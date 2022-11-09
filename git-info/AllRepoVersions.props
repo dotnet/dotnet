@@ -9,6 +9,8 @@
     <commandlineapiOutputPackageVersion>0.1.350401</commandlineapiOutputPackageVersion>
     <deploymenttoolsGitCommitHash>c3ad00ae84489071080a606f6a8e43c9a91a5cc2</deploymenttoolsGitCommitHash>
     <deploymenttoolsOutputPackageVersion>1.0.0-preview5.1.22263.1</deploymenttoolsOutputPackageVersion>
+    <diagnosticsGitCommitHash>e3e1490a23f27a6e0ed30d323035660c3ffc52cd</diagnosticsGitCommitHash>
+    <diagnosticsOutputPackageVersion>6.0.0-preview.22424.1</diagnosticsOutputPackageVersion>
     <formatGitCommitHash>bee17d238280246c6a8e6decbd86a91fda6d00c6</formatGitCommitHash>
     <formatOutputPackageVersion>7.0.351202</formatOutputPackageVersion>
     <fsharpGitCommitHash>a6a64706c78963cb033fd230f36518d3e773b725</fsharpGitCommitHash>

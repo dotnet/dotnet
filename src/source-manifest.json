@@ -25,6 +25,12 @@
       "commitSha": "c3ad00ae84489071080a606f6a8e43c9a91a5cc2"
     },
     {
+      "packageVersion": "6.0.0-preview.22424.1",
+      "path": "diagnostics",
+      "remoteUri": "https://github.com/dotnet/diagnostics",
+      "commitSha": "e3e1490a23f27a6e0ed30d323035660c3ffc52cd"
+    },
+    {
       "packageVersion": "7.0.351202",
       "path": "format",
       "remoteUri": "https://github.com/dotnet/format",

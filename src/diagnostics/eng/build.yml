@@ -1,0 +1,225 @@
+parameters:
+  # Job name
+  name: ''
+  # Agent OS (Windows_NT, Linux, MacOS, FreeBSD)
+  osGroup: Windows_NT
+  # Additional variables
+  variables: {}
+  # Build strategy - matrix
+  strategy: ''
+  # Optional: Job timeout
+  timeoutInMinutes: 180
+  # Optional: Docker image to use
+  dockerImage: ''
+  # Optional: ROOTFS_DIR to use
+  crossrootfsDir: ''
+  crossbuild: false
+  # Optional: test only job if true
+  testOnly: false
+  buildAndSkipTest: false
+  # Depends on 
+  dependsOn: ''
+  artifactsTargetPath: ''
+  requiresCapPtraceContainer: false
+
+jobs:
+- template: /eng/common/templates/job/job.yml
+  parameters:
+    name: ${{ parameters.name }}
+    timeoutInMinutes: ${{ parameters.timeoutInMinutes }}
+    enableMicrobuild: true
+    enableTelemetry: true
+    helixRepo: dotnet/diagnostics
+
+    pool:
+      # Public Linux Build Pool
+      ${{ if and(eq(parameters.osGroup, 'Linux'), eq(variables['System.TeamProject'], 'public')) }}:
+        name:  NetCore1ESPool-Public
+        demands: ImageOverride -equals Build.Ubuntu.1804.Amd64.Open
+
+      # Official Build Linux Pool
+      ${{ if and(eq(parameters.osGroup, 'Linux'), ne(variables['System.TeamProject'], 'public')) }}:
+        name: NetCore1ESPool-Internal
+        demands: ImageOverride -equals Build.Ubuntu.1804.Amd64
+
+      # FreeBSD builds only in the internal project
+      ${{ if and(eq(parameters.osGroup, 'FreeBSD'), ne(variables['System.TeamProject'], 'public')) }}:
+        name: dnceng-freebsd-internal
+
+      # Build OSX Pool  (we don't have on-prem OSX BuildPool)
+      ${{ if in(parameters.osGroup, 'MacOS', 'MacOS_cross') }}:
+        vmImage: macOS-latest
+
+      # Official Build Windows Pool
+      ${{ if and(eq(parameters.osGroup, 'Windows_NT'), ne(variables['System.TeamProject'], 'public')) }}:
+        name: NetCore1ESPool-Internal
+        demands: ImageOverride -equals Build.Windows.10.Amd64.VS2019
+
+      # Public Windows Build Pool
+      ${{ if and(eq(parameters.osGroup, 'Windows_NT'), eq(variables['System.TeamProject'], 'public')) }}:
+        name: NetCore1ESPool-Public
+        demands: ImageOverride -equals Build.Windows.10.Amd64.VS2019.Open
+
+    ${{ if and(ne(parameters.dockerImage, ''), ne(parameters.requiresCapPtraceContainer, 'true')) }}:
+      container: ${{ parameters.dockerImage }}
+
+    ${{ if ne(parameters.strategy, '') }}:
+      strategy: ${{ parameters.strategy }}
+
+    ${{ if ne(parameters.dependsOn, '') }}:
+      dependsOn: ${{ parameters.dependsOn }}
+
+    workspace:
+      clean: all
+
+    variables: 
+    - ${{ insert }}: ${{ parameters.variables }}
+    - _DockerImageName: ${{ parameters.dockerImage }}
+    - _PhaseName : ${{ parameters.name }}
+    - _HelixType: build/product
+    - _HelixBuildConfig: $(_BuildConfig)
+    - _Pipeline_StreamDumpDir: $(Build.SourcesDirectory)/artifacts/tmp/$(_BuildConfig)/streams
+
+    - ${{ if eq(parameters.osGroup, 'Windows_NT') }}:
+      - _buildScript: $(Build.SourcesDirectory)\eng\cibuild.cmd
+    - ${{ if ne(parameters.osGroup, 'Windows_NT') }}:
+      - _buildScript: $(Build.SourcesDirectory)/eng/cibuild.sh
+
+    - _TestArgs: '-test'
+    - _dockerEnv: ''
+
+    - ${{ if eq(parameters.testOnly, 'true') }}:
+      - _TestArgs: '-test -skipnative'
+    - ${{ if eq(parameters.requiresCapPtraceContainer, 'true') }}:
+      - _dockerEnv: $(Build.SourcesDirectory)/eng/docker-build.sh 
+            --docker-image $(_DockerImageName)
+            --source-directory $(Build.SourcesDirectory)
+            --container-name diagnostics-$(Build.BuildId)
+
+    - ${{ if eq(parameters.buildAndSkipTest, 'true') }}:
+      - _TestArgs: ''
+
+    - _InternalInstallArgs: ''
+    # For testing msrc's and service releases. The RuntimeSourceVersion is either "default" or the service release version to test
+    - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+      - _InternalInstallArgs:
+          -dotnetruntimeversion '$(DotnetRuntimeVersion)'
+          -dotnetruntimedownloadversion '$(DotnetRuntimeDownloadVersion)'
+          -runtimesourcefeed '$(RuntimeFeedUrl)'
+          -runtimesourcefeedkey '$(RuntimeFeedBase64SasToken)'
+
+    # Only enable publishing in non-public, non PR scenarios.
+    - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+      - _HelixSource: official/dotnet/arcade/$(Build.SourceBranch)
+    - ${{ if or(eq(variables['System.TeamProject'], 'public'), in(variables['Build.Reason'], 'PullRequest')) }}:
+      - _HelixSource: pr/dotnet/arcade/$(Build.SourceBranch)
+
+    # This is only required for cross builds.
+    - ${{ if and(eq(parameters.crossbuild, false), eq(parameters.crossrootfsDir, '')) }}:
+      - _Cross: ''
+    - ${{ if or(eq(parameters.crossbuild, true), ne(parameters.crossrootfsDir, '')) }}:
+      - _Cross: -cross
+
+    steps:
+    - ${{ if eq(parameters.osGroup, 'Linux') }}:
+      - ${{ if eq(parameters.testOnly, 'true') }}:
+        - task: DownloadBuildArtifacts@0
+          displayName: 'Download release builds'
+          inputs:
+            downloadPath: '$(Build.ArtifactStagingDirectory)/__download__'
+            downloadType: specific 
+            itemPattern: |
+              Build_$(_BuildConfig)/bin/Linux.$(_BuildArch).$(_BuildConfig)/**
+            checkDownloadedFiles: true
+        - task: CopyFiles@2
+          displayName: 'Binplace Product'
+          inputs:
+            sourceFolder: $(Build.ArtifactStagingDirectory)/__download__/Build_$(_BuildConfig)/bin/Linux.$(_BuildArch).$(_BuildConfig)
+            targetFolder: '$(Build.SourcesDirectory)/artifacts/bin/Linux.$(_BuildArch).$(_BuildConfig)'
+
+    - script: $(_dockerEnv) $(_buildScript)
+        -configuration $(_BuildConfig) 
+        -architecture $(_BuildArch)
+        $(_Cross)
+        $(_TestArgs)
+        /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
+        $(_InternalInstallArgs)
+      displayName: Build / Test
+      condition: succeeded()
+      env:
+        ROOTFS_DIR: ${{ parameters.crossrootfsDir }}
+
+    - ${{ if ne(variables['System.TeamProject'], 'public') }}:
+      - task: CopyFiles@2
+        displayName: Gather binaries for publish to artifacts
+        inputs:
+          SourceFolder: '$(Build.SourcesDirectory)/artifacts/$(_PublishArtifacts)'
+          Contents: '**'
+          TargetFolder: $(Build.ArtifactStagingDirectory)/artifacts/${{ coalesce(parameters.artifactsTargetPath, '$(_PublishArtifacts)') }}
+        condition:  ne(variables['_PublishArtifacts'], '')
+      - task: PublishBuildArtifacts@1
+        displayName: Publish Build Artifacts
+        inputs:
+          pathtoPublish: '$(Build.ArtifactStagingDirectory)/artifacts'
+          artifactName: Build_$(_BuildConfig)
+        condition: ne(variables['_PublishArtifacts'], '')
+
+    - task: PublishBuildArtifacts@1
+      displayName: Publish Artifacts on failure
+      inputs:
+        PathtoPublish: '$(Build.SourcesDirectory)/artifacts/bin'
+        PublishLocation: Container
+        ArtifactName: Artifacts_$(_PhaseName)_$(_BuildArch)_$(_BuildConfig)
+      continueOnError: true
+      condition: failed()
+
+    - task: PublishBuildArtifacts@1
+      displayName: Publish Dump Artifacts on failure
+      inputs:
+        PathtoPublish: '$(Build.SourcesDirectory)/artifacts/tmp/$(_BuildConfig)/dumps'
+        PublishLocation: Container
+        ArtifactName: Dumps_$(_PhaseName)_$(_BuildArch)_$(_BuildConfig)
+      continueOnError: true
+      condition: failed()
+
+    - task: PublishBuildArtifacts@1
+      displayName: Publish Stream Artifacts on failure
+      inputs:
+        PathtoPublish: $(_Pipeline_StreamDumpDir)
+        PublishLocation: Container
+        ArtifactName: Streams_$(_PhaseName)_$(_BuildArch)_$(_BuildConfig)
+      continueOnError: true
+      condition: failed()
+
+    - task: CopyFiles@2
+      displayName: Gather Logs
+      inputs:
+        sourceFolder: '$(Build.SourcesDirectory)/artifacts'
+        contents: '?(log|TestResults)/**'
+        targetFolder: '$(Build.StagingDirectory)/BuildLogs'
+      continueOnError: true
+      condition: always()
+
+    - task: PublishBuildArtifacts@1
+      displayName: Publish Logs
+      inputs:
+        PathtoPublish: '$(Build.StagingDirectory)/BuildLogs'
+        PublishLocation: Container
+        ArtifactName: Logs_$(_PhaseName)_$(_BuildArch)_$(_BuildConfig)
+      continueOnError: true
+      condition: always()
+
+    - ${{ if eq(parameters.buildAndSkipTest, 'false') }}:
+      # Publish test results to Azure Pipelines
+      - task: PublishTestResults@2
+        inputs:
+          testResultsFormat: xUnit
+          testResultsFiles: '**/*UnitTests*.xml' 
+          searchFolder: '$(Build.SourcesDirectory)/artifacts/TestResults'
+          failTaskOnFailedTests: true
+          testRunTitle: 'Tests $(_PhaseName) $(_BuildArch) $(_BuildConfig)'
+          publishRunAttachments: true
+          mergeTestResults: true
+          buildConfiguration: ${{ parameters.name }}
+        continueOnError: true
+        condition: ne(variables['_BuildOnly'], 'true')
