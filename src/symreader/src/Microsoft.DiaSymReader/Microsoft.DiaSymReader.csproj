@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. See the License.txt file in the project root for more information. -->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>netstandard1.1;net20</TargetFrameworks>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <IsPackable>true</IsPackable>
+    <Description>Microsoft DiaSymReader interop interfaces and utilities.</Description>
+    <PackageReleaseNotes>Microsoft DiaSymReader interop interfaces and utilities</PackageReleaseNotes>
+    <PackageTags>DiaSymReader ISymUnmanagedReader PDB COM interop debugging</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Microsoft.DiaSymReader.PortablePdb" />
+    <InternalsVisibleTo Include="Microsoft.DiaSymReader.UnitTests" />
+  </ItemGroup>
+</Project>
