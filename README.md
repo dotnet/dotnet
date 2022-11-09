@@ -145,6 +145,8 @@ To enable full offline source-building of the VMR, we have no other choice than 
 *[dotnet/linker@dc5e60f](https:/github.com/dotnet/linker/commit/dc5e60f5f2becf0b462d37ad918443126e80b49b)*
     - `src/linker/external/cecil`  
     *[mono/cecil.git@1840b74](https:/github.com/mono/cecil.git/commit/1840b7410d37a613e684b6f9650e39e2d4950bbb)*
+- `src/roslyn`  
+*[dotnet/roslyn@c9a6d5c](https:/github.com/dotnet/roslyn/commit/c9a6d5cf04904ebd2b1aaab0adb33df16c8e76a6)*
 - `src/runtime`  
 *[dotnet/runtime@af841c8](https:/github.com/dotnet/runtime/commit/af841c8b33cecc92d74222298f1e45bf7bf3d90a)*
 - `src/sdk`  

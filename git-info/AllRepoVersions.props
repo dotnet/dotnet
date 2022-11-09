@@ -9,6 +9,8 @@
     <installerOutputPackageVersion>8.0.100</installerOutputPackageVersion>
     <linkerGitCommitHash>dc5e60f5f2becf0b462d37ad918443126e80b49b</linkerGitCommitHash>
     <linkerOutputPackageVersion>7.0.100-1.22557.2</linkerOutputPackageVersion>
+    <roslynGitCommitHash>c9a6d5cf04904ebd2b1aaab0adb33df16c8e76a6</roslynGitCommitHash>
+    <roslynOutputPackageVersion>4.5.0-1.22553.5</roslynOutputPackageVersion>
     <runtimeGitCommitHash>af841c8b33cecc92d74222298f1e45bf7bf3d90a</runtimeGitCommitHash>
     <runtimeOutputPackageVersion>8.0.0-alpha.1.22557.12</runtimeOutputPackageVersion>
     <sdkGitCommitHash>4bd9b67d81fbf6d65012ef08c9d8cf2a27953057</sdkGitCommitHash>

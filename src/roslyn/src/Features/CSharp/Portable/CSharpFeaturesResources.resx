@@ -1,0 +1,638 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Inline_temporary_variable" xml:space="preserve">
+    <value>Inline temporary variable</value>
+  </data>
+  <data name="Conflict_s_detected" xml:space="preserve">
+    <value>Conflict(s) detected.</value>
+  </data>
+  <data name="Invert_if" xml:space="preserve">
+    <value>Invert if</value>
+  </data>
+  <data name="Add_await_and_ConfigureAwaitFalse" xml:space="preserve">
+    <value>Add 'await' and 'ConfigureAwait(false)'</value>
+    <comment>{Locked="await"} "await" is a C# keyword and should not be localized.</comment>
+  </data>
+  <data name="lambda_expression" xml:space="preserve">
+    <value>&lt;lambda expression&gt;</value>
+  </data>
+  <data name="Autoselect_disabled_due_to_potential_lambda_declaration" xml:space="preserve">
+    <value>Autoselect disabled due to potential lambda declaration.</value>
+  </data>
+  <data name="member_name" xml:space="preserve">
+    <value>&lt;member name&gt; = </value>
+  </data>
+  <data name="Autoselect_disabled_due_to_possible_explicitly_named_anonymous_type_member_creation" xml:space="preserve">
+    <value>Autoselect disabled due to possible explicitly named anonymous type member creation.</value>
+  </data>
+  <data name="pattern_variable" xml:space="preserve">
+    <value>&lt;pattern variable&gt;</value>
+  </data>
+  <data name="Autoselect_disabled_due_to_potential_pattern_variable_declaration" xml:space="preserve">
+    <value>Autoselect disabled due to potential pattern variable declaration.</value>
+  </data>
+  <data name="range_variable" xml:space="preserve">
+    <value>&lt;range variable&gt;</value>
+  </data>
+  <data name="Autoselect_disabled_due_to_potential_range_variable_declaration" xml:space="preserve">
+    <value>Autoselect disabled due to potential range variable declaration.</value>
+  </data>
+  <data name="Simplify_name_0" xml:space="preserve">
+    <value>Simplify name '{0}'</value>
+  </data>
+  <data name="Simplify_member_access_0" xml:space="preserve">
+    <value>Simplify member access '{0}'</value>
+  </data>
+  <data name="Remove_this_qualification" xml:space="preserve">
+    <value>Remove 'this' qualification</value>
+  </data>
+  <data name="Can_t_determine_valid_range_of_statements_to_extract" xml:space="preserve">
+    <value>Can't determine valid range of statements to extract</value>
+  </data>
+  <data name="Not_all_code_paths_return" xml:space="preserve">
+    <value>Not all code paths return</value>
+  </data>
+  <data name="Selection_does_not_contain_a_valid_node" xml:space="preserve">
+    <value>Selection does not contain a valid node</value>
+  </data>
+  <data name="Contains_invalid_selection" xml:space="preserve">
+    <value>Contains invalid selection.</value>
+  </data>
+  <data name="The_selection_contains_syntactic_errors" xml:space="preserve">
+    <value>The selection contains syntactic errors</value>
+  </data>
+  <data name="Selection_can_not_cross_over_preprocessor_directives" xml:space="preserve">
+    <value>Selection can not cross over preprocessor directives.</value>
+  </data>
+  <data name="Selection_can_not_contain_a_yield_statement" xml:space="preserve">
+    <value>Selection can not contain a yield statement.</value>
+  </data>
+  <data name="Selection_can_not_contain_throw_statement" xml:space="preserve">
+    <value>Selection can not contain throw statement.</value>
+  </data>
+  <data name="Selection_can_not_be_part_of_constant_initializer_expression" xml:space="preserve">
+    <value>Selection can not be part of constant initializer expression.</value>
+  </data>
+  <data name="Selection_can_not_contain_a_pattern_expression" xml:space="preserve">
+    <value>Selection can not contain a pattern expression.</value>
+  </data>
+  <data name="The_selected_code_is_inside_an_unsafe_context" xml:space="preserve">
+    <value>The selected code is inside an unsafe context.</value>
+  </data>
+  <data name="No_valid_statement_range_to_extract" xml:space="preserve">
+    <value>No valid statement range to extract</value>
+  </data>
+  <data name="deprecated" xml:space="preserve">
+    <value>deprecated</value>
+  </data>
+  <data name="extension" xml:space="preserve">
+    <value>extension</value>
+  </data>
+  <data name="awaitable" xml:space="preserve">
+    <value>awaitable</value>
+  </data>
+  <data name="awaitable_extension" xml:space="preserve">
+    <value>awaitable, extension</value>
+  </data>
+  <data name="Organize_Usings" xml:space="preserve">
+    <value>Organize Usings</value>
+  </data>
+  <data name="Make_0_return_Task_instead_of_void" xml:space="preserve">
+    <value>Make {0} return Task instead of void.</value>
+  </data>
+  <data name="Generate_explicit_conversion_operator_in_0" xml:space="preserve">
+    <value>Generate explicit conversion operator in '{0}'</value>
+  </data>
+  <data name="Generate_implicit_conversion_operator_in_0" xml:space="preserve">
+    <value>Generate implicit conversion operator in '{0}'</value>
+  </data>
+  <data name="try_block" xml:space="preserve">
+    <value>try block</value>
+    <comment>{Locked="try"} "try" is a C# keyword and should not be localized.</comment>
+  </data>
+  <data name="catch_clause" xml:space="preserve">
+    <value>catch clause</value>
+    <comment>{Locked="catch"} "catch" is a C# keyword and should not be localized.</comment>
+  </data>
+  <data name="filter_clause" xml:space="preserve">
+    <value>filter clause</value>
+  </data>
+  <data name="finally_clause" xml:space="preserve">
+    <value>finally clause</value>
+    <comment>{Locked="finally"} "finally" is a C# keyword and should not be localized.</comment>
+  </data>
+  <data name="fixed_statement" xml:space="preserve">
+    <value>fixed statement</value>
+    <comment>{Locked="fixed"} "fixed" is a C# keyword and should not be localized.</comment>
+  </data>
+  <data name="using_statement" xml:space="preserve">
+    <value>using statement</value>
+    <comment>{Locked="using"} "using" is a C# keyword and should not be localized.</comment>
+  </data>
+  <data name="lock_statement" xml:space="preserve">
+    <value>lock statement</value>
+    <comment>{Locked="lock"} "lock" is a C# keyword and should not be localized.</comment>
+  </data>
+  <data name="foreach_statement" xml:space="preserve">
+    <value>foreach statement</value>
+    <comment>{Locked="foreach"} "foreach" is a C# keyword and should not be localized.</comment>
+  </data>
+  <data name="asynchronous_foreach_statement" xml:space="preserve">
+    <value>asynchronous foreach statement</value>
+    <comment>{Locked="foreach"} "foreach" is a C# keyword and should not be localized.</comment>
+  </data>
+  <data name="using_declaration" xml:space="preserve">
+    <value>using declaration</value>
+    <comment>{Locked="using"} "using" is a C# keyword and should not be localized.</comment>
+  </data>
+  <data name="asynchronous_using_declaration" xml:space="preserve">
+    <value>asynchronous using declaration</value>
+    <comment>{Locked="using"} "using" is a C# keyword and should not be localized.</comment>
+  </data>
+  <data name="checked_statement" xml:space="preserve">
+    <value>checked statement</value>
+    <comment>{Locked="checked"} "checked" is a C# keyword and should not be localized.</comment>
+  </data>
+  <data name="unchecked_statement" xml:space="preserve">
+    <value>unchecked statement</value>
+    <comment>{Locked="unchecked"} "unchecked" is a C# keyword and should not be localized.</comment>
+  </data>
+  <data name="yield_return_statement" xml:space="preserve">
+    <value>yield return statement</value>
+    <comment>{Locked="yield return"} "yield return" is a C# keyword and should not be localized.</comment>
+  </data>
+  <data name="yield_break_statement" xml:space="preserve">
+    <value>yield break statement</value>
+    <comment>{Locked="yield break"} "yield break" is a C# keyword and should not be localized.</comment>
+  </data>
+  <data name="await_expression" xml:space="preserve">
+    <value>await expression</value>
+    <comment>{Locked="await"} "await" is a C# keyword and should not be localized.</comment>
+  </data>
+  <data name="lambda" xml:space="preserve">
+    <value>lambda</value>
+  </data>
+  <data name="anonymous_method" xml:space="preserve">
+    <value>anonymous method</value>
+  </data>
+  <data name="from_clause" xml:space="preserve">
+    <value>from clause</value>
+  </data>
+  <data name="join_clause" xml:space="preserve">
+    <value>join clause</value>
+    <comment>{Locked="join"} "join" is a C# keyword and should not be localized.</comment>
+  </data>
+  <data name="let_clause" xml:space="preserve">
+    <value>let clause</value>
+    <comment>{Locked="let"} "let" is a C# keyword and should not be localized.</comment>
+  </data>
+  <data name="where_clause" xml:space="preserve">
+    <value>where clause</value>
+    <comment>{Locked="where"} "where" is a C# keyword and should not be localized.</comment>
+  </data>
+  <data name="orderby_clause" xml:space="preserve">
+    <value>orderby clause</value>
+    <comment>{Locked="orderby"} "orderby" is a C# keyword and should not be localized.</comment>
+  </data>
+  <data name="select_clause" xml:space="preserve">
+    <value>select clause</value>
+    <comment>{Locked="select"} "select" is a C# keyword and should not be localized.</comment>
+  </data>
+  <data name="groupby_clause" xml:space="preserve">
+    <value>groupby clause</value>
+    <comment>{Locked="groupby"} "groupby" is a C# keyword and should not be localized.</comment>
+  </data>
+  <data name="query_body" xml:space="preserve">
+    <value>query body</value>
+  </data>
+  <data name="into_clause" xml:space="preserve">
+    <value>into clause</value>
+    <comment>{Locked="into"} "into" is a C# keyword and should not be localized.</comment>
+  </data>
+  <data name="is_pattern" xml:space="preserve">
+    <value>is pattern</value>
+    <comment>{Locked="is"} "is" is a C# keyword and should not be localized.</comment>
+  </data>
+  <data name="deconstruction" xml:space="preserve">
+    <value>deconstruction</value>
+  </data>
+  <data name="tuple" xml:space="preserve">
+    <value>tuple</value>
+  </data>
+  <data name="local_function" xml:space="preserve">
+    <value>local function</value>
+  </data>
+  <data name="out_var" xml:space="preserve">
+    <value>out variable</value>
+    <comment>{Locked="out"} "out" is a C# keyword and should not be localized.</comment>
+  </data>
+  <data name="ref_local_or_expression" xml:space="preserve">
+    <value>ref local or expression</value>
+    <comment>{Locked="ref"} "ref" is a C# keyword and should not be localized.</comment>
+  </data>
+  <data name="switch_statement" xml:space="preserve">
+    <value>switch statement</value>
+    <comment>{Locked="switch"} "switch" is a C# keyword and should not be localized.</comment>
+  </data>
+  <data name="global_statement" xml:space="preserve">
+    <value>global statement</value>
+    <comment>{Locked="global"} "global" is a C# keyword and should not be localized.</comment>
+  </data>
+  <data name="extern_alias" xml:space="preserve">
+    <value>extern alias</value>
+  </data>
+  <data name="using_directive" xml:space="preserve">
+    <value>using directive</value>
+  </data>
+  <data name="struct_" xml:space="preserve">
+    <value>struct</value>
+    <comment>{Locked}</comment>
+  </data>
+  <data name="event_field" xml:space="preserve">
+    <value>event field</value>
+  </data>
+  <data name="conversion_operator" xml:space="preserve">
+    <value>conversion operator</value>
+  </data>
+  <data name="destructor" xml:space="preserve">
+    <value>destructor</value>
+  </data>
+  <data name="indexer" xml:space="preserve">
+    <value>indexer</value>
+  </data>
+  <data name="property_getter" xml:space="preserve">
+    <value>property getter</value>
+  </data>
+  <data name="indexer_getter" xml:space="preserve">
+    <value>indexer getter</value>
+  </data>
+  <data name="property_setter" xml:space="preserve">
+    <value>property setter</value>
+  </data>
+  <data name="indexer_setter" xml:space="preserve">
+    <value>indexer setter</value>
+  </data>
+  <data name="attribute_target" xml:space="preserve">
+    <value>attribute target</value>
+  </data>
+  <data name="The_name_0_does_not_exist_in_the_current_context" xml:space="preserve">
+    <value>The name '{0}' does not exist in the current context.</value>
+  </data>
+  <data name="Remove_new_modifier" xml:space="preserve">
+    <value>Remove 'new' modifier</value>
+  </data>
+  <data name="Properties" xml:space="preserve">
+    <value>Properties</value>
+  </data>
+  <data name="Autoselect_disabled_due_to_namespace_declaration" xml:space="preserve">
+    <value>Autoselect disabled due to namespace declaration.</value>
+  </data>
+  <data name="namespace_name" xml:space="preserve">
+    <value>&lt;namespace name&gt;</value>
+  </data>
+  <data name="Autoselect_disabled_due_to_type_declaration" xml:space="preserve">
+    <value>Autoselect disabled due to type declaration.</value>
+  </data>
+  <data name="Autoselect_disabled_due_to_possible_deconstruction_declaration" xml:space="preserve">
+    <value>Autoselect disabled due to possible deconstruction declaration.</value>
+  </data>
+  <data name="Upgrade_this_project_to_csharp_language_version_0" xml:space="preserve">
+    <value>Upgrade this project to C# language version '{0}'</value>
+  </data>
+  <data name="Upgrade_all_csharp_projects_to_language_version_0" xml:space="preserve">
+    <value>Upgrade all C# projects to language version '{0}'</value>
+  </data>
+  <data name="class_name" xml:space="preserve">
+    <value>&lt;class name&gt;</value>
+  </data>
+  <data name="interface_name" xml:space="preserve">
+    <value>&lt;interface name&gt;</value>
+  </data>
+  <data name="designation_name" xml:space="preserve">
+    <value>&lt;designation name&gt;</value>
+  </data>
+  <data name="struct_name" xml:space="preserve">
+    <value>&lt;struct name&gt;</value>
+  </data>
+  <data name="Make_method_async" xml:space="preserve">
+    <value>Make method async</value>
+  </data>
+  <data name="Make_method_async_remain_void" xml:space="preserve">
+    <value>Make method async (stay void)</value>
+  </data>
+  <data name="Convert_to_switch_statement" xml:space="preserve">
+    <value>Convert to 'switch' statement</value>
+  </data>
+  <data name="Convert_to_switch_expression" xml:space="preserve">
+    <value>Convert to 'switch' expression</value>
+  </data>
+  <data name="Use_recursive_patterns" xml:space="preserve">
+    <value>Use recursive patterns</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>&lt;Name&gt;</value>
+  </data>
+  <data name="Autoselect_disabled_due_to_member_declaration" xml:space="preserve">
+    <value>Autoselect disabled due to member declaration</value>
+  </data>
+  <data name="Suggested_name" xml:space="preserve">
+    <value>(Suggested name)</value>
+  </data>
+  <data name="Remove_unused_function" xml:space="preserve">
+    <value>Remove unused function</value>
+  </data>
+  <data name="Add_parentheses_around_conditional_expression_in_interpolated_string" xml:space="preserve">
+    <value>Add parentheses</value>
+  </data>
+  <data name="Convert_to_foreach" xml:space="preserve">
+    <value>Convert to 'foreach'</value>
+  </data>
+  <data name="Convert_to_for" xml:space="preserve">
+    <value>Convert to 'for'</value>
+  </data>
+  <data name="Allow_unsafe_code_in_this_project" xml:space="preserve">
+    <value>Allow unsafe code in this project</value>
+  </data>
+  <data name="Convert_to_method" xml:space="preserve">
+    <value>Convert to method</value>
+  </data>
+  <data name="Add_required_braces_for_single_line_control_statements" xml:space="preserve">
+    <value>Add required braces for single-line control statements</value>
+  </data>
+  <data name="Apply_expression_block_body_preferences" xml:space="preserve">
+    <value>Apply expression/block body preferences</value>
+  </data>
+  <data name="Apply_inline_out_variable_preferences" xml:space="preserve">
+    <value>Apply inline 'out' variables preferences</value>
+  </data>
+  <data name="Make_private_field_readonly_when_possible" xml:space="preserve">
+    <value>Make private fields readonly when possible</value>
+  </data>
+  <data name="Use_0" xml:space="preserve">
+    <value>Use '{0}'</value>
+  </data>
+  <data name="Add_missing_usings" xml:space="preserve">
+    <value>Add missing usings</value>
+    <comment>{Locked="using"} "using" is a C# keyword and should not be localized.</comment>
+  </data>
+  <data name="Introduce_using_statement" xml:space="preserve">
+    <value>Introduce 'using' statement</value>
+    <comment>{Locked="using"} "using" is a C# keyword and should not be localized.</comment>
+  </data>
+  <data name="Make_ref_struct" xml:space="preserve">
+    <value>Make 'ref struct'</value>
+    <comment>{Locked="ref"}{Locked="struct"} "ref" and "struct" are C# keywords and should not be localized.</comment>
+  </data>
+  <data name="Assign_out_parameters" xml:space="preserve">
+    <value>Assign 'out' parameters</value>
+    <comment>{Locked="out"} "out" is a C# keyword and should not be localized.</comment>
+  </data>
+  <data name="Assign_out_parameters_at_start" xml:space="preserve">
+    <value>Assign 'out' parameters (at start)</value>
+    <comment>{Locked="out"} "out" is a C# keyword and should not be localized.</comment>
+  </data>
+  <data name="Warning_Inlining_temporary_into_conditional_method_call" xml:space="preserve">
+    <value>Warning: Inlining temporary into conditional method call.</value>
+  </data>
+  <data name="Warning_Inlining_temporary_variable_may_change_code_meaning" xml:space="preserve">
+    <value>Warning: Inlining temporary variable may change code meaning.</value>
+  </data>
+  <data name="local_variable_declaration" xml:space="preserve">
+    <value>local variable declaration</value>
+  </data>
+  <data name="switch_statement_case_clause" xml:space="preserve">
+    <value>switch statement case clause</value>
+    <comment>{Locked="switch"}{Locked="case"} "switch" and "case" are a C# keyword and should not be localized.</comment>
+  </data>
+  <data name="Reverse_for_statement" xml:space="preserve">
+    <value>Reverse 'for' statement</value>
+    <comment>{Locked="for"} "for" is a C# keyword and should not be localized.</comment>
+  </data>
+  <data name="Convert_to_regular_string" xml:space="preserve">
+    <value>Convert to regular string</value>
+  </data>
+  <data name="Convert_to_verbatim_string" xml:space="preserve">
+    <value>Convert to verbatim string</value>
+  </data>
+  <data name="Remove_in_keyword" xml:space="preserve">
+    <value>Remove 'in' keyword</value>
+    <comment>{Locked="in"} "in" is a C# keyword and should not be localized.</comment>
+  </data>
+  <data name="Change_to_as_expression" xml:space="preserve">
+    <value>Change to 'as' expression</value>
+  </data>
+  <data name="Change_to_cast" xml:space="preserve">
+    <value>Change to cast</value>
+  </data>
+  <data name="record_" xml:space="preserve">
+    <value>record</value>
+  </data>
+  <data name="record_struct" xml:space="preserve">
+    <value>record struct</value>
+  </data>
+  <data name="Enable_nullable_reference_types_in_project" xml:space="preserve">
+    <value>Enable nullable reference types in project</value>
+  </data>
+  <data name="Selection_cannot_include_global_statements" xml:space="preserve">
+    <value>Selection cannot include global statements</value>
+  </data>
+  <data name="Selection_cannot_include_top_level_statements" xml:space="preserve">
+    <value>Selection cannot include top-level statements</value>
+  </data>
+  <data name="Convert_to_raw_string" xml:space="preserve">
+    <value>Convert to raw string</value>
+  </data>
+  <data name="without_leading_whitespace_may_change_semantics" xml:space="preserve">
+    <value>... without leading whitespace (may change semantics)</value>
+    <comment>This clause is a follow up to the "Convert to raw string" loc string.
+    The intent is that the user sees "Convert to raw string" as an option to select,
+    and that is then followed with this clause.  This is so we don't have a huge string
+    saying "Convert to raw string without leading whitespace (may change semantics)"</comment>
+  </data>
+  <data name="Apply_blank_lines_between_consecutive_braces_preferences_experimental" xml:space="preserve">
+    <value>Apply blank lines between consecutive braces preferences (experimental)</value>
+  </data>
+  <data name="Apply_blank_line_after_colon_in_constructor_initializer_preferences_experimental" xml:space="preserve">
+    <value>Apply blank line after colon in constructor initializer preferences (experimental)</value>
+  </data>
+  <data name="Apply_conditional_delegate_call_preferences" xml:space="preserve">
+    <value>Apply conditional delegate call preferences</value>
+  </data>
+  <data name="Apply_deconstruct_preferences" xml:space="preserve">
+    <value>Apply deconstruct preferences</value>
+  </data>
+  <data name="Apply_default_T_preferences" xml:space="preserve">
+    <value>Apply default(T) preferences</value>
+  </data>
+  <data name="Apply_embedded_statements_on_same_line_preferences_experimental" xml:space="preserve">
+    <value>Apply embedded statements on same line preferences (experimental)</value>
+  </data>
+  <data name="Apply_local_over_anonymous_function_preferences" xml:space="preserve">
+    <value>Apply local over anonymous function preferences</value>
+  </data>
+  <data name="Apply_method_group_conversion_preferences" xml:space="preserve">
+    <value>Apply method group conversion preferences</value>
+  </data>
+  <data name="Apply_namespace_preferences" xml:space="preserve">
+    <value>Apply namespace preferences</value>
+  </data>
+  <data name="Apply_new_preferences" xml:space="preserve">
+    <value>Apply new() preferences</value>
+  </data>
+  <data name="Apply_parameter_null_preferences" xml:space="preserve">
+    <value>Apply parameter null preferences</value>
+  </data>
+  <data name="Apply_pattern_matching_preferences" xml:space="preserve">
+    <value>Apply pattern matching preferences</value>
+  </data>
+  <data name="Apply_range_preferences" xml:space="preserve">
+    <value>Apply range preferences</value>
+  </data>
+  <data name="Apply_static_local_function_preferences" xml:space="preserve">
+    <value>Apply static local function preferences</value>
+  </data>
+  <data name="Apply_throw_expression_preferences" xml:space="preserve">
+    <value>Apply throw expression preferences</value>
+  </data>
+  <data name="Apply_using_statement_preferences" xml:space="preserve">
+    <value>Apply using statement preferences</value>
+  </data>
+  <data name="Apply_var_preferences" xml:space="preserve">
+    <value>Apply 'var' preferences</value>
+  </data>
+  <data name="Add_await" xml:space="preserve">
+    <value>Add 'await'</value>
+    <comment>{Locked="await"} "await" is a C# keyword and should not be localized.</comment>
+  </data>
+  <data name="Global_using_directives" xml:space="preserve">
+    <value>Global 'using' directives</value>
+  </data>
+  <data name="Convert_0_to_record" xml:space="preserve">
+    <value>Convert '{0}' to record</value>
+    <comment>{Locked="record"} "record" is a C# keyword and should not be localized.</comment>
+  </data>
+  <data name="Convert_to_positional_record" xml:space="preserve">
+    <value>Convert to positional record</value>
+    <comment>{Locked="record"} "record" is a C# keyword and should not be localized.</comment>
+  </data>
+  <data name="Apply_readonly_struct_preferences" xml:space="preserve">
+    <value>Apply 'readonly struct' preferences</value>
+  </data>
+</root>
