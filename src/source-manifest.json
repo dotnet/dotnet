@@ -5,6 +5,12 @@
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
       "commitSha": "20663112b5c5c18e4fcf22c7b1421d9cd5ccb480"
+    },
+    {
+      "packageVersion": "8.0.0-alpha.1.22557.12",
+      "path": "runtime",
+      "remoteUri": "https://github.com/dotnet/runtime",
+      "commitSha": "af841c8b33cecc92d74222298f1e45bf7bf3d90a"
     }
   ],
   "submodules": []

@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+  <PropertyGroup>
+    <CopyDebugCRTDllsToOutputDirectory>true</CopyDebugCRTDllsToOutputDirectory>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="CopyConstructorMarshaler.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <CMakeProjectReference Include="CMakeLists.txt" />
+    <CMakeProjectReference Include="../ijwhostmock/CMakeLists.txt" />
+  </ItemGroup>
+</Project>

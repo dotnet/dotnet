@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>$(NetCoreAppCurrent);$(NetCoreAppMinimum);netstandard2.0;$(NetFrameworkMinimum)</TargetFrameworks>
+    <Nullable>disable</Nullable>
+    <NoWarn>$(NoWarn);nullable</NoWarn>
+    <IsTrimmable>false</IsTrimmable>
+    <StrongNameKeyId>Microsoft</StrongNameKeyId>
+    <IsPackable>true</IsPackable>
+    <PackageDescription>Provides types that support using Managed Extensibility Framework with a convention-based configuration model.
+
+Commonly Used Types:
+System.Composition.Convention.ConventionBuilder
+System.Composition.Convention.ExportConventionBuilder
+System.Composition.Convention.ImportConventionBuilder
+System.Composition.Convention.PartConventionBuilder
+System.Composition.Convention.ParameterImportConventionBuilder</PackageDescription>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="System\Composition\Convention\ConventionBuilder.cs" />
+    <Compile Include="System\Composition\Convention\ExportConventionBuilder.cs" />
+    <Compile Include="System\Composition\Convention\ImportConventionBuilder.cs" />
+    <Compile Include="System\Composition\Convention\ParameterImportConventionBuilder.cs" />
+    <Compile Include="System\Composition\Convention\PartConventionBuilder.cs" />
+    <Compile Include="System\Composition\Convention\PartConventionBuilderOfT.cs" />
+    <Compile Include="$(CommonPath)System\Composition\Diagnostics\CompositionTrace.cs"
+             Link="Common\System\Composition\Diagnostics\CompositionTrace.cs" />
+    <Compile Include="$(CommonPath)System\Composition\Diagnostics\CompositionTraceId.cs"
+             Link="Common\System\Composition\Diagnostics\CompositionTraceId.cs" />
+    <Compile Include="$(CommonPath)System\Composition\Diagnostics\CompositionTraceSource.cs"
+             Link="Common\System\Composition\Diagnostics\CompositionTraceSource.cs" />
+    <Compile Include="$(CommonPath)System\Composition\Diagnostics\DebuggerTraceWriter.cs"
+             Link="Common\System\Composition\Diagnostics\DebuggerTraceWriter.cs" />
+    <Compile Include="$(CommonPath)System\Composition\Diagnostics\TraceWriter.cs"
+             Link="Common\System\Composition\Diagnostics\TraceWriter.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(LibrariesProjectRoot)System.Composition.AttributedModel\src\System.Composition.AttributedModel.csproj" />
+  </ItemGroup>
+</Project>

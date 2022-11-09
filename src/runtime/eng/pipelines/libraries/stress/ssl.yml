@@ -1,0 +1,81 @@
+trigger: none
+
+pr:
+  branches:
+    include:
+    - "*"
+
+schedules:
+- cron: "0 13 * * *" # 1PM UTC => 5 AM PST
+  displayName: SslStress nightly run
+  branches:
+    include:
+    - main
+    - release/6.0
+    - release/7.0
+
+variables:
+  - template: ../variables.yml
+  - name: dockerfilesFolder
+    value: $(Build.SourcesDirectory)/eng/docker
+  - name: sslStressProject
+    value: $(sourcesRoot)/System.Net.Security/tests/StressTests/SslStress
+  - name: sdkBaseImage
+    value: dotnet-sdk-libraries-current
+
+
+extends:
+  template:  /eng/pipelines/common/templates/single-stage-pipeline-with-resources.yml
+  parameters:
+    jobs:
+
+    - job: linux
+      displayName: Docker Linux
+      timeoutInMinutes: 120
+      pool:
+        name: NetCore-Public
+        demands: ImageOverride -equals Build.Ubuntu.1804.Amd64.Open
+
+      steps:
+      - checkout: self
+        clean: true
+        fetchDepth: 5
+
+      - bash: |
+          $(dockerfilesFolder)/build-docker-sdk.sh -t $(sdkBaseImage) -c $(BUILD_CONFIGURATION)
+        displayName: Build CLR and Libraries
+
+      - bash: |
+          $(sslStressProject)/run-docker-compose.sh -o -c $(BUILD_CONFIGURATION) -t $(sdkBaseImage)
+        displayName: Build SslStress
+
+      - bash: |
+          cd '$(sslStressProject)'
+          docker-compose up --abort-on-container-exit --no-color
+        displayName: Run SslStress
+
+    - job: windows
+      displayName: Docker NanoServer
+      timeoutInMinutes: 120
+      pool:
+        name: NetCore-Public
+        demands: ImageOverride -equals 1es-windows-2022-open
+
+      steps:
+      - checkout: self
+        clean: true
+        fetchDepth: 5
+        lfs: false
+
+      - powershell: |
+          $(dockerfilesFolder)/build-docker-sdk.ps1 -w -t $(sdkBaseImage) -c $(BUILD_CONFIGURATION)
+        displayName: Build CLR and Libraries
+
+      - powershell: |
+          $(sslStressProject)/run-docker-compose.ps1 -w -o -c $(BUILD_CONFIGURATION) -t $(sdkBaseImage)
+        displayName: Build SslStress
+
+      - powershell: |
+          cd '$(sslStressProject)'
+          docker-compose up --abort-on-container-exit --no-color
+        displayName: Run SslStress

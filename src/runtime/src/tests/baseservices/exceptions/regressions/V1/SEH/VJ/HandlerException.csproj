@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <CLRTestPriority>1</CLRTestPriority>
+    <!-- The test can have threads running at exit -->
+    <UnloadabilityIncompatible>true</UnloadabilityIncompatible>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="HandlerException.cs" />
+  </ItemGroup>
+</Project>

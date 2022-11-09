@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>$(NetCoreAppCurrent);net48</TargetFrameworks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Tests.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.IO.Packaging.TestData" Version="$(SystemIOPackagingTestDataVersion)" />
+    <ProjectReference Include="..\src\System.IO.Packaging.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+</Project>

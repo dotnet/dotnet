@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <MonoAotIncompatible>true</MonoAotIncompatible>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DebugType>Embedded</DebugType>
+    <Optimize />
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="*.cs" />
+    <Compile Include="..\Shared\Program.cs" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <!-- Native varargs not supported on ARM -->
+    <CLRTestTargetUnsupported Condition="'$(TargetArchitecture)' == 'arm' or '$(TargetArchitecture)' == 'armel'">true</CLRTestTargetUnsupported>
+  </PropertyGroup>
+  <PropertyGroup>
+    <CopyDebugCRTDllsToOutputDirectory>true</CopyDebugCRTDllsToOutputDirectory>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="NativeVarargsTest.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <CMakeProjectReference Include="CMakeLists.txt" />
+    <CMakeProjectReference Include="../ijwhostmock/CMakeLists.txt" />
+  </ItemGroup>
+</Project>

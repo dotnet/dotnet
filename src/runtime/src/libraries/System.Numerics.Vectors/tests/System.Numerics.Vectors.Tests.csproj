@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <TargetFramework>$(NetCoreAppCurrent)</TargetFramework>
+    <TestRuntime>true</TestRuntime>
+    <!--Remove once this is fixed, https://github.com/dotnet/runtime/issues/71506 -->
+    <IlcTrimMetadata>false</IlcTrimMetadata>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="GenericVectorTests.cs" />
+    <Compile Include="GenericVectorUnsupportedTests.cs" />
+    <Compile Include="Util.cs" />
+    <Compile Include="Vector2Tests.cs" />
+    <Compile Include="Vector3Tests.cs" />
+    <Compile Include="Vector4Tests.cs" />
+    <Compile Include="MathHelper.cs" />
+    <Compile Include="Matrix3x2Tests.cs" />
+    <Compile Include="Matrix4x4Tests.cs" />
+    <Compile Include="PlaneTests.cs" />
+    <Compile Include="QuaternionTests.cs" />
+  </ItemGroup>
+</Project>

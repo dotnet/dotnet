@@ -3,5 +3,7 @@
   <PropertyGroup>
     <installerGitCommitHash>20663112b5c5c18e4fcf22c7b1421d9cd5ccb480</installerGitCommitHash>
     <installerOutputPackageVersion>8.0.100</installerOutputPackageVersion>
+    <runtimeGitCommitHash>af841c8b33cecc92d74222298f1e45bf7bf3d90a</runtimeGitCommitHash>
+    <runtimeOutputPackageVersion>8.0.0-alpha.1.22557.12</runtimeOutputPackageVersion>
   </PropertyGroup>
 </Project>
