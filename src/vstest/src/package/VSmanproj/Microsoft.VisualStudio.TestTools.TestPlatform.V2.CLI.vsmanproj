@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- Copyright (c)  Microsoft.  All Rights Reserved. -->
+  <PropertyGroup>
+    <TestPlatformRoot Condition="$(TestPlatformRoot) == ''">..\..\..\</TestPlatformRoot>
+    <FinalizeManifest>true</FinalizeManifest>
+    <FinalizeSkipLayout>true</FinalizeSkipLayout>
+    <IsPackage>true</IsPackage>
+    <OutputPath>$(TestPlatformRoot)artifacts\$(Configuration)\VSIX\</OutputPath>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+	  <UseVisualStudioVersion>true</UseVisualStudioVersion>
+    <ValidateManifest>false</ValidateManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(RunningInMicroBuild)' != 'true'"> 
+     <FinalizeValidate>false</FinalizeValidate> 
+     <ManifestPublishUrl>https://vsdrop.corp.microsoft.com/file/v1/Products/DevDiv/VS/lab/d15prerel/$(BUILD_BUILDNUMBER);</ManifestPublishUrl> 
+  </PropertyGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\..\..\packages\MicroBuild.Core\0.3.0\build\MicroBuild.Core.targets" />
+  <Import Project="..\..\..\packages\MicroBuild.Core\0.3.0\build\MicroBuild.Core.props" />
+  <ItemGroup>
+    <MergeManifest Include="$(OutputPath)Microsoft.VisualStudio.TestTools.TestPlatform.V2.CLI.json" />
+  </ItemGroup>
+</Project>

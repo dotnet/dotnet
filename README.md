@@ -147,6 +147,8 @@ To enable full offline source-building of the VMR, we have no other choice than 
 *[dotnet/sdk@4bd9b67](https:/github.com/dotnet/sdk/commit/4bd9b67d81fbf6d65012ef08c9d8cf2a27953057)*
 - `src/test-templates`  
 *[dotnet/test-templates@bb36956](https:/github.com/dotnet/test-templates/commit/bb3695688177f5f80eeb3c0498168612e31549d5)*
+- `src/vstest`  
+*[microsoft/vstest@02296a2](https:/github.com/microsoft/vstest/commit/02296a2873652bc5911ae4b58d74f9faae03917d)*
 <!-- component list end -->
 
 The repository also contains a [JSON manifest](https://github.com/dotnet/dotnet/blob/main/src/source-manifest.json) listing all components in a machine-readable format.

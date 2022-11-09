@@ -1,0 +1,56 @@
+<Project>
+    <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
+    <Import Project="Sdk.targets" Sdk="Microsoft.DotNet.Arcade.Sdk" />
+
+    <PropertyGroup>
+        <TargetFramework>net472</TargetFramework>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <NETCORE_ENGINEERING_TELEMETRY>Publish</NETCORE_ENGINEERING_TELEMETRY>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <MicrosoftDotNetBuildTasksFeedFilePath Condition=" '$(MicrosoftDotNetBuildTasksFeedFilePath)' == '' ">$(NuGetPackageRoot)microsoft.dotnet.build.tasks.feed/$(MicrosoftDotNetBuildTasksFeedVersion)/</MicrosoftDotNetBuildTasksFeedFilePath>
+        <MicrosoftDotNetBuildTasksFeedTaskDir>$(MicrosoftDotNetBuildTasksFeedFilePath)tools/net472/</MicrosoftDotNetBuildTasksFeedTaskDir>
+        <MicrosoftDotNetBuildTasksFeedTaskDir Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MicrosoftDotNetBuildTasksFeedFilePath)tools/netcoreapp3.1/</MicrosoftDotNetBuildTasksFeedTaskDir>
+
+        <PackagesPathWithTrailingSlash>$(PackagesPath)</PackagesPathWithTrailingSlash>
+        <PackagesPathWithTrailingSlash Condition=" '$(PackagesPathWithTrailingSlash)' == '' ">$(ArtifactsDir)\$(Configuration)\packages\</PackagesPathWithTrailingSlash>
+        <PackagesPathWithTrailingSlash Condition=" !$(PackagesPathWithTrailingSlash.EndsWith('\')) ">$(PackagesPathWithTrailingSlash)\</PackagesPathWithTrailingSlash>
+
+        <AssetManifestFilePath Condition=" '$(AssetManifestFilePath)' == '' ">$(PackagesPathWithTrailingSlash)manifest\manifest.xml</AssetManifestFilePath>
+        <PackagesToPublishPattern Condition=" '$(PackagesToPublishPattern)' == '' ">$(PackagesPathWithTrailingSlash)*.nupkg</PackagesToPublishPattern>
+        <FeedUrl Condition=" '$(FeedUrl)' == '' ">https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json</FeedUrl>
+    </PropertyGroup>
+    
+    <ItemGroup Condition="'$(PackagesToPublishPattern)' != ''">
+        <ItemsToPush Remove="@(ItemsToPush)" />
+        <ItemsToPush Include="$(PackagesToPublishPattern)" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ManifestBuildData Include="Location=$(FeedUrl)" />
+        <!-- <ManifestBuildData Include="InitialAssetsLocation=https://dev.azure.com/url/to/my/feed/index.json" /> -->
+        <ManifestBuildData Include="AzureDevOpsBuildId=$(BUILD_BUILDID)" />
+        <ManifestBuildData Include="AzureDevOpsBuildDefinitionId=$(SYSTEM_DEFINITIONID)" />
+        <ManifestBuildData Include="AzureDevOpsProject=$(SYSTEM_TEAMPROJECT)" />
+        <ManifestBuildData Include="AzureDevOpsBuildNumber=$(BUILD_BUILDNUMBER)" />
+        <ManifestBuildData Include="AzureDevOpsRepository=$(BUILD_REPOSITORY_URI)" />
+        <ManifestBuildData Include="AzureDevOpsBranch=$(BUILD_SOURCEBRANCH)" />
+    </ItemGroup>
+
+    <UsingTask TaskName="GenerateBuildManifest" AssemblyFile="$(MicrosoftDotNetBuildTasksFeedTaskDir)Microsoft.DotNet.Build.Tasks.Feed.dll" />
+
+    <Target Name="PublishToBuildAssetRegistry">
+        <GenerateBuildManifest Artifacts="@(ItemsToPush)"
+            ItemsToSign="@(ItemsToSignPostBuild)"
+            StrongNameSignInfo="@(StrongNameSignInfo)"
+            FileSignInfo="@(FileSignInfo)"
+            FileExtensionSignInfo="@(FileExtensionSignInfo)"
+            OutputPath="$(AssetManifestFilePath)"
+            BuildId="$(BUILD_BUILDNUMBER)"
+            BuildData="@(ManifestBuildData)"
+            RepoUri="$(BUILD_REPOSITORY_URI)"
+            RepoBranch="$(BUILD_SOURCEBRANCH)"
+            RepoCommit="$(BUILD_SOURCEVERSION)" />
+    </Target>
+</Project>

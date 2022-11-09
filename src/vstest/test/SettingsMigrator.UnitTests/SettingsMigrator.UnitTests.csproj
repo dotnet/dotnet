@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TestPlatformRoot Condition="$(TestPlatformRoot) == ''">..\..\</TestPlatformRoot>
+    <TestProject>true</TestProject>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+  <Import Project="$(TestPlatformRoot)scripts/build/TestPlatform.Settings.targets" />
+  <PropertyGroup>
+    <!-- TODO: Do we need this for net6.0 as well? -->
+    <TargetFramework>net48</TargetFramework>
+    <AssemblyName>SettingsMigrator.UnitTests</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\SettingsMigrator\SettingsMigrator.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="oldTestSettings.testsettings" CopyToOutputDirectory="Always" />
+    <Content Include="oldRunSettingsWithEmbeddedSettings.runsettings" CopyToOutputDirectory="Always" />
+    <Content Include="oldRunSettingsWithDataCollector.runsettings" CopyToOutputDirectory="Always" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Runtime" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <Import Project="$(TestPlatformRoot)scripts\build\TestPlatform.targets" />
+</Project>

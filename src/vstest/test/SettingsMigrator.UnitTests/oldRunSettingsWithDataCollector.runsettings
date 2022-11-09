@@ -1,0 +1,11 @@
+<RunSettings>
+	<MSTest>
+		<ForcedLegacyMode>true</ForcedLegacyMode>
+		<SettingsFile>.\oldTestsettings.testsettings</SettingsFile>	
+	</MSTest>
+	<DataCollectionRunSettings>
+		<DataCollectors>
+			<DataCollector uri="datacollector://microsoft/MyCollector/1.0" friendlyName="MyCollector" />
+		</DataCollectors>
+	</DataCollectionRunSettings>
+</RunSettings>

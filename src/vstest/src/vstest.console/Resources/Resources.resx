@@ -1,0 +1,846 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddnlInfoMessagesBanner" xml:space="preserve">
+    <value>Additional Information Messages:</value>
+  </data>
+  <data name="AppContainerTestPrerequisiteFail" xml:space="preserve">
+    <value>Could not start test run for unit tests for Windows Store app: {0}.</value>
+  </data>
+  <data name="AppxBundleSourceWarning" xml:space="preserve">
+    <value>No test found in the specified test containers. Additionally, Microsoft Windows Store Unit test adapter does not support .appxbundle files. Create an appx (set Generate App bundle option to Never) when creating App Package and try again.</value>
+  </data>
+  <data name="AssemblyPathInvalid" xml:space="preserve">
+    <value>Unable to find the assembly under test. Please make sure that the project is built.</value>
+  </data>
+  <data name="AttachmentOutputFormat" xml:space="preserve">
+    <value>  {0}</value>
+  </data>
+  <data name="AttachmentsBanner" xml:space="preserve">
+    <value>Attachments:</value>
+  </data>
+  <data name="AvailableDiscoverersHeaderMessage" xml:space="preserve">
+    <value>The following Test Discovery Add-Ins are available:</value>
+  </data>
+  <data name="AvailableExecutorsHeaderMessage" xml:space="preserve">
+    <value>The following Test Execution Add-Ins are available:</value>
+  </data>
+  <data name="AvailableExtensionFormat" xml:space="preserve">
+    <value>    {0}</value>
+    <comment>{Locked}</comment>
+  </data>
+  <data name="AvailableExtensionsMetadataFormat" xml:space="preserve">
+    <value>        {0}: {1}</value>
+  </data>
+  <data name="AvailableLoggersHeaderMessage" xml:space="preserve">
+    <value>The following Test Logger Add-Ins are available:</value>
+  </data>
+  <data name="AvailableSettingsProvidersHeaderMessage" xml:space="preserve">
+    <value>The following Settings Providers Add-Ins are available:</value>
+  </data>
+  <data name="AvailableTestsFormat" xml:space="preserve">
+    <value>    {0}</value>
+    <comment>{Locked}</comment>
+  </data>
+  <data name="BatchSizeRequired" xml:space="preserve">
+    <value>The /BatchSize argument requires the size of the batch.  Example:  /BatchSize:10</value>
+  </data>
+  <data name="BlameCollectDumpNotSupportedForPlatform" xml:space="preserve">
+    <value>Collecting crash dumps by option CollectDump for Blame is not supported for this platform.</value>
+  </data>
+  <data name="BuildBasePathArgumentHelp" xml:space="preserve">
+    <value>--BuildBasePath|/BuildBasePath:&lt;BuildBasePath&gt;
+      The directory containing the temporary outputs.</value>
+  </data>
+  <data name="BuildBasePathNotFound" xml:space="preserve">
+    <value>The BuildBasePath was not found, provide a valid path and try again.</value>
+  </data>
+  <data name="CannotBeNullOrEmpty" xml:space="preserve">
+    <value>Cannot be null or empty</value>
+  </data>
+  <data name="CommandLineError" xml:space="preserve">
+    <value>Error: {0}</value>
+  </data>
+  <data name="CommandLineInformational" xml:space="preserve">
+    <value>Information: {0}</value>
+  </data>
+  <data name="CommandLineWarning" xml:space="preserve">
+    <value>Warning: {0}</value>
+  </data>
+  <data name="CommaSeparatedFormat" xml:space="preserve">
+    <value>, {0}</value>
+    <comment>Format used to comma separate a list of values.</comment>
+  </data>
+  <data name="ConfigurationArgumentHelp" xml:space="preserve">
+    <value>-c|--Configuration|/c|/Configuration:&lt;Configuration&gt;
+      The configuration the project is built for i.e. Debug/Release</value>
+  </data>
+  <data name="CopyrightCommandLineTitle" xml:space="preserve">
+    <value>Copyright (c) Microsoft Corporation.  All rights reserved.</value>
+  </data>
+  <data name="Days" xml:space="preserve">
+    <value>Days</value>
+  </data>
+  <data name="DesignModeClientTimeoutError" xml:space="preserve">
+    <value>Timeout to connect or process request for DesignModeClient on port: {0}</value>
+  </data>
+  <data name="DisablingCodeCoverageInAppContainerTestExecution" xml:space="preserve">
+    <value>Code coverage is not available for Windows Store apps. Code coverage analysis skipped for this test run.</value>
+  </data>
+  <data name="DisablingCodeCoverageInPhoneAppContainerTestExecution" xml:space="preserve">
+    <value>Code coverage is not available for Windows Phone apps. Code coverage analysis skipped for this test run.</value>
+  </data>
+  <data name="DisablingDataCollectionInAppContainerTestExecution" xml:space="preserve">
+    <value>Diagnostic data adapters are not supported when running unit tests for Windows Store apps. Remove diagnostic data adapters settings from settings.</value>
+  </data>
+  <data name="DisablingDataCollectionInPhoneAppContainerTestExecution" xml:space="preserve">
+    <value>Diagnostic data adapters are not supported when running unit tests for Windows Phone apps. Remove diagnostic data adapters settings from settings.</value>
+  </data>
+  <data name="DisablingDCOnExceptionWhileParsingDCInfo" xml:space="preserve">
+    <value>Reading diagnostic data adapter settings threw an running '{0}'. All diagnostic data adapters will be skipped in this run.</value>
+  </data>
+  <data name="DiscoveryFailed" xml:space="preserve">
+    <value>Discovery failed for given sources. Exception : {0}</value>
+  </data>
+  <data name="DuplicateArgumentError" xml:space="preserve">
+    <value>The parameter "{0}" should be provided only once.</value>
+  </data>
+  <data name="EnableCodeCoverageArgumentProcessorHelp" xml:space="preserve">
+    <value>/EnableCodeCoverage
+      Enables data collector 'CodeCoverage' for the test run.</value>
+  </data>
+  <data name="EnableDiagUsage" xml:space="preserve">
+    <value>--Diag|/Diag:&lt;Path to log file&gt;
+      Enable logs for test platform.
+      Logs are written to the provided file.
+
+      Change the trace level for logs as shown below
+      Example: /Diag:&lt;Path to log file&gt;;tracelevel=&lt;Defaults to "verbose"&gt;
+      Allowed values for tracelevel: off, error, warning, info and verbose.</value>
+  </data>
+  <data name="EnableLoggersArgumentHelp" xml:space="preserve">
+    <value>--logger|/logger:&lt;Logger Uri/FriendlyName&gt;
+      Specify a logger for test results. For example, to log results into a 
+      Visual Studio Test Results File (TRX) use /logger:trx[;LogFileName=&lt;Defaults to unique file name&gt;]
+      Creates file in TestResults directory with given LogFileName.
+
+      Change the verbosity level in log messages for console logger as shown below
+      Example: /logger:console;verbosity=&lt;Defaults to "normal"&gt;
+      Allowed values for verbosity: quiet, minimal, normal and detailed.
+
+      Change the diagnostic level prefix for console logger as shown below
+      Example: /logger:console;prefix=&lt;Defaults to "false"&gt;
+      More info on Console Logger here : https://aka.ms/console-logger</value>
+  </data>
+  <data name="ErrorMessageBanner" xml:space="preserve">
+    <value>Error Message:</value>
+  </data>
+  <data name="Examples" xml:space="preserve">
+    <value>  To run tests:
+    &gt;vstest.console.exe tests.dll 
+  To run tests with additional settings such as  data collectors:
+    &gt;vstest.console.exe  tests.dll /Settings:Local.RunSettings</value>
+  </data>
+  <data name="ExceptionFromExtension" xml:space="preserve">
+    <value>Exception occurred when instantiating extension '{0}': {1}</value>
+  </data>
+  <data name="ExecutionTimeFormatString" xml:space="preserve">
+    <value> Total time: {0:0.0000} {1}</value>
+  </data>
+  <data name="ExtensionUriFormat" xml:space="preserve">
+    <value>        Uri: {0}</value>
+  </data>
+  <data name="FailedTestIndicator" xml:space="preserve">
+    <value>Failed</value>
+    <comment>Message which is written to the console when a test fails.</comment>
+  </data>
+  <data name="FileNotFound" xml:space="preserve">
+    <value>'{0}' not found.</value>
+  </data>
+  <data name="Framework35NotSupported" xml:space="preserve">
+    <value>Framework35 is not supported. For projects targeting .Net Framework 3.5, test will run in CLR 4.0 "compatibility mode".</value>
+  </data>
+  <data name="FrameworkArgumentHelp" xml:space="preserve">
+    <value>--Framework|/Framework:&lt;Framework Version&gt;
+      Target .Net Framework version to be used for test execution. 
+      Valid values are ".NETFramework,Version=v4.5.1", ".NETCoreApp,Version=v1.0" etc.
+      Other supported values are Framework40, Framework45, FrameworkCore10 and FrameworkUap10.</value>
+  </data>
+  <data name="FrameworkVersionRequired" xml:space="preserve">
+    <value>The /Framework argument requires the target .Net Framework version for the test run.   Example:  /Framework:".NETFramework,Version=v4.5.1"</value>
+  </data>
+  <data name="HelpArgumentHelp" xml:space="preserve">
+    <value>-?|--Help|/?|/Help
+      Display this usage message.</value>
+  </data>
+  <data name="HelpArgumentsText" xml:space="preserve">
+    <value>Arguments:</value>
+  </data>
+  <data name="HelpDescriptionText" xml:space="preserve">
+    <value>Description: Runs tests from the specified files.</value>
+  </data>
+  <data name="HelpOptionsText" xml:space="preserve">
+    <value>Options:</value>
+    <comment>Section Header for subsequent command help listing</comment>
+  </data>
+  <data name="HelpUsageText" xml:space="preserve">
+    <value>Usage: vstest.console.exe [Arguments] [Options] [[--] &lt;RunSettings arguments&gt;...]]</value>
+  </data>
+  <data name="Hours" xml:space="preserve">
+    <value>Hours</value>
+  </data>
+  <data name="InIsolationHelp" xml:space="preserve">
+    <value>--InIsolation|/InIsolation
+      Runs the tests in an isolated process. This makes vstest.console.exe 
+      process less likely to be stopped on an error in the tests, but tests 
+      may run slower.</value>
+  </data>
+  <data name="InvalidBatchSize" xml:space="preserve">
+    <value>Invalid batch size {0}. The batch size should be greater than zero. Example:  /BatchSize:10</value>
+  </data>
+  <data name="InvalidConfiguration" xml:space="preserve">
+    <value>The given configuration is invalid.</value>
+  </data>
+  <data name="InvalidEnableCodeCoverageCommand" xml:space="preserve">
+    <value>Argument {0} is not expected in the 'EnableCodeCoverage' command. Specify the command without the argument (Example: vstest.console.exe myTests.dll /EnableCodeCoverage) and try again.</value>
+  </data>
+  <data name="InvalidFrameworkVersion" xml:space="preserve">
+    <value>Invalid .Net Framework version:{0}. Please give the fullname of the TargetFramework(Example: .NETCoreApp,Version=v2.0). Other supported .Net Framework versions are Framework40, Framework45, FrameworkCore10 and FrameworkUap10.</value>
+  </data>
+  <data name="InvalidInIsolationCommand" xml:space="preserve">
+    <value>Argument {0} is not expected in the 'InIsolation' command. Specify the command without the argument (Example: vstest.console.exe myTests.dll /InIsolation) and try again.</value>
+  </data>
+  <data name="InvalidParallelCommand" xml:space="preserve">
+    <value>Argument {0} is not expected in the 'Parallel' command. Specify the command without the argument (Example: vstest.console.exe myTests.dll /Parallel) and try again.</value>
+  </data>
+  <data name="InvalidParentProcessIdArgument" xml:space="preserve">
+    <value>The --ParentProcessId|/ParentProcessId argument requires the process id which is an integer. Specify the process id of the parent process that launched this process.</value>
+  </data>
+  <data name="InvalidPlatformType" xml:space="preserve">
+    <value>Invalid platform type: {0}. Valid platform types are {1}.</value>
+    <comment>0 is the platform type e.g. x86, and 1 is a list of the built in platforms, e.g. x86, x64</comment>
+  </data>
+  <data name="InvalidPortArgument" xml:space="preserve">
+    <value>The --Port|/Port argument requires the port number which is an integer. Specify the port for socket connection and receiving the event messages.</value>
+  </data>
+  <data name="InvalidTestAdapterPathCommand" xml:space="preserve">
+    <value>The path '{0}' specified in the 'TestAdapterPath' is invalid. Error: {1}</value>
+  </data>
+  <data name="InvalidTestCaseFilterValueForSpecificTests" xml:space="preserve">
+    <value>The /TestCaseFilter argument cannot be specified with /Tests. Filtering of test cases is not applicable when tests are specified.</value>
+  </data>
+  <data name="InvalidUseVsixExtensionsCommand" xml:space="preserve">
+    <value>Argument {0} is not expected in the 'UseVsixExtensions' command. Specify the command indicating whether the vsix extensions should be used or skipped (Example: vstest.console.exe myTests.dll /UseVsixExtensions:true) and try again.</value>
+  </data>
+  <data name="ListDiscoverersHelp" xml:space="preserve">
+    <value>/ListDiscoverers
+      Lists installed test discoverers.</value>
+  </data>
+  <data name="ListExecutorsHelp" xml:space="preserve">
+    <value>/ListExecutors
+      Lists installed test executors.</value>
+  </data>
+  <data name="ListLoggersHelp" xml:space="preserve">
+    <value>/ListLoggers
+      Lists installed test loggers.</value>
+  </data>
+  <data name="ListSettingsProvidersHelp" xml:space="preserve">
+    <value>/ListSettingsProviders
+      Lists installed test settings providers.</value>
+  </data>
+  <data name="ListTestsHeaderMessage" xml:space="preserve">
+    <value>The following Tests are available:</value>
+  </data>
+  <data name="ListTestsHelp" xml:space="preserve">
+    <value>-lt|--ListTests|/lt|/ListTests:&lt;File Name&gt;
+      Lists all discovered tests from the given test container.</value>
+  </data>
+  <data name="LoggerFileIsReadOnly" xml:space="preserve">
+    <value>The file {0} provided is read only</value>
+  </data>
+  <data name="LoggerFriendlyNameFormat" xml:space="preserve">
+    <value>        FriendlyName: {0}</value>
+  </data>
+  <data name="LoggerNotFound" xml:space="preserve">
+    <value>Could not find a test logger with URI or FriendlyName '{0}'.</value>
+  </data>
+  <data name="LoggerUriFormat" xml:space="preserve">
+    <value>        Uri: {0}</value>
+  </data>
+  <data name="LoggerUriInvalid" xml:space="preserve">
+    <value>The Test Logger URI '{0}' is not valid.  The Test Logger will be ignored.</value>
+  </data>
+  <data name="MicrosoftCommandLineTitle" xml:space="preserve">
+    <value>Microsoft (R) Test Execution Command Line Tool Version {0}</value>
+  </data>
+  <data name="Minutes" xml:space="preserve">
+    <value>Minutes</value>
+  </data>
+  <data name="MissingTestSourceFile" xml:space="preserve">
+    <value>No test source files were specified.</value>
+  </data>
+  <data name="NoAdaptersFoundInTestAdapterPath" xml:space="preserve">
+    <value>The path '{0}' specified in the 'TestAdapterPath' does not contain any test adapters, provide a valid path and try again.</value>
+  </data>
+  <data name="NoArgumentProcessorFound" xml:space="preserve">
+    <value>Unrecognized parameter "{0}".</value>
+  </data>
+  <data name="NoArgumentsProvided" xml:space="preserve">
+    <value>No arguments were specified.</value>
+  </data>
+  <data name="NonDefaultFrameworkAndOrArchDetected" xml:space="preserve">
+    <value>{0} is built for {1}/{2}. The test assemblies specified in a run should have a common target .Net framework and platform.</value>
+  </data>
+  <data name="NoTestEntryPoint" xml:space="preserve">
+    <value>App package '{0}' does not has test executor entry point. For running unit tests for Windows Store apps, create app package using Windows Store app Unit Test Library project.</value>
+  </data>
+  <data name="NoTestsAvailableAfterFiltering" xml:space="preserve">
+    <value>A total of {0} tests were discovered but no test matches the specified selection criteria({1}). Use right value(s) and try again.</value>
+  </data>
+  <data name="NoTestsAvailableInSources" xml:space="preserve">
+    <value>No test is available in {0}. Make sure that installed test discoverers &amp; executors, platform &amp; framework version settings are appropriate and try again.</value>
+  </data>
+  <data name="StringFormatToJoinTwoStrings" xml:space="preserve">
+    <value>{0} {1}</value>
+  </data>
+  <data name="OutputArgumentHelp" xml:space="preserve">
+    <value>-o|--Output|/o|/Output:&lt;Output&gt;
+      The directory containing the binaries to run.</value>
+  </data>
+  <data name="OutputPathNotFound" xml:space="preserve">
+    <value>The Output path was not found, provide a valid path and try again.</value>
+  </data>
+  <data name="ParallelArgumentProcessorHelp" xml:space="preserve">
+    <value>--Parallel|/Parallel
+      Specifies that the tests be executed in parallel. By default up
+      to all available cores on the machine may be used.
+      The number of cores to use may be configured using a settings file.</value>
+  </data>
+  <data name="ParentProcessIdArgumentHelp" xml:space="preserve">
+    <value>--ParentProcessId|/ParentProcessId:&lt;ParentProcessId&gt;
+      Process Id of the Parent Process responsible for launching current process.</value>
+  </data>
+  <data name="PassedTestIndicator" xml:space="preserve">
+    <value>Passed</value>
+    <comment>Message which is written to the console when a test passes.</comment>
+  </data>
+  <data name="PhoneAppContainerTestPrerequisiteFail" xml:space="preserve">
+    <value>Could not start test run for the tests for Windows Phone app: {0}.</value>
+  </data>
+  <data name="PhoneNoTestEntryPoint" xml:space="preserve">
+    <value>App package '{0}' does not has test executor entry point. For running unit tests for Windows Phone apps, create app package using Windows Phone Unit Test App project.</value>
+  </data>
+  <data name="PlatformArgumentHelp" xml:space="preserve">
+    <value>--Platform|/Platform:&lt;Platform type&gt;
+      Target platform architecture to be used for test execution. 
+      Valid values are x86, x64 and ARM.</value>
+  </data>
+  <data name="PlatformTypeRequired" xml:space="preserve">
+    <value>The /Platform argument requires the target platform type for the test run to be provided.   Example:  /Platform:x86</value>
+  </data>
+  <data name="PortArgumentHelp" xml:space="preserve">
+    <value>--Port|/Port:&lt;Port&gt;
+      The Port for socket connection and receiving the event messages.</value>
+  </data>
+  <data name="ProjectPathNotFound" xml:space="preserve">
+    <value>The Path {0} does not exist.</value>
+  </data>
+  <data name="RunSettingsArgumentHelp" xml:space="preserve">
+    <value>--Settings|/Settings:&lt;Settings File&gt;
+      Settings to use when running tests.</value>
+  </data>
+  <data name="RunSettingsFileNotFound" xml:space="preserve">
+    <value>The Settings file '{0}' could not be found.</value>
+  </data>
+  <data name="RunSettingsRequired" xml:space="preserve">
+    <value>The /Settings parameter requires a settings file to be provided.</value>
+  </data>
+  <data name="RunSingleAppContainerSource" xml:space="preserve">
+    <value>Only one app package (.appx file) can be specified for running tests.</value>
+  </data>
+  <data name="RunSpecificTestsHelp" xml:space="preserve">
+    <value>--Tests|/Tests:&lt;Test Names&gt;
+      Run tests with names that match the provided values. To provide multiple
+      values, separate them by commas.
+      Examples: /Tests:TestMethod1
+                /Tests:TestMethod1,testMethod2</value>
+    <comment>Please verify if the console output looks good after modifiaction. </comment>
+  </data>
+  <data name="RunTestsArgumentHelp" xml:space="preserve">
+    <value>[TestFileNames]
+      Run tests from the specified files or wild card pattern. Separate multiple test file names or pattern
+      by spaces. Set console logger verbosity to detailed to view matched test files.
+      Examples: mytestproject.dll
+                mytestproject.dll myothertestproject.exe
+                testproject*.dll my*project.dll</value>
+  </data>
+  <data name="SearchStringDelimiter" xml:space="preserve">
+    <value>,</value>
+  </data>
+  <data name="Seconds" xml:space="preserve">
+    <value>Seconds</value>
+  </data>
+  <data name="SettingFormat" xml:space="preserve">
+    <value>        SettingName: {0}</value>
+  </data>
+  <data name="SkippedTestIndicator" xml:space="preserve">
+    <value>Skipped</value>
+  </data>
+  <data name="SomeTestsUnavailableAfterFiltering" xml:space="preserve">
+    <value>A total of {0} tests were discovered but some tests do not match the specified selection criteria({1}). Use right value(s) and try again.</value>
+  </data>
+  <data name="SpecificTestsRequired" xml:space="preserve">
+    <value>The /Tests argument requires one or more specific test names or their substrings.
+       Examples: /Tests:TestsMethod1, /Tests:TestMethod1,method2 </value>
+  </data>
+  <data name="StacktraceBanner" xml:space="preserve">
+    <value>Stack Trace:</value>
+  </data>
+  <data name="StartingDiscovery" xml:space="preserve">
+    <value>Starting test discovery, please wait...</value>
+  </data>
+  <data name="StartingExecution" xml:space="preserve">
+    <value>Starting test execution, please wait...</value>
+  </data>
+  <data name="StdErrMessagesBanner" xml:space="preserve">
+    <value>Standard Error Messages:</value>
+  </data>
+  <data name="StdOutMessagesBanner" xml:space="preserve">
+    <value>Standard Output Messages:</value>
+  </data>
+  <data name="SuggestTestAdapterPathIfNoTestsIsFound" xml:space="preserve">
+    <value>Additionally, path to test adapters can be specified using /TestAdapterPath command. Example  /TestAdapterPath:&lt;pathToCustomAdapters&gt;.</value>
+  </data>
+  <data name="SupportedFileTypesIndicator" xml:space="preserve">
+    <value>        Supported File Types:</value>
+  </data>
+  <data name="SupportedFileWithoutSeparator" xml:space="preserve">
+    <value> {0}</value>
+  </data>
+  <data name="SupportedFileWithSeparator" xml:space="preserve">
+    <value> {0},</value>
+  </data>
+  <data name="SwitchToIsolationInAppContainerMode" xml:space="preserve">
+    <value>Using Isolation mode to run unit tests for Windows Store apps. Use the /InIsolation parameter to suppress this warning.</value>
+  </data>
+  <data name="SwitchToIsolationInMultiTargetingMode" xml:space="preserve">
+    <value>Using Isolation mode to run tests as required by effective Platform:{0} and .Net Framework:{1} settings for test run. Use the /inIsolation parameter to suppress this warning.</value>
+  </data>
+  <data name="SwitchToIsolationInPhoneAppContainerMode" xml:space="preserve">
+    <value>Using Isolation mode to run unit tests for Windows Phone apps. Use the /InIsolation parameter to suppress this warning.</value>
+  </data>
+  <data name="SwitchToNoIsolation" xml:space="preserve">
+    <value>Using Isolation mode to run the tests as diagnostic data adapters were enabled in the runsettings. Use the /inIsolation parameter to suppress this warning.</value>
+  </data>
+  <data name="TestAdapterPathDoesNotExist" xml:space="preserve">
+    <value>The custom test adapter search path provided was not found, provide a valid path and try again.</value>
+  </data>
+  <data name="TestAdapterPathHelp" xml:space="preserve">
+    <value>--TestAdapterPath|/TestAdapterPath
+      This makes vstest.console.exe process use custom test adapters
+      from a given path (if any) in the test run. 
+      Example  /TestAdapterPath:&lt;pathToCustomAdapters&gt;</value>
+  </data>
+  <data name="TestAdapterPathValueRequired" xml:space="preserve">
+    <value>The /TestAdapterPath parameter requires a value, which is path of a location containing custom test adapters. Example:  /TestAdapterPath:c:\MyCustomAdapters</value>
+  </data>
+  <data name="TestAdapterLoadingStrategyHelp" xml:space="preserve">
+    <value>--TestAdapterLoadingStrategy|/TestAdapterLoadingStrategy:&lt;strategy&gt;
+      This affects adapter loading behavior.
+
+      Currently supported behaviors:
+        - Explicit: Test Platform will only load adapters specified by /TestAdapterPath (or RunConfiguration.TestAdaptersPaths node). 
+                    If a specific adapter path is provided, adapter will be loaded; if a directory path is provided adapters directly in that folder will be loaded, unless Recursive option is also specified.
+                    If no adapter path is specified, test run will fail.
+                    This will imply /InIsolation switch and force the tests to be run in an isolated process.
+        
+        - Default: Test Platform will load adapters is if this argument has not been specified. 
+                   It will pick up extensions from next to source, provided additional adapter paths and from the default directory.
+
+        - DefaultRuntimeProviders: Load default runtime providers shipped with Test Platform. 
+                                   If this is not specified when "Explicit" option is set, a test host provider need to be specified explicitly.
+
+        - ExtensionsDirectory: Load adapters inside Extensions folder.
+
+        - NextToSource: Load adapters next to source. 
+
+        - Recursive: Recursively search folders when loading adapters. This requires "Explicit" or "NextToSource" to be specified too.</value>
+    <comment>Do not translate "Default", "DefaultRuntimeProviders", "ExtensionsDirectory", "NextToSource" or "Recursive".</comment>
+  </data>
+  <data name="TestAdapterLoadingStrategyValueInvalid" xml:space="preserve">
+    <value>Specified value ({0}) for /TestAdapterLoadingStrategy is invalid!</value>
+  </data>
+  <data name="TestAdapterLoadingStrategyValueInvalidRecursive" xml:space="preserve">
+    <value>Recursive adapter loading strategy is cannot be used by itself. Please combine with one or more of: {0}</value>
+    <comment>
+        - Do not translate "Recursive",
+        - {0} is the strategy names, seperated by comma: for example "Explicit, NextToSource"
+    </comment>
+  </data>
+  <data name="TestAdapterPathValueRequiredWhenStrategyXIsUsed" xml:space="preserve">
+    <value>The /TestAdapterPath parameter needs to be provided when "{0}" test adapter loading strategy is specified!</value>
+    <comment>{0} is the strategy name, "Explicit" for example.</comment>
+  </data>
+  <data name="TestCaseFilterArgumentHelp" xml:space="preserve">
+    <value>--TestCaseFilter|/TestCaseFilter:&lt;Expression&gt;
+      Run tests that match the given expression.
+      &lt;Expression&gt; is of the format &lt;property&gt;Operator&lt;value&gt;[|&amp;&lt;Expression&gt;]
+         where Operator is one of =, != or ~  (Operator ~ has 'contains'
+         semantics and is applicable for string properties like DisplayName).
+         Parenthesis () can be used to group sub-expressions.
+      Examples: /TestCaseFilter:"Priority=1"
+                /TestCaseFilter:"(FullyQualifiedName~Nightly
+                                  |Name=MyTestMethod)"</value>
+  </data>
+  <data name="TestCaseFilterValueRequired" xml:space="preserve">
+    <value>The /TestCaseFilter argument requires the filter value.
+        Filter value can be &lt;property&gt;=&lt;value&gt; type.
+        Examples: "Priority=1", "TestCategory=Nightly"</value>
+  </data>
+  <data name="TestRunFailed" xml:space="preserve">
+    <value>Test Run Failed.</value>
+  </data>
+  <data name="TestRunSuccessful" xml:space="preserve">
+    <value>Test Run Successful.</value>
+  </data>
+  <data name="TestRunSummaryTotalTests" xml:space="preserve">
+    <value>Total tests: {0}</value>
+  </data>
+  <data name="TestSettingsFrameworkMismatch" xml:space="preserve">
+    <value>Using framework {0} to run the tests. Specify /Framework:{1} to suppress this warning.</value>
+  </data>
+  <data name="TestSourceFileNotFound" xml:space="preserve">
+    <value>The test source file "{0}" provided was not found.</value>
+  </data>
+  <data name="TimeElapsed" xml:space="preserve">
+    <value>Time elapsed :</value>
+  </data>
+  <data name="UriOfDefaultExecutor" xml:space="preserve">
+    <value>        Default Executor Uri: {0}</value>
+  </data>
+  <data name="UseVsixExtensionsHelp" xml:space="preserve">
+    <value>/UseVsixExtensions
+      This makes vstest.console.exe process use or skip the VSIX extensions 
+      installed(if any) in the test run. 
+      Example  /UseVsixExtensions:true</value>
+  </data>
+  <data name="UseVsixExtensionsValueRequired" xml:space="preserve">
+    <value>The /UseVsixExtensions parameter requires a value. If 'true', the installed VSIX extensions (if any) will be used in the test run. If false, they will be ignored.   Example:  /UseVsixExtensions:true</value>
+  </data>
+  <data name="CLIRunSettingsArgumentHelp" xml:space="preserve">
+    <value>RunSettings arguments:
+      Arguments to pass runsettings configurations through commandline. Arguments may be specified as name-value pair of the form [name]=[value] after "-- ". Note the space after --. 
+      Use a space to separate multiple [name]=[value].
+      More info on RunSettings arguments support: https://aka.ms/vstest-runsettings-arguments</value>
+  </data>
+  <data name="MalformedRunSettingsKey" xml:space="preserve">
+    <value>One or more runsettings provided contain invalid token</value>
+  </data>
+  <data name="ResultsDirectoryArgumentHelp" xml:space="preserve">
+    <value>--ResultsDirectory|/ResultsDirectory
+      Test results directory will be created in specified path if not exists.
+      Example  /ResultsDirectory:&lt;pathToResultsDirectory&gt;</value>
+  </data>
+  <data name="ResultsDirectoryValueRequired" xml:space="preserve">
+    <value>The /ResultsDirectory parameter requires a value, where the test results should be saved. Example:  /ResultsDirectory:c:\MyTestResultsDirectory</value>
+  </data>
+  <data name="InvalidResultsDirectoryPathCommand" xml:space="preserve">
+    <value>The path '{0}' specified in the 'ResultsDirectory' is invalid. Error: {1}</value>
+  </data>
+  <data name="InIsolationDeprecated" xml:space="preserve">
+    <value>The /InIsolation flag is deprecated. The tests are always run in a separate process</value>
+  </data>
+  <data name="NotRunTestIndicator" xml:space="preserve">
+    <value>Not Run</value>
+  </data>
+  <data name="VstestDiagLogOutputPath" xml:space="preserve">
+    <value>Logging Vstest Diagnostics in file: {0}</value>
+  </data>
+  <data name="CollectArgumentHelp" xml:space="preserve">
+    <value>--Collect|/Collect:&lt;DataCollector FriendlyName&gt;
+      Enables data collector for the test run. More info here : https://aka.ms/vstest-collect</value>
+  </data>
+  <data name="DataCollectorFriendlyNameInvalid" xml:space="preserve">
+    <value>The Data Collector friendly name '{0}' is not valid.  The Data Collector will be ignored.</value>
+  </data>
+  <data name="DbgTrcMessagesBanner" xml:space="preserve">
+    <value>Debug Traces Messages:</value>
+  </data>
+  <data name="OpenResponseFileError" xml:space="preserve">
+    <value>Error opening response file '{0}'</value>
+  </data>
+  <data name="ResponseFileArgumentHelp" xml:space="preserve">
+    <value>@&lt;file&gt;
+      Read response file for more options.</value>
+  </data>
+  <data name="EnableBlameUsage" xml:space="preserve">
+    <value>--Blame|/Blame:[CollectDump];[CollectAlways]=[Value];[DumpType]=[Value]
+      Runs the test in blame mode. This option is helpful in isolating the problematic test causing test host crash.
+      It creates an output file in the current directory as "Sequence.xml",
+      that captures the order of execution of test before the crash.
+      You may optionally choose to collect process dump for the test host.
+      When you choose to collect dump, by default, a mini dump will be collected on a crash.
+      You may also choose to override this default behaviour by some optional parameters:
+      CollectAlways - To collect dump on exit even if there is no crash (true/false) 
+      DumpType - To specify dump type (mini/full).
+      Example: /Blame
+               /Blame:CollectDump
+               /Blame:CollectDump;CollectAlways=true;DumpType=full</value>
+  </data>
+  <data name="TestRunAborted" xml:space="preserve">
+    <value>Test Run Aborted.</value>
+  </data>
+  <data name="TestRunCanceled" xml:space="preserve">
+    <value>Test Run Canceled.</value>
+  </data>
+  <data name="TestRunSummaryForCanceledOrAbortedRun" xml:space="preserve">
+    <value>Total tests: Unknown</value>
+  </data>
+  <data name="UseVsixExtensionsDeprecation" xml:space="preserve">
+    <value>/UseVsixExtensions is getting deprecated. Please use /TestAdapterPath instead.</value>
+  </data>
+  <data name="DisableAutoFakesUsage" xml:space="preserve">
+    <value>--DisableAutoFakes|/DisableAutoFakes:&lt;true/false&gt;
+     Example: /DisableAutoFakes:true</value>
+  </data>
+  <data name="CollectWithTestSettingErrorMessage" xml:space="preserve">
+    <value>--Collect|/Collect:"{0}" is not supported if test run is configured using testsettings.</value>
+  </data>
+  <data name="RunsettingsWithDCErrorMessage" xml:space="preserve">
+    <value>Data collectors other than Code Coverage and Microsoft Fakes configured via run settings are not supported with embedded test settings. Please see https://aka.ms/vstest-configure-datacollector for more information. Run settings: {0}.</value>
+  </data>
+  <data name="EnableLoggerArgumentsInNetCore" xml:space="preserve">
+    <value>--logger|/logger:&lt;Logger Uri/FriendlyName&gt;
+      Specify a logger for test results. For example, to log results into a 
+      Visual Studio Test Results File (TRX) use /logger:trx[;LogFileName=&lt;Defaults to unique file name&gt;]
+      Creates file in TestResults directory with given LogFileName.
+
+      Change the verbosity level in log messages for console logger as shown below
+      Example: /logger:console;verbosity=&lt;Defaults to "minimal"&gt;
+      Allowed values for verbosity: quiet, minimal, normal and detailed.
+
+      Change the diagnostic level prefix for console logger as shown below
+      Example: /logger:console;prefix=&lt;Defaults to "false"&gt;
+      More info on Console Logger here : https://aka.ms/console-logger</value>
+  </data>
+  <data name="BlameIncorrectOption" xml:space="preserve">
+    <value>The blame parameter specified with blame, {0} is invalid. Ignoring this parameter.</value>
+  </data>
+  <data name="InvalidDiagFilePath" xml:space="preserve">
+    <value>Diag file path '{0}' is not valid.</value>
+  </data>
+  <data name="InvalidBlameArgument" xml:space="preserve">
+    <value>Blame argument '{0}' is not valid.</value>
+  </data>
+  <data name="InvalidAeDebuggerArgument" xml:space="preserve">
+    <value>AeDebugger argument '{0}' is not valid.</value>
+  </data>
+  <data name="ProcDumpToolDirectoryPathArgumenNotFound" xml:space="preserve">
+    <value>ProcDumpToolDirectoryPath should be specified to install or unistall the post mortem debugger.</value>
+  </data>
+  <data name="ProcDumpDirectoryPathArgumenNotFound" xml:space="preserve">
+    <value>DumpDirectoryPath should be specified to install the post mortem debugger.</value>
+  </data>
+  <data name="PostmortemDebuggerNotSupportedForCurrentOS" xml:space="preserve">
+    <value>Postmortem debugger is not supported in the current OS.</value>
+  </data>
+  <data name="InvalidProcDumpToolDirectoryPath" xml:space="preserve">
+    <value>The directory specified for the procdump executable is not valid and the tool was not found inside environment variables (PROCDUMP_PATH, PATH)</value>
+  </data>
+  <data name="InvalidProcDumpDirectoryPath" xml:space="preserve">
+    <value>The directory specified is not valid: '{0}'</value>
+  </data>
+  <data name="ProcDumpFileNameNotFound" xml:space="preserve">
+    <value>Procdump file name not found: '{0}'</value>
+  </data>
+  <data name="InvalidDiagArgument" xml:space="preserve">
+    <value>Diag argument '{0}' is not valid.</value>
+  </data>
+  <data name="InvalidLoggerArgument" xml:space="preserve">
+    <value>Logger argument '{0}' is not valid.</value>
+  </data>
+  <data name="TestRunSummaryFailedTests" xml:space="preserve">
+    <value>     Failed: {0}</value>
+  </data>
+  <data name="TestRunSummaryPassedTests" xml:space="preserve">
+    <value>     Passed: {0}</value>
+  </data>
+  <data name="TestRunSummarySkippedTests" xml:space="preserve">
+    <value>    Skipped: {0}</value>
+  </data>
+  <data name="ProgressIndicatorString" xml:space="preserve">
+    <value>Test run in progress</value>
+  </data>
+  <data name="InvalidArgument" xml:space="preserve">
+    <value>The argument {0} is invalid. Please use the /help option to check the list of valid arguments.</value>
+  </data>
+  <data name="TestSourcesDiscovered" xml:space="preserve">
+    <value>A total of {0} test files matched the specified pattern.</value>
+  </data>
+  <data name="TestRunSummary" xml:space="preserve">
+    <value>{0} - Failed: {1}, Passed: {2}, Skipped: {3}, Total: {4}, Duration: {5}</value>
+  </data>
+  <data name="InvalidTestRunParameterArgument" xml:space="preserve">
+    <value>The test run parameter argument '{0}' is invalid. Please use the format below.
+     Format: TestRunParameters.Parameter(name=\"&lt;name&gt;\", value=\"&lt;value&gt;\")</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="TestRunSummaryAssemblyAndFramework" xml:space="preserve">
+    <value> - {0} {1}</value>
+  </data>
+  <data name="BlameCollectDumpTestTimeoutNotSupportedForPlatform" xml:space="preserve">
+    <value>Collecting hang dumps by option CollectDump with TestTimeout for Blame is not supported for this platform.</value>
+  </data>
+  <data name="EnvironmentArgumentHelp" xml:space="preserve">
+    <value>-e|--Environment|/e|/Environment:&lt;NAME&gt;=&lt;VALUE&gt;
+      Sets the value of an environment variable. Creates the variable if it does not exist, overrides if it does. This will imply /InIsolation switch and force the tests to be run in an isolated process.
+      
+      This argument can be specified multiple times to provide multiple variables.
+
+      Example: -e:VARIABLE1=VALUE1
+               -e:ANOTHER_VARIABLE="VALUE WITH SPACES"
+               -e:ANOTHER_VARIABLE="VALUE;seperated with;semicolons"</value>
+  </data>
+  <data name="EnvironmentVariableXIsOverriden" xml:space="preserve">
+    <value>Environment variable '{0}' was already defined, but it's overridden by -Environment argument.</value>
+  </data>
+  <data name="TestRunAbortedWithError" xml:space="preserve">
+    <value>Test Run Aborted with error {0}.</value>
+  </data>
+  <data name="InvalidTestSessionCorrelationId" xml:space="preserve">
+    <value>Invalid testSessionCorrelationId</value>
+  </data>
+  <data name="WarningEmulatedOnArm64" xml:space="preserve">
+    <value>vstest.console.exe is running in emulated mode as {0}. For better performance, please consider using the native runner vstest.console.arm64.exe.</value>
+  </data>
+  <data name="RequestHandlerConnectionTimedOut" xml:space="preserve">
+    <value>Waiting for request handler connection timed out after {0} seconds.</value>
+  </data>
+  <data name="StartTestSessionTimedOut" xml:space="preserve">
+    <value>Waiting for start test session timed out after {0} seconds.</value>
+  </data>
+  <data name="StopTestSessionTimedOut" xml:space="preserve">
+    <value>Waiting for stop test session timed out after {0} seconds.</value>
+  </data>
+  <data name="ErrorHostingCommunicationChannel" xml:space="preserve">
+    <value>Error hosting communication channel.</value>
+  </data>
+</root>

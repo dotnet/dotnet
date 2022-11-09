@@ -1,0 +1,37 @@
+#nullable enable
+Microsoft.VisualStudio.TestPlatform.CommandLine.CommandLineException
+Microsoft.VisualStudio.TestPlatform.CommandLine.CommandLineException.CommandLineException() -> void
+Microsoft.VisualStudio.TestPlatform.CommandLine.CommandLineException.CommandLineException(string? message) -> void
+Microsoft.VisualStudio.TestPlatform.CommandLine.CommandLineException.CommandLineException(string? message, System.Exception? innerException) -> void
+Microsoft.VisualStudio.TestPlatform.CommandLine.Internal.Product
+Microsoft.VisualStudio.TestPlatform.CommandLine.Internal.Product.Product() -> void
+Microsoft.VisualStudio.TestPlatform.CommandLine.Processors.ArgumentProcessorResult
+Microsoft.VisualStudio.TestPlatform.CommandLine.Processors.ArgumentProcessorResult.Abort = 2 -> Microsoft.VisualStudio.TestPlatform.CommandLine.Processors.ArgumentProcessorResult
+Microsoft.VisualStudio.TestPlatform.CommandLine.Processors.ArgumentProcessorResult.Fail = 1 -> Microsoft.VisualStudio.TestPlatform.CommandLine.Processors.ArgumentProcessorResult
+Microsoft.VisualStudio.TestPlatform.CommandLine.Processors.ArgumentProcessorResult.Success = 0 -> Microsoft.VisualStudio.TestPlatform.CommandLine.Processors.ArgumentProcessorResult
+Microsoft.VisualStudio.TestPlatform.CommandLine.Program
+Microsoft.VisualStudio.TestPlatform.CommandLine.Publisher.IMetricsPublisher
+Microsoft.VisualStudio.TestPlatform.CommandLine.Publisher.IMetricsPublisher.PublishMetrics(string! eventName, System.Collections.Generic.IDictionary<string!, object?>! metrics) -> void
+Microsoft.VisualStudio.TestPlatform.CommandLine.Publisher.MetricsPublisherFactory
+Microsoft.VisualStudio.TestPlatform.CommandLine.Publisher.MetricsPublisherFactory.MetricsPublisherFactory() -> void
+Microsoft.VisualStudio.TestPlatform.CommandLine.Publisher.NoOpMetricsPublisher
+Microsoft.VisualStudio.TestPlatform.CommandLine.Publisher.NoOpMetricsPublisher.Dispose() -> void
+virtual Microsoft.VisualStudio.TestPlatform.CommandLine.Publisher.NoOpMetricsPublisher.Dispose(bool disposing) -> void
+Microsoft.VisualStudio.TestPlatform.CommandLine.Publisher.NoOpMetricsPublisher.NoOpMetricsPublisher() -> void
+Microsoft.VisualStudio.TestPlatform.CommandLine.Publisher.NoOpMetricsPublisher.PublishMetrics(string! eventName, System.Collections.Generic.IDictionary<string!, object?>! metrics) -> void
+Microsoft.VisualStudio.TestPlatform.CommandLine.Publisher.TextFileTelemetryPublisher
+Microsoft.VisualStudio.TestPlatform.CommandLine.Publisher.TextFileTelemetryPublisher.Dispose() -> void
+virtual Microsoft.VisualStudio.TestPlatform.CommandLine.Publisher.TextFileTelemetryPublisher.Dispose(bool disposing) -> void
+Microsoft.VisualStudio.TestPlatform.CommandLine.Publisher.TextFileTelemetryPublisher.PublishMetrics(string! eventName, System.Collections.Generic.IDictionary<string!, object?>! metrics) -> void
+Microsoft.VisualStudio.TestPlatform.CommandLine.Publisher.TextFileTelemetryPublisher.TextFileTelemetryPublisher() -> void
+Microsoft.VisualStudio.TestPlatform.CommandLine.TestSourceException
+Microsoft.VisualStudio.TestPlatform.CommandLine.TestSourceException.TestSourceException() -> void
+Microsoft.VisualStudio.TestPlatform.CommandLine.TestSourceException.TestSourceException(string? message) -> void
+Microsoft.VisualStudio.TestPlatform.CommandLine.TestSourceException.TestSourceException(string? message, System.Exception? innerException) -> void
+Microsoft.VisualStudio.TestPlatform.CommandLineUtilities.GenerateFakesUtilities
+static Microsoft.VisualStudio.TestPlatform.CommandLine.Program.Main(string![]? args) -> int
+static Microsoft.VisualStudio.TestPlatform.CommandLine.Publisher.MetricsPublisherFactory.GetMetricsPublisher(bool isTelemetryOptedIn, bool isDesignMode) -> System.Threading.Tasks.Task<Microsoft.VisualStudio.TestPlatform.CommandLine.Publisher.IMetricsPublisher!>!
+static readonly Microsoft.VisualStudio.TestPlatform.CommandLine.Internal.Product.Version -> string?
+vstest.console.Internal.FilePatternParser
+vstest.console.Internal.FilePatternParser.FilePatternParser() -> void
+vstest.console.Internal.FilePatternParser.GetMatchingFiles(string! filePattern) -> System.Collections.Generic.List<string!>!

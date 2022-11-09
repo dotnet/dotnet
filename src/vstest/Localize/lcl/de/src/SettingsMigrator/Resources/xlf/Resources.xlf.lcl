@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LCX SchemaVersion="6.0" Name="Resources.xlf" PsrId="308" FileType="1" SrcCul="en-US" TgtCul="de-DE" xmlns="http://schemas.microsoft.com/locstudio/2006/6/lcx">
+  <OwnedComments>
+    <Cmt Name="Dev" />
+    <Cmt Name="LcxAdmin" />
+    <Cmt Name="Rccx" />
+  </OwnedComments>
+  <Settings Name="@vsLocTools@\default.lss" Type="Lss" />
+  <Item ItemId=";Xliff file" ItemType="0" PsrId="308" Leaf="false">
+    <Disp Icon="Expand" Expand="true" Disp="true" LocTbl="false" />
+    <Item ItemId=";Xliff Resources" ItemType="0" PsrId="308" Leaf="false">
+      <Disp Icon="Str" Disp="true" LocTbl="false" />
+      <Item ItemId=";IgnoringLegacySettings" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Any LegacySettings node already present in the runsettings will be removed.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Bereits in RunSettings vorhandene LegacySettings-Knoten werden entfernt.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";NoEmbeddedSettings" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[RunSettings does not contain an embedded testSettings, not migrating.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[RunSettings enthält keine eingebetteten testSettings. Die Migration wird nicht durchgeführt.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";RunSettingsCreated" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The migrated RunSettings file has been created at: {0}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Die migrierte RunSettings-Datei wurde in folgendem Verzeichnis erstellt: {0}]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";UnsupportedAttributes" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The attributes agentNotRespondingTimeout, deploymentTimeout, scriptTimeout of Timeouts node are not supported, so these will not be migrated.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Die Attribute "agentNotRespondingTimeout", "deploymentTimeout" und "scriptTimeout" des Knotens "Timeouts" werden nicht unterstützt und daher nicht migriert.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";ValidUsage" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Valid usage:]D;]A;SettingsMigrator.exe <Full path to testsettings file or runsettings file to be migrated>]D;]A;SettingsMigrator.exe <Full path to testsettings file or runsettings file to be migrated> <Full path to runsettings file to be created>]D;]A;Examples:]D;]A;SettingsMigrator.exe  E:\MyTest\MyTestSettings.testsettings]D;]A;SettingsMigrator.exe  E:\MyTest\MyOldRunSettings.runsettings]D;]A;SettingsMigrator.exe  E:\MyTest\MyTestSettings.testsettings E:\MyTest\MyNewRunSettings.runsettings]D;]A;SettingsMigrator.exe  E:\MyTest\MyOldRunSettings.runsettings E:\MyTest\MyNewRunSettings.runsettings]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Gültige Syntax:]D;]A;SettingsMigrator.exe <vollständiger Pfad zur TESTSETTINGS-Datei oder RUNSETTINGS-Datei für die Migration>]D;]A;SettingsMigrator.exe <vollständiger Pfad zur TESTSETTINGS-Datei oder RUNSETTINGS-Datei für die Migration> <vollständiger Pfad zur zu erstellenden RUNSETTINGS-Datei>]D;]A;Beispiele:]D;]A;SettingsMigrator.exe  E:\MyTest\MyTestSettings.testsettings]D;]A;SettingsMigrator.exe  E:\MyTest\MyOldRunSettings.runsettings]D;]A;SettingsMigrator.exe  E:\MyTest\MyTestSettings.testsettings E:\MyTest\MyNewRunSettings.runsettings]D;]A;SettingsMigrator.exe  E:\MyTest\MyOldRunSettings.runsettings E:\MyTest\MyNewRunSettings.runsettings]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+    </Item>
+  </Item>
+</LCX>

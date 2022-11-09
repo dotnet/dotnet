@@ -1,0 +1,350 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="BasicTestResultFormat" xml:space="preserve">
+    <value>{0,-10}  {1}</value>
+  </data>
+  <data name="Common_CannotBeNullOrEmpty" xml:space="preserve">
+    <value>The parameter cannot be null or empty.</value>
+  </data>
+  <data name="Common_FileNotExist" xml:space="preserve">
+    <value>File {0} does not exist.</value>
+  </data>
+  <data name="Common_ObjectMustBeOfType" xml:space="preserve">
+    <value>Object must be of type {0}.</value>
+  </data>
+  <data name="Common_TestOutcomeAborted" xml:space="preserve">
+    <value>Aborted</value>
+  </data>
+  <data name="Common_TestOutcomeCompleted" xml:space="preserve">
+    <value>Completed</value>
+  </data>
+  <data name="Common_TestOutcomeDisconnected" xml:space="preserve">
+    <value>Disconnected</value>
+  </data>
+  <data name="Common_TestOutcomeError" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="Common_TestOutcomeFailed" xml:space="preserve">
+    <value>Failed</value>
+  </data>
+  <data name="Common_TestOutcomeInconclusive" xml:space="preserve">
+    <value>Inconclusive</value>
+  </data>
+  <data name="Common_TestOutcomeInProgress" xml:space="preserve">
+    <value>In Progress</value>
+  </data>
+  <data name="Common_TestOutcomeNotExecuted" xml:space="preserve">
+    <value>Not Executed</value>
+  </data>
+  <data name="Common_TestOutcomeNotRunnable" xml:space="preserve">
+    <value>Not Runnable</value>
+  </data>
+  <data name="Common_TestOutcomePassed" xml:space="preserve">
+    <value>Passed</value>
+  </data>
+  <data name="Common_TestOutcomePassedButRunAborted" xml:space="preserve">
+    <value>Passed (run aborted)</value>
+  </data>
+  <data name="Common_TestOutcomePending" xml:space="preserve">
+    <value>Pending</value>
+  </data>
+  <data name="Common_TestOutcomeTimeout" xml:space="preserve">
+    <value>Timeout</value>
+  </data>
+  <data name="Common_TestOutcomeWarning" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="ConverterNotSupported" xml:space="preserve">
+    <value>Cannot find TypeConverter for type {0}.</value>
+  </data>
+  <data name="CouldNotFindXmlNode" xml:space="preserve">
+    <value>Could not find '{0}' node</value>
+    <comment>Error message when the specified {0}  xml node can not be found in the run settings xml document</comment>
+  </data>
+  <data name="DataCollectionSink_CanNotReadStream" xml:space="preserve">
+    <value>Unable to read from the provided stream.  Data from a stream cannot be sent unless the stream supports reading.</value>
+  </data>
+  <data name="DataCollectionSink_InvalidFileNameCharacters" xml:space="preserve">
+    <value>The provided file name '{0}' contains the following invalid characters: '{1}'.</value>
+  </data>
+  <data name="DataCollectionSink_ReservedFilenameUsed" xml:space="preserve">
+    <value>The provided file name '{0}' is reserved.</value>
+  </data>
+  <data name="Exception_RegisteredTestPropertyHasDifferentValueType" xml:space="preserve">
+    <value>Cannot register property '{0}' as value type '{1}' because it was already registered as '{2}'.</value>
+  </data>
+  <data name="InvalidRunSettingsRootNode" xml:space="preserve">
+    <value>The root node of the run settings must be named 'RunSettings'.</value>
+  </data>
+  <data name="InvalidSettingsIncorrectValue" xml:space="preserve">
+    <value>Invalid settings '{0}'.  Invalid value '{1}' specified for '{2}'.</value>
+  </data>
+  <data name="InvalidSettingsXmlAttribute" xml:space="preserve">
+    <value>Invalid settings '{0}'. Unexpected XmlAttribute: '{1}'.</value>
+  </data>
+  <data name="InvalidSettingsXmlElement" xml:space="preserve">
+    <value>Invalid settings '{0}'. Unexpected XmlElement: '{1}'.</value>
+  </data>
+  <data name="MissingDataCollectorAttributes" xml:space="preserve">
+    <value>Invalid data collector settings. Expected attribute '{0}' is missing.  A typical data collector setting would look like &lt;DataCollector uri="dataCollector://Samples/SampleCollector/1.0" assemblyQualifiedName="Samples.SampleCollector.SampleDataCollector, SampleCollectors, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1111111111111111" friendlyName="sampleCollector"&gt;.</value>
+  </data>
+  <data name="NoTestCaseFilterForSpecificTests" xml:space="preserve">
+    <value>Cannot specify TestCaseFilter for specific tests run. FilterCriteria is only for run with sources.</value>
+  </data>
+  <data name="NotificationFrequencyIsNotPositive" xml:space="preserve">
+    <value>Notification frequency need to be a positive value.</value>
+    <comment>frequency for DiscoveryCriteria/TestRunCriteria needs to be a positive value</comment>
+  </data>
+  <data name="NotificationTimeoutIsZero" xml:space="preserve">
+    <value>Notification timeout must be greater than zero.</value>
+    <comment>Timeout used during test discovery and execution must be greater than zero.</comment>
+  </data>
+  <data name="NullString" xml:space="preserve">
+    <value>(null)</value>
+  </data>
+  <data name="SolutionDirectoryNotExists" xml:space="preserve">
+    <value>Solution directory '{0}' does not exists. Please make sure solution directory specified in runsettings exists and have read permissions for directory.</value>
+  </data>
+  <data name="TestCasePropertyColumnNumberLabel" xml:space="preserve">
+    <value>Column Number</value>
+    <comment>The label of the test property ColumnNumber for test case.</comment>
+  </data>
+  <data name="TestCasePropertyExecutorUriLabel" xml:space="preserve">
+    <value>Executor Uri</value>
+    <comment>The label of the test property ExecutorUri for test case.</comment>
+  </data>
+  <data name="TestCasePropertyFilePathLabel" xml:space="preserve">
+    <value>File Path</value>
+    <comment>The label of the test property FilePath for test case.</comment>
+  </data>
+  <data name="TestCasePropertyFullyQualifiedNameLabel" xml:space="preserve">
+    <value>FullyQualifiedName</value>
+  </data>
+  <data name="TestCasePropertyIdLabel" xml:space="preserve">
+    <value>Id</value>
+  </data>
+  <data name="TestCasePropertyLineNumberLabel" xml:space="preserve">
+    <value>Line Number</value>
+    <comment>The label of the test property LineNumber for test case.</comment>
+  </data>
+  <data name="TestCasePropertyNameLabel" xml:space="preserve">
+    <value>Name</value>
+    <comment>The label of the test property Name for test case.</comment>
+  </data>
+  <data name="TestCasePropertySourceLabel" xml:space="preserve">
+    <value>Source</value>
+    <comment>The label of the test property Source for test case.</comment>
+  </data>
+  <data name="TestCasePropertyTraitsLabel" xml:space="preserve">
+    <value>Traits</value>
+    <comment>The label of the test property Traits for test case.</comment>
+  </data>
+  <data name="TestFailureMessageFormat" xml:space="preserve">
+    <value>  Message: {0}</value>
+  </data>
+  <data name="TestFailureStackTraceFormat" xml:space="preserve">
+    <value>  StackTrace:
+{0}</value>
+  </data>
+  <data name="TestOutcomeFailed" xml:space="preserve">
+    <value>Failed</value>
+    <comment>Test result for failed test</comment>
+  </data>
+  <data name="TestOutcomeNone" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="TestOutcomeNotFound" xml:space="preserve">
+    <value>NotFound</value>
+    <comment>Test result for not found test</comment>
+  </data>
+  <data name="TestOutcomePassed" xml:space="preserve">
+    <value>Passed</value>
+    <comment>Test result for passed test</comment>
+  </data>
+  <data name="TestOutcomeSkipped" xml:space="preserve">
+    <value>Skipped</value>
+    <comment>Test result for skipped test </comment>
+  </data>
+  <data name="TestResultMessageFormat" xml:space="preserve">
+    <value>  {0}:
+{1}</value>
+  </data>
+  <data name="TestResultPropertyComputerNameLabel" xml:space="preserve">
+    <value>Computer Name</value>
+    <comment>The label of the test property ComputerName for test result.</comment>
+  </data>
+  <data name="TestResultPropertyDisplayNameLabel" xml:space="preserve">
+    <value>TestResult Display Name</value>
+    <comment>The label of TestResult.DisplayName, mainly used for parameterized data tests</comment>
+  </data>
+  <data name="TestResultPropertyDurationLabel" xml:space="preserve">
+    <value>Duration</value>
+    <comment>The label of the test property Duration for test result.</comment>
+  </data>
+  <data name="TestResultPropertyEndTimeLabel" xml:space="preserve">
+    <value>End Time</value>
+    <comment>The label of the test property EndTime for test result.</comment>
+  </data>
+  <data name="TestResultPropertyErrorColumnNumberLabel" xml:space="preserve">
+    <value>Error Column Number</value>
+    <comment>The label of the test property ErrorColumnNumber for test result.</comment>
+  </data>
+  <data name="TestResultPropertyErrorMessageLabel" xml:space="preserve">
+    <value>Error Message</value>
+    <comment>The label of the test property ErrorMessage for test result.</comment>
+  </data>
+  <data name="TestResultPropertyErrorStackTraceLabel" xml:space="preserve">
+    <value>Error Stack Trace</value>
+    <comment>The label of the test property ErrorStackTrace for test result.</comment>
+  </data>
+  <data name="TestResultPropertyOutcomeLabel" xml:space="preserve">
+    <value>Outcome</value>
+    <comment>The label of the test property Outcome for test result.</comment>
+  </data>
+  <data name="TestResultPropertyStartTimeLabel" xml:space="preserve">
+    <value>Start Time</value>
+    <comment>The label of the test property StartTime for test result.</comment>
+  </data>
+  <data name="TestResultTextMessagesFormat" xml:space="preserve">
+    <value>  Test Messages:
+{0}</value>
+  </data>
+  <data name="UnexpectedTypeOfProperty" xml:space="preserve">
+    <value>The test property type '{0}' of property '{1}' is not supported. Use one of the supported property type (primitive types, uri, string, string[]) and try again. </value>
+  </data>
+  <data name="FailedToCreateDiaSession" xml:space="preserve">
+    <value>Failed to Create msdia Session COM HResult '{0}'.</value>
+  </data>
+  <data name="FailedToLoadMsDia" xml:space="preserve">
+    <value>Failed to load msdia</value>
+  </data>
+  <data name="InvalidDataCollectorUriInSettings" xml:space="preserve">
+    <value>Invalid URI in data collector settings '{0}'.</value>
+  </data>
+  <data name="InvalidUriInSettings" xml:space="preserve">
+    <value>Invalid URI '{0}' in settings '{1}'.</value>
+  </data>
+  <data name="MissingLoggerAttributes" xml:space="preserve">
+    <value>Invalid settings '{0}'. Expected atleast one of the XmlAttribute among friendlyName, uri and assemblyQualifiedName.</value>
+  </data>
+  <data name="TestCaseFilterEscapeException" xml:space="preserve">
+    <value>Filter string '{0}' includes unrecognized escape sequence.</value>
+  </data>
+</root>

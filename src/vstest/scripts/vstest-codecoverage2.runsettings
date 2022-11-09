@@ -1,0 +1,32 @@
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="Code Coverage" uri="datacollector://Microsoft/CodeCoverage/2.0">
+        <Configuration>
+            <Format>Coverage</Format>
+            <CodeCoverage>
+                <!-- Match assembly file paths: -->
+            <ModulePaths>
+             <Exclude>
+              <ModulePath>.*CodeCoverage.exe$</ModulePath>
+             </Exclude>
+            </ModulePaths>
+
+            <!-- We recommend you do not change the following values: -->
+            <UseVerifiableInstrumentation>True</UseVerifiableInstrumentation>
+            <AllowLowIntegrityProcesses>True</AllowLowIntegrityProcesses>
+            <CollectFromChildProcesses>True</CollectFromChildProcesses>
+            <CollectAspDotNet>False</CollectAspDotNet>
+
+            <Functions>
+                <Exclude>
+                    <Function>.*TestSign.*</Function>
+                </Exclude>
+            </Functions>
+
+          </CodeCoverage>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>

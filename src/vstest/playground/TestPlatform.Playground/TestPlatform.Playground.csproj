@@ -1,0 +1,83 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TestPlatformRoot Condition="$(TestPlatformRoot) == ''">..\..\</TestPlatformRoot>
+    <!-- MSB3270 Suppress warnings about testhost being x64 (AMD64)/x86 when imported into AnyCPU (MSIL) projects. -->
+    <!-- MSB3276 Suppress warnings about conflicts between different versions of the same dependent assembly -->
+    <MSBuildWarningsAsMessages>$(MSBuildWarningsAsMessages);MSB3270;MSB3276</MSBuildWarningsAsMessages>
+  </PropertyGroup>
+
+  <Import Project="$(TestPlatformRoot)scripts/build/TestPlatform.Settings.targets" />
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>$(TargetFrameworks);net472</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MSTest.TestAdapter" Version="2.2.8" />
+    <PackageReference Include="MSTest.TestFramework" Version="2.2.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(TestPlatformRoot)src\DataCollectors\DumpMinitool.arm64\DumpMinitool.arm64.csproj" />
+    <ProjectReference Include="$(TestPlatformRoot)src\DataCollectors\DumpMinitool.x86\DumpMinitool.x86.csproj" />
+    <ProjectReference Include="$(TestPlatformRoot)src\DataCollectors\DumpMinitool\DumpMinitool.csproj" />
+    <ProjectReference Include="$(TestPlatformRoot)src\DataCollectors\Microsoft.TestPlatform.Extensions.EventLogCollector\Microsoft.TestPlatform.Extensions.EventLogCollector.csproj" />
+    <ProjectReference Include="$(TestPlatformRoot)src\datacollector\datacollector.csproj" />
+    <ProjectReference Include="$(TestPlatformRoot)src\Microsoft.TestPlatform.Extensions.BlameDataCollector\Microsoft.TestPlatform.Extensions.BlameDataCollector.csproj" />
+    <ProjectReference Include="$(TestPlatformRoot)src\Microsoft.TestPlatform.TestHostProvider\Microsoft.TestPlatform.TestHostProvider.csproj" />
+    <ProjectReference Include="$(TestPlatformRoot)src\Microsoft.TestPlatform.VsTestConsole.TranslationLayer\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.csproj" />
+    <ProjectReference Include="$(TestPlatformRoot)src\testhost.x86\testhost.x86.csproj" />
+    <ProjectReference Include="$(TestPlatformRoot)src\testhost\testhost.csproj" />
+    <ProjectReference Include="$(TestPlatformRoot)src\vstest.console\vstest.console.csproj" />
+    <ProjectReference Include="$(TestPlatformRoot)playground\MSTest1\MSTest1.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition=" $(TargetFramework.StartsWith('net4')) AND '$(OS)' != 'Windows_NT' ">
+    <Reference Include="System" />
+    <Reference Include="System.Runtime" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition=" '$(OS)' == 'WINDOWS_NT' ">
+    <PropertyGroup>
+      <SourcePath>$(TestPlatformRoot)src\</SourcePath>
+      <DestinationPath>$(TargetDir)vstest.console\</DestinationPath>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <FileToCopy Include="$(SourcePath)vstest.console\bin\$(Configuration)\$(NetFrameworkMinimum)\**\*.*" SubFolder="" />
+      <FileToCopy Include="$(SourcePath)Microsoft.TestPlatform.TestHostProvider\bin\$(Configuration)\$(NetFrameworkMinimum)\**\*.*" SubFolder="Extensions\" />
+
+      <!-- copy net462, net47, net471, net472 and net48 testhosts" -->
+      <FileToCopy Include="$(SourcePath)testhost.x86\bin\$(Configuration)\$(NetFrameworkMinimum)\win7-x86\**\*.*" SubFolder="TestHostNetFramework\" />
+      <FileToCopy Include="$(SourcePath)testhost\bin\$(Configuration)\$(NetFrameworkMinimum)\win7-x64\**\*.*" SubFolder="TestHostNetFramework\" />
+      <FileToCopy Include="$(SourcePath)testhost.x86\bin\$(Configuration)\net47\win7-x86\**\*.*" SubFolder="TestHostNetFramework\" />
+      <FileToCopy Include="$(SourcePath)testhost\bin\$(Configuration)\net47\win7-x64\**\*.*" SubFolder="TestHostNetFramework\" />
+      <FileToCopy Include="$(SourcePath)testhost.x86\bin\$(Configuration)\net471\win7-x86\**\*.*" SubFolder="TestHostNetFramework\" />
+      <FileToCopy Include="$(SourcePath)testhost\bin\$(Configuration)\net471\win7-x64\**\*.*" SubFolder="TestHostNetFramework\" />
+      <FileToCopy Include="$(SourcePath)testhost.x86\bin\$(Configuration)\net472\win7-x86\**\*.*" SubFolder="TestHostNetFramework\" />
+      <FileToCopy Include="$(SourcePath)testhost\bin\$(Configuration)\net472\win7-x64\**\*.*" SubFolder="TestHostNetFramework\" />
+      <FileToCopy Include="$(SourcePath)testhost.x86\bin\$(Configuration)\net48\win7-x86\**\*.*" SubFolder="TestHostNetFramework\" />
+      <FileToCopy Include="$(SourcePath)testhost\bin\$(Configuration)\net48\win7-x64\**\*.*" SubFolder="TestHostNetFramework\" />
+
+      <!-- copy datacollectors" -->
+      <FileToCopy Include="$(SourcePath)datacollector\bin\$(Configuration)\net472\**\*.*" SubFolder="vstest.console\" />
+      <FileToCopy Include="$(SourcePath)Microsoft.TestPlatform.Extensions.BlameDataCollector\bin\$(Configuration)\net472\**\*.*" SubFolder="Extensions\" />
+      <FileToCopy Include="$(SourcePath)DataCollectors\Microsoft.TestPlatform.Extensions.EventLogCollector\bin\$(Configuration)\$(NetFrameworkMinimum)\**\*.*" SubFolder="Extensions\" />
+      <FileToCopy Include="$(SourcePath)DataCollectors\DumpMinitool\bin\$(Configuration)\$(NetFrameworkMinimum)\win7-x64\**\*.*" SubFolder="Extensions\blame\" />
+      <FileToCopy Include="$(SourcePath)DataCollectors\DumpMinitool.x86\bin\$(Configuration)\$(NetFrameworkMinimum)\win7-x86\**\*.*" SubFolder="Extensions\blame\" />
+      <FileToCopy Include="$(SourcePath)DataCollectors\DumpMinitool.arm64\bin\$(Configuration)\$(NetFrameworkMinimum)\win10-arm64\**\*.*" SubFolder="Extensions\blame\" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(FileToCopy)"
+          DestinationFiles="@(FileToCopy -> '$(DestinationPath)\%(SubFolder)\%(RecursiveDir)%(Filename)%(Extension)')"
+          SkipUnchangedFiles="True" OverwriteReadOnlyFiles="True" Retries="3" RetryDelayMilliseconds="500"
+          UseHardlinksIfPossible="False" UseSymboliclinksIfPossible="False" ErrorIfLinkFails="False"
+          Condition="@(FileToCopy->Count()) > 0">
+
+      <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
+    </Copy>
+  </Target>
+  <Import Project="$(TestPlatformRoot)scripts\build\TestPlatform.targets" />
+</Project>

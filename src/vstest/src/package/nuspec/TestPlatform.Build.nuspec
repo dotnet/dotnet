@@ -1,0 +1,35 @@
+﻿<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.TestPlatform.Build</id>
+    <version>15.0.0</version>
+    <title>Microsoft.TestPlatform.Build</title>
+    <authors>Microsoft</authors>
+    <owners>Microsoft</owners>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>Build tasks and targets for running tests with Test Platform</description>
+    <license type="file">LICENSE_NET.txt</license>
+    <iconUrl>http://go.microsoft.com/fwlink/?LinkID=288859</iconUrl>
+    <icon>Icon.png</icon>
+    <projectUrl>https://github.com/microsoft/vstest/</projectUrl>
+    <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+    <tags>vstest visual-studio unittest testplatform mstest microsoft test testing</tags>
+    <repository type="git" 
+                url="https://github.com/microsoft/vstest" 
+                branch="$BranchName$" 
+                commit="$CommitId$" />
+                
+    <dependencies>
+      <group targetFramework="$TargetFramework$"></group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="Icon.png" target="" />
+    <file src="licenses\LICENSE_NET.txt" target="" />
+    <file src="Microsoft.TestPlatform.Build\$TargetFramework$\Microsoft.TestPlatform.targets" target="runtimes\any\native" />
+
+    <!-- Add localized resources -->
+    <file src="Microsoft.TestPlatform.Build\$TargetFramework$\**\*.dll" target="lib\$TargetFramework$" />
+
+  </files>
+</package>

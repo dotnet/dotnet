@@ -1,0 +1,71 @@
+#nullable enable
+Microsoft.TestPlatform.Build.Tasks.VSTestForwardingApp
+Microsoft.TestPlatform.Build.Tasks.VSTestForwardingApp.Cancel() -> void
+Microsoft.TestPlatform.Build.Tasks.VSTestForwardingApp.Execute() -> int
+Microsoft.TestPlatform.Build.Tasks.VSTestForwardingApp.VSTestForwardingApp(string! vsTestExePath, System.Collections.Generic.IEnumerable<string!>! argsToForward) -> void
+Microsoft.TestPlatform.Build.Tasks.VSTestLogsTask
+Microsoft.TestPlatform.Build.Tasks.VSTestLogsTask.LogType.get -> string?
+Microsoft.TestPlatform.Build.Tasks.VSTestLogsTask.LogType.set -> void
+Microsoft.TestPlatform.Build.Tasks.VSTestLogsTask.ProjectFilePath.get -> string?
+Microsoft.TestPlatform.Build.Tasks.VSTestLogsTask.ProjectFilePath.set -> void
+Microsoft.TestPlatform.Build.Tasks.VSTestLogsTask.VSTestLogsTask() -> void
+Microsoft.TestPlatform.Build.Tasks.VSTestTask
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.Cancel() -> void
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.TestFileFullPath.get -> string?
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.TestFileFullPath.set -> void
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestArtifactsProcessingMode.get -> string?
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestArtifactsProcessingMode.set -> void
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestBlame.get -> string?
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestBlame.set -> void
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestBlameCrash.get -> string?
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestBlameCrash.set -> void
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestBlameCrashCollectAlways.get -> string?
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestBlameCrashCollectAlways.set -> void
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestBlameCrashDumpType.get -> string?
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestBlameCrashDumpType.set -> void
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestBlameHang.get -> string?
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestBlameHang.set -> void
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestBlameHangDumpType.get -> string?
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestBlameHangDumpType.set -> void
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestBlameHangTimeout.get -> string?
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestBlameHangTimeout.set -> void
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestCLIRunSettings.get -> string![]?
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestCLIRunSettings.set -> void
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestCollect.get -> string![]?
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestCollect.set -> void
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestConsolePath.get -> string!
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestConsolePath.set -> void
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestDiag.get -> string?
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestDiag.set -> void
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestFramework.get -> string?
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestFramework.set -> void
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestListTests.get -> string?
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestListTests.set -> void
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestLogger.get -> string![]?
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestLogger.set -> void
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestNoLogo.get -> string?
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestNoLogo.set -> void
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestPlatform.get -> string?
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestPlatform.set -> void
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestResultsDirectory.get -> string?
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestResultsDirectory.set -> void
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestSessionCorrelationId.get -> string?
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestSessionCorrelationId.set -> void
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestSetting.get -> string?
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestSetting.set -> void
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestTask() -> void
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestTestAdapterPath.get -> string![]?
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestTestAdapterPath.set -> void
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestTestCaseFilter.get -> string?
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestTestCaseFilter.set -> void
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestTraceDataCollectorDirectoryPath.get -> string?
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestTraceDataCollectorDirectoryPath.set -> void
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestVerbosity.get -> string?
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestVerbosity.set -> void
+Microsoft.TestPlatform.Build.Trace.Tracing
+Microsoft.TestPlatform.Build.Utils.ArgumentEscaper
+override Microsoft.TestPlatform.Build.Tasks.VSTestLogsTask.Execute() -> bool
+override Microsoft.TestPlatform.Build.Tasks.VSTestTask.Execute() -> bool
+static Microsoft.TestPlatform.Build.Trace.Tracing.Trace(string! message) -> void
+static Microsoft.TestPlatform.Build.Trace.Tracing.traceEnabled -> bool
+static Microsoft.TestPlatform.Build.Utils.ArgumentEscaper.HandleEscapeSequenceInArgForProcessStart(string! arg) -> string!

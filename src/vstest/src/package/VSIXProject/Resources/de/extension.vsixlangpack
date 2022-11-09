@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PackageLanguagePackManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011">
+  <Metadata>
+    <DisplayName>Microsoft Visual Studio-Testplattform</DisplayName>
+    <Description>Erweiterbare Testplattform, die Entwicklern das Ermitteln, Ausführen und Analysieren automatisierter Tests ermöglicht.</Description>
+  </Metadata>
+</PackageLanguagePackManifest>

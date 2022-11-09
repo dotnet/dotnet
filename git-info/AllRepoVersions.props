@@ -13,5 +13,7 @@
     <sdkOutputPackageVersion>8.0.100-alpha.1.22558.25</sdkOutputPackageVersion>
     <testtemplatesGitCommitHash>bb3695688177f5f80eeb3c0498168612e31549d5</testtemplatesGitCommitHash>
     <testtemplatesOutputPackageVersion>1.1.0-rc.22558.1</testtemplatesOutputPackageVersion>
+    <vstestGitCommitHash>02296a2873652bc5911ae4b58d74f9faae03917d</vstestGitCommitHash>
+    <vstestOutputPackageVersion>17.5.0-preview-20221107-06</vstestOutputPackageVersion>
   </PropertyGroup>
 </Project>
