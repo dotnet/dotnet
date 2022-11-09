@@ -1,6 +1,12 @@
 {
   "repositories": [
     {
+      "packageVersion": "8.0.0-alpha.1.22558.5",
+      "path": "aspnetcore",
+      "remoteUri": "https://github.com/dotnet/aspnetcore",
+      "commitSha": "1bee0afeedab9d6d9d1cf23e65daa7ea5fcc6d47"
+    },
+    {
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
@@ -13,5 +19,21 @@
       "commitSha": "af841c8b33cecc92d74222298f1e45bf7bf3d90a"
     }
   ],
-  "submodules": []
+  "submodules": [
+    {
+      "path": "aspnetcore/src/submodules/googletest",
+      "remoteUri": "https://github.com/google/googletest",
+      "commitSha": "a4f02ef38981350c9d673b9909559c7a86420d7a"
+    },
+    {
+      "path": "aspnetcore/src/submodules/MessagePack-CSharp",
+      "remoteUri": "https://github.com/aspnet/MessagePack-CSharp.git",
+      "commitSha": "fe9fa0834d18492eb229ff2923024af2c87553f8"
+    },
+    {
+      "path": "aspnetcore/src/submodules/spa-templates",
+      "remoteUri": "https://github.com/dotnet/spa-templates.git",
+      "commitSha": "57bf5a0a1bf5d55eb9efefa92dcff6f067d4bfb3"
+    }
+  ]
 }

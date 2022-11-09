@@ -1,0 +1,33 @@
+<Project>
+  <PropertyGroup Label="Version settings">
+    <AspNetCoreMajorVersion>7</AspNetCoreMajorVersion>
+    <AspNetCoreMinorVersion>0</AspNetCoreMinorVersion>
+    <AspNetCoreMajorMinorVersion>$(AspNetCoreMajorVersion).$(AspNetCoreMinorVersion)</AspNetCoreMajorMinorVersion>
+    <DefaultNetCoreTargetFramework>net7.0</DefaultNetCoreTargetFramework>
+  </PropertyGroup>
+  <PropertyGroup Label="Package versions">
+    <!-- Packages from dotnet/arcade -->
+    <MicrosoftDotNetBuildTasksTemplatingVersion>6.0.0-beta.21373.11</MicrosoftDotNetBuildTasksTemplatingVersion>
+    <!-- Packages from dotnet/aspnetcore -->
+    <MicrosoftAspNetCoreApiAuthorizationIdentityServerVersion>6.0.0</MicrosoftAspNetCoreApiAuthorizationIdentityServerVersion>
+    <MicrosoftAspNetCoreDiagnosticsEntityFrameworkCoreVersion>6.0.0</MicrosoftAspNetCoreDiagnosticsEntityFrameworkCoreVersion>
+    <MicrosoftAspNetCoreIdentityEntityFrameworkCoreVersion>6.0.0</MicrosoftAspNetCoreIdentityEntityFrameworkCoreVersion>
+    <MicrosoftAspNetCoreIdentityUIVersion>6.0.0</MicrosoftAspNetCoreIdentityUIVersion>
+    <MicrosoftAspNetCoreSpaProxyVersion>6.0.0</MicrosoftAspNetCoreSpaProxyVersion>
+    <MicrosoftAspNetCoreSpaServicesExtensionsVersion>6.0.0</MicrosoftAspNetCoreSpaServicesExtensionsVersion>
+    <!-- Packages from dotnet/efcore -->
+    <MicrosoftEntityFrameworkCoreRelationalVersion>6.0.0</MicrosoftEntityFrameworkCoreRelationalVersion>
+    <MicrosoftEntityFrameworkCoreSqliteVersion>6.0.0</MicrosoftEntityFrameworkCoreSqliteVersion>
+    <MicrosoftEntityFrameworkCoreSqlServerVersion>6.0.0</MicrosoftEntityFrameworkCoreSqlServerVersion>
+    <MicrosoftEntityFrameworkCoreToolsVersion>6.0.0</MicrosoftEntityFrameworkCoreToolsVersion>
+    <!-- Packages from dotnet/runtime -->
+    <MicrosoftExtensionsHostingVersion>6.0.0</MicrosoftExtensionsHostingVersion>
+    <!-- Packages from dotnet/sourcelink -->
+    <MicrosoftSourceLinkVersion>1.1.0-beta-20206-02</MicrosoftSourceLinkVersion>
+    <!--
+      Packages from dotnet/templating. https://github.com/dotnet/templating/blob/main/docs/Localization.md
+      recommends updating the version when preview or stable versions are released to NuGet.org.
+    -->
+    <MicrosoftTemplateEngineTasksVersion>7.0.100-preview.5.22302.1</MicrosoftTemplateEngineTasksVersion>
+  </PropertyGroup>
+</Project>

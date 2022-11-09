@@ -1,0 +1,87 @@
+env:
+  PathToSynchronize: eng\common
+  SourceRepo: dotnet/arcade
+  SourceRepoName: arcade
+  TargetRepo: dotnet/spa-templates
+  TargetRepoName: spa-templates
+
+name: Code Sync
+
+on:
+  # Manual run
+  workflow_dispatch:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    # https://help.github.com/en/actions/automating-your-workflow-with-github-actions/events-that-trigger-workflows#scheduled-events-schedule
+    # Once per week at midnight PST (8 UTC) on Monday.
+    - cron: '0 8 * * MON'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  compare_repos:
+    # Comment out repo checks to test the scripts in a fork or change the TargetRepo value above.
+    name: "Compare the shared code in the given repos; open a PR in the target if they're out of sync."
+    runs-on: windows-latest
+    steps:
+    - name: Checkout ${{ env.SourceRepoName }}
+      if: github.repository == env.TargetRepo
+      uses: actions/checkout@v3
+      with:
+        repository: ${{ env.SourceRepo }}
+        path: ${{ env.SourceRepoName }}
+        ref: main
+    - name: Checkout ${{ env.TargetRepoName }}
+      if: github.repository == env.TargetRepo
+      uses: actions/checkout@v3
+      with:
+        repository: ${{ env.TargetRepo }}
+        path: ${{ env.TargetRepoName }}
+        ref: main
+    - name: Copy
+      if: github.repository == env.TargetRepo
+      shell: cmd
+      run: ${{ github.workspace }}\${{ env.TargetRepoName }}\.github\workflows\CopyToTarget.cmd
+        ${{ github.workspace }}\${{ env.SourceRepoName }}\${{ env.PathToSynchronize }}
+        ${{ github.workspace }}\${{ env.TargetRepoName }}\${{ env.PathToSynchronize }}
+    - name: Diff
+      if: github.repository == env.TargetRepo
+      shell: cmd
+      working-directory: ${{ github.workspace }}\${{ env.TargetRepoName }}
+      run: |
+        mkdir ..\artifacts
+        git status > ..\artifacts\status.txt
+        git diff > ..\artifacts\diff.txt
+    - uses: actions/upload-artifact@v3
+      if: github.repository == env.TargetRepo
+      with:
+        name: results
+        path: artifacts
+    - name: Check and Notify
+      if: github.repository == env.TargetRepo
+      id: check
+      shell: pwsh
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        $sendpr = ${{ github.workspace }}\${{ env.TargetRepoName }}\.github\workflows\ReportDiff.ps1
+        echo "::set-output name=sendpr::$sendpr"
+    - name: Send PR
+      if: github.repository == env.TargetRepo && steps.check.outputs.sendpr == 'true'
+      # https://github.com/marketplace/actions/create-pull-request
+      uses: dotnet/actions-create-pull-request@v3
+      with:
+        base: main
+        body: 'This PR was automatically generated to sync shared code changes from ${{ env.SourceRepoName }}.'
+        branch-suffix: timestamp
+        branch: github-action/sync-${{ env.SourceRepoName }}
+        commit-message: "Sync shared code from ${{ env.SourceRepoName }}"
+        labels: area-infrastructure
+        path: .\${{ env.TargetRepoName }}
+        # May have problems here with a team name. team-reviewers property doesn't work due to
+        # https://github.com/peter-evans/create-pull-request/issues/155 Avoiding that for now.
+        reviewers: dougbu, wtgodbe
+        title: 'Sync shared code from ${{ env.SourceRepoName }}'
+        token: ${{ secrets.GITHUB_TOKEN }}

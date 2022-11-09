@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json.schemastore.org/ide.host",
+  "order": 810,
+  "icon": "icon.png",
+  "symbolInfo": [
+    {
+      "id": "UseProgramMain",
+      "isVisible": true
+    }
+  ],
+  "disableHttpsSymbol": "NoHttps"
+}

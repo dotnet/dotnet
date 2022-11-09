@@ -129,6 +129,14 @@ To enable full offline source-building of the VMR, we have no other choice than 
 ### Detailed list
 
 <!-- component list beginning -->
+- `src/aspnetcore`  
+*[dotnet/aspnetcore@1bee0af](https:/github.com/dotnet/aspnetcore/commit/1bee0afeedab9d6d9d1cf23e65daa7ea5fcc6d47)*
+    - `src/aspnetcore/src/submodules/googletest`  
+    *[google/googletest@a4f02ef](https:/github.com/google/googletest/commit/a4f02ef38981350c9d673b9909559c7a86420d7a)*
+    - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
+    *[aspnet/MessagePack-CSharp.git@fe9fa08](https:/github.com/aspnet/MessagePack-CSharp.git/commit/fe9fa0834d18492eb229ff2923024af2c87553f8)*
+    - `src/aspnetcore/src/submodules/spa-templates`  
+    *[dotnet/spa-templates.git@57bf5a0](https:/github.com/dotnet/spa-templates.git/commit/57bf5a0a1bf5d55eb9efefa92dcff6f067d4bfb3)*
 - `src/installer`  
 *[dotnet/installer@2066311](https:/github.com/dotnet/installer/commit/20663112b5c5c18e4fcf22c7b1421d9cd5ccb480)*
 - `src/runtime`  

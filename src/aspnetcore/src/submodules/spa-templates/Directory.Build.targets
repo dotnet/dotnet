@@ -1,0 +1,39 @@
+<!--
+  Everything in this file should have conditions that check $(RepoRoot). Similarly, because targets here could
+  unconditionally override dotnet/aspnetcore targets, put them in a conditionally-imported .targets file instead.
+-->
+<Project>
+  <!--
+    When outside dotnet/aspnetcore, intentionally break the inheritance chain.
+    Isolate this repo from irrelevant settings in parent folders.
+  -->
+  <Import Project="$(RepoRoot)src/ProjectTemplates/Directory.Build.targets" Condition=" '$(RepoRoot)' != '' " />
+
+  <!-- Copied from https://github.com/dotnet/aspnetcore/blob/0c5456afe95096db6ac5400cecd3440299b42714/src/ProjectTemplates/Directory.Build.targets. -->
+  <PropertyGroup Condition=" '$(RepoRoot)' == '' ">
+    <PackageVersion Condition=" '$(PackageVersion)' == '' ">$(Version)</PackageVersion>
+
+    <Description>$(Description)
+
+To install the templates in this package, run 'dotnet new --install $(PackageId)::$(PackageVersion)'.</Description>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(RepoRoot)' == '' ">
+    <!-- Copied from https://github.com/dotnet/aspnetcore/blob/0c5456afe95096db6ac5400cecd3440299b42714/eng/tools/GenerateFiles/GenerateFiles.csproj. -->
+    <PackageReference Include="Microsoft.DotNet.Build.Tasks.Templating"
+        Version="$(MicrosoftDotNetBuildTasksTemplatingVersion)"
+        PrivateAssets="All"
+        IsImplicitlyDefined="true" />
+    <!--
+      Copied from https://github.com/dotnet/arcade/blob/c6a28c81f96d196338b3ea520bc1e6dc7c440ee2/src/Microsoft.DotNet.Arcade.Sdk/tools/RepositoryInfo.targets.
+      We don't need source link. This is imported for automatic determination of repository information.
+    -->
+    <PackageReference Include="Microsoft.SourceLink.GitHub"
+        Version="$(MicrosoftSourceLinkVersion)"
+        PrivateAssets="all"
+        IsImplicitlyDefined="true" />
+  </ItemGroup>
+
+  <Import Project="eng/GenerateContent.targets" Condition=" '$(RepoRoot)' == '' " />
+  <Import Project="eng/Packaging.targets" Condition=" '$(RepoRoot)' == '' " />
+</Project>

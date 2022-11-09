@@ -1,6 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
   <PropertyGroup>
+    <aspnetcoreGitCommitHash>1bee0afeedab9d6d9d1cf23e65daa7ea5fcc6d47</aspnetcoreGitCommitHash>
+    <aspnetcoreOutputPackageVersion>8.0.0-alpha.1.22558.5</aspnetcoreOutputPackageVersion>
     <installerGitCommitHash>20663112b5c5c18e4fcf22c7b1421d9cd5ccb480</installerGitCommitHash>
     <installerOutputPackageVersion>8.0.100</installerOutputPackageVersion>
     <runtimeGitCommitHash>af841c8b33cecc92d74222298f1e45bf7bf3d90a</runtimeGitCommitHash>

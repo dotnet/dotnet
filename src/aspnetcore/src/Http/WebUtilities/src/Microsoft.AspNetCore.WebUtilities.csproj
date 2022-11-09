@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>ASP.NET Core utilities, such as for working with forms, multipart messages, and query strings.</Description>
+    <TargetFramework>$(DefaultNetCoreTargetFramework)</TargetFramework>
+    <IsAspNetCoreApp>true</IsAspNetCoreApp>
+    <DefineConstants>$(DefineConstants);WebEncoders_In_WebUtilities;QueryStringEnumerable_In_WebUtilities</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageTags>aspnetcore</PackageTags>
+    <IsPackable>false</IsPackable>
+    <IsTrimmable>true</IsTrimmable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="$(SharedSourceRoot)QueryStringEnumerable.cs" />
+    <Compile Include="$(SharedSourceRoot)WebEncoders\**\*.cs" />
+    <Compile Include="$(SharedSourceRoot)UrlDecoder\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.Net.Http.Headers" />
+    <Reference Include="System.IO.Pipelines" />
+  </ItemGroup>
+
+</Project>

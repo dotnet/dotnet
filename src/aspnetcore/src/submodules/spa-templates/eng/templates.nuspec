@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copied from https://github.com/dotnet/aspnetcore/blob/0c5456afe95096db6ac5400cecd3440299b42714/src/ProjectTemplates/templates.nuspec. -->
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    $CommonMetadataElements$
+    <packageTypes>
+      <packageType name="Template" />
+    </packageTypes>
+  </metadata>
+  <files>
+    $CommonFileElements$
+    <file
+      src="content/**"
+      exclude="**/node_modules/**;**/bin/**;**/obj/**;**/.vs/**;**/.vscode/**;**/ClientApp/dist/**;**/wwwroot/dist/**;content/Directory.Build.*"
+      target="" />
+  </files>
+</package>

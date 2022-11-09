@@ -1,0 +1,5 @@
+<Project>
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory)..\, Directory.Build.props))\Directory.Build.props" />
+
+  <Import Project="Wix.props"  Condition="'$(MSBuildProjectExtension)' == '.wixproj'" />
+</Project>
