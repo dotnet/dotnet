@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Include xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <?if $(var.Platform)=x86?>
+  <?define ProgramFilesFolder=ProgramFilesFolder?>
+  <?define InstallerVersion="200"?>
+  <?define Win64=no?>
+  <?elseif $(var.Platform)=x64?>
+  <?define ProgramFilesFolder=ProgramFiles64Folder?>
+  <?define InstallerVersion="200"?>
+  <?define Win64=yes?>
+  <?elseif $(var.Platform)=arm64?>
+  <?define ProgramFilesFolder=ProgramFiles64Folder?>
+  <?define InstallerVersion="500"?>
+  <?define Win64=yes?>
+  <?else?>
+  <?error Unknown platform: $(var.Platform)?>
+  <?endif?>
+  
+  <?ifndef ProductLanguage?>
+  <?define ProductLanguage=1033?>
+  <?endif?>
+  
+  <!-- Default dependency provider key for packs. -->
+  <?ifndef DependencyProviderKeyName?>
+  <?define DependencyProviderKeyName=$(var.PackageId),$(var.PackageVersion),$(var.Platform)?>
+  <?endif?>
+</Include>

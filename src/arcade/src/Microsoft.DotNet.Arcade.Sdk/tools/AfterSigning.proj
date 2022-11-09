@@ -1,0 +1,55 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+  <Import Project="BuildStep.props" />
+
+  <Target Name="Rebuild" DependsOnTargets="Clean;Build" />
+  <Target Name="Clean" />
+
+  <PropertyGroup>
+    <BuildDependsOn>
+      BeforeBuild;
+      CoreBuild;
+      AfterBuild
+    </BuildDependsOn>
+  </PropertyGroup>
+  <Target Name="Build" DependsOnTargets="$(BuildDependsOn)" />
+  <Target Name="BeforeBuild"/>
+  <Target Name="CoreBuild"/>
+  <Target Name="AfterBuild"/>
+  
+  <Target Name="Test" />
+  
+  <PropertyGroup>
+    <PackDependsOn>
+      BeforePack;
+      CorePack;
+      AfterPack
+    </PackDependsOn>
+  </PropertyGroup>
+  <Target Name="Pack" DependsOnTargets="$(PackDependsOn)" />
+  <Target Name="BeforePack"/>
+  <Target Name="CorePack"/>
+  <Target Name="AfterPack"/>
+  
+  <Target Name="IntegrationTest" />
+  <Target Name="PerformanceTest" />
+
+  <!--
+    Since multiple projects may contribute to a single insertion component
+    we need to package them in a separate phase.
+
+    Insertion manifests (vsman files) contain hashes of the referenced VSIXes.
+    These need to be calculated using signed VSIXes.
+    Hence we need to run this task after signing.
+  -->
+  <Import Project="VisualStudio.InsertionManifests.targets" Condition="'$(UsingToolVSSDK)' == 'true' and '$(MSBuildRuntimeType)' != 'Core'" />
+
+  <!-- 
+    Generate IBC training inputs for VS insertion components.
+  -->
+  <Import Project="VisualStudio.BuildIbcTrainingInputs.targets" Condition="'$(UsingToolVSSDK)' == 'true' and '$(UsingToolVisualStudioIbcTraining)' == 'true' and '$(MSBuildRuntimeType)' != 'Core'" />
+
+  <!-- Repository extension point -->
+  <Import Project="$(RepositoryEngineeringDir)AfterSigning.targets" Condition="Exists('$(RepositoryEngineeringDir)AfterSigning.targets')"/>
+
+</Project>

@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Imports Common TestAssets props. -->
+  <Import Project="..\..\..\scripts\build\TestAssets.props" />
+
+  <PropertyGroup>
+    <TargetFrameworks>$(NetFrameworkMinimum);$(NetCoreAppMinimum)</TargetFrameworks>
+    <TargetFrameworks Condition=" '$(DotNetBuildFromSource)' == 'true' ">$(NetCoreAppMinimum)</TargetFrameworks>
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Net.Http" Version="$(SystemNetHttpVersion)" />
+  </ItemGroup>
+
+  <PropertyGroup Condition="$(NetCoreAppTargetFramework) == 'true' and $(Configuration) == 'Debug'">
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(NetCoreAppTargetFramework) == 'true' and $(Configuration) == 'Release'">
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(TargetFramework)' == '$(NetFrameworkMinimum)' and $(Configuration) == 'Debug'">
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(TargetFramework)' == '$(NetFrameworkMinimum)' and $(Configuration) == 'Release'">
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+</Project>

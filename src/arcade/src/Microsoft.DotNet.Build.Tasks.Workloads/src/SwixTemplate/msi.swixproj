@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <OutputArchitecture>neutral</OutputArchitecture>
+    <OutputLocalized>false</OutputLocalized>
+    <OutputType>manifest</OutputType>
+    <OutputPath>$(ManifestOutputPath)</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PayloadSource Condition="'$(PayloadSource)' == ''">__VS_PAYLOAD_SOURCE__</PayloadSource>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackagePreprocessorDefinitions>$(PackagePreprocessorDefinitions);PayloadSource=$(PayloadSource)</PackagePreprocessorDefinitions>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Package Include="msi.swr" />
+  </ItemGroup>
+  
+  <Target Name="GetNativeManifest" />  
+
+  <Import Project="$(SwixBuildTargets)"/>  
+</Project>

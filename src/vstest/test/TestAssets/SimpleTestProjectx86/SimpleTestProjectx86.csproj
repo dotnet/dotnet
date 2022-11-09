@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-16"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Package dependency versions -->
+  <PropertyGroup>
+    <TestPlatformRoot Condition="$(TestPlatformRoot) == ''">..\..\..\</TestPlatformRoot>
+    <TestProject>true</TestProject>
+    <IsTestProject>true</IsTestProject>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <!-- Imports Common TestAssets props. -->
+  <Import Project="..\..\..\scripts\build\TestAssets.props" />
+  <Import Project="$(TestPlatformRoot)scripts/build/TestPlatform.Settings.targets" />
+
+  <PropertyGroup>
+    <AssemblyName>SimpleTestProjectx86</AssemblyName>
+    <TargetFrameworks>$(NetFrameworkMinimum);$(NetCoreAppMinimum)</TargetFrameworks>
+    <TargetFrameworks Condition=" '$(DotNetBuildFromSource)' == 'true' ">netcoreapp3.1</TargetFrameworks>
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
+    <OutputType Condition="$(NetCoreAppTargetFrameWork) == 'true' ">Exe</OutputType>
+  </PropertyGroup>
+  <Import Project="$(TestPlatformRoot)scripts\build\TestPlatform.targets" />
+</Project>

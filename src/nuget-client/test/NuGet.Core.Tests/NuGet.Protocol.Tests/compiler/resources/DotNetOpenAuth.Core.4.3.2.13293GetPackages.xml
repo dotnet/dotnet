@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<entry xml:base="https://www.nuget.org/api/v2" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
+  <id>https://www.nuget.org/api/v2/Packages(Id='DotNetOpenAuth.Core',Version='4.3.2.13293')</id>
+  <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='DotNetOpenAuth.Core',Version='4.3.2.13293')" />
+  <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='DotNetOpenAuth.Core',Version='4.3.2.13293')" />
+  <title type="text">DotNetOpenAuth.Core</title>
+  <summary type="text">Shared library implementing the messaging pipeline used by auxiliary DotNetOpenAuth libraries.</summary>
+  <updated>2015-09-21T11:45:51Z</updated>
+  <author>
+    <name>Andrew Arnott</name>
+  </author>
+  <content type="application/zip" src="https://www.nuget.org/api/v2/package/DotNetOpenAuth.Core/4.3.2.13293" />
+  <m:properties>
+    <d:Id>DotNetOpenAuth.Core</d:Id>
+    <d:Version>4.3.2.13293</d:Version>
+    <d:NormalizedVersion>4.3.2.13293</d:NormalizedVersion>
+    <d:Authors>Andrew Arnott</d:Authors>
+    <d:Copyright></d:Copyright>
+    <d:Created m:type="Edm.DateTime">2013-10-20T22:57:23.207</d:Created>
+    <d:Dependencies>CodeContracts.Unofficial::net35|Microsoft.Net.Http::net40</d:Dependencies>
+    <d:Description>This package contains shared code for other NuGet packages, and contains no public API in and of itself.</d:Description>
+    <d:DownloadCount m:type="Edm.Int32">2173585</d:DownloadCount>
+    <d:GalleryDetailsUrl>https://www.nuget.org/packages/DotNetOpenAuth.Core/4.3.2.13293</d:GalleryDetailsUrl>
+    <d:IconUrl>https://github.com/AArnott/dotnetopenid/raw/v3.4/doc/logo/dnoa-logo_32x32.png</d:IconUrl>
+    <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+    <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+    <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+    <d:Language>en-US</d:Language>
+    <d:LastUpdated m:type="Edm.DateTime">2015-09-21T11:45:51.12</d:LastUpdated>
+    <d:Published m:type="Edm.DateTime">2013-10-20T22:57:23.207</d:Published>
+    <d:PackageHash>fywW/2FVl1/T1N8eFIp0MhcYsMYNvrIMkSg55m6Ve84TNGr2JBZipbTIK5WKgHHWefClRVrgZY1Mek1AmuQhLQ==</d:PackageHash>
+    <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+    <d:PackageSize m:type="Edm.Int64">16262</d:PackageSize>
+    <d:ProjectUrl>http://www.dotnetopenauth.net/</d:ProjectUrl>
+    <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/DotNetOpenAuth.Core/4.3.2.13293</d:ReportAbuseUrl>
+    <d:ReleaseNotes></d:ReleaseNotes>
+    <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+    <d:Summary>Shared library implementing the messaging pipeline used by auxiliary DotNetOpenAuth libraries.</d:Summary>
+    <d:Tags></d:Tags>
+    <d:Title>DotNetOpenAuth Core</d:Title>
+    <d:VersionDownloadCount m:type="Edm.Int32">15476</d:VersionDownloadCount>
+    <d:MinClientVersion></d:MinClientVersion>
+    <d:LastEdited m:null="true" />
+    <d:LicenseUrl>http://www.opensource.org/licenses/ms-pl.html</d:LicenseUrl>
+    <d:LicenseNames>MS-PL</d:LicenseNames>
+    <d:LicenseReportUrl></d:LicenseReportUrl>
+  </m:properties>
+</entry>

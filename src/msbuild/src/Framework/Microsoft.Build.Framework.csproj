@@ -1,0 +1,54 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>$(LibraryTargetFrameworks)</TargetFrameworks>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <GenerateReferenceAssemblySource>true</GenerateReferenceAssemblySource>
+    <CreateTlb>true</CreateTlb>
+    <IsPackable>true</IsPackable>
+    <PackageDescription>This package contains the $(MSBuildProjectName) assembly which is a common assembly used by other MSBuild assemblies.</PackageDescription>
+    <IncludeSatelliteOutputInPack>false</IncludeSatelliteOutputInPack>
+    <ApplyNgenOptimization Condition="'$(TargetFramework)' == '$(FullFrameworkTFM)'">full</ApplyNgenOptimization>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.Collections" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' != '.NETFramework'">
+    <PackageReference Include="System.Security.Permissions" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
+    <!-- Promote CompilerServices.Unsafe from the old version we get from System.Memory on net472. -->
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" />
+    <PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" />
+    <Reference Include="System.Xaml" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETStandard'">
+    <!-- Need Win32 API on .NET Standard to ping registry for some methods in ToolLocationHelper -->
+    <PackageReference Include="Microsoft.Win32.Registry" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Shared\Constants.cs">
+      <Link>Shared\Constants.cs</Link>
+    </Compile>
+    <Compile Include="..\Shared\BinaryReaderExtensions.cs">
+      <Link>Shared\BinaryReaderExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Shared\BinaryWriterExtensions.cs">
+      <Link>Shared\BinaryWriterExtensions.cs</Link>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' != '.NETFramework'">
+    <Compile Remove="XamlTypes\**" />
+    <EmbeddedResource Remove="XamlTypes\**" />
+    <None Remove="XamlTypes\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <RCResourceFile Include="native.rc" />
+  </ItemGroup>
+</Project>

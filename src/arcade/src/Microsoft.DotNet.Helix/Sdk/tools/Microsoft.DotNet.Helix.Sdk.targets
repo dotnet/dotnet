@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
+
+  <Import Project="$(MSBuildThisFileDirectory)*/*.props"/>
+
+  <PropertyGroup>
+    <!--
+      Set by Microsoft.Common.targets, some targets must be removed while others are left as standard extension mechanisms.
+
+      We don't need to compile anything, but we want to still resolve project references to allow MSBuild extensions through PackageReferences.
+    -->
+    <CoreBuildDependsOn>
+      BuildOnlySettings;
+      PrepareForBuild;
+      PreBuildEvent;
+      ResolveReferences;
+      PostBuildEvent
+    </CoreBuildDependsOn>
+
+    <PrepareForBuildDependsOn></PrepareForBuildDependsOn>
+
+    <ResolveReferencesDependsOn>
+      BeforeResolveReferences;
+      AssignProjectConfiguration;
+      ResolveProjectReferences;
+      FindInvalidProjectReferences;
+      AfterResolveReferences
+    </ResolveReferencesDependsOn>
+
+    <CleanDependsOn>
+      BeforeClean;
+      UnmanagedUnregistration;
+      CoreClean;
+      PrepareProjectReferences;
+      CleanPublishFolder;
+      AfterClean
+    </CleanDependsOn>
+  </PropertyGroup>
+
+  <Target Name="PrepareForBuild"
+          DependsOnTargets="$(PrepareForBuildDependsOn)" />
+
+  <Target Name="Build"
+          DependsOnTargets="$(BuildDependsOn)"/>
+
+  <PropertyGroup>
+    <TestDependsOn>
+      Build;
+      BeforeTest;
+      CoreTest;
+      AfterTest;
+    </TestDependsOn>
+  </PropertyGroup>
+
+  <Target Name="BeforeTest"/>
+
+  <Target Name="Test" DependsOnTargets="$(TestDependsOn)"/>
+
+  <Target Name="AfterTest"/>
+
+
+  <PropertyGroup>
+    <!-- Normalize the Build value so the server normalization doesn't cause our URL generation to be bad. -->
+    <HelixBuild>$(HelixBuild.ToLower().Replace('-', '.'))</HelixBuild>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <HelixSdkTargets Condition="'$(HelixTargetQueue)' != ''">$(MSBuildThisFileDirectory)Microsoft.DotNet.Helix.Sdk.MonoQueue.targets</HelixSdkTargets>
+    <HelixSdkTargets Condition="'$(HelixTargetQueue)' == ''">$(MSBuildThisFileDirectory)Microsoft.DotNet.Helix.Sdk.MultiQueue.targets</HelixSdkTargets>
+  </PropertyGroup>
+
+  <Import Project="$(HelixSdkTargets)"/>
+
+</Project>

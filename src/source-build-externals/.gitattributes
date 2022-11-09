@@ -1,0 +1,4 @@
+* text=auto
+
+# patch files need lf line-endings, even on Windows
+*.patch text eol=lf

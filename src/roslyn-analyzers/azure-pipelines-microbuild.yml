@@ -1,0 +1,93 @@
+# Branches that trigger a build on commit
+trigger:
+  - main
+  - release/*
+  - features/*
+  - 2.9.x
+
+variables:
+  - name: _TeamName
+    value: Roslyn
+  - name: _DotNetArtifactsCategory
+    value: .NETCore
+  - name: _DotNetValidationArtifactsCategory
+    value: .NETCoreValidation
+  - name: Codeql.Enabled
+    value: true
+  - group: DotNet-Roslyn-SDLValidation-Params
+  - group: DotNet-Blob-Feed
+  - group: DotNet-Symbol-Server-Pats
+  - group: DotNet-Versions-Publish
+  - group: ManagedLanguageSecrets
+
+stages:
+- stage: build
+  displayName: Build
+  jobs:
+  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
+    - template: /eng/common/templates/job/onelocbuild.yml
+      parameters:
+        MirrorRepo: roslyn-analyzers
+        LclSource: lclFilesfromPackage
+        LclPackageId: 'LCL-JUNO-PROD-ROSANLZR'
+  - template: /eng/common/templates/jobs/jobs.yml
+    parameters:
+      enableMicrobuild: true
+      enablePublishBuildArtifacts: true
+      enablePublishTestResults: true
+      enablePublishBuildAssets: true
+      enablePublishUsingPipelines: true
+      enableTelemetry: true
+      enableSourceBuild: true
+      jobs:
+      - job: Signed_Build
+        pool:
+          name: NetCore1ESPool-Internal
+          demands: ImageOverride -equals windows.vs2022preview.amd64
+        variables:
+          - group: DotNet-Blob-Feed
+          - group: Publish-Build-Assets
+          - name: _BuildConfig
+            value: Release
+          - name: _SignType
+            value: real
+        steps:
+        - checkout: self
+          clean: true
+        - script: eng\common\CIBuild.cmd
+                    -configuration $(_BuildConfig)
+                    /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
+                    /p:DotNetSignType=$(_SignType)
+                    /p:DotNetSymbolServerTokenMsdl=$(microsoft-symbol-server-pat)
+                    /p:DotNetSymbolServerTokenSymWeb=$(symweb-symbol-server-pat)
+                    /p:PublishToSymbolServer=true
+                    /p:DotNetPublishToBlobFeed=true
+                    /p:DotNetPublishBlobFeedKey=$(dotnetfeed-storage-access-key-1)
+                    /p:DotNetPublishBlobFeedUrl=https://dotnetfeed.blob.core.windows.net/dotnet-core/index.json
+                    /p:DotNetArtifactsCategory=$(_DotNetArtifactsCategory)
+                    /p:DotnetPublishUsingPipelines=true
+          displayName: Build and Test
+
+        # Archive NuGet packages to DevOps.
+        - task: PublishBuildArtifacts@1
+          displayName: Publish Artifact Packages
+          inputs:
+            PathtoPublish: 'artifacts\packages\$(_BuildConfig)'
+            ArtifactName: 'Packages'
+          condition: succeeded()
+
+        # Archive VSIX packages to DevOps.
+        - task: PublishBuildArtifacts@1
+          displayName: Publish Artifact VSIXes
+          inputs:
+            PathtoPublish: 'artifacts\VSSetup\$(_BuildConfig)'
+            ArtifactName: 'VSIXes'
+          condition: succeeded()
+
+- template: eng\common\templates\post-build\post-build.yml
+  parameters:
+    publishingInfraVersion: 3
+    enableSymbolValidation: false
+    enableSigningValidation: false
+    enableSourceLinkValidation: false
+    enableNugetValidation: false

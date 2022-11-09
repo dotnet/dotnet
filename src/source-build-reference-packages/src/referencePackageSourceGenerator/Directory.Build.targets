@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <Target Name="GetGenApiDlls">
+    <Message Text="REF DLLS: %(GenApiRefDlls.RecursiveDir)" Importance="Low"/>
+    <Message Text="LIB DLLS: %(GenApiLibDlls.RecursiveDir)" Importance="Low"/>
+    <ItemGroup>
+        <CorrelatingLibDlls Include="$([System.String]::Copy('%(GenApiRefDlls.Identity)').Replace('/ref/','/lib/'))" />
+        <GenApiLibDlls Remove="@(CorrelatingLibDlls)" />
+        <GenApiDlls Include="@(GenApiRefDlls)" />
+        <GenApiDlls Include="@(GenApiLibDlls)" />
+    </ItemGroup>
+
+    <Message Text="COR DLLS: %(CorrelatingLibDlls.Identity)" Importance="Low"/>
+    <Message Text="NEW DLLS: %(GenApiDlls.RecursiveDir)" Importance="Low"/>
+  </Target>
+</Project>

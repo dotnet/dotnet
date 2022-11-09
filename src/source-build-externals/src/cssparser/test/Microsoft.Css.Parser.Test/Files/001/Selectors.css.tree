@@ -1,0 +1,468 @@
+StyleSheet
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    img
+                PseudoClassFunctionSelector
+                    Colon    :
+                    Function
+                        Function    nth-of-type(
+                        FunctionArgument
+                            NumericalValue
+                                Number    2
+                            Identifier    n
+                            NumericalValue
+                                Number    +1
+                        CloseFunctionBrace    )
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    float
+                Colon    :
+                Identifier    right
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    img
+                PseudoClassFunctionSelector
+                    Colon    :
+                    Function
+                        Function    nth-of-type(
+                        FunctionArgument
+                            NumericalValue
+                                Number    2
+                            Identifier    n
+                        CloseFunctionBrace    )
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    float
+                Colon    :
+                Identifier    left
+                Semicolon    ;
+            CloseCurlyBrace    }
+    CComment
+        OpenCComment    /*
+        CommentText    Escaped chars
+        CloseCComment    */
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    h\1
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    color
+                Colon    :
+                Identifier    blue
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    B\26 W\3F
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    boo
+                Colon    :
+                FunctionColor
+                    Function    rgb(
+                    FunctionArgument
+                        NumericalValue
+                            Number    255
+                        Comma    ,
+                    FunctionArgument
+                        NumericalValue
+                            Number    17
+                        Comma    ,
+                    FunctionArgument
+                        NumericalValue
+                            Number    26
+                    CloseFunctionBrace    )
+            CloseCurlyBrace    }
+    CComment
+        OpenCComment    /*
+        CommentText    Basic selectors
+        CloseCComment    */
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    *
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    CComment
+        OpenCComment    /*
+        CommentText    a=0 b=0 c=0 d=0 -> specificity = 0,0,0,0
+        CloseCComment    */
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    li
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    CComment
+        OpenCComment    /*
+        CommentText    a=0 b=0 c=0 d=1 -> specificity = 0,0,0,1
+        CloseCComment    */
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    li
+                PseudoClassSelector
+                    Colon    :
+                    Identifier    first-line
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    CComment
+        OpenCComment    /*
+        CommentText    a=0 b=0 c=0 d=2 -> specificity = 0,0,0,2
+        CloseCComment    */
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    ul
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    li
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    CComment
+        OpenCComment    /*
+        CommentText    a=0 b=0 c=0 d=2 -> specificity = 0,0,0,2
+        CloseCComment    */
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    ul
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    ol
+                Plus    +
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    li
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    CComment
+        OpenCComment    /*
+        CommentText    a=0 b=0 c=0 d=3 -> specificity = 0,0,0,3
+        CloseCComment    */
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    h1
+                Plus    +
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    *
+                AttributeSelector
+                    OpenSquareBracket    [
+                    Namespace    
+                    Separator    
+                    Name    rel
+                    Equals    =
+                    Identifier    up
+                    CloseSquareBracket    ]
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    CComment
+        OpenCComment    /*
+        CommentText    a=0 b=0 c=1 d=1 -> specificity = 0,0,1,1
+        CloseCComment    */
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    ul
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    ol
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    li
+                ClassSelector
+                    Dot    .
+                    Identifier    red
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    CComment
+        OpenCComment    /*
+        CommentText    a=0 b=0 c=1 d=3 -> specificity = 0,0,1,3
+        CloseCComment    */
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    li
+                ClassSelector
+                    Dot    .
+                    Identifier    red
+                ClassSelector
+                    Dot    .
+                    Identifier    level
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    CComment
+        OpenCComment    /*
+        CommentText    a=0 b=0 c=2 d=1 -> specificity = 0,0,2,1
+        CloseCComment    */
+    RuleSet
+        Selector
+            SimpleSelector
+                IdSelector
+                    HashName    #x34y
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    CComment
+        OpenCComment    /*
+        CommentText    a=0 b=1 c=0 d=0 -> specificity = 0,1,0,0
+        CloseCComment    */
+    CComment
+        OpenCComment    /*
+        CommentText    Subject selectors
+        CloseCComment    */
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    E
+                SubjectSelector
+                    Bang    !
+                Greater    >
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    F
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                SubjectSelector
+                    Bang    !
+                Namespace    
+                Separator    
+                Name    E
+                Greater    >
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    F
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                SubjectSelector
+                    Bang    !
+                SubjectSelector (UnexpectedBangInSelector:WholeItem)
+                    Bang    !
+                Namespace    
+                Separator    
+                Name    E
+                Greater    >
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    F
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    E
+                SubjectSelector
+                    Bang    !
+                SubjectSelector (UnexpectedBangInSelector:WholeItem)
+                    Bang    !
+                Greater    >
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    F
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    E
+            SimpleSelector
+                SubjectSelector
+                    Bang    !
+                Namespace    
+                Separator    
+                Name    F
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    E
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    F
+                SubjectSelector
+                    Bang    !
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    foo
+                PseudoClassSelector
+                    Colon    :
+                    Identifier    bar
+                SubjectSelector
+                    Bang    !
+            SimpleSelector
+                AttributeSelector
+                    OpenSquareBracket    [
+                    Namespace    
+                    Separator    
+                    Name    baz
+                    CloseSquareBracket    ]
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                SubjectSelector
+                    Bang    !
+                ClassSelector
+                    Dot    .
+                    Identifier    foo
+                PseudoClassSelector
+                    Colon    :
+                    Identifier    bar
+            SimpleSelector
+                AttributeSelector
+                    OpenSquareBracket    [
+                    Namespace    
+                    Separator    
+                    Name    baz
+                    CloseSquareBracket    ]
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    foo
+                SubjectSelector
+                    Bang    !
+                PseudoClassSelector
+                    Colon    :
+                    Identifier    bar
+            SimpleSelector
+                AttributeSelector
+                    OpenSquareBracket    [
+                    Namespace    
+                    Separator    
+                    Name    baz
+                    CloseSquareBracket    ]
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                SubjectSelector
+                    Bang    !
+                ClassSelector
+                    Dot    .
+                    Identifier    foo
+                SubjectSelector (UnexpectedBangInSelector:WholeItem)
+                    Bang    !
+                PseudoClassSelector
+                    Colon    :
+                    Identifier    bar
+                SubjectSelector (UnexpectedBangInSelector:WholeItem)
+                    Bang    !
+                AttributeSelector
+                    OpenSquareBracket    [
+                    Namespace    
+                    Separator    
+                    Name    baz
+                    CloseSquareBracket    ]
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                SubjectSelector
+                    Bang    !
+                SubjectSelector (UnexpectedBangInSelector:WholeItem)
+                    Bang    !
+            SimpleSelector
+                SubjectSelector
+                    Bang    !
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                SubjectSelector
+                    Bang    !
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }

@@ -1,0 +1,33 @@
+#nullable enable
+const Microsoft.TestPlatform.AdapterUtilities.HierarchyConstants.HierarchyLabel = "Hierarchy" -> string!
+const Microsoft.TestPlatform.AdapterUtilities.HierarchyConstants.HierarchyPropertyId = "TestCase.Hierarchy" -> string!
+const Microsoft.TestPlatform.AdapterUtilities.HierarchyConstants.Levels.ContainerIndex = 0 -> int
+const Microsoft.TestPlatform.AdapterUtilities.HierarchyConstants.Levels.NamespaceIndex = 1 -> int
+const Microsoft.TestPlatform.AdapterUtilities.HierarchyConstants.Levels.ClassIndex = 2 -> int
+const Microsoft.TestPlatform.AdapterUtilities.HierarchyConstants.Levels.TestGroupIndex = 3 -> int
+const Microsoft.TestPlatform.AdapterUtilities.HierarchyConstants.Levels.TotalLevelCount = 4 -> int
+const Microsoft.TestPlatform.AdapterUtilities.ManagedNameConstants.ManagedMethodLabel = "ManagedMethod" -> string!
+const Microsoft.TestPlatform.AdapterUtilities.ManagedNameConstants.ManagedMethodPropertyId = "TestCase.ManagedMethod" -> string!
+const Microsoft.TestPlatform.AdapterUtilities.ManagedNameConstants.ManagedTypeLabel = "ManagedType" -> string!
+const Microsoft.TestPlatform.AdapterUtilities.ManagedNameConstants.ManagedTypePropertyId = "TestCase.ManagedType" -> string!
+Microsoft.TestPlatform.AdapterUtilities.HierarchyConstants
+Microsoft.TestPlatform.AdapterUtilities.HierarchyConstants.Levels
+Microsoft.TestPlatform.AdapterUtilities.ManagedNameConstants
+Microsoft.TestPlatform.AdapterUtilities.ManagedNameUtilities.InvalidManagedNameException
+Microsoft.TestPlatform.AdapterUtilities.ManagedNameUtilities.InvalidManagedNameException.InvalidManagedNameException(string? message) -> void
+Microsoft.TestPlatform.AdapterUtilities.ManagedNameUtilities.InvalidManagedNameException.InvalidManagedNameException(System.Runtime.Serialization.SerializationInfo! info, System.Runtime.Serialization.StreamingContext context) -> void
+Microsoft.TestPlatform.AdapterUtilities.ManagedNameUtilities.ManagedNameHelper
+Microsoft.TestPlatform.AdapterUtilities.ManagedNameUtilities.ManagedNameParser
+Microsoft.TestPlatform.AdapterUtilities.ManagedNameUtilities.ManagedNameParser.ManagedNameParser() -> void
+Microsoft.TestPlatform.AdapterUtilities.TestIdProvider
+Microsoft.TestPlatform.AdapterUtilities.TestIdProvider.AppendString(string! str) -> void
+Microsoft.TestPlatform.AdapterUtilities.TestIdProvider.AppendBytes(byte[]! bytes) -> void
+Microsoft.TestPlatform.AdapterUtilities.TestIdProvider.GetHash() -> byte[]!
+Microsoft.TestPlatform.AdapterUtilities.TestIdProvider.GetId() -> System.Guid
+Microsoft.TestPlatform.AdapterUtilities.TestIdProvider.TestIdProvider() -> void
+static Microsoft.TestPlatform.AdapterUtilities.ManagedNameUtilities.ManagedNameHelper.GetManagedName(System.Reflection.MethodBase! method, out string! managedTypeName, out string! managedMethodName) -> void
+static Microsoft.TestPlatform.AdapterUtilities.ManagedNameUtilities.ManagedNameHelper.GetManagedName(System.Reflection.MethodBase! method, out string! managedTypeName, out string! managedMethodName, out string?[]! hierarchyValues) -> void
+static Microsoft.TestPlatform.AdapterUtilities.ManagedNameUtilities.ManagedNameHelper.GetManagedHierarchy(System.Reflection.MethodBase! method) -> string?[]!
+static Microsoft.TestPlatform.AdapterUtilities.ManagedNameUtilities.ManagedNameHelper.GetMethod(System.Reflection.Assembly! assembly, string! managedTypeName, string! managedMethodName) -> System.Reflection.MethodBase!
+static Microsoft.TestPlatform.AdapterUtilities.ManagedNameUtilities.ManagedNameParser.ParseManagedMethodName(string! managedMethodName, out string! methodName, out int arity, out string![]? parameterTypes) -> void
+static Microsoft.TestPlatform.AdapterUtilities.ManagedNameUtilities.ManagedNameParser.ParseManagedTypeName(string! managedTypeName, out string! namespaceName, out string! typeName) -> void

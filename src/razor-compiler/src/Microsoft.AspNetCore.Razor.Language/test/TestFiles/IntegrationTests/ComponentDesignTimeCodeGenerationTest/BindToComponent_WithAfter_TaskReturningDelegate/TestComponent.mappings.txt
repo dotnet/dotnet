@@ -1,0 +1,18 @@
+Source Location: (30:0,30 [11] x:\dir\subdir\Test\TestComponent.cshtml)
+|ParentValue|
+Generated Location: (1022:25,30 [11] )
+|ParentValue|
+
+Source Location: (81:1,7 [101] x:\dir\subdir\Test\TestComponent.cshtml)
+|
+    public int ParentValue { get; set; } = 42;
+
+    public Task Update() => Task.CompletedTask;
+|
+Generated Location: (1811:47,7 [101] )
+|
+    public int ParentValue { get; set; } = 42;
+
+    public Task Update() => Task.CompletedTask;
+|
+

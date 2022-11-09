@@ -1,0 +1,25 @@
+<Project>
+  <PropertyGroup>
+    <GitHubRepositoryName>razor-compiler</GitHubRepositoryName>
+    <SourceBuildManagedOnly>true</SourceBuildManagedOnly>
+    <CloneSubmodulesToInnerSourceBuildRepo>false</CloneSubmodulesToInnerSourceBuildRepo>
+  </PropertyGroup>
+
+  <!--
+    Remove inner source .globalconfig file as both the inner and outer config files get loaded and cause a conflict.
+    Leaving the inner will cause all conflicting settings to be ignored.
+    https://docs.microsoft.com/en-us/dotnet/fundamentals/code-analysis/configuration-files#general-options
+  -->
+  <Target Name="RemoveInnerGlobalConfig"
+          DependsOnTargets="PrepareInnerSourceBuildRepoRoot"
+          BeforeTargets="RunInnerSourceBuildCommand">
+    <Delete Files="$(InnerSourceBuildRepoRoot).globalconfig" />
+  </Target>
+
+  <Target Name="CustomizeInnerBuildArgs"
+          BeforeTargets="GetSourceBuildCommandConfiguration">
+    <PropertyGroup>
+      <InnerBuildArgs>$(InnerBuildArgs) /p:SourceBuildRuntimeIdentifier=$(TargetRuntimeIdentifier)</InnerBuildArgs>
+    </PropertyGroup>
+  </Target>
+</Project>

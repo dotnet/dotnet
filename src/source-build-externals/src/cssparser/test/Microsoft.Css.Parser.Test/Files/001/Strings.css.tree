@@ -1,0 +1,81 @@
+StyleSheet
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    a
+                IdSelector
+                    HashName    #b
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    a
+                Colon    :
+                String    "this is a 'string'"
+                Semicolon    ;
+            Declaration
+                Identifier    b
+                Colon    :
+                String    "this is a \"string\""
+                Semicolon    ;
+            Declaration
+                Identifier    c
+                Colon    :
+                String    'this is a "string"'
+                Semicolon    ;
+            Declaration
+                Identifier    d
+                Colon    :
+                String    'this is a \'string\''
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    li
+        RuleBlock (CloseCurlyBraceMissing:AfterItem)
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    list-style
+                Colon    :
+                UrlItem
+                    Url (CloseFunctionBraceMissing:AfterItem)    url(
+                    InvalidString    "http://www.example.com/redball.png) disc }
+                Identifier    li
+    RuleSet (SelectorBeforeRuleBlockMissing:BeforeItem)
+        RuleBlock (CloseCurlyBraceMissing:AfterItem)
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    list-style
+                Colon    :
+                UrlItem
+                    Url (CloseFunctionBraceMissing:AfterItem)    url(
+                    InvalidString    'http://www.example.com/redball.png) disc }
+                Identifier    li
+    RuleSet (SelectorBeforeRuleBlockMissing:BeforeItem)
+        RuleBlock (CloseCurlyBraceMissing:AfterItem)
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    list-style
+                Colon    :
+                UrlItem
+                    Url (CloseFunctionBraceMissing:AfterItem)    url(
+                    InvalidString    "http://www.example.com/redball.png') disc }
+                Identifier    li
+    RuleSet (SelectorBeforeRuleBlockMissing:BeforeItem)
+        RuleBlock (CloseCurlyBraceMissing:AfterItem)
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    list-style
+                Colon    :
+                UrlItem
+                    Url (CloseFunctionBraceMissing:AfterItem)    url(
+                    InvalidString    'http://www.example.com/redball.png") disc }
+                Identifier    li
+    RuleSet (SelectorBeforeRuleBlockMissing:BeforeItem)
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }

@@ -1,0 +1,292 @@
+StyleSheet
+    CComment
+        OpenCComment    /*
+        CommentText    BEGIN EXTERNAL SOURCE
+        CloseCComment    */
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    foo
+        RuleBlock (CloseCurlyBraceMissing:AfterItem)
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    color
+                Colon    :
+                Identifier    red
+                Semicolon    ;
+    ScopeBlocker    /* END EXTERNAL SOURCE */
+    CComment
+        OpenCComment    /*
+        CommentText    BEGIN EXTERNAL SOURCE
+        CloseCComment    */
+    RuleSet (OpenCurlyBraceMissingForRule:AfterItem)
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    background-color
+                PseudoClassSelector
+                    Colon (PseudoClassNameMissing:AfterItem)    :
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    blue
+                Semicolon (SimpleSelectorExpected:WholeItem)    ;
+    CloseCurlyBrace (UnexpectedToken:WholeItem)    }
+    ScopeBlocker    /* END EXTERNAL SOURCE */
+    CComment
+        OpenCComment    /*
+        CommentText    Unclosed comment
+        CloseCComment    */
+    CComment
+        OpenCComment    /*
+        CommentText    Comment1
+        CloseCComment    */
+    CComment (CloseCommentMissing:AfterItem)
+        OpenCComment    /*
+        CommentText    Comment2
+    ScopeBlocker    /* END EXTERNAL SOURCE */
+    CComment
+        OpenCComment    /*
+        CommentText    Unclosed string
+        CloseCComment    */
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    foo
+        RuleBlock (CloseCurlyBraceMissing:AfterItem)
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    color
+                Colon    :
+                InvalidString    "red\
+    ScopeBlocker    /* END EXTERNAL SOURCE */
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    foo
+        RuleBlock (CloseCurlyBraceMissing:AfterItem)
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    color
+                Colon    :
+                InvalidString    "red
+    ScopeBlocker    /* END EXTERNAL SOURCE */
+    CComment
+        OpenCComment    /*
+        CommentText    Nested blocks
+        CloseCComment    */
+    MediaDirective
+        At    @
+        Identifier    media
+        MediaQuery
+            Identifier    screen
+        StyleSheet (CloseCurlyBraceMissing:AfterItem)
+            OpenCurlyBrace    {
+            MediaDirective
+                At    @
+                Identifier    media
+                MediaQuery
+                    Identifier    print
+                StyleSheet (CloseCurlyBraceMissing:AfterItem)
+                    OpenCurlyBrace    {
+                    RuleSet
+                        Selector
+                            SimpleSelector
+                                ClassSelector
+                                    Dot    .
+                                    Identifier    foo
+                        RuleBlock (CloseCurlyBraceMissing:AfterItem)
+                            OpenCurlyBrace    {
+                            Declaration
+                                Identifier    color
+                                Colon    :
+                                Identifier    red
+                                Semicolon    ;
+    ScopeBlocker    /* END EXTERNAL SOURCE */
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    bar
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    color
+                Colon    :
+                Identifier    blue
+                Semicolon    ;
+            CloseCurlyBrace    }
+    UnknownDirective
+        At (AtDirectiveNameMissing:AfterItem, AtDirectiveSemicolonMissing:AfterItem)    @
+    ScopeBlocker    /* END EXTERNAL SOURCE */
+    CharsetDirective (AtDirectiveSemicolonMissing:AfterItem)
+        At    @
+        Identifier (EncodingMissing:AfterItem)    charset
+    ScopeBlocker    /* END EXTERNAL SOURCE */
+    CharsetDirective (AtDirectiveSemicolonMissing:AfterItem)
+        At    @
+        Identifier    charset
+        InvalidString    "
+    ScopeBlocker    /* END EXTERNAL SOURCE */
+    CharsetDirective (AtDirectiveSemicolonMissing:AfterItem)
+        At    @
+        Identifier    charset
+        InvalidString    "foo
+    ScopeBlocker    /* END EXTERNAL SOURCE */
+    CharsetDirective (AtDirectiveSemicolonMissing:AfterItem)
+        At    @
+        Identifier    charset
+        String    "foo"
+    ScopeBlocker    /* END EXTERNAL SOURCE */
+    CharsetDirective
+        At    @
+        Identifier    charset
+        String    "foo"
+        Semicolon    ;
+    ScopeBlocker    /* END EXTERNAL SOURCE */
+    KeyFramesDirective
+        At    @
+        Identifier    keyframes
+        Identifier    foo
+        KeyFramesBlock (CloseCurlyBraceMissing:AfterItem)
+            OpenCurlyBrace    {
+    ScopeBlocker    /* END EXTERNAL SOURCE */
+    FontFaceDirective
+        At    @
+        Identifier    font-face
+        RuleBlock (CloseCurlyBraceMissing:AfterItem)
+            OpenCurlyBrace    {
+    ScopeBlocker    /* END EXTERNAL SOURCE */
+    ImportDirective (AtDirectiveSemicolonMissing:AfterItem)
+        At    @
+        Identifier (UrlImportMissing:AfterItem)    import
+    ScopeBlocker    /* END EXTERNAL SOURCE */
+    ImportDirective (AtDirectiveSemicolonMissing:AfterItem)
+        At    @
+        Identifier    import
+        UrlItem
+            Url (CloseFunctionBraceMissing:AfterItem)    url(
+    ScopeBlocker    /* END EXTERNAL SOURCE */
+    RuleSet (OpenCurlyBraceMissingForRule:AfterItem)
+        Selector
+            SimpleSelector
+                UnquotedUrlString (SimpleSelectorExpected:WholeItem)    @import
+            SimpleSelector
+                UrlItem (SimpleSelectorExpected:WholeItem)
+                    Url (CloseFunctionBraceMissing:AfterItem)    url(
+                    InvalidString    'foo.jpg
+    ScopeBlocker    /* END EXTERNAL SOURCE */
+    ImportDirective (AtDirectiveSemicolonMissing:AfterItem)
+        At    @
+        Identifier    import
+        UrlItem
+            Url (CloseFunctionBraceMissing:AfterItem)    url(
+            String    'foo.jpg'
+    ScopeBlocker    /* END EXTERNAL SOURCE */
+    ImportDirective (AtDirectiveSemicolonMissing:AfterItem)
+        At    @
+        Identifier    import
+        UrlItem
+            Url    url(
+            String    'foo.jpg'
+            CloseFunctionBrace    )
+    ScopeBlocker    /* END EXTERNAL SOURCE */
+    ImportDirective
+        At    @
+        Identifier    import
+        UrlItem
+            Url    url(
+            String    'foo.jpg'
+            CloseFunctionBrace    )
+        Semicolon    ;
+    ScopeBlocker    /* END EXTERNAL SOURCE */
+    RuleSet (OpenCurlyBraceMissingForRule:AfterItem)
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    foo
+    ScopeBlocker    /* END EXTERNAL SOURCE */
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    foo
+        RuleBlock (CloseCurlyBraceMissing:AfterItem)
+            OpenCurlyBrace    {
+    ScopeBlocker    /* END EXTERNAL SOURCE */
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    foo
+        RuleBlock (CloseCurlyBraceMissing:AfterItem)
+            OpenCurlyBrace    {
+            Declaration
+                Identifier (ColonMissingInDeclaration:AfterItem)    color
+    ScopeBlocker    /* END EXTERNAL SOURCE */
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    foo
+        RuleBlock (CloseCurlyBraceMissing:AfterItem)
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    color
+                Colon (PropertyValueMissing:AfterItem)    :
+    ScopeBlocker    /* END EXTERNAL SOURCE */
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    foo
+        RuleBlock (CloseCurlyBraceMissing:AfterItem)
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    color
+                Colon    :
+                Identifier    red
+    ScopeBlocker    /* END EXTERNAL SOURCE */
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    foo
+        RuleBlock (CloseCurlyBraceMissing:AfterItem)
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    color
+                Colon    :
+                Identifier    red
+                Semicolon    ;
+    ScopeBlocker    /* END EXTERNAL SOURCE */
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    foo
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    color
+                Colon    :
+                Identifier    red
+                Semicolon    ;
+            CloseCurlyBrace    }
+    ScopeBlocker    /* END EXTERNAL SOURCE */
+    ScopeBlocker    /* END EXTERNAL SOURCE */

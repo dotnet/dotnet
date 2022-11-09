@@ -1,0 +1,2330 @@
+StyleSheet
+    CComment
+        OpenCComment    /*
+        CommentText    modifications to modal dialog used by page gate
+        CloseCComment    */
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    PageGateModal
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    background
+                Colon    :
+                HexColorValue
+                    HashName    #FFF
+                Semicolon    ;
+            Declaration
+                Identifier    border
+                Colon    :
+                UnitValue
+                    Number    1
+                    Units    px
+                Identifier    solid
+                HexColorValue
+                    HashName    #35afe8
+                Semicolon    ;
+            Declaration
+                Identifier    padding
+                Colon    :
+                UnitValue
+                    Number    10
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    width
+                Colon    :
+                UnitValue
+                    Number    470
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    height
+                Colon    :
+                UnitValue
+                    Number    290
+                    Units    px
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    PageGateModalContent
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    padding
+                Colon    :
+                UnitValue
+                    Number    0
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    margin
+                Colon    :
+                UnitValue
+                    Number    0
+                    Units    px
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    PageGateLegal
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    text-align
+                Colon    :
+                Identifier    center
+                Semicolon    ;
+            Declaration
+                Identifier    width
+                Colon    :
+                UnitValue
+                    Number    100
+                    Units    %
+                Semicolon    ;
+            Declaration
+                Identifier    color
+                Colon    :
+                HexColorValue
+                    HashName    #000
+                Semicolon    ;
+            Declaration
+                Identifier    position
+                Colon    :
+                Identifier    absolute
+                Semicolon    ;
+            Declaration
+                Identifier    bottom
+                Colon    :
+                UnitValue
+                    Number    10
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    left
+                Colon    :
+                NumericalValue
+                    Number    0
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    PageGateSubtitle
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    padding
+                Colon    :
+                NumericalValue
+                    Number    0
+                UnitValue
+                    Number    80
+                    Units    px
+                NumericalValue
+                    Number    0
+                UnitValue
+                    Number    86
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    color
+                Colon    :
+                HexColorValue
+                    HashName    #5e5e5e
+                Semicolon    ;
+            Declaration
+                Identifier    margin
+                Colon    :
+                NumericalValue
+                    Number    0
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    PageGateButton
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    position
+                Colon    :
+                Identifier    absolute
+                Semicolon    ;
+            Declaration
+                Identifier    bottom
+                Colon    :
+                UnitValue
+                    Number    43
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    left
+                Colon    :
+                UnitValue
+                    Number    87
+                    Units    px
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    PageGateModalContent2
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    padding
+                Colon    :
+                UnitValue
+                    Number    0
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    margin
+                Colon    :
+                UnitValue
+                    Number    0
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    background
+                Colon    :
+                HexColorValue
+                    HashName    #d9e3ed
+                UrlItem
+                    Url    url(
+                    UnquotedUrlString    ../images/download_sl_bg_bottom.jpg
+                    CloseFunctionBrace    )
+                Identifier    no-repeat
+                Identifier    bottom
+                Semicolon    ;
+            Declaration
+                Identifier    position
+                Colon    :
+                Identifier    relative
+                Semicolon    ;
+            Declaration
+                Identifier    width
+                Colon    :
+                UnitValue
+                    Number    470
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    height
+                Colon    :
+                UnitValue
+                    Number    265
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    font-family
+                Colon    :
+                Identifier    Arial
+                Comma    ,
+                Identifier    Helvetica
+                Comma    ,
+                Identifier    sans-serif
+                Semicolon    ;
+            Declaration
+                Identifier    font-size
+                Colon    :
+                UnitValue
+                    Number    9
+                    Units    pt
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    PageGateModalContent2
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    p
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    line-height
+                Colon    :
+                UnitValue
+                    Number    140
+                    Units    %
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    PageGateModalContent2
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    img
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    display
+                Colon    :
+                Identifier    block
+                Semicolon    ;
+            Declaration
+                Identifier    border
+                Colon    :
+                Identifier    none
+                Semicolon    ;
+            CloseCurlyBrace    }
+    CComment
+        OpenCComment    /*
+        CommentText    links
+        CloseCComment    */
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    PageGateModalContent2
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    a
+                PseudoClassSelector
+                    Colon    :
+                    Identifier    link
+            Comma    ,
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    PageGateModalContent2
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    a
+                PseudoClassSelector
+                    Colon    :
+                    Identifier    visited
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    color
+                Colon    :
+                HexColorValue
+                    HashName    #006198
+                Semicolon    ;
+            Declaration
+                Identifier    text-decoration
+                Colon    :
+                Identifier    underline
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    PageGateModalContent2
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    a
+                PseudoClassSelector
+                    Colon    :
+                    Identifier    hover
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    text-decoration
+                Colon    :
+                Identifier    none
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    PageGateModalContent2
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    a
+                PseudoClassSelector
+                    Colon    :
+                    Identifier    active
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    color
+                Colon    :
+                HexColorValue
+                    HashName    #006198
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    PageGateModalMask
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    opacity
+                Colon    :
+                NumericalValue
+                    Number    .6
+                Semicolon    ;
+            Declaration
+                Identifier    filter
+                Colon    :
+                Function
+                    Function    alpha(
+                    FunctionArgument
+                        Identifier    opacity
+                        Equals    =
+                        NumericalValue
+                            Number    60
+                    CloseFunctionBrace    )
+                Semicolon    ;
+            Declaration
+                Identifier    background-color
+                Colon    :
+                HexColorValue
+                    HashName    #d1d1d1
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    PageGateModalTitle
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    height
+                Colon    :
+                UnitValue
+                    Number    25
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    background-image
+                Colon    :
+                UrlItem
+                    Url    url(
+                    UnquotedUrlString    ../images/download_sl_bg_top1.png
+                    CloseFunctionBrace    )
+                Semicolon    ;
+            Declaration
+                Identifier    background-repeat
+                Colon    :
+                Identifier    no-repeat
+                Semicolon    ;
+            CComment
+                OpenCComment    /*
+                CommentText    cursor: move;
+                CloseCComment    */
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    PageGateModalClose
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    position
+                Colon    :
+                Identifier    absolute
+                Semicolon    ;
+            Declaration
+                Identifier    top
+                Colon    :
+                UnitValue
+                    Number    20
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    right
+                Colon    :
+                UnitValue
+                    Number    20
+                    Units    px
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    PageGateModalClose
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    width
+                Colon    :
+                UnitValue
+                    Number    15
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    height
+                Colon    :
+                UnitValue
+                    Number    15
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    background-image
+                Colon    :
+                UrlItem
+                    Url    url(
+                    UnquotedUrlString    ../images/download_sl_close.png
+                    CloseFunctionBrace    )
+                Semicolon    ;
+            Declaration
+                Identifier    background-repeat
+                Colon    :
+                Identifier    no-repeat
+                Semicolon    ;
+            Declaration
+                Identifier    cursor
+                Colon    :
+                Identifier    pointer
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    PageGateModalFooter
+            Comma    ,
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    PageGateModalResize
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    display
+                Colon    :
+                Identifier    none
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    div
+                IdSelector
+                    HashName    #fancy_overlay
+            Comma    ,
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    div
+                IdSelector
+                    HashName    #fancy_wrap
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    height
+                Colon    :
+                UnitValue
+                    Number    100
+                    Units    %
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    div
+                IdSelector
+                    HashName    #fancy_overlay
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    position
+                Colon    :
+                Identifier    fixed
+                Semicolon    ;
+            Declaration
+                Identifier    top
+                Colon    :
+                NumericalValue
+                    Number    0
+                Semicolon    ;
+            Declaration
+                Identifier    left
+                Colon    :
+                NumericalValue
+                    Number    0
+                Semicolon    ;
+            Declaration
+                Identifier    width
+                Colon    :
+                UnitValue
+                    Number    100
+                    Units    %
+                Semicolon    ;
+            Declaration
+                Identifier    height
+                Colon    :
+                UnitValue
+                    Number    100
+                    Units    %
+                Semicolon    ;
+            Declaration
+                Identifier    background-color
+                Colon    :
+                HexColorValue
+                    HashName    #222
+                Semicolon    ;
+            Declaration
+                Identifier    display
+                Colon    :
+                Identifier    none
+                Semicolon    ;
+            Declaration
+                Identifier    z-index
+                Colon    :
+                NumericalValue
+                    Number    105
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    *
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    html
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    div
+                IdSelector
+                    HashName    #fancy_overlay
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    position
+                Colon    :
+                Identifier    absolute
+                Semicolon    ;
+            Declaration
+                Identifier    height
+                Colon    :
+                FunctionExpression
+                    Function    expression(
+                    FunctionArgument
+                        Identifier    document
+                        Dot    .
+                        Identifier    body
+                        Dot    .
+                        Identifier    scrollHeight
+                        Greater    >
+                        Identifier    document
+                        Dot    .
+                        Identifier    body
+                        Dot    .
+                        Identifier    offsetHeight
+                        Unknown    ?
+                        Identifier    document
+                        Dot    .
+                        Identifier    body
+                        Dot    .
+                        Identifier    scrollHeight
+                        Colon    :
+                        Identifier    document
+                        Dot    .
+                        Identifier    body
+                        Dot    .
+                        Identifier    offsetHeight
+                        Plus    +
+                        String    'px'
+                    CloseFunctionBrace    )
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    div
+                IdSelector
+                    HashName    #fancy_wrap
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    text-align
+                Colon    :
+                Identifier    left
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    div
+                IdSelector
+                    HashName    #fancy_loading
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    position
+                Colon    :
+                Identifier    absolute
+                Semicolon    ;
+            Declaration
+                Identifier    height
+                Colon    :
+                UnitValue
+                    Number    40
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    width
+                Colon    :
+                UnitValue
+                    Number    40
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    cursor
+                Colon    :
+                Identifier    pointer
+                Semicolon    ;
+            Declaration
+                Identifier    display
+                Colon    :
+                Identifier    none
+                Semicolon    ;
+            Declaration
+                Identifier    overflow
+                Colon    :
+                Identifier    hidden
+                Semicolon    ;
+            Declaration
+                Identifier    background
+                Colon    :
+                Identifier    transparent
+                Semicolon    ;
+            Declaration
+                Identifier    z-index
+                Colon    :
+                NumericalValue
+                    Number    106
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    div
+                IdSelector
+                    HashName    #fancy_loading
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    div
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    position
+                Colon    :
+                Identifier    absolute
+                Semicolon    ;
+            Declaration
+                Identifier    top
+                Colon    :
+                NumericalValue
+                    Number    0
+                Semicolon    ;
+            Declaration
+                Identifier    left
+                Colon    :
+                NumericalValue
+                    Number    0
+                Semicolon    ;
+            Declaration
+                Identifier    width
+                Colon    :
+                UnitValue
+                    Number    40
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    height
+                Colon    :
+                UnitValue
+                    Number    480
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    background
+                Colon    :
+                Identifier    transparent
+                UrlItem
+                    Url    url(
+                    String    '/pagegate/images/modal/fancy_progress.png'
+                    CloseFunctionBrace    )
+                Identifier    no-repeat
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    div
+                IdSelector
+                    HashName    #fancy_loading_overlay
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    position
+                Colon    :
+                Identifier    absolute
+                Semicolon    ;
+            Declaration
+                Identifier    background-color
+                Colon    :
+                HexColorValue
+                    HashName    #FFF
+                Semicolon    ;
+            Declaration
+                Identifier    z-index
+                Colon    :
+                NumericalValue
+                    Number    105
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    div
+                IdSelector
+                    HashName    #fancy_loading_icon
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    position
+                Colon    :
+                Identifier    absolute
+                Semicolon    ;
+            Declaration
+                Identifier    background
+                Colon    :
+                UrlItem
+                    Url    url(
+                    String    '/pagegate/images/modal/fancy_loading.gif'
+                    CloseFunctionBrace    )
+                Identifier    no-repeat
+                Semicolon    ;
+            Declaration
+                Identifier    z-index
+                Colon    :
+                NumericalValue
+                    Number    35
+                Semicolon    ;
+            Declaration
+                Identifier    width
+                Colon    :
+                UnitValue
+                    Number    16
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    height
+                Colon    :
+                UnitValue
+                    Number    16
+                    Units    px
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    div
+                IdSelector
+                    HashName    #fancy_outer
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    position
+                Colon    :
+                Identifier    absolute
+                Semicolon    ;
+            Declaration
+                Identifier    top
+                Colon    :
+                NumericalValue
+                    Number    0
+                Semicolon    ;
+            Declaration
+                Identifier    left
+                Colon    :
+                NumericalValue
+                    Number    0
+                Semicolon    ;
+            Declaration
+                Identifier    z-index
+                Colon    :
+                NumericalValue
+                    Number    106
+                Semicolon    ;
+            Declaration
+                Identifier    padding
+                Colon    :
+                UnitValue
+                    Number    18
+                    Units    px
+                UnitValue
+                    Number    18
+                    Units    px
+                UnitValue
+                    Number    33
+                    Units    px
+                UnitValue
+                    Number    18
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    margin
+                Colon    :
+                NumericalValue
+                    Number    0
+                Semicolon    ;
+            Declaration
+                Identifier    overflow
+                Colon    :
+                Identifier    hidden
+                Semicolon    ;
+            Declaration
+                Identifier    background
+                Colon    :
+                Identifier    transparent
+                Semicolon    ;
+            Declaration
+                Identifier    display
+                Colon    :
+                Identifier    none
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    div
+                IdSelector
+                    HashName    #fancy_inner
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    position
+                Colon    :
+                Identifier    relative
+                Semicolon    ;
+            Declaration
+                Identifier    width
+                Colon    :
+                UnitValue
+                    Number    585
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    height
+                Colon    :
+                UnitValue
+                    Number    100
+                    Units    %
+                Semicolon    ;
+            Declaration
+                Identifier    background
+                Colon    :
+                HexColorValue
+                    HashName    #FFF
+                Semicolon    ;
+            Declaration
+                Identifier    border
+                Colon    :
+                UnitValue
+                    Number    1
+                    Units    px
+                Identifier    solid
+                HexColorValue
+                    HashName    #CAC9C9
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    div
+                IdSelector
+                    HashName    #fancy_content
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    margin
+                Colon    :
+                NumericalValue
+                    Number    0
+                Semicolon    ;
+            Declaration
+                Identifier    z-index
+                Colon    :
+                NumericalValue
+                    Number    100
+                Semicolon    ;
+            Declaration
+                Identifier    position
+                Colon    :
+                Identifier    absolute
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    div
+                IdSelector
+                    HashName    #fancy_div
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    background
+                Colon    :
+                HexColorValue
+                    HashName    #000
+                Semicolon    ;
+            Declaration
+                Identifier    color
+                Colon    :
+                HexColorValue
+                    HashName    #FFF
+                Semicolon    ;
+            Declaration
+                Identifier    height
+                Colon    :
+                UnitValue
+                    Number    100
+                    Units    %
+                Semicolon    ;
+            Declaration
+                Identifier    width
+                Colon    :
+                UnitValue
+                    Number    100
+                    Units    %
+                Semicolon    ;
+            Declaration
+                Identifier    z-index
+                Colon    :
+                NumericalValue
+                    Number    100
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    img
+                IdSelector
+                    HashName    #fancy_img
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    position
+                Colon    :
+                Identifier    absolute
+                Semicolon    ;
+            Declaration
+                Identifier    top
+                Colon    :
+                NumericalValue
+                    Number    0
+                Semicolon    ;
+            Declaration
+                Identifier    left
+                Colon    :
+                NumericalValue
+                    Number    0
+                Semicolon    ;
+            Declaration
+                Identifier    border
+                Colon    :
+                NumericalValue
+                    Number    0
+                Semicolon    ;
+            Declaration
+                Identifier    padding
+                Colon    :
+                NumericalValue
+                    Number    0
+                Semicolon    ;
+            Declaration
+                Identifier    margin
+                Colon    :
+                NumericalValue
+                    Number    0
+                Semicolon    ;
+            Declaration
+                Identifier    z-index
+                Colon    :
+                NumericalValue
+                    Number    100
+                Semicolon    ;
+            Declaration
+                Identifier    width
+                Colon    :
+                UnitValue
+                    Number    100
+                    Units    %
+                Semicolon    ;
+            Declaration
+                Identifier    height
+                Colon    :
+                UnitValue
+                    Number    100
+                    Units    %
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    div
+                IdSelector
+                    HashName    #fancy_close
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    position
+                Colon    :
+                Identifier    absolute
+                Semicolon    ;
+            Declaration
+                Identifier    top
+                Colon    :
+                UnitValue
+                    Number    -12
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    right
+                Colon    :
+                UnitValue
+                    Number    -15
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    height
+                Colon    :
+                UnitValue
+                    Number    31
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    width
+                Colon    :
+                UnitValue
+                    Number    32
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    background
+                Colon    :
+                UrlItem
+                    Url    url(
+                    String    '/pagegate/images/modal/icon_modal_close.png'
+                    CloseFunctionBrace    )
+                Identifier    top
+                Identifier    left
+                Identifier    no-repeat
+                Semicolon    ;
+            Declaration
+                Identifier    cursor
+                Colon    :
+                Identifier    pointer
+                Semicolon    ;
+            Declaration
+                Identifier    z-index
+                Colon    :
+                NumericalValue
+                    Number    181
+                Semicolon    ;
+            Declaration
+                Identifier    display
+                Colon    :
+                Identifier    none
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                IdSelector
+                    HashName    #fancy_frame
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    position
+                Colon    :
+                Identifier    relative
+                Semicolon    ;
+            Declaration
+                Identifier    width
+                Colon    :
+                UnitValue
+                    Number    470
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    height
+                Colon    :
+                UnitValue
+                    Number    265
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    display
+                Colon    :
+                Identifier    none
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                IdSelector
+                    HashName    #fancy_ajax
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    width
+                Colon    :
+                UnitValue
+                    Number    100
+                    Units    %
+                Semicolon    ;
+            Declaration
+                Identifier    height
+                Colon    :
+                UnitValue
+                    Number    100
+                    Units    %
+                Semicolon    ;
+            Declaration
+                Identifier    overflow
+                Colon    :
+                Identifier    auto
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    a
+                IdSelector
+                    HashName    #fancy_left
+            Comma    ,
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    a
+                IdSelector
+                    HashName    #fancy_right
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    position
+                Colon    :
+                Identifier    absolute
+                Semicolon    ;
+            Declaration
+                Identifier    bottom
+                Colon    :
+                UnitValue
+                    Number    0
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    height
+                Colon    :
+                UnitValue
+                    Number    100
+                    Units    %
+                Semicolon    ;
+            Declaration
+                Identifier    width
+                Colon    :
+                UnitValue
+                    Number    35
+                    Units    %
+                Semicolon    ;
+            Declaration
+                Identifier    cursor
+                Colon    :
+                Identifier    pointer
+                Semicolon    ;
+            Declaration
+                Identifier    z-index
+                Colon    :
+                NumericalValue
+                    Number    111
+                Semicolon    ;
+            Declaration
+                Identifier    display
+                Colon    :
+                Identifier    none
+                Semicolon    ;
+            Declaration
+                Identifier    background-image
+                Colon    :
+                UrlItem
+                    Url    url(
+                    UnquotedUrlString    data:image/gif;base64,AAAA
+                    CloseFunctionBrace    )
+                Semicolon    ;
+            Declaration
+                Identifier    outline
+                Colon    :
+                Identifier    none
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    a
+                IdSelector
+                    HashName    #fancy_left
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    left
+                Colon    :
+                UnitValue
+                    Number    0
+                    Units    px
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    a
+                IdSelector
+                    HashName    #fancy_right
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    right
+                Colon    :
+                UnitValue
+                    Number    0
+                    Units    px
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    span
+                ClassSelector
+                    Dot    .
+                    Identifier    fancy_ico
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    position
+                Colon    :
+                Identifier    absolute
+                Semicolon    ;
+            Declaration
+                Identifier    top
+                Colon    :
+                UnitValue
+                    Number    50
+                    Units    %
+                Semicolon    ;
+            Declaration
+                Identifier    margin-top
+                Colon    :
+                UnitValue
+                    Number    -15
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    width
+                Colon    :
+                UnitValue
+                    Number    30
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    height
+                Colon    :
+                UnitValue
+                    Number    30
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    z-index
+                Colon    :
+                NumericalValue
+                    Number    112
+                Semicolon    ;
+            Declaration
+                Identifier    cursor
+                Colon    :
+                Identifier    pointer
+                Semicolon    ;
+            Declaration
+                Identifier    display
+                Colon    :
+                Identifier    block
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    span
+                IdSelector
+                    HashName    #fancy_left_ico
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    left
+                Colon    :
+                UnitValue
+                    Number    -9999
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    background
+                Colon    :
+                Identifier    transparent
+                UrlItem
+                    Url    url(
+                    String    '/pagegate/images/modal/fancy_left.png'
+                    CloseFunctionBrace    )
+                Identifier    no-repeat
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    span
+                IdSelector
+                    HashName    #fancy_right_ico
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    right
+                Colon    :
+                UnitValue
+                    Number    -9999
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    background
+                Colon    :
+                Identifier    transparent
+                UrlItem
+                    Url    url(
+                    String    '/pagegate/images/modal/fancy_right.png'
+                    CloseFunctionBrace    )
+                Identifier    no-repeat
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    a
+                IdSelector
+                    HashName    #fancy_left
+                PseudoClassSelector
+                    Colon    :
+                    Identifier    hover
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    visibility
+                Colon    :
+                Identifier    visible
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    a
+                IdSelector
+                    HashName    #fancy_right
+                PseudoClassSelector
+                    Colon    :
+                    Identifier    hover
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    visibility
+                Colon    :
+                Identifier    visible
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    a
+                IdSelector
+                    HashName    #fancy_left
+                PseudoClassSelector
+                    Colon    :
+                    Identifier    hover
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    span
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    left
+                Colon    :
+                UnitValue
+                    Number    20
+                    Units    px
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    a
+                IdSelector
+                    HashName    #fancy_right
+                PseudoClassSelector
+                    Colon    :
+                    Identifier    hover
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    span
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    right
+                Colon    :
+                UnitValue
+                    Number    20
+                    Units    px
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    fancy_bigIframe
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    position
+                Colon    :
+                Identifier    absolute
+                Semicolon    ;
+            Declaration
+                Identifier    top
+                Colon    :
+                NumericalValue
+                    Number    0
+                Semicolon    ;
+            Declaration
+                Identifier    left
+                Colon    :
+                NumericalValue
+                    Number    0
+                Semicolon    ;
+            Declaration
+                Identifier    width
+                Colon    :
+                UnitValue
+                    Number    100
+                    Units    %
+                Semicolon    ;
+            Declaration
+                Identifier    height
+                Colon    :
+                UnitValue
+                    Number    100
+                    Units    %
+                Semicolon    ;
+            Declaration
+                Identifier    background
+                Colon    :
+                Identifier    transparent
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    div
+                IdSelector
+                    HashName    #fancy_bg
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    position
+                Colon    :
+                Identifier    absolute
+                Semicolon    ;
+            Declaration
+                Identifier    top
+                Colon    :
+                NumericalValue
+                    Number    0
+                Semicolon    ;
+            Declaration
+                Identifier    left
+                Colon    :
+                NumericalValue
+                    Number    0
+                Semicolon    ;
+            Declaration
+                Identifier    width
+                Colon    :
+                UnitValue
+                    Number    100
+                    Units    %
+                Semicolon    ;
+            Declaration
+                Identifier    height
+                Colon    :
+                UnitValue
+                    Number    100
+                    Units    %
+                Semicolon    ;
+            Declaration
+                Identifier    z-index
+                Colon    :
+                NumericalValue
+                    Number    70
+                Semicolon    ;
+            Declaration
+                Identifier    background-color
+                Colon    :
+                HexColorValue
+                    HashName    #FFFFFF
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    div
+                ClassSelector
+                    Dot    .
+                    Identifier    fancy_bg
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    position
+                Colon    :
+                Identifier    absolute
+                Semicolon    ;
+            Declaration
+                Identifier    display
+                Colon    :
+                Identifier    block
+                Semicolon    ;
+            Declaration
+                Identifier    z-index
+                Colon    :
+                NumericalValue
+                    Number    70
+                Semicolon    ;
+            Declaration
+                Identifier    border
+                Colon    :
+                NumericalValue
+                    Number    0
+                Semicolon    ;
+            Declaration
+                Identifier    padding
+                Colon    :
+                NumericalValue
+                    Number    0
+                Semicolon    ;
+            Declaration
+                Identifier    margin
+                Colon    :
+                NumericalValue
+                    Number    0
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    div
+                ClassSelector
+                    Dot    .
+                    Identifier    fancy_bg_n
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    top
+                Colon    :
+                UnitValue
+                    Number    -18
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    width
+                Colon    :
+                UnitValue
+                    Number    100
+                    Units    %
+                Semicolon    ;
+            Declaration
+                Identifier    height
+                Colon    :
+                UnitValue
+                    Number    18
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    background
+                Colon    :
+                Identifier    transparent
+                UrlItem
+                    Url    url(
+                    String    '/pagegate/images/modal/fancy_shadow_n.png'
+                    CloseFunctionBrace    )
+                Identifier    repeat-x
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    div
+                ClassSelector
+                    Dot    .
+                    Identifier    fancy_bg_ne
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    top
+                Colon    :
+                UnitValue
+                    Number    -18
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    right
+                Colon    :
+                UnitValue
+                    Number    -13
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    width
+                Colon    :
+                UnitValue
+                    Number    13
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    height
+                Colon    :
+                UnitValue
+                    Number    18
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    background
+                Colon    :
+                Identifier    transparent
+                UrlItem
+                    Url    url(
+                    String    '/pagegate/images/modal/fancy_shadow_ne.png'
+                    CloseFunctionBrace    )
+                Identifier    no-repeat
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    div
+                ClassSelector
+                    Dot    .
+                    Identifier    fancy_bg_e
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    right
+                Colon    :
+                UnitValue
+                    Number    -13
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    height
+                Colon    :
+                UnitValue
+                    Number    100
+                    Units    %
+                Semicolon    ;
+            Declaration
+                Identifier    width
+                Colon    :
+                UnitValue
+                    Number    13
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    background
+                Colon    :
+                Identifier    transparent
+                UrlItem
+                    Url    url(
+                    String    '/pagegate/images/modal/fancy_shadow_e.png'
+                    CloseFunctionBrace    )
+                Identifier    repeat-y
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    div
+                ClassSelector
+                    Dot    .
+                    Identifier    fancy_bg_se
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    bottom
+                Colon    :
+                UnitValue
+                    Number    -18
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    right
+                Colon    :
+                UnitValue
+                    Number    -13
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    width
+                Colon    :
+                UnitValue
+                    Number    13
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    height
+                Colon    :
+                UnitValue
+                    Number    18
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    background
+                Colon    :
+                Identifier    transparent
+                UrlItem
+                    Url    url(
+                    String    '/pagegate/images/modal/fancy_shadow_se.png'
+                    CloseFunctionBrace    )
+                Identifier    no-repeat
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    div
+                ClassSelector
+                    Dot    .
+                    Identifier    fancy_bg_s
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    bottom
+                Colon    :
+                UnitValue
+                    Number    -18
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    width
+                Colon    :
+                UnitValue
+                    Number    100
+                    Units    %
+                Semicolon    ;
+            Declaration
+                Identifier    height
+                Colon    :
+                UnitValue
+                    Number    18
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    background
+                Colon    :
+                Identifier    transparent
+                UrlItem
+                    Url    url(
+                    String    '/pagegate/images/modal/fancy_shadow_s.png'
+                    CloseFunctionBrace    )
+                Identifier    repeat-x
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    div
+                ClassSelector
+                    Dot    .
+                    Identifier    fancy_bg_sw
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    bottom
+                Colon    :
+                UnitValue
+                    Number    -18
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    left
+                Colon    :
+                UnitValue
+                    Number    -13
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    width
+                Colon    :
+                UnitValue
+                    Number    13
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    height
+                Colon    :
+                UnitValue
+                    Number    18
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    background
+                Colon    :
+                Identifier    transparent
+                UrlItem
+                    Url    url(
+                    String    '/pagegate/images/modal/fancy_shadow_sw.png'
+                    CloseFunctionBrace    )
+                Identifier    no-repeat
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    div
+                ClassSelector
+                    Dot    .
+                    Identifier    fancy_bg_w
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    left
+                Colon    :
+                UnitValue
+                    Number    -13
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    height
+                Colon    :
+                UnitValue
+                    Number    100
+                    Units    %
+                Semicolon    ;
+            Declaration
+                Identifier    width
+                Colon    :
+                UnitValue
+                    Number    13
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    background
+                Colon    :
+                Identifier    transparent
+                UrlItem
+                    Url    url(
+                    String    '/pagegate/images/modal/fancy_shadow_w.png'
+                    CloseFunctionBrace    )
+                Identifier    repeat-y
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    div
+                ClassSelector
+                    Dot    .
+                    Identifier    fancy_bg_nw
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    top
+                Colon    :
+                UnitValue
+                    Number    -18
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    left
+                Colon    :
+                UnitValue
+                    Number    -13
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    width
+                Colon    :
+                UnitValue
+                    Number    13
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    height
+                Colon    :
+                UnitValue
+                    Number    18
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    background
+                Colon    :
+                Identifier    transparent
+                UrlItem
+                    Url    url(
+                    String    '/pagegate/images/modal/fancy_shadow_nw.png'
+                    CloseFunctionBrace    )
+                Identifier    no-repeat
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    div
+                IdSelector
+                    HashName    #fancy_title
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    position
+                Colon    :
+                Identifier    absolute
+                Semicolon    ;
+            Declaration
+                Identifier    bottom
+                Colon    :
+                UnitValue
+                    Number    -33
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    left
+                Colon    :
+                NumericalValue
+                    Number    0
+                Semicolon    ;
+            Declaration
+                Identifier    width
+                Colon    :
+                UnitValue
+                    Number    100
+                    Units    %
+                Semicolon    ;
+            Declaration
+                Identifier    z-index
+                Colon    :
+                NumericalValue
+                    Number    100
+                Semicolon    ;
+            Declaration
+                Identifier    display
+                Colon    :
+                Identifier    none
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    div
+                IdSelector
+                    HashName    #fancy_title
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    div
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    color
+                Colon    :
+                HexColorValue
+                    HashName    #FFF
+                Semicolon    ;
+            Declaration
+                Identifier    font
+                Colon    :
+                Identifier    bold
+                UnitValue
+                    Number    12
+                    Units    px
+                Identifier    Arial
+                Semicolon    ;
+            Declaration
+                Identifier    padding-bottom
+                Colon    :
+                UnitValue
+                    Number    3
+                    Units    px
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    div
+                IdSelector
+                    HashName    #fancy_title
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    table
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    margin
+                Colon    :
+                NumericalValue
+                    Number    0
+                Identifier    auto
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    div
+                IdSelector
+                    HashName    #fancy_title
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    table
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    td
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    padding
+                Colon    :
+                NumericalValue
+                    Number    0
+                Semicolon    ;
+            Declaration
+                Identifier    vertical-align
+                Colon    :
+                Identifier    middle
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    td
+                IdSelector
+                    HashName    #fancy_title_left
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    height
+                Colon    :
+                UnitValue
+                    Number    32
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    width
+                Colon    :
+                UnitValue
+                    Number    15
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    background
+                Colon    :
+                Identifier    transparent
+                UrlItem
+                    Url    url(
+                    UnquotedUrlString    /pagegate/images/modal/fancy_title_left.png
+                    CloseFunctionBrace    )
+                Identifier    repeat-x
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    td
+                IdSelector
+                    HashName    #fancy_title_main
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    height
+                Colon    :
+                UnitValue
+                    Number    32
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    background
+                Colon    :
+                Identifier    transparent
+                UrlItem
+                    Url    url(
+                    UnquotedUrlString    /pagegate/images/modal/fancy_title_main.png
+                    CloseFunctionBrace    )
+                Identifier    repeat-x
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    td
+                IdSelector
+                    HashName    #fancy_title_right
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    height
+                Colon    :
+                UnitValue
+                    Number    32
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    width
+                Colon    :
+                UnitValue
+                    Number    15
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    background
+                Colon    :
+                Identifier    transparent
+                UrlItem
+                    Url    url(
+                    UnquotedUrlString    /pagegate/images/modal/fancy_title_right.png
+                    CloseFunctionBrace    )
+                Identifier    repeat-x
+                Semicolon    ;
+            CloseCurlyBrace    }

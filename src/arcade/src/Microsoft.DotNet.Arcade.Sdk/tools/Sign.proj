@@ -1,0 +1,70 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project DefaultTargets="Sign">
+  <Import Project="BuildStep.props" />
+
+  <Import Project="$(NuGetPackageRoot)microsoft.dotnet.signtool\$(MicrosoftDotNetSignToolVersion)\build\Microsoft.DotNet.SignTool.props" />
+
+  <Import Project="Sign.props" />
+
+  <!-- Import the wix props to get the install path -->
+  <Import Project="$(NuGetPackageRoot)microsoft.signed.wix\$(MicrosoftSignedWixVersion)\build\Microsoft.Signed.Wix.props" />
+
+  <!-- Update sign infos that were using Microsoft400 to use the .NET-specific cert if UseDotNetCertificate is present.
+       This will update any use, even if explicitly specified.
+       NOTE: This is outside the target on purpose, as Update will not correctly evaluate in the target. See
+       https://github.com/dotnet/msbuild/issues/1618. -->
+  <ItemGroup Condition="$(UseDotNetCertificate)">
+    <FileExtensionSignInfo Update="@(FileExtensionSignInfo->WithMetadataValue('CertificateName','Microsoft400'))" CertificateName="$(DotNetCertificateName)" />
+    <StrongNameSignInfo Update="@(StrongNameSignInfo->WithMetadataValue('CertificateName','Microsoft400'))" CertificateName="$(DotNetCertificateName)" />
+    <FileSignInfo Update="@(FileSignInfo->WithMetadataValue('CertificateName','Microsoft400'))" CertificateName="$(DotNetCertificateName)" />
+  </ItemGroup>
+
+  <Target Name="Sign">
+    <Error Text="The value of DotNetSignType is invalid: '$(DotNetSignType)'"
+           Condition="'$(DotNetSignType)' != 'real' and '$(DotNetSignType)' != 'test' and '$(DotNetSignType)' != ''" />
+
+    <PropertyGroup>
+      <_DryRun>true</_DryRun>
+      <_DryRun Condition="'$(OfficialBuild)' == 'true'">false</_DryRun>
+
+      <_TestSign>false</_TestSign>
+      <_TestSign Condition="'$(DotNetSignType)' == 'test'">true</_TestSign>
+
+      <_DesktopMSBuildRequired>false</_DesktopMSBuildRequired>
+      <_DesktopMSBuildRequired Condition="'$(_DryRun)' != 'true' and '$(MSBuildRuntimeType)' == 'Core'">true</_DesktopMSBuildRequired>
+    </PropertyGroup>
+
+    <Error Condition="'$(AllowEmptySignList)' != 'true' AND '@(ItemsToSign)' == ''" 
+           Text="List of files to sign is empty. Make sure that ItemsToSign is configured correctly." />
+
+    <!-- We only need this if we are going to use the executable version. -->
+    <Exec Command='"$(NuGetPackageRoot)vswhere\$(VSWhereVersion)\tools\vswhere.exe" -latest -prerelease -property installationPath -requires Microsoft.Component.MSBuild'
+          ConsoleToMsBuild="true"
+          StandardErrorImportance="high"
+          Condition="$(_DesktopMSBuildRequired)">
+      <Output TaskParameter="ConsoleOutput" PropertyName="_VSInstallDir" />
+    </Exec>
+
+    <PropertyGroup Condition="$(_DesktopMSBuildRequired)">
+      <_DesktopMSBuildPath>$(_VSInstallDir)\MSBuild\Current\Bin\msbuild.exe</_DesktopMSBuildPath>
+      <_DesktopMSBuildPath Condition="!Exists('$(_DesktopMSBuildPath)')">$(_VSInstallDir)\MSBuild\15.0\Bin\msbuild.exe</_DesktopMSBuildPath>
+    </PropertyGroup>
+
+    <Microsoft.DotNet.SignTool.SignToolTask
+        DryRun="$(_DryRun)"
+        TestSign="$(_TestSign)"
+        DoStrongNameCheck="$(DoStrongNameCheck)"
+        AllowEmptySignList="$(AllowEmptySignList)"
+        CertificatesSignInfo="@(CertificatesSignInfo)"
+        ItemsToSign="@(ItemsToSign)"
+        StrongNameSignInfo="@(StrongNameSignInfo)"
+        FileSignInfo="@(FileSignInfo)"
+        FileExtensionSignInfo="@(FileExtensionSignInfo)"
+        TempDir="$(ArtifactsTmpDir)"
+        LogDir="$(ArtifactsLogDir)"
+        MSBuildPath="$(_DesktopMSBuildPath)"
+        SNBinaryPath="$(NuGetPackageRoot)sn\$(SNVersion)\sn.exe"
+        MicroBuildCorePath="$(NuGetPackageRoot)microbuild.core\$(MicroBuildCoreVersion)"
+        WixToolsPath="$(WixInstallPath)"/>
+  </Target>
+</Project>

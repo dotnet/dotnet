@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.Build.Framework</id>
+    <version>15.3.409</version>
+    <title>Microsoft.Build.Framework</title>
+    <authors>Microsoft</authors>
+    <owners>Microsoft</owners>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <licenseUrl>https://microsoft.mit-license.org/</licenseUrl>
+    <projectUrl>http://go.microsoft.com/fwlink/?LinkId=624683</projectUrl>
+    <iconUrl>https://go.microsoft.com/fwlink/?linkid=825694</iconUrl>
+    <description>This package contains the Microsoft.Build.Framework assembly which is a common assembly used by other MSBuild assemblies.</description>
+    <copyright>Copyright © Microsoft Corporation</copyright>
+    <tags>MSBuild</tags>
+    <dependencies>
+      <group targetFramework=".NETStandard1.3">
+        <dependency id="System.Diagnostics.Debug" version="4.0.11" />
+        <dependency id="System.Collections" version="4.0.11" />
+        <dependency id="System.Globalization" version="4.0.11" />
+        <dependency id="System.Linq" version="4.1.0" />
+        <dependency id="System.Resources.ResourceManager" version="4.0.1" />
+        <dependency id="System.Runtime" version="4.1.0" />
+        <dependency id="System.Runtime.InteropServices" version="4.1.0" />
+        <dependency id="System.Threading" version="4.0.11" />
+        <dependency id="System.Threading.Thread" version="4.0.0" />
+      </group>
+    </dependencies>
+  </metadata>
+</package>

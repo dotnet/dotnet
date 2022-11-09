@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <_Authors>__AUTHORS__</_Authors>
+    <_Copyright>__COPYRIGHT__</_Copyright>
+    <_PackageProjectUrl>__PACKAGE_PROJECT_URL__</_PackageProjectUrl>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <Authors Condition="'$(_Authors)' != ''">$(_Authors)</Authors>
+    <Copyright Condition="'$(_Copyright)' != ''">$(_Copyright)</Copyright>
+    <Description>__DESCRIPTION__</Description>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <IsPackable>true</IsPackable>
+    <NoWarn>$(NoWarn);NU5128</NoWarn>
+    <PackageId>__PACKAGE_ID__</PackageId>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl Condition="'$(_PackageProjectUrl)' != ''">$(_PackageProjectUrl)</PackageProjectUrl>
+    <PackageType>DotnetPlatform</PackageType>
+    <PackageVersion>__PACKAGE_VERSION__</PackageVersion>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <TargetFramework>net7.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+  </ItemGroup>
+
+  <Target Name="AddPackageIcon"
+          BeforeTargets="$(GenerateNuspecDependsOn)"
+          Condition="'$(PackageIcon)' == ''">
+    <PropertyGroup>
+      <PackageIcon>Icon.png</PackageIcon>
+    </PropertyGroup>
+    <ItemGroup Condition="'$(IsPackable)' == 'true'">
+      <None Include="$(PackageIcon)" Pack="true" PackagePath="$(PackageIcon)" Visible="false" />
+    </ItemGroup>
+  </Target>
+</Project>

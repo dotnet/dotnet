@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>System.Management.Instrumentation</name>
+  </assembly>
+  <members>
+    <member name="T:System.Management.Instrumentation.DefaultManagementInstaller">
+      <summary>Installs an instrumented assembly. To use this default project installer, simply derive a class from <see cref="T:System.Management.Instrumentation.DefaultManagementInstaller" /> inside the assembly. No methods need to be overridden.</summary>
+    </member>
+    <member name="M:System.Management.Instrumentation.DefaultManagementInstaller.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Management.Instrumentation.DefaultManagementInstaller" /> class. This is the default constructor.</summary>
+    </member>
+    <member name="T:System.Management.Instrumentation.InstrumentationManager">
+      <summary>Provides methods that manage the lifetime and the model used for decoupled providers.</summary>
+    </member>
+    <member name="M:System.Management.Instrumentation.InstrumentationManager.Publish(System.Object)">
+      <summary>Makes an instance of a provider available within the WMI infrastructure.</summary>
+    </member>
+    <member name="M:System.Management.Instrumentation.InstrumentationManager.RegisterAssembly(System.Reflection.Assembly)">
+      <summary>Registers an assembly with the WMI infrastructure.</summary>
+      <param name="managementAssembly"> The assembly to register.</param>
+    </member>
+    <member name="M:System.Management.Instrumentation.InstrumentationManager.RegisterType(System.Type)">
+      <summary>Registers a class with the WMI infrastructure.</summary>
+      <param name="managementType">The type of the class.</param>
+    </member>
+    <member name="M:System.Management.Instrumentation.InstrumentationManager.Revoke(System.Object)">
+      <summary>Takes an instance of a currently available provider and makes it unavailable within the WMI infrastructure.</summary>
+    </member>
+    <member name="M:System.Management.Instrumentation.InstrumentationManager.UnregisterAssembly(System.Reflection.Assembly)">
+      <summary>Unregisters an assembly currently registered with the WMI infrastructure.</summary>
+      <param name="managementAssembly">The registered assembly to unregister.</param>
+    </member>
+    <member name="M:System.Management.Instrumentation.InstrumentationManager.UnregisterType(System.Type)">
+      <summary>Unregisters a class registered with the WMI infrastructure.</summary>
+      <param name="managementType">The registered type to unregister.</param>
+    </member>
+    <member name="T:System.Management.Instrumentation.ManagedCommonProvider">
+      <summary>The class is used internally by the WMI.NET Provider Extensions infrastructure.</summary>
+    </member>
+    <member name="M:System.Management.Instrumentation.ManagedCommonProvider.#ctor">
+      <summary>This is the default constructor for <see cref="T:System.Management.Instrumentation.ManagedCommonProvider" /> which is used internally by the WMI.NET Provider Extensions infrastructure.</summary>
+    </member>
+    <member name="T:System.Management.Instrumentation.ManagementQualifierAttribute">
+      <summary>The ManagementQualifier attribute contains additional WMI provider-related information about an associated WMI class, instance, property, field or method.</summary>
+    </member>
+    <member name="M:System.Management.Instrumentation.ManagementQualifierAttribute.#ctor(System.String)">
+      <summary>Creates an instance of the ManagementQualifierAttribute.</summary>
+      <param name="name"> Name of the qualifier.</param>
+    </member>
+    <member name="P:System.Management.Instrumentation.ManagementQualifierAttribute.Flavor">
+      <summary>Flavor of the attribute.</summary>
+      <returns>Returns a ManagementQualifierFlavor that indicates the flavor of the qualifier.</returns>
+    </member>
+    <member name="P:System.Management.Instrumentation.ManagementQualifierAttribute.Name">
+      <summary>Name of the qualifier.</summary>
+      <returns>Returns a string containing the name of the qualifier.</returns>
+    </member>
+    <member name="P:System.Management.Instrumentation.ManagementQualifierAttribute.Value">
+      <summary>Value associated with the qualifier.</summary>
+      <returns>Returns an object that represents the value of the qualifier.</returns>
+    </member>
+    <member name="T:System.Management.Instrumentation.ManagementQualifierFlavors">
+      <summary>Qualifier flavors that can be used with WMI provider extensions.</summary>
+    </member>
+    <member name="F:System.Management.Instrumentation.ManagementQualifierFlavors.Amended">
+      <summary>The qualifier is not required in the basic class definition and can be moved to the amendment to be localized.</summary>
+    </member>
+    <member name="F:System.Management.Instrumentation.ManagementQualifierFlavors.DisableOverride">
+      <summary>The qualifier cannot be overridden in a derived class or instance. Note that being able to override a propagated qualifier is the default.</summary>
+    </member>
+    <member name="F:System.Management.Instrumentation.ManagementQualifierFlavors.ClassOnly">
+      <summary>The qualifier is propagated to instances.</summary>
+    </member>
+    <member name="F:System.Management.Instrumentation.ManagementQualifierFlavors.ThisClassOnly">
+      <summary>The qualifier is not propagated to derived classes.</summary>
+    </member>
+    <member name="T:System.Management.Instrumentation.WmiProviderInstallationException">
+      <summary>Represents an exception to throw when WMI provider installation fails.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.Management.Instrumentation.WmiProviderInstallationException.#ctor">
+      <summary>Initializes a new instance of the class. This is the default constructor.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.Management.Instrumentation.WmiProviderInstallationException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Initializes a new instance of the class with serialization information.</summary>
+      <param name="info">The data that is required to serialize or deserialize an object.</param>
+      <param name="context">Description of the source and destination of the specified serialized stream.</param>
+    </member>
+    <member name="M:System.Management.Instrumentation.WmiProviderInstallationException.#ctor(System.String)">
+      <summary>Initializes a new instance of the class with a message that describes the exception.</summary>
+      <param name="message"> Message that describes the exception.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.Management.Instrumentation.WmiProviderInstallationException.#ctor(System.String,System.Exception)">
+      <summary>Initializes a new class with the specified string and exception.</summary>
+      <param name="message">Message that describes the exception.</param>
+      <param name="innerException">The Exception instance that caused the current exception.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+  </members>
+</doc>

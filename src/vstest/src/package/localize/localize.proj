@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <TestPlatformRoot Condition="$(TestPlatformRoot) == ''">$(MSBuildThisFileDirectory)..\..\..\</TestPlatformRoot>
+    <SourceRoot>$(TestPlatformRoot)src\</SourceRoot>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProductSource Include="$(SourceRoot)**\*.csproj" Exclude="$(SourceRoot)package\**\*.csproj" />
+  </ItemGroup>
+
+  <Target Name="Localize">
+    <MSBuild Projects="@(ProductSource)" Targets="Localize" BuildInParallel="True" />
+  </Target>
+</Project>

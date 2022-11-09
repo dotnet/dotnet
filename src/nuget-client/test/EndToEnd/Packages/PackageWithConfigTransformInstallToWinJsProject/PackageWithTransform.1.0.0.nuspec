@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <id>PackageWithTransform</id>
+        <version>1.0.0</version>
+        <authors>dotnetjunky</authors>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>My package description.</description>
+    </metadata>
+    <files>
+        <file src="content\b.config.transform" target="content\b.config.transform" />
+        <file src="content\root\a.config.transform" target="content\root\a.config.transform" />
+    </files>
+</package>

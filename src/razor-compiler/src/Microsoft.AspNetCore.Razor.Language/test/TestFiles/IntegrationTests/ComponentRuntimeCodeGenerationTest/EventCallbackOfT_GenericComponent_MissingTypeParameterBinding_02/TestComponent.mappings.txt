@@ -1,0 +1,9 @@
+Source Location: (64:2,7 [28] x:\dir\subdir\Test\TestComponent.cshtml)
+|
+    private int counter;
+|
+Generated Location: (944:28,7 [28] )
+|
+    private int counter;
+|
+

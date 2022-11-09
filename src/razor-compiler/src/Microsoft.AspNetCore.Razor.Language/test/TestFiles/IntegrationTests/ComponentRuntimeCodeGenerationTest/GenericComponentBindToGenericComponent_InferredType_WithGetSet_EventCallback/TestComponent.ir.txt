@@ -1,0 +1,23 @@
+Document - 
+    NamespaceDeclaration -  - Test
+        UsingDirective - (3:1,1 [14] ) - System
+        UsingDirective - (18:2,1 [34] ) - System.Collections.Generic
+        UsingDirective - (53:3,1 [19] ) - System.Linq
+        UsingDirective - (73:4,1 [30] ) - System.Threading.Tasks
+        UsingDirective - (104:5,1 [39] ) - Microsoft.AspNetCore.Components
+        ClassDeclaration -  - public partial - TestComponent - global::Microsoft.AspNetCore.Components.ComponentBase -  - TParam
+            MethodDeclaration -  - protected override - void - BuildRenderTree
+                Component - (19:1,0 [75] x:\dir\subdir\Test\TestComponent.cshtml) - MyComponent
+                    ComponentAttribute - (49:1,30 [11] x:\dir\subdir\Test\TestComponent.cshtml) - Value - Value - AttributeStructure.DoubleQuotes
+                        CSharpExpression - 
+                            LazyIntermediateToken - (49:1,30 [11] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - ParentValue
+                    ComponentAttribute - (49:1,30 [11] x:\dir\subdir\Test\TestComponent.cshtml) - ValueChanged - ValueChanged - AttributeStructure.DoubleQuotes
+                        CSharpExpression - 
+                            IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, 
+                            IntermediateToken -  - CSharp - UpdateValue
+                            IntermediateToken -  - CSharp - , ParentValue)
+            CSharpCode - (103:2,7 [120] x:\dir\subdir\Test\TestComponent.cshtml)
+                LazyIntermediateToken - (103:2,7 [120] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - \n    public TParam ParentValue { get; set; } = default;\n\n    public EventCallback<TParam> UpdateValue { get; set; }\n
+    NamespaceDeclaration -  - __Blazor.Test.TestComponent
+        ClassDeclaration -  - internal static - TypeInference -  - 
+            ComponentTypeInferenceMethod -  - __Blazor.Test.TestComponent.TypeInference - CreateMyComponent_0

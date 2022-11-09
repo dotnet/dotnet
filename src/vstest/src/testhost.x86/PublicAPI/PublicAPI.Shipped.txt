@@ -1,0 +1,10 @@
+#nullable enable
+Microsoft.VisualStudio.TestPlatform.TestExecutor.UnitTestClient
+Microsoft.VisualStudio.TestPlatform.TestHost.IEngineInvoker
+Microsoft.VisualStudio.TestPlatform.TestHost.IEngineInvoker.Invoke(System.Collections.Generic.IDictionary<string!, string?>! argsDictionary) -> void
+Microsoft.VisualStudio.TestPlatform.TestHost.Program
+Microsoft.VisualStudio.TestPlatform.TestHost.Program.Program() -> void
+static Microsoft.VisualStudio.TestPlatform.TestExecutor.UnitTestClient.CreateDefaultUI() -> void
+static Microsoft.VisualStudio.TestPlatform.TestExecutor.UnitTestClient.Run(string! arguments) -> void
+static Microsoft.VisualStudio.TestPlatform.TestHost.Program.Main(string![]? args) -> void
+static Microsoft.VisualStudio.TestPlatform.TestHost.Program.Run(string![]? args) -> void

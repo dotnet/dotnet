@@ -1,0 +1,26 @@
+###############################################################################
+# Set default behavior to automatically normalize line endings.
+###############################################################################
+* text=auto
+
+# Force bash scripts to always use lf line endings so that if a repro is accessed
+# in Unix via a file share from Windows, the scripts will work.
+*.sh text eol=lf
+
+# Ensure .bin files are stored as binary
+*.bin binary
+
+###############################################################################
+# Linguist customization (https://github.com/github/linguist#overrides)
+###############################################################################
+
+# Include MSBuild in repo stats
+src/Tasks/*.props linguist-detectable=true
+src/Tasks/*.targets linguist-detectable=true
+src/Tasks/*.tasks linguist-detectable=true
+
+# Don't include Arcade-owned path
+eng/common/** linguist-vendored linguist-generated
+
+# Display XLF files collapsed by default in PR diffs
+*.xlf linguist-generated=true

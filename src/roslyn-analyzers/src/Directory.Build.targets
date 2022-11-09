@@ -1,0 +1,118 @@
+<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information. -->
+<Project>
+
+  <!--  
+    Resx files are already included by the SDK. 
+    Update them with GenerateSource property to process them by GenerateResxSource target
+    that generates source code for them. Do this before the RepoToolset targets are imported
+    so that they can add additional metadata to these EmbeddedResource items.
+  -->
+  <ItemGroup>
+    <EmbeddedResource Update="**\*.resx" GenerateSource="true" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Workaround for https://github.com/dotnet/project-system/issues/2374 -->
+    <UpToDateCheckInput Include="$(CodeAnalysisRuleSet)" Condition="'$(CodeAnalysisRuleSet)' != ''" />
+
+    <!-- Include the shipping rules explicitly when they are imported by the non-shipping rules -->
+    <!-- Additional workaround for https://github.com/dotnet/project-system/issues/2374 -->
+    <UpToDateCheckInput Include="$(MSBuildThisFileDirectory)..\eng\Analyzers_ShippingRules.ruleset" Condition="'$(CodeAnalysisRuleSet)' == '$(MSBuildThisFileDirectory)..\build\Analyzers_NonShippingRules.ruleset'" />
+  </ItemGroup>
+
+  <!-- Add analyzer release tracking additional files -->
+  <!-- Unshipped release -->
+  <ItemGroup Condition="'$(ReleaseTrackingOptOut)' != 'true' AND Exists('$(MSBuildProjectDirectory)\AnalyzerReleases.Unshipped.md')">
+    <AdditionalFiles Include="$(MSBuildProjectDirectory)\AnalyzerReleases.Unshipped.md" />
+  </ItemGroup>
+  <!-- Shipped releases -->
+  <ItemGroup  Condition="'$(ReleaseTrackingOptOut)' != 'true' AND Exists('$(MSBuildProjectDirectory)\AnalyzerReleases.Shipped.md')">
+    <AdditionalFiles Include="$(MSBuildProjectDirectory)\AnalyzerReleases.Shipped.md" />
+    <!-- Copy the shipped releases file to output directory so it can be used in 'GenerateGlobalAnalyzerConfigs' post-build target -->
+    <!-- Include shipped file also as 'None' - Workaround for 'CopyToOutputDirectory' not being respected for additional files -->
+    <None Update="AnalyzerReleases.Shipped.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>AnalyzerReleases\$(AssemblyName)\AnalyzerReleases.Shipped.md</Link>
+    </None>
+  </ItemGroup>
+
+  <!-- Disable code analysis for source build -->
+  <ItemGroup Condition="'$(DotNetBuildFromSource)' != 'true'">
+    <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="$(MicrosoftCodeAnalysisBannedApiAnalyzersVersion)" />
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)\BannedSymbols.txt" Condition="'$(BannedSymbolsOptOut)' != 'true'" />
+  </ItemGroup>
+
+  <Target Name="BeforeBuild" Condition="'$(ReleaseTrackingOptOut)' != 'true'" >
+    <Error Condition="!Exists('$(MSBuildProjectDirectory)\AnalyzerReleases.Shipped.md')" Text="Create a new empty file named 'AnalyzerReleases.Shipped.md' in the project directory" />
+    <Error Condition="!Exists('$(MSBuildProjectDirectory)\AnalyzerReleases.Unshipped.md')" Text="Create a new empty file named 'AnalyzerReleases.Unshipped.md' in the project directory" />
+  </Target>
+
+  <PropertyGroup>
+    <!-- Workaround for https://github.com/dotnet/roslyn/issues/25041 -->
+    <MSBuildAllProjects Condition="'$(CodeAnalysisRuleSet)' == '$(MSBuildThisFileDirectory)..\eng\Analyzers_NonShippingRules.ruleset'">$(MSBuildAllProjects);$(MSBuildThisFileDirectory)..\build\Analyzers_ShippingRules.ruleset</MSBuildAllProjects>
+  </PropertyGroup>
+
+  <Import Project="..\Directory.Build.targets" />
+
+  <!-- Using Inputs/Outputs just to loop over test architectures -->
+  <Target Name="InnerTest" Inputs="*%(_TestArchitectureItems.Identity)" Outputs="*%(_TestArchitectureItems.Identity)" Returns="@(_FailedTestRuns)">
+
+    <PropertyGroup>
+      <_TestArchitecture>%(_TestArchitectureItems.Identity)</_TestArchitecture>
+      <_TestEnvironment>$(TargetFramework)|$(_TestArchitecture)</_TestEnvironment>
+      <_TestOutPathNoExt>$(ArtifactsTestResultsDir)$(MSBuildProjectName)_$(TargetFramework)_$(_TestArchitecture)</_TestOutPathNoExt>
+      <_TestStdOutPath>$(_TestOutPathNoExt).log</_TestStdOutPath>
+      <_TestResultsXmlPath>$(_TestOutPathNoExt).xml</_TestResultsXmlPath>
+      <_TestResultsHtmlPath>$(_TestOutPathNoExt).html</_TestResultsHtmlPath>
+      <_RunOnCore>false</_RunOnCore>
+      <_RunOnCore Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'">true</_RunOnCore>
+    </PropertyGroup>
+
+    <Error Text="Architecture specified in TestArchitectures is not supported: '$(_TestArchitecture)'" File="XUnit"
+           Condition="'$(_TestArchitecture)' != 'x64' and ('$(_TestArchitecture)' != 'x86' or $(_RunOnCore))"/>
+
+    <PropertyGroup Condition="'$(_RunOnCore)' == 'true'">
+      <_TargetFileNameNoExt>$([System.IO.Path]::GetFileNameWithoutExtension('$(TargetFileName)'))</_TargetFileNameNoExt>
+      <_CoreRuntimeConfigPath>$(TargetDir)$(_TargetFileNameNoExt).runtimeconfig.json</_CoreRuntimeConfigPath>
+      <_CoreDepsPath>$(TargetDir)$(_TargetFileNameNoExt).deps.json</_CoreDepsPath>
+
+      <_TestRunnerCommand>"$(DotNetTool)" exec --depsfile "$(_CoreDepsPath)" --runtimeconfig "$(_CoreRuntimeConfigPath)" "$(NuGetPackageRoot)xunit.runner.console/$(XUnitVersion)/tools/netcoreapp1.0/xunit.console.dll" "$(TargetPath)" -noautoreporters -xml "$(_TestResultsXmlPath)" -html "$(_TestResultsHtmlPath)" $(XUnitRunnerAdditionalArguments)</_TestRunnerCommand>
+      <_TestResultsDisplayPath>$(_TestStdOutPath)</_TestResultsDisplayPath>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(_RunOnCore)' != 'true'">
+      <_XUnitConsoleExe>xunit.console.exe</_XUnitConsoleExe>
+      <_XUnitConsoleExe Condition="'$(_TestArchitecture)' == 'x86'">xunit.console.x86.exe</_XUnitConsoleExe>
+      <_XUnitRunnerCommand>$(NuGetPackageRoot)xunit.runner.console\$(XUnitVersion)\tools\net452\$(_XUnitConsoleExe)</_XUnitRunnerCommand>
+      <_XUnitRunnerCommandArgs>"$(TargetPath)" -noshadow -xml "$(_TestResultsXmlPath)" -html "$(_TestResultsHtmlPath)" $(XUnitRunnerAdditionalArguments)</_XUnitRunnerCommandArgs>
+      <_TestRunnerCommand>"$(_XUnitRunnerCommand)" $(_XUnitRunnerCommandArgs)</_TestRunnerCommand>
+      <_TestResultsDisplayPath>$(_TestResultsHtmlPath)</_TestResultsDisplayPath>
+    </PropertyGroup>
+
+    <MakeDir Directories="$(ArtifactsTestResultsDir)"/>
+    <Delete Files="$(_TestOutPathNoExt).*" />
+
+    <Message Text="Running tests: $(TargetPath) [$(_TestEnvironment)]" Importance="high"/>
+
+    <!-- Note that xUnit outputs failure info to both STDOUT (stack trace, message) and STDERR (failed test name) -->
+    <Exec Command='$(_TestRunnerCommand) > "$(_TestStdOutPath)" 2>&amp;1'
+          LogStandardErrorAsError="false"
+          WorkingDirectory="$(OutDir)"
+          IgnoreExitCode="true">
+
+      <Output TaskParameter="ExitCode" PropertyName="_TestErrorCode" />
+    </Exec>
+
+    <WriteLinesToFile File="$(_TestStdOutPath)" Overwrite="false" Lines=";=== COMMAND LINE ===;$(_TestRunnerCommand)" />
+
+    <ItemGroup>
+      <_FailedTestRuns Include="$(_TestEnvironment)" Condition="'$(_TestErrorCode)' != '0'" />
+    </ItemGroup>
+
+    <Message Text="Tests succeeded: $(TargetPath) [$(_TestEnvironment)]" Condition="'$(_TestErrorCode)' == '0'" Importance="high" />
+    <Warning Text="$(_TestResultsDisplayPath) [$(_TestEnvironment)]" Condition="'$(_TestErrorCode)' != '0' and '$(TargetFrameworks)' != ''" File="XUnit" />
+    <Error Text="$(_TestResultsDisplayPath) [$(_TestEnvironment)]" Condition="'$(_TestErrorCode)' != '0' and '$(TargetFrameworks)' == ''" File="XUnit" />
+  </Target>
+
+  
+</Project>

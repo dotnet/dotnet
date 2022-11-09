@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DirectedGraph xmlns="http://schemas.microsoft.com/vs/2009/dgml">
+  <Nodes>
+    <Node Id="A:1.0" Label="A:1.0" />
+    <Node Id="A:2.0" Label="A:2.0" />
+    <Node Id="A:3.0" Label="A:3.0" />
+    <Node Id="B:0.9" Label="B:0.9" />
+    <Node Id="B:1.0" Label="B:1.0" />
+    <Node Id="B:1.0.0.4" Label="B:1.0.0.4" />
+    <Node Id="B:1.0.2" Label="B:1.0.2" />
+    <Node Id="B:1.0.3" Label="B:1.0.3" />
+    <Node Id="B:1.1" Label="B:1.1" />
+    <Node Id="B:2.0" Label="B:2.0" />
+    <Node Id="C:1.0" Label="C:1.0" />
+    <Node Id="C:2.0" Label="C:2.0" />
+    <Node Id="D:1.0" Label="D:1.0" />
+    <Node Id="D:2.0" Label="D:2.0" />
+  </Nodes>
+  <Links>
+    <Link Source="B:0.9" Target="A:1.0" />
+    <Link Source="B:1.0" Target="A:1.0" />
+    <Link Source="B:1.0.0.4" Target="A:1.0" />
+    <Link Source="B:1.0.2" Target="A:1.0" />
+    <Link Source="B:1.0.3" Target="A:1.0" />
+    <Link Source="B:1.1" Target="A:1.0" />
+    <Link Source="B:2.0" Target="A:2.0" />
+    <Link Source="C:1.0" Target="A:2.0" />
+    <Link Source="C:2.0" Target="A:3.0" />
+    <Link Source="D:1.0" Target="B:0.9" Label="[0.9,1.0.3)" />
+    <Link Source="D:1.0" Target="C:1.0" />
+    <Link Source="D:2.0" Target="B:2.0" />
+    <Link Source="D:2.0" Target="C:2.0" />
+  </Links>
+  <Properties>
+    <Property Id="Label" Label="Label" Description="Displayable label of an Annotatable object" DataType="System.String" />
+  </Properties>
+</DirectedGraph>

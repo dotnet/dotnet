@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PackageLanguagePackManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011">
+  <Metadata>
+    <DisplayName>MSTest V2 Şablonları</DisplayName>
+    <Description>MSTest V2 için Visual Studio proje şablonu sağlar.</Description>
+  </Metadata>
+</PackageLanguagePackManifest>

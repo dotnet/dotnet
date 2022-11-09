@@ -1,0 +1,27 @@
+#nullable enable
+Microsoft.VisualStudio.TestPlatform.SettingsMigrator.Migrator
+Microsoft.VisualStudio.TestPlatform.SettingsMigrator.Migrator.Migrate(string! oldFilePath, string! newFilePath) -> void
+Microsoft.VisualStudio.TestPlatform.SettingsMigrator.Migrator.Migrator() -> void
+Microsoft.VisualStudio.TestPlatform.SettingsMigrator.PathResolver
+Microsoft.VisualStudio.TestPlatform.SettingsMigrator.PathResolver.GetTargetPath(string![]! args) -> string?
+Microsoft.VisualStudio.TestPlatform.SettingsMigrator.PathResolver.PathResolver() -> void
+Microsoft.VisualStudio.TestPlatform.SettingsMigrator.Program
+Microsoft.VisualStudio.TestPlatform.SettingsMigrator.TestSettingsNodes
+Microsoft.VisualStudio.TestPlatform.SettingsMigrator.TestSettingsNodes.Datacollectors.get -> System.Xml.XmlNodeList?
+Microsoft.VisualStudio.TestPlatform.SettingsMigrator.TestSettingsNodes.Datacollectors.set -> void
+Microsoft.VisualStudio.TestPlatform.SettingsMigrator.TestSettingsNodes.Deployment.get -> System.Xml.XmlNode?
+Microsoft.VisualStudio.TestPlatform.SettingsMigrator.TestSettingsNodes.Deployment.set -> void
+Microsoft.VisualStudio.TestPlatform.SettingsMigrator.TestSettingsNodes.Execution.get -> System.Xml.XmlNode?
+Microsoft.VisualStudio.TestPlatform.SettingsMigrator.TestSettingsNodes.Execution.set -> void
+Microsoft.VisualStudio.TestPlatform.SettingsMigrator.TestSettingsNodes.Hosts.get -> System.Xml.XmlNode?
+Microsoft.VisualStudio.TestPlatform.SettingsMigrator.TestSettingsNodes.Hosts.set -> void
+Microsoft.VisualStudio.TestPlatform.SettingsMigrator.TestSettingsNodes.Script.get -> System.Xml.XmlNode?
+Microsoft.VisualStudio.TestPlatform.SettingsMigrator.TestSettingsNodes.Script.set -> void
+Microsoft.VisualStudio.TestPlatform.SettingsMigrator.TestSettingsNodes.TestSettingsNodes() -> void
+Microsoft.VisualStudio.TestPlatform.SettingsMigrator.TestSettingsNodes.Timeout.get -> System.Xml.XmlNode?
+Microsoft.VisualStudio.TestPlatform.SettingsMigrator.TestSettingsNodes.Timeout.set -> void
+Microsoft.VisualStudio.TestPlatform.SettingsMigrator.TestSettingsNodes.UnitTestConfig.get -> System.Xml.XmlNode?
+Microsoft.VisualStudio.TestPlatform.SettingsMigrator.TestSettingsNodes.UnitTestConfig.set -> void
+Microsoft.VisualStudio.TestPlatform.SettingsMigrator.TestSettingsNodes.WebSettings.get -> System.Xml.XmlNode?
+Microsoft.VisualStudio.TestPlatform.SettingsMigrator.TestSettingsNodes.WebSettings.set -> void
+static Microsoft.VisualStudio.TestPlatform.SettingsMigrator.Program.Main(string![]! args) -> int

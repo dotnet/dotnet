@@ -1,0 +1,35 @@
+# Tests specific configuration
+# Applies on top of other .editorconfig files
+
+# C# files
+[*.cs]
+
+#### .NET Coding Conventions ####
+
+# CA1825: Avoid zero-length array allocations
+dotnet_diagnostic.CA1825.severity = warning
+
+# IDE0060: Remove unused parameter
+dotnet_diagnostic.IDE0060.severity = warning
+
+# CA1018: Mark attributes with AttributeUsageAttribute
+dotnet_diagnostic.CA1018.severity = warning
+
+# CA1001: Types that own disposable fields should be disposable
+dotnet_diagnostic.CA1001.severity = silent # Disabled on tests as it does not matter
+
+# CA1051: Do not declare visible instance fields
+dotnet_diagnostic.CA1051.severity = silent # Disabled on tests as it does not matter
+
+#### C# Coding Conventions ####
+
+#### .NET Formatting Rules ####
+
+#### C# Formatting Rules ####
+
+#### .NET Naming styles ####
+
+# CA1710: Identifiers should have correct suffix
+dotnet_diagnostic.CA1710.severity = warning
+
+#### C# Naming styles ####

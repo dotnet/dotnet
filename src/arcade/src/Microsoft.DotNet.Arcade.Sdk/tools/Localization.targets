@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+
+  <!--
+    XliffTasks for localizing .resx files and generating satellite assemblies.
+    When not building in CI, automatically sync .xlf files to .resx files on build.
+    Otherwise, let the build fail to catch .xlf files that are not up-to-date.
+  -->
+  <PropertyGroup Condition="'$(UsingToolXliff)' == 'true'">
+    <!-- 
+      It is only intended to automatically run update during dev cycle. However, it will fail the build on CI if the XLF file is not updated.
+      XLF file should be checked in and loc team will update the XLF it with translated version.
+    -->
+    <UpdateXlfOnBuild Condition="'$(ContinuousIntegrationBuild)' != 'true'">true</UpdateXlfOnBuild>
+
+    <!--
+      Use Satellite assembly generation task from Microsoft.NET.Sdk even when building with
+      full Framework MSBuild. This will support public signing, is deterministic, and always
+      generates them as AnyCPU. 
+    -->
+    <GenerateSatelliteAssembliesForCore Condition="'$(GenerateSatelliteAssembliesForCore)' == ''">true</GenerateSatelliteAssembliesForCore>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.DotNet.XliffTasks" Version="$(MicrosoftDotNetXliffTasksVersion)" PrivateAssets="all" IsImplicitlyDefined="true" Condition="'$(UsingToolXliff)' == 'true' and '$(IsShippingAssembly)' == 'true'" />
+  </ItemGroup>
+
+
+  <!-- TemplateLocalizer for localizing 'dotnet new' templates -->
+  <PropertyGroup Condition="'$(UsingToolTemplateLocalizer)' == 'true'">
+    <!-- Run localizer when building on dev machine. -->
+    <LocalizeTemplates Condition="'$(ContinuousIntegrationBuild)' != 'true'">true</LocalizeTemplates>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.TemplateEngine.Tasks" Version="$(MicrosoftTemplateEngineTasksVersion)" PrivateAssets="all" IsImplicitlyDefined="true" Condition="'$(UsingToolTemplateLocalizer)' == 'true'" />
+  </ItemGroup>
+
+</Project>

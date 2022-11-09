@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
+  <Metadata>
+    <Identity Id="21BAC26D-2935-4D0D-A282-AD647E2592B5" Version="|%CurrentProject%;GetVsixVersion|" Language="en-US" Publisher="Microsoft" />
+    <DisplayName>Roslyn Expression Evaluators</DisplayName>
+    <Description xml:space="preserve">Roslyn Expression Evaluators</Description>
+    <PackageId>Microsoft.CodeAnalysis.ExpressionEvaluator</PackageId>
+    <License>EULA.rtf</License>
+    <AllowClientRole>true</AllowClientRole>
+  </Metadata>
+  <Installation Experimental="true">
+    <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[17.0,]">
+      <ProductArchitecture>amd64</ProductArchitecture>
+    </InstallationTarget>
+    <InstallationTarget Id="Microsoft.VisualStudio.VSWinDesktopExpress" Version="[17.0,]">
+      <ProductArchitecture>amd64</ProductArchitecture>
+    </InstallationTarget>
+    <InstallationTarget Id="Microsoft.VisualStudio.VWDExpress" Version="[17.0,]">
+      <ProductArchitecture>amd64</ProductArchitecture>
+    </InstallationTarget>
+    <InstallationTarget Id="Microsoft.VisualStudio.VSWinExpress" Version="[17.0,]">
+      <ProductArchitecture>amd64</ProductArchitecture>
+    </InstallationTarget>
+  </Installation>
+  <Dependencies>
+    <Dependency Version="[|VisualStudioSetup;GetVsixVersion|,]" DisplayName="Roslyn Language Services" Id="0b5e8ddb-f12d-4131-a71d-77acc26a798f" />
+  </Dependencies>
+  <Assets>
+    <Asset Type="DebuggerEngineExtension" d:Source="Project" d:ProjectName="BasicExpressionCompiler" Path="|BasicExpressionCompiler;VsdConfigOutputGroup|" />
+    <Asset Type="DebuggerEngineExtension" d:Source="Project" d:ProjectName="BasicResultProvider.Portable" Path="|BasicResultProvider.Portable;VsdConfigOutputGroup|" />
+    <Asset Type="DebuggerEngineExtension" d:Source="Project" d:ProjectName="CSharpExpressionCompiler" Path="|CSharpExpressionCompiler;VsdConfigOutputGroup|" />
+    <Asset Type="DebuggerEngineExtension" d:Source="Project" d:ProjectName="CSharpResultProvider.Portable" Path="|CSharpResultProvider.Portable;VsdConfigOutputGroup|" />
+    <Asset Type="DebuggerEngineExtension" d:Source="Project" d:ProjectName="FunctionResolver" Path="|FunctionResolver;VsdConfigOutputGroup|" />
+    <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
+  </Assets>
+  <Prerequisites>
+    <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[17.0,18.0)" DisplayName="Visual Studio core editor" />
+  </Prerequisites>
+</PackageManifest>

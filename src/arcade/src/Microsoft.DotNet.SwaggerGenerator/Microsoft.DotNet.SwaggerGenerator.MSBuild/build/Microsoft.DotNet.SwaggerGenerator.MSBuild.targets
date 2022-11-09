@@ -1,0 +1,17 @@
+<Project>
+  <UsingTask TaskName="GenerateSwaggerCode" AssemblyFile="$(MicrosoftDotNetSwaggerGeneratorMSBuildTasksAssembly)"/>
+
+  <Target Name="GenerateCode">
+    <GenerateSwaggerCode
+      SwaggerDocumentUri="$(SwaggerDocumentUri)"
+      RootNamespace="$(RootNamespace)"
+      ClientName="$(SwaggerClientName)"
+      OutputDirectory="$(SwaggerOutputDirectory)">
+      <Output TaskParameter="GeneratedFiles" ItemName="SwaggerGeneratedFile"/>
+    </GenerateSwaggerCode>
+    <ItemGroup>
+      <_StaleSwaggerGeneratedFile Include="$(SwaggerOutputDirectory)/**/*" Exclude="@(SwaggerGeneratedFile)"/>
+    </ItemGroup>
+    <Delete Files="@(_StaleSwaggerGeneratedFile)" TreatErrorsAsWarnings="true"/>
+  </Target>
+</Project>

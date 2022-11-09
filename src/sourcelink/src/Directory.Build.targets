@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. See the License.txt file in the project root for more information. -->
+<Project>
+  <Import Project="Sdk.targets" Sdk="Microsoft.DotNet.Arcade.Sdk" />
+
+  <ItemGroup>
+    <NuspecProperty Include="DesktopTfm=net472"/>
+    <NuspecProperty Include="CoreTfm=net7.0" Condition="'$(DotNetBuildFromSource)' == 'true'"/>
+    <NuspecProperty Include="CoreTfm=netcoreapp3.1" Condition="'$(DotNetBuildFromSource)' != 'true'"/>
+  </ItemGroup>
+
+  <!-- 
+    Workaround for https://github.com/NuGet/Home/issues/6754: cyclic dependency.
+  -->
+  <PropertyGroup>
+    <_ProjectDefinedPackageId>$(PackageId)</_ProjectDefinedPackageId>
+    <PackageId>*fake_packageid_for_project_$(MSBuildProjectName)*</PackageId>
+  </PropertyGroup>
+
+  <!-- 
+    Workaround for https://github.com/Microsoft/msbuild/issues/2527.
+  -->
+  <PropertyGroup>
+    <ImplicitlyExpandNETStandardFacades Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">false</ImplicitlyExpandNETStandardFacades>
+  </PropertyGroup>
+
+  <!--
+     Workaround for cyclic package reference. PackageId is set to ain invalid value above (in evaluation phase to be picked up by Restore),
+     then updated to the actual value before Pack target and SourceLink source package generation target.
+  -->
+  <Target Name="_UpdatePackageId" BeforeTargets="$(PackDependsOn);InitializeSourceControlInformation" >
+    <PropertyGroup>
+      <PackageId>$(_ProjectDefinedPackageId)</PackageId>
+      <PackageId Condition="'$(PackageId)' == ''">$(AssemblyName)</PackageId>
+      <PackageId Condition="'$(PackageId)' == ''">$(MSBuildProjectName)</PackageId>
+    </PropertyGroup>
+  </Target>
+</Project>

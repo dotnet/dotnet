@@ -1,0 +1,7 @@
+{
+  "version": "1.0.0.0",
+  "strings": {
+    "name": "xUnit Test Project",
+    "description": "A project that contains xUnit.net tests that can run on .NET on Windows, Linux and MacOS."
+  }
+}

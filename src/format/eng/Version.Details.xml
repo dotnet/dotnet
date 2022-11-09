@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Dependencies>
+  <ProductDependencies>
+    <Dependency Name="Microsoft.Net.Compilers.Toolset" Version="4.4.0-3.22511.14">
+      <Uri>https://github.com/dotnet/roslyn</Uri>
+      <Sha>a9c49e8b8633005d2d03516693950037a9cf7cc7</Sha>
+    </Dependency>
+    <Dependency Name="System.CommandLine" Version="2.0.0-beta4.22430.1">
+      <Uri>https://github.com/dotnet/command-line-api</Uri>
+      <Sha>e5861a73ad3f08c820319b56b302387a8832ed59</Sha>
+    </Dependency>
+    <Dependency Name="System.CommandLine.Rendering" Version="0.4.0-alpha.22430.1">
+      <Uri>https://github.com/dotnet/command-line-api</Uri>
+      <Sha>e5861a73ad3f08c820319b56b302387a8832ed59</Sha>
+    </Dependency>
+  </ProductDependencies>
+  <ToolsetDependencies>
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.22466.3">
+      <Uri>https://github.com/dotnet/arcade</Uri>
+      <Sha>bf47db2617320c82f94713d7b538f7bc0fa9d662</Sha>
+    </Dependency>
+  </ToolsetDependencies>
+</Dependencies>

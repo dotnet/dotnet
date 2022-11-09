@@ -1,0 +1,628 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>System.Web.ApplicationServices</name>
+  </assembly>
+  <members>
+    <member name="T:System.Web.Configuration.MembershipPasswordCompatibilityMode">
+      <summary>Enumerates the password-compatibility modes for ASP.NET membership.</summary>
+    </member>
+    <member name="F:System.Web.Configuration.MembershipPasswordCompatibilityMode.Framework20">
+      <summary>Passwords are in ASP.NET 2.0 mode.</summary>
+    </member>
+    <member name="F:System.Web.Configuration.MembershipPasswordCompatibilityMode.Framework40">
+      <summary>Passwords are in ASP.NET 4 mode.</summary>
+    </member>
+    <member name="T:System.Web.Security.MembershipCreateStatus">
+      <summary>Describes the result of a <see cref="M:System.Web.Security.Membership.CreateUser(System.String,System.String)" /> operation.</summary>
+    </member>
+    <member name="F:System.Web.Security.MembershipCreateStatus.Success">
+      <summary>The user was successfully created.</summary>
+    </member>
+    <member name="F:System.Web.Security.MembershipCreateStatus.InvalidUserName">
+      <summary>The user name was not found in the database.</summary>
+    </member>
+    <member name="F:System.Web.Security.MembershipCreateStatus.InvalidPassword">
+      <summary>The password is not formatted correctly.</summary>
+    </member>
+    <member name="F:System.Web.Security.MembershipCreateStatus.InvalidQuestion">
+      <summary>The password question is not formatted correctly.</summary>
+    </member>
+    <member name="F:System.Web.Security.MembershipCreateStatus.InvalidAnswer">
+      <summary>The password answer is not formatted correctly.</summary>
+    </member>
+    <member name="F:System.Web.Security.MembershipCreateStatus.InvalidEmail">
+      <summary>The e-mail address is not formatted correctly.</summary>
+    </member>
+    <member name="F:System.Web.Security.MembershipCreateStatus.DuplicateUserName">
+      <summary>The user name already exists in the database for the application.</summary>
+    </member>
+    <member name="F:System.Web.Security.MembershipCreateStatus.DuplicateEmail">
+      <summary>The e-mail address already exists in the database for the application.</summary>
+    </member>
+    <member name="F:System.Web.Security.MembershipCreateStatus.UserRejected">
+      <summary>The user was not created, for a reason defined by the provider.</summary>
+    </member>
+    <member name="F:System.Web.Security.MembershipCreateStatus.InvalidProviderUserKey">
+      <summary>The provider user key is of an invalid type or format.</summary>
+    </member>
+    <member name="F:System.Web.Security.MembershipCreateStatus.DuplicateProviderUserKey">
+      <summary>The provider user key already exists in the database for the application.</summary>
+    </member>
+    <member name="F:System.Web.Security.MembershipCreateStatus.ProviderError">
+      <summary>The provider returned an error that is not described by other <see cref="T:System.Web.Security.MembershipCreateStatus" /> enumeration values.</summary>
+    </member>
+    <member name="T:System.Web.Security.MembershipCreateUserException">
+      <summary>The exception that is thrown when a user is not successfully created by a membership provider.</summary>
+    </member>
+    <member name="M:System.Web.Security.MembershipCreateUserException.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Security.MembershipCreateUserException" /> class.</summary>
+    </member>
+    <member name="M:System.Web.Security.MembershipCreateUserException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Security.MembershipCreateUserException" /> class with the supplied serialization information and context.</summary>
+      <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> that holds the serialized object data about the exception being thrown.</param>
+      <param name="context">The <see cref="T:System.Runtime.Serialization.StreamingContext" />  that contains contextual information about the source or destination.</param>
+    </member>
+    <member name="M:System.Web.Security.MembershipCreateUserException.#ctor(System.String)">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Security.MembershipCreateUserException" /> class and sets the <see cref="P:System.Exception.Message" /> property to the supplied <paramref name="message" /> parameter value</summary>
+      <param name="message">A description of the reason for the exception.</param>
+    </member>
+    <member name="M:System.Web.Security.MembershipCreateUserException.#ctor(System.String,System.Exception)">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Security.MembershipCreateUserException" /> class and sets the <see cref="P:System.Exception.Message" /> property to the supplied <paramref name="message" /> and the <see cref="P:System.Exception.InnerException" /> property to the supplied <paramref name="innerException" />.</summary>
+      <param name="message">A description of the reason for the exception.</param>
+      <param name="innerException">The exception that caused the <see cref="T:System.Web.Security.MembershipCreateUserException" />.</param>
+    </member>
+    <member name="M:System.Web.Security.MembershipCreateUserException.#ctor(System.Web.Security.MembershipCreateStatus)">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Security.MembershipCreateUserException" /> class with the specified <see cref="P:System.Web.Security.MembershipCreateUserException.StatusCode" /> value.</summary>
+      <param name="statusCode">A <see cref="T:System.Web.Security.MembershipCreateStatus" /> enumeration value that describes the reason for the exception.</param>
+    </member>
+    <member name="M:System.Web.Security.MembershipCreateUserException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Populates a <see cref="T:System.Runtime.Serialization.SerializationInfo" /> with the data needed to serialize the target object.</summary>
+      <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> to populate with data.</param>
+      <param name="context">A <see cref="T:System.Runtime.Serialization.StreamingContext" /> that specifies the destination for this serialization.</param>
+    </member>
+    <member name="P:System.Web.Security.MembershipCreateUserException.StatusCode">
+      <summary>Gets a description of the reason for the exception.</summary>
+      <returns>A <see cref="T:System.Web.Security.MembershipCreateStatus" /> enumeration value that describes the reason for the exception.</returns>
+    </member>
+    <member name="T:System.Web.Security.MembershipPasswordException">
+      <summary>The exception that is thrown when a password cannot be retrieved from the password store.</summary>
+    </member>
+    <member name="M:System.Web.Security.MembershipPasswordException.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Security.MembershipPasswordException" /> class. </summary>
+    </member>
+    <member name="M:System.Web.Security.MembershipPasswordException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Security.MembershipPasswordException" /> class with the supplied serialization information and context. </summary>
+      <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> that holds the serialized object data about the exception being thrown.</param>
+      <param name="context">The <see cref="T:System.Runtime.Serialization.StreamingContext" /> that contains contextual information about the source or destination.</param>
+    </member>
+    <member name="M:System.Web.Security.MembershipPasswordException.#ctor(System.String)">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Security.MembershipPasswordException" /> class and sets the <see cref="P:System.Exception.Message" /> property to the supplied <paramref name="message" />.</summary>
+      <param name="message">A description of the reason for the exception.</param>
+    </member>
+    <member name="M:System.Web.Security.MembershipPasswordException.#ctor(System.String,System.Exception)">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Security.MembershipPasswordException" /> class and sets the <see cref="P:System.Exception.Message" /> property to the supplied <paramref name="message" /> and the <see cref="P:System.Exception.InnerException" /> property to the supplied <paramref name="innerException" />.</summary>
+      <param name="message">A description of the reason for the exception.</param>
+      <param name="innerException">The exception that caused the <see cref="T:System.Web.Security.MembershipPasswordException" />.</param>
+    </member>
+    <member name="T:System.Web.Security.MembershipPasswordFormat">
+      <summary>Describes the encryption format for storing passwords for membership users.</summary>
+    </member>
+    <member name="F:System.Web.Security.MembershipPasswordFormat.Clear">
+      <summary>Passwords are not encrypted.</summary>
+    </member>
+    <member name="F:System.Web.Security.MembershipPasswordFormat.Hashed">
+      <summary>Passwords are encrypted one-way using the SHA1 hashing algorithm.</summary>
+    </member>
+    <member name="F:System.Web.Security.MembershipPasswordFormat.Encrypted">
+      <summary>Passwords are encrypted using the encryption settings determined by the machineKey Element (ASP.NET Settings Schema) element configuration.</summary>
+    </member>
+    <member name="T:System.Web.Security.MembershipProvider">
+      <summary>Defines the contract that ASP.NET implements to provide membership services using custom membership providers.</summary>
+    </member>
+    <member name="M:System.Web.Security.MembershipProvider.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Security.MembershipProvider" /> class.</summary>
+    </member>
+    <member name="P:System.Web.Security.MembershipProvider.ApplicationName">
+      <summary>The name of the application using the custom membership provider.</summary>
+      <returns>The name of the application using the custom membership provider.</returns>
+    </member>
+    <member name="M:System.Web.Security.MembershipProvider.ChangePassword(System.String,System.String,System.String)">
+      <summary>Processes a request to update the password for a membership user.</summary>
+      <returns>true if the password was updated successfully; otherwise, false.</returns>
+      <param name="username">The user to update the password for. </param>
+      <param name="oldPassword">The current password for the specified user. </param>
+      <param name="newPassword">The new password for the specified user. </param>
+    </member>
+    <member name="M:System.Web.Security.MembershipProvider.ChangePasswordQuestionAndAnswer(System.String,System.String,System.String,System.String)">
+      <summary>Processes a request to update the password question and answer for a membership user.</summary>
+      <returns>true if the password question and answer are updated successfully; otherwise, false.</returns>
+      <param name="username">The user to change the password question and answer for. </param>
+      <param name="password">The password for the specified user. </param>
+      <param name="newPasswordQuestion">The new password question for the specified user. </param>
+      <param name="newPasswordAnswer">The new password answer for the specified user. </param>
+    </member>
+    <member name="M:System.Web.Security.MembershipProvider.CreateUser(System.String,System.String,System.String,System.String,System.String,System.Boolean,System.Object,System.Web.Security.MembershipCreateStatus@)">
+      <summary>Adds a new membership user to the data source.</summary>
+      <returns>A <see cref="T:System.Web.Security.MembershipUser" /> object populated with the information for the newly created user.</returns>
+      <param name="username">The user name for the new user. </param>
+      <param name="password">The password for the new user. </param>
+      <param name="email">The e-mail address for the new user.</param>
+      <param name="passwordQuestion">The password question for the new user.</param>
+      <param name="passwordAnswer">The password answer for the new user</param>
+      <param name="isApproved">Whether or not the new user is approved to be validated.</param>
+      <param name="providerUserKey">The unique identifier from the membership data source for the user.</param>
+      <param name="status">A <see cref="T:System.Web.Security.MembershipCreateStatus" /> enumeration value indicating whether the user was created successfully.</param>
+    </member>
+    <member name="M:System.Web.Security.MembershipProvider.DecryptPassword(System.Byte[])">
+      <summary>Decrypts an encrypted password.</summary>
+      <returns>A byte array that contains the decrypted password.</returns>
+      <param name="encodedPassword">A byte array that contains the encrypted password to decrypt.</param>
+      <exception cref="T:System.Configuration.Provider.ProviderException">The <see cref="P:System.Web.Configuration.MachineKeySection.ValidationKey" /> property or <see cref="P:System.Web.Configuration.MachineKeySection.DecryptionKey" /> property is set to AutoGenerate.</exception>
+      <exception cref="T:System.PlatformNotSupportedException">This method is not available. This can occur if the application targets the .NET Framework 4 Client Profile. To prevent this exception, override the method, or change the application to target the full version of the .NET Framework.</exception>
+    </member>
+    <member name="M:System.Web.Security.MembershipProvider.DeleteUser(System.String,System.Boolean)">
+      <summary>Removes a user from the membership data source. </summary>
+      <returns>true if the user was successfully deleted; otherwise, false.</returns>
+      <param name="username">The name of the user to delete.</param>
+      <param name="deleteAllRelatedData">true to delete data related to the user from the database; false to leave data related to the user in the database.</param>
+    </member>
+    <member name="P:System.Web.Security.MembershipProvider.EnablePasswordReset">
+      <summary>Indicates whether the membership provider is configured to allow users to reset their passwords.</summary>
+      <returns>true if the membership provider supports password reset; otherwise, false. The default is true.</returns>
+    </member>
+    <member name="P:System.Web.Security.MembershipProvider.EnablePasswordRetrieval">
+      <summary>Indicates whether the membership provider is configured to allow users to retrieve their passwords.</summary>
+      <returns>true if the membership provider is configured to support password retrieval; otherwise, false. The default is false.</returns>
+    </member>
+    <member name="M:System.Web.Security.MembershipProvider.EncryptPassword(System.Byte[])">
+      <summary>Encrypts a password.</summary>
+      <returns>A byte array that contains the encrypted password.</returns>
+      <param name="password">A byte array that contains the password to encrypt.</param>
+      <exception cref="T:System.Configuration.Provider.ProviderException">The <see cref="P:System.Web.Configuration.MachineKeySection.ValidationKey" /> property or <see cref="P:System.Web.Configuration.MachineKeySection.DecryptionKey" /> property is set to AutoGenerate.</exception>
+      <exception cref="T:System.PlatformNotSupportedException">This method is not available. This can occur if the application targets the .NET Framework 4 Client Profile. To prevent this exception, override the method, or change the application to target the full version of the .NET Framework.</exception>
+    </member>
+    <member name="M:System.Web.Security.MembershipProvider.EncryptPassword(System.Byte[],System.Web.Configuration.MembershipPasswordCompatibilityMode)">
+      <summary>Encrypts the specified password using the specified password-compatibility mode.</summary>
+      <returns>A byte array that contains the encrypted password.</returns>
+      <param name="password">A byte array that contains the password to encrypt.</param>
+      <param name="legacyPasswordCompatibilityMode">The membership password-compatibility mode.</param>
+      <exception cref="T:System.Configuration.Provider.ProviderException">The <see cref="P:System.Web.Configuration.MachineKeySection.ValidationKey" /> property or <see cref="P:System.Web.Configuration.MachineKeySection.DecryptionKey" /> property is set to AutoGenerate.</exception>
+      <exception cref="T:System.PlatformNotSupportedException">This method is not available. This can occur if the application targets the .NET Framework 4 Client Profile. To prevent this exception, override the method, or change the application to target the full version of the .NET Framework.</exception>
+    </member>
+    <member name="M:System.Web.Security.MembershipProvider.FindUsersByEmail(System.String,System.Int32,System.Int32,System.Int32@)">
+      <summary>Gets a collection of membership users where the e-mail address contains the specified e-mail address to match.</summary>
+      <returns>A <see cref="T:System.Web.Security.MembershipUserCollection" /> collection that contains a page of <paramref name="pageSize" /><see cref="T:System.Web.Security.MembershipUser" /> objects beginning at the page specified by <paramref name="pageIndex" />.</returns>
+      <param name="emailToMatch">The e-mail address to search for.</param>
+      <param name="pageIndex">The index of the page of results to return. <paramref name="pageIndex" /> is zero-based.</param>
+      <param name="pageSize">The size of the page of results to return.</param>
+      <param name="totalRecords">The total number of matched users.</param>
+    </member>
+    <member name="M:System.Web.Security.MembershipProvider.FindUsersByName(System.String,System.Int32,System.Int32,System.Int32@)">
+      <summary>Gets a collection of membership users where the user name contains the specified user name to match.</summary>
+      <returns>A <see cref="T:System.Web.Security.MembershipUserCollection" /> collection that contains a page of <paramref name="pageSize" /><see cref="T:System.Web.Security.MembershipUser" /> objects beginning at the page specified by <paramref name="pageIndex" />.</returns>
+      <param name="usernameToMatch">The user name to search for.</param>
+      <param name="pageIndex">The index of the page of results to return. <paramref name="pageIndex" /> is zero-based.</param>
+      <param name="pageSize">The size of the page of results to return.</param>
+      <param name="totalRecords">The total number of matched users.</param>
+    </member>
+    <member name="M:System.Web.Security.MembershipProvider.GetAllUsers(System.Int32,System.Int32,System.Int32@)">
+      <summary>Gets a collection of all the users in the data source in pages of data.</summary>
+      <returns>A <see cref="T:System.Web.Security.MembershipUserCollection" /> collection that contains a page of <paramref name="pageSize" /><see cref="T:System.Web.Security.MembershipUser" /> objects beginning at the page specified by <paramref name="pageIndex" />.</returns>
+      <param name="pageIndex">The index of the page of results to return. <paramref name="pageIndex" /> is zero-based.</param>
+      <param name="pageSize">The size of the page of results to return.</param>
+      <param name="totalRecords">The total number of matched users.</param>
+    </member>
+    <member name="M:System.Web.Security.MembershipProvider.GetNumberOfUsersOnline">
+      <summary>Gets the number of users currently accessing the application.</summary>
+      <returns>The number of users currently accessing the application.</returns>
+    </member>
+    <member name="M:System.Web.Security.MembershipProvider.GetPassword(System.String,System.String)">
+      <summary>Gets the password for the specified user name from the data source.</summary>
+      <returns>The password for the specified user name.</returns>
+      <param name="username">The user to retrieve the password for. </param>
+      <param name="answer">The password answer for the user. </param>
+    </member>
+    <member name="M:System.Web.Security.MembershipProvider.GetUser(System.Object,System.Boolean)">
+      <summary>Gets user information from the data source based on the unique identifier for the membership user. Provides an option to update the last-activity date/time stamp for the user.</summary>
+      <returns>A <see cref="T:System.Web.Security.MembershipUser" /> object populated with the specified user's information from the data source.</returns>
+      <param name="providerUserKey">The unique identifier for the membership user to get information for.</param>
+      <param name="userIsOnline">true to update the last-activity date/time stamp for the user; false to return user information without updating the last-activity date/time stamp for the user.</param>
+    </member>
+    <member name="M:System.Web.Security.MembershipProvider.GetUser(System.String,System.Boolean)">
+      <summary>Gets information from the data source for a user. Provides an option to update the last-activity date/time stamp for the user.</summary>
+      <returns>A <see cref="T:System.Web.Security.MembershipUser" /> object populated with the specified user's information from the data source.</returns>
+      <param name="username">The name of the user to get information for. </param>
+      <param name="userIsOnline">true to update the last-activity date/time stamp for the user; false to return user information without updating the last-activity date/time stamp for the user. </param>
+    </member>
+    <member name="M:System.Web.Security.MembershipProvider.GetUserNameByEmail(System.String)">
+      <summary>Gets the user name associated with the specified e-mail address.</summary>
+      <returns>The user name associated with the specified e-mail address. If no match is found, return null.</returns>
+      <param name="email">The e-mail address to search for. </param>
+    </member>
+    <member name="P:System.Web.Security.MembershipProvider.MaxInvalidPasswordAttempts">
+      <summary>Gets the number of invalid password or password-answer attempts allowed before the membership user is locked out.</summary>
+      <returns>The number of invalid password or password-answer attempts allowed before the membership user is locked out.</returns>
+    </member>
+    <member name="P:System.Web.Security.MembershipProvider.MinRequiredNonAlphanumericCharacters">
+      <summary>Gets the minimum number of special characters that must be present in a valid password.</summary>
+      <returns>The minimum number of special characters that must be present in a valid password.</returns>
+    </member>
+    <member name="P:System.Web.Security.MembershipProvider.MinRequiredPasswordLength">
+      <summary>Gets the minimum length required for a password.</summary>
+      <returns>The minimum length required for a password. </returns>
+    </member>
+    <member name="M:System.Web.Security.MembershipProvider.OnValidatingPassword(System.Web.Security.ValidatePasswordEventArgs)">
+      <summary>Raises the <see cref="E:System.Web.Security.MembershipProvider.ValidatingPassword" /> event if an event handler has been defined.</summary>
+      <param name="e">The <see cref="T:System.Web.Security.ValidatePasswordEventArgs" /> to pass to the <see cref="E:System.Web.Security.MembershipProvider.ValidatingPassword" /> event handler.</param>
+    </member>
+    <member name="P:System.Web.Security.MembershipProvider.PasswordAttemptWindow">
+      <summary>Gets the number of minutes in which a maximum number of invalid password or password-answer attempts are allowed before the membership user is locked out.</summary>
+      <returns>The number of minutes in which a maximum number of invalid password or password-answer attempts are allowed before the membership user is locked out.</returns>
+    </member>
+    <member name="P:System.Web.Security.MembershipProvider.PasswordFormat">
+      <summary>Gets a value indicating the format for storing passwords in the membership data store.</summary>
+      <returns>One of the <see cref="T:System.Web.Security.MembershipPasswordFormat" /> values indicating the format for storing passwords in the data store.</returns>
+    </member>
+    <member name="P:System.Web.Security.MembershipProvider.PasswordStrengthRegularExpression">
+      <summary>Gets the regular expression used to evaluate a password.</summary>
+      <returns>A regular expression used to evaluate a password.</returns>
+    </member>
+    <member name="P:System.Web.Security.MembershipProvider.RequiresQuestionAndAnswer">
+      <summary>Gets a value indicating whether the membership provider is configured to require the user to answer a password question for password reset and retrieval.</summary>
+      <returns>true if a password answer is required for password reset and retrieval; otherwise, false. The default is true.</returns>
+    </member>
+    <member name="P:System.Web.Security.MembershipProvider.RequiresUniqueEmail">
+      <summary>Gets a value indicating whether the membership provider is configured to require a unique e-mail address for each user name.</summary>
+      <returns>true if the membership provider requires a unique e-mail address; otherwise, false. The default is true.</returns>
+    </member>
+    <member name="M:System.Web.Security.MembershipProvider.ResetPassword(System.String,System.String)">
+      <summary>Resets a user's password to a new, automatically generated password.</summary>
+      <returns>The new password for the specified user.</returns>
+      <param name="username">The user to reset the password for. </param>
+      <param name="answer">The password answer for the specified user. </param>
+    </member>
+    <member name="M:System.Web.Security.MembershipProvider.UnlockUser(System.String)">
+      <summary>Clears a lock so that the membership user can be validated.</summary>
+      <returns>true if the membership user was successfully unlocked; otherwise, false.</returns>
+      <param name="userName">The membership user whose lock status you want to clear.</param>
+    </member>
+    <member name="M:System.Web.Security.MembershipProvider.UpdateUser(System.Web.Security.MembershipUser)">
+      <summary>Updates information about a user in the data source.</summary>
+      <param name="user">A <see cref="T:System.Web.Security.MembershipUser" /> object that represents the user to update and the updated information for the user. </param>
+    </member>
+    <member name="M:System.Web.Security.MembershipProvider.ValidateUser(System.String,System.String)">
+      <summary>Verifies that the specified user name and password exist in the data source.</summary>
+      <returns>true if the specified username and password are valid; otherwise, false.</returns>
+      <param name="username">The name of the user to validate. </param>
+      <param name="password">The password for the specified user. </param>
+    </member>
+    <member name="E:System.Web.Security.MembershipProvider.ValidatingPassword">
+      <summary>Occurs when a user is created, a password is changed, or a password is reset.</summary>
+    </member>
+    <member name="T:System.Web.Security.MembershipProviderCollection">
+      <summary>A collection of objects that inherit the <see cref="T:System.Web.Security.MembershipProvider" /> abstract class.</summary>
+    </member>
+    <member name="M:System.Web.Security.MembershipProviderCollection.#ctor">
+      <summary>Creates a new, empty membership provider collection.</summary>
+    </member>
+    <member name="M:System.Web.Security.MembershipProviderCollection.Add(System.Configuration.Provider.ProviderBase)">
+      <summary>Adds a membership provider to the collection.</summary>
+      <param name="provider">The membership provider to add to the collection.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="provider" /> is null.</exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="provider" /> is not of a type that inherits the <see cref="T:System.Web.Security.MembershipProvider" /> abstract class.</exception>
+    </member>
+    <member name="M:System.Web.Security.MembershipProviderCollection.CopyTo(System.Web.Security.MembershipProvider[],System.Int32)">
+      <summary>Copies the membership provider collection to a one-dimensional array.</summary>
+      <param name="array">A one-dimensional array that is the destination of the elements copied from the <see cref="T:System.Web.Security.MembershipProviderCollection" />. The array must have zero-based indexing.</param>
+      <param name="index">The zero-based index in <paramref name="array" /> at which copying begins.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="array" /> is null. </exception>
+      <exception cref="T:System.ArgumentOutOfRangeException">
+        <paramref name="index" /> is less than zero. </exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="array" /> is multidimensional.-or- The number of elements in the source array is greater than the available space from <paramref name="index" /> to the end of the destination <paramref name="array" />. </exception>
+      <exception cref="T:System.InvalidCastException">The type of the source array cannot be cast automatically to the type of the destination <paramref name="array" />. </exception>
+    </member>
+    <member name="P:System.Web.Security.MembershipProviderCollection.Item(System.String)">
+      <summary>Gets the membership provider in the collection referenced by the specified provider name.</summary>
+      <returns>An object that inherits the <see cref="T:System.Web.Security.MembershipProvider" /> abstract class.</returns>
+      <param name="name">The name of the membership provider.</param>
+    </member>
+    <member name="T:System.Web.Security.MembershipUser">
+      <summary>Exposes and updates membership user information in the membership data store.</summary>
+    </member>
+    <member name="M:System.Web.Security.MembershipUser.#ctor">
+      <summary>Creates a new instance of a <see cref="T:System.Web.Security.MembershipUser" /> object for a class that inherits the <see cref="T:System.Web.Security.MembershipUser" /> class.</summary>
+    </member>
+    <member name="M:System.Web.Security.MembershipUser.#ctor(System.String,System.String,System.Object,System.String,System.String,System.String,System.Boolean,System.Boolean,System.DateTime,System.DateTime,System.DateTime,System.DateTime,System.DateTime)">
+      <summary>Creates a new membership user object with the specified property values.</summary>
+      <param name="providerName">The <see cref="P:System.Web.Security.MembershipUser.ProviderName" /> string for the membership user.</param>
+      <param name="name">The <see cref="P:System.Web.Security.MembershipUser.UserName" /> string for the membership user.</param>
+      <param name="providerUserKey">The <see cref="P:System.Web.Security.MembershipUser.ProviderUserKey" /> identifier for the membership user.</param>
+      <param name="email">The <see cref="P:System.Web.Security.MembershipUser.Email" /> string for the membership user.</param>
+      <param name="passwordQuestion">The <see cref="P:System.Web.Security.MembershipUser.PasswordQuestion" /> string for the membership user.</param>
+      <param name="comment">The <see cref="P:System.Web.Security.MembershipUser.Comment" /> string for the membership user.</param>
+      <param name="isApproved">The <see cref="P:System.Web.Security.MembershipUser.IsApproved" /> value for the membership user.</param>
+      <param name="isLockedOut">true to lock out the membership user; otherwise, false.</param>
+      <param name="creationDate">The <see cref="P:System.Web.Security.MembershipUser.CreationDate" /><see cref="T:System.DateTime" /> object for the membership user.</param>
+      <param name="lastLoginDate">The <see cref="P:System.Web.Security.MembershipUser.LastLoginDate" /><see cref="T:System.DateTime" /> object for the membership user.</param>
+      <param name="lastActivityDate">The <see cref="P:System.Web.Security.MembershipUser.LastActivityDate" /><see cref="T:System.DateTime" /> object for the membership user.</param>
+      <param name="lastPasswordChangedDate">The <see cref="P:System.Web.Security.MembershipUser.LastPasswordChangedDate" /><see cref="T:System.DateTime" /> object for the membership user.</param>
+      <param name="lastLockoutDate">The <see cref="P:System.Web.Security.MembershipUser.LastLockoutDate" /><see cref="T:System.DateTime" /> object for the membership user.</param>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="providerName" /> is null.-or-<paramref name="providerName" /> is not found in the <see cref="P:System.Web.Security.Membership.Providers" /> collection.</exception>
+      <exception cref="T:System.PlatformNotSupportedException">The constructor is not available. This can occur if the application targets the .NET Framework 4 Client Profile. To prevent this exception, derive your class from the type and then call the default protected constructor, or change the application to target the full version of the .NET Framework.</exception>
+    </member>
+    <member name="M:System.Web.Security.MembershipUser.ChangePassword(System.String,System.String)">
+      <summary>Updates the password for the membership user in the membership data store.</summary>
+      <returns>true if the update was successful; otherwise, false.</returns>
+      <param name="oldPassword">The current password for the membership user.</param>
+      <param name="newPassword">The new password for the membership user.</param>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="oldPassword" /> is an empty string.-or-<paramref name="newPassword" /> is an empty string.</exception>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="oldPassword" /> is null.-or-<paramref name="newPassword" /> is null.</exception>
+      <exception cref="T:System.PlatformNotSupportedException">This method is not available. This can occur if the application targets the .NET Framework 4 Client Profile. To prevent this exception, override the method, or change the application to target the full version of the .NET Framework.</exception>
+    </member>
+    <member name="M:System.Web.Security.MembershipUser.ChangePasswordQuestionAndAnswer(System.String,System.String,System.String)">
+      <summary>Updates the password question and answer for the membership user in the membership data store.</summary>
+      <returns>true if the update was successful; otherwise, false.</returns>
+      <param name="password">The current password for the membership user.</param>
+      <param name="newPasswordQuestion">The new password question value for the membership user.</param>
+      <param name="newPasswordAnswer">The new password answer value for the membership user.</param>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="password" /> is an empty string.-or-<paramref name="newPasswordQuestion" /> is an empty string.-or-<paramref name="newPasswordAnswer" /> is an empty string.</exception>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="password" /> is null.</exception>
+      <exception cref="T:System.PlatformNotSupportedException">This method is not available. This can occur if the application targets the .NET Framework 4 Client Profile. To prevent this exception, override the method, or change the application to target the full version of the .NET Framework.</exception>
+    </member>
+    <member name="P:System.Web.Security.MembershipUser.Comment">
+      <summary>Gets or sets application-specific information for the membership user.</summary>
+      <returns>Application-specific information for the membership user.</returns>
+    </member>
+    <member name="P:System.Web.Security.MembershipUser.CreationDate">
+      <summary>Gets the date and time when the user was added to the membership data store.</summary>
+      <returns>The date and time when the user was added to the membership data store. </returns>
+    </member>
+    <member name="P:System.Web.Security.MembershipUser.Email">
+      <summary>Gets or sets the e-mail address for the membership user.</summary>
+      <returns>The e-mail address for the membership user.</returns>
+    </member>
+    <member name="M:System.Web.Security.MembershipUser.GetPassword">
+      <summary>Gets the password for the membership user from the membership data store.</summary>
+      <returns>The password for the membership user.</returns>
+      <exception cref="T:System.PlatformNotSupportedException">This method is not available. This can occur if the application targets the .NET Framework 4 Client Profile. To prevent this exception, override the method, or change the application to target the full version of the .NET Framework.</exception>
+    </member>
+    <member name="M:System.Web.Security.MembershipUser.GetPassword(System.String)">
+      <summary>Gets the password for the membership user from the membership data store.</summary>
+      <returns>The password for the membership user.</returns>
+      <param name="passwordAnswer">The password answer for the membership user.</param>
+      <exception cref="T:System.PlatformNotSupportedException">This method is not available. This can occur if the application targets the .NET Framework 4 Client Profile. To prevent this exception, override the method, or change the application to target the full version of the .NET Framework.</exception>
+    </member>
+    <member name="P:System.Web.Security.MembershipUser.IsApproved">
+      <summary>Gets or sets whether the membership user can be authenticated.</summary>
+      <returns>true if the user can be authenticated; otherwise, false.</returns>
+    </member>
+    <member name="P:System.Web.Security.MembershipUser.IsLockedOut">
+      <summary>Gets a value indicating whether the membership user is locked out and unable to be validated.</summary>
+      <returns>true if the membership user is locked out and unable to be validated; otherwise, false.</returns>
+    </member>
+    <member name="P:System.Web.Security.MembershipUser.IsOnline">
+      <summary>Gets whether the user is currently online.</summary>
+      <returns>true if the user is online; otherwise, false.</returns>
+      <exception cref="T:System.PlatformNotSupportedException">This method is not available. This can occur if the application targets the .NET Framework 4 Client Profile. To prevent this exception, override the method, or change the application to target the full version of the .NET Framework.</exception>
+    </member>
+    <member name="P:System.Web.Security.MembershipUser.LastActivityDate">
+      <summary>Gets or sets the date and time when the membership user was last authenticated or accessed the application.</summary>
+      <returns>The date and time when the membership user was last authenticated or accessed the application.</returns>
+    </member>
+    <member name="P:System.Web.Security.MembershipUser.LastLockoutDate">
+      <summary>Gets the most recent date and time that the membership user was locked out.</summary>
+      <returns>A <see cref="T:System.DateTime" /> object that represents the most recent date and time that the membership user was locked out.</returns>
+    </member>
+    <member name="P:System.Web.Security.MembershipUser.LastLoginDate">
+      <summary>Gets or sets the date and time when the user was last authenticated.</summary>
+      <returns>The date and time when the user was last authenticated.</returns>
+    </member>
+    <member name="P:System.Web.Security.MembershipUser.LastPasswordChangedDate">
+      <summary>Gets the date and time when the membership user's password was last updated.</summary>
+      <returns>The date and time when the membership user's password was last updated.</returns>
+    </member>
+    <member name="P:System.Web.Security.MembershipUser.PasswordQuestion">
+      <summary>Gets the password question for the membership user.</summary>
+      <returns>The password question for the membership user.</returns>
+    </member>
+    <member name="P:System.Web.Security.MembershipUser.ProviderName">
+      <summary>Gets the name of the membership provider that stores and retrieves user information for the membership user.</summary>
+      <returns>The name of the membership provider that stores and retrieves user information for the membership user.</returns>
+    </member>
+    <member name="P:System.Web.Security.MembershipUser.ProviderUserKey">
+      <summary>Gets the user identifier from the membership data source for the user.</summary>
+      <returns>The user identifier from the membership data source for the user.</returns>
+    </member>
+    <member name="M:System.Web.Security.MembershipUser.ResetPassword">
+      <summary>Resets a user's password to a new, automatically generated password.</summary>
+      <returns>The new password for the membership user.</returns>
+      <exception cref="T:System.PlatformNotSupportedException">This method is not available. This can occur if the application targets the .NET Framework 4 Client Profile. To prevent this exception, override the method, or change the application to target the full version of the .NET Framework.</exception>
+    </member>
+    <member name="M:System.Web.Security.MembershipUser.ResetPassword(System.String)">
+      <summary>Resets a user's password to a new, automatically generated password.</summary>
+      <returns>The new password for the membership user.</returns>
+      <param name="passwordAnswer">The password answer for the membership user.</param>
+      <exception cref="T:System.PlatformNotSupportedException">This method is not available. This can occur if the application targets the .NET Framework 4 Client Profile. To prevent this exception, override the method, or change the application to target the full version of the .NET Framework.</exception>
+    </member>
+    <member name="M:System.Web.Security.MembershipUser.ToString">
+      <summary>Returns the user name for the membership user.</summary>
+      <returns>The <see cref="P:System.Web.Security.MembershipUser.UserName" /> for the membership user.</returns>
+    </member>
+    <member name="M:System.Web.Security.MembershipUser.UnlockUser">
+      <summary>Clears the locked-out state of the user so that the membership user can be validated.</summary>
+      <returns>true if the membership user was successfully unlocked; otherwise, false.</returns>
+      <exception cref="T:System.PlatformNotSupportedException">This method is not available. This can occur if the application targets the .NET Framework 4 Client Profile. To prevent this exception, override the method, or change the application to target the full version of the .NET Framework.</exception>
+    </member>
+    <member name="P:System.Web.Security.MembershipUser.UserName">
+      <summary>Gets the logon name of the membership user.</summary>
+      <returns>The logon name of the membership user.</returns>
+    </member>
+    <member name="T:System.Web.Security.MembershipUserCollection">
+      <summary>A collection of <see cref="T:System.Web.Security.MembershipUser" /> objects.</summary>
+    </member>
+    <member name="M:System.Web.Security.MembershipUserCollection.#ctor">
+      <summary>Creates a new, empty membership user collection.</summary>
+    </member>
+    <member name="M:System.Web.Security.MembershipUserCollection.Add(System.Web.Security.MembershipUser)">
+      <summary>Adds the specified membership user to the collection.</summary>
+      <param name="user">A <see cref="T:System.Web.Security.MembershipUser" /> object to add to the collection.</param>
+      <exception cref="T:System.NotSupportedException">The collection is read-only.</exception>
+      <exception cref="T:System.ArgumentNullException">The <see cref="P:System.Web.Security.MembershipUser.UserName" /> of the <paramref name="user" /> is null.</exception>
+      <exception cref="T:System.ArgumentException">A <see cref="T:System.Web.Security.MembershipUser" /> object with the same <see cref="P:System.Web.Security.MembershipUser.UserName" /> value as <paramref name="user" /> already exists in the collection.</exception>
+    </member>
+    <member name="M:System.Web.Security.MembershipUserCollection.Clear">
+      <summary>Removes all membership user objects from the collection.</summary>
+    </member>
+    <member name="M:System.Web.Security.MembershipUserCollection.CopyTo(System.Web.Security.MembershipUser[],System.Int32)">
+      <summary>Copies the membership user collection to a one-dimensional array.</summary>
+      <param name="array">A one-dimensional array of type <see cref="T:System.Web.Security.MembershipUser" /> that is the destination of the elements copied from the <see cref="T:System.Web.Security.MembershipUserCollection" />. The array must have zero-based indexing.</param>
+      <param name="index">The zero-based index in the array at which copying begins.</param>
+    </member>
+    <member name="P:System.Web.Security.MembershipUserCollection.Count">
+      <summary>Gets the number of membership user objects in the collection.</summary>
+      <returns>The number of <see cref="T:System.Web.Security.MembershipUser" /> objects in the collection.</returns>
+    </member>
+    <member name="M:System.Web.Security.MembershipUserCollection.GetEnumerator">
+      <summary>Gets an enumerator that can iterate through the membership user collection.</summary>
+      <returns>An <see cref="T:System.Collections.IEnumerator" /> for the entire <see cref="T:System.Web.Security.MembershipUserCollection" />.</returns>
+    </member>
+    <member name="P:System.Web.Security.MembershipUserCollection.IsSynchronized">
+      <summary>Gets a value indicating whether the membership user collection is thread safe.</summary>
+      <returns>Always false because thread-safe membership user collections are not supported.</returns>
+    </member>
+    <member name="P:System.Web.Security.MembershipUserCollection.Item(System.String)">
+      <summary>Gets the membership user in the collection referenced by the specified user name.</summary>
+      <returns>A <see cref="T:System.Web.Security.MembershipUser" /> object representing the user specified by <paramref name="name" />.</returns>
+      <param name="name">The <see cref="P:System.Web.Security.MembershipUser.UserName" /> of the <see cref="T:System.Web.Security.MembershipUser" /> to retrieve from the collection.</param>
+    </member>
+    <member name="M:System.Web.Security.MembershipUserCollection.Remove(System.String)">
+      <summary>Removes the membership user object with the specified user name from the collection.</summary>
+      <param name="name">The user name of the <see cref="T:System.Web.Security.MembershipUser" /> object to remove from the collection.</param>
+      <exception cref="T:System.NotSupportedException">The collection is read-only.</exception>
+    </member>
+    <member name="M:System.Web.Security.MembershipUserCollection.SetReadOnly">
+      <summary>Makes the contents of the membership user collection read-only.</summary>
+    </member>
+    <member name="P:System.Web.Security.MembershipUserCollection.SyncRoot">
+      <summary>Gets the synchronization root.</summary>
+      <returns>Always this, because synchronization of membership user collections is not supported.</returns>
+    </member>
+    <member name="M:System.Web.Security.MembershipUserCollection.System#Collections#ICollection#CopyTo(System.Array,System.Int32)">
+      <summary>Copies the contents of the <see cref="T:System.Web.Security.MembershipUserCollection" /> object to an <see cref="T:System.Array" />, starting at a particular <see cref="T:System.Array" /> index.</summary>
+      <param name="array">The one-dimensional <see cref="T:System.Array" /> that is the destination for the objects copied from the <see cref="T:System.Web.Security.MembershipUserCollection" /> object. The <see cref="T:System.Array" /> must have zero-based indexing. </param>
+      <param name="index">The zero-based index in <paramref name="array" /> at which copying begins.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="array" /> is null.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException">
+        <paramref name="index" /> is less than 0.</exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="array" /> is multidimensional.-or-<paramref name="index" /> is greater than or equal to the length of <paramref name="array" />.-or-The number of elements in the source <see cref="T:System.Web.Security.MembershipUserCollection" /> is greater than the available space from <paramref name="index" /> to the end of the destination array. </exception>
+      <exception cref="T:System.InvalidCastException">The type of the source <see cref="T:System.Web.Security.MembershipUserCollection" /> cannot be cast automatically to the type of the destination array. </exception>
+    </member>
+    <member name="T:System.Web.Security.MembershipValidatePasswordEventHandler">
+      <summary>Represents the method that will handle the <see cref="E:System.Web.Security.MembershipProvider.ValidatingPassword" /> event of the <see cref="T:System.Web.Security.MembershipProvider" /> class.</summary>
+      <param name="sender">The <see cref="T:System.Web.Security.MembershipProvider" /> that raised the <see cref="E:System.Web.Security.MembershipProvider.ValidatingPassword" /> event.</param>
+      <param name="e">A <see cref="T:System.Web.Security.ValidatePasswordEventArgs" /> object that contains the event data.</param>
+    </member>
+    <member name="T:System.Web.Security.RoleProvider">
+      <summary>Defines the contract that ASP.NET implements to provide role-management services using custom role providers.</summary>
+    </member>
+    <member name="M:System.Web.Security.RoleProvider.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Web.Security.RoleProvider" /> class. </summary>
+    </member>
+    <member name="M:System.Web.Security.RoleProvider.AddUsersToRoles(System.String[],System.String[])">
+      <summary>Adds the specified user names to the specified roles for the configured applicationName.</summary>
+      <param name="usernames">A string array of user names to be added to the specified roles. </param>
+      <param name="roleNames">A string array of the role names to add the specified user names to.</param>
+    </member>
+    <member name="P:System.Web.Security.RoleProvider.ApplicationName">
+      <summary>Gets or sets the name of the application to store and retrieve role information for.</summary>
+      <returns>The name of the application to store and retrieve role information for.</returns>
+    </member>
+    <member name="M:System.Web.Security.RoleProvider.CreateRole(System.String)">
+      <summary>Adds a new role to the data source for the configured applicationName.</summary>
+      <param name="roleName">The name of the role to create.</param>
+    </member>
+    <member name="M:System.Web.Security.RoleProvider.DeleteRole(System.String,System.Boolean)">
+      <summary>Removes a role from the data source for the configured applicationName.</summary>
+      <returns>true if the role was successfully deleted; otherwise, false.</returns>
+      <param name="roleName">The name of the role to delete.</param>
+      <param name="throwOnPopulatedRole">If true, throw an exception if <paramref name="roleName" /> has one or more members and do not delete <paramref name="roleName" />.</param>
+    </member>
+    <member name="M:System.Web.Security.RoleProvider.FindUsersInRole(System.String,System.String)">
+      <summary>Gets an array of user names in a role where the user name contains the specified user name to match.</summary>
+      <returns>A string array containing the names of all the users where the user name matches <paramref name="usernameToMatch" /> and the user is a member of the specified role.</returns>
+      <param name="roleName">The role to search in.</param>
+      <param name="usernameToMatch">The user name to search for.</param>
+    </member>
+    <member name="M:System.Web.Security.RoleProvider.GetAllRoles">
+      <summary>Gets a list of all the roles for the configured applicationName.</summary>
+      <returns>A string array containing the names of all the roles stored in the data source for the configured applicationName.</returns>
+    </member>
+    <member name="M:System.Web.Security.RoleProvider.GetRolesForUser(System.String)">
+      <summary>Gets a list of the roles that a specified user is in for the configured applicationName.</summary>
+      <returns>A string array containing the names of all the roles that the specified user is in for the configured applicationName.</returns>
+      <param name="username">The user to return a list of roles for.</param>
+    </member>
+    <member name="M:System.Web.Security.RoleProvider.GetUsersInRole(System.String)">
+      <summary>Gets a list of users in the specified role for the configured applicationName.</summary>
+      <returns>A string array containing the names of all the users who are members of the specified role for the configured applicationName.</returns>
+      <param name="roleName">The name of the role to get the list of users for.</param>
+    </member>
+    <member name="M:System.Web.Security.RoleProvider.IsUserInRole(System.String,System.String)">
+      <summary>Gets a value indicating whether the specified user is in the specified role for the configured applicationName.</summary>
+      <returns>true if the specified user is in the specified role for the configured applicationName; otherwise, false.</returns>
+      <param name="username">The user name to search for.</param>
+      <param name="roleName">The role to search in.</param>
+    </member>
+    <member name="M:System.Web.Security.RoleProvider.RemoveUsersFromRoles(System.String[],System.String[])">
+      <summary>Removes the specified user names from the specified roles for the configured applicationName.</summary>
+      <param name="usernames">A string array of user names to be removed from the specified roles. </param>
+      <param name="roleNames">A string array of role names to remove the specified user names from.</param>
+    </member>
+    <member name="M:System.Web.Security.RoleProvider.RoleExists(System.String)">
+      <summary>Gets a value indicating whether the specified role name already exists in the role data source for the configured applicationName.</summary>
+      <returns>true if the role name already exists in the data source for the configured applicationName; otherwise, false.</returns>
+      <param name="roleName">The name of the role to search for in the data source.</param>
+    </member>
+    <member name="T:System.Web.Security.ValidatePasswordEventArgs">
+      <summary>Provides event data for the <see cref="E:System.Web.Security.MembershipProvider.ValidatingPassword" /> event of the <see cref="T:System.Web.Security.MembershipProvider" /> class.</summary>
+    </member>
+    <member name="M:System.Web.Security.ValidatePasswordEventArgs.#ctor(System.String,System.String,System.Boolean)">
+      <summary>Creates a new instance of the <see cref="T:System.Web.Security.ValidatePasswordEventArgs" /> class.</summary>
+      <param name="userName">The membership user name for the current create-user, change-password, or reset-password action.</param>
+      <param name="password">The new password for the specified membership user.</param>
+      <param name="isNewUser">true if the event is occurring while a new user is being created; otherwise, false.</param>
+    </member>
+    <member name="P:System.Web.Security.ValidatePasswordEventArgs.Cancel">
+      <summary>Gets or sets a value that indicates whether the current create-user, change-password, or reset-password action will be canceled.</summary>
+      <returns>true if the current create-user, change-password, or reset-password action will be canceled; otherwise, false. The default is false.</returns>
+    </member>
+    <member name="P:System.Web.Security.ValidatePasswordEventArgs.FailureInformation">
+      <summary>Gets or sets an exception that describes the reason for the password-validation failure.</summary>
+      <returns>An <see cref="T:System.Exception" /> that describes the reason for the password-validation failure.</returns>
+    </member>
+    <member name="P:System.Web.Security.ValidatePasswordEventArgs.IsNewUser">
+      <summary>Gets a value that indicates whether the <see cref="E:System.Web.Security.MembershipProvider.ValidatingPassword" /> event is being raised during a call to the <see cref="M:System.Web.Security.MembershipProvider.CreateUser(System.String,System.String,System.String,System.String,System.String,System.Boolean,System.Object,System.Web.Security.MembershipCreateStatus@)" /> method.</summary>
+      <returns>true if the <see cref="E:System.Web.Security.MembershipProvider.ValidatingPassword" /> event is being raised during a call to the <see cref="M:System.Web.Security.MembershipProvider.CreateUser(System.String,System.String,System.String,System.String,System.String,System.Boolean,System.Object,System.Web.Security.MembershipCreateStatus@)" /> method; otherwise, false.</returns>
+    </member>
+    <member name="P:System.Web.Security.ValidatePasswordEventArgs.Password">
+      <summary>Gets the password for the current create-user, change-password, or reset-password action.</summary>
+      <returns>The password for the current create-user, change-password, or reset-password action.</returns>
+    </member>
+    <member name="P:System.Web.Security.ValidatePasswordEventArgs.UserName">
+      <summary>Gets the name of the membership user for the current create-user, change-password, or reset-password action.</summary>
+      <returns>The name of the membership user for the current create-user, change-password, or reset-password action.</returns>
+    </member>
+  </members>
+</doc>

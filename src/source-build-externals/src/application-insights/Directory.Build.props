@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <!-- USE THESE VARIABLES TO CONTROL THE BUILD TASKS.-->
+    <Internal_Logging>false</Internal_Logging>
+
+    <!-- This is used to disable some build properties. -->
+    <IsExamplesSolution Condition="'$(SolutionName)' == 'Examples' ">true</IsExamplesSolution>
+
+    <!-- This is used to change EventSource names. -->
+    <DefineConstants Condition="'$(Redfield)' == 'True'">$(DefineConstants);REDFIELD</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Package versions for System.Diagnostics.DiagnosticSource">
+    <SystemDiagnosticsDiagnosticSourcePkgVer>5.0.0</SystemDiagnosticsDiagnosticSourcePkgVer>
+    <SystemDiagnosticsDiagnosticSourcePkgVer Condition="'$(Redfield)' == 'True'">4.7.0</SystemDiagnosticsDiagnosticSourcePkgVer>
+  </PropertyGroup>
+
+  <Target Name="Info_Redfield"  BeforeTargets="Build" Condition="'$(Redfield)' == 'True'">
+    <!-- 
+    This flag is reserved for Codeless Attach products.
+    Redfield has some unique code changes to avoid conflicting with the real AI SDK.
+    To use: dotnet build /p:Redfield=True
+    -->
+    <Message Text="Directory.Build.props: Redfield build detected." Importance="high"/>
+  </Target>
+  
+  <Target Name="Info_InternalSettings"  BeforeTargets="Build">
+    <Message Text="Directory.Build.props: Internal_Logging is set to $(Internal_Logging)." Importance="high"/>
+  </Target>
+
+  <Target Name="Info_DirectoryBuildProps"  BeforeTargets="Build" Condition=" $(Internal_Logging) == 'true' ">
+    <Message Text="Info: SolutionName: $(SolutionName)." Importance="high"/>
+    <Message Text="Info: ProjectName: $(MSBuildProjectName)." Importance="high"/>
+    <Message Text="Info: TargetFramework: $(TargetFramework)." Importance="high"/>
+    <Message Text="Info: Directory.Build.props imported by $(MSBuildProjectName)." Importance="high"/>
+  </Target>
+
+  <PropertyGroup>
+    <!-- EnlistmentRoot identifies the root directory of the repo and is used to dermine all other relative paths. -->
+    <EnlistmentRoot>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildProjectDirectory), 'EnlistmentRoot.marker'))</EnlistmentRoot>
+
+    <KeysRoot>$(EnlistmentRoot)\.keys</KeysRoot>
+    <PropsRoot>$(EnlistmentRoot)\.props</PropsRoot>
+    <RulesetsRoot>$(EnlistmentRoot)\.rulesets</RulesetsRoot>
+    <TargetsRoot>$(EnlistmentRoot)\.targets</TargetsRoot>
+    <PublicApiRoot>$(EnlistmentRoot)\.publicApi</PublicApiRoot>
+
+    <BinRoot>$(EnlistmentRoot)\bin</BinRoot>
+    <BinRoot>$([System.IO.Path]::GetFullPath( $(BinRoot) ))</BinRoot>
+
+    <ObjRoot>$(EnlistmentRoot)\obj</ObjRoot>
+    <ObjRoot>$([System.IO.Path]::GetFullPath( $(ObjRoot) ))</ObjRoot>
+
+    <PackagesDir>$(EnlistmentRoot)\packages</PackagesDir>
+    <PackagesDir>$([System.IO.Path]::GetFullPath( $(PackagesDir) ))</PackagesDir>
+
+    <RelativeOutputPathBase>$(MSBuildProjectDirectory.Substring($(EnlistmentRoot.Length)))</RelativeOutputPathBase>
+    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+
+    <!--This is to disable code analysis while devs are working. Default is true.-->
+    <RunAnalyzers Condition=" '$(Configuration)' == 'Debug' ">false</RunAnalyzers>
+
+    <OutputPath>$(BinRoot)\$(Configuration)\test\$(MSBuildProjectName)</OutputPath>
+    <OutputPath>$([System.IO.Path]::GetFullPath( $(OutputPath) ))\</OutputPath>
+
+    <!-- Collect all NuGet packages in the same folder for convenience during testing -->
+    <PackageOutputDir>$(BinRoot)\$(Configuration)\NuGet</PackageOutputDir>
+    <PackageOutputPath>$(PackageOutputDir)</PackageOutputPath>
+
+    <IntermediateOutputPath>$(ObjRoot)\$(Configuration)\$(MSBuildProjectName)</IntermediateOutputPath>
+    <IntermediateOutputPath>$([System.IO.Path]::GetFullPath( $(IntermediateOutputPath) ))\</IntermediateOutputPath>
+
+    <!-- Testing fix for https://github.com/dotnet/sdk/issues/2523 -->
+    <!-- If this works, should move to common and not the directory props -->
+    <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- https://docs.microsoft.com/dotnet/csharp/language-reference/configure-language-version -->
+    <LangVersion>preview</LangVersion>
+
+    <IsNetFramework Condition="'$(TargetFramework)' == 'net452' Or '$(TargetFramework)' == 'net46' Or '$(TargetFramework)' == 'net461' Or '$(TargetFramework)' == 'net462' Or '$(TargetFramework)' == 'net472' Or '$(TargetFramework)' == 'net480' ">True</IsNetFramework>
+    <IsNetCore Condition="'$(TargetFramework)' == 'netcoreapp3.1' Or '$(TargetFramework)' == 'net5.0' Or '$(TargetFramework)' == 'net6.0'">True</IsNetCore>
+    <IsNetStandard20 Condition="'$(TargetFramework)' == 'net461' Or '$(TargetFramework)' == 'net462' Or '$(TargetFramework)' == 'net472' Or '$(TargetFramework)' == 'net480' Or '$(TargetFramework)' == 'netcoreapp3.1' Or '$(TargetFramework)' == 'net5.0' Or '$(TargetFramework)' == 'net6.0'">True</IsNetStandard20>
+
+    <!-- .NET 6 introduces implicit global usings.
+    This causes build errors in our multi-target projects.
+    Dotnet team has commented that they will fix this error when .NET 6 is GA (Nov2021).
+    https://docs.microsoft.com/dotnet/core/compatibility/sdk/6.0/implicit-namespaces#recommended-action -->
+    <DisableImplicitNamespaceImports>True</DisableImplicitNamespaceImports>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <!-- Enable NuGet package restore during build -->
+    <RestorePackages>true</RestorePackages>
+    <RequireRestoreConsent>false</RequireRestoreConsent>
+  </PropertyGroup>
+  
+</Project>

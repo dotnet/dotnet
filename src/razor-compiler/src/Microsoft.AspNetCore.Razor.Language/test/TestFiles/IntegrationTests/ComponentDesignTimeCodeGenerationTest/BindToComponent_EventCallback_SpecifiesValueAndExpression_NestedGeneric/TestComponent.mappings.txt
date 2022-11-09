@@ -1,0 +1,14 @@
+Source Location: (30:0,30 [11] x:\dir\subdir\Test\TestComponent.cshtml)
+|ParentValue|
+Generated Location: (1001:25,30 [11] )
+|ParentValue|
+
+Source Location: (54:1,7 [89] x:\dir\subdir\Test\TestComponent.cshtml)
+|
+    public IEnumerable<DateTime> ParentValue { get; set; } = new [] { DateTime.Now };
+|
+Generated Location: (1640:43,7 [89] )
+|
+    public IEnumerable<DateTime> ParentValue { get; set; } = new [] { DateTime.Now };
+|
+

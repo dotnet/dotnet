@@ -1,0 +1,14 @@
+<Project>
+  <PropertyGroup>
+    <_XHarnessPackageName>Microsoft.DotNet.XHarness.CLI</_XHarnessPackageName>
+    <!-- MicrosoftDotNetXHarnessCLIVersion comes from eng\Versions.props -->
+    <_XHarnessPackageVersion Condition=" '$(_XHarnessPackageVersion)' == '' ">$(MicrosoftDotNetXHarnessCLIVersion)</_XHarnessPackageVersion>
+    <_HelixMonoQueueTargets>$(_HelixMonoQueueTargets);$(MSBuildThisFileDirectory)XHarnessRunner.targets</_HelixMonoQueueTargets>
+
+    <XHarnessPackageSource Condition=" '$(XHarnessPackageSource)' == '' ">https://dnceng.pkgs.visualstudio.com/public/_packaging/dotnet-eng/nuget/v3/index.json</XHarnessPackageSource>
+    <EnableXHarnessTelemetry>true</EnableXHarnessTelemetry>
+
+    <!-- Needed for app signing and tied to certificates installed in Helix machines -->
+    <XHarnessAppleProvisioningProfileUrl>https://netcorenativeassets.blob.core.windows.net/resource-packages/external/macos/signing/NET_Apple_Development_{PLATFORM}.mobileprovision</XHarnessAppleProvisioningProfileUrl>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,28 @@
+### These steps clone the VMR (https://github.com/dotnet/dotnet) into $(Agent.BuildDirectory)/vmr
+### Component Governance scan is also triggered over the VMR's non-repo sources
+
+parameters:
+- name: vmrBranch
+  displayName: dotnet/dotnet branch to use
+  type: string
+  default: $(Build.SourceBranchName)
+
+steps:
+- checkout: vmr
+  clean: true
+  displayName: Clone dotnet/dotnet
+  fetchDepth: 0
+  path: vmr
+
+- script: |
+    git switch -c ${{ parameters.vmrBranch }}
+  displayName: Checkout ${{ parameters.vmrBranch }}
+  workingDirectory: $(Agent.BuildDirectory)/vmr
+
+# TODO (https://github.com/dotnet/arcade/issues/11332): Allow full CG?
+# Currently, we ignore dirs of individual repos - they have been scanned before
+- ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal')) }}:
+  - task: ComponentGovernanceComponentDetection@0
+    inputs:
+      sourceScanPath: $(Agent.BuildDirectory)/vmr
+      ignoreDirectories: $(Agent.BuildDirectory)/vmr/src

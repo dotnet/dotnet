@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>Transport package for Mvc.Razor.Extensions pdbs. For internal use only.</Description>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <IsShipping>false</IsShipping>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Don't bother passing the following assemblies to the (ignored) build or copying the files into our bin. -->
+    <ProjectReference Include="..\..\Microsoft.AspNetCore.Mvc.Razor.Extensions\src\Microsoft.AspNetCore.Mvc.Razor.Extensions.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReferemce Include="..\..\Microsoft.AspNetCore.Mvc.Razor.Extensions.Version1_X\src\Microsoft.AspNetCore.Mvc.Razor.Extensions.Version1_X.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReferemce Include="..\..\Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X\src\Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReferemce Include="..\..\Microsoft.AspNetCore.Razor.Language\src\Microsoft.AspNetCore.Razor.Language.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReferemce Include="..\..\Microsoft.CodeAnalysis.Razor\src\Microsoft.CodeAnalysis.Razor.csproj" ReferenceOutputAssembly="false" />
+
+    <Content Include="$(ArtifactsDir)bin\Microsoft.AspNetCore.Mvc.Razor.Extensions\$(Configuration)\netstandard2.0\Microsoft.AspNetCore.Mvc.Razor.Extensions.pdb" PackagePath="pdb" />
+    <Content Include="$(ArtifactsDir)bin\Microsoft.AspNetCore.Mvc.Razor.Extensions.Version1_X\$(Configuration)\netstandard2.0\Microsoft.AspNetCore.Mvc.Razor.Extensions.Version1_X.pdb" PackagePath="pdb" />
+    <Content Include="$(ArtifactsDir)bin\Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X\$(Configuration)\netstandard2.0\Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X.pdb" PackagePath="pdb" />
+    <Content Include="$(ArtifactsDir)bin\Microsoft.AspNetCore.Razor.Language\$(Configuration)\netstandard2.0\Microsoft.AspNetCore.Razor.Language.pdb" PackagePath="pdb" />
+    <Content Include="$(ArtifactsDir)bin\Microsoft.CodeAnalysis.Razor\$(Configuration)\netstandard2.0\Microsoft.CodeAnalysis.Razor.pdb" PackagePath="pdb" />
+  </ItemGroup>
+
+</Project>

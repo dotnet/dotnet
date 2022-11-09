@@ -1,0 +1,625 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>System.ServiceModel.Routing</name>
+  </assembly>
+  <members>
+    <member name="T:System.ServiceModel.Dispatcher.EndpointNameMessageFilter">
+      <summary>Represents a query that tests whether a message was received on an endpoint with a name that matches the specified name.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Dispatcher.EndpointNameMessageFilter.#ctor(System.String)">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Dispatcher.EndpointNameMessageFilter" /> class with a specified name against which to test a message.</summary>
+      <param name="endpointName">The endpointName against which messages are tested</param>
+    </member>
+    <member name="M:System.ServiceModel.Dispatcher.EndpointNameMessageFilter.Match(System.ServiceModel.Channels.Message)">
+      <summary>Tests whether a message satisfies the specified endpoint name.</summary>
+      <returns>true if the Message object satisfies the endpoint name specified in the filter; otherwise, false.</returns>
+      <param name="message">The message object to check.</param>
+    </member>
+    <member name="M:System.ServiceModel.Dispatcher.EndpointNameMessageFilter.Match(System.ServiceModel.Channels.MessageBuffer)">
+      <summary>Tests whether a buffered message satisfies the specified endpoint name.</summary>
+      <returns>true if the Message object satisfies the endpoint name specified in the filter; otherwise, false.</returns>
+      <param name="buffer">The <see cref="T:System.ServiceModel.Channels.MessageBuffer" /> object to check.</param>
+    </member>
+    <member name="T:System.ServiceModel.Dispatcher.StrictAndMessageFilter">
+      <summary>Represents a query that tests whether a message satisfies both specified <see cref="T:System.ServiceModel.Dispatcher.MessageFilter" /> objects.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Dispatcher.StrictAndMessageFilter.#ctor(System.ServiceModel.Dispatcher.MessageFilter,System.ServiceModel.Dispatcher.MessageFilter)">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Dispatcher.StrictAndMessageFilter" /> class sing the specified <see cref="T:System.ServiceModel.Dispatcher.MessageFilter" /> objects.</summary>
+      <param name="filter1">A <see cref="T:System.ServiceModel.Dispatcher.MessageFilter" /> object.</param>
+      <param name="filter2">A <see cref="T:System.ServiceModel.Dispatcher.MessageFilter" /> object.</param>
+    </member>
+    <member name="M:System.ServiceModel.Dispatcher.StrictAndMessageFilter.CreateFilterTable``1">
+      <summary>Creates a new <see cref="T:System.ServiceModel.Dispatcher.IMessageFilterTable`1" />.</summary>
+      <returns>A new <see cref="T:System.ServiceModel.Dispatcher.IMessageFilterTable`1" />.</returns>
+      <typeparam name="TFilterData">The type of data associated with the filter.</typeparam>
+    </member>
+    <member name="M:System.ServiceModel.Dispatcher.StrictAndMessageFilter.Match(System.ServiceModel.Channels.Message)">
+      <summary>Tests whether a message matches both of the <see cref="T:System.ServiceModel.Dispatcher.MessageFilter" /> objects specified in this filter.</summary>
+      <returns>true if the message matches both message filters; otherwise, false.</returns>
+      <param name="message">The <see cref="T:System.ServiceModel.Channels.Message" /> to test.</param>
+    </member>
+    <member name="M:System.ServiceModel.Dispatcher.StrictAndMessageFilter.Match(System.ServiceModel.Channels.MessageBuffer)">
+      <summary>Tests whether a buffered message matches both of the <see cref="T:System.ServiceModel.Dispatcher.MessageFilter" /> objects specified in this filter.</summary>
+      <returns>true if the message contained in the buffer matches both message filters; otherwise, false.</returns>
+      <param name="buffer">The <see cref="T:System.ServiceModel.Channels.MessageBuffer" /> to test.</param>
+    </member>
+    <member name="T:System.ServiceModel.Routing.IDuplexSessionRouter">
+      <summary>Defines the interface required to process messages from duplex session channels.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Routing.IDuplexSessionRouter.BeginProcessMessage(System.ServiceModel.Channels.Message,System.AsyncCallback,System.Object)">
+      <summary>Initiates the asynchronous processing of the message.</summary>
+      <returns>An asynchronous result that can be used to poll or wait for results, or both; this value is also required when invoking <see cref="M:System.ServiceModel.Routing.IDuplexSessionRouter.EndProcessMessage(System.IAsyncResult)" />.</returns>
+      <param name="message">The message to be processed.</param>
+      <param name="callback">An asynchronous callback delegate that is invoked when the message processing has completed.</param>
+      <param name="state">A user-defined state object that is passed to the callback procedure.</param>
+    </member>
+    <member name="M:System.ServiceModel.Routing.IDuplexSessionRouter.EndProcessMessage(System.IAsyncResult)">
+      <summary>Finishes asynchronous execution of message processing.</summary>
+      <param name="result">The asynchronous result returned by the call to <see cref="M:System.ServiceModel.Routing.IDuplexSessionRouter.BeginProcessMessage(System.ServiceModel.Channels.Message,System.AsyncCallback,System.Object)" />.</param>
+    </member>
+    <member name="T:System.ServiceModel.Routing.IRequestReplyRouter">
+      <summary>Defines the interface required to process messages from request-reply channels. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Routing.IRequestReplyRouter.BeginProcessRequest(System.ServiceModel.Channels.Message,System.AsyncCallback,System.Object)">
+      <summary>Initiates the asynchronous processing of the message.</summary>
+      <returns>An asynchronous result that can be used to poll or wait for results, or both; this value is also required when invoking <see cref="M:System.ServiceModel.Routing.IRequestReplyRouter.EndProcessRequest(System.IAsyncResult)" />.</returns>
+      <param name="message">The message to be processed.</param>
+      <param name="callback">An asynchronous callback delegate that is invoked when the message processing has completed.</param>
+      <param name="state">A user-defined state object that is passed to the callback procedure.</param>
+    </member>
+    <member name="M:System.ServiceModel.Routing.IRequestReplyRouter.EndProcessRequest(System.IAsyncResult)">
+      <summary>Finishes asynchronous execution of message processing.</summary>
+      <returns>The reply.</returns>
+      <param name="result">The asynchronous result returned by the call to <see cref="M:System.ServiceModel.Routing.IRequestReplyRouter.BeginProcessRequest(System.ServiceModel.Channels.Message,System.AsyncCallback,System.Object)" />.</param>
+    </member>
+    <member name="T:System.ServiceModel.Routing.ISimplexDatagramRouter">
+      <summary>Defines the interface required for processing messages from simplex datagram. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Routing.ISimplexDatagramRouter.BeginProcessMessage(System.ServiceModel.Channels.Message,System.AsyncCallback,System.Object)">
+      <summary>Initiates the asynchronous processing of the message.</summary>
+      <returns>An <see cref="T:System.IAsyncResult" /> that can be used to poll or wait for results, or both; this value is also needed when invoking <see cref="M:System.ServiceModel.Routing.ISimplexDatagramRouter.EndProcessMessage(System.IAsyncResult)" />.</returns>
+      <param name="message">The message to be processed.</param>
+      <param name="callback">An <see cref="T:System.AsyncCallback" /> delegate that is invoked when the message processing has completed.</param>
+      <param name="state">A user-defined state object that is passed to the callback procedure.</param>
+    </member>
+    <member name="M:System.ServiceModel.Routing.ISimplexDatagramRouter.EndProcessMessage(System.IAsyncResult)">
+      <summary>Finishes asynchronous execution of message processing.</summary>
+      <param name="result">The asynchronous result returned by the call to <see cref="M:System.ServiceModel.Routing.ISimplexDatagramRouter.BeginProcessMessage(System.ServiceModel.Channels.Message,System.AsyncCallback,System.Object)" />.</param>
+    </member>
+    <member name="T:System.ServiceModel.Routing.ISimplexSessionRouter">
+      <summary>Defines the interface required to process messages from simplex session channels. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Routing.ISimplexSessionRouter.BeginProcessMessage(System.ServiceModel.Channels.Message,System.AsyncCallback,System.Object)">
+      <summary>Initiates the asynchronous processing of the message.</summary>
+      <returns>An asynchronous result that can be used to poll or wait for results, or both; this value is also required when invoking <see cref="M:System.ServiceModel.Routing.ISimplexSessionRouter.EndProcessMessage(System.IAsyncResult)" />.</returns>
+      <param name="message">The message to be processed.</param>
+      <param name="callback">An asynchronous callback delegate that is invoked when the message processing has completed.</param>
+      <param name="state">A user-defined state object that is passed to the callback procedure.</param>
+    </member>
+    <member name="M:System.ServiceModel.Routing.ISimplexSessionRouter.EndProcessMessage(System.IAsyncResult)">
+      <summary>Finishes asynchronous execution of message processing.</summary>
+      <param name="result">The asynchronous result returned by the call to <see cref="M:System.ServiceModel.Routing.ISimplexSessionRouter.BeginProcessMessage(System.ServiceModel.Channels.Message,System.AsyncCallback,System.Object)" />.</param>
+    </member>
+    <member name="T:System.ServiceModel.Routing.RoutingBehavior">
+      <summary>Defines the routing behavior, which is used to configure the destination endpoints, filters and filtering options to be used during routing. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Routing.RoutingBehavior.#ctor(System.ServiceModel.Routing.RoutingConfiguration)">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Routing.RoutingBehavior" /> class.</summary>
+      <param name="routingConfiguration">The routing configuration.</param>
+    </member>
+    <member name="M:System.ServiceModel.Routing.RoutingBehavior.GetContractForDescription(System.ServiceModel.Description.ContractDescription)">
+      <summary>Gets the contract type for the specified <see cref="T:System.ServiceModel.Description.ContractDescription" />.</summary>
+      <returns>The type of the specified <see cref="T:System.ServiceModel.Description.ContractDescription" />.</returns>
+      <param name="description">The contract description to get the type of.</param>
+    </member>
+    <member name="M:System.ServiceModel.Routing.RoutingBehavior.System#ServiceModel#Description#IServiceBehavior#AddBindingParameters(System.ServiceModel.Description.ServiceDescription,System.ServiceModel.ServiceHostBase,System.Collections.ObjectModel.Collection{System.ServiceModel.Description.ServiceEndpoint},System.ServiceModel.Channels.BindingParameterCollection)">
+      <summary>Implements the <see cref="M:System.ServiceModel.Description.IServiceBehavior.AddBindingParameters(System.ServiceModel.Description.ServiceDescription,System.ServiceModel.ServiceHostBase,System.Collections.ObjectModel.Collection{System.ServiceModel.Description.ServiceEndpoint},System.ServiceModel.Channels.BindingParameterCollection)" /> method to support the behavior.</summary>
+      <param name="serviceDescription">The service description of the service.</param>
+      <param name="serviceHostBase">The host of the service.</param>
+      <param name="endpoints">The service endpoints.</param>
+      <param name="bindingParameters">Custom objects to which binding elements have access.</param>
+    </member>
+    <member name="M:System.ServiceModel.Routing.RoutingBehavior.System#ServiceModel#Description#IServiceBehavior#ApplyDispatchBehavior(System.ServiceModel.Description.ServiceDescription,System.ServiceModel.ServiceHostBase)">
+      <summary>Implements the <see cref="M:System.ServiceModel.Description.IServiceBehavior.ApplyDispatchBehavior(System.ServiceModel.Description.ServiceDescription,System.ServiceModel.ServiceHostBase)" /> method to support the behavior.</summary>
+      <param name="serviceDescription">The service description of the service.</param>
+      <param name="serviceHostBase">The host of the service.</param>
+    </member>
+    <member name="M:System.ServiceModel.Routing.RoutingBehavior.System#ServiceModel#Description#IServiceBehavior#Validate(System.ServiceModel.Description.ServiceDescription,System.ServiceModel.ServiceHostBase)">
+      <summary>Implements the <see cref="M:System.ServiceModel.Description.IServiceBehavior.Validate(System.ServiceModel.Description.ServiceDescription,System.ServiceModel.ServiceHostBase)" /> method to support the behavior.</summary>
+      <param name="serviceDescription">The service description of the service.</param>
+      <param name="serviceHostBase">The host of the service.</param>
+    </member>
+    <member name="T:System.ServiceModel.Routing.RoutingConfiguration">
+      <summary>Defines the configuration information used by <see cref="T:System.ServiceModel.Routing.RoutingExtension" />. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Routing.RoutingConfiguration.#ctor">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Routing.RoutingConfiguration" /> class. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Routing.RoutingConfiguration.#ctor(System.ServiceModel.Dispatcher.MessageFilterTable{System.Collections.Generic.IEnumerable{System.ServiceModel.Description.ServiceEndpoint}},System.Boolean)">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Routing.RoutingConfiguration" /> class using the specified <see cref="T:System.ServiceModel.Dispatcher.MessageFilterTable`1" /> and routeOnHeadersOnly parameter.</summary>
+      <param name="filterTable">The message filter table to use for this configuration.</param>
+      <param name="routeOnHeadersOnly">true if the <see cref="T:System.ServiceModel.Dispatcher.MessageFilterTable`1" /> can only examine message headers; otherwise, false. The default is true.</param>
+    </member>
+    <member name="P:System.ServiceModel.Routing.RoutingConfiguration.FilterTable">
+      <summary>Gets or sets the <see cref="T:System.ServiceModel.Dispatcher.MessageFilterTable`1" /> used by this configuration.</summary>
+      <returns>The message filter table.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Routing.RoutingConfiguration.RouteOnHeadersOnly">
+      <summary>Gets or sets a value that indicates whether the filter can examine the message body.</summary>
+      <returns>true if the filter can only examine message headers; otherwise, false. The default is true.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Routing.RoutingConfiguration.SoapProcessingEnabled">
+      <summary>Gets or sets a value that indicates whether messages should be processed between SOAP <see cref="T:System.ServiceModel.Channels.MessageVersion" />s. </summary>
+      <returns>true if messages should be processed; otherwise, false. The default value is true.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Routing.RoutingExtension">
+      <summary>Provides run-time access to the routing service to allow dynamic modification of the routing configuration. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Routing.RoutingExtension.ApplyConfiguration(System.ServiceModel.Routing.RoutingConfiguration)">
+      <summary>Applies a new <see cref="T:System.ServiceModel.Routing.RoutingConfiguration" /> to a running instance of the routing service.</summary>
+      <param name="routingConfiguration">The routing configuration to be applied.</param>
+    </member>
+    <member name="M:System.ServiceModel.Routing.RoutingExtension.System#ServiceModel#IExtension{T}#Attach(System.ServiceModel.ServiceHostBase)">
+      <summary>Called when the runtime attaches the extension to an instance of the <see cref="T:System.ServiceModel.ServiceHostBase" /> class.  For internal use only.</summary>
+      <param name="owner">The service host base.</param>
+    </member>
+    <member name="M:System.ServiceModel.Routing.RoutingExtension.System#ServiceModel#IExtension{T}#Detach(System.ServiceModel.ServiceHostBase)">
+      <summary>Called when the runtime detaches the extension from an instance of the <see cref="T:System.ServiceModel.ServiceHostBase" /> class.  For internal use only.</summary>
+      <param name="owner">The service host base.</param>
+    </member>
+    <member name="T:System.ServiceModel.Routing.RoutingService">
+      <summary>Defines the routing service, which is responsible for routing messages between endpoints based on filter criteria. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Routing.RoutingService.System#IDisposable#Dispose">
+      <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Routing.RoutingService.System#ServiceModel#Routing#IDuplexSessionRouter#BeginProcessMessage(System.ServiceModel.Channels.Message,System.AsyncCallback,System.Object)">
+      <summary>Initiates the asynchronous processing of the message.</summary>
+      <returns>An <see cref="T:System.IAsyncResult" /> that can be used to poll or wait for results, or both; this value is also needed when invoking <see cref="M:System.ServiceModel.Routing.RoutingService.System#ServiceModel#Routing#IDuplexSessionRouter#EndProcessMessage(System.IAsyncResult)" />.</returns>
+      <param name="message">The <see cref="T:System.ServiceModel.Channels.Message" /> to be processed.</param>
+      <param name="callback">An <see cref="T:System.AsyncCallback" /> delegate that is invoked when the message processing has completed.</param>
+      <param name="state">A user-defined state object that is passed to the callback procedure.</param>
+    </member>
+    <member name="M:System.ServiceModel.Routing.RoutingService.System#ServiceModel#Routing#IDuplexSessionRouter#EndProcessMessage(System.IAsyncResult)">
+      <summary>Finishes asynchronous execution of message processing.</summary>
+      <param name="result">The <see cref="T:System.IAsyncResult" /> returned by the call to <see cref="M:System.ServiceModel.Routing.RoutingService.System#ServiceModel#Routing#IDuplexSessionRouter#BeginProcessMessage(System.ServiceModel.Channels.Message,System.AsyncCallback,System.Object)" /></param>
+    </member>
+    <member name="M:System.ServiceModel.Routing.RoutingService.System#ServiceModel#Routing#IRequestReplyRouter#BeginProcessRequest(System.ServiceModel.Channels.Message,System.AsyncCallback,System.Object)">
+      <summary>Initiates the asynchronous processing of the message.</summary>
+      <returns>An <see cref="T:System.IAsyncResult" /> that can be used to poll or wait for results, or both; this value is also needed when invoking <see cref="M:System.ServiceModel.Routing.RoutingService.System#ServiceModel#Routing#IRequestReplyRouter#EndProcessRequest(System.IAsyncResult)" />.</returns>
+      <param name="message">The <see cref="T:System.ServiceModel.Channels.Message" /> to be processed.</param>
+      <param name="callback">An <see cref="T:System.AsyncCallback" /> delegate that is invoked when the message processing has completed.</param>
+      <param name="state">A user-defined state object that is passed to the callback procedure.</param>
+    </member>
+    <member name="M:System.ServiceModel.Routing.RoutingService.System#ServiceModel#Routing#IRequestReplyRouter#EndProcessRequest(System.IAsyncResult)">
+      <summary>Finishes asynchronous execution of message processing.</summary>
+      <returns>A <see cref="T:System.ServiceModel.Channels.Message" /> that contains the reply.</returns>
+      <param name="result">The <see cref="T:System.IAsyncResult" /> returned by the call to <see cref="M:System.ServiceModel.Routing.RoutingService.System#ServiceModel#Routing#IRequestReplyRouter#BeginProcessRequest(System.ServiceModel.Channels.Message,System.AsyncCallback,System.Object)" /></param>
+    </member>
+    <member name="M:System.ServiceModel.Routing.RoutingService.System#ServiceModel#Routing#ISimplexDatagramRouter#BeginProcessMessage(System.ServiceModel.Channels.Message,System.AsyncCallback,System.Object)">
+      <summary>Initiates the asynchronous processing of the message.</summary>
+      <returns>An <see cref="T:System.IAsyncResult" /> that can be used to poll or wait for results, or both; this value is also needed when invoking <see cref="M:System.ServiceModel.Routing.RoutingService.System#ServiceModel#Routing#ISimplexDatagramRouter#EndProcessMessage(System.IAsyncResult)" />.</returns>
+      <param name="message">The <see cref="T:System.ServiceModel.Channels.Message" /> to be processed.</param>
+      <param name="callback">An <see cref="T:System.AsyncCallback" /> delegate that is invoked when the message processing has completed.</param>
+      <param name="state">A user-defined state object that is passed to the callback procedure.</param>
+    </member>
+    <member name="M:System.ServiceModel.Routing.RoutingService.System#ServiceModel#Routing#ISimplexDatagramRouter#EndProcessMessage(System.IAsyncResult)">
+      <summary>Finishes asynchronous execution of message processing.</summary>
+      <param name="result">The <see cref="T:System.IAsyncResult" /> returned by the call to <see cref="M:System.ServiceModel.Routing.RoutingService.System#ServiceModel#Routing#ISimplexDatagramRouter#BeginProcessMessage(System.ServiceModel.Channels.Message,System.AsyncCallback,System.Object)" />.</param>
+    </member>
+    <member name="M:System.ServiceModel.Routing.RoutingService.System#ServiceModel#Routing#ISimplexSessionRouter#BeginProcessMessage(System.ServiceModel.Channels.Message,System.AsyncCallback,System.Object)">
+      <summary>Initiates the asynchronous processing of the message.</summary>
+      <returns>An <see cref="T:System.IAsyncResult" /> that can be used to poll or wait for results, or both; this value is also needed when invoking <see cref="M:System.ServiceModel.Routing.RoutingService.System#ServiceModel#Routing#ISimplexSessionRouter#EndProcessMessage(System.IAsyncResult)" />.</returns>
+      <param name="message">The <see cref="T:System.ServiceModel.Channels.Message" /> to be processed.</param>
+      <param name="callback">An <see cref="T:System.AsyncCallback" /> delegate that is invoked when the message processing has completed.</param>
+      <param name="state">A user-defined state object that is passed to the callback procedure.</param>
+    </member>
+    <member name="M:System.ServiceModel.Routing.RoutingService.System#ServiceModel#Routing#ISimplexSessionRouter#EndProcessMessage(System.IAsyncResult)">
+      <summary>Finishes asynchronous execution of message processing.</summary>
+      <param name="result">The <see cref="T:System.IAsyncResult" /> returned by the call to <see cref="M:System.ServiceModel.Routing.RoutingService.System#ServiceModel#Routing#ISimplexSessionRouter#BeginProcessMessage(System.ServiceModel.Channels.Message,System.AsyncCallback,System.Object)" />.</param>
+    </member>
+    <member name="T:System.ServiceModel.Routing.SoapProcessingBehavior">
+      <summary>Defines the client endpoint behavior used to marshal messages between different binding types and message versions.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Routing.SoapProcessingBehavior.#ctor">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Routing.SoapProcessingBehavior" /> class.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Routing.SoapProcessingBehavior.AddBindingParameters(System.ServiceModel.Description.ServiceEndpoint,System.ServiceModel.Channels.BindingParameterCollection)">
+      <summary>Adds new binding elements to an endpoint.</summary>
+      <param name="endpoint">The service endpoint to apply the binding elements to.</param>
+      <param name="bindingParameters">The binding parameter collection to apply to the endpoint.</param>
+    </member>
+    <member name="M:System.ServiceModel.Routing.SoapProcessingBehavior.ApplyClientBehavior(System.ServiceModel.Description.ServiceEndpoint,System.ServiceModel.Dispatcher.ClientRuntime)">
+      <summary>Applies the specified endpoint behavior to the client.</summary>
+      <param name="endpoint">The service endpoint to apply to the client.</param>
+      <param name="clientRuntime">The runtime on the client.</param>
+    </member>
+    <member name="M:System.ServiceModel.Routing.SoapProcessingBehavior.ApplyDispatchBehavior(System.ServiceModel.Description.ServiceEndpoint,System.ServiceModel.Dispatcher.EndpointDispatcher)">
+      <summary>Applies the specified endpoint behavior to the endpoint dispatcher.</summary>
+      <param name="endpoint">The service endpoint to apply to the client.</param>
+      <param name="endpointDispatcher">The endpoint dispatcher.</param>
+    </member>
+    <member name="P:System.ServiceModel.Routing.SoapProcessingBehavior.ProcessMessages">
+      <summary>Gets or sets a value that indicates whether messages should be processed.</summary>
+      <returns>true if messages should be marshaled; otherwise, false. The default value is true.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Routing.SoapProcessingBehavior.Validate(System.ServiceModel.Description.ServiceEndpoint)">
+      <summary>Validates the service endpoint.</summary>
+      <param name="endpoint">The service endpoint to validate.</param>
+    </member>
+    <member name="T:System.ServiceModel.Routing.Configuration.BackupEndpointCollection">
+      <summary>Represents a configuration element that contains a collection of <see cref="T:System.ServiceModel.Routing.Configuration.BackupEndpointElement" /> objects.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.BackupEndpointCollection.#ctor">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Routing.Configuration.BackupEndpointCollection" /> class. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.BackupEndpointCollection.Add(System.ServiceModel.Routing.Configuration.BackupEndpointElement)">
+      <summary>Adds a new <see cref="T:System.ServiceModel.Routing.Configuration.BackupEndpointElement" /> to the collection. </summary>
+      <param name="element">The backup endpoint element to be added.</param>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.BackupEndpointCollection.Clear">
+      <summary>Removes all elements from the collection.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.BackupEndpointCollection.CreateNewElement">
+      <summary>Creates a new <see cref="T:System.Configuration.ConfigurationElement" />.</summary>
+      <returns>A new configuration element.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.BackupEndpointCollection.GetElementKey(System.Configuration.ConfigurationElement)">
+      <summary>Gets the element key for the specified configuration element.</summary>
+      <returns>The key for the specified configuration element.</returns>
+      <param name="element">The configuration element to return the key for.</param>
+    </member>
+    <member name="P:System.ServiceModel.Routing.Configuration.BackupEndpointCollection.Name">
+      <summary>Gets or sets the name used to identify this collection of elements in the configuration file.</summary>
+      <returns>The name of the collection.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.BackupEndpointCollection.Remove(System.ServiceModel.Routing.Configuration.BackupEndpointElement)">
+      <summary>Removes the first occurrence of <see cref="T:System.ServiceModel.Routing.Configuration.BackupEndpointElement" /> from the collection.</summary>
+      <param name="element">The backup element to remove from the collection.</param>
+    </member>
+    <member name="T:System.ServiceModel.Routing.Configuration.BackupEndpointElement">
+      <summary>Represents a configuration element that defines a backup endpoint element.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.BackupEndpointElement.#ctor">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Routing.Configuration.BackupEndpointElement" /> class.</summary>
+    </member>
+    <member name="P:System.ServiceModel.Routing.Configuration.BackupEndpointElement.EndpointName">
+      <summary>Gets or sets the name used to identify this endpoint in the configuration file.</summary>
+      <returns>The name.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Routing.Configuration.BackupListCollection">
+      <summary>Represents the configuration element that contains a collection of <see cref="T:System.ServiceModel.Routing.Configuration.BackupEndpointCollection" /> instances. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.BackupListCollection.#ctor">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Routing.Configuration.BackupListCollection" /> class.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.BackupListCollection.Add(System.ServiceModel.Routing.Configuration.BackupEndpointCollection)">
+      <summary>Adds a new <see cref="T:System.ServiceModel.Routing.Configuration.BackupEndpointCollection" /> to the collection.</summary>
+      <param name="element">The backup endpoint to be added.</param>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.BackupListCollection.Clear">
+      <summary>Removes all elements from the collection.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.BackupListCollection.CreateNewElement">
+      <summary>Creates a new <see cref="T:System.ServiceModel.Routing.Configuration.BackupEndpointCollection" />.</summary>
+      <returns>A new configuration element.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.BackupListCollection.GetElementKey(System.Configuration.ConfigurationElement)">
+      <summary>Gets the element key for the specified configuration element.</summary>
+      <returns>The key for the specified configuration element.</returns>
+      <param name="element">The configuration element to return the key for.</param>
+    </member>
+    <member name="P:System.ServiceModel.Routing.Configuration.BackupListCollection.Item(System.String)">
+      <summary>Gets the <see cref="T:System.ServiceModel.Routing.Configuration.BackupEndpointCollection" /> with the specified index.</summary>
+      <returns>A backup endpoint that matches the specified key.</returns>
+      <param name="name">The key of the element to be accessed.</param>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.BackupListCollection.Remove(System.ServiceModel.Routing.Configuration.BackupEndpointCollection)">
+      <summary>Removes the first occurrence of the specified <see cref="T:System.ServiceModel.Routing.Configuration.BackupEndpointCollection" /> from the collection.</summary>
+      <param name="element">The backup endpoint from the collection.</param>
+    </member>
+    <member name="T:System.ServiceModel.Routing.Configuration.FilterElement">
+      <summary>Represents a configuration element that defines a filter element. This element is used to define the type of filter, as well as any supporting data or parameters required by the filter.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.FilterElement.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Routing.Configuration.FilterElement" /> class.</summary>
+    </member>
+    <member name="P:System.ServiceModel.Routing.Configuration.FilterElement.CustomType">
+      <summary>Gets or sets the fully-qualified type name of the custom type to be used as a filter.</summary>
+      <returns>The fully-qualified type.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Routing.Configuration.FilterElement.Filter1">
+      <summary>Gets or sets the filter1 data of this configuration element. This value is only used when <see cref="P:System.ServiceModel.Routing.Configuration.FilterElement.FilterType" /> is set to And.</summary>
+      <returns>The filter1 value of this element.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Routing.Configuration.FilterElement.Filter2">
+      <summary>Gets or sets the filter2 data of this configuration element. This value is only used when <see cref="P:System.ServiceModel.Routing.Configuration.FilterElement.FilterType" /> is set to AND.</summary>
+      <returns>The filter2 value of this element.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Routing.Configuration.FilterElement.FilterData">
+      <summary>Gets or sets the filter data of this configuration element.</summary>
+      <returns>The filter data of this element.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Routing.Configuration.FilterElement.FilterType">
+      <summary>Gets or sets the <see cref="T:System.ServiceModel.Routing.Configuration.FilterType" /> of this configuration element.</summary>
+      <returns>The filter type of this element.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Routing.Configuration.FilterElement.Name">
+      <summary>Gets or sets the name of this configuration element.</summary>
+      <returns>The unique name of this configuration element.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Routing.Configuration.FilterElementCollection">
+      <summary>Represents a collection of <see cref="T:System.ServiceModel.Routing.Configuration.FilterElement" /> instances. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.FilterElementCollection.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Routing.Configuration.FilterElementCollection" /> class. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.FilterElementCollection.Add(System.ServiceModel.Routing.Configuration.FilterElement)">
+      <summary>Adds a new <see cref="T:System.ServiceModel.Routing.Configuration.FilterElement" /> to the collection.</summary>
+      <param name="element">The filter element to add.</param>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.FilterElementCollection.Clear">
+      <summary>Removes all elements from the collection.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.FilterElementCollection.CreateNewElement">
+      <summary>Creates a new <see cref="T:System.Configuration.ConfigurationElement" />.</summary>
+      <returns>A new configuration element.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.FilterElementCollection.GetElementKey(System.Configuration.ConfigurationElement)">
+      <summary>Returns the key of the specified <see cref="T:System.Configuration.ConfigurationElement" /> element within the collection.</summary>
+      <returns>The key for the specified configuration element.</returns>
+      <param name="element">The configuration element to return the key for.</param>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.FilterElementCollection.IsElementRemovable(System.Configuration.ConfigurationElement)">
+      <summary>Gets a value that indicates whether the element can be removed.</summary>
+      <returns>true if the element can be removed; otherwise, false.</returns>
+      <param name="element">The configuration element to check for removability.</param>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.FilterElementCollection.IsReadOnly">
+      <summary>Gets a value that indicates whether the element is read-only.</summary>
+      <returns>true if the element is read-only; otherwise, false.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Routing.Configuration.FilterElementCollection.Item(System.Int32)">
+      <summary>Gets an element from the collection with a specified index.</summary>
+      <returns>The element in the collection that has the specified index.</returns>
+      <param name="index">The index of the element to be retrieved from the collection.</param>
+    </member>
+    <member name="P:System.ServiceModel.Routing.Configuration.FilterElementCollection.Item(System.String)">
+      <summary>Gets an element from the collection with a specified key.</summary>
+      <returns>The element in the collection that matches the specified key.</returns>
+      <param name="name">The key of the element to be retrieved from the collection.</param>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.FilterElementCollection.Remove(System.ServiceModel.Routing.Configuration.FilterElement)">
+      <summary>Removes the first occurrence of the specified <see cref="T:System.ServiceModel.Routing.Configuration.FilterElement" /> from the collection.</summary>
+      <param name="element">The element to be removed from the collection.</param>
+    </member>
+    <member name="T:System.ServiceModel.Routing.Configuration.FilterTableCollection">
+      <summary>Represents the configuration element that contains a collection of <see cref="T:System.ServiceModel.Routing.Configuration.FilterTableEntryCollection" /> instances. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.FilterTableCollection.#ctor">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Routing.Configuration.FilterTableCollection" /> class.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.FilterTableCollection.Add(System.ServiceModel.Routing.Configuration.FilterTableEntryCollection)">
+      <summary>Adds a new <see cref="T:System.ServiceModel.Routing.Configuration.FilterTableEntryCollection" /> to the collection.</summary>
+      <param name="element">The filter table entry to be added.</param>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.FilterTableCollection.Clear">
+      <summary>Removes all elements from the collection.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.FilterTableCollection.CreateNewElement">
+      <summary>Creates a new <see cref="T:System.Configuration.ConfigurationElement" />.</summary>
+      <returns>A new configuration element.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.FilterTableCollection.GetElementKey(System.Configuration.ConfigurationElement)">
+      <summary>Gets the element key for the specified configuration element.</summary>
+      <returns>The key for the specified configuration element.</returns>
+      <param name="element">The configuration element to return the key for.</param>
+    </member>
+    <member name="P:System.ServiceModel.Routing.Configuration.FilterTableCollection.Item(System.String)">
+      <summary>Gets the <see cref="T:System.ServiceModel.Routing.Configuration.FilterTableEntryCollection" /> with the specified index.</summary>
+      <returns>A filter table entry that matches the specified key.</returns>
+      <param name="name">The key of the element to be accessed.</param>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.FilterTableCollection.Remove(System.ServiceModel.Routing.Configuration.FilterTableEntryCollection)">
+      <summary>Removes the first occurrence of the specified <see cref="T:System.ServiceModel.Routing.Configuration.FilterTableEntryCollection" /> from the collection.</summary>
+      <param name="element">The filter table entry to remove from the collection.</param>
+    </member>
+    <member name="T:System.ServiceModel.Routing.Configuration.FilterTableEntryCollection">
+      <summary>Represents the configuration element that contains a collection of <see cref="T:System.ServiceModel.Routing.Configuration.FilterTableEntryElement" /> instances.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.FilterTableEntryCollection.#ctor">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Routing.Configuration.FilterTableEntryCollection" /> class.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.FilterTableEntryCollection.Add(System.ServiceModel.Routing.Configuration.FilterTableEntryElement)">
+      <summary>Adds a new <see cref="T:System.ServiceModel.Routing.Configuration.FilterTableEntryElement" /> to the collection.</summary>
+      <param name="element">The filter table entry to be added.</param>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.FilterTableEntryCollection.Clear">
+      <summary>Removes all elements from the collection.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.FilterTableEntryCollection.CreateNewElement">
+      <summary>Creates a new <see cref="T:System.Configuration.ConfigurationElement" />.</summary>
+      <returns>A new configuration element.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.FilterTableEntryCollection.GetElementKey(System.Configuration.ConfigurationElement)">
+      <summary>Gets the element key for the specified configuration element.</summary>
+      <returns>The key for the specified configuration element.</returns>
+      <param name="element">The configuration element to return the key for.</param>
+    </member>
+    <member name="P:System.ServiceModel.Routing.Configuration.FilterTableEntryCollection.Name">
+      <summary>Gets or sets the name of this configuration element.</summary>
+      <returns>The unique name of this configuration element.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.FilterTableEntryCollection.Remove(System.ServiceModel.Routing.Configuration.FilterTableEntryElement)">
+      <summary>Removes the first occurrence of the specified <see cref="T:System.ServiceModel.Routing.Configuration.FilterTableEntryElement" /> from the collection.</summary>
+      <param name="element">The filter table entry to remove from the collection.</param>
+    </member>
+    <member name="T:System.ServiceModel.Routing.Configuration.FilterTableEntryElement">
+      <summary>Represents a configuration element that defines a filter table entry element. This element contains the association between filters, endpoints and backup endpoints and is used to determine which filter is used to route the message.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.FilterTableEntryElement.#ctor">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Routing.Configuration.FilterTableEntryElement" /> class.</summary>
+    </member>
+    <member name="P:System.ServiceModel.Routing.Configuration.FilterTableEntryElement.BackupList">
+      <summary>Gets or sets a value that specifies a reference to a backup endpoints element.</summary>
+      <returns>A reference to a backup endpoints element.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Routing.Configuration.FilterTableEntryElement.EndpointName">
+      <summary>Gets or sets a value that specifies a reference to a client endpoint that sends messages if the associated message filter matches the message.</summary>
+      <returns>A key to a client endpoint.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Routing.Configuration.FilterTableEntryElement.FilterName">
+      <summary>Gets or sets a value that specifies a reference to the filter element.</summary>
+      <returns>A key to the filter element.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Routing.Configuration.FilterTableEntryElement.Priority">
+      <summary>Gets or sets a value that specifies the priority of this entry.</summary>
+      <returns>The priority of this entry. The default value is 0.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Routing.Configuration.FilterType">
+      <summary>Specifies the type of filter to use when routing messages.</summary>
+    </member>
+    <member name="F:System.ServiceModel.Routing.Configuration.FilterType.Action">
+      <summary>Use <see cref="T:System.ServiceModel.Dispatcher.ActionMessageFilter" /> to filter on an action.</summary>
+    </member>
+    <member name="F:System.ServiceModel.Routing.Configuration.FilterType.EndpointAddress">
+      <summary>Use <see cref="T:System.ServiceModel.Dispatcher.EndpointAddressMessageFilter" /> with <see cref="P:System.ServiceModel.Dispatcher.EndpointAddressMessageFilter.IncludeHostNameInComparison" /> set to false to filter on the address.</summary>
+    </member>
+    <member name="F:System.ServiceModel.Routing.Configuration.FilterType.PrefixEndpointAddress">
+      <summary>Use <see cref="T:System.ServiceModel.Dispatcher.PrefixEndpointAddressMessageFilter" /> with <see cref="P:System.ServiceModel.Dispatcher.PrefixEndpointAddressMessageFilter.IncludeHostNameInComparison" /> set to false to filter on the address using longest prefix matching.</summary>
+    </member>
+    <member name="F:System.ServiceModel.Routing.Configuration.FilterType.And">
+      <summary>Use <see cref="T:System.ServiceModel.Dispatcher.StrictAndMessageFilter" /> to filter on two message filters, ANDed together.</summary>
+    </member>
+    <member name="F:System.ServiceModel.Routing.Configuration.FilterType.Custom">
+      <summary>Use a user-defined filter.</summary>
+    </member>
+    <member name="F:System.ServiceModel.Routing.Configuration.FilterType.EndpointName">
+      <summary>Use the <see cref="T:System.ServiceModel.Dispatcher.EndpointNameMessageFilter" /> to filter on the name of the service endpoint.</summary>
+    </member>
+    <member name="F:System.ServiceModel.Routing.Configuration.FilterType.MatchAll">
+      <summary>Use the <see cref="T:System.ServiceModel.Dispatcher.MatchAllMessageFilter" /> to match all messages.</summary>
+    </member>
+    <member name="F:System.ServiceModel.Routing.Configuration.FilterType.XPath">
+      <summary>Use the <see cref="T:System.ServiceModel.Dispatcher.XPathMessageFilter" /> to filter on an XPath expression.</summary>
+    </member>
+    <member name="T:System.ServiceModel.Routing.Configuration.NamespaceElement">
+      <summary>Represents a configuration element that defines the namespace element. This contains namespaces to namespace prefix mappings that can then be used in XPath filters.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.NamespaceElement.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Routing.Configuration.NamespaceElement" />.</summary>
+    </member>
+    <member name="P:System.ServiceModel.Routing.Configuration.NamespaceElement.Namespace">
+      <summary>Gets or sets the namespace for this configuration element.</summary>
+      <returns>The namespace of this element.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Routing.Configuration.NamespaceElement.Prefix">
+      <summary>Gets or sets the namespace prefix for this configuration element.</summary>
+      <returns>The namespace prefix of this element.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Routing.Configuration.NamespaceElementCollection">
+      <summary>Represents a collection of <see cref="T:System.ServiceModel.Routing.Configuration.NamespaceElement" /> instances. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.NamespaceElementCollection.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Routing.Configuration.NamespaceElementCollection" /> class. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.NamespaceElementCollection.Add(System.ServiceModel.Routing.Configuration.NamespaceElement)">
+      <summary>Adds a new <see cref="T:System.ServiceModel.Routing.Configuration.NamespaceElement" /> to the collection.</summary>
+      <param name="element">The namespace element to add.</param>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.NamespaceElementCollection.Clear">
+      <summary>Removes all elements from the collection.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.NamespaceElementCollection.CreateNewElement">
+      <summary>Creates a new <see cref="T:System.Configuration.ConfigurationElement" />.</summary>
+      <returns>A new configuration element.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.NamespaceElementCollection.GetElementKey(System.Configuration.ConfigurationElement)">
+      <summary>Returns the key of the specified namespace element.</summary>
+      <returns>The key for the specified configuration element.</returns>
+      <param name="element">The configuration element to return the key for.</param>
+    </member>
+    <member name="P:System.ServiceModel.Routing.Configuration.NamespaceElementCollection.Item(System.Int32)">
+      <summary>Gets an element from the collection with a specified index.</summary>
+      <returns>The namespace element in the collection that has the specified index.</returns>
+      <param name="index">The index of the element to be retrieved from the collection.</param>
+    </member>
+    <member name="P:System.ServiceModel.Routing.Configuration.NamespaceElementCollection.Item(System.String)">
+      <summary>Gets an element from the collection with a specified key.</summary>
+      <returns>The namespace element in the collection that matches the specified key.</returns>
+      <param name="name">The key of the element to be retrieved from the collection.</param>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.NamespaceElementCollection.Remove(System.ServiceModel.Routing.Configuration.NamespaceElement)">
+      <summary>Removes the first occurrence of the specified <see cref="T:System.ServiceModel.Routing.Configuration.NamespaceElement" /> from the collection.</summary>
+      <param name="element">The namespace element to be removed.</param>
+    </member>
+    <member name="T:System.ServiceModel.Routing.Configuration.RoutingExtensionElement">
+      <summary>Represents a configuration element that contains sub-elements that specify the routing behavior.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.RoutingExtensionElement.#ctor">
+      <summary>Initializes a new instance of <see cref="T:System.ServiceModel.Routing.Configuration.RoutingExtensionElement" /> class.</summary>
+    </member>
+    <member name="P:System.ServiceModel.Routing.Configuration.RoutingExtensionElement.BehaviorType">
+      <summary>Gets the type of behavior.</summary>
+      <returns>The behavior type.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Routing.Configuration.RoutingExtensionElement.FilterTableName">
+      <summary>Gets or sets the name of the filter table used by this routing service for routing messages.</summary>
+      <returns>The name of the filter table.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Routing.Configuration.RoutingExtensionElement.RouteOnHeadersOnly">
+      <summary>Gets or sets a value that indicates whether the filter is allowed to access only the message headers or the message headers and message body.</summary>
+      <returns>true if the filter can only access header values; otherwise, false. The default is true.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Routing.Configuration.RoutingExtensionElement.SoapProcessingEnabled">
+      <summary>Gets or sets a value that indicates whether SOAP processing should occur.</summary>
+      <returns>true if messages should be marshaled; otherwise, false. The default is true.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Routing.Configuration.RoutingSection">
+      <summary>Represents a collection of elements that are used to configure routing. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.RoutingSection.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Routing.Configuration.RoutingSection" /> class. </summary>
+    </member>
+    <member name="P:System.ServiceModel.Routing.Configuration.RoutingSection.BackupLists">
+      <summary>Gets the configuration element that contains a collection of <see cref="T:System.ServiceModel.Routing.Configuration.BackupEndpointElement" /> objects.</summary>
+      <returns>A collection that defines the configuration section that contains a collection of <see cref="T:System.ServiceModel.Routing.Configuration.BackupEndpointElement" /> objects.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.RoutingSection.CreateFilterTable(System.String)">
+      <summary>Creates a filter table using the specified name.</summary>
+      <returns>A filter table with the specified name.</returns>
+      <param name="name">The name of the filter table to create.</param>
+    </member>
+    <member name="P:System.ServiceModel.Routing.Configuration.RoutingSection.Filters">
+      <summary>Gets the configuration element that contains a collection of <see cref="T:System.ServiceModel.Routing.Configuration.FilterElement" /> objects.</summary>
+      <returns>A collection that defines the configuration section that contains a collection of <see cref="T:System.ServiceModel.Routing.Configuration.FilterElement" />.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Routing.Configuration.RoutingSection.FilterTables">
+      <summary>Gets the configuration element that contains a collection of <see cref="T:System.ServiceModel.Routing.Configuration.FilterTableEntryElement" /> objects.</summary>
+      <returns>A collection that defines the configuration section that contains a collection of <see cref="T:System.ServiceModel.Routing.Configuration.FilterTableEntryElement" /> objects.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Routing.Configuration.RoutingSection.NamespaceTable">
+      <summary>Gets the configuration element that contains a collection of <see cref="T:System.ServiceModel.Routing.Configuration.NamespaceElement" /> objects.</summary>
+      <returns>A collection that defines the configuration section that contains a collection of <see cref="T:System.ServiceModel.Routing.Configuration.NamespaceElement" /> objects.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Routing.Configuration.SoapProcessingExtensionElement">
+      <summary>Represents a configuration element that defines the SOAP processing endpoint behavior.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.SoapProcessingExtensionElement.#ctor">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Routing.Configuration.SoapProcessingExtensionElement" /> class.</summary>
+    </member>
+    <member name="P:System.ServiceModel.Routing.Configuration.SoapProcessingExtensionElement.BehaviorType">
+      <summary>Gets the type of the behavior.</summary>
+      <returns>The type of the behavior.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Routing.Configuration.SoapProcessingExtensionElement.CreateBehavior">
+      <summary>Creates a new SOAP processing behavior element based on the current configuration settings.</summary>
+      <returns>The behavior.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Routing.Configuration.SoapProcessingExtensionElement.ProcessMessages">
+      <summary>Gets or sets a value that indicates whether messages should be marshaled between SOAP message versions.</summary>
+      <returns>true if messages should be marshaled; otherwise, false. The default is true.</returns>
+    </member>
+  </members>
+</doc>

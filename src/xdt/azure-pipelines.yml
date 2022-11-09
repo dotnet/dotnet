@@ -1,0 +1,182 @@
+trigger:
+  batch: true
+  branches:
+    include:
+    - main
+    - release/3*
+    - release/5*
+    - release/6*
+
+pr:
+  branches:
+    include:
+    - main
+    - release/3*
+    - release/5*
+    - release/6*
+
+variables:
+  # Cannot use key:value syntax in root defined variables
+  - name: _TeamName
+    value: DotNetCore
+  - name: _PublishUsingPipelines
+    value: true
+  - name: _DotNetArtifactsCategory
+    value: .NETCore
+
+  # used for post-build phases, internal builds only
+  - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+    - group: DotNet-AspNet-SDLValidation-Params
+    
+resources:
+  containers:
+  - container: LinuxContainer
+    image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-14.04-cross-0cd4667-20170319080304
+
+stages:
+- stage: build
+  displayName: Build
+  jobs:
+  - template: /eng/common/templates/jobs/jobs.yml
+    parameters:
+      enableMicrobuild: true
+      enablePublishBuildArtifacts: true
+      enablePublishTestResults: true
+      enablePublishBuildAssets: true
+      enablePublishUsingPipelines: ${{ variables._PublishUsingPipelines }}
+      enableSourceBuild: true
+      enableTelemetry: true
+      helixRepo: dotnet/xdt
+      jobs:
+      - job: Windows_NT
+        pool:
+          # For public or PR jobs, use the hosted pool.  For internal jobs use the internal pool.
+          # Will eventually change this to two BYOC pools.
+          ${{ if or(eq(variables['System.TeamProject'], 'public'), in(variables['Build.Reason'], 'PullRequest')) }}:
+            vmImage: windows-2019
+          ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+            name: NetCore1ESPool-Internal
+            demands: ImageOverride -equals build.windows.10.amd64.vs2019
+
+        variables:
+        - _Script: eng\common\cibuild.cmd
+        - _ValidateSdkArgs: ''
+        - _InternalBuildArgs: ''
+
+        # Only enable publishing in non-public, non PR scenarios.
+        - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+          # DotNet-Blob-Feed provides: dotnetfeed-storage-access-key-1
+          # DotNet-Symbol-Server-Pats provides: microsoft-symbol-server-pat, symweb-symbol-server-pat
+          # Publish-Build-Assets provides: MaestroAccessToken, BotAccount-dotnet-maestro-bot-PAT
+          - group: DotNet-Blob-Feed
+          - group: DotNet-Symbol-Server-Pats
+          - group: Publish-Build-Assets
+          - _PublishBlobFeedUrl: https://dotnetfeed.blob.core.windows.net/dotnet-core/index.json
+          - _InternalBuildArgs: /p:DotNetSignType=$(_SignType) /p:TeamName=$(_TeamName)
+              /p:DotNetPublishBlobFeedKey=$(dotnetfeed-storage-access-key-1)
+              /p:DotNetPublishBlobFeedUrl=$(_PublishBlobFeedUrl)
+              /p:DotNetPublishToBlobFeed=$(_DotNetPublishToBlobFeed)
+              /p:DotNetPublishUsingPipelines=$(_PublishUsingPipelines)
+              /p:DotNetArtifactsCategory=$(_DotNetArtifactsCategory)
+              /p:DotNetSymbolServerTokenMsdl=$(microsoft-symbol-server-pat)
+              /p:DotNetSymbolServerTokenSymWeb=$(symweb-symbol-server-pat)
+              /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
+
+        strategy:
+          matrix:
+            # Do not build debug except in public CI/PR
+            ${{ if or(eq(variables['System.TeamProject'], 'public'), in(variables['Build.Reason'], 'PullRequest')) }}:
+              Build_Debug:
+                _BuildConfig: Debug
+                _PublishType: none
+                _SignType: test
+                _DotNetPublishToBlobFeed : false
+            Build_Release:
+              _BuildConfig: Release
+              # PRs or external builds are not signed.
+              ${{ if or(eq(variables['System.TeamProject'], 'public'), in(variables['Build.Reason'], 'PullRequest')) }}:
+                _PublishType: none
+                _SignType: test
+                _DotNetPublishToBlobFeed : false
+              ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+                _PublishType: blob
+                _SignType: real
+                _DotNetPublishToBlobFeed : true
+                # _Script: eng\validate-sdk.cmd
+                # _ValidateSdkArgs: -gitHubPat $(BotAccount-dotnet-maestro-bot-PAT) -barToken $(MaestroAccessToken)
+        steps:
+        - checkout: self
+          clean: true
+        # Use utility script to run script command dependent on agent OS.
+        - script: $(_Script)
+            -configuration $(_BuildConfig) 
+            -prepareMachine
+            $(_InternalBuildArgs)
+            $(_ValidateSdkArgs)
+          displayName: Windows Build / Publish
+
+      - job: OSX
+        pool:
+          vmImage: 'macOS-1015'
+        strategy:
+          matrix:
+            debug_configuration:
+              _BuildConfig: Debug
+            release_configuration:
+              _BuildConfig: Release
+        steps:
+        - checkout: self
+          clean: true
+        - script: eng/common/cibuild.sh
+            --configuration $(_BuildConfig)
+            --prepareMachine
+          name: Build
+          displayName: Build
+          condition: succeeded()
+          
+      - job: Linux
+        pool:
+          vmImage: 'ubuntu-20.04'
+        container: LinuxContainer
+        strategy:
+          matrix:
+            debug_configuration:
+              _BuildConfig: Debug
+            release_configuration:
+              _BuildConfig: Release
+        steps:
+        - checkout: self
+          clean: true
+        - script: eng/common/cibuild.sh
+            --configuration $(_BuildConfig)
+            --prepareMachine
+          name: Build
+          displayName: Build
+          condition: succeeded()
+
+- ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+  - template: eng\common\templates\post-build\post-build.yml
+    parameters:
+      publishingInfraVersion: 3
+      # Symbol validation isn't being very reliable lately. This should be enabled back
+      # once this issue is resolved: https://github.com/dotnet/arcade/issues/2871
+      enableSymbolValidation: false
+      # Sourcelink validation isn't passing for Arcade due to some regressions. This should be
+      # enabled back once this issue is resolved: https://github.com/dotnet/arcade/issues/2912
+      enableSourceLinkValidation: false
+      publishDependsOn:
+      - Validate
+      # This is to enable SDL runs part of Post-Build Validation Stage
+      SDLValidationParameters:
+        enable: true
+        continueOnError: false
+        params: ' -SourceToolsList @("policheck","credscan")
+        -TsaInstanceURL $(_TsaInstanceURL)
+        -TsaProjectName $(_TsaProjectName)
+        -TsaNotificationEmail $(_TsaNotificationEmail)
+        -TsaCodebaseAdmin $(_TsaCodebaseAdmin)
+        -TsaBugAreaPath $(_TsaBugAreaPath)
+        -TsaIterationPath $(_TsaIterationPath)
+        -TsaRepositoryName "xdt"
+        -TsaCodebaseName "xdt"
+        -TsaPublish $True'

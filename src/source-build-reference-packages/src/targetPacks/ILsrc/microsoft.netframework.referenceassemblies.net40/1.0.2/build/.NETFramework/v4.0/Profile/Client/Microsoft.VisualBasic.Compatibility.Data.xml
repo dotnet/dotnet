@@ -1,0 +1,1329 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>Microsoft.VisualBasic.Compatibility.Data</name>
+  </assembly>
+  <members>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC">
+      <summary>Provides compatibility with the Visual Basic 6.0 ADO Data Control, which enabled you to create a connection to a database using Microsoft ActiveX Data Objects (ADO).  </summary>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.ADODC.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" /> class.</summary>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.ADODC.addDataSourceListener(msdatasrc.DataSourceListener)">
+      <summary>Adds an interface to monitor changes in a data set.</summary>
+      <param name="dsl">A Msdatasrc.DataSourceListener.</param>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.ADODC.BackColor">
+      <summary>Gets or sets the background color for a <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" />.</summary>
+      <returns>A <see cref="T:System.Drawing.Color" /> that represents the background color of the <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" />.</returns>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.ADODC.BOF">
+      <summary>Gets a value that indicates whether the current row position is before the first row in a <see cref="P:Microsoft.VisualBasic.Compatibility.VB6.ADODC.Recordset" />.</summary>
+      <returns>true if the current row position is before the first row; otherwise false.</returns>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.ADODC.BOFAction">
+      <summary>Gets or sets a value that indicates what action the <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" /> takes when the <see cref="P:Microsoft.VisualBasic.Compatibility.VB6.ADODC.BOF" /> property is true.</summary>
+      <returns>A <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC.BOFActionEnum" /> enumeration that specifies the action to take.</returns>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.ADODC.CacheSize">
+      <summary>Gets or sets the number of records that are cached in local memory for the current <see cref="P:Microsoft.VisualBasic.Compatibility.VB6.ADODC.Recordset" />.</summary>
+      <returns>An Integer that specifies the number of records that are cached in local memory for the current <see cref="P:Microsoft.VisualBasic.Compatibility.VB6.ADODC.Recordset" /> object. The default is 50 records.</returns>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.ADODC.CommandTimeout">
+      <summary>Gets or sets the duration, in seconds, that the <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" /> waits for a command to return from the server.</summary>
+      <returns>An Integer that specifies the number of seconds to wait when a connection is being established. The default is 15 seconds.</returns>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.ADODC.CommandType">
+      <summary>Gets or sets a value that informs the <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" /> what type of command to pass when opening a <see cref="P:Microsoft.VisualBasic.Compatibility.VB6.ADODC.Recordset" />.</summary>
+      <returns>A ADODB.CommandTypeEnum enumeration that specifies the command type.</returns>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.ADODC.ConnectionString">
+      <summary>Gets of sets the information that is used to establish a connection to a data source.</summary>
+      <returns>A <see cref="T:System.String" /> that contains the connection information.</returns>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.ADODC.ConnectionTimeout">
+      <summary>Gets or sets the duration of time, in seconds, for which the provider attempts to connect to the server specified in the <see cref="P:Microsoft.VisualBasic.Compatibility.VB6.ADODC.ConnectionString" /> property.</summary>
+      <returns>An Integer that specifies the number of seconds to wait when a connection is being established. The default is 15 seconds.</returns>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.ADODC.CursorLocation">
+      <summary>Gets or sets the location of the cursor library for the <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" /> object.</summary>
+      <returns>A ADODB.CursorLocationEnum enumeration that specifies s the location. The default is ADODB.CursorLocationEnum.adUseClient.</returns>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.ADODC.CursorType">
+      <summary>Gets or sets a value that specifies the default type of cursor to use when opening a result set from the specified query.</summary>
+      <returns>A ADODB.CursorTypeEnum enumeration that specifies the type of cursor to use.</returns>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.ADODC.Dispose(System.Boolean)">
+      <summary>Releases the unmanaged resources used by a <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" /> and optionally releases the managed resources.</summary>
+      <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODC.EndOfRecordset">
+      <summary>The EndOfRecordset event is called when there is an attempt to move to a row past the end of the <see cref="P:Microsoft.VisualBasic.Compatibility.VB6.ADODC.Recordset" />.</summary>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.ADODC.EOF">
+      <summary>Gets a value that indicates whether the current row position is after the last row in a <see cref="P:Microsoft.VisualBasic.Compatibility.VB6.ADODC.Recordset" />.</summary>
+      <returns>true if the current row position is after the last row; otherwise false.</returns>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.ADODC.EOFAction">
+      <summary>Gets or sets a value that indicates what action the <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" /> takes when the <see cref="P:Microsoft.VisualBasic.Compatibility.VB6.ADODC.EOF" /> property is true.</summary>
+      <returns>A <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC.EOFActionEnum" /> enumeration that specifies the action to take.</returns>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODC.Error">
+      <summary>Occurs when an exception is raised in a <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" />.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODC.FetchComplete">
+      <summary>Occurs when a <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" /> control completes a fetch from a database.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODC.FetchProgress">
+      <summary>Occurs while a <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" /> control is fetching data from a database.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODC.FieldChangeComplete">
+      <summary>Occurs when an update to a Field in a <see cref="P:Microsoft.VisualBasic.Compatibility.VB6.ADODC.Recordset" /> for a <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" /> control is complete.</summary>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.ADODC.getDataMember(System.String,System.Guid@)">
+      <summary>Returns a <see cref="P:Microsoft.VisualBasic.Compatibility.VB6.ADODC.Recordset" /> for a <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" />.</summary>
+      <returns>Returns a data access object (such as a row position) for a given data member.</returns>
+      <param name="dataMember">A <see cref="T:System.String" /> that describes the data member that represents one or more sets of data supported by the data source.</param>
+      <param name="riid">The interface identifier of the specified data access object.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.ADODC.getDataMemberCount">
+      <summary>Implements the OLE DB DataSource.getDataMemberCount method.</summary>
+      <returns>An Integer that represents the count.</returns>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.ADODC.getDataMemberName(System.Int32)">
+      <summary>Implements the OLE DB DataSource.getDataMemberName method.</summary>
+      <returns>A <see cref="T:System.String" /> that describes the data member name.</returns>
+      <param name="index">An index into the list of data member names.</param>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.ADODC.LockType">
+      <summary>Gets or sets a value that indicates the type of concurrency handling.</summary>
+      <returns>A ADODB.LockTypeEnum enumeration that specifies the type of concurrency handling.</returns>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.ADODC.MaxRecords">
+      <summary>Gets or sets the maximum number of records that can be retrieved from the data source.</summary>
+      <returns>An Integer that specifies the number of records that can be retrieved from the data source.</returns>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.ADODC.Mode">
+      <summary>Gets or sets a value that specifies the available permissions for modifying data in a Connection or opening a Record in a <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" />.</summary>
+      <returns>A ADO.ConnectModeEnum that specifies the mode.</returns>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODC.MoveComplete">
+      <summary>Occurs when a MoveFirst, MoveNext, or MoveLast method has occurred in a Recordset for a <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" /> control.</summary>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.ADODC.OnResize(System.EventArgs)">
+      <summary>Raises the <see cref="E:System.Windows.Forms.Control.Resize" /> event.</summary>
+      <param name="e">An <see cref="T:System.EventArgs" /> that contains the event data.</param>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.ADODC.Orientation">
+      <summary>Gets or sets a value that specifies whether a <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" /> will be oriented horizontally (the default) or vertically.</summary>
+      <returns>A <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC.OrientationEnum" /> enumeration that specifies the orientation.</returns>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.ADODC.Password">
+      <summary>Sets the password that is used during the creation of an ADO Recordset object.</summary>
+      <returns>A <see cref="T:System.String" /> that contains the password.</returns>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODC.RecordChangeComplete">
+      <summary>Occurs when the current record has changed in the Recordset of a <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" /> control.</summary>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.ADODC.Recordset">
+      <summary>Gets or sets a reference to the underlying ADO Recordset object.</summary>
+      <returns>An ADO Recordset object.</returns>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODC.RecordsetChangeComplete">
+      <summary>Occurs when the Recordset for a <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" /> control changes.</summary>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.ADODC.RecordSource">
+      <summary>Gets or sets the statement or query that returns a <see cref="P:Microsoft.VisualBasic.Compatibility.VB6.ADODC.Recordset" />.</summary>
+      <returns>A <see cref="T:System.String" /> that contains the statement or query.</returns>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.ADODC.Refresh">
+      <summary>Forces a control to invalidate its client area and immediately redraw itself and any child controls.</summary>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.ADODC.removeDataSourceListener(msdatasrc.DataSourceListener)">
+      <summary>Removes a DataSourceListener.</summary>
+      <param name="dsl">A Msdatasrc.DataSourceListener.</param>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.ADODC.Text">
+      <summary>Gets or sets the text that is contained in the display area of a <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" />.</summary>
+      <returns>A <see cref="T:System.String" /> that specifies the text.</returns>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.ADODC.UserName">
+      <summary>Gets or sets a value that represents a user of an ADO Recordset object.</summary>
+      <returns>A <see cref="T:System.String" /> that contains a user name.</returns>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODC.WillChangeField">
+      <summary>Occurs before the current field in a Recordset of a <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" /> control changes.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODC.WillChangeRecord">
+      <summary>Occurs before the current record in a Recordset of a <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" /> control changes.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODC.WillChangeRecordset">
+      <summary>Occurs before the Recordset of a <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" /> control changes.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODC.WillMove">
+      <summary>Occurs before the MoveFirst, MoveNext, or MoveLast method of a Recordset of a <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" /> control executes.</summary>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC.BOFActionEnum">
+      <summary>Provides constants for compatibility with the Visual Basic 6.0 BOFAction property.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.ADODC.BOFActionEnum.adDoMoveFirst">
+      <summary>Keeps the first record as the current record.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.ADODC.BOFActionEnum.adStayBOF">
+      <summary>Moving past the start of a Recordset triggers the Validate event on the first record, followed by a Reposition event on the invalid (BOF) record. At this point, the Move Previous button on the <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" /> is disabled.</summary>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC.EndOfRecordsetDelegate">
+      <summary>Represents the method that will handle an event.</summary>
+      <param name="fMoreData">A Boolean determining whether the end of the <see cref="P:Microsoft.VisualBasic.Compatibility.VB6.ADODC.Recordset" /> has been reached.</param>
+      <param name="adStatus">An ADODB.EventStatusEnum.</param>
+      <param name="pRecordset">An ADODB.Recordset object.</param>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC.EOFActionEnum">
+      <summary>Provides constants for compatibility with the Visual Basic 6.0 EOFAction property.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.ADODC.EOFActionEnum.adDoMoveLast">
+      <summary>Keeps the last record as the current record.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.ADODC.EOFActionEnum.adStayEOF">
+      <summary>Moving past the end of a Recordset triggers the ADODC's Validation event on the last record, followed by a Reposition event on the invalid (EOF) record. At this point, the MoveNext button on the ADODC is disabled.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.ADODC.EOFActionEnum.adDoAddNew">
+      <summary>Moving past the last record triggers the ADODC's Validation event to occur on the current record, followed by an automatic AddNew, followed by a Reposition event on the new record.</summary>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC.ErrorDelegate">
+      <summary>Represents the method that will handle an Error event.</summary>
+      <param name="errorNumber">An Integer that represents the error number.</param>
+      <param name="description">A String that contains the error message.</param>
+      <param name="scode">An Integer that represents the error source.</param>
+      <param name="source">A String that represents the source name.</param>
+      <param name="helpFile">A String that represents the Help file for the error.</param>
+      <param name="helpContext">An Integer that represents the context ID for a Help topic.</param>
+      <param name="cancelDisplay">A Boolean that determines whether the user can cancel the error dialog box.</param>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC.FetchCompleteDelegate">
+      <summary>Represents the method that will handle a FetchComplete event.</summary>
+      <param name="pError">An ADODB.Error object.</param>
+      <param name="adStatus">An ADODB.EventStatusEnum enumeration.</param>
+      <param name="pRecordset">An ADODB.Recordset object.</param>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC.FetchProgressDelegate">
+      <summary>Represents the method that will handle a FetchProgress event.</summary>
+      <param name="progress">An Integer representing the progress of the fetch operation.</param>
+      <param name="maxProgress">An Integer representing the size of the fetch operation.</param>
+      <param name="adStatus">An ADODB.EventStatusEnum.</param>
+      <param name="pRecordset">An ADODB.Recordset object.</param>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC.FieldChangeCompleteDelegate">
+      <summary>Represents the method that will handle a FieldChange event.</summary>
+      <param name="cFields">An Integer that specifies the number of fields.</param>
+      <param name="fields">An ADODB.Field object.</param>
+      <param name="pError">An ADODB.Error object.</param>
+      <param name="adStatus">An ADODB.EventStatusEnum.</param>
+      <param name="pRecordset">An ADODB.Recordset object.</param>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC.MoveCompleteDelegate">
+      <summary>Represents the method that will handle a MoveComplete event.</summary>
+      <param name="adReason">An ADODB.EventReasonEnum.</param>
+      <param name="pError">An ADODB.Error object.</param>
+      <param name="adStatus">An ADODB.EventStatusEnum.</param>
+      <param name="pRecordset">An ADODB.Recordset object.</param>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC.OrientationEnum">
+      <summary>Provides constants for compatibility with the Visual Basic 6.0 Orientation property.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.ADODC.OrientationEnum.adHorizontal">
+      <summary>The ADODC will be displayed horizontally.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.ADODC.OrientationEnum.adVertical">
+      <summary>The ADODC will be displayed vertically.</summary>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC.RecordChangeCompleteDelegate">
+      <summary>Represents the method that will handle a RecordChangeComplete event.</summary>
+      <param name="adReason">An ADODB.EventReasonEnum.</param>
+      <param name="cRecords">An Integer representing the number of records.</param>
+      <param name="pError">An ADODB.Error object.</param>
+      <param name="adStatus">An ADODB.EventStatusEnum.</param>
+      <param name="pRecordset">An ADODB.Recordset object.</param>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC.RecordsetChangeCompleteDelegate">
+      <summary>Represents the method that will handle a RecordsetChangeComplete event.</summary>
+      <param name="adReason">An ADODB.EventReasonEnum.</param>
+      <param name="pError">An ADODB.Field object.</param>
+      <param name="adStatus">An ADODB.Error object.</param>
+      <param name="pRecordset">An ADODB.EventStatusEnum.</param>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC.WillChangeFieldDelegate">
+      <summary>Represents the method that will handle a WillChangeField event.</summary>
+      <param name="cFields">An Integer that represents the number of fields.</param>
+      <param name="fields">An Object that contains the fields.</param>
+      <param name="adStatus">An ADODB.EventStatusEnum.</param>
+      <param name="pRecordset">An ADODB.Recordset object.</param>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC.WillChangeRecordDelegate">
+      <summary>Represents the method that will handle a WillChangeRecord event.</summary>
+      <param name="adReason">An ADODB.EventReasonEnum.</param>
+      <param name="cRecords">An Integer that represents the number of records.</param>
+      <param name="adStatus">An ADODB.EventStatusEnum.</param>
+      <param name="pRecordset">An ADODB.Recordset object.</param>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC.WillChangeRecordsetDelegate">
+      <summary>Represents the method that will handle a WillChangeRecordset event.</summary>
+      <param name="adReason">An ADODB.EventReasonEnum.</param>
+      <param name="adStatus">An ADODB.EventStatusEnum.</param>
+      <param name="pRecordset">An ADODB.Recordset object.</param>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC.WillMoveDelegate">
+      <summary>Represents the method that will handle a WillMove event.</summary>
+      <param name="adReason">An ADODB.EventReasonEnum.</param>
+      <param name="adStatus">An ADODB.EventStatusEnum.</param>
+      <param name="pRecordset">An ADODB.Recordset object.</param>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray">
+      <summary>Provides a control array of <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" /> controls.</summary>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray" /> class.</summary>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.#ctor(System.ComponentModel.IContainer)">
+      <summary>Initializes a new instance of the <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray" /> class, specifying its container.</summary>
+      <param name="Container">The <see cref="T:System.ComponentModel.IContainer" /> where the control array will be hosted.</param>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.BackColorChanged">
+      <summary>Occurs when the value of the <see cref="P:System.Windows.Forms.Control.BackColor" /> property changes.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.BackgroundImageChanged">
+      <summary>Occurs when the value of the <see cref="P:System.Windows.Forms.Control.BackgroundImage" /> property changes.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.BindingContextChanged">
+      <summary>Occurs when the value of the <see cref="P:System.Windows.Forms.Control.BackgroundImageLayout" /> property changes.</summary>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.CanExtend(System.Object)">
+      <summary>Gets a value that determines whether a control is a member of an <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray" />.</summary>
+      <returns>true if <paramref name="target" /> is a member of the control array; otherwise false.</returns>
+      <param name="target">An <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" /> control.</param>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.CausesValidationChanged">
+      <summary>Occurs when the value of the <see cref="P:System.Windows.Forms.Control.CausesValidation" /> property changes.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.ChangeUICues">
+      <summary>Occurs when the focus or keyboard user interface (UI) cues change.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.Click">
+      <summary>Occurs when an <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" /> in an <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray" /> is clicked.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.ContextMenuChanged">
+      <summary>Occurs when the value of the <see cref="P:System.Windows.Forms.Control.ContextMenu" /> property changes.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.CtlLoad">
+      <summary>Occurs when an <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" /> control is loaded.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.CursorChanged">
+      <summary>Occurs when the value of the <see cref="P:System.Windows.Forms.Control.Cursor" /> property changes.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.DockChanged">
+      <summary>Occurs when the value of the <see cref="P:System.Windows.Forms.Control.Dock" /> property changes.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.DoubleClick">
+      <summary>Occurs when an <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" /> control in an <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray" /> is double-clicked.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.DragDrop">
+      <summary>Occurs when a drag-and-drop operation is completed.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.DragEnter">
+      <summary>Occurs when an object is dragged into the control's bounds.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.DragLeave">
+      <summary>Occurs when an object is dragged out of the control's bounds.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.DragOver">
+      <summary>Occurs when an object is dragged over the control's bounds.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.EnabledChanged">
+      <summary>Occurs when the value of the <see cref="P:System.Windows.Forms.Control.Enabled" /> property changes.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.EndOfRecordset">
+      <summary>Occurs when the <see cref="P:Microsoft.VisualBasic.Compatibility.VB6.ADODC.EOF" /> property of an <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" /> control changes.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.Enter">
+      <summary>Occurs when the control is entered.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.Error">
+      <summary>Occurs when an exception is raised for an <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" /> control.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.FetchComplete">
+      <summary>Occurs when an <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" /> control completes a fetch from a database.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.FetchProgress">
+      <summary>Occurs while an <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" /> control is fetching data from a database.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.FieldChangeComplete">
+      <summary>Occurs when an update to a Field in a Recordset for an <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" /> control is complete.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.FontChanged">
+      <summary>Occurs when the value of the <see cref="P:System.Windows.Forms.Control.Font" /> property changes.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.ForeColorChanged">
+      <summary>Occurs when the value of the <see cref="P:System.Windows.Forms.Control.ForeColor" /> property changes.</summary>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.GetControlInstanceType">
+      <summary>Overrides <see cref="M:Microsoft.VisualBasic.Compatibility.VB6.BaseControlArray.GetControlInstanceType" />.</summary>
+      <returns>A <see cref="T:System.Type" />.</returns>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.GetIndex(Microsoft.VisualBasic.Compatibility.VB6.ADODC)">
+      <summary>Gets the index of an <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" /> in a <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray" />.</summary>
+      <returns>A Short that represents the index of the specified <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" />.</returns>
+      <param name="o">An <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" /> in the control array.</param>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.GiveFeedback">
+      <summary>Occurs during a drag operation.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.HelpRequested">
+      <summary>Occurs when the user requests Help for a control.</summary>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.HookUpControlEvents(System.Object)">
+      <summary>Overrides <see cref="M:Microsoft.VisualBasic.Compatibility.VB6.BaseControlArray.HookUpControlEvents(System.Object)" />.</summary>
+      <param name="o">An <see cref="T:System.Object" />.</param>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.ImeModeChanged">
+      <summary>Occurs when value of the <see cref="P:System.Windows.Forms.Control.ImeMode" /> property changes.</summary>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.Item(System.Int16)">
+      <summary>Gets a specific element of an <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray" /> by index. Read-only.</summary>
+      <returns>An <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" /> at the specified <paramref name="Index" /> in the control array.</returns>
+      <param name="Index">A Short that specifies the position of an element of the control array.</param>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.KeyDown">
+      <summary>Occurs when a key is pressed and the control has focus.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.KeyPress">
+      <summary>Occurs when a key is pressed and the control has focus.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.KeyUp">
+      <summary>Occurs when a key is released and the control has focus.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.Layout">
+      <summary>Occurs when a control should reposition its child controls.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.Leave">
+      <summary>Occurs when the input focus leaves the control.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.LocationChanged">
+      <summary>Occurs when the value of the <see cref="P:System.Windows.Forms.Control.Location" /> property changes.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.MouseDown">
+      <summary>Occurs when the mouse pointer is over the control and a mouse button is pressed.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.MouseEnter">
+      <summary>Occurs when the mouse pointer enters the control.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.MouseHover">
+      <summary>Occurs when the mouse pointer rests on the control.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.MouseLeave">
+      <summary>Occurs when the mouse pointer leaves the control.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.MouseMove">
+      <summary>Occurs when the mouse pointer is moved over the control.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.MouseUp">
+      <summary>Occurs when the mouse pointer is over the control and a mouse button is released.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.Move">
+      <summary>Occurs when the control is moved.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.MoveComplete">
+      <summary>Occurs when a MoveFirst, MoveNext, or MoveLast method has occurred in a Recordset for an <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" /> control.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.Paint">
+      <summary>Occurs when the control is redrawn.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.ParentChanged">
+      <summary>Occurs when the control's <see cref="P:System.Windows.Forms.Control.Parent" /> property changes.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.QueryAccessibilityHelp">
+      <summary>Occurs when an <see cref="T:System.Windows.Forms.AccessibleObject" /> is providing Help to accessibility applications.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.QueryContinueDrag">
+      <summary>Occurs during a drag-and-drop operation and enables the drag source to determine whether the drag-and-drop operation should be canceled.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.RecordChangeComplete">
+      <summary>Occurs when the current record has changed in the Recordset of an <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" /> control.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.RecordsetChangeComplete">
+      <summary>Occurs when the Recordset for an <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" /> control changes.</summary>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.ResetIndex(Microsoft.VisualBasic.Compatibility.VB6.ADODC)">
+      <summary>The ResetIndex method is not supported in the <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray" /> class</summary>
+      <param name="o">A <see cref="T:System.Windows.Forms.Control" />.</param>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.Resize">
+      <summary>Occurs when the control is resized.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.RightToLeftChanged">
+      <summary>Occurs when the <see cref="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.RightToLeftChanged" /> property value changes.</summary>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.SetIndex(Microsoft.VisualBasic.Compatibility.VB6.ADODC,System.Int16)">
+      <summary>Sets the index of the initial <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" /> in a <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray" />.</summary>
+      <param name="o">An <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" /> in the control array.</param>
+      <param name="Index">A Short that represents the index of the specified <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" />.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.ShouldSerializeIndex(Microsoft.VisualBasic.Compatibility.VB6.ADODC)">
+      <summary>Returns a value that indicates whether an <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" /> control is a member of this <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray" />.</summary>
+      <returns>If the specified <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" /> is a member of a different <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray" />, ShouldSerializeIndex returns false.NoteFunctions and objects in the <see cref="N:Microsoft.VisualBasic.Compatibility.VB6" /> namespace are provided for use by the tools for upgrading from Visual Basic 6.0 to Visual Basic 2010. In most cases, these functions and objects duplicate functionality that you can find in other namespaces in the .NET Framework. They are necessary only when the Visual Basic 6.0 code model differs significantly from the .NET Framework implementation.</returns>
+      <param name="o">An <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" /> control.</param>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.SizeChanged">
+      <summary>Occurs when the <see cref="P:System.Windows.Forms.Control.Size" /> property value changes.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.StyleChanged">
+      <summary>Occurs when the control style changes.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.SystemColorsChanged">
+      <summary>Occurs when the system colors change.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.TabIndexChanged">
+      <summary>Occurs when the <see cref="P:System.Windows.Forms.Control.TabIndex" /> property value changes.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.TabStopChanged">
+      <summary>Occurs when the <see cref="P:System.Windows.Forms.Control.TabStop" /> property value changes.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.Validated">
+      <summary>Occurs when the control is finished validating.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.Validating">
+      <summary>Occurs when the control is validating.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.VisibleChanged">
+      <summary>Occurs when the <see cref="P:System.Windows.Forms.Control.Visible" /> property value changes.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.WillChangeField">
+      <summary>Occurs before a Field in the Recordset of an <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" /> control changes.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.WillChangeRecord">
+      <summary>Occurs before the current record in a Recordset of an <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" /> control changes.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.WillChangeRecordset">
+      <summary>Occurs before the Recordset of an <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" /> control changes.</summary>
+    </member>
+    <member name="E:Microsoft.VisualBasic.Compatibility.VB6.ADODCArray.WillMove">
+      <summary>Occurs before the MoveFirst, MoveNext, or MoveLast method of a Recordset of an <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.ADODC" /> control executes.</summary>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.BaseDataEnvironment">
+      <summary>Emulates a Visual Basic 6.0 Data Environment in applications that have been upgraded from Visual Basic 6.0.</summary>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.BaseDataEnvironment.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.BaseDataEnvironment" /> class.</summary>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.BaseDataEnvironment.addDataSourceListener(msdatasrc.DataSourceListener)">
+      <summary>This method is not implemented in the <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.BaseDataEnvironment" /> class.</summary>
+      <param name="ds">None.</param>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.BaseDataEnvironment.Commands">
+      <summary>Gets a collection of ADODB.Command objects for use in an application upgraded from Visual Basic 6.0.</summary>
+      <returns>A collection of ADODB.Command objects.</returns>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.BaseDataEnvironment.Commands(System.Object)">
+      <summary>Gets a collection of ADODB.Command objects for use in an application upgraded from Visual Basic 6.0.</summary>
+      <returns>A collection of ADODB.Command objects.</returns>
+      <param name="lpVar">A Visual Basic 6.0 Variant that contains the ADODB.Command objects.</param>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.BaseDataEnvironment.Connections">
+      <summary>Gets a collection of ADODB.Connection objects for use in an application upgraded from Visual Basic 6.0.</summary>
+      <returns>A collection of ADODB.Connection objects.</returns>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.BaseDataEnvironment.Connections(System.Object)">
+      <summary>Gets a collection of ADODB.Connection objects for use in an application upgraded from Visual Basic 6.0.</summary>
+      <returns>A collection of ADODB.Connection objects.</returns>
+      <param name="lpVar">A Visual Basic 6.0 Variant that contains the ADODB.Connection objects.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.BaseDataEnvironment.Dispose">
+      <summary>Releases the unmanaged resources that are used by a <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.BaseDataEnvironment" />.</summary>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.BaseDataEnvironment.Dispose(System.Boolean)">
+      <summary>Releases the unmanaged resources that are used by a <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.BaseDataEnvironment" />, and optionally releases the managed resources.</summary>
+      <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.BaseDataEnvironment.Finalize">
+      <summary>Overrides the <see cref="M:System.Object.Finalize" /> method.</summary>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.BaseDataEnvironment.getDataMember(System.String,System.Guid@)">
+      <summary>Invokes a method based on an ADODB.Command object.</summary>
+      <returns>An <see cref="T:System.Object" /> that contains the ADODB.Command object.</returns>
+      <param name="strDataMember">A String that contains an ADODB.Command object.</param>
+      <param name="Id">A GUID representing an ADODB.Recordset object.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.BaseDataEnvironment.GetDataMemberCount">
+      <summary>Gets a count of ADODB.Command objects.</summary>
+      <returns>An Integer that contains the count.</returns>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.BaseDataEnvironment.GetDataMemberName(System.Int32)">
+      <summary>This method is not implemented in the <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.BaseDataEnvironment" /> class.</summary>
+      <returns>Nothing.</returns>
+      <param name="Index">Not applicable.</param>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.BaseDataEnvironment.m_Commands">
+      <summary>Contains the <see cref="Overload:Microsoft.VisualBasic.Compatibility.VB6.BaseDataEnvironment.Commands" /> collection.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.BaseDataEnvironment.m_Connections">
+      <summary>Contains the <see cref="Overload:Microsoft.VisualBasic.Compatibility.VB6.BaseDataEnvironment.Connections" /> collection.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.BaseDataEnvironment.m_NonRSReturningCommands">
+      <summary>Contains a collection.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.BaseDataEnvironment.m_Recordsets">
+      <summary>Contains the <see cref="Overload:Microsoft.VisualBasic.Compatibility.VB6.BaseDataEnvironment.Recordsets" /> collection.</summary>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.BaseDataEnvironment.Object">
+      <summary>Gets the <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.BaseDataEnvironment" /> object.</summary>
+      <returns>A <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.BaseDataEnvironment" /> object.</returns>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.BaseDataEnvironment.Recordsets">
+      <summary>Gets a collection of ADODB.Recordset objects for use in an application upgraded from Visual Basic 6.0.</summary>
+      <returns>A collection of ADODB.Recordset objects.</returns>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.BaseDataEnvironment.Recordsets(System.Object)">
+      <summary>Gets a collection of ADODB.Recordset objects for use in an application upgraded from Visual Basic 6.0.</summary>
+      <returns>A collection of ADODB.Recordset objects.</returns>
+      <param name="lpVar">A Visual Basic 6.0 Variant that contains the ADODB.Recordset objects.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.BaseDataEnvironment.removeDataSourceListener(msdatasrc.DataSourceListener)">
+      <summary>This method is not implemented in the <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.BaseDataEnvironment" /> class.</summary>
+      <param name="ds">Not applicable.</param>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.BindingCollectionEnumerator">
+      <summary>Supports a simple iteration over a binding collection in an application upgraded from Visual Basic 6.0. </summary>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.BindingCollectionEnumerator.Current">
+      <summary>Gets the current element in the binding collection.</summary>
+      <returns>The current element in the collection.</returns>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.BindingCollectionEnumerator.MoveNext">
+      <summary>Advances the enumerator to the next element of the collection. </summary>
+      <returns>true if the enumerator was successfully advanced to the next element; false if the enumerator has passed the end of the collection.</returns>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.BindingCollectionEnumerator.Reset">
+      <summary>Sets the enumerator to its initial position, which is before the first element in the collection.</summary>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.CONNECTDATA">
+      <summary>A Structure that contains data that is used internally by an application that has been upgraded from Visual Basic 6.0.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.CONNECTDATA.cookie">
+      <summary>An Integer used by the <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.CONNECTDATA" />Structure.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.CONNECTDATA.pUnk">
+      <summary>An <see cref="T:System.IntPtr" /> used by the <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.CONNECTDATA" /> Structure.</summary>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.DBBINDING">
+      <summary>Provides a Structure that represents an ADO binding in an application that has been upgraded from Visual Basic 6.0.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.DBBINDING.bPrecision">
+      <summary>A field for the internal <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBBINDING" /> Structure.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.DBBINDING.bScale">
+      <summary>A field for the internal <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBBINDING" /> Structure.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.DBBINDING.cbMaxLen">
+      <summary>A field for the internal <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBBINDING" /> Structure.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.DBBINDING.dwFlags">
+      <summary>A field for the internal <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBBINDING" /> Structure.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.DBBINDING.eParamIO">
+      <summary>A field for the internal <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBBINDING" /> Structure.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.DBBINDING.iOrdinal">
+      <summary>A field for the internal <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBBINDING" /> Structure.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.DBBINDING.memOwner">
+      <summary>A field for the internal <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBBINDING" /> Structure.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.DBBINDING.obLength">
+      <summary>A field for the internal <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBBINDING" /> Structure.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.DBBINDING.obStatus">
+      <summary>A field for the internal <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBBINDING" /> Structure.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.DBBINDING.obValue">
+      <summary>A field for the internal <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBBINDING" /> Structure.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.DBBINDING.part">
+      <summary>A field for the internal <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBBINDING" /> Structure.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.DBBINDING.pBindExt">
+      <summary>A field for the internal <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBBINDING" /> Structure.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.DBBINDING.pObject">
+      <summary>A field for the internal <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBBINDING" /> Structure.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.DBBINDING.typeInfo">
+      <summary>A field for the internal <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBBINDING" /> Structure.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.DBBINDING.wType">
+      <summary>A field for the internal <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBBINDING" /> Structure.</summary>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.DBCOLUMNINFO">
+      <summary>A Structure that contains data that is used internally by an application that has been upgraded from Visual Basic 6.0.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.DBCOLUMNINFO.columnFlags">
+      <summary>A field for the internal <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBCOLUMNINFO" /> Structure.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.DBCOLUMNINFO.columnId">
+      <summary>A field for the internal <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBCOLUMNINFO" /> Structure.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.DBCOLUMNINFO.columnOrdinal">
+      <summary>A field for the internal <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBCOLUMNINFO" /> Structure.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.DBCOLUMNINFO.columnSize">
+      <summary>A field for the internal <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBCOLUMNINFO" /> Structure.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.DBCOLUMNINFO.columnType">
+      <summary>A field for the internal <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBCOLUMNINFO" /> Structure.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.DBCOLUMNINFO.name">
+      <summary>A field for the internal <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBCOLUMNINFO" /> Structure.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.DBCOLUMNINFO.precision">
+      <summary>A field for the internal <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBCOLUMNINFO" /> Structure.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.DBCOLUMNINFO.scale">
+      <summary>A field for the internal <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBCOLUMNINFO" /> Structure.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.DBCOLUMNINFO.typeInfo">
+      <summary>A field for the internal <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBCOLUMNINFO" /> Structure.</summary>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.DBID">
+      <summary>Provides a Structure that is used internally in an application that has been upgraded from Visual Basic 6.0.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.DBID.dbkind">
+      <summary>A field for the internal <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBID" /> Structure.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.DBID.uGuid">
+      <summary>A field for the internal <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBID" /> Structure.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.DBID.uName">
+      <summary>A field for the internal <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBID" /> Structure.</summary>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.DBinding">
+      <summary>Provides a managed equivalent of the DBinding interface from the Microsoft Data Binding Collection library (msbind) for use in applications upgraded from Visual Basic 6.0.</summary>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.DBinding.DataChanged">
+      <summary>Gets or sets a value indicating that data has changed.</summary>
+      <returns>true if data has changed; otherwise, false.</returns>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.DBinding.DataField">
+      <summary>Gets a data field.</summary>
+      <returns>A String that contains the data.</returns>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.DBinding.DataFormat">
+      <summary>Gets or sets the data format for a data field.</summary>
+      <returns>An <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.IDataFormatDisp" /> interface.</returns>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.DBinding.Key">
+      <summary>Gets the key value for a data field.</summary>
+      <returns>A String that contains the key value.</returns>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.DBinding.Object">
+      <summary>Gets a data object.</summary>
+      <returns>An <see cref="T:System.Object" /> that contains data.</returns>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.DBinding.PropertyName">
+      <summary>Gets the name of a property from a data object.</summary>
+      <returns>A String that contains the property name.</returns>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.DBindingCollection">
+      <summary>Provides an interface to replace COM-based data binding in an application upgraded from Visual Basic 6.0.</summary>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.DBindingCollection.Add(System.Object,System.String,System.String,Microsoft.VisualBasic.Compatibility.VB6.IDataFormatDisp,System.String)">
+      <summary>Adds a <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBinding" /> to a <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBindingCollection" />.</summary>
+      <returns>A <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBinding" /> interface.</returns>
+      <param name="obj">An <see cref="T:System.Object" /> that contains data.</param>
+      <param name="propertyName">A String that contains a property name.</param>
+      <param name="dataField">A String that contains the name of a data field.</param>
+      <param name="dataFormat">Optional. An <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.IDataFormatDisp" /> interface.</param>
+      <param name="key">Optional. A String that contains the key value.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.DBindingCollection.Clear">
+      <summary>Clears the collection of binding objects.</summary>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.DBindingCollection.Count">
+      <summary>Gets the total number of bindings in the <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBindingCollection" />.</summary>
+      <returns>An Integer that contains the count.</returns>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.DBindingCollection.DataMember">
+      <summary>Gets or sets the data member for a <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBindingCollection" />.</summary>
+      <returns>A string that contains the name of the data member.</returns>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.DBindingCollection.DataSource">
+      <summary>Gets or sets the data source for a <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBindingCollection" />.</summary>
+      <returns>A COM-based msdatasrc.DataSource object.</returns>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.DBindingCollection.Item(System.Object)">
+      <summary>Gets the <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBinding" /> at the specified index.</summary>
+      <returns>A <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBinding" /> interface.</returns>
+      <param name="index">An <see cref="T:System.Object" /> representing the index.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.DBindingCollection.Remove(System.Object)">
+      <summary>Removes a <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBinding" /> interface from a <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBindingCollection" />.</summary>
+      <param name="index">An <see cref="T:System.Object" /> representing the index.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.DBindingCollection.UpdateControls">
+      <summary>Gets the current row from the <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBindingCollection" /> object's data source and resets the contents of controls bound through the object.</summary>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.DBindingCollection.UpdateMode">
+      <summary>Gets or sets the <see cref="P:Microsoft.VisualBasic.Compatibility.VB6.DBindingCollection.UpdateMode" /> for a <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBindingCollection" />.</summary>
+      <returns>An <see cref="P:Microsoft.VisualBasic.Compatibility.VB6.DBindingCollection.UpdateMode" /> enumeration.</returns>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.DBKINDENUM">
+      <summary>Provides an enumeration for use by the tools for upgrading Visual Basic 6.0 applications to Visual Basic 2010.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.DBKINDENUM.DBKIND_GUID_NAME">
+      <summary>0</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.DBKINDENUM.DBKIND_GUID_PROPID">
+      <summary>1</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.DBKINDENUM.DBKIND_NAME">
+      <summary>2</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.DBKINDENUM.DBKIND_PGUID_NAME">
+      <summary>3</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.DBKINDENUM.DBKIND_PGUID_PROPID">
+      <summary>4</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.DBKINDENUM.DBKIND_PROPID">
+      <summary>5</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.DBKINDENUM.DBKIND_GUID">
+      <summary>6</summary>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.DBPROPIDSET">
+      <summary>Provides a Structure for use in an application that has been upgraded from Visual Basic 6.0.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.DBPROPIDSET.cPropertyIDs">
+      <summary>A field for the internal <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBPROPIDSET" /> Structure.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.DBPROPIDSET.guidPropertySet">
+      <summary>A field for the internal <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBPROPIDSET" /> Structure.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.DBPROPIDSET.rgPropertyIDs">
+      <summary>A field for the internal <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBPROPIDSET" /> Structure.</summary>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.IAccessor">
+      <summary>Provides an implementation of the OLE DB IAccessor interface for use by applications upgraded from Visual Basic 6.0.</summary>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IAccessor.AddRefAccessor(System.Int32,System.Int32@)">
+      <summary>Adds a reference count to an existing accessor.</summary>
+      <param name="hAccessor">The handle of the accessor for which to increment the reference count.</param>
+      <param name="cRefCount">A pointer to memory in which to return the reference count of the accessor handle. If <paramref name="cRefCount" /> is a null pointer, no reference count is returned.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IAccessor.CreateAccessor(System.Int32,System.Int32,Microsoft.VisualBasic.Compatibility.VB6.DBBINDING[],System.Int32,System.Int32@,System.IntPtr)">
+      <summary>Creates an accessor from a set of bindings.</summary>
+      <param name="accessorFlags">A bitmask that describes the properties of the accessor and how it can be used. </param>
+      <param name="cBindings">The number of bindings in the accessor.</param>
+      <param name="bindings">An array of <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBBINDING" /> structures.</param>
+      <param name="cbRowSize">The number of bytes allocated for a single set of parameters or criteria values in the consumer's buffer.</param>
+      <param name="hAccessor">A pointer to memory in which to return the handle of the created accessor.</param>
+      <param name="pBindStatus">A pointer to an array of DBBINDSTATUS values.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IAccessor.GetBindings(System.Int32,System.Int32@,System.Int32@,System.IntPtr@)">
+      <summary>Returns the bindings in an accessor.</summary>
+      <param name="hAccessor">The handle of the accessor for which to return the bindings.</param>
+      <param name="accessorFlags">A pointer to memory in which to return a bitmask that describes the properties of the accessor and how it is intended to be used.</param>
+      <param name="cBindings">A pointer to memory in which to return the number of bindings in the accessor.</param>
+      <param name="rgBindings">A pointer to memory in which to return an array of DBBINDSTATUS structures.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IAccessor.ReleaseAccessor(System.Int32,System.Int32@)">
+      <summary>Releases an accessor.</summary>
+      <param name="hAccessor">The handle of the accessor to release.</param>
+      <param name="cRefCount">A pointer to memory in which to return the remaining reference count of the accessor handle.</param>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.IChapteredRowset">
+      <summary>Provides an implementation of the OLE DB IAccessor interface for use by applications upgraded from Visual Basic 6.0.  </summary>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IChapteredRowset.AddRefChapter(System.Int32,System.Int32@)">
+      <summary>Adds a reference count to an existing chapter.</summary>
+      <param name="hChapter">The handle of the chapter for which to increment the reference count.</param>
+      <param name="cRefCount">A pointer to memory in which to return the reference count of the chapter handle.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IChapteredRowset.ReleaseChapter(System.Int32,System.Int32@)">
+      <summary>Releases a chapter.</summary>
+      <param name="hChapter">The chapter handle.</param>
+      <param name="cRefCount">A pointer to memory in which to return the reference count of the chapter handle.</param>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.IColumnsInfo">
+      <summary>Provides an implementation of the OLE DB IColumnInfo interface for use by applications upgraded from Visual Basic 6.0.</summary>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IColumnsInfo.GetColumnInfo(System.Int32@,System.IntPtr@,System.IntPtr@)">
+      <summary>Returns the column metadata needed by most consumers.</summary>
+      <param name="cColumns">A pointer to memory in which to return the number of columns in the rowset; this number includes the bookmark column, if there is one.</param>
+      <param name="pColumnInfo">A pointer to memory in which to return an array of DBCOLUMNINFO structures.</param>
+      <param name="pStringsBuffer">A pointer to memory in which to return a pointer to storage for all string values (names used either within columnid or for pwszName) within a single allocation block.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IColumnsInfo.MapColumnIDs(System.Int32,Microsoft.VisualBasic.Compatibility.VB6.DBID[],System.Int32[])">
+      <summary>Returns an array of ordinals of the columns in a rowset that are identified by the specified column IDs.</summary>
+      <param name="cColumnIDs">The number of column IDs to map.</param>
+      <param name="columnIDs">An array of IDs of the columns for which to determine the column ordinals.</param>
+      <param name="rgColumns">An array of <paramref name="cColumnIDs" /> ordinals of the columns identified by the elements of <paramref name="columnIDs" />.</param>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.IConnectionPoint">
+      <summary>Provides an implementation of the OLE DB IConnectionPoint interface for use by applications upgraded from Visual Basic 6.0.</summary>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IConnectionPoint.Advise(System.IntPtr,System.Int32@)">
+      <summary>Establishes an advisory connection between the connection point and the caller's sink object.</summary>
+      <param name="sink">A reference to the sink to receive calls for the outgoing interface managed by this connection point.</param>
+      <param name="cookie">When this method returns, contains the connection cookie. This parameter is passed uninitialized.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IConnectionPoint.EnumConnections(Microsoft.VisualBasic.Compatibility.VB6.IEnumConnections@)">
+      <summary>Creates an enumerator object for iteration through the connections that exist to this connection point.</summary>
+      <param name="enumC">When this method returns, contains the newly created enumerator. This parameter is passed uninitialized.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IConnectionPoint.GetConnectionInterface(System.Guid@)">
+      <summary>Returns the IID of the outgoing interface managed by this connection point.</summary>
+      <param name="piid">When this parameter returns, contains the IID of the outgoing interface managed by this connection point. This parameter is passed uninitialized.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IConnectionPoint.GetConnectionPointContainer(Microsoft.VisualBasic.Compatibility.VB6.IConnectionPointContainer@)">
+      <summary>Retrieves the IConnectionPointContainer interface pointer to the connectable object that conceptually owns this connection point. </summary>
+      <param name="cpc">When this parameter returns, contains the connectable object's IConnectionPointContainer interface. This parameter is passed uninitialized.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IConnectionPoint.Unadvise(System.Int32)">
+      <summary>Closes an advisory connection that was previously established through the <see cref="M:Microsoft.VisualBasic.Compatibility.VB6.IConnectionPoint.Advise(System.IntPtr,System.Int32@)" /> method.</summary>
+      <param name="cookie">The connection cookie previously returned from the <see cref="M:Microsoft.VisualBasic.Compatibility.VB6.IConnectionPoint.Advise(System.IntPtr,System.Int32@)" /> method.</param>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.IConnectionPointContainer">
+      <summary>Provides an implementation of the OLE DB IConnectionPointContainer interface for use by applications upgraded from Visual Basic 6.0.</summary>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IConnectionPointContainer.EnumConnectionPoints(Microsoft.VisualBasic.Compatibility.VB6.IEnumConnectionPoints@)">
+      <summary>Creates an enumerator of all the connection points supported in the connectable object, one connection point per IID.</summary>
+      <param name="enumC">When the method returns, this parameter contains the interface pointer of the enumerator. This parameter is passed uninitialized.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IConnectionPointContainer.FindConnectionPoint(System.Guid@,Microsoft.VisualBasic.Compatibility.VB6.IConnectionPoint@)">
+      <summary>Queries the connectable object about whether it has a connection point for a particular IID, and, if so, returns the IConnectionPoint interface pointer to that connection point.</summary>
+      <param name="riid">A reference to the outgoing interface IID whose connection point is being requested. </param>
+      <param name="cp">When the method returns, this parameter contains the connection point that manages the outgoing interface <paramref name="riid" />. This parameter is passed uninitialized.</param>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.IDataFormat">
+      <summary>Provides support for the <see cref="P:Microsoft.VisualBasic.Compatibility.VB6.DBinding.DataFormat" /> property of the <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBinding" /> interface.</summary>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IDataFormat.Clone(Microsoft.VisualBasic.Compatibility.VB6.IDataFormat@)">
+      <summary>Creates a shallow copy of the <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.IDataFormat" />.</summary>
+      <param name="newObject">An <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.IDataFormat" />.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IDataFormat.Convert(System.Int32,System.Object,System.Object@)">
+      <summary>Converts an <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.IDataFormat" /> to a Visual Basic 6.0 Variant.</summary>
+      <param name="cookie">An Integer.</param>
+      <param name="from">An <see cref="T:System.Object" />.</param>
+      <param name="varTo">A <see cref="T:Microsoft.VisualBasic.VariantType" />.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IDataFormat.Default(System.Boolean@)">
+      <summary>Determines whether an <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.IDataFormat" /> is the default <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.IDataFormat" />.</summary>
+      <param name="fDefault">A <see cref="T:System.Boolean" />.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IDataFormat.GetBinding(System.Runtime.InteropServices.VarEnum,System.Int32,Microsoft.VisualBasic.Compatibility.VB6.IRowset,Microsoft.VisualBasic.Compatibility.VB6.DBCOLUMNINFO@,Microsoft.VisualBasic.Compatibility.VB6.DBBINDING@,System.Int32@,System.Int32@)">
+      <summary>Gets a binding for a <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.IDataFormat" />.</summary>
+      <param name="vtPropHint">A <see cref="T:System.Runtime.InteropServices.VarEnum" />.</param>
+      <param name="rgfDataFormat">An Integer.</param>
+      <param name="rowset">An <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.IRowset" />.</param>
+      <param name="columnInfo">A <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBCOLUMNINFO" /> structure.</param>
+      <param name="binding">A <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBBINDING" /> structure.</param>
+      <param name="size">An Integer.</param>
+      <param name="cookie">An Integer.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IDataFormat.GetData(System.Int32,System.IntPtr,System.Object@,System.Int32@,System.Object)">
+      <summary>Gets the data for an <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.IDataFormat" /> interface.</summary>
+      <param name="cookie">An Integer.</param>
+      <param name="from">An <see cref="T:System.IntPtr" />.</param>
+      <param name="varTo">A <see cref="T:Microsoft.VisualBasic.VariantType" />.</param>
+      <param name="dbStatus">An Integer.</param>
+      <param name="pObject">An <see cref="T:System.Object" /> .</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IDataFormat.GetLcid(System.Int32@)">
+      <summary>Gets a locale ID for an <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.IDataFormat" /> interface.</summary>
+      <param name="lcid">An Integer.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IDataFormat.GetRawData(System.Int32,System.IntPtr,System.Object@,System.Int32@)">
+      <summary>Gets the raw data for an <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.IDataFormat" /> interface.</summary>
+      <param name="cookie">An Integer.</param>
+      <param name="from">An <see cref="T:System.IntPtr" />.</param>
+      <param name="varTo">A <see cref="T:Microsoft.VisualBasic.VariantType" />.</param>
+      <param name="dbStatus">An Integer.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IDataFormat.GetSubFormatType(System.Int32@)">
+      <summary>Gets the subformat type for an <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.IDataFormat" /> interface.</summary>
+      <param name="subFormatType">An Integer.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IDataFormat.ReleaseBinding(System.Int32)">
+      <summary>Releases a binding for an <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.IDataFormat" /> interface.</summary>
+      <param name="cookie">An Integer.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IDataFormat.ReleaseData(System.Int32,System.IntPtr)">
+      <summary>Releases the data for an <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.IDataFormat" /> interface.</summary>
+      <param name="cookie">An Integer.</param>
+      <param name="pv">An <see cref="T:System.IntPtr" />.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IDataFormat.SetData(System.Int32,System.Object@,System.IntPtr,System.Object)">
+      <summary>Sets the data for an <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.IDataFormat" /> interface.</summary>
+      <param name="cookie">An Integer.</param>
+      <param name="from">An <see cref="T:System.IntPtr" />.</param>
+      <param name="pVarTo">A <see cref="T:Microsoft.VisualBasic.VariantType" />.</param>
+      <param name="pObject">An <see cref="T:System.Object" />.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IDataFormat.SetLcid(System.Int32)">
+      <summary>Sets the locale ID for an <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.IDataFormat" />.</summary>
+      <param name="lcid">An Integer.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IDataFormat.SetRawData(System.Int32,System.Object,System.IntPtr)">
+      <summary>Sets the raw data for an <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.IDataFormat" />.</summary>
+      <param name="cookie">An Integer.</param>
+      <param name="from">An <see cref="T:System.IntPtr" />.</param>
+      <param name="pVarTo">A <see cref="T:Microsoft.VisualBasic.VariantType" />.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IDataFormat.SetSubFormatType(System.Int32)">
+      <summary>Sets the subformat type for an <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.IDataFormat" /> interface.</summary>
+      <param name="subFormatType">An Integer.</param>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.IDataFormatDisp">
+      <summary>Provides support for the <see cref="P:Microsoft.VisualBasic.Compatibility.VB6.DBinding.DataFormat" /> property of the <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.DBinding" /> interface.</summary>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.IEnumConnectionPoints">
+      <summary>Manages the definition of the IEnumConnectionPoints interface.</summary>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IEnumConnectionPoints.Clone(Microsoft.VisualBasic.Compatibility.VB6.IEnumConnectionPoints@)">
+      <summary>Creates a new enumerator that contains the same enumeration state as the current one. </summary>
+      <param name="ecp">When this method returns, contains a reference to the newly created enumerator. This parameter is passed uninitialized.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IEnumConnectionPoints.Next(System.Int32,Microsoft.VisualBasic.Compatibility.VB6.IConnectionPoint[]@,System.Int32@)">
+      <summary>Retrieves a specified number of items in the enumeration sequence.  </summary>
+      <param name="cConnections">The number of <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.IConnectionPoint" /> references to return in <paramref name="cp" />.</param>
+      <param name="cp">When this method returns, contains a reference to the enumerated connections. This parameter is passed uninitialized.</param>
+      <param name="cFetched">When this method returns, contains a reference to the actual number of connections enumerated in <paramref name="cp" />.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IEnumConnectionPoints.Reset">
+      <summary>Resets the enumeration sequence to the beginning.</summary>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IEnumConnectionPoints.Skip(System.Int32)">
+      <summary>Skips a specified number of items in the enumeration sequence.</summary>
+      <param name="cConnections">The number of elements to skip in the enumeration.</param>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.IEnumConnections">
+      <summary>Manages the definition of the IEnumConnections interface.</summary>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IEnumConnections.Clone(Microsoft.VisualBasic.Compatibility.VB6.IEnumConnections@)">
+      <summary>Creates a new enumerator that contains the same enumeration state as the current one.</summary>
+      <param name="ec">When this method returns, contains a reference to the newly created enumerator. This parameter is passed uninitialized.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IEnumConnections.Next(System.Int32,Microsoft.VisualBasic.Compatibility.VB6.CONNECTDATA[]@,System.Int32@)">
+      <summary>Retrieves a specified number of items in the enumeration sequence.</summary>
+      <param name="cConnections">The number of <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.CONNECTDATA" /> structures to return in <paramref name="cd" />.</param>
+      <param name="cd">When this method returns, contains a reference to the enumerated connections. This parameter is passed uninitialized.</param>
+      <param name="cFetched">When this method returns, contains a reference to the actual number of connections enumerated in <paramref name="cd" />.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IEnumConnections.Reset">
+      <summary>Resets the enumeration sequence to the start.</summary>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IEnumConnections.Skip(System.Int32)">
+      <summary>Skips a specified number of items in the enumeration sequence.</summary>
+      <param name="cConnections">The number of elements to skip in the enumeration.</param>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.IRowPosition">
+      <summary>Provides an implementation of the OLE DB IRowPosition interface for use by applications upgraded from Visual Basic 6.0.</summary>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IRowPosition.ClearRowPosition">
+      <summary>Clears the row position.</summary>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IRowPosition.GetRowPosition(System.Int32@,System.Int32@,System.Int32@)">
+      <summary>Retrieves the current row position.</summary>
+      <param name="hChapter">A pointer to memory in which to return the chapter associated with the current row. If the rowset is not chaptered, <paramref name="hChapter" /> is set to DB_NULL_HCHAPTER. If <paramref name="hChapter" /> is a null pointer on input, no chapter value is returned.</param>
+      <param name="hRow">A pointer to memory in which to return the hRow of the current row position; or DB_NULL_HROW if there is no current row position.</param>
+      <param name="dbPositionFlags">A pointer to memory in which to return additional information about the row position.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IRowPosition.GetRowset(System.Guid@,System.Object@)">
+      <summary>Returns the current underlying Rowset.</summary>
+      <param name="iid">The requested IID for the rowset returned in <paramref name="rowset" />.</param>
+      <param name="rowset">A pointer to memory in which to return the interface pointer of the underlying rowset.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IRowPosition.Initialize(System.Object)">
+      <summary>Initializes the row position object by setting the source rowset.</summary>
+      <param name="rowset">Pointer to an interface on the source rowset.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IRowPosition.SetRowPosition(System.Int32,System.Int32,System.Int32)">
+      <summary>Sets the current row position.</summary>
+      <param name="hChapter">The chapter associated with the current row, or with DB_NULL_HCHAPTER if the rowset is not chaptered.</param>
+      <param name="hRow">The new current row.</param>
+      <param name="dbPositionFlags">A flag indicating additional information about the new row position.</param>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.IRowPositionChange">
+      <summary>Provides an implementation of the OLE DB IRowPositionChange interface for use by applications upgraded from Visual Basic 6.0.</summary>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IRowPositionChange.OnRowPositionChange(System.Int32,System.Int32,System.Int32)">
+      <summary>Notifies the consumer of a row position object of a change to the current row position.</summary>
+      <returns>An Integer that represents the result.  </returns>
+      <param name="dbReason">The reason of the event that caused this change.</param>
+      <param name="eventPhase">The phase of this notification.</param>
+      <param name="fCantDeny">When this flag is set to true, the consumer cannot veto the event by returning S_FALSE because the provider cannot undo the event.</param>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.IRowset">
+      <summary>Provides an implementation of the OLE DB IRowset interface for use by applications upgraded from Visual Basic 6.0.</summary>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IRowset.AddRefRows(System.Int32,System.Int32[],System.Int32[]@,System.Int32[]@)">
+      <summary>Adds a reference count to an existing row handle.</summary>
+      <param name="cRows">The number of rows for which to increment the reference count.</param>
+      <param name="hRows">An array of row handles for which to increment the reference count. The reference count of row handles is incremented by one for each time they appear in the array.</param>
+      <param name="refCounts">An array with <paramref name="cRows" /> elements in which to return the new reference count for each row handle. The consumer allocates memory for this array. If <paramref name="refCounts" /> is a null pointer, no reference counts are returned.</param>
+      <param name="rowStatus">An array with <paramref name="cRows" /> elements in which to return values indicating the status of each row specified in <paramref name="hRows" />.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IRowset.GetData(System.Int32,System.Int32,System.IntPtr)">
+      <summary>Retrieves data from the rowset's copy of the row.</summary>
+      <param name="hRow">The handle of the row from which to get the data.</param>
+      <param name="hAccessor">The handle of the accessor to use.</param>
+      <param name="pData">A pointer to a buffer in which to return the data.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IRowset.GetNextRows(System.Int32,System.Int32,System.Int32,System.Int32@,System.Int32[]@)">
+      <summary>Fetches rows sequentially, remembering the previous position.</summary>
+      <param name="hChapter">The chapter handle designating the rows to fetch.</param>
+      <param name="lRowsOffset">The signed count of rows to skip before fetching rows. Deleted rows that the provider has removed from the rowset are not counted in the skip.</param>
+      <param name="cRows">The number of rows to fetch. A negative number means to fetch backward.</param>
+      <param name="cRowsObtained">A pointer to memory in which to return the actual number of fetched rows.</param>
+      <param name="hRows">A pointer to memory in which to return an array of handles of the fetched rows.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IRowset.ReleaseRows(System.Int32,System.Int32[],System.IntPtr,System.IntPtr,System.IntPtr)">
+      <summary>Releases rows.</summary>
+      <returns>An Integer representing the result.</returns>
+      <param name="cRows">The number of rows to release.</param>
+      <param name="hRows">An array of handles of the rows to be released. The row handles do not need to form a logical cluster; they may have been obtained at separate times and need not be for contiguous underlying rows. Row handles are decremented by one reference count for each time they appear in the array.</param>
+      <param name="rowOptions">An array of <paramref name="cRows" /> elements containing bitmasks indicating additional options to be specified when a row is released.</param>
+      <param name="rowRefCounts">An array with <paramref name="cRows" /> elements in which to return the new reference count of each row.</param>
+      <param name="rgRowStatus">An array with <paramref name="cRows" /> elements in which to return values indicating the status of each row specified in <paramref name="hRows" />.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IRowset.RestartPosition(System.Int32)">
+      <summary>Repositions the next fetch position to its initial position.</summary>
+      <returns>An Integer representing the result.</returns>
+      <param name="hChapter">The chapter handle designating the rows on which to reposition.</param>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.IRowsetChange">
+      <summary>Provides an implementation of the OLE DB IRowsetChange interface for use by applications upgraded from Visual Basic 6.0.</summary>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IRowsetChange.DeleteRows(System.Int32,System.Int32,System.Int32[],System.Int32[]@)">
+      <summary>Deletes rows.</summary>
+      <param name="hChapterReserved">The chapter handle.</param>
+      <param name="cRows">The number of rows to be deleted.</param>
+      <param name="rghRows">An array of handles of the rows to be deleted.</param>
+      <param name="rgRowStatus">An array with <paramref name="cRows" /> elements in which to return values indicating the status of each row specified in <paramref name="rghRows" />.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IRowsetChange.InsertRow(System.Int32,System.Int32,System.IntPtr,System.Int32@)">
+      <summary>Creates and initializes a new row.</summary>
+      <param name="hChapterReserved">The chapter handle.</param>
+      <param name="hAccessor">The handle of the accessor to use.</param>
+      <param name="pData">A pointer to memory containing the new data values, at offsets that correspond to the bindings in the accessor.</param>
+      <param name="hRow">A pointer to memory in which to return the handle of the new row.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IRowsetChange.SetData(System.Int32,System.Int32,System.IntPtr)">
+      <summary>Sets data values in one or more columns in a row.</summary>
+      <param name="hRow">The handle of the row in which to set data.</param>
+      <param name="hAccessor">The handle of the accessor to use.</param>
+      <param name="pData">A pointer to memory containing the new data values, at offsets that correspond to the bindings in the accessor.</param>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.IRowsetIdentity">
+      <summary>Provides an implementation of the OLE DB IRowsetIdentity interface for use by applications upgraded from Visual Basic 6.0.</summary>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IRowsetIdentity.IsSameRow(System.Int32,System.Int32)">
+      <summary>Compares two row handles to see whether they refer to the same row instance.</summary>
+      <returns>An Integer representing the result.</returns>
+      <param name="hThisRow">The handle of an active row.</param>
+      <param name="hThatRow">The handle of an active row.</param>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.IRowsetInfo">
+      <summary>Provides an implementation of the OLE DB IRowsetInfo interface for use by applications upgraded from Visual Basic 6.0.</summary>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IRowsetInfo.GetProperties(System.Int32,Microsoft.VisualBasic.Compatibility.VB6.DBPROPIDSET[],System.Int32@,System.IntPtr@)">
+      <summary>Returns the current settings of all properties supported by the rowset.</summary>
+      <param name="cPropertyIDSets">The number of DBPROPIDSET structures in <paramref name="rgPropertyIDSets" />.</param>
+      <param name="rgPropertyIDSets">An array of DBPROPIDSET structures.</param>
+      <param name="cPropertySets">A pointer to memory in which to return the number of DBPROPSET structures returned in <paramref name="prgPropertySets" />.</param>
+      <param name="prgPropertySets">A pointer to memory in which to return an array of DBPROPSET structures.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IRowsetInfo.GetReferencedRowset(System.Int32,System.Guid,System.Object@)">
+      <summary>Returns an interface pointer to the rowset to which a bookmark or chapter applies.</summary>
+      <param name="iOrdinal">The bookmark or chapter column for which to get the related rowset.</param>
+      <param name="riid">The IID of the interface pointer to return in <paramref name="referencedRowset" />.</param>
+      <param name="referencedRowset">A pointer to memory in which to return an IUnknown interface pointer on the rowset that interprets values from this column.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IRowsetInfo.GetSpecification(System.Guid,System.Object@)">
+      <summary>Returns an interface pointer on the object (command or session) that created this rowset.</summary>
+      <param name="riid">The IID of the interface on which to return a pointer.</param>
+      <param name="specification">A pointer to memory in which to return the interface pointer.</param>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.IRowsetNotify">
+      <summary>Provides an implementation of the OLE DB IRowsetNotify interface for use by applications upgraded from Visual Basic 6.0.</summary>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IRowsetNotify.OnFieldChange(Microsoft.VisualBasic.Compatibility.VB6.IRowset,System.Int32,System.Int32,System.Int32[],System.Int32,System.Int32,System.Int32)">
+      <summary>Notifies the consumer of any change to the value of a column.</summary>
+      <returns>An Integer representing the result.</returns>
+      <param name="rowset">A pointer to the rowset, because the consumer may be receiving notifications from multiple rowsets and this identifies which one is calling.</param>
+      <param name="hRow">The handle of the row in which the column value was changed.</param>
+      <param name="cColumns">The count of columns in <paramref name="rgColumns" />.</param>
+      <param name="rgColumns">An array of columns in the row for which the value was changed.</param>
+      <param name="dbReason">The reason for the change, as indicated by the value of DBREASON.</param>
+      <param name="eventPhase">The phase of this notification.</param>
+      <param name="fCantDeny">When this flag is set to true, the consumer cannot veto the event by returning S_FALSE because the provider cannot undo the event.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IRowsetNotify.OnRowChange(Microsoft.VisualBasic.Compatibility.VB6.IRowset,System.Int32,System.Int32[],System.Int32,System.Int32,System.Int32)">
+      <summary>Notifies the consumer of the first change to a row or of any change that affects the entire row.</summary>
+      <returns>An Integer representing the result.</returns>
+      <param name="rowset">A pointer to the rowset, because the consumer may be receiving notifications from multiple rowsets and this identifies which one is calling.</param>
+      <param name="cRows">The count of row handles in <paramref name="rghRows" />.</param>
+      <param name="rghRows">An array of handles of rows that are changing.</param>
+      <param name="dbReason">The reason for the change, as indicated by the value of DBREASON.</param>
+      <param name="eventPhase">The phase of this notification.</param>
+      <param name="fCantDeny">When this flag is set to true, the consumer cannot veto the event by returning S_FALSE because the provider cannot undo the event.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.IRowsetNotify.OnRowsetChange(Microsoft.VisualBasic.Compatibility.VB6.IRowset,System.Int32,System.Int32,System.Int32)">
+      <summary>Notifies the consumer of any change affecting the entire rowset.</summary>
+      <returns>An Integer representing the result.</returns>
+      <param name="rowset">A pointer to the rowset, because the consumer may be receiving notifications from multiple rowsets and this identifies which one is calling.</param>
+      <param name="dbReason">The reason for the change, as indicated by the value of DBREASON.</param>
+      <param name="eventPhase">The phase of this notification.</param>
+      <param name="fCantDeny">When this flag is set to true, the consumer cannot veto the event by returning S_FALSE because the provider cannot undo the event.</param>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.MBinding">
+      <summary>Enables Windows Forms controls to be bound to ADO recordsets. This type is a managed equivalent of the Visual Basic 6.0 msbind library.</summary>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.MBinding.DataChanged">
+      <summary>Gets or sets a value indicating whether data has changed.</summary>
+      <returns>true if data has changed; otherwise, false.</returns>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.MBinding.DataField">
+      <summary>Gets a data field.</summary>
+      <returns>A String that contains the data.</returns>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.MBinding.DataFormat">
+      <summary>Gets or sets the data format for a data field.</summary>
+      <returns>An <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.IDataFormatDisp" /> interface.</returns>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.MBinding.Dispose">
+      <summary>Releases the unmanaged resources that are used by an <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.MBinding" />.</summary>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.MBinding.Dispose(System.Boolean)">
+      <summary>Releases the unmanaged resources that are used by an <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.MBinding" /> and, optionally, releases the managed resources.</summary>
+      <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.MBinding.Key">
+      <summary>Gets the key value for a data field.</summary>
+      <returns>A String that contains the key value.</returns>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.MBinding.Object">
+      <summary>Gets a data object.</summary>
+      <returns>An <see cref="T:System.Object" /> that contains data.</returns>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.MBinding.PropertyName">
+      <summary>Gets the name of a property from a data object.</summary>
+      <returns>A String that contains the property name.</returns>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.MBindingCollection">
+      <summary>Provides an interface to replace COM-based data binding in an application upgraded from Visual Basic 6.0.</summary>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.MBindingCollection.#ctor">
+      <summary>Initializes an instance of a <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.MBindingCollection" />.</summary>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.MBindingCollection.Add(System.Object,System.String,System.String,Microsoft.VisualBasic.Compatibility.VB6.IDataFormatDisp,System.String)">
+      <summary>Adds a <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.MBinding" /> to a <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.MBindingCollection" />.</summary>
+      <returns>A <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.MBinding" /> interface.</returns>
+      <param name="obj">An <see cref="T:System.Object" /> that contains data.</param>
+      <param name="propertyName">A String that contains a property name.</param>
+      <param name="dataField">A String that contains the name of a data field.</param>
+      <param name="dataFormat">Optional. An <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.IDataFormatDisp" /> interface.</param>
+      <param name="key">Optional. A String that contains the key value.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.MBindingCollection.Add(System.Object,System.String,System.String,Microsoft.VisualBasic.Compatibility.VB6.IDataFormatDisp,System.String,System.Boolean)">
+      <summary>Adds a <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.MBinding" /> to a <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.MBindingCollection" />.</summary>
+      <returns>A <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.MBinding" /> interface.</returns>
+      <param name="obj">An <see cref="T:System.Object" /> that contains data.</param>
+      <param name="propertyName">A String that contains a property name.</param>
+      <param name="dataField">A String that contains the name of a data field.</param>
+      <param name="dataFormat">An <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.IDataFormatDisp" /> interface.</param>
+      <param name="key">A String that contains the key value.</param>
+      <param name="immediateBind">true to bind immediately; otherwise false.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.MBindingCollection.Clear">
+      <summary>Clears the collection of binding objects.</summary>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.MBindingCollection.Count">
+      <summary>Gets the total number of bindings in the <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.MBindingCollection" />.</summary>
+      <returns>An Integer that contains the count.</returns>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.MBindingCollection.DataMember">
+      <summary>Gets or sets the data member for a <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.MBindingCollection" />.</summary>
+      <returns>A String that contains the name of the data member.</returns>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.MBindingCollection.DataSource">
+      <summary>Gets or sets the data source for a <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.MBindingCollection" />.</summary>
+      <returns>A COM-based msdatasrc.DataSource object.</returns>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.MBindingCollection.Dispose">
+      <summary>Releases the unmanaged resources that are used by a <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.MBindingCollection" />.</summary>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.MBindingCollection.Dispose(System.Boolean)">
+      <summary>Releases the unmanaged resources that are used by a <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.MBindingCollection" /> and optionally releases the managed resources.</summary>
+      <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.MBindingCollection.GetEnumerator">
+      <summary>Gets an enumerator for a <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.MBindingCollection" />.</summary>
+      <returns>An <see cref="T:System.Collections.IEnumerator" /> for the collection.</returns>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.MBindingCollection.Item(System.Object)">
+      <summary>Gets the <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.MBinding" /> at the specified index.</summary>
+      <returns>A <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.MBinding" /> interface.</returns>
+      <param name="index">An <see cref="T:System.Object" /> that represents the index.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.MBindingCollection.Remove(System.Object)">
+      <summary>Removes a <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.MBinding" /> interface from a <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.MBindingCollection" />.</summary>
+      <param name="index">An <see cref="T:System.Object" /> that represents the index.</param>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.MBindingCollection.SavePendingChanges">
+      <summary>Determines whether to save changes in a <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.MBindingCollection" />.</summary>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.MBindingCollection.UpdateControls">
+      <summary>Gets the current row from the data source of the <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.MBindingCollection" /> object and resets the contents of controls bound through the object.</summary>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.MBindingCollection.UpdateMode">
+      <summary>Gets or sets the <see cref="P:Microsoft.VisualBasic.Compatibility.VB6.MBindingCollection.UpdateMode" /> for a <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.MBindingCollection" />.</summary>
+      <returns>A <see cref="P:Microsoft.VisualBasic.Compatibility.VB6.DBindingCollection.UpdateMode" /> enumeration.</returns>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.SRDescriptionAttribute">
+      <summary>Provides an attribute for use in upgrading Visual Basic 6.0 applications to Visual Basic 2010.</summary>
+    </member>
+    <member name="M:Microsoft.VisualBasic.Compatibility.VB6.SRDescriptionAttribute.#ctor(System.String)">
+      <summary>Initializes an instance of an <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.SRDescriptionAttribute" />.</summary>
+      <param name="description">A <see cref="T:System.String" /> that contains the description.</param>
+    </member>
+    <member name="P:Microsoft.VisualBasic.Compatibility.VB6.SRDescriptionAttribute.Description">
+      <summary>Gets the string that contains the description for an <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.SRDescriptionAttribute" />.</summary>
+      <returns>A <see cref="T:System.String" /> that contains the description.</returns>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.UGUID">
+      <summary>Provides a Structure that represents a <see cref="T:System.Guid" /> in an application that has been upgraded from Visual Basic 6.0.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.UGUID.guid">
+      <summary>A field containing a <see cref="T:System.Guid" /> for the internal <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.UGUID" /> Structure.</summary>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.UNAME">
+      <summary>Provides a Structure that represents a pointer to a Name property in an application that has been upgraded from Visual Basic 6.0.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.UNAME.name">
+      <summary>Contains a <see cref="T:System.IntPtr" /> for the internal <see cref="T:Microsoft.VisualBasic.Compatibility.VB6.UNAME" />Structure.</summary>
+    </member>
+    <member name="T:Microsoft.VisualBasic.Compatibility.VB6.UpdateMode">
+      <summary>Provides constants for compatibility with the Visual Basic 6.0 UpdateMode method.</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.UpdateMode.vbUsePropertyAttributes">
+      <summary>0</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.UpdateMode.vbUpdateWhenPropertyChanges">
+      <summary>1</summary>
+    </member>
+    <member name="F:Microsoft.VisualBasic.Compatibility.VB6.UpdateMode.vbUpdateWhenRowChanges">
+      <summary>2</summary>
+    </member>
+  </members>
+</doc>

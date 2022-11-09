@@ -1,0 +1,51 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), dir.props))/dir.props" />
+  <PropertyGroup>
+    <TargetFrameworks>netstandard1.0;netstandard1.1</TargetFrameworks>
+    <NuspecFile>$(ArtifactsBinDir)system.threading.tasks.dataflow/4.6.0/system.threading.tasks.dataflow.nuspec</NuspecFile>
+   </PropertyGroup>
+
+  <PropertyGroup>
+    <OutputPath>$(ArtifactsBinDir)system.threading.tasks.dataflow/4.6.0/ref/</OutputPath>
+    <IntermediateOutputPath>$(ArtifactsObjDir)system.threading.tasks.dataflow/4.6.0</IntermediateOutputPath>
+  </PropertyGroup>
+    <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.0' ">
+        <OutputPath>$(ArtifactsBinDir)system.threading.tasks.dataflow/4.6.0/lib/</OutputPath>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.1' ">
+        <OutputPath>$(ArtifactsBinDir)system.threading.tasks.dataflow/4.6.0/lib/</OutputPath>
+    </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="**/ref/$(TargetFramework)/*.cs" />
+    <Compile Include="**/lib/$(TargetFramework)/*.cs" />
+  </ItemGroup>
+
+    <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.0' ">
+        <PackageReference Include="System.Collections" Version="4.0.11" />
+        <PackageReference Include="System.Diagnostics.Debug" Version="4.0.11" />
+        <PackageReference Include="System.Dynamic.Runtime" Version="4.0.11" />
+        <PackageReference Include="System.Linq" Version="4.1.0" />
+        <PackageReference Include="System.Resources.ResourceManager" Version="4.0.1" />
+        <PackageReference Include="System.Runtime" Version="4.1.0" />
+        <PackageReference Include="System.Runtime.Extensions" Version="4.1.0" />
+        <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.1.1" />
+        <PackageReference Include="System.Threading" Version="4.0.11" />
+        <PackageReference Include="System.Threading.Tasks" Version="4.0.11" />
+    </ItemGroup>
+    <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.1' ">
+        <PackageReference Include="System.Collections" Version="4.0.11" />
+        <PackageReference Include="System.Collections.Concurrent" Version="4.0.12" />
+        <PackageReference Include="System.Diagnostics.Debug" Version="4.0.11" />
+        <PackageReference Include="System.Diagnostics.Tracing" Version="4.1.0" />
+        <PackageReference Include="System.Dynamic.Runtime" Version="4.0.11" />
+        <PackageReference Include="System.Linq" Version="4.1.0" />
+        <PackageReference Include="System.Resources.ResourceManager" Version="4.0.1" />
+        <PackageReference Include="System.Runtime" Version="4.1.0" />
+        <PackageReference Include="System.Runtime.Extensions" Version="4.1.0" />
+        <PackageReference Include="System.Threading" Version="4.0.11" />
+        <PackageReference Include="System.Threading.Tasks" Version="4.0.11" />
+    </ItemGroup>
+
+  
+</Project>

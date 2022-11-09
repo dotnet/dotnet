@@ -1,0 +1,9 @@
+<Project>
+
+  <Import Project="$([MSBuild]::GetPathOfFileAbove(Directory.Build.props, $(MSBuildThisFileDirectory)..))" />
+
+  <PropertyGroup>
+    <AssemblyName>Microsoft.Win32.Registry</AssemblyName>
+  </PropertyGroup>
+
+</Project>

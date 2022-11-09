@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="pl" original="../ReleasesResources.resx">
+    <body>
+      <trans-unit id="AspNetCoreReleaseName">
+        <source>ASP.NET Core Runtime</source>
+        <target state="translated">Środowisko uruchomieniowe platformy ASP.NET Core</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="BuildMetadataCannotBeEmpty">
+        <source>The build metadata cannot be empty if a separator is provided.</source>
+        <target state="new">The build metadata cannot be empty if a separator is provided.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FileNotFound">
+        <source>Could not find the specified file: {0}</source>
+        <target state="translated">Nie można znaleźć określonego pliku: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HashMismatch">
+        <source>The expected hash ({0}) and actual hash ({1}) for {2} do not match.</source>
+        <target state="translated">Oczekiwany skrót ({0}) i rzeczywisty skrót ({1}) elementu {2} nie są zgodne.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidBuildMetadata">
+        <source>The build metadata value is invalid: {0}</source>
+        <target state="translated">Wartość metadanych kompilowania jest nieprawidłowa: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidMajorVersion">
+        <source>Invalid or missing major version.</source>
+        <target state="translated">Brak wersji głównej lub jest ona nieprawidłowa.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidMinorVersion">
+        <source>Invalid or missing minor version.</source>
+        <target state="translated">Brak wersji pomocniczej lub jest ona nieprawidłowa.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidNumericIdentifier">
+        <source>Invalid numeric identifier: '{0}'.</source>
+        <target state="new">Invalid numeric identifier: '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidPatch">
+        <source>Invalid or missing patch version.</source>
+        <target state="translated">Brak wersji poprawki lub jest ona nieprawidłowa.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidPrerelease">
+        <source>The prerelease value is invalid: {0}</source>
+        <target state="translated">Wartość wersji wstępnej jest nieprawidłowa: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidReleaseVersion">
+        <source>The specified version is not a valid semantic version.</source>
+        <target state="new">The specified version is not a valid semantic version.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidVersion">
+        <source>The specified version does not contain a valid major, minor, and patch version: '{0}'.</source>
+        <target state="new">The specified version does not contain a valid major, minor, and patch version: '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PrereleaseCannotBeEmpty">
+        <source>The prerelease value cannot be empty if a separator is provided.</source>
+        <target state="new">The prerelease value cannot be empty if a separator is provided.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RuntimeReleaseName">
+        <source>.NET Core Runtime</source>
+        <target state="translated">Środowisko uruchomieniowe platformy .NET Core</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SdkReleaseName">
+        <source>SDK</source>
+        <target state="translated">SDK</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ValueCannotBeEmpty">
+        <source>Value cannot be empty.</source>
+        <target state="translated">Wartość nie może być pusta.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VersionPartLessThanZero">
+        <source>The value cannot be less than 0.</source>
+        <target state="new">The value cannot be less than 0.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WindowsDesktopReleaseName">
+        <source>Desktop Runtime</source>
+        <target state="translated">Klasyczne środowisko uruchomieniowe</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

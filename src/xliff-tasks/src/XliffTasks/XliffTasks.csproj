@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c) .NET Foundation and contributors. All rights reserved. Licensed under the MIT license. See License.txt in the project root for full license information. -->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net7.0;net46</TargetFrameworks>
+    <TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">net7.0</TargetFrameworks>
+    <BuildOutputTargetFolder>tools</BuildOutputTargetFolder>
+    <EnableDefaultItems>false</EnableDefaultItems>
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+    <IsPackable>true</IsPackable>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <LangVersion>10</LangVersion>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <AssemblyName>Microsoft.DotNet.XliffTasks</AssemblyName>
+    <RootNamespace>XliffTasks</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="**\*.cs" />
+    <Content Include="build\*" PackagePath="build" />
+    <Content Include="buildCrossTargeting\*" PackagePath="buildCrossTargeting" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="XliffTasks.Tests" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
+    <PackageReference Include="Microsoft.Build.Framework" Version="15.1.1012" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="15.1.1012" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.NETCore.App" Version="2.0.0" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net46'">
+    <Reference Include="System" Pack="false" />
+    <Reference Include="System.Core" Pack="false" />
+    <Reference Include="System.Xml" Pack="false" />
+    <Reference Include="System.Xml.Linq" Pack="false" />
+    <Reference Include="Microsoft.Build.Framework" Pack="false" />
+    <Reference Include="Microsoft.Build.Utilities.v4.0" Pack="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Model\xliff-core-1.2-transitional.xsd" />
+    <EmbeddedResource Include="Model\xml.xsd" />
+  </ItemGroup>
+
+</Project>

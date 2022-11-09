@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), dir.props))/dir.props" />
+  <PropertyGroup>
+    <TargetFrameworks>netstandard1.3</TargetFrameworks>
+    <NuspecFile>$(ArtifactsBinDir)system.resources.writer/4.0.0/system.resources.writer.nuspec</NuspecFile>
+   </PropertyGroup>
+
+  <PropertyGroup>
+    <OutputPath>$(ArtifactsBinDir)system.resources.writer/4.0.0/ref/</OutputPath>
+    <IntermediateOutputPath>$(ArtifactsObjDir)system.resources.writer/4.0.0</IntermediateOutputPath>
+  </PropertyGroup>
+    <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
+        <OutputPath>$(ArtifactsBinDir)system.resources.writer/4.0.0/lib/</OutputPath>
+    </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="**/ref/$(TargetFramework)/*.cs" />
+    <Compile Include="**/lib/$(TargetFramework)/*.cs" />
+  </ItemGroup>
+
+    <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
+        <PackageReference Include="System.Collections" Version="4.0.11" />
+        <PackageReference Include="System.IO" Version="4.1.0" />
+        <PackageReference Include="System.Resources.ResourceManager" Version="4.0.1" />
+        <PackageReference Include="System.Runtime" Version="4.1.0" />
+        <PackageReference Include="System.Runtime.Extensions" Version="4.1.0" />
+        <PackageReference Include="System.Text.Encoding" Version="4.0.11" />
+    </ItemGroup>
+
+  
+</Project>

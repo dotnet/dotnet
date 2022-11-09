@@ -1,0 +1,534 @@
+<Project>
+  <PropertyGroup>
+    <_InstallerTargetsImported>true</_InstallerTargetsImported>
+  </PropertyGroup>
+  <Target Name="GetInstallerGenerationFlags" DependsOnTargets="_GetTargetOSArchInfo">
+    <!-- Filter the installer generation/build flags for the current build machine. -->
+    <PropertyGroup>
+      <!--
+        Save the project's GenerateInstallers setting. It's possible the current arch of the current OS
+        doesn't support MSI generation, but we still want to create an MSI across architectures. For
+        example, we want to make an MSI that installs the arm apphost pack into the x64 SDK location
+        on an x64 machine.
+      -->
+      <GenerateCrossArchMsi Condition="'$(_osSupportsWixBasedInstallers)' == 'true'">true</GenerateCrossArchMsi>
+
+      <GenerateMSI Condition="'$(_osArchSupportsWixBasedInstallers)' == 'true'">true</GenerateMSI>
+
+      <GeneratePkg Condition="$([MSBuild]::IsOSPlatform('osx')) and '$(TargetRuntimeOS)' == 'osx'">true</GeneratePkg>
+    </PropertyGroup>
+
+    <!--
+      Apply the global Build*Package properties. These use distro-specific logic to determine if the
+      current distro should build RPM packages or Debian packages.
+
+      This logic is external because the legacy infra needs the values.
+    -->
+    <PropertyGroup>
+      <GenerateDeb>$(GenerateInstallers)</GenerateDeb>
+      <GenerateRpm>$(GenerateInstallers)</GenerateRpm>
+      <GenerateDeb Condition="'$(GenerateDeb)' == 'true' and '$(BuildDebPackage)' != 'true'">false</GenerateDeb>
+      <GenerateRpm Condition="'$(GenerateRpm)' == 'true' and '$(BuildRpmPackage)' != 'true'">false</GenerateRpm>
+    </PropertyGroup>
+  </Target>
+
+  <!--
+    Shared targets to build installers and distro packages.
+  -->
+  <Import Project="$(MSBuildThisFileDirectory)wix/wix.targets" />
+
+  <Target Name="GenerateInstallers" DependsOnTargets="GetInstallerGenerationFlags" Condition="'$(SkipInstallerBuild)' != 'true' and '$(GenerateInstallers)' == 'true'">    
+    <MakeDir Directories="$(PackageOutputPath)" />
+
+    <ItemGroup>
+      <_InstallerBuildProject
+        Include="$(MSBuildProjectFile)"
+        Targets="GenerateDeb"
+        Properties="GenerateDeb=true"
+        Condition="'$(GenerateDeb)' == 'true'" />
+      <_InstallerBuildProject
+        Include="$(MSBuildProjectFile)"
+        Targets="GenerateRpm"
+        Properties="GenerateRpm=true"
+        Condition="'$(GenerateRpm)' == 'true'" />
+      <_InstallerBuildProject
+        Include="$(MSBuildProjectFile)"
+        Targets="GenerateMsi"
+        Properties="GenerateMSI=true"
+        Condition="'$(GenerateMSI)' == 'true'" />
+      <_InstallerBuildProject
+        Include="$(MSBuildProjectFile)"
+        Targets="GenerateCrossArchMsi"
+        Properties="GenerateCrossArchMsi=true"
+        Condition="'$(GenerateCrossArchMsi)' == 'true'" />
+      <_InstallerBuildProject
+        Include="$(MSBuildProjectFile)"
+        Targets="GeneratePkg"
+        Properties="GeneratePkg=true"
+        Condition="'$(GeneratePkg)' == 'true'" />
+      <_InstallerBuildProject
+        Include="$(MSBuildProjectFile)"
+        Targets="GenerateVSInsertionNupkg"
+        Properties="GenerateMSI=$(GenerateMSI);GenerateCrossArchMsi=$(GenerateCrossArchMsi)"
+        Condition="'$(GenerateVSInsertionPackages)' == 'true'" />
+    </ItemGroup>
+    <MSBuild Projects="@(_InstallerBuildProject)"
+             Targets="%(_InstallerBuildProject.Targets)"
+             BuildInParallel="$(BuildInParallel)" />
+  </Target>
+
+  <Target Name="GenerateDeb" DependsOnTargets="FindDebuild;CreateDeb" />
+  <Target Name="GenerateRpm" DependsOnTargets="FindFPM;CreateRpm" />
+  <Target Name="GenerateMsi" DependsOnTargets="CreateWixInstaller" />
+  <Target Name="GenerateCrossArchMsi" DependsOnTargets="CreateCrossArchWixInstaller" />
+  <Target Name="GeneratePkg" DependsOnTargets="CreatePkg" />
+
+  <!--
+    Set up properties for installer generation. Project-type-specific properties are set up in
+    targets that use BeforeTargets="_GetInstallerProperties".
+  -->
+  <Target Name="_GetInstallerProperties"
+          DependsOnTargets="_GetTargetOSArchInfo;
+                            _GetProductBrandName">
+    <Error
+      Text="InstallerName '$(InstallerName)' is empty or starts with a '-': expected a value like 'dotnet-runtime'."
+      Condition="'$(InstallerName)' == '' or $(InstallerName.StartsWith('-'))" />
+
+    <PropertyGroup>
+      <VersionedInstallerName Condition="'$(VersionInstallerName)' == 'true'">$(InstallerName)-$(MajorVersion).$(MinorVersion)</VersionedInstallerName>
+      <VersionedInstallerName Condition="'$(VersionInstallerName)' != 'true'">$(InstallerName)</VersionedInstallerName>
+      <VersionedInstallerName>$(VersionedInstallerName.ToLowerInvariant())</VersionedInstallerName>
+      <InstallerPackageRelease>1</InstallerPackageRelease>
+      <InstallerPackageVersion>$(VersionPrefix)</InstallerPackageVersion>
+    </PropertyGroup>
+
+    <!-- Distinguish the cross-arch installer filename. -->
+    <PropertyGroup Condition="'$(CrossArchContentsArch)' != ''">
+      <CrossArchContentsBuildPart>_$(CrossArchContentsArch)</CrossArchContentsBuildPart>
+    </PropertyGroup>
+    
+    <PropertyGroup>
+      <InstallerExtension Condition="'$(GenerateMsi)' == 'true' or '$(GenerateCrossArchMsi)' == 'true'">.msi</InstallerExtension>
+      <InstallerExtension Condition="'$(GeneratePkg)' == 'true'">.pkg</InstallerExtension>
+      <InstallerExtension Condition="'$(GenerateDeb)' == 'true'">.deb</InstallerExtension>
+      <InstallerExtension Condition="'$(GenerateRpm)' == 'true'">.rpm</InstallerExtension>
+      <CombinedInstallerExtension Condition="'$(TargetRuntimeOS)' == 'win'">.exe</CombinedInstallerExtension>
+      <CombinedInstallerExtension Condition="'$(TargetRuntimeOS)' != 'win'">$(InstallerExtension)</CombinedInstallerExtension>
+    </PropertyGroup>
+    
+    <PropertyGroup Condition="'$(GenerateDeb)' == 'true'">
+      <InstallerPackageVersion Condition="'$(IncludePreReleaseLabelInPackageVersion)' == 'true'">$(VersionPrefix)~$(VersionSuffix)</InstallerPackageVersion>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(GenerateRpm)' == 'true'">
+      <InstallerPackageRelease Condition="'$(IncludePreReleaseLabelInPackageVersion)' == 'true'">0.1.$(VersionSuffix)</InstallerPackageRelease>
+      <InstallerPackageRelease>$([System.String]::Copy('$(InstallerPackageRelease)').Replace('-', '_'))</InstallerPackageRelease>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(GeneratePkg)' == 'true'">
+      <InstallerPackageVersion Condition="'$(IncludePreReleaseLabelInPackageVersion)' == 'true'">$(VersionPrefix)-$(VersionSuffix)</InstallerPackageVersion>
+    </PropertyGroup>
+
+    <PropertyGroup>
+      <_InstallerIntermediatesDir>$(IntermediateOutputPath)$(InstallerName)/$(InstallerPackageVersion)/</_InstallerIntermediatesDir>
+
+      <InstallerBuildPart>$(Version)-$(TargetRuntimeOS)-$(InstallerTargetArchitecture)</InstallerBuildPart>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(GenerateDeb)' == 'true' or '$(GenerateRpm)' == 'true'">
+      <InstallerBuildPart>$(Version)-$(InstallerTargetArchitecture)</InstallerBuildPart>
+      <InstallerBuildPart Condition="'$(PackageTargetOS)' != ''">$(Version)-$(PackageTargetOS)-$(InstallerTargetArchitecture)</InstallerBuildPart>
+    </PropertyGroup>
+    <PropertyGroup>
+      <!-- Location to place the installer, in artifacts. -->
+      <InstallerFileNameWithoutExtension>$(InstallerName)-$(InstallerBuildPart)$(CrossArchContentsBuildPart)</InstallerFileNameWithoutExtension>
+      <_InstallerFile Condition="'$(_InstallerFile)' == ''">$(PackageOutputPath)$(InstallerFileNameWithoutExtension)$(InstallerExtension)</_InstallerFile>
+      <ExeBundleInstallerFile>$(PackageOutputPath)$(InstallerFileNameWithoutExtension).exe</ExeBundleInstallerFile>
+      <ExeBundleInstallerEngineFile>$(PackageOutputPath)$(InstallerFileNameWithoutExtension)-engine.exe</ExeBundleInstallerEngineFile>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(GenerateRpm)' == 'true'">
+      <CreateRPMForCblMariner>true</CreateRPMForCblMariner>
+      <!-- PackageTargetOS is a distro-specific version suffix, used for deps packages, including the one for CBL Mariner.
+           We do not want to create additional CBL Mariner named RPMs of those packages. -->
+      <CreateRPMForCblMariner Condition="'$(PackageTargetOS)' != ''">false</CreateRPMForCblMariner>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(CreateRPMForCblMariner)' == 'true'">
+      <!-- CBL-Mariner 1.0 -->
+      <_CblMarinerVersionSuffix>cm.1</_CblMarinerVersionSuffix>
+      <_InstallerBuildPartCblMariner>$(Version)-$(_CblMarinerVersionSuffix)-$(InstallerTargetArchitecture)</_InstallerBuildPartCblMariner>
+      <_InstallerFileNameWithoutExtensionCblMariner>$(InstallerName)-$(_InstallerBuildPartCblMariner)$(CrossArchContentsBuildPart)</_InstallerFileNameWithoutExtensionCblMariner>
+      <_InstallerFileCblMariner>$(PackageOutputPath)$(_InstallerFileNameWithoutExtensionCblMariner)$(InstallerExtension)</_InstallerFileCblMariner>
+      <!-- CBL-Mariner 2.0 -->
+      <_CblMariner2VersionSuffix>cm.2</_CblMariner2VersionSuffix>
+      <_InstallerBuildPartCblMariner2>$(Version)-$(_CblMariner2VersionSuffix)-$(InstallerTargetArchitecture)</_InstallerBuildPartCblMariner2>
+      <_InstallerFileNameWithoutExtensionCblMariner2>$(InstallerName)-$(_InstallerBuildPartCblMariner2)$(CrossArchContentsBuildPart)</_InstallerFileNameWithoutExtensionCblMariner2>
+      <_InstallerFileCblMariner2>$(PackageOutputPath)$(_InstallerFileNameWithoutExtensionCblMariner2)$(InstallerExtension)</_InstallerFileCblMariner2>
+    </PropertyGroup>
+  </Target>
+  
+  <!--
+    Check if the deb package build tool prereq is available.
+  -->
+  <Target Name="FindDebuild">
+    <!-- run Debuild -->
+    <Exec
+      Command="/usr/bin/env debuild -h > /dev/null 2>&amp;1"
+      ContinueOnError="true"
+      IgnoreExitCode="true"
+      IgnoreStandardErrorWarningFormat="true">
+      <Output TaskParameter="ExitCode" PropertyName="_DebuildSearchExitCode" />
+    </Exec>
+
+    <!-- Check if it successfully showed us a help message. -->
+    <PropertyGroup>
+      <_DebuildPresent>false</_DebuildPresent>
+      <_DebuildPresent Condition=" '$(_DebuildSearchExitCode)' == '0' ">true</_DebuildPresent>
+    </PropertyGroup>
+
+    <Error Condition=" '$(_DebuildPresent)'  != 'true' "
+             Text="Debuild Not found, Debian packages will not be built." />
+  </Target>
+
+  <!--
+    Check if the RPM package build tool prereq is available.
+  -->
+  <Target Name="FindFPM">
+    <!-- run FPM  -->
+    <Exec
+      Command="/usr/bin/env fpm -h > /dev/null 2>&amp;1"
+      ContinueOnError="true"
+      IgnoreExitCode="true"
+      IgnoreStandardErrorWarningFormat="true">
+      <Output TaskParameter="ExitCode" PropertyName="_FPMSearchExitCode" />
+    </Exec>
+
+    <!-- Check if it successfully showed us a help message. -->
+    <PropertyGroup>
+      <_FPMPresent>false</_FPMPresent>
+      <_FPMPresent Condition=" '$(_FPMSearchExitCode)' == '0' ">true</_FPMPresent>
+    </PropertyGroup>
+
+    <Error Condition=" '$(_FPMPresent)'  != 'true' "
+             Text="FPM tool Not found, RPM packages will not be built." />
+  </Target>
+  
+  <!--
+    Create Debian package.
+  -->
+  <Target Name="CreateDeb"
+          DependsOnTargets="
+            _GetInstallerProperties;
+            _CreateInstallerLayout;
+            GetDebInstallerJsonProperties"
+          Condition="'$(_DebuildPresent)' == 'true'"
+          Returns="$(_InstallerFile)">
+    <PropertyGroup>
+      <_ConfigJsonFile>$(_LayoutDirectory)debian_config.json</_ConfigJsonFile>
+      <_DebIntermediatesDir>$(IntermediateOutputPath)out-deb</_DebIntermediatesDir>
+
+      <_DebToolArgs>-i $(_LayoutDirectory)</_DebToolArgs>
+      <_DebToolArgs>$(_DebToolArgs) -o $(_DebIntermediatesDir)</_DebToolArgs>
+      <_DebToolArgs>$(_DebToolArgs) -n $(VersionedInstallerName)</_DebToolArgs>
+      <_DebToolArgs>$(_DebToolArgs) -v $(InstallerPackageVersion)</_DebToolArgs>
+    </PropertyGroup>
+
+    <!-- Write the configuration JSON. -->
+    <GenerateJsonObjectString
+      Properties="@(_CommonLinuxPackageProperty);@(_DebJsonProperty)"
+      TargetFile="$(_ConfigJsonFile)" />
+
+    <!-- Run deb tool in the directory of the consumer project. -->
+    <Exec
+      Command="/usr/bin/env bash $(MSBuildThisFileDirectory)deb-package-tool/package_tool.sh $(_DebToolArgs)"
+      IgnoreStandardErrorWarningFormat="true" />
+
+    <!-- Copy package to output. -->
+    <ItemGroup>
+      <_GeneratedDebFiles Include="$(_DebIntermediatesDir)/*.deb" />
+    </ItemGroup>
+
+    <Error Text="@(_GeneratedDebFiles->Count()) .deb files generated." Condition="'@(_GeneratedDebFiles->Count())' != 1" />
+
+    <Copy SourceFiles="@(_GeneratedDebFiles)"
+          DestinationFiles="$(_InstallerFile)"
+          OverwriteReadOnlyFiles="True"
+          SkipUnchangedFiles="False"
+          UseHardlinksIfPossible="False" />
+
+    <Message Text="$(MSBuildProjectName) -> $(_InstallerFile)" Importance="high" />
+  </Target>
+
+  <Target Name="GetDebInstallerJsonProperties"
+          DependsOnTargets="_GetCommonJsonProperties">
+    <ItemGroup>
+      <_DebDependenciesJsonEntry Include="@(LinuxPackageDependency->'&quot;%(Identity)&quot; : { &quot;package_version&quot; : &quot;%(Version)&quot;}')" />
+    </ItemGroup>
+    <ItemGroup>
+      <_DebJsonProperty Include="debian_dependencies" Object="{@(_DebDependenciesJsonEntry, ', ')}" />
+      <_DebJsonProperty Include="@(DebJsonProperty)" />
+    </ItemGroup>
+  </Target>
+
+  <!--
+    Create RPM package.
+  -->
+  <Target Name="CreateRpm"
+          DependsOnTargets="
+            _GetInstallerProperties;
+            _CreateInstallerLayout;
+            GetRpmInstallerJsonProperties"
+          Condition="'$(_FPMPresent)' == 'true'"
+          Returns="$(_InstallerFile)">
+    <PropertyGroup>
+      <_ConfigJsonFile>$(_LayoutDirectory)rpm_config.json</_ConfigJsonFile>
+      <_RpmIntermediatesDir>$(_InstallerIntermediatesDir)out-rpm</_RpmIntermediatesDir>
+
+      <!-- Copyright, Changelog -->
+      <_RpmTemplatesLayoutDir>$(_LayoutDirectory)templates/</_RpmTemplatesLayoutDir>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <_RpmTemplateFile Include="$(MSBuildThisFileDirectory)rpm_templates/**/*" />
+    </ItemGroup>
+
+    <Copy
+      SourceFiles="@(_RpmTemplateFile)"
+      DestinationFiles="@(_RpmTemplateFile->'$(_RpmTemplatesLayoutDir)%(RecursiveDir)%(Filename)%(Extension)')" />
+
+    <GenerateJsonObjectString
+      Properties="@(_CommonLinuxPackageProperty);@(_RpmJsonProperty)"
+      TargetFile="$(_ConfigJsonFile)" />
+
+    <MakeDir Directories="$(_RpmIntermediatesDir)" />
+
+    <!-- Call the task to build the pre-reqs (parameters, copyright, changelog) for calling the FPM tool -->
+    <BuildFPMToolPreReqs
+      InputDir="$(_LayoutDirectory)"
+      OutputDir="$(_RpmIntermediatesDir)"
+      PackageVersion="$(InstallerPackageVersion)"
+      ConfigJsonFile="$(_ConfigJsonFile)">
+      <Output TaskParameter="FPMParameters" PropertyName="FPMCmdParameters" />
+    </BuildFPMToolPreReqs>
+
+    <Exec Command="fpm $(FPMCmdParameters)" WorkingDirectory="$(_RpmIntermediatesDir)" />
+
+    <!-- Copy package to output -->
+    <ItemGroup>
+      <GeneratedRpmFiles Include="$(_RpmIntermediatesDir)/*.rpm" />
+    </ItemGroup>
+
+    <Error Text="@(GeneratedRpmFiles->Count()) .rpm files generated." Condition="'@(GeneratedRpmFiles->Count())' != 1" />
+
+    <Copy SourceFiles="@(GeneratedRpmFiles)"
+          DestinationFiles="$(_InstallerFile)"
+          OverwriteReadOnlyFiles="True"
+          SkipUnchangedFiles="False"
+          UseHardlinksIfPossible="False" />
+
+    <Message Text="$(MSBuildProjectName) -> $(_InstallerFile)" Importance="high" />
+
+    <!-- CBL-Mariner 1.0 -->
+    <Copy Condition="'$(CreateRPMForCblMariner)' == 'true'"
+          SourceFiles="@(GeneratedRpmFiles)"
+          DestinationFiles="$(_InstallerFileCblMariner)"
+          OverwriteReadOnlyFiles="True"
+          SkipUnchangedFiles="False"
+          UseHardlinksIfPossible="False" />
+
+    <Message Text="$(MSBuildProjectName) -> $(_InstallerFileCblMariner)" Importance="high" />
+
+    <!-- CBL-Mariner 2.0 -->
+    <Copy Condition="'$(CreateRPMForCblMariner)' == 'true'"
+          SourceFiles="@(GeneratedRpmFiles)"
+          DestinationFiles="$(_InstallerFileCblMariner2)"
+          OverwriteReadOnlyFiles="True"
+          SkipUnchangedFiles="False"
+          UseHardlinksIfPossible="False" />
+
+    <Message Text="$(MSBuildProjectName) -> $(_InstallerFileCblMariner2)" Importance="high" />
+  </Target>
+
+  <Target Name="GetRpmInstallerJsonProperties"
+          DependsOnTargets="_GetCommonJsonProperties">
+    <ItemGroup>
+      <_FpmDependenciesJsonEntry Include="@(LinuxPackageDependency->'{&quot;package_name&quot; : &quot;%(Identity)&quot;, &quot;package_version&quot; : &quot;%(Version)&quot;}')" />
+    </ItemGroup>
+    <ItemGroup>
+      <_RpmJsonProperty Include="vendor" String=".NET Foundation" />
+      <_RpmJsonProperty Include="install_doc" String="/usr/share/doc/$(VersionedInstallerName)/" />
+      <_RpmJsonProperty Include="rpm_dependencies" Object="[@(_FpmDependenciesJsonEntry,', ')]" />
+      <_RpmJsonProperty Include="@(RpmJsonProperty)" />
+    </ItemGroup>
+  </Target>
+
+  <!--
+    Create MSI installer, using WiX tools.
+  -->
+  <Target Name="CreateWixInstaller"
+          DependsOnTargets="
+            _GetInstallerProperties;
+            RunLightLinker"
+          Returns="$(_OutInstallerFile)">
+    <Error
+      Condition="'$(GenerateExeBundle)' == 'true' and '$(GenerateMSI)' == 'true'"
+      Text="GenerateExeBundle and GenerateMSI are both set, but only one can be created at a time." />
+
+    <Message Text="$(MSBuildProjectName) -> $(_OutInstallerFile)" Importance="high" />
+  </Target>
+
+  <!--
+    Create MSI installers that install the current architecture's assets into the proper location
+    for a different architecture's SDK to find.
+  -->
+  <Target Name="CreateCrossArchWixInstaller"
+          DependsOnTargets="_GetTargetOSArchInfo"
+          Returns="@(_CrossArchMsi)">
+    <MSBuild
+      Condition="'@(CrossArchMsiToBuild)' != '' and '$(InstallerTargetArchitecture)' != '$(TargetArchitecture)'"
+      Projects="$(MSBuildProjectFullPath)"
+      Targets="CreateWixInstaller"
+      Properties="
+        InstallerTargetArchitecture=$(InstallerTargetArchitecture);
+        CrossArchContentsArch=$(TargetArchitecture);
+        GenerateMSI=true">
+      <Output TaskParameter="TargetOutputs" ItemName="_CrossArchMsi" />
+    </MSBuild>
+  </Target>
+
+  <!--
+    Create macOS pkg installer.
+  -->
+  <Target Name="CreatePkg"
+          DependsOnTargets="_GetInstallerProperties"
+          Returns="@(_CreatedPkg)">
+    
+    <!-- Copy files to layout. -->
+    <PropertyGroup>
+      <_OutputPathRoot>$(IntermediateOutputPath)output/</_OutputPathRoot>
+    </PropertyGroup>
+    
+    <MakeDir Directories="$(_OutputPathRoot)" />
+    <!-- avoid error where the root folder for the _InstallerFile does not exist: https://github.com/dotnet/arcade/issues/8603. -->
+    <MakeDir Directories="$(ArtifactsShippingPackagesDir)" Condition="!Exists($(ArtifactsShippingPackagesDir)) AND '$(IsShipping)' == 'true'" />
+    <MakeDir Directories="$(ArtifactsNonShippingPackagesDir)" Condition="!Exists($(ArtifactsNonShippingPackagesDir)) AND '$(IsShipping)' == 'false'" />
+
+    <MSBuild Projects="$(MSBuildProjectFullPath)"
+             Targets="PublishToDisk"
+             Properties="OutputPath=$(_OutputPathRoot)"
+             RemoveProperties="@(_GlobalPropertiesToRemoveForPublish)"  />
+    <PropertyGroup>
+      <_MacOSVersionComponent Condition="'$(IncludeVersionInMacOSComponentName)' == 'true'">.$(InstallerPackageVersion)</_MacOSVersionComponent>
+      <_MacOSComponentName Condition="'$(_MacOSComponentName)' == ''">com.microsoft.dotnet.$(MacOSComponentNamePackType)$(_MacOSVersionComponent).component.osx.$(InstallerTargetArchitecture)</_MacOSComponentName>
+      <_MacOSSharedInstallDir>/usr/local/share/dotnet</_MacOSSharedInstallDir>
+
+      <_pkgArgs></_pkgArgs>
+      <_pkgArgs>$(_pkgArgs) --root $(_OutputPathRoot)</_pkgArgs>
+      <_pkgArgs>$(_pkgArgs) --identifier $(_MacOSComponentName)</_pkgArgs>
+      <_pkgArgs>$(_pkgArgs) --version $(InstallerPackageVersion)</_pkgArgs>
+      <_pkgArgs>$(_pkgArgs) --install-location $(_MacOSSharedInstallDir)</_pkgArgs>
+      <_pkgArgs Condition="'$(MacOSScriptsDirectory)' != ''">$(_pkgArgs) --scripts $(MacOSScriptsDirectory)</_pkgArgs>
+      <_pkgArgs>$(_pkgArgs) $(_InstallerFile)</_pkgArgs>
+    </PropertyGroup>
+
+    <Exec Command="pkgbuild $(_pkgArgs)" />
+
+    <Message Text="$(MSBuildProjectName) -> $(_InstallerFile)" Importance="high" />
+    <ItemGroup>
+      <_CreatedPkg Include="$(_InstallerFile)" Description="$(MacOSPackageDescription)" Title="$(ProductBrandName) ($(TargetArchitecture))" />
+    </ItemGroup>
+  </Target>
+
+  <!--
+    Create installer layout. Used for RPM and Deb package creation.
+  -->
+  <Target Name="_CreateInstallerLayout">
+    <PropertyGroup>
+      <_LayoutDirectory>$(IntermediateOutputPath)installer/layoutDirectory/</_LayoutDirectory>
+      <_LayoutPackageRoot>$(_LayoutDirectory)package_root</_LayoutPackageRoot>
+      <_LayoutAbsolute>$(_LayoutDirectory)$</_LayoutAbsolute>
+      <_LayoutSamples>$(_LayoutDirectory)samples</_LayoutSamples>
+      <_LayoutDocs>$(_LayoutDirectory)docs</_LayoutDocs>
+    </PropertyGroup>
+
+    <RemoveDir Condition="Exists('$(_InstallerIntermediatesDir)')" Directories="$(_InstallerIntermediatesDir)" />
+    <MakeDir Directories="$(_InstallerIntermediatesDir)" />
+
+    <!-- Create empty layout. -->
+    <RemoveDir Condition="Exists('$(_LayoutDirectory)')" Directories="$(_LayoutDirectory)" />
+    <MakeDir Directories="$(_LayoutDirectory)" />
+    <MakeDir Directories="$(_LayoutAbsolute)" />
+    <MakeDir Directories="$(_LayoutPackageRoot)" />
+    <MakeDir Directories="$(_LayoutSamples)" />
+    <MakeDir Directories="$(_LayoutDocs)" />
+    
+    <MSBuild Projects="$(MSBuildProjectFullPath)"
+             Targets="PublishToDisk"
+             Properties="OutputPath=$([MSBuild]::EnsureTrailingSlash('$(_LayoutPackageRoot)'))"
+             RemoveProperties="@(_GlobalPropertiesToRemoveForPublish)"  />
+    
+    <Copy
+      SourceFiles="@(Manpage)"
+      DestinationFiles="@(Manpage->'$(_LayoutDocs)/%(RecursiveDir)%(Filename)%(Extension)')" />
+  </Target>
+
+  <!--
+    Get common JSON properties. Used in the configuration JSON for both RPM and Debian packages.
+  -->
+  <Target Name="_GetCommonJsonProperties">
+    <PropertyGroup>
+      <FullLicenseText>$([System.IO.File]::ReadAllText('$(LicenseFile)').Replace('%0A', '\n').Replace('"', '\"'))</FullLicenseText>
+      <LinuxInstallRoot Condition="'$(LinuxInstallRoot)' == ''">/usr/share/dotnet</LinuxInstallRoot>
+      <LinuxPackageArchitecture>$(InstallerTargetArchitecture)</LinuxPackageArchitecture>
+      <!-- Linux packaging requires 'amd64' for x64 packages -->
+      <LinuxPackageArchitecture Condition="'$(LinuxPackageArchitecture)' == 'x64'">amd64</LinuxPackageArchitecture>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <_LinuxPackageReleaseProperty Include="package_version" String="1.0.0.0" />
+      <_LinuxPackageReleaseProperty Include="package_revision" String="$(InstallerPackageRelease)" />
+      <_LinuxPackageReleaseProperty Include="urgency" String="low" />
+      <_LinuxPackageReleaseProperty Include="changelog_message" String="https://github.com/dotnet/core/tree/master/release-notes" />
+
+      <_LinuxPackageControlProperty Include="priority" String="standard" />
+      <_LinuxPackageControlProperty Include="section" String="libs" />
+      <_LinuxPackageControlProperty Include="architecture" String="$(LinuxPackageArchitecture)" />
+
+      <_LinuxPackageLicenseProperty Include="type" String="MIT and ASL 2.0 and BSD" />
+      <_LinuxPackageLicenseProperty Include="full_text" String="$(FullLicenseText)" />
+    </ItemGroup>
+
+    <GenerateJsonObjectString Properties="@(_LinuxPackageReleaseProperty)">
+      <Output TaskParameter="Json" PropertyName="_JsonReleaseObject" />
+    </GenerateJsonObjectString>
+    <GenerateJsonObjectString Properties="@(_LinuxPackageControlProperty)">
+      <Output TaskParameter="Json" PropertyName="_JsonControlObject" />
+    </GenerateJsonObjectString>
+    <GenerateJsonObjectString Properties="@(_LinuxPackageLicenseProperty)">
+      <Output TaskParameter="Json" PropertyName="_JsonLicenseObject" />
+    </GenerateJsonObjectString>
+
+    <PropertyGroup>
+      <_ShortDescription>$(MSBuildProjectName) $(InstallerPackageVersion)</_ShortDescription>
+      <_ShortDescription Condition="'$(UseBrandingNameInLinuxPackageDescription)' == 'true'">$(ProductBrandName)</_ShortDescription>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <_CommonLinuxPackageProperty Include="package_name" String="$(VersionedInstallerName)" />
+      <_CommonLinuxPackageProperty Include="short_description" String="$(_ShortDescription)" />
+      <_CommonLinuxPackageProperty Include="maintainer_name" String=".NET Team" />
+      <_CommonLinuxPackageProperty Include="maintainer_email" String="dotnetpackages@dotnetfoundation.org" />
+      <_CommonLinuxPackageProperty Include="install_root" String="$(LinuxInstallRoot)" />
+      <_CommonLinuxPackageProperty Include="long_description" String=".NET is a development platform that you can use to build command-line applications, microservices and modern websites. It is open source, cross-platform and is supported by Microsoft. We hope you enjoy using it! If you do, please consider joining the active community of developers that are contributing to the project on GitHub (https://github.com/dotnet/core). We happily accept issues and PRs." />
+      <_CommonLinuxPackageProperty Include="homepage" String="https://github.com/dotnet/core" />
+      <_CommonLinuxPackageProperty Include="copyright" String="2017 Microsoft" />
+      <_CommonLinuxPackageProperty Include="release" Object="$(_JsonReleaseObject)" />
+      <_CommonLinuxPackageProperty Include="control" Object="$(_JsonControlObject)" />
+      <_CommonLinuxPackageProperty Include="license" Object="$(_JsonLicenseObject)" />
+    </ItemGroup>
+  </Target>
+
+  <PropertyGroup>
+    <BuildDependsOn>$(BuildDependsOn);_GetSkipInstallerBuildProps;GenerateInstallers</BuildDependsOn>
+  </PropertyGroup>
+</Project>

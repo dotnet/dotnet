@@ -1,0 +1,39 @@
+﻿<VSTemplate Version="3.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="Project">
+  <TemplateData>
+    <Name Package="{CB22EE0E-4072-4ae7-96E2-90FCCF879544}" ID="1000" />
+    <Description Package="{CB22EE0E-4072-4ae7-96E2-90FCCF879544}" ID="1001" />
+    <Icon Package="{CB22EE0E-4072-4ae7-96E2-90FCCF879544}" ID="9007" />
+    <ProjectType>CSharp</ProjectType>
+    <TemplateGroupID>Silverlight</TemplateGroupID>
+    <TemplateID>Microsoft.Silverlight.CSharp.Project</TemplateID>
+    <SortOrder>42</SortOrder>
+    <RequiredFrameworkVersion>2.0</RequiredFrameworkVersion>
+    <CreateNewFolder>true</CreateNewFolder>
+    <DefaultName>SilverlightApplication</DefaultName>
+    <ProvideDefaultName>true</ProvideDefaultName>
+    <LocationField>Enabled</LocationField>
+    <PromptForSaveOnCreation>true</PromptForSaveOnCreation>
+    <EnableLocationBrowseButton>true</EnableLocationBrowseButton>
+    <NumberOfParentCategoriesToRollUp>1</NumberOfParentCategoriesToRollUp>
+  </TemplateData>
+  <TemplateContent>
+    <Project File="SilverlightProject.csproj" ReplaceParameters="true">
+      <ProjectItem OpenInEditor="false" ReplaceParameters="true" TargetFileName="MainPage.xaml">Page.xaml</ProjectItem>
+      <ProjectItem OpenInEditor="false" ReplaceParameters="true" TargetFileName="MainPage.xaml.cs">Page.xaml.cs</ProjectItem>
+      <ProjectItem OpenInEditor="false" ReplaceParameters="true">App.xaml</ProjectItem>
+      <ProjectItem OpenInEditor="false" ReplaceParameters="true">App.xaml.cs</ProjectItem>
+      <Folder Name="Properties" TargetFolderName="Properties">
+        <ProjectItem OpenInEditor="false" ReplaceParameters="false">AppManifest.xml</ProjectItem>
+        <ProjectItem OpenInEditor="false" ReplaceParameters="true" TargetFileName="AssemblyInfo.cs">AssemblyInfo.cs</ProjectItem>
+      </Folder>
+    </Project>
+    <CustomParameters>
+      <CustomParameter Name="SLPageToOpen" Value="MainPage.xaml" />
+    </CustomParameters>
+  </TemplateContent>
+<!--
+  <WizardExtension>
+    <Assembly>Microsoft.VisualStudio.Silverlight, Version=11.0.0.0, Culture=Neutral, PublicKeyToken=b03f5f7f11d50a3a</Assembly>
+    <FullClassName>Microsoft.VisualStudio.Silverlight.SilverlightProjectTemplateWizard</FullClassName>
+  </WizardExtension> -->
+</VSTemplate>

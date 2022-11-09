@@ -1,0 +1,91 @@
+<Project>
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+
+  <!--
+    Add basic project properties for NuGet restore, needed to import the SourceLink MSBuild tool
+    package's targets into the build.
+  -->
+  <PropertyGroup>
+    <TargetFramework>$(NETCoreAppFramework)</TargetFramework>
+  </PropertyGroup>
+
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+
+  <!-- Target that builds dotnet, hostfxr and hostpolicy with the same version as what NetCoreApp will be built for
+       since the build produced artifacts should always version the same (even if they may not get used).
+  -->
+  <Target Name="Build"
+          DependsOnTargets="
+            GetProductVersions;
+            GenerateNativeVersionFile;
+            BuildNativeProjects;
+            CopyNativePDBsToSymStore" />
+
+  <Target Name="BuildNativeProjects"
+          Condition="'$(TargetOS)' == 'Windows_NT'"
+          DependsOnTargets="GetLatestCommitHash">
+
+    <MSBuild
+      Projects="$(MSBuildProjectFullPath)"
+      Properties="
+        GenerateNativeVersionInfo=true;
+        AssemblyName=%(NativeFiles.FileDescription);
+        NativeVersionFile=$(IntermediateOutputRootPath)nativeResourceFiles\%(NativeFiles.Identity)\version_info.h"
+      Targets="GenerateNativeVersionFile"
+      Condition="
+        '$(IncrementalNativeBuild)' != 'true' or
+        !Exists('$(IntermediateOutputRootPath)nativeResourceFiles\%(NativeFiles.Identity)\version_info.h')"/>
+
+    <PropertyGroup>
+      <BuildArgs>$(Configuration) $(TargetArchitecture) nativever $(NativeVersion) netcorepkgver $(BundledNETCoreAppPackageVersion) commit $(LatestCommit) rid $(OutputRid)</BuildArgs>
+      <BuildArgs Condition="'$(PortableBuild)' == 'true'">$(BuildArgs) portable</BuildArgs>
+      <BuildArgs Condition="'$(IncrementalNativeBuild)' == 'true'">$(BuildArgs) incremental-native-build</BuildArgs>
+      <BuildArgs>$(BuildArgs) dotnetInstallDir "$(DOTNET_INSTALL_DIR)" rootdir $(RepoRoot)</BuildArgs>
+    </PropertyGroup>
+
+    <!--
+      Run script that invokes Cmake to create VS files, and then calls msbuild to compile them. Use
+      IgnoreStandardErrorWarningFormat because Arcade sets WarnAsError and there's an existing
+      warning in the native build.
+    -->
+    <Message Text="$(MSBuildProjectDirectory)\build.cmd $(BuildArgs)" Importance="High"/>
+    <Exec Command="$(MSBuildProjectDirectory)\build.cmd $(BuildArgs)" IgnoreStandardErrorWarningFormat="true"/>
+  </Target>
+
+  <Target Name="PrependWindowsHeaderIncludeToVersionHeaderFile"
+          Condition="'$(TargetOS)' == 'Windows_NT'"
+          AfterTargets="GenerateNativeVersionFile">
+    <PropertyGroup>
+      <IncludeStatementLine>#include &lt;Windows.h&gt;</IncludeStatementLine>
+      <NativeVersionFileContents>$([System.IO.File]::ReadAllText('$(NativeVersionFile)'))</NativeVersionFileContents>
+    </PropertyGroup>
+
+    <WriteLinesToFile
+      File="$(NativeVersionFile)"
+      Lines="$(IncludeStatementLine);$(NativeVersionFileContents)"
+      Overwrite="true" />
+  </Target>
+
+  <!--
+    Copy native PDBs to $(ArtifactsSymStoreDirectory) for publishing to symbols server.
+    We need to this because regular DeployToSymStore target doesn't run unless the project
+    is managed and uses default Build target.
+  -->
+  <Target Name="CopyNativePDBsToSymStore"
+          Condition="'$(ContinuousIntegrationBuild)' == 'true' and '$(OS)' == 'Windows_NT'">
+    <ItemGroup>
+      <NativePDB Include="$(BaseOutputRootPath)\**\*.pdb"/>
+    </ItemGroup>
+
+    <PropertyGroup>
+      <ArtifactsSymStoreRidDirectory>$(ArtifactsSymStoreDirectory)$(OutputRid)</ArtifactsSymStoreRidDirectory>
+    </PropertyGroup>
+
+    <MakeDir Directories="$(ArtifactsSymStoreRidDirectory)"/>
+
+    <Copy SourceFiles="@(NativePDB)"
+          DestinationFiles="@(NativePDB->'$(ArtifactsSymStoreRidDirectory)\%(RecursiveDir)%(Filename)%(Extension)')"
+          UseHardlinksIfPossible="true"/>
+  </Target>
+
+</Project>

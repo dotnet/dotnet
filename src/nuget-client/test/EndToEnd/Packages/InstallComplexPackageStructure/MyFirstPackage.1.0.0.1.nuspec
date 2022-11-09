@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <version>1.0.0.1</version>
+    <authors>My</authors>
+    <owners>My</owners>
+    <id>MyFirstPackage</id>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>No description.</description>
+  </metadata>
+  <files>
+    <file src="content\Pages\Blocks\Help\Security\clear.gif" target="content\Pages\Blocks\Help\Security\clear.gif" />
+    <file src="content\Pages\Blocks\Help\clear.png" target="content\Pages\Blocks\Help\clear.png" />
+    <file src="content\Pages\Blocks\Security\App_LocalResources\buttonBackground.png" target="content\Pages\Blocks\Security\App_LocalResources\buttonBackground.png" />
+    <file src="content\Pages\Blocks\Security\App_LocalResources\buttonBackgroundHover.png" target="content\Pages\Blocks\Security\App_LocalResources\buttonBackgroundHover.png" />
+    <file src="content\Pages\Blocks\Security\add.png" target="content\Pages\Blocks\Security\add.png" />
+    <file src="content\Pages\Blocks\Security\Attach.png" target="content\Pages\Blocks\Security\Attach.png" />
+    <file src="content\Pages\Blocks\Security\delete.gif" target="content\Pages\Blocks\Security\delete.gif" />
+  </files>
+</package>

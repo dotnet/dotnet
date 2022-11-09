@@ -1,0 +1,124 @@
+<Project DefaultTargets="Test">
+  <!-- <Import Sdk="Microsoft.DotNet.Helix.Sdk" Project="Sdk.props"/> -->
+  <!-- Using locally built version of the helix sdk, normal projects replace the below Import and PropertyGroup with the SDK import above-->
+  <Import Project="$(MSBuildThisFileDirectory)\..\src\Microsoft.DotNet.Helix\Sdk\sdk\Sdk.props"/>
+  <PropertyGroup>
+    <MicrosoftDotNetHelixSdkTasksAssembly Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)../artifacts/bin/Microsoft.DotNet.Helix.Sdk/$(Configuration)/net7.0/publish/Microsoft.DotNet.Helix.Sdk.dll</MicrosoftDotNetHelixSdkTasksAssembly>
+    <MicrosoftDotNetHelixSdkTasksAssembly Condition="'$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)../artifacts/bin/Microsoft.DotNet.Helix.Sdk/$(Configuration)/net472/publish/Microsoft.DotNet.Helix.Sdk.dll</MicrosoftDotNetHelixSdkTasksAssembly>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <HelixType>test/product/</HelixType>
+
+    <IncludeDotNetCli>true</IncludeDotNetCli>
+    <DotNetCliPackageType>sdk</DotNetCliPackageType>
+
+    <TestRunNamePrefix>$(AGENT_JOBNAME)</TestRunNamePrefix>
+    <XUnitWorkitemTimeout>300</XUnitWorkitemTimeout>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <HelixWorkItem Include="JUnitTest">
+      <Command>echo 'done!'</Command>
+      <PayloadDirectory>$(MSBuildThisFileDirectory)Junit</PayloadDirectory>
+    </HelixWorkItem>
+  </ItemGroup>
+  <ItemGroup>
+    <AzurePipelinesExpectedTestFailure Include="HelixReporterTests.failure1"/>
+    <AzurePipelinesExpectedTestFailure Include="HelixReporterTests.failure2"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <HelixWorkItem Include="TrxTest">
+      <Command>echo 'done!'</Command>
+      <PayloadDirectory>$(MSBuildThisFileDirectory)Trx</PayloadDirectory>
+    </HelixWorkItem>
+  </ItemGroup>  
+  <ItemGroup>
+    <AzurePipelinesExpectedTestFailure Include="HelixReporter.TRXTests.HelixReporter.TRXTests.Fail1"/>
+    <AzurePipelinesExpectedTestFailure Include="HelixReporter.TRXTests.HelixReporter.TRX.Fail2"/>
+    <AzurePipelinesExpectedTestFailure Include="tests.UnitTest2.ExpectedFailureTheoryTest"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <XUnitProject Include="..\src\**\*.Tests.csproj"/>
+
+    <!-- Exclude tests that do not target .NET Core -->
+    <XUnitProject Remove="..\src\Microsoft.DotNet.Build.Tasks.VisualStudio.Tests\Microsoft.DotNet.Build.Tasks.VisualStudio.Tests.csproj"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <HelixWorkItem Include="FailingXUnitTestsTest">
+      <Command>echo 'done!'</Command>
+      <PayloadDirectory>$(MSBuildThisFileDirectory)XUnit</PayloadDirectory>
+    </HelixWorkItem>
+  </ItemGroup>
+  <!-- Exercise Helix failure reporting path for Xunit --> 
+  <ItemGroup>
+    <AzurePipelinesExpectedTestFailure Include="XunitReportingTests.ExerciseXunitCharacterFilteringFailurePath"/>
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(HelixAccessToken)' != '' ">
+    <HelixTargetQueue Include="RedHat.7.Amd64"/>
+    <HelixTargetQueue Include="Windows.10.Amd64"/>
+    <HelixTargetQueue Include="(Debian.10.Amd64)ubuntu.1804.amd64@mcr.microsoft.com/dotnet-buildtools/prereqs:debian-10-helix-amd64"/>
+  </ItemGroup>
+
+  <PropertyGroup Condition=" '$(HelixAccessToken)' == '' ">
+    <IsExternal>true</IsExternal>
+    <Creator>$(BUILD_SOURCEVERSIONAUTHOR)</Creator>
+    <Creator Condition=" '$(Creator)' == ''">anon</Creator>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(HelixAccessToken)' == '' ">
+    <HelixTargetQueue Include="RedHat.7.Amd64.Open"/>
+    <HelixTargetQueue Include="Windows.10.Amd64.Open"/>
+    <HelixTargetQueue Include="(Debian.10.Amd64.Open)ubuntu.1804.amd64.open@mcr.microsoft.com/dotnet-buildtools/prereqs:debian-10-helix-amd64"/>
+  </ItemGroup>
+
+  <PropertyGroup Condition="!$(HelixTargetQueue.StartsWith('Windows'))">
+    <HelixPreCommands>$(HelixPreCommands);find $HELIX_CORRELATION_PAYLOAD -type f</HelixPreCommands>
+    <HelixPreCommands>$(HelixPreCommands);find . -type f</HelixPreCommands>
+    <!-- Remote Executor tests tend to make too many dumps for some OSes, and we're not testing dump functionality in Arcade's tests -->
+    <HelixPreCommands>$(HelixPreCommands);ulimit -c 0</HelixPreCommands>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(HelixTargetQueue.StartsWith('Windows'))">
+    <HelixPreCommands>$(HelixPreCommands);dir /s %HELIX_CORRELATION_PAYLOAD%</HelixPreCommands>
+    <HelixPreCommands>$(HelixPreCommands);dir /s</HelixPreCommands>
+  </PropertyGroup>
+
+  <!-- Useless stuff to make Arcade SDK happy -->
+  <PropertyGroup>
+    <Language>msbuild</Language>
+  </PropertyGroup>
+  <Target Name="Pack"/>
+
+  <!-- Yields an existing archive that will fail if ArchivePayload doesn't work -->
+  <Target Name="ZipPrexistingArchive" BeforeTargets="Build">
+      <MakeDir Directories="$(IntermediateOutputPath)\correlationarchivepayload" /> 
+      <WriteLinesToFile
+           File="$(IntermediateOutputPath)\correlationarchivepayload\testArchivePayload.txt"
+           Lines="I am a test Archive Payload"
+           Overwrite="true" />
+      <ZipDirectory Overwrite="True"
+          SourceDirectory="$(IntermediateOutputPath)\correlationarchivepayload"
+          DestinationFile="$(MSBuildProjectDirectory)\archivepayload.zip" />
+      <RemoveDir Directories="$(IntermediateOutputPath)\correlationarchivepayload" />
+  </Target>
+  <!-- Attach the ArchivePayload to all Helix work items to validate uploading them (and via logs whether caching occurs) -->
+  <ItemGroup>
+      <HelixCorrelationPayload Include="$(MSBuildProjectDirectory)\archivepayload.zip" />
+  </ItemGroup>
+
+  <!-- <Import Sdk="Microsoft.DotNet.Helix.Sdk" Project="Sdk.targets"/> -->
+  <!-- Using locally built version of the helix sdk, normal projects replace the below Import with the SDK import above-->
+  <Import Project="$(MSBuildThisFileDirectory)\..\src\Microsoft.DotNet.Helix\Sdk\sdk\Sdk.targets"/>
+
+  <ItemGroup>
+    <HelixWorkItem Condition="$(HelixTargetQueue.StartsWith('Windows'))" Include="AspNetCoreTest">
+      <Command>powershell %HELIX_WORKITEM_PAYLOAD%\aspnet-versioncheck.ps1 -aspNetCoreVersion $(AspNetCoreRuntimeVersion)</Command>
+      <PayloadDirectory>$(MSBuildThisFileDirectory)\AspNetVersionCheck</PayloadDirectory>
+    </HelixWorkItem>
+  </ItemGroup>
+</Project>

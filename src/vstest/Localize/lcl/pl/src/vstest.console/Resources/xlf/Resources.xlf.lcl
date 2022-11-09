@@ -1,0 +1,1794 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LCX SchemaVersion="6.0" Name="Resources.xlf" PsrId="308" FileType="1" SrcCul="en-US" TgtCul="pl-PL" xmlns="http://schemas.microsoft.com/locstudio/2006/6/lcx">
+  <OwnedComments>
+    <Cmt Name="Dev" />
+    <Cmt Name="LcxAdmin" />
+    <Cmt Name="Rccx" />
+  </OwnedComments>
+  <Settings Name="@vsLocTools@\default.lss" Type="Lss" />
+  <Item ItemId=";Xliff file" ItemType="0" PsrId="308" Leaf="false">
+    <Disp Icon="Expand" Expand="true" Disp="true" LocTbl="false" />
+    <Item ItemId=";Xliff Resources" ItemType="0" PsrId="308" Leaf="false">
+      <Disp Icon="Str" Disp="true" LocTbl="false" />
+      <Item ItemId=";AddnlInfoMessagesBanner" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Additional Information Messages:]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Dodatkowe komunikaty informacyjne:]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";AppContainerTestPrerequisiteFail" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Could not start test run for unit tests for Windows Store app: {0}.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nie można rozpocząć przebiegu testu dla testów jednostkowych aplikacji ze Sklepu Windows: {0}.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";AppxBundleSourceWarning" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[No test found in the specified test containers. Additionally, Microsoft Windows Store Unit test adapter does not support .appxbundle files. Create an appx (set Generate App bundle option to Never) when creating App Package and try again.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nie odnaleziono żadnych testów w określonych kontenerach testów. Ponadto adapter testów jednostkowych Sklepu Windows firmy Microsoft nie obsługuje plików appxbundle. Utwórz plik appx (ustaw opcję generowania zbioru aplikacji na wartość Nigdy) podczas tworzenia pakietu aplikacji, a następnie spróbuj ponownie.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";AssemblyPathInvalid" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Unable to find the assembly under test. Please make sure that the project is built.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nie można odnaleźć testowanego zestawu. Upewnij się, że projekt został skompilowany.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";AttachmentOutputFormat" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[  {0}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[  {0}]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";AttachmentsBanner" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Attachments:]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Załączniki:]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";AvailableDiscoverersHeaderMessage" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The following Test Discovery Add-Ins are available:]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Dostępne są następujące dodatki służące do wykrywania testów:]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";AvailableExecutorsHeaderMessage" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The following Test Execution Add-Ins are available:]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Dostępne są następujące dodatki służące do wykonywania testów:]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";AvailableExtensionFormat" ItemType="0" PsrId="308" InstFlg="true" Leaf="true">
+        <Str Cat="Text" UsrLk="true">
+          <Val><![CDATA[    {0}]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";AvailableExtensionsMetadataFormat" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[        {0}: {1}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[        {0}: {1}]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";AvailableLoggersHeaderMessage" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The following Test Logger Add-Ins are available:]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Dostępne są następujące dodatki rejestratora testów:]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";AvailableSettingsProvidersHeaderMessage" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The following Settings Providers Add-Ins are available:]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Dostępne są następujące dodatki dostawców ustawień:]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";AvailableTestsFormat" ItemType="0" PsrId="308" InstFlg="true" Leaf="true">
+        <Str Cat="Text" UsrLk="true">
+          <Val><![CDATA[    {0}]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";BatchSizeRequired" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The /BatchSize argument requires the size of the batch.  Example:  /BatchSize:10]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Argument /BatchSize wymaga podania wielkości partii. Przykład: /BatchSize:10]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";BlameCollectDumpNotSupportedForPlatform" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Collecting crash dumps by option CollectDump for Blame is not supported for this platform.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Zbieranie zrzutów awaryjnych przez opcję CollectDump programu Blame nie jest obsługiwane w przypadku tej platformy.]]></Val>
+          </Tgt>
+          <Prev Cat="Text">
+            <Val><![CDATA[CollectDump option for Blame is not supported for this platform.]]></Val>
+          </Prev>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";BlameCollectDumpTestTimeoutNotSupportedForPlatform" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Collecting hang dumps by option CollectDump with TestTimeout for Blame is not supported for this platform.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Zbieranie zrzutów po zawieszeniu przez opcję CollectDump z opcją TestTimeout programu Blame nie jest obsługiwane w przypadku tej platformy.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";BlameIncorrectOption" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The blame parameter specified with blame, {0} is invalid. Ignoring this parameter.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Parametr blame określony z argumentem blame, {0} jest nieprawidłowy. Ten parametr jest ignorowany.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";BuildBasePathArgumentHelp" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[--BuildBasePath|/BuildBasePath:<BuildBasePath>]D;]A;      The directory containing the temporary outputs.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[--BuildBasePath|/BuildBasePath:<podstawowa ścieżka do kompilacji>]D;]A;      Katalog zawierający tymczasowe dane wyjściowe.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";BuildBasePathNotFound" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The BuildBasePath was not found, provide a valid path and try again.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nie można odnaleźć parametru BuildBasePath. Podaj prawidłową ścieżkę i spróbuj ponownie.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";CLIRunSettingsArgumentHelp" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[RunSettings arguments:]D;]A;      Arguments to pass runsettings configurations through commandline. Arguments may be specified as name-value pair of the form [name]5D;=[value]5D; after "-- ". Note the space after --. ]D;]A;      Use a space to separate multiple [name]5D;=[value]5D;.]D;]A;      More info on RunSettings arguments support: https://aka.ms/vstest-runsettings-arguments]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Argumenty RunSettings:]D;]A;      Argumenty do przekazania konfiguracji runsettings za pośrednictwem wiersza polecenia. Argumenty mogą być określone jako para nazwa-wartość formularza [nazwa]5D;=[wartość]5D; po „-- ”. Pamiętaj o spacji po --. ]D;]A;      Oddziel wiele par [nazwa]5D;=[wartość]5D; za pomocą spacji.]D;]A;      Więcej informacji na temat obsługi argumentów RunSettings: https://aka.ms/vstest-runsettings-arguments]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";CannotBeNullOrEmpty" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Cannot be null or empty]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nie może mieć wartości null ani być pusty]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";CollectArgumentHelp" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[--Collect|/Collect:<DataCollector FriendlyName>]D;]A;      Enables data collector for the test run. More info here : https://aka.ms/vstest-collect]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[--Collect|/Collect:<przyjazna nazwa modułu zbierającego dane>]D;]A;      Włącza moduł zbierający dane dla przebiegu testu. Więcej informacji: https://aka.ms/vstest-collect]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";CollectWithTestSettingErrorMessage" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[--Collect|/Collect:"{0}" is not supported if test run is configured using testsettings.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[--Collect|/Collect: element „{0}” nie jest obsługiwany, jeśli przebieg testu został skonfigurowany za pomocą pliku testsettings.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";CommaSeparatedFormat" ItemType="0" PsrId="308" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[, {0}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[, {0}]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";CommandLineError" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Error: {0}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Błąd: {0}]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";CommandLineInformational" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Information: {0}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Informacje: {0}]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";CommandLineWarning" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Warning: {0}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Ostrzeżenie: {0}]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";ConfigurationArgumentHelp" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[-c|--Configuration|/c|/Configuration:<Configuration>]D;]A;      The configuration the project is built for i.e. Debug/Release]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[-c|--Configuration|/c|/Configuration:<konfiguracja>]D;]A;      Konfiguracja, na potrzeby której kompilowany jest projekt, na przykład Debug/Release]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";CopyrightCommandLineTitle" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Copyright (c) Microsoft Corporation.  All rights reserved.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Copyright (c) Microsoft Corporation. Wszelkie prawa zastrzeżone.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";DataCollectorFriendlyNameInvalid" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The Data Collector friendly name '{0}' is not valid.  The Data Collector will be ignored.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Przyjazna nazwa modułu zbierającego dane „{0}” jest nieprawidłowa. Moduł zbierający dane będzie ignorowany.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";Days" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Days]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Dni]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";DbgTrcMessagesBanner" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Debug Traces Messages:]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Komunikaty śledzenia debugowania:]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";DesignModeClientTimeoutError" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Timeout to connect or process request for DesignModeClient on port: {0}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Przekroczono limit czasu żądania nawiązywania połączenia lub przetwarzania dla elementu DesignModeClient na porcie: {0}]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";DisableAutoFakesUsage" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[--DisableAutoFakes|/DisableAutoFakes:<true/false>]D;]A;     Example: /DisableAutoFakes:true]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[--DisableAutoFakes|/DisableAutoFakes:<true/false>]D;]A;     Przykład: /DisableAutoFakes:true]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";DisablingCodeCoverageInAppContainerTestExecution" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Code coverage is not available for Windows Store apps. Code coverage analysis skipped for this test run.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Pokrycie kodu nie jest dostępne dla aplikacji ze Sklepu Windows. Pominięto analizę pokrycia kodu dla tego przebiegu testu.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";DisablingCodeCoverageInPhoneAppContainerTestExecution" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Code coverage is not available for Windows Phone apps. Code coverage analysis skipped for this test run.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Pokrycie kodu nie jest dostępne dla aplikacji systemu Windows Phone. Pominięto analizę pokrycia kodu dla tego przebiegu testu.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";DisablingDCOnExceptionWhileParsingDCInfo" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Reading diagnostic data adapter settings threw an running '{0}'. All diagnostic data adapters will be skipped in this run.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Podczas odczytywania ustawień adaptera danych diagnostycznych został zgłoszony uruchomiony element „{0}”. Wszystkie adaptery danych diagnostycznych zostaną pominięte podczas tego uruchomienia.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";DisablingDataCollectionInAppContainerTestExecution" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Diagnostic data adapters are not supported when running unit tests for Windows Store apps. Remove diagnostic data adapters settings from settings.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Adaptery danych diagnostycznych nie są obsługiwane podczas uruchamiania testów jednostkowych dla aplikacji ze Sklepu Windows. Usuń ustawienia adapterów danych diagnostycznych z ustawień.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";DisablingDataCollectionInPhoneAppContainerTestExecution" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Diagnostic data adapters are not supported when running unit tests for Windows Phone apps. Remove diagnostic data adapters settings from settings.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Adaptery danych diagnostycznych nie są obsługiwane podczas uruchamiania testów jednostkowych dla aplikacji systemu Windows Phone. Usuń ustawienia adapterów danych diagnostycznych z ustawień.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";DiscoveryFailed" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Discovery failed for given sources. Exception : {0}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Wykrywanie nie powiodło się dla podanych źródeł. Wyjątek: {0}]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";DuplicateArgumentError" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The parameter "{0}" should be provided only once.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Parametr „{0}” należy podać tylko raz.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";EnableBlameUsage" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[--Blame|/Blame:[CollectDump]5D;;[CollectAlways]5D;=[Value]5D;;[DumpType]5D;=[Value]5D;]D;]A;      Runs the test in blame mode. This option is helpful in isolating the problematic test causing test host crash.]D;]A;      It creates an output file in the current directory as "Sequence.xml",]D;]A;      that captures the order of execution of test before the crash.]D;]A;      You may optionally choose to collect process dump for the test host.]D;]A;      When you choose to collect dump, by default, a mini dump will be collected on a crash.]D;]A;      You may also choose to override this default behaviour by some optional parameters:]D;]A;      CollectAlways - To collect dump on exit even if there is no crash (true/false) ]D;]A;      DumpType - To specify dump type (mini/full).]D;]A;      Example: /Blame]D;]A;               /Blame:CollectDump]D;]A;               /Blame:CollectDump;CollectAlways=true;DumpType=full]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[--Blame|/Blame:[CollectDump]5D;;[CollectAlways]5D;=[Value]5D;;[DumpType]5D;=[Value]5D;]D;]A;      Uruchamia test w trybie Blame. Ta opcja jest pomocna w odizolowaniu problematycznego testu powodującego awarię hosta testów.]D;]A;      Tworzy w bieżącym katalogu plik wyjściowy „Sequence.xml”,]D;]A;      który przechwytuje kolejność wykonywania testu przed awarią.]D;]A;      Opcjonalnie możesz zebrać zrzut procesu dla hosta testów.]D;]A;      Gdy zdecydujesz się na zebranie zrzutu, domyślnie w momencie awarii zostanie zebrany minizrzut.]D;]A;      Możesz także przesłonić to zachowanie domyślne opcjonalnymi parametrami:]D;]A;      CollectAlways — zrzut jest zbierany przy wychodzeniu, nawet jeśli nie ma awarii (true/false) ]D;]A;      DumpType — określa typ zrzutu (mini/full).]D;]A;      Przykład: /Blame]D;]A;               /Blame:CollectDump]D;]A;               /Blame:CollectDump;CollectAlways=true;DumpType=full]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";EnableCodeCoverageArgumentProcessorHelp" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[/EnableCodeCoverage]D;]A;      Enables data collector 'CodeCoverage' for the test run.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[/EnableCodeCoverage]D;]A;      Włącza moduł zbierający dane „CodeCoverage” dla przebiegu testu.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";EnableDiagUsage" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[--Diag|/Diag:<Path to log file>]D;]A;      Enable logs for test platform.]D;]A;      Logs are written to the provided file.]D;]A;]D;]A;      Change the trace level for logs as shown below]D;]A;      Example: /Diag:<Path to log file>;tracelevel=<Defaults to "verbose">]D;]A;      Allowed values for tracelevel: off, error, warning, info and verbose.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[--Diag|/Diag:<ścieżka do pliku dziennika>]D;]A;      Włącz dzienniki dla platformy testowej.]D;]A;      Dzienniki są zapisywanie w podanym pliku.]D;]A;]D;]A;      Zmień poziom śledzenia dla dzienników, jak pokazano poniżej]D;]A;      Przykład: /Diag:<ścieżka do pliku dziennika>;tracelevel=<wartość domyślna to „verbose”>]D;]A;      Dozwolone wartości dla elementu tracelevel: off, error, warning, info i verbose.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";EnableLoggerArgumentsInNetCore" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[--logger|/logger:<Logger Uri/FriendlyName>]D;]A;      Specify a logger for test results. For example, to log results into a ]D;]A;      Visual Studio Test Results File (TRX) use /logger:trx[;LogFileName=<Defaults to unique file name>]5D;]D;]A;      Creates file in TestResults directory with given LogFileName.]D;]A;]D;]A;      Change the verbosity level in log messages for console logger as shown below]D;]A;      Example: /logger:console;verbosity=<Defaults to "minimal">]D;]A;      Allowed values for verbosity: quiet, minimal, normal and detailed.]D;]A;]D;]A;      Change the diagnostic level prefix for console logger as shown below]D;]A;      Example: /logger:console;prefix=<Defaults to "false">]D;]A;      More info on Console Logger here : https://aka.ms/console-logger]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[--logger|/logger:<identyfikator URI/przyjazna nazwa rejestratora>]D;]A;      Określa rejestrator dla wyników testu. Aby na przykład rejestrować wyniki testu ]D;]A;      do pliku wyników testu (TRX) programu Visual Studio, użyj parametru /logger:trx [;LogFileName=<wartość domyślna to unikatowa nazwa pliku>]5D;]D;]A;      Tworzy w katalogu TestResults plik z podaną nazwą LogFileName.]D;]A;]D;]A;      Zmień poziom szczegółowości dla rejestratora konsoli, jak pokazano poniżej]D;]A;      Przykład: /logger:console;verbosity=<wartość domyślna to „minimal”> ]D;]A;      Dozwolone wartości szczegółowości: quiet, minimal i normal.]D;]A;]D;]A;      Zmień prefiks poziomu diagnostyki dla rejestratora konsoli, jak pokazano poniżej]D;]A;      Przykład: /logger:console;prefix=<wartość domyślna to „false”>]D;]A;      Więcej informacji o rejestratorze konsoli: https://aka.ms/console-logger]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";EnableLoggersArgumentHelp" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[--logger|/logger:<Logger Uri/FriendlyName>]D;]A;      Specify a logger for test results. For example, to log results into a ]D;]A;      Visual Studio Test Results File (TRX) use /logger:trx[;LogFileName=<Defaults to unique file name>]5D;]D;]A;      Creates file in TestResults directory with given LogFileName.]D;]A;]D;]A;      Change the verbosity level in log messages for console logger as shown below]D;]A;      Example: /logger:console;verbosity=<Defaults to "normal">]D;]A;      Allowed values for verbosity: quiet, minimal, normal and detailed.]D;]A;]D;]A;      Change the diagnostic level prefix for console logger as shown below]D;]A;      Example: /logger:console;prefix=<Defaults to "false">]D;]A;      More info on Console Logger here : https://aka.ms/console-logger]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[--logger|/logger:<identyfikator URI/przyjazna nazwa rejestratora>]D;]A;      Określa rejestrator dla wyników testu. Aby na przykład rejestrować wyniki testu ]D;]A;      do pliku wyników testu (TRX) programu Visual Studio, użyj parametru /logger:trx [;LogFileName=<wartość domyślna to unikatowa nazwa pliku>]5D;]D;]A;      Tworzy w katalogu TestResults plik z podaną nazwą LogFileName.]D;]A;]D;]A;      Zmień poziom szczegółowości dla rejestratora konsoli, jak pokazano poniżej]D;]A;      Przykład: /logger:console;verbosity=<wartość domyślna to „normal”> ]D;]A;      Dozwolone wartości szczegółowości: quiet, minimal i normal.]D;]A;]D;]A;      Zmień prefiks poziomu diagnostyki dla rejestratora konsoli, jak pokazano poniżej]D;]A;      Przykład: /logger:console;prefix=<wartość domyślna to „false”>]D;]A;      Więcej informacji o rejestratorze konsoli: https://aka.ms/console-logger]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";EnvironmentArgumentHelp" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[-e|--Environment|/e|/Environment:<NAME>=<VALUE>]D;]A;      Sets the value of an environment variable. Creates the variable if it does not exist, overrides if it does. This will imply /InIsolation switch and force the tests to be run in an isolated process.]D;]A;      ]D;]A;      This argument can be specified multiple times to provide multiple variables.]D;]A;]D;]A;      Example: -e:VARIABLE1=VALUE1]D;]A;               -e:ANOTHER_VARIABLE="VALUE WITH SPACES"]D;]A;               -e:ANOTHER_VARIABLE="VALUE;seperated with;semicolons"]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[-e|--Environment|/e|/Environment:<NAME>=<VALUE>]D;]A;      Ustawia wartość zmiennej środowiskowej. Jeśli zmienna nie istnieje, tworzy ją, a w przeciwnym wypadku przesłania ją. Powoduje to określenie przełącznika /InIsolation i wymuszenie uruchomienia testów w procesie izolowanym.]D;]A;      ]D;]A;      Ten argument może być określany wielokrotnie w celu dostarczenia wielu zmiennych.]D;]A;]D;]A;      Przykład: -e:ZMIENNA1=WARTOŚĆ1]D;]A;               -e:INNA_ZMIENNA="WARTOŚĆ ZE SPACJAMI"]D;]A;               -e:INNA_ZMIENNA="WARTOŚCI;oddzielone;średnikami"]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";EnvironmentVariableXIsOverriden" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Environment variable '{0}' was already defined, but it's overridden by -Environment argument.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Zmienna środowiskowa „{0}” została już zdefiniowana, ale została przysłonięta przez argument by-Environment.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";ErrorHostingCommunicationChannel" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Error hosting communication channel.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Błąd podczas hostowania kanału komunikacji.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";ErrorMessageBanner" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Error Message:]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Komunikat o błędzie:]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";Examples" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[  To run tests:]D;]A;    >vstest.console.exe tests.dll ]D;]A;  To run tests with additional settings such as  data collectors:]D;]A;    >vstest.console.exe  tests.dll /Settings:Local.RunSettings]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[  Aby uruchomić testy:]D;]A;    >vstest.console.exe tests.dll ]D;]A;  Aby uruchomić testy z użyciem ustawień dodatkowych, takich jak moduły zbierające dane:]D;]A;    >vstest.console.exe  tests.dll /Settings:Local.RunSettings]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";ExceptionFromExtension" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Exception occurred when instantiating extension '{0}': {1}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Wystąpił wyjątek podczas tworzenia wystąpienia rozszerzenia „{0}”: {1}]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";ExecutionTimeFormatString" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[ Total time: {0:0.0000} {1}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[ Łączny czas: {0:0.0000} {1}]]></Val>
+          </Tgt>
+          <Prev Cat="Text">
+            <Val><![CDATA[Test execution time: {0:0.0000} {1}]]></Val>
+          </Prev>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";ExtensionUriFormat" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[        Uri: {0}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[        Identyfikator URI: {0}]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";FailedTestIndicator" ItemType="0" PsrId="308" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Failed]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Niepowodzenie]]></Val>
+          </Tgt>
+          <Prev Cat="Text">
+            <Val><![CDATA[Failed   {0}]]></Val>
+          </Prev>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";FileNotFound" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA['{0}' not found.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nie można odnaleźć elementu „{0}”.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";Framework35NotSupported" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Framework35 is not supported. For projects targeting .Net Framework 3.5, test will run in CLR 4.0 "compatibility mode".]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Program Framework35 nie jest obsługiwany. W przypadku projektów przeznaczonych dla programu .Net Framework 3.5 testy zostaną uruchomione w aparacie CLR 4.0 w trybie zgodności.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";FrameworkArgumentHelp" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[--Framework|/Framework:<Framework Version>]D;]A;      Target .Net Framework version to be used for test execution. ]D;]A;      Valid values are ".NETFramework,Version=v4.5.1", ".NETCoreApp,Version=v1.0" etc.]D;]A;      Other supported values are Framework40, Framework45, FrameworkCore10 and FrameworkUap10.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[--Framework|/Framework:<wersja struktury>]D;]A;      Docelowa wersja programu .NET Framework, która zostanie użyta na potrzeby wykonania testu. ]D;]A;      Prawidłowe wartości to ".NETFramework,Version=v4.5.1", ".NETCoreApp,Version=v1.0" itp.]D;]A;      Inne obsługiwane wartości to Framework40, Framework45, FrameworkCore10 i FrameworkUap10.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";FrameworkVersionRequired" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The /Framework argument requires the target .Net Framework version for the test run.   Example:  /Framework:".NETFramework,Version=v4.5.1"]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Argument /Framework wymaga docelowej wersji programu .NET Framework na potrzeby przebiegu testu. Przykład: /Framework:".NETFramework,Version=v4.5.1"]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";HelpArgumentHelp" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[-?|--Help|/?|/Help]D;]A;      Display this usage message.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[-?|--Help|/?|/Help]D;]A;      Wyświetla ten komunikat dotyczący sposobu użycia.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";HelpArgumentsText" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Arguments:]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Argumenty:]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";HelpDescriptionText" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Description: Runs tests from the specified files.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Opis: uruchamia testy z określonych plików.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";HelpOptionsText" ItemType="0" PsrId="308" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Options:]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Opcje:]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";HelpUsageText" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Usage: vstest.console.exe [Arguments]5D; [Options]5D; [[--]5D; <RunSettings arguments>...]5D;]5D;]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Sposób użycia: vstest.console.exe [argumenty]5D; [opcje]5D; [[--]5D; <argumenty RunSettings>...]5D;]5D;]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";Hours" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Hours]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Godziny]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";InIsolationDeprecated" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The /InIsolation flag is deprecated. The tests are always run in a separate process]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Flaga /InIsolation jest przestarzała. Testy zawsze są uruchamiane w oddzielnym procesie]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";InIsolationHelp" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[--InIsolation|/InIsolation]D;]A;      Runs the tests in an isolated process. This makes vstest.console.exe ]D;]A;      process less likely to be stopped on an error in the tests, but tests ]D;]A;      may run slower.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[--InIsolation|/InIsolation]D;]A;      Uruchamia testy w procesie izolowanym. Dzięki temu mniej prawdopodobne jest ]D;]A;      zatrzymanie procesu vstest.console.exe po wystąpieniu błędu w testach, ale ]D;]A;      testy mogą działać wolniej.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";InvalidAeDebuggerArgument" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[AeDebugger argument '{0}' is not valid.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Argument AeDebugger „{0}” jest nieprawidłowy.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";InvalidArgument" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The argument {0} is invalid. Please use the /help option to check the list of valid arguments.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Argument {0} jest nieprawidłowy. Użyj opcji /help, aby sprawdzić listę prawidłowych argumentów.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";InvalidBatchSize" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Invalid batch size {0}. The batch size should be greater than zero. Example:  /BatchSize:10]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Rozmiar partii {0} jest nieprawidłowy. Rozmiar partii powinien być większy niż zero. Przykład: /BatchSize:10]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";InvalidBlameArgument" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Blame argument '{0}' is not valid.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Argument Blame „{0}” jest nieprawidłowy.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";InvalidConfiguration" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The given configuration is invalid.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Podana konfiguracja jest nieprawidłowa.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";InvalidDiagArgument" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Diag argument '{0}' is not valid.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Argument Diag „{0}” jest nieprawidłowy.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";InvalidDiagFilePath" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Diag file path '{0}' is not valid.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Ścieżka pliku Diag „{0}” jest nieprawidłowa.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";InvalidEnableCodeCoverageCommand" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Argument {0} is not expected in the 'EnableCodeCoverage' command. Specify the command without the argument (Example: vstest.console.exe myTests.dll /EnableCodeCoverage) and try again.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Argument {0} nie jest oczekiwany w poleceniu „EnableCodeCoverage”. Określ polecenie bez argumentu (przykład: vstest.console.exe mojeTesty.dll /EnableCodeCoverage) i spróbuj ponownie.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";InvalidFrameworkVersion" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Invalid .Net Framework version:{0}. Please give the fullname of the TargetFramework(Example: .NETCoreApp,Version=v2.0). Other supported .Net Framework versions are Framework40, Framework45, FrameworkCore10 and FrameworkUap10.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nieprawidłowa wersja programu .NET Framework: {0}. Podaj pełną nazwę struktury docelowej (np. .NETCoreApp,Version=v2.0). Inne obsługiwane wersje programu .NET Framework to Framework40, Framework45, FrameworkCore10 i FrameworkUap10.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";InvalidInIsolationCommand" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Argument {0} is not expected in the 'InIsolation' command. Specify the command without the argument (Example: vstest.console.exe myTests.dll /InIsolation) and try again.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Argument {0} nie jest oczekiwany w poleceniu „InIsolation”. Określ polecenie bez argumentu (przykład: vstest.console.exe mojeTesty.dll /InIsolation) i spróbuj ponownie.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";InvalidLoggerArgument" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Logger argument '{0}' is not valid.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Argument Logger „{0}” jest nieprawidłowy.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";InvalidParallelCommand" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Argument {0} is not expected in the 'Parallel' command. Specify the command without the argument (Example: vstest.console.exe myTests.dll /Parallel) and try again.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Argument {0} nie jest oczekiwany w poleceniu „Parallel”. Określ polecenie bez tego argumentu (przykład: vstest.console.exe mojeTesty.dll /Parallel), a następnie spróbuj ponownie.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";InvalidParentProcessIdArgument" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The --ParentProcessId|/ParentProcessId argument requires the process id which is an integer. Specify the process id of the parent process that launched this process.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Argument --ParentProcessId|/ParentProcessId wymaga identyfikatora procesu będącego liczbą całkowitą. Określ identyfikator procesu nadrzędnego, który uruchomił ten proces.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";InvalidPlatformType" ItemType="0" PsrId="308" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Invalid platform type: {0}. Valid platform types are {1}.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nieprawidłowy typ platformy: {0}. Prawidłowe typy platform to {1}.]]></Val>
+          </Tgt>
+          <Prev Cat="Text">
+            <Val><![CDATA[Invalid platform type:{0}. Valid platform types are x86, x64 and Arm.]]></Val>
+          </Prev>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";InvalidPortArgument" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The --Port|/Port argument requires the port number which is an integer. Specify the port for socket connection and receiving the event messages.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Argument --Port|/Port wymaga numeru portu będącego liczbą całkowitą. Określ port na potrzeby połączenia z gniazdem i odbierania komunikatów zdarzeń.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";InvalidProcDumpDirectoryPath" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The directory specified is not valid: '{0}']]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Określony katalog jest nieprawidłowy: „{0}”]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";InvalidProcDumpToolDirectoryPath" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The directory specified for the procdump executable is not valid and the tool was not found inside environment variables (PROCDUMP_PATH, PATH)]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Katalog określony dla pliku wykonywalnego procdump jest nieprawidłowy i nie znaleziono narzędzia wewnątrz zmiennych środowiskowych (PROCDUMP_PATH, PATH)]]></Val>
+          </Tgt>
+          <Prev Cat="Text">
+            <Val><![CDATA[The directory specified for the procdump executable is not valid and the tool was not found inside environment variables(PROCDUMP_PATH, PATH)]]></Val>
+          </Prev>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";InvalidResultsDirectoryPathCommand" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The path '{0}' specified in the 'ResultsDirectory' is invalid. Error: {1}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Ścieżka „{0}” określona w parametrze „ResultsDirectory” jest nieprawidłowa. Błąd: {1}]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";InvalidTestAdapterPathCommand" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The path '{0}' specified in the 'TestAdapterPath' is invalid. Error: {1}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Ścieżka „{0}” określona w parametrze „TestAdapterPath” jest nieprawidłowa. Błąd: {1}]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";InvalidTestCaseFilterValueForSpecificTests" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The /TestCaseFilter argument cannot be specified with /Tests. Filtering of test cases is not applicable when tests are specified.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nie można określać argumentu /TestCaseFilter z argumentem /Tests. Filtrowanie przypadków testowych nie jest stosowane, gdy testy zostały określone.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";InvalidTestRunParameterArgument" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The test run parameter argument '{0}' is invalid. Please use the format below.]D;]A;     Format: TestRunParameters.Parameter(name=\"<name>\", value=\"<value>\")]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Argument parametru przebiegu testu „{0}” jest nieprawidłowy. Użyj poniższego formatu.]D;]A;     Format: TestRunParameters.Parameter(name=\"<name>\", value=\"<value>\")]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";InvalidTestSessionCorrelationId" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Invalid testSessionCorrelationId]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nieprawidłowy identyfikator testSessionCorrelationId]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";InvalidUseVsixExtensionsCommand" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Argument {0} is not expected in the 'UseVsixExtensions' command. Specify the command indicating whether the vsix extensions should be used or skipped (Example: vstest.console.exe myTests.dll /UseVsixExtensions:true) and try again.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Argument {0} nie jest oczekiwany w poleceniu „UseVsixExtensions”. Określ polecenie wskazujące, czy rozszerzenia vsix mają zostać użyte, czy pominięte (przykład: vstest.console.exe mojeTesty.dll /UseVsixExtensions:true), a następnie spróbuj ponownie.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";ListDiscoverersHelp" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[/ListDiscoverers]D;]A;      Lists installed test discoverers.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[/ListDiscoverers]D;]A;      Wyświetla listę zainstalowanych wykrywaczy testów.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";ListExecutorsHelp" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[/ListExecutors]D;]A;      Lists installed test executors.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[/ListExecutors]D;]A;      Wyświetla listę zainstalowanych modułów wykonywania testów.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";ListLoggersHelp" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[/ListLoggers]D;]A;      Lists installed test loggers.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[/ListLoggers]D;]A;      Wyświetla listę zainstalowanych rejestratorów testów.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";ListSettingsProvidersHelp" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[/ListSettingsProviders]D;]A;      Lists installed test settings providers.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[/ListSettingsProviders]D;]A;      Wyświetla listę zainstalowanych dostawców ustawień testów.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";ListTestsHeaderMessage" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The following Tests are available:]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Dostępne są następujące testy:]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";ListTestsHelp" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[-lt|--ListTests|/lt|/ListTests:<File Name>]D;]A;      Lists all discovered tests from the given test container.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[-lt|--ListTests|/lt|/ListTests:<nazwa pliku>]D;]A;      Wyświetla listę wszystkich wykrytych testów z danego kontenera testów.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";LoggerFileIsReadOnly" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The file {0} provided is read only]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Podany plik {0} jest tylko do odczytu]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";LoggerFriendlyNameFormat" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[        FriendlyName: {0}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[        Przyjazna nazwa: {0}]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";LoggerNotFound" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Could not find a test logger with URI or FriendlyName '{0}'.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nie można odnaleźć rejestratora testów z identyfikatorem URI lub przyjazną nazwą „{0}”.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";LoggerUriFormat" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[        Uri: {0}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[        Identyfikator URI: {0}]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";LoggerUriInvalid" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The Test Logger URI '{0}' is not valid.  The Test Logger will be ignored.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Podany identyfikator URI rejestratora testów „{0}” jest nieprawidłowy. Rejestrator testów zostanie zignorowany.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";MalformedRunSettingsKey" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[One or more runsettings provided contain invalid token]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Co najmniej jedne z podanych ustawień uruchamiania zawierają nieprawidłowy token]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";MicrosoftCommandLineTitle" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Microsoft (R) Test Execution Command Line Tool Version {0}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Narzędzie wiersza polecenia firmy Microsoft (R) służące do wykonania testów (wersja {0})]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";Minutes" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Minutes]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Minuty]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";MissingTestSourceFile" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[No test source files were specified.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nie określono żadnych plików źródłowych testów.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";NoAdaptersFoundInTestAdapterPath" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The path '{0}' specified in the 'TestAdapterPath' does not contain any test adapters, provide a valid path and try again.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Ścieżka „{0}” określona w parametrze „TestAdapterPath” nie zawiera żadnych adapterów testowych. Podaj prawidłową ścieżkę i spróbuj ponownie.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";NoArgumentProcessorFound" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Unrecognized parameter "{0}".]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nierozpoznany parametr „{0}”.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";NoArgumentsProvided" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[No arguments were specified.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nie określono żadnych argumentów.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";NoTestEntryPoint" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[App package '{0}' does not has test executor entry point. For running unit tests for Windows Store apps, create app package using Windows Store app Unit Test Library project.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Pakiet aplikacji „{0}” nie ma punktu wejścia modułu wykonywania testów. Aby uruchamiać testy jednostkowe dla aplikacji ze Sklepu Windows, utwórz pakiet aplikacji za pomocą projektu biblioteki testów jednostkowych aplikacji ze Sklepu Windows.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";NoTestsAvailableAfterFiltering" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[A total of {0} tests were discovered but no test matches the specified selection criteria({1}). Use right value(s) and try again.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Wykryto łącznie następującą liczbę testów: {0}. Żaden z nich nie jest zgodny z określonymi kryteriami wyboru ({1}). Użyj prawidłowych wartości i spróbuj ponownie.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";NoTestsAvailableInSources" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[No test is available in {0}. Make sure that installed test discoverers & executors, platform & framework version settings are appropriate and try again.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Brak dostępnych testów w elemencie {0}. Upewnij się, że ustawienia zainstalowanych wykrywaczy testów, modułów wykonywania, platform i wersji struktur są odpowiednie, i spróbuj ponownie.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";NonDefaultFrameworkAndOrArchDetected" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[{0} is built for {1}/{2}. The test assemblies specified in a run should have a common target .Net framework and platform.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Element {0} jest kompilowany dla elementu {1}/{2}. Zestawy testowe określone w ramach uruchomienia powinny mieć wspólny docelowy program .NET Framework i wspólną docelową platformę.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";None" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[None]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Brak]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";NotRunTestIndicator" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Not Run]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nie uruchomiono]]></Val>
+          </Tgt>
+          <Prev Cat="Text">
+            <Val><![CDATA[Not Run  {0}]]></Val>
+          </Prev>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";OpenResponseFileError" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Error opening response file '{0}']]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Błąd podczas otwierania pliku odpowiedzi „{0}”]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";OutputArgumentHelp" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[-o|--Output|/o|/Output:<Output>]D;]A;      The directory containing the binaries to run.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[-o|--Output|/o|/Output:<dane wyjściowe>]D;]A;      Katalog zawierający pliki binarne do uruchomienia.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";OutputPathNotFound" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The Output path was not found, provide a valid path and try again.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nie można odnaleźć ścieżki wyjściowej. Podaj prawidłową ścieżkę i spróbuj ponownie.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";ParallelArgumentProcessorHelp" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[--Parallel|/Parallel]D;]A;      Specifies that the tests be executed in parallel. By default up]D;]A;      to all available cores on the machine may be used.]D;]A;      The number of cores to use may be configured using a settings file.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[--Parallel|/Parallel]D;]A;      Określa, że testy będą wykonywane równolegle. Domyślnie mogą zostać użyte]D;]A;      wszystkie dostępne rdzenie maszyny.]D;]A;      Liczbę rdzeni do użycia można skonfigurować za pomocą pliku ustawień.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";ParentProcessIdArgumentHelp" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[--ParentProcessId|/ParentProcessId:<ParentProcessId>]D;]A;      Process Id of the Parent Process responsible for launching current process.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[--ParentProcessId|/ParentProcessId:<identyfikator procesu nadrzędnego>]D;]A;      Identyfikator procesu nadrzędnego odpowiedzialnego za uruchomienie bieżącego procesu.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";PassedTestIndicator" ItemType="0" PsrId="308" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Passed]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Powodzenie]]></Val>
+          </Tgt>
+          <Prev Cat="Text">
+            <Val><![CDATA[Passed   {0}]]></Val>
+          </Prev>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";PhoneAppContainerTestPrerequisiteFail" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Could not start test run for the tests for Windows Phone app: {0}.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nie można rozpocząć przebiegu testu dla testów dla aplikacji Windows Phone: {0}.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";PhoneNoTestEntryPoint" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[App package '{0}' does not has test executor entry point. For running unit tests for Windows Phone apps, create app package using Windows Phone Unit Test App project.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Pakiet aplikacji „{0}” nie ma punktu wejścia modułu wykonywania testów. Aby uruchamiać testy jednostkowe dla aplikacji systemu Windows Phone, utwórz projekt aplikacji testów jednostkowych systemu Windows Phone.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";PlatformArgumentHelp" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[--Platform|/Platform:<Platform type>]D;]A;      Target platform architecture to be used for test execution. ]D;]A;      Valid values are x86, x64 and ARM.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[--Platform|/Platform:<typ platformy>]D;]A;      Docelowa architektura platformy, która zostanie użyta do wykonania testu. ]D;]A;      Prawidłowe wartości to x86, x64 i ARM.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";PlatformTypeRequired" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The /Platform argument requires the target platform type for the test run to be provided.   Example:  /Platform:x86]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Argument /Platform wymaga podania typu platformy docelowej dla przebiegu testu. Przykład: /Platform:x86]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";PortArgumentHelp" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[--Port|/Port:<Port>]D;]A;      The Port for socket connection and receiving the event messages.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[--Port|/Port:<port>]D;]A;      Port służący do połączenia z gniazdem i odbierania komunikatów zdarzeń.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";PostmortemDebuggerNotSupportedForCurrentOS" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Postmortem debugger is not supported in the current OS.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Debuger postmortem nie jest obsługiwany w bieżącym systemie operacyjnym.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";ProcDumpDirectoryPathArgumenNotFound" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[DumpDirectoryPath should be specified to install the post mortem debugger.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Należy określić element DumpDirectoryPath, aby zainstalować debuger post mortem.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";ProcDumpFileNameNotFound" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Procdump file name not found: '{0}']]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nie znaleziono nazwy pliku procdump: „{0}”]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";ProcDumpToolDirectoryPathArgumenNotFound" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[ProcDumpToolDirectoryPath should be specified to install or unistall the post mortem debugger.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Właściwość ProcDumpToolDirectoryPath powinna być określona w celu zainstalowania lub usunięcia debugera post mortem.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";ProgressIndicatorString" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Test run in progress]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Uruchomienie testu w toku]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";ProjectPathNotFound" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The Path {0} does not exist.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Ścieżka {0} nie istnieje.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";RequestHandlerConnectionTimedOut" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Waiting for request handler connection timed out after {0} seconds.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Upłynął limit czasu oczekiwania na połączenie programu obsługi żądań po {0} s.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";ResponseFileArgumentHelp" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[@<file>]D;]A;      Read response file for more options.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[@<file>]D;]A;      Przeczytaj zawartość pliku odpowiedzi w celu uzyskania dodatkowych opcji.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";ResultsDirectoryArgumentHelp" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[--ResultsDirectory|/ResultsDirectory]D;]A;      Test results directory will be created in specified path if not exists.]D;]A;      Example  /ResultsDirectory:<pathToResultsDirectory>]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[--ResultsDirectory|/ResultsDirectory]D;]A;      Jeśli katalog wyników nie istnieje, zostanie utworzony w określonej ścieżce.]D;]A;      Przykład /ResultsDirectory:<ŚcieżkaDoKataloguWyników>]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";ResultsDirectoryValueRequired" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The /ResultsDirectory parameter requires a value, where the test results should be saved. Example:  /ResultsDirectory:c:\MyTestResultsDirectory]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Parametr /ResultsDirectory wymaga wartości określającej miejsce zapisania wyników testu. Przykład: /ResultsDirectory:c:\KatalogWynikówTestu]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";RunSettingsArgumentHelp" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[--Settings|/Settings:<Settings File>]D;]A;      Settings to use when running tests.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[--Settings|/Settings:<plik ustawień>]D;]A;      Ustawienia, które mają być używane podczas uruchamiania testów.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";RunSettingsFileNotFound" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The Settings file '{0}' could not be found.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nie można odnaleźć pliku ustawień „{0}”.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";RunSettingsRequired" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The /Settings parameter requires a settings file to be provided.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Parametr /Settings wymaga podania pliku ustawień.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";RunSingleAppContainerSource" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Only one app package (.appx file) can be specified for running tests.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Na potrzeby uruchamiania testów można określić tylko jeden pakiet aplikacji (plik appx).]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";RunSpecificTestsHelp" ItemType="0" PsrId="308" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[--Tests|/Tests:<Test Names>]D;]A;      Run tests with names that match the provided values. To provide multiple]D;]A;      values, separate them by commas.]D;]A;      Examples: /Tests:TestMethod1]D;]A;                /Tests:TestMethod1,testMethod2]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[--Tests|/Tests:<nazwy testów>]D;]A;      Uruchom testy z nazwami, które są zgodne z podanymi wartościami. Aby]D;]A;      podać wiele wartości, oddziel je przecinkami.]D;]A;      Przykłady: /Tests:MetodaTestowa1]D;]A;                /Tests:MetodaTestowa1,MetodaTestowa2]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";RunTestsArgumentHelp" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[[TestFileNames]5D;]D;]A;      Run tests from the specified files or wild card pattern. Separate multiple test file names or pattern]D;]A;      by spaces. Set console logger verbosity to detailed to view matched test files.]D;]A;      Examples: mytestproject.dll]D;]A;                mytestproject.dll myothertestproject.exe]D;]A;                testproject*.dll my*project.dll]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[[TestFileNames]5D;]D;]A;      Uruchom testy z określonych plików lub wzorca symbolu wieloznacznego. Rozdziel wiele nazw lub wzorców plików testowych]D;]A;      spacjami. Ustaw szczegółowość rejestratora konsoli na Szczegółowy, aby wyświetlić dopasowane pliki testowe.]D;]A;      Przykłady: mytestproject.dll]D;]A;                mytestproject.dll myothertestproject.exe]D;]A;                testproject*.dll my*project.dll]]></Val>
+          </Tgt>
+          <Prev Cat="Text">
+            <Val><![CDATA[[TestFileNames]5D;]D;]A;      Run tests from the specified files. Separate multiple test file names]D;]A;      by spaces.]D;]A;      Examples: mytestproject.dll]D;]A;                mytestproject.dll myothertestproject.exe]]></Val>
+          </Prev>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";RunsettingsWithDCErrorMessage" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Data collectors other than Code Coverage and Microsoft Fakes configured via run settings are not supported with embedded test settings. Please see https://aka.ms/vstest-configure-datacollector for more information. Run settings: {0}.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Moduły zbierające dane inne niż Pokrycie kodu i Microsoft Fakes skonfigurowane za pośrednictwem ustawień uruchamiania nie są obsługiwane przez osadzone ustawienia testów. Zobacz https://aka.ms/vstest-configure-datacollector w celu uzyskania dalszych informacji. Ustawienia uruchamiania: {0}.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";SearchStringDelimiter" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[,]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[,]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";Seconds" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Seconds]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Sekundy]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";SettingFormat" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[        SettingName: {0}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[        Nazwa ustawienia: {0}]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";SkippedTestIndicator" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Skipped]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Pominięto]]></Val>
+          </Tgt>
+          <Prev Cat="Text">
+            <Val><![CDATA[Skipped  {0}]]></Val>
+          </Prev>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";SomeTestsUnavailableAfterFiltering" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[A total of {0} tests were discovered but some tests do not match the specified selection criteria({1}). Use right value(s) and try again.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Wykryto łącznie następującą liczbę testów: {0}. Niektóre z nich nie są zgodne z określonymi kryteriami wyboru ({1}). Użyj prawidłowych wartości i spróbuj ponownie.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";SpecificTestsRequired" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The /Tests argument requires one or more specific test names or their substrings.]D;]A;       Examples: /Tests:TestsMethod1, /Tests:TestMethod1,method2 ]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Argument /Tests wymaga co najmniej jednej określonej nazwy testu lub jej podciągu.]D;]A;       Przykłady: /Tests:MetodaTestowa1, /Tests:MetodaTestowa1,metoda2 ]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";StacktraceBanner" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Stack Trace:]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Ślad stosu:]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";StartTestSessionTimedOut" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Waiting for start test session timed out after {0} seconds.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Upłynął limit czasu oczekiwania na rozpoczęcie sesji testu po {0} s.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";StartingDiscovery" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Starting test discovery, please wait...]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Trwa rozpoczynanie wykrywania testu, czekaj...]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";StartingExecution" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Starting test execution, please wait...]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Trwa rozpoczynanie wykonywania testu, czekaj...]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";StdErrMessagesBanner" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Standard Error Messages:]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Standardowe komunikaty o błędach:]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";StdOutMessagesBanner" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Standard Output Messages:]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Standardowe komunikaty wyjściowe:]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";StopTestSessionTimedOut" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Waiting for stop test session timed out after {0} seconds.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Upłynął limit czasu oczekiwania na zatrzymanie sesji testu po {0} sekund.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";StringFormatToJoinTwoStrings" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[{0} {1}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[{0} {1}]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";SuggestTestAdapterPathIfNoTestsIsFound" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Additionally, path to test adapters can be specified using /TestAdapterPath command. Example  /TestAdapterPath:<pathToCustomAdapters>.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Dodatkowo ścieżkę do adapterów testów można określić za pomocą polecenia /TestAdapterPath. Przykład: /TestAdapterPath:<ścieżka_do_adapterów_niestandardowych>.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";SupportedFileTypesIndicator" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[        Supported File Types:]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[        Obsługiwane typy plików:]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";SupportedFileWithSeparator" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[ {0},]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[ {0},]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";SupportedFileWithoutSeparator" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[ {0}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[ {0}]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";SwitchToIsolationInAppContainerMode" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Using Isolation mode to run unit tests for Windows Store apps. Use the /InIsolation parameter to suppress this warning.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Używanie trybu izolacji do uruchomienia testów jednostkowych dla aplikacji ze Sklepu Windows. Użyj parametru /InIsolation, aby pominąć to ostrzeżenie.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";SwitchToIsolationInMultiTargetingMode" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Using Isolation mode to run tests as required by effective Platform:{0} and .Net Framework:{1} settings for test run. Use the /inIsolation parameter to suppress this warning.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Używanie trybu izolacji do uruchomienia testów w sposób wymagany przez obowiązujące ustawienia platformy ({0}) i programu .NET Framework ({1}) dla przebiegu testu. Użyj parametru /InIsolation, aby pominąć to ostrzeżenie.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";SwitchToIsolationInPhoneAppContainerMode" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Using Isolation mode to run unit tests for Windows Phone apps. Use the /InIsolation parameter to suppress this warning.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Używanie trybu izolacji do uruchamiania testów jednostkowych dla aplikacji systemu Windows Phone. Użyj parametru /InIsolation, aby pominąć to ostrzeżenie.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";SwitchToNoIsolation" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Using Isolation mode to run the tests as diagnostic data adapters were enabled in the runsettings. Use the /inIsolation parameter to suppress this warning.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Używanie trybu izolacji do uruchomienia testów jako adapterów danych diagnostycznych zostało włączone w pliku runsettings. Użyj parametru /inIsolation, aby pominąć to ostrzeżenie.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";TestAdapterLoadingStrategyHelp" ItemType="0" PsrId="308" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[--TestAdapterLoadingStrategy|/TestAdapterLoadingStrategy:<strategy>]D;]A;      This affects adapter loading behavior.]D;]A;]D;]A;      Currently supported behaviors:]D;]A;        - Explicit: Test Platform will only load adapters specified by /TestAdapterPath (or RunConfiguration.TestAdaptersPaths node). ]D;]A;                    If a specific adapter path is provided, adapter will be loaded; if a directory path is provided adapters directly in that folder will be loaded, unless Recursive option is also specified.]D;]A;                    If no adapter path is specified, test run will fail.]D;]A;                    This will imply /InIsolation switch and force the tests to be run in an isolated process.]D;]A;        ]D;]A;        - Default: Test Platform will load adapters is if this argument has not been specified. ]D;]A;                   It will pick up extensions from next to source, provided additional adapter paths and from the default directory.]D;]A;]D;]A;        - DefaultRuntimeProviders: Load default runtime providers shipped with Test Platform. ]D;]A;                                   If this is not specified when "Explicit" option is set, a test host provider need to be specified explicitly.]D;]A;]D;]A;        - ExtensionsDirectory: Load adapters inside Extensions folder.]D;]A;]D;]A;        - NextToSource: Load adapters next to source. ]D;]A;]D;]A;        - Recursive: Recursively search folders when loading adapters. This requires "Explicit" or "NextToSource" to be specified too.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[--TestAdapterLoadingStrategy|/TestAdapterLoadingStrategy:<strategy>]D;]A; Wpływa to na zachowanie ładowania adaptera.]D;]A;]D;]A; Obecnie obsługiwane zachowania: ]D;]A; – Explicit: platforma testowa ładuje tylko adaptery określone przez /TestAdapterPath (lub węzeł RunConfiguration.TestAdaptersPaths). ]D;]A; Jeśli zostanie podana określona ścieżka adaptera, zostanie on załadowany; jeśli ścieżka katalogu jest podana adaptery bezpośrednio w tym folderze zostaną załadowane, o ile nie określono również opcji Recursive.]D;]A; Jeśli nie określono ścieżki adaptera, przebieg testu zakończy się niepowodzeniem.]D;]A; Będzie to uruchamiać przełącznik /InIsolation i wymusi uruchomienie testów w izolowanym procesie.]D;]A; ]D;]A; — Default: platforma testowa ładuje adaptery, tak jakby ten argument nie został określony. ]D;]A; Spowoduje to pobranie rozszerzeń z obszaru Obok źródła, podanie dodatkowych ścieżek adapterów i domyślnego katalogu.]D;]A;]D;]A; — DefaultRuntimeProviders: załaduje domyślnych dostawców środowiska uruchomieniowego dostarczanych z platformą testową. ]D;]A; Jeśli nie jest to określone, podczas gdy opcja „Explicit“ jest ustawiona, dostawca hosta testowego musi być wyraźnie określony.]D;]A;]D;]A; — ExtensionsDirectory: ładuje adaptery w folderze Rozszerzenia.]D;]A;]D;]A; — NextToSource: załaduje adaptery w obszarze Obok źródła. ]D;]A;]D;]A; — Recursive: cykliczne wyszukiwanie folderów podczas ładowania adapterów. Wymaga to określenia opcji „Explicit“ lub „NextToSource“.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";TestAdapterLoadingStrategyValueInvalid" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Specified value ({0}) for /TestAdapterLoadingStrategy is invalid!]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Określona wartość ({0}) dla parametru /TestAdapterLoadingStrategy jest nieprawidłowa!]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";TestAdapterLoadingStrategyValueInvalidRecursive" ItemType="0" PsrId="308" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Recursive adapter loading strategy is cannot be used by itself. Please combine with one or more of: {0}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Strategia ładowania rekurencyjnego adaptera nie może być używana samodzielnie. Połącz z co najmniej jednym z następujących elementów: {0}]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";TestAdapterPathDoesNotExist" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The custom test adapter search path provided was not found, provide a valid path and try again.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nie odnaleziono podanej ścieżki wyszukiwania niestandardowego adaptera testowego. Podaj prawidłową ścieżkę i spróbuj ponownie.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";TestAdapterPathHelp" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[--TestAdapterPath|/TestAdapterPath]D;]A;      This makes vstest.console.exe process use custom test adapters]D;]A;      from a given path (if any) in the test run. ]D;]A;      Example  /TestAdapterPath:<pathToCustomAdapters>]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[--TestAdapterPath | / TestAdapterPath]D;]A;      Powoduje to, że proces vstest.console.exe używa niestandardowych adapterów]D;]A;      testowych z podanej ścieżki (jeśli istnieje) w ramach przebiegu testu. ]D;]A;      Przykład: /TestAdapterPath:<ścieżka do adapterów niestandardowych>]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";TestAdapterPathValueRequired" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The /TestAdapterPath parameter requires a value, which is path of a location containing custom test adapters. Example:  /TestAdapterPath:c:\MyCustomAdapters]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Parametr /TestAdapterPath wymaga wartości, którą jest ścieżką do lokalizacji zawierającej niestandardowe adaptery testowe. Przykład: /TestAdapterPath:c:\MojeAdapteryNiestandardowe]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";TestAdapterPathValueRequiredWhenStrategyXIsUsed" ItemType="0" PsrId="308" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The /TestAdapterPath parameter needs to be provided when "{0}" test adapter loading strategy is specified!]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Parametr /TestAdapterPath musi być podany, gdy określono strategię ładowania adaptera testowego „{0}“.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";TestCaseFilterArgumentHelp" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[--TestCaseFilter|/TestCaseFilter:<Expression>]D;]A;      Run tests that match the given expression.]D;]A;      <Expression> is of the format <property>Operator<value>[|&<Expression>]5D;]D;]A;         where Operator is one of =, != or ~  (Operator ~ has 'contains']D;]A;         semantics and is applicable for string properties like DisplayName).]D;]A;         Parenthesis () can be used to group sub-expressions.]D;]A;      Examples: /TestCaseFilter:"Priority=1"]D;]A;                /TestCaseFilter:"(FullyQualifiedName~Nightly]D;]A;                                  |Name=MyTestMethod)"]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[--TestCaseFilter|/TestCaseFilter:<wyrażenie>]D;]A;      Uruchamia testy, które są zgodne z danym wyrażeniem.]D;]A;      Element <wyrażenie> jest w formacie <właściwość>Operator<wartość>[|&<wyrażenie>]5D;]D;]A;         gdzie Operator to =, != lub ~  (operator ~ ma semantykę „zawiera”]D;]A;         i jest stosowany dla właściwości ciągów, takich jak nazwa wyświetlana).]D;]A;         Nawiasy () mogą służyć do grupowania wyrażeń podrzędnych.]D;]A;      Przykłady: /TestCaseFilter:"Priority=1"]D;]A;                 /TestCaseFilter:"(FullyQualifiedName~Nocne]D;]A;                                  |Name=MojaMetodaTestowa)"]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";TestCaseFilterValueRequired" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The /TestCaseFilter argument requires the filter value.]D;]A;        Filter value can be <property>=<value> type.]D;]A;        Examples: "Priority=1", "TestCategory=Nightly"]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Argument /TestCaseFilter wymaga wartości filtru.]D;]A;        Wartość filtru może być typu <property>=<value> .]D;]A;        Przykłady: "Priority=1", "TestCategory=Nightly"]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";TestRunAborted" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Test Run Aborted.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Przebieg testu został przerwany.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";TestRunAbortedWithError" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Test Run Aborted with error {0}.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Przebieg testowy został przerwany z powodu błędu {0}.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";TestRunCanceled" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Test Run Canceled.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Przebieg testu został anulowany.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";TestRunFailed" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Test Run Failed.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Przebieg testu nie powiódł się.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";TestRunSuccessful" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Test Run Successful.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Przebieg testu zakończony powodzeniem.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";TestRunSummary" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[{0} - Failed: {1}, Passed: {2}, Skipped: {3}, Total: {4}, Duration: {5}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[{0} — niepowodzenie: {1}, powodzenie: {2}, pominięto: {3}, łącznie: {4}, czas trwania: {5}]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";TestRunSummaryAssemblyAndFramework" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[ - {0} {1}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[ - {0} {1}]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";TestRunSummaryFailedTests" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[     Failed: {0}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[     Zakończone niepowodzeniem: {0}]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";TestRunSummaryForCanceledOrAbortedRun" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Total tests: Unknown]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Łączna liczba testów: nieznana]]></Val>
+          </Tgt>
+          <Prev Cat="Text">
+            <Val><![CDATA[Total tests: Unknown. Passed: {0}. Failed: {1}. Skipped: {2}.]]></Val>
+          </Prev>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";TestRunSummaryPassedTests" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[     Passed: {0}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[     Zakończone pomyślnie: {0}]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";TestRunSummarySkippedTests" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[    Skipped: {0}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[    Pominięte: {0}]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";TestRunSummaryTotalTests" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Total tests: {0}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Łączna liczba testów: {0}]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";TestSettingsFrameworkMismatch" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Using framework {0} to run the tests. Specify /Framework:{1} to suppress this warning.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Używanie platformy {0} do uruchamiania testów. Określ parametr /Framework:{1}, aby pominąć to ostrzeżenie.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";TestSourceFileNotFound" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The test source file "{0}" provided was not found.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nie odnaleziono podanego pliku źródłowego testu „{0}”.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";TestSourcesDiscovered" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[A total of {0} test files matched the specified pattern.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Łączna liczba plików testowych dopasowanych do określonego wzorca: {0}.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";TimeElapsed" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Time elapsed :]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Czas, który upłynął:]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";UriOfDefaultExecutor" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[        Default Executor Uri: {0}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[        Domyślny identyfikator URI modułu wykonywania: {0}]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";UseVsixExtensionsDeprecation" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[/UseVsixExtensions is getting deprecated. Please use /TestAdapterPath instead.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Polecenie /UseVsixExtensions jest wycofywane. Użyj zamiast niego polecenia /TestAdapterPath.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";UseVsixExtensionsHelp" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[/UseVsixExtensions]D;]A;      This makes vstest.console.exe process use or skip the VSIX extensions ]D;]A;      installed(if any) in the test run. ]D;]A;      Example  /UseVsixExtensions:true]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[/UseVsixExtensions]D;]A;      Powoduje to, że proces vstest.console.exe używa lub pomija zainstalowane ]D;]A;      rozszerzenia VSIX (jeśli istnieją) w przebiegu testu.]D;]A;      Przykład: /UseVsixExtensions:true]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";UseVsixExtensionsValueRequired" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The /UseVsixExtensions parameter requires a value. If 'true', the installed VSIX extensions (if any) will be used in the test run. If false, they will be ignored.   Example:  /UseVsixExtensions:true]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Parametr /UseVsixExtensions wymaga podania wartości. Jeśli wartość to „true”, zainstalowane rozszerzenia VSIX (jeśli istnieją) zostaną użyte w ramach przebiegu testu. Jeśli wartość to „false”, rozszerzenia zostaną zignorowane. Przykład: /UseVsixExtensions:true]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";VstestDiagLogOutputPath" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Logging Vstest Diagnostics in file: {0}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Rejestrowanie diagnostyki Vstest w pliku: {0}]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";WarningEmulatedOnArm64" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[vstest.console.exe is running in emulated mode as {0}. For better performance, please consider using the native runner vstest.console.arm64.exe.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Program vstest.console.exe działa w trybie emulowanym jako {0}. Aby uzyskać lepszą wydajność, rozważ użycie natywnego modułu uruchamiającego vstest.console.arm64.exe.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+    </Item>
+  </Item>
+</LCX>

@@ -1,0 +1,7 @@
+{
+  "version": "1.0.0.0",
+  "strings": {
+    "name": "Projekt testów MSTest (.NET Core)",
+    "description": "Projekt zawierający testy jednostkowe MSTest, które można uruchomić w środowisku .NET Core w systemach Windows, Linux i MacOS."
+  }
+}

@@ -1,0 +1,29 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MichaelSimons <msimons@microsoft.com>
+Date: Wed, 4 May 2022 17:42:31 +0000
+Subject: [PATCH] Eliminate prebuilts
+
+---
+ .props/Product.props | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
+
+diff --git a/.props/Product.props b/.props/Product.props
+index da6f6ec3..cec2ee58 100644
+--- a/.props/Product.props
++++ b/.props/Product.props
+@@ -32,14 +32,7 @@
+   </ItemGroup>
+ 
+   <ItemGroup>
+-    <!--Build Infrastructure-->
+-    <PackageReference Include="Microsoft.VisualStudioEng.MicroBuild.Core" Version="0.4.1">
+-      <PrivateAssets>All</PrivateAssets>
+-    </PackageReference>
+-  </ItemGroup>
+-
+-  <ItemGroup>
+-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
++    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="$(MicrosoftSourceLinkVersion)" PrivateAssets="All" />
+   </ItemGroup>
+   
+   <PropertyGroup>

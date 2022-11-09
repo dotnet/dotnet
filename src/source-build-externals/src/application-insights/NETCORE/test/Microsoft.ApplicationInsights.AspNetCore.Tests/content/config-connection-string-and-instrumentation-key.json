@@ -1,0 +1,6 @@
+﻿{
+  "ApplicationInsights": {
+    "ConnectionString": "InstrumentationKey=11111111-2222-3333-4444-555555555555;IngestionEndpoint=http://127.0.0.1",
+    "InstrumentationKey": "33333333-4444-5555-6666-777777777777"
+  }
+  }

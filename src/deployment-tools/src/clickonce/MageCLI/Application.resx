@@ -1,0 +1,570 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ApplicationManifestCannotHaveHostInBrowserTag" xml:space="preserve">
+    <value>The specified application manifest includes unsupported HostInBrowser tag.</value>
+  </data>
+  <data name="DeployManifestNotSigned" xml:space="preserve">
+    <value>Deployment manifest is not signed - "{0}"</value>
+  </data>
+  <data name="DeployManifestSignatureInvalid" xml:space="preserve">
+    <value>Deployment manifest contains invalid signature - "{0}"</value>
+  </data>
+  <data name="ErrorWritingOutputFile" xml:space="preserve">
+    <value>Error writing output file "{0}".</value>
+  </data>
+  <data name="FileNotWriteable" xml:space="preserve">
+    <value>Cannot write to file "{0}"</value>
+  </data>
+  <data name="HelpTerse" xml:space="preserve">
+    <value>Commands
+  -New &lt;file_type&gt;	          -n
+  -Update &lt;file_name&gt;	          -u
+  -Sign &lt;file_name&gt;	          -s
+  -ClearApplicationCache	  -cc
+  -Verify &lt;manifest_file_name&gt;    -ver
+  -AddLauncher &lt;binary_to_launch&gt; -al
+  -Help [verbose]		  -h -?
+
+
+
+Options
+  -Algorithm &lt;sha256RSA&gt;           -a
+  -AppCodeBase &lt;path&gt;	            -appc
+  -AppManifest &lt;path&gt;	            -appm
+  -CertFile &lt;file_name&gt;	            -cf
+  -CertHash &lt;hash&gt;                  -ch
+  -CryptoProvider &lt;name&gt;            -csp
+  -FromDirectory &lt;path&gt;	            -fd
+  -IconFile &lt;file_path&gt;             -if
+  -IncludeProviderURL &lt;true|false&gt;  -ip
+  -Install &lt;true|false&gt;             -i 
+  -KeyContainer &lt;name&gt;              -kc
+  -MinVersion &lt;version #|none&gt;      -mv
+  -Name &lt;name&gt;		            -n
+  -Password &lt;password&gt;	            -pwd
+  -Processor &lt;processor&gt;	    -p
+  -ProviderURL &lt;url&gt; 	            -pu
+  -Publisher &lt;publisher_name&gt;       -pub
+  -SupportURL &lt;support_url&gt;         -s
+  -TargetDirectory &lt;path&gt;	    -td
+  -TimeStampUri &lt;uri&gt;               -ti
+  -ToFile	&lt;file_name&gt;	    -t
+  -TrustLevel &lt;level&gt;	            -tr
+  -UseManifestForTrust &lt;true|false&gt; -um
+  -Version &lt;version&gt;	            -v
+
+Use "mage -help verbose" for more detailed help</value>
+  </data>
+  <data name="HelpVerbose" xml:space="preserve">
+    <value>Commands:
+
+  -New &lt;file_type&gt;        -n
+      Generate a new application manifest, deployment manifest, or trust
+      license, using the options listed below.
+      Examples:
+        -New Application -ToFile MyApp.manifest -Name MyApp -Processor X86
+        -New Deployment -ToFile MyApp.application -Name MyApp -Version 1.0.0.0
+    
+  -Update &lt;file_name&gt;     -u
+      Update an existing application manifest, deployment manifest, or trust
+      License, updating it as specified by the options listed below.
+      Examples:
+        -Update MyApp.manifest -FromDirectory bin/release
+        -Update MyApp.application -Version 2.1.0.123 -ToFile MyApp21.application 
+          
+  -Sign &lt;file_name&gt;       -s
+      Sign an existing manifest or license with a keypair or an X509
+      certificate.
+      Examples:
+        -Sign MyApp.manifest -CertFile MyCert.pfx -Password mycertpassword
+    
+  -Verify &lt;manifest_file_name&gt;       -ver
+      Verify if the manifest is signed correctly. Cannot be combined with other commands.
+      Example:
+        -Verify MyApp.manifest
+  
+  -AddLauncher &lt;binary_to_launch&gt;    -al
+      Adds Launcher to target directory and sets its binary to launch.
+      Example:
+        -AddLauncher myapp.dll -TargetDirectory bin/release
+
+  -ClearApplicationCache  -cc
+      Clear the downloaded application cache of all online-only applications. 
+
+  -Help [verbose]         -h -?
+      Print usage instructions.
+      Examples:
+        -Help
+        -Help Verbose
+
+Options:
+
+  -Algorithm &lt;sha256RSA&gt;      -a
+      Specifies the algorithm to generate digests.
+      Example:
+         -Algorithm sha256RSA
+
+  -AppCodeBase &lt;path&gt;     -appc
+      Specifies the code base of the app manifest to be placed in the
+      deployment manifest being generated or updated.
+      Example:
+         -AppCodeBase 1.0.0.0/myapp.manifest
+      
+  -AppManifest &lt;path&gt;     -appm
+      Specifies the local path to an application manifest that is being
+      referenced from the deployment manifest being generated or updated.
+      Example:
+        -AppManifest MyApp.manifest
+
+  -CertFile &lt;file_name&gt;   -cf
+      Specifies the name of an X509 certificate file with which to sign a
+      manifest or license file.  This option can be used in conjunction 
+      with the -Password option, if the certificate requires a password
+      for Personal Information Exchange (PFX) files. If the file does not 
+      contain private key a combination of -CryptoProvider and 
+      -KeyContainer options is required.
+      Example:
+        -CertFile MyCert.pfx
+        -CertFile MyCert.pfx -Password mycertpassword
+        -CertFile PublicKey.cer -KeyContainer name -CryptoProvider MyCspName
+
+  -CertHash &lt;hash&gt;        -ch
+      Specifies the hash of an X509 certificate in your local cert store.
+      Example:
+        -CertHash a1b2c3d4e5f6g7h8i9j0
+
+  -CryptoProvider &lt;name&gt;  -csp
+      Specifies the name of cryptographic service provider (CSP) that contains
+      the private key container.  This option requires the -KeyContainer option.
+      Example:
+        -CryptoProvider "Microsoft Enhanced Cryptographic Provider v1.0" -KeyContainer name
+
+  -FromDirectory &lt;path&gt;   -fd
+      Specifies the directory to recursively search for files to include in
+      an application manifest.  
+      Example:
+        -FromDirectory bin/release
+        
+  -IconFile &lt;file_path&gt;   -if
+      Specifies relative path and filename for the application icon.
+        
+  -IncludeProviderURL &lt;true|false&gt; -ip
+      Specifies if the deployment manifest will include the deployment 
+      provider URL.
+      
+  -Install &lt;true|false&gt;   -i
+      Specifies if the application will be an installed or an online only 
+      application.
+
+  -KeyContainer &lt;name&gt;    -kc
+      Specifies the key container that contains the name of the private key.
+      This option requires the -CryptoProvider option.
+      Example:
+        -KeyContainer name -CryptoProvider "Microsoft Enhanced Cryptographic Provider v1.0"
+
+  -MinVersion &lt;version #|none&gt;   -mv
+      Specifies whether the manifest being generated specifies a minimum version.
+      Must be of the form "0.0.0.0".  Specifying "none" removes this from the manifest.
+      Example:
+        -MinVersion 1.2.3.4
+        -MinVersion none
+
+  -Name &lt;name&gt;            -n
+      Specifies the name of the application whose manifest is being 
+      generated or updated.  Names which include spaces should be enclosed
+      in quotes.
+      Examples:
+        -Name MyApp
+        -Name "My Application"
+        
+  -Password &lt;password&gt;    -pwd
+      Specifies the password to use with an X509 certificate when signing
+      a manifest or license file.  See example above.
+
+  -Processor &lt;processor&gt;  -p
+      Specifies the processor architecture of the application whose manifest
+      is being generated or updated.
+      Examples:
+        -Processor MSIL
+        -Processor i386
+
+  -ProviderURL &lt;url&gt;      -pu
+      Specifies the provider URL to be use in the deployment manifest being
+      generated or updated.
+      Example:
+        -ProviderURL http://www.whatever.net/application
+
+  -Publisher &lt;publisher_name&gt;    -pub
+      Specifies the name of the publisher.  Names which include spaces should 
+      be enclosed in quotes.
+      Examples:
+        -Publisher MyCompany
+        -Publisher "My Company"
+
+  -SupportURL &lt;url&gt;       -s
+      Specifies the support URL for the application.
+      Example:
+        -SupportURL http://www.whatever.net/application/support
+
+  -TargetDirectory &lt;path&gt;	  -td
+      Specifies the directory to which to add the Launcher.
+      Example:
+        -TargetDirectory bin/release
+
+  -ToFile &lt;file_name&gt;     -t
+      Specifies the name of the file to save the output of a sign, new, or 
+      update command.
+      Example:
+        -ToFile MyApp.manifest
+
+  -TimeStampUri &lt;uri&gt;     -ti
+      Specifies the URI to use for timestamping during signing.
+
+  -TrustLevel &lt;level&gt;     -tr
+      Specifies the trust level to be included in the application manifest
+      being generated or updated. Valid values are: "Internet", "LocalIntranet",
+      and "FullTrust".
+      Example:
+        -TrustLevel FullTrust
+
+  -UseManifestForTrust &lt;true|false&gt; -um
+      Specifies if the application manifest will be used for certification and
+      branding information.
+            
+  -Version &lt;version&gt;                -v
+      Specifies the version of the application whose manifest is being 
+      generated or updated.  Must be of the form "0.0.0.0".
+      Example:
+        -Version 1.2.3.2112</value>
+  </data>
+  <data name="InternalError" xml:space="preserve">
+    <value>Internal error, please try again.</value>
+    <comment>trailing space is added at run-time</comment>
+  </data>
+  <data name="InvalidAlgorithmValue" xml:space="preserve">
+    <value>Algorithm has to be sha256RSA. Specified - "{0}".</value>
+  </data>
+  <data name="InvalidCertFile" xml:space="preserve">
+    <value>Cert file is not of proper format - "{0}"</value>
+  </data>
+  <data name="InvalidCertNoPrivateKey" xml:space="preserve">
+    <value>This certificate does not contain a private key - "{0}"</value>
+  </data>
+  <data name="MissingCspOrContainer" xml:space="preserve">
+    <value>This certificate does not contain a private key - "{0}", if this is a public key certificate, please provide valid cryptographic service provider and key container names</value>
+  </data>
+  <data name="VerifyIsExclusive" xml:space="preserve">
+    <value>'verify' command can't be combined with any other command.</value>
+  </data>
+  <data name="AddLauncherIsExclusive" xml:space="preserve">
+    <value>'addlauncher' command can't be combined with any other command.</value>
+  </data>
+  <data name="InvalidCertUsage" xml:space="preserve">
+    <value>This certificate cannot be used for signing - "{0}"</value>
+  </data>
+  <data name="InvalidCodebase" xml:space="preserve">
+    <value>The codebase is invalid - "{0}"</value>
+  </data>
+  <data name="InvalidDirectory" xml:space="preserve">
+    <value>Directory not found - "{0}"</value>
+  </data>
+  <data name="InvalidFileType" xml:space="preserve">
+    <value>Invalid file type, must be "Application", or "Deployment"</value>
+  </data>
+  <data name="InvalidHash" xml:space="preserve">
+    <value>No cert found matching specified hash - "{0}"</value>
+  </data>
+  <data name="InvalidIncludeProviderURL" xml:space="preserve">
+    <value>The -IncludeProviderURL option must be "true", "false", "t", or "f" - "{0}"</value>
+  </data>
+  <data name="InvalidInputFile" xml:space="preserve">
+    <value>Unrecognized file type - "{0}"</value>
+  </data>
+  <data name="InvalidInstall" xml:space="preserve">
+    <value>The -Install option must be "true", "false", "t", or "f" - "{0}"</value>
+  </data>
+  <data name="InvalidKeyFile" xml:space="preserve">
+    <value>Key file is not of proper format - "{0}"</value>
+  </data>
+  <data name="FileTypeSpecificOption" xml:space="preserve">
+    <value>The "{0}" option can only be used with the following type of files: "{1}"</value>
+  </data>
+  <data name="InvalidPassword" xml:space="preserve">
+    <value>Cert password is incorrect - "{0}"</value>
+  </data>
+  <data name="InvalidPath" xml:space="preserve">
+    <value>File not found - "{0}"</value>
+  </data>
+  <data name="InvalidProcessor" xml:space="preserve">
+    <value>Unknown processor type "{0}".  Supported processor types are:</value>
+    <comment>Will be followed by a list of processor types, after a newline is added at run-time</comment>
+  </data>
+  <data name="InvalidRequiredUpdate" xml:space="preserve">
+    <value>The -RequiredUpdate option must be "true", "false", "t", or "f" - "{0}"</value>
+  </data>
+  <data name="InvalidNonManifestOption" xml:space="preserve">
+    <value>The "{0}" option can only be used with the -Update or -New commands.</value>
+  </data>
+  <data name="InvalidAddLauncherOption" xml:space="preserve">
+    <value>The "{0}" option can not be used with -AddLauncher command.</value>
+  </data>
+  <data name="InvalidNonAddLauncherOption" xml:space="preserve">
+    <value>The "{0}" option can only be used with -AddLauncher command.</value>
+  </data>
+  <data name="InvalidTrustLevel" xml:space="preserve">
+    <value>Invalid trust level, must be either "LocalIntranet", "Internet", or "FullTrust" - "{0}"</value>
+  </data>
+  <data name="TrustLevelsNotSupportedOnNETCore" xml:space="preserve">
+    <value>Setting trust level is not supported on .NET Core</value>
+  </data>
+  <data name="InvalidUrl" xml:space="preserve">
+    <value>The URL is not of the proper format - "{0}"</value>
+  </data>
+  <data name="InvalidUseManifestForTrust" xml:space="preserve">
+    <value>The -UseManifestForTrust option must be "true", "false", "t", or "f" - "{0}"</value>
+  </data>
+  <data name="InvalidVersion" xml:space="preserve">
+    <value>Version must be of format X.X.X.X (ex 1.0.0.0) - "{0}"</value>
+  </data>
+  <data name="LockedFile" xml:space="preserve">
+    <value>Not including locked file {0}</value>
+  </data>
+  <data name="MissingArgument" xml:space="preserve">
+    <value>Missing value following the "{0}" option</value>
+  </data>
+  <data name="MissingDeploymentProviderUrl" xml:space="preserve">
+    <value>The IncludeProviderURL option is set to true, but no deployment provider Url is provided.</value>
+  </data>
+  <data name="MissingPassword" xml:space="preserve">
+    <value>Missing Password option, this is required when using the CertFile option.</value>
+  </data>
+  <data name="MissingAddLauncherOption" xml:space="preserve">
+    <value>Missing {0} option, it is required with AddLauncher command.</value>
+  </data>
+  <data name="MissingUseApplicationManifestForTrustInfo" xml:space="preserve">
+    <value>When generating or updating an application manifest, the {0} option can only be used when the UseManifestForTrust option is set to true.</value>
+  </data>
+  <data name="MultipleKeys" xml:space="preserve">
+    <value>Only one type of signing method may be specified.</value>
+  </data>
+  <data name="NewLicense" xml:space="preserve">
+    <value>New License</value>
+  </data>
+  <data name="NoKeySpecified" xml:space="preserve">
+    <value>The -Sign command requires one of -CertFile, or -CertHash.</value>
+  </data>
+  <data name="NoOutputFileSpecified" xml:space="preserve">
+    <value>No output file was specified.  Please use -ToFile &lt;filename&gt;.</value>
+  </data>
+  <data name="NoVerb" xml:space="preserve">
+    <value>The first argument must be one of the following: -New, -Update, -Sign, -Verify, -AddLauncher</value>
+    <comment>"-New, -Update, -Sign, -Verify, -AddLauncher" are command names and should not be translated</comment>
+ </data>
+  <data name="TooManyKeysSpecified" xml:space="preserve">
+    <value>Only one of -KeyFile, -CertFile, or -CertHash can be used.</value>
+  </data>
+  <data name="TrustLicenseNotSigned" xml:space="preserve">
+    <value>Trust license is not signed - "{0}"</value>
+  </data>
+  <data name="UnableToOpenCertificate" xml:space="preserve">
+    <value>Unable to open certificate "{0}":</value>
+  </data>
+  <data name="UnableToStartGUI" xml:space="preserve">
+    <value>Unable to locate Mage UI - "{0}"</value>
+  </data>
+  <data name="InvalidMinVersion" xml:space="preserve">
+    <value>The minimum version specified is not valid.</value>
+  </data>
+  <data name="InvalidTimestamp" xml:space="preserve">
+    <value>The timestamp URI specified is not valid.</value>
+  </data>
+  <data name="UnrecognizedParameter" xml:space="preserve">
+    <value>Parameter not recognized - "{0}"</value>
+  </data>
+  <data name="DefaultAppName" xml:space="preserve">
+    <value>New Application</value>
+  </data>
+  <data name="ResultSuccessfullyCreated" xml:space="preserve">
+    <value>successfully created</value>
+  </data>
+  <data name="ResultSuccessfullySigned" xml:space="preserve">
+    <value>successfully signed</value>
+  </data>
+  <data name="ResultSuccessfullyUpdated" xml:space="preserve">
+    <value>successfully updated</value>
+  </data>
+  <data name="ResultSomeErrorsEncountered" xml:space="preserve">
+    <value>However, some errors were encountered.</value>
+  </data>
+  <data name="ErrorMessage" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="WarningMessage" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="InfoMessage" xml:space="preserve">
+    <value>Info</value>
+  </data>
+  <data name="SecurityMessage" xml:space="preserve">
+    <value>Mage does not have the security permissions necessary to run.  Ensure that mage is not running from an untrusted source such as a network share or web site.</value>
+  </data>
+  <data name="NotAllowedCleanCache" xml:space="preserve">
+    <value>ClearApplicationCache should not be used with any other switch.</value>
+  </data>
+  <data name="ApplicationCacheCleared" xml:space="preserve">
+    <value>Application cache cleared.</value>
+  </data>
+  <data name="ErrorApplicactionCachedCleared" xml:space="preserve">
+    <value>Failed to clear application cache.</value>
+  </data>
+  <data name="ErrorMissingSignatureNode" xml:space="preserve">
+    <value>Signature node is missing.</value>
+  </data>
+  <data name="ErrorInvalidTimestampFormat" xml:space="preserve">
+    <value>Timestamp is not encoded as a base64 string.</value>
+  </data>
+  <data name="ErrorInvalidSignature" xml:space="preserve">
+    <value>Manifest does not have a valid signature.</value>
+  </data>
+  <data name="SignatureValidatedSuccessfully" xml:space="preserve">
+    <value>Manifest has a valid signature.</value>
+  </data>
+  <data name="MissingLauncherTemplate" xml:space="preserve">
+    <value>Launcher template "{0}" does not exist.</value>
+  </data>
+  <data name="FailedToUpdateLauncherResources" xml:space="preserve">
+    <value>Failed to update Launcher resources.</value>
+  </data>
+  <data name="FailedToAddLauncher" xml:space="preserve">
+    <value>Failed to add Launcher.</value>
+  </data>
+  <data name="InvalidBinaryToLaunch" xml:space="preserve">
+    <value>Binary to launch cannot include a path, it can only be a filename - {0}.</value>
+  </data>
+  <data name="MissingBinaryToLaunch" xml:space="preserve">
+    <value>Binary to launch cannot be empty.</value>
+  </data>
+  <data name="LauncherSuccessfullyAdded" xml:space="preserve">
+    <value>Launcher successfully added.</value>
+  </data>
+  <data name="InvalidSigningPlatform" xml:space="preserve">
+    <value>Signing is only supported on Windows.</value>
+  </data>
+</root>

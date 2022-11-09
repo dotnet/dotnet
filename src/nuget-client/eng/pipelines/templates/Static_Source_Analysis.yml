@@ -1,0 +1,74 @@
+parameters:
+  - name: isOfficialBuild
+    type: boolean
+    default: false
+
+steps:
+- task: PowerShell@1
+  displayName: "Print Environment Variables"
+  inputs:
+    scriptType: "inlineScript"
+    inlineScript: |
+      Get-ChildItem Env: | Sort-Object Name | Format-Table -Wrap -AutoSize
+
+- task: CredScan@2
+  inputs:
+    toolMajorVersion: "V2"
+  continueOnError: ${{ parameters.isOfficialBuild }}
+  condition: succeededOrFailed()
+
+- task: PowerShell@2
+  displayName: "Analyze CredScan artifact"
+  inputs:
+    targetType: 'inline'
+    script: |
+      try {
+        $credentialScannerMatches = Join-Path $(Pipeline.Workspace)\_sdt\logs\CredentialScanner CredentialScanner-matches.xml
+        $credScannerXml = [xml](Get-Content $credentialScannerMatches)
+
+        if($credScannerXml.DEFECTS -eq $null)
+        {
+          Write-Host "Unable to verify CodeAnalysisLogs artifact content, please manually verify it."
+          exit 1
+        }
+
+        if ($credScannerXml.DEFECTS.DEFECT -ne $null) {
+          Write-Host "CredentialScanner found following credential in this PR, please revoke this credential immediately:"
+          $credScannerXml.DEFECTS.DEFECT
+          exit 1
+        }
+      }
+      catch
+      {
+        Write-Host "##vso[task.LogIssue type=error;]$Error[0]"
+        exit 1
+      }
+  continueOnError: ${{ parameters.isOfficialBuild }}
+  condition: succeededOrFailed()
+
+- task: MSBuild@1
+  displayName: "Ensure msbuild.exe can parse nuget.sln"
+  inputs:
+    solution: "nuget.sln"
+    msbuildArguments: "/t:EnsureNewtonsoftJsonVersion /bl:$(Build.StagingDirectory)\\binlog\\01.EnsureNewtonsoftJsonVersion.binlog"
+    maximumCpuCount: true
+  continueOnError: ${{ parameters.isOfficialBuild }}
+  condition: succeededOrFailed()
+
+- task: MSBuild@1
+  displayName: "Ensure package versions are declared in packages.targets"
+  inputs:
+    solution: "build\\build.proj"
+    msbuildArguments: "/t:EnsurePackageReferenceVersionsInSolution /bl:$(Build.StagingDirectory)\\binlog\\02.EnsurePackageReferenceVersionsInSolution.binlog"
+  continueOnError: ${{ parameters.isOfficialBuild }}
+  condition: succeededOrFailed()
+
+- task: PublishPipelineArtifact@1
+  displayName: "Publish binlogs"
+  inputs:
+    artifactName: binlog - $(System.JobDisplayName) - Attempt $(System.JobAttempt)
+    targetPath: $(Build.StagingDirectory)\binlog
+  condition: " failed() "
+
+- task: ComponentGovernanceComponentDetection@0
+  displayName: 'Component Detection'

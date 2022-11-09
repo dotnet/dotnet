@@ -1,0 +1,1 @@
+NuGet.Common.NuGetLogCode.NU5049 = 5049 -> NuGet.Common.NuGetLogCode

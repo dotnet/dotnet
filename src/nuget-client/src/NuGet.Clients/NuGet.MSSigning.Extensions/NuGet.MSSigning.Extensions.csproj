@@ -1,0 +1,79 @@
+<Project>
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), 'NuGet.sln'))\build\common.props" />
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+  <Import Project="ilmerge.props" />
+
+  <PropertyGroup>
+    <TargetFramework>$(NETFXTargetFramework)</TargetFramework>
+    <Description>NuGet Command Line Interface for repository signing.</Description>
+    <Shipping>true</Shipping>
+    <PackProject>false</PackProject>
+    <IncludeInVsix>false</IncludeInVsix>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(NuGetClientsSrcDirectory)NuGet.CommandLine\NuGet.CommandLine.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="NuGetMSSignCommand.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>NuGetMSSignCommand.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="NuGetMSSignCommand.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>NuGetMSSignCommand.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <Target Name="DetermineILMergeNuGetMssignExeInputsOutputs">
+    <PropertyGroup>
+      <PathToBuiltNuGetExe>$(OutputPath)NuGet.exe</PathToBuiltNuGetExe>
+      <PathToMergedNuGetExe>$(ArtifactsDirectory)$(VsixOutputDirName)\NuGet.Mssign.exe</PathToMergedNuGetExe>
+    </PropertyGroup>
+    <ItemGroup>
+      <BuildArtifacts Include="$(OutputPath)\*.dll" Exclude="@(MergeExclude)" />
+    </ItemGroup>
+    <Message Text="$(MSBuildProjectName) -&gt; $(PathToMergedNuGetExe)" Importance="High" />
+  </Target>
+
+  <Target Name="ILMergeNuGetMssignExe"
+          AfterTargets="Build"
+          DependsOnTargets="DetermineILMergeNuGetMssignExeInputsOutputs"
+          Inputs="$(PathToBuiltNuGetExe);@(BuildArtifacts)"
+          Outputs="$(PathToMergedNuGetExe)"
+          Condition="'$(BuildingInsideVisualStudio)' != 'true'">
+    <Error Text="Build dependencies are inconsistent with mergeinclude specified in ilmerge.props" Condition="'@(BuildArtifacts-&gt;Count())' != '@(MergeInclude-&gt;Count())'" />
+    <PropertyGroup>
+      <IlmergeCommand>$(ILMergeExePath) $(PathToBuiltNuGetExe) /lib:$(OutputPath) @(BuildArtifacts->'%(filename)%(extension)', ' ') /out:$(PathToMergedNuGetExe) @(MergeAllowDup -> '/allowdup:%(Identity)', ' ')</IlmergeCommand>
+      <IlmergeCommand Condition="Exists($(MS_PFX_PATH))">$(IlmergeCommand) /delaysign /keyfile:$(MS_PFX_PATH)</IlmergeCommand>
+    </PropertyGroup>
+    <MakeDir Directories="$([System.IO.Path]::GetDirectoryName($(PathToMergedNuGetExe)))" />
+    <Exec Command="$(IlmergeCommand)" ContinueOnError="false" />
+  </Target>
+
+  <Import Project="$(BuildCommonDirectory)common.targets"/>
+
+  <Target Name="GetSigningInputs" Returns="@(DllsToSign)">
+    <ItemGroup>
+      <DllsToSign Include="$(ArtifactsDirectory)$(VsixOutputDirName)\NuGet.Mssign.exe">
+        <StrongName>MsSharedLib72</StrongName>
+        <Authenticode>Microsoft400</Authenticode>
+      </DllsToSign>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="GetSymbolsToIndex" Returns="@(SymbolsToIndex)">
+    <ItemGroup>
+      <SymbolsToIndex Include="$(ArtifactsDirectory)$(VsixOutputDirName)\NuGet.Mssign.exe" />
+      <SymbolsToIndex Include="$(ArtifactsDirectory)$(VsixOutputDirName)\NuGet.Mssign.pdb" />
+    </ItemGroup>
+  </Target>
+
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+</Project>

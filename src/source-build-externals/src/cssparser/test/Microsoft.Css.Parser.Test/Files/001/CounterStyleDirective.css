@@ -1,0 +1,4 @@
+@counter-style daggers "*" "\2020" "\2021" "\A7" "#";
+ol { list-style-type: daggers }
+@counter-style ordinal "1st" "2nd" "3rd" "4th";
+h1:before { content: counter(chapter, ordinal) " chapter" }

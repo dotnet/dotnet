@@ -1,0 +1,17 @@
+﻿<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>$(TargetFrameworkForNETSDK)</TargetFrameworks>
+    <ExcludeFromSourceBuild>false</ExcludeFromSourceBuild>
+
+    <IsPackable>true</IsPackable>
+    <PackTasks>false</PackTasks>
+
+    <Description>Targets for producing an archive of file outputs.</Description>
+    <PackageType>MSBuildSdk</PackageType>
+
+    <EnableGeneratedPackageContent>false</EnableGeneratedPackageContent>
+  </PropertyGroup>
+
+  <Import Project="$(RepoRoot)eng\BuildTask.targets" />
+</Project>

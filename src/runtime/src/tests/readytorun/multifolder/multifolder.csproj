@@ -1,0 +1,121 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>exe</OutputType>
+    <!-- Running Crossgen2 under GCStress takes too long -->
+    <GCStressIncompatible>true</GCStressIncompatible>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+
+    <!-- Crossgen2 currently targets x64 and ARM64 only -->
+    <DisableProjectBuild Condition="'$(TargetArchitecture)' != 'x64' and '$(TargetArchitecture)' != 'arm64'">true</DisableProjectBuild>
+
+    <!-- This is an explicit crossgen test -->
+    <CrossGenTest>false</CrossGenTest>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Root.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="FolderA/FolderA.csproj" />
+    <ProjectReference Include="FolderB/FolderB.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <CLRTestBatchPreCommands><![CDATA[
+$(CLRTestBatchPreCommands)
+
+    set __ResponseFile=%scriptPath%\multifolder.rsp
+    del %__ResponseFile%
+    echo --composite>>%__ResponseFile%
+    echo -r:%21CORE_ROOT%21\System.*.dll>>%__ResponseFile%
+    echo -r:%21CORE_ROOT%21\Microsoft.*.dll>>%__ResponseFile%
+    echo -r:%21CORE_ROOT%21\mscorlib.dll>>%__ResponseFile%
+    echo -r:%21CORE_ROOT%21\netstandard.dll>>%__ResponseFile%
+    echo -o:%scriptPath%\multifolder-composite.dll>>%__ResponseFile%
+    echo --crp:%scriptPath%\..>>%__ResponseFile%
+    echo --targetarch:$(TargetArchitecture)>>%__ResponseFile%
+    echo %scriptPath%\multifolder.dll>>%__ResponseFile%
+    echo %scriptPath%\..\FolderA\FolderA\FolderA.dll>>%__ResponseFile%
+    echo %scriptPath%\..\FolderB\FolderB\FolderB.dll>>%__ResponseFile%
+
+    REM Suppress GC stand alone mode for the duration of Crossgen2 execution
+    set __gcStandaloneModeToRestore=!DOTNET_GCName!
+    set DOTNET_GCName=
+    set __gcStandaloneModeToRestore=!COMPlus_GCName!
+    set COMPlus_GCName=
+
+    set __Command=%_DebuggerFullPath%
+    REM Tests run locally need __TestDotNetCmd (set by runtest.py) or a compatible 5.0 dotnet runtime in the path
+    if defined __TestDotNetCmd (
+        set __Command=!__Command! "!__TestDotNetCmd!"
+    ) else (
+        set __Command=!__Command! "dotnet"
+    )
+    set __Command=%__Command% "%CORE_ROOT%\crossgen2\crossgen2.dll"
+    set __Command=%__Command% @"%__ResponseFile%"
+
+    REM work around problems in 6.0 OSR
+    set "DOTNET_TC_OnStackReplacement="
+    set "DOTNET_TC_PartialCompilation="
+
+    echo Response file: %__ResponseFile%
+    type %__ResponseFile%
+    echo ------------------
+    echo Running crossgen2: %__Command%
+    %__Command%
+
+    dir %scriptPath%
+    dir %scriptPath%\multifolder
+
+    set ExePath=multifolder\multifolder.dll
+    set DOTNET_NativeImageSearchPaths=%scriptPath%
+    set DOTNET_GCName=!__gcStandaloneModeToRestore!
+
+]]></CLRTestBatchPreCommands>
+    <CLRTestBashPreCommands><![CDATA[
+$(CLRTestBashPreCommands)
+
+    __OutputDir=$PWD
+    __ResponseFile=$__OutputDir/multifolder.rsp
+    rm $__ResponseFile
+    echo --composite>>$__ResponseFile
+    echo -r:$CORE_ROOT/System.*.dll>>$__ResponseFile
+    echo -r:$CORE_ROOT/Microsoft.*.dll>>$__ResponseFile
+    echo -r:$CORE_ROOT/mscorlib.dll>>$__ResponseFile
+    echo -r:$CORE_ROOT/netstandard.dll>>$__ResponseFile
+    echo -o:$__OutputDir/multifolder-composite.dll>>$__ResponseFile
+    echo --crp:$__OutputDir/..>>$__ResponseFile
+    echo --targetarch:$(TargetArchitecture)>>$__ResponseFile
+    echo $__OutputDir/multifolder.dll>>$__ResponseFile
+    echo $__OutputDir/../FolderA/FolderA/FolderA.dll>>$__ResponseFile
+    echo $__OutputDir/../FolderB/FolderB/FolderB.dll>>$__ResponseFile
+
+    # Suppress some DOTNET and COMPlus variables for the duration of Crossgen2 execution
+    export -n DOTNET_GCName DOTNET_GCStress DOTNET_HeapVerify DOTNET_ReadyToRun DOTNET_TC_OnStackReplacement DOTNET_TC_PartialCompilation
+    export -n COMPlus_GCName COMPlus_GCStress COMPlus_HeapVerify COMPlus_ReadyToRun COMPlus_TC_OnStackReplacement COMPlus_TC_PartialCompilation
+
+    __Command=$_DebuggerFullPath
+    # Tests run locally need __TestDotNetCmd (set by runtest.py) or a compatible 5.0 dotnet runtime in the path
+    if [ ! -z ${__TestDotNetCmd+x} ] %3B then
+        __Command+=" $__TestDotNetCmd"
+    else
+        __Command+=" dotnet"
+    fi
+    __Command+=" $CORE_ROOT/crossgen2/crossgen2.dll"
+    __Command+=" @$__ResponseFile"
+
+    echo Response file: $__ResponseFile
+    cat $__ResponseFile
+    echo ------------------
+    echo Running crossgen2: $__Command
+    $__Command
+
+    export DOTNET_GCName DOTNET_GCStress DOTNET_HeapVerify DOTNET_ReadyToRun DOTNET_TC_OnStackReplacement DOTNET_TC_PartialCompilation
+
+    ExePath=multifolder/multifolder.dll
+    export DOTNET_NativeImageSearchPaths=$__OutputDir
+
+]]></CLRTestBashPreCommands>
+  </PropertyGroup>
+</Project>

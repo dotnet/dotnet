@@ -1,0 +1,627 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>System.Deployment</name>
+  </assembly>
+  <members>
+    <member name="T:System.Deployment.Application.ApplicationDeployment">
+      <summary>Supports updates of the current deployment programmatically, and handles on-demand downloading of files. This class cannot be inherited.</summary>
+    </member>
+    <member name="P:System.Deployment.Application.ApplicationDeployment.ActivationUri">
+      <summary>Gets the URL used to launch the deployment manifest of the application. </summary>
+      <returns>A zero-length string if the TrustUrlParameters property in the deployment manifest is false, or if the user has supplied a UNC to open the deployment or has opened it locally. Otherwise, the return value is the full URL used to launch the application, including any parameters.</returns>
+    </member>
+    <member name="M:System.Deployment.Application.ApplicationDeployment.CheckForDetailedUpdate">
+      <summary>Performs the same operation as <see cref="M:System.Deployment.Application.ApplicationDeployment.CheckForUpdate" />, but returns extended information about the available update.</summary>
+      <returns>An <see cref="T:System.Deployment.Application.UpdateCheckInfo" /> for the available update.</returns>
+      <exception cref="T:System.InvalidOperationException">The current application is either not configured to support updates, or there is another update check operation already in progress.</exception>
+      <exception cref="T:System.Deployment.Application.DeploymentDownloadException">The deployment manifest cannot be downloaded. This exception will appear in the <see cref="P:System.ComponentModel.AsyncCompletedEventArgs.Error" /> property of the <see cref="E:System.Deployment.Application.ApplicationDeployment.CheckForUpdateCompleted" /> event.</exception>
+      <exception cref="T:System.Deployment.Application.InvalidDeploymentException">The deployment manifest is corrupted. Regenerate the application's manifest before you attempt to deploy this application to users. This exception will appear in the <see cref="P:System.ComponentModel.AsyncCompletedEventArgs.Error" /> property of the <see cref="E:System.Deployment.Application.ApplicationDeployment.CheckForUpdateCompleted" /> event.</exception>
+    </member>
+    <member name="M:System.Deployment.Application.ApplicationDeployment.CheckForDetailedUpdate(System.Boolean)">
+      <summary>Performs the same operation as <see cref="M:System.Deployment.Application.ApplicationDeployment.CheckForUpdate" />, but returns extended information about the available update.</summary>
+      <returns>An <see cref="T:System.Deployment.Application.UpdateCheckInfo" /> for the available update.</returns>
+      <param name="persistUpdateCheckResult">If false, the update will be applied silently and no dialog box will be displayed.</param>
+    </member>
+    <member name="M:System.Deployment.Application.ApplicationDeployment.CheckForUpdate">
+      <summary>Checks <see cref="P:System.Deployment.Application.ApplicationDeployment.UpdateLocation" /> to determine whether a new update is available.</summary>
+      <returns>true if a new update is available; otherwise, false.</returns>
+      <exception cref="T:System.InvalidOperationException">ClickOnce throws this exception immediately if you call the <see cref="M:System.Deployment.Application.ApplicationDeployment.CheckForUpdate" />  method while an update is already in progress.</exception>
+      <exception cref="T:System.Deployment.Application.DeploymentDownloadException">The deployment manifest cannot be downloaded. </exception>
+      <exception cref="T:System.Deployment.Application.InvalidDeploymentException">The deployment manifest is corrupted. You will likely need to redeploy the application to fix this problem. </exception>
+    </member>
+    <member name="M:System.Deployment.Application.ApplicationDeployment.CheckForUpdate(System.Boolean)">
+      <summary>Checks <see cref="P:System.Deployment.Application.ApplicationDeployment.UpdateLocation" /> to determine whether a new update is available.</summary>
+      <returns>true if a new update is available; otherwise, false.</returns>
+      <param name="persistUpdateCheckResult">If false, the update will be applied silently and no dialog box will be displayed.</param>
+    </member>
+    <member name="M:System.Deployment.Application.ApplicationDeployment.CheckForUpdateAsync">
+      <summary>Checks <see cref="P:System.Deployment.Application.ApplicationDeployment.UpdateLocation" /> asynchronously to determine whether a new update is available.</summary>
+      <exception cref="T:System.InvalidOperationException">ClickOnce throws this exception immediately if you call the <see cref="M:System.Deployment.Application.ApplicationDeployment.CheckForUpdateAsync" />  method while an update is already in progress.</exception>
+      <exception cref="T:System.Deployment.Application.DeploymentDownloadException">The deployment manifest cannot be downloaded. This exception appears in the <see cref="P:System.ComponentModel.AsyncCompletedEventArgs.Error" /> property of the <see cref="E:System.Deployment.Application.ApplicationDeployment.CheckForUpdateCompleted" /> event.</exception>
+      <exception cref="T:System.Deployment.Application.InvalidDeploymentException">The deployment manifest is corrupted. You will likely need to redeploy the application to fix this problem. This exception appears in the <see cref="P:System.ComponentModel.AsyncCompletedEventArgs.Error" /> property of the <see cref="E:System.Deployment.Application.ApplicationDeployment.CheckForUpdateCompleted" /> event.</exception>
+    </member>
+    <member name="M:System.Deployment.Application.ApplicationDeployment.CheckForUpdateAsyncCancel">
+      <summary>Cancels the asynchronous update check.</summary>
+    </member>
+    <member name="E:System.Deployment.Application.ApplicationDeployment.CheckForUpdateCompleted">
+      <summary>Occurs when <see cref="M:System.Deployment.Application.ApplicationDeployment.CheckForUpdateAsync" /> has completed.</summary>
+    </member>
+    <member name="E:System.Deployment.Application.ApplicationDeployment.CheckForUpdateProgressChanged">
+      <summary>Occurs when a progress update is available on a <see cref="M:System.Deployment.Application.ApplicationDeployment.CheckForUpdateAsync" /> call.</summary>
+    </member>
+    <member name="P:System.Deployment.Application.ApplicationDeployment.CurrentDeployment">
+      <summary>Returns the current <see cref="T:System.Deployment.Application.ApplicationDeployment" /> for this deployment.</summary>
+      <returns>The current deployment.</returns>
+      <exception cref="T:System.Deployment.Application.InvalidDeploymentException">You attempted to call this static property from a non-ClickOnce application. </exception>
+    </member>
+    <member name="P:System.Deployment.Application.ApplicationDeployment.CurrentVersion">
+      <summary>Gets the version of the deployment for the current running instance of the application.</summary>
+      <returns>The current deployment version.</returns>
+    </member>
+    <member name="P:System.Deployment.Application.ApplicationDeployment.DataDirectory">
+      <summary>Gets the path to the ClickOnce data directory.</summary>
+      <returns>A string containing the path to the application's data directory on the local disk.</returns>
+    </member>
+    <member name="M:System.Deployment.Application.ApplicationDeployment.DownloadFileGroup(System.String)">
+      <summary>Downloads a set of optional files on demand.</summary>
+      <param name="groupName">The named group of files to download. All files marked "optional" in a ClickOnce application require a group name.</param>
+      <exception cref="T:System.ArgumentNullException">The <paramref name="groupName" /> parameter is null or zero-length.</exception>
+    </member>
+    <member name="M:System.Deployment.Application.ApplicationDeployment.DownloadFileGroupAsync(System.String)">
+      <summary>Downloads, on demand, a set of optional files in the background.</summary>
+      <param name="groupName">The named group of files to download. All files marked "optional" in a ClickOnce application require a group name.</param>
+      <exception cref="T:System.ArgumentNullException">The <paramref name="groupName" /> parameter is null or zero-length.</exception>
+      <exception cref="T:System.InvalidOperationException">You cannot initiate more than one download of <paramref name="groupName" /> at a time.</exception>
+    </member>
+    <member name="M:System.Deployment.Application.ApplicationDeployment.DownloadFileGroupAsync(System.String,System.Object)">
+      <summary>Downloads, on demand, a set of optional files in the background, and passes a piece of application state to the event callbacks.</summary>
+      <param name="groupName">The named group of files to download. All files marked "optional" in a ClickOnce application require a group name.</param>
+      <param name="userState">An arbitrary object containing state information for the asynchronous operation.</param>
+      <exception cref="T:System.ArgumentNullException">The <paramref name="groupName" /> parameter is null or zero-length.</exception>
+      <exception cref="T:System.InvalidOperationException">You cannot initiate more than one download of <paramref name="groupName" /> at a time.</exception>
+    </member>
+    <member name="M:System.Deployment.Application.ApplicationDeployment.DownloadFileGroupAsyncCancel(System.String)">
+      <summary>Cancels an asynchronous file download.</summary>
+      <param name="groupName">The named group of files to download. All files marked "optional" in a ClickOnce application require a group name.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="groupName" /> cannot be null.</exception>
+    </member>
+    <member name="E:System.Deployment.Application.ApplicationDeployment.DownloadFileGroupCompleted">
+      <summary>Occurs on the main application thread when a file download is complete.</summary>
+    </member>
+    <member name="E:System.Deployment.Application.ApplicationDeployment.DownloadFileGroupProgressChanged">
+      <summary>Occurs when status information is available on a file download operation initiated by a call to <see cref="Overload:System.Deployment.Application.ApplicationDeployment.DownloadFileGroupAsync" />.</summary>
+    </member>
+    <member name="M:System.Deployment.Application.ApplicationDeployment.IsFileGroupDownloaded(System.String)">
+      <summary>Checks whether the named file group has already been downloaded to the client computer.</summary>
+      <returns>true if the file group has already been downloaded for the current version of this application; otherwise, false. If a new version of the application has been installed, and the new version has not added, removed, or altered files in the file group, <see cref="M:System.Deployment.Application.ApplicationDeployment.IsFileGroupDownloaded(System.String)" /> returns true.</returns>
+      <param name="groupName">The named group of files to download. All files marked "optional" in a ClickOnce application require a group name.</param>
+      <exception cref="T:System.Deployment.Application.InvalidDeploymentException">
+        <paramref name="groupName" /> is not a file group defined in the application manifest.</exception>
+    </member>
+    <member name="P:System.Deployment.Application.ApplicationDeployment.IsFirstRun">
+      <summary>Gets a value indicating whether this is the first time this application has run on the client computer. </summary>
+      <returns>true if this version of the application has never run on the client computer before; otherwise, false.</returns>
+    </member>
+    <member name="P:System.Deployment.Application.ApplicationDeployment.IsNetworkDeployed">
+      <summary>Gets a value indicating whether the current application is a ClickOnce application.</summary>
+      <returns>true if this is a ClickOnce application; otherwise, false.</returns>
+    </member>
+    <member name="P:System.Deployment.Application.ApplicationDeployment.TimeOfLastUpdateCheck">
+      <summary>Gets the date and the time ClickOnce last checked for an application update.</summary>
+      <returns>The <see cref="T:System.DateTime" /> of the last update check.</returns>
+    </member>
+    <member name="M:System.Deployment.Application.ApplicationDeployment.Update">
+      <summary>Starts a synchronous download and installation of the latest version of this application. </summary>
+      <returns>true if an application has been updated; otherwise, false.</returns>
+      <exception cref="T:System.Deployment.Application.TrustNotGrantedException">The local computer did not grant the application the permission level it requested to execute.</exception>
+      <exception cref="T:System.Deployment.Application.InvalidDeploymentException">Your ClickOnce deployment is corrupted. For tips on how to diagnose and correct the problem, see Troubleshooting ClickOnce Deployments.</exception>
+      <exception cref="T:System.Deployment.Application.DeploymentDownloadException">The new deployment could not be downloaded from its location on the network.</exception>
+      <exception cref="T:System.InvalidOperationException">The application is currently being updated.</exception>
+    </member>
+    <member name="M:System.Deployment.Application.ApplicationDeployment.UpdateAsync">
+      <summary>Starts an asynchronous download and installation of the latest version of this application.</summary>
+      <exception cref="T:System.Deployment.Application.TrustNotGrantedException">The local computer did not grant this application the permission level it requested to execute.</exception>
+      <exception cref="T:System.Deployment.Application.InvalidDeploymentException">Your ClickOnce deployment is corrupted. For tips on how to diagnose and correct the problem, see Troubleshooting ClickOnce Deployments.</exception>
+      <exception cref="T:System.Deployment.Application.DeploymentDownloadException">The new deployment could not be downloaded from its location on the network.</exception>
+    </member>
+    <member name="M:System.Deployment.Application.ApplicationDeployment.UpdateAsyncCancel">
+      <summary>Cancels an asynchronous update initiated by <see cref="M:System.Deployment.Application.ApplicationDeployment.UpdateAsync" />.</summary>
+    </member>
+    <member name="E:System.Deployment.Application.ApplicationDeployment.UpdateCompleted">
+      <summary>Occurs when ClickOnce has finished upgrading the application as the result of a call to <see cref="M:System.Deployment.Application.ApplicationDeployment.UpdateAsync" />.</summary>
+    </member>
+    <member name="P:System.Deployment.Application.ApplicationDeployment.UpdatedApplicationFullName">
+      <summary>Gets the full name of the application after it has been updated.</summary>
+      <returns>A <see cref="T:System.String" /> that contains the full name of the application.</returns>
+    </member>
+    <member name="P:System.Deployment.Application.ApplicationDeployment.UpdatedVersion">
+      <summary>Gets the version of the update that was recently downloaded.</summary>
+      <returns>The <see cref="T:System.Version" /> describing the version of the update.</returns>
+    </member>
+    <member name="P:System.Deployment.Application.ApplicationDeployment.UpdateLocation">
+      <summary>Gets the Web site or file share from which this application updates itself.</summary>
+      <returns>The update path, expressed as an HTTP, HTTPS, or file URL; or as a Windows network file path (UNC).</returns>
+    </member>
+    <member name="E:System.Deployment.Application.ApplicationDeployment.UpdateProgressChanged">
+      <summary>Occurs when ClickOnce has new status information for an update operation initiated by calling the <see cref="M:System.Deployment.Application.ApplicationDeployment.UpdateAsync" /> method.</summary>
+    </member>
+    <member name="T:System.Deployment.Application.CheckForUpdateCompletedEventArgs">
+      <summary>Represents detailed update information obtained through a call to <see cref="M:System.Deployment.Application.ApplicationDeployment.CheckForUpdateAsync" />.</summary>
+    </member>
+    <member name="P:System.Deployment.Application.CheckForUpdateCompletedEventArgs.AvailableVersion">
+      <summary>Gets the version number of the latest uninstalled version.</summary>
+      <returns>The <see cref="T:System.Version" /> expressing the major, minor, build and revision numbers of the latest version.</returns>
+    </member>
+    <member name="P:System.Deployment.Application.CheckForUpdateCompletedEventArgs.IsUpdateRequired">
+      <summary>Gets a value indicating whether the update must be installed. </summary>
+      <returns>true if the update is required; otherwise, false.</returns>
+    </member>
+    <member name="P:System.Deployment.Application.CheckForUpdateCompletedEventArgs.MinimumRequiredVersion">
+      <summary>Gets the minimum version that the user must have installed on the computer. </summary>
+      <returns>A <see cref="T:System.Version" /> object expressing the earliest version that all users must install.</returns>
+    </member>
+    <member name="P:System.Deployment.Application.CheckForUpdateCompletedEventArgs.UpdateAvailable">
+      <summary>Gets whether an uninstalled update is available.</summary>
+      <returns>true if new version of the application is available; otherwise, false.</returns>
+    </member>
+    <member name="P:System.Deployment.Application.CheckForUpdateCompletedEventArgs.UpdateSizeBytes">
+      <summary>Gets the size of the available update.</summary>
+      <returns>An <see cref="T:System.Int64" /> describing the size, in bytes, of the available update. If no update is available, returns 0. </returns>
+    </member>
+    <member name="T:System.Deployment.Application.CheckForUpdateCompletedEventHandler">
+      <summary>Represents the method that will handle the <see cref="E:System.Deployment.Application.ApplicationDeployment.CheckForUpdateCompleted" /> event of an <see cref="T:System.Deployment.Application.ApplicationDeployment" />. </summary>
+      <param name="sender">The source of the event.</param>
+      <param name="e">A <see cref="T:System.Deployment.Application.CheckForUpdateCompletedEventArgs" /> that contains the event data. </param>
+    </member>
+    <member name="T:System.Deployment.Application.CompatibleFramework">
+      <summary>Represents a version of the .NET Framework where an application can install and run.</summary>
+    </member>
+    <member name="P:System.Deployment.Application.CompatibleFramework.Profile">
+      <summary>Specifies the profile of the .NET Framework version where an application can install and run.</summary>
+      <returns>A string that represents the profile.</returns>
+    </member>
+    <member name="P:System.Deployment.Application.CompatibleFramework.SupportedRuntime">
+      <summary>Specifies the runtime version number of the .NET Framework where an application can install and run.</summary>
+      <returns>A string that represents the runtime version.</returns>
+    </member>
+    <member name="P:System.Deployment.Application.CompatibleFramework.TargetVersion">
+      <summary>Specifies the version of the .NET Framework where an application can install and run.</summary>
+      <returns>A string that represents the version.</returns>
+    </member>
+    <member name="T:System.Deployment.Application.CompatibleFrameworkMissingException">
+      <summary>This exception is thrown when a version of the .NET Framework that is compatible with this application cannot be found.</summary>
+    </member>
+    <member name="M:System.Deployment.Application.CompatibleFrameworkMissingException.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Deployment.Application.CompatibleFrameworkMissingException" /> class with a system-supplied message that describes the error.</summary>
+    </member>
+    <member name="M:System.Deployment.Application.CompatibleFrameworkMissingException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Initializes a new instance of the <see cref="T:System.Deployment.Application.CompatibleFrameworkMissingException" /> class with serialized data.</summary>
+      <param name="serializationInfo">The object that holds the serialized object data. </param>
+      <param name="streamingContext">The contextual information about the source or destination. </param>
+    </member>
+    <member name="M:System.Deployment.Application.CompatibleFrameworkMissingException.#ctor(System.String)">
+      <summary>Initializes a new instance of the <see cref="T:System.Deployment.Application.CompatibleFrameworkMissingException" /> class with a specified message that describes the error.</summary>
+      <param name="message">The message that describes the exception. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
+    </member>
+    <member name="M:System.Deployment.Application.CompatibleFrameworkMissingException.#ctor(System.String,System.Exception)">
+      <summary>Initializes a new instance of the <see cref="T:System.Deployment.Application.CompatibleFrameworkMissingException" /> class with a specified error message and a reference to the inner exception that is the cause of this exception.</summary>
+      <param name="message">The message that describes the exception. The caller of this constructor is required to ensure that this string has been localized for the current system culture. </param>
+      <param name="innerException">The exception that is the cause of the current exception. If the <paramref name="innerException" /> parameter is not null, the current exception is raised in a catch block that handles the inner exception. </param>
+    </member>
+    <member name="P:System.Deployment.Application.CompatibleFrameworkMissingException.CompatibleFrameworks">
+      <summary>Gets a list of .NET Framework versions where this application can install and run.</summary>
+      <returns>A list of .NET Framework versions where this application can install and run.</returns>
+    </member>
+    <member name="M:System.Deployment.Application.CompatibleFrameworkMissingException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Initializes a new instance of the <see cref="T:System.Deployment.Application.CompatibleFrameworkMissingException" /> class with serialized data.</summary>
+      <param name="info">The object that holds the serialized object data. </param>
+      <param name="context">The contextual information about the source or destination. </param>
+    </member>
+    <member name="T:System.Deployment.Application.CompatibleFrameworks">
+      <summary>Provides details about versions of the .NET Framework on which this application can install and run.</summary>
+    </member>
+    <member name="P:System.Deployment.Application.CompatibleFrameworks.Frameworks">
+      <summary>Gets a list of .NET Framework versions on which this application can install and run.</summary>
+      <returns>A list of <see cref="T:System.Deployment.Application.CompatibleFramework" /> objects that specify the .NET Framework versions on which this application can install and run.</returns>
+    </member>
+    <member name="P:System.Deployment.Application.CompatibleFrameworks.SupportUrl">
+      <summary>Gets a <see cref="T:System.Uri" /> that provides the user with instructions for installing a version of the .NET Framework on which this application can install and run.</summary>
+      <returns>A <see cref="T:System.Uri" /> that provides the user with instructions for installing a version of the .NET Framework on which this application can install and run.</returns>
+    </member>
+    <member name="T:System.Deployment.Application.DependentPlatformMissingException">
+      <summary>The exception that is thrown when the platform dependency is not found during activation of the ClickOnce deployment and the deployment will not run.</summary>
+    </member>
+    <member name="M:System.Deployment.Application.DependentPlatformMissingException.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Deployment.Application.DependentPlatformMissingException" /> class. </summary>
+    </member>
+    <member name="M:System.Deployment.Application.DependentPlatformMissingException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Initializes a new instance of the <see cref="T:System.Deployment.Application.DependentPlatformMissingException" /> class. </summary>
+      <param name="serializationInfo">The object that holds the serialized object data. </param>
+      <param name="streamingContext">The contextual information about the source or destination. </param>
+    </member>
+    <member name="M:System.Deployment.Application.DependentPlatformMissingException.#ctor(System.String)">
+      <summary>Initializes a new instance of the <see cref="T:System.Deployment.Application.DependentPlatformMissingException" /> class with a specified message that describes the error. </summary>
+      <param name="message">The message that describes the exception. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
+    </member>
+    <member name="M:System.Deployment.Application.DependentPlatformMissingException.#ctor(System.String,System.Exception)">
+      <summary>Initializes a new instance of the <see cref="T:System.Deployment.Application.DependentPlatformMissingException" /> class with a specified error message and a reference to the inner exception that is the cause of this exception. </summary>
+      <param name="message">The message that describes the exception. The caller of this constructor is required to ensure that this string has been localized for the current system culture. </param>
+      <param name="innerException">The exception that is the cause of the current exception. If the <paramref name="innerException" /> parameter is not null, the current exception is raised in a catch block that handles the inner exception. </param>
+    </member>
+    <member name="M:System.Deployment.Application.DependentPlatformMissingException.#ctor(System.String,System.Uri)">
+      <summary>Initializes a new instance of the <see cref="T:System.Deployment.Application.DependentPlatformMissingException" /> class. </summary>
+      <param name="message">The exception message.</param>
+      <param name="supportUrl">The URL to visit for product support information.</param>
+    </member>
+    <member name="M:System.Deployment.Application.DependentPlatformMissingException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Gets the object data.</summary>
+      <param name="info">The object that holds the serialized object data.</param>
+      <param name="context">The contextual information about the source or destination.</param>
+    </member>
+    <member name="P:System.Deployment.Application.DependentPlatformMissingException.SupportUrl">
+      <summary>Gets a URI that indicates where support can be found for the problem encountered.</summary>
+      <returns>A URI that indicates where support can be found for the problem encountered.</returns>
+    </member>
+    <member name="T:System.Deployment.Application.DeploymentDownloadException">
+      <summary>Indicates that there was an error downloading either the ClickOnce manifests or the deployment's files to the client computer. </summary>
+    </member>
+    <member name="M:System.Deployment.Application.DeploymentDownloadException.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Deployment.Application.DeploymentDownloadException" /> class. </summary>
+    </member>
+    <member name="M:System.Deployment.Application.DeploymentDownloadException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Initializes a new instance of the <see cref="T:System.Deployment.Application.DeploymentDownloadException" /> class. </summary>
+      <param name="serializationInfo">The object that holds the serialized object data. </param>
+      <param name="streamingContext">The contextual information about the source or destination. </param>
+    </member>
+    <member name="M:System.Deployment.Application.DeploymentDownloadException.#ctor(System.String)">
+      <summary>Initializes a new instance of the <see cref="T:System.Deployment.Application.DeploymentDownloadException" /> class with a message that describes the exception. </summary>
+      <param name="message">The message that describes the exception. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
+    </member>
+    <member name="M:System.Deployment.Application.DeploymentDownloadException.#ctor(System.String,System.Exception)">
+      <summary>Initializes a new instance of the <see cref="T:System.Deployment.Application.DeploymentDownloadException" /> class. </summary>
+      <param name="message">The message that describes the exception. The caller of this constructor is required to ensure that this string has been localized for the current system culture. </param>
+      <param name="innerException">The exception that is the cause of the current exception. If the <paramref name="innerException" /> parameter is not null, the current exception is raised in a catch block that handles the inner exception. </param>
+    </member>
+    <member name="T:System.Deployment.Application.DeploymentException">
+      <summary>Defines a base class for all deployment-related exceptions.</summary>
+    </member>
+    <member name="M:System.Deployment.Application.DeploymentException.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Deployment.Application.DeploymentException" /> class. </summary>
+    </member>
+    <member name="M:System.Deployment.Application.DeploymentException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Initializes a new instance of the <see cref="T:System.Deployment.Application.DeploymentException" /> class. </summary>
+      <param name="serializationInfo">Stores all the data needed to serialize or deserialize an object. This class cannot be inherited.</param>
+      <param name="streamingContext">Describes the source and destination of a given serialized stream, and provides an additional caller-defined context.</param>
+    </member>
+    <member name="M:System.Deployment.Application.DeploymentException.#ctor(System.String)">
+      <summary>Initializes a new instance of the <see cref="T:System.Deployment.Application.DeploymentException" /> class. </summary>
+      <param name="message">Represents text as a series of Unicode characters.</param>
+    </member>
+    <member name="M:System.Deployment.Application.DeploymentException.#ctor(System.String,System.Exception)">
+      <summary>Initializes a new instance of the <see cref="T:System.Deployment.Application.DeploymentException" /> class. </summary>
+      <param name="message">Represents text as a series of Unicode characters.</param>
+      <param name="innerException">Represents errors that occur during application execution.</param>
+    </member>
+    <member name="M:System.Deployment.Application.DeploymentException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> that holds the serialized object data about the exception being thrown. </param>
+      <param name="context">The <see cref="T:System.Runtime.Serialization.StreamingContext" /> that contains contextual information about the source or destination. </param>
+    </member>
+    <member name="T:System.Deployment.Application.DeploymentProgressChangedEventArgs">
+      <summary>Represents progress data reported in an asynchronous operation.</summary>
+    </member>
+    <member name="P:System.Deployment.Application.DeploymentProgressChangedEventArgs.BytesCompleted">
+      <summary>Gets the number of bytes already downloaded by this operation.</summary>
+      <returns>An <see cref="T:System.Int64" /> representing the data already transferred, in bytes. </returns>
+    </member>
+    <member name="P:System.Deployment.Application.DeploymentProgressChangedEventArgs.BytesTotal">
+      <summary>Gets the total number of bytes in the download operation.</summary>
+      <returns>An <see cref="T:System.Int64" /> representing the total size of the download, in bytes.</returns>
+    </member>
+    <member name="P:System.Deployment.Application.DeploymentProgressChangedEventArgs.Group">
+      <summary>Gets the name of the file group being downloaded.</summary>
+      <returns>A <see cref="T:System.String" /> containing the name of the file group, if the event occurred as the result of a call to <see cref="Overload:System.Deployment.Application.ApplicationDeployment.DownloadFileGroupAsync" />; otherwise, a zero-length string. </returns>
+    </member>
+    <member name="P:System.Deployment.Application.DeploymentProgressChangedEventArgs.State">
+      <summary>Gets the action that the process is currently executing.</summary>
+      <returns>A <see cref="T:System.Deployment.Application.DeploymentProgressState" /> value, stating what element or elements the operation is currently downloading. </returns>
+    </member>
+    <member name="T:System.Deployment.Application.DeploymentProgressChangedEventHandler">
+      <summary>Represents the method that will handle the <see cref="E:System.Deployment.Application.ApplicationDeployment.CheckForUpdateProgressChanged" /> event, <see cref="E:System.Deployment.Application.ApplicationDeployment.UpdateProgressChanged" /> event, or <see cref="E:System.Deployment.Application.ApplicationDeployment.DownloadFileGroupProgressChanged" /> event of an <see cref="T:System.Deployment.Application.ApplicationDeployment" />. </summary>
+      <param name="sender">The source of the event. </param>
+      <param name="e">A <see cref="T:System.Deployment.Application.DeploymentProgressChangedEventArgs" /> that contains the event data.</param>
+    </member>
+    <member name="T:System.Deployment.Application.DeploymentProgressState">
+      <summary>Specifies the current stage of a ClickOnce download operation.</summary>
+    </member>
+    <member name="F:System.Deployment.Application.DeploymentProgressState.DownloadingDeploymentInformation">
+      <summary>ClickOnce is downloading the deployment manifest.</summary>
+    </member>
+    <member name="F:System.Deployment.Application.DeploymentProgressState.DownloadingApplicationInformation">
+      <summary>ClickOnce is downloading the application manifest.</summary>
+    </member>
+    <member name="F:System.Deployment.Application.DeploymentProgressState.DownloadingApplicationFiles">
+      <summary>ClickOnce is downloading the DLLs and data files that comprised the application.</summary>
+    </member>
+    <member name="T:System.Deployment.Application.DeploymentServiceCom">
+      <summary>Provides internal services for the ClickOnce deployment API. </summary>
+    </member>
+    <member name="M:System.Deployment.Application.DeploymentServiceCom.#ctor">
+      <summary>Creates a new instance of <see cref="T:System.Deployment.Application.DeploymentServiceCom" />.</summary>
+    </member>
+    <member name="M:System.Deployment.Application.DeploymentServiceCom.ActivateApplicationExtension(System.String,System.String,System.String)">
+      <summary>Activates an application extension.</summary>
+      <param name="textualSubId">The internal ID of the deployment.</param>
+      <param name="deploymentProviderUrl">The URL of the deployment.</param>
+      <param name="targetAssociatedFile">The target file.</param>
+    </member>
+    <member name="M:System.Deployment.Application.DeploymentServiceCom.ActivateDeployment(System.String,System.Boolean)">
+      <summary>Starts the deployment on the client computer. </summary>
+      <param name="deploymentLocation">The location of the deployment manifest on disk.</param>
+      <param name="isShortcut">Whether <paramref name="deploymentLocation" /> is a shortcut, or the actual file.</param>
+    </member>
+    <member name="M:System.Deployment.Application.DeploymentServiceCom.ActivateDeploymentEx(System.String,System.Int32,System.Int32)">
+      <summary>Starts the deployment on the client computer.</summary>
+      <param name="deploymentLocation">The location of the deployment manifest.</param>
+      <param name="unsignedPolicy">The policy to use for unsigned applications.</param>
+      <param name="signedPolicy">The policy to use for signed applications.</param>
+    </member>
+    <member name="M:System.Deployment.Application.DeploymentServiceCom.CheckForDeploymentUpdate(System.String)">
+      <summary>Checks the update location to determine whether an updated version of this deployment exists.</summary>
+      <param name="textualSubId">An internal identifier for the deployment.</param>
+    </member>
+    <member name="M:System.Deployment.Application.DeploymentServiceCom.CleanOnlineAppCache">
+      <summary>Removes all online-only ClickOnce applications that are installed on a computer.</summary>
+    </member>
+    <member name="M:System.Deployment.Application.DeploymentServiceCom.EndServiceRightNow">
+      <summary>Stops a deployment update immediately. </summary>
+    </member>
+    <member name="M:System.Deployment.Application.DeploymentServiceCom.MaintainSubscription(System.String)">
+      <summary>Maintains the update subscription. </summary>
+      <param name="textualSubId">The internal ID of the deployment.</param>
+    </member>
+    <member name="T:System.Deployment.Application.DownloadApplicationCompletedEventArgs">
+      <summary>Provides data for the <see cref="E:System.Deployment.Application.InPlaceHostingManager.DownloadApplicationCompleted" /> event. </summary>
+    </member>
+    <member name="P:System.Deployment.Application.DownloadApplicationCompletedEventArgs.LogFilePath">
+      <summary>Gets the path of the ClickOnce log file. </summary>
+      <returns>The path of the ClickOnce log file.</returns>
+    </member>
+    <member name="P:System.Deployment.Application.DownloadApplicationCompletedEventArgs.ShortcutAppId">
+      <summary>Gets the contents of an .appref-ms file that can launch this ClickOnce application.</summary>
+      <returns>The contents of an .appref-ms file.</returns>
+    </member>
+    <member name="T:System.Deployment.Application.DownloadFileGroupCompletedEventArgs">
+      <summary>Describes a file download that has recently completed. </summary>
+    </member>
+    <member name="P:System.Deployment.Application.DownloadFileGroupCompletedEventArgs.Group">
+      <summary>Gets the name of the file group being downloaded.</summary>
+      <returns>A <see cref="T:System.String" /> representing the name of the file group.</returns>
+    </member>
+    <member name="T:System.Deployment.Application.DownloadFileGroupCompletedEventHandler">
+      <summary>Represents the method that will handle the <see cref="E:System.Deployment.Application.ApplicationDeployment.DownloadFileGroupCompleted" /> event of an <see cref="T:System.Deployment.Application.ApplicationDeployment" />. </summary>
+      <param name="sender">The source of the event. </param>
+      <param name="e">A <see cref="T:System.Deployment.Application.DownloadFileGroupCompletedEventArgs" /> that contains the event data.</param>
+    </member>
+    <member name="T:System.Deployment.Application.DownloadProgressChangedEventArgs">
+      <summary>Provides data for the <see cref="E:System.Deployment.Application.InPlaceHostingManager.DownloadProgressChanged" /> event. </summary>
+    </member>
+    <member name="P:System.Deployment.Application.DownloadProgressChangedEventArgs.BytesDownloaded">
+      <summary>Gets the number of bytes downloaded to the local computer.</summary>
+      <returns>An <see cref="T:System.Int64" /> representing the number of downloaded bytes. </returns>
+    </member>
+    <member name="P:System.Deployment.Application.DownloadProgressChangedEventArgs.State">
+      <summary>Gets the progress state of the download.</summary>
+      <returns>A <see cref="T:System.Deployment.Application.DeploymentProgressState" /> value describing which portion of the ClickOnce application is being downloaded.</returns>
+    </member>
+    <member name="P:System.Deployment.Application.DownloadProgressChangedEventArgs.TotalBytesToDownload">
+      <summary>Gets the total number of bytes for the download operation. </summary>
+      <returns>An <see cref="T:System.Int64" /> representing the total size of the download, in bytes.</returns>
+    </member>
+    <member name="T:System.Deployment.Application.GetManifestCompletedEventArgs">
+      <summary>Provides data for the <see cref="E:System.Deployment.Application.InPlaceHostingManager.GetManifestCompleted" /> event of <see cref="T:System.Deployment.Application.InPlaceHostingManager" />.</summary>
+    </member>
+    <member name="P:System.Deployment.Application.GetManifestCompletedEventArgs.ActivationContext">
+      <summary>Gets the context for the current ClickOnce application.</summary>
+      <returns>An <see cref="T:System.ActivationContext" /> object representing the context for the current application.</returns>
+    </member>
+    <member name="P:System.Deployment.Application.GetManifestCompletedEventArgs.ApplicationIdentity">
+      <summary>Gets a description of the ClickOnce application. </summary>
+      <returns>An <see cref="T:System.ApplicationIdentity" /> object.</returns>
+    </member>
+    <member name="P:System.Deployment.Application.GetManifestCompletedEventArgs.ApplicationManifest">
+      <summary>Gets the ClickOnce application manifest for this deployment.</summary>
+      <returns>An <see cref="T:System.Xml.XmlReader" /> representing the application manifest.</returns>
+    </member>
+    <member name="P:System.Deployment.Application.GetManifestCompletedEventArgs.DeploymentManifest">
+      <summary>Gets the ClickOnce deployment manifest for this deployment.</summary>
+      <returns>An <see cref="T:System.Xml.XmlReader" /> representing the deployment manifest.</returns>
+    </member>
+    <member name="P:System.Deployment.Application.GetManifestCompletedEventArgs.IsCached">
+      <summary>Gets a value indicating whether this ClickOnce application is cached.</summary>
+      <returns>true if the application is cached; otherwise, false.</returns>
+    </member>
+    <member name="P:System.Deployment.Application.GetManifestCompletedEventArgs.LogFilePath">
+      <summary>Gets the location of the ClickOnce error log.</summary>
+      <returns>A <see cref="T:System.String" /> containing the location of the ClickOnce error log.</returns>
+    </member>
+    <member name="P:System.Deployment.Application.GetManifestCompletedEventArgs.ProductName">
+      <summary>Gets the name of the ClickOnce application.</summary>
+      <returns>A <see cref="T:System.String" /> representing the product name of the ClickOnce application, as stored in the assembly metadata of the application's main executable file.</returns>
+    </member>
+    <member name="P:System.Deployment.Application.GetManifestCompletedEventArgs.SubscriptionIdentity">
+      <summary>Gets a string identifying the subscription.</summary>
+      <returns>A string with information identifying the subscription.</returns>
+    </member>
+    <member name="P:System.Deployment.Application.GetManifestCompletedEventArgs.SupportUri">
+      <summary>Gets the location of a Web page users can visit to obtain product support for the ClickOnce application.</summary>
+      <returns>A <see cref="T:System.Uri" /> containing the value found in the supportUrl attribute of the deployment manifest's &lt;description&gt; tag. For more information, see ClickOnce Deployment Manifest.</returns>
+    </member>
+    <member name="P:System.Deployment.Application.GetManifestCompletedEventArgs.Version">
+      <summary>Gets the version of the update for the ClickOnce application.</summary>
+      <returns>A <see cref="T:System.Version" /> representing the version number contained within the downloaded manifest.</returns>
+    </member>
+    <member name="T:System.Deployment.Application.InPlaceHostingManager">
+      <summary>Install or update a ClickOnce deployment on a computer.</summary>
+    </member>
+    <member name="M:System.Deployment.Application.InPlaceHostingManager.#ctor(System.Uri)">
+      <summary>Creates a new instance of <see cref="T:System.Deployment.Application.InPlaceHostingManager" /> to download and install the specified browser-hosted application.</summary>
+      <param name="deploymentManifest">A Uniform Resource Identifier (<see cref="T:System.Uri" />) to a ClickOnce application's deployment manifest.</param>
+      <exception cref="T:System.PlatformNotSupportedException">
+        <see cref="T:System.Deployment.Application.InPlaceHostingManager" /> can be used only in Windows XP or in later versions of the Windows operating system.</exception>
+      <exception cref="T:System.ArgumentNullException">Cannot pass null for the <paramref name="deploymentManifest" /> argument.</exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="deploymentManifest" /> uses a URI scheme that is not supported by ClickOnce.</exception>
+    </member>
+    <member name="M:System.Deployment.Application.InPlaceHostingManager.#ctor(System.Uri,System.Boolean)">
+      <summary>Creates a new instance of <see cref="T:System.Deployment.Application.InPlaceHostingManager" /> to download and install the specified application, which can be either a stand-alone Windows Forms-based application or an application hosted in a Web browser.</summary>
+      <param name="deploymentManifest">The Uniform Resource Identifier (URI) to the deployment manifest of the application that will be installed.</param>
+      <param name="launchInHostProcess">Whether this application will be run in a host, such as a Web browser. For a stand-alone application, set this value to false.</param>
+      <exception cref="T:System.PlatformNotSupportedException">
+        <see cref="T:System.Deployment.Application.InPlaceHostingManager" /> can be used only in Windows XP or in later versions of the Windows operating system.</exception>
+      <exception cref="T:System.ArgumentNullException">Cannot pass null for the <paramref name="deploymentManifest" /> argument.</exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="deploymentManifest" /> uses a URI scheme that is not supported by ClickOnce.</exception>
+    </member>
+    <member name="M:System.Deployment.Application.InPlaceHostingManager.AssertApplicationRequirements">
+      <summary>Determines whether the ClickOnce application has the appropriate permissions and platform dependencies to run on the local computer.</summary>
+      <exception cref="T:System.InvalidOperationException">Raised if this method is called before the <see cref="M:System.Deployment.Application.InPlaceHostingManager.GetManifestAsync" /> method.</exception>
+    </member>
+    <member name="M:System.Deployment.Application.InPlaceHostingManager.AssertApplicationRequirements(System.Boolean)">
+      <summary>Determines whether the ClickOnce application has the appropriate permissions and platform dependencies to run on the local computer.</summary>
+      <param name="grantApplicationTrust">If true, the application will attempt to elevate its permissions to the required level.</param>
+    </member>
+    <member name="M:System.Deployment.Application.InPlaceHostingManager.CancelAsync">
+      <summary>Cancels an asynchronous download operation.</summary>
+    </member>
+    <member name="M:System.Deployment.Application.InPlaceHostingManager.Dispose">
+      <summary>Releases all resources used by the <see cref="T:System.Deployment.Application.InPlaceHostingManager" />. </summary>
+    </member>
+    <member name="M:System.Deployment.Application.InPlaceHostingManager.DownloadApplicationAsync">
+      <summary>Downloads an application update in the background.</summary>
+      <exception cref="T:System.InvalidOperationException">Raised if this method is called before the <see cref="M:System.Deployment.Application.InPlaceHostingManager.GetManifestAsync" /> and <see cref="M:System.Deployment.Application.InPlaceHostingManager.AssertApplicationRequirements" /> methods.</exception>
+    </member>
+    <member name="E:System.Deployment.Application.InPlaceHostingManager.DownloadApplicationCompleted">
+      <summary>Occurs when the application has finished downloading to the local computer.</summary>
+    </member>
+    <member name="E:System.Deployment.Application.InPlaceHostingManager.DownloadProgressChanged">
+      <summary>Occurs when there is a change in the status of an application or manifest download.</summary>
+    </member>
+    <member name="M:System.Deployment.Application.InPlaceHostingManager.Execute">
+      <summary>Launches the ClickOnce application, if and only if it is a Windows Presentation Foundation-based application running in a Web browser.</summary>
+      <returns>An <see cref="T:System.Runtime.Remoting.ObjectHandle" /> corresponding to the launched application.</returns>
+    </member>
+    <member name="M:System.Deployment.Application.InPlaceHostingManager.GetManifestAsync">
+      <summary>Downloads the deployment manifest of the ClickOnce application in the background, and raises an event when the operation has either completed or encountered an error.</summary>
+    </member>
+    <member name="E:System.Deployment.Application.InPlaceHostingManager.GetManifestCompleted">
+      <summary>Occurs when the deployment manifest has been downloaded to the local computer.</summary>
+    </member>
+    <member name="M:System.Deployment.Application.InPlaceHostingManager.UninstallCustomAddIn(System.String)">
+      <summary>Removes a previously installed user-defined component of an application.</summary>
+      <param name="subscriptionId">A string that contains a subscription identifier, which indicates the add-in to remove.</param>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="subscriptionId" /> is not a valid subscription identity, or does not include a name, public key token, processor architecture, and version number.</exception>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="subscriptionId" /> is null.</exception>
+    </member>
+    <member name="M:System.Deployment.Application.InPlaceHostingManager.UninstallCustomUXApplication(System.String)">
+      <summary>Removes a ClickOnce application that includes the &lt;customUX&gt; element.</summary>
+      <param name="subscriptionId">A string that contains a subscription identifier, which indicates the ClickOnce application to remove.</param>
+    </member>
+    <member name="T:System.Deployment.Application.InvalidDeploymentException">
+      <summary>Indicates that ClickOnce could not read either the deployment or application manifests.</summary>
+    </member>
+    <member name="M:System.Deployment.Application.InvalidDeploymentException.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Deployment.Application.InvalidDeploymentException" /> class. </summary>
+    </member>
+    <member name="M:System.Deployment.Application.InvalidDeploymentException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Initializes a new instance of the <see cref="T:System.Deployment.Application.InvalidDeploymentException" /> class. </summary>
+      <param name="serializationInfo">The object that holds the serialized object data. </param>
+      <param name="streamingContext">The contextual information about the source or destination. </param>
+    </member>
+    <member name="M:System.Deployment.Application.InvalidDeploymentException.#ctor(System.String)">
+      <summary>Initializes a new instance of the <see cref="T:System.Deployment.Application.InvalidDeploymentException" /> class with the specified message that describes the exception. </summary>
+      <param name="message">The message that describes the exception. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
+    </member>
+    <member name="M:System.Deployment.Application.InvalidDeploymentException.#ctor(System.String,System.Exception)">
+      <summary>Initializes a new instance of the <see cref="T:System.Deployment.Application.InvalidDeploymentException" /> class. </summary>
+      <param name="message">The message that describes the exception. The caller of this constructor is required to ensure that this string has been localized for the current system culture. </param>
+      <param name="innerException">The exception that is the cause of the current exception. If the <paramref name="innerException" /> parameter is not null, the current exception is raised in a catch block that handles the inner exception. </param>
+    </member>
+    <member name="T:System.Deployment.Application.SupportedRuntimeMissingException">
+      <summary>This exception is thrown when a runtime version that is compatible with this application cannot be found.</summary>
+    </member>
+    <member name="M:System.Deployment.Application.SupportedRuntimeMissingException.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Deployment.Application.SupportedRuntimeMissingException" /> class with a system-supplied message that describes the error.</summary>
+    </member>
+    <member name="M:System.Deployment.Application.SupportedRuntimeMissingException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Initializes a new instance of the <see cref="T:System.Deployment.Application.SupportedRuntimeMissingException" /> class with serialized data.</summary>
+      <param name="serializationInfo">The object that holds the serialized object data. </param>
+      <param name="streamingContext">The contextual information about the source or destination. </param>
+    </member>
+    <member name="M:System.Deployment.Application.SupportedRuntimeMissingException.#ctor(System.String)">
+      <summary>Initializes a new instance of the <see cref="T:System.Deployment.Application.SupportedRuntimeMissingException" /> class with a specified message that describes the error.</summary>
+      <param name="message">The message that describes the exception. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
+    </member>
+    <member name="M:System.Deployment.Application.SupportedRuntimeMissingException.#ctor(System.String,System.Exception)">
+      <summary>Initializes a new instance of the <see cref="T:System.Deployment.Application.SupportedRuntimeMissingException" /> class with a specified error message and a reference to the inner exception that is the cause of this exception.</summary>
+      <param name="message">The message that describes the exception. The caller of this constructor is required to ensure that this string has been localized for the current system culture. </param>
+      <param name="innerException">The exception that is the cause of the current exception. If the <paramref name="innerException" /> parameter is not null, the current exception is raised in a catch block that handles the inner exception. </param>
+    </member>
+    <member name="M:System.Deployment.Application.SupportedRuntimeMissingException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Initializes a new instance of the <see cref="T:System.Deployment.Application.SupportedRuntimeMissingException" /> class with serialized data.</summary>
+      <param name="info">The object that holds the serialized object data. </param>
+      <param name="context">The contextual information about the source or destination. </param>
+    </member>
+    <member name="P:System.Deployment.Application.SupportedRuntimeMissingException.SupportedRuntimeVersion">
+      <summary>Gets the version of the runtime where this application can install and run.</summary>
+      <returns>A string that contains the runtime version number.</returns>
+    </member>
+    <member name="T:System.Deployment.Application.TrustNotGrantedException">
+      <summary>Indicates that the application does not have the appropriate level of trust to run on the local computer.</summary>
+    </member>
+    <member name="M:System.Deployment.Application.TrustNotGrantedException.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Deployment.Application.TrustNotGrantedException" /> class with a system-supplied message that describes the error.</summary>
+    </member>
+    <member name="M:System.Deployment.Application.TrustNotGrantedException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Initializes a new instance of the <see cref="T:System.Deployment.Application.TrustNotGrantedException" /> class with serialized data.</summary>
+      <param name="serializationInfo">The object that holds the serialized object data. </param>
+      <param name="streamingContext">The contextual information about the source or destination. </param>
+    </member>
+    <member name="M:System.Deployment.Application.TrustNotGrantedException.#ctor(System.String)">
+      <summary>Initializes a new instance of the <see cref="T:System.Deployment.Application.TrustNotGrantedException" /> class with a specified message that describes the error.</summary>
+      <param name="message">The message that describes the exception. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
+    </member>
+    <member name="M:System.Deployment.Application.TrustNotGrantedException.#ctor(System.String,System.Exception)">
+      <summary>Initializes a new instance of the <see cref="T:System.Deployment.Application.TrustNotGrantedException" /> class with a specified error message and a reference to the inner exception that is the cause of this exception.</summary>
+      <param name="message">The message that describes the exception. The caller of this constructor is required to ensure that this string has been localized for the current system culture. </param>
+      <param name="innerException">The exception that is the cause of the current exception. If the <paramref name="innerException" /> parameter is not null, the current exception is raised in a catch block that handles the inner exception. </param>
+    </member>
+    <member name="T:System.Deployment.Application.UpdateCheckInfo">
+      <summary>Represents detailed update information obtained through a call to <see cref="M:System.Deployment.Application.ApplicationDeployment.CheckForDetailedUpdate" />.</summary>
+    </member>
+    <member name="P:System.Deployment.Application.UpdateCheckInfo.AvailableVersion">
+      <summary>Gets the version number of the latest uninstalled version.</summary>
+      <returns>The <see cref="T:System.Version" /> expressing the major and minor build and revision numbers of the latest version.</returns>
+    </member>
+    <member name="P:System.Deployment.Application.UpdateCheckInfo.IsUpdateRequired">
+      <summary>Gets a value indicating whether the update must be installed. </summary>
+      <returns>true if the update is required; otherwise, false.</returns>
+    </member>
+    <member name="P:System.Deployment.Application.UpdateCheckInfo.MinimumRequiredVersion">
+      <summary>Gets the minimum version that the user must have installed on the computer.</summary>
+      <returns>A <see cref="T:System.Version" /> expressing the least version that the user must install.</returns>
+      <exception cref="T:System.InvalidOperationException">There is no new version available to install.</exception>
+    </member>
+    <member name="P:System.Deployment.Application.UpdateCheckInfo.UpdateAvailable">
+      <summary>Gets whether an uninstalled update is available.</summary>
+      <returns>true if new version of the application is available; otherwise, false.</returns>
+    </member>
+    <member name="P:System.Deployment.Application.UpdateCheckInfo.UpdateSizeBytes">
+      <summary>Gets the size of the available update.</summary>
+      <returns>An <see cref="T:System.Int64" /> describing the size, in bytes, of the available update. If no update is available, returns 0. </returns>
+    </member>
+  </members>
+</doc>

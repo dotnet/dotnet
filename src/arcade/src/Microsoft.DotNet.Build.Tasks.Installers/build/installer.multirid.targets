@@ -1,0 +1,31 @@
+<Project>
+  <Target Name="_ComputeInstallerItems">
+    <ItemGroup>
+      <_RuntimeIdentifiers Include="$(InstallerRuntimeIdentifiers)" />
+      <!-- Make normalization explicit: Trim; Deduplicate by keeping first occurrence, case insensitive -->
+      <_RuntimeIdentifiers Include="@(_RuntimeIdentifiers->Trim()->Distinct())" />
+      <_InnerBuildProjects Include="$(MSBuildProjectFile)">
+        <AdditionalProperties>InstallerRuntimeIdentifier=%(_RuntimeIdentifiers.Identity)</AdditionalProperties>
+      </_InnerBuildProjects>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="GenerateInstallers"
+          Condition="'$(SkipInstallerBuild)' != 'true'"
+          DependsOnTargets="_ComputeInstallerItems"
+          Returns="@(InnerOutput)">
+    <Error Condition="'$(InstallerRuntimeIdentifiers)' == ''"
+           Text="At least one RID must be specified via InstallerRuntimeIdentifiers to build installers." />
+    <!-- If this logic is changed, also update Clean -->
+    <MSBuild Projects="@(_InnerBuildProjects)"
+             Condition="'@(_InnerBuildProjects)' != '' "
+             Targets="GenerateInstallers"
+             BuildInParallel="$(BuildInParallel)">
+      <Output ItemName="InnerOutput" TaskParameter="TargetOutputs" />
+    </MSBuild>
+  </Target>
+
+  <PropertyGroup>
+    <BuildDependsOn>$(BuildDependsOn);_GetSkipInstallerBuildProps;GenerateInstallers</BuildDependsOn>
+  </PropertyGroup>
+</Project>

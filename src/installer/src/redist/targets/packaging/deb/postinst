@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+
+first_run() {
+    /usr/share/dotnet/dotnet exec /usr/share/dotnet/sdk/%SDK_VERSION%/dotnet.dll internal-reportinstallsuccess "debianpackage" > /dev/null 2>&1 || true
+}
+
+INSTALL_TEMP_HOME=/tmp/dotnet-installer
+[ -d $INSTALL_TEMP_HOME ] || mkdir $INSTALL_TEMP_HOME
+HOME=$INSTALL_TEMP_HOME first_run

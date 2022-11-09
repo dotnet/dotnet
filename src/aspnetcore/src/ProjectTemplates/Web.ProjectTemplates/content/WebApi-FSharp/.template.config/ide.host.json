@@ -1,0 +1,7 @@
+{
+  "$schema": "http://json.schemastore.org/ide.host",
+  "order": 201,
+  "icon": "ide/WebAPI.png",
+  "supportsDocker": true,
+  "disableHttpsSymbol": "NoHttps"
+}

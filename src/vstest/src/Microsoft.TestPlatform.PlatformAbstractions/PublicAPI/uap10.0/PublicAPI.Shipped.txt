@@ -1,0 +1,9 @@
+﻿#nullable enable
+Microsoft.VisualStudio.TestPlatform.ObjectModel.PlatformEqtTrace.InitializeTrace(string? customLogFile, Microsoft.VisualStudio.TestPlatform.ObjectModel.PlatformTraceLevel traceLevel) -> bool
+Microsoft.VisualStudio.TestPlatform.ObjectModel.PlatformEqtTrace.WriteLine(Microsoft.VisualStudio.TestPlatform.ObjectModel.PlatformTraceLevel level, string? message) -> void
+Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformThread.Run(System.Action? action, Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformApartmentState apartmentState, bool waitForCompletion) -> void
+Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.ProcessHelper.GetProcessById(int processId) -> object!
+Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.ProcessHelper.LaunchProcess(string! processPath, string? arguments, string? workingDirectory, System.Collections.Generic.IDictionary<string!, string?>? envVariables, System.Action<object?, string?>? errorCallback, System.Action<object?>? exitCallBack, System.Action<object?, string?>? outputCallBack) -> object!
+Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.ProcessHelper.SetExitCallback(int parentProcessId, System.Action<object?>? callbackAction) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.PlatformEqtTrace.LogFile.get -> string?
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.PlatformEqtTrace.LogFile.set -> void

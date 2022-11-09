@@ -1,0 +1,11 @@
+storageLocation:
+  type: azure-key-vault
+  parameters:
+    subscription: 68672ab8-de0c-40f1-8d1b-ffb20bd62c0f
+    name: HelixProdKV
+
+secrets:
+  HelixApiAccessToken:
+    type: helix-access-token
+    parameters:
+      environment: helix.dot.net

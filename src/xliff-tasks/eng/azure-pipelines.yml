@@ -1,0 +1,114 @@
+# CI and PR triggers
+trigger:
+- main
+pr:
+- main
+
+variables:
+  - name: _TeamName
+    value: DotNetCore
+  - name: _BuildConfig
+    value: Release
+  - name: _PublishUsingPipelines
+    value: true
+  - name: _DotNetArtifactsCategory
+    value: .NETCore
+
+stages:
+- stage: build
+  displayName: Build
+  jobs:
+  - template: /eng/common/templates/jobs/jobs.yml
+    parameters:
+      enableMicrobuild: true
+      enablePublishBuildArtifacts: true
+      enablePublishTestResults: false
+      enablePublishBuildAssets: true
+      enablePublishUsingPipelines: $(_PublishUsingPipelines)
+      enableSourceBuild: true
+      enableTelemetry: true
+      helixRepo: dotnet/standard
+      jobs:
+      - job: Windows_NT
+        pool:
+          ${{ if or(eq(variables['System.TeamProject'], 'public'), in(variables['Build.Reason'], 'PullRequest')) }}:
+            name: NetCore-Public
+            demands: ImageOverride -equals windows.vs2017.amd64.open
+          ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+            name: NetCore1ESPool-Internal
+            demands: ImageOverride -equals windows.vs2017.amd64
+        variables:
+        # Enable signing for internal, non-PR builds
+        - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+          - group: DotNet-Blob-Feed
+          - group: DotNet-Symbol-Server-Pats
+          - name: _SignType
+            value: Real
+          - name: _DotNetPublishToBlobFeed
+            value: true
+          - name: _BuildArgs
+            value: /p:SignType=$(_SignType)
+              /p:DotNetSignType=$(_SignType)
+              /p:MicroBuild_SigningEnabled=true
+              /p:OverridePackageSource=https://dotnetfeed.blob.core.windows.net/dotnet-core/index.json
+              /p:TeamName=$(_TeamName)
+              /p:DotNetPublishBlobFeedKey=$(dotnetfeed-storage-access-key-1)
+              /p:DotNetPublishBlobFeedUrl=https://dotnetfeed.blob.core.windows.net/dotnet-core/index.json
+              /p:DotNetPublishToBlobFeed=true
+              /p:DotNetPublishUsingPipelines=$(_PublishUsingPipelines)
+              /p:DotNetArtifactsCategory=$(_DotNetArtifactsCategory)
+              /p:DotNetSymbolServerTokenMsdl=$(microsoft-symbol-server-pat)
+              /p:DotNetSymbolServerTokenSymWeb=$(symweb-symbol-server-pat)
+              /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
+          - name: _OfficialBuildIdArgs
+        # else
+        - ${{ if or(eq(variables['System.TeamProject'], 'public'), in(variables['Build.Reason'], 'PullRequest')) }}:
+          - name: _SignType
+            value: Test
+          - name: _BuildArgs
+            value: /p:SignType=$(_SignType)
+        strategy:
+          matrix:
+            Debug:
+              _BuildConfig: Debug
+            Release:
+              _BuildConfig: Release
+        steps:
+        - checkout: self
+          clean: true
+        - script: eng\common\cibuild.cmd
+            -configuration $(_BuildConfig)
+            -prepareMachine
+            -warnaserror:0
+            $(_BuildArgs)
+          displayName: Windows Build / Publish
+
+      # Linux leg (only runs in CI)
+      - ${{ if eq(variables['System.TeamProject'], 'public') }}:
+        - job: Linux
+          pool:
+            vmimage: ubuntu-latest
+          strategy:
+            matrix:
+              Debug:
+                _BuildConfig: Debug
+              Release:
+                _BuildConfig: Release
+          variables:
+          - name: _SignType
+            value: Test
+          steps:
+          - checkout: self
+            clean: true
+          - script: eng/common/cibuild.sh
+              --configuration $(_BuildConfig)
+              --prepareMachine
+            displayName: Linux Build
+
+- ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+  - template: /eng/common/templates/post-build/post-build.yml
+    parameters:
+      publishingInfraVersion: 3
+      # Symbol validation isn't being very reliable lately. This should be enabled back
+      # once this issue is resolved: https://github.com/dotnet/arcade/issues/2871
+      enableSymbolValidation: false

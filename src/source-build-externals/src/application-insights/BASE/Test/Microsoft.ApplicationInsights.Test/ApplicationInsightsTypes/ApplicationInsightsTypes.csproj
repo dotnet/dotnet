@@ -1,0 +1,88 @@
+﻿<Project ToolsVersion="15.0" Sdk="Microsoft.NET.Sdk">
+  <!--temp while we dont merge application insights types -->
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildProjectDirectory), 'Product.props'))\Product.props" />
+  <Import Project="$(PropsRoot)\Test.props" />
+  <PropertyGroup>
+    <Company>Microsoft</Company>
+    <Copyright>Copyright © Microsoft. All Rights Reserved.</Copyright>
+
+    <TargetFrameworks>net452;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks Condition="$(OS) != 'Windows_NT'">netstandard2.0</TargetFrameworks>
+
+    <ProjectGuid>{4B0BC3B7-C7FC-4333-9E28-5790D9153F07}</ProjectGuid>
+    <RootNamespace>ApplicationInsightsTypes</RootNamespace>
+    <AssemblyName>ApplicationInsightsTypes</AssemblyName>
+    <BondOptions>--collection-interfaces --using="DateTimeOffset=System.DateTimeOffset" --using="TimeSpan=System.TimeSpan" --using="Guid=System.Guid"</BondOptions>
+    <BondOutputDirectory>$(MSBuildThisFileDirectory)\Generated</BondOutputDirectory>
+    <EnableDefaultItems Condition="$(OS) == 'Windows_NT'">false</EnableDefaultItems>
+  </PropertyGroup>
+  <ItemGroup Condition="$(OS) == 'Windows_NT'">
+    <Compile Include="ItemType.cs" />
+    <Compile Include="TelemetryItem.cs" />
+    <Compile Include="TelemetryItemType.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Bond.CSharp" Version="7.0.1">
+      <PrivateAssets>build</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup Condition="$(OS) == 'Windows_NT'">
+    <BondCodegen Include="..\..\..\Schema\PublicSchema\AvailabilityData.bond">
+      <Link>StackFrame.bond</Link>
+    </BondCodegen>
+    <BondCodegen Include="..\..\..\Schema\PublicSchema\Base.bond">
+      <Link>Base.bond</Link>
+    </BondCodegen>
+    <BondCodegen Include="..\..\..\Schema\PublicSchema\ContextTagKeys.bond">
+      <Link>ContextTagKeys.bond</Link>
+    </BondCodegen>
+    <BondCodegen Include="..\..\..\Schema\PublicSchema\Data.bond">
+      <Link>Data.bond</Link>
+    </BondCodegen>
+    <BondCodegen Include="..\..\..\Schema\PublicSchema\DataPoint.bond">
+      <Link>DataPoint.bond</Link>
+    </BondCodegen>
+    <BondCodegen Include="..\..\..\Schema\PublicSchema\DataPointType.bond">
+      <Link>DataPointType.bond</Link>
+    </BondCodegen>
+    <BondCodegen Include="..\..\..\Schema\PublicSchema\Domain.bond">
+      <Link>Domain.bond</Link>
+    </BondCodegen>
+    <BondCodegen Include="..\..\..\Schema\PublicSchema\Envelope.bond">
+      <Link>Envelope.bond</Link>
+    </BondCodegen>
+    <BondCodegen Include="..\..\..\Schema\PublicSchema\EventData.bond">
+      <Link>EventData.bond</Link>
+    </BondCodegen>
+    <BondCodegen Include="..\..\..\Schema\PublicSchema\ExceptionData.bond">
+      <Link>ExceptionData.bond</Link>
+    </BondCodegen>
+    <BondCodegen Include="..\..\..\Schema\PublicSchema\ExceptionDetails.bond">
+      <Link>ExceptionDetails.bond</Link>
+    </BondCodegen>
+    <BondCodegen Include="..\..\..\Schema\PublicSchema\MessageData.bond">
+      <Link>MessageData.bond</Link>
+    </BondCodegen>
+    <BondCodegen Include="..\..\..\Schema\PublicSchema\MetricData.bond">
+      <Link>MetricData.bond</Link>
+    </BondCodegen>
+    <BondCodegen Include="..\..\..\Schema\PublicSchema\PageViewData.bond">
+      <Link>PageViewData.bond</Link>
+    </BondCodegen>
+    <BondCodegen Include="..\..\..\Schema\PublicSchema\PageViewPerfData.bond">
+      <Link>PageViewPerfData.bond</Link>
+    </BondCodegen>
+    <BondCodegen Include="..\..\..\Schema\PublicSchema\RemoteDependencyData.bond">
+      <Link>RemoteDependencyData.bond</Link>
+    </BondCodegen>
+    <BondCodegen Include="..\..\..\Schema\PublicSchema\RequestData.bond">
+      <Link>RequestData.bond</Link>
+    </BondCodegen>
+    <BondCodegen Include="..\..\..\Schema\PublicSchema\SeverityLevel.bond">
+      <Link>SeverityLevel.bond</Link>
+    </BondCodegen>
+    <BondCodegen Include="..\..\..\Schema\PublicSchema\StackFrame.bond">
+      <Link>StackFrame.bond</Link>
+    </BondCodegen>
+  </ItemGroup>
+</Project>

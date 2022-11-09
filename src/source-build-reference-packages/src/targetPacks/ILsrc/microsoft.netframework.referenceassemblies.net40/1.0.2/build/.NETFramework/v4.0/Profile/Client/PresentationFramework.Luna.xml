@@ -1,0 +1,124 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>PresentationFramework.Luna</name>
+  </assembly>
+  <members>
+    <member name="P:Microsoft.Windows.Themes.ButtonChrome.ThemeColor">
+      <summary>Gets or sets the theme color.  </summary>
+      <returns>A value in the enumeration.</returns>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.ButtonChrome.ThemeColorProperty">
+      <summary>Identifies the <see cref="P:Microsoft.Windows.Themes.ButtonChrome.ThemeColor" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="P:Microsoft.Windows.Themes.ButtonChrome.ThemeColor" /> dependency property.</returns>
+    </member>
+    <member name="P:Microsoft.Windows.Themes.DataGridHeaderBorder.ThemeColor">
+      <summary>Gets or sets the header theme color.</summary>
+      <returns>Represents possible color variants for the Microsoft themes. </returns>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.DataGridHeaderBorder.ThemeColorProperty">
+      <summary>Identifies the <see cref="P:Microsoft.Windows.Themes.DataGridHeaderBorder.ThemeColor" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="P:Microsoft.Windows.Themes.DataGridHeaderBorder.ThemeColor" /> dependency property.</returns>
+    </member>
+    <member name="T:Microsoft.Windows.Themes.ScrollChrome">
+      <summary>Creates the theme-specific look for Microsoft .NET Framework <see cref="T:System.Windows.Controls.Primitives.ScrollBar" /> elements.</summary>
+    </member>
+    <member name="M:Microsoft.Windows.Themes.ScrollChrome.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:Microsoft.Windows.Themes.ScrollChrome" /> class.    </summary>
+    </member>
+    <member name="M:Microsoft.Windows.Themes.ScrollChrome.GetScrollGlyph(System.Windows.DependencyObject)">
+      <summary>Gets the <see cref="T:Microsoft.Windows.Themes.ScrollGlyph" /> for the specified object.    </summary>
+      <returns>One of the enumeration values.   </returns>
+      <param name="element">The dependency object to which the <see cref="T:Microsoft.Windows.Themes.ScrollGlyph" /> is attached.   </param>
+    </member>
+    <member name="P:Microsoft.Windows.Themes.ScrollChrome.HasOuterBorder">
+      <summary>Gets or sets a value indicating whether the <see cref="T:System.Windows.Controls.Primitives.ScrollBar" /> renders with a white outer border.  </summary>
+      <returns>true if the <see cref="T:System.Windows.Controls.Primitives.ScrollBar" /> renders with a white outer border; otherwise false.</returns>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.ScrollChrome.HasOuterBorderProperty">
+      <summary>Identifies the <see cref="P:Microsoft.Windows.Themes.ScrollChrome.HasOuterBorder" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="P:Microsoft.Windows.Themes.ScrollChrome.HasOuterBorder" /> dependency property.</returns>
+    </member>
+    <member name="P:Microsoft.Windows.Themes.ScrollChrome.Padding">
+      <summary>Gets or sets a value that describes the amount of space between a <see cref="T:System.Windows.Controls.Primitives.ScrollBar" /> and its child element.  </summary>
+      <returns>A <see cref="T:System.Windows.Thickness" /> value that describes the amount of space between a <see cref="T:System.Windows.Controls.Primitives.ScrollBar" /> and its child element.</returns>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.ScrollChrome.PaddingProperty">
+      <summary>Identifies the <see cref="P:Microsoft.Windows.Themes.ScrollChrome.Padding" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="P:Microsoft.Windows.Themes.ScrollChrome.Padding" /> dependency property.</returns>
+    </member>
+    <member name="P:Microsoft.Windows.Themes.ScrollChrome.RenderMouseOver">
+      <summary>Gets or sets a value indicating whether the <see cref="T:System.Windows.Controls.Primitives.ScrollBar" /> appears as if the mouse is over it.  </summary>
+      <returns>true if the <see cref="T:System.Windows.Controls.Primitives.ScrollBar" /> appears as if the mouse is over it; otherwise false.</returns>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.ScrollChrome.RenderMouseOverProperty">
+      <summary>Identifies the <see cref="P:Microsoft.Windows.Themes.ScrollChrome.RenderMouseOver" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="P:Microsoft.Windows.Themes.ScrollChrome.RenderMouseOver" /> dependency property.</returns>
+    </member>
+    <member name="P:Microsoft.Windows.Themes.ScrollChrome.RenderPressed">
+      <summary>Gets or sets a value indicating whether the <see cref="T:System.Windows.Controls.Primitives.ScrollBar" /> appears pressed.</summary>
+      <returns>true if the <see cref="T:System.Windows.Controls.Primitives.ScrollBar" /> appears pressed; otherwise false.</returns>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.ScrollChrome.RenderPressedProperty">
+      <summary>Identifies the <see cref="P:Microsoft.Windows.Themes.ScrollChrome.RenderPressed" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="P:Microsoft.Windows.Themes.ScrollChrome.RenderPressed" /> dependency property.</returns>
+    </member>
+    <member name="P:Microsoft.Windows.Themes.ScrollChrome.ScrollGlyph">
+      <summary>Gets or sets the color of the <see cref="T:Microsoft.Windows.Themes.ScrollGlyph" /> for the <see cref="T:Microsoft.Windows.Themes.ScrollChrome" />. </summary>
+      <returns>A value in the enumeration.</returns>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.ScrollChrome.ScrollGlyphProperty">
+      <summary>Identifies the <see cref="T:Microsoft.Windows.Themes.ScrollGlyph" /> attached property.   </summary>
+      <returns>The <see cref="T:Microsoft.Windows.Themes.ScrollGlyph" /> attached property identifier. </returns>
+    </member>
+    <member name="M:Microsoft.Windows.Themes.ScrollChrome.SetScrollGlyph(System.Windows.DependencyObject,Microsoft.Windows.Themes.ScrollGlyph)">
+      <summary>Sets the <see cref="T:Microsoft.Windows.Themes.ScrollGlyph" /> on the specified object.</summary>
+      <param name="element">The dependency object to which the <see cref="T:Microsoft.Windows.Themes.ScrollGlyph" /> is attached.   </param>
+      <param name="value">One of the enumeration values.   </param>
+    </member>
+    <member name="P:Microsoft.Windows.Themes.ScrollChrome.ThemeColor">
+      <summary>Gets or sets the color of the theme. </summary>
+      <returns>A value in the enumeration.</returns>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.ScrollChrome.ThemeColorProperty">
+      <summary>Identifies the <see cref="P:Microsoft.Windows.Themes.ScrollChrome.ThemeColor" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="P:Microsoft.Windows.Themes.ScrollChrome.ThemeColor" /> dependency property.</returns>
+    </member>
+    <member name="T:Microsoft.Windows.Themes.ScrollGlyph">
+      <summary>Describes the glyphs used to represent the <see cref="T:System.Windows.Controls.Primitives.Thumb" />.</summary>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.ScrollGlyph.None">
+      <summary>No glyph is used. </summary>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.ScrollGlyph.LeftArrow">
+      <summary>An arrow glyph pointing to the left.</summary>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.ScrollGlyph.RightArrow">
+      <summary>An arrow glyph pointing to the right.</summary>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.ScrollGlyph.UpArrow">
+      <summary>An arrow glyph pointing up.</summary>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.ScrollGlyph.DownArrow">
+      <summary>An arrow glyph pointing down.</summary>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.ScrollGlyph.VerticalGripper">
+      <summary>A vertical gripper glyph.</summary>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.ScrollGlyph.HorizontalGripper">
+      <summary> horizontal gripper glyph.</summary>
+    </member>
+    <member name="T:Microsoft.Windows.Themes.ThemeColor">
+      <summary>Represents possible color variants for the Microsoft themes. </summary>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.ThemeColor.NormalColor">
+      <summary>Used by the Luna, Aero, and Classic themes; the localized color name is Blue.</summary>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.ThemeColor.Homestead">
+      <summary>Used by the Luna theme; the localized color name is Olive.</summary>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.ThemeColor.Metallic">
+      <summary>Used by the Luna theme; the localized color name is Sliver.</summary>
+    </member>
+  </members>
+</doc>

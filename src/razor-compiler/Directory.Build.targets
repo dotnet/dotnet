@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <Import Project="Sdk.targets" Sdk="Microsoft.DotNet.Arcade.Sdk" />
+
+  <PropertyGroup Label="Resx settings">
+    <GenerateResxSource Condition="$(GenerateResxSource) == ''">true</GenerateResxSource>
+    <GenerateResxSourceEmitFormatMethods Condition="$(GenerateResxSourceEmitFormatMethods) == ''">true</GenerateResxSourceEmitFormatMethods>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Remove unneeded reference to AspNetCore.App -->
+    <KnownFrameworkReference Remove="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <Target Name="GetCustomAssemblyAttributes"
+          BeforeTargets="GetAssemblyAttributes"
+          Condition=" '$(MSBuildProjectExtension)' == '.csproj' "
+          DependsOnTargets="InitializeSourceControlInformation">
+    <ItemGroup>
+      <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute" Condition="'$(Serviceable)' == 'true'">
+        <_Parameter1>Serviceable</_Parameter1>
+        <_Parameter2>True</_Parameter2>
+      </AssemblyAttribute>
+    </ItemGroup>
+  </Target>
+</Project>

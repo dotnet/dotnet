@@ -1,0 +1,33 @@
+<Project>
+  <Target Name="DownloadFromResultsContainer"
+          Condition="$(WaitForWorkItemCompletion)"
+          AfterTargets="CoreTest"
+          Inputs="unused"
+          Outputs="%(SentJob.Identity)">
+    <ItemGroup>
+      <_workItemsWithDownloadMetadata Include="@(HelixWorkItem)" Condition="'%(HelixWorkItem.DownloadFilesFromResults)' != ''" />
+
+      <HelixDownloadResultsMetadata Include="HelixQueue=%(SentJob.HelixTargetQueue)" />
+      <HelixDownloadResultsMetadata Condition="'$(HelixConfiguration)' != ''" Include="Configuration=$(HelixConfiguration)" />
+      <HelixDownloadResultsMetadata Condition="'$(HelixArchitecture)' != ''" Include="Architecture=$(HelixArchitecture)" />
+    </ItemGroup>
+
+    <PropertyGroup>
+      <HelixResultsDestinationDir Condition="'$(HelixResultsDestinationDir)' == '' AND '$(BUILD_SOURCESDIRECTORY)' != ''">$([MSBuild]::NormalizeDirectory($(BUILD_SOURCESDIRECTORY), 'artifacts', 'helixresults'))</HelixResultsDestinationDir>
+
+      <_shouldDownloadResults>false</_shouldDownloadResults>
+      <_shouldDownloadResults Condition="'@(_workItemsWithDownloadMetadata)' != '' AND '$(HelixResultsDestinationDir)' != ''">true</_shouldDownloadResults>
+    </PropertyGroup>
+
+    <Warning Text="DownloadFromResultsContainer will be skipped for job %(SentJob.Identity) because results container uri is empty" Condition="'%(SentJob.ResultsContainerUri)' == '' AND $(_shouldDownloadResults)" />
+
+    <DownloadFromResultsContainer
+        Condition="$(_shouldDownloadResults) AND '%(SentJob.ResultsContainerUri)' != ''"
+        WorkItems="@(_workItemsWithDownloadMetadata)"
+        ResultsContainer="%(SentJob.ResultsContainerUri)"
+        OutputDirectory="$(HelixResultsDestinationDir)"
+        MetadataToWrite="@(HelixDownloadResultsMetadata)"
+        JobId="%(SentJob.Identity)"
+        ResultsContainerReadSAS="%(SentJob.ResultsContainerReadSAS)" />
+  </Target>
+</Project>

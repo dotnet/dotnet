@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>TestPackageC</id>
+    <version>1.0.0-beta-12345-01</version>
+    <authors>Microsoft</authors>
+    <description>C</description>
+    <dependencies>
+      <dependency id="TestPackageB" version="[1.0.0-beta-12345-01]" />
+    </dependencies>
+  </metadata>
+  <files/>
+</package>

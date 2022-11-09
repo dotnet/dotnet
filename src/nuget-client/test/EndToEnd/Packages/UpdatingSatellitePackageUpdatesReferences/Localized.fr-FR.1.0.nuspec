@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>Localized.fr-Fr</id>
+    <version>1.0</version>
+    <authors>test</authors>
+    <language>fr-Fr</language>
+    <description>Localized package</description>
+    <dependencies>
+        <dependency id="Localized" version="[1.0]" /> 
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="lib\net40\fr-FR\Main.1.0.resources.dll" target="lib\net40\fr-FR\Main.1.0.resources.dll" />
+  </files>
+</package>

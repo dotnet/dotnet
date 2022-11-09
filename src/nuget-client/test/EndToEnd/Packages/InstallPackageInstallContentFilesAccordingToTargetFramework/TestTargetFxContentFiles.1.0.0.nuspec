@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <version>1.0.0</version>
+    <authors>kinhln</authors>
+    <id>TestTargetFxContentFiles</id>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>My package description.</description>
+  </metadata>
+  <files>
+    <file src="content\net35\two.txt" target="content\net35\two.txt" />
+    <file src="content\net40\sub\one.txt" target="content\net40\sub\one.txt" />
+  </files>
+</package>

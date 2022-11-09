@@ -1,0 +1,5 @@
+// Use this devcontainer if you don't need the full context of a source-build tarball
+{
+	"name": "Source-Build",
+	"image": "mcr.microsoft.com/dotnet-buildtools/prereqs:fedora-36"
+}

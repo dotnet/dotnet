@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<data>  
+  <item>
+    <original>
+      <ApplicationInsights xmlns="http://schemas.microsoft.com/ApplicationInsights/2013/Settings">
+        <TelemetryChannel Type="Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel.ServerTelemetryChannel, Microsoft.AI.ServerTelemetryChannel" />  
+        <InstrumentationKey>4f563a32-8ceb-4481-a987-1b2e9ea91aab</InstrumentationKey>
+      </ApplicationInsights>
+    </original>
+    <expectedPostTransform>
+      <ApplicationInsights xmlns="http://schemas.microsoft.com/ApplicationInsights/2013/Settings">
+        <TelemetryChannel Type="Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel.ServerTelemetryChannel, Microsoft.AI.ServerTelemetryChannel" />  
+        <InstrumentationKey>4f563a32-8ceb-4481-a987-1b2e9ea91aab</InstrumentationKey>
+        <TelemetryModules>
+          <Add Type="Microsoft.ApplicationInsights.EventSourceListener.EventSourceTelemetryModule, Microsoft.ApplicationInsights.EventSourceListener" >
+            <Sources>
+              <!-- Replace/add your own EventSources as necessary. -->
+              <Add Name="MyCompany-MyApplication-MyEventSource" Level="Warning"/>
+            </Sources>
+          </Add>
+        </TelemetryModules>
+      </ApplicationInsights>
+    </expectedPostTransform>
+  </item>
+  <item>
+    <original>
+      <ApplicationInsights xmlns="http://schemas.microsoft.com/ApplicationInsights/2013/Settings">
+        <TelemetryChannel Type="Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel.ServerTelemetryChannel, Microsoft.AI.ServerTelemetryChannel" />
+        <InstrumentationKey>4f563a32-8ceb-4481-a987-1b2e9ea91aab</InstrumentationKey>
+        <TelemetryModules>
+          <Add Type="Microsoft.ApplicationInsights.WindowsServer.UnhandledExceptionTelemetryModule, Microsoft.AI.WindowsServer"/>
+        </TelemetryModules>
+      </ApplicationInsights>
+    </original>
+    <expectedPostTransform>
+      <ApplicationInsights xmlns="http://schemas.microsoft.com/ApplicationInsights/2013/Settings">
+        <TelemetryChannel Type="Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel.ServerTelemetryChannel, Microsoft.AI.ServerTelemetryChannel" />
+        <InstrumentationKey>4f563a32-8ceb-4481-a987-1b2e9ea91aab</InstrumentationKey>
+        <TelemetryModules>
+          <Add Type="Microsoft.ApplicationInsights.WindowsServer.UnhandledExceptionTelemetryModule, Microsoft.AI.WindowsServer"/>
+          <Add Type="Microsoft.ApplicationInsights.EventSourceListener.EventSourceTelemetryModule, Microsoft.ApplicationInsights.EventSourceListener" >
+            <Sources>
+              <!-- Replace/add your own EventSources as necessary. -->
+              <Add Name="MyCompany-MyApplication-MyEventSource" Level="Warning"/>
+            </Sources>
+          </Add>
+        </TelemetryModules>
+      </ApplicationInsights>
+    </expectedPostTransform>
+  </item>
+</data>

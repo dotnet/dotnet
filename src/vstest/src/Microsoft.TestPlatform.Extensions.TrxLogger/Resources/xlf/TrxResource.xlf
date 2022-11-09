@@ -1,0 +1,143 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../TrxResource.resx">
+    <body>
+      <trans-unit id="TestOutcomeAborted">
+        <source>Aborted</source>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TestOutcomeCompleted">
+        <source>Completed</source>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TestOutcomeDisconnected">
+        <source>Disconnected</source>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TestOutcomeError">
+        <source>Error</source>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TestOutcomeFailed">
+        <source>Failed</source>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TestOutcomeInconclusive">
+        <source>Inconclusive</source>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TestOutcomeInProgress">
+        <source>In Progress</source>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TestOutcomeNotExecuted">
+        <source>Not Executed</source>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TestOutcomeNotRunnable">
+        <source>Not Runnable</source>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TestOutcomePassed">
+        <source>Passed</source>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TestOutcomePassedButRunAborted">
+        <source>Passed (run aborted)</source>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TestOutcomePending">
+        <source>Pending</source>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TestOutcomeTimeout">
+        <source>Timeout</source>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TestOutcomeWarning">
+        <source>Warning</source>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="Common_CannotBeLessThanZero">
+        <source>The parameter cannot be less than 0.</source>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="Common_CannotBeNullOrEmpty">
+        <source>The parameter cannot be null or empty.</source>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="Common_CannotGetNextIterationName">
+        <source>Cannot get free name for {0}(1),(2),... in directory {1}. Please clean up this directory.</source>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="Common_MissingRunConfigInRun">
+        <source>Test Settings are not specified.</source>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="Common_MissingRunDeploymentRootInRunConfig">
+        <source>The active Test Settings do not define the Run Deployment Directory.</source>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="Common_MissingRunInResult">
+        <source>The result is not associated with a test run. Use a result that was obtained from an in-progress or completed test run.</source>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="Common_NothingLeftAfterReplaciingBadCharsInName">
+        <source>The specified file/directory name '{0}' is not valid.</source>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="Common_TestRunName">
+        <source>{0}@{1} {2}</source>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="FailureToAttach">
+        <source>Failed to attach files from: {0}
+Error Details: {1}:{2}</source>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="MessageForSkippedTests">
+        <source>Test '{0}' was skipped in the test run.</source>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TrxLoggerResultsFile">
+        <source>Results File: {0}</source>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TS_AllResults">
+        <source>All Loaded Results</source>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TS_UncategorizedResults">
+        <source>Results Not in a List</source>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="Common_DeploymentItem">
+        <source>deployment item '{0}'</source>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="Common_DeploymentItemWithOutputDirectory">
+        <source>deployment item '{0}' (output directory '{1}')</source>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="Common_NullInMessages">
+        <source>(null)</source>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TrxLoggerResultsFileOverwriteWarning">
+        <source>WARNING: Overwriting results file: {0}</source>
+        <target state="new">WARNING: Overwriting results file: {0}</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="PrefixAndNameProvidedError">
+        <source>The parameters LogFileName and LogFilePrefix cannot be used together. </source>
+        <target state="new">The parameters LogFileName and LogFilePrefix cannot be given together. </target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="Common_CannotGetNextTimestampFileName">
+        <source>Cannot get find an available filename for {0} using timestamp format '{2}' at {1}.</source>
+        <target state="new">Cannot get find an available filename for {0} using timestamp format '{2}' at {1}.</target>
+        <note></note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

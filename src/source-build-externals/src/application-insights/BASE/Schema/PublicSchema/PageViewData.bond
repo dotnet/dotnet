@@ -1,0 +1,22 @@
+import "EventData.bond"
+
+namespace AI
+
+[Description("An instance of PageView represents a generic action on a page like a button click. It is also the base type for PageView.")]
+[Alias("PageviewData;PageEventData")]
+struct PageViewData
+    : EventData
+{
+    [MaxStringLength("2048")]
+    [Description("Request URL with all query string parameters")]
+    10: string 	 url;
+    
+    [CSType("TimeSpan")]
+    [Description("Request duration in format: DD.HH:MM:SS.MMMMMM. For a page view (PageViewData), this is the duration. For a page view with performance information (PageViewPerfData), this is the page load time. Must be less than 1000 days.")]
+    20: string 	 duration;
+    
+    [MaxStringLength("128")]
+    [ActAsRequired("Required field for correct correlation.")]
+    [Description("Identifier of a page view instance. Used for correlation between page view and other telemetry items.")]
+    50: required string 	 id;
+}

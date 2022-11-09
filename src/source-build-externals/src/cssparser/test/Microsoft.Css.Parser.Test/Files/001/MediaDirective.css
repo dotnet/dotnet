@@ -1,0 +1,34 @@
+@media screen and (color: red/blue), projection and (color) { @import url(http://www.example.com/color) }
+
+@media screen and (device-aspect-ratio: 16/9)
+{
+}
+@media handheld and (device-aspect-ratio: 32/18)
+{
+    a:visited
+    {
+        background-color: red;
+    }
+}
+@media screen and (device-aspect-ratio: 1280/720)
+{
+    E > B:hover
+    {
+        color: blue;
+    }
+}
+@media screen and (device-aspect-ratio: 2560/1440)
+{
+    .foo::nth-child(2n)
+    {
+        background-image: url("www.microsoft.com");
+        color: blue;
+    }
+}
+
+/* Dev12 bug 744783 - don't require a space after @media */
+@media(min-width: 200px) { }
+@media (min-width: 200px) { }
+@ media(min-width: 200px) { }
+@ media (min-width: 200px) { }
+media(min-width: 200px) { }

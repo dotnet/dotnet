@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Package dependency versions -->
+  <Import Project="..\..\..\..\scripts\build\TestAssets.props" />
+
+  <PropertyGroup>
+    <TargetFrameworks>net6.0;net48</TargetFrameworks>
+    <TargetFrameworks Condition=" '$(DotNetBuildFromSource)' == 'true' ">netcoreapp3.1</TargetFrameworks>
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(NETTestSdkVersion)" />
+    <PackageReference Include="xunit" Version="$(XUnitFrameworkVersion)" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="$(XUnitAdapterVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="XunitTests.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>XunitTests.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="XunitTests.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>XunitTests.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+</Project>

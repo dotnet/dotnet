@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- This project is a workaround utilized by the DependencyPackageProjects infrastructure -->
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+  </PropertyGroup>
+
+  <Target Name="Build" />
+
+</Project>

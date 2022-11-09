@@ -1,0 +1,67 @@
+# Syntax: https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions
+# .NET CLI: https://docs.microsoft.com/dotnet/core/tools/
+# Description: The purpose of this workflow is to build the MAIN branch and push to MyGet.
+
+name: Nightly
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *' # End of every day
+
+jobs:
+  build-publish:
+
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest]
+        branch: [main]
+        solution: [./ProjectsForSigning.sln]
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        ref: ${{ matrix.branch }}
+    
+    - uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '3.1.x'
+        
+    - uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '5.0.x'
+
+    - uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '6.0.x'
+
+    - uses: nuget/setup-nuget@v1
+      with:
+        nuget-version: 'latest'
+
+    - name: Restore
+      run: dotnet restore ${{ matrix.solution }}
+
+    - name: Build
+      run: dotnet build -p:NightlyBuild=True -p:PublicRelease=True ${{ matrix.solution }} --configuration Release --no-restore
+
+    - name: Find nuget directory # Find path of 'bin/release/nuget' and assign to environment variable
+      shell: pwsh
+      run: |
+        $dir = "./bin/Release/NuGet"
+        Test-Path $dir -PathType Container
+        echo "NUGET_DIRECTORY=$dir" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf-8 -Append
+
+    - name: List files 
+      shell: pwsh
+      run: |
+        Get-ChildItem '${{ env.NUGET_DIRECTORY }}' -Recurse -Force | Write-Host
+
+    - name: Publish
+      shell: pwsh
+      run: |
+        Get-ChildItem '${{ env.NUGET_DIRECTORY }}' -Filter *.nupkg -Recurse -Force | 
+        ForEach-Object { nuget push $_.FullName -Source https://www.myget.org/F/applicationinsights-dotnet-nightly/api/v2/package -ApiKey ${{ secrets.MYGET_NIGHTLY_API_KEY }} }

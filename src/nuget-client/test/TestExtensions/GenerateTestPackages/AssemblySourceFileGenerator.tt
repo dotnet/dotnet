@@ -1,0 +1,21 @@
+﻿<#@ template language="C#" #>
+
+using System;
+using System.Text;
+using System.Reflection;
+
+[assembly: AssemblyVersion("<#= Package.FullName.Version.Version #>")]
+
+namespace <#= Package.Id #> {
+    public static class SomeClass {
+        public static string SomeString {
+            get  {
+                return "<#= Package.FullName #> ("
+<# foreach (var dependency in Package.Dependencies) { #>
+                    + <#= dependency.Id #>.SomeClass.SomeString + " "
+<# } #>
+                    + ")";
+            } 
+        }
+    }
+}

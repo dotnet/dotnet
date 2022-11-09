@@ -1,0 +1,26 @@
+steps:
+- task: PublishPipelineArtifact@1
+  displayName: "Save build YAML"
+  inputs:
+    artifactName: yaml
+    targetPath: "$(Build.Repository.LocalPath)\\eng\\pipelines"
+
+- task: PowerShell@1
+  displayName: "Set Semantic Version"
+  name: "setsemanticversion"
+  inputs:
+    scriptType: "inlineScript"
+    inlineScript: |
+      try {
+        $version = & dotnet msbuild $env:BUILD_REPOSITORY_LOCALPATH\build\config.props /v:m /nologo /t:GetSemanticVersion
+        if ($LASTEXITCODE -ne 0) { throw $version }
+        $version = $version.Trim()
+        Write-Host "##vso[task.setvariable variable=SemanticVersion;isOutput=true]$version"
+      } catch {
+        Write-Host "##vso[task.LogIssue type=error;]Unable to set product version: $_"
+        exit 1
+      }
+
+- task: ComponentGovernanceComponentDetection@0
+  displayName: 'Component Detection'
+

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <TargetPackagesPath>$(ArtifactsDir)textOnlyPackages/</TargetPackagesPath>
+    <CsProjTemplatePath>./textOnlyPackage.csproj.template</CsProjTemplatePath>
+  </PropertyGroup>
+
+  <Import Project="../common/RestoreProjects.proj" />
+
+  <Target Name="GetPackageInfo" AfterTargets="Restore">
+    <Error Text="'PathToCsv' property was not set!" Condition="$(PathToCsv) == ''" />
+
+    <ReadLinesFromFile File="$(PathToCsv)">
+      <Output TaskParameter="Lines" ItemName="CsvLines" />
+    </ReadLinesFromFile>
+
+    <ItemGroup>
+      <PackageInfo Include="@(CsvLines)" Exclude="">
+        <PackageName>$([System.String]::Copy('%(CsvLines.Identity)').Split(',')[0])</PackageName>
+        <PackageVersion>$([System.String]::Copy('%(CsvLines.Identity)').Split(',')[1])</PackageVersion>
+      </PackageInfo>
+    </ItemGroup>
+  </Target>
+
+  <!-- see ./generate.sh for 'AfterTargets' justification -->
+  <Target Name="CopyTextOnlyPackages" AfterTargets="Restore">
+    <MSBuild Projects="$(MSBuildProjectFile)" Targets="CopyTextOnlyPackage" Properties="PackageName=%(PackageInfo.PackageName);PackageVersion=%(PackageInfo.PackageVersion)" />
+  </Target>
+
+  <Target Name="CopyTextOnlyPackage">
+    <PropertyGroup>
+      <RestoredPackagePath>$(TargetPackagesPath)$(PackageName.ToLower())</RestoredPackagePath>
+      <TextOnlyPackageDirectory>$(PackageName.ToLower())</TextOnlyPackageDirectory>
+      <CsProjFileName>$(PackageName.ToLower()).$(PackageVersion).csproj</CsProjFileName>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <TextOnlyPackageContent Include="$(RestoredPackagePath)/**/*" Exclude="
+          $(RestoredPackagePath)/**/.nupkg.metadata;
+          $(RestoredPackagePath)/**/.signature.p7s;
+          $(RestoredPackagePath)/**/*.nupkg;
+          $(RestoredPackagePath)/**/*.nupkg.sha512;" />
+    </ItemGroup>
+
+    <Error Text="Package $(PackageName) was not restored!" Condition=" '@(TextOnlyPackageContent)' == '' " />
+
+    <!-- Verify that invalid assets were not copied into text-only packs -->
+    <ItemGroup>
+      <!-- ttf, woff, woff2, eot are permissible font-related content -->
+      <AllowedTextOnlyExtensions Include="
+        .-;
+        ._;
+        .bowerrc;
+        .config;
+        .cs;
+        .cshtml;
+        .csproj;
+        .css;
+        .db;
+        .editorconfig;
+        .env;
+        .env.development;
+        .eot;
+        .fs;
+        .fsproj;
+        .gitignore;
+        .gitkeep;
+        .html;
+        .ico;
+        .js;
+        .json;
+        .map;
+        .md;
+        .nuspec;
+        .otf;
+        .png;
+        .props;
+        .proto;
+        .razor;
+        .resx;
+        .rtf;
+        .sln;
+        .svg;
+        .targets;
+        .ts;
+        .ttf;
+        .tsx;
+        .txt;
+        .vb;
+        .vbproj;
+        .woff;
+        .woff2;
+        .xlf;
+        .xml;
+        browserslist;
+        browserslistrc;
+        LICENSE;" />
+      <UnsupportedTextOnlyPackageContent Include="@(TextOnlyPackageContent)" />
+      <UnsupportedTextOnlyPackageContent Remove="$(RestoredPackagePath)/**/*$([System.String]::Copy('%(AllowedTextOnlyExtensions.Identity)').ToLowerInvariant())" />
+      <UnsupportedTextOnlyPackageContent Remove="$(RestoredPackagePath)/**/*$([System.String]::Copy('%(AllowedTextOnlyExtensions.Identity)').ToUpperInvariant())" />
+    </ItemGroup>
+
+    <Error Text="Unsupported content found in text-only packages: @(UnsupportedTextOnlyPackageContent)" Condition=" '@(UnsupportedTextOnlyPackageContent)' != '' " />
+    <Error Text="'TextOnlyPackageDestination' property was not set!" Condition="$(TextOnlyPackageDestination) == ''" />
+
+    <Copy SourceFiles="@(TextOnlyPackageContent)" DestinationFiles="@(TextOnlyPackageContent->'$(TextOnlyPackageDestination)/$(TextOnlyPackageDirectory)/%(RecursiveDir)%(Filename)%(Extension)')" />
+
+    <Copy SourceFiles="$(CsProjTemplatePath)" DestinationFiles="$(TextOnlyPackageDestination)/$(TextOnlyPackageDirectory)/$(PackageVersion)/$(CsProjFileName)" />
+
+  </Target>
+</Project>

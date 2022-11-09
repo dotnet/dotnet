@@ -1,0 +1,31 @@
+<Project>
+  <Target Name="_GetFrameworkPackWixConfiguration"
+          BeforeTargets="GetInstallerWixConfiguration"
+          DependsOnTargets="PublishFilesForWixInstaller">
+    <PropertyGroup Condition="'$(PlatformPackageType)' == 'RuntimePack'">
+      <WixIncludeRegistryKeys>true</WixIncludeRegistryKeys>
+      <UseCustomDirectoryHarvesting>true</UseCustomDirectoryHarvesting>
+    </PropertyGroup>
+
+    <ItemGroup Condition="'$(PlatformPackageType)' == 'RuntimePack'">
+      <DirectoryToHarvest
+        Include="$(FilesOutputPathRoot)shared/"
+        Name="install-shared-framework"
+        SubstituteVar="SharedFrameworkSrc"
+        ComponentGroupName="InstallFiles"
+        DirectoryRef="SHARED" />
+
+      <WixSrcFile Include="$(MSBuildThisFileDirectory)product/sharedfxdir.wxs" />
+
+      <CandleVariables Include="AuthoredRegistryKeys" Value="true" />
+      <CandleVariables Include="RegKeyNugetVersionExistence" Value="true" />
+    </ItemGroup>
+
+    <PropertyGroup>
+      <RegKeyProductName Condition="'$(RegKeyProductName)' == '' and '$(SharedFrameworkName)' != ''">sharedfx\$(SharedFrameworkName)</RegKeyProductName>
+    </PropertyGroup>
+    <ItemGroup>
+      <CandleVariables Include="FrameworkName" Value="$(SharedFrameworkName)" Condition="'$(SharedFrameworkName)' != ''" />
+    </ItemGroup>
+  </Target>
+</Project>

@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.NET.Test.Sdk</id>
+    <version>$Version$</version>
+    <title>Microsoft.NET.Test.Sdk</title>
+    <authors>Microsoft</authors>
+    <owners>Microsoft</owners>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <license type="file">LICENSE_NET.txt</license>
+    <iconUrl>http://go.microsoft.com/fwlink/?LinkID=288859</iconUrl>
+    <icon>Icon.png</icon>
+    <description>The MSbuild targets and properties for building .NET test projects.</description>
+    <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+    <projectUrl>https://github.com/microsoft/vstest/</projectUrl>
+    <tags>vstest visual-studio unittest testplatform mstest microsoft test testing</tags>
+    <repository type="git"
+                url="https://github.com/microsoft/vstest"
+                branch="$BranchName$"
+                commit="$CommitId$" />
+    <dependencies>
+      <group targetFramework="netcoreapp3.1">
+        <dependency id="Microsoft.TestPlatform.TestHost" version="$Version$" />
+        <dependency id="Microsoft.CodeCoverage" version="$Version$" />
+      </group>
+      <group targetFramework="net462">
+        <!-- TestHost gets shipped with vstest.console -->
+        <dependency id="Microsoft.CodeCoverage" version="$Version$" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="Icon.png" target="" />
+    <file src="licenses\LICENSE_NET.txt" target="" />
+    <file src="netcoreapp\*" target="build\netcoreapp3.1\" />
+    <file src="netfx\*" target="build\net462\" />
+
+    <file src="Microsoft.NET.Test.Sdk.props" target="buildMultiTargeting\" />
+    <file src="Microsoft.NET.Test.Sdk.props" target="build\netcoreapp3.1\" />
+    <file src="Microsoft.NET.Test.Sdk.props" target="build\net462\" />
+
+    <file src="_._" target="lib/netcoreapp3.1" />
+    <file src="_._" target="lib/net462" />
+  </files>
+</package>

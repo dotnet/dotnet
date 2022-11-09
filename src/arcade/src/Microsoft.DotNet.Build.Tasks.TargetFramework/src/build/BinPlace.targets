@@ -1,0 +1,227 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+  <UsingTask TaskName="ChooseBestTargetFrameworksTask" AssemblyFile="$(DotNetBuildTasksTargetFrameworkAssembly)" />
+
+  <PropertyGroup>
+    <BinPlaceUseHardlinksIfPossible Condition="'$(BinPlaceUseHardlinksIfPossible)' == ''">true</BinPlaceUseHardlinksIfPossible>
+  </PropertyGroup>
+
+  <Target Name="BinPlace"
+          DependsOnTargets="GetBinPlaceTargetFramework;BinPlaceFiles;BinPlaceProps"
+          AfterTargets="CopyFilesToOutputDirectory"
+          Condition="'$(BinPlaceNative)' == 'true' or '$(BinPlaceRef)' == 'true' or '$(BinPlaceRuntime)' == 'true' or '$(BinPlaceTest)' == 'true' or '@(BinPlaceDir)' != ''" />
+
+  <Target Name="BinPlaceFiles"
+          Condition="'@(BinPlaceDir)' != ''"
+          DependsOnTargets="GetBinPlaceItems"
+          Inputs="@(BinPlaceDir);%(BinPlaceDir.ItemName);%(BinPlaceDir.Identity)"
+          Outputs="unused">
+
+    <PropertyGroup>
+      <_BinPlaceItemName>%(BinPlaceDir.ItemName)</_BinPlaceItemName>
+      <_BinPlaceItemName Condition="'$(_BinPlaceItemName)' == ''">BinPlaceItem</_BinPlaceItemName>
+      <_BinPlaceDir>%(BinPlaceDir.Identity)</_BinPlaceDir>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <!-- Temporary collection to allow dynamic include name. -->
+      <_BinPlaceItems Include="@($(_BinPlaceItemName))" />
+      <BinPlaceItemsWithFullTargetPath Include="@(_BinPlaceItems)">
+        <TargetPath Condition="'%(_BinPlaceItems.TargetPath)' != ''">%(_BinPlaceItems.TargetPath)</TargetPath>
+        <TargetPath Condition="'%(_BinPlaceItems.TargetPath)' == ''">%(_BinPlaceItems.DestinationSubDirectory)%(Filename)%(Extension)</TargetPath>
+      </BinPlaceItemsWithFullTargetPath>
+    </ItemGroup>
+
+    <Message Importance="low" Text="BinPlaceDir: $(_BinPlaceDir)" />
+
+    <Copy SourceFiles="@(BinPlaceItemsWithFullTargetPath)"
+          DestinationFiles="@(BinPlaceItemsWithFullTargetPath -> '$([MSBuild]::EnsureTrailingSlash('$(_BinPlaceDir)'))%(TargetPath)')"
+          SkipUnchangedFiles="true"
+          OverwriteReadOnlyFiles="true"
+          Retries="$(CopyRetryCount)"
+          RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)"
+          UseHardlinksIfPossible="$(BinPlaceUseHardlinksIfPossible)">
+      <Output TaskParameter="DestinationFiles" ItemName="FileWrites" />
+    </Copy>
+  </Target>
+
+  <UsingTask TaskName="SaveItems" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)"/>
+  <Target Name="BinPlaceProps"
+          Condition="'@(PackageFileDir)' != ''"
+          DependsOnTargets="GetBinPlaceItems"
+          Inputs="%(PackageFileDir.Identity);%(PackageFileDir.ItemName)"
+          Outputs="unused">
+    <ItemGroup>
+      <!-- in the case of an overlapping batch (eg: multiple configurations using same directory)
+           use the first -->
+      <_packageFileDir Include="@(PackageFileDir->Distinct())" />
+    </ItemGroup>
+
+    <!-- This filename is chosen so that each build of every project has a uniquie filename.-->
+    <PropertyGroup>
+      <_propsFilename>$(TargetName).$(TargetFramework)</_propsFilename>
+      <_propsFilename Condition="'$(TargetName)' == ''">$(MSBuildProjectName).$(TargetFramework)</_propsFilename>
+      <_projectDirLength>$(ProjectDir.Length)</_projectDirLength>
+    </PropertyGroup>
+
+    <PropertyGroup>
+      <_BinPlaceItemName>%(_packageFileDir.ItemName)</_BinPlaceItemName>
+      <_BinPlaceItemName Condition="'$(_BinPlaceItemName)' == ''">BinPlaceItem</_BinPlaceItemName>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <_itemsToSave Include="@($(_BinPlaceItemName))">
+        <!-- intentionally empty: to be set by pkgproj -->
+        <TargetPath />
+        <TargetFramework>%(_packageFileDir.BuildConfiguration_NuGetTargetMonikerShort)</TargetFramework>
+      </_itemsToSave>
+
+      <!-- Include doc files. -->
+      <_docFiles Condition="'$(BinPlaceRef)' == 'true'" Include="$(XmlDocDir)/**/$(TargetName).xml" />
+      <_docFiles>
+        <SubFolder Condition="'%(RecursiveDir)' != ''">/$([System.String]::new('%(RecursiveDir)').TrimEnd('\').TrimEnd('/'))</SubFolder>
+      </_docFiles>
+      <_docFiles>
+        <TargetFramework>%(_packageFileDir.BuildConfiguration_NuGetTargetMonikerShort)</TargetFramework>
+      </_docFiles>
+      <_itemsToSave Include="@(_docFiles)"/>
+    </ItemGroup>
+
+    <Message Importance="low" Text="PackageFileDir: @(PackageFileDir)" />
+
+    <SaveItems ItemName="%(_packageFileDir.SaveItemName)"
+               Items="@(_itemsToSave)"
+               File="%(_packageFileDir.Identity)\$(_propsFilename).props">
+      <Output TaskParameter="File" ItemName="FileWrites" />
+    </SaveItems>
+  </Target>
+
+  <PropertyGroup>
+    <GetBinPlaceItemsDependsOn>
+      $(GetBinPlaceItemsDependsOn);
+      GetCopyToOutputDirectoryItems;
+      PrepareResourceNames;
+      ComputeIntermediateSatelliteAssemblies;
+    </GetBinPlaceItemsDependsOn>
+  </PropertyGroup>
+  
+  <Target Name="GetBinPlaceItems" DependsOnTargets="$(GetBinPlaceItemsDependsOn)">
+    <ItemGroup>
+      <BinPlaceItem Condition="Exists('$(TargetPath)')" Include="$(TargetPath)" />
+      <BinPlaceItem Condition="Exists('$(TargetDir)$(TargetName).pdb')" Include="$(TargetDir)$(TargetName).pdb" />
+      <BinPlaceItem Condition="Exists('$(TargetDir)$(TargetName).xml')" Include="$(TargetDir)$(TargetName).xml" />
+      <BinPlaceItem Condition="'$(BinPlaceReferenceCopyLocalPaths)' != 'false'" Include="@(ReferenceCopyLocalPaths)" />
+      <BinPlaceItem Condition="'$(BinPlaceCopyToOutputDirectoryItems)' != 'false'" Include="@(AllItemsFullPathWithTargetPath)" />
+      <BinPlaceItem Condition="'$(BinPlaceSatelliteAssemblies)' != 'false'" Include="@(IntermediateSatelliteAssembliesWithTargetPath)" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="GetBinPlaceTargetFramework">
+    <ItemGroup>
+      <!-- This needs to be a separate item as batching doesn't work when passing in the ValueOrDefault result directly. -->
+      <_supportedTargetFramework Include="$(TargetFrameworks)" Condition="'$(TargetFrameworks)' != ''" />
+      <_supportedTargetFramework Include="$(TargetFramework)" Condition="'@(_supportedTargetFramework)' == '' and '$(TargetFramework)' != ''" />
+    </ItemGroup>
+
+    <!-- Find which, if any, supported target framework of this project is best
+         for each binplace targetFramework. -->
+    <ChooseBestTargetFrameworksTask BuildTargetFrameworks="@(BinPlaceTargetFrameworks)"
+                                    SupportedTargetFrameworks="@(_supportedTargetFramework)"
+                                    RuntimeGraph="$(RuntimeGraph)">
+      <Output TaskParameter="BestTargetFrameworks" ItemName="_bestBinPlaceTargetFrameworks" />
+    </ChooseBestTargetFrameworksTask>
+    
+    <ItemGroup>
+      <_currentBinPlaceTargetFrameworks Include="@(_bestBinPlaceTargetFrameworks)" Condition="'%(Identity)' == '$(TargetFramework)'" />
+
+      <BinPlaceDir Condition="'$(BinPlaceNative)' == 'true'" Include="@(_currentBinPlaceTargetFrameworks->'%(NativePath)')" />
+      <BinPlaceDir Condition="'$(BinPlaceRef)' == 'true'" Include="@(_currentBinPlaceTargetFrameworks->'%(RefPath)')" />
+      <BinPlaceDir Condition="'$(BinPlaceRuntime)' == 'true'" Include="@(_currentBinPlaceTargetFrameworks->'%(RuntimePath)')" />
+      <BinPlaceDir Condition="'$(BinPlaceTest)' == 'true'" Include="@(_currentBinPlaceTargetFrameworks->'%(TestPath)')" />
+
+      <PackageFileDir Condition="'$(BinPlaceNative)' == 'true'" Include="@(_currentBinPlaceTargetFrameworks->'%(PackageFileNativePath)')">
+        <SaveItemName Condition="'%(_currentBinPlaceTargetFrameworks.SaveItemName)' == ''">NativeFile</SaveItemName>
+      </PackageFileDir>
+      <PackageFileDir Condition="'$(BinPlaceRef)' == 'true'" Include="@(_currentBinPlaceTargetFrameworks->'%(PackageFileRefPath)')">
+        <SaveItemName Condition="'%(_currentBinPlaceTargetFrameworks.SaveItemName)' == ''">RefFile</SaveItemName>
+      </PackageFileDir>
+      <PackageFileDir Condition="'$(BinPlaceRuntime)' == 'true'" Include="@(_currentBinPlaceTargetFrameworks->'%(PackageFileRuntimePath)')">
+        <SaveItemName Condition="'%(_currentBinPlaceTargetFrameworks.SaveItemName)' == ''">LibFile</SaveItemName>
+      </PackageFileDir>
+
+      <!-- permit BinplaceConfigurations to define SetProperties metadata,
+           set those properties when BinplaceConfiguration is active -->
+      <_binplacePropertyTuples Include="%(_currentBinPlaceTargetFrameworks.SetProperties)" />
+
+      <_binplaceSetProperty Condition="'%(_binplacePropertyTuples.Identity)' != ''"
+                            Include="$([System.String]::new('%(_binplacePropertyTuples.Identity)').Split('=')[0])">
+        <Value>$([System.String]::new('%(_binplacePropertyTuples.Identity)').Split('=')[1])</Value>
+      </_binplaceSetProperty>
+    </ItemGroup>
+
+    <CreateProperty Value="%(_binplaceSetProperty.Value)" Condition="'@(_binplaceSetProperty)' != ''" >
+      <Output TaskParameter="Value" PropertyName="%(_binplaceSetProperty.Identity)" />
+    </CreateProperty>
+  </Target>
+
+  <!-- IncrementalClean and CoreClean only clean paths under Intermediate or OutDir, handle additional paths -->
+  <ItemGroup>
+    <AdditionalCleanDirectories Include="@(BinPlaceTargetFrameworks->'%(NativePath)')" />
+    <AdditionalCleanDirectories Include="@(BinPlaceTargetFrameworks->'%(RefPath)')" />
+    <AdditionalCleanDirectories Include="@(BinPlaceTargetFrameworks->'%(RuntimePath)')" />
+    <AdditionalCleanDirectories Include="@(BinPlaceTargetFrameworks->'%(PackageFileNativePath)')" />
+    <AdditionalCleanDirectories Include="@(BinPlaceTargetFrameworks->'%(PackageFileRefPath)')" />
+    <AdditionalCleanDirectories Include="@(BinPlaceTargetFrameworks->'%(PackageFileRuntimePath)')" />
+    <AdditionalCleanDirectories Include="@(BinPlaceTargetFrameworks->'%(TestPath)')" />
+    <AdditionalCleanDirectories Include="@(BinPlaceDir)" />
+  </ItemGroup>
+
+  <Target Name="_CleanGetCurrentAdditionalFileWrites" BeforeTargets="_CleanGetCurrentAndPriorFileWrites" Condition="'@(AdditionalCleanDirectories)' != ''">
+    <!-- find files under paths we care about and add them to _CleanCurrentFileWrites to ensure they are written to the file list -->
+    <FindUnderPath Path="%(AdditionalCleanDirectories.Identity)" Files="@(FileWrites)" UpdateToAbsolutePaths="true">
+      <Output TaskParameter="InPath" ItemName="_CleanCurrentFileWrites" />
+    </FindUnderPath>
+  </Target>
+
+  <!-- delete files under our AdditionalCleanDirectories on Incremental clean -->
+  <Target Name="IncrementalCleanAdditionalDirectories" BeforeTargets="IncrementalClean" Condition="'@(AdditionalCleanDirectories)' != ''">
+    <ItemGroup>
+      <_CleanOrphanAdditionalFileWrites Include="@(_CleanPriorFileWrites)" Exclude="@(_CleanCurrentFileWrites)" />
+    </ItemGroup>
+    <FindUnderPath Path="%(AdditionalCleanDirectories.Identity)" Files="@(_CleanOrphanAdditionalFileWrites)">
+      <Output TaskParameter="InPath" ItemName="_CleanOrphanFileWritesInAdditionalDirectories" />
+    </FindUnderPath>
+
+    <!-- Delete the orphaned files.  IncrementalClean will remove these from the file list -->
+    <Delete Files="@(_CleanOrphanFileWritesInAdditionalDirectories)" TreatErrorsAsWarnings="true">
+      <Output TaskParameter="DeletedFiles" ItemName="_CleanOrphanFilesDeleted" />
+    </Delete>
+  </Target>
+
+  <!-- delete files under our AdditionalCleanDirectories on CoreClean -->
+  <Target Name="CleanAdditionalDirectories" AfterTargets="CoreClean" Condition="'@(AdditionalCleanDirectories)' != ''">
+    <FindUnderPath Path="%(AdditionalCleanDirectories.Identity)" Files="@(_CleanUniqueRemainingFileWrites)">
+      <Output TaskParameter="InPath" ItemName="_CleanUniqueRemainingFileWritesInAdditionalDirectories"/>
+    </FindUnderPath>
+
+    <Delete Files="@(_CleanUniqueRemainingFileWritesInAdditionalDirectories)" TreatErrorsAsWarnings="true">
+      <Output TaskParameter="DeletedFiles" ItemName="_CleanUniqueRemainingFileWritesInAdditionalDirectoriesDeleted" />
+    </Delete>
+
+    <!-- Create a list of everything that wasn't deleted. -->
+    <ItemGroup>
+      <_CleanRemainingFileWritesAfterCleanAdditionalDirectories Include="@(_CleanUniqueRemainingFileWrites)" Exclude="@(_CleanUniqueRemainingFileWritesInAdditionalDirectoriesDeleted)"/>
+    </ItemGroup>
+
+    <!-- Remove duplicates. -->
+    <RemoveDuplicates Inputs="@(_CleanRemainingFileWritesAfterCleanAdditionalDirectories)">
+      <Output TaskParameter="Filtered" ItemName="_CleanAdditionalDirectoriesUniqueRemainingFileWrites"/>
+    </RemoveDuplicates>
+
+    <!-- Make sure the directory exists. -->
+    <MakeDir Directories="$(IntermediateOutputPath)"/>
+
+    <!-- Write new list of current files back to disk. -->
+    <WriteLinesToFile File="$(IntermediateOutputPath)$(CleanFile)" Lines="@(_CleanAdditionalDirectoriesUniqueRemainingFileWrites)" Overwrite="true" />
+  </Target>
+</Project>

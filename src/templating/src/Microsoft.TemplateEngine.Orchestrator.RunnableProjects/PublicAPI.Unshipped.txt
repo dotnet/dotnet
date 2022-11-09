@@ -1,0 +1,1 @@
+﻿Microsoft.TemplateEngine.Orchestrator.RunnableProjects.ConfigModel.TemplateConfigModel.Identity.get -> string!

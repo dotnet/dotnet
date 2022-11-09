@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+     Licensed to the .NET Foundation under one or more agreements.
+     The .NET Foundation licenses this file to you under the MIT license.
+     See the LICENSE file in the project root for more information.
+
+-->
+<Configuration xmlns="http://schemas.microsoft.com/vstudio/vsdconfig/2008">
+  <DefineGuid Name="CSharpFormatterId" Value="1C4DBBE7-7699-49FA-868A-7377BF50ADD8"/>
+  <ManagedComponent
+    ComponentId="CSharpFormatterId"
+    ComponentLevel="63000"
+    AssemblyName="Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator.ResultProvider">
+    <Class Name="Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator.CSharpResultProvider">
+      <Implements>
+        <InterfaceGroup Priority="Low">
+          <NoFilter/>
+          <Interface Name="IDkmClrResultProvider"/>
+        </InterfaceGroup>
+      </Implements>
+    </Class>
+    <Class Name="Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator.CSharpFormatter">
+      <Implements>
+        <InterfaceGroup Priority="Low">
+          <NoFilter/>
+          <Interface Name="IDkmClrFormatter"/>
+          <Interface Name="IDkmClrFormatter2"/>
+          <Interface Name="IDkmClrFullNameProvider"/>
+          <Interface Name="IDkmClrFullNameProvider2"/>
+        </InterfaceGroup>
+      </Implements>
+    </Class>
+  </ManagedComponent>
+</Configuration>

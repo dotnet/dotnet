@@ -1,0 +1,110 @@
+StyleSheet
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    html
+                PseudoClassFunctionSelector
+                    Colon    :
+                    Function
+                        Function    lang(
+                        FunctionArgument
+                            Identifier    fr-ca
+                        CloseFunctionBrace    )
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    quotes
+                Colon    :
+                String    '� '
+                String    ' �'
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    html
+                PseudoClassFunctionSelector
+                    Colon    :
+                    Function
+                        Function    lang(
+                        FunctionArgument
+                            Identifier    de
+                        CloseFunctionBrace    )
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    quotes
+                Colon    :
+                String    '�'
+                String    '�'
+                String    '\2039'
+                String    '\203A'
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                PseudoClassFunctionSelector
+                    Colon    :
+                    Function
+                        Function    lang(
+                        FunctionArgument
+                            Identifier    fr
+                        CloseFunctionBrace    )
+                Greater    >
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    Q
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    quotes
+                Colon    :
+                String    '� '
+                String    ' �'
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                PseudoClassFunctionSelector
+                    Colon    :
+                    Function
+                        Function    lang(
+                        FunctionArgument
+                            Identifier    de
+                        CloseFunctionBrace    )
+                Greater    >
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    Q
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    quotes
+                Colon    :
+                String    '�'
+                String    '�'
+                String    '\2039'
+                String    '\203A'
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    li
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    list-style
+                Colon    :
+                UnicodeRange    U+F00
+                UnicodeRange    U+A
+                UnicodeRange    U+A-B
+                UnicodeRange    U+A-C
+                Identifier    -D-E
+            CloseCurlyBrace    }

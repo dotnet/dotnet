@@ -1,0 +1,937 @@
+NuGet.PackageManagement.ActionEventBase
+NuGet.PackageManagement.ActionEventBase.ActionEventBase(string eventName, string operationId, string[] projectIds, System.DateTimeOffset startTime, NuGet.Common.NuGetOperationStatus status, int packageCount, System.DateTimeOffset endTime, double duration) -> void
+NuGet.PackageManagement.ActionEventBase.Duration.get -> double
+NuGet.PackageManagement.ActionEventBase.EndTime.get -> string
+NuGet.PackageManagement.ActionEventBase.OperationId.get -> string
+NuGet.PackageManagement.ActionEventBase.PackagesCount.get -> int
+NuGet.PackageManagement.ActionEventBase.ProjectIds -> string[]
+NuGet.PackageManagement.ActionEventBase.ProjectsCount.get -> int
+NuGet.PackageManagement.ActionEventBase.StartTime.get -> string
+NuGet.PackageManagement.ActionEventBase.Status.get -> NuGet.Common.NuGetOperationStatus
+NuGet.PackageManagement.ActionTelemetryStepEvent
+NuGet.PackageManagement.ActionTelemetryStepEvent.ActionTelemetryStepEvent(string parentId, string stepName, double duration) -> void
+NuGet.PackageManagement.ActionTelemetryStepEvent.Duration.get -> double
+NuGet.PackageManagement.ActionTelemetryStepEvent.ParentId.get -> string
+NuGet.PackageManagement.ActionTelemetryStepEvent.SubStepName.get -> string
+NuGet.PackageManagement.ActionsExecutedEventArgs
+NuGet.PackageManagement.ActionsExecutedEventArgs.Actions.get -> System.Collections.Generic.IEnumerable<NuGet.PackageManagement.ResolvedAction>
+NuGet.PackageManagement.ActionsExecutedEventArgs.ActionsExecutedEventArgs(System.Collections.Generic.IEnumerable<NuGet.PackageManagement.ResolvedAction> actions) -> void
+NuGet.PackageManagement.ActionsTelemetryEvent
+NuGet.PackageManagement.ActionsTelemetryEvent.ActionsTelemetryEvent(string operationId, string[] projectIds, NuGet.PackageManagement.NuGetOperationType operationType, System.DateTimeOffset startTime, NuGet.Common.NuGetOperationStatus status, int packageCount, System.DateTimeOffset endTime, double duration) -> void
+NuGet.PackageManagement.ActionsTelemetryEvent.OperationType.get -> NuGet.PackageManagement.NuGetOperationType
+NuGet.PackageManagement.AssetsFileMissingStatusChanged
+NuGet.PackageManagement.BuildIntegratedProjectAction
+NuGet.PackageManagement.BuildIntegratedProjectAction.BuildIntegratedProjectAction(NuGet.ProjectManagement.NuGetProject project, NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.PackageManagement.NuGetProjectActionType nuGetProjectActionType, NuGet.ProjectModel.LockFile originalLockFile, NuGet.Commands.RestoreResultPair restoreResultPair, System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Core.Types.SourceRepository> sources, System.Collections.Generic.IReadOnlyList<NuGet.PackageManagement.NuGetProjectAction> originalActions, NuGet.ProjectManagement.BuildIntegratedInstallationContext installationContext) -> void
+NuGet.PackageManagement.BuildIntegratedProjectAction.BuildIntegratedProjectAction(NuGet.ProjectManagement.NuGetProject project, NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.PackageManagement.NuGetProjectActionType nuGetProjectActionType, NuGet.ProjectModel.LockFile originalLockFile, NuGet.Commands.RestoreResultPair restoreResultPair, System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Core.Types.SourceRepository> sources, System.Collections.Generic.IReadOnlyList<NuGet.PackageManagement.NuGetProjectAction> originalActions, NuGet.ProjectManagement.BuildIntegratedInstallationContext installationContext, NuGet.Versioning.VersionRange versionRange) -> void
+NuGet.PackageManagement.BuildIntegratedProjectAction.GetProjectActions() -> System.Collections.Generic.IReadOnlyList<NuGet.PackageManagement.NuGetProjectAction>
+NuGet.PackageManagement.BuildIntegratedProjectAction.InstallationContext.get -> NuGet.ProjectManagement.BuildIntegratedInstallationContext
+NuGet.PackageManagement.BuildIntegratedProjectAction.OriginalActions.get -> System.Collections.Generic.IReadOnlyList<NuGet.PackageManagement.NuGetProjectAction>
+NuGet.PackageManagement.BuildIntegratedProjectAction.OriginalLockFile.get -> NuGet.ProjectModel.LockFile
+NuGet.PackageManagement.BuildIntegratedProjectAction.RestoreResult.get -> NuGet.Commands.RestoreResult
+NuGet.PackageManagement.BuildIntegratedProjectAction.RestoreResultPair.get -> NuGet.Commands.RestoreResultPair
+NuGet.PackageManagement.BuildIntegratedProjectAction.Sources.get -> System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Core.Types.SourceRepository>
+NuGet.PackageManagement.BuildIntegratedRestoreUtility
+NuGet.PackageManagement.DependencyGraphRestoreUtility
+NuGet.PackageManagement.ExceptionUtility
+NuGet.PackageManagement.GatherCache
+NuGet.PackageManagement.GatherCache.AddAllPackagesForId(NuGet.Configuration.PackageSource source, string packageId, NuGet.Frameworks.NuGetFramework framework, System.Collections.Generic.List<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo> packages) -> void
+NuGet.PackageManagement.GatherCache.AddPackageFromSingleVersionLookup(NuGet.Configuration.PackageSource source, NuGet.Packaging.Core.PackageIdentity identity, NuGet.Frameworks.NuGetFramework framework, NuGet.Protocol.Core.Types.SourcePackageDependencyInfo package) -> void
+NuGet.PackageManagement.GatherCache.GatherCache() -> void
+NuGet.PackageManagement.GatherCache.GetPackage(NuGet.Configuration.PackageSource source, NuGet.Packaging.Core.PackageIdentity package, NuGet.Frameworks.NuGetFramework framework) -> NuGet.PackageManagement.GatherCacheResult
+NuGet.PackageManagement.GatherCache.GetPackages(NuGet.Configuration.PackageSource source, string packageId, NuGet.Frameworks.NuGetFramework framework) -> NuGet.PackageManagement.GatherCacheResult
+NuGet.PackageManagement.GatherCacheResult
+NuGet.PackageManagement.GatherCacheResult.GatherCacheResult(bool hasEntry, System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo> packages) -> void
+NuGet.PackageManagement.GatherCacheResult.HasEntry.get -> bool
+NuGet.PackageManagement.GatherCacheResult.Packages.get -> System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo>
+NuGet.PackageManagement.GatherContext
+NuGet.PackageManagement.GatherContext.AllSources.get -> System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Core.Types.SourceRepository>
+NuGet.PackageManagement.GatherContext.AllSources.set -> void
+NuGet.PackageManagement.GatherContext.AllowDowngrades.get -> bool
+NuGet.PackageManagement.GatherContext.AllowDowngrades.set -> void
+NuGet.PackageManagement.GatherContext.GatherContext() -> void
+NuGet.PackageManagement.GatherContext.GatherContext(NuGet.Configuration.PackageSourceMapping _packageSourceMappingConfiguration) -> void
+NuGet.PackageManagement.GatherContext.InstalledPackages.get -> System.Collections.Generic.IReadOnlyList<NuGet.Packaging.Core.PackageIdentity>
+NuGet.PackageManagement.GatherContext.InstalledPackages.set -> void
+NuGet.PackageManagement.GatherContext.IsUpdateAll.get -> bool
+NuGet.PackageManagement.GatherContext.IsUpdateAll.set -> void
+NuGet.PackageManagement.GatherContext.Log.get -> NuGet.Common.ILogger
+NuGet.PackageManagement.GatherContext.PackageSourceMapping.get -> NuGet.Configuration.PackageSourceMapping
+NuGet.PackageManagement.GatherContext.PackagesFolderSource.get -> NuGet.Protocol.Core.Types.SourceRepository
+NuGet.PackageManagement.GatherContext.PackagesFolderSource.set -> void
+NuGet.PackageManagement.GatherContext.PrimarySources.get -> System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Core.Types.SourceRepository>
+NuGet.PackageManagement.GatherContext.PrimarySources.set -> void
+NuGet.PackageManagement.GatherContext.PrimaryTargetIds.get -> System.Collections.Generic.IReadOnlyList<string>
+NuGet.PackageManagement.GatherContext.PrimaryTargetIds.set -> void
+NuGet.PackageManagement.GatherContext.PrimaryTargets.get -> System.Collections.Generic.IReadOnlyList<NuGet.Packaging.Core.PackageIdentity>
+NuGet.PackageManagement.GatherContext.PrimaryTargets.set -> void
+NuGet.PackageManagement.GatherContext.ProjectContext.get -> NuGet.ProjectManagement.INuGetProjectContext
+NuGet.PackageManagement.GatherContext.ProjectContext.set -> void
+NuGet.PackageManagement.GatherContext.ResolutionContext.get -> NuGet.PackageManagement.ResolutionContext
+NuGet.PackageManagement.GatherContext.ResolutionContext.set -> void
+NuGet.PackageManagement.GatherContext.TargetFramework.get -> NuGet.Frameworks.NuGetFramework
+NuGet.PackageManagement.GatherContext.TargetFramework.set -> void
+NuGet.PackageManagement.GatherExceptionHelpers
+NuGet.PackageManagement.ICommonOperations
+NuGet.PackageManagement.ICommonOperations.CollapseAllNodes(NuGet.PackageManagement.ISolutionManager solutionManager) -> System.Threading.Tasks.Task
+NuGet.PackageManagement.ICommonOperations.OpenFile(string fullPath) -> System.Threading.Tasks.Task
+NuGet.PackageManagement.ICommonOperations.SaveSolutionExplorerNodeStates(NuGet.PackageManagement.ISolutionManager solutionManager) -> System.Threading.Tasks.Task
+NuGet.PackageManagement.IDEExecutionContext
+NuGet.PackageManagement.IDEExecutionContext.CollapseAllNodes(NuGet.PackageManagement.ISolutionManager solutionManager) -> System.Threading.Tasks.Task
+NuGet.PackageManagement.IDEExecutionContext.CommonOperations.get -> NuGet.PackageManagement.ICommonOperations
+NuGet.PackageManagement.IDEExecutionContext.IDEDirectInstall.get -> NuGet.Packaging.Core.PackageIdentity
+NuGet.PackageManagement.IDEExecutionContext.IDEDirectInstall.set -> void
+NuGet.PackageManagement.IDEExecutionContext.IDEExecutionContext(NuGet.PackageManagement.ICommonOperations commonOperations) -> void
+NuGet.PackageManagement.IDEExecutionContext.SaveExpandedNodeStates(NuGet.PackageManagement.ISolutionManager solutionManager) -> System.Threading.Tasks.Task
+NuGet.PackageManagement.IDeleteOnRestartManager
+NuGet.PackageManagement.IDeleteOnRestartManager.CheckAndRaisePackageDirectoriesMarkedForDeletion() -> void
+NuGet.PackageManagement.IDeleteOnRestartManager.DeleteMarkedPackageDirectoriesAsync(NuGet.ProjectManagement.INuGetProjectContext projectContext) -> System.Threading.Tasks.Task
+NuGet.PackageManagement.IDeleteOnRestartManager.GetPackageDirectoriesMarkedForDeletion() -> System.Collections.Generic.IReadOnlyList<string>
+NuGet.PackageManagement.IDeleteOnRestartManager.MarkPackageDirectoryForDeletion(NuGet.Packaging.Core.PackageIdentity package, string packageDirectory, NuGet.ProjectManagement.INuGetProjectContext projectContext) -> void
+NuGet.PackageManagement.IDeleteOnRestartManager.PackagesMarkedForDeletionFound -> System.EventHandler<NuGet.PackageManagement.PackagesMarkedForDeletionEventArgs>
+NuGet.PackageManagement.IInstallationCompatibility
+NuGet.PackageManagement.IInstallationCompatibility.EnsurePackageCompatibility(NuGet.ProjectManagement.NuGetProject nuGetProject, NuGet.Common.INuGetPathContext pathContext, System.Collections.Generic.IEnumerable<NuGet.PackageManagement.NuGetProjectAction> nuGetProjectActions, NuGet.Commands.RestoreResult restoreResult) -> void
+NuGet.PackageManagement.IInstallationCompatibility.EnsurePackageCompatibilityAsync(NuGet.ProjectManagement.NuGetProject nuGetProject, NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.Protocol.Core.Types.DownloadResourceResult resourceResult, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task
+NuGet.PackageManagement.IPackageProjectEventsProvider
+NuGet.PackageManagement.IPackageProjectEventsProvider.GetPackageProjectEvents() -> NuGet.PackageManagement.PackageProjectEvents
+NuGet.PackageManagement.IPackageRestoreManager
+NuGet.PackageManagement.IPackageRestoreManager.AssetsFileMissingStatusChanged -> NuGet.PackageManagement.AssetsFileMissingStatusChanged
+NuGet.PackageManagement.IPackageRestoreManager.GetPackagesInSolutionAsync(string solutionDirectory, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.PackageManagement.PackageRestoreData>>
+NuGet.PackageManagement.IPackageRestoreManager.GetPackagesRestoreData(string solutionDirectory, System.Collections.Generic.Dictionary<NuGet.Packaging.PackageReference, System.Collections.Generic.List<string>> packageReferencesDict) -> System.Collections.Generic.IEnumerable<NuGet.PackageManagement.PackageRestoreData>
+NuGet.PackageManagement.IPackageRestoreManager.PackageRestoreFailedEvent -> System.EventHandler<NuGet.PackageManagement.PackageRestoreFailedEventArgs>
+NuGet.PackageManagement.IPackageRestoreManager.PackageRestoredEvent -> System.EventHandler<NuGet.PackageManagement.PackageRestoredEventArgs>
+NuGet.PackageManagement.IPackageRestoreManager.PackagesMissingStatusChanged -> System.EventHandler<NuGet.PackageManagement.PackagesMissingStatusEventArgs>
+NuGet.PackageManagement.IPackageRestoreManager.RaiseAssetsFileMissingEventForProjectAsync(bool isAssetsFileMissing) -> void
+NuGet.PackageManagement.IPackageRestoreManager.RaisePackagesMissingEventForSolutionAsync(string solutionDirectory, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task
+NuGet.PackageManagement.IPackageRestoreManager.RestoreMissingPackagesAsync(string solutionDirectory, System.Collections.Generic.IEnumerable<NuGet.PackageManagement.PackageRestoreData> packages, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, NuGet.Protocol.Core.Types.PackageDownloadContext downloadContext, NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.PackageManagement.PackageRestoreResult>
+NuGet.PackageManagement.IPackageRestoreManager.RestoreMissingPackagesAsync(string solutionDirectory, System.Collections.Generic.IEnumerable<NuGet.PackageManagement.PackageRestoreData> packages, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, NuGet.Protocol.Core.Types.PackageDownloadContext downloadContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.PackageManagement.PackageRestoreResult>
+NuGet.PackageManagement.IPackageRestoreManager.RestoreMissingPackagesInSolutionAsync(string solutionDirectory, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.PackageManagement.PackageRestoreResult>
+NuGet.PackageManagement.IPackageRestoreManager.RestoreMissingPackagesInSolutionAsync(string solutionDirectory, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.PackageManagement.PackageRestoreResult>
+NuGet.PackageManagement.IProductUpdateService
+NuGet.PackageManagement.IProductUpdateService.CheckForAvailableUpdateAsync() -> void
+NuGet.PackageManagement.IProductUpdateService.DeclineUpdate(bool doNotRemindAgain) -> void
+NuGet.PackageManagement.IProductUpdateService.Update() -> void
+NuGet.PackageManagement.IProductUpdateService.UpdateAvailable -> System.EventHandler<NuGet.PackageManagement.ProductUpdateAvailableEventArgs>
+NuGet.PackageManagement.ISolutionManager
+NuGet.PackageManagement.ISolutionManager.ActionsExecuted -> System.EventHandler<NuGet.PackageManagement.ActionsExecutedEventArgs>
+NuGet.PackageManagement.ISolutionManager.AfterNuGetCacheUpdated -> System.EventHandler<NuGet.PackageManagement.NuGetEventArgs<string>>
+NuGet.PackageManagement.ISolutionManager.AfterNuGetProjectRenamed -> System.EventHandler<NuGet.PackageManagement.NuGetProjectEventArgs>
+NuGet.PackageManagement.ISolutionManager.DoesNuGetSupportsAnyProjectAsync() -> System.Threading.Tasks.Task<bool>
+NuGet.PackageManagement.ISolutionManager.EnsureSolutionIsLoaded() -> void
+NuGet.PackageManagement.ISolutionManager.GetNuGetProjectAsync(string nuGetProjectSafeName) -> System.Threading.Tasks.Task<NuGet.ProjectManagement.NuGetProject>
+NuGet.PackageManagement.ISolutionManager.GetNuGetProjectSafeNameAsync(NuGet.ProjectManagement.NuGetProject nuGetProject) -> System.Threading.Tasks.Task<string>
+NuGet.PackageManagement.ISolutionManager.GetNuGetProjectsAsync() -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.ProjectManagement.NuGetProject>>
+NuGet.PackageManagement.ISolutionManager.IsSolutionAvailableAsync() -> System.Threading.Tasks.Task<bool>
+NuGet.PackageManagement.ISolutionManager.IsSolutionOpen.get -> bool
+NuGet.PackageManagement.ISolutionManager.NuGetProjectAdded -> System.EventHandler<NuGet.PackageManagement.NuGetProjectEventArgs>
+NuGet.PackageManagement.ISolutionManager.NuGetProjectContext.get -> NuGet.ProjectManagement.INuGetProjectContext
+NuGet.PackageManagement.ISolutionManager.NuGetProjectContext.set -> void
+NuGet.PackageManagement.ISolutionManager.NuGetProjectRemoved -> System.EventHandler<NuGet.PackageManagement.NuGetProjectEventArgs>
+NuGet.PackageManagement.ISolutionManager.NuGetProjectRenamed -> System.EventHandler<NuGet.PackageManagement.NuGetProjectEventArgs>
+NuGet.PackageManagement.ISolutionManager.NuGetProjectUpdated -> System.EventHandler<NuGet.PackageManagement.NuGetProjectEventArgs>
+NuGet.PackageManagement.ISolutionManager.OnActionsExecuted(System.Collections.Generic.IEnumerable<NuGet.PackageManagement.ResolvedAction> actions) -> void
+NuGet.PackageManagement.ISolutionManager.SolutionClosed -> System.EventHandler
+NuGet.PackageManagement.ISolutionManager.SolutionClosing -> System.EventHandler
+NuGet.PackageManagement.ISolutionManager.SolutionDirectory.get -> string
+NuGet.PackageManagement.ISolutionManager.SolutionOpened -> System.EventHandler
+NuGet.PackageManagement.ISolutionManager.SolutionOpening -> System.EventHandler
+NuGet.PackageManagement.InstallationCompatibility
+NuGet.PackageManagement.InstallationCompatibility.EnsurePackageCompatibility(NuGet.ProjectManagement.NuGetProject nuGetProject, NuGet.Common.INuGetPathContext pathContext, System.Collections.Generic.IEnumerable<NuGet.PackageManagement.NuGetProjectAction> nuGetProjectActions, NuGet.Commands.RestoreResult restoreResult) -> void
+NuGet.PackageManagement.InstallationCompatibility.EnsurePackageCompatibilityAsync(NuGet.ProjectManagement.NuGetProject nuGetProject, NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.Protocol.Core.Types.DownloadResourceResult resourceResult, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task
+NuGet.PackageManagement.InstallationCompatibility.InstallationCompatibility() -> void
+NuGet.PackageManagement.LogUtility
+NuGet.PackageManagement.NuGetEventArgs<T>
+NuGet.PackageManagement.NuGetEventArgs<T>.Arg.get -> T
+NuGet.PackageManagement.NuGetEventArgs<T>.NuGetEventArgs(T arg) -> void
+NuGet.PackageManagement.NuGetOperationType
+NuGet.PackageManagement.NuGetOperationType.Install = 0 -> NuGet.PackageManagement.NuGetOperationType
+NuGet.PackageManagement.NuGetOperationType.Uninstall = 2 -> NuGet.PackageManagement.NuGetOperationType
+NuGet.PackageManagement.NuGetOperationType.Update = 1 -> NuGet.PackageManagement.NuGetOperationType
+NuGet.PackageManagement.NuGetPackageManager
+NuGet.PackageManagement.NuGetPackageManager.BatchEnd -> System.EventHandler<NuGet.PackageManagement.PackageProjectEventArgs>
+NuGet.PackageManagement.NuGetPackageManager.BatchStart -> System.EventHandler<NuGet.PackageManagement.PackageProjectEventArgs>
+NuGet.PackageManagement.NuGetPackageManager.CopySatelliteFilesAsync(NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
+NuGet.PackageManagement.NuGetPackageManager.DeleteOnRestartManager.get -> NuGet.PackageManagement.IDeleteOnRestartManager
+NuGet.PackageManagement.NuGetPackageManager.ExecuteBuildIntegratedProjectActionsAsync(NuGet.ProjectManagement.Projects.BuildIntegratedNuGetProject buildIntegratedProject, System.Collections.Generic.IEnumerable<NuGet.PackageManagement.NuGetProjectAction> nuGetProjectActions, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task
+NuGet.PackageManagement.NuGetPackageManager.ExecuteNuGetProjectActionsAsync(NuGet.ProjectManagement.NuGetProject nuGetProject, System.Collections.Generic.IEnumerable<NuGet.PackageManagement.NuGetProjectAction> nuGetProjectActions, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, NuGet.Protocol.Core.Types.PackageDownloadContext downloadContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task
+NuGet.PackageManagement.NuGetPackageManager.ExecuteNuGetProjectActionsAsync(NuGet.ProjectManagement.NuGetProject nuGetProject, System.Collections.Generic.IEnumerable<NuGet.PackageManagement.NuGetProjectAction> nuGetProjectActions, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, NuGet.Protocol.Core.Types.SourceCacheContext sourceCacheContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task
+NuGet.PackageManagement.NuGetPackageManager.ExecuteNuGetProjectActionsAsync(System.Collections.Generic.IEnumerable<NuGet.ProjectManagement.NuGetProject> nuGetProjects, System.Collections.Generic.IEnumerable<NuGet.PackageManagement.NuGetProjectAction> nuGetProjectActions, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, NuGet.Protocol.Core.Types.SourceCacheContext sourceCacheContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task
+NuGet.PackageManagement.NuGetPackageManager.GetInstalledPackagesDependencyInfo(NuGet.ProjectManagement.NuGetProject nuGetProject, System.Threading.CancellationToken token, bool includeUnresolved = false) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageDependencyInfo>>
+NuGet.PackageManagement.NuGetPackageManager.GetInstalledPackagesInDependencyOrder(NuGet.ProjectManagement.NuGetProject nuGetProject, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageIdentity>>
+NuGet.PackageManagement.NuGetPackageManager.GlobalPackageFolderRepositories.get -> System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Core.Types.SourceRepository>
+NuGet.PackageManagement.NuGetPackageManager.InstallPackageAsync(NuGet.ProjectManagement.NuGetProject nuGetProject, NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.PackageManagement.ResolutionContext resolutionContext, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, NuGet.Protocol.Core.Types.PackageDownloadContext downloadContext, NuGet.Protocol.Core.Types.SourceRepository primarySourceRepository, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> secondarySources, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task
+NuGet.PackageManagement.NuGetPackageManager.InstallPackageAsync(NuGet.ProjectManagement.NuGetProject nuGetProject, NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.PackageManagement.ResolutionContext resolutionContext, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, NuGet.Protocol.Core.Types.PackageDownloadContext downloadContext, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> primarySources, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> secondarySources, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task
+NuGet.PackageManagement.NuGetPackageManager.InstallPackageAsync(NuGet.ProjectManagement.NuGetProject nuGetProject, NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.PackageManagement.ResolutionContext resolutionContext, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, NuGet.Protocol.Core.Types.SourceRepository primarySourceRepository, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> secondarySources, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task
+NuGet.PackageManagement.NuGetPackageManager.InstallPackageAsync(NuGet.ProjectManagement.NuGetProject nuGetProject, NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.PackageManagement.ResolutionContext resolutionContext, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> primarySources, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> secondarySources, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task
+NuGet.PackageManagement.NuGetPackageManager.InstallPackageAsync(NuGet.ProjectManagement.NuGetProject nuGetProject, string packageId, NuGet.PackageManagement.ResolutionContext resolutionContext, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, NuGet.Protocol.Core.Types.PackageDownloadContext downloadContext, NuGet.Protocol.Core.Types.SourceRepository primarySourceRepository, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> secondarySources, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task
+NuGet.PackageManagement.NuGetPackageManager.InstallPackageAsync(NuGet.ProjectManagement.NuGetProject nuGetProject, string packageId, NuGet.PackageManagement.ResolutionContext resolutionContext, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, NuGet.Protocol.Core.Types.PackageDownloadContext downloadContext, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> primarySources, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> secondarySources, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task
+NuGet.PackageManagement.NuGetPackageManager.InstallPackageAsync(NuGet.ProjectManagement.NuGetProject nuGetProject, string packageId, NuGet.PackageManagement.ResolutionContext resolutionContext, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, NuGet.Protocol.Core.Types.SourceRepository primarySourceRepository, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> secondarySources, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task
+NuGet.PackageManagement.NuGetPackageManager.InstallPackageAsync(NuGet.ProjectManagement.NuGetProject nuGetProject, string packageId, NuGet.PackageManagement.ResolutionContext resolutionContext, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> primarySources, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> secondarySources, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task
+NuGet.PackageManagement.NuGetPackageManager.InstallationCompatibility.get -> NuGet.PackageManagement.IInstallationCompatibility
+NuGet.PackageManagement.NuGetPackageManager.InstallationCompatibility.set -> void
+NuGet.PackageManagement.NuGetPackageManager.NuGetPackageManager(NuGet.Protocol.Core.Types.ISourceRepositoryProvider sourceRepositoryProvider, NuGet.Configuration.ISettings settings, NuGet.PackageManagement.ISolutionManager solutionManager, NuGet.PackageManagement.IDeleteOnRestartManager deleteOnRestartManager) -> void
+NuGet.PackageManagement.NuGetPackageManager.NuGetPackageManager(NuGet.Protocol.Core.Types.ISourceRepositoryProvider sourceRepositoryProvider, NuGet.Configuration.ISettings settings, NuGet.PackageManagement.ISolutionManager solutionManager, NuGet.PackageManagement.IDeleteOnRestartManager deleteOnRestartManager, NuGet.Commands.IRestoreProgressReporter reporter) -> void
+NuGet.PackageManagement.NuGetPackageManager.NuGetPackageManager(NuGet.Protocol.Core.Types.ISourceRepositoryProvider sourceRepositoryProvider, NuGet.Configuration.ISettings settings, NuGet.PackageManagement.ISolutionManager solutionManager, NuGet.PackageManagement.IDeleteOnRestartManager deleteOnRestartManager, NuGet.Commands.IRestoreProgressReporter reporter, bool excludeVersion) -> void
+NuGet.PackageManagement.NuGetPackageManager.NuGetPackageManager(NuGet.Protocol.Core.Types.ISourceRepositoryProvider sourceRepositoryProvider, NuGet.Configuration.ISettings settings, NuGet.PackageManagement.ISolutionManager solutionManager, NuGet.PackageManagement.IDeleteOnRestartManager deleteOnRestartManager, bool excludeVersion) -> void
+NuGet.PackageManagement.NuGetPackageManager.NuGetPackageManager(NuGet.Protocol.Core.Types.ISourceRepositoryProvider sourceRepositoryProvider, NuGet.Configuration.ISettings settings, string packagesFolderPath) -> void
+NuGet.PackageManagement.NuGetPackageManager.NuGetPackageManager(NuGet.Protocol.Core.Types.ISourceRepositoryProvider sourceRepositoryProvider, NuGet.Configuration.ISettings settings, string packagesFolderPath, bool excludeVersion) -> void
+NuGet.PackageManagement.NuGetPackageManager.PackageExistsInPackagesFolder(NuGet.Packaging.Core.PackageIdentity packageIdentity) -> bool
+NuGet.PackageManagement.NuGetPackageManager.PackageExistsInPackagesFolder(NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.Packaging.PackageSaveMode packageSaveMode) -> bool
+NuGet.PackageManagement.NuGetPackageManager.PackagesFolderNuGetProject.get -> NuGet.ProjectManagement.FolderNuGetProject
+NuGet.PackageManagement.NuGetPackageManager.PackagesFolderNuGetProject.set -> void
+NuGet.PackageManagement.NuGetPackageManager.PackagesFolderSourceRepository.get -> NuGet.Protocol.Core.Types.SourceRepository
+NuGet.PackageManagement.NuGetPackageManager.PackagesFolderSourceRepository.set -> void
+NuGet.PackageManagement.NuGetPackageManager.PreviewBuildIntegratedProjectActionsAsync(NuGet.ProjectManagement.Projects.BuildIntegratedNuGetProject buildIntegratedProject, System.Collections.Generic.IEnumerable<NuGet.PackageManagement.NuGetProjectAction> nuGetProjectActions, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.PackageManagement.BuildIntegratedProjectAction>
+NuGet.PackageManagement.NuGetPackageManager.PreviewInstallPackageAsync(NuGet.ProjectManagement.NuGetProject nuGetProject, NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.PackageManagement.ResolutionContext resolutionContext, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, NuGet.Protocol.Core.Types.SourceRepository primarySourceRepository, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> secondarySources, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.PackageManagement.NuGetProjectAction>>
+NuGet.PackageManagement.NuGetPackageManager.PreviewInstallPackageAsync(NuGet.ProjectManagement.NuGetProject nuGetProject, NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.PackageManagement.ResolutionContext resolutionContext, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> primarySources, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> secondarySources, NuGet.Versioning.VersionRange versionRange, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.PackageManagement.NuGetProjectAction>>
+NuGet.PackageManagement.NuGetPackageManager.PreviewInstallPackageAsync(NuGet.ProjectManagement.NuGetProject nuGetProject, NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.PackageManagement.ResolutionContext resolutionContext, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> primarySources, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> secondarySources, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.PackageManagement.NuGetProjectAction>>
+NuGet.PackageManagement.NuGetPackageManager.PreviewInstallPackageAsync(NuGet.ProjectManagement.NuGetProject nuGetProject, string packageId, NuGet.PackageManagement.ResolutionContext resolutionContext, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, NuGet.Protocol.Core.Types.SourceRepository primarySourceRepository, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> secondarySources, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.PackageManagement.NuGetProjectAction>>
+NuGet.PackageManagement.NuGetPackageManager.PreviewInstallPackageAsync(NuGet.ProjectManagement.NuGetProject nuGetProject, string packageId, NuGet.PackageManagement.ResolutionContext resolutionContext, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> primarySources, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> secondarySources, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.PackageManagement.NuGetProjectAction>>
+NuGet.PackageManagement.NuGetPackageManager.PreviewProjectsInstallPackageAsync(System.Collections.Generic.IReadOnlyCollection<NuGet.ProjectManagement.NuGetProject> nuGetProjects, NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.PackageManagement.ResolutionContext resolutionContext, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, System.Collections.Generic.IReadOnlyCollection<NuGet.Protocol.Core.Types.SourceRepository> activeSources, NuGet.Versioning.VersionRange versionRange, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.PackageManagement.ResolvedAction>>
+NuGet.PackageManagement.NuGetPackageManager.PreviewProjectsInstallPackageAsync(System.Collections.Generic.IReadOnlyCollection<NuGet.ProjectManagement.NuGetProject> nuGetProjects, NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.PackageManagement.ResolutionContext resolutionContext, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, System.Collections.Generic.IReadOnlyCollection<NuGet.Protocol.Core.Types.SourceRepository> activeSources, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.PackageManagement.ResolvedAction>>
+NuGet.PackageManagement.NuGetPackageManager.PreviewProjectsUninstallPackageAsync(System.Collections.Generic.IReadOnlyCollection<NuGet.ProjectManagement.NuGetProject> nuGetProjects, string packageId, NuGet.PackageManagement.UninstallationContext uninstallationContext, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.PackageManagement.NuGetProjectAction>>
+NuGet.PackageManagement.NuGetPackageManager.PreviewUninstallPackageAsync(NuGet.ProjectManagement.NuGetProject nuGetProject, NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.PackageManagement.UninstallationContext uninstallationContext, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.PackageManagement.NuGetProjectAction>>
+NuGet.PackageManagement.NuGetPackageManager.PreviewUninstallPackageAsync(NuGet.ProjectManagement.NuGetProject nuGetProject, string packageId, NuGet.PackageManagement.UninstallationContext uninstallationContext, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.PackageManagement.NuGetProjectAction>>
+NuGet.PackageManagement.NuGetPackageManager.PreviewUpdatePackagesAsync(NuGet.Packaging.Core.PackageIdentity packageIdentity, System.Collections.Generic.IEnumerable<NuGet.ProjectManagement.NuGetProject> nuGetProjects, NuGet.PackageManagement.ResolutionContext resolutionContext, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> primarySources, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> secondarySources, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.PackageManagement.NuGetProjectAction>>
+NuGet.PackageManagement.NuGetPackageManager.PreviewUpdatePackagesAsync(System.Collections.Generic.IEnumerable<NuGet.ProjectManagement.NuGetProject> nuGetProjects, NuGet.PackageManagement.ResolutionContext resolutionContext, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> primarySources, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> secondarySources, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.PackageManagement.NuGetProjectAction>>
+NuGet.PackageManagement.NuGetPackageManager.PreviewUpdatePackagesAsync(System.Collections.Generic.List<NuGet.Packaging.Core.PackageIdentity> packageIdentities, System.Collections.Generic.IEnumerable<NuGet.ProjectManagement.NuGetProject> nuGetProjects, NuGet.PackageManagement.ResolutionContext resolutionContext, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> primarySources, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> secondarySources, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.PackageManagement.NuGetProjectAction>>
+NuGet.PackageManagement.NuGetPackageManager.PreviewUpdatePackagesAsync(string packageId, System.Collections.Generic.IEnumerable<NuGet.ProjectManagement.NuGetProject> nuGetProjects, NuGet.PackageManagement.ResolutionContext resolutionContext, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> primarySources, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> secondarySources, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.PackageManagement.NuGetProjectAction>>
+NuGet.PackageManagement.NuGetPackageManager.RestorePackageAsync(NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, NuGet.Protocol.Core.Types.PackageDownloadContext downloadContext, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> sourceRepositories, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
+NuGet.PackageManagement.NuGetPackageManager.UninstallPackageAsync(NuGet.ProjectManagement.NuGetProject nuGetProject, string packageId, NuGet.PackageManagement.UninstallationContext uninstallationContext, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task
+NuGet.PackageManagement.NuGetProjectAction
+NuGet.PackageManagement.NuGetProjectAction.NuGetProjectAction(NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.PackageManagement.NuGetProjectActionType nuGetProjectActionType, NuGet.ProjectManagement.NuGetProject project, NuGet.Protocol.Core.Types.SourceRepository sourceRepository = null) -> void
+NuGet.PackageManagement.NuGetProjectAction.NuGetProjectAction(NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.PackageManagement.NuGetProjectActionType nuGetProjectActionType, NuGet.ProjectManagement.NuGetProject project, NuGet.Protocol.Core.Types.SourceRepository sourceRepository, NuGet.Versioning.VersionRange versionRange) -> void
+NuGet.PackageManagement.NuGetProjectAction.NuGetProjectActionType.get -> NuGet.PackageManagement.NuGetProjectActionType
+NuGet.PackageManagement.NuGetProjectAction.PackageIdentity.get -> NuGet.Packaging.Core.PackageIdentity
+NuGet.PackageManagement.NuGetProjectAction.Project.get -> NuGet.ProjectManagement.NuGetProject
+NuGet.PackageManagement.NuGetProjectAction.SourceRepository.get -> NuGet.Protocol.Core.Types.SourceRepository
+NuGet.PackageManagement.NuGetProjectAction.VersionRange.get -> NuGet.Versioning.VersionRange
+NuGet.PackageManagement.NuGetProjectActionType
+NuGet.PackageManagement.NuGetProjectActionType.Install = 0 -> NuGet.PackageManagement.NuGetProjectActionType
+NuGet.PackageManagement.NuGetProjectActionType.Uninstall = 1 -> NuGet.PackageManagement.NuGetProjectActionType
+NuGet.PackageManagement.NuGetProjectEventArgs
+NuGet.PackageManagement.NuGetProjectEventArgs.NuGetProject.get -> NuGet.ProjectManagement.NuGetProject
+NuGet.PackageManagement.NuGetProjectEventArgs.NuGetProjectEventArgs(NuGet.ProjectManagement.NuGetProject nuGetProject) -> void
+NuGet.PackageManagement.PackageAlreadyInstalledException
+NuGet.PackageManagement.PackageAlreadyInstalledException.PackageAlreadyInstalledException(string message) -> void
+NuGet.PackageManagement.PackageDownloader
+NuGet.PackageManagement.PackageGraphAnalysisUtilities
+NuGet.PackageManagement.PackageManagementConstants
+NuGet.PackageManagement.PackageManagementContext
+NuGet.PackageManagement.PackageManagementContext.CommonOperations.get -> NuGet.PackageManagement.ICommonOperations
+NuGet.PackageManagement.PackageManagementContext.PackageManagementContext(NuGet.Protocol.Core.Types.ISourceRepositoryProvider sourceRepositoryProvider, NuGet.PackageManagement.ISolutionManager solutionManager, NuGet.Configuration.ISettings settings, NuGet.ProjectManagement.ISourceControlManagerProvider sourceControlManagerProvider, NuGet.PackageManagement.ICommonOperations commonOperations) -> void
+NuGet.PackageManagement.PackageManagementContext.Settings.get -> NuGet.Configuration.ISettings
+NuGet.PackageManagement.PackageManagementContext.SourceControlManagerProvider.get -> NuGet.ProjectManagement.ISourceControlManagerProvider
+NuGet.PackageManagement.PackageManagementContext.SourceRepositoryProvider.get -> NuGet.Protocol.Core.Types.ISourceRepositoryProvider
+NuGet.PackageManagement.PackageManagementContext.VsSolutionManager.get -> NuGet.PackageManagement.ISolutionManager
+NuGet.PackageManagement.PackagePreFetcher
+NuGet.PackageManagement.PackagePreFetcherResult
+NuGet.PackageManagement.PackagePreFetcherResult.Dispose() -> void
+NuGet.PackageManagement.PackagePreFetcherResult.EmitTelemetryEvent(System.Guid parentId) -> void
+NuGet.PackageManagement.PackagePreFetcherResult.EnsureResultAsync() -> System.Threading.Tasks.Task
+NuGet.PackageManagement.PackagePreFetcherResult.GetResultAsync() -> System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.DownloadResourceResult>
+NuGet.PackageManagement.PackagePreFetcherResult.InPackagesFolder.get -> bool
+NuGet.PackageManagement.PackagePreFetcherResult.IsComplete.get -> bool
+NuGet.PackageManagement.PackagePreFetcherResult.Package.get -> NuGet.Packaging.Core.PackageIdentity
+NuGet.PackageManagement.PackagePreFetcherResult.PackagePreFetcherResult(System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.DownloadResourceResult> downloadTask, NuGet.Packaging.Core.PackageIdentity package, NuGet.Configuration.PackageSource source) -> void
+NuGet.PackageManagement.PackagePreFetcherResult.PackagePreFetcherResult(string nupkgPath, NuGet.Packaging.Core.PackageIdentity package) -> void
+NuGet.PackageManagement.PackagePreFetcherResult.Source.get -> NuGet.Configuration.PackageSource
+NuGet.PackageManagement.PackageProjectEventArgs
+NuGet.PackageManagement.PackageProjectEventArgs.Id.get -> string
+NuGet.PackageManagement.PackageProjectEventArgs.Name.get -> string
+NuGet.PackageManagement.PackageProjectEventArgs.PackageProjectEventArgs(string id, string name) -> void
+NuGet.PackageManagement.PackageProjectEventArgs.PackageProjectEventArgs(string id, string name, string projectPath) -> void
+NuGet.PackageManagement.PackageProjectEventArgs.ProjectPath.get -> string
+NuGet.PackageManagement.PackageProjectEvents
+NuGet.PackageManagement.PackageProjectEvents.BatchEnd -> System.EventHandler<NuGet.PackageManagement.PackageProjectEventArgs>
+NuGet.PackageManagement.PackageProjectEvents.BatchStart -> System.EventHandler<NuGet.PackageManagement.PackageProjectEventArgs>
+NuGet.PackageManagement.PackageProjectEvents.PackageProjectEvents() -> void
+NuGet.PackageManagement.PackageProjectEventsProvider
+NuGet.PackageManagement.PackageProjectEventsProvider.GetPackageProjectEvents() -> NuGet.PackageManagement.PackageProjectEvents
+NuGet.PackageManagement.PackageProjectEventsProvider.PackageProjectEventsProvider() -> void
+NuGet.PackageManagement.PackageReferenceComparer
+NuGet.PackageManagement.PackageReferenceComparer.Equals(NuGet.Packaging.PackageReference x, NuGet.Packaging.PackageReference y) -> bool
+NuGet.PackageManagement.PackageReferenceComparer.GetHashCode(NuGet.Packaging.PackageReference obj) -> int
+NuGet.PackageManagement.PackageReferenceComparer.PackageReferenceComparer() -> void
+NuGet.PackageManagement.PackageReferenceRollbackException
+NuGet.PackageManagement.PackageReferenceRollbackException.LogMessages.get -> System.Collections.Generic.IReadOnlyList<NuGet.Common.ILogMessage>
+NuGet.PackageManagement.PackageReferenceRollbackException.PackageReferenceRollbackException(string message, System.Collections.Generic.IEnumerable<NuGet.Common.ILogMessage> logMessages) -> void
+NuGet.PackageManagement.PackageRestoreConsent
+NuGet.PackageManagement.PackageRestoreConsent.IsAutomatic.get -> bool
+NuGet.PackageManagement.PackageRestoreConsent.IsAutomatic.set -> void
+NuGet.PackageManagement.PackageRestoreConsent.IsGranted.get -> bool
+NuGet.PackageManagement.PackageRestoreConsent.IsGrantedInSettings.get -> bool
+NuGet.PackageManagement.PackageRestoreConsent.IsGrantedInSettings.set -> void
+NuGet.PackageManagement.PackageRestoreConsent.PackageRestoreConsent(NuGet.Configuration.ISettings settings) -> void
+NuGet.PackageManagement.PackageRestoreConsent.PackageRestoreConsent(NuGet.Configuration.ISettings settings, NuGet.Common.IEnvironmentVariableReader environmentReader) -> void
+NuGet.PackageManagement.PackageRestoreConsent.PackageRestoreConsent(NuGet.Configuration.ISettings settings, NuGet.Common.IEnvironmentVariableReader environmentReader, NuGet.Configuration.ConfigurationDefaults configurationDefaults) -> void
+NuGet.PackageManagement.PackageRestoreContext
+NuGet.PackageManagement.PackageRestoreContext.Logger.get -> NuGet.Common.ILogger
+NuGet.PackageManagement.PackageRestoreContext.MaxNumberOfParallelTasks.get -> int
+NuGet.PackageManagement.PackageRestoreContext.PackageManager.get -> NuGet.PackageManagement.NuGetPackageManager
+NuGet.PackageManagement.PackageRestoreContext.PackageRestoreContext(NuGet.PackageManagement.NuGetPackageManager nuGetPackageManager, System.Collections.Generic.IEnumerable<NuGet.PackageManagement.PackageRestoreData> packages, System.Threading.CancellationToken token, System.EventHandler<NuGet.PackageManagement.PackageRestoredEventArgs> packageRestoredEvent, System.EventHandler<NuGet.PackageManagement.PackageRestoreFailedEventArgs> packageRestoreFailedEvent, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> sourceRepositories, int maxNumberOfParallelTasks, NuGet.Common.ILogger logger) -> void
+NuGet.PackageManagement.PackageRestoreContext.PackageRestoreFailedEvent.get -> System.EventHandler<NuGet.PackageManagement.PackageRestoreFailedEventArgs>
+NuGet.PackageManagement.PackageRestoreContext.PackageRestoredEvent.get -> System.EventHandler<NuGet.PackageManagement.PackageRestoredEventArgs>
+NuGet.PackageManagement.PackageRestoreContext.Packages.get -> System.Collections.Generic.IEnumerable<NuGet.PackageManagement.PackageRestoreData>
+NuGet.PackageManagement.PackageRestoreContext.SourceRepositories.get -> System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository>
+NuGet.PackageManagement.PackageRestoreContext.Token.get -> System.Threading.CancellationToken
+NuGet.PackageManagement.PackageRestoreData
+NuGet.PackageManagement.PackageRestoreData.IsMissing.get -> bool
+NuGet.PackageManagement.PackageRestoreData.PackageReference.get -> NuGet.Packaging.PackageReference
+NuGet.PackageManagement.PackageRestoreData.PackageRestoreData(NuGet.Packaging.PackageReference packageReference, System.Collections.Generic.IEnumerable<string> projectNames, bool isMissing) -> void
+NuGet.PackageManagement.PackageRestoreData.ProjectNames.get -> System.Collections.Generic.IEnumerable<string>
+NuGet.PackageManagement.PackageRestoreFailedEventArgs
+NuGet.PackageManagement.PackageRestoreFailedEventArgs.Exception.get -> System.Exception
+NuGet.PackageManagement.PackageRestoreFailedEventArgs.PackageRestoreFailedEventArgs(NuGet.Packaging.PackageReference restoredFailedPackageReference, System.Exception exception, System.Collections.Generic.IEnumerable<string> projectNames) -> void
+NuGet.PackageManagement.PackageRestoreFailedEventArgs.ProjectNames.get -> System.Collections.Generic.IEnumerable<string>
+NuGet.PackageManagement.PackageRestoreFailedEventArgs.RestoreFailedPackageReference.get -> NuGet.Packaging.PackageReference
+NuGet.PackageManagement.PackageRestoreManager
+NuGet.PackageManagement.PackageRestoreManager.AssetsFileMissingStatusChanged -> NuGet.PackageManagement.AssetsFileMissingStatusChanged
+NuGet.PackageManagement.PackageRestoreManager.ClearMissingEventForSolution() -> void
+NuGet.PackageManagement.PackageRestoreManager.GetPackagesInSolutionAsync(string solutionDirectory, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.PackageManagement.PackageRestoreData>>
+NuGet.PackageManagement.PackageRestoreManager.GetPackagesRestoreData(string solutionDirectory, System.Collections.Generic.Dictionary<NuGet.Packaging.PackageReference, System.Collections.Generic.List<string>> packageReferencesDict) -> System.Collections.Generic.IEnumerable<NuGet.PackageManagement.PackageRestoreData>
+NuGet.PackageManagement.PackageRestoreManager.PackageRestoreFailedEvent -> System.EventHandler<NuGet.PackageManagement.PackageRestoreFailedEventArgs>
+NuGet.PackageManagement.PackageRestoreManager.PackageRestoreManager(NuGet.Protocol.Core.Types.ISourceRepositoryProvider sourceRepositoryProvider, NuGet.Configuration.ISettings settings, NuGet.PackageManagement.ISolutionManager solutionManager) -> void
+NuGet.PackageManagement.PackageRestoreManager.PackageRestoredEvent -> System.EventHandler<NuGet.PackageManagement.PackageRestoredEventArgs>
+NuGet.PackageManagement.PackageRestoreManager.PackagesMissingStatusChanged -> System.EventHandler<NuGet.PackageManagement.PackagesMissingStatusEventArgs>
+NuGet.PackageManagement.PackageRestoreResult
+NuGet.PackageManagement.PackageRestoreResult.PackageRestoreResult(bool restored, System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageIdentity> restoredPackages) -> void
+NuGet.PackageManagement.PackageRestoreResult.Restored.get -> bool
+NuGet.PackageManagement.PackageRestoreResult.RestoredPackages.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageIdentity>
+NuGet.PackageManagement.PackageRestoredEventArgs
+NuGet.PackageManagement.PackageRestoredEventArgs.Package.get -> NuGet.Packaging.Core.PackageIdentity
+NuGet.PackageManagement.PackageRestoredEventArgs.PackageRestoredEventArgs(NuGet.Packaging.Core.PackageIdentity packageIdentity, bool restored) -> void
+NuGet.PackageManagement.PackageRestoredEventArgs.Restored.get -> bool
+NuGet.PackageManagement.PackageWithDependants
+NuGet.PackageManagement.PackageWithDependants.DependantPackages.get -> System.Collections.Generic.IReadOnlyList<NuGet.Packaging.Core.PackageIdentity>
+NuGet.PackageManagement.PackageWithDependants.Identity.get -> NuGet.Packaging.Core.PackageIdentity
+NuGet.PackageManagement.PackageWithDependants.IsTopLevelPackage.get -> bool
+NuGet.PackageManagement.PackageWithDependants.PackageWithDependants(NuGet.Packaging.Core.PackageIdentity identity, System.Collections.Generic.IReadOnlyList<NuGet.Packaging.Core.PackageIdentity> dependingPackages) -> void
+NuGet.PackageManagement.PackagesFolderPathUtility
+NuGet.PackageManagement.PackagesMarkedForDeletionEventArgs
+NuGet.PackageManagement.PackagesMarkedForDeletionEventArgs.DirectoriesMarkedForDeletion.get -> System.Collections.Generic.IReadOnlyList<string>
+NuGet.PackageManagement.PackagesMarkedForDeletionEventArgs.PackagesMarkedForDeletionEventArgs(System.Collections.Generic.IReadOnlyList<string> directoriesMarkedForDeletion) -> void
+NuGet.PackageManagement.PackagesMissingStatusEventArgs
+NuGet.PackageManagement.PackagesMissingStatusEventArgs.PackagesMissing.get -> bool
+NuGet.PackageManagement.PackagesMissingStatusEventArgs.PackagesMissingStatusEventArgs(bool packagesMissing) -> void
+NuGet.PackageManagement.ProductUpdateAvailableEventArgs
+NuGet.PackageManagement.ProductUpdateAvailableEventArgs.CurrentVersion.get -> System.Version
+NuGet.PackageManagement.ProductUpdateAvailableEventArgs.NewVersion.get -> System.Version
+NuGet.PackageManagement.ProductUpdateAvailableEventArgs.ProductUpdateAvailableEventArgs(System.Version currentVersion, System.Version newVersion) -> void
+NuGet.PackageManagement.ProjectContextLogger
+NuGet.PackageManagement.ProjectContextLogger.ProjectContextLogger(NuGet.ProjectManagement.INuGetProjectContext projectContext) -> void
+NuGet.PackageManagement.PrunePackageTree
+NuGet.PackageManagement.ResolutionContext
+NuGet.PackageManagement.ResolutionContext.DependencyBehavior.get -> NuGet.Resolver.DependencyBehavior
+NuGet.PackageManagement.ResolutionContext.GatherCache.get -> NuGet.PackageManagement.GatherCache
+NuGet.PackageManagement.ResolutionContext.IncludePrerelease.get -> bool
+NuGet.PackageManagement.ResolutionContext.IncludeUnlisted.get -> bool
+NuGet.PackageManagement.ResolutionContext.ResolutionContext() -> void
+NuGet.PackageManagement.ResolutionContext.ResolutionContext(NuGet.Resolver.DependencyBehavior dependencyBehavior, bool includePrelease, bool includeUnlisted, NuGet.PackageManagement.VersionConstraints versionConstraints) -> void
+NuGet.PackageManagement.ResolutionContext.ResolutionContext(NuGet.Resolver.DependencyBehavior dependencyBehavior, bool includePrelease, bool includeUnlisted, NuGet.PackageManagement.VersionConstraints versionConstraints, NuGet.PackageManagement.GatherCache gatherCache, NuGet.Protocol.Core.Types.SourceCacheContext sourceCacheContext) -> void
+NuGet.PackageManagement.ResolutionContext.SourceCacheContext.get -> NuGet.Protocol.Core.Types.SourceCacheContext
+NuGet.PackageManagement.ResolutionContext.VersionConstraints.get -> NuGet.PackageManagement.VersionConstraints
+NuGet.PackageManagement.ResolvedAction
+NuGet.PackageManagement.ResolvedAction.Action.get -> NuGet.PackageManagement.NuGetProjectAction
+NuGet.PackageManagement.ResolvedAction.Project.get -> NuGet.ProjectManagement.NuGetProject
+NuGet.PackageManagement.ResolvedAction.ResolvedAction(NuGet.ProjectManagement.NuGetProject project, NuGet.PackageManagement.NuGetProjectAction action) -> void
+NuGet.PackageManagement.ResolvedPackage
+NuGet.PackageManagement.ResolvedPackage.Exists.get -> bool
+NuGet.PackageManagement.ResolvedPackage.LatestVersion.get -> NuGet.Versioning.NuGetVersion
+NuGet.PackageManagement.ResolvedPackage.ResolvedPackage(NuGet.Versioning.NuGetVersion latestVersion, bool exists) -> void
+NuGet.PackageManagement.ResolverGather
+NuGet.PackageManagement.ResolverGather.MaxDegreeOfParallelism.get -> int
+NuGet.PackageManagement.ResolverGather.MaxDegreeOfParallelism.set -> void
+NuGet.PackageManagement.ResolverGather.RequestTimeout.get -> System.TimeSpan
+NuGet.PackageManagement.ResolverGather.RequestTimeout.set -> void
+NuGet.PackageManagement.SourceRepositoryComparer
+NuGet.PackageManagement.SourceRepositoryComparer.Equals(NuGet.Protocol.Core.Types.SourceRepository x, NuGet.Protocol.Core.Types.SourceRepository y) -> bool
+NuGet.PackageManagement.SourceRepositoryComparer.GetHashCode(NuGet.Protocol.Core.Types.SourceRepository obj) -> int
+NuGet.PackageManagement.SourceRepositoryComparer.SourceRepositoryComparer() -> void
+NuGet.PackageManagement.TelemetryConstants
+NuGet.PackageManagement.UninstallResolver
+NuGet.PackageManagement.UninstallationContext
+NuGet.PackageManagement.UninstallationContext.ForceRemove.get -> bool
+NuGet.PackageManagement.UninstallationContext.RemoveDependencies.get -> bool
+NuGet.PackageManagement.UninstallationContext.UninstallationContext(bool removeDependencies = false, bool forceRemove = false) -> void
+NuGet.PackageManagement.UriHelper
+NuGet.PackageManagement.Utility.PackagesConfigLockFileUtility
+NuGet.PackageManagement.VersionConstraints
+NuGet.PackageManagement.VersionConstraints.ExactMajor = 1 -> NuGet.PackageManagement.VersionConstraints
+NuGet.PackageManagement.VersionConstraints.ExactMinor = 2 -> NuGet.PackageManagement.VersionConstraints
+NuGet.PackageManagement.VersionConstraints.ExactPatch = 4 -> NuGet.PackageManagement.VersionConstraints
+NuGet.PackageManagement.VersionConstraints.ExactRelease = 8 -> NuGet.PackageManagement.VersionConstraints
+NuGet.PackageManagement.VersionConstraints.None = 0 -> NuGet.PackageManagement.VersionConstraints
+NuGet.ProjectManagement.BuildIntegratedInstallationContext
+NuGet.ProjectManagement.BuildIntegratedInstallationContext.BuildIntegratedInstallationContext(System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> successfulFrameworks, System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> unsucessfulFrameworks, System.Collections.Generic.IDictionary<NuGet.Frameworks.NuGetFramework, string> originalFrameworks) -> void
+NuGet.ProjectManagement.BuildIntegratedInstallationContext.IncludeType.get -> NuGet.LibraryModel.LibraryIncludeFlags
+NuGet.ProjectManagement.BuildIntegratedInstallationContext.IncludeType.set -> void
+NuGet.ProjectManagement.BuildIntegratedInstallationContext.OriginalFrameworks.get -> System.Collections.Generic.IDictionary<NuGet.Frameworks.NuGetFramework, string>
+NuGet.ProjectManagement.BuildIntegratedInstallationContext.SuccessfulFrameworks.get -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework>
+NuGet.ProjectManagement.BuildIntegratedInstallationContext.SuppressParent.get -> NuGet.LibraryModel.LibraryIncludeFlags
+NuGet.ProjectManagement.BuildIntegratedInstallationContext.SuppressParent.set -> void
+NuGet.ProjectManagement.BuildIntegratedInstallationContext.UnsuccessfulFrameworks.get -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework>
+NuGet.ProjectManagement.BuildIntegratedPackageReference
+NuGet.ProjectManagement.BuildIntegratedPackageReference.BuildIntegratedPackageReference(NuGet.LibraryModel.LibraryDependency dependency, NuGet.Frameworks.NuGetFramework projectFramework) -> void
+NuGet.ProjectManagement.BuildIntegratedPackageReference.BuildIntegratedPackageReference(NuGet.LibraryModel.LibraryDependency dependency, NuGet.Frameworks.NuGetFramework projectFramework, NuGet.Packaging.Core.PackageIdentity installedVersion) -> void
+NuGet.ProjectManagement.BuildIntegratedPackageReference.Dependency.get -> NuGet.LibraryModel.LibraryDependency
+NuGet.ProjectManagement.BuildIntegratedProjectUtility
+NuGet.ProjectManagement.CollectionsUtility
+NuGet.ProjectManagement.ConsoleProjectContext
+NuGet.ProjectManagement.ConsoleProjectContext.ActionType.get -> NuGet.ProjectManagement.NuGetActionType
+NuGet.ProjectManagement.ConsoleProjectContext.ActionType.set -> void
+NuGet.ProjectManagement.ConsoleProjectContext.ConsoleProjectContext(NuGet.Common.ILogger logger) -> void
+NuGet.ProjectManagement.ConsoleProjectContext.ExecutionContext.get -> NuGet.ProjectManagement.ExecutionContext
+NuGet.ProjectManagement.ConsoleProjectContext.Log(NuGet.Common.ILogMessage message) -> void
+NuGet.ProjectManagement.ConsoleProjectContext.Log(NuGet.ProjectManagement.MessageLevel level, string message, params object[] args) -> void
+NuGet.ProjectManagement.ConsoleProjectContext.OperationId.get -> System.Guid
+NuGet.ProjectManagement.ConsoleProjectContext.OperationId.set -> void
+NuGet.ProjectManagement.ConsoleProjectContext.OriginalPackagesConfig.get -> System.Xml.Linq.XDocument
+NuGet.ProjectManagement.ConsoleProjectContext.OriginalPackagesConfig.set -> void
+NuGet.ProjectManagement.ConsoleProjectContext.PackageExtractionContext.get -> NuGet.Packaging.PackageExtractionContext
+NuGet.ProjectManagement.ConsoleProjectContext.PackageExtractionContext.set -> void
+NuGet.ProjectManagement.ConsoleProjectContext.ReportError(NuGet.Common.ILogMessage message) -> void
+NuGet.ProjectManagement.ConsoleProjectContext.ReportError(string message) -> void
+NuGet.ProjectManagement.ConsoleProjectContext.SourceControlManagerProvider.get -> NuGet.ProjectManagement.ISourceControlManagerProvider
+NuGet.ProjectManagement.Constants
+NuGet.ProjectManagement.DependencyGraphCacheContext
+NuGet.ProjectManagement.DependencyGraphCacheContext.DependencyGraphCache.get -> System.Collections.Generic.Dictionary<string, NuGet.ProjectModel.DependencyGraphSpec>
+NuGet.ProjectManagement.DependencyGraphCacheContext.DependencyGraphCache.set -> void
+NuGet.ProjectManagement.DependencyGraphCacheContext.DependencyGraphCacheContext() -> void
+NuGet.ProjectManagement.DependencyGraphCacheContext.DependencyGraphCacheContext(NuGet.Common.ILogger logger, NuGet.Configuration.ISettings settings) -> void
+NuGet.ProjectManagement.DependencyGraphCacheContext.DirectReferenceCache.get -> System.Collections.Generic.Dictionary<string, System.Collections.Generic.IReadOnlyList<NuGet.ProjectManagement.IDependencyGraphProject>>
+NuGet.ProjectManagement.DependencyGraphCacheContext.DirectReferenceCache.set -> void
+NuGet.ProjectManagement.DependencyGraphCacheContext.Logger.get -> NuGet.Common.ILogger
+NuGet.ProjectManagement.DependencyGraphCacheContext.PackageSpecCache.get -> System.Collections.Generic.Dictionary<string, NuGet.ProjectModel.PackageSpec>
+NuGet.ProjectManagement.DependencyGraphCacheContext.PackageSpecCache.set -> void
+NuGet.ProjectManagement.DependencyGraphCacheContext.Settings.get -> NuGet.Configuration.ISettings
+NuGet.ProjectManagement.EmptyNuGetProjectContext
+NuGet.ProjectManagement.EmptyNuGetProjectContext.ActionType.get -> NuGet.ProjectManagement.NuGetActionType
+NuGet.ProjectManagement.EmptyNuGetProjectContext.ActionType.set -> void
+NuGet.ProjectManagement.EmptyNuGetProjectContext.EmptyNuGetProjectContext() -> void
+NuGet.ProjectManagement.EmptyNuGetProjectContext.ExecutionContext.get -> NuGet.ProjectManagement.ExecutionContext
+NuGet.ProjectManagement.EmptyNuGetProjectContext.Log(NuGet.Common.ILogMessage message) -> void
+NuGet.ProjectManagement.EmptyNuGetProjectContext.Log(NuGet.ProjectManagement.MessageLevel level, string message, params object[] args) -> void
+NuGet.ProjectManagement.EmptyNuGetProjectContext.OperationId.get -> System.Guid
+NuGet.ProjectManagement.EmptyNuGetProjectContext.OperationId.set -> void
+NuGet.ProjectManagement.EmptyNuGetProjectContext.OriginalPackagesConfig.get -> System.Xml.Linq.XDocument
+NuGet.ProjectManagement.EmptyNuGetProjectContext.OriginalPackagesConfig.set -> void
+NuGet.ProjectManagement.EmptyNuGetProjectContext.PackageExtractionContext.get -> NuGet.Packaging.PackageExtractionContext
+NuGet.ProjectManagement.EmptyNuGetProjectContext.PackageExtractionContext.set -> void
+NuGet.ProjectManagement.EmptyNuGetProjectContext.ReportError(NuGet.Common.ILogMessage message) -> void
+NuGet.ProjectManagement.EmptyNuGetProjectContext.ReportError(string message) -> void
+NuGet.ProjectManagement.EmptyNuGetProjectContext.ResolveFileConflict(string message) -> NuGet.ProjectManagement.FileConflictAction
+NuGet.ProjectManagement.EmptyNuGetProjectContext.SourceControlManagerProvider.get -> NuGet.ProjectManagement.ISourceControlManagerProvider
+NuGet.ProjectManagement.ExecutionContext
+NuGet.ProjectManagement.ExecutionContext.DirectInstall.get -> NuGet.Packaging.Core.PackageIdentity
+NuGet.ProjectManagement.ExecutionContext.DirectInstall.set -> void
+NuGet.ProjectManagement.ExecutionContext.ExecutionContext() -> void
+NuGet.ProjectManagement.FileConflictAction
+NuGet.ProjectManagement.FileConflictAction.Ignore = 3 -> NuGet.ProjectManagement.FileConflictAction
+NuGet.ProjectManagement.FileConflictAction.IgnoreAll = 4 -> NuGet.ProjectManagement.FileConflictAction
+NuGet.ProjectManagement.FileConflictAction.Overwrite = 1 -> NuGet.ProjectManagement.FileConflictAction
+NuGet.ProjectManagement.FileConflictAction.OverwriteAll = 2 -> NuGet.ProjectManagement.FileConflictAction
+NuGet.ProjectManagement.FileConflictAction.PromptUser = 0 -> NuGet.ProjectManagement.FileConflictAction
+NuGet.ProjectManagement.FileSystemUtility
+NuGet.ProjectManagement.FileTransformExtensions
+NuGet.ProjectManagement.FileTransformExtensions.Equals(NuGet.ProjectManagement.FileTransformExtensions other) -> bool
+NuGet.ProjectManagement.FileTransformExtensions.FileTransformExtensions(string installExtension, string uninstallExtension) -> void
+NuGet.ProjectManagement.FileTransformExtensions.InstallExtension.get -> string
+NuGet.ProjectManagement.FileTransformExtensions.UninstallExtension.get -> string
+NuGet.ProjectManagement.FolderNuGetProject
+NuGet.ProjectManagement.FolderNuGetProject.CopySatelliteFilesAsync(NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
+NuGet.ProjectManagement.FolderNuGetProject.DeletePackage(NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
+NuGet.ProjectManagement.FolderNuGetProject.FolderNuGetProject(string root) -> void
+NuGet.ProjectManagement.FolderNuGetProject.FolderNuGetProject(string root, NuGet.Packaging.PackagePathResolver packagePathResolver) -> void
+NuGet.ProjectManagement.FolderNuGetProject.FolderNuGetProject(string root, NuGet.Packaging.PackagePathResolver packagePathResolver, NuGet.Frameworks.NuGetFramework targetFramework) -> void
+NuGet.ProjectManagement.FolderNuGetProject.GetInstalledManifestFilePath(NuGet.Packaging.Core.PackageIdentity packageIdentity) -> string
+NuGet.ProjectManagement.FolderNuGetProject.GetInstalledPackageFilePath(NuGet.Packaging.Core.PackageIdentity packageIdentity) -> string
+NuGet.ProjectManagement.FolderNuGetProject.GetInstalledPath(NuGet.Packaging.Core.PackageIdentity packageIdentity) -> string
+NuGet.ProjectManagement.FolderNuGetProject.GetPackageDownloadMarkerFilePath(NuGet.Packaging.Core.PackageIdentity packageIdentity) -> string
+NuGet.ProjectManagement.FolderNuGetProject.ManifestExists(NuGet.Packaging.Core.PackageIdentity packageIdentity) -> bool
+NuGet.ProjectManagement.FolderNuGetProject.PackageAndManifestExists(NuGet.Packaging.Core.PackageIdentity packageIdentity) -> bool
+NuGet.ProjectManagement.FolderNuGetProject.PackageExists(NuGet.Packaging.Core.PackageIdentity packageIdentity) -> bool
+NuGet.ProjectManagement.FolderNuGetProject.PackageExists(NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.Packaging.PackageSaveMode packageSaveMode) -> bool
+NuGet.ProjectManagement.FolderNuGetProject.Root.get -> string
+NuGet.ProjectManagement.FolderNuGetProject.Root.set -> void
+NuGet.ProjectManagement.IDependencyGraphProject
+NuGet.ProjectManagement.IDependencyGraphProject.GetPackageSpecsAndAdditionalMessagesAsync(NuGet.ProjectManagement.DependencyGraphCacheContext context) -> System.Threading.Tasks.Task<(System.Collections.Generic.IReadOnlyList<NuGet.ProjectModel.PackageSpec> dgSpecs, System.Collections.Generic.IReadOnlyList<NuGet.ProjectModel.IAssetsLogMessage> additionalMessages)>
+NuGet.ProjectManagement.IDependencyGraphProject.GetPackageSpecsAsync(NuGet.ProjectManagement.DependencyGraphCacheContext context) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<NuGet.ProjectModel.PackageSpec>>
+NuGet.ProjectManagement.IDependencyGraphProject.MSBuildProjectPath.get -> string
+NuGet.ProjectManagement.IMSBuildNuGetProjectContext
+NuGet.ProjectManagement.IMSBuildNuGetProjectContext.BindingRedirectsDisabled.get -> bool
+NuGet.ProjectManagement.IMSBuildNuGetProjectContext.SkipAssemblyReferences.get -> bool
+NuGet.ProjectManagement.IMSBuildProjectSystem
+NuGet.ProjectManagement.IMSBuildProjectSystem.AddBindingRedirects() -> void
+NuGet.ProjectManagement.IMSBuildProjectSystem.AddExistingFile(string path) -> void
+NuGet.ProjectManagement.IMSBuildProjectSystem.AddFile(string path, System.IO.Stream stream) -> void
+NuGet.ProjectManagement.IMSBuildProjectSystem.AddFrameworkReferenceAsync(string name, string packageId) -> System.Threading.Tasks.Task
+NuGet.ProjectManagement.IMSBuildProjectSystem.AddImport(string targetFullPath, NuGet.ProjectManagement.ImportLocation location) -> void
+NuGet.ProjectManagement.IMSBuildProjectSystem.AddReferenceAsync(string referencePath) -> System.Threading.Tasks.Task
+NuGet.ProjectManagement.IMSBuildProjectSystem.BeginProcessingAsync() -> System.Threading.Tasks.Task
+NuGet.ProjectManagement.IMSBuildProjectSystem.DeleteDirectory(string path, bool recursive) -> void
+NuGet.ProjectManagement.IMSBuildProjectSystem.EndProcessingAsync() -> System.Threading.Tasks.Task
+NuGet.ProjectManagement.IMSBuildProjectSystem.FileExistsInProject(string path) -> bool
+NuGet.ProjectManagement.IMSBuildProjectSystem.GetDirectories(string path) -> System.Collections.Generic.IEnumerable<string>
+NuGet.ProjectManagement.IMSBuildProjectSystem.GetFiles(string path, string filter, bool recursive) -> System.Collections.Generic.IEnumerable<string>
+NuGet.ProjectManagement.IMSBuildProjectSystem.GetFullPaths(string fileName) -> System.Collections.Generic.IEnumerable<string>
+NuGet.ProjectManagement.IMSBuildProjectSystem.GetPropertyValue(string propertyName) -> dynamic
+NuGet.ProjectManagement.IMSBuildProjectSystem.IsSupportedFile(string path) -> bool
+NuGet.ProjectManagement.IMSBuildProjectSystem.NuGetProjectContext.get -> NuGet.ProjectManagement.INuGetProjectContext
+NuGet.ProjectManagement.IMSBuildProjectSystem.NuGetProjectContext.set -> void
+NuGet.ProjectManagement.IMSBuildProjectSystem.ProjectFileFullPath.get -> string
+NuGet.ProjectManagement.IMSBuildProjectSystem.ProjectFullPath.get -> string
+NuGet.ProjectManagement.IMSBuildProjectSystem.ProjectName.get -> string
+NuGet.ProjectManagement.IMSBuildProjectSystem.ProjectUniqueName.get -> string
+NuGet.ProjectManagement.IMSBuildProjectSystem.ReferenceExistsAsync(string name) -> System.Threading.Tasks.Task<bool>
+NuGet.ProjectManagement.IMSBuildProjectSystem.RegisterProcessedFiles(System.Collections.Generic.IEnumerable<string> files) -> void
+NuGet.ProjectManagement.IMSBuildProjectSystem.RemoveFile(string path) -> void
+NuGet.ProjectManagement.IMSBuildProjectSystem.RemoveImport(string targetFullPath) -> void
+NuGet.ProjectManagement.IMSBuildProjectSystem.RemoveReferenceAsync(string name) -> System.Threading.Tasks.Task
+NuGet.ProjectManagement.IMSBuildProjectSystem.ResolvePath(string path) -> string
+NuGet.ProjectManagement.IMSBuildProjectSystem.TargetFramework.get -> NuGet.Frameworks.NuGetFramework
+NuGet.ProjectManagement.INuGetProjectContext
+NuGet.ProjectManagement.INuGetProjectContext.ActionType.get -> NuGet.ProjectManagement.NuGetActionType
+NuGet.ProjectManagement.INuGetProjectContext.ActionType.set -> void
+NuGet.ProjectManagement.INuGetProjectContext.ExecutionContext.get -> NuGet.ProjectManagement.ExecutionContext
+NuGet.ProjectManagement.INuGetProjectContext.Log(NuGet.Common.ILogMessage message) -> void
+NuGet.ProjectManagement.INuGetProjectContext.Log(NuGet.ProjectManagement.MessageLevel level, string message, params object[] args) -> void
+NuGet.ProjectManagement.INuGetProjectContext.OperationId.get -> System.Guid
+NuGet.ProjectManagement.INuGetProjectContext.OperationId.set -> void
+NuGet.ProjectManagement.INuGetProjectContext.OriginalPackagesConfig.get -> System.Xml.Linq.XDocument
+NuGet.ProjectManagement.INuGetProjectContext.OriginalPackagesConfig.set -> void
+NuGet.ProjectManagement.INuGetProjectContext.PackageExtractionContext.get -> NuGet.Packaging.PackageExtractionContext
+NuGet.ProjectManagement.INuGetProjectContext.PackageExtractionContext.set -> void
+NuGet.ProjectManagement.INuGetProjectContext.ReportError(NuGet.Common.ILogMessage message) -> void
+NuGet.ProjectManagement.INuGetProjectContext.ReportError(string message) -> void
+NuGet.ProjectManagement.INuGetProjectContext.ResolveFileConflict(string message) -> NuGet.ProjectManagement.FileConflictAction
+NuGet.ProjectManagement.INuGetProjectContext.SourceControlManagerProvider.get -> NuGet.ProjectManagement.ISourceControlManagerProvider
+NuGet.ProjectManagement.INuGetProjectServices
+NuGet.ProjectManagement.INuGetProjectServices.BuildProperties.get -> NuGet.ProjectManagement.IProjectBuildProperties
+NuGet.ProjectManagement.INuGetProjectServices.Capabilities.get -> NuGet.ProjectManagement.IProjectSystemCapabilities
+NuGet.ProjectManagement.INuGetProjectServices.ProjectSystem.get -> NuGet.ProjectManagement.IProjectSystemService
+NuGet.ProjectManagement.INuGetProjectServices.References.get -> NuGet.ProjectManagement.IProjectSystemReferencesService
+NuGet.ProjectManagement.INuGetProjectServices.ReferencesReader.get -> NuGet.ProjectManagement.IProjectSystemReferencesReader
+NuGet.ProjectManagement.INuGetProjectServices.ScriptService.get -> NuGet.ProjectManagement.IProjectScriptHostService
+NuGet.ProjectManagement.IPackageEventsProvider
+NuGet.ProjectManagement.IPackageEventsProvider.GetPackageEvents() -> NuGet.ProjectManagement.PackageEvents
+NuGet.ProjectManagement.IPackageFileTransformer
+NuGet.ProjectManagement.IPackageFileTransformer.RevertFileAsync(System.Func<System.Threading.Tasks.Task<System.IO.Stream>> streamTaskFactory, string targetPath, System.Collections.Generic.IEnumerable<NuGet.ProjectManagement.InternalZipFileInfo> matchingFiles, NuGet.ProjectManagement.IMSBuildProjectSystem projectSystem, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task
+NuGet.ProjectManagement.IPackageFileTransformer.TransformFileAsync(System.Func<System.Threading.Tasks.Task<System.IO.Stream>> streamTaskFactory, string targetPath, NuGet.ProjectManagement.IMSBuildProjectSystem projectSystem, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task
+NuGet.ProjectManagement.IProjectBuildProperties
+NuGet.ProjectManagement.IProjectBuildProperties.GetPropertyValue(string propertyName) -> string
+NuGet.ProjectManagement.IProjectBuildProperties.GetPropertyValueAsync(string propertyName) -> System.Threading.Tasks.Task<string>
+NuGet.ProjectManagement.IProjectScriptHostService
+NuGet.ProjectManagement.IProjectScriptHostService.ExecutePackageInitScriptAsync(NuGet.Packaging.Core.PackageIdentity packageIdentity, string packageInstallPath, NuGet.ProjectManagement.INuGetProjectContext projectContext, bool throwOnFailure, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
+NuGet.ProjectManagement.IProjectScriptHostService.ExecutePackageScriptAsync(NuGet.Packaging.Core.PackageIdentity packageIdentity, string packageInstallPath, string scriptRelativePath, NuGet.ProjectManagement.INuGetProjectContext projectContext, bool throwOnFailure, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task
+NuGet.ProjectManagement.IProjectSystemCapabilities
+NuGet.ProjectManagement.IProjectSystemCapabilities.NominatesOnSolutionLoad.get -> bool
+NuGet.ProjectManagement.IProjectSystemCapabilities.SupportsPackageReferences.get -> bool
+NuGet.ProjectManagement.IProjectSystemReferencesReader
+NuGet.ProjectManagement.IProjectSystemReferencesReader.GetPackageReferencesAsync(NuGet.Frameworks.NuGetFramework targetFramework, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.LibraryModel.LibraryDependency>>
+NuGet.ProjectManagement.IProjectSystemReferencesReader.GetProjectReferencesAsync(NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.ProjectModel.ProjectRestoreReference>>
+NuGet.ProjectManagement.IProjectSystemReferencesService
+NuGet.ProjectManagement.IProjectSystemReferencesService.AddOrUpdatePackageReferenceAsync(NuGet.LibraryModel.LibraryDependency packageReference, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task
+NuGet.ProjectManagement.IProjectSystemReferencesService.RemovePackageReferenceAsync(string packageName) -> System.Threading.Tasks.Task
+NuGet.ProjectManagement.IProjectSystemService
+NuGet.ProjectManagement.IProjectSystemService.SaveProjectAsync(System.Threading.CancellationToken token) -> System.Threading.Tasks.Task
+NuGet.ProjectManagement.ISourceControlManagerProvider
+NuGet.ProjectManagement.ISourceControlManagerProvider.GetSourceControlManager() -> NuGet.ProjectManagement.SourceControlManager
+NuGet.ProjectManagement.ImportLocation
+NuGet.ProjectManagement.ImportLocation.Bottom = 1 -> NuGet.ProjectManagement.ImportLocation
+NuGet.ProjectManagement.ImportLocation.Top = 0 -> NuGet.ProjectManagement.ImportLocation
+NuGet.ProjectManagement.InternalZipFileInfo
+NuGet.ProjectManagement.InternalZipFileInfo.InternalZipFileInfo(string zipArchivePath, string zipArchiveEntryFullName) -> void
+NuGet.ProjectManagement.InternalZipFileInfo.ZipArchiveEntryFullName.get -> string
+NuGet.ProjectManagement.InternalZipFileInfo.ZipArchivePath.get -> string
+NuGet.ProjectManagement.JsonConfigUtility
+NuGet.ProjectManagement.LoggerAdapter
+NuGet.ProjectManagement.LoggerAdapter.LoggerAdapter(NuGet.ProjectManagement.INuGetProjectContext projectLogger) -> void
+NuGet.ProjectManagement.LoggerAdapter.ProjectLogger.get -> NuGet.ProjectManagement.INuGetProjectContext
+NuGet.ProjectManagement.MSBuildNuGetProject
+NuGet.ProjectManagement.MSBuildNuGetProject.AddBindingRedirects() -> void
+NuGet.ProjectManagement.MSBuildNuGetProject.DoesPackagesConfigExists() -> bool
+NuGet.ProjectManagement.MSBuildNuGetProject.FolderNuGetProject.get -> NuGet.ProjectManagement.FolderNuGetProject
+NuGet.ProjectManagement.MSBuildNuGetProject.GetPackageSpecsAndAdditionalMessagesAsync(NuGet.ProjectManagement.DependencyGraphCacheContext context) -> System.Threading.Tasks.Task<(System.Collections.Generic.IReadOnlyList<NuGet.ProjectModel.PackageSpec> dgSpecs, System.Collections.Generic.IReadOnlyList<NuGet.ProjectModel.IAssetsLogMessage> additionalMessages)>
+NuGet.ProjectManagement.MSBuildNuGetProject.GetPackageSpecsAsync(NuGet.ProjectManagement.DependencyGraphCacheContext context) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<NuGet.ProjectModel.PackageSpec>>
+NuGet.ProjectManagement.MSBuildNuGetProject.MSBuildNuGetProject(NuGet.ProjectManagement.IMSBuildProjectSystem msbuildNuGetProjectSystem, string folderNuGetProjectPath, string packagesConfigFolderPath) -> void
+NuGet.ProjectManagement.MSBuildNuGetProject.MSBuildProjectPath.get -> string
+NuGet.ProjectManagement.MSBuildNuGetProject.PackageInstalled -> System.EventHandler<NuGet.ProjectManagement.PackageEventArgs>
+NuGet.ProjectManagement.MSBuildNuGetProject.PackageInstalling -> System.EventHandler<NuGet.ProjectManagement.PackageEventArgs>
+NuGet.ProjectManagement.MSBuildNuGetProject.PackageReferenceAdded -> System.EventHandler<NuGet.ProjectManagement.PackageEventArgs>
+NuGet.ProjectManagement.MSBuildNuGetProject.PackageReferenceRemoved -> System.EventHandler<NuGet.ProjectManagement.PackageEventArgs>
+NuGet.ProjectManagement.MSBuildNuGetProject.PackageUninstalled -> System.EventHandler<NuGet.ProjectManagement.PackageEventArgs>
+NuGet.ProjectManagement.MSBuildNuGetProject.PackageUninstalling -> System.EventHandler<NuGet.ProjectManagement.PackageEventArgs>
+NuGet.ProjectManagement.MSBuildNuGetProject.PackagesConfigNuGetProject.get -> NuGet.ProjectManagement.PackagesConfigNuGetProject
+NuGet.ProjectManagement.MSBuildNuGetProject.ProjectSystem.get -> NuGet.ProjectManagement.IMSBuildProjectSystem
+NuGet.ProjectManagement.MSBuildNuGetProjectSystemUtility
+NuGet.ProjectManagement.MessageLevel
+NuGet.ProjectManagement.MessageLevel.Debug = 2 -> NuGet.ProjectManagement.MessageLevel
+NuGet.ProjectManagement.MessageLevel.Error = 3 -> NuGet.ProjectManagement.MessageLevel
+NuGet.ProjectManagement.MessageLevel.Info = 0 -> NuGet.ProjectManagement.MessageLevel
+NuGet.ProjectManagement.MessageLevel.Warning = 1 -> NuGet.ProjectManagement.MessageLevel
+NuGet.ProjectManagement.MessageLevelExtensions
+NuGet.ProjectManagement.NuGetActionType
+NuGet.ProjectManagement.NuGetActionType.Install = 0 -> NuGet.ProjectManagement.NuGetActionType
+NuGet.ProjectManagement.NuGetActionType.Reinstall = 2 -> NuGet.ProjectManagement.NuGetActionType
+NuGet.ProjectManagement.NuGetActionType.Uninstall = 1 -> NuGet.ProjectManagement.NuGetActionType
+NuGet.ProjectManagement.NuGetActionType.Update = 3 -> NuGet.ProjectManagement.NuGetActionType
+NuGet.ProjectManagement.NuGetActionType.UpdateAll = 4 -> NuGet.ProjectManagement.NuGetActionType
+NuGet.ProjectManagement.NuGetProject
+NuGet.ProjectManagement.NuGetProject.GetMetadata<T>(string key) -> T
+NuGet.ProjectManagement.NuGetProject.GetMetadataOrNull(string key) -> object
+NuGet.ProjectManagement.NuGetProject.InternalMetadata.get -> System.Collections.Generic.Dictionary<string, object>
+NuGet.ProjectManagement.NuGetProject.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string, object>
+NuGet.ProjectManagement.NuGetProject.NuGetProject() -> void
+NuGet.ProjectManagement.NuGetProject.NuGetProject(System.Collections.Generic.Dictionary<string, object> optionalMetadata) -> void
+NuGet.ProjectManagement.NuGetProject.ProjectServices.get -> NuGet.ProjectManagement.INuGetProjectServices
+NuGet.ProjectManagement.NuGetProject.ProjectServices.set -> void
+NuGet.ProjectManagement.NuGetProject.ProjectStyle.get -> NuGet.ProjectModel.ProjectStyle
+NuGet.ProjectManagement.NuGetProject.ProjectStyle.set -> void
+NuGet.ProjectManagement.NuGetProject.SaveAsync(System.Threading.CancellationToken token) -> System.Threading.Tasks.Task
+NuGet.ProjectManagement.NuGetProject.TryGetMetadata<T>(string key, out T value) -> bool
+NuGet.ProjectManagement.NuGetProjectMetadataKeys
+NuGet.ProjectManagement.PackageEventArgs
+NuGet.ProjectManagement.PackageEventArgs.Identity.get -> NuGet.Packaging.Core.PackageIdentity
+NuGet.ProjectManagement.PackageEventArgs.InstallPath.get -> string
+NuGet.ProjectManagement.PackageEventArgs.PackageEventArgs() -> void
+NuGet.ProjectManagement.PackageEventArgs.PackageEventArgs(NuGet.ProjectManagement.NuGetProject project, NuGet.Packaging.Core.PackageIdentity identity, string installPath) -> void
+NuGet.ProjectManagement.PackageEventArgs.Project.get -> NuGet.ProjectManagement.NuGetProject
+NuGet.ProjectManagement.PackageEvents
+NuGet.ProjectManagement.PackageEvents.PackageInstalled -> System.EventHandler<NuGet.ProjectManagement.PackageEventArgs>
+NuGet.ProjectManagement.PackageEvents.PackageInstalling -> System.EventHandler<NuGet.ProjectManagement.PackageEventArgs>
+NuGet.ProjectManagement.PackageEvents.PackageReferenceAdded -> System.EventHandler<NuGet.ProjectManagement.PackageEventArgs>
+NuGet.ProjectManagement.PackageEvents.PackageReferenceRemoved -> System.EventHandler<NuGet.ProjectManagement.PackageEventArgs>
+NuGet.ProjectManagement.PackageEvents.PackageUninstalled -> System.EventHandler<NuGet.ProjectManagement.PackageEventArgs>
+NuGet.ProjectManagement.PackageEvents.PackageUninstalling -> System.EventHandler<NuGet.ProjectManagement.PackageEventArgs>
+NuGet.ProjectManagement.PackageEventsProvider
+NuGet.ProjectManagement.PackageEventsProvider.GetPackageEvents() -> NuGet.ProjectManagement.PackageEvents
+NuGet.ProjectManagement.PackageEventsProvider.PackageEventsProvider() -> void
+NuGet.ProjectManagement.PackagesConfigNuGetProject
+NuGet.ProjectManagement.PackagesConfigNuGetProject.FullPath.get -> string
+NuGet.ProjectManagement.PackagesConfigNuGetProject.GetPackagesConfig() -> System.Xml.Linq.XDocument
+NuGet.ProjectManagement.PackagesConfigNuGetProject.PackagesConfigExists() -> bool
+NuGet.ProjectManagement.PackagesConfigNuGetProject.PackagesConfigNuGetProject(string folderPath, System.Collections.Generic.Dictionary<string, object> metadata) -> void
+NuGet.ProjectManagement.PowerShellScripts
+NuGet.ProjectManagement.Preprocessor
+NuGet.ProjectManagement.Preprocessor.Preprocessor() -> void
+NuGet.ProjectManagement.Preprocessor.RevertFileAsync(System.Func<System.Threading.Tasks.Task<System.IO.Stream>> streamTaskFactory, string targetPath, System.Collections.Generic.IEnumerable<NuGet.ProjectManagement.InternalZipFileInfo> matchingFiles, NuGet.ProjectManagement.IMSBuildProjectSystem projectSystem, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task
+NuGet.ProjectManagement.Preprocessor.TransformFileAsync(System.Func<System.Threading.Tasks.Task<System.IO.Stream>> streamTaskFactory, string targetPath, NuGet.ProjectManagement.IMSBuildProjectSystem projectSystem, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task
+NuGet.ProjectManagement.ProjectBuildProperties
+NuGet.ProjectManagement.ProjectItemProperties
+NuGet.ProjectManagement.ProjectItems
+NuGet.ProjectManagement.Projects.BuildIntegratedNuGetProject
+NuGet.ProjectManagement.Projects.BuildIntegratedNuGetProject.BuildIntegratedNuGetProject() -> void
+NuGet.ProjectManagement.Projects.INuGetIntegratedProject
+NuGet.ProjectManagement.Projects.ProjectJsonNuGetProject
+NuGet.ProjectManagement.Projects.ProjectJsonNuGetProject.IsUAPFramework(NuGet.Frameworks.NuGetFramework framework) -> bool
+NuGet.ProjectManagement.Projects.ProjectJsonNuGetProject.JsonConfigPath.get -> string
+NuGet.ProjectManagement.Projects.ProjectJsonNuGetProject.ProjectJsonNuGetProject(string jsonConfig, string msBuildProjectPath) -> void
+NuGet.ProjectManagement.Projects.ProjectJsonNuGetProject.RemoveDependencyAsync(string packageId, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
+NuGet.ProjectManagement.SourceControlManager
+NuGet.ProjectManagement.SourceControlManager.IsPackagesFolderBoundToSourceControl() -> bool
+NuGet.ProjectManagement.SourceControlManager.Settings.get -> NuGet.Configuration.ISettings
+NuGet.ProjectManagement.SourceControlManager.Settings.set -> void
+NuGet.ProjectManagement.SourceControlManager.SourceControlManager(NuGet.Configuration.ISettings settings) -> void
+NuGet.ProjectManagement.SourceControlUtility
+NuGet.ProjectManagement.StreamUtility
+NuGet.ProjectManagement.XElementExtensions
+NuGet.ProjectManagement.XdtTransformer
+NuGet.ProjectManagement.XdtTransformer.RevertFileAsync(System.Func<System.Threading.Tasks.Task<System.IO.Stream>> streamTaskFactory, string targetPath, System.Collections.Generic.IEnumerable<NuGet.ProjectManagement.InternalZipFileInfo> matchingFiles, NuGet.ProjectManagement.IMSBuildProjectSystem projectSystem, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task
+NuGet.ProjectManagement.XdtTransformer.TransformFileAsync(System.Func<System.Threading.Tasks.Task<System.IO.Stream>> streamTaskFactory, string targetPath, NuGet.ProjectManagement.IMSBuildProjectSystem projectSystem, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task
+NuGet.ProjectManagement.XdtTransformer.XdtTransformer() -> void
+NuGet.ProjectManagement.XmlTransformer
+NuGet.ProjectManagement.XmlTransformer.RevertFileAsync(System.Func<System.Threading.Tasks.Task<System.IO.Stream>> streamTaskFactory, string targetPath, System.Collections.Generic.IEnumerable<NuGet.ProjectManagement.InternalZipFileInfo> matchingFiles, NuGet.ProjectManagement.IMSBuildProjectSystem projectSystem, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task
+NuGet.ProjectManagement.XmlTransformer.TransformFileAsync(System.Func<System.Threading.Tasks.Task<System.IO.Stream>> streamTaskFactory, string targetPath, NuGet.ProjectManagement.IMSBuildProjectSystem projectSystem, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task
+NuGet.ProjectManagement.XmlTransformer.XmlTransformer(System.Collections.Generic.IDictionary<System.Xml.Linq.XName, System.Action<System.Xml.Linq.XElement, System.Xml.Linq.XElement>> nodeActions) -> void
+NuGet.ProjectManagement.XmlUtility
+abstract NuGet.ProjectManagement.ExecutionContext.OpenFile(string fullPath) -> System.Threading.Tasks.Task
+abstract NuGet.ProjectManagement.NuGetProject.GetInstalledPackagesAsync(System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageReference>>
+abstract NuGet.ProjectManagement.NuGetProject.InstallPackageAsync(NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.Protocol.Core.Types.DownloadResourceResult downloadResourceResult, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
+abstract NuGet.ProjectManagement.NuGetProject.UninstallPackageAsync(NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
+abstract NuGet.ProjectManagement.Projects.BuildIntegratedNuGetProject.AddFileToProjectAsync(string filePath) -> System.Threading.Tasks.Task
+abstract NuGet.ProjectManagement.Projects.BuildIntegratedNuGetProject.GetAssetsFilePathAsync() -> System.Threading.Tasks.Task<string>
+abstract NuGet.ProjectManagement.Projects.BuildIntegratedNuGetProject.GetAssetsFilePathOrNullAsync() -> System.Threading.Tasks.Task<string>
+abstract NuGet.ProjectManagement.Projects.BuildIntegratedNuGetProject.GetCacheFilePathAsync() -> System.Threading.Tasks.Task<string>
+abstract NuGet.ProjectManagement.Projects.BuildIntegratedNuGetProject.GetPackageSpecsAndAdditionalMessagesAsync(NuGet.ProjectManagement.DependencyGraphCacheContext context) -> System.Threading.Tasks.Task<(System.Collections.Generic.IReadOnlyList<NuGet.ProjectModel.PackageSpec> dgSpecs, System.Collections.Generic.IReadOnlyList<NuGet.ProjectModel.IAssetsLogMessage> additionalMessages)>
+abstract NuGet.ProjectManagement.Projects.BuildIntegratedNuGetProject.GetPackageSpecsAsync(NuGet.ProjectManagement.DependencyGraphCacheContext context) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<NuGet.ProjectModel.PackageSpec>>
+abstract NuGet.ProjectManagement.Projects.BuildIntegratedNuGetProject.InstallPackageAsync(string packageId, NuGet.Versioning.VersionRange range, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, NuGet.ProjectManagement.BuildIntegratedInstallationContext installationContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
+abstract NuGet.ProjectManagement.Projects.BuildIntegratedNuGetProject.MSBuildProjectPath.get -> string
+abstract NuGet.ProjectManagement.Projects.BuildIntegratedNuGetProject.ProjectName.get -> string
+abstract NuGet.ProjectManagement.SourceControlManager.CreateFile(string fullPath, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext) -> System.IO.Stream
+abstract NuGet.ProjectManagement.SourceControlManager.PendAddFiles(System.Collections.Generic.IEnumerable<string> fullPaths, string root, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext) -> void
+abstract NuGet.ProjectManagement.SourceControlManager.PendDeleteFiles(System.Collections.Generic.IEnumerable<string> fullPaths, string root, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext) -> void
+const NuGet.PackageManagement.ActionTelemetryStepEvent.NugetActionStepsEventName = "NugetActionSteps" -> string
+const NuGet.PackageManagement.ActionsTelemetryEvent.NugetActionEventName = "NugetAction" -> string
+const NuGet.PackageManagement.PackagePreFetcherResult.PackagePreFetcherInformation = "PackagePreFetcherInformation" -> string
+const NuGet.ProjectManagement.Constants.ResourceAssemblyExtension = ".resources.dll" -> string
+const NuGet.ProjectManagement.NuGetProjectMetadataKeys.FullPath = "FullPath" -> string
+const NuGet.ProjectManagement.NuGetProjectMetadataKeys.Name = "Name" -> string
+const NuGet.ProjectManagement.NuGetProjectMetadataKeys.ProjectId = "ProjectId" -> string
+const NuGet.ProjectManagement.NuGetProjectMetadataKeys.SupportedFrameworks = "SupportedFrameworks" -> string
+const NuGet.ProjectManagement.NuGetProjectMetadataKeys.TargetFramework = "TargetFramework" -> string
+const NuGet.ProjectManagement.NuGetProjectMetadataKeys.UniqueName = "UniqueName" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.AssemblyName = "AssemblyName" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.AssetTargetFallback = "AssetTargetFallback" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.CLRSupport = "CLRSupport" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.CentralPackageTransitivePinningEnabled = "CentralPackageTransitivePinningEnabled" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.CentralPackageVersionOverrideEnabled = "CentralPackageVersionOverrideEnabled" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.Clear = "Clear" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.DotnetCliToolTargetFramework = "DotnetCliToolTargetFramework" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.ExcludeAssets = "ExcludeAssets" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.IncludeAssets = "IncludeAssets" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.MSBuildProjectExtensionsPath = "MSBuildProjectExtensionsPath" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.ManagePackageVersionsCentrally = "ManagePackageVersionsCentrally" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.NoWarn = "NoWarn" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.NuGetLockFilePath = "NuGetLockFilePath" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.PackageId = "PackageId" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.PackageTargetFallback = "PackageTargetFallback" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.PackageVersion = "PackageVersion" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.PrivateAssets = "PrivateAssets" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.ProjectTypeGuids = "ProjectTypeGuids" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.ReferenceOutputAssembly = "ReferenceOutputAssembly" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.RestoreAdditionalProjectFallbackFolders = "RestoreAdditionalProjectFallbackFolders" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.RestoreAdditionalProjectFallbackFoldersExcludes = "RestoreAdditionalProjectFallbackFoldersExcludes" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.RestoreAdditionalProjectSources = "RestoreAdditionalProjectSources" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.RestoreFallbackFolders = "RestoreFallbackFolders" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.RestoreLockedMode = "RestoreLockedMode" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.RestorePackagesPath = "RestorePackagesPath" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.RestorePackagesWithLockFile = "RestorePackagesWithLockFile" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.RestoreProjectStyle = "RestoreProjectStyle" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.RestoreSources = "RestoreSources" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.RuntimeIdentifier = "RuntimeIdentifier" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.RuntimeIdentifierGraphPath = "RuntimeIdentifierGraphPath" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.RuntimeIdentifiers = "RuntimeIdentifiers" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.RuntimeSupports = "RuntimeSupports" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.TargetFramework = "TargetFramework" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.TargetFrameworkIdentifier = "TargetFrameworkIdentifier" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.TargetFrameworkMoniker = "TargetFrameworkMoniker" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.TargetFrameworkProfile = "TargetFrameworkProfile" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.TargetFrameworkVersion = "TargetFrameworkVersion" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.TargetFrameworks = "TargetFrameworks" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.TargetPlatformIdentifier = "TargetPlatformIdentifier" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.TargetPlatformMinVersion = "TargetPlatformMinVersion" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.TargetPlatformMoniker = "TargetPlatformMoniker" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.TargetPlatformVersion = "TargetPlatformVersion" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.TreatWarningsAsErrors = "TreatWarningsAsErrors" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.Version = "Version" -> string
+const NuGet.ProjectManagement.ProjectBuildProperties.WarningsAsErrors = "WarningsAsErrors" -> string
+const NuGet.ProjectManagement.ProjectItemProperties.Aliases = "Aliases" -> string
+const NuGet.ProjectManagement.ProjectItemProperties.ExcludeAssets = "ExcludeAssets" -> string
+const NuGet.ProjectManagement.ProjectItemProperties.GeneratePathProperty = "GeneratePathProperty" -> string
+const NuGet.ProjectManagement.ProjectItemProperties.IncludeAssets = "IncludeAssets" -> string
+const NuGet.ProjectManagement.ProjectItemProperties.IsImplicitlyDefined = "IsImplicitlyDefined" -> string
+const NuGet.ProjectManagement.ProjectItemProperties.NoWarn = "NoWarn" -> string
+const NuGet.ProjectManagement.ProjectItemProperties.PrivateAssets = "PrivateAssets" -> string
+const NuGet.ProjectManagement.ProjectItemProperties.VersionOverride = "VersionOverride" -> string
+const NuGet.ProjectManagement.ProjectItems.PackageReference = "PackageReference" -> string
+const NuGet.ProjectManagement.ProjectItems.ProjectReference = "ProjectReference" -> string
+override NuGet.PackageManagement.IDEExecutionContext.OpenFile(string fullPath) -> System.Threading.Tasks.Task
+override NuGet.PackageManagement.ProjectContextLogger.Log(NuGet.Common.ILogMessage message) -> void
+override NuGet.PackageManagement.ProjectContextLogger.LogAsync(NuGet.Common.ILogMessage message) -> System.Threading.Tasks.Task
+override NuGet.ProjectManagement.FileTransformExtensions.GetHashCode() -> int
+override NuGet.ProjectManagement.FolderNuGetProject.GetInstalledPackagesAsync(System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageReference>>
+override NuGet.ProjectManagement.FolderNuGetProject.InstallPackageAsync(NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.Protocol.Core.Types.DownloadResourceResult downloadResourceResult, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
+override NuGet.ProjectManagement.FolderNuGetProject.UninstallPackageAsync(NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
+override NuGet.ProjectManagement.LoggerAdapter.Log(NuGet.Common.ILogMessage message) -> void
+override NuGet.ProjectManagement.LoggerAdapter.LogAsync(NuGet.Common.ILogMessage message) -> System.Threading.Tasks.Task
+override NuGet.ProjectManagement.LoggerAdapter.LogDebug(string data) -> void
+override NuGet.ProjectManagement.LoggerAdapter.LogError(string data) -> void
+override NuGet.ProjectManagement.LoggerAdapter.LogInformation(string data) -> void
+override NuGet.ProjectManagement.LoggerAdapter.LogInformationSummary(string data) -> void
+override NuGet.ProjectManagement.LoggerAdapter.LogMinimal(string data) -> void
+override NuGet.ProjectManagement.LoggerAdapter.LogVerbose(string data) -> void
+override NuGet.ProjectManagement.LoggerAdapter.LogWarning(string data) -> void
+override NuGet.ProjectManagement.MSBuildNuGetProject.GetInstalledPackagesAsync(System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageReference>>
+override NuGet.ProjectManagement.MSBuildNuGetProject.InstallPackageAsync(NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.Protocol.Core.Types.DownloadResourceResult downloadResourceResult, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
+override NuGet.ProjectManagement.MSBuildNuGetProject.PostProcessAsync(NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task
+override NuGet.ProjectManagement.MSBuildNuGetProject.UninstallPackageAsync(NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
+override NuGet.ProjectManagement.PackagesConfigNuGetProject.GetInstalledPackagesAsync(System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageReference>>
+override NuGet.ProjectManagement.PackagesConfigNuGetProject.InstallPackageAsync(NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.Protocol.Core.Types.DownloadResourceResult downloadResourceResult, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
+override NuGet.ProjectManagement.PackagesConfigNuGetProject.UninstallPackageAsync(NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
+override NuGet.ProjectManagement.Projects.ProjectJsonNuGetProject.AddFileToProjectAsync(string filePath) -> System.Threading.Tasks.Task
+override NuGet.ProjectManagement.Projects.ProjectJsonNuGetProject.GetAssetsFilePathAsync() -> System.Threading.Tasks.Task<string>
+override NuGet.ProjectManagement.Projects.ProjectJsonNuGetProject.GetAssetsFilePathOrNullAsync() -> System.Threading.Tasks.Task<string>
+override NuGet.ProjectManagement.Projects.ProjectJsonNuGetProject.GetCacheFilePathAsync() -> System.Threading.Tasks.Task<string>
+override NuGet.ProjectManagement.Projects.ProjectJsonNuGetProject.GetInstalledPackagesAsync(System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageReference>>
+override NuGet.ProjectManagement.Projects.ProjectJsonNuGetProject.GetPackageSpecsAndAdditionalMessagesAsync(NuGet.ProjectManagement.DependencyGraphCacheContext context) -> System.Threading.Tasks.Task<(System.Collections.Generic.IReadOnlyList<NuGet.ProjectModel.PackageSpec> dgSpecs, System.Collections.Generic.IReadOnlyList<NuGet.ProjectModel.IAssetsLogMessage> additionalMessages)>
+override NuGet.ProjectManagement.Projects.ProjectJsonNuGetProject.GetPackageSpecsAsync(NuGet.ProjectManagement.DependencyGraphCacheContext context) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<NuGet.ProjectModel.PackageSpec>>
+override NuGet.ProjectManagement.Projects.ProjectJsonNuGetProject.InstallPackageAsync(string packageId, NuGet.Versioning.VersionRange range, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, NuGet.ProjectManagement.BuildIntegratedInstallationContext installationContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
+override NuGet.ProjectManagement.Projects.ProjectJsonNuGetProject.MSBuildProjectPath.get -> string
+override NuGet.ProjectManagement.Projects.ProjectJsonNuGetProject.ProjectName.get -> string
+override NuGet.ProjectManagement.Projects.ProjectJsonNuGetProject.UninstallPackageAsync(NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
+override sealed NuGet.ProjectManagement.Projects.BuildIntegratedNuGetProject.InstallPackageAsync(NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.Protocol.Core.Types.DownloadResourceResult downloadResourceResult, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
+static NuGet.PackageManagement.BuildIntegratedRestoreUtility.ExecuteInitPs1ScriptsAsync(NuGet.ProjectManagement.Projects.BuildIntegratedNuGetProject project, System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageIdentity> packages, NuGet.Packaging.FallbackPackagePathResolver pathResolver, NuGet.ProjectManagement.INuGetProjectContext projectContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task
+static NuGet.PackageManagement.BuildIntegratedRestoreUtility.GetAddedPackages(NuGet.ProjectModel.LockFile originalLockFile, NuGet.ProjectModel.LockFile updatedLockFile) -> System.Collections.Generic.IReadOnlyList<NuGet.Packaging.Core.PackageIdentity>
+static NuGet.PackageManagement.BuildIntegratedRestoreUtility.GetParentProjectsInClosure(System.Collections.Generic.IReadOnlyList<NuGet.ProjectManagement.Projects.BuildIntegratedNuGetProject> projects, NuGet.ProjectManagement.Projects.BuildIntegratedNuGetProject target, NuGet.ProjectModel.DependencyGraphSpec cache) -> System.Collections.Generic.IReadOnlyList<NuGet.ProjectManagement.Projects.BuildIntegratedNuGetProject>
+static NuGet.PackageManagement.BuildIntegratedRestoreUtility.UpdatePackageReferenceMetadata(NuGet.ProjectModel.LockFile lockFile, NuGet.Packaging.FallbackPackagePathResolver pathResolver, NuGet.Packaging.Core.PackageIdentity package) -> void
+static NuGet.PackageManagement.DependencyGraphRestoreUtility.GetDefaultDGSpecFileName() -> string
+static NuGet.PackageManagement.DependencyGraphRestoreUtility.GetProjectSpec(NuGet.ProjectManagement.IDependencyGraphProject project, NuGet.ProjectManagement.DependencyGraphCacheContext context) -> System.Threading.Tasks.Task<NuGet.ProjectModel.PackageSpec>
+static NuGet.PackageManagement.DependencyGraphRestoreUtility.GetSolutionRestoreSpec(NuGet.PackageManagement.ISolutionManager solutionManager, NuGet.ProjectManagement.DependencyGraphCacheContext context) -> System.Threading.Tasks.Task<NuGet.ProjectModel.DependencyGraphSpec>
+static NuGet.PackageManagement.DependencyGraphRestoreUtility.GetSolutionRestoreSpecAndAdditionalMessages(NuGet.PackageManagement.ISolutionManager solutionManager, NuGet.ProjectManagement.DependencyGraphCacheContext context) -> System.Threading.Tasks.Task<(NuGet.ProjectModel.DependencyGraphSpec dgSpec, System.Collections.Generic.IReadOnlyList<NuGet.ProjectModel.IAssetsLogMessage> additionalMessages)>
+static NuGet.PackageManagement.DependencyGraphRestoreUtility.IsRestoreRequired(NuGet.ProjectModel.DependencyGraphSpec solutionDgSpec) -> bool
+static NuGet.PackageManagement.DependencyGraphRestoreUtility.RestoreAsync(NuGet.PackageManagement.ISolutionManager solutionManager, NuGet.ProjectModel.DependencyGraphSpec dgSpec, NuGet.ProjectManagement.DependencyGraphCacheContext context, NuGet.Commands.RestoreCommandProvidersCache providerCache, System.Action<NuGet.Protocol.Core.Types.SourceCacheContext> cacheContextModifier, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> sources, System.Guid parentId, bool forceRestore, bool isRestoreOriginalAction, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<NuGet.Commands.RestoreSummary>>
+static NuGet.PackageManagement.DependencyGraphRestoreUtility.RestoreAsync(NuGet.PackageManagement.ISolutionManager solutionManager, NuGet.ProjectModel.DependencyGraphSpec dgSpec, NuGet.ProjectManagement.DependencyGraphCacheContext context, NuGet.Commands.RestoreCommandProvidersCache providerCache, System.Action<NuGet.Protocol.Core.Types.SourceCacheContext> cacheContextModifier, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> sources, System.Guid parentId, bool forceRestore, bool isRestoreOriginalAction, System.Collections.Generic.IReadOnlyList<NuGet.ProjectModel.IAssetsLogMessage> additionalMessages, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<NuGet.Commands.RestoreSummary>>
+static NuGet.PackageManagement.DependencyGraphRestoreUtility.RestoreAsync(NuGet.ProjectModel.DependencyGraphSpec dgSpec, NuGet.ProjectManagement.DependencyGraphCacheContext context, NuGet.Commands.RestoreCommandProvidersCache providerCache, System.Action<NuGet.Protocol.Core.Types.SourceCacheContext> cacheContextModifier, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> sources, System.Guid parentId, bool forceRestore, bool isRestoreOriginalAction, System.Collections.Generic.IReadOnlyList<NuGet.ProjectModel.IAssetsLogMessage> additionalMessages, NuGet.Commands.IRestoreProgressReporter progressReporter, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<NuGet.Commands.RestoreSummary>>
+static NuGet.PackageManagement.DependencyGraphRestoreUtility.RestoreProjectAsync(NuGet.PackageManagement.ISolutionManager solutionManager, NuGet.ProjectManagement.Projects.BuildIntegratedNuGetProject project, NuGet.ProjectManagement.DependencyGraphCacheContext context, NuGet.Commands.RestoreCommandProvidersCache providerCache, System.Action<NuGet.Protocol.Core.Types.SourceCacheContext> cacheContextModifier, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> sources, System.Guid parentId, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Commands.RestoreResult>
+static NuGet.PackageManagement.ExceptionUtility.GetRootException(System.Exception exception) -> System.Exception
+static NuGet.PackageManagement.ExceptionUtility.Unwrap(System.Exception exception) -> System.Exception
+static NuGet.PackageManagement.GatherExceptionHelpers.ThrowIfNewerVersionAlreadyReferenced(string target, System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageReference> packagesConfig, System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageDependencyInfo> availablePackages) -> void
+static NuGet.PackageManagement.GatherExceptionHelpers.ThrowIfVersionIsDisallowedByPackagesConfig(System.Collections.Generic.IEnumerable<string> targets, System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageReference> packagesConfig, System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageDependencyInfo> availablePackages, NuGet.Common.ILogger logger) -> void
+static NuGet.PackageManagement.GatherExceptionHelpers.ThrowIfVersionIsDisallowedByPackagesConfig(string target, System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageReference> packagesConfig, System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageDependencyInfo> availablePackages, NuGet.Common.ILogger logger) -> void
+static NuGet.PackageManagement.InstallationCompatibility.Instance.get -> NuGet.PackageManagement.InstallationCompatibility
+static NuGet.PackageManagement.LogUtility.LogLevelToMessageLevel(NuGet.Common.LogLevel level) -> NuGet.ProjectManagement.MessageLevel
+static NuGet.PackageManagement.NuGetPackageManager.ClearDirectInstall(NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext) -> void
+static NuGet.PackageManagement.NuGetPackageManager.GetLatestVersionAsync(NuGet.Packaging.PackageReference package, NuGet.Frameworks.NuGetFramework framework, NuGet.PackageManagement.ResolutionContext resolutionContext, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> sources, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.PackageManagement.ResolvedPackage>
+static NuGet.PackageManagement.NuGetPackageManager.GetLatestVersionAsync(string packageId, NuGet.Frameworks.NuGetFramework framework, NuGet.PackageManagement.ResolutionContext resolutionContext, NuGet.Protocol.Core.Types.SourceRepository primarySourceRepository, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.PackageManagement.ResolvedPackage>
+static NuGet.PackageManagement.NuGetPackageManager.GetLatestVersionAsync(string packageId, NuGet.Frameworks.NuGetFramework framework, NuGet.PackageManagement.ResolutionContext resolutionContext, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> sources, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.PackageManagement.ResolvedPackage>
+static NuGet.PackageManagement.NuGetPackageManager.GetLatestVersionAsync(string packageId, NuGet.ProjectManagement.NuGetProject project, NuGet.PackageManagement.ResolutionContext resolutionContext, NuGet.Protocol.Core.Types.SourceRepository primarySourceRepository, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.PackageManagement.ResolvedPackage>
+static NuGet.PackageManagement.NuGetPackageManager.GetLatestVersionAsync(string packageId, NuGet.ProjectManagement.NuGetProject project, NuGet.PackageManagement.ResolutionContext resolutionContext, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> sources, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.PackageManagement.ResolvedPackage>
+static NuGet.PackageManagement.NuGetPackageManager.PackageExistsInAnotherNuGetProject(NuGet.ProjectManagement.NuGetProject nuGetProject, NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.PackageManagement.ISolutionManager solutionManager, System.Threading.CancellationToken token, bool excludeIntegrated = false) -> System.Threading.Tasks.Task<bool>
+static NuGet.PackageManagement.NuGetPackageManager.SetDirectInstall(NuGet.Packaging.Core.PackageIdentity directInstall, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext) -> void
+static NuGet.PackageManagement.NuGetProjectAction.CreateInstallProjectAction(NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.Protocol.Core.Types.SourceRepository sourceRepository, NuGet.ProjectManagement.NuGetProject project) -> NuGet.PackageManagement.NuGetProjectAction
+static NuGet.PackageManagement.NuGetProjectAction.CreateInstallProjectAction(NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.Protocol.Core.Types.SourceRepository sourceRepository, NuGet.ProjectManagement.NuGetProject project, NuGet.Versioning.VersionRange versionRange) -> NuGet.PackageManagement.NuGetProjectAction
+static NuGet.PackageManagement.NuGetProjectAction.CreateUninstallProjectAction(NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.ProjectManagement.NuGetProject project) -> NuGet.PackageManagement.NuGetProjectAction
+static NuGet.PackageManagement.PackageDownloader.GetDownloadResourceResultAsync(NuGet.Protocol.Core.Types.SourceRepository sourceRepository, NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.Protocol.Core.Types.PackageDownloadContext downloadContext, string globalPackagesFolder, NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.DownloadResourceResult>
+static NuGet.PackageManagement.PackageDownloader.GetDownloadResourceResultAsync(System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> sources, NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.Protocol.Core.Types.PackageDownloadContext downloadContext, string globalPackagesFolder, NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.DownloadResourceResult>
+static NuGet.PackageManagement.PackageGraphAnalysisUtilities.GetDependantPackages(NuGet.Packaging.Core.PackageDependencyInfo package, System.Collections.Generic.IList<NuGet.Packaging.Core.PackageDependencyInfo> packageDependencyInfos) -> System.Collections.Generic.IList<NuGet.Packaging.Core.PackageDependencyInfo>
+static NuGet.PackageManagement.PackageGraphAnalysisUtilities.GetDependencyInfoForPackageIdentitiesAsync(System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageIdentity> packageIdentities, NuGet.Frameworks.NuGetFramework nuGetFramework, NuGet.Protocol.Core.Types.DependencyInfoResource dependencyInfoResource, NuGet.Protocol.Core.Types.SourceCacheContext sourceCacheContext, bool includeUnresolved, NuGet.Common.ILogger logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageDependencyInfo>>
+static NuGet.PackageManagement.PackageGraphAnalysisUtilities.GetPackagesWithDependants(System.Collections.Generic.IList<NuGet.Packaging.Core.PackageDependencyInfo> packageDependencyInfos) -> System.Collections.Generic.IList<NuGet.PackageManagement.PackageWithDependants>
+static NuGet.PackageManagement.PackagePreFetcher.GetPackagesAsync(System.Collections.Generic.IEnumerable<NuGet.PackageManagement.NuGetProjectAction> actions, NuGet.ProjectManagement.FolderNuGetProject packagesFolder, NuGet.Protocol.Core.Types.PackageDownloadContext downloadContext, string globalPackagesFolder, NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.Dictionary<NuGet.Packaging.Core.PackageIdentity, NuGet.PackageManagement.PackagePreFetcherResult>>
+static NuGet.PackageManagement.PackagePreFetcher.LogFetchMessages(System.Collections.Generic.IEnumerable<NuGet.PackageManagement.PackagePreFetcherResult> fetchResults, string packagesFolderRoot, NuGet.Common.ILogger logger) -> void
+static NuGet.PackageManagement.PackageRestoreManager.RestoreMissingPackagesAsync(NuGet.PackageManagement.PackageRestoreContext packageRestoreContext, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, NuGet.Protocol.Core.Types.PackageDownloadContext downloadContext) -> System.Threading.Tasks.Task<NuGet.PackageManagement.PackageRestoreResult>
+static NuGet.PackageManagement.PackagesFolderPathUtility.GetPackagesFolderPath(NuGet.PackageManagement.ISolutionManager solutionManager, NuGet.Configuration.ISettings settings) -> string
+static NuGet.PackageManagement.PackagesFolderPathUtility.GetPackagesFolderPath(string solutionDirectory, NuGet.Configuration.ISettings settings) -> string
+static NuGet.PackageManagement.PrunePackageTree.IsExactVersion(NuGet.PackageManagement.VersionConstraints versionConstraints) -> bool
+static NuGet.PackageManagement.PrunePackageTree.PruneAllButHighest(System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo> packages, string packageId) -> System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo>
+static NuGet.PackageManagement.PrunePackageTree.PruneByPrimaryTargets(System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo> packages, System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageIdentity> primaryTargets) -> System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo>
+static NuGet.PackageManagement.PrunePackageTree.PruneByUpdateConstraints(System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo> packages, NuGet.Versioning.NuGetVersion existingVersion, NuGet.PackageManagement.VersionConstraints versionConstraints) -> System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo>
+static NuGet.PackageManagement.PrunePackageTree.PruneByUpdateConstraints(System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo> packages, System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageReference> packageReferences, NuGet.PackageManagement.VersionConstraints versionConstraints) -> System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo>
+static NuGet.PackageManagement.PrunePackageTree.PruneDisallowedVersions(System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo> packages, System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageReference> packageReferences) -> System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo>
+static NuGet.PackageManagement.PrunePackageTree.PruneDowngrades(System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo> packages, System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageReference> packageReferences) -> System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo>
+static NuGet.PackageManagement.PrunePackageTree.PrunePreleaseForStableTargets(System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo> packages, System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageIdentity> targets, System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageIdentity> packagesToInstall) -> System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo>
+static NuGet.PackageManagement.PrunePackageTree.PrunePrereleaseExceptAllowed(System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo> packages, System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageIdentity> installedPackages, bool isUpdateAll) -> System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo>
+static NuGet.PackageManagement.PrunePackageTree.RemoveAllPrereleaseVersionsForId(System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo> packages, string id) -> System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo>
+static NuGet.PackageManagement.PrunePackageTree.RemoveAllVersionsForIdExcept(System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo> packages, NuGet.Packaging.Core.PackageIdentity target) -> System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo>
+static NuGet.PackageManagement.PrunePackageTree.RemoveAllVersionsLessThan(System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo> packages, NuGet.Packaging.Core.PackageIdentity minimum) -> System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo>
+static NuGet.PackageManagement.PrunePackageTree.RemoveDisallowedVersions(System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo> packages, NuGet.Packaging.PackageReference packageReference) -> System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo>
+static NuGet.PackageManagement.ResolverGather.GatherAsync(NuGet.PackageManagement.GatherContext context, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.HashSet<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo>>
+static NuGet.PackageManagement.UninstallResolver.GetPackageDependents(System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageDependencyInfo> dependencyInfoEnumerable, System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageIdentity> installedPackages, out System.Collections.Generic.IDictionary<NuGet.Packaging.Core.PackageIdentity, System.Collections.Generic.HashSet<NuGet.Packaging.Core.PackageIdentity>> dependenciesDict) -> System.Collections.Generic.IDictionary<NuGet.Packaging.Core.PackageIdentity, System.Collections.Generic.HashSet<NuGet.Packaging.Core.PackageIdentity>>
+static NuGet.PackageManagement.UninstallResolver.GetPackagesToBeUninstalled(NuGet.Packaging.Core.PackageIdentity packageIdentity, System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageDependencyInfo> dependencyInfoEnumerable, System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageIdentity> installedPackages, NuGet.PackageManagement.UninstallationContext uninstallationContext) -> System.Collections.Generic.ICollection<NuGet.Packaging.Core.PackageIdentity>
+static NuGet.PackageManagement.UriHelper.IsAnySourceAvailable(NuGet.Configuration.PackageSourceProvider packageSourceProvider, bool checkHttp) -> bool
+static NuGet.PackageManagement.UriHelper.IsAnySourceLocal(NuGet.Configuration.PackageSourceProvider packageSourceProvider, out string localSource) -> bool
+static NuGet.PackageManagement.UriHelper.IsHttpSource(NuGet.Configuration.PackageSourceProvider packageSourceProvider) -> bool
+static NuGet.PackageManagement.UriHelper.IsHttpSource(string source) -> bool
+static NuGet.PackageManagement.UriHelper.IsHttpSource(string source, NuGet.Configuration.PackageSourceProvider packageSourceProvider) -> bool
+static NuGet.PackageManagement.UriHelper.OpenExternalLink(System.Uri url) -> void
+static NuGet.PackageManagement.Utility.PackagesConfigLockFileUtility.FromPackagesConfigFile(string pcFile, NuGet.Frameworks.NuGetFramework projectTfm, string packagesFolderPath, System.Threading.CancellationToken token) -> NuGet.ProjectModel.PackagesLockFile
+static NuGet.PackageManagement.Utility.PackagesConfigLockFileUtility.GetPackagesLockFilePath(string projectPath, string nuGetLockFilePath, string projectName) -> string
+static NuGet.PackageManagement.Utility.PackagesConfigLockFileUtility.ValidatePackagesConfigLockFiles(string projectFile, string packagesConfigFile, string projectName, string nuGetLockFilePath, string restorePackagesWithLockFile, NuGet.Frameworks.NuGetFramework projectTfm, string packagesFolderPath, bool restoreLockedMode, System.Threading.CancellationToken token) -> System.Collections.Generic.IReadOnlyList<NuGet.Common.IRestoreLogMessage>
+static NuGet.ProjectManagement.BuildIntegratedProjectUtility.GetLockFileOrNull(NuGet.ProjectManagement.Projects.BuildIntegratedNuGetProject buildIntegratedProject) -> System.Threading.Tasks.Task<NuGet.ProjectModel.LockFile>
+static NuGet.ProjectManagement.BuildIntegratedProjectUtility.GetLockFileOrNull(string lockFilePath) -> NuGet.ProjectModel.LockFile
+static NuGet.ProjectManagement.BuildIntegratedProjectUtility.GetOrderedLockFileDependencies(NuGet.ProjectModel.LockFile lockFile) -> System.Collections.Generic.IReadOnlyList<NuGet.LibraryModel.LibraryIdentity>
+static NuGet.ProjectManagement.BuildIntegratedProjectUtility.GetOrderedLockFilePackageDependencies(NuGet.ProjectModel.LockFile lockFile) -> System.Collections.Generic.IReadOnlyList<NuGet.Packaging.Core.PackageIdentity>
+static NuGet.ProjectManagement.BuildIntegratedProjectUtility.GetOrderedProjectPackageDependencies(NuGet.ProjectManagement.Projects.BuildIntegratedNuGetProject buildIntegratedProject) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<NuGet.Packaging.Core.PackageIdentity>>
+static NuGet.ProjectManagement.CollectionsUtility.AddRange<T>(System.Collections.Generic.ICollection<T> collection, System.Collections.Generic.IEnumerable<T> items) -> void
+static NuGet.ProjectManagement.CollectionsUtility.RemoveAll<T>(System.Collections.Generic.ICollection<T> collection, System.Func<T, bool> match) -> int
+static NuGet.ProjectManagement.FileSystemUtility.AddFile(string root, string path, System.Action<System.IO.Stream> writeToStream, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext) -> void
+static NuGet.ProjectManagement.FileSystemUtility.AddFile(string root, string path, System.IO.Stream stream, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext) -> void
+static NuGet.ProjectManagement.FileSystemUtility.ContentEquals(string path, System.Func<System.IO.Stream> streamFactory) -> bool
+static NuGet.ProjectManagement.FileSystemUtility.ContentEqualsAsync(string path, System.Func<System.Threading.Tasks.Task<System.IO.Stream>> streamTaskFactory) -> System.Threading.Tasks.Task<bool>
+static NuGet.ProjectManagement.FileSystemUtility.CreateFile(string fullPath) -> System.IO.Stream
+static NuGet.ProjectManagement.FileSystemUtility.CreateFile(string fullPath, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext) -> System.IO.Stream
+static NuGet.ProjectManagement.FileSystemUtility.CreateFile(string root, string path, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext) -> System.IO.Stream
+static NuGet.ProjectManagement.FileSystemUtility.DeleteDirectory(string fullPath, bool recursive, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext) -> void
+static NuGet.ProjectManagement.FileSystemUtility.DeleteDirectorySafe(string fullPath, bool recursive, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext) -> void
+static NuGet.ProjectManagement.FileSystemUtility.DeleteFile(string fullPath, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext) -> void
+static NuGet.ProjectManagement.FileSystemUtility.DeleteFileAndParentDirectoriesIfEmpty(string root, string filePath, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext) -> void
+static NuGet.ProjectManagement.FileSystemUtility.DeleteFiles(System.Collections.Generic.IEnumerable<NuGet.Packaging.ZipFilePair> packageFiles, string packagesDir, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext) -> void
+static NuGet.ProjectManagement.FileSystemUtility.DirectoryExists(string root, string path) -> bool
+static NuGet.ProjectManagement.FileSystemUtility.FileExists(string root, string path) -> bool
+static NuGet.ProjectManagement.FileSystemUtility.GetDirectories(string root, string path) -> System.Collections.Generic.IEnumerable<string>
+static NuGet.ProjectManagement.FileSystemUtility.GetFileStream(string fullPath) -> System.IO.Stream
+static NuGet.ProjectManagement.FileSystemUtility.GetFiles(string root, string path, string filter) -> System.Collections.Generic.IEnumerable<string>
+static NuGet.ProjectManagement.FileSystemUtility.GetFiles(string root, string path, string filter, bool recursive) -> System.Collections.Generic.IEnumerable<string>
+static NuGet.ProjectManagement.FileSystemUtility.GetFullPath(string root, string path) -> string
+static NuGet.ProjectManagement.FileSystemUtility.GetRelativePath(string root, string fullPath) -> string
+static NuGet.ProjectManagement.FileSystemUtility.MakeRelativePath(string root, string fullPath) -> string
+static NuGet.ProjectManagement.FileSystemUtility.MakeWritable(string fullPath) -> void
+static NuGet.ProjectManagement.FileSystemUtility.PendAddFiles(System.Collections.Generic.IEnumerable<string> addedPackageFiles, string packagesDir, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext) -> void
+static NuGet.ProjectManagement.JsonConfigUtility.AddDependency(Newtonsoft.Json.Linq.JObject json, NuGet.Packaging.Core.PackageDependency dependency) -> void
+static NuGet.ProjectManagement.JsonConfigUtility.AddDependency(Newtonsoft.Json.Linq.JObject json, NuGet.Packaging.Core.PackageIdentity package) -> void
+static NuGet.ProjectManagement.JsonConfigUtility.AddFramework(Newtonsoft.Json.Linq.JObject json, NuGet.Frameworks.NuGetFramework framework) -> void
+static NuGet.ProjectManagement.JsonConfigUtility.ClearFrameworks(Newtonsoft.Json.Linq.JObject json) -> void
+static NuGet.ProjectManagement.JsonConfigUtility.GetDependencies(Newtonsoft.Json.Linq.JObject json) -> System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageDependency>
+static NuGet.ProjectManagement.JsonConfigUtility.GetFrameworks(Newtonsoft.Json.Linq.JObject json) -> System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework>
+static NuGet.ProjectManagement.JsonConfigUtility.ParseDependency(Newtonsoft.Json.Linq.JToken dependencyToken) -> NuGet.Packaging.Core.PackageDependency
+static NuGet.ProjectManagement.JsonConfigUtility.RemoveDependency(Newtonsoft.Json.Linq.JObject json, string packageId) -> void
+static NuGet.ProjectManagement.MSBuildNuGetProjectSystemUtility.GetMostCompatibleGroup(NuGet.Frameworks.NuGetFramework projectTargetFramework, System.Collections.Generic.IEnumerable<NuGet.Packaging.FrameworkSpecificGroup> itemGroups) -> NuGet.Packaging.FrameworkSpecificGroup
+static NuGet.ProjectManagement.MSBuildNuGetProjectSystemUtility.IsValid(NuGet.Packaging.FrameworkSpecificGroup frameworkSpecificGroup) -> bool
+static NuGet.ProjectManagement.MSBuildNuGetProjectSystemUtility.Normalize(NuGet.Packaging.FrameworkSpecificGroup group) -> NuGet.Packaging.FrameworkSpecificGroup
+static NuGet.ProjectManagement.MessageLevelExtensions.ToLogLevel(this NuGet.ProjectManagement.MessageLevel messageLevel) -> NuGet.Common.LogLevel
+static NuGet.ProjectManagement.NuGetProject.GetUniqueNameOrName(NuGet.ProjectManagement.NuGetProject nuGetProject) -> string
+static NuGet.ProjectManagement.SourceControlUtility.DisableSourceControlMode(NuGet.Configuration.ISettings settings) -> void
+static NuGet.ProjectManagement.SourceControlUtility.GetSourceControlManager(NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext) -> NuGet.ProjectManagement.SourceControlManager
+static NuGet.ProjectManagement.SourceControlUtility.IsPackagesFolderBoundToSourceControl(NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext) -> bool
+static NuGet.ProjectManagement.SourceControlUtility.IsSourceControlDisabled(NuGet.Configuration.ISettings settings) -> bool
+static NuGet.ProjectManagement.StreamUtility.ContentEquals(System.IO.Stream stream, System.IO.Stream otherStream) -> bool
+static NuGet.ProjectManagement.StreamUtility.IsBinary(System.IO.Stream stream) -> bool
+static NuGet.ProjectManagement.StreamUtility.StreamFromString(string content) -> System.IO.Stream
+static NuGet.ProjectManagement.StreamUtility.StreamFromString(string content, System.Text.Encoding encoding) -> System.IO.Stream
+static NuGet.ProjectManagement.XElementExtensions.AddIndented(this System.Xml.Linq.XContainer container, System.Xml.Linq.XContainer content) -> void
+static NuGet.ProjectManagement.XElementExtensions.ElementsNoNamespace(this System.Collections.Generic.IEnumerable<System.Xml.Linq.XContainer> source, string localName) -> System.Collections.Generic.IEnumerable<System.Xml.Linq.XElement>
+static NuGet.ProjectManagement.XElementExtensions.ElementsNoNamespace(this System.Xml.Linq.XContainer container, string localName) -> System.Collections.Generic.IEnumerable<System.Xml.Linq.XElement>
+static NuGet.ProjectManagement.XElementExtensions.Except(this System.Xml.Linq.XElement source, System.Xml.Linq.XElement target) -> System.Xml.Linq.XElement
+static NuGet.ProjectManagement.XElementExtensions.GetOptionalAttributeValue(this System.Xml.Linq.XElement element, string localName, string namespaceName = null) -> string
+static NuGet.ProjectManagement.XElementExtensions.GetOptionalElementValue(this System.Xml.Linq.XContainer element, string localName, string namespaceName = null) -> string
+static NuGet.ProjectManagement.XElementExtensions.MergeWith(this System.Xml.Linq.XElement source, System.Xml.Linq.XElement target) -> System.Xml.Linq.XElement
+static NuGet.ProjectManagement.XElementExtensions.MergeWith(this System.Xml.Linq.XElement source, System.Xml.Linq.XElement target, System.Collections.Generic.IDictionary<System.Xml.Linq.XName, System.Action<System.Xml.Linq.XElement, System.Xml.Linq.XElement>> nodeActions) -> System.Xml.Linq.XElement
+static NuGet.ProjectManagement.XElementExtensions.RemoveAttributes(this System.Xml.Linq.XElement element, System.Func<System.Xml.Linq.XAttribute, bool> condition) -> void
+static NuGet.ProjectManagement.XElementExtensions.RemoveIndented(this System.Xml.Linq.XNode element) -> void
+static NuGet.ProjectManagement.XmlUtility.CreateDocument(System.Xml.Linq.XName rootName, string path, NuGet.ProjectManagement.IMSBuildProjectSystem msBuildNuGetProjectSystem) -> System.Xml.Linq.XDocument
+static NuGet.ProjectManagement.XmlUtility.CreateDocument(System.Xml.Linq.XName rootName, string root, string path, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext) -> System.Xml.Linq.XDocument
+static NuGet.ProjectManagement.XmlUtility.GetDocument(string root, string path) -> System.Xml.Linq.XDocument
+static NuGet.ProjectManagement.XmlUtility.GetOrCreateDocument(System.Xml.Linq.XName rootName, string path, NuGet.ProjectManagement.IMSBuildProjectSystem msBuildNuGetProjectSystem) -> System.Xml.Linq.XDocument
+static NuGet.ProjectManagement.XmlUtility.GetOrCreateDocument(System.Xml.Linq.XName rootName, string root, string path, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext) -> System.Xml.Linq.XDocument
+static NuGet.ProjectManagement.XmlUtility.LoadSafe(System.IO.Stream input) -> System.Xml.Linq.XDocument
+static NuGet.ProjectManagement.XmlUtility.LoadSafe(System.IO.Stream input, System.Xml.Linq.LoadOptions options) -> System.Xml.Linq.XDocument
+static NuGet.ProjectManagement.XmlUtility.LoadSafe(System.IO.Stream input, bool ignoreWhiteSpace) -> System.Xml.Linq.XDocument
+static NuGet.ProjectManagement.XmlUtility.LoadSafe(string filePath) -> System.Xml.Linq.XDocument
+static NuGet.ProjectManagement.XmlUtility.TryParseDocument(string content, out System.Xml.Linq.XDocument document) -> bool
+static readonly NuGet.PackageManagement.PackageManagementConstants.DefaultMaxDegreeOfParallelism -> int
+static readonly NuGet.PackageManagement.PackageManagementConstants.DefaultRequestTimeout -> System.TimeSpan
+static readonly NuGet.PackageManagement.TelemetryConstants.ExecuteActionStepName -> string
+static readonly NuGet.PackageManagement.TelemetryConstants.GatherDependencyStepName -> string
+static readonly NuGet.PackageManagement.TelemetryConstants.PreviewBuildIntegratedStepName -> string
+static readonly NuGet.PackageManagement.TelemetryConstants.ResolveDependencyStepName -> string
+static readonly NuGet.PackageManagement.TelemetryConstants.ResolvedActionsStepName -> string
+static readonly NuGet.ProjectManagement.Constants.AssemblyReferencesExtensions -> System.Collections.Generic.ICollection<string>
+static readonly NuGet.ProjectManagement.Constants.BeginIgnoreMarker -> string
+static readonly NuGet.ProjectManagement.Constants.BinDirectory -> string
+static readonly NuGet.ProjectManagement.Constants.EndIgnoreMarker -> string
+static readonly NuGet.ProjectManagement.Constants.JSProjectExt -> string
+static readonly NuGet.ProjectManagement.Constants.MirroringReferenceFile -> string
+static readonly NuGet.ProjectManagement.Constants.NativeTFM -> string
+static readonly NuGet.ProjectManagement.Constants.PackageReferenceFile -> string
+static readonly NuGet.ProjectManagement.Constants.ProjectExt -> string
+static readonly NuGet.ProjectManagement.Constants.ReadmeFileName -> string
+static readonly NuGet.ProjectManagement.Constants.TargetFrameworkMoniker -> string
+static readonly NuGet.ProjectManagement.Constants.TargetPlatformIdentifier -> string
+static readonly NuGet.ProjectManagement.Constants.TargetPlatformVersion -> string
+static readonly NuGet.ProjectManagement.Constants.Unpublished -> System.DateTimeOffset
+static readonly NuGet.ProjectManagement.Constants.VCXProjextExt -> string
+static readonly NuGet.ProjectManagement.PowerShellScripts.Init -> string
+static readonly NuGet.ProjectManagement.PowerShellScripts.InitPS1RelativePath -> string
+static readonly NuGet.ProjectManagement.PowerShellScripts.Install -> string
+static readonly NuGet.ProjectManagement.PowerShellScripts.Uninstall -> string
+virtual NuGet.PackageManagement.PackagePreFetcherResult.Dispose(bool disposing) -> void
+virtual NuGet.PackageManagement.PackageRestoreManager.RaiseAssetsFileMissingEventForProjectAsync(bool isAssetsFileMissing) -> void
+virtual NuGet.PackageManagement.PackageRestoreManager.RaisePackagesMissingEventForSolutionAsync(string solutionDirectory, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task
+virtual NuGet.PackageManagement.PackageRestoreManager.RestoreMissingPackagesAsync(string solutionDirectory, System.Collections.Generic.IEnumerable<NuGet.PackageManagement.PackageRestoreData> packages, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, NuGet.Protocol.Core.Types.PackageDownloadContext downloadContext, NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.PackageManagement.PackageRestoreResult>
+virtual NuGet.PackageManagement.PackageRestoreManager.RestoreMissingPackagesAsync(string solutionDirectory, System.Collections.Generic.IEnumerable<NuGet.PackageManagement.PackageRestoreData> packages, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, NuGet.Protocol.Core.Types.PackageDownloadContext downloadContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.PackageManagement.PackageRestoreResult>
+virtual NuGet.PackageManagement.PackageRestoreManager.RestoreMissingPackagesInSolutionAsync(string solutionDirectory, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.PackageManagement.PackageRestoreResult>
+virtual NuGet.PackageManagement.PackageRestoreManager.RestoreMissingPackagesInSolutionAsync(string solutionDirectory, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.PackageManagement.PackageRestoreResult>
+virtual NuGet.ProjectManagement.ConsoleProjectContext.ResolveFileConflict(string message) -> NuGet.ProjectManagement.FileConflictAction
+virtual NuGet.ProjectManagement.NuGetProject.PostProcessAsync(NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task
+virtual NuGet.ProjectManagement.NuGetProject.PreProcessAsync(NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task
+virtual NuGet.ProjectManagement.Projects.ProjectJsonNuGetProject.GetMSBuildProjectExtensionsPathAsync() -> System.Threading.Tasks.Task<string>
+virtual NuGet.ProjectManagement.Projects.ProjectJsonNuGetProject.UpdateInternalTargetFrameworkAsync() -> System.Threading.Tasks.Task

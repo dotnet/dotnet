@@ -1,0 +1,209 @@
+<Project DefaultTargets="Build">
+
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+
+  <ItemGroup>
+    <PackageReference Include="vswhere" Version="$(VSWhereVersion)" IsImplicitlyDefined="true" GeneratePathProperty="true" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <CMakeOutputDir Condition="'$(CMakeOutputDir)' != ''">$([MSBuild]::NormalizePath($(CMakeOutputDir)))</CMakeOutputDir>
+    <CMakeOutputDir Condition="'$(CMakeOutputDir)' == ''">$([MSBuild]::NormalizePath($(IntermediateOutputPath)))</CMakeOutputDir>
+    <CMakeOutputDir>$(CMakeOutputDir.TrimEnd('\'))</CMakeOutputDir>
+    <CMakeInstallDir Condition="'$(CMakeInstallDir)' != ''">$([MSBuild]::NormalizePath($(CMakeInstallDir)))</CMakeInstallDir>
+    <CMakeInstallDir Condition="'$(CMakeInstallDir)' == ''">$([MSBuild]::NormalizePath($(OutputPath)))</CMakeInstallDir>
+    <CMakeInstallDir>$(CMakeInstallDir.TrimEnd('\'))</CMakeInstallDir>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$([MSBuild]::IsOsPlatform(Windows))">
+    <VSWherePath>$([MSBuild]::NormalizePath('$(Pkgvswhere)','tools','vswhere.exe'))</VSWherePath>
+    <_VSNativeCompilerComponentArchName Condition="'$(Platform)' == 'x86'">x86.x64</_VSNativeCompilerComponentArchName>
+    <_VSNativeCompilerComponentArchName Condition="'$(Platform)' == 'x64'">x86.x64</_VSNativeCompilerComponentArchName>
+    <_VSNativeCompilerComponentArchName Condition="'$(Platform)' == 'arm'">ARM</_VSNativeCompilerComponentArchName>
+    <_VSNativeCompilerComponentArchName Condition="'$(Platform)' == 'arm64'">ARM64</_VSNativeCompilerComponentArchName>
+    <_VSNativeCompilerComponentName>Microsoft.VisualStudio.Component.VC.Tools.$(_VSNativeCompilerComponentArchName)</_VSNativeCompilerComponentName>
+  </PropertyGroup>
+
+  <Target Name="ResolveVSGenerator" Condition="'$(CMakeGenerator)' == 'Visual Studio'">
+    <Error Condition="'$(CMakeCompilerToolchain)' != 'MSVC'" Text="The Visual Studio generator only supports the MSVC toolchain." />
+    <Error Condition="'$(Platform)' == 'AnyCPU'" Text="A CMake project must be built for a specific architecture." />
+    <PropertyGroup>
+      <_CMakeMultiConfigurationGenerator>true</_CMakeMultiConfigurationGenerator>
+      <_CMakePassArchitectureToGenerator>true</_CMakePassArchitectureToGenerator>
+      <!-- We limit the VS version range for the generator since CMake only knows about specific VS versions -->
+      <VSGeneratorVersionRange Condition="'$(VSGeneratorVersionRange)' == ''">[15,18.0)</VSGeneratorVersionRange>
+      <!-- Visual Studio uses the Win32 name for the x86 target architecture. -->
+      <Platform Condition="'$(Platform)' == 'x86'">Win32</Platform>
+    </PropertyGroup>
+
+    <Error Condition="'$(_VSNativeCompilerComponentArchName)' == ''" Text="Unable to determine if Visual Studio has MSVC tools installed for the '$(Platform)' architecture." />
+
+    <Exec
+      Command="&quot;$(VSWherePath)&quot; -latest -prerelease -products * -version $(VSGeneratorVersionRange) -requires $(_VSNativeCompilerComponentName) -property installationVersion"
+      EchoOff="true"
+      ConsoleToMsBuild="true"
+      StandardOutputImportance="Low">
+      <Output TaskParameter="ConsoleOutput" PropertyName="_HighestCompatibleVSVersion" />
+    </Exec>
+
+    <Error Condition="'$(_HighestCompatibleVSVersion)' == ''" Text="Unable to find a VS installation with the MSVC tools for the '$(Platform)' architecture." />
+
+    <PropertyGroup>
+      <VSGenerator Condition="$(_HighestCompatibleVSVersion.StartsWith(16.))">Visual Studio 16 2019</VSGenerator>
+      <VSGenerator Condition="$(_HighestCompatibleVSVersion.StartsWith(17.))">Visual Studio 17 2022</VSGenerator>
+    </PropertyGroup>
+
+    <Error Condition="'$(VSGenerator)' == ''"
+           Text="Unable to determine the correct CMake Generator for Visual Studio. The SDK may need to be updated to understand a new VS version. Unknown Visual Studio version $(_HighestCompatibleVSVersion)" />
+
+    <PropertyGroup>
+      <CMakeGenerator>$(VSGenerator)</CMakeGenerator>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="IsMultiConfigurationGenerator" DependsOnTargets="ResolveVSGenerator" Returns="$(_CMakeMultiConfigurationGenerator)" />
+
+  <Target Name="GetRootCMakeListsDirectory" Returns="$(_NormalizedCMakeListsDirectory)">
+    <PropertyGroup>
+      <_NormalizedCMakeListsPath>$([MSBuild]::NormalizePath($(MSBuildProjectDirectory),$(CMakeLists)))</_NormalizedCMakeListsPath>
+      <_NormalizedCMakeListsDirectory>$([System.IO.Path]::GetDirectoryName($(_NormalizedCMakeListsPath)))</_NormalizedCMakeListsDirectory>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="GetOutputPathForProjectReference" DependsOnTargets="GetRootCMakeListsDirectory;ResolveVSGenerator;IsMultiConfigurationGenerator" Returns="@(_CMakeProjectReferenceFilesLocationItem)">
+    <PropertyGroup>
+      <_NormalizedReferencedCMakeListsDirectory>$([System.IO.Path]::GetDirectoryName($(ReferencedCMakeLists)))</_NormalizedReferencedCMakeListsDirectory>
+    </PropertyGroup>
+
+    <PropertyGroup>
+      <!-- MSBuild::MakeRelative doesn't make the identity path when passed the same path twice, so we do so manually. -->
+      <_RelativePathToCMakeLists
+        Condition="'$(_NormalizedCMakeListsDirectory)' == '$(_NormalizedReferencedCMakeListsDirectory)'">.</_RelativePathToCMakeLists>
+      <_RelativePathToCMakeLists
+        Condition="'$(_NormalizedCMakeListsDirectory)' != '$(_NormalizedReferencedCMakeListsDirectory)'">$([MSBuild]::MakeRelative('$(_NormalizedCMakeListsDirectory)','$(_NormalizedReferencedCMakeListsDirectory)'))</_RelativePathToCMakeLists>
+      <_CMakeProjectReferenceFilesLocation>$([MSBuild]::NormalizePath('$(CMakeOutputDir)','$(_RelativePathToCMakeLists)'))</_CMakeProjectReferenceFilesLocation>
+      <!-- If the generator is a multi-configuration generator, it outputs into a folder named after the configuration. As a result, we need to append the configuration to the path. -->
+      <_CMakeProjectReferenceFilesLocation
+        Condition="'$(_CMakeMultiConfigurationGenerator)' == 'true'">$([MSBuild]::NormalizePath('$(_CMakeProjectReferenceFilesLocation)','$(Configuration)'))</_CMakeProjectReferenceFilesLocation>
+    </PropertyGroup>
+    <ItemGroup>
+      <_CMakeProjectReferenceFilesLocationItem Include="$(_CMakeProjectReferenceFilesLocation)" IsMultiConfigurationGenerator="_CMakeMultiConfigurationGenerator" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="_ResolveVSCompilerToolchainForNonVSGenerators"
+    Condition="$([MSBuild]::IsOsPlatform(Windows)) and !$(CMakeGenerator.StartsWith('Visual Studio')) and '$(CMakeCompilerToolchain)' == 'MSVC' and '$(CMakeCompilerSearchScript)' == ''">
+    <Error Condition="'$(_VSNativeCompilerComponentArchName)' == ''" Text="Unable to determine location of MSVC tools installed for the '$(Platform)' architecture." />
+
+    <Exec
+      Command="$(VSWherePath) -latest -prerelease -products * -requires $(_VSNativeCompilerComponentName) -property installationPath"
+      EchoOff="true"
+      ConsoleToMsBuild="true"
+      StandardOutputImportance="Low">
+      <Output TaskParameter="ConsoleOutput" PropertyName="_VSInstallationPath" />
+    </Exec>
+
+    <Error Condition="'$(_VSInstallationPath)' == ''" Text="Unable to find a VS installation with the MSVC tools for the '$(Platform)' architecture." />
+
+    <PropertyGroup>
+      <_VCVarsAllPath>$([MSBuild]::NormalizePath('$(_VSInstallationPath)', 'VC', 'Auxiliary', 'Build', 'vcvarsall.bat'))</_VCVarsAllPath>
+      <_VCToolsArchSpec Condition="'$(Platform)' == 'x86'">x64_x86</_VCToolsArchSpec>
+      <_VCToolsArchSpec Condition="'$(Platform)' == 'x64'">x64</_VCToolsArchSpec>
+      <_VCToolsArchSpec Condition="'$(Platform)' == 'arm'">x64_arm</_VCToolsArchSpec>
+      <_VCToolsArchSpec Condition="'$(Platform)' == 'arm64'">x64_arm64</_VCToolsArchSpec>
+      <CMakeCompilerSearchScript>
+      call &quot;$(_VCVarsAllPath)&quot; $(_VCToolsArchSpec)
+      $(CMakeCompilerSearchScript)
+      </CMakeCompilerSearchScript>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="_ResolveNonMSVCCompilerToolchain" Condition="'$(CMakeCompilerToolchain)' != 'MSVC' and '$(CMakeCompilerSearchScript)' == ''">
+    <Error Condition="$([MSBuild]::IsOsPlatform(Windows))" Text="This SDK does not support using non-MSVC toolchains on Windows." />
+    <PropertyGroup>
+      <_NativeScriptsDir>$([MSBuild]::NormalizeDirectory('$(RepositoryEngineeringDir)', 'common', 'native'))</_NativeScriptsDir>
+      <CMakeCompilerSearchScript>
+      . &quot;$([MSBuild]::MakeRelative('$(MSBuildProjectDirectory)', '$(_NativeScriptsDir)/init-compiler.sh'))&quot; &quot;$(_NativeScriptsDir)&quot; &quot;$(Platform)&quot; &quot;$(CMakeCompilerToolchain)&quot;
+      </CMakeCompilerSearchScript>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="GetConfigScript" Returns="$(CMakeConfigScript)"
+    DependsOnTargets="ResolveVSGenerator;GetRootCMakeListsDirectory;_ResolveVSCompilerToolchainForNonVSGenerators;_ResolveNonMSVCCompilerToolchain;$(CMakeConfigureDependsOn)">
+    <Error Condition="'$(CMakeLists)' == ''" Text="A CMakeLists.txt must be specified via a CMakeLists item." />
+    <Error Condition="'$(CMakeOutputDir)' == ''" Text="An output directory must be specified via the CMakeOutputDir property." />
+    <Error Condition="!Exists('$(CMakeLists)')" Text="The provided CMakeLists.txt does not exist." />
+    <Error Condition="'$(Platform)' == 'AnyCPU'" Text="A CMake project must be built for a specific architecture." />
+
+    <ItemGroup>
+      <CMakeDefines Condition="'$(CMakeInstallDir)' != ''" Include="CMAKE_INSTALL_PREFIX" Value="$(CMakeInstallDir)" />
+      <CMakeDefines Condition="'$(_CMakeMultiConfigurationGenerator)' != 'true'" Include="CMAKE_BUILD_TYPE" Value="$(Configuration)" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_CMakeArguments Include="-G &quot;$(CMakeGenerator)&quot;" />
+      <_CMakeArguments Condition="'$(CMakeToolset)' != ''" Include="-T $(CMakeToolset)" />
+      <_CMakeArguments Condition="'$(_CMakePassArchitectureToGenerator)' == 'true'" Include="-A $(Platform)" />
+      <_CMakeArguments Condition="'$(CMakeOutputDir)' != ''" Include="-B &quot;$(CMakeOutputDir)&quot;" />
+      <_CMakeArguments Condition="'$(CMakeLists)' != ''" Include="-S &quot;$(_NormalizedCMakeListsDirectory)&quot;" />
+      <_CMakeDefineArguments Include="@(CMakeDefines->'-D%(Identity)=%(Value)')" />
+      <_CMakeArguments Include="@(_CMakeDefineArguments)" />
+      <_CMakeArguments Include="@(CMakeArguments)" />
+    </ItemGroup>
+
+    <PropertyGroup>
+      <CMakeConfigScript>
+      $(CMakeConfigureCommandWrapper) cmake @(_CMakeArguments->'%(Identity)',' ')
+      </CMakeConfigScript>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="GetBuildScript" Returns="$(CMakeBuildScript)"
+    DependsOnTargets="_ResolveVSCompilerToolchainForNonVSGenerators;_ResolveNonMSVCCompilerToolchain;$(CMakeBuildDependsOn)">
+    <Error Condition="'$(CMakeOutputDir)' == ''" Text="An output directory must be specified via the CMakeOutputDir property." />
+
+    <PropertyGroup>
+      <CMakeBuildTarget Condition="'$(CMakeBuildTarget)' == ''">install</CMakeBuildTarget>
+      <_CMakeParallelizationArgument Condition="'$(CMakeParallelization)' != ''">-g $(CMakeParallelization)</_CMakeParallelizationArgument>
+    </PropertyGroup>
+
+    <PropertyGroup>
+      <CMakeBuildScript>
+      cmake --build &quot;$(CMakeOutputDir)&quot; --target $(CMakeBuildTarget) $(_CMakeParallelizationArgument) --config $(Configuration) -- @(CMakeNativeToolArguments->'%(Identity)',' ')
+      </CMakeBuildScript>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="Configure"
+    DependsOnTargets="GetConfigScript">
+    <Exec WorkingDirectory="$(MSBuildProjectDirectory)" Command="
+      $(CMakeCompilerSearchScript)
+      $(CMakeConfigScript)" />
+  </Target>
+
+  <Target Name="CoreCompile" DependsOnTargets="Configure;GetBuildScript">
+    <ItemGroup>
+      <!-- Don't set IntermediateAssembly since this is not produced -->
+      <IntermediateAssembly Remove="@(IntermediateAssembly)" />
+    </ItemGroup>
+    <Exec WorkingDirectory="$(MSBuildProjectDirectory)" Command="
+      $(CMakeCompilerSearchScript)
+      $(CMakeBuildScript)" />
+  </Target>
+
+  <Target Name="GenerateBringupScript" DependsOnTargets="GetConfigScript;GetBuildScript">
+    <Error Condition="'$(BringupScriptOutputFile)' == ''" Text="An output file for the bringup script must be specified" />
+    <PropertyGroup>
+      <BringupScript>
+        $(CMakeConfigScript)
+
+        $(CMakeBuildScript)
+      </BringupScript>
+    </PropertyGroup>
+
+    <WriteLinesToFile File="$(BringupScriptOutputFile)" Lines="$([MSBuild]::Escape('$(BringupScript)'))" />
+  </Target>
+
+  <!-- Stub out targets required by the Microsoft.NET.Sdk -->
+  <Target Name="CreateManifestResourceNames"></Target>
+</Project>

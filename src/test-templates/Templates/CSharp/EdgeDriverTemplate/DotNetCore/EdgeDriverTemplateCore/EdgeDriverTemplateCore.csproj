@@ -1,0 +1,39 @@
+<Project  Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net461</TargetFramework>
+    <RootNamespace>EdgeDriverTemplateCore</RootNamespace>
+    <AssemblyName>EdgeDriverTemplateCore</AssemblyName>
+    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+    <GeneratePkgDefFile>false</GeneratePkgDefFile>
+    <EnableDefaultItems>false</EnableDefaultItems>
+    <IncludeAssemblyInVSIXContainer>false</IncludeAssemblyInVSIXContainer>
+    <!-- VS Insertion -->
+    <VisualStudioInsertionComponent>Microsoft.VisualStudio.Templates.CS.EdgeDriverTestCore</VisualStudioInsertionComponent>
+
+    <CreateVsixContainer>true</CreateVsixContainer>
+    <DeployExtension>False</DeployExtension>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="source.extension.vsixmanifest">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.CoreUtility" Version="$(MicrosoftVisualStudioCoreUtilityVersion)"/>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ProjectTemplates\**">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="EdgeDriver.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <VSTemplate Include="ProjectTemplates\CSharp\Test\EdgeDriverTemplate\EdgeDriverTemplate.vstemplate" />
+  </ItemGroup>
+  <Import Project="$(RepoRoot)eng\Loc.targets" />
+</Project>

@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <IsPackable Condition="'$(TargetArchitecture)' == 'x86'">true</IsPackable>
+    <IsShipping>false</IsShipping>
+    <IsShippingPackage>false</IsShippingPackage>
+    <PackageId>VS.Redist.Common.NetCore.Launcher</PackageId>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <!--
+      Suppress warnings/errors about missing dependencies. Launcher is a template binary
+      and never used during build.
+    -->
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <AssemblyName>Launcher</AssemblyName>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net45</TargetFramework>
+    <NoWin32Manifest>true</NoWin32Manifest>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Deployment" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Shared\NativeMethods.cs" />
+  </ItemGroup>
+</Project>

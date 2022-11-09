@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <Optimize>false</Optimize>
+    <!-- Fails in many GCStress jobs. https://github.com/dotnet/runtime/issues/46279 -->
+    <GCStressIncompatible>true</GCStressIncompatible>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="stackoverflowtester.cs" />
+  </ItemGroup>
+</Project>
+

@@ -1,0 +1,347 @@
+<UserControl x:Class="NuGet.PackageManagement.UI.LoadingStatusBar"
+             x:ClassModifier="internal"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:nuget="clr-namespace:NuGet.PackageManagement.UI"
+             xmlns:imaging="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.Imaging"
+             xmlns:imagingTheme="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Imaging"
+             xmlns:catalog="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.ImageCatalog"
+             xmlns:ui="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Utilities"
+             mc:Ignorable="d"
+             d:DesignHeight="30" d:DesignWidth="800">
+  <UserControl.DataContext>
+    <nuget:LoadingStatusViewModel/>
+  </UserControl.DataContext>
+  <UserControl.Resources>
+    <BooleanToVisibilityConverter
+      x:Key="BooleanToVisibilityConverter" />
+    <nuget:EnumDescriptionValueConverter
+      x:Key="EnumDescriptionValueConverter"/>
+    <nuget:CollectionToStringConverter
+      x:Key="CollectionToStringConverter"/>
+    <nuget:EnumerableToVisibilityConverter
+      x:Key="EnumerableToVisibilityConverter" />
+    <ui:BrushToColorConverter x:Key="BrushToColorConverter" />
+    <Style
+        x:Key="LinkButtonStyle"
+        TargetType="{x:Type Button}">
+        <Setter Property="Template">
+          <Setter.Value>
+            <ControlTemplate TargetType="{x:Type Button}">
+              <TextBlock TextDecorations="Underline">
+                <ContentPresenter />
+              </TextBlock>
+            </ControlTemplate>
+          </Setter.Value>
+        </Setter>
+        <Setter Property="HorizontalContentAlignment" 
+              Value="Center" />
+        <Setter Property="VerticalContentAlignment" 
+              Value="Center" />
+        <Setter Property="Foreground" 
+              Value="{DynamicResource {x:Static nuget:Brushes.ControlLinkTextKey}}" />
+        <Setter Property="Cursor" 
+              Value="Hand" />
+        <Setter Property="Margin" 
+              Value="5,0"/>
+        <Setter Property="FontFamily" 
+              Value="SegoeUI"/>
+        <Setter Property="FontSize" 
+              Value="12"/>
+        <Style.Triggers>
+          <Trigger Property="IsMouseOver" 
+                 Value="true">
+            <Setter Property="Foreground" 
+                  Value="{DynamicResource {x:Static nuget:Brushes.ControlLinkTextHoverKey}}" />
+          </Trigger>
+        </Style.Triggers>
+      </Style>
+    <Style
+      x:Key="StatusMessageTextBlockStyle"
+      TargetType="TextBlock">
+      <Setter Property="TextTrimming" 
+              Value="WordEllipsis"/>
+      <Setter Property="TextOptions.TextFormattingMode" 
+              Value="Display"/>
+      <Setter Property="VerticalAlignment" 
+              Value="Center"/>
+      <Setter Property="Margin" 
+              Value="3,0"/>
+      <Setter Property="FontFamily" 
+              Value="SegoeUI"/>
+      <Setter Property="FontSize" 
+              Value="12" />
+      <Setter Property="HorizontalAlignment" 
+              Value="Left"/>
+      <Setter Property="Foreground" 
+              Value="{DynamicResource {x:Static nuget:Brushes.InfoTextKey}}" />
+    </Style>
+  </UserControl.Resources>
+  <Grid
+      d:DataContext="{d:DesignData Source=/Design/LoadingStatusViewModelSampleData.xaml,IsDesignTimeCreatable=True}"
+      Background="{DynamicResource {x:Static nuget:Brushes.InfoBackgroundKey}}"
+      imagingTheme:ImageThemingUtilities.ImageBackgroundColor="{Binding Background, RelativeSource={RelativeSource Self}, Converter={StaticResource BrushToColorConverter}}"
+      VerticalAlignment="Center"
+      Visibility="Visible"
+      Margin="0"
+      Height="22"
+      ToolTipService.ShowDuration="12000">
+    <Grid.ToolTip>
+      <ToolTip
+        Visibility="{Binding IsMultiSource,Converter={StaticResource BooleanToVisibilityConverter}}">
+        <StackPanel
+          Orientation="Vertical">
+          <TextBlock
+            TextTrimming="WordEllipsis"
+            TextWrapping="Wrap"
+            Text="{x:Static nuget:Resources.Text_SearchStopped}"
+            Visibility="{Binding FailedSources,Converter={StaticResource EnumerableToVisibilityConverter}}" 
+            Margin="3"
+            MaxWidth="500"/>
+          <TextBlock
+            TextTrimming="WordEllipsis"
+            TextWrapping="Wrap"
+            Text="{x:Static nuget:Resources.Text_SearchIncomplete}"
+            Visibility="{Binding LoadingSources,Converter={StaticResource EnumerableToVisibilityConverter}}" 
+            Margin="3"
+            MaxWidth="500"/>
+          <TextBlock
+            Text="{x:Static nuget:Resources.Text_PackageSources}"
+            FontWeight="Bold"/>
+          <DataGrid 
+            ItemsSource="{Binding SourceLoadingStatus}" 
+            AutoGenerateColumns="False"
+            IsReadOnly="True"
+            HeadersVisibility="None"
+            GridLinesVisibility="None"
+            Background="Transparent"
+            RowBackground="Transparent"
+            IsHitTestVisible="False"
+            BorderThickness="0"
+            ColumnWidth="SizeToCells"
+            Margin="1"
+            HorizontalScrollBarVisibility="Hidden">
+            <DataGrid.Columns>
+              <DataGridTemplateColumn 
+                MaxWidth="200"
+                MinWidth="50">
+                <DataGridTemplateColumn.CellTemplate>
+                  <DataTemplate>
+                    <TextBlock Text="{Binding Key}" 
+                               TextTrimming="CharacterEllipsis"/>
+                  </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+              </DataGridTemplateColumn>
+              <DataGridTextColumn 
+                Binding="{Binding Value,Converter={StaticResource EnumDescriptionValueConverter},StringFormat=[{0}]}"/>
+            </DataGrid.Columns>
+          </DataGrid>
+        </StackPanel>
+      </ToolTip>
+    </Grid.ToolTip>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="16"/>
+      <ColumnDefinition Width="16"/>
+      <ColumnDefinition Width="*" MinWidth="50"/>
+      <ColumnDefinition Width="Auto"/>
+      <ColumnDefinition Width="Auto"/>
+      <ColumnDefinition Width="Auto"/>
+      <ColumnDefinition Width="16"/>
+    </Grid.ColumnDefinitions>
+    <imaging:CrispImage Grid.Column="1"
+           Moniker="{x:Static catalog:KnownMonikers.StatusStopped}"
+           Stretch="Uniform">
+      <Image.Style>
+        <Style TargetType="{x:Type Image}">
+          <Setter Property="Visibility" 
+                  Value="Collapsed" />
+          <Style.Triggers>
+            <DataTrigger Binding="{Binding Path=PackageSearchStatus}" 
+                         Value="ErrorOccurred">
+              <Setter Property="Visibility" 
+                      Value="Visible" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Path=PackageSearchStatus}" 
+                         Value="Cancelled">
+              <Setter Property="Visibility" 
+                      Value="Visible" />
+            </DataTrigger>
+          </Style.Triggers>
+        </Style>
+      </Image.Style>
+    </imaging:CrispImage>
+    <imaging:CrispImage Grid.Column="1"
+           Moniker="{x:Static catalog:KnownMonikers.StatusOK}"
+           Stretch="Uniform">
+      <Image.Style>
+        <Style TargetType="{x:Type Image}">
+          <Setter Property="Visibility" 
+                  Value="Collapsed" />
+          <Style.Triggers>
+            <DataTrigger Binding="{Binding Path=PackageSearchStatus}" 
+                         Value="PackagesFound">
+              <Setter Property="Visibility" 
+                      Value="Visible" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Path=PackageSearchStatus}" 
+                         Value="NoPackagesFound">
+              <Setter Property="Visibility" 
+                      Value="Visible" />
+            </DataTrigger>
+          </Style.Triggers>
+        </Style>
+      </Image.Style>
+    </imaging:CrispImage>
+    <nuget:Spinner Grid.Column="1"
+                   Height="16">
+      <nuget:Spinner.Style>
+        <Style TargetType="{x:Type nuget:Spinner}">
+          <Setter Property="Visibility" 
+                  Value="Collapsed" />
+          <Style.Triggers>
+            <DataTrigger Binding="{Binding PackageSearchStatus}" 
+                         Value="Loading">
+              <Setter Property="Visibility" 
+                      Value="Visible" />
+            </DataTrigger>
+          </Style.Triggers>
+        </Style>
+      </nuget:Spinner.Style>
+    </nuget:Spinner>
+    <TextBlock Grid.Column="2"
+               x:Name="SingleSourceStatusMessageTextBlock"
+               Text="{Binding Path=PackageSearchStatus,Converter={StaticResource EnumDescriptionValueConverter}}">
+      <TextBlock.Style>
+        <Style TargetType="TextBlock"
+               BasedOn="{StaticResource StatusMessageTextBlockStyle}">
+          <Setter Property="Visibility" 
+                  Value="Collapsed"/>
+          <Style.Triggers>
+            <DataTrigger Binding="{Binding IsMultiSource}"
+                         Value="False">
+              <Setter Property="Visibility"
+                      Value="Visible"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding PackageSearchStatus}"
+                         Value="PackagesFound">
+              <Setter Property="Visibility"
+                      Value="Visible"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding PackageSearchStatus}"
+                         Value="NoPackagesFound">
+              <Setter Property="Visibility"
+                      Value="Visible"/>
+            </DataTrigger>
+          </Style.Triggers>
+        </Style>
+      </TextBlock.Style>
+    </TextBlock>
+    <TextBlock Grid.Column="2" 
+               x:Name="MultiSourceErrorStatusMessageTextBlock">
+      <TextBlock.Style>
+        <Style TargetType="TextBlock"
+               BasedOn="{StaticResource StatusMessageTextBlockStyle}">
+          <Setter Property="Visibility" 
+                  Value="Collapsed"/>
+          <Style.Triggers>
+            <MultiDataTrigger>
+              <MultiDataTrigger.Conditions>
+                <Condition
+                    Binding="{Binding IsMultiSource}"
+                    Value="True"/>
+                <Condition
+                    Binding="{Binding PackageSearchStatus}"
+                    Value="ErrorOccurred"/>
+              </MultiDataTrigger.Conditions>
+              <Setter
+                  Property="Visibility"
+                  Value="{Binding FailedSources,Converter={StaticResource EnumerableToVisibilityConverter}}" />
+            </MultiDataTrigger>
+          </Style.Triggers>
+        </Style>
+      </TextBlock.Style>
+        <Run Text="{x:Static nuget:Resources.Text_SearchStopped}"/>
+        <Run Text=": "/>
+        <Run Text="{Binding FailedSources,Converter={StaticResource CollectionToStringConverter},Mode=OneWay}" 
+             FontStyle="Italic"/>
+        <Run Text="."/>
+    </TextBlock>
+    <TextBlock Grid.Column="2"
+               x:Name="MultiSourceLoadingStatusMessageTextBlock">
+      <TextBlock.Style>
+        <Style TargetType="TextBlock"
+               BasedOn="{StaticResource StatusMessageTextBlockStyle}">
+          <Setter Property="Visibility" Value="Collapsed"/>
+          <Style.Triggers>
+            <MultiDataTrigger>
+              <MultiDataTrigger.Conditions>
+                <Condition Binding="{Binding IsMultiSource}"
+                           Value="True"/>
+                <Condition Binding="{Binding PackageSearchStatus}"
+                           Value="Loading"/>
+              </MultiDataTrigger.Conditions>
+              <Setter Property="Visibility"
+                      Value="{Binding LoadingSources,Converter={StaticResource EnumerableToVisibilityConverter}}" />
+            </MultiDataTrigger>
+          </Style.Triggers>
+        </Style>
+      </TextBlock.Style>
+        <Run Text="{x:Static nuget:Resources.Text_SearchIncomplete}"/>
+        <Run Text=": "/>
+        <Run Text="{Binding LoadingSources,Converter={StaticResource CollectionToStringConverter},Mode=OneWay}" 
+             FontStyle="Italic"/>
+        <Run Text="."/>
+    </TextBlock>
+    <Button Grid.Column="3"
+            x:Name="ShowMoreResultsButton"
+            Visibility="{Binding HasMoreItems,Converter={StaticResource BooleanToVisibilityConverter}}"
+            VerticalAlignment="Center"
+            Content="{Binding Path=MoreItemsLinkText}"
+            Click="ShowMoreResultsButton_Click"
+            Style="{StaticResource LinkButtonStyle}" />
+    <Button Grid.Column="4"
+            x:Name="ShowErrorsButton"
+            AutomationProperties.AutomationId="Button_ShowErrors"
+            VerticalAlignment="Center"
+            Content="{x:Static nuget:Resources.Button_ShowErrors}"
+            Command="{x:Static nuget:Commands.ShowErrorsCommand}">
+      <Button.Style>
+        <Style TargetType="{x:Type Button}" 
+               BasedOn="{StaticResource LinkButtonStyle}">
+          <Setter Property="Visibility" 
+                  Value="Collapsed" />
+          <Style.Triggers>
+            <DataTrigger Binding="{Binding Path=PackageSearchStatus}" 
+                         Value="ErrorOccurred">
+              <Setter Property="Visibility" 
+                      Value="Visible" />
+            </DataTrigger>
+          </Style.Triggers>
+        </Style>
+      </Button.Style>
+    </Button>
+    <Button Grid.Column="5"
+            x:Name="DismissButton"
+            AutomationProperties.AutomationId="Button_Dismiss"
+            VerticalAlignment="Center"
+            Content="{x:Static nuget:Resources.Button_Dismiss}"
+            Click="DismissButton_Click">
+      <Button.Style>
+        <Style TargetType="{x:Type Button}"
+               BasedOn="{StaticResource LinkButtonStyle}">
+          <Setter Property="Visibility"
+                  Value="Visible"/>
+          <Style.Triggers>
+            <DataTrigger Binding="{Binding PackageSearchStatus}"
+                         Value="Loading">
+              <Setter Property="Visibility"
+                      Value="Collapsed"/>
+            </DataTrigger>
+          </Style.Triggers>
+        </Style>
+      </Button.Style>
+    </Button>
+  </Grid>
+</UserControl>

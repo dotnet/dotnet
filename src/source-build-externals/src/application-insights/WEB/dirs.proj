@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <!-- EnlistmentRoot identifies the root directory of the repo and is used to dermine all other relative paths. -->
+    <EnlistmentRoot>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildProjectDirectory), 'EnlistmentRoot.marker'))</EnlistmentRoot>
+    <PropsRoot>$(EnlistmentRoot)\.props</PropsRoot>
+    <PublicApiRoot>$(EnlistmentRoot)\.publicApi</PublicApiRoot>
+  </PropertyGroup>
+  
+  <Import Project="$(PropsRoot)\_GlobalStaticVersion.props" />
+
+  <ItemGroup>
+    <Solution Include="Src\Microsoft.ApplicationInsights.Web.sln" />
+  </ItemGroup>
+  
+  <ItemGroup Condition="$(ExcludeTests) != 'true'" >
+    <Solution Include="Test\PerformanceCollector\FunctionalTests.sln" />
+    <Solution Include="Test\Web\FunctionalTests.sln" />
+	  <Solution Include="Test\E2ETests\DependencyCollectionTests.sln" />
+  </ItemGroup>
+  
+  <Target Name="Build">
+	  <Exec Command='IF EXIST "%(Solution.FullPath)" nuget.exe restore "%(Solution.FullPath)" -NonInteractive' ContinueOnError="ErrorAndStop"/>
+    <MSBuild Projects="@(Solution)" Targets="Restore;Build" ContinueOnError="ErrorAndStop" /> 	
+  </Target>
+  
+  <Target Name="Clean">
+    <RemoveDir Directories="$(BinRoot)\$(Configuration)" />
+    <RemoveDir Directories="$(BaseIntermediateOutputPath)" />
+  </Target>
+</Project>

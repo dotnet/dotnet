@@ -1,0 +1,59 @@
+trigger:
+  batch: true
+  branches:
+    include:
+    - main
+    - release/*
+  paths:
+    exclude:
+    - '*.md'
+
+pr:
+  branches:
+    include:
+    - main
+    - release/*
+  paths:
+    exclude:
+    - '*.md'
+
+stages:
+- stage: build
+  displayName: Build
+  jobs:
+  - template: /eng/common/templates/jobs/jobs.yml
+    parameters:
+      enablePublishUsingPipelines: true
+      enablePublishBuildAssets: true
+      artifacts:
+        publish:
+          artifacts: true
+          manifests: true
+      jobs:
+
+      - job: SourceBuild_Managed
+        displayName: Source-Build (Managed)
+        pool:
+          ${{ if eq(variables['System.TeamProject'], 'public') }}:
+            name: NetCore-Public
+            demands: ImageOverride -equals Build.Ubuntu.1804.Amd64.Open
+          ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+            name: NetCore1ESPool-Internal
+            demands: ImageOverride -equals Build.Ubuntu.1804.Amd64
+        container: 'mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream8'
+        workspace:
+          clean: all
+        variables:
+        - name: _BuildConfig
+          value: Release
+        steps:
+        - checkout: self
+          submodules: true
+        - template: /eng/common/templates/steps/source-build.yml
+
+- ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+  - template: /eng/common/templates/post-build/post-build.yml
+    parameters:
+      publishingInfraVersion: 3
+      enableSourceLinkValidation: false
+      enableSigningValidation: false

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PackageManifest Version="2.0.0"
+  xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011"
+  xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
+  <Metadata>
+    <Identity Id="MSTestV2UnitTestExtensionPackage.Microsoft.632139eb-968c-47ce-8667-f0898f00833f" Version="|%CurrentProject%;GetVsixVersion|" Language="en-US" Publisher="Microsoft" />
+    <DisplayName>MSTest V2 Create Unit Test Extension</DisplayName>
+    <Description xml:space="preserve">Allows developers to create unit test using MSTest V2.</Description>
+    <License>CreateUnitTestExtensionLicense.rtf</License>
+    <PackageId>Microsoft.VisualStudio.TestTools.MSTestV2.WizardExtension.UnitTest</PackageId>
+  </Metadata>
+  <Installation AllUsers="true" Experimental="true">
+    <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[16.0]" />
+    <InstallationTarget Version="[16.0]" Id="Microsoft.VisualStudio.Enterprise" />
+    <InstallationTarget Version="[16.0]" Id="Microsoft.VisualStudio.Community" />
+    <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[17.0, 18.0)">
+      <ProductArchitecture>amd64</ProductArchitecture>
+    </InstallationTarget>
+    <InstallationTarget Version="[16.0]" Id="Microsoft.VisualStudio.VSWinExpress" />
+    <InstallationTarget Version="[16.0]" Id="Microsoft.VisualStudio.VWDExpress" />
+    <InstallationTarget Version="[16.0]" Id="Microsoft.VisualStudio.VSWinDesktopExpress" />
+  </Installation>
+  <Dependencies>
+    <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
+  </Dependencies>
+  <Assets>
+    <Asset Type="Microsoft.VisualStudio.TestGenerationExtension" d:Source="Project" d:ProjectName="MSTestv2UnitTestExtension" Path="|MSTestv2UnitTestExtension|" />
+  </Assets>
+  <Prerequisites>
+    <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[16.0]" DisplayName="Visual Studio core editor" />
+  </Prerequisites>
+</PackageManifest>

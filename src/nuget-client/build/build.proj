@@ -1,0 +1,456 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" DefaultTargets="Test" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), 'README.md'))\build\common.props" />
+
+  <!-- Configuration/global properties -->
+  <PropertyGroup>
+    <CommonMSBuildProperties>
+      Configuration=$(Configuration);
+      ReleaseLabel=$(ReleaseLabel);
+      BuildNumber=$(BuildNumber);
+      BuildRTM=$(BuildRTM);
+    </CommonMSBuildProperties>
+  </PropertyGroup>
+
+  <!--
+    ============================================================
+    Get XPLAT projects
+    ============================================================
+  -->
+  <Target Name="GetXPLATProjects">
+      <MsBuild
+      Projects="@(ProductProjects)"
+      Targets="GetXPLATProject">
+      <Output
+          TaskParameter="TargetOutputs"
+          ItemName="XPLATProjects" />
+    </MsBuild>
+  </Target>
+
+  <!--
+    ============================================================
+    Run core functional tests (non-VS specific)
+    ============================================================
+  -->
+  <Target Name="CoreFuncTests" DependsOnTargets="BuildVS;Pack">
+    <!-- Test inputs -->
+    <PropertyGroup>
+      <TestProjectPaths>@(CoreFuncTestProjects)</TestProjectPaths>
+      <TestResultsFileName>CoreFuncTests</TestResultsFileName>
+    </PropertyGroup>
+
+    <!-- Run tests as a batch -->
+    <MSBuild
+        Projects="$(MSBuildThisFileFullPath)"
+        Targets="RunTestsOnProjects"
+        Properties="$(CommonMSBuildProperties);
+                    TestResultsFileName=$(TestResultsFileName);
+                    TestProjectPaths=$(TestProjectPaths)">
+      <Output TaskParameter="TargetOutputs"
+              ItemName="TestAssemblyPath" />
+    </MSBuild>
+  </Target>
+
+  <!--
+    ============================================================
+    Run core unit tests (non-VS specific)
+    ============================================================
+  -->
+  <Target Name="CoreUnitTests">
+    <!-- Test inputs -->
+    <PropertyGroup>
+      <TestProjectPaths>@(CoreUnitTestProjects)</TestProjectPaths>
+      <TestResultsFileName>CoreUnitTests</TestResultsFileName>
+    </PropertyGroup>
+
+    <!-- Run tests as a batch -->
+    <MSBuild
+        Projects="$(MSBuildThisFileFullPath)"
+        Targets="RunTestsOnProjects"
+        Properties="$(CommonMSBuildProperties);
+                    TestResultsFileName=$(TestResultsFileName);
+                    TestProjectPaths=$(TestProjectPaths)">
+      <Output TaskParameter="TargetOutputs"
+              ItemName="TestAssemblyPath" />
+    </MSBuild>
+  </Target>
+
+  <!--
+    ============================================================
+    Run unit tests
+    ============================================================
+  -->
+  <Target Name="UnitTestsVS">
+    <!-- Test inputs -->
+    <PropertyGroup>
+      <TestProjectPaths>@(VSUnitTestProjects)</TestProjectPaths>
+      <TestResultsFileName>UnitTestsVS</TestResultsFileName>
+    </PropertyGroup>
+
+    <!-- Run tests as a batch -->
+    <MSBuild
+        Projects="$(MSBuildThisFileFullPath)"
+        Targets="RunTestsOnProjects"
+        Properties="$(CommonMSBuildProperties);
+                    TestResultsFileName=$(TestResultsFileName);
+                    TestProjectPaths=$(TestProjectPaths)">
+      <Output TaskParameter="TargetOutputs"
+              ItemName="TestAssemblyPath" />
+    </MSBuild>
+  </Target>
+
+  <!--
+    ============================================================
+    Run apex tests
+    ============================================================
+  -->
+  <Target Name="ApexTestsStandalone">
+
+    <!-- Test inputs -->
+    <PropertyGroup>
+      <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+      <TestProjectPaths>$(RepositoryRootDirectory)test\NuGet.Tests.Apex\NuGet.Tests.Apex\NuGet.Tests.Apex.csproj</TestProjectPaths>
+      <TestResultsFileName>ApexTestsVS15</TestResultsFileName>
+    </PropertyGroup>
+
+    <!-- Run tests as a batch -->
+    <MSBuild
+        Projects="$(MSBuildThisFileFullPath)"
+        Targets="RunTestsOnProjects"
+        Properties="$(CommonMSBuildProperties);
+                    TestResultsFileName=$(TestResultsFileName);
+                    TestProjectPaths=$(TestProjectPaths)">
+      <Output TaskParameter="TargetOutputs"
+              ItemName="TestAssemblyPath" />
+    </MSBuild>
+  </Target>
+
+  <!--
+    ============================================================
+    Build, Pack, Core Tests, Unit tests for VS
+    ============================================================
+  -->
+  <Target Name="RunVS" DependsOnTargets="BuildVS;Pack;CoreUnitTests;UnitTestsVS">
+    <Message Text="Running NuGet Build" Importance="high" />
+  </Target>
+
+  <!--
+    ============================================================
+    Build
+    ============================================================
+  -->
+  <Target Name="BuildVS"  Condition=" '$(IsXPlat)' != 'true' " >
+    <Message Text="Building" Importance="high" />
+  </Target>
+
+    <!--
+    ============================================================
+    Build for XPLAT
+    ============================================================
+  -->
+  <Target Name="BuildXPLAT" DependsOnTargets="GetXPLATProjects">
+    <Message Text="Building XPLAT" Importance="high" />
+  </Target>
+
+  <!--
+    ============================================================
+    Build no VSIX
+    ============================================================
+  -->
+  <Target Name="BuildNoVSIX" AfterTargets="BuildVS" Condition=" '$(IsXPlat)' != 'true' ">
+    <Message Text="Building" Importance="high" />
+
+    <MSBuild Projects="@(SolutionProjectsWithoutVSIX)"
+             Targets="Build"
+             Properties="$(CommonMSBuildProperties)" />
+  </Target>
+
+  <!--
+    ============================================================
+    Build XPLAT
+    ============================================================
+  -->
+  <Target Name="BuildXPLATProjects" AfterTargets="BuildXPLAT">
+    <Message Text="Building XPLAT" Importance="high" />
+
+    <MSBuild Projects="@(XPLATProjects)"
+             Targets="Build"
+             Properties="$(CommonMSBuildProperties);" />
+  </Target>
+
+  <!--
+    ============================================================
+    Build the VSIX
+    This target always needs to be below BuildNoVSIX so that
+    BuildVS runs the NoVSIX targets before this one.
+    ============================================================
+  -->
+  <Target Name="BuildVSIX" AfterTargets= "BuildVS" Condition=" '$(IsXPlat)' != 'true' AND '$(BuildRTM)' != 'true'">
+    <Message Text="Building the VSIX" Importance="high" />
+
+    <MSBuild Projects="$(VSIXProject)"
+             Targets="Build"
+             Properties="$(CommonMSBuildProperties);
+                         BuildProjectReferences=false;
+                         IsVsixBuild=true;" />
+  </Target>
+
+  <!--
+    ============================================================
+    Clean all
+    ============================================================
+  -->
+  <Target Name="Clean">
+    <Message Text="Cleaning" Importance="high" />
+
+    <!-- Clean -->
+    <MSBuild BuildInParallel="true"
+             Projects="@(SolutionProjects)"
+             Targets="Clean"
+             Properties="$(CommonMSBuildProperties);" />
+  </Target>
+
+  <!--
+    ============================================================
+    Pack
+    ============================================================
+  -->
+  <Target Name="Pack">
+    <Message Text="Packing" Importance="high" />
+
+    <MSBuild BuildInParallel="false"
+             Projects="@(SolutionProjects)"
+             Targets="PackProjects"
+             Properties="$(CommonMSBuildProperties)" />
+  </Target>
+
+  <!--
+    ============================================================
+    Pack for XPLAT
+    ============================================================
+  -->
+  <Target Name="PackXPLAT" DependsOnTargets="GetXPLATProjects">
+    <Message Text="Packing for XPLAT" Importance="high" />
+
+    <MSBuild BuildInParallel="false"
+             Projects="@(XPLATProjects)"
+             Targets="PackProjects"
+             Properties="$(CommonMSBuildProperties)" />
+  </Target>
+
+  <!--
+    ============================================================
+    Restore all projects for the current platform.
+    ============================================================
+  -->
+  <Target Name="Restore">
+    <Message Text="Restoring" Importance="high" />
+
+    <!-- Convert list of projects to a property -->
+    <PropertyGroup>
+      <ProjectListValue>@(SolutionProjects)</ProjectListValue>
+    </PropertyGroup>
+
+    <MSBuild
+      Projects="restorehelper.targets"
+      Targets="Restore"
+      Properties="RestoreGraphProjectInput=$(ProjectListValue);
+                  $(CommonMSBuildProperties)">
+    </MSBuild>
+  </Target>
+
+  <!--
+    ============================================================
+    Restore for VS
+    ============================================================
+  -->
+  <Target Name="RestoreVS">
+    <MSBuild
+      Projects="$(MSBuildThisFileFullPath)"
+      Targets="Restore"
+      Properties="$(CommonMSBuildProperties)">
+    </MSBuild>
+  </Target>
+
+  <!--
+    ============================================================
+    Restore for XPLAT
+    ============================================================
+  -->
+  <Target Name="RestoreXPLAT" DependsOnTargets="GetXPLATProjects">
+    <Message Text="Restoring for XPLAT" Importance="high" />
+
+    <PropertyGroup>
+      <ProjectListValue>@(XPLATProjects)</ProjectListValue>
+    </PropertyGroup>
+
+    <MSBuild
+      Projects="restorehelper.targets"
+      Targets="Restore"
+      Properties="RestoreGraphProjectInput=$(ProjectListValue);
+                  $(CommonMSBuildProperties)">
+    </MSBuild>
+  </Target>
+
+  <!--
+    ============================================================
+    Restore Apex
+    ============================================================
+  -->
+  <Target Name="RestoreApex">
+    <Message Text="Restoring Apex projects" Importance="high" />
+
+    <PropertyGroup>
+      <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+      <ProjectListValue>@(ApexProjects)</ProjectListValue>
+    </PropertyGroup>
+
+    <MSBuild
+      Projects="restorehelper.targets"
+      Targets="Restore"
+      Properties="RestoreGraphProjectInput=$(ProjectListValue);
+                  $(CommonMSBuildProperties)">
+    </MSBuild>
+  </Target>
+
+    <!--
+    ============================================================
+    EnsurePackageReferenceVersionsInSolution
+    ============================================================
+  -->
+  <Target Name="EnsurePackageReferenceVersionsInSolution">
+      <MsBuild
+        Projects="@(AllRepoProjects)"
+        Targets="EnsurePackageReferenceVersions"
+        Properties="SkipCentralPackageVersions=true">
+    </MsBuild>
+  </Target>
+
+  <!--
+    ============================================================
+    Get projects need to be packed
+    ============================================================
+  -->
+  <Target Name="GetPackProjects">
+      <MsBuild
+        Projects="@(SolutionProjects)"
+        Targets="_IsProjectNeedsPack">
+          <Output
+              TaskParameter="TargetOutputs"
+              ItemName="PackProjects" />
+      </MsBuild>
+  </Target>
+
+  <!--
+    ============================================================
+    Ensure all the nupkg and symbol.nugkg files created
+    ============================================================
+  -->
+  <Target Name="EnsurePackagesExist" DependsOnTargets="GetPackProjects">
+      <ItemGroup>
+          <NupkgsFiles Include="$(NupkgOutputDirectory)\*.nupkg"
+                       Exclude="$(NupkgOutputDirectory)\*.symbols.nupkg" />
+          <SymbolFiles Include="$(NupkgOutputDirectory)\*.symbols.nupkg" />
+      </ItemGroup>
+
+      <Message Text="Count of Projects need to be packed: @(PackProjects->Count())        Nupkg Count: @(NupkgsFiles->Count())        Symbol Count: @(SymbolFiles->Count())" Importance="high" />
+
+      <Error Text="There are @(PackProjects->Count()) projects need to be packed, but only @(NupkgsFiles->Count()) nupkg files and  @(SymbolFiles->Count()) symbol nupkg files are created under '$(NupkgOutputDirectory)'."
+             Condition=" '@(PackProjects->Count())' != '@(NupkgsFiles->Count())' OR '@(PackProjects->Count())' != '@(SymbolFiles->Count())' " />
+  </Target>
+
+  <!--
+    ============================================================
+    RunTestsOnProjects
+    Finds all test assemblies and allows Xunit to run them as
+    efficiently as the xunit.runner.json settings allow.
+    ============================================================
+  -->
+  <Target Name="RunTestsOnProjects">
+    <Message Text="Running $(TestResultsFileName)" Importance="high" />
+
+    <ItemGroup>
+      <TestProjectToSearch Include="$(TestProjectPaths)" />
+    </ItemGroup>
+
+    <MSBuild
+            Projects="@(TestProjectToSearch)"
+            Targets="GetTestAssemblies"
+            Properties="$(CommonMSBuildProperties)"
+            Condition=" '$(TestProjectPaths)' != '' ">
+      <Output TaskParameter="TargetOutputs"
+              ItemName="TestAssemblyPath" />
+    </MSBuild>
+
+    <PropertyGroup>
+      <TestResultsDirectory>$(BuildCommonDirectory)TestResults</TestResultsDirectory>
+    </PropertyGroup>
+
+    <!-- Ensure the test results dir exists -->
+    <MakeDir Directories="$(TestResultsDirectory)" />
+
+    <PropertyGroup>
+      <DesktopTestResultsTrx Condition=" '$(TestResultsFileName)' != '' ">$(TestResultsDirectory)\$(TestResultsFileName)-desktop.trx</DesktopTestResultsTrx>
+      <CoreTestResultsTrx Condition=" '$(TestResultsFileName)' != '' ">$(TestResultsDirectory)\$(TestResultsFileName)-core.trx</CoreTestResultsTrx>
+      <DotNetTestConsoleVerbosity Condition="'$(DotNetTestConsoleVerbosity)' == '' And '$(System_Debug)' == 'true'">detailed</DotNetTestConsoleVerbosity>
+      <DotNetTestConsoleVerbosity Condition="'$(DotNetTestConsoleVerbosity)' == ''">minimal</DotNetTestConsoleVerbosity>
+    </PropertyGroup>
+
+    <ItemGroup Condition=" '$(SkipDesktopAssemblies)' != 'true' ">
+      <DesktopInputTestAssemblies Include="@(TestAssemblyPath->WithMetadataValue('IsDesktop', 'true'))" />
+    </ItemGroup>
+
+    <PropertyGroup Condition=" '$(SkipDesktopAssemblies)' != 'true' ">
+      <DesktopTestCommand>&quot;$(DotnetExePath)&quot; test @(DesktopInputTestAssemblies->'&quot;%(Identity)&quot;', ' ') --logger:&quot;console;verbosity=$(DotNetTestConsoleVerbosity)&quot; --settings:&quot;$(MSBuildThisFileDirectory)xunit.runsettings&quot;</DesktopTestCommand>
+      <DesktopTestCommand Condition=" '$(DesktopTestResultsTrx)' != '' ">$(DesktopTestCommand) --logger:&quot;trx;LogFilePath=$(DesktopTestResultsTrx)&quot;</DesktopTestCommand>
+    </PropertyGroup>
+
+    <ItemGroup Condition=" '$(SkipCoreAssemblies)' != 'true' ">
+      <CoreInputTestAssemblies Include="@(TestAssemblyPath->WithMetadataValue('IsCore', 'true'))" />
+    </ItemGroup>
+    
+    <PropertyGroup Condition=" '$(SkipCoreAssemblies)' != 'true' ">
+      <CoreTestCommand>&quot;$(DotnetExePath)&quot; test @(CoreInputTestAssemblies->'&quot;%(Identity)&quot;', ' ') --logger:&quot;console;verbosity=$(DotNetTestConsoleVerbosity)&quot; --settings:&quot;$(MSBuildThisFileDirectory)xunit.runsettings&quot;</CoreTestCommand>
+      <CoreTestCommand Condition=" '$(CoreTestResultsTrx)' != '' ">$(CoreTestCommand) --logger:&quot;trx;LogFilePath=$(CoreTestResultsTrx)&quot;</CoreTestCommand>
+    </PropertyGroup>
+
+    <!-- Desktop -->
+    <Message Text="Running $(DesktopTestCommand)"
+             Importance="High"
+             Condition=" '$(SkipDesktopAssemblies)' != 'true' AND @(DesktopInputTestAssemblies->Count()) > 0 "/>
+
+    <Exec Command="$(DesktopTestCommand)"
+          LogStandardErrorAsError="true"
+          ContinueOnError="true"
+          EnvironmentVariables="VisualStudio.InstallationUnderTest.Path=$(VSINSTALLDIR);MSBUILD_EXE_PATH=$(MSBuildBinPath)\MSBuild.exe"
+          Condition=" '$(SkipDesktopAssemblies)' != 'true' AND @(DesktopInputTestAssemblies->Count()) > 0 ">
+      <Output TaskParameter="ExitCode" PropertyName="DesktopTestErrorCode"/>
+    </Exec>
+    
+    <!-- VSTest/NETCore -->
+    <Message Text="Running $(CoreTestCommand)"
+             Importance="High"
+             Condition=" '$(SkipCoreAssemblies)' != 'true' AND @(CoreInputTestAssemblies->Count()) > 0 "/>
+
+    <Exec Command="$(CoreTestCommand)"
+          LogStandardErrorAsError="true"
+          ContinueOnError="true"
+          Condition=" '$(SkipCoreAssemblies)' != 'true' AND @(CoreInputTestAssemblies->Count()) > 0 ">
+      <Output TaskParameter="ExitCode" PropertyName="VSTestErrorCode"/>
+    </Exec>
+
+    <Error Text="Desktop $(TestResultsFileName) tests failed! Results: $(DesktopTestResultsTrx)"
+           Condition=" '$(SkipDesktopAssemblies)' != 'true' AND '$(DesktopTestErrorCode)' != '0' AND '$(DesktopTestErrorCode)' != '' " />
+    
+    <Error Text="NETCore $(TestResultsFileName) tests failed! Results: $(CoreTestResultsTrx)"
+           Condition=" '$(SkipCoreAssemblies)' != 'true' AND '$(VSTestErrorCode)' != '0' AND '$(VSTestErrorCode)' != '' " />
+
+    <Message Text="Desktop $(TestResultsFileName) tests passed! Results: $(DesktopTestResultsTrx)"
+             Importance="High"
+             Condition=" '$(SkipDesktopAssemblies)' != 'true' AND '$(DesktopTestErrorCode)' == '0' " />
+
+    <Message Text="NETCore $(TestResultsFileName) tests passed! Results: $(CoreTestResultsTrx)"
+             Importance="High"
+             Condition=" '$(SkipCoreAssemblies)' != 'true' AND '$(VSTestErrorCode)' == '0' " />
+  </Target>
+</Project>

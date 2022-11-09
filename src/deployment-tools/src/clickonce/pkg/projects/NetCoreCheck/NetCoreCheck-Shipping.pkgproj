@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    This package is shipping to nuget.org. It will have a stable version, without pre-release
+    or release suffixes, when built in release branches.
+
+    Release to nuget.org is on-demand. Stable versions are expected for product releases.
+  -->
+
+  <PropertyGroup>
+    <PackageId>Microsoft.NET.Tools.NETCoreCheck.$(TargetArchitecture)</PackageId>
+    <IsShipping>true</IsShipping>
+    <IsShippingPackage>true</IsShippingPackage>
+  </PropertyGroup>
+
+</Project>

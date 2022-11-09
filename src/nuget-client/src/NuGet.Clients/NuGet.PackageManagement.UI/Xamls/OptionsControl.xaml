@@ -1,0 +1,164 @@
+<UserControl x:Class="NuGet.PackageManagement.UI.OptionsControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:nuget="clr-namespace:NuGet.PackageManagement.UI"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:imaging="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.Imaging"
+             xmlns:catalog="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.ImageCatalog"
+             mc:Ignorable="d"
+             d:DesignHeight="350" d:DesignWidth="350">
+  <UserControl.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <nuget:SharedResources />
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+  </UserControl.Resources>
+  <UserControl.CommandBindings>
+    <CommandBinding
+      Command="{x:Static nuget:PackageManagerControlCommands.OpenExternalLink}"
+      Executed="ExecuteOpenExternalLink" />
+  </UserControl.CommandBindings>
+  <Expander
+    x:Name="_expander"
+    Foreground="{DynamicResource {x:Static nuget:Brushes.UIText}}">
+    <Expander.Header>
+      <TextBlock
+        Text="{x:Static nuget:Resources.Label_Options}"
+        FontWeight="Bold" />
+    </Expander.Header>
+    <StackPanel
+      Orientation="Vertical">
+      <CheckBox
+        Margin="16,8,0,0"
+        IsChecked="{Binding Path=Options.ShowPreviewWindow}"
+        VerticalContentAlignment="Center">
+        <TextBlock
+          TextWrapping="Wrap"
+          TextTrimming="WordEllipsis"
+          Text="{x:Static nuget:Resources.Checkbox_ShowPreviewWindow}" />
+      </CheckBox>
+      <StackPanel
+        Orientation="Vertical"
+        Visibility="{Binding Options.ShowClassicOptions, Converter={StaticResource BooleanToVisibilityConverter}}"
+        Margin="0,16,0,0">
+        <Grid 
+          Grid.ColumnSpan="3" 
+          Visibility="{Binding IsSolution, Converter={StaticResource BooleanToVisibilityConverter}}" 
+          Margin="0,3">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+          </Grid.ColumnDefinitions>
+          <imaging:CrispImage Grid.Row="0" Grid.Column="0" Moniker="{x:Static catalog:KnownMonikers.StatusInformation}"/>
+          <TextBlock Grid.Row="0" Grid.Column="1" TextWrapping="Wrap" TextTrimming="WordEllipsis" Text="{x:Static nuget:Resources.Warning_ProjectJson}" Margin="3,0"/>
+        </Grid>
+
+        <!-- install and update options -->
+        <TextBlock
+          Grid.ColumnSpan="3"
+          Margin="0,8,0,0"
+          Text="{x:Static nuget:Resources.GroupBoxHeader_InstallOptions}"
+          FontWeight="Bold">
+        </TextBlock>
+        <Grid
+          Margin="16,8,0,0">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="8" />
+            <RowDefinition Height="auto" />
+          </Grid.RowDefinitions>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="4*" MinWidth="100" />
+            <ColumnDefinition Width="*"/>
+          </Grid.ColumnDefinitions>
+          <TextBlock
+            Grid.Row="0"
+            Grid.Column="0"
+            Margin="0,0,6,0"
+            VerticalAlignment="Center"
+            Foreground="{DynamicResource {x:Static nuget:Brushes.UIText}}"
+            Text="{x:Static nuget:Resources.Label_DependencyBehavior}" />
+          <ComboBox
+            Grid.Row="0"
+            Grid.Column="1"
+            MinHeight="22"
+            AutomationProperties.Name="{x:Static nuget:Resources.Label_DependencyBehavior}"
+            ItemsSource="{Binding Path=Options.DependencyBehaviors}"
+            SelectedItem="{Binding Path=Options.SelectedDependencyBehavior}" />
+          <TextBlock
+            Grid.Row="2"
+            Grid.Column="0"
+            Margin="0,0,6,0"
+            VerticalAlignment="Center"
+            Foreground="{DynamicResource {x:Static nuget:Brushes.UIText}}"
+            Text="{x:Static nuget:Resources.Label_FileConflictAction}" />
+          <ComboBox
+            Grid.Row="2"
+            Grid.Column="1"
+            MinHeight="22"
+            AutomationProperties.Name="{x:Static nuget:Resources.Label_FileConflictAction}"
+            ItemsSource="{Binding Path=Options.FileConflictActions}"
+            SelectedItem="{Binding Path=Options.SelectedFileConflictAction}" />
+        </Grid>
+        <TextBlock 
+          TextWrapping="Wrap"
+          TextTrimming="WordEllipsis"
+          Margin="16,8,0,0">
+          <Hyperlink
+            NavigateUri="https://docs.nuget.org/consume/package-manager-ui#install-options"
+            Style="{StaticResource HyperlinkStyle}"
+            Command="{x:Static nuget:PackageManagerControlCommands.OpenExternalLink}">
+            <Run Text="{x:Static nuget:Resources.Link_LearnAboutInstallOptions}" />
+          </Hyperlink>
+        </TextBlock>
+
+        <!-- uninstall options -->
+        <TextBlock
+          Margin="0,16,0,0"
+          Text="{x:Static nuget:Resources.GroupBoxHeader_UninstallOptions}"
+          FontWeight="Bold">
+        </TextBlock>
+        <Grid
+          Margin="16,8,0,0">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="8" />
+            <RowDefinition Height="auto" />
+          </Grid.RowDefinitions>
+          <CheckBox
+            Grid.Row="0"
+            IsChecked="{Binding Path=Options.RemoveDependencies}"
+            VerticalContentAlignment="Center">
+            <TextBlock
+              TextWrapping="Wrap"
+              TextTrimming="WordEllipsis"
+              Text="{x:Static nuget:Resources.Checkbox_RemoveDependencies}"/>
+          </CheckBox>
+          <CheckBox
+            Grid.Row="2"
+            IsChecked="{Binding Path=Options.ForceRemove}"
+            VerticalContentAlignment="Center">
+            <TextBlock
+              TextWrapping="Wrap"
+              TextTrimming="WordEllipsis"
+              Text="{x:Static nuget:Resources.Checkbox_ForceRemove}" />
+          </CheckBox>
+        </Grid>
+        <TextBlock 
+          TextWrapping="Wrap"
+          TextTrimming="WordEllipsis"
+          Margin="16,8,0,0">
+          <Hyperlink
+            NavigateUri="https://docs.nuget.org/consume/package-manager-ui#uninstall-options"
+            Style="{StaticResource HyperlinkStyle}"
+            Command="{x:Static nuget:PackageManagerControlCommands.OpenExternalLink}">
+            <Run Text="{x:Static nuget:Resources.Link_LearnAboutUninstallOptions}" />
+          </Hyperlink>
+        </TextBlock>
+      </StackPanel>
+    </StackPanel>
+  </Expander>
+</UserControl>

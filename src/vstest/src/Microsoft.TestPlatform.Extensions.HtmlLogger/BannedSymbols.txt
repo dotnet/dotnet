@@ -1,0 +1,4 @@
+﻿﻿M:System.Diagnostics.TPDebug.Assert(System.Boolean); Use 'TPDebug.Assert' instead
+M:System.Diagnostics.TPDebug.Assert(System.Boolean,System.String); Use 'TPDebug.Assert' instead
+M:System.String.IsNullOrEmpty(System.String); Use 'StringUtils.IsNullOrEmpty' instead
+M:System.String.IsNullOrWhiteSpace(System.String); Use 'StringUtils.IsNullOrWhiteSpace' instead

@@ -1,0 +1,5 @@
+#nullable enable
+Microsoft.TestPlatform.Extensions.EventLogCollector.EventLogDataCollector
+Microsoft.TestPlatform.Extensions.EventLogCollector.EventLogDataCollector.EventLogDataCollector() -> void
+override Microsoft.TestPlatform.Extensions.EventLogCollector.EventLogDataCollector.Dispose(bool disposing) -> void
+override Microsoft.TestPlatform.Extensions.EventLogCollector.EventLogDataCollector.Initialize(System.Xml.XmlElement? configurationElement, Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionEvents! events, Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionSink! dataSink, Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionLogger! logger, Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionEnvironmentContext? dataCollectionEnvironmentContext) -> void

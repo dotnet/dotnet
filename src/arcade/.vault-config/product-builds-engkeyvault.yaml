@@ -1,0 +1,270 @@
+storageLocation:
+  type: azure-key-vault
+  parameters:
+    subscription: a4fc5514-21a9-4296-bfaf-5c7ee7fa35d1
+    name: EngKeyVault
+
+references:
+  helixkv:
+    type: azure-key-vault
+    parameters:
+      subscription: a4fc5514-21a9-4296-bfaf-5c7ee7fa35d1
+      name: helixkv
+      
+  dotnetbuildskeys:
+    type: azure-key-vault
+    parameters:
+      subscription: 11c6037b-227b-4d63-bee1-18c7b68c3a40
+      name: dotnetbuildskeys
+
+secrets:
+  BotAccount-dotnet-maestro-bot:
+    type: github-account
+    parameters:
+      Name: dotnet-maestro-bot
+
+  #DotNet-Blob-Feed
+  dotnetfeed-storage-access-key-1:
+    type: azure-storage-key
+    parameters:
+      subscription: a4fc5514-21a9-4296-bfaf-5c7ee7fa35d1
+      account: dotnetfeed
+
+  #Publish-Build-Assets
+  MaestroAccessToken:
+    type: maestro-access-token
+    parameters:
+      environment: maestro-prod.westus2.cloudapp.azure.com
+
+  BotAccount-dotnet-maestro-bot-PAT:
+    type: github-access-token
+    parameters:
+      gitHubBotAccountSecret: BotAccount-dotnet-maestro-bot
+      gitHubBotAccountName: dotnet-maestro-bot
+
+  dn-bot-dnceng-build-rw-code-rw:
+    type: azure-devops-access-token
+    parameters:
+      domainAccountName: dn-bot
+      domainAccountSecret:
+          location: helixkv
+          name: dn-bot-account-redmond
+      name: dn-bot-dnceng-build
+      organizations: dnceng
+      scopes: build_execute code_write
+
+  akams:
+    type: github-oauth-secret
+    parameters:
+      appName: akams
+      description: set to never expire
+
+  publishing-dnceng-devdiv-code-r-build-re:
+    type: azure-devops-access-token
+    parameters:
+      domainAccountName: dn-bot
+      domainAccountSecret:
+          location: helixkv
+          name: dn-bot-account-redmond
+      name: publishing-dnceng-devdiv-code
+      organizations: dnceng devdiv
+      scopes: code build_execute 
+
+  dn-bot-dotnet-build-rw-code-rw:
+    type: azure-devops-access-token
+    parameters:
+      domainAccountName: dn-bot
+      domainAccountSecret:
+          location: helixkv
+          name: dn-bot-account-redmond
+      name: dn-bot-dotnet-build
+      organizations: dnceng
+      scopes: build_execute code_write 
+
+  dn-bot-all-orgs-build-rw-code-rw:
+    type: azure-devops-access-token
+    parameters:
+      domainAccountName: dn-bot
+      domainAccountSecret:
+          location: helixkv
+          name: dn-bot-account-redmond
+      name: dn-bot-all-orgs-build
+      organizations: dnceng devdiv microsoft
+      scopes: build_execute code_write
+
+  #DotNet-AllOrgs-Darc-Pats
+  dn-bot-devdiv-dnceng-rw-code-pat:
+    type: azure-devops-access-token
+    parameters:
+      domainAccountName: dn-bot
+      domainAccountSecret:
+          location: helixkv
+          name: dn-bot-account-redmond
+      name: dn-bot-devdiv-dnceng
+      organizations: dnceng devdiv
+      scopes: code_write
+
+  #AzureDevOps-Artifact-Feeds-Pats
+  dn-bot-dnceng-artifact-feeds-rw:
+    type: azure-devops-access-token
+    parameters:
+      domainAccountName: dn-bot
+      domainAccountSecret:
+          location: helixkv
+          name: dn-bot-account-redmond
+      name: dn-bot-dnceng-artifact-feeds
+      organizations: dnceng
+      scopes: packaging_write
+
+  dn-bot-dnceng-universal-packages-rw:
+    type: azure-devops-access-token
+    parameters:
+      domainAccountName: dn-bot
+      domainAccountSecret:
+          location: helixkv
+          name: dn-bot-account-redmond
+      name: dn-bot-dnceng-universal-packages
+      organizations: dnceng
+      scopes: packaging_write
+
+  dn-bot-all-orgs-artifact-feeds-rw:
+    type: azure-devops-access-token
+    parameters:
+      domainAccountName: dn-bot
+      domainAccountSecret:
+          location: helixkv
+          name: dn-bot-account-redmond
+      name: dn-bot-all-orgs-artifact-feeds
+      organizations: dnceng devdiv microsoft
+      scopes: packaging_write 
+
+  #DotNet-Symbol-Server-Pats
+  microsoft-symbol-server-pat:
+    type: azure-devops-access-token
+    parameters:
+      domainAccountSecret:
+          location: helixkv
+          name: dn-bot-account-redmond
+      name: microsoft-symbol-server-pat
+      organizations: microsoftpublicsymbols
+      scopes: packaging_write  
+
+  symweb-symbol-server-pat:
+    type: azure-devops-access-token
+    parameters:
+      domainAccountSecret:
+          location: helixkv
+          name: dn-bot-account-redmond
+      name: dn-symweb-symbol-server-pat
+      organizations: microsoft
+      scopes: packaging_write 
+
+  dotnetfeedmsrc-storage-access-key-1:
+    type: text
+    parameters:
+      description: Also located in dnceng-pipeline-secrets keyvault.
+      
+  dotnetfeedmsrc-private-feed-url:
+    type: text
+    parameters:
+      description: created manually from SAS in the format https://dotnetfeedmsrc.azurewebsites.net/sig/{sig}/se{se}
+
+  dotnetfeedmsrc-connection-string:
+    type: azure-storage-connection-string
+    parameters:
+      storageKeySecret: dotnetfeedmsrc-storage-access-key-1
+      account: dotnetfeedmsrc
+
+  dotnetfeedmsrc-read-sas-token:
+    type: azure-storage-container-sas-token
+    parameters:
+      connectionString: dotnetfeedmsrc-connection-string
+      permissions: r
+      container: $root
+
+  dotnetfeedmsrc-read-sas-token-base64:
+    type: base64-encoder
+    parameters:
+      secret: dotnetfeedmsrc-read-sas-token
+
+  dotnetclimsrc-access-key:
+    type: text
+    parameters:
+      description: Also located in dnceng-pipeline-secrets keyvault.
+
+  dotnetclimsrc-private-feed-url:
+    type: text
+    parameters:
+      description: created manually from SAS in the format https://dotnetclimsrc.azurewebsites.net/sig/{sig}/se{se}
+
+  dotnetclimsrc-connection-string:
+    type: azure-storage-connection-string
+    parameters:
+      storageKeySecret: dotnetclimsrc-access-key
+      account: dotnetclimsrc
+
+  dotnetclimsrc-read-sas-token:
+    type: azure-storage-container-sas-token
+    parameters:
+      connectionString: dotnetclimsrc-connection-string
+      permissions: rl
+      container: dotnet
+
+  dotnetclimsrc-read-sas-token-base64:
+    type: base64-encoder
+    parameters:
+      secret: dotnetclimsrc-read-sas-token
+
+  dotnetclichecksumsmsrc-storage-key:
+    type: text
+    parameters:
+      description: Also located in dnceng-pipeline-secrets keyvault.
+
+  dotnetclichecksumsmsrc-connection-string:
+    type: azure-storage-connection-string
+    parameters:
+      storageKeySecret: dotnetclichecksumsmsrc-storage-key
+      account: dotnetclichecksumsmsrc
+      
+  dotnetclichecksumsmsrc-dotnet-read-list-sas-token:
+    type: azure-storage-container-sas-token
+    parameters:
+      connectionString: dotnetclichecksumsmsrc-connection-string
+      permissions: rl
+      container: dotnet
+
+  dotnetbuilds-internal-container-read-token:
+    type: azure-storage-container-sas-token
+    parameters:
+      connectionString:
+        name: dotnetbuilds-connection-string
+        location: dotnetbuildskeys
+      permissions: rl
+      container: internal
+
+  dotnetbuilds-public-container-read-token:
+    type: azure-storage-container-sas-token
+    parameters:
+      connectionString:
+        name: dotnetbuilds-connection-string
+        location: dotnetbuildskeys
+      permissions: rl
+      container: public
+
+  dotnetbuilds-internal-checksums-container-read-token:
+    type: azure-storage-container-sas-token
+    parameters:
+      connectionString:
+        name: dotnetbuilds-connection-string
+        location: dotnetbuildskeys
+      permissions: rl
+      container: internal-checksums
+
+  dotnetbuilds-public-checksums-container-read-token:
+    type: azure-storage-container-sas-token
+    parameters:
+      connectionString:
+        name: dotnetbuilds-connection-string
+        location: dotnetbuildskeys
+      permissions: rl
+      container: public-checksums

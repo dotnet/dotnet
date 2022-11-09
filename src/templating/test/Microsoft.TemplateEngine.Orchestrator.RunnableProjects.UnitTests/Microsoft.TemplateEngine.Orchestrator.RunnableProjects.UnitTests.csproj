@@ -1,0 +1,69 @@
+<Project ToolsVersion="15.0" Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+      <TargetFrameworks Condition="'$(PackSpecific)' != 'true'">$(NETCoreTargetFramework);$(NETFullTargetFramework)</TargetFrameworks>
+      <TargetFrameworks Condition="'$(PackSpecific)' == 'true'">$(NETCoreTargetFramework)</TargetFrameworks>
+      <Nullable>enable</Nullable>
+    </PropertyGroup>
+    <ItemGroup>
+      <None Remove="xunit.runner.json" />
+    </ItemGroup>
+    <ItemGroup>
+      <Content Include="xunit.runner.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+    <ItemGroup>
+      <PackageReference Include="Newtonsoft.Json.Schema" />
+      <PackageReference Include="FakeItEasy" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Update="ConditionalTests.*.cs" DependentUpon="ConditionalTests.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="$(SrcDir)Microsoft.TemplateEngine.Abstractions\Microsoft.TemplateEngine.Abstractions.csproj" />
+        <ProjectReference Include="$(SrcDir)Microsoft.TemplateEngine.Core\Microsoft.TemplateEngine.Core.csproj" />
+        <ProjectReference Include="$(SrcDir)Microsoft.TemplateEngine.Core.Contracts\Microsoft.TemplateEngine.Core.Contracts.csproj" />
+        <ProjectReference Include="$(SrcDir)Microsoft.TemplateEngine.Orchestrator.RunnableProjects\Microsoft.TemplateEngine.Orchestrator.RunnableProjects.csproj" />
+        <ProjectReference Include="$(TestDir)Microsoft.TemplateEngine.Mocks\Microsoft.TemplateEngine.Mocks.csproj" />
+        <ProjectReference Include="$(TestDir)Microsoft.TemplateEngine.TestHelper\Microsoft.TemplateEngine.TestHelper.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="SchemaTests\ConditionalParametersTest.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="SchemaTests\ConstraintsTest.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="SchemaTests\BasicTest.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="SchemaTests\GeneratorTest.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="SchemaTests\MultiValueChoiceTest.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="SchemaTests\PostActionTest.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="SchemaTests\StarterWebTest.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="SchemaTests\SymbolsTest.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
+    <Target Name="PostBuildWin" AfterTargets="PostBuildEvent" Condition="'$(OS)' == 'Windows_NT' ">
+      <Exec Command="copy $(SolutionDir)src\Microsoft.TemplateEngine.Orchestrator.RunnableProjects\Schemas\JSON\template.json $(TargetDir)SchemaTests" />
+    </Target>
+
+    <Target Name="PostBuildUnix" AfterTargets="PostBuildEvent" Condition="'$(OS)' == 'Unix' ">
+        <Exec Command="cp $(SolutionDir)src/Microsoft.TemplateEngine.Orchestrator.RunnableProjects/Schemas/JSON/template.json $(TargetDir)SchemaTests" />
+    </Target>
+
+    <ProjectExtensions><VisualStudio><UserProperties schematests_4constraintstest_1json__JsonSchema="$(SrcDir)Microsoft.TemplateEngine.Orchestrator.RunnableProjects\Schemas\JSON\template.json" /></VisualStudio></ProjectExtensions>
+</Project>

@@ -1,0 +1,21 @@
+<Project>
+  <PropertyGroup>
+    <AspNetCoreMinSupportedVersion>2.1.1</AspNetCoreMinSupportedVersion>
+    <MicrosoftAzureKeyVaultVersion>3.0.5</MicrosoftAzureKeyVaultVersion>
+    <MicrosoftAzureServicesAppAuthenticationVersion>1.0.3</MicrosoftAzureServicesAppAuthenticationVersion>
+    <MicrosoftCSharpVersion>4.5.0</MicrosoftCSharpVersion>
+    <MicrosoftSourceLinkGitHubVersion>1.0.0</MicrosoftSourceLinkGitHubVersion>
+    <NetStandardVersion>2.0.3</NetStandardVersion>
+    <SystemCollectionsSpecializedVersion>4.3.0</SystemCollectionsSpecializedVersion>
+    <SystemComponentModelTypeConverterVersion>4.3.0</SystemComponentModelTypeConverterVersion>
+    <SystemDiagnosticsContractsVersion>4.3.0</SystemDiagnosticsContractsVersion>
+    <SystemDynamicRuntimeVersion>4.3.0</SystemDynamicRuntimeVersion>
+    <SystemNetHttpVersion>4.3.4</SystemNetHttpVersion>
+    <SystemRuntimeSerializationFormattersVersion>4.3.0</SystemRuntimeSerializationFormattersVersion>
+    <SystemRuntimeSerializationPrimitivesVersion>4.3.0</SystemRuntimeSerializationPrimitivesVersion>
+    <SystemRuntimeSerializationXmlVersion>4.3.0</SystemRuntimeSerializationXmlVersion>
+    <SystemSecurityClaimsVersion>4.3.0</SystemSecurityClaimsVersion>
+    <SystemSecurityCryptographyCngVersion>4.5.0</SystemSecurityCryptographyCngVersion>
+    <SystemXmlXmlDocumentVersion>4.3.0</SystemXmlXmlDocumentVersion>
+  </PropertyGroup>
+</Project>

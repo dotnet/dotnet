@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.Build.NoTargets">
+  <PropertyGroup>
+    <ScriptExt Condition="$([MSBuild]::IsOSPlatform('WINDOWS'))">.cmd</ScriptExt>
+    <ScriptExt Condition="!$([MSBuild]::IsOSPlatform('WINDOWS'))">.sh</ScriptExt>
+    <ProjTemplatePath>$(RepositoryEngineeringDir)slngen.template.proj</ProjTemplatePath>
+    <SolutionNameOverride Condition="'$(SolutionNameOverride)' == ''">*</SolutionNameOverride>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Unless a "/p:SolutionNameOverride" property is passed in, glob all solutions under src/libraries. -->
+    <SolutionFile Include="$(MSBuildThisFileDirectory)$(SolutionNameOverride)\*.sln" />
+  </ItemGroup>
+
+  <Target Name="UpdateSolutionFile"
+          AfterTargets="Build"
+          DependsOnTargets="GetSolutionFiles"
+          Inputs="@(SolutionFile)"
+          Outputs="%(ProjFilePath)">
+    <!-- Copy template files, required by slngen -->
+    <Copy SourceFiles="$(ProjTemplatePath)"
+          DestinationFiles="%(SolutionFile.ProjFilePath)" />
+    
+    <!-- Invoke slngen -->
+    <Exec Command="&quot;$(RepoRoot)dotnet$(ScriptExt)&quot; slngen -p SlnGenMainProject=%(SolutionFile.Filename) --launch false --nologo &quot;%(SolutionFile.ProjFilePath)&quot;" />
+
+    <!-- Delete temporary template file -->
+    <Delete Files="%(SolutionFile.ProjFilePath)" />
+  </Target>
+
+  <Target Name="GetSolutionFiles">
+    <ItemGroup>
+      <!-- Add attributes that require a separate item mutation. -->
+      <SolutionFile ProjFilePath="%(RelativeDir)%(Filename).proj" />
+    </ItemGroup>
+  </Target>
+</Project>

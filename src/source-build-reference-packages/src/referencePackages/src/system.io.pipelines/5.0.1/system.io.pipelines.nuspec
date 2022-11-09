@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata minClientVersion="2.12">
+    <id>System.IO.Pipelines</id>
+    <version>5.0.1</version>
+    <title>System.IO.Pipelines</title>
+    <authors>Microsoft</authors>
+    <owners>microsoft,dotnetframework</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+    <projectUrl>https://github.com/dotnet/runtime</projectUrl>
+    <iconUrl>http://go.microsoft.com/fwlink/?LinkID=288859</iconUrl>
+    <description>Single producer single consumer byte buffer management.
+
+Commonly Used Types:
+System.IO.Pipelines.Pipe
+System.IO.Pipelines.PipeWriter
+System.IO.Pipelines.PipeReader
+ 
+When using NuGet 3.x this package requires at least version 3.4.</description>
+    <releaseNotes>https://go.microsoft.com/fwlink/?LinkID=799421</releaseNotes>
+    <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+    <serviceable>true</serviceable>
+    <repository type="git" url="git://github.com/dotnet/runtime" commit="b02e13abab3d6f499751af2ad1ae6333fb4e633d" />
+    <dependencies>
+      <group targetFramework="MonoAndroid1.0">
+        <dependency id="System.Buffers" version="4.5.1" />
+      </group>
+      <group targetFramework="MonoTouch1.0">
+        <dependency id="System.Buffers" version="4.5.1" />
+      </group>
+      <group targetFramework=".NETFramework4.6">
+        <dependency id="System.Buffers" version="4.5.1" />
+        <dependency id="System.Memory" version="4.5.4" />
+        <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
+      </group>
+      <group targetFramework=".NETFramework4.6.1">
+        <dependency id="System.Buffers" version="4.5.1" />
+        <dependency id="System.Memory" version="4.5.4" />
+        <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
+      </group>
+      <group targetFramework=".NETCoreApp2.0">
+        <dependency id="System.Memory" version="4.5.4" />
+        <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
+      </group>
+      <group targetFramework=".NETCoreApp2.1" />
+      <group targetFramework=".NETCoreApp3.0" />
+      <group targetFramework=".NETStandard1.3">
+        <dependency id="NETStandard.Library" version="1.6.1" />
+        <dependency id="System.Buffers" version="4.5.1" />
+        <dependency id="System.Memory" version="4.5.4" />
+        <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
+      </group>
+      <group targetFramework=".NETStandard2.0">
+        <dependency id="System.Buffers" version="4.5.1" />
+        <dependency id="System.Memory" version="4.5.4" />
+        <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
+      </group>
+      <group targetFramework="UAP10.0.16299">
+        <dependency id="System.Memory" version="4.5.4" />
+        <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
+      </group>
+      <group targetFramework="Xamarin.iOS1.0">
+        <dependency id="System.Buffers" version="4.5.1" />
+      </group>
+      <group targetFramework="Xamarin.Mac2.0">
+        <dependency id="System.Buffers" version="4.5.1" />
+      </group>
+      <group targetFramework="Xamarin.TVOS1.0">
+        <dependency id="System.Buffers" version="4.5.1" />
+      </group>
+      <group targetFramework="Xamarin.WatchOS1.0">
+        <dependency id="System.Buffers" version="4.5.1" />
+      </group>
+    </dependencies>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.6.1" />
+    </frameworkAssemblies>
+  </metadata>
+</package>

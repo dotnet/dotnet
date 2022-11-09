@@ -1,0 +1,100 @@
+StyleSheet
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    p
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    color
+                PseudoClassSelector
+                    Colon    :
+                    Identifier    green
+                Semicolon (SimpleSelectorExpected:WholeItem)    ;
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    color
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration (PropertyNameMissing:BeforeItem)
+                Semicolon    ;
+            Declaration
+                Identifier    color
+                Colon    :
+                Identifier    maroon
+            CloseCurlyBrace    }
+    CloseCurlyBrace (UnexpectedToken:WholeItem)    }
+    CComment
+        OpenCComment    /*
+        CommentText    unexpected tokens { }
+        CloseCComment    */
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    p
+        RuleBlock (CloseCurlyBraceMissing:AfterItem)
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    color
+                Colon    :
+                Identifier    red
+                Semicolon    ;
+            Declaration
+                Identifier (ColonMissingInDeclaration:AfterItem)    color
+    RuleSet (SelectorBeforeRuleBlockMissing:BeforeItem)
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration (PropertyNameMissing:BeforeItem)
+                Semicolon    ;
+            Declaration
+                Identifier    color
+                Colon    :
+                Identifier    maroon
+            CloseCurlyBrace    }
+    RuleSet (OpenCurlyBraceMissingForRule:AfterItem)
+        Selector
+            SimpleSelector
+                Semicolon (SimpleSelectorExpected:WholeItem)    ;
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    color
+                PseudoClassSelector
+                    Colon    :
+                    Identifier    green
+    CloseCurlyBrace (UnexpectedToken:WholeItem)    }
+    CComment
+        OpenCComment    /*
+        CommentText    same with recovery
+        CloseCComment    */
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    p
+                PseudoClassSelector
+                    Colon    :
+                    Identifier    before
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    content
+                Colon    :
+                FunctionCounter
+                    Function    counter(
+                    FunctionArgument
+                        Identifier    par-num
+                        Comma    ,
+                    FunctionArgument
+                        Identifier    upper-roman
+                    CloseFunctionBrace    )
+                String    ""
+                Dot (PropertyValueExpected:WholeItem)    .
+                String    ""
+            CloseCurlyBrace    }

@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <CLRTestPriority>1</CLRTestPriority>
+    <!-- Test unsupported outside of linux -->
+    <CLRTestTargetUnsupported Condition="'$(TargetOS)' != 'Linux'">true</CLRTestTargetUnsupported>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Ii.cs" />
+  </ItemGroup>
+</Project>

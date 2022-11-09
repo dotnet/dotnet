@@ -1,0 +1,52 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net7.0</TargetFramework>
+    <IsPackable>true</IsPackable>
+    <PackAsTool>true</PackAsTool>
+    <PackageId>dotnet-suggest</PackageId>
+    <ToolCommandName>dotnet-suggest</ToolCommandName>
+    <PackAsToolShimRuntimeIdentifiers>win-x64;win-x86;osx-x64;linux-x64</PackAsToolShimRuntimeIdentifiers>
+    <PackagedShimOutputRootDirectory>$(OutputPath)</PackagedShimOutputRootDirectory>
+
+    <DotnetSuggestBuildNumber>.1</DotnetSuggestBuildNumber>
+    <DotnetSuggestBuildNumber Condition="'$(VersionSuffixDateStamp)' != ''">.$(VersionSuffixDateStamp).$(VersionSuffixBuildOfTheDay)</DotnetSuggestBuildNumber>
+    <VersionPrefix>1.1$(DotnetSuggestBuildNumber)</VersionPrefix>
+    <VersionSuffix></VersionSuffix>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!--No warning for the scripts, it is part of the content, not to execuate-->
+    <NoWarn>$(NoWarn);NU5110;NU5111;</NoWarn>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\System.CommandLine\System.CommandLine.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="dotnet-suggest-shim.ps1" />
+    <Content Include="dotnet-suggest-shim.ps1">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Remove="dotnet-suggest-shim.bash" />
+    <Content Include="dotnet-suggest-shim.bash">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Remove="dotnet-suggest-shim.zsh" />
+    <Content Include="dotnet-suggest-shim.zsh">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <!-- Workaround https://github.com/dotnet/arcade/issues/2233 -->
+  <Target Name="_InitializeAssemblyVersion" BeforeTargets="GetAssemblyVersion">
+    <PropertyGroup>
+      <FileVersion></FileVersion>
+    </PropertyGroup>
+  </Target>
+</Project>

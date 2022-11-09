@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PackageLanguagePackManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011">
+  <Metadata>
+    <DisplayName>Extension Création de test unitaire pour MSTest V2</DisplayName>
+    <Description>Permet aux développeurs de créer un test unitaire à l'aide de MSTest V2.</Description>
+  </Metadata>
+</PackageLanguagePackManifest>

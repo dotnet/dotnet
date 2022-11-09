@@ -1,0 +1,487 @@
+{
+  "@context": { "@vocab": "http://schema.nuget.org/schema#" },
+  "totalHits": 10008,
+  "index": "nuget-volatile",
+  "lastReopen": "2016-01-23T06:46:08.8626709Z",
+  "data": [
+    {
+      "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.core/2.11.0.json",
+      "@type": "Package",
+      "registration": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.core/index.json",
+      "id": "NuGet.Core",
+      "description": "NuGet.Core is the core framework assembly for NuGet that the rest of NuGet builds upon.",
+      "summary": "NuGet.Core is the core framework assembly for NuGet that the rest of NuGet builds upon.",
+      "title": "NuGet.Core",
+      "iconUrl": "/Content/images/packageDefaultIcon_nuget.png",
+      "licenseUrl": "https://raw.githubusercontent.com/NuGet/NuGet2/master/LICENSE.txt",
+      "projectUrl": "https://github.com/NuGet/NuGet2",
+      "tags": [ "nuget" ],
+      "authors": [ "Outercurve", "Foundation" ],
+      "totaldownloads": 97596,
+      "version": "2.11.0",
+      "versions": [
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.core/2.8.8-beta-02.json",
+          "version": "2.8.8-beta-02",
+          "downloads": 627
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.core/2.8.8-beta-724.json",
+          "version": "2.8.8-beta-724",
+          "downloads": 206
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.core/2.8.8.json",
+          "version": "2.8.8",
+          "downloads": 205
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.core/2.9.0.json",
+          "version": "2.9.0",
+          "downloads": 2789
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.core/2.10.0-beta-741.json",
+          "version": "2.10.0-beta-741",
+          "downloads": 1
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.core/2.10.0-beta-742.json",
+          "version": "2.10.0-beta-742",
+          "downloads": 2199
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.core/2.10.0-beta-748.json",
+          "version": "2.10.0-beta-748",
+          "downloads": 372
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.core/2.10.0.json",
+          "version": "2.10.0",
+          "downloads": 1467
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.core/2.10.1-beta-759.json",
+          "version": "2.10.1-beta-759",
+          "downloads": 257
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.core/2.10.1.json",
+          "version": "2.10.1",
+          "downloads": 10
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.core/2.11.0-alpha-0001.json",
+          "version": "2.11.0-alpha-0001",
+          "downloads": 0
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.core/2.11.0.json",
+          "version": "2.11.0",
+          "downloads": 0
+        }
+      ]
+    },
+    {
+      "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.common/3.0.0-ci-0017.json",
+      "@type": "Package",
+      "registration": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.common/index.json",
+      "id": "NuGet.Common",
+      "description": "NuGet.Common",
+      "summary": "NuGet.Common",
+      "title": "NuGet.Common",
+      "iconUrl": "/Content/images/packageDefaultIcon_nuget.png",
+      "licenseUrl": null,
+      "projectUrl": null,
+      "tags": [ ],
+      "authors": [ "Microsoft", "Open", "Technologies,", "", "Inc." ],
+      "totaldownloads": 28,
+      "version": "3.0.0-ci-0017",
+      "versions": [
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.common/3.0.0-ci-0014.json",
+          "version": "3.0.0-ci-0014",
+          "downloads": 0
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.common/3.0.0-ci-0015.json",
+          "version": "3.0.0-ci-0015",
+          "downloads": 0
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.common/3.0.0-ci-0016.json",
+          "version": "3.0.0-ci-0016",
+          "downloads": 1
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.common/3.0.0-ci-0017.json",
+          "version": "3.0.0-ci-0017",
+          "downloads": 6
+        }
+      ]
+    },
+    {
+      "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.indexing/3.0.41-r-master.json",
+      "@type": "Package",
+      "registration": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.indexing/index.json",
+      "id": "NuGet.Indexing",
+      "description": "Lucene-based Search Indexing tools for NuGet",
+      "summary": "Lucene-based Search Indexing tools for NuGet",
+      "title": "NuGet.Indexing",
+      "iconUrl": "/Content/images/packageDefaultIcon_nuget.png",
+      "licenseUrl": "https://github.com/NuGet/NuGet.Services.Search/blob/master/LICENSE",
+      "projectUrl": "https://github.com/NuGet/NuGet.Services.Search",
+      "tags": [ "nuget", "services", "search", "index", "lucene" ],
+      "authors": [ "Outercurve", "Foundation" ],
+      "totaldownloads": 175,
+      "version": "3.0.41-r-master",
+      "versions": [
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.indexing/3.0.12-r-master.json",
+          "version": "3.0.12-r-master",
+          "downloads": 7
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.indexing/3.0.13-r-master.json",
+          "version": "3.0.13-r-master",
+          "downloads": 0
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.indexing/3.0.14-r-master.json",
+          "version": "3.0.14-r-master",
+          "downloads": 0
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.indexing/3.0.15-r-master.json",
+          "version": "3.0.15-r-master",
+          "downloads": 0
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.indexing/3.0.16-r-master.json",
+          "version": "3.0.16-r-master",
+          "downloads": 0
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.indexing/3.0.17-r-master.json",
+          "version": "3.0.17-r-master",
+          "downloads": 0
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.indexing/3.0.18-r-master.json",
+          "version": "3.0.18-r-master",
+          "downloads": 0
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.indexing/3.0.19-r-master.json",
+          "version": "3.0.19-r-master",
+          "downloads": 0
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.indexing/3.0.20-r-master.json",
+          "version": "3.0.20-r-master",
+          "downloads": 0
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.indexing/3.0.23-r-master.json",
+          "version": "3.0.23-r-master",
+          "downloads": 0
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.indexing/3.0.24-r-master.json",
+          "version": "3.0.24-r-master",
+          "downloads": 0
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.indexing/3.0.25-r-master.json",
+          "version": "3.0.25-r-master",
+          "downloads": 0
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.indexing/3.0.26-r-master.json",
+          "version": "3.0.26-r-master",
+          "downloads": 0
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.indexing/3.0.27-r-master.json",
+          "version": "3.0.27-r-master",
+          "downloads": 0
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.indexing/3.0.28-r-master.json",
+          "version": "3.0.28-r-master",
+          "downloads": 0
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.indexing/3.0.31-r-master.json",
+          "version": "3.0.31-r-master",
+          "downloads": 0
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.indexing/3.0.32-r-master.json",
+          "version": "3.0.32-r-master",
+          "downloads": 0
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.indexing/3.0.33-r-master.json",
+          "version": "3.0.33-r-master",
+          "downloads": 0
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.indexing/3.0.34-r-master.json",
+          "version": "3.0.34-r-master",
+          "downloads": 0
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.indexing/3.0.35-r-master.json",
+          "version": "3.0.35-r-master",
+          "downloads": 0
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.indexing/3.0.36-r-master.json",
+          "version": "3.0.36-r-master",
+          "downloads": 0
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.indexing/3.0.37-r-master.json",
+          "version": "3.0.37-r-master",
+          "downloads": 0
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.indexing/3.0.38-r-master.json",
+          "version": "3.0.38-r-master",
+          "downloads": 0
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.indexing/3.0.40-r-master.json",
+          "version": "3.0.40-r-master",
+          "downloads": 0
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.indexing/3.0.41-r-master.json",
+          "version": "3.0.41-r-master",
+          "downloads": 0
+        }
+      ]
+    },
+    {
+      "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.versioning/3.0.0-beta-00032.json",
+      "@type": "Package",
+      "registration": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.versioning/index.json",
+      "id": "NuGet.Versioning",
+      "description": "NuGet's implementation of Semantic Versioning.",
+      "summary": "NuGet's implementation of Semantic Versioning.",
+      "title": "NuGet.Versioning",
+      "iconUrl": "/Content/images/packageDefaultIcon_nuget.png",
+      "licenseUrl": "https://raw.githubusercontent.com/NuGet/NuGet.Versioning/master/LICENSE",
+      "projectUrl": "https://github.com/NuGet/NuGet.Versioning/",
+      "tags": [ "semver", "semantic", "versioning" ],
+      "authors": [ "NuGet" ],
+      "totaldownloads": 297,
+      "version": "3.0.0-beta-00032",
+      "versions": [
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.versioning/3.0.0-beta-00023.json",
+          "version": "3.0.0-beta-00023",
+          "downloads": 15
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.versioning/3.0.0-beta-00024.json",
+          "version": "3.0.0-beta-00024",
+          "downloads": 0
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.versioning/3.0.0-beta-00025.json",
+          "version": "3.0.0-beta-00025",
+          "downloads": 0
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.versioning/3.0.0-beta-00026.json",
+          "version": "3.0.0-beta-00026",
+          "downloads": 0
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.versioning/3.0.0-beta-00027.json",
+          "version": "3.0.0-beta-00027",
+          "downloads": 0
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.versioning/3.0.0-beta-00028.json",
+          "version": "3.0.0-beta-00028",
+          "downloads": 0
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.versioning/3.0.0-beta-00029.json",
+          "version": "3.0.0-beta-00029",
+          "downloads": 0
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.versioning/3.0.0-beta-00031.json",
+          "version": "3.0.0-beta-00031",
+          "downloads": 0
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.versioning/3.0.0-beta-00032.json",
+          "version": "3.0.0-beta-00032",
+          "downloads": 18
+        }
+      ]
+    },
+    {
+      "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.commandline/2.9.0.json",
+      "@type": "Package",
+      "registration": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.commandline/index.json",
+      "id": "NuGet.CommandLine",
+      "description": "NuGet Command Line Tool",
+      "summary": "NuGet Command Line Tool",
+      "title": "NuGet.CommandLine",
+      "iconUrl": "/Content/images/packageDefaultIcon_nuget.png",
+      "licenseUrl": "https://raw.githubusercontent.com/NuGet/NuGet2/master/LICENSE.txt",
+      "projectUrl": "https://github.com/NuGet/NuGet2",
+      "tags": [ ],
+      "authors": [ ".NET", "Foundation" ],
+      "totaldownloads": 216,
+      "version": "2.9.0",
+      "versions": [
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.commandline/2.8.5-beta-00002.json",
+          "version": "2.8.5-beta-00002",
+          "downloads": 5
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.commandline/2.8.6-beta-01.json",
+          "version": "2.8.6-beta-01",
+          "downloads": 15
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.commandline/2.9.0.json",
+          "version": "2.9.0",
+          "downloads": 52
+        }
+      ]
+    },
+    {
+      "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.visualstudio/3.0.0-beta-3.json",
+      "@type": "Package",
+      "registration": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.visualstudio/index.json",
+      "id": "NuGet.VisualStudio",
+      "description": "APIs for invoking NuGet services in Visual Studio.",
+      "summary": "APIs for invoking NuGet services in Visual Studio.",
+      "title": "NuGet.VisualStudio",
+      "iconUrl": "/Content/images/packageDefaultIcon_nuget.png",
+      "licenseUrl": "http://www.microsoft.com/web/webpi/eula/nuget_release_eula.htm",
+      "projectUrl": "http://nuget.codeplex.com/",
+      "tags": [ "nuget" ],
+      "authors": [ "Outercurve", "Foundation" ],
+      "totaldownloads": 14,
+      "version": "3.0.0-beta-3",
+      "versions": [
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.visualstudio/3.0.0-beta-3.json",
+          "version": "3.0.0-beta-3",
+          "downloads": 14
+        }
+      ]
+    },
+    {
+      "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.configuration/3.0.0-ci-00025.json",
+      "@type": "Package",
+      "registration": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.configuration/index.json",
+      "id": "NuGet.Configuration",
+      "description": "NuGet's client configuration settings implementation.",
+      "summary": "NuGet's client configuration settings implementation.",
+      "title": "NuGet.Configuration",
+      "iconUrl": "/Content/images/packageDefaultIcon_nuget.png",
+      "licenseUrl": "https://raw.githubusercontent.com/NuGet/NuGet.Configuration/master/LICENSE",
+      "projectUrl": "https://github.com/NuGet/NuGet.Configuration/",
+      "tags": [ "nuget", "configuration", "nuget.config" ],
+      "authors": [ "NuGet" ],
+      "totaldownloads": 372,
+      "version": "3.0.0-ci-00025",
+      "versions": [
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.configuration/3.0.0-ci-00009.json",
+          "version": "3.0.0-ci-00009",
+          "downloads": 0
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.configuration/3.0.0-ci-00010.json",
+          "version": "3.0.0-ci-00010",
+          "downloads": 0
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.configuration/3.0.0-ci-00011.json",
+          "version": "3.0.0-ci-00011",
+          "downloads": 1
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.configuration/3.0.0-ci-00012.json",
+          "version": "3.0.0-ci-00012",
+          "downloads": 0
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.configuration/3.0.0-ci-00013.json",
+          "version": "3.0.0-ci-00013",
+          "downloads": 0
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.configuration/3.0.0-ci-00014.json",
+          "version": "3.0.0-ci-00014",
+          "downloads": 2
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.configuration/3.0.0-ci-00019.json",
+          "version": "3.0.0-ci-00019",
+          "downloads": 0
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.configuration/3.0.0-ci-00020.json",
+          "version": "3.0.0-ci-00020",
+          "downloads": 1
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.configuration/3.0.0-ci-00021.json",
+          "version": "3.0.0-ci-00021",
+          "downloads": 0
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.configuration/3.0.0-ci-00022.json",
+          "version": "3.0.0-ci-00022",
+          "downloads": 0
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.configuration/3.0.0-ci-00023.json",
+          "version": "3.0.0-ci-00023",
+          "downloads": 4
+        },
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.configuration/3.0.0-ci-00025.json",
+          "version": "3.0.0-ci-00025",
+          "downloads": 23
+        }
+      ]
+    },
+    {
+      "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.msbuild.integration/3.1.0-beta-001.json",
+      "@type": "Package",
+      "registration": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.msbuild.integration/index.json",
+      "id": "NuGet.MsBuild.Integration",
+      "description": "MsBuild files to integrate with NuGet transitive restore",
+      "summary": "MsBuild files to integrate with NuGet transitive restore",
+      "title": "NuGet.MsBuild.Integration",
+      "iconUrl": "/Content/images/packageDefaultIcon_nuget.png",
+      "licenseUrl": null,
+      "projectUrl": null,
+      "tags": [ ],
+      "authors": [ "Microsoft", "Open", "Technologies,", "", "Inc." ],
+      "totaldownloads": 1552,
+      "version": "3.1.0-beta-001",
+      "versions": [
+        {
+          "@id": "https://www.myget.org/F/nuget-volatile/api/v3/registration1/nuget.msbuild.integration/3.1.0-beta-001.json",
+          "version": "3.1.0-beta-001",
+          "downloads": 1552
+        }
+      ]
+    }
+  ]
+}

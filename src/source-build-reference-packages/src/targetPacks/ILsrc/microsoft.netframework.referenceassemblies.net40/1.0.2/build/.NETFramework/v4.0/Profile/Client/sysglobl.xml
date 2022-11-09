@@ -1,0 +1,260 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>sysglobl</name>
+  </assembly>
+  <members>
+    <member name="T:System.Globalization.CultureAndRegionInfoBuilder">
+      <summary>Defines a custom culture that is new or based on another culture and country/region. The custom culture can be installed on a computer and subsequently used by any application running on that computer. This class cannot be inherited. </summary>
+    </member>
+    <member name="M:System.Globalization.CultureAndRegionInfoBuilder.#ctor(System.String,System.Globalization.CultureAndRegionModifiers)">
+      <summary>Initializes a new instance of the <see cref="T:System.Globalization.CultureAndRegionInfoBuilder" /> class. </summary>
+      <param name="cultureName">The name of a culture.</param>
+      <param name="flags">One of the <see cref="T:System.Globalization.CultureAndRegionModifiers" /> values that specifies whether the new <see cref="T:System.Globalization.CultureAndRegionInfoBuilder" /> object is a neutral culture, replaces an existing culture and country/region, or is a new culture. </param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="cultureName" /> is null.</exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="cultureName" /> is the empty string ("").-or-<paramref name="cultureName" /> contains characters other than "0" through "9", "a" through "z", "A" through "Z", hyphen (-), or underscore (_).-or-<paramref name="cultureName" /> contains hyphens (-) to delimit components, but one or more of the <paramref name="prefix" />, <paramref name="language" />, <paramref name="region" />, or <paramref name="suffix" /> components is absent. That is, two or more hyphens are adjacent.-or-<paramref name="cultureName" /> is longer than 84 characters.-or-<paramref name="cultureName" /> contains hyphens to delimit components, but one or more of the components is longer than 8 characters.-or-<paramref name="cultureName" /> contains a leading or trailing hyphen (-) or underscore (_).-or-<paramref name="cultureName" /> specifies an alternate sort replacement culture instead of a .NET Framework culture. For example, <paramref name="culturenName" /> is "de-de_phoneb", a culture that sorts strings as they appear in a German telephone book, instead of "de-DE", the German (Germany) culture.-or-<paramref name="flags" /> contains an invalid combination of <see cref="T:System.Globalization.CultureAndRegionModifiers" /> values.-or-<paramref name="flags" /> contains <see cref="F:System.Globalization.CultureAndRegionModifiers.Replacement" /> or <see cref="F:System.Globalization.CultureAndRegionModifiers.Neutral" /> and <paramref name="cultureName" /> specifies a culture that is not found.-or-<paramref name="flags" /> contains <see cref="F:System.Globalization.CultureAndRegionModifiers.Replacement" /> and <paramref name="cultureName" /> specifies a user-created custom culture that does not replace a culture shipped with the .NET Framework.-or-<paramref name="flags" /> contains <see cref="F:System.Globalization.CultureAndRegionModifiers.Neutral" /> and <paramref name="cultureName" /> specifies a culture that is not a neutral culture.-or-<paramref name="flags" /> contains <see cref="F:System.Globalization.CultureAndRegionModifiers.Neutral" /> and <paramref name="cultureName" /> specifies a user-created custom culture that replaces a specific culture shipped with the .NET Framework.</exception>
+    </member>
+    <member name="P:System.Globalization.CultureAndRegionInfoBuilder.AvailableCalendars">
+      <summary>Gets or sets an array of calendars that are supported by this <see cref="T:System.Globalization.CultureAndRegionInfoBuilder" /> object.</summary>
+      <returns>An array of calendars.</returns>
+      <exception cref="T:System.ArgumentNullException">In a set operation, the assigned array is null, or an element of the assigned array is null.</exception>
+      <exception cref="T:System.NotSupportedException">This property is not supported for neutral cultures.-or-In a set operation, the assigned array contains <see cref="T:System.Globalization.PersianCalendar" />, <see cref="T:System.Globalization.TaiwanLunisolarCalendar" />, <see cref="T:System.Globalization.KoreanLunisolarCalendar" />, <see cref="T:System.Globalization.JapaneseLunisolarCalendar" />, <see cref="T:System.Globalization.ChineseLunisolarCalendar" />, or <see cref="T:System.Globalization.JulianCalendar" />.-or-In a set operation, the assigned array includes a custom calendar.</exception>
+    </member>
+    <member name="P:System.Globalization.CultureAndRegionInfoBuilder.CompareInfo">
+      <summary>Gets or sets the <see cref="T:System.Globalization.CompareInfo" /> object that defines how to compare strings for the culture.</summary>
+      <returns>The <see cref="T:System.Globalization.CompareInfo" /> object that defines how to compare strings for the culture.</returns>
+      <exception cref="T:System.ArgumentNullException">In a set operation the assigned value is null.</exception>
+      <exception cref="T:System.NotSupportedException">This custom culture is an override of a built-in culture.</exception>
+    </member>
+    <member name="P:System.Globalization.CultureAndRegionInfoBuilder.ConsoleFallbackUICulture">
+      <summary>Gets or sets an alternate user interface culture suitable for console applications when the default graphic user interface culture is inappropriate.</summary>
+      <returns>An alternate culture that is used to read and display text on the console.</returns>
+      <exception cref="T:System.ArgumentException">In a set operation where the specified culture is not null, the <see cref="P:System.Globalization.CultureAndRegionInfoBuilder.ConsoleFallbackUICulture" /> property of the specified culture is not the same as the specified culture. </exception>
+    </member>
+    <member name="M:System.Globalization.CultureAndRegionInfoBuilder.CreateFromLdml(System.String)">
+      <summary>Reconstitutes a <see cref="T:System.Globalization.CultureAndRegionInfoBuilder" /> object from a specified XML file that contains a representation of the object.</summary>
+      <returns>A new <see cref="T:System.Globalization.CultureAndRegionInfoBuilder" /> object that is equivalent to the information stored in the <paramref name="xmlFileName" /> parameter.</returns>
+      <param name="xmlFileName">A file name that contains the XML representation of a <see cref="T:System.Globalization.CultureAndRegionInfoBuilder" /> object.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="xmlFileName" /> is null.</exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="xmlFileName" /> is an empty string (""), or invalid file or path name.</exception>
+      <exception cref="T:System.Xml.XmlException">The data in <paramref name="xmlFileName" /> is not in valid XML format.-or-An I/O error occurred while accessing <paramref name="xmlFileName" />.</exception>
+      <exception cref="T:System.Xml.Schema.XmlSchemaValidationException">The data in <paramref name="xmlFileName" /> is not in valid LDML format.</exception>
+    </member>
+    <member name="P:System.Globalization.CultureAndRegionInfoBuilder.CultureEnglishName">
+      <summary>Gets or sets the culture name in English.</summary>
+      <returns>The culture name in English.</returns>
+      <exception cref="T:System.ArgumentNullException">The value in a set operation is null.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException">The length of the value in a set operation does not range from 0 to 79 characters.</exception>
+    </member>
+    <member name="P:System.Globalization.CultureAndRegionInfoBuilder.CultureName">
+      <summary>Gets the name of the culture being created.</summary>
+      <returns>The culture name of the current <see cref="T:System.Globalization.CultureAndRegionInfoBuilder" /> object.</returns>
+    </member>
+    <member name="P:System.Globalization.CultureAndRegionInfoBuilder.CultureNativeName">
+      <summary>Gets or sets the culture name in the format and language that the culture is set to display.</summary>
+      <returns>The culture name in the format and language that the culture is set to display.</returns>
+      <exception cref="T:System.ArgumentNullException">The value in a set operation is null.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException">The length of the value in a set operation does not range from 0 to 79 characters.</exception>
+    </member>
+    <member name="P:System.Globalization.CultureAndRegionInfoBuilder.CultureTypes">
+      <summary>Gets the <see cref="T:System.Globalization.CultureTypes" /> value that describes the culture represented by the current <see cref="T:System.Globalization.CultureAndRegionInfoBuilder" /> object.</summary>
+      <returns>One of the <see cref="T:System.Globalization.CultureTypes" /> values.</returns>
+    </member>
+    <member name="P:System.Globalization.CultureAndRegionInfoBuilder.CurrencyEnglishName">
+      <summary>Gets or sets the name, in English, of the currency used in the country/region represented by the current <see cref="T:System.Globalization.CultureAndRegionInfoBuilder" /> object.</summary>
+      <returns>The name, in English, of the currency used in the region.</returns>
+      <exception cref="T:System.ArgumentNullException">The value in a set operation is null.</exception>
+      <exception cref="T:System.ArgumentException">The value in a set operation is the empty string ("").</exception>
+      <exception cref="T:System.NotSupportedException">The current <see cref="T:System.Globalization.CultureAndRegionInfoBuilder" /> object is a neutral culture.</exception>
+    </member>
+    <member name="P:System.Globalization.CultureAndRegionInfoBuilder.CurrencyNativeName">
+      <summary>Gets or sets the native name of the currency used in the country/region represented by the current <see cref="T:System.Globalization.CultureAndRegionInfoBuilder" /> object.</summary>
+      <returns>The name of the currency used in the country/region represented by the current <see cref="T:System.Globalization.CultureAndRegionInfoBuilder" /> object, formatted in the language associated with the ISO 3166 country/region code of the region. </returns>
+      <exception cref="T:System.ArgumentNullException">The value in a set operation is null.</exception>
+      <exception cref="T:System.ArgumentException">The value in a set operation is the empty string ("").</exception>
+      <exception cref="T:System.NotSupportedException">The current <see cref="T:System.Globalization.CultureAndRegionInfoBuilder" /> object is a neutral culture.</exception>
+    </member>
+    <member name="P:System.Globalization.CultureAndRegionInfoBuilder.GeoId">
+      <summary>Gets or sets a unique identification number for a geographical region, country, city, or location.</summary>
+      <returns>A 32-bit signed number that uniquely identifies a geographical location.</returns>
+      <exception cref="T:System.NotSupportedException">The current <see cref="T:System.Globalization.CultureAndRegionInfoBuilder" /> object defines a neutral culture.</exception>
+    </member>
+    <member name="P:System.Globalization.CultureAndRegionInfoBuilder.GregorianDateTimeFormat">
+      <summary>Gets or sets a <see cref="T:System.Globalization.DateTimeFormatInfo" /> object that defines the format of dates and times according to the Gregorian calendar.</summary>
+      <returns>A <see cref="T:System.Globalization.DateTimeFormatInfo" /> object. </returns>
+      <exception cref="T:System.ArgumentNullException">The value in a set operation is null.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException">A property of the value in a set operation returned an invalid property value.</exception>
+      <exception cref="T:System.NotSupportedException">The current <see cref="T:System.Globalization.CultureAndRegionInfoBuilder" /> object is a neutral culture.</exception>
+    </member>
+    <member name="P:System.Globalization.CultureAndRegionInfoBuilder.IetfLanguageTag">
+      <summary>Gets or sets a culture name formatted according to the RFC 4646 standard, "Tags for the Identification of Languages."</summary>
+      <returns>A culture name formatted according to RFC 4646.</returns>
+      <exception cref="T:System.ArgumentNullException">In a set operation, the value is null.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException">In a set operation, the length of the value is not from 1 through 84 characters.</exception>
+      <exception cref="T:System.ArgumentException">In a set operation, a component of the name specified in the value is empty or longer than 8 characters, not an alphanumeric character or hyphen (-), or the name contains a leading or trailing hyphen. </exception>
+    </member>
+    <member name="P:System.Globalization.CultureAndRegionInfoBuilder.IsMetric">
+      <summary>Gets or sets a value indicating whether the country/region uses the metric system for measurements.</summary>
+      <returns>true if the country/region uses the metric system for measurements; otherwise, false.</returns>
+      <exception cref="T:System.NotSupportedException">This operation is not valid for a neutral culture.</exception>
+    </member>
+    <member name="P:System.Globalization.CultureAndRegionInfoBuilder.ISOCurrencySymbol">
+      <summary>Gets or sets the three-character ISO 4217 currency symbol associated with the country/region.</summary>
+      <returns>The three-character ISO 4217 currency symbol associated with the country/region.</returns>
+      <exception cref="T:System.NotSupportedException">This is a neutral culture.</exception>
+      <exception cref="T:System.ArgumentNullException">In a set operation, the value is null.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException">In a set operation, the value is not from 0 through 8 characters long.</exception>
+    </member>
+    <member name="P:System.Globalization.CultureAndRegionInfoBuilder.IsRightToLeft">
+      <summary>Gets or sets the predominant direction of lines of text in the writing system associated with the current <see cref="T:System.Globalization.CultureAndRegionInfoBuilder" /> object. </summary>
+      <returns>true if the predominant direction of lines of text in the current writing system is right-to-left; otherwise, false.</returns>
+    </member>
+    <member name="P:System.Globalization.CultureAndRegionInfoBuilder.KeyboardLayoutId">
+      <summary>Gets or sets the active input locale identifier.</summary>
+      <returns>A 32-bit signed number that specifies an input locale identifier.</returns>
+      <exception cref="T:System.ArgumentOutOfRangeException">In a set operation, the value is zero.</exception>
+    </member>
+    <member name="P:System.Globalization.CultureAndRegionInfoBuilder.LCID">
+      <summary>Gets the culture identifier for the current <see cref="T:System.Globalization.CultureAndRegionInfoBuilder" /> object.</summary>
+      <returns>The culture identifier for the current <see cref="T:System.Globalization.CultureAndRegionInfoBuilder" /> object.</returns>
+    </member>
+    <member name="M:System.Globalization.CultureAndRegionInfoBuilder.LoadDataFromCultureInfo(System.Globalization.CultureInfo)">
+      <summary>Sets the properties of the current <see cref="T:System.Globalization.CultureAndRegionInfoBuilder" /> object with the corresponding properties of the specified <see cref="T:System.Globalization.CultureInfo" /> object.</summary>
+      <param name="culture">A <see cref="T:System.Globalization.CultureInfo" /> object to read.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="culture" /> is null.</exception>
+    </member>
+    <member name="M:System.Globalization.CultureAndRegionInfoBuilder.LoadDataFromRegionInfo(System.Globalization.RegionInfo)">
+      <summary>Sets the properties of the current <see cref="T:System.Globalization.CultureAndRegionInfoBuilder" /> object with the corresponding properties of the specified <see cref="T:System.Globalization.RegionInfo" /> object.</summary>
+      <param name="region">A <see cref="T:System.Globalization.RegionInfo" /> object to read.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="region" /> is null.</exception>
+      <exception cref="T:System.ArgumentException">Country/region information cannot be set because the current <see cref="T:System.Globalization.CultureAndRegionInfoBuilder" /> object specifies a neutral culture.</exception>
+    </member>
+    <member name="P:System.Globalization.CultureAndRegionInfoBuilder.NumberFormat">
+      <summary>Gets or sets a <see cref="T:System.Globalization.NumberFormatInfo" /> object that defines the culturally appropriate format of displaying numbers, currency, and percentage.</summary>
+      <returns>A <see cref="T:System.Globalization.NumberFormatInfo" /> object that defines the culturally appropriate format of displaying numbers, currency, and percentage.</returns>
+      <exception cref="T:System.ArgumentNullException">The value in a set operation is null.</exception>
+      <exception cref="T:System.NotSupportedException">This operation is not valid for a neutral culture.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException">The specification for a number, currency, or percent property for this culture contains too many digits or is out of range.</exception>
+    </member>
+    <member name="P:System.Globalization.CultureAndRegionInfoBuilder.Parent">
+      <summary>Gets or sets the <see cref="T:System.Globalization.CultureInfo" /> object that represents the parent culture of the current custom culture.</summary>
+      <returns>The <see cref="T:System.Globalization.CultureInfo" /> object that represents the parent culture of the current custom culture.</returns>
+      <exception cref="T:System.InvalidOperationException">In a set operation, the culture value cannot be found. Possibly, the assigned value is an unregistered custom culture.</exception>
+      <exception cref="T:System.ArgumentNullException">In a set operation, the value is null.</exception>
+      <exception cref="T:System.ArgumentException">In a set operation, which traverses the ancestors of the current culture, the invariant culture cannot be found within 10 generations of ancestors. -or- In a set operation, a circular reference was discovered: the assigned value is an ancestor of the current custom culture. </exception>
+    </member>
+    <member name="P:System.Globalization.CultureAndRegionInfoBuilder.RegionEnglishName">
+      <summary>Gets or sets the full name of the country/region in English.</summary>
+      <returns>The full name of the country/region in English.</returns>
+      <exception cref="T:System.NotSupportedException">This operation is not valid for a neutral culture.</exception>
+      <exception cref="T:System.ArgumentNullException">The value in a set operation is null.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException">The length of the value in a set operation does not range from 0 to 79 characters.</exception>
+    </member>
+    <member name="P:System.Globalization.CultureAndRegionInfoBuilder.RegionName">
+      <summary>Gets the name of the country/region for the current <see cref="T:System.Globalization.CultureAndRegionInfoBuilder" /> object.</summary>
+      <returns>The name of the country/region for the current <see cref="T:System.Globalization.CultureAndRegionInfoBuilder" /> object.</returns>
+      <exception cref="T:System.NotSupportedException">This operation is not valid for a neutral culture.</exception>
+    </member>
+    <member name="P:System.Globalization.CultureAndRegionInfoBuilder.RegionNativeName">
+      <summary>Gets or sets the full name of the country/region as known by the people of this custom culture.</summary>
+      <returns>The local name of the country/region.</returns>
+      <exception cref="T:System.NotSupportedException">This operation is not valid for a neutral culture.</exception>
+      <exception cref="T:System.ArgumentNullException">The value in a set operation is null.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException">The length of the value in a set operation does not range from 1 to 79 characters.</exception>
+    </member>
+    <member name="M:System.Globalization.CultureAndRegionInfoBuilder.Register">
+      <summary>Persists the current <see cref="T:System.Globalization.CultureAndRegionInfoBuilder" /> object as a custom culture on the local computer and makes that culture available to applications. Requires administrative privileges.</summary>
+      <exception cref="T:System.InvalidOperationException">The custom culture is already registered.-or-The current <see cref="T:System.Globalization.CultureAndRegionInfoBuilder" /> object has a property that must be set before the culture can be registered. All cultures, neutral or specific, must have <see cref="P:System.Globalization.CultureAndRegionInfoBuilder.TextInfo" /> and <see cref="P:System.Globalization.CultureAndRegionInfoBuilder.CompareInfo" /> set. Specific cultures must also have <see cref="P:System.Globalization.CultureAndRegionInfoBuilder.NumberFormat" />, <see cref="P:System.Globalization.CultureAndRegionInfoBuilder.GregorianDateTimeFormat" />, and <see cref="P:System.Globalization.CultureAndRegionInfoBuilder.AvailableCalendars" /> set.This method also throws <see cref="T:System.InvalidOperationException" /> if the following properties are not defined:<see cref="P:System.Globalization.CultureAndRegionInfoBuilder.CultureEnglishName" /><see cref="P:System.Globalization.CultureAndRegionInfoBuilder.CultureNativeName" /><see cref="P:System.Globalization.CultureAndRegionInfoBuilder.CurrencyEnglishName" /><see cref="P:System.Globalization.CultureAndRegionInfoBuilder.CurrencyNativeName" /><see cref="P:System.Globalization.CultureAndRegionInfoBuilder.ISOCurrencySymbol" /><see cref="P:System.Globalization.CultureAndRegionInfoBuilder.Parent" /><see cref="P:System.Globalization.CultureAndRegionInfoBuilder.RegionEnglishName" /><see cref="P:System.Globalization.CultureAndRegionInfoBuilder.RegionNativeName" /><see cref="P:System.Globalization.CultureAndRegionInfoBuilder.ThreeLetterISOLanguageName" /><see cref="P:System.Globalization.CultureAndRegionInfoBuilder.ThreeLetterISORegionName" /><see cref="P:System.Globalization.CultureAndRegionInfoBuilder.ThreeLetterWindowsLanguageName" /><see cref="P:System.Globalization.CultureAndRegionInfoBuilder.ThreeLetterWindowsRegionName" /><see cref="P:System.Globalization.CultureAndRegionInfoBuilder.TwoLetterISOLanguageName" /><see cref="P:System.Globalization.CultureAndRegionInfoBuilder.TwoLetterISORegionName" /></exception>
+      <exception cref="T:System.ArgumentOutOfRangeException">A <see cref="T:System.Globalization.CultureAndRegionInfoBuilder" /> object property value exceeds its maximum length or value.</exception>
+      <exception cref="T:System.UnauthorizedAccessException">User does not have administrative privileges.</exception>
+    </member>
+    <member name="M:System.Globalization.CultureAndRegionInfoBuilder.Save(System.String)">
+      <summary>Writes an XML representation of the current <see cref="T:System.Globalization.CultureAndRegionInfoBuilder" /> object to the specified file.</summary>
+      <param name="filename">The name of a file to contain the XML representation of this custom culture.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="filename" /> is null.</exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="filename" /> is an empty string ("").</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException">The value of a property of a <see cref="T:System.Globalization.DateTimeFormatInfo" />, <see cref="T:System.Globalization.TextInfo" />, or <see cref="T:System.Globalization.NumberFormatInfo" /> object contained in the current <see cref="T:System.Globalization.CultureAndRegionInfoBuilder" /> object is invalid.</exception>
+    </member>
+    <member name="P:System.Globalization.CultureAndRegionInfoBuilder.TextInfo">
+      <summary>Gets or sets the <see cref="T:System.Globalization.TextInfo" /> object that defines the writing system associated with this custom culture.</summary>
+      <returns>The <see cref="T:System.Globalization.TextInfo" /> object that defines the writing system associated with this custom culture.</returns>
+      <exception cref="T:System.NotSupportedException">This operation is not supported for replacement cultures.</exception>
+      <exception cref="T:System.ArgumentNullException">The value in a set operation is null.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException">The number of characters in a list separator does not range from 0 to 3 characters.</exception>
+    </member>
+    <member name="P:System.Globalization.CultureAndRegionInfoBuilder.ThreeLetterISOLanguageName">
+      <summary>Gets or sets the ISO 639-2 three-letter code for the language of this custom culture.</summary>
+      <returns>The ISO 639-2 three-letter code for the language of the current <see cref="T:System.Globalization.CultureInfo" /> object.</returns>
+      <exception cref="T:System.ArgumentNullException">The value in a set operation is null.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException">The length of the value in a set operation does not range from 1 to 8 characters. </exception>
+      <exception cref="T:System.ArgumentException">The value in a set operation contains a character that is not in the range "a" to "z", "A" to "Z", or "0" to "9".</exception>
+    </member>
+    <member name="P:System.Globalization.CultureAndRegionInfoBuilder.ThreeLetterISORegionName">
+      <summary>Gets or sets the three-letter code defined in ISO 3166 for the country/region.</summary>
+      <returns>The three-letter code defined in ISO 3166 for the country/region.</returns>
+      <exception cref="T:System.ArgumentNullException">The value in a set operation is null.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException">The length of the value in a set operation does not range from 1 to 8 characters. </exception>
+      <exception cref="T:System.ArgumentException">The value in a set operation contains a character that is not in the range "a" to "z", "A" to "Z", or "0" to "9".</exception>
+    </member>
+    <member name="P:System.Globalization.CultureAndRegionInfoBuilder.ThreeLetterWindowsLanguageName">
+      <summary>Gets or sets the three-letter code for the language as defined in the Windows API.</summary>
+      <returns>The three-letter code for the language as defined in the Windows API.</returns>
+      <exception cref="T:System.ArgumentNullException">The value in a set operation is null.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException">The length of the value in a set operation does not range from 1 to 8 characters.</exception>
+      <exception cref="T:System.ArgumentException">The value in a set operation contains a character that is not in the range "a" to "z", "A" to "Z", or "0" to "9".</exception>
+      <exception cref="T:System.NotSupportedException">In a set operation, the current custom culture is a replacement culture.</exception>
+    </member>
+    <member name="P:System.Globalization.CultureAndRegionInfoBuilder.ThreeLetterWindowsRegionName">
+      <summary>Gets or sets the three-letter code assigned by Windows to the country/region represented by the current custom culture.</summary>
+      <returns>The three-letter code assigned by Windows to the country/region represented by this <see cref="T:System.Globalization.CultureAndRegionInfoBuilder" /> object.</returns>
+      <exception cref="T:System.ArgumentNullException">The value in a set operation is null.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException">The length of the value in a set operation does not range from 1 to 8 characters.</exception>
+      <exception cref="T:System.ArgumentException">The value in a set operation contains a character that is not in the range "a" to "z", "A" to "Z", or "0" to "9".</exception>
+      <exception cref="T:System.NotSupportedException">In a set operation, the current custom culture is a replacement culture or a neutral culture.</exception>
+    </member>
+    <member name="P:System.Globalization.CultureAndRegionInfoBuilder.TwoLetterISOLanguageName">
+      <summary>Gets or sets the ISO 639-1 two-letter code for the language of the current <see cref="T:System.Globalization.CultureInfo" /> object.</summary>
+      <returns>The ISO 639-1 two-letter code for the language of the current <see cref="T:System.Globalization.CultureInfo" /> object.</returns>
+      <exception cref="T:System.ArgumentNullException">The value in a set operation is null.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException">The length of the value in a set operation does not range from 1 to 8 characters. </exception>
+      <exception cref="T:System.ArgumentException">The value in a set operation contains a character that is not in the range "a" to "z", "A" to "Z", or "0" to "9".</exception>
+    </member>
+    <member name="P:System.Globalization.CultureAndRegionInfoBuilder.TwoLetterISORegionName">
+      <summary>Gets or sets the two-letter code defined in ISO 3166 for the country/region.</summary>
+      <returns>The two-letter code defined in ISO 3166 for the country/region.</returns>
+      <exception cref="T:System.ArgumentNullException">The value in a set operation is null.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException">The length of the value in a set operation does not range from 1 to 8 characters.</exception>
+      <exception cref="T:System.ArgumentException">The value in a set operation contains a character that is not in the range "a" to "z", "A" to "Z", or "0" to "9".</exception>
+      <exception cref="T:System.NotSupportedException">In a set operation, the current custom culture is a neutral culture.</exception>
+    </member>
+    <member name="M:System.Globalization.CultureAndRegionInfoBuilder.Unregister(System.String)">
+      <summary>Deletes a custom culture from the local computer.</summary>
+      <param name="cultureName">The name of a custom culture.</param>
+      <exception cref="T:System.InvalidOperationException">
+        <paramref name="cultureName" /> is a parent culture or console fallback user interface culture of a dependent culture.</exception>
+      <exception cref="T:System.UnauthorizedAccessException">Application does not have administrative privileges.</exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="cultureName" /> specifies a culture that is not found.</exception>
+    </member>
+    <member name="T:System.Globalization.CultureAndRegionModifiers">
+      <summary>Specifies constants that define a <see cref="T:System.Globalization.CultureAndRegionInfoBuilder" /> object. </summary>
+    </member>
+    <member name="F:System.Globalization.CultureAndRegionModifiers.None">
+      <summary>A specific, supplemental custom culture.</summary>
+    </member>
+    <member name="F:System.Globalization.CultureAndRegionModifiers.Neutral">
+      <summary>A neutral custom culture.</summary>
+    </member>
+    <member name="F:System.Globalization.CultureAndRegionModifiers.Replacement">
+      <summary>A custom culture that replaces an existing .NET Framework culture or Windows locale.</summary>
+    </member>
+  </members>
+</doc>
