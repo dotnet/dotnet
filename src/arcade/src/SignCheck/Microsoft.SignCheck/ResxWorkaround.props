@@ -1,0 +1,16 @@
+<Project>
+  <PropertyGroup>
+    <ResxGenerator Condition="'$(ResxGenerator)' == ''">ResXFileCodeGenerator</ResxGenerator>
+  </PropertyGroup>
+  <ItemGroup Label="Resx Workaround">
+    <Compile Update="Resources\**\*.designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources\$([System.String]::Copy('%(FileName)').Replace('.Designer', '')).resx</DependentUpon>
+    </Compile>
+    <EmbeddedResource Update="**\*.resx">
+      <Generator>$(ResxGenerator)</Generator>
+      <LastGenOutput>%(FileName).designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+</Project>

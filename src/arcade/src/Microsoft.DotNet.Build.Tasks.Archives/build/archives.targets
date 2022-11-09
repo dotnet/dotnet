@@ -1,0 +1,127 @@
+<Project>
+  <Target Name="_GetCurrentProjectServicingConfiguration">
+    <ItemGroup>
+      <CurrentProjectServicingConfiguration
+        Include="@(ProjectServicingConfiguration)"
+        Condition="'%(Identity)' == '$(MSBuildProjectName)'" />
+    </ItemGroup>
+  </Target>
+
+  <!--
+    The Microsoft build's per-package servicing policy conflicts with the source-build restrictions.
+    Targeting packs, for example, are only built/published when there's a known change to release.
+    This is in contrast to runtime packs and the shared framework, which are always built and
+    published. This means it's common in the Microsoft build for downstream repos to depend on two
+    builds' outputs: the current build's runtime assets, and some old build's targeting pack.
+
+    The Microsoft build can simply download the old targeting pack from NuGet.org. Source-build
+    can't do this because the bits on NuGet.org are not built locally. Instead, source-build assumes
+    it's possible to use current sources to build a package with the old version. This target
+    applies the old build's patch version to make that happen.
+
+    This solution has pitfalls. More info at https://github.com/dotnet/core-setup/issues/8735. The
+    target supports SkipSetLastReleasedVersionForSourceBuild (unused as of writing) to allow
+    disabling this workaround if a better way forward is implemented.
+  -->
+  <Target Name="SetLastReleasedVersionForSourceBuild"
+          Condition="
+            '$(DotNetBuildFromSource)' == 'true' and
+            '$(SkipSetLastReleasedVersionForSourceBuild)' != 'true'"
+          BeforeTargets="GetProductVersions"
+          DependsOnTargets="_GetCurrentProjectServicingConfiguration">
+    <PropertyGroup>
+      <MostRecentProducedServicingPatchVersion>%(CurrentProjectServicingConfiguration.PatchVersion)</MostRecentProducedServicingPatchVersion>
+      <PatchVersion Condition="'$(MostRecentProducedServicingPatchVersion)' != ''">$(MostRecentProducedServicingPatchVersion)</PatchVersion>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="_GetSkipArchivesBuildProps"
+          DependsOnTargets="
+            _GetCurrentProjectServicingConfiguration;
+            SetLastReleasedVersionForSourceBuild">
+    <!--
+      Skip the build if there is an applicable servicing configuration, and the servicing
+      configuration indicates this project shouldn't build for this patch version.
+    -->
+    <PropertyGroup Condition="'@(CurrentProjectServicingConfiguration)' != ''">
+      <SkipArchivesBuild Condition="'%(CurrentProjectServicingConfiguration.PatchVersion)' != '$(PatchVersion)'">true</SkipArchivesBuild>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <_TargetRuntimeIdentifiers Include="$(RuntimeIdentifiers)" />
+    </ItemGroup>
+    
+    <PropertyGroup Condition="'$(RuntimeIdentifiers)' != '' and '$(RuntimeIdentifier)' != ''">
+      <!-- Avoid building a project when none of the possible RuntimeIdentifiers is the current RuntimeIdentifier. -->
+      <_RidInRidList Condition="'%(_TargetRuntimeIdentifiers.Identity)' == '$(RuntimeIdentifier)'">true</_RidInRidList>
+      <SkipArchivesBuild Condition="'$(_RidInRidList)' != 'true'">true</SkipArchivesBuild>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(SkipBuild)' == 'true'">
+      <SkipArchivesBuild>true</SkipArchivesBuild>
+    </PropertyGroup>
+  </Target>
+
+  <PropertyGroup>
+    <ArchiveName Condition="'$(ArchiveName)' == ''">$([System.IO.Path]::GetFileNameWithoutExtension($(MSBuildProjectFile)))</ArchiveName>
+    <SymbolsArchiveName Condition="'$(SymbolsArchiveName)' == ''">$(ArchiveName)-symbols</SymbolsArchiveName>
+  </PropertyGroup>
+
+  <Target Name="_CreateArchive"
+          Condition="'$(SkipArchivesBuild)' != 'true'">
+    <PropertyGroup>
+      <_OutputPathRoot>$(IntermediateOutputPath)output/</_OutputPathRoot>
+      <_ArchiveFileName>$(ArchiveName)-$(Version)</_ArchiveFileName>
+      <_ArchiveFileName Condition="'$(RuntimeIdentifier)' != ''">$(ArchiveName)-$(Version)-$(RuntimeIdentifier)</_ArchiveFileName>
+      <_DestinationFileName>$(PackageOutputPath)/$(_ArchiveFileName).$(ArchiveFormat)</_DestinationFileName>
+    </PropertyGroup>
+    <MSBuild Projects="$(MSBuildProjectFullPath)"
+             Targets="PublishToDisk"
+             Properties="OutputPath=$(_OutputPathRoot)" />
+
+    <MakeDir Directories="$(PackageOutputPath)" />
+    <ZipDirectory SourceDirectory="$(_OutputPathRoot)"
+                  Overwrite="true"
+                  DestinationFile="$(_DestinationFileName)"
+                  Condition="'$(ArchiveFormat)' == 'zip'"/>
+    <Exec Command="tar -C '$(_OutputPathRoot)' -czf $(_DestinationFileName) ."
+          IgnoreExitCode="true"
+          IgnoreStandardErrorWarningFormat="true"
+          Condition="'$(ArchiveFormat)' == 'tar.gz'"/>
+
+    <Message Text="$(_OutputPathRoot) -> $(_DestinationFileName)" Importance="high" />
+  </Target>
+
+  <Target Name="_CreateSymbolsArchive"
+          Condition="'$(CreateSymbolsArchive)' == 'true' and '$(SkipArchivesBuild)' != 'true'">
+    <PropertyGroup>
+      <_SymbolsOutputPathRoot>$(IntermediateOutputPath)symbols/</_SymbolsOutputPathRoot>
+      <_ArchiveFileName>$(SymbolsArchiveName)-$(Version)</_ArchiveFileName>
+      <_ArchiveFileName Condition="'$(RuntimeIdentifier)' != ''">$(SymbolsArchiveName)-$(RuntimeIdentifier)-$(Version)</_ArchiveFileName>
+      <_DestinationFileName>$(PackageOutputPath)/$(_ArchiveFileName).$(ArchiveFormat)</_DestinationFileName>
+    </PropertyGroup>
+    <MSBuild Projects="$(MSBuildProjectFullPath)"
+             Targets="PublishSymbolsToDisk"
+             Properties="SymbolsOutputPath=$(_SymbolsOutputPathRoot)" />
+
+    <MakeDir Directories="$(PackageOutputPath)" />
+    <ZipDirectory SourceDirectory="$(_SymbolsOutputPathRoot)"
+                  Overwrite="true"
+                  DestinationFile="$(_DestinationFileName)"
+                  Condition="'$(ArchiveFormat)' == 'zip'"/>
+    <Exec Command="tar -C '$(_SymbolsOutputPathRoot)' -czf $(_DestinationFileName) ."
+          IgnoreExitCode="true"
+          IgnoreStandardErrorWarningFormat="true"
+          Condition="'$(ArchiveFormat)' == 'tar.gz'"/>
+
+    <Message Text="$(_SymbolsOutputPathRoot) -> $(_DestinationFileName)" Importance="high" />
+  </Target>
+
+  <PropertyGroup>
+    <BuildDependsOn>
+      $(BuildDependsOn);
+      _GetSkipArchivesBuildProps;
+      _CreateArchive;
+      _CreateSymbolsArchive
+    </BuildDependsOn>
+  </PropertyGroup>
+</Project>

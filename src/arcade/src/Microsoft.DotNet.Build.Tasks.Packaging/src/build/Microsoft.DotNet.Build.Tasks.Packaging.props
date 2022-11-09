@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <PropertyGroup Condition="'$(MSBuildProjectExtension)' == '.pkgproj'">
+    <IsPackable>true</IsPackable>
+    <!-- Additional property which no-ops the pkgproj entrypoint targets for more flexibility during servicing. -->
+    <GeneratePackage Condition="'$(GeneratePackage)' == ''">true</GeneratePackage>
+  </PropertyGroup>
+</Project>

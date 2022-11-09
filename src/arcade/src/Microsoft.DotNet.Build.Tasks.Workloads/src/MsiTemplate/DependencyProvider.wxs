@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:dep="http://schemas.microsoft.com/wix/DependencyExtension">
+  <?include Variables.wxi?>
+  <Fragment>
+    <Feature Id="F_DependencyProvider" Absent="disallow" AllowAdvertise="no" Description="Support for package reference counting."
+             Display="hidden" InstallDefault="local" Level="1" Title="RefCounting" TypicalDefault="install">
+      <Component Id="C_DependencyProvider" Win64="no" Directory="TARGETDIR">
+        <dep:Provides Key="$(var.DependencyProviderKeyName)" />
+      </Component>
+    </Feature>
+  </Fragment>
+</Wix>

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project InitialTargets="ValidateTargetQueues;ValidateOpenQueueUsage">
+  <PropertyGroup>
+    <!-- Split up HelixTargetQueues list
+         In order to support all delimiters (commas, pluses and semicolons).
+         Note that queues will never have ',', '+' or ';' in their name, and this greatly simplifies providing a queue list in *nix.
+    -->
+    <_ProcessedTargetQueues>$([System.String]::Copy('$(HelixTargetQueues)').Replace(',',';').Replace('+',';'))</_ProcessedTargetQueues>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- This Split() is needed since the semicolon in ProcessedTargetQueues is now a literal -->
+    <HelixTargetQueue Include="$(_ProcessedTargetQueues.Split(';'))" />
+  </ItemGroup>
+
+  <Target Name="ValidateTargetQueues">
+    <Telemetry EventName="NETCORE_ENGINEERING_TELEMETRY" EventData="Category=Build" />
+    <Error Condition="'@(HelixTargetQueue)' == ''" Text="You must specify at least one target queue to send a job to helix. Use the HelixTargetQueues property or HelixTargetQueue items." />
+  </Target>
+
+  <!-- Anywhere we don't have public projects, force users to set a property to send to public as this is likely unintentional copy/paste error -->
+  <Target Name="ValidateOpenQueueUsage" Condition="'$(DisableHelixAzdoProjectCheck)' != 'true' and
+                                                   ('$(SYSTEM_COLLECTIONURI)' == 'https://dev.azure.com/dnceng/' or '$(SYSTEM_COLLECTIONURI)' == 'https://dev.azure.com/devdiv/') and 
+                                                   '$(SYSTEM_TEAMPROJECT)' != 'public' and 
+                                                   '$(SYSTEM_TEAMPROJECT)' != 'devdiv' ">
+    <ItemGroup>
+      <HelixOpenQueue Include="@(HelixTargetQueue)" Condition="$([System.String]::Copy('%(FullPath)').ToLowerInvariant().Contains('.open'))" />
+    </ItemGroup>
+
+    <Error Condition="'@(HelixOpenQueue)' != ''" Text="Helix '.open' queues should only be used from public AzDO projects. (this is '$(SYSTEM_COLLECTIONURI)$(SYSTEM_TEAMPROJECT)').  Please contact dnceng if you feel you are seeing this message in error." />
+  </Target>
+
+  <Import Project="$(_HelixMultiQueueTargets)" Condition="'$(_HelixMultiQueueTargets)' != ''"/>
+
+  <PropertyGroup>
+    <WaitForWorkItemCompletion Condition="'$(WaitForWorkItemCompletion)' != 'false'">true</WaitForWorkItemCompletion>
+    <CancelHelixJobsIfBuildCancelled Condition="'$(CancelHelixJobsIfBuildCancelled)' != 'false'">true</CancelHelixJobsIfBuildCancelled>
+    <FailOnWorkItemFailure Condition="'$(FailOnWorkItemFailure)' != 'false'">true</FailOnWorkItemFailure>
+    <FailOnMissionControlTestFailure Condition="'$(FailOnMissionControlTestFailure)' != 'true'">false</FailOnMissionControlTestFailure>
+  </PropertyGroup>
+
+  <Target Name="RestoreProjects"
+          BeforeTargets="Restore">
+    <MSBuild Projects="$(MSBuildProjectFile)"
+             Targets="Restore"
+             Properties="HelixTargetQueue=%(HelixTargetQueue.Identity);%(HelixTargetQueue.AdditionalProperties)"
+             BuildInParallel="$(BuildInParallel)">
+    </MSBuild>
+  </Target>
+
+  <Target Name="CoreBuild">
+    <MSBuild Projects="$(MSBuildProjectFile)"
+             Targets="Build"
+             Properties="HelixTargetQueue=%(HelixTargetQueue.Identity);%(HelixTargetQueue.AdditionalProperties)"
+             BuildInParallel="$(BuildInParallel)">
+    </MSBuild>
+  </Target>
+
+  <Target Name="CoreTest">
+    <MSBuild Projects="$(MSBuildProjectFile)"
+             Targets="Test"
+             Properties="HelixTargetQueue=%(HelixTargetQueue.Identity);%(HelixTargetQueue.AdditionalProperties)"
+             BuildInParallel="$(BuildInParallel)">
+      <Output TaskParameter="TargetOutputs" ItemName="SentJob" />
+    </MSBuild>
+
+    <WaitForHelixJobCompletion 
+      Condition="$(WaitForWorkItemCompletion)"
+      AccessToken="$(HelixAccessToken)"
+      BaseUri="$(HelixBaseUri)"
+      CancelHelixJobsOnTaskCancellation="$(CancelHelixJobsIfBuildCancelled)"
+      Jobs="@(SentJob)" />
+
+    <GetHelixWorkItems
+      Condition="$(WaitForWorkItemCompletion)"
+      AccessToken="$(HelixAccessToken)"
+      BaseUri="$(HelixBaseUri)"
+      Jobs="@(SentJob)">
+      <Output TaskParameter="WorkItems" ItemName="CompletedWorkItem" />
+    </GetHelixWorkItems>
+  </Target>
+
+  <Target Name="Test"
+    DependsOnTargets="$(TestDependsOn)"
+    Returns="@(SentJob)">
+  </Target>
+
+  <Target Name="CheckHelixJobStatus"
+          BeforeTargets="AfterTest">
+    <CheckHelixJobStatus
+      Condition="$(WaitForWorkItemCompletion)"
+      AccessToken="$(HelixAccessToken)"
+      BaseUri="$(HelixBaseUri)"
+      Jobs="@(SentJob)"
+      WorkItems="@(CompletedWorkItem)"
+      FailOnWorkItemFailure="$(FailOnWorkItemFailure)"
+      FailOnMissionControlTestFailure="$(FailOnMissionControlTestFailure)" 
+      />
+  </Target>
+</Project>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TestRun xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+    <Results>
+        <UnitTestResult testName="HelixReporter.TRXTests.Pass1" duration="00:00:00.0001620" outcome="Passed" testId="2">
+            <Output>
+                <StdOut>hello</StdOut>
+            </Output>
+        </UnitTestResult>
+        <UnitTestResult testName="HelixReporter.TRXTests.Skip1" outcome="NotExecuted" testId="3">
+            <Output></Output>
+        </UnitTestResult>
+        <UnitTestResult testName="HelixReporter.TRXTests.Fail1" duration="00:00:00.0358100" outcome="Failed" testId="1">
+            <Output>
+                <StdOut>hello</StdOut>
+                <ErrorInfo>
+                    <Message>
+                        This failure is expected and is not the reason why your PR failed. This test is always failing in order to test failure reporting infrastructure. If your PR is blocked there must be another test or build error that is blocking your PR.
+                    </Message>
+                    <StackTrace>   at tests.UnitTest1.TestMethod1() in UnitTest1.cs:line 13</StackTrace>
+                </ErrorInfo>
+            </Output>
+        </UnitTestResult>
+        <UnitTestResult executionId="f56ae404-32d0-430e-8787-bd82ecdb7cd1" testId="40a24c87-d3b2-8fcd-e92a-fa24495b937e" testName="Microsoft.AspNetCore.Mvc.ApplicationModels.AttributeRouteModelTests.ReplaceTokens_InvalidFormat(template: &quot;[action]]&quot;, values: [], reason: &quot;A replacement token is not closed.&quot;)" computerName="Mac-860" duration="00:00:00.0010000" startTime="2019-04-30T15:34:19.9184430+00:00" endTime="2019-04-30T15:34:19.9184430+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f56ae404-32d0-430e-8787-bd82ecdb7cd1" />
+    </Results>
+    <TestDefinitions>
+        <UnitTest name="HelixReporter.TRXTests.Pass1" id="2">
+            <TestMethod className="HelixReporter.TRXTests" name="HelixReporter.TRXTests.Pass1" />
+        </UnitTest>
+        <UnitTest name="HelixReporter.TRXTests.Fail1" id="1">
+            <TestMethod className="HelixReporter.TRXTests" name="HelixReporter.TRXTests.Fail1" />
+        </UnitTest>
+        <UnitTest name="HelixReporter.TRXTests.Skip1" id="3">
+            <TestMethod className="HelixReporter.TRXTests" name="HelixReporter.TRXTests.Skip1" />
+        </UnitTest>
+        <UnitTest name="Microsoft.AspNetCore.Mvc.ApplicationModels.AttributeRouteModelTests.ReplaceTokens_InvalidFormat" storage="/users/vsts/agent/2.150.2/work/1/s/src/mvc/mvc.core/test/bin/release/netcoreapp3.0/microsoft.aspnetcore.mvc.core.test.dll" id="40a24c87-d3b2-8fcd-e92a-fa24495b937e">
+            <Execution id="2bcc79ff-2747-4692-a0be-318649c7c282" />
+            <TestMethod codeBase="/Users/vsts/agent/2.150.2/work/1/s/src/Mvc/Mvc.Core/test/bin/Release/netcoreapp3.0/Microsoft.AspNetCore.Mvc.Core.Test.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="Microsoft.AspNetCore.Mvc.Core.Test" name="Microsoft.AspNetCore.Mvc.ApplicationModels.AttributeRouteModelTests.ReplaceTokens_InvalidFormat" />
+        </UnitTest>
+    </TestDefinitions>
+</TestRun>
+

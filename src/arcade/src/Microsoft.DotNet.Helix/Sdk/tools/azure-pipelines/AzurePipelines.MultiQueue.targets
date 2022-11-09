@@ -1,0 +1,50 @@
+<Project>
+  <PropertyGroup>
+    <!-- Azure Pipelines requires waiting for work item completion -->
+    <WaitForWorkItemCompletion>true</WaitForWorkItemCompletion>
+  </PropertyGroup>
+
+  <Target Name="StartTestRuns"
+          BeforeTargets="CoreBuild"
+          Outputs="%(HelixTargetQueue.Identity)">
+    <PropertyGroup>
+      <_CurrentTargetQueue>%(HelixTargetQueue.Identity)</_CurrentTargetQueue>
+      <_CurrentTestRunName>%(HelixTargetQueue.TestRunName)</_CurrentTestRunName>
+      <_CurrentTestRunName Condition="'$(_CurrentTestRunName)' == ''">$(TestRunNamePrefix)$(_CurrentTargetQueue)$(TestRunNameSuffix)</_CurrentTestRunName>
+    </PropertyGroup>
+    <Message Text="Starting Azure Pipelines Test Run $(_CurrentTestRunName)" Importance="High"/>
+    <StartAzurePipelinesTestRun TestRunName="$(_CurrentTestRunName)">
+      <Output TaskParameter="TestRunId" PropertyName="TestRunId"/>
+    </StartAzurePipelinesTestRun>
+    <ItemGroup>
+      <HelixTargetQueue Condition="'%(Identity)' == '$(_CurrentTargetQueue)'">
+        <TestRunId>$(TestRunId)</TestRunId>
+        <TestRunName>$(_CurrentTestRunName)</TestRunName>
+        <AdditionalProperties>TestRunId=$(TestRunId)</AdditionalProperties>
+      </HelixTargetQueue>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="CreateTestsForWorkItems"
+          BeforeTargets="StopTestRuns">
+    <CreateTestsForWorkItems WorkItems="@(CompletedWorkItem)"/>
+  </Target>
+
+  <Target Name="StopTestRuns"
+          AfterTargets="CoreTest"
+          Outputs="%(HelixTargetQueue.Identity)">
+    <Message Text="Stopping Azure Pipelines Test Run %(HelixTargetQueue.TestRunName)" Importance="High"/>
+    <StopAzurePipelinesTestRun TestRunId="%(HelixTargetQueue.TestRunId)"/>
+  </Target>
+
+  <Target Name="CheckTestResults"
+          AfterTargets="AfterTest"
+          Condition="$(FailOnTestFailure)">
+    <CheckAzurePipelinesTestResults
+      ExpectedTestFailures="@(AzurePipelinesExpectedTestFailure)"
+      EnableFlakyTestSupport="$(AzurePipelinesEnableFlakyTestSupport)"
+      TestRunIds="@(HelixTargetQueue -> '%(TestRunId)')"
+      WorkItems="@(CompletedWorkItem)"
+    />
+  </Target>
+</Project>

@@ -1,0 +1,13 @@
+<Project>
+
+  <PropertyGroup>
+    <MicrosoftDotNetSourceBuildTasksAssembly Condition="'$(MSBuildRuntimeType)' == 'core'">$(MSBuildThisFileDirectory)..\tools\net7.0\$(MSBuildThisFileName).dll</MicrosoftDotNetSourceBuildTasksAssembly>
+    <MicrosoftDotNetSourceBuildTasksAssembly Condition="'$(MSBuildRuntimeType)' != 'core'">$(MSBuildThisFileDirectory)..\tools\net472\$(MSBuildThisFileName).dll</MicrosoftDotNetSourceBuildTasksAssembly>
+  </PropertyGroup>
+
+  <UsingTask TaskName="ReadNuGetPackageInfos" AssemblyFile="$(MicrosoftDotNetSourceBuildTasksAssembly)" />
+  <UsingTask TaskName="ValidateUsageAgainstBaseline" AssemblyFile="$(MicrosoftDotNetSourceBuildTasksAssembly)" />
+  <UsingTask TaskName="WritePackageUsageData" AssemblyFile="$(MicrosoftDotNetSourceBuildTasksAssembly)" />
+  <UsingTask TaskName="WriteUsageReports" AssemblyFile="$(MicrosoftDotNetSourceBuildTasksAssembly)" />
+
+</Project>

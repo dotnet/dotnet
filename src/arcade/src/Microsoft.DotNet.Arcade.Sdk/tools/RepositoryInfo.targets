@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+  <!--
+    Include both GitHub and Azure DevOps packages to enable SourceLink in repositories that mirror to Azure DevOps.
+  -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="$(MicrosoftSourceLinkVersion)" PrivateAssets="all" IsImplicitlyDefined="true" />
+    <PackageReference Include="Microsoft.SourceLink.AzureRepos.Git" Version="$(MicrosoftSourceLinkVersion)" PrivateAssets="all" IsImplicitlyDefined="true" />
+  </ItemGroup>
+
+  <!-- Opt-in switch to disable source link (i.e. for local builds). -->
+  <PropertyGroup Condition="'$(DisableSourceLink)' == 'true'">
+    <EnableSourceLink>false</EnableSourceLink>
+    <EnableSourceControlManagerQueries>false</EnableSourceControlManagerQueries>
+    <DeterministicSourcePaths>false</DeterministicSourcePaths>
+  </PropertyGroup>
+
+  <!--
+    Set the SourceRoot to repo root to facilitate deterministic source paths when SCM queries are disabled.
+    Set the RepositoryUrl to the Build.Repository.Uri Azure DevOps build variable if on CI, otherwise to local repo path.
+  -->
+
+  <ItemGroup Condition="'$(EnableSourceControlManagerQueries)' != 'true'">
+    <SourceRoot Include="$(RepoRoot)" />
+  </ItemGroup>
+
+  <PropertyGroup Condition="'$(EnableSourceControlManagerQueries)' != 'true' and '$(RepositoryUrl)' == ''">
+    <RepositoryUrl Condition="'$(BUILD_REPOSITORY_URI)' != '' and '$(DisableSourceLinkUrlTranslation)' != 'true'">$([System.Text.RegularExpressions.Regex]::Replace($(BUILD_REPOSITORY_URI), $(_TranslateUrlPattern), $(_TranslateUrlReplacement)))</RepositoryUrl>
+    <RepositoryUrl Condition="'$(BUILD_REPOSITORY_URI)' != '' and '$(DisableSourceLinkUrlTranslation)' == 'true'">$(BUILD_REPOSITORY_URI)</RepositoryUrl>
+    <RepositoryUrl Condition="'$(BUILD_REPOSITORY_URI)' == ''">file://$(RepoRoot)</RepositoryUrl>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(EnableSourceControlManagerQueries)' != 'true' and '$(RepositoryCommit)' == ''">
+    <RepositoryCommit Condition="'$(BUILD_SOURCEVERSION)' != ''">$(BUILD_SOURCEVERSION)</RepositoryCommit>
+    <RepositoryCommit Condition="'$(BUILD_SOURCEVERSION)' == ''">0000000000000000000000000000000000000000</RepositoryCommit>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(EnableSourceControlManagerQueries)' != 'true' and '$(RepositoryType)' == ''">
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+
+  <!-- 
+    The convention for names of Azure DevOps repositories mirrored from GitHub is "{GitHub org name}-{GitHub repository name}"
+    In the legacy devdiv.visualstudio instance, it is instead "{GitHub org name}-{GitHub repository name}-Trusted" with no guarantees for casing.
+  -->
+  <PropertyGroup>
+    <!-- There are quite a few git repo forms:
+      https://dnceng@dev.azure.com/dnceng/internal/_git/dotnet-arcade-services
+      https://dev.azure.com/dnceng/internal/_git/dotnet-arcade-services
+      https://dnceng.visualstudio.com/internal/_git/dotnet-arcade-services
+      https://devdiv.visualstudio.com/DevDiv/_git/DotNet-msbuild-Trusted
+      dnceng@vs-ssh.visualstudio.com:v3/dnceng/internal/dotnet-arcade-services
+      git@ssh.dev.azure.com:v3/dnceng/internal/dotnet-arcade-services
+    -->
+    <!-- Set DisableSourceLinkUrlTranslation to true when building a tool for internal use where sources only come from internal URIs -->
+    <DisableSourceLinkUrlTranslation Condition="'$(DisableSourceLinkUrlTranslation)' == ''">false</DisableSourceLinkUrlTranslation>
+    <_TranslateUrlPattern>(https://dnceng%40dev\.azure\.com/dnceng/internal/_git|https://dev\.azure\.com/dnceng/internal/_git|https://dnceng\.visualstudio\.com/internal/_git|dnceng%40vs-ssh\.visualstudio\.com:v3/dnceng/internal|git%40ssh\.dev\.azure\.com:v3/dnceng/internal|https://devdiv\.visualstudio\.com/devdiv/_git)/([^/-]+)-(.+)</_TranslateUrlPattern>
+    <_TranslateUrlReplacement>https://github.com/$2/$3</_TranslateUrlReplacement>
+  </PropertyGroup>
+
+  <Target Name="_TranslateAzureDevOpsUrlToGitHubUrl"
+          Condition="'$(DisableSourceLinkUrlTranslation)' == 'false'"
+          DependsOnTargets="$(SourceControlManagerUrlTranslationTargets)"
+          BeforeTargets="SourceControlManagerPublishTranslatedUrls">
+
+    <PropertyGroup>
+      <!-- Repositories mirrored on devdiv.visualstudio will have '-Trusted' added to their name and this needs to be stripped off before translation
+           Eventually, all repos should move to dnceng/internal when possible. -->
+      <ScmRepositoryUrl Condition=" '$([MSBuild]::ValueOrDefault(`%(SourceRoot.ScmRepositoryUrl)`, ``).Contains(`devdiv.visualstudio`))' == 'true' ">$([MSBuild]::ValueOrDefault(`%(SourceRoot.ScmRepositoryUrl)`, ``).ToLower().Replace(`-trusted`,``))</ScmRepositoryUrl>
+      <ScmRepositoryUrl>$([System.Text.RegularExpressions.Regex]::Replace($(ScmRepositoryUrl), $(_TranslateUrlPattern), $(_TranslateUrlReplacement)))</ScmRepositoryUrl>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <SourceRoot Update="@(SourceRoot)">
+        <ScmRepositoryUrl Condition="$([MSBuild]::ValueOrDefault(`%(SourceRoot.ScmRepositoryUrl)`, ``).Contains(`devdiv.visualstudio`))">$([MSBuild]::ValueOrDefault(`%(SourceRoot.ScmRepositoryUrl)`, ``).ToLower().Replace(`-trusted`,``))</ScmRepositoryUrl>
+      </SourceRoot>
+      <SourceRoot Update="@(SourceRoot)">
+        <ScmRepositoryUrl>$([System.Text.RegularExpressions.Regex]::Replace(%(SourceRoot.ScmRepositoryUrl), $(_TranslateUrlPattern), $(_TranslateUrlReplacement)))</ScmRepositoryUrl>
+      </SourceRoot>
+    </ItemGroup>
+  </Target>
+
+  <!--
+    Generates and adds {PackageId}.SourceLink.targets file to the build directory of the source package.
+  -->
+
+  <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.GenerateSourcePackageSourceLinkTargetsFile" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" />
+
+  <PropertyGroup Condition="'$(IsPackable)' == 'true' and '$(IsSourcePackage)' == 'true' and '$(EnableSourceLink)' == 'true'">
+    <BeforePack>$(BeforePack);_AddSourcePackageSourceLinkFile</BeforePack>
+  </PropertyGroup>
+
+  <Target Name="_AddSourcePackageSourceLinkFile" DependsOnTargets="_GenerateSourcePackageSourceLinkFile">
+    <ItemGroup>
+      <!-- Add a packable item if the project builds the package with auto-generated .nuspec file -->
+      <None Include="$(_SourcePackageSourceLinkTargetsFilePath)" PackagePath="build" Pack="true" Condition="'$(NuspecFile)' == ''"/>
+
+      <!-- Include path in the nuspec properties if the project builds package using custom .nuspec -->
+      <NuspecProperty Include="SourceLinkTargetsFilePath=$(_SourcePackageSourceLinkTargetsFilePath)" Condition="'$(NuspecFile)' != ''"/>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="_CalculateGenerateSourcePackageSourceLinkFileOutputs">
+    <PropertyGroup>
+      <_SourcePackageSourceLinkTargetsFileName>$([MSBuild]::ValueOrDefault($(SourcePackageSourceLinkTargetsFileName), '$(PackageId).targets'))</_SourcePackageSourceLinkTargetsFileName>
+      <_SourcePackageSourceLinkTargetsFilePath>$(IntermediateOutputPath)$(_SourcePackageSourceLinkTargetsFileName)</_SourcePackageSourceLinkTargetsFilePath>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="_GenerateSourcePackageSourceLinkFile"
+          DependsOnTargets="InitializeSourceControlInformation;$(SourceLinkUrlInitializerTargets);_CalculateGenerateSourcePackageSourceLinkFileOutputs"
+          Inputs="$(MSBuildAllProjects)"
+          Outputs="$(_SourcePackageSourceLinkTargetsFilePath)">
+
+    <Microsoft.DotNet.Arcade.Sdk.GenerateSourcePackageSourceLinkTargetsFile
+        ProjectDirectory="$(MSBuildProjectDirectory)"
+        PackageId="$(PackageId)"
+        SourceRoots="@(SourceRoot)"
+        OutputPath="$(_SourcePackageSourceLinkTargetsFilePath)"/>
+
+    <ItemGroup>
+      <FileWrites Include="$(_SourcePackageSourceLinkTargetsFilePath)"/>
+    </ItemGroup>
+  </Target>
+
+  <!--
+    Validates repository-wide requirements.
+    MSBuild only evaluates the target project once per each set of values of global properties and caches the results.
+  -->
+  <Target Name="_RepositoryValidation" BeforeTargets="Build" Condition="'$(ContinuousIntegrationBuild)' == 'true'">
+    <MSBuild Projects="$(MSBuildThisFileDirectory)RepositoryValidation.proj"
+             Targets="Validate"
+             RemoveProperties="TargetFramework;Platform"
+             Properties="RepoRoot=$(RepoRoot);PackageLicenseExpression=$(PackageLicenseExpression);PackageLicenseExpressionInternal=$(PackageLicenseExpressionInternal);SuppressLicenseValidation=$(SuppressLicenseValidation)"
+             UseResultsCache="true" />
+  </Target>
+
+</Project>

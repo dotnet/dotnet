@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- On .NET Framework and .NET Core we use this assembly as both a library and as an executable. -->
+    <OutputType>Exe</OutputType>
+    <!-- Since RemoteExecutor is a standalone library, we can target a lower version of .NET than the rest of arcade. -->
+    <TargetFrameworks>$(TargetFrameworkForNETSDK);net461</TargetFrameworks>
+    <Description>This package provides support for running tests out-of-process.</Description>
+    <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
+    <IsPackable>true</IsPackable>
+    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);PackBuildOutputs</TargetsForTfmSpecificContentInPackage>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="xunit.assert" Version="$(XUnitVersion)" />
+    <PackageReference Include="Microsoft.Diagnostics.Runtime" Version="1.0.5" />
+    <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="$(SystemRuntimeInteropServicesRuntimeInformation)" Condition="'$(TargetFramework)' == 'net461'" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="build\$(MSBuildProjectName).targets" PackagePath="build\$(MSBuildProjectName).targets" Pack="true" />
+    <None Include="$(RepoRoot)LICENSE.txt" PackagePath="LICENSE.txt" Pack="true" />
+    <None Include="$(RepoRoot)THIRD-PARTY-NOTICES.txt" PackagePath="THIRD-PARTY-NOTICES.txt" Pack="true" />
+  </ItemGroup>
+
+  <Target Name="PackBuildOutputs"
+          DependsOnTargets="CopyFilesToOutputDirectory">
+    <ItemGroup>
+      <TfmSpecificPackageFile Include="$(ProjectDepsFilePath)" Condition="'$(TargetFramework)' != 'net461'" PackagePath="lib\$(TargetFramework)\" />
+      <TfmSpecificPackageFile Include="@(AppConfigWithTargetPath->'$(OutDir)%(TargetPath)')" Condition="'$(TargetFramework)' == 'net461'" PackagePath="lib\$(TargetFramework)\" />
+    </ItemGroup>
+  </Target>
+
+</Project>

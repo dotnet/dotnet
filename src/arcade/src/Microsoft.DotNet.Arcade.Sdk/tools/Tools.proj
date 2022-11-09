@@ -1,0 +1,66 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+  <Import Project="BuildStep.props" />
+
+  <!-- Properties requires by NuGet.targets to restore PackageReferences -->
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <!-- Workaround changes from newer MSBuild requiring additional properties --> 
+    <TargetFrameworkVersion Condition="'$(TargetFrameworkVersion)' == ''">5</TargetFrameworkVersion>
+    <TargetFrameworkIdentifier  Condition="'$(TargetFrameworkIdentifier)' == ''">.NETFramework</TargetFrameworkIdentifier>
+    <TargetFrameworkMoniker Condition="'$(TargetFrameworkMoniker)' == ''">.NETFramework,Version=v4.7.2</TargetFrameworkMoniker>   
+    <MSBuildProjectExtensionsPath>$(BaseIntermediateOutputPath)</MSBuildProjectExtensionsPath>
+  </PropertyGroup>
+
+  <!-- 
+    Configure NuGet Restore to use NuGet.config file in the repository root.
+    We could drop a custom NuGet.config to the containing directory but it's simpler
+    if we use the same config for all restore operations.
+    NuGet.Config, NuGet.config, and nuget.config are all allowed casings according to NuGet:
+    https://github.com/NuGet/NuGet.Client/blob/b83566ec2369c4e9fd07e6f95d734dfe370a1e66/src/NuGet.Core/NuGet.Configuration/Settings/Settings.cs#L34-L36
+  -->
+  <PropertyGroup>
+    <RestoreConfigFile Condition="Exists('$(RepoRoot)NuGet.config')">$(RepoRoot)NuGet.config</RestoreConfigFile>
+    <RestoreConfigFile Condition="Exists('$(RepoRoot)NuGet.Config')">$(RepoRoot)NuGet.Config</RestoreConfigFile>
+    <RestoreConfigFile Condition="Exists('$(RepoRoot)nuget.config')">$(RepoRoot)nuget.config</RestoreConfigFile>
+  </PropertyGroup>
+
+  <Import Project="$(_NuGetRestoreTargets)" />
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.DotNet.NuGetRepack.Tasks" Version="$(MicrosoftDotnetNuGetRepackTasksVersion)" Condition="'$(UsingToolNuGetRepack)' == 'true'" IsImplicitlyDefined="true" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(DotNetBuildFromSource)' != 'true'">
+    <!-- Copy of 'sn.exe' in form of NuGet package. -->
+    <PackageReference Include="sn" Version="$(SNVersion)" IsImplicitlyDefined="true" />
+    <PackageReference Include="MicroBuild.Core" Version="$(MicroBuildCoreVersion)"  IsImplicitlyDefined="true" />
+    <PackageReference Include="MicroBuild.Core.Sentinel" Version="1.0.0" IsImplicitlyDefined="true" />
+    <PackageReference Include="vswhere" Version="$(VSWhereVersion)" IsImplicitlyDefined="true" />
+    <PackageReference Include="Microsoft.Signed.Wix" Version="$(MicrosoftSignedWixVersion)" IsImplicitlyDefined="true" />
+    <PackageReference Include="Microsoft.DotNet.Build.Tasks.Feed" Version="$(MicrosoftDotNetBuildTasksFeedVersion)" IsImplicitlyDefined="true" />
+    <PackageReference Include="Microsoft.DotNet.SignTool" Version="$(MicrosoftDotNetSignToolVersion)" IsImplicitlyDefined="true" />
+    <PackageReference Include="Microsoft.SymbolUploader.Build.Task" Version="$(MicrosoftSymbolUploaderBuildTaskVersion)" Condition="'$(PublishToSymbolServer)' == 'true'" IsImplicitlyDefined="true" />
+    <PackageReference Include="Microsoft.DotNet.Build.Tasks.VisualStudio" Version="$(MicrosoftDotNetBuildTasksVisualStudioVersion)" Condition="'$(UsingToolVSSDK)' == 'true'" IsImplicitlyDefined="true" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <_RepoToolManifest>$([MSBuild]::NormalizePath('$(RepoRoot)', '.config', 'dotnet-tools.json'))</_RepoToolManifest>
+  </PropertyGroup>
+
+  <Target Name="RestoreRepoTools"
+          Condition="'$(DotNetBuildFromSource)' != 'true' and Exists('$(_RepoToolManifest)')"
+          BeforeTargets="Restore">
+
+    <Exec Command='"$(DotNetTool)" tool restore' WorkingDirectory="$(RepoRoot)" />
+  </Target>
+
+  <Import Project="SourceBuild/SourceBuildArcadeTools.targets" Condition="'$(ArcadeBuildFromSource)' == 'true' or '$(SetUpSourceBuildIntermediateNupkgCache)' == 'true'" />
+
+  <!-- Repository extensibility point -->
+  <Import Project="$(RepositoryEngineeringDir)Tools.props" Condition="Exists('$(RepositoryEngineeringDir)Tools.props')" />
+
+  <Import Project="InstallDotNetCore.targets" Condition="'$(DotNetBuildFromSource)' != 'true'" />
+
+  <Import Project="VisualStudio.AcquireOptimizationData.targets" Condition="'$(UsingToolVisualStudioIbcTraining)' == 'true'" />
+</Project>

@@ -1,0 +1,92 @@
+<Project>
+  <!-- Required by Common.Targets but not used by packaging projects. -->
+  <Target Name="CreateManifestResourceNames" />
+  <Target Name="CoreCompile" />
+
+  <Target Name="_ComputePlatformItems">
+    <ItemGroup>
+      <_RuntimeIdentifiers Include="$(RuntimeIdentifiers)" />
+      <!-- Make normalization explicit: Trim; Deduplicate by keeping first occurrence, case insensitive -->
+      <_RuntimeIdentifiers Include="@(_RuntimeIdentifiers->Trim()->Distinct())" />
+      <_InnerBuildProjects Include="$(MSBuildProjectFile)">
+        <AdditionalProperties>RuntimeIdentifier=%(_RuntimeIdentifiers.Identity)</AdditionalProperties>
+      </_InnerBuildProjects>
+    </ItemGroup>
+  </Target>
+
+  <!--
+  ============================================================
+                                       DispatchToInnerPlatformBuilds
+     Builds this project with /t:$(InnerTarget) /p:RuntimeIdentifier=X for each
+     value X in $(RuntimeIdentifiers)
+     [IN]
+     $(RuntimeIdentifiers) - Semicolon delimited list of runtime identifiers.
+     $(InnerTargets) - The targets to build for each runtime identifier
+     [OUT]
+     @(InnerOutput) - The combined output items of the inner targets across
+                      all runtime identifiers..
+  ============================================================
+  -->
+  <Target Name="DispatchToInnerPlatformBuilds"
+          DependsOnTargets="_ComputePlatformItems;_SetBuildInnerTarget"
+          Returns="@(InnerOutput)">
+    <!-- If this logic is changed, also update Clean -->
+    <MSBuild Projects="@(_InnerBuildProjects)"
+             Condition="'@(_InnerBuildProjects)' != '' "
+             Targets="$(InnerTargets)"
+             BuildInParallel="$(BuildInParallel)">
+      <Output ItemName="InnerOutput" TaskParameter="TargetOutputs" />
+    </MSBuild>
+  </Target>
+
+  <Target Name="_SetBuildInnerTarget" Returns="@(InnerOutput)">
+    <PropertyGroup Condition="'$(InnerTargets)' == ''">
+      <InnerTargets>Build</InnerTargets>
+    </PropertyGroup>
+  </Target>
+
+  <!--
+  ============================================================
+                                       Build
+   Cross-targeting version of Build.
+   [IN]
+   $(RuntimeIdentifiers) - Semicolon delimited list of runtime identifiers.
+   $(InnerTargets)     - The targets to build for each runtime identifiers. Defaults
+                         to 'Build' if unset, but allows override to support
+                         `msbuild /p:InnerTargets=X;Y;Z` which will build X, Y,
+                         and Z targets for each runtime identifier.
+   [OUT]
+   @(InnerOutput) - The combined output items of the inner targets across
+                    all builds.
+  ============================================================
+  -->
+  <Target Name="Build" DependsOnTargets="DispatchToInnerPlatformBuilds" Returns="@(InnerOutput)" />
+
+  <!--
+  ============================================================
+                                       Clean
+   Cross-targeting version of clean.
+   Inner-build dispatch is a clone of DispatchToInnerBuilds;
+   the only reason it's replicated is that it must be a different
+   target to be run in the same build (e.g. by Rebuild or by
+   a /t:Clean;Build invocation.
+  ============================================================
+  -->
+  <Target Name="Clean"
+          DependsOnTargets="_ComputePlatformItems">
+    <!-- If this logic is changed, also update DispatchToInnerBuilds -->
+    <MSBuild Projects="@(_InnerBuildProjects)"
+             Condition="'@(_InnerBuildProjects)' != '' "
+             Targets="Clean"
+             BuildInParallel="$(BuildInParallel)" />
+  </Target>
+
+  <!--
+  ============================================================
+                                       Rebuild
+   Cross-targeting version of rebuild.
+  ============================================================
+  -->
+  <Target Name="Rebuild" DependsOnTargets="Clean;Build" />
+
+</Project>

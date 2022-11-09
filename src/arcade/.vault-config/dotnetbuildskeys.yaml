@@ -1,0 +1,18 @@
+storageLocation:
+  type: azure-key-vault
+  parameters:
+    subscription: 11c6037b-227b-4d63-bee1-18c7b68c3a40
+    name: dotnetbuildskeys
+
+secrets:
+  dotnetbuilds-access-key:
+    type: azure-storage-key
+    parameters:
+      subscription: 11c6037b-227b-4d63-bee1-18c7b68c3a40
+      account: dotnetbuilds
+
+  dotnetbuilds-connection-string:
+    type: azure-storage-connection-string
+    parameters:
+      storageKeySecret: dotnetbuilds-access-key
+      account: dotnetbuilds

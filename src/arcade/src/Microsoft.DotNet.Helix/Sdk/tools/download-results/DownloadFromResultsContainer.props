@@ -1,0 +1,5 @@
+<Project>
+  <PropertyGroup>
+    <_HelixMultiQueueTargets>$(_HelixMultiQueueTargets);$(MSBuildThisFileDirectory)DownloadFromResultsContainer.targets</_HelixMultiQueueTargets>
+  </PropertyGroup>
+</Project>

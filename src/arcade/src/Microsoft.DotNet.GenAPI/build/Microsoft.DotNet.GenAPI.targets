@@ -1,0 +1,78 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+
+  <PropertyGroup>
+    <GenAPIAssembly Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)\..\tools\net7.0\Microsoft.DotNet.GenAPI.dll</GenAPIAssembly>
+    <GenAPIAssembly Condition="'$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)\..\tools\net472\Microsoft.DotNet.GenAPI.exe</GenAPIAssembly>
+
+    <!-- Hook onto the TargetsTriggeredByCompilation target which only runs when the compiler is invoked. -->
+    <TargetsTriggeredByCompilation Condition="'$(GenerateReferenceAssemblySource)' == 'true'">
+      $(TargetsTriggeredByCompilation);
+      GenerateReferenceAssemblySource
+    </TargetsTriggeredByCompilation>
+  </PropertyGroup>
+
+  <!-- Only run this target when the GenerateReferenceAssemblySource target is invoked directly
+       which means that GenerateReferenceAssemblySource property is false. -->
+  <Target Name="_DontBuildProjectReferences"
+          Condition="'$(GenerateReferenceAssemblySource)' != 'true'">
+    <PropertyGroup>
+      <BuildProjectReferences>false</BuildProjectReferences>
+    </PropertyGroup>
+  </Target>
+
+  <!-- GenerateReferenceSource was the old target's name. Keep it to not break existing dev workflows. -->
+  <Target Name="GenerateReferenceSource"
+          DependsOnTargets="GenerateReferenceAssemblySource" />
+
+  <UsingTask TaskName="Microsoft.DotNet.GenAPI.GenAPITask" AssemblyFile="$(GenAPIAssembly)" />
+
+  <Target Name="GenerateReferenceAssemblySource"
+          DependsOnTargets="_DontBuildProjectReferences;ResolveAssemblyReferences">
+    <ItemGroup Condition="'$(GenAPILibPath)' == ''">
+      <!-- Build out a list of directories where dependencies are located. -->
+      <_referencePathDirectories Include="@(ReferencePath->'%(RootDir)%(Directory)'->Distinct())" />
+    </ItemGroup>
+
+    <PropertyGroup>
+      <GenAPIInputAssembly Condition="'$(GenAPIInputAssembly)' == ''">@(IntermediateAssembly)</GenAPIInputAssembly>
+      <GenAPITargetPath Condition="'$(GenAPITargetPath)' == ''">$(TargetDir)$(TargetName).cs</GenAPITargetPath>
+      <GenAPILibPath Condition="'$(GenAPILibPath)' == ''">@(_referencePathDirectories)</GenAPILibPath>
+      <!-- When the GenerateReferenceAssemblySource target is invoked directly, make sure the verbosity is high
+           so that the generated reference source path is printed to the console. Otherwise emit the message with
+           a low verbosity so that it doesn't appear on a console but still on logs. -->
+      <GenAPIVerbosity Condition="'$(GenAPIVerbosity)' == '' and '$(GenerateReferenceAssemblySource)' == 'true'">low</GenAPIVerbosity>
+      <GenAPIVerbosity Condition="'$(GenAPIVerbosity)' == '' and '$(GenerateReferenceAssemblySource)' != 'true'">high</GenAPIVerbosity>
+    </PropertyGroup>
+
+    <Microsoft.DotNet.GenAPI.GenAPITask
+      Assembly="$(GenAPIInputAssembly)"
+      LibPath="$(GenAPILibPath)"
+      ApiList="$(GenAPIApiList)"
+      ConditionalTypeLists="@(GenAPIConditionalTypeLists)"
+      DefaultCondition="$(GenAPIDefaultCondition)"
+      OutputPath="$(GenAPITargetPath)"
+      HeaderFile="$(GenAPIHeaderFile)"
+      WriterType="$(GenAPIWriterType)"
+      SyntaxWriterType="$(GenAPISyntaxWriterType)"
+      DocIdKinds="$(GenAPIDocIdKinds)"
+      ExceptionMessage="$(GenAPIExceptionMessage)"
+      GlobalPrefix="$(GenAPIGlobalPrefix)"
+      ExcludeApiList="$(GenAPIExcludeApiList)"
+      ExcludeAttributesList="$(GenAPIExcludeAttributesList)"
+      FollowTypeForwards="$(GenAPIFollowTypeForwards)"
+      ApiOnly="$(GenAPIApiOnly)"
+      All="$(GenAPIAll)"
+      RespectInternals="$(GenAPIRespectInternals)"
+      ExcludeCompilerGenerated="$(GenAPIExcludeCompilerGenerated)"
+      MemberHeadings="$(GenAPIMemberHeadings)"
+      HighlightBaseMembers="$(GenAPIHighlightBaseMembers)"
+      HighlightInterfaceMembers="$(GenAPIHighlightInterfaceMembers)"
+      AlwaysIncludeBase="$(GenAPIAlwaysIncludeBase)"
+      ExcludeMembers="$(GenAPIExcludeMembers)"
+      LangVersion="$(GenAPILangVersion)" />
+
+    <Message Text="Generated reference assembly source code: $(GenAPITargetPath)" Importance="$(GenAPIVerbosity)" />
+  </Target>
+
+</Project>

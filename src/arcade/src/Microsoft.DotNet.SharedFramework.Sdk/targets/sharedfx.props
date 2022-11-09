@@ -1,0 +1,20 @@
+<Project>
+  <PropertyGroup>
+    <LicenseFile Condition="'$(LicenseFile)' == ''">$(RepoRoot)LICENSE.TXT</LicenseFile>
+    <GetSharedFrameworkFilesForReadyToRunDependsOn>
+      ResolveFrameworkReferences;
+      ResolveReferences;
+    </GetSharedFrameworkFilesForReadyToRunDependsOn>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <IncludeContentInPack>true</IncludeContentInPack>
+    <IsPackable>true</IsPackable>
+    <IncludeSymbols>true</IncludeSymbols>
+    <NoWarn>$(NoWarn);NU5128;NU5131</NoWarn>
+    <PackageType>DotnetPlatform</PackageType>
+    <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+  </PropertyGroup>
+
+  <!-- Stub out the CreatePackageOverrides target. Each repo uses their own implementation. -->
+  <Target Name="CreatePackageOverrides" />
+</Project>

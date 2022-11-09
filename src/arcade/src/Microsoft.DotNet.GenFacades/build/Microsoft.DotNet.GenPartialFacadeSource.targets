@@ -1,0 +1,62 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+
+  <UsingTask TaskName="ClearAssemblyReferenceVersions" AssemblyFile="$(GenFacadesTargetAssemblyPath)" />
+  <UsingTask TaskName="GenPartialFacadeSource" AssemblyFile="$(GenFacadesTargetAssemblyPath)" />
+
+  <PropertyGroup>
+    <GenFacadesReferencePathItemName Condition="'$(GenFacadesReferencePathItemName)' == ''">ReferencePath</GenFacadesReferencePathItemName>
+    <!-- Tell ResolveMatchingContract to run and resolve contract to project reference -->
+    <ResolveMatchingContract>true</ResolveMatchingContract>
+    <GeneratePartialFacadeSourceDependsOn>$(GeneratePartialFacadeSourceDependsOn);ResolveMatchingContract;_GetRoslynAssembliesPath</GeneratePartialFacadeSourceDependsOn>
+    <CoreCompileDependsOn Condition="'$(DesignTimeBuild)' != 'true'">$(CoreCompileDependsOn);GeneratePartialFacadeSource</CoreCompileDependsOn>
+    <!-- Support zero version seeds by rewriting the output of the compiler. -->
+    <TargetsTriggeredByCompilation Condition="'$(DesignTimeBuild)' != 'true' and '$(GenFacadesForceZeroVersionSeeds)' == 'true'">
+      $(TargetsTriggeredByCompilation);ClearAssemblyReferenceVersions
+    </TargetsTriggeredByCompilation>
+    <OutputSourcePath>$(IntermediateOutputPath)$(AssemblyTitle).Forwards.cs</OutputSourcePath>
+  </PropertyGroup>
+
+  <Target Name="GeneratePartialFacadeSource"
+          Inputs="$(MSBuildAllProjects);@(ResolvedMatchingContract);@($(GenFacadesReferencePathItemName));@(Compile)"
+          Outputs="$(OutputSourcePath)"
+          DependsOnTargets="$(GeneratePartialFacadeSourceDependsOn)">
+    <PropertyGroup>
+      <ReferenceAssembly>%(ResolvedMatchingContract.Identity)</ReferenceAssembly>
+    </PropertyGroup>
+
+    <GenPartialFacadeSource
+      ReferencePaths="@($(GenFacadesReferencePathItemName))"
+      ReferenceAssembly="$(ReferenceAssembly)"
+      CompileFiles="@(Compile)"
+      DefineConstants="$(DefineConstants)"
+      LangVersion="$(LangVersion)"
+      IgnoreMissingTypes="$(GenFacadesIgnoreMissingTypes)"
+      IgnoreMissingTypesList="@(GenFacadesIgnoreMissingType)"
+      OmitTypes="@(GenFacadesOmitType)"
+      OutputSourcePath="$(OutputSourcePath)"
+      SeedTypePreferences="@(SeedTypePreference)"
+      RoslynAssembliesPath="$(RoslynAssembliesPath)" />
+
+    <ItemGroup Condition="Exists('$(OutputSourcePath)')">
+      <Compile Include="$(OutputSourcePath)" />
+      <FileWrites Include="$(OutputSourcePath)" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="ClearAssemblyReferenceVersions">
+    <PropertyGroup>
+      <_ClearAssemblyReferenceVersionsAssembly>$(IntermediateOutputPath)$(TargetName)$(TargetExt)</_ClearAssemblyReferenceVersionsAssembly>
+    </PropertyGroup>
+
+    <!-- Copy the original assembly for debugging purposes -->
+    <Copy SourceFiles="$(_ClearAssemblyReferenceVersionsAssembly)"
+          DestinationFolder="$(IntermediateOutputPath)ClearRef"
+          Condition="'$(GenFacadesForceZeroVersionSeedsDebugMode)' == 'true'">
+      <Output TaskParameter="CopiedFiles" ItemName="FileWrites" />
+    </Copy>
+
+    <ClearAssemblyReferenceVersions Assembly="$(_ClearAssemblyReferenceVersionsAssembly)" />
+  </Target>
+
+</Project>

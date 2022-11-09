@@ -1,0 +1,78 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+  <Target Name="RunTests"
+          Outputs="%(TestToRun.ResultsStdOutPath)">
+    <PropertyGroup>
+      <_TestEnvironment>%(TestToRun.EnvironmentDisplay)</_TestEnvironment>
+      <_TestAssembly>%(TestToRun.Identity)</_TestAssembly>
+      <_TestRuntime>%(TestToRun.TestRuntime)</_TestRuntime>
+      <_TestTimeout>%(TestToRun.TestTimeout)</_TestTimeout>
+      <_TestRunnerAdditionalArguments>%(TestToRun.TestRunnerAdditionalArguments)</_TestRunnerAdditionalArguments>
+
+      <!-- Always use net472 for desktop to enable displaying source location from Portable PDBs in stack traces -->
+      <_TestRunnerTargetFramework>net472</_TestRunnerTargetFramework>
+      <_TestRunnerTargetFramework Condition="'$(_TestRuntime)' == 'Core'">netcoreapp2.0</_TestRunnerTargetFramework>
+      <_TestRunnerTargetFramework Condition="%(TestToRun.TargetFramework) == 'netcoreapp1.1' or %(TestToRun.TargetFramework) == 'netcoreapp1.0'">netcoreapp1.0</_TestRunnerTargetFramework>
+
+      <_TargetDir>$([System.IO.Path]::GetDirectoryName('$(_TestAssembly)'))\</_TargetDir>
+
+      <_TestResultDirectory>$([System.IO.Path]::GetDirectoryName('%(TestToRun.ResultsTrxPath)'))</_TestResultDirectory>
+      <_TestResultTrxFileName>$([System.IO.Path]::GetFileName('%(TestToRun.ResultsTrxPath)'))</_TestResultTrxFileName>
+      <_TestResultHtmlFileName>$([System.IO.Path]::GetFileName('%(TestToRun.ResultsHtmlPath)'))</_TestResultHtmlFileName>
+
+      <_TestRunnerCommand>&quot;$(DotNetTool)&quot; test $(_TestAssembly) --logger:"console%3Bverbosity=normal" --logger:"trx%3BLogFileName=$(_TestResultTrxFileName)" --logger:"html%3BLogFileName=$(_TestResultHtmlFileName)" "--ResultsDirectory:$(_TestResultDirectory)" "--Framework:%(TestToRun.TargetFrameworkIdentifier),Version=%(TestToRun.TargetFrameworkVersion)"</_TestRunnerCommand>
+      <_TestRunnerCommand Condition="'$(VSTestRunSettingsFile)' != ''">$(_TestRunnerCommand) "--settings:$(VSTestRunSettingsFile)"</_TestRunnerCommand>
+      <_TestRunnerCommand Condition="'$(_TestRunnerAdditionalArguments)' != ''">$(_TestRunnerCommand) $(_TestRunnerAdditionalArguments)</_TestRunnerCommand>
+
+      <!-- 
+        Redirect std output of the runner.
+      -->
+      <_TestRunnerCommand Condition="'$(TestCaptureOutput)' != 'false'">$(_TestRunnerCommand) >> "%(TestToRun.ResultsStdOutPath)" 2>&amp;1</_TestRunnerCommand>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <_OutputFiles Include="%(TestToRun.ResultsTrxPath)" />
+      <_OutputFiles Include="%(TestToRun.ResultsHtmlPath)" />
+      <_OutputFiles Include="%(TestToRun.ResultsStdOutPath)" />
+    </ItemGroup>
+
+    <MakeDir Directories="@(_OutputFiles->'%(RootDir)%(Directory)')"/>
+    <Delete Files="@(_OutputFiles)" />
+
+    <!--
+      Add command line to the log.
+    -->
+    <Exec Command="echo === COMMAND LINE === > %(TestToRun.ResultsStdOutPath)
+                   echo $(_TestRunnerCommand) >> %(TestToRun.ResultsStdOutPath)" />
+
+    <Message Text="Running tests: $(_TestAssembly) [$(_TestEnvironment)]" Importance="high"/>
+    <Exec Command='$(_TestRunnerCommand)'
+          LogStandardErrorAsError="false"
+          WorkingDirectory="$(_TargetDir)"
+          IgnoreExitCode="true"
+          Timeout="$(_TestTimeout)"
+          ContinueOnError="WarnAndContinue">
+      <Output TaskParameter="ExitCode" PropertyName="_TestErrorCode" />
+    </Exec>
+
+    <!--
+      Report test status.
+    -->
+    <Message Text="Tests succeeded: $(_TestAssembly) [$(_TestEnvironment)]" Condition="'$(_TestErrorCode)' == '0'" Importance="high" />
+
+    <PropertyGroup>
+      <_ResultsFileToDisplay>%(TestToRun.ResultsHtmlPath)</_ResultsFileToDisplay>
+      <_ResultsFileToDisplay Condition="!Exists('$(_ResultsFileToDisplay)')">%(TestToRun.ResultsStdOutPath)</_ResultsFileToDisplay>
+    </PropertyGroup>
+
+    <!-- 
+      Ideally we would set ContinueOnError="ErrorAndContinue" so that when a test fails in multi-targeted test project
+      we'll still run tests for all target frameworks. ErrorAndContinue doesn't work well on Linux though: https://github.com/Microsoft/msbuild/issues/3961.
+    -->
+    <Error Text="Tests failed: $(_ResultsFileToDisplay) [$(_TestEnvironment)]" Condition="'$(_TestErrorCode)' != '0'" File="VSTest" />
+
+    <ItemGroup>
+      <FileWrites Include="@(_OutputFiles)"/>
+    </ItemGroup>
+  </Target>
+</Project>

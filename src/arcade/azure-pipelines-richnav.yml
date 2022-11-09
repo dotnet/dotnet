@@ -1,0 +1,38 @@
+trigger:
+  batch: true
+  branches:
+    include:
+    - main
+    - release/3.x
+    - release/5.0
+
+pr: none
+
+variables:
+- template: eng/common-variables.yml
+- template: eng/common/templates/variables/pool-providers.yml
+
+stages:
+- stage: build
+  displayName: Build
+  jobs:
+  - template: /eng/common/templates/jobs/jobs.yml
+    parameters:
+      enableRichCodeNavigation: true
+      workspace:
+        clean: all
+      jobs:
+      - job: Windows_NT
+        timeoutInMinutes: 90
+        pool:
+          name: $(DncEngPublicBuildPool)
+          demands: ImageOverride -equals windows.vs2019.amd64.open
+        preSteps:
+        - checkout: self
+          clean: true
+        steps:
+        - script: eng\common\cibuild.cmd
+            -configuration Debug
+            -prepareMachine
+            /p:Test=false
+          displayName: Windows Build / Publish

@@ -1,0 +1,111 @@
+<Project>
+  <!-- Required by Common.Targets but not used by packaging projects. -->
+  <Target Name="CreateManifestResourceNames" />
+  <Target Name="CoreCompile">
+    <ItemGroup>
+      <IntermediateAssembly Remove="@(IntermediateAssembly)" />
+    </ItemGroup>
+  </Target>
+
+
+  <Target Name="_GetCurrentProjectServicingConfiguration">
+    <ItemGroup>
+      <CurrentProjectServicingConfiguration
+        Include="@(ProjectServicingConfiguration)"
+        Condition="'%(Identity)' == '$(MSBuildProjectName)'" />
+    </ItemGroup>
+  </Target>
+
+  <!--
+    The Microsoft build's per-package servicing policy conflicts with the source-build restrictions.
+    Targeting packs, for example, are only built/published when there's a known change to release.
+    This is in contrast to runtime packs and the shared framework, which are always built and
+    published. This means it's common in the Microsoft build for downstream repos to depend on two
+    builds' outputs: the current build's runtime assets, and some old build's targeting pack.
+
+    The Microsoft build can simply download the old targeting pack from NuGet.org. Source-build
+    can't do this because the bits on NuGet.org are not built locally. Instead, source-build assumes
+    it's possible to use current sources to build a package with the old version. This target
+    applies the old build's patch version to make that happen.
+
+    This solution has pitfalls. More info at https://github.com/dotnet/core-setup/issues/8735. The
+    target supports SkipSetLastReleasedVersionForSourceBuild (unused as of writing) to allow
+    disabling this workaround if a better way forward is implemented.
+  -->
+  <Target Name="SetLastReleasedVersionForSourceBuild"
+          Condition="
+            '$(DotNetBuildFromSource)' == 'true' and
+            '$(SkipSetLastReleasedVersionForSourceBuild)' != 'true'"
+          BeforeTargets="GetProductVersions"
+          DependsOnTargets="_GetCurrentProjectServicingConfiguration">
+    <PropertyGroup>
+      <MostRecentProducedServicingPatchVersion>%(CurrentProjectServicingConfiguration.PatchVersion)</MostRecentProducedServicingPatchVersion>
+      <PatchVersion Condition="'$(MostRecentProducedServicingPatchVersion)' != ''">$(MostRecentProducedServicingPatchVersion)</PatchVersion>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="_GetSkipBuildProps"
+          DependsOnTargets="
+            _GetCurrentProjectServicingConfiguration;
+            SetLastReleasedVersionForSourceBuild">
+    <!--
+      Skip the build if there is an applicable servicing configuration, and the servicing
+      configuration indicates this project shouldn't build for this patch version.
+    -->
+    <PropertyGroup Condition="'@(CurrentProjectServicingConfiguration)' != ''">
+      <SkipBuild Condition="'%(CurrentProjectServicingConfiguration.PatchVersion)' != '$(PatchVersion)'">true</SkipBuild>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <_TargetRuntimeIdentifiers Include="$(RuntimeIdentifiers)" />
+    </ItemGroup>
+
+    <PropertyGroup Condition="'$(RuntimeIdentifiers)' != ''">
+      <!-- Avoid building a project when none of the possible RuntimeIdentifiers is the current RuntimeIdentifier. -->
+      <_RidInRidList Condition="'%(_TargetRuntimeIdentifiers.Identity)' == '$(RuntimeIdentifier)'">true</_RidInRidList>
+      <SkipBuild Condition="'$(_RidInRidList)' != 'true'">true</SkipBuild>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="_CalculatePackageInformation">
+    <Error Condition="'$(PlatformPackageType)' != 'TargetingPack' and
+                      '$(PlatformPackageType)' != 'RuntimePack' and
+                      '$(PlatformPackageType)' != 'AppHostPack' and
+                      '$(PlatformPackageType)' != 'ToolPack'"
+           Text="Unknown PlatformPackageType '$(PlatformPackageType)'" />
+    <Error Condition="'$(_PackageTypeRequiresRid)' == 'true' and '$(RuntimeIdentifier)' == ''"
+           Text="Producing a $(PlatformPackageType) requires a runtime-identifier to be specified." />
+  </Target>
+  
+  <PropertyGroup>
+    <_PackageTypeRequiresRid Condition="'$(PlatformPackageType)' == 'RuntimePack' or '$(PlatformPackageType)' == 'AppHostPack'">true</_PackageTypeRequiresRid>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId Condition="'$(OverridePackageId)' != ''">$(OverridePackageId)</PackageId>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(PlatformPackageType)' == 'TargetingPack'">
+    <PackageId Condition="'$(OverridePackageId)' == ''">$(SharedFrameworkName).Ref</PackageId>
+    <PackageBrandNameSuffix>Targeting Pack</PackageBrandNameSuffix>
+    <MacOSComponentNamePackType>pack.targeting</MacOSComponentNamePackType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(PlatformPackageType)' == 'RuntimePack'">
+    <PackageId Condition="'$(OverridePackageId)' == ''">$(SharedFrameworkName).Runtime.$(RuntimeIdentifier)</PackageId>
+    <PackageBrandNameSuffix>Runtime</PackageBrandNameSuffix>
+    <MacOSComponentNamePackType>sharedframework.$(SharedFrameworkName)</MacOSComponentNamePackType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(PlatformPackageType)' == 'AppHostPack'">
+    <PackageId Condition="'$(OverridePackageId)' == ''">$(SharedFrameworkName).Host.$(RuntimeIdentifier)</PackageId>
+    <PackageBrandNameSuffix>AppHost Pack</PackageBrandNameSuffix>
+    <MacOSComponentNamePackType>pack.apphost</MacOSComponentNamePackType>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PackageId Condition="'$(OverridePackageId)' == '' and '$(PackageId)' == ''">$(SharedFrameworkName)</PackageId>
+    <MacOSComponentNamePackType Condition="'$(MacOSComponentNamePackType)' == ''">pack.$(PlatformPackageType.ToLower())</MacOSComponentNamePackType>
+  </PropertyGroup>
+
+  <Import Project="$(MSBuildThisFileDirectory)sharedfx.targets" />
+  
+  <Import Project="windows/wix.targets" />
+</Project>

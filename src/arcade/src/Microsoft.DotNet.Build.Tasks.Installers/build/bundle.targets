@@ -1,0 +1,166 @@
+<Project>    
+  <Target Name="GetBundleGenerationFlags" DependsOnTargets="_GetTargetOSArchInfo" Condition="'$(SkipInstallerBuild)' != 'true'">
+    <Error
+      Text="Unable to build a bundle installer for a non-Windows, non-macOS platform."
+      Condition="'$(TargetRuntimeOS)' != 'win' and '$(TargetRuntimeOS)' != 'osx'" />
+    <!-- Filter the installer generation/build flags for the current build machine. -->
+    <PropertyGroup>
+      <GenerateExeBundle Condition="'$(_osArchSupportsWixBasedInstallers)' == 'true'">true</GenerateExeBundle>
+      <GeneratePkgBundle Condition="$([MSBuild]::IsOSPlatform('osx')) and '$(TargetRuntimeOS)' == 'osx'">true</GeneratePkgBundle>
+    </PropertyGroup>
+  </Target>
+
+  <Import Project="$(MSBuildThisFileDirectory)wix/wix.targets" />
+
+  <Target Name="GenerateBundles" DependsOnTargets="GetBundleGenerationFlags" Condition="'$(SkipInstallerBuild)' != 'true'">
+    <MakeDir Directories="$(PackageOutputPath)" />
+
+    <ItemGroup>
+      <_InstallerBuildProject Include="$(MSBuildProjectFile)"
+               Targets="GenerateExeBundle"
+               Properties="GenerateExeBundle=true"
+               Condition="'$(GenerateExeBundle)' == 'true'" />
+      <_InstallerBuildProject Include="$(MSBuildProjectFile)"
+               Targets="GeneratePkgBundle"
+               Properties="GeneratePkgBundle=true"
+               Condition="'$(GeneratePkgBundle)' == 'true'" />
+    </ItemGroup>
+    <MSBuild Projects="@(_InstallerBuildProject)"
+             Targets="%(_InstallerBuildProject.Targets)"
+             BuildInParallel="$(BuildInParallel)" />
+  </Target>
+
+  <Target Name="GeneratePkgBundle" DependsOnTargets="CreatePkgBundle" />
+  <Target Name="GenerateExeBundle" DependsOnTargets="CreateWixInstaller" />
+
+  <!--
+    Set up properties for installer generation. Project-type-specific properties are set up in
+    targets that use BeforeTargets="_GetInstallerProperties".
+  -->
+  <Target Name="_GetInstallerProperties"
+          DependsOnTargets="_GetTargetOSArchInfo;
+                            _GetProductBrandName">
+    <PropertyGroup>
+      <InstallerName Condition="'$(InstallerName)' == ''">$(ArchiveName)</InstallerName>
+    </PropertyGroup>
+
+    <Error
+      Text="InstallerName '$(InstallerName)' is empty or starts with a '-': expected a value like 'dotnet-runtime'."
+      Condition="'$(InstallerName)' == '' or $(InstallerName.StartsWith('-'))" />
+
+    <PropertyGroup>
+      <VersionedInstallerName>$(InstallerName)-$(MajorVersion).$(MinorVersion)</VersionedInstallerName>
+      <VersionedInstallerName>$(VersionedInstallerName.ToLowerInvariant())</VersionedInstallerName>
+      <InstallerPackageRelease>1</InstallerPackageRelease>
+      <InstallerPackageVersion>$(VersionPrefix)</InstallerPackageVersion>
+    </PropertyGroup>
+    
+    <PropertyGroup>
+      <InstallerExtension Condition="'$(TargetRuntimeOS)' == 'win'">.exe</InstallerExtension>
+      <InstallerExtension Condition="'$(TargetRuntimeOS)' == 'osx'">.pkg</InstallerExtension>
+    </PropertyGroup>
+
+    <PropertyGroup>
+      <_InstallerIntermediatesDir>$(IntermediateOutputPath)$(InstallerName)/$(InstallerPackageVersion)/</_InstallerIntermediatesDir>
+
+      <InstallerBuildPart>$(Version)-$(TargetRuntimeOS)-$(InstallerTargetArchitecture)</InstallerBuildPart>
+
+      <!-- Location to place the installer, in artifacts. -->
+      <InstallerFileNameWithoutExtension>$(InstallerName)-$(InstallerBuildPart)</InstallerFileNameWithoutExtension>
+      <_InstallerFile Condition="'$(_InstallerFile)' == ''">$(PackageOutputPath)$(InstallerFileNameWithoutExtension)$(InstallerExtension)</_InstallerFile>
+      <ExeBundleInstallerEngineFile>$(PackageOutputPath)$(InstallerFileNameWithoutExtension)-engine.exe</ExeBundleInstallerEngineFile>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="_GetBundledComponentInstallers">
+    <ItemGroup Condition="'$(GenerateExeBundle)' == 'true'">
+      <BundleComponentReference>
+        <Targets>CreateWixInstaller</Targets>
+        <AdditionalProperties>GenerateMSI=true</AdditionalProperties>
+        <RemoveProperties>GenerateExeBundle</RemoveProperties>
+      </BundleComponentReference>
+    </ItemGroup>
+    <ItemGroup Condition="'$(GeneratePkgBundle)' == 'true'">
+      <BundleComponentReference>
+        <Targets>CreatePkg</Targets>
+        <AdditionalProperties>GeneratePkg=true</AdditionalProperties>
+        <RemoveProperties>GeneratePkgBundle</RemoveProperties>
+      </BundleComponentReference>
+    </ItemGroup>
+      
+    <MSBuild Projects="@(BundleComponentReference)" Targets="%(Targets)" RemoveProperties="%(RemoveProperties)">
+      <Output TaskParameter="TargetOutputs" ItemName="_BundledComponents" />
+    </MSBuild>
+  </Target>
+
+  <!--
+    Create MSI installer, using WiX tools.
+  -->
+  <Target Name="CreateWixInstaller"
+          DependsOnTargets="
+            _GetInstallerProperties;
+            RunLightLinker"
+          Returns="$(_OutInstallerFile)">
+    <Message Text="$(MSBuildProjectName) -> $(_OutInstallerFile)" Importance="high" />
+  </Target>
+
+  <!--
+    Create macOS pkg installer.
+  -->
+  <UsingTask TaskName="GenerateMacOSDistributionFile" AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)"/>
+  <Target Name="CreatePkgBundle"
+          DependsOnTargets="
+            _GetInstallerProperties;
+            _GetBundledComponentInstallers"
+          Returns="$(_InstallerFile)">
+
+    <Error Text="A template XML file for the bundle must be provided via the MacOSBundleTemplate property"
+           Condition="'$(MacOSBundleTemplate)' == ''" />
+    <Error Text="A bundle identifier must be provided via the MacOSBundleIdentifierName property"
+           Condition="'$(MacOSBundleIdentifierName)' == ''" />
+    
+    <PropertyGroup>
+      <_MacOSIntermediatesPath>$(IntermediateOutputPath)macos/</_MacOSIntermediatesPath>
+      <_MacOSDistributionFile>$(_MacOSIntermediatesPath)distribution-file.xml</_MacOSDistributionFile>
+    </PropertyGroup>
+    
+    <Copy SourceFiles="@(_BundledComponents)"
+          DestinationFolder="$(_MacOSIntermediatesPath)"
+          SkipUnchangedFiles="true"
+          OverwriteReadOnlyFiles="true">
+      <Output TaskParameter="DestinationFiles" ItemName="_MacOSPackagesToBundle" />
+    </Copy>
+
+    <ItemGroup>
+      <_MacOSPackagesToBundle>
+        <FileNameWithExtension>%(FileName)%(Extension)</FileNameWithExtension>
+      </_MacOSPackagesToBundle>
+    </ItemGroup>
+    
+    <GenerateMacOSDistributionFile
+      TemplatePath="$(MacOSBundleTemplate)"
+      ProductBrandName="$(ProductBrandName)"
+      TargetArchitecture="$(TargetArchitecture)"
+      BundledPackages="@(_MacOSPackagesToBundle)"
+      DestinationFile="$(_MacOSDistributionFile)" />
+    
+    <PropertyGroup>
+      <_pkgArgs></_pkgArgs>
+      <_pkgArgs Condition="'$(MacOSBundleResourcesPath)' == ''">$(_pkgArgs) --resources $(MacOSBundleResourcesPath)</_pkgArgs>
+      <_pkgArgs>$(_pkgArgs) --identifier $(MacOSBundleIdentifierName)</_pkgArgs>
+      <_pkgArgs>$(_pkgArgs) --version $(ProductVersion)</_pkgArgs>
+      <_pkgArgs>$(_pkgArgs) --package-path $(_MacOSIntermediatesPath)</_pkgArgs>
+      <_pkgArgs>$(_pkgArgs) --distribution $(_MacOSDistributionFile)</_pkgArgs>
+      <_pkgArgs>$(_pkgArgs) $(_InstallerFile)</_pkgArgs>
+    </PropertyGroup>
+
+    <Exec Command="productbuild $(_pkgArgs)" />
+
+
+    <Message Text="$(MSBuildProjectName) -> $(_InstallerFile)" Importance="high" />
+  </Target>
+
+  <PropertyGroup>
+    <BuildDependsOn>$(BuildDependsOn);_GetSkipInstallerBuildProps;GenerateBundles</BuildDependsOn>
+  </PropertyGroup>
+</Project>

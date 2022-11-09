@@ -1,0 +1,116 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project Sdk="Microsoft.NET.Sdk" DefaultTargets="Execute">
+  <!--
+    This MSBuild file is intended to be used as the body of the default 
+    publishing release pipeline. The release pipeline will use this file
+    to invoke the PublishSymbols tasks to publish symbols to MSDL and SymWeb.
+  
+    Parameters:
+  
+      - PDBArtifactsDirectory   : Full path to directory containing PDB files to be published and (optionally) DLLs matching these PDBs
+      - BlobBasePath            : Full path containing *.symbols.nupkg packages to be published.
+      - DotNetSymbolServerTokenMsdl   : PAT to access MSDL.
+      - DotNetSymbolServerTokenSymWeb : PAT to access SymWeb.
+      - DotNetSymbolExpirationInDays  : Expiration days for published packages. Default is 3650.
+      - SymbolPublishingExclusionsFile : Path to file containing exclusion list to be used by Symbol Uploader.
+      - PublishSpecialClrFiles : If true, publish the DAC, DBI and SOS using the coreclr index. If false, don't do any special indexing.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <NETCORE_ENGINEERING_TELEMETRY>Publish</NETCORE_ENGINEERING_TELEMETRY>
+  </PropertyGroup>
+
+  <Target Name="Execute">
+    <ItemGroup>
+      <FilesToPublishToSymbolServer Include="$(PDBArtifactsDirectory)\**\*.pdb"/>
+      <!-- Whenever PDBs are associated with DLLs that are not included as symbols.nupkgs, they need to be included via FilesToPublishToSymbolServer -->
+      <FilesToPublishToSymbolServer Include="$(PDBArtifactsDirectory)\**\*.dll"/>
+      <PackagesToPublishToSymbolServer Include="$(BlobBasePath)\*.symbols.nupkg"/>
+
+      <!--
+        These packages from Arcade-Services include some native libraries that
+        our current symbol uploader can't handle. Below is a workaround until
+        we get issue: https://github.com/dotnet/arcade/issues/2457 sorted.
+      -->
+      <PackagesToPublishToSymbolServer Remove="$(BlobBasePath)\Microsoft.DotNet.Darc.*" />
+      <PackagesToPublishToSymbolServer Remove="$(BlobBasePath)\Microsoft.DotNet.Maestro.Tasks.*" />
+    </ItemGroup>
+
+    <!--
+    ConvertPortablePdbsToWindowsPdbs is set to true only in staging pipeline, because this is an expensive task and we don't want to do it for every build.
+    -->
+    <PropertyGroup>
+      <DotNetSymbolExpirationInDays Condition="'$(DotNetSymbolExpirationInDays)' == ''">3650</DotNetSymbolExpirationInDays>
+      <PublishToSymbolServer>true</PublishToSymbolServer>
+      <PublishToSymWeb Condition="'$(PublishToSymWeb)' == ''">true</PublishToSymWeb>
+      <PublishToMSDL Condition="'$(PublishToMSDL)' == ''">true</PublishToMSDL>
+      <PublishToSymbolServer Condition="'@(FilesToPublishToSymbolServer)' == '' and '@(PackagesToPublishToSymbolServer)' == ''">false</PublishToSymbolServer>
+      <PublishSpecialClrFiles Condition="'$(PublishSpecialClrFiles)' == ''">true</PublishSpecialClrFiles>
+      <DryRun Condition="'$(DryRun)' == ''">false</DryRun>
+      <ConvertPortablePdbsToWindowsPdbs Condition="'$(ConvertPortablePdbsToWindowsPdbs)' == ''">false</ConvertPortablePdbsToWindowsPdbs>
+      <TreatPdbConversionIssuesAsInfo Condition="'$(TreatPdbConversionIssuesAsInfo)' == ''">false</TreatPdbConversionIssuesAsInfo>
+    </PropertyGroup>
+
+    <Message
+      Importance="High"
+      Text="No symbol file(s) were found to publish."
+      Condition="'@(FilesToPublishToSymbolServer)' == ''" />
+
+    <Message
+      Importance="High"
+      Text="No symbol package(s) were found to publish."
+      Condition="'@(PackagesToPublishToSymbolServer)' == ''" />
+
+    <ReadLinesFromFile
+      File="$(SymbolPublishingExclusionsFile)"
+      Condition="'$(SymbolPublishingExclusionsFile)' != '' and Exists($(SymbolPublishingExclusionsFile))">
+      <Output
+          TaskParameter="Lines"
+          ItemName="PackageExcludeFiles"/>
+    </ReadLinesFromFile>
+
+    <Message
+      Text="Going to publish this package -> %(PackagesToPublishToSymbolServer.Identity)." />
+
+    <Message
+      Text="Going to publish this file -> %(FilesToPublishToSymbolServer.Identity)." />
+
+    <Message
+      Text="Going to ignore this file -> %(PackageExcludeFiles.Identity)." />
+
+    <ItemGroup>
+      <!-- Symbol Uploader: MSDL -->
+      <SymbolServerTargets Include="https://microsoftpublicsymbols.artifacts.visualstudio.com/DefaultCollection" Condition="$(PublishToMSDL)">
+        <PersonalAccessToken>$(DotNetSymbolServerTokenMsdl)</PersonalAccessToken>
+      </SymbolServerTargets>
+      <!-- 
+        Symbol Uploader: SymWeb 
+        Watson, VS insertion testings and the typical internal dev usage require SymWeb.
+        Currently we need to call the task twice (https://github.com/dotnet/core-eng/issues/3489).
+      -->
+      <SymbolServerTargets Include="https://microsoft.artifacts.visualstudio.com/DefaultCollection" Condition="$(PublishToSymWeb)">
+        <PersonalAccessToken>$(DotNetSymbolServerTokenSymWeb)</PersonalAccessToken>
+      </SymbolServerTargets>
+    </ItemGroup>
+
+    <Message Importance="High" Text="Publishing symbol packages to %(SymbolServerTargets.Identity)" Condition="$(PublishToSymbolServer)" />
+    <PublishSymbols PackagesToPublish="@(PackagesToPublishToSymbolServer)"
+                    FilesToPublish="@(FilesToPublishToSymbolServer)"
+                    PackageExcludeFiles="@(PackageExcludeFiles)"
+                    PersonalAccessToken="%(SymbolServerTargets.PersonalAccessToken)"
+                    SymbolServerPath="%(SymbolServerTargets.Identity)"
+                    ExpirationInDays="$(DotNetSymbolExpirationInDays)"
+                    VerboseLogging="true"
+                    DryRun="$(DryRun)"
+                    ConvertPortablePdbsToWindowsPdbs="$(ConvertPortablePdbsToWindowsPdbs)"
+                    PdbConversionTreatAsWarning=""
+                    PublishSpecialClrFiles="$(PublishSpecialClrFiles)"
+                    Condition="$(PublishToSymbolServer)"
+                    TreatPdbConversionIssuesAsInfo="$(TreatPdbConversionIssuesAsInfo)"/>
+  </Target>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SymbolUploader.Build.Task" Version="$(MicrosoftSymbolUploaderBuildTaskVersion)" />
+  </ItemGroup>
+</Project>

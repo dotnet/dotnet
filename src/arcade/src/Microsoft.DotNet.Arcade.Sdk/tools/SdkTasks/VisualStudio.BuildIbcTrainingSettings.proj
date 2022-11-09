@@ -1,0 +1,45 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project DefaultTargets="Execute">
+  <!--
+    Required parameters:
+      VisualStudioDropName                  Product drop name, e.g. 'Products/$(System.TeamProject)/$(Build.Repository.Name)/$(Build.SourceBranchName)/$(Build.BuildNumber)'
+      BootstrapperInfoPath                  Path to the BootstrapperInfo.json
+
+    Optional parameters:
+      Configuration                         Build configuration (defaults to 'Debug')
+      VisualStudioIbcTrainingSettingsPath   Path to .runsettings file to be used as a template for the generated .runsettings file.
+                                            The SessionConfiguration node is replaced with a generated value.
+
+    This project is supposed to be executed from build definition after the repository is built and VS bootstrapper produced.
+    Dependencies are expected to have been already restored as part of toolset restore (Tools.proj).
+    Ideally this would be done in AfterSigning.proj but we can't currently build VS bootstrapper from an msbuild build task 
+    as it is only available as a DevOps Pipeline task.
+  -->
+
+  <Import Project="Directory.Build.props" />
+
+  <PropertyGroup>
+    <_VisualStudioBuildTasksAssembly>$(NuGetPackageRoot)microsoft.dotnet.build.tasks.visualstudio\$(MicrosoftDotNetBuildTasksVisualStudioVersion)\tools\net472\Microsoft.DotNet.Build.Tasks.VisualStudio.dll</_VisualStudioBuildTasksAssembly>
+  </PropertyGroup>
+
+  <UsingTask AssemblyFile="$(_VisualStudioBuildTasksAssembly)" TaskName="Microsoft.DotNet.Build.Tasks.VisualStudio.GetRunSettingsSessionConfiguration"/>
+
+  <PropertyGroup>
+    <_OutputFilePath>$(VisualStudioSetupInsertionPath)OptProf\Training.runsettings</_OutputFilePath>
+    <VisualStudioIbcTrainingSettingsPath Condition="'$(VisualStudioIbcTrainingSettingsPath)' == ''">$(MSBuildThisFileDirectory)VisualStudio.IbcTraining.runsettings</VisualStudioIbcTrainingSettingsPath>
+  </PropertyGroup>
+
+  <Target Name="Execute">
+    <GetRunSettingsSessionConfiguration ConfigurationFile="$(RepositoryEngineeringDir)config\OptProf.json"
+                                        ProductDropName="$(VisualStudioDropName)"
+                                        BootstrapperInfoPath="$(BootstrapperInfoPath)">
+      <Output TaskParameter="SessionConfiguration" PropertyName="_SessionConfiguration"/>
+    </GetRunSettingsSessionConfiguration>
+
+    <Copy SourceFiles="$(VisualStudioIbcTrainingSettingsPath)" DestinationFiles="$(_OutputFilePath)" />
+
+    <XmlPoke XmlInputPath="$(_OutputFilePath)"
+             Query="/RunSettings/SessionConfiguration"
+             Value="$(_SessionConfiguration)" />
+  </Target>
+</Project>

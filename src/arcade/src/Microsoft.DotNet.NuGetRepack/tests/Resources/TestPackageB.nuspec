@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>TestPackageB</id>
+    <version>1.0.0-beta-12345-01</version>
+    <authors>Microsoft</authors>
+    <description>B</description>
+    <dependencies>
+      <dependency id="LCC" version="[1.2.0,]" />
+      <dependency id="LCO" version="[1.2.0,)" />
+      <dependency id="LOC" version="(1.2.0,]" />
+      <dependency id="LOO" version="(1.2.0,)" />
+      <dependency id="UCC" version="[,1.2.0]" />
+      <dependency id="UCO" version="[,1.2.0)" />
+      <dependency id="UOC" version="(,1.2.0]" />
+      <dependency id="UOO" version="(,1.2.0)" />
+      <dependency id="LUCC" version="[1.2.0,1.3.0]" />
+      <dependency id="LUCO" version="[1.2.0,1.3.0)" />
+      <dependency id="LUOC" version="(1.2.0,1.3.0]" />
+      <dependency id="LUOO" version="(1.2.0,1.3.0)" />
+    </dependencies>
+  </metadata>
+  <files/>
+</package>
