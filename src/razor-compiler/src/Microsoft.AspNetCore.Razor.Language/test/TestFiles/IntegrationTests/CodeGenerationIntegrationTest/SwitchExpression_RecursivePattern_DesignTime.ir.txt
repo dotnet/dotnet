@@ -1,0 +1,22 @@
+Document - 
+    NamespaceDeclaration -  - Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
+        ClassDeclaration -  - public - TestFiles_IntegrationTests_CodeGenerationIntegrationTest_SwitchExpression_RecursivePattern_DesignTime -  - 
+            DesignTimeDirective - 
+            CSharpCode - 
+                IntermediateToken -  - CSharp - #pragma warning disable 0414
+            CSharpCode - 
+                IntermediateToken -  - CSharp - private static System.Object __o = null;
+            CSharpCode - 
+                IntermediateToken -  - CSharp - #pragma warning restore 0414
+            MethodDeclaration -  - public async - System.Threading.Tasks.Task - ExecuteAsync
+                CSharpCode - (1:0,1 [69] SwitchExpression_RecursivePattern.cshtml)
+                    LazyIntermediateToken - (1:0,1 [69] SwitchExpression_RecursivePattern.cshtml) - CSharp - switch (DateTimeOffset.UtcNow)\n{\n    case { Year: 2022 }:\n        
+                HtmlContent - (70:3,8 [89] SwitchExpression_RecursivePattern.cshtml)
+                    LazyIntermediateToken - (70:3,8 [7] SwitchExpression_RecursivePattern.cshtml) - Html - <strong
+                    LazyIntermediateToken - (77:3,15 [1] SwitchExpression_RecursivePattern.cshtml) - Html - >
+                    LazyIntermediateToken - (78:3,16 [72] SwitchExpression_RecursivePattern.cshtml) - Html - Property expressions are supported by the razor syntax in the year 2022.
+                    LazyIntermediateToken - (150:3,88 [9] SwitchExpression_RecursivePattern.cshtml) - Html - </strong>
+                CSharpCode - (159:3,97 [180] SwitchExpression_RecursivePattern.cshtml)
+                    LazyIntermediateToken - (159:3,97 [180] SwitchExpression_RecursivePattern.cshtml) - CSharp - \n        break;\n    case [{ Test: true }]:\n        break;\n    case ({ Test: { Nested.Pattern: global::Qualifier } }):\n        break;\n    case global::Test:\n        break;\n}
+                HtmlContent - (339:11,1 [2] SwitchExpression_RecursivePattern.cshtml)
+                    LazyIntermediateToken - (339:11,1 [2] SwitchExpression_RecursivePattern.cshtml) - Html - \n

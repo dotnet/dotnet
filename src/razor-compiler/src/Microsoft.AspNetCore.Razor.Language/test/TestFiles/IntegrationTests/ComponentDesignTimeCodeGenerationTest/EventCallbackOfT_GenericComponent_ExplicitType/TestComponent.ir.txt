@@ -1,0 +1,26 @@
+Document - 
+    NamespaceDeclaration -  - Test
+        UsingDirective - (3:1,1 [12] ) - System
+        UsingDirective - (18:2,1 [32] ) - System.Collections.Generic
+        UsingDirective - (53:3,1 [17] ) - System.Linq
+        UsingDirective - (73:4,1 [28] ) - System.Threading.Tasks
+        UsingDirective - (104:5,1 [37] ) - Microsoft.AspNetCore.Components
+        ClassDeclaration -  - public partial - TestComponent - global::Microsoft.AspNetCore.Components.ComponentBase - 
+            DesignTimeDirective - 
+            CSharpCode - 
+                IntermediateToken -  - CSharp - #pragma warning disable 0414
+            CSharpCode - 
+                IntermediateToken -  - CSharp - private static System.Object __o = null;
+            CSharpCode - 
+                IntermediateToken -  - CSharp - #pragma warning restore 0414
+            MethodDeclaration -  - protected override - void - BuildRenderTree
+                Component - (0:0,0 [64] x:\dir\subdir\Test\TestComponent.cshtml) - MyComponent
+                    ComponentTypeArgument - (16:0,16 [6] x:\dir\subdir\Test\TestComponent.cshtml) - T
+                        LazyIntermediateToken - (16:0,16 [6] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - MyType
+                    ComponentAttribute - (33:0,33 [28] x:\dir\subdir\Test\TestComponent.cshtml) - OnClick - OnClick - AttributeStructure.DoubleQuotes
+                        CSharpExpression - (34:0,34 [27] x:\dir\subdir\Test\TestComponent.cshtml)
+                            LazyIntermediateToken - (35:0,35 [25] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - (MyType arg) => counter++
+                HtmlContent - (64:0,64 [4] x:\dir\subdir\Test\TestComponent.cshtml)
+                    LazyIntermediateToken - (64:0,64 [4] x:\dir\subdir\Test\TestComponent.cshtml) - Html - \n\n
+            CSharpCode - (75:2,7 [28] x:\dir\subdir\Test\TestComponent.cshtml)
+                LazyIntermediateToken - (75:2,7 [28] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - \n    private int counter;\n
