@@ -1,0 +1,63 @@
+steps:
+- task: UseDotNet@2
+  displayName: 'Use .NET Core sdk'
+  inputs:
+    packageType: sdk
+    version: 6.x
+    installationPath: $(Agent.TempDirectory)/dotnet
+
+- task: ShellScript@2
+  displayName: "Run Tests (continue on error)"
+  continueOnError: "true"
+  inputs:
+    scriptPath: "scripts/funcTests/runFuncTests.sh"
+    disableAutoCwd: "true"
+    cwd: "$(Build.Repository.LocalPath)"
+  condition: "and(succeeded(), eq(variables['IsOfficialBuild'], 'true'))"
+
+- task: ShellScript@2
+  displayName: "Run Tests (stop on error)"
+  continueOnError: "false"
+  inputs:
+    scriptPath: "scripts/funcTests/runFuncTests.sh"
+    disableAutoCwd: "true"
+    cwd: "$(Build.Repository.LocalPath)"
+  condition: "and(succeeded(), not(eq(variables['IsOfficialBuild'], 'true')))"
+
+- task: PublishTestResults@2
+  displayName: "Publish Test Results"
+  inputs:
+    testRunner: "VSTest"
+    testResultsFiles: "*.trx"
+    testRunTitle: "NuGet.Client Tests On Linux"
+    searchFolder: "$(Build.Repository.LocalPath)/build/TestResults"
+    mergeTestResults: "true"
+  condition: "succeededOrFailed()"
+
+- task: PublishBuildArtifacts@1
+  displayName: "Publish Test Freeze Dump"
+  inputs:
+    PathtoPublish: "$(Build.Repository.LocalPath)/build/TestResults"
+    ArtifactName: "$(Agent.JobName)"
+    ArtifactType: "Container"
+  condition: "or(failed(), canceled())"
+
+- task: PowerShell@2
+  displayName: "Initialize Git Commit Status on GitHub"
+  inputs:
+    targetType: "inline"
+    script: |
+      . $(Build.Repository.LocalPath)/scripts/utils/PostGitCommitStatus.ps1
+      SetCommitStatusForTestResult -PersonalAccessToken $(NuGetLurkerPersonalAccessToken) -VstsPersonalAccessToken $(System.AccessToken) -CommitSha $(Build.SourceVersion) -TestName "Tests On Linux"
+    failOnStderr: "true"
+  condition: "not(eq(variables['ManualGitHubChecks'], 'false'))"
+
+- task: PublishPipelineArtifact@1
+  displayName: "Publish binlogs"
+  inputs:
+    artifactName: binlog - $(System.JobDisplayName) - Attempt $(System.JobAttempt)
+    targetPath: $(Build.StagingDirectory)/binlog
+  condition: " failed() "
+
+- task: ComponentGovernanceComponentDetection@0
+  displayName: 'Component Detection'

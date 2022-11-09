@@ -147,6 +147,14 @@ To enable full offline source-building of the VMR, we have no other choice than 
     *[mono/cecil.git@1840b74](https:/github.com/mono/cecil.git/commit/1840b7410d37a613e684b6f9650e39e2d4950bbb)*
 - `src/msbuild`  
 *[dotnet/msbuild@3bcada9](https:/github.com/dotnet/msbuild/commit/3bcada934edfa09e5f68222411e3efeda407985c)*
+- `src/nuget-client`  
+*[NuGet/NuGet.Client@6038f76](https:/github.com/NuGet/NuGet.Client/commit/6038f769411b98f4efdb10a0924986eae2583618)*
+    - `src/nuget-client/submodules/Common`  
+    *[aspnet/Common.git@e6fac80](https:/github.com/aspnet/Common.git/commit/e6fac8061686c18531e2621ccef97dd5e0687a65)*
+    - `src/nuget-client/submodules/FileSystem`  
+    *[NuGet/FileSystem.git@f1f3f08](https:/github.com/NuGet/FileSystem.git/commit/f1f3f0820a573b96b2faaf5b7e6be9a036e4c7aa)*
+    - `src/nuget-client/submodules/NuGet.Build.Localization`  
+    *[NuGet/NuGet.Build.Localization.git@f15db7b](https:/github.com/NuGet/NuGet.Build.Localization.git/commit/f15db7b7c6f5affbea268632ef8333d2687c8031)*
 - `src/roslyn`  
 *[dotnet/roslyn@c9a6d5c](https:/github.com/dotnet/roslyn/commit/c9a6d5cf04904ebd2b1aaab0adb33df16c8e76a6)*
 - `src/runtime`  

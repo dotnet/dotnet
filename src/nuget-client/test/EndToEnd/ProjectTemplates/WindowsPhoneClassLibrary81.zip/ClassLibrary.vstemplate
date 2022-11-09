@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<VSTemplate Version="3.0.0" Type="Project" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005">
+  <TemplateData>
+    <Name Package="{91DFF702-E034-4CE2-9EE6-A5BF33341908}" ID="1000" />
+    <Description Package="{91DFF702-E034-4CE2-9EE6-A5BF33341908}" ID="1001" />
+    <Icon Package="{91DFF702-E034-4CE2-9EE6-A5BF33341908}" ID="4005" />
+    <TemplateID>Microsoft.CS.WindowsPhoneApp.ClassLibrary</TemplateID>
+    <TemplateGroupID>WindowsPhoneApp-Managed-Win81</TemplateGroupID>
+    <ProjectType>CSharp</ProjectType>
+    <SortOrder>48</SortOrder>
+    <NumberOfParentCategoriesToRollUp>0</NumberOfParentCategoriesToRollUp>
+    <CreateNewFolder>true</CreateNewFolder>
+    <DefaultName>ClassLibrary</DefaultName>
+    <ProvideDefaultName>true</ProvideDefaultName>
+    <TargetPlatformName>Windows</TargetPlatformName>
+    <RequiredPlatformVersion>6.3.0</RequiredPlatformVersion>
+    <CreateInPlace>true</CreateInPlace>
+    <AppIdFilter>blend</AppIdFilter>
+  </TemplateData>
+  <TemplateContent>
+    <Project File="ClassLibrary.csproj" ReplaceParameters="true">
+      <ProjectItem ReplaceParameters="true" TargetFileName="Properties\AssemblyInfo.cs">AssemblyInfo.cs</ProjectItem>
+      <ProjectItem ReplaceParameters="true" OpenInEditor="true">Class1.cs</ProjectItem>
+    </Project>
+  </TemplateContent>
+</VSTemplate>

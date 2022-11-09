@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <version>1.2.0.0</version>
+    <authors>Daniel Cazzulino</authors>
+    <owners>Daniel Cazzulino</owners>
+    <licenseUrl>http://netfx.codeplex.com/license</licenseUrl>
+    <projectUrl>http://netfx.codeplex.com</projectUrl>
+    <id>netfx-Guard</id>
+    <title>NETFx Guard</title>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Provides the argument validation class Guard and its accompanying code snippets notnull and notempty.</description>
+    <language>en-US</language>
+    <tags>netfx validation</tags>
+  </metadata>
+  <files>
+    <file src="content\netfx\System\Guard.cs" target="content\netfx\System\Guard.cs" />
+    <file src="tools\init.ps1" target="tools\init.ps1" />
+    <file src="tools\install.ps1" target="tools\install.ps1" />
+    <file src="tools\notempty.snippet" target="tools\notempty.snippet" />
+    <file src="tools\notnull.snippet" target="tools\notnull.snippet" />
+    <file src="tools\uninstall.ps1" target="tools\uninstall.ps1" />
+    <file src="License.txt" target="License.txt" />
+  </files>
+</package>

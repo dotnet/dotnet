@@ -1,0 +1,27 @@
+﻿<VSTemplate Version="3.0.0" Type="Project" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005">
+    <TemplateData>
+        <Name Package="{39c9c826-8ef8-4079-8c95-428f5b1c323f}" ID="3006" />
+        <Description Package="{39c9c826-8ef8-4079-8c95-428f5b1c323f}" ID="3007"/>
+        <Icon Package="{39c9c826-8ef8-4079-8c95-428f5b1c323f}" ID="4700"/>
+        <TemplateID>Microsoft.Web.CSharp.EmptyWeb</TemplateID>
+        <ProjectType>Web</ProjectType>
+        <ProjectSubType>CSharp</ProjectSubType>
+        <SortOrder>50</SortOrder>
+        <RequiredFrameworkVersion>2.0</RequiredFrameworkVersion>
+        <CreateNewFolder>true</CreateNewFolder>
+        <DefaultName>WebSite</DefaultName>
+        <ProvideDefaultName>true</ProvideDefaultName>
+        <PromptForSaveOnCreation>true</PromptForSaveOnCreation>
+        <EnableLocationBrowseButton>true</EnableLocationBrowseButton>
+        <LocationField>Hidden</LocationField>
+    </TemplateData>
+    <TemplateContent>
+        <Project File="EmptyWeb.webproj" ReplaceParameters="true">
+            <ProjectItem ReplaceParameters="true">web.config</ProjectItem>
+        </Project>
+    </TemplateContent>
+    <WizardExtension>
+        <Assembly>Microsoft.VisualStudio.Web, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</Assembly>
+        <FullClassName>Microsoft.VisualStudio.Web.Wizard.EmptyWebTemplateWizard</FullClassName>
+    </WizardExtension>
+</VSTemplate>

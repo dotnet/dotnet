@@ -1,0 +1,436 @@
+<UserControl x:Class="NuGet.PackageManagement.UI.SolutionView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:NuGet.PackageManagement.UI"
+             mc:Ignorable="d"
+             DataContextChanged="SolutionView_DataContextChanged"
+             d:DesignHeight="300" d:DesignWidth="500">
+  <UserControl.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <local:SharedResources />
+      </ResourceDictionary.MergedDictionaries>
+      <local:InstalledVersionsCountConverter
+        x:Key="InstalledVersionsCountConverter" />
+      <local:TooltipConverter
+        x:Key="TooltipConverter" />
+      <local:NotNullToBooleanConverter
+        x:Key="NotNullToBooleanConverter" />
+      <ControlTemplate
+        x:Key="SeparatorControlTemplate">
+        <Separator
+            HorizontalAlignment="Stretch"
+            IsEnabled="False" />
+      </ControlTemplate>
+
+      <!-- style of the list view headers -->
+      <Style x:Uid="Style_1" x:Key="GridViewColumnHeaderGripper" TargetType="{x:Type Thumb}">
+        <Setter x:Uid="Setter_1" Property="Canvas.Right" Value="-8.5" />
+        <Setter x:Uid="Setter_2" Property="Width" Value="18" />
+        <Setter x:Uid="Setter_3" Property="Height" Value="{Binding Path=ActualHeight, RelativeSource={RelativeSource TemplatedParent}}" />
+        <Setter x:Uid="Setter_4" Property="Background" Value="{DynamicResource {x:Static local:Brushes.HeaderColorsSeparatorLineBrushKey}}" />
+        <Setter x:Uid="Setter_5" Property="Template">
+          <Setter.Value>
+            <ControlTemplate x:Uid="ControlTemplate_1" TargetType="{x:Type Thumb}">
+              <Border x:Uid="Border_1" Background="Transparent" Padding="{TemplateBinding Padding}">
+                <Rectangle x:Uid="Rectangle_1" HorizontalAlignment="Center" Width="1" Fill="{TemplateBinding Background}" />
+              </Border>
+            </ControlTemplate>
+          </Setter.Value>
+        </Setter>
+      </Style>
+      <Style x:Uid="Style_2" x:Key="GridViewColumnHeaderStyle" TargetType="{x:Type GridViewColumnHeader}">
+        <Setter x:Uid="Setter_6" Property="Background" Value="{DynamicResource {x:Static local:Brushes.HeaderColorsDefaultBrushKey}}" />
+        <Setter x:Uid="Setter_7" Property="BorderBrush" Value="{DynamicResource {x:Static local:Brushes.HeaderColorsSeparatorLineBrushKey}}" />
+        <Setter x:Uid="Setter_8" Property="Foreground" Value="{DynamicResource {x:Static local:Brushes.HeaderColorsDefaultTextBrushKey}}" />
+        <Setter x:Uid="Setter_9" Property="BorderThickness" Value="0,1,0,1" />
+        <Setter x:Uid="Setter_10" Property="Padding" Value="4,2,4,2" />
+        <Setter x:Uid="Setter_20" Property="FocusVisualStyle" Value="{DynamicResource MarginFocusVisualStyle}"/>
+        <Setter x:Uid="Setter_11" Property="Template">
+          <Setter.Value>
+            <ControlTemplate x:Uid="ControlTemplate_2" TargetType="{x:Type GridViewColumnHeader}">
+              <Grid x:Uid="Grid_1">
+                <Border x:Uid="Border_2"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Padding="{TemplateBinding Padding}">
+                  <ContentPresenter
+                    x:Uid="ContentPresenter_1"
+                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
+                </Border>
+                <Canvas x:Uid="Canvas_1">
+                  <Thumb x:Uid="PART_HeaderGripper" x:Name="PART_HeaderGripper" Style="{StaticResource GridViewColumnHeaderGripper}" />
+                </Canvas>
+              </Grid>
+              <ControlTemplate.Triggers>
+                <Trigger x:Uid="Trigger_1" Property="IsMouseOver"  Value="True">
+                  <Setter x:Uid="Setter_12" Property="Background" Value="{DynamicResource {x:Static local:Brushes.HeaderColorsMouseOverBrushKey}}" />
+                  <Setter x:Uid="Setter_13" Property="Foreground" Value="{DynamicResource {x:Static local:Brushes.HeaderColorsMouseOverTextBrushKey}}" />
+                  <Setter x:Uid="Setter_14" TargetName="PART_HeaderGripper" Property="Background" Value="Transparent" />
+                </Trigger>
+                <Trigger x:Uid="Trigger_2" Property="IsPressed" Value="True">
+                  <Setter x:Uid="Setter_15" Property="Background" Value="{DynamicResource {x:Static local:Brushes.HeaderColorsMouseDownBrushKey}}" />
+                  <Setter x:Uid="Setter_16" Property="Foreground" Value="{DynamicResource {x:Static local:Brushes.HeaderColorsMouseDownTextBrushKey}}" />
+                  <Setter x:Uid="Setter_17" TargetName="PART_HeaderGripper" Property="Visibility" Value="Hidden" />
+                </Trigger>
+                <Trigger x:Uid="Trigger_3" Property="Role" Value="Padding">
+                  <Setter x:Uid="Setter_18" TargetName="PART_HeaderGripper" Property="Visibility" Value="Collapsed" />
+                </Trigger>
+                <Trigger x:Uid="Trigger_4" Property="Role" Value="Floating">
+                  <Setter x:Uid="Setter_19" TargetName="PART_HeaderGripper" Property="Visibility" Value="Collapsed" />
+                </Trigger>
+              </ControlTemplate.Triggers>
+            </ControlTemplate>
+          </Setter.Value>
+        </Setter>
+      </Style>
+
+      <!-- the style of the list view items -->
+      <Style x:Key="ListViewItemFocusVisual" TargetType="{x:Type Control}" BasedOn="{StaticResource ControlsFocusVisualStyle}">
+        <Setter Property="Margin" Value="2"/>
+      </Style>
+      <Style x:Key="ListViewItemStyle1" TargetType="{x:Type ListViewItem}">
+        <Setter Property="Background" Value="{DynamicResource {x:Static local:Brushes.ListPaneBackground}}" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static local:Brushes.UIText}}" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+          <Setter.Value>
+            <ControlTemplate TargetType="{x:Type ListViewItem}">
+              <Border
+                BorderThickness="0"
+                Background="{TemplateBinding Background}"
+                SnapsToDevicePixels="true"
+                Padding="0,2,0,2">
+                <GridViewRowPresenter
+                  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+              </Border>
+              <ControlTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="true">
+                  <Setter
+                    Property="Background"
+                    Value="{DynamicResource {x:Static local:Brushes.ContentMouseOverBrushKey}}" />
+                  <Setter
+                    Property="TextBlock.Foreground"
+                    Value="{DynamicResource {x:Static local:Brushes.ContentMouseOverTextBrushKey}}" />
+                </Trigger>
+                <Trigger Property="IsSelected" Value="true">
+                  <Setter
+                    Property="Background"
+                    Value="{DynamicResource {x:Static local:Brushes.ContentSelectedBrushKey}}" />
+                  <Setter
+                    Property="TextBlock.Foreground"
+                    Value="{DynamicResource {x:Static local:Brushes.ContentSelectedTextBrushKey}}" />
+                </Trigger>
+
+                <MultiTrigger>
+                  <MultiTrigger.Conditions>
+                    <Condition Property="IsSelected" Value="true" />
+                    <Condition Property="Selector.IsSelectionActive" Value="false" />
+                  </MultiTrigger.Conditions>
+                  <Setter
+                    Property="Background"
+                    Value="{DynamicResource {x:Static local:Brushes.ContentInactiveSelectedBrushKey}}" />
+                  <Setter
+                    Property="TextBlock.Foreground"
+                    Value="{DynamicResource {x:Static local:Brushes.ContentInactiveSelectedTextBrushKey}}" />
+                </MultiTrigger>
+              </ControlTemplate.Triggers>
+            </ControlTemplate>
+          </Setter.Value>
+        </Setter>
+      </Style>
+      <Style x:Key="InstalledTextBoxStyle" TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static local:Brushes.UIText}}"/>
+        <Setter Property="Template">
+          <Setter.Value>
+            <ControlTemplate TargetType="{x:Type TextBox}">
+              <Border
+                x:Name="border"
+                BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}"
+                Background="{TemplateBinding Background}"
+                SnapsToDevicePixels="True">
+                <ScrollViewer
+                  VerticalAlignment="Center" 
+                  x:Name="PART_ContentHost"
+                  Focusable="false"
+                  HorizontalScrollBarVisibility="Disabled" 
+                  VerticalScrollBarVisibility="Disabled"/>
+              </Border>
+            </ControlTemplate>
+          </Setter.Value>
+        </Setter>
+      </Style>
+    </ResourceDictionary>
+  </UserControl.Resources>
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="auto" />
+      <RowDefinition Height="*" />
+      <RowDefinition Height="auto" />
+    </Grid.RowDefinitions>
+
+    <TextBlock
+      x:Name="_installedVersionsCount"
+      Grid.Row="0"
+      Text="{Binding InstalledVersionsCount, Converter={StaticResource InstalledVersionsCountConverter}}" />
+
+    <local:ProjectsListView
+      Grid.Row="1"
+      x:Name="_projectList"
+      Margin="0,8,0,0"
+      ScrollViewer.VerticalScrollBarVisibility="Auto"
+      PreviewKeyUp="ProjectList_PreviewKeyUp"
+      ItemsSource="{Binding Projects}"
+      Background="{DynamicResource {x:Static local:Brushes.ListPaneBackground}}"
+      Foreground="{DynamicResource {x:Static local:Brushes.UIText}}"
+      AutomationProperties.LabeledBy="{Binding ElementName=_installedVersionsCount}"
+      KeyboardNavigation.TabNavigation="Local"
+      SelectionMode="Single">
+
+      <ListView.Style>
+        <Style TargetType="{x:Type ListView}">
+          <Setter Property="Template">
+            <Setter.Value>
+              <ControlTemplate TargetType="{x:Type ListView}">
+                <Border
+                  x:Name="Bd"
+                  BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="{TemplateBinding BorderThickness}"
+                  Background="{TemplateBinding Background}"
+                  SnapsToDevicePixels="true">
+                  <ScrollViewer Padding="{TemplateBinding Padding}"
+                                BorderBrush="{DynamicResource {x:Static local:Brushes.ListPaneBackground}}"
+                                Background="{DynamicResource {x:Static local:Brushes.ListPaneBackground}}"
+                                Style="{DynamicResource {x:Static GridView.GridViewScrollViewerStyleKey}}">
+                    <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+                      <ItemsPresenter.Resources>
+                        <Style TargetType="{x:Type Grid}">
+                          <Setter Property="Background" Value="{DynamicResource {x:Static local:Brushes.ListPaneBackground}}" />
+                        </Style>
+                      </ItemsPresenter.Resources>
+                    </ItemsPresenter>
+                  </ScrollViewer>
+                </Border>
+                <ControlTemplate.Triggers>
+                  <MultiTrigger>
+                    <MultiTrigger.Conditions>
+                      <Condition Property="IsGrouping" Value="true"/>
+                      <Condition Property="VirtualizingPanel.IsVirtualizingWhenGrouping" Value="false"/>
+                    </MultiTrigger.Conditions>
+                    <Setter Property="ScrollViewer.CanContentScroll" Value="false"/>
+                  </MultiTrigger>
+                </ControlTemplate.Triggers>
+              </ControlTemplate>
+            </Setter.Value>
+          </Setter>
+        </Style>
+      </ListView.Style>
+
+      <!-- set the list view item style -->
+      <ListView.ItemContainerStyle>
+        <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource ListViewItemStyle1}" >
+          <Setter Property="FocusVisualStyle" Value="{DynamicResource ListViewItemFocusVisual}"/>
+          <Setter Property="IsTabStop" Value="True"/>
+        </Style>
+      </ListView.ItemContainerStyle>
+
+      <ListView.View>
+        <GridView x:Name="_gridProjects" ColumnHeaderContainerStyle="{StaticResource GridViewColumnHeaderStyle}">
+          <!-- checkbox column -->
+          <GridViewColumn>
+            <GridViewColumn.Header>
+              <GridViewColumnHeader
+                HorizontalContentAlignment="Left"
+                AutomationProperties.Name="{x:Static local:Resources.ColumnHeader_Selected}">
+                <CheckBox
+                  KeyboardNavigation.TabIndex="0"
+                  FocusVisualStyle="{DynamicResource ListViewItemFocusVisual}"
+                  AutomationProperties.AutomationId="SolutionViewCheckBox"
+                  IsChecked="{Binding SelectCheckBoxState}"
+                  Checked="CheckBox_Checked"
+                  Unchecked="CheckBox_Unchecked"
+                  AutomationProperties.Name="{x:Static local:Resources.CheckBox_SelectAllProjects}"
+                  AutomationProperties.HelpText="{x:Static local:Resources.CheckBox_SelectAllProjects_HelpText}"/>
+              </GridViewColumnHeader>
+            </GridViewColumn.Header>
+
+            <GridViewColumn.CellTemplate>
+              <DataTemplate>
+                <CheckBox
+                  IsTabStop="False"
+                  AutomationProperties.AutomationId="{Binding ProjectName, Mode=OneWay, StringFormat='ProjectCheckBox_{0}'}"
+                  IsChecked="{Binding IsSelected}"
+                  Checked="ItemCheckBox_Toggled"
+                  Unchecked="ItemCheckBox_Toggled"
+                  AutomationProperties.Name="{Binding ProjectName, Mode=OneWay}"
+                  AutomationProperties.HelpText="{Binding ProjectName, Mode=OneWay, StringFormat='{x:Static local:Resources.CheckBox_SelectProject_HelpText}'}"/>
+              </DataTemplate>
+            </GridViewColumn.CellTemplate>
+          </GridViewColumn>
+
+          <!-- the project column -->
+          <GridViewColumn x:Name="_projectColumn">
+            <GridViewColumnHeader
+              x:Name="_projectColumnHeader"
+              Content="{x:Static local:Resources.ColumnHeader_Project}"
+              AutomationProperties.Name="{x:Static local:Resources.ColumnHeader_Project}"
+              local:SortableColumnHeaderAttachedProperties.SortPropertyName="ProjectName"
+              Click="ColumnHeader_Clicked"
+              HorizontalContentAlignment="Left"
+              SizeChanged="SortableColumnHeader_SizeChanged"
+              KeyboardNavigation.TabIndex="1"
+              PreviewKeyUp="SortableColumnHeader_PreviewKeyUp"
+              Focusable="True"
+              IsTabStop="True"
+              FocusVisualStyle="{DynamicResource ControlsFocusVisualStyle}"/>
+            <GridViewColumn.CellTemplate>
+              <DataTemplate>
+                <StackPanel Orientation="Horizontal">
+                  <TextBlock
+                    Text="{Binding ProjectName}" />
+                </StackPanel>
+              </DataTemplate>
+            </GridViewColumn.CellTemplate>
+          </GridViewColumn>
+
+          <!-- the version column may be inserted here dynamically from code -->
+
+          <!-- the installed column -->
+          <GridViewColumn
+            DisplayMemberBinding="{Binding InstalledVersion, Converter={StaticResource VersionToStringConverter}}">
+            <GridViewColumn.Header>
+              <GridViewColumnHeader
+                AutomationProperties.Name="{x:Static local:Resources.ColumnHeader_InstalledVersion}"
+                x:Name="_installedVersionColumnHeader"
+                Click="ColumnHeader_Clicked"
+                Content="{x:Static local:Resources.ColumnHeader_InstalledVersion}"
+                local:SortableColumnHeaderAttachedProperties.SortPropertyName="InstalledVersion"
+                HorizontalContentAlignment="Left"
+                SizeChanged="SortableColumnHeader_SizeChanged"
+                PreviewKeyUp="SortableColumnHeader_PreviewKeyUp"
+                Focusable="True"
+                IsTabStop="True"
+                FocusVisualStyle="{DynamicResource ControlsFocusVisualStyle}"/>
+            </GridViewColumn.Header>
+          </GridViewColumn>
+        </GridView>
+      </ListView.View>
+    </local:ProjectsListView>
+
+    <Grid
+      Grid.Row="2"
+      Margin="0,10,0,0">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="auto" />
+        <RowDefinition Height="10" />
+        <RowDefinition Height="auto" />
+      </Grid.RowDefinitions>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="auto" />
+        <ColumnDefinition Width="6" />
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="6" />
+        <ColumnDefinition Width="auto" />
+      </Grid.ColumnDefinitions>
+
+      <!-- row 0 -->
+      <TextBlock
+        Grid.Row="0"
+        Grid.Column="0"
+        FontWeight="Bold"
+        VerticalAlignment="Center"
+        Text="{x:Static local:Resources.Label_InstalledColon}" />
+
+      <TextBox
+          FocusVisualStyle="{DynamicResource MarginFocusVisualStyle}"
+          Grid.Row="0"
+          Grid.Column="2"
+          VerticalAlignment="Center"
+          Style="{StaticResource InstalledTextBoxStyle}"
+          Background="{x:Null}"
+          IsReadOnly="true"
+          BorderBrush="{DynamicResource {x:Static local:Brushes.ComboBoxBorderKey}}"
+          BorderThickness="1"
+          MinHeight="24"
+          AutomationProperties.AutomationId="InstalledVersion"
+          AutomationProperties.Name="{x:Static local:Resources.Version_Installed}"
+          Margin="0"
+          Focusable="True"
+          Text="{Binding InstalledVersions}" />
+
+      <Button
+        x:Name="_uninstallButton"
+        Grid.Row="0"
+        Grid.Column="4"
+        MinWidth="100"
+        MinHeight="24"
+        HorizontalAlignment="Left"
+        AutomationProperties.AutomationId="Solution_Button_Uninstall"
+        Visibility="{Binding InstalledVersion, Converter={StaticResource NullToVisibilityConverter}}"
+        IsEnabled="{Binding CanUninstall}"
+        Click="UninstallButton_Clicked"
+        Content="{x:Static local:Resources.Button_Uninstall}" />
+
+      <!-- Row 2 -->
+      <TextBlock
+        Grid.Row="2"
+        Grid.Column="0"
+        FontWeight="Bold"
+        VerticalAlignment="Center"
+        Text="{x:Static local:Resources.Label_Version}" />
+
+      <ComboBox
+        x:Name="_versions"
+        Grid.Row="2"
+        Grid.Column="2"
+        MinWidth="150"
+        MinHeight="22"
+        AutomationProperties.Name="{x:Static local:Resources.Label_Version}"
+        ItemsSource="{Binding Path=Versions}"
+        SelectedItem="{Binding Path=SelectedVersion}">
+
+        <ComboBox.ItemContainerStyle>
+          <Style TargetType="{x:Type ComboBoxItem}" BasedOn="{StaticResource {x:Type ComboBoxItem}}">
+            <Style.Triggers>
+              <DataTrigger 
+                        Binding="{Binding Converter={StaticResource NotNullToBooleanConverter}}"
+                        Value="True" >
+                <Setter 
+                            Property="ToolTipService.ShowOnDisabled"
+                            Value="True" />
+                <Setter 
+                            Property="ToolTip" 
+                            Value="{Binding Converter={StaticResource TooltipConverter}}" />
+                <Setter
+                            Property="IsEnabled"
+                            Value="{Binding IsValidVersion}" />
+              </DataTrigger>
+            </Style.Triggers>
+          </Style>
+        </ComboBox.ItemContainerStyle>
+      </ComboBox>
+
+      <!-- install button -->
+      <Button
+        x:Name="_installButton"
+        Grid.Row="2"
+        Grid.Column="4"
+        MinWidth="100"
+        MinHeight="24"
+        HorizontalAlignment="Left"
+        AutomationProperties.AutomationId="Solution_Button_Install"
+        Click="InstallButton_Clicked"
+        IsEnabled="{Binding CanInstall}"
+        Content="{x:Static local:Resources.Button_Install}" />
+    </Grid>
+  </Grid>
+</UserControl>

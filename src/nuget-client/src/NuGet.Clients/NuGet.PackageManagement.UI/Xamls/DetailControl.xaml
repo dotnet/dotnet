@@ -1,0 +1,227 @@
+<UserControl
+  x:Class="NuGet.PackageManagement.UI.DetailControl"
+  xmlns:nuget="clr-namespace:NuGet.PackageManagement.UI"
+  xmlns:nugettel="clr-namespace:NuGet.PackageManagement.Telemetry;assembly=NuGet.PackageManagement.VisualStudio"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:imaging="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.Imaging"
+  xmlns:catalog="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.ImageCatalog"
+  Background="{Binding UIBrushes.DetailPaneBackground }"
+  x:Name="_self"
+  mc:Ignorable="d"
+  d:DesignHeight="600"
+  d:DesignWidth="400">
+  <UserControl.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <nuget:SharedResources/>
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+  </UserControl.Resources>
+  <UserControl.CommandBindings>
+    <CommandBinding
+      Command="{x:Static nuget:PackageManagerControlCommands.OpenExternalLink}"
+      Executed="ExecuteOpenExternalLink" />
+  </UserControl.CommandBindings>
+  <ScrollViewer
+    x:Name="_root"
+    HorizontalScrollBarVisibility="Disabled"
+    AutomationProperties.Name="{Binding Text, ElementName=_packageId}">
+    <Grid
+      Margin="24,0,7,0">
+      <Grid.RowDefinitions>
+        <RowDefinition
+          Height="Auto" />
+        <RowDefinition
+          Height="{Binding Path=IsSolution, Converter={StaticResource ProjectAndSolutionViewHeightConverter}}"
+          MinHeight="{Binding Path=IsSolution, Converter={StaticResource ProjectAndSolutionViewMinHeightConverter}}" />
+        <RowDefinition
+          Height="Auto" />
+        <RowDefinition
+          Height="Auto" />
+        <RowDefinition
+          Height="Auto" />
+        <RowDefinition
+          Height="Auto" />
+        <RowDefinition
+          Height="Auto" />
+        <RowDefinition
+          Height="Auto" />
+        <RowDefinition
+          Height="Auto" />
+      </Grid.RowDefinitions>
+
+      <!-- Icon and Id -->
+      <Grid
+        Grid.Row="0"
+        MinHeight="32"
+        Margin="0,8">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="auto"/>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="auto"/>
+        </Grid.ColumnDefinitions>
+        <Image
+          Grid.Column="0"
+          Margin="0,0,8,0"
+          AutomationProperties.Name="{x:Static nuget:Resources.Accessibility_PackageIcon}"
+          Style="{StaticResource PackageIconImageStyle}" />
+        <Grid
+          Grid.Column="1">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="auto"/>
+          </Grid.ColumnDefinitions>
+          <TextBox
+            Grid.Column="0"
+            Name="_packageId"
+            AutomationProperties.Name="{Binding Path=Id, Mode=OneWay}"
+            Style="{DynamicResource SelectableTextBlockStyle}"
+            Text="{Binding Path=Id, Mode=OneWay}"
+            FontSize="{Binding ElementName=_self,Path=FontSize,Converter={StaticResource Font155PercentSizeConverter}}" />
+          <imaging:CrispImage
+            Grid.Column="1"
+            x:Name="_prefixReservedMark"
+            Grid.Row="0"
+            Margin="5,7,0,0"
+            Width="16"
+            Height="16"
+            VerticalAlignment="Top"
+            AutomationProperties.Name="{x:Static nuget:Resources.Accessibility_PrefixReserved}"
+            Visibility="{Binding Path=PrefixReserved, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+            ToolTip="{x:Static nuget:Resources.Tooltip_PrefixReserved}"
+            Moniker="{x:Static nuget:PackageIconMonikers.PrefixReservedIndicator}" />
+        </Grid>
+        <Grid
+          Grid.Column="2"
+          Grid.Row="0"
+          Visibility="{Binding Path=PackageMetadata.PackageDetailsUrl, FallbackValue=Collapsed, Converter={StaticResource NullToVisibilityConverter}}">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="auto"/>
+          </Grid.ColumnDefinitions>
+          <imaging:CrispImage
+            x:Name="_packageDetailsUrlIcon"
+            Width="20"
+            Height="20"
+            Grid.Column="0"
+            VerticalAlignment="Top"
+            Margin="0,5,0,0"
+            AutomationProperties.Name="{x:Static nuget:Resources.Accessibility_PackageDetailsUrlIcon}"
+            Moniker="{x:Static catalog:KnownMonikers.OpenWebSite}" />
+          <TextBlock
+            x:Name="_packageDetailsUrlLink"
+            Grid.Column="1"
+            VerticalAlignment="Top"
+            Margin="5,7,0,0">
+            <Hyperlink
+              NavigateUri="{Binding Path=PackageMetadata.PackageDetailsUrl}"
+              Style="{StaticResource HyperlinkStyle}"
+              ToolTip="{Binding Path=PackageMetadata.PackageDetailsUrl}"
+              AutomationProperties.LabeledBy="{Binding ElementName=_packageDetailsUrlIcon}"
+              Command="{x:Static nuget:PackageManagerControlCommands.OpenExternalLink}"
+              CommandParameter="{x:Static nugettel:HyperlinkType.Header}">
+              <Run Text="{Binding Path=PackageMetadata.PackageDetailsText}" />
+            </Hyperlink>
+          </TextBlock>
+        </Grid>
+      </Grid>
+
+      <!-- project action when in project package manager -->
+      <nuget:ProjectView
+        Grid.Row="1"
+        Margin="0,8"
+        x:Name="_projectView"
+        Visibility="{Binding Path=IsSolution, Converter={StaticResource NegatedBooleanToVisibilityConverter}}" />
+
+      <!-- solution view when in solution package manager -->
+      <nuget:SolutionView
+        AutomationProperties.AutomationId="SolutionView"
+        x:Name="_solutionView"
+        Grid.Row="1"
+        Margin="0,8"
+        Visibility="{Binding Path=IsSolution,Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+      <!-- the splitter is shown when in solution package manager -->
+      <GridSplitter
+        Grid.Row="2"
+        Height="4"
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Top"
+        Margin="-24,0,-7,12"
+        AutomationProperties.Name="{x:Static nuget:Resources.Accessibility_ThumbName}"
+        AutomationProperties.HelpText="{x:Static nuget:Resources.Accessibility_ThumbHelp}"
+        Visibility="{Binding Path=IsSolution,Converter={StaticResource BooleanToVisibilityConverter}}"
+        Background="{DynamicResource {x:Static nuget:Brushes.SplitterBackgroundKey}}"
+        BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"
+        BorderThickness="0,1" />
+
+      <!-- vulnerabilities info -->
+      <Border
+        Grid.Row="3"
+        Margin="0,11,0,0"
+        BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"
+        Visibility="{Binding Path=IsPackageVulnerable,Converter={StaticResource BooleanToVisibilityConverter}}"
+        BorderThickness="0,1,0,0">
+        <Grid>
+          <nuget:VulnerabilitiesControl
+            x:Name="_vulnerabilitiesControl"
+            DataContext="{Binding}"
+            AutomationProperties.Name="{x:Static nuget:Resources.Accessibility_PackageVulnerabilities}" />
+        </Grid>
+      </Border>
+
+      <!-- deprecation info -->
+      <Border
+        Grid.Row="4"
+        Margin="0,11,0,0"
+        BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"
+        Visibility="{Binding Path=IsPackageDeprecated,Converter={StaticResource BooleanToVisibilityConverter}}"
+        BorderThickness="0,1,0,0">
+        <Grid>
+          <nuget:DeprecationControl
+            x:Name="_deprecationControl"
+            DataContext="{Binding}"
+            AutomationProperties.Name="{x:Static nuget:Resources.Accessibility_PackageDeprecation}" />
+        </Grid>
+      </Border>
+
+      <!-- options -->
+      <Border
+        Grid.Row="5"
+        BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"
+        BorderThickness="0,1,0,1">
+        <Grid>
+          <TextBlock
+            x:Name="_optionsBlockedTextBox"
+            Margin="0,12,0,16"
+            TextWrapping="WrapWithOverflow"
+            AutomationProperties.Name="{Binding OptionsBlockedMessage}"
+            Visibility="{Binding Path=OptionsBlockedMessage,Converter={StaticResource NullToVisibilityConverter}}">
+            <Run Text="{Binding OptionsBlockedMessage}"/>
+            <Hyperlink
+              NavigateUri="{Binding Path=OptionsBlockedUrl}"
+              Style="{StaticResource HyperlinkStyle}"
+              Command="{x:Static nuget:PackageManagerControlCommands.OpenExternalLink}"
+              CommandParameter="{x:Static nugettel:HyperlinkType.OptionsBlocked}">
+              <Run Text="{Binding Path=OptionsBlockedUrlText}" />
+            </Hyperlink>
+          </TextBlock>
+          <nuget:OptionsControl
+            x:Name="_optionsControl"
+            Margin="0,12,0,16"
+            DataContext="{Binding}"
+            Visibility="{Binding Path=OptionsBlockedMessage,Converter={StaticResource InverseNullToVisibilityConverter}}" />
+        </Grid>
+      </Border>
+      
+      <nuget:PackageMetadataControl
+        Grid.Row="7"
+        AutomationProperties.Name="{x:Static nuget:Resources.Accessibility_PackageMetadata}"
+        Margin="0,12,0,0"
+        DataContext="{Binding PackageMetadata}" />
+    </Grid>
+  </ScrollViewer>
+</UserControl>

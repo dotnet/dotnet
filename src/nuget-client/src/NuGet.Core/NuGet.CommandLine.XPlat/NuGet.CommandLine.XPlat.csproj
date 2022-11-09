@@ -1,0 +1,75 @@
+<Project>
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), 'NuGet.sln'))\build\common.props" />
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+
+  <PropertyGroup>
+    <Description>NuGet executable wrapper for the dotnet CLI nuget functionality.</Description>
+    <TargetFrameworks>$(TargetFrameworksExeForSigning)</TargetFrameworks>
+    <RuntimeIdentifier Condition=" '$(TargetFramework)' == '$(NETFXTargetFramework)' ">win7-x86</RuntimeIdentifier>
+    <NoWarn>$(NoWarn);CS1591;CS1701;NU5104;CA1307;CA2000;NU1505</NoWarn> <!-- Remove NU1505 NoWarn when https://github.com/dotnet/sdk/issues/24747 is fixed -->
+    <OutputType>Exe</OutputType>
+    <Shipping>true</Shipping>
+    <PackProject>true</PackProject>
+    <XPLATProject>true</XPLATProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Commands\NuGet.Commands.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.CommandLineUtils.Sources" PrivateAssets="All" />
+    <PackageReference Include="System.Diagnostics.Debug" />
+    <PackageReference Include="Microsoft.Build" ExcludeAssets="runtime" />
+  </ItemGroup>
+
+<!-- Microsoft.Build.Locator is only used when debugging, and the compiler will skip copying this dependency from Release assemblies we insert because we only refer to it conditionally with the DEBUG configuration.
+  Uncomment the following when debugging. Also uncomment the MSBuildLocator code from Program.cs -->
+  <!-- <ItemGroup>
+    <PackageReference Include="Microsoft.Build.Locator" PrivateAssets="All" />
+  </ItemGroup> -->
+
+  <ItemGroup>
+    <Compile Remove="external\*" />
+    <Compile Update="Commands\Verbs.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Verbs.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Commands\CommandParsers.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>CommandParsers.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Strings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Strings.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Strings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Commands\Verbs.tt">
+      <LastGenOutput>Verbs.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+    <None Update="Commands\CommandParsers.tt">
+      <LastGenOutput>CommandParsers.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+  </ItemGroup>
+
+  <Import Project="$(BuildCommonDirectory)common.targets" />
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+</Project>

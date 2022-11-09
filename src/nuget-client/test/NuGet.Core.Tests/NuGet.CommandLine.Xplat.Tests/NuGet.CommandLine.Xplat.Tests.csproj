@@ -1,0 +1,29 @@
+<Project>
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), 'NuGet.sln'))\build\common.test.props" />
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+
+  <PropertyGroup>
+    <TargetFrameworks>$(TargetFrameworksExeForSigning)</TargetFrameworks>
+    <UseParallelXunit>true</UseParallelXunit>
+    <Description>Unit tests for NuGet.CommandLine.XPlat.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(TestUtilitiesDirectory)Test.Utility\Test.Utility.csproj" />
+    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.CommandLine.XPlat\NuGet.CommandLine.XPlat.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.IO.Compression" />
+  </ItemGroup>
+
+  <ItemGroup>
+      <PackageReference Include="Microsoft.Build" ExcludeAssets="runtime" />
+      <PackageReference Include="Microsoft.Build.Framework" ExcludeAssets="runtime" />
+      <PackageReference Include="Microsoft.Build.Locator" />
+      <PackageReference Include="System.Memory" />
+  </ItemGroup>
+  
+  <Import Project="$(BuildCommonDirectory)common.targets" />
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+</Project>

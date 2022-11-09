@@ -1,0 +1,60 @@
+steps:
+- task: PowerShell@1
+  displayName: "Check VSTS Personal Access Token"
+  inputs:
+    scriptType: "inlineScript"
+    inlineScript: |
+      . $(Build.Repository.LocalPath)\\scripts\\utils\\PostGitCommitStatus.ps1
+      CheckVstsPersonalAccessToken -VstsPersonalAccessToken $(System.AccessToken)
+
+- task: PowerShell@1
+  displayName: "Initialize Git Commit Status on GitHub"
+  inputs:
+    scriptType: "inlineScript"
+    inlineScript: |
+      . $(Build.Repository.LocalPath)\\scripts\\utils\\PostGitCommitStatus.ps1
+      InitializeAllTestsToPending -PersonalAccessToken $(NuGetLurkerPersonalAccessToken) -CommitSha $(Build.SourceVersion)
+  condition: "not(eq(variables['ManualGitHubChecks'], 'false'))"
+
+- task: PowerShell@1
+  displayName: "Update Build Number"
+  name: "updatebuildnumber"
+  inputs:
+    scriptType: "inlineScript"
+    inlineScript: |
+      try {
+        $FullBuildNumber = "$(SemanticVersion).$(BuildRevision)"
+        if ([System.String]::IsNullOrEmpty($env:VsTargetChannelOverride) -eq $false) {
+          $targetChannel = $env:VsTargetChannelOverride
+        } else {
+          $targetChannel = & dotnet msbuild $env:BUILD_REPOSITORY_LOCALPATH\build\config.props /v:m /nologo /t:GetVsTargetChannel
+          $targetChannel = $targetChannel.Trim()
+        }
+        if ([System.String]::IsNullOrEmpty($env:VsTargetChannelOverrideForTests) -eq $false) {
+          $targetChannelForTests = $env:VsTargetChannelOverrideForTests
+        } else {
+          $targetChannelForTests = $targetChannel
+        }
+        $targetMajorVersion = & dotnet msbuild $env:BUILD_REPOSITORY_LOCALPATH\build\config.props /v:m /nologo /t:GetVsTargetMajorVersion
+        $targetMajorVersion = $targetMajorVersion.Trim()
+        Write-Host "##vso[task.setvariable variable=VsTargetChannel;isOutput=true]$targetChannel"
+        Write-Host "##vso[task.setvariable variable=VsTargetChannelForTests;isOutput=true]$targetChannelForTests"
+        Write-Host "##vso[task.setvariable variable=VsTargetMajorVersion;isOutput=true]$targetMajorVersion"
+        Write-Host "##vso[build.updatebuildnumber]$FullBuildNumber"
+        Write-Host "##vso[task.setvariable variable=BuildNumber;isOutput=true]$(BuildRevision)"
+        Write-Host "##vso[task.setvariable variable=FullVstsBuildNumber;isOutput=true]$FullBuildNumber"
+      } catch {
+        Write-Host "##vso[task.LogIssue type=error;]Unable to set build number"
+        exit 1
+      }
+
+- task: PowerShell@1
+  displayName: "Add Build Tags"
+  inputs:
+    scriptType: "inlineScript"
+    inlineScript: |
+      Write-Host "##vso[build.addbuildtag]${env:BUILD_SOURCEVERSIONAUTHOR}"
+      Write-Host "##vso[build.addbuildtag]${env:BUILD_SOURCEBRANCHNAME}"
+
+- task: ComponentGovernanceComponentDetection@0
+  displayName: 'Component Detection'

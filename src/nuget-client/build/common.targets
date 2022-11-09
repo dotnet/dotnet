@@ -1,0 +1,431 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0">
+  <!-- Compiler flags -->
+  <PropertyGroup Condition=" '$(TargetFramework)' == '$(NETFXTargetFramework)' ">
+    <DefineConstants>$(DefineConstants);IS_DESKTOP</DefineConstants>
+    <IsDesktop>true</IsDesktop>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('netcoreapp')) OR $(TargetFramework.StartsWith('netstandard')) OR $(TargetFramework.StartsWith('net6')) OR $(TargetFramework.StartsWith('net7')) ">
+    <DefineConstants>$(DefineConstants);IS_CORECLR</DefineConstants>
+    <IsCore>true</IsCore>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp5.0' ">
+    <DefineConstants>$(DefineConstants);NETCORE5_0</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <SigningNotSupported Condition=" '$(TargetFramework)' == 'netstandard2.0' OR '$(TargetFramework)' == 'netcoreapp2.1' OR '$(TargetFramework)' == 'netstandard2.1' OR '$(TargetFramework)' == 'netcoreapp3.1'">true</SigningNotSupported>
+    <SigningNotSupported Condition=" '$(SigningNotSupported)' != 'true'">false</SigningNotSupported>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(SigningNotSupported)' != 'true' ">
+    <DefineConstants>$(DefineConstants);IS_SIGNING_SUPPORTED</DefineConstants>
+  </PropertyGroup>
+
+  <!-- Include shared files for netcore projects -->
+  <ItemGroup Condition=" ('$(IsNetCoreProject)' == 'true' AND '$(SkipShared)' != 'true' AND '$(TestProject)' != 'true') OR '$(IncludeNuGetSharedFiles)' == 'true'">
+    <Compile Include="$(SharedDirectory)\*.cs" Exclude="bin\**;obj\**;**\*.xproj;packages\**" />
+  </ItemGroup>
+
+  <!-- Include shared files for test netcore projects -->
+  <ItemGroup Condition=" '$(IsNetCoreProject)' == 'true' AND '$(SkipShared)' != 'true' AND '$(TestProject)' == 'true' ">
+    <Compile Include="$(BuildCommonDirectory)TestShared\*.cs" />
+  </ItemGroup>
+
+  <Target Name="_NuGetClientAddVsThreadingAnalyzerAdditionalFiles" AfterTargets="ResolvePackageAssets;ResolveNuGetPackageAssets">
+    <ItemGroup Condition=" '@(PackageDependencies->AnyHaveMetadataValue('Identity', 'Microsoft.VisualStudio.Threading.Analyzers'))' == 'true'
+                          OR '@(ReferencedNuGetPackages->AnyHaveMetadataValue('Identity', 'Microsoft.VisualStudio.Sdk'))' == 'true' ">
+      <AdditionalFiles Include="$(SharedDirectory)\vs-threading.*.txt" />
+    </ItemGroup>
+  </Target>
+
+  <ImportGroup Condition=" '$(SkipSigning)' != 'true' ">
+    <Import Project="sign.targets" />
+  </ImportGroup>
+
+  <PropertyGroup Condition="'$(Shipping)' == 'true'">
+    <SignTargetsForRealSigning>GetBuildOutputWithSigningMetadata</SignTargetsForRealSigning>
+    <SymbolTargetsToGetPdbs>GetDebugSymbolsProjectOutput</SymbolTargetsToGetPdbs>
+    <LocTargets>GetBuildOutputWithLocMetadata</LocTargets>
+  </PropertyGroup>
+
+  <!-- Write out .XML files for projects that will be packed. -->
+  <PropertyGroup Condition=" '$(PackProject)' == 'true' ">
+    <GenerateDocumentationFile Condition=" '$(GenerateDocumentationFile)' == '' ">true</GenerateDocumentationFile>
+    <DocumentationFile Condition=" '$(DocumentationFile)' == '' AND '$(GenerateDocumentationFile)' == 'true' AND '$(IsNetCoreProject)' != 'true' ">$(OutputPath)\$(AssemblyName).xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ImportGroup Condition=" '$(PackProject)' == 'true' AND '$(NuGetBuildTasksPackTargets)' != '' ">
+      <Import Project="$(NuGetBuildTasksPackTargets)" />
+  </ImportGroup>
+
+  <!-- Readme file in shipping packages -->
+  <PropertyGroup Condition=" '$(PackProject)' == 'true' ">
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(PackProject)' == 'true' ">
+    <None Include="$(MSBuildThisFileDirectory)..\icon.png" Pack="true" PackagePath="\" Visible="false" />
+    <None Include="$(MSBuildProjectDirectory)\README.md" Pack="true" PackagePath="\"/>
+  </ItemGroup>
+
+    <!-- Don't use PublicApiAnalyzer on source-build .NET -->
+  <PropertyGroup Condition=" '$(DotNetBuildFromSource)' == 'true' ">
+    <UsePublicApiAnalyzer>false</UsePublicApiAnalyzer>
+  </PropertyGroup>
+
+  <!-- Projects we pack become public APIs that others can use -->
+  <PropertyGroup Condition=" '$(DotNetBuildFromSource)' != 'true' and '$(PackProject)' == 'true' ">
+    <UsePublicApiAnalyzer Condition=" '$(UsePublicApiAnalyzer)' == '' " >true</UsePublicApiAnalyzer>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(UsePublicApiAnalyzer)' == 'true' ">
+    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" PrivateAssets="all" />
+
+    <None Remove="$(MSBuildProjectDirectory)\PublicAPI.Shipped.txt" />
+    <None Remove="$(MSBuildProjectDirectory)\PublicAPI.Unshipped.txt" />
+    <AdditionalFiles Include="$(MSBuildProjectDirectory)\PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="$(MSBuildProjectDirectory)\PublicAPI.Unshipped.txt" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(UsePublicApiAnalyzer)' == 'perTfm' ">
+    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" PrivateAssets="all" />
+
+    <None Remove="$(MSBuildProjectDirectory)\PublicAPI\$(TargetFramework)\PublicAPI.Shipped.txt" />
+    <None Remove="$(MSBuildProjectDirectory)\PublicAPI\$(TargetFramework)\PublicAPI.Unshipped.txt" />
+    <AdditionalFiles Include="$(MSBuildProjectDirectory)\PublicAPI\$(TargetFramework)\PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="$(MSBuildProjectDirectory)\PublicAPI\$(TargetFramework)\PublicAPI.Unshipped.txt" />
+  </ItemGroup>
+
+  <Target Name="UnknownUsePublicApiAnalyzerValue"
+          AfterTargets="Restore"
+          Condition=" '$(UsePublicApiAnalyzer)' != ''
+                  and '$(UsePublicApiAnalyzer)' != 'true'
+                  and '$(UsePublicApiAnalyzer)' != 'false'
+                  and '$(UsePublicApiAnalyzer)' != 'perTfm' ">
+    <Error Text="Unknown/Unsupported value for UsePublicApiAnalyzer: $(UsePublicApiAnalyzer)" />
+  </Target>
+
+  <!-- Test Projects -->
+  <ImportGroup Condition=" '$(TestProject)' == 'true' ">
+    <Import Project="test.targets" />
+  </ImportGroup>
+
+  <!-- Centrally managed packages. SkipCentralPackageVersions is used to enforce that the packages are centrally managed through a check in build.proj -->
+  <ImportGroup Condition=" '$(SkipCentralPackageVersions)' != 'true' ">
+    <Import Project="packages.targets" />
+  </ImportGroup>
+
+  <!-- Allow WPF projects to run under NETCore SDK -->
+  <!-- Errors occur if the output path is not set correctly -->
+  <PropertyGroup Condition=" '$(NETCoreWPFProject)' == 'true' ">
+    <TargetFrameworkVersion>$(NETFXTargetFrameworkVersion)</TargetFrameworkVersion>
+    <BaseOutputPath>bin\</BaseOutputPath>
+    <OutputPath>bin\$(Configuration)</OutputPath>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+  </PropertyGroup>
+
+  <!-- These are needed because currently a VSIX project cannot reference a net core project that multi targets.
+  This is a hack for building the VSIX. It's because all these targets are available in the inner build, while the VSIX project
+  is non netcore, and isn't aware of inner/outer builds. -->
+  <Target Name="BuiltProjectOutputGroupDependencies" DependsOnTargets="PrintVSVersionAndNetcore" Condition="false" />
+  <Target Name="BuiltProjectOutputGroup" DependsOnTargets="PrintVSVersionAndNetcore" Condition="false" />
+  <Target Name="GetCopyToOutputDirectoryItems" DependsOnTargets="PrintVSVersionAndNetcore" Condition="false" />
+  <Target Name="SatelliteDllsProjectOutputGroup" DependsOnTargets="PrintVSVersionAndNetcore" Condition="false" />
+  <Target Name="DebugSymbolsProjectOutputGroup" DependsOnTargets="PrintVSVersionAndNetcore" Condition="false" />
+
+  <!--
+    ============================================================
+    TestProject
+    Runs tests on the current project if it is a test project.
+    ============================================================
+  -->
+  <Target Name="TestProject" Condition=" '$(TestProject)' == 'true' " DependsOnTargets="VSTest">
+    <Message Text="Tested project $(MSBuildProjectName)" Importance="high"  />
+  </Target>
+
+  <!--
+    ============================================================
+    PackProjects
+    This must be called after building. The dependency on build does
+    not exist to improve perf.
+    ============================================================
+  -->
+  <Target Name="PackProjects" Condition=" '$(PackProject)' == 'true' ">
+    <Message Text="Packing $(ProjectName)" Importance="high" />
+
+    <!-- Run pack on the project -->
+    <MSBuild
+      Projects="$(MSBuildProjectFullPath)"
+      Targets="Pack"
+      Properties="Configuration=$(Configuration);
+                  PackageOutputPath=$(NupkgOutputDirectory);
+                  IncludeSymbols=true;
+                  NoBuild=true;">
+    </MSBuild>
+  </Target>
+
+  <!--
+    ============================================================
+    _IsProjectNeedsPack
+    Verify if the project needs to be packed.
+    ============================================================
+  -->
+  <Target Name="_IsProjectNeedsPack" Returns="@(PackProjects)">
+    <ItemGroup Condition="'$(PackProject)' == 'true'">
+      <PackProjects Include="$(MSBuildProjectFullPath)">
+      </PackProjects>
+    </ItemGroup>
+  </Target>
+
+  <!--
+    ============================================================
+    GetSymbolsToIndex - gets the list of DLLs,EXEs and PDBs that
+    need to be indexed on the symbol server
+    ============================================================
+  -->
+  <Target Name="GetSymbolsToIndex" DependsOnTargets="GetTargetFrameworkSet" Returns="@(SymbolFilesToIndex)" Condition=" '$(Shipping)' == 'true' ">
+    <MSBuild
+      Projects="$(MSBuildProjectFullPath)"
+      Targets="$(SignTargetsForRealSigning);$(SymbolTargetsToGetPdbs)"
+      Properties="TargetFramework=%(ProjectTargetFrameworkEntries.Identity);
+                  BuildProjectReferences=false;">
+
+      <Output
+          TaskParameter="TargetOutputs"
+          ItemName="SymbolFilesToIndex" />
+    </MSBuild>
+  </Target>
+
+  <!--
+    ============================================================
+    GetSigningInputs - gets the list of DLLs that need to
+    be signed from each project
+    ============================================================
+  -->
+  <Target Name="GetSigningInputs" DependsOnTargets="GetTargetFrameworkSet" Returns="@(DllsToSign)" Condition=" '$(Shipping)' == 'true' ">
+    <MSBuild
+      Projects="$(MSBuildProjectFullPath)"
+      Targets="$(SignTargetsForRealSigning)"
+      Properties="TargetFramework=%(ProjectTargetFrameworkEntries.Identity);
+                  BuildProjectReferences=false;">
+
+      <Output
+          TaskParameter="TargetOutputs"
+          ItemName="DllsToSign" />
+    </MSBuild>
+    <MsBuild
+      Projects="$(MSBuildProjectFullPath)"
+      Targets="_GetLocalizedDllsForSigning"
+      Properties="BuildProjectReferences=false;">
+      <Output
+        TaskParameter="TargetOutputs"
+        ItemName="DllsToSign"/>
+    </MsBuild>
+  </Target>
+
+  <Target Name="GetXPLATProject" Returns="@(XPLATProjects)">
+    <ItemGroup Condition="'$(XPLATProject)' == 'true'">
+      <XPLATProjects Include="$(MSBuildProjectFullPath)">
+      </XPLATProjects>
+    </ItemGroup>
+  </Target>
+
+
+  <Target Name="_GetLocalizedDllsForSigning" Returns="@(LocalizedDllsToSign)">
+    <ItemGroup>
+      <LocalizedDllsToSign Include="$(OutputPath)**\$(AssemblyName).resources.dll">
+        <StrongName>$(StrongNameCert)</StrongName>
+        <Authenticode>Microsoft400</Authenticode>
+      </LocalizedDllsToSign>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="GetBuildOutputWithSigningMetadata" DependsOnTargets="BuiltProjectOutputGroup;DocumentationProjectOutputGroup" Returns="@(DllsToSignWithMetadata)">
+    <ItemGroup>
+      <DllsToSignWithMetadata Include="@(BuiltProjectOutputGroupOutput->'%(FinalOutputPath)')" Condition="'%(Extension)' == '.dll' OR '%(Extension)' == '.exe'" KeepDuplicates="false">
+        <StrongName>$(StrongNameCert)</StrongName>
+        <Authenticode>Microsoft400</Authenticode>
+      </DllsToSignWithMetadata>
+      <DllsToSignWithMetadata Include="@(DocumentationProjectOutputGroupOutput->'%(FinalOutputPath)')" KeepDuplicates="false">
+        <Authenticode>MicrosoftXmlSHA2</Authenticode>
+      </DllsToSignWithMetadata>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="GetDebugSymbolsProjectOutput" DependsOnTargets="DebugSymbolsProjectOutputGroup" Returns="@(PdbsToIndex)">
+    <ItemGroup>
+      <PdbsToIndex Include="@(DebugSymbolsProjectOutputGroupOutput->'%(FinalOutputPath)')"/>
+    </ItemGroup>
+  </Target>
+
+  <!--
+    ============================================================
+    GatherLocalizationInputs - gathers the list of DLLs that need to
+    be localized from each project
+    ============================================================
+  -->
+  <Target Name="GetLocalizationInputs" DependsOnTargets="GetTargetFrameworkSet" Returns="@(DllsToLocalize)" Condition="'$(Shipping)' == 'true'">
+    <MSBuild
+      Projects="$(MSBuildProjectFullPath)"
+      Targets="$(LocTargets)"
+      Properties="TargetFramework=%(ProjectTargetFrameworkEntries.Identity);
+                  BuildProjectReferences=false;">
+
+      <Output
+          TaskParameter="TargetOutputs"
+          ItemName="DllsToLocalize" />
+    </MSBuild>
+  </Target>
+
+  <Target Name="GetBuildOutputWithLocMetadata" DependsOnTargets="BuiltProjectOutputGroup" Returns="@(DllsToLocalizeWithMetadata)">
+    <ItemGroup>
+      <!-- remove all net45 assemblies, otherwise loc tools have problem loading two assemblies of same name in same appdomain. net45 doesn't ship in VSIX, so doesn't need loc. -->
+      <DllsToLocalizeWithMetadata Include="@(BuiltProjectOutputGroupOutput->'%(FinalOutputPath)')"
+Condition=" ('%(Extension)' == '.dll' OR '%(Filename)' == 'NuGet.CommandLine.XPlat' OR '%(Filename)' == 'NuGet') AND !($([System.String]::new('%(FullPath)').Contains('\net45\'))) " KeepDuplicates="false">
+        <TranslationFile>$(LocalizationWorkDirectory)\{Lang}\15\%(Filename)%(Extension).lcl</TranslationFile>    <!--Required: translation file-->
+        <LciCommentFile>$(LocalizationWorkDirectory)\comments\15\%(Filename)%(Extension).lci</LciCommentFile>
+        <HasLceComments>false</HasLceComments>
+      </DllsToLocalizeWithMetadata>
+    </ItemGroup>
+  </Target>
+
+  <!--
+    ============================================================
+    GetLocalizedFiles - gathers the list of files that have been
+    localized from each project
+    ============================================================
+  -->
+  <!--Target is invoked by build\build.proj\MoveLocalizedFilesToLocalizedArtifacts to get all the localized files from all projects-->
+  <Target Name="GetNetCoreLocalizedFilesInProjectOutputPath" Returns="@(_LocalizedNetCoreDllsWithRelativeTargetPath)" Condition=" '$(PackProject)' == 'true' ">
+    <ItemGroup>
+      <_LocalizedDllsNetCoreApp Include="$(OutputPath)$(NETCoreTargetFramework)\**\$(AssemblyName).resources.dll"/>
+      <_LocalizedDllsNetStandard Include="$(OutputPath)$(NetStandardVersion)\**\$(AssemblyName).resources.dll"/>
+      <_LocalizedDllsNetStandard10 Include="$(OutputPath)netstandard1.0\**\$(AssemblyName).resources.dll"/>
+
+      <_LocalizedNetCoreDllsWithRelativeTargetPath Include="@(_LocalizedDllsNetCoreApp)" Condition=" '@(_LocalizedDllsNetCoreApp)' != '' ">
+        <RelativeTargetPath>$(NetStandardVersion)\%(_LocalizedDllsNetCoreApp.RecursiveDir)%(_LocalizedDllsNetCoreApp.FileName)%(_LocalizedDllsNetCoreApp.Extension)</RelativeTargetPath>
+      </_LocalizedNetCoreDllsWithRelativeTargetPath>
+
+      <_LocalizedNetCoreDllsWithRelativeTargetPath Include="@(_LocalizedDllsNetStandard10)" Condition=" '@(_LocalizedDllsNetStandard10)' != '' ">
+        <RelativeTargetPath>$(NetStandardVersion)\%(_LocalizedDllsNetStandard10.RecursiveDir)%(_LocalizedDllsNetStandard10.FileName)%(_LocalizedDllsNetStandard10.Extension)</RelativeTargetPath>
+      </_LocalizedNetCoreDllsWithRelativeTargetPath>
+
+      <_LocalizedNetCoreDllsWithRelativeTargetPath Include="@(_LocalizedDllsNetStandard)" Condition=" '@(_LocalizedDllsNetStandard)' != '' ">
+        <RelativeTargetPath>$(NetStandardVersion)\%(_LocalizedDllsNetStandard.RecursiveDir)%(_LocalizedDllsNetStandard.FileName)%(_LocalizedDllsNetStandard.Extension)</RelativeTargetPath>
+      </_LocalizedNetCoreDllsWithRelativeTargetPath>
+    </ItemGroup>
+  </Target>
+
+  <!--
+    ============================================================
+    GetLocalizedFilesForVsix - gathers the list of localized DLLs
+    from each project
+    ============================================================
+  -->
+  <Target Name="GetLocalizedFilesForVsix" DependsOnTargets="$(GetLocalizedFilesForVsixDependsOn)" Returns="@(LocalizedFilesForVsix)" Condition=" '$(IncludeInVsix)' == 'true' ">
+    <ItemGroup>
+      <_AllResourceDlls Include="$(OutputPath)**\$(AssemblyName).resources.dll"/>
+      <LocalizedFilesForVsix Include="@(_AllResourceDlls)">
+        <TargetPath>$([MSBuild]::MakeRelative($(OutputPath), %(_AllResourceDlls.Identity)))</TargetPath>
+      </LocalizedFilesForVsix>
+    </ItemGroup>
+  </Target>
+
+  <!--
+    ============================================================
+    GetTestAssemblies
+    ============================================================
+  -->
+  <Target Name="GetTestAssemblies"
+          DependsOnTargets="Build;GetTargetFrameworkSet"
+          Condition=" '$(TestProject)' == 'true' AND '$(SkipTests)' != 'true' "
+          Returns="@(TestAssemblyPath)">
+    <Message Text="Discovering test assemblies for $(AssemblyName)" Importance="high" />
+
+    <!-- Execute find for all frameworks -->
+    <MSBuild
+      Projects="$(MSBuildProjectFullPath)"
+      Targets="GetTestAssembliesInner"
+      Properties="TargetFramework=%(ProjectTargetFrameworkEntries.Identity);
+                  Configuration=$(Configuration);">
+      <Output TaskParameter="TargetOutputs"
+              ItemName="TestAssemblyPath" />
+    </MSBuild>
+  </Target>
+
+  <!--
+    ============================================================
+    GetTestAssembliesInner
+    ============================================================
+  -->
+  <Target Name="GetTestAssembliesInner"
+          Returns="@(TestAssemblyPath)">
+
+    <PropertyGroup>
+      <TestAssemblyRelativePath>$(OutputPath)$(AssemblyName).dll</TestAssemblyRelativePath>
+    </PropertyGroup>
+
+    <ConvertToAbsolutePath Paths="$(TestAssemblyRelativePath)">
+      <Output TaskParameter="AbsolutePaths" PropertyName="AbsoluteTestAssemblyPath"/>
+    </ConvertToAbsolutePath>
+
+    <ItemGroup>
+      <TestAssemblyPath Include="$(AbsoluteTestAssemblyPath)">
+        <IsDesktop Condition=" '$(IsDesktop)' == 'true' ">true</IsDesktop>
+        <IsCore Condition=" '$(IsDesktop)' != 'true' ">true</IsCore>
+      </TestAssemblyPath>
+    </ItemGroup>
+  </Target>
+
+  <!--
+    ============================================================
+    GetTargetFrameworkSet get all target frameworks
+    ============================================================
+  -->
+  <Target Name="GetTargetFrameworkSet" Returns="@(ProjectTargetFrameworkEntries)">
+    <!-- Find all frameworks to run on -->
+    <ItemGroup>
+      <ProjectTargetFrameworkEntries Include="$(TargetFramework);$(TargetFrameworks)" />
+    </ItemGroup>
+  </Target>
+
+  <!--
+    ============================================================
+    EnsureNewtonsoftJsonVersion ensures that the resolved version of Newtonsoft.Json is the version that ships with VS/.NET Core SDK
+    ============================================================
+  -->
+  <Target Name="EnsureNewtonsoftJsonVersion" AfterTargets="ResolveAssemblyReferences">
+    <Error
+      Text="Newtonsoft.Json must be version $(NewtonsoftJsonPackageVersion) but resolved %(Reference.NuGetPackageVersion)"
+      Condition=" %(Reference.NuGetPackageId) == 'Newtonsoft.Json' AND %(Reference.NuGetPackageVersion) != '$(NewtonsoftJsonPackageVersion)' " />
+  </Target>
+
+   <Target Name="EnsurePackageReferenceVersions">
+    <ItemGroup Condition=" '$(TargetFrameworks)' != '' ">
+      <_TargetFrameworkItems Include="$(TargetFrameworks.Split(';'))" />
+    </ItemGroup>
+    <ItemGroup Condition=" '$(TargetFrameworks)' == '' ">
+      <_TargetFrameworkItems Include="$(TargetFramework)" />
+    </ItemGroup>
+    <MSBuild
+      Projects="$(MSBuildProjectFullPath)"
+      Targets="EnsurePackageReferenceVersionsForFramework"
+      Properties="TargetFramework=%(_TargetFrameworkItems.Identity);"
+    />
+  </Target>
+
+  <Target Name="EnsurePackageReferenceVersionsForFramework">
+    <Error
+      Text="%(PackageReference.Identity) should not have a version declared outside of packages.targets but found '%(PackageReference.Version)'"
+      Condition=" '%(PackageReference.Version)' != '' AND '%(PackageReference.IsImplicitlyDefined)' != 'true' AND '%(PackageReference.Identity)' != 'Microsoft.NET.Test.Sdk' " />
+  </Target>
+
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), 'README.md'))\packages\Microsoft.VisualStudioEng.MicroBuild.Core\1.0.0\build\Microsoft.VisualStudioEng.MicroBuild.Core.targets" Condition="Exists('$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), &quot;README.md&quot;))\packages\Microsoft.VisualStudioEng.MicroBuild.Core\1.0.0\build\Microsoft.VisualStudioEng.MicroBuild.Core.targets')" />
+
+</Project>

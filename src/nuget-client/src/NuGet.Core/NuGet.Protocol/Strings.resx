@@ -1,0 +1,485 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ArgumentCannotBeNullOrEmpty" xml:space="preserve">
+    <value>Argument cannot be null or empty.</value>
+  </data>
+  <data name="DefaultSymbolServer" xml:space="preserve">
+    <value>the symbol server</value>
+  </data>
+  <data name="DeleteCommandCanceled" xml:space="preserve">
+    <value>Delete canceled</value>
+  </data>
+  <data name="DeleteCommandConfirm" xml:space="preserve">
+    <value>{0} {1} will be deleted from the {2}. Would you like to continue?</value>
+  </data>
+  <data name="DeleteCommandDeletedPackage" xml:space="preserve">
+    <value>{0} {1} was deleted successfully.</value>
+  </data>
+  <data name="DeleteCommandDeletingPackage" xml:space="preserve">
+    <value>Deleting {0} {1} from the {2}.</value>
+  </data>
+  <data name="Http_Timeout" xml:space="preserve">
+    <value>The HTTP request to '{0} {1}' has timed out after {2}ms.</value>
+    <comment>Parameters in order: non-localizable HTTP method, non-localizable HTTP request URI, timeout duration in milliseconds.
+The "ms" should be localized to the abbreviation for milliseconds.</comment>
+  </data>
+  <data name="InvalidVersionFolder" xml:space="preserve">
+    <value>The folder '{0}' contains an invalid version.</value>
+  </data>
+  <data name="Log_CanceledNupkgDownload" xml:space="preserve">
+    <value>Downloading a package from '{0}' was canceled.</value>
+  </data>
+  <data name="Log_ErrorDownloading" xml:space="preserve">
+    <value>Error downloading '{0}' from '{1}'.</value>
+  </data>
+  <data name="Log_FailedToDownloadPackage" xml:space="preserve">
+    <value>Failed to download package '{0}' from '{1}'.</value>
+    <comment>{0} is the identity of the package.
+{1} is the URI.</comment>
+  </data>
+  <data name="PackageNotFound" xml:space="preserve">
+    <value>Unable to find package '{0}'.</value>
+  </data>
+  <data name="Log_FailedToGetNuspecStream" xml:space="preserve">
+    <value>Unable to load nuspec from package '{0}'.</value>
+  </data>
+  <data name="Log_FailedToRetrievePackage" xml:space="preserve">
+    <value>Failed to retrieve information about '{0}' from remote source '{1}'.</value>
+    <comment>{0} is the ID of the package.
+{1} is the URI.</comment>
+  </data>
+  <data name="Log_FileIsCorrupt" xml:space="preserve">
+    <value>The file '{0}' is corrupt.</value>
+  </data>
+  <data name="Log_RetryingFindPackagesById" xml:space="preserve">
+    <value>Retrying '{0}' for source '{1}'.</value>
+  </data>
+  <data name="NoApiKeyFound" xml:space="preserve">
+    <value>No API Key was provided and no API Key could be found for {0}. To save an API Key for a source use the 'setApiKey' command.</value>
+  </data>
+  <data name="OneOrMoreUrisMustBeSpecified" xml:space="preserve">
+    <value>One or more URIs must be specified.</value>
+  </data>
+  <data name="Protocol_BadSource" xml:space="preserve">
+    <value>Failed to retrieve metadata from source '{0}'.</value>
+  </data>
+  <data name="Protocol_MalformedMetadataError" xml:space="preserve">
+    <value>Metadata could not be loaded from the source '{0}'.</value>
+  </data>
+  <data name="Protocol_MissingSearchService" xml:space="preserve">
+    <value>The source does not have a Search service!</value>
+  </data>
+  <data name="Protocol_MissingVersion" xml:space="preserve">
+    <value>The source does not have the 'version' property.</value>
+  </data>
+  <data name="Protocol_PackageMetadataError" xml:space="preserve">
+    <value>An error occurred while retrieving package metadata for '{0}' from source '{1}'.</value>
+  </data>
+  <data name="Protocol_UnsupportedVersion" xml:space="preserve">
+    <value>The source version is not supported: '{0}'.</value>
+  </data>
+  <data name="PushCommandPackagePushed" xml:space="preserve">
+    <value>Your package was pushed.</value>
+  </data>
+  <data name="PushCommandPushingPackage" xml:space="preserve">
+    <value>Pushing {0} to {1}...</value>
+  </data>
+  <data name="PackageServerEndpoint_NotSupported" xml:space="preserve">
+    <value>ERROR: This version of nuget.exe does not support updating packages to package source '{0}'.</value>
+  </data>
+  <data name="UnableToFindFile" xml:space="preserve">
+    <value>File does not exist ({0}).</value>
+  </data>
+  <data name="Warning_SymbolServerNotConfigured" xml:space="preserve">
+    <value>Found symbols package '{0}', but no API key was specified for the symbol server. To save an API Key, run 'NuGet.exe setApiKey [your API key from http://www.NuGet.org]'.</value>
+  </data>
+  <data name="LiveFeed" xml:space="preserve">
+    <value>the NuGet gallery</value>
+  </data>
+  <data name="Log_InvalidCacheEntry" xml:space="preserve">
+    <value>An invalid cache entry was found for URL '{0}' and will be replaced.</value>
+  </data>
+  <data name="Protocol_InvalidJsonObject" xml:space="preserve">
+    <value>The content at '{0}' is not a valid JSON object.</value>
+  </data>
+  <data name="Log_InvalidNupkgFromUrl" xml:space="preserve">
+    <value>The nupkg at '{0}' is not valid.</value>
+  </data>
+  <data name="Log_FailedToReadServiceIndex" xml:space="preserve">
+    <value>Unable to load the service index for source {0}.</value>
+  </data>
+  <data name="Log_RetryingServiceIndex" xml:space="preserve">
+    <value>Retrying service index request for source '{0}'.</value>
+  </data>
+  <data name="Protocol_InvalidXml" xml:space="preserve">
+    <value>The content at '{0}' is not valid XML.</value>
+  </data>
+  <data name="AddPackage_ExistingPackageInvalid" xml:space="preserve">
+    <value>Package '{0}' already exists at feed '{1}' and is invalid.</value>
+  </data>
+  <data name="AddPackage_PackageAlreadyExists" xml:space="preserve">
+    <value>Package '{0}' already exists at feed '{1}'.</value>
+  </data>
+  <data name="AddPackage_SuccessfullyAdded" xml:space="preserve">
+    <value>Successfully added package '{0}' to feed '{1}'.</value>
+  </data>
+  <data name="Argument_Cannot_Be_Null_Or_Empty" xml:space="preserve">
+    <value>Argument can not be null or empty.</value>
+  </data>
+  <data name="DeletePackage_NotFound" xml:space="preserve">
+    <value>Not Found.</value>
+  </data>
+  <data name="NupkgPath_Invalid" xml:space="preserve">
+    <value>'{0}' is not a valid nupkg file.</value>
+  </data>
+  <data name="Path_Invalid" xml:space="preserve">
+    <value>'{0}' is not a valid path.</value>
+  </data>
+  <data name="Path_Invalid_NotFileNotUnc" xml:space="preserve">
+    <value>'{0}' should be a local path or a UNC share path.</value>
+  </data>
+  <data name="Http_RequestLog" xml:space="preserve">
+    <value>{0} {1}</value>
+    <comment>Parameters in order: non-localizable HTTP method, non-localizable HTTP request URI</comment>
+  </data>
+  <data name="Http_ResponseLog" xml:space="preserve">
+    <value>{0} {1} {2}ms</value>
+    <comment>Parameters in order: non-localizable HTTP status, non-localizable HTTP request URI, request duration in milliseconds.
+The "ms" should be localized to the abbreviation for milliseconds.</comment>
+  </data>
+  <data name="Log_FailedToFetchV2Feed" xml:space="preserve">
+    <value>The V2 feed at '{0}' returned an unexpected status code '{1} {2}'.</value>
+    <comment>{0} is the URL that failed.
+{1} is the HTTP status code (an integer).
+{2} is the HTTP reason phrase (a non-translated string).</comment>
+  </data>
+  <data name="Log_RetryingHttp" xml:space="preserve">
+    <value>An error was encountered when fetching '{0} {1}'. The request will now be retried.</value>
+    <comment>'{0}' is replaced with the HTTP method used.
+'{1}' is replaced with the URL that failed to be reached.</comment>
+  </data>
+  <data name="Error_DownloadTimeout" xml:space="preserve">
+    <value>The download of '{0}' timed out because no data was received for {1}ms.</value>
+    <comment>'{0}' is replaced with the resource that could not be downloaded.
+'{1}' is replaced with the integer (in milliseconds) of the timeout duration.</comment>
+  </data>
+  <data name="Http_CredentialsForUnauthorized" xml:space="preserve">
+    <value>The server responded with HTTP '401 Unauthorized' when accessing the source '{0}'. This suggests that the server needs credentials to authenticate your identity. Provide credentials to access this resource.</value>
+    <comment>{0} is the source that needs credentials to be accessed.</comment>
+  </data>
+  <data name="Http_CredentialsForForbidden" xml:space="preserve">
+    <value>The server responded with HTTP '403 Forbidden' when accessing the source '{0}'. This suggests that the server has authenticated your identity but has not permitted you to access the requested resource. Provide credentials that have permissions to view this resource.</value>
+    <comment>{0} is the source that needs credentials to be accessed.</comment>
+  </data>
+  <data name="Http_CredentialsForProxy" xml:space="preserve">
+    <value>The server responded with HTTP '407 Proxy Authentication Required' when accessing the proxy '{0}'. This suggests that the server needs credentials to authenticate your identity to use a proxy. Provide credentials to access this resource.</value>
+    <comment>{0} is the proxy URL that needs credentials to be accessed.</comment>
+  </data>
+  <data name="Protocol_Search_LocalSourceNotFound" xml:space="preserve">
+    <value>The path '{0}' for the selected source could not be resolved.</value>
+  </data>
+  <data name="UnableToParseFolderV3Version" xml:space="preserve">
+    <value>Unable to parse a valid version from a v3 folder: '{0}'.</value>
+  </data>
+  <data name="NupkgPath_InvalidEx" xml:space="preserve">
+    <value>'{0}' is not a valid nupkg file. Error: '{1}'.</value>
+  </data>
+  <data name="Protocol_duplicateUri" xml:space="preserve">
+    <value>'{0}' is a duplicate url which has already been downloaded and will lead to a cyclic dependency. Please correct from server.</value>
+  </data>
+  <data name="Log_FailedToVerifyRootDirectory" xml:space="preserve">
+    <value>Failed to verify the root directory of local source '{0}'.</value>
+    <comment>{0} is the path to the bad directory.</comment>
+  </data>
+  <data name="Log_FailedToVerifyValidFile" xml:space="preserve">
+    <value>Failed to validate the file '{0}'.</value>
+    <comment>{0} is the file path.</comment>
+  </data>
+  <data name="Plugin_ConnectionAlreadyStarted" xml:space="preserve">
+    <value>A connection has already been started.</value>
+  </data>
+  <data name="Plugin_Exception" xml:space="preserve">
+    <value>Plugin '{0}' failed with the exception:  {1}</value>
+    <comment>{0} is the plugin name
+{1} is the message from a caught exception</comment>
+  </data>
+  <data name="Plugin_HandshakeFailed" xml:space="preserve">
+    <value>The plugin handshake failed.</value>
+  </data>
+  <data name="Plugin_ProtocolVersionNotSupportedOnError" xml:space="preserve">
+    <value>A protocol version is not supported on error.</value>
+  </data>
+  <data name="Plugin_ProtocolVersionOutOfRange" xml:space="preserve">
+    <value>'{0}' must be greater than or equal to '{1}'.</value>
+    <comment>{0} is a parameter name
+{1} is a parameter name</comment>
+  </data>
+  <data name="Plugin_RequestContextDoesNotExist" xml:space="preserve">
+    <value>Request context does not exist for request ID '{0}'.</value>
+    <comment>{0} is a request ID</comment>
+  </data>
+  <data name="Plugin_RequestHandlerDoesNotExist" xml:space="preserve">
+    <value>A request handler does not exist for the message method '{0}'.</value>
+    <comment>{0} is a message method</comment>
+  </data>
+  <data name="Plugin_TimeoutOutOfRange" xml:space="preserve">
+    <value>Timeout must be greater than TimeSpan.Zero and less than or equal to TimeSpan.FromMilliseconds(int.MaxValue).</value>
+    <comment>Do not localize:  TimeSpan.Zero, TimeSpan.FromMilliseconds(int.MaxValue)</comment>
+  </data>
+  <data name="Plugin_UnrecognizedEnumValue" xml:space="preserve">
+    <value>The enum value '{0}' is unrecognized.</value>
+    <comment>{0} is an undefined enum value</comment>
+  </data>
+  <data name="Plugin_InvalidMessageType" xml:space="preserve">
+    <value>The message type '{0}' is invalid at this time.</value>
+    <comment>{0} is a message type enum value</comment>
+  </data>
+  <data name="Plugin_UnrecognizedOperationClaims" xml:space="preserve">
+    <value>The operation claims are unrecognized:  {0}.</value>
+    <comment>{0} is a comma-delimited list of unrecognized enum values.</comment>
+  </data>
+  <data name="Plugin_NotConnected" xml:space="preserve">
+    <value>A plugin is not connected.</value>
+  </data>
+  <data name="Plugin_FileNotFound" xml:space="preserve">
+    <value>A plugin was not found at path '{0}'.</value>
+    <comment>{0} is a file system path</comment>
+  </data>
+  <data name="Plugin_InvalidEmbeddedSignature" xml:space="preserve">
+    <value>The plugin at '{0}' did not have a valid embedded signature.</value>
+    <comment>{0} is a file system path</comment>
+  </data>
+  <data name="Plugin_InitializationFailed" xml:space="preserve">
+    <value>Plugin initialization failed.</value>
+  </data>
+  <data name="Plugin_HandshakeRequestHandlerAlreadyExists" xml:space="preserve">
+    <value>A handshake request handler already exists.</value>
+  </data>
+  <data name="Plugin_IdleTimeoutMustBeGreaterThanOrEqualToInfiniteTimeSpan" xml:space="preserve">
+    <value>The idle timeout must be greater than or equal to System.Threading.Timeout.InfiniteTimeSpan.</value>
+  </data>
+  <data name="Plugin_ProtocolException" xml:space="preserve">
+    <value>A plugin protocol exception occurred.</value>
+  </data>
+  <data name="Plugin_PackageDownloadFailed" xml:space="preserve">
+    <value>Plugin '{0}' failed to download package '{1}'.</value>
+    <comment>{0} is the plugin name
+{1} is the package identity</comment>
+  </data>
+  <data name="Plugin_ConnectionIsClosed" xml:space="preserve">
+    <value>The plugin connection is closed.</value>
+  </data>
+  <data name="Plugin_FailureQueryingPackageVersions" xml:space="preserve">
+    <value>A failure occurred while attempting to query package versions for package '{0}' using the plugin at '{1}'.</value>
+    <comment>{0} is a package ID
+{0} is a file system path</comment>
+  </data>
+  <data name="Plugin_InvalidPluginFilePath" xml:space="preserve">
+    <value>The plugin file path '{0}' is invalid.</value>
+    <comment>{0} is a file system path.</comment>
+  </data>
+  <data name="Plugin_FailedOperationForPackage" xml:space="preserve">
+    <value>Plugin '{0}' failed a {1} operation for package {2}.{3}.</value>
+    <comment>{0} is the plugin name
+{1} is a plugin operation name
+{2} is a package ID
+{3} is a package version</comment>
+  </data>
+  <data name="Plugin_Fault" xml:space="preserve">
+    <value>Terminating plugin '{0}' due to an unrecoverable fault:  {1}</value>
+    <comment>{0} is the plugin name
+{1} is the exception ToString() result</comment>
+  </data>
+  <data name="Log_LocalSourceNotExist" xml:space="preserve">
+    <value>The local source '{0}' doesn't exist.</value>
+  </data>
+  <data name="Log_FailedToFetchV2FeedHttp" xml:space="preserve">
+    <value>Failed to fetch results from V2 feed at '{0}' with following message : {1}</value>
+    <comment>{0} is the URL that failed.
+{1} is the message returned from HTTP call.</comment>
+  </data>
+  <data name="Log_FailedToReadRepositorySignature" xml:space="preserve">
+    <value>Unable to get repository signature information for source {0}.</value>
+    <comment>{0} is the repository signature information endpoint.</comment>
+  </data>
+  <data name="Log_RetryingRepositorySignature" xml:space="preserve">
+    <value>Retrying repository signature request for source '{0}'.</value>
+    <comment>{0} is the repository signature information endpoint.</comment>
+  </data>
+  <data name="Log_FailedToParseRepoSignInfor" xml:space="preserve">
+    <value>Unable to parse {0} information from {1}. </value>
+    <comment>{0} is the information name that needs to be parsed. 
+{1} is the repository signature information endpoint.</comment>
+  </data>
+  <data name="RepositoryContentUrlMustBeHttps" xml:space="preserve">
+    <value>Repository content URL for repository signatures must be HTTPS.</value>
+  </data>
+  <data name="RepositorySignaturesResourceMustBeHttps" xml:space="preserve">
+    <value>Repository Signatures resouce must be served over HTTPS. Source: {0}</value>
+    <comment>{0} source service index</comment>
+  </data>
+  <data name="NuGetLicense_LicenseExpressionVersionTooHigh" xml:space="preserve">
+    <value>The license version string '{0}' is higher than the one supported by this toolset '{1}'.</value>
+  </data>
+  <data name="NuGetLicenseExpression_NonStandardIdentifier" xml:space="preserve">
+    <value>The license identifier(s) {0} is(are) not recognized by the current toolset.</value>
+  </data>
+  <data name="LoadFileFromNupkg_FileNotFound" xml:space="preserve">
+    <value>The file '{0}' does not exist in the package.</value>
+    <comment>0 - file path relative to the nupkg.</comment>
+  </data>
+  <data name="LoadFileFromNupkg_FileTooLarge" xml:space="preserve">
+    <value>Cannot load the file '{0}' because it is larger than {1} MB.</value>
+    <comment>0 -file path, megabytes</comment>
+  </data>
+  <data name="LoadFileFromNupkg_UnknownProblemLoadingTheFile" xml:space="preserve">
+    <value>Unknown problem loading the file '{0}'.</value>
+    <comment>0 - file path relative to the nupkg.</comment>
+  </data>
+  <data name="Plugin_DownloadNotSupportedSinceUnsignedNotAllowed" xml:space="preserve">
+    <value>Downloading a package from a plugin is not supported since unsigned packages are not allowed and package download plugins do not support signed package verification.</value>
+  </data>
+  <data name="Plugin_ProblemStartingPlugin" xml:space="preserve">
+    <value>Problem starting the plugin '{0}'. {1}</value>
+    <comment>0 - plugin path, 1 - error message </comment>
+  </data>
+  <data name="PushCommandSkipDuplicateAdvertiseNuGetExe" xml:space="preserve">
+    <value>To skip already published packages, use the option -SkipDuplicate</value>
+  </data>
+  <data name="PushCommandSkipDuplicateNotImplemented" xml:space="preserve">
+    <value>The option to skip duplicates is not currently supported for this type of push.</value>
+  </data>
+  <data name="Plugin_FailedOnCreation" xml:space="preserve">
+    <value>Plugin '{0}' failed within {1:N3} seconds with exit code {2}.</value>
+    <comment>{0} is the plugin name
+{1} is the number of seconds
+{2} is the plugin process exit code</comment>
+  </data>
+  <data name="PushCommandSkipDuplicateAdvertiseDotnetExe" xml:space="preserve">
+    <value>To skip already published packages, use the option --skip-duplicate</value>
+  </data>
+  <data name="StringCannotBeNullOrEmpty" xml:space="preserve">
+    <value>String argument '{0}' cannot be null or empty</value>
+  </data>
+  <data name="Warning_HttpServerUsage" xml:space="preserve">
+    <value>You are running the '{0}' operation with an 'HTTP' source, '{1}'. Non-HTTPS access will be removed in a future version. Consider migrating to an 'HTTPS' source.</value>
+    <comment>0 - The command name. Ex. Push/Delete. 1 - server uri.</comment>
+  </data>
+</root>

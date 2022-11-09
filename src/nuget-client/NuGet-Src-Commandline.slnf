@@ -1,0 +1,28 @@
+{
+  "solution": {
+    "path": "NuGet.sln",
+    "projects": [
+      "src\\NuGet.Clients\\NuGet.CommandLine\\NuGet.CommandLine.csproj",
+      "src\\NuGet.Core\\Microsoft.Build.NuGetSdkResolver\\Microsoft.Build.NuGetSdkResolver.csproj",
+      "src\\NuGet.Core\\NuGet.Build.Tasks.Console\\NuGet.Build.Tasks.Console.csproj",
+      "src\\NuGet.Core\\NuGet.Build.Tasks.Pack\\NuGet.Build.Tasks.Pack.csproj",
+      "src\\NuGet.Core\\NuGet.Build.Tasks\\NuGet.Build.Tasks.csproj",
+      "src\\NuGet.Core\\NuGet.CommandLine.XPlat\\NuGet.CommandLine.XPlat.csproj",
+      "src\\NuGet.Core\\NuGet.Commands\\NuGet.Commands.csproj",
+      "src\\NuGet.Core\\NuGet.Common\\NuGet.Common.csproj",
+      "src\\NuGet.Core\\NuGet.Configuration\\NuGet.Configuration.csproj",
+      "src\\NuGet.Core\\NuGet.Credentials\\NuGet.Credentials.csproj",
+      "src\\NuGet.Core\\NuGet.DependencyResolver.Core\\NuGet.DependencyResolver.Core.csproj",
+      "src\\NuGet.Core\\NuGet.Frameworks\\NuGet.Frameworks.csproj",
+      "src\\NuGet.Core\\NuGet.LibraryModel\\NuGet.LibraryModel.csproj",
+      "src\\NuGet.Core\\NuGet.Localization\\NuGet.Localization.csproj",
+      "src\\NuGet.Core\\NuGet.PackageManagement\\NuGet.PackageManagement.csproj",
+      "src\\NuGet.Core\\NuGet.Packaging.Core\\NuGet.Packaging.Core.csproj",
+      "src\\NuGet.Core\\NuGet.Packaging\\NuGet.Packaging.csproj",
+      "src\\NuGet.Core\\NuGet.ProjectModel\\NuGet.ProjectModel.csproj",
+      "src\\NuGet.Core\\NuGet.Protocol\\NuGet.Protocol.csproj",
+      "src\\NuGet.Core\\NuGet.Resolver\\NuGet.Resolver.csproj",
+      "src\\NuGet.Core\\NuGet.Versioning\\NuGet.Versioning.csproj"
+    ]
+  }
+}

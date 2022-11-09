@@ -1,0 +1,11 @@
+﻿{
+  "dependencies": { },
+  "frameworks": {
+    "uap10.0": {
+      "imports": [
+        "native",
+        "uap"
+      ]
+    }
+  }
+}

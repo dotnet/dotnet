@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<feed xml:base="https://www.nuget.org/api/v2/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">
+  <id>https://www.nuget.org/api/v2/FindPackagesById</id>
+  <title type="text">FindPackagesById</title>
+  <updated>2016-02-17T01:37:00Z</updated>
+  <link rel="self" title="FindPackagesById" href="FindPackagesById" />
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='RavenDB.Client',Version='1.2.2068-Unstable')</id>
+    <category term="NuGetGallery.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" title="V2FeedPackage" href="Packages(Id='RavenDB.Client',Version='1.2.2068-Unstable')" />
+    <title type="text">RavenDB.Client</title>
+    <summary type="text">This package includes the client API of RavenDB.</summary>
+    <updated>2015-04-20T03:53:56Z</updated>
+    <author>
+      <name>Hibernating Rhinos</name>
+    </author>
+    <link rel="edit-media" title="V2FeedPackage" href="Packages(Id='RavenDB.Client',Version='1.2.2068-Unstable')/$value" />
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/RavenDB.Client/1.2.2068-Unstable" />
+    <m:properties>
+      <d:Version>1.2.2068-Unstable</d:Version>
+      <d:NormalizedVersion>1.2.2068-Unstable</d:NormalizedVersion>
+      <d:Copyright m:null="true" />
+      <d:Created m:type="Edm.DateTime">2012-08-22T09:46:43.48</d:Created>
+      <d:Dependencies></d:Dependencies>
+      <d:Description>This package includes the client API of RavenDB. RavenDB is a document database for the .NET platform, offering a flexible data model design to fit the needs of real world systems.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">501741</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/RavenDB.Client/1.2.2068-Unstable</d:GalleryDetailsUrl>
+      <d:IconUrl>http://static.ravendb.net/logo-for-nuget.png</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">true</d:IsPrerelease>
+      <d:Language>en-US</d:Language>
+      <d:Published m:type="Edm.DateTime">2012-08-22T09:46:43.48</d:Published>
+      <d:PackageHash>gMALeuyi3Xekunq5gnMCgHf43+hea+9W0SKDhdnE0HuTOHfA2uU389ZvdmYocAHlR/QtlC2VZOJ7SywHyoXV2w==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">4066418</d:PackageSize>
+      <d:ProjectUrl>http://www.ravendb.net/</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/RavenDB.Client/1.2.2068-Unstable</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true" />
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">true</d:RequireLicenseAcceptance>
+      <d:Tags xml:space="preserve"> nosql ravendb raven document database client </d:Tags>
+      <d:Title>RavenDB Client</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">178</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true" />
+      <d:LastEdited m:type="Edm.DateTime" m:null="true" />
+      <d:LicenseUrl>http://www.ravendb.net/licensing</d:LicenseUrl>
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>  
+  <link rel="next" href="https://www.nuget.org/api/v2/FindPackagesById?id='ravendb.client'&amp;$skiptoken='RavenDB.Client','2.0.2183-Unstable'" />
+</feed>

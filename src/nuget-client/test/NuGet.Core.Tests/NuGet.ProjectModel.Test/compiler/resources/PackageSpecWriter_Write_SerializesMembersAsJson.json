@@ -1,0 +1,147 @@
+{
+  "title": "title",
+  "version": "1.2.3",
+  "description": "description",
+  "authors": [
+    "b",
+    "a",
+    "c"
+  ],
+  "copyright": "copyright",
+  "language": "language",
+  "contentFiles": [
+    "b",
+    "a",
+    "c"
+  ],
+  "packInclude": {
+    "a": "e",
+    "b": "d",
+    "c": "f"
+  },
+  "packOptions": {
+    "owners": [
+      "b",
+      "a",
+      "c"
+    ],
+    "tags": [
+      "b",
+      "a",
+      "c"
+    ],
+    "projectUrl": "projectUrl",
+    "iconUrl": "iconUrl",
+    "summary": "summary",
+    "releaseNotes": "releaseNotes",
+    "licenseUrl": "licenseUrl",
+    "requireLicenseAcceptance": true
+  },
+  "restore": {
+    "projectUniqueName": "projectUniqueName",
+    "projectName": "projectName",
+    "projectPath": "projectPath",
+    "projectJsonPath": "projectJsonPath",
+    "packagesPath": "packagesPath",
+    "outputPath": "outputPath",
+    "projectStyle": "PackageReference",
+    "crossTargeting": true,
+    "fallbackFolders": [
+      "b",
+      "a",
+      "c"
+    ],
+    "configFilePaths": [
+      "b",
+      "a",
+      "c"
+    ],
+    "originalTargetFrameworks": [
+      "a",
+      "b",
+      "c"
+    ],
+    "sources": {
+      "source": {}
+    },
+    "frameworks": {
+      "frameworkidentifier123-frameworkprofile": {
+        "projectReferences": {}
+      }
+    }
+  },
+  "scripts": {
+    "a": [
+      "b",
+      "a",
+      "c"
+    ],
+    "b": [
+      "b",
+      "a",
+      "c"
+    ],
+    "c": [
+      "b",
+      "a",
+      "c"
+    ]
+  },
+  "dependencies": {
+    "library": {
+      "include": "Build",
+      "target": "Package",
+      "version": "[1.2.3, )"
+    },
+    "libraryRangeWithNoWarnGlobal": {
+      "include": "Build",
+      "target": "Package",
+      "version": "[1.2.3, )",
+      "noWarn": [
+        "NU1500",
+        "NU1608"
+      ]
+    }
+  },
+  "frameworks": {
+    "frameworkidentifier123-frameworkprofile": {
+      "imports": [
+        "frameworkidentifier123-frameworkprofile"
+      ]
+    },
+    "frameworkidentifierwithnowarn125-frameworkprofilewithnowarn": {
+      "dependencies": {
+        "libraryWithNoWarn": {
+          "include": "Build",
+          "target": "Package",
+          "version": "[1.2.3, )",
+          "noWarn": [
+            "NU1500",
+            "NU1601"
+          ]
+        }
+      },
+      "imports": [
+        "frameworkidentifierwithnowarn125-frameworkprofilewithnowarn"
+      ],
+      "warn": true
+    }
+  },
+  "runtimes": {
+    "runtimeIdentifier": {
+      "#import": [
+        "b",
+        "a",
+        "c"
+      ],
+      "id": {
+        "id": "[1.2.3, )"
+      }
+    }
+  },
+  "supports": {
+    "name": {
+      "frameworkidentifier123-frameworkprofile": "runtimeIdentifier"
+    }
+  }
+}

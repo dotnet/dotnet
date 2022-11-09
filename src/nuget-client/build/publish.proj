@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), 'README.md'))\build\common.props" />
+
+  <!--
+    =================================================================
+    Publish NuGet builds to the .NET Core build asset registry (BAR).
+    =================================================================
+  -->
+
+  <Import Project="$(BuildCommonDirectory)common.targets" />
+
+  <UsingTask TaskName="Microsoft.DotNet.Build.Tasks.Feed.PushToAzureDevOpsArtifacts" AssemblyFile="$(MicrosoftDotNetBuildTasksFeedFilePath)" />
+  <UsingTask TaskName="Microsoft.DotNet.Maestro.Tasks.PushMetadataToBuildAssetRegistry" AssemblyFile="$(MicrosoftDotNetMaestroTasksFilePath)" />
+
+
+  <Target Name="PublishToBuildAssetRegistry">
+    <PropertyGroup>
+      <AssetManifestFileName>nuget.client.xml</AssetManifestFileName>
+      <AssetManifestPath>$(ArtifactsLogDir)AssetManifest\$(AssetManifestFileName)</AssetManifestPath>
+    </PropertyGroup>
+
+    <Error Condition="!Exists($(NuGetClientNupkgsDirectoryPath))" Text="The package directory path '$(NuGetClientNupkgsDirectoryPath)' does not exist." />
+    <Error Condition="Exists($(AssetManifestPath))" Text="The manifest file '$(AssetManifestPath)' already exists." />
+
+    <CreateItem Include="$([System.IO.Path]::Combine($(NuGetClientNupkgsDirectoryPath), '*.nupkg'))">
+      <Output TaskParameter="Include" ItemName="ItemsToPush" />
+    </CreateItem>
+
+    <Error Condition="'@(ItemsToPush)' == ''" Text="No packages to push." />
+
+    <Error Condition="'$(BUILD_BUILDNUMBER)' == ''" Text="The BUILD_BUILDNUMBER property is required." />
+    <Error Condition="'$(ArtifactsLogDir)' == ''" Text="The ArtifactsLogDir property is required." />
+    <Error Condition="'$(BUILD_SOURCEBRANCH)' == ''" Text="The BUILD_SOURCEBRANCH property is required." />
+    <Error Condition="'$(BUILD_SOURCEVERSION)' == ''" Text="The BUILD_SOURCEVERSION property is required." />
+    <Error Condition="'$(BUILD_REPOSITORY_URI)' == ''" Text="The BUILD_REPOSITORY_URI property is required." />
+    <Error Condition="'$(MaestroAccessToken)' == ''" Text="The MaestroAccessToken property is required." />
+    <Error Condition="'$(MaestroApiEndpoint)' == ''" Text="The MaestroApiEndpoint property is required." />
+    <Error Condition="'$(SYSTEM_TEAMFOUNDATIONCOLLECTIONURI)' == ''" Text="The SYSTEM_TEAMFOUNDATIONCOLLECTIONURI property is required." />
+    <Error Condition="'$(SYSTEM_TEAMPROJECT)' == ''" Text="The SYSTEM_TEAMPROJECT property is required." />
+    <Error Condition="'$(BUILD_BUILDID)' == ''" Text="The BUILD_BUILDID property is required." />
+    <Error Condition="'$(SYSTEM_DEFINITIONID)' == ''" Text="The SYSTEM_DEFINITIONID property is required." />
+
+    <Message Text="Publishing %(ItemsToPush.Identity)" Importance="normal" />
+
+    <ItemGroup>
+      <ManifestBuildData Include="InitialAssetsLocation=$(SYSTEM_TEAMFOUNDATIONCOLLECTIONURI)$(SYSTEM_TEAMPROJECT)/_apis/build/builds/$(BUILD_BUILDID)/artifacts" />
+      <ManifestBuildData Include="AzureDevOpsBuildId=$(BUILD_BUILDID)" />
+      <ManifestBuildData Include="AzureDevOpsBuildDefinitionId=$(SYSTEM_DEFINITIONID)" />
+      <ManifestBuildData Include="AzureDevOpsProject=$(SYSTEM_TEAMPROJECT)" />
+      <ManifestBuildData Include="AzureDevOpsBuildNumber=$(BUILD_BUILDNUMBER)" />
+      <ManifestBuildData Include="AzureDevOpsRepository=$(BUILD_REPOSITORY_URI)" />
+      <ManifestBuildData Include="AzureDevOpsBranch=$(BUILD_SOURCEBRANCH)" />
+    </ItemGroup>
+
+    <PushToAzureDevOpsArtifacts
+      ItemsToPush="@(ItemsToPush)"
+      ManifestBuildData="@(ManifestBuildData)"
+      ManifestRepoUri="$(BUILD_REPOSITORY_NAME)"
+      ManifestBranch="$(BUILD_SOURCEBRANCH)"
+      ManifestBuildId="$(BUILD_BUILDNUMBER)"
+      ManifestCommit="$(BUILD_SOURCEVERSION)"
+      AssetManifestPath="$(AssetManifestPath)"
+      PublishingVersion="3" />
+
+    <PushMetadataToBuildAssetRegistry
+      BuildAssetRegistryToken="$(MaestroAccessToken)"
+      MaestroApiEndpoint="$(MaestroApiEndpoint)"
+      ManifestsPath="$(ArtifactsLogDir)AssetManifest\"
+      AssetVersion="$(Version)" />
+  </Target>
+
+</Project>

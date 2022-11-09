@@ -1,0 +1,2 @@
+#nullable enable
+NuGet.VisualStudio.Internal.Contracts.INuGetProjectManagerService.GetInstalledAndTransitivePackagesAsync(System.Collections.Generic.IReadOnlyCollection<string!>! projectIds, bool includeTransitiveOrigins, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask<NuGet.VisualStudio.Internal.Contracts.IInstalledAndTransitivePackages!>

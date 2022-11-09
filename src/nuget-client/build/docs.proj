@@ -1,0 +1,57 @@
+<Project DefaultTargets="GenerateDocsOverview">
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), 'README.md'))\build\common.props" />
+
+  <PropertyGroup>
+    <MarkdownAssemblyPath>$(ArtifactsDirectory)doc.tasks\bin\$(Configuration)\$(NetStandardVersion)\doc.tasks.dll</MarkdownAssemblyPath>
+    <DocTaskPath>$(RepositoryRootDirectory)\tools-local\doc.tasks\doc.tasks.csproj</DocTaskPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <DocTitle>NuGet Project Overview</DocTitle>
+    <DocSummary>Below is a list of projects contained in the NuGet.Client repo, organized by product and test projects.</DocSummary>
+  </PropertyGroup>
+  <ItemGroup>
+    <Section Include="DocItem">
+      <Title>Product Projects</Title>
+      <Summary>All shipped NuGet libraries and clients in `src/` folder.</Summary>
+      <Projects>@(ProductProjects)</Projects>
+    </Section>
+    <Section Include="DocItem">
+      <Title>Core Unit Test Projects</Title>
+      <Summary>Unit tests for libraries and some clients. Located in `test/` folder.</Summary>
+      <Projects>@(CoreUnitTestProjects)</Projects>
+    </Section>
+    <Section Include="DocItem">
+      <Title>Visual Studio Test Projects</Title>
+      <Projects>@(VSUnitTestProjects)</Projects>
+    </Section>
+    <Section Include="DocItem">
+      <Title>Functional Test Projects</Title>
+      <Projects>@(CoreFuncTestProjects)</Projects>
+    </Section>
+  </ItemGroup>
+
+  <Target Name="BuildTasks">
+    <MsBuild
+      Projects="$(DocTaskPath)"
+      Targets="Restore"
+      Properties="$(CommonMSBuildProperties);" />
+
+    <MsBuild
+      Projects="$(DocTaskPath)"
+      Targets="Build"
+      Properties="$(CommonMSBuildProperties);" />
+  </Target>
+
+  <UsingTask TaskName="NuGetTasks.GenerateMarkdownDoc" AssemblyFile="$(MarkdownAssemblyPath)" />
+  <Target Name="GenerateDocsOverview" DependsOnTargets="BuildTasks">
+    <GenerateMarkdownDoc
+      OutputFile="$(RepositoryRootDirectory)\docs\project-overview.md"
+      RepositoryRoot="$(RepositoryRootDirectory)"
+      Title="$(DocTitle)"
+      Summary="$(DocSummary)"
+      Sections="@(Section)" />
+
+    <Message Text="Documentation generated!" Importance="High" />
+  </Target>
+</Project>

@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<VSTemplate Version="3.0.0" Type="Project" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.microsoft.com/developer/vstemplate/2005">
+  <TemplateData>
+    <Name Package="{b3bae735-386c-4030-8329-ef48eeda4036}" ID="4650" />
+    <Description Package="{b3bae735-386c-4030-8329-ef48eeda4036}" ID="4651" />
+    <Icon Package="{b3bae735-386c-4030-8329-ef48eeda4036}" ID="4602" />
+    <TemplateID>Microsoft.CSharp.WPFApplication</TemplateID>
+    <ProjectType>CSharp</ProjectType>
+    <RequiredFrameworkVersion>3.0</RequiredFrameworkVersion>
+    <SortOrder>11</SortOrder>
+    <NumberOfParentCategoriesToRollUp>1</NumberOfParentCategoriesToRollUp>
+    <CreateNewFolder>true</CreateNewFolder>
+    <DefaultName>WpfApplication</DefaultName>
+    <ProvideDefaultName>true</ProvideDefaultName>
+    <PromptForSaveOnCreation>false</PromptForSaveOnCreation>
+    <EnableLocationBrowseButton>true</EnableLocationBrowseButton>
+  </TemplateData>
+  <TemplateContent>
+    <Project File="WPFApplication.csproj" ReplaceParameters="true">
+      <ProjectItem ReplaceParameters="true" TargetFileName="Properties\AssemblyInfo.cs">AssemblyInfo.cs</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="Properties\Resources.resx">Resources.resx</ProjectItem>
+      <ProjectItem ReplaceParameters="true" TargetFileName="Properties\Resources.Designer.cs">Resources.Designer.cs</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="Properties\Settings.settings">Settings.settings</ProjectItem>
+      <ProjectItem ReplaceParameters="true" TargetFileName="Properties\Settings.Designer.cs">Settings.Designer.cs</ProjectItem>
+      <ProjectItem ReplaceParameters="true" OpenInEditor="true">MainWindow.xaml</ProjectItem>
+      <ProjectItem ReplaceParameters="true" OpenInEditor="true" SubType="Code">MainWindow.xaml.cs</ProjectItem>
+      <ProjectItem ReplaceParameters="true">App.xaml</ProjectItem>
+      <ProjectItem ReplaceParameters="true" SubType="Code">App.xaml.cs</ProjectItem>
+      <ProjectItem ReplaceParameters="true">App.config</ProjectItem>
+    </Project>
+  </TemplateContent>
+</VSTemplate>

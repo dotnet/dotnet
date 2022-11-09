@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.AspNet.WebPages.Administration</id>
+    <version>2.0.20713.0</version>
+    <authors>Microsoft</authors>
+    <description>This package contains the runtime assemblies for ASP.NET Web Pages. ASP.NET Web Pages and the new Razor syntax provide a fast, terse, clean and lightweight way to combine server code with HTML to create dynamic web content.</description>
+    <dependencies>
+      <dependency id="Microsoft.AspNet.WebPages" version="[2.0.20710.0, 2.1)" />
+      <dependency id="NuGet.Core" version="[1.6.2, 1.7)" />
+    </dependencies>
+  </metadata>
+</package>

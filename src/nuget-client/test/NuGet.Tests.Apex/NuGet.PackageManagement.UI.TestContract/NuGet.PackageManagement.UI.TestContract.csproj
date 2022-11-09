@@ -1,0 +1,25 @@
+<Project>
+  <PropertyGroup>
+    <SkipAnalyzers>true</SkipAnalyzers>
+  </PropertyGroup>
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), 'NuGet.sln'))\build\common.test.props" />
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+  <PropertyGroup>
+    <TargetFramework>$(NETFXTargetFramework)</TargetFramework>
+    <OutputType>Library</OutputType>
+    <NoWarn>$(NoWarn);CS1591;1762</NoWarn>
+    <Description>A contract assembly providing a wrapper for testing the NuGet Package Manager UI functionality.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="$(NuGetClientsSrcDirectory)NuGet.PackageManagement.UI\NuGet.PackageManagement.UI.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+
+  <Import Project="$(BuildCommonDirectory)common.targets"/>
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+</Project>

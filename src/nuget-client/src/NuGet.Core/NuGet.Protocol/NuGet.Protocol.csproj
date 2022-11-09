@@ -1,0 +1,52 @@
+<Project>
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), 'NuGet.sln'))\build\common.props" />
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+
+  <PropertyGroup>
+    <TargetFrameworks>$(TargetFrameworksLibraryForSigning)</TargetFrameworks>
+    <TargetFramework />
+    <NoWarn>$(NoWarn);CS1591;CS1573;CS0012</NoWarn>
+    <PackageTags>nuget protocol</PackageTags>
+    <PackProject>true</PackProject>
+    <Shipping>true</Shipping>
+    <IncludeInVSIX>true</IncludeInVSIX>
+    <XPLATProject>true</XPLATProject>
+    <Description>NuGet's implementation for interacting with feeds. Contains functionality for all feed types.</Description>
+    <UsePublicApiAnalyzer>perTfm</UsePublicApiAnalyzer>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(IsVsixBuild)' == 'true' ">
+    <TargetFrameworks />
+    <TargetFramework>$(NETFXTargetFramework)</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Packaging\NuGet.Packaging.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Strings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Strings.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Strings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == '$(NETFXTargetFramework)' ">
+    <Reference Include="System.IdentityModel" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.IO.Compression" />
+  </ItemGroup>
+
+  <Import Project="$(BuildCommonDirectory)common.targets" />
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+</Project>

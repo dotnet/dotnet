@@ -1,0 +1,768 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ApiKey_Description" xml:space="preserve">
+    <value>The API key for the server.</value>
+  </data>
+  <data name="App_FullName" xml:space="preserve">
+    <value>NuGet Command Line</value>
+  </data>
+  <data name="ConsoleConfirmMessage" xml:space="preserve">
+    <value>{0} (y/N)</value>
+  </data>
+  <data name="ConsoleConfirmMessageAccept" xml:space="preserve">
+    <value>y</value>
+  </data>
+  <data name="Delete_Description" xml:space="preserve">
+    <value>Deletes a package from the server.</value>
+  </data>
+  <data name="Delete_MissingArguments" xml:space="preserve">
+    <value>Please provide arguments for package id and package version.</value>
+  </data>
+  <data name="Delete_PackageIdAndVersion_Description" xml:space="preserve">
+    <value>The Package Id and version.</value>
+  </data>
+  <data name="DisableBuffering_Description" xml:space="preserve">
+    <value>Disable buffering when pushing to an HTTP(S) server to decrease memory usage.</value>
+  </data>
+  <data name="NoSymbols_Description" xml:space="preserve">
+    <value>If a symbols package exists, it will not be pushed to a symbols server.</value>
+  </data>
+  <data name="NonInteractive_Description" xml:space="preserve">
+    <value>Do not prompt for user input or confirmations.</value>
+  </data>
+  <data name="Push_Description" xml:space="preserve">
+    <value>Pushes a package to the server and publishes it.</value>
+  </data>
+  <data name="Push_MissingArguments" xml:space="preserve">
+    <value>Please specify the path to the package.</value>
+  </data>
+  <data name="Push_Package_ApiKey_Description" xml:space="preserve">
+    <value>Specify the path to the package and your API key to push the package to the server.</value>
+  </data>
+  <data name="Push_Timeout_Description" xml:space="preserve">
+    <value>Timeout for pushing to a server in seconds. Defaults to 300 seconds (5 minutes).</value>
+  </data>
+  <data name="Source_Description" xml:space="preserve">
+    <value>Package source (URL, UNC/folder path or package source name) to use. Defaults to DefaultPushSource if specified in NuGet.Config.</value>
+  </data>
+  <data name="Push_InvalidTimeout" xml:space="preserve">
+    <value>Invalid timeout parameter value.</value>
+  </data>
+  <data name="Push_Timeout_Error" xml:space="preserve">
+    <value>Pushing took too long. You can change the default timeout of 300 seconds by using the --timeout &lt;seconds&gt; option with the push command.</value>
+  </data>
+  <data name="ForceEnglishOutput_Description" xml:space="preserve">
+    <value>Forces the application to run using an invariant, English-based culture.</value>
+  </data>
+  <data name="OutputNuGetVersion" xml:space="preserve">
+    <value>{0} Version: {1}</value>
+    <comment>{0}: App full name
+{1}: App version</comment>
+  </data>
+  <data name="SymbolSource_Description" xml:space="preserve">
+    <value>Symbol server URL to use.</value>
+  </data>
+  <data name="SymbolApiKey_Description" xml:space="preserve">
+    <value>The API key for the symbol server.</value>
+  </data>
+  <data name="LocalsCommand_ArgumentDescription" xml:space="preserve">
+    <value>Specifies the cache location(s) to list or clear.
+&lt;all | http-cache | global-packages | temp&gt;</value>
+  </data>
+  <data name="LocalsCommand_ClearDescription" xml:space="preserve">
+    <value>Clear the selected local resources or cache location(s).</value>
+  </data>
+  <data name="LocalsCommand_ListDescription" xml:space="preserve">
+    <value>List the selected local resources or cache location(s).</value>
+  </data>
+  <data name="LocalsCommand_Description" xml:space="preserve">
+    <value>Clears or lists local NuGet resources such as http requests cache, packages folder, plugin operations cache  or machine-wide global packages folder.</value>
+  </data>
+  <data name="LocalsCommand_MultipleOperations" xml:space="preserve">
+    <value>Both operations, --list and --clear, are not supported in the same command. Please specify only one operation.
+usage: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
+For more information, visit https://docs.nuget.org/docs/reference/command-line-reference</value>
+  </data>
+  <data name="LocalsCommand_NoArguments" xml:space="preserve">
+    <value>No Cache Type was specified.
+usage: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
+For more information, visit https://docs.nuget.org/docs/reference/command-line-reference</value>
+  </data>
+  <data name="LocalsCommand_NoOperation" xml:space="preserve">
+    <value>Please specify an operation i.e. --list or --clear.
+usage: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
+For more information, visit https://docs.nuget.org/docs/reference/command-line-reference</value>
+  </data>
+  <data name="Error_MsBuildUnableToOpenProject" xml:space="preserve">
+    <value>MsBuild was unable to open Project '{0}'.</value>
+    <comment>{0} - Project/csproj path</comment>
+  </data>
+  <data name="Error_AddPkgIncompatibleWithAllFrameworks" xml:space="preserve">
+    <value>Package '{0}' is incompatible with '{1}' frameworks in project '{2}'.</value>
+    <comment>{0} - Package Id
+{1} - all / user specified
+{2} - Project Path</comment>
+  </data>
+  <data name="Info_AddPkgAddingReference" xml:space="preserve">
+    <value>Adding PackageReference for package '{0}' into project '{1}'.</value>
+    <comment>{0} - Package Id
+{1} - Project Path</comment>
+  </data>
+  <data name="Info_AddPkgCompatibleWithAllFrameworks" xml:space="preserve">
+    <value>Package '{0}' is compatible with all the specified frameworks in project '{1}'.</value>
+    <comment>{0} - Package Id
+{1} - Project Path</comment>
+  </data>
+  <data name="Info_AddPkgCompatibleWithSubsetFrameworks" xml:space="preserve">
+    <value>Package '{0}' is compatible with a subset of the specified frameworks in project '{1}'.</value>
+    <comment>{0} - Package Id
+{1} - Project Path</comment>
+  </data>
+  <data name="Warn_AddPkgWithoutRestore" xml:space="preserve">
+    <value>--no-restore|-n flag was used. No compatibility check will be done and the added package reference will be unconditional.</value>
+  </data>
+  <data name="AddPkg_Description" xml:space="preserve">
+    <value>Adds a package reference to a project.</value>
+  </data>
+  <data name="AddPkg_FrameworksDescription" xml:space="preserve">
+    <value>Frameworks for which the package reference should be added.</value>
+  </data>
+  <data name="Error_PkgMissingArgument" xml:space="preserve">
+    <value>Unable to {0} package. Argument '{1}' not provided.</value>
+    <comment>{0} - Operation Name
+{1} - Argument which was not provided</comment>
+  </data>
+  <data name="AddPkg_NoRestoreDescription" xml:space="preserve">
+    <value>Do not perform restore preview and compatibility check. The added package reference will be unconditional.</value>
+  </data>
+  <data name="AddPkg_PackageDirectoryDescription" xml:space="preserve">
+    <value>Directory to restore packages in.</value>
+  </data>
+  <data name="AddPkg_PackageIdDescription" xml:space="preserve">
+    <value>Id of the package to be added.</value>
+  </data>
+  <data name="AddPkg_PackageVersionDescription" xml:space="preserve">
+    <value>Version of the package to be added.</value>
+  </data>
+  <data name="AddPkg_ProjectPathDescription" xml:space="preserve">
+    <value>Path to the project file.</value>
+  </data>
+  <data name="AddPkg_SourcesDescription" xml:space="preserve">
+    <value>Specifies NuGet package sources to use during the restore.</value>
+  </data>
+  <data name="AddPkg_DgFileDescription" xml:space="preserve">
+    <value>Path to the dependency graph file to be used to restore preview and compatibility check.</value>
+  </data>
+  <data name="Error_NoDgSpec" xml:space="preserve">
+    <value>None or invalid DgSpec was passed to NuGet add package command.</value>
+  </data>
+  <data name="Error_AddPkgErrorStringForImportedEdit" xml:space="preserve">
+    <value>Item '{0}' for '{1}' in Imported file '{2}'.</value>
+    <comment>{0} - ItemType
+{1} - Package Id
+{2} - Imported File Path</comment>
+  </data>
+  <data name="Error_AddPkgFailOnImportEdit" xml:space="preserve">
+    <value>Error while performing {0} for package '{1}'. Cannot edit items in imported files - {2}{3}</value>
+    <comment>{0} - Operation Name
+{1} - packageId
+{2} - New line (this is just to hold a new line between sentences. does not need any translation)
+{3} - Error string</comment>
+  </data>
+  <data name="Info_AddPkgAdded" xml:space="preserve">
+    <value>PackageReference for package '{0}' version '{1}' added to file '{2}'.</value>
+    <comment>{0} - Package Id
+{1} - package version
+{2} - project file path</comment>
+  </data>
+  <data name="Info_AddPkgUpdated" xml:space="preserve">
+    <value>PackageReference for package '{0}' version '{1}' updated in file '{2}'.</value>
+    <comment>{0} - Package Id
+{1} - package version
+{2} - project file path</comment>
+  </data>
+  <data name="AddPkg_All" xml:space="preserve">
+    <value>all</value>
+  </data>
+  <data name="AddPkg_UserSpecified" xml:space="preserve">
+    <value>user specified</value>
+  </data>
+  <data name="Info_RemovePkgRemovingReference" xml:space="preserve">
+    <value>Removing PackageReference for package '{0}' from project '{1}'.</value>
+    <comment>{0} - Package Id
+{1} - Project Path</comment>
+  </data>
+  <data name="RemovePkg_Description" xml:space="preserve">
+    <value>Removes a package reference from a project.</value>
+  </data>
+  <data name="RemovePkg_PackageIdDescription" xml:space="preserve">
+    <value>Id of the package to be removed.</value>
+  </data>
+  <data name="RemovePkg_ProjectPathDescription" xml:space="preserve">
+    <value>Path to the project file.</value>
+  </data>
+  <data name="Error_UpdatePkgNoSuchPackage" xml:space="preserve">
+    <value>Project '{0}' does not contain any PackageReference '{1}' to {2}.</value>
+    <comment>{0} - project path
+{1} - package id
+{2} - operation name</comment>
+  </data>
+  <data name="Error_PkgMissingOrInvalidProjectFile" xml:space="preserve">
+    <value>Unable to {0} package. Missing or Invalid project file '{1}'.</value>
+    <comment>{0} - Operation Name
+{1} - project file path</comment>
+  </data>
+  <data name="Error_UnsupportedProject" xml:space="preserve">
+    <value>Error while adding package '{0}' to project '{1}'. The project does not support adding package references through the add package command.</value>
+    <comment>{0} - Package Id
+{1} - Project path</comment>
+  </data>
+  <data name="NoServiceEndpoint_Description" xml:space="preserve">
+    <value>Does not append "api/v2/package" to the source URL.</value>
+  </data>
+  <data name="AddPkg_InteractiveDescription" xml:space="preserve">
+    <value>Allow the command to block and require manual action for operations like authentication.</value>
+  </data>
+  <data name="ListPkg_DeprecatedDescription" xml:space="preserve">
+    <value>Displays only the packages marked deprecated by the authors.</value>
+  </data>
+  <data name="ListPkg_VulnerableDescription" xml:space="preserve">
+    <value>Displays only the packages flagged as vulnerable.</value>
+  </data>
+  <data name="ListPkg_Description" xml:space="preserve">
+    <value>Lists all the packages used by the current project(s).</value>
+  </data>
+  <data name="ListPkg_FrameworkDescription" xml:space="preserve">
+    <value>Specifies the target framework for which the packages will be listed.</value>
+  </data>
+  <data name="ListPkg_OutdatedDescription" xml:space="preserve">
+    <value>Displays only the packages that need updates with the latest version from the sources.</value>
+  </data>
+  <data name="ListPkg_TransitiveDescription" xml:space="preserve">
+    <value>Includes transitive packages too in the result.</value>
+  </data>
+  <data name="ListPkg_PathDescription" xml:space="preserve">
+    <value>A path to a project, solution file or directory.</value>
+  </data>
+  <data name="Error_AssetsFileNotFound" xml:space="preserve">
+    <value>No assets file was found for `{0}`. Please run restore before running this command.</value>
+  </data>
+  <data name="ListPkg_ProjectHeaderLog" xml:space="preserve">
+    <value>Project '{0}' has the following package references</value>
+  </data>
+  <data name="ListPkg_AutoReferenceDescription" xml:space="preserve">
+    <value>(A) : Auto-referenced package.</value>
+  </data>
+  <data name="ListPkg_NoPackagesForFramework" xml:space="preserve">
+    <value>No packages were found for this framework.</value>
+  </data>
+  <data name="ListPkg_NoPackagesFoundForFrameworks" xml:space="preserve">
+    <value>No packages were found for the project `{0}` given the specified frameworks.</value>
+  </data>
+  <data name="ListPkg_ConfigDescription" xml:space="preserve">
+    <value>A path to a config file to specify sources. Works only with `--outdated`.</value>
+  </data>
+  <data name="ListPkg_HighestMinorDescription" xml:space="preserve">
+    <value>Considers only the versions with matching major. Works only with `--outdated`.</value>
+  </data>
+  <data name="ListPkg_HighestPatchDescription" xml:space="preserve">
+    <value>Considers only the versions with matching minor and major. Works only with `--outdated`.</value>
+  </data>
+  <data name="ListPkg_PrereleaseDescription" xml:space="preserve">
+    <value>Considers prerelease versions when looking for latest. Works only with `--outdated`.</value>
+  </data>
+  <data name="ListPkg_SourceDescription" xml:space="preserve">
+    <value>Sources to lookup for latest versions. Works only with `--outdated`.</value>
+  </data>
+  <data name="Error_NotPRProject" xml:space="preserve">
+    <value>The project `{0}` uses package.config for NuGet packages, while the command works only with package reference projects.</value>
+  </data>
+  <data name="ListPkg_ErrorReadingAssetsFile" xml:space="preserve">
+    <value>Unable to read the assets file `{0}`. Please make sure the file has the write format.</value>
+  </data>
+  <data name="ListPkg_ErrorReadingReferenceFromProject" xml:space="preserve">
+    <value>Unable to read a package reference from the project `{0}`. Please make sure that your project file and project.assets.json file are in sync by running restore.</value>
+  </data>
+  <data name="ListPkg_InvalidFramework" xml:space="preserve">
+    <value>Failed to parse one of the given frameworks. Please make sure the given frameworks are valid.</value>
+  </data>
+  <data name="ListPkg_Latest" xml:space="preserve">
+    <value>Latest</value>
+  </data>
+  <data name="ListPkg_NotFoundAtSources" xml:space="preserve">
+    <value>Not found at the sources</value>
+  </data>
+  <data name="ListPkg_Requested" xml:space="preserve">
+    <value>Requested</value>
+  </data>
+  <data name="ListPkg_Resolved" xml:space="preserve">
+    <value>Resolved</value>
+  </data>
+  <data name="ListPkg_TopLevelHeader" xml:space="preserve">
+    <value>Top-level Package</value>
+  </data>
+  <data name="ListPkg_TransitiveHeader" xml:space="preserve">
+    <value>Transitive Package</value>
+  </data>
+  <data name="NuGetXplatCommand_Interactive" xml:space="preserve">
+    <value>Allow the command to block and require manual action for operations like authentication.</value>
+  </data>
+  <data name="ListPkg_ErrorFileNotFound" xml:space="preserve">
+    <value>The given file `{0}` was not found</value>
+  </data>
+  <data name="ListPkg_NoUpdatesForFramework" xml:space="preserve">
+    <value>No package updates available for this framework.</value>
+  </data>
+  <data name="ListPkg_NoUpdatesForProject" xml:space="preserve">
+    <value>The given project `{0}` has no updates given the current sources.</value>
+  </data>
+  <data name="ListPkg_ProjectUpdatesHeaderLog" xml:space="preserve">
+    <value>Project `{0}` has the following updates to its packages</value>
+  </data>
+  <data name="ListPkg_SourcesUsedDescription" xml:space="preserve">
+    <value>The following sources were used:</value>
+  </data>
+  <data name="ListPkg_InvalidOptions" xml:space="preserve">
+    <value>Options '--outdated', '--deprecated' and '--vulnerable' cannot be combined.</value>
+  </data>
+  <data name="ListPkg_NoDeprecatedPackagesForProject" xml:space="preserve">
+    <value>The given project `{0}` has no deprecated packages given the current sources.</value>
+  </data>
+  <data name="ListPkg_NoVulnerablePackagesForProject" xml:space="preserve">
+    <value>The given project `{0}` has no vulnerable packages given the current sources.</value>
+  </data>
+  <data name="ListPkg_VulnerableIgnoredOptions" xml:space="preserve">
+    <value>The command option(s) '--include-prerelease', '--highest-minor', and '--highest-patch' are ignored by this command.</value>
+  </data>
+  <data name="ListPkg_ProjectDeprecationsHeaderLog" xml:space="preserve">
+    <value>Project `{0}` has the following deprecated packages</value>
+  </data>
+  <data name="ListPkg_ProjectVulnerabilitiesHeaderLog" xml:space="preserve">
+    <value>Project `{0}` has the following vulnerable packages</value>
+  </data>
+  <data name="ListPkg_NoDeprecationsForFramework" xml:space="preserve">
+    <value>No deprecated packages for this framework.</value>
+  </data>
+  <data name="ListPkg_NoVulnerabilitiesForFramework" xml:space="preserve">
+    <value>No vulnerable packages for this framework.</value>
+  </data>
+  <data name="ListPkg_DeprecationAlternative" xml:space="preserve">
+    <value>Alternative</value>
+  </data>
+  <data name="ListPkg_DeprecationReasons" xml:space="preserve">
+    <value>Reason(s)</value>
+  </data>
+  <data name="ListPkg_VulnerabilitySeverity" xml:space="preserve">
+    <value>Severity</value>
+  </data>
+  <data name="ListPkg_VulnerabilityAdvisoryUrl" xml:space="preserve">
+    <value>Advisory URL</value>
+  </data>
+  <data name="PushCommandSkipDuplicateDescription" xml:space="preserve">
+    <value>If a package and version already exists, skip it and continue with the next package in the push, if any.</value>
+  </data>
+  <data name="AddSourceCommandDescription" xml:space="preserve">
+    <value>Add a NuGet source.</value>
+  </data>
+  <data name="DisableSourceCommandDescription" xml:space="preserve">
+    <value>Disable a NuGet source.</value>
+  </data>
+  <data name="EnableSourceCommandDescription" xml:space="preserve">
+    <value>Enable a NuGet source.</value>
+  </data>
+  <data name="ListSourceCommandDescription" xml:space="preserve">
+    <value>Lists all configured NuGet sources.</value>
+  </data>
+  <data name="RemoveSourceCommandDescription" xml:space="preserve">
+    <value>Remove a NuGet source.</value>
+  </data>
+  <data name="UpdateSourceCommandDescription" xml:space="preserve">
+    <value>Update a NuGet source.</value>
+  </data>
+  <data name="SourcesCommandNameDescription" xml:space="preserve">
+    <value>Name of the source.</value>
+  </data>
+  <data name="SourcesCommandPasswordDescription" xml:space="preserve">
+    <value>Password to be used when connecting to an authenticated source.</value>
+  </data>
+  <data name="SourcesCommandSourceDescription" xml:space="preserve">
+    <value>Path to the package source.</value>
+  </data>
+  <data name="SourcesCommandFormatDescription" xml:space="preserve">
+    <value>The format of the list command output: `Detailed` (the default) and `Short`.</value>
+  </data>
+  <data name="SourcesCommandUsernameDescription" xml:space="preserve">
+    <value>Username to be used when connecting to an authenticated source.</value>
+  </data>
+  <data name="SourcesCommandStorePasswordInClearTextDescription" xml:space="preserve">
+    <value>Enables storing portable package source credentials by disabling password encryption.</value>
+  </data>
+  <data name="SourcesCommandValidAuthenticationTypesDescription" xml:space="preserve">
+    <value>Comma-separated list of valid authentication types for this source. Set this to basic if the server advertises NTLM or Negotiate and your credentials must be sent using the Basic mechanism, for instance when using a PAT with on-premises Azure DevOps Server. Other valid values include negotiate, kerberos, ntlm, and digest, but these values are unlikely to be useful.</value>
+    <comment>Please don't localize "basic, NTLM, Negotiate, kerberos, ntlm, digest"</comment>
+  </data>
+  <data name="Option_ConfigFile" xml:space="preserve">
+    <value>The NuGet configuration file. If specified, only the settings from this file will be used. If not specified, the hierarchy of configuration files from the current directory will be used. For more information, see https://docs.microsoft.com/nuget/consume-packages/configuring-nuget-behavior.</value>
+  </data>
+  <data name="Option_PackageSource" xml:space="preserve">
+    <value>Package source name.</value>
+  </data>
+  <data name="Option_Path" xml:space="preserve">
+    <value>Path to certificate file.</value>
+  </data>
+  <data name="Option_Password" xml:space="preserve">
+    <value>Password for the certificate, if needed.</value>
+  </data>
+  <data name="Option_StorePasswordInClearText" xml:space="preserve">
+    <value>Enables storing password for the certificate by disabling password encryption.</value>
+  </data>
+  <data name="Option_StoreLocation" xml:space="preserve">
+    <value>Certificate store location (see docs).</value>
+  </data>
+  <data name="Option_StoreName" xml:space="preserve">
+    <value>Certificate store name (see docs).</value>
+  </data>
+  <data name="Option_FindBy" xml:space="preserve">
+    <value>Search method to find certificate in certificate store (see docs).</value>
+  </data>
+  <data name="Option_FindValue" xml:space="preserve">
+    <value>Search the certificate store for the supplied value. Used with FindValue (see docs).</value>
+    <comment>Don't translate FindValue</comment>
+  </data>
+  <data name="Option_Force" xml:space="preserve">
+    <value>Skip certificate validation.</value>
+  </data>
+  <data name="Add_Description" xml:space="preserve">
+    <value>Add a NuGet source.</value>
+  </data>
+  <data name="Disable_Description" xml:space="preserve">
+    <value>Disable a NuGet source.</value>
+  </data>
+  <data name="Enable_Description" xml:space="preserve">
+    <value>Enable a NuGet source.</value>
+  </data>
+  <data name="List_Description" xml:space="preserve">
+    <value>List configured NuGet sources.</value>
+  </data>
+  <data name="Remove_Description" xml:space="preserve">
+    <value>Remove a NuGet source.</value>
+  </data>
+  <data name="Update_Description" xml:space="preserve">
+    <value>Update a NuGet source.</value>
+  </data>
+  <data name="Sources_Redirect" xml:space="preserve">
+    <value>The proper command is '{0}'.</value>
+  </data>
+  <data name="ListClientCertCommandDescription" xml:space="preserve">
+    <value>Lists all the client certificates in the configuration.</value>
+  </data>
+  <data name="RemoveClientCertCommandDescription" xml:space="preserve">
+    <value>Removes the client certificate configuration that matches the given package source name.</value>
+  </data>
+  <data name="UpdateClientCertCommandDescription" xml:space="preserve">
+    <value>Updates the client certificate configuration that matches the given package source name.</value>
+  </data>
+  <data name="AddClientCertCommandDescription" xml:space="preserve">
+    <value>Adds a client certificate configuration that matches the given package source name.</value>
+  </data>
+  <data name="Verbosity_Description" xml:space="preserve">
+    <value>Set the verbosity level of the command. Allowed values are q[uiet], m[inimal], n[ormal], d[etailed], and diag[nostic].</value>
+    <comment>Please don't localize "q[uiet]", "m[inimal]", "n[ormal]", "d[etailed]", or "diag[nostic]"</comment>
+  </data>
+  <data name="AddPkg_PackagePrerelease" xml:space="preserve">
+    <value>Allows prerelease packages to be installed.</value>
+  </data>
+  <data name="Error_PrereleaseWhenVersionSpecified" xml:space="preserve">
+    <value>The --prerelease and --version options are not supported in the same command.</value>
+    <comment>Please don't localize "prerelease" and "version"</comment>
+  </data>
+  <data name="Error_NoVersionsAvailable" xml:space="preserve">
+    <value>There are no versions available for the package '{0}'.</value>
+    <comment>{0} - PackageID</comment>
+  </data>
+  <data name="PrereleaseVersionsAvailable" xml:space="preserve">
+    <value>There are no stable versions available, {0} is the best available. Consider adding the --prerelease option</value>
+    <comment>{0} - Package Version</comment>
+  </data>
+  <data name="VerifyCommandAllDescription" xml:space="preserve">
+    <value>Specifies that all verifications possible should be performed to the package(s).</value>
+  </data>
+  <data name="VerifyCommandCertificateFingerprintDescription" xml:space="preserve">
+    <value>Verify that the signer certificate matches with one of the specified SHA256 fingerprints. A certificate SHA256 fingerprint is a SHA256 hash of the certificate used to identify the certificate. Multiple inputs should be separated by space.</value>
+  </data>
+  <data name="VerifyCommandDescription" xml:space="preserve">
+    <value>Verifies a signed NuGet package.</value>
+  </data>
+  <data name="VerifyCommandPackagePathDescription" xml:space="preserve">
+    <value>Specify the path to the package</value>
+  </data>
+  <data name="TrustCommandAlgorithm" xml:space="preserve">
+    <value>Specifies the hash algorithm used to calculate the certificate fingerprint. Defaults to SHA256. Values supported are SHA256, SHA384 and SHA512.</value>
+  </data>
+  <data name="TrustCommandAllowUntrustedRoot" xml:space="preserve">
+    <value>Specifies if the certificate for the trusted signer should be allowed to chain to an untrusted root. This is not recommended.</value>
+  </data>
+  <data name="TrustCommandDescription" xml:space="preserve">
+    <value>Manage the trusted signers.</value>
+  </data>
+  <data name="TrustCommandOwners" xml:space="preserve">
+    <value>Semi-colon separated list of trusted owners to further restrict the trust of a repository.</value>
+  </data>
+  <data name="SignCommandOutputDirectoryDescription" xml:space="preserve">
+    <value>Directory where the signed package(s) should be saved. By default the original package is overwritten by the signed package.</value>
+  </data>
+  <data name="SignCommandCertificateFingerprintDescription" xml:space="preserve">
+    <value>SHA-1 fingerprint of the certificate used to search a local certificate store for the certificate. The certificate store can be specified by --certificate-store-name and --certificate-store-location options.</value>
+    <comment>Please don't localize '--certificate-store-name' and '--certificate-store-location'</comment>
+  </data>
+  <data name="SignCommandCertificatePasswordDescription" xml:space="preserve">
+    <value>Password for the certificate, if needed.
+This option can be used to specify the password for the certificate. The command will throw an error message if certificate is password protected but password is not provided as input.</value>
+  </data>
+  <data name="SignCommandCertificatePathDescription" xml:space="preserve">
+    <value>File path to the certificate to be used while signing the package.</value>
+  </data>
+  <data name="SignCommandCertificateStoreLocationDescription" xml:space="preserve">
+    <value>Name of the X.509 certificate store use to search for the certificate. Defaults to "CurrentUser", the X.509 certificate store used by the current user.
+This option should be used when specifying the certificate via --certificate-subject-name or --certificate-fingerprint options.</value>
+    <comment>Please don't localize '--certificate-subject-name' and '--certificate-fingerprint'</comment>
+  </data>
+  <data name="SignCommandCertificateStoreNameDescription" xml:space="preserve">
+    <value>Name of the X.509 certificate store to use to search for the certificate. Defaults to "My", the X.509 certificate store for personal certificates.
+This option should be used when specifying the certificate via --certificate-subject-name or --certificate-fingerprint options.</value>
+    <comment>Please don't localize '--certificate-subject-name' and '--certificate-fingerprint'</comment>
+  </data>
+  <data name="SignCommandCertificateSubjectNameDescription" xml:space="preserve">
+    <value>Subject name of the certificate used to search a local certificate store for the certificate.
+The search is a case-insensitive string comparison using the supplied value, which will find all certificates with the subject name containing that string, regardless of other subject values. The certificate store can be specified by --certificate-store-name and --certificate-store-location options.</value>
+    <comment>Please don't localize '--certificate-store-name' and '--certificate-store-location'</comment>
+  </data>
+  <data name="SignCommandHashAlgorithmDescription" xml:space="preserve">
+    <value>Hash algorithm to be used to sign the package. Defaults to SHA256.</value>
+  </data>
+  <data name="SignCommandOverwriteDescription" xml:space="preserve">
+    <value>Switch to indicate if the current signature should be overwritten. By default the command will fail if the package already has a signature.</value>
+  </data>
+  <data name="SignCommandPackagePathDescription" xml:space="preserve">
+    <value>Signs NuGet packages at &lt;package-paths&gt; with the specified certificate.</value>
+    <comment>Please don't localize '&lt;package-paths&gt;'</comment>
+  </data>
+  <data name="SignCommandTimestamperDescription" xml:space="preserve">
+    <value>URL to an RFC 3161 timestamping server.</value>
+  </data>
+  <data name="SignCommandTimestampHashAlgorithmDescription" xml:space="preserve">
+    <value>Hash algorithm to be used by the RFC 3161 timestamp server. Defaults to SHA256.</value>
+  </data>
+  <data name="SignCommandDescription" xml:space="preserve">
+    <value>Signs NuGet package(s) at &lt;package-paths&gt; with the specified certificate.</value>
+    <comment>Please don't localize '&lt;package-paths&gt;'</comment>
+  </data>
+  <data name="SignCommandNoTimestamperWarning" xml:space="preserve">
+    <value>The '--timestamper' option was not provided. The signed package will not be timestamped. To learn more about this option, please visit https://docs.microsoft.com/dotnet/core/tools</value>
+    <comment>Please don't localize '--timestamper'</comment>
+  </data>
+  <data name="Err_InvalidValue" xml:space="preserve">
+    <value>Invalid value provided for '{0}'. The accepted values are {1}.</value>
+    <comment>{0} - argument name in SignCommand. e.g. certificate storeName, certificate storelocation, hashAlgorithmName  {1} - the possible values of the argument.</comment>
+  </data>
+  <data name="SignCommandMultipleCertificateException" xml:space="preserve">
+    <value>Multiple options were used to specify a certificate.</value>
+  </data>
+  <data name="SignCommandNoCertificateException" xml:space="preserve">
+    <value>No certificate was provided.</value>
+  </data>
+  <data name="TrustAuthorCommandDescription" xml:space="preserve">
+    <value>Adds a trusted signer with the given name, based on the author signature of the package.</value>
+  </data>
+  <data name="TrustListCommandDescription" xml:space="preserve">
+    <value>Lists all the trusted signers in the configuration.</value>
+  </data>
+  <data name="TrustRemoveCommandDescription" xml:space="preserve">
+    <value>Removes any trusted signers that match the given name.</value>
+  </data>
+  <data name="TrustRepositoryCommandDescription" xml:space="preserve">
+    <value>Adds a trusted signer with the given name, based on the repository signature or countersignature of a signed package.</value>
+  </data>
+  <data name="TrustSyncCommandDescription" xml:space="preserve">
+    <value>Deletes the current list of certificates and replaces them with an up-to-date list from the repository.</value>
+  </data>
+  <data name="TrustCertificateFingerprint" xml:space="preserve">
+    <value>The fingerprint of the certificate.</value>
+  </data>
+  <data name="TrustedCertificateSignerNameToAdd" xml:space="preserve">
+    <value>The name of the trusted signer to add. If a trusted signer with the given name already exists, the certificate item is added to that signer. Otherwise a trusted author is created with a certificate item from the given certificate information.</value>
+  </data>
+  <data name="TrustedSignerNameExists" xml:space="preserve">
+    <value>The name of the existing trusted signer to sync.</value>
+  </data>
+  <data name="TrustedSignerNameToAdd" xml:space="preserve">
+    <value>The name of the trusted signer to add. If name already exists in the configuration, the signature is appended.</value>
+  </data>
+  <data name="TrustedSignerNameToRemove" xml:space="preserve">
+    <value>The name of the existing trusted signer to remove.</value>
+  </data>
+  <data name="TrustLocalSignedNupkgPath" xml:space="preserve">
+    <value>The given package should be a local path to the signed .nupkg file.</value>
+  </data>
+  <data name="TrustSourceCommandDescription" xml:space="preserve">
+    <value>Adds a trusted signer based on a given package source.</value>
+  </data>
+  <data name="TrustSourceSignerName" xml:space="preserve">
+    <value>"The name of the trusted signer to add. If only &lt;NAME&gt; is provided without --&lt;source-url&gt;, the package source from your NuGet configuration files with the same name is added to the trusted list. If &lt;NAME&gt; already exists in the configuration, the package source is appended to it."</value>
+  </data>
+  <data name="TrustSourceUrl" xml:space="preserve">
+    <value>If a source-url is provided, it must be a v3 package source URL (like https://api.nuget.org/v3/index.json). Other package source types are not supported.</value>
+  </data>
+  <data name="Error_TrustedRepoAlreadyExists" xml:space="preserve">
+    <value>A trusted repository with the service index '{0}' already exists.</value>
+    <comment>0 - trusted repository name</comment>
+  </data>
+  <data name="Error_TrustedSignerAlreadyExists" xml:space="preserve">
+    <value>A trusted signer '{0}' already exists.</value>
+    <comment>0 - trusted signer name</comment>
+  </data>
+  <data name="Error_TrustFingerPrintAlreadyExist" xml:space="preserve">
+    <value>The certificate finger you're trying to add is already in the certificate fingerprint list.</value>
+  </data>
+  <data name="String1" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Warning_HttpServerUsage" xml:space="preserve">
+    <value>You are running the '{0}' operation with an 'HTTP' source, '{1}'. Non-HTTPS access will be removed in a future version. Consider migrating to an 'HTTPS' source.</value>
+    <comment>0 - The command name. Ex. Push/Delete. 1 - server uri.</comment>
+  </data>
+  <data name="Warning_HttpServerUsage_MultipleSources" xml:space="preserve">
+    <value>You are running the '{0}' operation with 'HTTP' sources: {1}
+Non-HTTPS access will be removed in a future version. Consider migrating to 'HTTPS' sources.</value>
+    <comment>0 - The command name. Ex. Push/Delete. 1 - list of server uris</comment>
+  </data>
+  <data name="Debug_CurrentUICulture" xml:space="preserve">
+    <value>DefaultThreadCurrentUICulture value: {0}</value>
+    <comment>0 - Value of CultureInfo.DefaultThreadCurrentUICulture</comment>
+  </data>
+  <data name="Error_InvalidCultureInfo" xml:space="preserve">
+    <value>Invalid culture identifier in {0} environment variable. Value read is '{1}'</value>
+    <comment>0 - Environment variable name, 1 - value set in environment variable</comment>
+  </data>
+  <data name="Info_AddPkgCPM" xml:space="preserve">
+    <value>PackageReference for package '{0}' added to '{1}' and PackageVersion added to central package management file '{2}'.</value>
+    <comment>0 - The package ID. 1 - Directory.Packages.props file path. 2 - Project file path.</comment>
+  </data>
+</root>

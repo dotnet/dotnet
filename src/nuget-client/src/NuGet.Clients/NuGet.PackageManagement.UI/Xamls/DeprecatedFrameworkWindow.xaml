@@ -1,0 +1,112 @@
+<vs:DialogWindow
+  x:Class="NuGet.PackageManagement.UI.DeprecatedFrameworkWindow"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:nuget="clr-namespace:NuGet.PackageManagement.UI"
+  xmlns:vs="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.15.0"
+  x:Name="_self"
+  ShowInTaskbar="False"
+  WindowStyle="SingleBorderWindow"
+  Background="{DynamicResource {x:Static nuget:Brushes.BackgroundBrushKey}}"
+  Foreground="{DynamicResource {x:Static nuget:Brushes.UIText}}"
+  WindowStartupLocation="CenterOwner"
+  Title="{x:Static nuget:Resources.WindowTitle_DeprecatedFramework}"
+  Height="500"
+  Width="500"
+  MinWidth="388">
+  <Window.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <nuget:SharedResources />
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+  </Window.Resources>
+
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="auto" />
+      <RowDefinition Height="auto" />
+      <RowDefinition />
+      <RowDefinition Height="auto" />
+    </Grid.RowDefinitions>
+    <TextBlock
+      Grid.Row="0"
+      Margin="12,4,12,0"
+      TextWrapping="Wrap">
+        <Run
+          Text="{Binding TextBeforeLink, Mode=OneWay}"
+          AutomationProperties.Name="{Binding Text, Source={RelativeSource Self}}"
+          x:Name="_migrationLinkLabel"/>
+        <Hyperlink AutomationProperties.AutomationId="MigrationLink"
+                   NavigateUri="{Binding MigrationUrl, Mode=OneTime}"
+                   Style="{StaticResource HyperlinkStyle}"
+                   RequestNavigate="OnMigrationUrlNavigate"
+                   AutomationProperties.LabeledBy="{Binding ElementName=_migrationLinkLabel}">
+          <Run Text="{Binding LinkText, Mode=OneTime}" />
+        </Hyperlink><Run Text="{Binding TextAfterLink, Mode=OneTime}" />
+    </TextBlock>
+    <TextBlock
+      x:Name="_projectListText"
+      Grid.Row="1"
+      Margin="12,4,12,0"
+      TextWrapping="Wrap"
+      Text="{Binding ProjectListText, Mode=OneTime}" />
+
+    <Border
+      Grid.Row="2"
+      Margin="12,12"
+      BorderBrush="{DynamicResource {x:Static nuget:Brushes.BorderBrush}}"
+      BorderThickness="1">
+      <ScrollViewer
+        HorizontalScrollBarVisibility="Auto"
+        IsTabStop="True"
+        AutomationProperties.HelpText="{Binding ElementName=_projectListText}">
+        <ItemsControl
+          ItemsSource="{Binding Path=Projects}"
+          IsTabStop="False">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+                <StackPanel Margin="6, 6">
+                    <TextBlock Text="{Binding}" AutomationProperties.Name="{Binding Text}" />
+                </StackPanel>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </ScrollViewer>
+    </Border>
+
+    <Grid
+      Grid.Row="3">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" MinWidth="180 "/>
+        <ColumnDefinition Width="auto" />
+        <ColumnDefinition Width="auto" />
+      </Grid.ColumnDefinitions>
+      <CheckBox
+        x:Name="_doNotShowCheckBox"
+        Grid.Column="0"
+        Margin="12"
+        VerticalAlignment="Center"
+        Foreground="{DynamicResource {x:Static nuget:Brushes.UIText}}"
+        Content="{x:Static nuget:Resources.DoNotShowThisAgain}"
+        Checked="DoNotShowCheckBox_Checked"
+        Unchecked="DoNotShowCheckBox_Unchecked" />
+      <Button
+        Grid.Column="1"
+        MinWidth="86"
+        MinHeight="24"
+        Margin="0,12"
+        AutomationProperties.AutomationId="OK"
+        Content="{x:Static nuget:Resources.Button_OK}"
+        Click="OkButtonClicked" />
+      <Button
+        Grid.Column="2"
+        MinWidth="86"
+        MinHeight="24"
+        Margin="6,12,12,12"
+        AutomationProperties.AutomationId="Cancel"
+        Content="{x:Static nuget:Resources.Button_Cancel}"
+        Click="CancelButtonClicked" />
+    </Grid>
+  </Grid>
+</vs:DialogWindow>

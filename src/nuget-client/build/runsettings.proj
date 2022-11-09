@@ -1,0 +1,23 @@
+<Project>
+    <Target Name="Build">
+
+        <Error Condition=" '$(IsOfficialBuild)' == 'true' AND '$(VsTargetMajorVersion)' == '' "
+            Text="VsTargetMajorVersion must be specified" />
+
+        <!-- NuGet.OptProfV2.runsettings -->
+        <MSBuild Condition=" '$(IsOfficialBuild)' == 'true' "
+            Projects="template.runsettingsproj"
+            Properties="RunName=NuGet.OptProfV2;
+            FileName=NuGet.OptProf.dll;
+            TestCaseFilter=TestCategory=OptProf;
+            OptProfCollector=enabled;
+            IncludeProfilingInputs=true;
+            VsConfigPath=tests.optprof.dev$(VsTargetMajorVersion).vsconfig;" />
+
+        <!-- NuGet.Tests.Apex.runsettings -->
+        <MSBuild
+            Projects="template.runsettingsproj"
+            Properties="RunName=NuGet.Tests.Apex;
+            FileName=NuGet.Tests.Apex.dll;" />
+    </Target>
+</Project>

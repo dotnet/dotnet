@@ -1,0 +1,301 @@
+<UserControl x:Class="NuGet.PackageManagement.UI.PackageManagerTopPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:nuget="clr-namespace:NuGet.PackageManagement.UI"
+             xmlns:imaging="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.Imaging"
+             xmlns:catalog="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.ImageCatalog"
+             xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+             mc:Ignorable="d"
+             d:DesignHeight="100" d:DesignWidth="800">
+  <UserControl.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <nuget:SharedResources/>
+      </ResourceDictionary.MergedDictionaries>
+
+      <CollectionViewSource x:Key="cvsPackageSources">
+        <CollectionViewSource.SortDescriptions>
+          <scm:SortDescription PropertyName="PriorityOrder" Direction="Ascending" />
+          <scm:SortDescription PropertyName="SourceName" Direction="Ascending" />
+        </CollectionViewSource.SortDescriptions>
+      </CollectionViewSource>
+    </ResourceDictionary>
+  </UserControl.Resources>
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="auto" />
+      <RowDefinition Height="14" />
+      <RowDefinition Height="auto" />
+    </Grid.RowDefinitions>
+
+    <Grid Grid.Row="0" Margin="0,10,0,0">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="auto" />
+        <ColumnDefinition Width="*" MinWidth="20"/>
+      </Grid.ColumnDefinitions>
+
+      <TabControl x:Name="tabsPackageManagement" IsSynchronizedWithCurrentItem="False" SelectionChanged="TabsPackageManagement_SelectionChanged">
+        <TabControl.Resources>
+          <Style TargetType="TabItem">
+            <Setter Property="Background" Value="{DynamicResource {x:Static nuget:Brushes.HeaderBackground}}" />
+            <Setter Property="FontSize" Value="{Binding FontSize, RelativeSource={RelativeSource AncestorType=UserControl},Converter={StaticResource Font122PercentSizeConverter}}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static nuget:Brushes.UIText}}" />
+            <Setter Property="Padding" Value="20,0,20,0" />
+            <Setter Property="FocusVisualStyle" Value="{DynamicResource ControlsFocusVisualStyle}" />
+            <Setter Property="Template">
+              <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TabItem}">
+                  <Grid x:Name="templateRoot" SnapsToDevicePixels="true">
+                    <Grid.RowDefinitions>
+                      <RowDefinition Height="auto" />
+                      <RowDefinition Height="auto" />
+                    </Grid.RowDefinitions>
+                    <Border x:Name="mainBorder" Background="{TemplateBinding Background}" BorderThickness="0" Margin="0">
+                    </Border>
+                    <ContentPresenter Grid.Row="0" x:Name="contentPresenter" ContentSource="Header" Focusable="False" HorizontalAlignment="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+                    <!-- the line under the text to indicate that this label is selected -->
+                    <Rectangle
+                      x:Name="_underline"
+                      Grid.Row="1"
+                      Height="3"
+                      Visibility="Collapsed"
+                      Width="{Binding ActualWidth, ElementName=contentPresenter}"
+                      HorizontalAlignment="Center"
+                      Fill="{DynamicResource {x:Static nuget:Brushes.TabSelectedIndicatorBrushKey}}"/>
+                  </Grid>
+                  <ControlTemplate.Triggers>
+                    <MultiDataTrigger>
+                      <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="true"/>
+                      </MultiDataTrigger.Conditions>
+                      <Setter Property="Visibility" TargetName="_underline" Value="Visible" />
+                      <Setter Property="Foreground" Value="{DynamicResource {x:Static nuget:Brushes.TabSelectedTextBrushKey}}" />
+                    </MultiDataTrigger>
+                    <MultiDataTrigger>
+                      <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding IsKeyboardFocused, RelativeSource={RelativeSource Self}}" Value="true" />
+                      </MultiDataTrigger.Conditions>
+                      <Setter Property="Foreground" Value="{DynamicResource {x:Static nuget:Brushes.TabTextFocusedBrushKey}}" />
+                    </MultiDataTrigger>
+                    <MultiDataTrigger>
+                      <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="true" />
+                      </MultiDataTrigger.Conditions>
+                      <Setter Property="Foreground" Value="{DynamicResource {x:Static nuget:Brushes.TabTextHoverBrushKey}}" />
+                    </MultiDataTrigger>
+                  </ControlTemplate.Triggers>
+                </ControlTemplate>
+              </Setter.Value>
+            </Setter>
+          </Style>
+          <Style TargetType="{x:Type TabControl}">
+            <Setter Property="Padding" Value="2"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template" >
+              <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TabControl}">
+                  <Grid x:Name="templateRoot" ClipToBounds="true" SnapsToDevicePixels="true" KeyboardNavigation.TabNavigation="Local">
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition x:Name="ColumnDefinition0"/>
+                      <ColumnDefinition x:Name="ColumnDefinition1" Width="0"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                      <RowDefinition x:Name="RowDefinition0" Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <TabPanel x:Name="headerPanel" Background="Transparent" Grid.Column="0" IsItemsHost="true" Margin="0,0,0,0" Grid.Row="0" KeyboardNavigation.TabIndex="1" Panel.ZIndex="1"/>
+                  </Grid>
+                </ControlTemplate>
+              </Setter.Value>
+            </Setter>
+          </Style>
+        </TabControl.Resources>
+
+        <TabItem Name="tabBrowse" Tag="{x:Static nuget:ItemFilter.All}" Header="{x:Static nuget:Resources.Label_Browse}" IsSelected="True" />
+        <TabItem Name="tabInstalled" Tag="{x:Static nuget:ItemFilter.Installed}">
+          <AutomationProperties.Name>
+            <MultiBinding StringFormat="{}{0}{1}">
+              <Binding ElementName="textInstalled" Path="Text" />
+              <Binding ElementName="_warningIcon" Path="ToolTip" />
+            </MultiBinding>
+          </AutomationProperties.Name>
+          <TabItem.Header>
+            <StackPanel Orientation="Horizontal" >
+              <TextBlock x:Name="textInstalled" Text="{x:Static nuget:Resources.Label_Installed}" IsHitTestVisible="False" />
+              <imaging:CrispImage
+                Name="_warningIcon"
+                Margin="3,0"
+                Visibility="Collapsed"
+                Moniker="{x:Static catalog:KnownMonikers.StatusWarning}" />
+            </StackPanel>
+          </TabItem.Header>
+        </TabItem>
+        <TabItem Name="tabUpdates" Tag="{x:Static nuget:ItemFilter.UpdatesAvailable}">
+          <AutomationProperties.Name>
+            <MultiBinding StringFormat="{}{0}{1}">
+              <Binding ElementName="textUpdates" Path="Text" />
+              <Binding ElementName="_countUpdates" Path="Text" />
+            </MultiBinding>
+          </AutomationProperties.Name>
+          <TabItem.Header>
+            <StackPanel Orientation="Horizontal">
+              <TextBlock x:Name="textUpdates" Text="{x:Static nuget:Resources.Label_Updates}" IsHitTestVisible="False" />
+              <!-- the textblock that displays the count -->
+              <Border
+                x:Name="_countUpdatesContainer"
+                CornerRadius="2"
+                Margin="3,0"
+                Padding="3,0"
+                Visibility="Collapsed"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Background="{DynamicResource {x:Static nuget:Brushes.TabPopupBrushKey}}">
+                <TextBlock
+                  x:Name="_countUpdates"
+                  HorizontalAlignment="Right"
+                  VerticalAlignment="Top"
+                  FontSize="{Binding FontSize, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                  Foreground="{DynamicResource {x:Static nuget:Brushes.TabPopupTextBrushKey}}"/>
+              </Border>
+            </StackPanel>
+          </TabItem.Header>
+        </TabItem>
+        <!--Consolidate tab is added dynamically in code based on certain conditions.-->
+      </TabControl>
+
+      <TextBlock
+        x:Name="_label"
+        Grid.Column="4"
+        HorizontalAlignment="Right"
+        VerticalAlignment="Center"
+        FontSize="{Binding FontSize,RelativeSource={RelativeSource AncestorType=UserControl},Converter={StaticResource Font155PercentSizeConverter}}"
+        Margin="20,0,0,0"
+        TextTrimming="CharacterEllipsis">
+        Package Manager
+      </TextBlock>
+    </Grid>
+
+    <!-- search control and include prerelease checkbox -->
+    <Grid Grid.Row="2" Margin="20,0,0,0">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" MinWidth="269"/>
+        <ColumnDefinition Width="0.01*" MinWidth="5" />
+        <ColumnDefinition Width="*" MinWidth="192" />
+      </Grid.ColumnDefinitions>
+
+      <Grid
+        Grid.Column="0">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" MaxWidth="320" MinWidth="118"/>
+          <ColumnDefinition Width="auto" />
+          <ColumnDefinition Width="auto" />
+        </Grid.ColumnDefinitions>
+        <!-- container of the search control -->
+        <Border
+          Grid.Column="0"
+          x:Name="_searchControlParent"
+          VerticalAlignment="Center"
+          MinHeight="22"
+          MinWidth="118"/>
+
+        <Button
+          Grid.Column="1"
+          x:Name="_refreshButton"
+          AutomationProperties.AutomationId="Button_Retry"
+          Margin="3,0"
+          VerticalAlignment="Center"
+          Padding="0"
+          ToolTip="{x:Static nuget:Resources.ToolTip_Refresh}"
+          AutomationProperties.Name="{x:Static nuget:Resources.ToolTip_Refresh}"
+          Style="{StaticResource ToolBarButtonStyle}"
+          Command="{x:Static nuget:Commands.RestartSearchCommand}">
+          <imaging:CrispImage
+            Moniker="{x:Static catalog:KnownMonikers.Refresh}"
+            Margin="2"
+            Height="16"
+            Width="16" />
+        </Button>
+
+        <!-- prerelease checkbox -->
+        <CheckBox
+          Grid.Column="2"
+          x:Name="_checkboxPrerelease"
+          AutomationProperties.AutomationId="CheckBox_Prerelease"
+          Margin="3,0"
+          VerticalAlignment="Center"
+          Content="{x:Static nuget:Resources.Checkbox_IncludePrerelease}"
+          Foreground="{DynamicResource {x:Static nuget:Brushes.UIText}}"
+          VerticalContentAlignment="Center"
+          Checked="_checkboxPrerelease_Checked"
+          Unchecked="_checkboxPrerelease_Unchecked"
+          IsChecked="True" />
+      </Grid>
+
+
+      <Grid
+        Grid.Column="2"
+        VerticalAlignment="Center"
+        HorizontalAlignment="Right">
+
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="auto" />
+          <ColumnDefinition Width="*" MinWidth="50" />
+          <ColumnDefinition Width="auto" />
+        </Grid.ColumnDefinitions>
+
+        <TextBlock
+          Grid.Column="0"
+          Text="{x:Static nuget:Resources.Label_Repository}"
+          Margin="0,4,0,0"
+          HorizontalAlignment="Right"/>
+
+        <ComboBox
+          Grid.Column="1"
+          x:Name="_sourceRepoList"
+          Margin="6,0,0,0"
+          AutomationProperties.AutomationId="ComboBox_PackageSource"
+          MinHeight="22"
+          AutomationProperties.Name="{x:Static nuget:Resources.Label_Repository}"
+          SelectionChanged="_sourceRepoList_SelectionChanged"
+          HorizontalAlignment="Right"
+          ItemsSource="{Binding Source={StaticResource cvsPackageSources}}">
+          <ComboBox.ItemTemplate>
+            <DataTemplate>
+              <TextBlock
+                Text="{Binding SourceName}"
+                TextTrimming="CharacterEllipsis" />
+            </DataTemplate>
+          </ComboBox.ItemTemplate>
+          <ComboBox.ToolTip>
+            <ToolTip
+              x:Name="_sourceTooltip">
+              <TextBlock
+                Text="{Binding}" />
+            </ToolTip>
+          </ComboBox.ToolTip>
+          <ComboBox.ItemContainerStyle>
+            <Style TargetType="{x:Type ComboBoxItem}" BasedOn="{StaticResource {x:Type ComboBoxItem}}">
+              <Setter Property="AutomationProperties.Name" Value="{Binding SourceName}"/>
+            </Style>
+          </ComboBox.ItemContainerStyle>
+        </ComboBox>
+        <Button
+          Grid.Column="3"
+          x:Name="_settingsButton"
+          Margin="12,0,0,0"
+          AutomationProperties.AutomationId="Button_Settings"
+          VerticalAlignment="Center"
+          Padding="0"
+          ToolTip="{x:Static nuget:Resources.ToolTip_Settings}"
+          AutomationProperties.Name="{x:Static nuget:Resources.ToolTip_Settings}"
+          Style="{StaticResource ToolBarButtonStyle}"
+          Click="_settingsButton_Click">
+          <imaging:CrispImage
+            Moniker="{x:Static catalog:KnownMonikers.Settings}" />
+        </Button>
+      </Grid>
+    </Grid>
+  </Grid>
+</UserControl>

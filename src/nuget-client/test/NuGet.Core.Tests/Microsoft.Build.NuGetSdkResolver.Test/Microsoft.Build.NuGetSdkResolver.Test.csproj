@@ -1,0 +1,19 @@
+﻿<Project>
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), 'NuGet.sln'))\build\common.test.props" />
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+
+  <PropertyGroup>
+    <TargetFrameworks>$(TargetFrameworksExeForSigning)</TargetFrameworks>
+    <UseParallelXunit>true</UseParallelXunit>
+    <Description>Unit tests for Microsoft.Build.NuGetSdkResolver.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(NuGetCoreSrcDirectory)Microsoft.Build.NuGetSdkResolver\Microsoft.Build.NuGetSdkResolver.csproj" />
+    <ProjectReference Include="$(TestUtilitiesDirectory)Test.Utility\Test.Utility.csproj" />
+    <PackageReference Include="Microsoft.Build.Framework" />
+  </ItemGroup>
+
+  <Import Project="$(BuildCommonDirectory)common.targets" />
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+</Project>

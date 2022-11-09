@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <ItemGroup Label="OptProfV2 Configuration"
+    Condition="'$(IsXPlat)' == 'false' and
+      (
+        '$(AssemblyName)' == 'NuGet.Commands' or
+        '$(AssemblyName)' == 'NuGet.Common' or
+        '$(AssemblyName)' == 'NuGet.Configuration' or
+        '$(AssemblyName)' == 'NuGet.Console' or
+        '$(AssemblyName)' == 'NuGet.DependencyResolver.Core' or
+        '$(AssemblyName)' == 'NuGet.Frameworks' or
+        '$(AssemblyName)' == 'NuGet.LibraryModel' or
+        '$(AssemblyName)' == 'NuGet.PackageManagement' or
+        '$(AssemblyName)' == 'NuGet.PackageManagement.VisualStudio' or
+        '$(AssemblyName)' == 'NuGet.Packaging' or
+        '$(AssemblyName)' == 'NuGet.ProjectModel' or
+        '$(AssemblyName)' == 'NuGet.Protocol' or
+        '$(AssemblyName)' == 'NuGet.SolutionRestoreManager' or
+        '$(AssemblyName)' == 'NuGet.Versioning' or
+        '$(AssemblyName)' == 'NuGet.VisualStudio.Common'
+      )">
+    <OptProf Include="$(OutputPath)$(AssemblyName).dll">
+      <Technology>IBC</Technology>
+      <InstallationPath>Common7\IDE\CommonExtensions\Microsoft\NuGet\$(AssemblyName).dll</InstallationPath>
+      <InstrumentationArguments>/ExeConfig:"%VisualStudio.InstallationUnderTest.Path%\Common7\IDE\vsn.exe"</InstrumentationArguments>
+      <Scenarios>
+        <TestContainer Name="NuGet.OptProf">
+          <TestCase Weight="100" FullyQualifiedName="NuGet.OptProfV2Tests.IVsPackageSourceProvider_GetSources" />
+          <TestCase Weight="100" FullyQualifiedName="NuGet.OptProfV2Tests.OpenSolutionAndBuild_PackageReferenceSdk" />
+        </TestContainer>
+      </Scenarios>
+    </OptProf>
+  </ItemGroup>
+  <ItemGroup Label="OptProfV2 Configuration"
+    Condition="'$(IsXPlat)' == 'false' and
+      (
+        '$(AssemblyName)' == 'NuGet.VisualStudio.Implementation'
+      )">
+    <OptProf Include="$(OutputPath)$(AssemblyName).dll">
+      <Technology>IBC</Technology>
+      <InstallationPath>Common7\IDE\CommonExtensions\Microsoft\NuGet\$(AssemblyName).dll</InstallationPath>
+      <InstrumentationArguments>/ExeConfig:"%VisualStudio.InstallationUnderTest.Path%\Common7\IDE\vsn.exe"</InstrumentationArguments>
+      <Scenarios>
+        <TestContainer Name="NuGet.OptProf">
+          <TestCase Weight="100" FullyQualifiedName="NuGet.OptProfV2Tests.IVsPackageSourceProvider_GetSources" />
+        </TestContainer>
+      </Scenarios>
+    </OptProf>
+  </ItemGroup>
+</Project>

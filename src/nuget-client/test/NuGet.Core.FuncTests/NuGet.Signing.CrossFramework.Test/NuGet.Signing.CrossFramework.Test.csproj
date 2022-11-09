@@ -1,0 +1,37 @@
+<Project>
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), 'NuGet.sln'))\build\common.test.props" />
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+
+  <PropertyGroup>
+    <TargetFrameworks>$(TargetFrameworksLibraryForCrossVerificationTests)</TargetFrameworks>
+    <TargetFrameworks Condition=" '$(IsXPlat)' == 'true' "></TargetFrameworks>
+    <TestProject>true</TestProject>
+    <UseParallelXunit>true</UseParallelXunit>
+    <Description>NuGet package signing cross framework test.</Description>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == '$(NETFXTargetFramework)' ">
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Security" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" NoWarn="NU1605" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Packaging\NuGet.Packaging.csproj" />
+    <ProjectReference Include="..\..\NuGet.Core.Tests\NuGet.Configuration.Test\NuGet.Configuration.Test.csproj" />
+    <ProjectReference Include="..\..\TestUtilities\Test.Utility\Test.Utility.csproj" />
+    <ProjectReference Include="..\..\NuGet.Core.FuncTests\NuGet.Packaging.FuncTest\NuGet.Packaging.FuncTest.csproj" />
+  </ItemGroup>
+
+  <Import Project="$(BuildCommonDirectory)common.targets" />
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+</Project>
+

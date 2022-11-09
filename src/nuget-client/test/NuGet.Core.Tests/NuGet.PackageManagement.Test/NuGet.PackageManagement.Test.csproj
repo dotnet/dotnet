@@ -1,0 +1,38 @@
+<Project>
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), 'NuGet.sln'))\build\common.test.props" />
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+
+  <PropertyGroup>
+    <TargetFrameworks>$(TargetFrameworksExe)</TargetFrameworks>
+    <UseParallelXunit>true</UseParallelXunit>
+    <Description>Unit tests for NuGet.PackageManagement.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(TestUtilitiesDirectory)Test.Utility\Test.Utility.csproj" />
+    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.PackageManagement\NuGet.PackageManagement.csproj" />
+    <ProjectReference Include="..\NuGet.Configuration.Test\NuGet.Configuration.Test.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == '$(NETFXTargetFramework)' ">
+    <ProjectReference Include="$(NuGetClientsSrcDirectory)NuGet.VisualStudio.Common\NuGet.VisualStudio.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="xunit.runner.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == '$(NETFXTargetFramework)' ">
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Net.Http" />
+  </ItemGroup>
+
+  <Import Project="$(BuildCommonDirectory)common.targets" />
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+</Project>

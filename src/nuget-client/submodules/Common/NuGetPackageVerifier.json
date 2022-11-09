@@ -1,0 +1,39 @@
+{
+    "adx": { // Packages written by the ADX team and that ship on NuGet.org
+        "rules": [
+            "AssemblyHasDocumentFileRule",
+            "AssemblyHasVersionAttributesRule",
+            "AssemblyHasServicingAttributeRule",
+            "AssemblyHasNeutralResourcesLanguageAttributeRule",
+            "SatellitePackageRule",
+            "StrictSemanticVersionValidationRule"
+        ],
+        "packages": {
+            "Microsoft.Extensions.MemoryPool": { },
+            "Microsoft.Extensions.Primitives": { }
+        }
+    },
+    "adx-nonshipping": {
+        "rules": [],
+        "packages": {
+            "Microsoft.Extensions.ActivatorUtilities.Sources": { },
+            "Microsoft.Extensions.ClosedGenericMatcher.Sources": { },
+            "Microsoft.Extensions.CopyOnWriteDictionary.Sources": { },
+            "Microsoft.Extensions.HashCodeCombiner.Sources": { },
+            "Microsoft.Extensions.PropertyActivator.Sources": { },
+            "Microsoft.Extensions.PropertyHelper.Sources": { },
+            "Microsoft.Extensions.SecurityHelper.Sources": { },
+            "Microsoft.Extensions.TypeNameHelper.Sources": { }
+        }
+    },
+    "Default": { // Rules to run for packages not listed in any other set.
+        "rules": [
+            "AssemblyHasDocumentFileRule",
+            "AssemblyHasVersionAttributesRule",
+            "AssemblyHasServicingAttributeRule",
+            "AssemblyHasNeutralResourcesLanguageAttributeRule",
+            "SatellitePackageRule",
+            "StrictSemanticVersionValidationRule"
+        ]
+    }
+}

@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AttemptingToGatherDependencyInfo" xml:space="preserve">
+    <value>Attempting to gather dependency information for package '{0}' with respect to project '{1}', targeting '{2}'</value>
+  </data>
+  <data name="AttemptingToResolveDependencies" xml:space="preserve">
+    <value>Attempting to resolve dependencies for package '{0}' with DependencyBehavior '{1}'</value>
+  </data>
+  <data name="NoLatestVersionFound" xml:space="preserve">
+    <value>No latest version found for '{0}' for the given source repositories and resolution context</value>
+  </data>
+  <data name="PackageCouldNotBeInstalled" xml:space="preserve">
+    <value>Package '{0}' could not be installed</value>
+  </data>
+  <data name="PackageHasDependent" xml:space="preserve">
+    <value>Unable to uninstall '{0}' because '{1}' depends on it.</value>
+  </data>
+  <data name="PackageHasDependents" xml:space="preserve">
+    <value>Unable to uninstall '{0}' because '{1}' depend on it.</value>
+  </data>
+  <data name="PackageNotFound" xml:space="preserve">
+    <value>Package '{0}' is not found</value>
+  </data>
+  <data name="PackagesCouldNotBeInstalled" xml:space="preserve">
+    <value>Packages could not be installed</value>
+  </data>
+  <data name="PackageToBeUninstalledCouldNotBeFound" xml:space="preserve">
+    <value>Package '{0}' to be uninstalled could not be found in project '{1}'</value>
+  </data>
+  <data name="ResolvedActionsToInstallPackage" xml:space="preserve">
+    <value>Resolved actions to install package '{0}'</value>
+  </data>
+  <data name="ResolvedActionsToUninstallPackage" xml:space="preserve">
+    <value>Resolved actions to uninstall package '{0}'</value>
+  </data>
+  <data name="ResolvingActionsToInstallPackage" xml:space="preserve">
+    <value>Resolving actions to install package '{0}'</value>
+  </data>
+  <data name="ResolvingActionsToUninstallPackage" xml:space="preserve">
+    <value>Resolving actions to uninstall package '{0}'</value>
+  </data>
+  <data name="RestoringPackage" xml:space="preserve">
+    <value>Restoring NuGet package {0}.</value>
+  </data>
+  <data name="SolutionDirectoryNotAvailable" xml:space="preserve">
+    <value>Solution is not opened or not saved. Please ensure you have an open and saved solution.</value>
+  </data>
+  <data name="SolutionManagerNotAvailableForUninstall" xml:space="preserve">
+    <value>Uninstall is not supported when SolutionManager is not available</value>
+  </data>
+  <data name="UnableToGatherDependencyInfo" xml:space="preserve">
+    <value>Unable to gather dependency information for package '{0}'</value>
+  </data>
+  <data name="UnableToResolveDependencyInfo" xml:space="preserve">
+    <value>Unable to resolve dependencies for package '{0}' with DependencyBehavior '{1}'</value>
+  </data>
+  <data name="UnknownPackage" xml:space="preserve">
+    <value>Unable to find package '{0}'</value>
+  </data>
+  <data name="UnknownPackageSpecificVersion" xml:space="preserve">
+    <value>Unable to find version '{1}' of package '{0}'.</value>
+  </data>
+  <data name="AttemptingToGatherDependencyInfoForMultiplePackages" xml:space="preserve">
+    <value>Attempting to gather dependency information for multiple packages with respect to project '{0}', targeting '{1}'</value>
+  </data>
+  <data name="NoPackagesInProject" xml:space="preserve">
+    <value>No packages were found in packages.config for project '{0}'.</value>
+  </data>
+  <data name="AttemptingToResolveDependenciesForMultiplePackages" xml:space="preserve">
+    <value>Attempting to resolve dependencies for multiple packages.</value>
+  </data>
+  <data name="ResolvingActionsToInstallOrUpdateMultiplePackages" xml:space="preserve">
+    <value>Resolving actions install multiple packages</value>
+  </data>
+  <data name="UnableToGatherDependencyInfoForMultiplePackages" xml:space="preserve">
+    <value>Unable to gather dependency information for multiple packages</value>
+  </data>
+  <data name="UnableToResolveDependencyInfoForMultiplePackages" xml:space="preserve">
+    <value>Unable to resolve dependencies for multiple packages</value>
+  </data>
+  <data name="Warning_RollingBack" xml:space="preserve">
+    <value>Install failed. Rolling back...</value>
+  </data>
+  <data name="NewerVersionAlreadyReferenced" xml:space="preserve">
+    <value>Already referencing a newer version of '{0}'..</value>
+  </data>
+  <data name="ParameterCannotBeZeroOrNegative" xml:space="preserve">
+    <value>Parameter cannot be zero or negative</value>
+  </data>
+  <data name="PackagesConfigAllowedVersionConflict" xml:space="preserve">
+    <value>Unable to resolve '{0}'. An additional constraint '{1}' defined in {2} prevents this operation.</value>
+  </data>
+  <data name="RestoreFailedRollingBack" xml:space="preserve">
+    <value>Package restore failed. Rolling back package changes for '{0}'.</value>
+  </data>
+  <data name="DownloadResourceNotFound" xml:space="preserve">
+    <value>Cannot download packages from '{0}'.</value>
+  </data>
+  <data name="DownloadStreamNotAvailable" xml:space="preserve">
+    <value>Package stream for '{0}' cannot be found at '{1}'.</value>
+  </data>
+  <data name="SuccessfullyInstalled" xml:space="preserve">
+    <value>Successfully installed '{0}' to {1}</value>
+  </data>
+  <data name="SuccessfullyUninstalled" xml:space="preserve">
+    <value>Successfully uninstalled '{0}' from {1}</value>
+  </data>
+  <data name="ResolutionSuccessfulNoAction" xml:space="preserve">
+    <value>Resolution was successful but resulted in no action</value>
+  </data>
+  <data name="ExceptionWhenTryingToAddSource" xml:space="preserve">
+    <value>Exception '{0}' thrown when trying to add source '{1}'. Please verify all your online package sources are available.</value>
+  </data>
+  <data name="PackageNotFoundInPrimarySources" xml:space="preserve">
+    <value>Package '{0}' is not found in the following primary source(s): '{1}'. Please verify all your online package sources are available (OR) package id, version are specified correctly.</value>
+  </data>
+  <data name="UnableToGatherPackageFromSource" xml:space="preserve">
+    <value>Unable to gather package '{0}' from source '{1}'. Please verify all your online package sources are available. </value>
+  </data>
+  <data name="NoUpdatesAvailable" xml:space="preserve">
+    <value>There are no new updates available.</value>
+  </data>
+  <data name="Warning_ErrorFindingRepository" xml:space="preserve">
+    <value>Error finding repository for '{0}': {1}</value>
+    <comment>0 - package source
+1 - exception message</comment>
+  </data>
+  <data name="PackageCancelledFromSource" xml:space="preserve">
+    <value>Getting package '{0}' from source '{1}' was cancelled.</value>
+  </data>
+  <data name="PackageNotFoundOnSource" xml:space="preserve">
+    <value>Package '{0}' is not found on source '{1}'.</value>
+  </data>
+  <data name="GatherTotalTime" xml:space="preserve">
+    <value>Gathering dependency information took {0}</value>
+  </data>
+  <data name="NugetActionsTotalTime" xml:space="preserve">
+    <value>Executing nuget actions took {0}</value>
+  </data>
+  <data name="RetrievingPackageStart" xml:space="preserve">
+    <value>Retrieving package '{0} {1}' from '{2}'.</value>
+  </data>
+  <data name="FoundPackageInPackagesFolder" xml:space="preserve">
+    <value>Found package '{0} {1}' in '{2}'.</value>
+  </data>
+  <data name="MultiplePackageTypesNotSupported" xml:space="preserve">
+    <value>Package '{0}' has multiple package types, which is not supported.</value>
+    <comment>{0} is replaced with the package identity.</comment>
+  </data>
+  <data name="UnsupportedPackageType" xml:space="preserve">
+    <value>Package '{0}' has a package type '{1}' that is not supported by project '{2}'.</value>
+    <comment>{0} is the package identity.
+{1} is the unsupported package type.
+{2} is the project name.</comment>
+  </data>
+  <data name="PackagesConfigAllowedVersions" xml:space="preserve">
+    <value>Applying constraint '{0}' defined in '{1}'.</value>
+    <comment>{0} is the package constraint.
+{1} is the 'packages.config'</comment>
+  </data>
+  <data name="NoPackageUpdates" xml:space="preserve">
+    <value>No package updates are available from the current package source for project '{0}'.</value>
+  </data>
+  <data name="AddedPackageToFolder" xml:space="preserve">
+    <value>Added package '{0}' to folder '{1}'</value>
+  </data>
+  <data name="AddedPackageToFolderFromSource" xml:space="preserve">
+    <value>Added package '{0}' to folder '{1}' from source '{2}'</value>
+  </data>
+  <data name="AddedPackageToPackagesConfig" xml:space="preserve">
+    <value>Added package '{0}' to '{1}'</value>
+  </data>
+  <data name="AddingPackageToFolder" xml:space="preserve">
+    <value>Adding package '{0}' to folder '{1}'</value>
+  </data>
+  <data name="AddingPackageWithOnlyDependencies" xml:space="preserve">
+    <value>Adding package '{0}', which only has dependencies, to project '{1}'.</value>
+  </data>
+  <data name="AddingPackageWithOnlyToolsGroup" xml:space="preserve">
+    <value>Adding package '{0}', which only has tools group, to project '{1}'</value>
+  </data>
+  <data name="Argument_Cannot_Be_Null_Or_Empty" xml:space="preserve">
+    <value>Argument cannot be null or empty</value>
+  </data>
+  <data name="Debug_AddedFile" xml:space="preserve">
+    <value>Added file '{0}'.</value>
+  </data>
+  <data name="Debug_AddedFileToFolder" xml:space="preserve">
+    <value>Added file '{0}' to folder '{1}'.</value>
+  </data>
+  <data name="Debug_RemovedFile" xml:space="preserve">
+    <value>Removed file '{0}'.</value>
+  </data>
+  <data name="Debug_RemovedFileFromFolder" xml:space="preserve">
+    <value>Removed file '{0}' from folder '{1}'.</value>
+  </data>
+  <data name="Debug_RemovedFolder" xml:space="preserve">
+    <value>Removed folder '{0}'.</value>
+  </data>
+  <data name="Debug_TargetFrameworkInfo" xml:space="preserve">
+    <value>&gt;&gt; {0} are being added from '{1}'{2}</value>
+  </data>
+  <data name="Debug_TargetFrameworkInfoPrefix" xml:space="preserve">
+    <value>For adding package '{0}' to project '{1}' that targets '{2}'.</value>
+  </data>
+  <data name="DependencyDoesNotHaveValidVersion" xml:space="preserve">
+    <value>Dependency '{0}' has invalid version specification.</value>
+  </data>
+  <data name="ErrorLoadingPackagesConfig" xml:space="preserve">
+    <value>An error occurred while reading file '{0}': {1}</value>
+  </data>
+  <data name="ErrorWritingPackagesConfig" xml:space="preserve">
+    <value>An error occurred while writing file '{0}': {1}</value>
+  </data>
+  <data name="FileConflictMessage" xml:space="preserve">
+    <value>File '{0}' already exists in project '{1}'. Do you want to overwrite it?</value>
+  </data>
+  <data name="Info_OverwritingExistingFile" xml:space="preserve">
+    <value>Overwriting existing file '{0}'..</value>
+  </data>
+  <data name="InvalidProjectName" xml:space="preserve">
+    <value>Unable to determine the project name for '{0}'.</value>
+  </data>
+  <data name="PackageAlreadyExistsInFolder" xml:space="preserve">
+    <value>Package '{0}' already exists in folder '{1}'</value>
+  </data>
+  <data name="PackageAlreadyExistsInPackagesConfig" xml:space="preserve">
+    <value>Package '{0}' already exists in '{1}'</value>
+  </data>
+  <data name="PackageAlreadyExistsInProject" xml:space="preserve">
+    <value>Package '{0}' already exists in project '{1}'</value>
+  </data>
+  <data name="PackageDoesNotExistInFolder" xml:space="preserve">
+    <value>Package '{0}' does not exist in folder '{1}'</value>
+  </data>
+  <data name="PackageDoesNotExistInProject" xml:space="preserve">
+    <value>Package '{0}' does not exist in project '{1}'</value>
+  </data>
+  <data name="PackageDoesNotExisttInPackagesConfig" xml:space="preserve">
+    <value>Package '{0}' does not exists in '{1}'</value>
+  </data>
+  <data name="PackageStreamShouldBeSeekable" xml:space="preserve">
+    <value>Package stream should be seekable</value>
+  </data>
+  <data name="ProjectNotLoaded_RestoreFailed" xml:space="preserve">
+    <value>The operation failed as details for project {0} could not be loaded.</value>
+  </data>
+  <data name="RemovedPackageFromFolder" xml:space="preserve">
+    <value>Removed package '{0}' from folder '{1}'</value>
+  </data>
+  <data name="RemovedPackageFromPackagesConfig" xml:space="preserve">
+    <value>Removed package '{0}' from '{1}'</value>
+  </data>
+  <data name="RemovingPackageFromFolder" xml:space="preserve">
+    <value>Removing package '{0}' from folder '{1}'</value>
+  </data>
+  <data name="UnableToFindCompatibleItems" xml:space="preserve">
+    <value>Could not install package '{0}'. You are trying to install this package into a project that targets '{1}', but the package does not contain any assembly references or content files that are compatible with that framework. For more information, contact the package author.</value>
+  </data>
+  <data name="Warning_DirectoryNotEmpty" xml:space="preserve">
+    <value>Directory '{0}' is not empty. Skipping...</value>
+  </data>
+  <data name="Warning_FileAlreadyExists" xml:space="preserve">
+    <value>'{0}' already exists. Skipping...</value>
+  </data>
+  <data name="Warning_FileModified" xml:space="preserve">
+    <value>Skipping '{0}' because it was modified.</value>
+  </data>
+  <data name="XdtError" xml:space="preserve">
+    <value>An error occurred while applying transformation to '{0}' in project '{1}'</value>
+  </data>
+  <data name="SignatureVerificationMultiple" xml:space="preserve">
+    <value>Signed package validation failed with multiple errors:{0}</value>
+    <comment>0 - new line separated list of errors</comment>
+  </data>
+  <data name="Error_InvalidLockFileInput" xml:space="preserve">
+    <value>Invalid restore input where RestorePackagesWithLockFile property is set to false but a packages lock file exists at {0}.</value>
+    <comment>{0} - packages lock file path</comment>
+  </data>
+  <data name="Error_PackageValidationFailed" xml:space="preserve">
+    <value>Package content hash validation failed for {0}. The package is different than the last restore.</value>
+    <comment>{0} - package id and version</comment>
+  </data>
+  <data name="Error_RestoreInLockedModePackagesConfig" xml:space="preserve">
+    <value>The packages lock file is inconsistent with the project dependencies so restore can't be run in locked mode. Run restore without using restore locked mode to update the lock file.</value>
+  </data>
+  <data name="Error_DirectoryDoesNotExist" xml:space="preserve">
+    <value>Directory {0} does not exist.</value>
+    <comment>{0} is the directory name.</comment>
+  </data>
+  <data name="Error_FileDoesNotExist" xml:space="preserve">
+    <value>File {0} does not exist.</value>
+    <comment>{0} is the filename.</comment>
+  </data>
+  <data name="PropertyCannotBeNull" xml:space="preserve">
+    <value>'{0}' cannot be null.</value>
+    <comment>0 - property name</comment>
+  </data>
+  <data name="UnableToFindPathInLookupOrList" xml:space="preserve">
+    <value>Either should have value in {0} for {1} or {2} &amp; {3}.</value>
+    <comment>0 - Lookup table
+1 - Project Path
+2 - Package ID
+3 - Package Sources</comment>
+  </data>
+  <data name="PackageSourceMappingPatternMatchFound" xml:space="preserve">
+    <value>Package source mapping matches found for package ID '{0}' are: '{1}'</value>
+    <comment>{0} - package id
+{1} - sources ids</comment>
+  </data>
+  <data name="PackageSourceMappingPatternNoMatchFound" xml:space="preserve">
+    <value>Package source mapping match not found for package ID '{0}'</value>
+    <comment>{0} - package id</comment>
+  </data>
+  <data name="Warning_HttpServerUsage" xml:space="preserve">
+    <value>You are running the '{0}' operation with an 'http' source, '{1}'. Support for 'http' sources will be removed in a future version.</value>
+  </data>
+</root>

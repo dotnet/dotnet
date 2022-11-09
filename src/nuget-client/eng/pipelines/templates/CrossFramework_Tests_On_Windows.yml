@@ -1,0 +1,105 @@
+steps:
+- task: UseDotNet@2
+  displayName: 'Use .NET Core sdk'
+  inputs:
+    packageType: sdk
+    version: 6.x
+    installationPath: $(Agent.TempDirectory)/dotnet
+
+- task: PowerShell@2
+  displayName: "Print Environment Variables"
+  inputs:
+    targetType: "inline"
+    script: |
+      Write-Host "##vso[build.updatebuildnumber]$env:FullVstsBuildNumber"
+      Get-ChildItem Env: | Sort-Object Name | Format-Table -Wrap -AutoSize
+
+- task: PowerShell@1
+  displayName: "Disable strong name verification"
+  inputs:
+    scriptName: "$(Build.Repository.LocalPath)\\scripts\\utils\\DisableStrongNameVerification.ps1"
+
+- task: PowerShell@1
+  displayName: "Run Configure.ps1"
+  inputs:
+    scriptName: "$(Build.Repository.LocalPath)\\configure.ps1"
+    arguments: "-Force -CleanCache"
+
+- task: MSBuild@1
+  displayName: "Restore for VS2019"
+  inputs:
+    solution: "build\\build.proj"
+    configuration: "$(BuildConfiguration)"
+    msbuildArguments: "/MaxCPUCount /ConsoleLoggerParameters:Verbosity=Minimal;Summary;ForceNoAlign /t:RestoreVS /p:BuildNumber=$(BuildNumber) /p:BuildRTM=false /bl:$(Build.StagingDirectory)\\binlog\\01.Restore.binlog"
+
+- task: ComponentGovernanceComponentDetection@0
+  displayName: 'Component Detection'
+
+- task: MSBuild@1
+  displayName: "BuildNoVSIX"
+  continueOnError: "true"
+  inputs:
+    solution: "build\\build.proj"
+    configuration: "$(BuildConfiguration)"
+    msbuildArguments: "/MaxCPUCount /ConsoleLoggerParameters:Verbosity=Minimal;Summary;ForceNoAlign /t:BuildNoVSIX /p:BuildRTM=false /p:BuildNumber=$(BuildNumber) /bl:$(Build.StagingDirectory)\\binlog\\02.Build.binlog"
+
+- task: PowerShell@1
+  displayName: "Run Cross Verify Tests (continue on error)"
+  continueOnError: "true"
+  inputs:
+    scriptType: "inlineScript"
+    inlineScript: |
+      dotnet test --no-build --configuration Release `
+      $(Build.Repository.LocalPath)\test\NuGet.Core.FuncTests\NuGet.Signing.CrossFramework.Test\NuGet.Signing.CrossFramework.Test.csproj `
+      --logger:"trx;LogFileName=$(Build.Repository.LocalPath)\\build\\TestResults\CrossVerifyTests-vsts.trx" `
+      --logger:"console;verbosity=detailed" `
+      --settings:$(Build.Repository.LocalPath)\build\xunit.runsettings
+  condition: "and(succeeded(), eq(variables['IsOfficialBuild'], 'true'))"
+
+- task: PowerShell@1
+  displayName: "Run Cross Verify Tests (stop on error)"
+  continueOnError: "false"
+  inputs:
+    scriptType: "inlineScript"
+    inlineScript: |
+      dotnet test --no-build --configuration Release `
+      $(Build.Repository.LocalPath)\test\NuGet.Core.FuncTests\NuGet.Signing.CrossFramework.Test\NuGet.Signing.CrossFramework.Test.csproj `
+      --logger:"trx;LogFileName=$(Build.Repository.LocalPath)\\build\\TestResults\CrossVerifyTests-vsts.trx" `
+      --logger:"console;verbosity=detailed" `
+      --settings:$(Build.Repository.LocalPath)\build\xunit.runsettings
+  condition: "and(succeeded(), not(eq(variables['IsOfficialBuild'], 'true')))"
+
+- task: PublishTestResults@2
+  displayName: "Publish Test Results"
+  continueOnError: "true"
+  inputs:
+    testRunner: "VSTest"
+    testResultsFiles: "*.trx"
+    searchFolder: "$(Build.Repository.LocalPath)\\build\\TestResults"
+    mergeTestResults: "true"
+    testRunTitle: "NuGet.Client Cross Verify Tests On Windows"
+  condition: "succeededOrFailed()"
+
+- task: PublishBuildArtifacts@1
+  displayName: "Publish Test Freeze Dump"
+  inputs:
+    PathtoPublish: "$(Build.Repository.LocalPath)/build/TestResults"
+    ArtifactName: "$(Agent.JobName)"
+    ArtifactType: "Container"
+  condition: "or(failed(), canceled())"
+
+- task: PowerShell@1
+  displayName: "Initialize Git Commit Status on GitHub"
+  inputs:
+    scriptType: "inlineScript"
+    inlineScript: |
+      . $(Build.Repository.LocalPath)\\scripts\\utils\\PostGitCommitStatus.ps1
+      SetCommitStatusForTestResult -PersonalAccessToken $(NuGetLurkerPersonalAccessToken) -CommitSha $(Build.SourceVersion) -VstsPersonalAccessToken $(System.AccessToken) -TestName "$env:AGENT_JOBNAME"
+  condition: "not(eq(variables['ManualGitHubChecks'], 'false'))"
+
+- task: PublishPipelineArtifact@1
+  displayName: "Publish binlogs"
+  inputs:
+    artifactName: binlog - $(System.JobDisplayName) - Attempt $(System.JobAttempt)
+    targetPath: $(Build.StagingDirectory)\binlog
+  condition: " failed() "

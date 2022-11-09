@@ -1,0 +1,185 @@
+<vsui:DialogWindow x:Class="NuGet.Options.AddMappingDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:vs="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.15.0"
+             xmlns:vsui="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.15.0"
+             xmlns:nuget="clr-namespace:NuGet.PackageManagement.UI"
+             xmlns:options="clr-namespace:NuGet.Options"
+             mc:Ignorable="d" 
+             x:Uid="AddMappingDialogWindow"
+             Height="348"
+             Width="480"
+             ShowInTaskbar="False"
+             WindowStyle="None"
+             Title="{x:Static nuget:Resources.VSOptions_Label_AddPackageNamespace}"
+             AllowsTransparency="True"
+             WindowStartupLocation="CenterOwner"
+             BorderBrush="{DynamicResource {x:Static vsui:EnvironmentColors.PanelBorderBrushKey}}"
+             BorderThickness="1"
+             Foreground="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}">
+  <vsui:DialogWindow.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <options:SharedResources />
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+  </vsui:DialogWindow.Resources>
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+    <Grid.Resources>
+      <!-- Copied from ThemedDialogResources.xaml. See https://github.com/NuGet/Home/issues/12163 -->
+      <Style TargetType="{x:Type vsui:WatermarkedTextBox}">
+        <Setter Property="Padding" Value="6,8,6,8" />
+        <Setter Property="AutomationProperties.HelpText" Value="{Binding Watermark}" />
+        <Setter Property="Template">
+          <Setter.Value>
+            <ControlTemplate TargetType="{x:Type vsui:WatermarkedTextBox}">
+              <Border x:Name="border"
+                      BorderBrush="{TemplateBinding BorderBrush}"
+                      BorderThickness="{TemplateBinding BorderThickness}"
+                      Background="{TemplateBinding Background}"
+                      SnapsToDevicePixels="True">
+                <Grid>
+                  <ScrollViewer x:Name="PART_ContentHost"
+                                Padding="{TemplateBinding Padding}"
+                                Focusable="false"
+                                HorizontalScrollBarVisibility="Hidden"
+                                VerticalScrollBarVisibility="Hidden"/>
+                  <TextBlock VerticalAlignment="Center"
+                             x:Name="WatermarkTextBlock"
+                             Visibility="Collapsed"
+                             Cursor="IBeam"
+                             Padding="{TemplateBinding Padding}"
+                             Margin="2,0,0,0"
+                             Text="{TemplateBinding Watermark}"
+                             IsHitTestVisible="False"
+                             Foreground="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
+                </Grid>
+              </Border>
+              <ControlTemplate.Triggers>
+                <Trigger Property="IsEnabled" Value="false">
+                  <Setter Property="Opacity" TargetName="border" Value="0.56"/>
+                </Trigger>
+                <Trigger Property="Text" Value="">
+                  <Setter TargetName="WatermarkTextBlock" Property="Visibility" Value="Visible" />
+                </Trigger>
+              </ControlTemplate.Triggers>
+            </ControlTemplate>
+          </Setter.Value>
+        </Setter>
+      </Style>
+    </Grid.Resources>
+    <Grid Grid.Row="0">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock AutomationProperties.Name="AddNewPackageNamespace"
+                   Grid.Column="0"
+                   Text="{x:Static nuget:Resources.VSOptions_Label_AddPackageNamespace}"
+                   Margin="12"/>
+        <Button x:Uid="ButtonClose"
+                       Height="25"
+                       Width="25"
+                       Grid.Column="1"
+                       HorizontalAlignment="Left"
+                       HorizontalContentAlignment="Stretch"
+                       VerticalAlignment="Top"
+                       VerticalContentAlignment="Center"
+                       Margin="0,6,6,0"
+                       Command="{Binding HideDialogCommand}"
+                       AutomationProperties.Name="Close"
+                       IsCancel="True"
+                       BorderBrush="Transparent"
+                       BorderThickness="0"
+                       Background="{Binding Path=(Window.Background), RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}">
+          <Canvas x:Uid="canvas" Width="12" Height="10">
+            <Path x:Uid="CloseButtonPath"
+                  Width="10"
+                  Height="8"
+                  Fill="{Binding Path=(TextElement.Foreground), RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
+                  Stretch="Uniform"
+                  Data="F1 M 0,0L 2,0L 5,3L 8,0L 10,0L 6,4L 10,8L 8,8L 5,5L 2,8L 0,8L 4,4L 0,0 Z" />
+          </Canvas>
+        </Button>
+      </Grid>
+    <Grid Grid.Row="1">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+      </Grid.RowDefinitions>
+      <TextBlock Grid.Row="0" Text="{x:Static nuget:Resources.VSOptions_Label_PackagePattern}" Margin="12,0,12,9"/>
+      <vsui:WatermarkedTextBox Grid.Row="1"
+                                 BorderBrush="{DynamicResource {x:Static vsui:CommonControlsColors.ButtonBorderBrushKey}}"
+                                 BorderThickness="1"
+                                 AutomationProperties.Name="{x:Static nuget:Resources.VSOptions_Watermark_AddPackageNamespace}"
+                                 x:Name="_packageID"
+                                 MaxLength="100"
+                                 Margin="12,0,12,0"
+                                 Watermark="{x:Static nuget:Resources.VSOptions_Watermark_AddPackageNamespace}"
+                                 TextChanged="PackageID_TextChanged"/>
+      <nuget:ProjectsListView Grid.Row="2"
+                    x:Name="_sourcesListBox"
+                    AutomationProperties.Name="{x:Static nuget:Resources.VSOptions_Accessibility_SourcesList}"
+                    ItemsSource="{Binding SourcesCollection}"
+                    PreviewKeyUp="SourcesListBox_PreviewKeyUp"
+                    Margin="12"
+                    Height="184">
+        <ListView.ItemContainerStyle>
+          <Style>
+            <Setter Property="AutomationProperties.Name" Value="{Binding SourceInfo.Name}"/>
+          </Style>
+        </ListView.ItemContainerStyle>
+        <ListView.Resources>
+          <Style x:Key="{x:Static GridView.GridViewScrollViewerStyleKey}" TargetType="{x:Type ScrollViewer}" BasedOn="{StaticResource {x:Static vs:VsResourceKeys.UnthemedGridViewScrollViewerStyleKey}}" />
+          <Style TargetType="{x:Type ScrollBar}" BasedOn="{StaticResource {x:Static vs:VsResourceKeys.UnthemedScrollBarStyleKey}}"/>
+        </ListView.Resources>
+        <ListView.View>
+          <GridView>
+            <!-- checkbox column -->
+            <GridViewColumn>
+              <GridViewColumn.CellTemplate>
+                <DataTemplate>
+                  <CheckBox IsTabStop="False"
+                                AutomationProperties.Name="{x:Static nuget:Resources.CheckBox_Selected}"
+                                IsChecked="{Binding Path=IsSelected}"
+                                Checked="CheckBox_Checked"
+                                Unchecked="CheckBox_Checked"/>
+                </DataTemplate>
+              </GridViewColumn.CellTemplate>
+            </GridViewColumn>
+            <!-- the text column -->
+            <GridViewColumn>
+              <GridViewColumnHeader Content="{x:Static nuget:Resources.VSOptions_Label_Source}" HorizontalContentAlignment="Left"/>
+              <GridViewColumn.CellTemplate>
+                <DataTemplate>
+                  <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="{Binding SourceInfo.Name}"/>
+                  </StackPanel>
+                </DataTemplate>
+              </GridViewColumn.CellTemplate>
+            </GridViewColumn>
+          </GridView>
+        </ListView.View>
+      </nuget:ProjectsListView>
+    </Grid>
+    <Grid Grid.Row="3" Margin="12,0,12,12">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="Auto" />
+      </Grid.ColumnDefinitions>
+      <!-- The `Grid.Column="0"` is missing in order to push the next column to the far right of the grid. -->
+      <Button Grid.Column="1" Style="{StaticResource PackageSourceMappingButtonStyle}" Command="{Binding AddMappingCommand}" Content="{x:Static nuget:Resources.VSOptions_Button_Add}"/>
+      <Button Grid.Column="2" Style="{StaticResource PackageSourceMappingButtonStyle}" Command ="{Binding HideDialogCommand}" Content="{x:Static nuget:Resources.VSOptions_Button_Cancel}"/>
+    </Grid>
+  </Grid>
+</vsui:DialogWindow>

@@ -1,0 +1,51 @@
+<VSTemplate Version="3.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="Project">
+  <TemplateData>
+    <Name Package="{BB89AFCA-43DA-45C1-907D-9D61DD11F28D}" ID="1002" />
+    <Description Package="{BB89AFCA-43DA-45C1-907D-9D61DD11F28D}" ID="1003" />
+    <Icon Package="{BB89AFCA-43DA-45C1-907D-9D61DD11F28D}" ID="4002" />
+    <ProjectType>VC</ProjectType>
+    <TemplateID>Microsoft.CPP.WinRT.BlankApp</TemplateID>
+    <TemplateGroupID>WinRT-Native</TemplateGroupID>
+    <SortOrder>40</SortOrder>
+    <CreateNewFolder>true</CreateNewFolder>
+    <DefaultName>App</DefaultName>
+    <ProvideDefaultName>true</ProvideDefaultName>
+    <LocationField>Enabled</LocationField>
+    <EnableLocationBrowseButton>true</EnableLocationBrowseButton>
+    <NumberOfParentCategoriesToRollUp>1</NumberOfParentCategoriesToRollUp>
+    <TargetPlatformName>Windows</TargetPlatformName>
+    <RequiredPlatformVersion>8</RequiredPlatformVersion>
+    <PromptForSaveOnCreation>true</PromptForSaveOnCreation>
+    <PreviewImage>BlankApp.png</PreviewImage>
+  </TemplateData>
+  <TemplateContent>
+    <Project File="Application.vcxproj" ReplaceParameters="true">
+      
+      <ProjectItem ReplaceParameters="true" TargetFileName="$projectname$.vcxproj.filters">Application.vcxproj.filters</ProjectItem>
+      <ProjectItem ReplaceParameters="true" BlendOpenInEditor="true" TargetFileName="MainPage.xaml">MainPage.xaml</ProjectItem>
+      <ProjectItem ReplaceParameters="true" TargetFileName="MainPage.xaml.cpp">MainPage.xaml.cpp</ProjectItem>
+      <ProjectItem ReplaceParameters="true" TargetFileName="MainPage.xaml.h">MainPage.xaml.h</ProjectItem>
+      
+      <ProjectItem ReplaceParameters="true" TargetFileName="App.xaml">App.xaml</ProjectItem>
+      <ProjectItem ReplaceParameters="true" OpenInEditor="true" BlendOpenInEditor="false" TargetFileName="App.xaml.cpp">App.xaml.cpp</ProjectItem>
+      <ProjectItem ReplaceParameters="true" TargetFileName="App.xaml.h">App.xaml.h</ProjectItem>
+
+      <ProjectItem ReplaceParameters="false">pch.cpp</ProjectItem>
+      <ProjectItem ReplaceParameters="false">pch.h</ProjectItem>
+      
+      <ProjectItem ReplaceParameters="true" TargetFileName="Package.appxmanifest">Package-native.appxmanifest</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="Assets\Logo.png">Logo.png</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="Assets\SmallLogo.png">SmallLogo.png</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="Assets\StoreLogo.png">StoreLogo.png</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="Assets\SplashScreen.png">SplashScreen.png</ProjectItem>
+
+      <ProjectItem ReplaceParameters="false" TargetFileName="Common\StandardStyles.xaml">StandardStyles.xaml</ProjectItem>
+
+      <ProjectItem ReplaceParameters="false" TargetFileName="$projectname$_TemporaryKey.pfx" BlendDoNotCreate="true">Application_TemporaryKey.pfx</ProjectItem>
+    </Project>
+  </TemplateContent>
+  <WizardExtension>
+    <Assembly>Microsoft.VisualStudio.WinRT.TemplateWizards, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</Assembly>
+    <FullClassName>Microsoft.VisualStudio.WinRT.TemplateWizards.CreateProjectCertificate.Wizard</FullClassName>
+  </WizardExtension>
+</VSTemplate>

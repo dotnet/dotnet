@@ -1,0 +1,158 @@
+﻿<Project>
+
+  <PropertyGroup>
+    <IsCommandLinePackage>true</IsCommandLinePackage>
+  </PropertyGroup>
+
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), 'NuGet.sln'))\build\common.props" />
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+  <Import Project="ilmerge.props" />
+
+  <PropertyGroup>
+    <RootNamespace>NuGet.CommandLine</RootNamespace>
+    <AssemblyName>NuGet</AssemblyName>
+    <AssemblyTitle>NuGet Command Line</AssemblyTitle>
+    <PackageId>NuGet.CommandLine</PackageId>
+    <TargetFramework>$(NETFXTargetFramework)</TargetFramework>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <Description>NuGet Command Line Interface.</Description>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Shipping>true</Shipping>
+    <OutputType>Exe</OutputType>
+    <ComVisible>false</ComVisible>
+    <!-- Pack properties-->
+    <PackProject>true</PackProject>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);CreateCommandlineNupkg</TargetsForTfmSpecificContentInPackage>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <DevelopmentDependency>true</DevelopmentDependency>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <UsePublicApiAnalyzer>false</UsePublicApiAnalyzer>
+  </PropertyGroup>
+
+  <Target Name="CreateCommandlineNupkg">
+    <ItemGroup>
+      <TfmSpecificPackageFile Include="$(ArtifactsDirectory)$(VsixOutputDirName)\NuGet.exe">
+        <PackagePath>tools/</PackagePath>
+      </TfmSpecificPackageFile>
+      <TfmSpecificPackageFile Include="$(ArtifactsDirectory)$(VsixOutputDirName)\NuGet.pdb">
+        <PackagePath>tools/</PackagePath>
+      </TfmSpecificPackageFile>
+    </ItemGroup>
+  </Target>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.Build.Utilities.v4.0" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.ComponentModel.Composition.Registration" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="NuGet.Core">
+      <HintPath>$(NuGetPackageRoot)\nuget.core\$(NuGetCoreV2Version)\lib\net40-Client\NuGet.Core.dll</HintPath>
+      <Aliases>CoreV2</Aliases>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageDownload Include="NuGet.Core" />
+    <PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" />
+    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.PackageManagement\NuGet.PackageManagement.csproj" />
+    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Build.Tasks\NuGet.Build.Tasks.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="NuGetCommand.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>NuGetCommand.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <Compile Update="NuGetCommand.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>NuGetCommand.resx</DependentUpon>
+    </Compile>
+    <EmbeddedResource Update="NuGetResources.resx">
+      <!-- Strings are shared by other projects, use public strings. -->
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>NuGetResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <Compile Update="NuGetResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>NuGetResources.resx</DependentUpon>
+    </Compile>
+    <!-- nuget.exe localized assemblies -->
+    <EmbeddedResource Include="$(OutputPath)\**\$(AssemblyName).resources.dll" Exclude="@(MergeExclude)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="$(NuGetCoreSrcDirectory)NuGet.Build.Tasks\NuGet.targets">
+      <Link>NuGet.targets</Link>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <Target Name="DetermineILMergeNuGetExeInputsOutputs">
+    <PropertyGroup>
+      <PathToBuiltNuGetExe>$(OutputPath)NuGet.exe</PathToBuiltNuGetExe>
+      <PathToMergedNuGetExe>$(ArtifactsDirectory)$(VsixOutputDirName)\NuGet.exe</PathToMergedNuGetExe>
+    </PropertyGroup>
+    <ItemGroup>
+      <!-- Dependent assemblies -->
+      <BuildArtifacts Include="$(OutputPath)\*.dll" Exclude="@(MergeExclude)" />
+    </ItemGroup>
+    <Message Text="$(MSBuildProjectName) -&gt; $(PathToMergedNuGetExe)" Importance="High" />
+  </Target>
+
+  <!-- 	Since we are moving some code and strings from NuGet.CommandLine to NuGet.Commands, we opted to go through normal localization process
+        (build .resources.dll) and then add them to the ILMerged nuget.exe -->
+  <!-- This will also be called from CI build, after assemblies are localized, since our test infra takes nuget.exe before Localization  -->
+  <Target Name="ILMergeNuGetExe"
+          AfterTargets="Build"
+          DependsOnTargets="DetermineILMergeNuGetExeInputsOutputs"
+          Inputs="$(PathToBuiltNuGetExe);@(BuildArtifacts)"
+          Outputs="$(PathToMergedNuGetExe)"
+          Condition="'$(BuildingInsideVisualStudio)' != 'true' and '$(SkipILMergeOfNuGetExe)' != 'true'" >
+    <PropertyGroup>
+      <IlmergeCommand>$(ILMergeExePath) /lib:$(OutputPath) /out:$(PathToMergedNuGetExe) @(MergeAllowDup -> '/allowdup:%(Identity)', ' ') /log:$(OutputPath)IlMergeLog.txt</IlmergeCommand>
+      <IlmergeCommand Condition="Exists($(MS_PFX_PATH))">$(IlmergeCommand) /delaysign /keyfile:$(MS_PFX_PATH)</IlmergeCommand>
+      <IlmergeCommand>$(IlmergeCommand) $(PathToBuiltNuGetExe) @(BuildArtifacts->'%(fullpath)', ' ')</IlmergeCommand>
+    </PropertyGroup>
+    <MakeDir Directories="$([System.IO.Path]::GetDirectoryName($(PathToMergedNuGetExe)))" />
+    <Exec Command="$(IlmergeCommand)" ContinueOnError="false" />
+  </Target>
+
+  <Import Project="$(BuildCommonDirectory)common.targets" />
+
+  <Target Name="NuGetLinkVSSDKEmbeddableAssemblies" AfterTargets="ResolveReferences" BeforeTargets="FindReferenceAssembliesForReferences">
+    <ItemGroup>
+      <ReferencePath Condition="'%(FileName)' == 'Microsoft.VisualStudio.Setup.Configuration.Interop'">
+        <EmbedInteropTypes>true</EmbedInteropTypes>
+      </ReferencePath>
+    </ItemGroup>
+  </Target>
+
+  <!-- Do nothing. This basically strips away the framework assemblies from the resulting nuspec.-->
+  <Target Name="_GetFrameworkAssemblyReferences" DependsOnTargets="ResolveReferences" />
+
+  <Target Name="GetSigningInputs" Returns="@(DllsToSign)">
+    <ItemGroup>
+      <DllsToSign Include="$(ArtifactsDirectory)$(VsixOutputDirName)\NuGet.exe">
+        <StrongName>MsSharedLib72</StrongName>
+        <Authenticode>Microsoft400</Authenticode>
+      </DllsToSign>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="GetSymbolsToIndex" Returns="@(SymbolsToIndex)">
+    <ItemGroup>
+      <SymbolsToIndex Include="$(ArtifactsDirectory)$(VsixOutputDirName)\NuGet.exe" />
+      <SymbolsToIndex Include="$(ArtifactsDirectory)$(VsixOutputDirName)\NuGet.pdb" />
+    </ItemGroup>
+  </Target>
+
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+</Project>

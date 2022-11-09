@@ -1,0 +1,2 @@
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Net70 -> NuGet.Frameworks.NuGetFramework
+static readonly NuGet.Frameworks.FrameworkConstants.Version7 -> System.Version

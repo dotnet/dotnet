@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <version>2.0.0</version>
+    <authors>Test</authors>
+    <id>A.fr</id>
+    <description>No description.</description>
+    <language>fr</language>
+    <dependencies>
+        <dependency id="A" version="[2.0.0]" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="lib\net40\fr\A.resource.dll" target="lib\net40\fr\A.resource.dll" />
+  </files>
+</package>

@@ -1,0 +1,65 @@
+﻿<Project>
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), 'NuGet.sln'))\build\common.props" />
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+
+  <PropertyGroup>
+    <TargetFrameworks>$(TargetFrameworksExeForSigning)</TargetFrameworks>
+    <OutputType>Exe</OutputType>
+    <Shipping>true</Shipping>
+    <PackProject>true</PackProject>
+    <SkipShared>true</SkipShared>
+    <Description>NuGet Build tasks for MSBuild and dotnet restore. Contains restore logic using the MSBuild static graph functionality.</Description>
+    <NoWarn>$(NoWarn);CS1591;NU5100;NU5128;NU1505</NoWarn> <!-- Remove NU1505 NoWarn when https://github.com/dotnet/sdk/issues/24747 is fixed -->
+    <XPLATProject>true</XPLATProject>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);PackBuildOutputs</TargetsForTfmSpecificContentInPackage>
+    <EnableDefaultNoneItems>false</EnableDefaultNoneItems>
+    <ServerGarbageCollection>true</ServerGarbageCollection>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <UsePublicApiAnalyzer>false</UsePublicApiAnalyzer>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(IsVsixBuild)' == 'true' ">
+    <TargetFrameworks />
+    <TargetFramework>$(NETFXTargetFramework)</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NuGet.Build.Tasks\NuGet.Build.Tasks.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Build.Framework" ExcludeAssets="Runtime" />
+    <PackageReference Include="Microsoft.Build" ExcludeAssets="Runtime" />
+    <PackageReference Include="Microsoft.Build.Tasks.Core" ExcludeAssets="Runtime" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" ExcludeAssets="Runtime" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == '$(NETFXTargetFramework)' ">
+    <Reference Include="Microsoft.Build.Utilities.v4.0" Aliases="MicrosoftBuildUtilitiesv4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="App.config" Condition=" '$(TargetFramework)' == '$(NETFXTargetFramework)' " />
+    <None Include="app.manifest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\NuGet.Build.Tasks\NuGet.RestoreEx.targets">
+      <Link>%(Filename)%(Extension)</Link>
+      <PackagePath>runtimes\any\native</PackagePath>
+      <Pack>true</Pack>
+    </Content>
+  </ItemGroup>
+
+  <Target Name="PackBuildOutputs">
+    <ItemGroup>
+      <TfmSpecificPackageFile Include="$(TargetPath)" PackagePath="contentFiles\any\$(TargetFramework)" PackageCopyToOutput="true" />
+      <TfmSpecificPackageFile Include="$(ProjectRuntimeConfigFilePath)" Condition=" '$(IsCore)' == 'true' " PackagePath="contentFiles\any\$(TargetFramework)" PackageCopyToOutput="true" />
+    </ItemGroup>
+  </Target>
+
+  <Import Project="$(BuildCommonDirectory)common.targets" />
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+</Project>

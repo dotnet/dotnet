@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<VSTemplate Version="3.0.0" Type="Project" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005">
+  <TemplateData>
+    <Name Package="{FAE04EC1-301F-11d3-BF4B-00C04F79EFBC}" ID="2330" />
+    <Description Package="{FAE04EC1-301F-11d3-BF4B-00C04F79EFBC}" ID="2331" />
+    <Icon Package="{FAE04EC1-301F-11d3-BF4B-00C04F79EFBC}" ID="4549" />
+    <TemplateID>Microsoft.CSharp.EmptyProject</TemplateID>
+    <ProjectType>CSharp</ProjectType>
+    <RequiredFrameworkVersion>2.0</RequiredFrameworkVersion>
+    <CreateNewFolder>true</CreateNewFolder>
+    <DefaultName>Project</DefaultName>
+    <ProvideDefaultName>true</ProvideDefaultName>
+  </TemplateData>
+  <TemplateContent>
+    <Project File="EmptyProject.csproj" ReplaceParameters="true">
+      <ProjectItem ReplaceParameters="true">App.config</ProjectItem>
+    </Project>
+  </TemplateContent>
+</VSTemplate>

@@ -1,0 +1,22 @@
+﻿<UserControl x:Class="NuGetConsole.ConsoleContainer"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:resources="clr-namespace:NuGetConsole">
+    
+    <Grid x:Name="RootLayout">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        
+        <!-- initializing text -->
+        <TextBlock
+            x:Name="InitializeText"
+            Focusable="False"
+            Text="{x:Static resources:Resources.ToolWindowInitializing}"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Grid.RowSpan="2"
+            Canvas.ZIndex="1" />
+    </Grid>
+</UserControl>

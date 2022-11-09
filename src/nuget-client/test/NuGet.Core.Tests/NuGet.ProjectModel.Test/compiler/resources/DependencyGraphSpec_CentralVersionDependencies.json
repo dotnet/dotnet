@@ -1,0 +1,32 @@
+{
+  "format": 1,
+  "restore": {
+    "a": {}
+  },
+  "projects": {
+    "a": {
+      "restore": {
+        "projectUniqueName": "a",
+        "centralPackageVersionsManagementEnabled": true
+      },
+      "frameworks": {
+        "net40": {
+          "dependencies": {
+            "foo": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[1.0.0, )",
+              "generatePathProperty": true,
+              "versionCentrallyManaged": true
+            }
+          },
+          "centralPackageVersions": {
+            "bar": "[2.0.0, )",
+            "foo": "[1.0.0, )"
+          },
+          "assetTargetFallback": true
+        }
+      }
+    }
+  }
+}
