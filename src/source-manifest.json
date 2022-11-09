@@ -7,6 +7,12 @@
       "commitSha": "1bee0afeedab9d6d9d1cf23e65daa7ea5fcc6d47"
     },
     {
+      "packageVersion": "1.0.0-preview5.1.22263.1",
+      "path": "deployment-tools",
+      "remoteUri": "https://github.com/dotnet/deployment-tools",
+      "commitSha": "c3ad00ae84489071080a606f6a8e43c9a91a5cc2"
+    },
+    {
       "packageVersion": "7.0.1-beta.22557.9",
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",

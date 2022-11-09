@@ -1,0 +1,824 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="zh-Hans" original="../Application.resx">
+    <body>
+      <trans-unit id="AddLauncherIsExclusive">
+        <source>'addlauncher' command can't be combined with any other command.</source>
+        <target state="translated">"addlauncher" 命令不能与任何其他命令组合。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ApplicationCacheCleared">
+        <source>Application cache cleared.</source>
+        <target state="translated">已清除应用程序缓存。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ApplicationManifestCannotHaveHostInBrowserTag">
+        <source>The specified application manifest includes unsupported HostInBrowser tag.</source>
+        <target state="translated">指定的应用程序清单包含不支持的 HostInBrowser 标记。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DefaultAppName">
+        <source>New Application</source>
+        <target state="translated">新应用程序</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DeployManifestNotSigned">
+        <source>Deployment manifest is not signed - "{0}"</source>
+        <target state="translated">部署清单未签名 -“{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DeployManifestSignatureInvalid">
+        <source>Deployment manifest contains invalid signature - "{0}"</source>
+        <target state="translated">部署清单包含无效的签名 -“{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorApplicactionCachedCleared">
+        <source>Failed to clear application cache.</source>
+        <target state="translated">未能清除应用程序缓存。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorInvalidSignature">
+        <source>Manifest does not have a valid signature.</source>
+        <target state="translated">清单不具有有效的签名。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorInvalidTimestampFormat">
+        <source>Timestamp is not encoded as a base64 string.</source>
+        <target state="translated">时间戳未编码为 base64 字符串。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorMessage">
+        <source>Error</source>
+        <target state="translated">错误</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorMissingSignatureNode">
+        <source>Signature node is missing.</source>
+        <target state="translated">签名节点丢失。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorWritingOutputFile">
+        <source>Error writing output file "{0}".</source>
+        <target state="translated">写入输出文件“{0}”时出错。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToAddLauncher">
+        <source>Failed to add Launcher.</source>
+        <target state="translated">未能添加 Launcher。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToUpdateLauncherResources">
+        <source>Failed to update Launcher resources.</source>
+        <target state="translated">未能更新 Launcher 资源。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FileNotWriteable">
+        <source>Cannot write to file "{0}"</source>
+        <target state="translated">无法写入到文件“{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FileTypeSpecificOption">
+        <source>The "{0}" option can only be used with the following type of files: "{1}"</source>
+        <target state="translated">“{0}”选项只能用于以下类型的文件:“{1}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HelpTerse">
+        <source>Commands
+  -New &lt;file_type&gt;	          -n
+  -Update &lt;file_name&gt;	          -u
+  -Sign &lt;file_name&gt;	          -s
+  -ClearApplicationCache	  -cc
+  -Verify &lt;manifest_file_name&gt;    -ver
+  -AddLauncher &lt;binary_to_launch&gt; -al
+  -Help [verbose]		  -h -?
+
+
+
+Options
+  -Algorithm &lt;sha256RSA&gt;           -a
+  -AppCodeBase &lt;path&gt;	            -appc
+  -AppManifest &lt;path&gt;	            -appm
+  -CertFile &lt;file_name&gt;	            -cf
+  -CertHash &lt;hash&gt;                  -ch
+  -CryptoProvider &lt;name&gt;            -csp
+  -FromDirectory &lt;path&gt;	            -fd
+  -IconFile &lt;file_path&gt;             -if
+  -IncludeProviderURL &lt;true|false&gt;  -ip
+  -Install &lt;true|false&gt;             -i 
+  -KeyContainer &lt;name&gt;              -kc
+  -MinVersion &lt;version #|none&gt;      -mv
+  -Name &lt;name&gt;		            -n
+  -Password &lt;password&gt;	            -pwd
+  -Processor &lt;processor&gt;	    -p
+  -ProviderURL &lt;url&gt; 	            -pu
+  -Publisher &lt;publisher_name&gt;       -pub
+  -SupportURL &lt;support_url&gt;         -s
+  -TargetDirectory &lt;path&gt;	    -td
+  -TimeStampUri &lt;uri&gt;               -ti
+  -ToFile	&lt;file_name&gt;	    -t
+  -TrustLevel &lt;level&gt;	            -tr
+  -UseManifestForTrust &lt;true|false&gt; -um
+  -Version &lt;version&gt;	            -v
+
+Use "mage -help verbose" for more detailed help</source>
+        <target state="translated">命令
+  -New &lt;file_type&gt;	          -n
+  -Update &lt;file_name&gt;	          -u
+  -Sign &lt;file_name&gt;	          -s
+  -ClearApplicationCache	  -cc
+  -Verify &lt;manifest_file_name&gt;    -ver
+  -AddLauncher &lt;binary_to_launch&gt; -al
+  -Help [verbose]		  -h -?
+
+
+
+Options
+  -Algorithm &lt;sha256RSA&gt;           -a
+  -AppCodeBase &lt;path&gt;	            -appc
+  -AppManifest &lt;path&gt;	            -appm
+  -CertFile &lt;file_name&gt;	            -cf
+  -CertHash &lt;hash&gt;                  -ch
+  -CryptoProvider &lt;name&gt;            -csp
+  -FromDirectory &lt;path&gt;	            -fd
+  -IconFile &lt;file_path&gt;             -if
+  -IncludeProviderURL &lt;true|false&gt;  -ip
+  -Install &lt;true|false&gt;             -i 
+  -KeyContainer &lt;name&gt;              -kc
+  -MinVersion &lt;version #|none&gt;      -mv
+  -Name &lt;name&gt;		            -n
+  -Password &lt;password&gt;	            -pwd
+  -Processor &lt;processor&gt;	    -p
+  -ProviderURL &lt;url&gt; 	            -pu
+  -Publisher &lt;publisher_name&gt;       -pub
+  -SupportURL &lt;support_url&gt;         -s
+  -TargetDirectory &lt;path&gt;	    -td
+  -TimeStampUri &lt;uri&gt;               -ti
+  -ToFile	&lt;file_name&gt;	    -t
+  -TrustLevel &lt;level&gt;	            -tr
+  -UseManifestForTrust &lt;true|false&gt; -um
+  -Version &lt;version&gt;	            -v
+
+使用 "mage -help verbose" 获取更详细的帮助信息</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HelpVerbose">
+        <source>Commands:
+
+  -New &lt;file_type&gt;        -n
+      Generate a new application manifest, deployment manifest, or trust
+      license, using the options listed below.
+      Examples:
+        -New Application -ToFile MyApp.manifest -Name MyApp -Processor X86
+        -New Deployment -ToFile MyApp.application -Name MyApp -Version 1.0.0.0
+    
+  -Update &lt;file_name&gt;     -u
+      Update an existing application manifest, deployment manifest, or trust
+      License, updating it as specified by the options listed below.
+      Examples:
+        -Update MyApp.manifest -FromDirectory bin/release
+        -Update MyApp.application -Version 2.1.0.123 -ToFile MyApp21.application 
+          
+  -Sign &lt;file_name&gt;       -s
+      Sign an existing manifest or license with a keypair or an X509
+      certificate.
+      Examples:
+        -Sign MyApp.manifest -CertFile MyCert.pfx -Password mycertpassword
+    
+  -Verify &lt;manifest_file_name&gt;       -ver
+      Verify if the manifest is signed correctly. Cannot be combined with other commands.
+      Example:
+        -Verify MyApp.manifest
+  
+  -AddLauncher &lt;binary_to_launch&gt;    -al
+      Adds Launcher to target directory and sets its binary to launch.
+      Example:
+        -AddLauncher myapp.dll -TargetDirectory bin/release
+
+  -ClearApplicationCache  -cc
+      Clear the downloaded application cache of all online-only applications. 
+
+  -Help [verbose]         -h -?
+      Print usage instructions.
+      Examples:
+        -Help
+        -Help Verbose
+
+Options:
+
+  -Algorithm &lt;sha256RSA&gt;      -a
+      Specifies the algorithm to generate digests.
+      Example:
+         -Algorithm sha256RSA
+
+  -AppCodeBase &lt;path&gt;     -appc
+      Specifies the code base of the app manifest to be placed in the
+      deployment manifest being generated or updated.
+      Example:
+         -AppCodeBase 1.0.0.0/myapp.manifest
+      
+  -AppManifest &lt;path&gt;     -appm
+      Specifies the local path to an application manifest that is being
+      referenced from the deployment manifest being generated or updated.
+      Example:
+        -AppManifest MyApp.manifest
+
+  -CertFile &lt;file_name&gt;   -cf
+      Specifies the name of an X509 certificate file with which to sign a
+      manifest or license file.  This option can be used in conjunction 
+      with the -Password option, if the certificate requires a password
+      for Personal Information Exchange (PFX) files. If the file does not 
+      contain private key a combination of -CryptoProvider and 
+      -KeyContainer options is required.
+      Example:
+        -CertFile MyCert.pfx
+        -CertFile MyCert.pfx -Password mycertpassword
+        -CertFile PublicKey.cer -KeyContainer name -CryptoProvider MyCspName
+
+  -CertHash &lt;hash&gt;        -ch
+      Specifies the hash of an X509 certificate in your local cert store.
+      Example:
+        -CertHash a1b2c3d4e5f6g7h8i9j0
+
+  -CryptoProvider &lt;name&gt;  -csp
+      Specifies the name of cryptographic service provider (CSP) that contains
+      the private key container.  This option requires the -KeyContainer option.
+      Example:
+        -CryptoProvider "Microsoft Enhanced Cryptographic Provider v1.0" -KeyContainer name
+
+  -FromDirectory &lt;path&gt;   -fd
+      Specifies the directory to recursively search for files to include in
+      an application manifest.  
+      Example:
+        -FromDirectory bin/release
+        
+  -IconFile &lt;file_path&gt;   -if
+      Specifies relative path and filename for the application icon.
+        
+  -IncludeProviderURL &lt;true|false&gt; -ip
+      Specifies if the deployment manifest will include the deployment 
+      provider URL.
+      
+  -Install &lt;true|false&gt;   -i
+      Specifies if the application will be an installed or an online only 
+      application.
+
+  -KeyContainer &lt;name&gt;    -kc
+      Specifies the key container that contains the name of the private key.
+      This option requires the -CryptoProvider option.
+      Example:
+        -KeyContainer name -CryptoProvider "Microsoft Enhanced Cryptographic Provider v1.0"
+
+  -MinVersion &lt;version #|none&gt;   -mv
+      Specifies whether the manifest being generated specifies a minimum version.
+      Must be of the form "0.0.0.0".  Specifying "none" removes this from the manifest.
+      Example:
+        -MinVersion 1.2.3.4
+        -MinVersion none
+
+  -Name &lt;name&gt;            -n
+      Specifies the name of the application whose manifest is being 
+      generated or updated.  Names which include spaces should be enclosed
+      in quotes.
+      Examples:
+        -Name MyApp
+        -Name "My Application"
+        
+  -Password &lt;password&gt;    -pwd
+      Specifies the password to use with an X509 certificate when signing
+      a manifest or license file.  See example above.
+
+  -Processor &lt;processor&gt;  -p
+      Specifies the processor architecture of the application whose manifest
+      is being generated or updated.
+      Examples:
+        -Processor MSIL
+        -Processor i386
+
+  -ProviderURL &lt;url&gt;      -pu
+      Specifies the provider URL to be use in the deployment manifest being
+      generated or updated.
+      Example:
+        -ProviderURL http://www.whatever.net/application
+
+  -Publisher &lt;publisher_name&gt;    -pub
+      Specifies the name of the publisher.  Names which include spaces should 
+      be enclosed in quotes.
+      Examples:
+        -Publisher MyCompany
+        -Publisher "My Company"
+
+  -SupportURL &lt;url&gt;       -s
+      Specifies the support URL for the application.
+      Example:
+        -SupportURL http://www.whatever.net/application/support
+
+  -TargetDirectory &lt;path&gt;	  -td
+      Specifies the directory to which to add the Launcher.
+      Example:
+        -TargetDirectory bin/release
+
+  -ToFile &lt;file_name&gt;     -t
+      Specifies the name of the file to save the output of a sign, new, or 
+      update command.
+      Example:
+        -ToFile MyApp.manifest
+
+  -TimeStampUri &lt;uri&gt;     -ti
+      Specifies the URI to use for timestamping during signing.
+
+  -TrustLevel &lt;level&gt;     -tr
+      Specifies the trust level to be included in the application manifest
+      being generated or updated. Valid values are: "Internet", "LocalIntranet",
+      and "FullTrust".
+      Example:
+        -TrustLevel FullTrust
+
+  -UseManifestForTrust &lt;true|false&gt; -um
+      Specifies if the application manifest will be used for certification and
+      branding information.
+            
+  -Version &lt;version&gt;                -v
+      Specifies the version of the application whose manifest is being 
+      generated or updated.  Must be of the form "0.0.0.0".
+      Example:
+        -Version 1.2.3.2112</source>
+        <target state="translated">命令:
+
+  -New &lt;file_type&gt;        -n
+      使用下面列出的选项生成新的应用程序清单、部署清单或
+      信任许可证。
+      示例:
+        -New Application -ToFile MyApp.manifest -Name MyApp -Processor X86
+        -New Deployment -ToFile MyApp.application -Name MyApp -Version 1.0.0.0
+    
+  -Update &lt;file_name&gt;     -u
+      更新现有的应用程序清单、部署清单或信任
+     许可证，按照下面列出的选项所指定的方式对其进行更新。
+      示例:
+        -Update MyApp.manifest -FromDirectory bin/release
+        -Update MyApp.application -Version 2.1.0.123 -ToFile MyApp21.application 
+          
+  -Sign &lt;file_name&gt;       -s
+      使用密钥对或 X509 证书为现有清单或许可证
+      签名。
+      示例:
+        -Sign MyApp.manifest -CertFile MyCert.pfx -Password mycertpassword
+    
+  -Verify &lt;manifest_file_name&gt;       -ver
+     验证清单是否正确签名。不能与其他命令组合。
+      示例:
+        -Verify MyApp.manifest
+  
+  -AddLauncher &lt;binary_to_launch&gt;    -al
+      向目标目录添加启动器并设置要启动的二进制文件。
+      示例:
+        -AddLauncher myapp.dll -TargetDirectory bin/release
+
+  -ClearApplicationCache  -cc
+      清除所有仅限联机的应用程序的已下载应用程序缓存。
+
+  -Help [verbose]         -h -?
+     打印使用说明。
+      示例:
+        -Help
+        -Help Verbose
+
+Options:
+
+  -Algorithm &lt;sha256RSA&gt;  -a
+    指定用于生成摘要的算法。
+      示例:
+         -Algorithm sha1RSA
+
+  -AppCodeBase &lt;path&gt;     -appc
+      指定要放在所生成或更新的部署清单中
+      的应用清单的代码库。
+      示例:
+         -AppCodeBase 1.0.0.0/myapp.manifest
+      
+  -AppManifest &lt;path&gt;     -appm
+     指定从所生成或更新的部署清单中引用的
+     应用程序清单的本地路径。
+      示例:
+        -AppManifest MyApp.manifest
+
+  -CertFile &lt;file_name&gt;   -cf
+      指定要使用其来为
+      清单或证书文件签名的 X509 证书文件的名称。如果证书需要密码来获取个人信息交换(PFX)文件，此选项可以与 
+      -Password 选项
+      结合使用。如果文件不
+     包含私匙，则需要 -CryptoProvider 和 
+      -KeyContainer 选项的组合。
+      示例:
+        -CertFile MyCert.pfx
+        -CertFile MyCert.pfx -Password mycertpassword
+        -CertFile PublicKey.cer -KeyContainer name -CryptoProvider MyCspName
+
+  -CertHash &lt;hash&gt;        -ch
+      在本地证书存储中指定 X509 证书的哈希。
+      示例:
+        -CertHash a1b2c3d4e5f6g7h8i9j0
+
+  -CryptoProvider &lt;name&gt;  -csp
+     指定包含私钥容器的
+      加密服务提供程序(CSP)的名称。此选项需要 -KeyContainer  选项。
+     示例:
+        -CryptoProvider "Microsoft Enhanced Cryptographic Provider v1.0" -KeyContainer name
+
+  -FromDirectory &lt;path&gt;   -fd
+     指定用于递归搜索文件以将其包含
+      在应用程序清单中的目录。
+      示例:
+        -FromDirectory bin/release
+        
+  -IconFile &lt;file_path&gt;   -if
+      指定应用程序图标的相对路径和文件名。
+        
+  -IncludeProviderURL &lt;true|false&gt; -ip
+      指定部署清单是否将包含
+      部署提供程序 URL。
+      
+  -Install &lt;true|false&gt;   -i
+      指定应用程序是安装的应用程序还是仅限联机的
+      应用程序。
+
+  -KeyContainer &lt;name&gt;    -kc
+     指定包含私钥名称的密钥容器。 
+     此选项需要 -CryptoProvider 选项。  
+      示例:
+        -KeyContainer name -CryptoProvider "Microsoft Enhanced Cryptographic Provider v1.0"
+
+  -MinVersion &lt;version #|none&gt;   -mv
+     指定要生成的清单是否指定最低版本。
+      格式必须为 "0.0.0.0"。如果指定 "none"，则会从清单中移除此项。
+      示例:
+        -MinVersion 1.2.3.4
+        -MinVersion none
+
+  -Name &lt;name&gt;            -n
+     指定正在生成或更新其清单的 
+     应用程序名称。包含空格的名称需用
+      引号括起来。
+      示例:
+        -Name MyApp
+        -Name "My Application"
+        
+  -Password &lt;password&gt;    -pwd
+     指定要在对清单或许可证文件进行签名时用于
+      X509 证书的密码。参阅以上示例。
+
+  -Processor &lt;processor&gt;  -p
+     指定正在生成或更新其清单的应用程序的
+      处理器架构。
+      示例:
+        -Processor MSIL
+        -Processor i386
+
+  -ProviderURL &lt;url&gt;      -pu
+      指定要用在所生成或更新的部署清单中的
+     提供程序 URL。 
+      示例:
+        -ProviderURL http://www.whatever.net/application
+
+  -Publisher &lt;publisher_name&gt;    -pub
+     指定发行者的名称。包含空格的名称应用
+      引号括起来。
+      示例:
+        -Publisher MyCompany
+        -Publisher "My Company"
+
+  -SupportURL &lt;url&gt;       -s
+      指定应用程序的支持 URL。
+      示例:
+        -SupportURL http://www.whatever.net/application/support
+
+  -TargetDirectory &lt;path&gt;	  -td
+      指定要添加 Launcher 的目录。
+      示例:
+        -TargetDirectory bin/release
+
+  -ToFile &lt;file_name&gt;     -t
+       指定要保存 sign、new 或
+      update 命令的输出的文件名称。
+      示例:
+        -ToFile MyApp.manifest
+
+  -TimeStampUri &lt;uri&gt;     -ti
+      指定要用于在签名过程中盖时间戳的 URI。
+
+  -TrustLevel &lt;level&gt;     -tr
+      指定要包括在所生成或更新的应用程序清单中的
+     信任级别。有效值包括: "Internet"、"LocalIntranet" 
+      和 "FullTrust"。and "FullTrust".
+      示例:
+        -TrustLevel FullTrust
+
+  -UseManifestForTrust &lt;true|false&gt; -um
+      指定应用程序清单是否将用于认证和
+     署名信息。
+            
+  -Version &lt;version&gt;                -v
+      指定正在生成或更新其清单的
+     应用程序的版本。格式必须为 "0.0.0.0"。 
+      示例:
+        -Version 1.2.3.2112</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InfoMessage">
+        <source>Info</source>
+        <target state="translated">信息</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InternalError">
+        <source>Internal error, please try again.</source>
+        <target state="translated">内部错误，请重试。</target>
+        <note>trailing space is added at run-time</note>
+      </trans-unit>
+      <trans-unit id="InvalidAddLauncherOption">
+        <source>The "{0}" option can not be used with -AddLauncher command.</source>
+        <target state="translated">“{0}”选项不能与 -AddLauncher 命令一起使用。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidAlgorithmValue">
+        <source>Algorithm has to be sha256RSA. Specified - "{0}".</source>
+        <target state="translated">算法必须为 sha256RSA。指定值 -“{0}”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidBinaryToLaunch">
+        <source>Binary to launch cannot include a path, it can only be a filename - {0}.</source>
+        <target state="translated">要启动的二进制文件不能包含路径，它只能是一个文件名 - {0}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidCertFile">
+        <source>Cert file is not of proper format - "{0}"</source>
+        <target state="translated">证书文件的格式不正确 -“{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidCertNoPrivateKey">
+        <source>This certificate does not contain a private key - "{0}"</source>
+        <target state="translated">此证书不包含私钥 -“{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidCertUsage">
+        <source>This certificate cannot be used for signing - "{0}"</source>
+        <target state="translated">此证书不能用于签名 -“{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidCodebase">
+        <source>The codebase is invalid - "{0}"</source>
+        <target state="translated">代码库无效 -“{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidDirectory">
+        <source>Directory not found - "{0}"</source>
+        <target state="translated">找不到目录 -“{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidFileType">
+        <source>Invalid file type, must be "Application", or "Deployment"</source>
+        <target state="translated">文件类型无效，必须为“Application”或“Deployment”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidHash">
+        <source>No cert found matching specified hash - "{0}"</source>
+        <target state="translated">未找到与指定哈希匹配的证书 -“{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidIncludeProviderURL">
+        <source>The -IncludeProviderURL option must be "true", "false", "t", or "f" - "{0}"</source>
+        <target state="translated">-IncludeProviderURL 选项必须为“true”、“false”、“t”或“f”-“{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidInputFile">
+        <source>Unrecognized file type - "{0}"</source>
+        <target state="translated">无法识别的文件类型 -“{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidInstall">
+        <source>The -Install option must be "true", "false", "t", or "f" - "{0}"</source>
+        <target state="translated">-Install 选项必须为“true”、“false”、“t”或“f”-“{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidKeyFile">
+        <source>Key file is not of proper format - "{0}"</source>
+        <target state="translated">密钥文件的格式不正确 -“{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidMinVersion">
+        <source>The minimum version specified is not valid.</source>
+        <target state="translated">指定的最低版本无效。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidNonAddLauncherOption">
+        <source>The "{0}" option can only be used with -AddLauncher command.</source>
+        <target state="translated">“{0}”选项只能用于 -AddLauncher 命令。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidNonManifestOption">
+        <source>The "{0}" option can only be used with the -Update or -New commands.</source>
+        <target state="translated">“{0}”选项只能与 -Update 或 -New 命令一起使用。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidPassword">
+        <source>Cert password is incorrect - "{0}"</source>
+        <target state="translated">证书密码不正确 -“{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidPath">
+        <source>File not found - "{0}"</source>
+        <target state="translated">找不到文件 -“{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidProcessor">
+        <source>Unknown processor type "{0}".  Supported processor types are:</source>
+        <target state="translated">未知处理器类型“{0}”。支持的处理器类型包括:</target>
+        <note>Will be followed by a list of processor types, after a newline is added at run-time</note>
+      </trans-unit>
+      <trans-unit id="InvalidRequiredUpdate">
+        <source>The -RequiredUpdate option must be "true", "false", "t", or "f" - "{0}"</source>
+        <target state="translated">-RequiredUpdate 选项必须为“true”、“false”、“t”或“f”-“{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidSigningPlatform">
+        <source>Signing is only supported on Windows.</source>
+        <target state="translated">只有 Windows 上支持签名。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidTimestamp">
+        <source>The timestamp URI specified is not valid.</source>
+        <target state="translated">指定的时间戳 URI 无效。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidTrustLevel">
+        <source>Invalid trust level, must be either "LocalIntranet", "Internet", or "FullTrust" - "{0}"</source>
+        <target state="translated">信任级别无效，必须为“LocalIntranet”、“Internet”或“FullTrust”-“{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidUrl">
+        <source>The URL is not of the proper format - "{0}"</source>
+        <target state="translated">URL 的格式不正确 -“{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidUseManifestForTrust">
+        <source>The -UseManifestForTrust option must be "true", "false", "t", or "f" - "{0}"</source>
+        <target state="translated">-UseManifestForTrust 选项必须为“true”、“false”、“t”或“f”-“{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidVersion">
+        <source>Version must be of format X.X.X.X (ex 1.0.0.0) - "{0}"</source>
+        <target state="translated">版本的格式必须为 X.X.X.X (例如 1.0.0.0) -“{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LauncherSuccessfullyAdded">
+        <source>Launcher successfully added.</source>
+        <target state="translated">已成功添加 Launcher。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LockedFile">
+        <source>Not including locked file {0}</source>
+        <target state="translated">不包括锁定的文件 {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingAddLauncherOption">
+        <source>Missing {0} option, it is required with AddLauncher command.</source>
+        <target state="translated">缺少 {0} 选项，使用 AddLauncher 命令时需要该选项。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingArgument">
+        <source>Missing value following the "{0}" option</source>
+        <target state="translated">“{0}”选项后缺少值</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingBinaryToLaunch">
+        <source>Binary to launch cannot be empty.</source>
+        <target state="translated">要启动的二进制文件不能为空。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingCspOrContainer">
+        <source>This certificate does not contain a private key - "{0}", if this is a public key certificate, please provide valid cryptographic service provider and key container names</source>
+        <target state="translated">此证书不包含私钥 -“{0}”，如果这是公钥证书，请提供有效的加密服务提供程序和密钥容器名称</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingDeploymentProviderUrl">
+        <source>The IncludeProviderURL option is set to true, but no deployment provider Url is provided.</source>
+        <target state="translated">IncludeProviderURL 选项设置为 true，但没有提供部署提供程序 Url。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingLauncherTemplate">
+        <source>Launcher template "{0}" does not exist.</source>
+        <target state="translated">Launcher 模板“{0}”不存在。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingPassword">
+        <source>Missing Password option, this is required when using the CertFile option.</source>
+        <target state="translated">缺少 Password 选项，在使用 CertFile 选项时，此选项是必需的。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingUseApplicationManifestForTrustInfo">
+        <source>When generating or updating an application manifest, the {0} option can only be used when the UseManifestForTrust option is set to true.</source>
+        <target state="translated">在生成或更新应用程序清单时，只有当 UseManifestForTrust 选项设置为 true 时，才能使用 {0} 选项。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MultipleKeys">
+        <source>Only one type of signing method may be specified.</source>
+        <target state="translated">只能指定一种类型的签名方法。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NewLicense">
+        <source>New License</source>
+        <target state="translated">新许可证</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoKeySpecified">
+        <source>The -Sign command requires one of -CertFile, or -CertHash.</source>
+        <target state="translated">-Sign 命令需要 -CertFile 或 -CertHash 中的一个。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoOutputFileSpecified">
+        <source>No output file was specified.  Please use -ToFile &lt;filename&gt;.</source>
+        <target state="translated">未指定输出文件。请使用 -ToFile &lt;文件名&gt;。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoVerb">
+        <source>The first argument must be one of the following: -New, -Update, -Sign, -Verify, -AddLauncher</source>
+        <target state="translated">第一个参数必须为以下参数之一: -New、-Update、-Sign、-Verify、-AddLauncher</target>
+        <note>"-New, -Update, -Sign, -Verify, -AddLauncher" are command names and should not be translated</note>
+      </trans-unit>
+      <trans-unit id="NotAllowedCleanCache">
+        <source>ClearApplicationCache should not be used with any other switch.</source>
+        <target state="translated">ClearApplicationCache 不能与任何其他开关一起使用。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ResultSomeErrorsEncountered">
+        <source>However, some errors were encountered.</source>
+        <target state="translated">但是，遇到了某些错误。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ResultSuccessfullyCreated">
+        <source>successfully created</source>
+        <target state="translated">已成功创建</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ResultSuccessfullySigned">
+        <source>successfully signed</source>
+        <target state="translated">已成功签名</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ResultSuccessfullyUpdated">
+        <source>successfully updated</source>
+        <target state="translated">已成功更新</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SecurityMessage">
+        <source>Mage does not have the security permissions necessary to run.  Ensure that mage is not running from an untrusted source such as a network share or web site.</source>
+        <target state="translated">Mage 没有必要的安全权限，无法运行。  请确保没有从诸如网络共享或网站等不受信任的来源运行 mage。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignatureValidatedSuccessfully">
+        <source>Manifest has a valid signature.</source>
+        <target state="translated">清单具有有效的签名。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TooManyKeysSpecified">
+        <source>Only one of -KeyFile, -CertFile, or -CertHash can be used.</source>
+        <target state="translated">只能使用 -KeyFile、-CertFile 或 -CertHash 中的一个。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustLevelsNotSupportedOnNETCore">
+        <source>Setting trust level is not supported on .NET Core</source>
+        <target state="translated">.NET Core 不支持设置信任级别</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustLicenseNotSigned">
+        <source>Trust license is not signed - "{0}"</source>
+        <target state="translated">信任许可证未签名 -“{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToOpenCertificate">
+        <source>Unable to open certificate "{0}":</source>
+        <target state="translated">无法打开证书“{0}”:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToStartGUI">
+        <source>Unable to locate Mage UI - "{0}"</source>
+        <target state="translated">无法找到 Mage UI -“{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnrecognizedParameter">
+        <source>Parameter not recognized - "{0}"</source>
+        <target state="translated">无法识别参数 -“{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VerifyIsExclusive">
+        <source>'verify' command can't be combined with any other command.</source>
+        <target state="translated">"verify" 命令不能与任何其他命令组合。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WarningMessage">
+        <source>Warning</source>
+        <target state="translated">警告</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

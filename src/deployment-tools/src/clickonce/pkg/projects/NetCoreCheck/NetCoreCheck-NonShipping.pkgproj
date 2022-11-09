@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    This package is shipping to VS Feed only. It will always have a unique version, that includes
+    pre-release or release suffixes and build number, even when built in release branches.
+
+    Release to VS Feed is automatic, as part of the build - not having a unique version would have
+    caused feed publishing, and build, failure.
+  -->
+
+  <PropertyGroup>
+    <PackageId>VS.Redist.Common.NETCoreCheck.$(TargetArchitecture)</PackageId>
+    <IsShippingPackage>false</IsShippingPackage>
+  </PropertyGroup>
+
+</Project>

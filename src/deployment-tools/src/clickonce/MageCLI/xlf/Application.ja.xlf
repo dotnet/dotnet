@@ -1,0 +1,824 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="ja" original="../Application.resx">
+    <body>
+      <trans-unit id="AddLauncherIsExclusive">
+        <source>'addlauncher' command can't be combined with any other command.</source>
+        <target state="translated">'addlauncher' コマンドは他のコマンドと併用できません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ApplicationCacheCleared">
+        <source>Application cache cleared.</source>
+        <target state="translated">アプリケーション キャッシュがクリアされました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ApplicationManifestCannotHaveHostInBrowserTag">
+        <source>The specified application manifest includes unsupported HostInBrowser tag.</source>
+        <target state="translated">指定されたアプリケーション マニフェストに、サポートされない HostInBrowser タグが含まれています。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DefaultAppName">
+        <source>New Application</source>
+        <target state="translated">新しいアプリケーション</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DeployManifestNotSigned">
+        <source>Deployment manifest is not signed - "{0}"</source>
+        <target state="translated">配置マニフェストは署名されていません - "{0}"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DeployManifestSignatureInvalid">
+        <source>Deployment manifest contains invalid signature - "{0}"</source>
+        <target state="translated">配置マニフェストに無効な署名が含まれています - "{0}"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorApplicactionCachedCleared">
+        <source>Failed to clear application cache.</source>
+        <target state="translated">アプリケーション キャッシュをクリアできませんでした。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorInvalidSignature">
+        <source>Manifest does not have a valid signature.</source>
+        <target state="translated">マニフェストに有効な署名が含まれていません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorInvalidTimestampFormat">
+        <source>Timestamp is not encoded as a base64 string.</source>
+        <target state="translated">タイムスタンプが base64 文字列としてエンコードされていません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorMessage">
+        <source>Error</source>
+        <target state="translated">エラー</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorMissingSignatureNode">
+        <source>Signature node is missing.</source>
+        <target state="translated">署名ノードがありません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorWritingOutputFile">
+        <source>Error writing output file "{0}".</source>
+        <target state="translated">出力ファイル "{0}" の書き込みエラーです。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToAddLauncher">
+        <source>Failed to add Launcher.</source>
+        <target state="translated">Launcher の追加に失敗しました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToUpdateLauncherResources">
+        <source>Failed to update Launcher resources.</source>
+        <target state="translated">Launcher リソースの更新に失敗しました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FileNotWriteable">
+        <source>Cannot write to file "{0}"</source>
+        <target state="translated">ファイル "{0}" に書き込めません</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FileTypeSpecificOption">
+        <source>The "{0}" option can only be used with the following type of files: "{1}"</source>
+        <target state="translated">"{0}" オプションは、次のファイルの種類でのみ使用可能です: "{1}"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HelpTerse">
+        <source>Commands
+  -New &lt;file_type&gt;	          -n
+  -Update &lt;file_name&gt;	          -u
+  -Sign &lt;file_name&gt;	          -s
+  -ClearApplicationCache	  -cc
+  -Verify &lt;manifest_file_name&gt;    -ver
+  -AddLauncher &lt;binary_to_launch&gt; -al
+  -Help [verbose]		  -h -?
+
+
+
+Options
+  -Algorithm &lt;sha256RSA&gt;           -a
+  -AppCodeBase &lt;path&gt;	            -appc
+  -AppManifest &lt;path&gt;	            -appm
+  -CertFile &lt;file_name&gt;	            -cf
+  -CertHash &lt;hash&gt;                  -ch
+  -CryptoProvider &lt;name&gt;            -csp
+  -FromDirectory &lt;path&gt;	            -fd
+  -IconFile &lt;file_path&gt;             -if
+  -IncludeProviderURL &lt;true|false&gt;  -ip
+  -Install &lt;true|false&gt;             -i 
+  -KeyContainer &lt;name&gt;              -kc
+  -MinVersion &lt;version #|none&gt;      -mv
+  -Name &lt;name&gt;		            -n
+  -Password &lt;password&gt;	            -pwd
+  -Processor &lt;processor&gt;	    -p
+  -ProviderURL &lt;url&gt; 	            -pu
+  -Publisher &lt;publisher_name&gt;       -pub
+  -SupportURL &lt;support_url&gt;         -s
+  -TargetDirectory &lt;path&gt;	    -td
+  -TimeStampUri &lt;uri&gt;               -ti
+  -ToFile	&lt;file_name&gt;	    -t
+  -TrustLevel &lt;level&gt;	            -tr
+  -UseManifestForTrust &lt;true|false&gt; -um
+  -Version &lt;version&gt;	            -v
+
+Use "mage -help verbose" for more detailed help</source>
+        <target state="translated">コマンド
+  -New &lt;file_type&gt;	          -n
+  -Update &lt;file_name&gt;	          -u
+  -Sign &lt;file_name&gt;	          -s
+  -ClearApplicationCache	  -cc
+  -Verify &lt;manifest_file_name&gt;    -ver
+  -AddLauncher &lt;binary_to_launch&gt; -al
+  -Help [verbose]		  -h -?
+
+
+
+オプション
+  -Algorithm &lt;sha256RSA&gt;           -a
+  -AppCodeBase &lt;path&gt;	            -appc
+  -AppManifest &lt;path&gt;	            -appm
+  -CertFile &lt;file_name&gt;	            -cf
+  -CertHash &lt;hash&gt;                  -ch
+  -CryptoProvider &lt;name&gt;            -csp
+  -FromDirectory &lt;path&gt;	            -fd
+  -IconFile &lt;file_path&gt;             -if
+  -IncludeProviderURL &lt;true|false&gt;  -ip
+  -Install &lt;true|false&gt;             -i 
+  -KeyContainer &lt;name&gt;              -kc
+  -MinVersion &lt;version #|none&gt;      -mv
+  -Name &lt;name&gt;		            -n
+  -Password &lt;password&gt;	            -pwd
+  -Processor &lt;processor&gt;	    -p
+  -ProviderURL &lt;url&gt; 	            -pu
+  -Publisher &lt;publisher_name&gt;       -pub
+  -SupportURL &lt;support_url&gt;         -s
+  -TargetDirectory &lt;path&gt;	    -td
+  -TimeStampUri &lt;uri&gt;               -ti
+  -ToFile	&lt;file_name&gt;	    -t
+  -TrustLevel &lt;level&gt;	            -tr
+  -UseManifestForTrust &lt;true|false&gt; -um
+  -Version &lt;version&gt;	            -v
+
+詳細なヘルプを表示するには、"mage -help verbose" を使用してください</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HelpVerbose">
+        <source>Commands:
+
+  -New &lt;file_type&gt;        -n
+      Generate a new application manifest, deployment manifest, or trust
+      license, using the options listed below.
+      Examples:
+        -New Application -ToFile MyApp.manifest -Name MyApp -Processor X86
+        -New Deployment -ToFile MyApp.application -Name MyApp -Version 1.0.0.0
+    
+  -Update &lt;file_name&gt;     -u
+      Update an existing application manifest, deployment manifest, or trust
+      License, updating it as specified by the options listed below.
+      Examples:
+        -Update MyApp.manifest -FromDirectory bin/release
+        -Update MyApp.application -Version 2.1.0.123 -ToFile MyApp21.application 
+          
+  -Sign &lt;file_name&gt;       -s
+      Sign an existing manifest or license with a keypair or an X509
+      certificate.
+      Examples:
+        -Sign MyApp.manifest -CertFile MyCert.pfx -Password mycertpassword
+    
+  -Verify &lt;manifest_file_name&gt;       -ver
+      Verify if the manifest is signed correctly. Cannot be combined with other commands.
+      Example:
+        -Verify MyApp.manifest
+  
+  -AddLauncher &lt;binary_to_launch&gt;    -al
+      Adds Launcher to target directory and sets its binary to launch.
+      Example:
+        -AddLauncher myapp.dll -TargetDirectory bin/release
+
+  -ClearApplicationCache  -cc
+      Clear the downloaded application cache of all online-only applications. 
+
+  -Help [verbose]         -h -?
+      Print usage instructions.
+      Examples:
+        -Help
+        -Help Verbose
+
+Options:
+
+  -Algorithm &lt;sha256RSA&gt;      -a
+      Specifies the algorithm to generate digests.
+      Example:
+         -Algorithm sha256RSA
+
+  -AppCodeBase &lt;path&gt;     -appc
+      Specifies the code base of the app manifest to be placed in the
+      deployment manifest being generated or updated.
+      Example:
+         -AppCodeBase 1.0.0.0/myapp.manifest
+      
+  -AppManifest &lt;path&gt;     -appm
+      Specifies the local path to an application manifest that is being
+      referenced from the deployment manifest being generated or updated.
+      Example:
+        -AppManifest MyApp.manifest
+
+  -CertFile &lt;file_name&gt;   -cf
+      Specifies the name of an X509 certificate file with which to sign a
+      manifest or license file.  This option can be used in conjunction 
+      with the -Password option, if the certificate requires a password
+      for Personal Information Exchange (PFX) files. If the file does not 
+      contain private key a combination of -CryptoProvider and 
+      -KeyContainer options is required.
+      Example:
+        -CertFile MyCert.pfx
+        -CertFile MyCert.pfx -Password mycertpassword
+        -CertFile PublicKey.cer -KeyContainer name -CryptoProvider MyCspName
+
+  -CertHash &lt;hash&gt;        -ch
+      Specifies the hash of an X509 certificate in your local cert store.
+      Example:
+        -CertHash a1b2c3d4e5f6g7h8i9j0
+
+  -CryptoProvider &lt;name&gt;  -csp
+      Specifies the name of cryptographic service provider (CSP) that contains
+      the private key container.  This option requires the -KeyContainer option.
+      Example:
+        -CryptoProvider "Microsoft Enhanced Cryptographic Provider v1.0" -KeyContainer name
+
+  -FromDirectory &lt;path&gt;   -fd
+      Specifies the directory to recursively search for files to include in
+      an application manifest.  
+      Example:
+        -FromDirectory bin/release
+        
+  -IconFile &lt;file_path&gt;   -if
+      Specifies relative path and filename for the application icon.
+        
+  -IncludeProviderURL &lt;true|false&gt; -ip
+      Specifies if the deployment manifest will include the deployment 
+      provider URL.
+      
+  -Install &lt;true|false&gt;   -i
+      Specifies if the application will be an installed or an online only 
+      application.
+
+  -KeyContainer &lt;name&gt;    -kc
+      Specifies the key container that contains the name of the private key.
+      This option requires the -CryptoProvider option.
+      Example:
+        -KeyContainer name -CryptoProvider "Microsoft Enhanced Cryptographic Provider v1.0"
+
+  -MinVersion &lt;version #|none&gt;   -mv
+      Specifies whether the manifest being generated specifies a minimum version.
+      Must be of the form "0.0.0.0".  Specifying "none" removes this from the manifest.
+      Example:
+        -MinVersion 1.2.3.4
+        -MinVersion none
+
+  -Name &lt;name&gt;            -n
+      Specifies the name of the application whose manifest is being 
+      generated or updated.  Names which include spaces should be enclosed
+      in quotes.
+      Examples:
+        -Name MyApp
+        -Name "My Application"
+        
+  -Password &lt;password&gt;    -pwd
+      Specifies the password to use with an X509 certificate when signing
+      a manifest or license file.  See example above.
+
+  -Processor &lt;processor&gt;  -p
+      Specifies the processor architecture of the application whose manifest
+      is being generated or updated.
+      Examples:
+        -Processor MSIL
+        -Processor i386
+
+  -ProviderURL &lt;url&gt;      -pu
+      Specifies the provider URL to be use in the deployment manifest being
+      generated or updated.
+      Example:
+        -ProviderURL http://www.whatever.net/application
+
+  -Publisher &lt;publisher_name&gt;    -pub
+      Specifies the name of the publisher.  Names which include spaces should 
+      be enclosed in quotes.
+      Examples:
+        -Publisher MyCompany
+        -Publisher "My Company"
+
+  -SupportURL &lt;url&gt;       -s
+      Specifies the support URL for the application.
+      Example:
+        -SupportURL http://www.whatever.net/application/support
+
+  -TargetDirectory &lt;path&gt;	  -td
+      Specifies the directory to which to add the Launcher.
+      Example:
+        -TargetDirectory bin/release
+
+  -ToFile &lt;file_name&gt;     -t
+      Specifies the name of the file to save the output of a sign, new, or 
+      update command.
+      Example:
+        -ToFile MyApp.manifest
+
+  -TimeStampUri &lt;uri&gt;     -ti
+      Specifies the URI to use for timestamping during signing.
+
+  -TrustLevel &lt;level&gt;     -tr
+      Specifies the trust level to be included in the application manifest
+      being generated or updated. Valid values are: "Internet", "LocalIntranet",
+      and "FullTrust".
+      Example:
+        -TrustLevel FullTrust
+
+  -UseManifestForTrust &lt;true|false&gt; -um
+      Specifies if the application manifest will be used for certification and
+      branding information.
+            
+  -Version &lt;version&gt;                -v
+      Specifies the version of the application whose manifest is being 
+      generated or updated.  Must be of the form "0.0.0.0".
+      Example:
+        -Version 1.2.3.2112</source>
+        <target state="translated">コマンド:
+
+  -New &lt;file_type&gt;        -n
+      以下に一覧表示されているオプションを使用して、新しいアプリケーション マニフェスト、配置
+      マニフェスト、信頼ライセンスを生成します。
+      例:
+        -New Application -ToFile MyApp.manifest -Name MyApp -Processor X86
+        -New Deployment -ToFile MyApp.application -Name MyApp -Version 1.0.0.0
+    
+  -Update &lt;file_name&gt;     -u
+      既存のアプリケーション マニフェスト、配置マニフェスト、信頼
+      ライセンスを更新します。以下に一覧表示されているオプションで指定する場合と同様に更新されます。
+      例:
+        -Update MyApp.manifest -FromDirectory bin/release
+        -Update MyApp.application -Version 2.1.0.123 -ToFile MyApp21.application 
+          
+  -Sign &lt;file_name&gt;       -s
+      キー ペアまたは X509 証明書を使用して、既存のマニフェストまたはライセンスに
+      署名します。
+      例:
+        -Sign MyApp.manifest -CertFile MyCert.pfx -Password mycertpassword
+    
+  -Verify &lt;manifest_file_name&gt;       -ver
+      マニフェストが正しく署名されているかどうかを検証します。他のコマンドと組み合わせて使用することはできません。
+      例:
+        -Verify MyApp.manifest
+  
+  -AddLauncher &lt;binary_to_launch&gt;    -al
+      起動ツールがターゲット ディレクトリに追加され、起動するバイナリが設定されます。
+      例:
+        -AddLauncher myapp.dll -TargetDirectory bin/release
+
+  -ClearApplicationCache  -cc
+      すべてのオンライン専用アプリケーションのダウンロード済みアプリケーション キャッシュをクリアします。
+
+  -Help [verbose]         -h -?
+      使用方法の手順を印刷します。
+      例:
+        -Help
+        -Help Verbose
+
+オプション:
+
+  -Algorithm &lt;sha256RSA&gt;      -a
+      ダイジェストを生成するためのアルゴリズムが指定されます。
+      例:
+         -Algorithm sha256RSA
+
+  -AppCodeBase &lt;path&gt;     -appc
+      生成または更新されている配置マニフェストに配置する
+      アプリ マニフェストのコード ベースが指定されます。
+      例:
+         -AppCodeBase 1.0.0.0/myapp.manifest
+      
+  -AppManifest &lt;path&gt;     -appm
+      生成または更新されている配置マニフェストから参照されている
+      アプリケーション マニフェストへのローカル パスが指定されます。
+      例:
+        -AppManifest MyApp.manifest
+
+  -CertFile &lt;file_name&gt;   -cf
+      マニフェストまたはライセンス ファイルを署名するのに使用する X509 証明書
+      ファイルの名前が指定されます。このオプションは、
+      証明書に Personal Information Exchange (PFX) ファイルのパスワードが求められる場合に、
+      -Password オプションと組み合わせて使用できます。ファイルに秘密キーが含まれていない場合は、
+      -CryptoProvider と -KeyContainer のオプションの
+      組み合わせが必要です。
+      例:
+        -CertFile MyCert.pfx
+        -CertFile MyCert.pfx -Password mycertpassword
+        -CertFile PublicKey.cer -KeyContainer name -CryptoProvider MyCspName
+
+  -CertHash &lt;hash&gt;        -ch
+      ローカル証明書ストアの X509 証明書のハッシュが指定されます。
+      例:
+        -CertHash a1b2c3d4e5f6g7h8i9j0
+
+  -CryptoProvider &lt;name&gt;  -csp
+      秘密キーのコンテナーを含む暗号化サービス プロバイダー (CSP) の
+      名前が指定されます。このオプションには -KeyContainer オプションが必要です。
+      例:
+        -CryptoProvider "Microsoft Enhanced Cryptographic Provider v1.0" -KeyContainer name
+
+  -FromDirectory &lt;path&gt;   -fd
+      アプリケーション マニフェストに含めるファイルを再帰的に検索するための
+      ディレクトリが指定されます。
+      例:
+        -FromDirectory bin/release
+        
+  -IconFile &lt;file_path&gt;   -if
+      アプリケーション アイコンの相対パスおよびファイル名が指定されます。
+        
+  -IncludeProviderURL &lt;true|false&gt; -ip
+      配置マニフェストに配置プロバイダー URL が含まれる場合に
+      指定されます。
+      
+  -Install &lt;true|false&gt;   -i
+      アプリケーションがインストールまたはオンライン専用のアプリケーションの場合に
+      指定されます。
+
+  -KeyContainer &lt;name&gt;    -kc
+      秘密キーの名前を含むキー コンテナーが指定されます。
+      このオプションには -CryptoProvider オプションが必要です。
+      例:
+        -KeyContainer name -CryptoProvider "Microsoft Enhanced Cryptographic Provider v1.0"
+
+  -MinVersion &lt;version #|none&gt;   -mv
+      生成されているマニフェストで最小バージョンが指定されるかどうかが指定されます。
+      "0.0.0.0" の形式でなければなりません。"none" を指定すると、マニフェストから削除されます。
+      例:
+        -MinVersion 1.2.3.4
+        -MinVersion none
+
+  -Name &lt;name&gt;            -n
+      マニフェストが生成または更新されているアプリケーションの
+      名前が指定されます。スペースを含む名前は単一引用符で囲む
+      必要があります。
+      例:
+        -Name MyApp
+        -Name "My Application"
+        
+  -Password &lt;password&gt;    -pwd
+      マニフェストまたはライセンス ファイルを署名する場合に X509 証明書に使用する
+      パスワードが指定されます。上記の例をご確認ください。
+
+  -Processor &lt;processor&gt;  -p
+      マニフェストが生成または更新されているアプリケーションの
+      プロセッサ アーキテクチャが指定されます。
+      例:
+        -Processor MSIL
+        -Processor i386
+
+  -ProviderURL &lt;url&gt;      -pu
+      生成または更新されている配置マニフェストで使用される
+      プロバイダー URL が指定されます。
+      例:
+        -ProviderURL http://www.whatever.net/application
+
+  -Publisher &lt;publisher_name&gt;    -pub
+      パブリッシャーの名前が指定されます。スペースを含む名前は単一引用符で
+      囲む必要があります。
+      例:
+        -Publisher MyCompany
+        -Publisher "My Company"
+
+  -SupportURL &lt;url&gt;       -s
+      アプリケーションのサポート URL が指定されます。
+      例:
+        -SupportURL http://www.whatever.net/application/support
+
+  -TargetDirectory &lt;path&gt;	  -td
+      起動ツールを追加するディレクトリが指定されます。
+      例:
+        -TargetDirectory bin/release
+
+  -ToFile &lt;file_name&gt;     -t
+      署名、新規、更新コマンドの出力を保存するファイルの
+      名前が指定されます。
+      例:
+        -ToFile MyApp.manifest
+
+  -TimeStampUri &lt;uri&gt;     -ti
+      署名中のタイムスタンプの設定に使用する URI が指定されます。
+
+  -TrustLevel &lt;level&gt;     -tr
+      生成または更新されたアプリケーション マニフェストに含める
+      信頼レベルが指定されます。有効な値: "Internet"、"LocalIntranet"、
+      "FullTrust"。
+      例:
+        -TrustLevel FullTrust
+
+  -UseManifestForTrust &lt;true|false&gt; -um
+      アプリケーション マニフェストを認定およびブランド情報に
+      使用するかどうかが指定されます。
+            
+  -Version &lt;version&gt;                -v
+      マニフェストが生成または更新されているアプリケーションの
+      バージョンが指定されます。"0.0.0.0" の形式でなければなりません。
+      例:
+        -Version 1.2.3.2112</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InfoMessage">
+        <source>Info</source>
+        <target state="translated">情報</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InternalError">
+        <source>Internal error, please try again.</source>
+        <target state="translated">内部エラーが発生しました。もう一度やり直してください。</target>
+        <note>trailing space is added at run-time</note>
+      </trans-unit>
+      <trans-unit id="InvalidAddLauncherOption">
+        <source>The "{0}" option can not be used with -AddLauncher command.</source>
+        <target state="translated">"{0}" オプションを -AddLauncher コマンドに使用することはできません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidAlgorithmValue">
+        <source>Algorithm has to be sha256RSA. Specified - "{0}".</source>
+        <target state="translated">アルゴリズムは sha256RSA である必要があります。指定されたアルゴリズム - "{0}"。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidBinaryToLaunch">
+        <source>Binary to launch cannot include a path, it can only be a filename - {0}.</source>
+        <target state="translated">起動するバイナリにパスを含めることはできません。ファイル名としてのみ使用できます - {0}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidCertFile">
+        <source>Cert file is not of proper format - "{0}"</source>
+        <target state="translated">証明書ファイルが正しい形式ではありません - "{0}"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidCertNoPrivateKey">
+        <source>This certificate does not contain a private key - "{0}"</source>
+        <target state="translated">この証明書には秘密キーが含まれていません - "{0}"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidCertUsage">
+        <source>This certificate cannot be used for signing - "{0}"</source>
+        <target state="translated">この証明書は署名に使用できません - "{0}"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidCodebase">
+        <source>The codebase is invalid - "{0}"</source>
+        <target state="translated">このコードベースは無効です - "{0}"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidDirectory">
+        <source>Directory not found - "{0}"</source>
+        <target state="translated">ディレクトリが見つかりません - "{0}"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidFileType">
+        <source>Invalid file type, must be "Application", or "Deployment"</source>
+        <target state="translated">ファイルの種類が無効です。"Application" または "Deployment" でなければなりません</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidHash">
+        <source>No cert found matching specified hash - "{0}"</source>
+        <target state="translated">指定されたハッシュに一致する証明書が見つかりません - "{0}"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidIncludeProviderURL">
+        <source>The -IncludeProviderURL option must be "true", "false", "t", or "f" - "{0}"</source>
+        <target state="translated">-IncludeProviderURL オプションは、"true"、"false"、"t"、"f" のいずれかでなければなりません - "{0}"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidInputFile">
+        <source>Unrecognized file type - "{0}"</source>
+        <target state="translated">認識されないファイルの種類です - "{0}"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidInstall">
+        <source>The -Install option must be "true", "false", "t", or "f" - "{0}"</source>
+        <target state="translated">-Install オプションは、"true"、"false"、"t"、"f" のいずれかでなければなりません - "{0}"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidKeyFile">
+        <source>Key file is not of proper format - "{0}"</source>
+        <target state="translated">キー ファイルが正しい形式ではありません - "{0}"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidMinVersion">
+        <source>The minimum version specified is not valid.</source>
+        <target state="translated">指定された最小バージョンは無効です。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidNonAddLauncherOption">
+        <source>The "{0}" option can only be used with -AddLauncher command.</source>
+        <target state="translated">"{0}" オプションは、-AddLauncher コマンドにのみ使用可能です。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidNonManifestOption">
+        <source>The "{0}" option can only be used with the -Update or -New commands.</source>
+        <target state="translated">"{0}" オプションと共に使用できるのは、-Update コマンドまたは -New コマンドのみです。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidPassword">
+        <source>Cert password is incorrect - "{0}"</source>
+        <target state="translated">証明書パスワードが正しくありません - "{0}"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidPath">
+        <source>File not found - "{0}"</source>
+        <target state="translated">ファイルが見つかりません - "{0}"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidProcessor">
+        <source>Unknown processor type "{0}".  Supported processor types are:</source>
+        <target state="translated">プロセッサの種類 "{0}" が不明です。  サポートされるプロセッサの種類は、次のとおりです:</target>
+        <note>Will be followed by a list of processor types, after a newline is added at run-time</note>
+      </trans-unit>
+      <trans-unit id="InvalidRequiredUpdate">
+        <source>The -RequiredUpdate option must be "true", "false", "t", or "f" - "{0}"</source>
+        <target state="translated">-RequiredUpdate オプションは、"true"、"false"、"t"、"f" のいずれかでなければなりません - "{0}"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidSigningPlatform">
+        <source>Signing is only supported on Windows.</source>
+        <target state="translated">署名は Windows でのみサポートされます。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidTimestamp">
+        <source>The timestamp URI specified is not valid.</source>
+        <target state="translated">指定されたタイムスタンプ URI は無効です。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidTrustLevel">
+        <source>Invalid trust level, must be either "LocalIntranet", "Internet", or "FullTrust" - "{0}"</source>
+        <target state="translated">無効な信頼レベルです。信頼レベルは、"LocalIntranet"、"Internet"、"FullTrust" のいずれかでなければなりません - "{0}"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidUrl">
+        <source>The URL is not of the proper format - "{0}"</source>
+        <target state="translated">URL が正しい形式ではありません - "{0}"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidUseManifestForTrust">
+        <source>The -UseManifestForTrust option must be "true", "false", "t", or "f" - "{0}"</source>
+        <target state="translated">-UseManifestForTrust オプションは、"true"、"false"、"t"、"f" のいずれかでなければなりません - "{0}"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidVersion">
+        <source>Version must be of format X.X.X.X (ex 1.0.0.0) - "{0}"</source>
+        <target state="translated">バージョンは、X.X.X.X の形式 (たとえば、1.0.0.0) でなければなりません - "{0}"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LauncherSuccessfullyAdded">
+        <source>Launcher successfully added.</source>
+        <target state="translated">Launcher が正常に追加されました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LockedFile">
+        <source>Not including locked file {0}</source>
+        <target state="translated">ロックされたファイル {0} を含んでいません</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingAddLauncherOption">
+        <source>Missing {0} option, it is required with AddLauncher command.</source>
+        <target state="translated">{0} オプションがありません。AddLauncher コマンドに必要です。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingArgument">
+        <source>Missing value following the "{0}" option</source>
+        <target state="translated">"{0}" オプションに続く値が見つかりません</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingBinaryToLaunch">
+        <source>Binary to launch cannot be empty.</source>
+        <target state="translated">起動するバイナリを空にすることはできません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingCspOrContainer">
+        <source>This certificate does not contain a private key - "{0}", if this is a public key certificate, please provide valid cryptographic service provider and key container names</source>
+        <target state="translated">この証明書には秘密キー - "{0}" が含まれていません。これが公開キー証明書である場合には、有効な暗号化サービス プロバイダーとキー コンテナーの名前を指定してください</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingDeploymentProviderUrl">
+        <source>The IncludeProviderURL option is set to true, but no deployment provider Url is provided.</source>
+        <target state="translated">IncludeProviderURL オプションが true に設定されていますが、配置プロバイダー URL が指定されていません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingLauncherTemplate">
+        <source>Launcher template "{0}" does not exist.</source>
+        <target state="translated">Launcher テンプレート "{0}" が存在しません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingPassword">
+        <source>Missing Password option, this is required when using the CertFile option.</source>
+        <target state="translated">Password オプションが指定されていません。CertFile オプションを使用するときには、このオプションは必須です。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingUseApplicationManifestForTrustInfo">
+        <source>When generating or updating an application manifest, the {0} option can only be used when the UseManifestForTrust option is set to true.</source>
+        <target state="translated">アプリケーション マニフェストを生成または更新する場合、{0} オプションは UseManifestForTrust オプションが true のときにのみ使用できます。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MultipleKeys">
+        <source>Only one type of signing method may be specified.</source>
+        <target state="translated">指定できる署名方法は 1 種類だけです。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NewLicense">
+        <source>New License</source>
+        <target state="translated">新しいライセンス</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoKeySpecified">
+        <source>The -Sign command requires one of -CertFile, or -CertHash.</source>
+        <target state="translated">-Sign コマンドには、-CertFile の 1 つ、または -CertHash が必要です。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoOutputFileSpecified">
+        <source>No output file was specified.  Please use -ToFile &lt;filename&gt;.</source>
+        <target state="translated">出力ファイルが指定されていません。  -ToFile &lt;ファイル名&gt; を使用してください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoVerb">
+        <source>The first argument must be one of the following: -New, -Update, -Sign, -Verify, -AddLauncher</source>
+        <target state="translated">最初の引数は、-New、-Update、-Sign、-Verify、-AddLauncher のいずれかでなければなりません</target>
+        <note>"-New, -Update, -Sign, -Verify, -AddLauncher" are command names and should not be translated</note>
+      </trans-unit>
+      <trans-unit id="NotAllowedCleanCache">
+        <source>ClearApplicationCache should not be used with any other switch.</source>
+        <target state="translated">ClearApplicationCache は、他のスイッチと共に使用できません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ResultSomeErrorsEncountered">
+        <source>However, some errors were encountered.</source>
+        <target state="translated">しかし、いくつかのエラーが見つかりました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ResultSuccessfullyCreated">
+        <source>successfully created</source>
+        <target state="translated">正常に作成されました</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ResultSuccessfullySigned">
+        <source>successfully signed</source>
+        <target state="translated">正常に署名されました</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ResultSuccessfullyUpdated">
+        <source>successfully updated</source>
+        <target state="translated">正常に更新されました</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SecurityMessage">
+        <source>Mage does not have the security permissions necessary to run.  Ensure that mage is not running from an untrusted source such as a network share or web site.</source>
+        <target state="translated">Mage には、実行に必要なセキュリティ アクセス許可がありません。  mage がネットワーク共有や Web サイトなどの信頼されていないソースから実行されていないことを確認してください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignatureValidatedSuccessfully">
+        <source>Manifest has a valid signature.</source>
+        <target state="translated">マニフェストに有効な署名が含まれています。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TooManyKeysSpecified">
+        <source>Only one of -KeyFile, -CertFile, or -CertHash can be used.</source>
+        <target state="translated">-KeyFile、-CertFile、または -CertHash のいずれか 1 つのみ使用できます。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustLevelsNotSupportedOnNETCore">
+        <source>Setting trust level is not supported on .NET Core</source>
+        <target state="translated">.NET Core では信頼レベルの設定はサポートされていません</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustLicenseNotSigned">
+        <source>Trust license is not signed - "{0}"</source>
+        <target state="translated">信頼ライセンスは署名されていません - "{0}"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToOpenCertificate">
+        <source>Unable to open certificate "{0}":</source>
+        <target state="translated">証明書 "{0}" を開けません:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToStartGUI">
+        <source>Unable to locate Mage UI - "{0}"</source>
+        <target state="translated">Mage UI が見つかりません - "{0}"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnrecognizedParameter">
+        <source>Parameter not recognized - "{0}"</source>
+        <target state="translated">認識されないパラメーターです - "{0}"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VerifyIsExclusive">
+        <source>'verify' command can't be combined with any other command.</source>
+        <target state="translated">'verify' コマンドは他のコマンドと併用できません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WarningMessage">
+        <source>Warning</source>
+        <target state="translated">警告</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

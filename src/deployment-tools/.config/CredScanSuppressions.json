@@ -1,0 +1,12 @@
+{
+ "tool": "Credential Scanner",
+ "suppressions": [
+  {
+    "file": [
+      "/eng/common/internal-feed-operations.ps1",
+      "/eng/common/internal-feed-operations.sh"
+    ],
+    "_justification": "Common infrastructure."
+  },
+ ]
+}
