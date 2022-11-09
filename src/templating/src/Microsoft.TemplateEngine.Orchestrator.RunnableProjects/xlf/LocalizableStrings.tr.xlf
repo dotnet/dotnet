@@ -1,0 +1,185 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="tr" original="../LocalizableStrings.resx">
+    <body>
+      <trans-unit id="Authoring_InvalidJsonElementInLocalizationFile">
+        <source>Localization file should only contain elements with type 'string'. Remove elements that are not strings.</source>
+        <target state="translated">Yerelleştirme dosyası yalnızca ‘dize’ türünde öğeler içermelidir. Dize olmayan öğeleri kaldırın.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Authoring_InvalidManualInstructionLocalizationIndex">
+        <source>In localization file under the post action with id '{1}', there are localized strings for manual instruction(s) with ids '{0}'. These manual instructions do not exist in the template.json file and should be removed from localization file.</source>
+        <target state="translated">‘{1}’ kimliğine sahip gönderme eyleminin altındaki yerelleştirme dosyasında ‘{0}’ kimliklerine sahip el ile yönerge için yerelleştirilmiş dizeler var. Bu el ile yönergeler template.json dosyasında yok ve yerelleştirme dosyasından kaldırılması gerekiyor.</target>
+        <note>{0} is a list of single-word identifier strings separated by comma. Such as "myManualInstruction, someUserPickedText, instruction3".
+{1} is a single-word identifier string. Such as "myPostAction".</note>
+      </trans-unit>
+      <trans-unit id="Authoring_InvalidMultichoiceSymbol">
+        <source>Choice parameter {0} is invalid. It allows multiple values ('AllowMultipleValues=true'), while some of the configured choices contain separator characters ({1}). Invalid choices: {2}</source>
+        <target state="translated">{0} seçim parametresi geçersiz. Birden çok değere izin verirken ('AllowMultipleValues=true') yapılandırılan seçimlerin bazıları ayırıcı karakterler ({1}) içeriyor. Geçersiz seçimler: {2}</target>
+        <note>{0} is the offending symbol name, {1} is a set of separator characters, {2} is a csv list of offending choice values</note>
+      </trans-unit>
+      <trans-unit id="Authoring_InvalidPostActionLocalizationIndex">
+        <source>Post action(s) with id(s) '{0}' specified in the localization file do not exist in the template.json file. Remove the localized strings from the localization file.</source>
+        <target state="translated">Yerelleştirme dosyasında belirtilen ‘{0}’ kimliklerine sahip gönderme eylemleri template.json dosyasında yok. Yerelleştirilmiş dizeleri yerelleştirme dosyasından kaldırın.</target>
+        <note>{0} is a list of single-word identifier strings separated by comma. Such as "myManualInstruction, someUserPickedText, instruction3".</note>
+      </trans-unit>
+      <trans-unit id="Authoring_InvalidRegex">
+        <source>'{0}' could not be parsed as a regular expression</source>
+        <target state="translated">'{0}', normal ifade olarak ayrıştırılamadı</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Authoring_MalformedPostActionManualInstructions">
+        <source>One or more postActions have a malformed or missing manualInstructions value.</source>
+        <target state="translated">Bir veya daha fazla postActions öğesinin hatalı biçimlendirilmiş veya eksik bir değeri var.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Authoring_ManualInstructionIdIsNotUnique">
+        <source>'id' of the manual instruction '{0}' at index {1} is not unique. Only the first manual instruction that uses this id will be localized.</source>
+        <target state="translated">‘{1}‘ dizininde bulunan ‘{0}’ el ile yönergesinin ‘kimliği’ benzersiz değil. Yalnızca bu kimliği kullanan ilk el ile yönerge yerelleştirilecek.</target>
+        <note>{0} is any identifier string that user provided in the file. Such as: "myInstruction", "firstInstruction", "instruction1" etc.
+{1} is a whole number representing the zero-based index of the manual instruction. Such as "5", or "0".</note>
+      </trans-unit>
+      <trans-unit id="Authoring_MissingValue">
+        <source>Missing '{0}'.</source>
+        <target state="translated">'{0}' eksik.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Authoring_NonBoolDataTypeForRegexMatch">
+        <source>A non-bool DataType was specified for a regexMatch type symbol</source>
+        <target state="translated">Bir regexMatch türü sembol için Boole olmayan bir DataType belirtildi</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Authoring_PostActionIdIsNotUnique">
+        <source>[{0}]: id of the post action '{1}' at index '{2}' is not unique. Only the first post action that uses this id will be localized.</source>
+        <target state="translated">[{0}]: '{2}' dizinindeki ‘{1}’ gönderme eyleminin kimliği benzersiz değil. Yalnızca bu kimliği kullanan ilk gönderme eylemi yerelleştirilecek.</target>
+        <note>{0} is any identifier string that user provided in the file. Such as "myPostAction", "firstPostAction", "postAction1" etc.
+{1} is a number representing the zero-based index of the post action. Such as "5", or "0".</note>
+      </trans-unit>
+      <trans-unit id="Authoring_PostActionMustHaveActionId">
+        <source>[{0}]: Post action at index '{1}' should have an 'actionId' to declare the action to be executed.</source>
+        <target state="translated">[{0}]: '{1}' dizinindeki gönderme eyleminin, yürütülecek eylemi bildirmek için bir 'actionId' değerine sahip olması gerekir.</target>
+        <note>{0} is a whole number representing the zero-based index of the post action. Such as "5" or "0".
+Do not localize: actionId</note>
+      </trans-unit>
+      <trans-unit id="Authoring_SourceDoesNotExist">
+        <source>Source '{0}' in template does not exist.</source>
+        <target state="translated">'{0}' kaynağı şablonda yok.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Authoring_SourceIsOutsideInstallSource">
+        <source>Source location '{0}' is outside the specified install source location.</source>
+        <target state="translated">'{0}' kaynak konumu belirtilen yükleme kaynağı konumunun dışında.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Authoring_SourceMustBeDirectory">
+        <source>Source must be a directory, but '{0}' is a file.</source>
+        <target state="translated">Kaynağın bir dizin olması gerekir ancak '{0}' bir dosyadır.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Authoring_TemplateMissingCommonInformation">
+        <source>The template configuration {0} is missing common information:</source>
+        <target state="translated">{0} şablon yapılandırmasında genel bilgiler eksik:</target>
+        <note>{0} is template configuration location.</note>
+      </trans-unit>
+      <trans-unit id="Authoring_TemplateNotInstalled">
+        <source>Failed to load template from {0}:</source>
+        <target state="translated">{0} kaynağından şablon yüklenemedi:</target>
+        <note>{0} is template configuration location.</note>
+      </trans-unit>
+      <trans-unit id="Authoring_TemplateNotInstalled_Message">
+        <source>Failed to load template from {0}.
+Details: {1}</source>
+        <target state="translated">{0} kaynağından şablon yüklenemedi.
+Ayrıntılar: {1}</target>
+        <note>{0} is template configuration location.</note>
+      </trans-unit>
+      <trans-unit id="Authoring_TemplateRootOutsideInstallSource">
+        <source>The template root is outside the specified install source location.</source>
+        <target state="translated">Şablon kökü belirtilen yükleme kaynağı konumunun dışında.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="BindSymbolEvaluator_Warning_EvaluationError">
+        <source>Failed to evaluate bind symbol '{0}', it will be skipped.</source>
+        <target state="translated">'{0}' bağlama sembolü değerlendirilemedi, sembol atlanacak.</target>
+        <note>{0} - name of the symbol in configuration that cannot be evaluated</note>
+      </trans-unit>
+      <trans-unit id="BindSymbolEvaluator_Warning_ValueAvailableFromMultipleSources">
+        <source>Failed to evaluate binding '{0}', its value is available from multiple sources: {1}. Use the prefixed value ({2}) in template configuration instead.</source>
+        <target state="translated">'{0}' bağlama işlemi değerlendirilemedi, değeri birden fazla kaynaktan kullanılabilir: {1}. Bunun yerine şablon yapılandırmasında ön ek değerini ({2}) kullanın.</target>
+        <note>{0} - binding from template.json configuration
+{1} - the comma separated list of sources (localized values) which define the binding
+{2} - the comma separated list of prefixes that can be used to define the source of the value</note>
+      </trans-unit>
+      <trans-unit id="LocalizationModelDeserializer_Error_FailedToParse">
+        <source>Failed to read parse localization file {0}, it will be skipped from further processing.</source>
+        <target state="translated">Ayrıştırma yerelleştirme dosyası {0} okunamadı, daha fazla işlenmeden atlanacak.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RunnableProjectGenerator_CannotAddImplicitChoice">
+        <source>Variable [{0}] already added with value [{1}]. Cannot add it as implicit variable with value of self.</source>
+        <target state="translated">[{0}] değişkeni [{1}] değeriyle zaten eklendi. Kendi değeriyle örtük bir değişken olarak eklenemez.</target>
+        <note>{0} is the choiceKey, {1} is the existing conflict value</note>
+      </trans-unit>
+      <trans-unit id="RunnableProjectGenerator_Exception_ConfigShouldBeFile">
+        <source>Template configuration must be a file, but {0} is not a file.</source>
+        <target state="translated">Şablon yapılandırması bir dosya olmalı, ancak {0} dosya değil.</target>
+        <note>{0} is template configuration location.</note>
+      </trans-unit>
+      <trans-unit id="RunnableProjectGenerator_Exception_LocaleConfigShouldBeFile">
+        <source>Template localization configuration must be a file, but {0} is not a file.</source>
+        <target state="translated">Şablon yerelleştirme yapılandırması bir dosya olmalı, ancak {0} dosya değil.</target>
+        <note>{0} is template localization configuration location.</note>
+      </trans-unit>
+      <trans-unit id="RunnableProjectGenerator_Exception_TemplateValidationFailed">
+        <source>The template configuration {0} is not valid.</source>
+        <target state="translated">Şablon yapılandırma {0} geçerli değil.</target>
+        <note>{0} is template configuration location.</note>
+      </trans-unit>
+      <trans-unit id="RunnableProjectGenerator_Exception_TemplateVersionNotSupported">
+        <source>The template is not compatible with generator version: allowed versions: {0}, generator version: {1}.</source>
+        <target state="translated">Şablon, oluşturucu sürümü ile uyumlu değil: izin verilen sürümler: {0}, oluşturucu sürümü: {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RunnableProjectGenerator_Warning_LocFileSkipped">
+        <source>Localization file {0} is not compatible with base configuration {1}, and will be skipped.</source>
+        <target state="translated">Yerelleştirme dosyası {0}, temel yapılandırma {1} ile uyumlu değil ve atlanacak.</target>
+        <note>{0} and {1} are template configuration locations.</note>
+      </trans-unit>
+      <trans-unit id="SimpleConfigModel_AuthoringException_MergeConfiguration_FileNotFound">
+        <source>Failed to load additional configuration file {0}, the file does not exist.</source>
+        <target state="translated">Ek yapılandırma dosyası {0} yüklenemedi, dosya yok.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SimpleConfigModel_AuthoringException_MergeConfiguration_InvalidFileName">
+        <source>Failed to load additional configuration file {0}. Additional configuration file names must end with '.{1}'.</source>
+        <target state="translated">Ek yapılandırma dosyası {0} yüklenemedi. Ek yapılandırma dosya adlarının '{1}' ile bitmesi gerekir.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SimpleConfigModel_Error_Constraints_InvalidSyntax">
+        <source>'{0}' should contain objects.</source>
+        <target state="translated">'{0}', nesne içermeli.</target>
+        <note>{0} is name of JSON property </note>
+      </trans-unit>
+      <trans-unit id="SimpleConfigModel_Error_Constraints_MissingType">
+        <source>Constraint definition '{0}' does not contain mandatory property '{1}'.</source>
+        <target state="translated">Kısıtlama tanımı '{0}', zorunlu özellik türü '{1}' içermiyor.</target>
+        <note>{0} - JSON with constraint defintion, {1} - missing property.</note>
+      </trans-unit>
+      <trans-unit id="SymbolModel_Error_MandatoryPropertyMissing">
+        <source>The symbol '{0}' of type '{1}' is incorrect: mandatory property '{2}' is not set. The symbol will be skipped.</source>
+        <target state="translated">'{1}' türündeki '{0}' sembolü hatalı: '{2}' zorunlu özelliği ayarlanmadı. Sembol atlanacak.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Symbol_Error_IsRequiredNotABool">
+        <source>Found disallowed value for IsRequired property: [{0}], expected boolean value.</source>
+        <target state="translated">IsRequired özelliği için izin verilmeyen değer bulundu: [{0}], boole değer bekleniyordu.</target>
+        <note>{0} - the json property</note>
+      </trans-unit>
+      <trans-unit id="Symbol_Error_IsRequiredNotABoolOrString">
+        <source>Found disallowed value for IsRequired property: [{0}], expected boolean or string (condition) value</source>
+        <target state="translated">IsRequired özelliği için izin verilmeyen değer bulundu: [{0}], boole değer veya dize (koşul) değeri bekleniyordu.</target>
+        <note>{0} - the json property</note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
