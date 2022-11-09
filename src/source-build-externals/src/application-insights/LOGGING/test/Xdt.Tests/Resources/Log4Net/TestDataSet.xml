@@ -1,0 +1,115 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<data>
+  <item>
+    <original>
+
+      <configuration>
+        <configSections>
+          <section name="entityFramework" type="System.Data.Entity.Internal.ConfigFile.EntityFrameworkSection, EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" requirePermission="false" />
+        </configSections>
+      </configuration>
+
+    </original>
+    <expectedPostTransform>
+
+      <configuration>
+        <configSections>
+          <section name="entityFramework" type="System.Data.Entity.Internal.ConfigFile.EntityFrameworkSection, EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" requirePermission="false" />
+          <section name="log4net" type="log4net.Config.Log4NetConfigurationSectionHandler, log4net" />
+        </configSections>
+        <log4net>
+          <root>
+            <level value="ALL" />
+            <appender-ref ref="aiAppender" />
+          </root>
+          <appender name="aiAppender" type="Microsoft.ApplicationInsights.Log4NetAppender.ApplicationInsightsAppender, Microsoft.ApplicationInsights.Log4NetAppender">
+            <layout type="log4net.Layout.PatternLayout">
+              <conversionPattern value="%message%newline" />
+            </layout>
+          </appender>
+        </log4net>
+      </configuration>
+
+    </expectedPostTransform>
+  </item>
+  <item>
+    <original>
+
+      <configuration>
+        <someSetting/>
+      </configuration>
+
+    </original>
+    <expectedPostTransform>
+
+      <configuration>
+        <configSections>
+          <section name="log4net" type="log4net.Config.Log4NetConfigurationSectionHandler, log4net" />
+        </configSections>
+        <someSetting/>
+        <log4net>
+          <root>
+            <level value="ALL" />
+            <appender-ref ref="aiAppender" />
+          </root>
+          <appender name="aiAppender" type="Microsoft.ApplicationInsights.Log4NetAppender.ApplicationInsightsAppender, Microsoft.ApplicationInsights.Log4NetAppender">
+            <layout type="log4net.Layout.PatternLayout">
+              <conversionPattern value="%message%newline" />
+            </layout>
+          </appender>
+        </log4net>
+      </configuration>
+
+    </expectedPostTransform>
+  </item>
+  <item>
+    <original>
+
+      <configuration>
+        <configSections>
+          <section name="entityFramework" type="System.Data.Entity.Internal.ConfigFile.EntityFrameworkSection, EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" requirePermission="false" />
+          <section name="log4net" type="log4net.Config.Log4NetConfigurationSectionHandler, log4net" />
+        </configSections>
+        <log4net>
+          <root>
+            <level value="ALL" />
+            <appender-ref ref="someAppender" />
+          </root>
+          <appender name="someAppender" type="SomeType">
+            <layout type="SomeLayout">
+              <conversionPattern value="SomePattern" />
+            </layout>
+          </appender>
+        </log4net>
+      </configuration>
+
+    </original>
+    <expectedPostTransform>
+
+      <configuration>
+        <configSections>
+          <section name="entityFramework" type="System.Data.Entity.Internal.ConfigFile.EntityFrameworkSection, EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" requirePermission="false" />
+          <section name="log4net" type="log4net.Config.Log4NetConfigurationSectionHandler, log4net" />
+        </configSections>
+        <log4net>
+          <root>
+            <level value="ALL" />
+            <appender-ref ref="someAppender" />
+            <appender-ref ref="aiAppender" />
+          </root>
+          <appender name="someAppender" type="SomeType">
+            <layout type="SomeLayout">
+              <conversionPattern value="SomePattern" />
+            </layout>
+          </appender>
+          <appender name="aiAppender" type="Microsoft.ApplicationInsights.Log4NetAppender.ApplicationInsightsAppender, Microsoft.ApplicationInsights.Log4NetAppender">
+            <layout type="log4net.Layout.PatternLayout">
+              <conversionPattern value="%message%newline" />
+            </layout>
+          </appender>
+        </log4net>
+      </configuration>
+
+    </expectedPostTransform>
+  </item>
+</data>

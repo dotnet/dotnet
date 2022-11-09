@@ -61,6 +61,12 @@
       "commitSha": "4bd9b67d81fbf6d65012ef08c9d8cf2a27953057"
     },
     {
+      "packageVersion": "8.0.0-alpha.1.22552.1",
+      "path": "source-build-externals",
+      "remoteUri": "https://github.com/dotnet/source-build-externals",
+      "commitSha": "4d37f75b11b8613594fcb38bd9b965a75877c49f"
+    },
+    {
       "packageVersion": "1.1.0-rc.22558.1",
       "path": "test-templates",
       "remoteUri": "https://github.com/dotnet/test-templates",
@@ -108,6 +114,36 @@
       "path": "nuget-client/submodules/NuGet.Build.Localization",
       "remoteUri": "https://github.com/NuGet/NuGet.Build.Localization.git",
       "commitSha": "f15db7b7c6f5affbea268632ef8333d2687c8031"
+    },
+    {
+      "path": "source-build-externals/src/application-insights",
+      "remoteUri": "https://github.com/Microsoft/ApplicationInsights-dotnet",
+      "commitSha": "51c3ed8aa3f32209edf01168f9136a3ac8486c5d"
+    },
+    {
+      "path": "source-build-externals/src/azure-activedirectory-identitymodel-extensions-for-dotnet",
+      "remoteUri": "https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet.git",
+      "commitSha": "a9de8ff14648770a3caa33a68d8061d0fa84d105"
+    },
+    {
+      "path": "source-build-externals/src/cssparser",
+      "remoteUri": "https://github.com/dotnet/cssparser",
+      "commitSha": "d6d86bcd8c162b1ae22ef00955ff748d028dd0ee"
+    },
+    {
+      "path": "source-build-externals/src/humanizer",
+      "remoteUri": "https://github.com/Humanizr/Humanizer",
+      "commitSha": "3ebc38de585fc641a04b0e78ed69468453b0f8a1"
+    },
+    {
+      "path": "source-build-externals/src/MSBuildLocator",
+      "remoteUri": "https://github.com/microsoft/MSBuildLocator",
+      "commitSha": "47281c3de1c87a43ab946725d011b9dca4b6434a"
+    },
+    {
+      "path": "source-build-externals/src/newtonsoft-json",
+      "remoteUri": "https://github.com/JamesNK/Newtonsoft.Json.git",
+      "commitSha": "ae9fe44e1323e91bcbd185ca1a14099fba7c021f"
     }
   ]
 }

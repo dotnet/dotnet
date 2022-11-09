@@ -1,0 +1,18 @@
+[submodule "src/application-insights"]
+	path = src/application-insights
+	url = https://github.com/Microsoft/ApplicationInsights-dotnet
+[submodule "src/cssparser"]
+	path = src/cssparser
+	url = https://github.com/dotnet/cssparser
+[submodule "src/humanizer"]
+	path = src/humanizer
+	url = https://github.com/Humanizr/Humanizer
+[submodule "src/newtonsoft-json"]
+	path = src/newtonsoft-json
+	url = https://github.com/JamesNK/Newtonsoft.Json.git
+[submodule "src/MSBuildLocator"]
+	path = src/MSBuildLocator
+	url = https://github.com/microsoft/MSBuildLocator
+[submodule "src/azure-activedirectory-identitymodel-extensions-for-dotnet"]
+	path = src/azure-activedirectory-identitymodel-extensions-for-dotnet
+	url = https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet.git

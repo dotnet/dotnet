@@ -1,0 +1,30 @@
+import "DataPointType.bond"
+
+namespace AI
+
+[Description("Metric data single measurement.")]
+struct DataPoint
+{
+    [Description("Name of the metric.")]
+    [MaxStringLength("1024")]
+    10: required string 	 name;
+    
+    [Description("Metric type.")]
+    20: AI.DataPointType 	 kind = Measurement;
+    
+    [Description("Metric calculated value.")]
+    30: required double 	 value;
+    
+    [Description("Metric weight of the aggregated metric. Should not be set for a measurement.")]
+    40: nullable<int32> 	 count;
+    
+    [Description("Minimum value of the aggregated metric. Should not be set for a measurement.")]
+    50: nullable<double> 	 min;
+    
+    [Description("Maximum value of the aggregated metric. Should not be set for a measurement.")]
+    60: nullable<double> 	 max;
+    
+    [Description("Standard deviation of the aggregated metric. Should not be set for a measurement.")]
+    70: nullable<double> 	 stdDev;
+    
+}

@@ -1,0 +1,15 @@
+#cnn_hdr #us-menu, #cnn_hdr #intl-menu{display:block; margin:0 auto; width: 980px; height: 35px; border-left: 1px solid #b60002}
+
+/* Test unknown blocks */
+
+@foo bar { unknown: block; ( [ (1px) url('url') ] 3) }
+@foo bar { unknown: block; ::after(foo[bar]) { foo: bar; } color: blue; }
+
+div { grid-columns: * (1em *)[2]; }
+
+div { grid-columns: [rgb(1, 2, 3)} /* mis-matched close */
+div { grid-columns: [#123456))} /* mis-matched close */
+
+div {0 {1 [2 [3 (4 (5 5) 4) 3] 2] 1} 0}
+
+@foo [bar] (bar) [[((bar))]] [unclosed;

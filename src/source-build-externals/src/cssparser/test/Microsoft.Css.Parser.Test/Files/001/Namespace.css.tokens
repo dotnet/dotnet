@@ -1,0 +1,34 @@
+Token Type           Length     Token Text
+At                   1          @
+Identifier           9          namespace
+Identifier           1          Q
+String               29         "http://example.com/q-markup"
+Semicolon            1          ;
+At                   1          @
+Identifier           9          namespace
+Identifier           2          lq
+String               29         "http://example.com/q-markup"
+Semicolon            1          ;
+At                   1          @
+Identifier           9          namespace
+Identifier           5          empty
+String               2          ""
+Semicolon            1          ;
+Identifier           4          toto
+Or                   1          |
+Identifier           1          A
+OpenCurlyBrace       1          {
+CloseCurlyBrace      1          }
+Or                   1          |
+Identifier           1          B
+OpenCurlyBrace       1          {
+CloseCurlyBrace      1          }
+Asterisk             1          *
+Or                   1          |
+Identifier           1          C
+OpenCurlyBrace       1          {
+CloseCurlyBrace      1          }
+Identifier           1          D
+OpenCurlyBrace       1          {
+CloseCurlyBrace      1          }
+EndOfFile            0          

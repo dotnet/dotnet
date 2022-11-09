@@ -1,0 +1,480 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<data>
+  <!--TelemetryModule tag already exists-->
+  <item>
+    <original>
+      
+      <ApplicationInsights xmlns="http://schemas.microsoft.com/ApplicationInsights/2013/Settings" schemaVersion="2014-05-30">
+        <TelemetryModules>
+          <Add Type="Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing.DiagnosticsTelemetryModule, Microsoft.ApplicationInsights"/>
+        </TelemetryModules>
+      </ApplicationInsights>
+    
+    </original>
+    <expectedPostTransform>
+
+      <ApplicationInsights xmlns="http://schemas.microsoft.com/ApplicationInsights/2013/Settings" schemaVersion="2014-05-30">
+        <TelemetryModules>
+          <Add Type="Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing.DiagnosticsTelemetryModule, Microsoft.ApplicationInsights"/>
+          <Add Type="Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.PerformanceCollectorModule, Microsoft.AI.PerfCounterCollector">
+            <!--
+      Use the following syntax here to collect additional performance counters:
+      
+      <Counters>
+        <Add PerformanceCounter="\Process(??APP_WIN32_PROC??)\Handle Count" ReportAs="Process handle count" />
+        ...
+      </Counters>
+      
+      PerformanceCounter must be either \CategoryName(InstanceName)\CounterName or \CategoryName\CounterName
+      
+      NOTE: performance counters configuration will be lost upon NuGet upgrade.
+      
+      The following placeholders are supported as InstanceName:
+        ??APP_WIN32_PROC?? - instance name of the application process  for Win32 counters.
+        ??APP_W3SVC_PROC?? - instance name of the application IIS worker process for IIS/ASP.NET counters.
+        ??APP_CLR_PROC?? - instance name of the application CLR process for .NET counters.
+      -->
+          </Add>
+          <Add Type="Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.QuickPulse.QuickPulseTelemetryModule, Microsoft.AI.PerfCounterCollector"/>
+        </TelemetryModules>
+        <TelemetrySinks>
+          <Add Name="default">
+            <TelemetryProcessors>
+              <Add Type="Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.QuickPulse.QuickPulseTelemetryProcessor, Microsoft.AI.PerfCounterCollector" />
+            </TelemetryProcessors>
+          </Add>
+        </TelemetrySinks>
+      </ApplicationInsights>
+      
+    </expectedPostTransform>
+  </item>
+  <!--Installing NuGet when TelemetryModule tag does not exist-->
+  <item>
+    <original>
+
+      <ApplicationInsights xmlns="http://schemas.microsoft.com/ApplicationInsights/2013/Settings" schemaVersion="2014-05-30">    
+      </ApplicationInsights>
+      
+    </original>
+    <expectedPostTransform>
+
+      <ApplicationInsights xmlns="http://schemas.microsoft.com/ApplicationInsights/2013/Settings" schemaVersion="2014-05-30">
+        <TelemetryModules>
+          <Add Type="Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.PerformanceCollectorModule, Microsoft.AI.PerfCounterCollector">
+            <!--
+      Use the following syntax here to collect additional performance counters:
+      
+      <Counters>
+        <Add PerformanceCounter="\Process(??APP_WIN32_PROC??)\Handle Count" ReportAs="Process handle count" />
+        ...
+      </Counters>
+      
+      PerformanceCounter must be either \CategoryName(InstanceName)\CounterName or \CategoryName\CounterName
+      
+      NOTE: performance counters configuration will be lost upon NuGet upgrade.
+      
+      The following placeholders are supported as InstanceName:
+        ??APP_WIN32_PROC?? - instance name of the application process  for Win32 counters.
+        ??APP_W3SVC_PROC?? - instance name of the application IIS worker process for IIS/ASP.NET counters.
+        ??APP_CLR_PROC?? - instance name of the application CLR process for .NET counters.
+      -->
+          </Add>
+          <Add Type="Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.QuickPulse.QuickPulseTelemetryModule, Microsoft.AI.PerfCounterCollector"/>
+        </TelemetryModules>
+        <TelemetrySinks>
+          <Add Name="default">
+            <TelemetryProcessors>
+              <Add Type="Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.QuickPulse.QuickPulseTelemetryProcessor, Microsoft.AI.PerfCounterCollector" />
+            </TelemetryProcessors>
+          </Add>
+        </TelemetrySinks>
+      </ApplicationInsights>
+
+    </expectedPostTransform>
+  </item>
+  <!--Installing NuGet when PerfCollector module already present, but not QuickPulse module-->
+  <item>
+    <original>
+
+      <ApplicationInsights xmlns="http://schemas.microsoft.com/ApplicationInsights/2013/Settings" schemaVersion="2014-05-30">
+        <TelemetryModules>
+          <Add Type="Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.PerformanceCollectorModule, Microsoft.AI.PerfCounterCollector">
+            <!--
+      Use the following syntax here to collect additional performance counters:
+      
+      <Counters>
+        <Add PerformanceCounter="\Process(??APP_WIN32_PROC??)\Handle Count" ReportAs="Process handle count" />
+        ...
+      </Counters>
+      
+      PerformanceCounter must be either \CategoryName(InstanceName)\CounterName or \CategoryName\CounterName
+      
+      NOTE: performance counters configuration will be lost upon NuGet upgrade.
+      
+      The following placeholders are supported as InstanceName:
+        ??APP_WIN32_PROC?? - instance name of the application process  for Win32 counters.
+        ??APP_W3SVC_PROC?? - instance name of the application IIS worker process for IIS/ASP.NET counters.
+        ??APP_CLR_PROC?? - instance name of the application CLR process for .NET counters.
+      -->
+          </Add>
+        </TelemetryModules>
+      </ApplicationInsights>
+
+    </original>
+    <expectedPostTransform>
+
+      <ApplicationInsights xmlns="http://schemas.microsoft.com/ApplicationInsights/2013/Settings" schemaVersion="2014-05-30">
+        <TelemetryModules>
+          <Add Type="Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.PerformanceCollectorModule, Microsoft.AI.PerfCounterCollector">
+            <!--
+      Use the following syntax here to collect additional performance counters:
+      
+      <Counters>
+        <Add PerformanceCounter="\Process(??APP_WIN32_PROC??)\Handle Count" ReportAs="Process handle count" />
+        ...
+      </Counters>
+      
+      PerformanceCounter must be either \CategoryName(InstanceName)\CounterName or \CategoryName\CounterName
+      
+      NOTE: performance counters configuration will be lost upon NuGet upgrade.
+      
+      The following placeholders are supported as InstanceName:
+        ??APP_WIN32_PROC?? - instance name of the application process  for Win32 counters.
+        ??APP_W3SVC_PROC?? - instance name of the application IIS worker process for IIS/ASP.NET counters.
+        ??APP_CLR_PROC?? - instance name of the application CLR process for .NET counters.
+      -->
+          </Add>
+          <Add Type="Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.QuickPulse.QuickPulseTelemetryModule, Microsoft.AI.PerfCounterCollector"/>
+        </TelemetryModules>
+        <TelemetrySinks>
+          <Add Name="default">
+            <TelemetryProcessors>
+              <Add Type="Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.QuickPulse.QuickPulseTelemetryProcessor, Microsoft.AI.PerfCounterCollector" />
+            </TelemetryProcessors>
+          </Add>
+        </TelemetrySinks>
+      </ApplicationInsights>
+
+    </expectedPostTransform>
+
+    <expectedPostUninstall>
+
+      <ApplicationInsights xmlns="http://schemas.microsoft.com/ApplicationInsights/2013/Settings" schemaVersion="2014-05-30">
+      </ApplicationInsights>
+
+    </expectedPostUninstall>
+  </item>
+  <!--Installing NuGet when QuickPulse module already present, but not PerfCollector module-->
+  <item>
+    <original>
+
+      <ApplicationInsights xmlns="http://schemas.microsoft.com/ApplicationInsights/2013/Settings" schemaVersion="2014-05-30">
+        <TelemetryModules>
+          <Add Type="Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.QuickPulse.QuickPulseTelemetryModule, Microsoft.AI.PerfCounterCollector"/>
+        </TelemetryModules>
+      </ApplicationInsights>
+
+    </original>
+    <expectedPostTransform>
+
+      <ApplicationInsights xmlns="http://schemas.microsoft.com/ApplicationInsights/2013/Settings" schemaVersion="2014-05-30">
+        <TelemetryModules>
+          <Add Type="Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.QuickPulse.QuickPulseTelemetryModule, Microsoft.AI.PerfCounterCollector"/>
+          <Add Type="Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.PerformanceCollectorModule, Microsoft.AI.PerfCounterCollector">
+            <!--
+      Use the following syntax here to collect additional performance counters:
+      
+      <Counters>
+        <Add PerformanceCounter="\Process(??APP_WIN32_PROC??)\Handle Count" ReportAs="Process handle count" />
+        ...
+      </Counters>
+      
+      PerformanceCounter must be either \CategoryName(InstanceName)\CounterName or \CategoryName\CounterName
+      
+      NOTE: performance counters configuration will be lost upon NuGet upgrade.
+      
+      The following placeholders are supported as InstanceName:
+        ??APP_WIN32_PROC?? - instance name of the application process  for Win32 counters.
+        ??APP_W3SVC_PROC?? - instance name of the application IIS worker process for IIS/ASP.NET counters.
+        ??APP_CLR_PROC?? - instance name of the application CLR process for .NET counters.
+      -->
+          </Add>
+        </TelemetryModules>
+        <TelemetrySinks>
+          <Add Name="default">
+            <TelemetryProcessors>
+              <Add Type="Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.QuickPulse.QuickPulseTelemetryProcessor, Microsoft.AI.PerfCounterCollector" />
+            </TelemetryProcessors>
+          </Add>
+        </TelemetrySinks>
+      </ApplicationInsights>
+
+    </expectedPostTransform>
+
+    <expectedPostUninstall>
+
+      <ApplicationInsights xmlns="http://schemas.microsoft.com/ApplicationInsights/2013/Settings" schemaVersion="2014-05-30">
+      </ApplicationInsights>
+
+    </expectedPostUninstall>
+  </item>
+  <!--Installing NuGet when QuickPulse telemetry processor is already present in common pipeline-->
+  <item>
+    <original>
+
+      <ApplicationInsights xmlns="http://schemas.microsoft.com/ApplicationInsights/2013/Settings" schemaVersion="2014-05-30">
+        <TelemetryModules>
+        </TelemetryModules>
+        <TelemetryProcessors>
+          <Add Type="Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.QuickPulse.QuickPulseTelemetryProcessor, Microsoft.AI.PerfCounterCollector" />
+        </TelemetryProcessors>
+      </ApplicationInsights>
+
+    </original>
+    <expectedPostTransform>
+
+      <ApplicationInsights xmlns="http://schemas.microsoft.com/ApplicationInsights/2013/Settings" schemaVersion="2014-05-30">
+        <TelemetryModules>
+          <Add Type="Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.PerformanceCollectorModule, Microsoft.AI.PerfCounterCollector">
+            <!--
+      Use the following syntax here to collect additional performance counters:
+      
+      <Counters>
+        <Add PerformanceCounter="\Process(??APP_WIN32_PROC??)\Handle Count" ReportAs="Process handle count" />
+        ...
+      </Counters>
+      
+      PerformanceCounter must be either \CategoryName(InstanceName)\CounterName or \CategoryName\CounterName
+      
+      NOTE: performance counters configuration will be lost upon NuGet upgrade.
+      
+      The following placeholders are supported as InstanceName:
+        ??APP_WIN32_PROC?? - instance name of the application process  for Win32 counters.
+        ??APP_W3SVC_PROC?? - instance name of the application IIS worker process for IIS/ASP.NET counters.
+        ??APP_CLR_PROC?? - instance name of the application CLR process for .NET counters.
+      -->
+          </Add>
+          <Add Type="Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.QuickPulse.QuickPulseTelemetryModule, Microsoft.AI.PerfCounterCollector"/>
+        </TelemetryModules>
+        <TelemetrySinks>
+          <Add Name="default">
+            <TelemetryProcessors>
+              <Add Type="Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.QuickPulse.QuickPulseTelemetryProcessor, Microsoft.AI.PerfCounterCollector" />
+            </TelemetryProcessors>
+          </Add>
+        </TelemetrySinks>
+      </ApplicationInsights>
+
+    </expectedPostTransform>
+
+    <expectedPostUninstall>
+
+      <ApplicationInsights xmlns="http://schemas.microsoft.com/ApplicationInsights/2013/Settings" schemaVersion="2014-05-30">
+      </ApplicationInsights>
+
+    </expectedPostUninstall>
+  </item>
+
+  <!--Installing NuGet when QuickPulse telemetry processor is already present in default sink-->
+  <item>
+    <original>
+
+      <ApplicationInsights xmlns="http://schemas.microsoft.com/ApplicationInsights/2013/Settings" schemaVersion="2014-05-30">
+        <TelemetryModules>
+        </TelemetryModules>
+        <TelemetrySinks>
+          <Add Name="default">
+            <TelemetryProcessors>
+              <Add Type="Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.QuickPulse.QuickPulseTelemetryProcessor, Microsoft.AI.PerfCounterCollector" />
+            </TelemetryProcessors>
+          </Add>
+        </TelemetrySinks>
+      </ApplicationInsights>
+
+    </original>
+    <expectedPostTransform>
+
+      <ApplicationInsights xmlns="http://schemas.microsoft.com/ApplicationInsights/2013/Settings" schemaVersion="2014-05-30">
+        <TelemetryModules>
+          <Add Type="Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.PerformanceCollectorModule, Microsoft.AI.PerfCounterCollector">
+            <!--
+      Use the following syntax here to collect additional performance counters:
+      
+      <Counters>
+        <Add PerformanceCounter="\Process(??APP_WIN32_PROC??)\Handle Count" ReportAs="Process handle count" />
+        ...
+      </Counters>
+      
+      PerformanceCounter must be either \CategoryName(InstanceName)\CounterName or \CategoryName\CounterName
+      
+      NOTE: performance counters configuration will be lost upon NuGet upgrade.
+      
+      The following placeholders are supported as InstanceName:
+        ??APP_WIN32_PROC?? - instance name of the application process  for Win32 counters.
+        ??APP_W3SVC_PROC?? - instance name of the application IIS worker process for IIS/ASP.NET counters.
+        ??APP_CLR_PROC?? - instance name of the application CLR process for .NET counters.
+      -->
+          </Add>
+          <Add Type="Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.QuickPulse.QuickPulseTelemetryModule, Microsoft.AI.PerfCounterCollector"/>
+        </TelemetryModules>
+        <TelemetrySinks>
+          <Add Name="default">
+            <TelemetryProcessors>
+              <Add Type="Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.QuickPulse.QuickPulseTelemetryProcessor, Microsoft.AI.PerfCounterCollector" />
+            </TelemetryProcessors>
+          </Add>
+        </TelemetrySinks>
+      </ApplicationInsights>
+
+    </expectedPostTransform>
+
+    <expectedPostUninstall>
+
+      <ApplicationInsights xmlns="http://schemas.microsoft.com/ApplicationInsights/2013/Settings" schemaVersion="2014-05-30">
+      </ApplicationInsights>
+
+    </expectedPostUninstall>
+  </item>
+  
+  <!--Installing NuGet when QuickPulse telemetry processor is not present, but others are. QuickPulse telemetry processor must always be first-->
+  <item>
+    <original>
+
+      <ApplicationInsights xmlns="http://schemas.microsoft.com/ApplicationInsights/2013/Settings" schemaVersion="2014-05-30">
+        <TelemetryModules>
+        </TelemetryModules>
+        <TelemetrySinks>
+          <Add Name="default">
+            <TelemetryProcessors>
+              <Add Type="SomeTelemetryProcessor, SomeAssembly" />
+            </TelemetryProcessors>
+          </Add>
+        </TelemetrySinks>
+      </ApplicationInsights>
+
+    </original>
+    <expectedPostTransform>
+
+      <ApplicationInsights xmlns="http://schemas.microsoft.com/ApplicationInsights/2013/Settings" schemaVersion="2014-05-30">
+        <TelemetryModules>
+          <Add Type="Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.PerformanceCollectorModule, Microsoft.AI.PerfCounterCollector">
+            <!--
+      Use the following syntax here to collect additional performance counters:
+      
+      <Counters>
+        <Add PerformanceCounter="\Process(??APP_WIN32_PROC??)\Handle Count" ReportAs="Process handle count" />
+        ...
+      </Counters>
+      
+      PerformanceCounter must be either \CategoryName(InstanceName)\CounterName or \CategoryName\CounterName
+      
+      NOTE: performance counters configuration will be lost upon NuGet upgrade.
+      
+      The following placeholders are supported as InstanceName:
+        ??APP_WIN32_PROC?? - instance name of the application process  for Win32 counters.
+        ??APP_W3SVC_PROC?? - instance name of the application IIS worker process for IIS/ASP.NET counters.
+        ??APP_CLR_PROC?? - instance name of the application CLR process for .NET counters.
+      -->
+          </Add>
+          <Add Type="Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.QuickPulse.QuickPulseTelemetryModule, Microsoft.AI.PerfCounterCollector"/>
+        </TelemetryModules>
+        <TelemetrySinks>
+          <Add Name="default">
+            <TelemetryProcessors>
+              <Add Type="Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.QuickPulse.QuickPulseTelemetryProcessor, Microsoft.AI.PerfCounterCollector" />
+              <Add Type="SomeTelemetryProcessor, SomeAssembly" />
+            </TelemetryProcessors>
+          </Add>
+        </TelemetrySinks>
+      </ApplicationInsights>
+
+    </expectedPostTransform>
+
+    <expectedPostUninstall>
+
+      <ApplicationInsights xmlns="http://schemas.microsoft.com/ApplicationInsights/2013/Settings" schemaVersion="2014-05-30">
+        <TelemetrySinks>
+          <Add Name="default">
+            <TelemetryProcessors>
+              <Add Type="SomeTelemetryProcessor, SomeAssembly" />
+            </TelemetryProcessors>
+          </Add>
+        </TelemetrySinks>
+      </ApplicationInsights>
+
+    </expectedPostUninstall>
+  </item>
+  <!--Installing NuGet when QuickPulse telemetry processor is present, along with others, in an incorrect order. QuickPulse telemetry processor must always be first-->
+  <item>
+    <original>
+
+      <ApplicationInsights xmlns="http://schemas.microsoft.com/ApplicationInsights/2013/Settings" schemaVersion="2014-05-30">
+        <TelemetryModules>
+        </TelemetryModules>
+        <TelemetrySinks>
+          <Add Name="default">
+            <TelemetryProcessors>
+              <Add Type="SomeTelemetryProcessor, SomeAssembly" />
+              <Add Type="Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.QuickPulse.QuickPulseTelemetryProcessor, Microsoft.AI.PerfCounterCollector" />
+              <Add Type="SomeOtherTelemetryProcessor, SomeOtherAssembly" />
+            </TelemetryProcessors>
+          </Add>
+        </TelemetrySinks>
+      </ApplicationInsights>
+
+    </original>
+    <expectedPostTransform>
+
+      <ApplicationInsights xmlns="http://schemas.microsoft.com/ApplicationInsights/2013/Settings" schemaVersion="2014-05-30">
+        <TelemetryModules>
+          <Add Type="Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.PerformanceCollectorModule, Microsoft.AI.PerfCounterCollector">
+            <!--
+      Use the following syntax here to collect additional performance counters:
+      
+      <Counters>
+        <Add PerformanceCounter="\Process(??APP_WIN32_PROC??)\Handle Count" ReportAs="Process handle count" />
+        ...
+      </Counters>
+      
+      PerformanceCounter must be either \CategoryName(InstanceName)\CounterName or \CategoryName\CounterName
+      
+      NOTE: performance counters configuration will be lost upon NuGet upgrade.
+      
+      The following placeholders are supported as InstanceName:
+        ??APP_WIN32_PROC?? - instance name of the application process  for Win32 counters.
+        ??APP_W3SVC_PROC?? - instance name of the application IIS worker process for IIS/ASP.NET counters.
+        ??APP_CLR_PROC?? - instance name of the application CLR process for .NET counters.
+      -->
+          </Add>
+          <Add Type="Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.QuickPulse.QuickPulseTelemetryModule, Microsoft.AI.PerfCounterCollector"/>
+        </TelemetryModules>
+        <TelemetrySinks>
+          <Add Name="default">
+            <TelemetryProcessors>
+              <Add Type="Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.QuickPulse.QuickPulseTelemetryProcessor, Microsoft.AI.PerfCounterCollector" />
+              <Add Type="SomeTelemetryProcessor, SomeAssembly" />
+              <Add Type="SomeOtherTelemetryProcessor, SomeOtherAssembly" />
+            </TelemetryProcessors>
+          </Add>
+        </TelemetrySinks>
+      </ApplicationInsights>
+
+    </expectedPostTransform>
+
+    <expectedPostUninstall>
+
+      <ApplicationInsights xmlns="http://schemas.microsoft.com/ApplicationInsights/2013/Settings" schemaVersion="2014-05-30">
+        <TelemetrySinks>
+          <Add Name="default">
+            <TelemetryProcessors>
+              <Add Type="SomeTelemetryProcessor, SomeAssembly" />
+              <Add Type="SomeOtherTelemetryProcessor, SomeOtherAssembly" />
+            </TelemetryProcessors>
+          </Add>
+        </TelemetrySinks>
+      </ApplicationInsights>
+
+    </expectedPostUninstall>
+  </item>
+
+</data>

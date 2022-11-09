@@ -1,0 +1,5 @@
+<Project>
+
+  <Import Condition="'$(SkipArcadeSdkImport)' != 'true'" Project="Sdk.targets" Sdk="Microsoft.DotNet.Arcade.Sdk" />
+
+</Project>

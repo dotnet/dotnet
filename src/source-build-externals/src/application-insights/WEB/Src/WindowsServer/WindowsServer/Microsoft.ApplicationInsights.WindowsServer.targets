@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Target Name="CopyApplicationInsightsConfigToOutputDirectory" AfterTargets="CopyFilesToOutputDirectory" Condition="Exists('ApplicationInsights.config')" >
+    <!--Currently we cannot set the config's "Copy to Output Directory" property to "PreserveNewest.
+          Workaround is to use this targets file to manually copy into output path."-->
+
+    <Message Text="Microsoft.ApplicationInsights.WindowsServer: Copying ApplicationInsights.config to $(OutputPath)" Importance="high" />
+    <Copy SourceFiles="ApplicationInsights.config" DestinationFolder="$(OutputPath)" ContinueOnError="true" />
+  </Target>
+</Project>

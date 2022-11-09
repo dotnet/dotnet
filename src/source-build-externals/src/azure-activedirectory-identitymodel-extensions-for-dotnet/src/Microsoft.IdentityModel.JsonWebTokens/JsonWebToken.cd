@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Microsoft.IdentityModel.JsonWebTokens.JsonWebToken">
+    <Position X="6" Y="2.5" Width="5.5" />
+    <Members>
+      <Method Name="AddClaimsFromJToken" Hidden="true" />
+      <Method Name="AddDefaultClaimFromJToken" Hidden="true" />
+      <Method Name="Decode" Hidden="true" />
+      <Method Name="DecodeJwe" Hidden="true" />
+      <Method Name="DecodeJws" Hidden="true" />
+      <Method Name="GetClaimValueType" Hidden="true" />
+      <Property Name="Header" Hidden="true" />
+      <Property Name="Payload" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>hAcTICgAAAAMggAEAIQYCAUAAAIwBCCAwKAAYQAQAAA=</HashCode>
+      <FileName>JsonWebToken.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

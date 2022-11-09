@@ -1,0 +1,40 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: "msimons@microsoft.com" <MichaelSimons>
+Date: Fri, 15 Oct 2021 18:10:34 +0000
+Subject: [PATCH] Eliminate prebuilts
+
+* Updated SourceLink reference to pick up the source-build version
+* Removed Nerdbank.GitVersioning references because it would introduce a prebuilt. Instead version property is set as build prop
+---
+ Directory.Build.props                             | 3 +--
+ src/MSBuildLocator/Microsoft.Build.Locator.csproj | 2 +-
+ 2 files changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/Directory.Build.props b/Directory.Build.props
+index 27bc1a1..f8ea438 100644
+--- a/Directory.Build.props
++++ b/Directory.Build.props
+@@ -27,7 +27,6 @@
+   </PropertyGroup>
+
+   <ItemGroup>
+-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All"/>
++    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="$(MicrosoftSourceLinkVersion)" PrivateAssets="All"/>
+-    <PackageReference Include="Nerdbank.GitVersioning" Version="2.2.13" PrivateAssets="all" />
+   </ItemGroup>
+ 
+   <ItemGroup>
+diff --git a/src/MSBuildLocator/Microsoft.Build.Locator.csproj b/src/MSBuildLocator/Microsoft.Build.Locator.csproj
+index 712f67c..56b1196 100644
+--- a/src/MSBuildLocator/Microsoft.Build.Locator.csproj
++++ b/src/MSBuildLocator/Microsoft.Build.Locator.csproj
+@@ -2,7 +2,7 @@
+ 
+   <PropertyGroup>
+     <OutputType>Library</OutputType>
+-    <TargetFrameworks>net46;netcoreapp2.0</TargetFrameworks>
++    <TargetFrameworks>netcoreapp2.0</TargetFrameworks>
+     <DebugType>full</DebugType>
+ 
+     <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+

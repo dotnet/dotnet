@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Target Name="Info_ProductProps"  BeforeTargets="Build" Condition=" $(Internal_Logging) == 'true' ">
+    <Message Text="Info: Product.props imported by $(MSBuildProjectName)." Importance="high"/>
+  </Target>
+
+  <Import Project=".\_Common.props" />
+  <Import Project=".\_AnalyzerSettings.props" />
+
+  <Import Project=".\_GlobalStaticVersion.props" />
+  <Import Project=".\_Nupkg.props"  Condition="'$(IsExamplesSolution)' != 'true'"/>
+
+  <ItemGroup Condition=" $(OS) == 'Windows_NT'">
+    <!--Analyzers-->
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.2">
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.2">	
+      <PrivateAssets>all</PrivateAssets>	
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>	
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="3.3.2">
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--Build Infrastructure-->
+    <PackageReference Include="Microsoft.VisualStudioEng.MicroBuild.Core" Version="0.4.1">
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+  </ItemGroup>
+  
+  <PropertyGroup>
+    <!-- Enable all the latest CA rules from 'Microsoft.CodeAnalysis.NetAnalyzers' as build warnings by default -->
+    
+    <AnalysisLevel>latest</AnalysisLevel>
+    <AnalysisMode>AllEnabledByDefault</AnalysisMode>
+    
+    <!-- This appears to create a conflict between using built-in analyzers and the NuGetPackage. -->
+    <!--<EnableNETAnalyzers>true</EnableNETAnalyzers>--> 
+    
+    
+    <!--Removing the SRC folder from the output directory-->
+    <CorePath>$(RelativeOutputPathBase)</CorePath>
+    <OutputPath>$(BinRoot)\$(Configuration)\$(CorePath)</OutputPath>
+    <OutputPath>$([System.IO.Path]::GetFullPath( $(OutputPath) ))\</OutputPath>
+  </PropertyGroup>
+
+</Project>

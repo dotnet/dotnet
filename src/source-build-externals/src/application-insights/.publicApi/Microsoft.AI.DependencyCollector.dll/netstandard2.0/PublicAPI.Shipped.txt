@@ -1,0 +1,69 @@
+const Microsoft.ApplicationInsights.Common.InjectionGuardConstants.AppIdMaxLength = 50 -> int
+const Microsoft.ApplicationInsights.Common.InjectionGuardConstants.ContextHeaderKeyMaxLength = 50 -> int
+const Microsoft.ApplicationInsights.Common.InjectionGuardConstants.ContextHeaderValueMaxLength = 1024 -> int
+const Microsoft.ApplicationInsights.Common.InjectionGuardConstants.QuickPulseResponseHeaderMaxLength = 1024 -> int
+const Microsoft.ApplicationInsights.Common.InjectionGuardConstants.RequestHeaderMaxLength = 1024 -> int
+const Microsoft.ApplicationInsights.Common.InjectionGuardConstants.TraceParentHeaderMaxLength = 55 -> int
+const Microsoft.ApplicationInsights.Common.InjectionGuardConstants.TraceStateHeaderMaxLength = 512 -> int
+const Microsoft.ApplicationInsights.Common.InjectionGuardConstants.TraceStateMaxPairs = 32 -> int
+const Microsoft.ApplicationInsights.W3C.W3CConstants.ApplicationIdTraceStateField = "cid-v1" -> string
+const Microsoft.ApplicationInsights.W3C.W3CConstants.AzureTracestateNamespace = "az" -> string
+const Microsoft.ApplicationInsights.W3C.W3CConstants.TraceParentHeader = "traceparent" -> string
+const Microsoft.ApplicationInsights.W3C.W3CConstants.TracestateAzureSeparator = ';' -> char
+const Microsoft.ApplicationInsights.W3C.W3CConstants.TraceStateHeader = "tracestate" -> string
+Microsoft.ApplicationInsights.Common.ActiveSubsciptionManager
+Microsoft.ApplicationInsights.Common.ActiveSubsciptionManager.ActiveSubsciptionManager() -> void
+Microsoft.ApplicationInsights.Common.ActiveSubsciptionManager.Attach(object subscription) -> void
+Microsoft.ApplicationInsights.Common.ActiveSubsciptionManager.Detach(object subscription) -> void
+Microsoft.ApplicationInsights.Common.ActiveSubsciptionManager.IsActive(object subscriber) -> bool
+Microsoft.ApplicationInsights.Common.ConditionalWeakTableExtensions
+Microsoft.ApplicationInsights.Common.InjectionGuardConstants
+Microsoft.ApplicationInsights.Common.StringUtilities
+Microsoft.ApplicationInsights.DependencyCollector.DependencyTrackingTelemetryModule
+Microsoft.ApplicationInsights.DependencyCollector.DependencyTrackingTelemetryModule.DependencyTrackingTelemetryModule() -> void
+Microsoft.ApplicationInsights.DependencyCollector.DependencyTrackingTelemetryModule.DisableDiagnosticSourceInstrumentation.get -> bool
+Microsoft.ApplicationInsights.DependencyCollector.DependencyTrackingTelemetryModule.DisableDiagnosticSourceInstrumentation.set -> void
+Microsoft.ApplicationInsights.DependencyCollector.DependencyTrackingTelemetryModule.DisableRuntimeInstrumentation.get -> bool
+Microsoft.ApplicationInsights.DependencyCollector.DependencyTrackingTelemetryModule.DisableRuntimeInstrumentation.set -> void
+Microsoft.ApplicationInsights.DependencyCollector.DependencyTrackingTelemetryModule.Dispose() -> void
+Microsoft.ApplicationInsights.DependencyCollector.DependencyTrackingTelemetryModule.EnableAzureSdkTelemetryListener.get -> bool
+Microsoft.ApplicationInsights.DependencyCollector.DependencyTrackingTelemetryModule.EnableAzureSdkTelemetryListener.set -> void
+Microsoft.ApplicationInsights.DependencyCollector.DependencyTrackingTelemetryModule.EnableLegacyCorrelationHeadersInjection.get -> bool
+Microsoft.ApplicationInsights.DependencyCollector.DependencyTrackingTelemetryModule.EnableLegacyCorrelationHeadersInjection.set -> void
+Microsoft.ApplicationInsights.DependencyCollector.DependencyTrackingTelemetryModule.EnableRequestIdHeaderInjectionInW3CMode.get -> bool
+Microsoft.ApplicationInsights.DependencyCollector.DependencyTrackingTelemetryModule.EnableRequestIdHeaderInjectionInW3CMode.set -> void
+Microsoft.ApplicationInsights.DependencyCollector.DependencyTrackingTelemetryModule.EnableSqlCommandTextInstrumentation.get -> bool
+Microsoft.ApplicationInsights.DependencyCollector.DependencyTrackingTelemetryModule.EnableSqlCommandTextInstrumentation.set -> void
+Microsoft.ApplicationInsights.DependencyCollector.DependencyTrackingTelemetryModule.EnableW3CHeadersInjection.get -> bool
+Microsoft.ApplicationInsights.DependencyCollector.DependencyTrackingTelemetryModule.EnableW3CHeadersInjection.set -> void
+Microsoft.ApplicationInsights.DependencyCollector.DependencyTrackingTelemetryModule.ExcludeComponentCorrelationHttpHeadersOnDomains.get -> System.Collections.Generic.ICollection<string>
+Microsoft.ApplicationInsights.DependencyCollector.DependencyTrackingTelemetryModule.IncludeDiagnosticSourceActivities.get -> System.Collections.Generic.ICollection<string>
+Microsoft.ApplicationInsights.DependencyCollector.DependencyTrackingTelemetryModule.Initialize(Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration configuration) -> void
+Microsoft.ApplicationInsights.DependencyCollector.DependencyTrackingTelemetryModule.ProfileQueryEndpoint.get -> string
+Microsoft.ApplicationInsights.DependencyCollector.DependencyTrackingTelemetryModule.ProfileQueryEndpoint.set -> void
+Microsoft.ApplicationInsights.DependencyCollector.DependencyTrackingTelemetryModule.SetComponentCorrelationHttpHeaders.get -> bool
+Microsoft.ApplicationInsights.DependencyCollector.DependencyTrackingTelemetryModule.SetComponentCorrelationHttpHeaders.set -> void
+Microsoft.ApplicationInsights.DependencyCollector.HttpDependenciesParsingTelemetryInitializer
+Microsoft.ApplicationInsights.DependencyCollector.HttpDependenciesParsingTelemetryInitializer.HttpDependenciesParsingTelemetryInitializer() -> void
+Microsoft.ApplicationInsights.DependencyCollector.HttpDependenciesParsingTelemetryInitializer.Initialize(Microsoft.ApplicationInsights.Channel.ITelemetry telemetry) -> void
+Microsoft.ApplicationInsights.W3C.W3CActivityExtensions
+Microsoft.ApplicationInsights.W3C.W3CConstants
+Microsoft.ApplicationInsights.W3C.W3COperationCorrelationTelemetryInitializer
+Microsoft.ApplicationInsights.W3C.W3COperationCorrelationTelemetryInitializer.Initialize(Microsoft.ApplicationInsights.Channel.ITelemetry telemetry) -> void
+Microsoft.ApplicationInsights.W3C.W3COperationCorrelationTelemetryInitializer.W3COperationCorrelationTelemetryInitializer() -> void
+static Microsoft.ApplicationInsights.Common.ConditionalWeakTableExtensions.AddIfNotExists<TKey, TValue>(this System.Runtime.CompilerServices.ConditionalWeakTable<TKey, TValue> conditionalWeakTable, TKey key, TValue value) -> void
+static Microsoft.ApplicationInsights.Common.StringUtilities.EnforceMaxLength(string input, int maxLength) -> string
+static Microsoft.ApplicationInsights.Common.StringUtilities.FormatRequestId(string traceId, string spanId) -> string
+static Microsoft.ApplicationInsights.Common.StringUtilities.GenerateSpanId() -> string
+static Microsoft.ApplicationInsights.Common.StringUtilities.GenerateTraceId() -> string
+static Microsoft.ApplicationInsights.W3C.W3CActivityExtensions.GenerateW3CContext(this System.Diagnostics.Activity activity) -> System.Diagnostics.Activity
+static Microsoft.ApplicationInsights.W3C.W3CActivityExtensions.GetParentSpanId(this System.Diagnostics.Activity activity) -> string
+static Microsoft.ApplicationInsights.W3C.W3CActivityExtensions.GetSpanId(this System.Diagnostics.Activity activity) -> string
+static Microsoft.ApplicationInsights.W3C.W3CActivityExtensions.GetTraceId(this System.Diagnostics.Activity activity) -> string
+static Microsoft.ApplicationInsights.W3C.W3CActivityExtensions.GetTraceparent(this System.Diagnostics.Activity activity) -> string
+static Microsoft.ApplicationInsights.W3C.W3CActivityExtensions.GetTracestate(this System.Diagnostics.Activity activity) -> string
+static Microsoft.ApplicationInsights.W3C.W3CActivityExtensions.IsW3CActivity(this System.Diagnostics.Activity activity) -> bool
+static Microsoft.ApplicationInsights.W3C.W3CActivityExtensions.SetTraceparent(this System.Diagnostics.Activity activity, string value) -> void
+static Microsoft.ApplicationInsights.W3C.W3CActivityExtensions.SetTracestate(this System.Diagnostics.Activity activity, string value) -> void
+static Microsoft.ApplicationInsights.W3C.W3CActivityExtensions.UpdateContextOnActivity(this System.Diagnostics.Activity activity) -> System.Diagnostics.Activity
+virtual Microsoft.ApplicationInsights.DependencyCollector.DependencyTrackingTelemetryModule.Dispose(bool disposing) -> void

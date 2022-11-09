@@ -1,0 +1,576 @@
+﻿#region License
+// Copyright (c) 2007 James Newton-King
+//
+// Permission is hereby granted, free of charge, to any person
+// obtaining a copy of this software and associated documentation
+// files (the "Software"), to deal in the Software without
+// restriction, including without limitation the rights to use,
+// copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the
+// Software is furnished to do so, subject to the following
+// conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+// OTHER DEALINGS IN THE SOFTWARE.
+#endregion
+
+#if !(NET35 || NET20 || DNXCORE50) || NETSTANDARD1_3 || NETSTANDARD2_0
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Dynamic;
+using System.IO;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.Text;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
+#if DNXCORE50
+using Xunit;
+using Test = Xunit.FactAttribute;
+using Assert = Newtonsoft.Json.Tests.XUnitAssert;
+#else
+using NUnit.Framework;
+#endif
+using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json.Tests.TestObjects;
+using Newtonsoft.Json.Utilities;
+using System.Globalization;
+using ErrorEventArgs = Newtonsoft.Json.Serialization.ErrorEventArgs;
+using File = System.IO.File;
+
+namespace Newtonsoft.Json.Tests.Documentation
+{
+    public static class File
+    {
+        public static StreamReader OpenText(string path)
+        {
+            return new StreamReader(new MemoryStream(Encoding.UTF8.GetBytes("{}")));
+        }
+
+        public static StreamWriter CreateText(string path)
+        {
+            return new StreamWriter(new MemoryStream());
+        }
+
+        public static void WriteAllText(string path, string contents)
+        {
+        }
+
+        public static string ReadAllText(string path)
+        {
+            return null;
+        }
+    }
+
+    [TestFixture]
+    public class LinqToJsonTests : TestFixtureBase
+    {
+        [Test]
+        public void LinqToJsonBasic()
+        {
+            #region LinqToJsonBasic
+            JObject o = JObject.Parse(@"{
+              'CPU': 'Intel',
+              'Drives': [
+                'DVD read/writer',
+                '500 gigabyte hard drive'
+              ]
+            }");
+
+            string cpu = (string)o["CPU"];
+            // Intel
+
+            string firstDrive = (string)o["Drives"][0];
+            // DVD read/writer
+
+            IList<string> allDrives = o["Drives"].Select(t => (string)t).ToList();
+            // DVD read/writer
+            // 500 gigabyte hard drive
+            #endregion
+        }
+
+        [Test]
+        public void LinqToJsonCreateNormal()
+        {
+            #region LinqToJsonCreateNormal
+            JArray array = new JArray();
+            JValue text = new JValue("Manual text");
+            JValue date = new JValue(new DateTime(2000, 5, 23));
+
+            array.Add(text);
+            array.Add(date);
+
+            string json = array.ToString();
+            // [
+            //   "Manual text",
+            //   "2000-05-23T00:00:00"
+            // ]
+            #endregion
+        }
+
+        public class Post
+        {
+            public string Title { get; set; }
+            public string Description { get; set; }
+            public string Link { get; set; }
+            public IList<string> Categories { get; set; }
+        }
+
+        private List<Post> GetPosts()
+        {
+            return new List<Post>();
+        }
+
+        [Test]
+        public void LinqToJsonCreateDeclaratively()
+        {
+            #region LinqToJsonCreateDeclaratively
+            List<Post> posts = GetPosts();
+
+            JObject rss =
+                new JObject(
+                    new JProperty("channel",
+                        new JObject(
+                            new JProperty("title", "James Newton-King"),
+                            new JProperty("link", "http://james.newtonking.com"),
+                            new JProperty("description", "James Newton-King's blog."),
+                            new JProperty("item",
+                                new JArray(
+                                    from p in posts
+                                    orderby p.Title
+                                    select new JObject(
+                                        new JProperty("title", p.Title),
+                                        new JProperty("description", p.Description),
+                                        new JProperty("link", p.Link),
+                                        new JProperty("category",
+                                            new JArray(
+                                                from c in p.Categories
+                                                select new JValue(c)))))))));
+
+            Console.WriteLine(rss.ToString());
+
+            //{
+            //  "channel": {
+            //    "title": "James Newton-King",
+            //    "link": "http://james.newtonking.com",
+            //    "description": "James Newton-King\'s blog.",
+            //    "item": [
+            //      {
+            //        "title": "Json.NET 1.3 + New license + Now on CodePlex",
+            //        "description": "Announcing the release of Json.NET 1.3, the MIT license and being available on CodePlex",
+            //        "link": "http://james.newtonking.com/projects/json-net.aspx",
+            //        "category": [
+            //          "Json.NET",
+            //          "CodePlex"
+            //        ]
+            //      },
+            //      {
+            //        "title": "LINQ to JSON beta",
+            //        "description": "Announcing LINQ to JSON",
+            //        "link": "http://james.newtonking.com/projects/json-net.aspx",
+            //        "category": [
+            //          "Json.NET",
+            //          "LINQ"
+            //        ]
+            //      }
+            //    ]
+            //  }
+            //}
+            #endregion
+        }
+
+        [Test]
+        public void LinqToJsonCreateFromObject()
+        {
+            List<Post> posts = GetPosts();
+
+            #region LinqToJsonCreateFromObject
+            JObject o = JObject.FromObject(new
+            {
+                channel = new
+                {
+                    title = "James Newton-King",
+                    link = "http://james.newtonking.com",
+                    description = "James Newton-King's blog.",
+                    item =
+                        from p in posts
+                        orderby p.Title
+                        select new
+                        {
+                            title = p.Title,
+                            description = p.Description,
+                            link = p.Link,
+                            category = p.Categories
+                        }
+                }
+            });
+            #endregion
+        }
+
+        [Test]
+        public void LinqToJsonCreateParse()
+        {
+            #region LinqToJsonCreateParse
+            string json = @"{
+              CPU: 'Intel',
+              Drives: [
+                'DVD read/writer',
+                '500 gigabyte hard drive'
+              ]
+            }";
+
+            JObject o = JObject.Parse(json);
+            #endregion
+        }
+
+        [Test]
+        public void LinqToJsonCreateParseArray()
+        {
+            #region LinqToJsonCreateParseArray
+            string json = @"[
+              'Small',
+              'Medium',
+              'Large'
+            ]";
+
+            JArray a = JArray.Parse(json);
+            #endregion
+        }
+
+        [Test]
+        public void LinqToJsonReadObject()
+        {
+            #region LinqToJsonReadObject
+            using (StreamReader reader = File.OpenText(@"c:\person.json"))
+            {
+                JObject o = (JObject)JToken.ReadFrom(new JsonTextReader(reader));
+                // do stuff
+            }
+            #endregion
+        }
+
+        [Test]
+        public void LinqToJsonSimpleQuerying()
+        {
+            #region LinqToJsonSimpleQuerying
+            string json = @"{
+              'channel': {
+                'title': 'James Newton-King',
+                'link': 'http://james.newtonking.com',
+                'description': 'James Newton-King\'s blog.',
+                'item': [
+                  {
+                    'title': 'Json.NET 1.3 + New license + Now on CodePlex',
+                    'description': 'Announcing the release of Json.NET 1.3, the MIT license and the source on CodePlex',
+                    'link': 'http://james.newtonking.com/projects/json-net.aspx',
+                    'categories': [
+                      'Json.NET',
+                      'CodePlex'
+                    ]
+                  },
+                  {
+                    'title': 'LINQ to JSON beta',
+                    'description': 'Announcing LINQ to JSON',
+                    'link': 'http://james.newtonking.com/projects/json-net.aspx',
+                    'categories': [
+                      'Json.NET',
+                      'LINQ'
+                    ]
+                  }
+                ]
+              }
+            }";
+
+            JObject rss = JObject.Parse(json);
+
+            string rssTitle = (string)rss["channel"]["title"];
+            // James Newton-King
+
+            string itemTitle = (string)rss["channel"]["item"][0]["title"];
+            // Json.NET 1.3 + New license + Now on CodePlex
+
+            JArray categories = (JArray)rss["channel"]["item"][0]["categories"];
+            // ["Json.NET", "CodePlex"]
+
+            IList<string> categoriesText = categories.Select(c => (string)c).ToList();
+            // Json.NET
+            // CodePlex
+            #endregion
+        }
+
+        [Test]
+        public void LinqToJsonQuerying()
+        {
+            JObject rss = JObject.Parse(@"{
+              'channel': {
+                'title': 'James Newton-King',
+                'link': 'http://james.newtonking.com',
+                'description': 'James Newton-King\'s blog.',
+                'item': [
+                  {
+                    'title': 'Json.NET 1.3 + New license + Now on CodePlex',
+                    'description': 'Announcing the release of Json.NET 1.3, the MIT license and the source on CodePlex',
+                    'link': 'http://james.newtonking.com/projects/json-net.aspx',
+                    'categories': [
+                      'Json.NET',
+                      'CodePlex'
+                    ]
+                  },
+                  {
+                    'title': 'LINQ to JSON beta',
+                    'description': 'Announcing LINQ to JSON',
+                    'link': 'http://james.newtonking.com/projects/json-net.aspx',
+                    'categories': [
+                      'Json.NET',
+                      'LINQ'
+                    ]
+                  }
+                ]
+              }
+            }");
+
+            #region LinqToJsonQuerying
+            var postTitles =
+                from p in rss["channel"]["item"]
+                select (string)p["title"];
+
+            foreach (var item in postTitles)
+            {
+                Console.WriteLine(item);
+            }
+
+            //LINQ to JSON beta
+            //Json.NET 1.3 + New license + Now on CodePlex
+
+            var categories =
+                from c in rss["channel"]["item"].SelectMany(i => i["categories"]).Values<string>()
+                group c by c
+                into g
+                orderby g.Count() descending
+                select new { Category = g.Key, Count = g.Count() };
+
+            foreach (var c in categories)
+            {
+                Console.WriteLine(c.Category + " - Count: " + c.Count);
+            }
+
+            //Json.NET - Count: 2
+            //LINQ - Count: 1
+            //CodePlex - Count: 1
+            #endregion
+
+            Assert.AreEqual(2, postTitles.Count());
+            Assert.AreEqual(3, categories.Count());
+        }
+
+        #region LinqToJsonDeserializeObject
+        public class Shortie
+        {
+            public string Original { get; set; }
+            public string Shortened { get; set; }
+            public string Short { get; set; }
+            public ShortieException Error { get; set; }
+        }
+
+        public class ShortieException
+        {
+            public int Code { get; set; }
+            public string ErrorMessage { get; set; }
+        }
+        #endregion
+
+        [Test]
+        public void LinqToJsonDeserializeExample()
+        {
+            #region LinqToJsonDeserializeExample
+            string jsonText = @"{
+              'short': {
+                'original': 'http://www.foo.com/',
+                'short': 'krehqk',
+                'error': {
+                  'code': 0,
+                  'msg': 'No action taken'
+                }
+              }
+            }";
+
+            JObject json = JObject.Parse(jsonText);
+
+            Shortie shortie = new Shortie
+            {
+                Original = (string)json["short"]["original"],
+                Short = (string)json["short"]["short"],
+                Error = new ShortieException
+                {
+                    Code = (int)json["short"]["error"]["code"],
+                    ErrorMessage = (string)json["short"]["error"]["msg"]
+                }
+            };
+
+            Console.WriteLine(shortie.Original);
+            // http://www.foo.com/
+
+            Console.WriteLine(shortie.Error.ErrorMessage);
+            // No action taken
+            #endregion
+
+            Assert.AreEqual("http://www.foo.com/", shortie.Original);
+            Assert.AreEqual("No action taken", shortie.Error.ErrorMessage);
+        }
+
+        [Test]
+        public void SelectTokenSimple()
+        {
+            JObject o = JObject.Parse(@"{
+              'Stores': [
+                'Lambton Quay',
+                'Willis Street'
+              ],
+              'Manufacturers': [
+                {
+                  'Name': 'Acme Co',
+                  'Products': [
+                    {
+                      'Name': 'Anvil',
+                      'Price': 50
+                    }
+                  ]
+                },
+                {
+                  'Name': 'Contoso',
+                  'Products': [
+                    {
+                      'Name': 'Elbow Grease',
+                      'Price': 99.95
+                    },
+                    {
+                      'Name': 'Headlight Fluid',
+                      'Price': 4
+                    }
+                  ]
+                }
+              ]
+            }");
+
+            #region SelectTokenSimple
+            string name = (string)o.SelectToken("Manufacturers[0].Name");
+            #endregion
+
+            Assert.AreEqual("Acme Co", name);
+        }
+
+        [Test]
+        public void SelectTokenComplex()
+        {
+            #region SelectTokenComplex
+            JObject o = JObject.Parse(@"{
+              'Stores': [
+                'Lambton Quay',
+                'Willis Street'
+              ],
+              'Manufacturers': [
+                {
+                  'Name': 'Acme Co',
+                  'Products': [
+                    {
+                      'Name': 'Anvil',
+                      'Price': 50
+                    }
+                  ]
+                },
+                {
+                  'Name': 'Contoso',
+                  'Products': [
+                    {
+                      'Name': 'Elbow Grease',
+                      'Price': 99.95
+                    },
+                    {
+                      'Name': 'Headlight Fluid',
+                      'Price': 4
+                    }
+                  ]
+                }
+              ]
+            }");
+
+            string name = (string)o.SelectToken("Manufacturers[0].Name");
+            // Acme Co
+
+            decimal productPrice = (decimal)o.SelectToken("Manufacturers[0].Products[0].Price");
+            // 50
+
+            string productName = (string)o.SelectToken("Manufacturers[1].Products[0].Name");
+            // Elbow Grease
+            #endregion
+
+            Assert.AreEqual("Acme Co", name);
+            Assert.AreEqual(50m, productPrice);
+            Assert.AreEqual("Elbow Grease", productName);
+        }
+
+        [Test]
+        public void SelectTokenLinq()
+        {
+            JObject o = JObject.Parse(@"{
+              'Stores': [
+                'Lambton Quay',
+                'Willis Street'
+              ],
+              'Manufacturers': [
+                {
+                  'Name': 'Acme Co',
+                  'Products': [
+                    {
+                      'Name': 'Anvil',
+                      'Price': 50
+                    }
+                  ]
+                },
+                {
+                  'Name': 'Contoso',
+                  'Products': [
+                    {
+                      'Name': 'Elbow Grease',
+                      'Price': 99.95
+                    },
+                    {
+                      'Name': 'Headlight Fluid',
+                      'Price': 4
+                    }
+                  ]
+                }
+              ]
+            }");
+
+            #region SelectTokenLinq
+            IList<string> storeNames = o.SelectToken("Stores").Select(s => (string)s).ToList();
+            // Lambton Quay
+            // Willis Street
+
+            IList<string> firstProductNames = o["Manufacturers"].Select(m => (string)m.SelectToken("Products[1].Name")).ToList();
+            // null
+            // Headlight Fluid
+
+            decimal totalPrice = o["Manufacturers"].Sum(m => (decimal)m.SelectToken("Products[0].Price"));
+            // 149.95
+            #endregion
+
+            Assert.AreEqual(2, storeNames.Count);
+            Assert.AreEqual(2, firstProductNames.Count);
+            Assert.AreEqual(149.95m, totalPrice);
+        }
+    }
+}
+
+#endif
