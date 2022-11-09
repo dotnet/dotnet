@@ -1,0 +1,1432 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>System.AddIn.Contract</name>
+  </assembly>
+  <members>
+    <member name="T:System.AddIn.Contract.IContract">
+      <summary>Represents the base interface for all contracts that are used for communication between components that are updated independently.</summary>
+    </member>
+    <member name="M:System.AddIn.Contract.IContract.AcquireLifetimeToken">
+      <summary>Specifies that the contract is accessible to a client until the client revokes the contract.</summary>
+      <returns>A value, also known as a lifetime token, that identifies the client that has acquired the contract.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.IContract.GetRemoteHashCode">
+      <summary>Returns a hash code for the <see cref="T:System.AddIn.Contract.IContract" />.</summary>
+      <returns>A hash code for the <see cref="T:System.AddIn.Contract.IContract" />.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.IContract.QueryContract(System.String)">
+      <summary>Returns a contract that is implemented by this contract.</summary>
+      <returns>An <see cref="T:System.AddIn.Contract.IContract" /> that represents a contract that a client is requesting from the current contract; null if the current contract does not support the contract that is requested.</returns>
+      <param name="contractIdentifier">A string that identifies the contract that is being requested.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.IContract.RemoteEquals(System.AddIn.Contract.IContract)">
+      <summary>Indicates whether the specified contract is equal to this <see cref="T:System.AddIn.Contract.IContract" />.</summary>
+      <returns>true if <paramref name="contract" /> is equal to this <see cref="T:System.AddIn.Contract.IContract" />; otherwise, false.</returns>
+      <param name="contract">The contract to compare with this <see cref="T:System.AddIn.Contract.IContract" />.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.IContract.RemoteToString">
+      <summary>Returns a string representation of the current <see cref="T:System.AddIn.Contract.IContract" />.</summary>
+      <returns>A string representation of the current <see cref="T:System.AddIn.Contract.IContract" />.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.IContract.RevokeLifetimeToken(System.Int32)">
+      <summary>Specifies that the contract is no longer accessible to a client.</summary>
+      <param name="token">A value, also known as a lifetime token, that identifies the client that is revoking the contract.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.AddIn.Contract.IEnumeratorContract`1">
+      <summary>Enumerates the elements in an <see cref="T:System.AddIn.Contract.IListContract`1" /> collection.</summary>
+      <typeparam name="T">The type of objects being enumerated. </typeparam>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.IEnumeratorContract`1.GetCurrent">
+      <summary>Returns the object in the collection at the current position of the enumerator.</summary>
+      <returns>The <see cref="T:System.AddIn.Contract.IContract" /> in the collection at the current position of the enumerator.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.IEnumeratorContract`1.MoveNext">
+      <summary>Advances the enumerator to the next element of the collection.</summary>
+      <returns>true if the enumerator was successfully advanced to the next element; false if the enumerator has passed the end of the collection.</returns>
+      <exception cref="T:System.InvalidOperationException">The collection was modified after the enumerator was created. </exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.IEnumeratorContract`1.Reset">
+      <summary>Sets the enumerator to its initial position, which is before the first element in the collection.</summary>
+      <exception cref="T:System.InvalidOperationException">The collection was modified after the enumerator was created. </exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.AddIn.Contract.IExecutorExtensionContract">
+      <summary>Defines an interface that host applications can implement to extend add-in executors.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.IExecutorExtensionContract.AssemblyLoaded(System.String)">
+      <summary>Called after an add-in executor loads an add-in assembly.</summary>
+      <param name="assemblyName">The name of the assembly that was loaded.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.IExecutorExtensionContract.AssemblyLoadedFrom(System.String)">
+      <summary>Called after an add-in executor loads an add-in assembly from a specified location.</summary>
+      <param name="assemblyFile">The name of the assembly that was loaded.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.IExecutorExtensionContract.AssemblyLoading(System.String)">
+      <summary>Called just before an add-in executor loads an add-in assembly.</summary>
+      <param name="assemblyName">The name of the assembly to be loaded.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.IExecutorExtensionContract.AssemblyLoadingFrom(System.String)">
+      <summary>Called just before an add-in executor loads an add-in assembly from a specified location.</summary>
+      <param name="assemblyFile">The name of the assembly to be loaded.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.IExecutorExtensionContract.EntryPointStarted(System.AddIn.Contract.IContract)">
+      <summary>Called after an add-in executor instantiates the entry point of an add-in assembly.</summary>
+      <param name="entryPoint">An <see cref="T:System.AddIn.Contract.IContract" /> that represents the entry point that was instantiated.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.IExecutorExtensionContract.EntryPointStarting(System.String,System.String,System.AddIn.Contract.Collections.IRemoteArgumentArrayContract)">
+      <summary>Called just before an add-in executor instantiates the entry point in an add-in assembly.</summary>
+      <param name="assemblyName">The name of the add-in assembly.</param>
+      <param name="startupClass">The name of the class that is the entry point for the add-in assembly.</param>
+      <param name="initArgs">An <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentArrayContract" /> that contains the arguments that will be passed to the constructor for <paramref name="startupClass" />.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.IExecutorExtensionContract.ExecutorCreated">
+      <summary>Called after an add-in loader creates a new add-in executor.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.AddIn.Contract.IListContract`1">
+      <summary>Represents a generic list of types that are defined by a contract and are used to pass collections of that contract type between a host and an add-in.</summary>
+      <typeparam name="T">The contract type of the objects in the list.</typeparam>
+    </member>
+    <member name="M:System.AddIn.Contract.IListContract`1.Add(`0)">
+      <summary>Adds an object to an <see cref="T:System.AddIn.Contract.IListContract`1" /> collection. </summary>
+      <param name="item">The object to add.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.IListContract`1.Clear">
+      <summary>Removes all objects from an <see cref="T:System.AddIn.Contract.IListContract`1" /> collection. </summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.IListContract`1.Contains(`0)">
+      <summary>Determines whether a specific item is in an <see cref="T:System.AddIn.Contract.IListContract`1" /> collection.</summary>
+      <returns>true if <paramref name="item" /> is in the collection; otherwise, false. </returns>
+      <param name="item">The object to look for in the collection.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.IListContract`1.GetCount">
+      <summary>Gets the number of items in an <see cref="T:System.AddIn.Contract.IListContract`1" /> collection.</summary>
+      <returns>The number of items in the collection.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.IListContract`1.GetEnumeratorContract">
+      <summary>Returns an enumerator that iterates through an <see cref="T:System.AddIn.Contract.IListContract`1" /> collection.</summary>
+      <returns>An <see cref="T:System.AddIn.Contract.IEnumeratorContract`1" /> enumerator to iterate through the collection.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.IListContract`1.GetIsReadOnly">
+      <summary>Determines whether an <see cref="T:System.AddIn.Contract.IListContract`1" /> collection is read-only.</summary>
+      <returns>true if the collection is read-only; otherwise, false. </returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.IListContract`1.GetItem(System.Int32)">
+      <summary>Returns the item at the specified index of an <see cref="T:System.AddIn.Contract.IListContract`1" /> collection.</summary>
+      <returns>The item at the specified index.</returns>
+      <param name="index">The zero-based index of the item to get.</param>
+      <exception cref="T:System.IndexOutOfRangeException">
+        <paramref name="index" /> is less than zero.-or-<paramref name="index" /> is equal to or greater than the return value of <see cref="M:System.AddIn.Contract.IListContract`1.GetCount" />.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.IListContract`1.IndexOf(`0)">
+      <summary>Returns the index of a specific item in an <see cref="T:System.AddIn.Contract.Collections.IListContract`1" /> collection.</summary>
+      <returns>The index of the specified item.</returns>
+      <param name="item">An item in the collection.</param>
+      <exception cref="T:System.IndexOutOfRangeException">
+        <paramref name="index" /> is less than zero.-or-<paramref name="index" /> is equal to or greater than the return value of the <see cref="M:System.AddIn.Contract.IListContract`1.GetCount" /> method.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.IListContract`1.Insert(System.Int32,`0)">
+      <summary>Inserts an item at the specified index in an <see cref="T:System.AddIn.Contract.IListContract`1" /> collection.</summary>
+      <param name="index">The zero-based index at which to insert <paramref name="item" />.</param>
+      <param name="item">The <see cref="T:System.AddIn.Contract.IContract" /> object to insert in the <see cref="T:System.AddIn.Contract.IListContract`1" /> collection.</param>
+      <exception cref="T:System.IndexOutOfRangeException">
+        <paramref name="index" /> is less than zero.-or-<paramref name="index" /> is equal to or greater than the return value of <see cref="M:System.AddIn.Contract.IListContract`1.GetCount" />.</exception>
+      <exception cref="T:System.NotSupportedException">The <see cref="T:System.AddIn.Contract.IListContract`1" /> collection is read-only.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.IListContract`1.Remove(`0)">
+      <summary>Removes an item from an <see cref="T:System.AddIn.Contract.IListContract`1" /> collection of a specified type.</summary>
+      <returns>true if an item is removed; otherwise, false. </returns>
+      <param name="item">The item to remove from the collection.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.IListContract`1.RemoveAt(System.Int32)">
+      <summary>Removes the item at the specified index in an <see cref="T:System.AddIn.Contract.IListContract`1" /> collection.</summary>
+      <param name="index">The index of the item to remove.</param>
+      <exception cref="T:System.IndexOutOfRangeException">
+        <paramref name="index" /> is less than zero.-or-<paramref name="index" /> is equal to or greater than the return value of the <see cref="M:System.AddIn.Contract.IListContract`1.GetCount" /> method.</exception>
+      <exception cref="T:System.NotSupportedException">The <see cref="T:System.AddIn.Contract.IListContract`1" /> collection is read-only.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.IListContract`1.SetItem(System.Int32,`0)">
+      <summary>Sets the item at the specified index in an <see cref="T:System.AddIn.Contract.IListContract`1" /> collection.</summary>
+      <param name="index">The zero-based index at which to set the item.</param>
+      <param name="item">The item to set at the specified index.</param>
+      <exception cref="T:System.IndexOutOfRangeException">
+        <paramref name="index" /> is less than zero.-or-<paramref name="index" /> is equal to or greater than the return value of the <see cref="M:System.AddIn.Contract.IListContract`1.GetCount" /> method.</exception>
+      <exception cref="T:System.NotSupportedException">The <see cref="T:System.AddIn.Contract.IListContract`1" /> collection is read-only.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.AddIn.Contract.INativeHandleContract">
+      <summary>Provides access to a window's handle (Hwnd) from native code. </summary>
+    </member>
+    <member name="M:System.AddIn.Contract.INativeHandleContract.GetHandle">
+      <summary>Obtains the window's handle (Hwnd).</summary>
+      <returns>An <see cref="T:System.IntPtr" /> object that represents a pointer to the window's handle.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.AddIn.Contract.IProfferServiceContract">
+      <summary>Enables clients to provide custom services to components on which the contract is implemented.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.IProfferServiceContract.ProfferService(System.String,System.AddIn.Contract.IServiceProviderContract)">
+      <summary>Adds a service to the set of services that can be accessed by clients of a component. </summary>
+      <param name="serviceIdentifier">A string that identifies the service being offered. </param>
+      <param name="service">An <see cref="T:System.AddIn.Contract.IServiceProviderContract" /> that implements the service being offered.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.IProfferServiceContract.RevokeService(System.String)">
+      <summary>Removes a service from the set of services offered by a component. </summary>
+      <param name="serviceIdentifier">A string that identifies the service being revoked.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.AddIn.Contract.ISerializableObjectContract">
+      <summary>Defines a contract that provides information about a serializable object.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.ISerializableObjectContract.GetCanonicalName">
+      <summary>Returns the canonical name of the type of the object that this <see cref="T:System.AddIn.Contract.ISerializableObjectContract" /> describes.</summary>
+      <returns>The canonical name of the type of the object that this <see cref="T:System.AddIn.Contract.ISerializableObjectContract" /> describes.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.ISerializableObjectContract.GetSerializableObjectData">
+      <summary>Returns data that can be used to help deserialize the object that this <see cref="T:System.AddIn.Contract.ISerializableObjectContract" /> describes.</summary>
+      <returns>A <see cref="T:System.AddIn.Contract.SerializableObjectData" /> that contains data about the object that this <see cref="T:System.AddIn.Contract.ISerializableObjectContract" /> describes.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.AddIn.Contract.IServiceProviderContract">
+      <summary>Defines a mechanism for retrieving a service contract from a component.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.IServiceProviderContract.QueryService(System.String,System.String)">
+      <summary>Returns a service contract that is implemented by this <see cref="T:System.AddIn.Contract.IServiceProviderContract" />.</summary>
+      <returns>An <see cref="T:System.AddIn.Contract.IContract" /> that represents a service contract that a client is requesting from the <see cref="T:System.AddIn.Contract.IServiceProviderContract" />; null if the <see cref="T:System.AddIn.Contract.IServiceProviderContract" /> does not implement the requested contract.</returns>
+      <param name="serviceIdentifier">The name of the service that is being requested.</param>
+      <param name="serviceContractIdentifier">The service contract that is being requested.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.AddIn.Contract.RemoteArgument">
+      <summary>Represents an instance of a type that can be passed across process and application domain boundaries.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.RemoteArgument.#ctor(System.AddIn.Contract.IContract)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> class that represents an <see cref="T:System.AddIn.Contract.IContract" /> argument.</summary>
+      <param name="value">An <see cref="T:System.AddIn.Contract.IContract" /> argument that can be passed across process or application domain boundaries.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.RemoteArgument.#ctor(System.AddIn.Contract.IContract,System.Boolean)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> class that represents an <see cref="T:System.AddIn.Contract.IContract" /> argument that can be passed by reference.</summary>
+      <param name="value">An <see cref="T:System.AddIn.Contract.IContract" /> argument that can be passed across process or application domain boundaries.</param>
+      <param name="isByRef">true if <paramref name="value" /> is an argument that is passed by reference; otherwise, false.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.RemoteArgument.#ctor(System.AddIn.Contract.RemoteArgumentKind,System.TypeCode)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> class using the specified <see cref="T:System.AddIn.Contract.RemoteArgumentKind" /> and <see cref="T:System.TypeCode" /> for an argument that is not passed by reference.</summary>
+      <param name="remoteArgKind">One of the <see cref="T:System.AddIn.Contract.RemoteArgumentKind" /> values that indicates whether the <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents an intrinsic type, an array of intrinsic types, an <see cref="T:System.AddIn.Contract.IContract" />, or the <see cref="F:System.Type.Missing" /> value.</param>
+      <param name="typeCode">A <see cref="T:System.TypeCode" /> that specifies the base type of the remote argument.</param>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="remoteArgKind" /> is <see cref="F:System.AddIn.Contract.RemoteArgumentKind.Intrinsic" /> or <see cref="F:System.AddIn.Contract.RemoteArgumentKind.IntrinsicArray" />, and <paramref name="typeCode" /> is <see cref="F:System.TypeCode.Object" /> or <see cref="F:System.TypeCode.Empty" />.-or-<paramref name="remoteArgKind" /> is <see cref="F:System.AddIn.Contract.RemoteArgumentKind.Missing" /> and <paramref name="typeCode" /> is not <see cref="F:System.TypeCode.Empty" />.-or-<paramref name="remoteArgKind" /> is <see cref="F:System.AddIn.Contract.RemoteArgumentKind.Contract" /> and <paramref name="typeCode" /> is not <see cref="F:System.TypeCode.Object" />.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.RemoteArgument.#ctor(System.AddIn.Contract.RemoteArgumentKind,System.TypeCode,System.Boolean)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> class using the specified <see cref="T:System.AddIn.Contract.RemoteArgumentKind" /> and <see cref="T:System.TypeCode" /> for an argument that can be passed by reference.</summary>
+      <param name="remoteArgKind">One of the <see cref="T:System.AddIn.Contract.RemoteArgumentKind" /> values that indicates whether the <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents an intrinsic type, an array of intrinsic types, an <see cref="T:System.AddIn.Contract.IContract" />, or the <see cref="F:System.Type.Missing" /> value.</param>
+      <param name="typeCode">A <see cref="T:System.TypeCode" /> that specifies the base type of the remote argument.</param>
+      <param name="isByRef">true if the remote argument is passed by reference; otherwise, false.</param>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="remoteArgKind" /> is <see cref="F:System.AddIn.Contract.RemoteArgumentKind.Intrinsic" /> or <see cref="F:System.AddIn.Contract.RemoteArgumentKind.IntrinsicArray" />, and <paramref name="typeCode" /> is <see cref="F:System.TypeCode.Object" /> or <see cref="F:System.TypeCode.Empty" />.-or-<paramref name="remoteArgKind" /> is <see cref="F:System.AddIn.Contract.RemoteArgumentKind.Missing" /> and <paramref name="typeCode" /> is not <see cref="F:System.TypeCode.Empty" />.-or-<paramref name="remoteArgKind" /> is <see cref="F:System.AddIn.Contract.RemoteArgumentKind.Contract" /> and <paramref name="typeCode" /> is not <see cref="F:System.TypeCode.Object" />.</exception>
+      <exception cref="T:System.InvalidOperationException">
+        <paramref name="remoteArgKind" /> is not a valid <see cref="T:System.AddIn.Contract.RemoteArgumentKind" /> value. </exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.RemoteArgument.#ctor(System.Array)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> class that represents an <see cref="T:System.Array" /> argument.</summary>
+      <param name="array">An <see cref="T:System.Array" /> argument that can be passed across process or application domain boundaries.</param>
+      <exception cref="T:System.ArgumentException">The array element type is not a base type (that is, the <see cref="M:System.Type.GetTypeCode(System.Type)" /> method for the array element type returns <see cref="F:System.TypeCode.Object" />).</exception>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="array" /> is null.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.RemoteArgument.#ctor(System.Array,System.Boolean)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> class that represents an <see cref="T:System.Array" /> argument that can be passed by reference.</summary>
+      <param name="array">An <see cref="T:System.Array" /> argument that can be passed across process or application domain boundaries.</param>
+      <param name="isByRef">true if <paramref name="array" /> is an argument that is passed by reference; otherwise, false.</param>
+      <exception cref="T:System.ArgumentException">The array element type is not a base type (that is, the <see cref="M:System.Type.GetTypeCode(System.Type)" /> method returns <see cref="F:System.TypeCode.Object" /> for the array element type).</exception>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="array" /> is null.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.RemoteArgument.#ctor(System.Boolean)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> class that represents a <see cref="T:System.Boolean" /> argument.</summary>
+      <param name="value">A <see cref="T:System.Boolean" /> argument that can be passed across process or application domain boundaries.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.RemoteArgument.#ctor(System.Boolean,System.Boolean)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> class that represents a <see cref="T:System.Boolean" /> argument that can be passed by reference.</summary>
+      <param name="value">A <see cref="T:System.Boolean" /> argument that can be passed across process or application domain boundaries.</param>
+      <param name="isByRef">true if <paramref name="value" /> is an argument that is passed by reference; otherwise, false.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.RemoteArgument.#ctor(System.Byte)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> class that represents a <see cref="T:System.Byte" /> argument.</summary>
+      <param name="value">A <see cref="T:System.Byte" /> argument that can be passed across process or application domain boundaries.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.RemoteArgument.#ctor(System.Byte,System.Boolean)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> class that represents a <see cref="T:System.Byte" /> argument that can be passed by reference.</summary>
+      <param name="value">A <see cref="T:System.Byte" /> argument that can be passed across process or application domain boundaries.</param>
+      <param name="isByRef">true if <paramref name="value" /> is an argument that is passed by reference; otherwise, false.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.RemoteArgument.#ctor(System.Char)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> class that represents a <see cref="T:System.Char" /> argument.</summary>
+      <param name="value">A <see cref="T:System.Char" /> argument that can be passed across process or application domain boundaries.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.RemoteArgument.#ctor(System.Char,System.Boolean)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> class that represents a <see cref="T:System.Char" /> argument that can be passed by reference.</summary>
+      <param name="value">A <see cref="T:System.Char" /> argument that can be passed across process or application domain boundaries.</param>
+      <param name="isByRef">true if <paramref name="value" /> is an argument that is passed by reference; otherwise, false.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.RemoteArgument.#ctor(System.DateTime)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> class that represents a <see cref="T:System.DateTime" /> argument.</summary>
+      <param name="value">A <see cref="T:System.DateTime" /> argument that can be passed across process or application domain boundaries.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.RemoteArgument.#ctor(System.DateTime,System.Boolean)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> class that represents a <see cref="T:System.DateTime" /> argument that can be passed by reference.</summary>
+      <param name="value">A <see cref="T:System.DateTime" /> argument that can be passed across process or application domain boundaries.</param>
+      <param name="isByRef">true if <paramref name="value" /> is an argument that is passed by reference; otherwise, false.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.RemoteArgument.#ctor(System.DBNull)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> class that represents a <see cref="T:System.DBNull" /> argument.</summary>
+      <param name="value">A <see cref="T:System.DBNull" /> argument that can be passed across process or application domain boundaries.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.RemoteArgument.#ctor(System.DBNull,System.Boolean)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> class that represents a <see cref="T:System.DBNull" /> argument that can be passed by reference.</summary>
+      <param name="value">A <see cref="T:System.DBNull" /> argument that can be passed across process or application domain boundaries.</param>
+      <param name="isByRef">true if <paramref name="value" /> is an argument that is passed by reference; otherwise, false.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.RemoteArgument.#ctor(System.Decimal)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> class that represents a <see cref="T:System.Decimal" /> argument.</summary>
+      <param name="value">A <see cref="T:System.Decimal" /> argument that can be passed across process or application domain boundaries.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.RemoteArgument.#ctor(System.Decimal,System.Boolean)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> class that represents a <see cref="T:System.Decimal" /> argument that can be passed by reference.</summary>
+      <param name="value">A <see cref="T:System.Decimal" /> argument that can be passed across process or application domain boundaries.</param>
+      <param name="isByRef">true if <paramref name="value" /> is an argument that is passed by reference; otherwise, false.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.RemoteArgument.#ctor(System.Double)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> class that represents a <see cref="T:System.Double" /> argument.</summary>
+      <param name="value">A <see cref="T:System.Double" /> argument that can be passed across process or application domain boundaries.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.RemoteArgument.#ctor(System.Double,System.Boolean)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> class that represents a <see cref="T:System.Double" /> argument that can be passed by reference.</summary>
+      <param name="value">A <see cref="T:System.Double" /> argument that can be passed across process or application domain boundaries.</param>
+      <param name="isByRef">true if <paramref name="value" /> is an argument that is passed by reference; otherwise, false.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.RemoteArgument.#ctor(System.Int16)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> class that represents an <see cref="T:System.Int16" /> argument.</summary>
+      <param name="value">An <see cref="T:System.Int16" /> argument that can be passed across process or application domain boundaries.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.RemoteArgument.#ctor(System.Int16,System.Boolean)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> class that represents an <see cref="T:System.Int16" /> argument that can be passed by reference.</summary>
+      <param name="value">An <see cref="T:System.Int16" /> argument that can be passed across process or application domain boundaries.</param>
+      <param name="isByRef">true if <paramref name="value" /> is an argument that is passed by reference; otherwise, false.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.RemoteArgument.#ctor(System.Int32)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> class that represents an <see cref="T:System.Int32" /> argument.</summary>
+      <param name="value">An <see cref="T:System.Int32" /> argument that can be passed across process or application domain boundaries.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.RemoteArgument.#ctor(System.Int32,System.Boolean)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> class that represents an <see cref="T:System.Int32" /> argument that can be passed by reference.</summary>
+      <param name="value">An <see cref="T:System.Int32" /> argument that can be passed across process or application domain boundaries.</param>
+      <param name="isByRef">true if <paramref name="value" /> is an argument that is passed by reference; otherwise, false.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.RemoteArgument.#ctor(System.Int64)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> class that represents an <see cref="T:System.Int64" /> argument.</summary>
+      <param name="value">An <see cref="T:System.Int64" /> argument that can be passed across process or application domain boundaries.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.RemoteArgument.#ctor(System.Int64,System.Boolean)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> class that represents an <see cref="T:System.Int64" /> argument that can be passed by reference.</summary>
+      <param name="value">An <see cref="T:System.Int64" /> argument that can be passed across process or application domain boundaries.</param>
+      <param name="isByRef">true if <paramref name="value" /> is an argument that is passed by reference; otherwise, false.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.RemoteArgument.#ctor(System.SByte)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> class that represents an <see cref="T:System.SByte" /> argument.</summary>
+      <param name="value">An <see cref="T:System.SByte" /> argument that can be passed across process or application domain boundaries.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.RemoteArgument.#ctor(System.SByte,System.Boolean)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> class that represents an <see cref="T:System.SByte" /> argument that can be passed by reference.</summary>
+      <param name="value">An <see cref="T:System.SByte" /> argument that can be passed across process or application domain boundaries.</param>
+      <param name="isByRef">true if <paramref name="value" /> is an argument that is passed by reference; otherwise, false.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.RemoteArgument.#ctor(System.Single)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> class that represents a <see cref="T:System.Single" /> argument.</summary>
+      <param name="value">A <see cref="T:System.Single" /> argument that can be passed across process or application domain boundaries.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.RemoteArgument.#ctor(System.Single,System.Boolean)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> class that represents a <see cref="T:System.Single" /> argument that can be passed by reference.</summary>
+      <param name="value">A <see cref="T:System.Single" /> argument that can be passed across process or application domain boundaries.</param>
+      <param name="isByRef">true if <paramref name="value" /> is an argument that is passed by reference; otherwise, false.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.RemoteArgument.#ctor(System.String)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> class that represents a <see cref="T:System.String" /> argument.</summary>
+      <param name="value">A <see cref="T:System.String" /> argument that can be passed across process or application domain boundaries.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.RemoteArgument.#ctor(System.String,System.Boolean)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> class that represents a <see cref="T:System.String" /> argument that can be passed by reference.</summary>
+      <param name="value">A <see cref="T:System.String" /> argument that can be passed across process or application domain boundaries.</param>
+      <param name="isByRef">true if <paramref name="value" /> is an argument that is passed by reference; otherwise, false.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.RemoteArgument.#ctor(System.UInt16)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> class that represents a <see cref="T:System.UInt16" /> argument.</summary>
+      <param name="value">A <see cref="T:System.UInt16" /> argument that can be passed across process or application domain boundaries.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.RemoteArgument.#ctor(System.UInt16,System.Boolean)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> class that represents a <see cref="T:System.UInt16" /> argument that can be passed by reference.</summary>
+      <param name="value">A <see cref="T:System.UInt16" /> argument that can be passed across process or application domain boundaries.</param>
+      <param name="isByRef">true if <paramref name="value" /> is an argument that is passed by reference; otherwise, false.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.RemoteArgument.#ctor(System.UInt32)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> class that represents a <see cref="T:System.UInt32" /> argument.</summary>
+      <param name="value">A <see cref="T:System.UInt32" /> argument that can be passed across process or application domain boundaries.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.RemoteArgument.#ctor(System.UInt32,System.Boolean)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> class that represents a <see cref="T:System.UInt32" /> argument that can be passed by reference.</summary>
+      <param name="value">A <see cref="T:System.UInt32" /> argument that can be passed across process or application domain boundaries.</param>
+      <param name="isByRef">true if <paramref name="value" /> is an argument that is passed by reference; otherwise, false.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.RemoteArgument.#ctor(System.UInt64)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> class that represents a <see cref="T:System.UInt64" /> argument.</summary>
+      <param name="value">A <see cref="T:System.UInt64" /> argument that can be passed across process or application domain boundaries.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.RemoteArgument.#ctor(System.UInt64,System.Boolean)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> class that represents a <see cref="T:System.UInt64" /> argument that can be passed by reference.</summary>
+      <param name="value">A <see cref="T:System.UInt64" /> argument that can be passed across process or application domain boundaries.</param>
+      <param name="isByRef">true if <paramref name="value" /> is an argument that is passed by reference; otherwise, false.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="P:System.AddIn.Contract.RemoteArgument.ArrayValue">
+      <summary>Gets or sets the <see cref="T:System.Array" /> that the <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents. </summary>
+      <returns>The <see cref="T:System.Array" /> that the <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents; null if the value of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> has not yet been specified.</returns>
+      <exception cref="T:System.InvalidOperationException">The <see cref="P:System.AddIn.Contract.RemoteArgument.RemoteArgumentKind" /> property is not set to the <see cref="F:System.AddIn.Contract.RemoteArgumentKind.IntrinsicArray" /> value.-or-The <see cref="P:System.AddIn.Contract.RemoteArgument.TypeCode" /> property is set to the <see cref="F:System.TypeCode.Object" /> value.-or-This property is set while the <see cref="P:System.AddIn.Contract.RemoteArgument.IsByRef" /> property is false.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="P:System.AddIn.Contract.RemoteArgument.BooleanValue">
+      <summary>Gets or sets the <see cref="T:System.Boolean" /> that the <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents. </summary>
+      <returns>The <see cref="T:System.Boolean" /> that the <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents; false if the value of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> has not yet been specified.</returns>
+      <exception cref="T:System.InvalidOperationException">The <see cref="P:System.AddIn.Contract.RemoteArgument.RemoteArgumentKind" /> property is not set to the <see cref="F:System.AddIn.Contract.RemoteArgumentKind.Intrinsic" /> value.-or-The <see cref="P:System.AddIn.Contract.RemoteArgument.TypeCode" /> property is not set to the <see cref="F:System.TypeCode.Boolean" /> value.-or-This property is set while the <see cref="P:System.AddIn.Contract.RemoteArgument.IsByRef" /> property is false.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="P:System.AddIn.Contract.RemoteArgument.ByteValue">
+      <summary>Gets or sets the <see cref="T:System.Byte" /> that the <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents. </summary>
+      <returns>The <see cref="T:System.Byte" /> that the <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents; 0 (zero) if the value of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> has not yet been specified.</returns>
+      <exception cref="T:System.InvalidOperationException">The <see cref="P:System.AddIn.Contract.RemoteArgument.RemoteArgumentKind" /> property is not set to the <see cref="F:System.AddIn.Contract.RemoteArgumentKind.Intrinsic" /> value.-or-The <see cref="P:System.AddIn.Contract.RemoteArgument.TypeCode" /> property is not set to the <see cref="F:System.TypeCode.Byte" /> value.-or-This property is set while the <see cref="P:System.AddIn.Contract.RemoteArgument.IsByRef" /> property is false.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="P:System.AddIn.Contract.RemoteArgument.CharValue">
+      <summary>Gets or sets the <see cref="T:System.Char" /> that the <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents. </summary>
+      <returns>The <see cref="T:System.Char" /> that the <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents; <see cref="F:System.Char.MinValue" /> if the value of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> has not yet been specified.</returns>
+      <exception cref="T:System.InvalidOperationException">The <see cref="P:System.AddIn.Contract.RemoteArgument.RemoteArgumentKind" /> property is not set to the <see cref="F:System.AddIn.Contract.RemoteArgumentKind.Intrinsic" /> value.-or-The <see cref="P:System.AddIn.Contract.RemoteArgument.TypeCode" /> property is not set to the <see cref="F:System.TypeCode.Char" /> value.-or-This property is set while the <see cref="P:System.AddIn.Contract.RemoteArgument.IsByRef" /> property is false.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="P:System.AddIn.Contract.RemoteArgument.ContractValue">
+      <summary>Gets or sets the <see cref="T:System.AddIn.Contract.IContract" /> that the <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents. </summary>
+      <returns>The <see cref="T:System.AddIn.Contract.IContract" /> that the <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents; null if the value of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> has not yet been specified.</returns>
+      <exception cref="T:System.InvalidOperationException">The <see cref="P:System.AddIn.Contract.RemoteArgument.RemoteArgumentKind" /> property is not set to the <see cref="F:System.AddIn.Contract.RemoteArgumentKind.Contract" /> value.-or-The <see cref="P:System.AddIn.Contract.RemoteArgument.TypeCode" /> property is not set to the <see cref="F:System.TypeCode.Object" /> value.-or-This property is set while the <see cref="P:System.AddIn.Contract.RemoteArgument.IsByRef" /> property is false.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.RemoteArgument.CreateRemoteArgument(System.Object)">
+      <summary>Creates a <see cref="T:System.AddIn.Contract.RemoteArgument" /> for an argument that is not passed by reference. </summary>
+      <returns>A <see cref="T:System.AddIn.Contract.RemoteArgument" /> that represents the specified argument.</returns>
+      <param name="value">The argument that will be passed across process or application domain boundaries.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="value" /> is null.</exception>
+      <exception cref="T:System.ArgumentException">The <see cref="T:System.TypeCode" /> of <paramref name="value" /> is <see cref="F:System.TypeCode.Object" /> and <paramref name="value" /> is not an <see cref="T:System.AddIn.Contract.IContract" />.-or-The <see cref="T:System.TypeCode" /> of <paramref name="value" /> is <see cref="F:System.TypeCode.Empty" /> and <paramref name="value" /> is not set to <see cref="F:System.Reflection.Missing.Value" />.-or-<paramref name="value" /> does not implement the <see cref="T:System.IConvertible" /> interface and <paramref name="value" /> is not an <see cref="T:System.Array" />.-or-<paramref name="value" /> is an <see cref="T:System.Array" /> that contains elements with a <see cref="T:System.TypeCode" /> value of <see cref="F:System.TypeCode.Object" />.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.RemoteArgument.CreateRemoteArgument(System.Object,System.Boolean)">
+      <summary>Creates a <see cref="T:System.AddIn.Contract.RemoteArgument" /> for an argument that can be passed by reference. </summary>
+      <returns>A <see cref="T:System.AddIn.Contract.RemoteArgument" /> that represents the specified argument.</returns>
+      <param name="value">The argument that will be passed across process or application domain boundaries.</param>
+      <param name="isByRef">true to pass the <paramref name="value" /> argument by reference; otherwise, false.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="value" /> is null.</exception>
+      <exception cref="T:System.ArgumentException">The <see cref="T:System.TypeCode" /> of <paramref name="value" /> is <see cref="F:System.TypeCode.Object" /> and <paramref name="value" /> is not an <see cref="T:System.AddIn.Contract.IContract" />.-or-The <see cref="T:System.TypeCode" /> of <paramref name="value" /> is <see cref="F:System.TypeCode.Empty" /> and <paramref name="value" /> is not set to <see cref="F:System.Reflection.Missing.Value" />.-or-<paramref name="value" /> does not implement the <see cref="T:System.IConvertible" /> interface and <paramref name="value" /> is not an <see cref="T:System.Array" />.-or-<paramref name="value" /> is an <see cref="T:System.Array" /> that contains elements with a <see cref="T:System.TypeCode" /> value of <see cref="F:System.TypeCode.Object" />.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.RemoteArgument.CreateRemoteArgument(System.Object,System.Boolean,System.TypeCode)">
+      <summary>Creates a <see cref="T:System.AddIn.Contract.RemoteArgument" /> for an argument that has the specified type code and that can be passed by reference.</summary>
+      <returns>A <see cref="T:System.AddIn.Contract.RemoteArgument" /> that represents the specified argument.</returns>
+      <param name="value">The argument that will be passed across process or application domain boundaries.</param>
+      <param name="isByRef">true to pass the argument by reference; otherwise, false.</param>
+      <param name="typeCodeToUse">A <see cref="T:System.TypeCode" /> that indicates the type code of <paramref name="value" />, if <paramref name="value" /> is not an <see cref="T:System.Array" />. Otherwise, a <see cref="T:System.TypeCode" /> that indicates the type code of the elements in <paramref name="value" />.</param>
+      <exception cref="T:System.ArgumentException">The <see cref="T:System.TypeCode" /> of <paramref name="value" /> is <see cref="F:System.TypeCode.Object" />, <paramref name="value" /> is not an <see cref="T:System.AddIn.Contract.IContract" />, and <paramref name="value" /> is not null.-or-The <see cref="T:System.TypeCode" /> of <paramref name="value" /> is <see cref="F:System.TypeCode.Empty" /> and <paramref name="value" /> is not <see cref="F:System.Reflection.Missing.Value" />.-or-<paramref name="value" /> does not implement the <see cref="T:System.IConvertible" /> interface, <paramref name="value" /> is not null, and <paramref name="value" /> is not an <see cref="T:System.Array" />. -or-<paramref name="value" /> is an <see cref="T:System.Array" /> that contains elements with a <see cref="T:System.TypeCode" /> value of <see cref="F:System.TypeCode.Object" />.</exception>
+      <exception cref="T:System.NotSupportedException">The <see cref="T:System.TypeCode" /> of <paramref name="value" /> is not <see cref="F:System.TypeCode.DBNull" /> and <paramref name="typeCodeToUse" /> is <see cref="F:System.TypeCode.DBNull" />.</exception>
+      <exception cref="T:System.InvalidOperationException">
+        <paramref name="typeCodeToUse" /> does not specify a valid <see cref="T:System.TypeCode" /> value.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="P:System.AddIn.Contract.RemoteArgument.DateTimeValue">
+      <summary>Gets or sets the <see cref="T:System.DateTime" /> that the <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents. </summary>
+      <returns>The <see cref="T:System.DateTime" /> that the <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents; <see cref="F:System.DateTime.MinValue" /> if the value of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> has not yet been specified.</returns>
+      <exception cref="T:System.InvalidOperationException">The <see cref="P:System.AddIn.Contract.RemoteArgument.RemoteArgumentKind" /> property is not set to the <see cref="F:System.AddIn.Contract.RemoteArgumentKind.Intrinsic" /> value.-or-The <see cref="P:System.AddIn.Contract.RemoteArgument.TypeCode" /> property is not set to the <see cref="F:System.TypeCode.DateTime" /> value.-or-This property is set while the <see cref="P:System.AddIn.Contract.RemoteArgument.IsByRef" /> property is false.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="P:System.AddIn.Contract.RemoteArgument.DBNullValue">
+      <summary>Gets or sets the <see cref="T:System.DBNull" /> that the <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents. </summary>
+      <returns>The <see cref="T:System.DBNull" /> that the <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents; null if the value of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> has not yet been specified.</returns>
+      <exception cref="T:System.InvalidOperationException">The <see cref="P:System.AddIn.Contract.RemoteArgument.RemoteArgumentKind" /> property is not set to the <see cref="F:System.AddIn.Contract.RemoteArgumentKind.Intrinsic" /> value.-or-The <see cref="P:System.AddIn.Contract.RemoteArgument.TypeCode" /> property is not set to the <see cref="F:System.TypeCode.DBNull" /> value.-or-This property is set while the <see cref="P:System.AddIn.Contract.RemoteArgument.IsByRef" /> property is false.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="P:System.AddIn.Contract.RemoteArgument.DecimalValue">
+      <summary>Gets or sets the <see cref="T:System.Decimal" /> that the <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents. </summary>
+      <returns>The <see cref="T:System.Decimal" /> that the <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents; 0 (zero) if the value of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> has not yet been specified.</returns>
+      <exception cref="T:System.InvalidOperationException">The <see cref="P:System.AddIn.Contract.RemoteArgument.RemoteArgumentKind" /> property is not set to the <see cref="F:System.AddIn.Contract.RemoteArgumentKind.Intrinsic" /> value.-or-The <see cref="P:System.AddIn.Contract.RemoteArgument.TypeCode" /> property is not set to the <see cref="F:System.TypeCode.Decimal" /> value.-or-This property is set while the <see cref="P:System.AddIn.Contract.RemoteArgument.IsByRef" /> property is false.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="P:System.AddIn.Contract.RemoteArgument.DoubleValue">
+      <summary>Gets or sets the <see cref="T:System.Double" /> that the <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents. </summary>
+      <returns>The <see cref="T:System.Double" /> that the <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents; 0.0 if the value of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> has not yet been specified.</returns>
+      <exception cref="T:System.InvalidOperationException">The <see cref="P:System.AddIn.Contract.RemoteArgument.RemoteArgumentKind" /> property is not set to the <see cref="F:System.AddIn.Contract.RemoteArgumentKind.Intrinsic" /> value.-or-The <see cref="P:System.AddIn.Contract.RemoteArgument.TypeCode" /> property is not set to the <see cref="F:System.TypeCode.Double" /> value.-or-This property is set while the <see cref="P:System.AddIn.Contract.RemoteArgument.IsByRef" /> property is false.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="P:System.AddIn.Contract.RemoteArgument.Int16Value">
+      <summary>Gets or sets the <see cref="T:System.Int16" /> that the <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents. </summary>
+      <returns>The <see cref="T:System.Int16" /> that the <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents; 0 (zero) if the value of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> has not yet been specified.</returns>
+      <exception cref="T:System.InvalidOperationException">The <see cref="P:System.AddIn.Contract.RemoteArgument.RemoteArgumentKind" /> property is not set to the <see cref="F:System.AddIn.Contract.RemoteArgumentKind.Intrinsic" /> value.-or-The <see cref="P:System.AddIn.Contract.RemoteArgument.TypeCode" /> property is not set to the <see cref="F:System.TypeCode.Int16" /> value.-or-This property is set while the <see cref="P:System.AddIn.Contract.RemoteArgument.IsByRef" /> property is false.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="P:System.AddIn.Contract.RemoteArgument.Int32Value">
+      <summary>Gets or sets the <see cref="T:System.Int32" /> that the <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents. </summary>
+      <returns>The <see cref="T:System.Int32" /> that the <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents; 0 (zero) if the value of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> has not yet been specified.</returns>
+      <exception cref="T:System.InvalidOperationException">The <see cref="P:System.AddIn.Contract.RemoteArgument.RemoteArgumentKind" /> property is not set to the <see cref="F:System.AddIn.Contract.RemoteArgumentKind.Intrinsic" /> value.-or-The <see cref="P:System.AddIn.Contract.RemoteArgument.TypeCode" /> property is not set to the <see cref="F:System.TypeCode.Int32" /> value.-or-This property is set while the <see cref="P:System.AddIn.Contract.RemoteArgument.IsByRef" /> property is false.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="P:System.AddIn.Contract.RemoteArgument.Int64Value">
+      <summary>Gets or sets the <see cref="T:System.Int64" /> that the <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents. </summary>
+      <returns>The <see cref="T:System.Int64" /> that the <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents; 0 (zero) if the value of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> has not yet been specified.</returns>
+      <exception cref="T:System.InvalidOperationException">The <see cref="P:System.AddIn.Contract.RemoteArgument.RemoteArgumentKind" /> property is not set to the <see cref="F:System.AddIn.Contract.RemoteArgumentKind.Intrinsic" /> value.-or-The <see cref="P:System.AddIn.Contract.RemoteArgument.TypeCode" /> property is not set to the <see cref="F:System.TypeCode.Int64" /> value.-or-This property is set while the <see cref="P:System.AddIn.Contract.RemoteArgument.IsByRef" /> property is false.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="P:System.AddIn.Contract.RemoteArgument.IsByRef">
+      <summary>Gets or sets a value that indicates whether the <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents an argument that is passed by reference.</summary>
+      <returns>true if the <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents an argument that is passed by reference; otherwise, false.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="P:System.AddIn.Contract.RemoteArgument.MissingValue">
+      <summary>Gets the <see cref="F:System.Type.Missing" /> value. </summary>
+      <returns>The <see cref="F:System.Type.Missing" /> value.</returns>
+      <exception cref="T:System.InvalidOperationException">The <see cref="P:System.AddIn.Contract.RemoteArgument.RemoteArgumentKind" /> property is not set to the <see cref="F:System.AddIn.Contract.RemoteArgumentKind.Intrinsic" /> value.-or-This property value is retrieved while the <see cref="P:System.AddIn.Contract.RemoteArgument.TypeCode" /> property is not set to the <see cref="F:System.TypeCode.Empty" /> value.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="P:System.AddIn.Contract.RemoteArgument.RemoteArgumentKind">
+      <summary>Gets a <see cref="T:System.AddIn.Contract.RemoteArgumentKind" /> that indicates the kind of argument that the <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents.</summary>
+      <returns>One of the <see cref="T:System.AddIn.Contract.RemoteArgumentKind" /> values that indicates whether the <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents an intrinsic type, an array of intrinsic types, an <see cref="T:System.AddIn.Contract.IContract" />, or the <see cref="F:System.Type.Missing" /> value.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="P:System.AddIn.Contract.RemoteArgument.SByteValue">
+      <summary>Gets or sets the <see cref="T:System.SByte" /> that the <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents. </summary>
+      <returns>The <see cref="T:System.SByte" /> that the <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents; 0 (zero) if the value of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> has not yet been specified.</returns>
+      <exception cref="T:System.InvalidOperationException">The <see cref="P:System.AddIn.Contract.RemoteArgument.RemoteArgumentKind" /> property is not set to the <see cref="F:System.AddIn.Contract.RemoteArgumentKind.Intrinsic" /> value.-or-The <see cref="P:System.AddIn.Contract.RemoteArgument.TypeCode" /> property is not set to the <see cref="F:System.TypeCode.SByte" /> value.-or-This property is set while the <see cref="P:System.AddIn.Contract.RemoteArgument.IsByRef" /> property is false.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="P:System.AddIn.Contract.RemoteArgument.SingleValue">
+      <summary>Gets or sets the <see cref="T:System.Single" /> that the <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents. </summary>
+      <returns>The <see cref="T:System.Single" /> that the <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents; 0.0 if the value of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> has not yet been specified.</returns>
+      <exception cref="T:System.InvalidOperationException">The <see cref="P:System.AddIn.Contract.RemoteArgument.RemoteArgumentKind" /> property is not set to the <see cref="F:System.AddIn.Contract.RemoteArgumentKind.Intrinsic" /> value.-or-The <see cref="P:System.AddIn.Contract.RemoteArgument.TypeCode" /> property is not set to the <see cref="F:System.TypeCode.Single" /> value.-or-This property is set while the <see cref="P:System.AddIn.Contract.RemoteArgument.IsByRef" /> property is false.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="P:System.AddIn.Contract.RemoteArgument.StringValue">
+      <summary>Gets or sets the <see cref="T:System.String" /> that the <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents. </summary>
+      <returns>The <see cref="T:System.String" /> that the <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents; null if the value of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> has not yet been specified.</returns>
+      <exception cref="T:System.InvalidOperationException">The <see cref="P:System.AddIn.Contract.RemoteArgument.RemoteArgumentKind" /> property is not set to the <see cref="F:System.AddIn.Contract.RemoteArgumentKind.Intrinsic" /> value.-or-The <see cref="P:System.AddIn.Contract.RemoteArgument.TypeCode" /> property is not set to the <see cref="F:System.TypeCode.String" /> value.-or-This property is set while the <see cref="P:System.AddIn.Contract.RemoteArgument.IsByRef" /> property is false.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="P:System.AddIn.Contract.RemoteArgument.TypeCode">
+      <summary>Gets a <see cref="T:System.TypeCode" /> that indicates the base type of the argument that the <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents.</summary>
+      <returns>A <see cref="T:System.TypeCode" /> that indicates the base type of the argument that the <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="P:System.AddIn.Contract.RemoteArgument.UInt16Value">
+      <summary>Gets or sets the <see cref="T:System.UInt16" /> that the <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents. </summary>
+      <returns>The <see cref="T:System.UInt16" /> that the <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents; 0 (zero) if the value of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> has not yet been specified.</returns>
+      <exception cref="T:System.InvalidOperationException">The <see cref="P:System.AddIn.Contract.RemoteArgument.RemoteArgumentKind" /> property is not set to the <see cref="F:System.AddIn.Contract.RemoteArgumentKind.Intrinsic" /> value.-or-The <see cref="P:System.AddIn.Contract.RemoteArgument.TypeCode" /> property is not set to the <see cref="F:System.TypeCode.UInt16" /> value.-or-This property is set while the <see cref="P:System.AddIn.Contract.RemoteArgument.IsByRef" /> property is false.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="P:System.AddIn.Contract.RemoteArgument.UInt32Value">
+      <summary>Gets or sets the <see cref="T:System.UInt32" /> that the <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents. </summary>
+      <returns>The <see cref="T:System.UInt32" /> that the <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents; 0 (zero) if the value of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> has not yet been specified.</returns>
+      <exception cref="T:System.InvalidOperationException">The <see cref="P:System.AddIn.Contract.RemoteArgument.RemoteArgumentKind" /> property is not set to the <see cref="F:System.AddIn.Contract.RemoteArgumentKind.Intrinsic" /> value.-or-The <see cref="P:System.AddIn.Contract.RemoteArgument.TypeCode" /> property is not set to the <see cref="F:System.TypeCode.UInt32" /> value.-or-This property is set while the <see cref="P:System.AddIn.Contract.RemoteArgument.IsByRef" /> property is false.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="P:System.AddIn.Contract.RemoteArgument.UInt64Value">
+      <summary>Gets or sets the <see cref="T:System.UInt64" /> that the <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents. </summary>
+      <returns>The <see cref="T:System.UInt64" /> that the <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents; 0 (zero) if the value of the <see cref="T:System.AddIn.Contract.RemoteArgument" /> has not yet been specified.</returns>
+      <exception cref="T:System.InvalidOperationException">The <see cref="P:System.AddIn.Contract.RemoteArgument.RemoteArgumentKind" /> property is not set to the <see cref="F:System.AddIn.Contract.RemoteArgumentKind.Intrinsic" /> value.-or-The <see cref="P:System.AddIn.Contract.RemoteArgument.TypeCode" /> property is not set to the <see cref="F:System.TypeCode.UInt64" /> value.-or-This property is set while the <see cref="P:System.AddIn.Contract.RemoteArgument.IsByRef" /> property is false.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.AddIn.Contract.RemoteArgumentKind">
+      <summary>Specifies the kind of argument that a <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="F:System.AddIn.Contract.RemoteArgumentKind.Missing">
+      <summary>The <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents the <see cref="F:System.Type.Missing" /> value. This is the default value for the <see cref="P:System.AddIn.Contract.RemoteArgument.RemoteArgumentKind" /> property.</summary>
+    </member>
+    <member name="F:System.AddIn.Contract.RemoteArgumentKind.Intrinsic">
+      <summary>The <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents an intrinsic data type.</summary>
+    </member>
+    <member name="F:System.AddIn.Contract.RemoteArgumentKind.IntrinsicArray">
+      <summary>The <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents an <see cref="T:System.Array" /> that contains elements of an intrinsic data type.</summary>
+    </member>
+    <member name="F:System.AddIn.Contract.RemoteArgumentKind.Contract">
+      <summary>The <see cref="T:System.AddIn.Contract.RemoteArgument" /> represents an <see cref="T:System.AddIn.Contract.IContract" />.</summary>
+    </member>
+    <member name="T:System.AddIn.Contract.SerializableObjectData">
+      <summary>Provides information about a serializable object. </summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="F:System.AddIn.Contract.SerializableObjectData.DimensionLengths">
+      <summary>Represents an array that contains the length of each of the dimensions of the serializable array that this <see cref="T:System.AddIn.Contract.SerializableObjectData" /> describes.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="F:System.AddIn.Contract.SerializableObjectData.DimensionLowerBounds">
+      <summary>Represents an array that contains the lower bound of each of the dimensions of the serializable array that this <see cref="T:System.AddIn.Contract.SerializableObjectData" /> describes.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="F:System.AddIn.Contract.SerializableObjectData.ElementIndexes">
+      <summary>Represents an array that contains the indexes of the parent array that contains the serializable object that this <see cref="T:System.AddIn.Contract.SerializableObjectData" /> describes.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="F:System.AddIn.Contract.SerializableObjectData.IsArray">
+      <summary>Indicates whether the <see cref="T:System.AddIn.Contract.SerializableObjectData" /> describes a serializable array.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="F:System.AddIn.Contract.SerializableObjectData.IsArrayElement">
+      <summary>Indicates whether the <see cref="T:System.AddIn.Contract.SerializableObjectData" /> describes an element in a serializable array.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="F:System.AddIn.Contract.SerializableObjectData.MemberName">
+      <summary>Represents the member name of the serializable object that this <see cref="T:System.AddIn.Contract.SerializableObjectData" /> describes.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="F:System.AddIn.Contract.SerializableObjectData.ObjectId">
+      <summary>Represents the ID of the serializable object that this <see cref="T:System.AddIn.Contract.SerializableObjectData" /> describes.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="F:System.AddIn.Contract.SerializableObjectData.ParentId">
+      <summary>Represents the ID of the parent of the serializable object that this <see cref="T:System.AddIn.Contract.SerializableObjectData" /> describes.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.AddIn.Contract.Automation.IRemoteDelegateContract">
+      <summary>Defines a contract that components can use to access a delegate across application domain and process boundaries.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Automation.IRemoteDelegateContract.InvokeDelegate(System.AddIn.Contract.Collections.IRemoteArgumentArrayContract)">
+      <summary>Invokes the delegate that this <see cref="T:System.AddIn.Contract.Automation.IRemoteDelegateContract" /> identifies.</summary>
+      <returns>A <see cref="T:System.AddIn.Contract.RemoteArgument" /> that specifies the return value of the invoked delegate.</returns>
+      <param name="args">An <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentArrayContract" /> that specifies the delegate parameters.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.AddIn.Contract.Automation.IRemoteEventInfoContract">
+      <summary>Defines a contract that components can use to access information about an event across application domain and process boundaries.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Automation.IRemoteEventInfoContract.GetAddMethod">
+      <summary>Returns the method that was used to add an event handler delegate to the event that this <see cref="T:System.AddIn.Contract.Automation.IRemoteEventInfoContract" /> identifies.</summary>
+      <returns>An <see cref="T:System.AddIn.Contract.Automation.IRemoteMethodInfoContract" /> that represents the method that was used to add an event handler delegate to the event that this <see cref="T:System.AddIn.Contract.Automation.IRemoteEventInfoContract" /> identifies.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Automation.IRemoteEventInfoContract.GetMemberData">
+      <summary>Returns information about the event that this <see cref="T:System.AddIn.Contract.Automation.IRemoteEventInfoContract" /> identifies.</summary>
+      <returns>A <see cref="T:System.AddIn.Contract.Automation.RemoteMemberData" /> that provides information about the event that this <see cref="T:System.AddIn.Contract.Automation.IRemoteEventInfoContract" /> identifies.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Automation.IRemoteEventInfoContract.GetRemoveMethod">
+      <summary>Returns the method that was used to remove an event handler delegate from the event that this <see cref="T:System.AddIn.Contract.Automation.IRemoteEventInfoContract" /> identifies.</summary>
+      <returns>An <see cref="T:System.AddIn.Contract.Automation.IRemoteMethodInfoContract" /> that represents the method that was used to remove an event handler delegate from the event that this <see cref="T:System.AddIn.Contract.Automation.IRemoteEventInfoContract" /> identifies.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.AddIn.Contract.Automation.IRemoteFieldInfoContract">
+      <summary>Defines a contract that components can use to access information about a field across application domain and process boundaries.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Automation.IRemoteFieldInfoContract.GetFieldData">
+      <summary>Returns information about the field that this <see cref="T:System.AddIn.Contract.Automation.IRemoteFieldInfoContract" /> identifies.</summary>
+      <returns>A <see cref="T:System.AddIn.Contract.Automation.RemoteFieldData" /> that provides information about the field that this <see cref="T:System.AddIn.Contract.Automation.IRemoteFieldInfoContract" /> identifies.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Automation.IRemoteFieldInfoContract.GetValue(System.AddIn.Contract.Automation.IRemoteObjectContract)">
+      <summary>Returns the value of the field that this <see cref="T:System.AddIn.Contract.Automation.IRemoteFieldInfoContract" /> identifies.</summary>
+      <returns>A <see cref="T:System.AddIn.Contract.RemoteArgument" /> that specifies the field value.</returns>
+      <param name="obj">The <see cref="T:System.AddIn.Contract.Automation.IRemoteObjectContract" /> that identifies the object that contains the field.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Automation.IRemoteFieldInfoContract.SetValue(System.AddIn.Contract.Automation.IRemoteObjectContract,System.AddIn.Contract.RemoteArgument,System.Int32)">
+      <summary>Sets the value of the field that this <see cref="T:System.AddIn.Contract.Automation.IRemoteFieldInfoContract" /> represents.</summary>
+      <param name="obj">The <see cref="T:System.AddIn.Contract.Automation.IRemoteObjectContract" /> that identifies the object that contains the field.</param>
+      <param name="value">A <see cref="T:System.AddIn.Contract.RemoteArgument" /> that specifies the field value.</param>
+      <param name="localeId">The locale ID that the field will use for any locale-specific type conversions.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.AddIn.Contract.Automation.IRemoteMethodInfoContract">
+      <summary>Defines a contract that components can use to access information about a method across application domain and process boundaries.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Automation.IRemoteMethodInfoContract.GetMethodData">
+      <summary>Returns information about the method that this <see cref="T:System.AddIn.Contract.Automation.IRemoteMethodInfoContract" /> identifies.</summary>
+      <returns>A <see cref="T:System.AddIn.Contract.Automation.RemoteMethodData" /> that provides information about the method that this <see cref="T:System.AddIn.Contract.Automation.IRemoteMethodInfoContract" /> identifies.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Automation.IRemoteMethodInfoContract.Invoke(System.AddIn.Contract.Automation.IRemoteObjectContract,System.Reflection.BindingFlags,System.AddIn.Contract.Collections.IRemoteArgumentArrayContract,System.Int32)">
+      <summary>Invokes the method that this <see cref="T:System.AddIn.Contract.Automation.IRemoteMethodInfoContract" /> identifies.</summary>
+      <returns>A <see cref="T:System.AddIn.Contract.RemoteArgument" /> that specifies the return value of the invoked method.</returns>
+      <param name="target">The <see cref="T:System.AddIn.Contract.Automation.IRemoteObjectContract" /> that identifies the object that contains the method to invoke.</param>
+      <param name="bindingFlags">A bitwise combination of the <see cref="T:System.Reflection.BindingFlags" /> values that specifies how to invoke the method.</param>
+      <param name="parameters">An <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentArrayContract" /> that specifies the method parameters; null if the method does not have any parameters.</param>
+      <param name="localeId">The locale ID that the method will use for any locale-specific type conversions of the arguments or return value.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.AddIn.Contract.Automation.IRemoteObjectContract">
+      <summary>Defines a contract that components can use to access an object across application domain and process boundaries.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Automation.IRemoteObjectContract.GetRemoteType">
+      <summary>Returns an <see cref="T:System.AddIn.Contract.Automation.IRemoteTypeContract" /> that specifies the type of the current <see cref="T:System.AddIn.Contract.Automation.IRemoteObjectContract" />.</summary>
+      <returns>An <see cref="T:System.AddIn.Contract.Automation.IRemoteTypeContract" /> that specifies the type of the current <see cref="T:System.AddIn.Contract.Automation.IRemoteObjectContract" />.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Automation.IRemoteObjectContract.RemoteCast(System.String)">
+      <summary>Casts the object identified by the current <see cref="T:System.AddIn.Contract.Automation.IRemoteObjectContract" /> to a specified type. </summary>
+      <returns>A <see cref="T:System.AddIn.Contract.RemoteArgument" /> that represents the result of the cast operation.</returns>
+      <param name="canonicalName">The canonical name of the type to cast the object to.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.AddIn.Contract.Automation.IRemotePropertyInfoContract">
+      <summary>Defines a contract that components can use to access information about a property across application domain and process boundaries.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Automation.IRemotePropertyInfoContract.GetGetMethod">
+      <summary>Returns the get accessor of the property that this <see cref="T:System.AddIn.Contract.Automation.IRemotePropertyInfoContract" /> identifies.</summary>
+      <returns>An <see cref="T:System.AddIn.Contract.Automation.IRemoteMethodInfoContract" /> that represents the get accessor of the property that this <see cref="T:System.AddIn.Contract.Automation.IRemotePropertyInfoContract" /> identifies; null if the property does not have a get accessor.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Automation.IRemotePropertyInfoContract.GetPropertyData">
+      <summary>Returns information about the property that this <see cref="T:System.AddIn.Contract.Automation.IRemotePropertyInfoContract" /> identifies.</summary>
+      <returns>A <see cref="T:System.AddIn.Contract.Automation.RemotePropertyData" /> that provides information about the property that this <see cref="T:System.AddIn.Contract.Automation.IRemotePropertyInfoContract" /> identifies.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Automation.IRemotePropertyInfoContract.GetSetMethod">
+      <summary>Returns the set accessor of the property that this <see cref="T:System.AddIn.Contract.Automation.IRemotePropertyInfoContract" /> identifies.</summary>
+      <returns>An <see cref="T:System.AddIn.Contract.Automation.IRemoteMethodInfoContract" /> that represents the set accessor of the property that this <see cref="T:System.AddIn.Contract.Automation.IRemotePropertyInfoContract" /> identifies; null if the property does not have a set accessor.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Automation.IRemotePropertyInfoContract.GetValue(System.AddIn.Contract.Automation.IRemoteObjectContract,System.Reflection.BindingFlags,System.AddIn.Contract.Collections.IRemoteArgumentArrayContract,System.Int32)">
+      <summary>Returns the value of the property that this <see cref="T:System.AddIn.Contract.Automation.IRemotePropertyInfoContract" /> identifies.</summary>
+      <returns>A <see cref="T:System.AddIn.Contract.RemoteArgument" /> that specifies the property value.</returns>
+      <param name="obj">The <see cref="T:System.AddIn.Contract.Automation.IRemoteObjectContract" /> that identifies the object that contains the property.</param>
+      <param name="bindingFlags">A bitwise combination of the <see cref="T:System.Reflection.BindingFlags" /> values that specifies how to invoke the property.</param>
+      <param name="index">An <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentArrayContract" />  that specifies the index values for an indexed property; null if the property is not indexed.</param>
+      <param name="localeId">A locale ID to use for locale-specific conversions that are performed by the property.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Automation.IRemotePropertyInfoContract.SetValue(System.AddIn.Contract.Automation.IRemoteObjectContract,System.AddIn.Contract.RemoteArgument@,System.Reflection.BindingFlags,System.AddIn.Contract.Collections.IRemoteArgumentArrayContract,System.Int32)">
+      <summary>Sets the value of the property that this <see cref="T:System.AddIn.Contract.Automation.IRemotePropertyInfoContract" /> identifies.</summary>
+      <param name="target">The <see cref="T:System.AddIn.Contract.Automation.IRemoteObjectContract" /> that identifies the object that contains the property.</param>
+      <param name="value">A <see cref="T:System.AddIn.Contract.RemoteArgument" /> that specifies the property value.</param>
+      <param name="bindingFlags">A bitwise combination of the <see cref="T:System.Reflection.BindingFlags" /> values that specifies how to invoke the property.</param>
+      <param name="index">An <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentArrayContract" /> that specifies the index values for an indexed property; null if the property is not indexed.</param>
+      <param name="localeId">The locale ID that the property will use for any locale-specific type conversions.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.AddIn.Contract.Automation.IRemoteTypeContract">
+      <summary>Defines a contract that components can use to access type information and invoke members across application domain and process boundaries.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Automation.IRemoteTypeContract.GetCanonicalName">
+      <summary>Returns the canonical name of the current <see cref="T:System.AddIn.Contract.Automation.IRemoteTypeContract" />.</summary>
+      <returns>The canonical name of the current <see cref="T:System.AddIn.Contract.Automation.IRemoteTypeContract" />.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Automation.IRemoteTypeContract.GetEvent(System.String,System.Reflection.BindingFlags)">
+      <summary>Returns an <see cref="T:System.AddIn.Contract.Automation.IRemoteEventInfoContract" /> that provides access to a specified event of the current <see cref="T:System.AddIn.Contract.Automation.IRemoteTypeContract" />.</summary>
+      <returns>An <see cref="T:System.AddIn.Contract.Automation.IRemoteEventInfoContract" /> that provides access to the specified event, if found; otherwise, null.</returns>
+      <param name="name">The name of an event of the current <see cref="T:System.AddIn.Contract.Automation.IRemoteTypeContract" />.</param>
+      <param name="bindingFlags">A bitwise combination of the <see cref="T:System.Reflection.BindingFlags" /> values that specifies how to search for the event.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Automation.IRemoteTypeContract.GetEvents(System.Reflection.BindingFlags)">
+      <summary>Returns a collection of <see cref="T:System.AddIn.Contract.Automation.IRemoteEventInfoContract" /> objects that provides access to the specified events of the current <see cref="T:System.AddIn.Contract.Automation.IRemoteTypeContract" />.</summary>
+      <returns>An <see cref="T:System.AddIn.Contract.Collections.IArrayContract`1" /> of <see cref="T:System.AddIn.Contract.Automation.IRemoteEventInfoContract" /> objects that provides access to the events that match the specified binding constraints; otherwise, an empty <see cref="T:System.AddIn.Contract.Collections.IArrayContract`1" />.</returns>
+      <param name="bindingFlags">A bitwise combination of the <see cref="T:System.Reflection.BindingFlags" /> values that specifies how to search for the events.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Automation.IRemoteTypeContract.GetField(System.String,System.Reflection.BindingFlags)">
+      <summary>Returns an <see cref="T:System.AddIn.Contract.Automation.IRemoteFieldInfoContract" /> that provides access to a specified field of the current <see cref="T:System.AddIn.Contract.Automation.IRemoteTypeContract" />.</summary>
+      <returns>An <see cref="T:System.AddIn.Contract.Automation.IRemoteFieldInfoContract" /> that provides access to the specified field, if found; otherwise, null.</returns>
+      <param name="name">The name of a field of the current <see cref="T:System.AddIn.Contract.Automation.IRemoteTypeContract" />.</param>
+      <param name="bindingFlags">A bitwise combination of the <see cref="T:System.Reflection.BindingFlags" /> values that specifies how to search for the field.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Automation.IRemoteTypeContract.GetFields(System.Reflection.BindingFlags)">
+      <summary>Returns a collection of <see cref="T:System.AddIn.Contract.Automation.IRemoteFieldInfoContract" /> objects that provides access to the specified fields of the current <see cref="T:System.AddIn.Contract.Automation.IRemoteTypeContract" />.</summary>
+      <returns>An <see cref="T:System.AddIn.Contract.Collections.IArrayContract`1" /> of <see cref="T:System.AddIn.Contract.Automation.IRemoteFieldInfoContract" /> objects that provides access to the fields that match the specified binding constraints; otherwise, an empty <see cref="T:System.AddIn.Contract.Collections.IArrayContract`1" />.</returns>
+      <param name="bindingFlags">A bitwise combination of the <see cref="T:System.Reflection.BindingFlags" /> values that specifies how to search for the fields.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Automation.IRemoteTypeContract.GetInterface(System.String)">
+      <summary>Returns an interface that is implemented by the current <see cref="T:System.AddIn.Contract.Automation.IRemoteTypeContract" />.</summary>
+      <returns>An <see cref="T:System.AddIn.Contract.Automation.IRemoteTypeContract" /> that represents the interface with the specified canonical name that this <see cref="T:System.AddIn.Contract.Automation.IRemoteTypeContract" /> implements. null if this <see cref="T:System.AddIn.Contract.Automation.IRemoteTypeContract" /> does not implement an interface with the specified canonical name.</returns>
+      <param name="canonicalName">The canonical name of an interface that is implemented by the current <see cref="T:System.AddIn.Contract.Automation.IRemoteTypeContract" />.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Automation.IRemoteTypeContract.GetInterfaces">
+      <summary>Returns the interfaces that are implemented by the current <see cref="T:System.AddIn.Contract.Automation.IRemoteTypeContract" />.</summary>
+      <returns>An <see cref="T:System.AddIn.Contract.Collections.IArrayContract`1" /> of <see cref="T:System.AddIn.Contract.Automation.IRemoteTypeContract" /> objects that represent all the interfaces that are implemented by the current <see cref="T:System.AddIn.Contract.Automation.IRemoteTypeContract" />.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Automation.IRemoteTypeContract.GetMember(System.String,System.Reflection.MemberTypes,System.Reflection.BindingFlags)">
+      <summary>Returns a collection of <see cref="T:System.AddIn.Contract.IContract" /> objects that provides access to all the specified members of the specified member type in the current <see cref="T:System.AddIn.Contract.Automation.IRemoteTypeContract" />, using the specified binding constraints.</summary>
+      <returns>An <see cref="T:System.AddIn.Contract.Collections.IArrayContract`1" /> of <see cref="T:System.AddIn.Contract.IContract" /> objects that represent the members of the current <see cref="T:System.AddIn.Contract.Automation.IRemoteTypeContract" /> that have the specified name and that meet the criteria specified by the <paramref name="memberTypes" /> and <paramref name="bindingFlags" /> parameters.</returns>
+      <param name="name">The name of a member of the current <see cref="T:System.AddIn.Contract.Automation.IRemoteTypeContract" />. The name can represent multiple members that have the same name.</param>
+      <param name="memberTypes">A bitwise combination of the <see cref="T:System.Reflection.MemberTypes" /> values that specifies the members to search for.</param>
+      <param name="bindingFlags">A bitwise combination of the <see cref="T:System.Reflection.BindingFlags" /> values that specifies how to search for the members.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Automation.IRemoteTypeContract.GetMembers(System.Reflection.BindingFlags)">
+      <summary>Returns a collection of <see cref="T:System.AddIn.Contract.IContract" /> objects that provides access to all the members in the current <see cref="T:System.AddIn.Contract.Automation.IRemoteTypeContract" /> that match the specified binding constraints.</summary>
+      <returns>An <see cref="T:System.AddIn.Contract.Collections.IArrayContract`1" /> of <see cref="T:System.AddIn.Contract.IContract" /> objects that provides access to the members of the current <see cref="T:System.AddIn.Contract.Automation.IRemoteTypeContract" /> that meet the specified binding constraints.</returns>
+      <param name="bindingFlags">A bitwise combination of the <see cref="T:System.Reflection.BindingFlags" /> values that specifies how to search for the members.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Automation.IRemoteTypeContract.GetMethod(System.String,System.Reflection.BindingFlags,System.AddIn.Contract.Collections.IArrayContract{System.AddIn.Contract.Automation.IRemoteTypeContract})">
+      <summary>Returns an <see cref="T:System.AddIn.Contract.Automation.IRemoteMethodInfoContract" /> that provides access to a specified method of the current <see cref="T:System.AddIn.Contract.Automation.IRemoteTypeContract" />.</summary>
+      <returns>An <see cref="T:System.AddIn.Contract.Automation.IRemoteMethodInfoContract" /> that provides access to the specified method, if found; otherwise, null.</returns>
+      <param name="name">The name of a method of the current <see cref="T:System.AddIn.Contract.Automation.IRemoteTypeContract" />.</param>
+      <param name="bindingFlags">A bitwise combination of the <see cref="T:System.Reflection.BindingFlags" /> values that specifies how to search for the method.</param>
+      <param name="remoteTypes">An <see cref="T:System.AddIn.Contract.Collections.IArrayContract`1" /> of <see cref="T:System.AddIn.Contract.Automation.IRemoteTypeContract" /> objects that represent the number, order, and type of the parameters for the method to get.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Automation.IRemoteTypeContract.GetMethods(System.Reflection.BindingFlags)">
+      <summary>Returns a collection of <see cref="T:System.AddIn.Contract.Automation.IRemoteMethodInfoContract" /> objects that provides access to the specified methods of the current <see cref="T:System.AddIn.Contract.Automation.IRemoteTypeContract" />.</summary>
+      <returns>An <see cref="T:System.AddIn.Contract.Collections.IArrayContract`1" /> of <see cref="T:System.AddIn.Contract.Automation.IRemoteMethodInfoContract" /> objects that provides access to the methods that match the specified binding constraints.</returns>
+      <param name="bindingFlags">A bitwise combination of the <see cref="T:System.Reflection.BindingFlags" /> values that specifies how to search for the methods.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Automation.IRemoteTypeContract.GetProperties(System.Reflection.BindingFlags)">
+      <summary>Returns a collection of <see cref="T:System.AddIn.Contract.Automation.IRemotePropertyInfoContract" /> objects that provides access to the specified properties of the current <see cref="T:System.AddIn.Contract.Automation.IRemoteTypeContract" />.</summary>
+      <returns>An <see cref="T:System.AddIn.Contract.Collections.IArrayContract`1" /> of <see cref="T:System.AddIn.Contract.Automation.IRemotePropertyInfoContract" /> objects that provides access to the properties that match the specified binding constraints.</returns>
+      <param name="bindingFlags">A bitwise combination of the <see cref="T:System.Reflection.BindingFlags" /> values that specifies how to search for the properties.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Automation.IRemoteTypeContract.GetProperty(System.String,System.Reflection.BindingFlags,System.AddIn.Contract.Automation.IRemoteTypeContract,System.AddIn.Contract.Collections.IArrayContract{System.AddIn.Contract.Automation.IRemoteTypeContract})">
+      <summary>Returns an <see cref="T:System.AddIn.Contract.Automation.IRemotePropertyInfoContract" /> that provides access to a specified property of the current <see cref="T:System.AddIn.Contract.Automation.IRemoteTypeContract" />.</summary>
+      <returns>An <see cref="T:System.AddIn.Contract.Automation.IRemotePropertyInfoContract" /> that provides access to the specified property, if found; otherwise, null.</returns>
+      <param name="name">The name of a property of the current <see cref="T:System.AddIn.Contract.Automation.IRemoteTypeContract" />.</param>
+      <param name="bindingFlags">A bitwise combination of the <see cref="T:System.Reflection.BindingFlags" /> values that specifies how to search for the method.</param>
+      <param name="remoteReturnType">An <see cref="T:System.AddIn.Contract.Automation.IRemoteTypeContract" /> that specifies the return type of the property.</param>
+      <param name="remoteTypes">An <see cref="T:System.AddIn.Contract.Collections.IArrayContract`1" /> of <see cref="T:System.AddIn.Contract.Automation.IRemoteTypeContract" /> objects that represent the parameters for the specified property.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Automation.IRemoteTypeContract.GetTypeData">
+      <summary>Returns type information about the object that the current <see cref="T:System.AddIn.Contract.Automation.IRemoteTypeContract" /> identifies.</summary>
+      <returns>A <see cref="T:System.AddIn.Contract.Automation.RemoteTypeData" /> that contains information about the object that the current <see cref="T:System.AddIn.Contract.Automation.IRemoteTypeContract" /> identifies.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Automation.IRemoteTypeContract.InvokeMember(System.String,System.Reflection.BindingFlags,System.AddIn.Contract.Automation.IRemoteObjectContract,System.AddIn.Contract.Collections.IRemoteArgumentArrayContract,System.Boolean[],System.Int32)">
+      <summary>Invokes the specified member of the current <see cref="T:System.AddIn.Contract.Automation.IRemoteTypeContract" />.</summary>
+      <returns>A <see cref="T:System.AddIn.Contract.RemoteArgument" /> that represents the return value of the invoked member.</returns>
+      <param name="name">The name of the member to invoke.</param>
+      <param name="bindingFlags">A bitwise combination of the <see cref="T:System.Reflection.BindingFlags" /> values that specifies how to search for the member.</param>
+      <param name="target">The <see cref="T:System.AddIn.Contract.Automation.IRemoteObjectContract" /> on which to invoke the specified member.</param>
+      <param name="remoteArgs">An <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentArrayContract" /> that contains the arguments to pass to the member to invoke.</param>
+      <param name="remoteArgModifiers">An array of Boolean values that indicate whether each of the <paramref name="remoteArgs" /> values is passed by reference. </param>
+      <param name="localeId">A locale ID to use for locale-specific conversions that might be performed by the member being invoked.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.AddIn.Contract.Automation.RemoteFieldData">
+      <summary>Provides information about a field of a type that components can access across application domain and process boundaries.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="F:System.AddIn.Contract.Automation.RemoteFieldData.Attributes">
+      <summary>Represents the attributes of the field that this <see cref="T:System.AddIn.Contract.Automation.RemoteFieldData" /> describes.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="F:System.AddIn.Contract.Automation.RemoteFieldData.FieldType">
+      <summary>Represents the type of the value of the field that this <see cref="T:System.AddIn.Contract.Automation.RemoteFieldData" /> describes.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="F:System.AddIn.Contract.Automation.RemoteFieldData.MemberData">
+      <summary>Represents member data for the field that this <see cref="T:System.AddIn.Contract.Automation.RemoteFieldData" /> describes.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.AddIn.Contract.Automation.RemoteMemberData">
+      <summary>Provides information about a member of a type that components can access across application domain and process boundaries.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="F:System.AddIn.Contract.Automation.RemoteMemberData.DeclaringType">
+      <summary>Represents the type that declares the member that this <see cref="T:System.AddIn.Contract.Automation.RemoteMemberData" /> describes.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="F:System.AddIn.Contract.Automation.RemoteMemberData.Name">
+      <summary>Represents the name of the member that this <see cref="T:System.AddIn.Contract.Automation.RemoteMemberData" /> describes.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.AddIn.Contract.Automation.RemoteMethodData">
+      <summary>Provides information about a method of a type that components can access across application domain and process boundaries.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="F:System.AddIn.Contract.Automation.RemoteMethodData.Attributes">
+      <summary>Represents the attributes of the method that this <see cref="T:System.AddIn.Contract.Automation.RemoteMethodData" /> describes.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="F:System.AddIn.Contract.Automation.RemoteMethodData.MemberData">
+      <summary>Represents member data for the method that this <see cref="T:System.AddIn.Contract.Automation.RemoteMethodData" /> describes.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="F:System.AddIn.Contract.Automation.RemoteMethodData.Parameters">
+      <summary>Represents information about the parameters of the method that this <see cref="T:System.AddIn.Contract.Automation.RemoteMethodData" /> describes.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="F:System.AddIn.Contract.Automation.RemoteMethodData.ReturnParameter">
+      <summary>Represents information about the return value of the method that this <see cref="T:System.AddIn.Contract.Automation.RemoteMethodData" /> describes.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.AddIn.Contract.Automation.RemoteParameterData">
+      <summary>Provides information about a parameter or return value of a method that belongs to a type that components can access across application domain and process boundaries.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="F:System.AddIn.Contract.Automation.RemoteParameterData.Attributes">
+      <summary>Represents the attributes of the method parameter that this <see cref="T:System.AddIn.Contract.Automation.RemoteParameterData" /> describes.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="F:System.AddIn.Contract.Automation.RemoteParameterData.DefaultValue">
+      <summary>Represents the default value of the method parameter that this <see cref="T:System.AddIn.Contract.Automation.RemoteParameterData" /> describes.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="F:System.AddIn.Contract.Automation.RemoteParameterData.IsByRef">
+      <summary>Indicates whether this <see cref="T:System.AddIn.Contract.Automation.RemoteParameterData" /> describes a method parameter that is passed by reference.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="F:System.AddIn.Contract.Automation.RemoteParameterData.IsParameterArray">
+      <summary>Indicates whether this <see cref="T:System.AddIn.Contract.Automation.RemoteParameterData" /> describes a method parameter that can have a variable number of arguments.</summary>
+      <returns>true if the data is a parameter array; otherwise, false. </returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="F:System.AddIn.Contract.Automation.RemoteParameterData.Name">
+      <summary>Represents the name of the method parameter that this <see cref="T:System.AddIn.Contract.Automation.RemoteParameterData" /> describes.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="F:System.AddIn.Contract.Automation.RemoteParameterData.ParameterType">
+      <summary>Represents the type of the method parameter or return value that this <see cref="T:System.AddIn.Contract.Automation.RemoteParameterData" /> describes.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="F:System.AddIn.Contract.Automation.RemoteParameterData.Position">
+      <summary>Represents the position of the method parameter that this <see cref="T:System.AddIn.Contract.Automation.RemoteParameterData" /> describes in relation to the other parameters of the method.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.AddIn.Contract.Automation.RemotePropertyData">
+      <summary>Provides information about a property of a type that components can access across application domain and process boundaries.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="F:System.AddIn.Contract.Automation.RemotePropertyData.Attributes">
+      <summary>Represents the attributes of the property that this <see cref="T:System.AddIn.Contract.Automation.RemotePropertyData" /> describes.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="F:System.AddIn.Contract.Automation.RemotePropertyData.CanRead">
+      <summary>Indicates whether this <see cref="T:System.AddIn.Contract.Automation.RemotePropertyData" /> describes a readable property.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="F:System.AddIn.Contract.Automation.RemotePropertyData.CanWrite">
+      <summary>Indicates whether this <see cref="T:System.AddIn.Contract.Automation.RemotePropertyData" /> describes a writable property.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="F:System.AddIn.Contract.Automation.RemotePropertyData.IndexParameters">
+      <summary>Represents the index parameters for the property that this <see cref="T:System.AddIn.Contract.Automation.RemotePropertyData" /> describes.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="F:System.AddIn.Contract.Automation.RemotePropertyData.MemberData">
+      <summary>Represents member data for the property that this <see cref="T:System.AddIn.Contract.Automation.RemotePropertyData" /> describes.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="F:System.AddIn.Contract.Automation.RemotePropertyData.PropertyType">
+      <summary>Represents the type of the property that this <see cref="T:System.AddIn.Contract.Automation.RemotePropertyData" /> describes.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.AddIn.Contract.Automation.RemoteTypeData">
+      <summary>Provides information about a type that components can access across application domain and process boundaries. </summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="F:System.AddIn.Contract.Automation.RemoteTypeData.ArrayRank">
+      <summary>Indicates the rank (that is, the number of dimensions) of the remote array type that this <see cref="T:System.AddIn.Contract.Automation.RemoteTypeData" /> describes.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="F:System.AddIn.Contract.Automation.RemoteTypeData.AssemblyName">
+      <summary>Represents the full name of the assembly that contains the remote type that this <see cref="T:System.AddIn.Contract.Automation.RemoteTypeData" /> describes.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="F:System.AddIn.Contract.Automation.RemoteTypeData.AssemblyQualifiedName">
+      <summary>Represents the name of the remote type that this <see cref="T:System.AddIn.Contract.Automation.RemoteTypeData" /> describes, qualified by the name of the assembly that contains the type.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="F:System.AddIn.Contract.Automation.RemoteTypeData.Attributes">
+      <summary>Represents the attributes of the remote type that this <see cref="T:System.AddIn.Contract.Automation.RemoteTypeData" /> describes.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="F:System.AddIn.Contract.Automation.RemoteTypeData.BaseType">
+      <summary>Represents the base type of the remote type that this <see cref="T:System.AddIn.Contract.Automation.RemoteTypeData" /> describes.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="F:System.AddIn.Contract.Automation.RemoteTypeData.ElementType">
+      <summary>Represents the type of the elements in the remote array type that this <see cref="T:System.AddIn.Contract.Automation.RemoteTypeData" /> describes.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="F:System.AddIn.Contract.Automation.RemoteTypeData.FullName">
+      <summary>Represents the name of the remote type that this <see cref="T:System.AddIn.Contract.Automation.RemoteTypeData" /> describes, qualified by the namespace.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="F:System.AddIn.Contract.Automation.RemoteTypeData.IsArray">
+      <summary>Indicates whether this <see cref="T:System.AddIn.Contract.Automation.RemoteTypeData" /> describes an array type.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="F:System.AddIn.Contract.Automation.RemoteTypeData.IsByRef">
+      <summary>Indicates whether this <see cref="T:System.AddIn.Contract.Automation.RemoteTypeData" /> describes a type that is passed by reference.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="F:System.AddIn.Contract.Automation.RemoteTypeData.MemberData">
+      <summary>Represents member data for the remote type that this <see cref="T:System.AddIn.Contract.Automation.RemoteTypeData" /> describes.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="F:System.AddIn.Contract.Automation.RemoteTypeData.TypeCode">
+      <summary>Represents the type of the remote type that this <see cref="T:System.AddIn.Contract.Automation.RemoteTypeData" /> describes.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.AddIn.Contract.Collections.IArrayContract`1">
+      <summary>Represents a generic array of <see cref="T:System.AddIn.Contract.IContract" /> objects.</summary>
+      <typeparam name="C">The type of elements in the array. <paramref name="C" /> must implement the <see cref="T:System.AddIn.Contract.IContract" /> interface.</typeparam>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.IArrayContract`1.GetCount">
+      <summary>Returns the number of elements contained in the <see cref="T:System.AddIn.Contract.Collections.IArrayContract`1" />.</summary>
+      <returns>The number of elements contained in the <see cref="T:System.AddIn.Contract.Collections.IArrayContract`1" />.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.IArrayContract`1.GetItem(System.Int32)">
+      <summary>Returns the element at the specified index. </summary>
+      <returns>The element at the specified index.</returns>
+      <param name="index">The zero-based index of the element to return. </param>
+      <exception cref="T:System.IndexOutOfRangeException">
+        <paramref name="index" /> is less than zero.-or-<paramref name="index" /> is equal to or greater than the return value of <see cref="M:System.AddIn.Contract.Collections.IArrayContract`1.GetCount" />.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.IArrayContract`1.SetItem(System.Int32,`0)">
+      <summary>Replaces the element at the specified index with the specified <see cref="T:System.AddIn.Contract.IContract" />.</summary>
+      <param name="index">The zero-based index of the element to replace.</param>
+      <param name="value">The new value for the element at the specified index. </param>
+      <exception cref="T:System.IndexOutOfRangeException">
+        <paramref name="index" /> is less than zero.-or-<paramref name="index" /> is equal to or greater than the return value of <see cref="M:System.AddIn.Contract.Collections.IArrayContract`1.GetCount" />.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.AddIn.Contract.Collections.ICollectionContract`1">
+      <summary>Represents a generic collection of <see cref="T:System.AddIn.Contract.IContract" /> objects.</summary>
+      <typeparam name="C">The type of elements in the collection. <paramref name="C" /> must implement the <see cref="T:System.AddIn.Contract.IContract" /> interface.</typeparam>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.ICollectionContract`1.Add(`0)">
+      <summary>Adds an <see cref="T:System.AddIn.Contract.IContract" /> to the <see cref="T:System.AddIn.Contract.Collections.ICollectionContract`1" />.</summary>
+      <param name="item">The <see cref="T:System.AddIn.Contract.IContract" /> to add to the <see cref="T:System.AddIn.Contract.Collections.ICollectionContract`1" />.</param>
+      <exception cref="T:System.NotSupportedException">The <see cref="T:System.AddIn.Contract.Collections.ICollectionContract`1" /> is read-only.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.ICollectionContract`1.Clear">
+      <summary>Removes all elements from the <see cref="T:System.AddIn.Contract.Collections.ICollectionContract`1" />.</summary>
+      <exception cref="T:System.NotSupportedException">The <see cref="T:System.AddIn.Contract.Collections.ICollectionContract`1" /> is read-only.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.ICollectionContract`1.Contains(`0)">
+      <summary>Returns a value that indicates whether the specified <see cref="T:System.AddIn.Contract.IContract" /> is in the <see cref="T:System.AddIn.Contract.Collections.ICollectionContract`1" />.</summary>
+      <returns>true if the specified <see cref="T:System.AddIn.Contract.IContract" /> is in the <see cref="T:System.AddIn.Contract.Collections.ICollectionContract`1" />; otherwise, false.</returns>
+      <param name="item">The <see cref="T:System.AddIn.Contract.IContract" /> to locate in the <see cref="T:System.AddIn.Contract.Collections.ICollectionContract`1" />.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.ICollectionContract`1.CopyTo(`0[],System.Int32)">
+      <summary>Copies the entire <see cref="T:System.AddIn.Contract.Collections.ICollectionContract`1" /> to a compatible one-dimensional array, starting at the specified index of the target array. </summary>
+      <param name="array">The one-dimensional array that is the destination of the elements copied from the <see cref="T:System.AddIn.Contract.Collections.ICollectionContract`1" />. </param>
+      <param name="arrayIndex">The zero-based index in <paramref name="array" /> at which copying begins.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="array" /> is null.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException">
+        <paramref name="arrayIndex" /> is less than 0.</exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="array" /> is multidimensional.-or-The number of elements in the source <see cref="T:System.AddIn.Contract.Collections.ICollectionContract`1" /> is greater than the available space from <paramref name="arrayIndex" /> to the end of the destination array.-or-Type <paramref name="C" /> cannot be cast automatically to the type of the destination array.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.ICollectionContract`1.GetCount">
+      <summary>Returns the number of elements contained in the <see cref="T:System.AddIn.Contract.Collections.ICollectionContract`1" />.</summary>
+      <returns>The number of elements contained in the <see cref="T:System.AddIn.Contract.Collections.ICollectionContract`1" />.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.ICollectionContract`1.GetIsReadOnly">
+      <summary>Returns a value that indicates whether the <see cref="T:System.AddIn.Contract.Collections.ICollectionContract`1" /> is read-only.</summary>
+      <returns>true if the <see cref="T:System.AddIn.Contract.Collections.ICollectionContract`1" /> is read-only; otherwise, false.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.ICollectionContract`1.Remove(`0)">
+      <summary>Removes the first occurrence of a specific <see cref="T:System.AddIn.Contract.IContract" /> from the <see cref="T:System.AddIn.Contract.Collections.ICollectionContract`1" />.</summary>
+      <returns>true if <paramref name="item" /> is successfully removed; otherwise, false. This method also returns false if <paramref name="item" /> was not found in the <see cref="T:System.AddIn.Contract.Collections.ICollectionContract`1" />.</returns>
+      <param name="item">The <see cref="T:System.AddIn.Contract.IContract" /> to remove from the <see cref="T:System.AddIn.Contract.Collections.ICollectionContract`1" />.</param>
+      <exception cref="T:System.NotSupportedException">The <see cref="T:System.AddIn.Contract.Collections.ICollectionContract`1" /> is read-only.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.AddIn.Contract.Collections.IEnumerableContract`1">
+      <summary>Exposes an enumerator that supports a simple iteration over a generic collection of <see cref="T:System.AddIn.Contract.IContract" /> objects.</summary>
+      <typeparam name="C">The type of objects to enumerate. <paramref name="C" /> must implement the <see cref="T:System.AddIn.Contract.IContract" /> interface.</typeparam>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.IEnumerableContract`1.GetEnumeratorContract">
+      <summary>Returns an enumerator that iterates through the collection.</summary>
+      <returns>An <see cref="T:System.AddIn.Contract.Collections.IEnumeratorContract`1" /> that can be used to iterate through the collection.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.AddIn.Contract.Collections.IEnumeratorContract`1">
+      <summary>Enumerates the elements of a generic collection of <see cref="T:System.AddIn.Contract.IContract" /> objects.</summary>
+      <typeparam name="C">The type of objects to enumerate. <paramref name="C" /> must implement the <see cref="T:System.AddIn.Contract.IContract" /> interface.</typeparam>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.IEnumeratorContract`1.GetCurrent">
+      <summary>Returns the <see cref="T:System.AddIn.Contract.IContract" /> in the collection at the current position of the enumerator.</summary>
+      <returns>The <see cref="T:System.AddIn.Contract.IContract" /> in the collection at the current position of the enumerator.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.IEnumeratorContract`1.MoveNext">
+      <summary>Advances the enumerator to the next element of the collection.</summary>
+      <returns>true if the enumerator was successfully advanced to the next element; false if the enumerator has passed the end of the collection.</returns>
+      <exception cref="T:System.InvalidOperationException">The collection was modified after the enumerator was created. </exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.IEnumeratorContract`1.Reset">
+      <summary>Sets the enumerator to its initial position, which is before the first element in the collection.</summary>
+      <exception cref="T:System.InvalidOperationException">The collection was modified after the enumerator was created. </exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.AddIn.Contract.Collections.IListContract`1">
+      <summary>Represents a generic collection of <see cref="T:System.AddIn.Contract.IContract" /> objects that can be individually accessed by index.</summary>
+      <typeparam name="C">The type of objects in the list. <paramref name="C" /> must implement the <see cref="T:System.AddIn.Contract.IContract" /> interface.</typeparam>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.IListContract`1.GetItem(System.Int32)">
+      <summary>Returns the element at the specified index.</summary>
+      <returns>The element at the specified index.</returns>
+      <param name="index">The zero-based index of the element to get.</param>
+      <exception cref="T:System.IndexOutOfRangeException">
+        <paramref name="index" /> is less than zero.-or-<paramref name="index" /> is equal to or greater than the return value of <see cref="M:System.AddIn.Contract.Collections.ICollectionContract`1.GetCount" />.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.IListContract`1.IndexOf(`0)">
+      <summary>Returns the index of a specific element in the <see cref="T:System.AddIn.Contract.Collections.IListContract`1" />.</summary>
+      <returns>The index of <paramref name="item" /> if found in the list; otherwise, -1.</returns>
+      <param name="item">The <see cref="T:System.AddIn.Contract.IContract" /> to locate in the <see cref="T:System.AddIn.Contract.Collections.IListContract`1" />.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.IListContract`1.Insert(System.Int32,`0)">
+      <summary>Inserts an element in the <see cref="T:System.AddIn.Contract.Collections.IListContract`1" /> at the specified index.</summary>
+      <param name="index">The zero-based index at which to insert <paramref name="item" />.</param>
+      <param name="item">The <see cref="T:System.AddIn.Contract.IContract" /> to insert in the <see cref="T:System.AddIn.Contract.Collections.IListContract`1" />.</param>
+      <exception cref="T:System.IndexOutOfRangeException">
+        <paramref name="index" /> is less than zero.-or-<paramref name="index" /> is equal to or greater than the return value of <see cref="M:System.AddIn.Contract.Collections.ICollectionContract`1.GetCount" />.</exception>
+      <exception cref="T:System.NotSupportedException">The <see cref="T:System.AddIn.Contract.Collections.IListContract`1" /> is read-only.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.IListContract`1.RemoveAt(System.Int32)">
+      <summary>Removes the element at the specified index.</summary>
+      <param name="index">The index of the element to remove.</param>
+      <exception cref="T:System.IndexOutOfRangeException">
+        <paramref name="index" /> is less than zero.-or-<paramref name="index" /> is equal to or greater than the return value of <see cref="M:System.AddIn.Contract.Collections.ICollectionContract`1.GetCount" />.</exception>
+      <exception cref="T:System.NotSupportedException">The <see cref="T:System.AddIn.Contract.Collections.IListContract`1" /> is read-only.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.IListContract`1.SetItem(System.Int32,`0)">
+      <summary>Replaces the element at the specified index.</summary>
+      <param name="index">The zero-based index at which to set the element.</param>
+      <param name="value">The element to set at the specified index.</param>
+      <exception cref="T:System.IndexOutOfRangeException">
+        <paramref name="index" /> is less than zero.-or-<paramref name="index" /> is equal to or greater than the return value of <see cref="M:System.AddIn.Contract.Collections.ICollectionContract`1.GetCount" />.</exception>
+      <exception cref="T:System.NotSupportedException">The <see cref="T:System.AddIn.Contract.Collections.IListContract`1" /> is read-only.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.AddIn.Contract.Collections.IRemoteArgumentArrayContract">
+      <summary>Represents an array of <see cref="T:System.AddIn.Contract.RemoteArgument" /> objects.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.IRemoteArgumentArrayContract.GetItem(System.Int32)">
+      <summary>Returns the element at the specified index. </summary>
+      <returns>The element at the specified index.</returns>
+      <param name="index">The zero-based index of the element to return.</param>
+      <exception cref="T:System.IndexOutOfRangeException">
+        <paramref name="index" /> is less than zero.-or-<paramref name="index" /> is equal to or greater than the return value of <see cref="M:System.AddIn.Contract.Collections.IRemoteArgumentCollectionContract.GetCount" />.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.IRemoteArgumentArrayContract.SetItem(System.Int32,System.AddIn.Contract.RemoteArgument)">
+      <summary>Replaces the element at the specified index with the specified <see cref="T:System.AddIn.Contract.RemoteArgument" />.</summary>
+      <param name="index">The zero-based index of the element to replace.</param>
+      <param name="value">The new value for the element at the specified index.</param>
+      <exception cref="T:System.IndexOutOfRangeException">
+        <paramref name="index" /> is less than zero.-or-<paramref name="index" /> is equal to or greater than the return value of <see cref="M:System.AddIn.Contract.Collections.IRemoteArgumentCollectionContract.GetCount" />.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.AddIn.Contract.Collections.IRemoteArgumentArrayListContract">
+      <summary>Represents an array of <see cref="T:System.AddIn.Contract.RemoteArgument" /> objects that dynamically resizes itself as required.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.IRemoteArgumentArrayListContract.Add(System.AddIn.Contract.RemoteArgument)">
+      <summary>Adds a <see cref="T:System.AddIn.Contract.RemoteArgument" /> to the end of the <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentArrayListContract" />.</summary>
+      <param name="newItem">The <see cref="T:System.AddIn.Contract.RemoteArgument" /> to be added to the end of the <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentArrayListContract" />.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.IRemoteArgumentArrayListContract.Clear">
+      <summary>Removes all elements from the <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentArrayListContract" />.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.IRemoteArgumentArrayListContract.Contains(System.AddIn.Contract.RemoteArgument)">
+      <summary>Indicates whether a specified <see cref="T:System.AddIn.Contract.RemoteArgument" /> is in the <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentArrayListContract" />.</summary>
+      <returns>true if <paramref name="item" /> is found in the <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentArrayListContract" />; otherwise, false.</returns>
+      <param name="item">The <see cref="T:System.AddIn.Contract.RemoteArgument" /> to locate in the <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentArrayListContract" />.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.IRemoteArgumentArrayListContract.IndexOf(System.AddIn.Contract.RemoteArgument)">
+      <summary>Returns the zero-based index of the first occurrence of a specified <see cref="T:System.AddIn.Contract.RemoteArgument" /> in the <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentArrayListContract" />.</summary>
+      <returns>The zero-based index of the first occurrence of <paramref name="item" /> in the <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentArrayListContract" />, if found; otherwise, -1.</returns>
+      <param name="item">The <see cref="T:System.AddIn.Contract.RemoteArgument" /> to locate in the <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentArrayListContract" />.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.IRemoteArgumentArrayListContract.Insert(System.Int32,System.AddIn.Contract.RemoteArgument)">
+      <summary>Inserts a <see cref="T:System.AddIn.Contract.RemoteArgument" /> into the <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentArrayListContract" /> at the specified index.</summary>
+      <param name="index">The zero-based index at which to insert <paramref name="item" />.</param>
+      <param name="item">The <see cref="T:System.AddIn.Contract.RemoteArgument" /> to insert.</param>
+      <exception cref="T:System.IndexOutOfRangeException">
+        <paramref name="index" /> is less than zero.-or-<paramref name="index" /> is equal to or greater than the return value of <see cref="M:System.AddIn.Contract.Collections.IRemoteArgumentCollectionContract.GetCount" />.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.IRemoteArgumentArrayListContract.Remove(System.AddIn.Contract.RemoteArgument)">
+      <summary>Removes the first occurrence of a specified <see cref="T:System.AddIn.Contract.RemoteArgument" /> from the <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentArrayListContract" />. </summary>
+      <param name="item">The <see cref="T:System.AddIn.Contract.RemoteArgument" /> to remove.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.IRemoteArgumentArrayListContract.RemoveAt(System.Int32)">
+      <summary>Removes the element at the specified index of the <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentArrayListContract" />.</summary>
+      <param name="index">The zero-based index of the element to remove.</param>
+      <exception cref="T:System.IndexOutOfRangeException">
+        <paramref name="index" /> is less than zero.-or-<paramref name="index" /> is equal to or greater than the return value of <see cref="M:System.AddIn.Contract.Collections.IRemoteArgumentCollectionContract.GetCount" />.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.AddIn.Contract.Collections.IRemoteArgumentCollectionContract">
+      <summary>Represents a collection of <see cref="T:System.AddIn.Contract.RemoteArgument" /> objects.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.IRemoteArgumentCollectionContract.GetCount">
+      <summary>Returns the number of elements contained in the <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentCollectionContract" />.</summary>
+      <returns>The number of elements contained in the <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentCollectionContract" />.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.AddIn.Contract.Collections.IRemoteArgumentDictionaryContract">
+      <summary>Represents a collection of <see cref="T:System.AddIn.Contract.RemoteArgument" /> objects that are stored as key/value pairs.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.IRemoteArgumentDictionaryContract.Add(System.AddIn.Contract.RemoteArgument,System.AddIn.Contract.RemoteArgument)">
+      <summary>Adds an element with a specified key and value to the <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentDictionaryContract" />.</summary>
+      <param name="key">The <see cref="T:System.AddIn.Contract.RemoteArgument" /> to use as the key of the element to add.</param>
+      <param name="value">The <see cref="T:System.AddIn.Contract.RemoteArgument" /> to use as the value of the element to add.</param>
+      <exception cref="T:System.ArgumentException">An element with the same key already exists in the <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentDictionaryContract" />. </exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.IRemoteArgumentDictionaryContract.Clear">
+      <summary>Removes all elements from the <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentDictionaryContract" />.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.IRemoteArgumentDictionaryContract.ContainsKey(System.AddIn.Contract.RemoteArgument)">
+      <summary>Indicates whether the <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentDictionaryContract" /> contains an element with the specified key.</summary>
+      <returns>true if the <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentDictionaryContract" /> contains an element with the specified key; otherwise, false.</returns>
+      <param name="key">The key to locate in the <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentDictionaryContract" />.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.IRemoteArgumentDictionaryContract.GetEnumeratorContract">
+      <summary>Returns an <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentDictionaryEnumeratorContract" /> that can be used to iterate through the elements in the <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentDictionaryContract" />.</summary>
+      <returns>An <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentDictionaryEnumeratorContract" /> that can be used to iterate through the elements in the <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentDictionaryContract" />.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.IRemoteArgumentDictionaryContract.GetItem(System.AddIn.Contract.RemoteArgument)">
+      <summary>Returns the value of the element with the specified key.</summary>
+      <returns>The <see cref="T:System.AddIn.Contract.RemoteArgument" /> with the specified key.</returns>
+      <param name="key">The key of the value to return.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.IRemoteArgumentDictionaryContract.GetKeys">
+      <summary>Returns an <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentCollectionContract" /> that contains the keys of the <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentDictionaryContract" /> object. </summary>
+      <returns>An <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentCollectionContract" /> that contains the keys of the <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentDictionaryContract" /> object.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.IRemoteArgumentDictionaryContract.GetValues">
+      <summary>Returns an <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentCollectionContract" /> that contains the values of the <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentDictionaryContract" /> object. </summary>
+      <returns>An <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentCollectionContract" /> that contains the values of the <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentDictionaryContract" /> object. </returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.IRemoteArgumentDictionaryContract.Remove(System.AddIn.Contract.RemoteArgument)">
+      <summary>Removes the element with the specified key from the <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentDictionaryContract" />.</summary>
+      <returns>true if the element is successfully found and removed; otherwise, false. This method returns false if <paramref name="key" /> is not found in the <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentDictionaryContract" />.</returns>
+      <param name="key">The key of the element to remove. </param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.IRemoteArgumentDictionaryContract.SetItem(System.AddIn.Contract.RemoteArgument,System.AddIn.Contract.RemoteArgument)">
+      <summary>Replaces the value of an element.</summary>
+      <param name="key">The key of the value to replace.</param>
+      <param name="value">The new value of the specified element.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.AddIn.Contract.Collections.IRemoteArgumentDictionaryEnumeratorContract">
+      <summary>Enumerates the elements of an <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentDictionaryContract" />.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.IRemoteArgumentDictionaryEnumeratorContract.GetEntry">
+      <summary>Returns the key and the value of the current <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentDictionaryContract" /> entry.</summary>
+      <returns>A <see cref="T:System.AddIn.Contract.Collections.RemoteArgumentDictionaryEntry" /> that contains the key and the value of the current <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentDictionaryContract" /> entry.</returns>
+      <exception cref="T:System.InvalidOperationException">The <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentDictionaryEnumeratorContract" /> is positioned before the first entry of the <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentDictionaryContract" /> or after the last entry. </exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.IRemoteArgumentDictionaryEnumeratorContract.GetKey">
+      <summary>Returns the key of the current <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentDictionaryContract" /> entry.</summary>
+      <returns>A <see cref="T:System.AddIn.Contract.RemoteArgument" /> that contains the key of the current <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentDictionaryContract" /> entry.</returns>
+      <exception cref="T:System.InvalidOperationException">The <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentDictionaryEnumeratorContract" /> is positioned before the first entry of the <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentDictionaryContract" /> or after the last entry. </exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.IRemoteArgumentDictionaryEnumeratorContract.GetValue">
+      <summary>Returns the value of the current <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentDictionaryContract" /> entry.</summary>
+      <returns>A <see cref="T:System.AddIn.Contract.RemoteArgument" /> that contains the value of the current <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentDictionaryContract" /> entry.</returns>
+      <exception cref="T:System.InvalidOperationException">The <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentDictionaryEnumeratorContract" /> is positioned before the first entry of the <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentDictionaryContract" /> or after the last entry. </exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.AddIn.Contract.Collections.IRemoteArgumentEnumerableContract">
+      <summary>Exposes an enumerator that supports a simple iteration over a collection of <see cref="T:System.AddIn.Contract.RemoteArgument" /> objects.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.IRemoteArgumentEnumerableContract.GetEnumeratorContract">
+      <summary>Returns an enumerator that can be used to iterate through the collection.</summary>
+      <returns>An <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentEnumeratorContract" /> that can be used to iterate through the collection.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.AddIn.Contract.Collections.IRemoteArgumentEnumeratorContract">
+      <summary>Enumerates the elements of a collection of <see cref="T:System.AddIn.Contract.RemoteArgument" /> objects.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.IRemoteArgumentEnumeratorContract.GetCurrent">
+      <summary>Returns the <see cref="T:System.AddIn.Contract.RemoteArgument" /> in the collection at the current position of the enumerator.</summary>
+      <returns>The <see cref="T:System.AddIn.Contract.RemoteArgument" /> in the collection at the current position of the enumerator.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.IRemoteArgumentEnumeratorContract.MoveNext">
+      <summary>Advances the enumerator to the next element of the collection.</summary>
+      <returns>true if the enumerator was successfully advanced to the next element; false if the enumerator has passed the end of the collection.</returns>
+      <exception cref="T:System.InvalidOperationException">The collection was modified after the enumerator was created. </exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.IRemoteArgumentEnumeratorContract.Reset">
+      <summary>Sets the enumerator to its initial position, which is before the first element in the collection.</summary>
+      <exception cref="T:System.InvalidOperationException">The collection was modified after the enumerator was created. </exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.AddIn.Contract.Collections.RemoteArgumentDictionaryEntry">
+      <summary>Defines a key/value pair in an <see cref="T:System.AddIn.Contract.Collections.IRemoteArgumentDictionaryContract" />.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Contract.Collections.RemoteArgumentDictionaryEntry.#ctor(System.AddIn.Contract.RemoteArgument,System.AddIn.Contract.RemoteArgument)">
+      <summary>Initializes an instance of the <see cref="T:System.AddIn.Contract.Collections.RemoteArgumentDictionaryEntry" /> structure with the specified key and value.</summary>
+      <param name="key">The <see cref="T:System.AddIn.Contract.RemoteArgument" /> that contains the key in the new <see cref="T:System.AddIn.Contract.Collections.RemoteArgumentDictionaryEntry" />.</param>
+      <param name="value">The <see cref="T:System.AddIn.Contract.RemoteArgument" /> that contains the value in the new <see cref="T:System.AddIn.Contract.Collections.RemoteArgumentDictionaryEntry" />.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="F:System.AddIn.Contract.Collections.RemoteArgumentDictionaryEntry.Key">
+      <summary>Represents the key in the key/value pair that this <see cref="T:System.AddIn.Contract.Collections.RemoteArgumentDictionaryEntry" /> represents.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="F:System.AddIn.Contract.Collections.RemoteArgumentDictionaryEntry.Value">
+      <summary>Represents the value in the key/value pair that this <see cref="T:System.AddIn.Contract.Collections.RemoteArgumentDictionaryEntry" /> represents.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.AddIn.Pipeline.AddInContractAttribute">
+      <summary>Identifies an object as a add-in contract segment of the pipeline.</summary>
+    </member>
+    <member name="M:System.AddIn.Pipeline.AddInContractAttribute.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Pipeline.AddInContractAttribute" /> class. </summary>
+    </member>
+    <member name="T:System.AddIn.Pipeline.QualificationDataAttribute">
+      <summary>Provides developer-specified data for a pipeline segment.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Pipeline.QualificationDataAttribute.#ctor(System.String,System.String)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Pipeline.QualificationDataAttribute" /> class. </summary>
+      <param name="name">Any identifier that serves as a key in a key/value pair.</param>
+      <param name="value">Any value.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="P:System.AddIn.Pipeline.QualificationDataAttribute.Name">
+      <summary>Gets the name, which serves as a key, of a key/value pair.</summary>
+      <returns>The assigned name for the attribute.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="P:System.AddIn.Pipeline.QualificationDataAttribute.Value">
+      <summary>Gets the value of a key/value pair.</summary>
+      <returns>The assigned value for the attribute.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+  </members>
+</doc>

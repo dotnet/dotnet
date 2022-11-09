@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>Microsoft.VisualC</name>
+  </assembly>
+  <members>
+    <member name="T:Microsoft.VisualC.DebugInfoInPDBAttribute">
+      <summary>An attribute applied to native classes that tells the debugger to look up field information in the pdb rather than in metadata.</summary>
+    </member>
+    <member name="M:Microsoft.VisualC.DebugInfoInPDBAttribute.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:Microsoft.VisualC.DebugInfoInPDBAttribute" /> class.</summary>
+    </member>
+    <member name="T:Microsoft.VisualC.DecoratedNameAttribute">
+      <summary>An attribute used by the compiler to pass the decorated name of a method to the linker.</summary>
+    </member>
+    <member name="M:Microsoft.VisualC.DecoratedNameAttribute.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:Microsoft.VisualC.DecoratedNameAttribute" /> class.</summary>
+    </member>
+    <member name="M:Microsoft.VisualC.DecoratedNameAttribute.#ctor(System.String)">
+      <summary>Initializes a new instance of the <see cref="T:Microsoft.VisualC.DecoratedNameAttribute" /> class using the specified decorated name.</summary>
+      <param name="decoratedName">The decorated name of a method.</param>
+    </member>
+    <member name="T:Microsoft.VisualC.IsConstModifier">
+      <summary>Is const modifier.</summary>
+    </member>
+    <member name="M:Microsoft.VisualC.IsConstModifier.#ctor">
+      <summary>Constructor.</summary>
+    </member>
+    <member name="T:Microsoft.VisualC.IsCXXReferenceModifier">
+      <summary>Is C++ reference modifier.</summary>
+    </member>
+    <member name="M:Microsoft.VisualC.IsCXXReferenceModifier.#ctor">
+      <summary>Constructor.</summary>
+    </member>
+    <member name="T:Microsoft.VisualC.IsLongModifier">
+      <summary>Is long modifier.</summary>
+    </member>
+    <member name="M:Microsoft.VisualC.IsLongModifier.#ctor">
+      <summary>Constructor.</summary>
+    </member>
+    <member name="T:Microsoft.VisualC.IsSignedModifier">
+      <summary>Is signed modifier.</summary>
+    </member>
+    <member name="M:Microsoft.VisualC.IsSignedModifier.#ctor">
+      <summary>Constructor.</summary>
+    </member>
+    <member name="T:Microsoft.VisualC.IsVolatileModifier">
+      <summary>Is volatile modifier.</summary>
+    </member>
+    <member name="M:Microsoft.VisualC.IsVolatileModifier.#ctor">
+      <summary>Constructor.</summary>
+    </member>
+    <member name="T:Microsoft.VisualC.MiscellaneousBitsAttribute">
+      <summary>An attribute that stores miscellaneous information about a type in metadata.</summary>
+    </member>
+    <member name="M:Microsoft.VisualC.MiscellaneousBitsAttribute.#ctor(System.Int32)">
+      <summary>Initializes a new instance of the <see cref="T:Microsoft.VisualC.MiscellaneousBitsAttribute" /> class using the specified bit mask.</summary>
+      <param name="miscellaneousBits">A bit mask containing information about a type.</param>
+    </member>
+    <member name="F:Microsoft.VisualC.MiscellaneousBitsAttribute.m_dwAttrs">
+      <summary>A bit mask containing information about a type.</summary>
+    </member>
+    <member name="T:Microsoft.VisualC.NeedsCopyConstructorModifier">
+      <summary>A custom modifier applied to parameters that tells the CLR marshaler to call the parameter's copy constructor when marshaling the parameter.</summary>
+    </member>
+    <member name="M:Microsoft.VisualC.NeedsCopyConstructorModifier.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:Microsoft.VisualC.NeedsCopyConstructorModifier" /> class.</summary>
+    </member>
+    <member name="T:Microsoft.VisualC.NoSignSpecifiedModifier">
+      <summary>No sign specified modifier.</summary>
+    </member>
+    <member name="M:Microsoft.VisualC.NoSignSpecifiedModifier.#ctor">
+      <summary>Constructor.</summary>
+    </member>
+  </members>
+</doc>

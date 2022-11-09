@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata minClientVersion="2.12">
+    <id>System.Security.Permissions</id>
+    <version>4.7.0</version>
+    <title>System.Security.Permissions</title>
+    <authors>Microsoft</authors>
+    <owners>microsoft,dotnetframework</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+    <projectUrl>https://github.com/dotnet/corefx</projectUrl>
+    <iconUrl>http://go.microsoft.com/fwlink/?LinkID=288859</iconUrl>
+    <description>Provides types supporting Code Access Security (CAS). 
+When using NuGet 3.x this package requires at least version 3.4.</description>
+    <releaseNotes>https://go.microsoft.com/fwlink/?LinkID=799421</releaseNotes>
+    <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+    <serviceable>true</serviceable>
+    <dependencies>
+      <group targetFramework=".NETFramework4.6.1">
+        <dependency id="System.Security.AccessControl" version="4.7.0" />
+      </group>
+      <group targetFramework=".NETCoreApp3.0">
+        <dependency id="System.Security.AccessControl" version="4.7.0" />
+        <dependency id="System.Windows.Extensions" version="4.7.0" />
+      </group>
+      <group targetFramework=".NETStandard2.0">
+        <dependency id="System.Security.AccessControl" version="4.7.0" />
+      </group>
+      <group targetFramework="UAP10.0.16299" />
+    </dependencies>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.6.1" />
+      <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.6.1" />
+      <frameworkAssembly assemblyName="System.Configuration" targetFramework=".NETFramework4.6.1" />
+      <frameworkAssembly assemblyName="System.Data" targetFramework=".NETFramework4.6.1" />
+      <frameworkAssembly assemblyName="System.Data.OracleClient" targetFramework=".NETFramework4.6.1" />
+      <frameworkAssembly assemblyName="System.Drawing" targetFramework=".NETFramework4.6.1" />
+      <frameworkAssembly assemblyName="System.Net" targetFramework=".NETFramework4.6.1" />
+      <frameworkAssembly assemblyName="System.Security" targetFramework=".NETFramework4.6.1" />
+      <frameworkAssembly assemblyName="System.ServiceProcess" targetFramework=".NETFramework4.6.1" />
+      <frameworkAssembly assemblyName="System.Transactions" targetFramework=".NETFramework4.6.1" />
+      <frameworkAssembly assemblyName="WindowsBase" targetFramework=".NETFramework4.6.1" />
+    </frameworkAssemblies>
+  </metadata>
+</package>

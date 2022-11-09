@@ -1,0 +1,18 @@
+#AssemblyUsings#
+
+[assembly: Debuggable(DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+[assembly: AllowPartiallyTrustedCallers]
+[assembly: ReferenceAssembly]
+[assembly: AssemblyTitle("#FileName#")]
+[assembly: AssemblyDescription("#FileName#")]
+[assembly: AssemblyDefaultAlias("#FileName#")]
+[assembly: AssemblyCompany("Microsoft Corporation")]
+[assembly: AssemblyProduct("Microsoft® .NET Framework")]
+[assembly: AssemblyCopyright("© Microsoft Corporation.  All rights reserved.")]
+[assembly: AssemblyFileVersion("#FileVersion#")]
+[assembly: AssemblyInformationalVersion("#FileVersion# built by: SOURCEBUILD")]
+[assembly: CLSCompliant(true)]
+[assembly: AssemblyMetadata("", "")]
+[assembly: AssemblyVersion("#AssemblyVersion#")]
+
+#TypeForwards#

@@ -1,0 +1,45 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), dir.props))/dir.props" />
+
+  <PropertyGroup>
+    <LangVersion>8.0</LangVersion>
+    <TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
+    <NuspecFile>$(ArtifactsBinDir)microsoft.build.utilities.core/16.7.0/microsoft.build.utilities.core.nuspec</NuspecFile>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <OutputPath>$(ArtifactsBinDir)microsoft.build.utilities.core/16.7.0/ref/</OutputPath>
+    <IntermediateOutputPath>$(ArtifactsObjDir)microsoft.build.utilities.core/16.7.0</IntermediateOutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+    <OutputPath>$(ArtifactsBinDir)microsoft.build.utilities.core/16.7.0/lib/</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net472' ">
+    <OutputPath>$(ArtifactsBinDir)microsoft.build.utilities.core/16.7.0/lib/</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="**/ref/$(TargetFramework)/*.cs" />
+    <Compile Include="**/lib/$(TargetFramework)/*.cs" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+    <PackageReference Include="NETStandard.Library" Version="$(NETStandardImplicitPackageVersion)" />
+    <PackageReference Include="Microsoft.Build.Framework" Version="16.7.0" />
+    <PackageReference Include="Microsoft.Win32.Registry" Version="4.3.0" />
+    <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />
+    <PackageReference Include="System.Security.Permissions" Version="4.7.0" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.0.1" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
+    <PackageReference Include="Microsoft.Build.Framework" Version="16.7.0" />
+    <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net472" Version="1.0.2" />
+    <PackageReference Include="System.Runtime" Version="4.3.0" />
+    <Reference Include="System.Configuration" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,30 @@
+<!--
+***********************************************************************************************
+Microsoft.NETFramework.ReferenceAssemblies.net462.targets
+WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and have
+          created a backup copy.  Incorrect changes to this file will make it
+          impossible to load or build your projects from the command-line or the IDE.
+Copyright (c) .NET Foundation. All rights reserved.
+***********************************************************************************************
+-->
+<Project>
+  <PropertyGroup Condition=" ('$(TargetFrameworkIdentifier)' == '.NETFramework') And ('$(TargetFrameworkVersion)' == 'v4.6.2') ">
+    <TargetFrameworkRootPath>$(MSBuildThisFileDirectory)</TargetFrameworkRootPath>
+    
+    <!-- FrameworkPathOverride is typically not set to the correct value, and the common targets include mscorlib from FrameworkPathOverride.
+         So disable FrameworkPathOverride, set NoStdLib to true, and explicitly reference mscorlib here. -->
+    <EnableFrameworkPathOverride>false</EnableFrameworkPathOverride>
+    <NoStdLib>true</NoStdLib>
+
+    <UseReferencedVBRuntime Condition="'$(Language)' == 'VB' And '$(UsingMicrosoftNETSdk)' == 'true'">true</UseReferencedVBRuntime>
+    <DisableSdkPath Condition="'$(Language)' == 'VB' And '$(UsingMicrosoftNETSdk)' == 'true'">true</DisableSdkPath>
+
+  </PropertyGroup>
+  
+  <ItemGroup Condition=" ('$(TargetFrameworkIdentifier)' == '.NETFramework') And ('$(TargetFrameworkVersion)' == 'v4.6.2') ">
+    <Reference Include="mscorlib" Pack="false" />
+    <Reference Include="Microsoft.VisualBasic" Pack="false"
+               Condition="'$(Language)' == 'VB' And '$(UsingMicrosoftNETSdk)' == 'true'" />
+  </ItemGroup>
+
+</Project>

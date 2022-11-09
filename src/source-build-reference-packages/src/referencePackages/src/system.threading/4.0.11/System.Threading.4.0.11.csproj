@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), dir.props))/dir.props" />
+  <PropertyGroup>
+    <TargetFrameworks>netstandard1.0;netstandard1.3</TargetFrameworks>
+    <NuspecFile>$(ArtifactsBinDir)system.threading/4.0.11/system.threading.nuspec</NuspecFile>
+   </PropertyGroup>
+
+  <PropertyGroup>
+    <OutputPath>$(ArtifactsBinDir)system.threading/4.0.11/ref/</OutputPath>
+    <IntermediateOutputPath>$(ArtifactsObjDir)system.threading/4.0.11</IntermediateOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="**/ref/$(TargetFramework)/*.cs" />
+    <Compile Include="**/lib/$(TargetFramework)/*.cs" />
+  </ItemGroup>
+
+    <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.0' ">
+        <PackageReference Include="System.Runtime" Version="4.1.0" />
+        <PackageReference Include="System.Threading.Tasks" Version="4.0.11" />
+    </ItemGroup>
+    <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
+        <PackageReference Include="System.Runtime" Version="4.1.0" />
+        <PackageReference Include="System.Threading.Tasks" Version="4.0.11" />
+    </ItemGroup>
+
+  
+</Project>

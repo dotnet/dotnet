@@ -1,0 +1,478 @@
+﻿<?xml version="1.0" encoding="utf-8"?><span>
+<doc>
+  <assembly>
+    <name>System.IO.UnmanagedMemoryStream</name>
+  </assembly>
+  <members>
+    <member name="T:System.IO.UnmanagedMemoryAccessor">
+      <summary>Provides random access to unmanaged blocks of memory from managed code.</summary>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryAccessor.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.IO.UnmanagedMemoryAccessor"></see> class.</summary>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryAccessor.#ctor(System.Runtime.InteropServices.SafeBuffer,System.Int64,System.Int64)">
+      <summary>Initializes a new instance of the <see cref="T:System.IO.UnmanagedMemoryAccessor"></see> class with a specified buffer, offset, and capacity.</summary>
+      <param name="buffer">The buffer to contain the accessor.</param>
+      <param name="offset">The byte at which to start the accessor.</param>
+      <param name="capacity">The size, in bytes, of memory to allocate.</param>
+      <exception cref="T:System.ArgumentException"><paramref name="offset">offset</paramref> plus <paramref name="capacity">capacity</paramref> is greater than <paramref name="buffer">buffer</paramref>.</exception>
+      <exception cref="T:System.ArgumentNullException"><paramref name="buffer">buffer</paramref> is null.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="offset">offset</paramref> or <paramref name="capacity">capacity</paramref> is less than zero.</exception>
+      <exception cref="T:System.InvalidOperationException"><paramref name="offset">offset</paramref> plus <paramref name="capacity">capacity</paramref> would wrap around the high end of the address space.</exception>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryAccessor.#ctor(System.Runtime.InteropServices.SafeBuffer,System.Int64,System.Int64,System.IO.FileAccess)">
+      <summary>Initializes a new instance of the <see cref="T:System.IO.UnmanagedMemoryAccessor"></see> class with a specified buffer, offset, capacity, and access right.</summary>
+      <param name="buffer">The buffer to contain the accessor.</param>
+      <param name="offset">The byte at which to start the accessor.</param>
+      <param name="capacity">The size, in bytes, of memory to allocate.</param>
+      <param name="access">The type of access allowed to the memory. The default is <see cref="F:System.IO.MemoryMappedFiles.MemoryMappedFileAccess.ReadWrite"></see>.</param>
+      <exception cref="T:System.ArgumentException"><paramref name="offset">offset</paramref> plus <paramref name="capacity">capacity</paramref> is greater than <paramref name="buffer">buffer</paramref>.</exception>
+      <exception cref="T:System.ArgumentNullException"><paramref name="buffer">buffer</paramref> is null.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="offset">offset</paramref> or <paramref name="capacity">capacity</paramref> is less than zero.   -or-  <paramref name="access">access</paramref> is not a valid <see cref="T:System.IO.MemoryMappedFiles.MemoryMappedFileAccess"></see> enumeration value.</exception>
+      <exception cref="T:System.InvalidOperationException"><paramref name="offset">offset</paramref> plus <paramref name="capacity">capacity</paramref> would wrap around the high end of the address space.</exception>
+    </member>
+    <member name="P:System.IO.UnmanagedMemoryAccessor.CanRead">
+      <summary>Determines whether the accessor is readable.</summary>
+      <returns>true if the accessor is readable; otherwise, false.</returns>
+    </member>
+    <member name="P:System.IO.UnmanagedMemoryAccessor.CanWrite">
+      <summary>Determines whether the accessory is writable.</summary>
+      <returns>true if the accessor is writable; otherwise, false.</returns>
+    </member>
+    <member name="P:System.IO.UnmanagedMemoryAccessor.Capacity">
+      <summary>Gets the capacity of the accessor.</summary>
+      <returns>The capacity of the accessor.</returns>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryAccessor.Dispose">
+      <summary>Releases all resources used by the <see cref="T:System.IO.UnmanagedMemoryAccessor"></see>.</summary>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryAccessor.Dispose(System.Boolean)">
+      <summary>Releases the unmanaged resources used by the <see cref="T:System.IO.UnmanagedMemoryAccessor"></see> and optionally releases the managed resources.</summary>
+      <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryAccessor.Initialize(System.Runtime.InteropServices.SafeBuffer,System.Int64,System.Int64,System.IO.FileAccess)">
+      <summary>Sets the initial values for the accessor.</summary>
+      <param name="buffer">The buffer to contain the accessor.</param>
+      <param name="offset">The byte at which to start the accessor.</param>
+      <param name="capacity">The size, in bytes, of memory to allocate.</param>
+      <param name="access">The type of access allowed to the memory. The default is <see cref="F:System.IO.MemoryMappedFiles.MemoryMappedFileAccess.ReadWrite"></see>.</param>
+      <exception cref="T:System.ArgumentException"><paramref name="offset">offset</paramref> plus <paramref name="capacity">capacity</paramref> is greater than <paramref name="buffer">buffer</paramref>.</exception>
+      <exception cref="T:System.ArgumentNullException"><paramref name="buffer">buffer</paramref> is null.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="offset">offset</paramref> or <paramref name="capacity">capacity</paramref> is less than zero.   -or-  <paramref name="access">access</paramref> is not a valid <see cref="T:System.IO.MemoryMappedFiles.MemoryMappedFileAccess"></see> enumeration value.</exception>
+      <exception cref="T:System.InvalidOperationException"><paramref name="offset">offset</paramref> plus <paramref name="capacity">capacity</paramref> would wrap around the high end of the address space.</exception>
+    </member>
+    <member name="P:System.IO.UnmanagedMemoryAccessor.IsOpen">
+      <summary>Determines whether the accessor is currently open by a process.</summary>
+      <returns>true if the accessor is open; otherwise, false.</returns>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryAccessor.ReadBoolean(System.Int64)">
+      <summary>Reads a Boolean value from the accessor.</summary>
+      <param name="position">The number of bytes into the accessor at which to begin reading.</param>
+      <returns>true or false.</returns>
+      <exception cref="T:System.ArgumentException">There are not enough bytes after <paramref name="position">position</paramref> to read a value.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="position">position</paramref> is less than zero or greater than the capacity of the accessor.</exception>
+      <exception cref="T:System.NotSupportedException">The accessor does not support reading.</exception>
+      <exception cref="T:System.ObjectDisposedException">The accessor has been disposed.</exception>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryAccessor.ReadByte(System.Int64)">
+      <summary>Reads a byte value from the accessor.</summary>
+      <param name="position">The number of bytes into the accessor at which to begin reading.</param>
+      <returns>The value that was read.</returns>
+      <exception cref="T:System.ArgumentException">There are not enough bytes after <paramref name="position">position</paramref> to read a value.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="position">position</paramref> is less than zero or greater than the capacity of the accessor.</exception>
+      <exception cref="T:System.NotSupportedException">The accessor does not support reading.</exception>
+      <exception cref="T:System.ObjectDisposedException">The accessor has been disposed.</exception>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryAccessor.ReadChar(System.Int64)">
+      <summary>Reads a character from the accessor.</summary>
+      <param name="position">The number of bytes into the accessor at which to begin reading.</param>
+      <returns>The value that was read.</returns>
+      <exception cref="T:System.ArgumentException">There are not enough bytes after <paramref name="position">position</paramref> to read a value.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="position">position</paramref> is less than zero or greater than the capacity of the accessor.</exception>
+      <exception cref="T:System.NotSupportedException">The accessor does not support reading.</exception>
+      <exception cref="T:System.ObjectDisposedException">The accessor has been disposed.</exception>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryAccessor.ReadDecimal(System.Int64)">
+      <summary>Reads a decimal value from the accessor.</summary>
+      <param name="position">The number of bytes into the accessor at which to begin reading.</param>
+      <returns>The value that was read.</returns>
+      <exception cref="T:System.ArgumentException">There are not enough bytes after <paramref name="position">position</paramref> to read a value.   -or-   The decimal to read is invalid.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="position">position</paramref> is less than zero or greater than the capacity of the accessor.</exception>
+      <exception cref="T:System.NotSupportedException">The accessor does not support reading.</exception>
+      <exception cref="T:System.ObjectDisposedException">The accessor has been disposed.</exception>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryAccessor.ReadDouble(System.Int64)">
+      <summary>Reads a double-precision floating-point value from the accessor.</summary>
+      <param name="position">The number of bytes into the accessor at which to begin reading.</param>
+      <returns>The value that was read.</returns>
+      <exception cref="T:System.ArgumentException">There are not enough bytes after <paramref name="position">position</paramref> to read a value.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="position">position</paramref> is less than zero or greater than the capacity of the accessor.</exception>
+      <exception cref="T:System.NotSupportedException">The accessor does not support reading.</exception>
+      <exception cref="T:System.ObjectDisposedException">The accessor has been disposed.</exception>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryAccessor.ReadInt16(System.Int64)">
+      <summary>Reads a 16-bit integer from the accessor.</summary>
+      <param name="position">The number of bytes into the accessor at which to begin reading.</param>
+      <returns>The value that was read.</returns>
+      <exception cref="T:System.ArgumentException">There are not enough bytes after <paramref name="position">position</paramref> to read a value.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="position">position</paramref> is less than zero or greater than the capacity of the accessor.</exception>
+      <exception cref="T:System.NotSupportedException">The accessor does not support reading.</exception>
+      <exception cref="T:System.ObjectDisposedException">The accessor has been disposed.</exception>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryAccessor.ReadInt32(System.Int64)">
+      <summary>Reads a 32-bit integer from the accessor.</summary>
+      <param name="position">The number of bytes into the accessor at which to begin reading.</param>
+      <returns>The value that was read.</returns>
+      <exception cref="T:System.ArgumentException">There are not enough bytes after <paramref name="position">position</paramref> to read a value.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="position">position</paramref> is less than zero or greater than the capacity of the accessor.</exception>
+      <exception cref="T:System.NotSupportedException">The accessor does not support reading.</exception>
+      <exception cref="T:System.ObjectDisposedException">The accessor has been disposed.</exception>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryAccessor.ReadInt64(System.Int64)">
+      <summary>Reads a 64-bit integer from the accessor.</summary>
+      <param name="position">The number of bytes into the accessor at which to begin reading.</param>
+      <returns>The value that was read.</returns>
+      <exception cref="T:System.ArgumentException">There are not enough bytes after <paramref name="position">position</paramref> to read a value.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="position">position</paramref> is less than zero or greater than the capacity of the accessor.</exception>
+      <exception cref="T:System.NotSupportedException">The accessor does not support reading.</exception>
+      <exception cref="T:System.ObjectDisposedException">The accessor has been disposed.</exception>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryAccessor.ReadSByte(System.Int64)">
+      <summary>Reads an 8-bit signed integer from the accessor.</summary>
+      <param name="position">The number of bytes into the accessor at which to begin reading.</param>
+      <returns>The value that was read.</returns>
+      <exception cref="T:System.ArgumentException">There are not enough bytes after <paramref name="position">position</paramref> to read a value.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="position">position</paramref> is less than zero or greater than the capacity of the accessor.</exception>
+      <exception cref="T:System.NotSupportedException">The accessor does not support reading.</exception>
+      <exception cref="T:System.ObjectDisposedException">The accessor has been disposed.</exception>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryAccessor.ReadSingle(System.Int64)">
+      <summary>Reads a single-precision floating-point value from the accessor.</summary>
+      <param name="position">The number of bytes into the accessor at which to begin reading.</param>
+      <returns>The value that was read.</returns>
+      <exception cref="T:System.ArgumentException">There are not enough bytes after <paramref name="position">position</paramref> to read a value.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="position">position</paramref> is less than zero or greater than the capacity of the accessor.</exception>
+      <exception cref="T:System.NotSupportedException">The accessor does not support reading.</exception>
+      <exception cref="T:System.ObjectDisposedException">The accessor has been disposed.</exception>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryAccessor.ReadUInt16(System.Int64)">
+      <summary>Reads an unsigned 16-bit integer from the accessor.</summary>
+      <param name="position">The number of bytes into the accessor at which to begin reading.</param>
+      <returns>The value that was read.</returns>
+      <exception cref="T:System.ArgumentException">There are not enough bytes after <paramref name="position">position</paramref> to read a value.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="position">position</paramref> is less than zero or greater than the capacity of the accessor.</exception>
+      <exception cref="T:System.NotSupportedException">The accessor does not support reading.</exception>
+      <exception cref="T:System.ObjectDisposedException">The accessor has been disposed.</exception>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryAccessor.ReadUInt32(System.Int64)">
+      <summary>Reads an unsigned 32-bit integer from the accessor.</summary>
+      <param name="position">The number of bytes into the accessor at which to begin reading.</param>
+      <returns>The value that was read.</returns>
+      <exception cref="T:System.ArgumentException">There are not enough bytes after <paramref name="position">position</paramref> to read a value.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="position">position</paramref> is less than zero or greater than the capacity of the accessor.</exception>
+      <exception cref="T:System.NotSupportedException">The accessor does not support reading.</exception>
+      <exception cref="T:System.ObjectDisposedException">The accessor has been disposed.</exception>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryAccessor.ReadUInt64(System.Int64)">
+      <summary>Reads an unsigned 64-bit integer from the accessor.</summary>
+      <param name="position">The number of bytes into the accessor at which to begin reading.</param>
+      <returns>The value that was read.</returns>
+      <exception cref="T:System.ArgumentException">There are not enough bytes after <paramref name="position">position</paramref> to read a value.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="position">position</paramref> is less than zero or greater than the capacity of the accessor.</exception>
+      <exception cref="T:System.NotSupportedException">The accessor does not support reading.</exception>
+      <exception cref="T:System.ObjectDisposedException">The accessor has been disposed.</exception>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryAccessor.Write(System.Int64,System.UInt64)">
+      <summary>Writes an unsigned 64-bit integer into the accessor.</summary>
+      <param name="position">The number of bytes into the accessor at which to begin writing.</param>
+      <param name="value">The value to write.</param>
+      <exception cref="T:System.ArgumentException">There are not enough bytes after <paramref name="position">position</paramref> to write a value.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="position">position</paramref> is less than zero or greater than the capacity of the accessor.</exception>
+      <exception cref="T:System.NotSupportedException">The accessor does not support writing.</exception>
+      <exception cref="T:System.ObjectDisposedException">The accessor has been disposed.</exception>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryAccessor.Write(System.Int64,System.UInt32)">
+      <summary>Writes an unsigned 32-bit integer into the accessor.</summary>
+      <param name="position">The number of bytes into the accessor at which to begin writing.</param>
+      <param name="value">The value to write.</param>
+      <exception cref="T:System.ArgumentException">There are not enough bytes after <paramref name="position">position</paramref> to write a value.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="position">position</paramref> is less than zero or greater than the capacity of the accessor.</exception>
+      <exception cref="T:System.NotSupportedException">The accessor does not support writing.</exception>
+      <exception cref="T:System.ObjectDisposedException">The accessor has been disposed.</exception>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryAccessor.Write(System.Int64,System.UInt16)">
+      <summary>Writes an unsigned 16-bit integer into the accessor.</summary>
+      <param name="position">The number of bytes into the accessor at which to begin writing.</param>
+      <param name="value">The value to write.</param>
+      <exception cref="T:System.ArgumentException">There are not enough bytes after <paramref name="position">position</paramref> to write a value.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="position">position</paramref> is less than zero or greater than the capacity of the accessor.</exception>
+      <exception cref="T:System.NotSupportedException">The accessor does not support writing.</exception>
+      <exception cref="T:System.ObjectDisposedException">The accessor has been disposed.</exception>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryAccessor.Write(System.Int64,System.Single)">
+      <summary>Writes a Single into the accessor.</summary>
+      <param name="position">The number of bytes into the accessor at which to begin writing.</param>
+      <param name="value">The value to write.</param>
+      <exception cref="T:System.ArgumentException">There are not enough bytes after <paramref name="position">position</paramref> to write a value.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="position">position</paramref> is less than zero or greater than the capacity of the accessor.</exception>
+      <exception cref="T:System.NotSupportedException">The accessor does not support writing.</exception>
+      <exception cref="T:System.ObjectDisposedException">The accessor has been disposed.</exception>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryAccessor.Write(System.Int64,System.SByte)">
+      <summary>Writes an 8-bit integer into the accessor.</summary>
+      <param name="position">The number of bytes into the accessor at which to begin writing.</param>
+      <param name="value">The value to write.</param>
+      <exception cref="T:System.ArgumentException">There are not enough bytes after <paramref name="position">position</paramref> to write a value.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="position">position</paramref> is less than zero or greater than the capacity of the accessor.</exception>
+      <exception cref="T:System.NotSupportedException">The accessor does not support writing.</exception>
+      <exception cref="T:System.ObjectDisposedException">The accessor has been disposed.</exception>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryAccessor.Write(System.Int64,System.Int64)">
+      <summary>Writes a 64-bit integer into the accessor.</summary>
+      <param name="position">The number of bytes into the accessor at which to begin writing.</param>
+      <param name="value">The value to write.</param>
+      <exception cref="T:System.ArgumentException">There are not enough bytes after position to write a value.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="position">position</paramref> is less than zero or greater than the capacity of the accessor.</exception>
+      <exception cref="T:System.NotSupportedException">The accessor does not support writing.</exception>
+      <exception cref="T:System.ObjectDisposedException">The accessor has been disposed.</exception>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryAccessor.Write(System.Int64,System.Double)">
+      <summary>Writes a Double value into the accessor.</summary>
+      <param name="position">The number of bytes into the accessor at which to begin writing.</param>
+      <param name="value">The value to write.</param>
+      <exception cref="T:System.ArgumentException">There are not enough bytes after <paramref name="position">position</paramref> to write a value.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="position">position</paramref> is less than zero or greater than the capacity of the accessor.</exception>
+      <exception cref="T:System.NotSupportedException">The accessor does not support writing.</exception>
+      <exception cref="T:System.ObjectDisposedException">The accessor has been disposed.</exception>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryAccessor.Write(System.Int64,System.Int16)">
+      <summary>Writes a 16-bit integer into the accessor.</summary>
+      <param name="position">The number of bytes into the accessor at which to begin writing.</param>
+      <param name="value">The value to write.</param>
+      <exception cref="T:System.ArgumentException">There are not enough bytes after <paramref name="position">position</paramref> to write a value.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="position">position</paramref> is less than zero or greater than the capacity of the accessor.</exception>
+      <exception cref="T:System.NotSupportedException">The accessor does not support writing.</exception>
+      <exception cref="T:System.ObjectDisposedException">The accessor has been disposed.</exception>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryAccessor.Write(System.Int64,System.Decimal)">
+      <summary>Writes a decimal value into the accessor.</summary>
+      <param name="position">The number of bytes into the accessor at which to begin writing.</param>
+      <param name="value">The value to write.</param>
+      <exception cref="T:System.ArgumentException">There are not enough bytes after <paramref name="position">position</paramref> to write a value.   -or-   The decimal is invalid.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="position">position</paramref> is less than zero or greater than the capacity of the accessor.</exception>
+      <exception cref="T:System.NotSupportedException">The accessor does not support writing.</exception>
+      <exception cref="T:System.ObjectDisposedException">The accessor has been disposed.</exception>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryAccessor.Write(System.Int64,System.Char)">
+      <summary>Writes a character into the accessor.</summary>
+      <param name="position">The number of bytes into the accessor at which to begin writing.</param>
+      <param name="value">The value to write.</param>
+      <exception cref="T:System.ArgumentException">There are not enough bytes after <paramref name="position">position</paramref> to write a value.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="position">position</paramref> is less than zero or greater than the capacity of the accessor.</exception>
+      <exception cref="T:System.NotSupportedException">The accessor does not support writing.</exception>
+      <exception cref="T:System.ObjectDisposedException">The accessor has been disposed.</exception>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryAccessor.Write(System.Int64,System.Byte)">
+      <summary>Writes a byte value into the accessor.</summary>
+      <param name="position">The number of bytes into the accessor at which to begin writing.</param>
+      <param name="value">The value to write.</param>
+      <exception cref="T:System.ArgumentException">There are not enough bytes after <paramref name="position">position</paramref> to write a value.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="position">position</paramref> is less than zero or greater than the capacity of the accessor.</exception>
+      <exception cref="T:System.NotSupportedException">The accessor does not support writing.</exception>
+      <exception cref="T:System.ObjectDisposedException">The accessor has been disposed.</exception>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryAccessor.Write(System.Int64,System.Boolean)">
+      <summary>Writes a Boolean value into the accessor.</summary>
+      <param name="position">The number of bytes into the accessor at which to begin writing.</param>
+      <param name="value">The value to write.</param>
+      <exception cref="T:System.ArgumentException">There are not enough bytes after <paramref name="position">position</paramref> to write a value.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="position">position</paramref> is less than zero or greater than the capacity of the accessor.</exception>
+      <exception cref="T:System.NotSupportedException">The accessor does not support writing.</exception>
+      <exception cref="T:System.ObjectDisposedException">The accessor has been disposed.</exception>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryAccessor.Write(System.Int64,System.Int32)">
+      <summary>Writes a 32-bit integer into the accessor.</summary>
+      <param name="position">The number of bytes into the accessor at which to begin writing.</param>
+      <param name="value">The value to write.</param>
+      <exception cref="T:System.ArgumentException">There are not enough bytes after <paramref name="position">position</paramref> to write a value.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="position">position</paramref> is less than zero or greater than the capacity of the accessor.</exception>
+      <exception cref="T:System.NotSupportedException">The accessor does not support writing.</exception>
+      <exception cref="T:System.ObjectDisposedException">The accessor has been disposed.</exception>
+    </member>
+    <member name="T:System.IO.UnmanagedMemoryStream">
+      <summary>Provides access to unmanaged blocks of memory from managed code.</summary>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryStream.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.IO.UnmanagedMemoryStream"></see> class.</summary>
+      <exception cref="T:System.Security.SecurityException">The user does not have the required permission.</exception>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryStream.#ctor(System.Byte*,System.Int64)">
+      <summary>Initializes a new instance of the <see cref="T:System.IO.UnmanagedMemoryStream"></see> class using the specified location and memory length.</summary>
+      <param name="pointer">A pointer to an unmanaged memory location.</param>
+      <param name="length">The length of the memory to use.</param>
+      <exception cref="T:System.Security.SecurityException">The user does not have the required permission.</exception>
+      <exception cref="T:System.ArgumentNullException">The <paramref name="pointer">pointer</paramref> value is null.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException">The <paramref name="length">length</paramref> value is less than zero.   - or -   The <paramref name="length">length</paramref> is large enough to cause an overflow.</exception>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryStream.#ctor(System.Runtime.InteropServices.SafeBuffer,System.Int64,System.Int64)">
+      <summary>Initializes a new instance of the <see cref="T:System.IO.UnmanagedMemoryStream"></see> class in a safe buffer with a specified offset and length.</summary>
+      <param name="buffer">The buffer to contain the unmanaged memory stream.</param>
+      <param name="offset">The byte position in the buffer at which to start the unmanaged memory stream.</param>
+      <param name="length">The length of the unmanaged memory stream.</param>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryStream.#ctor(System.Byte*,System.Int64,System.Int64,System.IO.FileAccess)">
+      <summary>Initializes a new instance of the <see cref="T:System.IO.UnmanagedMemoryStream"></see> class using the specified location, memory length, total amount of memory, and file access values.</summary>
+      <param name="pointer">A pointer to an unmanaged memory location.</param>
+      <param name="length">The length of the memory to use.</param>
+      <param name="capacity">The total amount of memory assigned to the stream.</param>
+      <param name="access">One of the <see cref="T:System.IO.FileAccess"></see> values.</param>
+      <exception cref="T:System.Security.SecurityException">The user does not have the required permission.</exception>
+      <exception cref="T:System.ArgumentNullException">The <paramref name="pointer">pointer</paramref> value is null.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException">The <paramref name="length">length</paramref> value is less than zero.   - or -   The <paramref name="capacity">capacity</paramref> value is less than zero.   - or -   The <paramref name="length">length</paramref> value is greater than the <paramref name="capacity">capacity</paramref> value.</exception>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryStream.#ctor(System.Runtime.InteropServices.SafeBuffer,System.Int64,System.Int64,System.IO.FileAccess)">
+      <summary>Initializes a new instance of the <see cref="T:System.IO.UnmanagedMemoryStream"></see> class in a safe buffer with a specified offset, length, and file access.</summary>
+      <param name="buffer">The buffer to contain the unmanaged memory stream.</param>
+      <param name="offset">The byte position in the buffer at which to start the unmanaged memory stream.</param>
+      <param name="length">The length of the unmanaged memory stream.</param>
+      <param name="access">The mode of file access to the unmanaged memory stream.</param>
+    </member>
+    <member name="P:System.IO.UnmanagedMemoryStream.CanRead">
+      <summary>Gets a value indicating whether a stream supports reading.</summary>
+      <returns>false if the object was created by a constructor with an <paramref name="access">access</paramref> parameter that did not include reading the stream and if the stream is closed; otherwise, true.</returns>
+    </member>
+    <member name="P:System.IO.UnmanagedMemoryStream.CanSeek">
+      <summary>Gets a value indicating whether a stream supports seeking.</summary>
+      <returns>false if the stream is closed; otherwise, true.</returns>
+    </member>
+    <member name="P:System.IO.UnmanagedMemoryStream.CanWrite">
+      <summary>Gets a value indicating whether a stream supports writing.</summary>
+      <returns>false if the object was created by a constructor with an <paramref name="access">access</paramref> parameter value that supports writing or was created by a constructor that had no parameters, or if the stream is closed; otherwise, true.</returns>
+    </member>
+    <member name="P:System.IO.UnmanagedMemoryStream.Capacity">
+      <summary>Gets the stream length (size) or the total amount of memory assigned to a stream (capacity).</summary>
+      <returns>The size or capacity of the stream.</returns>
+      <exception cref="T:System.ObjectDisposedException">The stream is closed.</exception>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryStream.Dispose(System.Boolean)">
+      <summary>Releases the unmanaged resources used by the <see cref="T:System.IO.UnmanagedMemoryStream"></see> and optionally releases the managed resources.</summary>
+      <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryStream.Flush">
+      <summary>Overrides the <see cref="M:System.IO.Stream.Flush"></see> method so that no action is performed.</summary>
+      <exception cref="T:System.ObjectDisposedException">The stream is closed.</exception>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryStream.FlushAsync(System.Threading.CancellationToken)">
+      <summary>Overrides the <see cref="M:System.IO.Stream.FlushAsync(System.Threading.CancellationToken)"></see> method so that the operation is cancelled if specified, but no other action is performed.   Available starting in .NET Framework 4.6</summary>
+      <param name="cancellationToken">The token to monitor for cancellation requests. The default value is <see cref="P:System.Threading.CancellationToken.None"></see>.</param>
+      <returns>A task that represents the asynchronous flush operation.</returns>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryStream.Initialize(System.Runtime.InteropServices.SafeBuffer,System.Int64,System.Int64,System.IO.FileAccess)">
+      <summary>Initializes a new instance of the <see cref="T:System.IO.UnmanagedMemoryStream"></see> class in a safe buffer with a specified offset, length, and file access.</summary>
+      <param name="buffer">The buffer to contain the unmanaged memory stream.</param>
+      <param name="offset">The byte position in the buffer at which to start the unmanaged memory stream.</param>
+      <param name="length">The length of the unmanaged memory stream.</param>
+      <param name="access">The mode of file access to the unmanaged memory stream.</param>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryStream.Initialize(System.Byte*,System.Int64,System.Int64,System.IO.FileAccess)">
+      <summary>Initializes a new instance of the <see cref="T:System.IO.UnmanagedMemoryStream"></see> class by using a pointer to an unmanaged memory location.</summary>
+      <param name="pointer">A pointer to an unmanaged memory location.</param>
+      <param name="length">The length of the memory to use.</param>
+      <param name="capacity">The total amount of memory assigned to the stream.</param>
+      <param name="access">One of the <see cref="T:System.IO.FileAccess"></see> values.</param>
+      <exception cref="T:System.Security.SecurityException">The user does not have the required permission.</exception>
+      <exception cref="T:System.ArgumentNullException">The <paramref name="pointer">pointer</paramref> value is null.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException">The <paramref name="length">length</paramref> value is less than zero.   - or -   The <paramref name="capacity">capacity</paramref> value is less than zero.   - or -   The <paramref name="length">length</paramref> value is large enough to cause an overflow.</exception>
+    </member>
+    <member name="P:System.IO.UnmanagedMemoryStream.Length">
+      <summary>Gets the length of the data in a stream.</summary>
+      <returns>The length of the data in the stream.</returns>
+      <exception cref="T:System.ObjectDisposedException">The stream is closed.</exception>
+    </member>
+    <member name="P:System.IO.UnmanagedMemoryStream.Position">
+      <summary>Gets or sets the current position in a stream.</summary>
+      <returns>The current position in the stream.</returns>
+      <exception cref="T:System.ObjectDisposedException">The stream is closed.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException">The position is set to a value that is less than zero, or the position is larger than <see cref="F:System.Int32.MaxValue"></see> or results in overflow when added to the current pointer.</exception>
+    </member>
+    <member name="P:System.IO.UnmanagedMemoryStream.PositionPointer">
+      <summary>Gets or sets a byte pointer to a stream based on the current position in the stream.</summary>
+      <returns>A byte pointer.</returns>
+      <exception cref="T:System.IndexOutOfRangeException">The current position is larger than the capacity of the stream.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException">The position is being set is not a valid position in the current stream.</exception>
+      <exception cref="T:System.IO.IOException">The pointer is being set to a lower value than the starting position of the stream.</exception>
+      <exception cref="T:System.NotSupportedException">The stream was initialized for use with a <see cref="T:System.Runtime.InteropServices.SafeBuffer"></see>. The <see cref="P:System.IO.UnmanagedMemoryStream.PositionPointer"></see> property is valid only for streams that are initialized with a <see cref="T:System.Byte"></see> pointer.</exception>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryStream.Read(System.Byte[],System.Int32,System.Int32)">
+      <summary>Reads the specified number of bytes into the specified array.</summary>
+      <param name="buffer">When this method returns, contains the specified byte array with the values between offset and (offset + count - 1) replaced by the bytes read from the current source. This parameter is passed uninitialized.</param>
+      <param name="offset">The zero-based byte offset in buffer at which to begin storing the data read from the current stream.</param>
+      <param name="count">The maximum number of bytes to read from the current stream.</param>
+      <returns>The total number of bytes read into the buffer. This can be less than the number of bytes requested if that many bytes are not currently available, or zero (0) if the end of the stream has been reached.</returns>
+      <exception cref="T:System.ObjectDisposedException">The stream is closed.</exception>
+      <exception cref="T:System.NotSupportedException">The underlying memory does not support reading.   - or -   The <see cref="P:System.IO.UnmanagedMemoryStream.CanRead"></see> property is set to false.</exception>
+      <exception cref="T:System.ArgumentNullException">The <paramref name="buffer">buffer</paramref> parameter is set to null.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException">The <paramref name="offset">offset</paramref> parameter is less than zero.   - or -   The <paramref name="count">count</paramref> parameter is less than zero.</exception>
+      <exception cref="T:System.ArgumentException">The length of the buffer array minus the <paramref name="offset">offset</paramref> parameter is less than the <paramref name="count">count</paramref> parameter.</exception>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryStream.ReadAsync(System.Byte[],System.Int32,System.Int32,System.Threading.CancellationToken)">
+      <summary>Asynchronously reads the specified number of bytes into the specified array.   Available starting in .NET Framework 4.6</summary>
+      <param name="buffer">The buffer to write the data into.</param>
+      <param name="offset">The byte offset in buffer at which to begin writing data from the stream.</param>
+      <param name="count">The maximum number of bytes to read.</param>
+      <param name="cancellationToken">The token to monitor for cancellation requests. The default value is <see cref="P:System.Threading.CancellationToken.None"></see>.</param>
+      <returns>A task that represents the asynchronous read operation. The value of the <paramref name="TResult">TResult</paramref> parameter contains the total number of bytes read into the buffer. The result value can be less than the number of bytes requested if the number of bytes currently available is less than the requested number, or it can be 0 (zero) if the end of the stream has been reached.</returns>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryStream.ReadByte">
+      <summary>Reads a byte from a stream and advances the position within the stream by one byte, or returns -1 if at the end of the stream.</summary>
+      <returns>The unsigned byte cast to an <see cref="T:System.Int32"></see> object, or -1 if at the end of the stream.</returns>
+      <exception cref="T:System.ObjectDisposedException">The stream is closed.</exception>
+      <exception cref="T:System.NotSupportedException">The underlying memory does not support reading.   - or -   The current position is at the end of the stream.</exception>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryStream.Seek(System.Int64,System.IO.SeekOrigin)">
+      <summary>Sets the current position of the current stream to the given value.</summary>
+      <param name="offset">The point relative to origin to begin seeking from.</param>
+      <param name="loc">Specifies the beginning, the end, or the current position as a reference point for origin, using a value of type <see cref="T:System.IO.SeekOrigin"></see>.</param>
+      <returns>The new position in the stream.</returns>
+      <exception cref="T:System.IO.IOException">An attempt was made to seek before the beginning of the stream.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException">The <paramref name="offset">offset</paramref> value is larger than the maximum size of the stream.</exception>
+      <exception cref="T:System.ArgumentException"><paramref name="loc">loc</paramref> is invalid.</exception>
+      <exception cref="T:System.ObjectDisposedException">The stream is closed.</exception>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryStream.SetLength(System.Int64)">
+      <summary>Sets the length of a stream to a specified value.</summary>
+      <param name="value">The length of the stream.</param>
+      <exception cref="T:System.IO.IOException">An I/O error has occurred.</exception>
+      <exception cref="T:System.ObjectDisposedException">The stream is closed.</exception>
+      <exception cref="T:System.NotSupportedException">The underlying memory does not support writing.   - or -   An attempt is made to write to the stream and the <see cref="P:System.IO.UnmanagedMemoryStream.CanWrite"></see> property is false.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException">The specified <paramref name="value">value</paramref> exceeds the capacity of the stream.   - or -   The specified <paramref name="value">value</paramref> is negative.</exception>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryStream.Write(System.Byte[],System.Int32,System.Int32)">
+      <summary>Writes a block of bytes to the current stream using data from a buffer.</summary>
+      <param name="buffer">The byte array from which to copy bytes to the current stream.</param>
+      <param name="offset">The offset in the buffer at which to begin copying bytes to the current stream.</param>
+      <param name="count">The number of bytes to write to the current stream.</param>
+      <exception cref="T:System.ObjectDisposedException">The stream is closed.</exception>
+      <exception cref="T:System.NotSupportedException">The underlying memory does not support writing.   - or -   An attempt is made to write to the stream and the <see cref="P:System.IO.UnmanagedMemoryStream.CanWrite"></see> property is false.   - or -   The <paramref name="count">count</paramref> value is greater than the capacity of the stream.   - or -   The position is at the end of the stream capacity.</exception>
+      <exception cref="T:System.IO.IOException">An I/O error occurs.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException">One of the specified parameters is less than zero.</exception>
+      <exception cref="T:System.ArgumentException">The <paramref name="offset">offset</paramref> parameter minus the length of the <paramref name="buffer">buffer</paramref> parameter is less than the <paramref name="count">count</paramref> parameter.</exception>
+      <exception cref="T:System.ArgumentNullException">The <paramref name="buffer">buffer</paramref> parameter is null.</exception>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryStream.WriteAsync(System.Byte[],System.Int32,System.Int32,System.Threading.CancellationToken)">
+      <summary>Asynchronously writes a sequence of bytes to the current stream, advances the current position within this stream by the number of bytes written, and monitors cancellation requests.   Available starting in .NET Framework 4.6</summary>
+      <param name="buffer">The buffer to write data from.</param>
+      <param name="offset">The zero-based byte offset in buffer from which to begin copying bytes to the stream.</param>
+      <param name="count">The maximum number of bytes to write.</param>
+      <param name="cancellationToken">The token to monitor for cancellation requests. The default value is <see cref="P:System.Threading.CancellationToken.None"></see>.</param>
+      <returns>A task that represents the asynchronous write operation.</returns>
+    </member>
+    <member name="M:System.IO.UnmanagedMemoryStream.WriteByte(System.Byte)">
+      <summary>Writes a byte to the current position in the file stream.</summary>
+      <param name="value">A byte value written to the stream.</param>
+      <exception cref="T:System.ObjectDisposedException">The stream is closed.</exception>
+      <exception cref="T:System.NotSupportedException">The underlying memory does not support writing.   - or -   An attempt is made to write to the stream and the <see cref="P:System.IO.UnmanagedMemoryStream.CanWrite"></see> property is false.   - or -   The current position is at the end of the capacity of the stream.</exception>
+      <exception cref="T:System.IO.IOException">The supplied <paramref name="value">value</paramref> causes the stream exceed its maximum capacity.</exception>
+    </member>
+  </members>
+</doc></span>

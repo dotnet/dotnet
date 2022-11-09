@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), dir.props))/dir.props" />
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <NuspecFile>$(ArtifactsBinDir)microsoft.codeanalysis.csharp/4.0.1/microsoft.codeanalysis.csharp.nuspec</NuspecFile>
+    <StrongNameKeyId>MicrosoftShared</StrongNameKeyId>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <OutputPath>$(ArtifactsBinDir)microsoft.codeanalysis.csharp/4.0.1/ref/</OutputPath>
+    <IntermediateOutputPath>$(ArtifactsObjDir)microsoft.codeanalysis.csharp/4.0.1</IntermediateOutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+    <OutputPath>$(ArtifactsBinDir)microsoft.codeanalysis.csharp/4.0.1/lib/</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="**/ref/$(TargetFramework)/*.cs" />
+    <Compile Include="**/lib/$(TargetFramework)/*.cs" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+    <PackageReference Include="NETStandard.Library" Version="$(NETStandardImplicitPackageVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\microsoft.codeanalysis.common\4.0.1\Microsoft.CodeAnalysis.Common.4.0.1.csproj" />
+  </ItemGroup>
+
+</Project>

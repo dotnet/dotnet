@@ -1,0 +1,9 @@
+<Project>
+
+  <Import Project="$([MSBuild]::GetPathOfFileAbove(Directory.Build.props, $(MSBuildThisFileDirectory)..))" />
+
+  <PropertyGroup>
+    <AssemblyName>System.Security.Cryptography.X509Certificates</AssemblyName>
+  </PropertyGroup>
+
+</Project>

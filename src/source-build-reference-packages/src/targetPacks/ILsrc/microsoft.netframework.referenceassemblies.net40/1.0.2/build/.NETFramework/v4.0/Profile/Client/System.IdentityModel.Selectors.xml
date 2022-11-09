@@ -1,0 +1,305 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>System.IdentityModel.Selectors</name>
+  </assembly>
+  <members>
+    <member name="T:System.IdentityModel.Selectors.CardSpaceException">
+      <summary>The exception that is thrown when one or more exceptions have occurred at the  service level. The cause of the error will be logged in the event log.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.IdentityModel.Selectors.CardSpaceException.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.IdentityModel.Selectors.CardSpaceException" /> class.  </summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.IdentityModel.Selectors.CardSpaceException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Initializes an instance of the <see cref="T:System.IdentityModel.Selectors.CardSpaceException" /> class with serialized data.</summary>
+      <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> that holds the serialized object data about the exception that is being thrown.</param>
+      <param name="context">The <see cref="T:System.Runtime.Serialization.StreamingContext" />  that contains contextual information about the source or destination.</param>
+    </member>
+    <member name="M:System.IdentityModel.Selectors.CardSpaceException.#ctor(System.String)">
+      <summary>Initializes an instance of the <see cref="T:System.IdentityModel.Selectors.CardSpaceException" /> class with the specified error message. </summary>
+      <param name="message">The message that describes the error.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.IdentityModel.Selectors.CardSpaceException.#ctor(System.String,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.IdentityModel.Selectors.CardSpaceException" /> class with the specified error message and a reference to the inner exception that is the cause of this exception.</summary>
+      <param name="message">The message that describes the error.</param>
+      <param name="innerException">The <see cref="T:System.Exception" /> that represents the cause of the current exception.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.IdentityModel.Selectors.CardSpacePolicyElement">
+      <summary>This class is intended for use by the infrastructure.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.IdentityModel.Selectors.CardSpacePolicyElement.#ctor(System.Xml.XmlElement,System.Xml.XmlElement,System.Collections.ObjectModel.Collection{System.Xml.XmlElement},System.Uri,System.Int32,System.Boolean)">
+      <summary>Initializes a new instance of the <see cref="T:System.IdentityModel.Selectors.CardSpacePolicyElement" /> class using the specified target and issuer of the policy, the policy parameters, privacy notice location, and the privacy notice version.</summary>
+      <param name="target">An <see cref="T:System.Xml.XmlElement" /> that represents the target of this policy.Sets the <see cref="P:System.IdentityModel.Selectors.CardSpacePolicyElement.Target" /> property.</param>
+      <param name="issuer">An <see cref="T:System.Xml.XmlElement" /> that represents the policy issuer. Sets the <see cref="P:System.IdentityModel.Selectors.CardSpacePolicyElement.Issuer" /> property.</param>
+      <param name="parameters">A <see cref="T:System.Collections.ObjectModel.Collection`1" /> of type <see cref="T:System.Xml.XmlElement" /> that represents the parameters for this element. Sets the <see cref="P:System.IdentityModel.Selectors.CardSpacePolicyElement.Parameters" /> property.</param>
+      <param name="privacyNoticeLink">The <see cref="T:System.Uri" /> where the privacy policy is located. Sets the <see cref="P:System.IdentityModel.Selectors.CardSpacePolicyElement.PolicyNoticeLink" /> property.</param>
+      <param name="privacyNoticeVersion">The version of the privacy information. Sets the <see cref="P:System.IdentityModel.Selectors.CardSpacePolicyElement.PolicyNoticeVersion" /> property.</param>
+      <param name="isManagedIssuer">true if the issuer is managed; otherwise false. Sets the <see cref="P:System.IdentityModel.Selectors.CardSpacePolicyElement.IsManagedIssuer" /> property.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="P:System.IdentityModel.Selectors.CardSpacePolicyElement.IsManagedIssuer">
+      <summary>Gets or sets a value that indicates whether the issuer of the policy is a managed issuer.</summary>
+      <returns>true if the issuer is managed; otherwise false.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="P:System.IdentityModel.Selectors.CardSpacePolicyElement.Issuer">
+      <summary>Gets or sets the policy issuer.</summary>
+      <returns>An <see cref="T:System.Xml.XmlElement" /> that represents the policy issuer.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="P:System.IdentityModel.Selectors.CardSpacePolicyElement.Parameters">
+      <summary>Gets a collection of XML elements that represent the parameters for this element.</summary>
+      <returns>A <see cref="T:System.Collections.ObjectModel.Collection`1" /> of type <see cref="T:System.Xml.XmlElement" /> that represents the parameters for this element.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="P:System.IdentityModel.Selectors.CardSpacePolicyElement.PolicyNoticeLink">
+      <summary>Gets or sets the URI for the privacy information of this policy.</summary>
+      <returns>The <see cref="T:System.Uri" /> where the privacy policy is located. </returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="P:System.IdentityModel.Selectors.CardSpacePolicyElement.PolicyNoticeVersion">
+      <summary>Gets or sets the version of the privacy information.</summary>
+      <returns>The version of the privacy information.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="P:System.IdentityModel.Selectors.CardSpacePolicyElement.Target">
+      <summary>Gets or sets the target of this policy.</summary>
+      <returns>An <see cref="T:System.Xml.XmlElement" /> that represents the target of this policy.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.IdentityModel.Selectors.CardSpaceSelector">
+      <summary>Provides access to all  public operations that are supported in managed code.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.IdentityModel.Selectors.CardSpaceSelector.GetToken(System.IdentityModel.Selectors.CardSpacePolicyElement[],System.IdentityModel.Selectors.SecurityTokenSerializer)">
+      <summary>Generates a security token using the  system and the specified policy chain and token serializer. </summary>
+      <returns>A <see cref="T:System.IdentityModel.Tokens.GenericXmlSecurityToken" /> that represents the generated security token.</returns>
+      <param name="policyChain">An array of <see cref="T:System.IdentityModel.Selectors.CardSpacePolicyElement" /> that describes the federated security chain that the client requires a final token to unwind.</param>
+      <param name="tokenSerializer">A <see cref="T:System.IdentityModel.Selectors.SecurityTokenSerializer" /> that can read a KeyInfo clause.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="policyChain" /> is null.-or-<paramref name="policyChain" /> is zero length.-or-<paramref name="tokenSerializer" /> is null.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.IdentityModel.Selectors.CardSpaceSelector.GetToken(System.Xml.XmlElement,System.Collections.Generic.IEnumerable{System.Xml.XmlElement},System.Xml.XmlElement,System.IdentityModel.Selectors.SecurityTokenSerializer)">
+      <summary>Generates a security token using the  system and the specified endpoint, policy, token issuer, and token serializer.</summary>
+      <returns>A <see cref="T:System.IdentityModel.Tokens.GenericXmlSecurityToken" /> that represents the generated security token.</returns>
+      <param name="endpoint">An <see cref="T:System.Xml.XmlElement" /> that represents the endpoint address of the recipient where the token is presented.</param>
+      <param name="policy">An <see cref="T:System.Collections.Generic.IEnumerable`1" /> of type <see cref="T:System.Xml.XmlElement" /> that contains a policy fragment that specifies the token types and claims that are requested by the recipient.</param>
+      <param name="requiredRemoteTokenIssuer">An <see cref="T:System.Xml.XmlElement" /> that represents the issuer of the token.</param>
+      <param name="tokenSerializer">A <see cref="T:System.IdentityModel.Selectors.SecurityTokenSerializer" /> that can read a KeyInfo clause.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="endpoint" /> is null.-or-<paramref name="policy" /> is null.-or-<paramref name="tokenSerializer" /> is null.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.IdentityModel.Selectors.CardSpaceSelector.Import(System.String)">
+      <summary>Displays the Import Card user interface.</summary>
+      <param name="fileName">The name of the file to import.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="fileName" /> is null.-or-<paramref name="fileName" /> is <see cref="F:System.String.Empty" />.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.IdentityModel.Selectors.CardSpaceSelector.Manage">
+      <summary>Displays the  management user interface that allows the user to create, delete, rename, and modify the card.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.IdentityModel.Selectors.IdentityValidationException">
+      <summary>Exception class to indicate that the recipient certificate was not valid.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.IdentityModel.Selectors.IdentityValidationException.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.IdentityModel.Selectors.IdentityValidationException" /> class. </summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.IdentityModel.Selectors.IdentityValidationException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Initializes a new instance of the <see cref="T:System.IdentityModel.Selectors.IdentityValidationException" /> class using the specified serialization information and serialization context.</summary>
+      <param name="info">
+        <see cref="T:System.Runtime.Serialization.SerializationInfo" /> that holds the serialized object data about the exception that is being thrown.</param>
+      <param name="context">The <see cref="T:System.Runtime.Serialization.StreamingContext" /> that contains contextual information about the source or destination.</param>
+    </member>
+    <member name="M:System.IdentityModel.Selectors.IdentityValidationException.#ctor(System.String)">
+      <summary>Initializes a new instance of the <see cref="T:System.IdentityModel.Selectors.IdentityValidationException" /> class with the specified error message.</summary>
+      <param name="message">A string that contains the error message that explains the reason for the exception.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.IdentityModel.Selectors.IdentityValidationException.#ctor(System.String,System.Exception)">
+      <summary>Initializes a new instance of the <see cref="T:System.IdentityModel.Selectors.IdentityValidationException" /> class with the specified error message and the original exception that caused this exception to be thrown.</summary>
+      <param name="message">A string that contains the error message that explains the reason for the exception. </param>
+      <param name="innerException">The original exception that caused this exception to be thrown.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.IdentityModel.Selectors.PolicyValidationException">
+      <summary>Exception class to indicate that the policy supplied by the recipient could not be validated.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.IdentityModel.Selectors.PolicyValidationException.#ctor">
+      <summary>Initializes an instance of the <see cref="T:System.IdentityModel.Selectors.PolicyValidationException" /> class. </summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.IdentityModel.Selectors.PolicyValidationException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Initializes an instance of the <see cref="T:System.IdentityModel.Selectors.PolicyValidationException" /> class with serialization information and streaming context specified. </summary>
+      <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> object that holds the serialized object data about the exception that is being thrown.</param>
+      <param name="context">The <see cref="T:System.Runtime.Serialization.StreamingContext" /> object that contains contextual information about the source or destination.</param>
+    </member>
+    <member name="M:System.IdentityModel.Selectors.PolicyValidationException.#ctor(System.String)">
+      <summary>Initializes an instance of the <see cref="T:System.IdentityModel.Selectors.PolicyValidationException" /> class with the specified error message.</summary>
+      <param name="message">The message that describes the error.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.IdentityModel.Selectors.PolicyValidationException.#ctor(System.String,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.IdentityModel.Selectors.PolicyValidationException" /> class with the specified error message and a reference to the inner exception that is the cause of this exception.</summary>
+      <param name="message">The message that describes the error.</param>
+      <param name="innerException">The exception that is the cause of the current exception.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.IdentityModel.Selectors.ServiceBusyException">
+      <summary>Exception class to indicate that the  service is busy processing other requests.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.IdentityModel.Selectors.ServiceBusyException.#ctor">
+      <summary>Initializes an instance of the <see cref="T:System.IdentityModel.Selectors.ServiceBusyException" /> class. </summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.IdentityModel.Selectors.ServiceBusyException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Initializes an instance of the <see cref="T:System.IdentityModel.Selectors.ServiceBusyException" /> class with serialization information and streaming context specified.</summary>
+      <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> object that holds the serialized object data about the exception that is being thrown.</param>
+      <param name="context">The <see cref="T:System.Runtime.Serialization.StreamingContext" /> object that contains contextual information about the source or destination.</param>
+    </member>
+    <member name="M:System.IdentityModel.Selectors.ServiceBusyException.#ctor(System.String)">
+      <summary>Initializes an instance of the <see cref="T:System.IdentityModel.Selectors.ServiceBusyException" /> class with the specified error message. </summary>
+      <param name="message">The message that describes the error.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.IdentityModel.Selectors.ServiceBusyException.#ctor(System.String,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.IdentityModel.Selectors.ServiceBusyException" /> class with the specified error message and a reference to the inner exception that is the cause of this exception.</summary>
+      <param name="message">The message that describes the error.</param>
+      <param name="innerException">The exception that is the cause of the current exception.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.IdentityModel.Selectors.ServiceNotStartedException">
+      <summary>The exception that is thrown when  has not been started on the user's computer.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.IdentityModel.Selectors.ServiceNotStartedException.#ctor">
+      <summary>Initializes an instance of the <see cref="T:System.IdentityModel.Selectors.ServiceNotStartedException" /> class. </summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.IdentityModel.Selectors.ServiceNotStartedException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Initializes an instance of the <see cref="T:System.IdentityModel.Selectors.ServiceNotStartedException" /> class with serialized data.</summary>
+      <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> object that contains the serialized object data about the exception that is being thrown.</param>
+      <param name="context">The <see cref="T:System.Runtime.Serialization.StreamingContext" /> object that contains contextual information about the source or destination.</param>
+    </member>
+    <member name="M:System.IdentityModel.Selectors.ServiceNotStartedException.#ctor(System.String)">
+      <summary>Initializes an instance of the <see cref="T:System.IdentityModel.Selectors.ServiceNotStartedException" /> class with the specified error message. </summary>
+      <param name="message">The message that describes the error.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.IdentityModel.Selectors.ServiceNotStartedException.#ctor(System.String,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.IdentityModel.Selectors.ServiceNotStartedException" /> class with the specified error message and a reference to the inner exception that is the cause of this exception.</summary>
+      <param name="message">The message that describes the error.</param>
+      <param name="innerException">The exception that is the cause of the current exception.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.IdentityModel.Selectors.StsCommunicationException">
+      <summary>The exception that is thrown when there is a problem communicating with the security token service.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.IdentityModel.Selectors.StsCommunicationException.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.IdentityModel.Selectors.StsCommunicationException" /> class.  </summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.IdentityModel.Selectors.StsCommunicationException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Initializes an instance of the <see cref="T:System.IdentityModel.Selectors.StsCommunicationException" /> class with serialized data. </summary>
+      <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> object that contains the serialized object data about the exception that is being thrown.</param>
+      <param name="context">The <see cref="T:System.Runtime.Serialization.StreamingContext" /> object that contains contextual information about the source or destination.</param>
+    </member>
+    <member name="M:System.IdentityModel.Selectors.StsCommunicationException.#ctor(System.String)">
+      <summary>Initializes an instance of the <see cref="T:System.IdentityModel.Selectors.StsCommunicationException" /> class with the specified error message.</summary>
+      <param name="message">The message that describes the error.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.IdentityModel.Selectors.StsCommunicationException.#ctor(System.String,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.IdentityModel.Selectors.StsCommunicationException" /> class with the specified error message and a reference to the inner exception that is the cause of this exception.</summary>
+      <param name="message">The message that describes the error.</param>
+      <param name="innerException">The exception that is the cause of the current exception.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.IdentityModel.Selectors.UnsupportedPolicyOptionsException">
+      <summary>Indicates that a policy was provided to the system that included options that were unsupported.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.IdentityModel.Selectors.UnsupportedPolicyOptionsException.#ctor">
+      <summary>Initializes an instance of the <see cref="T:System.IdentityModel.Selectors.UnsupportedPolicyOptionsException" /> class. </summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.IdentityModel.Selectors.UnsupportedPolicyOptionsException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Initializes an instance of the <see cref="T:System.IdentityModel.Selectors.UnsupportedPolicyOptionsException" /> class with the specified serialization information and streaming context.</summary>
+      <param name="info">
+        <see cref="T:System.Runtime.Serialization.SerializationInfo" /> that holds the serialized object data about the exception that is being thrown.</param>
+      <param name="context">The <see cref="T:System.Runtime.Serialization.StreamingContext" /> that contains contextual information about the source or destination. </param>
+    </member>
+    <member name="M:System.IdentityModel.Selectors.UnsupportedPolicyOptionsException.#ctor(System.String)">
+      <summary>Initializes an instance of the <see cref="T:System.IdentityModel.Selectors.UnsupportedPolicyOptionsException" /> class with the specified error message.</summary>
+      <param name="message">The error message.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.IdentityModel.Selectors.UnsupportedPolicyOptionsException.#ctor(System.String,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.IdentityModel.Selectors.UnsupportedPolicyOptionsException" /> class with the specified error message and the original exception that caused this exception to be thrown.</summary>
+      <param name="message">The error message that explains the reason for the exception.</param>
+      <param name="innerException">The original exception that caused this exception to be thrown.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.IdentityModel.Selectors.UntrustedRecipientException">
+      <summary>The exception that is thrown when the user decides not to trust the entity that is requesting a token after reviewing the information from their certificate.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.IdentityModel.Selectors.UntrustedRecipientException.#ctor">
+      <summary>Initializes an instance of the <see cref="T:System.IdentityModel.Selectors.UntrustedRecipientException" /> class. </summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.IdentityModel.Selectors.UntrustedRecipientException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Initializes an instance of the <see cref="T:System.IdentityModel.Selectors.UntrustedRecipientException" /> class with serialized data.</summary>
+      <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> object that contains the serialized object data about the exception being thrown.</param>
+      <param name="context">The <see cref="T:System.Runtime.Serialization.StreamingContext" /> object that contains contextual information about the source or destination.</param>
+    </member>
+    <member name="M:System.IdentityModel.Selectors.UntrustedRecipientException.#ctor(System.String)">
+      <summary>Initializes an instance of the <see cref="T:System.IdentityModel.Selectors.UntrustedRecipientException" /> class with the specified error message. </summary>
+      <param name="message">The message that describes the error.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.IdentityModel.Selectors.UntrustedRecipientException.#ctor(System.String,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.IdentityModel.Selectors.UntrustedRecipientException" /> class with the specified error message and a reference to the inner exception that is the cause of this exception.</summary>
+      <param name="message">The message that describes the error.</param>
+      <param name="innerException">The exception that is the cause of the current exception.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.IdentityModel.Selectors.UserCancellationException">
+      <summary>The exception that is thrown when the user cancels an operation during the <see cref="M:System.IdentityModel.Selectors.CardSpaceSelector.GetToken(System.IdentityModel.Selectors.CardSpacePolicyElement[],System.IdentityModel.Selectors.SecurityTokenSerializer)" /> call.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.IdentityModel.Selectors.UserCancellationException.#ctor">
+      <summary>Initializes an instance of the <see cref="T:System.IdentityModel.Selectors.UserCancellationException" /> class. </summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.IdentityModel.Selectors.UserCancellationException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Initializes an instance of the <see cref="T:System.IdentityModel.Selectors.UserCancellationException" /> class with serialized data.</summary>
+      <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> object that contains the serialized object data about the exception being thrown.</param>
+      <param name="context">The <see cref="T:System.Runtime.Serialization.StreamingContext" /> object that contains contextual information about the source or destination.</param>
+    </member>
+    <member name="M:System.IdentityModel.Selectors.UserCancellationException.#ctor(System.String)">
+      <summary>Initializes an instance of the <see cref="T:System.IdentityModel.Selectors.UserCancellationException" /> class with the specified error message. </summary>
+      <param name="message">The message that describes the error.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.IdentityModel.Selectors.UserCancellationException.#ctor(System.String,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.IdentityModel.Selectors.UserCancellationException" /> class with the specified error message and a reference to the inner exception that is the cause of this exception.</summary>
+      <param name="message">The message that describes the error.</param>
+      <param name="innerException">The exception that is the cause of the current exception.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+  </members>
+</doc>

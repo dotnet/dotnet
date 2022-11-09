@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?><span>
+<doc>
+  <assembly>
+    <name>System.Resources.Reader</name>
+  </assembly>
+  <members>
+    <member name="T:System.Resources.ResourceReader">
+      <summary>Enumerates the resources in a binary resources (.resources) file by reading sequential resource name/value pairs.  Security Note: Calling methods in this class with untrusted data is a security risk. Call the methods in the class only with trusted data. For more information, see <see cref="https://docs.com/rick-anderson-1/8710/untrusted-data-security-risks">Untrusted Data Security Risks</see>.</summary>
+    </member>
+    <member name="M:System.Resources.ResourceReader.#ctor(System.IO.Stream)">
+      <summary>Initializes a new instance of the <see cref="T:System.Resources.ResourceReader"></see> class for the specified stream.</summary>
+      <param name="stream">The input stream for reading resources.</param>
+      <exception cref="T:System.ArgumentException">The <paramref name="stream">stream</paramref> parameter is not readable.</exception>
+      <exception cref="T:System.ArgumentNullException">The <paramref name="stream">stream</paramref> parameter is null.</exception>
+      <exception cref="T:System.IO.IOException">An I/O error has occurred while accessing <paramref name="stream">stream</paramref>.</exception>
+    </member>
+    <member name="M:System.Resources.ResourceReader.Dispose">
+      <summary>Releases all resources used by the current instance of the <see cref="T:System.Resources.ResourceReader"></see> class.</summary>
+    </member>
+    <member name="M:System.Resources.ResourceReader.GetEnumerator">
+      <summary>Returns an enumerator for this <see cref="T:System.Resources.ResourceReader"></see> object.</summary>
+      <returns>An enumerator for this <see cref="T:System.Resources.ResourceReader"></see> object.</returns>
+      <exception cref="T:System.InvalidOperationException">The reader has been closed or disposed, and cannot be accessed.</exception>
+    </member>
+  </members>
+</doc></span>

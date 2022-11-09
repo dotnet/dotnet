@@ -1,0 +1,1179 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>System.Runtime.DurableInstancing</name>
+  </assembly>
+  <members>
+    <member name="T:System.Runtime.DurableInstancing.InstanceCollisionException">
+      <summary>A persistence provider throws this exception when it expects an instance to be in an uninitialized state but the instance is not in that state. </summary>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceCollisionException.#ctor">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceCollisionException" /> class. </summary>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceCollisionException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceCollisionException" /> class with serialized data.</summary>
+      <param name="info">The information about the current exception.</param>
+      <param name="context">The contextual information about the source or destination.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceCollisionException.#ctor(System.String)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceCollisionException" /> class using the error message.</summary>
+      <param name="message">The reason for the exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceCollisionException.#ctor(System.String,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceCollisionException" /> class using the error message and the inner exception information.</summary>
+      <param name="message">The reason for the exception.</param>
+      <param name="innerException">The exception that caused the current exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceCollisionException.#ctor(System.Xml.Linq.XName,System.Guid)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceCollisionException" /> class using the XName (the combination of namespace and name) of the command and the ID of the target instance against which the command was executed passed as parameters.</summary>
+      <param name="commandName">The XName (the combination of namespace and name) of the command.</param>
+      <param name="instanceId">The ID of the target instance against which the command was executed.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceCollisionException.#ctor(System.Xml.Linq.XName,System.Guid,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceCollisionException" /> class using the XName (the combination of namespace and name) of the command, the ID of the target instance against which the command was executed, and the inner exception information.</summary>
+      <param name="commandName">The XName (the combination of namespace and name) of the command.</param>
+      <param name="instanceId">The ID of the target instance against which the command was executed.</param>
+      <param name="innerException">The exception that caused the current exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceCollisionException.#ctor(System.Xml.Linq.XName,System.Guid,System.String,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceCollisionException" /> class using the XName (the combination of namespace and name) of the command, the ID of the target instance against which the command was executed, the error message that explains the reason for the current exception, and the inner exception information passed as parameters.</summary>
+      <param name="commandName">The XName (the combination of namespace and name) of the command.</param>
+      <param name="instanceId">The ID of the target instance against which the command was executed.</param>
+      <param name="message">The reason for the exception.</param>
+      <param name="innerException">The exception that caused the current exception.</param>
+    </member>
+    <member name="T:System.Runtime.DurableInstancing.InstanceCompleteException">
+      <summary>A persistence provider throws this exception when it expects to find an instance in the initialized state, but finds the instance is in the completed state.</summary>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceCompleteException.#ctor">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceCompleteException" /> class. </summary>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceCompleteException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceCompleteException" /> class with serialized data.</summary>
+      <param name="info">The information about the current exception.</param>
+      <param name="context">The contextual information about the source or destination.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceCompleteException.#ctor(System.String)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceCompleteException" /> class using the error message.</summary>
+      <param name="message">The reason for the exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceCompleteException.#ctor(System.String,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceCompleteException" /> class using the error message and the inner exception information.</summary>
+      <param name="message">The reason for the exception.</param>
+      <param name="innerException">The exception that causes the current exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceCompleteException.#ctor(System.Xml.Linq.XName,System.Guid)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceCompleteException" /> class using the XName (the combination of namespace and name) of the command and the ID of the target instance against which the command was executed.</summary>
+      <param name="commandName">The XName (the combination of namespace and name) of the command.</param>
+      <param name="instanceId">The ID of the target instance against which the command was executed.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceCompleteException.#ctor(System.Xml.Linq.XName,System.Guid,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceCompleteException" /> class using the XName (the combination of namespace and name) of the command, the ID of the target instance against which the command was executed, and the inner exception information passed as parameters.</summary>
+      <param name="commandName">The XName (the combination of namespace and name) of the command.</param>
+      <param name="instanceId">The ID of the target instance against which the command was executed.</param>
+      <param name="innerException">The exception that caused the current exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceCompleteException.#ctor(System.Xml.Linq.XName,System.Guid,System.String,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceCompleteException" /> class using the XName (the combination of namespace and name) of the command, the ID of the target instance against which the command was executed, error message that explains the reason for the exception, and the exception that caused the current exception.</summary>
+      <param name="commandName">The XName (the combination of namespace and name) of the command.</param>
+      <param name="instanceId">The ID of the target instance against which the command was executed.</param>
+      <param name="message">The reason for the exception.</param>
+      <param name="innerException">The exception that caused the current exception.</param>
+    </member>
+    <member name="T:System.Runtime.DurableInstancing.InstanceHandle">
+      <summary>Represents a handle to <see cref="T:System.Runtime.DurableInstancing.InstanceView" /> object.</summary>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceHandle.Free">
+      <summary>Frees the instance handle.</summary>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstanceHandle.IsValid">
+      <summary>Returns a value that indicates whether an instance handle is valid.</summary>
+      <returns>true if the handle is valid; false if the handle is not valid.</returns>
+    </member>
+    <member name="T:System.Runtime.DurableInstancing.InstanceHandleConflictException">
+      <summary>A persistence provider throws this exception when it tries to acquire write access to an instance by binding an instance handle to an instance lock, when an instance handle with write access to that instance already exists. </summary>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceHandleConflictException.#ctor">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceHandleConflictException" /> class. </summary>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceHandleConflictException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceHandleConflictException" /> class with serialized data.</summary>
+      <param name="info">The information about the current exception.</param>
+      <param name="context">The contextual information about the source or destination.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceHandleConflictException.#ctor(System.String)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceHandleConflictException" /> class using the error message.</summary>
+      <param name="message">The reason for the exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceHandleConflictException.#ctor(System.String,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceHandleConflictException" /> class using the error message and the inner exception information.</summary>
+      <param name="message">The reason for the exception.</param>
+      <param name="innerException">The exception that caused the current exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceHandleConflictException.#ctor(System.Xml.Linq.XName,System.Guid)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceHandleConflictException" /> class using the XName (the combination of namespace and name) of the command and the ID of the target instance against which the command was executed.</summary>
+      <param name="commandName">The XName (the combination of namespace and name) of the command.</param>
+      <param name="instanceId">The ID of the target instance against which the command was executed.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceHandleConflictException.#ctor(System.Xml.Linq.XName,System.Guid,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceHandleConflictException" /> class using the XName (the combination of namespace and name) of the command, the ID of the target instance against which the command was executed, and the inner exception information passed as parameters.</summary>
+      <param name="commandName">The XName (the combination of namespace and name) of the command.</param>
+      <param name="instanceId">The ID of the target instance against which the command was executed.</param>
+      <param name="innerException">The exception that caused the current exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceHandleConflictException.#ctor(System.Xml.Linq.XName,System.Guid,System.String,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceHandleConflictException" /> class using the XName (the combination of namespace and name) of the command, the ID of the target instance against which the command was executed, the error message that explains the reason for the current exception, and the inner exception information </summary>
+      <param name="commandName">The XName (the combination of namespace and name) of the command.</param>
+      <param name="instanceId">The ID of the target instance against which the command was executed.</param>
+      <param name="message">The reason for the exception.</param>
+      <param name="innerException">The exception that caused the current exception.</param>
+    </member>
+    <member name="T:System.Runtime.DurableInstancing.InstanceKey">
+      <summary>Represents an instance key and contains an identifier and metadata associated with the instance key. An instance key acts as a non-unique alias for an instance. </summary>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceKey.#ctor(System.Guid)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceKey" /> class using the GUID associated with the instance key passed.</summary>
+      <param name="value">The GUID associated with the instance key. Must not be Guid.Empty.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceKey.#ctor(System.Guid,System.Collections.Generic.IDictionary{System.Xml.Linq.XName,System.Runtime.DurableInstancing.InstanceValue})">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceKey" /> class using the GUID and metadata associated with the instance key.</summary>
+      <param name="value">The GUID associated with the instance key. Must not be Guid.Empty.</param>
+      <param name="metadata">The dictionary that contains metadata associated with the instance key or null.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceKey.Equals(System.Object)">
+      <summary>Compares the GUID associated with the current object (stored in the <see cref="P:System.Runtime.DurableInstancing.InstanceKey.Value" /> property) with the GUID associated with the <see cref="T:System.Runtime.DurableInstancing.InstanceKey" /> object. </summary>
+      <returns>true if the objects are same; otherwise returns false.</returns>
+      <param name="obj">An <see cref="T:System.Runtime.DurableInstancing.InstanceKey" /> object that needs to be compared with the current object.  Must not be null.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceKey.GetHashCode">
+      <summary>Returns a unique hash code for the current <see cref="T:System.Runtime.DurableInstancing.InstanceKey" /> object’s GUID (stored in the Value property).</summary>
+      <returns>The unique hash code.</returns>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstanceKey.InvalidKey">
+      <summary>Returns an invalid <see cref="T:System.Runtime.DurableInstancing.InstanceKey" /> object. An invalid <see cref="T:System.Runtime.DurableInstancing.InstanceKey" /> object has Guid.Empty value for the <see cref="P:System.Runtime.DurableInstancing.InstanceKey.Value" /> property and a false value for the <see cref="P:System.Runtime.DurableInstancing.InstanceKey.IsValid" /> property.</summary>
+      <returns>An invalid instance key.</returns>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstanceKey.IsValid">
+      <summary>Gets a value that indicates whether the instance key is valid.</summary>
+      <returns>true if the instance key is valid; otherwise false.  An instance key is valid if and only if its GUID (stored in the Value property) is not Guid.Empty.</returns>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstanceKey.Metadata">
+      <summary>Gets the dictionary that contains metadata associated with the instance key.</summary>
+      <returns>The dictionary that contains metadata associated with the instance key. This dictionary is a read-only dictionary.</returns>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstanceKey.Value">
+      <summary>Gets the GUID value associated with the current instance key.   </summary>
+      <returns>The GUID value associated with the current instance key.</returns>
+    </member>
+    <member name="T:System.Runtime.DurableInstancing.InstanceKeyCollisionException">
+      <summary>A persistence provider throws this exception when it expects to find an instance key in the unassociated state, but finds the key in a different state.</summary>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceKeyCollisionException.#ctor">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceKeyCollisionException" /> class. </summary>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceKeyCollisionException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceKeyCollisionException" /> class with serialized data.</summary>
+      <param name="info">The information about the current exception.</param>
+      <param name="context">The contextual information about the source or destination.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceKeyCollisionException.#ctor(System.String)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceKeyCollisionException" /> class with the error message passed as a parameter.</summary>
+      <param name="message">The reason for the exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceKeyCollisionException.#ctor(System.String,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceKeyCollisionException" /> class with the error message and the inner exception information passed as parameters.</summary>
+      <param name="message">The reason for the exception.</param>
+      <param name="innerException">The exception that caused the current exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceKeyCollisionException.#ctor(System.Xml.Linq.XName,System.Guid,System.Runtime.DurableInstancing.InstanceKey,System.Guid)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceKeyCollisionException" /> class with the name of the command, ID of the instance against which the command was executed, instance key information, and the instance ID that is currently associated with the instance key passed as parameters.</summary>
+      <param name="commandName">The XName (the combination of namespace and name) of the command.</param>
+      <param name="instanceId">The ID of the instance against which the command was executed. The command failed because the instance key is already associated with another instance whose ID is represented by the <paramref name="conflictingInstanceId" /> parameter.</param>
+      <param name="instanceKey">The instance key information. </param>
+      <param name="conflictingInstanceId">The ID of the instance that is currently associated with the instance key. </param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceKeyCollisionException.#ctor(System.Xml.Linq.XName,System.Guid,System.Runtime.DurableInstancing.InstanceKey,System.Guid,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceKeyCollisionException" /> class with the name of the command, ID of the instance against which the command was executed, instance key information, the instance ID that is currently associated with the instance key, and inner exception information passed as parameters.</summary>
+      <param name="commandName">The XName (the combination of namespace and name) of the command.</param>
+      <param name="instanceId">The ID of the instance against which the command was executed. The command failed because the instance key is already associated with another instance whose ID is represented by the <paramref name="conflictingInstanceId" /> parameter.</param>
+      <param name="instanceKey">The instance key information. </param>
+      <param name="conflictingInstanceId">The ID of the instance that is currently associated with the instance key. </param>
+      <param name="innerException">The exception that caused the current exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceKeyCollisionException.#ctor(System.Xml.Linq.XName,System.Guid,System.Runtime.DurableInstancing.InstanceKey,System.Guid,System.String,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceKeyCollisionException" /> class with the name of the command, ID of the instance against which the command was executed, instance key information, the instance ID that is currently associated with the instance key, the error message that describes the exception, and inner exception information passed as parameters.</summary>
+      <param name="commandName">The XName (the combination of namespace and name) of the command.</param>
+      <param name="instanceId">The ID of the instance against which the command was executed. The command failed because the instance key is already associated with another instance whose ID is represented by the conflictingInstanceId parameter.</param>
+      <param name="instanceKey">The instance key information. </param>
+      <param name="conflictingInstanceId">The ID of the instance that is currently associated with the instance key. </param>
+      <param name="message">The reason for the exception.</param>
+      <param name="innerException">The exception that caused the current exception.</param>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstanceKeyCollisionException.ConflictingInstanceId">
+      <summary>Gets the instance ID currently associated with the instance key. The persistence provider expects to find the instance key in an unassociated state, but the key is associated with this instance ID.</summary>
+      <returns>The instance ID. Returns Guid.Empty if the conflicting instance ID is not known.</returns>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceKeyCollisionException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Sets the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> object with information about the exception. </summary>
+      <param name="info">The serialized object data about the exception being thrown.</param>
+      <param name="context">The contextual information about the source or the destination.</param>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstanceKeyCollisionException.InstanceKey">
+      <summary>Contains information about the instance key.</summary>
+      <returns>The instance key information. Returns null if the conflicting instance key is not known.</returns>
+    </member>
+    <member name="T:System.Runtime.DurableInstancing.InstanceKeyCompleteException">
+      <summary>A persistence provider throws this exception when it expects to find an instance key in the associated state but finds the key in the completed state.</summary>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceKeyCompleteException.#ctor">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceKeyCompleteException" /> class. </summary>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceKeyCompleteException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceKeyCompleteException" /> class with the serialized data.</summary>
+      <param name="info">The information about the current exception.</param>
+      <param name="context">The contextual information about the source or destination.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceKeyCompleteException.#ctor(System.String)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceKeyCompleteException" /> class using the error message.</summary>
+      <param name="message">The reason for the exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceKeyCompleteException.#ctor(System.String,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceKeyCompleteException" /> class using the error message and the inner exception information.</summary>
+      <param name="message">The reason for the exception.</param>
+      <param name="innerException">The exception that caused the current exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceKeyCompleteException.#ctor(System.Xml.Linq.XName,System.Guid,System.Runtime.DurableInstancing.InstanceKey,System.String,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceKeyCompleteException" /> class using the name of the command, ID of the instance against which the command was executed, instance key information, the error message that explains the reason for the exception, and the inner exception (the exception that caused the current exception) passed as parameters.</summary>
+      <param name="commandName">The XName (the combination of namespace and name) of the command.</param>
+      <param name="instanceId">The ID of the instance against which the command was executed.</param>
+      <param name="instanceKey">The information about the instance key. </param>
+      <param name="message">Error message that explains the reason for the exception.</param>
+      <param name="innerException">The exception that caused the current exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceKeyCompleteException.#ctor(System.Xml.Linq.XName,System.Runtime.DurableInstancing.InstanceKey)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceKeyCompleteException" /> class using the name of the command, and the instance key information.</summary>
+      <param name="commandName">The XName (the combination of namespace and name) of the command.</param>
+      <param name="instanceKey">The information about the instance key. </param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceKeyCompleteException.#ctor(System.Xml.Linq.XName,System.Runtime.DurableInstancing.InstanceKey,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceKeyCompleteException" /> class using the name of the command, the instance key information, and the inner exception (the exception that caused the current exception).</summary>
+      <param name="commandName">The XName (the combination of namespace and name) of the command.</param>
+      <param name="instanceKey">The information about the instance key. </param>
+      <param name="innerException">The exception that caused the current exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceKeyCompleteException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Sets the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> object with information about the exception. </summary>
+      <param name="info">The serialized object data about the exception being thrown.</param>
+      <param name="context">The contextual information about the source or the destination.</param>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstanceKeyCompleteException.InstanceKey">
+      <summary>Contains information about the instance key.</summary>
+      <returns>The information about the instance key. Return null if the instance key is not known.</returns>
+    </member>
+    <member name="T:System.Runtime.DurableInstancing.InstanceKeyNotReadyException">
+      <summary>A persistence provider throws this exception when it expects to find an instance key in the associated state, but finds the key in the unassociated state.</summary>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceKeyNotReadyException.#ctor">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceKeyNotReadyException" /> class. </summary>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceKeyNotReadyException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceKeyNotReadyException" /> class with the serialized data.</summary>
+      <param name="info">The information about the current exception.</param>
+      <param name="context">The contextual information about the source or destination.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceKeyNotReadyException.#ctor(System.String)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceKeyNotReadyException" /> class by using the error message.</summary>
+      <param name="message">The reason for the exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceKeyNotReadyException.#ctor(System.String,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceKeyNotReadyException" /> class by using the error message and the inner exception information.</summary>
+      <param name="message">The reason for the exception.</param>
+      <param name="innerException">The exception that caused the current exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceKeyNotReadyException.#ctor(System.Xml.Linq.XName,System.Guid,System.Runtime.DurableInstancing.InstanceKey,System.String,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceKeyNotReadyException" /> class by using the name of the command, ID of the instance against which the command was executed, instance key information, the error message that explains the reason for the exception, and the inner exception (the exception that caused the current exception).</summary>
+      <param name="commandName">The XName (the combination of namespace and name) of the command.</param>
+      <param name="instanceId">The ID of the instance against which the command was executed.</param>
+      <param name="instanceKey">The information about the instance key. </param>
+      <param name="message">The reason for the exception.</param>
+      <param name="innerException">The exception that caused the current exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceKeyNotReadyException.#ctor(System.Xml.Linq.XName,System.Runtime.DurableInstancing.InstanceKey)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceKeyNotReadyException" /> class using the name of the command and the instance key information.</summary>
+      <param name="commandName">The XName (the combination of namespace and name) of the command.</param>
+      <param name="instanceKey">The information about the instance key. </param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceKeyNotReadyException.#ctor(System.Xml.Linq.XName,System.Runtime.DurableInstancing.InstanceKey,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceKeyNotReadyException" /> class using the name of the command, the instance key information, and the inner exception (the exception that caused the current exception) passed as parameters.</summary>
+      <param name="commandName">The XName (the combination of namespace and name) of the command.</param>
+      <param name="instanceKey">The information about the instance key. </param>
+      <param name="innerException">The exception that caused the current exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceKeyNotReadyException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Sets the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> object with information about the exception. </summary>
+      <param name="info">The serialized object data about the exception being thrown.</param>
+      <param name="context">The contextual information about the source or the destination.</param>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstanceKeyNotReadyException.InstanceKey">
+      <summary>Contains information about the instance key.</summary>
+      <returns>The instance key. Returns null if the instance key is not known.</returns>
+    </member>
+    <member name="T:System.Runtime.DurableInstancing.InstanceKeyState">
+      <summary>Contains a list of valid states for instance keys.</summary>
+    </member>
+    <member name="F:System.Runtime.DurableInstancing.InstanceKeyState.Unknown">
+      <summary>The instance key is not associated with any instance.</summary>
+    </member>
+    <member name="F:System.Runtime.DurableInstancing.InstanceKeyState.Associated">
+      <summary>The instance key is associated with a non-completed instance.</summary>
+    </member>
+    <member name="F:System.Runtime.DurableInstancing.InstanceKeyState.Completed">
+      <summary>The instance key was associated with an instance, which is no longer active.</summary>
+    </member>
+    <member name="T:System.Runtime.DurableInstancing.InstanceKeyView">
+      <summary>Provides a view into instance key information.</summary>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstanceKeyView.InstanceKey">
+      <summary>Gets the value of the instance key (GUID).</summary>
+      <returns>The value of the instance key.</returns>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstanceKeyView.InstanceKeyMetadata">
+      <summary>Gets the metadata for the instance key as a dictionary of XNames and corresponding InstanceValue objects. </summary>
+      <returns>The metadata for the instance key.</returns>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstanceKeyView.InstanceKeyMetadataConsistency">
+      <summary>Gets consistency of the metadata (None, In Doubt, or Partial) of the instance key.</summary>
+      <returns>The consistency of the metadata.</returns>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstanceKeyView.InstanceKeyState">
+      <summary>Gets the state of the instance key (Unassociated, Associated, or Completed).</summary>
+      <returns>The state of the instance key.</returns>
+    </member>
+    <member name="T:System.Runtime.DurableInstancing.InstanceLockedException">
+      <summary>A persistence provider throws this exception when it is unable to acquire a lock on an instance because the instance is already locked by another owner. </summary>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceLockedException.#ctor">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceLockedException" /> class.</summary>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceLockedException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceLockedException" /> class with serialized data.</summary>
+      <param name="info">The information about the current exception.</param>
+      <param name="context">The contextual information about the source or destination. </param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceLockedException.#ctor(System.String)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceLockedException" /> class by using the error message passed as a parameter.</summary>
+      <param name="message">The reason for the exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceLockedException.#ctor(System.String,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceLockedException" /> class by using the error message and the inner exception information passed as parameters.</summary>
+      <param name="message">The reason for the exception.</param>
+      <param name="innerException">The exception that caused the current exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceLockedException.#ctor(System.Xml.Linq.XName,System.Guid)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceLockedException" /> class using the XName (the combination of namespace and name) of the command and the ID of the target instance against which the command was executed passed as parameters.</summary>
+      <param name="commandName">The XName (the combination of namespace and name) of the command.</param>
+      <param name="instanceId">The ID of the target instance against which the command was executed.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceLockedException.#ctor(System.Xml.Linq.XName,System.Guid,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceLockedException" /> class using the XName (the combination of namespace and name) of the command, the ID of the target instance against which the command was executed, and the inner exception information passed as parameters.</summary>
+      <param name="commandName">The XName (the combination of namespace and name) of the command.</param>
+      <param name="instanceId">The ID of the target instance against which the command was executed.</param>
+      <param name="innerException">The exception that caused the current exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceLockedException.#ctor(System.Xml.Linq.XName,System.Guid,System.Guid,System.Collections.Generic.IDictionary{System.Xml.Linq.XName,System.Object})">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceLockedException" /> class using the XName (the combination of namespace and name) of the command, the ID of the target instance against which the command was executed, the ID of the owner that currently has a lock on the instance, and serializable metadata information of the owner passed as parameters.</summary>
+      <param name="commandName">The XName (the combination of namespace and name) of the command.</param>
+      <param name="instanceId">The ID of the target instance against which the command was executed.</param>
+      <param name="instanceOwnerId">The ID of the owner that currently has a lock on the instance.</param>
+      <param name="serializableInstanceOwnerMetadata">Serializable metadata information about the instance owner (who has a lock on the instance).</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceLockedException.#ctor(System.Xml.Linq.XName,System.Guid,System.Guid,System.Collections.Generic.IDictionary{System.Xml.Linq.XName,System.Object},System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceLockedException" /> class using the XName (the combination of namespace and name) of the command, the ID of the target instance against which the command was executed, the ID of the owner that currently has a lock on the instance, serializable metadata information about the owner, and the exception that caused the current exception passed as parameters.</summary>
+      <param name="commandName">The XName (the combination of namespace and name) of the command.</param>
+      <param name="instanceId">The ID of the target instance against which the command was executed.</param>
+      <param name="instanceOwnerId">The ID of the owner that currently has a lock on the instance.</param>
+      <param name="serializableInstanceOwnerMetadata">Serializable metadata information about the instance owner (who has a lock on the instance).</param>
+      <param name="innerException">The exception that caused the current exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceLockedException.#ctor(System.Xml.Linq.XName,System.Guid,System.Guid,System.Collections.Generic.IDictionary{System.Xml.Linq.XName,System.Object},System.String,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceLockedException" /> class using the XName (the combination of namespace and name) of the command, the ID of the target instance against which the command was executed, the ID of the owner that currently has a lock on the instance, serializable metadata information about the owner, the error message that explains the reason for the exception, and the exception that caused the current exception passed as parameters.</summary>
+      <param name="commandName">The XName (the combination of namespace and name) of the command.</param>
+      <param name="instanceId">The ID of the target instance against which the command was executed.</param>
+      <param name="instanceOwnerId">The ID of the owner that currently has lock on the instance.</param>
+      <param name="serializableInstanceOwnerMetadata">The serializable metadata information about the instance owner (who has a lock on the instance).</param>
+      <param name="message">The error message that explains the reason for the exception.</param>
+      <param name="innerException">The exception that caused the current exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceLockedException.#ctor(System.Xml.Linq.XName,System.Guid,System.String,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceLockedException" /> class using the XName (the combination of namespace and name) of the command, the ID of the target instance against which the command was executed, the error message that explains the reason for the exception, and the exception that caused the current exception passed as parameters.</summary>
+      <param name="commandName">The XName (the combination of namespace and name) of the command.</param>
+      <param name="instanceId">The ID of the target instance against which the command was executed.</param>
+      <param name="message">The error message that explains the reason for the exception.</param>
+      <param name="innerException">The exception that caused the current exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceLockedException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Sets the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> object with information about the exception.</summary>
+      <param name="info">The serialized object data about the exception being thrown.</param>
+      <param name="context">An object that contains the contextual information about the source or destination.</param>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstanceLockedException.InstanceOwnerId">
+      <summary>Gets the GUID associated with the current instance owner (who currently has a lock on the instance).</summary>
+      <returns>The GUID associated with the current instance owner.  Returns Guid.Empty if the current instance owner is not known.</returns>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstanceLockedException.SerializableInstanceOwnerMetadata">
+      <summary>Gets serializable metadata information about the current instance owner (who currently has a lock on the instance).  When present, this consists of the subset of instance owner metadata which is serializable.  The metadata may contain information such as the location of the instance owner, who currently owns the lock.</summary>
+      <returns>The serializable metadata information about the current instance owner (who currently has a lock on the instance).</returns>
+    </member>
+    <member name="T:System.Runtime.DurableInstancing.InstanceLockLostException">
+      <summary>A persistence provider throws this exception when it cannot perform the command because the lock on the instance does not match the lock associated with the instance handle against which the command was executed. Either the owner or the version does not match.</summary>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceLockLostException.#ctor">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceLockLostException" /> class. </summary>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceLockLostException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceLockLostException" /> class with serialized data.</summary>
+      <param name="info">The information about the current exception.</param>
+      <param name="context">The contextual information about the source or destination.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceLockLostException.#ctor(System.String)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceLockLostException" /> class using the error message. </summary>
+      <param name="message">The reason for the exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceLockLostException.#ctor(System.String,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceLockLostException" /> class using the error message and the inner exception information.</summary>
+      <param name="message">The reason for the exception.</param>
+      <param name="innerException">The exception that caused the current exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceLockLostException.#ctor(System.Xml.Linq.XName,System.Guid)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceLockLostException" /> class using the XName (the combination of namespace and name) of the command and the ID of the target instance against which the command was executed.</summary>
+      <param name="commandName">The XName (the combination of namespace and name) of the command.</param>
+      <param name="instanceId">The ID of the target instance against which the command was executed.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceLockLostException.#ctor(System.Xml.Linq.XName,System.Guid,System.Exception)">
+      <summary>Initializes an instance of <see cref="T:System.Runtime.DurableInstancing.InstanceLockLostException" /> the class using the XName (the combination of namespace and name) of the command, the ID of the target instance against which the command was executed, and the inner exception information.</summary>
+      <param name="commandName">The XName (the combination of namespace and name) of the command.</param>
+      <param name="instanceId">The ID of the target instance against which the command was executed.</param>
+      <param name="innerException">The exception that caused the current exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceLockLostException.#ctor(System.Xml.Linq.XName,System.Guid,System.String,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceLockLostException" /> class using the XName (the combination of namespace and name) of the command, the ID of the target instance against which the command was executed, error message that explains the reason for the exception, and the exception that caused the current exception.</summary>
+      <param name="commandName">The XName (the combination of namespace and name) of the command.</param>
+      <param name="instanceId">The ID of the target instance against which the command was executed.</param>
+      <param name="message">The reason for the exception.</param>
+      <param name="innerException">The exception that caused the current exception.</param>
+    </member>
+    <member name="T:System.Runtime.DurableInstancing.InstanceLockQueryResult">
+      <summary>Contains query result set represented by a dictionary of ID of instance and the instance owner which currently owns the lock on each instance.</summary>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceLockQueryResult.#ctor">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceLockQueryResult" /> class with any empty query result set.</summary>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceLockQueryResult.#ctor(System.Collections.Generic.IDictionary{System.Guid,System.Guid})">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceLockQueryResult" /> class and sets the <see cref="P:System.Runtime.DurableInstancing.InstanceLockQueryResult.InstanceOwnerIds" /> property using the dictionary of instance IDs and instance owner IDs.</summary>
+      <param name="instanceOwnerIds">A dictionary that represents the query result set. The dictionary has instance ID as the key and ID of the instance owner who owns the lock on the instance as the value. </param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceLockQueryResult.#ctor(System.Guid,System.Guid)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceLockQueryResult" /> class and sets the <see cref="P:System.Runtime.DurableInstancing.InstanceLockQueryResult.InstanceOwnerIds" /> property using a dictionary that contains the single query result represented by the instance ID and the instance owner ID.</summary>
+      <param name="instanceId">The ID of the instance.</param>
+      <param name="instanceOwnerId">The ID of the instance owner who owns the lock on the instance represented by the <paramref name="instanceId" /> parameter.</param>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstanceLockQueryResult.InstanceOwnerIds">
+      <summary>Gets a dictionary that contains the query result set. The query result set is represented by a dictionary, which has Instance ID as the key and the ID of the instance owner who owns the lock on the instance as the value. </summary>
+      <returns>The dictionary that contains instance IDs and instance owner IDs.</returns>
+    </member>
+    <member name="T:System.Runtime.DurableInstancing.InstanceNotReadyException">
+      <summary>A persistence provider throws this exception when it expects to find an instance in an initialized state, but finds the instance in an uninitialized state.</summary>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceNotReadyException.#ctor">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceNotReadyException" /> class. </summary>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceNotReadyException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceNotReadyException" /> class with serialized data.</summary>
+      <param name="info">The information about the current exception.</param>
+      <param name="context">The contextual information about the source or destination.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceNotReadyException.#ctor(System.String)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceNotReadyException" /> class using the error message.</summary>
+      <param name="message">The reason for the exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceNotReadyException.#ctor(System.String,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceNotReadyException" /> class using the error message and the inner exception information.</summary>
+      <param name="message">The reason for the exception.</param>
+      <param name="innerException">The exception that caused the current exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceNotReadyException.#ctor(System.Xml.Linq.XName,System.Guid)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceNotReadyException" /> class using the XName (the combination of namespace and name) of the command and the ID of the target instance against which the command was executed.</summary>
+      <param name="commandName">The XName (the combination of namespace and name) of the command.</param>
+      <param name="instanceId">The ID of the target instance against which the command was executed.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceNotReadyException.#ctor(System.Xml.Linq.XName,System.Guid,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceNotReadyException" /> class using the XName (the combination of namespace and name) of the command, the ID of the target instance against which the command was executed, and the inner exception information.</summary>
+      <param name="commandName">The XName (the combination of namespace and name) of the command.</param>
+      <param name="instanceId">The ID of the target instance against which the command was executed.</param>
+      <param name="innerException">The exception that caused the current exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceNotReadyException.#ctor(System.Xml.Linq.XName,System.Guid,System.String,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceNotReadyException" /> class using the XName (the combination of namespace and name) of the command and the ID of the target instance against which the command was executed, error message that explains the reason for the exception, and the exception that caused the current exception.</summary>
+      <param name="commandName">The XName (the combination of namespace and name) of the command.</param>
+      <param name="instanceId">The ID of the target instance against which the command was executed.</param>
+      <param name="message">The reason for the exception.</param>
+      <param name="innerException">The exception that caused the current exception.</param>
+    </member>
+    <member name="T:System.Runtime.DurableInstancing.InstanceOwner">
+      <summary>Represents the owner of an instance in the instance store. An instance owner is an interaction participant with an instance in the instance store.</summary>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstanceOwner.InstanceOwnerId">
+      <summary>Gets ID of the instance owner as a GUID.</summary>
+      <returns>The ID of the instance owner.</returns>
+    </member>
+    <member name="T:System.Runtime.DurableInstancing.InstanceOwnerException">
+      <summary>A persistence provider throws this exception when the instance owner bound to the instance handle has become invalid.</summary>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceOwnerException.#ctor">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceOwnerException" /> class. </summary>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceOwnerException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceOwnerException" /> class with the serialized data.</summary>
+      <param name="info">The information about the current exception.</param>
+      <param name="context">The contextual information about the source or destination.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceOwnerException.#ctor(System.String)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceOwnerException" /> class using the error message.</summary>
+      <param name="message">The reason for the exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceOwnerException.#ctor(System.String,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceOwnerException" /> class using the error message and the inner exception information.</summary>
+      <param name="message">The reason for the exception.</param>
+      <param name="innerException">The exception that caused the current exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceOwnerException.#ctor(System.Xml.Linq.XName,System.Guid)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceOwnerException" /> class using the XName (the combination of namespace and name) of the command and the ID of the instance owner.</summary>
+      <param name="commandName">The XName (the combination of namespace and name) of the command.</param>
+      <param name="instanceOwnerId">The ID of the instance owner.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceOwnerException.#ctor(System.Xml.Linq.XName,System.Guid,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceOwnerException" /> class using the XName (the combination of namespace and name) of the command, the ID of the instance owner, and the inner exception information.</summary>
+      <param name="commandName">The XName (the combination of namespace and name) of the command.</param>
+      <param name="instanceOwnerId">The ID of the instance owner.</param>
+      <param name="innerException">The exception that caused the current exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceOwnerException.#ctor(System.Xml.Linq.XName,System.Guid,System.String,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceOwnerException" /> class using the XName (the combination of namespace and name) of the command, the ID of the instance owner, error message that describes the exception, and the inner exception information.</summary>
+      <param name="commandName">The XName (the combination of namespace and name) of the command.</param>
+      <param name="instanceOwnerId">The ID of the instance owner.</param>
+      <param name="message">Error message that describes the exception.</param>
+      <param name="innerException">The exception that caused the current exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceOwnerException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Sets the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> object with information about the exception.</summary>
+      <param name="info">The serialized object data about the exception being thrown.</param>
+      <param name="context">The contextual information about the source or the destination.</param>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstanceOwnerException.InstanceOwnerId">
+      <summary>Gets the ID of the instance owner.</summary>
+      <returns>The ID of the instance owner.  Returns Guid.Empty if the instance owner is not known.</returns>
+    </member>
+    <member name="T:System.Runtime.DurableInstancing.InstanceOwnerQueryResult">
+      <summary>Contains a query result set consisting of metadata associated with an instance owner or instance owners that are retrieved from a persistence store. </summary>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceOwnerQueryResult.#ctor">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceOwnerQueryResult" /> class with an empty query result set.</summary>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceOwnerQueryResult.#ctor(System.Collections.Generic.IDictionary{System.Guid,System.Collections.Generic.IDictionary{System.Xml.Linq.XName,System.Runtime.DurableInstancing.InstanceValue}})">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceOwnerQueryResult" /> class using the dictionary passed as a parameter that contains GUIDs associated with instance owners and dictionaries that contain metadata associated with these instance owners. </summary>
+      <param name="instanceOwners">A dictionary that contains GUIDs and metadata of instance owners representing the query result set. Metadata itself is contained in additional dictionaries that contain names and values of metadata properties.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceOwnerQueryResult.#ctor(System.Guid,System.Collections.Generic.IDictionary{System.Xml.Linq.XName,System.Runtime.DurableInstancing.InstanceValue})">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceOwnerQueryResult" /> class  with a single query result consisting of the GUID of the instance owner and the metadata associated with that instance owner in the instance store passed as parameters. </summary>
+      <param name="instanceOwnerId">GUID associated with the instance owner.</param>
+      <param name="metadata">Metadata associated with the instance owner in a dictionary, (which contains the names of properties and their values).</param>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstanceOwnerQueryResult.InstanceOwners">
+      <summary>Gets the query result set consisting of metadata associated with an instance owner or instance owners stored in a dictionary that contains the GUID of the instance owner as a key and the metadata stored in another dictionary of names and values of properties as the value.</summary>
+      <returns>The metadata associated with instance owners.</returns>
+    </member>
+    <member name="T:System.Runtime.DurableInstancing.InstancePersistenceCommand">
+      <summary>Base class for all persistence related commands. Commands are distinguished by their Name. Usually commands can also be distinguished by their derived type.</summary>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceCommand.#ctor(System.Xml.Linq.XName)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstancePersistenceCommand" /> class. </summary>
+      <param name="name">The XName (the combination of namespace and name) of the command.</param>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstancePersistenceCommand.AutomaticallyAcquiringLock">
+      <summary>Indicates whether the command could attempt to acquire a lock on the instance. </summary>
+      <returns>true if the command acquires a lock on the instance;, otherwise false. The default is false.</returns>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstancePersistenceCommand.IsTransactionEnlistmentOptional">
+      <summary>Returns a value that indicates whether the persistence provider may choose not to enlist in the ambient transaction (Transaction.Currnet) when executing this command. </summary>
+      <returns>True if enlisting in the transaction is optional for this command, otherwise false.</returns>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstancePersistenceCommand.Name">
+      <summary>Gets the name of the persistence command.</summary>
+      <returns>An XName (the combination of namespace and name).</returns>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceCommand.Validate(System.Runtime.DurableInstancing.InstanceView)">
+      <summary>Validates the command.</summary>
+      <param name="view">An <see cref="T:System.Runtime.DurableInstancing.InstanceView" /> object representing the current state of the instance handle.</param>
+    </member>
+    <member name="T:System.Runtime.DurableInstancing.InstancePersistenceCommandException">
+      <summary>A persistence provider throws this exception when an error occurs while processing a persistence command. The persistence provider may also free the instance handle against which the command was executed if the error would extend to future uses of the instance handle.</summary>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceCommandException.#ctor">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstancePersistenceCommand" /> class. </summary>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceCommandException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstancePersistenceCommand" /> class using the serialized data.</summary>
+      <param name="info">The information about the current exception.</param>
+      <param name="context">The contextual information about the source or destination.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceCommandException.#ctor(System.String)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstancePersistenceCommand" /> class using the error message.</summary>
+      <param name="message">The reason for the exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceCommandException.#ctor(System.String,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstancePersistenceCommand" /> class using the error message and the inner exception information.</summary>
+      <param name="message">The reason for the exception.</param>
+      <param name="innerException">The inner exception that caused the current exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceCommandException.#ctor(System.Xml.Linq.XName)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstancePersistenceCommand" /> class using the XName (the combination of namespace and name) of the command.</summary>
+      <param name="commandName">The XName (the combination of namespace and name) of the command.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceCommandException.#ctor(System.Xml.Linq.XName,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstancePersistenceCommand" /> class using the XName (the combination of namespace and name) of the command and the inner exception information.</summary>
+      <param name="commandName">The XName (the combination of namespace and name) of the command.</param>
+      <param name="innerException">The exception that caused the current exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceCommandException.#ctor(System.Xml.Linq.XName,System.Guid)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstancePersistenceCommand" /> class using the XName (the combination of namespace and name) of the command and the ID of the target instance against which the command was executed.</summary>
+      <param name="commandName">The XName (the combination of namespace and name) of the command.</param>
+      <param name="instanceId">The ID of the target instance against which the command was executed.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceCommandException.#ctor(System.Xml.Linq.XName,System.Guid,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstancePersistenceCommand" /> class using the XName (the combination of namespace and name) of the command, the ID of the target instance against which the command was executed, and the inner exception information.</summary>
+      <param name="commandName">The XName (the combination of namespace and name) of the command.</param>
+      <param name="instanceId">The ID of the target instance against which the command was executed.</param>
+      <param name="innerException">The exception that caused the current exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceCommandException.#ctor(System.Xml.Linq.XName,System.Guid,System.String,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceCompletedException" /> class using the XName (the combination of namespace and name) of the command, the ID of the target instance against which the command was executed, error message that explains the reason for the exception, and the exception that caused the current exception.</summary>
+      <param name="commandName">The XName (the combination of namespace and name) of the command.</param>
+      <param name="instanceId">The ID of the target instance against which the command was executed.</param>
+      <param name="message">The reason for the exception.</param>
+      <param name="innerException">The exception that caused the current exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceCommandException.#ctor(System.Xml.Linq.XName,System.String,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceCompletedException" /> class using the XName (the combination of namespace and name) of the command, error message that explains the reason for the exception, and the exception that caused the current exception.</summary>
+      <param name="commandName">The XName (the combination of namespace and name) of the command.</param>
+      <param name="message">The reason for the exception.</param>
+      <param name="innerException">The exception that caused the current exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceCommandException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Sets the specified <see cref="T:System.Runtime.Serialization.SerizationInfo" /> object with information about the <see cref="T:System.Runtime.DurableInstancing.InstancePersistenceCommandException" />.</summary>
+      <param name="info">The serialized object data about the exception being thrown.</param>
+      <param name="context">The contextual information about the source or destination.</param>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstancePersistenceCommandException.InstanceId">
+      <summary>Gets the ID of the instance against which the command was executed.</summary>
+      <returns>The ID of the instance. Returns Guid.Empty if the instance is not known or the command does not involve a specific instance.</returns>
+    </member>
+    <member name="T:System.Runtime.DurableInstancing.InstancePersistenceContext">
+      <summary>Represents execution state information while a persistence command is being executed.</summary>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceContext.AssociatedInstanceKey(System.Guid)">
+      <summary>Indicates that the persistence provider has successfully associated a key to the current instance in the instance store. The identifier of the key is specified as a parameter.</summary>
+      <param name="key">The instance key identifier  for the key that has been associated. Must not be Guid.Empty.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceContext.BeginBindReclaimedLock(System.Int64,System.TimeSpan,System.AsyncCallback,System.Object)">
+      <summary>Begin an asynchronous operation to bind an existing lock on an instance to the current instance handle. The version of the existing lock is passed as a parameter.</summary>
+      <returns>The status of an asynchronous operation.</returns>
+      <param name="instanceVersion">The version of the lock held on the instance, or zero if the persistence provider does not implement lock versions.</param>
+      <param name="timeout">The timeout period for the asynchronous operation. </param>
+      <param name="callback">The method to be called when the operation is completed.</param>
+      <param name="state">The state information associated with the asynchronous operation.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceContext.BeginExecute(System.Runtime.DurableInstancing.InstancePersistenceCommand,System.TimeSpan,System.AsyncCallback,System.Object)">
+      <summary>Begins executing a persistence command asynchronously.</summary>
+      <returns>The status of an asynchronous operation.</returns>
+      <param name="command">The persistence command to be executed.</param>
+      <param name="timeout">The time-out value for the operation.</param>
+      <param name="callback">The delegate that receives the notification of the asynchronous receive that a request operation completes.</param>
+      <param name="state">The state information.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceContext.BindAcquiredLock(System.Int64)">
+      <summary>Binds a newly acquired lock on an instance to the current instance handle. The version of the acquired lock is passed as a parameter.</summary>
+      <param name="instanceVersion">Version of the lock acquired on the instance, or zero if the persistence provider does not implement lock versions.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceContext.BindEvent(System.Runtime.DurableInstancing.InstancePersistenceEvent)">
+      <summary>Binds an <see cref="T:System.Runtime.DurableInstancing.InstancePersistenceEvent" /> to an instance handle.</summary>
+      <param name="persistenceEvent">An <see cref="T:System.Runtime.DurableInstancing.InstancePersistenceEvent" /> object containing information about the event.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceContext.BindInstance(System.Guid)">
+      <summary>Binds an instance whose identifier is specified as a parameter to the current instance handle.</summary>
+      <param name="instanceId">An instance identifier. Must not be Guid.Empty.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceContext.BindInstanceOwner(System.Guid,System.Guid)">
+      <summary>Binds an instance owner to the current instance handle.</summary>
+      <param name="instanceOwnerId">The identifier for the instance owner.</param>
+      <param name="lockToken">The lock token of the instance owner. A persistence provider may choose to use the same value for the instance owner identifier and the owner’s lock token.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceContext.BindReclaimedLock(System.Int64,System.TimeSpan)">
+      <summary>Binds an existing lock on an instance to the current instance handle. The version of the existing lock is passed as a parameter.</summary>
+      <param name="instanceVersion">Version of the lock held on the instance, or zero if the persistence provider does not implement lock versions.</param>
+      <param name="timeout">The time-out value for the operation.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceContext.CompletedInstance">
+      <summary>Indicates that the persistence provider has successfully marked the current instance as complete in the instance store.</summary>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceContext.CompletedInstanceKey(System.Guid)">
+      <summary>Indicates that the persistence provider has successfully marked a key as complete in the external store. The identifier of the key is specified as a parameter.</summary>
+      <param name="key">The instance key identifier for the key that has been completed. Must not be Guid.Empty.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceContext.CreateBindReclaimedLockException(System.Int64)">
+      <summary>Creates an instance of an exception which can be thrown from TryCommand to trigger BindReclaimedLock behavior.</summary>
+      <returns>An exception.</returns>
+      <param name="instanceVersion">The version of the lock held on the instance, or zero if the persistence provider does not implement lock versions.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceContext.EndBindReclaimedLock(System.IAsyncResult)">
+      <summary>Ends the asynchronous operation started by the <see cref="M:System.Runtime.DurableInstancing.InstancePersistenceContext.BeginBindReclaimedLock(System.Int64,System.TimeSpan,System.AsyncCallback,System.Object)" /> method.</summary>
+      <param name="result">The result of the asynchronous operation.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceContext.EndExecute(System.IAsyncResult)">
+      <summary>Ends the asynchronous operation.</summary>
+      <param name="result">The status of an asynchronous operation.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceContext.Execute(System.Runtime.DurableInstancing.InstancePersistenceCommand,System.TimeSpan)">
+      <summary>Executes a persistence command.</summary>
+      <param name="command">The persistence command to be executed.</param>
+      <param name="timeout">The time-out value for the operation.</param>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstancePersistenceContext.InstanceHandle">
+      <summary>Gets the current instance handle.</summary>
+      <returns>The current instance handle.</returns>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstancePersistenceContext.InstanceVersion">
+      <summary>Gets the version of the lock held on the current instance by the current instance handle.</summary>
+      <returns>The version of the instance lock bound to the current instance handle, or -1 if the handle isn’t bound to a lock.</returns>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstancePersistenceContext.InstanceView">
+      <summary>Gets the instance view object that represents the in-memory state of the current instance. This view reflects updates as they are made by the command in progress.</summary>
+      <returns>The instance view object.</returns>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceContext.LoadedInstance(System.Runtime.DurableInstancing.InstanceState,System.Collections.Generic.IDictionary{System.Xml.Linq.XName,System.Runtime.DurableInstancing.InstanceValue},System.Collections.Generic.IDictionary{System.Xml.Linq.XName,System.Runtime.DurableInstancing.InstanceValue},System.Collections.Generic.IDictionary{System.Guid,System.Collections.Generic.IDictionary{System.Xml.Linq.XName,System.Runtime.DurableInstancing.InstanceValue}},System.Collections.Generic.IDictionary{System.Guid,System.Collections.Generic.IDictionary{System.Xml.Linq.XName,System.Runtime.DurableInstancing.InstanceValue}})">
+      <summary>Indicates that the persistence provider has successfully retrieved the current instance from the instance store.</summary>
+      <param name="state">The instance state information.</param>
+      <param name="instanceData">The instance data as a dictionary of <see cref="T:System.Xml.Linq.XName" /> and <see cref="T:System.Runtime.DurableInstancing.InstanceValue" /> objects.</param>
+      <param name="instanceMetadata">Instance metadata as a collection of <see cref="T:System.Xml.Linq.XName" /> and <see cref="T:System.Runtime.DurableInstancing.InstanceValue" /> objects.</param>
+      <param name="associatedInstanceKeyMetadata">Associated instance key metadata as a dictionary of instance identifier and instance key metadata, which is a dictionary of <see cref="T:System.Xml.Linq.XName" /> and <see cref="T:System.Runtime.DurableInstancing.InstanceValue" /> objects.</param>
+      <param name="completedInstanceKeyMetadata">Completed instance metadata as a dictionary of instance identifier and instance key metadata, which is a dictionary of <see cref="T:System.Xml.Linq.XName" /> and <see cref="T:System.Runtime.DurableInstancing.InstanceValue" /> objects.</param>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstancePersistenceContext.LockToken">
+      <summary>Gets the lock token of the instance owner bound to the current instance handle.</summary>
+      <returns>The lock token bound to the current instance handle, or Guid.Empty if the handle isn’t bound to an instance owner.</returns>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceContext.PersistedInstance(System.Collections.Generic.IDictionary{System.Xml.Linq.XName,System.Runtime.DurableInstancing.InstanceValue})">
+      <summary>Indicates that the persistence provider has successfully persisted a set of instance data to the instance store. This has the effect of initializing the instance if it wasn’t already.</summary>
+      <param name="data">Instance data as a dictionary of <see cref="T:System.Xml.Linq.XName" /> and <see cref="T:System.Runtime.DurableInstancing.InstanceValue" /> objects.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceContext.QueriedInstanceStore(System.Runtime.DurableInstancing.InstanceStoreQueryResult)">
+      <summary>Adds the <see cref="T:System.Runtime.DurableInstancing.InstanceStoreQueryResult" /> passed as a parameter to a list of <see cref="T:System.Runtime.DurableInstancing.InstanceStoreQueryResult" /> objects in an <see cref="T:System.Runtime.DurableInstancing.InstanceView" />.</summary>
+      <param name="queryResult">The results of a query against an instance store.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceContext.ReadInstanceKeyMetadata(System.Guid,System.Collections.Generic.IDictionary{System.Xml.Linq.XName,System.Runtime.DurableInstancing.InstanceValue},System.Boolean)">
+      <summary>Indicates that the persistence provider has successfully read some instance key metadata for a key associated to the current instance from the instance store.</summary>
+      <param name="key">The instance key identifier for the key whose metadata was read. Must not be Guid.Empty.</param>
+      <param name="metadata">The metadata as a dictionary of <see cref="T:System.Xml.Linq.XName" /> and <see cref="T:System.Runtime.DurableInstancing.InstanceValue" /> objects.</param>
+      <param name="complete">True if the metadata represents all of the metadata associated to the instance key, otherwise false.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceContext.ReadInstanceMetadata(System.Collections.Generic.IDictionary{System.Xml.Linq.XName,System.Runtime.DurableInstancing.InstanceValue},System.Boolean)">
+      <summary>Indicates that the persistence provider has successfully read some instance metadata for the current instance from the instance store.</summary>
+      <param name="metadata">The metadata as a dictionary of <see cref="T:System.Xml.Linq.XName" /> and <see cref="T:System.Runtime.DurableInstancing.InstanceValue" /> objects.</param>
+      <param name="complete">True if the metadata represents all of the metadata associated to the instance, otherwise false.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceContext.ReadInstanceOwnerMetadata(System.Collections.Generic.IDictionary{System.Xml.Linq.XName,System.Runtime.DurableInstancing.InstanceValue},System.Boolean)">
+      <summary>Sets the instance owner metadata using the data passed in the parameter.</summary>
+      <param name="metadata">The dictionary of <see cref="T:System.Xml.Linq.XName" /> and <see cref="T:System.Runtime.DurableInstancing.InstanceValue" /> objects.</param>
+      <param name="complete">The value to specify whether the consistency to be set to <see cref="F:System.Runtime.DurableInstancing.InstanceValueConsistency.InDoubt" /> or <see cref="F:System.Runtime.DurableInstancing.InstanceValueConsistency.Partial" />.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceContext.SetCancellationHandler(System.Action{System.Runtime.DurableInstancing.InstancePersistenceContext})">
+      <summary>Sets the cancellation handler to be called when the cancel of an operation is requested.</summary>
+      <param name="cancellationHandler">The reference to a function to be called.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceContext.UnassociatedInstanceKey(System.Guid)">
+      <summary>Indicates that the persistence provider has successfully disassociated a key from the current instance in the instance store. The identifier of the key is specified as a parameter.</summary>
+      <param name="key">The instance key identifier for the key that has been unassociated. Must not be Guid.Empty.</param>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstancePersistenceContext.UserContext">
+      <summary>Gets the user context information attached to the current instance handle.</summary>
+      <returns>The user context information.</returns>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceContext.WroteInstanceKeyMetadataValue(System.Guid,System.Xml.Linq.XName,System.Runtime.DurableInstancing.InstanceValue)">
+      <summary>Indicates that the persistence provider has successfully written a metadata value for an instance key that is associated with the current instance to the instance store</summary>
+      <param name="key">The instance key identifier for the key. Must not be Guid.Empty.</param>
+      <param name="name">The name of the metadata property.</param>
+      <param name="value">The value of the metadata property.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceContext.WroteInstanceMetadataValue(System.Xml.Linq.XName,System.Runtime.DurableInstancing.InstanceValue)">
+      <summary>Indicates that the persistence provider has successfully written a metadata value for the current instance to the external instance store.</summary>
+      <param name="name">The name of the metadata property.</param>
+      <param name="value">The value of the metadata property.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceContext.WroteInstanceOwnerMetadataValue(System.Xml.Linq.XName,System.Runtime.DurableInstancing.InstanceValue)">
+      <summary>Indicates that the persistence provider has successfully written a metadata value for the current instance owner to the instance store.</summary>
+      <param name="name">The name of the metadata property.</param>
+      <param name="value">The value of the metadata property.</param>
+    </member>
+    <member name="T:System.Runtime.DurableInstancing.InstancePersistenceEvent">
+      <summary>Represents an event that an instance store raises to notify hosts about a condition. Examples: <see cref="T:System.Activities.DurableInstancing.HasRunnableWorkflowEvent" /> and <see cref="T:System.Activities.DurableInstancing.HasActivatableWorkflowEvent" />.</summary>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceEvent.Equals(System.Object)">
+      <summary>Determines whether the current <see cref="T:System.Runtime.DurableInstancing.InstancePersistenceEvent" /> object and the passed object converted as the <see cref="T:System.Runtime.DurableInstancing.InstancePersistenceEvent" /> are the same.</summary>
+      <returns>Returns True if the objects are same; otherwise, returns False.</returns>
+      <param name="obj">The object to be compared with the current object.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceEvent.Equals(System.Runtime.DurableInstancing.InstancePersistenceEvent)">
+      <summary>Determines whether the current <see cref="T:System.Runtime.DurableInstancing.InstancePersistenceEvent" /> object and the passed <see cref="T:System.Runtime.DurableInstancing.InstancePersistenceEvent" /> object are the same.</summary>
+      <returns>Returns True if the objects are same; otherwise, returns False.</returns>
+      <param name="persistenceEvent">The object to be compared with the current object.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceEvent.GetHashCode">
+      <summary>Returns the hash code for the <see cref="T:System.Runtime.DurableInstancing.InstancePersistenceEvent" /> instance.</summary>
+      <returns>The hash code for the instance.</returns>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstancePersistenceEvent.Name">
+      <summary>Returns the XName (namespace combined with name) of the persistence event. </summary>
+      <returns>XName of the persistence event</returns>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceEvent.op_Equality(System.Runtime.DurableInstancing.InstancePersistenceEvent,System.Runtime.DurableInstancing.InstancePersistenceEvent)">
+      <summary>Returns a value indicating whether the specified <see cref="T:System.Runtime.DurableInstancing.InstancePersistenceEvent" /> objects are the same.</summary>
+      <returns>True if the two objects are the same; otherwise, False.</returns>
+      <param name="left">The first <see cref="T:System.Runtime.DurableInstancing.InstancePersistenceEvent" /> object to compare.</param>
+      <param name="right">The second <see cref="T:System.Runtime.DurableInstancing.InstancePersistenceEvent" /> object to compare.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceEvent.op_Inequality(System.Runtime.DurableInstancing.InstancePersistenceEvent,System.Runtime.DurableInstancing.InstancePersistenceEvent)">
+      <summary>Returns a value indicating whether the specified <see cref="T:System.Runtime.DurableInstancing.InstancePersistenceEvent" /> objects are not the same.</summary>
+      <returns>True if the two objects are the same; otherwise, False.</returns>
+      <param name="left">The first <see cref="T:System.Runtime.DurableInstancing.InstancePersistenceEvent" /> object to compare.</param>
+      <param name="right">The second <see cref="T:System.Runtime.DurableInstancing.InstancePersistenceEvent" /> object to compare.</param>
+    </member>
+    <member name="T:System.Runtime.DurableInstancing.InstancePersistenceEvent`1">
+      <summary>Represents an event that an instance store raises to notify hosts about a change. This is a generic class.  Classes such as <see cref="T:System.Activities.DurableInstancing.HasRunnableWorkflowEvent" /> and <see cref="T:System.Activities.DurableInstancing.HasActivatableWorkflowEvent" /> derive from this class.</summary>
+      <typeparam name="T"></typeparam>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceEvent`1.#ctor(System.Xml.Linq.XName)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstancePersistenceEvent`1" /> class using the XName parameter.</summary>
+      <param name="name">XName (namespace combined with name) of the event.</param>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstancePersistenceEvent`1.Value">
+      <summary>Returns the instance of the actual event object (for example: <see cref="T:System.Activities.DurableInstancing.HasRunnableWorkflowEvent" />).</summary>
+      <returns>The event object.</returns>
+    </member>
+    <member name="T:System.Runtime.DurableInstancing.InstancePersistenceException">
+      <summary>Base class for all the persistence related exception classes. The <see cref="T:System.Runtime.DurableInstancing.InstanceOwnerException" /> and the <see cref="T:System.Runtime.DurableInstancing.InstancePersistenceCommandException" /> are derived classes of this class. </summary>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceException.#ctor">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstancePersistenceException" /> class. </summary>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstancePersistenceException" /> class using the serialized information and the context information. </summary>
+      <param name="info">The  information about the current exception.</param>
+      <param name="context">The contextual information about the source or destination.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceException.#ctor(System.String)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstancePersistenceException" /> class using the error message. </summary>
+      <param name="message">Error message that describes the current exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceException.#ctor(System.String,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstancePersistenceException" /> class using the error message and inner exception information.</summary>
+      <param name="message">The reason for the current exception.</param>
+      <param name="innerException">The exception that causes the current exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceException.#ctor(System.Xml.Linq.XName)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstancePersistenceException" /> class using the name of the command.</summary>
+      <param name="commandName">The XName (the combination of namespace and name) of the command.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceException.#ctor(System.Xml.Linq.XName,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstancePersistenceException" /> class by using the name of the command and the inner exception information.</summary>
+      <param name="commandName">The XName (the combination of namespace and name) of the command.</param>
+      <param name="innerException">The exception that caused the current exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceException.#ctor(System.Xml.Linq.XName,System.String)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstancePersistenceException" /> class using the name of the command and the error message.</summary>
+      <param name="commandName">The XName (the combination of namespace and name) of the command.</param>
+      <param name="message">The error message that describes the exception.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceException.#ctor(System.Xml.Linq.XName,System.String,System.Exception)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstancePersistenceException" /> class using the name of the command, error message, and inner exception information.</summary>
+      <param name="commandName">The XName (the combination of namespace and name) of the command.</param>
+      <param name="message">The error message that describes the exception.</param>
+      <param name="innerException">The exception that caused the current exception.</param>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstancePersistenceException.CommandName">
+      <summary>Gets the name of the command.</summary>
+      <returns>The name of the command. Returns null if the command is not known.</returns>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstancePersistenceException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Sets the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> with information about the exception.</summary>
+      <param name="info">The serialized object data about the exception being thrown.</param>
+      <param name="context">The contextual information about the source or destination</param>
+    </member>
+    <member name="T:System.Runtime.DurableInstancing.InstanceState">
+      <summary>This enumeration contains a list of states of an instance.</summary>
+    </member>
+    <member name="F:System.Runtime.DurableInstancing.InstanceState.Unknown">
+      <summary>Indicates that the instance is in Unknown state.</summary>
+    </member>
+    <member name="F:System.Runtime.DurableInstancing.InstanceState.Uninitialized">
+      <summary>Indicates that the instance is uninitialized. An uninitialized instance is an instance that has never been persisted.</summary>
+    </member>
+    <member name="F:System.Runtime.DurableInstancing.InstanceState.Initialized">
+      <summary>Indicates that the instance is initialized. An initialized instance is an instance that has been persisted at least once and can be persisted again in the future.</summary>
+    </member>
+    <member name="F:System.Runtime.DurableInstancing.InstanceState.Completed">
+      <summary>Indicates that the instance is in completed state. A completed instance cannot be persisted again in the future.</summary>
+    </member>
+    <member name="T:System.Runtime.DurableInstancing.InstanceStore">
+      <summary>Represents an instance store. </summary>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceStore.#ctor">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceStore" /> class.</summary>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceStore.BeginExecute(System.Runtime.DurableInstancing.InstanceHandle,System.Runtime.DurableInstancing.InstancePersistenceCommand,System.TimeSpan,System.AsyncCallback,System.Object)">
+      <summary>Asynchronously executes persistence commands such as <see cref="T:System.Activities.DurableInstancing.LoadWorkflowCommand" /> and <see cref="T:System.Activities.DurableInstancing.SaveWorkflowCommand" />.</summary>
+      <returns>The state of the asynchronous operation.</returns>
+      <param name="handle">An instance handle.</param>
+      <param name="command">The command to be executed.</param>
+      <param name="timeout">The timeout value for the command execution.</param>
+      <param name="callback">The asynchronous callback delegate that receives notification of the completion of the asynchronous operation.</param>
+      <param name="state">The state information.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceStore.BeginTryCommand(System.Runtime.DurableInstancing.InstancePersistenceContext,System.Runtime.DurableInstancing.InstancePersistenceCommand,System.TimeSpan,System.AsyncCallback,System.Object)">
+      <summary>A persistence provider implements this method, which determines whether a particular persistence command can be executed. If the command can be executed, executes the command asynchronously.</summary>
+      <returns>The state of the asynchronous operation.</returns>
+      <param name="context">The instance context.</param>
+      <param name="command">The persistence command to be executed.</param>
+      <param name="timeout">The timeout value for the command execution.</param>
+      <param name="callback">The asynchronous callback delegate that receives notification of the completion of the asynchronous operation.</param>
+      <param name="state">The state information.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceStore.BeginWaitForEvents(System.Runtime.DurableInstancing.InstanceHandle,System.TimeSpan,System.AsyncCallback,System.Object)">
+      <summary>Begins an asynchronous operation to listen for any events raised by the instance store for a specific instance handle.</summary>
+      <returns>Returns an <see cref="T:System.IAsyncResult" /> object..</returns>
+      <param name="handle">An instance handle.</param>
+      <param name="timeout">The period after which the operation times out.</param>
+      <param name="callback">The method to be called after the asynchronous operation is complete.</param>
+      <param name="state">An object containing the state information associated with the asynchronous operation.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceStore.CreateInstanceHandle">
+      <summary>Creates an instance handle. </summary>
+      <returns>The instance handle.</returns>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceStore.CreateInstanceHandle(System.Guid)">
+      <summary>Creates an instance handle.  If the DefaultInstanceOwner is set, the value is automatically bound as the new handle’s instance owner.  The instance identifier passed as a parameter is automatically bound as the new handle’s instance.</summary>
+      <returns>The instance handle.</returns>
+      <param name="instanceId">An instance identifier. Must not be Guid.Empty.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceStore.CreateInstanceHandle(System.Runtime.DurableInstancing.InstanceOwner)">
+      <summary>Creates an instance handle. If the instance owner passed as a parameter is not null, the value is automatically bound as the new handle’s instance owner.  (Otherwise, no instance owner is bound, even if DefaultInstanceOwner is set.)</summary>
+      <returns>The instance handle. A null value indicates that the new handle should not be automatically bound to an instance owner.</returns>
+      <param name="owner">The owner of an instance.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceStore.CreateInstanceHandle(System.Runtime.DurableInstancing.InstanceOwner,System.Guid)">
+      <summary>Creates an instance handle. If the instance owner passed as a parameter is not null, the value is automatically bound as the new handle’s instance owner.  (Otherwise, no instance owner is bound, even if DefaultInstanceOwner is set.) The instance identifier passed as a parameter is automatically bound as the new handle’s instance.</summary>
+      <returns>The instance handle.</returns>
+      <param name="owner">An InstanceOwner object  that represents the owner of an instance. Pass null as the value for this parameter to indicate that the new handle should not be automatically bound to an instance owner.</param>
+      <param name="instanceId">An instance identifier. Must not be Guid.Empty.</param>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstanceStore.DefaultInstanceOwner">
+      <summary>Gets or sets the default instance owner. </summary>
+      <returns>The default instance owner.</returns>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceStore.EndExecute(System.IAsyncResult)">
+      <summary>Ends the asynchronous operation.</summary>
+      <returns>An InstanceView object  representing the known state of the instance after the successful completion of the command. </returns>
+      <param name="result">The result of the operation.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceStore.EndTryCommand(System.IAsyncResult)">
+      <summary>Ends an asynchronous operation.</summary>
+      <returns>A persistence provider implementation should return false if it doesn’t support the command passed to the BeginTryCommand method. Otherwise it should return true or throw an exception.</returns>
+      <param name="result">The result of the operation.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceStore.EndWaitForEvents(System.IAsyncResult)">
+      <summary>Ends the asynchronous operation initiated by the <see cref="M:System.Runtime.DurableInstancing.InstanceStore.BeginWaitForEvents(System.Runtime.DurableInstancing.InstanceHandle,System.TimeSpan,System.AsyncCallback,System.Object)" /> method.</summary>
+      <returns>Returns a list of <see cref="T:System.Runtime.DurableInstancing.InstancePersistenceEvent" /> objects..</returns>
+      <param name="result">An IAsyncResult object that was handed over to the client by the Begin method.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceStore.Execute(System.Runtime.DurableInstancing.InstanceHandle,System.Runtime.DurableInstancing.InstancePersistenceCommand,System.TimeSpan)">
+      <summary>Executes a persistence command synchronously. Examples of persistence commands are: <see cref="T:System.Activities.DurableInstancing.LoadWorkflowCommand" /> and <see cref="T:System.Activities.DurableInstancing.SaveWorkflowCommand" />. </summary>
+      <returns>An InstanceView object representing the known state of the instance after the successful completion of the command.  If Execute was called under a transaction, this state may include uncommitted data. Once the transaction is committed successfully, the data in the InstanceView object can be considered committed</returns>
+      <param name="handle">An instance handle.</param>
+      <param name="command">The command to be executed.</param>
+      <param name="timeout">The timeout value for the operation.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceStore.GetEvents(System.Runtime.DurableInstancing.InstanceOwner)">
+      <summary>Gets all the signaled events bound to an <see cref="T:System.Runtime.DurableInstancing.InstanceOwner" /> object.</summary>
+      <returns>Returns an array of <see cref="T:System.Runtime.DurableInstancing.InstancePersistenceEvent" /> objects..</returns>
+      <param name="owner">An <see cref="T:System.Runtime.DurableInstancing.InstanceOwner" /> object representing the owner of an instance.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceStore.GetInstanceOwners">
+      <summary>Gets each InstanceOwner object that is bound to a valid instance handle or has not been garbage collected.</summary>
+      <returns>The owner of the instance.</returns>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceStore.OnFreeInstanceHandle(System.Runtime.DurableInstancing.InstanceHandle,System.Object)">
+      <summary>Invoked when an instance handle is freed.</summary>
+      <param name="instanceHandle">The instance handle that was freed.</param>
+      <param name="userContext">The persistence provider’s user context information that was returned from OnNewInstanceHandle, or null if OnNewInstanceHandle is not overridden.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceStore.OnNewInstanceHandle(System.Runtime.DurableInstancing.InstanceHandle)">
+      <summary>Invoked when a new instance handle is created.</summary>
+      <returns>An object.  This user context object will be available to the persistence provider when commands are executed using the handle, and when the handle is freed.</returns>
+      <param name="instanceHandle">An instance handle.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceStore.ResetEvent(System.Runtime.DurableInstancing.InstancePersistenceEvent,System.Runtime.DurableInstancing.InstanceOwner)">
+      <summary>Resets the signaled event and removes the event from the signaled events list maintained by the instance owner.</summary>
+      <param name="persistenceEvent">The persistence event that was signaled earlier and to be reset.</param>
+      <param name="owner">The instance owner associated with the persistence event.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceStore.SignalEvent(System.Runtime.DurableInstancing.InstancePersistenceEvent,System.Runtime.DurableInstancing.InstanceOwner)">
+      <summary>An instance store invokes this method to signal an event. A workflow host that subscribes for this persistence event receives it and takes an appropriate action.</summary>
+      <param name="persistenceEvent">The persistence event to be signaled.</param>
+      <param name="owner">The instance owner.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceStore.TryCommand(System.Runtime.DurableInstancing.InstancePersistenceContext,System.Runtime.DurableInstancing.InstancePersistenceCommand,System.TimeSpan)">
+      <summary>A persistence provider implements this method, which determines whether a particular persistence command can be executed and if the command can be executed executes it asynchronously.</summary>
+      <returns>A persistence provider implementation should return false if it doesn’t support the command passed as a parameter; otherwise it should return true or throw an exception.</returns>
+      <param name="context">The instance context.</param>
+      <param name="command">The command to be executed.</param>
+      <param name="timeout">Timeout value for the operation.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceStore.WaitForEvents(System.Runtime.DurableInstancing.InstanceHandle,System.TimeSpan)">
+      <summary>A workflow host typically invokes this method to wait for an event to be signaled.</summary>
+      <returns>A list of <see cref="T:System.Runtime.DurableInstancing.InstancePersistenceEvent" /> objects.</returns>
+      <param name="handle">The instance handle that is bound to the event.</param>
+      <param name="timeout">The time span after which the waiting operation times out.</param>
+    </member>
+    <member name="T:System.Runtime.DurableInstancing.InstanceStoreQueryResult">
+      <summary>Supports an extensible mechanism to provide data from an instance store. This includes data for instances, instance owners, and instance keys other than those bound to the instance handle being used.  For example, a persistence provider mayprovide the owner metadata for all the instance owners in the store by passing an instance of a class derived from <see cref="T:System.Runtime.DurableInstancing.InstanceStoreQueryResult" /> to the <see cref="M:System.Runtime.DurableInstancing.InstancePersistenceContext.QueriedInstanceStore(System.Runtime.DurableInstancing.InstanceStoreQueryResult)" />method.</summary>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceStoreQueryResult.#ctor">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceStoreQueryResult" /> class.</summary>
+    </member>
+    <member name="T:System.Runtime.DurableInstancing.InstanceValue">
+      <summary>Stores the information about instance data and metadata.</summary>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceValue.#ctor(System.Object)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceValue" /> class by using value object passed as a parameter.</summary>
+      <param name="value">The value object.</param>
+    </member>
+    <member name="M:System.Runtime.DurableInstancing.InstanceValue.#ctor(System.Object,System.Runtime.DurableInstancing.InstanceValueOptions)">
+      <summary>Initializes an instance of the <see cref="T:System.Runtime.DurableInstancing.InstanceValue" /> class by using the value Object and the options for those values passed as parameters.</summary>
+      <param name="value">The value object.</param>
+      <param name="options">The options for the value object For more information, see<see cref="T:System.Runtime.DurableInstancing.InstanceValueOptions" />)</param>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstanceValue.DeletedValue">
+      <summary>Gets the previously deleted value.</summary>
+      <returns>An <see cref="T:System.Runtime.DurableInstancing.InstanceValue" />.</returns>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstanceValue.IsDeletedValue">
+      <summary>Returns a value that indicates whether the object represents a deleted value.</summary>
+      <returns>true if the object represents a deleted value, otherwise false.</returns>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstanceValue.Options">
+      <summary>Specifies the options for an instance value. The options are: None, Optional, WriteOnly.</summary>
+      <returns>
+        <see cref="T:System.Runtime.DurableInstancing.InstanceValueOptions" />.</returns>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstanceValue.Value">
+      <summary>Gets the value as an object.</summary>
+      <returns>
+        <see cref="T:System.Object" />.</returns>
+    </member>
+    <member name="T:System.Runtime.DurableInstancing.InstanceValueConsistency">
+      <summary>Describes the consistency guarantee of the instance values contained in a specified dictionary.</summary>
+    </member>
+    <member name="F:System.Runtime.DurableInstancing.InstanceValueConsistency.None">
+      <summary>Indicates that there is no consistency guarantee.</summary>
+    </member>
+    <member name="F:System.Runtime.DurableInstancing.InstanceValueConsistency.InDoubt">
+      <summary>Indicates that the consistency of the instance value is in doubt.</summary>
+    </member>
+    <member name="F:System.Runtime.DurableInstancing.InstanceValueConsistency.Partial">
+      <summary>Indicates that the consistency of the instance value is partial.</summary>
+    </member>
+    <member name="T:System.Runtime.DurableInstancing.InstanceValueOptions">
+      <summary>Contains options for instance values to indicate whether the instance values are write-only, optional, there are no instance values.</summary>
+    </member>
+    <member name="F:System.Runtime.DurableInstancing.InstanceValueOptions.None">
+      <summary>Indicates that there are no instance values.</summary>
+    </member>
+    <member name="F:System.Runtime.DurableInstancing.InstanceValueOptions.Optional">
+      <summary>Indicates that a host can function without knowing the value of this instance value.</summary>
+    </member>
+    <member name="F:System.Runtime.DurableInstancing.InstanceValueOptions.WriteOnly">
+      <summary>Indicates that the instance value is write-only. The instance value can be used for administration purposes.</summary>
+    </member>
+    <member name="T:System.Runtime.DurableInstancing.InstanceView">
+      <summary>Represents a view of an instance. For example, the <see cref="M:System.Runtime.DurableInstancing.InstanceStore.Execute(System.Runtime.DurableInstancing.InstanceHandle,System.Runtime.DurableInstancing.InstancePersistenceCommand,System.TimeSpan)" /> method implementations return an <see cref="T:System.Runtime.DurableInstancing.InstanceView" /> object that provides a view into the instance data in the persistence store.</summary>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstanceView.InstanceData">
+      <summary>Gets instance data as a dictionary of names and values.</summary>
+      <returns>The instance data.</returns>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstanceView.InstanceDataConsistency">
+      <summary>Gets the consistency status of the InstanceData property.</summary>
+      <returns>The consistency (None, In Doubt, and Partial) of the instance data. InstanceValueConsistency.None indicates that the InstanceData property holds a fully populated and locked set of instance data. </returns>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstanceView.InstanceId">
+      <summary>Gets the identifier (ID) of the instance as a GUID.</summary>
+      <returns>The ID of the instance or Guid.Empty if the associated instance handle is not bound to an instance.</returns>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstanceView.InstanceKeys">
+      <summary>Gets the instance keys as a dictionary of instance key identifiers and associated <see cref="T:System.Runtime.DurableInstancing.InstanceKeyView" /> objects.</summary>
+      <returns>A dictionary of instance key identifiers and their associated instance key view objects.</returns>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstanceView.InstanceKeysConsistency">
+      <summary>Gets the consistency status of the InstanceKeys property.</summary>
+      <returns>The consistency value of instance keys. InstanceValueConsistency.None indicates that the InstanceKeys property holds a fully populated and locked set of instance keys (though not necessarily each key’s metadata).</returns>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstanceView.InstanceMetadata">
+      <summary>Gets the metadata of an instance as a dictionary of names and <see cref="T:System.Runtime.DurableInstancing.InstanceValue" /> objects.</summary>
+      <returns>The metadata of the instance.</returns>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstanceView.InstanceMetadataConsistency">
+      <summary>Gets the consistency status of the InstanceMetadata property. </summary>
+      <returns>The consistency of the instance metadata. InstanceValueConsistency.None indicates that the InstanceMetadata property holds a fully populated and locked set of instance metadata.</returns>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstanceView.InstanceOwner">
+      <summary>Gets the owner of the instance.</summary>
+      <returns>The owner of the instance. Returns null if the associated instance handle is not bound to an instance owner.</returns>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstanceView.InstanceOwnerMetadata">
+      <summary>Gets the metadata for an instance owner as a dictionary of names and values.</summary>
+      <returns>A dictionary containing instance-owner metadata.</returns>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstanceView.InstanceOwnerMetadataConsistency">
+      <summary>Gets the consistency status of the InstanceOwnerMetadata property.</summary>
+      <returns>The consistency of the instance owner metadata.  Returns null if the associated instance handle is not bound to an instance owner.</returns>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstanceView.InstanceState">
+      <summary>Gets the state of the instance (Unknown, Uninitialized, Initialized, or Completed).</summary>
+      <returns>The state of the instance.</returns>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstanceView.InstanceStoreQueryResults">
+      <summary>Gets a collection of <see cref="T:System.Runtime.DurableInstancing.InstanceStoreQueryResult" /> objects. The collection is automatically reset to empty each time a command is executed against the associated instance handle.</summary>
+      <returns>A <see cref="T:System.Collections.ObjectModel.ReadOnlyCollection`1" />.</returns>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstanceView.IsBoundToInstance">
+      <summary>Returns a value that indicates whether the associated instance handle is bound to an instance.</summary>
+      <returns>True if the associated instance handle is bound to an instance; otherwise false</returns>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstanceView.IsBoundToInstanceOwner">
+      <summary>Returns a value that indicates whether the associated instance handle is bound to an instance owner.</summary>
+      <returns>True if the associated instance handle is bound to an instance owner; otherwise false.</returns>
+    </member>
+    <member name="P:System.Runtime.DurableInstancing.InstanceView.IsBoundToLock">
+      <summary>Returns a value that indicates whether the associated instance handle is bound to an instance lock.</summary>
+      <returns>true if the associated instance handle is bound to an instance lock; otherwise false.</returns>
+    </member>
+  </members>
+</doc>

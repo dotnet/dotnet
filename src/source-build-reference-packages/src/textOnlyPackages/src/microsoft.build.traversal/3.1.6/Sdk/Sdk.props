@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright (c) Microsoft Corporation. All rights reserved.
+  
+  Licensed under the MIT license.
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <UsingMicrosoftTraversalSdk>true</UsingMicrosoftTraversalSdk>
+  </PropertyGroup>
+
+  <Import Project="$(CustomBeforeTraversalProps)" Condition=" '$(CustomBeforeTraversalProps)' != '' And Exists('$(CustomBeforeTraversalProps)') " />
+
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildToolsVersion)' != 'Current'">$(MSBuildAllProjects);$(MsBuildThisFileFullPath)</MSBuildAllProjects>
+
+    <!--
+      A list of project names that are considered traversal projects.  Add to this list if you name your projects something other than "dirs.proj"
+    -->
+    <TraversalProjectNames Condition=" '$(TraversalProjectNames)' == '' ">dirs.proj</TraversalProjectNames>
+
+    <IsTraversal Condition=" '$(IsTraversal)' == '' And $(TraversalProjectNames.IndexOf($(MSBuildProjectFile), System.StringComparison.OrdinalIgnoreCase)) >= 0 ">true</IsTraversal>
+
+    <!--
+      NuGet should always restore Traversal projects with "PackageReference" style restore.  Setting this property will cause the right thing to happen even if there aren't any PackageReference items in the project.
+    -->
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+    
+    <!-- Targeting packs shouldn't be referenced as traversal projects don't compile. -->
+    <DisableImplicitFrameworkReferences Condition="'$(DisableImplicitFrameworkReferences)' == ''">true</DisableImplicitFrameworkReferences>
+  </PropertyGroup>
+
+  <ItemDefinitionGroup Condition=" '$(TraversalDoNotReferenceOutputAssemblies)' != 'false' ">
+    <ProjectReference>
+      <!--
+        Setting ReferenceOutputAssembly skips adding the outputs of the referenced project to an item
+      -->
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <!--
+        Setting SkipGetTargetFrameworkProperties skips target framework cross-project validation in NuGet
+      -->
+      <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  
+  <!-- For CPS/VS support. Importing in .props allows any subsequent targets to redefine this if needed -->
+  <Target Name="CompileDesignTime" />
+
+  <Import Project="$(CustomAfterTraversalProps)" Condition=" '$(CustomAfterTraversalProps)' != '' And Exists('$(CustomAfterTraversalProps)') " />
+</Project>

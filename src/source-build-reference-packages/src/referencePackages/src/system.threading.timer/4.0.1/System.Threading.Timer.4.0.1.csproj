@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), dir.props))/dir.props" />
+  <PropertyGroup>
+    <TargetFrameworks>netstandard1.2</TargetFrameworks>
+    <NuspecFile>$(ArtifactsBinDir)system.threading.timer/4.0.1/system.threading.timer.nuspec</NuspecFile>
+   </PropertyGroup>
+
+  <PropertyGroup>
+    <OutputPath>$(ArtifactsBinDir)system.threading.timer/4.0.1/ref/</OutputPath>
+    <IntermediateOutputPath>$(ArtifactsObjDir)system.threading.timer/4.0.1</IntermediateOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="**/ref/$(TargetFramework)/*.cs" />
+    <Compile Include="**/lib/$(TargetFramework)/*.cs" />
+  </ItemGroup>
+
+    <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.2' ">
+        <PackageReference Include="Microsoft.NETCore.Platforms" Version="1.0.1" />
+        <PackageReference Include="Microsoft.NETCore.Targets" Version="1.0.1" />
+        <PackageReference Include="System.Runtime" Version="4.1.0" />
+    </ItemGroup>
+
+  
+</Project>

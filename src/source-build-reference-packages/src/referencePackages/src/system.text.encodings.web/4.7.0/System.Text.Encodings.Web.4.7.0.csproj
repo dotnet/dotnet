@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), dir.props))/dir.props" />
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard1.0;netstandard2.0;netstandard2.1</TargetFrameworks>
+    <NuspecFile>$(ArtifactsBinDir)system.text.encodings.web/4.7.0/system.text.encodings.web.nuspec</NuspecFile>
+    <StrongNameKeyId>Open</StrongNameKeyId>
+    <DisableImplicitFrameworkReferences>false</DisableImplicitFrameworkReferences>
+    <!-- Don't warn on CS3011 - Some types have abstract members that are not CLS-compliant -->
+    <NoWarn>$(NoWarn);CS3011</NoWarn>   
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <OutputPath>$(ArtifactsBinDir)system.text.encodings.web/4.7.0/ref/</OutputPath>
+    <IntermediateOutputPath>$(ArtifactsObjDir)system.text.encodings.web/4.7.0</IntermediateOutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.0' ">
+    <OutputPath>$(ArtifactsBinDir)system.text.encodings.web/4.7.0/lib/</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+    <OutputPath>$(ArtifactsBinDir)system.text.encodings.web/4.7.0/lib/</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' ">
+    <OutputPath>$(ArtifactsBinDir)system.text.encodings.web/4.7.0/lib/</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="**/ref/$(TargetFramework)/*.cs" />
+    <Compile Include="**/lib/$(TargetFramework)/*.cs" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+    <PackageReference Include="System.Memory" Version="4.5.3" />
+  </ItemGroup>
+
+</Project>
