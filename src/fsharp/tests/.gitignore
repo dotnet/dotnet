@@ -1,0 +1,5 @@
+FSharp_*
+net40-fsharpqa-suite-*
+CoreUnit_*
+*.il
+dont.run.peverify

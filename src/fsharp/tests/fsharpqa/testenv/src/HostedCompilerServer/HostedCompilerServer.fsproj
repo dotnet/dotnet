@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <DisableImplicitFSharpCoreReference>true</DisableImplicitFSharpCoreReference>
+    <DisableOutputPathCopying>true</DisableOutputPathCopying>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <OutputPath>$(RepoRoot)tests\fsharpqa\testenv\bin</OutputPath>
+    <NoWarn>$(NoWarn);44</NoWarn>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>true</Prefer32Bit>
+    <NGenBinary>true</NGenBinary>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Program.fs" />
+    <None Include="App.config" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(FSharpSourcesRoot)\FSharp.Core\FSharp.Core.fsproj" />
+    <ProjectReference Include="$(FSharpSourcesRoot)\Compiler\FSharp.Compiler.Service.fsproj" />
+  </ItemGroup>
+
+</Project>

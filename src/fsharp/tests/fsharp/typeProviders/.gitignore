@@ -1,0 +1,12 @@
+helloWorld/bincompat1
+helloWorld/bincompat2
+
+negTests/*.bsl
+negTests/*.err
+negTests/*.vserr
+negTests/*.vsbsl
+negTests/*.diff
+negTests/*.vsdiff
+
+*.dll
+*.pdb

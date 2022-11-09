@@ -1,0 +1,302 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="zh-Hant" original="../FSharp.Editor.resx">
+    <body>
+      <trans-unit id="AddMissingEqualsToTypeDefinition">
+        <source>Add missing '=' to type definition</source>
+        <target state="translated">將缺少的 '=' 新增至類型定義</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddMissingFunKeyword">
+        <source>Add missing 'fun' keyword</source>
+        <target state="translated">新增缺少的 'fun' 關鍵字</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddMissingInstanceMemberParameter">
+        <source>Add missing instance member parameter</source>
+        <target state="translated">新增缺少的執行個體成員參數</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddNewKeyword">
+        <source>Add 'new' keyword</source>
+        <target state="translated">新增 'new' 關鍵字</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddTypeAnnotation">
+        <source>Add type annotation</source>
+        <target state="translated">新增型別註解</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConvertCSharpUsingToFSharpOpen">
+        <source>Convert C# 'using' to F# 'open'</source>
+        <target state="new">Convert C# 'using' to F# 'open'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConvertToAnonymousRecord">
+        <source>Convert to Anonymous Record</source>
+        <target state="translated">轉換為匿名記錄</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConvertToNotEqualsEqualityExpression">
+        <source>Use '&lt;&gt;' for inequality check</source>
+        <target state="translated">使用 '&lt;&gt;' 進行不等式檢查</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConvertToSingleEqualsEqualityExpression">
+        <source>Use '=' for equality check</source>
+        <target state="translated">使用 '=' 檢查是否相等</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ChangePrefixNegationToInfixSubtraction">
+        <source>Use subtraction instead of negation</source>
+        <target state="translated">使用減號代替否定</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FSharpDisposableLocalValuesClassificationType">
+        <source>F# Disposable Values (locals)</source>
+        <target state="translated">F# 可處置的值 (區域)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FSharpDisposableTopLevelValuesClassificationType">
+        <source>F# Disposable Values (top-level)</source>
+        <target state="translated">F# 可處置的值 (最上層)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FSharpDisposableTypesClassificationType">
+        <source>F# Disposable Types</source>
+        <target state="translated">F# 可處置的類型</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FSharpFunctionsClassificationType">
+        <source>F# Functions</source>
+        <target state="translated">F# 函式</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementInterface">
+        <source>Implement interface</source>
+        <target state="translated">實作介面</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementInterfaceWithoutTypeAnnotation">
+        <source>Implement interface without type annotation</source>
+        <target state="translated">實作沒有類型註釋的介面</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MakeDeclarationMutable">
+        <source>Make declaration 'mutable'</source>
+        <target state="translated">將宣告設定為「可變動」</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MakeOuterBindingRecursive">
+        <source>Make '{0}' recursive</source>
+        <target state="translated">將 '{0}' 設為遞迴</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PrefixValueNameWithUnderscore">
+        <source>Prefix '{0}' with underscore</source>
+        <target state="translated">有底線的前置詞 '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RemoveReturn">
+        <source>Remove 'return'</source>
+        <target state="translated">移除 'return'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RemoveReturnBang">
+        <source>Remove 'return!'</source>
+        <target state="translated">移除 'return!'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RemoveUnusedBinding">
+        <source>Remove unused binding</source>
+        <target state="translated">移除未使用的繫結</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RemoveYield">
+        <source>Remove 'yield'</source>
+        <target state="translated">移除 'yield'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RemoveYieldBang">
+        <source>Remove 'yield!'</source>
+        <target state="translated">移除 'yield!'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RenameValueToUnderscore">
+        <source>Rename '{0}' to '_'</source>
+        <target state="translated">將 '{0}' 重新命名為 '_'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SimplifyName">
+        <source>Simplify name</source>
+        <target state="translated">簡化名稱</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NameCanBeSimplified">
+        <source>Name can be simplified.</source>
+        <target state="translated">可以簡化名稱。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FSharpMutableVarsClassificationType">
+        <source>F# Mutable Variables / Reference Cells</source>
+        <target state="translated">F# 可變動變數 / 參考儲存格</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FSharpPrintfFormatClassificationType">
+        <source>F# Printf Format</source>
+        <target state="translated">F# Printf 格式</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FSharpPropertiesClassificationType">
+        <source>F# Properties</source>
+        <target state="translated">F# 屬性</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RemoveUnusedOpens">
+        <source>Remove unused open declarations</source>
+        <target state="translated">移除未使用的公開宣告</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnusedOpens">
+        <source>Open declaration can be removed.</source>
+        <target state="translated">可以移除公開宣告。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="6008">
+        <source>IntelliSense</source>
+        <target state="translated">IntelliSense</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="6009">
+        <source>QuickInfo</source>
+        <target state="translated">QuickInfo</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddAssemblyReference">
+        <source>Add an assembly reference to '{0}'</source>
+        <target state="translated">新增組件參考至 '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddProjectReference">
+        <source>Add a project reference to '{0}'</source>
+        <target state="translated">新增專案參考至 '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="6010">
+        <source>Code Fixes</source>
+        <target state="translated">程式碼修正</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="6011">
+        <source>Performance</source>
+        <target state="translated">效能</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TheValueIsUnused">
+        <source>The value is unused</source>
+        <target state="translated">未使用該值</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CannotDetermineSymbol">
+        <source>Cannot determine the symbol under the caret</source>
+        <target state="translated">無法決定插入點下的符號</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CannotNavigateUnknown">
+        <source>Cannot navigate to the requested location</source>
+        <target state="translated">無法瀏覽至要求的位置</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocatingSymbol">
+        <source>Locating the symbol under the caret...</source>
+        <target state="translated">正在尋找插入點下的符號...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NavigatingTo">
+        <source>Navigating to symbol...</source>
+        <target state="translated">正在瀏覽至符號...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NavigateToFailed">
+        <source>Navigate to symbol failed: {0}</source>
+        <target state="translated">瀏覽至符號失敗: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ExceptionsHeader">
+        <source>Exceptions:</source>
+        <target state="translated">例外狀況:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="GenericParametersHeader">
+        <source>Generic parameters:</source>
+        <target state="translated">泛型參數:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RenameValueToDoubleUnderscore">
+        <source>Rename '{0}' to '__'</source>
+        <target state="translated">將 '{0}' 重新命名為 '__'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="6012">
+        <source>Advanced</source>
+        <target state="translated">進階</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="6013">
+        <source>Lens</source>
+        <target state="new">Lens</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="6014">
+        <source>Formatting</source>
+        <target state="translated">格式化</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseFSharpLambda">
+        <source>Use F# lambda syntax</source>
+        <target state="translated">使用 F# lambda 語法</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseMutationWhenValueIsMutable">
+        <source>Use '&lt;-' to mutate value</source>
+        <target state="translated">使用 '&lt;-' 來變動值</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseNameof">
+        <source>Use 'nameof'</source>
+        <target state="translated">使用 'nameof'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseTripleQuotedInterpolation">
+        <source>Use triple quoted string interpolation.</source>
+        <target state="translated">使用三引號字串插補。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseUpcastKeyword">
+        <source>Use 'upcast'</source>
+        <target state="translated">使用「向上轉型」</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseUpcastOperator">
+        <source>Use ':&gt;' operator</source>
+        <target state="translated">使用 ':&gt;' 運算子</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseNotForNegation">
+        <source>Use 'not' to negate expression</source>
+        <target state="translated">使用 'not' 來否定運算式</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseValueInsteadOfDeref">
+        <source>Use '.Value' to dereference expression</source>
+        <target state="translated">使用 '.Value' 擷取運算式的值</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WrapExpressionInParentheses">
+        <source>Wrap expression in parentheses</source>
+        <target state="translated">使用括弧包裝運算式</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

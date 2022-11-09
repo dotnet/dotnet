@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c) Microsoft Corporation.  All Rights Reserved.  See License.txt in the project root for license information. -->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <NoWarn>$(NoWarn);75</NoWarn>
+    <NoWarn>$(NoWarn);44</NoWarn><!-- warning about Roslyn API only for F# and TypeScript -->
+    <DisableImplicitFSharpCoreReference>true</DisableImplicitFSharpCoreReference>
+    <OtherFlags>$(OtherFlags) --warnon:1182 --subsystemversion:6.00</OtherFlags>
+    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="FSharp.ProjectSystem.FSharp" />
+    <InternalsVisibleTo Include="VisualFSharp.UnitTests" />
+    <InternalsVisibleTo Include="VisualFSharp.Salsa" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="FSharp.Editor.resx">
+      <GenerateSource>true</GenerateSource>
+      <GeneratedModuleName>Microsoft.VisualStudio.FSharp.Editor.SR</GeneratedModuleName>
+    </EmbeddedResource>
+    <Compile Include="Common\AssemblyInfo.fs" />
+    <Compile Include="Common\Logger.fsi" />
+    <Compile Include="Common\Logger.fs" />
+    <Compile Include="Common\Pervasive.fs" />
+    <Compile Include="Common\Constants.fs" />
+    <Compile Include="Common\Extensions.fs" />
+    <Compile Include="Common\Error.fs" />
+    <Compile Include="Common\Logging.fs" />
+    <Compile Include="Common\RoslynHelpers.fs" />
+    <Compile Include="Common\FSharpCodeAnalysisExtensions.fs" />
+    <Compile Include="Common\CodeAnalysisExtensions.fs" />
+    <Compile Include="Common\Vs.fs" />
+    <Compile Include="Options\SettingsPersistence.fs" />
+    <Compile Include="Options\UIHelpers.fs" />
+    <Compile Include="Options\EditorOptions.fs" />
+    <Compile Include="LanguageService\ProvideBraceCompletionAttribute.fs" />
+    <Compile Include="LanguageService\FSharpEditorFactory.fs" />
+    <Compile Include="LanguageService\TextViewCreationListener.fs" />
+    <Compile Include="LanguageService\Tokenizer.fs" />
+    <Compile Include="LanguageService\Symbols.fs" />
+    <Compile Include="LanguageService\IProjectSite.fs" />
+    <Compile Include="LanguageService\ProvideFSharpVersionRegistrationAttribute.fs" />
+    <Compile Include="LanguageService\MetadataAsSource.fs" />
+    <Compile Include="LanguageService\FSharpProjectOptionsManager.fs" />
+    <Compile Include="LanguageService\IFSharpWorkspaceService.fs" />
+    <Compile Include="LanguageService\SingleFileWorkspaceMap.fs" />
+    <Compile Include="LanguageService\LegacyProjectWorkspaceMap.fs" />
+    <Compile Include="LanguageService\FSharpAnalysisSaveFileCommandHandler.fs" />
+    <Compile Include="LanguageService\LanguageService.fs" />
+    <Compile Include="LanguageService\WorkspaceExtensions.fs" />
+    <Compile Include="LanguageService\AssemblyContentProvider.fs" />
+    <Compile Include="LanguageService\SymbolHelpers.fs" />
+    <Compile Include="Classification\ClassificationDefinitions.fs" />
+    <Compile Include="Classification\ClassificationService.fs" />
+    <Compile Include="Formatting\BraceMatchingService.fs" />
+    <Compile Include="Formatting\IndentationService.fs" />
+    <Compile Include="Formatting\EditorFormattingService.fs" />
+    <Compile Include="Debugging\BreakpointResolutionService.fs" />
+    <Compile Include="Debugging\LanguageDebugInfoService.fs" />
+    <Compile Include="Diagnostics\DocumentDiagnosticAnalyzer.fs" />
+    <Compile Include="Diagnostics\SimplifyNameDiagnosticAnalyzer.fs" />
+    <Compile Include="Diagnostics\UnusedDeclarationsAnalyzer.fs" />
+    <Compile Include="Diagnostics\UnusedOpensDiagnosticAnalyzer.fs" />
+    <Compile Include="DocComments\XMLDocumentation.fs" />
+    <Compile Include="Completion\CompletionUtils.fs" />
+    <Compile Include="Completion\CompletionProvider.fs" />
+    <Compile Include="Completion\PathCompletionUtilities.fs" />
+    <Compile Include="Completion\HashDirectiveCompletionProvider.fs" />
+    <Compile Include="Completion\CompletionService.fs" />
+    <Compile Include="Completion\SignatureHelp.fs" />
+    <Compile Include="InlineRename\InlineRenameService.fs" />
+    <Compile Include="DocumentHighlights\DocumentHighlightsService.fs" />
+    <Compile Include="Navigation\GoToDefinition.fs" />
+    <Compile Include="Navigation\NavigableSymbolsService.fs" />
+    <Compile Include="Navigation\GoToDefinitionService.fs" />
+    <Compile Include="Navigation\NavigationBarItemService.fs" />
+    <Compile Include="Navigation\NavigateToSearchService.fs" />
+    <Compile Include="Navigation\FindUsagesService.fs" />
+    <Compile Include="QuickInfo\NavigableTextRun.fs" />
+    <Compile Include="QuickInfo\WpfNagivableTextRunViewElementFactory.fs" />
+    <Compile Include="QuickInfo\Views.fs" />
+    <Compile Include="QuickInfo\QuickInfoProvider.fs" />
+    <Compile Include="Structure\BlockStructureService.fs" />
+    <Compile Include="Commands\HelpContextService.fs" />
+    <Compile Include="Commands\FsiCommandService.fs" />
+    <Compile Include="Commands\XmlDocCommandService.fs" />
+    <Compile Include="Refactor\ChangeTypeofWithNameToNameofExpression.fs" />
+    <Compile Include="Refactor\AddExplicitTypeToParameter.fs" />
+    <Compile Include="Refactor\ChangeDerefToValueRefactoring.fs" />
+    <Compile Include="CodeFix\CodeFixHelpers.fs" />
+    <Compile Include="CodeFix\AddInstanceMemberParameter.fs" />
+    <Compile Include="CodeFix\AddTypeAnnotationToObjectOfIndeterminateType.fs" />
+    <Compile Include="CodeFix\AddMissingRecToMutuallyRecFunctions.fs" />
+    <Compile Include="CodeFix\ConvertCSharpUsingToFSharpOpen.fs" />
+    <Compile Include="CodeFix\ConvertCSharpLambdaToFSharpLambda.fs" />
+    <Compile Include="CodeFix\MakeOuterBindingRecursive.fs" />
+    <Compile Include="CodeFix\RemoveReturnOrYield.fs" />
+    <Compile Include="CodeFix\AddMissingFunKeyword.fs" />
+    <Compile Include="CodeFix\ConvertToAnonymousRecord.fs" />
+    <Compile Include="CodeFix\UseMutationWhenValueIsMutable.fs" />
+    <Compile Include="CodeFix\MakeDeclarationMutable.fs" />
+    <Compile Include="CodeFix\ChangeToUpcast.fs" />
+    <Compile Include="CodeFix\AddMissingEqualsToTypeDefinition.fs" />
+    <Compile Include="CodeFix\ConvertToNotEqualsEqualityExpression.fs" />
+    <Compile Include="CodeFix\ConvertToSingleEqualsEqualityExpression.fs" />
+    <Compile Include="CodeFix\ChangeRefCellDerefToNotExpression.fs" />
+    <Compile Include="CodeFix\WrapExpressionInParentheses.fs" />
+    <Compile Include="CodeFix\ChangePrefixNegationToInfixSubtraction.fs" />
+    <Compile Include="CodeFix\AddNewKeywordToDisposableConstructorInvocation.fs" />
+    <Compile Include="CodeFix\AddOpenCodeFixProvider.fs" />
+    <Compile Include="CodeFix\ProposeUppercaseLabel.fs" />
+    <Compile Include="CodeFix\ReplaceWithSuggestion.fs" />
+    <Compile Include="CodeFix\RemoveUnusedBinding.fs" />
+    <Compile Include="CodeFix\RenameUnusedValue.fs" />
+    <Compile Include="CodeFix\ImplementInterfaceCodeFixProvider.fs" />
+    <Compile Include="CodeFix\SimplifyName.fs" />
+    <Compile Include="CodeFix\RemoveUnusedOpens.fs" />
+    <Compile Include="CodeFix\MissingReferenceCodeFixProvider.fs" />
+    <Compile Include="CodeFix\FixIndexerAccess.fs" />
+    <Compile Include="CodeFix\RenameParamToMatchSignature.fs" />
+    <Compile Include="CodeFix\UseTripleQuotedInterpolation.fs" />
+    <Compile Include="Build\SetGlobalPropertiesForSdkProjects.fs" />
+    <Compile Include="AutomaticCompletion\BraceCompletionSessionProvider.fsi" />
+    <Compile Include="AutomaticCompletion\BraceCompletionSessionProvider.fs" />
+    <Compile Include="Hints\HintService.fs" />
+    <Compile Include="Hints\NativeToRoslynHintConverter.fs" />
+    <Compile Include="Hints\RoslynAdapter.fs" />
+    <Compile Include="Lens\LensDisplayService.fs" />
+    <Compile Include="Lens\LensService.fs" />
+    <Compile Include="Lens\LensProvider.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(FSharpSourcesRoot)\FSharp.Core\FSharp.Core.fsproj" />
+    <ProjectReference Include="$(FSharpSourcesRoot)\Compiler\FSharp.Compiler.Service.fsproj" />
+    <ProjectReference Include="..\FSharp.PatternMatcher\FSharp.PatternMatcher.csproj" />
+    <ProjectReference Include="..\FSharp.UIResources\FSharp.UIResources.csproj" />
+    <ProjectReference Include="..\FSharp.VS.FSI\FSharp.VS.FSI.fsproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Interop" Version="$(MicrosoftVisualStudioInteropVersion)" PrivateAssets="all" ExcludeAssets="runtime;contentFiles;build;analyzers;native" />
+    <PackageReference Include="Microsoft.Internal.VisualStudio.Interop" Version="$(MicrosoftInternalVisualStudioInteropVersion)" PrivateAssets="all" ExcludeAssets="runtime;contentFiles;build;analyzers;native" />
+    <PackageReference Include="Microsoft.CodeAnalysis.EditorFeatures.Text" Version="$(MicrosoftCodeAnalysisEditorFeaturesTextVersion)" PrivateAssets="all" ExcludeAssets="runtime;contentFiles;build;analyzers;native" />
+    <PackageReference Include="Microsoft.CodeAnalysis.EditorFeatures.Wpf" Version="$(MicrosoftCodeAnalysisEditorFeaturesWpfVersion)" PrivateAssets="all" ExcludeAssets="runtime;contentFiles;build;analyzers;native" />
+    <PackageReference Include="Microsoft.CodeAnalysis.ExternalAccess.FSharp" Version="$(MicrosoftCodeAnalysisExternalAccessFSharpVersion)" PrivateAssets="all" ExcludeAssets="runtime;contentFiles;build;analyzers;native" />
+    <PackageReference Include="Microsoft.Composition" Version="$(MicrosoftCompositionVersion)" PrivateAssets="all" ExcludeAssets="runtime;contentFiles;build;analyzers;native" />
+    <PackageReference Include="Microsoft.VisualStudio.ComponentModelHost" Version="$(MicrosoftVisualStudioComponentModelHostVersion)" PrivateAssets="all" ExcludeAssets="runtime;contentFiles;build;analyzers;native" />
+    <PackageReference Include="Microsoft.VisualStudio.Editor" Version="$(MicrosoftVisualStudioEditorVersion)" PrivateAssets="all" ExcludeAssets="runtime;contentFiles;build;analyzers;native" />
+    <PackageReference Include="Microsoft.VisualStudio.Language" Version="$(MicrosoftVisualStudioLanguageVersion)" PrivateAssets="all" ExcludeAssets="runtime;contentFiles;build;analyzers;native" />
+    <PackageReference Include="Microsoft.VisualStudio.Language.Intellisense" Version="$(MicrosoftVisualStudioLanguageIntellisenseVersion)" PrivateAssets="all" ExcludeAssets="runtime;contentFiles;build;analyzers;native" />
+    <PackageReference Include="Microsoft.VisualStudio.Language.StandardClassification" Version="$(MicrosoftVisualStudioLanguageStandardClassificationVersion)" PrivateAssets="all" ExcludeAssets="runtime;contentFiles;build;analyzers;native" />
+    <PackageReference Include="Microsoft.VisualStudio.LanguageServices" Version="$(MicrosoftVisualStudioLanguageServicesVersion)" PrivateAssets="all" ExcludeAssets="runtime;contentFiles;build;analyzers;native" />
+    <PackageReference Include="Microsoft.VisualStudio.Package.LanguageService.15.0" Version="$(MicrosoftVisualStudioPackageLanguageService150Version)" PrivateAssets="all" ExcludeAssets="runtime;contentFiles;build;analyzers;native" />
+    <PackageReference Include="Microsoft.VisualStudio.ProjectAggregator" Version="$(MicrosoftVisualStudioProjectAggregatorVersion)" PrivateAssets="all" ExcludeAssets="runtime;contentFiles;build;analyzers;native" />
+    <PackageReference Include="Microsoft.VisualStudio.ProjectSystem" Version="$(MicrosoftVisualStudioProjectSystemVersion)" PrivateAssets="all" ExcludeAssets="runtime;contentFiles;build;analyzers;native" />
+    <PackageReference Include="Microsoft.VisualStudio.ProjectSystem.Managed" Version="$(MicrosoftVisualStudioProjectSystemManagedVersion)" PrivateAssets="all" ExcludeAssets="runtime;contentFiles;build;analyzers;native" />
+    <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" Version="$(MicrosoftVisualStudioShell150Version)" PrivateAssets="all" ExcludeAssets="runtime;contentFiles;build;analyzers;native" />
+    <PackageReference Include="Microsoft.VisualStudio.Shell.Design" Version="$(MicrosoftVisualStudioShellDesignVersion)" PrivateAssets="all" ExcludeAssets="runtime;contentFiles;build;analyzers;native" />
+    <PackageReference Include="Microsoft.VisualStudio.Text.UI" Version="$(MicrosoftVisualStudioTextUIVersion)" PrivateAssets="all" ExcludeAssets="runtime;contentFiles;build;analyzers;native" />
+    <PackageReference Include="Microsoft.VisualStudio.Text.UI.Wpf" Version="$(MicrosoftVisualStudioTextUIWpfVersion)" PrivateAssets="all" ExcludeAssets="runtime;contentFiles;build;analyzers;native" />
+    <PackageReference Include="Microsoft.VisualStudio.Threading" Version="$(MicrosoftVisualStudioThreadingVersion)" PrivateAssets="all" ExcludeAssets="runtime;contentFiles;build;analyzers;native" />
+    <PackageReference Include="Microsoft.VisualStudio.Validation" Version="$(MicrosoftVisualStudioValidationVersion)" PrivateAssets="all" ExcludeAssets="runtime;contentFiles;build;analyzers;native" />
+    <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" PrivateAssets="all" ExcludeAssets="runtime;contentFiles;build;analyzers;native" />
+    <PackageReference Include="StreamJsonRpc" Version="$(StreamJsonRpcVersion)" />
+    <PackageReference Include="Nerdbank.Streams" Version="$(NerdbankStreamsVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="Microsoft.VisualStudio.Shell.ProvideCodeBaseAttribute">
+      <AssemblyName>FSharp.Editor</AssemblyName>
+      <Version>$(VSAssemblyVersion)</Version>
+      <CodeBase>$PackageFolder$\FSharp.Editor.dll</CodeBase>
+    </AssemblyAttribute>
+    <AssemblyAttribute Include="Microsoft.VisualStudio.Shell.ProvideCodeBaseAttribute">
+      <AssemblyName>FSharp.UIResources</AssemblyName>
+      <Version>$(VSAssemblyVersion)</Version>
+      <CodeBase>$PackageFolder$\FSharp.UIResources.dll</CodeBase>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+</Project>

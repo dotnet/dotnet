@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c) Microsoft Corporation.  All Rights Reserved.  See License.txt in the project root for license information. -->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <ExtensionInstallationFolder>Microsoft\FSharp</ExtensionInstallationFolder>
+    <PackageTargetFallback>netcoreapp1.0</PackageTargetFallback>
+    <IsShipping>true</IsShipping>
+    <DependencyTargetFramework>net472</DependencyTargetFramework>
+    <!-- locally you should deploy VisualFSharpDebug.vsix instead -->
+    <DeployExtension>false</DeployExtension>
+  </PropertyGroup>
+
+  <Import Project="VisualFSharp.Core.targets" />
+
+</Project>

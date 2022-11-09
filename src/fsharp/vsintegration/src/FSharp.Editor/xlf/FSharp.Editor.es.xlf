@@ -1,0 +1,302 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="es" original="../FSharp.Editor.resx">
+    <body>
+      <trans-unit id="AddMissingEqualsToTypeDefinition">
+        <source>Add missing '=' to type definition</source>
+        <target state="translated">Agregar el carácter "=" que falta a la definición de tipo</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddMissingFunKeyword">
+        <source>Add missing 'fun' keyword</source>
+        <target state="translated">Agregar la palabra clave "fun" que falta</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddMissingInstanceMemberParameter">
+        <source>Add missing instance member parameter</source>
+        <target state="translated">Agregar parámetro de miembro de instancia que falta</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddNewKeyword">
+        <source>Add 'new' keyword</source>
+        <target state="translated">Agregar "nueva" palabra clave</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddTypeAnnotation">
+        <source>Add type annotation</source>
+        <target state="translated">Agregar una anotación de tipo</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConvertCSharpUsingToFSharpOpen">
+        <source>Convert C# 'using' to F# 'open'</source>
+        <target state="new">Convert C# 'using' to F# 'open'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConvertToAnonymousRecord">
+        <source>Convert to Anonymous Record</source>
+        <target state="translated">Convertir en registro anónimo</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConvertToNotEqualsEqualityExpression">
+        <source>Use '&lt;&gt;' for inequality check</source>
+        <target state="translated">Usar "&lt;&gt;" para la comprobación de desigualdad</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConvertToSingleEqualsEqualityExpression">
+        <source>Use '=' for equality check</source>
+        <target state="translated">Usar "=" para la comprobación de igualdad</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ChangePrefixNegationToInfixSubtraction">
+        <source>Use subtraction instead of negation</source>
+        <target state="translated">Usar la resta en lugar de la negación</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FSharpDisposableLocalValuesClassificationType">
+        <source>F# Disposable Values (locals)</source>
+        <target state="translated">Valores de F# descartables (locales)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FSharpDisposableTopLevelValuesClassificationType">
+        <source>F# Disposable Values (top-level)</source>
+        <target state="translated">Valores desechables en F# (nivel superior)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FSharpDisposableTypesClassificationType">
+        <source>F# Disposable Types</source>
+        <target state="translated">Tipos descartables de F#</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FSharpFunctionsClassificationType">
+        <source>F# Functions</source>
+        <target state="translated">Funciones de F#</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementInterface">
+        <source>Implement interface</source>
+        <target state="translated">Implementar interfaz</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementInterfaceWithoutTypeAnnotation">
+        <source>Implement interface without type annotation</source>
+        <target state="translated">Implementar interfaz sin anotación de tipos</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MakeDeclarationMutable">
+        <source>Make declaration 'mutable'</source>
+        <target state="translated">Convertir la declaración en "mutable"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MakeOuterBindingRecursive">
+        <source>Make '{0}' recursive</source>
+        <target state="translated">Convertir el elemento "{0}" en recursivo</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PrefixValueNameWithUnderscore">
+        <source>Prefix '{0}' with underscore</source>
+        <target state="translated">Colocar un carácter de subrayado delante de "{0}"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RemoveReturn">
+        <source>Remove 'return'</source>
+        <target state="translated">Quitar "return"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RemoveReturnBang">
+        <source>Remove 'return!'</source>
+        <target state="translated">Quitar "return!"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RemoveUnusedBinding">
+        <source>Remove unused binding</source>
+        <target state="translated">Quitar el enlace no usado</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RemoveYield">
+        <source>Remove 'yield'</source>
+        <target state="translated">Quitar "yield"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RemoveYieldBang">
+        <source>Remove 'yield!'</source>
+        <target state="translated">Quitar "yield!"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RenameValueToUnderscore">
+        <source>Rename '{0}' to '_'</source>
+        <target state="translated">Cambiar nombre de "{0}" por "_"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SimplifyName">
+        <source>Simplify name</source>
+        <target state="translated">Simplificar nombre</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NameCanBeSimplified">
+        <source>Name can be simplified.</source>
+        <target state="translated">El nombre se puede simplificar.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FSharpMutableVarsClassificationType">
+        <source>F# Mutable Variables / Reference Cells</source>
+        <target state="translated">Variables mutables y celdas de referencia de F#</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FSharpPrintfFormatClassificationType">
+        <source>F# Printf Format</source>
+        <target state="translated">Formato Printf de F#</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FSharpPropertiesClassificationType">
+        <source>F# Properties</source>
+        <target state="translated">Propiedades de F#</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RemoveUnusedOpens">
+        <source>Remove unused open declarations</source>
+        <target state="translated">Quitar declaraciones abiertas no usadas</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnusedOpens">
+        <source>Open declaration can be removed.</source>
+        <target state="translated">Las declaraciones abiertas se pueden quitar.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="6008">
+        <source>IntelliSense</source>
+        <target state="translated">IntelliSense</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="6009">
+        <source>QuickInfo</source>
+        <target state="translated">QuickInfo</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddAssemblyReference">
+        <source>Add an assembly reference to '{0}'</source>
+        <target state="translated">Agregar una referencia de ensamblado a "{0}"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddProjectReference">
+        <source>Add a project reference to '{0}'</source>
+        <target state="translated">Agregar una referencia de proyecto a "{0}"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="6010">
+        <source>Code Fixes</source>
+        <target state="translated">Correcciones de código</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="6011">
+        <source>Performance</source>
+        <target state="translated">Rendimiento</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TheValueIsUnused">
+        <source>The value is unused</source>
+        <target state="translated">El valor no se usa</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CannotDetermineSymbol">
+        <source>Cannot determine the symbol under the caret</source>
+        <target state="translated">No se puede determinar el símbolo bajo el símbolo de intercalación</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CannotNavigateUnknown">
+        <source>Cannot navigate to the requested location</source>
+        <target state="translated">No se puede navegar a la ubicación solicitada</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocatingSymbol">
+        <source>Locating the symbol under the caret...</source>
+        <target state="translated">Buscando el símbolo bajo el símbolo de intercalación...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NavigatingTo">
+        <source>Navigating to symbol...</source>
+        <target state="translated">Navegando al símbolo...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NavigateToFailed">
+        <source>Navigate to symbol failed: {0}</source>
+        <target state="translated">No se pudo navegar al símbolo: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ExceptionsHeader">
+        <source>Exceptions:</source>
+        <target state="translated">Excepciones:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="GenericParametersHeader">
+        <source>Generic parameters:</source>
+        <target state="translated">Parámetros genéricos:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RenameValueToDoubleUnderscore">
+        <source>Rename '{0}' to '__'</source>
+        <target state="translated">Cambiar nombre de "{0}" por "__"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="6012">
+        <source>Advanced</source>
+        <target state="translated">Opciones avanzadas</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="6013">
+        <source>Lens</source>
+        <target state="new">Lens</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="6014">
+        <source>Formatting</source>
+        <target state="translated">Formato</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseFSharpLambda">
+        <source>Use F# lambda syntax</source>
+        <target state="translated">Usar la sintaxis lambda de F#</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseMutationWhenValueIsMutable">
+        <source>Use '&lt;-' to mutate value</source>
+        <target state="translated">Usar "&lt;-" para mutar el valor</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseNameof">
+        <source>Use 'nameof'</source>
+        <target state="translated">Usar 'nameof'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseTripleQuotedInterpolation">
+        <source>Use triple quoted string interpolation.</source>
+        <target state="translated">Use la interpolación de cadenas entre comillas triples.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseUpcastKeyword">
+        <source>Use 'upcast'</source>
+        <target state="translated">Usar "upcast"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseUpcastOperator">
+        <source>Use ':&gt;' operator</source>
+        <target state="translated">Usar el operador ":&gt;"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseNotForNegation">
+        <source>Use 'not' to negate expression</source>
+        <target state="translated">Usar "not" para negar la expresión</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseValueInsteadOfDeref">
+        <source>Use '.Value' to dereference expression</source>
+        <target state="translated">Usar ".Value" para desreferenciar la expresión</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WrapExpressionInParentheses">
+        <source>Wrap expression in parentheses</source>
+        <target state="translated">Encapsular la expresión entre paréntesis</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
