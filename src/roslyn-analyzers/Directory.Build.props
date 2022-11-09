@@ -1,0 +1,61 @@
+<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information. -->
+<Project>
+  <PropertyGroup>
+    <ImportNetSdkFromRepoToolset>false</ImportNetSdkFromRepoToolset>
+    <AssetsDir>$(MSBuildThisFileDirectory)assets\</AssetsDir>
+    <VSSDKTargetPlatformRegRootSuffix>RoslynDev</VSSDKTargetPlatformRegRootSuffix>
+    <AutoGenerateAssemblyVersion>true</AutoGenerateAssemblyVersion>
+
+    <!-- Set 'NoDefaultExcludes' to ensure that we can package .editorconfig files into our analyzer NuGet packages -->
+    <NoDefaultExcludes>true</NoDefaultExcludes>
+  </PropertyGroup>
+
+  <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
+  <Import Project="eng/Testing.props"/>
+
+  <PropertyGroup>
+    <!-- Do not ship packages by default -->
+    <IsShippingPackage>false</IsShippingPackage>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <LangVersion Condition="'$(Language)' == 'C#'">preview</LangVersion>
+    <LangVersion Condition="'$(Language)' == 'VB'">16</LangVersion>
+
+    <NoWarn>$(NoWarn);NU1701</NoWarn>
+
+    <!-- Do not warn about the version of analyzers being used in this project -->
+    <_SkipUpgradeNetAnalyzersNuGetWarning>true</_SkipUpgradeNetAnalyzersNuGetWarning>
+    <!-- TODO: Enable Nullable for test and non-shipping projects -->
+    <Nullable Condition="'$(Nullable)' == '' and '$(IsTestProject)' != 'true' and '$(NonShipping)' != 'true'">enable</Nullable>
+
+    <Features>strict</Features>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+    <!--
+      Make sure any documentation comments which are included in code get checked for syntax during the build, but do
+      not report warnings for missing comments.
+
+      CS1573: Parameter 'parameter' has no matching param tag in the XML comment for 'member' (but other parameters do)
+      CS1591: Missing XML comment for publicly visible type or member 'Type_or_Member'
+      CS1712: Type parameter 'parameter' has no matching typeparam tag in the XML comment on 'type_or_member' (but other type parameters do)
+    -->
+    <NoWarn Condition="'$(Language)' == 'C#'">$(NoWarn),1573,1591,1712</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- We generate per-project assembly attributes files, so we can safely delete them when cleaning the project -->
+    <TargetFrameworkMonikerAssemblyAttributesFileClean>true</TargetFrameworkMonikerAssemblyAttributesFileClean>
+  </PropertyGroup>
+
+  <!-- Workaround to enable .editorconfig based analyzer configuration until dotnet compilers support .editorconfig based configuration -->
+  <PropertyGroup>
+    <SkipDefaultEditorConfigAsAdditionalFile>true</SkipDefaultEditorConfigAsAdditionalFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory).editorconfig" />
+  </ItemGroup>
+</Project>
