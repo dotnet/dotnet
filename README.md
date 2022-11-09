@@ -139,6 +139,8 @@ To enable full offline source-building of the VMR, we have no other choice than 
     *[aspnet/MessagePack-CSharp.git@fe9fa08](https:/github.com/aspnet/MessagePack-CSharp.git/commit/fe9fa0834d18492eb229ff2923024af2c87553f8)*
     - `src/aspnetcore/src/submodules/spa-templates`  
     *[dotnet/spa-templates.git@57bf5a0](https:/github.com/dotnet/spa-templates.git/commit/57bf5a0a1bf5d55eb9efefa92dcff6f067d4bfb3)*
+- `src/command-line-api`  
+*[dotnet/command-line-api@c776cd4](https:/github.com/dotnet/command-line-api/commit/c776cd4e906b669b9cce1017fee7d0ba9845d163)*
 - `src/deployment-tools`  
 *[dotnet/deployment-tools@c3ad00a](https:/github.com/dotnet/deployment-tools/commit/c3ad00ae84489071080a606f6a8e43c9a91a5cc2)*
 - `src/format`  
