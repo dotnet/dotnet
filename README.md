@@ -141,6 +141,8 @@ To enable full offline source-building of the VMR, we have no other choice than 
     *[dotnet/spa-templates.git@57bf5a0](https:/github.com/dotnet/spa-templates.git/commit/57bf5a0a1bf5d55eb9efefa92dcff6f067d4bfb3)*
 - `src/deployment-tools`  
 *[dotnet/deployment-tools@c3ad00a](https:/github.com/dotnet/deployment-tools/commit/c3ad00ae84489071080a606f6a8e43c9a91a5cc2)*
+- `src/format`  
+*[dotnet/format@bee17d2](https:/github.com/dotnet/format/commit/bee17d238280246c6a8e6decbd86a91fda6d00c6)*
 - `src/fsharp`  
 *[dotnet/fsharp@a6a6470](https:/github.com/dotnet/fsharp/commit/a6a64706c78963cb033fd230f36518d3e773b725)*
 - `src/installer`  

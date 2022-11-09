@@ -19,6 +19,12 @@
       "commitSha": "c3ad00ae84489071080a606f6a8e43c9a91a5cc2"
     },
     {
+      "packageVersion": "7.0.351202",
+      "path": "format",
+      "remoteUri": "https://github.com/dotnet/format",
+      "commitSha": "bee17d238280246c6a8e6decbd86a91fda6d00c6"
+    },
+    {
       "packageVersion": "7.0.1-beta.22557.9",
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
