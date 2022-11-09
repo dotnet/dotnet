@@ -101,6 +101,12 @@
       "path": "vstest",
       "remoteUri": "https://github.com/microsoft/vstest",
       "commitSha": "02296a2873652bc5911ae4b58d74f9faae03917d"
+    },
+    {
+      "packageVersion": "1.0.0-beta.22513.1",
+      "path": "xliff-tasks",
+      "remoteUri": "https://github.com/dotnet/xliff-tasks",
+      "commitSha": "366ad9b9f7af7d0eddbd36d1e13d8fcff0ac99db"
     }
   ],
   "submodules": [
