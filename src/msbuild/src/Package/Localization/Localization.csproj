@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework Condition="$(MonoBuild) != 'true'">$(LatestDotNetCoreForMSBuild)</TargetFramework>
+    <TargetFramework Condition="$(MonoBuild) == 'true'">net472</TargetFramework>
+    <NuspecFile>Microsoft.Build.Localization.nuspec</NuspecFile>
+    <IsShipping>false</IsShipping>
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\MSBuild\MSBuild.csproj" />
+  </ItemGroup>
+
+  <Import Project="..\NuspecProject.targets" Condition="'$(MonoBuild)' != 'true'" />
+  <Import Project="$(RepoRoot)eng\ProducesNoOutput.Settings.props" Condition="'$(MonoBuild)' == 'true'" />
+  
+</Project>

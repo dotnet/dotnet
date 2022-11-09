@@ -1,0 +1,37 @@
+{
+  "products": [
+    {
+      "name": "Microsoft.Build.vsix",
+      "tests": [
+        {
+          "container": "VSPE",
+          "testCases": [
+            "VSPE.OptProfTests.vs_perf_designtime_solution_build_vc_auto7",
+            "VSPE.OptProfTests.vs_perf_designtime_solution_build_vb_australiangovernment"
+          ]
+        },
+        {
+          "container": "MSBuild",
+          "testCases": [
+            "MSBuild.Managed.vs_perf_designtime_commandline_msbuild_cs_mstv_fullbuild",
+            "MSBuild.Managed.vs_perf_designtime_commandline_msbuild_cs_mstv_fullbuild_4proc",
+          ]
+        },
+        {
+          "container": "ManagedLangs",
+          "testCases": [
+            "ManagedLangs.OptProfTests.DDRIT_RPS_ManagedLangs"
+          ]
+        },
+        {
+          "container": "Microsoft.VisualStudio.ProjectSystem.DDRIT",
+          "testCases": [
+            "Microsoft.VisualStudio.ProjectSystem.DDRIT.OptProfOpenCloseTest.OpenAndCloseProjectTestSolution"
+          ]
+        }  
+      ]
+    }
+  ],
+  "assemblies": [
+  ]
+}
