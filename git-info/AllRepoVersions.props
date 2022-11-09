@@ -7,5 +7,7 @@
     <installerOutputPackageVersion>8.0.100</installerOutputPackageVersion>
     <runtimeGitCommitHash>af841c8b33cecc92d74222298f1e45bf7bf3d90a</runtimeGitCommitHash>
     <runtimeOutputPackageVersion>8.0.0-alpha.1.22557.12</runtimeOutputPackageVersion>
+    <testtemplatesGitCommitHash>bb3695688177f5f80eeb3c0498168612e31549d5</testtemplatesGitCommitHash>
+    <testtemplatesOutputPackageVersion>1.1.0-rc.22558.1</testtemplatesOutputPackageVersion>
   </PropertyGroup>
 </Project>

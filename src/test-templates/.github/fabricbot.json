@@ -1,0 +1,87 @@
+{
+  "version": "1.0",
+  "tasks": [
+    {
+      "taskType": "trigger",
+      "capabilityId": "AutoMerge",
+      "subCapability": "AutoMerge",
+      "version": "1.0",
+      "id": "ulqhTkb7I",
+      "config": {
+        "label": "auto-merge",
+        "minMinutesOpen": "5",
+        "mergeType": "squash",
+        "deleteBranches": true,
+        "enforceDMPAsStatus": true,
+        "removeLabelOnPush": true,
+        "allowAutoMergeInstructionsWithoutLabel": false,
+        "taskName": "Auto-merge PRs",
+        "usePrDescriptionAsCommitMessage": true
+      }
+    },
+    {
+      "taskType": "trigger",
+      "capabilityId": "IssueResponder",
+      "subCapability": "PullRequestResponder",
+      "version": "1.0",
+      "id": "mcazfzuL1",
+      "config": {
+        "conditions": {
+          "operator": "and",
+          "operands": [
+            {
+              "name": "titleContains",
+              "parameters": {
+                "titlePattern": "Update dependencies from dotnet/arcade"
+              }
+            },
+            {
+              "name": "isAction",
+              "parameters": {
+                "action": "opened"
+              }
+            },
+            {
+              "name": "activitySenderHasPermissions",
+              "parameters": {
+                "permissions": "write"
+              }
+            },
+            {
+              "name": "isActivitySender",
+              "parameters": {
+                "user": "dotnet-maestro"
+              }
+            }
+          ]
+        },
+        "eventType": "pull_request",
+        "eventNames": [
+          "pull_request",
+          "issues",
+          "project_card"
+        ],
+        "taskName": "Arcade PR merger",
+        "actions": [
+          {
+            "name": "addLabel",
+            "parameters": {
+              "label": "auto-merge"
+            }
+          },
+          {
+            "name": "approvePullRequest",
+            "parameters": {
+              "comment": "Arcade update PR auto-approved."
+            }
+          }
+        ],
+        "dangerZone": {
+          "respondToBotActions": true,
+          "acceptRespondToBotActions": true
+        }
+      }
+    }
+  ],
+  "userGroups": []
+}

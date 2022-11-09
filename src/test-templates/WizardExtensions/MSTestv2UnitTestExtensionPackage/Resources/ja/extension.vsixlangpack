@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PackageLanguagePackManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011">
+  <Metadata>
+    <DisplayName>MSTest V2 単体テスト作成の拡張機能</DisplayName>
+    <Description>開発者が MSTest V2 を使用して単体テストを作成できるようにします。</Description>
+  </Metadata>
+</PackageLanguagePackManifest>

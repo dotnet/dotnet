@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PackageLanguagePackManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011">
+  <Metadata>
+    <DisplayName>MSTest V2 IntelliTest の拡張</DisplayName>
+    <Description>開発者が MSTest V2 を使用して IntelliTest を生成できるようにします。</Description>
+  </Metadata>
+</PackageLanguagePackManifest>

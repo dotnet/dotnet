@@ -1,0 +1,7 @@
+{
+  "version": "1.0.0.0",
+  "strings": {
+    "name": "xUnit テスト プロジェクト",
+    "description": "Windows、Linux、および MacOS 上の .NET で実行できる xUnit.net テストを含むプロジェクト。"
+  }
+}

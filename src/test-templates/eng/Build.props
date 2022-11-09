@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- Specify the solutions to build. Add all new solutions/projects here as necessary or the main build won't build them! -->
+  <ItemGroup>
+    <ProjectToBuild Include="$(MSBuildThisFileDirectory)..\template_feed\NetCoreTestTemplates.sln" />
+    <ProjectToBuild Include="$(MSBuildThisFileDirectory)..\Templates\MSTestTemplates.sln" Condition="'$(DotNetBuildFromSource)' != 'true'" />
+    <ProjectToBuild Include="$(MSBuildThisFileDirectory)..\WizardExtensions\WizardExtensions.sln" Condition="'$(DotNetBuildFromSource)' != 'true'" />
+    <ProjectToBuild Include="$(MSBuildThisFileDirectory)..\test\Microsoft.TestTemplates.Acceptance.Tests.sln" Condition="'$(DotNetBuildFromSource)' != 'true'" />
+  </ItemGroup>
+</Project>

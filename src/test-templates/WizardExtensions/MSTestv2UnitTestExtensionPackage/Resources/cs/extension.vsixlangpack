@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PackageLanguagePackManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011">
+  <Metadata>
+    <DisplayName>Rozšíření rozhraní MSTest V2 pro vytvoření testu jednotek</DisplayName>
+    <Description>Umožňuje vývojářům vytvořit test jednotek pomocí rozhraní MSTest V2.</Description>
+  </Metadata>
+</PackageLanguagePackManifest>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PackageLanguagePackManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011">
+  <Metadata>
+    <DisplayName>MSTest V2 단위 테스트 확장 만들기</DisplayName>
+    <Description>개발자가 MSTest V2를 사용하여 단위 테스트를 만들 수 있습니다.</Description>
+  </Metadata>
+</PackageLanguagePackManifest>

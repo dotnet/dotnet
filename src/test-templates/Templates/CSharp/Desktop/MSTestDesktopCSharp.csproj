@@ -1,0 +1,39 @@
+<Project  Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net461</TargetFramework>
+    <RootNamespace>MSTestDesktopCSharp</RootNamespace>
+    <AssemblyName>MSTestDesktopCSharp</AssemblyName>
+    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+    <GeneratePkgDefFile>false</GeneratePkgDefFile>
+    <EnableDefaultItems>false</EnableDefaultItems>
+    <IncludeAssemblyInVSIXContainer>false</IncludeAssemblyInVSIXContainer>
+    <!-- VS Insertion -->
+    <VisualStudioInsertionComponent>Microsoft.VisualStudio.Templates.CS.MSTestv2.Desktop.UnitTest</VisualStudioInsertionComponent>
+
+    <CreateVsixContainer>true</CreateVsixContainer>
+    <DeployExtension>False</DeployExtension>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="DesktopTemplateLicense.rtf">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="extension.vsixlangpack">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="packages\MSTest.TestAdapter.2.2.10.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="packages\MSTest.TestFramework.2.2.10.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <None Include="source.extension.vsixmanifest">
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="ProjectTemplates\**">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+  </ItemGroup>
+  <Import Project="$(RepoRoot)eng\Loc.targets" />
+</Project>

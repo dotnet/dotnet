@@ -1,0 +1,37 @@
+﻿<Project  Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net461</TargetFramework>
+    <RootNamespace>MSTestv2UnitTestExtensionPackage</RootNamespace>
+    <AssemblyName>MSTestv2UnitTestExtensionPackage</AssemblyName>
+    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+    <GeneratePkgDefFile>false</GeneratePkgDefFile>
+    <EnableDefaultItems>false</EnableDefaultItems>
+    <IncludeAssemblyInVSIXContainer>false</IncludeAssemblyInVSIXContainer>
+    <!-- VS Insertion -->
+    <VisualStudioInsertionComponent>Microsoft.VisualStudio.TestTools.MSTestV2.WizardExtension.UnitTest</VisualStudioInsertionComponent>
+
+    <CreateVsixContainer>true</CreateVsixContainer>
+    <DeployExtension>False</DeployExtension>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+<ItemGroup>
+    <Content Include="CreateUnitTestExtensionLicense.rtf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <None Include="source.extension.vsixmanifest">
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="extension.vsixlangpack">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MSTestv2UnitTestExtension\MSTestv2UnitTestExtension.csproj">
+      <Name>MSTestv2UnitTestExtension</Name>
+      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup</IncludeOutputGroupsInVSIX>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(RepoRoot)eng\Loc.targets" />
+</Project>
