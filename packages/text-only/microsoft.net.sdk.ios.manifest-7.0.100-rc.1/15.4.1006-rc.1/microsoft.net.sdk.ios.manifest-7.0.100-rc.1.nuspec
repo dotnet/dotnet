@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.NET.Sdk.iOS.Manifest-7.0.100-rc.1</id>
+    <version>15.4.1006-rc.1+sha.0e53b999d</version>
+    <authors>Microsoft</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="file">LICENSE</license>
+    <licenseUrl>https://aka.ms/deprecateLicenseUrl</licenseUrl>
+    <projectUrl>https://github.com/xamarin/xamarin-macios</projectUrl>
+    <description>.NET Workload for iOS platforms</description>
+    <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+    <packageTypes>
+      <packageType name="DotnetPlatform" />
+    </packageTypes>
+  </metadata>
+</package>

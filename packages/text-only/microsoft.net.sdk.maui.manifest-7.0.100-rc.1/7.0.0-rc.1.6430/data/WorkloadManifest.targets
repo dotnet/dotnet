@@ -1,0 +1,47 @@
+<Project>
+
+  <ItemGroup Condition=" '$(UseMaui)' == 'true' or '$(UseMauiCore)' == 'true' ">
+    <ProjectCapability Include="UseMauiCore" />
+    <ProjectCapability Condition=" '$(UseMaui)' == 'true' " Include="UseMaui" />
+  </ItemGroup>
+
+  <Import
+      Condition=" ('$(UseMaui)' == 'true' or '$(UseMauiCore)' == 'true' or '$(UseMauiEssentials)' == 'true' or '$(UseMauiAssets)' == 'true') and ($([MSBuild]::VersionEquals($(TargetFrameworkVersion), '7.0'))) "
+      Project="Sdk.targets" Sdk="Microsoft.Maui.Sdk"
+  />
+  <Import
+      Condition=" ('$(UseMaui)' == 'true' or '$(UseMauiCore)' == 'true' or '$(UseMauiEssentials)' == 'true' or '$(UseMauiAssets)' == 'true') and ($([MSBuild]::VersionEquals($(TargetFrameworkVersion), '6.0'))) "
+      Project="Sdk.targets" Sdk="Microsoft.Maui.Sdk-6.0"
+  />
+
+  <Import
+      Condition=" '$(UseMaui)' == 'true' or '$(UseMauiAssets)' == 'true' "
+      Project="Sdk.targets" Sdk="Microsoft.Maui.Resizetizer.Sdk"
+  />
+
+  <!--
+      Previous versions of the .NET MAUI SDK used **FromWorkload**, so replace with explicit versions.
+      The BundledVersions.targets that is imported is from the previous SDK, so all the other values are correct.
+  -->
+  <ItemGroup Condition=" $([MSBuild]::VersionEquals($(TargetFrameworkVersion), '6.0')) ">
+    <KnownFrameworkReference
+        Update="Microsoft.Maui.Core"
+        DefaultRuntimeFrameworkVersion="6.0.419"
+        LatestRuntimeFrameworkVersion="6.0.419"
+        TargetingPackVersion="6.0.419"
+    />
+    <KnownFrameworkReference
+        Update="Microsoft.Maui.Controls"
+        DefaultRuntimeFrameworkVersion="6.0.419"
+        LatestRuntimeFrameworkVersion="6.0.419"
+        TargetingPackVersion="6.0.419"
+    />
+    <KnownFrameworkReference
+        Update="Microsoft.Maui.Essentials"
+        DefaultRuntimeFrameworkVersion="6.0.419"
+        LatestRuntimeFrameworkVersion="6.0.419"
+        TargetingPackVersion="6.0.419"
+    />
+  </ItemGroup>
+
+</Project>

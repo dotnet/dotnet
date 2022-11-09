@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/01/nuspec.xsd">
+  <metadata minClientVersion="2.12">
+    <id>Microsoft.NET.Workload.Emscripten.net7.Manifest-8.0.100</id>
+    <version>8.0.0-alpha.1.22510.1</version>
+    <title>Microsoft.NET.Workload.Emscripten.net7.Manifest</title>
+    <authors>Microsoft</authors>
+    <owners>microsoft,dotnetframework</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <licenseUrl>https://github.com/dotnet/emsdk/blob/main/LICENSE</licenseUrl>
+    <icon>Icon.png</icon>
+    <projectUrl>https://github.com/dotnet/emsdk</projectUrl>
+    <iconUrl>http://go.microsoft.com/fwlink/?LinkID=288859</iconUrl>
+    <description>Internal toolchain package not meant for direct consumption. Please do not reference directly.</description>
+    <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+    <serviceable>true</serviceable>
+    <repository type="git" url="https://github.com/dotnet/emsdk" commit="aecb1c71c70f6db44035602a879c57fa495d37e8" />
+  </metadata>
+</package>
