@@ -1,0 +1,74 @@
+### This pipeline synchronizes code from product repositories into the VMR (https://github.com/dotnet/dotnet)
+
+parameters:
+- name: targetRef
+  displayName: Target revision in dotnet/installer to synchronize to
+  type: string
+  default: $(Build.SourceVersion)
+
+- name: vmrBranch
+  displayName: dotnet/dotnet branch to use
+  type: string
+  default: $(Build.SourceBranchName)
+
+- name: noPush
+  displayName: Don't push changes to dotnet/dotnet
+  type: boolean
+  default: false
+
+trigger:
+  branches:
+    include:
+    - main
+    - release/*
+    - internal/release/*
+
+pr: none
+
+resources:
+  repositories:
+  - repository: vmr
+    type: github
+    name: dotnet/dotnet
+    endpoint: dotnet
+
+variables:
+- template: /eng/common/templates/variables/pool-providers.yml
+- template: templates/variables/vmr-variables.yml
+
+jobs:
+- job: Synchronize
+  displayName: Synchronize dotnet/dotnet
+  timeoutInMinutes: 120
+
+  pool:
+    ${{ if eq(variables['System.TeamProject'], 'public') }}:
+      name: $(DncEngPublicBuildPool)
+      demands: ImageOverride -equals Build.Ubuntu.2004.Amd64.Open
+    ${{ else }}:
+      name: $(DncEngInternalBuildPool)
+      demands: ImageOverride -equals Build.Ubuntu.2004.Amd64
+
+  steps:
+  - template: templates/steps/vmr-prepare.yml
+    parameters:
+      vmrBranch: ${{ parameters.vmrBranch }}
+
+  - template: templates/steps/vmr-pull-updates.yml
+    parameters:
+      vmrPath: $(vmrPath)
+      vmrBranch: ${{ parameters.vmrBranch }}
+      targetRef: ${{ parameters.targetRef }}
+      vmrToken: $(BotAccount-dotnet-bot-repo-PAT)
+
+  - ${{ if and(not(parameters.noPush), ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal')) }}:
+    - script: |-
+        set -x
+        git config --global user.email 'dotnet-maestro[bot]@users.noreply.github.com' && git config --global user.name 'dotnet-maestro[bot]'
+        git remote add dotnet 'https://$(BotAccount-dotnet-bot-repo-PAT)@github.com/dotnet/dotnet.git'
+        git fetch dotnet
+        git branch ${{ parameters.vmrBranch }}
+        git branch --set-upstream-to=dotnet/${{ parameters.vmrBranch }} ${{ parameters.vmrBranch }} || echo 'Branch ${{ parameters.vmrBranch }} not found in remote'
+        git push dotnet ${{ parameters.vmrBranch }}
+      displayName: Push changes to dotnet/dotnet
+      workingDirectory: $(vmrPath)

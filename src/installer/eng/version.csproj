@@ -1,0 +1,8 @@
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+   <PropertyGroup>
+     <TargetFramework>$(CoreSdkTargetFramework)</TargetFramework>
+     <NativeVersionFile>$(ArtifactsObjDir)sdk_version.h</NativeVersionFile>
+   </PropertyGroup>
+
+   <Target Name="GenerateSdkVersionFile" BeforeTargets="CoreCompile" DependsOnTargets="GenerateNativeVersionFile" />
+</Project>

@@ -1,0 +1,63 @@
+<Project>
+
+  <ItemGroup>
+    <!-- Remove the wixpacks from items to sign post build. These will be added explicitly by the
+         custom publishing target. And should not be picked up by arcade's default publishing logic. -->
+    <ItemsToSignPostBuild Remove="*.wixpack.zip" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(PostBuildSign)' != 'true'">
+    <ItemsToSign Remove="@(ItemsToSign)" />
+    <ItemsToSign Include="$(ArtifactsShippingPackagesDir)*.zip" Condition=" '$(PublishBinariesAndBadge)' == 'true' " />
+    <ItemsToSign Include="$(ArtifactsShippingPackagesDir)*.exe" />
+    <ItemsToSign Include="$(ArtifactsShippingPackagesDir)*.msi" />
+    <ItemsToSign Include="$(ArtifactsNonShippingPackagesDir)*.msi" />
+    <ItemsToSign Include="$(ArtifactsNonShippingPackagesDir)*.zip" Condition=" '$(PublishBinariesAndBadge)' == 'true' " />
+    <ItemsToSign Include="$(ArtifactsPackagesDir)**\*.wixpack.zip" />
+    <ItemsToSign Include="$(ArtifactsPackagesDir)**\*.nupkg" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <ExternalCertificateId Condition="'$(ExternalCertificateId)' == ''">3PartySHA2</ExternalCertificateId>
+    <InternalCertificateId Condition="'$(InternalCertificateId)' == ''">MicrosoftDotNet500</InternalCertificateId>
+
+    <!--
+      Signing of shipping artifacts (layout, msi, bundle) are handled separately.
+      It is therefore expected that <ItemsToSign> could be an empty set.
+    -->
+    <AllowEmptySignList>true</AllowEmptySignList>
+    <AllowEmptySignPostBuildList>true</AllowEmptySignPostBuildList>
+
+    <UseDotNetCertificate>true</UseDotNetCertificate>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FileSignInfo Include="Newtonsoft.Json.dll" CertificateName="$(ExternalCertificateId)" />
+    <FileSignInfo Include="MessagePack.Annotations.dll" CertificateName="$(ExternalCertificateId)" />
+    <FileSignInfo Include="MessagePack.dll" CertificateName="$(ExternalCertificateId)" />
+    <FileSignInfo Include="Nerdbank.Streams.dll" CertificateName="$(ExternalCertificateId)" />
+    <FileSignInfo Include="StreamJsonRpc.dll" CertificateName="$(ExternalCertificateId)" />
+
+    <!-- Files in the layout that should not be signed -->
+    <FileSignInfo Include="apphost.exe" CertificateName="None" />
+    <FileSignInfo Include="comhost.dll" CertificateName="None" />
+    <FileSignInfo Include="singlefilehost.exe" CertificateName="None" />
+
+    <!-- These are 3rd party nupkgs and should not be signed with an MS cert -->
+    <FileSignInfo Include="nunit3.dotnetnew.template.$(NUnit3Templates21PackageVersion).nupkg" CertificateName="None" />
+    <FileSignInfo Include="nunit3.dotnetnew.template.$(NUnit3Templates30PackageVersion).nupkg" CertificateName="None" />
+    <FileSignInfo Include="nunit3.dotnetnew.template.$(NUnit3Templates31PackageVersion).nupkg" CertificateName="None" />
+    <FileSignInfo Include="nunit3.dotnetnew.template.$(NUnit3Templates50PackageVersion).nupkg" CertificateName="None" />
+
+    <FileExtensionSignInfo Include=".msi" CertificateName="$(InternalCertificateId)" />
+    <!-- .ttf, .otf, and .js files come in from some older aspnetcore packages (e.g. 2.1).
+          These files in the 5.0 packages are NOT signed. When doing postbuild signing,
+          SignTool will recognize that the files in the installer zips came from the 5.0 packages
+          pulled in from aspnetcore, and aspnetcore said not to sign them. This info is not
+          available for the 2.1 packages, so we need to avoid signing these in this repo. -->
+    <FileExtensionSignInfo Include=".ttf" CertificateName="None" />
+    <FileExtensionSignInfo Include=".otf" CertificateName="None" />
+    <FileExtensionSignInfo Remove=".js" />
+    <FileExtensionSignInfo Include=".js" CertificateName="None" />
+  </ItemGroup>
+
+</Project>

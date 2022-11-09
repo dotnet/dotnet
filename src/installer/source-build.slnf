@@ -1,0 +1,10 @@
+{
+  "solution": {
+    "path": "Microsoft.DotNet.Cli.sln",
+    "projects": [
+      "src\\Microsoft.Dotnet.Sdk.Internal\\Microsoft.Dotnet.Sdk.Internal.csproj",
+      "src\\core-sdk-tasks\\core-sdk-tasks.csproj",
+      "src\\redist\\redist.csproj",
+    ]
+  }
+}

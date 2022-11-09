@@ -1,0 +1,60 @@
+### These steps synchronize new code from product repositories into the VMR (https://github.com/dotnet/dotnet).
+### They initialize the darc CLI and pull the new updates.
+### Changes are applied locally onto the already cloned VMR (located in $vmrPath).
+
+parameters:
+- name: vmrBranch
+  displayName: dotnet/dotnet branch to use
+  type: string
+
+- name: targetRef
+  displayName: Target revision in dotnet/installer to synchronize
+  type: string
+  default: $(Build.SourceVersion)
+
+- name: vmrToken
+  displayName: PAT that allows pushing to dotnet/dotnet
+  type: string
+
+- name: vmrPath
+  displayName: Path where the dotnet/dotnet is checked out to
+  type: string
+  default: $(Agent.BuildDirectory)/vmr
+
+steps:
+- checkout: self
+  clean: true
+  displayName: Clone dotnet/installer
+  fetchDepth: 0
+  path: installer
+
+- script: |
+    source ./eng/common/tools.sh
+    InitializeDotNetCli true
+    ./.dotnet/dotnet tool restore
+  displayName: Restore darc
+  workingDirectory: $(Agent.BuildDirectory)/installer
+
+- script: git checkout -B ${{ parameters.vmrBranch }}
+  displayName: Prepare branch ${{ parameters.vmrBranch }}
+  workingDirectory: $(vmrPath)
+
+# TODO (https://github.com/dotnet/arcade/issues/11386): Remove this step
+# This step is here so that darc can find the PR commit (which might be in some fork)
+# We need to make darc understand that it needs to look in the fork from this PR
+- ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+  - script: |
+      cp -r $(Agent.BuildDirectory)/installer $(Agent.TempDirectory)/497F233644435505515AF465112B48CD
+    displayName: Prepare dotnet/installer clone
+
+- script: >
+    $(Agent.BuildDirectory)/installer/.dotnet/dotnet darc vmr update
+    --vmr ${{ parameters.vmrPath }}
+    --tmp $(Agent.TempDirectory)
+    --azdev-pat $(System.AccessToken)
+    --github-pat ${{ parameters.vmrToken }}
+    --recursive
+    --verbose
+    installer:${{ parameters.targetRef }}
+  displayName: Synchronize dotnet/dotnet
+  workingDirectory: $(Agent.BuildDirectory)/installer

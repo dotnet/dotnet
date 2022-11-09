@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
+
+  <PropertyGroup Condition="'$(CopyrightNetFoundation)' != ''">
+    <Copyright>$(CopyrightNetFoundation)</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <BuildArchitecture>$([System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture.ToString().ToLowerInvariant())</BuildArchitecture>
+    <Architecture Condition="'$(Architecture)' == '' AND ('$(BuildArchitecture)' == 'arm64' OR '$(BuildArchitecture)' == 'arm')">$(BuildArchitecture)</Architecture>
+    <Architecture Condition="'$(Architecture)' == '' AND '$(BuildArchitecture)' == 's390x'">$(BuildArchitecture)</Architecture>
+    <Architecture Condition="'$(Architecture)' == '' AND '$(BuildArchitecture)' == 'ppc64le'">$(BuildArchitecture)</Architecture>
+    <Architecture Condition="'$(Architecture)' == ''">x64</Architecture>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(PgoInstrument)' == 'true'">
+    <SkipBuildingInstallers>true</SkipBuildingInstallers>
+    <PgoTerm>-pgo</PgoTerm>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    <DebugType>embedded</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+
+    <IsShipping>true</IsShipping>
+    <CoreSdkTargetFramework>net7.0</CoreSdkTargetFramework>
+
+    <!-- MSB3243 and MSB3247 fire when attempting to resolve references to the same assembly from different cultures.
+         This is a prevalent problem in building the precomputed assembly reference cache. Limiting the assemblies resolved
+         to those outside the culture folders would work, but that is a nontrivial problem. -->
+    <NoWarn>NU5125;NU5105;NU1701;MSB3243;MSB3247</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(DisableSourceLink)' == 'true'">
+    <EnableSourceLink>false</EnableSourceLink>
+    <EnableSourceControlManagerQueries>false</EnableSourceControlManagerQueries>
+    <DeterministicSourcePaths>false</DeterministicSourcePaths>
+    <!-- Normally set by sourcelink, and needed by the Pack targets -->
+    <RepositoryUrl>https://github.com/dotnet/core-sdk</RepositoryUrl>
+  </PropertyGroup>
+</Project>
