@@ -156,7 +156,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
     - `src/linker/external/cecil`  
     *[mono/cecil@1840b74](https://github.com/mono/cecil/commit/1840b7410d37a613e684b6f9650e39e2d4950bbb)*
 - `src/msbuild`  
-*[dotnet/msbuild@3bcada9](https://github.com/dotnet/msbuild/commit/3bcada934edfa09e5f68222411e3efeda407985c)*
+*[dotnet/msbuild@15b127d](https://github.com/dotnet/msbuild/commit/15b127d2445d6b68429f1c31d9ff98fe4e1e728c)*
 - `src/nuget-client`  
 *[NuGet/NuGet.Client@6038f76](https://github.com/NuGet/NuGet.Client/commit/6038f769411b98f4efdb10a0924986eae2583618)*
     - `src/nuget-client/submodules/Common`  
