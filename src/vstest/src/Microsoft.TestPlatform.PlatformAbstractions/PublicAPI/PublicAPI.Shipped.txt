@@ -120,4 +120,3 @@ static Microsoft.VisualStudio.TestPlatform.ObjectModel.PlatformEqtTrace.ErrorOnI
 static Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformAssemblyExtensions.GetAssemblyLocation(this System.Reflection.Assembly! assembly) -> string!
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces.IProcessHelper.GetProcessArchitecture(int processId) -> Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformArchitecture
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.ProcessHelper.GetProcessArchitecture(int processId) -> Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformArchitecture
-

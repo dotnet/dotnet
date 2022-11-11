@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections;
 
 namespace Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces;
 
@@ -29,4 +30,10 @@ internal interface IEnvironmentVariableHelper
     /// <param name="variable">The name of an environment variable.</param>
     /// <param name="value">A value to assign to variable.</param>
     void SetEnvironmentVariable(string variable, string value);
+
+    /// <summary>
+    /// Retrieves all environment variable names and their values from the current process.
+    /// </summary>
+    /// <returns>A dictionary that contains all environment variable names and their values; otherwise, an empty dictionary if no environment variables are found.</returns>
+    IDictionary GetEnvironmentVariables();
 }
