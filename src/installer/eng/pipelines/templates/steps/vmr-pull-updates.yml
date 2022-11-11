@@ -44,7 +44,7 @@ steps:
 # We need to make darc understand that it needs to look in the fork from this PR
 - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
   - script: |
-      cp -r $(Agent.BuildDirectory)/installer $(Agent.TempDirectory)/497F233644435505515AF465112B48CD
+      cp -r $(Agent.BuildDirectory)/installer $(Agent.TempDirectory)/03298978DFFFCD23
     displayName: Prepare dotnet/installer clone
 
 - script: >
