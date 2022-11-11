@@ -765,4 +765,18 @@ Non-HTTPS access will be removed in a future version. Consider migrating to 'HTT
     <value>PackageReference for package '{0}' added to '{1}' and PackageVersion added to central package management file '{2}'.</value>
     <comment>0 - The package ID. 1 - Directory.Packages.props file path. 2 - Project file path.</comment>
   </data>
+  <data name="ListPkg_OutputFormatDescription" xml:space="preserve">
+    <value>Set the report output format.</value>
+  </data>
+  <data name="ListPkg_OutputVersionDescription" xml:space="preserve">
+    <value>The version of report output.</value>
+  </data>
+  <data name="ListPkg_InvalidOutputFormat" xml:space="preserve">
+    <value>Invalid value {0} provided for output format. The accepted values are {1}.</value>
+    <comment>{0} - argument name in format option {1} - the possible values of the argument.</comment>
+  </data>
+  <data name="ListPkg_InvalidOutputVersion" xml:space="preserve">
+    <value>Unsupported output format version {0} was requested.  The accepted format version value is {1}.</value>
+    <comment>{0} - argument name in version option {1} - the possible value of the argument.</comment>
+  </data>
 </root>

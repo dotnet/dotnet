@@ -1,7 +1,4 @@
-﻿<Project>
-  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), 'NuGet.sln'))\build\common.test.props" />
-  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>$(TargetFrameworksExeForSigning)</TargetFrameworks>
     <TestProjectType>functional</TestProjectType>
@@ -28,7 +25,4 @@
       xcopy /diye $(ArtifactsDirectory)TestablePlugin\bin\$(Configuration)\$(TargetFramework)\* $(MSBuildProjectDirectory)\bin\$(Configuration)\$(TargetFramework)\TestablePlugin\
     </PostBuildEvent>
   </PropertyGroup>
-
-  <Import Project="$(BuildCommonDirectory)common.targets"/>
-  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 </Project>

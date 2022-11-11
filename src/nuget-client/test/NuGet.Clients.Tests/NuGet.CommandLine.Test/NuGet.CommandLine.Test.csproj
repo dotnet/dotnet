@@ -1,7 +1,4 @@
-<Project>
-  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), 'NuGet.sln'))\build\common.test.props" />
-  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>$(NETFXTargetFramework)</TargetFramework>
     <TargetFramework Condition=" '$(IsXPlat)' == 'true' "></TargetFramework>
@@ -63,7 +60,4 @@
     <Copy SourceFiles="$(ArtifactsDirectory)$(VsixOutputDirName)\NuGet.exe"
           DestinationFolder="$(OutputPath)NuGet\" />
   </Target>
-
-  <Import Project="$(BuildCommonDirectory)common.targets" />
-  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 </Project>

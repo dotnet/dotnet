@@ -1,7 +1,4 @@
-<Project>
-  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), 'NuGet.sln'))\build\common.test.props" />
-  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>$(NETFXTargetFramework)</TargetFramework>
     <OutputType>Library</OutputType>
@@ -14,7 +11,4 @@
   <ItemGroup>
     <Reference Include="System.ComponentModel.Composition" />
   </ItemGroup>
-
-  <Import Project="$(BuildCommonDirectory)common.targets"/>
-  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 </Project>

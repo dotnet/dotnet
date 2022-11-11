@@ -4,7 +4,7 @@ $VSInstallerProcessName = "VSIXInstaller"
 
 function Get-VisualStudioVersionRangeFromConfig
 {
-    $VsVersion = & dotnet msbuild "$PSScriptRoot\..\..\build\config.props" -t:GetVSTargetMajorVersion -NoLogo
+    $VsVersion = & dotnet msbuild "$PSScriptRoot\..\..\build\config.props" /restore:false "/ConsoleLoggerParameters:Verbosity=Minimal;NoSummary;ForceNoAlign" /nologo /target:GetVSTargetMajorVersion
     Write-Host "config.props targets VS version $vsVersion"
     $VsVersionRange = "["+$VsVersion+".0,"+(1+$VsVersion)+".0)"
     return $VsVersionRange

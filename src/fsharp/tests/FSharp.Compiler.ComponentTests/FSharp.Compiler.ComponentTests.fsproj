@@ -102,6 +102,7 @@
     <Compile Include="EmittedIL\CompilerGeneratedAttributeOnAccessors.fs" />
     <Compile Include="EmittedIL\EmptyArray.fs" />
     <Compile Include="EmittedIL\Literals.fs" />
+    <Compile Include="EmittedIL\NoCompilerInlining.fs" />
     <Compile Include="EmittedIL\SkipLocalsInit.fs" />
     <Compile Include="EmittedIL\StringFormatAndInterpolation.fs" />
     <Compile Include="EmittedIL\StructGettersReadOnly.fs" />
@@ -184,6 +185,8 @@
     <Compile Include="Scripting\Interactive.fs" />
     <Compile Include="TypeChecks\CheckDeclarationsTests.fs" />
     <Compile Include="TypeChecks\ParallelCheckingWithSignatureFilesTests.fs" />
+    <Compile Include="CompilerOptions\fsc\checked\checked.fs" />
+    <Compile Include="CompilerOptions\fsc\cliversion.fs" />
     <Compile Include="CompilerOptions\fsc\langversion.fs" />
     <Compile Include="CompilerOptions\fsc\noframework\noframework.fs" />
     <Compile Include="CompilerOptions\fsc\platform\platform.fs" />

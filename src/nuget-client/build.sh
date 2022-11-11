@@ -40,10 +40,10 @@ DOTNET="$(pwd)/cli/dotnet"
 $DOTNET --info
 
 # Get CLI Branches for testing
-echo "dotnet msbuild build/config.props /v:m /nologo /t:GetCliBranchForTesting"
+echo "dotnet msbuild build/config.props /restore:false /ConsoleLoggerParameters:Verbosity=Minimal;NoSummary;ForceNoAlign /nologo /target:GetCliBranchForTesting"
 
 IFS=$'\n'
-CMD_OUT_LINES=(`dotnet msbuild build/config.props /v:m /nologo /t:GetCliBranchForTesting`)
+CMD_OUT_LINES=(`dotnet msbuild build/config.props /restore:false /ConsoleLoggerParameters:Verbosity=Minimal;NoSummary;ForceNoAlign /nologo /target:GetCliBranchForTesting`)
 # Take only last the line which has the version information and strip all the spaces
 DOTNET_BRANCHES=${CMD_OUT_LINES[-1]//[[:space:]]}
 unset IFS

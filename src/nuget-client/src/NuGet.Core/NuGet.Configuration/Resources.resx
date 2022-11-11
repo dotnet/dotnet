@@ -303,4 +303,10 @@
     <value>PackageSourceMapping is enabled and there are multiple package sources associated with the same key(s): {0}. Path: {1}</value>
     <comment>0 - package sources separated with comma 1 - path</comment>
   </data>
+  <data name="ShowError_ConfigDuplicateDisabledSources" xml:space="preserve">
+    <value>Cannot update package sources, config file contains a duplicated key '{0}' in the disabled package sources section. Path: '{1}'</value>
+    <comment>0 - key 
+1 - config file path
+</comment>
+  </data>
 </root>

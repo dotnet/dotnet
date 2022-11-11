@@ -47,10 +47,10 @@ steps:
   condition: succeededOrFailed()
 
 - task: MSBuild@1
-  displayName: "Ensure msbuild.exe can parse nuget.sln"
+  displayName: "Ensure msbuild.exe can parse NuGet.sln"
   inputs:
-    solution: "nuget.sln"
-    msbuildArguments: "/t:EnsureNewtonsoftJsonVersion /bl:$(Build.StagingDirectory)\\binlog\\01.EnsureNewtonsoftJsonVersion.binlog"
+    solution: "NuGet.sln"
+    msbuildArguments: "/restore:false /target:EnsureNewtonsoftJsonVersion /binarylogger:$(Build.StagingDirectory)\\binlog\\01.EnsureNewtonsoftJsonVersion.binlog"
     maximumCpuCount: true
   continueOnError: ${{ parameters.isOfficialBuild }}
   condition: succeededOrFailed()
@@ -59,7 +59,7 @@ steps:
   displayName: "Ensure package versions are declared in packages.targets"
   inputs:
     solution: "build\\build.proj"
-    msbuildArguments: "/t:EnsurePackageReferenceVersionsInSolution /bl:$(Build.StagingDirectory)\\binlog\\02.EnsurePackageReferenceVersionsInSolution.binlog"
+    msbuildArguments: "/restore:false /target:EnsurePackageReferenceVersionsInSolution /binarylogger:$(Build.StagingDirectory)\\binlog\\02.EnsurePackageReferenceVersionsInSolution.binlog"
   continueOnError: ${{ parameters.isOfficialBuild }}
   condition: succeededOrFailed()
 

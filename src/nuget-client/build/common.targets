@@ -46,8 +46,10 @@
   </ImportGroup>
 
   <PropertyGroup Condition="'$(Shipping)' == 'true'">
-    <SignTargetsForRealSigning>GetBuildOutputWithSigningMetadata</SignTargetsForRealSigning>
-    <SymbolTargetsToGetPdbs>GetDebugSymbolsProjectOutput</SymbolTargetsToGetPdbs>
+    <GetSigningInputsDependsOn Condition="'$(GetSigningInputsDependsOn)' == ''">GetSigningInputsDefault</GetSigningInputsDependsOn>
+    <GetSymbolsToIndexDependsOn Condition="'$(GetSymbolsToIndexDependsOn)' == ''">GetSymbolsToIndexDefault</GetSymbolsToIndexDependsOn>
+    <SignTargetsForRealSigning Condition="'$(SignTargetsForRealSigning)' == ''">GetBuildOutputWithSigningMetadata</SignTargetsForRealSigning>
+    <SymbolTargetsToGetPdbs Condition="'$(SymbolTargetsToGetPdbs)' == ''">GetDebugSymbolsProjectOutput</SymbolTargetsToGetPdbs>
     <LocTargets>GetBuildOutputWithLocMetadata</LocTargets>
   </PropertyGroup>
 
@@ -112,6 +114,19 @@
   <ImportGroup Condition=" '$(TestProject)' == 'true' ">
     <Import Project="test.targets" />
   </ImportGroup>
+  
+  <!-- FxCop Analyzers -->
+  <ItemGroup Condition="'$(Shipping)' == 'true' AND '$(SkipAnalyzers)' != 'true' AND '$(DotNetBuildFromSource)' != 'true'">
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)\BannedSymbols.txt" Condition="'$(TestProject)' != 'true'" />
+  </ItemGroup>
 
   <!-- Centrally managed packages. SkipCentralPackageVersions is used to enforce that the packages are centrally managed through a check in build.proj -->
   <ImportGroup Condition=" '$(SkipCentralPackageVersions)' != 'true' ">
@@ -185,11 +200,13 @@
 
   <!--
     ============================================================
-    GetSymbolsToIndex - gets the list of DLLs,EXEs and PDBs that
-    need to be indexed on the symbol server
+    GetSymbolsToIndex - depends on targets that gather symbols that
+    need to be indexed on the symbol server.  
     ============================================================
   -->
-  <Target Name="GetSymbolsToIndex" DependsOnTargets="GetTargetFrameworkSet" Returns="@(SymbolFilesToIndex)" Condition=" '$(Shipping)' == 'true' ">
+  <Target Name="GetSymbolsToIndex" DependsOnTargets="$(GetSymbolsToIndexDependsOn)" Returns="@(SymbolFilesToIndex)" />
+  
+  <Target Name="GetSymbolsToIndexDefault" DependsOnTargets="GetTargetFrameworkSet" Returns="@(SymbolFilesToIndex)" Condition=" '$(Shipping)' == 'true' ">
     <MSBuild
       Projects="$(MSBuildProjectFullPath)"
       Targets="$(SignTargetsForRealSigning);$(SymbolTargetsToGetPdbs)"
@@ -204,11 +221,19 @@
 
   <!--
     ============================================================
-    GetSigningInputs - gets the list of DLLs that need to
-    be signed from each project
+    GetSigningInputs - depends on targets that gather files.
+    be signed from each project.  By default it calls $(GetSigningInputsDependsOn)
+    which projects can override to change the functionality.
     ============================================================
   -->
-  <Target Name="GetSigningInputs" DependsOnTargets="GetTargetFrameworkSet" Returns="@(DllsToSign)" Condition=" '$(Shipping)' == 'true' ">
+  <Target Name="GetSigningInputs" DependsOnTargets="$(GetSigningInputsDependsOn)" Returns="@(DllsToSign)" />
+ 
+ <!--
+    ============================================================
+    The default target to get signing inputs for a particular project
+    ============================================================
+  -->
+  <Target Name="GetSigningInputsDefault" DependsOnTargets="GetTargetFrameworkSet" Returns="@(DllsToSign)" Condition=" '$(Shipping)' == 'true' ">
     <MSBuild
       Projects="$(MSBuildProjectFullPath)"
       Targets="$(SignTargetsForRealSigning)"

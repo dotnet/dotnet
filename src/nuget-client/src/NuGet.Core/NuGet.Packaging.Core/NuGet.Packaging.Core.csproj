@@ -1,7 +1,4 @@
-<Project>
-  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), 'NuGet.sln'))\build\common.props" />
-  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Description>The (former home to) core data structures for NuGet.Packaging. Contains only the type forwarders to the new assembly.</Description>
     <TargetFrameworks>$(TargetFrameworksLibraryForSigning)</TargetFrameworks>
@@ -17,7 +14,4 @@
   <ItemGroup>
     <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Packaging\NuGet.Packaging.csproj" />
   </ItemGroup>
-
-  <Import Project="$(BuildCommonDirectory)common.targets"/>
-  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 </Project>

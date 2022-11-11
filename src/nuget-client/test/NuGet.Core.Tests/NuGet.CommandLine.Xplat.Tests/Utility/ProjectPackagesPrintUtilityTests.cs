@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading;
 using Moq;
 using NuGet.CommandLine.XPlat;
+using NuGet.CommandLine.XPlat.ListPackage;
 using NuGet.CommandLine.XPlat.Utility;
 using NuGet.Common;
 using NuGet.Configuration;
@@ -25,13 +26,25 @@ namespace NuGet.CommandLine.Xplat.Tests.Utility
             object[] expectedReport)
         {
             // Arrange
-            if (packages is InstalledPackageReference[] packageRefs &&
+            var installPackageRefs = packages as InstalledPackageReference[];
+            bool autoReference = false;
+            var pkgArgs = listPackageArgs as ListPackageArgs;
+            var listReportPackages = installPackageRefs?
+                .Select(p => ProjectPackagesPrintUtility.GetFrameworkPackageMetadata(
+                    new List<InstalledPackageReference> { p },
+                    printingTransitive,
+                    pkgArgs?.ReportType ?? ReportType.Default,
+                    ref autoReference)
+                .First())
+                .ToArray();
+
+            if (listReportPackages != null &&
                 expectedReport is FormattedCell[] expectedResult &&
-                listPackageArgs is ListPackageArgs pkgArgs)
+                pkgArgs != null)
             {
                 // Act
                 var autoReferenceFound = false;
-                var report = ProjectPackagesPrintUtility.BuildPackagesTable(packageRefs, printingTransitive, pkgArgs, ref autoReferenceFound);
+                IEnumerable<FormattedCell> report = ProjectPackagesPrintUtility.BuildPackagesTable(listReportPackages, printingTransitive, pkgArgs, ref autoReferenceFound);
 
                 // Assert
                 var reportArr = report.ToArray();
@@ -100,7 +113,7 @@ namespace NuGet.CommandLine.Xplat.Tests.Utility
                 },
                 new object[]
                 {
-                    new[] { OutdatedPackage, DeprecatedOutdatedPackage },
+                    new[] { DeprecatedOutdatedPackage, OutdatedPackage },
                     false, // printing transitives
                     OutdatedReportArgs,
                     ProcessExpectedReport(new[]
@@ -144,28 +157,28 @@ namespace NuGet.CommandLine.Xplat.Tests.Utility
         private static ListPackageArgs StandardListReportArgs => StandardListReportArgsCache ?? (StandardListReportArgsCache =
             new ListPackageArgs(
                         path: string.Empty, packageSources: Enumerable.Empty<PackageSource>(), frameworks: Enumerable.Empty<string>(),
-                        ReportType.Default, includeTransitive: false,
+                        ReportType.Default, new ListPackageConsoleRenderer(), includeTransitive: false,
                         prerelease: false, highestPatch: false, highestMinor: false, logger: new Mock<ILogger>().Object, cancellationToken: CancellationToken.None));
 
         private static ListPackageArgs OutdatedReportArgsCache;
         private static ListPackageArgs OutdatedReportArgs => OutdatedReportArgsCache ?? (OutdatedReportArgsCache =
             new ListPackageArgs(
                         path: string.Empty, packageSources: Enumerable.Empty<PackageSource>(), frameworks: Enumerable.Empty<string>(),
-                        ReportType.Outdated, includeTransitive: false,
+                        ReportType.Outdated, new ListPackageConsoleRenderer(), includeTransitive: false,
                         prerelease: false, highestPatch: false, highestMinor: false, logger: new Mock<ILogger>().Object, cancellationToken: CancellationToken.None));
 
         private static ListPackageArgs DeprecatedReportArgsCache;
         private static ListPackageArgs DeprecatedReportArgs => DeprecatedReportArgsCache ?? (DeprecatedReportArgsCache =
             new ListPackageArgs(
                         path: string.Empty, packageSources: Enumerable.Empty<PackageSource>(), frameworks: Enumerable.Empty<string>(),
-                        ReportType.Deprecated, includeTransitive: false,
+                        ReportType.Deprecated, new ListPackageConsoleRenderer(), includeTransitive: false,
                         prerelease: false, highestPatch: false, highestMinor: false, logger: new Mock<ILogger>().Object, cancellationToken: CancellationToken.None));
 
         private static ListPackageArgs VulnerableReportArgsCache;
         private static ListPackageArgs VulnerableReportArgs => VulnerableReportArgsCache ?? (VulnerableReportArgsCache =
             new ListPackageArgs(
                         path: string.Empty, packageSources: Enumerable.Empty<PackageSource>(), frameworks: Enumerable.Empty<string>(),
-                        ReportType.Vulnerable, includeTransitive: false,
+                        ReportType.Vulnerable, new ListPackageConsoleRenderer(), includeTransitive: false,
                         prerelease: false, highestPatch: false, highestMinor: false, logger: new Mock<ILogger>().Object, cancellationToken: CancellationToken.None));
 
         private static InstalledPackageReference StandardPackageCache;

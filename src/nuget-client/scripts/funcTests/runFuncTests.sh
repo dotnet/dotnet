@@ -5,11 +5,11 @@ echo "Starting runFuncTests at `date -u +"%Y-%m-%dT%H:%M:%S"`"
 env | sort
 
 while true ; do
-	case "$1" in
-		-c|--clear-cache) CLEAR_CACHE=1 ; shift ;;
-		--) shift ; break ;;
-		*) shift ; break ;;
-	esac
+    case "$1" in
+        -c|--clear-cache) CLEAR_CACHE=1 ; shift ;;
+        --) shift ; break ;;
+        *) shift ; break ;;
+    esac
 done
 
 RESULTCODE=0
@@ -44,10 +44,10 @@ DOTNET="$(pwd)/cli/dotnet"
 $DOTNET --info
 
 # Get CLI Branches for testing
-echo "dotnet msbuild build/config.props /v:m /nologo /t:GetCliBranchForTesting"
+echo "dotnet msbuild build/config.props /restore:false /ConsoleLoggerParameters:Verbosity=Minimal;NoSummary;ForceNoAlign /nologo /target:GetCliBranchForTesting"
 
 IFS=$'\n'
-CMD_OUT_LINES=(`dotnet msbuild build/config.props /v:m /nologo /t:GetCliBranchForTesting`)
+CMD_OUT_LINES=(`dotnet msbuild build/config.props /restore:false "/ConsoleLoggerParameters:Verbosity=Minimal;NoSummary;ForceNoAlign" /nologo /target:GetCliBranchForTesting`)
 # Take only last the line which has the version information and strip all the spaces
 CMD_LAST_LINE=${CMD_OUT_LINES[@]:(-1)}
 DOTNET_BRANCHES=${CMD_LAST_LINE//[[:space:]]}
@@ -56,18 +56,18 @@ unset IFS
 IFS=$';'
 for DOTNET_BRANCH in ${DOTNET_BRANCHES[@]}
 do
-	echo $DOTNET_BRANCH
+    echo $DOTNET_BRANCH
 
-	IFS=$':'
-	ChannelAndVersion=($DOTNET_BRANCH)
-	Channel=${ChannelAndVersion[0]}
-	if [ ${#ChannelAndVersion[@]} -eq 1 ]
-	then
-		Version="latest"
-	else
-		Version=${ChannelAndVersion[1]}
-	fi
-	unset IFS
+    IFS=$':'
+    ChannelAndVersion=($DOTNET_BRANCH)
+    Channel=${ChannelAndVersion[0]}
+    if [ ${#ChannelAndVersion[@]} -eq 1 ]
+    then
+        Version="latest"
+    else
+        Version=${ChannelAndVersion[1]}
+    fi
+    unset IFS
 
 	echo "cli/dotnet-install.sh --install-dir cli --channel $Channel --version $Version -nopath"
 	cli/dotnet-install.sh --install-dir cli --channel $Channel --version $Version -nopath
@@ -81,8 +81,8 @@ done
 # Display .NET CLI info
 $DOTNET --info
 if (( $? )); then
-	echo "DOTNET --info failed!!"
-	exit 1
+    echo "DOTNET --info failed!!"
+    exit 1
 fi
 
 # Install .NET 5, 6, and .NETCoreapp3.1 runtimes
@@ -97,15 +97,15 @@ echo "cli/dotnet-install.sh --install-dir cli --runtime dotnet --channel 3.1 -no
 cli/dotnet-install.sh --install-dir cli --runtime dotnet --channel 3.1 -nopath
 
 if (( $? )); then
-	echo "The .NET CLI Install failed!!"
-	exit 1
+    echo "The .NET CLI Install failed!!"
+    exit 1
 fi
 
 # Display .NET CLI info
 $DOTNET --info
 if (( $? )); then
-	echo "DOTNET --info failed!!"
-	exit 1
+    echo "DOTNET --info failed!!"
+    exit 1
 fi
 
 echo "initial dotnet cli install finished at `date -u +"%Y-%m-%dT%H:%M:%S"`"
@@ -121,8 +121,8 @@ echo "================="
 #restore solution packages
 dotnet msbuild -t:restore "$DIR/build/bootstrap.proj" -bl:"$BUILD_STAGINGDIRECTORY/binlog/01.RestoreBootstrap.binlog"
 if [ $? -ne 0 ]; then
-	echo "Restore failed!!"
-	exit 1
+    echo "Restore failed!!"
+    exit 1
 fi
 
 echo "bootstrap project restore finished at `date -u +"%Y-%m-%dT%H:%M:%S"`"
@@ -137,57 +137,57 @@ echo "git submodules updated finished at `date -u +"%Y-%m-%dT%H:%M:%S"`"
 # clear caches
 if [ "$CLEAR_CACHE" == "1" ]
 then
-	# echo "Clearing the nuget web cache folder"
-	# rm -r -f ~/.local/share/NuGet/*
+    # echo "Clearing the nuget web cache folder"
+    # rm -r -f ~/.local/share/NuGet/*
 
-	echo "Clearing the nuget packages folder"
-	rm -r -f ~/.nuget/packages/*
+    echo "Clearing the nuget packages folder"
+    rm -r -f ~/.nuget/packages/*
 fi
 
 # restore packages
-echo "dotnet msbuild build/build.proj /t:Restore /p:Configuration=Release /p:ReleaseLabel=beta /bl:$BUILD_STAGINGDIRECTORY/binlog/02.Restore.binlog"
-dotnet msbuild build/build.proj /t:Restore /p:Configuration=Release /p:ReleaseLabel=beta /bl:$BUILD_STAGINGDIRECTORY/binlog/02.Restore.binlog
+echo "dotnet msbuild build/build.proj /restore:false /target:Restore /property:Configuration=Release /property:ReleaseLabel=beta /bl:$BUILD_STAGINGDIRECTORY/binlog/02.Restore.binlog"
+dotnet msbuild build/build.proj /restore:false /target:Restore /target:Restore /property:Configuration=Release /property:ReleaseLabel=beta /bl:$BUILD_STAGINGDIRECTORY/binlog/02.Restore.binlog
 
 if [ $? -ne 0 ]; then
-	echo "Restore failed!!"
-	exit 1
+    echo "Restore failed!!"
+    exit 1
 fi
 
 echo "Restore finished at `date -u +"%Y-%m-%dT%H:%M:%S"`"
 
 # Unit tests
-echo "dotnet msbuild build/build.proj /t:CoreUnitTests /p:Configuration=Release /p:ReleaseLabel=beta /bl:$BUILD_STAGINGDIRECTORY/binlog/03.CoreUnitTests.binlog"
-dotnet msbuild build/build.proj /t:CoreUnitTests /p:Configuration=Release /p:ReleaseLabel=beta /bl:$BUILD_STAGINGDIRECTORY/binlog/03.CoreUnitTests.binlog
+echo "dotnet msbuild build/build.proj /restore:false /target:CoreUnitTests /property:Configuration=Release /property:ReleaseLabel=beta /bl:$BUILD_STAGINGDIRECTORY/binlog/03.CoreUnitTests.binlog"
+dotnet msbuild build/build.proj /restore:false /target:CoreUnitTests /property:Configuration=Release /property:ReleaseLabel=beta /bl:$BUILD_STAGINGDIRECTORY/binlog/03.CoreUnitTests.binlog
 
 if [ $? -ne 0 ]; then
-	echo "CoreUnitTests failed!!"
-	RESULTCODE=1
+    echo "CoreUnitTests failed!!"
+    RESULTCODE=1
 fi
 
 echo "Core tests finished at `date -u +"%Y-%m-%dT%H:%M:%S"`"
 
 # Func tests
-echo "dotnet msbuild build/build.proj /t:CoreFuncTests /p:Configuration=Release /p:ReleaseLabel=beta /bl:$BUILD_STAGINGDIRECTORY/binlog/04.CoreFuncTests.binlog"
-dotnet msbuild build/build.proj /t:CoreFuncTests /p:Configuration=Release /p:ReleaseLabel=beta /bl:$BUILD_STAGINGDIRECTORY/binlog/04.CoreFuncTests.binlog
+echo "dotnet msbuild build/build.proj /restore:false /target:CoreFuncTests /property:Configuration=Release /property:ReleaseLabel=beta /bl:$BUILD_STAGINGDIRECTORY/binlog/04.CoreFuncTests.binlog"
+dotnet msbuild build/build.proj /restore:false /target:CoreFuncTests /property:Configuration=Release /property:ReleaseLabel=beta /bl:$BUILD_STAGINGDIRECTORY/binlog/04.CoreFuncTests.binlog
 
 if [ $? -ne 0 ]; then
-	RESULTCODE='1'
-	echo "CoreFuncTests failed!!"
+    RESULTCODE='1'
+    echo "CoreFuncTests failed!!"
 fi
 
 if [ -z "$CI" ]; then
-	popd
-	exit $RESULTCODE
+    popd
+    exit $RESULTCODE
 fi
 
 #run mono test
 TestDir="$DIR/artifacts/NuGet.CommandLine.Test/"
 VsTestConsole="$DIR/artifacts/NuGet.CommandLine.Test/vstest/vstest.console.exe"
-TestResultsTrx="$DIR/build/TestResults/monoonmac.trx"
+TestResultsDir="$DIR/build/TestResults"
 VsTestVerbosity="minimal"
 
 if [ "$SYSTEM_DEBUG" == "true" ]; then
-	VsTestVerbosity="detailed"
+    VsTestVerbosity="detailed"
 fi
 
 #Clean System dll
@@ -198,8 +198,8 @@ rm -rf "$TestDir/System.*" "$TestDir/WindowsBase.dll" "$TestDir/Microsoft.CSharp
 case "$(uname -s)" in
 		Linux)
 			# We are not testing Mono on linux currently, so comment it out.
-			#echo "mono $VsTestConsole $TestDir/NuGet.CommandLine.Test.dll --TestCaseFilter:Platform!=Windows&Platform!=Darwin --logger:console;verbosity=$VsTestVerbosity --logger:trx;LogFilePath=$TestResultsTrx"
-			#mono $VsTestConsole "$TestDir/NuGet.CommandLine.Test.dll" --TestCaseFilter:"Platform!=Windows&Platform!=Darwin" --logger:"console;verbosity=$VsTestVerbosity" --logger:"trx;LogFilePath=$TestResultsTrx"
+			#echo "mono $VsTestConsole $TestDir/NuGet.CommandLine.Test.dll --TestCaseFilter:Platform!=Windows&Platform!=Darwin --logger:console;verbosity=$VsTestVerbosity --logger:"trx" --ResultsDirectory:$TestResultsDir"
+			#mono $VsTestConsole "$TestDir/NuGet.CommandLine.Test.dll" --TestCaseFilter:"Platform!=Windows&Platform!=Darwin" --logger:"console;verbosity=$VsTestVerbosity" --logger:"trx" --ResultsDirectory:"$TestResultsDir"
 			if [ $RESULTCODE -ne '0' ]; then
 				RESULTCODE=$?
 				echo "Unit Tests or Core Func Tests failed on Linux"
@@ -207,8 +207,8 @@ case "$(uname -s)" in
 			fi
 			;;
 		Darwin)
-			echo "mono $VsTestConsole $TestDir/NuGet.CommandLine.Test.dll --TestCaseFilter:Platform!=Windows&Platform!=Linux --logger:console;verbosity=$VsTestVerbosity --logger:trx;LogFilePath=$TestResultsTrx"
-			mono $VsTestConsole "$TestDir/NuGet.CommandLine.Test.dll" --TestCaseFilter:"Platform!=Windows&Platform!=Linux" --logger:"console;verbosity=$VsTestVerbosity" --logger:"trx;LogFilePath=$TestResultsTrx"
+			echo "mono $VsTestConsole $TestDir/NuGet.CommandLine.Test.dll --TestCaseFilter:Platform!=Windows&Platform!=Linux --logger:console;verbosity=$VsTestVerbosity --logger:"trx" --ResultsDirectory:$TestResultsDir"
+			mono $VsTestConsole "$TestDir/NuGet.CommandLine.Test.dll" --TestCaseFilter:"Platform!=Windows&Platform!=Linux" --logger:"console;verbosity=$VsTestVerbosity" --logger:"trx" --ResultsDirectory:"$TestResultsDir"
 			if [ $? -ne '0' ]; then
 				RESULTCODE=$?
 				echo "Mono tests failed!"

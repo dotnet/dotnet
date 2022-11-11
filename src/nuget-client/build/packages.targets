@@ -11,6 +11,7 @@
         <NuGetCoreV2Version>2.14.0-rtm-832</NuGetCoreV2Version>
         <ProjectSystemManagedVersion>17.0.0-beta1-10402-05</ProjectSystemManagedVersion>
         <MicrosoftExtensionsCommandLineUtilsSourcesPackageVersion>3.0.0-preview6.19253.5</MicrosoftExtensionsCommandLineUtilsSourcesPackageVersion>
+      <MicrosoftCodeAnalysisCSharpVersion Condition="'$(MicrosoftCodeAnalysisCSharpVersion)' == ''">3.0.0-dev-61717-03</MicrosoftCodeAnalysisCSharpVersion>
     </PropertyGroup>
 
     <!-- Test and package versions -->
@@ -92,8 +93,8 @@
         <PackageReference Update="FluentAssertions" Version="6.6.0" />
         <PackageReference Update="Microsoft.Build.Runtime" Version="$(MicrosoftBuildPackageVersion)" />
         <PackageReference Update="Microsoft.CodeAnalysis" Version="3.0.0" />
-        <PackageReference Update="Microsoft.CodeAnalysis.Build.Tasks" Version="3.0.0-dev-61717-03" />
-        <PackageReference Update="Microsoft.CodeAnalysis.CSharp" Version="3.0.0-dev-61717-03" />
+        <PackageReference Update="Microsoft.CodeAnalysis.Build.Tasks" Version="$(MicrosoftCodeAnalysisCSharpVersion)" />
+        <PackageReference Update="Microsoft.CodeAnalysis.CSharp" Version="$(MicrosoftCodeAnalysisCSharpVersion)" />
         <PackageReference Update="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="3.0.0" />
         <PackageReference Update="Microsoft.CSharp" Version="$(SystemPackagesVersion)" />
         <PackageReference Update="Microsoft.Net.Compilers.netcore" Version="3.0.0-dev-61717-03" />

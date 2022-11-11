@@ -1,11 +1,4 @@
-﻿<Project>
-
-  <PropertyGroup>
-    <IsCommandLinePackage>true</IsCommandLinePackage>
-  </PropertyGroup>
-
-  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), 'NuGet.sln'))\build\common.props" />
-  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="ilmerge.props" />
 
   <PropertyGroup>
@@ -28,6 +21,8 @@
     <DevelopmentDependency>true</DevelopmentDependency>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <UsePublicApiAnalyzer>false</UsePublicApiAnalyzer>
+    <GetSigningInputsDependsOn>GetSigningInputsCustom</GetSigningInputsDependsOn>
+    <GetSymbolsToIndexDependsOn>GetSymbolsToIndexCustom</GetSymbolsToIndexDependsOn>
   </PropertyGroup>
 
   <Target Name="CreateCommandlineNupkg">
@@ -125,8 +120,6 @@
     <Exec Command="$(IlmergeCommand)" ContinueOnError="false" />
   </Target>
 
-  <Import Project="$(BuildCommonDirectory)common.targets" />
-
   <Target Name="NuGetLinkVSSDKEmbeddableAssemblies" AfterTargets="ResolveReferences" BeforeTargets="FindReferenceAssembliesForReferences">
     <ItemGroup>
       <ReferencePath Condition="'%(FileName)' == 'Microsoft.VisualStudio.Setup.Configuration.Interop'">
@@ -135,10 +128,14 @@
     </ItemGroup>
   </Target>
 
-  <!-- Do nothing. This basically strips away the framework assemblies from the resulting nuspec.-->
-  <Target Name="_GetFrameworkAssemblyReferences" DependsOnTargets="ResolveReferences" />
+  <!-- This strips away the framework assemblies from the resulting nuspec.-->
+  <Target Name="ClearFrameworkAssemblyReferences" BeforeTargets="GenerateNuspec" DependsOnTargets="$(GenerateNuspecDependsOn)">
+    <ItemGroup>
+      <_FrameworkAssemblyReferences Remove="@(_FrameworkAssemblyReferences)" />
+    </ItemGroup>
+  </Target>
 
-  <Target Name="GetSigningInputs" Returns="@(DllsToSign)">
+  <Target Name="GetSigningInputsCustom" Returns="@(DllsToSign)">
     <ItemGroup>
       <DllsToSign Include="$(ArtifactsDirectory)$(VsixOutputDirName)\NuGet.exe">
         <StrongName>MsSharedLib72</StrongName>
@@ -147,12 +144,10 @@
     </ItemGroup>
   </Target>
 
-  <Target Name="GetSymbolsToIndex" Returns="@(SymbolsToIndex)">
+  <Target Name="GetSymbolsToIndexCustom" Returns="@(SymbolsToIndex)">
     <ItemGroup>
       <SymbolsToIndex Include="$(ArtifactsDirectory)$(VsixOutputDirName)\NuGet.exe" />
       <SymbolsToIndex Include="$(ArtifactsDirectory)$(VsixOutputDirName)\NuGet.pdb" />
     </ItemGroup>
   </Target>
-
-  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 </Project>

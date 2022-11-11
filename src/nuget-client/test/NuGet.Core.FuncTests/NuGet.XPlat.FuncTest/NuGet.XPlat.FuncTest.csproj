@@ -1,7 +1,4 @@
-<Project>
-  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), 'NuGet.sln'))\build\common.test.props" />
-  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>$(TargetFrameworksExeForSigning)</TargetFrameworks>
     <TestProjectType>functional</TestProjectType>
@@ -38,7 +35,4 @@
     <Copy Condition=" '$(IsCore)' == 'true' " SourceFiles="$(MSBuildProjectDirectory)\$(OutputPath)\Microsoft.CSharp.Core.targets" DestinationFolder="$(MSBuildProjectDirectory)\$(OutputPath)\Roslyn\" />
     <Copy Condition="'$(TargetFramework)' == '$(NETFXTargetFramework)'" SourceFiles="$(MSBuildProjectDirectory)\$(OutputPath)\Microsoft.CSharp.Core.targets" DestinationFolder="$(MSBuildProjectDirectory)\$(OutputPath)\..\..\Bin\Roslyn\" />
   </Target>
-
-  <Import Project="$(BuildCommonDirectory)common.targets" />
-  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 </Project>

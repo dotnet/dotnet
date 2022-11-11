@@ -609,8 +609,7 @@ namespace NuGet.CommandLine.XPlat
                 }
                 catch (Exception)
                 {
-                    Console.WriteLine(string.Format(CultureInfo.CurrentCulture, Strings.ListPkg_ErrorReadingAssetsFile, assetsFile.Path));
-                    return null;
+                    throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Strings.ListPkg_ErrorReadingAssetsFile, assetsFile.Path));
                 }
 
                 //The packages for the framework that were retrieved with GetRequestedVersions
@@ -642,8 +641,7 @@ namespace NuGet.CommandLine.XPlat
                             }
                             catch (Exception)
                             {
-                                Console.WriteLine(string.Format(CultureInfo.CurrentCulture, Strings.ListPkg_ErrorReadingReferenceFromProject, projectPath));
-                                return null;
+                                throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Strings.ListPkg_ErrorReadingReferenceFromProject, projectPath));
                             }
                         }
                         else

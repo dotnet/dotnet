@@ -30,7 +30,7 @@ steps:
   inputs:
     solution: "build\\build.proj"
     configuration: "$(BuildConfiguration)"
-    msbuildArguments: "/MaxCPUCount /ConsoleLoggerParameters:Verbosity=Minimal;Summary;ForceNoAlign /t:RestoreVS /p:BuildNumber=$(BuildNumber) /p:BuildRTM=false /bl:$(Build.StagingDirectory)\\binlog\\01.Restore.binlog"
+    msbuildArguments: "/restore:false /target:RestoreVS /property:BuildNumber=$(BuildNumber) /property:BuildRTM=false /binarylogger:$(Build.StagingDirectory)\\binlog\\01.Restore.binlog"
 
 - task: ComponentGovernanceComponentDetection@0
   displayName: 'Component Detection'
@@ -41,7 +41,7 @@ steps:
   inputs:
     solution: "build\\build.proj"
     configuration: "$(BuildConfiguration)"
-    msbuildArguments: "/MaxCPUCount /ConsoleLoggerParameters:Verbosity=Minimal;Summary;ForceNoAlign /t:BuildNoVSIX /p:BuildRTM=false /p:BuildNumber=$(BuildNumber) /bl:$(Build.StagingDirectory)\\binlog\\02.Build.binlog"
+    msbuildArguments: "/restore:false /target:BuildNoVSIX /property:BuildRTM=false /property:BuildNumber=$(BuildNumber) /binarylogger:$(Build.StagingDirectory)\\binlog\\02.Build.binlog"
 
 - task: PowerShell@1
   displayName: "Run Cross Verify Tests (continue on error)"

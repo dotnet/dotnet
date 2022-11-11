@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup Condition="'$(_WasCommonPropsImported)' != 'true'">
+    <TestProject Condition="'$(TestProject)' == ''">false</TestProject>
+    <SkipShared Condition="'$(SkipShared)' == ''">true</SkipShared>
+  </PropertyGroup>
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+</Project>

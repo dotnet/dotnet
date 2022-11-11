@@ -1,0 +1,17 @@
+<Project>
+  <!-- Temporarily detect that common props haven't been imported since not every project is using this new logic yet. -->
+  <PropertyGroup Condition="'$(_WasCommonPropsImported)' != 'true'">
+    <IsNetCoreProject Condition="'$(UsingMicrosoftNETSdk)' == 'true'">true</IsNetCoreProject>
+    <IsNetCoreProject Condition="'$(UsingMicrosoftNETSdk)' != 'true'">false</IsNetCoreProject>
+    <CustomBeforeMicrosoftCSharpTargets>$(CustomBeforeMicrosoftCSharpTargets);$(MSBuildThisFileDirectory)build\common.targets</CustomBeforeMicrosoftCSharpTargets>
+  </PropertyGroup>
+  <ImportGroup Condition="'$(_WasCommonPropsImported)' != 'true'">
+    <Import Project="build\config.props" />
+    <Import Project="build\common.project.props" />
+  </ImportGroup>
+  <PropertyGroup Condition="'$(_WasCommonPropsImported)' != 'true'">
+    <!-- Some legacy projects reference assemblies in GAC;AssemblyFolders. -->
+    <!-- Reset AssemblySearchPaths to empty to let Microsoft.Common.targets pick the legacy defaults -->
+    <AssemblySearchPaths Condition="'$(UsingMicrosoftNETSdk)' != 'true'" />
+  </PropertyGroup>
+</Project>

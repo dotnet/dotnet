@@ -28,7 +28,7 @@ steps:
   inputs:
     solution: "build\\build.proj"
     configuration: "$(BuildConfiguration)"
-    msbuildArguments: "/MaxCPUCount /ConsoleLoggerParameters:Verbosity=Minimal;Summary;ForceNoAlign /t:RestoreVS /p:BuildNumber=$(BuildNumber) /p:BuildRTM=false /bl:$(Build.StagingDirectory)\\binlog\\01.Restore.binlog"
+    msbuildArguments: "/restore:false /target:RestoreVS /property:BuildNumber=$(BuildNumber) /property:BuildRTM=false /binarylogger:$(Build.StagingDirectory)\\binlog\\01.Restore.binlog"
 
 - task: ComponentGovernanceComponentDetection@0
   displayName: 'Component Detection'
@@ -39,7 +39,7 @@ steps:
   inputs:
     solution: "build\\build.proj"
     configuration: "$(BuildConfiguration)"
-    msbuildArguments: "/MaxCPUCount /ConsoleLoggerParameters:Verbosity=Minimal;Summary;ForceNoAlign /t:CoreFuncTests /p:BuildRTM=false /p:BuildNumber=$(BuildNumber) /p:SkipDesktopAssemblies=$(SkipDesktopAssemblies) /p:SkipCoreAssemblies=$(SkipCoreAssemblies) /bl:$(Build.StagingDirectory)\\binlog\\02.Build.binlog"
+    msbuildArguments: "/restore:false /target:CoreFuncTests /property:BuildRTM=false /property:BuildNumber=$(BuildNumber) /property:SkipDesktopAssemblies=$(SkipDesktopAssemblies) /property:SkipCoreAssemblies=$(SkipCoreAssemblies) /binarylogger:$(Build.StagingDirectory)\\binlog\\02.Build.binlog"
   condition: "and(succeeded(), eq(variables['IsOfficialBuild'], 'true'))"
 
 - task: MSBuild@1
@@ -48,7 +48,7 @@ steps:
   inputs:
     solution: "build\\build.proj"
     configuration: "$(BuildConfiguration)"
-    msbuildArguments: "/MaxCPUCount /ConsoleLoggerParameters:Verbosity=Minimal;Summary;ForceNoAlign /t:CoreFuncTests /p:BuildRTM=false /p:BuildNumber=$(BuildNumber) /p:SkipDesktopAssemblies=$(SkipDesktopAssemblies) /p:SkipCoreAssemblies=$(SkipCoreAssemblies) /bl:$(Build.StagingDirectory)\\binlog\\02.Build.binlog"
+    msbuildArguments: "/restore:false /target:CoreFuncTests /property:BuildRTM=false /property:BuildNumber=$(BuildNumber) /property:SkipDesktopAssemblies=$(SkipDesktopAssemblies) /property:SkipCoreAssemblies=$(SkipCoreAssemblies) /binarylogger:$(Build.StagingDirectory)\\binlog\\02.Build.binlog"
   condition: "and(succeeded(), not(eq(variables['IsOfficialBuild'], 'true')))"
 
 - task: PublishTestResults@2
