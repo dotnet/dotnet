@@ -28,6 +28,8 @@ using GelUtilities = Microsoft.Internal.VisualStudio.PlatformUI.Utilities;
 using Task = System.Threading.Tasks.Task;
 using Microsoft.VisualStudio.Imaging.Interop;
 using Microsoft.VisualStudio.Imaging;
+using StreamJsonRpc;
+using StreamJsonRpc.Protocol;
 
 namespace NuGet.Options
 {
@@ -283,27 +285,28 @@ namespace NuGet.Options
                     await _nugetSourcesService.SavePackageSourceContextInfosAsync(packageSources, cancellationToken);
                 }
             }
-            // Thrown during creating or saving NuGet.Config.
-            catch (NuGetConfigurationException ex)
-            {
-                MessageHelper.ShowErrorMessage(ex.Message, Resources.ErrorDialogBoxTitle);
-                return false;
-            }
-            // Thrown if no nuget.config found.
-            catch (InvalidOperationException ex)
-            {
-                MessageHelper.ShowErrorMessage(ex.Message, Resources.ErrorDialogBoxTitle);
-                return false;
-            }
-            catch (UnauthorizedAccessException)
-            {
-                MessageHelper.ShowErrorMessage(Resources.ShowError_ConfigUnauthorizedAccess, Resources.ErrorDialogBoxTitle);
-                return false;
-            }
-            // Unknown exception.
             catch (Exception ex)
             {
-                MessageHelper.ShowErrorMessage(Resources.ShowError_ApplySettingFailed, Resources.ErrorDialogBoxTitle);
+                if (ex is RemoteInvocationException remoteException &&
+                    remoteException.DeserializedErrorData is CommonErrorData commonError)
+                {
+                    if (commonError.TypeName == typeof(NuGetConfigurationException).FullName || // Thrown during creating or saving NuGet.Config.
+                        commonError.TypeName == typeof(InvalidOperationException).FullName) // Thrown if no nuget.config found.
+                    {
+                        MessageHelper.ShowErrorMessage(ex.Message, Resources.ErrorDialogBoxTitle);
+                        return false;
+                    }
+                    else if (commonError.TypeName == typeof(UnauthorizedAccessException).FullName)
+                    {
+                        MessageHelper.ShowErrorMessage(Resources.ShowError_ConfigUnauthorizedAccess, Resources.ErrorDialogBoxTitle);
+                        return false;
+                    }
+                }
+                else
+                {
+                    MessageHelper.ShowErrorMessage(Resources.ShowError_ApplySettingFailed, Resources.ErrorDialogBoxTitle);
+                }
+
                 ActivityLog.LogError(NuGetUI.LogEntrySource, ex.ToString());
                 return false;
             }

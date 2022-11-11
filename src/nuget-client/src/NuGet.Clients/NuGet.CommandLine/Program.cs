@@ -76,10 +76,16 @@ namespace NuGet.CommandLine
 
         public static int MainCore(string workingDirectory, string[] args)
         {
+            var console = new Console();
+
             // First, optionally disable localization in resources.
             if (args.Any(arg => string.Equals(arg, ForceEnglishOutputOption, StringComparison.OrdinalIgnoreCase)))
             {
                 CultureUtility.DisableLocalization();
+            }
+            else
+            {
+                UILanguageOverride.Setup(console);
             }
 
             // set output encoding to UTF8 if -utf8 is specified
@@ -101,7 +107,6 @@ namespace NuGet.CommandLine
                 ServicePointManager.DefaultConnectionLimit = 1;
             }
 
-            var console = new Console();
             var fileSystem = new CoreV2.NuGet.PhysicalFileSystem(workingDirectory);
 
             try

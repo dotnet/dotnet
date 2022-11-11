@@ -717,7 +717,8 @@ namespace NuGet.CommandLine
             {
                 packageRestoreInputs.RestoreV3Context.Inputs.Add(projectFilePath);
             }
-            else if (projectFileName.EndsWith(".sln", StringComparison.OrdinalIgnoreCase))
+            else if (projectFileName.EndsWith(".sln", StringComparison.OrdinalIgnoreCase)
+                || projectFileName.EndsWith(".slnf", StringComparison.OrdinalIgnoreCase))
             {
                 ProcessSolutionFile(projectFilePath, packageRestoreInputs);
             }

@@ -728,4 +728,11 @@ Non-HTTPS access will be removed in a future version. Consider migrating to 'HTT
     <comment>0 - environment variable name. 
 Do not localize `SDK`, `dotnet pack`, msbuild -t:pack` and 'true'.</comment>
   </data>
+  <data name="Error_UnsupportedMsBuildForSolutionFilter" xml:space="preserve">
+    <value>This version of MSBuild not support Solution filter: '{0}'. Please use a MSBuild version greater or equal to 16.7 to use this feature.</value>
+  </data>
+  <data name="Error_InvalidCultureInfo" xml:space="preserve">
+    <value>Invalid culture identifier in {0} environment variable. Value read is '{1}'</value>
+    <comment>0 - Environment variable name, 1 - value set in environment variable</comment>
+  </data>
 </root>

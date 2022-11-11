@@ -81,7 +81,7 @@ namespace Dotnet.Integration.Test
                 Assert.True(addResult.Success);
 
                 var listResult = _fixture.RunDotnet(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"list {projectA.ProjectPath} package");
+                    $"list {projectA.ProjectPath} package", ignoreExitCode: true);
 
                 Assert.True(ContainsIgnoringSpaces(listResult.AllOutput, "No assets file was found".Replace(" ", "")));
             }

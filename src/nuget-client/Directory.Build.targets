@@ -1,0 +1,3 @@
+<Project>
+  <Import Project="build\common.targets" Condition="'$(IsCrossTargetingBuild)' == 'true' And '$(_WasCommonPropsImported)' != 'true'" />
+</Project>

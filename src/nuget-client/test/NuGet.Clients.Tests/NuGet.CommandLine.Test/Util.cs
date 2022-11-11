@@ -951,6 +951,31 @@ EndProject");
             return repositoryPath;
         }
 
+        public static string CreateBasicTwoProjectSolutionWithSolutionFilters(TestDirectory workingPath, string proj1ConfigFileName, string proj2ConfigFileName, bool redirectGlobalPackagesFolder = true)
+        {
+            var repositoryPath = CreateBasicTwoProjectSolution(workingPath, proj1ConfigFileName, proj2ConfigFileName, redirectGlobalPackagesFolder);
+
+            CreateFile(workingPath, "a.proj1.slnf", @"{
+  ""solution"": {
+    ""path"": ""a.sln"",
+    ""projects"": [
+      ""proj1\\proj1.csproj""
+    ]
+  }
+}");
+
+            CreateFile(workingPath, "a.proj2.slnf", @"{
+  ""solution"": {
+    ""path"": ""a.sln"",
+    ""projects"": [
+      ""proj2\\proj2.csproj""
+    ]
+  }
+}");
+
+            return repositoryPath;
+        }
+
         public static void CreateConfigFile(string path, string configFileName, string targetFramework, IEnumerable<PackageIdentity> packages)
         {
             var fileContent = IsProjectJson(configFileName)

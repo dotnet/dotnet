@@ -27,7 +27,7 @@ steps:
         if ([System.String]::IsNullOrEmpty($env:VsTargetChannelOverride) -eq $false) {
           $targetChannel = $env:VsTargetChannelOverride
         } else {
-          $targetChannel = & dotnet msbuild $env:BUILD_REPOSITORY_LOCALPATH\build\config.props /v:m /nologo /t:GetVsTargetChannel
+          $targetChannel = & dotnet msbuild $env:BUILD_REPOSITORY_LOCALPATH\build\config.props /restore:false "/ConsoleLoggerParameters:Verbosity=Minimal;NoSummary;ForceNoAlign" /nologo /target:GetVsTargetChannel
           $targetChannel = $targetChannel.Trim()
         }
         if ([System.String]::IsNullOrEmpty($env:VsTargetChannelOverrideForTests) -eq $false) {
@@ -35,7 +35,7 @@ steps:
         } else {
           $targetChannelForTests = $targetChannel
         }
-        $targetMajorVersion = & dotnet msbuild $env:BUILD_REPOSITORY_LOCALPATH\build\config.props /v:m /nologo /t:GetVsTargetMajorVersion
+        $targetMajorVersion = & dotnet msbuild $env:BUILD_REPOSITORY_LOCALPATH\build\config.props /restore:false "/ConsoleLoggerParameters:Verbosity=Minimal;NoSummary;ForceNoAlign" /nologo /target:GetVsTargetMajorVersion
         $targetMajorVersion = $targetMajorVersion.Trim()
         Write-Host "##vso[task.setvariable variable=VsTargetChannel;isOutput=true]$targetChannel"
         Write-Host "##vso[task.setvariable variable=VsTargetChannelForTests;isOutput=true]$targetChannelForTests"

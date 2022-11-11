@@ -4,6 +4,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.CommandLineUtils;
 using Moq;
@@ -97,6 +99,60 @@ namespace NuGet.XPlat.FuncTest
                 });
         }
 
+        [Theory]
+        [InlineData("")]
+        [InlineData("--format json")]
+        [InlineData("--format JSON")]
+        [InlineData("--format json --output-version 1")]
+        [InlineData("--format console")]
+        [InlineData("--format console --output-version 1")]
+        public void BasicListPackage_OutputFormat_CorrectInput_Parsing_Succeeds(string outputFormatCommmand)
+        {
+            VerifyCommand(
+                (projectPath, mockCommandRunner, testApp, getLogLevel) =>
+                {
+                    // Arrange
+                    var argList = new List<string>() { "list" };
+
+                    if (!string.IsNullOrEmpty(outputFormatCommmand))
+                    {
+                        argList.AddRange(outputFormatCommmand.Split(' ').ToList());
+                    }
+
+                    argList.Add(projectPath);
+
+                    // Act
+                    var result = testApp.Execute(argList.ToArray());
+
+                    // Assert
+                    mockCommandRunner.Verify();
+                    Assert.Equal(0, result);
+                });
+        }
+
+        [Theory]
+        [InlineData("--format xml")]
+        [InlineData("--format json --output-version 2")]
+        public void BasicListPackage_OutputFormat_BadInput_Parsing_Fails(string outputFormatCommmand)
+        {
+            VerifyCommand(
+                (projectPath, mockCommandRunner, testApp, getLogLevel) =>
+                {
+                    // Arrange
+                    var argList = new List<string>() { "list" };
+
+                    if (!string.IsNullOrEmpty(outputFormatCommmand))
+                    {
+                        argList.AddRange(outputFormatCommmand.Split(' ').ToList());
+                    }
+
+                    argList.Add(projectPath);
+
+                    // Act & Assert
+                    Assert.Throws<AggregateException>(() => testApp.Execute(argList.ToArray()));
+                });
+        }
+
         private void VerifyCommand(Action<string, Mock<IListPackageCommandRunner>, CommandLineApplication, Func<LogLevel>> verify)
         {
             // Arrange
@@ -111,7 +167,7 @@ namespace NuGet.XPlat.FuncTest
                 var mockCommandRunner = new Mock<IListPackageCommandRunner>();
                 mockCommandRunner
                     .Setup(m => m.ExecuteCommandAsync(It.IsAny<ListPackageArgs>()))
-                    .Returns(Task.CompletedTask);
+                    .Returns(Task.FromResult(0));
 
                 testApp.Name = "dotnet nuget_test";
                 ListPackageCommand.Register(testApp,
@@ -129,6 +185,14 @@ namespace NuGet.XPlat.FuncTest
                     XPlatTestUtils.DisposeTemporaryFile(projectPath);
                 }
             }
+        }
+
+        [Fact]
+        public void JsonRenderer_ListPackageArgse_Verify_AllFields_Covered()
+        {
+            Type listPackageArgsType = typeof(ListPackageArgs);
+            FieldInfo[] fields = listPackageArgsType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+            Assert.True(12 == fields.Length, "Number of fields are changed in ListPackageArgs.cs. Please make sure this change is accounted for GetReportParameters method in that file.");
         }
     }
 }

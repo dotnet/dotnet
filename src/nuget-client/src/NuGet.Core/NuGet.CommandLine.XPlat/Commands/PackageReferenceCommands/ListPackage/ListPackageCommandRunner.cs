@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Build.Evaluation;
+using NuGet.CommandLine.XPlat.ListPackage;
 using NuGet.CommandLine.XPlat.Utility;
 using NuGet.Configuration;
 using NuGet.Packaging;
@@ -22,6 +23,8 @@ namespace NuGet.CommandLine.XPlat
     {
         private const string ProjectAssetsFile = "ProjectAssetsFile";
         private const string ProjectName = "MSBuildProjectName";
+        private const int GenericSuccessExitCode = 0;
+        private const int GenericFailureExitCode = 1;
         private Dictionary<PackageSource, SourceRepository> _sourceRepositoryCache;
 
         public ListPackageCommandRunner()
@@ -29,14 +32,25 @@ namespace NuGet.CommandLine.XPlat
             _sourceRepositoryCache = new Dictionary<PackageSource, SourceRepository>();
         }
 
-        public async Task ExecuteCommandAsync(ListPackageArgs listPackageArgs)
+        public async Task<int> ExecuteCommandAsync(ListPackageArgs listPackageArgs)
         {
+            IReportRenderer reportRenderer = listPackageArgs.Renderer;
+            (int exitCode, ListPackageReportModel reportModel) = await GetReportDataAsync(listPackageArgs);
+            reportRenderer.Render(reportModel);
+            return exitCode;
+        }
+
+        internal async Task<(int, ListPackageReportModel)> GetReportDataAsync(ListPackageArgs listPackageArgs)
+        {
+            // It's important not to print anything to console from below methods and sub method calls, because it'll affect both json/console outputs.
+            var listPackageReportModel = new ListPackageReportModel(listPackageArgs);
             if (!File.Exists(listPackageArgs.Path))
             {
-                Console.Error.WriteLine(string.Format(CultureInfo.CurrentCulture,
+                listPackageArgs.Renderer.AddProblem(problemType: ProblemType.Error,
+                    text: string.Format(CultureInfo.CurrentCulture,
                         Strings.ListPkg_ErrorFileNotFound,
                         listPackageArgs.Path));
-                return;
+                return (GenericFailureExitCode, listPackageReportModel);
             }
             //If the given file is a solution, get the list of projects
             //If not, then it's a project, which is put in a list
@@ -44,125 +58,107 @@ namespace NuGet.CommandLine.XPlat
                            MSBuildAPIUtility.GetProjectsFromSolution(listPackageArgs.Path).Where(f => File.Exists(f)) :
                            new List<string>(new string[] { listPackageArgs.Path });
 
-            var autoReferenceFound = false;
-            var msBuild = new MSBuildAPIUtility(listPackageArgs.Logger);
+            MSBuildAPIUtility msBuild = listPackageReportModel.MSBuildAPIUtility;
 
-            //Print sources, but not for generic list (which is offline)
-            if (listPackageArgs.ReportType != ReportType.Default)
+            foreach (string projectPath in projectsPaths)
             {
-                Console.WriteLine();
-                Console.WriteLine(Strings.ListPkg_SourcesUsedDescription);
-                ProjectPackagesPrintUtility.PrintSources(listPackageArgs.PackageSources);
-                Console.WriteLine();
+                await GetProjectMetadataAsync(projectPath, listPackageReportModel, msBuild, listPackageArgs);
             }
 
-            foreach (var projectPath in projectsPaths)
+            // if there is any error then return failure code.
+            int exitCode = (
+                listPackageArgs.Renderer.GetProblems().Any(p => p.ProblemType == ProblemType.Error)
+                || listPackageReportModel.Projects.Where(p => p.ProjectProblems != null).SelectMany(p => p.ProjectProblems).Any(p => p.ProblemType == ProblemType.Error))
+                ? GenericFailureExitCode : GenericSuccessExitCode;
+
+            return (exitCode, listPackageReportModel);
+        }
+
+        private async Task GetProjectMetadataAsync(
+            string projectPath,
+            ListPackageReportModel listPackageReportModel,
+            MSBuildAPIUtility msBuild,
+            ListPackageArgs listPackageArgs)
+        {
+            //Open project to evaluate properties for the assets
+            //file and the name of the project
+            Project project = MSBuildAPIUtility.GetProject(projectPath);
+            var projectName = project.GetPropertyValue(ProjectName);
+            ListPackageProjectModel projectModel = listPackageReportModel.CreateProjectReportData(projectPath: projectPath, projectName);
+
+            if (!MSBuildAPIUtility.IsPackageReferenceProject(project))
             {
-                //Open project to evaluate properties for the assets
-                //file and the name of the project
-                var project = MSBuildAPIUtility.GetProject(projectPath);
+                projectModel.AddProjectInformation(problemType: ProblemType.Error,
+                    string.Format(CultureInfo.CurrentCulture, Strings.Error_NotPRProject, projectPath));
+                return;
+            }
 
-                if (!MSBuildAPIUtility.IsPackageReferenceProject(project))
+            var assetsPath = project.GetPropertyValue(ProjectAssetsFile);
+
+            if (!File.Exists(assetsPath))
+            {
+                projectModel.AddProjectInformation(ProblemType.Error,
+                    string.Format(CultureInfo.CurrentCulture, Strings.Error_AssetsFileNotFound, projectPath));
+            }
+            else
+            {
+                var lockFileFormat = new LockFileFormat();
+                LockFile assetsFile = lockFileFormat.Read(assetsPath);
+
+                // Assets file validation
+                if (assetsFile.PackageSpec != null &&
+                    assetsFile.Targets != null &&
+                    assetsFile.Targets.Count != 0)
                 {
-                    Console.Error.WriteLine(string.Format(CultureInfo.CurrentCulture,
-                        Strings.Error_NotPRProject,
-                        projectPath));
-                    Console.WriteLine();
-                    continue;
-                }
+                    // Get all the packages that are referenced in a project
+                    IEnumerable<FrameworkPackages> packages;
+                    try
+                    {
+                        packages = msBuild.GetResolvedVersions(project.FullPath, listPackageArgs.Frameworks, assetsFile, listPackageArgs.IncludeTransitive, includeProjects: listPackageArgs.ReportType == ReportType.Default);
+                    }
+                    catch (InvalidOperationException ex)
+                    {
+                        projectModel.AddProjectInformation(ProblemType.Error, ex.Message);
+                        return;
+                    }
 
-                var projectName = project.GetPropertyValue(ProjectName);
+                    if (packages.Any())
+                    {
+                        if (listPackageArgs.ReportType != ReportType.Default)  // generic list package is offline -- no server lookups
+                        {
+                            PopulateSourceRepositoryCache(listPackageArgs);
+                            WarnForHttpSources(listPackageArgs, projectModel);
+                            await GetRegistrationMetadataAsync(packages, listPackageArgs);
+                            await AddLatestVersionsAsync(packages, listPackageArgs);
+                        }
 
-                var assetsPath = project.GetPropertyValue(ProjectAssetsFile);
-
-                // If the file was not found, print an error message and continue to next project
-                if (!File.Exists(assetsPath))
-                {
-                    Console.Error.WriteLine(string.Format(CultureInfo.CurrentCulture,
-                        Strings.Error_AssetsFileNotFound,
-                        projectPath));
-                    Console.WriteLine();
+                        bool printPackages = FilterPackages(packages, listPackageArgs);
+                        printPackages = printPackages || ReportType.Default == listPackageArgs.ReportType;
+                        if (printPackages)
+                        {
+                            var hasAutoReference = false;
+                            List<ListPackageReportFrameworkPackage> projectFrameworkPackages = ProjectPackagesPrintUtility.GetPackagesMetadata(packages, listPackageArgs, ref hasAutoReference);
+                            projectModel.TargetFrameworkPackages = projectFrameworkPackages;
+                            projectModel.AutoReferenceFound = hasAutoReference;
+                        }
+                        else
+                        {
+                            projectModel.TargetFrameworkPackages = new List<ListPackageReportFrameworkPackage>();
+                        }
+                    }
                 }
                 else
                 {
-                    var lockFileFormat = new LockFileFormat();
-                    var assetsFile = lockFileFormat.Read(assetsPath);
-
-                    // Assets file validation
-                    if (assetsFile.PackageSpec != null &&
-                        assetsFile.Targets != null &&
-                        assetsFile.Targets.Count != 0)
-                    {
-                        // Get all the packages that are referenced in a project
-                        var packages = msBuild.GetResolvedVersions(project.FullPath, listPackageArgs.Frameworks, assetsFile, listPackageArgs.IncludeTransitive, includeProjects: listPackageArgs.ReportType == ReportType.Default);
-
-                        // If packages equals null, it means something wrong happened
-                        // with reading the packages and it was handled and message printed
-                        // in MSBuildAPIUtility function, but we need to move to the next project
-                        if (packages != null)
-                        {
-                            // No packages means that no package references at all were found in the current framework
-                            if (!packages.Any())
-                            {
-                                Console.WriteLine(string.Format(CultureInfo.CurrentCulture, Strings.ListPkg_NoPackagesFoundForFrameworks, projectName));
-                            }
-                            else
-                            {
-                                if (listPackageArgs.ReportType != ReportType.Default)  // generic list package is offline -- no server lookups
-                                {
-                                    PopulateSourceRepositoryCache(listPackageArgs);
-                                    WarnForHttpSources(listPackageArgs);
-                                    await GetRegistrationMetadataAsync(packages, listPackageArgs);
-                                    await AddLatestVersionsAsync(packages, listPackageArgs);
-                                }
-
-                                bool printPackages = FilterPackages(packages, listPackageArgs);
-
-                                // Filter packages for dedicated reports, inform user if none
-                                if (listPackageArgs.ReportType != ReportType.Default && !printPackages)
-                                {
-                                    switch (listPackageArgs.ReportType)
-                                    {
-                                        case ReportType.Outdated:
-                                            Console.WriteLine(string.Format(CultureInfo.CurrentCulture, Strings.ListPkg_NoUpdatesForProject, projectName));
-                                            break;
-                                        case ReportType.Deprecated:
-                                            Console.WriteLine(string.Format(CultureInfo.CurrentCulture, Strings.ListPkg_NoDeprecatedPackagesForProject, projectName));
-                                            break;
-                                        case ReportType.Vulnerable:
-                                            Console.WriteLine(string.Format(CultureInfo.CurrentCulture, Strings.ListPkg_NoVulnerablePackagesForProject, projectName));
-                                            break;
-                                    }
-                                }
-
-                                printPackages = printPackages || ReportType.Default == listPackageArgs.ReportType;
-                                if (printPackages)
-                                {
-                                    var hasAutoReference = false;
-                                    ProjectPackagesPrintUtility.PrintPackages(packages, projectName, listPackageArgs, ref hasAutoReference);
-                                    autoReferenceFound = autoReferenceFound || hasAutoReference;
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine(string.Format(CultureInfo.CurrentCulture, Strings.ListPkg_ErrorReadingAssetsFile, assetsPath));
-                    }
-
-                    // Unload project
-                    ProjectCollection.GlobalProjectCollection.UnloadProject(project);
+                    projectModel.AddProjectInformation(ProblemType.Error,
+                        string.Format(CultureInfo.CurrentCulture, Strings.ListPkg_ErrorReadingAssetsFile, assetsPath));
                 }
-            }
 
-            // Print a legend message for auto-reference markers used
-            if (autoReferenceFound)
-            {
-                Console.WriteLine(Strings.ListPkg_AutoReferenceDescription);
+                // Unload project
+                ProjectCollection.GlobalProjectCollection.UnloadProject(project);
             }
         }
 
-        private static void WarnForHttpSources(ListPackageArgs listPackageArgs)
+        private static void WarnForHttpSources(ListPackageArgs listPackageArgs, ListPackageProjectModel projectModel)
         {
             List<PackageSource> httpPackageSources = null;
             foreach (PackageSource packageSource in listPackageArgs.PackageSources)
@@ -181,7 +177,8 @@ namespace NuGet.CommandLine.XPlat
             {
                 if (httpPackageSources.Count == 1)
                 {
-                    listPackageArgs.Logger.LogWarning(
+                    projectModel.AddProjectInformation(
+                        ProblemType.Warning,
                         string.Format(CultureInfo.CurrentCulture,
                         Strings.Warning_HttpServerUsage,
                         "list package",
@@ -189,7 +186,8 @@ namespace NuGet.CommandLine.XPlat
                 }
                 else
                 {
-                    listPackageArgs.Logger.LogWarning(
+                    projectModel.AddProjectInformation(
+                        ProblemType.Warning,
                         string.Format(CultureInfo.CurrentCulture,
                         Strings.Warning_HttpServerUsage_MultipleSources,
                         "list package",

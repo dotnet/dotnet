@@ -1,7 +1,4 @@
-﻿<Project>
-  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), 'NuGet.sln'))\build\common.props" />
-  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <SkipShared>true</SkipShared>
     <OutputType>Exe</OutputType>
@@ -9,6 +6,8 @@
     <AssemblyName>GenerateLicenseList</AssemblyName>
     <NoWarn>$(NoWarn);NU1505</NoWarn> <!-- Remove NoWarn when https://github.com/dotnet/sdk/issues/24747 is fixed -->
     <Description>A utility for updating the NuGet license list from the SPDX source.</Description>
+    <!-- There are some conflicts that are impossible to resolve because of missing package versions-->
+    <MicrosoftCodeAnalysisCSharpVersion>3.0.0</MicrosoftCodeAnalysisCSharpVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,12 +15,4 @@
     <PackageReference Include="Microsoft.CodeAnalysis" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
   </ItemGroup>
-
-  <Import Project="$(BuildCommonDirectory)common.targets"/>
-
-  <!-- There are some conflicts that are impossible to resolve because of missing package versions-->
-  <ItemGroup Condition=" '$(SkipCentralPackageVersions)' != 'true' ">
-    <PackageReference Update="Microsoft.CodeAnalysis.CSharp" Version="3.0.0" />
-  </ItemGroup>
-  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 </Project>

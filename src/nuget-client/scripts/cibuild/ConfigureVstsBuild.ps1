@@ -171,10 +171,10 @@ else
 {
     Write-Host "##vso[task.setvariable variable=VsixPublishDir;]VS15"
     $newBuildCounter = $BuildNumber
-    $VsTargetBranch = & dotnet msbuild $RepositoryPath\build\config.props /v:m /nologo /t:GetVsTargetBranch
-    $NuGetSdkVsVersion = & dotnet msbuild $RepositoryPath\build\config.props /v:m /nologo /t:GetNuGetSdkVsSemanticVersion
-    $VsTargetChannel = & dotnet msbuild $RepositoryPath\build\config.props /v:m /nologo /t:GetVsTargetChannel
-    $VsTargetMajorVersion = & dotnet msbuild $RepositoryPath\build\config.props /v:m /nologo /t:GetVsTargetMajorVersion
+    $VsTargetBranch = & dotnet msbuild $RepositoryPath\build\config.props /restore:false "/ConsoleLoggerParameters:Verbosity=Minimal;NoSummary;ForceNoAlign" /nologo /target:GetVsTargetBranch
+    $NuGetSdkVsVersion = & dotnet msbuild $RepositoryPath\build\config.props /restore:false "/ConsoleLoggerParameters:Verbosity=Minimal;NoSummary;ForceNoAlign" /nologo /target:GetNuGetSdkVsSemanticVersion
+    $VsTargetChannel = & dotnet msbuild $RepositoryPath\build\config.props /restore:false "/ConsoleLoggerParameters:Verbosity=Minimal;NoSummary;ForceNoAlign" /nologo /target:GetVsTargetChannel
+    $VsTargetMajorVersion = & dotnet msbuild $RepositoryPath\build\config.props /restore:false "/ConsoleLoggerParameters:Verbosity=Minimal;NoSummary;ForceNoAlign" /nologo /target:GetVsTargetMajorVersion
     Write-Host "VS target branch: $VsTargetBranch"
     $jsonRepresentation = @{
         BuildNumber = $newBuildCounter

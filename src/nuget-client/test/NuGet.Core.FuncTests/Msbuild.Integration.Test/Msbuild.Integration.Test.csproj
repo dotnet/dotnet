@@ -1,7 +1,4 @@
-<Project>
-  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), 'NuGet.sln'))\build\common.test.props" />
-  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>$(NETFXTargetFramework)</TargetFrameworks>
     <Description>Integration tests for NuGet powered msbuild functionalities (restore/pack).</Description>
@@ -33,8 +30,4 @@
   <ItemGroup>
     <Reference Include="System.IO.Compression" />
   </ItemGroup>
-
-  <Import Project="$(BuildCommonDirectory)common.targets" />
-  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
-
 </Project>

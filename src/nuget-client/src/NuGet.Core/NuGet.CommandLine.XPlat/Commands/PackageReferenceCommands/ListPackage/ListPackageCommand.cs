@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using Microsoft.Extensions.CommandLineUtils;
+using NuGet.CommandLine.XPlat.ListPackage;
 using NuGet.Commands;
 using NuGet.Common;
 using NuGet.Configuration;
@@ -89,6 +90,16 @@ namespace NuGet.CommandLine.XPlat
                     Strings.ListPkg_ConfigDescription,
                     CommandOptionType.SingleValue);
 
+                var outputFormat = listpkg.Option(
+                    "--format",
+                    Strings.ListPkg_OutputFormatDescription,
+                    CommandOptionType.SingleValue);
+
+                var outputVersion = listpkg.Option(
+                    "--output-version",
+                    Strings.ListPkg_OutputVersionDescription,
+                    CommandOptionType.SingleValue);
+
                 var interactive = listpkg.Option(
                     "--interactive",
                     Strings.NuGetXplatCommand_Interactive,
@@ -117,11 +128,14 @@ namespace NuGet.CommandLine.XPlat
                         isDeprecated: deprecatedReport.HasValue(),
                         isVulnerable: vulnerableReport.HasValue());
 
+                    IReportRenderer reportRenderer = GetOutputType(outputFormat.Value(), outputVersionOption: outputVersion.Value());
+
                     var packageRefArgs = new ListPackageArgs(
                         path.Value,
                         packageSources,
                         framework.Values,
                         reportType,
+                        reportRenderer,
                         includeTransitive.HasValue(),
                         prerelease.HasValue(),
                         highestPatch.HasValue(),
@@ -129,13 +143,12 @@ namespace NuGet.CommandLine.XPlat
                         logger,
                         CancellationToken.None);
 
-                    DisplayMessages(packageRefArgs);
+                    WarnAboutIncompatibleOptions(packageRefArgs, reportRenderer);
 
                     DefaultCredentialServiceUtility.SetupDefaultCredentialService(getLogger(), !interactive.HasValue());
 
                     var listPackageCommandRunner = getCommandRunner();
-                    await listPackageCommandRunner.ExecuteCommandAsync(packageRefArgs);
-                    return 0;
+                    return await listPackageCommandRunner.ExecuteCommandAsync(packageRefArgs);
                 });
             });
         }
@@ -158,12 +171,43 @@ namespace NuGet.CommandLine.XPlat
             throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Strings.ListPkg_InvalidOptions));
         }
 
-        private static void DisplayMessages(ListPackageArgs packageRefArgs)
+        private static IReportRenderer GetOutputType(string outputFormatOption, string outputVersionOption)
+        {
+            ReportOutputFormat outputFormat = ReportOutputFormat.Console;
+            if (!string.IsNullOrEmpty(outputFormatOption) &&
+                !Enum.TryParse(outputFormatOption, ignoreCase: true, out outputFormat))
+            {
+                string currentlySupportedFormat = GetEnumValues<ReportOutputFormat>();
+                throw new ArgumentException(string.Format(Strings.ListPkg_InvalidOutputFormat, outputFormatOption, currentlySupportedFormat));
+            }
+
+            if (outputFormat == ReportOutputFormat.Console)
+            {
+                return new ListPackageConsoleRenderer();
+            }
+
+            IReportRenderer jsonReportRenderer;
+
+            var currentlySupportedReportVersions = new List<string> { "1" };
+            // If customer pass unsupported version then error out instead of defaulting to version probably unsupported by customer machine.
+            if (!string.IsNullOrEmpty(outputVersionOption) && !currentlySupportedReportVersions.Contains(outputVersionOption))
+            {
+                throw new ArgumentException(string.Format(Strings.ListPkg_InvalidOutputVersion, outputVersionOption, string.Join(" ,", currentlySupportedReportVersions)));
+            }
+            else
+            {
+                jsonReportRenderer = new ListPackageJsonRenderer();
+            }
+
+            return jsonReportRenderer;
+        }
+
+        private static void WarnAboutIncompatibleOptions(ListPackageArgs packageRefArgs, IReportRenderer reportRenderer)
         {
             if (packageRefArgs.ReportType != ReportType.Outdated &&
                 (packageRefArgs.Prerelease || packageRefArgs.HighestMinor || packageRefArgs.HighestPatch))
             {
-                Console.WriteLine(Strings.ListPkg_VulnerableIgnoredOptions);
+                reportRenderer.AddProblem(ProblemType.Warning, Strings.ListPkg_VulnerableIgnoredOptions);
             }
         }
 
@@ -215,6 +259,14 @@ namespace NuGet.CommandLine.XPlat
             }
 
             return packageSources;
+        }
+
+        private static string GetEnumValues<T>() where T : Enum
+        {
+            var enumValues = ((T[])Enum.GetValues(typeof(T)))
+               .Select(x => x.ToString());
+
+            return string.Join(", ", enumValues).ToLower(CultureInfo.CurrentCulture);
         }
     }
 }

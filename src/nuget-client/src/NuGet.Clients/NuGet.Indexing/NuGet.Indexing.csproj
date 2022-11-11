@@ -1,8 +1,4 @@
-﻿
-<Project>
-  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), 'NuGet.sln'))\build\common.props" />
-  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Description>NuGet's indexing library for the Visual Studio client search functionality.</Description>
     <TargetFramework>$(NETFXTargetFramework)</TargetFramework>
@@ -20,7 +16,4 @@
     <PackageReference Include="Lucene.Net" />
     <PackageReference Include="SharpZipLib" ExcludeAssets="all" /> <!-- dependency of Lucene.net. Can delete when Lucene.net has an update with a newer dependency on sharpziplib -->
   </ItemGroup>
-
-  <Import Project="$(BuildCommonDirectory)common.targets"/>
-  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 </Project>

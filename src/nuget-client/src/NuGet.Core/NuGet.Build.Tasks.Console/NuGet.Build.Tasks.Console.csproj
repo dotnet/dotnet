@@ -1,7 +1,4 @@
-﻿<Project>
-  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), 'NuGet.sln'))\build\common.props" />
-  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>$(TargetFrameworksExeForSigning)</TargetFrameworks>
     <OutputType>Exe</OutputType>
@@ -59,7 +56,4 @@
       <TfmSpecificPackageFile Include="$(ProjectRuntimeConfigFilePath)" Condition=" '$(IsCore)' == 'true' " PackagePath="contentFiles\any\$(TargetFramework)" PackageCopyToOutput="true" />
     </ItemGroup>
   </Target>
-
-  <Import Project="$(BuildCommonDirectory)common.targets" />
-  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 </Project>

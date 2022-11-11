@@ -7,6 +7,6 @@ namespace NuGet.CommandLine.XPlat
 {
     internal interface IListPackageCommandRunner
     {
-        Task ExecuteCommandAsync(ListPackageArgs packageRefArgs);
+        Task<int> ExecuteCommandAsync(ListPackageArgs packageRefArgs);
     }
 }

@@ -1,6 +1,4 @@
-<Project>
-  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), 'NuGet.sln'))\build\common.props" />
-  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>$(NETFXTargetFramework)</TargetFramework>
     <SkipSigning>true</SkipSigning>
@@ -22,8 +20,6 @@
     <ProjectReference Include="$(NuGetClientsSrcDirectory)NuGet.PackageManagement.VisualStudio\NuGet.PackageManagement.VisualStudio.csproj" />
   </ItemGroup>
 
-  <Import Project="$(BuildCommonDirectory)common.targets" />
-
   <Target Name="DeployToArtifacts" AfterTargets="Build;Rebuild">
   <!--
     Publish test extension artifacts to a well-known location so that
@@ -36,6 +32,4 @@
     <Message Text="$(TargetPath) -&gt; $(PublishDestination)" Importance="high" />
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(PublishDestination)" OverwriteReadOnlyFiles="true" />
   </Target>
-
-  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 </Project>
