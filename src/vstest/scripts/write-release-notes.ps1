@@ -47,7 +47,7 @@ else {
 # $start = "v16.8.0-preview-20200812-03"
 # $end = $tag = "v16.8.0-preview-20200921-01"
 
-Write-Host "Generating release notes for $start..$end$(if ($Stable) { " (expected tag: $tag)" })"
+Write-Host "Generating release notes for $start..$end$(if ($HasPackageVersion) { " (expected tag: $tag)" })"
 
 $sourceBranch = $branch = git -C $Path rev-parse --abbrev-ref HEAD
 if ($sourceBranch -eq "HEAD") {
@@ -66,45 +66,56 @@ if ([string]::IsNullOrWhiteSpace($sourceBranch)) {
 Write-Host "Branch is $branch"
 Write-Host "SourceBranch is $sourceBranch"
 
+$discard = @(
+    "^Update dependencies from https:\/\/",
+    "^\[.+\] Update dependencies from",
+    "^LEGO: Pull request from lego",
+    "^Localized file check-in by OneLocBuild Task:",
+    "^Juno: check in to lego"
+) -join "|"
+
 $prUrl = "$repoUrl/pull/"
-$v = $tag -replace '^v'
-$b = if ($Stable) { $v } else { $tag -replace '.*?(\d+-\d+)$', '$1' }
+$tagVersionNumber = $tag -replace '^v'
+$b = if ($HasPackageVersion) { $tagVersionNumber } else { $tag -replace '.*?(\d+-\d+)$', '$1' }
 # using .. because I want to know the changes that are on this branch, but don't care about the changes that I don't have https://stackoverflow.com/a/24186641/3065397
 $log = (git -C $Path log "$start..$end" --oneline --pretty="format:%s" --first-parent)
 $issues = $log | ForEach-Object {
-    if ($_ -match '^(?<message>.+)\s\(#(?<pr>\d+)\)?$') {
-        $message = "* $($matches.message)"
-        if ($matches.pr) {
-            $pr = $matches.pr
-            $message += " [#$pr]($prUrl$pr)"
-        }
+    if ($_ -notmatch $discard) {
+        if ($_ -match '^(?<message>.+)\s\(#(?<pr>\d+)\)?$') {
+            $message = "* $($matches.message)"
+            if ($matches.pr) {
+                $pr = $matches.pr
+                $message += " [#$pr]($prUrl$pr)"
+            }
 
-        $message
-    }
-    else {
-        "* $_"
+            $message
+        }
+        else {
+            "* $_"
+        }
     }
 }
 
-$vsixDropBranch = $sourceBranch -replace "rel/", ""
+$tagVersionNumbersixDropBranch = $sourceBranch -replace "rel/", ""
 
 $output = @"
 
-See the release notes [here](https://github.com/microsoft/vstest-docs/blob/main/docs/releases.md#$($v -replace '\.')).
+See the release notes [here](https://github.com/microsoft/vstest-docs/blob/main/docs/releases.md#$($tagVersionNumber -replace '\.')).
 
 -------------------------------
 
-## $v
+## $tagVersionNumber
 
 ### $(if ($issues.Length -eq 1) { 'Issue' } else { 'Issues' }) Fixed
+
 $($issues -join "`n")
 
 See full log [here]($repoUrl/compare/$start...$tag)
 
-### Drops
+### Artifacts
 
-* TestPlatform vsix: [$v](https://vsdrop.corp.microsoft.com/file/v1/Products/DevDiv/microsoft/vstest/$vsixDropBranch/$b;/TestPlatform.vsix)
-* Microsoft.TestPlatform.ObjectModel : [$v](https://www.nuget.org/packages/Microsoft.TestPlatform.ObjectModel/$v)
+* TestPlatform vsix: [$tagVersionNumber](https://vsdrop.corp.microsoft.com/file/v1/Products/DevDiv/microsoft/vstest/$tagVersionNumbersixDropBranch/$b;/TestPlatform.vsix)
+* Microsoft.TestPlatform.ObjectModel : [$tagVersionNumber](https://www.nuget.org/packages/Microsoft.TestPlatform.ObjectModel/$tagVersionNumber)
 "@
 
 
