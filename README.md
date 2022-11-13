@@ -43,7 +43,7 @@ See the [Unified Build roadmap](https://github.com/dotnet/arcade/blob/main/Docum
 ### Supported platforms
 
 The VMR only supports .NET 8.0 and higher. Additionally, source-build currently supports Linux only.  
-It is expected that Mac and Window will be supported in the .NET 9.0.
+It is expected that Mac and Windows will be supported in the .NET 9.0.
 
 For the latest information about Source-Build support for new .NET versions, please check our [GitHub Discussions page](https://github.com/dotnet/source-build/discussions) for announcements.
 
@@ -150,7 +150,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@1268777](https://github.com/dotnet/fsharp/commit/126877797a797eeb17ddfb8d18904c18eca8aa5d)*
 - `src/installer`  
-*[dotnet/installer@7793ae1](https://github.com/dotnet/installer/commit/7793ae1c5c6237d675bd30f6db32f10d2c8b84cd)*
+*[dotnet/installer@355d664](https://github.com/dotnet/installer/commit/355d6643bdcd7e5a918550b67d12e35e65d8c646)*
 - `src/linker`  
 *[dotnet/linker@9c993bf](https://github.com/dotnet/linker/commit/9c993bf401377209cd7b4e84b60deab5e4f421a2)*
     - `src/linker/external/cecil`  
