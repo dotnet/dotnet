@@ -1,7 +1,10 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+extern alias Abstraction;
+
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -16,11 +19,13 @@ using Microsoft.VisualStudio.TestPlatform.Client.RequestHelper;
 using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers;
 using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing;
 using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces;
+using Microsoft.VisualStudio.TestPlatform.Execution;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
+using Abstraction::Microsoft.VisualStudio.TestPlatform.PlatformAbstractions;
 using Microsoft.VisualStudio.TestPlatform.Utilities;
 using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.VsTestConsole.TranslationLayer.Interfaces;
@@ -52,7 +57,8 @@ internal class InProcessVsTestConsoleWrapper : IVsTestConsoleWrapper
               requestSender: new VsTestConsoleRequestSender(),
               testRequestManager: null,
               executor: new Executor(ConsoleOutput.Instance),
-              testPlatformEventSource: TestPlatformEventSource.Instance)
+              testPlatformEventSource: TestPlatformEventSource.Instance,
+              new())
     { }
 
     internal InProcessVsTestConsoleWrapper(
@@ -61,8 +67,13 @@ internal class InProcessVsTestConsoleWrapper : IVsTestConsoleWrapper
         ITranslationLayerRequestSender requestSender,
         ITestRequestManager? testRequestManager,
         Executor executor,
-        ITestPlatformEventSource testPlatformEventSource)
+        ITestPlatformEventSource testPlatformEventSource,
+        UiLanguageOverride languageOverride)
     {
+        // Setting the culture specified by user here since there's no more vstest.console process
+        // to set it for us. See vstest.console Main method for more info.
+        languageOverride.SetCultureSpecifiedByUser();
+
         EqtTrace.Info("VsTestConsoleWrapper.StartSession: Starting VsTestConsoleWrapper session.");
 
         _environmentVariableHelper = environmentVariableHelper;
@@ -89,18 +100,29 @@ internal class InProcessVsTestConsoleWrapper : IVsTestConsoleWrapper
         consoleParameters.PortNumber = port;
 
         // Start vstest.console.
-        // TODO: under VS we use consoleParameters.InheritEnvironmentVariables, we take that
-        // into account when starting a testhost, or clean up in the service host, and use the
-        // desired set, so all children can inherit it.
+        // Running vstest.console in process means we inherit all environment variables from the
+        // process we load the wrapper into. We do not want to alter this environment since that
+        // would mean we may interfer with the way the host process works. However, certain
+        // alterations are desired. The solution is to pass the environment variables we get via
+        // the console parameters directly to the testhost process and make sure that at least the
+        // testhost environment is predictable.
+        IDictionary<string, string?> environmentVariableBaseline = new Dictionary<string, string?>();
+        if (consoleParameters.InheritEnvironmentVariables)
+        {
+            // This is needed because GetEnvironmentVariables() returns a non-generic dictionary
+            // and we need to convert it to a generic dictionary for our use-case.
+            foreach (DictionaryEntry? entry in _environmentVariableHelper.GetEnvironmentVariables())
+            {
+                environmentVariableBaseline[entry?.Key.ToString()!] = entry?.Value?.ToString();
+            }
+        }
+
         foreach (var pair in consoleParameters.EnvironmentVariables)
         {
-            if (pair.Value is null)
-            {
-                continue;
-            }
-
-            _environmentVariableHelper.SetEnvironmentVariable(pair.Key, pair.Value);
+            environmentVariableBaseline[pair.Key] = pair.Value;
         }
+
+        ProcessHelper.ExternalEnvironmentVariables = environmentVariableBaseline;
 
         string someExistingFile = typeof(InProcessVsTestConsoleWrapper).Assembly.Location;
         var args = new VsTestConsoleProcessManager(someExistingFile).BuildArguments(consoleParameters);
@@ -869,7 +891,7 @@ internal class InProcessVsTestConsoleWrapper : IVsTestConsoleWrapper
                 await Task.Run(() =>
                         TestRequestManager?.ProcessTestRunAttachments(
                             attachmentProcessingPayload,
-                            eventsHandler,
+                            new InProcessTestRunAttachmentsProcessingEventsHandler(eventsHandler),
                             new ProtocolConfig { Version = _highestSupportedVersion }),
                         CancellationToken.None)
                     .ConfigureAwait(false);

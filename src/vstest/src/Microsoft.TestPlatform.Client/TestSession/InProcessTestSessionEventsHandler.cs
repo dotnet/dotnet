@@ -28,7 +28,16 @@ internal class InProcessTestSessionEventsHandler : ITestSessionEventsHandler
 
     public void HandleRawMessage(string rawMessage)
     {
-        _testSessionEventsHandler.HandleRawMessage(rawMessage);
+        // No-op by design.
+        //
+        // For out-of-process vstest.console, raw messages are passed to the translation layer but
+        // they are never read and don't get passed to the actual events handler in TW. If they
+        // were (as it happens for in-process vstest.console since there is no more translation
+        // layer) a NotImplemented exception would be raised as per the time this of writing this
+        // note.
+        //
+        // Consider changing this logic in the future if TW changes the handling logic for raw
+        // messages.
     }
 
     public void HandleStartTestSessionComplete(StartTestSessionCompleteEventArgs? eventArgs)

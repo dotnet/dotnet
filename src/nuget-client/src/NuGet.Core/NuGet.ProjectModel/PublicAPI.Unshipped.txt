@@ -1,5 +1,1 @@
-NuGet.ProjectModel.DependencyGraphSpec.Save(System.IO.Stream stream) -> void
-NuGet.ProjectModel.WarningProperties.WarningProperties(System.Collections.Generic.ISet<NuGet.Common.NuGetLogCode> warningsAsErrors, System.Collections.Generic.ISet<NuGet.Common.NuGetLogCode> noWarn, bool allWarningsAsErrors, System.Collections.Generic.ISet<NuGet.Common.NuGetLogCode> warningsNotAsErrors) -> void
-NuGet.ProjectModel.WarningProperties.WarningsNotAsErrors.get -> System.Collections.Generic.ISet<NuGet.Common.NuGetLogCode>
-static NuGet.ProjectModel.WarningProperties.GetWarningProperties(string treatWarningsAsErrors, System.Collections.Generic.IEnumerable<NuGet.Common.NuGetLogCode> warningsAsErrors, System.Collections.Generic.IEnumerable<NuGet.Common.NuGetLogCode> noWarn, System.Collections.Generic.IEnumerable<NuGet.Common.NuGetLogCode> warningsNotAsErrors) -> NuGet.ProjectModel.WarningProperties
-static NuGet.ProjectModel.WarningProperties.GetWarningProperties(string treatWarningsAsErrors, string warningsAsErrors, string noWarn, string warningsNotAsErrors) -> NuGet.ProjectModel.WarningProperties
+#nullable enable

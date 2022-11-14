@@ -4,12 +4,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Newtonsoft.Json;
 using System.Linq;
+using Newtonsoft.Json;
 using NuGet.Common;
-using NuGet.Versioning;
-using NuGet.Protocol;
 using NuGet.Configuration;
+using NuGet.Protocol;
+using NuGet.Versioning;
 
 namespace NuGet.CommandLine.XPlat.ListPackage
 {

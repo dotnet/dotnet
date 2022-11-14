@@ -23,7 +23,19 @@ internal class DiscoveryHandlerToEventsRegistrarAdapter : ITestDiscoveryEventsRe
         _handleDiscoveredTests += (_, e) => _handler.HandleDiscoveredTests(e.DiscoveredTestCases);
         _handleLogMessage += (_, e) => _handler.HandleLogMessage(e.Level, e.Message);
         _handleDiscoveryComplete += (_, e) => _handler.HandleDiscoveryComplete(e, null);
-        _handleRawMessage += (_, e) => _handler.HandleRawMessage(e);
+        _handleRawMessage += (_, e) =>
+        {
+            // No-op by design.
+            //
+            // For out-of-process vstest.console, raw messages are passed to the translation layer but
+            // they are never read and don't get passed to the actual events handler in TW. If they
+            // were (as it happens for in-process vstest.console since there is no more translation
+            // layer) a NotImplemented exception would be raised as per the time this of writing this
+            // note.
+            //
+            // Consider changing this logic in the future if TW changes the handling logic for raw
+            // messages.
+        };
     }
 
     public void LogWarning(string message)
@@ -60,7 +72,19 @@ internal class RunHandlerToEventsRegistrarAdapter : ITestRunEventsRegistrar
     {
         _handler = handler;
         _handleLogMessage = (_, e) => _handler.HandleLogMessage(e.Level, e.Message);
-        _handleRawMessage = (_, e) => _handler.HandleRawMessage(e);
+        _handleRawMessage = (_, e) =>
+        {
+            // No-op by design.
+            //
+            // For out-of-process vstest.console, raw messages are passed to the translation layer but
+            // they are never read and don't get passed to the actual events handler in TW. If they
+            // were (as it happens for in-process vstest.console since there is no more translation
+            // layer) a NotImplemented exception would be raised as per the time this of writing this
+            // note.
+            //
+            // Consider changing this logic in the future if TW changes the handling logic for raw
+            // messages.
+        };
         _handleTestRunComplete = (_, e) => _handler.HandleTestRunComplete(e, null, null, null);
         _handleTestRunStatsChange = (_, e) => _handler.HandleTestRunStatsChange(e);
     }

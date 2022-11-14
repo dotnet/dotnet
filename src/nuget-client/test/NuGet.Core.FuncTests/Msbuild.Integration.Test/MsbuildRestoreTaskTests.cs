@@ -1083,7 +1083,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 Version = "1.0.0"
             });
             // But create only 2.0.0 on the server.
-            await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, new SimpleTestPackageContext { Id ="x", Version = "2.0.0" });
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, new SimpleTestPackageContext { Id = "x", Version = "2.0.0" });
             projectA.Properties.Add("TreatWarningsAsErrors", "true");
             projectA.Properties.Add("WarningsNotAsErrors", "NU1603");
             solution.Projects.Add(projectA);

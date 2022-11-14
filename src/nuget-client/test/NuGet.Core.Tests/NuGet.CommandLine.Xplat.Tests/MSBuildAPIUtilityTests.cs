@@ -21,7 +21,7 @@ namespace NuGet.CommandLine.Xplat.Tests
         {
             MSBuildLocator.RegisterDefaults();
         }
-        
+
         [PlatformFact(Platform.Windows)]
         public void GetDirectoryBuildPropsRootElementWhenItExists_Success()
         {

@@ -1,5 +1,6 @@
+#nullable enable
 Microsoft.Build.NuGetSdkResolver.NuGetSdkResolver
 Microsoft.Build.NuGetSdkResolver.NuGetSdkResolver.NuGetSdkResolver() -> void
-override Microsoft.Build.NuGetSdkResolver.NuGetSdkResolver.Name.get -> string
+~override Microsoft.Build.NuGetSdkResolver.NuGetSdkResolver.Name.get -> string
 override Microsoft.Build.NuGetSdkResolver.NuGetSdkResolver.Priority.get -> int
-override Microsoft.Build.NuGetSdkResolver.NuGetSdkResolver.Resolve(Microsoft.Build.Framework.SdkReference sdkReference, Microsoft.Build.Framework.SdkResolverContext resolverContext, Microsoft.Build.Framework.SdkResultFactory factory) -> Microsoft.Build.Framework.SdkResult
+~override Microsoft.Build.NuGetSdkResolver.NuGetSdkResolver.Resolve(Microsoft.Build.Framework.SdkReference sdkReference, Microsoft.Build.Framework.SdkResolverContext resolverContext, Microsoft.Build.Framework.SdkResultFactory factory) -> Microsoft.Build.Framework.SdkResult

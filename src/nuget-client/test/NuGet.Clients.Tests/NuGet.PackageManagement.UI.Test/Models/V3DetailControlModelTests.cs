@@ -85,8 +85,8 @@ namespace NuGet.PackageManagement.UI.Test.Models
     {
         private readonly Dictionary<Type, Task<object>> _services = new Dictionary<Type, Task<object>>(TypeEquivalenceComparer.Instance);
         private readonly PackageDetailControlModel _testInstance;
-    public V3PackageDetailControlModelTests(GlobalServiceProvider sp, V3PackageSearchMetadataFixture testData)
-            : base(sp, testData)
+        public V3PackageDetailControlModelTests(GlobalServiceProvider sp, V3PackageSearchMetadataFixture testData)
+                : base(sp, testData)
         {
             var solMgr = new Mock<INuGetSolutionManagerService>();
 

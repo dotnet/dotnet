@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -90,7 +92,7 @@ namespace NuGet.Shared
             }
         }
 
-        internal void AddSequence<T>(IEnumerable<T> sequence)
+        internal void AddSequence<T>(IEnumerable<T> sequence) where T : notnull
         {
             if (sequence != null)
             {
@@ -102,7 +104,7 @@ namespace NuGet.Shared
             }
         }
 
-        internal void AddSequence<T>(T[] array)
+        internal void AddSequence<T>(T[] array) where T : notnull
         {
             if (array != null)
             {
@@ -114,7 +116,7 @@ namespace NuGet.Shared
             }
         }
 
-        internal void AddSequence<T>(IList<T> list)
+        internal void AddSequence<T>(IList<T> list) where T : notnull
         {
             if (list != null)
             {
@@ -127,7 +129,7 @@ namespace NuGet.Shared
             }
         }
 
-        internal void AddSequence<T>(IReadOnlyList<T> list)
+        internal void AddSequence<T>(IReadOnlyList<T> list) where T : notnull
         {
             if (list != null)
             {
@@ -141,6 +143,8 @@ namespace NuGet.Shared
         }
 
         internal void AddDictionary<TKey, TValue>(IEnumerable<KeyValuePair<TKey, TValue>> dictionary)
+            where TKey : notnull
+            where TValue : notnull
         {
             if (dictionary != null)
             {
@@ -157,6 +161,8 @@ namespace NuGet.Shared
         /// Create a unique hash code for the given set of items
         /// </summary>
         internal static int GetHashCode<T1, T2>(T1 o1, T2 o2)
+            where T1 : notnull
+            where T2 : notnull
         {
             var combiner = new HashCodeCombiner();
             combiner.CheckInitialized();
@@ -171,6 +177,9 @@ namespace NuGet.Shared
         /// Create a unique hash code for the given set of items
         /// </summary>
         internal static int GetHashCode<T1, T2, T3>(T1 o1, T2 o2, T3 o3)
+            where T1 : notnull
+            where T2 : notnull
+            where T3 : notnull
         {
             var combiner = new HashCodeCombiner();
             combiner.CheckInitialized();

@@ -36,7 +36,7 @@ namespace NuGet.CommandLine.Test
         }
 
         [Theory]
-        [InlineData("SpecCommandCreatedNuSpec", typeof(NuGetResources) )]
+        [InlineData("SpecCommandCreatedNuSpec", typeof(NuGetResources))]
         [InlineData("UpdateCommandPrerelease", typeof(NuGetCommand))]
         public void GetString_ExistingResourcesInOtherResources_ReturnsStringResource(string resourceName, Type resourceType)
         {

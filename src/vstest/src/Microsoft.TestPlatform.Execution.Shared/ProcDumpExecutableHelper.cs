@@ -1,13 +1,24 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+#if USE_EXTERN_ALIAS
+extern alias Abstraction;
+#endif
+
 using System;
 using System.IO;
 
 using Microsoft.VisualStudio.TestPlatform.CoreUtilities;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
+
+#if USE_EXTERN_ALIAS
+using Abstraction::Microsoft.VisualStudio.TestPlatform.PlatformAbstractions;
+using Abstraction::Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces;
+#else
 using Microsoft.VisualStudio.TestPlatform.PlatformAbstractions;
 using Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces;
+#endif
+
 using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces;
 
 namespace Microsoft.VisualStudio.TestPlatform.Execution;

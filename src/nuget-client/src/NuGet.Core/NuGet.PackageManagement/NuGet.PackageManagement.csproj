@@ -3,7 +3,7 @@
     <Description>NuGet Package Management functionality for Visual Studio installation flow.</Description>
     <TargetFrameworks>$(TargetFrameworksLibrary)</TargetFrameworks>
     <TargetFramework />
-    <NoWarn>$(NoWarn);CS1591;CS1580;CS1574;CS1573</NoWarn>
+    <NoWarn>$(NoWarn);CS1591;CS1580;CS1574;CS1573;RS0041</NoWarn>
     <PackProject>true</PackProject>
     <Shipping>true</Shipping>
     <IncludeInVSIX>true</IncludeInVSIX>

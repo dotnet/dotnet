@@ -1,1 +1,1 @@
-override NuGet.Protocol.HttpSourceAuthenticationHandler.Dispose(bool disposing) -> void
+#nullable enable

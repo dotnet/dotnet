@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Description>NuGet's indexing library for the Visual Studio client search functionality.</Description>
     <TargetFramework>$(NETFXTargetFramework)</TargetFramework>
-    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <NoWarn>$(NoWarn);CS1591;RS0041</NoWarn>
     <PackProject>true</PackProject>
     <Shipping>true</Shipping>
     <IncludeInVsix>true</IncludeInVsix>

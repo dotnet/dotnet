@@ -2,7 +2,9 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,6 +15,7 @@ using Microsoft.VisualStudio.TestPlatform.Client;
 using Microsoft.VisualStudio.TestPlatform.Client.RequestHelper;
 using Microsoft.VisualStudio.TestPlatform.Common.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces;
+using Microsoft.VisualStudio.TestPlatform.Execution;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Interfaces;
@@ -23,7 +26,6 @@ using Microsoft.VisualStudio.TestPlatform.Utilities;
 using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-using FluentAssertions;
 using Moq;
 
 namespace Microsoft.VisualStudio.TestPlatform.CommandLine.UnitTests;
@@ -57,6 +59,7 @@ public class InProcessVsTestConsoleWrapperTests
     public InProcessVsTestConsoleWrapperTests()
     {
         _mockEnvironmentVariableHelper = new Mock<IEnvironmentVariableHelper>();
+        _mockEnvironmentVariableHelper.Setup(evh => evh.GetEnvironmentVariables()).Returns(new Hashtable());
 
         _mockRequestSender = new Mock<ITranslationLayerRequestSender>();
         _mockRequestSender.Setup(rs => rs.InitializeCommunication()).Returns(1234);
@@ -75,7 +78,8 @@ public class InProcessVsTestConsoleWrapperTests
             _mockRequestSender.Object,
             _mockTestRequestManager.Object,
             _executor,
-            _mockEventSource.Object);
+            _mockEventSource.Object,
+            new());
     }
 
     [TestMethod]
@@ -90,18 +94,18 @@ public class InProcessVsTestConsoleWrapperTests
                 _mockRequestSender.Object,
                 _mockTestRequestManager.Object,
                 new Executor(_mockOutput.Object, new Mock<ITestPlatformEventSource>().Object, new ProcessHelper(), new PlatformEnvironment()),
-                new Mock<ITestPlatformEventSource>().Object));
+                new Mock<ITestPlatformEventSource>().Object,
+                new()));
     }
 
     [TestMethod]
-    public void InProcessWrapperConstructorShouldSetEnvironmentVariablesReceivedAsConsoleParameters()
+    public void InProcessWrapperConstructorShouldSetEnvironmentVariablesReceivedAsConsoleParametersForProcessHelperNoInherit()
     {
         const string environmentVariableName = "AAAAA";
 
-        Environment.GetEnvironmentVariable(environmentVariableName).Should().BeNull();
-
         var consoleParams = new ConsoleParameters();
         consoleParams.EnvironmentVariables.Add(environmentVariableName, "1");
+        consoleParams.InheritEnvironmentVariables = false;
 
         var _ = new InProcessVsTestConsoleWrapper(
             consoleParams,
@@ -109,9 +113,76 @@ public class InProcessVsTestConsoleWrapperTests
             _mockRequestSender.Object,
             _mockTestRequestManager.Object,
             new Executor(_mockOutput.Object, new Mock<ITestPlatformEventSource>().Object, new ProcessHelper(), new PlatformEnvironment()),
-            new Mock<ITestPlatformEventSource>().Object);
+            new Mock<ITestPlatformEventSource>().Object,
+            new());
 
-        _mockEnvironmentVariableHelper.Verify(evh => evh.SetEnvironmentVariable(environmentVariableName, "1"));
+        Assert.IsTrue(ProcessHelper.ExternalEnvironmentVariables?.Count == 1);
+        Assert.IsTrue(ProcessHelper.ExternalEnvironmentVariables?.ContainsKey(environmentVariableName));
+        Assert.IsTrue(ProcessHelper.ExternalEnvironmentVariables?[environmentVariableName] == "1");
+    }
+
+    [TestMethod]
+    public void InProcessWrapperConstructorShouldSetEnvironmentVariablesReceivedAsConsoleParametersForProcessHelper()
+    {
+        const string environmentVariableName1 = "AAAAA";
+        const string environmentVariableName2 = "BBBBB";
+        const string environmentVariableName3 = "CCCCC";
+
+        var consoleParams = new ConsoleParameters();
+        consoleParams.EnvironmentVariables.Add(environmentVariableName1, "1");
+        consoleParams.InheritEnvironmentVariables = true;
+
+        IDictionary defaultEnvironmentVariables = new Hashtable();
+        defaultEnvironmentVariables.Add(environmentVariableName2, "1");
+        defaultEnvironmentVariables.Add(environmentVariableName3, "1");
+
+        _mockEnvironmentVariableHelper.Setup(evh => evh.GetEnvironmentVariables()).Returns(defaultEnvironmentVariables);
+
+        var _ = new InProcessVsTestConsoleWrapper(
+            consoleParams,
+            _mockEnvironmentVariableHelper.Object,
+            _mockRequestSender.Object,
+            _mockTestRequestManager.Object,
+            new Executor(_mockOutput.Object, new Mock<ITestPlatformEventSource>().Object, new ProcessHelper(), new PlatformEnvironment()),
+            new Mock<ITestPlatformEventSource>().Object,
+            new());
+
+        Assert.IsTrue(ProcessHelper.ExternalEnvironmentVariables?.Count == 3);
+        Assert.IsTrue(ProcessHelper.ExternalEnvironmentVariables?.ContainsKey(environmentVariableName1));
+        Assert.IsTrue(ProcessHelper.ExternalEnvironmentVariables?[environmentVariableName1] == "1");
+        Assert.IsTrue(ProcessHelper.ExternalEnvironmentVariables?.ContainsKey(environmentVariableName2));
+        Assert.IsTrue(ProcessHelper.ExternalEnvironmentVariables?[environmentVariableName2] == "1");
+        Assert.IsTrue(ProcessHelper.ExternalEnvironmentVariables?.ContainsKey(environmentVariableName3));
+        Assert.IsTrue(ProcessHelper.ExternalEnvironmentVariables?[environmentVariableName3] == "1");
+    }
+
+    [TestMethod]
+    public void InProcessWrapperConstructorShouldSetTheCultureSpecifiedByTheUser()
+    {
+        // Arrange
+        var culture = new CultureInfo("fr-fr");
+        _mockEnvironmentVariableHelper.Setup(x => x.GetEnvironmentVariable("DOTNET_CLI_UI_LANGUAGE")).Returns(culture.Name);
+
+        bool threadCultureWasSet = false;
+
+        // Act - We have an exception because we are not passing the right args but that's ok for our test
+        var consoleParams = new ConsoleParameters();
+        var _ = new InProcessVsTestConsoleWrapper(
+            consoleParams,
+            _mockEnvironmentVariableHelper.Object,
+            _mockRequestSender.Object,
+            _mockTestRequestManager.Object,
+            new Executor(_mockOutput.Object, new Mock<ITestPlatformEventSource>().Object, new ProcessHelper(), new PlatformEnvironment()),
+            new Mock<ITestPlatformEventSource>().Object,
+            new UiLanguageOverride(_mockEnvironmentVariableHelper.Object, lang => threadCultureWasSet = lang.Equals(culture)));
+
+        // Assert
+        Assert.IsTrue(threadCultureWasSet, "DefaultThreadCurrentUICulture was not set");
+        _mockEnvironmentVariableHelper.Verify(x => x.GetEnvironmentVariable("DOTNET_CLI_UI_LANGUAGE"), Times.Exactly(2));
+        _mockEnvironmentVariableHelper.Verify(x => x.GetEnvironmentVariable("VSLANG"), Times.Once);
+        _mockEnvironmentVariableHelper.Verify(x => x.SetEnvironmentVariable("VSLANG", culture.LCID.ToString(CultureInfo.InvariantCulture)), Times.Once);
+        _mockEnvironmentVariableHelper.Verify(x => x.GetEnvironmentVariable("PreferredUILang"), Times.Once);
+        _mockEnvironmentVariableHelper.Verify(x => x.SetEnvironmentVariable("PreferredUILang", culture.Name), Times.Once);
     }
 
     [TestMethod]
@@ -840,7 +911,8 @@ public class InProcessVsTestConsoleWrapperTests
             _mockRequestSender.Object,
             _mockTestRequestManager.Object,
             new Executor(_mockOutput.Object, new Mock<ITestPlatformEventSource>().Object, new ProcessHelper(), new PlatformEnvironment()),
-            new Mock<ITestPlatformEventSource>().Object);
+            new Mock<ITestPlatformEventSource>().Object,
+            new());
 
         using (var testSession = consoleWrapper?.StartTestSession(_testSources, _runSettings, mockTestSessionEventsHandler.Object))
         {

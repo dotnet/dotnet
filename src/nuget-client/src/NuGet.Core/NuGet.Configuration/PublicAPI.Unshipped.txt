@@ -1,4 +1,1 @@
-NuGet.Configuration.PackageSourceMappingProvider
-NuGet.Configuration.PackageSourceMappingProvider.GetPackageSourceMappingItems() -> System.Collections.Generic.IReadOnlyList<NuGet.Configuration.PackageSourceMappingSourceItem>
-NuGet.Configuration.PackageSourceMappingProvider.PackageSourceMappingProvider(NuGet.Configuration.ISettings settings) -> void
-NuGet.Configuration.PackageSourceMappingProvider.SavePackageSourceMappings(System.Collections.Generic.IReadOnlyList<NuGet.Configuration.PackageSourceMappingSourceItem> packageSourceMappingsSourceItems) -> void
+#nullable enable

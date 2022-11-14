@@ -199,7 +199,7 @@ namespace NuGet.PackageManagement.UI.Test
 
         public static IEnumerable<object[]> GetInstallActionTestData()
         {
-            foreach(var activeTab in Enum.GetValues(typeof(ContractsItemFilter)))
+            foreach (var activeTab in Enum.GetValues(typeof(ContractsItemFilter)))
             {
                 yield return new object[] { activeTab, true, "transitiveA", null, }; // don't care in expectedValue in this case (solution PM UI)
                 yield return new object[] { activeTab, false, "transitiveA", true, }; // installs a package that was a transitive dependency

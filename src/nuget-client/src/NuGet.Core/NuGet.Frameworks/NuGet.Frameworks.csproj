@@ -2,7 +2,7 @@
     <Description>NuGet's understanding of target frameworks.</Description>
     <TargetFrameworks>$(TargetFrameworksLibrary)</TargetFrameworks>
     <TargetFramework />
-    <NoWarn>$(NoWarn);CS1591;CS1574;CS1573</NoWarn>
+    <NoWarn>$(NoWarn);CS1591;CS1574;CS1573;RS0041</NoWarn>
     <PackProject>true</PackProject>
     <Shipping>true</Shipping>
     <IncludeInVSIX>true</IncludeInVSIX>

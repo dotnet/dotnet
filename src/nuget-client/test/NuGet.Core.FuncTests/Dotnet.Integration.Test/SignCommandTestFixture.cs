@@ -88,7 +88,7 @@ namespace Dotnet.Integration.Test
                         TestDirectory.Path,
                         configureLeafCrl: true,
                         leafCertificateActionGenerator: SigningTestUtility.CertificateModificationGeneratorForInvalidEkuCert))
-                    { 
+                    {
                         StoreLocation rootStoreLocation = CertificateStoreUtilities.GetTrustedCertificateStoreLocation(readOnly: false);
 
                         _invalidEkuCertificateChain.Add(CreateX509StoreCertificate(StoreLocation.CurrentUser, StoreName.My, chain[0], X509StorePurpose.CodeSigning));

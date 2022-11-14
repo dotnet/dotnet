@@ -893,7 +893,8 @@ namespace NuGet.Commands.Test
                 library.Dependencies.Should().HaveCount(1);
                 var dependencies = library.Dependencies.Single();
                 dependencies.Name.Should().Be("full.framework");
-            } else
+            }
+            else
             {
                 library.Dependencies.Should().HaveCount(0);
             }

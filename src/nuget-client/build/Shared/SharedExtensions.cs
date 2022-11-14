@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,7 +31,7 @@ namespace NuGet.Shared
         /// Return the ISet as a HashSet of T, copying if required. Optimized for common case where it is a HashSet of T.
         /// Avoid mutating the return value.
         /// </summary>
-        public static HashSet<T> AsHashSet<T>(this ISet<T> enumerable, IEqualityComparer<T> comparer = null)
+        public static HashSet<T>? AsHashSet<T>(this ISet<T> enumerable, IEqualityComparer<T>? comparer = null)
         {
             if (enumerable == null)
             {

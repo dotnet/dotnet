@@ -3,7 +3,7 @@
     <Description>NuGet's understanding of packages. Reading nuspec, nupkgs and package signing.</Description>
     <TargetFrameworks>$(TargetFrameworksLibraryForSigning)</TargetFrameworks>
     <TargetFramework />
-    <NoWarn>$(NoWarn);CS1591;CS1574;CS1573;CS1572</NoWarn>
+    <NoWarn>$(NoWarn);CS1591;CS1574;CS1573;CS1572;RS0041</NoWarn>
     <NoWarn Condition=" $(TargetFramework.StartsWith('netstandard')) OR $(TargetFramework.StartsWith('netcoreapp'))">$(NoWarn);CS0414</NoWarn>
     <PackProject>true</PackProject>
     <Shipping>true</Shipping>

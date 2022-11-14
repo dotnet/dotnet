@@ -35,7 +35,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             TransitivePackageReference transitivePackageReference = PackageReferenceProject<List<object>, object>.MergeTransitiveOrigin(pr, te);
 
             var transitiveOrigin = transitivePackageReference.TransitiveOrigins.Single();
-            
+
             Assert.Equal(NuGetVersion.Parse("0.0.2"), transitiveOrigin.PackageIdentity.Version);
         }
 

@@ -649,7 +649,7 @@ namespace NuGet.ProjectModel.Test
                     }
                 }
             };
-                
+
             var lockFileFormat = new LockFileFormat();
 
             // Act

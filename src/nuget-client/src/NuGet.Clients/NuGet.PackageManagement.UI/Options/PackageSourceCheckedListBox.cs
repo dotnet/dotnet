@@ -8,12 +8,12 @@ using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using Microsoft.VisualStudio.Imaging;
 using Microsoft.VisualStudio.Imaging.Interop;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using NuGet.Configuration;
 using NuGet.PackageManagement.UI;
 using NuGet.VisualStudio.Internal.Contracts;
 using GelUtilities = Microsoft.Internal.VisualStudio.PlatformUI.Utilities;
-using NuGet.Configuration;
-using Microsoft.VisualStudio.Shell;
 
 namespace NuGet.Options
 {
