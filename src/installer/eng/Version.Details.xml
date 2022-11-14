@@ -213,9 +213,9 @@
       <Uri>https://github.com/dotnet/arcade-services</Uri>
       <Sha>e1c11c90d26581339cca9684399250101cbbc3bb</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Extensions.Logging.Console" Version="7.0.0-rc.1.22426.10">
+    <Dependency Name="Microsoft.Extensions.Logging.Console" Version="8.0.0-alpha.1.22557.12">
       <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>06aceb7015f3bd2ff019ef5920d2354eb2ea2c92</Sha>
+      <Sha>af841c8b33cecc92d74222298f1e45bf7bf3d90a</Sha>
     </Dependency>
     <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.22557.1">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
