@@ -14,6 +14,8 @@ using System.Windows.Forms;
 using Microsoft;
 using Microsoft.ServiceHub.Framework;
 using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.Imaging;
+using Microsoft.VisualStudio.Imaging.Interop;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using NuGet.Configuration;
@@ -23,13 +25,11 @@ using NuGet.VisualStudio;
 using NuGet.VisualStudio.Common;
 using NuGet.VisualStudio.Internal.Contracts;
 using NuGet.VisualStudio.Telemetry;
-using IAsyncServiceProvider = Microsoft.VisualStudio.Shell.IAsyncServiceProvider;
-using GelUtilities = Microsoft.Internal.VisualStudio.PlatformUI.Utilities;
-using Task = System.Threading.Tasks.Task;
-using Microsoft.VisualStudio.Imaging.Interop;
-using Microsoft.VisualStudio.Imaging;
 using StreamJsonRpc;
 using StreamJsonRpc.Protocol;
+using GelUtilities = Microsoft.Internal.VisualStudio.PlatformUI.Utilities;
+using IAsyncServiceProvider = Microsoft.VisualStudio.Shell.IAsyncServiceProvider;
+using Task = System.Threading.Tasks.Task;
 
 namespace NuGet.Options
 {

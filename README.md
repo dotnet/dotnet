@@ -158,7 +158,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/msbuild`  
 *[dotnet/msbuild@15b127d](https://github.com/dotnet/msbuild/commit/15b127d2445d6b68429f1c31d9ff98fe4e1e728c)*
 - `src/nuget-client`  
-*[NuGet/NuGet.Client@a8e878f](https://github.com/NuGet/NuGet.Client/commit/a8e878fbc51600caf01d62f0deed5481af7f8aff)*
+*[NuGet/NuGet.Client@ea921bf](https://github.com/NuGet/NuGet.Client/commit/ea921bf1871b2799d9c130aad860db33e6577975)*
     - `src/nuget-client/submodules/Common`  
     *[aspnet/Common@e6fac80](https://github.com/aspnet/Common/commit/e6fac8061686c18531e2621ccef97dd5e0687a65)*
     - `src/nuget-client/submodules/FileSystem`  

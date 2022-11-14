@@ -135,7 +135,7 @@ namespace NuGet.Core.FuncTest
 #endif
         }
 
-        [Fact(Skip = "https://github.com/NuGet/Home/issues/12191")] 
+        [Fact(Skip = "https://github.com/NuGet/Home/issues/12191")]
         public async Task HttpRetryHandler_HandlesNameResolutionFailure()
         {
             // Arrange

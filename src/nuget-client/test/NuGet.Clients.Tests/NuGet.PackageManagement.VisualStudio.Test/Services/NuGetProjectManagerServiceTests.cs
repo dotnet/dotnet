@@ -1355,7 +1355,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
 
             await Assert.ThrowsAsync<ArgumentException>(async () =>
             {
-                await _projectManager.GetPackageFoldersAsync(new[] { "unknownProject" } , CancellationToken.None);
+                await _projectManager.GetPackageFoldersAsync(new[] { "unknownProject" }, CancellationToken.None);
             });
         }
 
@@ -1422,7 +1422,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             Assert.True(File.Exists(pajFilepath));
 
             // Act
-            IReadOnlyCollection<string> folders = await _projectManager.GetPackageFoldersAsync(new[] {projectId}, CancellationToken.None);
+            IReadOnlyCollection<string> folders = await _projectManager.GetPackageFoldersAsync(new[] { projectId }, CancellationToken.None);
 
             // Assert
             Assert.Equal(1, folders.Count); // only globalPackagesFolder is listed
@@ -1459,7 +1459,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 LockFilePath = Path.Combine(testDirectory, "obj", "project.assets.json")
             };
 
-            await SimpleTestPackageUtility.CreateFullPackageAsync(packageSource.FullName, "packageA", "1.0.0", new PackageDependency[]{});
+            await SimpleTestPackageUtility.CreateFullPackageAsync(packageSource.FullName, "packageA", "1.0.0", new PackageDependency[] { });
 
             var command = new RestoreCommand(request);
             RestoreResult result = await command.ExecuteAsync();

@@ -79,7 +79,7 @@ namespace NuGet.XPlat.FuncTest
                                     }
                                 }
                             },
-                            projectProblems : null
+                            projectProblems: null
                         ),
                         (
                             projectBPath,
@@ -106,7 +106,7 @@ namespace NuGet.XPlat.FuncTest
                                     }
                                 }
                           },
-                          projectProblems : null
+                          projectProblems: null
                       )
                     );
 

@@ -305,7 +305,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         }
 
         [Theory]
-        [InlineData(new string[] {}, 0)]
+        [InlineData(new string[] { }, 0)]
         [InlineData(new string[] { "folder1" }, 1)]
         [InlineData(new string[] { "folder1", "folder2" }, 2)]
         public async Task GetPackageFoldersAsync_OneProject_ReturnsPackageFolderAsync(IReadOnlyCollection<string> folderCollection, int expected)

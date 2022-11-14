@@ -16,20 +16,22 @@ namespace NuGet.Internal.Tools.ShipPublicApis
                 ? new Argument<DirectoryInfo>("path")
                 : new Argument<DirectoryInfo>("path", getDefaultValue: () => nugetSlnDirectory);
 
+            var resortOption = new Option<bool>("--resort");
+
             var rootCommand = new RootCommand()
             {
                 pathArgument,
-                new Option<bool>("--resort")
+                resortOption
             };
 
             rootCommand.Description = "Copy and merge contents of PublicAPI.Unshipped.txt to PublicAPI.Shipped.txt. See https://github.com/NuGet/NuGet.Client/tree/dev/docs/nuget-sdk.md#Shipping_NuGet for more details.";
 
-            rootCommand.Handler = CommandHandler.Create<DirectoryInfo, bool>(MainAsync);
+            rootCommand.SetHandler<DirectoryInfo, bool>(MainAsync, pathArgument, resortOption);
 
             return await rootCommand.InvokeAsync(args);
         }
 
-        private static DirectoryInfo FindNuGetSlnDirectory()
+        private static DirectoryInfo? FindNuGetSlnDirectory()
         {
             var directory = Environment.CurrentDirectory;
 
@@ -65,7 +67,7 @@ namespace NuGet.Internal.Tools.ShipPublicApis
             }
 
             bool foundAtLeastOne = false;
-            foreach (var unshippedTxtPath in path.EnumerateFiles("PublicAPI.Unshipped.txt", new EnumerationOptions() { MatchCasing = MatchCasing.CaseInsensitive, RecurseSubdirectories = true}))
+            foreach (FileInfo unshippedTxtPath in path.EnumerateFiles("PublicAPI.Unshipped.txt", new EnumerationOptions() { MatchCasing = MatchCasing.CaseInsensitive, RecurseSubdirectories = true }))
             {
                 foundAtLeastOne = true;
                 if (unshippedTxtPath.Length == 0 && !resort)
@@ -74,52 +76,17 @@ namespace NuGet.Internal.Tools.ShipPublicApis
                     continue;
                 }
 
+                if (unshippedTxtPath.DirectoryName == null)
+                {
+                    throw new Exception("Found a file that's not in a directory?");
+                }
                 var shippedTxtPath = Path.Combine(unshippedTxtPath.DirectoryName, "PublicAPI.Shipped.txt");
                 if (!File.Exists(shippedTxtPath))
                 {
                     throw new FileNotFoundException($"Cannot migrate APIs from {unshippedTxtPath.FullName}. {shippedTxtPath} not found.");
                 }
 
-                var shippedLines = new List<string>();
-                var unshippedLines = new List<string>();
-                int unshippedApiCount = 0;
-                using (var stream = unshippedTxtPath.OpenText())
-                {
-                    string line;
-                    while ((line = await stream.ReadLineAsync()) != null)
-                    {
-                        if (!string.IsNullOrWhiteSpace(line))
-                        {
-                            if (line.StartsWith("#"))
-                            {
-                                unshippedLines.Add(line);
-                            }
-                            else
-                            {
-                                shippedLines.Add(line);
-                                unshippedApiCount++;
-                            }
-                        }
-                    }
-                }
-
-                using (var stream = File.OpenText(shippedTxtPath))
-                {
-                    string line;
-                    while ((line = await stream.ReadLineAsync()) != null)
-                    {
-                        if (!string.IsNullOrWhiteSpace(line))
-                        {
-                            shippedLines.Add(line);
-                        }
-                    }
-                }
-
-                shippedLines.Sort(StringComparer.Ordinal);
-
-                await File.WriteAllLinesAsync(shippedTxtPath, shippedLines);
-                await File.WriteAllLinesAsync(unshippedTxtPath.FullName, unshippedLines);
-
+                int unshippedApiCount = await MoveUnshippedApisToShippedAsync(shippedTxtPath, unshippedTxtPath.FullName);
                 Console.WriteLine($"{unshippedTxtPath.FullName}: Shipped {unshippedApiCount} APIs.");
             }
 
@@ -130,6 +97,52 @@ namespace NuGet.Internal.Tools.ShipPublicApis
             }
 
             return 0;
+        }
+
+        private static async Task<int> MoveUnshippedApisToShippedAsync(string shippedTxtPath, string unshippedTxtPath)
+        {
+            var shippedLines = new List<string>();
+            var unshippedLines = new List<string>();
+            int unshippedApiCount = 0;
+
+            using (var stream = File.OpenText(unshippedTxtPath))
+            {
+                string? line;
+                while ((line = await stream.ReadLineAsync()) != null)
+                {
+                    if (!string.IsNullOrWhiteSpace(line))
+                    {
+                        if (line.StartsWith("#"))
+                        {
+                            unshippedLines.Add(line);
+                        }
+                        else
+                        {
+                            shippedLines.Add(line);
+                            unshippedApiCount++;
+                        }
+                    }
+                }
+            }
+
+            using (var stream = File.OpenText(shippedTxtPath))
+            {
+                string? line;
+                while ((line = await stream.ReadLineAsync()) != null)
+                {
+                    if (!string.IsNullOrWhiteSpace(line))
+                    {
+                        shippedLines.Add(line);
+                    }
+                }
+            }
+
+            shippedLines.Sort(PublicAPIAnalyzerLineComparer.Instance);
+
+            await File.WriteAllLinesAsync(shippedTxtPath, shippedLines);
+            await File.WriteAllLinesAsync(unshippedTxtPath, unshippedLines);
+
+            return unshippedApiCount;
         }
     }
 }

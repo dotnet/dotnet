@@ -1,33 +1,34 @@
+#nullable enable
 NuGet.Versioning.FloatRange
-NuGet.Versioning.FloatRange.Equals(NuGet.Versioning.FloatRange other) -> bool
+~NuGet.Versioning.FloatRange.Equals(NuGet.Versioning.FloatRange other) -> bool
 NuGet.Versioning.FloatRange.FloatBehavior.get -> NuGet.Versioning.NuGetVersionFloatBehavior
 NuGet.Versioning.FloatRange.FloatRange(NuGet.Versioning.NuGetVersionFloatBehavior floatBehavior) -> void
-NuGet.Versioning.FloatRange.FloatRange(NuGet.Versioning.NuGetVersionFloatBehavior floatBehavior, NuGet.Versioning.NuGetVersion minVersion) -> void
-NuGet.Versioning.FloatRange.FloatRange(NuGet.Versioning.NuGetVersionFloatBehavior floatBehavior, NuGet.Versioning.NuGetVersion minVersion, string releasePrefix) -> void
+~NuGet.Versioning.FloatRange.FloatRange(NuGet.Versioning.NuGetVersionFloatBehavior floatBehavior, NuGet.Versioning.NuGetVersion minVersion) -> void
+~NuGet.Versioning.FloatRange.FloatRange(NuGet.Versioning.NuGetVersionFloatBehavior floatBehavior, NuGet.Versioning.NuGetVersion minVersion, string releasePrefix) -> void
 NuGet.Versioning.FloatRange.HasMinVersion.get -> bool
-NuGet.Versioning.FloatRange.MinVersion.get -> NuGet.Versioning.NuGetVersion
-NuGet.Versioning.FloatRange.OriginalReleasePrefix.get -> string
-NuGet.Versioning.FloatRange.Satisfies(NuGet.Versioning.NuGetVersion version) -> bool
+~NuGet.Versioning.FloatRange.MinVersion.get -> NuGet.Versioning.NuGetVersion
+~NuGet.Versioning.FloatRange.OriginalReleasePrefix.get -> string
+~NuGet.Versioning.FloatRange.Satisfies(NuGet.Versioning.NuGetVersion version) -> bool
 NuGet.Versioning.INuGetVersionable
-NuGet.Versioning.INuGetVersionable.Version.get -> NuGet.Versioning.NuGetVersion
+~NuGet.Versioning.INuGetVersionable.Version.get -> NuGet.Versioning.NuGetVersion
 NuGet.Versioning.IVersionComparer
 NuGet.Versioning.IVersionRangeComparer
 NuGet.Versioning.NuGetVersion
 NuGet.Versioning.NuGetVersion.IsSemVer2.get -> bool
-NuGet.Versioning.NuGetVersion.NuGetVersion(NuGet.Versioning.NuGetVersion version) -> void
-NuGet.Versioning.NuGetVersion.NuGetVersion(System.Version version, System.Collections.Generic.IEnumerable<string> releaseLabels, string metadata, string originalVersion) -> void
-NuGet.Versioning.NuGetVersion.NuGetVersion(System.Version version, string releaseLabel = null, string metadata = null) -> void
+~NuGet.Versioning.NuGetVersion.NuGetVersion(NuGet.Versioning.NuGetVersion version) -> void
+~NuGet.Versioning.NuGetVersion.NuGetVersion(System.Version version, System.Collections.Generic.IEnumerable<string> releaseLabels, string metadata, string originalVersion) -> void
+~NuGet.Versioning.NuGetVersion.NuGetVersion(System.Version version, string releaseLabel = null, string metadata = null) -> void
 NuGet.Versioning.NuGetVersion.NuGetVersion(int major, int minor, int patch) -> void
-NuGet.Versioning.NuGetVersion.NuGetVersion(int major, int minor, int patch, System.Collections.Generic.IEnumerable<string> releaseLabels, string metadata) -> void
+~NuGet.Versioning.NuGetVersion.NuGetVersion(int major, int minor, int patch, System.Collections.Generic.IEnumerable<string> releaseLabels, string metadata) -> void
 NuGet.Versioning.NuGetVersion.NuGetVersion(int major, int minor, int patch, int revision) -> void
-NuGet.Versioning.NuGetVersion.NuGetVersion(int major, int minor, int patch, int revision, System.Collections.Generic.IEnumerable<string> releaseLabels, string metadata) -> void
-NuGet.Versioning.NuGetVersion.NuGetVersion(int major, int minor, int patch, int revision, string releaseLabel, string metadata) -> void
-NuGet.Versioning.NuGetVersion.NuGetVersion(int major, int minor, int patch, string releaseLabel) -> void
-NuGet.Versioning.NuGetVersion.NuGetVersion(int major, int minor, int patch, string releaseLabel, string metadata) -> void
-NuGet.Versioning.NuGetVersion.NuGetVersion(string version) -> void
-NuGet.Versioning.NuGetVersion.OriginalVersion.get -> string
+~NuGet.Versioning.NuGetVersion.NuGetVersion(int major, int minor, int patch, int revision, System.Collections.Generic.IEnumerable<string> releaseLabels, string metadata) -> void
+~NuGet.Versioning.NuGetVersion.NuGetVersion(int major, int minor, int patch, int revision, string releaseLabel, string metadata) -> void
+~NuGet.Versioning.NuGetVersion.NuGetVersion(int major, int minor, int patch, string releaseLabel) -> void
+~NuGet.Versioning.NuGetVersion.NuGetVersion(int major, int minor, int patch, string releaseLabel, string metadata) -> void
+~NuGet.Versioning.NuGetVersion.NuGetVersion(string version) -> void
+~NuGet.Versioning.NuGetVersion.OriginalVersion.get -> string
 NuGet.Versioning.NuGetVersion.Revision.get -> int
-NuGet.Versioning.NuGetVersion.Version.get -> System.Version
+~NuGet.Versioning.NuGetVersion.Version.get -> System.Version
 NuGet.Versioning.NuGetVersionFloatBehavior
 NuGet.Versioning.NuGetVersionFloatBehavior.AbsoluteLatest = 6 -> NuGet.Versioning.NuGetVersionFloatBehavior
 NuGet.Versioning.NuGetVersionFloatBehavior.Major = 5 -> NuGet.Versioning.NuGetVersionFloatBehavior
@@ -44,24 +45,24 @@ NuGet.Versioning.SemanticVersion
 NuGet.Versioning.SemanticVersion.Major.get -> int
 NuGet.Versioning.SemanticVersion.Minor.get -> int
 NuGet.Versioning.SemanticVersion.Patch.get -> int
-NuGet.Versioning.SemanticVersion.Release.get -> string
-NuGet.Versioning.SemanticVersion.ReleaseLabels.get -> System.Collections.Generic.IEnumerable<string>
-NuGet.Versioning.SemanticVersion.SemanticVersion(NuGet.Versioning.SemanticVersion version) -> void
-NuGet.Versioning.SemanticVersion.SemanticVersion(System.Version version, System.Collections.Generic.IEnumerable<string> releaseLabels, string metadata) -> void
-NuGet.Versioning.SemanticVersion.SemanticVersion(System.Version version, string releaseLabel = null, string metadata = null) -> void
+~NuGet.Versioning.SemanticVersion.Release.get -> string
+~NuGet.Versioning.SemanticVersion.ReleaseLabels.get -> System.Collections.Generic.IEnumerable<string>
+~NuGet.Versioning.SemanticVersion.SemanticVersion(NuGet.Versioning.SemanticVersion version) -> void
+~NuGet.Versioning.SemanticVersion.SemanticVersion(System.Version version, System.Collections.Generic.IEnumerable<string> releaseLabels, string metadata) -> void
+~NuGet.Versioning.SemanticVersion.SemanticVersion(System.Version version, string releaseLabel = null, string metadata = null) -> void
 NuGet.Versioning.SemanticVersion.SemanticVersion(int major, int minor, int patch) -> void
-NuGet.Versioning.SemanticVersion.SemanticVersion(int major, int minor, int patch, System.Collections.Generic.IEnumerable<string> releaseLabels, string metadata) -> void
-NuGet.Versioning.SemanticVersion.SemanticVersion(int major, int minor, int patch, int revision, System.Collections.Generic.IEnumerable<string> releaseLabels, string metadata) -> void
-NuGet.Versioning.SemanticVersion.SemanticVersion(int major, int minor, int patch, int revision, string releaseLabel, string metadata) -> void
-NuGet.Versioning.SemanticVersion.SemanticVersion(int major, int minor, int patch, string releaseLabel) -> void
-NuGet.Versioning.SemanticVersion.SemanticVersion(int major, int minor, int patch, string releaseLabel, string metadata) -> void
-NuGet.Versioning.SemanticVersion.TryFormatter(string format, System.IFormatProvider formatProvider, out string formattedString) -> bool
+~NuGet.Versioning.SemanticVersion.SemanticVersion(int major, int minor, int patch, System.Collections.Generic.IEnumerable<string> releaseLabels, string metadata) -> void
+~NuGet.Versioning.SemanticVersion.SemanticVersion(int major, int minor, int patch, int revision, System.Collections.Generic.IEnumerable<string> releaseLabels, string metadata) -> void
+~NuGet.Versioning.SemanticVersion.SemanticVersion(int major, int minor, int patch, int revision, string releaseLabel, string metadata) -> void
+~NuGet.Versioning.SemanticVersion.SemanticVersion(int major, int minor, int patch, string releaseLabel) -> void
+~NuGet.Versioning.SemanticVersion.SemanticVersion(int major, int minor, int patch, string releaseLabel, string metadata) -> void
+~NuGet.Versioning.SemanticVersion.TryFormatter(string format, System.IFormatProvider formatProvider, out string formattedString) -> bool
 NuGet.Versioning.SemanticVersionConverter
 NuGet.Versioning.SemanticVersionConverter.SemanticVersionConverter() -> void
 NuGet.Versioning.VersionComparer
-NuGet.Versioning.VersionComparer.Compare(NuGet.Versioning.SemanticVersion x, NuGet.Versioning.SemanticVersion y) -> int
-NuGet.Versioning.VersionComparer.Equals(NuGet.Versioning.SemanticVersion x, NuGet.Versioning.SemanticVersion y) -> bool
-NuGet.Versioning.VersionComparer.GetHashCode(NuGet.Versioning.SemanticVersion version) -> int
+~NuGet.Versioning.VersionComparer.Compare(NuGet.Versioning.SemanticVersion x, NuGet.Versioning.SemanticVersion y) -> int
+~NuGet.Versioning.VersionComparer.Equals(NuGet.Versioning.SemanticVersion x, NuGet.Versioning.SemanticVersion y) -> bool
+~NuGet.Versioning.VersionComparer.GetHashCode(NuGet.Versioning.SemanticVersion version) -> int
 NuGet.Versioning.VersionComparer.VersionComparer() -> void
 NuGet.Versioning.VersionComparer.VersionComparer(NuGet.Versioning.VersionComparison versionComparison) -> void
 NuGet.Versioning.VersionComparison
@@ -71,121 +72,121 @@ NuGet.Versioning.VersionComparison.VersionRelease = 2 -> NuGet.Versioning.Versio
 NuGet.Versioning.VersionComparison.VersionReleaseMetadata = 3 -> NuGet.Versioning.VersionComparison
 NuGet.Versioning.VersionExtensions
 NuGet.Versioning.VersionFormatter
-NuGet.Versioning.VersionFormatter.Format(string format, object arg, System.IFormatProvider formatProvider) -> string
-NuGet.Versioning.VersionFormatter.GetFormat(System.Type formatType) -> object
+~NuGet.Versioning.VersionFormatter.Format(string format, object arg, System.IFormatProvider formatProvider) -> string
+~NuGet.Versioning.VersionFormatter.GetFormat(System.Type formatType) -> object
 NuGet.Versioning.VersionFormatter.VersionFormatter() -> void
 NuGet.Versioning.VersionRange
-NuGet.Versioning.VersionRange.Equals(NuGet.Versioning.VersionRange other) -> bool
-NuGet.Versioning.VersionRange.FindBestMatch(System.Collections.Generic.IEnumerable<NuGet.Versioning.NuGetVersion> versions) -> NuGet.Versioning.NuGetVersion
-NuGet.Versioning.VersionRange.Float.get -> NuGet.Versioning.FloatRange
-NuGet.Versioning.VersionRange.IsBetter(NuGet.Versioning.NuGetVersion current, NuGet.Versioning.NuGetVersion considering) -> bool
+~NuGet.Versioning.VersionRange.Equals(NuGet.Versioning.VersionRange other) -> bool
+~NuGet.Versioning.VersionRange.FindBestMatch(System.Collections.Generic.IEnumerable<NuGet.Versioning.NuGetVersion> versions) -> NuGet.Versioning.NuGetVersion
+~NuGet.Versioning.VersionRange.Float.get -> NuGet.Versioning.FloatRange
+~NuGet.Versioning.VersionRange.IsBetter(NuGet.Versioning.NuGetVersion current, NuGet.Versioning.NuGetVersion considering) -> bool
 NuGet.Versioning.VersionRange.IsFloating.get -> bool
-NuGet.Versioning.VersionRange.OriginalString.get -> string
-NuGet.Versioning.VersionRange.PrettyPrint() -> string
-NuGet.Versioning.VersionRange.ToNonSnapshotRange() -> NuGet.Versioning.VersionRange
-NuGet.Versioning.VersionRange.ToString(string format, System.IFormatProvider formatProvider) -> string
-NuGet.Versioning.VersionRange.TryFormatter(string format, System.IFormatProvider formatProvider, out string formattedString) -> bool
-NuGet.Versioning.VersionRange.VersionRange(NuGet.Versioning.NuGetVersion minVersion = null, bool includeMinVersion = true, NuGet.Versioning.NuGetVersion maxVersion = null, bool includeMaxVersion = false, NuGet.Versioning.FloatRange floatRange = null, string originalString = null) -> void
-NuGet.Versioning.VersionRange.VersionRange(NuGet.Versioning.NuGetVersion minVersion) -> void
-NuGet.Versioning.VersionRange.VersionRange(NuGet.Versioning.NuGetVersion minVersion, NuGet.Versioning.FloatRange floatRange) -> void
-NuGet.Versioning.VersionRange.VersionRange(NuGet.Versioning.VersionRange range, NuGet.Versioning.FloatRange floatRange) -> void
+~NuGet.Versioning.VersionRange.OriginalString.get -> string
+~NuGet.Versioning.VersionRange.PrettyPrint() -> string
+~NuGet.Versioning.VersionRange.ToNonSnapshotRange() -> NuGet.Versioning.VersionRange
+~NuGet.Versioning.VersionRange.ToString(string format, System.IFormatProvider formatProvider) -> string
+~NuGet.Versioning.VersionRange.TryFormatter(string format, System.IFormatProvider formatProvider, out string formattedString) -> bool
+~NuGet.Versioning.VersionRange.VersionRange(NuGet.Versioning.NuGetVersion minVersion = null, bool includeMinVersion = true, NuGet.Versioning.NuGetVersion maxVersion = null, bool includeMaxVersion = false, NuGet.Versioning.FloatRange floatRange = null, string originalString = null) -> void
+~NuGet.Versioning.VersionRange.VersionRange(NuGet.Versioning.NuGetVersion minVersion) -> void
+~NuGet.Versioning.VersionRange.VersionRange(NuGet.Versioning.NuGetVersion minVersion, NuGet.Versioning.FloatRange floatRange) -> void
+~NuGet.Versioning.VersionRange.VersionRange(NuGet.Versioning.VersionRange range, NuGet.Versioning.FloatRange floatRange) -> void
 NuGet.Versioning.VersionRangeBase
-NuGet.Versioning.VersionRangeBase.Equals(NuGet.Versioning.VersionRangeBase other) -> bool
-NuGet.Versioning.VersionRangeBase.Equals(NuGet.Versioning.VersionRangeBase other, NuGet.Versioning.IVersionComparer versionComparer) -> bool
-NuGet.Versioning.VersionRangeBase.Equals(NuGet.Versioning.VersionRangeBase other, NuGet.Versioning.IVersionRangeComparer comparer) -> bool
-NuGet.Versioning.VersionRangeBase.Equals(NuGet.Versioning.VersionRangeBase other, NuGet.Versioning.VersionComparison versionComparison) -> bool
+~NuGet.Versioning.VersionRangeBase.Equals(NuGet.Versioning.VersionRangeBase other) -> bool
+~NuGet.Versioning.VersionRangeBase.Equals(NuGet.Versioning.VersionRangeBase other, NuGet.Versioning.IVersionComparer versionComparer) -> bool
+~NuGet.Versioning.VersionRangeBase.Equals(NuGet.Versioning.VersionRangeBase other, NuGet.Versioning.IVersionRangeComparer comparer) -> bool
+~NuGet.Versioning.VersionRangeBase.Equals(NuGet.Versioning.VersionRangeBase other, NuGet.Versioning.VersionComparison versionComparison) -> bool
 NuGet.Versioning.VersionRangeBase.HasLowerAndUpperBounds.get -> bool
 NuGet.Versioning.VersionRangeBase.HasLowerBound.get -> bool
 NuGet.Versioning.VersionRangeBase.HasPrereleaseBounds.get -> bool
 NuGet.Versioning.VersionRangeBase.HasUpperBound.get -> bool
 NuGet.Versioning.VersionRangeBase.IsMaxInclusive.get -> bool
 NuGet.Versioning.VersionRangeBase.IsMinInclusive.get -> bool
-NuGet.Versioning.VersionRangeBase.IsSubSetOrEqualTo(NuGet.Versioning.VersionRangeBase possibleSuperSet) -> bool
-NuGet.Versioning.VersionRangeBase.IsSubSetOrEqualTo(NuGet.Versioning.VersionRangeBase possibleSuperSet, NuGet.Versioning.IVersionComparer comparer) -> bool
-NuGet.Versioning.VersionRangeBase.MaxVersion.get -> NuGet.Versioning.NuGetVersion
-NuGet.Versioning.VersionRangeBase.MinVersion.get -> NuGet.Versioning.NuGetVersion
-NuGet.Versioning.VersionRangeBase.Satisfies(NuGet.Versioning.NuGetVersion version) -> bool
-NuGet.Versioning.VersionRangeBase.Satisfies(NuGet.Versioning.NuGetVersion version, NuGet.Versioning.IVersionComparer comparer) -> bool
-NuGet.Versioning.VersionRangeBase.Satisfies(NuGet.Versioning.NuGetVersion version, NuGet.Versioning.VersionComparison versionComparison) -> bool
-NuGet.Versioning.VersionRangeBase.VersionRangeBase(NuGet.Versioning.NuGetVersion minVersion = null, bool includeMinVersion = true, NuGet.Versioning.NuGetVersion maxVersion = null, bool includeMaxVersion = false) -> void
+~NuGet.Versioning.VersionRangeBase.IsSubSetOrEqualTo(NuGet.Versioning.VersionRangeBase possibleSuperSet) -> bool
+~NuGet.Versioning.VersionRangeBase.IsSubSetOrEqualTo(NuGet.Versioning.VersionRangeBase possibleSuperSet, NuGet.Versioning.IVersionComparer comparer) -> bool
+~NuGet.Versioning.VersionRangeBase.MaxVersion.get -> NuGet.Versioning.NuGetVersion
+~NuGet.Versioning.VersionRangeBase.MinVersion.get -> NuGet.Versioning.NuGetVersion
+~NuGet.Versioning.VersionRangeBase.Satisfies(NuGet.Versioning.NuGetVersion version) -> bool
+~NuGet.Versioning.VersionRangeBase.Satisfies(NuGet.Versioning.NuGetVersion version, NuGet.Versioning.IVersionComparer comparer) -> bool
+~NuGet.Versioning.VersionRangeBase.Satisfies(NuGet.Versioning.NuGetVersion version, NuGet.Versioning.VersionComparison versionComparison) -> bool
+~NuGet.Versioning.VersionRangeBase.VersionRangeBase(NuGet.Versioning.NuGetVersion minVersion = null, bool includeMinVersion = true, NuGet.Versioning.NuGetVersion maxVersion = null, bool includeMaxVersion = false) -> void
 NuGet.Versioning.VersionRangeComparer
-NuGet.Versioning.VersionRangeComparer.Equals(NuGet.Versioning.VersionRangeBase x, NuGet.Versioning.VersionRangeBase y) -> bool
-NuGet.Versioning.VersionRangeComparer.GetHashCode(NuGet.Versioning.VersionRangeBase obj) -> int
+~NuGet.Versioning.VersionRangeComparer.Equals(NuGet.Versioning.VersionRangeBase x, NuGet.Versioning.VersionRangeBase y) -> bool
+~NuGet.Versioning.VersionRangeComparer.GetHashCode(NuGet.Versioning.VersionRangeBase obj) -> int
 NuGet.Versioning.VersionRangeComparer.VersionRangeComparer() -> void
-NuGet.Versioning.VersionRangeComparer.VersionRangeComparer(NuGet.Versioning.IVersionComparer versionComparer) -> void
+~NuGet.Versioning.VersionRangeComparer.VersionRangeComparer(NuGet.Versioning.IVersionComparer versionComparer) -> void
 NuGet.Versioning.VersionRangeComparer.VersionRangeComparer(NuGet.Versioning.VersionComparison versionComparison) -> void
 NuGet.Versioning.VersionRangeFormatter
-NuGet.Versioning.VersionRangeFormatter.Format(string format, object arg, System.IFormatProvider formatProvider) -> string
-NuGet.Versioning.VersionRangeFormatter.GetFormat(System.Type formatType) -> object
+~NuGet.Versioning.VersionRangeFormatter.Format(string format, object arg, System.IFormatProvider formatProvider) -> string
+~NuGet.Versioning.VersionRangeFormatter.GetFormat(System.Type formatType) -> object
 NuGet.Versioning.VersionRangeFormatter.VersionRangeFormatter() -> void
-override NuGet.Versioning.FloatRange.Equals(object obj) -> bool
+~override NuGet.Versioning.FloatRange.Equals(object obj) -> bool
 override NuGet.Versioning.FloatRange.GetHashCode() -> int
-override NuGet.Versioning.FloatRange.ToString() -> string
-override NuGet.Versioning.NuGetVersion.ToString() -> string
-override NuGet.Versioning.SemanticVersion.Equals(object obj) -> bool
+~override NuGet.Versioning.FloatRange.ToString() -> string
+~override NuGet.Versioning.NuGetVersion.ToString() -> string
+~override NuGet.Versioning.SemanticVersion.Equals(object obj) -> bool
 override NuGet.Versioning.SemanticVersion.GetHashCode() -> int
-override NuGet.Versioning.SemanticVersion.ToString() -> string
-override NuGet.Versioning.SemanticVersionConverter.CanConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Type sourceType) -> bool
-override NuGet.Versioning.SemanticVersionConverter.CanConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Type destinationType) -> bool
-override NuGet.Versioning.SemanticVersionConverter.ConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value) -> object
-override NuGet.Versioning.SemanticVersionConverter.ConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, System.Type destinationType) -> object
-override NuGet.Versioning.VersionRange.Equals(object obj) -> bool
+~override NuGet.Versioning.SemanticVersion.ToString() -> string
+~override NuGet.Versioning.SemanticVersionConverter.CanConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Type sourceType) -> bool
+~override NuGet.Versioning.SemanticVersionConverter.CanConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Type destinationType) -> bool
+~override NuGet.Versioning.SemanticVersionConverter.ConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value) -> object
+~override NuGet.Versioning.SemanticVersionConverter.ConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, System.Type destinationType) -> object
+~override NuGet.Versioning.VersionRange.Equals(object obj) -> bool
 override NuGet.Versioning.VersionRange.GetHashCode() -> int
-override NuGet.Versioning.VersionRange.ToString() -> string
-override NuGet.Versioning.VersionRangeBase.Equals(object obj) -> bool
+~override NuGet.Versioning.VersionRange.ToString() -> string
+~override NuGet.Versioning.VersionRangeBase.Equals(object obj) -> bool
 override NuGet.Versioning.VersionRangeBase.GetHashCode() -> int
-static NuGet.Versioning.FloatRange.Parse(string versionString) -> NuGet.Versioning.FloatRange
-static NuGet.Versioning.FloatRange.TryParse(string versionString, out NuGet.Versioning.FloatRange range) -> bool
-static NuGet.Versioning.NuGetVersion.Parse(string value) -> NuGet.Versioning.NuGetVersion
-static NuGet.Versioning.NuGetVersion.TryParse(string value, out NuGet.Versioning.NuGetVersion version) -> bool
-static NuGet.Versioning.NuGetVersion.TryParseStrict(string value, out NuGet.Versioning.NuGetVersion version) -> bool
-static NuGet.Versioning.SemanticVersion.Parse(string value) -> NuGet.Versioning.SemanticVersion
-static NuGet.Versioning.SemanticVersion.TryParse(string value, out NuGet.Versioning.SemanticVersion version) -> bool
-static NuGet.Versioning.SemanticVersion.operator !=(NuGet.Versioning.SemanticVersion version1, NuGet.Versioning.SemanticVersion version2) -> bool
-static NuGet.Versioning.SemanticVersion.operator <(NuGet.Versioning.SemanticVersion version1, NuGet.Versioning.SemanticVersion version2) -> bool
-static NuGet.Versioning.SemanticVersion.operator <=(NuGet.Versioning.SemanticVersion version1, NuGet.Versioning.SemanticVersion version2) -> bool
-static NuGet.Versioning.SemanticVersion.operator ==(NuGet.Versioning.SemanticVersion version1, NuGet.Versioning.SemanticVersion version2) -> bool
-static NuGet.Versioning.SemanticVersion.operator >(NuGet.Versioning.SemanticVersion version1, NuGet.Versioning.SemanticVersion version2) -> bool
-static NuGet.Versioning.SemanticVersion.operator >=(NuGet.Versioning.SemanticVersion version1, NuGet.Versioning.SemanticVersion version2) -> bool
-static NuGet.Versioning.VersionComparer.Compare(NuGet.Versioning.SemanticVersion version1, NuGet.Versioning.SemanticVersion version2, NuGet.Versioning.VersionComparison versionComparison) -> int
-static NuGet.Versioning.VersionExtensions.FindBestMatch(this System.Collections.Generic.IEnumerable<NuGet.Versioning.INuGetVersionable> items, NuGet.Versioning.VersionRange ideal) -> NuGet.Versioning.INuGetVersionable
-static NuGet.Versioning.VersionExtensions.FindBestMatch<T>(this System.Collections.Generic.IEnumerable<T> items, NuGet.Versioning.VersionRange ideal, System.Func<T, NuGet.Versioning.NuGetVersion> selector) -> T
-static NuGet.Versioning.VersionRange.Combine(System.Collections.Generic.IEnumerable<NuGet.Versioning.NuGetVersion> versions) -> NuGet.Versioning.VersionRange
-static NuGet.Versioning.VersionRange.Combine(System.Collections.Generic.IEnumerable<NuGet.Versioning.NuGetVersion> versions, NuGet.Versioning.IVersionComparer comparer) -> NuGet.Versioning.VersionRange
-static NuGet.Versioning.VersionRange.Combine(System.Collections.Generic.IEnumerable<NuGet.Versioning.VersionRange> ranges) -> NuGet.Versioning.VersionRange
-static NuGet.Versioning.VersionRange.Combine(System.Collections.Generic.IEnumerable<NuGet.Versioning.VersionRange> ranges, NuGet.Versioning.IVersionComparer comparer) -> NuGet.Versioning.VersionRange
-static NuGet.Versioning.VersionRange.CommonSubSet(System.Collections.Generic.IEnumerable<NuGet.Versioning.VersionRange> ranges) -> NuGet.Versioning.VersionRange
-static NuGet.Versioning.VersionRange.CommonSubSet(System.Collections.Generic.IEnumerable<NuGet.Versioning.VersionRange> ranges, NuGet.Versioning.IVersionComparer comparer) -> NuGet.Versioning.VersionRange
-static NuGet.Versioning.VersionRange.Parse(string value) -> NuGet.Versioning.VersionRange
-static NuGet.Versioning.VersionRange.Parse(string value, bool allowFloating) -> NuGet.Versioning.VersionRange
-static NuGet.Versioning.VersionRange.TryParse(string value, bool allowFloating, out NuGet.Versioning.VersionRange versionRange) -> bool
-static NuGet.Versioning.VersionRange.TryParse(string value, out NuGet.Versioning.VersionRange versionRange) -> bool
-static NuGet.Versioning.VersionRangeComparer.Default.get -> NuGet.Versioning.IVersionRangeComparer
-static NuGet.Versioning.VersionRangeComparer.VersionRelease.get -> NuGet.Versioning.IVersionRangeComparer
-static readonly NuGet.Versioning.VersionComparer.Default -> NuGet.Versioning.IVersionComparer
-static readonly NuGet.Versioning.VersionComparer.Version -> NuGet.Versioning.IVersionComparer
-static readonly NuGet.Versioning.VersionComparer.VersionRelease -> NuGet.Versioning.IVersionComparer
-static readonly NuGet.Versioning.VersionComparer.VersionReleaseMetadata -> NuGet.Versioning.IVersionComparer
-static readonly NuGet.Versioning.VersionFormatter.Instance -> NuGet.Versioning.VersionFormatter
-static readonly NuGet.Versioning.VersionRange.All -> NuGet.Versioning.VersionRange
-static readonly NuGet.Versioning.VersionRange.AllFloating -> NuGet.Versioning.VersionRange
-static readonly NuGet.Versioning.VersionRange.AllStable -> NuGet.Versioning.VersionRange
-static readonly NuGet.Versioning.VersionRange.AllStableFloating -> NuGet.Versioning.VersionRange
-static readonly NuGet.Versioning.VersionRange.None -> NuGet.Versioning.VersionRange
-static readonly NuGet.Versioning.VersionRangeFormatter.Instance -> NuGet.Versioning.VersionRangeFormatter
+~static NuGet.Versioning.FloatRange.Parse(string versionString) -> NuGet.Versioning.FloatRange
+~static NuGet.Versioning.FloatRange.TryParse(string versionString, out NuGet.Versioning.FloatRange range) -> bool
+~static NuGet.Versioning.NuGetVersion.Parse(string value) -> NuGet.Versioning.NuGetVersion
+~static NuGet.Versioning.NuGetVersion.TryParse(string value, out NuGet.Versioning.NuGetVersion version) -> bool
+~static NuGet.Versioning.NuGetVersion.TryParseStrict(string value, out NuGet.Versioning.NuGetVersion version) -> bool
+~static NuGet.Versioning.SemanticVersion.Parse(string value) -> NuGet.Versioning.SemanticVersion
+~static NuGet.Versioning.SemanticVersion.TryParse(string value, out NuGet.Versioning.SemanticVersion version) -> bool
+~static NuGet.Versioning.SemanticVersion.operator !=(NuGet.Versioning.SemanticVersion version1, NuGet.Versioning.SemanticVersion version2) -> bool
+~static NuGet.Versioning.SemanticVersion.operator <(NuGet.Versioning.SemanticVersion version1, NuGet.Versioning.SemanticVersion version2) -> bool
+~static NuGet.Versioning.SemanticVersion.operator <=(NuGet.Versioning.SemanticVersion version1, NuGet.Versioning.SemanticVersion version2) -> bool
+~static NuGet.Versioning.SemanticVersion.operator ==(NuGet.Versioning.SemanticVersion version1, NuGet.Versioning.SemanticVersion version2) -> bool
+~static NuGet.Versioning.SemanticVersion.operator >(NuGet.Versioning.SemanticVersion version1, NuGet.Versioning.SemanticVersion version2) -> bool
+~static NuGet.Versioning.SemanticVersion.operator >=(NuGet.Versioning.SemanticVersion version1, NuGet.Versioning.SemanticVersion version2) -> bool
+~static NuGet.Versioning.VersionComparer.Compare(NuGet.Versioning.SemanticVersion version1, NuGet.Versioning.SemanticVersion version2, NuGet.Versioning.VersionComparison versionComparison) -> int
+~static NuGet.Versioning.VersionExtensions.FindBestMatch(this System.Collections.Generic.IEnumerable<NuGet.Versioning.INuGetVersionable> items, NuGet.Versioning.VersionRange ideal) -> NuGet.Versioning.INuGetVersionable
+~static NuGet.Versioning.VersionExtensions.FindBestMatch<T>(this System.Collections.Generic.IEnumerable<T> items, NuGet.Versioning.VersionRange ideal, System.Func<T, NuGet.Versioning.NuGetVersion> selector) -> T
+~static NuGet.Versioning.VersionRange.Combine(System.Collections.Generic.IEnumerable<NuGet.Versioning.NuGetVersion> versions) -> NuGet.Versioning.VersionRange
+~static NuGet.Versioning.VersionRange.Combine(System.Collections.Generic.IEnumerable<NuGet.Versioning.NuGetVersion> versions, NuGet.Versioning.IVersionComparer comparer) -> NuGet.Versioning.VersionRange
+~static NuGet.Versioning.VersionRange.Combine(System.Collections.Generic.IEnumerable<NuGet.Versioning.VersionRange> ranges) -> NuGet.Versioning.VersionRange
+~static NuGet.Versioning.VersionRange.Combine(System.Collections.Generic.IEnumerable<NuGet.Versioning.VersionRange> ranges, NuGet.Versioning.IVersionComparer comparer) -> NuGet.Versioning.VersionRange
+~static NuGet.Versioning.VersionRange.CommonSubSet(System.Collections.Generic.IEnumerable<NuGet.Versioning.VersionRange> ranges) -> NuGet.Versioning.VersionRange
+~static NuGet.Versioning.VersionRange.CommonSubSet(System.Collections.Generic.IEnumerable<NuGet.Versioning.VersionRange> ranges, NuGet.Versioning.IVersionComparer comparer) -> NuGet.Versioning.VersionRange
+~static NuGet.Versioning.VersionRange.Parse(string value) -> NuGet.Versioning.VersionRange
+~static NuGet.Versioning.VersionRange.Parse(string value, bool allowFloating) -> NuGet.Versioning.VersionRange
+~static NuGet.Versioning.VersionRange.TryParse(string value, bool allowFloating, out NuGet.Versioning.VersionRange versionRange) -> bool
+~static NuGet.Versioning.VersionRange.TryParse(string value, out NuGet.Versioning.VersionRange versionRange) -> bool
+~static NuGet.Versioning.VersionRangeComparer.Default.get -> NuGet.Versioning.IVersionRangeComparer
+~static NuGet.Versioning.VersionRangeComparer.VersionRelease.get -> NuGet.Versioning.IVersionRangeComparer
+~static readonly NuGet.Versioning.VersionComparer.Default -> NuGet.Versioning.IVersionComparer
+~static readonly NuGet.Versioning.VersionComparer.Version -> NuGet.Versioning.IVersionComparer
+~static readonly NuGet.Versioning.VersionComparer.VersionRelease -> NuGet.Versioning.IVersionComparer
+~static readonly NuGet.Versioning.VersionComparer.VersionReleaseMetadata -> NuGet.Versioning.IVersionComparer
+~static readonly NuGet.Versioning.VersionFormatter.Instance -> NuGet.Versioning.VersionFormatter
+~static readonly NuGet.Versioning.VersionRange.All -> NuGet.Versioning.VersionRange
+~static readonly NuGet.Versioning.VersionRange.AllFloating -> NuGet.Versioning.VersionRange
+~static readonly NuGet.Versioning.VersionRange.AllStable -> NuGet.Versioning.VersionRange
+~static readonly NuGet.Versioning.VersionRange.AllStableFloating -> NuGet.Versioning.VersionRange
+~static readonly NuGet.Versioning.VersionRange.None -> NuGet.Versioning.VersionRange
+~static readonly NuGet.Versioning.VersionRangeFormatter.Instance -> NuGet.Versioning.VersionRangeFormatter
 virtual NuGet.Versioning.NuGetVersion.IsLegacyVersion.get -> bool
-virtual NuGet.Versioning.SemanticVersion.CompareTo(NuGet.Versioning.SemanticVersion other) -> int
-virtual NuGet.Versioning.SemanticVersion.CompareTo(NuGet.Versioning.SemanticVersion other, NuGet.Versioning.VersionComparison versionComparison) -> int
-virtual NuGet.Versioning.SemanticVersion.CompareTo(object obj) -> int
-virtual NuGet.Versioning.SemanticVersion.Equals(NuGet.Versioning.SemanticVersion other) -> bool
-virtual NuGet.Versioning.SemanticVersion.Equals(NuGet.Versioning.SemanticVersion other, NuGet.Versioning.VersionComparison versionComparison) -> bool
+~virtual NuGet.Versioning.SemanticVersion.CompareTo(NuGet.Versioning.SemanticVersion other) -> int
+~virtual NuGet.Versioning.SemanticVersion.CompareTo(NuGet.Versioning.SemanticVersion other, NuGet.Versioning.VersionComparison versionComparison) -> int
+~virtual NuGet.Versioning.SemanticVersion.CompareTo(object obj) -> int
+~virtual NuGet.Versioning.SemanticVersion.Equals(NuGet.Versioning.SemanticVersion other) -> bool
+~virtual NuGet.Versioning.SemanticVersion.Equals(NuGet.Versioning.SemanticVersion other, NuGet.Versioning.VersionComparison versionComparison) -> bool
 virtual NuGet.Versioning.SemanticVersion.HasMetadata.get -> bool
 virtual NuGet.Versioning.SemanticVersion.IsPrerelease.get -> bool
-virtual NuGet.Versioning.SemanticVersion.Metadata.get -> string
-virtual NuGet.Versioning.SemanticVersion.ToFullString() -> string
-virtual NuGet.Versioning.SemanticVersion.ToNormalizedString() -> string
-virtual NuGet.Versioning.SemanticVersion.ToString(string format, System.IFormatProvider formatProvider) -> string
-virtual NuGet.Versioning.VersionRange.ToLegacyShortString() -> string
-virtual NuGet.Versioning.VersionRange.ToLegacyString() -> string
-virtual NuGet.Versioning.VersionRange.ToNormalizedString() -> string
-virtual NuGet.Versioning.VersionRange.ToShortString() -> string
+~virtual NuGet.Versioning.SemanticVersion.Metadata.get -> string
+~virtual NuGet.Versioning.SemanticVersion.ToFullString() -> string
+~virtual NuGet.Versioning.SemanticVersion.ToNormalizedString() -> string
+~virtual NuGet.Versioning.SemanticVersion.ToString(string format, System.IFormatProvider formatProvider) -> string
+~virtual NuGet.Versioning.VersionRange.ToLegacyShortString() -> string
+~virtual NuGet.Versioning.VersionRange.ToLegacyString() -> string
+~virtual NuGet.Versioning.VersionRange.ToNormalizedString() -> string
+~virtual NuGet.Versioning.VersionRange.ToShortString() -> string

@@ -1,147 +1,148 @@
+#nullable enable
 NuGet.IFileSystem
 NuGet.IPackage
-NuGet.IPackage.AssemblyReferences.get -> System.Collections.Generic.IEnumerable<NuGet.IPackageAssemblyReference>
-NuGet.IPackage.ExtractContents(NuGet.IFileSystem fileSystem, string extractPath) -> void
-NuGet.IPackage.GetFiles() -> System.Collections.Generic.IEnumerable<NuGet.IPackageFile>
-NuGet.IPackage.GetStream() -> System.IO.Stream
-NuGet.IPackage.GetSupportedFrameworks() -> System.Collections.Generic.IEnumerable<System.Runtime.Versioning.FrameworkName>
+~NuGet.IPackage.AssemblyReferences.get -> System.Collections.Generic.IEnumerable<NuGet.IPackageAssemblyReference>
+~NuGet.IPackage.ExtractContents(NuGet.IFileSystem fileSystem, string extractPath) -> void
+~NuGet.IPackage.GetFiles() -> System.Collections.Generic.IEnumerable<NuGet.IPackageFile>
+~NuGet.IPackage.GetStream() -> System.IO.Stream
+~NuGet.IPackage.GetSupportedFrameworks() -> System.Collections.Generic.IEnumerable<System.Runtime.Versioning.FrameworkName>
 NuGet.IPackage.IsAbsoluteLatestVersion.get -> bool
 NuGet.IPackage.IsLatestVersion.get -> bool
 NuGet.IPackage.Listed.get -> bool
 NuGet.IPackage.Published.get -> System.DateTimeOffset?
 NuGet.IPackageAssemblyReference
-NuGet.IPackageAssemblyReference.Name.get -> string
+~NuGet.IPackageAssemblyReference.Name.get -> string
 NuGet.IPackageFile
-NuGet.IPackageFile.EffectivePath.get -> string
-NuGet.IPackageFile.GetStream() -> System.IO.Stream
-NuGet.IPackageFile.Path.get -> string
-NuGet.IPackageFile.TargetFramework.get -> System.Runtime.Versioning.FrameworkName
+~NuGet.IPackageFile.EffectivePath.get -> string
+~NuGet.IPackageFile.GetStream() -> System.IO.Stream
+~NuGet.IPackageFile.Path.get -> string
+~NuGet.IPackageFile.TargetFramework.get -> System.Runtime.Versioning.FrameworkName
 NuGet.IPackageRepository
-NuGet.IPackageRepository.AddPackage(NuGet.IPackage package) -> void
-NuGet.IPackageRepository.GetPackages() -> System.Linq.IQueryable<NuGet.IPackage>
+~NuGet.IPackageRepository.AddPackage(NuGet.IPackage package) -> void
+~NuGet.IPackageRepository.GetPackages() -> System.Linq.IQueryable<NuGet.IPackage>
 NuGet.IPackageRepository.PackageSaveMode.get -> NuGet.PackageSaveModes
 NuGet.IPackageRepository.PackageSaveMode.set -> void
-NuGet.IPackageRepository.RemovePackage(NuGet.IPackage package) -> void
-NuGet.IPackageRepository.Source.get -> string
+~NuGet.IPackageRepository.RemovePackage(NuGet.IPackage package) -> void
+~NuGet.IPackageRepository.Source.get -> string
 NuGet.IPackageRepository.SupportsPrereleasePackages.get -> bool
 NuGet.PackageSaveModes
 NuGet.PackageSaveModes.None = 0 -> NuGet.PackageSaveModes
 NuGet.PackageSaveModes.Nupkg = 2 -> NuGet.PackageSaveModes
 NuGet.PackageSaveModes.Nuspec = 1 -> NuGet.PackageSaveModes
 NuGet.SemanticVersion
-NuGet.SemanticVersion.CompareTo(NuGet.SemanticVersion other) -> int
-NuGet.SemanticVersion.CompareTo(object obj) -> int
-NuGet.SemanticVersion.Equals(NuGet.SemanticVersion other) -> bool
-NuGet.SemanticVersion.GetOriginalVersionComponents() -> string[]
-NuGet.SemanticVersion.SemanticVersion(System.Version version) -> void
-NuGet.SemanticVersion.SemanticVersion(System.Version version, string specialVersion) -> void
+~NuGet.SemanticVersion.CompareTo(NuGet.SemanticVersion other) -> int
+~NuGet.SemanticVersion.CompareTo(object obj) -> int
+~NuGet.SemanticVersion.Equals(NuGet.SemanticVersion other) -> bool
+~NuGet.SemanticVersion.GetOriginalVersionComponents() -> string[]
+~NuGet.SemanticVersion.SemanticVersion(System.Version version) -> void
+~NuGet.SemanticVersion.SemanticVersion(System.Version version, string specialVersion) -> void
 NuGet.SemanticVersion.SemanticVersion(int major, int minor, int build, int revision) -> void
-NuGet.SemanticVersion.SemanticVersion(int major, int minor, int build, string specialVersion) -> void
-NuGet.SemanticVersion.SemanticVersion(string version) -> void
-NuGet.SemanticVersion.SpecialVersion.get -> string
-NuGet.SemanticVersion.ToNormalizedString() -> string
-NuGet.SemanticVersion.Version.get -> System.Version
+~NuGet.SemanticVersion.SemanticVersion(int major, int minor, int build, string specialVersion) -> void
+~NuGet.SemanticVersion.SemanticVersion(string version) -> void
+~NuGet.SemanticVersion.SpecialVersion.get -> string
+~NuGet.SemanticVersion.ToNormalizedString() -> string
+~NuGet.SemanticVersion.Version.get -> System.Version
 NuGet.SolutionRestoreManager.IVsProjectProperties
 NuGet.SolutionRestoreManager.IVsProjectProperties.Count.get -> int
-NuGet.SolutionRestoreManager.IVsProjectProperties.Item(object index) -> NuGet.SolutionRestoreManager.IVsProjectProperty
+~NuGet.SolutionRestoreManager.IVsProjectProperties.Item(object index) -> NuGet.SolutionRestoreManager.IVsProjectProperty
 NuGet.SolutionRestoreManager.IVsProjectProperty
-NuGet.SolutionRestoreManager.IVsProjectProperty.Name.get -> string
-NuGet.SolutionRestoreManager.IVsProjectProperty.Value.get -> string
+~NuGet.SolutionRestoreManager.IVsProjectProperty.Name.get -> string
+~NuGet.SolutionRestoreManager.IVsProjectProperty.Value.get -> string
 NuGet.SolutionRestoreManager.IVsProjectRestoreInfo
-NuGet.SolutionRestoreManager.IVsProjectRestoreInfo.BaseIntermediatePath.get -> string
-NuGet.SolutionRestoreManager.IVsProjectRestoreInfo.OriginalTargetFrameworks.get -> string
-NuGet.SolutionRestoreManager.IVsProjectRestoreInfo.TargetFrameworks.get -> NuGet.SolutionRestoreManager.IVsTargetFrameworks
-NuGet.SolutionRestoreManager.IVsProjectRestoreInfo.ToolReferences.get -> NuGet.SolutionRestoreManager.IVsReferenceItems
+~NuGet.SolutionRestoreManager.IVsProjectRestoreInfo.BaseIntermediatePath.get -> string
+~NuGet.SolutionRestoreManager.IVsProjectRestoreInfo.OriginalTargetFrameworks.get -> string
+~NuGet.SolutionRestoreManager.IVsProjectRestoreInfo.TargetFrameworks.get -> NuGet.SolutionRestoreManager.IVsTargetFrameworks
+~NuGet.SolutionRestoreManager.IVsProjectRestoreInfo.ToolReferences.get -> NuGet.SolutionRestoreManager.IVsReferenceItems
 NuGet.SolutionRestoreManager.IVsProjectRestoreInfo2
-NuGet.SolutionRestoreManager.IVsProjectRestoreInfo2.BaseIntermediatePath.get -> string
-NuGet.SolutionRestoreManager.IVsProjectRestoreInfo2.OriginalTargetFrameworks.get -> string
-NuGet.SolutionRestoreManager.IVsProjectRestoreInfo2.TargetFrameworks.get -> NuGet.SolutionRestoreManager.IVsTargetFrameworks2
-NuGet.SolutionRestoreManager.IVsProjectRestoreInfo2.ToolReferences.get -> NuGet.SolutionRestoreManager.IVsReferenceItems
+~NuGet.SolutionRestoreManager.IVsProjectRestoreInfo2.BaseIntermediatePath.get -> string
+~NuGet.SolutionRestoreManager.IVsProjectRestoreInfo2.OriginalTargetFrameworks.get -> string
+~NuGet.SolutionRestoreManager.IVsProjectRestoreInfo2.TargetFrameworks.get -> NuGet.SolutionRestoreManager.IVsTargetFrameworks2
+~NuGet.SolutionRestoreManager.IVsProjectRestoreInfo2.ToolReferences.get -> NuGet.SolutionRestoreManager.IVsReferenceItems
 NuGet.SolutionRestoreManager.IVsProjectRestoreInfoSource
 NuGet.SolutionRestoreManager.IVsProjectRestoreInfoSource.HasPendingNomination.get -> bool
-NuGet.SolutionRestoreManager.IVsProjectRestoreInfoSource.Name.get -> string
-NuGet.SolutionRestoreManager.IVsProjectRestoreInfoSource.WhenNominated(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task
+~NuGet.SolutionRestoreManager.IVsProjectRestoreInfoSource.Name.get -> string
+~NuGet.SolutionRestoreManager.IVsProjectRestoreInfoSource.WhenNominated(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task
 NuGet.SolutionRestoreManager.IVsReferenceItem
-NuGet.SolutionRestoreManager.IVsReferenceItem.Name.get -> string
-NuGet.SolutionRestoreManager.IVsReferenceItem.Properties.get -> NuGet.SolutionRestoreManager.IVsReferenceProperties
+~NuGet.SolutionRestoreManager.IVsReferenceItem.Name.get -> string
+~NuGet.SolutionRestoreManager.IVsReferenceItem.Properties.get -> NuGet.SolutionRestoreManager.IVsReferenceProperties
 NuGet.SolutionRestoreManager.IVsReferenceItems
 NuGet.SolutionRestoreManager.IVsReferenceItems.Count.get -> int
-NuGet.SolutionRestoreManager.IVsReferenceItems.Item(object index) -> NuGet.SolutionRestoreManager.IVsReferenceItem
+~NuGet.SolutionRestoreManager.IVsReferenceItems.Item(object index) -> NuGet.SolutionRestoreManager.IVsReferenceItem
 NuGet.SolutionRestoreManager.IVsReferenceProperties
 NuGet.SolutionRestoreManager.IVsReferenceProperties.Count.get -> int
-NuGet.SolutionRestoreManager.IVsReferenceProperties.Item(object index) -> NuGet.SolutionRestoreManager.IVsReferenceProperty
+~NuGet.SolutionRestoreManager.IVsReferenceProperties.Item(object index) -> NuGet.SolutionRestoreManager.IVsReferenceProperty
 NuGet.SolutionRestoreManager.IVsReferenceProperty
-NuGet.SolutionRestoreManager.IVsReferenceProperty.Name.get -> string
-NuGet.SolutionRestoreManager.IVsReferenceProperty.Value.get -> string
+~NuGet.SolutionRestoreManager.IVsReferenceProperty.Name.get -> string
+~NuGet.SolutionRestoreManager.IVsReferenceProperty.Value.get -> string
 NuGet.SolutionRestoreManager.IVsSolutionRestoreService
-NuGet.SolutionRestoreManager.IVsSolutionRestoreService.CurrentRestoreOperation.get -> System.Threading.Tasks.Task<bool>
-NuGet.SolutionRestoreManager.IVsSolutionRestoreService.NominateProjectAsync(string projectUniqueName, NuGet.SolutionRestoreManager.IVsProjectRestoreInfo projectRestoreInfo, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
+~NuGet.SolutionRestoreManager.IVsSolutionRestoreService.CurrentRestoreOperation.get -> System.Threading.Tasks.Task<bool>
+~NuGet.SolutionRestoreManager.IVsSolutionRestoreService.NominateProjectAsync(string projectUniqueName, NuGet.SolutionRestoreManager.IVsProjectRestoreInfo projectRestoreInfo, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
 NuGet.SolutionRestoreManager.IVsSolutionRestoreService2
-NuGet.SolutionRestoreManager.IVsSolutionRestoreService2.NominateProjectAsync(string projectUniqueName, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
+~NuGet.SolutionRestoreManager.IVsSolutionRestoreService2.NominateProjectAsync(string projectUniqueName, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
 NuGet.SolutionRestoreManager.IVsSolutionRestoreService3
-NuGet.SolutionRestoreManager.IVsSolutionRestoreService3.CurrentRestoreOperation.get -> System.Threading.Tasks.Task<bool>
-NuGet.SolutionRestoreManager.IVsSolutionRestoreService3.NominateProjectAsync(string projectUniqueName, NuGet.SolutionRestoreManager.IVsProjectRestoreInfo2 projectRestoreInfo, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
+~NuGet.SolutionRestoreManager.IVsSolutionRestoreService3.CurrentRestoreOperation.get -> System.Threading.Tasks.Task<bool>
+~NuGet.SolutionRestoreManager.IVsSolutionRestoreService3.NominateProjectAsync(string projectUniqueName, NuGet.SolutionRestoreManager.IVsProjectRestoreInfo2 projectRestoreInfo, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
 NuGet.SolutionRestoreManager.IVsSolutionRestoreService4
-NuGet.SolutionRestoreManager.IVsSolutionRestoreService4.RegisterRestoreInfoSourceAsync(NuGet.SolutionRestoreManager.IVsProjectRestoreInfoSource restoreInfoSource, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task
+~NuGet.SolutionRestoreManager.IVsSolutionRestoreService4.RegisterRestoreInfoSourceAsync(NuGet.SolutionRestoreManager.IVsProjectRestoreInfoSource restoreInfoSource, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task
 NuGet.SolutionRestoreManager.IVsSolutionRestoreStatusProvider
-NuGet.SolutionRestoreManager.IVsSolutionRestoreStatusProvider.IsRestoreCompleteAsync(System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
+~NuGet.SolutionRestoreManager.IVsSolutionRestoreStatusProvider.IsRestoreCompleteAsync(System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
 NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo
-NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo.PackageReferences.get -> NuGet.SolutionRestoreManager.IVsReferenceItems
-NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo.ProjectReferences.get -> NuGet.SolutionRestoreManager.IVsReferenceItems
-NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo.Properties.get -> NuGet.SolutionRestoreManager.IVsProjectProperties
-NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo.TargetFrameworkMoniker.get -> string
+~NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo.PackageReferences.get -> NuGet.SolutionRestoreManager.IVsReferenceItems
+~NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo.ProjectReferences.get -> NuGet.SolutionRestoreManager.IVsReferenceItems
+~NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo.Properties.get -> NuGet.SolutionRestoreManager.IVsProjectProperties
+~NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo.TargetFrameworkMoniker.get -> string
 NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo2
-NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo2.FrameworkReferences.get -> NuGet.SolutionRestoreManager.IVsReferenceItems
-NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo2.PackageDownloads.get -> NuGet.SolutionRestoreManager.IVsReferenceItems
+~NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo2.FrameworkReferences.get -> NuGet.SolutionRestoreManager.IVsReferenceItems
+~NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo2.PackageDownloads.get -> NuGet.SolutionRestoreManager.IVsReferenceItems
 NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo3
-NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo3.CentralPackageVersions.get -> NuGet.SolutionRestoreManager.IVsReferenceItems
+~NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo3.CentralPackageVersions.get -> NuGet.SolutionRestoreManager.IVsReferenceItems
 NuGet.SolutionRestoreManager.IVsTargetFrameworks
 NuGet.SolutionRestoreManager.IVsTargetFrameworks.Count.get -> int
-NuGet.SolutionRestoreManager.IVsTargetFrameworks.Item(object index) -> NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo
+~NuGet.SolutionRestoreManager.IVsTargetFrameworks.Item(object index) -> NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo
 NuGet.SolutionRestoreManager.IVsTargetFrameworks2
 NuGet.SolutionRestoreManager.IVsTargetFrameworks2.Count.get -> int
-NuGet.SolutionRestoreManager.IVsTargetFrameworks2.Item(object index) -> NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo2
+~NuGet.SolutionRestoreManager.IVsTargetFrameworks2.Item(object index) -> NuGet.SolutionRestoreManager.IVsTargetFrameworkInfo2
 NuGet.VisualStudio.IRegistryKey
 NuGet.VisualStudio.IRegistryKey.Close() -> void
-NuGet.VisualStudio.IRegistryKey.GetValue(string name) -> object
-NuGet.VisualStudio.IRegistryKey.OpenSubKey(string name) -> NuGet.VisualStudio.IRegistryKey
+~NuGet.VisualStudio.IRegistryKey.GetValue(string name) -> object
+~NuGet.VisualStudio.IRegistryKey.OpenSubKey(string name) -> NuGet.VisualStudio.IRegistryKey
 NuGet.VisualStudio.IVsCredentialProvider
-NuGet.VisualStudio.IVsCredentialProvider.GetCredentialsAsync(System.Uri uri, System.Net.IWebProxy proxy, bool isProxyRequest, bool isRetry, bool nonInteractive, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Net.ICredentials>
+~NuGet.VisualStudio.IVsCredentialProvider.GetCredentialsAsync(System.Uri uri, System.Net.IWebProxy proxy, bool isProxyRequest, bool isRetry, bool nonInteractive, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Net.ICredentials>
 NuGet.VisualStudio.IVsFrameworkCompatibility
-NuGet.VisualStudio.IVsFrameworkCompatibility.GetFrameworksSupportingNetStandard(System.Runtime.Versioning.FrameworkName frameworkName) -> System.Collections.Generic.IEnumerable<System.Runtime.Versioning.FrameworkName>
-NuGet.VisualStudio.IVsFrameworkCompatibility.GetNearest(System.Runtime.Versioning.FrameworkName targetFramework, System.Collections.Generic.IEnumerable<System.Runtime.Versioning.FrameworkName> frameworks) -> System.Runtime.Versioning.FrameworkName
-NuGet.VisualStudio.IVsFrameworkCompatibility.GetNetStandardFrameworks() -> System.Collections.Generic.IEnumerable<System.Runtime.Versioning.FrameworkName>
+~NuGet.VisualStudio.IVsFrameworkCompatibility.GetFrameworksSupportingNetStandard(System.Runtime.Versioning.FrameworkName frameworkName) -> System.Collections.Generic.IEnumerable<System.Runtime.Versioning.FrameworkName>
+~NuGet.VisualStudio.IVsFrameworkCompatibility.GetNearest(System.Runtime.Versioning.FrameworkName targetFramework, System.Collections.Generic.IEnumerable<System.Runtime.Versioning.FrameworkName> frameworks) -> System.Runtime.Versioning.FrameworkName
+~NuGet.VisualStudio.IVsFrameworkCompatibility.GetNetStandardFrameworks() -> System.Collections.Generic.IEnumerable<System.Runtime.Versioning.FrameworkName>
 NuGet.VisualStudio.IVsFrameworkCompatibility2
-NuGet.VisualStudio.IVsFrameworkCompatibility2.GetNearest(System.Runtime.Versioning.FrameworkName targetFramework, System.Collections.Generic.IEnumerable<System.Runtime.Versioning.FrameworkName> fallbackTargetFrameworks, System.Collections.Generic.IEnumerable<System.Runtime.Versioning.FrameworkName> frameworks) -> System.Runtime.Versioning.FrameworkName
+~NuGet.VisualStudio.IVsFrameworkCompatibility2.GetNearest(System.Runtime.Versioning.FrameworkName targetFramework, System.Collections.Generic.IEnumerable<System.Runtime.Versioning.FrameworkName> fallbackTargetFrameworks, System.Collections.Generic.IEnumerable<System.Runtime.Versioning.FrameworkName> frameworks) -> System.Runtime.Versioning.FrameworkName
 NuGet.VisualStudio.IVsFrameworkCompatibility3
-NuGet.VisualStudio.IVsFrameworkCompatibility3.GetNearest(NuGet.VisualStudio.IVsNuGetFramework targetFramework, System.Collections.Generic.IEnumerable<NuGet.VisualStudio.IVsNuGetFramework> fallbackTargetFrameworks, System.Collections.Generic.IEnumerable<NuGet.VisualStudio.IVsNuGetFramework> frameworks) -> NuGet.VisualStudio.IVsNuGetFramework
-NuGet.VisualStudio.IVsFrameworkCompatibility3.GetNearest(NuGet.VisualStudio.IVsNuGetFramework targetFramework, System.Collections.Generic.IEnumerable<NuGet.VisualStudio.IVsNuGetFramework> frameworks) -> NuGet.VisualStudio.IVsNuGetFramework
+~NuGet.VisualStudio.IVsFrameworkCompatibility3.GetNearest(NuGet.VisualStudio.IVsNuGetFramework targetFramework, System.Collections.Generic.IEnumerable<NuGet.VisualStudio.IVsNuGetFramework> fallbackTargetFrameworks, System.Collections.Generic.IEnumerable<NuGet.VisualStudio.IVsNuGetFramework> frameworks) -> NuGet.VisualStudio.IVsNuGetFramework
+~NuGet.VisualStudio.IVsFrameworkCompatibility3.GetNearest(NuGet.VisualStudio.IVsNuGetFramework targetFramework, System.Collections.Generic.IEnumerable<NuGet.VisualStudio.IVsNuGetFramework> frameworks) -> NuGet.VisualStudio.IVsNuGetFramework
 NuGet.VisualStudio.IVsFrameworkParser
-NuGet.VisualStudio.IVsFrameworkParser.GetShortFrameworkName(System.Runtime.Versioning.FrameworkName frameworkName) -> string
-NuGet.VisualStudio.IVsFrameworkParser.ParseFrameworkName(string shortOrFullName) -> System.Runtime.Versioning.FrameworkName
+~NuGet.VisualStudio.IVsFrameworkParser.GetShortFrameworkName(System.Runtime.Versioning.FrameworkName frameworkName) -> string
+~NuGet.VisualStudio.IVsFrameworkParser.ParseFrameworkName(string shortOrFullName) -> System.Runtime.Versioning.FrameworkName
 NuGet.VisualStudio.IVsFrameworkParser2
-NuGet.VisualStudio.IVsFrameworkParser2.TryParse(string input, out NuGet.VisualStudio.IVsNuGetFramework nuGetFramework) -> bool
+~NuGet.VisualStudio.IVsFrameworkParser2.TryParse(string input, out NuGet.VisualStudio.IVsNuGetFramework nuGetFramework) -> bool
 NuGet.VisualStudio.IVsGlobalPackagesInitScriptExecutor
-NuGet.VisualStudio.IVsGlobalPackagesInitScriptExecutor.ExecuteInitScriptAsync(string packageId, string packageVersion) -> System.Threading.Tasks.Task<bool>
+~NuGet.VisualStudio.IVsGlobalPackagesInitScriptExecutor.ExecuteInitScriptAsync(string packageId, string packageVersion) -> System.Threading.Tasks.Task<bool>
 NuGet.VisualStudio.IVsNuGetFramework
-NuGet.VisualStudio.IVsNuGetFramework.TargetFrameworkMoniker.get -> string
-NuGet.VisualStudio.IVsNuGetFramework.TargetPlatformMinVersion.get -> string
-NuGet.VisualStudio.IVsNuGetFramework.TargetPlatformMoniker.get -> string
+~NuGet.VisualStudio.IVsNuGetFramework.TargetFrameworkMoniker.get -> string
+~NuGet.VisualStudio.IVsNuGetFramework.TargetPlatformMinVersion.get -> string
+~NuGet.VisualStudio.IVsNuGetFramework.TargetPlatformMoniker.get -> string
 NuGet.VisualStudio.IVsNuGetProjectUpdateEvents
 NuGet.VisualStudio.IVsNuGetProjectUpdateEvents.ProjectUpdateFinished -> NuGet.VisualStudio.ProjectUpdateEventHandler
 NuGet.VisualStudio.IVsNuGetProjectUpdateEvents.ProjectUpdateStarted -> NuGet.VisualStudio.ProjectUpdateEventHandler
 NuGet.VisualStudio.IVsNuGetProjectUpdateEvents.SolutionRestoreFinished -> NuGet.VisualStudio.SolutionRestoreEventHandler
 NuGet.VisualStudio.IVsNuGetProjectUpdateEvents.SolutionRestoreStarted -> NuGet.VisualStudio.SolutionRestoreEventHandler
 NuGet.VisualStudio.IVsPackageInstaller
-NuGet.VisualStudio.IVsPackageInstaller.InstallPackage(NuGet.IPackageRepository repository, EnvDTE.Project project, string packageId, string version, bool ignoreDependencies, bool skipAssemblyReferences) -> void
-NuGet.VisualStudio.IVsPackageInstaller.InstallPackage(string source, EnvDTE.Project project, string packageId, System.Version version, bool ignoreDependencies) -> void
-NuGet.VisualStudio.IVsPackageInstaller.InstallPackage(string source, EnvDTE.Project project, string packageId, string version, bool ignoreDependencies) -> void
-NuGet.VisualStudio.IVsPackageInstaller.InstallPackagesFromRegistryRepository(string keyName, bool isPreUnzipped, bool skipAssemblyReferences, EnvDTE.Project project, System.Collections.Generic.IDictionary<string, string> packageVersions) -> void
-NuGet.VisualStudio.IVsPackageInstaller.InstallPackagesFromRegistryRepository(string keyName, bool isPreUnzipped, bool skipAssemblyReferences, bool ignoreDependencies, EnvDTE.Project project, System.Collections.Generic.IDictionary<string, string> packageVersions) -> void
-NuGet.VisualStudio.IVsPackageInstaller.InstallPackagesFromVSExtensionRepository(string extensionId, bool isPreUnzipped, bool skipAssemblyReferences, EnvDTE.Project project, System.Collections.Generic.IDictionary<string, string> packageVersions) -> void
-NuGet.VisualStudio.IVsPackageInstaller.InstallPackagesFromVSExtensionRepository(string extensionId, bool isPreUnzipped, bool skipAssemblyReferences, bool ignoreDependencies, EnvDTE.Project project, System.Collections.Generic.IDictionary<string, string> packageVersions) -> void
+~NuGet.VisualStudio.IVsPackageInstaller.InstallPackage(NuGet.IPackageRepository repository, EnvDTE.Project project, string packageId, string version, bool ignoreDependencies, bool skipAssemblyReferences) -> void
+~NuGet.VisualStudio.IVsPackageInstaller.InstallPackage(string source, EnvDTE.Project project, string packageId, System.Version version, bool ignoreDependencies) -> void
+~NuGet.VisualStudio.IVsPackageInstaller.InstallPackage(string source, EnvDTE.Project project, string packageId, string version, bool ignoreDependencies) -> void
+~NuGet.VisualStudio.IVsPackageInstaller.InstallPackagesFromRegistryRepository(string keyName, bool isPreUnzipped, bool skipAssemblyReferences, EnvDTE.Project project, System.Collections.Generic.IDictionary<string, string> packageVersions) -> void
+~NuGet.VisualStudio.IVsPackageInstaller.InstallPackagesFromRegistryRepository(string keyName, bool isPreUnzipped, bool skipAssemblyReferences, bool ignoreDependencies, EnvDTE.Project project, System.Collections.Generic.IDictionary<string, string> packageVersions) -> void
+~NuGet.VisualStudio.IVsPackageInstaller.InstallPackagesFromVSExtensionRepository(string extensionId, bool isPreUnzipped, bool skipAssemblyReferences, EnvDTE.Project project, System.Collections.Generic.IDictionary<string, string> packageVersions) -> void
+~NuGet.VisualStudio.IVsPackageInstaller.InstallPackagesFromVSExtensionRepository(string extensionId, bool isPreUnzipped, bool skipAssemblyReferences, bool ignoreDependencies, EnvDTE.Project project, System.Collections.Generic.IDictionary<string, string> packageVersions) -> void
 NuGet.VisualStudio.IVsPackageInstaller2
-NuGet.VisualStudio.IVsPackageInstaller2.InstallLatestPackage(string source, EnvDTE.Project project, string packageId, bool includePrerelease, bool ignoreDependencies) -> void
+~NuGet.VisualStudio.IVsPackageInstaller2.InstallLatestPackage(string source, EnvDTE.Project project, string packageId, bool includePrerelease, bool ignoreDependencies) -> void
 NuGet.VisualStudio.IVsPackageInstallerEvents
 NuGet.VisualStudio.IVsPackageInstallerEvents.PackageInstalled -> NuGet.VisualStudio.VsPackageEventHandler
 NuGet.VisualStudio.IVsPackageInstallerEvents.PackageInstalling -> NuGet.VisualStudio.VsPackageEventHandler
@@ -153,70 +154,70 @@ NuGet.VisualStudio.IVsPackageInstallerProjectEvents
 NuGet.VisualStudio.IVsPackageInstallerProjectEvents.BatchEnd -> NuGet.VisualStudio.VsPackageProjectEventHandler
 NuGet.VisualStudio.IVsPackageInstallerProjectEvents.BatchStart -> NuGet.VisualStudio.VsPackageProjectEventHandler
 NuGet.VisualStudio.IVsPackageInstallerServices
-NuGet.VisualStudio.IVsPackageInstallerServices.GetInstalledPackages() -> System.Collections.Generic.IEnumerable<NuGet.VisualStudio.IVsPackageMetadata>
-NuGet.VisualStudio.IVsPackageInstallerServices.GetInstalledPackages(EnvDTE.Project project) -> System.Collections.Generic.IEnumerable<NuGet.VisualStudio.IVsPackageMetadata>
-NuGet.VisualStudio.IVsPackageInstallerServices.IsPackageInstalled(EnvDTE.Project project, string id) -> bool
-NuGet.VisualStudio.IVsPackageInstallerServices.IsPackageInstalled(EnvDTE.Project project, string id, NuGet.SemanticVersion version) -> bool
-NuGet.VisualStudio.IVsPackageInstallerServices.IsPackageInstalledEx(EnvDTE.Project project, string id, string versionString) -> bool
+~NuGet.VisualStudio.IVsPackageInstallerServices.GetInstalledPackages() -> System.Collections.Generic.IEnumerable<NuGet.VisualStudio.IVsPackageMetadata>
+~NuGet.VisualStudio.IVsPackageInstallerServices.GetInstalledPackages(EnvDTE.Project project) -> System.Collections.Generic.IEnumerable<NuGet.VisualStudio.IVsPackageMetadata>
+~NuGet.VisualStudio.IVsPackageInstallerServices.IsPackageInstalled(EnvDTE.Project project, string id) -> bool
+~NuGet.VisualStudio.IVsPackageInstallerServices.IsPackageInstalled(EnvDTE.Project project, string id, NuGet.SemanticVersion version) -> bool
+~NuGet.VisualStudio.IVsPackageInstallerServices.IsPackageInstalledEx(EnvDTE.Project project, string id, string versionString) -> bool
 NuGet.VisualStudio.IVsPackageManagerProvider
-NuGet.VisualStudio.IVsPackageManagerProvider.CheckForPackageAsync(string packageId, string projectName, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
-NuGet.VisualStudio.IVsPackageManagerProvider.Description.get -> string
-NuGet.VisualStudio.IVsPackageManagerProvider.GoToPackage(string packageId, string projectName) -> void
-NuGet.VisualStudio.IVsPackageManagerProvider.PackageManagerId.get -> string
-NuGet.VisualStudio.IVsPackageManagerProvider.PackageManagerName.get -> string
+~NuGet.VisualStudio.IVsPackageManagerProvider.CheckForPackageAsync(string packageId, string projectName, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
+~NuGet.VisualStudio.IVsPackageManagerProvider.Description.get -> string
+~NuGet.VisualStudio.IVsPackageManagerProvider.GoToPackage(string packageId, string projectName) -> void
+~NuGet.VisualStudio.IVsPackageManagerProvider.PackageManagerId.get -> string
+~NuGet.VisualStudio.IVsPackageManagerProvider.PackageManagerName.get -> string
 NuGet.VisualStudio.IVsPackageMetadata
-NuGet.VisualStudio.IVsPackageMetadata.Authors.get -> System.Collections.Generic.IEnumerable<string>
-NuGet.VisualStudio.IVsPackageMetadata.Description.get -> string
-NuGet.VisualStudio.IVsPackageMetadata.Id.get -> string
-NuGet.VisualStudio.IVsPackageMetadata.InstallPath.get -> string
-NuGet.VisualStudio.IVsPackageMetadata.Title.get -> string
-NuGet.VisualStudio.IVsPackageMetadata.Version.get -> NuGet.SemanticVersion
-NuGet.VisualStudio.IVsPackageMetadata.VersionString.get -> string
+~NuGet.VisualStudio.IVsPackageMetadata.Authors.get -> System.Collections.Generic.IEnumerable<string>
+~NuGet.VisualStudio.IVsPackageMetadata.Description.get -> string
+~NuGet.VisualStudio.IVsPackageMetadata.Id.get -> string
+~NuGet.VisualStudio.IVsPackageMetadata.InstallPath.get -> string
+~NuGet.VisualStudio.IVsPackageMetadata.Title.get -> string
+~NuGet.VisualStudio.IVsPackageMetadata.Version.get -> NuGet.SemanticVersion
+~NuGet.VisualStudio.IVsPackageMetadata.VersionString.get -> string
 NuGet.VisualStudio.IVsPackageProjectMetadata
-NuGet.VisualStudio.IVsPackageProjectMetadata.BatchId.get -> string
-NuGet.VisualStudio.IVsPackageProjectMetadata.ProjectName.get -> string
+~NuGet.VisualStudio.IVsPackageProjectMetadata.BatchId.get -> string
+~NuGet.VisualStudio.IVsPackageProjectMetadata.ProjectName.get -> string
 NuGet.VisualStudio.IVsPackageRestorer
 NuGet.VisualStudio.IVsPackageRestorer.IsUserConsentGranted() -> bool
-NuGet.VisualStudio.IVsPackageRestorer.RestorePackages(EnvDTE.Project project) -> void
+~NuGet.VisualStudio.IVsPackageRestorer.RestorePackages(EnvDTE.Project project) -> void
 NuGet.VisualStudio.IVsPackageSourceProvider
-NuGet.VisualStudio.IVsPackageSourceProvider.GetSources(bool includeUnOfficial, bool includeDisabled) -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string>>
+~NuGet.VisualStudio.IVsPackageSourceProvider.GetSources(bool includeUnOfficial, bool includeDisabled) -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string>>
 NuGet.VisualStudio.IVsPackageSourceProvider.SourcesChanged -> System.EventHandler
 NuGet.VisualStudio.IVsPackageUninstaller
-NuGet.VisualStudio.IVsPackageUninstaller.UninstallPackage(EnvDTE.Project project, string packageId, bool removeDependencies) -> void
+~NuGet.VisualStudio.IVsPackageUninstaller.UninstallPackage(EnvDTE.Project project, string packageId, bool removeDependencies) -> void
 NuGet.VisualStudio.IVsPathContext
-NuGet.VisualStudio.IVsPathContext.FallbackPackageFolders.get -> System.Collections.IEnumerable
-NuGet.VisualStudio.IVsPathContext.TryResolvePackageAsset(string packageAssetPath, out string packageDirectoryPath) -> bool
-NuGet.VisualStudio.IVsPathContext.UserPackageFolder.get -> string
+~NuGet.VisualStudio.IVsPathContext.FallbackPackageFolders.get -> System.Collections.IEnumerable
+~NuGet.VisualStudio.IVsPathContext.TryResolvePackageAsset(string packageAssetPath, out string packageDirectoryPath) -> bool
+~NuGet.VisualStudio.IVsPathContext.UserPackageFolder.get -> string
 NuGet.VisualStudio.IVsPathContext2
-NuGet.VisualStudio.IVsPathContext2.SolutionPackageFolder.get -> string
+~NuGet.VisualStudio.IVsPathContext2.SolutionPackageFolder.get -> string
 NuGet.VisualStudio.IVsPathContextProvider
-NuGet.VisualStudio.IVsPathContextProvider.TryCreateContext(string projectUniqueName, out NuGet.VisualStudio.IVsPathContext context) -> bool
+~NuGet.VisualStudio.IVsPathContextProvider.TryCreateContext(string projectUniqueName, out NuGet.VisualStudio.IVsPathContext context) -> bool
 NuGet.VisualStudio.IVsPathContextProvider2
-NuGet.VisualStudio.IVsPathContextProvider2.TryCreateNoSolutionContext(out NuGet.VisualStudio.IVsPathContext vsPathContext) -> bool
-NuGet.VisualStudio.IVsPathContextProvider2.TryCreateSolutionContext(out NuGet.VisualStudio.IVsPathContext2 context) -> bool
-NuGet.VisualStudio.IVsPathContextProvider2.TryCreateSolutionContext(string solutionDirectory, out NuGet.VisualStudio.IVsPathContext2 context) -> bool
+~NuGet.VisualStudio.IVsPathContextProvider2.TryCreateNoSolutionContext(out NuGet.VisualStudio.IVsPathContext vsPathContext) -> bool
+~NuGet.VisualStudio.IVsPathContextProvider2.TryCreateSolutionContext(out NuGet.VisualStudio.IVsPathContext2 context) -> bool
+~NuGet.VisualStudio.IVsPathContextProvider2.TryCreateSolutionContext(string solutionDirectory, out NuGet.VisualStudio.IVsPathContext2 context) -> bool
 NuGet.VisualStudio.IVsProjectJsonToPackageReferenceMigrateResult
-NuGet.VisualStudio.IVsProjectJsonToPackageReferenceMigrateResult.ErrorMessage.get -> string
+~NuGet.VisualStudio.IVsProjectJsonToPackageReferenceMigrateResult.ErrorMessage.get -> string
 NuGet.VisualStudio.IVsProjectJsonToPackageReferenceMigrateResult.IsSuccess.get -> bool
 NuGet.VisualStudio.IVsProjectJsonToPackageReferenceMigrator
-NuGet.VisualStudio.IVsProjectJsonToPackageReferenceMigrator.MigrateProjectJsonToPackageReferenceAsync(string projectUniqueName) -> System.Threading.Tasks.Task<object>
+~NuGet.VisualStudio.IVsProjectJsonToPackageReferenceMigrator.MigrateProjectJsonToPackageReferenceAsync(string projectUniqueName) -> System.Threading.Tasks.Task<object>
 NuGet.VisualStudio.IVsSemanticVersionComparer
-NuGet.VisualStudio.IVsSemanticVersionComparer.Compare(string versionA, string versionB) -> int
+~NuGet.VisualStudio.IVsSemanticVersionComparer.Compare(string versionA, string versionB) -> int
 NuGet.VisualStudio.IVsTemplateWizard
 NuGet.VisualStudio.ProjectUpdateEventHandler
 NuGet.VisualStudio.SolutionRestoreEventHandler
 NuGet.VisualStudio.VsPackageEventHandler
 NuGet.VisualStudio.VsPackageProjectEventHandler
-override NuGet.SemanticVersion.Equals(object obj) -> bool
+~override NuGet.SemanticVersion.Equals(object obj) -> bool
 override NuGet.SemanticVersion.GetHashCode() -> int
-override NuGet.SemanticVersion.ToString() -> string
-static NuGet.SemanticVersion.Parse(string version) -> NuGet.SemanticVersion
-static NuGet.SemanticVersion.ParseOptionalVersion(string version) -> NuGet.SemanticVersion
-static NuGet.SemanticVersion.TryParse(string version, out NuGet.SemanticVersion value) -> bool
-static NuGet.SemanticVersion.TryParseStrict(string version, out NuGet.SemanticVersion value) -> bool
-static NuGet.SemanticVersion.operator !=(NuGet.SemanticVersion version1, NuGet.SemanticVersion version2) -> bool
-static NuGet.SemanticVersion.operator <(NuGet.SemanticVersion version1, NuGet.SemanticVersion version2) -> bool
-static NuGet.SemanticVersion.operator <=(NuGet.SemanticVersion version1, NuGet.SemanticVersion version2) -> bool
-static NuGet.SemanticVersion.operator ==(NuGet.SemanticVersion version1, NuGet.SemanticVersion version2) -> bool
-static NuGet.SemanticVersion.operator >(NuGet.SemanticVersion version1, NuGet.SemanticVersion version2) -> bool
-static NuGet.SemanticVersion.operator >=(NuGet.SemanticVersion version1, NuGet.SemanticVersion version2) -> bool
+~override NuGet.SemanticVersion.ToString() -> string
+~static NuGet.SemanticVersion.Parse(string version) -> NuGet.SemanticVersion
+~static NuGet.SemanticVersion.ParseOptionalVersion(string version) -> NuGet.SemanticVersion
+~static NuGet.SemanticVersion.TryParse(string version, out NuGet.SemanticVersion value) -> bool
+~static NuGet.SemanticVersion.TryParseStrict(string version, out NuGet.SemanticVersion value) -> bool
+~static NuGet.SemanticVersion.operator !=(NuGet.SemanticVersion version1, NuGet.SemanticVersion version2) -> bool
+~static NuGet.SemanticVersion.operator <(NuGet.SemanticVersion version1, NuGet.SemanticVersion version2) -> bool
+~static NuGet.SemanticVersion.operator <=(NuGet.SemanticVersion version1, NuGet.SemanticVersion version2) -> bool
+~static NuGet.SemanticVersion.operator ==(NuGet.SemanticVersion version1, NuGet.SemanticVersion version2) -> bool
+~static NuGet.SemanticVersion.operator >(NuGet.SemanticVersion version1, NuGet.SemanticVersion version2) -> bool
+~static NuGet.SemanticVersion.operator >=(NuGet.SemanticVersion version1, NuGet.SemanticVersion version2) -> bool

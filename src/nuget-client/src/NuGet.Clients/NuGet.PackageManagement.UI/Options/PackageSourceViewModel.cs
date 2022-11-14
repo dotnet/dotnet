@@ -1,10 +1,10 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using NuGet.PackageManagement.UI;
 using System.ComponentModel;
-using NuGet.VisualStudio.Internal.Contracts;
 using System.Runtime.CompilerServices;
+using NuGet.PackageManagement.UI;
+using NuGet.VisualStudio.Internal.Contracts;
 
 namespace NuGet.Options
 {

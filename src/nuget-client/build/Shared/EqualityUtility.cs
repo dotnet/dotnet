@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -20,7 +22,7 @@ namespace NuGet.Shared
         /// <param name="keySelector">The function to extract the key from each item in the list</param>
         /// <param name="orderComparer">An optional comparer for comparing keys</param>
         /// <param name="sequenceComparer">An optional comparer for sequences</param>
-        internal static bool OrderedEquals<TSource, TKey>(this IEnumerable<TSource> self, IEnumerable<TSource> other, Func<TSource, TKey> keySelector, IComparer<TKey> orderComparer = null, IEqualityComparer<TSource> sequenceComparer = null)
+        internal static bool OrderedEquals<TSource, TKey>(this IEnumerable<TSource> self, IEnumerable<TSource> other, Func<TSource, TKey> keySelector, IComparer<TKey>? orderComparer = null, IEqualityComparer<TSource>? sequenceComparer = null)
         {
             Debug.Assert(orderComparer != null || typeof(TKey) != typeof(string), "Argument " + "orderComparer" + " must be provided if " + "TKey" + " is a string.");
             Debug.Assert(sequenceComparer != null || typeof(TSource) != typeof(string), "Argument " + "sequenceComparer" + " must be provided if " + "TSource" + " is a string.");
@@ -46,7 +48,7 @@ namespace NuGet.Shared
         /// <param name="keySelector">The function to extract the key from each item in the list</param>
         /// <param name="orderComparer">An optional comparer for comparing keys</param>
         /// <param name="sequenceComparer">An optional comparer for sequences</param>
-        internal static bool OrderedEquals<TSource, TKey>(this ICollection<TSource> self, ICollection<TSource> other, Func<TSource, TKey> keySelector, IComparer<TKey> orderComparer = null, IEqualityComparer<TSource> sequenceComparer = null)
+        internal static bool OrderedEquals<TSource, TKey>(this ICollection<TSource> self, ICollection<TSource> other, Func<TSource, TKey> keySelector, IComparer<TKey>? orderComparer = null, IEqualityComparer<TSource>? sequenceComparer = null)
         {
             Debug.Assert(orderComparer != null || typeof(TKey) != typeof(string), "Argument " + "orderComparer" + " must be provided if " + "TKey" + " is a string.");
             Debug.Assert(sequenceComparer != null || typeof(TSource) != typeof(string), "Argument " + "sequenceComparer" + " must be provided if " + "TSource" + " is a string.");
@@ -82,7 +84,7 @@ namespace NuGet.Shared
         /// <param name="keySelector">The function to extract the key from each item in the list</param>
         /// <param name="orderComparer">An optional comparer for comparing keys</param>
         /// <param name="sequenceComparer">An optional comparer for sequences</param>
-        internal static bool OrderedEquals<TSource, TKey>(this IList<TSource> self, IList<TSource> other, Func<TSource, TKey> keySelector, IComparer<TKey> orderComparer = null, IEqualityComparer<TSource> sequenceComparer = null)
+        internal static bool OrderedEquals<TSource, TKey>(this IList<TSource> self, IList<TSource> other, Func<TSource, TKey> keySelector, IComparer<TKey>? orderComparer = null, IEqualityComparer<TSource>? sequenceComparer = null)
         {
             Debug.Assert(orderComparer != null || typeof(TKey) != typeof(string), "Argument " + "orderComparer" + " must be provided if " + "TKey" + " is a string.");
             Debug.Assert(sequenceComparer != null || typeof(TSource) != typeof(string), "Argument " + "sequenceComparer" + " must be provided if " + "TSource" + " is a string.");
@@ -120,7 +122,7 @@ namespace NuGet.Shared
         internal static bool SequenceEqualWithNullCheck<T>(
             this IEnumerable<T> self,
             IEnumerable<T> other,
-            IEqualityComparer<T> comparer = null)
+            IEqualityComparer<T>? comparer = null)
         {
             bool identityEquals;
             if (TryIdentityEquals(self, other, out identityEquals))
@@ -143,7 +145,7 @@ namespace NuGet.Shared
         internal static bool SequenceEqualWithNullCheck<T>(
             this ICollection<T> self,
             ICollection<T> other,
-            IEqualityComparer<T> comparer = null)
+            IEqualityComparer<T>? comparer = null)
         {
             bool identityEquals;
             if (TryIdentityEquals(self, other, out identityEquals))
@@ -176,7 +178,7 @@ namespace NuGet.Shared
         internal static bool SequenceEqualWithNullCheck<T>(
             this IList<T> self,
             IList<T> other,
-            IEqualityComparer<T> comparer = null)
+            IEqualityComparer<T>? comparer = null)
         {
             bool identityEquals;
             if (TryIdentityEquals(self, other, out identityEquals))
@@ -214,7 +216,7 @@ namespace NuGet.Shared
         internal static bool SetEqualsWithNullCheck<T>(
             this ISet<T> self,
             ISet<T> other,
-            IEqualityComparer<T> comparer = null)
+            IEqualityComparer<T>? comparer = null)
         {
             bool identityEquals;
             if (TryIdentityEquals(self, other, out identityEquals))
@@ -246,7 +248,8 @@ namespace NuGet.Shared
         internal static bool DictionaryEquals<TKey, TValue>(
             IDictionary<TKey, TValue> self,
             IDictionary<TKey, TValue> other,
-            Func<TValue, TValue, bool> compareValues = null)
+            Func<TValue, TValue, bool>? compareValues = null)
+            where TKey : notnull
         {
             var comparer = EqualityComparer<TValue>.Default;
             Func<TValue, TValue, bool> comparerFunc = (s, o) => comparer.Equals(s, o);
@@ -292,6 +295,7 @@ namespace NuGet.Shared
         internal static bool DictionaryOfSequenceEquals<TKey, TValue>(
             IDictionary<TKey, IEnumerable<TValue>> self,
             IDictionary<TKey, IEnumerable<TValue>> other)
+            where TKey : notnull
         {
             return DictionaryEquals(
                 self,
@@ -307,7 +311,7 @@ namespace NuGet.Shared
                 return identityEquals;
             }
 
-            return self.Equals(other);
+            return self?.Equals(other) ?? false;
         }
 
         /// <summary>
@@ -320,7 +324,7 @@ namespace NuGet.Shared
             return !string.IsNullOrWhiteSpace(value) && bool.FalseString.Equals(value.Trim(), StringComparison.OrdinalIgnoreCase);
         }
 
-        private static bool TryIdentityEquals<T>(T self, T other, out bool equals)
+        private static bool TryIdentityEquals<T>(T? self, T? other, out bool equals)
         {
             // Are they the same instance? This handles the case where both are null.
             if (ReferenceEquals(self, other))

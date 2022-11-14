@@ -304,7 +304,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 var projectAdapter = CreateProjectAdapter(testDirectory, projectBuildProperties);
 
                 projectBuildProperties
-                    .Setup(x => x.GetPropertyValue(It.Is<string>( x => x.Equals(ProjectBuildProperties.RestorePackagesPath))))
+                    .Setup(x => x.GetPropertyValue(It.Is<string>(x => x.Equals(ProjectBuildProperties.RestorePackagesPath))))
                     .Returns(restorePackagesPath);
 
                 projectBuildProperties
@@ -942,7 +942,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                         restorePackagesWithLockFile: null,
                         nuGetLockFilePath: null,
                         restoreLockedMode: false,
-                        projectPackageVersions: new List<(string Id, string Version)>() {  },
+                        projectPackageVersions: new List<(string Id, string Version)>() { },
                         CentralPackageTransitivePinningEnabled: transitiveDependencyPinning);
 
             var legacyPRProject = new LegacyPackageReferenceProject(
@@ -1454,7 +1454,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         }
 
         [Theory]
-        [InlineData(null,null,null, 0, 0)]
+        [InlineData(null, null, null, 0, 0)]
         [InlineData("win-x64", null, null, 1, 0)]
         [InlineData("win-x64", "win-x86", null, 2, 0)]
         [InlineData("win-x64", "win-x86;win-x64", null, 2, 0)]

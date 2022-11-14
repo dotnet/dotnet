@@ -684,7 +684,7 @@ namespace Dotnet.Integration.Test
                 stream.CopyToFile(destinationFilePath);
             }
         }
-        
+
         public async Task AddPkg_WithCPM_WhenPackageVersionDoesNotExistAndVersionCLIArgNotPassed_Success()
         {
             using var pathContext = new SimpleTestPathContext();
@@ -734,7 +734,7 @@ namespace Dotnet.Integration.Test
         }
 
         [Fact]
-        public async Task AddPkg_WithCPM_WhenPackageVersionDoesNotExistAndVersionCLIArgPassed_Success() 
+        public async Task AddPkg_WithCPM_WhenPackageVersionDoesNotExistAndVersionCLIArgPassed_Success()
         {
             using var pathContext = new SimpleTestPathContext();
 
@@ -783,7 +783,7 @@ namespace Dotnet.Integration.Test
         }
 
         [Fact]
-        public async Task AddPkg_WithCPM_WhenPackageVersionExistsAndVersionCLIArgNotPassed_NoOp() 
+        public async Task AddPkg_WithCPM_WhenPackageVersionExistsAndVersionCLIArgNotPassed_NoOp()
         {
             using var pathContext = new SimpleTestPathContext();
 

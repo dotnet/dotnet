@@ -86,9 +86,9 @@ namespace NuGet.Commands.Test
         }
 
         [Theory]
-        [InlineData(".dll", "A", new[] { "A.B.dll", "A.B.C.dll"}, null)]
+        [InlineData(".dll", "A", new[] { "A.B.dll", "A.B.C.dll" }, null)]
         [InlineData(".exe", "A", new[] { "A.dll", "A.B.dll", "A.B.exe" }, null)]
-        [InlineData(".dll", "A", new string[] { "A.exe", "A.B.EXE", "A.B.C.DLL", "A.B.C.dll","A.B.winmd" }, null)]
+        [InlineData(".dll", "A", new string[] { "A.exe", "A.B.EXE", "A.B.C.DLL", "A.B.C.dll", "A.B.winmd" }, null)]
         public async Task RelatedProperty_TopLevelPackageWithAssemblyExtensions_RelatedPropertyAddedCorrectly(
             string assemblyExtension,
             string assemblyName,

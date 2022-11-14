@@ -29,8 +29,8 @@ namespace NuGet.DependencyResolver.Core.Tests
             }
             else
             {
-                nodeA = new GraphNode<RemoteResolveResult>(libraryRangeA, hasInnerNodes:true, hasParentNodes.Value);
-                nodeB = new GraphNode<RemoteResolveResult>(libraryRangeB, hasInnerNodes:true, hasParentNodes.Value);
+                nodeA = new GraphNode<RemoteResolveResult>(libraryRangeA, hasInnerNodes: true, hasParentNodes.Value);
+                nodeB = new GraphNode<RemoteResolveResult>(libraryRangeB, hasInnerNodes: true, hasParentNodes.Value);
             }
 
             if (!parentNodesHasNode)
@@ -69,8 +69,8 @@ namespace NuGet.DependencyResolver.Core.Tests
             }
             else
             {
-                nodeA = new GraphNode<RemoteResolveResult>(libraryRangeA, hasInnerNodes.Value, hasParentNodes : true);
-                nodeB = new GraphNode<RemoteResolveResult>(libraryRangeB, hasInnerNodes.Value, hasParentNodes : true);
+                nodeA = new GraphNode<RemoteResolveResult>(libraryRangeA, hasInnerNodes.Value, hasParentNodes: true);
+                nodeB = new GraphNode<RemoteResolveResult>(libraryRangeB, hasInnerNodes.Value, hasParentNodes: true);
             }
 
             if (!innerNodesHasNode)

@@ -108,9 +108,9 @@ namespace NuGet.Protocol
         public void UpdateLastAccessTime(string nupkgMetadataPath)
         {
             var exists = _metadataFileCache.ContainsKey(nupkgMetadataPath);
-            if (exists) 
+            if (exists)
             {
-            	return;
+                return;
             }
 
             try

@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- [Visual Studio 2019](https://www.visualstudio.com)
+- [Visual Studio 2022](https://www.visualstudio.com)
   with following workloads:
   - .NET Core Cross Platform Development
   - .NET desktop development
@@ -22,7 +22,7 @@
 1. Make your change. Please name your branch `dev-<userid>-<very-short-title>`.
 1. Add tests.
     * [Testing in .NET](https://docs.microsoft.com/en-us/dotnet/core/testing/)
-    * [Testing tools in Visual Studio](https://docs.microsoft.com/visualstudio/test/?view=vs-2019)
+    * [Testing tools in Visual Studio](https://docs.microsoft.com/visualstudio/test/)
 1. Create a [pull request](https://github.com/NuGet/NuGet.Client/pulls).
     * Create a new issue if you cannot find an existing one [NuGet/Home](https://github.com/NuGet/Home/issues). 
     * Keep the pull request template, and link to an issue. 
@@ -94,7 +94,7 @@ NuGet members may contribute directly to the main remote.
 1. Run dotnet code formatters and correct any errors.
     * You can use `Format Document` in VS: 
 
-       `Ctrl+K, Ctrl+D` or Edit > Advanced > Format Document (https://docs.microsoft.com/visualstudio/ide/default-keyboard-shortcuts-in-visual-studio?view=vs-2019#text-editor)
+       `Ctrl+K, Ctrl+D` or Edit > Advanced > Format Document (https://learn.microsoft.com/en-us/visualstudio/ide/default-keyboard-shortcuts-in-visual-studio?view=vs-2022#bkmk_text-editor-context-specific-shortcuts)
 
     * You can use the dotnet CLI tool (https://github.com/dotnet/format):
 

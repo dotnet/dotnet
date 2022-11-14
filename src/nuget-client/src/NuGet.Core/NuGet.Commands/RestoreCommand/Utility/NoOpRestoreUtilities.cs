@@ -174,7 +174,7 @@ namespace NuGet.Commands
                     {
                         request.DependencyProviders.PackageFileCache.UpdateLastAccessTime(metadataFile);
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         request.Log.Log(RestoreLogMessage.CreateWarning(NuGetLogCode.NU1802,
                             string.Format(CultureInfo.InvariantCulture, Strings.Error_CouldNotUpdateMetadataLastAccessTime,

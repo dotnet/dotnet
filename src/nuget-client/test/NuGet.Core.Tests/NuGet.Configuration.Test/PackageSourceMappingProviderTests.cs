@@ -77,7 +77,7 @@ namespace NuGet.Configuration.Test
 
             // Act & Assert
             var exception = Assert.Throws<NuGetConfigurationException>(
-                () => Settings.LoadSettingsGivenConfigPaths(new string[] { configPath}));
+                () => Settings.LoadSettingsGivenConfigPaths(new string[] { configPath }));
             Assert.Equal(string.Format(CultureInfo.CurrentCulture, "PackageSourceMapping is enabled and there are multiple package sources associated with the same key(s): dotnet, nuget.org. Path: {0}", configPath), exception.Message);
         }
 

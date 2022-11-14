@@ -2276,7 +2276,7 @@ namespace NuGet.Commands.Test
                     Directory = Directory.CreateDirectory(Path.Combine(pathContext.SolutionRoot, "ProjectA")),
                     Path = new FileInfo(Path.Combine(pathContext.SolutionRoot, "ProjectA", "Project1.csproj")).FullName
                 };
-                
+
                 var logger = new TestLogger();
 
                 // PackageA 1.0.0 -> PackageB 1.0.0 -> PackageC 1.0.0 -> PackageD 1.0.0
@@ -2303,7 +2303,7 @@ namespace NuGet.Commands.Test
                 packageAContext.AddFile("lib/net46/PackageA.dll");
                 packageAContext.Dependencies.Add(packageBContext);
                 await SimpleTestPackageUtility.CreateFullPackageAsync(pathContext.PackageSource, packageAContext);
-                
+
                 var tfi = CreateTargetFrameworkInformation(
                     new List<LibraryDependency>
                     {
@@ -2343,7 +2343,7 @@ namespace NuGet.Commands.Test
                     projectInfo.Path,
                     centralPackageManagementEnabled: true,
                     centralPackageTransitivePinningEnabled: true);
-                
+
 
                 var dgspec = new DependencyGraphSpec();
                 dgspec.AddProject(packageSpec);
@@ -2506,7 +2506,7 @@ namespace NuGet.Commands.Test
                 };
 
                 var logger = new TestLogger();
-                
+
                 var packageA = new PackageIdentity("PackageA", new NuGetVersion("1.0.0"));
                 var packageB = new PackageIdentity("PackageB", new NuGetVersion("1.0.0"));
                 var packageC1_0 = new PackageIdentity("PackageC", new NuGetVersion("1.0.0"));
@@ -3014,12 +3014,12 @@ namespace NuGet.Commands.Test
 
                 var tfiB = CreateTargetFrameworkInformation(
                     new List<LibraryDependency>(), // no direct dependencies
-                    new List<CentralPackageVersion>() {centralVersion3},
+                    new List<CentralPackageVersion>() { centralVersion3 },
                     framework);
 
                 var tfiC = CreateTargetFrameworkInformation(
-                    new List<LibraryDependency>() {dependencyD}, // direct dependency
-                    new List<CentralPackageVersion>() {centralVersion2},
+                    new List<LibraryDependency>() { dependencyD }, // direct dependency
+                    new List<CentralPackageVersion>() { centralVersion2 },
                     framework);
 
                 PackageSpec packageSpecA = CreatePackageSpec(new List<TargetFrameworkInformation>() { tfiA }, framework, projectNameA, projectPathA, centralPackageManagementEnabled: true);
@@ -3040,8 +3040,8 @@ namespace NuGet.Commands.Test
                     ProjectStyle = ProjectStyle.PackageReference,
                 };
 
-                var externalProjectA = new ExternalProjectReference(projectNameA, packageSpecA, projectPathA, new[] {projectNameB});
-                var externalProjectB = new ExternalProjectReference(projectNameB, packageSpecB, projectPathB, new[] {projectNameC});
+                var externalProjectA = new ExternalProjectReference(projectNameA, packageSpecA, projectPathA, new[] { projectNameB });
+                var externalProjectB = new ExternalProjectReference(projectNameB, packageSpecB, projectPathB, new[] { projectNameC });
                 var externalProjectC = new ExternalProjectReference(projectNameC, packageSpecC, projectPathC, new string[] { });
                 request.ExternalProjects.Add(externalProjectA);
                 request.ExternalProjects.Add(externalProjectB);

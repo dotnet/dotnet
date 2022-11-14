@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>$(NETFXTargetFramework)</TargetFramework>
     <!-- Preview version of Microsoft.VisualStudio.ComponentModelHost causes a NU5104 warning. When upgrading to a stable version of this package, remove the below NoWarn="NU5104". -->
-    <NoWarn>$(NoWarn);NU5104</NoWarn>
+    <NoWarn>$(NoWarn);NU5104;RS0041</NoWarn>
     <Shipping>true</Shipping>
     <PackProject>true</PackProject>
     <IncludeInVSIX>true</IncludeInVSIX>

@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>$(NetStandardVersion)</TargetFramework>
     <!-- Preview version of Microsoft.ServiceHub.Framework causes a NU5104 warning. When upgrading to a stable version of this package, remove the below NoWarn="NU5104". -->
-    <NoWarn>$(NoWarn);NU5104</NoWarn>
+    <NoWarn>$(NoWarn);NU5104;RS0041</NoWarn>
     <SkipShared>true</SkipShared>
     <PackProject>true</PackProject>
     <Shipping>true</Shipping>
