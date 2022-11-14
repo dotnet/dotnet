@@ -111,16 +111,16 @@
     <!-- Cross-release dependency versions -->
     <MicrosoftDotNetCommonItemTemplates50PackageVersion>5.0.403</MicrosoftDotNetCommonItemTemplates50PackageVersion>
     <MicrosoftDotNetCommonItemTemplates60PackageVersion>6.0.302</MicrosoftDotNetCommonItemTemplates60PackageVersion>
-    <MicrosoftDotNetCommonItemTemplates70PackageVersion>7.0.100-rc.1.22429.2</MicrosoftDotNetCommonItemTemplates70PackageVersion>
+    <MicrosoftDotNetCommonItemTemplates70PackageVersion>7.0.100</MicrosoftDotNetCommonItemTemplates70PackageVersion>
     <MicrosoftAspNetCoreAppRuntime50PackageVersion>5.0.13</MicrosoftAspNetCoreAppRuntime50PackageVersion>
     <MicrosoftAspNetCoreAppRuntime60PackageVersion>6.0.1</MicrosoftAspNetCoreAppRuntime60PackageVersion>
-    <MicrosoftAspNetCoreAppRuntime70PackageVersion>7.0.0-rc.1.22427.2</MicrosoftAspNetCoreAppRuntime70PackageVersion>
+    <MicrosoftAspNetCoreAppRuntime70PackageVersion>7.0.0</MicrosoftAspNetCoreAppRuntime70PackageVersion>
     <MicrosoftWinFormsProjectTemplates50PackageVersion>5.0.17-servicing.22215.4</MicrosoftWinFormsProjectTemplates50PackageVersion>
     <MicrosoftWPFProjectTemplates50PackageVersion>5.0.17-servicing.22218.2</MicrosoftWPFProjectTemplates50PackageVersion>
     <MicrosoftWinFormsProjectTemplates60PackageVersion>6.0.7-servicing.22322.3</MicrosoftWinFormsProjectTemplates60PackageVersion>
     <MicrosoftWPFProjectTemplates60PackageVersion>6.0.7-servicing.22322.2</MicrosoftWPFProjectTemplates60PackageVersion>
-    <MicrosoftWinFormsProjectTemplates70PackageVersion>7.0.0-rc.1.22426.4</MicrosoftWinFormsProjectTemplates70PackageVersion>
-    <MicrosoftWPFProjectTemplates70PackageVersion>7.0.0-rc.1.22427.1</MicrosoftWPFProjectTemplates70PackageVersion>
+    <MicrosoftWinFormsProjectTemplates70PackageVersion>7.0.0-rtm.22518.7</MicrosoftWinFormsProjectTemplates70PackageVersion>
+    <MicrosoftWPFProjectTemplates70PackageVersion>7.0.0-rtm.22518.2</MicrosoftWPFProjectTemplates70PackageVersion>
   </PropertyGroup>
   <PropertyGroup>
     <HostFxrVersion>$(MicrosoftNETCoreAppRuntimePackageVersion)</HostFxrVersion>
@@ -138,12 +138,12 @@
     <MicrosoftDotNetCommonProjectTemplates80PackageVersion>$(MicrosoftDotNetCommonItemTemplatesPackageVersion)</MicrosoftDotNetCommonProjectTemplates80PackageVersion>
     <AspNetCorePackageVersionFor80Templates>$(MicrosoftAspNetCoreAppRuntimePackageVersion)</AspNetCorePackageVersionFor80Templates>
     <!-- 7.0 Template versions -->
-    <MicrosoftDotnetWinFormsProjectTemplates70PackageVersion>7.0.0-rc.1.22426.4</MicrosoftDotnetWinFormsProjectTemplates70PackageVersion>
-    <MicrosoftDotNetWpfProjectTemplates70PackageVersion>7.0.0-rc.1.22427.1</MicrosoftDotNetWpfProjectTemplates70PackageVersion>
+    <MicrosoftDotnetWinFormsProjectTemplates70PackageVersion>$(MicrosoftWinFormsProjectTemplates70PackageVersion)</MicrosoftDotnetWinFormsProjectTemplates70PackageVersion>
+    <MicrosoftDotNetWpfProjectTemplates70PackageVersion>$(MicrosoftWPFProjectTemplates70PackageVersion)</MicrosoftDotNetWpfProjectTemplates70PackageVersion>
     <NUnit3Templates70PackageVersion>$(NUnit3DotNetNewTemplatePackageVersion)</NUnit3Templates70PackageVersion>
-    <MicrosoftDotNetCommonItemTemplates70PackageVersion>7.0.100-rc.1.22429.2</MicrosoftDotNetCommonItemTemplates70PackageVersion>
-    <MicrosoftDotNetCommonProjectTemplates70PackageVersion>7.0.100-rc.1.22429.2</MicrosoftDotNetCommonProjectTemplates70PackageVersion>
-    <AspNetCorePackageVersionFor70Templates>7.0.0-rc.1.22427.2</AspNetCorePackageVersionFor70Templates>
+    <MicrosoftDotNetCommonItemTemplates70PackageVersion>$(MicrosoftDotNetCommonItemTemplates70PackageVersion)</MicrosoftDotNetCommonItemTemplates70PackageVersion>
+    <MicrosoftDotNetCommonProjectTemplates70PackageVersion>$(MicrosoftDotNetCommonItemTemplates70PackageVersion)</MicrosoftDotNetCommonProjectTemplates70PackageVersion>
+    <AspNetCorePackageVersionFor70Templates>7.0.0</AspNetCorePackageVersionFor70Templates>
     <!-- 6.0 Template versions -->
     <MicrosoftDotnetWinFormsProjectTemplates60PackageVersion>$(MicrosoftWinFormsProjectTemplates60PackageVersion)</MicrosoftDotnetWinFormsProjectTemplates60PackageVersion>
     <MicrosoftDotNetWpfProjectTemplates60PackageVersion>$(MicrosoftWPFProjectTemplates60PackageVersion)</MicrosoftDotNetWpfProjectTemplates60PackageVersion>
@@ -187,7 +187,7 @@
     <VersionToolsVersion>2.2.0-beta.19072.10</VersionToolsVersion>
     <DotnetDebToolVersion>2.0.0</DotnetDebToolVersion>
     <MicrosoftNETTestSdkVersion>17.5.0-preview-20221111-01</MicrosoftNETTestSdkVersion>
-    <MicrosoftExtensionsLoggingConsoleVersion>7.0.0-rc.1.22426.10</MicrosoftExtensionsLoggingConsoleVersion>
+    <MicrosoftExtensionsLoggingConsoleVersion>8.0.0-alpha.1.22557.12</MicrosoftExtensionsLoggingConsoleVersion>
   </PropertyGroup>
   <!-- dependencies for source-build tarball -->
   <PropertyGroup>
@@ -209,17 +209,17 @@
       or minor release, prebuilts may be needed. When the release is mature, prebuilts are not
       necessary, and this property is removed from the file.
     -->
-    <PrivateSourceBuiltArtifactsPackageVersion>7.0.100-rc.2</PrivateSourceBuiltArtifactsPackageVersion>
+    <PrivateSourceBuiltArtifactsPackageVersion>7.0.100</PrivateSourceBuiltArtifactsPackageVersion>
   </PropertyGroup>
   <!-- Workload manifest package versions -->
   <PropertyGroup>
-    <MauiFeatureBand>7.0.100-rc.1</MauiFeatureBand>
-    <MauiWorkloadManifestVersion>7.0.0-rc.1.6430</MauiWorkloadManifestVersion>
-    <XamarinAndroidWorkloadManifestVersion>33.0.0-rc.1.136</XamarinAndroidWorkloadManifestVersion>
-    <XamarinIOSWorkloadManifestVersion>15.4.1006-rc.1</XamarinIOSWorkloadManifestVersion>
-    <XamarinMacCatalystWorkloadManifestVersion>15.4.1006-rc.1</XamarinMacCatalystWorkloadManifestVersion>
-    <XamarinMacOSWorkloadManifestVersion>12.3.1006-rc.1</XamarinMacOSWorkloadManifestVersion>
-    <XamarinTvOSWorkloadManifestVersion>15.4.1006-rc.1</XamarinTvOSWorkloadManifestVersion>
+    <MauiFeatureBand>7.0.100</MauiFeatureBand>
+    <MauiWorkloadManifestVersion>7.0.49</MauiWorkloadManifestVersion>
+    <XamarinAndroidWorkloadManifestVersion>33.0.4</XamarinAndroidWorkloadManifestVersion>
+    <XamarinIOSWorkloadManifestVersion>16.0.1478</XamarinIOSWorkloadManifestVersion>
+    <XamarinMacCatalystWorkloadManifestVersion>15.4.2372</XamarinMacCatalystWorkloadManifestVersion>
+    <XamarinMacOSWorkloadManifestVersion>12.3.2372</XamarinMacOSWorkloadManifestVersion>
+    <XamarinTvOSWorkloadManifestVersion>16.0.1478</XamarinTvOSWorkloadManifestVersion>
     <MonoWorkloadManifestVersion>$(MicrosoftNETCoreAppRefPackageVersion)</MonoWorkloadManifestVersion>
     <MicrosoftNETWorkloadEmscriptennet6Manifest80100Version>8.0.0-alpha.1.22558.2</MicrosoftNETWorkloadEmscriptennet6Manifest80100Version>
     <MicrosoftNETWorkloadEmscriptennet7Manifest80100Version>8.0.0-alpha.1.22558.2</MicrosoftNETWorkloadEmscriptennet7Manifest80100Version>
