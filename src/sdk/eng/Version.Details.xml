@@ -42,21 +42,21 @@
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>dd7fdb723d91c2c6cb7efc3d95f9d95ee86d48c8</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Build" Version="17.5.0-preview-22558-04">
+    <Dependency Name="Microsoft.Build" Version="17.5.0-preview-22564-01">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>15b127d2445d6b68429f1c31d9ff98fe4e1e728c</Sha>
+      <Sha>d14b74d6f08ab7f2e17706359a38f8c22b569cb5</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Build.Localization" Version="17.5.0-preview-22558-04">
+    <Dependency Name="Microsoft.Build.Localization" Version="17.5.0-preview-22564-01">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>15b127d2445d6b68429f1c31d9ff98fe4e1e728c</Sha>
+      <Sha>d14b74d6f08ab7f2e17706359a38f8c22b569cb5</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.FSharp.Compiler" Version="12.5.0-beta.22559.7">
+    <Dependency Name="Microsoft.FSharp.Compiler" Version="12.5.0-beta.22563.3">
       <Uri>https://github.com/dotnet/fsharp</Uri>
-      <Sha>126877797a797eeb17ddfb8d18904c18eca8aa5d</Sha>
+      <Sha>9f7329d4b4deab97603643eaa6607779d03568f1</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.fsharp" Version="7.0.1-beta.22559.7">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.fsharp" Version="7.0.1-beta.22563.3">
       <Uri>https://github.com/dotnet/fsharp</Uri>
-      <Sha>126877797a797eeb17ddfb8d18904c18eca8aa5d</Sha>
+      <Sha>9f7329d4b4deab97603643eaa6607779d03568f1</Sha>
       <SourceBuild RepoName="fsharp" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="dotnet-format" Version="7.0.351202">
@@ -109,14 +109,14 @@
       <Uri>https://github.com/microsoft/vstest</Uri>
       <Sha>b61973970a544ea30d03ac35b6f5535adb64fd4c</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.ILLink.Tasks" Version="7.0.100-1.22560.1">
+    <Dependency Name="Microsoft.NET.ILLink.Tasks" Version="7.0.100-1.22564.1">
       <Uri>https://github.com/dotnet/linker</Uri>
-      <Sha>9c993bf401377209cd7b4e84b60deab5e4f421a2</Sha>
+      <Sha>13b8d6d68a07a47e52e13705313bc32d5540edf5</Sha>
       <SourceBuild RepoName="linker" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.NET.ILLink.Analyzers" Version="7.0.100-1.22560.1">
+    <Dependency Name="Microsoft.NET.ILLink.Analyzers" Version="7.0.100-1.22564.1">
       <Uri>https://github.com/dotnet/linker</Uri>
-      <Sha>9c993bf401377209cd7b4e84b60deab5e4f421a2</Sha>
+      <Sha>13b8d6d68a07a47e52e13705313bc32d5540edf5</Sha>
     </Dependency>
     <Dependency Name="System.CodeDom" Version="8.0.0-alpha.1.22559.2">
       <Uri>https://github.com/dotnet/runtime</Uri>
