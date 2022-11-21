@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
   <metadata minClientVersion="2.12">
     <id>System.Data.SqlClient</id>
-    <version>4.8.3</version>
+    <version>4.8.5</version>
     <title>System.Data.SqlClient</title>
     <authors>Microsoft</authors>
     <owners>microsoft,dotnetframework</owners>
@@ -86,7 +86,7 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
         <dependency id="System.Data.Common" version="4.3.0" />
       </group>
       <group targetFramework="UAP10.0.16299">
-        <dependency id="Microsoft.NETCore.Platforms" version="3.1.8" />
+        <dependency id="Microsoft.NETCore.Platforms" version="3.1.12" />
         <dependency id="System.Diagnostics.DiagnosticSource" version="4.7.0" exclude="Compile" />
         <dependency id="System.Memory" version="4.5.4" exclude="Compile" />
         <dependency id="System.Text.Encoding.CodePages" version="4.7.0" exclude="Compile" />

@@ -3,12 +3,12 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard1.2;netstandard1.3;netstandard2.0;netcoreapp2.1;net451;net46;net461</TargetFrameworks>
-    <NuspecFile>$(ArtifactsBinDir)system.data.sqlclient/4.8.3/system.data.sqlclient.nuspec</NuspecFile>
+    <NuspecFile>$(ArtifactsBinDir)system.data.sqlclient/4.8.5/system.data.sqlclient.nuspec</NuspecFile>
   </PropertyGroup>
 
   <PropertyGroup>
-    <OutputPath>$(ArtifactsBinDir)system.data.sqlclient/4.8.3/ref/</OutputPath>
-    <IntermediateOutputPath>$(ArtifactsObjDir)system.data.sqlclient/4.8.3</IntermediateOutputPath>
+    <OutputPath>$(ArtifactsBinDir)system.data.sqlclient/4.8.5/ref/</OutputPath>
+    <IntermediateOutputPath>$(ArtifactsObjDir)system.data.sqlclient/4.8.5</IntermediateOutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.1' ">

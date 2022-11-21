@@ -17,6 +17,7 @@
       Format:
       <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Extensions.Options.5.0.0.csproj" />
     -->
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Data.SqlClient.4.8.5.csproj" />
     <DependencyPackageProjects Include="$(RepoRoot)src\textOnlyPackages\src\**\Microsoft.NETCore.Platforms.3.1.4.csproj" />
     <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Drawing.Common.4.7.2.csproj" />
     <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Security.Cryptography.Xml.4.7.1.csproj" />
