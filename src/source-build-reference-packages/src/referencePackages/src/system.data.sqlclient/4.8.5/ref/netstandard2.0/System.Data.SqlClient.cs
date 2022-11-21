@@ -22,36 +22,12 @@ using System.Security;
 [assembly: AssemblyCompany("Microsoft Corporation")]
 [assembly: AssemblyProduct("Microsoft® .NET Framework")]
 [assembly: AssemblyCopyright("© Microsoft Corporation.  All rights reserved.")]
-[assembly: AssemblyFileVersion("4.700.21.41603")]
-[assembly: AssemblyInformationalVersion("4.700.21.41603 built by: SOURCEBUILD")]
+[assembly: AssemblyFileVersion("4.700.22.51706")]
+[assembly: AssemblyInformationalVersion("4.700.22.51706 built by: SOURCEBUILD")]
 [assembly: CLSCompliant(true)]
 [assembly: AssemblyMetadata("", "")]
-[assembly: AssemblyVersion("4.6.1.3")]
+[assembly: AssemblyVersion("4.6.1.5")]
 
-[assembly: TypeForwardedTo(typeof(System.Data.SqlDbType))]
-[assembly: TypeForwardedTo(typeof(System.Data.SqlTypes.INullable))]
-[assembly: TypeForwardedTo(typeof(System.Data.SqlTypes.SqlBinary))]
-[assembly: TypeForwardedTo(typeof(System.Data.SqlTypes.SqlBoolean))]
-[assembly: TypeForwardedTo(typeof(System.Data.SqlTypes.SqlByte))]
-[assembly: TypeForwardedTo(typeof(System.Data.SqlTypes.SqlBytes))]
-[assembly: TypeForwardedTo(typeof(System.Data.SqlTypes.SqlChars))]
-[assembly: TypeForwardedTo(typeof(System.Data.SqlTypes.SqlCompareOptions))]
-[assembly: TypeForwardedTo(typeof(System.Data.SqlTypes.SqlDateTime))]
-[assembly: TypeForwardedTo(typeof(System.Data.SqlTypes.SqlDecimal))]
-[assembly: TypeForwardedTo(typeof(System.Data.SqlTypes.SqlDouble))]
-[assembly: TypeForwardedTo(typeof(System.Data.SqlTypes.SqlGuid))]
-[assembly: TypeForwardedTo(typeof(System.Data.SqlTypes.SqlInt16))]
-[assembly: TypeForwardedTo(typeof(System.Data.SqlTypes.SqlInt32))]
-[assembly: TypeForwardedTo(typeof(System.Data.SqlTypes.SqlInt64))]
-[assembly: TypeForwardedTo(typeof(System.Data.SqlTypes.SqlMoney))]
-[assembly: TypeForwardedTo(typeof(System.Data.SqlTypes.SqlNullValueException))]
-[assembly: TypeForwardedTo(typeof(System.Data.SqlTypes.SqlSingle))]
-[assembly: TypeForwardedTo(typeof(System.Data.SqlTypes.SqlString))]
-[assembly: TypeForwardedTo(typeof(System.Data.SqlTypes.SqlTruncateException))]
-[assembly: TypeForwardedTo(typeof(System.Data.SqlTypes.SqlTypeException))]
-[assembly: TypeForwardedTo(typeof(System.Data.SqlTypes.SqlXml))]
-[assembly: TypeForwardedTo(typeof(System.Data.StatementCompletedEventArgs))]
-[assembly: TypeForwardedTo(typeof(System.Data.StatementCompletedEventHandler))]
 
 
 
@@ -162,16 +138,6 @@ namespace Microsoft.SqlServer.Server
         public virtual void SetValue(int ordinal, object value) { }
         public virtual int SetValues(params object[] values) { throw null; }
         System.Data.IDataReader System.Data.IDataRecord.GetData(int ordinal) { throw null; }
-    }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Field | System.AttributeTargets.Parameter | System.AttributeTargets.Property | System.AttributeTargets.ReturnValue, AllowMultiple=false, Inherited=false)]
-    public partial class SqlFacetAttribute : System.Attribute
-    {
-        public SqlFacetAttribute() { }
-        public bool IsFixedLength { get { throw null; } set { } }
-        public bool IsNullable { get { throw null; } set { } }
-        public int MaxSize { get { throw null; } set { } }
-        public int Precision { get { throw null; } set { } }
-        public int Scale { get { throw null; } set { } }
     }
     [System.AttributeUsageAttribute(System.AttributeTargets.Method, AllowMultiple=false, Inherited=false)]
     public partial class SqlFunctionAttribute : System.Attribute
@@ -319,12 +285,6 @@ namespace System.Data.SqlClient
         ReadOnly = 1,
     }
     public delegate void OnChangeEventHandler(object sender, System.Data.SqlClient.SqlNotificationEventArgs e);
-    public enum PoolBlockingPeriod
-    {
-        Auto = 0,
-        AlwaysBlock = 1,
-        NeverBlock = 2,
-    }
     public enum SortOrder
     {
         Unspecified = -1,
@@ -579,7 +539,6 @@ namespace System.Data.SqlClient
         public int PacketSize { get { throw null; } set { } }
         public string Password { get { throw null; } set { } }
         public bool PersistSecurityInfo { get { throw null; } set { } }
-        public System.Data.SqlClient.PoolBlockingPeriod PoolBlockingPeriod { get { throw null; } set { } }
         public bool Pooling { get { throw null; } set { } }
         public bool Replication { get { throw null; } set { } }
         public string TransactionBinding { get { throw null; } set { } }
@@ -622,7 +581,7 @@ namespace System.Data.SqlClient
         protected override void OnRowUpdating(System.Data.Common.RowUpdatingEventArgs value) { }
         object System.ICloneable.Clone() { throw null; }
     }
-    public partial class SqlDataReader : System.Data.Common.DbDataReader, System.Data.Common.IDbColumnSchemaGenerator, System.IDisposable
+    public partial class SqlDataReader : System.Data.Common.DbDataReader, System.IDisposable
     {
         internal SqlDataReader() { }
         protected System.Data.SqlClient.SqlConnection Connection { get { throw null; } }
@@ -639,7 +598,6 @@ namespace System.Data.SqlClient
         public override long GetBytes(int i, long dataIndex, byte[] buffer, int bufferIndex, int length) { throw null; }
         public override char GetChar(int i) { throw null; }
         public override long GetChars(int i, long dataIndex, char[] buffer, int bufferIndex, int length) { throw null; }
-        public System.Collections.ObjectModel.ReadOnlyCollection<System.Data.Common.DbColumn> GetColumnSchema() { throw null; }
         public override string GetDataTypeName(int i) { throw null; }
         public override System.DateTime GetDateTime(int i) { throw null; }
         public virtual System.DateTimeOffset GetDateTimeOffset(int i) { throw null; }
@@ -908,25 +866,5 @@ namespace System.Data.SqlClient
         public override void Rollback() { }
         public void Rollback(string transactionName) { }
         public void Save(string savePointName) { }
-    }
-}
-namespace System.Data.SqlTypes
-{
-    public sealed partial class SqlFileStream : System.IO.Stream
-    {
-        public SqlFileStream(string path, byte[] transactionContext, System.IO.FileAccess access) { }
-        public SqlFileStream(string path, byte[] transactionContext, System.IO.FileAccess access, System.IO.FileOptions options, long allocationSize) { }
-        public override bool CanRead { get { throw null; } }
-        public override bool CanSeek { get { throw null; } }
-        public override bool CanWrite { get { throw null; } }
-        public override long Length { get { throw null; } }
-        public string Name { get { throw null; } }
-        public override long Position { get { throw null; } set { } }
-        public byte[] TransactionContext { get { throw null; } }
-        public override void Flush() { }
-        public override int Read(byte[] buffer, int offset, int count) { throw null; }
-        public override long Seek(long offset, System.IO.SeekOrigin origin) { throw null; }
-        public override void SetLength(long value) { }
-        public override void Write(byte[] buffer, int offset, int count) { }
     }
 }
