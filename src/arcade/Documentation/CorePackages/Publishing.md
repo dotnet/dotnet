@@ -532,3 +532,21 @@ During publishing, arcade will pick up SymbolPublishingExclusionsFile.txt and ex
 <!-- Begin Generated Content: Doc Feedback -->
 <sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CCorePackages%5CPublishing.md)](https://helix.dot.net/f/p/5?p=Documentation%5CCorePackages%5CPublishing.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CCorePackages%5CPublishing.md)</sub>
 <!-- End Generated Content-->
+
+
+### How do I publish stable packages?
+
+Stable packages are not published by Arcade except for dependency flow and testing purposes. Stable packages go to isolated feeds (to enable rebuilds), then repo owners push these packages to Nuget.org manually. Then these packages flow to dotnet-public feed via the mirroring process
+
+```mermaid
+flowchart LR
+  Packages[Built Packages]-->ArcadePublishing{Arcade Publishing}
+  ArcadePublishing-->|Non-Stable|PermanantFeeds[Permanant Feeds]
+  ArcadePublishing-->|Stable|IsolatedFeeds[Isolated Feeds]
+  IsolatedFeeds-->DogFoodingAndDepFlow{Dog-Fooding and dependency flow}
+  PermanantFeeds-->DogFoodingAndDepFlow
+  Packages-->|Release final stable packages on NuGet.org|NuGet[NuGet.Org]
+  NuGet-->|Mirroring|DotnetPublic[dotnet-public feed]
+  DotnetPublic-->RepoUse[Repository use]
+  DogFoodingAndDepFlow-->RepoUse
+  

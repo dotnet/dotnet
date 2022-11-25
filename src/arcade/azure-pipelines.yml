@@ -62,9 +62,6 @@ stages:
           matrix:
             Build_Release:
               _BuildConfig: Release
-            ${{ if eq(variables._RunAsPublic, True) }}:
-              Build_Debug:
-                _BuildConfig: Debug
         preSteps:
         - checkout: self
           clean: true
@@ -85,8 +82,6 @@ stages:
             matrix:
               Build_Debug:
                 _BuildConfig: Debug
-              Build_Release:
-                _BuildConfig: Release
           preSteps:
           - checkout: self
             clean: true
@@ -119,8 +114,6 @@ stages:
             matrix:
               Build_Release:
                 _BuildConfig: Release
-              Build_Debug:
-                _BuildConfig: Debug
           variables:
           - _Testing: Helix
           preSteps:
@@ -163,8 +156,6 @@ stages:
             matrix:
               Build_Debug:
                 _BuildConfig: Debug
-              Build_Release:
-                _BuildConfig: Release
           variables:
           - _Testing: Helix
           preSteps:
@@ -237,8 +228,8 @@ stages:
             vmimage: ubuntu-latest
           strategy:
             matrix:
-              Build_Release:
-                _BuildConfig: Release
+              Build_Debug:
+                _BuildConfig: Debug
           variables:
           - _Testing: XHarness_Apple_Device_Tests
           preSteps:
@@ -267,8 +258,8 @@ stages:
             vmimage: ubuntu-latest
           strategy:
             matrix:
-              Build_Release:
-                _BuildConfig: Release
+              Build_Debug:
+                _BuildConfig: Debug
           variables:
           - _Testing: XHarness_Android_Simulator_Tests
           preSteps:
@@ -296,8 +287,8 @@ stages:
             vmimage: windows-latest
           strategy:
             matrix:
-              Build_Debug:
-                _BuildConfig: Debug
+              Build_Release:
+                _BuildConfig: Release
           variables:
           - _Testing: XHarness_Android_Device_Tests
           preSteps:

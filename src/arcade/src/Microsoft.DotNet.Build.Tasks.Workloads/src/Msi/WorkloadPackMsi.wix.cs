@@ -5,6 +5,7 @@
 
 using System;
 using System.IO;
+using System.IO.Packaging;
 using Microsoft.Build.Framework;
 using Microsoft.DotNet.Build.Tasks.Workloads.Wix;
 using Microsoft.NET.Sdk.WorkloadManifestReader;
@@ -71,12 +72,9 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
                 throw new Exception(Strings.FailedToCompileMsi);
             }
 
-            // Add the platform to the MSI unless the package name already contains it.
-            string msiFileName = _package.PackageFileName.Contains(Platform) ?
-                Path.Combine(outputPath, _package.ShortName + ".msi") :
-                Path.Combine(outputPath, _package.ShortName + $"-{Platform}.msi");
-
-            ITaskItem msi = Link(candle.OutputPath, msiFileName, iceSuppressions);
+            ITaskItem msi = Link(candle.OutputPath,
+                Path.Combine(outputPath, _package.ShortName + $"-{Platform}.msi"),
+                iceSuppressions);
 
             AddDefaultPackageFiles(msi);
 
