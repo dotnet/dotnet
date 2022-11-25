@@ -130,7 +130,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 
 <!-- component list beginning -->
 - `src/arcade`  
-*[dotnet/arcade@3709573](https://github.com/dotnet/arcade/commit/37095730a5eebb50fed86a0d3013d90408a05609)*
+*[dotnet/arcade@7cd5e97](https://github.com/dotnet/arcade/commit/7cd5e97416ad782621a2cce154d659253c06223a)*
 - `src/aspnetcore`  
 *[dotnet/aspnetcore@1bee0af](https://github.com/dotnet/aspnetcore/commit/1bee0afeedab9d6d9d1cf23e65daa7ea5fcc6d47)*
     - `src/aspnetcore/src/submodules/googletest`  
@@ -150,7 +150,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@9f7329d](https://github.com/dotnet/fsharp/commit/9f7329d4b4deab97603643eaa6607779d03568f1)*
 - `src/installer`  
-*[dotnet/installer@319b8d3](https://github.com/dotnet/installer/commit/319b8d35559621913419b37d68aa9eea89257265)*
+*[dotnet/installer@c6cbb8c](https://github.com/dotnet/installer/commit/c6cbb8cbc88fe93b2910ca50c55e37747bcc3b9c)*
 - `src/linker`  
 *[dotnet/linker@13b8d6d](https://github.com/dotnet/linker/commit/13b8d6d68a07a47e52e13705313bc32d5540edf5)*
     - `src/linker/external/cecil`  
