@@ -102,7 +102,12 @@
         {
             "name": "nuget-client",
             "defaultRemote": "https://github.com/NuGet/NuGet.Client",
-            "defaultRef": "dev"
+            "defaultRef": "dev",
+            "exclude": [
+                "NuGet.config",
+                "submodules/Common/NuGet.config",
+                "submodules/FileSystem/NuGet.config"
+            ]
         },
         {
             "name": "razor-compiler",
