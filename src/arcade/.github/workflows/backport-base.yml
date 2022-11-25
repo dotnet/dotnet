@@ -78,6 +78,17 @@ jobs:
           if (target_branch == null) throw "Error: No backport branch found in the trigger phrase.";
 
           return target_branch[1];
+    - name: Unlock comments if PR is locked
+      uses: actions/github-script@v6
+      if: ${{ github.event.issue.locked == true }}
+      with:
+        script: |
+          console.log(`Unlocking locked PR #${context.issue.number}.`);
+          await github.rest.issues.unlock({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+          });
     - name: Post backport started comment to pull request
       uses: actions/github-script@v6
       with:
@@ -229,3 +240,15 @@ jobs:
             });
           }
  
+    - name: Re-lock PR comments
+      uses: actions/github-script@v6
+      if: ${{ github.event.issue.locked == true && (success() || failure()) }}
+      with:
+        script: |
+          console.log(`Locking previously locked PR #${context.issue.number} again.`);
+          await github.rest.issues.lock({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            lock_reason: "resolved"
+          });

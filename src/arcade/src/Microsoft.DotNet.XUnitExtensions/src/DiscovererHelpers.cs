@@ -31,6 +31,7 @@ namespace Microsoft.DotNet.XUnitExtensions
                 (platforms.HasFlag(TestPlatforms.LinuxBionic) && RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) && !String.IsNullOrEmpty(Environment.GetEnvironmentVariable("ANDROID_STORAGE")) ||
                 (platforms.HasFlag(TestPlatforms.Android) && RuntimeInformation.IsOSPlatform(OSPlatform.Create("ANDROID"))) ||
                 (platforms.HasFlag(TestPlatforms.Browser) && RuntimeInformation.IsOSPlatform(OSPlatform.Create("BROWSER"))) ||
+                (platforms.HasFlag(TestPlatforms.Wasi) && RuntimeInformation.IsOSPlatform(OSPlatform.Create("WASI"))) ||
                 (platforms.HasFlag(TestPlatforms.Windows) && RuntimeInformation.IsOSPlatform(OSPlatform.Windows));
 
         public static bool TestRuntimeApplies(TestRuntimes runtimes) =>

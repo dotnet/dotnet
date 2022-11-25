@@ -65,7 +65,7 @@ namespace Microsoft.DotNet.Deployment.Tasks.Links.src
             // The bulk hard-delete APIs do not have short-url forms (only identity), so they must be
             // deleted individually. Use a semaphore to avoid excessive numbers of concurrent API calls
 
-            using (HttpClient client = CreateClient())
+            using (HttpClient client = await CreateClient())
             {
                 using (var clientThrottle = new SemaphoreSlim(8, 8))
                 {
@@ -163,7 +163,7 @@ namespace Microsoft.DotNet.Deployment.Tasks.Links.src
             ConcurrentBag<AkaMSLink> linksToCreate = new ConcurrentBag<AkaMSLink>();
             ConcurrentBag<AkaMSLink> linksToUpdate = new ConcurrentBag<AkaMSLink>();
 
-            using (HttpClient client = CreateClient())
+            using (HttpClient client = await CreateClient())
             using (var clientThrottle = new SemaphoreSlim(8, 8))
             {
                 await Task.WhenAll(links.Select(async link =>
@@ -240,7 +240,7 @@ namespace Microsoft.DotNet.Deployment.Tasks.Links.src
         {
             _log.LogMessage(MessageImportance.High, $"{(update ? "Updating" : "Creating")} {links.Count()} aka.ms links.");
 
-            using (HttpClient client = CreateClient())
+            using (HttpClient client = await CreateClient())
             {
                 string newOrUpdatedLinksJson = 
                     GetCreateOrUpdateLinkJson(linkOwners, linkCreatedOrUpdatedBy, linkGroupOwner, update, links);
@@ -255,8 +255,10 @@ namespace Microsoft.DotNet.Deployment.Tasks.Links.src
                     {
                         try
                         {
+                            _log.LogMessage(MessageImportance.High, $"Sending {(update ? "update" : "create")} aka.ms request.");
                             using (HttpResponseMessage response = await client.SendAsync(requestMessage))
                             {
+                                _log.LogMessage(MessageImportance.High, $"Processing {(update ? "update" : "create")} aka.ms request response.");
                                 // Check for auth failures on POST (401, and 403).
                                 // No reason to retry here.
                                 if (response.StatusCode == HttpStatusCode.Unauthorized ||
@@ -377,7 +379,7 @@ namespace Microsoft.DotNet.Deployment.Tasks.Links.src
             }
         }
 
-        private HttpClient CreateClient()
+        private async Task<HttpClient> CreateClient()
         {
 #if NETCOREAPP
             var platformParameters = new PlatformParameters();
@@ -388,7 +390,7 @@ namespace Microsoft.DotNet.Deployment.Tasks.Links.src
 #endif
             AuthenticationContext authContext = new AuthenticationContext(Authority);
             ClientCredential credential = new ClientCredential(_clientId, _clientSecret);
-            AuthenticationResult token = authContext.AcquireTokenAsync(Endpoint, credential).Result;
+            AuthenticationResult token = await authContext.AcquireTokenAsync(Endpoint, credential);
 
             HttpClient httpClient = new HttpClient(new HttpClientHandler { CheckCertificateRevocationList = true });
             httpClient.DefaultRequestHeaders.Add("Authorization", token.CreateAuthorizationHeader());

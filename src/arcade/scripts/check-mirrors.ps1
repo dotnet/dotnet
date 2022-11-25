@@ -21,7 +21,7 @@ param
     [Parameter(Mandatory=$true)][string]$RepoRoot,
     [Parameter(Mandatory=$true)][string]$RuntimeBranch,
     [Parameter(Mandatory=$true)][string[]]$SdkBranches,
-    [Parameter(Mandatory=$true)][ValidateSet('5.0','6.0')][string]$ReleaseBand,
+    [Parameter(Mandatory=$true)][ValidateSet('5.0','6.0','7.0')][string]$ReleaseBand,
     [switch]$NoFetch = $false
 )
 
@@ -31,78 +31,70 @@ $repos = @(
         repo="runtime";
         branches=@($RuntimeBranch);
         hasInternal=$true;
-        appliesTo=@("5.0","6.0");
+        appliesTo=@("5.0","6.0","7.0");
     },
     @{
         org="dotnet";
         repo="emsdk";
         branches=@($RuntimeBranch);
         hasInternal=$false;
-        appliesTo=@("6.0");
+        appliesTo=@("6.0","7.0");
     },
     @{
         org="dotnet";
         repo="aspnetcore";
         branches=@($RuntimeBranch);
         hasInternal=$true;
-        appliesTo=@("5.0","6.0");
+        appliesTo=@("5.0","6.0","7.0");
     },
     @{
         org="dotnet";
         repo="efcore";
         branches=@($RuntimeBranch);
         hasInternal=$true;
-        appliesTo=@("5.0","6.0");
+        appliesTo=@("5.0","6.0","7.0");
     },
     @{
         org="dotnet";
         repo="windowsdesktop";
         branches=@($RuntimeBranch);
         hasInternal=$true;
-        appliesTo=@("5.0","6.0");
+        appliesTo=@("5.0","6.0","7.0");
     },
     @{
         org="dotnet";
         repo="winforms";
         branches=@($RuntimeBranch);
         hasInternal=$true;
-        appliesTo=@("5.0","6.0");
+        appliesTo=@("5.0","6.0","7.0");
     },
     @{
         org="dotnet";
         repo="wpf";
         branches=@($RuntimeBranch);
         hasInternal=$true;
-        appliesTo=@("5.0","6.0");
+        appliesTo=@("5.0","6.0","7.0");
     },
     @{
         org="dotnet";
         repo="templating";
         branches=$SdkBranches;
         hasInternal=$true;
-        appliesTo=@("5.0","6.0");
+        appliesTo=@("5.0","6.0","7.0");
     },
     @{
         org="dotnet";
         repo="sdk";
         branches=$SdkBranches;
         hasInternal=$true;
-        appliesTo=@("5.0","6.0");
+        appliesTo=@("5.0","6.0","7.0");
     },
     @{
         org="dotnet";
         repo="installer";
         branches=$SdkBranches;
         hasInternal=$true;
-        appliesTo=@("5.0","6.0");
-    },
-    # Roslyn-analyzers "kind of" applies to 5.0, but only in the dead 5.0.3xx branch.
-    @{
-        org="dotnet";
-        repo="roslyn-analyzers";
-        branches=$SdkBranches;
-        hasInternal=$false;
-        appliesTo=@("6.0");
+        appliesTo=@("5.0","6.0","7.0");
     }
 )
 

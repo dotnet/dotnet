@@ -6,6 +6,7 @@
 
   <PropertyGroup>
     <GenFacadesReferencePathItemName Condition="'$(GenFacadesReferencePathItemName)' == ''">ReferencePath</GenFacadesReferencePathItemName>
+    <GenFacadesReferenceAssemblyItemName Condition="'$(GenFacadesReferenceAssemblyItemName)' == ''">ResolvedMatchingContract</GenFacadesReferenceAssemblyItemName>
     <!-- Tell ResolveMatchingContract to run and resolve contract to project reference -->
     <ResolveMatchingContract>true</ResolveMatchingContract>
     <GeneratePartialFacadeSourceDependsOn>$(GeneratePartialFacadeSourceDependsOn);ResolveMatchingContract;_GetRoslynAssembliesPath</GeneratePartialFacadeSourceDependsOn>
@@ -14,33 +15,29 @@
     <TargetsTriggeredByCompilation Condition="'$(DesignTimeBuild)' != 'true' and '$(GenFacadesForceZeroVersionSeeds)' == 'true'">
       $(TargetsTriggeredByCompilation);ClearAssemblyReferenceVersions
     </TargetsTriggeredByCompilation>
-    <OutputSourcePath>$(IntermediateOutputPath)$(AssemblyTitle).Forwards.cs</OutputSourcePath>
+    <GenFacadesOutputSourcePath Condition="'$(GenFacadesOutputSourcePath)' == ''">$(IntermediateOutputPath)$(AssemblyTitle).Forwards.cs</GenFacadesOutputSourcePath>
   </PropertyGroup>
 
   <Target Name="GeneratePartialFacadeSource"
-          Inputs="$(MSBuildAllProjects);@(ResolvedMatchingContract);@($(GenFacadesReferencePathItemName));@(Compile)"
-          Outputs="$(OutputSourcePath)"
+          Inputs="$(MSBuildAllProjects);@($(GenFacadesReferenceAssemblyItemName));@($(GenFacadesReferencePathItemName));@(Compile)"
+          Outputs="$(GenFacadesOutputSourcePath)"
           DependsOnTargets="$(GeneratePartialFacadeSourceDependsOn)">
-    <PropertyGroup>
-      <ReferenceAssembly>%(ResolvedMatchingContract.Identity)</ReferenceAssembly>
-    </PropertyGroup>
-
     <GenPartialFacadeSource
       ReferencePaths="@($(GenFacadesReferencePathItemName))"
-      ReferenceAssembly="$(ReferenceAssembly)"
+      ReferenceAssembly="@($(GenFacadesReferenceAssemblyItemName))"
       CompileFiles="@(Compile)"
       DefineConstants="$(DefineConstants)"
       LangVersion="$(LangVersion)"
       IgnoreMissingTypes="$(GenFacadesIgnoreMissingTypes)"
       IgnoreMissingTypesList="@(GenFacadesIgnoreMissingType)"
       OmitTypes="@(GenFacadesOmitType)"
-      OutputSourcePath="$(OutputSourcePath)"
+      OutputSourcePath="$(GenFacadesOutputSourcePath)"
       SeedTypePreferences="@(SeedTypePreference)"
       RoslynAssembliesPath="$(RoslynAssembliesPath)" />
 
-    <ItemGroup Condition="Exists('$(OutputSourcePath)')">
-      <Compile Include="$(OutputSourcePath)" />
-      <FileWrites Include="$(OutputSourcePath)" />
+    <ItemGroup Condition="Exists('$(GenFacadesOutputSourcePath)')">
+      <Compile Include="$(GenFacadesOutputSourcePath)" />
+      <FileWrites Include="$(GenFacadesOutputSourcePath)" />
     </ItemGroup>
   </Target>
 
