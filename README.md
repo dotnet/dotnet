@@ -176,7 +176,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/sdk`  
 *[dotnet/sdk@fc06e69](https://github.com/dotnet/sdk/commit/fc06e695c5ab63fab7f9e89ed32fbcdb13e9992f)*
 - `src/source-build-externals`  
-*[dotnet/source-build-externals@af8eedc](https://github.com/dotnet/source-build-externals/commit/af8eedc4daa3d1e29af9d493f657b1927b24c957)*
+*[dotnet/source-build-externals@dd9d921](https://github.com/dotnet/source-build-externals/commit/dd9d921db96b4469ebac73ee708cce8a31845c0c)*
     - `src/source-build-externals/src/application-insights`  
     *[Microsoft/ApplicationInsights-dotnet@51c3ed8](https://github.com/Microsoft/ApplicationInsights-dotnet/commit/51c3ed8aa3f32209edf01168f9136a3ac8486c5d)*
     - `src/source-build-externals/src/azure-activedirectory-identitymodel-extensions-for-dotnet`  
