@@ -1,4 +1,4 @@
-# .NET Core SDK
+# .NET SDK Installers
 
 [![Join the chat at https://gitter.im/dotnet/cli](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/dotnet/cli?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![GitHub release](https://img.shields.io/github/release/dotnet/installer.svg)](https://GitHub.com/dotnet/installer/releases/)
@@ -11,13 +11,22 @@
 [![GitHub contributors](https://img.shields.io/github/contributors/dotnet/installer.svg)](https://GitHub.com/dotnet/installer/graphs/contributors/)
 [![Commit Activity](https://img.shields.io/github/commit-activity/m/dotnet/installer)]()
 
+This repo contains the source code for the cross-platform [.NET](http://github.com/dotnet/core) SDK. It aggregates the .NET toolchain, the .NET runtime, the templates, and the .NET  Windows Desktop runtime. It produces zip, tarballs, and native packages for various supported platforms.
 
-This repo contains the source code for the cross-platform [.NET Core](http://github.com/dotnet/core) SDK. It aggregates the .NET Toolchain, the .NET Core runtime, the templates, and the .NET Core Windows Desktop runtime. It produces zip, tarballs, and native packages for various supported platforms.
-
-Looking for released versions of the .NET Core tooling?
+Looking for released versions of the .NET tooling?
 ----------------------------------------
 
-Download released versions of the .NET Core tools (CLI, MSBuild and the new csproj) at https://dot.net/core.
+The links below are for preview versions of .NET tooling. Prefer to use released versions of the .NET tools? Go to https://dot.net/download.
+
+Looking for .NET Framework downloads?
+----------------------------------------
+
+.NET Framework is the product from which the .NET Core project originated. .NET Core (mostly just called ".NET" here) adds many features and improvements and supports many more platforms than .NET Framework. .NET Framework remains fully supported and you can find the downloads on the [.NET website](https://dotnet.microsoft.com/download/dotnet-framework). For new projects, we recommend you use .NET Core.
+
+Want to contribute or find out more about the .NET project?
+----------------------------------------
+
+This repo is for the installers. Most of the implementation is in other repos, such as the [dotnet/runtime repo](https://github.com/dotnet/runtime) or the [dotnet/aspnetcore repo](https://github.com/dotnet/aspnetcore) and [many others](https://github.com/dotnet/core/blob/main/Documentation/core-repos.md). We welcome you to join us there!
 
 Found an issue?
 ---------------
@@ -25,7 +34,7 @@ You can consult the [Documents Index for the SDK repo](https://github.com/dotnet
 
 This project has adopted the code of conduct defined by the [Contributor Covenant](http://contributor-covenant.org/) to clarify expected behavior in our community. For more information, see the [.NET Foundation Code of Conduct](http://www.dotnetfoundation.org/code-of-conduct).
 
-# Build .NET installer 
+# Build .NET installer
 
 The repository contains native code project required for the Windows installer. If you intend to build it locally on Windows, you will need to ensure that you have the following items installed.
 - Install CMAKE 3.21.0 is required if you're building VS 17.0. Make sure to add CMAKE to your PATH (the installer will prompt you).
@@ -109,7 +118,7 @@ Visibility|All legs|
 
 ## Installers and Binaries
 
-You can download the .NET Core SDK as either an installer (MSI, PKG) or a zip (zip, tar.gz). The .NET Core SDK contains both the .NET Core runtime and CLI tools.
+You can download the .NET SDK as either an installer (MSI, PKG) or a zip (zip, tar.gz). The .NET SDK contains both the .NET runtime and CLI tools.
 
 **Note:** Be aware that the following installers are the **latest bits**. If you
 want to install the latest released versions, check out the [preceding section](#looking-for-released-versions-of-the-net-core-tooling).
@@ -135,7 +144,7 @@ With development builds, internal NuGet feeds are necessary for some scenarios (
 </configuration>
 ```
 
-Please do not directly edit the table below. Use https://github.com/dotnet/installer/tree/main/tools/sdk-readme-table-generator to help you generate it. Make sure to run the table generator test and make any changes to the generator along with your changes to the table. Daily servicing builds have been removed as all servicing is done in private repos to avoid disclosure of critical security fixes. All public servicing builds can be downloaded at http://aka.ms/dotnet-download.
+Do not directly edit the table below. Use https://github.com/dotnet/installer/tree/main/tools/sdk-readme-table-generator to help you generate it. Make sure to run the table generator test and make any changes to the generator along with your changes to the table. Daily servicing builds aren't shown here because they may contain upcoming security fixes. All public servicing builds can be downloaded at http://aka.ms/dotnet-download.
 
 ### Table
 *Note* the 7.0.100 build will be finished internally. Below is the last public version available from that branch but is not fully updated with the final runtime.
@@ -161,7 +170,7 @@ Reference notes:
 > * [Host, Host FX Resolver, and Shared Framework](https://github.com/dotnet/runtime/blob/main/docs/project/dogfooding.md#nightly-builds-table)
 > * [ASP.NET Core Shared Framework](https://github.com/aspnet/AspNetCore/blob/main/docs/DailyBuilds.md)
 
-.NET Core SDK 2.x downloads can be found here: [.NET Core SDK 2.x Installers and Binaries](Downloads2.x.md)
+.NET Core SDK 2.x downloads can be found at [.NET Core SDK 2.x Installers and Binaries](Downloads2.x.md) but they are [out of support](https://dotnet.microsoft.com/platform/support/policy/dotnet-core).
 
 [win-x64-badge-main]: https://aka.ms/dotnet/8.0.1xx/daily/win_x64_Release_version_badge.svg
 [win-x64-version-main]: https://aka.ms/dotnet/8.0.1xx/daily/productCommit-win-x64.txt
