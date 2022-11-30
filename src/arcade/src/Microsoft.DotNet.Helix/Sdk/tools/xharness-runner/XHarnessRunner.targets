@@ -2,7 +2,7 @@
   <PropertyGroup Condition=" '$(IncludeXHarnessCli)' == 'true' ">
     <IncludeDotNetCli>true</IncludeDotNetCli>
     <XHarnessTargetFramework Condition=" '$(XHarnessTargetFramework)' == '' ">net7.0</XHarnessTargetFramework>
-    <DotNetCliVersion Condition=" '$(XHarnessTargetFramework)' == 'net7.0' ">7.0.100-rc.1.22431.12</DotNetCliVersion>
+    <DotNetCliVersion Condition=" '$(XHarnessTargetFramework)' == 'net7.0' ">7.0.100</DotNetCliVersion>
     <DotNetCliVersion Condition=" '$(XHarnessTargetFramework)' == 'net6.0' ">6.0.202</DotNetCliVersion>
     <DotNetCliPackageType>sdk</DotNetCliPackageType>
   </PropertyGroup>
