@@ -309,14 +309,18 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         ///   Persist in BAR all pending associations of Asset -> AssetLocation stored in `NewAssetLocations`.
         /// </summary>
         /// <param name="client">Maestro++ API client</param>
-        protected Task PersistPendingAssetLocationAsync(IMaestroApi client)
+        protected async Task PersistPendingAssetLocationAsync(IMaestroApi client)
         {
+            Log.LogMessage(MessageImportance.High, "\nPersisting new locations of assets in the Build Asset Registry.");
+
             var updates = NewAssetLocations.Keys.Select(nal => new AssetAndLocation(nal.AssetId, (LocationType)nal.LocationType)
             {
                 Location = nal.AssetLocation
             }).ToImmutableList();
 
-            return client.Assets.BulkAddLocationsAsync(updates);
+            await client.Assets.BulkAddLocationsAsync(updates);
+
+            Log.LogMessage(MessageImportance.High, "\nCompleted persisting of new asset locations...");
         }
 
         /// <summary>
@@ -813,6 +817,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             }
 
             await Task.WhenAll(publishTasks);
+
+            Log.LogMessage(MessageImportance.High, "\nCompleted publishing of packages: ");
         }
 
         private HashSet<PackageArtifactModel> FilterPackages(HashSet<PackageArtifactModel> packages, TargetFeedConfig feedConfig)
@@ -999,7 +1005,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             List<Task> publishTasks = new List<Task>();
 
             // Just log a empty line for better visualization of the logs
-            Log.LogMessage(MessageImportance.High, "\nPublishing blobs: ");
+            Log.LogMessage(MessageImportance.High, "\nBegin publishing of blobs: ");
 
             foreach (var blobsPerCategory in BlobsByCategory)
             {
@@ -1039,6 +1045,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             }
 
             await Task.WhenAll(publishTasks);
+
+            Log.LogMessage(MessageImportance.High, "\nCompleted publishing of blobs: ");
         }
 
         /// <summary>

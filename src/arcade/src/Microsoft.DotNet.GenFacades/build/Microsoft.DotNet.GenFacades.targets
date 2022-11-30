@@ -17,7 +17,8 @@
     </PropertyGroup>
   </Target>
 
-  <Import Project="Microsoft.DotNet.GenPartialFacadeSource.targets" Condition="'$(IsPartialFacadeAssembly)' == 'true'" />
-  <Import Project="Microsoft.DotNet.GenFacadesNotSupported.targets" Condition="'$(GeneratePlatformNotSupportedAssembly)' == 'true' or
-                                                                               '$(GeneratePlatformNotSupportedAssemblyMessage)' != ''" />
+  <Import Project="Microsoft.DotNet.GenFacades.ClearVersion.targets" Condition="'$(GenFacadesForceZeroVersionSeeds)' == 'true'" />
+  <Import Project="Microsoft.DotNet.GenFacades.NotSupported.targets" Condition="'$(GeneratePlatformNotSupportedAssembly)' == 'true' or
+                                                                                '$(GeneratePlatformNotSupportedAssemblyMessage)' != ''" />
+  <Import Project="Microsoft.DotNet.GenFacades.PartialFacadeSource.targets" Condition="'$(IsPartialFacadeAssembly)' == 'true'" />
 </Project>

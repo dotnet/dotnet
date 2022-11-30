@@ -139,6 +139,8 @@ namespace Microsoft.DotNet.Deployment.Tasks.Links.src
         public async Task CreateOrUpdateLinksAsync(IEnumerable<AkaMSLink> links, string linkOwners,
             string linkCreatedOrUpdatedBy, string linkGroupOwner, bool overwrite)
         {
+            _log.LogMessage(MessageImportance.High, $"Creating/Updating {links.Count()} aka.ms links.");
+
             // Batch these up by the max batch size
             List<IEnumerable<AkaMSLink>> linkBatches = new List<IEnumerable<AkaMSLink>>();
             IEnumerable<AkaMSLink> remainingLinks = links;
@@ -150,6 +152,8 @@ namespace Microsoft.DotNet.Deployment.Tasks.Links.src
 
             await Task.WhenAll(linkBatches.Select(async batch =>
                 await CreateOrUpdateLinkBatchAsync(batch, linkOwners, linkCreatedOrUpdatedBy, linkGroupOwner, overwrite, false)));
+
+            _log.LogMessage(MessageImportance.High, $"Completed creating/updating {links.Count()} aka.ms links.");
         }
 
         /// <summary>
@@ -238,7 +242,7 @@ namespace Microsoft.DotNet.Deployment.Tasks.Links.src
         private async Task CreateOrUpdateLinkBatchAsync(IEnumerable<AkaMSLink> links, string linkOwners,
             string linkCreatedOrUpdatedBy, string linkGroupOwner, bool update, bool bucketed)
         {
-            _log.LogMessage(MessageImportance.High, $"{(update ? "Updating" : "Creating")} {links.Count()} aka.ms links.");
+            _log.LogMessage(MessageImportance.High, $"{(update ? "Updating" : "Creating")} batch of {links.Count()} aka.ms links.");
 
             using (HttpClient client = await CreateClient())
             {
@@ -255,10 +259,10 @@ namespace Microsoft.DotNet.Deployment.Tasks.Links.src
                     {
                         try
                         {
-                            _log.LogMessage(MessageImportance.High, $"Sending {(update ? "update" : "create")} aka.ms request.");
+                            _log.LogMessage(MessageImportance.High, $"Sending {(update ? "update" : "create")} request for batch of {links.Count()} aka.ms links.");
                             using (HttpResponseMessage response = await client.SendAsync(requestMessage))
                             {
-                                _log.LogMessage(MessageImportance.High, $"Processing {(update ? "update" : "create")} aka.ms request response.");
+                                _log.LogMessage(MessageImportance.High, $"Processing {(update ? "update" : "create")} response for batch of {links.Count()} aka.ms links.");
                                 // Check for auth failures on POST (401, and 403).
                                 // No reason to retry here.
                                 if (response.StatusCode == HttpStatusCode.Unauthorized ||
@@ -279,7 +283,7 @@ namespace Microsoft.DotNet.Deployment.Tasks.Links.src
                                     if (update && !bucketed)
                                     {
                                         _log.LogMessage(MessageImportance.High, $"Failed to update aka.ms links: {response.StatusCode}\n" +
-                                            $"{response.Content.ReadAsStringAsync().Result}. Will bucket and create+update.");
+                                            $"{await response.Content.ReadAsStringAsync()}. Will bucket and create+update.");
 
                                         (IEnumerable<AkaMSLink> linksToCreate, IEnumerable<AkaMSLink> linksToUpdate) = await BucketLinksAsync(links);
 
@@ -295,7 +299,7 @@ namespace Microsoft.DotNet.Deployment.Tasks.Links.src
                                     }
                                     else
                                     {
-                                        _log.LogError($"Error creating/updating aka.ms links: {response.Content.ReadAsStringAsync().Result}");
+                                        _log.LogError($"Error creating/updating aka.ms links: {await response.Content.ReadAsStringAsync()}");
                                         return true;
                                     }
                                 }
@@ -305,7 +309,7 @@ namespace Microsoft.DotNet.Deployment.Tasks.Links.src
                                         response.StatusCode != System.Net.HttpStatusCode.NoContent &&
                                         response.StatusCode != System.Net.HttpStatusCode.NotFound))
                                 {
-                                    _log.LogMessage(MessageImportance.High, $"Failed to create/update aka.ms links: {response.StatusCode}\n{response.Content.ReadAsStringAsync().Result}");
+                                    _log.LogMessage(MessageImportance.High, $"Failed to create/update aka.ms links: {response.StatusCode}\n{await response.Content.ReadAsStringAsync()}");
                                     return false;
                                 }
 
@@ -325,7 +329,11 @@ namespace Microsoft.DotNet.Deployment.Tasks.Links.src
 
                 if (!success)
                 {
-                    _log.LogError($"Failed to create/updating aka.ms links");
+                    _log.LogError("Failed to create/update aka.ms links");
+                }
+                else
+                {
+                    _log.LogMessage(MessageImportance.High, $"Completed aka.ms create/update for batch {links.Count()} links.");
                 }
             }
         }
