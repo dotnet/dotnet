@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="ko" original="../SR.resx">
+    <body>
+      <trans-unit id="Blazor_directive_attributes">
+        <source>Blazor directive attributes</source>
+        <target state="translated">Blazor 지시문 특성</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Create_Component_FromTag_Title">
+        <source>Create component from tag</source>
+        <target state="translated">태그에서 구성 요소 만들기</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Document_Not_Found">
+        <source>Document {0} was not found.</source>
+        <target state="translated">문서 {0}을(를) 찾을 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ExtractTo_CodeBehind_Title">
+        <source>Extract block to code behind</source>
+        <target state="translated">코드 숨김에 블록 추출</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Invalid_Offset">
+        <source>Invalid offset.</source>
+        <target state="translated">오프셋이 유효하지 않습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PositionIndex_Outside_Range">
+        <source>Line '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</source>
+        <target state="translated">'{2}'의 {1} 범위를 벗어나는 줄 '{0}'을(를) 쿼리했습니다. 문서가 최신이 아닐 수 있습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReTrigger_Completions_Title">
+        <source>"Re-trigger completions..."</source>
+        <target state="translated">"완료된 항목 다시 트리거"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TagHelper_Attribute_Glyph">
+        <source>Razor TagHelper Attribute Glyph</source>
+        <target state="translated">Razor TagHelper 특성 문자 모양</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TagHelper_Element_Glyph">
+        <source>Razor TagHelper Element Glyph</source>
+        <target state="translated">Razor TagHelper 요소 문자 모양</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Unknown_RazorMetaCode">
+        <source>Attempted to visit a RazorMetaCode other than '{' or '}'.</source>
+        <target state="translated">'{' 또는 '}' 이외의 RazorMetaCode를 방문하려고 했습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Unknown_mapping_behavior">
+        <source>Unknown mapping behavior</source>
+        <target state="translated">알 수 없는 매핑 동작</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Version_Should_Not_Be_Null">
+        <source>Provided version should not be null.</source>
+        <target state="translated">제공된 버전은 null이 아니어야 합니다.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="pt-BR" original="../SR.resx">
+    <body>
+      <trans-unit id="Blazor_directive_attributes">
+        <source>Blazor directive attributes</source>
+        <target state="translated">Atributos da diretiva Blazor</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Create_Component_FromTag_Title">
+        <source>Create component from tag</source>
+        <target state="translated">Criar componente a partir da marca</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Document_Not_Found">
+        <source>Document {0} was not found.</source>
+        <target state="translated">O documento {0} não foi encontrado.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ExtractTo_CodeBehind_Title">
+        <source>Extract block to code behind</source>
+        <target state="translated">Extrair o bloco para codificar atrás</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Invalid_Offset">
+        <source>Invalid offset.</source>
+        <target state="translated">Deslocamento inválido.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PositionIndex_Outside_Range">
+        <source>Line '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</source>
+        <target state="translated">A linha '{0}' fora do intervalo {1} de '{2}' foi consultada. O documento pode não estar atualizado.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReTrigger_Completions_Title">
+        <source>"Re-trigger completions..."</source>
+        <target state="translated">"Disparar conclusões novamente..."</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TagHelper_Attribute_Glyph">
+        <source>Razor TagHelper Attribute Glyph</source>
+        <target state="translated">Atributo Glyph Razor TagHelper</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TagHelper_Element_Glyph">
+        <source>Razor TagHelper Element Glyph</source>
+        <target state="translated">Elemento Glyph Razor TagHelper</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Unknown_RazorMetaCode">
+        <source>Attempted to visit a RazorMetaCode other than '{' or '}'.</source>
+        <target state="translated">Tentativa de visitar um RazorMetaCode diferente de '{' or '}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Unknown_mapping_behavior">
+        <source>Unknown mapping behavior</source>
+        <target state="translated">Comportamento de mapeamento desconhecido</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Version_Should_Not_Be_Null">
+        <source>Provided version should not be null.</source>
+        <target state="translated">A versão fornecida não deve ser nula.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

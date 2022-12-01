@@ -67,6 +67,12 @@
       "commitSha": "ea921bf1871b2799d9c130aad860db33e6577975"
     },
     {
+      "packageVersion": "8.0.100",
+      "path": "razor",
+      "remoteUri": "https://github.com/dotnet/razor",
+      "commitSha": "f437532b1db4525bf69d7761b1b922110a6eb02d"
+    },
+    {
       "packageVersion": "7.0.0-preview.5.22412.2",
       "path": "razor-compiler",
       "remoteUri": "https://github.com/dotnet/razor-compiler",

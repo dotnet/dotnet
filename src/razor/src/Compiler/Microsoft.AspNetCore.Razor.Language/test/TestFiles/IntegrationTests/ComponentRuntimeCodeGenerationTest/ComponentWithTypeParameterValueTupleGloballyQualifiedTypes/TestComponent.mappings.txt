@@ -1,0 +1,17 @@
+Source Location: (38:3,7 [169] x:\dir\subdir\Test\TestComponent.cshtml)
+|
+    [Parameter]
+    public TParam InferParam { get; set; }
+
+    [Parameter]
+    public RenderFragment<(MyClass I1, MyStruct I2, TParam P)> Template { get; set; }
+|
+Generated Location: (1551:52,7 [169] )
+|
+    [Parameter]
+    public TParam InferParam { get; set; }
+
+    [Parameter]
+    public RenderFragment<(MyClass I1, MyStruct I2, TParam P)> Template { get; set; }
+|
+

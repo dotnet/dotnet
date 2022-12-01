@@ -1,0 +1,13 @@
+#nullable enable
+Microsoft.AspNetCore.Razor.LanguageServer.Common.RemoteTextLoaderFactory
+Microsoft.AspNetCore.Razor.LanguageServer.Common.RemoteTextLoaderFactory.RemoteTextLoaderFactory() -> void
+const Microsoft.AspNetCore.Razor.LanguageServer.Common.LanguageServerConstants.DefaultProjectConfigurationFile = "project.razor.json" -> string!
+Microsoft.AspNetCore.Razor.LanguageServer.Common.DefaultRemoteTextLoaderFactory
+Microsoft.AspNetCore.Razor.LanguageServer.Common.DefaultRemoteTextLoaderFactory.DefaultRemoteTextLoaderFactory() -> void
+Microsoft.AspNetCore.Razor.LanguageServer.Common.LanguageServerConstants
+Microsoft.AspNetCore.Razor.LanguageServer.Common.RazorFileChangeKind
+Microsoft.AspNetCore.Razor.LanguageServer.Common.RazorFileChangeKind.Added = 0 -> Microsoft.AspNetCore.Razor.LanguageServer.Common.RazorFileChangeKind
+Microsoft.AspNetCore.Razor.LanguageServer.Common.RazorFileChangeKind.Changed = 2 -> Microsoft.AspNetCore.Razor.LanguageServer.Common.RazorFileChangeKind
+Microsoft.AspNetCore.Razor.LanguageServer.Common.RazorFileChangeKind.Removed = 1 -> Microsoft.AspNetCore.Razor.LanguageServer.Common.RazorFileChangeKind
+Microsoft.AspNetCore.Razor.LanguageServer.Common.UnsupportedRazorConfiguration
+static readonly Microsoft.AspNetCore.Razor.LanguageServer.Common.UnsupportedRazorConfiguration.Instance -> Microsoft.AspNetCore.Razor.Language.RazorConfiguration!

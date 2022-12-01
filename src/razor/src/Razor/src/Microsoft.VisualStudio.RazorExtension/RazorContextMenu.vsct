@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable">
+
+  <Extern href="stdidcmd.h"/>
+  <Extern href="vsshlids.h"/>
+
+  <Commands package="RazorPackage">
+  </Commands>
+
+  <Symbols>
+    <GuidSymbol name="RazorPackage" value="{13b72f58-279e-49e0-a56d-296be02f0805}" />
+  </Symbols>
+</CommandTable>

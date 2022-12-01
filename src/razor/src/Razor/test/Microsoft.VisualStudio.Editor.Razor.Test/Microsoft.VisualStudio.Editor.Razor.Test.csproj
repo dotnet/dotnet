@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>$(DefaultNetFxTargetFramework)</TargetFramework>
+    <PreserveCompilationContext>true</PreserveCompilationContext>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Microsoft.CodeAnalysis.Razor.Workspaces.Test\Shared\**\*.cs">
+      <Link>Shared\%(RecursiveDir)%(FileName)%(Extension)</Link>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="TestFiles\**\*" />
+    <None Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.VisualStudio.Editor.Razor.Test.Common\Microsoft.VisualStudio.Editor.Razor.Test.Common.csproj" />
+    <ProjectReference Include="..\..\..\Compiler\Microsoft.AspNetCore.Mvc.Razor.Extensions.Version1_X\src\Microsoft.AspNetCore.Mvc.Razor.Extensions.Version1_X.csproj" />
+    <ProjectReference Include="..\..\..\Compiler\Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X\src\Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X.csproj" />
+    <ProjectReference Include="..\..\..\Compiler\Microsoft.AspNetCore.Mvc.Razor.Extensions\src\Microsoft.AspNetCore.Mvc.Razor.Extensions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Moq" Version="$(MoqPackageVersion)" />
+  </ItemGroup>
+
+</Project>

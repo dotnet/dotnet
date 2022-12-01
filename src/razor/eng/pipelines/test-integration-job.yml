@@ -1,0 +1,117 @@
+parameters:
+  - name: configuration
+    type: string
+    default: 'Debug'
+  - name: shallowCheckout
+    type: boolean
+    default: true
+
+steps:
+  - ${{ if eq(parameters.shallowCheckout, true) }}:
+    - template: checkout-windows-task.yml
+
+  - task: NodeTool@0
+    displayName: Install Node 10.x
+    inputs:
+      versionSpec: 10.x
+
+  # We explicitly pass the VS install directory in azure-pipelines-integration-dartlab.yml
+  # We manually create the Hive before deployment to avoid a race condition
+  - powershell: eng\scripts\CreateVSHive.ps1
+      -rootSuffix RoslynDev
+      -devenvExepath C:\\Test\\VisualStudio\\Common7\\IDE\\devenv.exe
+    displayName: Create and Verify hive
+
+  - script: eng\cibuild.cmd
+      -configuration ${{ parameters.configuration }}
+      -msbuildEngine vs
+      -prepareMachine
+      -restore
+      -build
+      -pack
+      -publish
+      /p:BuildDependencyVsix=false
+    name: Build
+    displayName: Build
+    condition: succeeded()
+
+  - task: PublishBuildArtifacts@1
+    displayName: Upload Build BinLog
+    condition: always()
+    continueOnError: true
+    inputs:
+        pathtoPublish: artifacts/log/${{ parameters.configuration }}/Build.binlog
+        artifactName: $(Agent.Os)_$(Agent.JobName) BuildBinLog
+        artifactType: Container
+        parallel: true
+
+  # We want to build the VSIX but NOT the ".Dependencies" package.
+  # This way we get as close to a real deployment as possible in VSMain.
+  - script: eng\cibuild.cmd
+      -configuration ${{ parameters.configuration }}
+      -msbuildEngine vs
+      -prepareMachine
+      /p:BuildVsix=true
+      /p:BuildDependencyVsix=false
+      /p:BuildProjectReferences=false
+    name: BuildVSIX
+    displayName: Build and Deploy VSIX
+    condition: succeeded()
+
+  - task: PublishBuildArtifacts@1
+    displayName: Upload Build VSIX BinLog
+    condition: always()
+    continueOnError: true
+    inputs:
+        pathtoPublish: artifacts/log/${{ parameters.configuration }}/Build.binlog
+        artifactName: $(Agent.Os)_$(Agent.JobName) BuildVSIXBinLog
+        artifactType: Container
+        parallel: true
+
+  - script: eng\cibuild.cmd
+      -configuration ${{ parameters.configuration }}
+      -msbuildEngine vs
+      -prepareMachine
+      -integrationTest
+      /p:BuildDependencyVsix=false
+      /p:BuildProjectReferences=false
+    name: RunIntegrationTests
+    displayName: Run Integration Tests
+    condition: succeeded()
+
+  - task: PublishBuildArtifacts@1
+    displayName: Upload Run tests BinLog
+    condition: always()
+    continueOnError: true
+    inputs:
+        pathtoPublish: artifacts/log/${{ parameters.configuration }}/Build.binlog
+        artifactName: $(Agent.Os)_$(Agent.JobName) RunTestsBinLog
+        artifactType: Container
+        parallel: true
+
+  - task: PublishTestResults@2
+    displayName: Publish xUnit Test Results
+    inputs:
+      testResultsFormat: 'VSTest'
+      searchFolder: $(Build.SourcesDirectory)\artifacts\TestResults\${{ parameters.configuration }}
+      testResultsFiles: '*.trx'
+      mergeTestResults: true
+      testRunTitle: '$(System.JobAttempt)-Integration ${{ parameters.configuration }}'
+    condition: succeededOrFailed()
+
+  - task: PublishBuildArtifacts@1
+    displayName: Publish TestResults
+    inputs:
+      PathtoPublish: $(Build.SourcesDirectory)\artifacts\TestResults\${{ parameters.configuration }}
+      ArtifactName: '$(System.JobAttempt)-TestResults $(Build.BuildNumber)'
+      publishLocation: Container
+    continueOnError: true
+    condition: succeededOrFailed()
+  - task: PublishBuildArtifacts@1
+    displayName: Publish Logs
+    inputs:
+      PathtoPublish: '$(Build.SourcesDirectory)\artifacts\log\${{ parameters.configuration }}'
+      ArtifactName: '$(System.JobAttempt)-Logs ${{ parameters.configuration }} $(Build.BuildNumber)'
+      publishLocation: Container
+    continueOnError: true
+    condition: succeededOrFailed()

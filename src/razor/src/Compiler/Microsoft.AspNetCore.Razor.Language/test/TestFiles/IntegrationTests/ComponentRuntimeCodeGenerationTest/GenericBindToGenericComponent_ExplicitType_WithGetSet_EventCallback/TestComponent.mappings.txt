@@ -1,0 +1,13 @@
+Source Location: (119:2,7 [120] x:\dir\subdir\Test\TestComponent.cshtml)
+|
+    public TParam ParentValue { get; set; } = default;
+
+    public EventCallback<TParam> UpdateValue { get; set; }
+|
+Generated Location: (1534:31,7 [120] )
+|
+    public TParam ParentValue { get; set; } = default;
+
+    public EventCallback<TParam> UpdateValue { get; set; }
+|
+

@@ -1,0 +1,20 @@
+Source Location: (7:0,7 [8] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ModelExpressionTagHelper.cshtml)
+|DateTime|
+Generated Location: (1598:30,0 [8] )
+|DateTime|
+
+Source Location: (33:2,14 [29] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ModelExpressionTagHelper.cshtml)
+|"InputTestTagHelper, AppCode"|
+Generated Location: (1899:40,37 [29] )
+|"InputTestTagHelper, AppCode"|
+
+Source Location: (83:4,17 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ModelExpressionTagHelper.cshtml)
+|Date|
+Generated Location: (2616:58,102 [4] )
+|Date|
+
+Source Location: (111:5,18 [5] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ModelExpressionTagHelper.cshtml)
+|Model|
+Generated Location: (3046:67,94 [5] )
+|Model|
+

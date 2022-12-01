@@ -1,0 +1,9 @@
+#nullable enable
+Microsoft.CodeAnalysis.Razor.ProjectSystem.ProjectWorkspaceState
+Microsoft.CodeAnalysis.Razor.ProjectSystem.ProjectWorkspaceState.Equals(Microsoft.CodeAnalysis.Razor.ProjectSystem.ProjectWorkspaceState? other) -> bool
+Microsoft.CodeAnalysis.Razor.ProjectSystem.ProjectWorkspaceState.ProjectWorkspaceState(System.Collections.Generic.IReadOnlyCollection<Microsoft.AspNetCore.Razor.Language.TagHelperDescriptor!>! tagHelpers, Microsoft.CodeAnalysis.CSharp.LanguageVersion csharpLanguageVersion) -> void
+Microsoft.CodeAnalysis.Razor.ProjectSystem.ProjectWorkspaceState.ProjectWorkspaceState(System.Collections.Generic.IReadOnlyList<Microsoft.AspNetCore.Razor.Language.TagHelperDescriptor!>! tagHelpers, Microsoft.CodeAnalysis.CSharp.LanguageVersion csharpLanguageVersion) -> void
+override Microsoft.CodeAnalysis.Razor.ProjectSystem.ProjectWorkspaceState.Equals(object? obj) -> bool
+override Microsoft.CodeAnalysis.Razor.ProjectSystem.ProjectWorkspaceState.GetHashCode() -> int
+Microsoft.CodeAnalysis.Razor.ProjectSystem.ProjectWorkspaceState.CSharpLanguageVersion.get -> Microsoft.CodeAnalysis.CSharp.LanguageVersion
+Microsoft.CodeAnalysis.Razor.ProjectSystem.ProjectWorkspaceState.TagHelpers.get -> System.Collections.Generic.IReadOnlyList<Microsoft.AspNetCore.Razor.Language.TagHelperDescriptor!>!

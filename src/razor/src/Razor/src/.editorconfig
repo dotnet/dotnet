@@ -1,0 +1,4 @@
+[*.cs]
+dotnet_public_api_analyzer.require_api_files = true
+dotnet_diagnostic.RS0016.severity = error
+dotnet_diagnostic.RS0048.severity = error

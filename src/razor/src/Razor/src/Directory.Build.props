@@ -1,0 +1,17 @@
+﻿<Project>
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory).., Directory.Build.props))\Directory.Build.props" Condition="'$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), Directory.Build.props))'!= ''" />
+
+  <PropertyGroup>
+    <PackageTags>aspnetcore;cshtml;razor</PackageTags>
+    <IsPackable>true</IsPackable>
+    <IsShipping>true</IsShipping>
+    <IncludeSymbols>true</IncludeSymbols>
+
+    <!-- In theory we want to have this property set, but our pipeline doesn't set the access tokens yet -->
+    <PublishWindowsPdb Condition="'$(DotNetSymbolServerTokenMsdl)'!='' and '$(DotNetSymbolServerTokenSymWeb)'!=''">true</PublishWindowsPdb>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="$(Tooling_MicrosoftCodeAnalysisPublicApiAnalyzersPackageVersion)" />
+  </ItemGroup>
+</Project>

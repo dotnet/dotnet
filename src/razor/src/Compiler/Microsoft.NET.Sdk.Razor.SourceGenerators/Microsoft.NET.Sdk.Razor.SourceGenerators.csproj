@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <StrongNameKeyId>MicrosoftAspNetCore</StrongNameKeyId>
+
+    <!-- This is not a package, it is part of Razor SDK. -->
+    <IsPackable>false</IsPackable>
+    <IsShipping>false</IsShipping>
+    <NoWarn>$(NoWarn);RS2008</NoWarn>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.AspNetCore.Mvc.Razor.Extensions\src\Microsoft.AspNetCore.Mvc.Razor.Extensions.csproj" />
+    <ProjectReference Include="..\Microsoft.AspNetCore.Razor.Language\src\Microsoft.AspNetCore.Razor.Language.csproj" />
+    <ProjectReference Include="..\Microsoft.CodeAnalysis.Razor\src\Microsoft.CodeAnalysis.Razor.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="RazorSourceGenerator.razorencconfig" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

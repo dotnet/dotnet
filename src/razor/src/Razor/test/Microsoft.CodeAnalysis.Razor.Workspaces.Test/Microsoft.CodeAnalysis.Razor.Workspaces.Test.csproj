@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>$(StandardTestTfms)</TargetFrameworks>
+    <PreserveCompilationContext>true</PreserveCompilationContext>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\test.taghelpers.json" CopyToOutputDirectory="PreserveNewest" />
+    <Compile Include="..\OSSkipConditionFactAttribute.cs" LinkBase="Shared" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Microsoft.CodeAnalysis.Razor.Workspaces\Microsoft.CodeAnalysis.Razor.Workspaces.csproj" />
+    <ProjectReference Include="..\Microsoft.CodeAnalysis.Razor.Workspaces.Test.Common\Microsoft.CodeAnalysis.Razor.Workspaces.Test.Common.csproj" />
+    <ProjectReference Include="..\Microsoft.AspNetCore.Razor.Test.MvcShim\Microsoft.AspNetCore.Razor.Test.MvcShim.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="$(Tooling_MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion)" />
+    <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.Workspaces" Version="$(Tooling_MicrosoftCodeAnalysisVisualBasicWorkspacesPackageVersion)" />
+    <PackageReference Include="Moq" Version="$(MoqPackageVersion)" />
+    <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="$(SystemRuntimeInteropServicesRuntimePackageVersion)" />
+    <EmbeddedResource Include=".\taghelpers.json" />
+  </ItemGroup>
+
+</Project>

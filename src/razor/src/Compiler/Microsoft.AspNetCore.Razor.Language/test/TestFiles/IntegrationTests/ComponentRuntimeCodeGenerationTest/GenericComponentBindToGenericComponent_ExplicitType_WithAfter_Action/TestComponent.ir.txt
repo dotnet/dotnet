@@ -1,0 +1,20 @@
+Document - 
+    NamespaceDeclaration -  - Test
+        UsingDirective - (3:1,1 [14] ) - System
+        UsingDirective - (18:2,1 [34] ) - System.Collections.Generic
+        UsingDirective - (53:3,1 [19] ) - System.Linq
+        UsingDirective - (73:4,1 [30] ) - System.Threading.Tasks
+        UsingDirective - (104:5,1 [39] ) - Microsoft.AspNetCore.Components
+        ClassDeclaration -  - public partial - TestComponent - global::Microsoft.AspNetCore.Components.ComponentBase -  - TParam
+            MethodDeclaration -  - protected override - void - BuildRenderTree
+                Component - (19:1,0 [88] x:\dir\subdir\Test\TestComponent.cshtml) - MyComponent
+                    ComponentTypeArgument - (40:1,21 [6] x:\dir\subdir\Test\TestComponent.cshtml) - TValue
+                        LazyIntermediateToken - (40:1,21 [6] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - TParam
+                    ComponentAttribute - (65:1,46 [11] x:\dir\subdir\Test\TestComponent.cshtml) - Value - Value - AttributeStructure.DoubleQuotes
+                        CSharpExpression - 
+                            LazyIntermediateToken - (65:1,46 [11] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - ParentValue
+                    ComponentAttribute - (65:1,46 [11] x:\dir\subdir\Test\TestComponent.cshtml) - ValueChanged - ValueChanged - AttributeStructure.DoubleQuotes
+                        CSharpExpression - 
+                            IntermediateToken -  - CSharp - __value => { ParentValue = __value; global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.InvokeSynchronousDelegate(Update); }
+            CSharpCode - (116:2,7 [79] x:\dir\subdir\Test\TestComponent.cshtml)
+                LazyIntermediateToken - (116:2,7 [79] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - \n    public TParam ParentValue { get; set; }\n\n    public void Update() { }\n

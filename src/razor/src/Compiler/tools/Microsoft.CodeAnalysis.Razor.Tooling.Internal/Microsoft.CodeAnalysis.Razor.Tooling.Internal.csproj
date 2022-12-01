@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>Transport package for Razor compiler binaries. For internal use only.</Description>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <IsShipping>false</IsShipping>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReferemce Include="..\..\Microsoft.AspNetCore.Razor.Language\src\Microsoft.AspNetCore.Razor.Language.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReferemce Include="..\..\Microsoft.CodeAnalysis.Razor\src\Microsoft.CodeAnalysis.Razor.csproj" ReferenceOutputAssembly="false" />
+
+    <Content Include="$(ArtifactsDir)bin\Microsoft.AspNetCore.Razor.Language\$(Configuration)\netstandard2.0\Microsoft.AspNetCore.Razor.Language.dll" PackagePath="lib\$(TargetFramework)" />
+    <Content Include="$(ArtifactsDir)bin\Microsoft.CodeAnalysis.Razor\$(Configuration)\netstandard2.0\Microsoft.CodeAnalysis.Razor.dll" PackagePath="lib\$(TargetFramework)" />
+  </ItemGroup>
+
+</Project>
