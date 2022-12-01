@@ -1,0 +1,225 @@
+### This job source-builds https://github.com/dotnet/dotnet with given parameters
+### If run in a PR, new changes are applied to a local copy of the VMR, then it is source-built and tested
+
+parameters:
+
+- name: vmrPath
+  type: string
+  default: $(Agent.BuildDirectory)/vmr
+
+- name: vmrBranch
+  displayName: dotnet/dotnet branch to use
+  type: string
+  default: $(Build.SourceBranchName)
+
+# Resource id of the installer build to retrieve MSFT SDK from
+- name: installerBuildResourceId
+  type: string
+
+- name: buildName
+  type: string
+
+- name: architecture
+  type: string
+
+- name: container
+  type: string
+
+- name: pool
+  type: object
+
+# Allow downloading artifacts from the internet during the build
+- name: runOnline
+  type: boolean
+
+# Skip running the SDK content smoke-tests
+- name: excludeSdkContentTests
+  type: boolean
+  default: false
+
+# Name of a previous job (from the same template as this) whose output will be used to build this job
+# The SDK from its artifacts is copied to vmr/.dotnet
+- name: reuseBuildArtifactsFrom
+  type: string
+  default: ''
+
+- name: excludeOmniSharpTests
+  type: boolean
+
+- name: bootstrapPrep
+  type: boolean
+
+- name: enablePoison
+  type: boolean
+
+jobs:
+- job: ${{ parameters.buildName }}_${{ parameters.architecture }}
+  timeoutInMinutes: 150
+  pool: ${{ parameters.pool }}
+  ${{ if ne(parameters.reuseBuildArtifactsFrom, '') }}:
+    # Always attempt to run the bootstrap leg (e.g. even when stage 1 tests fail) in order to get a complete accessment of the build status.
+    # The build shortcuts when stage 1 build fails and doesn't produce the SDK.
+    condition: succeededOrFailed()
+    dependsOn: ${{ parameters.reuseBuildArtifactsFrom }}_${{ parameters.architecture }}
+  variables:
+  - template: /eng/common/templates/variables/pool-providers.yml
+  - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+    - group: DotNetBot-GitHub
+    - group: AzureDevOps-Artifact-Feeds-Pats
+  - ${{ else }}:
+    - name: BotAccount-dotnet-bot-repo-PAT
+      value: N/A
+  - ${{ if eq(parameters.reuseBuildArtifactsFrom, '') }}:
+    - name: additionalBuildArgs
+      value: ''
+  - ${{ else }}:
+    - name: additionalBuildArgs
+      value: ' --with-sdk /vmr/.dotnet'
+
+  steps:
+  - template: ../steps/vmr-prepare.yml
+    parameters:
+      vmrBranch: ${{ parameters.vmrBranch }}
+      installerBuildResourceId: ${{ parameters.installerBuildResourceId }}
+      skipComponentGovernanceDetection: true
+
+  # Synchronize new content in the VMR during PRs (we expect this to come
+  - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+    - template: ../steps/vmr-pull-updates.yml
+      parameters:
+        vmrPath: ${{ parameters.vmrPath }}
+        vmrBranch: ${{ parameters.vmrBranch }}
+        targetRef: $(Build.SourceVersion) # Synchronize the current installer commit
+
+  - ${{ if ne(variables['System.TeamProject'], 'public') }}:
+    - script: cp ${{ parameters.vmrPath }}/src/installer/NuGet.config ${{ parameters.vmrPath }}/test/Microsoft.DotNet.SourceBuild.SmokeTests/assets/online.NuGet.Config
+      displayName: Copy Test NuGet Config
+
+    - task: Bash@3
+      displayName: Setup Private Feeds Credentials
+      inputs:
+        filePath: ${{ parameters.vmrPath }}/src/installer/eng/common/SetupNugetSources.sh
+        arguments: ${{ parameters.vmrPath }}/test/Microsoft.DotNet.SourceBuild.SmokeTests/assets/online.NuGet.Config $Token
+      env:
+        Token: $(dn-bot-dnceng-artifact-feeds-rw)
+
+  - ${{ if ne(parameters.excludeSdkContentTests, 'true') }}:
+    - download: ${{ parameters.installerBuildResourceId }}
+      artifact: BlobArtifacts
+      patterns: '**/dotnet-sdk-+([0-9]).+([0-9]).+([0-9])?(-@(alpha|preview|rc|rtm)*)-linux-${{ parameters.architecture }}.tar.gz'
+      displayName: Download MSFT SDK
+
+  - ${{ if ne(parameters.reuseBuildArtifactsFrom, '') }}:
+    - download: current
+      artifact: ${{ parameters.reuseBuildArtifactsFrom }}_${{ parameters.architecture }}_Artifacts
+      patterns: '*.tar.gz'
+      displayName: Download Previous Build
+
+    - task: CopyFiles@2
+      displayName: Copy Previous Build
+      inputs:
+        SourceFolder: $(Pipeline.Workspace)/${{ parameters.reuseBuildArtifactsFrom }}_${{ parameters.architecture }}_Artifacts
+        Contents: '*.tar.gz'
+        TargetFolder: ${{ parameters.vmrPath }}/packages/archive/
+
+  - script: |
+      set -x
+
+      if [[ -z '${{ parameters.reuseBuildArtifactsFrom }}' ]]; then
+        customPrepArgs=
+        if [[ '${{ parameters.bootstrapPrep }}' == 'True' ]]; then
+          customPrepArgs='--bootstrap'
+        fi
+
+        docker run --rm -v ${{ parameters.vmrPath }}:/vmr -w /vmr ${{ parameters.container }} ./prep.sh ${customPrepArgs}
+      else
+        mkdir ${{ parameters.vmrPath }}/.dotnet
+        previousSdkPath="${{ parameters.vmrPath }}/packages/archive/dotnet-sdk-*.tar.gz"
+        eval tar -ozxf "$previousSdkPath" -C "${{ parameters.vmrPath }}/.dotnet"
+        eval rm -f "$previousSdkPath"
+      fi
+    displayName: Prep the Build
+
+  - script: |
+      set -x
+      df -h
+
+      networkArgs=
+      customBuildArgs=
+      if [[ '${{ parameters.runOnline }}' == 'True' ]]; then
+        customBuildArgs='--online'
+      else
+        networkArgs='--network none'
+      fi
+
+      if [[ '${{ parameters.enablePoison }}' == 'True' ]]; then
+        customBuildArgs="$customBuildArgs --poison"
+      fi
+
+      docker run --rm -v ${{ parameters.vmrPath }}:/vmr -w /vmr ${networkArgs} ${{ parameters.container }} ./build.sh --clean-while-building $(additionalBuildArgs) ${customBuildArgs}
+    displayName: Build
+
+  - script: |
+      set -x
+
+      dockerVolumeArgs="-v ${{ parameters.vmrPath }}:/vmr"
+      dockerEnvArgs="-e SMOKE_TESTS_EXCLUDE_OMNISHARP=${{ parameters.excludeOmniSharpTests }} -e SMOKE_TESTS_WARN_SDK_CONTENT_DIFFS=true"
+      poisonArg=''
+
+      if [[ '${{ parameters.excludeSdkContentTests }}' != 'True' ]]; then
+        dockerVolumeArgs+=" -v $(Pipeline.Workspace)/${{ parameters.installerBuildResourceId }}/BlobArtifacts/:/BlobArtifacts"
+        msftSdkTarballName=$(find "$(Pipeline.Workspace)/${{ parameters.installerBuildResourceId }}/BlobArtifacts/" -name "dotnet-sdk-*-linux-${{ parameters.architecture }}.tar.gz" -exec basename {} \;)
+        dockerEnvArgs+=" -e SMOKE_TESTS_MSFT_SDK_TARBALL_PATH=/BlobArtifacts/$msftSdkTarballName"
+      fi
+
+      if [[ '${{ parameters.enablePoison }}' == 'True' ]]; then
+        poisonArg='--poison'
+        dockerEnvArgs+=" -e SMOKE_TESTS_WARN_POISON_DIFFS=true"
+      fi
+
+      docker run --rm $dockerVolumeArgs -w /vmr $dockerEnvArgs ${{ parameters.container }} ./build.sh $poisonArg --run-smoke-test $(additionalBuildArgs) -- -p:SmokeTestConsoleVerbosity=detailed
+    displayName: Run Tests
+
+  # Don't use CopyFiles@2 as it encounters permissions issues because it indexes all files in the source directory graph.
+  - script: |
+      set -x
+
+      targetFolder=$(Build.StagingDirectory)/BuildLogs/
+      mkdir -p ${targetFolder}
+
+      cd "${{ parameters.vmrPath }}"
+      find artifacts/ -type f -name "*.binlog" -exec cp {} --parents -t ${targetFolder} \;
+      find artifacts/ -type f -name "*.log" -exec cp {} --parents -t ${targetFolder} \;
+      find artifacts/prebuilt-report/ -exec cp {} --parents -t ${targetFolder} \;
+      find src/ -type f -name "*.binlog" -exec cp {} --parents -t ${targetFolder} \;
+      find src/ -type f -name "*.log" -exec cp {} --parents -t ${targetFolder} \;
+      find test/ -type f -name "*.binlog" -exec cp {} --parents -t ${targetFolder} \;
+      find test/ -type f -name "Updated*.diff" -exec cp {} --parents -t ${targetFolder} \;
+      find test/ -type f -name "Updated*.txt" -exec cp {} --parents -t ${targetFolder} \;
+    displayName: Prepare BuildLogs staging directory
+    continueOnError: true
+    condition: succeededOrFailed()
+
+  - publish: '$(Build.StagingDirectory)/BuildLogs'
+    artifact: $(Agent.JobName)_BuildLogs_Attempt$(System.JobAttempt)
+    displayName: Publish BuildLogs
+    continueOnError: true
+    condition: succeededOrFailed()
+
+  - task: PublishTestResults@2
+    displayName: Publish Test Results
+    condition: succeededOrFailed()
+    continueOnError: true
+    inputs:
+      testRunner: vSTest
+      testResultsFiles: 'test/**/*.trx'
+      searchFolder: ${{ parameters.vmrPath }}
+      mergeTestResults: true
+      publishRunAttachments: true
+      testRunTitle: SourceBuild_SmokeTests_$(Agent.JobName)
+
+  - publish: '${{ parameters.vmrPath }}/artifacts/${{ parameters.architecture }}/Release/'
+    artifact: $(Agent.JobName)_Artifacts
+    displayName: Publish Artifacts
+    condition: succeededOrFailed()
+    continueOnError: true
