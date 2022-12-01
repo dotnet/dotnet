@@ -1,0 +1,79 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <!--
+      This project deploys extra dependencies that may not be included in the host VS.
+      Used by integration tests to deploy dependencies not available on public preview.
+
+      In general this project should not be deployed (F5'd) by itself as it only includes
+      extra dependencies + codebases that may not be present in public VS installs.
+    -->
+
+    <TargetFramework>$(DefaultNetFxTargetFramework)</TargetFramework>
+
+    <VSSDKTargetPlatformRegRootSuffix>RoslynDev</VSSDKTargetPlatformRegRootSuffix>
+
+    <IsShipping>false</IsShipping>
+    <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
+    <IsPackable>false</IsPackable>
+
+    <!-- Don't automatically include dependencies -->
+    <IncludePackageReferencesInVSIXContainer>false</IncludePackageReferencesInVSIXContainer>
+
+    <CreateVsixContainer Condition="'$(BuildDependencyVsix)' == 'true'">true</CreateVsixContainer>
+    <GeneratePkgDefFile>true</GeneratePkgDefFile>
+    <DeployExtension Condition="'$(BuildDependencyVsix)' == 'true' OR '$(BuildDependencyVsix)' == ''" >true</DeployExtension>
+    <IncludeAssemblyInVSIXContainer>false</IncludeAssemblyInVSIXContainer>
+    <IncludeDebugSymbolsInVSIXContainer>false</IncludeDebugSymbolsInVSIXContainer>
+    <IncludeDebugSymbolsInLocalVSIXDeployment>false</IncludeDebugSymbolsInLocalVSIXDeployment>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AvailableItemName Include="VSIXSourceItem" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="source.extension.vsixmanifest">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- To include the ProvideCodeBase attribute type. -->
+    <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" Version="$(MicrosoftVisualStudioShell150PackageVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Reference the Roslyn dependencies so that Preview builds work -->
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Version="$(Tooling_MicrosoftCodeAnalysisCSharpFeaturesPackageVersion)" />
+    <PackageReference Include="Microsoft.CodeAnalysis.EditorFeatures" Version="$(RoslynPackageVersion)" />
+    <PackageReference Include="Microsoft.CodeAnalysis.EditorFeatures.Wpf" Version="$(RoslynPackageVersion)" />
+    <PackageReference Include="Microsoft.CodeAnalysis.ExternalAccess.Razor" Version="$(Tooling_MicrosoftCodeAnalysisExternalAccessRazorPackageVersion)" />
+    <PackageReference Include="Microsoft.CodeAnalysis.ExternalAccess.FSharp" Version="$(Tooling_MicrosoftCodeAnalysisExternalAccessRazorPackageVersion)" />
+    <PackageReference Include="Microsoft.VisualStudio.LanguageServices" Version="$(Tooling_MicrosoftVisualStudioLanguageServicesPackageVersion)" />
+
+    <!-- Reference the LSP protocol dlls so that we can include them in the code base and output them with the VSIX. -->
+    <PackageReference Include="Microsoft.VisualStudio.LanguageServer.Protocol" Version="$(MicrosoftVisualStudioLanguageServerProtocolPackageVersion)" />
+    <PackageReference Include="Microsoft.VisualStudio.LanguageServer.Protocol.Extensions" Version="$(MicrosoftVisualStudioLanguageServerProtocolExtensionsPackageVersion)" />
+    <PackageReference Include="Microsoft.VisualStudio.LanguageServer.Protocol.Internal" Version="$(MicrosoftVisualStudioLanguageServerProtocolInternalPackageVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <VSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.dll" />
+    <VSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.CSharp.dll" />
+    <VSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.CSharp.Features.dll" />
+    <VSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.CSharp.Workspaces.dll" />
+    <VSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.EditorFeatures.dll" />
+    <VSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.EditorFeatures.Text.dll" />
+    <VSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.EditorFeatures.Wpf.dll" />
+    <VSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.ExternalAccess.Razor.dll" />
+    <VSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.InteractiveHost.dll" />
+    <VSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.Features.dll" />
+    <VSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.LanguageServer.Protocol.dll" />
+    <VSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.Remote.Workspaces.dll" />
+    <VSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.Workspaces.dll" />
+    <VSIXSourceItem Include="$(OutputPath)Microsoft.VisualStudio.LanguageServices.dll" />
+    <VSIXSourceItem Include="$(OutputPath)Microsoft.VisualStudio.LanguageServer.Protocol.dll" />
+    <VSIXSourceItem Include="$(OutputPath)Microsoft.VisualStudio.LanguageServer.Protocol.Extensions.dll" />
+    <VSIXSourceItem Include="$(OutputPath)Microsoft.VisualStudio.LanguageServer.Protocol.Internal.dll" />
+  </ItemGroup>
+</Project>

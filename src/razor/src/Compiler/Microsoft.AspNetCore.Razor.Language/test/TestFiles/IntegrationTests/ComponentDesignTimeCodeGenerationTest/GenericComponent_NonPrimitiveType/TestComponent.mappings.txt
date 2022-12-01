@@ -1,0 +1,10 @@
+Source Location: (20:0,20 [10] x:\dir\subdir\Test\TestComponent.cshtml)
+|CustomType|
+Generated Location: (915:25,20 [10] )
+|CustomType|
+
+Source Location: (38:0,38 [16] x:\dir\subdir\Test\TestComponent.cshtml)
+|new CustomType()|
+Generated Location: (1215:34,38 [16] )
+|new CustomType()|
+

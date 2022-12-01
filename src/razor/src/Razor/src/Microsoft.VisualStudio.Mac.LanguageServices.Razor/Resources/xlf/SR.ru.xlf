@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="ru" original="../SR.resx">
+    <body>
+      <trans-unit id="ArgumentCannotBeNullOrEmpty">
+        <source>Value cannot be null or an empty string.</source>
+        <target state="translated">Значение не может быть NULL или пустой строкой.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RazorLanguageServiceGeneralError">
+        <source>Razor Language Service error encountered.</source>
+        <target state="translated">Произошла ошибка языковой службы Razor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RazorLanguageServiceProjectError">
+        <source>Razor Language Service error encountered from project '{0}'.</source>
+        <target state="translated">Произошла ошибка языковой службы Razor в проекте "{0}".</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RazorLanguageServiceProjectSnapshotError">
+        <source>Error encountered from project '{0}':
+{1}</source>
+        <target state="translated">Произошла ошибка в проекте "{0}":
+{1}</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -1,0 +1,17 @@
+{
+    "codebaseName": "Razor-Tooling-GitHub",
+    "notificationAliases": [
+        "CoreRazorTooling@microsoft.com"
+    ],
+    "codebaseAdmins": [
+        "REDMOND\\manishj",
+        "REDMOND\\vaagrawa"
+    ],
+    "instanceUrl": "https://devdiv.visualstudio.com",
+    "projectName": "DevDiv",
+    "areaPath": "DevDiv\\NET Developer Experience\\Productivity\\Razor Tooling",
+    "iterationPath": "DevDiv",
+    "tools": [
+        "APIScan"
+    ]
+}

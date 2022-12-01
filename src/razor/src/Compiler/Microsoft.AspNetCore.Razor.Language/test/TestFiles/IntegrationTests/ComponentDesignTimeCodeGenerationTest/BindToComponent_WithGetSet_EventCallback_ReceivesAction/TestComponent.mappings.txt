@@ -1,0 +1,14 @@
+Source Location: (30:0,30 [11] x:\dir\subdir\Test\TestComponent.cshtml)
+|ParentValue|
+Generated Location: (1022:25,30 [11] )
+|ParentValue|
+
+Source Location: (101:1,7 [50] x:\dir\subdir\Test\TestComponent.cshtml)
+|
+    public int ParentValue { get; set; } = 42;
+|
+Generated Location: (1992:47,7 [50] )
+|
+    public int ParentValue { get; set; } = 42;
+|
+

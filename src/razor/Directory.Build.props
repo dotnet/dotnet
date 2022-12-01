@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <!--
+    We don't follow Arcade conventions for project naming.
+  -->
+  <PropertyGroup Condition="'$(IsUnitTestProject)' == ''">
+    <IsUnitTestProject>false</IsUnitTestProject>
+    <IsUnitTestProject Condition="$(MSBuildProjectName.EndsWith('.Test'))">true</IsUnitTestProject>
+  </PropertyGroup>
+
+  <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
+  <Import Project="eng\MPack.props" />
+  <Import Project="eng\targets\Npm.Common.props"  Condition="'$(MSBuildProjectExtension)' == '.npmproj'" />
+
+  <Import
+    Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), AspNetCoreSettings.props))\AspNetCoreSettings.props"
+    Condition=" '$(CI)' != 'true' AND '$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), AspNetCoreSettings.props))' != '' " />
+
+  <PropertyGroup Label="Build Settings">
+    <LangVersion>preview</LangVersion>
+    <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <StrongNameKeyId>MicrosoftAspNetCore</StrongNameKeyId>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <GenerateResxSource>true</GenerateResxSource>
+    <GenerateResxSourceEmitFormatMethods>true</GenerateResxSourceEmitFormatMethods>
+    <ExcludeFromSourceBuild Condition="'$(IsUnitTestProject)' == 'true'">true</ExcludeFromSourceBuild>
+    <RepositoryRoot>$(MSBuildThisFileDirectory)</RepositoryRoot>
+
+    <SharedSourceRoot>$(MSBuildThisFileDirectory)src\Shared\</SharedSourceRoot>
+
+    <!-- Embed source files that are not tracked by the source control manager in the PDB. -->
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+
+    <!-- Working around https://github.com/dotnet/sdk/issues/24747 -->
+    <NoWarn>$(NoWarn);NU1505</NoWarn>
+
+    <!-- Working around https://github.com/microsoft/msbuild/pull/4764 -->
+    <EmbeddedResourceUseDependentUponConvention>false</EmbeddedResourceUseDependentUponConvention>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)eng\BannedSymbols.txt" />
+
+    <!--
+      This language support type (used for init-only properties) is linked directly into every project to avoid conflicts with
+      the same type that is included in Microsoft.CodeAnalysis.ExternalAccess.Razor, which allows InternalsVisibleTo access
+      to Razor tooling.
+    -->
+    <Compile Include="$(MSBuildThisFileDirectory)\src\Shared\LanguageSupport\IsExternalInit.cs" Link="LanguageSupport\IsExternalInit.cs" />
+  </ItemGroup>
+
+  <PropertyGroup Label="Package and Assembly Metadata">
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Product>Microsoft ASP.NET Core</Product>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Warning Suppressions">
+    <!--
+      Suppress warnings about assembly conflicts. This happens for assemblies that ship in VS so it's irrelevant.
+    -->
+    <NoWarn>$(NoWarn);MSB3277</NoWarn>
+  </PropertyGroup>
+</Project>

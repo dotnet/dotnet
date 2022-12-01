@@ -1,0 +1,19 @@
+﻿abstract Microsoft.AspNetCore.Razor.OmniSharpPlugin.ProjectConfigurationProvider.TryResolveConfiguration(Microsoft.AspNetCore.Razor.OmniSharpPlugin.ProjectConfigurationProviderContext context, out Microsoft.AspNetCore.Razor.OmniSharpPlugin.ProjectConfiguration configuration) -> bool
+abstract Microsoft.AspNetCore.Razor.OmniSharpPlugin.ProjectInstanceEvaluator.Evaluate(Microsoft.Build.Execution.ProjectInstance projectInstance) -> Microsoft.Build.Execution.ProjectInstance
+Microsoft.AspNetCore.Razor.OmniSharpPlugin.CoreProjectConfigurationProvider.HasRazorCoreCapability(Microsoft.AspNetCore.Razor.OmniSharpPlugin.ProjectConfigurationProviderContext context) -> bool
+Microsoft.AspNetCore.Razor.OmniSharpPlugin.CoreProjectConfigurationProvider.HasRazorCoreConfigurationCapability(Microsoft.AspNetCore.Razor.OmniSharpPlugin.ProjectConfigurationProviderContext context) -> bool
+Microsoft.AspNetCore.Razor.OmniSharpPlugin.ProjectConfiguration.Configuration.get -> Microsoft.AspNetCore.Razor.Language.RazorConfiguration
+Microsoft.AspNetCore.Razor.OmniSharpPlugin.ProjectConfiguration.Documents.get -> System.Collections.Generic.IReadOnlyList<Microsoft.AspNetCore.Razor.OmniSharpPlugin.OmniSharpHostDocument>
+Microsoft.AspNetCore.Razor.OmniSharpPlugin.ProjectConfiguration.ProjectConfiguration(Microsoft.AspNetCore.Razor.Language.RazorConfiguration configuration, System.Collections.Generic.IReadOnlyList<Microsoft.AspNetCore.Razor.OmniSharpPlugin.OmniSharpHostDocument> documents, string rootNamespace) -> void
+Microsoft.AspNetCore.Razor.OmniSharpPlugin.ProjectConfiguration.RootNamespace.get -> string
+Microsoft.AspNetCore.Razor.OmniSharpPlugin.ProjectConfigurationProviderContext.ProjectCapabilities.get -> System.Collections.Generic.IReadOnlyList<string>
+Microsoft.AspNetCore.Razor.OmniSharpPlugin.ProjectConfigurationProviderContext.ProjectConfigurationProviderContext(System.Collections.Generic.IReadOnlyList<string> projectCapabilities, Microsoft.Build.Execution.ProjectInstance projectInstance) -> void
+Microsoft.AspNetCore.Razor.OmniSharpPlugin.ProjectConfigurationProviderContext.ProjectInstance.get -> Microsoft.Build.Execution.ProjectInstance
+Microsoft.AspNetCore.Razor.OmniSharpPlugin.CoreProjectConfigurationProvider
+Microsoft.AspNetCore.Razor.OmniSharpPlugin.CoreProjectConfigurationProvider.CoreProjectConfigurationProvider() -> void
+Microsoft.AspNetCore.Razor.OmniSharpPlugin.ProjectConfiguration
+Microsoft.AspNetCore.Razor.OmniSharpPlugin.ProjectConfigurationProvider
+Microsoft.AspNetCore.Razor.OmniSharpPlugin.ProjectConfigurationProvider.ProjectConfigurationProvider() -> void
+Microsoft.AspNetCore.Razor.OmniSharpPlugin.ProjectConfigurationProviderContext
+Microsoft.AspNetCore.Razor.OmniSharpPlugin.ProjectInstanceEvaluator
+Microsoft.AspNetCore.Razor.OmniSharpPlugin.ProjectInstanceEvaluator.ProjectInstanceEvaluator() -> void
