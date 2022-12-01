@@ -105,6 +105,10 @@
             "defaultRef": "dev"
         },
         {
+            "name": "razor",
+            "defaultRemote": "https://github.com/dotnet/razor"
+        },
+        {
             "name": "razor-compiler",
             "defaultRemote": "https://github.com/dotnet/razor-compiler"
         },
