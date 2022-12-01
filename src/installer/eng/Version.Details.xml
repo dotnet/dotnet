@@ -167,13 +167,13 @@
       <Uri>https://github.com/Microsoft/ApplicationInsights-dotnet</Uri>
       <Sha>53b80940842204f78708a538628288ff5d741a1d</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Workload.Emscripten.net6.Manifest-8.0.100" Version="8.0.0-alpha.1.22558.2">
+    <Dependency Name="Microsoft.NET.Workload.Emscripten.net6.Manifest-8.0.100" Version="8.0.0-alpha.1.22578.1">
       <Uri>https://github.com/dotnet/emsdk</Uri>
-      <Sha>96351a7e97093d88eb097b4a489f949ebf8a901b</Sha>
+      <Sha>2039a62eeb52e1288f0b4aa6f71baae8f99a6f5b</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Workload.Emscripten.net7.Manifest-8.0.100" Version="8.0.0-alpha.1.22558.2">
+    <Dependency Name="Microsoft.NET.Workload.Emscripten.net7.Manifest-8.0.100" Version="8.0.0-alpha.1.22578.1">
       <Uri>https://github.com/dotnet/emsdk</Uri>
-      <Sha>96351a7e97093d88eb097b4a489f949ebf8a901b</Sha>
+      <Sha>2039a62eeb52e1288f0b4aa6f71baae8f99a6f5b</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Deployment.DotNet.Releases" Version="1.0.0-preview5.1.22263.1">
       <Uri>https://github.com/dotnet/deployment-tools</Uri>
@@ -205,13 +205,13 @@
       <Uri>https://github.com/dotnet/arcade</Uri>
       <Sha>6b3bad6673f3ebe89ebe12ea7c4eff1705b893e6</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Darc" Version="1.1.0-beta.22578.1">
+    <Dependency Name="Microsoft.DotNet.Darc" Version="1.1.0-beta.22601.1">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
-      <Sha>a1e2957fadc434c33a83fcf6a4e04ce6f231ee6b</Sha>
+      <Sha>7706f3fc349838553a94c3b0d84060b50c47d514</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.DarcLib" Version="1.1.0-beta.22578.1">
+    <Dependency Name="Microsoft.DotNet.DarcLib" Version="1.1.0-beta.22601.1">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
-      <Sha>a1e2957fadc434c33a83fcf6a4e04ce6f231ee6b</Sha>
+      <Sha>7706f3fc349838553a94c3b0d84060b50c47d514</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Extensions.Logging.Console" Version="8.0.0-alpha.1.22557.12">
       <Uri>https://github.com/dotnet/runtime</Uri>
