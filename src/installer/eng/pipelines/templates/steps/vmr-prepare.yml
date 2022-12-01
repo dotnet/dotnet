@@ -7,21 +7,42 @@ parameters:
   type: string
   default: $(Build.SourceBranchName)
 
+- name: installerBuildResourceId
+  displayName: Installer build to get the commit hash to check out from
+  type: string
+  default: current
+
+- name: skipComponentGovernanceDetection
+  type: boolean
+  default: false
+
 steps:
 - checkout: vmr
-  clean: true
   displayName: Clone dotnet/dotnet
-  fetchDepth: 0
   path: vmr
+  clean: true
+  fetchDepth: 0 # We need this so that we can check out the new commit
 
-- script: |
-    git switch -c ${{ parameters.vmrBranch }}
-  displayName: Checkout ${{ parameters.vmrBranch }}
-  workingDirectory: $(Agent.BuildDirectory)/vmr
+- ${{ if ne(parameters.installerBuildResourceId, 'current') }}:
+  - download: ${{ parameters.installerBuildResourceId }}
+    artifact: VmrRevision
+    displayName: Download VmrRevision
+
+  - script: |
+      set -ex
+      sha=`head -n 1 $(Pipeline.Workspace)/${{ parameters.installerBuildResourceId }}/VmrRevision/VmrRevision.txt`
+      git checkout $sha
+    displayName: Check out dotnet/dotnet commit
+    workingDirectory: $(Agent.BuildDirectory)/vmr
+- ${{ else }}:
+  - script: |
+      git switch -c ${{ parameters.vmrBranch }}
+    displayName: Checkout ${{ parameters.vmrBranch }}
+    workingDirectory: $(Agent.BuildDirectory)/vmr
 
 # TODO (https://github.com/dotnet/arcade/issues/11332): Allow full CG?
 # Currently, we ignore dirs of individual repos - they have been scanned before
-- ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal')) }}:
+- ${{ if and(not(parameters.skipComponentGovernanceDetection), ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal')) }}:
   - task: ComponentGovernanceComponentDetection@0
     inputs:
       sourceScanPath: $(Agent.BuildDirectory)/vmr

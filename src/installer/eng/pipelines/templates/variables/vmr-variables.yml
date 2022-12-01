@@ -1,9 +1,0 @@
-variables:
-- name: vmrPath
-  value: $(Agent.BuildDirectory)/vmr
-
-- ${{ if eq(variables['System.TeamProject'], 'internal') }}:
-  - group: DotNetBot-GitHub
-- ${{ else }}:
-  - name: BotAccount-dotnet-bot-repo-PAT
-    value: N/A
