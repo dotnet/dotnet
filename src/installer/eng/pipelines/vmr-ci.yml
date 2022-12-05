@@ -21,6 +21,6 @@ resources:
     endpoint: dotnet
 
 stages:
-- template: /eng/pipelines/templates/stages/vmr-build.yml
+- template: templates/stages/vmr-build.yml
   parameters:
     installerBuildResourceId: installer-build-resource
