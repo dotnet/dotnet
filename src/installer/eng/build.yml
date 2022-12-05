@@ -64,7 +64,7 @@ parameters:
   default: false
 
 jobs:
-- template: /eng/common/templates/job/job.yml
+- template: common/templates/job/job.yml
   parameters:
     # Set up the name of the job.
     ${{ if parameters.pgoInstrument }}:
