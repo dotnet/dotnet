@@ -49,10 +49,10 @@
       "commitSha": "4e531ec93223827c3e12c2a79d4c687e3f275066"
     },
     {
-      "packageVersion": "7.0.100-1.22564.1",
+      "packageVersion": "7.0.100-1.22605.2",
       "path": "linker",
       "remoteUri": "https://github.com/dotnet/linker",
-      "commitSha": "13b8d6d68a07a47e52e13705313bc32d5540edf5"
+      "commitSha": "f3469ca5e80e3701d90f8a376371eda940ba9687"
     },
     {
       "packageVersion": "17.5.0-preview-22564-01",
@@ -175,7 +175,7 @@
     },
     {
       "path": "linker/external/cecil",
-      "remoteUri": "https://github.com/mono/cecil.git",
+      "remoteUri": "https://github.com/dotnet/cecil.git",
       "commitSha": "1840b7410d37a613e684b6f9650e39e2d4950bbb"
     },
     {
