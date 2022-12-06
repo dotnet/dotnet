@@ -251,7 +251,7 @@ ERR:
         {
             builder.AddMiddleware((context, next) =>
             {
-                if (context.ParseResult.Directives.TryGetValues("env", out var keyValuePairs))
+                if (context.ParseResult.Directives.TryGetValue("env", out var keyValuePairs))
                 {
                     for (var i = 0; i < keyValuePairs.Count; i++)
                     {
@@ -498,9 +498,9 @@ ERR:
         {
             builder.AddMiddleware(async (context, next) =>
             {
-                if (context.ParseResult.Directives.Contains("parse"))
+                if (context.ParseResult.Directives.ContainsKey("parse"))
                 {
-                    context.InvocationResult = new ParseDirectiveResult(errorExitCode);
+                    context.InvocationResult = ctx => ParseDirectiveResult.Apply(ctx, errorExitCode);
                 }
                 else
                 {
@@ -525,7 +525,7 @@ ERR:
             {
                 if (context.ParseResult.Errors.Count > 0)
                 {
-                    context.InvocationResult = new ParseErrorResult(errorExitCode);
+                    context.InvocationResult = ctx => ParseErrorResult.Apply(ctx, errorExitCode);
                 }
                 else
                 {
@@ -547,7 +547,7 @@ ERR:
         {
             builder.AddMiddleware(async (context, next) =>
             {
-                if (context.ParseResult.Directives.TryGetValues("suggest", out var values))
+                if (context.ParseResult.Directives.TryGetValue("suggest", out var values))
                 {
                     int position;
 
@@ -560,7 +560,7 @@ ERR:
                         position = context.ParseResult.CommandLineText?.Length ?? 0;
                     }
 
-                    context.InvocationResult = new SuggestDirectiveResult(position);
+                    context.InvocationResult = ctx => SuggestDirectiveResult.Apply(ctx, position);
                 }
                 else
                 {
@@ -649,7 +649,7 @@ ERR:
                 {
                     if (context.ParseResult.Errors.Any(e => e.SymbolResult?.Symbol is VersionOption))
                     {
-                        context.InvocationResult = new ParseErrorResult(null);
+                        context.InvocationResult = static ctx => ParseErrorResult.Apply(ctx, null);
                     }
                     else
                     {
@@ -690,7 +690,7 @@ ERR:
                 {
                     if (context.ParseResult.Errors.Any(e => e.SymbolResult?.Symbol is VersionOption))
                     {
-                        context.InvocationResult = new ParseErrorResult(null);
+                        context.InvocationResult = static ctx => ParseErrorResult.Apply(ctx, null);
                     }
                     else
                     {
@@ -712,7 +712,7 @@ ERR:
         {
             if (context.ParseResult.FindResultFor(helpOption) is { })
             {
-                context.InvocationResult = new HelpResult();
+                context.InvocationResult = HelpResult.Apply;
                 return true;
             }
 

@@ -16,14 +16,9 @@ namespace System.CommandLine
     public abstract class Option : IdentifierSymbol, IValueDescriptor
     {
         private string? _name;
-        private List<ValidateSymbolResult<OptionResult>>? _validators;
-        private readonly Argument _argument;
+        private List<Action<OptionResult>>? _validators;
 
-        internal Option(
-            string name,
-            string? description,
-            Argument argument)
-            : base(description)
+        private protected Option(string name, string? description) : base(description)
         {
             if (name is null)
             {
@@ -33,16 +28,9 @@ namespace System.CommandLine
             _name = name.RemovePrefix();
 
             AddAlias(name);
-
-            argument.AddParent(this);
-            _argument = argument;
         }
 
-        internal Option(
-            string[] aliases,
-            string? description,
-            Argument argument)
-            : base(description)
+        private protected Option(string[] aliases, string? description) : base(description)
         {
             if (aliases is null)
             {
@@ -58,15 +46,12 @@ namespace System.CommandLine
             {
                 AddAlias(aliases[i]);
             }
-
-            argument.AddParent(this);
-            _argument = argument;
         }
 
         /// <summary>
         /// Gets the <see cref="Argument">argument</see> for the option.
         /// </summary>
-        internal virtual Argument Argument => _argument;
+        internal abstract Argument Argument { get; }
 
         /// <summary>
         /// Gets or sets the name of the argument when displayed in help.
@@ -83,7 +68,7 @@ namespace System.CommandLine
         /// <summary>
         /// Gets or sets the arity of the option.
         /// </summary>
-        public virtual ArgumentArity Arity
+        public ArgumentArity Arity
         {
             get => Argument.Arity;
             set => Argument.Arity = value;
@@ -112,15 +97,15 @@ namespace System.CommandLine
             }
         }
 
-        internal List<ValidateSymbolResult<OptionResult>> Validators => _validators ??= new();
+        internal List<Action<OptionResult>> Validators => _validators ??= new();
 
         internal bool HasValidators => _validators is not null && _validators.Count > 0;
 
         /// <summary>
         /// Adds a validator that will be called when the option is matched by the parser.
         /// </summary>
-        /// <param name="validate">A <see cref="ValidateSymbolResult{OptionResult}"/> delegate used to validate the <see cref="OptionResult"/> produced during parsing.</param>
-        public void AddValidator(ValidateSymbolResult<OptionResult> validate) => Validators.Add(validate);
+        /// <param name="validate">An action used to validate the <see cref="OptionResult"/> produced during parsing.</param>
+        public void AddValidator(Action<OptionResult> validate) => Validators.Add(validate);
 
         /// <summary>
         /// Indicates whether a given alias exists on the option, regardless of its prefix.
@@ -152,10 +137,10 @@ namespace System.CommandLine
         /// <summary>
         /// Sets a delegate to invoke when the default value for the option is required.
         /// </summary>
-        /// <param name="getDefaultValue">The delegate to invoke to return the default value.</param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="getDefaultValue"/> is null.</exception>
-        public void SetDefaultValueFactory(Func<object?> getDefaultValue) =>
-            Argument.SetDefaultValueFactory(getDefaultValue);
+        /// <param name="defaultValueFactory">The delegate to invoke to return the default value.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="defaultValueFactory"/> is null.</exception>
+        public void SetDefaultValueFactory(Func<object?> defaultValueFactory) =>
+            Argument.SetDefaultValueFactory(defaultValueFactory);
 
         /// <summary>
         /// Gets a value that indicates whether multiple argument tokens are allowed for each option identifier token.
@@ -173,7 +158,7 @@ namespace System.CommandLine
         public bool AllowMultipleArgumentsPerToken { get; set; }
 
         internal virtual bool IsGreedy
-            => _argument is not null && _argument.Arity.MinimumNumberOfValues > 0 && _argument.ValueType != typeof(bool);
+            => Argument is not null && Argument.Arity.MinimumNumberOfValues > 0 && Argument.ValueType != typeof(bool);
 
         /// <summary>
         /// Indicates whether the option is required when its parent command is invoked.
@@ -210,14 +195,14 @@ namespace System.CommandLine
         /// <inheritdoc />
         public override IEnumerable<CompletionItem> GetCompletions(CompletionContext context)
         {
-            if (_argument is null)
+            if (Argument is null)
             {
                 return Array.Empty<CompletionItem>();
             }
 
             List<CompletionItem>? completions = null;
 
-            foreach (var completion in _argument.GetCompletions(context))
+            foreach (var completion in Argument.GetCompletions(context))
             {
                 if (completion.Label.ContainsCaseInsensitive(context.WordToComplete))
                 {
@@ -234,5 +219,22 @@ namespace System.CommandLine
                    .OrderBy(item => item.SortText.IndexOfCaseInsensitive(context.WordToComplete))
                    .ThenBy(symbol => symbol.Label, StringComparer.OrdinalIgnoreCase);
         }
+
+        /// <summary>
+        /// Parses a command line string value using the option.
+        /// </summary>
+        /// <remarks>The command line string input will be split into tokens as if it had been passed on the command line.</remarks>
+        /// <param name="commandLine">A command line string to parse, which can include spaces and quotes equivalent to what can be entered into a terminal.</param>
+        /// <returns>A parse result describing the outcome of the parse operation.</returns>
+        public ParseResult Parse(string commandLine) =>
+            this.GetOrCreateDefaultSimpleParser().Parse(commandLine);
+
+        /// <summary>
+        /// Parses a command line string value using the option.
+        /// </summary>
+        /// <param name="args">The string options to parse.</param>
+        /// <returns>A parse result describing the outcome of the parse operation.</returns>
+        public ParseResult Parse(string[] args) =>
+            this.GetOrCreateDefaultSimpleParser().Parse(args);
     }
 }

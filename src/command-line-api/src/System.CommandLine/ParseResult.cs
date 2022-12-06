@@ -23,7 +23,7 @@ namespace System.CommandLine
             Parser parser,
             RootCommandResult rootCommandResult,
             CommandResult commandResult,
-            DirectiveCollection directives,
+            IReadOnlyDictionary<string, IReadOnlyList<string>> directives,
             TokenizeResult tokenizeResult,
             IReadOnlyList<Token>? unmatchedTokens,
             List<ParseError>? errors,
@@ -99,7 +99,7 @@ namespace System.CommandLine
         /// Gets the directives found while parsing command line input.
         /// </summary>
         /// <remarks>If <see cref="CommandLineConfiguration.EnableDirectives"/> is set to <see langword="false"/>, then this collection will be empty.</remarks>
-        public DirectiveCollection Directives { get; }
+        public IReadOnlyDictionary<string, IReadOnlyList<string>> Directives { get; }
 
         /// <summary>
         /// Gets the tokens identified while parsing command line input.
@@ -129,8 +129,8 @@ namespace System.CommandLine
         internal T? GetValueFor<T>(IValueDescriptor<T> symbol) =>
             symbol switch
             {
-                Argument<T> argument => GetValueForArgument(argument),
-                Option<T> option => GetValueForOption(option),
+                Argument<T> argument => GetValue(argument),
+                Option<T> option => GetValue(option),
                 _ => throw new ArgumentOutOfRangeException()
             };
 
@@ -139,24 +139,24 @@ namespace System.CommandLine
         /// </summary>
         /// <param name="option">The option for which to get a value.</param>
         /// <returns>The parsed value or a configured default.</returns>
-        public object? GetValueForOption(Option option) =>
-            RootCommandResult.GetValueForOption(option);
+        public object? GetValue(Option option) =>
+            RootCommandResult.GetValue(option);
 
         /// <summary>
         /// Gets the parsed or default value for the specified argument.
         /// </summary>
         /// <param name="argument">The argument for which to get a value.</param>
         /// <returns>The parsed value or a configured default.</returns>
-        public object? GetValueForArgument(Argument argument) =>
-            RootCommandResult.GetValueForArgument(argument);
+        public object? GetValue(Argument argument) =>
+            RootCommandResult.GetValue(argument);
 
-        /// <inheritdoc cref="GetValueForArgument"/>
-        public T GetValueForArgument<T>(Argument<T> argument)
-            => RootCommandResult.GetValueForArgument(argument);
+        /// <inheritdoc cref="GetValue(Argument)"/>
+        public T GetValue<T>(Argument<T> argument)
+            => RootCommandResult.GetValue(argument);
         
-        /// <inheritdoc cref="GetValueForOption"/>
-        public T? GetValueForOption<T>(Option<T> option)
-            => RootCommandResult.GetValueForOption(option);
+        /// <inheritdoc cref="GetValue(Option)"/>
+        public T? GetValue<T>(Option<T> option)
+            => RootCommandResult.GetValue(option);
 
         /// <inheritdoc />
         public override string ToString() => $"{nameof(ParseResult)}: {this.Diagram()}";
@@ -220,8 +220,8 @@ namespace System.CommandLine
             }
 
             var completions =
-                currentSymbol is ICompletionSource currentCompletionSource
-                    ? currentCompletionSource.GetCompletions(context)
+                currentSymbol is not null
+                    ? currentSymbol.GetCompletions(context)
                     : Array.Empty<CompletionItem>();
 
             completions =
