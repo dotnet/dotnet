@@ -42,16 +42,12 @@
     <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.PackageManagement\NuGet.PackageManagement.csproj" />
     <Reference Include="Microsoft.Build.Utilities.v4.0" />
     <Reference Include="Microsoft.Build.Framework" />
+    <PackageReference Include="System.Threading.Tasks.Dataflow" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(IsCore)' == 'true' ">
-    <PackageReference Include="Microsoft.Build.Framework" ExcludeAssets="runtime" />
     <PackageReference Include="Microsoft.Build.Tasks.Core" ExcludeAssets="runtime" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" ExcludeAssets="runtime" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="System.Threading.Tasks.Dataflow" />
   </ItemGroup>
 
   <ItemGroup>

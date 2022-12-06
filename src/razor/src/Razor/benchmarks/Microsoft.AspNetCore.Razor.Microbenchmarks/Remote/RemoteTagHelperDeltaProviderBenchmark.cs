@@ -12,7 +12,7 @@ using Microsoft.CodeAnalysis.Remote.Razor;
 
 namespace Microsoft.AspNetCore.Razor.Microbenchmarks;
 
-internal class RemoteTagHelperDeltaProviderBenchmark : TagHelperBenchmarkBase
+public class RemoteTagHelperDeltaProviderBenchmark : TagHelperBenchmarkBase
 {
     public RemoteTagHelperDeltaProviderBenchmark()
     {

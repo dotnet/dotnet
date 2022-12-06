@@ -28,6 +28,7 @@ internal sealed class ParallelProxyExecutionManager : IParallelProxyExecutionMan
 {
     private readonly IDataSerializer _dataSerializer;
     private readonly bool _isParallel;
+    private readonly int _parallelLevel;
     private readonly ParallelOperationManager<IProxyExecutionManager, IInternalTestRunEventsHandler, TestRunCriteria> _parallelOperationManager;
     private readonly Dictionary<string, TestRuntimeProviderInfo> _sourceToTestHostProviderMap;
 
@@ -80,6 +81,7 @@ internal sealed class ParallelProxyExecutionManager : IParallelProxyExecutionMan
         _requestData = requestData;
         _dataSerializer = dataSerializer;
         _isParallel = parallelLevel > 1;
+        _parallelLevel = parallelLevel;
         _parallelOperationManager = new(actualProxyManagerCreator, parallelLevel);
         _sourceToTestHostProviderMap = testHostProviders
             .SelectMany(provider => provider.SourceDetails.Select(s => new KeyValuePair<string, TestRuntimeProviderInfo>(s.Source!, provider)))
@@ -233,6 +235,9 @@ internal sealed class ParallelProxyExecutionManager : IParallelProxyExecutionMan
         List<ProviderSpecificWorkload<TestRunCriteria>> workloads = new();
         if (testRunCriteria.HasSpecificTests)
         {
+            // We get the expected number of hosts to use to run tests
+            int? numberOfTestHostToUse = TestEngine.GetTargetFrameworkTestHostDemultiplexer(testRunCriteria.TestRunSettings);
+
             // We split test cases to their respective sources, and associate them with additional info about on
             // which type of provider they can run so we can later select the correct workload for the provider
             // if we already have a shared provider running, that can take more sources.
@@ -257,6 +262,30 @@ internal sealed class ParallelProxyExecutionManager : IParallelProxyExecutionMan
                     // Create multiple testcase batches, each having set of testcases from single source,
                     // so each testhost will end up running one source.
                     testCaseBatches = group.Select(w => sourceToTestCasesMap[w.Work]).ToList();
+                    if (numberOfTestHostToUse is not null)
+                    {
+                        if (numberOfTestHostToUse > _parallelLevel)
+                        {
+                            EqtTrace.Warning($"ParallelProxyExecutionManager: adjust the numberOfTestHostToUse to the max parallel level, from {numberOfTestHostToUse} to {_parallelLevel}");
+                            // Adjust to the maximum parallel level
+                            numberOfTestHostToUse = _parallelLevel;
+                        }
+
+                        // Simple round robin distribution
+                        var testCases = testCaseBatches.SelectMany(tcb => tcb).ToList();
+                        var groups = new List<List<TestCase>>();
+                        for (int i = 0; i < numberOfTestHostToUse.Value; i++)
+                        {
+                            groups.Add(new List<TestCase>());
+                        }
+
+                        for (var i = 0; i < testCases.Count; i++)
+                        {
+                            groups[i % numberOfTestHostToUse.Value].Add(testCases[i]);
+                        }
+
+                        testCaseBatches = groups.Where(g => g.Count > 0).Select(g => g.ToArray()).ToList();
+                    }
                 }
 
                 foreach (var testCases in testCaseBatches)

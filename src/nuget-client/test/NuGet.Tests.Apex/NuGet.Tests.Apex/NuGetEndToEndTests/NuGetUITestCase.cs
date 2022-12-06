@@ -2,12 +2,10 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
-using EnvDTE;
 using Microsoft.Test.Apex.VisualStudio.Solution;
-using Test.Utility;
+using NuGet.Test.Utility;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -15,8 +13,16 @@ namespace NuGet.Tests.Apex
 {
     public class NuGetUITestCase : SharedVisualStudioHostTestClass, IClassFixture<VisualStudioHostFixtureFactory>
     {
+        private const string TestPackageName = "Contoso.A";
+        private const string TestPackageVersionV1 = "1.0.0";
+        private const string TestPackageVersionV2 = "2.0.0";
+        private const string PrimarySourceName = "source";
+        private const string SecondarySourceName = "SecondarySource";
+
         private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(10);
         private static readonly TimeSpan Interval = TimeSpan.FromSeconds(2);
+
+        private readonly SimpleTestPathContext _pathContext = new SimpleTestPathContext();
 
         public NuGetUITestCase(VisualStudioHostFixtureFactory visualStudioHostFixtureFactory, ITestOutputHelper output)
             : base(visualStudioHostFixtureFactory, output)
@@ -24,292 +30,237 @@ namespace NuGet.Tests.Apex
         }
 
         [StaFact]
-        public void SearchPackageFromUI()
+        public async Task SearchPackageFromUI()
         {
             // Arrange
-            EnsureVisualStudioHost();
-            var dte = VisualStudio.Dte;
-            var solutionService = VisualStudio.Get<SolutionService>();
+            await CommonUtility.CreatePackageInSourceAsync(_pathContext.PackageSource, TestPackageName, TestPackageVersionV1);
 
-            solutionService.CreateEmptySolution();
-            var project = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, ProjectTargetFramework.V46, "TestProject");
+            NuGetApexTestService nugetTestService = GetNuGetTestService();
+
+            SolutionService solutionService = VisualStudio.Get<SolutionService>();
+            solutionService.CreateEmptySolution("TestSolution", _pathContext.SolutionRoot);
+            ProjectTestExtension project = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, ProjectTargetFramework.V46, "TestProject");
             VisualStudio.ClearOutputWindow();
             solutionService.SaveAll();
 
             // Act
             CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
-            var nugetTestService = GetNuGetTestService();
-            var uiwindow = nugetTestService.GetUIWindowfromProject(project);
+
+            NuGetUIProjectTestExtension uiwindow = nugetTestService.GetUIWindowfromProject(project);
             uiwindow.SwitchTabToBrowse();
-            uiwindow.SeachPackgeFromUI("newtonsoft.json");
+            uiwindow.SearchPackageFromUI(TestPackageName);
 
             // Assert
             VisualStudio.AssertNoErrors();
         }
 
         [StaFact]
-        public void InstallPackageFromUI()
+        public async Task InstallPackageFromUI()
         {
             // Arrange
-            EnsureVisualStudioHost();
-            var dte = VisualStudio.Dte;
-            var solutionService = VisualStudio.Get<SolutionService>();
+            await CommonUtility.CreatePackageInSourceAsync(_pathContext.PackageSource, TestPackageName, TestPackageVersionV1);
 
-            solutionService.CreateEmptySolution();
-            var project = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, ProjectTargetFramework.V46, "TestProject");
+            NuGetApexTestService nugetTestService = GetNuGetTestService();
+
+            SolutionService solutionService = VisualStudio.Get<SolutionService>();
+            solutionService.CreateEmptySolution("TestSolution", _pathContext.SolutionRoot);
+            ProjectTestExtension project = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, ProjectTargetFramework.V46, "TestProject");
             VisualStudio.ClearOutputWindow();
             solutionService.SaveAll();
 
             // Act
             CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
-            var nugetTestService = GetNuGetTestService();
-            var uiwindow = nugetTestService.GetUIWindowfromProject(project);
-            uiwindow.InstallPackageFromUI("newtonsoft.json", "9.0.1");
+
+            NuGetUIProjectTestExtension uiwindow = nugetTestService.GetUIWindowfromProject(project);
+            uiwindow.InstallPackageFromUI(TestPackageName, TestPackageVersionV1);
 
             // Assert
-            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project, "newtonsoft.json", "9.0.1", XunitLogger);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project, TestPackageName, TestPackageVersionV1, XunitLogger);
         }
 
         [StaFact]
-        public void InstallPackageToProjectsFromUI()
+        public async Task InstallPackageToProjectsFromUI()
         {
             // Arrange
-            EnsureVisualStudioHost();
-            var dte = VisualStudio.Dte;
-            var solutionService = VisualStudio.Get<SolutionService>();
+            await CommonUtility.CreatePackageInSourceAsync(_pathContext.PackageSource, TestPackageName, TestPackageVersionV1);
 
-            solutionService.CreateEmptySolution();
-            var project = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, ProjectTargetFramework.V46, "TestProject");
-            var nuProject = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, ProjectTargetFramework.V46, "NuProject");
+            NuGetApexTestService nugetTestService = GetNuGetTestService();
+
+            SolutionService solutionService = VisualStudio.Get<SolutionService>();
+            solutionService.CreateEmptySolution("TestSolution", _pathContext.SolutionRoot);
+            ProjectTestExtension project = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, ProjectTargetFramework.V46, "TestProject");
+            ProjectTestExtension nuProject = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, ProjectTargetFramework.V46, "NuProject");
             solutionService.SaveAll();
 
             // Act
             CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
-            var nugetTestService = GetNuGetTestService();
-            var uiwindow = nugetTestService.GetUIWindowfromProject(nuProject);
-            uiwindow.InstallPackageFromUI("newtonsoft.json", "9.0.1");
+
+            NuGetUIProjectTestExtension uiwindow = nugetTestService.GetUIWindowfromProject(nuProject);
+            uiwindow.InstallPackageFromUI(TestPackageName, TestPackageVersionV1);
+
             VisualStudio.SelectProjectInSolutionExplorer(project.Name);
             CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
 
             VisualStudio.ClearOutputWindow();
-            var uiwindow2 = nugetTestService.GetUIWindowfromProject(project);
-            uiwindow2.InstallPackageFromUI("newtonsoft.json", "9.0.1");
+            NuGetUIProjectTestExtension uiwindow2 = nugetTestService.GetUIWindowfromProject(project);
+            uiwindow2.InstallPackageFromUI(TestPackageName, TestPackageVersionV1);
 
             // Assert
-            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project, "newtonsoft.json", "9.0.1", XunitLogger);
-            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, nuProject, "newtonsoft.json", "9.0.1", XunitLogger);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project, TestPackageName, TestPackageVersionV1, XunitLogger);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, nuProject, TestPackageName, TestPackageVersionV1, XunitLogger);
         }
 
         [StaFact]
-        public void UninstallPackageFromUI()
+        public async Task UninstallPackageFromUI()
         {
             // Arrange
-            EnsureVisualStudioHost();
-            var dte = VisualStudio.Dte;
-            var solutionService = VisualStudio.Get<SolutionService>();
+            await CommonUtility.CreatePackageInSourceAsync(_pathContext.PackageSource, TestPackageName, TestPackageVersionV1);
 
-            solutionService.CreateEmptySolution();
-            var project = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, ProjectTargetFramework.V46, "TestProject");
+            NuGetApexTestService nugetTestService = GetNuGetTestService();
+
+            SolutionService solutionService = VisualStudio.Get<SolutionService>();
+            solutionService.CreateEmptySolution("TestSolution", _pathContext.SolutionRoot);
+            ProjectTestExtension project = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, ProjectTargetFramework.V46, "TestProject");
             solutionService.SaveAll();
 
             FileInfo packagesConfigFile = GetPackagesConfigFile(project);
             CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
-            var nugetTestService = GetNuGetTestService();
-            var uiwindow = nugetTestService.GetUIWindowfromProject(project);
-            uiwindow.InstallPackageFromUI("newtonsoft.json", "9.0.1");
+
+            NuGetUIProjectTestExtension uiwindow = nugetTestService.GetUIWindowfromProject(project);
+            uiwindow.InstallPackageFromUI(TestPackageName, TestPackageVersionV1);
 
             WaitForFileExists(packagesConfigFile);
 
             VisualStudio.ClearWindows();
 
             // Act
-            uiwindow.UninstallPackageFromUI("newtonsoft.json");
+            uiwindow.UninstallPackageFromUI(TestPackageName);
 
             WaitForFileNotExists(packagesConfigFile);
 
             // Assert
-            CommonUtility.AssertPackageNotInPackagesConfig(VisualStudio, project, "newtonsoft.json", XunitLogger);
+            CommonUtility.AssertPackageNotInPackagesConfig(VisualStudio, project, TestPackageName, XunitLogger);
         }
 
         [StaFact]
-        public void UpdatePackageFromUI()
+        public async Task UpdatePackageFromUI()
         {
             // Arrange
-            EnsureVisualStudioHost();
-            var dte = VisualStudio.Dte;
-            var solutionService = VisualStudio.Get<SolutionService>();
+            await CommonUtility.CreatePackageInSourceAsync(_pathContext.PackageSource, TestPackageName, TestPackageVersionV1);
+            await CommonUtility.CreatePackageInSourceAsync(_pathContext.PackageSource, TestPackageName, TestPackageVersionV2);
 
-            solutionService.CreateEmptySolution();
-            var project = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, ProjectTargetFramework.V46, "TestProject");
+            NuGetApexTestService nugetTestService = GetNuGetTestService();
+
+            SolutionService solutionService = VisualStudio.Get<SolutionService>();
+            solutionService.CreateEmptySolution("TestSolution", _pathContext.SolutionRoot);
+            ProjectTestExtension project = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, ProjectTargetFramework.V46, "TestProject");
             VisualStudio.ClearWindows();
             solutionService.SaveAll();
 
             // Act
             CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
-            var nugetTestService = GetNuGetTestService();
-            var uiwindow = nugetTestService.GetUIWindowfromProject(project);
-            uiwindow.InstallPackageFromUI("newtonsoft.json", "9.0.1");
+
+            NuGetUIProjectTestExtension uiwindow = nugetTestService.GetUIWindowfromProject(project);
+            uiwindow.InstallPackageFromUI(TestPackageName, TestPackageVersionV1);
 
             // Act
             VisualStudio.ClearWindows();
-            uiwindow.UpdatePackageFromUI("newtonsoft.json", "10.0.3");
+            uiwindow.UpdatePackageFromUI(TestPackageName, TestPackageVersionV2);
 
             // Assert
-            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project, "newtonsoft.json", "10.0.3", XunitLogger);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project, TestPackageName, TestPackageVersionV2, XunitLogger);
         }
 
         [StaFact]
         public async Task InstallPackageFromUI_PC_PackageSourceMapping_WithSingleFeed_Match_Succeeds()
         {
             // Arrange
-            EnsureVisualStudioHost();
-            var solutionService = VisualStudio.Get<SolutionService>();
-            string solutionDirectory = CommonUtility.CreateSolutionDirectory(Directory.GetCurrentDirectory());
-            var privateRepositoryPath = Path.Combine(solutionDirectory, "PrivateRepository");
-            Directory.CreateDirectory(privateRepositoryPath);
-
-            var packageName = "Contoso.A";
-            var packageVersion = "1.0.0";
-
-            await CommonUtility.CreatePackageInSourceAsync(privateRepositoryPath, packageName, packageVersion);
+            await CommonUtility.CreatePackageInSourceAsync(_pathContext.PackageSource, TestPackageName, TestPackageVersionV1);
 
             // Create nuget.config with Package source mapping filtering rules before project is created.
-            CommonUtility.CreateConfigurationFile(Path.Combine(solutionDirectory, "NuGet.config"), $@"<?xml version=""1.0"" encoding=""utf-8""?>
-<configuration>
-    <packageSources>
-    <!--To inherit the global NuGet package sources remove the <clear/> line below -->
-    <clear />
-    <add key=""PrivateRepository"" value=""{privateRepositoryPath}"" />
-    </packageSources>
-    <packageSourceMapping>
-        <packageSource key=""PrivateRepository"">
-            <package pattern=""Contoso.*"" />
-            <package pattern=""Test.*"" />
-        </packageSource>
-    </packageSourceMapping>
-</configuration>");
+            _pathContext.Settings.AddPackageSourceMapping(PrimarySourceName, "Contoso.*", "Test.*");
 
-            solutionService.CreateEmptySolution("TestSolution", solutionDirectory);
+            NuGetApexTestService nugetTestService = GetNuGetTestService();
 
-            var project = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, ProjectTargetFramework.V46, "TestProject");
+            SolutionService solutionService = VisualStudio.Get<SolutionService>();
+            solutionService.CreateEmptySolution("TestSolution", _pathContext.SolutionRoot);
+            ProjectTestExtension project = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, ProjectTargetFramework.V46, "TestProject");
             VisualStudio.ClearOutputWindow();
             solutionService.SaveAll();
 
             // Act
             CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
-            var nugetTestService = GetNuGetTestService();
-            var uiwindow = nugetTestService.GetUIWindowfromProject(project);
-            uiwindow.InstallPackageFromUI("contoso.a", "1.0.0");
+
+            NuGetUIProjectTestExtension uiwindow = nugetTestService.GetUIWindowfromProject(project);
+            uiwindow.InstallPackageFromUI(TestPackageName, TestPackageVersionV1);
 
             // Assert
-            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project, "Contoso.A", "1.0.0", XunitLogger);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project, TestPackageName, TestPackageVersionV1, XunitLogger);
         }
 
         [StaFact]
         public async Task InstallPackageToProjectsFromUI_PC_PackageSourceMapping_WithSingleFeed_Match_Succeeds()
         {
             // Arrange
-            EnsureVisualStudioHost();
-            var solutionService = VisualStudio.Get<SolutionService>();
-            string solutionDirectory = CommonUtility.CreateSolutionDirectory(Directory.GetCurrentDirectory());
-            var privateRepositoryPath = Path.Combine(solutionDirectory, "PrivateRepository");
-
-            Directory.CreateDirectory(privateRepositoryPath);
-
-            var packageName = "Contoso.A";
-            var packageVersion = "1.0.0";
-
-            await CommonUtility.CreatePackageInSourceAsync(privateRepositoryPath, packageName, packageVersion);
+            await CommonUtility.CreatePackageInSourceAsync(_pathContext.PackageSource, TestPackageName, TestPackageVersionV1);
 
             // Create nuget.config with Package source mapping filtering rules before project is created.
-            CommonUtility.CreateConfigurationFile(Path.Combine(solutionDirectory, "NuGet.config"), $@"<?xml version=""1.0"" encoding=""utf-8""?>
-<configuration>
-    <packageSources>
-    <!--To inherit the global NuGet package sources remove the <clear/> line below -->
-    <clear />
-    <add key=""PrivateRepository"" value=""{privateRepositoryPath}"" />
-    </packageSources>
-    <packageSourceMapping>
-        <packageSource key=""PrivateRepository"">
-            <package pattern=""Contoso.*"" />
-            <package pattern=""Test.*"" />
-        </packageSource>
-    </packageSourceMapping>
-</configuration>");
+            _pathContext.Settings.AddPackageSourceMapping(PrimarySourceName, "Contoso.*", "Test.*");
 
-            solutionService.CreateEmptySolution("TestSolution", solutionDirectory);
+            NuGetApexTestService nugetTestService = GetNuGetTestService();
 
-            var project = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, ProjectTargetFramework.V46, "TestProject");
-            var nuProject = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, ProjectTargetFramework.V46, "NuProject");
+            SolutionService solutionService = VisualStudio.Get<SolutionService>();
+            solutionService.CreateEmptySolution("TestSolution", _pathContext.SolutionRoot);
+            ProjectTestExtension project = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, ProjectTargetFramework.V46, "TestProject");
+            ProjectTestExtension nuProject = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, ProjectTargetFramework.V46, "NuProject");
             solutionService.SaveAll();
 
             // Act
             CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
-            var nugetTestService = GetNuGetTestService();
-            var uiwindow = nugetTestService.GetUIWindowfromProject(nuProject);
-            uiwindow.InstallPackageFromUI("contoso.a", "1.0.0");
+            NuGetUIProjectTestExtension uiwindow = nugetTestService.GetUIWindowfromProject(nuProject);
+            uiwindow.InstallPackageFromUI(TestPackageName, TestPackageVersionV1);
             VisualStudio.SelectProjectInSolutionExplorer(project.Name);
             CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
 
             VisualStudio.ClearOutputWindow();
-            var uiwindow2 = nugetTestService.GetUIWindowfromProject(project);
-            uiwindow2.InstallPackageFromUI("contoso.a", "1.0.0");
+            NuGetUIProjectTestExtension uiwindow2 = nugetTestService.GetUIWindowfromProject(project);
+            uiwindow2.InstallPackageFromUI(TestPackageName, TestPackageVersionV1);
 
             // Assert
-            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project, "contoso.a", "1.0.0", XunitLogger);
-            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, nuProject, "contoso.a", "1.0.0", XunitLogger);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project, TestPackageName, TestPackageVersionV1, XunitLogger);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, nuProject, TestPackageName, TestPackageVersionV1, XunitLogger);
         }
 
         [StaFact]
         public async Task InstallPackageFromUI_PC_PackageSourceMapping_WithMultiFeed_Succeed()
         {
             // Arrange
-            EnsureVisualStudioHost();
-            var solutionService = VisualStudio.Get<SolutionService>();
-            string solutionDirectory = CommonUtility.CreateSolutionDirectory(Directory.GetCurrentDirectory());
-            var externalRepositoryPath = Path.Combine(solutionDirectory, "ExternalRepository");
-            Directory.CreateDirectory(externalRepositoryPath);
-            var privateRepositoryPath = Path.Combine(solutionDirectory, "PrivateRepository");
-            Directory.CreateDirectory(privateRepositoryPath);
+            string secondarySourcePath = Directory.CreateDirectory(Path.Combine(_pathContext.SolutionRoot, SecondarySourceName)).FullName;
+
+            await CommonUtility.CreateNetFrameworkPackageInSourceAsync(secondarySourcePath, TestPackageName, TestPackageVersionV1);
+            await CommonUtility.CreateNetFrameworkPackageInSourceAsync(_pathContext.PackageSource, TestPackageName, TestPackageVersionV1);
 
             // Create nuget.config with Package source mapping filtering rules before project is created.
-            CommonUtility.CreateConfigurationFile(Path.Combine(solutionDirectory, "NuGet.config"), $@"<?xml version=""1.0"" encoding=""utf-8""?>
-<configuration>
-    <packageSources>
-    <!--To inherit the global NuGet package sources remove the <clear/> line below -->
-    <clear />
-    <add key=""encyclopaedia"" value=""{externalRepositoryPath}"" />
-    <add key=""encyclopædia"" value=""{privateRepositoryPath}"" />
-    </packageSources>
-    <packageSourceMapping>
-        <packageSource key=""encyclopaedia"">
-            <package pattern=""External.*"" />
-            <package pattern=""Others.*"" />
-        </packageSource>
-        <packageSource key=""encyclopædia"">
-            <package pattern=""Contoso.*"" />
-            <package pattern=""Test.*"" />
-        </packageSource>
-    </packageSourceMapping>
-//</configuration>");
+            _pathContext.Settings.AddSource(SecondarySourceName, secondarySourcePath);
+            _pathContext.Settings.AddPackageSourceMapping(SecondarySourceName, "External.*", "Others.*");
+            _pathContext.Settings.AddPackageSourceMapping(PrimarySourceName, "Contoso.*", "Test.*");
 
-            solutionService.CreateEmptySolution("TestSolution", solutionDirectory);
-            var packageName = "Contoso.A";
-            var packageVersion1 = "1.0.0";
-            await CommonUtility.CreatePackageInSourceAsync(externalRepositoryPath, packageName, packageVersion1);
-            await CommonUtility.CreatePackageInSourceAsync(privateRepositoryPath, packageName, packageVersion1);
-            var project = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, ProjectTargetFramework.V46, "TestProject");
+            NuGetApexTestService nugetTestService = GetNuGetTestService();
+
+            SolutionService solutionService = VisualStudio.Get<SolutionService>();
+            solutionService.CreateEmptySolution("TestSolution", _pathContext.SolutionRoot);
+            ProjectTestExtension project = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, ProjectTargetFramework.V46, "TestProject");
             VisualStudio.ClearOutputWindow();
             solutionService.SaveAll();
 
             // Act
             CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
-            var nugetTestService = GetNuGetTestService();
-            var uiwindow = nugetTestService.GetUIWindowfromProject(project);
+
+            NuGetUIProjectTestExtension uiwindow = nugetTestService.GetUIWindowfromProject(project);
 
             // Set option to package source option to All
             uiwindow.SetPackageSourceOptionToAll();
-            uiwindow.InstallPackageFromUI("contoso.a", "1.0.0");
+            uiwindow.InstallPackageFromUI(TestPackageName, TestPackageVersionV1);
 
             // Assert
             CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project, "contoso.a", XunitLogger);
@@ -319,50 +270,28 @@ namespace NuGet.Tests.Apex
         public async Task InstallPackageFromUI_PC_PackageSourceMapping_WithMultiFeed_Fails()
         {
             // Arrange
-            EnsureVisualStudioHost();
-            var solutionService = VisualStudio.Get<SolutionService>();
-            string solutionDirectory = CommonUtility.CreateSolutionDirectory(Directory.GetCurrentDirectory());
-            var externalRepositoryPath = Path.Combine(solutionDirectory, "ExternalRepository");
-            Directory.CreateDirectory(externalRepositoryPath);
-            var privateRepositoryPath = Path.Combine(solutionDirectory, "PrivateRepository");
-            Directory.CreateDirectory(privateRepositoryPath);
+            string secondarySourcePath = Directory.CreateDirectory(Path.Combine(_pathContext.SolutionRoot, SecondarySourceName)).FullName;
 
-            var packageName = "Contoso.A";
-            var packageVersion = "1.0.0";
-            await CommonUtility.CreatePackageInSourceAsync(externalRepositoryPath, packageName, packageVersion);
+            await CommonUtility.CreateNetFrameworkPackageInSourceAsync(secondarySourcePath, TestPackageName, TestPackageVersionV1);
 
             // Create nuget.config with Package source mapping filtering rules before project is created.
-            CommonUtility.CreateConfigurationFile(Path.Combine(solutionDirectory, "NuGet.config"), $@"<?xml version=""1.0"" encoding=""utf-8""?>
-<configuration>
-    <packageSources>
-    <!--To inherit the global NuGet package sources remove the <clear/> line below -->
-    <clear />
-    <add key=""ExternalRepository"" value=""{externalRepositoryPath}"" />
-    <add key=""PrivateRepository"" value=""{privateRepositoryPath}"" />
-    </packageSources>
-    <packageSourceMapping>
-        <packageSource key=""externalRepository"">
-            <package pattern=""External.*"" />
-            <package pattern=""Others.*"" />
-        </packageSource>
-        <packageSource key=""PrivateRepository"">
-            <package pattern=""Contoso.*"" />
-            <package pattern=""Test.*"" />
-        </packageSource>
-    </packageSourceMapping>
-</configuration>");
+            _pathContext.Settings.AddSource(SecondarySourceName, secondarySourcePath);
+            _pathContext.Settings.AddPackageSourceMapping(SecondarySourceName, "External.*", "Others.*");
+            _pathContext.Settings.AddPackageSourceMapping(PrimarySourceName, "Contoso.*", "Test.*");
 
-            solutionService.CreateEmptySolution("TestSolution", solutionDirectory);
+            NuGetApexTestService nugetTestService = GetNuGetTestService();
 
-            var project = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, ProjectTargetFramework.V46, "TestProject");
+            SolutionService solutionService = VisualStudio.Get<SolutionService>();
+            solutionService.CreateEmptySolution("TestSolution", _pathContext.SolutionRoot);
+            ProjectTestExtension project = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, ProjectTargetFramework.V46, "TestProject");
             VisualStudio.ClearOutputWindow();
             solutionService.SaveAll();
 
             // Act
             CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
-            var nugetTestService = GetNuGetTestService();
-            var uiwindow = nugetTestService.GetUIWindowfromProject(project);
-            uiwindow.InstallPackageFromUI("contoso.a", "1.0.0");
+
+            NuGetUIProjectTestExtension uiwindow = nugetTestService.GetUIWindowfromProject(project);
+            uiwindow.InstallPackageFromUI(TestPackageName, TestPackageVersionV1);
 
             // Assert
             // Even though Contoso.a exist in ExternalRepository, but packageSourceMapping filter doesn't let restore from it.
@@ -373,53 +302,31 @@ namespace NuGet.Tests.Apex
         public async Task UpdatePackageFromUI_PC_PackageSourceMapping_WithSingleFeed_Succeeds()
         {
             // Arrange
-            EnsureVisualStudioHost();
-            var solutionService = VisualStudio.Get<SolutionService>();
-            string solutionDirectory = CommonUtility.CreateSolutionDirectory(Directory.GetCurrentDirectory());
-            var privateRepositoryPath = Path.Combine(solutionDirectory, "PrivateRepository");
-            Directory.CreateDirectory(privateRepositoryPath);
-
-            var packageName = "Contoso.A";
-            var packageVersionV1 = "1.0.0";
-            var packageVersionV2 = "2.0.0";
-
-            await CommonUtility.CreatePackageInSourceAsync(privateRepositoryPath, packageName, packageVersionV1);
-            await CommonUtility.CreatePackageInSourceAsync(privateRepositoryPath, packageName, packageVersionV2);
+            await CommonUtility.CreatePackageInSourceAsync(_pathContext.PackageSource, TestPackageName, TestPackageVersionV1);
+            await CommonUtility.CreatePackageInSourceAsync(_pathContext.PackageSource, TestPackageName, TestPackageVersionV2);
 
             // Create nuget.config with Package source mapping filtering rules before project is created.
-            CommonUtility.CreateConfigurationFile(Path.Combine(solutionDirectory, "NuGet.config"), $@"<?xml version=""1.0"" encoding=""utf-8""?>
-<configuration>
-    <packageSources>
-    <!--To inherit the global NuGet package sources remove the <clear/> line below -->
-    <clear />
-    <add key=""PrivateRepository"" value=""{privateRepositoryPath}"" />
-    </packageSources>
-    <packageSourceMapping>
-        <packageSource key=""PrivateRepository"">
-            <package pattern=""Contoso.*"" />
-            <package pattern=""Test.*"" />
-        </packageSource>
-    </packageSourceMapping>
-</configuration>");
+            _pathContext.Settings.AddPackageSourceMapping(PrimarySourceName, "Contoso.*", "Test.*");
 
-            solutionService.CreateEmptySolution("TestSolution", solutionDirectory);
+            NuGetApexTestService nugetTestService = GetNuGetTestService();
 
-            var project = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, ProjectTargetFramework.V46, "TestProject");
+            SolutionService solutionService = VisualStudio.Get<SolutionService>();
+            solutionService.CreateEmptySolution("TestSolution", _pathContext.SolutionRoot);
+            ProjectTestExtension project = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, ProjectTargetFramework.V46, "TestProject");
             VisualStudio.ClearOutputWindow();
             solutionService.SaveAll();
 
             // Act
             CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
-            var nugetTestService = GetNuGetTestService();
-            var uiwindow = nugetTestService.GetUIWindowfromProject(project);
-            uiwindow.InstallPackageFromUI("contoso.a", "1.0.0");
+            NuGetUIProjectTestExtension uiwindow = nugetTestService.GetUIWindowfromProject(project);
+            uiwindow.InstallPackageFromUI(TestPackageName, TestPackageVersionV1);
 
             // Act
             VisualStudio.ClearWindows();
-            uiwindow.UpdatePackageFromUI("contoso.a", "2.0.0");
+            uiwindow.UpdatePackageFromUI(TestPackageName, TestPackageVersionV2);
 
             // Assert
-            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project, "contoso.a", "2.0.0", XunitLogger);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project, TestPackageName, TestPackageVersionV2, XunitLogger);
         }
 
 
@@ -427,62 +334,45 @@ namespace NuGet.Tests.Apex
         public async Task UpdatePackageFromUI_PC_PackageSourceMapping_WithMultiFeed_Succeed()
         {
             // Arrange
-            EnsureVisualStudioHost();
-            var solutionService = VisualStudio.Get<SolutionService>();
-            string solutionDirectory = CommonUtility.CreateSolutionDirectory(Directory.GetCurrentDirectory());
-            var externalRepositoryPath = Path.Combine(solutionDirectory, "ExternalRepository");
-            Directory.CreateDirectory(externalRepositoryPath);
-            var privateRepositoryPath = Path.Combine(solutionDirectory, "PrivateRepository");
-            Directory.CreateDirectory(privateRepositoryPath);
+            string secondarySourcePath = Directory.CreateDirectory(Path.Combine(_pathContext.SolutionRoot, SecondarySourceName)).FullName;
+            await CommonUtility.CreateNetFrameworkPackageInSourceAsync(secondarySourcePath, TestPackageName, TestPackageVersionV1);
+            await CommonUtility.CreateNetFrameworkPackageInSourceAsync(secondarySourcePath, TestPackageName, TestPackageVersionV2);
+            await CommonUtility.CreateNetFrameworkPackageInSourceAsync(_pathContext.PackageSource, TestPackageName, TestPackageVersionV1);
+            await CommonUtility.CreateNetFrameworkPackageInSourceAsync(_pathContext.PackageSource, TestPackageName, TestPackageVersionV2);
 
             // Create nuget.config with Package source mapping filtering rules before project is created.
-            CommonUtility.CreateConfigurationFile(Path.Combine(solutionDirectory, "NuGet.config"), $@"<?xml version=""1.0"" encoding=""utf-8""?>
-<configuration>
-    <packageSources>
-    <!--To inherit the global NuGet package sources remove the <clear/> line below -->
-    <clear />
-    <add key=""ExternalRepository"" value=""{externalRepositoryPath}"" />
-    <add key=""PrivateRepository"" value=""{privateRepositoryPath}"" />
-    </packageSources>
-    <packageSourceMapping>
-        <packageSource key=""externalRepository"">
-            <package pattern=""External.*"" />
-            <package pattern=""Others.*"" />
-        </packageSource>
-        <packageSource key=""PrivateRepository"">
-            <package pattern=""Contoso.*"" />
-            <package pattern=""Test.*"" />
-        </packageSource>
-    </packageSourceMapping>
-//</configuration>");
+            _pathContext.Settings.AddSource(SecondarySourceName, secondarySourcePath);
+            _pathContext.Settings.AddPackageSourceMapping(SecondarySourceName, "External.*", "Others.*");
+            _pathContext.Settings.AddPackageSourceMapping(PrimarySourceName, "Contoso.*", "Test.*");
 
-            solutionService.CreateEmptySolution("TestSolution", solutionDirectory);
+            NuGetApexTestService nugetTestService = GetNuGetTestService();
 
-            var packageName = "Contoso.A";
-            var packageVersion1 = "1.0.0";
-            var packageVersion2 = "2.0.0";
-            await CommonUtility.CreatePackageInSourceAsync(externalRepositoryPath, packageName, packageVersion1);
-            await CommonUtility.CreatePackageInSourceAsync(externalRepositoryPath, packageName, packageVersion2);
-            await CommonUtility.CreatePackageInSourceAsync(privateRepositoryPath, packageName, packageVersion1);
-            await CommonUtility.CreatePackageInSourceAsync(privateRepositoryPath, packageName, packageVersion2);
-            var project = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, ProjectTargetFramework.V46, "TestProject");
+            SolutionService solutionService = VisualStudio.Get<SolutionService>();
+            solutionService.CreateEmptySolution("TestSolution", _pathContext.SolutionRoot);
+            ProjectTestExtension project = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, ProjectTargetFramework.V46, "TestProject");
             VisualStudio.ClearOutputWindow();
             solutionService.SaveAll();
 
             // Act
             CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
-            var nugetTestService = GetNuGetTestService();
-            var uiwindow = nugetTestService.GetUIWindowfromProject(project);
+            NuGetUIProjectTestExtension uiwindow = nugetTestService.GetUIWindowfromProject(project);
 
             // Set option to package source option to All
             uiwindow.SetPackageSourceOptionToAll();
-            uiwindow.InstallPackageFromUI("contoso.a", "1.0.0");
+            uiwindow.InstallPackageFromUI(TestPackageName, TestPackageVersionV1);
 
             // Act
-            uiwindow.InstallPackageFromUI("contoso.a", "2.0.0");
+            uiwindow.InstallPackageFromUI(TestPackageName, TestPackageVersionV2);
 
             // Assert
-            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project, "contoso.a", "2.0.0", XunitLogger);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project, TestPackageName, TestPackageVersionV2, XunitLogger);
+        }
+
+        public override void Dispose()
+        {
+            _pathContext.Dispose();
+
+            base.Dispose();
         }
 
         private static FileInfo GetPackagesConfigFile(ProjectTestExtension project)
@@ -508,6 +398,76 @@ namespace NuGet.Tests.Apex
                 Timeout,
                 Interval,
                 $"{file.FullName} still existed after {Timeout}.");
+        }
+
+        [StaFact]
+        public void InstallPackageToWebSiteProjectFromUI()
+        {
+            // Arrange
+            EnsureVisualStudioHost();
+            var dte = VisualStudio.Dte;
+            var solutionService = VisualStudio.Get<SolutionService>();
+            solutionService.CreateEmptySolution();
+            var project = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.WebSiteEmpty, ProjectTargetFramework.V48, "WebSiteEmpty");
+            VisualStudio.ClearOutputWindow();
+            solutionService.SaveAll();
+
+            // Act
+            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
+            var nugetTestService = GetNuGetTestService();
+            var uiwindow = nugetTestService.GetUIWindowfromProject(project);
+            uiwindow.InstallPackageFromUI("log4net", "2.0.12");
+
+            // Assert
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project, "log4net", "2.0.12", XunitLogger);
+        }
+
+        [StaFact]
+        public void UpdateWebSitePackageFromUI()
+        {
+            // Arrange
+            EnsureVisualStudioHost();
+            var dte = VisualStudio.Dte;
+            var solutionService = VisualStudio.Get<SolutionService>();
+            solutionService.CreateEmptySolution();
+            var project = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.WebSiteEmpty, ProjectTargetFramework.V48, "WebSiteEmpty");
+            VisualStudio.ClearOutputWindow();
+            solutionService.SaveAll();
+
+            // Act
+            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
+            var nugetTestService = GetNuGetTestService();
+            var uiwindow = nugetTestService.GetUIWindowfromProject(project);
+            uiwindow.InstallPackageFromUI("log4net", "2.0.13");
+            VisualStudio.ClearWindows();
+            uiwindow.UpdatePackageFromUI("log4net", "2.0.15");
+
+            // Assert
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project, "log4net", "2.0.15", XunitLogger);
+        }
+
+        [StaFact]
+        public void UninstallWebSitePackageFromUI()
+        {
+            // Arrange
+            EnsureVisualStudioHost();
+            var dte = VisualStudio.Dte;
+            var solutionService = VisualStudio.Get<SolutionService>();
+            solutionService.CreateEmptySolution();
+            var project = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.WebSiteEmpty, ProjectTargetFramework.V48, "WebSiteEmpty");
+            VisualStudio.ClearOutputWindow();
+            solutionService.SaveAll();
+
+            // Act
+            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
+            var nugetTestService = GetNuGetTestService();
+            var uiwindow = nugetTestService.GetUIWindowfromProject(project);
+            uiwindow.InstallPackageFromUI("log4net", "2.0.15");
+            VisualStudio.ClearWindows();
+            uiwindow.UninstallPackageFromUI("log4net");
+
+            // Assert
+            CommonUtility.AssertPackageNotInPackagesConfig(VisualStudio, project, "log4net", XunitLogger);
         }
     }
 }

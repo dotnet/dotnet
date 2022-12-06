@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.Build.Evaluation;
 using NuGet.CommandLine.XPlat.ListPackage;
 using NuGet.CommandLine.XPlat.Utility;
+using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Packaging;
 using NuGet.ProjectModel;
@@ -54,7 +55,7 @@ namespace NuGet.CommandLine.XPlat
             }
             //If the given file is a solution, get the list of projects
             //If not, then it's a project, which is put in a list
-            var projectsPaths = Path.GetExtension(listPackageArgs.Path).Equals(".sln") ?
+            var projectsPaths = Path.GetExtension(listPackageArgs.Path).Equals(".sln", PathUtility.GetStringComparisonBasedOnOS()) ?
                            MSBuildAPIUtility.GetProjectsFromSolution(listPackageArgs.Path).Where(f => File.Exists(f)) :
                            new List<string>(new string[] { listPackageArgs.Path });
 

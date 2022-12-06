@@ -90,7 +90,7 @@
       <PathToMergedNuGetPack>$(OutputPath)ilmerge\NuGet.Build.Tasks.Pack.dll</PathToMergedNuGetPack>
     </PropertyGroup>
     <ItemGroup>
-      <BuildArtifacts Include="$(OutputPath)*.dll" Exclude="$(OutputPath)*Pack.dll" />
+      <BuildArtifacts Include="$(OutputPath)publish\*.dll" Exclude="$(OutputPath)publish\*Pack.dll" />
     </ItemGroup>
     <Message Text="$(MSBuildProjectName) -&gt; $(PathToMergedNuGetPack)" Importance="High" />
   </Target>
@@ -110,6 +110,7 @@
       <IlmergeCommand>$(ILMergeExePath) ^
         /out:$(PathToMergedNuGetPack) ^
         $(ILMergePlatformArg) ^
+        /allowDup ^
         /lib:$(OutputPath)publish ^
         /internalize ^
         /xmldocs ^
@@ -156,6 +157,7 @@
       <IlmergeCommand>$(ILMergeExePath) ^
         /out:$(PathToMergedNuGetPackResource) ^
         $(ILMergePlatformArg) ^
+        /allowDup ^
         /log ^
         /lib:$(OutputPath)\publish ^
         /internalize ^

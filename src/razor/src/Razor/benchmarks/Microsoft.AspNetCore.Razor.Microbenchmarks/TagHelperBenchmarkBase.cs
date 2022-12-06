@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 
 namespace Microsoft.AspNetCore.Razor.Microbenchmarks;
 
-internal abstract class TagHelperBenchmarkBase
+public abstract class TagHelperBenchmarkBase
 {
     protected readonly byte[] TagHelperBuffer;
 

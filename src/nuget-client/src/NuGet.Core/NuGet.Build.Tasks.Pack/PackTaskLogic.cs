@@ -996,7 +996,7 @@ namespace NuGet.Build.Tasks.Pack
             var dictionary = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             foreach (var item in properties)
             {
-                var index = item.IndexOf("=");
+                var index = item.IndexOf("=", StringComparison.Ordinal);
                 // Make sure '=' is not the first or the last character of the string
                 if (index > 0 && index < item.Length - 1)
                 {

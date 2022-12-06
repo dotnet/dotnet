@@ -187,7 +187,7 @@ namespace NuGet.Versioning
                 {
                     range = new FloatRange(NuGetVersionFloatBehavior.Major, new NuGetVersion(new Version(0, 0)));
                 }
-                else if (versionString.Equals("*-*"))
+                else if (versionString.Equals("*-*", StringComparison.Ordinal))
                 {
                     range = new FloatRange(NuGetVersionFloatBehavior.AbsoluteLatest, new NuGetVersion("0.0.0-0"), releasePrefix: string.Empty);
                 }
@@ -228,7 +228,7 @@ namespace NuGet.Versioning
                         var releaseVersion = versionString.Substring(dashPosition + 1);
                         releasePrefix = releaseVersion.Substring(0, releaseVersion.Length - 1);
                         var releasePart = releasePrefix;
-                        if (releasePrefix.Length == 0 || releasePrefix.EndsWith("."))
+                        if (releasePrefix.Length == 0 || releasePrefix.EndsWith(".", StringComparison.Ordinal))
                         {
                             // 1.0.0-* scenario, an empty label is not a valid version.
                             releasePart += "0";
@@ -280,12 +280,12 @@ namespace NuGet.Versioning
                             releasePrefix = actualVersion.Substring(versionString.LastIndexOf('-') + 1);
 
                             // For numeric labels 0 is the lowest. For alpha-numeric - is the lowest.
-                            if (releasePrefix.Length == 0 || actualVersion.EndsWith("."))
+                            if (releasePrefix.Length == 0 || actualVersion.EndsWith(".", StringComparison.Ordinal))
                             {
                                 // 1.0.0-* scenario, an empty label is not a valid version.
                                 actualVersion += "0";
                             }
-                            else if (actualVersion.EndsWith("-"))
+                            else if (actualVersion.EndsWith("-", StringComparison.Ordinal))
                             {
                                 // Append a dash to allow floating on the next character.
                                 actualVersion += "-";

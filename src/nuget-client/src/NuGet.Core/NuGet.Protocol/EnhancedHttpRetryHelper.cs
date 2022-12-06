@@ -34,6 +34,11 @@ namespace NuGet.Protocol
         public const bool DefaultRetry429 = true;
 
         /// <summary>
+        /// The default value indicating whether or not to observe Retry-After headers on responses.
+        /// </summary>
+        public const bool DefaultObserveRetryAfter = true;
+
+        /// <summary>
         /// The environment variable used to change the delay value.
         /// </summary>
         public const string DelayInMillisecondsEnvironmentVariableName = "NUGET_ENHANCED_NETWORK_RETRY_DELAY_MILLISECONDS";
@@ -53,6 +58,16 @@ namespace NuGet.Protocol
         /// </summary>
         public const string Retry429EnvironmentVariableName = "NUGET_RETRY_HTTP_429";
 
+        /// <summary>
+        /// The envionment variable to disable observing Retry-After responses.
+        /// </summary>
+        public const string ObserveRetryAfterEnvironmentVariableName = "NUGET_OBSERVE_RETRY_AFTER";
+
+        /// <summary>
+        /// The environment variable used to set maximum Retry-After delay period
+        /// </summary>
+        public const string MaximumRetryAfterDurationEnvironmentVariableName = "NUGET_MAX_RETRY_AFTER_DELAY_SECONDS";
+
         private readonly IEnvironmentVariableReader _environmentVariableReader;
 
         private bool? _isEnabled = null;
@@ -62,6 +77,10 @@ namespace NuGet.Protocol
         private int? _delayInMilliseconds = null;
 
         private bool? _retry429 = null;
+
+        private bool? _observeRetryAfter = null;
+
+        private TimeSpan? _maxRetyAfterDelay = null;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EnhancedHttpRetryHelper" /> class.
@@ -92,6 +111,25 @@ namespace NuGet.Protocol
         /// Gets a value indicating whether or not retryable HTTP 4xx responses should be retried.
         /// </summary>
         internal bool Retry429 => _retry429 ??= GetBoolFromEnvironmentVariable(Retry429EnvironmentVariableName, defaultValue: true, _environmentVariableReader);
+
+        /// <summary>
+        /// Gets a value indicating whether or not to observe the Retry-After header on HTTP responses.
+        /// </summary>
+        internal bool ObserveRetryAfter => _observeRetryAfter ??= GetBoolFromEnvironmentVariable(ObserveRetryAfterEnvironmentVariableName, defaultValue: DefaultObserveRetryAfter, _environmentVariableReader);
+
+        internal TimeSpan MaxRetryAfterDelay
+        {
+            get
+            {
+                if (_maxRetyAfterDelay == null)
+                {
+                    int maxRetryAfterDelay = GetIntFromEnvironmentVariable(MaximumRetryAfterDurationEnvironmentVariableName, defaultValue: (int)TimeSpan.FromHours(1).TotalSeconds, _environmentVariableReader);
+                    _maxRetyAfterDelay = TimeSpan.FromSeconds(maxRetryAfterDelay);
+                }
+
+                return _maxRetyAfterDelay.Value;
+            }
+        }
 
         /// <summary>
         /// Gets a <see cref="bool" /> value from the specified environment variable.

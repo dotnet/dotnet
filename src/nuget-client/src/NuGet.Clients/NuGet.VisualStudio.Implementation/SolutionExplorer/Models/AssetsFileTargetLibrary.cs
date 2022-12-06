@@ -16,7 +16,7 @@ namespace NuGet.VisualStudio.SolutionExplorer.Models
     /// </summary>
     internal sealed class AssetsFileTargetLibrary
     {
-        public static bool TryCreate(LockFileTargetLibrary lockFileLibrary, [NotNullWhen(returnValue: true)] out AssetsFileTargetLibrary? library)
+        public static bool TryCreate(LockFile lockFile, LockFileTargetLibrary lockFileLibrary, [NotNullWhen(returnValue: true)] out AssetsFileTargetLibrary? targetLibrary)
         {
             AssetsFileLibraryType type;
             if (lockFileLibrary.Type == "package")
@@ -29,44 +29,49 @@ namespace NuGet.VisualStudio.SolutionExplorer.Models
             }
             else
             {
-                library = null;
+                targetLibrary = null;
                 return false;
             }
 
-            library = new AssetsFileTargetLibrary(lockFileLibrary, type);
+            LockFileLibrary? library = lockFile.Libraries.FirstOrDefault(lib => lib.Name == lockFileLibrary.Name);
+
+            targetLibrary = new AssetsFileTargetLibrary(library, lockFileLibrary, type);
             return true;
         }
 
-        private AssetsFileTargetLibrary(LockFileTargetLibrary library, AssetsFileLibraryType type)
+        private AssetsFileTargetLibrary(LockFileLibrary? library, LockFileTargetLibrary targetLibrary, AssetsFileLibraryType type)
         {
-            Name = library.Name;
-            Version = library.Version.ToNormalizedString();
+            Name = targetLibrary.Name;
+            Version = targetLibrary.Version.ToNormalizedString();
             Type = type;
 
-            Dependencies = library.Dependencies.Select(dep => dep.Id).ToImmutableArray();
+            Dependencies = targetLibrary.Dependencies.Select(dep => dep.Id).ToImmutableArray();
 
-            CompileTimeAssemblies = library.CompileTimeAssemblies
+            CompileTimeAssemblies = targetLibrary.CompileTimeAssemblies
+                .Where(a => a is not null && !IsPlaceholderFile(a.Path))
                 .Select(a => a.Path)
-                .Where(path => path != null)
-                .Where(path => !IsPlaceholderFile(path))
                 .ToImmutableArray();
 
-            FrameworkAssemblies = library.FrameworkAssemblies.ToImmutableArray();
+            FrameworkAssemblies = targetLibrary.FrameworkAssemblies.ToImmutableArray();
 
-            ContentFiles = library.ContentFiles
+            ContentFiles = targetLibrary.ContentFiles
                 .Where(file => !IsPlaceholderFile(file.Path))
                 .Select(file => new AssetsFileTargetLibraryContentFile(file))
                 .ToImmutableArray();
 
-            BuildFiles = library.Build
+            BuildFiles = targetLibrary.Build
                 .Where(file => !IsPlaceholderFile(file.Path))
                 .Select(file => file.Path)
                 .ToImmutableArray();
 
-            BuildMultiTargetingFiles = library.BuildMultiTargeting
+            BuildMultiTargetingFiles = targetLibrary.BuildMultiTargeting
                 .Where(file => !IsPlaceholderFile(file.Path))
                 .Select(file => file.Path)
                 .ToImmutableArray();
+
+            DocumentationFiles = library?.Files
+                .Where(IsDocumentationFile)
+                .ToImmutableArray() ?? ImmutableArray<string>.Empty;
 
             return;
 
@@ -85,6 +90,16 @@ namespace NuGet.VisualStudio.SolutionExplorer.Models
 
                 return false;
             }
+
+            static bool IsDocumentationFile(string path)
+            {
+                // Content files are not considered documentation. They are displayed via different means.
+                if (path.StartsWith("contentFiles/", StringComparison.OrdinalIgnoreCase))
+                    return false;
+
+                return path.EndsWith(".txt", StringComparison.OrdinalIgnoreCase)
+                    || path.EndsWith(".md", StringComparison.OrdinalIgnoreCase);
+            }
         }
 
         public string Name { get; }
@@ -96,6 +111,7 @@ namespace NuGet.VisualStudio.SolutionExplorer.Models
         public ImmutableArray<AssetsFileTargetLibraryContentFile> ContentFiles { get; }
         public ImmutableArray<string> BuildFiles { get; }
         public ImmutableArray<string> BuildMultiTargetingFiles { get; }
+        public ImmutableArray<string> DocumentationFiles { get; }
 
         public override string ToString() => $"{Type} {Name} ({Version}) {Dependencies.Length} {(Dependencies.Length == 1 ? "dependency" : "dependencies")}";
     }

@@ -3,7 +3,6 @@
     <TargetFrameworks>$(TargetFrameworksExe)</TargetFrameworks>
     <UseParallelXunit>true</UseParallelXunit>
     <Description>Unit tests for NuGet.Configuration.</Description>
-    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

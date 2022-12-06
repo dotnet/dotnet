@@ -192,6 +192,11 @@
         <target state="translated">Trasování zásobníku:</target>
         <note></note>
       </trans-unit>
+      <trans-unit id="SerialTestRunInvalidScenario">
+        <source>&lt;ForceOneTestAtTimePerTestHost&gt;true&lt;/ForceOneTestAtTimePerTestHost&gt; is not supported for sources test run.</source>
+        <target state="translated">&lt;ForceOneTestAtTimePerTestHost&gt;true&lt;/ForceOneTestAtTimePerTestHost&gt; se pro testovací běh zdrojů nepodporuje.</target>
+        <note></note>
+      </trans-unit>
     </body>
   </file>
 </xliff>

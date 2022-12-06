@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.Text;
 
 namespace Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 
-internal abstract class VirtualDocumentSnapshot
+public abstract class VirtualDocumentSnapshot
 {
     public abstract Uri Uri { get; }
 

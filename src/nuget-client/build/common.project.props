@@ -280,10 +280,5 @@
     <AllRepoProjects Include="@(ApexProjects)" />
   </ItemGroup>
 
-  <!-- source link -->
-  <ItemGroup Condition="'$(Shipping)' == 'true' AND '$(IsXPlat)' != 'true'">
-    <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All"/>
-  </ItemGroup>
-
   <Import Project="OptProfV2.props"/>
 </Project>

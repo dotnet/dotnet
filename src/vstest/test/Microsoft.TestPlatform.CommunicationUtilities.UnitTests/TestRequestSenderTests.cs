@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.Threading.Tasks;
 
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces;
@@ -471,6 +472,18 @@ public class TestRequestSenderTests
     }
 
     [TestMethod]
+    public void DiscoverTestShouldNotifyDiscoveryCompleteIfClientDisconnectedBeforeDiscovery()
+    {
+        SetupFakeCommunicationChannel();
+
+        RaiseClientDisconnectedEvent();
+
+        _testRequestSender.DiscoverTests(new DiscoveryCriteria(), _mockDiscoveryEventsHandler.Object);
+
+        _mockDiscoveryEventsHandler.Verify(eh => eh.HandleDiscoveryComplete(It.Is<DiscoveryCompleteEventArgs>(dc => dc.IsAborted == true && dc.TotalCount == -1), null));
+    }
+
+    [TestMethod]
     public void DiscoverTestShouldNotifyDiscoveryCompleteIfClientDisconnected()
     {
         SetupFakeCommunicationChannel();
@@ -744,6 +757,52 @@ public class TestRequestSenderTests
 
         var expectedErrorMessage = "Reason: Test host process crashed : Dummy Stderr";
         _mockExecutionEventsHandler.Verify(eh => eh.HandleLogMessage(TestMessageLevel.Error, It.Is<string>(s => s.Contains(expectedErrorMessage))), Times.Once);
+    }
+
+    [TestMethod]
+    public void StartTestRunShouldNotifyExecutionCompleteIfClientDisconnectedBeforeRun()
+    {
+        SetupOperationAbortedPayload();
+        SetupFakeCommunicationChannel();
+
+        RaiseClientDisconnectedEvent();
+
+        _testRequestSender.StartTestRun(_testRunCriteriaWithSources, _mockExecutionEventsHandler.Object);
+
+        _mockExecutionEventsHandler.Verify(eh => eh.HandleTestRunComplete(It.Is<TestRunCompleteEventArgs>(t => t.IsAborted), null, null, null), Times.Once);
+        _mockExecutionEventsHandler.Verify(eh => eh.HandleRawMessage("SerializedAbortedPayload"), Times.Once);
+    }
+
+    [TestMethod]
+    public void StartTestRunWithTestsShouldNotifyExecutionCompleteIfClientDisconnectedBeforeRun()
+    {
+        var runCriteria = new TestRunCriteriaWithTests(new TestCase[2], "runsettings", null, null!);
+        SetupOperationAbortedPayload();
+        SetupFakeCommunicationChannel();
+
+        RaiseClientDisconnectedEvent();
+
+        _testRequestSender.StartTestRun(runCriteria, _mockExecutionEventsHandler.Object);
+
+        _mockExecutionEventsHandler.Verify(eh => eh.HandleTestRunComplete(It.Is<TestRunCompleteEventArgs>(t => t.IsAborted), null, null, null), Times.Once);
+        _mockExecutionEventsHandler.Verify(eh => eh.HandleRawMessage("SerializedAbortedPayload"), Times.Once);
+    }
+
+    [TestMethod]
+    public async Task StartTestRunWithTestsShouldNotifyExecutionCompleteIfClientDisconnectedBeforeRunInAThreadSafeWay()
+    {
+        var runCriteria = new TestRunCriteriaWithTests(new TestCase[2], "runsettings", null, null!);
+        SetupOperationAbortedPayload();
+        SetupFakeCommunicationChannel();
+
+        // Note: Even if the calls get invoked on separate threads, the request sender should send back the complete message just once.
+        var t1 = Task.Run(RaiseClientDisconnectedEvent);
+        var t2 = Task.Run(() => _testRequestSender.StartTestRun(runCriteria, _mockExecutionEventsHandler.Object));
+
+        await Task.WhenAll(t1, t2);
+
+        _mockExecutionEventsHandler.Verify(eh => eh.HandleTestRunComplete(It.Is<TestRunCompleteEventArgs>(t => t.IsAborted), null, null, null), Times.Once);
+        _mockExecutionEventsHandler.Verify(eh => eh.HandleRawMessage("SerializedAbortedPayload"), Times.Once);
     }
 
     [TestMethod]

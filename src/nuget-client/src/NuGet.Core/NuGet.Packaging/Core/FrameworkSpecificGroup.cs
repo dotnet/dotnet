@@ -104,7 +104,12 @@ namespace NuGet.Packaging
 
             if (Items != null)
             {
+#if NETFRAMEWORK || NETSTANDARD
+
                 foreach (var hash in Items.Select(e => e.GetHashCode()).OrderBy(e => e))
+#else
+                foreach (var hash in Items.Select(e => e.GetHashCode(StringComparison.Ordinal)).OrderBy(e => e))
+#endif
                 {
                     combiner.AddObject(hash);
                 }

@@ -463,6 +463,15 @@ public class TestPluginCache
 
     protected void SetupAssemblyResolver(string? extensionAssembly)
     {
+        // If we don't load the resource for Microsoft.TestPlatform.Common before
+        // to set the assembly resolver we won't be able to use the resources.
+        // This should be the algorithm followed during the satellite assembly resolution
+        // https://learn.microsoft.com/dotnet/core/extensions/package-and-deploy-resources#net-framework-resource-fallback-process
+        // BUT for some unknown reason the point 10 is not working as explained.
+        // Satellite resolution should fallback to the NeutralResourcesLanguageAttribute
+        // that we set to en-US but don't and we fail with FileNotFoundException.
+        _ = Resources.Resources.FailedToLoadAdapaterFile;
+
         IList<string> resolutionPaths = extensionAssembly.IsNullOrEmpty()
             ? GetDefaultResolutionPaths()
             : GetResolutionPaths(extensionAssembly);

@@ -334,7 +334,7 @@ internal class DefaultRazorDynamicFileInfoProvider : RazorDynamicFileInfoProvide
 
     // Using a separate handle to the 'current' file info so that can allow Roslyn to send
     // us the add/remove operations, while we process the update operations.
-    internal class Entry
+    public class Entry
     {
         // Can't ever be null for thread-safety reasons
         private RazorDynamicFileInfo _current;
@@ -477,7 +477,7 @@ internal class DefaultRazorDynamicFileInfoProvider : RazorDynamicFileInfoProvide
         public override TextLoader GetTextLoader(string filePath) => _textLoader;
     }
 
-    internal class TestAccessor
+    public class TestAccessor
     {
         private readonly DefaultRazorDynamicFileInfoProvider _provider;
 
@@ -492,6 +492,6 @@ internal class DefaultRazorDynamicFileInfoProvider : RazorDynamicFileInfoProvide
             return new TestDynamicFileInfoResult(result.FilePath, result.TextLoader);
         }
 
-        internal record TestDynamicFileInfoResult(string FilePath, TextLoader TextLoader);
+        public record TestDynamicFileInfoResult(string FilePath, TextLoader TextLoader);
     }
 }

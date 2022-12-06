@@ -24,7 +24,6 @@
     <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.ProjectModel\NuGet.ProjectModel.csproj" />
     <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Resolver\NuGet.Resolver.csproj" />
     <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Versioning\NuGet.Versioning.csproj" />
-    <ProjectReference Include="$(NuGetClientsSrcDirectory)NuGet.VisualStudio\NuGet.VisualStudio.csproj" />
   </ItemGroup>
 
   <ItemGroup>

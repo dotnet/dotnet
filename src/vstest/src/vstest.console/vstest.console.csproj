@@ -11,6 +11,8 @@
     <TargetFrameworks>net7.0;$(NetFrameworkMinimum);$(NetCoreAppMinimum)</TargetFrameworks>
     <TargetFrameworks Condition=" '$(DotNetBuildFromSource)' == 'true' ">net7.0;</TargetFrameworks>
     <OutputType>Exe</OutputType>
+    <!-- Prevent the creation of the ".exe" for .NET Core. This was the default on .NET Core 2.1, behavior changed for .NET Core 3.1 -->
+    <UseAppHost>false</UseAppHost>
     <RollForward>Major</RollForward>
     <IsTestProject>false</IsTestProject>
     <PlatformTarget Condition="'$(TargetFramework)' == '$(NetFrameworkMinimum)' AND '$(RuntimeIdentifier)' == '' " >AnyCPU</PlatformTarget>

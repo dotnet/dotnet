@@ -62,7 +62,7 @@
         <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="NuGet.VisualStudio.Implementation" Path="|NuGet.VisualStudio.Implementation|" />
         <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="NuGet.SolutionRestoreManager" Path="|NuGet.SolutionRestoreManager|" />
         <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="NuGet.VisualStudio.Common" Path="|NuGet.VisualStudio.Common|" />
-        <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="NuGetConsole.Host.PowerShell" Path="|NuGetConsole.Host.PowerShell|" />
+        <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="NuGet.PackageManagement.PowerShellCmdlets" Path="|NuGet.PackageManagement.PowerShellCmdlets|" />
         <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="NuGet.VisualStudio.OnlineEnvironment.Client" Path="|NuGet.VisualStudio.OnlineEnvironment.Client|" />
 
         <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="File" Path="Lucene.Net.dll" AssemblyName="Lucene.Net, Version=3.0.3.0, Culture=neutral, PublicKeyToken=85089178b9ac3181" />

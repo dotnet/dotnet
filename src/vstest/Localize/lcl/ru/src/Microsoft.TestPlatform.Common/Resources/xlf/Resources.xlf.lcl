@@ -283,6 +283,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";SerialTestRunInvalidScenario" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[<ForceOneTestAtTimePerTestHost>true</ForceOneTestAtTimePerTestHost> is not supported for sources test run.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[<ForceOneTestAtTimePerTestHost>true</ForceOneTestAtTimePerTestHost> не поддерживается для тестового запуска источников.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";SettingsNodeInvalidName" ItemType="0" PsrId="308" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Invalid settings node specified. The name property of the settings node must be non-empty.]]></Val>

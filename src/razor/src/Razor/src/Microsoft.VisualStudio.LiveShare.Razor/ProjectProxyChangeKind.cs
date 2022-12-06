@@ -3,7 +3,7 @@
 
 namespace Microsoft.VisualStudio.LiveShare.Razor;
 
-internal enum ProjectProxyChangeKind
+public enum ProjectProxyChangeKind
 {
     ProjectAdded,
     ProjectRemoved,

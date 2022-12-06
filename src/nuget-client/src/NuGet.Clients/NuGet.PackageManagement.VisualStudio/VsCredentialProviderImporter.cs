@@ -76,7 +76,7 @@ namespace NuGet.PackageManagement.VisualStudio
             TryImportCredentialProviders(results, ImportedProviders);
 
             // Ensure imported providers ordering is deterministic
-            results.Sort((a, b) => a.GetType().FullName.CompareTo(b.GetType().FullName));
+            results.Sort((a, b) => string.Compare(a.GetType().FullName, b.GetType().FullName, StringComparison.Ordinal));
 
             return results;
         }

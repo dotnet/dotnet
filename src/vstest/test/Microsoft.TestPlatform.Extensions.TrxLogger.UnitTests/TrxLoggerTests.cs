@@ -328,15 +328,9 @@ public class TrxLoggerTests
     }
 
     [TestMethod]
-    public void TestResultHandlerShouldChangeGuidAndDisplayNameForMsTestResultIfParentNotPresentButTestResultNamePresent()
+    public void TestResultHandlerShouldNotChangeGuidAndDisplayNameForTestResultIfParentNotPresentButTestResultNamePresent()
     {
-        ValidateTestIdAndNameInTrx(true);
-    }
-
-    [TestMethod]
-    public void TestResultHandlerShouldNotChangeGuidAndDisplayNameForNonMsTestResultIfParentNotPresentButTestResultNamePresent()
-    {
-        ValidateTestIdAndNameInTrx(false);
+        ValidateTestIdAndNameInTrx();
     }
 
     [TestMethod]
@@ -863,42 +857,30 @@ public class TrxLoggerTests
         Assert.ThrowsException<ArgumentException>(() => _testableTrxLogger.Initialize(_events.Object, _parameters));
     }
 
-    private void ValidateTestIdAndNameInTrx(bool isMstestAdapter)
+    private void ValidateTestIdAndNameInTrx()
     {
         TestCase testCase = CreateTestCase("TestCase");
-        testCase.ExecutorUri = isMstestAdapter ? new Uri("some://mstestadapteruri") : new Uri("some://uri");
+        testCase.ExecutorUri = new Uri("some://uri");
 
         VisualStudio.TestPlatform.ObjectModel.TestResult result = new(testCase);
         result.SetPropertyValue(TrxLoggerConstants.ExecutionIdProperty, Guid.NewGuid());
-        if (isMstestAdapter)
-        {
-            result.DisplayName = "testDisplayName";
-        }
 
         Mock<TestResultEventArgs> resultEventArg = new(result);
         _testableTrxLogger.TestResultHandler(new object(), resultEventArg.Object);
         var testRunCompleteEventArgs = CreateTestRunCompleteEventArgs();
         _testableTrxLogger.TestRunCompleteHandler(new object(), testRunCompleteEventArgs);
 
-        ValidateResultAttributesInTrx(_testableTrxLogger.TrxFile!, testCase.Id, testCase.DisplayName, isMstestAdapter);
+        ValidateResultAttributesInTrx(_testableTrxLogger.TrxFile!, testCase.Id, testCase.DisplayName);
     }
 
-    private static void ValidateResultAttributesInTrx(string trxFileName, Guid testId, string testName, bool isMstestAdapter)
+    private static void ValidateResultAttributesInTrx(string trxFileName, Guid testId, string testName)
     {
         using FileStream file = File.OpenRead(trxFileName);
         using XmlReader reader = XmlReader.Create(file);
         XDocument document = XDocument.Load(reader);
         var resultNode = document.Descendants(document.Root!.GetDefaultNamespace() + "UnitTestResult").First();
-        if (isMstestAdapter)
-        {
-            Assert.AreNotEqual(resultNode.Attributes("testId").First().Value, testId.ToString());
-            Assert.AreNotEqual(resultNode.Attributes("testName").First().Value, testName);
-        }
-        else
-        {
-            Assert.AreEqual(resultNode.Attributes("testId").First().Value, testId.ToString());
-            Assert.AreEqual(resultNode.Attributes("testName").First().Value, testName);
-        }
+        Assert.AreEqual(resultNode.Attributes("testId").First().Value, testId.ToString());
+        Assert.AreEqual(resultNode.Attributes("testName").First().Value, testName);
     }
 
     private static void ValidateTimeWithinUtcLimits(DateTimeOffset dateTime)

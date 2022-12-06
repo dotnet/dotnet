@@ -51,7 +51,6 @@ Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Helpers.DotnetHostHelper.Dot
 Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Helpers.DotnetHostHelper.DotnetHostHelper(Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces.IFileHelper! fileHelper, Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces.IEnvironment! environment) -> void
 Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Helpers.DotnetHostHelper.GetDotnetPath() -> string!
 Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Helpers.DotnetHostHelper.GetMonoPath() -> string!
-Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Helpers.DotnetHostHelper.TryGetDotnetPathByArchitecture(Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformArchitecture targetArchitecture, out string? muxerPath) -> bool
 Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.FileHelper
 Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.FileHelper.CopyFile(string! sourcePath, string! destinationPath) -> void
 Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.FileHelper.CreateDirectory(string! path) -> System.IO.DirectoryInfo!

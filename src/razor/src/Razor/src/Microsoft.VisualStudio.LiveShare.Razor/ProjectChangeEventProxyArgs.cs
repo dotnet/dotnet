@@ -5,7 +5,7 @@ using System;
 
 namespace Microsoft.VisualStudio.LiveShare.Razor;
 
-internal sealed class ProjectChangeEventProxyArgs : EventArgs
+public sealed class ProjectChangeEventProxyArgs : EventArgs
 {
     public ProjectChangeEventProxyArgs(ProjectSnapshotHandleProxy? older, ProjectSnapshotHandleProxy? newer, ProjectProxyChangeKind kind)
     {

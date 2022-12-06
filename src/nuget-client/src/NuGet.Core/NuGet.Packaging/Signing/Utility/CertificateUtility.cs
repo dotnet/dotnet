@@ -185,7 +185,7 @@ namespace NuGet.Packaging.Signing
         {
             foreach (var extension in certificate.Extensions)
             {
-                if (string.Equals(extension.Oid.Value, Oids.EnhancedKeyUsage))
+                if (string.Equals(extension.Oid.Value, Oids.EnhancedKeyUsage, StringComparison.Ordinal))
                 {
                     var ekuExtension = (X509EnhancedKeyUsageExtension)extension;
 
@@ -218,7 +218,7 @@ namespace NuGet.Packaging.Signing
         {
             foreach (var extension in certificate.Extensions)
             {
-                if (string.Equals(extension.Oid.Value, Oids.EnhancedKeyUsage))
+                if (string.Equals(extension.Oid.Value, Oids.EnhancedKeyUsage, StringComparison.Ordinal))
                 {
                     var ekuExtension = (X509EnhancedKeyUsageExtension)extension;
 

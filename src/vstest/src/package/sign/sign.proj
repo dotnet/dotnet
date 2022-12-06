@@ -157,7 +157,6 @@
       <NativeBinariesToSign Include="$(ArtifactsCore31Directory)Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.arm64.dll" />
       <Core31AssembliesToSign Include="$(ArtifactsCore31Directory)testhost.dll" />
       <Core31AssembliesToSign Include="$(ArtifactsCore31Directory)vstest.console.dll" />
-      <BinariesToSign Include="$(ArtifactsCore31Directory)vstest.console.exe" />
 
       <Core31AssembliesToSign Include="$(ArtifactsCore31Directory)TestHostNetFramework\Microsoft.TestPlatform.CommunicationUtilities.dll" />
       <Core31AssembliesToSign Include="$(ArtifactsCore31Directory)TestHostNetFramework\Microsoft.TestPlatform.CoreUtilities.dll" />
@@ -185,7 +184,6 @@
       <Core31AssembliesToSign Include="$(ArtifactsCore31Directory)TestHostNetFramework\testhost.net472.arm64.exe" />
       <Core31AssembliesToSign Include="$(ArtifactsCore31Directory)TestHostNetFramework\testhost.net48.arm64.exe" />
 
-      <BinariesToSign Include="$(ArtifactsCore31Directory)datacollector.exe" />
       <Core31AssembliesToSign Include="$(ArtifactsCore31Directory)TestHostNetFramework\datacollector.exe" />
       <Core31AssembliesToSign Include="$(ArtifactsCore31Directory)TestHostNetFramework\datacollector.arm64.exe" />
 
@@ -223,7 +221,7 @@
     <ItemGroup>
       <BuildAssembliesToSign Include="$(ArtifactsBaseDirectory)Microsoft.TestPlatform.Build\netstandard2.0\Microsoft.TestPlatform.Build.dll" />
       <BuildAssembliesToSign Include="$(ArtifactsBaseDirectory)Microsoft.TestPlatform.Build\netstandard2.0\%(ResxLang.Identity)\*.*" />
-      
+
       <BuildAssembliesToSign Include="$(ArtifactsBaseDirectory)Microsoft.TestPlatform.Build\net7.0\Microsoft.TestPlatform.Build.dll" />
       <BuildAssembliesToSign Include="$(ArtifactsBaseDirectory)Microsoft.TestPlatform.Build\net7.0\%(ResxLang.Identity)\*.*" />
     </ItemGroup>

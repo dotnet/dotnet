@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.Razor.Editor;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
 
-internal abstract class EditorSettingsManager
+public abstract class EditorSettingsManager
 {
     public abstract event EventHandler<EditorSettingsChangedEventArgs>? Changed;
 

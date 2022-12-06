@@ -1,0 +1,17 @@
+- name: 0001 - Test Platform Architecture
+  href: 0001-Test-Platform-Architecture.md
+- name: 0002 - Test discovery protocol
+  href: 0002-Test-Discovery-Protocol.md
+- name: 0003 - Test execution protocol
+  href: 0003-Test-Execution-Protocol.md
+- name: 0004 - Adapter extensibility
+  href: 0004-Adapter-Extensibility.md
+- name: 0005 - Test platform SDK
+  href: 0005-Test-Platform-SDK.md
+- name: 0006 - Datacollection protocol
+  href: 0006-DataCollection-Protocol.md
+- name: 0010 - Source Information For Discovered Tests
+  href: 0010-Source-Information-For-Discovered-Tests.md
+- name: 0014-Guidelines for TestCase FullyQualifiedName
+  href: 0017-TestCase-FullyQualifiedName.md
+  

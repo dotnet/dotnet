@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0">
   <ItemGroup>
+    <MergeInclude Include="$(OutputPath)Microsoft.Extensions.FileProviders.Abstractions.dll"/>
+    <MergeInclude Include="$(OutputPath)Microsoft.Extensions.FileSystemGlobbing.dll"/>
+    <MergeInclude Include="$(OutputPath)Microsoft.Extensions.Primitives.dll"/>
     <MergeInclude Include="$(OutputPath)Microsoft.Web.XmlTransform.dll"/>
     <MergeInclude Include="$(OutputPath)Newtonsoft.Json.dll"/>
     <MergeInclude Include="$(OutputPath)NuGet.Build.Tasks.dll"/>
@@ -19,11 +22,15 @@
     <MergeInclude Include="$(OutputPath)NuGet.Versioning.dll"/>
     <MergeInclude Include="$(OutputPath)NuGet.Core.dll"/>
     <MergeInclude Include="$(OutputPath)NuGet.MSSigning.Extensions.dll"/>
+    <MergeInclude Include="$(OutputPath)System.Memory.dll"/>
+    <MergeInclude Include="$(OutputPath)System.Numerics.Vectors.dll"/>
+    <MergeInclude Include="$(OutputPath)System.Runtime.CompilerServices.Unsafe.dll"/>
     <MergeInclude Include="$(OutputPath)System.Threading.Tasks.Dataflow.dll"/>
 
     <MergeExclude Include="$(OutputPath)Microsoft.VisualStudio.Setup.Configuration.Interop.dll"/>
     <MergeExclude Include="$(OutputPath)Microsoft.CSharp.dll"/>
     <MergeExclude Include="$(OutputPath)mscorlib.dll"/>
+    <MergeExclude Include="$(OutputPath)System.Buffers.dll"/>
     <MergeExclude Include="$(OutputPath)System.Collections.Concurrent.dll"/>
     <MergeExclude Include="$(OutputPath)System.Collections.dll"/>
     <MergeExclude Include="$(OutputPath)System.ComponentModel.Composition.dll"/>

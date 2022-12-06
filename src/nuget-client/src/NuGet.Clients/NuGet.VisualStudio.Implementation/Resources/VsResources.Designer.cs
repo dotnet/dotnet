@@ -457,6 +457,42 @@ namespace NuGet.VisualStudio.Implementation.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Package Document.
+        /// </summary>
+        internal static string PackageDocumentBrowseObjectClassName {
+            get {
+                return ResourceManager.GetString("PackageDocumentBrowseObjectClassName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Documents.
+        /// </summary>
+        internal static string PackageDocumentGroupName {
+            get {
+                return ResourceManager.GetString("PackageDocumentGroupName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The document&apos;s path..
+        /// </summary>
+        internal static string PackageDocumentPathDescription {
+            get {
+                return ResourceManager.GetString("PackageDocumentPathDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Path.
+        /// </summary>
+        internal static string PackageDocumentPathDisplayName {
+            get {
+                return ResourceManager.GetString("PackageDocumentPathDisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Framework Assemblies.
         /// </summary>
         internal static string PackageFrameworkAssemblyGroupName {

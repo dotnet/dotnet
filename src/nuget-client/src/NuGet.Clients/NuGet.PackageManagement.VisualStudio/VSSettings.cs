@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
-using System.Threading.Tasks;
 using Microsoft.VisualStudio.Threading;
 using NuGet.Configuration;
 using NuGet.VisualStudio;
@@ -75,7 +74,7 @@ namespace NuGet.PackageManagement.VisualStudio
             // In the open PM UI scenario (no restore run), there is an asynchronous invocation of this code path. This changes ensures that
             // the synchronous calls that come after the asynchrnous calls don't do duplicate work.
             // That however is not the case for solution close and  same session close -> open events. Those will be on the UI thread.
-            if (_solutionSettings == null || !string.Equals(root, _solutionSettings.Item1))
+            if (_solutionSettings == null || !string.Equals(root, _solutionSettings.Item1, Common.PathUtility.GetStringComparisonBasedOnOS()))
             {
                 _solutionSettings = new Tuple<string, AsyncLazy<ISettings>>(
                     item1: root,

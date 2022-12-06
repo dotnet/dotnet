@@ -12,6 +12,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
+using Microsoft.VisualStudio.TestPlatform.Common.ExtensionDecorators;
 using Microsoft.VisualStudio.TestPlatform.Common.ExtensionFramework;
 using Microsoft.VisualStudio.TestPlatform.Common.ExtensionFramework.Utilities;
 using Microsoft.VisualStudio.TestPlatform.Common.Interfaces;
@@ -492,8 +493,13 @@ internal abstract class BaseRunTests
 
                     if (!CrossPlatEngine.Constants.DefaultAdapters.Contains(executor.Metadata.ExtensionUri, StringComparer.OrdinalIgnoreCase))
                     {
-                        var executorLocation = executor.Value.GetType().GetTypeInfo().Assembly.GetAssemblyLocation();
+                        // If real executor is wrapped by a decorator we get the real decorated type
+                        TypeInfo executorTypeInfo =
+                            (executor.Value is SerialTestRunDecorator serialTestRunDecorator)
+                                ? serialTestRunDecorator.OriginalTestExecutor.GetType().GetTypeInfo()
+                                : executor.Value.GetType().GetTypeInfo();
 
+                        var executorLocation = executorTypeInfo.Assembly.GetAssemblyLocation();
                         executorsFromDeprecatedLocations |= Path.GetDirectoryName(executorLocation)!.Equals(CrossPlatEngine.Constants.DefaultAdapterLocation);
                     }
 

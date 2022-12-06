@@ -1,2 +1,0 @@
-﻿#nullable enable
-Microsoft.VisualStudio.RazorExtension.SyntaxVisualizer.SyntaxVisualizerControl

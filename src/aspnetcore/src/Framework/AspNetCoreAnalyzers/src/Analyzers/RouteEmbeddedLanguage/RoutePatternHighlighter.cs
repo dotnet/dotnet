@@ -9,6 +9,7 @@ using System.Threading;
 using Microsoft.AspNetCore.Analyzers.RouteEmbeddedLanguage.Infrastructure;
 using Microsoft.AspNetCore.Analyzers.RouteEmbeddedLanguage.Infrastructure.VirtualChars;
 using Microsoft.AspNetCore.Analyzers.RouteEmbeddedLanguage.RoutePattern;
+using Microsoft.AspNetCore.App.Analyzers.Infrastructure;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.ExternalAccess.AspNetCore.EmbeddedLanguages;
@@ -21,10 +22,7 @@ internal class RoutePatternHighlighter : IAspNetCoreEmbeddedLanguageDocumentHigh
     public ImmutableArray<AspNetCoreDocumentHighlights> GetDocumentHighlights(
         SemanticModel semanticModel, SyntaxToken token, int position, CancellationToken cancellationToken)
     {
-        if (!WellKnownTypes.TryGetOrCreate(semanticModel.Compilation, out var wellKnownTypes))
-        {
-            return ImmutableArray<AspNetCoreDocumentHighlights>.Empty;
-        }
+        var wellKnownTypes = WellKnownTypes.GetOrCreate(semanticModel.Compilation);
 
         var usageContext = RoutePatternUsageDetector.BuildContext(token, semanticModel, wellKnownTypes, cancellationToken);
 
@@ -39,7 +37,7 @@ internal class RoutePatternHighlighter : IAspNetCoreEmbeddedLanguageDocumentHigh
     }
 
     private static ImmutableArray<AspNetCoreDocumentHighlights> GetHighlights(
-        RoutePatternTree tree, SemanticModel semanticModel, WellKnownTypes wellKnownTypes, int position, IMethodSymbol methodSymbol, CancellationToken cancellationToken)
+        RoutePatternTree tree, SemanticModel semanticModel, WellKnownTypes wellKnownTypes, int position, IMethodSymbol? methodSymbol, CancellationToken cancellationToken)
     {
         var virtualChar = tree.Text.Find(position);
         if (virtualChar == null)
@@ -66,7 +64,7 @@ internal class RoutePatternHighlighter : IAspNetCoreEmbeddedLanguageDocumentHigh
 
             // Match route parameter to method parameter. Parameters in a route aren't case sensitive.
             // First attempt an exact match, then a case insensitive match.
-            var parameterName = node.ParameterNameToken.Value.ToString();
+            var parameterName = node.ParameterNameToken.Value!.ToString();
             var matchingParameterSymbol = parameterSymbols.FirstOrDefault(s => s.Name == parameterName)
                 ?? parameterSymbols.FirstOrDefault(s => string.Equals(s.Name, parameterName, StringComparison.OrdinalIgnoreCase));
 
@@ -79,7 +77,7 @@ internal class RoutePatternHighlighter : IAspNetCoreEmbeddedLanguageDocumentHigh
         return ImmutableArray.Create(new AspNetCoreDocumentHighlights(highlightSpans.ToImmutable()));
     }
 
-    private static void HighlightSymbol(SemanticModel semanticModel, IMethodSymbol methodSymbol, IList<AspNetCoreHighlightSpan> highlightSpans, ISymbol? matchingParameter, CancellationToken cancellationToken)
+    private static void HighlightSymbol(SemanticModel semanticModel, IMethodSymbol methodSymbol, IList<AspNetCoreHighlightSpan> highlightSpans, ISymbol matchingParameter, CancellationToken cancellationToken)
     {
         // Highlight parameter in method signature.
         // e.g. "{id}" in route highlights id in "void Foo(string id) {}"

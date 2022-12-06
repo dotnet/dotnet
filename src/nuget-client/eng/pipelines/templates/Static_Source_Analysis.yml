@@ -46,20 +46,28 @@ steps:
   continueOnError: ${{ parameters.isOfficialBuild }}
   condition: succeededOrFailed()
 
-- task: MSBuild@1
-  displayName: "Ensure msbuild.exe can parse NuGet.sln"
+- task: PowerShell@2
+  displayName: "Ensure all projects are in NuGet.sln"
   inputs:
-    solution: "NuGet.sln"
-    msbuildArguments: "/restore:false /target:EnsureNewtonsoftJsonVersion /binarylogger:$(Build.StagingDirectory)\\binlog\\01.EnsureNewtonsoftJsonVersion.binlog"
-    maximumCpuCount: true
-  continueOnError: ${{ parameters.isOfficialBuild }}
-  condition: succeededOrFailed()
-
-- task: MSBuild@1
-  displayName: "Ensure package versions are declared in packages.targets"
-  inputs:
-    solution: "build\\build.proj"
-    msbuildArguments: "/restore:false /target:EnsurePackageReferenceVersionsInSolution /binarylogger:$(Build.StagingDirectory)\\binlog\\02.EnsurePackageReferenceVersionsInSolution.binlog"
+    targetType: 'inline'
+    script: |
+      try {
+        $slnProjects = & dotnet sln list | Select-Object -Skip 2 | ForEach-Object { "$PWD\$_" } | sort
+        "Solution contains $($slnProjects.Length) projects"
+        $fsProjects = gci -Recurse -Filter *.csproj | ForEach-Object { $_.FullName } | Where-Object { $_ -notlike "*\EndToEnd\*" -and $_ -notlike "*\bin\*" -and $_ -notlike "*\compiler\resources\*" -and $_ -notlike "*\Assets\*" } | sort
+        "Repo contains $($fsProjects.Length) projects"
+        $diff = @(Compare-Object -ReferenceObject $fsProjects -DifferenceObject $slnProjects)
+        $diff
+        if ($diff.length -gt 0)
+        {
+          throw "Repo has project file(s) not in NuGet.sln"
+        }
+      }
+      catch
+      {
+        Write-Host "##vso[task.LogIssue type=error;]$Error[0]"
+        exit 1
+      }
   continueOnError: ${{ parameters.isOfficialBuild }}
   condition: succeededOrFailed()
 

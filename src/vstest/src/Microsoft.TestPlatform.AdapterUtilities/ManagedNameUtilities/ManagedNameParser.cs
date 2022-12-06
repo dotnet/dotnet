@@ -15,7 +15,7 @@ public class ManagedNameParser
     /// </summary>
     /// <param name="managedTypeName">
     /// The fully qualified managed type name to parse.
-    /// The format is defined in <see href="https://github.com/microsoft/vstest-docs/blob/main/RFCs/0017-Managed-TestCase-Properties.md#managedtype-property">the RFC</see>.
+    /// The format is defined in <see href="https://github.com/microsoft/vstest/blob/main/RFCs/0017-Managed-TestCase-Properties.md#managedtype-property">the RFC</see>.
     /// </param>
     /// <param name="namespaceName">
     /// When this method returns, contains the parsed namespace name of the <paramref name="managedTypeName"/>.
@@ -45,7 +45,7 @@ public class ManagedNameParser
     /// </summary>
     /// <param name="managedMethodName">
     /// The fully qualified managed method name to parse.
-    /// The format is defined in <see href="https://github.com/microsoft/vstest-docs/blob/main/RFCs/0017-Managed-TestCase-Properties.md#managedmethod-property">the RFC</see>.
+    /// The format is defined in <see href="https://github.com/microsoft/vstest/blob/main/RFCs/0017-Managed-TestCase-Properties.md#managedmethod-property">the RFC</see>.
     /// </param>
     /// <param name="methodName">
     /// When this method returns, contains the parsed method name of the <paramref name="managedMethodName"/>.

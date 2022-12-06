@@ -26,7 +26,7 @@ namespace NuGet.Tests.Apex
             _logger = logger;
         }
 
-        public bool SeachPackgeFromUI(string searchText)
+        public bool SearchPackageFromUI(string searchText)
         {
             return _uiproject.WaitForSearchComplete(() => _uiproject.Search(searchText), _timeout);
         }

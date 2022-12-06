@@ -53,7 +53,7 @@ namespace NuGet.Packaging
             // now check for required elements, which include <id>, <version>, <authors> and <description>
             foreach (var requiredElement in RequiredElements)
             {
-                if (requiredElement.Equals("authors") && manifestMetadata.PackageTypes.Contains(PackageType.SymbolsPackage))
+                if (requiredElement.Equals("authors", StringComparison.Ordinal) && manifestMetadata.PackageTypes.Contains(PackageType.SymbolsPackage))
                 {
                     continue;
                 }

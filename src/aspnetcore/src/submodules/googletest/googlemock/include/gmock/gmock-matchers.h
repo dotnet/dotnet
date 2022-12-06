@@ -2309,11 +2309,11 @@ class SizeIsMatcher {
         : size_matcher_(MatcherCast<SizeType>(size_matcher)) {}
 
     void DescribeTo(::std::ostream* os) const override {
-      *os << "size ";
+      *os << "has a size that ";
       size_matcher_.DescribeTo(os);
     }
     void DescribeNegationTo(::std::ostream* os) const override {
-      *os << "size ";
+      *os << "has a size that ";
       size_matcher_.DescribeNegationTo(os);
     }
 
@@ -5482,7 +5482,13 @@ PolymorphicMatcher<internal::ExceptionMatcherImpl<Err>> ThrowsMessage(
       }                                                                        \
     };                                                                         \
   };                                                                           \
-  GTEST_ATTRIBUTE_UNUSED_ inline name##Matcher name() { return {}; }           \
+  inline name##Matcher GMOCK_INTERNAL_WARNING_PUSH()                           \
+      GMOCK_INTERNAL_WARNING_CLANG(ignored, "-Wunused-function")               \
+          GMOCK_INTERNAL_WARNING_CLANG(ignored, "-Wunused-member-function")    \
+              name                                                             \
+              GMOCK_INTERNAL_WARNING_POP()() {                                 \
+    return {};                                                                 \
+  }                                                                            \
   template <typename arg_type>                                                 \
   bool name##Matcher::gmock_Impl<arg_type>::MatchAndExplain(                   \
       const arg_type& arg,                                                     \

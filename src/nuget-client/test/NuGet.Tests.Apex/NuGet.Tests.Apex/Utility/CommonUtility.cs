@@ -312,38 +312,6 @@ namespace NuGet.Tests.Apex
             }
         }
 
-        public static string CreateSolutionDirectory(string root)
-        {
-            string parentPath;
-
-            // Loop until we find a directory that isn't taken (extremely unlikely this would need multiple guids).
-            while (true)
-            {
-                var guid = Guid.NewGuid().ToString();
-
-                // Use a shorter path to this easier when debugging
-                parentPath = Path.Combine(root, guid.Split('-')[0]);
-
-                if (Directory.Exists(parentPath))
-                {
-                    // If a collision happens use the full guid
-                    parentPath = Path.Combine(root, guid);
-
-                    if (!Directory.Exists(parentPath))
-                    {
-                        break;
-                    }
-                }
-                else
-                {
-                    break;
-                }
-            }
-
-            Directory.CreateDirectory(parentPath);
-            return parentPath;
-        }
-
         internal static void OpenNuGetPackageManagerWithDte(VisualStudioHost visualStudio, ILogger logger)
         {
             visualStudio.ObjectModel.Solution.WaitForOperationsInProgress(TimeSpan.FromMinutes(3));

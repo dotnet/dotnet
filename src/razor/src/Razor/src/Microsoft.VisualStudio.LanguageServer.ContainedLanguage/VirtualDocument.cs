@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.Text;
 
 namespace Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 
-internal abstract class VirtualDocument : IDisposable
+public abstract class VirtualDocument : IDisposable
 {
     public abstract Uri Uri { get; }
 

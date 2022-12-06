@@ -33,7 +33,8 @@ steps:
         if ([System.String]::IsNullOrEmpty($env:VsTargetChannelOverrideForTests) -eq $false) {
           $targetChannelForTests = $env:VsTargetChannelOverrideForTests
         } else {
-          $targetChannelForTests = $targetChannel
+          $targetChannelForTests = & dotnet msbuild $env:BUILD_REPOSITORY_LOCALPATH\build\config.props /restore:false "/ConsoleLoggerParameters:Verbosity=Minimal;NoSummary;ForceNoAlign" /nologo /target:GetVsTargetChannelForTests
+          $targetChannelForTests = $targetChannelForTests.Trim()
         }
         $targetMajorVersion = & dotnet msbuild $env:BUILD_REPOSITORY_LOCALPATH\build\config.props /restore:false "/ConsoleLoggerParameters:Verbosity=Minimal;NoSummary;ForceNoAlign" /nologo /target:GetVsTargetMajorVersion
         $targetMajorVersion = $targetMajorVersion.Trim()

@@ -100,7 +100,7 @@ $tagVersionNumbersixDropBranch = $sourceBranch -replace "rel/", ""
 
 $output = @"
 
-See the release notes [here](https://github.com/microsoft/vstest-docs/blob/main/docs/releases.md#$($tagVersionNumber -replace '\.')).
+See the release notes [here](https://github.com/microsoft/vstest/blob/main/docs/releases.md#$($tagVersionNumber -replace '\.')).
 
 -------------------------------
 

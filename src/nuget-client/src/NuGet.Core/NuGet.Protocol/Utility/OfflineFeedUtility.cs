@@ -228,7 +228,7 @@ namespace NuGet.Protocol.Core.Types
             // Reading Nuspec in invalid package on Mono will get PackagingException 
             catch (Exception ex) when (ex is InvalidDataException
                                     || (RuntimeEnvironmentHelper.IsMono
-                                    && (ex.GetType().FullName.Equals("SharpCompress.Common.ArchiveException")
+                                    && (ex.GetType().FullName.Equals("SharpCompress.Common.ArchiveException", StringComparison.Ordinal)
                                     || ex is PackagingException)))
             {
                 var message = string.Format(

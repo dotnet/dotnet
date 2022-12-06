@@ -39,7 +39,7 @@
     </ProjectReference>
 
     <!-- CVE-2019-0657, CVE-2019-0980 and CVE-2019-0981 mitigation -->
-    <PackageReference Include="System.Private.Uri" Version="$(SystemUriVersion)" Condition="'$(DotNetBuildFromSource)' != 'true'"/>
+    <PackageReference Include="System.Private.Uri" Version="$(SystemUriVersion)" Condition="'$(DotNetBuildFromSource)' != 'true'" />
     <PackageReference Include="Microsoft.NETCore.Targets" Version="1.1.4" Condition=" $(TargetFramework.StartsWith('net4')) " />
     <!-- CVE-2019-0657, CVE-2019-0980 and CVE-2019-0981 mitigation -->
   </ItemGroup>

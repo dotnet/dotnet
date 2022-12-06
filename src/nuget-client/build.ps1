@@ -100,15 +100,6 @@ $MSBuildExe = Get-MSBuildExe
 
 Invoke-BuildStep 'Running Restore' {
     # Restore
-    $restoreArgs = "build\build.proj", "/t:EnsurePackageReferenceVersionsInSolution", "/p:Configuration=$Configuration"
-    if ($Binlog)
-    {
-        $restoreArgs += "-bl:msbuild.ensurepr.binlog"
-    }
-
-    Trace-Log ". `"$MSBuildExe`" $restoreArgs"
-    & $MSBuildExe @restoreArgs
-
     $restoreArgs = "build\build.proj", "/t:RestoreVS", "/p:Configuration=$Configuration", "/p:ReleaseLabel=$ReleaseLabel", "/p:IncludeApex=$IncludeApex", "/v:m", "/m"
 
     if ($BuildNumber)

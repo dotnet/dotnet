@@ -28,7 +28,7 @@ namespace Microsoft.AspNetCore.Razor.OmniSharpPlugin;
 //     the project instance.
 [Shared]
 [Export(typeof(ProjectInstanceEvaluator))]
-internal class DefaultProjectInstanceEvaluator : ProjectInstanceEvaluator
+public class DefaultProjectInstanceEvaluator : ProjectInstanceEvaluator
 {
     internal const string TargetFrameworkPropertyName = "TargetFramework";
     internal const string TargetFrameworksPropertyName = "TargetFrameworks";

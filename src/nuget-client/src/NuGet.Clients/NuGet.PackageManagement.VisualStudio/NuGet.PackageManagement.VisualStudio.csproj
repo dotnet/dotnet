@@ -30,12 +30,6 @@
     <Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Build">
-      <HintPath>$(NuGetPackageRoot)microsoft.build\15.1.262-preview5\lib\net46\Microsoft.Build.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Common\IProjectContextInfoExtensions.cs" />
     <Compile Include="Common\InstalledAndTransitivePackageCollections.cs" />
     <Compile Include="Exceptions\ProjectNotNominatedException.cs" />
@@ -236,7 +230,6 @@
     <ProjectReference Include="..\NuGet.VisualStudio\NuGet.VisualStudio.csproj">
       <Project>{e5556bc6-a7fd-4d8e-8a7d-7648df1d7471}</Project>
       <Name>NuGet.VisualStudio</Name>
-      <EmbedInteropTypes>true</EmbedInteropTypes>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -293,7 +286,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <PackageDownload Include="Microsoft.Build" />
+    <PackageReference Include="Microsoft.Build" ExcludeAssets="Runtime" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" ExcludeAssets="Runtime" PrivateAssets="All" />
     <PackageReference Include="Microsoft.DataAI.NuGetRecommender.Contracts" />
     <PackageReference Include="Microsoft.VisualStudio.VCProjectEngine" />
     <PackageReference Include="Microsoft.VisualStudio.Sdk" />

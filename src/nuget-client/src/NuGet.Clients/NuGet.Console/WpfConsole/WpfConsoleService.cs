@@ -98,7 +98,7 @@ namespace NuGetConsole.Implementation.Console
                 {
                     IService service = null;
 
-                    var lazyProvider = providers.FirstOrDefault(f => string.Equals(f.Metadata.HostName, console.HostName));
+                    var lazyProvider = providers.FirstOrDefault(f => string.Equals(f.Metadata.HostName, console.HostName, StringComparison.Ordinal));
                     if (lazyProvider != null)
                     {
                         service = create(lazyProvider.Value, console.Host);

@@ -6,7 +6,7 @@ using System;
 namespace Microsoft.VisualStudio.Editor.Razor;
 
 [Flags]
-internal enum AcceptedCharacters
+public enum AcceptedCharacters
 {
     None = 0,
     NewLine = 1,

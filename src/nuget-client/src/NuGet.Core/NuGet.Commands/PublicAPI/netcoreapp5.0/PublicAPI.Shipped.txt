@@ -1,144 +1,4 @@
 #nullable enable
-Microsoft.AspNet.FileProviders.IDirectoryContents
-Microsoft.AspNet.FileProviders.IDirectoryContents.Exists.get -> bool
-Microsoft.AspNet.FileProviders.IFileInfo
-~Microsoft.AspNet.FileProviders.IFileInfo.CreateReadStream() -> System.IO.Stream
-Microsoft.AspNet.FileProviders.IFileInfo.Exists.get -> bool
-Microsoft.AspNet.FileProviders.IFileInfo.IsDirectory.get -> bool
-Microsoft.AspNet.FileProviders.IFileInfo.LastModified.get -> System.DateTimeOffset
-Microsoft.AspNet.FileProviders.IFileInfo.Length.get -> long
-~Microsoft.AspNet.FileProviders.IFileInfo.Name.get -> string
-~Microsoft.AspNet.FileProviders.IFileInfo.PhysicalPath.get -> string
-Microsoft.AspNet.FileProviders.IFileProvider
-~Microsoft.AspNet.FileProviders.IFileProvider.GetDirectoryContents(string subpath) -> Microsoft.AspNet.FileProviders.IDirectoryContents
-~Microsoft.AspNet.FileProviders.IFileProvider.GetFileInfo(string subpath) -> Microsoft.AspNet.FileProviders.IFileInfo
-~Microsoft.AspNet.FileProviders.IFileProvider.Watch(string filter) -> Microsoft.Extensions.Primitives.IChangeToken
-Microsoft.Extensions.FileSystemGlobbing.Abstractions.DirectoryInfoBase
-Microsoft.Extensions.FileSystemGlobbing.Abstractions.DirectoryInfoBase.DirectoryInfoBase() -> void
-Microsoft.Extensions.FileSystemGlobbing.Abstractions.DirectoryInfoWrapper
-~Microsoft.Extensions.FileSystemGlobbing.Abstractions.DirectoryInfoWrapper.DirectoryInfoWrapper(System.IO.DirectoryInfo directoryInfo, bool isParentPath = false) -> void
-Microsoft.Extensions.FileSystemGlobbing.Abstractions.FileInfoBase
-Microsoft.Extensions.FileSystemGlobbing.Abstractions.FileInfoBase.FileInfoBase() -> void
-Microsoft.Extensions.FileSystemGlobbing.Abstractions.FileInfoWrapper
-~Microsoft.Extensions.FileSystemGlobbing.Abstractions.FileInfoWrapper.FileInfoWrapper(System.IO.FileInfo fileInfo) -> void
-Microsoft.Extensions.FileSystemGlobbing.Abstractions.FileSystemInfoBase
-Microsoft.Extensions.FileSystemGlobbing.Abstractions.FileSystemInfoBase.FileSystemInfoBase() -> void
-Microsoft.Extensions.FileSystemGlobbing.FilePatternMatch
-Microsoft.Extensions.FileSystemGlobbing.FilePatternMatch.Equals(Microsoft.Extensions.FileSystemGlobbing.FilePatternMatch other) -> bool
-~Microsoft.Extensions.FileSystemGlobbing.FilePatternMatch.FilePatternMatch(string path, string stem) -> void
-~Microsoft.Extensions.FileSystemGlobbing.FilePatternMatch.Path.get -> string
-~Microsoft.Extensions.FileSystemGlobbing.FilePatternMatch.Stem.get -> string
-Microsoft.Extensions.FileSystemGlobbing.Internal.ILinearPattern
-~Microsoft.Extensions.FileSystemGlobbing.Internal.ILinearPattern.Segments.get -> System.Collections.Generic.IList<Microsoft.Extensions.FileSystemGlobbing.Internal.IPathSegment>
-Microsoft.Extensions.FileSystemGlobbing.Internal.IPathSegment
-Microsoft.Extensions.FileSystemGlobbing.Internal.IPathSegment.CanProduceStem.get -> bool
-~Microsoft.Extensions.FileSystemGlobbing.Internal.IPathSegment.Match(string value) -> bool
-Microsoft.Extensions.FileSystemGlobbing.Internal.IPattern
-~Microsoft.Extensions.FileSystemGlobbing.Internal.IPattern.CreatePatternContextForExclude() -> Microsoft.Extensions.FileSystemGlobbing.Internal.IPatternContext
-~Microsoft.Extensions.FileSystemGlobbing.Internal.IPattern.CreatePatternContextForInclude() -> Microsoft.Extensions.FileSystemGlobbing.Internal.IPatternContext
-Microsoft.Extensions.FileSystemGlobbing.Internal.IPatternContext
-~Microsoft.Extensions.FileSystemGlobbing.Internal.IPatternContext.Declare(System.Action<Microsoft.Extensions.FileSystemGlobbing.Internal.IPathSegment, bool> onDeclare) -> void
-Microsoft.Extensions.FileSystemGlobbing.Internal.IPatternContext.PopDirectory() -> void
-~Microsoft.Extensions.FileSystemGlobbing.Internal.IPatternContext.PushDirectory(Microsoft.Extensions.FileSystemGlobbing.Abstractions.DirectoryInfoBase directory) -> void
-~Microsoft.Extensions.FileSystemGlobbing.Internal.IPatternContext.Test(Microsoft.Extensions.FileSystemGlobbing.Abstractions.DirectoryInfoBase directory) -> bool
-~Microsoft.Extensions.FileSystemGlobbing.Internal.IPatternContext.Test(Microsoft.Extensions.FileSystemGlobbing.Abstractions.FileInfoBase file) -> Microsoft.Extensions.FileSystemGlobbing.Internal.PatternTestResult
-Microsoft.Extensions.FileSystemGlobbing.Internal.IRaggedPattern
-~Microsoft.Extensions.FileSystemGlobbing.Internal.IRaggedPattern.Contains.get -> System.Collections.Generic.IList<System.Collections.Generic.IList<Microsoft.Extensions.FileSystemGlobbing.Internal.IPathSegment>>
-~Microsoft.Extensions.FileSystemGlobbing.Internal.IRaggedPattern.EndsWith.get -> System.Collections.Generic.IList<Microsoft.Extensions.FileSystemGlobbing.Internal.IPathSegment>
-~Microsoft.Extensions.FileSystemGlobbing.Internal.IRaggedPattern.Segments.get -> System.Collections.Generic.IList<Microsoft.Extensions.FileSystemGlobbing.Internal.IPathSegment>
-~Microsoft.Extensions.FileSystemGlobbing.Internal.IRaggedPattern.StartsWith.get -> System.Collections.Generic.IList<Microsoft.Extensions.FileSystemGlobbing.Internal.IPathSegment>
-Microsoft.Extensions.FileSystemGlobbing.Internal.MatcherContext
-~Microsoft.Extensions.FileSystemGlobbing.Internal.MatcherContext.Execute() -> Microsoft.Extensions.FileSystemGlobbing.PatternMatchingResult
-~Microsoft.Extensions.FileSystemGlobbing.Internal.MatcherContext.MatcherContext(System.Collections.Generic.IEnumerable<Microsoft.Extensions.FileSystemGlobbing.Internal.IPattern> includePatterns, System.Collections.Generic.IEnumerable<Microsoft.Extensions.FileSystemGlobbing.Internal.IPattern> excludePatterns, Microsoft.Extensions.FileSystemGlobbing.Abstractions.DirectoryInfoBase directoryInfo, System.StringComparison comparison) -> void
-Microsoft.Extensions.FileSystemGlobbing.Internal.PathSegments.CurrentPathSegment
-Microsoft.Extensions.FileSystemGlobbing.Internal.PathSegments.CurrentPathSegment.CanProduceStem.get -> bool
-Microsoft.Extensions.FileSystemGlobbing.Internal.PathSegments.CurrentPathSegment.CurrentPathSegment() -> void
-~Microsoft.Extensions.FileSystemGlobbing.Internal.PathSegments.CurrentPathSegment.Match(string value) -> bool
-Microsoft.Extensions.FileSystemGlobbing.Internal.PathSegments.LiteralPathSegment
-Microsoft.Extensions.FileSystemGlobbing.Internal.PathSegments.LiteralPathSegment.CanProduceStem.get -> bool
-~Microsoft.Extensions.FileSystemGlobbing.Internal.PathSegments.LiteralPathSegment.LiteralPathSegment(string value, System.StringComparison comparisonType) -> void
-~Microsoft.Extensions.FileSystemGlobbing.Internal.PathSegments.LiteralPathSegment.Match(string value) -> bool
-~Microsoft.Extensions.FileSystemGlobbing.Internal.PathSegments.LiteralPathSegment.Value.get -> string
-Microsoft.Extensions.FileSystemGlobbing.Internal.PathSegments.ParentPathSegment
-Microsoft.Extensions.FileSystemGlobbing.Internal.PathSegments.ParentPathSegment.CanProduceStem.get -> bool
-~Microsoft.Extensions.FileSystemGlobbing.Internal.PathSegments.ParentPathSegment.Match(string value) -> bool
-Microsoft.Extensions.FileSystemGlobbing.Internal.PathSegments.ParentPathSegment.ParentPathSegment() -> void
-Microsoft.Extensions.FileSystemGlobbing.Internal.PathSegments.RecursiveWildcardSegment
-Microsoft.Extensions.FileSystemGlobbing.Internal.PathSegments.RecursiveWildcardSegment.CanProduceStem.get -> bool
-~Microsoft.Extensions.FileSystemGlobbing.Internal.PathSegments.RecursiveWildcardSegment.Match(string value) -> bool
-Microsoft.Extensions.FileSystemGlobbing.Internal.PathSegments.RecursiveWildcardSegment.RecursiveWildcardSegment() -> void
-Microsoft.Extensions.FileSystemGlobbing.Internal.PathSegments.WildcardPathSegment
-~Microsoft.Extensions.FileSystemGlobbing.Internal.PathSegments.WildcardPathSegment.BeginsWith.get -> string
-Microsoft.Extensions.FileSystemGlobbing.Internal.PathSegments.WildcardPathSegment.CanProduceStem.get -> bool
-~Microsoft.Extensions.FileSystemGlobbing.Internal.PathSegments.WildcardPathSegment.Contains.get -> System.Collections.Generic.List<string>
-~Microsoft.Extensions.FileSystemGlobbing.Internal.PathSegments.WildcardPathSegment.EndsWith.get -> string
-~Microsoft.Extensions.FileSystemGlobbing.Internal.PathSegments.WildcardPathSegment.Match(string value) -> bool
-~Microsoft.Extensions.FileSystemGlobbing.Internal.PathSegments.WildcardPathSegment.WildcardPathSegment(string beginsWith, System.Collections.Generic.List<string> contains, string endsWith, System.StringComparison comparisonType) -> void
-Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContext<TFrame>
-Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContext<TFrame>.Frame -> TFrame
-Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContext<TFrame>.IsStackEmpty() -> bool
-Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContext<TFrame>.PatternContext() -> void
-Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContext<TFrame>.PopDirectory() -> void
-Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContext<TFrame>.PushDataFrame(TFrame frame) -> void
-Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextLinear
-~Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextLinear.CalculateStem(Microsoft.Extensions.FileSystemGlobbing.Abstractions.FileInfoBase matchedFile) -> string
-Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextLinear.FrameData
-Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextLinear.FrameData.FrameData() -> void
-Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextLinear.FrameData.InStem -> bool
-Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextLinear.FrameData.IsNotApplicable -> bool
-Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextLinear.FrameData.SegmentIndex -> int
-~Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextLinear.FrameData.Stem.get -> string
-~Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextLinear.FrameData.StemItems.get -> System.Collections.Generic.IList<string>
-Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextLinear.IsLastSegment() -> bool
-~Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextLinear.Pattern.get -> Microsoft.Extensions.FileSystemGlobbing.Internal.ILinearPattern
-~Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextLinear.PatternContextLinear(Microsoft.Extensions.FileSystemGlobbing.Internal.ILinearPattern pattern) -> void
-~Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextLinear.TestMatchingSegment(string value) -> bool
-Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextLinearExclude
-~Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextLinearExclude.PatternContextLinearExclude(Microsoft.Extensions.FileSystemGlobbing.Internal.ILinearPattern pattern) -> void
-Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextLinearInclude
-~Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextLinearInclude.PatternContextLinearInclude(Microsoft.Extensions.FileSystemGlobbing.Internal.ILinearPattern pattern) -> void
-Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextRagged
-~Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextRagged.CalculateStem(Microsoft.Extensions.FileSystemGlobbing.Abstractions.FileInfoBase matchedFile) -> string
-Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextRagged.FrameData
-Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextRagged.FrameData.BacktrackAvailable -> int
-Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextRagged.FrameData.FrameData() -> void
-Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextRagged.FrameData.InStem -> bool
-Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextRagged.FrameData.IsNotApplicable -> bool
-~Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextRagged.FrameData.SegmentGroup -> System.Collections.Generic.IList<Microsoft.Extensions.FileSystemGlobbing.Internal.IPathSegment>
-Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextRagged.FrameData.SegmentGroupIndex -> int
-Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextRagged.FrameData.SegmentIndex -> int
-~Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextRagged.FrameData.Stem.get -> string
-~Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextRagged.FrameData.StemItems.get -> System.Collections.Generic.IList<string>
-Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextRagged.IsEndingGroup() -> bool
-Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextRagged.IsStartingGroup() -> bool
-~Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextRagged.Pattern.get -> Microsoft.Extensions.FileSystemGlobbing.Internal.IRaggedPattern
-~Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextRagged.PatternContextRagged(Microsoft.Extensions.FileSystemGlobbing.Internal.IRaggedPattern pattern) -> void
-~Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextRagged.TestMatchingGroup(Microsoft.Extensions.FileSystemGlobbing.Abstractions.FileSystemInfoBase value) -> bool
-~Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextRagged.TestMatchingSegment(string value) -> bool
-Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextRaggedExclude
-~Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextRaggedExclude.PatternContextRaggedExclude(Microsoft.Extensions.FileSystemGlobbing.Internal.IRaggedPattern pattern) -> void
-Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextRaggedInclude
-~Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextRaggedInclude.PatternContextRaggedInclude(Microsoft.Extensions.FileSystemGlobbing.Internal.IRaggedPattern pattern) -> void
-Microsoft.Extensions.FileSystemGlobbing.Internal.PatternTestResult
-Microsoft.Extensions.FileSystemGlobbing.Internal.PatternTestResult.IsSuccessful.get -> bool
-~Microsoft.Extensions.FileSystemGlobbing.Internal.PatternTestResult.Stem.get -> string
-Microsoft.Extensions.FileSystemGlobbing.Internal.Patterns.PatternBuilder
-~Microsoft.Extensions.FileSystemGlobbing.Internal.Patterns.PatternBuilder.Build(string pattern) -> Microsoft.Extensions.FileSystemGlobbing.Internal.IPattern
-Microsoft.Extensions.FileSystemGlobbing.Internal.Patterns.PatternBuilder.ComparisonType.get -> System.StringComparison
-Microsoft.Extensions.FileSystemGlobbing.Internal.Patterns.PatternBuilder.PatternBuilder() -> void
-Microsoft.Extensions.FileSystemGlobbing.Internal.Patterns.PatternBuilder.PatternBuilder(System.StringComparison comparisonType) -> void
-Microsoft.Extensions.FileSystemGlobbing.Matcher
-Microsoft.Extensions.FileSystemGlobbing.Matcher.Matcher() -> void
-Microsoft.Extensions.FileSystemGlobbing.Matcher.Matcher(System.StringComparison comparisonType) -> void
-Microsoft.Extensions.FileSystemGlobbing.MatcherExtensions
-Microsoft.Extensions.FileSystemGlobbing.PatternMatchingResult
-~Microsoft.Extensions.FileSystemGlobbing.PatternMatchingResult.Files.get -> System.Collections.Generic.IEnumerable<Microsoft.Extensions.FileSystemGlobbing.FilePatternMatch>
-~Microsoft.Extensions.FileSystemGlobbing.PatternMatchingResult.Files.set -> void
-~Microsoft.Extensions.FileSystemGlobbing.PatternMatchingResult.PatternMatchingResult(System.Collections.Generic.IEnumerable<Microsoft.Extensions.FileSystemGlobbing.FilePatternMatch> files) -> void
-Microsoft.Extensions.Primitives.IChangeToken
-Microsoft.Extensions.Primitives.IChangeToken.ActiveChangeCallbacks.get -> bool
-Microsoft.Extensions.Primitives.IChangeToken.HasChanged.get -> bool
-~Microsoft.Extensions.Primitives.IChangeToken.RegisterChangeCallback(System.Action<object> callback, object state) -> System.IDisposable
 NuGet.Commands.AddClientCertArgs
 NuGet.Commands.AddClientCertArgs.AddClientCertArgs() -> void
 ~NuGet.Commands.AddClientCertArgs.Configfile.get -> string
@@ -981,39 +841,8 @@ NuGet.Commands.WarningPropertiesCollection
 ~NuGet.Commands.WarningPropertiesCollection.ProjectFrameworks.get -> System.Collections.Generic.IReadOnlyList<NuGet.Frameworks.NuGetFramework>
 ~NuGet.Commands.WarningPropertiesCollection.ProjectWideWarningProperties.get -> NuGet.ProjectModel.WarningProperties
 ~NuGet.Commands.WarningPropertiesCollection.WarningPropertiesCollection(NuGet.ProjectModel.WarningProperties projectWideWarningProperties, NuGet.Commands.PackageSpecificWarningProperties packageSpecificWarningProperties, System.Collections.Generic.IReadOnlyList<NuGet.Frameworks.NuGetFramework> projectFrameworks) -> void
-~abstract Microsoft.Extensions.FileSystemGlobbing.Abstractions.DirectoryInfoBase.EnumerateFileSystemInfos() -> System.Collections.Generic.IEnumerable<Microsoft.Extensions.FileSystemGlobbing.Abstractions.FileSystemInfoBase>
-~abstract Microsoft.Extensions.FileSystemGlobbing.Abstractions.DirectoryInfoBase.GetDirectory(string path) -> Microsoft.Extensions.FileSystemGlobbing.Abstractions.DirectoryInfoBase
-~abstract Microsoft.Extensions.FileSystemGlobbing.Abstractions.DirectoryInfoBase.GetFile(string path) -> Microsoft.Extensions.FileSystemGlobbing.Abstractions.FileInfoBase
-~abstract Microsoft.Extensions.FileSystemGlobbing.Abstractions.FileSystemInfoBase.FullName.get -> string
-~abstract Microsoft.Extensions.FileSystemGlobbing.Abstractions.FileSystemInfoBase.Name.get -> string
-~abstract Microsoft.Extensions.FileSystemGlobbing.Abstractions.FileSystemInfoBase.ParentDirectory.get -> Microsoft.Extensions.FileSystemGlobbing.Abstractions.DirectoryInfoBase
-~abstract Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContext<TFrame>.PushDirectory(Microsoft.Extensions.FileSystemGlobbing.Abstractions.DirectoryInfoBase directory) -> void
-~abstract Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContext<TFrame>.Test(Microsoft.Extensions.FileSystemGlobbing.Abstractions.DirectoryInfoBase directory) -> bool
-~abstract Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContext<TFrame>.Test(Microsoft.Extensions.FileSystemGlobbing.Abstractions.FileInfoBase file) -> Microsoft.Extensions.FileSystemGlobbing.Internal.PatternTestResult
 ~const NuGet.Commands.BuildAssetsUtils.PropsExtension = ".props" -> string
 ~const NuGet.Commands.BuildAssetsUtils.TargetsExtension = ".targets" -> string
-~override Microsoft.Extensions.FileSystemGlobbing.Abstractions.DirectoryInfoWrapper.EnumerateFileSystemInfos() -> System.Collections.Generic.IEnumerable<Microsoft.Extensions.FileSystemGlobbing.Abstractions.FileSystemInfoBase>
-~override Microsoft.Extensions.FileSystemGlobbing.Abstractions.DirectoryInfoWrapper.FullName.get -> string
-~override Microsoft.Extensions.FileSystemGlobbing.Abstractions.DirectoryInfoWrapper.GetDirectory(string name) -> Microsoft.Extensions.FileSystemGlobbing.Abstractions.DirectoryInfoBase
-~override Microsoft.Extensions.FileSystemGlobbing.Abstractions.DirectoryInfoWrapper.GetFile(string name) -> Microsoft.Extensions.FileSystemGlobbing.Abstractions.FileInfoBase
-~override Microsoft.Extensions.FileSystemGlobbing.Abstractions.DirectoryInfoWrapper.Name.get -> string
-~override Microsoft.Extensions.FileSystemGlobbing.Abstractions.DirectoryInfoWrapper.ParentDirectory.get -> Microsoft.Extensions.FileSystemGlobbing.Abstractions.DirectoryInfoBase
-~override Microsoft.Extensions.FileSystemGlobbing.Abstractions.FileInfoWrapper.FullName.get -> string
-~override Microsoft.Extensions.FileSystemGlobbing.Abstractions.FileInfoWrapper.Name.get -> string
-~override Microsoft.Extensions.FileSystemGlobbing.Abstractions.FileInfoWrapper.ParentDirectory.get -> Microsoft.Extensions.FileSystemGlobbing.Abstractions.DirectoryInfoBase
-~override Microsoft.Extensions.FileSystemGlobbing.FilePatternMatch.Equals(object obj) -> bool
-override Microsoft.Extensions.FileSystemGlobbing.FilePatternMatch.GetHashCode() -> int
-~override Microsoft.Extensions.FileSystemGlobbing.Internal.PathSegments.LiteralPathSegment.Equals(object obj) -> bool
-override Microsoft.Extensions.FileSystemGlobbing.Internal.PathSegments.LiteralPathSegment.GetHashCode() -> int
-~override Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextLinear.PushDirectory(Microsoft.Extensions.FileSystemGlobbing.Abstractions.DirectoryInfoBase directory) -> void
-~override Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextLinear.Test(Microsoft.Extensions.FileSystemGlobbing.Abstractions.FileInfoBase file) -> Microsoft.Extensions.FileSystemGlobbing.Internal.PatternTestResult
-~override Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextLinearExclude.Test(Microsoft.Extensions.FileSystemGlobbing.Abstractions.DirectoryInfoBase directory) -> bool
-~override Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextLinearInclude.Declare(System.Action<Microsoft.Extensions.FileSystemGlobbing.Internal.IPathSegment, bool> onDeclare) -> void
-~override Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextLinearInclude.Test(Microsoft.Extensions.FileSystemGlobbing.Abstractions.DirectoryInfoBase directory) -> bool
-~override Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextRagged.Test(Microsoft.Extensions.FileSystemGlobbing.Abstractions.FileInfoBase file) -> Microsoft.Extensions.FileSystemGlobbing.Internal.PatternTestResult
-~override Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextRaggedExclude.Test(Microsoft.Extensions.FileSystemGlobbing.Abstractions.DirectoryInfoBase directory) -> bool
-~override Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextRaggedInclude.Declare(System.Action<Microsoft.Extensions.FileSystemGlobbing.Internal.IPathSegment, bool> onDeclare) -> void
-~override Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextRaggedInclude.Test(Microsoft.Extensions.FileSystemGlobbing.Abstractions.DirectoryInfoBase directory) -> bool
 ~override NuGet.Commands.CompatibilityIssue.ToString() -> string
 ~override NuGet.Commands.MSBuildItem.ToString() -> string
 ~override NuGet.Commands.NoOpRestoreResult.CommitAsync(NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task
@@ -1036,11 +865,6 @@ override NuGet.Commands.TransitiveNoWarnUtils.DependencyNode.GetHashCode() -> in
 override NuGet.Commands.TransitiveNoWarnUtils.NodeWarningProperties.GetHashCode() -> int
 ~override NuGet.Commands.WarningPropertiesCollection.Equals(object obj) -> bool
 override NuGet.Commands.WarningPropertiesCollection.GetHashCode() -> int
-~override sealed Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContextRagged.PushDirectory(Microsoft.Extensions.FileSystemGlobbing.Abstractions.DirectoryInfoBase directory) -> void
-~static Microsoft.Extensions.FileSystemGlobbing.Internal.PatternTestResult.Success(string stem) -> Microsoft.Extensions.FileSystemGlobbing.Internal.PatternTestResult
-~static Microsoft.Extensions.FileSystemGlobbing.MatcherExtensions.AddExcludePatterns(this Microsoft.Extensions.FileSystemGlobbing.Matcher matcher, params System.Collections.Generic.IEnumerable<string>[] excludePatternsGroups) -> void
-~static Microsoft.Extensions.FileSystemGlobbing.MatcherExtensions.AddIncludePatterns(this Microsoft.Extensions.FileSystemGlobbing.Matcher matcher, params System.Collections.Generic.IEnumerable<string>[] includePatternsGroups) -> void
-~static Microsoft.Extensions.FileSystemGlobbing.MatcherExtensions.GetResultsInFullPath(this Microsoft.Extensions.FileSystemGlobbing.Matcher matcher, string directoryPath) -> System.Collections.Generic.IEnumerable<string>
 ~static NuGet.Commands.AddClientCertRunner.Run(NuGet.Commands.AddClientCertArgs args, System.Func<NuGet.Common.ILogger> getLogger) -> void
 ~static NuGet.Commands.AddSourceRunner.Run(NuGet.Commands.AddSourceArgs args, System.Func<NuGet.Common.ILogger> getLogger) -> void
 ~static NuGet.Commands.AssetTargetFallbackUtility.ApplyFramework(NuGet.ProjectModel.TargetFrameworkInformation targetFrameworkInfo, System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> packageTargetFallback, System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> assetTargetFallback) -> void
@@ -1186,8 +1010,6 @@ override NuGet.Commands.WarningPropertiesCollection.GetHashCode() -> int
 ~static NuGet.Commands.UpdateSourceRunner.Run(NuGet.Commands.UpdateSourceArgs args, System.Func<NuGet.Common.ILogger> getLogger) -> void
 ~static NuGet.Commands.WarningPropertiesCollection.ApplyProjectWideNoWarnProperties(NuGet.Common.ILogMessage message, NuGet.ProjectModel.WarningProperties warningProperties) -> bool
 ~static NuGet.Commands.WarningPropertiesCollection.ApplyProjectWideWarningsAsErrorProperties(NuGet.Common.ILogMessage message, NuGet.ProjectModel.WarningProperties warningProperties) -> void
-~static readonly Microsoft.Extensions.FileSystemGlobbing.Internal.PathSegments.WildcardPathSegment.MatchAll -> Microsoft.Extensions.FileSystemGlobbing.Internal.PathSegments.WildcardPathSegment
-static readonly Microsoft.Extensions.FileSystemGlobbing.Internal.PatternTestResult.Failed -> Microsoft.Extensions.FileSystemGlobbing.Internal.PatternTestResult
 ~static readonly NuGet.Commands.AssetTargetFallbackUtility.AssetTargetFallback -> string
 ~static readonly NuGet.Commands.BuildAssetsUtils.MacroCandidates -> string[]
 ~static readonly NuGet.Commands.LockFileUtils.LIBANY -> string
@@ -1195,10 +1017,6 @@ static readonly Microsoft.Extensions.FileSystemGlobbing.Internal.PatternTestResu
 ~static readonly NuGet.Commands.MSBuildRestoreItemGroup.ItemGroup -> string
 ~static readonly NuGet.Commands.MSBuildRestoreUtility.Clear -> string
 static readonly NuGet.Commands.RestoreRequest.DefaultDegreeOfConcurrency -> int
-~virtual Microsoft.Extensions.FileSystemGlobbing.Internal.PatternContexts.PatternContext<TFrame>.Declare(System.Action<Microsoft.Extensions.FileSystemGlobbing.Internal.IPathSegment, bool> declare) -> void
-~virtual Microsoft.Extensions.FileSystemGlobbing.Matcher.AddExclude(string pattern) -> Microsoft.Extensions.FileSystemGlobbing.Matcher
-~virtual Microsoft.Extensions.FileSystemGlobbing.Matcher.AddInclude(string pattern) -> Microsoft.Extensions.FileSystemGlobbing.Matcher
-~virtual Microsoft.Extensions.FileSystemGlobbing.Matcher.Execute(Microsoft.Extensions.FileSystemGlobbing.Abstractions.DirectoryInfoBase directoryInfo) -> Microsoft.Extensions.FileSystemGlobbing.PatternMatchingResult
 ~virtual NuGet.Commands.DependencyGraphFileRequestProvider.CreateRequests(string inputPath, NuGet.Commands.RestoreArgs restoreContext) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<NuGet.Commands.RestoreSummaryRequest>>
 ~virtual NuGet.Commands.DependencyGraphFileRequestProvider.Supports(string path) -> System.Threading.Tasks.Task<bool>
 ~virtual NuGet.Commands.RestoreResult.CommitAsync(NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task

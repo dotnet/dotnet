@@ -2,9 +2,10 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNet.FileProviders;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Primitives;
 
 namespace NuGet.Commands
@@ -77,7 +78,23 @@ namespace NuGet.Commands
 
         public IChangeToken Watch(string filter)
         {
-            return NoopChangeToken.Singleton;
+            return NullChangeToken.Singleton;
+        }
+
+        private class EnumerableDirectoryContents : IDirectoryContents
+        {
+            private readonly IEnumerable<IFileInfo> _entries;
+
+            public EnumerableDirectoryContents(IEnumerable<IFileInfo> entries)
+            {
+                _entries = entries ?? throw new ArgumentNullException(nameof(entries));
+            }
+
+            public bool Exists => true;
+
+            public IEnumerator<IFileInfo> GetEnumerator() => _entries.GetEnumerator();
+
+            IEnumerator IEnumerable.GetEnumerator() => _entries.GetEnumerator();
         }
     }
 }

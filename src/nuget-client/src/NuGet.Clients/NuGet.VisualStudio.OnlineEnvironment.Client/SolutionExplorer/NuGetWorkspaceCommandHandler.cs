@@ -140,7 +140,7 @@ namespace NuGet.VisualStudio.OnlineEnvironment.Client
         {
             return selection != null &&
                 selection.Count.Equals(1) &&
-                selection.First().NodeMoniker.Equals(string.Empty);
+                selection.First().NodeMoniker.Equals(string.Empty, StringComparison.Ordinal);
         }
     }
 }

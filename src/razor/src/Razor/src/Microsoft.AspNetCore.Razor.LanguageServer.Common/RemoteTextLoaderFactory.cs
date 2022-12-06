@@ -7,5 +7,5 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Common;
 
 public abstract class RemoteTextLoaderFactory
 {
-    internal abstract TextLoader Create(string filePath);
+    public abstract TextLoader Create(string filePath);
 }

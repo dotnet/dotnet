@@ -49,7 +49,7 @@ namespace NuGet.Frameworks
                 throw new ArgumentNullException(nameof(mappings));
             }
 
-            Debug.Assert(folderName.IndexOf(";") < 0, "invalid folder name, this appears to contain multiple frameworks");
+            Debug.Assert(folderName.IndexOf(";", StringComparison.Ordinal) < 0, "invalid folder name, this appears to contain multiple frameworks");
 
             var framework = UnsupportedFramework;
 

@@ -33,7 +33,7 @@ namespace System.CommandLine.Suggest
             };
             CompleteScriptCommand.SetHandler(context =>
             {
-                SuggestionShellScriptHandler.Handle(context.Console, context.ParseResult.GetValueForArgument(shellTypeArgument));
+                SuggestionShellScriptHandler.Handle(context.Console, context.ParseResult.GetValue(shellTypeArgument));
             });
 
             ListCommand = new Command("list")
@@ -63,7 +63,7 @@ namespace System.CommandLine.Suggest
 
             RegisterCommand.SetHandler(context =>
             {
-                Register(context.ParseResult.GetValueForOption(commandPathOption), context.Console);
+                Register(context.ParseResult.GetValue(commandPathOption), context.Console);
                 return Task.FromResult(0);
             });
 
@@ -89,15 +89,21 @@ namespace System.CommandLine.Suggest
 
         private Command GetCommand { get; }
 
-        private Option<FileInfo> ExecutableOption { get; } =
-            new Option<FileInfo>(new[] { "-e", "--executable" }, "The executable to call for suggestions")
-                .LegalFilePathsOnly();
+        private Option<FileInfo> ExecutableOption { get; } = GetExecutableOption();
+
+        private static Option<FileInfo> GetExecutableOption()
+        {
+            var option = new Option<FileInfo>(new[] { "-e", "--executable" }, "The executable to call for suggestions");
+            option.AcceptLegalFilePathsOnly();
+
+            return option;
+        }
 
         private Command ListCommand { get; }
 
         private Option<int> PositionOption { get; } = new(new[] { "-p", "--position" },
                                                           description: "The current character position on the command line",
-                                                          getDefaultValue: () => short.MaxValue);
+                                                          defaultValueFactory: () => short.MaxValue);
 
         private Command RegisterCommand { get; }
 
@@ -130,7 +136,7 @@ namespace System.CommandLine.Suggest
         private Task<int> Get(InvocationContext context)
         {
             var parseResult = context.ParseResult;
-            var commandPath = parseResult.GetValueForOption(ExecutableOption);
+            var commandPath = parseResult.GetValue(ExecutableOption);
 
             Registration suggestionRegistration;
             if (commandPath.FullName == DotnetMuxer.Path.FullName)
@@ -142,7 +148,7 @@ namespace System.CommandLine.Suggest
                 suggestionRegistration = _suggestionRegistration.FindRegistration(commandPath);
             }
 
-            var position = parseResult.GetValueForOption(PositionOption);
+            var position = parseResult.GetValue(PositionOption);
 
             if (suggestionRegistration is null)
             {

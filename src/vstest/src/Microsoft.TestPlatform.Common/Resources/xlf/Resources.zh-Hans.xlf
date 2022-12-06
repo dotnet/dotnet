@@ -192,6 +192,11 @@
         <target state="translated">堆栈跟踪:</target>
         <note></note>
       </trans-unit>
+      <trans-unit id="SerialTestRunInvalidScenario">
+        <source>&lt;ForceOneTestAtTimePerTestHost&gt;true&lt;/ForceOneTestAtTimePerTestHost&gt; is not supported for sources test run.</source>
+        <target state="translated">源测试运行不支持 &lt;ForceOneTestAtTimePerTestHost&gt;true&lt;/ForceOneTestAtTimePerTestHost&gt;。</target>
+        <note></note>
+      </trans-unit>
     </body>
   </file>
 </xliff>

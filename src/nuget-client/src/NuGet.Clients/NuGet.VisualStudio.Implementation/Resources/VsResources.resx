@@ -316,6 +316,18 @@ The string representation of the user's input framework name.</comment>
   <data name="PackageFrameworkAssemblyGroupName" xml:space="preserve">
     <value>Framework Assemblies</value>
   </data>
+  <data name="PackageDocumentGroupName" xml:space="preserve">
+    <value>Documents</value>
+  </data>
+  <data name="PackageDocumentBrowseObjectClassName" xml:space="preserve">
+    <value>Package Document</value>
+  </data>
+  <data name="PackageDocumentPathDisplayName" xml:space="preserve">
+    <value>Path</value>
+  </data>
+  <data name="PackageDocumentPathDescription" xml:space="preserve">
+    <value>The document's path.</value>
+  </data>
   <data name="PackageBuildFileGroupName" xml:space="preserve">
     <value>Build Files</value>
   </data>

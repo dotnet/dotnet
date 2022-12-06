@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.Text;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
 
-internal abstract class RazorEditorFactoryService
+public abstract class RazorEditorFactoryService
 {
     public abstract bool TryGetDocumentTracker(ITextBuffer textBuffer, [NotNullWhen(returnValue: true)] out VisualStudioDocumentTracker? documentTracker);
 

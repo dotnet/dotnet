@@ -1,7 +1,7 @@
 ﻿using System.CommandLine;
 using System.CommandLine.Invocation;
 
-var fileArgument = new Argument<FileInfo>().LegalFileNamesOnly();
+var fileArgument = new Argument<FileInfo>().AcceptLegalFileNamesOnly();
 
 var command = new RootCommand
 {
@@ -10,7 +10,7 @@ var command = new RootCommand
 
 command.SetHandler(context =>
 {
-    context.Console.Write($"The file you chose was: {context.ParseResult.GetValueForArgument(fileArgument)}");
+    context.Console.Write($"The file you chose was: {context.ParseResult.GetValue(fileArgument)}");
 });
 
 command.Invoke(args);

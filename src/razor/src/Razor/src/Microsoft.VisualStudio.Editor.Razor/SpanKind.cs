@@ -3,7 +3,7 @@
 
 namespace Microsoft.VisualStudio.Editor.Razor;
 
-internal enum SpanKind
+public enum SpanKind
 {
     Transition,
     MetaCode,

@@ -191,7 +191,7 @@ namespace NuGet.Commands
                     var packageFile = new ManifestFile()
                     {
                         Source = sourcePath,
-                        Target = target.EndsWith(Path.DirectorySeparatorChar.ToString(CultureInfo.InvariantCulture)) || string.IsNullOrEmpty(target)
+                        Target = target.EndsWith(Path.DirectorySeparatorChar.ToString(CultureInfo.InvariantCulture), StringComparison.Ordinal) || string.IsNullOrEmpty(target)
                         ? Path.Combine(target, Path.GetFileName(sourcePath))
                         : target
                     };

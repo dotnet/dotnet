@@ -35,7 +35,7 @@ namespace NuGet.Commands
                     i++;
                 }
             }
-            else if (string.Equals(args.Name, Strings.ReservedPackageNameAll))
+            else if (string.Equals(args.Name, Strings.ReservedPackageNameAll, StringComparison.Ordinal))
             {
                 throw new CommandException(Strings.SourcesCommandAllNameIsReserved);
             }

@@ -38,7 +38,7 @@ param
 
 if ($BuildRTM -eq 'false')
 {
-    $NuGetValidator = [System.IO.Path]::Combine($RepoRoot, 'packages', 'nugetvalidator', '2.0.3', 'tools', 'NuGetValidator.exe')
+    $NuGetValidator = [System.IO.Path]::Combine($RepoRoot, 'packages', 'nugetvalidator', '2.0.5', 'tools', 'NuGetValidator.exe')
     $LocalizationRepository = [System.IO.Path]::Combine($RepoRoot, 'submodules', 'NuGet.Build.Localization', 'localize', 'comments', '15')
 
     if ($ValidateVsix)

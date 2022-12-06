@@ -373,7 +373,11 @@ namespace NuGet.ContentModel
                         // We store the raw version of the TFM, but we don't want it to affect the result.
                         continue;
                     }
+#if NETFRAMEWORK || NETSTANDARD
                     hashCode ^= property.Key.GetHashCode();
+#else
+                    hashCode ^= property.Key.GetHashCode(StringComparison.Ordinal);
+#endif
                     hashCode ^= property.Value.GetHashCode();
                 }
                 return hashCode;

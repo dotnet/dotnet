@@ -9,7 +9,7 @@ using Microsoft.CodeAnalysis.Razor;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Common;
 
-internal class AdhocLanguageServices : HostLanguageServices
+public class AdhocLanguageServices : HostLanguageServices
 {
     private readonly HostWorkspaceServices _workspaceServices;
     private readonly IEnumerable<ILanguageService> _languageServices;

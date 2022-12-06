@@ -482,4 +482,10 @@ The "ms" should be localized to the abbreviation for milliseconds.</comment>
     <value>You are running the '{0}' operation with an 'HTTP' source, '{1}'. Non-HTTPS access will be removed in a future version. Consider migrating to an 'HTTPS' source.</value>
     <comment>0 - The command name. Ex. Push/Delete. 1 - server uri.</comment>
   </data>
+  <data name="Http_ResponseLogWithRetryAfter" xml:space="preserve">
+    <value>{0} {1} {2}ms (retry after: {3}s)</value>
+    <comment>Parameters in order: non-localizable HTTP status, non-localizable HTTP request URI, request duration in milliseconds, retry after duration in milliseconds
+The "ms" should be localized to the abbreviation for milliseconds.
+The "s" should be localized to the abbreviation for seconds.</comment>
+  </data>
 </root>

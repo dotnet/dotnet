@@ -3,7 +3,7 @@
 
 namespace Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 
-internal enum LSPDocumentChangeKind
+public enum LSPDocumentChangeKind
 {
     Added,
     Removed,

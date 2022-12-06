@@ -8,7 +8,7 @@ using Microsoft.Extensions.Internal;
 
 namespace Microsoft.CodeAnalysis.Razor;
 
-internal readonly struct DocumentKey : IEquatable<DocumentKey>
+public readonly struct DocumentKey : IEquatable<DocumentKey>
 {
     public DocumentKey(string projectFilePath, string documentFilePath)
     {

@@ -3,7 +3,7 @@
 
 namespace Microsoft.VisualStudio.LiveShare.Razor.Guest;
 
-internal abstract class LiveShareSessionAccessor
+public abstract class LiveShareSessionAccessor
 {
     public abstract CollaborationSession? Session { get; }
 

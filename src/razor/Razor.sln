@@ -5,7 +5,6 @@ VisualStudioVersion = 17.0.31415.485
 MinimumVisualStudioVersion = 16.0.0.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tooling", "Tooling", "{3C0D6505-79B3-49D0-B4C3-176F0F1836ED}"
 	ProjectSection(SolutionItems) = preProject
-		src\Razor\src\.editorconfig = src\Razor\src\.editorconfig
 		src\Razor\src\Directory.Build.props = src\Razor\src\Directory.Build.props
 	EndProjectSection
 EndProject

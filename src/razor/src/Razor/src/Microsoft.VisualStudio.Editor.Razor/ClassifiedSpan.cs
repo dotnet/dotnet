@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Razor.Language;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
 
-internal struct ClassifiedSpan
+public struct ClassifiedSpan
 {
     public ClassifiedSpan(SourceSpan span, SourceSpan blockSpan, SpanKind spanKind, BlockKind blockKind, AcceptedCharacters acceptedCharacters)
     {

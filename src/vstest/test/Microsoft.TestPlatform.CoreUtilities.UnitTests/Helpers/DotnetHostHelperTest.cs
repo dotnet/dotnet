@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
+using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers;
 using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Helpers;
 using Microsoft.VisualStudio.TestPlatform.PlatformAbstractions;
 using Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces;
@@ -39,32 +40,45 @@ public sealed class DotnetHostHelperTest : IDisposable
         _processHelper.Setup(x => x.GetCurrentProcessArchitecture()).Returns(PlatformArchitecture.X64);
 
         // Act & Assert
-        Assert.IsTrue(dotnetHostHelper.TryGetDotnetPathByArchitecture(PlatformArchitecture.X64, out string? muxerPath));
+        Assert.IsTrue(dotnetHostHelper.TryGetDotnetPathByArchitecture(PlatformArchitecture.X64, DotnetMuxerResolutionStrategy.Default, out string? muxerPath));
         Assert.AreEqual(finalMuxerPath, muxerPath);
     }
 
     [DataTestMethod]
     [DataRow(PlatformArchitecture.X86, PlatformArchitecture.X64, PlatformOperatingSystem.Windows, "DOTNET_ROOT(x86)")]
     [DataRow(PlatformArchitecture.X86, PlatformArchitecture.X64, PlatformOperatingSystem.Windows, "DOTNET_ROOT")]
+    [DataRow(PlatformArchitecture.X86, PlatformArchitecture.X64, PlatformOperatingSystem.Windows, "DOTNET_ROOT(x86)", true, DotnetMuxerResolutionStrategy.DotnetRootArchitectureLess)]
+    [DataRow(PlatformArchitecture.X86, PlatformArchitecture.X64, PlatformOperatingSystem.Windows, "DOTNET_ROOT", true, DotnetMuxerResolutionStrategy.DotnetRootArchitectureLess)]
 
     [DataRow(PlatformArchitecture.ARM64, PlatformArchitecture.X64, PlatformOperatingSystem.Windows, "DOTNET_ROOT(x86)", false)]
     [DataRow(PlatformArchitecture.ARM64, PlatformArchitecture.X64, PlatformOperatingSystem.Windows, "DOTNET_ROOT_ARM64")]
     [DataRow(PlatformArchitecture.ARM64, PlatformArchitecture.X64, PlatformOperatingSystem.Windows, "DOTNET_ROOT")]
+    [DataRow(PlatformArchitecture.ARM64, PlatformArchitecture.X64, PlatformOperatingSystem.Windows, "DOTNET_ROOT(x86)", false, DotnetMuxerResolutionStrategy.DotnetRootArchitectureLess)]
+    [DataRow(PlatformArchitecture.ARM64, PlatformArchitecture.X64, PlatformOperatingSystem.Windows, "DOTNET_ROOT_ARM64", true, DotnetMuxerResolutionStrategy.DotnetRootArchitecture)]
+    [DataRow(PlatformArchitecture.ARM64, PlatformArchitecture.X64, PlatformOperatingSystem.Windows, "DOTNET_ROOT", true, DotnetMuxerResolutionStrategy.DotnetRootArchitectureLess)]
 
     [DataRow(PlatformArchitecture.X64, PlatformArchitecture.X64, PlatformOperatingSystem.Windows, "DOTNET_ROOT(x86)", false)]
     [DataRow(PlatformArchitecture.X64, PlatformArchitecture.ARM64, PlatformOperatingSystem.Windows, "DOTNET_ROOT_X64")]
     [DataRow(PlatformArchitecture.X64, PlatformArchitecture.ARM64, PlatformOperatingSystem.Windows, "DOTNET_ROOT")]
+    [DataRow(PlatformArchitecture.X64, PlatformArchitecture.X64, PlatformOperatingSystem.Windows, "DOTNET_ROOT(x86)", false, DotnetMuxerResolutionStrategy.DotnetRootArchitectureLess)]
+    [DataRow(PlatformArchitecture.X64, PlatformArchitecture.ARM64, PlatformOperatingSystem.Windows, "DOTNET_ROOT_X64", true, DotnetMuxerResolutionStrategy.DotnetRootArchitecture)]
+    [DataRow(PlatformArchitecture.X64, PlatformArchitecture.ARM64, PlatformOperatingSystem.Windows, "DOTNET_ROOT", true, DotnetMuxerResolutionStrategy.DotnetRootArchitectureLess)]
 
     [DataRow(PlatformArchitecture.ARM64, PlatformArchitecture.X64, PlatformOperatingSystem.OSX, "DOTNET_ROOT_ARM64")]
     [DataRow(PlatformArchitecture.ARM64, PlatformArchitecture.X64, PlatformOperatingSystem.OSX, "DOTNET_ROOT")]
+    [DataRow(PlatformArchitecture.ARM64, PlatformArchitecture.X64, PlatformOperatingSystem.OSX, "DOTNET_ROOT_ARM64", true, DotnetMuxerResolutionStrategy.DotnetRootArchitecture)]
+    [DataRow(PlatformArchitecture.ARM64, PlatformArchitecture.X64, PlatformOperatingSystem.OSX, "DOTNET_ROOT", true, DotnetMuxerResolutionStrategy.DotnetRootArchitectureLess)]
 
     [DataRow(PlatformArchitecture.X64, PlatformArchitecture.ARM64, PlatformOperatingSystem.OSX, "DOTNET_ROOT_X64")]
     [DataRow(PlatformArchitecture.X64, PlatformArchitecture.ARM64, PlatformOperatingSystem.OSX, "DOTNET_ROOT")]
+    [DataRow(PlatformArchitecture.X64, PlatformArchitecture.ARM64, PlatformOperatingSystem.OSX, "DOTNET_ROOT_X64", true, DotnetMuxerResolutionStrategy.DotnetRootArchitecture)]
+    [DataRow(PlatformArchitecture.X64, PlatformArchitecture.ARM64, PlatformOperatingSystem.OSX, "DOTNET_ROOT", true, DotnetMuxerResolutionStrategy.DotnetRootArchitectureLess)]
     public void GetDotnetPathByArchitecture_EnvVars(PlatformArchitecture targetArchitecture,
         PlatformArchitecture platformArchitecture,
         PlatformOperatingSystem platformSystem,
         string envVar,
-        bool found = true)
+        bool found = true,
+        DotnetMuxerResolutionStrategy strategy = DotnetMuxerResolutionStrategy.Default)
     {
         // Arrange
         string dotnetRootX64 = _muxerHelper.RenameMuxerAndReturnPath(platformSystem, PlatformArchitecture.X64);
@@ -94,14 +108,21 @@ public sealed class DotnetHostHelperTest : IDisposable
 
         // Act & Assert
         var dotnetHostHelper = new DotnetHostHelper(_fileHelper.Object, _environmentHelper.Object, _windowsRegistrytHelper.Object, _environmentVariableHelper.Object, _processHelper.Object);
-        Assert.AreEqual(found, dotnetHostHelper.TryGetDotnetPathByArchitecture(targetArchitecture, out string? muxerPath));
+        Assert.AreEqual(found, dotnetHostHelper.TryGetDotnetPathByArchitecture(targetArchitecture, strategy, out string? muxerPath));
         Assert.AreEqual(found ? envVars[envVar] : null, muxerPath);
     }
 
     [DataTestMethod]
     [DataRow("DOTNET_ROOT_ARM64", "DOTNET_ROOT", PlatformArchitecture.ARM64, PlatformArchitecture.X64)]
     [DataRow("DOTNET_ROOT(x86)", "DOTNET_ROOT", PlatformArchitecture.X86, PlatformArchitecture.X64)]
-    public void GetDotnetPathByArchitecture_EnvVars_DirectoryNotExists_TryNext(string notExists, string nextEnv, PlatformArchitecture targetAchitecture, PlatformArchitecture platformArchitecture)
+    [DataRow("DOTNET_ROOT_ARM64", "DOTNET_ROOT", PlatformArchitecture.ARM64, PlatformArchitecture.X64, DotnetMuxerResolutionStrategy.DotnetRootArchitecture | DotnetMuxerResolutionStrategy.DotnetRootArchitectureLess)]
+    [DataRow("DOTNET_ROOT(x86)", "DOTNET_ROOT", PlatformArchitecture.X86, PlatformArchitecture.X64, DotnetMuxerResolutionStrategy.DotnetRootArchitecture | DotnetMuxerResolutionStrategy.DotnetRootArchitectureLess)]
+    public void GetDotnetPathByArchitecture_EnvVars_DirectoryNotExists_TryNext(
+        string notExists,
+        string nextEnv,
+        PlatformArchitecture targetAchitecture,
+        PlatformArchitecture platformArchitecture,
+        DotnetMuxerResolutionStrategy strategy = DotnetMuxerResolutionStrategy.Default)
     {
         // Arrange
         string dotnetRootX64 = _muxerHelper.RenameMuxerAndReturnPath(PlatformOperatingSystem.Windows, PlatformArchitecture.X64);
@@ -126,14 +147,20 @@ public sealed class DotnetHostHelperTest : IDisposable
 
         //Act & Assert
         var dotnetHostHelper = new DotnetHostHelper(_fileHelper.Object, _environmentHelper.Object, _windowsRegistrytHelper.Object, _environmentVariableHelper.Object, _processHelper.Object);
-        Assert.IsTrue(dotnetHostHelper.TryGetDotnetPathByArchitecture(targetAchitecture, out string? muxerPath));
+        Assert.IsTrue(dotnetHostHelper.TryGetDotnetPathByArchitecture(targetAchitecture, strategy, out string? muxerPath));
         Assert.AreEqual(envVars[nextEnv], muxerPath);
     }
 
     [DataTestMethod]
     [DataRow(PlatformArchitecture.X64, PlatformArchitecture.X64, true)]
     [DataRow(PlatformArchitecture.X64, PlatformArchitecture.X86, false)]
-    public void GetDotnetPathByArchitecture_GlobalInstallation_Windows(PlatformArchitecture muxerArchitecture, PlatformArchitecture targetArchitecture, bool found)
+    [DataRow(PlatformArchitecture.X64, PlatformArchitecture.X64, true, DotnetMuxerResolutionStrategy.GlobalInstallationLocation)]
+    [DataRow(PlatformArchitecture.X64, PlatformArchitecture.X86, false, DotnetMuxerResolutionStrategy.GlobalInstallationLocation)]
+    public void GetDotnetPathByArchitecture_GlobalInstallation_Windows(
+        PlatformArchitecture muxerArchitecture,
+        PlatformArchitecture targetArchitecture,
+        bool found,
+        DotnetMuxerResolutionStrategy strategy = DotnetMuxerResolutionStrategy.Default)
     {
         // Arrange
         string dotnetMuxer = _muxerHelper.RenameMuxerAndReturnPath(PlatformOperatingSystem.Windows, muxerArchitecture);
@@ -149,7 +176,7 @@ public sealed class DotnetHostHelperTest : IDisposable
 
         //Act & Assert
         var dotnetHostHelper = new DotnetHostHelper(_fileHelper.Object, _environmentHelper.Object, _windowsRegistrytHelper.Object, _environmentVariableHelper.Object, _processHelper.Object);
-        Assert.AreEqual(found, dotnetHostHelper.TryGetDotnetPathByArchitecture(targetArchitecture, out string? muxerPath));
+        Assert.AreEqual(found, dotnetHostHelper.TryGetDotnetPathByArchitecture(targetArchitecture, strategy, out string? muxerPath));
         Assert.AreEqual(found ? dotnetMuxer : null, muxerPath);
     }
 
@@ -158,7 +185,16 @@ public sealed class DotnetHostHelperTest : IDisposable
     [DataRow(false, true, false, false)]
     [DataRow(false, false, true, false)]
     [DataRow(false, false, false, true)]
-    public void GetDotnetPathByArchitecture_GlobalInstallation_NullSubkeys(bool nullInstalledVersion, bool nullArchitecture, bool nullNative, bool nullInstallLocation)
+    [DataRow(true, false, false, false, DotnetMuxerResolutionStrategy.GlobalInstallationLocation)]
+    [DataRow(false, true, false, false, DotnetMuxerResolutionStrategy.GlobalInstallationLocation)]
+    [DataRow(false, false, true, false, DotnetMuxerResolutionStrategy.GlobalInstallationLocation)]
+    [DataRow(false, false, false, true, DotnetMuxerResolutionStrategy.GlobalInstallationLocation)]
+    public void GetDotnetPathByArchitecture_GlobalInstallation_NullSubkeys(
+        bool nullInstalledVersion,
+        bool nullArchitecture,
+        bool nullNative,
+        bool nullInstallLocation,
+        DotnetMuxerResolutionStrategy strategy = DotnetMuxerResolutionStrategy.Default)
     {
         // Arrange
         Mock<IRegistryKey> installedVersionKey = new();
@@ -176,7 +212,7 @@ public sealed class DotnetHostHelperTest : IDisposable
 
         // Act & Assert
         var dotnetHostHelper = new DotnetHostHelper(_fileHelper.Object, _environmentHelper.Object, _windowsRegistrytHelper.Object, _environmentVariableHelper.Object, _processHelper.Object);
-        Assert.IsFalse(dotnetHostHelper.TryGetDotnetPathByArchitecture(PlatformArchitecture.X64, out string? muxerPath));
+        Assert.IsFalse(dotnetHostHelper.TryGetDotnetPathByArchitecture(PlatformArchitecture.X64, strategy, out string? muxerPath));
     }
 
     [DataTestMethod]
@@ -185,13 +221,28 @@ public sealed class DotnetHostHelperTest : IDisposable
     [DataRow(PlatformArchitecture.ARM64, "/etc/dotnet/install_location", true, PlatformOperatingSystem.OSX)]
     [DataRow(PlatformArchitecture.X64, "/etc/dotnet/install_location", true, PlatformOperatingSystem.OSX)]
     [DataRow(PlatformArchitecture.ARM64, "/etc/dotnet/install_location_x64", false, PlatformOperatingSystem.OSX)]
+    [DataRow(PlatformArchitecture.ARM64, "/etc/dotnet/install_location_arm64", true, PlatformOperatingSystem.OSX, DotnetMuxerResolutionStrategy.GlobalInstallationLocation)]
+    [DataRow(PlatformArchitecture.X64, "/etc/dotnet/install_location_x64", true, PlatformOperatingSystem.OSX, DotnetMuxerResolutionStrategy.GlobalInstallationLocation)]
+    [DataRow(PlatformArchitecture.ARM64, "/etc/dotnet/install_location", true, PlatformOperatingSystem.OSX, DotnetMuxerResolutionStrategy.GlobalInstallationLocation)]
+    [DataRow(PlatformArchitecture.X64, "/etc/dotnet/install_location", true, PlatformOperatingSystem.OSX, DotnetMuxerResolutionStrategy.GlobalInstallationLocation)]
+    [DataRow(PlatformArchitecture.ARM64, "/etc/dotnet/install_location_x64", false, PlatformOperatingSystem.OSX, DotnetMuxerResolutionStrategy.GlobalInstallationLocation)]
 
     [DataRow(PlatformArchitecture.ARM64, "/etc/dotnet/install_location_arm64", false, PlatformOperatingSystem.Unix)]
     [DataRow(PlatformArchitecture.X64, "/etc/dotnet/install_location_x64", false, PlatformOperatingSystem.Unix)]
     [DataRow(PlatformArchitecture.ARM64, "/etc/dotnet/install_location", false, PlatformOperatingSystem.Unix)]
     [DataRow(PlatformArchitecture.X64, "/etc/dotnet/install_location", false, PlatformOperatingSystem.Unix)]
     [DataRow(PlatformArchitecture.ARM64, "/etc/dotnet/install_location_x64", false, PlatformOperatingSystem.Unix)]
-    public void GetDotnetPathByArchitecture_GlobalInstallation_Unix(PlatformArchitecture targetArchitecture, string installLocation, bool found, PlatformOperatingSystem os)
+    [DataRow(PlatformArchitecture.ARM64, "/etc/dotnet/install_location_arm64", false, PlatformOperatingSystem.Unix, DotnetMuxerResolutionStrategy.GlobalInstallationLocation)]
+    [DataRow(PlatformArchitecture.X64, "/etc/dotnet/install_location_x64", false, PlatformOperatingSystem.Unix, DotnetMuxerResolutionStrategy.GlobalInstallationLocation)]
+    [DataRow(PlatformArchitecture.ARM64, "/etc/dotnet/install_location", false, PlatformOperatingSystem.Unix, DotnetMuxerResolutionStrategy.GlobalInstallationLocation)]
+    [DataRow(PlatformArchitecture.X64, "/etc/dotnet/install_location", false, PlatformOperatingSystem.Unix, DotnetMuxerResolutionStrategy.GlobalInstallationLocation)]
+    [DataRow(PlatformArchitecture.ARM64, "/etc/dotnet/install_location_x64", false, PlatformOperatingSystem.Unix, DotnetMuxerResolutionStrategy.GlobalInstallationLocation)]
+    public void GetDotnetPathByArchitecture_GlobalInstallation_Unix(
+        PlatformArchitecture targetArchitecture,
+        string installLocation,
+        bool found,
+        PlatformOperatingSystem os,
+        DotnetMuxerResolutionStrategy strategy = DotnetMuxerResolutionStrategy.Default)
     {
         // Arrange
         string dotnetMuxer = _muxerHelper.RenameMuxerAndReturnPath(os, targetArchitecture);
@@ -206,7 +257,7 @@ public sealed class DotnetHostHelperTest : IDisposable
 
         //Act & Assert
         var dotnetHostHelper = new DotnetHostHelper(_fileHelper.Object, _environmentHelper.Object, _windowsRegistrytHelper.Object, _environmentVariableHelper.Object, _processHelper.Object);
-        Assert.AreEqual(found, dotnetHostHelper.TryGetDotnetPathByArchitecture(targetArchitecture, out string? muxerPath));
+        Assert.AreEqual(found, dotnetHostHelper.TryGetDotnetPathByArchitecture(targetArchitecture, strategy, out string? muxerPath));
         Assert.AreEqual(found ? dotnetMuxer : null, muxerPath);
     }
 
@@ -216,8 +267,19 @@ public sealed class DotnetHostHelperTest : IDisposable
     [DataRow(PlatformArchitecture.X64, PlatformArchitecture.X64, "ProgramFiles", "dotnet", true)]
     [DataRow(PlatformArchitecture.X86, PlatformArchitecture.X86, "ProgramFiles", "dotnet", true)]
     [DataRow(PlatformArchitecture.X64, PlatformArchitecture.X64, "ProgramFiles", "dotnet", false)]
+    [DataRow(PlatformArchitecture.X86, PlatformArchitecture.X64, "ProgramFiles(x86)", "dotnet", true, DotnetMuxerResolutionStrategy.DefaultInstallationLocation)]
+    [DataRow(PlatformArchitecture.X64, PlatformArchitecture.ARM64, "ProgramFiles", @"dotnet\x64", true, DotnetMuxerResolutionStrategy.DefaultInstallationLocation)]
+    [DataRow(PlatformArchitecture.X64, PlatformArchitecture.X64, "ProgramFiles", "dotnet", true, DotnetMuxerResolutionStrategy.DefaultInstallationLocation)]
+    [DataRow(PlatformArchitecture.X86, PlatformArchitecture.X86, "ProgramFiles", "dotnet", true, DotnetMuxerResolutionStrategy.DefaultInstallationLocation)]
+    [DataRow(PlatformArchitecture.X64, PlatformArchitecture.X64, "ProgramFiles", "dotnet", false, DotnetMuxerResolutionStrategy.DefaultInstallationLocation)]
     [TestCategory("Windows")]
-    public void GetDotnetPathByArchitecture_DefaultInstallation_Win(PlatformArchitecture targetArchitecture, PlatformArchitecture platformArchitecture, string envVar, string subfolder, bool found)
+    public void GetDotnetPathByArchitecture_DefaultInstallation_Win(
+        PlatformArchitecture targetArchitecture,
+        PlatformArchitecture platformArchitecture,
+        string envVar,
+        string subfolder,
+        bool found,
+        DotnetMuxerResolutionStrategy strategy = DotnetMuxerResolutionStrategy.Default)
     {
         // Arrange
         string dotnetMuxer = _muxerHelper.RenameMuxerAndReturnPath(PlatformOperatingSystem.Windows, targetArchitecture, subfolder);
@@ -232,7 +294,7 @@ public sealed class DotnetHostHelperTest : IDisposable
 
         //Act & Assert
         var dotnetHostHelper = new DotnetHostHelper(_fileHelper.Object, _environmentHelper.Object, _windowsRegistrytHelper.Object, _environmentVariableHelper.Object, _processHelper.Object);
-        Assert.AreEqual(found, dotnetHostHelper.TryGetDotnetPathByArchitecture(targetArchitecture, out string? muxerPath));
+        Assert.AreEqual(found, dotnetHostHelper.TryGetDotnetPathByArchitecture(targetArchitecture, strategy, out string? muxerPath));
         Assert.AreEqual(found ? dotnetMuxer : null, muxerPath);
     }
 
@@ -241,12 +303,27 @@ public sealed class DotnetHostHelperTest : IDisposable
     [DataRow(PlatformArchitecture.X64, PlatformArchitecture.ARM64, "/usr/local/share/dotnet/x64", "", true, PlatformOperatingSystem.OSX)]
     [DataRow(PlatformArchitecture.ARM64, PlatformArchitecture.X64, "/usr/local/share/dotnet", "", true, PlatformOperatingSystem.OSX)]
     [DataRow(PlatformArchitecture.X64, PlatformArchitecture.X64, "/usr/local/share/dotnet", "", false, PlatformOperatingSystem.OSX)]
+    [DataRow(PlatformArchitecture.X64, PlatformArchitecture.X64, "/usr/local/share/dotnet", "", true, PlatformOperatingSystem.OSX, DotnetMuxerResolutionStrategy.DefaultInstallationLocation)]
+    [DataRow(PlatformArchitecture.X64, PlatformArchitecture.ARM64, "/usr/local/share/dotnet/x64", "", true, PlatformOperatingSystem.OSX, DotnetMuxerResolutionStrategy.DefaultInstallationLocation)]
+    [DataRow(PlatformArchitecture.ARM64, PlatformArchitecture.X64, "/usr/local/share/dotnet", "", true, PlatformOperatingSystem.OSX, DotnetMuxerResolutionStrategy.DefaultInstallationLocation)]
+    [DataRow(PlatformArchitecture.X64, PlatformArchitecture.X64, "/usr/local/share/dotnet", "", false, PlatformOperatingSystem.OSX, DotnetMuxerResolutionStrategy.DefaultInstallationLocation)]
 
     [DataRow(PlatformArchitecture.X64, PlatformArchitecture.X64, "/usr/share/dotnet", "", false, PlatformOperatingSystem.Unix)]
     [DataRow(PlatformArchitecture.X64, PlatformArchitecture.ARM64, "/usr/share/dotnet/x64", "", false, PlatformOperatingSystem.Unix)]
     [DataRow(PlatformArchitecture.ARM64, PlatformArchitecture.X64, "/usr/share/dotnet", "", false, PlatformOperatingSystem.Unix)]
     [DataRow(PlatformArchitecture.X64, PlatformArchitecture.X64, "/usr/share/dotnet", "", false, PlatformOperatingSystem.Unix)]
-    public void GetDotnetPathByArchitecture_DefaultInstallation_Unix(PlatformArchitecture targetArchitecture, PlatformArchitecture platformArchitecture, string expectedFolder, string subfolder, bool found, PlatformOperatingSystem os)
+    [DataRow(PlatformArchitecture.X64, PlatformArchitecture.X64, "/usr/share/dotnet", "", false, PlatformOperatingSystem.Unix, DotnetMuxerResolutionStrategy.DefaultInstallationLocation)]
+    [DataRow(PlatformArchitecture.X64, PlatformArchitecture.ARM64, "/usr/share/dotnet/x64", "", false, PlatformOperatingSystem.Unix, DotnetMuxerResolutionStrategy.DefaultInstallationLocation)]
+    [DataRow(PlatformArchitecture.ARM64, PlatformArchitecture.X64, "/usr/share/dotnet", "", false, PlatformOperatingSystem.Unix, DotnetMuxerResolutionStrategy.DefaultInstallationLocation)]
+    [DataRow(PlatformArchitecture.X64, PlatformArchitecture.X64, "/usr/share/dotnet", "", false, PlatformOperatingSystem.Unix, DotnetMuxerResolutionStrategy.DefaultInstallationLocation)]
+    public void GetDotnetPathByArchitecture_DefaultInstallation_Unix(
+        PlatformArchitecture targetArchitecture,
+        PlatformArchitecture platformArchitecture,
+        string expectedFolder,
+        string subfolder,
+        bool found,
+        PlatformOperatingSystem os,
+        DotnetMuxerResolutionStrategy strategy = DotnetMuxerResolutionStrategy.Default)
     {
         // Arrange
         string dotnetMuxer = _muxerHelper.RenameMuxerAndReturnPath(os, targetArchitecture, subfolder);
@@ -262,7 +339,7 @@ public sealed class DotnetHostHelperTest : IDisposable
 
         //Act & Assert
         var dotnetHostHelper = new DotnetHostHelper(_fileHelper.Object, _environmentHelper.Object, _windowsRegistrytHelper.Object, _environmentVariableHelper.Object, _processHelper.Object);
-        Assert.AreEqual(found, dotnetHostHelper.TryGetDotnetPathByArchitecture(targetArchitecture, out string? muxerPath));
+        Assert.AreEqual(found, dotnetHostHelper.TryGetDotnetPathByArchitecture(targetArchitecture, strategy, out string? muxerPath));
         Assert.AreEqual(found ? expectedMuxerPath : null, muxerPath);
     }
 

@@ -10,6 +10,9 @@
         <DataCollectors>
             <DataCollector friendlyName="blame" enabled="True">
                 <Configuration>
+                    <!-- Enables crash dump-->
+                    <CollectDump DumpType="Full" />
+                    <!-- Enables hang dump-->
                     <CollectDumpOnTestSessionHang TestTimeout="15min" HangDumpType="full" />
                     <ResultsDirectory>%AGENT_TEMPDIRECTORY%</ResultsDirectory>
                 </Configuration>

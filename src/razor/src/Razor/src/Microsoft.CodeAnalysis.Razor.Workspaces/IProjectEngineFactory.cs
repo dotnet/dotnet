@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Razor.Language;
 
 namespace Microsoft.CodeAnalysis.Razor;
 
-internal interface IProjectEngineFactory
+public interface IProjectEngineFactory
 {
     RazorProjectEngine Create(RazorConfiguration configuration, RazorProjectFileSystem fileSystem, Action<RazorProjectEngineBuilder> configure);
 }

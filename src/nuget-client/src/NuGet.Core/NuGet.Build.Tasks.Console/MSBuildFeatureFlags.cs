@@ -23,7 +23,7 @@ namespace NuGet.Build.Tasks.Console
         /// </remarks>
         public static bool EnableCacheFileEnumerations
         {
-            get => string.Equals(Environment.GetEnvironmentVariable("MSBuildCacheFileEnumerations"), "1");
+            get => string.Equals(Environment.GetEnvironmentVariable("MSBuildCacheFileEnumerations"), "1", StringComparison.Ordinal);
             set => Environment.SetEnvironmentVariable("MSBuildCacheFileEnumerations", value ? "1" : null);
         }
 
@@ -36,7 +36,7 @@ namespace NuGet.Build.Tasks.Console
         /// </remarks>
         public static bool LoadAllFilesAsReadonly
         {
-            get => string.Equals(Environment.GetEnvironmentVariable("MSBuildLoadAllFilesAsReadonly"), "1");
+            get => string.Equals(Environment.GetEnvironmentVariable("MSBuildLoadAllFilesAsReadonly"), "1", StringComparison.Ordinal);
             set => Environment.SetEnvironmentVariable("MSBuildLoadAllFilesAsReadonly", value ? "1" : null);
         }
 
@@ -72,7 +72,7 @@ namespace NuGet.Build.Tasks.Console
         /// </remarks>
         public static bool SkipEagerWildcardEvaluations
         {
-            get => !string.Equals(Environment.GetEnvironmentVariable("MSBuildSkipEagerWildCardEvaluationRegexes"), null);
+            get => !string.Equals(Environment.GetEnvironmentVariable("MSBuildSkipEagerWildCardEvaluationRegexes"), null, StringComparison.Ordinal);
             set => Environment.SetEnvironmentVariable("MSBuildSkipEagerWildCardEvaluationRegexes", SkipWildcardRegularExpression);
         }
     }

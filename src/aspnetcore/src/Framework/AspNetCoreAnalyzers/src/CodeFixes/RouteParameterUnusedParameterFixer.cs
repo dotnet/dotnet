@@ -8,6 +8,7 @@ using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Analyzers.RouteEmbeddedLanguage.Infrastructure;
+using Microsoft.AspNetCore.App.Analyzers.Infrastructure;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -26,42 +27,37 @@ public class RouteParameterUnusedParameterFixer : CodeFixProvider
 
     public sealed override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
 
-    public sealed override Task RegisterCodeFixesAsync(CodeFixContext context)
+    public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
     {
+        var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+        if (root == null)
+        {
+            return;
+        }
+
+        var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+        if (semanticModel == null)
+        {
+            return;
+        }
+
+        var wellKnownTypes = WellKnownTypes.GetOrCreate(semanticModel.Compilation);
+
         foreach (var diagnostic in context.Diagnostics)
         {
             if (diagnostic.Properties.TryGetValue("RouteParameterName", out var routeParameterName))
             {
                 context.RegisterCodeFix(
                     CodeAction.Create($"Add parameter '{routeParameterName}'",
-                        cancellationToken => AddRouteParameterAsync(diagnostic, context.Document, cancellationToken),
+                        cancellationToken => AddRouteParameterAsync(diagnostic, root, semanticModel, wellKnownTypes, context.Document, cancellationToken),
                         equivalenceKey: DiagnosticDescriptors.RoutePatternUnusedParameter.Id),
                     diagnostic);
             }
         }
-
-        return Task.CompletedTask;
     }
 
-    private static async Task<Document> AddRouteParameterAsync(Diagnostic diagnostic, Document document, CancellationToken cancellationToken)
+    private static Task<Document> AddRouteParameterAsync(Diagnostic diagnostic, SyntaxNode root, SemanticModel semanticModel, WellKnownTypes wellKnownTypes, Document document, CancellationToken cancellationToken)
     {
-        var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-        if (root == null)
-        {
-            return document;
-        }
-
-        var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
-        if (semanticModel == null)
-        {
-            return document;
-        }
-
-        if (!WellKnownTypes.TryGetOrCreate(semanticModel.Compilation, out var wellKnownTypes))
-        {
-            return document;
-        }
-
         var param = root.FindNode(diagnostic.Location.SourceSpan);
 
         var token = param.GetFirstToken();
@@ -70,13 +66,13 @@ public class RouteParameterUnusedParameterFixer : CodeFixProvider
         // Check that the route is used in a context with a method, e.g. attribute on an action or Map method.
         if (usageContext.MethodSyntax == null)
         {
-            return document;
+            return Task.FromResult(document);
         }
 
-        return await UpdateDocument(diagnostic, document, usageContext.MethodSyntax, cancellationToken);
+        return Task.FromResult(UpdateDocument(diagnostic, root, document, usageContext.MethodSyntax));
     }
 
-    private static async Task<Document> UpdateDocument(Diagnostic diagnostic, Document document, SyntaxNode methodSyntax, CancellationToken cancellationToken)
+    private static Document UpdateDocument(Diagnostic diagnostic, SyntaxNode root, Document document, SyntaxNode methodSyntax)
     {
         var routeParameterName = diagnostic.Properties["RouteParameterName"];
         var routeParameterPolicy = diagnostic.Properties["RouteParameterPolicy"];
@@ -91,7 +87,7 @@ public class RouteParameterUnusedParameterFixer : CodeFixProvider
 
         // After fix, navigate to type with CodeAction_Navigation.
         var type = resolvedType.WithAdditionalAnnotations(new SyntaxAnnotation("CodeAction_Navigation"));
-        var newParameter = SyntaxFactory.Parameter(SyntaxFactory.Identifier(routeParameterName)).WithType(type);
+        var newParameter = SyntaxFactory.Parameter(SyntaxFactory.Identifier(routeParameterName!)).WithType(type);
         var updatedMethod = methodSyntax switch
         {
             BaseMethodDeclarationSyntax declaredMethodSyntax => AddParameter(declaredMethodSyntax, newParameter, routeParameterInsertIndex),
@@ -100,8 +96,7 @@ public class RouteParameterUnusedParameterFixer : CodeFixProvider
         };
 
         // Update document.
-        var syntaxTree = await document.GetSyntaxTreeAsync(cancellationToken);
-        var updatedSyntaxTree = syntaxTree.GetRoot(cancellationToken).ReplaceNode(methodSyntax, updatedMethod);
+        var updatedSyntaxTree = root.ReplaceNode(methodSyntax, updatedMethod);
         return document.WithSyntaxRoot(updatedSyntaxTree);
     }
 
@@ -111,7 +106,7 @@ public class RouteParameterUnusedParameterFixer : CodeFixProvider
         {
             parameterIndex = 0;
         }
-        
+
         var newParameters = syntax.ParameterList.Parameters.Insert(parameterIndex, parameterSyntax);
         return syntax.WithParameterList(syntax.ParameterList.WithParameters(newParameters));
     }

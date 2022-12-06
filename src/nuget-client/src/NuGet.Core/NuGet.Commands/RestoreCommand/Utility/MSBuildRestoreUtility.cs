@@ -899,7 +899,7 @@ namespace NuGet.Commands
         {
             var result = s;
 
-            if (result.IndexOf('/') >= -1 && result.IndexOf(DoubleSlash) == -1)
+            if (result.IndexOf("/", StringComparison.Ordinal) >= -1 && result.IndexOf(DoubleSlash, StringComparison.Ordinal) == -1)
             {
                 for (var i = 0; i < HttpPrefixes.Length; i++)
                 {

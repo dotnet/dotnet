@@ -62,7 +62,7 @@
       <FileToCopy Include="$(SourcePath)testhost\bin\$(Configuration)\net48\win7-x64\**\*.*" SubFolder="TestHostNetFramework\" />
 
       <!-- copy datacollectors" -->
-      <FileToCopy Include="$(SourcePath)datacollector\bin\$(Configuration)\net472\**\*.*" SubFolder="vstest.console\" />
+      <FileToCopy Include="$(SourcePath)datacollector\bin\$(Configuration)\net472\**\*.*" SubFolder="" />
       <FileToCopy Include="$(SourcePath)Microsoft.TestPlatform.Extensions.BlameDataCollector\bin\$(Configuration)\net472\**\*.*" SubFolder="Extensions\" />
       <FileToCopy Include="$(SourcePath)DataCollectors\Microsoft.TestPlatform.Extensions.EventLogCollector\bin\$(Configuration)\$(NetFrameworkMinimum)\**\*.*" SubFolder="Extensions\" />
       <FileToCopy Include="$(SourcePath)DataCollectors\DumpMinitool\bin\$(Configuration)\$(NetFrameworkMinimum)\win7-x64\**\*.*" SubFolder="Extensions\blame\" />

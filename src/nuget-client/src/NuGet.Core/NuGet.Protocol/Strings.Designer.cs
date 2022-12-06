@@ -214,6 +214,15 @@ namespace NuGet.Protocol {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} {1} {2}ms (retry after: {3}s).
+        /// </summary>
+        internal static string Http_ResponseLogWithRetryAfter {
+            get {
+                return ResourceManager.GetString("Http_ResponseLogWithRetryAfter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The HTTP request to &apos;{0} {1}&apos; has timed out after {2}ms..
         /// </summary>
         internal static string Http_Timeout {
@@ -961,7 +970,7 @@ namespace NuGet.Protocol {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You are running the &apos;{0}&apos; operation with an &apos;HTTP&apos; source, &apos;{1}&apos;. Non-HTTPS access will be removed in a future version. Consider migrating to &apos;HTTPS&apos; sources..
+        ///   Looks up a localized string similar to You are running the &apos;{0}&apos; operation with an &apos;HTTP&apos; source, &apos;{1}&apos;. Non-HTTPS access will be removed in a future version. Consider migrating to an &apos;HTTPS&apos; source..
         /// </summary>
         internal static string Warning_HttpServerUsage {
             get {

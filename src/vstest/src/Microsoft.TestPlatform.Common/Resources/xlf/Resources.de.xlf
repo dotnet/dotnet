@@ -192,6 +192,11 @@
         <target state="translated">Stapelüberwachung:</target>
         <note></note>
       </trans-unit>
+      <trans-unit id="SerialTestRunInvalidScenario">
+        <source>&lt;ForceOneTestAtTimePerTestHost&gt;true&lt;/ForceOneTestAtTimePerTestHost&gt; is not supported for sources test run.</source>
+        <target state="translated">&lt;ForceOneTestAtTimePerTestHost&gt;TRUE&lt;/ForceOneTestAtTimePerTestHost&gt; wird für den Testlauf der Quellen nicht unterstützt.</target>
+        <note></note>
+      </trans-unit>
     </body>
   </file>
 </xliff>

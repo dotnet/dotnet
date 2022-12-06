@@ -33,7 +33,7 @@ namespace Microsoft.VisualStudio.RazorExtension;
 [ProvideMenuResource("SyntaxVisualizerMenu.ctmenu", 1)]
 [ProvideToolWindow(typeof(SyntaxVisualizerToolWindow))]
 [Guid(PackageGuidString)]
-internal sealed class RazorPackage : AsyncPackage
+public sealed class RazorPackage : AsyncPackage
 {
     public const string PackageGuidString = "13b72f58-279e-49e0-a56d-296be02f0805";
 

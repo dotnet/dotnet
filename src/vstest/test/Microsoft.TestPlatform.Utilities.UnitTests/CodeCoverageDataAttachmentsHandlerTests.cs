@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using System.Xml;
 
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
 using Microsoft.VisualStudio.TestPlatform.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -25,6 +26,7 @@ namespace Microsoft.TestPlatform.Utilities.UnitTests;
 public class CodeCoverageDataAttachmentsHandlerTests
 {
     private readonly Mock<IProgress<int>> _mockProgressReporter;
+    private readonly Mock<IMessageLogger> _messageLogger;
     private readonly XmlElement _configurationElement;
     private readonly CodeCoverageDataAttachmentsHandler _coverageDataAttachmentsHandler;
     private readonly string _filePrefix;
@@ -39,6 +41,7 @@ public class CodeCoverageDataAttachmentsHandlerTests
         doc.LoadXml("<configurationElement/>");
         _configurationElement = doc.DocumentElement!;
         _mockProgressReporter = new Mock<IProgress<int>>();
+        _messageLogger = new Mock<IMessageLogger>();
         _coverageDataAttachmentsHandler = new CodeCoverageDataAttachmentsHandler();
 #if NETFRAMEWORK
         _filePrefix = "file:///";
@@ -193,5 +196,26 @@ public class CodeCoverageDataAttachmentsHandlerTests
         Assert.AreEqual(2, attachment.Count);
 
         _mockProgressReporter.Verify(p => p.Report(It.IsAny<int>()), Times.Never);
+    }
+
+    [TestMethod]
+    public async Task MergingPerTestCodeCoverageIsNotSupportedAndShoulReturnInputs()
+    {
+        string file1Path = Path.Combine(TestFilesDirectory, "fullcovered.cobertura.xml");
+        var attachmentSet = new AttachmentSet(new Uri("datacollector://microsoft/CodeCoverage/2.0"), string.Empty);
+        attachmentSet.Attachments.Add(new UriDataAttachment(new Uri(file1Path), "coverage"));
+        attachmentSet.Attachments.Add(new UriDataAttachment(new Uri(file1Path), "coverage"));
+
+        var attachment = new Collection<AttachmentSet> { attachmentSet };
+
+        var doc = new XmlDocument();
+        doc.LoadXml("<Configuration><PerTestCodeCoverage>TrUe</PerTestCodeCoverage></Configuration>");
+        ICollection<AttachmentSet> resultAttachmentSets = await
+            _coverageDataAttachmentsHandler.ProcessAttachmentSetsAsync(doc.DocumentElement!, attachment, _mockProgressReporter.Object, _messageLogger.Object, CancellationToken.None);
+
+        Assert.IsNotNull(resultAttachmentSets);
+        Assert.IsTrue(resultAttachmentSets.Count == 1);
+        Assert.IsTrue(resultAttachmentSets.First().Attachments.Count == 2);
+        Assert.AreEqual("datacollector://microsoft/CodeCoverage/2.0", resultAttachmentSets.First().Uri.AbsoluteUri);
     }
 }

@@ -24,14 +24,21 @@ steps:
     arguments: "-Force -CleanCache"
 
 - task: MSBuild@1
-  displayName: "Restore for VS2019"
+  displayName: "Restore"
   inputs:
-    solution: "build\\build.proj"
+    solution: "NuGet.sln"
     configuration: "$(BuildConfiguration)"
-    msbuildArguments: "/restore:false /target:RestoreVS /property:BuildNumber=$(BuildNumber) /property:BuildRTM=false /binarylogger:$(Build.StagingDirectory)\\binlog\\01.Restore.binlog"
+    msbuildArguments: "/target:restore /property:BuildNumber=$(BuildNumber) /property:BuildRTM=false /binarylogger:$(Build.StagingDirectory)\\binlog\\01.Restore.binlog"
 
 - task: ComponentGovernanceComponentDetection@0
   displayName: 'Component Detection'
+
+- task: MSBuild@1
+  displayName: "Build"
+  inputs:
+    solution: "NuGet.sln"
+    configuration: "$(BuildConfiguration)"
+    msbuildArguments: "/restore:false /target:Build /property:BuildNumber=$(BuildNumber) /property:BuildRTM=false /binarylogger:$(Build.StagingDirectory)\\binlog\\02.Build.binlog"
 
 - task: MSBuild@1
   displayName: "Run Functional Tests (continue on error)"
@@ -39,7 +46,7 @@ steps:
   inputs:
     solution: "build\\build.proj"
     configuration: "$(BuildConfiguration)"
-    msbuildArguments: "/restore:false /target:CoreFuncTests /property:BuildRTM=false /property:BuildNumber=$(BuildNumber) /property:SkipDesktopAssemblies=$(SkipDesktopAssemblies) /property:SkipCoreAssemblies=$(SkipCoreAssemblies) /binarylogger:$(Build.StagingDirectory)\\binlog\\02.Build.binlog"
+    msbuildArguments: "/restore:false /target:CoreFuncTests /property:BuildRTM=false /property:BuildNumber=$(BuildNumber) /property:SkipDesktopAssemblies=$(SkipDesktopAssemblies) /property:SkipCoreAssemblies=$(SkipCoreAssemblies) /binarylogger:$(Build.StagingDirectory)\\binlog\\03.Test.binlog"
   condition: "and(succeeded(), eq(variables['IsOfficialBuild'], 'true'))"
 
 - task: MSBuild@1
@@ -48,7 +55,7 @@ steps:
   inputs:
     solution: "build\\build.proj"
     configuration: "$(BuildConfiguration)"
-    msbuildArguments: "/restore:false /target:CoreFuncTests /property:BuildRTM=false /property:BuildNumber=$(BuildNumber) /property:SkipDesktopAssemblies=$(SkipDesktopAssemblies) /property:SkipCoreAssemblies=$(SkipCoreAssemblies) /binarylogger:$(Build.StagingDirectory)\\binlog\\02.Build.binlog"
+    msbuildArguments: "/restore:false /target:CoreFuncTests /property:BuildRTM=false /property:BuildNumber=$(BuildNumber) /property:SkipDesktopAssemblies=$(SkipDesktopAssemblies) /property:SkipCoreAssemblies=$(SkipCoreAssemblies) /binarylogger:$(Build.StagingDirectory)\\binlog\\03.Test.binlog"
   condition: "and(succeeded(), not(eq(variables['IsOfficialBuild'], 'true')))"
 
 - task: PublishTestResults@2

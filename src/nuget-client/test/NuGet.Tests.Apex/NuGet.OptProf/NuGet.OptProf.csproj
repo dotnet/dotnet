@@ -37,8 +37,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\NuGet.Clients\NuGet.VisualStudio\NuGet.VisualStudio.csproj">
-      <EmbedInteropTypes>true</EmbedInteropTypes>
-    </ProjectReference>
+    <ProjectReference Include="..\..\..\src\NuGet.Clients\NuGet.VisualStudio\NuGet.VisualStudio.csproj" />
   </ItemGroup>
 </Project>

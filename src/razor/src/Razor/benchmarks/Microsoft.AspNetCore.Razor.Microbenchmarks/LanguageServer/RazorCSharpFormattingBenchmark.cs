@@ -18,7 +18,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.Microbenchmarks.LanguageServer;
 
-internal enum InputType
+public enum InputType
 {
     Preformatted,
     Unformatted
@@ -26,7 +26,7 @@ internal enum InputType
 
 [CsvExporter]
 [RPlotExporter]
-internal class RazorCSharpFormattingBenchmark : RazorLanguageServerBenchmarkBase
+public class RazorCSharpFormattingBenchmark : RazorLanguageServerBenchmarkBase
 {
     private string _filePath;
 

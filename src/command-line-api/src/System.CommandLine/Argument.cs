@@ -17,8 +17,8 @@ namespace System.CommandLine
         private Func<ArgumentResult, object?>? _defaultValueFactory;
         private ArgumentArity _arity;
         private TryConvertArgument? _convertArguments;
-        private CompletionSourceList? _completions = null;
-        private List<ValidateSymbolResult<ArgumentResult>>? _validators = null;
+        private List<Func<CompletionContext, IEnumerable<CompletionItem>>>? _completions = null;
+        private List<Action<ArgumentResult>>? _validators = null;
 
         /// <summary>
         /// Initializes a new instance of the Argument class.
@@ -72,10 +72,10 @@ namespace System.CommandLine
         }
 
         /// <summary>
-        /// Gets the list of completion sources for the argument.
+        /// Gets the collection of completion sources for the argument.
         /// </summary>
-        public CompletionSourceList Completions =>
-            _completions ??= new CompletionSourceList
+        public ICollection<Func<CompletionContext, IEnumerable<CompletionItem>>> Completions =>
+            _completions ??= new ()
             {
                 CompletionSource.ForType(ValueType)
             };
@@ -104,14 +104,14 @@ namespace System.CommandLine
             }
         }
 
-        internal List<ValidateSymbolResult<ArgumentResult>> Validators => _validators ??= new ();
+        internal List<Action<ArgumentResult>> Validators => _validators ??= new ();
 
         /// <summary>
-        /// Adds a custom <see cref="ValidateSymbolResult{ArgumentResult}"/> to the argument. Validators can be used
+        /// Adds a custom validator to the argument. Validators can be used
         /// to provide custom errors based on user input.
         /// </summary>
-        /// <param name="validate">The delegate to validate the parsed argument.</param>
-        public void AddValidator(ValidateSymbolResult<ArgumentResult> validate) => Validators.Add(validate);
+        /// <param name="validate">The action to validate the parsed argument.</param>
+        public void AddValidator(Action<ArgumentResult> validate) => Validators.Add(validate);
 
         /// <summary>
         /// Gets the default value for the argument.
@@ -144,26 +144,26 @@ namespace System.CommandLine
         /// <summary>
         /// Sets a delegate to invoke when the default value for the argument is required.
         /// </summary>
-        /// <param name="getDefaultValue">The delegate to invoke to return the default value.</param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="getDefaultValue"/> is null.</exception>
-        public void SetDefaultValueFactory(Func<object?> getDefaultValue)
+        /// <param name="defaultValueFactory">The delegate to invoke to return the default value.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="defaultValueFactory"/> is null.</exception>
+        public void SetDefaultValueFactory(Func<object?> defaultValueFactory)
         {
-            if (getDefaultValue is null)
+            if (defaultValueFactory is null)
             {
-                throw new ArgumentNullException(nameof(getDefaultValue));
+                throw new ArgumentNullException(nameof(defaultValueFactory));
             }
 
-            SetDefaultValueFactory(_ => getDefaultValue());
+            SetDefaultValueFactory(_ => defaultValueFactory());
         }
         
         /// <summary>
         /// Sets a delegate to invoke when the default value for the argument is required.
         /// </summary>
-        /// <param name="getDefaultValue">The delegate to invoke to return the default value.</param>
+        /// <param name="defaultValueFactory">The delegate to invoke to return the default value.</param>
         /// <remarks>In this overload, the <see cref="ArgumentResult"/> is provided to the delegate.</remarks>
-        public void SetDefaultValueFactory(Func<ArgumentResult, object?> getDefaultValue)
+        public void SetDefaultValueFactory(Func<ArgumentResult, object?> defaultValueFactory)
         {
-            _defaultValueFactory = getDefaultValue ?? throw new ArgumentNullException(nameof(getDefaultValue));
+            _defaultValueFactory = defaultValueFactory ?? throw new ArgumentNullException(nameof(defaultValueFactory));
         }
 
         /// <summary>
@@ -172,11 +172,6 @@ namespace System.CommandLine
         public bool HasDefaultValue => _defaultValueFactory is not null;
 
         internal virtual bool HasCustomParser => false;
-
-        internal static Argument None() => new Argument<bool>
-        {
-            Arity = ArgumentArity.Zero
-        };
 
         internal void AddAllowedValues(IReadOnlyList<string> values)
         {
@@ -192,7 +187,7 @@ namespace System.CommandLine
         public override IEnumerable<CompletionItem> GetCompletions(CompletionContext context)
         {
             return Completions
-                   .SelectMany(source => source.GetCompletions(context))
+                   .SelectMany(source => source.Invoke(context))
                    .Distinct()
                    .OrderBy(c => c.SortText, StringComparer.OrdinalIgnoreCase);
         }
@@ -202,5 +197,22 @@ namespace System.CommandLine
 
         /// <inheritdoc />
         string IValueDescriptor.ValueName => Name;
+
+        /// <summary>
+        /// Parses a command line string value using the argument.
+        /// </summary>
+        /// <remarks>The command line string input will be split into tokens as if it had been passed on the command line.</remarks>
+        /// <param name="commandLine">A command line string to parse, which can include spaces and quotes equivalent to what can be entered into a terminal.</param>
+        /// <returns>A parse result describing the outcome of the parse operation.</returns>
+        public ParseResult Parse(string commandLine) =>
+            this.GetOrCreateDefaultSimpleParser().Parse(commandLine);
+
+        /// <summary>
+        /// Parses a command line string value using the argument.
+        /// </summary>
+        /// <param name="args">The string arguments to parse.</param>
+        /// <returns>A parse result describing the outcome of the parse operation.</returns>
+        public ParseResult Parse(string[] args) =>
+            this.GetOrCreateDefaultSimpleParser().Parse(args);
     }
 }

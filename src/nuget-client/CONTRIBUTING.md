@@ -2,14 +2,14 @@
 
 ## Prerequisites
 
-- [Visual Studio 2022](https://www.visualstudio.com)
+- [Visual Studio 2022 17.4 or above](https://www.visualstudio.com)
   with following workloads:
   - .NET Core Cross Platform Development
   - .NET desktop development
   - Visual Studio extension development.
   - Desktop development with C++
 - [Windows 10 SDK](https://developer.microsoft.com/windows/downloads/windows-10-sdk/)
-- [.NET 5.0 SDK](https://dotnet.microsoft.com/download/dotnet/5.0)
+- [.NET 7.0 SDK](https://dotnet.microsoft.com/download/dotnet/7.0)
 - Git
 - Windows Powershell v3.0+
 

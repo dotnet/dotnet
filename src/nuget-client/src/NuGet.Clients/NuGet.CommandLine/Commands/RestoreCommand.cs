@@ -819,7 +819,7 @@ namespace NuGet.CommandLine
         /// </summary>
         private static bool IsPackagesConfig(string projectFileName)
         {
-            return string.Equals(projectFileName, Constants.PackageReferenceFile)
+            return string.Equals(projectFileName, Constants.PackageReferenceFile, PathUtility.GetStringComparisonBasedOnOS())
                 || (projectFileName.StartsWith("packages.", StringComparison.OrdinalIgnoreCase)
                 && string.Equals(
                     Path.GetExtension(projectFileName),
