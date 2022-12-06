@@ -490,7 +490,7 @@ namespace NuGet.Common
             filename = GetPathWithForwardSlashes(filename);
             var currentDirectoryPath = $"./";
 
-            if (filename.StartsWith(currentDirectoryPath))
+            if (filename.StartsWith(currentDirectoryPath, PathUtility.GetStringComparisonBasedOnOS()))
             {
                 filename = filename.Substring(currentDirectoryPath.Length);
             }

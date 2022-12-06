@@ -42,7 +42,7 @@ namespace NuGet.PackageManagement.UI
                 dateTime = dt;
             }
 
-            if (string.Equals(culture.Name, "ja-JP"))
+            if (string.Equals(culture.Name, "ja-JP", StringComparison.Ordinal))
             {
                 return $"{dateTime.ToString("D", culture)} {dateTime.ToString("dddd", culture)} ({ dateTime.ToString("d", culture)})";
             }

@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>$(NETFXTargetFramework)</TargetFramework>
     <UseParallelXunit>true</UseParallelXunit>
-    <Description>Unit and integration tests for NuGetConsole.Host.PowerShell.</Description>
+    <Description>Unit and integration tests for NuGet.PackageManagement.PowerShellCmdlets.</Description>
   </PropertyGroup>
 
   <ItemGroup>
@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="$(NuGetClientsSrcDirectory)NuGetConsole.Host.PowerShell\NuGetConsole.Host.PowerShell.csproj" />
+    <ProjectReference Include="$(NuGetClientsSrcDirectory)NuGet.PackageManagement.PowerShellCmdlets\NuGet.PackageManagement.PowerShellCmdlets.csproj" />
     <ProjectReference Include="..\..\TestUtilities\Test.Utility\Test.Utility.csproj" />
   </ItemGroup>
 

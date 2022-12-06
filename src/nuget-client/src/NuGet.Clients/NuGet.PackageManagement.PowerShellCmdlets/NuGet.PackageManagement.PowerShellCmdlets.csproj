@@ -4,22 +4,28 @@
   <PropertyGroup>
     <Shipping>true</Shipping>
     <IncludeInVSIX>true</IncludeInVSIX>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Description>Package Manager Console PowerShell host implementation and NuGet's PowerShell cmdlets for the Visual Studio client.</Description>
     <ProjectGuid>{26DC17AC-A390-4515-A2C0-07A0950036C5}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>NuGet.PackageManagement.PowerShellCmdlets</RootNamespace>
     <AssemblyName>NuGet.PackageManagement.PowerShellCmdlets</AssemblyName>
     <FileAlignment>512</FileAlignment>
-    <Description>NuGet's PowerShell cmdlets for the Visual Studio client.</Description>
     <ResolveNuGetPackages>true</ResolveNuGetPackages>
     <TargetFrameworkVersion>$(NETFXTargetFrameworkVersion)</TargetFrameworkVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="WindowsBase" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.IO.Compression" />
-    <Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.WebRequest" />
     <Reference Include="System.Runtime.Serialization" />
@@ -31,73 +37,85 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="AsyncPowerShellHost.cs" />
     <Compile Include="Cmdlets\AddBindingRedirectCommand.cs" />
-    <Compile Include="Cmdlets\TabExpansionCommand.cs" />
-    <Compile Include="Exceptions\PackageSourceException.cs" />
-    <Compile Include="PackageActionBaseCommand.cs" />
-    <Compile Include="Model\PowerShellExecutionMessage.cs" />
     <Compile Include="Cmdlets\FindPackageCommand.cs" />
     <Compile Include="Cmdlets\GetPackageCommand.cs" />
     <Compile Include="Cmdlets\GetProjectCommand.cs" />
+    <Compile Include="Cmdlets\InstallPackageCommand.cs" />
+    <Compile Include="Cmdlets\SyncPackageCommand.cs" />
+    <Compile Include="Cmdlets\TabExpansionCommand.cs" />
+    <Compile Include="Cmdlets\UninstallPackageCommand.cs" />
+    <Compile Include="Cmdlets\UpdatePackageCommand.cs" />
+    <Compile Include="Command.cs" />
+    <Compile Include="CommandParser.cs" />
+    <Compile Include="Common\CommonResources.cs" />
+    <Compile Include="Exceptions\PackageSourceException.cs" />
+    <Compile Include="Model\PowerShellExecutionMessage.cs" />
     <Compile Include="Model\PowerShellInstalledPackage.cs" />
+    <Compile Include="Model\PowerShellPackage.cs" />
     <Compile Include="Model\PowerShellRemotePackage.cs" />
     <Compile Include="Model\PowerShellUpdatePackage.cs" />
+    <Compile Include="Model\VersionType.cs" />
+    <Compile Include="NuGetPowerShellBaseCommand.cs" />
+    <Compile Include="PackageActionBaseCommand.cs" />
     <Compile Include="SourceValidationResult.cs" />
     <Compile Include="SourceValidity.cs" />
     <Compile Include="Utility\IErrorHandler.cs" />
-    <Compile Include="Cmdlets\InstallPackageCommand.cs" />
     <Compile Include="Utility\NuGetErrorId.cs" />
-    <Compile Include="NuGetPowerShellBaseCommand.cs" />
-    <Compile Include="Model\PowerShellPackage.cs" />
     <Compile Include="Utility\PackageSourceMappingUtility.cs" />
     <Compile Include="Utility\PowerShellCmdletsUtility.cs" />
     <Compile Include="Utility\ProgressActivityIds.cs" />
+    <Compile Include="Utility\PSPathUtility.cs" />
+    <Compile Include="Utility\WebRequestEventArgs.cs" />
+    <Compile Include="Utils\InstalledPackageEnumerator.cs" />
+    <Compile Include="IRunspaceManager.cs" />
+    <Compile Include="NativeMethods.cs" />
+    <Compile Include="ProjectExtensions.cs" />
+    <Compile Include="Providers\CommandTokenizerProvider.cs" />
+    <Compile Include="Providers\PowerShellCommandExpansionProvider.cs" />
+    <Compile Include="Providers\PowerShellHostProvider.cs" />
+    <Compile Include="RegistryHelper.cs" />
+    <Compile Include="UnsupportedHost.cs" />
+    <Compile Include="PSTypeWrapper.cs" />
+    <Compile Include="RunspaceDispatcher.cs" />
+    <Compile Include="RunspaceManager.cs" />
+    <Compile Include="SyncPowerShellHost.cs" />
+    <Compile Include="Utils\CommandExpansion.cs" />
+    <Compile Include="CommandTokenizer.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Utils\ComplexCommand.cs" />
+    <Compile Include="Utils\MethodBinder.cs" />
+    <Compile Include="Utils\TypeWrapper.cs" />
+    <Compile Include="HostUtilities.cs" />
+    <Compile Include="NuGetPSHost.cs" />
+    <Compile Include="NuGetHostRawUserInterface.cs" />
+    <Compile Include="NuGetHostUserInterface.cs" />
+    <Compile Include="PowerShellHost.cs" />
+    <Compile Include="PowerShellHostService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Cmdlets\SyncPackageCommand.cs" />
-    <Compile Include="Cmdlets\UninstallPackageCommand.cs" />
-    <Compile Include="Cmdlets\UpdatePackageCommand.cs" />
-    <Compile Include="Utility\PSPathUtility.cs" />
-    <Compile Include="Utility\WebRequestEventArgs.cs" />
-    <Compile Include="Model\VersionType.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.Resolver\NuGet.Resolver.csproj">
-      <Project>{51AA27A9-B8B4-458F-9211-E6889B441573}</Project>
-      <Name>NuGet.Resolver</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NuGet.PackageManagement.VisualStudio\NuGet.PackageManagement.VisualStudio.csproj">
-      <Project>{306CDDFA-FF0B-4299-930C-9EC6C9308160}</Project>
-      <Name>NuGet.PackageManagement.VisualStudio</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NuGet.VisualStudio\NuGet.VisualStudio.csproj">
-      <Project>{E5556BC6-A7FD-4D8E-8A7D-7648DF1D7471}</Project>
-      <Name>NuGet.VisualStudio</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NuGet.VisualStudio.Common\NuGet.VisualStudio.Common.csproj">
-      <Project>{EEA49A74-6EFC-410E-9745-BAD367AC151D}</Project>
-      <Name>NuGet.VisualStudio.Common</Name>
-    </ProjectReference>
+    <None Include="Scripts\Add-WrapperMembers.ps1" />
+    <None Include="Scripts\NuGet.Types.ps1xml" />
+    <None Include="Scripts\NuGet.psd1" />
+    <None Include="Scripts\nuget.psm1" />
+    <None Include="Scripts\Profile.ps1" />
+    <None Include="Scripts\NuGet.Format.ps1xml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.Sdk" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Commands\NuGet.Commands.csproj">
-      <Project>{567e8582-0e73-4a34-a7d3-ed9486415523}</Project>
-      <Name>NuGet.Commands</Name>
-    </ProjectReference>
     <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Common\NuGet.Common.csproj">
       <Project>{98bee375-a5a0-4fc2-9b7a-25db41c8045d}</Project>
       <Name>NuGet.Common</Name>
@@ -109,10 +127,6 @@
     <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Frameworks\NuGet.Frameworks.csproj">
       <Project>{9a9a9f26-597a-4fa6-a4f1-415063484d9c}</Project>
       <Name>NuGet.Frameworks</Name>
-    </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.LibraryModel\NuGet.LibraryModel.csproj">
-      <Project>{13883e8e-7de1-4edd-8e4a-c5357ba8cd81}</Project>
-      <Name>NuGet.LibraryModel</Name>
     </ProjectReference>
     <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.PackageManagement\NuGet.PackageManagement.csproj">
       <Project>{394aeb96-493c-4839-a5ac-8d93cd2fad40}</Project>
@@ -130,10 +144,110 @@
       <Project>{020f4c88-3a5c-4b89-9868-089e867cc223}</Project>
       <Name>NuGet.Protocol</Name>
     </ProjectReference>
+    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Resolver\NuGet.Resolver.csproj">
+      <Project>{51aa27a9-b8b4-458f-9211-e6889b441573}</Project>
+      <Name>NuGet.Resolver</Name>
+    </ProjectReference>
     <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Versioning\NuGet.Versioning.csproj">
       <Project>{24e62ab7-64e4-4975-9417-883559d1bc19}</Project>
       <Name>NuGet.Versioning</Name>
     </ProjectReference>
+    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Commands\NuGet.Commands.csproj">
+      <Project>{567e8582-0e73-4a34-a7d3-ed9486415523}</Project>
+      <Name>NuGet.Commands</Name>
+    </ProjectReference>
+    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.LibraryModel\NuGet.LibraryModel.csproj">
+      <Project>{13883e8e-7de1-4edd-8e4a-c5357ba8cd81}</Project>
+      <Name>NuGet.LibraryModel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NuGet.Console\NuGet.Console.csproj">
+      <Project>{50e33da2-af14-486d-81b8-bd8409744a38}</Project>
+      <Name>NuGet.Console</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NuGet.VisualStudio.Common\NuGet.VisualStudio.Common.csproj">
+      <Project>{eea49a74-6efc-410e-9745-bad367ac151d}</Project>
+      <Name>NuGet.VisualStudio.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NuGet.VisualStudio\NuGet.VisualStudio.csproj">
+      <Project>{E5556BC6-A7FD-4D8E-8A7D-7648DF1D7471}</Project>
+      <Name>NuGet.VisualStudio</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NuGet.PackageManagement.VisualStudio\NuGet.PackageManagement.VisualStudio.csproj">
+      <Project>{306CDDFA-FF0B-4299-930C-9EC6C9308160}</Project>
+      <Name>NuGet.PackageManagement.VisualStudio</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Sdk" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Scripts\about_NuGet.Cmdlets.help.txt">
+      <CopyToOutputDirectory Condition="$(IsVsixBuild) != 'true'">PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <!-- We copy this xml file to output directory so the CI can pick it for localization from the artifacts directory.
+    However, we condition it to only be copied when building the project itself and not the vsix to prevent the VSIX
+    from including this file -->
+    <None Include="Scripts\NuGet.PackageManagement.PowerShellCmdlets.dll-Help.xml">
+      <CopyToOutputDirectory Condition="$(IsVsixBuild) != 'true'">PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <SignTargetsForRealSigning>$(SignTargetsForRealSigning);GetScriptsForSigning</SignTargetsForRealSigning>
+    <LocTargets>$(LocTargets);GetPowerShellCmdletsHelpFile</LocTargets>
+    <GetLocalizedFilesForVsixDependsOn>GetLocalizedPowerShellCmdletHelpFile</GetLocalizedFilesForVsixDependsOn>
+  </PropertyGroup>
+  <Target Name="AfterBuild">
+    <ItemGroup>
+      <PowerShellScripts Include="$(MSBuildProjectDirectory)\Scripts\*.ps*" Exclude="$(MSBuildProjectDirectory)\Scripts\NuGet.psd1" />
+    </ItemGroup>
+    <Copy SourceFiles="@(PowerShellScripts)" DestinationFolder="$(ArtifactsDirectory)Scripts" />
+    <Exec Command="powershell.exe -ExecutionPolicy Bypass &quot;$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), 'NuGet.sln'))\build\UpdateNuGetModuleManifest.ps1&quot; -NuGetPackageManagementPowerShellCmdletsFilePath &quot;$(ArtifactsDirectory)NuGet.PackageManagement.PowerShellCmdlets\bin\$(Configuration)\NuGet.PackageManagement.PowerShellCmdlets.dll&quot; -ManifestModuleSourceFilePath &quot;$(MSBuildProjectDirectory)\Scripts\NuGet.psd1&quot; -ManifestModuleDestinationFilePath &quot;$(ArtifactsDirectory)Scripts\NuGet.psd1&quot;" />
+  </Target>
+  <Target Name="GetScriptsForSigning" Returns="@(ScriptsToSign)">
+    <ItemGroup>
+      <ScriptsToSign Include="$(ArtifactsDirectory)Scripts\*.ps*">
+        <Authenticode>Microsoft400</Authenticode>
+      </ScriptsToSign>
+    </ItemGroup>
+  </Target>
+  <Target Name="GetPowerShellCmdletsHelpFile" Returns="@(PowerShellCmdletsHelpFiles)">
+    <ItemGroup>
+      <_PowerShellCmdletsHelpFiles Include="$(OutputPath)Scripts\NuGet.PackageManagement.PowerShellCmdlets.dll-Help.xml" />
+      <PowerShellCmdletsHelpFiles Include="@(_PowerShellCmdletsHelpFiles)">
+        <!--Required: translation file-->
+        <TranslationFile>$(LocalizationWorkDirectory)\{Lang}\15\%(_PowerShellCmdletsHelpFiles.Filename)%(_PowerShellCmdletsHelpFiles.Extension).lcl</TranslationFile>
+        <LciCommentFile>$(LocalizationWorkDirectory)\comments\15\%(_PowerShellCmdletsHelpFiles.Filename)%(_PowerShellCmdletsHelpFiles.Extension).lci</LciCommentFile>
+        <Parser>210</Parser>
+        <HasLceComments>false</HasLceComments>
+      </PowerShellCmdletsHelpFiles>
+    </ItemGroup>
+  </Target>
+  <!-- This is called at PackVsix time to get localized files -->
+  <Target Name="GetLocalizedPowerShellCmdletHelpFile">
+    <ItemGroup>
+      <!-- VS localized languages defined at MicroBuild.Plugins.Localization.targets, which is installed as a plugin in VSTS MicroBuild -->
+      <VSLanguage Include="CHT" Locale="zh-Hant" />
+      <VSLanguage Include="CHS" Locale="zh-Hans" />
+      <VSLanguage Include="CSY" Locale="cs" />
+      <VSLanguage Include="DEU" Locale="de" />
+      <VSLanguage Include="ESN" Locale="es" />
+      <VSLanguage Include="FRA" Locale="fr" />
+      <VSLanguage Include="ITA" Locale="it" />
+      <VSLanguage Include="JPN" Locale="ja" />
+      <VSLanguage Include="KOR" Locale="ko" />
+      <VSLanguage Include="PLK" Locale="pl" />
+      <VSLanguage Include="PTB" Locale="pt-BR" />
+      <VSLanguage Include="RUS" Locale="ru" />
+      <VSLanguage Include="TRK" Locale="tr" />
+      <_AllLocalizedXmlFiles Include="$(OutputPath)Scripts\**\NuGet.PackageManagement.PowerShellCmdlets.dll-Help.xml" />
+      <_XmlLocFiles Include="@(_AllLocalizedXmlFiles)">
+        <TargetPath>Modules\NuGet\$([MSBuild]::MakeRelative($(OutputPath)Scripts, %(_AllLocalizedXmlFiles.Identity)))</TargetPath>
+      </_XmlLocFiles>
+      <_TxtLocFiles Include="$(LocalizationRootDirectory)\%(VSLanguage.Identity)\15\about_NuGet.Cmdlets.help.txt">
+        <TargetPath>Modules\NuGet\%(VSLanguage.Locale)\about_NuGet.Cmdlets.help.txt</TargetPath>
+      </_TxtLocFiles>
+      <LocalizedFilesForVsix Include="@(_XmlLocFiles);@(_TxtLocFiles)" />
+    </ItemGroup>
+  </Target>
 </Project>

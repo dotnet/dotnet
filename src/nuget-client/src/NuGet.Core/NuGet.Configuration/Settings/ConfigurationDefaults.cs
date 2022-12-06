@@ -55,18 +55,20 @@ namespace NuGet.Configuration
             {
                 if (_defaultPackageSources == null)
                 {
-                    _defaultPackageSources = new List<PackageSource>();
+                    List<PackageSource> defaultPackageSources = new();
                     var disabledPackageSources = _settingsManager.GetSection(ConfigurationConstants.DisabledPackageSources)?.Items.OfType<AddItem>() ?? Enumerable.Empty<AddItem>();
                     var packageSources = _settingsManager.GetSection(ConfigurationConstants.PackageSources)?.Items.OfType<SourceItem>() ?? Enumerable.Empty<SourceItem>();
 
                     foreach (var source in packageSources)
                     {
                         // In a SettingValue representing a package source, the Key represents the name of the package source and the Value its source
-                        _defaultPackageSources.Add(new PackageSource(source.GetValueAsPath(),
+                        defaultPackageSources.Add(new PackageSource(source.GetValueAsPath(),
                             source.Key,
                             isEnabled: !disabledPackageSources.Any(p => p.Key.Equals(source.Key, StringComparison.OrdinalIgnoreCase)),
                             isOfficial: true));
                     }
+
+                    _defaultPackageSources = defaultPackageSources;
                 }
                 return _defaultPackageSources;
             }
@@ -79,8 +81,8 @@ namespace NuGet.Configuration
                 if (_defaultPushSource == null
                     && !_defaultPackageSourceInitialized)
                 {
-                    _defaultPackageSourceInitialized = true;
                     _defaultPushSource = SettingsUtility.GetDefaultPushSource(_settingsManager);
+                    _defaultPackageSourceInitialized = true;
                 }
 
                 return _defaultPushSource;

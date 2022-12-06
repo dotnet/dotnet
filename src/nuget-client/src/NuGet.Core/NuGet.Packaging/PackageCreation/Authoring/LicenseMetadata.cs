@@ -68,7 +68,7 @@ namespace NuGet.Packaging
             }
 
             return Type == other.Type &&
-                   License.Equals(other.License) &&
+                   License.Equals(other.License, StringComparison.Ordinal) &&
                    Equals(LicenseExpression, other.LicenseExpression) &&
                    EqualityUtility.SequenceEqualWithNullCheck(WarningsAndErrors, other.WarningsAndErrors) &&
                    Version == other.Version;

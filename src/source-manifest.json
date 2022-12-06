@@ -61,10 +61,10 @@
       "commitSha": "a2490dd3f78cce4abc8f9e6f1b5268437332818f"
     },
     {
-      "packageVersion": "6.5.0-preview.2.79",
+      "packageVersion": "6.5.0-preview.2.108",
       "path": "nuget-client",
       "remoteUri": "https://github.com/NuGet/NuGet.Client",
-      "commitSha": "ea921bf1871b2799d9c130aad860db33e6577975"
+      "commitSha": "be87c9ee11149780ce7de5fe35fe2653d565ccfd"
     },
     {
       "packageVersion": "8.0.100",
@@ -177,16 +177,6 @@
       "path": "linker/external/cecil",
       "remoteUri": "https://github.com/dotnet/cecil.git",
       "commitSha": "1840b7410d37a613e684b6f9650e39e2d4950bbb"
-    },
-    {
-      "path": "nuget-client/submodules/Common",
-      "remoteUri": "https://github.com/aspnet/Common.git",
-      "commitSha": "e6fac8061686c18531e2621ccef97dd5e0687a65"
-    },
-    {
-      "path": "nuget-client/submodules/FileSystem",
-      "remoteUri": "https://github.com/NuGet/FileSystem.git",
-      "commitSha": "f1f3f0820a573b96b2faaf5b7e6be9a036e4c7aa"
     },
     {
       "path": "nuget-client/submodules/NuGet.Build.Localization",

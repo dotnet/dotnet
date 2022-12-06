@@ -19,7 +19,6 @@
       "src\\NuGet.Clients\\NuGet.VisualStudio.Interop\\NuGet.VisualStudio.Interop.csproj",
       "src\\NuGet.Clients\\NuGet.VisualStudio.OnlineEnvironment.Client\\NuGet.VisualStudio.OnlineEnvironment.Client.csproj",
       "src\\NuGet.Clients\\NuGet.VisualStudio\\NuGet.VisualStudio.csproj",
-      "src\\NuGet.Clients\\NuGetConsole.Host.PowerShell\\NuGetConsole.Host.PowerShell.csproj",
       "src\\NuGet.Core\\Microsoft.Build.NuGetSdkResolver\\Microsoft.Build.NuGetSdkResolver.csproj",
       "src\\NuGet.Core\\NuGet.Build.Tasks.Console\\NuGet.Build.Tasks.Console.csproj",
       "src\\NuGet.Core\\NuGet.Build.Tasks.Pack\\NuGet.Build.Tasks.Pack.csproj",

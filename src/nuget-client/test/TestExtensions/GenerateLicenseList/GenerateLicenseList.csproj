@@ -6,8 +6,6 @@
     <AssemblyName>GenerateLicenseList</AssemblyName>
     <NoWarn>$(NoWarn);NU1505</NoWarn> <!-- Remove NoWarn when https://github.com/dotnet/sdk/issues/24747 is fixed -->
     <Description>A utility for updating the NuGet license list from the SPDX source.</Description>
-    <!-- There are some conflicts that are impossible to resolve because of missing package versions-->
-    <MicrosoftCodeAnalysisCSharpVersion>3.0.0</MicrosoftCodeAnalysisCSharpVersion>
   </PropertyGroup>
 
   <ItemGroup>

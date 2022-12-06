@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
@@ -101,7 +102,7 @@ namespace NuGet.PackageManagement.UI
                 var formatString = Resx.Text_Downloads;
                 string begin = string.Empty;
                 string end = string.Empty;
-                var index = formatString.IndexOf("{0}");
+                var index = formatString.IndexOf("{0}", StringComparison.Ordinal);
                 if (index == -1)
                 {
                     // Cannot find "{0}".

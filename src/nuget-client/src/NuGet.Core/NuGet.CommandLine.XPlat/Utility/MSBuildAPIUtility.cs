@@ -201,7 +201,7 @@ namespace NuGet.CommandLine.XPlat
                 }
 
                 // Get package version if it already exists in the props file. Returns null if there is no matching package version.
-                ProjectItem packageVersionInProps = project.Items.LastOrDefault(i => i.ItemType == PACKAGE_VERSION_TYPE_TAG && i.EvaluatedInclude.Equals(libraryDependency.Name));
+                ProjectItem packageVersionInProps = project.Items.LastOrDefault(i => i.ItemType == PACKAGE_VERSION_TYPE_TAG && i.EvaluatedInclude.Equals(libraryDependency.Name, StringComparison.OrdinalIgnoreCase));
 
                 // If no <PackageVersion /> exists in the Directory.Packages.props file.
                 if (packageVersionInProps == null)
@@ -250,7 +250,7 @@ namespace NuGet.CommandLine.XPlat
         {
             // Get the Directory.Packages.props path.
             string directoryPackagesPropsPath = project.GetPropertyValue(DirectoryPackagesPropsPathPropertyName);
-            ProjectRootElement directoryBuildPropsRootElement = project.Imports.FirstOrDefault(i => i.ImportedProject.FullPath.Equals(directoryPackagesPropsPath)).ImportedProject;
+            ProjectRootElement directoryBuildPropsRootElement = project.Imports.FirstOrDefault(i => i.ImportedProject.FullPath.Equals(directoryPackagesPropsPath, PathUtility.GetStringComparisonBasedOnOS())).ImportedProject;
             return directoryBuildPropsRootElement;
         }
 
@@ -378,7 +378,7 @@ namespace NuGet.CommandLine.XPlat
             var packageVersion = libraryDependency.LibraryRange.VersionRange.OriginalString ??
                     libraryDependency.LibraryRange.VersionRange.MinVersion.ToString();
 
-            ProjectMetadataElement versionAttribute = item.Metadata.FirstOrDefault(i => i.Name.Equals("Version"));
+            ProjectMetadataElement versionAttribute = item.Metadata.FirstOrDefault(i => i.Name.Equals("Version", StringComparison.OrdinalIgnoreCase));
 
             // If version attribute does not exist at all, add it.
             if (versionAttribute == null)
@@ -434,7 +434,7 @@ namespace NuGet.CommandLine.XPlat
             ProjectItemElement packageVersionItemElement = project.GetItemProvenance(packageVersion).LastOrDefault()?.ItemElement;
 
             // Get the Version attribute on the packageVersionItemElement.
-            ProjectMetadataElement versionAttribute = packageVersionItemElement.Metadata.FirstOrDefault(i => i.Name.Equals("Version"));
+            ProjectMetadataElement versionAttribute = packageVersionItemElement.Metadata.FirstOrDefault(i => i.Name.Equals("Version", StringComparison.OrdinalIgnoreCase));
             // Update the version
             versionAttribute.Value = versionCLIArgument;
             packageVersionItemElement.ContainingProject.Save();
@@ -744,7 +744,7 @@ namespace NuGet.CommandLine.XPlat
             var newProject = new ProjectInstance(projectPath, globalProperties, null);
             newProject.Build(new[] { CollectPackageReferences }, new List<Microsoft.Build.Framework.ILogger> { }, out var targetOutputs);
 
-            return targetOutputs.First(e => e.Key.Equals(CollectPackageReferences)).Value.Items.Select(p =>
+            return targetOutputs.First(e => e.Key.Equals(CollectPackageReferences, StringComparison.OrdinalIgnoreCase)).Value.Items.Select(p =>
                 new InstalledPackageReference(p.ItemSpec)
                 {
                     OriginalRequestedVersion = p.GetMetadata("version"),

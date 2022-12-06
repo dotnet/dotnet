@@ -431,8 +431,8 @@ namespace NuGet.Commands
 
                         // Remove anything that starts with "lib/" and is NOT specified in the reference filter.
                         // runtimes/* is unaffected (it doesn't start with lib/)
-                        lockFileLib.RuntimeAssemblies = lockFileLib.RuntimeAssemblies.Where(p => !p.Path.StartsWith("lib/") || referenceFilter.Contains(Path.GetFileName(p.Path))).ToList();
-                        lockFileLib.CompileTimeAssemblies = lockFileLib.CompileTimeAssemblies.Where(p => !p.Path.StartsWith("lib/") || referenceFilter.Contains(Path.GetFileName(p.Path))).ToList();
+                        lockFileLib.RuntimeAssemblies = lockFileLib.RuntimeAssemblies.Where(p => !p.Path.StartsWith("lib/", StringComparison.Ordinal) || referenceFilter.Contains(Path.GetFileName(p.Path))).ToList();
+                        lockFileLib.CompileTimeAssemblies = lockFileLib.CompileTimeAssemblies.Where(p => !p.Path.StartsWith("lib/", StringComparison.Ordinal) || referenceFilter.Contains(Path.GetFileName(p.Path))).ToList();
                     }
                 }
             }
@@ -868,7 +868,7 @@ namespace NuGet.Commands
         /// </summary>
         private static bool GroupHasNonEmptyItems(IEnumerable<LockFileItem> group)
         {
-            return group?.Any(item => !item.Path.EndsWith(PackagingCoreConstants.ForwardSlashEmptyFolder)) == true;
+            return group?.Any(item => !item.Path.EndsWith(PackagingCoreConstants.ForwardSlashEmptyFolder, StringComparison.Ordinal)) == true;
         }
 
         /// <summary>

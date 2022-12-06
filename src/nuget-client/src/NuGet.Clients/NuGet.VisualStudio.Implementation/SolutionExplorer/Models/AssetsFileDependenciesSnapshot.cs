@@ -96,7 +96,7 @@ namespace NuGet.VisualStudio.SolutionExplorer.Models
                         this,
                         lockFileTarget.Name,
                         ParseLogMessages(lockFile, previousTarget, lockFileTarget.Name),
-                        ParseLibraries(lockFileTarget)));
+                        ParseLibraries(lockFile, lockFileTarget)));
             }
 
             DataByTarget = dataByTarget.ToImmutable();
@@ -138,13 +138,13 @@ namespace NuGet.VisualStudio.SolutionExplorer.Models
             }
         }
 
-        internal static ImmutableDictionary<string, AssetsFileTargetLibrary> ParseLibraries(LockFileTarget lockFileTarget)
+        internal static ImmutableDictionary<string, AssetsFileTargetLibrary> ParseLibraries(LockFile lockFile, LockFileTarget lockFileTarget)
         {
             ImmutableDictionary<string, AssetsFileTargetLibrary>.Builder builder = ImmutableDictionary.CreateBuilder<string, AssetsFileTargetLibrary>(StringComparer.OrdinalIgnoreCase);
 
             foreach (LockFileTargetLibrary lockFileLibrary in lockFileTarget.Libraries)
             {
-                if (AssetsFileTargetLibrary.TryCreate(lockFileLibrary, out AssetsFileTargetLibrary? library))
+                if (AssetsFileTargetLibrary.TryCreate(lockFile, lockFileLibrary, out AssetsFileTargetLibrary? library))
                 {
                     builder.Add(library.Name, library);
                 }

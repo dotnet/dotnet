@@ -459,8 +459,8 @@ NuGet.Protocol.HttpRequestMessageFactory
 NuGet.Protocol.HttpResponseMessageExtensions
 NuGet.Protocol.HttpRetryHandler
 NuGet.Protocol.HttpRetryHandler.HttpRetryHandler() -> void
-~NuGet.Protocol.HttpRetryHandler.SendAsync(NuGet.Protocol.HttpRetryHandlerRequest request, NuGet.Common.ILogger log, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage>
-~NuGet.Protocol.HttpRetryHandler.SendAsync(NuGet.Protocol.HttpRetryHandlerRequest request, string source, NuGet.Common.ILogger log, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage>
+NuGet.Protocol.HttpRetryHandler.SendAsync(NuGet.Protocol.HttpRetryHandlerRequest! request, NuGet.Common.ILogger! log, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage!>!
+NuGet.Protocol.HttpRetryHandler.SendAsync(NuGet.Protocol.HttpRetryHandlerRequest! request, string! source, NuGet.Common.ILogger! log, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage!>!
 NuGet.Protocol.HttpRetryHandlerRequest
 ~NuGet.Protocol.HttpRetryHandlerRequest.AddHeaders.get -> System.Collections.Generic.IList<System.Collections.Generic.KeyValuePair<string, System.Collections.Generic.IEnumerable<string>>>
 ~NuGet.Protocol.HttpRetryHandlerRequest.AddHeaders.set -> void

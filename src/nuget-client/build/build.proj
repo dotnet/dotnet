@@ -313,19 +313,6 @@
     </MSBuild>
   </Target>
 
-    <!--
-    ============================================================
-    EnsurePackageReferenceVersionsInSolution
-    ============================================================
-  -->
-  <Target Name="EnsurePackageReferenceVersionsInSolution">
-      <MsBuild
-        Projects="@(AllRepoProjects)"
-        Targets="EnsurePackageReferenceVersions"
-        Properties="SkipCentralPackageVersions=true">
-    </MsBuild>
-  </Target>
-
   <!--
     ============================================================
     Get projects need to be packed

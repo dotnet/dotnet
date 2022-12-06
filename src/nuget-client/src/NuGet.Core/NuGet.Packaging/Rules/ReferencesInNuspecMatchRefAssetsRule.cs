@@ -22,7 +22,7 @@ namespace NuGet.Packaging.Rules
 
         public IEnumerable<PackagingLogMessage> Validate(PackageArchiveReader builder)
         {
-            var refFiles = builder.GetFiles().Where(t => t.StartsWith(PackagingConstants.Folders.Ref));
+            var refFiles = builder.GetFiles().Where(t => t.StartsWith(PackagingConstants.Folders.Ref, StringComparison.OrdinalIgnoreCase));
             var nuspecReferences = GetReferencesFromNuspec(builder.GetNuspec());
             var missingItems = Compare(nuspecReferences, refFiles);
             return GenerateWarnings(missingItems);
@@ -57,8 +57,8 @@ namespace NuGet.Packaging.Rules
                         .GroupBy(t => NuGetFramework.ParseFolder(t.Split('/')[1]).GetShortFolderName(), t => Path.GetFileName(t));
                     var keys = GetAllKeys(filesByTFM);
                     var missingSubfolderInFiles = nuspecReferences.Keys.Where(t => !keys.Contains(t) &&
-                    !NuGetFramework.ParseFolder(t).GetShortFolderName().Equals("unsupported") &&
-                    !NuGetFramework.ParseFolder(t).GetShortFolderName().Equals("any"));
+                    !NuGetFramework.ParseFolder(t).GetShortFolderName().Equals("unsupported", StringComparison.Ordinal) &&
+                    !NuGetFramework.ParseFolder(t).GetShortFolderName().Equals("any", StringComparison.Ordinal));
                     if (missingSubfolderInFiles.Any())
                     {
                         var subfolder = nuspecReferences.Where(t => missingSubfolderInFiles.Contains(t.Key));
@@ -146,7 +146,7 @@ namespace NuGet.Packaging.Rules
                 {
                     foreach (var item in reference.MissingItems)
                     {
-                        if (reference.Tfm.Equals("any"))
+                        if (reference.Tfm.Equals("any", StringComparison.Ordinal))
                         {
                             message.AppendLine(string.Format(CultureInfo.CurrentCulture, _addToNuspecNoTfmFormat, item));
                         }

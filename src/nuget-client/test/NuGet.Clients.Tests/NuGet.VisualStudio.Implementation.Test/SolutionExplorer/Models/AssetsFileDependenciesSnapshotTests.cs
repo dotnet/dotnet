@@ -59,7 +59,7 @@ namespace NuGet.VisualStudio.Implementation.Test.SolutionExplorer.Models
             var lockFileFormat = new LockFileFormat();
             var lockFile = lockFileFormat.Parse(lockFileContent, "In Memory");
 
-            var dependencies = AssetsFileDependenciesSnapshot.ParseLibraries(lockFile.Targets.First());
+            var dependencies = AssetsFileDependenciesSnapshot.ParseLibraries(lockFile, lockFile.Targets.First());
 
             Assert.Equal(1, dependencies.Count);
             Assert.True(dependencies.ContainsKey("system.runtime"));
@@ -86,7 +86,7 @@ namespace NuGet.VisualStudio.Implementation.Test.SolutionExplorer.Models
                 }
             };
 
-            var exception = Assert.Throws<ArgumentException>(() => AssetsFileDependenciesSnapshot.ParseLibraries(lockFileTarget));
+            var exception = Assert.Throws<ArgumentException>(() => AssetsFileDependenciesSnapshot.ParseLibraries(new LockFile(), lockFileTarget));
 
             Assert.Contains("PackageA", exception.Message);
         }
@@ -124,7 +124,7 @@ namespace NuGet.VisualStudio.Implementation.Test.SolutionExplorer.Models
                 }
             };
 
-            ImmutableDictionary<string, AssetsFileTargetLibrary> dependencies = AssetsFileDependenciesSnapshot.ParseLibraries(lockFileTarget);
+            ImmutableDictionary<string, AssetsFileTargetLibrary> dependencies = AssetsFileDependenciesSnapshot.ParseLibraries(new LockFile(), lockFileTarget);
 
             Assert.Equal(lockFileTarget.Libraries.Count, dependencies.Count);
             Assert.All<LockFileTargetLibrary>(lockFileTarget.Libraries,

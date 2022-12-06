@@ -6,7 +6,6 @@ using System.Diagnostics;
 using System.Management.Automation;
 using System.Threading;
 using NuGet.Common;
-using NuGet.Configuration;
 using NuGet.PackageManagement.Telemetry;
 using NuGet.ProjectManagement;
 using NuGet.Protocol.Core.Types;

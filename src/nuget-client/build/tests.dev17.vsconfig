@@ -101,6 +101,8 @@
     "Microsoft.Component.ClickOnce",
     "Microsoft.VisualStudio.Component.VisualStudioData",
     "Microsoft.Net.Component.4.6.1.SDK",
-    "Microsoft.Net.Component.4.7.2.SDK"
+    "Microsoft.Net.Component.4.7.2.SDK",
+    "Microsoft.VisualStudio.Component.Wcf.Tooling",
+    "Microsoft.VisualStudio.ComponentGroup.AdditionalWebProjectTemplates"
   ]
 }

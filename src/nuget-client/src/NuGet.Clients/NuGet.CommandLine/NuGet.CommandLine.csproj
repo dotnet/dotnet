@@ -48,13 +48,13 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="NuGet.Core">
-      <HintPath>$(NuGetPackageRoot)\nuget.core\$(NuGetCoreV2Version)\lib\net40-Client\NuGet.Core.dll</HintPath>
+      <HintPath>$(PkgNuGet_Core)\lib\net40-Client\NuGet.Core.dll</HintPath>
       <Aliases>CoreV2</Aliases>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <PackageDownload Include="NuGet.Core" />
-    <PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" />
+    <PackageReference Include="NuGet.Core" ExcludeAssets="All" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" ExcludeAssets="Runtime" />
     <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.PackageManagement\NuGet.PackageManagement.csproj" />
     <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Build.Tasks\NuGet.Build.Tasks.csproj" />
   </ItemGroup>
@@ -80,7 +80,7 @@
       <DependentUpon>NuGetResources.resx</DependentUpon>
     </Compile>
     <!-- nuget.exe localized assemblies -->
-    <EmbeddedResource Include="$(OutputPath)\**\$(AssemblyName).resources.dll" Exclude="@(MergeExclude)" />
+    <EmbeddedResource Include="$(OutputPath)\**\$(AssemblyName).resources.dll" />
   </ItemGroup>
 
   <ItemGroup>
@@ -97,7 +97,7 @@
     </PropertyGroup>
     <ItemGroup>
       <!-- Dependent assemblies -->
-      <BuildArtifacts Include="$(OutputPath)\*.dll" Exclude="@(MergeExclude)" />
+      <BuildArtifacts Include="$(OutputPath)\*.dll" />
     </ItemGroup>
     <Message Text="$(MSBuildProjectName) -&gt; $(PathToMergedNuGetExe)" Importance="High" />
   </Target>
@@ -118,14 +118,6 @@
     </PropertyGroup>
     <MakeDir Directories="$([System.IO.Path]::GetDirectoryName($(PathToMergedNuGetExe)))" />
     <Exec Command="$(IlmergeCommand)" ContinueOnError="false" />
-  </Target>
-
-  <Target Name="NuGetLinkVSSDKEmbeddableAssemblies" AfterTargets="ResolveReferences" BeforeTargets="FindReferenceAssembliesForReferences">
-    <ItemGroup>
-      <ReferencePath Condition="'%(FileName)' == 'Microsoft.VisualStudio.Setup.Configuration.Interop'">
-        <EmbedInteropTypes>true</EmbedInteropTypes>
-      </ReferencePath>
-    </ItemGroup>
   </Target>
 
   <!-- This strips away the framework assemblies from the resulting nuspec.-->

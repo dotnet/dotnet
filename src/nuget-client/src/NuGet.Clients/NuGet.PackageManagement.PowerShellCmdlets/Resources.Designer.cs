@@ -61,6 +61,48 @@ namespace NuGet.PackageManagement.PowerShellCmdlets {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to #
+        ///# This private script adds $InterfaceType members to $psObject which invokes on $wrappedObject
+        ///#
+        ///Param(
+        ///    $psObject,
+        ///    $wrappedObject,
+        ///    [Type]$InterfaceType
+        ///)
+        ///
+        ///function GetInvoker
+        ///{
+        ///    Param(
+        ///        $Target,
+        ///        $Method
+        ///    )
+        ///
+        ///    if ($Method.IsGenericMethodDefinition) {
+        ///        return {
+        ///            $t = $Target
+        ///            $m = $Method.MakeGenericMethod($args)
+        ///            
+        ///            if (!$m.GetParameters()) {
+        ///                return $m.Invoke($t, @())
+        ///            }
+        ///  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string Add_WrapperMembers {
+            get {
+                return ResourceManager.GetString("Add_WrapperMembers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All.
+        /// </summary>
+        internal static string AggregateSourceName {
+            get {
+                return ResourceManager.GetString("AggregateSourceName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Argument cannot be null or empty.
         /// </summary>
         internal static string Argument_Cannot_Be_Null_Or_Empty {
@@ -412,11 +454,65 @@ namespace NuGet.PackageManagement.PowerShellCmdlets {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Each package is licensed to you by its owner. NuGet is not responsible for, nor does it grant any licenses to, third-party packages. Some packages may include dependencies which are governed by additional licenses. Follow the package source (feed) URL to determine any dependencies..
+        /// </summary>
+        internal static string Console_DisclaimerText {
+            get {
+                return ResourceManager.GetString("Console_DisclaimerText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Type &apos;get-help NuGet&apos; to see all available NuGet commands..
+        /// </summary>
+        internal static string Console_HelpText {
+            get {
+                return ResourceManager.GetString("Console_HelpText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nested prompt not supported..
+        /// </summary>
+        internal static string ErrorNestedPromptNotSupported {
+            get {
+                return ResourceManager.GetString("ErrorNestedPromptNotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unable to find package &apos;{0}&apos; at source &apos;{1}&apos;..
         /// </summary>
         internal static string Exception_PackageNotFound {
             get {
                 return ResourceManager.GetString("Exception_PackageNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error: The Package Manager Console requires PowerShell 2.0 runtime, which is not detected on this machine. Please install the PowerShell 2.0 from http://support.microsoft.com/kb/968929 and restart Visual Studio..
+        /// </summary>
+        internal static string Host_PSNotInstalled {
+            get {
+                return ResourceManager.GetString("Host_PSNotInstalled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Package Manager Console Host Version {0}.
+        /// </summary>
+        internal static string PowerShellHostTitle {
+            get {
+                return ResourceManager.GetString("PowerShellHostTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to [?] Help (default is &quot;{0}&quot;):.
+        /// </summary>
+        internal static string PromptForChoiceSuffix {
+            get {
+                return ResourceManager.GetString("PromptForChoiceSuffix", resourceCulture);
             }
         }
         
@@ -462,6 +558,15 @@ namespace NuGet.PackageManagement.PowerShellCmdlets {
         internal static string Warning_SourceNotRespectedForProjectType {
             get {
                 return ResourceManager.GetString("Warning_SourceNotRespectedForProjectType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Zero length collection..
+        /// </summary>
+        internal static string ZeroLengthCollection {
+            get {
+                return ResourceManager.GetString("ZeroLengthCollection", resourceCulture);
             }
         }
     }

@@ -83,24 +83,6 @@
     <UsePublicApiAnalyzer Condition=" '$(UsePublicApiAnalyzer)' == '' " >true</UsePublicApiAnalyzer>
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(UsePublicApiAnalyzer)' == 'true' ">
-    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" PrivateAssets="all" />
-
-    <None Remove="$(MSBuildProjectDirectory)\PublicAPI.Shipped.txt" />
-    <None Remove="$(MSBuildProjectDirectory)\PublicAPI.Unshipped.txt" />
-    <AdditionalFiles Include="$(MSBuildProjectDirectory)\PublicAPI.Shipped.txt" />
-    <AdditionalFiles Include="$(MSBuildProjectDirectory)\PublicAPI.Unshipped.txt" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(UsePublicApiAnalyzer)' == 'perTfm' ">
-    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" PrivateAssets="all" />
-
-    <None Remove="$(MSBuildProjectDirectory)\PublicAPI\$(TargetFramework)\PublicAPI.Shipped.txt" />
-    <None Remove="$(MSBuildProjectDirectory)\PublicAPI\$(TargetFramework)\PublicAPI.Unshipped.txt" />
-    <AdditionalFiles Include="$(MSBuildProjectDirectory)\PublicAPI\$(TargetFramework)\PublicAPI.Shipped.txt" />
-    <AdditionalFiles Include="$(MSBuildProjectDirectory)\PublicAPI\$(TargetFramework)\PublicAPI.Unshipped.txt" />
-  </ItemGroup>
-
   <Target Name="UnknownUsePublicApiAnalyzerValue"
           AfterTargets="Restore"
           Condition=" '$(UsePublicApiAnalyzer)' != ''
@@ -115,23 +97,6 @@
     <Import Project="test.targets" />
   </ImportGroup>
   
-  <!-- FxCop Analyzers -->
-  <ItemGroup Condition="'$(Shipping)' == 'true' AND '$(SkipAnalyzers)' != 'true' AND '$(DotNetBuildFromSource)' != 'true'">
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <AdditionalFiles Include="$(MSBuildThisFileDirectory)\BannedSymbols.txt" Condition="'$(TestProject)' != 'true'" />
-  </ItemGroup>
-
-  <!-- Centrally managed packages. SkipCentralPackageVersions is used to enforce that the packages are centrally managed through a check in build.proj -->
-  <ImportGroup Condition=" '$(SkipCentralPackageVersions)' != 'true' ">
-    <Import Project="packages.targets" />
-  </ImportGroup>
 
   <!-- Allow WPF projects to run under NETCore SDK -->
   <!-- Errors occur if the output path is not set correctly -->
@@ -429,26 +394,6 @@ Condition=" ('%(Extension)' == '.dll' OR '%(Filename)' == 'NuGet.CommandLine.XPl
     <Error
       Text="Newtonsoft.Json must be version $(NewtonsoftJsonPackageVersion) but resolved %(Reference.NuGetPackageVersion)"
       Condition=" %(Reference.NuGetPackageId) == 'Newtonsoft.Json' AND %(Reference.NuGetPackageVersion) != '$(NewtonsoftJsonPackageVersion)' " />
-  </Target>
-
-   <Target Name="EnsurePackageReferenceVersions">
-    <ItemGroup Condition=" '$(TargetFrameworks)' != '' ">
-      <_TargetFrameworkItems Include="$(TargetFrameworks.Split(';'))" />
-    </ItemGroup>
-    <ItemGroup Condition=" '$(TargetFrameworks)' == '' ">
-      <_TargetFrameworkItems Include="$(TargetFramework)" />
-    </ItemGroup>
-    <MSBuild
-      Projects="$(MSBuildProjectFullPath)"
-      Targets="EnsurePackageReferenceVersionsForFramework"
-      Properties="TargetFramework=%(_TargetFrameworkItems.Identity);"
-    />
-  </Target>
-
-  <Target Name="EnsurePackageReferenceVersionsForFramework">
-    <Error
-      Text="%(PackageReference.Identity) should not have a version declared outside of packages.targets but found '%(PackageReference.Version)'"
-      Condition=" '%(PackageReference.Version)' != '' AND '%(PackageReference.IsImplicitlyDefined)' != 'true' AND '%(PackageReference.Identity)' != 'Microsoft.NET.Test.Sdk' " />
   </Target>
 
   <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), 'README.md'))\packages\Microsoft.VisualStudioEng.MicroBuild.Core\1.0.0\build\Microsoft.VisualStudioEng.MicroBuild.Core.targets" Condition="Exists('$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), &quot;README.md&quot;))\packages\Microsoft.VisualStudioEng.MicroBuild.Core\1.0.0\build\Microsoft.VisualStudioEng.MicroBuild.Core.targets')" />

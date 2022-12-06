@@ -1,5 +1,5 @@
 ---
-date-generated: 2020-04-07T17:27:35
+date-generated: 2022-11-22T14:33:34
 tool: NuGetTasks.GenerateMarkdownDoc
 ---
 
@@ -12,7 +12,7 @@ Below is a list of projects contained in the NuGet.Client repo, organized by pro
 
 All shipped NuGet libraries and clients in `src/` folder.
 
-Projects in section: 38
+Projects in section: 37
 
 ### src\NuGet.Clients
 
@@ -20,20 +20,19 @@ Projects in section: 38
 - [`NuGet.Console.csproj`](../src/NuGet.Clients/NuGet.Console/NuGet.Console.csproj): Package Manager PowerShell Console implementation.
 - [`NuGet.Indexing.csproj`](../src/NuGet.Clients/NuGet.Indexing/NuGet.Indexing.csproj): NuGet's indexing library for the Visual Studio client search functionality.
 - [`NuGet.MSSigning.Extensions.csproj`](../src/NuGet.Clients/NuGet.MSSigning.Extensions/NuGet.MSSigning.Extensions.csproj): NuGet Command Line Interface for repository signing.
-- [`NuGet.PackageManagement.PowerShellCmdlets.csproj`](../src/NuGet.Clients/NuGet.PackageManagement.PowerShellCmdlets/NuGet.PackageManagement.PowerShellCmdlets.csproj): NuGet's PowerShell cmdlets for the Visual Studio client.
+- [`NuGet.PackageManagement.PowerShellCmdlets.csproj`](../src/NuGet.Clients/NuGet.PackageManagement.PowerShellCmdlets/NuGet.PackageManagement.PowerShellCmdlets.csproj): Package Manager Console PowerShell host implementation and NuGet's PowerShell cmdlets for the Visual Studio client.
 - [`NuGet.PackageManagement.UI.csproj`](../src/NuGet.Clients/NuGet.PackageManagement.UI/NuGet.PackageManagement.UI.csproj): Package Management UI elements for Visual Studio, Package Manager UI, Migrator, Options dialog.
 - [`NuGet.PackageManagement.VisualStudio.csproj`](../src/NuGet.Clients/NuGet.PackageManagement.VisualStudio/NuGet.PackageManagement.VisualStudio.csproj): NuGet's Visual Studio functionalities, integrations and utilities.
-- [`NuGet.SolutionRestoreManager.Interop.csproj`](../src/NuGet.Clients/NuGet.SolutionRestoreManager.Interop/NuGet.SolutionRestoreManager.Interop.csproj): APIs for invoking NuGet Restore Manager in Visual Studio.
 - [`NuGet.SolutionRestoreManager.csproj`](../src/NuGet.Clients/NuGet.SolutionRestoreManager/NuGet.SolutionRestoreManager.csproj): NuGet's Visual Studio Solution Restore Manager.
 - [`NuGet.Tools.csproj`](../src/NuGet.Clients/NuGet.Tools/NuGet.Tools.csproj): NuGet's Visual Studio extension Package.
 - [`NuGet.VisualStudio.Client.csproj`](../src/NuGet.Clients/NuGet.VisualStudio.Client/NuGet.VisualStudio.Client.csproj): NuGet Visual Studio extension package project.
 - [`NuGet.VisualStudio.Common.csproj`](../src/NuGet.Clients/NuGet.VisualStudio.Common/NuGet.VisualStudio.Common.csproj): NuGet's Visual Studio common types and interfaces used for both Package Manager UI, Package Manager Console, restore and install functionalities.
+- [`NuGet.VisualStudio.Contracts.csproj`](../src/NuGet.Clients/NuGet.VisualStudio.Contracts/NuGet.VisualStudio.Contracts.csproj): RPC contracts for NuGet's Visual Studio Service Broker extensibility APIs.
 - [`NuGet.VisualStudio.Implementation.csproj`](../src/NuGet.Clients/NuGet.VisualStudio.Implementation/NuGet.VisualStudio.Implementation.csproj): Implementation of the NuGet.VisualStudio extensibility APIs.
-- [`NuGet.VisualStudio.Internal.Contracts.csproj`](../src/NuGet.Clients/NuGet.VisualStudio.Internal.Contracts/NuGet.VisualStudio.Internal.Contracts.csproj):
+- [`NuGet.VisualStudio.Internal.Contracts.csproj`](../src/NuGet.Clients/NuGet.VisualStudio.Internal.Contracts/NuGet.VisualStudio.Internal.Contracts.csproj): 
 - [`NuGet.VisualStudio.Interop.csproj`](../src/NuGet.Clients/NuGet.VisualStudio.Interop/NuGet.VisualStudio.Interop.csproj): NuGet's Visual Studio client Template Wizard interop implementation.
-- [`NuGet.VisualStudio.OnlineEnvironment.Client.csproj`](../src/NuGet.Clients/NuGet.VisualStudio.OnlineEnvironment.Client/NuGet.VisualStudio.OnlineEnvironment.Client.csproj):
+- [`NuGet.VisualStudio.OnlineEnvironment.Client.csproj`](../src/NuGet.Clients/NuGet.VisualStudio.OnlineEnvironment.Client/NuGet.VisualStudio.OnlineEnvironment.Client.csproj): 
 - [`NuGet.VisualStudio.csproj`](../src/NuGet.Clients/NuGet.VisualStudio/NuGet.VisualStudio.csproj): APIs for invoking NuGet services in Visual Studio.
-- [`NuGetConsole.Host.PowerShell.csproj`](../src/NuGet.Clients/NuGetConsole.Host.PowerShell/NuGetConsole.Host.PowerShell.csproj): Package Manager Console PowerShell host implementation.
 
 ### src\NuGet.Core
 
@@ -89,7 +88,7 @@ Projects in section: 18
 
 ## Visual Studio Test Projects
 
-Projects in section: 10
+Projects in section: 11
 
 ### test\NuGet.Clients.Tests
 
@@ -98,15 +97,17 @@ Projects in section: 10
 - [`NuGet.PackageManagement.UI.Test.csproj`](../test/NuGet.Clients.Tests/NuGet.PackageManagement.UI.Test/NuGet.PackageManagement.UI.Test.csproj): Unit and integration tests for NuGet.PackageManagement.UI.
 - [`NuGet.PackageManagement.VisualStudio.Test.csproj`](../test/NuGet.Clients.Tests/NuGet.PackageManagement.VisualStudio.Test/NuGet.PackageManagement.VisualStudio.Test.csproj): Unit and integration tests for NuGet.PackageManagement.VisualStudio.
 - [`NuGet.SolutionRestoreManager.Test.csproj`](../test/NuGet.Clients.Tests/NuGet.SolutionRestoreManager.Test/NuGet.SolutionRestoreManager.Test.csproj): Unit and integration tests for NuGet.SolutionRestoreManager.
+- [`NuGet.Tools.Test.csproj`](../test/NuGet.Clients.Tests/NuGet.Tools.Test/NuGet.Tools.Test.csproj): Unit tests for NuGet.Tools.
 - [`NuGet.VisualStudio.Common.Test.csproj`](../test/NuGet.Clients.Tests/NuGet.VisualStudio.Common.Test/NuGet.VisualStudio.Common.Test.csproj): Unit and integration tests for NuGet.VisualStudio.Common.
 - [`NuGet.VisualStudio.Implementation.Test.csproj`](../test/NuGet.Clients.Tests/NuGet.VisualStudio.Implementation.Test/NuGet.VisualStudio.Implementation.Test.csproj): Unit and integration tests for NuGet.VisualStudio.Implementation.
+- [`NuGet.VisualStudio.Internal.Contracts.Test.csproj`](../test/NuGet.Clients.Tests/NuGet.VisualStudio.Internal.Contracts.Test/NuGet.VisualStudio.Internal.Contracts.Test.csproj): Unit and integration tests for NuGet.VisualStudio.Internal.Contracts.
 - [`NuGet.VisualStudio.Test.csproj`](../test/NuGet.Clients.Tests/NuGet.VisualStudio.Test/NuGet.VisualStudio.Test.csproj): Unit and integration tests for NuGet.VisualStudio.
-- [`NuGetConsole.Host.PowerShell.Test.csproj`](../test/NuGet.Clients.Tests/NuGetConsole.Host.PowerShell.Test/NuGetConsole.Host.PowerShell.Test.csproj): Unit and integration tests for NuGetConsole.Host.PowerShell.
+- [`NuGetConsole.Host.PowerShell.Test.csproj`](../test/NuGet.Clients.Tests/NuGetConsole.Host.PowerShell.Test/NuGetConsole.Host.PowerShell.Test.csproj): Unit and integration tests for NuGet.PackageManagement.PowerShellCmdlets.
 
 
 ## Functional Test Projects
 
-Projects in section: 11
+Projects in section: 10
 
 ### test\NuGet.Clients.FuncTests
 
@@ -122,7 +123,6 @@ Projects in section: 11
 - [`Dotnet.Integration.Test.csproj`](../test/NuGet.Core.FuncTests/Dotnet.Integration.Test/Dotnet.Integration.Test.csproj): Integration tests for NuGet-powered dotnet CLI commands such as pack/restore/list package and dotnet nuget.
 - [`Msbuild.Integration.Test.csproj`](../test/NuGet.Core.FuncTests/Msbuild.Integration.Test/Msbuild.Integration.Test.csproj): Integration tests for NuGet powered msbuild functionalities (restore/pack).
 - [`NuGet.Commands.FuncTest.csproj`](../test/NuGet.Core.FuncTests/NuGet.Commands.FuncTest/NuGet.Commands.FuncTest.csproj): Integration tests for the more involved NuGet.Commands, such as restore.
-- [`NuGet.Core.FuncTest.csproj`](../test/NuGet.Core.FuncTests/NuGet.Core.FuncTest/NuGet.Core.FuncTest.csproj): Integration tests for various functionality from the src/NuGet.Core projects.
 - [`NuGet.Packaging.FuncTest.csproj`](../test/NuGet.Core.FuncTests/NuGet.Packaging.FuncTest/NuGet.Packaging.FuncTest.csproj): Integration tests for the more involved NuGet.Packaging functionality, such as signing.
 - [`NuGet.Protocol.FuncTest.csproj`](../test/NuGet.Core.FuncTests/NuGet.Protocol.FuncTest/NuGet.Protocol.FuncTest.csproj): Integration tests for the more involved NuGet.Protocol functionality, such as plugins.
 - [`NuGet.XPlat.FuncTest.csproj`](../test/NuGet.Core.FuncTests/NuGet.XPlat.FuncTest/NuGet.XPlat.FuncTest.csproj): Functional tests for nuget in dotnet CLI scenarios, using the NuGet.CommandLine.XPlat assembly.

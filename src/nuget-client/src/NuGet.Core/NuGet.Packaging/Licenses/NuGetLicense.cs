@@ -96,7 +96,7 @@ namespace NuGet.Packaging.Licenses
             {
                 if (HasValidCharacters(licenseIdentifier))
                 {
-                    if (licenseIdentifier.Equals(UNLICENSED))
+                    if (licenseIdentifier.Equals(UNLICENSED, StringComparison.Ordinal))
                     {
                         if (plus)
                         {

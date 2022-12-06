@@ -453,7 +453,7 @@ namespace NuGet.CommandLine
         {
             var productName = (string)RegistryKeyUtility.GetValueFromRegistryKey("ProductName", OSVersionRegistryKey, Registry.LocalMachine, logger);
 
-            return productName != null && productName.StartsWith("Windows 10");
+            return productName != null && productName.StartsWith("Windows 10", StringComparison.Ordinal);
         }
 
         private static bool IsSupportLongPathEnabled(ILogger logger)

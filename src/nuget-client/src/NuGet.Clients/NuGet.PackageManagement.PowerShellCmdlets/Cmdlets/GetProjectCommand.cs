@@ -4,7 +4,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Management.Automation;
-using System.Threading.Tasks;
 using NuGet.VisualStudio;
 
 namespace NuGet.PackageManagement.PowerShellCmdlets

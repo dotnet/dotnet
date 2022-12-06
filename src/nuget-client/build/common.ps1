@@ -227,6 +227,7 @@ Function Install-DotnetCLI {
     # However, Invoke-BuildStep checks if any error happened, ever. Hence we need to run dotnet-install
     # in a different process, to avoid treating their handled errors as build errors.
     & powershell $DotNetInstall -Runtime dotnet -Channel 3.1 -InstallDir $CLIRoot -NoPath
+    & powershell $DotNetInstall -Runtime dotnet -Channel 5.0 -InstallDir $CLIRoot -NoPath
 
     if ($LASTEXITCODE -ne 0)
     {

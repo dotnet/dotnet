@@ -138,7 +138,7 @@ namespace NuGet.Commands
             // For project.json not all files are written out. Find the first one
             // or if no files exist skip this.
             var firstImport = files.Where(file => file.Content != null)
-                .OrderByDescending(file => file.Path.EndsWith(PropsExtension) ? 1 : 0)
+                .OrderByDescending(file => file.Path.EndsWith(PropsExtension, StringComparison.Ordinal) ? 1 : 0)
                 .FirstOrDefault();
 
             if (firstImport != null)
@@ -677,7 +677,7 @@ namespace NuGet.Commands
                                     rootName: MSBuildRestoreItemGroup.ItemGroup,
                                     position: 1,
                                     conditions: GetLanguageConditions(group.Key, allLanguages),
-                                    items: group.Where(e => !e.Item2.Path.EndsWith(PackagingCoreConstants.ForwardSlashEmptyFolder)
+                                    items: group.Where(e => !e.Item2.Path.EndsWith(PackagingCoreConstants.ForwardSlashEmptyFolder, StringComparison.Ordinal)
                                                             && !e.Item2.Path.EndsWith(".pp", StringComparison.OrdinalIgnoreCase)) // Skip .pp files
                                                 .Select(e => GenerateContentFilesItem(e.Item3, e.Item2, packageId, packageVersion))))
                                 .Where(group => group.Items.Count > 0);

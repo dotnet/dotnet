@@ -68,7 +68,7 @@ namespace NuGet.Frameworks
 
         public int CompareTo(FrameworkRuntimePair other)
         {
-            var fxCompare = Framework.GetShortFolderName().CompareTo(other.Framework.GetShortFolderName());
+            var fxCompare = string.Compare(Framework.GetShortFolderName(), other.Framework.GetShortFolderName(), StringComparison.Ordinal);
             if (fxCompare != 0)
             {
                 return fxCompare;

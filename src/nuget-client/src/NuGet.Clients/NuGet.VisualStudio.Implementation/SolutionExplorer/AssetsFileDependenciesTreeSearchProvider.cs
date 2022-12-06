@@ -102,6 +102,7 @@ namespace NuGet.VisualStudio.SolutionExplorer
                     SearchContentFiles(library);
                     SearchBuildFiles(library, library.BuildFiles, PackageBuildFileGroupType.Build);
                     SearchBuildFiles(library, library.BuildMultiTargetingFiles, PackageBuildFileGroupType.BuildMultiTargeting);
+                    SearchDocuments(library);
                 }
 
                 SearchLogMessages();
@@ -210,6 +211,17 @@ namespace NuGet.VisualStudio.SolutionExplorer
                         }
 
                         return null;
+                    }
+                }
+
+                void SearchDocuments(AssetsFileTargetLibrary library)
+                {
+                    foreach (string path in library.DocumentationFiles)
+                    {
+                        if (targetContext.IsMatch(path))
+                        {
+                            targetContext.SubmitResult(new PackageDocumentItem(target, library, path, _fileOpener, _fileIconProvider));
+                        }
                     }
                 }
             }

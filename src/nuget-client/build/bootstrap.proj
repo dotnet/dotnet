@@ -18,7 +18,7 @@
         <PackageDownload Include="Microsoft.Web.Xdt" version="[3.0.0]" />
         <PackageDownload Include="Newtonsoft.Json" version="[13.0.1]" />
         <PackageDownload Include="NuGet.Client.EndToEnd.TestData" version="[1.0.0]" />
-        <PackageDownload Include="NuGetValidator" version="[2.0.3]" />
+        <PackageDownload Include="NuGetValidator" version="[2.0.5]" />
     </ItemGroup>
 
 </Project>

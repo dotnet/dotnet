@@ -3,10 +3,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
 using NuGet.Common;
 using NuGet.Protocol;
 using NuGet.Test.Server;
@@ -18,7 +20,7 @@ namespace NuGet.Core.FuncTest
 {
     public class HttpRetryHandlerTests
     {
-        private const string TestUrl = "https://test.local/test.json";
+        private const string TestUrl = "https://local.test/test.json";
 
         [Fact]
         public async Task HttpRetryHandler_ReturnsContentHeaders()
@@ -176,6 +178,102 @@ namespace NuGet.Core.FuncTest
 #endif
         }
 
+        [Fact]
+        public async Task HttpRetryHandler_429WithRetryAfterHeader_UsesRetryAfterValue()
+        {
+            // Arrange
+            int attempt = 0;
+            // .NET Framework don't have HttpStatusCode.TooManyRequests
+            HttpStatusCode tooManyRequestsStatusCode = (HttpStatusCode)429;
+
+            var busyServer = new HttpRetryTestHandler((req, cancellationToken) =>
+            {
+                attempt++;
+                var response = new HttpResponseMessage(tooManyRequestsStatusCode);
+                response.Headers.RetryAfter = new System.Net.Http.Headers.RetryConditionHeaderValue(TimeSpan.FromMilliseconds(1));
+                return Task.FromResult(response);
+            });
+            var client = new HttpClient(busyServer);
+
+            // Use a very long timeout that will tell us that Retry-After wasn't being used.
+            TimeSpan retryDelay = TimeSpan.FromHours(5);
+            var httpRetryHandlerRequest = new HttpRetryHandlerRequest(client, () => new HttpRequestMessage(HttpMethod.Get, TestUrl))
+            {
+                RetryDelay = retryDelay
+            };
+            TestEnvironmentVariableReader environmentVariables = GetEnhancedHttpRetryEnvironmentVariables(retry429: true, observeRetryAfter: true, delayMilliseconds: (int)retryDelay.TotalMilliseconds);
+            var httpRetryHandler = new HttpRetryHandler(environmentVariables);
+            var logger = new TestLogger();
+
+            // Act
+            HttpResponseMessage response;
+            int cancellationDelay = Debugger.IsAttached ? int.MaxValue : 60 * 1000;
+            using (var cts = new CancellationTokenSource(millisecondsDelay: cancellationDelay))
+            {
+                try
+                {
+                    response = await httpRetryHandler.SendAsync(httpRetryHandlerRequest, logger, cts.Token);
+                }
+                catch (OperationCanceledException) when (cts.Token.IsCancellationRequested)
+                {
+                    throw new Exception("HTTP response Retry-After not used");
+                }
+            }
+
+            // Assert
+            response.StatusCode.Should().Be(tooManyRequestsStatusCode);
+            attempt.Should().Be(3);
+        }
+
+        [Fact]
+        public async Task HttpRetryHandler_LongRetryAfterDuration_UsesEnvVarSetting()
+        {
+            // Arrange
+            int attempts = 0;
+            // .NET Framework don't have HttpStatusCode.TooManyRequests
+            HttpStatusCode tooManyRequestsStatusCode = (HttpStatusCode)429;
+
+            var busyServer = new HttpRetryTestHandler((req, cancellationToken) =>
+            {
+                attempts++;
+                var response = new HttpResponseMessage(tooManyRequestsStatusCode);
+                response.Headers.RetryAfter = new System.Net.Http.Headers.RetryConditionHeaderValue(TimeSpan.FromHours(1));
+                return Task.FromResult(response);
+            });
+            var client = new HttpClient(busyServer);
+
+            // Use a very long timeout that will tell us that Retry-After wasn't being used.
+            TimeSpan retryDelay = TimeSpan.FromHours(1);
+            var httpRetryHandlerRequest = new HttpRetryHandlerRequest(client, () => new HttpRequestMessage(HttpMethod.Get, TestUrl))
+            {
+                MaxTries = 2,
+                RetryDelay = retryDelay
+            };
+            TestEnvironmentVariableReader environmentVariables =
+                GetEnhancedHttpRetryEnvironmentVariables(retryCount: 2, retry429: true, observeRetryAfter: true, delayMilliseconds: (int)retryDelay.TotalMilliseconds, maxRetryAfterSeconds: 1);
+            var httpRetryHandler = new HttpRetryHandler(environmentVariables);
+            var logger = new TestLogger();
+
+            // Act
+            HttpResponseMessage response;
+            int cancellationDelay = Debugger.IsAttached ? int.MaxValue : 60 * 1000;
+            using (var cts = new CancellationTokenSource(millisecondsDelay: cancellationDelay))
+            {
+                try
+                {
+                    response = await httpRetryHandler.SendAsync(httpRetryHandlerRequest, logger, cts.Token);
+                }
+                catch (OperationCanceledException) when (cts.Token.IsCancellationRequested)
+                {
+                    throw new Exception("HTTP response Retry-After not used");
+                }
+            }
+
+            // Assert
+            response.StatusCode.Should().Be(tooManyRequestsStatusCode);
+            attempts.Should().Be(2);
+        }
+
         private static async Task<T> ThrowsException<T>(ITestServer server) where T : Exception
         {
             return await server.ExecuteAsync(async address =>
@@ -212,6 +310,24 @@ namespace NuGet.Core.FuncTest
                 return exception;
             });
         }
+
+        private static TestEnvironmentVariableReader GetEnhancedHttpRetryEnvironmentVariables(
+            bool? isEnabled = true,
+            int? retryCount = 5,
+            int? delayMilliseconds = 0,
+            bool? retry429 = true,
+            bool? observeRetryAfter = true,
+            int? maxRetryAfterSeconds = null)
+        => new TestEnvironmentVariableReader(
+            new Dictionary<string, string>()
+            {
+                [EnhancedHttpRetryHelper.IsEnabledEnvironmentVariableName] = isEnabled?.ToString(),
+                [EnhancedHttpRetryHelper.RetryCountEnvironmentVariableName] = retryCount?.ToString(),
+                [EnhancedHttpRetryHelper.DelayInMillisecondsEnvironmentVariableName] = delayMilliseconds?.ToString(),
+                [EnhancedHttpRetryHelper.Retry429EnvironmentVariableName] = retry429?.ToString(),
+                [EnhancedHttpRetryHelper.ObserveRetryAfterEnvironmentVariableName] = observeRetryAfter?.ToString(),
+                [EnhancedHttpRetryHelper.MaximumRetryAfterDurationEnvironmentVariableName] = maxRetryAfterSeconds?.ToString(),
+            });
 
         private class CountingHandler : DelegatingHandler
         {

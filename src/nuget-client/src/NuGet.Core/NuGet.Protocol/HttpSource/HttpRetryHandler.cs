@@ -1,11 +1,14 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using NuGet.Common;
@@ -71,16 +74,20 @@ namespace NuGet.Protocol
             }
 
             var tries = 0;
-            HttpResponseMessage response = null;
-            var success = false;
+            HttpResponseMessage? response = null;
+            TimeSpan? retryAfter = null;
 
-            while (tries < request.MaxTries && !success)
+            while (true)
             {
                 // There are many places where another variable named "MaxTries" is set to 1,
                 // so the Delay() never actually occurs.
                 // When opted in to "enhanced retry", do the delay and have it increase exponentially where applicable
                 // (i.e. when "tries" is allowed to be > 1)
-                if (tries > 0 || (_enhancedHttpRetryHelper.IsEnabled && request.IsRetry))
+                if (retryAfter != null && _enhancedHttpRetryHelper.ObserveRetryAfter)
+                {
+                    await Task.Delay(retryAfter.Value, cancellationToken);
+                }
+                else if (tries > 0 || (_enhancedHttpRetryHelper.IsEnabled && request.IsRetry))
                 {
                     // "Enhanced" retry: In the case where this is actually a 2nd-Nth try, back off exponentially with some random.
                     // In many cases due to the external retry loop, this will be always be 1 * request.RetryDelay.TotalMilliseconds + 0-200 ms
@@ -100,14 +107,13 @@ namespace NuGet.Protocol
                 }
 
                 tries++;
-                success = true;
 
                 using (var requestMessage = request.RequestFactory())
                 {
                     var stopwatches = new List<Stopwatch>(2);
                     var bodyStopwatch = new Stopwatch();
                     stopwatches.Add(bodyStopwatch);
-                    Stopwatch headerStopwatch = null;
+                    Stopwatch? headerStopwatch = null;
                     if (request.CompletionOption == HttpCompletionOption.ResponseHeadersRead)
                     {
                         headerStopwatch = new Stopwatch();
@@ -118,7 +124,7 @@ namespace NuGet.Protocol
 #else
                     requestMessage.Properties[StopwatchPropertyName] = stopwatches;
 #endif
-                    var requestUri = requestMessage.RequestUri;
+                    var requestUri = requestMessage.RequestUri!;
 
                     try
                     {
@@ -197,12 +203,35 @@ namespace NuGet.Protocol
                             response.Content = newContent;
                         }
 
-                        log.LogInformation("  " + string.Format(
-                            CultureInfo.InvariantCulture,
-                            Strings.Http_ResponseLog,
-                            response.StatusCode,
-                            requestUri,
-                            bodyStopwatch.ElapsedMilliseconds));
+                        retryAfter = GetRetryAfter(response.Headers.RetryAfter);
+                        if (retryAfter != null)
+                        {
+                            log.LogInformation("  " + string.Format(
+                                CultureInfo.InvariantCulture,
+                                Strings.Http_ResponseLogWithRetryAfter,
+                                response.StatusCode,
+                                requestUri,
+                                bodyStopwatch.ElapsedMilliseconds,
+                                retryAfter.Value.TotalSeconds));
+
+                            if (retryAfter.Value.TotalMilliseconds < 0)
+                            {
+                                retryAfter = null;
+                            }
+                            else if (retryAfter.Value > _enhancedHttpRetryHelper.MaxRetryAfterDelay)
+                            {
+                                retryAfter = _enhancedHttpRetryHelper.MaxRetryAfterDelay;
+                            }
+                        }
+                        else
+                        {
+                            log.LogInformation("  " + string.Format(
+                                CultureInfo.InvariantCulture,
+                                Strings.Http_ResponseLog,
+                                response.StatusCode,
+                                requestUri,
+                                bodyStopwatch.ElapsedMilliseconds));
+                        }
 
                         int statusCode = (int)response.StatusCode;
                         // 5xx == server side failure
@@ -210,7 +239,14 @@ namespace NuGet.Protocol
                         // 429 == too many requests
                         if (statusCode >= 500 || ((statusCode == 408 || statusCode == 429) && _enhancedHttpRetryHelper.Retry429))
                         {
-                            success = false;
+                            if (tries == request.MaxTries)
+                            {
+                                return response;
+                            }
+                        }
+                        else
+                        {
+                            return response;
                         }
                     }
                     catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -234,8 +270,6 @@ namespace NuGet.Protocol
                     }
                     catch (Exception e)
                     {
-                        success = false;
-
                         response?.Dispose();
 
                         ProtocolDiagnostics.RaiseEvent(new ProtocolDiagnosticHttpEvent(
@@ -267,8 +301,23 @@ namespace NuGet.Protocol
                     }
                 }
             }
+        }
 
-            return response;
+        private static TimeSpan? GetRetryAfter(RetryConditionHeaderValue? retryAfter)
+        {
+            if (retryAfter?.Delta != null)
+            {
+                return retryAfter.Delta;
+            }
+
+            if (retryAfter?.Date != null)
+            {
+                DateTimeOffset retryAfterDate = retryAfter.Date.Value.ToUniversalTime();
+                var now = DateTimeOffset.UtcNow;
+                return retryAfterDate - now;
+            }
+
+            return null;
         }
     }
 }

@@ -20,6 +20,7 @@ namespace NuGet.VisualStudio.SolutionExplorer
         public const int Diagnostic = 100;
         public const int Package = 200;
         public const int Project = 300;
+        public const int DocumentGroup = 350;
         public const int CompileTimeAssemblyGroup = 400;
         public const int FrameworkAssemblyGroup = 500;
         public const int ContentFilesGroup = 600;

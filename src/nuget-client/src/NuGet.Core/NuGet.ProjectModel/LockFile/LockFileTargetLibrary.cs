@@ -62,7 +62,7 @@ namespace NuGet.ProjectModel
                 return true;
             }
 
-            return string.Equals(Name, other.Name)
+            return string.Equals(Name, other.Name, StringComparison.Ordinal)
                 && VersionComparer.Default.Equals(Version, other.Version)
                 && string.Equals(Type, other.Type, StringComparison.Ordinal)
                 && string.Equals(Framework, other.Framework, StringComparison.Ordinal)

@@ -62,7 +62,7 @@ namespace NuGet.Protocol
                 throw new ArgumentNullException(nameof(httpSource));
             }
 
-            _baseUri = packageSource.Source.EndsWith("/") ? packageSource.Source : (packageSource.Source + "/");
+            _baseUri = packageSource.Source.EndsWith("/", StringComparison.Ordinal) ? packageSource.Source : (packageSource.Source + "/");
             _httpSource = httpSource;
             _nupkgDownloader = new FindPackagesByIdNupkgDownloader(_httpSource);
             _queryBuilder = new V2FeedQueryBuilder();

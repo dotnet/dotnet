@@ -28,21 +28,22 @@
     <ProjectReference Include="$(NuGetClientsSrcDirectory)NuGet.VisualStudio.Common\NuGet.VisualStudio.Common.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageDownload Include="Microsoft.VisualStudio.ProjectSystem.Managed" />
-    <PackageDownload Include="Microsoft.VisualStudio.ProjectSystem.Managed.VS" />
+    <PackageReference Include="Microsoft.Build" IncludeAssets="None" PrivateAssets="all"/>
+    <PackageReference Include="Microsoft.Build.Framework" IncludeAssets="None" PrivateAssets="all"/>
+    <PackageReference Include="Microsoft.Build.Tasks.Core" IncludeAssets="None" PrivateAssets="all"/>
+    <PackageReference Include="Microsoft.Build.Utilities.Core" IncludeAssets="None" PrivateAssets="all"/>
+    <PackageReference Include="Microsoft.CodeAnalysis" IncludeAssets="None" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Common" IncludeAssets="None" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Features" IncludeAssets="None" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" IncludeAssets="None" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.VisualStudio.LanguageServices" IncludeAssets="None" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.VisualStudio.ProjectSystem.Managed" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.VisualStudio.ProjectSystem.Managed.VS" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.VisualStudio.ProjectSystem.VS" PrivateAssets="all" />
     <PackageReference Include="Microsoft.VisualStudio.Sdk" />
     <PackageReference Include="Microsoft.VSSDK.BuildTools" GeneratePathProperty="true" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.VisualStudio.ProjectSystem.VS">
-      <HintPath>$(NuGetPackageRoot)\microsoft.visualstudio.projectsystem\16.7.156-pre\lib\net472\Microsoft.VisualStudio.ProjectSystem.VS.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.VisualStudio.ProjectSystem.Managed">
-      <HintPath>$(NuGetPackageRoot)\microsoft.visualstudio.projectsystem.managed\$(ProjectSystemManagedVersion)\lib\net472\Microsoft.VisualStudio.ProjectSystem.Managed.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.VisualStudio.ProjectSystem.Managed.VS">
-      <HintPath>$(NuGetPackageRoot)\microsoft.visualstudio.projectsystem.managed.vs\$(ProjectSystemManagedVersion)\lib\net472\Microsoft.VisualStudio.ProjectSystem.Managed.VS.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.VisualStudio.ExtensionEngine">
       <HintPath>$(PkgMicrosoft_VSSDK_BuildTools)\tools\vssdk\Microsoft.VisualStudio.ExtensionEngine.dll</HintPath>
     </Reference>

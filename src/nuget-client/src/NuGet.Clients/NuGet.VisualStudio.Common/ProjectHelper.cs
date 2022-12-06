@@ -26,19 +26,20 @@ namespace NuGet.VisualStudio
                 var service = unconfiguredProject.ProjectService.Services.ProjectLockService;
                 if (service != null)
                 {
-                    using (ProjectWriteLockReleaser x = await service.WriteLockAsync())
-                    {
-                        await x.CheckoutAsync(unconfiguredProject.FullPath);
-                        ConfiguredProject configuredProject = await unconfiguredProject.GetSuggestedConfiguredProjectAsync();
-                        MsBuildProject buildProject = await x.GetProjectAsync(configuredProject);
-
-                        if (buildProject != null)
+                    await service.WriteLockAsync(
+                        async (x) =>
                         {
-                            action(buildProject);
-                        }
+                            await x.CheckoutAsync(unconfiguredProject.FullPath);
+                            ConfiguredProject configuredProject = await unconfiguredProject.GetSuggestedConfiguredProjectAsync();
+                            MsBuildProject buildProject = await x.GetProjectAsync(configuredProject);
 
-                        await x.ReleaseAsync();
-                    }
+                            if (buildProject != null)
+                            {
+                                action(buildProject);
+                            }
+
+                            await x.ReleaseAsync();
+                        });
 
                     await unconfiguredProject.ProjectService.Services.ThreadingPolicy.SwitchToUIThread();
                     project.Save();

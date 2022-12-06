@@ -45,7 +45,7 @@ namespace NuGet.Common
                 }
                 Path.GetFullPath(path);
                 // If paht is rooted and it's not a unc path, it's a local path.
-                return Path.IsPathRooted(path) && !path.StartsWith(@"\\");
+                return Path.IsPathRooted(path) && !path.StartsWith(@"\\", StringComparison.Ordinal);
             }
             catch
             {
@@ -69,7 +69,7 @@ namespace NuGet.Common
             try
             {
                 Path.GetFullPath(path);
-                return path.StartsWith(@"\\");
+                return path.StartsWith(@"\\", StringComparison.Ordinal);
             }
             catch
             {

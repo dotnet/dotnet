@@ -1,45 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0">
+<Project>
   <ItemGroup>
-    <MergeInclude Include="$(OutputPath)Microsoft.Web.XmlTransform.dll"/>
-    <MergeInclude Include="$(OutputPath)Newtonsoft.Json.dll"/>
-    <MergeInclude Include="$(OutputPath)NuGet.Build.Tasks.dll"/>
-    <MergeInclude Include="$(OutputPath)NuGet.Commands.dll"/>
-    <MergeInclude Include="$(OutputPath)NuGet.Common.dll"/>
-    <MergeInclude Include="$(OutputPath)NuGet.Configuration.dll"/>
-    <MergeInclude Include="$(OutputPath)NuGet.Credentials.dll"/>
-    <MergeInclude Include="$(OutputPath)NuGet.DependencyResolver.Core.dll"/>
-    <MergeInclude Include="$(OutputPath)NuGet.Frameworks.dll"/>
-    <MergeInclude Include="$(OutputPath)NuGet.LibraryModel.dll"/>
-    <MergeInclude Include="$(OutputPath)NuGet.PackageManagement.dll"/>
-    <MergeInclude Include="$(OutputPath)NuGet.Packaging.dll"/>
-    <MergeInclude Include="$(OutputPath)NuGet.ProjectModel.dll"/>
-    <MergeInclude Include="$(OutputPath)NuGet.Protocol.dll"/>
-    <MergeInclude Include="$(OutputPath)NuGet.Resolver.dll"/>
-    <MergeInclude Include="$(OutputPath)NuGet.Versioning.dll"/>
-    <MergeInclude Include="$(OutputPath)NuGet.Core.dll"/>
-    <MergeInclude Include="$(OutputPath)System.Threading.Tasks.Dataflow.dll"/>
-
-    <MergeExclude Include="$(OutputPath)Microsoft.VisualStudio.Setup.Configuration.Interop.dll"/>
-    <MergeExclude Include="$(OutputPath)Microsoft.CSharp.dll"/>
-    <MergeExclude Include="$(OutputPath)mscorlib.dll"/>
-    <MergeExclude Include="$(OutputPath)System.Collections.Concurrent.dll"/>
-    <MergeExclude Include="$(OutputPath)System.Collections.dll"/>
-    <MergeExclude Include="$(OutputPath)System.ComponentModel.Composition.dll"/>
-    <MergeExclude Include="$(OutputPath)System.dll"/>
-    <MergeExclude Include="$(OutputPath)System.Globalization.dll"/>
-    <MergeExclude Include="$(OutputPath)System.IdentityModel.dll"/>
-    <MergeExclude Include="$(OutputPath)System.IO.Compression.dll"/>
-    <MergeExclude Include="$(OutputPath)System.Net.Http.dll"/>
-    <MergeExclude Include="$(OutputPath)System.Net.Http.WebRequest.dll"/>
-    <MergeExclude Include="$(OutputPath)System.Runtime.dll"/>
-    <MergeExclude Include="$(OutputPath)System.Runtime.Serialization.dll"/>
-    <MergeExclude Include="$(OutputPath)System.Security.dll"/>
-    <MergeExclude Include="$(OutputPath)System.ServiceModel.dll"/>
-    <MergeExclude Include="$(OutputPath)System.Xml.dll"/>
-    <MergeExclude Include="$(OutputPath)System.Xml.Linq.dll"/>
-    <MergeExclude Include="$(OutputPath)WindowsBase.dll"/>
-
+    <MergeAllowdup Include="ArrayPool`1"/>
     <MergeAllowdup Include="CompatibilityListProvider"/>
     <MergeAllowdup Include="CompatibilityMappingComparer"/>
     <MergeAllowdup Include="CompatibilityProvider"/>
