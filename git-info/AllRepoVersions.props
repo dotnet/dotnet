@@ -19,8 +19,8 @@
     <installerOutputPackageVersion>8.0.100</installerOutputPackageVersion>
     <linkerGitCommitHash>f3469ca5e80e3701d90f8a376371eda940ba9687</linkerGitCommitHash>
     <linkerOutputPackageVersion>7.0.100-1.22605.2</linkerOutputPackageVersion>
-    <msbuildGitCommitHash>d14b74d6f08ab7f2e17706359a38f8c22b569cb5</msbuildGitCommitHash>
-    <msbuildOutputPackageVersion>17.5.0-preview-22564-01</msbuildOutputPackageVersion>
+    <msbuildGitCommitHash>a2490dd3f78cce4abc8f9e6f1b5268437332818f</msbuildGitCommitHash>
+    <msbuildOutputPackageVersion>17.5.0-preview-22601-03</msbuildOutputPackageVersion>
     <nugetclientGitCommitHash>ea921bf1871b2799d9c130aad860db33e6577975</nugetclientGitCommitHash>
     <nugetclientOutputPackageVersion>6.5.0-preview.2.79</nugetclientOutputPackageVersion>
     <razorcompilerGitCommitHash>a41514681a4db83c7cae7e17debf668d12efc1bb</razorcompilerGitCommitHash>
