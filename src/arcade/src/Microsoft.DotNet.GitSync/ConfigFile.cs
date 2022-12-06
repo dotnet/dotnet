@@ -1,10 +1,9 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
 using log4net;
-using Microsoft.Azure.KeyVault;
-using Microsoft.Azure.KeyVault.Models;
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Newtonsoft.Json;
 using System;
 using System.IO;
@@ -35,22 +34,20 @@ namespace Microsoft.DotNet.GitSync
                 PreserveReferencesHandling = PreserveReferencesHandling.All,
             });
 
-            var kvc = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(
-                async (authority, resource, scope) => 
-                {
-                    var authContext = new AuthenticationContext(authority);
-                    var clientCred = new ClientCredential(config.ClientId, config.ClientSecret);
-                    var result = await authContext.AcquireTokenAsync(resource, clientCred);
+            // This app originally took fully qualified secret values; we'll split it up using Uri and string APIs to get the same effect.
+            Uri vaultUri = new Uri(config.SecretUri);
 
-                    if (result == null)
-                        throw new InvalidOperationException("Failed to obtain the github token");
+            string secretName = vaultUri.AbsolutePath.Replace("/secrets/", "");
+            if (secretName.IndexOf('/') > 0) // If the secret includes a version, lop it off so we fetch 'latest'
+            {
+                secretName = secretName.Substring(0, secretName.IndexOf("/"));
+            }
 
-                    return result.AccessToken;
-                }));
+            SecretClient client = new SecretClient(new Uri(vaultUri.GetLeftPart(UriPartial.Authority)),
+                new ClientSecretCredential("72f988bf-86f1-41af-91ab-2d7cd011db47", config.ClientId, config.ClientSecret));
 
-            SecretBundle secretBundle = await kvc.GetSecretAsync(config.SecretUri);
-            config.Password = secretBundle.Value;
-
+            KeyVaultSecret secret = await client.GetSecretAsync(secretName);
+            config.Password = secret.Value;
             return config;
         }
 

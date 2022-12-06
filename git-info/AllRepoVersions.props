@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
   <PropertyGroup>
-    <arcadeGitCommitHash>6b3bad6673f3ebe89ebe12ea7c4eff1705b893e6</arcadeGitCommitHash>
-    <arcadeOutputPackageVersion>8.0.0-beta.22579.2</arcadeOutputPackageVersion>
+    <arcadeGitCommitHash>c96d78299a4fe5557bd564e44b63725cdbabd960</arcadeGitCommitHash>
+    <arcadeOutputPackageVersion>8.0.0-beta.22605.1</arcadeOutputPackageVersion>
     <aspnetcoreGitCommitHash>955e293332027bf86f51cd4ee176edfb68c89b3f</aspnetcoreGitCommitHash>
     <aspnetcoreOutputPackageVersion>8.0.0-alpha.1.22605.17</aspnetcoreOutputPackageVersion>
     <commandlineapiGitCommitHash>8374d5fca634a93458c84414b1604c12f765d1ab</commandlineapiGitCommitHash>
@@ -15,7 +15,7 @@
     <formatOutputPackageVersion>8.0.360313</formatOutputPackageVersion>
     <fsharpGitCommitHash>ebf9aaa550b016202dcc4da55e89dfe7bc97346c</fsharpGitCommitHash>
     <fsharpOutputPackageVersion>7.0.1-beta.22602.3</fsharpOutputPackageVersion>
-    <installerGitCommitHash>4e531ec93223827c3e12c2a79d4c687e3f275066</installerGitCommitHash>
+    <installerGitCommitHash>b9cea4b4faf665a351f5994c1d4bbd5c103e281d</installerGitCommitHash>
     <installerOutputPackageVersion>8.0.100</installerOutputPackageVersion>
     <linkerGitCommitHash>f3469ca5e80e3701d90f8a376371eda940ba9687</linkerGitCommitHash>
     <linkerOutputPackageVersion>7.0.100-1.22605.2</linkerOutputPackageVersion>
@@ -51,7 +51,7 @@
     <vstestOutputPackageVersion>17.5.0-preview-20221205-07</vstestOutputPackageVersion>
     <xdtGitCommitHash>9a1c3e1b7f0c8763d4c96e593961a61a72679a7b</xdtGitCommitHash>
     <xdtOutputPackageVersion>7.0.0-preview.22423.2</xdtOutputPackageVersion>
-    <xlifftasksGitCommitHash>9d44d854356c5ea0152b40acdef20c23bde58b03</xlifftasksGitCommitHash>
-    <xlifftasksOutputPackageVersion>1.0.0-beta.22576.1</xlifftasksOutputPackageVersion>
+    <xlifftasksGitCommitHash>a54541e2b225c006bed2bc7c3c8e379069741466</xlifftasksGitCommitHash>
+    <xlifftasksOutputPackageVersion>1.0.0-beta.22580.1</xlifftasksOutputPackageVersion>
   </PropertyGroup>
 </Project>

@@ -118,7 +118,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 ShortUrl = GetLatestShortUrlForBlob(shortUrlPrefix, asset, flatten),
                 TargetUrl = actualTargetUrl
             };
-            Logger.LogMessage(MessageImportance.High, $"  {Path.GetFileName(asset)}");
 
             Logger.LogMessage(MessageImportance.High, $"  aka.ms/{newLink.ShortUrl} -> {newLink.TargetUrl}");
 
