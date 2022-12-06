@@ -3,8 +3,8 @@
 
 using System;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Linq;
+using Microsoft.AspNetCore.App.Analyzers.Infrastructure;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
@@ -30,11 +30,7 @@ public partial class RouteHandlerAnalyzer : DiagnosticAnalyzer
         context.RegisterCompilationStartAction(static context =>
         {
             var compilation = context.Compilation;
-            if (!WellKnownTypes.TryCreate(compilation, out var wellKnownTypes))
-            {
-                Debug.Fail("One or more types could not be found. This usually means you are bad at spelling C# type names.");
-                return;
-            }
+            var wellKnownTypes = WellKnownTypes.GetOrCreate(compilation);
 
             context.RegisterOperationAction(context =>
             {
@@ -48,7 +44,7 @@ public partial class RouteHandlerAnalyzer : DiagnosticAnalyzer
                 IDelegateCreationOperation? delegateCreation = null;
                 foreach (var argument in invocation.Arguments)
                 {
-                    if (argument.Parameter.Ordinal == DelegateParameterOrdinal)
+                    if (argument.Parameter?.Ordinal == DelegateParameterOrdinal)
                     {
                         delegateCreation = argument.Descendants().OfType<IDelegateCreationOperation>().FirstOrDefault();
                         break;
@@ -79,7 +75,7 @@ public partial class RouteHandlerAnalyzer : DiagnosticAnalyzer
                     {
                         var syntaxReference = methodReference.Method.DeclaringSyntaxReferences.Single();
                         var syntaxNode = syntaxReference.GetSyntax(context.CancellationToken);
-                        var methodOperation = syntaxNode.SyntaxTree == invocation.SemanticModel.SyntaxTree
+                        var methodOperation = syntaxNode.SyntaxTree == invocation.SemanticModel!.SyntaxTree
                             ? invocation.SemanticModel.GetOperation(syntaxNode, context.CancellationToken)
                             : null;
                         if (methodOperation is ILocalFunctionOperation { Body: not null } localFunction)
@@ -130,9 +126,9 @@ public partial class RouteHandlerAnalyzer : DiagnosticAnalyzer
         IMethodSymbol targetMethod)
     {
         return targetMethod.Name.StartsWith("Map", StringComparison.Ordinal) &&
-            SymbolEqualityComparer.Default.Equals(wellKnownTypes.EndpointRouteBuilderExtensions, targetMethod.ContainingType) &&
+            SymbolEqualityComparer.Default.Equals(wellKnownTypes.Get(WellKnownType.Microsoft_AspNetCore_Builder_EndpointRouteBuilderExtensions), targetMethod.ContainingType) &&
             invocation.Arguments.Length == 3 &&
             targetMethod.Parameters.Length == 3 &&
-            SymbolEqualityComparer.Default.Equals(wellKnownTypes.Delegate, targetMethod.Parameters[DelegateParameterOrdinal].Type);
+            SymbolEqualityComparer.Default.Equals(wellKnownTypes.Get(WellKnownType.System_Delegate), targetMethod.Parameters[DelegateParameterOrdinal].Type);
     }
 }

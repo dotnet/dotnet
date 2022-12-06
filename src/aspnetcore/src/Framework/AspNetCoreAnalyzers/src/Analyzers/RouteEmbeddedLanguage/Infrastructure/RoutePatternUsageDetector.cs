@@ -5,6 +5,7 @@ using System;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
+using Microsoft.AspNetCore.App.Analyzers.Infrastructure;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -13,7 +14,7 @@ namespace Microsoft.AspNetCore.Analyzers.RouteEmbeddedLanguage.Infrastructure;
 
 internal readonly record struct RoutePatternUsageContext(
     IMethodSymbol? MethodSymbol,
-    SyntaxNode MethodSyntax,
+    SyntaxNode? MethodSyntax,
     bool IsMinimal,
     bool IsMvcAttribute);
 
@@ -80,7 +81,7 @@ internal static class RoutePatternUsageDetector
     private static SyntaxNode? FindAttributeParent(SyntaxNode container)
     {
         var argument = container.Parent;
-        if (argument.Parent is not AttributeArgumentListSyntax argumentList)
+        if (argument?.Parent is not AttributeArgumentListSyntax argumentList)
         {
             return null;
         }
@@ -98,9 +99,9 @@ internal static class RoutePatternUsageDetector
         return attributeList.Parent;
     }
 
-    private static IMethodSymbol? FindMvcMethod(WellKnownTypes wellKnownTypes, IMethodSymbol methodSymbol)
+    private static IMethodSymbol? FindMvcMethod(WellKnownTypes wellKnownTypes, IMethodSymbol? methodSymbol)
     {
-        if (methodSymbol.ContainingType is not INamedTypeSymbol typeSymbol)
+        if (methodSymbol?.ContainingType is not INamedTypeSymbol typeSymbol)
         {
             return null;
         }
@@ -121,7 +122,7 @@ internal static class RoutePatternUsageDetector
     public static MapMethodParts? FindMapMethodParts(SemanticModel semanticModel, WellKnownTypes wellKnownTypes, SyntaxNode container, CancellationToken cancellationToken)
     {
         var argument = container.Parent;
-        if (argument.Parent is not BaseArgumentListSyntax argumentList ||
+        if (argument?.Parent is not BaseArgumentListSyntax argumentList ||
             argumentList.Parent is null)
         {
             return null;
@@ -156,8 +157,8 @@ internal static class RoutePatternUsageDetector
         // IEndpointRouteBuilder may be removed from symbol because the method is called as an extension method.
         // ReducedFrom includes the original IEndpointRouteBuilder parameter.
         if (!(method.ReducedFrom ?? method).Parameters.Any(
-            a => SymbolEqualityComparer.Default.Equals(a.Type, wellKnownTypes.IEndpointRouteBuilder) ||
-                a.Type.Implements(wellKnownTypes.IEndpointRouteBuilder)))
+            a => SymbolEqualityComparer.Default.Equals(a.Type, wellKnownTypes.Get(WellKnownType.Microsoft_AspNetCore_Routing_IEndpointRouteBuilder)) ||
+                a.Type.Implements(wellKnownTypes.Get(WellKnownType.Microsoft_AspNetCore_Routing_IEndpointRouteBuilder))))
         {
             return null;
         }
@@ -194,7 +195,7 @@ internal static class RoutePatternUsageDetector
         return new MapMethodParts(method, literalExpression, delegateArgument.Expression);
     }
 
-    private static ArgumentSyntax? GetArgumentSyntax(BaseArgumentListSyntax argumentList, IMethodSymbol methodSymbol, IParameterSymbol? parameterSymbol)
+    private static ArgumentSyntax? GetArgumentSyntax(BaseArgumentListSyntax argumentList, IMethodSymbol methodSymbol, IParameterSymbol parameterSymbol)
     {
         foreach (var argument in argumentList.Arguments)
         {
