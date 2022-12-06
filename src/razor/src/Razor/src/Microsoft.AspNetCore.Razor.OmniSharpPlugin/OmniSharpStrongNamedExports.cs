@@ -44,7 +44,7 @@ internal class ExportDefaultOmniSharpProjectSnapshotManagerAccessor : DefaultOmn
 
 [Shared]
 [Export(typeof(IOmniSharpProjectSnapshotManagerChangeTrigger))]
-internal class ExportOmniSharpWorkspaceProjectStateChangeDetector : OmniSharpWorkspaceProjectStateChangeDetector
+public class ExportOmniSharpWorkspaceProjectStateChangeDetector : OmniSharpWorkspaceProjectStateChangeDetector
 {
     [ImportingConstructor]
     public ExportOmniSharpWorkspaceProjectStateChangeDetector(
@@ -59,7 +59,7 @@ internal class ExportOmniSharpWorkspaceProjectStateChangeDetector : OmniSharpWor
 [Shared]
 [Export(typeof(IOmniSharpProjectSnapshotManagerChangeTrigger))]
 [Export(typeof(OmniSharpProjectWorkspaceStateGenerator))]
-internal class ExportOmniSharpProjectWorkspaceStateGenerator : OmniSharpProjectWorkspaceStateGenerator
+public class ExportOmniSharpProjectWorkspaceStateGenerator : OmniSharpProjectWorkspaceStateGenerator
 {
     [ImportingConstructor]
     public ExportOmniSharpProjectWorkspaceStateGenerator(OmniSharpProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher) : base(projectSnapshotManagerDispatcher)
@@ -69,7 +69,7 @@ internal class ExportOmniSharpProjectWorkspaceStateGenerator : OmniSharpProjectW
 
 [Shared]
 [Export(typeof(IOmniSharpProjectSnapshotManagerChangeTrigger))]
-internal class ExportOmniSharpBackgroundDocumentGenerator : OmniSharpBackgroundDocumentGenerator
+public class ExportOmniSharpBackgroundDocumentGenerator : OmniSharpBackgroundDocumentGenerator
 {
     [ImportingConstructor]
     public ExportOmniSharpBackgroundDocumentGenerator(
@@ -82,7 +82,7 @@ internal class ExportOmniSharpBackgroundDocumentGenerator : OmniSharpBackgroundD
 
 [Shared]
 [Export(typeof(OmniSharpLanguageServerFeatureOptions))]
-internal class ExportOmniSharpLanguageServerFeatureOptions : OmniSharpLanguageServerFeatureOptions
+public class ExportOmniSharpLanguageServerFeatureOptions : OmniSharpLanguageServerFeatureOptions
 {
     [ImportingConstructor]
     public ExportOmniSharpLanguageServerFeatureOptions() : base()

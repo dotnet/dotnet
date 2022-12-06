@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 
 namespace Microsoft.AspNetCore.Razor.Microbenchmarks.Serialization;
 
-internal class TagHelperSerializationBenchmark : TagHelperBenchmarkBase
+public class TagHelperSerializationBenchmark : TagHelperBenchmarkBase
 {
     [Benchmark(Description = "Razor TagHelper Roundtrip Serialization")]
     public void TagHelper_Serialization_RoundTrip()

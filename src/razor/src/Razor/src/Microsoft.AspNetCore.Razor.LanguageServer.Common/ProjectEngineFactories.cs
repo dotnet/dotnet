@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.Razor;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Common;
 
-internal static class ProjectEngineFactories
+public static class ProjectEngineFactories
 {
     public static readonly Lazy<IProjectEngineFactory, ICustomProjectEngineFactoryMetadata>[] Factories =
         new Lazy<IProjectEngineFactory, ICustomProjectEngineFactoryMetadata>[]

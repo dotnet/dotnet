@@ -10,7 +10,7 @@ namespace Microsoft.VisualStudio.LanguageServer.ContainedLanguage.MessageInterce
 /// <summary>
 /// Intercepts an LSP message and applies changes to the payload.
 /// </summary>
-internal abstract class MessageInterceptor
+public abstract class MessageInterceptor
 {
     /// <summary>
     /// Applies changes to the message token, and signals if the document path has been changed.

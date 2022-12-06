@@ -3,7 +3,7 @@
 
 namespace Microsoft.VisualStudio.Editor.Razor;
 
-internal abstract class TagHelperCompletionService
+public abstract class TagHelperCompletionService
 {
     public abstract AttributeCompletionResult GetAttributeCompletions(AttributeCompletionContext completionContext);
 

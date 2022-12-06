@@ -8,7 +8,7 @@ namespace Microsoft.VisualStudio.LanguageServer.ContainedLanguage.MessageInterce
 /// <summary>
 /// Contains an updated message token and a signal of whether the document Uri was changed.
 /// </summary>
-internal struct InterceptionResult
+public struct InterceptionResult
 {
     public static readonly InterceptionResult NoChange = new(null, false);
 

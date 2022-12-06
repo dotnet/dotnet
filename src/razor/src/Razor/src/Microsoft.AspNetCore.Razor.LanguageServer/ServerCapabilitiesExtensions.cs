@@ -8,7 +8,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-internal static class ServerCapabilitiesExtensions
+public static class ServerCapabilitiesExtensions
 {
     private static readonly IReadOnlyDictionary<string, PropertyInfo> s_propertyMappings;
 

@@ -12,7 +12,7 @@ using Microsoft.VisualStudio.Text.Editor;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
 
-internal abstract class VisualStudioDocumentTracker
+public abstract class VisualStudioDocumentTracker
 {
     public abstract event EventHandler<ContextChangeEventArgs> ContextChanged;
 

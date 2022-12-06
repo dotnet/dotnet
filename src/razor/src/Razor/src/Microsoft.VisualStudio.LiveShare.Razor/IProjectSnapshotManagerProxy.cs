@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Microsoft.VisualStudio.LiveShare.Razor;
 
-internal interface IProjectSnapshotManagerProxy
+public interface IProjectSnapshotManagerProxy
 {
     event EventHandler<ProjectChangeEventProxyArgs>? Changed;
 

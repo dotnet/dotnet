@@ -8,7 +8,7 @@ using Microsoft.VisualStudio.Text;
 
 namespace Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 
-internal abstract class LSPDocument : IDisposable
+public abstract class LSPDocument : IDisposable
 {
     public abstract int Version { get; }
 

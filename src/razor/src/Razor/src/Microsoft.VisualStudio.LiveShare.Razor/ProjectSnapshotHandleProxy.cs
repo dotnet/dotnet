@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 namespace Microsoft.VisualStudio.LiveShare.Razor;
 
-internal sealed class ProjectSnapshotHandleProxy
+public sealed class ProjectSnapshotHandleProxy
 {
     public ProjectSnapshotHandleProxy(
         Uri filePath,

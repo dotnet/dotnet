@@ -8,7 +8,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
 // We unify the ILspLogger and ILogger systems here because the ILspLogger class does not match the ILogger class used by Razor,
 // but we did not want to migrate them all at once
-internal class LoggerAdapter : IRazorLogger
+public class LoggerAdapter : IRazorLogger
 {
     private readonly ILogger _logger;
 

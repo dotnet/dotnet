@@ -12,7 +12,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Common;
 
 public class DefaultRemoteTextLoaderFactory : RemoteTextLoaderFactory
 {
-    internal override TextLoader Create(string filePath)
+    public override TextLoader Create(string filePath)
     {
         if (filePath is null)
         {

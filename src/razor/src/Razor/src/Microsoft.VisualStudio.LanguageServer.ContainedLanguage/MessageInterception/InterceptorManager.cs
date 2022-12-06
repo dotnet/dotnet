@@ -7,7 +7,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Microsoft.VisualStudio.LanguageServer.ContainedLanguage.MessageInterception;
 
-internal abstract class InterceptorManager
+public abstract class InterceptorManager
 {
     /// <summary>
     /// Returns whether there is an interceptor available for the given message name.

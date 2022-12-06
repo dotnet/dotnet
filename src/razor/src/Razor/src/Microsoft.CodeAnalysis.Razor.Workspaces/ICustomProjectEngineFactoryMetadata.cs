@@ -3,7 +3,7 @@
 
 namespace Microsoft.CodeAnalysis.Razor;
 
-internal interface ICustomProjectEngineFactoryMetadata
+public interface ICustomProjectEngineFactoryMetadata
 {
     string ConfigurationName { get; }
 

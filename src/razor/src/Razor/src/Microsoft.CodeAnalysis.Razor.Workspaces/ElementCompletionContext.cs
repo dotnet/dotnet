@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Razor.Language;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
 
-internal sealed class ElementCompletionContext
+public sealed class ElementCompletionContext
 {
     public ElementCompletionContext(
         TagHelperDocumentContext documentContext,

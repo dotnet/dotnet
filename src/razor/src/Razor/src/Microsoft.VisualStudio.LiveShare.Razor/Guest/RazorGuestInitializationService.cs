@@ -101,7 +101,7 @@ internal class RazorGuestInitializationService : ICollaborationServiceFactory
     }
 }
 
-internal class SessionActiveDetector : ICollaborationService, IDisposable
+public class SessionActiveDetector : ICollaborationService, IDisposable
 {
     private readonly Action _onDispose;
 

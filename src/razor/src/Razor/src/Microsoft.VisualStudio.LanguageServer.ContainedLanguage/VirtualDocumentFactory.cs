@@ -11,7 +11,7 @@ namespace Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 /// These <see cref="VirtualDocument"/>s are addressable via their <see cref="VirtualDocument.Uri"/>'s and represnt an embedded, addressable LSP
 /// document for a provided <see cref="ITextBuffer"/>.
 /// </summary>
-internal abstract class VirtualDocumentFactory
+public abstract class VirtualDocumentFactory
 {
     /// <summary>
     /// Attempts to create a <see cref="VirtualDocument"/> for the provided <paramref name="hostDocumentBuffer"/>.

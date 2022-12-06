@@ -10,7 +10,7 @@ namespace Microsoft.VisualStudio.LanguageServerClient.Razor.HtmlCSharp;
 
 internal class ClassifiedTextElementComparer : IEqualityComparer<ClassifiedTextElement>
 {
-    internal static ClassifiedTextElementComparer Default = new();
+    public static ClassifiedTextElementComparer Default = new();
 
     public bool Equals(ClassifiedTextElement x, ClassifiedTextElement y)
     {

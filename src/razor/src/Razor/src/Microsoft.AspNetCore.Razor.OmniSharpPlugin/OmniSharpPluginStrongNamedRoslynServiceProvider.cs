@@ -21,7 +21,7 @@ namespace Microsoft.AspNetCore.Razor.OmniSharpPlugin;
 
 [Shared]
 [Export(typeof(IHostServicesProvider))]
-internal class OmniSharpPluginStrongNamedRoslynServiceProvider : IHostServicesProvider
+public class OmniSharpPluginStrongNamedRoslynServiceProvider : IHostServicesProvider
 {
     public OmniSharpPluginStrongNamedRoslynServiceProvider()
     {

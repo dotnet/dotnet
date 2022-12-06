@@ -1,5 +1,0 @@
-﻿#nullable enable
-Microsoft.AspNetCore.Razor.LanguageServer.Program
-Microsoft.AspNetCore.Razor.LanguageServer.Program.Program() -> void
-static Microsoft.AspNetCore.Razor.LanguageServer.Program.Main(string![]! args) -> void
-static Microsoft.AspNetCore.Razor.LanguageServer.Program.MainAsync(string![]! args) -> System.Threading.Tasks.Task!

@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis.Host;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
 
-internal abstract class RazorSyntaxFactsService : ILanguageService
+public abstract class RazorSyntaxFactsService : ILanguageService
 {
     public abstract IReadOnlyList<ClassifiedSpan> GetClassifiedSpans(RazorSyntaxTree syntaxTree);
 
