@@ -118,8 +118,8 @@
         <note></note>
       </trans-unit>
       <trans-unit id="DeprecatedAdapterPath">
-        <source>Adapter lookup is being changed, please follow https://github.com/Microsoft/vstest-docs/blob/main/RFCs/0022-User-Specified-TestAdapter-Lookup.md#roadmap for more details.</source>
-        <target state="translated">适配器查找正在发生更改，请转到 https://github.com/Microsoft/vstest-docs/blob/main/RFCs/0022-User-Specified-TestAdapter-Lookup.md#roadmap 以了解详细信息。</target>
+        <source>Adapter lookup is being changed, please follow https://github.com/Microsoft/vstest/blob/main/RFCs/0022-User-Specified-TestAdapter-Lookup.md#roadmap for more details.</source>
+        <target state="translated">适配器查找正在发生更改，请转到 https://github.com/Microsoft/vstest/blob/main/RFCs/0022-User-Specified-TestAdapter-Lookup.md#roadmap 以了解详细信息。</target>
         <note></note>
       </trans-unit>
       <trans-unit id="NoTestsAvailableForGivenTestCaseFilter">

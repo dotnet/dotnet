@@ -118,8 +118,14 @@ public class DotnetHostHelper : IDotnetHostHelper
         return false;
     }
 
-    public bool TryGetDotnetPathByArchitecture(PlatformArchitecture targetArchitecture, [NotNullWhen(true)] out string? muxerPath)
+    public bool TryGetDotnetPathByArchitecture(
+        PlatformArchitecture targetArchitecture,
+        DotnetMuxerResolutionStrategy dotnetMuxerResolutionStrategy,
+        [NotNullWhen(true)] out string? muxerPath)
     {
+        muxerPath = null;
+        EqtTrace.Verbose($"DotnetHostHelper.TryGetDotnetPathByArchitecture: Using dotnet muxer resolution strategy: {dotnetMuxerResolutionStrategy}");
+
         // If current process is the same as the target architecture we return the current process filename.
         if (_processHelper.GetCurrentProcessArchitecture() == targetArchitecture)
         {
@@ -140,29 +146,37 @@ public class DotnetHostHelper : IDotnetHostHelper
         bool isWinOs = _environment.OperatingSystem == PlatformOperatingSystem.Windows;
         EqtTrace.Verbose($"DotnetHostHelper.TryGetDotnetPathByArchitecture: Searching for muxer named '{_muxerName}'");
 
-        // Try to search using env vars in the order
-        // DOTNET_ROOT_{arch}
-        // DOTNET_ROOT(x86) if X86 on Win (here we cannot check if current process is WOW64 because this is SDK process arch and not real host arch so it's irrelevant)
-        //                  "DOTNET_ROOT(x86) is used instead when running a 32-bit executable on a 64-bit OS."
-        // DOTNET_ROOT
-        string envKey = $"DOTNET_ROOT_{targetArchitecture.ToString().ToUpperInvariant()}";
-
-        // Try on arch specific env var
-        string? envVar = _environmentVariableHelper.GetEnvironmentVariable(envKey);
-
-        // Try on non virtualized x86 var(should happen only on non-x86 architecture)
-        if ((envVar == null || !_fileHelper.DirectoryExists(envVar)) &&
-            targetArchitecture == PlatformArchitecture.X86 && _environment.OperatingSystem == PlatformOperatingSystem.Windows)
+        string? envKey = null;
+        string? envVar = null;
+        if (dotnetMuxerResolutionStrategy.HasFlag(DotnetMuxerResolutionStrategy.DotnetRootArchitecture))
         {
-            envKey = $"DOTNET_ROOT(x86)";
+            // Try to search using env vars in the order
+            // DOTNET_ROOT_{arch}
+            // DOTNET_ROOT(x86) if X86 on Win (here we cannot check if current process is WOW64 because this is SDK process arch and not real host arch so it's irrelevant)
+            //                  "DOTNET_ROOT(x86) is used instead when running a 32-bit executable on a 64-bit OS."
+            // DOTNET_ROOT
+            envKey = $"DOTNET_ROOT_{targetArchitecture.ToString().ToUpperInvariant()}";
+
+            // Try on arch specific env var
             envVar = _environmentVariableHelper.GetEnvironmentVariable(envKey);
         }
 
-        // Try on default DOTNET_ROOT
-        if (envVar == null || !_fileHelper.DirectoryExists(envVar))
+        if (dotnetMuxerResolutionStrategy.HasFlag(DotnetMuxerResolutionStrategy.DotnetRootArchitectureLess))
         {
-            envKey = "DOTNET_ROOT";
-            envVar = _environmentVariableHelper.GetEnvironmentVariable(envKey);
+            // Try on non virtualized x86 var(should happen only on non-x86 architecture)
+            if ((envVar == null || !_fileHelper.DirectoryExists(envVar)) &&
+                targetArchitecture == PlatformArchitecture.X86 && _environment.OperatingSystem == PlatformOperatingSystem.Windows)
+            {
+                envKey = $"DOTNET_ROOT(x86)";
+                envVar = _environmentVariableHelper.GetEnvironmentVariable(envKey);
+            }
+
+            // Try on default DOTNET_ROOT
+            if (envVar == null || !_fileHelper.DirectoryExists(envVar))
+            {
+                envKey = "DOTNET_ROOT";
+                envVar = _environmentVariableHelper.GetEnvironmentVariable(envKey);
+            }
         }
 
         if (envVar != null)
@@ -196,64 +210,74 @@ public class DotnetHostHelper : IDotnetHostHelper
             }
         }
 
-        EqtTrace.Verbose($"DotnetHostHelper.TryGetDotnetPathByArchitecture: Muxer was not found using DOTNET_ROOT* env variables.");
-
-        // Try to search for global registration
-        muxerPath = isWinOs ? GetMuxerFromGlobalRegistrationWin(targetArchitecture) : GetMuxerFromGlobalRegistrationOnUnix(targetArchitecture);
-
-        if (muxerPath != null)
+        if (dotnetMuxerResolutionStrategy.HasFlag(DotnetMuxerResolutionStrategy.DotnetRootArchitecture)
+            || dotnetMuxerResolutionStrategy.HasFlag(DotnetMuxerResolutionStrategy.DotnetRootArchitectureLess))
         {
-            if (!_fileHelper.Exists(muxerPath))
-            {
-                // If muxer doesn't exists or it's wrong we stop the search
-                EqtTrace.Verbose($"DotnetHostHelper.TryGetDotnetPathByArchitecture: Muxer file not found for global registration '{muxerPath}'");
-                muxerPath = null;
-                return false;
-            }
-
-            if (!IsValidArchitectureMuxer(targetArchitecture, muxerPath))
-            {
-                // If muxer is wrong we stop the search
-                EqtTrace.Verbose($"DotnetHostHelper.TryGetDotnetPathByArchitecture: Muxer resolved using global registration is not compatible with the target architecture: '{muxerPath}'");
-                muxerPath = null;
-                return false;
-            }
-
-            EqtTrace.Verbose($"DotnetHostHelper.TryGetDotnetPathByArchitecture: Muxer compatible with '{targetArchitecture}' resolved from global registration: '{muxerPath}'");
-            return true;
+            EqtTrace.Verbose($"DotnetHostHelper.TryGetDotnetPathByArchitecture: Muxer was not found using DOTNET_ROOT* env variables.");
         }
 
-        EqtTrace.Verbose($"DotnetHostHelper.TryGetDotnetPathByArchitecture: Muxer not found using global registrations");
-
-        // Try searching in default installation location if it exists
-        if (isWinOs)
+        if (dotnetMuxerResolutionStrategy.HasFlag(DotnetMuxerResolutionStrategy.GlobalInstallationLocation))
         {
-            // If we're on x64/arm64 SDK and target is x86 we need to search on non virtualized windows folder
-            if ((_environment.Architecture == PlatformArchitecture.X64 || _environment.Architecture == PlatformArchitecture.ARM64) &&
-                 targetArchitecture == PlatformArchitecture.X86)
+            // Try to search for global registration
+            muxerPath = isWinOs ? GetMuxerFromGlobalRegistrationWin(targetArchitecture) : GetMuxerFromGlobalRegistrationOnUnix(targetArchitecture);
+
+            if (muxerPath != null)
             {
-                muxerPath = Path.Combine(_environmentVariableHelper.GetEnvironmentVariable("ProgramFiles(x86)")!, "dotnet", _muxerName);
+                if (!_fileHelper.Exists(muxerPath))
+                {
+                    // If muxer doesn't exists or it's wrong we stop the search
+                    EqtTrace.Verbose($"DotnetHostHelper.TryGetDotnetPathByArchitecture: Muxer file not found for global registration '{muxerPath}'");
+                    muxerPath = null;
+                    return false;
+                }
+
+                if (!IsValidArchitectureMuxer(targetArchitecture, muxerPath))
+                {
+                    // If muxer is wrong we stop the search
+                    EqtTrace.Verbose($"DotnetHostHelper.TryGetDotnetPathByArchitecture: Muxer resolved using global registration is not compatible with the target architecture: '{muxerPath}'");
+                    muxerPath = null;
+                    return false;
+                }
+
+                EqtTrace.Verbose($"DotnetHostHelper.TryGetDotnetPathByArchitecture: Muxer compatible with '{targetArchitecture}' resolved from global registration: '{muxerPath}'");
+                return true;
+            }
+
+            EqtTrace.Verbose($"DotnetHostHelper.TryGetDotnetPathByArchitecture: Muxer not found using global registrations");
+        }
+
+        if (dotnetMuxerResolutionStrategy.HasFlag(DotnetMuxerResolutionStrategy.DefaultInstallationLocation))
+        {
+            // Try searching in default installation location if it exists
+            if (isWinOs)
+            {
+                // If we're on x64/arm64 SDK and target is x86 we need to search on non virtualized windows folder
+                if ((_environment.Architecture == PlatformArchitecture.X64 || _environment.Architecture == PlatformArchitecture.ARM64) &&
+                     targetArchitecture == PlatformArchitecture.X86)
+                {
+                    muxerPath = Path.Combine(_environmentVariableHelper.GetEnvironmentVariable("ProgramFiles(x86)")!, "dotnet", _muxerName);
+                }
+                else
+                {
+                    // If we're on ARM and target is x64 we expect correct installation inside x64 folder
+                    muxerPath = _environment.Architecture == PlatformArchitecture.ARM64 && targetArchitecture == PlatformArchitecture.X64
+                        ? Path.Combine(_environmentVariableHelper.GetEnvironmentVariable("ProgramFiles")!, "dotnet", "x64", _muxerName)
+                        : Path.Combine(_environmentVariableHelper.GetEnvironmentVariable("ProgramFiles")!, "dotnet", _muxerName);
+                }
             }
             else
             {
-                // If we're on ARM and target is x64 we expect correct installation inside x64 folder
-                muxerPath = _environment.Architecture == PlatformArchitecture.ARM64 && targetArchitecture == PlatformArchitecture.X64
-                    ? Path.Combine(_environmentVariableHelper.GetEnvironmentVariable("ProgramFiles")!, "dotnet", "x64", _muxerName)
-                    : Path.Combine(_environmentVariableHelper.GetEnvironmentVariable("ProgramFiles")!, "dotnet", _muxerName);
-            }
-        }
-        else
-        {
-            if (_environment.OperatingSystem == PlatformOperatingSystem.OSX)
-            {
-                // If we're on ARM and target is x64 we expect correct installation inside x64 folder
-                muxerPath = _environment.Architecture == PlatformArchitecture.ARM64 && targetArchitecture == PlatformArchitecture.X64
-                    ? Path.Combine("/usr/local/share/dotnet/x64", _muxerName)
-                    : Path.Combine("/usr/local/share/dotnet", _muxerName);
-            }
-            else
-            {
-                muxerPath = Path.Combine("/usr/share/dotnet", _muxerName);
+                if (_environment.OperatingSystem == PlatformOperatingSystem.OSX)
+                {
+                    // If we're on ARM and target is x64 we expect correct installation inside x64 folder
+                    muxerPath = _environment.Architecture == PlatformArchitecture.ARM64 && targetArchitecture == PlatformArchitecture.X64
+                        ? Path.Combine("/usr/local/share/dotnet/x64", _muxerName)
+                        : Path.Combine("/usr/local/share/dotnet", _muxerName);
+                }
+                else
+                {
+                    muxerPath = Path.Combine("/usr/share/dotnet", _muxerName);
+                }
             }
         }
 

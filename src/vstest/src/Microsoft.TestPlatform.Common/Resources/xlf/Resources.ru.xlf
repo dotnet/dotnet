@@ -192,6 +192,11 @@
         <target state="translated">Трассировка стека:</target>
         <note></note>
       </trans-unit>
+      <trans-unit id="SerialTestRunInvalidScenario">
+        <source>&lt;ForceOneTestAtTimePerTestHost&gt;true&lt;/ForceOneTestAtTimePerTestHost&gt; is not supported for sources test run.</source>
+        <target state="translated">&lt;ForceOneTestAtTimePerTestHost&gt;true&lt;/ForceOneTestAtTimePerTestHost&gt; не поддерживается для тестового запуска источников.</target>
+        <note></note>
+      </trans-unit>
     </body>
   </file>
 </xliff>

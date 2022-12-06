@@ -54,6 +54,9 @@ internal partial class FeatureFlag : IFeatureFlag
     // even though we are blocking additional threads becuase we don't have to wait for ThreadPool to start more threads.
     public const string DISABLE_THREADPOOL_SIZE_INCREASE = VSTEST_ + nameof(DISABLE_THREADPOOL_SIZE_INCREASE);
 
+    // Disable the SerialTestRunDecorator
+    public const string DISABLE_SERIALTESTRUN_DECORATOR = VSTEST_ + nameof(DISABLE_SERIALTESTRUN_DECORATOR);
+
     [Obsolete("Only use this in tests.")]
     internal static void Reset()
     {

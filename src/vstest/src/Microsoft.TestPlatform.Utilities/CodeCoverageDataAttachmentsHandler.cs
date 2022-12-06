@@ -49,6 +49,12 @@ public class CodeCoverageDataAttachmentsHandler : IDataCollectorAttachmentProces
         if (attachments?.Any() != true)
             return new Collection<AttachmentSet>();
 
+        // Merging per test code coverage is not supported
+        if (IsPerTestCoverageEnabled(configurationElement))
+        {
+            return attachments;
+        }
+
         var coverageReportFilePaths = new List<string>();
         var coverageOtherFilePaths = new List<string>();
 
@@ -90,6 +96,20 @@ public class CodeCoverageDataAttachmentsHandler : IDataCollectorAttachmentProces
         }
 
         return attachments;
+
+        static bool IsPerTestCoverageEnabled(XmlElement? configurationElement)
+        {
+            XmlNodeList? xmlNodeList = configurationElement?.GetElementsByTagName("PerTestCodeCoverage");
+            if (xmlNodeList?.Count == 1)
+            {
+                if (bool.TryParse(xmlNodeList[0]?.InnerText, out bool enabled))
+                {
+                    return enabled;
+                }
+            }
+
+            return false;
+        }
     }
 
     private static async Task<IList<string>?> MergeCodeCoverageFilesAsync(IList<string> files, IProgress<int> progressReporter, CancellationToken cancellationToken)
@@ -122,12 +142,13 @@ public class CodeCoverageDataAttachmentsHandler : IDataCollectorAttachmentProces
 
     private static async Task<IList<string>?> MergeCodeCoverageFilesAsync(IList<string> files, CancellationToken cancellationToken)
     {
-        TPDebug.Assert(s_mergeOperationEnumValues != null);
-
         cancellationToken.ThrowIfCancellationRequested();
 
         // Invoke methods
         LoadCodeCoverageAssembly();
+
+        TPDebug.Assert(s_mergeOperationEnumValues != null);
+
         var task = (Task)s_mergeMethodInfo.Invoke(s_classInstance, new object[] { files[0], files, s_mergeOperationEnumValues.GetValue(0)!, true, cancellationToken })!;
         await task.ConfigureAwait(false);
 

@@ -10,9 +10,8 @@
 
 namespace Microsoft.VisualStudio.TestPlatform.Common.Resources {
     using System;
-    using System.Reflection;
-
-
+    
+    
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -20,7 +19,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Common.Resources {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -40,7 +39,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Common.Resources {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Microsoft.VisualStudio.TestPlatform.Common.Resources.Resources", typeof(Resources).GetTypeInfo().Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Microsoft.VisualStudio.TestPlatform.Common.Resources.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -328,6 +327,15 @@ namespace Microsoft.VisualStudio.TestPlatform.Common.Resources {
         internal static string RunSettingsParseError {
             get {
                 return ResourceManager.GetString("RunSettingsParseError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;ForceOneTestAtTimePerTestHost&gt;true&lt;/ForceOneTestAtTimePerTestHost&gt; is not supported for sources test run..
+        /// </summary>
+        internal static string SerialTestRunInvalidScenario {
+            get {
+                return ResourceManager.GetString("SerialTestRunInvalidScenario", resourceCulture);
             }
         }
         

@@ -476,7 +476,7 @@ Discovery workflow is used to find tests in the provided test sources. Discovery
 > ℹ️ The real work is often offloaded to a test framework such as NUnit, which runs inside of the testhost process. This is not shown in the workflow below.
 
 ```mermaid
-%% https://github.com/microsoft/vstest-docs/blob/main/RFCs/0001-Test-Platform-Architecture.md#discovery
+%% ./RFCs/0001-Test-Platform-Architecture.md#discovery
 sequenceDiagram
 participant c as Client<br>(Visual Studio)
 participant r as Runner<br>(vstest.console.exe)
@@ -936,7 +936,7 @@ There are four distinct messages, one for each mode, which all use the same payl
 Below, only the most complex workflow is shown:
 
 ```mermaid
-%% https://github.com/microsoft/vstest-docs/blob/main/RFCs/0001-Test-Platform-Architecture.md#discovery
+%% ./RFCs/0001-Test-Platform-Architecture.md#discovery
 sequenceDiagram
 participant c as Client<br>(Visual Studio)
 participant r as Runner<br>(vstest.console.exe)

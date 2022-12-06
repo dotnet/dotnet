@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.PlatformAbstractions;
@@ -122,6 +123,7 @@ internal class AssemblyResolver : IDisposable
 
             TPDebug.Assert(requestedName != null && !requestedName.Name.IsNullOrEmpty(), "AssemblyResolver.OnResolve: requested is null or name is empty!");
 
+            var isResource = requestedName.Name.EndsWith(".resources");
             foreach (var dir in _searchDirectories)
             {
                 if (dir.IsNullOrEmpty())
@@ -136,7 +138,6 @@ internal class AssemblyResolver : IDisposable
                     var assemblyPath = Path.Combine(dir, requestedName.Name + extension);
                     try
                     {
-                        var isResource = requestedName.Name.EndsWith(".resources");
                         bool pushed = false;
                         try
                         {

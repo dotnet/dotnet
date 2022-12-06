@@ -44,8 +44,16 @@ internal class Program
                 <RunConfiguration>
 
                     <!-- <MaxCpuCount>1</MaxCpuCount> -->
+                    <!-- <DisableParallelization>True<DisableParallelization> -->
                     <!-- <TargetPlatform>x86</TargetPlatform> -->
                     <!-- <TargetFrameworkVersion>net472</TargetFrameworkVersion> -->
+
+                    <!-- Per test coverage support -->
+                    <!--
+                    <MaxCpuCount>0</MaxCpuCount>
+                    <ForceOneTestAtTimePerTestHost>True</ForceOneTestAtTimePerTestHost>
+                    <TargetFrameworkTestHostDemultiplexer>4</TargetFrameworkTestHostDemultiplexer>
+                    -->
 
                     <!-- The settings below are what VS sends by default. -->
                     <CollectSourceInformation>False</CollectSourceInformation>
@@ -81,7 +89,8 @@ internal class Program
 
         var sources = new[] {
             Path.Combine(playground, "MSTest1", "bin", "Debug", "net472", "MSTest1.dll"),
-            Path.Combine(playground, "MSTest1", "bin", "Debug", "net5.0", "MSTest1.dll"),
+            //Path.Combine(playground, "MSTest2", "bin", "Debug", "net472", "MSTest2.dll"),
+            //Path.Combine(playground, "MSTest1", "bin", "Debug", "net5.0", "MSTest1.dll"),
         };
 
         //// Console mode
@@ -136,9 +145,9 @@ internal class Program
         Console.WriteLine($"Discovery done in {discoveryDuration} ms");
         sw.Restart();
         // Run with test cases and custom testhost launcher
-        r.RunTestsWithCustomTestHost(discoveryHandler.TestCases, sourceSettings, options, sessionHandler.TestSessionInfo, new TestRunHandler(detailedOutput), new DebuggerTestHostLauncher());
+        //r.RunTestsWithCustomTestHost(discoveryHandler.TestCases, sourceSettings, options, sessionHandler.TestSessionInfo, new TestRunHandler(detailedOutput), new DebuggerTestHostLauncher());
         //// Run with test cases and without custom testhost launcher
-        //r.RunTests(discoveryHandler.TestCases, sourceSettings, options, sessionHandler.TestSessionInfo, new TestRunHandler(detailedOutput));
+        r.RunTests(discoveryHandler.TestCases, sourceSettings, options, sessionHandler.TestSessionInfo, new TestRunHandler(detailedOutput));
         //// Run with sources and custom testhost launcher
         //r.RunTestsWithCustomTestHost(sources, sourceSettings, options, sessionHandler.TestSessionInfo, new TestRunHandler(detailedOutput), new DebuggerTestHostLauncher());
         //// Run with sources

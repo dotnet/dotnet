@@ -192,6 +192,11 @@
         <target state="translated">Arborescence des appels de procédure :</target>
         <note></note>
       </trans-unit>
+      <trans-unit id="SerialTestRunInvalidScenario">
+        <source>&lt;ForceOneTestAtTimePerTestHost&gt;true&lt;/ForceOneTestAtTimePerTestHost&gt; is not supported for sources test run.</source>
+        <target state="translated">&lt;ForceOneTestAtTimePerTestHost&gt;&lt;/ForceOneTestAtTimePerTestHost&gt; true n’est pas prise en charge pour la série de tests sources.</target>
+        <note></note>
+      </trans-unit>
     </body>
   </file>
 </xliff>

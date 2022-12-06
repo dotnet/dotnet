@@ -608,27 +608,13 @@ public class TrxLogger : ITestLoggerWithParameters
         TestCase testCase = rockSteadyTestResult.TestCase;
         Guid testId = Converter.GetTestId(testCase);
 
-        // Scenario for inner test case when parent test element is not present.
-        string? testName = testCase.DisplayName;
-        var adapter = testCase.ExecutorUri.ToString();
-        if (adapter.Contains(TrxLoggerConstants.MstestAdapterString) &&
-            parentTestElement == null &&
-            !string.IsNullOrEmpty(rockSteadyTestResult.DisplayName))
-        {
-            // Note: For old mstest adapters hierarchical support was not present. Thus inner result of data driven was identified using test result display name.
-            // Non null test result display name means its a inner result of data driven/ordered test.
-            // Changing GUID to keep supporting old mstest adapters.
-            testId = Guid.NewGuid();
-            testName = rockSteadyTestResult.DisplayName;
-        }
-
         // Get test element
         testElement = GetTestElement(testId);
 
         // Create test element
         if (testElement == null)
         {
-            testElement = Converter.ToTestElement(testId, executionId, parentExecutionId, testName!, testType, testCase);
+            testElement = Converter.ToTestElement(testId, executionId, parentExecutionId, testCase.DisplayName, testType, testCase);
             _testElements.TryAdd(testId, testElement);
         }
 

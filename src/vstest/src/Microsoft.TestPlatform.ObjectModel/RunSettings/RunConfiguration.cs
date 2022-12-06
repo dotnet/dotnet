@@ -901,7 +901,12 @@ public class RunConfiguration : TestRunSettings
                         }
                         runConfiguration.TreatNoTestsAsError = treatNoTestsAsError;
                         break;
-
+                    // Configuration used but not exposed to the public to avoid the Warning inside the log
+                    case "ForceOneTestAtTimePerTestHost":
+                    case "EnvironmentVariables":
+                    case "TargetFrameworkTestHostLoadBalancingStrategy":
+                        reader.Skip();
+                        break;
                     default:
                         // Ignore a runsettings element that we don't understand. It could occur in the case
                         // the test runner is of a newer version, but the test host is of an earlier version.

@@ -63,7 +63,6 @@ Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatfo
 Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Helpers.Interfaces.IDotnetHostHelper
 Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Helpers.Interfaces.IDotnetHostHelper.GetDotnetPath() -> string!
 Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Helpers.Interfaces.IDotnetHostHelper.GetMonoPath() -> string!
-Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Helpers.Interfaces.IDotnetHostHelper.TryGetDotnetPathByArchitecture(Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformArchitecture targetArchitecture, out string? muxerPath) -> bool
 Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace
 Microsoft.VisualStudio.TestPlatform.ObjectModel.ValidateArg
 Microsoft.VisualStudio.TestPlatform.ObjectModel.ValidateArgProperty
@@ -169,3 +168,11 @@ static Microsoft.VisualStudio.TestPlatform.Utilities.TimeSpanParser.TryParse(str
 virtual Microsoft.VisualStudio.TestPlatform.Utilities.JobQueue<T>.WaitForQueueToGetEmpty() -> bool
 static Microsoft.VisualStudio.TestPlatform.Utilities.MulticastDelegateUtilities.SafeInvoke(this System.Delegate? delegates, object? sender, object! args, string! traceDisplayName) -> void
 Microsoft.VisualStudio.TestPlatform.Utilities.JobQueue<T>.IsPaused.get -> bool
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.DotnetMuxerResolutionStrategy
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.DotnetMuxerResolutionStrategy.Default = Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.DotnetMuxerResolutionStrategy.DotnetRootArchitecture | Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.DotnetMuxerResolutionStrategy.DotnetRootArchitectureLess | Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.DotnetMuxerResolutionStrategy.GlobalInstallationLocation | Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.DotnetMuxerResolutionStrategy.DefaultInstallationLocation -> Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.DotnetMuxerResolutionStrategy
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.DotnetMuxerResolutionStrategy.DefaultInstallationLocation = 8 -> Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.DotnetMuxerResolutionStrategy
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.DotnetMuxerResolutionStrategy.DotnetRootArchitecture = 1 -> Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.DotnetMuxerResolutionStrategy
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.DotnetMuxerResolutionStrategy.DotnetRootArchitectureLess = 2 -> Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.DotnetMuxerResolutionStrategy
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.DotnetMuxerResolutionStrategy.GlobalInstallationLocation = 4 -> Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.DotnetMuxerResolutionStrategy
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Helpers.DotnetHostHelper.TryGetDotnetPathByArchitecture(Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformArchitecture targetArchitecture, Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.DotnetMuxerResolutionStrategy dotnetMuxerResolutionStrategy, out string? muxerPath) -> bool
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Helpers.Interfaces.IDotnetHostHelper.TryGetDotnetPathByArchitecture(Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformArchitecture targetArchitecture, Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.DotnetMuxerResolutionStrategy dotnetMuxerResolutionStrategy, out string? muxerPath) -> bool

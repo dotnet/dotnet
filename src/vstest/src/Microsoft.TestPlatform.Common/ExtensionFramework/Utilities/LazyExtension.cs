@@ -4,6 +4,10 @@
 using System;
 using System.Linq;
 
+using Microsoft.VisualStudio.TestPlatform.Common.ExtensionDecorators;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
+using Microsoft.VisualStudio.TestPlatform.Utilities;
+
 namespace Microsoft.VisualStudio.TestPlatform.Common.ExtensionFramework.Utilities;
 
 /// <summary>
@@ -16,6 +20,7 @@ public class LazyExtension<TExtension, TMetadata>
     private static readonly object Synclock = new();
     private readonly Type? _metadataType;
     private readonly Func<TExtension>? _extensionCreator;
+    private readonly ExtensionDecoratorFactory _extensionDecoratorFactory = new(FeatureFlag.Instance);
     private TExtension? _extension;
     private TMetadata? _metadata;
 
@@ -96,7 +101,15 @@ public class LazyExtension<TExtension, TMetadata>
                             TPDebug.Assert(TestPluginInfo.AssemblyQualifiedName is not null, "TestPluginInfo.AssemblyQualifiedName is null");
                             var pluginType = TestPluginManager.GetTestExtensionType(TestPluginInfo.AssemblyQualifiedName);
                             TPDebug.Assert(pluginType is not null, "pluginType is null");
-                            _extension = TestPluginManager.CreateTestExtension<TExtension>(pluginType);
+
+                            // If the extension is a test executor we decorate the adapter to augment the test platform capabilities.
+                            var extension = TestPluginManager.CreateTestExtension<TExtension>(pluginType);
+                            if (typeof(ITestExecutor).IsAssignableFrom(typeof(TExtension)))
+                            {
+                                extension = (TExtension)_extensionDecoratorFactory.Decorate((ITestExecutor)extension!);
+                            }
+
+                            _extension = extension;
                         }
                     }
                 }

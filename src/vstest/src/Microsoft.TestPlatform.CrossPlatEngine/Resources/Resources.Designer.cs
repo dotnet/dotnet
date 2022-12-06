@@ -24,15 +24,15 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Resources {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
-        
+
         private static global::System.Resources.ResourceManager resourceMan;
-        
+
         private static global::System.Globalization.CultureInfo resourceCulture;
-        
+
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal Resources() {
         }
-        
+
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
@@ -46,7 +46,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Resources {
                 return resourceMan;
             }
         }
-        
+
         /// <summary>
         ///   Overrides the current thread's CurrentUICulture property for all
         ///   resource lookups using this strongly typed resource class.
@@ -60,7 +60,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Resources {
                 resourceCulture = value;
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to {0} Access denied while trying to create &quot;TestResults&quot; folder in mentioned location. You are getting this exception because you are running vstest.console.exe from a folder which requires having write access. To solve the issue: please  run vstest.console.exe from a folder where you have write privileges..
         /// </summary>
@@ -69,7 +69,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Resources {
                 return ResourceManager.GetString("AccessDenied", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Cannot attach the debugger to the default test host with process ID: {0}..
         /// </summary>
@@ -78,7 +78,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Resources {
                 return ResourceManager.GetString("AttachDebuggerToDefaultTestHostFailure", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to   {0}.
         /// </summary>
@@ -87,7 +87,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Resources {
                 return ResourceManager.GetString("AttachmentOutputFormat", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Attachments:.
         /// </summary>
@@ -96,7 +96,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Resources {
                 return ResourceManager.GetString("AttachmentsBanner", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to DataCollector debugging is enabled. Please attach debugger to datacollector process to continue..
         /// </summary>
@@ -105,16 +105,16 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Resources {
                 return ResourceManager.GetString("DataCollectorDebuggerWarning", resourceCulture);
             }
         }
-        
+
         /// <summary>
-        ///   Looks up a localized string similar to Adapter lookup is being changed, please follow https://github.com/Microsoft/vstest-docs/blob/main/RFCs/0022-User-Specified-TestAdapter-Lookup.md#roadmap for more details..
+        ///   Looks up a localized string similar to Adapter lookup is being changed, please follow https://github.com/Microsoft/vstest/blob/main/RFCs/0022-User-Specified-TestAdapter-Lookup.md#roadmap for more details..
         /// </summary>
         internal static string DeprecatedAdapterPath {
             get {
                 return ResourceManager.GetString("DeprecatedAdapterPath", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Exception occurred while instantiating discoverer : {0}.
         /// </summary>
@@ -123,7 +123,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Resources {
                 return ResourceManager.GetString("DiscovererInstantiationException", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Multiple test adapters with the same uri &apos;{0}&apos; were found. Ignoring adapter &apos;{1}&apos;. Please uninstall the conflicting adapter(s) to avoid this warning..
         /// </summary>
@@ -132,7 +132,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Resources {
                 return ResourceManager.GetString("DuplicateAdaptersFound", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Ignoring the specified duplicate source &apos;{0}&apos;..
         /// </summary>
@@ -141,7 +141,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Resources {
                 return ResourceManager.GetString("DuplicateSource", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to An exception occurred while test discoverer &apos;{0}&apos; was loading tests. Exception: {1}.
         /// </summary>
@@ -150,7 +150,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Resources {
                 return ResourceManager.GetString("ExceptionFromLoadTests", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to An exception occurred while invoking executor &apos;{0}&apos;: {1}.
         /// </summary>
@@ -159,7 +159,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Resources {
                 return ResourceManager.GetString("ExceptionFromRunTests", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to ExecutionThreadApartmentState option not supported for framework: {0}..
         /// </summary>
@@ -168,7 +168,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Resources {
                 return ResourceManager.GetString("ExecutionThreadApartmentStateNotSupportedForFramework", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Failed to launch testhost with error: {0}.
         /// </summary>
@@ -177,7 +177,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Resources {
                 return ResourceManager.GetString("FailedToLaunchTestHost", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Could not find file {0}..
         /// </summary>
@@ -186,7 +186,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Resources {
                 return ResourceManager.GetString("FileNotFound", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Host debugging is enabled. Please attach debugger to testhost process to continue..
         /// </summary>
@@ -195,7 +195,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Resources {
                 return ResourceManager.GetString("HostDebuggerWarning", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Ignoring the test executor corresponding to test discoverer {0} because the discoverer does not have the DefaultExecutorUri attribute . You might need to re-install the test adapter add-in..
         /// </summary>
@@ -204,7 +204,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Resources {
                 return ResourceManager.GetString("IgnoringExecutorAsNoDefaultExecutorUriAttribute", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Failed to initialize client proxy: could not connect to test process..
         /// </summary>
@@ -213,7 +213,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Resources {
                 return ResourceManager.GetString("InitializationFailed", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to This operation is not allowed in the context of a non-debug run..
         /// </summary>
@@ -222,7 +222,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Resources {
                 return ResourceManager.GetString("LaunchDebugProcessNotAllowedForANonDebugRun", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Could not find an available proxy to deque..
         /// </summary>
@@ -231,7 +231,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Resources {
                 return ResourceManager.GetString("NoAvailableProxyForDeque", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Could not find {0}. Make sure that the dotnet is installed on the machine..
         /// </summary>
@@ -240,7 +240,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Resources {
                 return ResourceManager.GetString("NoDotnetExeFound", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Could not find test executor with URI &apos;{0}&apos;.  Make sure that the test executor is installed and supports .net runtime version {1}..
         /// </summary>
@@ -249,7 +249,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Resources {
                 return ResourceManager.GetString("NoMatchingExecutor", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Could not find extensions: {0}.
         /// </summary>
@@ -258,7 +258,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Resources {
                 return ResourceManager.GetString("NonExistingExtensions", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The runsettings changed between the time when the test session was established and the time of the current run/discovery request..
         /// </summary>
@@ -267,7 +267,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Resources {
                 return ResourceManager.GetString("NoProxyMatchesDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Proxy with id {0} is not managed by the current session manager..
         /// </summary>
@@ -276,7 +276,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Resources {
                 return ResourceManager.GetString("NoSuchProxyId", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to No suitable test runtime provider was found:.
         /// </summary>
@@ -285,7 +285,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Resources {
                 return ResourceManager.GetString("NoSuitableRuntimeProviderFound", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to No suitable test runtime provider was found for any source in this run..
         /// </summary>
@@ -294,7 +294,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Resources {
                 return ResourceManager.GetString("NoTestHostProviderFound", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to No test matches the given testcase filter `{0}` in {1}.
         /// </summary>
@@ -303,7 +303,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Resources {
                 return ResourceManager.GetString("NoTestsAvailableForGivenTestCaseFilter", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to None of the specified source(s) &apos;{0}&apos; is valid. Fix the above errors/warnings and then try again. .
         /// </summary>
@@ -312,7 +312,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Resources {
                 return ResourceManager.GetString("NoValidSourceFoundForDiscovery", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You are using an older version of Microsoft.NET.Test.Sdk. Kindly move to a version equal or greater than 15.3.0..
         /// </summary>
@@ -321,7 +321,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Resources {
                 return ResourceManager.GetString("OldTestHostIsGettingUsed", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Proxy with id {0} is already available and cannot be re-enqueued..
         /// </summary>
@@ -330,7 +330,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Resources {
                 return ResourceManager.GetString("ProxyIsAlreadyAvailable", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Skipping source:.
         /// </summary>
@@ -339,7 +339,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Resources {
                 return ResourceManager.GetString("SkippingSource", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to , .
         /// </summary>
@@ -348,7 +348,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Resources {
                 return ResourceManager.GetString("StringSeperator", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Discovery of tests cancelled..
         /// </summary>
@@ -357,7 +357,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Resources {
                 return ResourceManager.GetString("TestDiscoveryCancelled", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Logging TestHost Diagnostics in file: {0}.
         /// </summary>
@@ -366,7 +366,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Resources {
                 return ResourceManager.GetString("TesthostDiagLogOutputFile", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Testhost process for source(s) &apos;{0}&apos; exited with error: {1}. Please check the diagnostic logs for more information..
         /// </summary>
@@ -375,7 +375,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Resources {
                 return ResourceManager.GetString("TestHostExitedWithError", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to No test is available in {0}. Make sure that test discoverer &amp; executors are registered and platform &amp; framework version settings are appropriate and try again..
         /// </summary>
@@ -384,7 +384,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Resources {
                 return ResourceManager.GetString("TestRunFailed_NoDiscovererFound_NoTestsAreAvailableInTheSources", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to No tests matched the filter because it contains one or more properties that are not valid ({0}). Specify filter expression containing valid properties ({1})..
         /// </summary>
