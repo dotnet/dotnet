@@ -161,7 +161,10 @@ stages:
           displayName: Publish packages, blobs and symbols
           inputs:
             filePath: $(Build.SourcesDirectory)/eng/common/sdk-task.ps1
-            arguments: -task PublishArtifactsInManifest -restore -msbuildEngine dotnet
+            arguments: -task PublishArtifactsInManifest
+              -restore
+              -msbuildEngine dotnet
+              -verbosity detailed
               /p:PublishingInfraVersion=3
               /p:BARBuildId=${{ parameters.BARBuildId }}
               /p:TargetChannels='${{ parameters.PromoteToChannelIds }}'

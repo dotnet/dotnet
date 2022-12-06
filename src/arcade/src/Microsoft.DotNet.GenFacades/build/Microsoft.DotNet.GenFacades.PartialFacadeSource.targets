@@ -14,13 +14,13 @@
   </PropertyGroup>
 
   <Target Name="GeneratePartialFacadeSource"
-          Inputs="$(MSBuildAllProjects);@($(GenFacadesReferenceAssemblyItemName));@($(GenFacadesReferencePathItemName));@(Compile)"
+          Inputs="$(MSBuildAllProjects);@($(GenFacadesReferenceAssemblyItemName));@($(GenFacadesReferencePathItemName));@(Compile->WithMetadataValue('ExcludeFromGenFacades', ''))"
           Outputs="$(GenFacadesOutputSourcePath)"
           DependsOnTargets="$(GeneratePartialFacadeSourceDependsOn)">
     <GenPartialFacadeSource
       ReferencePaths="@($(GenFacadesReferencePathItemName))"
       ReferenceAssembly="@($(GenFacadesReferenceAssemblyItemName))"
-      CompileFiles="@(Compile)"
+      CompileFiles="@(Compile->WithMetadataValue('ExcludeFromGenFacades', ''))"
       DefineConstants="$(DefineConstants)"
       LangVersion="$(LangVersion)"
       IgnoreMissingTypes="$(GenFacadesIgnoreMissingTypes)"
