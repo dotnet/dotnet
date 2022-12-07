@@ -67,9 +67,9 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/sdk -->
-    <MicrosoftDotNetCommonItemTemplatesPackageVersion>8.0.100-alpha.1.22606.7</MicrosoftDotNetCommonItemTemplatesPackageVersion>
-    <MicrosoftNETSdkPackageVersion>8.0.100-alpha.1.22606.7</MicrosoftNETSdkPackageVersion>
-    <MicrosoftDotNetMSBuildSdkResolverPackageVersion>8.0.100-alpha.1.22606.7</MicrosoftDotNetMSBuildSdkResolverPackageVersion>
+    <MicrosoftDotNetCommonItemTemplatesPackageVersion>8.0.100-alpha.1.22606.10</MicrosoftDotNetCommonItemTemplatesPackageVersion>
+    <MicrosoftNETSdkPackageVersion>8.0.100-alpha.1.22606.10</MicrosoftNETSdkPackageVersion>
+    <MicrosoftDotNetMSBuildSdkResolverPackageVersion>8.0.100-alpha.1.22606.10</MicrosoftDotNetMSBuildSdkResolverPackageVersion>
     <MicrosoftNETBuildExtensionsPackageVersion>$(MicrosoftNETSdkPackageVersion)</MicrosoftNETBuildExtensionsPackageVersion>
     <MicrosoftDotnetToolsetInternalPackageVersion>$(MicrosoftNETSdkPackageVersion)</MicrosoftDotnetToolsetInternalPackageVersion>
     <MicrosoftDotnetTemplateLocatorPackageVersion>$(MicrosoftNETSdkPackageVersion)</MicrosoftDotnetTemplateLocatorPackageVersion>
@@ -221,8 +221,8 @@
     <XamarinMacOSWorkloadManifestVersion>12.3.2372</XamarinMacOSWorkloadManifestVersion>
     <XamarinTvOSWorkloadManifestVersion>16.0.1478</XamarinTvOSWorkloadManifestVersion>
     <MonoWorkloadManifestVersion>$(MicrosoftNETCoreAppRefPackageVersion)</MonoWorkloadManifestVersion>
-    <MicrosoftNETWorkloadEmscriptennet6Manifest80100Version>8.0.0-alpha.1.22578.1</MicrosoftNETWorkloadEmscriptennet6Manifest80100Version>
-    <MicrosoftNETWorkloadEmscriptennet7Manifest80100Version>8.0.0-alpha.1.22578.1</MicrosoftNETWorkloadEmscriptennet7Manifest80100Version>
+    <MicrosoftNETWorkloadEmscriptennet6Manifest80100Version>8.0.0-alpha.1.22605.2</MicrosoftNETWorkloadEmscriptennet6Manifest80100Version>
+    <MicrosoftNETWorkloadEmscriptennet7Manifest80100Version>8.0.0-alpha.1.22605.2</MicrosoftNETWorkloadEmscriptennet7Manifest80100Version>
     <EmscriptenWorkloadManifestVersion>$(MicrosoftNETWorkloadEmscriptennet7Manifest80100Version)</EmscriptenWorkloadManifestVersion>
   </PropertyGroup>
   <PropertyGroup>

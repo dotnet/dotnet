@@ -102,22 +102,22 @@
       <Uri>https://github.com/dotnet/test-templates</Uri>
       <Sha>bb3695688177f5f80eeb3c0498168612e31549d5</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Common.ItemTemplates" Version="8.0.100-alpha.1.22606.7">
+    <Dependency Name="Microsoft.DotNet.Common.ItemTemplates" Version="8.0.100-alpha.1.22606.10">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>21fafac880edeab5bba9026e10c1583641606391</Sha>
+      <Sha>3ed8009d2bb26a9cd52875d9c4f80d504427a1f3</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.TemplateEngine.Cli" Version="8.0.100-alpha.1.22606.7">
+    <Dependency Name="Microsoft.TemplateEngine.Cli" Version="8.0.100-alpha.1.22606.10">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>21fafac880edeab5bba9026e10c1583641606391</Sha>
+      <Sha>3ed8009d2bb26a9cd52875d9c4f80d504427a1f3</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Sdk" Version="8.0.100-alpha.1.22606.7">
+    <Dependency Name="Microsoft.NET.Sdk" Version="8.0.100-alpha.1.22606.10">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>21fafac880edeab5bba9026e10c1583641606391</Sha>
+      <Sha>3ed8009d2bb26a9cd52875d9c4f80d504427a1f3</Sha>
       <SourceBuild RepoName="sdk" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.MSBuildSdkResolver" Version="8.0.100-alpha.1.22606.7">
+    <Dependency Name="Microsoft.DotNet.MSBuildSdkResolver" Version="8.0.100-alpha.1.22606.10">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>21fafac880edeab5bba9026e10c1583641606391</Sha>
+      <Sha>3ed8009d2bb26a9cd52875d9c4f80d504427a1f3</Sha>
     </Dependency>
     <!-- For coherency purposes, these versions should be gated by the versions of winforms and wpf routed via windowsdesktop -->
     <Dependency Name="Microsoft.Dotnet.WinForms.ProjectTemplates" Version="8.0.0-alpha.1.22602.3" CoherentParentDependency="Microsoft.WindowsDesktop.App.Runtime.win-x64">
@@ -167,13 +167,13 @@
       <Uri>https://github.com/Microsoft/ApplicationInsights-dotnet</Uri>
       <Sha>53b80940842204f78708a538628288ff5d741a1d</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Workload.Emscripten.net6.Manifest-8.0.100" Version="8.0.0-alpha.1.22578.1">
+    <Dependency Name="Microsoft.NET.Workload.Emscripten.net6.Manifest-8.0.100" Version="8.0.0-alpha.1.22605.2">
       <Uri>https://github.com/dotnet/emsdk</Uri>
-      <Sha>2039a62eeb52e1288f0b4aa6f71baae8f99a6f5b</Sha>
+      <Sha>16e4d145b2c911c42c2668782dfc42e4500a425d</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Workload.Emscripten.net7.Manifest-8.0.100" Version="8.0.0-alpha.1.22578.1">
+    <Dependency Name="Microsoft.NET.Workload.Emscripten.net7.Manifest-8.0.100" Version="8.0.0-alpha.1.22605.2">
       <Uri>https://github.com/dotnet/emsdk</Uri>
-      <Sha>2039a62eeb52e1288f0b4aa6f71baae8f99a6f5b</Sha>
+      <Sha>16e4d145b2c911c42c2668782dfc42e4500a425d</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Deployment.DotNet.Releases" Version="1.0.0-preview5.1.22263.1">
       <Uri>https://github.com/dotnet/deployment-tools</Uri>
