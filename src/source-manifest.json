@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "packageVersion": "8.0.0-beta.22605.1",
+      "packageVersion": "8.0.0-beta.22606.1",
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "c96d78299a4fe5557bd564e44b63725cdbabd960"
+      "commitSha": "513428e6a7a61bc5f4efd82afee219e90df51bfe"
     },
     {
       "packageVersion": "8.0.0-alpha.1.22605.17",
@@ -46,7 +46,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "3735a516402208720f5fd7d104b2b882d762d2a3"
+      "commitSha": "dbe4565beb8fc4f919c5e2edae508f23fd376f69"
     },
     {
       "packageVersion": "7.0.100-1.22605.2",
@@ -103,16 +103,16 @@
       "commitSha": "3ed8009d2bb26a9cd52875d9c4f80d504427a1f3"
     },
     {
-      "packageVersion": "8.0.0-alpha.1.22601.1",
+      "packageVersion": "8.0.0-alpha.1.22606.1",
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "82852951f9148c22e2aaeb0b1a7c3928401489db"
+      "commitSha": "0b78f2932d3a804833ff5ca212c685bb25d2ba4f"
     },
     {
-      "packageVersion": "8.0.0-alpha.1.22606.1",
+      "packageVersion": "8.0.0-alpha.1.22607.1",
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "42f1122c5d6b3d069c97e47458b0bf1deca04905"
+      "commitSha": "37a8ae6969a3247a9080efaf34f577c4c2d04cfe"
     },
     {
       "packageVersion": "1.2.0-beta-22518-02",
@@ -151,10 +151,10 @@
       "commitSha": "9a1c3e1b7f0c8763d4c96e593961a61a72679a7b"
     },
     {
-      "packageVersion": "1.0.0-beta.22580.1",
+      "packageVersion": "1.0.0-beta.22605.1",
       "path": "xliff-tasks",
       "remoteUri": "https://github.com/dotnet/xliff-tasks",
-      "commitSha": "a54541e2b225c006bed2bc7c3c8e379069741466"
+      "commitSha": "0d65aa8023efa85de4945c07e7dc8a0f7992260c"
     }
   ],
   "submodules": [

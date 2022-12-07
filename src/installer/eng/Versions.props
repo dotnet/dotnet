@@ -26,7 +26,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependency from https://github.com/dotnet/arcade -->
-    <MicrosoftDotNetBuildTasksInstallersPackageVersion>8.0.0-beta.22605.1</MicrosoftDotNetBuildTasksInstallersPackageVersion>
+    <MicrosoftDotNetBuildTasksInstallersPackageVersion>8.0.0-beta.22606.1</MicrosoftDotNetBuildTasksInstallersPackageVersion>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependency from https://github.com/dotnet/arcade-services -->
@@ -42,7 +42,11 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependency from https://github.com/dotnet/test-templates -->
+    <!-- Legacy versions  -->
+    <MicrosoftDotNetTestProjectTemplates21PackageVersion>1.0.2-beta4.22406.1</MicrosoftDotNetTestProjectTemplates21PackageVersion>
     <MicrosoftDotNetTestProjectTemplates30PackageVersion>1.0.2-beta4.22406.1</MicrosoftDotNetTestProjectTemplates30PackageVersion>
+    <!-- Supported versions -->
+    <MicrosoftDotNetTestProjectTemplates31PackageVersion>1.1.0-rc.22558.1</MicrosoftDotNetTestProjectTemplates31PackageVersion>
     <MicrosoftDotNetTestProjectTemplates50PackageVersion>1.1.0-rc.22558.1</MicrosoftDotNetTestProjectTemplates50PackageVersion>
     <MicrosoftDotNetTestProjectTemplates60PackageVersion>1.1.0-rc.22558.1</MicrosoftDotNetTestProjectTemplates60PackageVersion>
     <MicrosoftDotNetTestProjectTemplates70PackageVersion>1.1.0-rc.22558.1</MicrosoftDotNetTestProjectTemplates70PackageVersion>
@@ -164,7 +168,6 @@
     <NUnit3Templates31PackageVersion>1.7.2</NUnit3Templates31PackageVersion>
     <MicrosoftDotNetCommonItemTemplates31PackageVersion>3.1.27</MicrosoftDotNetCommonItemTemplates31PackageVersion>
     <MicrosoftDotNetCommonProjectTemplates31PackageVersion>$(MicrosoftDotNetCommonItemTemplates31PackageVersion)</MicrosoftDotNetCommonProjectTemplates31PackageVersion>
-    <MicrosoftDotNetTestProjectTemplates31PackageVersion>$(MicrosoftDotNetTestProjectTemplates50PackageVersion)</MicrosoftDotNetTestProjectTemplates31PackageVersion>
     <AspNetCorePackageVersionFor31Templates>3.1.31</AspNetCorePackageVersionFor31Templates>
     <MicrosoftAspNetCoreComponentsWebAssemblyTemplatesPackageVersion>3.2.1</MicrosoftAspNetCoreComponentsWebAssemblyTemplatesPackageVersion>
     <!-- 3.0 Template versions -->
@@ -172,14 +175,12 @@
     <MicrosoftDotNetWpfProjectTemplates30PackageVersion>3.0.0</MicrosoftDotNetWpfProjectTemplates30PackageVersion>
     <NUnit3Templates30PackageVersion>1.6.5</NUnit3Templates30PackageVersion>
     <MicrosoftDotNetCommonItemTemplates30PackageVersion>2.0.0-preview8.19373.1</MicrosoftDotNetCommonItemTemplates30PackageVersion>
-    <MicrosoftDotNetCommonProjectTemplates30PackageVersion>$(MicrosoftDotNetCommonItemTemplates30PackageVersion)</MicrosoftDotNetCommonProjectTemplates30PackageVersion>
-    <MicrosoftDotNetTestProjectTemplates30PackageVersion>$(MicrosoftDotNetTestProjectTemplates30PackageVersion)</MicrosoftDotNetTestProjectTemplates30PackageVersion>
+    <MicrosoftDotNetCommonProjectTemplates30PackageVersion>$(MicrosoftDotNetCommonItemTemplates30PackageVersion)</MicrosoftDotNetCommonProjectTemplates30PackageVersion>    
     <AspNetCorePackageVersionFor30Templates>3.0.1</AspNetCorePackageVersionFor30Templates>
     <!-- 2.1 Template versions -->
     <NUnit3Templates21PackageVersion>1.5.3</NUnit3Templates21PackageVersion>
     <MicrosoftDotNetCommonItemTemplates21PackageVersion>1.0.2-beta3</MicrosoftDotNetCommonItemTemplates21PackageVersion>
-    <MicrosoftDotNetCommonProjectTemplates21PackageVersion>$(MicrosoftDotNetCommonItemTemplates21PackageVersion)</MicrosoftDotNetCommonProjectTemplates21PackageVersion>
-    <MicrosoftDotNetTestProjectTemplates21PackageVersion>$(MicrosoftDotNetTestProjectTemplates30PackageVersion)</MicrosoftDotNetTestProjectTemplates21PackageVersion>
+    <MicrosoftDotNetCommonProjectTemplates21PackageVersion>$(MicrosoftDotNetCommonItemTemplates21PackageVersion)</MicrosoftDotNetCommonProjectTemplates21PackageVersion>    
     <AspNetCorePackageVersionFor21Templates>2.1.34</AspNetCorePackageVersionFor21Templates>
   </PropertyGroup>
   <!-- infrastructure and test only dependencies -->
