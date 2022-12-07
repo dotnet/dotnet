@@ -8,11 +8,6 @@ resources:
       branches:
         include:
         - main
-        - release/*
-        - internal/release/*
-      stages:
-      - Build
-      - VMR_Synchronization
 
   repositories:
   - repository: vmr
