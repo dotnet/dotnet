@@ -78,6 +78,11 @@
             "defaultRemote": "https://github.com/dotnet/fsharp"
         },
         {
+            "name": "icu",
+            "defaultRemote": "https://github.com/dotnet/icu",
+            "defaultRef": "dotnet/main"
+        },
+        {
             "name": "installer",
             "defaultRemote": "https://github.com/dotnet/installer",
             "exclude": [
