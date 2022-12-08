@@ -8,6 +8,8 @@ parameters:
   # Branch of the VMR to use (to push to for internal builds)
   vmrBranch: $(Build.SourceBranchName)
 
+  dependsOn: []
+
   # The following parameters aren't expected to be passed in rather they are used for encapsulation
   # -----------------------------------------------------------------------------------------------
   centOSStream8Container: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream8
@@ -34,7 +36,7 @@ parameters:
 stages:
 - stage: VMR_Source_Build
   displayName: VMR Source-Build
-  dependsOn: []
+  dependsOn: ${{ parameters.dependsOn }}
   variables:
   - ${{ if eq(variables['System.TeamProject'], 'public') }}:
     - name: defaultPoolName
