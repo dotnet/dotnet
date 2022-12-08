@@ -9,6 +9,11 @@
 
   <Import Project="../../common/RestoreProjects.proj"/>
 
+  <ItemGroup>
+    <GenAPIInputAssembly Include="$(_GenAPIInputAssembly)" />
+    <GenAPIExcludeAttributesList Include="$(_GenAPIExcludeAttributesList)" />
+  </ItemGroup>
+
   <Target Name="CopyNuspecFiles" BeforeTargets="CoreCompile">
     <Message Importance="High" Text="==> Copying all target package nuspec files to generated source" />
     <Copy SourceFiles="@(NuspecFiles)" DestinationFiles="@(NuspecFiles->'$(GeneratedSourcePath)%(RecursiveDir)%(Filename)%(Extension)')" />
@@ -22,7 +27,7 @@
     <Message Importance="High" Text="Copy DummyFiles Complete."/>
   </Target>
 
-  <Target Name="SetupReferencePath" BeforeTargets="GenerateReferenceAssemblySource" DependsOnTargets="GetGenApiDlls">
+  <Target Name="SetupReferencePath" BeforeTargets="GenerateReferenceAssemblySource;GenAPIGenerateReferenceAssemblySource" DependsOnTargets="GetGenApiDlls">
     <!-- ReferencePath is used by the GenerateReferenceAsemblySource target to locate references -->
     <ItemGroup>
         <ReferencePath Include="@(GenApiDlls)" />
@@ -31,10 +36,16 @@
   </Target>
 
   <Target Name="CoreCompile" DependsOnTargets="GetGenApiDlls" >
-    <Message Importance="High" Text="==> Generating source for all target package dlls" />
+    <Message Importance="High" Text="==> Generating source for all target package dlls with $(GenAPIBackend) backend" />
     <MakeDir Directories="$(GeneratedSourcePath)%(GenApiDlls.RecursiveDir)" />
 
-    <MSBuild Projects="$(RepoRoot)src/referencePackageSourceGenerator/GenerateSource/GenerateSource.proj" 
+    <MSBuild Projects="$(RepoRoot)src/referencePackageSourceGenerator/GenerateSource/GenerateSource.proj;"
+        Condition=" '$(GenAPIBackend)' == 'roslyn' "
+        Targets="GenAPIGenerateReferenceAssemblySource"
+        Properties="_GenAPIInputAssembly=%(GenApiDlls.Identity);_GenAPIExcludeAttributesList=$(RepoRoot)src/referencePackageSourceGenerator/DefaultGenApiDocIds.txt;GenAPITargetPath=$(GeneratedSourcePath)%(GenApiDlls.RecursiveDir)%(GenApiDlls.Filename).cs;GenAPIHeaderFile=$(RepoRoot)src/referencePackageSourceGenerator/LicenseHeader.txt" />
+
+    <MSBuild Projects="$(RepoRoot)src/referencePackageSourceGenerator/GenerateSource/GenerateSource.proj"
+        Condition=" '$(GenAPIBackend)' == 'cci' "
         Targets="GenerateReferenceAssemblySource"
         Properties="GenAPIInputAssembly=%(GenApiDlls.Identity);GenAPITargetPath=$(GeneratedSourcePath)%(GenApiDlls.RecursiveDir)%(GenApiDlls.Filename).cs;GenAPIHeaderFile=$(RepoRoot)src/referencePackageSourceGenerator/LicenseHeader.txt;GenAPIExcludeAttributesList=$(RepoRoot)src/referencePackageSourceGenerator/DefaultGenApiDocIds.txt;" />
 

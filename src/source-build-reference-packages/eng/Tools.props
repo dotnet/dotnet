@@ -6,7 +6,12 @@
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(GeneratePackageSource)' == 'true' ">
+  <ItemGroup Condition=" '$(GeneratePackageSource)' == 'true' AND '$(GenAPIBackend)' == 'roslyn' ">
+    <PackageReference Include="Microsoft.DotNet.GenAPI.Task" Version="$(MicrosoftDotNetGenAPITaskPackageVersion)" />
+    <PackageReference Include="Microsoft.DotNet.Build.Tasks.Packaging" Version="$(MicrosoftDotNetBuildTasksPackagingPackageVersion)" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(GeneratePackageSource)' == 'true' AND '$(GenAPIBackend)' == 'cci' ">
     <PackageReference Include="Microsoft.DotNet.GenAPI" Version="$(MicrosoftDotNetGenApiPackageVersion)" />
     <PackageReference Include="Microsoft.DotNet.Build.Tasks.Packaging" Version="$(MicrosoftDotNetBuildTasksPackagingPackageVersion)" />
   </ItemGroup>

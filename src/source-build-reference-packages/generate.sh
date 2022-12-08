@@ -12,6 +12,7 @@ scriptroot="$( cd -P "$( dirname "$source" )" && pwd )"
 RED='\033[0;31m'
 NC='\033[0m'
 
+
 usage() {
     echo "usage: $0 [options]"
     echo ""
@@ -35,9 +36,11 @@ usage() {
     echo "  --dest <pathToDestRepo>            A path to the root of the repo to copy source into."
     echo "  --type <packageType>               Type of the package to generate. Accepted values: ref (default) | text."
     echo "  --feeds <nugetFeeds>               A semicolon-separated list of additional NuGet feeds to use during restore."
+    echo "  --genapi-backend                   The GenAPI backend used to generate reference assemblies. Accepted values: cci (default) | roslyn."
     echo ""
 }
 
+backend="cci"
 packageVersion=
 defaultPathToCSV="$scriptroot/artifacts/targetPackages.csv"
 pathToCSV=
@@ -86,6 +89,15 @@ while [ $# -gt 0 ]; do
             ;;
         --feeds)
             feeds="$2"
+            shift
+            ;;
+        --genapi-backend)
+            backend="$2"
+            if [[ ! "$backend" =~ ^(cci|roslyn)$ ]]; then
+                echo -e "${RED}ERROR: unknown backend type - $2${NC}"
+                usage
+                exit 1
+            fi
             shift
             ;;
         *)
@@ -151,7 +163,7 @@ if [[ "$packageType" == "ref" ]]; then
     pathToRepoSrc="$pathToDestRepo"
 
     # Build the projects to generate source and projects
-    "$scriptroot/eng/common/build.sh" --build --restore -bl /p:GeneratePackageSource=true /p:GeneratorVersion=2 /p:PathToRepoSrc="$pathToRepoSrc" /p:RestoreAdditionalProjectSources="\"$feeds\"" "$@"
+    "$scriptroot/eng/common/build.sh" --build --restore -bl /p:GeneratePackageSource=true /p:GenAPIBackend="\"$backend\"" /p:GeneratorVersion=2 /p:PathToRepoSrc="$pathToRepoSrc" /p:RestoreAdditionalProjectSources="\"$feeds\"" "$@"
 else
     # -p:RestoreAdditionalProjectSources -> specifies additional Nuget package sources, including feeds: https://docs.microsoft.com/en-us/nuget/reference/msbuild-targets#restore-properties
     # -p:RestoreUsingNuGetTargets -> switch that controls who will restore the project; if set to `false`, Arcade's Build.proj will execute the Restore target of the project itself.

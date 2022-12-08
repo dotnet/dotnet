@@ -165,7 +165,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@ebf9aaa](https://github.com/dotnet/fsharp/commit/ebf9aaa550b016202dcc4da55e89dfe7bc97346c)*
 - `src/installer`  
-*[dotnet/installer@24295c8](https://github.com/dotnet/installer/commit/24295c8a0a3f8a8828976ad8c7e041544e145687)*
+*[dotnet/installer@3a73ec3](https://github.com/dotnet/installer/commit/3a73ec3a792978181ad2c7f07395d0d43958ce23)*
 - `src/linker`  
 *[dotnet/linker@f3469ca](https://github.com/dotnet/linker/commit/f3469ca5e80e3701d90f8a376371eda940ba9687)*
     - `src/linker/external/cecil`  
@@ -189,7 +189,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/sdk`  
 *[dotnet/sdk@3ed8009](https://github.com/dotnet/sdk/commit/3ed8009d2bb26a9cd52875d9c4f80d504427a1f3)*
 - `src/source-build-externals`  
-*[dotnet/source-build-externals@0b78f29](https://github.com/dotnet/source-build-externals/commit/0b78f2932d3a804833ff5ca212c685bb25d2ba4f)*
+*[dotnet/source-build-externals@9845ef5](https://github.com/dotnet/source-build-externals/commit/9845ef580869dc613b301343504f8831d20f84da)*
     - `src/source-build-externals/src/application-insights`  
     *[Microsoft/ApplicationInsights-dotnet@51c3ed8](https://github.com/Microsoft/ApplicationInsights-dotnet/commit/51c3ed8aa3f32209edf01168f9136a3ac8486c5d)*
     - `src/source-build-externals/src/azure-activedirectory-identitymodel-extensions-for-dotnet`  
@@ -203,7 +203,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
     - `src/source-build-externals/src/newtonsoft-json`  
     *[JamesNK/Newtonsoft.Json@ae9fe44](https://github.com/JamesNK/Newtonsoft.Json/commit/ae9fe44e1323e91bcbd185ca1a14099fba7c021f)*
 - `src/source-build-reference-packages`  
-*[dotnet/source-build-reference-packages@37a8ae6](https://github.com/dotnet/source-build-reference-packages/commit/37a8ae6969a3247a9080efaf34f577c4c2d04cfe)*
+*[dotnet/source-build-reference-packages@17ad400](https://github.com/dotnet/source-build-reference-packages/commit/17ad400c7b867c675b05aa3143163503bcdf8695)*
 - `src/sourcelink`  
 *[dotnet/sourcelink@d047202](https://github.com/dotnet/sourcelink/commit/d047202874ad79d72c75b6354c0f8a9a12d1b054)*
 - `src/symreader`  
