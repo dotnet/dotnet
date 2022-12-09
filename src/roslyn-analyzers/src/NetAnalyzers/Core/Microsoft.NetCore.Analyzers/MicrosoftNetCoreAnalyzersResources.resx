@@ -2017,7 +2017,7 @@
     <value>Prefer 'Clear' over 'Fill'</value>
   </data>
   <data name="PreventNumericIntPtrUIntPtrBehavioralChangesDescription" xml:space="preserve">
-    <value>Some built in operators added in .NET 7 behave differently than the user defined operatorsi in .NET 6 and below. Some operators that used to throw in unchecked context while overflowing will not throw anymore unless wrapped within checked context, and some operators that not used to throw in checked context now would throw unless wrapped within unchecked context.</value>
+    <value>Some built-in operators added in .NET 7 behave differently when overflowing than did the corresponding user-defined operators in .NET 6 and earlier versions. Some operators that previously threw in an unchecked context now don't throw unless wrapped within a checked context. Also, some operators that did not previously throw in a checked context now throw unless wrapped in an unchecked context.</value>
   </data>
   <data name="PreventNumericIntPtrUIntPtrBehavioralChangesConversionNotThrowMessage" xml:space="preserve">
     <value>Starting with .NET 7 the explicit conversion '{0}' will not throw when overflowing in an unchecked context. Wrap the expression with a 'checked' statement to restore the .NET 6 behavior.</value>
@@ -2026,9 +2026,31 @@
     <value>Starting with .NET 7 the operator '{0}' will throw when overflowing in a checked context. Wrap the expression with an 'unchecked' statement to restore the .NET 6 behavior.</value>
   </data>
   <data name="PreventNumericIntPtrUIntPtrBehavioralChangesTitle" xml:space="preserve">
-    <value>Prevent from behavioral change</value>
+    <value>Prevent behavioral change</value>
   </data>
   <data name="PreventNumericIntPtrUIntPtrBehavioralChangesConversionThrowsMessage" xml:space="preserve">
     <value>Starting with .NET 7 the explicit conversion '{0}' will throw when overflowing in a checked context. Wrap the expression with an 'unchecked' statement to restore the .NET 6 behavior.</value>
   </data>
+  <data name="UseArgumentNullExceptionThrowHelperTitle" xml:space="preserve">
+    <value>Use ArgumentNullException throw helper</value>
+  </data>
+  <data name="UseArgumentExceptionThrowHelperTitle" xml:space="preserve">
+    <value>Use ArgumentException throw helper</value>
+  </data>
+  <data name="UseArgumentOutOfRangeExceptionThrowHelperTitle" xml:space="preserve">
+    <value>Use ArgumentOutOfRangeException throw helper</value>
+  </data>
+  <data name="UseObjectDisposedExceptionThrowHelperTitle" xml:space="preserve">
+    <value>Use ObjectDisposedException throw helper</value>
+  </data>
+  <data name="UseThrowHelperMessage" xml:space="preserve">
+    <value>Use '{0}.{1}' instead of explicitly throwing a new exception instance</value>
+  </data>
+  <data name="UseThrowHelperDescription" xml:space="preserve">
+    <value>Throw helpers are simpler and more efficient than an if block constructing a new exception instance.</value>
+  </data>
+  <data name="UseThrowHelperFix" xml:space="preserve">
+    <value>Use '{0}.{1}'</value>
+  </data>
+
 </root>
