@@ -864,6 +864,54 @@ Invalid entry in code metrics rule specification file.
 |CodeFix|False|
 ---
 
+## [CA1510](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1510): Use ArgumentNullException throw helper
+
+Throw helpers are simpler and more efficient than an if block constructing a new exception instance.
+
+|Item|Value|
+|-|-|
+|Category|Maintainability|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA1511](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1511): Use ArgumentException throw helper
+
+Throw helpers are simpler and more efficient than an if block constructing a new exception instance.
+
+|Item|Value|
+|-|-|
+|Category|Maintainability|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA1512](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1512): Use ArgumentOutOfRangeException throw helper
+
+Throw helpers are simpler and more efficient than an if block constructing a new exception instance.
+
+|Item|Value|
+|-|-|
+|Category|Maintainability|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA1513](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1513): Use ObjectDisposedException throw helper
+
+Throw helpers are simpler and more efficient than an if block constructing a new exception instance.
+
+|Item|Value|
+|-|-|
+|Category|Maintainability|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
 ## [CA1700](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1700): Do not name enum values 'Reserved'
 
 This rule assumes that an enumeration member that has a name that contains "reserved" is not currently used but is a placeholder to be renamed or removed in a future version. Renaming or removing a member is a breaking change.
@@ -1776,9 +1824,9 @@ Number of parameters supplied in the logging message template do not match the n
 |CodeFix|False|
 ---
 
-## [CA2020](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2020): Prevent from behavioral change
+## [CA2020](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2020): Prevent behavioral change
 
-Some built in operators added in .NET 7 behave differently than the user defined operatorsi in .NET 6 and below. Some operators that used to throw in unchecked context while overflowing will not throw anymore unless wrapped within checked context, and some operators that not used to throw in checked context now would throw unless wrapped within unchecked context.
+Some built-in operators added in .NET 7 behave differently when overflowing than did the corresponding user-defined operators in .NET 6 and earlier versions. Some operators that previously threw in an unchecked context now don't throw unless wrapped within a checked context. Also, some operators that did not previously throw in a checked context now throw unless wrapped in an unchecked context.
 
 |Item|Value|
 |-|-|

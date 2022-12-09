@@ -59,10 +59,10 @@
         <Str Cat="Text">
           <Val><![CDATA[Adapter lookup is being changed, please follow https://github.com/Microsoft/vstest/blob/main/RFCs/0022-User-Specified-TestAdapter-Lookup.md#roadmap for more details.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[目前正在變更配接器查閱，請遵循 https://github.com/Microsoft/vstest/blob/main/RFCs/0022-User-Specified-TestAdapter-Lookup.md#roadmap，以取得詳細資料。]]></Val>
+            <Val><![CDATA[目前正在變更配接器查閱，請遵循 https://github.com/Microsoft/vstest/blob/main/RFCs/0022-User-Specified-TestAdapter-Lookup.md#roadmap 以尋求詳細資料。]]></Val>
           </Tgt>
           <Prev Cat="Text">
-            <Val><![CDATA[Adapter lookup is being changed, please follow https://github.com/Microsoft/vstest/blob/master/RFCs/0022-User-Specified-TestAdapter-Lookup.md#roadmap for more details.]]></Val>
+            <Val><![CDATA[Adapter lookup is being changed, please follow https://github.com/Microsoft/vstest-docs/blob/main/RFCs/0022-User-Specified-TestAdapter-Lookup.md#roadmap for more details.]]></Val>
           </Prev>
         </Str>
         <Disp Icon="Str" />

@@ -126,8 +126,7 @@ internal class EnableCodeCoverageArgumentExecutor : IArgumentExecutor
         @"                <Function>.*__CxxPureMSILEntry.*</Function>" + Environment.NewLine +
         @"                <Function>^Microsoft::VisualStudio::CppCodeCoverageFramework::.*</Function>" + Environment.NewLine +
         @"                <Function>^Microsoft::VisualStudio::CppUnitTestFramework::.*</Function>" + Environment.NewLine +
-        @"                <Function>^__.*</Function>" + Environment.NewLine +
-        @"                <Function>.*::__.*</Function>" + Environment.NewLine +
+        @"                <Function>^__empty_global_delete.*</Function>" + Environment.NewLine +
         @"              </Exclude>" + Environment.NewLine +
         @"            </Functions>" + Environment.NewLine +
         @"            <Attributes>" + Environment.NewLine +
