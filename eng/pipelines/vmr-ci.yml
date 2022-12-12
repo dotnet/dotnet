@@ -13,6 +13,12 @@ pr:
     - release/*
     - internal/release/*
 
+parameters:
+- name: vmrBranch
+  displayName: dotnet/dotnet branch to push to
+  type: string
+  default: $(Build.SourceBranchName)
+
 stages:
 # For rolling builds we want to build the MSFT SDK first so that we can
 # compare the contents with the source-built one later.
@@ -42,7 +48,8 @@ stages:
 
 - template: /src/installer/eng/pipelines/templates/stages/vmr-build.yml
   parameters:
+    vmrBranch: ${{ parameters.vmrBranch }}
     installerBuildResourceId: current
-    isDotnetDotnet: true
+    vmrIsSelf: true
     ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
       dependsOn: Build_MSFT_SDK

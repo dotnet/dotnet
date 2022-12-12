@@ -2,7 +2,7 @@
 ### If run in a PR, new changes are applied to a local copy of the VMR, then it is source-built and tested
 
 parameters:
-- name: isDotnetDotnet
+- name: vmrIsSelf
   displayName: True when build is running from dotnet/dotnet directly
   type: boolean
 
@@ -85,10 +85,10 @@ jobs:
       vmrBranch: ${{ parameters.vmrBranch }}
       installerBuildResourceId: ${{ parameters.installerBuildResourceId }}
       skipComponentGovernanceDetection: true
-      isDotnetDotnet: ${{ parameters.isDotnetDotnet }}
+      vmrIsSelf: ${{ parameters.vmrIsSelf }}
 
   # Synchronize new content in the VMR during PRs (we expect this to come
-  - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+  - ${{ if and(not(parameters.vmrIsSelf), eq(variables['Build.Reason'], 'PullRequest')) }}:
     - template: ../steps/vmr-pull-updates.yml
       parameters:
         vmrPath: ${{ parameters.vmrPath }}

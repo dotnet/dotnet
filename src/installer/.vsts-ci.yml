@@ -368,7 +368,7 @@ stages:
     - template: eng/pipelines/templates/jobs/vmr-synchronization.yml
       parameters:
         vmrBranch: ${{ parameters.vmrBranch }}
-        isDotnetDotnet: false
+        vmrIsSelf: false
 
 # In case the VMR Build stage needs to be temporarily disabled, please make sure that
 # the VMR synchronization step is run to validate that the PR can be merged and later
@@ -379,7 +379,7 @@ stages:
     parameters:
       vmrBranch: ${{ parameters.vmrBranch }}
       installerBuildResourceId: current
-      isDotnetDotnet: false
+      vmrIsSelf: false
 
 - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
   - stage: Publish

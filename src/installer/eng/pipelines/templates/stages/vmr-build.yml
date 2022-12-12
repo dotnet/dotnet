@@ -11,7 +11,7 @@ parameters:
   dependsOn: []
 
   # True when build is running from dotnet/dotnet directly
-  isDotnetDotnet:
+  vmrIsSelf:
 
   # The following parameters aren't expected to be passed in rather they are used for encapsulation
   # -----------------------------------------------------------------------------------------------
@@ -64,7 +64,7 @@ stages:
       buildName: CentOSStream8_Online
       installerBuildResourceId: ${{ parameters.installerBuildResourceId }}
       vmrBranch: ${{ parameters.vmrBranch }}
-      isDotnetDotnet: ${{ parameters.isDotnetDotnet }}
+      vmrIsSelf: ${{ parameters.vmrIsSelf }}
       architecture: x64
       pool:
         name: ${{ variables.defaultPoolName }}
@@ -82,7 +82,7 @@ stages:
         buildName: CentOSStream8_Offline
         installerBuildResourceId: ${{ parameters.installerBuildResourceId }}
         vmrBranch: ${{ parameters.vmrBranch }}
-        isDotnetDotnet: ${{ parameters.isDotnetDotnet }}
+        vmrIsSelf: ${{ parameters.vmrIsSelf }}
         architecture: x64
         pool:
           name: ${{ variables.defaultPoolName }}
@@ -99,7 +99,7 @@ stages:
         buildName: CentOSStream9_Offline
         installerBuildResourceId: ${{ parameters.installerBuildResourceId }}
         vmrBranch: ${{ parameters.vmrBranch }}
-        isDotnetDotnet: ${{ parameters.isDotnetDotnet }}
+        vmrIsSelf: ${{ parameters.vmrIsSelf }}
         architecture: x64
         pool:
           name: ${{ variables.defaultPoolName }}
@@ -116,7 +116,7 @@ stages:
         buildName: Fedora36_Offline
         installerBuildResourceId: ${{ parameters.installerBuildResourceId }}
         vmrBranch: ${{ parameters.vmrBranch }}
-        isDotnetDotnet: ${{ parameters.isDotnetDotnet }}
+        vmrIsSelf: ${{ parameters.vmrIsSelf }}
         architecture: x64
         pool:
           name: ${{ variables.defaultPoolName }}
@@ -133,7 +133,7 @@ stages:
         buildName: Ubuntu2004_Offline
         installerBuildResourceId: ${{ parameters.installerBuildResourceId }}
         vmrBranch: ${{ parameters.vmrBranch }}
-        isDotnetDotnet: ${{ parameters.isDotnetDotnet }}
+        vmrIsSelf: ${{ parameters.vmrIsSelf }}
         architecture: x64
         pool:
           name: ${{ variables.defaultPoolName }}
@@ -150,7 +150,7 @@ stages:
         buildName: Debian11_Offline
         installerBuildResourceId: ${{ parameters.installerBuildResourceId }}
         vmrBranch: ${{ parameters.vmrBranch }}
-        isDotnetDotnet: ${{ parameters.isDotnetDotnet }}
+        vmrIsSelf: ${{ parameters.vmrIsSelf }}
         architecture: arm64
         pool: ${{ parameters.poolInternalArm64 }}
         container: ${{ parameters.debian11Arm64Container }}
@@ -165,7 +165,7 @@ stages:
         buildName: Fedora36_Offline_Using_Previous
         installerBuildResourceId: ${{ parameters.installerBuildResourceId }}
         vmrBranch: ${{ parameters.vmrBranch }}
-        isDotnetDotnet: ${{ parameters.isDotnetDotnet }}
+        vmrIsSelf: ${{ parameters.vmrIsSelf }}
         architecture: x64
         pool:
           name: ${{ variables.defaultPoolName }}

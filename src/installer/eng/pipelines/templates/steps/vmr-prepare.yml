@@ -2,7 +2,7 @@
 ### Component Governance scan is also triggered over the VMR's non-repo sources
 
 parameters:
-- name: isDotnetDotnet
+- name: vmrIsSelf
   displayName: True when build is running from dotnet/dotnet directly
   type: boolean
 
@@ -21,7 +21,7 @@ parameters:
   default: false
 
 steps:
-- ${{ if parameters.isDotnetDotnet }}:
+- ${{ if parameters.vmrIsSelf }}:
   - checkout: self
     displayName: Clone dotnet/dotnet
     path: vmr
@@ -32,24 +32,6 @@ steps:
     displayName: Clone dotnet/dotnet
     path: vmr
     clean: true
-    fetchDepth: 0 # We need this so that we can check out the new commit
-
-- ${{ if ne(parameters.installerBuildResourceId, 'current') }}:
-  - download: ${{ parameters.installerBuildResourceId }}
-    artifact: VmrRevision
-    displayName: Download VmrRevision
-
-  - script: |
-      set -ex
-      sha=`head -n 1 $(Pipeline.Workspace)/${{ parameters.installerBuildResourceId }}/VmrRevision/VmrRevision.txt`
-      git checkout $sha
-    displayName: Check out dotnet/dotnet commit
-    workingDirectory: $(Agent.BuildDirectory)/vmr
-- ${{ else }}:
-  - script: |
-      git switch -c ${{ parameters.vmrBranch }}
-    displayName: Checkout ${{ parameters.vmrBranch }}
-    workingDirectory: $(Agent.BuildDirectory)/vmr
 
 # TODO (https://github.com/dotnet/arcade/issues/11332): Allow full CG?
 # Currently, we ignore dirs of individual repos - they have been scanned before
