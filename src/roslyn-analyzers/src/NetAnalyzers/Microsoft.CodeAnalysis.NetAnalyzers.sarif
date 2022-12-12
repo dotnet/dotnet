@@ -382,8 +382,8 @@
         },
         "CA2020": {
           "id": "CA2020",
-          "shortDescription": "Prevent from behavioral change",
-          "fullDescription": "Some built in operators added in .NET 7 behave differently than the user defined operatorsi in .NET 6 and below. Some operators that used to throw in unchecked context while overflowing will not throw anymore unless wrapped within checked context, and some operators that not used to throw in checked context now would throw unless wrapped within unchecked context.",
+          "shortDescription": "Prevent behavioral change",
+          "fullDescription": "Some built-in operators added in .NET 7 behave differently when overflowing than did the corresponding user-defined operators in .NET 6 and earlier versions. Some operators that previously threw in an unchecked context now don't throw unless wrapped within a checked context. Also, some operators that did not previously throw in a checked context now throw unless wrapped in an unchecked context.",
           "defaultLevel": "note",
           "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2020",
           "properties": {
@@ -1947,6 +1947,86 @@
             "tags": [
               "Telemetry",
               "CompilationEnd"
+            ]
+          }
+        },
+        "CA1510": {
+          "id": "CA1510",
+          "shortDescription": "Use ArgumentNullException throw helper",
+          "fullDescription": "Throw helpers are simpler and more efficient than an if block constructing a new exception instance.",
+          "defaultLevel": "note",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1510",
+          "properties": {
+            "category": "Maintainability",
+            "isEnabledByDefault": true,
+            "typeName": "UseExceptionThrowHelpers",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA1511": {
+          "id": "CA1511",
+          "shortDescription": "Use ArgumentException throw helper",
+          "fullDescription": "Throw helpers are simpler and more efficient than an if block constructing a new exception instance.",
+          "defaultLevel": "note",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1511",
+          "properties": {
+            "category": "Maintainability",
+            "isEnabledByDefault": true,
+            "typeName": "UseExceptionThrowHelpers",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA1512": {
+          "id": "CA1512",
+          "shortDescription": "Use ArgumentOutOfRangeException throw helper",
+          "fullDescription": "Throw helpers are simpler and more efficient than an if block constructing a new exception instance.",
+          "defaultLevel": "note",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1512",
+          "properties": {
+            "category": "Maintainability",
+            "isEnabledByDefault": true,
+            "typeName": "UseExceptionThrowHelpers",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA1513": {
+          "id": "CA1513",
+          "shortDescription": "Use ObjectDisposedException throw helper",
+          "fullDescription": "Throw helpers are simpler and more efficient than an if block constructing a new exception instance.",
+          "defaultLevel": "note",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1513",
+          "properties": {
+            "category": "Maintainability",
+            "isEnabledByDefault": true,
+            "typeName": "UseExceptionThrowHelpers",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },

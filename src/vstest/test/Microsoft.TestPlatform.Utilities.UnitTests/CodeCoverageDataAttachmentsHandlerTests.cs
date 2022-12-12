@@ -199,7 +199,7 @@ public class CodeCoverageDataAttachmentsHandlerTests
     }
 
     [TestMethod]
-    public async Task MergingPerTestCodeCoverageIsNotSupportedAndShoulReturnInputs()
+    public async Task MergingPerTestCodeCoverageReturnsOneCoverageFile()
     {
         string file1Path = Path.Combine(TestFilesDirectory, "fullcovered.cobertura.xml");
         var attachmentSet = new AttachmentSet(new Uri("datacollector://microsoft/CodeCoverage/2.0"), string.Empty);
@@ -215,7 +215,7 @@ public class CodeCoverageDataAttachmentsHandlerTests
 
         Assert.IsNotNull(resultAttachmentSets);
         Assert.IsTrue(resultAttachmentSets.Count == 1);
-        Assert.IsTrue(resultAttachmentSets.First().Attachments.Count == 2);
+        Assert.IsTrue(resultAttachmentSets.First().Attachments.Count == 1);
         Assert.AreEqual("datacollector://microsoft/CodeCoverage/2.0", resultAttachmentSets.First().Uri.AbsoluteUri);
     }
 }

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.22606.1">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.22608.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>513428e6a7a61bc5f4efd82afee219e90df51bfe</Sha>
+      <Sha>2473ebd41195d623c82e351242d8cdc64bb3fd34</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.SourceLink.GitHub" Version="1.2.0-beta-22518-02" CoherentParentDependency="Microsoft.DotNet.Arcade.Sdk">
@@ -11,9 +11,9 @@
       <Sha>d047202874ad79d72c75b6354c0f8a9a12d1b054</Sha>
       <SourceBuild RepoName="sourcelink" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.22606.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.22608.3">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>42f1122c5d6b3d069c97e47458b0bf1deca04905</Sha>
+      <Sha>7164de443758bf790fb201659a6f5d7ccc55c3f0</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
   </ToolsetDependencies>

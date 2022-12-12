@@ -31,6 +31,29 @@ You'll find 3 files for logs(runner, datacollector, host), datacollector one can
 -a----         8/17/2022   9:33 AM          37222 log.host.22-08-17_09-32-55_24965_7.txt
 -a----         8/17/2022   9:33 AM         200345 log.txt
 ```
+## vstest.console.exe  
+
+### Collect logs with `/Diag:`
+
+```shell
+vstest.console.exe ...\TestProject1.dll /Collect:"Code Coverage" /Diag:log.txt
+```
+At the end of the execution you'll find the list of logs generated:
+```shell
+dir *.txt
+ Volume in drive C has no label.
+ Volume Serial Number is FA60-B142
+
+ Directory of ...\net7.0
+
+12/08/2022  12:00 PM           173,002 log.datacollector.22-12-08_12-00-14_68705_1.txt
+12/08/2022  12:01 PM           173,000 log.datacollector.22-12-08_12-01-12_19459_1.txt
+12/08/2022  12:00 PM            56,017 log.host.22-12-08_12-00-15_88174_7.txt
+12/08/2022  12:01 PM            55,986 log.host.22-12-08_12-01-12_94082_7.txt
+12/08/2022  12:01 PM           292,548 log.txt
+               5 File(s)        750,553 bytes
+               0 Dir(s)  263,236,558,848 bytes free
+```
 
 ## Azure DevOps
 

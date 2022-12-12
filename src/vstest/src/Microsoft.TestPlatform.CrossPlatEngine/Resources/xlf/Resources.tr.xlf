@@ -119,7 +119,7 @@
       </trans-unit>
       <trans-unit id="DeprecatedAdapterPath">
         <source>Adapter lookup is being changed, please follow https://github.com/Microsoft/vstest/blob/main/RFCs/0022-User-Specified-TestAdapter-Lookup.md#roadmap for more details.</source>
-        <target state="translated">Bağdaştırıcı arama değiştiriliyor. Ayrıntılar için lütfen https://github.com/Microsoft/vstest/blob/main/RFCs/0022-User-Specified-TestAdapter-Lookup.md#roadmap sayfasını takip edin.</target>
+        <target state="translated">Bağdaştırıcı arama değiştiriliyor. Ayrıntılar için lütfen https://github.com/Microsoft/vstest/blob/main/RFCs/0022-User-Specified-TestAdapter-Lookup.md#roadmap bağlantısını takip edin.</target>
         <note></note>
       </trans-unit>
       <trans-unit id="NoTestsAvailableForGivenTestCaseFilter">

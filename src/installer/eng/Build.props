@@ -1,13 +1,5 @@
 <Project>
   <Choose>
-      <When Condition=" '$(ArcadeBuildTarball)' == 'true' ">
-        <!-- Source build / tarball generation -->
-        <ItemGroup>
-          <ProjectToBuild Include="$(RepoRoot)src/SourceBuild/Arcade/src/SourceBuild.Tasks.csproj" BuildInParallel="false" />
-          <ProjectToBuild Include="$(RepoRoot)src/SourceBuild/tarball/BuildSourceBuildTarball.proj" BuildInParallel="false" />
-        </ItemGroup>
-      </When>
-
       <When Condition=" '$(InitializeVMR)' == 'true' ">
         <!-- VMR bootstrap -->
         <ItemGroup>

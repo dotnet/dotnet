@@ -59,10 +59,10 @@
         <Str Cat="Text">
           <Val><![CDATA[Adapter lookup is being changed, please follow https://github.com/Microsoft/vstest/blob/main/RFCs/0022-User-Specified-TestAdapter-Lookup.md#roadmap for more details.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[어댑터 조회가 변경됩니다. 자세한 내용은 https://github.com/Microsoft/vstest/blob/main/RFCs/0022-User-Specified-TestAdapter-Lookup.md#roadmap을 참조하세요.]]></Val>
+            <Val><![CDATA[어댑터 조회를 변경하는 중입니다. 자세한 내용은 https://github.com/Microsoft/vstest/blob/main/RFCs/0022-User-Specified-TestAdapter-Lookup.md#roadmap을 팔로우하세요.]]></Val>
           </Tgt>
           <Prev Cat="Text">
-            <Val><![CDATA[Adapter lookup is being changed, please follow https://github.com/Microsoft/vstest/blob/master/RFCs/0022-User-Specified-TestAdapter-Lookup.md#roadmap for more details.]]></Val>
+            <Val><![CDATA[Adapter lookup is being changed, please follow https://github.com/Microsoft/vstest-docs/blob/main/RFCs/0022-User-Specified-TestAdapter-Lookup.md#roadmap for more details.]]></Val>
           </Prev>
         </Str>
         <Disp Icon="Str" />
