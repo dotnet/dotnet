@@ -11,11 +11,6 @@ parameters:
   type: string
   default: $(Build.SourceBranchName)
 
-- name: installerBuildResourceId
-  displayName: Installer build to get the commit hash to check out from
-  type: string
-  default: current
-
 - name: skipComponentGovernanceDetection
   type: boolean
   default: false
@@ -32,6 +27,12 @@ steps:
     displayName: Clone dotnet/dotnet
     path: vmr
     clean: true
+
+- ${{ if and(not(parameters.isBuiltFromVmr)) }}:
+  - script: |
+      git switch -c ${{ parameters.vmrBranch }}
+    displayName: Checkout ${{ parameters.vmrBranch }}
+    workingDirectory: $(Agent.BuildDirectory)/vmr
 
 # TODO (https://github.com/dotnet/arcade/issues/11332): Allow full CG?
 # Currently, we ignore dirs of individual repos - they have been scanned before
