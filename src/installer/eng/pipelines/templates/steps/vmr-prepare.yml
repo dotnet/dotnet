@@ -21,7 +21,7 @@ parameters:
   default: false
 
 steps:
-- ${{ parameters.isDotnetDotnet }}:
+- ${{ if parameters.isDotnetDotnet }}:
   - checkout: self
     displayName: Clone dotnet/dotnet
     path: vmr
