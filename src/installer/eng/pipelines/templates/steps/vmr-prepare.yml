@@ -28,7 +28,7 @@ steps:
     path: vmr
     clean: true
 
-- ${{ if and(not(parameters.isBuiltFromVmr)) }}:
+- ${{ if or(not(parameters.isBuiltFromVmr), eq(variables['System.TeamProject'], 'internal')) }}:
   - script: |
       git switch -c ${{ parameters.vmrBranch }}
     displayName: Checkout ${{ parameters.vmrBranch }}
