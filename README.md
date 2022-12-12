@@ -189,7 +189,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/sdk`  
 *[dotnet/sdk@e547957](https://github.com/dotnet/sdk/commit/e5479573ba46cc6d85059cee3632195e49e75e6d)*
 - `src/source-build-externals`  
-*[dotnet/source-build-externals@9845ef5](https://github.com/dotnet/source-build-externals/commit/9845ef580869dc613b301343504f8831d20f84da)*
+*[dotnet/source-build-externals@bea0487](https://github.com/dotnet/source-build-externals/commit/bea048703a1a2a9b5f35b04660b74a63ae2520cd)*
     - `src/source-build-externals/src/application-insights`  
     *[Microsoft/ApplicationInsights-dotnet@51c3ed8](https://github.com/Microsoft/ApplicationInsights-dotnet/commit/51c3ed8aa3f32209edf01168f9136a3ac8486c5d)*
     - `src/source-build-externals/src/azure-activedirectory-identitymodel-extensions-for-dotnet`  
@@ -199,7 +199,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
     - `src/source-build-externals/src/humanizer`  
     *[Humanizr/Humanizer@3ebc38d](https://github.com/Humanizr/Humanizer/commit/3ebc38de585fc641a04b0e78ed69468453b0f8a1)*
     - `src/source-build-externals/src/MSBuildLocator`  
-    *[microsoft/MSBuildLocator@47281c3](https://github.com/microsoft/MSBuildLocator/commit/47281c3de1c87a43ab946725d011b9dca4b6434a)*
+    *[microsoft/MSBuildLocator@5484ae4](https://github.com/microsoft/MSBuildLocator/commit/5484ae4729a60a01724987a4e6658ea506ef279d)*
     - `src/source-build-externals/src/newtonsoft-json`  
     *[JamesNK/Newtonsoft.Json@ae9fe44](https://github.com/JamesNK/Newtonsoft.Json/commit/ae9fe44e1323e91bcbd185ca1a14099fba7c021f)*
 - `src/source-build-reference-packages`  

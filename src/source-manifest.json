@@ -103,10 +103,10 @@
       "commitSha": "e5479573ba46cc6d85059cee3632195e49e75e6d"
     },
     {
-      "packageVersion": "8.0.0-alpha.1.22607.1",
+      "packageVersion": "8.0.0-alpha.1.22609.3",
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "9845ef580869dc613b301343504f8831d20f84da"
+      "commitSha": "bea048703a1a2a9b5f35b04660b74a63ae2520cd"
     },
     {
       "packageVersion": "8.0.0-alpha.1.22608.3",
@@ -206,7 +206,7 @@
     {
       "path": "source-build-externals/src/MSBuildLocator",
       "remoteUri": "https://github.com/microsoft/MSBuildLocator",
-      "commitSha": "47281c3de1c87a43ab946725d011b9dca4b6434a"
+      "commitSha": "5484ae4729a60a01724987a4e6658ea506ef279d"
     },
     {
       "path": "source-build-externals/src/newtonsoft-json",

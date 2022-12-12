@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
 namespace Microsoft.Build.Locator
@@ -77,93 +78,80 @@ namespace Microsoft.Build.Locator
             }
         }
 
+        private static string realpath(string path)
+        {
+            IntPtr ptr = NativeMethods.realpath(path, IntPtr.Zero);
+            string result = Marshal.PtrToStringAuto(ptr);
+            NativeMethods.free(ptr);
+            return result;
+        }
+
         private static IEnumerable<string> GetDotNetBasePaths(string workingDirectory)
         {
-            const string DOTNET_CLI_UI_LANGUAGE = nameof(DOTNET_CLI_UI_LANGUAGE);
-            
-            Process process;
-            var lines = new List<string>();
-            try
+            string dotnetPath = null;
+            bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+            string exeName = isWindows ? "dotnet.exe" : "dotnet";
+
+            // We will generally find the dotnet exe on the path, but on linux, it is often just a 'dotnet' symlink (possibly even to more symlinks) that we have to resolve
+            // to the real dotnet executable.
+            // This will work as often as just invoking dotnet from the command line, but we can be more confident in finding a dotnet executable by following
+            // https://github.com/dotnet/designs/blob/main/accepted/2021/install-location-per-architecture.md
+            // This can be done using the nethost library. We didn't do this previously, so I did not implement this extension.
+            foreach (string dir in Environment.GetEnvironmentVariable("PATH").Split(Path.PathSeparator))
             {
-                process = new Process()
-                { 
-                    StartInfo = new ProcessStartInfo("dotnet", "--info")
-                    {
-                        WorkingDirectory = workingDirectory,
-                        CreateNoWindow = true,
-                        UseShellExecute = false,
-                        RedirectStandardOutput = true,
-                        RedirectStandardError = true
-                    }
-                };
-
-                // Ensure that we set the DOTNET_CLI_UI_LANGUAGE environment variable to "en-US" before
-                // running 'dotnet --info'. Otherwise, we may get localized results.
-                process.StartInfo.EnvironmentVariables[DOTNET_CLI_UI_LANGUAGE] = "en-US";
-
-                process.OutputDataReceived += (_, e) =>
+                string filePath = Path.Combine(dir, exeName);
+                if (File.Exists(Path.Combine(dir, exeName)))
                 {
-                    if (!string.IsNullOrWhiteSpace(e.Data))
-                    {
-                        lines.Add(e.Data);
-                    }
-                };
-
-                process.Start();
-            }
-            catch
-            {
-                // when error running dotnet command, consider dotnet as not available
-                yield break;
-            }
-
-            process.BeginOutputReadLine();
-
-            process.WaitForExit();
-
-            var outputString = string.Join(Environment.NewLine, lines);
-
-            var matched = DotNetBasePathRegex.Match(outputString);
-            string basePath = null;
-            if (matched.Success)
-            {
-                basePath = matched.Groups[1].Value.Trim();
-                yield return basePath;
-            }
-
-            var lineSdkIndex = lines.FindIndex(line => line.Contains("SDKs installed"));
-
-            List<string> paths = new List<string>();
-            if (lineSdkIndex != -1)
-            {
-                lineSdkIndex++;
-
-                while (lineSdkIndex < lines.Count && !string.IsNullOrEmpty(lines[lineSdkIndex]))
-                {
-                    var sdkMatch = SdkRegex.Match(lines[lineSdkIndex]);
-
-                    if (!sdkMatch.Success)
-                        break;
-
-                    var version = sdkMatch.Groups[1].Value.Trim();
-                    var path = sdkMatch.Groups[2].Value.Trim();
-                    
-                    path = Path.Combine(path, version) + Path.DirectorySeparatorChar;
-
-                    if (!path.Equals(basePath))
-                        paths.Add(path); 
-                                    
-                    lineSdkIndex++;
+                    dotnetPath = filePath;
+                    break;
                 }
+            }
+
+            if (dotnetPath != null)
+            {
+                dotnetPath = Path.GetDirectoryName(isWindows ? dotnetPath : realpath(dotnetPath) ?? dotnetPath);
+            }
+
+            string bestSDK = null;
+            int rc = NativeMethods.hostfxr_resolve_sdk2(exe_dir: dotnetPath, working_dir: workingDirectory, flags: 0, result: (key, value) =>
+            {
+                if (key == NativeMethods.hostfxr_resolve_sdk2_result_key_t.resolved_sdk_dir)
+                {
+                    bestSDK = value;
+                }
+            });
+
+            if (rc == 0 && bestSDK != null)
+            {
+                yield return bestSDK;
+            }
+            else if (rc != 0)
+            {
+                throw new InvalidOperationException("Failed to find an appropriate version of .NET Core MSBuild. Call to hostfxr_resolve_sdk2 failed. There may be more details in stderr.");
+            }
+
+            string[] paths = null;
+            rc = NativeMethods.hostfxr_get_available_sdks(exe_dir: dotnetPath, result: (key, value) =>
+            {
+                paths = value;
+            });
+
+            // Errors are automatically printed to stderr. We should not continue to try to output anything if we failed.
+            if (rc != 0)
+            {
+                throw new InvalidOperationException("Failed to find all versions of .NET Core MSBuild. Call to hostfxr_get_available_sdks failed. There may be more details in stderr.");
             }
 
             // The paths are sorted in increasing order. We want to return the newest SDKs first, however,
             // so iterate over the list in reverse order. If basePath is disqualified because it was later
             // than the runtime version, this ensures that RegisterDefaults will return the latest valid
             // SDK instead of the earliest installed.
-            for (int i = paths.Count - 1; i >= 0; i--)
+            for (int i = paths.Length - 1; i >= 0; i--)
             {
-                yield return paths[i];
+                if (paths[i] != bestSDK)
+                {
+                    yield return paths[i];
+                }
             }
         }
     }
