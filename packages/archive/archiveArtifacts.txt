@@ -1,1 +1,1 @@
-https://dotnetcli.azureedge.net/source-built-artifacts/assets/Private.SourceBuilt.Artifacts.7.0.100-rc.2.tar.gz
+https://dotnetcli.azureedge.net/source-built-artifacts/assets/Private.SourceBuilt.Artifacts.7.0.100.tar.gz
