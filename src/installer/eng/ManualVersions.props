@@ -9,11 +9,11 @@
      Basically: In this file, choose the highest version when resolving merge conflicts.
  -->
   <PropertyGroup>
-    <MicrosoftWindowsSDKNETRef10_0_17763PackageVersion>10.0.17763.27</MicrosoftWindowsSDKNETRef10_0_17763PackageVersion>
-    <MicrosoftWindowsSDKNETRef10_0_18362PackageVersion>10.0.18362.27</MicrosoftWindowsSDKNETRef10_0_18362PackageVersion>
-    <MicrosoftWindowsSDKNETRef10_0_19041PackageVersion>10.0.19041.27</MicrosoftWindowsSDKNETRef10_0_19041PackageVersion>
-    <MicrosoftWindowsSDKNETRef10_0_20348PackageVersion>10.0.20348.27</MicrosoftWindowsSDKNETRef10_0_20348PackageVersion>
-    <MicrosoftWindowsSDKNETRef10_0_22000PackageVersion>10.0.22000.27</MicrosoftWindowsSDKNETRef10_0_22000PackageVersion>
-    <MicrosoftWindowsSDKNETRef10_0_22621PackageVersion>10.0.22621.27</MicrosoftWindowsSDKNETRef10_0_22621PackageVersion>
+    <MicrosoftWindowsSDKNETRef10_0_17763PackageVersion>10.0.17763.28</MicrosoftWindowsSDKNETRef10_0_17763PackageVersion>
+    <MicrosoftWindowsSDKNETRef10_0_18362PackageVersion>10.0.18362.28</MicrosoftWindowsSDKNETRef10_0_18362PackageVersion>
+    <MicrosoftWindowsSDKNETRef10_0_19041PackageVersion>10.0.19041.28</MicrosoftWindowsSDKNETRef10_0_19041PackageVersion>
+    <MicrosoftWindowsSDKNETRef10_0_20348PackageVersion>10.0.20348.28</MicrosoftWindowsSDKNETRef10_0_20348PackageVersion>
+    <MicrosoftWindowsSDKNETRef10_0_22000PackageVersion>10.0.22000.28</MicrosoftWindowsSDKNETRef10_0_22000PackageVersion>
+    <MicrosoftWindowsSDKNETRef10_0_22621PackageVersion>10.0.22621.28</MicrosoftWindowsSDKNETRef10_0_22621PackageVersion>
   </PropertyGroup>
 </Project>

@@ -52,8 +52,8 @@ Please see the [dotnet/source-build](https://github.com/dotnet/source-build) rep
 
 ## Support
 
-.NET Source-Build is supported on the oldest available .NET SDK feature update, and on Linux only.
-For example, if both .NET 6.0.1XX and 6.0.2XX feature updates are available from [dotnet.microsoft.com](https://dotnet.microsoft.com/en-us/download/dotnet/6.0), Source-Build will only support 6.0.1XX.
+.NET Source-Build is supported on the oldest available .NET SDK feature update for each major release, and on Linux only.
+For example, if .NET 6.0.1xx, 6.0.2xx, and 7.0.1xx feature updates are available from [dotnet.microsoft.com](https://dotnet.microsoft.com/en-us/download/dotnet/6.0), Source-Build will support 6.0.1xx and 7.0.1xx.
 For the latest information about Source-Build support for new .NET versions, please check our [GitHub Discussions page](https://github.com/dotnet/source-build/discussions) for announcements.
 
 ## Prerequisites
@@ -88,7 +88,7 @@ The dependencies for building .NET from source can be found [here](https://githu
     ```
 
     This builds the entire .NET SDK from source.
-    The resulting SDK is placed at `artifacts/x64/Release/dotnet-sdk-6.0.100-fedora.33-x64.tar.gz`.
+    The resulting SDK is placed at `artifacts/x64/Release/dotnet-sdk-7.0.100-your-RID.tar.gz`.
 
     Optionally add the `--online` flag to add online NuGet restore sources to the build.
     This is useful for testing unsupported releases that don't yet build without downloading pre-built binaries from the internet.
@@ -99,7 +99,7 @@ The dependencies for building .NET from source can be found [here](https://githu
 
     ```bash
     mkdir -p $HOME/dotnet
-    tar zxf artifacts/x64/Release/dotnet-sdk-6.0.100-fedora.33-x64.tar.gz -C $HOME/dotnet
+    tar zxf artifacts/x64/Release/dotnet-sdk-7.0.100-your-RID.tar.gz -C $HOME/dotnet
     ln -s $HOME/dotnet/dotnet /usr/bin/dotnet
     ```
     
