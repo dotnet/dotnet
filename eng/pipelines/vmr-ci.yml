@@ -32,6 +32,7 @@ stages:
         buildArchitecture: x64
         linuxPortable: true
         runTests: false
+        isBuiltFromVmr: true
     - template: /src/installer/eng/build.yml
       parameters:
         agentOs: Linux
@@ -41,6 +42,7 @@ stages:
         runtimeIdentifier: 'linux-arm64'
         linuxPortable: true
         runTests: false
+        isBuiltFromVmr: true
 
 - template: /src/installer/eng/pipelines/templates/stages/vmr-build.yml
   parameters:

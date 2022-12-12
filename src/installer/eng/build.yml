@@ -63,6 +63,11 @@ parameters:
   type: boolean
   default: false
 
+- name: isBuiltFromVmr
+  displayName: True when build is running from dotnet/dotnet
+  type: boolean
+  default: false
+
 jobs:
 - template: common/templates/job/job.yml
   parameters:
@@ -149,6 +154,11 @@ jobs:
                 /p:DotNetPublishUsingPipelines=$(_PublishUsingPipelines)
                 $(_PgoInstrument)
 
+    - ${{ if parameters.isBuiltFromVmr }}:
+      - installerRoot: '$(Build.SourcesDirectory)/src/installer'
+    - ${{ else }}:
+      - installerRoot: '$(Build.SourcesDirectory)'
+
     steps:
     - checkout: self
       clean: true
@@ -157,11 +167,11 @@ jobs:
         - task: PowerShell@2
           displayName: Setup Private Feeds Credentials
           inputs:
-            filePath: $(Build.SourcesDirectory)/eng/common/SetupNugetSources.ps1
-            arguments: -ConfigFile $(Build.SourcesDirectory)/NuGet.config -Password $Env:Token
+            filePath: $(installerRoot)/eng/common/SetupNugetSources.ps1
+            arguments: -ConfigFile $(installerRoot)/NuGet.config -Password $Env:Token
           env:
             Token: $(dn-bot-dnceng-artifact-feeds-rw)
-      - script: build.cmd
+      - script: $(installerRoot)/build.cmd
                   $(_TestArg) $(_PackArg)
                   -publish -ci -sign
                   -Configuration ${{ parameters.buildConfiguration }}
@@ -178,12 +188,12 @@ jobs:
         - task: Bash@3
           displayName: Setup Private Feeds Credentials
           inputs:
-            filePath: $(Build.SourcesDirectory)/eng/common/SetupNugetSources.sh
-            arguments: $(Build.SourcesDirectory)/NuGet.config $Token
+            filePath: $(installerRoot)/eng/common/SetupNugetSources.sh
+            arguments: $(installerRoot)/NuGet.config $Token
           env:
             Token: $(dn-bot-dnceng-artifact-feeds-rw)
     - ${{ if eq(parameters.agentOs, 'Linux') }}:
-      - script: ./build.sh
+      - script: $(installerRoot)/build.sh
                   $(_TestArg) $(_PackArg)
                   --publish --ci
                   --noprettyprint
@@ -197,7 +207,7 @@ jobs:
         displayName: Build
 
     - ${{ if or(eq(parameters.agentOs, 'Darwin'), eq(parameters.agentOs, 'FreeBSD')) }}:
-      - script: ./build.sh
+      - script: $(installerRoot)/build.sh
                   $(_TestArg)
                   --pack --publish --ci
                   --noprettyprint
@@ -222,7 +232,7 @@ jobs:
     - task: CopyFiles@2
       displayName: Gather Logs
       inputs:
-        SourceFolder: '$(Build.SourcesDirectory)/artifacts'
+        SourceFolder: '$(installerRoot)/artifacts'
         Contents: |
          log/${{ parameters.buildConfiguration }}/**/*
          TestResults/${{ parameters.buildConfiguration }}/**/*
