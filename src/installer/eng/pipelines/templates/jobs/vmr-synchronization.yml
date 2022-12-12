@@ -2,10 +2,6 @@
 ### It synchronizes the content of the VMR to this new commit and pushes the changes
 
 parameters:
-- name: vmrIsSelf
-  displayName: True when build is running from dotnet/dotnet directly
-  type: boolean
-
 - name: targetRef
   displayName: Target revision of dotnet/installer to synchronize
   type: string
@@ -47,13 +43,13 @@ jobs:
   - template: ../steps/vmr-prepare.yml
     parameters:
       vmrBranch: ${{ parameters.vmrBranch }}
-      vmrIsSelf: ${{ parameters.vmrIsSelf }}
+      vmrIsSelf: false
 
   - template: ../steps/vmr-pull-updates.yml
     parameters:
       vmrPath: $(vmrPath)
       vmrBranch: ${{ parameters.vmrBranch }}
-      targetRef: ${{ parameters.targetRef }}
+      targetRef: false
 
   # For official builds, push the changes to the VMR
   - ${{ if and(not(parameters.noPush), not(in(variables['Build.Reason'], 'PullRequest')), eq(variables['System.TeamProject'], 'internal')) }}:
@@ -65,14 +61,5 @@ jobs:
         git branch ${{ parameters.vmrBranch }}
         git branch --set-upstream-to=dotnet/${{ parameters.vmrBranch }} ${{ parameters.vmrBranch }} || echo 'Branch ${{ parameters.vmrBranch }} not found in remote'
         git push dotnet ${{ parameters.vmrBranch }}
-
-        # Export the SHA as an artifact to be reused by the official VMR build
-        sha=`git rev-parse HEAD`
-        mkdir -p "$(Build.ArtifactStagingDirectory)/VmrRevision"
-        echo $sha > "$(Build.ArtifactStagingDirectory)/VmrRevision/VmrRevision.txt"
       displayName: Push changes to dotnet/dotnet
       workingDirectory: $(vmrPath)
-
-    - publish: $(Build.ArtifactStagingDirectory)/VmrRevision
-      artifact: VmrRevision
-      displayName: Publish new SHA
