@@ -8,33 +8,32 @@ Subject: [PATCH] Eliminate prebuilts
 ---
  Directory.Build.props                             | 3 +--
  src/MSBuildLocator/Microsoft.Build.Locator.csproj | 2 +-
- 2 files changed, 1 insertion(+), 3 deletions(-)
+ 2 files changed, 2 insertions(+), 3 deletions(-)
 
 diff --git a/Directory.Build.props b/Directory.Build.props
-index 27bc1a1..f8ea438 100644
+index 95ec511..5227a47 100644
 --- a/Directory.Build.props
 +++ b/Directory.Build.props
-@@ -27,7 +27,6 @@
+@@ -28,8 +28,7 @@
    </PropertyGroup>
-
+ 
    <ItemGroup>
--    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All"/>
+-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
+-    <PackageReference Include="Nerdbank.GitVersioning" Version="3.5.107" PrivateAssets="all" />
 +    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="$(MicrosoftSourceLinkVersion)" PrivateAssets="All"/>
--    <PackageReference Include="Nerdbank.GitVersioning" Version="2.2.13" PrivateAssets="all" />
    </ItemGroup>
  
    <ItemGroup>
 diff --git a/src/MSBuildLocator/Microsoft.Build.Locator.csproj b/src/MSBuildLocator/Microsoft.Build.Locator.csproj
-index 712f67c..56b1196 100644
+index a3977cd..921c8c0 100644
 --- a/src/MSBuildLocator/Microsoft.Build.Locator.csproj
 +++ b/src/MSBuildLocator/Microsoft.Build.Locator.csproj
 @@ -2,7 +2,7 @@
  
    <PropertyGroup>
      <OutputType>Library</OutputType>
--    <TargetFrameworks>net46;netcoreapp2.0</TargetFrameworks>
-+    <TargetFrameworks>netcoreapp2.0</TargetFrameworks>
+-    <TargetFrameworks>net46;netcoreapp3.1</TargetFrameworks>
++    <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
      <DebugType>full</DebugType>
  
      <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
-

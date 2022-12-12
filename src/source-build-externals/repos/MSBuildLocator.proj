@@ -16,7 +16,7 @@
       <BuildCommandArgs>$(BuildCommandArgs) /v:$(LogVerbosity)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) $(RedirectRepoOutputToLog)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /p:MicrosoftSourceLinkVersion=$(MicrosoftSourceLinkVersion)</BuildCommandArgs>
-      <BuildCommandArgs>$(BuildCommandArgs) /p:Version=1.4.1</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:Version=1.5.5</BuildCommandArgs>
     </PropertyGroup>
 
     <Exec Command="$(DotnetToolCommand) restore /bl:restore.binlog $(BuildCommandArgs)"
