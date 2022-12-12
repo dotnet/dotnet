@@ -33,6 +33,8 @@ variables:
   - name: PostBuildSign
     value: true
 - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+  - name: Codeql.Enabled
+    value: true
   - group: DotNet-DotNetCli-Storage
   - group: DotNet-Installer-SDLValidation-Params
   - name: _PublishUsingPipelines
