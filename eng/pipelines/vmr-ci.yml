@@ -25,7 +25,7 @@ stages:
 # compare the contents with the source-built one later.
 # This only works because we don't run this test in PRs. If we decided
 # to run this test in PRs, we would need to build the MSFT SDK there too.
-- ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
+- ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal')) }}:
   stage: Build_MSFT_SDK
   jobs:
   - template: /src/installer/eng/build.yml
@@ -49,5 +49,5 @@ stages:
 - template: /src/installer/eng/pipelines/templates/stages/vmr-build.yml
   parameters:
     installerBuildResourceId: current
-    ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
+    ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal')) }}:
       dependsOn: Build_MSFT_SDK
