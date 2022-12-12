@@ -2,6 +2,10 @@
 ### It synchronizes the content of the VMR to this new commit and pushes the changes
 
 parameters:
+- name: isDotnetDotnet
+  displayName: True when build is running from dotnet/dotnet directly
+  type: boolean
+
 - name: targetRef
   displayName: Target revision of dotnet/installer to synchronize
   type: string
@@ -43,6 +47,7 @@ jobs:
   - template: ../steps/vmr-prepare.yml
     parameters:
       vmrBranch: ${{ parameters.vmrBranch }}
+      isDotnetDotnet: ${{ parameters.isDotnetDotnet }}
 
   - template: ../steps/vmr-pull-updates.yml
     parameters:

@@ -2,6 +2,10 @@
 ### Component Governance scan is also triggered over the VMR's non-repo sources
 
 parameters:
+- name: isDotnetDotnet
+  displayName: True when build is running from dotnet/dotnet directly
+  type: boolean
+
 - name: vmrBranch
   displayName: dotnet/dotnet branch to use
   type: string
@@ -17,11 +21,18 @@ parameters:
   default: false
 
 steps:
-- checkout: vmr
-  displayName: Clone dotnet/dotnet
-  path: vmr
-  clean: true
-  fetchDepth: 0 # We need this so that we can check out the new commit
+- ${{ parameters.isDotnetDotnet }}:
+  - checkout: self
+    displayName: Clone dotnet/dotnet
+    path: vmr
+    clean: true
+
+- ${{ else }}:
+  - checkout: vmr
+    displayName: Clone dotnet/dotnet
+    path: vmr
+    clean: true
+    fetchDepth: 0 # We need this so that we can check out the new commit
 
 - ${{ if ne(parameters.installerBuildResourceId, 'current') }}:
   - download: ${{ parameters.installerBuildResourceId }}
