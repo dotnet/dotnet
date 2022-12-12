@@ -154,6 +154,9 @@ jobs:
                 /p:DotNetPublishUsingPipelines=$(_PublishUsingPipelines)
                 $(_PgoInstrument)
 
+    - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+      - group: AzureDevOps-Artifact-Feeds-Pats
+
     - ${{ if parameters.isBuiltFromVmr }}:
       - installerRoot: '$(Build.SourcesDirectory)/src/installer'
     - ${{ else }}:
