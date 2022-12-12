@@ -2,7 +2,7 @@
 ### Component Governance scan is also triggered over the VMR's non-repo sources
 
 parameters:
-- name: vmrIsSelf
+- name: isBuiltFromVmr
   displayName: True when build is running from dotnet/dotnet directly
   type: boolean
 
@@ -21,7 +21,7 @@ parameters:
   default: false
 
 steps:
-- ${{ if parameters.vmrIsSelf }}:
+- ${{ if parameters.isBuiltFromVmr }}:
   - checkout: self
     displayName: Clone dotnet/dotnet
     path: vmr

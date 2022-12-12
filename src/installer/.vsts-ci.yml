@@ -378,7 +378,7 @@ stages:
     parameters:
       vmrBranch: ${{ parameters.vmrBranch }}
       installerBuildResourceId: current
-      vmrIsSelf: false
+      isBuiltFromVmr: false
 
 - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
   - stage: Publish

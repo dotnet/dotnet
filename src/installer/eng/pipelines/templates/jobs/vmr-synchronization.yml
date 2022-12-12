@@ -43,7 +43,7 @@ jobs:
   - template: ../steps/vmr-prepare.yml
     parameters:
       vmrBranch: ${{ parameters.vmrBranch }}
-      vmrIsSelf: false
+      isBuiltFromVmr: false
 
   - template: ../steps/vmr-pull-updates.yml
     parameters:
