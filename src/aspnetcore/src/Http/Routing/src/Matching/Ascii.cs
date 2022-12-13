@@ -12,6 +12,7 @@ internal static class Ascii
     // and we know that the spans are the same length.
     //
     // Similar to https://github.com/dotnet/coreclr/blob/master/src/System.Private.CoreLib/shared/System/Globalization/CompareInfo.cs#L549
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool AsciiIgnoreCaseEquals(ReadOnlySpan<char> a, ReadOnlySpan<char> b, int length)
     {
         // The caller should have checked the length. We enforce that here by THROWING if the
