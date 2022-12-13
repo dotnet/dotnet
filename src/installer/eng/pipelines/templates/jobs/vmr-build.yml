@@ -62,7 +62,7 @@ jobs:
     dependsOn: ${{ parameters.reuseBuildArtifactsFrom }}_${{ parameters.architecture }}
   variables:
   - template: /eng/common/templates/variables/pool-providers.yml
-  - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+  - ${{ if and(not(parameters.isBuiltFromVmr), eq(variables['System.TeamProject'], 'internal')) }}:
     - group: DotNetBot-GitHub
     - group: AzureDevOps-Artifact-Feeds-Pats
   - ${{ else }}:
