@@ -15,7 +15,7 @@
     <formatOutputPackageVersion>8.0.360313</formatOutputPackageVersion>
     <fsharpGitCommitHash>ae1718567f2aab20df7ca07368b9f51d1c376a10</fsharpGitCommitHash>
     <fsharpOutputPackageVersion>7.0.1-beta.22608.3</fsharpOutputPackageVersion>
-    <installerGitCommitHash>06e0c7ec4cc156b1d76e92b24f1eeb0a044717aa</installerGitCommitHash>
+    <installerGitCommitHash>27e87715f2cf715646f7351783dfb7ec36439590</installerGitCommitHash>
     <installerOutputPackageVersion>8.0.100</installerOutputPackageVersion>
     <linkerGitCommitHash>27ce03227f4822aaff660ec9bac6fe6c20d001d2</linkerGitCommitHash>
     <linkerOutputPackageVersion>8.0.100-1.22609.1</linkerOutputPackageVersion>
@@ -23,8 +23,6 @@
     <msbuildOutputPackageVersion>17.5.0-preview-22608-02</msbuildOutputPackageVersion>
     <nugetclientGitCommitHash>be87c9ee11149780ce7de5fe35fe2653d565ccfd</nugetclientGitCommitHash>
     <nugetclientOutputPackageVersion>6.5.0-preview.2.108</nugetclientOutputPackageVersion>
-    <razorcompilerGitCommitHash>a41514681a4db83c7cae7e17debf668d12efc1bb</razorcompilerGitCommitHash>
-    <razorcompilerOutputPackageVersion>7.0.0-preview.5.22412.2</razorcompilerOutputPackageVersion>
     <razorGitCommitHash>b83534429c940756d49907d1637cbf14c7f07b2a</razorGitCommitHash>
     <razorOutputPackageVersion>7.0.0-preview.22601.12</razorOutputPackageVersion>
     <roslynanalyzersGitCommitHash>f3615531cc3ead0dc930d4e76aef06607ff6aad9</roslynanalyzersGitCommitHash>
