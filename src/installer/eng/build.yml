@@ -153,7 +153,8 @@ jobs:
       - _PushToVSFeed: false
       - _BuildArgs: /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
                 /p:TeamName=$(_TeamName)
-                /p:DotNetPublishUsingPipelines=$(_PublishUsingPipelines)
+                /p:DotNetPublishUsingPipelines=true
+                /p:PublishToSymbolServer=false
                 $(_PgoInstrument)
     - ${{ else }}:
       - installerRoot: '$(Build.SourcesDirectory)'
