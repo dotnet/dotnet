@@ -105,7 +105,6 @@ namespace NuGet.XPlat.FuncTest
         [InlineData("--format JSON")]
         [InlineData("--format json --output-version 1")]
         [InlineData("--format console")]
-        [InlineData("--format console --output-version 1")]
         public void BasicListPackage_OutputFormat_CorrectInput_Parsing_Succeeds(string outputFormatCommmand)
         {
             VerifyCommand(
@@ -132,7 +131,11 @@ namespace NuGet.XPlat.FuncTest
 
         [Theory]
         [InlineData("--format xml")]
+        [InlineData("--format json --output-version 0")]
         [InlineData("--format json --output-version 2")]
+        [InlineData("--format console --output-version 1")]
+        [InlineData("--output-version 0")]
+        [InlineData("--output-version 1")]
         public void BasicListPackage_OutputFormat_BadInput_Parsing_Fails(string outputFormatCommmand)
         {
             VerifyCommand(

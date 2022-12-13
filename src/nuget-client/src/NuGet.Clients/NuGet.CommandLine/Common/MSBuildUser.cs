@@ -38,8 +38,8 @@ namespace NuGet.Common
             }
 
             _msbuildDirectory = msbuildDirectory;
-            _msbuildAssembly = Assembly.LoadFile(microsoftBuildDllPath);
-            _frameworkAssembly = Assembly.LoadFile(Path.Combine(msbuildDirectory, "Microsoft.Build.Framework.dll"));
+            _msbuildAssembly = Assembly.LoadFrom(microsoftBuildDllPath);
+            _frameworkAssembly = Assembly.LoadFrom(Path.Combine(msbuildDirectory, "Microsoft.Build.Framework.dll"));
 
             LoadTypes();
         }

@@ -71,7 +71,12 @@
     <MicrosoftBuildUtilitiesCorePackageVersion>$(MicrosoftBuildPackageVersion)</MicrosoftBuildUtilitiesCorePackageVersion>
 
     <MicrosoftExtensionsDependencyModelPackageVersion>3.0.0-preview4-27615-11</MicrosoftExtensionsDependencyModelPackageVersion>
-    <MicrosoftExtensionsFileSystemGlobbingPackageVersion>1.1.1</MicrosoftExtensionsFileSystemGlobbingPackageVersion>
+
+    <!-- Looks like source build workflow changes the version used during the build but we're shipping older version, this lead to failure on "centos" -->
+    <!-- We have to keep the version aligned with the SDK version specified src\vstest.console\vstest.console.csproj <TargetFrameworks Condition=" '$(DotNetBuildFromSource)' == 'true' ">xxxx;</TargetFrameworks> -->
+    <!-- https://github.com/dotnet/installer/pull/15078#issuecomment-1344407280 -->
+    <MicrosoftExtensionsFileSystemGlobbingPackageVersion  Condition=" '$(DotNetBuildFromSource)' == 'true' ">7.0.0</MicrosoftExtensionsFileSystemGlobbingPackageVersion>
+    <MicrosoftExtensionsFileSystemGlobbingPackageVersion  Condition=" '$(DotNetBuildFromSource)' == '' ">1.1.1</MicrosoftExtensionsFileSystemGlobbingPackageVersion>
 
     <CoverletCoverageVersion>1.2.0</CoverletCoverageVersion>
     <RoslynPublicApiAnalyzersVersion>3.3.4-beta1.21554.2</RoslynPublicApiAnalyzersVersion>

@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Versioning\NuGet.Versioning.csproj" />
+    <ProjectReference Include="..\..\..\src\NuGet.Core\NuGet.Versioning\NuGet.Versioning.csproj" />
   </ItemGroup>
 
   <ItemGroup>

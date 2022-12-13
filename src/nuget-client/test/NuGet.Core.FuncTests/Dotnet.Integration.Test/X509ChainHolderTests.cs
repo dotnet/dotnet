@@ -2,15 +2,11 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using NuGet.Common;
 using NuGet.Packaging.Signing;
-using NuGet.Test.Utility;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Dotnet.Integration.Test
 {
@@ -19,71 +15,33 @@ namespace Dotnet.Integration.Test
     [Collection(DotnetIntegrationCollection.Name)]
     public class X509ChainHolderTests
     {
-        private readonly MsbuildIntegrationTestFixture _msbuildFixture;
-        private readonly TestLogger _logger;
-
-        public X509ChainHolderTests(MsbuildIntegrationTestFixture msbuildFixture, ITestOutputHelper helper)
-        {
-            _msbuildFixture = msbuildFixture;
-            _logger = new TestLogger(helper);
-        }
-
         [Fact]
         public void CreateForCodeSigning_Always_ReturnsRootCertificatesValidForCodeSigning()
         {
-            FileInfo codeSigningCertificateBundle = new(
-                Path.Combine(
-                    _msbuildFixture.SdkDirectory.FullName,
-                    FallbackCertificateBundleX509ChainFactory.SubdirectoryName,
-                    FallbackCertificateBundleX509ChainFactory.CodeSigningFileName));
-
             using (X509ChainHolder chainHolder = X509ChainHolder.CreateForCodeSigning())
             {
                 X509ChainPolicy policy = chainHolder.Chain.ChainPolicy;
 
-                Verify(codeSigningCertificateBundle, policy);
+                // Code signing certificates that chain to this root certificate are widely used on nuget.org.
+                // CN=DigiCert Assured ID Root CA, OU=www.digicert.com, O=DigiCert Inc, C=US
+                Verify(policy, expectedFingerprint: "3e9099b5015e8f486c00bcea9d111ee721faba355a89bcf1df69561e3dc6325c");
             }
         }
 
         [Fact]
         public void CreateForTimestamping_Always_ReturnsRootCertificatesValidForTimestamping()
         {
-            FileInfo codeSigningCertificateBundle = new(
-                Path.Combine(
-                    _msbuildFixture.SdkDirectory.FullName,
-                    FallbackCertificateBundleX509ChainFactory.SubdirectoryName,
-                    FallbackCertificateBundleX509ChainFactory.TimestampingFileName));
-
             using (X509ChainHolder chainHolder = X509ChainHolder.CreateForTimestamping())
             {
                 X509ChainPolicy policy = chainHolder.Chain.ChainPolicy;
 
-                Verify(codeSigningCertificateBundle, policy);
+                // Timestamping certificates that chain to this root certificate are widely used on nuget.org.
+                // CN=VeriSign Universal Root Certification Authority, OU="(c) 2008 VeriSign, Inc. - For authorized use only", OU=VeriSign Trust Network, O="VeriSign, Inc.", C=US
+                Verify(policy, expectedFingerprint: "2399561127a57125de8cefea610ddf2fa078b5c8067f4e828290bfb860e84b3c");
             }
         }
 
-        private static void AssertSameCertificates(
-            X509Certificate2Collection expectedCertificates,
-            X509Certificate2Collection actualCertificates)
-        {
-            Assert.Equal(expectedCertificates.Count, actualCertificates.Count);
-
-            Dictionary<string, X509Certificate2> expectedCertificatesDictionary =
-                expectedCertificates.ToDictionary(
-                    certificate => certificate.GetCertHashString(HashAlgorithmName.SHA256),
-                    certificate => certificate,
-                    StringComparer.Ordinal);
-            Dictionary<string, X509Certificate2> actualCertificatesDictionary =
-                actualCertificates.ToDictionary(
-                    certificate => certificate.GetCertHashString(HashAlgorithmName.SHA256),
-                    certificate => certificate,
-                    StringComparer.Ordinal);
-
-            Assert.Equal(0, expectedCertificatesDictionary.Keys.Except(actualCertificatesDictionary.Keys).Count());
-            Assert.Equal(0, actualCertificatesDictionary.Keys.Except(expectedCertificatesDictionary.Keys).Count());
-        }
-
-        private void Verify(FileInfo certificateBundleFile, X509ChainPolicy policy)
+        private void Verify(X509ChainPolicy policy, string expectedFingerprint)
         {
             if (RuntimeEnvironmentHelper.IsWindows)
             {
@@ -91,28 +49,22 @@ namespace Dotnet.Integration.Test
             }
             else if (RuntimeEnvironmentHelper.IsLinux || RuntimeEnvironmentHelper.IsMacOSX)
             {
-                X509Certificate2Collection expectedCertificates = LoadCertificateBundle(certificateBundleFile);
-
                 Assert.Equal(X509ChainTrustMode.CustomRootTrust, policy.TrustMode);
 
-                AssertSameCertificates(expectedCertificates, policy.CustomTrustStore);
+                using (SHA256 hashAlgorithm = SHA256.Create())
+                {
+                    Assert.Contains(policy.CustomTrustStore, certificate =>
+                    {
+                        string actualFingerprint = certificate.GetCertHashString(HashAlgorithmName.SHA256);
+
+                        return string.Equals(expectedFingerprint, actualFingerprint, StringComparison.OrdinalIgnoreCase);
+                    });
+                }
             }
             else
             {
                 throw new PlatformNotSupportedException();
             }
-        }
-
-        private X509Certificate2Collection LoadCertificateBundle(FileInfo certificateBundle)
-        {
-            _logger.LogVerbose($"Expected fallback certificate bundle file path:  {certificateBundle.FullName}");
-            _logger.LogVerbose($"Fallback certificate bundle file exists:  {certificateBundle.Exists}");
-
-            X509Certificate2Collection certificates = new();
-
-            certificates.ImportFromPemFile(certificateBundle.FullName);
-
-            return certificates;
         }
     }
 }

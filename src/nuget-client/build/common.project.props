@@ -26,7 +26,7 @@
     <TargetFrameworksLibrary Condition="'$(DotNetBuildFromSource)' == 'true'">$(NETCoreTargetFramework);$(NETFXTargetFramework);$(NetStandardVersion)</TargetFrameworksLibrary>
     <TargetFrameworksLibraryForSigning>$(TargetFrameworksLibrary);netcoreapp5.0</TargetFrameworksLibraryForSigning>
     <TargetFrameworksLibraryForSigning Condition="'$(DotNetBuildFromSource)' == 'true'">$(TargetFrameworksLibrary);net7.0</TargetFrameworksLibraryForSigning>
-    <TargetFrameworksLibraryForCrossVerificationTests>$(NETFXTargetFramework);net6.0</TargetFrameworksLibraryForCrossVerificationTests>
+    <TargetFrameworksLibraryForCrossVerificationTests>$(NETFXTargetFramework);net7.0</TargetFrameworksLibraryForCrossVerificationTests>
     <RepositoryRootDirectory>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), 'README.md'))\</RepositoryRootDirectory>
     <BuildCommonDirectory>$(RepositoryRootDirectory)build\</BuildCommonDirectory>
     <SolutionFile>$(RepositoryRootDirectory)$(RepositoryName).sln</SolutionFile>
@@ -34,8 +34,6 @@
     <DotnetExePath>$(RepositoryRootDirectory)cli\dotnet.exe</DotnetExePath>
     <DotnetExePath Condition=" '$(IsXPlat)' == 'true' ">$(RepositoryRootDirectory)cli\dotnet</DotnetExePath>
     <SharedDirectory>$(BuildCommonDirectory)Shared</SharedDirectory>
-    <NuGetCoreSrcDirectory>$(RepositoryRootDirectory)src\NuGet.Core\</NuGetCoreSrcDirectory>
-    <NuGetClientsSrcDirectory>$(RepositoryRootDirectory)src\NuGet.Clients\</NuGetClientsSrcDirectory>
     <NupkgOutputDirectory>$(ArtifactsDirectory)nupkgs\</NupkgOutputDirectory>
     <SolutionPackagesFolder>$(RepositoryRootDirectory)packages\</SolutionPackagesFolder>
     <ILMergeExePath>$(SolutionPackagesFolder)ilmerge\3.0.21\tools\net452\ILMerge.exe</ILMergeExePath>
@@ -43,7 +41,6 @@
     <EnlistmentRootSrc>$(RepositoryRootDirectory)src</EnlistmentRootSrc>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">$(RepositoryRootDirectory)</SolutionDir>
     <ArtifactRoot>$(ArtifactsDirectory)</ArtifactRoot>
-    <TestUtilitiesDirectory>$(RepositoryRootDirectory)test\TestUtilities\</TestUtilitiesDirectory>
     <NuGetBuildLocalizationRepository>$(RepositoryRootDirectory)submodules\NuGet.Build.Localization\</NuGetBuildLocalizationRepository>
     <LocalizationRootDirectory>$(NuGetBuildLocalizationRepository)localize</LocalizationRootDirectory>
     <LocalizationWorkDirectory>$(RepositoryRootDirectory)localize</LocalizationWorkDirectory>
@@ -87,7 +84,7 @@
     <Features>strict</Features>
     <!-- Same as SDK default, but without CandidateAssemblyFiles in front, which would search in Content items -->
     <AssemblySearchPaths>{HintPathFromItem};{TargetFrameworkDirectory};{RawFileName}</AssemblySearchPaths>
-    <LangVersion>9</LangVersion>
+    <LangVersion>11</LangVersion>
     <LangVersion Condition="'$(DotNetBuildFromSource)' == 'true'">latest</LangVersion>
   </PropertyGroup>
 

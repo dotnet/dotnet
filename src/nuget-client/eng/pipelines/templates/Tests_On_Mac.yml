@@ -3,7 +3,7 @@ steps:
   displayName: 'Use .NET Core sdk'
   inputs:
     packageType: sdk
-    version: 6.x
+    version: 7.x
     installationPath: $(Agent.TempDirectory)/dotnet
 
 - task: DownloadBuildArtifacts@0

@@ -345,6 +345,7 @@ function Test-SubTreeUpdateWithConflict {
 }
 
 function Test-AddingBindingRedirectAfterUpdate {
+    [SkipTest('https://github.com/NuGet/Home/issues/12292')]
     param(
         $context
     )
@@ -1742,6 +1743,7 @@ function Test-UpdatePackageWithToHighestMinorFlag {
 }
 
 function Test-UpdatingBindingRedirectAfterUpdate {
+    [SkipTest('https://github.com/NuGet/Home/issues/12292')]
     param(
         $context
     )

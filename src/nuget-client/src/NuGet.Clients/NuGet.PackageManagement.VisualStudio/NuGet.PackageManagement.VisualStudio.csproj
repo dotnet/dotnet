@@ -1,290 +1,24 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <TargetFramework>$(NETFXTargetFramework)</TargetFramework>
     <Shipping>true</Shipping>
-    <IncludeInVSIX>true</IncludeInVSIX>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <ProjectGuid>{306CDDFA-FF0B-4299-930C-9EC6C9308160}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <IncludeInVsix>true</IncludeInVsix>
     <RootNamespace>NuGet.PackageManagement.VisualStudio</RootNamespace>
-    <AssemblyName>NuGet.PackageManagement.VisualStudio</AssemblyName>
-    <FileAlignment>512</FileAlignment>
     <Description>NuGet's Visual Studio functionalities, integrations and utilities.</Description>
-    <ResolveNuGetPackages>true</ResolveNuGetPackages>
-    <TargetFrameworkVersion>$(NETFXTargetFrameworkVersion)</TargetFrameworkVersion>
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System.Runtime.Caching" />
-  </ItemGroup>
-  <ItemGroup>
+
+ <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="WindowsBase" />
-    <Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Common\IProjectContextInfoExtensions.cs" />
-    <Compile Include="Common\InstalledAndTransitivePackageCollections.cs" />
-    <Compile Include="Exceptions\ProjectNotNominatedException.cs" />
-    <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="PackageFeeds\InstalledAndTransitivePackageFeed.cs" />
-    <Compile Include="PackageFeeds\PackageSourceMoniker.cs" />
-    <Compile Include="PackageFeeds\RecommenderPackageFeed.cs" />
-    <Compile Include="Telemetry\IVsProjectBuildPropertiesTelemetry.cs" />
-    <Compile Include="ProjectServices\NativeProjectSystemReferencesReader.cs" />
-    <Compile Include="ProjectServices\CpsProjectSystemReferenceReader.cs" />
-    <Compile Include="Telemetry\VsProjectBuildPropertiesTelemetry.cs" />
-    <Compile Include="Projects\IPackageReferenceProject.cs" />
-    <Compile Include="Telemetry\CounterfactualLoggers.cs" />
-    <Compile Include="Telemetry\PackageManagerCloseEvent.cs" />
-    <Compile Include="Telemetry\PackageManagerInstalledTabData.cs" />
-    <Compile Include="Telemetry\TelemetryOnceEmitter.cs" />
-    <Compile Include="Projects\PackageReferenceProject.cs" />
-    <Compile Include="Projects\ProjectPackages.cs" />
-    <Compile Include="Projects\FrameworkInstalledPackages.cs" />
-    <Compile Include="Services\ISharedServiceState.cs" />
-    <Compile Include="Services\NuGetPackageSearchService.cs" />
-    <Compile Include="Services\NuGetProjectManagerService.cs" />
-    <Compile Include="Services\NuGetProjectManagerServiceState.cs" />
-    <Compile Include="Services\NuGetProjectUpgraderService.cs" />
-    <Compile Include="Services\PackageSearchMetadataCacheItem.cs" />
-    <Compile Include="Services\PackageSearchMetadataCacheItemEntry.cs" />
-    <Compile Include="Services\SearchObject.cs" />
-    <Compile Include="Services\SharedServiceState.cs" />
-    <Compile Include="Services\NuGetPackageFileService.cs" />
-    <Compile Include="Services\NuGetSolutionManagerService.cs" />
-    <Compile Include="Services\NuGetSourcesService.cs" />
-    <Compile Include="Projects\LegacyPackageReferenceProject.cs" />
-    <Compile Include="Projects\LegacyPackageReferenceProjectProvider.cs" />
-    <Compile Include="Migrate\ProjectJsonToPackageRefMigrator.cs" />
-    <Compile Include="CommonResources.cs" />
-    <Compile Include="Common\PackageCollection.cs" />
-    <Compile Include="Common\PackageCollectionExtensions.cs" />
-    <Compile Include="Common\PackageCollectionItem.cs" />
-    <Compile Include="Common\PackageCollectionItemExtensions.cs" />
-    <Compile Include="PackageFeeds\LoadingStatusExtensionMethods.cs" />
-    <Compile Include="ProjectServices\CpsProjectSystemServices.cs" />
-    <Compile Include="ProjectServices\VsCoreProjectSystemReferenceReader.cs" />
-    <Compile Include="ProjectSystems\VsCoreProjectSystem.cs" />
-    <Compile Include="Projects\VsMSBuildProjectSystemServices.cs" />
-    <Compile Include="Common\VersionCollectionExtensions.cs" />
-    <Compile Include="DefaultVSCredentialServiceProvider.cs" />
-    <Compile Include="Handlers\ProjectRetargetingHandler.cs" />
-    <Compile Include="Handlers\ProjectUpgradeHandler.cs" />
-    <Compile Include="IPSNuGetProjectContext.cs" />
-    <Compile Include="PackageFeeds\ConsolidatePackageFeed.cs" />
-    <Compile Include="PackageFeeds\ContinuationToken.cs" />
-    <Compile Include="PackageFeeds\IAutoCompleteProvider.cs" />
-    <Compile Include="PackageFeeds\InstalledPackageFeed.cs" />
-    <Compile Include="PackageFeeds\IPackageFeed.cs" />
-    <Compile Include="PackageFeeds\IPackageMetadataProvider.cs" />
-    <Compile Include="PackageFeeds\MultiSourceAutoCompleteProvider.cs" />
-    <Compile Include="PackageFeeds\MultiSourcePackageFeed.cs" />
-    <Compile Include="PackageFeeds\MultiSourcePackageMetadataProvider.cs" />
-    <Compile Include="PackageFeeds\PackageFeedEnumerator.cs" />
-    <Compile Include="PackageFeeds\PackageSearchMetadataCache.cs" />
-    <Compile Include="PackageFeeds\PlainPackageFeedBase.cs" />
-    <Compile Include="PackageFeeds\RefreshToken.cs" />
-    <Compile Include="PackageFeeds\SearchResult.cs" />
-    <Compile Include="PackageFeeds\SourceRepositoryExtensions.cs" />
-    <Compile Include="PackageFeeds\UpdatePackageFeed.cs" />
-    <Compile Include="Services\BrokeredServicesUtilities.cs" />
-    <Compile Include="IDE\ExtensibleSourceRepositoryProvider.cs" />
-    <Compile Include="Projects\CpsPackageReferenceProject.cs" />
-    <Compile Include="Projects\INuGetProjectProvider.cs" />
-    <Compile Include="Projects\MSBuildNuGetProjectProvider.cs" />
-    <Compile Include="Projects\ProjectJsonProjectProvider.cs" />
-    <Compile Include="Projects\ProjectSystemCache.cs" />
-    <Compile Include="Projects\CpsPackageReferenceProjectProvider.cs" />
-    <Compile Include="Projects\ProjectProviderContext.cs" />
-    <Compile Include="ProjectServices\VsProjectScriptHostService.cs" />
-    <Compile Include="Prompts\DeprecatedFrameworkModel.cs" />
-    <Compile Include="Prompts\DotnetDeprecatedPrompt.cs" />
-    <Compile Include="Services\NuGetLockService.cs" />
-    <Compile Include="Projects\VsMSBuildNuGetProject.cs" />
-    <Compile Include="ICredentialServiceProvider.cs" />
-    <Compile Include="IDE\VsCommonOperations.cs" />
-    <Compile Include="IDE\VSDeleteOnRestartManager.cs" />
-    <Compile Include="IDE\VSPackageRestoreManager.cs" />
-    <Compile Include="IDE\VSProductUpdateService.cs" />
-    <Compile Include="Projects\VsProjectJsonNuGetProject.cs" />
-    <Compile Include="SourceControl\DefaultTFSSourceControlManager.cs" />
-    <Compile Include="SourceControl\VSSourceControlManagerProvider.cs" />
-    <Compile Include="OptionsPageActivator.cs" />
-    <Compile Include="ProjectSystems\CpsProjectSystem.cs" />
-    <Compile Include="ProjectSystems\FSharpProjectSystem.cs" />
-    <Compile Include="ProjectSystems\JsProjectSystem.cs" />
-    <Compile Include="ProjectSystems\MSBuildNuGetProjectSystemFactory.cs" />
-    <Compile Include="ProjectSystems\NativeProjectSystem.cs" />
-    <Compile Include="ProjectSystems\WebProjectSystem.cs" />
-    <Compile Include="ProjectSystems\WebSiteProjectSystem.cs" />
-    <Compile Include="ProjectSystems\WindowsStoreProjectSystem.cs" />
-    <Compile Include="ProjectSystems\WixProjectSystem.cs" />
-    <Compile Include="Runtime\BindingRedirectManager.cs" />
-    <Compile Include="Runtime\BindingRedirectResolver.cs" />
-    <Compile Include="Runtime\RemoteAssembly.cs" />
-    <Compile Include="Setting\ISettingsManager.cs" />
-    <Compile Include="Setting\ISettingsStore.cs" />
-    <Compile Include="Setting\IWritableSettingsStore.cs" />
-    <Compile Include="Setting\SettingsManagerBase.cs" />
-    <Compile Include="Setting\SettingsManagerWrapper.cs" />
-    <Compile Include="Setting\SettingsStoreWrapper.cs" />
-    <Compile Include="Setting\WritableSettingsStoreWrapper.cs" />
-    <Compile Include="SourceControl\DTESourceControlUtility.cs" />
-    <Compile Include="SourceControl\VsSourceControlTracker.cs" />
-    <Compile Include="Telemetry\GetInstalledPackagesAsyncTelemetryEvent.cs" />
-    <Compile Include="Telemetry\CacheMissException.cs" />
-    <Compile Include="Telemetry\HyperlinkClickedTelemetryEvent.cs" />
-    <Compile Include="Telemetry\HyperlinkType.cs" />
-    <Compile Include="Telemetry\NuGetProjectType.cs" />
-    <Compile Include="Telemetry\PackageManagerUIRefreshEvent.cs" />
-    <Compile Include="Telemetry\DiagnosticTelemetryEvent.cs" />
-    <Compile Include="Telemetry\ProjectTelemetryEvent.cs" />
-    <Compile Include="Telemetry\SearchPageTelemetryEvent.cs" />
-    <Compile Include="Telemetry\SearchSelectionTelemetryEvent.cs" />
-    <Compile Include="Telemetry\SearchTelemetryEvent.cs" />
-    <Compile Include="Telemetry\SourceTelemetry.cs" />
-    <Compile Include="Telemetry\VSTelemetryServiceUtility.cs" />
-    <Compile Include="Utility\EnvDTEProjectUtility.cs" />
-    <Compile Include="Utility\EnvDTESolutionUtility.cs" />
-    <Compile Include="Utility\ExperimentUtility.cs" />
-    <Compile Include="Utility\FrameworkAssembly.cs" />
-    <Compile Include="Utility\FrameworkAssemblyResolver.cs" />
-    <Compile Include="Utility\GetPackageReferenceUtility.cs" />
-    <Compile Include="Utility\IProjectContextInfoUtility.cs" />
-    <Compile Include="Utility\ProjectInstalledPackage.cs" />
-    <Compile Include="Utility\NativeMethods.cs" />
-    <Compile Include="Utility\NuGetProjectUpgradeUtility.cs" />
-    <Compile Include="Utility\ProjectRetargetingUtility.cs" />
-    <Compile Include="Utility\SolutionUtility.cs" />
-    <Compile Include="Utility\RefreshFileUtility.cs" />
-    <Compile Include="Utility\RegistrySettingUtility.cs" />
-    <Compile Include="Utility\RuntimeHelpers.cs" />
-    <Compile Include="Utility\SettingsHelper.cs" />
-    <Compile Include="Utility\TaskCombinators.cs" />
-    <Compile Include="Utility\VCProjectHelper.cs" />
-    <Compile Include="Utility\VSRestoreSettingsUtilities.cs" />
-    <Compile Include="VisualStudioActivityLogger.cs" />
-    <Compile Include="VisualStudioCredentialProvider.cs" />
-    <Compile Include="VsCredentialProviderAdapter.cs" />
-    <Compile Include="VsCredentialProviderImporter.cs" />
-    <Compile Include="VSMachineWideSettings.cs" />
-    <Compile Include="Projects\NuGetProjectFactory.cs" />
-    <Compile Include="ProjectSystems\VsMSBuildProjectSystem.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Strings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Strings.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Utility\MicrosoftBuildEvaluationProjectUtility.cs" />
-    <Compile Include="IDE\VSSolutionManager.cs" />
-    <Compile Include="Services\DefaultProjectThreadingService.cs" />
-    <Compile Include="Projects\IVsProjectAdapterProvider.cs" />
-    <Compile Include="Services\IVsProjectThreadingService.cs" />
-    <Compile Include="ProjectServices\VsProjectBuildProperties.cs" />
-    <Compile Include="ProjectServices\VsManagedLanguagesProjectSystemServices.cs" />
-    <Compile Include="Projects\VsProjectAdapter.cs" />
-    <Compile Include="Projects\VsProjectAdapterProvider.cs" />
-    <Compile Include="ProjectServices\VsCoreProjectSystemServices.cs" />
-    <Compile Include="VSSettings.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="CommonResources.resx">
-      <DependentUpon>CommonResources.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Strings.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="$(NuGetClientsSrcDirectory)NuGet.Indexing\NuGet.Indexing.csproj">
-      <Project>{a2b06fa8-bdbc-4459-a92a-161862b2aa97}</Project>
-      <Name>NuGet.Indexing</Name>
-    </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Credentials\NuGet.Credentials.csproj">
-      <Project>{32a23995-14c7-483b-98c3-0ae4185373ea}</Project>
-      <Name>NuGet.Credentials</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\NuGet.Core\NuGet.Resolver\NuGet.Resolver.csproj">
-      <Project>{51aa27a9-b8b4-458f-9211-e6889b441573}</Project>
-      <Name>NuGet.Resolver</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NuGet.VisualStudio.Common\NuGet.VisualStudio.Common.csproj">
-      <Project>{eea49a74-6efc-410e-9745-bad367ac151d}</Project>
-      <Name>NuGet.VisualStudio.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NuGet.VisualStudio.Internal.Contracts\NuGet.VisualStudio.Internal.Contracts.csproj">
-      <Project>{deebf1a1-1c21-4e9e-8ce3-1eb21381ff1e}</Project>
-      <Name>NuGet.VisualStudio.Internal.Contracts</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NuGet.VisualStudio\NuGet.VisualStudio.csproj">
-      <Project>{e5556bc6-a7fd-4d8e-8a7d-7648df1d7471}</Project>
-      <Name>NuGet.VisualStudio</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Commands\NuGet.Commands.csproj">
-      <Project>{567e8582-0e73-4a34-a7d3-ed9486415523}</Project>
-      <Name>NuGet.Commands</Name>
-    </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Common\NuGet.Common.csproj">
-      <Project>{98bee375-a5a0-4fc2-9b7a-25db41c8045d}</Project>
-      <Name>NuGet.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Configuration\NuGet.Configuration.csproj">
-      <Project>{e3ef26e1-80a7-4573-b3a4-1d4b0042616e}</Project>
-      <Name>NuGet.Configuration</Name>
-    </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Frameworks\NuGet.Frameworks.csproj">
-      <Project>{9a9a9f26-597a-4fa6-a4f1-415063484d9c}</Project>
-      <Name>NuGet.Frameworks</Name>
-    </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.LibraryModel\NuGet.LibraryModel.csproj">
-      <Project>{13883e8e-7de1-4edd-8e4a-c5357ba8cd81}</Project>
-      <Name>NuGet.LibraryModel</Name>
-    </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.PackageManagement\NuGet.PackageManagement.csproj">
-      <Project>{394aeb96-493c-4839-a5ac-8d93cd2fad40}</Project>
-      <Name>NuGet.PackageManagement</Name>
-    </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Packaging\NuGet.Packaging.csproj">
-      <Project>{bd6bbc90-60be-4e7d-8458-91e9cda66abe}</Project>
-      <Name>NuGet.Packaging</Name>
-    </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.ProjectModel\NuGet.ProjectModel.csproj">
-      <Project>{f013e43f-b6d5-4f59-acf0-eecec2c794f5}</Project>
-      <Name>NuGet.ProjectModel</Name>
-    </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Protocol\NuGet.Protocol.csproj">
-      <Project>{020f4c88-3a5c-4b89-9868-089e867cc223}</Project>
-      <Name>NuGet.Protocol</Name>
-    </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Versioning\NuGet.Versioning.csproj">
-      <Project>{24e62ab7-64e4-4975-9417-883559d1bc19}</Project>
-      <Name>NuGet.Versioning</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="$(SharedDirectory)\HashCodeCombiner.cs">
-      <Link>HashCodeCombiner.cs</Link>
-    </Compile>
-    <Compile Include="$(SharedDirectory)\EqualityUtility.cs">
-      <Link>EqualityUtility.cs</Link>
-    </Compile>
-    <Compile Include="$(SharedDirectory)\XmlUtility.cs">
-      <Link>XmlUtility.cs</Link>
-    </Compile>
-  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.Build" ExcludeAssets="Runtime" PrivateAssets="All" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" ExcludeAssets="Runtime" PrivateAssets="All" />
@@ -293,5 +27,32 @@
     <PackageReference Include="Microsoft.VisualStudio.Sdk" />
     <PackageReference Include="VsWebSite.Interop" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
+  <ItemGroup>
+    <ProjectReference Include="..\NuGet.Indexing\NuGet.Indexing.csproj" />
+    <ProjectReference Include="..\NuGet.VisualStudio.Common\NuGet.VisualStudio.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="CommonResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>CommonResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <Compile Update="CommonResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>CommonResources.resx</DependentUpon>
+    </Compile>
+
+    <EmbeddedResource Update="Strings.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <Compile Update="Strings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Strings.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  
 </Project>

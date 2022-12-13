@@ -779,4 +779,8 @@ Non-HTTPS access will be removed in a future version. Consider migrating to 'HTT
     <value>Unsupported output format version {0} was requested.  The accepted format version value is {1}.</value>
     <comment>{0} - argument name in version option {1} - the possible value of the argument.</comment>
   </data>
+  <data name="ListPkg_OutputVersionNotApplicable" xml:space="preserve">
+    <value>'--output-version' option not applicable for console output, it can only be used together with `--format json` option.</value>
+    <comment>Don't localize '--output-version' and `--format json`</comment>
+  </data>
 </root>

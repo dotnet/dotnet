@@ -835,6 +835,15 @@ namespace NuGet.CommandLine.XPlat {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &apos;--output-version&apos; option not applicable for console output, it can only be used together with `--format json` option..
+        /// </summary>
+        internal static string ListPkg_OutputVersionNotApplicable {
+            get {
+                return ResourceManager.GetString("ListPkg_OutputVersionNotApplicable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A path to a project, solution file or directory..
         /// </summary>
         internal static string ListPkg_PathDescription {

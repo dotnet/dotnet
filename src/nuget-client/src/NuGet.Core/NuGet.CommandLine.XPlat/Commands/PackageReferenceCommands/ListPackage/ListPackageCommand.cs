@@ -183,6 +183,10 @@ namespace NuGet.CommandLine.XPlat
 
             if (outputFormat == ReportOutputFormat.Console)
             {
+                if (!string.IsNullOrEmpty(outputVersionOption))
+                {
+                    throw new ArgumentException(string.Format(Strings.ListPkg_OutputVersionNotApplicable));
+                }
                 return new ListPackageConsoleRenderer();
             }
 

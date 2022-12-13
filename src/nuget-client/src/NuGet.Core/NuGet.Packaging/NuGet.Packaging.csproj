@@ -22,8 +22,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)\NuGet.Configuration\NuGet.Configuration.csproj" />
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Versioning\NuGet.Versioning.csproj" />
+    <ProjectReference Include="..\NuGet.Configuration\NuGet.Configuration.csproj" />
+    <ProjectReference Include="..\NuGet.Versioning\NuGet.Versioning.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(IsDesktop)' == 'true' ">

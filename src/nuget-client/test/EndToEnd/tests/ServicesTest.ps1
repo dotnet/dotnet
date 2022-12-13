@@ -707,6 +707,7 @@ function Test-RestorePackageAPINoPackage
 
 function Test-InstallPackageAPIBindingRedirect
 {
+    [SkipTest('https://github.com/NuGet/Home/issues/12292')]
     param($context)
 
     # Arrange

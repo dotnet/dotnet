@@ -18,7 +18,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Packaging\NuGet.Packaging.csproj" />
+    <ProjectReference Include="..\NuGet.Packaging\NuGet.Packaging.csproj" />
   </ItemGroup>
 
   <ItemGroup>

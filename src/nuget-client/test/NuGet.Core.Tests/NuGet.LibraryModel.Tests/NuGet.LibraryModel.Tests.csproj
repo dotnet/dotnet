@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.ProjectModel\NuGet.ProjectModel.csproj" />
+    <ProjectReference Include="..\..\..\src\NuGet.Core\NuGet.ProjectModel\NuGet.ProjectModel.csproj" />
   </ItemGroup>
 
   <ItemGroup>

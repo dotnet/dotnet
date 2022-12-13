@@ -515,50 +515,53 @@ namespace NuGet.Commands
         /// <returns>An <see cref="IEnumerable{LibraryDependency}" /> representing the centrally defined transitive dependencies for the specified <see cref="RestoreTargetGraph" />.</returns>
         private IEnumerable<LibraryDependency> GetLibraryDependenciesForCentralTransitiveDependencies(RestoreTargetGraph targetGraph, TargetFrameworkInformation targetFrameworkInformation, bool centralPackageTransitivePinningEnabled)
         {
-            foreach (GraphNode<RemoteResolveResult> node in targetGraph.Graphs.SelectMany(i => i.InnerNodes))
+            foreach (GraphNode<RemoteResolveResult> rootNode in targetGraph.Graphs)
             {
-                // Only consider nodes that are Accepted, IsCentralTransitive, and have a centrally defined package version
-                if (node?.Item == null || node.Disposition != Disposition.Accepted || !node.Item.IsCentralTransitive || !targetFrameworkInformation.CentralPackageVersions?.ContainsKey(node.Item.Key.Name) == true)
+                foreach (GraphNode<RemoteResolveResult> node in rootNode.InnerNodes)
                 {
-                    continue;
-                }
-
-                CentralPackageVersion centralPackageVersion = targetFrameworkInformation.CentralPackageVersions[node.Item.Key.Name];
-                Dictionary<string, LibraryIncludeFlags> dependenciesIncludeFlags = _includeFlagGraphs[targetGraph];
-
-                LibraryIncludeFlags suppressParent = LibraryIncludeFlags.None;
-
-                if (centralPackageTransitivePinningEnabled)
-                {
-                    // Centrally pinned dependencies are not directly declared but the PrivateAssets from the top-level dependency that pulled it in should apply to it also
-                    foreach (GraphNode<RemoteResolveResult> parentNode in EnumerateParentNodes(node))
-                    {
-                        LibraryDependency parentDependency = targetFrameworkInformation.Dependencies.FirstOrDefault(i => i.Name.Equals(parentNode.Item.Key.Name, StringComparison.OrdinalIgnoreCase));
-
-                        // A transitive dependency that is a few levels deep won't be a top-level dependency so skip it
-                        if (parentDependency == null)
-                        {
-                            continue;
-                        }
-
-                        suppressParent |= parentDependency.SuppressParent;
-                    }
-
-                    // If all assets are suppressed then the dependency should not be added
-                    if (suppressParent == LibraryIncludeFlags.All)
+                    // Only consider nodes that are Accepted, IsCentralTransitive, and have a centrally defined package version
+                    if (node?.Item == null || node.Disposition != Disposition.Accepted || !node.Item.IsCentralTransitive || !targetFrameworkInformation.CentralPackageVersions?.ContainsKey(node.Item.Key.Name) == true)
                     {
                         continue;
                     }
-                }
 
-                yield return new LibraryDependency()
-                {
-                    LibraryRange = new LibraryRange(centralPackageVersion.Name, centralPackageVersion.VersionRange, LibraryDependencyTarget.Package),
-                    ReferenceType = LibraryDependencyReferenceType.Transitive,
-                    VersionCentrallyManaged = true,
-                    IncludeType = dependenciesIncludeFlags[centralPackageVersion.Name],
-                    SuppressParent = suppressParent,
-                };
+                    CentralPackageVersion centralPackageVersion = targetFrameworkInformation.CentralPackageVersions[node.Item.Key.Name];
+                    Dictionary<string, LibraryIncludeFlags> dependenciesIncludeFlags = _includeFlagGraphs[targetGraph];
+
+                    LibraryIncludeFlags suppressParent = LibraryIncludeFlags.None;
+
+                    if (centralPackageTransitivePinningEnabled)
+                    {
+                        // Centrally pinned dependencies are not directly declared but the PrivateAssets from the top-level dependency that pulled it in should apply to it also
+                        foreach (GraphNode<RemoteResolveResult> parentNode in EnumerateParentNodes(node))
+                        {
+                            LibraryDependency parentDependency = rootNode.Item.Data.Dependencies.FirstOrDefault(i => i.Name.Equals(parentNode.Item.Key.Name, StringComparison.OrdinalIgnoreCase));
+
+                            // A transitive dependency that is a few levels deep won't be a top-level dependency so skip it
+                            if (parentDependency == null || parentDependency.ReferenceType != LibraryDependencyReferenceType.Direct)
+                            {
+                                continue;
+                            }
+
+                            suppressParent |= parentDependency.SuppressParent;
+                        }
+
+                        // If all assets are suppressed then the dependency should not be added
+                        if (suppressParent == LibraryIncludeFlags.All)
+                        {
+                            continue;
+                        }
+                    }
+
+                    yield return new LibraryDependency()
+                    {
+                        LibraryRange = new LibraryRange(centralPackageVersion.Name, centralPackageVersion.VersionRange, LibraryDependencyTarget.Package),
+                        ReferenceType = LibraryDependencyReferenceType.Transitive,
+                        VersionCentrallyManaged = true,
+                        IncludeType = dependenciesIncludeFlags[centralPackageVersion.Name],
+                        SuppressParent = suppressParent,
+                    };
+                }
             }
         }
 

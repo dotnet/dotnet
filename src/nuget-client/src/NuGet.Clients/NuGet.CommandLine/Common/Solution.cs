@@ -28,7 +28,7 @@ namespace NuGet.Common
 
             try
             {
-                var msbuildAssembly = Assembly.LoadFile(
+                var msbuildAssembly = Assembly.LoadFrom(
                     Path.Combine(msbuildPath, "Microsoft.Build.dll"));
                 switch (msbuildAssembly.GetName().Version.Major)
                 {

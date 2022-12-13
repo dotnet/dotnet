@@ -10,6 +10,7 @@ using NuGet.Frameworks;
 using NuGet.Packaging;
 using NuGet.ProjectModel;
 using NuGet.RuntimeModel;
+using NuGet.Versioning;
 
 namespace Test.Utility.Commands
 {
@@ -23,6 +24,9 @@ namespace Test.Utility.Commands
         private string _projectDirectory;
         private bool _isLockedMode;
         private bool _isRestorePackagesWithLockFile;
+        private bool _centralPackageVersionsEnabled;
+        private bool _centralPackageTransitivePinningEnabled;
+
         private PackageReferenceSpecBuilder()
         {
         }
@@ -62,6 +66,18 @@ namespace Test.Utility.Commands
             return this;
         }
 
+        public PackageReferenceSpecBuilder WithCentralPackageVersionsEnabled()
+        {
+            _centralPackageVersionsEnabled = true;
+            return this;
+        }
+
+        public PackageReferenceSpecBuilder WithCentralPackageTransitivePinningEnabled()
+        {
+            _centralPackageTransitivePinningEnabled = true;
+            return this;
+        }
+
         public PackageSpec Build()
         {
             var projectPath = Path.Combine(_projectDirectory, _projectName + ".csproj");
@@ -81,7 +97,10 @@ namespace Test.Utility.Commands
                 ProjectPath = projectPath,
                 ConfigFilePaths = new List<string>(),
                 RestoreLockProperties = new RestoreLockProperties(_isRestorePackagesWithLockFile.ToString(), Path.Combine(_projectDirectory, PackagesLockFileFormat.LockFileName), _isLockedMode),
+                CentralPackageVersionsEnabled = _centralPackageVersionsEnabled,
+                CentralPackageTransitivePinningEnabled = _centralPackageTransitivePinningEnabled,
             };
+
             packageSpec.RestoreMetadata.TargetFrameworks.AddRange(packageSpec.TargetFrameworks.Select(e => new ProjectRestoreMetadataFrameworkInfo { FrameworkName = e.FrameworkName }));
 
             return packageSpec;

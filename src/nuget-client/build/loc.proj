@@ -21,7 +21,7 @@
       <NonProjectFilesToMove Include="$(SolutionPackagesFolder)microsoft.web.xdt\3.0.0\lib\net40\Microsoft.Web.XmlTransform.dll">
         <DestinationDir>$(ArtifactsDirectory)microsoft.web.xdt\3.0.0\lib\net40\Microsoft.Web.XmlTransform.dll</DestinationDir>
       </NonProjectFilesToMove>
-      <NonProjectFilesToMove Include="$(NuGetClientsSrcDirectory)NuGet.VisualStudio.Client\extension.vsixlangpack">
+      <NonProjectFilesToMove Include="..\src\NuGet.Clients\NuGet.VisualStudio.Client\extension.vsixlangpack">
         <DestinationDir>$(ArtifactsDirectory)vsixlangpack\extension.vsixlangpack</DestinationDir>
       </NonProjectFilesToMove>
     </ItemGroup>
