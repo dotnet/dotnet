@@ -13,6 +13,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <UsingMicrosoftDotNetSharedFrameworkSdk>true</UsingMicrosoftDotNetSharedFrameworkSdk>
     <DotNetSharedFrameworkTaskFile>$(DotNetSharedFrameworkTaskDir)Microsoft.DotNet.SharedFramework.Sdk.dll</DotNetSharedFrameworkTaskFile>
   </PropertyGroup>
 
