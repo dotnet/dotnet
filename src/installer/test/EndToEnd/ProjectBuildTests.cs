@@ -15,26 +15,17 @@ namespace EndToEnd.Tests
 {
     public class ProjectBuildTests : TestBase
     {
-        private static readonly string currentTfm = "net8.0";
-
         [Fact]
         public void ItCanNewRestoreBuildRunCleanMSBuildProject()
         {
             var directory = TestAssets.CreateTestDirectory();
             string projectDirectory = directory.FullName;
 
-            string newArgs = "console --debug:ephemeral-hive --no-restore";
+            string newArgs = "console --no-restore";
             new NewCommandShim()
                 .WithWorkingDirectory(projectDirectory)
                 .Execute(newArgs)
                 .Should().Pass();
-
-            string projectPath = Path.Combine(projectDirectory, directory.Name + ".csproj");
-            var project = XDocument.Load(projectPath);
-            var ns = project.Root.Name.Namespace;
-            project.Root.Element(ns + "PropertyGroup")
-                .Element(ns + "TargetFramework").Value = currentTfm;
-            project.Save(projectPath);
 
             new RestoreCommand()
                 .WithWorkingDirectory(projectDirectory)
@@ -68,7 +59,7 @@ namespace EndToEnd.Tests
             var directory = TestAssets.CreateTestDirectory();
             string projectDirectory = directory.FullName;
 
-            string newArgs = "console --debug:ephemeral-hive --no-restore";
+            string newArgs = "console --no-restore";
             new NewCommandShim()
                 .WithWorkingDirectory(projectDirectory)
                 .Execute(newArgs)
@@ -80,9 +71,6 @@ namespace EndToEnd.Tests
             var ns = project.Root.Name.Namespace;
 
             project.Root.Attribute("Sdk").Value = "Microsoft.NET.Sdk.Web";
-            project.Root.Element(ns + "PropertyGroup")
-                .Element(ns + "TargetFramework").Value = currentTfm;
-
             project.Save(projectPath);
 
             new BuildCommand()
@@ -236,7 +224,7 @@ namespace EndToEnd.Tests
             DirectoryInfo directory = TestAssets.CreateTestDirectory(identifier: templateName);
             string projectDirectory = directory.FullName;
 
-            string newArgs = $"{templateName} --debug:ephemeral-hive";
+            string newArgs = $"{templateName}";
 
             new NewCommandShim()
                 .WithWorkingDirectory(projectDirectory)
@@ -397,8 +385,6 @@ namespace EndToEnd.Tests
                 // Return net7.0 for templates that don't support
                 // net8.0 yet.
                 if (template.StartsWith("blazor")
-                    || template.StartsWith("classlib")
-                    || template.StartsWith("console")
                     || template.StartsWith("mvc")
                     || template.StartsWith("web")
                     || template.StartsWith("worker")
@@ -420,7 +406,7 @@ namespace EndToEnd.Tests
             DirectoryInfo directory = TestAssets.CreateTestDirectory(identifier: string.IsNullOrWhiteSpace(language) ? templateName : $"{templateName}[{language}]");
             string projectDirectory = directory.FullName;
 
-            string newArgs = $"{templateName} --debug:ephemeral-hive --no-restore";
+            string newArgs = $"{templateName} --no-restore";
             if (!string.IsNullOrWhiteSpace(language))
             {
                 newArgs += $" --language {language}";
