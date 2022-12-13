@@ -101,7 +101,9 @@ jobs:
         vmImage: 'macOS-latest'
 
     timeoutInMinutes: ${{ parameters.timeoutInMinutes }}
-    ${{ if not(parameters.isBuiltFromVmr) }}:
+    ${{ if parameters.isBuiltFromVmr }}:
+      enableSbom: false
+    ${{ else }}:
       enablePublishBuildAssets: true
       enablePublishUsingPipelines: true
       enableTelemetry: true
@@ -185,7 +187,7 @@ jobs:
           DOTNET_CLI_UI_LANGUAGE: ${{ parameters.dotnetCLIUILanguage }}
 
     - ${{ if ne(parameters.agentOs, 'Windows_NT') }}:
-      - ${{ if ne(variables['System.TeamProject'], 'public') }}:
+      - ${{ if and(not(parameters.isBuiltFromVmr), ne(variables['System.TeamProject'], 'public')) }}:
         - task: Bash@3
           displayName: Setup Private Feeds Credentials
           inputs:
