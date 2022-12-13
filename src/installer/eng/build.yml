@@ -149,6 +149,8 @@ jobs:
 
     - ${{ if parameters.isBuiltFromVmr }}:
       - installerRoot: '$(Build.SourcesDirectory)/src/installer'
+      - _SignType: test
+      - _PushToVSFeed: false
       - _BuildArgs: /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
                 /p:TeamName=$(_TeamName)
                 /p:DotNetPublishUsingPipelines=$(_PublishUsingPipelines)
