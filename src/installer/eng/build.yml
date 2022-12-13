@@ -146,6 +146,9 @@ jobs:
 
     - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
       - group: DotNet-HelixApi-Access
+      - group: AzureDevOps-Artifact-Feeds-Pats
+      - group: DotNet-DotNetCli-Storage
+      - group: DotNet-Installer-SDLValidation-Params
       - _PushToVSFeed: true
       - _SignType: real
       - _BuildArgs: /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
@@ -153,9 +156,6 @@ jobs:
                 /p:TeamName=$(_TeamName)
                 /p:DotNetPublishUsingPipelines=$(_PublishUsingPipelines)
                 $(_PgoInstrument)
-
-    - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
-      - group: AzureDevOps-Artifact-Feeds-Pats
 
     - ${{ if parameters.isBuiltFromVmr }}:
       - installerRoot: '$(Build.SourcesDirectory)/src/installer'
