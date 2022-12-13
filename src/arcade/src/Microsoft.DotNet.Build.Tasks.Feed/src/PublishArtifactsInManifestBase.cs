@@ -953,12 +953,13 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         {
             string uri =
                 $"{AzureDevOpsBaseUrl}/{AzureDevOpsOrg}/_apis/resources/Containers/{containerId}?itemPath=/{artifactName}/{fileName}&isShallow=true&api-version={AzureApiVersionForFileDownload}";
-            Log.LogMessage(MessageImportance.Low, $"Download file uri = {uri}");
             Exception mostRecentlyCaughtException = null;
             bool success = await RetryHandler.RunAsync(async attempt =>
             {
                 try
                 {
+                    Log.LogMessage(MessageImportance.Low, $"Download file uri = {uri}");
+
                     CancellationTokenSource timeoutTokenSource =
                         new CancellationTokenSource(TimeSpan.FromMinutes(TimeoutInMinutes));
 
@@ -972,11 +973,11 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                         FileMode.Create,
                         FileAccess.ReadWrite,
                         FileShare.ReadWrite);
-                    using var stream = await response.Content.ReadAsStreamAsync();
+                    using var stream = await response.Content.ReadAsStreamAsync(timeoutTokenSource.Token);
 
                     try
                     {
-                        await stream.CopyToAsync(fs);
+                        await stream.CopyToAsync(fs, timeoutTokenSource.Token);
                     }
                     finally
                     {

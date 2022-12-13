@@ -84,7 +84,7 @@
     <MicrosoftDotNetXliffTasksVersion>$(MicrosoftDotNetXliffTasksVersion)</MicrosoftDotNetXliffTasksVersion>
     <MicrosoftDotNetMaestroTasksVersion>$(MicrosoftDotNetMaestroTasksVersion)</MicrosoftDotNetMaestroTasksVersion>
     <MicrosoftSymbolUploaderBuildTaskVersion>$(MicrosoftSymbolUploaderBuildTaskVersion)</MicrosoftSymbolUploaderBuildTaskVersion>
-    <MicrosoftTemplateEngineTasksVersion>$(MicrosoftTemplateEngineTasksVersion)</MicrosoftTemplateEngineTasksVersion>
+    <MicrosoftTemplateEngineAuthoringTasksVersion>$(MicrosoftTemplateEngineAuthoringTasksVersion)</MicrosoftTemplateEngineAuthoringTasksVersion>
   </PropertyGroup>
 </Project>]]>
   </_SdkVersionPropsContent>
