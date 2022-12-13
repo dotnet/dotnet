@@ -101,9 +101,10 @@ jobs:
         vmImage: 'macOS-latest'
 
     timeoutInMinutes: ${{ parameters.timeoutInMinutes }}
-    enablePublishBuildAssets: true
-    enablePublishUsingPipelines: true
-    enableTelemetry: true
+    ${{ if not(parameters.isBuiltFromVmr) }}:
+      enablePublishBuildAssets: true
+      enablePublishUsingPipelines: true
+      enableTelemetry: true
     helixRepo: dotnet/installer
     workspace:
       clean: all
@@ -144,11 +145,8 @@ jobs:
     - _SignType: test
     - _BuildArgs: '/p:DotNetSignType=$(_SignType) $(_PgoInstrument)'
 
-    - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+    - ${{ if and(not(parameters.isBuiltFromVmr), ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
       - group: DotNet-HelixApi-Access
-      - group: AzureDevOps-Artifact-Feeds-Pats
-      - group: DotNet-DotNetCli-Storage
-      - group: DotNet-Installer-SDLValidation-Params
       - _PushToVSFeed: true
       - _SignType: real
       - _BuildArgs: /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
@@ -166,7 +164,7 @@ jobs:
     - checkout: self
       clean: true
     - ${{ if eq(parameters.agentOs, 'Windows_NT') }}:
-      - ${{ if ne(variables['System.TeamProject'], 'public') }}:
+      - ${{ if and(not(parameters.isBuiltFromVmr), ne(variables['System.TeamProject'], 'public')) }}:
         - task: PowerShell@2
           displayName: Setup Private Feeds Credentials
           inputs:
