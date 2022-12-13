@@ -167,13 +167,13 @@
       <Uri>https://github.com/Microsoft/ApplicationInsights-dotnet</Uri>
       <Sha>53b80940842204f78708a538628288ff5d741a1d</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Workload.Emscripten.net6.Manifest-8.0.100" Version="8.0.0-alpha.1.22605.2">
+    <Dependency Name="Microsoft.NET.Workload.Emscripten.net6.Manifest-8.0.100" Version="8.0.0-alpha.1.22612.1">
       <Uri>https://github.com/dotnet/emsdk</Uri>
-      <Sha>16e4d145b2c911c42c2668782dfc42e4500a425d</Sha>
+      <Sha>9d8545dee0b3b8ae7dcc357fc5c0598487e8df1d</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Workload.Emscripten.net7.Manifest-8.0.100" Version="8.0.0-alpha.1.22605.2">
+    <Dependency Name="Microsoft.NET.Workload.Emscripten.net7.Manifest-8.0.100" Version="8.0.0-alpha.1.22612.1">
       <Uri>https://github.com/dotnet/emsdk</Uri>
-      <Sha>16e4d145b2c911c42c2668782dfc42e4500a425d</Sha>
+      <Sha>9d8545dee0b3b8ae7dcc357fc5c0598487e8df1d</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Deployment.DotNet.Releases" Version="1.0.0-preview5.1.22263.1">
       <Uri>https://github.com/dotnet/deployment-tools</Uri>
