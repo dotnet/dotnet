@@ -46,6 +46,7 @@
     <Compile Include="IHostProvider.cs" />
     <Compile Include="IPathExpansion.cs" />
     <Compile Include="IPowerConsoleWindow.cs" />
+    <Compile Include="IPSNuGetProjectContext.cs" />
     <Compile Include="ITabExpansion.cs" />
     <Compile Include="IWpfConsole.cs" />
     <Compile Include="IWpfConsoleService.cs" />
@@ -106,23 +107,23 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Common\NuGet.Common.csproj">
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Common\NuGet.Common.csproj">
       <Project>{98bee375-a5a0-4fc2-9b7a-25db41c8045d}</Project>
       <Name>NuGet.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Configuration\NuGet.Configuration.csproj">
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Configuration\NuGet.Configuration.csproj">
       <Project>{e3ef26e1-80a7-4573-b3a4-1d4b0042616e}</Project>
       <Name>NuGet.Configuration</Name>
     </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.PackageManagement\NuGet.PackageManagement.csproj">
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.PackageManagement\NuGet.PackageManagement.csproj">
       <Project>{394aeb96-493c-4839-a5ac-8d93cd2fad40}</Project>
       <Name>NuGet.PackageManagement</Name>
     </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Packaging\NuGet.Packaging.csproj">
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Packaging\NuGet.Packaging.csproj">
       <Project>{bd6bbc90-60be-4e7d-8458-91e9cda66abe}</Project>
       <Name>NuGet.Packaging</Name>
     </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Versioning\NuGet.Versioning.csproj">
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Versioning\NuGet.Versioning.csproj">
       <Project>{24e62ab7-64e4-4975-9417-883559d1bc19}</Project>
       <Name>NuGet.Versioning</Name>
     </ProjectReference>

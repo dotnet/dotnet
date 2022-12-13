@@ -147,7 +147,7 @@ namespace NuGet.Common
 
 #if IS_CORECLR
 
-        private static string GetFolderPath(SpecialFolder folder)
+        internal static string GetFolderPath(SpecialFolder folder)
         {
             switch (folder)
             {
@@ -226,7 +226,7 @@ namespace NuGet.Common
 
 #else
 
-        private static string GetFolderPath(SpecialFolder folder)
+        internal static string GetFolderPath(SpecialFolder folder)
         {
             // Convert the private enum to the .NET Framework enum
             Environment.SpecialFolder converted;
@@ -397,7 +397,7 @@ namespace NuGet.Common
         /// make our own and re-implement the functionality. On .NET Framework, we can use the
         /// built-in functionality.
         /// </summary>
-        private enum SpecialFolder
+        internal enum SpecialFolder
         {
             ProgramFilesX86,
             ProgramFiles,

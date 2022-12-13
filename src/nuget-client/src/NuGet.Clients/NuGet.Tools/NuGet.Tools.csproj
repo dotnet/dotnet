@@ -61,23 +61,23 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Common\NuGet.Common.csproj">
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Common\NuGet.Common.csproj">
       <Project>{98bee375-a5a0-4fc2-9b7a-25db41c8045d}</Project>
       <Name>NuGet.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Configuration\NuGet.Configuration.csproj">
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Configuration\NuGet.Configuration.csproj">
       <Project>{e3ef26e1-80a7-4573-b3a4-1d4b0042616e}</Project>
       <Name>NuGet.Configuration</Name>
     </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.PackageManagement\NuGet.PackageManagement.csproj">
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.PackageManagement\NuGet.PackageManagement.csproj">
       <Project>{394aeb96-493c-4839-a5ac-8d93cd2fad40}</Project>
       <Name>NuGet.PackageManagement</Name>
     </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Packaging\NuGet.Packaging.csproj">
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Packaging\NuGet.Packaging.csproj">
       <Project>{bd6bbc90-60be-4e7d-8458-91e9cda66abe}</Project>
       <Name>NuGet.Packaging</Name>
     </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Protocol\NuGet.Protocol.csproj">
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Protocol\NuGet.Protocol.csproj">
       <Project>{020f4c88-3a5c-4b89-9868-089e867cc223}</Project>
       <Name>NuGet.Protocol</Name>
     </ProjectReference>
@@ -87,7 +87,7 @@
       <Project>{50e33da2-af14-486d-81b8-bd8409744a38}</Project>
       <Name>NuGet.Console</Name>
     </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Credentials\NuGet.Credentials.csproj">
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Credentials\NuGet.Credentials.csproj">
       <Project>{32a23995-14c7-483b-98c3-0ae4185373ea}</Project>
       <Name>NuGet.Credentials</Name>
     </ProjectReference>

@@ -13,9 +13,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="$(TestUtilitiesDirectory)Test.Utility\Test.Utility.csproj" />
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.CommandLine.XPlat\NuGet.CommandLine.XPlat.csproj" />
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)Microsoft.Build.NuGetSdkResolver\Microsoft.Build.NuGetSdkResolver.csproj" />
+    <ProjectReference Include="..\..\TestUtilities\Test.Utility\Test.Utility.csproj" />
+    <ProjectReference Include="..\..\..\src\NuGet.Core\NuGet.CommandLine.XPlat\NuGet.CommandLine.XPlat.csproj" />
+    <ProjectReference Include="..\..\..\src\NuGet.Core\Microsoft.Build.NuGetSdkResolver\Microsoft.Build.NuGetSdkResolver.csproj" />
     <ProjectReference Include="..\..\NuGet.Core.Tests\NuGet.CommandLine.Xplat.Tests\NuGet.CommandLine.Xplat.Tests.csproj" />
     <ProjectReference Include="..\..\NuGet.Core.Tests\NuGet.Configuration.Test\NuGet.Configuration.Test.csproj" />
   </ItemGroup>
@@ -24,7 +24,7 @@
     <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="$(NuGetCoreSrcDirectory)NuGet.Build.Tasks\NuGet.targets">
+    <None Include="..\..\..\src\NuGet.Core\NuGet.Build.Tasks\NuGet.targets">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

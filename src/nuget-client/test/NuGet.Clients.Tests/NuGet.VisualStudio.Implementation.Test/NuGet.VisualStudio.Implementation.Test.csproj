@@ -34,18 +34,18 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="$(NuGetClientsSrcDirectory)NuGet.PackageManagement.VisualStudio\NuGet.PackageManagement.VisualStudio.csproj" />
-    <ProjectReference Include="$(NuGetClientsSrcDirectory)NuGet.VisualStudio.Common\NuGet.VisualStudio.Common.csproj" />
-    <ProjectReference Include="$(NuGetClientsSrcDirectory)NuGet.VisualStudio.Implementation\NuGet.VisualStudio.Implementation.csproj">
+    <ProjectReference Include="..\..\..\src\NuGet.Clients\NuGet.PackageManagement.VisualStudio\NuGet.PackageManagement.VisualStudio.csproj" />
+    <ProjectReference Include="..\..\..\src\NuGet.Clients\NuGet.VisualStudio.Common\NuGet.VisualStudio.Common.csproj" />
+    <ProjectReference Include="..\..\..\src\NuGet.Clients\NuGet.VisualStudio.Implementation\NuGet.VisualStudio.Implementation.csproj">
       <Project>{9623cf30-192c-4864-b419-29649169ae30}</Project>
       <Name>NuGet.VisualStudio.Implementation</Name>
     </ProjectReference>
-    <ProjectReference Include="$(NuGetClientsSrcDirectory)NuGet.VisualStudio\NuGet.VisualStudio.csproj">
+    <ProjectReference Include="..\..\..\src\NuGet.Clients\NuGet.VisualStudio\NuGet.VisualStudio.csproj">
       <Project>{E5556BC6-A7FD-4D8E-8A7D-7648DF1D7471}</Project>
       <Name>NuGet.VisualStudio</Name>
     </ProjectReference>
 
-    <ProjectReference Include="$(TestUtilitiesDirectory)Test.Utility\Test.Utility.csproj" />
+    <ProjectReference Include="..\..\TestUtilities\Test.Utility\Test.Utility.csproj" />
   </ItemGroup>
 
   <ItemGroup>

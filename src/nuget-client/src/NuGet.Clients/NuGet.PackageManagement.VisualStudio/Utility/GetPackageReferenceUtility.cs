@@ -25,7 +25,7 @@ namespace NuGet.PackageManagement.VisualStudio.Utility
         /// <param name="targetFramework">Target framework from the project file.</param>
         /// <param name="targets">Target assets file with the package information.</param>
         /// <param name="installedPackages">Installed packages information from the project.</param>
-        internal static PackageIdentity UpdateResolvedVersion(LibraryDependency projectLibrary, NuGetFramework targetFramework, IReadOnlyList<LockFileTarget> targets, Dictionary<string, ProjectInstalledPackage> installedPackages)
+        internal static PackageIdentity UpdateResolvedVersion(LibraryDependency projectLibrary, NuGetFramework targetFramework, IList<LockFileTarget> targets, Dictionary<string, ProjectInstalledPackage> installedPackages)
         {
             NuGetVersion resolvedVersion = default;
 
@@ -67,7 +67,7 @@ namespace NuGet.PackageManagement.VisualStudio.Utility
         /// <param name="targets">Target assets file with the package information.</param>
         /// <param name="installedPackages">Cached installed package information</param>
         /// <param name="transitivePackages">Cached transitive package information</param>
-        internal static IReadOnlyList<PackageIdentity> UpdateTransitiveDependencies(LockFileTargetLibrary library, NuGetFramework targetFramework, IReadOnlyList<LockFileTarget> targets, Dictionary<string, ProjectInstalledPackage> installedPackages, Dictionary<string, ProjectInstalledPackage> transitivePackages)
+        internal static IReadOnlyList<PackageIdentity> UpdateTransitiveDependencies(LockFileTargetLibrary library, NuGetFramework targetFramework, IList<LockFileTarget> targets, Dictionary<string, ProjectInstalledPackage> installedPackages, Dictionary<string, ProjectInstalledPackage> transitivePackages)
         {
             NuGetVersion resolvedVersion = default;
 
@@ -100,7 +100,7 @@ namespace NuGet.PackageManagement.VisualStudio.Utility
             return packageIdentities;
         }
 
-        private static NuGetVersion GetInstalledVersion(string libraryName, NuGetFramework targetFramework, IReadOnlyList<LockFileTarget> targets)
+        private static NuGetVersion GetInstalledVersion(string libraryName, NuGetFramework targetFramework, IList<LockFileTarget> targets)
         {
             // PERF: Intentionally avoiding LINQ and foreach to avoid allocating capture classes and enumerators
             if (targets != null)
@@ -132,7 +132,7 @@ namespace NuGet.PackageManagement.VisualStudio.Utility
             return null;
         }
 
-        private static IReadOnlyList<PackageDependency> GetTransitivePackagesForLibrary(LockFileTargetLibrary library, NuGetFramework targetFramework, IReadOnlyList<LockFileTarget> targets)
+        private static IReadOnlyList<PackageDependency> GetTransitivePackagesForLibrary(LockFileTargetLibrary library, NuGetFramework targetFramework, IList<LockFileTarget> targets)
         {
             // PERF: Intentionally avoiding LINQ and foreach to avoid allocating capture classes and enumerators
             if (targets != null)

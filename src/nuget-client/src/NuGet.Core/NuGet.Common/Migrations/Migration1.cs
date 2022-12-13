@@ -17,10 +17,12 @@ namespace NuGet.Common.Migrations
                 return;
             }
 
-            // Since these paths have changed, we can't use NuGetEnvironment.GetFolderPath, since that will
-            // return us the new path, not the old.
-            string localAppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            string localAppDataPath = NuGetEnvironment.GetFolderPath(NuGetEnvironment.SpecialFolder.LocalApplicationData);
             string nugetPath = Path.Combine(localAppDataPath, "NuGet");
+
+            // Since these paths have changed(v3-cache to http-cache, plugins.cache to plugin-cache),
+            // we can't use NuGetEnvironment.GetFolderPath.HttpCacheDirectory or NuGetEnvironment.GetFolderPath.NuGetPluginsCacheDirectory,
+            // because that will return us the new path, not the old.
             DeleteMigratedDirectories(nugetBaseDirectory: nugetPath);
 
             PosixPermissions umask = GetUmask();

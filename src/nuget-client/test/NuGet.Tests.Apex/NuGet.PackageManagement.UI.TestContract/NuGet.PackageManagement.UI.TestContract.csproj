@@ -7,7 +7,7 @@
     <SkipAnalyzers>true</SkipAnalyzers>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="$(NuGetClientsSrcDirectory)NuGet.PackageManagement.UI\NuGet.PackageManagement.UI.csproj" />
+    <ProjectReference Include="..\..\..\src\NuGet.Clients\NuGet.PackageManagement.UI\NuGet.PackageManagement.UI.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />

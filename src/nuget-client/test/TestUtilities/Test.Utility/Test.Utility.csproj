@@ -45,7 +45,7 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == '$(NETFXTargetFramework)' ">
-    <ProjectReference Include="$(NuGetClientsSrcDirectory)NuGet.CommandLine\NuGet.CommandLine.csproj" />
+    <ProjectReference Include="..\..\..\src\NuGet.Clients\NuGet.CommandLine\NuGet.CommandLine.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -68,9 +68,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Commands\NuGet.Commands.csproj" />
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Resolver\NuGet.Resolver.csproj" />
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.PackageManagement\NuGet.PackageManagement.csproj" />
+    <ProjectReference Include="..\..\..\src\NuGet.Core\NuGet.Commands\NuGet.Commands.csproj" />
+    <ProjectReference Include="..\..\..\src\NuGet.Core\NuGet.Resolver\NuGet.Resolver.csproj" />
+    <ProjectReference Include="..\..\..\src\NuGet.Core\NuGet.PackageManagement\NuGet.PackageManagement.csproj" />
   </ItemGroup>
 
   <ItemGroup>

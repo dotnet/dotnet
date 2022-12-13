@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Resolver\NuGet.Resolver.csproj" />
+    <ProjectReference Include="..\..\..\src\NuGet.Core\NuGet.Resolver\NuGet.Resolver.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -206,6 +206,7 @@ namespace NuGet.CommandLine
         private void Initialize(CoreV2.NuGet.IFileSystem fileSystem, IConsole console)
         {
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+            AppDomain.CurrentDomain.ResourceResolve += CurrentDomain_ResourceResolve;
 
             using (var catalog = new AggregateCatalog(new AssemblyCatalog(GetType().Assembly)))
             {
@@ -229,6 +230,24 @@ namespace NuGet.CommandLine
                     throw new AggregateException(ex.LoaderExceptions);
                 }
             }
+        }
+
+        private Assembly CurrentDomain_ResourceResolve(object sender, ResolveEventArgs args)
+        {
+            Assembly returnedResource = null;
+
+            // We want to intercept NuGet.Resources resources and redirect it to nuget.exe assembly
+            if (!args.Name.StartsWith("NuGet.CommandLine", StringComparison.OrdinalIgnoreCase) && args.Name.StartsWith("NuGet", StringComparison.OrdinalIgnoreCase) && string.Equals("NuGet.Resources", args.RequestingAssembly.GetName().Name, StringComparison.OrdinalIgnoreCase))
+            {
+                ManifestResourceInfo resource = NuGetExeAssembly.GetManifestResourceInfo(args.Name);
+                if (resource != null)
+                {
+                    // Return nuget.exe assembly, since it contains the requested resource by NuGet.Resources assembly
+                    returnedResource = NuGetExeAssembly;
+                }
+            }
+
+            return returnedResource;
         }
 
         // This method acts as a binding redirect

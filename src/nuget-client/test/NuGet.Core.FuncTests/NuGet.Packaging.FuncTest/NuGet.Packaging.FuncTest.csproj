@@ -32,7 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Packaging\NuGet.Packaging.csproj" />
+    <ProjectReference Include="..\..\..\src\NuGet.Core\NuGet.Packaging\NuGet.Packaging.csproj" />
     <ProjectReference Include="..\..\NuGet.Core.Tests\NuGet.Configuration.Test\NuGet.Configuration.Test.csproj" />
     <ProjectReference Include="..\..\TestUtilities\Test.Utility\Test.Utility.csproj" />
   </ItemGroup>

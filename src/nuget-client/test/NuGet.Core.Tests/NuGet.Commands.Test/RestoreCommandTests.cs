@@ -2486,6 +2486,80 @@ namespace NuGet.Commands.Test
             }
         }
 
+        [Theory]
+        [InlineData(LibraryIncludeFlags.All, 0)]
+        [InlineData(LibraryIncludeFlags.None, 1)]
+        public async Task RestoreCommand_CentralVersion_AssetsFile_PrivateAssetsFlowsToPinnedDependenciesWithSingleParentProject(LibraryIncludeFlags privateAssets, int expectedCount)
+        {
+            // Arrange
+            using (var testPathContext = new SimpleTestPathContext())
+            {
+                var logger = new TestLogger();
+
+                var project1Directory = new DirectoryInfo(Path.Combine(testPathContext.SolutionRoot, "Project1"));
+                var project2Directory = new DirectoryInfo(Path.Combine(testPathContext.SolutionRoot, "Project2"));
+
+                // Project1 -> Project2 -> PackageA 1.0.0
+                var packageA = new SimpleTestPackageContext { Id = "PackageA", Version = "1.0.0", };
+                await SimpleTestPackageUtility.CreateFullPackageAsync(testPathContext.PackageSource, packageA);
+
+                var project2Spec = PackageReferenceSpecBuilder.Create("Project2", project2Directory.FullName)
+                    .WithTargetFrameworks(new[]
+                    {
+                        new TargetFrameworkInformation
+                        {
+                            FrameworkName = NuGetFramework.Parse("net46"),
+                            Dependencies = new List<LibraryDependency>(new[]
+                            {
+                                new LibraryDependency
+                                {
+                                    LibraryRange = new LibraryRange("PackageA", VersionRange.Parse("1.0.0"), LibraryDependencyTarget.All),
+                                    VersionCentrallyManaged = true,
+                                },
+                            }),
+                            CentralPackageVersions = { new KeyValuePair<string, CentralPackageVersion>("PackageA", new CentralPackageVersion("PackageA", VersionRange.Parse("1.0.0"))) },
+                        }
+                    })
+                    .WithCentralPackageVersionsEnabled()
+                    .WithCentralPackageTransitivePinningEnabled()
+                    .Build()
+                    .WithTestRestoreMetadata();
+
+                var project1Spec = PackageReferenceSpecBuilder.Create("Project1", project1Directory.FullName)
+                    .WithTargetFrameworks(new[]
+                    {
+                        new TargetFrameworkInformation
+                        {
+                            FrameworkName = NuGetFramework.Parse("net46"),
+                            Dependencies = new List<LibraryDependency>(),
+                            CentralPackageVersions = { new KeyValuePair<string, CentralPackageVersion>("PackageA", new CentralPackageVersion("PackageA", VersionRange.Parse("1.0.0"))) },
+                        }
+                    })
+                    .WithCentralPackageVersionsEnabled()
+                    .WithCentralPackageTransitivePinningEnabled()
+                    .Build()
+                    .WithTestRestoreMetadata()
+                    .WithTestProjectReference(project2Spec, privateAssets:privateAssets);
+
+                var restoreContext = new RestoreArgs()
+                {
+                    Sources = new List<string> { testPathContext.PackageSource },
+                    GlobalPackagesFolder = testPathContext.UserPackagesFolder,
+                    Log = logger,
+                    CacheContext = new TestSourceCacheContext(),
+                };
+
+                var request = await ProjectTestHelpers.GetRequestAsync(restoreContext, project1Spec, project2Spec);
+                var restoreCommand = new RestoreCommand(request);
+                var result = await restoreCommand.ExecuteAsync();
+                var lockFile = result.LockFile;
+
+                // Assert
+                Assert.True(result.Success);
+                Assert.Equal(expectedCount, lockFile.CentralTransitiveDependencyGroups.Count);
+            }
+        }
+
         /// <summary>
         /// Verifies that when a transitive package version is pinned and is referenced by multiple parents, the PrivateAssets flow from the package that pulled it into the graph to the pinned dependency.
         /// </summary>

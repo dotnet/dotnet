@@ -6,13 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="$(TestUtilitiesDirectory)Test.Utility\Test.Utility.csproj" />
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.PackageManagement\NuGet.PackageManagement.csproj" />
+    <ProjectReference Include="..\..\TestUtilities\Test.Utility\Test.Utility.csproj" />
+    <ProjectReference Include="..\..\..\src\NuGet.Core\NuGet.PackageManagement\NuGet.PackageManagement.csproj" />
     <ProjectReference Include="..\NuGet.Configuration.Test\NuGet.Configuration.Test.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == '$(NETFXTargetFramework)' ">
-    <ProjectReference Include="$(NuGetClientsSrcDirectory)NuGet.VisualStudio.Common\NuGet.VisualStudio.Common.csproj" />
+    <ProjectReference Include="..\..\..\src\NuGet.Clients\NuGet.VisualStudio.Common\NuGet.VisualStudio.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,5 +28,14 @@
   <ItemGroup Condition=" '$(TargetFramework)' == '$(NETFXTargetFramework)' ">
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.Net.Http" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == '$(NETCoreTargetFramework)' ">
+    <!--
+      For .netcoreapp3.0 a different version of System.Configuration.ConfigurationManager and System.Security.Cryptography.ProtectedData are used
+      which causes assembly resolution conflicts
+    -->
+    <PackageReference Include="System.Configuration.ConfigurationManager" ExcludeAssets="Compile" />
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" ExcludeAssets="Compile" />
   </ItemGroup>
 </Project>

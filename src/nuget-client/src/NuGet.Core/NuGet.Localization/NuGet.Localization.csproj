@@ -33,7 +33,7 @@
     <MakeDir
             Directories="$(LocalizationOutputDirectory)"/>
     <ItemGroup>
-      <LocalizationProjects Include="@(SolutionProjectsWithoutVSIX)" Exclude="$(NuGetCoreSrcDirectory)NuGet.Build.Tasks.Pack\NuGet.Build.Tasks.Pack.csproj"/>
+      <LocalizationProjects Include="@(SolutionProjectsWithoutVSIX)" Exclude="..\NuGet.Build.Tasks.Pack\NuGet.Build.Tasks.Pack.csproj"/>
     </ItemGroup>
     <Message Text="Localization Projects: @(LocalizationProjects, '%0a')" Importance="High" />
     <MSBuild Projects="@(LocalizationProjects)"

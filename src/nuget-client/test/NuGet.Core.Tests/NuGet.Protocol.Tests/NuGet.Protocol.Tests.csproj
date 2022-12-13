@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="$(TestUtilitiesDirectory)Test.Utility\Test.Utility.csproj" />
+    <ProjectReference Include="..\..\TestUtilities\Test.Utility\Test.Utility.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == '$(NETFXTargetFramework)' ">

@@ -6,7 +6,7 @@
     <Description>A contract assembly providing a wrapper for testing the NuGet PowerShell functionality.</Description>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="$(NuGetClientsSrcDirectory)NuGet.Console\NuGet.Console.csproj" />
+    <ProjectReference Include="..\..\..\src\NuGet.Clients\NuGet.Console\NuGet.Console.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.ComponentModel.Composition" />

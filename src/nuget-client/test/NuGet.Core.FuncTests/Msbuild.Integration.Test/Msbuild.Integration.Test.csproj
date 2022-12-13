@@ -11,10 +11,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Build.Tasks\NuGet.Build.Tasks.csproj" />
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Build.Tasks.Console\NuGet.Build.Tasks.Console.csproj" />
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)Microsoft.Build.NuGetSdkResolver\Microsoft.Build.NuGetSdkResolver.csproj" />
-    <ProjectReference Include="$(TestUtilitiesDirectory)Test.Utility\Test.Utility.csproj" />
+    <ProjectReference Include="..\..\..\src\NuGet.Core\NuGet.Build.Tasks\NuGet.Build.Tasks.csproj" />
+    <ProjectReference Include="..\..\..\src\NuGet.Core\NuGet.Build.Tasks.Console\NuGet.Build.Tasks.Console.csproj" />
+    <ProjectReference Include="..\..\..\src\NuGet.Core\Microsoft.Build.NuGetSdkResolver\Microsoft.Build.NuGetSdkResolver.csproj" />
+    <ProjectReference Include="..\..\TestUtilities\Test.Utility\Test.Utility.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="$(NuGetCoreSrcDirectory)NuGet.Build.Tasks\NuGet.targets">
+    <None Include="..\..\..\src\NuGet.Core\NuGet.Build.Tasks\NuGet.targets">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

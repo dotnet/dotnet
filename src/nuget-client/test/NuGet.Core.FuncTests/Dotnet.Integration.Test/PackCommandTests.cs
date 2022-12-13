@@ -332,7 +332,6 @@ namespace Dotnet.Integration.Test
                     tfmProps["TargetFrameworkIdentifier"] = ".NETCoreApp";
                     tfmProps["TargetFrameworkVersion"] = "v3.1";
                     tfmProps["TargetFrameworkMoniker"] = ".NETCoreApp,Version=v3.1";
-                    tfmProps["RuntimeFrameworkVersion"] = "6.0";
                     ProjectFileUtils.AddProperties(xml, tfmProps, " '$(TargetFramework)' == 'myalias' ");
 
                     ProjectFileUtils.WriteXmlToFile(xml, stream);

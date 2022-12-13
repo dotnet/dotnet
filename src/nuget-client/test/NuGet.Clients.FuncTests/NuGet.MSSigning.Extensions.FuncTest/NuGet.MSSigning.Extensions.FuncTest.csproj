@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="$(NuGetClientsSrcDirectory)NuGet.MSSigning.Extensions\NuGet.MSSigning.Extensions.csproj" />
+    <ProjectReference Include="..\..\..\src\NuGet.Clients\NuGet.MSSigning.Extensions\NuGet.MSSigning.Extensions.csproj" />
     <ProjectReference Include="..\..\NuGet.Clients.Tests\NuGet.CommandLine.Test\NuGet.CommandLine.Test.csproj" />
     <ProjectReference Include="..\..\TestUtilities\Test.Utility\Test.Utility.csproj" />
 

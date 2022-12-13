@@ -55,8 +55,8 @@
   <ItemGroup>
     <PackageReference Include="NuGet.Core" ExcludeAssets="All" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" ExcludeAssets="Runtime" />
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.PackageManagement\NuGet.PackageManagement.csproj" />
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Build.Tasks\NuGet.Build.Tasks.csproj" />
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.PackageManagement\NuGet.PackageManagement.csproj" />
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Build.Tasks\NuGet.Build.Tasks.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -81,10 +81,12 @@
     </Compile>
     <!-- nuget.exe localized assemblies -->
     <EmbeddedResource Include="$(OutputPath)\**\$(AssemblyName).resources.dll" />
+    <!-- NuGet.Commands localized assemblies -->
+    <LocResource Include="$(OutputPath)\**\NuGet.Commands.resources.dll" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="$(NuGetCoreSrcDirectory)NuGet.Build.Tasks\NuGet.targets">
+    <EmbeddedResource Include="..\..\NuGet.Core\NuGet.Build.Tasks\NuGet.targets">
       <Link>NuGet.targets</Link>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -115,6 +117,7 @@
       <IlmergeCommand>$(ILMergeExePath) /lib:$(OutputPath) /out:$(PathToMergedNuGetExe) @(MergeAllowDup -> '/allowdup:%(Identity)', ' ') /log:$(OutputPath)IlMergeLog.txt</IlmergeCommand>
       <IlmergeCommand Condition="Exists($(MS_PFX_PATH))">$(IlmergeCommand) /delaysign /keyfile:$(MS_PFX_PATH)</IlmergeCommand>
       <IlmergeCommand>$(IlmergeCommand) $(PathToBuiltNuGetExe) @(BuildArtifacts->'%(fullpath)', ' ')</IlmergeCommand>
+      <IlmergeCommand>$(IlmergeCommand) @(LocResource->'%(fullpath)', ' ')</IlmergeCommand>
     </PropertyGroup>
     <MakeDir Directories="$([System.IO.Path]::GetDirectoryName($(PathToMergedNuGetExe)))" />
     <Exec Command="$(IlmergeCommand)" ContinueOnError="false" />

@@ -20,8 +20,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="$(TestUtilitiesDirectory)Test.Utility\Test.Utility.csproj" />
-    <ProjectReference Include="$(NuGetClientsSrcDirectory)NuGet.MSSigning.Extensions\NuGet.MSSigning.Extensions.csproj" />
+    <ProjectReference Include="..\..\TestUtilities\Test.Utility\Test.Utility.csproj" />
+    <ProjectReference Include="..\..\..\src\NuGet.Clients\NuGet.MSSigning.Extensions\NuGet.MSSigning.Extensions.csproj" />
   </ItemGroup>
 
   <ItemGroup>

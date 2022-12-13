@@ -42,15 +42,15 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="$(NuGetCoreSrcDirectory)NuGet.Build.Tasks\NuGet.targets">
+    <Content Include="..\..\NuGet.Core\NuGet.Build.Tasks\NuGet.targets">
       <Link>NuGet.targets</Link>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="$(NuGetCoreSrcDirectory)NuGet.Build.Tasks\NuGet.RestoreEx.targets">
+    <Content Include="..\..\NuGet.Core\NuGet.Build.Tasks\NuGet.RestoreEx.targets">
       <Link>NuGet.RestoreEx.targets</Link>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="$(NuGetCoreSrcDirectory)NuGet.Build.Tasks\NuGet.props">
+    <Content Include="..\..\NuGet.Core\NuGet.Build.Tasks\NuGet.props">
       <Link>NuGet.props</Link>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
@@ -107,19 +107,19 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)Microsoft.Build.NuGetSdkResolver\Microsoft.Build.NuGetSdkResolver.csproj">
+    <ProjectReference Include="..\..\NuGet.Core\Microsoft.Build.NuGetSdkResolver\Microsoft.Build.NuGetSdkResolver.csproj">
       <Project>{299b3e44-5372-4d6b-a4e9-3dbea4705701}</Project>
       <Name>Microsoft.Build.NuGetSdkResolver</Name>
     </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Build.Tasks\NuGet.Build.Tasks.csproj">
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Build.Tasks\NuGet.Build.Tasks.csproj">
       <Project>{e09441b8-8d74-4a96-8431-480e2065f844}</Project>
       <Name>NuGet.Build.Tasks</Name>
     </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Build.Tasks.Console\NuGet.Build.Tasks.Console.csproj">
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Build.Tasks.Console\NuGet.Build.Tasks.Console.csproj">
       <Project>{3ed13630-90eb-420e-8083-0959b2955c6e}</Project>
       <Name>NuGet.Build.Tasks.Console</Name>
     </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Common\NuGet.Common.csproj">
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Common\NuGet.Common.csproj">
       <Project>{98bee375-a5a0-4fc2-9b7a-25db41c8045d}</Project>
       <Name>NuGet.Common</Name>
       <Ngen>True</Ngen>
@@ -127,7 +127,7 @@
       <NgenArchitecture>All</NgenArchitecture>
       <NgenPriority>$(NgenPriorityDefault)</NgenPriority>
     </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Configuration\NuGet.Configuration.csproj">
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Configuration\NuGet.Configuration.csproj">
       <Project>{e3ef26e1-80a7-4573-b3a4-1d4b0042616e}</Project>
       <Name>NuGet.Configuration</Name>
       <Ngen>True</Ngen>
@@ -135,7 +135,7 @@
       <NgenArchitecture>All</NgenArchitecture>
       <NgenPriority>$(NgenPriorityDefault)</NgenPriority>
     </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.DependencyResolver.Core\NuGet.DependencyResolver.Core.csproj">
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.DependencyResolver.Core\NuGet.DependencyResolver.Core.csproj">
       <Project>{cf8e1753-ee98-410f-bb4b-6624b19c6b64}</Project>
       <Name>NuGet.DependencyResolver.Core</Name>
       <Ngen>True</Ngen>
@@ -143,7 +143,7 @@
       <NgenArchitecture>All</NgenArchitecture>
       <NgenPriority>$(NgenPriorityDefault)</NgenPriority>
     </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Frameworks\NuGet.Frameworks.csproj">
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Frameworks\NuGet.Frameworks.csproj">
       <Project>{9a9a9f26-597a-4fa6-a4f1-415063484d9c}</Project>
       <Name>NuGet.Frameworks</Name>
       <Ngen>True</Ngen>
@@ -151,7 +151,7 @@
       <NgenArchitecture>All</NgenArchitecture>
       <NgenPriority>$(NgenPriorityDefault)</NgenPriority>
     </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.LibraryModel\NuGet.LibraryModel.csproj">
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.LibraryModel\NuGet.LibraryModel.csproj">
       <Project>{13883e8e-7de1-4edd-8e4a-c5357ba8cd81}</Project>
       <Name>NuGet.LibraryModel</Name>
       <Ngen>True</Ngen>
@@ -159,7 +159,7 @@
       <NgenArchitecture>All</NgenArchitecture>
       <NgenPriority>$(NgenPriorityDefault)</NgenPriority>
     </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.PackageManagement\NuGet.PackageManagement.csproj">
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.PackageManagement\NuGet.PackageManagement.csproj">
       <Project>{394aeb96-493c-4839-a5ac-8d93cd2fad40}</Project>
       <Name>NuGet.PackageManagement</Name>
       <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
@@ -169,7 +169,7 @@
       <NgenArchitecture>All</NgenArchitecture>
       <NgenPriority>$(NgenPriorityDefault)</NgenPriority>
     </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Packaging\NuGet.Packaging.csproj">
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Packaging\NuGet.Packaging.csproj">
       <Project>{bd6bbc90-60be-4e7d-8458-91e9cda66abe}</Project>
       <Name>NuGet.Packaging</Name>
       <Ngen>True</Ngen>
@@ -177,7 +177,7 @@
       <NgenArchitecture>All</NgenArchitecture>
       <NgenPriority>$(NgenPriorityDefault)</NgenPriority>
     </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.ProjectModel\NuGet.ProjectModel.csproj">
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.ProjectModel\NuGet.ProjectModel.csproj">
       <Project>{f013e43f-b6d5-4f59-acf0-eecec2c794f5}</Project>
       <Name>NuGet.ProjectModel</Name>
       <Ngen>True</Ngen>
@@ -185,7 +185,7 @@
       <NgenArchitecture>All</NgenArchitecture>
       <NgenPriority>$(NgenPriorityDefault)</NgenPriority>
     </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Protocol\NuGet.Protocol.csproj">
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Protocol\NuGet.Protocol.csproj">
       <Project>{020f4c88-3a5c-4b89-9868-089e867cc223}</Project>
       <Name>NuGet.Protocol</Name>
       <Ngen>True</Ngen>
@@ -193,11 +193,11 @@
       <NgenArchitecture>All</NgenArchitecture>
       <NgenPriority>$(NgenPriorityDefault)</NgenPriority>
     </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Resolver\NuGet.Resolver.csproj">
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Resolver\NuGet.Resolver.csproj">
       <Project>{51aa27a9-b8b4-458f-9211-e6889b441573}</Project>
       <Name>NuGet.Resolver</Name>
     </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Versioning\NuGet.Versioning.csproj">
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Versioning\NuGet.Versioning.csproj">
       <Project>{24e62ab7-64e4-4975-9417-883559d1bc19}</Project>
       <Name>NuGet.Versioning</Name>
       <Ngen>True</Ngen>
@@ -211,13 +211,13 @@
       <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bPkgdefProjectOutputGroup%3bGetCopyToOutputDirectoryItems</IncludeOutputGroupsInVSIX>
       <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup</IncludeOutputGroupsInVSIXLocalOnly>
     </ProjectReference>
-    <ProjectReference Include="$(NuGetClientsSrcDirectory)NuGet.Indexing\NuGet.Indexing.csproj">
+    <ProjectReference Include="..\NuGet.Indexing\NuGet.Indexing.csproj">
       <Project>{a2b06fa8-bdbc-4459-a92a-161862b2aa97}</Project>
       <Name>NuGet.Indexing</Name>
       <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup</IncludeOutputGroupsInVSIX>
       <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup</IncludeOutputGroupsInVSIXLocalOnly>
     </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Commands\NuGet.Commands.csproj">
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Commands\NuGet.Commands.csproj">
       <Project>{567E8582-0E73-4A34-A7D3-ED9486415523}</Project>
       <Name>NuGet.Commands</Name>
       <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup</IncludeOutputGroupsInVSIX>
@@ -227,7 +227,7 @@
       <NgenArchitecture>All</NgenArchitecture>
       <NgenPriority>$(NgenPriorityDefault)</NgenPriority>
     </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Credentials\NuGet.Credentials.csproj">
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Credentials\NuGet.Credentials.csproj">
       <Project>{32a23995-14c7-483b-98c3-0ae4185373ea}</Project>
       <Name>NuGet.Credentials</Name>
       <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup</IncludeOutputGroupsInVSIX>

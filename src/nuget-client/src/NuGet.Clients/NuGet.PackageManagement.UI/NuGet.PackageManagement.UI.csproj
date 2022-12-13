@@ -477,51 +477,51 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Commands\NuGet.Commands.csproj">
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Commands\NuGet.Commands.csproj">
       <Project>{567E8582-0E73-4A34-A7D3-ED9486415523}</Project>
       <Name>NuGet.Commands</Name>
     </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Common\NuGet.Common.csproj">
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Common\NuGet.Common.csproj">
       <Project>{98BEE375-A5A0-4FC2-9B7A-25DB41C8045D}</Project>
       <Name>NuGet.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Configuration\NuGet.Configuration.csproj">
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Configuration\NuGet.Configuration.csproj">
       <Project>{E3EF26E1-80A7-4573-B3A4-1D4B0042616E}</Project>
       <Name>NuGet.Configuration</Name>
     </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Frameworks\NuGet.Frameworks.csproj">
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Frameworks\NuGet.Frameworks.csproj">
       <Project>{9A9A9F26-597A-4FA6-A4F1-415063484D9C}</Project>
       <Name>NuGet.Frameworks</Name>
     </ProjectReference>
-    <ProjectReference Include="$(NuGetClientsSrcDirectory)NuGet.Indexing\NuGet.Indexing.csproj">
+    <ProjectReference Include="..\NuGet.Indexing\NuGet.Indexing.csproj">
       <Project>{a2b06fa8-bdbc-4459-a92a-161862b2aa97}</Project>
       <Name>NuGet.Indexing</Name>
     </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.LibraryModel\NuGet.LibraryModel.csproj">
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.LibraryModel\NuGet.LibraryModel.csproj">
       <Project>{13883E8E-7DE1-4EDD-8E4A-C5357BA8CD81}</Project>
       <Name>NuGet.LibraryModel</Name>
     </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.PackageManagement\NuGet.PackageManagement.csproj">
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.PackageManagement\NuGet.PackageManagement.csproj">
       <Project>{394aeb96-493c-4839-a5ac-8d93cd2fad40}</Project>
       <Name>NuGet.PackageManagement</Name>
     </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Packaging\NuGet.Packaging.csproj">
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Packaging\NuGet.Packaging.csproj">
       <Project>{BD6BBC90-60BE-4E7D-8458-91E9CDA66ABE}</Project>
       <Name>NuGet.Packaging</Name>
     </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.ProjectModel\NuGet.ProjectModel.csproj">
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.ProjectModel\NuGet.ProjectModel.csproj">
       <Project>{F013E43F-B6D5-4F59-ACF0-EECEC2C794F5}</Project>
       <Name>NuGet.ProjectModel</Name>
     </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Protocol\NuGet.Protocol.csproj">
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Protocol\NuGet.Protocol.csproj">
       <Project>{020f4c88-3a5c-4b89-9868-089e867cc223}</Project>
       <Name>NuGet.Protocol</Name>
     </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Resolver\NuGet.Resolver.csproj">
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Resolver\NuGet.Resolver.csproj">
       <Project>{51AA27A9-B8B4-458F-9211-E6889B441573}</Project>
       <Name>NuGet.Resolver</Name>
     </ProjectReference>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Versioning\NuGet.Versioning.csproj">
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Versioning\NuGet.Versioning.csproj">
       <Project>{24E62AB7-64E4-4975-9417-883559D1BC19}</Project>
       <Name>NuGet.Versioning</Name>
     </ProjectReference>

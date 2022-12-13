@@ -2807,6 +2807,106 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         }
 
         [Fact]
+        public async Task GetInstalledPackagesAsync_WithCancellationToken_ThrowsAsync()
+        {
+            // Arrange
+            using var testContext = new SimpleTestPathContext();
+
+            var project = await PrepareTestProjectAsync(testContext) as CpsPackageReferenceProject;
+
+            // Act and Assert
+            await Assert.ThrowsAsync<OperationCanceledException>(async () => await project.GetInstalledPackagesAsync(new CancellationToken(canceled: true)));
+        }
+
+        [Fact]
+        public async Task GetInstalledPackagesAsync_FirstCall_NoTransitivePackagesAsync()
+        {
+            // Arrange
+            using var testContext = new SimpleTestPathContext();
+            await CreatePackagesAsync(testContext);
+
+            var project = await PrepareTestProjectAsync(testContext) as CpsPackageReferenceProject;
+
+            // Act
+            IEnumerable<PackageReference> intalledPackages = await project.GetInstalledPackagesAsync(CancellationToken.None);
+
+            // Assert
+            Assert.Collection(intalledPackages,
+                elem => Assert.Equal(new PackageIdentity("PackageA", NuGetVersion.Parse("2.15.3")), elem.PackageIdentity));
+        }
+
+        [Fact]
+        public async Task GetInstalledPackagesAsync_WithGetInstalledAndTransitivePackagesCallAtSameTime_DoesNotDeadlockAsync()
+        {
+            // Arrange
+            using var testContext = new SimpleTestPathContext();
+            await CreatePackagesAsync(testContext);
+
+            var project = await PrepareTestProjectAsync(testContext) as CpsPackageReferenceProject;
+
+            IEnumerable<PackageReference> installed = null;
+            ProjectPackages installedAndTransitive;
+            var tasks = new Task[]
+            {
+                new Task(async () => installed = await project.GetInstalledPackagesAsync(CancellationToken.None)),
+                new Task(async () => installedAndTransitive = await project.GetInstalledAndTransitivePackagesAsync(includeTransitiveOrigins: false, CancellationToken.None)),
+            };
+
+            // Act
+            Parallel.ForEach(tasks, tsk =>
+            {
+                if (tsk.Status == TaskStatus.Created)
+                {
+                    tsk.Start();
+                }
+            });
+            await Task.WhenAll(tasks);
+
+            // Assert
+            installed.Should().BeEquivalentTo(installedAndTransitive.InstalledPackages);
+            Assert.Collection(installed,
+                elem => Assert.Equal(new PackageIdentity("PackageA", NuGetVersion.Parse("2.15.3")), elem.PackageIdentity));
+            Assert.Collection(installedAndTransitive.TransitivePackages,
+                elem => Assert.Equal(new PackageIdentity("PackageB", NuGetVersion.Parse("1.0.0")), elem.PackageIdentity));
+        }
+
+        [Fact]
+        public async Task GetInstalledPackagesAsync_WithMultipleCalls_DoesNotDeadlockAsync()
+        {
+            // Arrange
+            using var testContext = new SimpleTestPathContext();
+            await CreatePackagesAsync(testContext);
+
+            var project = await PrepareTestProjectAsync(testContext) as CpsPackageReferenceProject;
+
+            var tasks = new []
+            {
+                project.GetInstalledPackagesAsync(CancellationToken.None),
+                project.GetInstalledPackagesAsync(CancellationToken.None),
+                project.GetInstalledPackagesAsync(CancellationToken.None),
+                project.GetInstalledPackagesAsync(CancellationToken.None),
+                project.GetInstalledPackagesAsync(CancellationToken.None),
+            };
+
+            // Act
+            Parallel.ForEach(tasks, tsk =>
+            {
+                if (tsk.Status == TaskStatus.Created)
+                {
+                    tsk.Start();
+                }
+            });
+            IEnumerable<PackageReference>[] results = await Task.WhenAll(tasks);
+            IEnumerable<PackageReference> first = results[0];
+
+            // Assert
+            results.Should().AllBeEquivalentTo(first);
+
+            Assert.Collection(first,
+                elem => Assert.Equal(new PackageIdentity("PackageA", NuGetVersion.Parse("2.15.3")), elem.PackageIdentity));
+        }
+
+        [Fact]
         public async Task GetInstalledPackages_WithNominationUpdate_ReloadsCache()
         {
             using (var testContext = new SimpleTestPathContext())
@@ -4375,7 +4475,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             Assert.NotEmpty(packagesWithoutOrigins.InstalledPackages);
             Assert.NotEmpty(packagesWithoutOrigins.TransitivePackages);
             Assert.All(packagesWithoutOrigins.TransitivePackages, pkg => Assert.Empty(pkg.TransitiveOrigins));
-            // Act II: Transitive packages with transi
+            // Act II: Transitive packages with transitive origins
             ProjectPackages packagesWithOrigins = await project.GetInstalledAndTransitivePackagesAsync(includeTransitiveOrigins: true, CancellationToken.None);
             // Assert II
             Assert.NotEmpty(packagesWithOrigins.InstalledPackages);

@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="$(TestUtilitiesDirectory)Test.Utility\Test.Utility.csproj" />
+    <ProjectReference Include="..\..\TestUtilities\Test.Utility\Test.Utility.csproj" />
     <ProjectReference Include="..\NuGet.Configuration.Test\NuGet.Configuration.Test.csproj" />
   </ItemGroup>
 

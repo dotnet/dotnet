@@ -16,6 +16,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="$(NuGetClientsSrcDirectory)NuGet.CommandLine\NuGet.CommandLine.csproj" />
+    <ProjectReference Include="..\..\..\src\NuGet.Clients\NuGet.CommandLine\NuGet.CommandLine.csproj" />
   </ItemGroup>
 </Project>

@@ -16,14 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Configuration\NuGet.Configuration.csproj" />
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.LibraryModel\NuGet.LibraryModel.csproj" />
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.PackageManagement\NuGet.PackageManagement.csproj" />
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Packaging.Core\NuGet.Packaging.Core.csproj" />
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Packaging\NuGet.Packaging.csproj" />
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.ProjectModel\NuGet.ProjectModel.csproj" />
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Resolver\NuGet.Resolver.csproj" />
-    <ProjectReference Include="$(NuGetCoreSrcDirectory)NuGet.Versioning\NuGet.Versioning.csproj" />
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.PackageManagement\NuGet.PackageManagement.csproj" />
   </ItemGroup>
 
   <ItemGroup>

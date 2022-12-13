@@ -6,10 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="$(NuGetClientsSrcDirectory)NuGet.Tools\NuGet.Tools.csproj">
+    <ProjectReference Include="..\..\..\src\NuGet.Clients\NuGet.Tools\NuGet.Tools.csproj">
       <Name>NuGet.Tools</Name>
     </ProjectReference>
-    <ProjectReference Include="$(TestUtilitiesDirectory)Test.Utility\Test.Utility.csproj" />
+    <ProjectReference Include="..\..\TestUtilities\Test.Utility\Test.Utility.csproj" />
   </ItemGroup>
 
   <ItemGroup>

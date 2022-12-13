@@ -47,7 +47,7 @@ namespace NuGet.Commands
                 directDependencies.AddRange(specFramework.Dependencies);
             }
 
-            // Override the flags for direct dependencies. This lets the 
+            // Override the flags for direct dependencies. This lets the
             // user take control when needed.
             foreach (var dependency in directDependencies)
             {
@@ -74,7 +74,7 @@ namespace NuGet.Commands
             var unifiedNodes = new Dictionary<string, GraphItem<RemoteResolveResult>>(StringComparer.OrdinalIgnoreCase);
 
             // Create a look up table of id -> library
-            // This should contain only packages and projects. If there is a project with the 
+            // This should contain only packages and projects. If there is a project with the
             // same name as a package, use the project.
             // Projects take precedence over packages here to match the resolver behavior.
             foreach (var item in targetGraph.Flattened
@@ -142,8 +142,11 @@ namespace NuGet.Commands
 
                 foreach (var dependency in node.Item.Data.Dependencies)
                 {
+                    if (dependency.ReferenceType != LibraryDependencyReferenceType.Direct)
+                        continue;
+
                     // Any nodes that are not in unifiedNodes are types that should be ignored
-                    // We should also ignore dependencies that are excluded to match the dependency 
+                    // We should also ignore dependencies that are excluded to match the dependency
                     // resolution phase.
                     // Note that we cannot stop here if there are no flags since we still need to mark
                     // the child nodes as having no flags. SuppressParent=all is a special case.
@@ -165,7 +168,7 @@ namespace NuGet.Commands
         }
 
         /// <summary>
-        /// Find the flags for a node. 
+        /// Find the flags for a node.
         /// Include - Exclude - ParentExclude
         /// </summary>
         private static LibraryIncludeFlags GetDependencyType(
@@ -179,7 +182,7 @@ namespace NuGet.Commands
 
             var flags = match.IncludeType;
 
-            // Unless the root project is the grand parent here, the suppress flag should be applied directly to the 
+            // Unless the root project is the grand parent here, the suppress flag should be applied directly to the
             // child since it has no effect on the parent.
             if (parent.OuterNode != null)
             {

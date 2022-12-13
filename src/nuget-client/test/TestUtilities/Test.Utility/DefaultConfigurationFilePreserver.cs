@@ -5,6 +5,7 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Threading;
+using NuGet.Common;
 
 namespace NuGet.CommandLine.Test
 {
@@ -61,8 +62,7 @@ namespace NuGet.CommandLine.Test
 
         private static void BackupAndDeleteDefaultConfigurationFile()
         {
-            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            string defaultConfigurationFile = Path.Combine(appDataPath, "NuGet", "NuGet.Config");
+            string defaultConfigurationFile = Path.Combine(NuGetEnvironment.GetFolderPath(NuGetFolderPath.UserSettingsDirectory), "NuGet.Config");
             string backupFileName = defaultConfigurationFile + ".backup";
 
             if (File.Exists(defaultConfigurationFile))
@@ -74,8 +74,7 @@ namespace NuGet.CommandLine.Test
 
         private static void RestoreDefaultConfigurationFile()
         {
-            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            string defaultConfigurationFile = Path.Combine(appDataPath, "NuGet", "NuGet.Config");
+            string defaultConfigurationFile = Path.Combine(NuGetEnvironment.GetFolderPath(NuGetFolderPath.UserSettingsDirectory), "NuGet.Config");
             string backupFileName = defaultConfigurationFile + ".backup";
 
             if (File.Exists(backupFileName))

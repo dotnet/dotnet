@@ -750,9 +750,9 @@ namespace NuGet.Commands
 
             foreach (var item in items)
             {
-                var dependencies =
-                    item.Data?.Dependencies?.Select(
-                        dependency => new PackageDependency(dependency.Name, VersionRange.All));
+                IEnumerable<PackageDependency> dependencies = item.Data?.Dependencies?
+                    .Where(i => i.ReferenceType == LibraryDependencyReferenceType.Direct) // Ignore transitively pinned dependencies
+                    .Select(dependency => new PackageDependency(dependency.Name, VersionRange.All));
 
                 result.Add(new PackageDependencyInfo(item.Key.Name, item.Key.Version, dependencies));
             }
