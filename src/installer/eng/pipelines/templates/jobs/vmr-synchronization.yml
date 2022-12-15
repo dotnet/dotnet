@@ -43,6 +43,7 @@ jobs:
   - template: ../steps/vmr-prepare.yml
     parameters:
       vmrBranch: ${{ parameters.vmrBranch }}
+      isBuiltFromVmr: false
 
   - template: ../steps/vmr-pull-updates.yml
     parameters:
@@ -60,14 +61,5 @@ jobs:
         git branch ${{ parameters.vmrBranch }}
         git branch --set-upstream-to=dotnet/${{ parameters.vmrBranch }} ${{ parameters.vmrBranch }} || echo 'Branch ${{ parameters.vmrBranch }} not found in remote'
         git push dotnet ${{ parameters.vmrBranch }}
-
-        # Export the SHA as an artifact to be reused by the official VMR build
-        sha=`git rev-parse HEAD`
-        mkdir -p "$(Build.ArtifactStagingDirectory)/VmrRevision"
-        echo $sha > "$(Build.ArtifactStagingDirectory)/VmrRevision/VmrRevision.txt"
       displayName: Push changes to dotnet/dotnet
       workingDirectory: $(vmrPath)
-
-    - publish: $(Build.ArtifactStagingDirectory)/VmrRevision
-      artifact: VmrRevision
-      displayName: Publish new SHA

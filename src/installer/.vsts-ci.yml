@@ -377,7 +377,7 @@ stages:
   - template: eng/pipelines/templates/stages/vmr-build.yml
     parameters:
       vmrBranch: ${{ parameters.vmrBranch }}
-      installerBuildResourceId: current
+      isBuiltFromVmr: false
 
 - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
   - stage: Publish

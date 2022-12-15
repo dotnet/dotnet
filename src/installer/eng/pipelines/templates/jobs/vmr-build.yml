@@ -2,6 +2,9 @@
 ### If run in a PR, new changes are applied to a local copy of the VMR, then it is source-built and tested
 
 parameters:
+- name: isBuiltFromVmr
+  displayName: True when build is running from dotnet/dotnet directly
+  type: boolean
 
 - name: vmrPath
   type: string
@@ -11,10 +14,6 @@ parameters:
   displayName: dotnet/dotnet branch to use
   type: string
   default: $(Build.SourceBranchName)
-
-# Resource id of the installer build to retrieve MSFT SDK from
-- name: installerBuildResourceId
-  type: string
 
 - name: buildName
   type: string
@@ -63,7 +62,7 @@ jobs:
     dependsOn: ${{ parameters.reuseBuildArtifactsFrom }}_${{ parameters.architecture }}
   variables:
   - template: /eng/common/templates/variables/pool-providers.yml
-  - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+  - ${{ if and(not(parameters.isBuiltFromVmr), eq(variables['System.TeamProject'], 'internal')) }}:
     - group: DotNetBot-GitHub
     - group: AzureDevOps-Artifact-Feeds-Pats
   - ${{ else }}:
@@ -80,11 +79,11 @@ jobs:
   - template: ../steps/vmr-prepare.yml
     parameters:
       vmrBranch: ${{ parameters.vmrBranch }}
-      installerBuildResourceId: ${{ parameters.installerBuildResourceId }}
+      isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
       skipComponentGovernanceDetection: true
 
   # Synchronize new content in the VMR during PRs (we expect this to come
-  - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+  - ${{ if and(not(parameters.isBuiltFromVmr), eq(variables['Build.Reason'], 'PullRequest')) }}:
     - template: ../steps/vmr-pull-updates.yml
       parameters:
         vmrPath: ${{ parameters.vmrPath }}
@@ -104,7 +103,7 @@ jobs:
         Token: $(dn-bot-dnceng-artifact-feeds-rw)
 
   - ${{ if ne(parameters.excludeSdkContentTests, 'true') }}:
-    - download: ${{ parameters.installerBuildResourceId }}
+    - download: current
       artifact: BlobArtifacts
       patterns: '**/dotnet-sdk-+([0-9]).+([0-9]).+([0-9])?(-@(alpha|preview|rc|rtm)*)-linux-${{ parameters.architecture }}.tar.gz'
       displayName: Download MSFT SDK
@@ -167,8 +166,8 @@ jobs:
       poisonArg=''
 
       if [[ '${{ parameters.excludeSdkContentTests }}' != 'True' ]]; then
-        dockerVolumeArgs+=" -v $(Pipeline.Workspace)/${{ parameters.installerBuildResourceId }}/BlobArtifacts/:/BlobArtifacts"
-        msftSdkTarballName=$(find "$(Pipeline.Workspace)/${{ parameters.installerBuildResourceId }}/BlobArtifacts/" -name "dotnet-sdk-*-linux-${{ parameters.architecture }}.tar.gz" -exec basename {} \;)
+        dockerVolumeArgs+=" -v $(Pipeline.Workspace)/BlobArtifacts/:/BlobArtifacts"
+        msftSdkTarballName=$(find "$(Pipeline.Workspace)/BlobArtifacts/" -name "dotnet-sdk-*-linux-${{ parameters.architecture }}.tar.gz" -exec basename {} \;)
         dockerEnvArgs+=" -e SMOKE_TESTS_MSFT_SDK_TARBALL_PATH=/BlobArtifacts/$msftSdkTarballName"
       fi
 

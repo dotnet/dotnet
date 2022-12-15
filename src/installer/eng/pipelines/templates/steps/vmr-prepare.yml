@@ -2,39 +2,33 @@
 ### Component Governance scan is also triggered over the VMR's non-repo sources
 
 parameters:
+- name: isBuiltFromVmr
+  displayName: True when build is running from dotnet/dotnet directly
+  type: boolean
+
 - name: vmrBranch
   displayName: dotnet/dotnet branch to use
   type: string
   default: $(Build.SourceBranchName)
-
-- name: installerBuildResourceId
-  displayName: Installer build to get the commit hash to check out from
-  type: string
-  default: current
 
 - name: skipComponentGovernanceDetection
   type: boolean
   default: false
 
 steps:
-- checkout: vmr
-  displayName: Clone dotnet/dotnet
-  path: vmr
-  clean: true
-  fetchDepth: 0 # We need this so that we can check out the new commit
+- ${{ if parameters.isBuiltFromVmr }}:
+  - checkout: self
+    displayName: Clone dotnet/dotnet
+    path: vmr
+    clean: true
 
-- ${{ if ne(parameters.installerBuildResourceId, 'current') }}:
-  - download: ${{ parameters.installerBuildResourceId }}
-    artifact: VmrRevision
-    displayName: Download VmrRevision
-
-  - script: |
-      set -ex
-      sha=`head -n 1 $(Pipeline.Workspace)/${{ parameters.installerBuildResourceId }}/VmrRevision/VmrRevision.txt`
-      git checkout $sha
-    displayName: Check out dotnet/dotnet commit
-    workingDirectory: $(Agent.BuildDirectory)/vmr
 - ${{ else }}:
+  - checkout: vmr
+    displayName: Clone dotnet/dotnet
+    path: vmr
+    clean: true
+
+- ${{ if or(not(parameters.isBuiltFromVmr), eq(variables['System.TeamProject'], 'internal')) }}:
   - script: |
       git switch -c ${{ parameters.vmrBranch }}
     displayName: Checkout ${{ parameters.vmrBranch }}
