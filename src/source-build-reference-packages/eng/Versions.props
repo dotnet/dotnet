@@ -11,7 +11,7 @@
   <PropertyGroup>
     <MicrosoftNETCoreILAsmVersion>6.0.0-preview.6.21352.12</MicrosoftNETCoreILAsmVersion>
     <MicrosoftNETCoreILDAsmVersion>6.0.0-preview.6.21352.12</MicrosoftNETCoreILDAsmVersion>
-    <MicrosoftDotNetGenAPIPackageVersion>8.0.0-beta.22612.4</MicrosoftDotNetGenAPIPackageVersion>
+    <MicrosoftDotNetGenAPIPackageVersion>8.0.0-beta.22613.4</MicrosoftDotNetGenAPIPackageVersion>
     <MicrosoftDotNetGenAPITaskPackageVersion>8.0.100-alpha.1.22573.3</MicrosoftDotNetGenAPITaskPackageVersion>
     <MicrosoftDotNetBuildTasksPackagingPackageVersion>1.0.0-beta.20113.5</MicrosoftDotNetBuildTasksPackagingPackageVersion>
   </PropertyGroup>
