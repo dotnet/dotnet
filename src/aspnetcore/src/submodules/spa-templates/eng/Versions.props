@@ -28,6 +28,6 @@
       Packages from dotnet/templating. https://github.com/dotnet/templating/blob/main/docs/Localization.md
       recommends updating the version when preview or stable versions are released to NuGet.org.
     -->
-    <MicrosoftTemplateEngineTasksVersion>7.0.100-preview.5.22302.1</MicrosoftTemplateEngineTasksVersion>
+    <MicrosoftTemplateEngineAuthoringTasksVersion>8.0.100-alpha.1.22607.1</MicrosoftTemplateEngineAuthoringTasksVersion>
   </PropertyGroup>
 </Project>
