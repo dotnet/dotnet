@@ -13,8 +13,8 @@
     <diagnosticsOutputPackageVersion>6.0.0-preview.22424.1</diagnosticsOutputPackageVersion>
     <formatGitCommitHash>1c0a45d73c43282f272f71c870c2a325a218e9a4</formatGitCommitHash>
     <formatOutputPackageVersion>8.0.361101</formatOutputPackageVersion>
-    <fsharpGitCommitHash>ae1718567f2aab20df7ca07368b9f51d1c376a10</fsharpGitCommitHash>
-    <fsharpOutputPackageVersion>7.0.1-beta.22608.3</fsharpOutputPackageVersion>
+    <fsharpGitCommitHash>3130e06ce88bc3d6171f5127cdb9972e776af911</fsharpGitCommitHash>
+    <fsharpOutputPackageVersion>7.0.1-beta.22612.4</fsharpOutputPackageVersion>
     <installerGitCommitHash>0d24684503c007748bf73aa78e1242dc095667ad</installerGitCommitHash>
     <installerOutputPackageVersion>8.0.100</installerOutputPackageVersion>
     <linkerGitCommitHash>dde6d62e9e80cde5e2dd8a2ce613384ff41d4a08</linkerGitCommitHash>
