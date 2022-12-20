@@ -73,7 +73,7 @@ namespace Test.Utility.Signing
 
                     using (var taskStartedEvent = new ManualResetEventSlim())
                     {
-                        Task.Factory.StartNew(() => server.HandleRequest(taskStartedEvent, token));
+                        Task.Factory.StartNew(() => server.HandleRequest(taskStartedEvent, token), token);
 
                         taskStartedEvent.Wait(token);
                     }

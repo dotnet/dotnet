@@ -73,7 +73,11 @@ namespace NuGet.Protocol
                 FileShare.None,
                 BufferSize))
             {
+#if NETCOREAPP2_0_OR_GREATER
+                using (var networkStream = await response.Content.ReadAsStreamAsync(cancellationToken))
+#else
                 using (var networkStream = await response.Content.ReadAsStreamAsync())
+#endif
                 {
                     await networkStream.CopyToAsync(fileStream, BufferSize, cancellationToken);
                 }

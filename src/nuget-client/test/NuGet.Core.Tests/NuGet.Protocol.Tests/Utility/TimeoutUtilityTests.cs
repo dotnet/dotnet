@@ -67,7 +67,7 @@ namespace NuGet.Protocol.Tests
             Func<CancellationToken, Task<int>> actionAsync = async token =>
             {
                 timeoutToken = token;
-                await Task.Delay(TimeSpan.FromMilliseconds(250));
+                await Task.Delay(TimeSpan.FromMilliseconds(250), token);
                 return 23;
             };
 
@@ -134,7 +134,7 @@ namespace NuGet.Protocol.Tests
             Func<CancellationToken, Task> actionAsync = async token =>
             {
                 timeoutToken = token;
-                await Task.Delay(TimeSpan.FromMilliseconds(250));
+                await Task.Delay(TimeSpan.FromMilliseconds(250), token);
             };
 
             // Act & Assert

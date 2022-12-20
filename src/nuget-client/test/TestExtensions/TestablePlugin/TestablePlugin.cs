@@ -80,7 +80,7 @@ namespace NuGet.Test.TestExtensions.TestablePlugin
             IResponseHandler responseHandler,
             CancellationToken cancellationToken)
         {
-            var response = _responses.Take();
+            var response = _responses.Take(cancellationToken);
 
             if (message.Type == MessageType.Request)
             {

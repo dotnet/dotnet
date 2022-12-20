@@ -203,7 +203,12 @@ namespace NuGet.Packaging
 
             using (var destination = File.OpenWrite(nupkgFilePath))
             {
-                await ZipReadStream.CopyToAsync(destination);
+#if NETCOREAPP2_0_OR_GREATER
+                await ZipReadStream.CopyToAsync(destination, cancellationToken);
+#else
+                const int BufferSize = 8192;
+                await ZipReadStream.CopyToAsync(destination, BufferSize, cancellationToken);
+#endif
             }
 
             return nupkgFilePath;
