@@ -42,6 +42,7 @@
     <Asset Type="Microsoft.VisualStudio.Assembly" Path="OmniSharp.Extensions.LanguageServer.Shared.dll" />
     <Asset Type="Microsoft.VisualStudio.Assembly" Path="Microsoft.Extensions.Configuration.Binder.dll" />
     <Asset Type="Microsoft.VisualStudio.Assembly" Path="Microsoft.CommonLanguageServerProtocol.Framework.dll" />
+    <Asset Type="Microsoft.VisualStudio.Assembly" Path="Microsoft.Extensions.ObjectPool.dll" />
     <Asset Type="Microsoft.VisualStudio.Assembly" Path="Microsoft.Extensions.Options.dll" />
     <Asset Type="Microsoft.VisualStudio.Assembly" Path="Microsoft.Extensions.Options.ConfigurationExtensions.dll" />
     <Asset Type="Microsoft.VisualStudio.Assembly" Path="Microsoft.Extensions.Primitives.dll" />

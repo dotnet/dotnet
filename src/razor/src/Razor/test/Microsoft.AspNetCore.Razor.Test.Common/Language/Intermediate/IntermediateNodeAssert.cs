@@ -5,8 +5,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Xunit;
 using Xunit.Sdk;
 
@@ -99,7 +99,9 @@ public static class IntermediateNodeAssert
         try
         {
             var html = Assert.IsType<HtmlContentIntermediateNode>(node);
-            var content = new StringBuilder();
+
+            using var _ = StringBuilderPool.GetPooledObject(out var content);
+
             for (var i = 0; i < html.Children.Count; i++)
             {
                 var token = Assert.IsType<IntermediateToken>(html.Children[i]);
@@ -120,7 +122,9 @@ public static class IntermediateNodeAssert
         try
         {
             var statement = Assert.IsType<CSharpCodeIntermediateNode>(node);
-            var content = new StringBuilder();
+
+            using var _ = StringBuilderPool.GetPooledObject(out var content);
+
             for (var i = 0; i < statement.Children.Count; i++)
             {
                 var token = Assert.IsType<IntermediateToken>(statement.Children[i]);
@@ -207,7 +211,8 @@ public static class IntermediateNodeAssert
 
         try
         {
-            var content = new StringBuilder();
+            using var _ = StringBuilderPool.GetPooledObject(out var content);
+
             for (var i = 0; i < attributeValue.Children.Count; i++)
             {
                 var token = Assert.IsType<IntermediateToken>(attributeValue.Children[i]);
@@ -230,7 +235,8 @@ public static class IntermediateNodeAssert
 
         try
         {
-            var content = new StringBuilder();
+            using var _ = StringBuilderPool.GetPooledObject(out var content);
+
             for (var i = 0; i < attributeValue.Children.Count; i++)
             {
                 var token = Assert.IsType<IntermediateToken>(attributeValue.Children[i]);
@@ -253,7 +259,8 @@ public static class IntermediateNodeAssert
         {
             var cSharp = Assert.IsType<CSharpExpressionIntermediateNode>(node);
 
-            var content = new StringBuilder();
+            using var _ = StringBuilderPool.GetPooledObject(out var content);
+
             for (var i = 0; i < cSharp.Children.Count; i++)
             {
                 var token = Assert.IsType<IntermediateToken>(cSharp.Children[i]);
@@ -274,7 +281,9 @@ public static class IntermediateNodeAssert
         try
         {
             var beginNode = Assert.IsType<CSharpCodeIntermediateNode>(node);
-            var content = new StringBuilder();
+
+            using var _ = StringBuilderPool.GetPooledObject(out var content);
+
             for (var i = 0; i < beginNode.Children.Count; i++)
             {
                 var token = Assert.IsType<IntermediateToken>(beginNode.Children[i]);
@@ -295,7 +304,9 @@ public static class IntermediateNodeAssert
         try
         {
             var endNode = Assert.IsType<CSharpCodeIntermediateNode>(node);
-            var content = new StringBuilder();
+
+            using var _ = StringBuilderPool.GetPooledObject(out var content);
+
             for (var i = 0; i < endNode.Children.Count; i++)
             {
                 var token = Assert.IsType<IntermediateToken>(endNode.Children[i]);
@@ -458,7 +469,8 @@ public static class IntermediateNodeAssert
 
         private static string Format(IntermediateNode[] ancestors, IEnumerable<IntermediateNode> nodes, string userMessage)
         {
-            var builder = new StringBuilder();
+            using var _ = StringBuilderPool.GetPooledObject(out var builder);
+
             builder.AppendLine(userMessage);
             builder.AppendLine();
 

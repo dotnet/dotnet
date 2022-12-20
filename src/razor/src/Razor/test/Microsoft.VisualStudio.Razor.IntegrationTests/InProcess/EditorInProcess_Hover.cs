@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Adornments;
@@ -68,7 +69,8 @@ internal partial class EditorInProcess
     {
         var hoverContent = await HoverAsync(position, cancellationToken);
 
-        var sb = new StringBuilder();
+        using var _ = StringBuilderPool.GetPooledObject(out var sb);
+
         TraverseContent(hoverContent, sb);
         return sb.ToString();
 

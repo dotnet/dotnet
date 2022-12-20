@@ -175,7 +175,7 @@ namespace NuGet.Protocol.Tests
             TestEnvironmentVariableReader testEnvironmentVariableReader = GetEnhancedHttpRetryEnvironmentVariables();
             Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> handler = async (requestMessage, token) =>
             {
-                await Task.Delay(LargeTimeout);
+                await Task.Delay(LargeTimeout, token);
                 return new HttpResponseMessage(HttpStatusCode.OK);
             };
 

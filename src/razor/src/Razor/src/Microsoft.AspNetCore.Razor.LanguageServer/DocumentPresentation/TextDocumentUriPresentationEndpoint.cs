@@ -4,7 +4,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
@@ -12,6 +11,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.Extensions.Logging;
@@ -165,7 +165,8 @@ internal class TextDocumentUriPresentationEndpoint : AbstractTextDocumentPresent
 
         // TODO: Add @using statements if required, or fully qualify (GetTypeName())
 
-        var sb = new StringBuilder();
+        using var _ = StringBuilderPool.GetPooledObject(out var sb);
+
         sb.Append('<');
         sb.Append(typeName);
 

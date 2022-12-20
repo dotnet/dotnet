@@ -5,7 +5,7 @@
 
 using System;
 using System.IO;
-using System.Text;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Xunit;
 using Xunit.Sdk;
 
@@ -90,7 +90,8 @@ internal class TagHelperSpanVerifier
 
             private static string Format(string expected, string actual, string userMessage)
             {
-                var builder = new StringBuilder();
+                using var _ = StringBuilderPool.GetPooledObject(out var builder);
+
                 builder.AppendLine(userMessage);
                 builder.AppendLine();
 

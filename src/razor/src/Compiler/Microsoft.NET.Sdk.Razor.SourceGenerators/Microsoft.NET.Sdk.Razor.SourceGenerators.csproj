@@ -9,6 +9,7 @@
     <IsShipping>false</IsShipping>
     <NoWarn>$(NoWarn);RS2008</NoWarn>
     <Nullable>enable</Nullable>
+    <ExcludeFromSourceBuild>false</ExcludeFromSourceBuild>
   </PropertyGroup>
 
   <ItemGroup>

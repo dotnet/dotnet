@@ -87,14 +87,14 @@ namespace NuGet.Common
 
                             // This can occur when the file is being deleted
                             // Or when an admin user has locked the file
-                            await Task.Delay(SleepDuration);
+                            await Task.Delay(SleepDuration, token);
                             continue;
                         }
                         catch (IOException)
                         {
                             token.ThrowIfCancellationRequested();
 
-                            await Task.Delay(SleepDuration);
+                            await Task.Delay(SleepDuration, token);
                             continue;
                         }
 

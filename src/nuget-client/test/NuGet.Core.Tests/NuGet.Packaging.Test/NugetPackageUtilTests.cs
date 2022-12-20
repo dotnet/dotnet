@@ -870,7 +870,7 @@ namespace Commands.Test
 
                     Assert.True(byteCount > 0);
 
-                    await destination.WriteAsync(buffer, 0, byteCount);
+                    await destination.WriteAsync(buffer, 0, byteCount, cancellationToken);
 
                     throw new CorruptionException();
                 }

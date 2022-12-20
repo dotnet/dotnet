@@ -7,7 +7,7 @@ import * as vscode from 'vscode';
 
 import { RazorLogger } from '../RazorLogger';
 import { JS_DEBUG_NAME, SERVER_APP_NAME } from './Constants';
-import { isValidEvent, onDidTerminateDebugSession } from './TerminateDebugHandler';
+import { onDidTerminateDebugSession } from './TerminateDebugHandler';
 
 export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurationProvider {
 
@@ -27,22 +27,13 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
             url: string,
             inspectUri: string,
             debuggingPort: number,
-        }>('blazorwasm-companion.launchDebugProxy');
+        }>('blazorwasm-companion.launchDebugProxy', folder);
 
         await this.launchBrowser(
             folder,
             configuration,
             result ? result.inspectUri : undefined,
             result ? result.debuggingPort : undefined);
-
-        if (result && result.url) {
-            const terminateDebugProxy = this.vscodeType.debug.onDidTerminateDebugSession(async event => {
-                if (isValidEvent(event.name)) {
-                    await vscode.commands.executeCommand('blazorwasm-companion.killDebugProxy', result.url);
-                    terminateDebugProxy.dispose();
-                }
-            });
-        }
 
         /**
          * If `resolveDebugConfiguration` returns undefined, then the debugger

@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language.Syntax;
 
@@ -113,7 +114,9 @@ internal class SyntaxNodeWriter : SyntaxRewriter
             return;
         }
 
-        var builder = new StringBuilder("Directive:{");
+        using var _ = StringBuilderPool.GetPooledObject(out var builder);
+
+        builder.Append("Directive:{");
         builder.Append(node.DirectiveDescriptor.Directive);
         builder.Append(';');
         builder.Append(node.DirectiveDescriptor.Kind);
