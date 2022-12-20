@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <OutputType>Exe</OutputType>
 
-    <!-- The purpose of this project is to include all dependecies of Microsoft.CodeAnalysis.Remote.Razor targeting .Net Core -->
+    <!-- The purpose of this project is to include all dependencies of Microsoft.CodeAnalysis.Remote.Razor targeting .Net Core -->
     <IsShipping>false</IsShipping>
   </PropertyGroup>
 
@@ -18,17 +18,18 @@
       <!-- Need to include and then update items (https://github.com/microsoft/msbuild/issues/1053) -->
 
       <!--
-        We're only targeting netcoreapp3.1 to ensure the SDK consumes all transitive dependencies, we don't actually need an executable.
+        We're only targeting net6.0 to ensure the SDK consumes all transitive dependencies, we don't actually need an executable.
         Also only include dependencies exclusive to Razor. For any common dependencies between Roslyn and Razor, we want to share the ones
         loaded in Roslyn's ALC at runtime.
       -->
 
-      <_ExcludedFiles Include="$(PublishDir)**\Microsoft.CodeAnalysis.Remote.ServiceHub.CoreComponents.*" />
+      <_ExcludedFiles Include="$(PublishDir)**\Microsoft.CodeAnalysis.Remote.Razor.CoreComponents.*" />
 
       <_PublishedFiles Include="$(PublishDir)**\Microsoft.CodeAnalysis.Razor.*" />
       <_PublishedFiles Include="$(PublishDir)**\Microsoft.CodeAnalysis.Remote.Razor.*" Exclude="@(_ExcludedFiles)"/>
       <_PublishedFiles Include="$(PublishDir)**\Microsoft.AspNetCore.*" />
       <_PublishedFiles Include="$(PublishDir)**\Microsoft.Extensions.Logging.Abstractions.dll" />
+      <_PublishedFiles Include="$(PublishDir)**\Microsoft.Extensions.ObjectPool.dll" />
 
       <_PublishedFiles Remove="@(_PublishedFiles)" Condition="'%(Extension)' == '.pdb'" />
       <_PublishedFiles Remove="@(_PublishedFiles)" Condition="'%(Extension)' == '.xml'" />

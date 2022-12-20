@@ -6,6 +6,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Xunit.Sdk;
 
@@ -27,7 +28,8 @@ public class CompilationFailedException : XunitException
     {
         get
         {
-            var builder = new StringBuilder();
+            using var _ = StringBuilderPool.GetPooledObject(out var builder);
+
             builder.AppendLine("Compilation failed: ");
 
             var syntaxTreesWithErrors = new HashSet<SyntaxTree>();

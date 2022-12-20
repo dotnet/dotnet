@@ -6804,6 +6804,68 @@ namespace Test
         CompileToAssembly(generated);
     }
 
+    [Theory] // https://github.com/dotnet/razor/issues/7074
+    [InlineData("struct", null, "1")]
+    [InlineData("class", null, "string.Empty")]
+    [InlineData("notnull", null, "1")]
+    [InlineData("unmanaged", null, "1")]
+    [InlineData(null, "new()", "1")]
+    public void GenericComponent_ConstraintOrdering(string first, string last, string arg)
+    {
+        // Arrange
+        if (first != null)
+        {
+            first = $"{first}, ";
+        }
+        if (last != null)
+        {
+            last = $", {last}";
+        }
+        AdditionalSyntaxTrees.Add(Parse($$"""
+            using Microsoft.AspNetCore.Components;
+            using System;
+            namespace Test;
+            public class MyComponent<T> : ComponentBase where T : {{first}}IComparable{{last}}
+            {
+                [Parameter] public T Parameter { get; set; }
+            }
+            """));
+
+        // Act
+        var generated = CompileToCSharp($"""
+            @using Test
+            <MyComponent Parameter="{arg}" />
+            """);
+
+        // Assert
+        CompileToAssembly(generated);
+    }
+
+    [Fact]
+    public void GenericComponent_UnmanagedConstraint()
+    {
+        // Arrange
+        AdditionalSyntaxTrees.Add(Parse("""
+            using Microsoft.AspNetCore.Components;
+            namespace Test;
+            public class MyComponent<T> : ComponentBase where T : unmanaged
+            {
+                [Parameter] public T Parameter { get; set; }
+            }
+            """));
+
+        // Act
+        var generated = CompileToCSharp("""
+            @using Test
+            <MyComponent Parameter="1" />
+            """);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
     #endregion
 
     #region Key

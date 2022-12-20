@@ -143,6 +143,7 @@
     <RazorNgendVSIXSourceItem Include="$(OutputPath)OmniSharp.Extensions.LanguageProtocol.dll" />
     <RazorNgendVSIXSourceItem Include="$(OutputPath)OmniSharp.Extensions.LanguageServer.dll" />
     <RazorNgendVSIXSourceItem Include="$(OutputPath)OmniSharp.Extensions.LanguageServer.Shared.dll" />
+    <RazorNgendVSIXSourceItem Include="$(OutputPath)Microsoft.Extensions.ObjectPool.dll" />
     <RazorNgendVSIXSourceItem Include="$(OutputPath)Microsoft.Extensions.Options.dll" />
     <RazorNgendVSIXSourceItem Include="$(OutputPath)Microsoft.Extensions.Options.ConfigurationExtensions.dll" />
     <RazorNgendVSIXSourceItem Include="$(OutputPath)Microsoft.Extensions.Primitives.dll" />

@@ -5,17 +5,18 @@
 
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
 public sealed class ItemCollection : ICollection<KeyValuePair<object, object>>, ICollection
 {
-    private readonly Dictionary<object, object> _inner;
+    private readonly ConcurrentDictionary<object, object> _inner;
 
     public ItemCollection()
     {
-        _inner = new Dictionary<object, object>();
+        _inner = new ConcurrentDictionary<object, object>();
     }
 
     public object this[object key]
@@ -66,7 +67,7 @@ public sealed class ItemCollection : ICollection<KeyValuePair<object, object>>, 
             throw new ArgumentNullException(nameof(key));
         }
 
-        _inner.Add(key, value);
+        ((IDictionary<object, object>)_inner).Add(key, value);
     }
 
     public void Clear()

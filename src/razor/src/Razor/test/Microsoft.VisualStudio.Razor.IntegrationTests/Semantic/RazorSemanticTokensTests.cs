@@ -6,10 +6,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.VisualStudio.Razor.IntegrationTests.InProcess;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
@@ -143,7 +143,8 @@ public class RazorSemanticTokensTests : AbstractRazorEditorTest
 
     private static void GenerateSemanticBaseline(IEnumerable<ClassificationSpan> actual, string baselineFileName)
     {
-        var builder = new StringBuilder();
+        using var _ = StringBuilderPool.GetPooledObject(out var builder);
+
         foreach (var baseline in actual)
         {
             builder.Append(baseline.Span.Start.Position).Append(Separator);

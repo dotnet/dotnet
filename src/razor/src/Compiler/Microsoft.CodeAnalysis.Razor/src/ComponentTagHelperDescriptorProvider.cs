@@ -333,27 +333,36 @@ internal class ComponentTagHelperDescriptorProvider : RazorEngineFeatureBase, IT
             // type parameter so we create a single string representation of all the constraints
             // here.
             var list = new List<string>();
+
+            // CS0449: The 'class', 'struct', 'unmanaged', 'notnull', and 'default' constraints
+            // cannot be combined or duplicated, and must be specified first in the constraints list.
+            if (typeParameter.HasReferenceTypeConstraint)
+            {
+                list.Add("class");
+            }
+
+            if (typeParameter.HasNotNullConstraint)
+            {
+                list.Add("notnull");
+            }
+
+            if (typeParameter.HasUnmanagedTypeConstraint)
+            {
+                list.Add("unmanaged");
+            }
+            else if (typeParameter.HasValueTypeConstraint)
+            {
+                // `HasValueTypeConstraint` is also true when `unmanaged` constraint is present.
+                list.Add("struct");
+            }
+
             for (var i = 0; i < typeParameter.ConstraintTypes.Length; i++)
             {
                 var constraintType = typeParameter.ConstraintTypes[i];
                 list.Add(constraintType.ToDisplayString(GloballyQualifiedFullNameTypeDisplayFormat));
             }
-            if (typeParameter.HasReferenceTypeConstraint)
-            {
-                list.Add("class");
-            }
-            if (typeParameter.HasValueTypeConstraint)
-            {
-                list.Add("struct");
-            }
-            if (typeParameter.HasNotNullConstraint)
-            {
-                list.Add("notnull");
-            }
-            if (typeParameter.HasUnmanagedTypeConstraint)
-            {
-                list.Add("unmanaged");
-            }
+
+            // CS0401: The new() constraint must be the last constraint specified.
             if (typeParameter.HasConstructorConstraint)
             {
                 list.Add("new()");

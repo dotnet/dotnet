@@ -22,16 +22,12 @@
   ],
   "publisher": "ms-dotnettools",
   "activationEvents": [
-    "onCommand:blazorwasm-companion.launchDebugProxy",
-    "onCommand:blazorwasm-companion.killDebugProxy"
+    "onCommand:blazorwasm-companion.launchDebugProxy"
   ],
   "main": "./dist/extension.js",
   "extensionDependencies": [
     "ms-dotnettools.vscode-dotnet-runtime",
     "ms-dotnettools.csharp"
-  ],
-  "files": [
-    "BlazorDebugProxy/"
   ],
   "capabilities": {
     "untrustedWorkspaces": {
@@ -42,7 +38,7 @@
   "scripts": {
     "vscode:prepublish": "yarn run build",
     "clean": "rimraf dist",
-    "build": "yarn run clean && yarn run lint && yarn run compile && node scripts/retrieveDebugProxy.js",
+    "build": "yarn run clean && yarn run lint && yarn run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "pretest": "yarn run compile && yarn run lint",

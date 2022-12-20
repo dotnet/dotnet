@@ -7,8 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Xunit;
 using Xunit.Sdk;
 
@@ -242,7 +242,8 @@ public static class IntermediateNodeVerifier
 
             private static string Format(IntermediateNode[] ancestors, string expected, string actual, string userMessage)
             {
-                var builder = new StringBuilder();
+                using var _ = StringBuilderPool.GetPooledObject(out var builder);
+
                 builder.AppendLine(userMessage);
                 builder.AppendLine();
 

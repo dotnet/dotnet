@@ -27,6 +27,7 @@
     <!--
         Purposefully not including these actual dependencies because VS4Mac ships them for us on our behalf. This differs from VisualStudio windows.
 
+        <Import assembly="Microsoft.Extensions.ObjectPool.dll" />
         <Import assembly="Microsoft.Extensions.Logging.dll" />
         <Import assembly="Microsoft.Extensions.Logging.Abstractions.dll" />
         <Import assembly="System.IO.Pipelines.dll" />

@@ -2380,6 +2380,36 @@ namespace MyApp
             Assert.Single(result.GeneratedSources);
         }
 
+        [Theory] // https://github.com/dotnet/razor/issues/7236
+        [InlineData("")]
+        [InlineData(" ")]
+        [InlineData("\n")]
+        public async Task SourceGenerator_EmptyTargetPath(string targetPath)
+        {
+            const string componentPath = "Component.razor";
+            var project = CreateTestProject(new()
+            {
+                [componentPath] = "<h1>Hello world</h1>",
+            });
+
+            var compilation = await project.GetCompilationAsync();
+            var (driver, _, _) = await GetDriverWithAdditionalTextAndProviderAsync(project, optionsProvider =>
+            {
+                optionsProvider.AdditionalTextOptions[componentPath] = new TestAnalyzerConfigOptions
+                {
+                    ["build_metadata.AdditionalFiles.TargetPath"] = targetPath
+                };
+            });
+
+            var result = RunGenerator(compilation!, ref driver);
+
+            var diagnostic = Assert.Single(result.Diagnostics);
+            // RSG002: TargetPath not specified for additional file
+            Assert.Equal("RSG002", diagnostic.Id);
+
+            Assert.Empty(result.GeneratedSources);
+        }
+
         private static async ValueTask<GeneratorDriver> GetDriverAsync(Project project)
         {
             var (driver, _) = await GetDriverWithAdditionalTextAsync(project);
@@ -2403,8 +2433,6 @@ namespace MyApp
             optionsProvider.TestGlobalOptions["build_property.RazorLangVersion"] = "Latest";
             optionsProvider.TestGlobalOptions["build_property.GenerateRazorMetadataSourceChecksumAttributes"] = "false";
 
-            configureGlobalOptions?.Invoke(optionsProvider);
-
             var additionalTexts = ImmutableArray<AdditionalText>.Empty;
 
             foreach (var document in project.AdditionalDocuments)
@@ -2419,6 +2447,8 @@ namespace MyApp
 
                 optionsProvider.AdditionalTextOptions[additionalText.Path] = additionalTextOptions;
             }
+
+            configureGlobalOptions?.Invoke(optionsProvider);
 
             driver = driver
                 .AddAdditionalTexts(additionalTexts)

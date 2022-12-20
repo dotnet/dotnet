@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Semantic.Models;
 using Microsoft.AspNetCore.Razor.LanguageServer.Test.Common;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -159,7 +160,8 @@ public abstract class SemanticTokenTestBase : TagHelperServiceTestBase
 
     private static void GenerateSemanticBaseline(IEnumerable<int>? actual, string baselineFileName)
     {
-        var builder = new StringBuilder();
+        using var _ = StringBuilderPool.GetPooledObject(out var builder);
+
         if (actual != null)
         {
             var actualArray = actual.ToArray();

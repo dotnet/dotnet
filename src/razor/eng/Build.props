@@ -6,9 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectToBuild Condition="'$(OS)'=='WINDOWS_NT' and '$(SdkTaskProjects)'=='' And '$(BuildVsix)' != 'true'" Include="$(MSBuildThisFileDirectory)..\Razor.sln" />
-    <ProjectToBuild Condition="'$(OS)'=='WINDOWS_NT' and '$(SdkTaskProjects)'=='' And '$(BuildVsix)' == 'true'" Include="$(MSBuildThisFileDirectory)..\src\Razor\src\Microsoft.VisualStudio.RazorExtension\Microsoft.VisualStudio.RazorExtension.csproj" />
-    <ProjectToBuild Condition="'$(OS)'=='WINDOWS_NT' and '$(SdkTaskProjects)'=='' And '$(BuildVsix)' == 'true' AND '$(BuildDependencyVsix)' != 'false'" Include="$(MSBuildThisFileDirectory)..\src\Razor\src\Microsoft.VisualStudio.RazorExtension.Dependencies\Microsoft.VisualStudio.RazorExtension.Dependencies.csproj" />
+    <ProjectToBuild Condition="'$(OS)'=='WINDOWS_NT' and '$(SdkTaskProjects)'==''" Include="$(MSBuildThisFileDirectory)..\Razor.sln" />
 
     <!-- Exclude VSIX projects on non-Windows -->
     <ProjectToBuild Condition="'$(OS)'!='WINDOWS_NT' and '$(SdkTaskProjects)'==''" Include="$(MSBuildThisFileDirectory)..\Razor.Slim.slnf" />

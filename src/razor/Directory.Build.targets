@@ -8,7 +8,7 @@
 
   <Import Project="eng\MPack.targets" />
   <Import Project="eng\targets\Packaging.targets" />
-  <Import Project="eng\targets\Npm.Common.targets"  Condition="'$(MSBuildProjectExtension)' == '.npmproj'" />
+  <Import Project="eng\targets\Npm.Common.targets"  Condition="'$(MSBuildProjectExtension)' == '.npmproj' and '$(_SuppressAllTargets)' != 'true'" />
 
   <!-- Workaround https://github.com/dotnet/cli/issues/10528 -->
   <PropertyGroup>

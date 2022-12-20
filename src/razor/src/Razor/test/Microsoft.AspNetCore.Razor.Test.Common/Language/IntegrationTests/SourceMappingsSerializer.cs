@@ -4,6 +4,7 @@
 #nullable disable
 
 using System.Text;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests;
 
@@ -11,7 +12,8 @@ public static class SourceMappingsSerializer
 {
     public static string Serialize(RazorCSharpDocument csharpDocument, RazorSourceDocument sourceDocument)
     {
-        var builder = new StringBuilder();
+        using var _ = StringBuilderPool.GetPooledObject(out var builder);
+
         var charBuffer = new char[sourceDocument.Length];
         sourceDocument.CopyTo(0, charBuffer, 0, sourceDocument.Length);
         var sourceContent = new string(charBuffer);
