@@ -176,7 +176,12 @@ namespace NuGet.Protocol
                             // the cache. We cannot seek on the network stream and it is not valuable to download the
                             // content twice just to validate the first time (considering that the second download could
                             // be different from the first thus rendering the first validation meaningless).
+#if NETCOREAPP2_0_OR_GREATER
+
+                            using (var stream = await throttledResponse.Response.Content.ReadAsStreamAsync(lockedToken))
+#else
                             using (var stream = await throttledResponse.Response.Content.ReadAsStreamAsync())
+#endif
                             using (var httpSourceResult = new HttpSourceResult(
                                 HttpSourceResultStatus.OpenedFromNetwork,
                                 cacheFileName: null,

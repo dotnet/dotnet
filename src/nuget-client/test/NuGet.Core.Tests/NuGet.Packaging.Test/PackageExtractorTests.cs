@@ -5229,7 +5229,13 @@ namespace NuGet.Packaging.Test
 
                 using (var destination = File.OpenWrite(nupkgFilePath))
                 {
-                    await _stream.CopyToAsync(destination);
+#if NETCOREAPP2_0_OR_GREATER
+                    await _stream.CopyToAsync(destination, cancellationToken);
+
+#else
+                    const int BufferSize = 8192;
+                    await _stream.CopyToAsync(destination, BufferSize, cancellationToken);
+#endif
                 }
 
                 return nupkgFilePath;

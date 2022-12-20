@@ -162,7 +162,7 @@ namespace NuGet.Protocol
             {
                 if (_throttle != null)
                 {
-                    await _throttle.WaitAsync();
+                    await _throttle.WaitAsync(cancellationToken);
                 }
 
                 cancellationToken.ThrowIfCancellationRequested();

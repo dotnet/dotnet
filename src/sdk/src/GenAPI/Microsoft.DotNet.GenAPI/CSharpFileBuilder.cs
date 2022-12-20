@@ -58,7 +58,7 @@ namespace Microsoft.DotNet.GenAPI
             IEnumerable<INamespaceSymbol> namespaceSymbols = EnumerateNamespaces(assembly).Where(_symbolFilter.Include);
             List<SyntaxNode> namespaceSyntaxNodes = new();
 
-            foreach (INamespaceSymbol namespaceSymbol in AssemblySymbolOrderer.Order(namespaceSymbols))
+            foreach (INamespaceSymbol namespaceSymbol in namespaceSymbols.Order())
             {
                 SyntaxNode? syntaxNode = Visit(namespaceSymbol);
 
@@ -92,7 +92,7 @@ namespace Microsoft.DotNet.GenAPI
                 return null;
             }
 
-            foreach (INamedTypeSymbol typeMember in AssemblySymbolOrderer.Order(typeMembers))
+            foreach (INamedTypeSymbol typeMember in typeMembers.Order())
             {
                 SyntaxNode typeDeclaration = _syntaxGenerator.DeclarationExt(typeMember);
 
@@ -112,10 +112,9 @@ namespace Microsoft.DotNet.GenAPI
 
         private SyntaxNode Visit(SyntaxNode namedTypeNode, INamedTypeSymbol namedType)
         {
-            namedTypeNode = VisitInnerNamedTypes(namedTypeNode, namedType);
             IEnumerable<ISymbol> members = namedType.GetMembers().Where(_symbolFilter.Include);
 
-            foreach (ISymbol member in AssemblySymbolOrderer.Order(members))
+            foreach (ISymbol member in members.Order())
             {
                 SyntaxNode memberDeclaration = _syntaxGenerator.DeclarationExt(member);
 
@@ -125,22 +124,12 @@ namespace Microsoft.DotNet.GenAPI
                     memberDeclaration = _syntaxGenerator.AddAttributes(memberDeclaration, _syntaxGenerator.Attribute(attribute));
                 }
 
+                if (member is INamedTypeSymbol nestedTypeSymbol)
+                {
+                    memberDeclaration = Visit(memberDeclaration, nestedTypeSymbol);
+                }
+
                 namedTypeNode = _syntaxGenerator.AddMembers(namedTypeNode, memberDeclaration);
-            }
-
-            return namedTypeNode;
-        }
-
-        private SyntaxNode VisitInnerNamedTypes(SyntaxNode namedTypeNode, INamedTypeSymbol namedType)
-        {
-            IEnumerable<INamedTypeSymbol> innerNamedTypes = namedType.GetTypeMembers().Where(_symbolFilter.Include);
-
-            foreach (INamedTypeSymbol innerNamedType in AssemblySymbolOrderer.Order(innerNamedTypes))
-            {
-                SyntaxNode typeDeclaration = _syntaxGenerator.DeclarationExt(innerNamedType);
-                typeDeclaration = Visit(typeDeclaration, innerNamedType);
-
-                namedTypeNode = _syntaxGenerator.AddMembers(namedTypeNode, typeDeclaration);
             }
 
             return namedTypeNode;

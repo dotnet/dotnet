@@ -41,11 +41,11 @@
         </GeneratedContentProperties>
       </PropertyGroup>
       <ItemGroup>
-        <PackageReference Include="Microsoft.TemplateEngine.Tasks"
+        <PackageReference Include="Microsoft.TemplateEngine.Authoring.Tasks"
             Condition=" '$(LocalizeTemplates)' == 'true' "
             IsImplicitlyDefined="true"
             PrivateAssets="all"
-            Version="$(MicrosoftTemplateEngineTasksVersion)" />
+            Version="$(MicrosoftTemplateEngineAuthoringTasksVersion)" />
       </ItemGroup>
     </When>
     <Otherwise>

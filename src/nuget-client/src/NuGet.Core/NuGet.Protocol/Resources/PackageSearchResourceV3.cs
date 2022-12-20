@@ -256,7 +256,11 @@ namespace NuGet.Protocol
             var _newtonsoftConvertersSerializer = JsonSerializer.Create(JsonExtensions.ObjectSerializationSettings);
             _newtonsoftConvertersSerializer.Converters.Add(new Converters.V3SearchResultsConverter(take));
 
+#if NETCOREAPP2_0_OR_GREATER
+            using (var stream = await httpInitialResponse.Content.ReadAsStreamAsync(token))
+#else
             using (var stream = await httpInitialResponse.Content.ReadAsStreamAsync())
+#endif
             using (var streamReader = new StreamReader(stream))
             using (var jsonReader = new JsonTextReader(streamReader))
             {

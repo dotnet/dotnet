@@ -1155,7 +1155,7 @@ namespace NuGet.Protocol.Plugins.Tests
                     case MessageType.Cancel:
                     case MessageType.Progress:
                     case MessageType.Response:
-                        _event.Wait();
+                        _event.Wait(cancellationToken);
                         MessageSent?.Invoke(this, new MessageEventArgs(message));
                         break;
                 }

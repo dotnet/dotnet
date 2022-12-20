@@ -68,7 +68,7 @@ namespace NuGet.Core.FuncTest
             Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> handler = async (requestMessage, token) =>
             {
                 hits++;
-                await Task.Delay(requestDuration);
+                await Task.Delay(requestDuration, token);
                 return new HttpResponseMessage(HttpStatusCode.InternalServerError);
             };
 

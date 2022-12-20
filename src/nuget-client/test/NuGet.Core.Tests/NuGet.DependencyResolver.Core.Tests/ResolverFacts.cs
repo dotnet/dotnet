@@ -129,7 +129,7 @@ namespace NuGet.DependencyResolver.Core.Tests
             {
                 if (_delay != TimeSpan.Zero)
                 {
-                    await Task.Delay(_delay);
+                    await Task.Delay(_delay, cancellationToken);
                 }
 
                 return _libraries.FindBestMatch(libraryRange.VersionRange, l => l?.Version);

@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Mef;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
+using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Xunit;
@@ -106,10 +107,31 @@ public abstract class SingleServerDelegatingEndpointTestBase : LanguageServerTes
                 RazorLanguageServerCustomMessageTargets.RazorRenameEndpointName => await HandleRenameAsync(@params),
                 RazorLanguageServerCustomMessageTargets.RazorOnAutoInsertEndpointName => await HandleOnAutoInsertAsync(@params),
                 RazorLanguageServerCustomMessageTargets.RazorValidateBreakpointRangeName => await HandleValidateBreakpointRangeAsync(@params),
+                RazorLanguageServerCustomMessageTargets.RazorReferencesEndpointName => await HandleReferencesAsync(@params),
                 _ => throw new NotImplementedException($"I don't know how to handle the '{method}' method.")
             };
 
             return (TResponse)result;
+        }
+
+        private async Task<VSInternalReferenceItem[]> HandleReferencesAsync<TParams>(TParams @params)
+        {
+            var delegatedParams = Assert.IsType<DelegatedPositionParams>(@params);
+            var delegatedRequest = new TextDocumentPositionParams()
+            {
+                TextDocument = new TextDocumentIdentifier()
+                {
+                    Uri = _csharpDocumentUri
+                },
+                Position = delegatedParams.ProjectedPosition
+            };
+
+            var result = await _csharpServer.ExecuteRequestAsync<TextDocumentPositionParams, VSInternalReferenceItem[]>(
+                Methods.TextDocumentReferencesName,
+                delegatedRequest,
+                _cancellationToken);
+
+            return result;
         }
 
         private async Task<DefinitionResult?> HandleDefinitionAsync<T>(T @params)

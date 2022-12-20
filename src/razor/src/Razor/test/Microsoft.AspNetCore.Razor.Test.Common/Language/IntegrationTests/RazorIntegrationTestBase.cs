@@ -9,9 +9,9 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Mef;
 using Microsoft.CodeAnalysis;
@@ -398,7 +398,8 @@ public class RazorIntegrationTestBase : TestBase
         {
             get
             {
-                var builder = new StringBuilder();
+                using var _ = StringBuilderPool.GetPooledObject(out var builder);
+
                 builder.AppendLine("Compilation failed: ");
 
                 var diagnostics = Compilation.GetDiagnostics();

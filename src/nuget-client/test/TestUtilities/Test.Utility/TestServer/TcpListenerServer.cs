@@ -80,7 +80,7 @@ namespace NuGet.Test.Server
                     writer.WriteLine();
                     writer.Write(contentBefore);
                     writer.Flush();
-                    await Task.Delay(SleepDuration);
+                    await Task.Delay(SleepDuration, token);
                     writer.Write(contentAfter);
                 }
             }

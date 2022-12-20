@@ -110,6 +110,7 @@ stages:
       enablePublishBuildArtifacts: true
       enablePublishTestResults: true
       enableTelemetry: true
+      enableSourcebuild: true
       helixRepo: dotnet/razor
       helixType: build.product/
       # enableMicrobuild can't be read from a user-defined variable (Azure DevOps limitation)
@@ -197,20 +198,20 @@ stages:
             env:
               Token: $(dn-bot-dnceng-artifact-feeds-rw)
 
-        - script: eng\CIBuild.cmd
+        - script: eng\cibuild.cmd
+            -configuration $(_BuildConfig)
+            -msbuildEngine vs
+            -prepareMachine
             -restore
             -build
-            -sign
             -pack
             -publish
-            -configuration $(_BuildConfig)
-            -msbuildEngine dotnet
-            -prepareMachine
+            -sign
             $(_BuildArgs)
             $(_PublishArgs)
             $(_InternalRuntimeDownloadArgs)
           name: Build
-          displayName: Build
+          displayName: Build and Deploy
           condition: succeeded()
 
         - task: PublishBuildArtifacts@1
@@ -220,33 +221,6 @@ stages:
           inputs:
               pathtoPublish: artifacts/log/$(_BuildConfig)/Build.binlog
               artifactName: $(Agent.Os)_$(Agent.JobName) BuildBinLog
-              artifactType: Container
-              parallel: true
-
-        - script: eng\cibuild.cmd
-            -configuration $(_BuildConfig)
-            -msbuildEngine vs
-            -prepareMachine
-            -restore
-            -build
-            -pack
-            -sign
-            /p:BuildVsix=true
-            /p:BuildProjectReferences=false
-            $(_BuildArgs)
-            $(_PublishArgs)
-            $(_InternalRuntimeDownloadArgs)
-          name: Build_Vsix
-          displayName: Build and Deploy Vsix
-          condition: succeeded()
-
-        - task: PublishBuildArtifacts@1
-          displayName: Upload Build VSIX BinLog
-          condition: always()
-          continueOnError: true
-          inputs:
-              pathtoPublish: artifacts/log/$(_BuildConfig)/Build.binlog
-              artifactName: $(Agent.Os)_$(Agent.JobName) BuildVSIXBinLog
               artifactType: Container
               parallel: true
 
@@ -446,32 +420,6 @@ stages:
               artifactType: Container
               parallel: true
 
-      # Source build
-      - job: Source_Build_Managed
-        displayName: Source-Build (Managed)
-        variables:
-          - _BuildConfig: Release
-        pool:
-          ${{ if eq(variables['System.TeamProject'], 'public') }}:
-            name: NetCore-Public
-            demands: ImageOverride -equals Build.Ubuntu.1804.Amd64.Open
-          ${{ if eq(variables['System.TeamProject'], 'internal') }}:
-            name: NetCore1ESPool-Internal
-            demands: ImageOverride -equals Build.Ubuntu.1804.Amd64
-        workspace:
-          clean: all
-        steps:
-          - task: NodeTool@0
-            displayName: Install Node 10.x
-            inputs:
-              versionSpec: 10.x
-
-          - powershell: npm install -g yarn
-            displayName: Install yarn
-            condition: succeeded()
-
-          - template: /eng/common/templates/steps/source-build.yml
-
 - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
   - stage: publishBuildAssets
     displayName: Publish to Build Asset Registry
@@ -530,6 +478,6 @@ stages:
           componentPassword: $(dn-bot-dnceng-build-e-code-full-release-e-packaging-r)
           componentBuildProjectName: internal
           sourceBranch: "$(ComponentBranchName)"
-          publishDataURI: "https://dev.azure.com/dnceng/internal/_apis/git/repositories/dotnet-razor/items?path=/eng/config/PublishData.json&versionType=commit&version=507dd3c0c9af56897c7d9f2830c82d690e0ef3d4&api-version=6.0"
+          publishDataURI: "https://dev.azure.com/dnceng/internal/_apis/git/repositories/dotnet-razor/items?path=/eng/config/PublishData.json&api-version=6.0"
           publishDataAccessToken: "$(System.AccessToken)"
           dropPath: '$(Pipeline.Workspace)\VSSetup'

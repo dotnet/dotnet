@@ -179,7 +179,11 @@ namespace NuGet.Protocol
                         // Wrap the response stream so that the download can timeout.
                         if (response.Content != null)
                         {
+#if NETCOREAPP2_0_OR_GREATER
+                            var networkStream = await response.Content.ReadAsStreamAsync(cancellationToken);
+#else
                             var networkStream = await response.Content.ReadAsStreamAsync();
+#endif
                             var timeoutStream = new DownloadTimeoutStream(requestUri.ToString(), networkStream, request.DownloadTimeout);
                             var inProgressEvent = new ProtocolDiagnosticInProgressHttpEvent(
                                 source,

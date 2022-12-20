@@ -113,6 +113,7 @@ internal class InitializeHandler : IRequestHandler<InitializeParams, InitializeR
             _initializeResult.Capabilities.DocumentHighlightProvider = false;
             _initializeResult.Capabilities.SignatureHelpProvider = null;
             _initializeResult.Capabilities.ImplementationProvider = false;
+            _initializeResult.Capabilities.ReferencesProvider = false;
 
             ((VSInternalServerCapabilities)_initializeResult.Capabilities).OnAutoInsertProvider = null;
             ((VSInternalServerCapabilities)_initializeResult.Capabilities).SupportsDiagnosticRequests = false;

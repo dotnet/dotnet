@@ -22,8 +22,6 @@ To that end, we need a way to launch the debugging proxy on the user's host mach
 
 In order to publish the extension, you will need to have access to the `ms.dotnet-tools` publisher account on the VS Code marketplace. If you don't already have this access, reach out to @captainsafia for info.
 
-This extension bundles the debugging proxy assets that are needed inside the `BlazorDebugProxy` directory. These assets are not committed to repository so they will need to be included as part of the publish process.
-
 1. Generate a personal access token per the instructions in [the VS Code publishing guide](https://docs.microsoft.com/en-us/azure/devops/organizations/accounts/use-personal-access-tokens-to-authenticate?view=azure-devops&tabs=preview-page).
 2. Store the token from #1 in the `VSCODE_MARKETPLACE_TOKEN` environment variable.
 3. Increment the `patch` version of the package in the `package.json` file.

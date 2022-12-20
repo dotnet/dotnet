@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Tooltip;
 using Microsoft.VisualStudio.Core.Imaging;
 using Microsoft.VisualStudio.Text.Adornments;
@@ -243,7 +244,8 @@ internal class DefaultVSLSPTagHelperTooltipFactory : VSLSPTagHelperTooltipFactor
 
     private static void ClassifyReducedTypeName(List<ClassifiedTextRun> runs, string reducedTypeName)
     {
-        var currentTextRun = new StringBuilder();
+        using var _ = StringBuilderPool.GetPooledObject(out var currentTextRun);
+
         for (var i = 0; i < reducedTypeName.Length; i++)
         {
             var ch = reducedTypeName[i];
@@ -352,7 +354,8 @@ internal class DefaultVSLSPTagHelperTooltipFactory : VSLSPTagHelperTooltipFactor
             return;
         }
 
-        var currentTextRun = new StringBuilder();
+        using var _ = StringBuilderPool.GetPooledObject(out var currentTextRun);
+
         var currentCrefMatchIndex = 0;
         var currentCodeMatchIndex = 0;
         for (var i = 0; i < summaryContent.Length; i++)
@@ -360,7 +363,7 @@ internal class DefaultVSLSPTagHelperTooltipFactory : VSLSPTagHelperTooltipFactor
             // If we made it through all the crefs and code matches, add the rest of the text and break out of the loop.
             if (currentCrefMatchIndex == crefMatches.Count && currentCodeMatchIndex == codeMatches.Count)
             {
-                currentTextRun.Append(summaryContent.Substring(i));
+                currentTextRun.Append(summaryContent[i..]);
                 break;
             }
 

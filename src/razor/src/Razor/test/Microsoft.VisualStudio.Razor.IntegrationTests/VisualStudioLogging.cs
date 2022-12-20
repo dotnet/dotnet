@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.Internal.VisualStudio.Shell.Embeddable.Feedback;
 using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.Shell;
@@ -98,7 +98,8 @@ internal static class VisualStudioLogging
     private static void RazorExtensionExplorerLogger(string filePath)
     {
         var hiveDirectory = GetHiveDirectory();
-        var fileBuilder = new StringBuilder();
+
+        using var _ = StringBuilderPool.GetPooledObject(out var fileBuilder);
 
         var extensionsDir = Path.Combine(hiveDirectory, "Extensions");
         var compatListFile = Path.Combine(extensionsDir, "CompatibilityList.xml");

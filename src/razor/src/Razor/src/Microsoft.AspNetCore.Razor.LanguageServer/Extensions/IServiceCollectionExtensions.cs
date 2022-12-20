@@ -101,6 +101,7 @@ internal static class IServiceCollectionExtensions
     {
         services.AddHandler<RazorTranslateDiagnosticsEndpoint>();
         services.AddRegisteringHandler<RazorPullDiagnosticsEndpoint>();
+        services.AddSingleton<RazorTranslateDiagnosticsService>();
     }
 
     public static void AddHoverServices(this IServiceCollection services)

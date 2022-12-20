@@ -904,7 +904,7 @@ public class RunConfiguration : TestRunSettings
                     // Configuration used but not exposed to the public to avoid the Warning inside the log
                     case "ForceOneTestAtTimePerTestHost":
                     case "EnvironmentVariables":
-                    case "TargetFrameworkTestHostLoadBalancingStrategy":
+                    case "TargetFrameworkTestHostDemultiplexer":
                         reader.Skip();
                         break;
                     default:

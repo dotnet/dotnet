@@ -183,7 +183,7 @@ namespace NuGet.PackageManagement
                                     {
                                         linkedTokenSource.Dispose();
                                     }
-                                });
+                                }, token);
                             }
 
                             return completedTask.Result;

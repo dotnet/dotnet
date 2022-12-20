@@ -148,7 +148,7 @@ namespace NuGet.Protocol
         {
             try
             {
-                await _credentialPromptLock.WaitAsync();
+                await _credentialPromptLock.WaitAsync(cancellationToken);
 
                 cancellationToken.ThrowIfCancellationRequested();
 
