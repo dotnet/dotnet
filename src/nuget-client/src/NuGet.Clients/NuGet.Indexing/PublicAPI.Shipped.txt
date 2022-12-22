@@ -1,0 +1,58 @@
+#nullable enable
+NuGet.Indexing.CamelCaseFilter
+~NuGet.Indexing.CamelCaseFilter.CamelCaseFilter(Lucene.Net.Analysis.TokenStream stream) -> void
+NuGet.Indexing.DescriptionAnalyzer
+NuGet.Indexing.DescriptionAnalyzer.DescriptionAnalyzer() -> void
+NuGet.Indexing.DotTokenizer
+~NuGet.Indexing.DotTokenizer.DotTokenizer(System.IO.TextReader input) -> void
+NuGet.Indexing.DownloadCountResultsIndexer
+NuGet.Indexing.DownloadCountResultsIndexer.DownloadCountResultsIndexer() -> void
+~NuGet.Indexing.DownloadCountResultsIndexer.ProcessUnrankedEntries(System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata> entries, System.Collections.Generic.IDictionary<string, long> ranking) -> System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata>
+~NuGet.Indexing.DownloadCountResultsIndexer.Rank(string queryString, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata> entries) -> System.Collections.Generic.IDictionary<string, long>
+NuGet.Indexing.IPackageSearchMetadataSplicer
+~NuGet.Indexing.IPackageSearchMetadataSplicer.MergeEntries(NuGet.Protocol.Core.Types.IPackageSearchMetadata lhs, NuGet.Protocol.Core.Types.IPackageSearchMetadata rhs) -> NuGet.Protocol.Core.Types.IPackageSearchMetadata
+NuGet.Indexing.ISearchResultsAggregator
+~NuGet.Indexing.ISearchResultsAggregator.AggregateAsync(string queryString, params System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata>[] results) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata>>
+NuGet.Indexing.ISearchResultsIndexer
+~NuGet.Indexing.ISearchResultsIndexer.ProcessUnrankedEntries(System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata> entries, System.Collections.Generic.IDictionary<string, long> ranking) -> System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata>
+~NuGet.Indexing.ISearchResultsIndexer.Rank(string queryString, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata> entries) -> System.Collections.Generic.IDictionary<string, long>
+NuGet.Indexing.IdentifierAnalyzer
+NuGet.Indexing.IdentifierAnalyzer.IdentifierAnalyzer() -> void
+NuGet.Indexing.IdentifierKeywordAnalyzer
+NuGet.Indexing.IdentifierKeywordAnalyzer.IdentifierKeywordAnalyzer() -> void
+NuGet.Indexing.NuGetQuery
+NuGet.Indexing.OwnerAnalyzer
+NuGet.Indexing.OwnerAnalyzer.OwnerAnalyzer() -> void
+NuGet.Indexing.PackageAnalyzer
+NuGet.Indexing.PackageAnalyzer.PackageAnalyzer() -> void
+NuGet.Indexing.PackageSearchMetadataSplicer
+~NuGet.Indexing.PackageSearchMetadataSplicer.MergeEntries(NuGet.Protocol.Core.Types.IPackageSearchMetadata lhs, NuGet.Protocol.Core.Types.IPackageSearchMetadata rhs) -> NuGet.Protocol.Core.Types.IPackageSearchMetadata
+NuGet.Indexing.PackageSearchMetadataSplicer.PackageSearchMetadataSplicer() -> void
+NuGet.Indexing.RelevanceSearchResultsIndexer
+~NuGet.Indexing.RelevanceSearchResultsIndexer.ProcessUnrankedEntries(System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata> entries, System.Collections.Generic.IDictionary<string, long> ranking) -> System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata>
+~NuGet.Indexing.RelevanceSearchResultsIndexer.Rank(string queryString, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata> entries) -> System.Collections.Generic.IDictionary<string, long>
+NuGet.Indexing.RelevanceSearchResultsIndexer.RelevanceSearchResultsIndexer() -> void
+NuGet.Indexing.SearchResultsAggregator
+~NuGet.Indexing.SearchResultsAggregator.AggregateAsync(string queryString, params System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata>[] inputResults) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata>>
+~NuGet.Indexing.SearchResultsAggregator.SearchResultsAggregator(NuGet.Indexing.ISearchResultsIndexer indexer, NuGet.Indexing.IPackageSearchMetadataSplicer splicer) -> void
+NuGet.Indexing.SemanticVersionFilter
+~NuGet.Indexing.SemanticVersionFilter.SemanticVersionFilter(Lucene.Net.Analysis.TokenStream stream) -> void
+NuGet.Indexing.SortExtensions
+NuGet.Indexing.TagsAnalyzer
+NuGet.Indexing.TagsAnalyzer.TagsAnalyzer() -> void
+NuGet.Indexing.TokenizingHelper
+NuGet.Indexing.VersionAnalyzer
+NuGet.Indexing.VersionAnalyzer.VersionAnalyzer() -> void
+override NuGet.Indexing.CamelCaseFilter.IncrementToken() -> bool
+~override NuGet.Indexing.DescriptionAnalyzer.TokenStream(string fieldName, System.IO.TextReader reader) -> Lucene.Net.Analysis.TokenStream
+override NuGet.Indexing.DotTokenizer.IsTokenChar(char c) -> bool
+~override NuGet.Indexing.IdentifierAnalyzer.TokenStream(string fieldName, System.IO.TextReader reader) -> Lucene.Net.Analysis.TokenStream
+~override NuGet.Indexing.IdentifierKeywordAnalyzer.TokenStream(string fieldName, System.IO.TextReader reader) -> Lucene.Net.Analysis.TokenStream
+~override NuGet.Indexing.OwnerAnalyzer.TokenStream(string fieldName, System.IO.TextReader reader) -> Lucene.Net.Analysis.TokenStream
+override NuGet.Indexing.SemanticVersionFilter.IncrementToken() -> bool
+~override NuGet.Indexing.TagsAnalyzer.TokenStream(string fieldName, System.IO.TextReader reader) -> Lucene.Net.Analysis.TokenStream
+~override NuGet.Indexing.VersionAnalyzer.TokenStream(string fieldName, System.IO.TextReader reader) -> Lucene.Net.Analysis.TokenStream
+~static NuGet.Indexing.NuGetQuery.MakeQuery(string q) -> Lucene.Net.Search.Query
+~static NuGet.Indexing.SortExtensions.Merge<T>(this System.Collections.Generic.IEnumerable<T> first, System.Collections.Generic.IEnumerable<T> second, System.Collections.Generic.IComparer<T> comparer) -> System.Collections.Generic.IEnumerable<T>
+~static NuGet.Indexing.TokenizingHelper.CamelCaseSplit(string term) -> System.Collections.Generic.IEnumerable<string>
+~static NuGet.Indexing.TokenizingHelper.GetStopWords() -> System.Collections.Generic.ISet<string>

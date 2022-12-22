@@ -1,0 +1,870 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ErrorDuplicatePackages" xml:space="preserve">
+    <value>There are duplicate packages: {0}</value>
+  </data>
+  <data name="ErrorInvalidAllowedVersions" xml:space="preserve">
+    <value>Invalid allowedVersions for package id '{0}': '{1}'</value>
+  </data>
+  <data name="ErrorInvalidMinClientVersion" xml:space="preserve">
+    <value>Invalid minClientVersion: '{0}'</value>
+  </data>
+  <data name="ErrorInvalidPackageVersion" xml:space="preserve">
+    <value>Invalid package version for package id '{0}': '{1}'</value>
+  </data>
+  <data name="ErrorInvalidPackageVersionForDependency" xml:space="preserve">
+    <value>Invalid package version for a dependency with id '{0}' in package '{1}': '{2}'</value>
+    <comment>{0} is the dependency's package id.
+{1} is the package's identity.
+{2} is the dependency's version range.</comment>
+  </data>
+  <data name="ErrorNullOrEmptyPackageId" xml:space="preserve">
+    <value>Null or empty package id</value>
+  </data>
+  <data name="Log_InstalledPackage" xml:space="preserve">
+    <value>Installed {0} {1} from {2} with content hash {3}.</value>
+    <comment>0 - package id
+1 - package version
+2 - package source
+3 - hex byte string, representing content hash</comment>
+  </data>
+  <data name="FailToLoadPackagesConfig" xml:space="preserve">
+    <value>Fail to load packages.config as XML file. Please check it. </value>
+  </data>
+  <data name="MinClientVersionAlreadyExist" xml:space="preserve">
+    <value>MinClientVersion already exists in packages.config</value>
+  </data>
+  <data name="Error_MissingNuspecFile" xml:space="preserve">
+    <value>The package is missing the required nuspec file. </value>
+    <comment>package folder path will be appended to this message, if exists</comment>
+  </data>
+  <data name="PackageEntryAlreadyExist" xml:space="preserve">
+    <value>Package entry already exists in packages.config. Id: {0}</value>
+  </data>
+  <data name="PackageEntryNotExist" xml:space="preserve">
+    <value>Package entry does not exists in packages.config. Id: {0}, Version: {1}</value>
+  </data>
+  <data name="PackageStreamShouldBeSeekable" xml:space="preserve">
+    <value>Package stream should be seekable</value>
+  </data>
+  <data name="StringCannotBeNullOrEmpty" xml:space="preserve">
+    <value>String argument '{0}' cannot be null or empty</value>
+  </data>
+  <data name="UnableToAddEntry" xml:space="preserve">
+    <value>An error occurred while updating packages.config. The file was closed before the entry could be added.</value>
+  </data>
+  <data name="MultipleNuspecFiles" xml:space="preserve">
+    <value>Package contains multiple nuspec files.</value>
+  </data>
+  <data name="InvalidNuspecEntry" xml:space="preserve">
+    <value>The nuspec contains an invalid entry '{0}' in package '{1}' .</value>
+  </data>
+  <data name="FailToWritePackagesConfig" xml:space="preserve">
+    <value>Failed to write packages.config as XML file '{0}'. Error: '{1}'.</value>
+  </data>
+  <data name="PackagesNodeNotExist" xml:space="preserve">
+    <value>Packages node does not exists in packages.config at {0}.</value>
+  </data>
+  <data name="ErrorUnableToDeleteFile" xml:space="preserve">
+    <value>Unable to delete temporary file '{0}'. Error: '{1}'.</value>
+  </data>
+  <data name="FailedFileTime" xml:space="preserve">
+    <value>Failed to update file time for {0}: {1}</value>
+  </data>
+  <data name="Error_InvalidTargetFramework" xml:space="preserve">
+    <value>Unsupported targetFramework value '{0}'.</value>
+  </data>
+  <data name="PackageMinVersionNotSatisfied" xml:space="preserve">
+    <value>The '{0}' package requires NuGet client version '{1}' or above, but the current NuGet version is '{2}'. To upgrade NuGet, please go to https://docs.nuget.org/consume/installing-nuget</value>
+  </data>
+  <data name="UnableToParseClientVersion" xml:space="preserve">
+    <value>Unable to parse the current NuGet client version.</value>
+  </data>
+  <data name="InvalidNuspecElement" xml:space="preserve">
+    <value>{0} This validation error occurred in a '{1}' element.</value>
+    <comment>{0} is the validation error message.
+{1} is the local name of the XML element that causes the validation error.</comment>
+  </data>
+  <data name="MustContainAbsolutePath" xml:space="preserve">
+    <value>'{0}' must contain an absolute path '{1}'.</value>
+  </data>
+  <data name="FallbackFolderNotFound" xml:space="preserve">
+    <value>Unable to find fallback package folder '{0}'.</value>
+  </data>
+  <data name="InvalidPackageFrameworkFolderName" xml:space="preserve">
+    <value>The framework in the folder name of '{0}' in package '{1}' could not be parsed.</value>
+    <comment>{0} is the invalid path.
+{1} is the package ID and version.</comment>
+  </data>
+  <data name="ErrorManifestFileNotFound" xml:space="preserve">
+    <value>Manifest file not found at '{0}'</value>
+  </data>
+  <data name="ErrorPackageNotSigned" xml:space="preserve">
+    <value>The package is not signed.</value>
+  </data>
+  <data name="VerifyError_TimestampIntegrityCheckFailed" xml:space="preserve">
+    <value>The {0}'s timestamp integrity check failed.</value>
+    <comment>0 -Signature friendly name</comment>
+  </data>
+  <data name="VerifyError_TimestampUnsupportedSignatureAlgorithm" xml:space="preserve">
+    <value>The {0}'s timestamp certificate has an unsupported signature algorithm.</value>
+    <comment>0 - Signature friendly name</comment>
+  </data>
+  <data name="VerifyError_TimestampSignatureUnsupportedDigestAlgorithm" xml:space="preserve">
+    <value>The {0}'s timestamp signature has an unsupported digest algorithm.</value>
+    <comment>0 - Signature friendly name</comment>
+  </data>
+  <data name="TimestampFailureInvalidHttpScheme" xml:space="preserve">
+    <value>The timestamper URL '{0}' has an invalid URI scheme. The supported schemes are '{1}' and '{2}'.</value>
+    <comment>0 - url value
+1 - Uri.Http scheme
+2 - Uri.Https scheme</comment>
+  </data>
+  <data name="TimestampFailureNonceMismatch" xml:space="preserve">
+    <value>The timestamp response is invalid.  Nonces did not match.</value>
+  </data>
+  <data name="VerifyError_TimestampSignatureValidationFailed" xml:space="preserve">
+    <value>The {0}'s timestamp signature validation failed.</value>
+    <comment>0 - Signature friendly name</comment>
+  </data>
+  <data name="SignedPackageUnableToAccessSignature" xml:space="preserve">
+    <value>The package was not opened correctly to perform signature operations. Please use a Stream-based constructor to have access to signature attributes of the package.</value>
+  </data>
+  <data name="SignedPackageAlreadySigned" xml:space="preserve">
+    <value>The package already contains a signature. Please remove the existing signature before adding a new signature.</value>
+  </data>
+  <data name="SignedPackageNotSignedOnRemove" xml:space="preserve">
+    <value>The package is not signed. Unable to remove signature from an unsigned package.</value>
+  </data>
+  <data name="CertUtilityCertificateHashSha1" xml:space="preserve">
+    <value>SHA1 hash: {0}</value>
+    <comment>0 - certificate sha1 hash</comment>
+  </data>
+  <data name="CertUtilityCertificateIssuer" xml:space="preserve">
+    <value>Issued by: {0}</value>
+    <comment>0 - certificate issuer</comment>
+  </data>
+  <data name="CertUtilityCertificateSubjectName" xml:space="preserve">
+    <value>Subject Name: {0}</value>
+    <comment>0 - certificate subject name</comment>
+  </data>
+  <data name="CertUtilityCertificateValidity" xml:space="preserve">
+    <value>Valid from: {0} to {1}</value>
+    <comment>0 -  start date
+1 - end date</comment>
+  </data>
+  <data name="CertUtilityMultipleCertificatesFooter" xml:space="preserve">
+    <value>... {0} more.</value>
+    <comment>0 - number of certificates left</comment>
+  </data>
+  <data name="CertUtilityMultipleCertificatesHeader" xml:space="preserve">
+    <value>The following certificates meet all given criteria:</value>
+  </data>
+  <data name="VerificationCertDisplay" xml:space="preserve">
+    <value>Verifying the {0} with certificate: {1}</value>
+    <comment>0 - Signature friendly
+1 -  X509Certificate2 details in the following format -
+Subject Name:
+SHA1 hash:
+Issued by:
+Valid from:</comment>
+  </data>
+  <data name="VerificationTimestamperCertDisplay" xml:space="preserve">
+    <value>Verifying {0}'s timestamp with timestamping service certificate: {1}</value>
+    <comment>0 - signature friendly name
+1 -  X509Certificate2 details in the following format -
+Subject Name:
+SHA1 hash:
+Issued by:
+Valid from:</comment>
+  </data>
+  <data name="SignedPackageNotSignedOnVerify" xml:space="preserve">
+    <value>The package is not signed. Unable to verify signature from an unsigned package.</value>
+  </data>
+  <data name="ErrorPackageSignatureInvalid" xml:space="preserve">
+    <value>The package signature is invalid or cannot be verified on this platform.</value>
+  </data>
+  <data name="CommitmentTypeIndicationAttributeInvalidCombination" xml:space="preserve">
+    <value>The commitment-type-indication attribute contains an invalid combination of values.</value>
+  </data>
+  <data name="ErrorByteSignatureNotFound" xml:space="preserve">
+    <value>Byte signature not found in package archive:  0x{0}</value>
+    <comment>{0} is the byte signature in hexadecimal</comment>
+  </data>
+  <data name="SignatureContainsInvalidAttribute" xml:space="preserve">
+    <value>Package signature contains an invalid attribute: {0}</value>
+  </data>
+  <data name="VerifyError_InvalidCertificateChain" xml:space="preserve">
+    <value>The {0}'s certificate chain validation failed with error(s): {1}</value>
+    <comment>0 - Signature friendly name
+1 - error list</comment>
+  </data>
+  <data name="Verify_ErrorNoCertificate" xml:space="preserve">
+    <value>The {0} does not have a signing certificate.</value>
+    <comment>0 - signature friendly name</comment>
+  </data>
+  <data name="VerifyError_SignatureVerificationFailed" xml:space="preserve">
+    <value>The {0} validation failed.</value>
+    <comment>0 - Signature friendly name</comment>
+  </data>
+  <data name="SignatureDebug_HashOidFound" xml:space="preserve">
+    <value>Signature hash OID found: {0}</value>
+  </data>
+  <data name="SignatureFailureInvalidHashAlgorithmOid" xml:space="preserve">
+    <value>The package hash uses an unsupported hash algorithm.</value>
+  </data>
+  <data name="SignaturePackageIntegrityFailure" xml:space="preserve">
+    <value>The package integrity check failed. The package has changed since it was signed. Try clearing the local http-cache and run nuget operation again.</value>
+  </data>
+  <data name="SignatureHashAlgorithm" xml:space="preserve">
+    <value>Signature Hash Algorithm: {0}</value>
+  </data>
+  <data name="SignatureType" xml:space="preserve">
+    <value>Signature type: {0}</value>
+  </data>
+  <data name="VerifyError_TimestampInvalid" xml:space="preserve">
+    <value>The {0} contains an invalid timestamp.</value>
+    <comment>0 - Signature friendly name</comment>
+  </data>
+  <data name="TimestampValue" xml:space="preserve">
+    <value>Timestamp: {0}</value>
+  </data>
+  <data name="VerifyError_CertificateHasLifetimeSigningEKU" xml:space="preserve">
+    <value>The lifetime signing EKU in the {0}'s certificate is not supported.</value>
+    <comment>0 - Signature friendly name</comment>
+  </data>
+  <data name="ErrorInvalidPackageArchive" xml:space="preserve">
+    <value>Invalid package archive.</value>
+  </data>
+  <data name="ErrorZip64NotSupported" xml:space="preserve">
+    <value>Signed Zip64 packages are not supported.</value>
+  </data>
+  <data name="Error_NotOnePrimarySignature" xml:space="preserve">
+    <value>The package signature file does not contain exactly one primary signature.</value>
+  </data>
+  <data name="InvalidSignatureContent" xml:space="preserve">
+    <value>The package signature content is invalid.</value>
+  </data>
+  <data name="UnableToReadPackageHashInformation" xml:space="preserve">
+    <value>Package hash information could not be read from the package signature.</value>
+  </data>
+  <data name="UnsupportedSignatureFormatVersion" xml:space="preserve">
+    <value>The package signature format version is not supported. Updating your client may solve this problem.</value>
+  </data>
+  <data name="SignFailureCertificateInvalidProviderType" xml:space="preserve">
+    <value>The following certificate cannot be used for package signing as the private key provider is unsupported:</value>
+  </data>
+  <data name="ErrorInvalidCertificateChainUnspecifiedReason" xml:space="preserve">
+    <value>Certificate chain validation failed for an unspecified reason.</value>
+  </data>
+  <data name="VerifyError_CertificateHasUnsupportedSignatureAlgorithm" xml:space="preserve">
+    <value>The {0}'s certificate has an unsupported signature algorithm.</value>
+    <comment>0 - Signature friendly name</comment>
+  </data>
+  <data name="VerifyError_CertificateFailsPublicKeyLengthRequirement" xml:space="preserve">
+    <value>The {0}'s certificate does not meet a minimum public key length requirement.</value>
+    <comment>0 - Signature friendly name</comment>
+  </data>
+  <data name="InvalidPackageSignatureFileEntryCentralDirectoryHeader" xml:space="preserve">
+    <value>The central directory header field '{0}' has an invalid value ({1}).</value>
+    <comment>{0} is the name of field with the invalid value
+{1} is the field value</comment>
+  </data>
+  <data name="InvalidPackageSignatureFileEntryLocalFileHeader" xml:space="preserve">
+    <value>The local file header field '{0}' has an invalid value ({1}).</value>
+    <comment>{0} is the name of field with the invalid value
+{1} is the field value</comment>
+  </data>
+  <data name="SignedPackageArchiveIOExtraRead" xml:space="preserve">
+    <value>Package stream read position cannot be longer than the length of the stream.</value>
+  </data>
+  <data name="SignedPackageArchiveIOInvalidRead" xml:space="preserve">
+    <value>Package stream read position cannot be before the current position in the stream.</value>
+  </data>
+  <data name="ErrorMultipleTimestamps" xml:space="preserve">
+    <value>Multiple timestamps are not accepted.</value>
+  </data>
+  <data name="ErrorNoTimestamp" xml:space="preserve">
+    <value>The signature should be timestamped to enable long-term signature validity after the certificate has expired.</value>
+  </data>
+  <data name="VerifyError_TimestampNoCertificate" xml:space="preserve">
+    <value>The {0}'s timestamp does not have a signing certificate.</value>
+    <comment>0 -Signature friendly name</comment>
+  </data>
+  <data name="VerifyError_CertificateNotYetValid" xml:space="preserve">
+    <value>The {0}'s certificate is not yet valid.</value>
+    <comment>0 - Signature friendly name</comment>
+  </data>
+  <data name="VerifyError_TimestampNotYetValid" xml:space="preserve">
+    <value>The {0}'s timestamp signing certificate is not yet valid.</value>
+  </data>
+  <data name="InvalidPackageSignatureFileEntry" xml:space="preserve">
+    <value>The package signature file entry is invalid. {0}</value>
+    <comment>{0} - error message suffix containing the reason for failure.</comment>
+  </data>
+  <data name="InvalidPrimarySignature" xml:space="preserve">
+    <value>The primary signature is invalid.</value>
+  </data>
+  <data name="CertificateChainBuildFailed" xml:space="preserve">
+    <value>A complete certificate chain could not be built for the signing certificate.</value>
+  </data>
+  <data name="SigningCertificateAttributeMustNotBePresent" xml:space="preserve">
+    <value>The signing-certificate attribute is not allowed.</value>
+  </data>
+  <data name="SigningCertificateCertificateNotFound" xml:space="preserve">
+    <value>A certificate referenced by the signing-certificate attribute could not be found.</value>
+  </data>
+  <data name="SigningCertificateV2CertificateNotFound" xml:space="preserve">
+    <value>A certificate referenced by the signing-certificate-v2 attribute could not be found.</value>
+  </data>
+  <data name="SigningCertificateV2UnsupportedHashAlgorithm" xml:space="preserve">
+    <value>The signing-certificate-v2 attribute uses an unsupported hash algorithm.</value>
+  </data>
+  <data name="InvalidTimestampSignature" xml:space="preserve">
+    <value>The timestamp signature is invalid.</value>
+  </data>
+  <data name="SigningCertificateInvalid" xml:space="preserve">
+    <value>The signing-certificate attribute is invalid.</value>
+  </data>
+  <data name="SigningCertificateV2Invalid" xml:space="preserve">
+    <value>The signing-certificate-v2 attribute is invalid.</value>
+  </data>
+  <data name="PrimarySignatureHasNoTimestamp" xml:space="preserve">
+    <value>The primary signature does not have a timestamp.</value>
+  </data>
+  <data name="InvalidAsn1" xml:space="preserve">
+    <value>The ASN.1 data is invalid.</value>
+  </data>
+  <data name="UnsupportedAsn1" xml:space="preserve">
+    <value>The ASN.1 data is unsupported.</value>
+  </data>
+  <data name="VerifyError_TimestampCertificateFailsPublicKeyLengthRequirement" xml:space="preserve">
+    <value>The {0}'s timestamp certificate does not meet a minimum public key length requirement.</value>
+    <comment>0 -Signature friendly name</comment>
+  </data>
+  <data name="CommitmentTypeIndicationAttributeInvalid" xml:space="preserve">
+    <value>The commitment-type-indication attribute is invalid.</value>
+  </data>
+  <data name="VerifyError_SignatureNotTimeValid" xml:space="preserve">
+    <value>The {0} validity period has expired.</value>
+    <comment>0 - Signature friendly name</comment>
+  </data>
+  <data name="SigningCertificateV1OrV2AttributeMustBePresent" xml:space="preserve">
+    <value>Either the signing-certificate or signing-certificate-v2 attribute must be present.</value>
+  </data>
+  <data name="NuGetV3ServiceIndexUrlInvalid" xml:space="preserve">
+    <value>The nuget-v3-service-index-url attribute is invalid.</value>
+  </data>
+  <data name="NuGetPackageOwnersInvalid" xml:space="preserve">
+    <value>The nuget-package-owners attribute is invalid.</value>
+  </data>
+  <data name="NuGetPackageOwnersInvalidValue" xml:space="preserve">
+    <value>One or more package owner values are invalid.</value>
+  </data>
+  <data name="NuGetV3ServiceIndexUrlInvalidValue" xml:space="preserve">
+    <value>The nuget-v3-service-index-url attribute value is invalid.</value>
+  </data>
+  <data name="InvalidUrl" xml:space="preserve">
+    <value>The URL value is invalid.</value>
+  </data>
+  <data name="ExactlyOneAttributeRequired" xml:space="preserve">
+    <value>Exactly one {0} attribute is required.</value>
+    <comment>{0} is the attribute name</comment>
+  </data>
+  <data name="ExactlyOneAttributeValueRequired" xml:space="preserve">
+    <value>The {0} attribute must have exactly one attribute value.</value>
+    <comment>{0} is the attribute name</comment>
+  </data>
+  <data name="MultipleAttributesDisallowed" xml:space="preserve">
+    <value>Multiple {0} attributes are not allowed.</value>
+    <comment>{0} is the attribute name</comment>
+  </data>
+  <data name="InvalidArgument" xml:space="preserve">
+    <value>The argument is invalid.</value>
+  </data>
+  <data name="Error_NoMatchingClientCertificate" xml:space="preserve">
+    <value>This package is signed but not by a trusted signer.</value>
+  </data>
+  <data name="CertUtilityCertificateHash" xml:space="preserve">
+    <value>{0} hash: {1}</value>
+    <comment>0 - Hash algorithm name
+1 - certificate hash in given hash algorithm</comment>
+  </data>
+  <data name="CertificateChainValidationFailed" xml:space="preserve">
+    <value>Certificate chain validation failed.</value>
+  </data>
+  <data name="VerifyError_TimestampMessageImprintUnsupportedHashAlgorithm" xml:space="preserve">
+    <value>The {0} timestamp's message imprint uses an unsupported hash algorithm.</value>
+    <comment>0 -Signature friendly name</comment>
+  </data>
+  <data name="Error_NotOneRepositoryCounterSignature" xml:space="preserve">
+    <value>The package signature contains multiple repository countersignatures.</value>
+  </data>
+  <data name="NuGetPackageOwners" xml:space="preserve">
+    <value>Owners: {0}</value>
+    <comment>0 - The nuget-package-owners value</comment>
+  </data>
+  <data name="NuGetV3ServiceIndexUrl" xml:space="preserve">
+    <value>Service index: {0}</value>
+    <comment>0- The nuget-v3-service-index-url value</comment>
+  </data>
+  <data name="Error_RepositorySignatureMustNotHaveARepositoryCountersignature" xml:space="preserve">
+    <value>A repository primary signature must not have a repository countersignature.</value>
+  </data>
+  <data name="InvalidRepositoryCountersignature" xml:space="preserve">
+    <value>The repository countersignature is invalid.</value>
+  </data>
+  <data name="InvalidPackageSignatureFile" xml:space="preserve">
+    <value>The package contains an invalid package signature file.</value>
+  </data>
+  <data name="MultiplePackageSignatureFiles" xml:space="preserve">
+    <value>The package contains multiple package signature files.</value>
+  </data>
+  <data name="NoPackageSignatureFile" xml:space="preserve">
+    <value>The package does not contain a valid package signature file.</value>
+  </data>
+  <data name="SigningCannotBeDoneInPlace" xml:space="preserve">
+    <value>{0} and {1} should be different. Package signing cannot be done in place.</value>
+    <comment>0 - PackageFilePath parameter name
+1 - OutputFilePath parameter name</comment>
+  </data>
+  <data name="UnexpectedPackageSignatureVerificationError" xml:space="preserve">
+    <value>An unexpected error occurred while verifying a package signature.</value>
+  </data>
+  <data name="RangeOutOfBoundsForArray" xml:space="preserve">
+    <value>Arguments {0} and {1} were out of bounds for the array.</value>
+    <comment>{0} and {1} are parameter names</comment>
+  </data>
+  <data name="StreamMustBeReadable" xml:space="preserve">
+    <value>The stream must be readable.</value>
+  </data>
+  <data name="StreamMustBeSeekable" xml:space="preserve">
+    <value>The stream must be seekable.</value>
+  </data>
+  <data name="SignedPackagePackageAlreadyCountersigned" xml:space="preserve">
+    <value>The package already contains a repository countersignature. Please remove the existing signature before adding a new repository countersignature.</value>
+  </data>
+  <data name="RepositoryCountersignatureHasNoCertificate" xml:space="preserve">
+    <value>The repository countersignature does not have a signing certificate.</value>
+  </data>
+  <data name="RepositoryCountersignatureHasNoTimestamp" xml:space="preserve">
+    <value>The repository countersignature does not have a timestamp.</value>
+  </data>
+  <data name="UnrelatedSignatures" xml:space="preserve">
+    <value>The primary signature and repository countersignature are unrelated.</value>
+  </data>
+  <data name="Error_NoRepoAllowList" xml:space="preserve">
+    <value>This repository indicated that all its packages are repository signed; however, it listed no signing certificates.</value>
+  </data>
+  <data name="Error_NoClientAllowList" xml:space="preserve">
+    <value>signatureValidationMode is set to require, so packages are allowed only if signed by trusted signers; however, no trusted signers were specified.</value>
+  </data>
+  <data name="Error_NoMatchingRepositoryCertificate" xml:space="preserve">
+    <value>This package was not repository signed with a certificate listed by this repository.</value>
+  </data>
+  <data name="VerifyChainBuildingIssue" xml:space="preserve">
+    <value>The {0} found a chain building issue: {1}</value>
+    <comment>0 - Signature friendly name
+1 - issue message</comment>
+  </data>
+  <data name="SigningError_CertificateFailsPublicKeyLengthRequirement" xml:space="preserve">
+    <value>The signing certificate does not meet a minimum public key length requirement.</value>
+  </data>
+  <data name="SigningError_CertificateHasLifetimeSigningEKU" xml:space="preserve">
+    <value>The lifetime signing EKU in the signing certificate is not supported.</value>
+  </data>
+  <data name="SigningError_CertificateHasUnsupportedSignatureAlgorithm" xml:space="preserve">
+    <value>The signing certificate has an unsupported signature algorithm.</value>
+  </data>
+  <data name="SigningError_NotYetValid" xml:space="preserve">
+    <value>The signing certificate is not yet valid.</value>
+  </data>
+  <data name="VerifyError_TimestampVerifyChainBuildingIssue" xml:space="preserve">
+    <value>The {0}'s timestamp found a chain building issue: {1}</value>
+    <comment>0 - Signature friendly name
+1 - issue message</comment>
+  </data>
+  <data name="AuthorPrimarySignatureFriendlyName" xml:space="preserve">
+    <value>author primary signature</value>
+  </data>
+  <data name="PrimarySignatureFriendlyName" xml:space="preserve">
+    <value>primary signature</value>
+  </data>
+  <data name="RepositoryCountersignatureFriendlyName" xml:space="preserve">
+    <value>repository countersignature</value>
+  </data>
+  <data name="RepositoryPrimarySignatureFriendlyName" xml:space="preserve">
+    <value>repository primary signature</value>
+  </data>
+  <data name="SignatureFriendlyName" xml:space="preserve">
+    <value>signature</value>
+  </data>
+  <data name="SignError_TimestampCertificateFailsPublicKeyLengthRequirement" xml:space="preserve">
+    <value>The timestamp certificate does not meet a minimum public key length requirement.</value>
+  </data>
+  <data name="SignError_TimestampIntegrityCheckFailed" xml:space="preserve">
+    <value>The timestamp integrity check failed.</value>
+  </data>
+  <data name="SignError_TimestampNoCertificate" xml:space="preserve">
+    <value>The timestamp does not have a signing certificate.</value>
+  </data>
+  <data name="SignError_TimestampNotYetValid" xml:space="preserve">
+    <value>The timestamp signing certificate is not yet valid.</value>
+  </data>
+  <data name="SignError_TimestampSignatureValidationFailed" xml:space="preserve">
+    <value>The timestamp signature validation failed.</value>
+  </data>
+  <data name="TimestampCertificateUnsupportedSignatureAlgorithm" xml:space="preserve">
+    <value>The timestamp certificate has an unsupported signature algorithm ({0}). The following algorithms are supported: {1}.</value>
+    <comment>0 - certificate signature algorithm name/oid
+1 - supported signature algorithm names</comment>
+  </data>
+  <data name="ErrorAuthorTargetCannotBeACountersignature" xml:space="preserve">
+    <value>Cannot target author signatures that are countersignatures.</value>
+  </data>
+  <data name="VerifyError_TimestampGeneralizedTimeInvalid" xml:space="preserve">
+    <value>The {0}'s timestamp's generalized time is outside the timestamping certificate's validity period.</value>
+    <comment>0 - Signature friendly name</comment>
+  </data>
+  <data name="SignError_TimestampGeneralizedTimeInvalid" xml:space="preserve">
+    <value>The timestamp's generalized time is outside the timestamping certificate's validity period.</value>
+  </data>
+  <data name="InvalidPackageNupkg" xml:space="preserve">
+    <value>The file is not a valid nupkg. File path: {0}</value>
+    <comment>0 - Nupkg file path</comment>
+  </data>
+  <data name="ArgumentCannotBeNullOrEmpty" xml:space="preserve">
+    <value>The argument cannot be null or empty.</value>
+  </data>
+  <data name="TimestampSignatureUnsupportedDigestAlgorithm" xml:space="preserve">
+    <value>The timestamp signature has an unsupported digest algorithm ({0}). The following algorithms are supported: {1}.</value>
+    <comment>0 - signature algorithm name/oid
+1 - supported signature algorithm names</comment>
+  </data>
+  <data name="UnrecognizedEnumValue" xml:space="preserve">
+    <value>The enum value '{0}' is unrecognized.</value>
+    <comment>{0} is an undefined enum value</comment>
+  </data>
+  <data name="InvalidArgumentCombination" xml:space="preserve">
+    <value>Invalid combination of arguments {0} and {1}.</value>
+    <comment>{0} and {1} are parameter names</comment>
+  </data>
+  <data name="PackageSignatureVerificationLog" xml:space="preserve">
+    <value>PackageSignatureVerificationLog: PackageIdentity: {0} Source: {1} PackageSignatureValidity: {2}</value>
+    <comment>0 - package id and version
+1 - package source url
+2 - validation result as a bool</comment>
+  </data>
+  <data name="ErrorUnableCheckPackageEntries" xml:space="preserve">
+    <value>An unexpected error occurred while checking package entries.</value>
+  </data>
+  <data name="ErrorUnsafePackageEntry" xml:space="preserve">
+    <value>The package '{0}' contains an entry '{1}' which is unsafe for extraction.</value>
+    <comment>{0} is the package identity.
+    {1} is the package entry</comment>
+  </data>
+  <data name="NoRepositoryCountersignature" xml:space="preserve">
+    <value>Verification settings require a repository countersignature, but the package does not have a repository countersignature.</value>
+  </data>
+  <data name="ExtractionLog_InformationPrefix" xml:space="preserve">
+    <value>Package '{0} {1}' from source '{2}': {3}</value>
+    <comment>0 - package ID
+1 - package versions
+2 - package source url
+3 - Log Message</comment>
+  </data>
+  <data name="VerifyCertTrustOfflineWhileRevocationModeOffline" xml:space="preserve">
+    <value>The revocation function was unable to check revocation because the certificate is not available in the cached certificate revocation list and NUGET_CERT_REVOCATION_MODE environment variable has been set to offline. For more information, visit https://aka.ms/certificateRevocationMode.</value>
+  </data>
+  <data name="VerifyCertTrustOfflineWhileRevocationModeOnline" xml:space="preserve">
+    <value>The revocation function was unable to check revocation because the revocation server could not be reached. For more information, visit https://aka.ms/certificateRevocationMode.</value>
+    <comment>0 - Signature friendly name</comment>
+  </data>
+  <data name="SigningWouldRequireZip64" xml:space="preserve">
+    <value>The package cannot be signed as it would require the Zip64 format.</value>
+  </data>
+  <data name="NuGetLicenseExpression_InvalidToken" xml:space="preserve">
+    <value>Invalid element '{0}'.</value>
+    <comment>0 - The element value</comment>
+  </data>
+  <data name="NuGetLicenseExpression_MismatchedParentheses" xml:space="preserve">
+    <value>Mismatched parentheses in the expression.</value>
+  </data>
+  <data name="NuGetLicenseExpression_InvalidExpression" xml:space="preserve">
+    <value>The license expression is invalid.</value>
+  </data>
+  <data name="NuGetLicenseExpression_InvalidCharacters" xml:space="preserve">
+    <value>The license expression '{0}' contains invalid characters.</value>
+  </data>
+  <data name="NuGetLicenseExpression_DeprecatedIdentifier" xml:space="preserve">
+    <value>The identifier '{0}' is deprecated.</value>
+    <comment>0 - identifier (license or exception)</comment>
+  </data>
+  <data name="NuGetLicenseExpression_LicenseIdentifierIsException" xml:space="preserve">
+    <value>The identifier '{0}' is an exception. It cannot be used as a license.</value>
+  </data>
+  <data name="NuGetLicenseExpression_ExceptionIdentifierIsLicense" xml:space="preserve">
+    <value>The identifier '{0}' is a license. It cannot be used as an exception.</value>
+  </data>
+  <data name="NuGetLicenseExpression_InvalidExceptionIdentifier" xml:space="preserve">
+    <value>The identifier '{0}' is not a standard exception.</value>
+  </data>
+  <data name="NuGetLicenseExpression_LicenseInvalidCharacters" xml:space="preserve">
+    <value>The license identifier '{0}' contains invalid characters.</value>
+  </data>
+  <data name="ConflictingAllowUntrustedRoot" xml:space="preserve">
+    <value>There are two certificates with conflicting allowUntrustedRoot attributes in the computed settings. The allowUntrustedRoot attribute is going to be set to false. Certificate: {0}-{1}</value>
+    <comment>0 - Hash algorithm
+1 - Fingerprint
+'allowUntrustedRoot' should not be localized</comment>
+  </data>
+  <data name="Error_LoadingHashFile" xml:space="preserve">
+    <value>Error parsing nupkg metadata file {0} : {1}</value>
+    <comment>0 - nupkg metadata file path
+1 - error message</comment>
+  </data>
+  <data name="DefaultError_EmptyAllowList" xml:space="preserve">
+    <value>A list of trusted signers is required but none was found.</value>
+  </data>
+  <data name="DefaultError_NoMatchInAllowList" xml:space="preserve">
+    <value>The package signature certificate fingerprint does not match any certificate fingerprint in the allow list.</value>
+  </data>
+  <data name="NuGetLicense_InvalidLicenseExpressionVersion" xml:space="preserve">
+    <value>The license version string '{0}'  is invalid.</value>
+    <comment>0 - version string, 1 - the metadata</comment>
+  </data>
+  <data name="InvalidLicenseExppressionVersion_VersionTooHigh" xml:space="preserve">
+    <value>The version string '{0}' is not supported by this toolset. The highest supported version is '{1}'. Either use a lower version or upgrade your toolset.</value>
+  </data>
+  <data name="NuGetLicense_InvalidLicenseType" xml:space="preserve">
+    <value>Unrecognized license type '{0}'</value>
+  </data>
+  <data name="NuGetLicense_MissingRequiredValue" xml:space="preserve">
+    <value>The element 'license' cannot be empty. </value>
+  </data>
+  <data name="NuGetLicense_LicenseExpressionVersionTooHigh" xml:space="preserve">
+    <value>The license version string '{0}' is higher than the one supported by this toolset '{1}'.</value>
+  </data>
+  <data name="NuGetLicense_LicenseElementMissingValue" xml:space="preserve">
+    <value>The license element value is empty. This is likely due to an authoring error. </value>
+  </data>
+  <data name="NuGetLicenseExpression_NonStandardIdentifier" xml:space="preserve">
+    <value>The license identifier(s) '{0}' is(are) not recognized by the current toolset.</value>
+    <comment>0 - semicolon delimited list of identifiers</comment>
+  </data>
+  <data name="Error_RepositorySettings_UnsignedPackage" xml:space="preserve">
+    <value>This repository indicated that all its packages are repository signed; however, this package is unsigned.</value>
+  </data>
+  <data name="Error_RequireMode_UnsignedPackage" xml:space="preserve">
+    <value>signatureValidationMode is set to require, so packages are allowed only if signed by trusted signers; however, this package is unsigned.</value>
+  </data>
+  <data name="NuGetLicenseExpression_IllegalUnlicensedOperator" xml:space="preserve">
+    <value>The 'UNLICENSED' license identifier cannot be combined with the '+' operator.</value>
+  </data>
+  <data name="NuGetLicenseExpression_UnexpectedIdentifier" xml:space="preserve">
+    <value>Unexpected license identifier '{0}'. The identifier is not allowed in this context.</value>
+    <comment>0 - the license identifier.</comment>
+  </data>
+  <data name="NuGetLicenseExpression_UnlicensedPackageWarning" xml:space="preserve">
+    <value>The owner has marked this package as 'UNLICENSED'. This means that there is no license that allows this package to be used outside of the copyright owner.</value>
+  </data>
+  <data name="InvalidPackageTypeVersion" xml:space="preserve">
+    <value>Nuspec file contains a package type with an invalid package version '{0}'.</value>
+    <comment>{0} is the invalid version string.</comment>
+  </data>
+  <data name="MissingMetadataNode" xml:space="preserve">
+    <value>Nuspec file does not contain the '{0}' node.</value>
+  </data>
+  <data name="MissingPackageTypeName" xml:space="preserve">
+    <value>Nuspec file contains a package type that is missing the name attribute.</value>
+  </data>
+  <data name="Message_Path" xml:space="preserve">
+    <value>Path: {0}</value>
+    <comment>0 - folder path</comment>
+  </data>
+  <data name="AnAbsoluteUriIsRequired" xml:space="preserve">
+    <value>An absolute URI is required.</value>
+  </data>
+  <data name="HttpOrHttpsIsRequired" xml:space="preserve">
+    <value>HTTP or HTTPS is required.</value>
+  </data>
+  <data name="TimestampServiceRespondedError" xml:space="preserve">
+    <value>The timestamp service responded with HTTP status code '{0}' ('{1}').</value>
+    <comment>{0} is the httpResponse.StatusCode, {1} is the httpResponse.ReasonPhrase.</comment>
+  </data>
+  <data name="MissingTargetPlatformVersionsFromDependencyGroups" xml:space="preserve">
+    <value>Some dependency group TFMs are missing a platform version: {0}</value>
+    <comment>0 - comma-separated list of dependency group TFMs</comment>
+  </data>
+  <data name="MissingTargetPlatformVersionsFromFrameworkAssemblyGroups" xml:space="preserve">
+    <value>Some reference assembly group TFMs are missing a platform version: {0}</value>
+    <comment>0 - comma-separated list of reference assembly group TFMs</comment>
+  </data>
+  <data name="MissingTargetPlatformVersionsFromIncludedFiles" xml:space="preserve">
+    <value>Some included files are included under TFMs which are missing a platform version: {0}</value>
+    <comment>0 - comma-separated list of files with bad TFMs</comment>
+  </data>
+  <data name="MissingTargetPlatformVersionsFromReferenceGroups" xml:space="preserve">
+    <value>Some reference group TFMs are missing a platform version: {0}</value>
+    <comment>0 - comma-separated list of reference group TFMs</comment>
+  </data>
+  <data name="MissingTargetPlatformVersionsFromFrameworkAssemblyReferences" xml:space="preserve">
+    <value>Some framework assembly reference TFMs are missing a platform version: {0}</value>
+    <comment>0 - comma-separated list of reference group TFMs</comment>
+  </data>
+  <data name="PropertyCannotBeNull" xml:space="preserve">
+    <value>'{0}' cannot be null.</value>
+    <comment>0 - property name</comment>
+  </data>
+  <data name="ZipFileLastWriteTimeStampModifiedMessage" xml:space="preserve">
+    <value>'{0}' changed from '{1}' to '{2}'</value>
+    <comment>0 - File name
+1 - Original last write timestamp
+2 - Updated last write timestamp</comment>
+  </data>
+  <data name="ZipFileTimeStampModifiedWarning" xml:space="preserve">
+    <value>The zip format supports a limited date range. The following files are outside the supported range:</value>
+  </data>
+  <data name="VerifyChainBuildingIssue_UntrustedRoot" xml:space="preserve">
+    <value>The {0}'s signing certificate is not trusted by the trust provider.</value>
+    <comment>0 -Signature friendly name</comment>
+  </data>
+  <data name="VerifyTimestampChainBuildingIssue_UntrustedRoot" xml:space="preserve">
+    <value>The {0}'s timestamping certificate is not trusted by the trust provider.</value>
+    <comment>0 -Signature friendly name</comment>
+  </data>
+  <data name="ChainBuilding_UsingDefaultTrustStore" xml:space="preserve">
+    <value>X.509 certificate chain validation will use the default trust store selected by .NET.</value>
+  </data>
+  <data name="ChainBuilding_UsingFallbackCertificateBundle" xml:space="preserve">
+    <value>X.509 certificate chain validation will use the fallback certificate bundle at '{0}'.</value>
+    <comment>{0} is the file path</comment>
+  </data>
+  <data name="ChainBuilding_UsingNoCertificateBundle" xml:space="preserve">
+    <value>X.509 certificate chain validation will not have any trusted roots. Chain building will fail with an untrusted status.</value>
+  </data>
+  <data name="ChainBuilding_UsingSystemCertificateBundle" xml:space="preserve">
+    <value>X.509 certificate chain validation will use the system certificate bundle at '{0}'.</value>
+    <comment>{0} is the file path</comment>
+  </data>
+  <data name="InvalidX509StorePurpose" xml:space="preserve">
+    <value>Invalid X.509 store purpose.</value>
+  </data>
+</root>

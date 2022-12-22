@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="DTE_ProjectUnsupported" xml:space="preserve">
+    <value>The project '{0}' is unsupported</value>
+  </data>
+  <data name="FailedToAddReference" xml:space="preserve">
+    <value>Failed to add reference to '{0}'.</value>
+  </data>
+  <data name="FailedToAddGacReference" xml:space="preserve">
+    <value>Failed to add reference. The package '{0}' tried to add a framework reference to '{1}' which was not found in the GAC. This is possibly a bug in the package. Please contact the package owners for assistance.</value>
+  </data>
+  <data name="Debug_AddGacReference" xml:space="preserve">
+    <value>Added reference '{0}' in the Global Assembly Cache to project '{1}'</value>
+  </data>
+  <data name="Warning_FileAlreadyExists" xml:space="preserve">
+    <value>'{0}' already exists. Skipping...</value>
+  </data>
+  <data name="Debug_AddedFileToProject" xml:space="preserve">
+    <value>Added file '{0}' to project '{1}'.</value>
+  </data>
+  <data name="PathToExistingFileNotPresent" xml:space="preserve">
+    <value>Path '{0}' to existing file is not found on disk. Cannot add to project '{1}'</value>
+  </data>
+  <data name="Argument_Must_Be_GreaterThanOrEqualTo" xml:space="preserve">
+    <value>Value must be greater than or equal to {0}.</value>
+  </data>
+  <data name="Debug_RemovedFile" xml:space="preserve">
+    <value>Removed file '{0}'</value>
+  </data>
+  <data name="Debug_RemovedFileFromFolder" xml:space="preserve">
+    <value>Removed file '{0}' from folder '{1}'</value>
+  </data>
+  <data name="Debug_RemoveReference" xml:space="preserve">
+    <value>Removed reference '{0}' from project '{1}'</value>
+  </data>
+  <data name="Error_FailedToCreateParentFolder" xml:space="preserve">
+    <value>Failed to create parent folder for file '{0}' in project {1}.</value>
+  </data>
+  <data name="FailedToRemoveReference" xml:space="preserve">
+    <value>Case insensitive search for reference '{0}', to be removed, returned more than 1 match. Request could not be performed.</value>
+  </data>
+  <data name="Warning_FailedToFindMatchForRemoveReference" xml:space="preserve">
+    <value>Failed to find match for removing reference '{0}'.</value>
+  </data>
+  <data name="Warning_NoExactMatchForReference" xml:space="preserve">
+    <value>No exact match found for removing reference '{0}'. Trying No No exact match found for removing reference '{0}'. Trying case-insensitive search...-</value>
+  </data>
+  <data name="InstallingPackage" xml:space="preserve">
+    <value>Installing NuGet package {0}.</value>
+  </data>
+  <data name="Warning_FailedToDeleteMarkedPackageDirectory" xml:space="preserve">
+    <value>Failed to remove package directory '{0}' that was marked for deletion on Visual Studio restart.</value>
+  </data>
+  <data name="Warning_FailedToDeleteMarkedPackageDirectories" xml:space="preserve">
+    <value>Failed to remove package directories that were marked for deletion on Visual Studio restart: {0}</value>
+  </data>
+  <data name="Warning_FailedToMarkPackageDirectoryForDeletion" xml:space="preserve">
+    <value>Failed to mark package directory '{0}' for deletion on Visual Studio restart: {1}</value>
+  </data>
+  <data name="UnresolvedItemDuringProjectClosureWalk" xml:space="preserve">
+    <value>Failed to resolve all items referenced by '{0}'. This message can typically be ignored. The issue may be resolved by fully restoring and building the solution. If the unresolved item is a project reference this can lead to an incomplete NuGet restore result and missing package references. To ensure that restore is able to find all projects verify that all projects are referenced correctly and exist on disk.</value>
+  </data>
+  <data name="SolutionIsNotSaved" xml:space="preserve">
+    <value>Solution is not saved. Please save your solution before managing NuGet packages.</value>
+  </data>
+  <data name="Error_WhileLoadingConfigForBindingRedirects" xml:space="preserve">
+    <value>Failed to load '{0}', while updating binding redirects. {1}</value>
+  </data>
+  <data name="FailedToUpdateBindingRedirects" xml:space="preserve">
+    <value>Failed to update binding redirects for {0} : {1}</value>
+  </data>
+  <data name="ConfigErrorDialogBoxTitle" xml:space="preserve">
+    <value>NuGet operation failed</value>
+  </data>
+  <data name="FailedToAddFacadeReference" xml:space="preserve">
+    <value>Failed to add reference to '{0}'. The package '{1}' tried to add a framework reference to '{0}'. This reference is not required to be explicitly added by a package.</value>
+    <comment>{0} is the framework facade reference name
+{1} is the package name</comment>
+  </data>
+  <data name="ProjectNotLoaded_RestoreFailed" xml:space="preserve">
+    <value>The operation failed as details for project {0} could not be loaded.</value>
+  </data>
+  <data name="MSBuildPropertyNotFound" xml:space="preserve">
+    <value>The {0} MSBuild property could not be found for project '{1}'.</value>
+    <comment>{0} is the name of the property that was not set.  {1} is the full path to the project.</comment>
+  </data>
+  <data name="UnableToGetCPSPackageInstallationService" xml:space="preserve">
+    <value>Unable to get the project's package installation service for project '{0}'.</value>
+    <comment>{0} is the full path to the project.</comment>
+  </data>
+  <data name="CredentialProviderFailed_VisualStudioCredentialProvider" xml:space="preserve">
+    <value>The Visual Studio credential provider failed to load.</value>
+  </data>
+  <data name="CredentialProviderFailed_VisualStudioAccountProvider" xml:space="preserve">
+    <value>The Visual Studio or VSTS account provider failed to load.</value>
+  </data>
+  <data name="CredentialProviderFailed_DefaultCredentialsCredentialProvider" xml:space="preserve">
+    <value>The default credentials credential provider failed to load.</value>
+  </data>
+  <data name="CredentialProviderFailed_ImportedProvider" xml:space="preserve">
+    <value>Failed to load credential provider from assembly {0}.</value>
+  </data>
+  <data name="Error_MultipleFrameworks" xml:space="preserve">
+    <value>Failed to migrate project '{0}'. The project may only contain one target framework.</value>
+    <comment>{0} is the full path to the project.</comment>
+  </data>
+  <data name="Error_InvalidJson" xml:space="preserve">
+    <value>'{0}' is an invalid json file.</value>
+  </data>
+  <data name="Error_FileNotExists" xml:space="preserve">
+    <value>File '{0}' does not exist on disk. </value>
+  </data>
+  <data name="Argument_Cannot_Be_Null_Or_Empty" xml:space="preserve">
+    <value>Argument cannot be null or empty</value>
+  </data>
+  <data name="Debug_RemovedFolder" xml:space="preserve">
+    <value>Removed folder '{0}'.</value>
+  </data>
+  <data name="Warning_DirectoryNotEmpty" xml:space="preserve">
+    <value>Directory '{0}' is not empty. Skipping...</value>
+  </data>
+  <data name="Text_DeprecatedFramework_DocumentLink" xml:space="preserve">
+    <value>migration document</value>
+    <comment>The text has the document hyperlink applied to it.</comment>
+  </data>
+  <data name="Text_DeprecatedFramework_DocumentLink_After" xml:space="preserve">
+    <value>.</value>
+    <comment>This test goes immediately after the document link.</comment>
+  </data>
+  <data name="Text_DeprecatedFramework_DocumentLink_Before" xml:space="preserve">
+    <value>The NuGet operation failed due to one or more packages being incompatible with your project. The '{0}' ('{1}') project framework is deprecated. For more information about how to migrate your projects to a supported framework, please refer to the</value>
+    <comment>This text goes immediately before the document link.
+{0} is the full name of the deprecated framework (e.g. ".NETFramework,Version=v4.5").
+{1} is the short folder representation of the framework (e.g. "net45").</comment>
+  </data>
+  <data name="Text_DeprecatedFramework_ProjectList" xml:space="preserve">
+    <value>The following project(s) target the deprecated framework:</value>
+  </data>
+  <data name="ProjectUpgradeAndRetargetErrorMessage" xml:space="preserve">
+    <value>Some NuGet packages were installed using a target framework different from the current target framework and may need to be reinstalled. Visit https://docs.nuget.org/docs/workflows/reinstalling-packages for more information.  Packages affected: {0}</value>
+  </data>
+  <data name="Debug_AddedReferenceToProject" xml:space="preserve">
+    <value>Added reference '{0}' to project:'{1}'. The Reference was Resolved To Package (resolvedToPackage):'{2}', where Reference Path from DTE(dteOriginalPath):'{3}' and Reference Path from package reference(assemblyFullPath):'{4}'.</value>
+    <comment>{0} is the reference name
+{1} is the project name
+{2} is boolean flag (true or false)
+{3} is the project full path
+{4} is the reference assembly full path</comment>
+  </data>
+  <data name="CredentialProviderFailed_PluginCredentialProvider" xml:space="preserve">
+    <value>The plugin credential providers could not be loaded.</value>
+  </data>
+  <data name="AggregateSourceName" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="ProjectWithIdNotFound" xml:space="preserve">
+    <value>A project with ID '{0}' was not found.</value>
+    <comment>{0} is the project's unique ID (ProjectGuid)</comment>
+  </data>
+  <data name="UnsupportedFeedType" xml:space="preserve">
+    <value>The feed type '{0}' is unsupported.</value>
+    <comment>{0} is the ItemFilter type which correlates to the selected tab</comment>
+  </data>
+  <data name="PropertyCannotBeNull" xml:space="preserve">
+    <value>'{0}' cannot be null.</value>
+    <comment>0 - property name</comment>
+  </data>
+  <data name="Exception_InvalidContinuationToken" xml:space="preserve">
+    <value>Invalid token</value>
+  </data>
+</root>

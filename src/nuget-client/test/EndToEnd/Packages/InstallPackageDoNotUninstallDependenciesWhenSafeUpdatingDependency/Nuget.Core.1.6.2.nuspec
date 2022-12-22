@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Nuget.Core</id>
+    <version>1.6.2</version>
+    <authors>Microsoft Corporation</authors>
+    <description>NuGet.Core is the core framework assembly for NuGet that the rest of NuGet builds upon.</description>
+  </metadata>
+  <files>
+    <file src="lib\net40\nuget.core.dll" target="lib\net40\nuget.core.dll"  />
+  </files>
+</package>

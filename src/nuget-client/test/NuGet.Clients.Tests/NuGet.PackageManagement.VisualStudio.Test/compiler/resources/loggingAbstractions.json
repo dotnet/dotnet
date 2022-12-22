@@ -1,0 +1,2744 @@
+{
+  "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json",
+  "@type": [ "catalog:CatalogRoot", "PackageRegistration", "catalog:Permalink" ],
+  "commitId": "9021eb20-e3eb-4052-80e0-3f982f501caf",
+  "commitTimeStamp": "2020-10-13T14:44:10.4931057+00:00",
+  "count": 1,
+  "items": [
+    {
+      "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json#page/1.0.0-rc1-final/5.0.0-rc.2.20475.5",
+      "@type": "catalog:CatalogPage",
+      "commitId": "9021eb20-e3eb-4052-80e0-3f982f501caf",
+      "commitTimeStamp": "2020-10-13T14:44:10.4931057+00:00",
+      "count": 60,
+      "items": [
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/1.0.0-rc1-final.json",
+          "@type": "Package",
+          "commitId": "d0be419f-fa7f-468a-810a-199974e581cb",
+          "commitTimeStamp": "2020-02-08T10:17:57.2169171+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.20.58/microsoft.extensions.logging.abstractions.1.0.0-rc1-final.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.20.58/microsoft.extensions.logging.abstractions.1.0.0-rc1-final.json#dependencygroup/.netframework4.5.1",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETFramework4.5.1"
+              },
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.20.58/microsoft.extensions.logging.abstractions.1.0.0-rc1-final.json#dependencygroup/.netplatform5.4",
+                "@type": "PackageDependencyGroup",
+                "dependencies": [
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.20.58/microsoft.extensions.logging.abstractions.1.0.0-rc1-final.json#dependencygroup/.netplatform5.4/system.collections",
+                    "@type": "PackageDependency",
+                    "id": "System.Collections",
+                    "range": "[4.0.11-beta-23516, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.collections/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.20.58/microsoft.extensions.logging.abstractions.1.0.0-rc1-final.json#dependencygroup/.netplatform5.4/system.collections.concurrent",
+                    "@type": "PackageDependency",
+                    "id": "System.Collections.Concurrent",
+                    "range": "[4.0.11-beta-23516, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.collections.concurrent/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.20.58/microsoft.extensions.logging.abstractions.1.0.0-rc1-final.json#dependencygroup/.netplatform5.4/system.linq",
+                    "@type": "PackageDependency",
+                    "id": "System.Linq",
+                    "range": "[4.0.1-beta-23516, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.linq/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.20.58/microsoft.extensions.logging.abstractions.1.0.0-rc1-final.json#dependencygroup/.netplatform5.4/system.globalization",
+                    "@type": "PackageDependency",
+                    "id": "System.Globalization",
+                    "range": "[4.0.11-beta-23516, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.globalization/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.20.58/microsoft.extensions.logging.abstractions.1.0.0-rc1-final.json#dependencygroup/.netplatform5.4/system.reflection",
+                    "@type": "PackageDependency",
+                    "id": "System.Reflection",
+                    "range": "[4.1.0-beta-23225, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.reflection/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.20.58/microsoft.extensions.logging.abstractions.1.0.0-rc1-final.json#dependencygroup/.netplatform5.4/system.runtime",
+                    "@type": "PackageDependency",
+                    "id": "System.Runtime",
+                    "range": "[4.0.21-beta-23516, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.runtime/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.20.58/microsoft.extensions.logging.abstractions.1.0.0-rc1-final.json#dependencygroup/.netplatform5.4/system.runtime.extensions",
+                    "@type": "PackageDependency",
+                    "id": "System.Runtime.Extensions",
+                    "range": "[4.0.11-beta-23516, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.runtime.extensions/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.20.58/microsoft.extensions.logging.abstractions.1.0.0-rc1-final.json#dependencygroup/.netplatform5.4/system.runtime.interopservices",
+                    "@type": "PackageDependency",
+                    "id": "System.Runtime.InteropServices",
+                    "range": "[4.0.21-beta-23516, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.runtime.interopservices/index.json"
+                  }
+                ],
+                "targetFramework": ".NETPlatform5.4"
+              },
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.20.58/microsoft.extensions.logging.abstractions.1.0.0-rc1-final.json#dependencygroup/.netcore5.0",
+                "@type": "PackageDependencyGroup",
+                "dependencies": [
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.20.58/microsoft.extensions.logging.abstractions.1.0.0-rc1-final.json#dependencygroup/.netcore5.0/system.collections",
+                    "@type": "PackageDependency",
+                    "id": "System.Collections",
+                    "range": "[4.0.10, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.collections/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.20.58/microsoft.extensions.logging.abstractions.1.0.0-rc1-final.json#dependencygroup/.netcore5.0/system.collections.concurrent",
+                    "@type": "PackageDependency",
+                    "id": "System.Collections.Concurrent",
+                    "range": "[4.0.10, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.collections.concurrent/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.20.58/microsoft.extensions.logging.abstractions.1.0.0-rc1-final.json#dependencygroup/.netcore5.0/system.diagnostics.debug",
+                    "@type": "PackageDependency",
+                    "id": "System.Diagnostics.Debug",
+                    "range": "[4.0.10, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.diagnostics.debug/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.20.58/microsoft.extensions.logging.abstractions.1.0.0-rc1-final.json#dependencygroup/.netcore5.0/system.globalization",
+                    "@type": "PackageDependency",
+                    "id": "System.Globalization",
+                    "range": "[4.0.10, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.globalization/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.20.58/microsoft.extensions.logging.abstractions.1.0.0-rc1-final.json#dependencygroup/.netcore5.0/system.linq",
+                    "@type": "PackageDependency",
+                    "id": "System.Linq",
+                    "range": "[4.0.0, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.linq/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.20.58/microsoft.extensions.logging.abstractions.1.0.0-rc1-final.json#dependencygroup/.netcore5.0/system.reflection",
+                    "@type": "PackageDependency",
+                    "id": "System.Reflection",
+                    "range": "[4.0.10, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.reflection/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.20.58/microsoft.extensions.logging.abstractions.1.0.0-rc1-final.json#dependencygroup/.netcore5.0/system.resources.resourcemanager",
+                    "@type": "PackageDependency",
+                    "id": "System.Resources.ResourceManager",
+                    "range": "[4.0.0, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.resources.resourcemanager/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.20.58/microsoft.extensions.logging.abstractions.1.0.0-rc1-final.json#dependencygroup/.netcore5.0/system.runtime",
+                    "@type": "PackageDependency",
+                    "id": "System.Runtime",
+                    "range": "[4.0.20, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.runtime/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.20.58/microsoft.extensions.logging.abstractions.1.0.0-rc1-final.json#dependencygroup/.netcore5.0/system.runtime.extensions",
+                    "@type": "PackageDependency",
+                    "id": "System.Runtime.Extensions",
+                    "range": "[4.0.10, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.runtime.extensions/index.json"
+                  }
+                ],
+                "targetFramework": ".NETCore5.0"
+              }
+            ],
+            "description": "Logging interface definitions.",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/1.0.0-rc1-final/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "",
+            "licenseUrl": "http://www.microsoft.com/web/webpi/eula/net_library_eula_enu.htm",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/1.0.0-rc1-final/microsoft.extensions.logging.abstractions.1.0.0-rc1-final.nupkg",
+            "projectUrl": "http://www.asp.net/",
+            "published": "2015-11-18T14:11:14.353+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "" ],
+            "title": "",
+            "version": "1.0.0-rc1-final"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/1.0.0-rc1-final/microsoft.extensions.logging.abstractions.1.0.0-rc1-final.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/1.0.0-rc2-final.json",
+          "@type": "Package",
+          "commitId": "d0be419f-fa7f-468a-810a-199974e581cb",
+          "commitTimeStamp": "2020-02-08T10:17:57.2169171+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.50.47/microsoft.extensions.logging.abstractions.1.0.0-rc2-final.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft.Extensions.Logging.Abstractions",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.50.47/microsoft.extensions.logging.abstractions.1.0.0-rc2-final.json#dependencygroup/.netcore5.0",
+                "@type": "PackageDependencyGroup",
+                "dependencies": [
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.50.47/microsoft.extensions.logging.abstractions.1.0.0-rc2-final.json#dependencygroup/.netcore5.0/system.collections",
+                    "@type": "PackageDependency",
+                    "id": "System.Collections",
+                    "range": "[4.0.10, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.collections/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.50.47/microsoft.extensions.logging.abstractions.1.0.0-rc2-final.json#dependencygroup/.netcore5.0/system.collections.concurrent",
+                    "@type": "PackageDependency",
+                    "id": "System.Collections.Concurrent",
+                    "range": "[4.0.10, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.collections.concurrent/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.50.47/microsoft.extensions.logging.abstractions.1.0.0-rc2-final.json#dependencygroup/.netcore5.0/system.linq",
+                    "@type": "PackageDependency",
+                    "id": "System.Linq",
+                    "range": "[4.0.0, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.linq/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.50.47/microsoft.extensions.logging.abstractions.1.0.0-rc2-final.json#dependencygroup/.netcore5.0/system.globalization",
+                    "@type": "PackageDependency",
+                    "id": "System.Globalization",
+                    "range": "[4.0.10, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.globalization/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.50.47/microsoft.extensions.logging.abstractions.1.0.0-rc2-final.json#dependencygroup/.netcore5.0/system.reflection",
+                    "@type": "PackageDependency",
+                    "id": "System.Reflection",
+                    "range": "[4.0.10, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.reflection/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.50.47/microsoft.extensions.logging.abstractions.1.0.0-rc2-final.json#dependencygroup/.netcore5.0/system.resources.resourcemanager",
+                    "@type": "PackageDependency",
+                    "id": "System.Resources.ResourceManager",
+                    "range": "[4.0.0, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.resources.resourcemanager/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.50.47/microsoft.extensions.logging.abstractions.1.0.0-rc2-final.json#dependencygroup/.netcore5.0/system.runtime.extensions",
+                    "@type": "PackageDependency",
+                    "id": "System.Runtime.Extensions",
+                    "range": "[4.0.10, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.runtime.extensions/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.50.47/microsoft.extensions.logging.abstractions.1.0.0-rc2-final.json#dependencygroup/.netcore5.0/system.runtime.interopservices",
+                    "@type": "PackageDependency",
+                    "id": "System.Runtime.InteropServices",
+                    "range": "[4.0.20, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.runtime.interopservices/index.json"
+                  }
+                ],
+                "targetFramework": ".NETCore5.0"
+              },
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.50.47/microsoft.extensions.logging.abstractions.1.0.0-rc2-final.json#dependencygroup/.netstandard1.1",
+                "@type": "PackageDependencyGroup",
+                "dependencies": [
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.50.47/microsoft.extensions.logging.abstractions.1.0.0-rc2-final.json#dependencygroup/.netstandard1.1/system.collections",
+                    "@type": "PackageDependency",
+                    "id": "System.Collections",
+                    "range": "[4.0.11-rc2-24027, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.collections/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.50.47/microsoft.extensions.logging.abstractions.1.0.0-rc2-final.json#dependencygroup/.netstandard1.1/system.collections.concurrent",
+                    "@type": "PackageDependency",
+                    "id": "System.Collections.Concurrent",
+                    "range": "[4.0.12-rc2-24027, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.collections.concurrent/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.50.47/microsoft.extensions.logging.abstractions.1.0.0-rc2-final.json#dependencygroup/.netstandard1.1/system.linq",
+                    "@type": "PackageDependency",
+                    "id": "System.Linq",
+                    "range": "[4.1.0-rc2-24027, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.linq/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.50.47/microsoft.extensions.logging.abstractions.1.0.0-rc2-final.json#dependencygroup/.netstandard1.1/system.globalization",
+                    "@type": "PackageDependency",
+                    "id": "System.Globalization",
+                    "range": "[4.0.11-rc2-24027, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.globalization/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.50.47/microsoft.extensions.logging.abstractions.1.0.0-rc2-final.json#dependencygroup/.netstandard1.1/system.reflection",
+                    "@type": "PackageDependency",
+                    "id": "System.Reflection",
+                    "range": "[4.1.0-rc2-24027, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.reflection/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.50.47/microsoft.extensions.logging.abstractions.1.0.0-rc2-final.json#dependencygroup/.netstandard1.1/system.resources.resourcemanager",
+                    "@type": "PackageDependency",
+                    "id": "System.Resources.ResourceManager",
+                    "range": "[4.0.1-rc2-24027, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.resources.resourcemanager/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.50.47/microsoft.extensions.logging.abstractions.1.0.0-rc2-final.json#dependencygroup/.netstandard1.1/system.runtime.extensions",
+                    "@type": "PackageDependency",
+                    "id": "System.Runtime.Extensions",
+                    "range": "[4.1.0-rc2-24027, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.runtime.extensions/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.50.47/microsoft.extensions.logging.abstractions.1.0.0-rc2-final.json#dependencygroup/.netstandard1.1/system.runtime.interopservices",
+                    "@type": "PackageDependency",
+                    "id": "System.Runtime.InteropServices",
+                    "range": "[4.1.0-rc2-24027, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.runtime.interopservices/index.json"
+                  }
+                ],
+                "targetFramework": ".NETStandard1.1"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging. \nMicrosoft.Extensions.Logging.",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/1.0.0-rc2-final/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "",
+            "licenseUrl": "http://www.microsoft.com/web/webpi/eula/net_library_eula_enu.htm",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/1.0.0-rc2-final/microsoft.extensions.logging.abstractions.1.0.0-rc2-final.nupkg",
+            "projectUrl": "http://www.asp.net/",
+            "published": "2016-05-16T17:00:04.77+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "1.0.0-rc2-final"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/1.0.0-rc2-final/microsoft.extensions.logging.abstractions.1.0.0-rc2-final.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/1.0.0.json",
+          "@type": "Package",
+          "commitId": "d0be419f-fa7f-468a-810a-199974e581cb",
+          "commitTimeStamp": "2020-02-08T10:17:57.2169171+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.13.23.04.04/microsoft.extensions.logging.abstractions.1.0.0.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft.Extensions.Logging.Abstractions",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.13.23.04.04/microsoft.extensions.logging.abstractions.1.0.0.json#dependencygroup/.netstandard1.1",
+                "@type": "PackageDependencyGroup",
+                "dependencies": [
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.13.23.04.04/microsoft.extensions.logging.abstractions.1.0.0.json#dependencygroup/.netstandard1.1/system.collections",
+                    "@type": "PackageDependency",
+                    "id": "System.Collections",
+                    "range": "[4.0.11, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.collections/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.13.23.04.04/microsoft.extensions.logging.abstractions.1.0.0.json#dependencygroup/.netstandard1.1/system.collections.concurrent",
+                    "@type": "PackageDependency",
+                    "id": "System.Collections.Concurrent",
+                    "range": "[4.0.12, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.collections.concurrent/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.13.23.04.04/microsoft.extensions.logging.abstractions.1.0.0.json#dependencygroup/.netstandard1.1/system.diagnostics.debug",
+                    "@type": "PackageDependency",
+                    "id": "System.Diagnostics.Debug",
+                    "range": "[4.0.11, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.diagnostics.debug/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.13.23.04.04/microsoft.extensions.logging.abstractions.1.0.0.json#dependencygroup/.netstandard1.1/system.globalization",
+                    "@type": "PackageDependency",
+                    "id": "System.Globalization",
+                    "range": "[4.0.11, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.globalization/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.13.23.04.04/microsoft.extensions.logging.abstractions.1.0.0.json#dependencygroup/.netstandard1.1/system.linq",
+                    "@type": "PackageDependency",
+                    "id": "System.Linq",
+                    "range": "[4.1.0, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.linq/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.13.23.04.04/microsoft.extensions.logging.abstractions.1.0.0.json#dependencygroup/.netstandard1.1/system.reflection",
+                    "@type": "PackageDependency",
+                    "id": "System.Reflection",
+                    "range": "[4.1.0, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.reflection/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.13.23.04.04/microsoft.extensions.logging.abstractions.1.0.0.json#dependencygroup/.netstandard1.1/system.resources.resourcemanager",
+                    "@type": "PackageDependency",
+                    "id": "System.Resources.ResourceManager",
+                    "range": "[4.0.1, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.resources.resourcemanager/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.13.23.04.04/microsoft.extensions.logging.abstractions.1.0.0.json#dependencygroup/.netstandard1.1/system.runtime.extensions",
+                    "@type": "PackageDependency",
+                    "id": "System.Runtime.Extensions",
+                    "range": "[4.1.0, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.runtime.extensions/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.13.23.04.04/microsoft.extensions.logging.abstractions.1.0.0.json#dependencygroup/.netstandard1.1/system.runtime.interopservices",
+                    "@type": "PackageDependency",
+                    "id": "System.Runtime.InteropServices",
+                    "range": "[4.1.0, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.runtime.interopservices/index.json"
+                  }
+                ],
+                "targetFramework": ".NETStandard1.1"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging. \nMicrosoft.Extensions.Logging.",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/1.0.0/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "",
+            "licenseUrl": "http://www.microsoft.com/web/webpi/eula/net_library_eula_enu.htm",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/1.0.0/microsoft.extensions.logging.abstractions.1.0.0.nupkg",
+            "projectUrl": "http://www.asp.net/",
+            "published": "2016-06-27T14:26:49.013+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "1.0.0"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/1.0.0/microsoft.extensions.logging.abstractions.1.0.0.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/1.0.1.json",
+          "@type": "Package",
+          "commitId": "d0be419f-fa7f-468a-810a-199974e581cb",
+          "commitTimeStamp": "2020-02-08T10:17:57.2169171+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.48.31/microsoft.extensions.logging.abstractions.1.0.1.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft.Extensions.Logging.Abstractions",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.48.31/microsoft.extensions.logging.abstractions.1.0.1.json#dependencygroup/.netstandard1.1",
+                "@type": "PackageDependencyGroup",
+                "dependencies": [
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.48.31/microsoft.extensions.logging.abstractions.1.0.1.json#dependencygroup/.netstandard1.1/system.collections",
+                    "@type": "PackageDependency",
+                    "id": "System.Collections",
+                    "range": "[4.0.11, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.collections/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.48.31/microsoft.extensions.logging.abstractions.1.0.1.json#dependencygroup/.netstandard1.1/system.collections.concurrent",
+                    "@type": "PackageDependency",
+                    "id": "System.Collections.Concurrent",
+                    "range": "[4.0.12, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.collections.concurrent/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.48.31/microsoft.extensions.logging.abstractions.1.0.1.json#dependencygroup/.netstandard1.1/system.diagnostics.debug",
+                    "@type": "PackageDependency",
+                    "id": "System.Diagnostics.Debug",
+                    "range": "[4.0.11, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.diagnostics.debug/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.48.31/microsoft.extensions.logging.abstractions.1.0.1.json#dependencygroup/.netstandard1.1/system.globalization",
+                    "@type": "PackageDependency",
+                    "id": "System.Globalization",
+                    "range": "[4.0.11, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.globalization/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.48.31/microsoft.extensions.logging.abstractions.1.0.1.json#dependencygroup/.netstandard1.1/system.linq",
+                    "@type": "PackageDependency",
+                    "id": "System.Linq",
+                    "range": "[4.1.0, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.linq/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.48.31/microsoft.extensions.logging.abstractions.1.0.1.json#dependencygroup/.netstandard1.1/system.reflection",
+                    "@type": "PackageDependency",
+                    "id": "System.Reflection",
+                    "range": "[4.1.0, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.reflection/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.48.31/microsoft.extensions.logging.abstractions.1.0.1.json#dependencygroup/.netstandard1.1/system.resources.resourcemanager",
+                    "@type": "PackageDependency",
+                    "id": "System.Resources.ResourceManager",
+                    "range": "[4.0.1, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.resources.resourcemanager/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.48.31/microsoft.extensions.logging.abstractions.1.0.1.json#dependencygroup/.netstandard1.1/system.runtime.extensions",
+                    "@type": "PackageDependency",
+                    "id": "System.Runtime.Extensions",
+                    "range": "[4.1.0, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.runtime.extensions/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.48.31/microsoft.extensions.logging.abstractions.1.0.1.json#dependencygroup/.netstandard1.1/system.runtime.interopservices",
+                    "@type": "PackageDependency",
+                    "id": "System.Runtime.InteropServices",
+                    "range": "[4.1.0, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.runtime.interopservices/index.json"
+                  }
+                ],
+                "targetFramework": ".NETStandard1.1"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging. \nMicrosoft.Extensions.Logging.",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/1.0.1/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "",
+            "licenseUrl": "http://www.microsoft.com/web/webpi/eula/net_library_eula_enu.htm",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/1.0.1/microsoft.extensions.logging.abstractions.1.0.1.nupkg",
+            "projectUrl": "http://www.asp.net/",
+            "published": "2016-12-12T23:54:23.073+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "1.0.1"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/1.0.1/microsoft.extensions.logging.abstractions.1.0.1.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/1.0.2.json",
+          "@type": "Package",
+          "commitId": "d0be419f-fa7f-468a-810a-199974e581cb",
+          "commitTimeStamp": "2020-02-08T10:17:57.2169171+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.18.00.16.52/microsoft.extensions.logging.abstractions.1.0.2.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft.Extensions.Logging.Abstractions",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.18.00.16.52/microsoft.extensions.logging.abstractions.1.0.2.json#dependencygroup/.netstandard1.1",
+                "@type": "PackageDependencyGroup",
+                "dependencies": [
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.18.00.16.52/microsoft.extensions.logging.abstractions.1.0.2.json#dependencygroup/.netstandard1.1/system.collections",
+                    "@type": "PackageDependency",
+                    "id": "System.Collections",
+                    "range": "[4.0.11, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.collections/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.18.00.16.52/microsoft.extensions.logging.abstractions.1.0.2.json#dependencygroup/.netstandard1.1/system.collections.concurrent",
+                    "@type": "PackageDependency",
+                    "id": "System.Collections.Concurrent",
+                    "range": "[4.0.12, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.collections.concurrent/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.18.00.16.52/microsoft.extensions.logging.abstractions.1.0.2.json#dependencygroup/.netstandard1.1/system.diagnostics.debug",
+                    "@type": "PackageDependency",
+                    "id": "System.Diagnostics.Debug",
+                    "range": "[4.0.11, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.diagnostics.debug/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.18.00.16.52/microsoft.extensions.logging.abstractions.1.0.2.json#dependencygroup/.netstandard1.1/system.globalization",
+                    "@type": "PackageDependency",
+                    "id": "System.Globalization",
+                    "range": "[4.0.11, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.globalization/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.18.00.16.52/microsoft.extensions.logging.abstractions.1.0.2.json#dependencygroup/.netstandard1.1/system.linq",
+                    "@type": "PackageDependency",
+                    "id": "System.Linq",
+                    "range": "[4.1.0, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.linq/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.18.00.16.52/microsoft.extensions.logging.abstractions.1.0.2.json#dependencygroup/.netstandard1.1/system.reflection",
+                    "@type": "PackageDependency",
+                    "id": "System.Reflection",
+                    "range": "[4.1.0, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.reflection/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.18.00.16.52/microsoft.extensions.logging.abstractions.1.0.2.json#dependencygroup/.netstandard1.1/system.resources.resourcemanager",
+                    "@type": "PackageDependency",
+                    "id": "System.Resources.ResourceManager",
+                    "range": "[4.0.1, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.resources.resourcemanager/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.18.00.16.52/microsoft.extensions.logging.abstractions.1.0.2.json#dependencygroup/.netstandard1.1/system.runtime.extensions",
+                    "@type": "PackageDependency",
+                    "id": "System.Runtime.Extensions",
+                    "range": "[4.1.0, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.runtime.extensions/index.json"
+                  },
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.18.00.16.52/microsoft.extensions.logging.abstractions.1.0.2.json#dependencygroup/.netstandard1.1/system.runtime.interopservices",
+                    "@type": "PackageDependency",
+                    "id": "System.Runtime.InteropServices",
+                    "range": "[4.1.0, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/system.runtime.interopservices/index.json"
+                  }
+                ],
+                "targetFramework": ".NETStandard1.1"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging. \nMicrosoft.Extensions.Logging.",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/1.0.2/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "",
+            "licenseUrl": "http://www.microsoft.com/web/webpi/eula/net_library_eula_enu.htm",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/1.0.2/microsoft.extensions.logging.abstractions.1.0.2.nupkg",
+            "projectUrl": "http://www.asp.net/",
+            "published": "2017-03-06T19:06:30.24+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "1.0.2"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/1.0.2/microsoft.extensions.logging.abstractions.1.0.2.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/1.1.0-preview1-final.json",
+          "@type": "Package",
+          "commitId": "d0be419f-fa7f-468a-810a-199974e581cb",
+          "commitTimeStamp": "2020-02-08T10:17:57.2169171+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.49.17/microsoft.extensions.logging.abstractions.1.1.0-preview1-final.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.49.17/microsoft.extensions.logging.abstractions.1.1.0-preview1-final.json#dependencygroup/.netstandard1.1",
+                "@type": "PackageDependencyGroup",
+                "dependencies": [
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.49.17/microsoft.extensions.logging.abstractions.1.1.0-preview1-final.json#dependencygroup/.netstandard1.1/netstandard.library",
+                    "@type": "PackageDependency",
+                    "id": "NETStandard.Library",
+                    "range": "[1.6.1-preview1-24530-04, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/netstandard.library/index.json"
+                  }
+                ],
+                "targetFramework": ".NETStandard1.1"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging. \nMicrosoft.Extensions.Logging.",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/1.1.0-preview1-final/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "",
+            "licenseUrl": "http://www.microsoft.com/web/webpi/eula/net_library_eula_enu.htm",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/1.1.0-preview1-final/microsoft.extensions.logging.abstractions.1.1.0-preview1-final.nupkg",
+            "projectUrl": "http://www.asp.net/",
+            "published": "2016-10-24T16:21:17.2+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "1.1.0-preview1-final"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/1.1.0-preview1-final/microsoft.extensions.logging.abstractions.1.1.0-preview1-final.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/1.1.0.json",
+          "@type": "Package",
+          "commitId": "d0be419f-fa7f-468a-810a-199974e581cb",
+          "commitTimeStamp": "2020-02-08T10:17:57.2169171+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.13.22.09.36/microsoft.extensions.logging.abstractions.1.1.0.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.13.22.09.36/microsoft.extensions.logging.abstractions.1.1.0.json#dependencygroup/.netstandard1.1",
+                "@type": "PackageDependencyGroup",
+                "dependencies": [
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.13.22.09.36/microsoft.extensions.logging.abstractions.1.1.0.json#dependencygroup/.netstandard1.1/netstandard.library",
+                    "@type": "PackageDependency",
+                    "id": "NETStandard.Library",
+                    "range": "[1.6.1, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/netstandard.library/index.json"
+                  }
+                ],
+                "targetFramework": ".NETStandard1.1"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging. \nMicrosoft.Extensions.Logging.",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/1.1.0/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "",
+            "licenseUrl": "http://www.microsoft.com/web/webpi/eula/net_library_eula_enu.htm",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/1.1.0/microsoft.extensions.logging.abstractions.1.1.0.nupkg",
+            "projectUrl": "http://www.asp.net/",
+            "published": "2016-11-16T00:35:40.75+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "1.1.0"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/1.1.0/microsoft.extensions.logging.abstractions.1.1.0.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/1.1.1.json",
+          "@type": "Package",
+          "commitId": "d0be419f-fa7f-468a-810a-199974e581cb",
+          "commitTimeStamp": "2020-02-08T10:17:57.2169171+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.18.00.17.13/microsoft.extensions.logging.abstractions.1.1.1.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.18.00.17.13/microsoft.extensions.logging.abstractions.1.1.1.json#dependencygroup/.netstandard1.1",
+                "@type": "PackageDependencyGroup",
+                "dependencies": [
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.18.00.17.13/microsoft.extensions.logging.abstractions.1.1.1.json#dependencygroup/.netstandard1.1/netstandard.library",
+                    "@type": "PackageDependency",
+                    "id": "NETStandard.Library",
+                    "range": "[1.6.1, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/netstandard.library/index.json"
+                  }
+                ],
+                "targetFramework": ".NETStandard1.1"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging. \nMicrosoft.Extensions.Logging.",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/1.1.1/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "",
+            "licenseUrl": "http://www.microsoft.com/web/webpi/eula/net_library_eula_enu.htm",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/1.1.1/microsoft.extensions.logging.abstractions.1.1.1.nupkg",
+            "projectUrl": "http://www.asp.net/",
+            "published": "2017-03-06T19:29:17.23+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "1.1.1"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/1.1.1/microsoft.extensions.logging.abstractions.1.1.1.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/1.1.2.json",
+          "@type": "Package",
+          "commitId": "d0be419f-fa7f-468a-810a-199974e581cb",
+          "commitTimeStamp": "2020-02-08T10:17:57.2169171+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.18.01.00.20/microsoft.extensions.logging.abstractions.1.1.2.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.18.01.00.20/microsoft.extensions.logging.abstractions.1.1.2.json#dependencygroup/.netstandard1.1",
+                "@type": "PackageDependencyGroup",
+                "dependencies": [
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.18.01.00.20/microsoft.extensions.logging.abstractions.1.1.2.json#dependencygroup/.netstandard1.1/netstandard.library",
+                    "@type": "PackageDependency",
+                    "id": "NETStandard.Library",
+                    "range": "[1.6.1, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/netstandard.library/index.json"
+                  }
+                ],
+                "targetFramework": ".NETStandard1.1"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging. \nMicrosoft.Extensions.Logging.",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/1.1.2/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "",
+            "licenseUrl": "http://www.microsoft.com/web/webpi/eula/net_library_eula_enu.htm",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/1.1.2/microsoft.extensions.logging.abstractions.1.1.2.nupkg",
+            "projectUrl": "http://www.asp.net/",
+            "published": "2017-05-09T17:12:05.363+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "1.1.2"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/1.1.2/microsoft.extensions.logging.abstractions.1.1.2.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/2.0.0-preview1-final.json",
+          "@type": "Package",
+          "commitId": "d0be419f-fa7f-468a-810a-199974e581cb",
+          "commitTimeStamp": "2020-02-08T10:17:57.2169171+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.13.23.03.08/microsoft.extensions.logging.abstractions.2.0.0-preview1-final.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.13.23.03.08/microsoft.extensions.logging.abstractions.2.0.0-preview1-final.json#dependencygroup/.netstandard1.1",
+                "@type": "PackageDependencyGroup",
+                "dependencies": [
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.13.23.03.08/microsoft.extensions.logging.abstractions.2.0.0-preview1-final.json#dependencygroup/.netstandard1.1/netstandard.library",
+                    "@type": "PackageDependency",
+                    "id": "NETStandard.Library",
+                    "range": "[2.0.0-preview1-25301-01, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/netstandard.library/index.json"
+                  }
+                ],
+                "targetFramework": ".NETStandard1.1"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger<T>\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/2.0.0-preview1-final/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "",
+            "licenseUrl": "https://www.microsoft.com/web/webpi/eula/net_library_eula_enu.htm",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/2.0.0-preview1-final/microsoft.extensions.logging.abstractions.2.0.0-preview1-final.nupkg",
+            "projectUrl": "https://www.asp.net/",
+            "published": "2017-05-10T03:05:39.897+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "2.0.0-preview1-final"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/2.0.0-preview1-final/microsoft.extensions.logging.abstractions.2.0.0-preview1-final.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/2.0.0-preview2-final.json",
+          "@type": "Package",
+          "commitId": "d0be419f-fa7f-468a-810a-199974e581cb",
+          "commitTimeStamp": "2020-02-08T10:17:57.2169171+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.13.22.07.24/microsoft.extensions.logging.abstractions.2.0.0-preview2-final.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.13.22.07.24/microsoft.extensions.logging.abstractions.2.0.0-preview2-final.json#dependencygroup/.netstandard1.1",
+                "@type": "PackageDependencyGroup",
+                "dependencies": [
+                  {
+                    "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.13.22.07.24/microsoft.extensions.logging.abstractions.2.0.0-preview2-final.json#dependencygroup/.netstandard1.1/netstandard.library",
+                    "@type": "PackageDependency",
+                    "id": "NETStandard.Library",
+                    "range": "[2.0.0-preview2-25401-01, )",
+                    "registration": "https://api.nuget.org/v3/registration5-gz-semver2/netstandard.library/index.json"
+                  }
+                ],
+                "targetFramework": ".NETStandard1.1"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger<T>\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/2.0.0-preview2-final/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "",
+            "licenseUrl": "https://www.microsoft.com/web/webpi/eula/net_library_eula_enu.htm",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/2.0.0-preview2-final/microsoft.extensions.logging.abstractions.2.0.0-preview2-final.nupkg",
+            "projectUrl": "https://www.asp.net/",
+            "published": "2017-06-28T00:13:17.07+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "2.0.0-preview2-final"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/2.0.0-preview2-final/microsoft.extensions.logging.abstractions.2.0.0-preview2-final.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/2.0.0.json",
+          "@type": "Package",
+          "commitId": "d0be419f-fa7f-468a-810a-199974e581cb",
+          "commitTimeStamp": "2020-02-08T10:17:57.2169171+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.13.22.06.50/microsoft.extensions.logging.abstractions.2.0.0.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.13.22.06.50/microsoft.extensions.logging.abstractions.2.0.0.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger<T>\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/2.0.0/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "",
+            "licenseUrl": "https://raw.githubusercontent.com/aspnet/Home/2.0.0/LICENSE.txt",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/2.0.0/microsoft.extensions.logging.abstractions.2.0.0.nupkg",
+            "projectUrl": "https://asp.net/",
+            "published": "2017-08-11T18:47:46.77+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "2.0.0"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/2.0.0/microsoft.extensions.logging.abstractions.2.0.0.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/2.0.1.json",
+          "@type": "Package",
+          "commitId": "d0be419f-fa7f-468a-810a-199974e581cb",
+          "commitTimeStamp": "2020-02-08T10:17:57.2169171+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.20.01/microsoft.extensions.logging.abstractions.2.0.1.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.20.01/microsoft.extensions.logging.abstractions.2.0.1.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger<T>\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/2.0.1/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "",
+            "licenseUrl": "https://raw.githubusercontent.com/aspnet/Home/2.0.0/LICENSE.txt",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/2.0.1/microsoft.extensions.logging.abstractions.2.0.1.nupkg",
+            "projectUrl": "https://asp.net/",
+            "published": "2018-03-13T16:04:15.997+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "2.0.1"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/2.0.1/microsoft.extensions.logging.abstractions.2.0.1.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/2.0.2.json",
+          "@type": "Package",
+          "commitId": "d0be419f-fa7f-468a-810a-199974e581cb",
+          "commitTimeStamp": "2020-02-08T10:17:57.2169171+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.18.01.09.49/microsoft.extensions.logging.abstractions.2.0.2.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.18.01.09.49/microsoft.extensions.logging.abstractions.2.0.2.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger<T>\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/2.0.2/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "",
+            "licenseUrl": "https://raw.githubusercontent.com/aspnet/Home/2.0.0/LICENSE.txt",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/2.0.2/microsoft.extensions.logging.abstractions.2.0.2.nupkg",
+            "projectUrl": "https://asp.net/",
+            "published": "2018-05-07T20:11:06.39+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "2.0.2"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/2.0.2/microsoft.extensions.logging.abstractions.2.0.2.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/2.1.0-preview1-final.json",
+          "@type": "Package",
+          "commitId": "d0be419f-fa7f-468a-810a-199974e581cb",
+          "commitTimeStamp": "2020-02-08T10:17:57.2169171+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.18.00.06.00/microsoft.extensions.logging.abstractions.2.1.0-preview1-final.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.18.00.06.00/microsoft.extensions.logging.abstractions.2.1.0-preview1-final.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger<T>\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/2.1.0-preview1-final/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "",
+            "licenseUrl": "https://raw.githubusercontent.com/aspnet/Home/2.0.0/LICENSE.txt",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/2.1.0-preview1-final/microsoft.extensions.logging.abstractions.2.1.0-preview1-final.nupkg",
+            "projectUrl": "https://asp.net/",
+            "published": "2018-02-26T22:11:12.16+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "2.1.0-preview1-final"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/2.1.0-preview1-final/microsoft.extensions.logging.abstractions.2.1.0-preview1-final.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/2.1.0-preview2-final.json",
+          "@type": "Package",
+          "commitId": "d0be419f-fa7f-468a-810a-199974e581cb",
+          "commitTimeStamp": "2020-02-08T10:17:57.2169171+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.18.01.08.50/microsoft.extensions.logging.abstractions.2.1.0-preview2-final.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.18.01.08.50/microsoft.extensions.logging.abstractions.2.1.0-preview2-final.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger<T>\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/2.1.0-preview2-final/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "",
+            "licenseUrl": "https://raw.githubusercontent.com/aspnet/Home/2.0.0/LICENSE.txt",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/2.1.0-preview2-final/microsoft.extensions.logging.abstractions.2.1.0-preview2-final.nupkg",
+            "projectUrl": "https://asp.net/",
+            "published": "2018-04-10T01:57:02.24+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "2.1.0-preview2-final"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/2.1.0-preview2-final/microsoft.extensions.logging.abstractions.2.1.0-preview2-final.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/2.1.0-rc1-final.json",
+          "@type": "Package",
+          "commitId": "d0be419f-fa7f-468a-810a-199974e581cb",
+          "commitTimeStamp": "2020-02-08T10:17:57.2169171+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.18.01.10.46/microsoft.extensions.logging.abstractions.2.1.0-rc1-final.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.18.01.10.46/microsoft.extensions.logging.abstractions.2.1.0-rc1-final.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger<T>\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/2.1.0-rc1-final/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "",
+            "licenseUrl": "https://raw.githubusercontent.com/aspnet/Home/2.0.0/LICENSE.txt",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/2.1.0-rc1-final/microsoft.extensions.logging.abstractions.2.1.0-rc1-final.nupkg",
+            "projectUrl": "https://asp.net/",
+            "published": "2018-05-06T23:13:07.65+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "2.1.0-rc1-final"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/2.1.0-rc1-final/microsoft.extensions.logging.abstractions.2.1.0-rc1-final.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/2.1.0.json",
+          "@type": "Package",
+          "commitId": "d0be419f-fa7f-468a-810a-199974e581cb",
+          "commitTimeStamp": "2020-02-08T10:17:57.2169171+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.18.01.13.03/microsoft.extensions.logging.abstractions.2.1.0.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.18.01.13.03/microsoft.extensions.logging.abstractions.2.1.0.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger<T>\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/2.1.0/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "",
+            "licenseUrl": "https://raw.githubusercontent.com/aspnet/Home/2.0.0/LICENSE.txt",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/2.1.0/microsoft.extensions.logging.abstractions.2.1.0.nupkg",
+            "projectUrl": "https://asp.net/",
+            "published": "2018-05-29T20:19:09.463+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "2.1.0"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/2.1.0/microsoft.extensions.logging.abstractions.2.1.0.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/2.1.1.json",
+          "@type": "Package",
+          "commitId": "d0be419f-fa7f-468a-810a-199974e581cb",
+          "commitTimeStamp": "2020-02-08T10:17:57.2169171+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.37.49/microsoft.extensions.logging.abstractions.2.1.1.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.37.49/microsoft.extensions.logging.abstractions.2.1.1.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger<T>\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/2.1.1/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "",
+            "licenseUrl": "https://raw.githubusercontent.com/aspnet/Home/2.0.0/LICENSE.txt",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/2.1.1/microsoft.extensions.logging.abstractions.2.1.1.nupkg",
+            "projectUrl": "https://asp.net/",
+            "published": "2018-06-18T20:18:15.8+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "2.1.1"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/2.1.1/microsoft.extensions.logging.abstractions.2.1.1.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/2.2.0-preview1-35029.json",
+          "@type": "Package",
+          "commitId": "d0be419f-fa7f-468a-810a-199974e581cb",
+          "commitTimeStamp": "2020-02-08T10:17:57.2169171+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.29.32/microsoft.extensions.logging.abstractions.2.2.0-preview1-35029.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.17.23.29.32/microsoft.extensions.logging.abstractions.2.2.0-preview1-35029.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger<T>\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger\nThis package was built from the source at:\nhttps://github.com/aspnet/Logging/tree/bdd33cdcfd6345c01f820ae0726c49b2c3bc4939",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/2.2.0-preview1-35029/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "",
+            "licenseUrl": "https://raw.githubusercontent.com/aspnet/Home/2.0.0/LICENSE.txt",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/2.2.0-preview1-35029/microsoft.extensions.logging.abstractions.2.2.0-preview1-35029.nupkg",
+            "projectUrl": "https://asp.net/",
+            "published": "2018-08-22T16:14:17.753+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "2.2.0-preview1-35029"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/2.2.0-preview1-35029/microsoft.extensions.logging.abstractions.2.2.0-preview1-35029.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/2.2.0-preview2-35157.json",
+          "@type": "Package",
+          "commitId": "d0be419f-fa7f-468a-810a-199974e581cb",
+          "commitTimeStamp": "2020-02-08T10:17:57.2169171+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.18.01.03.36/microsoft.extensions.logging.abstractions.2.2.0-preview2-35157.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.18.01.03.36/microsoft.extensions.logging.abstractions.2.2.0-preview2-35157.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger<T>\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger\nThis package was built from the source at:\nhttps://github.com/aspnet/Logging/tree/f6c988d6a421e2fc6a927204de563e64a24fa1f6",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/2.2.0-preview2-35157/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "",
+            "licenseUrl": "https://raw.githubusercontent.com/aspnet/Home/2.0.0/LICENSE.txt",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/2.2.0-preview2-35157/microsoft.extensions.logging.abstractions.2.2.0-preview2-35157.nupkg",
+            "projectUrl": "https://asp.net/",
+            "published": "2018-09-12T15:12:57.59+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "2.2.0-preview2-35157"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/2.2.0-preview2-35157/microsoft.extensions.logging.abstractions.2.2.0-preview2-35157.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/2.2.0-preview3-35497.json",
+          "@type": "Package",
+          "commitId": "d0be419f-fa7f-468a-810a-199974e581cb",
+          "commitTimeStamp": "2020-02-08T10:17:57.2169171+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2018.10.17.15.53.36/microsoft.extensions.logging.abstractions.2.2.0-preview3-35497.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2018.10.17.15.53.36/microsoft.extensions.logging.abstractions.2.2.0-preview3-35497.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger<T>\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger\nThis package was built from the source at:\nhttps://github.com/aspnet/Logging/tree/b3d506624b9f20413c7a24f849ca0da76da831d2",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/2.2.0-preview3-35497/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "",
+            "licenseUrl": "https://raw.githubusercontent.com/aspnet/Home/2.0.0/LICENSE.txt",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/2.2.0-preview3-35497/microsoft.extensions.logging.abstractions.2.2.0-preview3-35497.nupkg",
+            "projectUrl": "https://asp.net/",
+            "published": "2018-10-17T15:49:20.643+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "2.2.0-preview3-35497"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/2.2.0-preview3-35497/microsoft.extensions.logging.abstractions.2.2.0-preview3-35497.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/2.2.0.json",
+          "@type": "Package",
+          "commitId": "d0be419f-fa7f-468a-810a-199974e581cb",
+          "commitTimeStamp": "2020-02-08T10:17:57.2169171+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.03.23.22.29/microsoft.extensions.logging.abstractions.2.2.0.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.03.23.22.29/microsoft.extensions.logging.abstractions.2.2.0.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger<T>\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger\n\nThis package was built from the source code at https://github.com/aspnet/Extensions/tree/9bc79b2f25a3724376d7af19617c33749a30ea3a",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/2.2.0/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "",
+            "licenseUrl": "https://raw.githubusercontent.com/aspnet/AspNetCore/2.0.0/LICENSE.txt",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/2.2.0/microsoft.extensions.logging.abstractions.2.2.0.nupkg",
+            "projectUrl": "https://asp.net/",
+            "published": "2018-12-03T23:18:11.073+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "2.2.0"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/2.2.0/microsoft.extensions.logging.abstractions.2.2.0.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/3.0.0-preview.18572.1.json",
+          "@type": "Package",
+          "commitId": "d0be419f-fa7f-468a-810a-199974e581cb",
+          "commitTimeStamp": "2020-02-08T10:17:57.2169171+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.04.00.05.34/microsoft.extensions.logging.abstractions.3.0.0-preview.18572.1.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2018.12.04.00.05.34/microsoft.extensions.logging.abstractions.3.0.0-preview.18572.1.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger<T>\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger\n\nThis package was built from the source code at https://github.com/aspnet/Extensions/tree/392e329b194b18c7cae04273479334d88c05af2c",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.0.0-preview.18572.1/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "",
+            "licenseUrl": "https://raw.githubusercontent.com/aspnet/AspNetCore/2.0.0/LICENSE.txt",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.0.0-preview.18572.1/microsoft.extensions.logging.abstractions.3.0.0-preview.18572.1.nupkg",
+            "projectUrl": "https://asp.net/",
+            "published": "2018-12-04T00:01:12.11+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "3.0.0-preview.18572.1"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.0.0-preview.18572.1/microsoft.extensions.logging.abstractions.3.0.0-preview.18572.1.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/3.0.0-preview.19074.2.json",
+          "@type": "Package",
+          "commitId": "d0be419f-fa7f-468a-810a-199974e581cb",
+          "commitTimeStamp": "2020-02-08T10:17:57.2169171+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2019.01.29.16.20.13/microsoft.extensions.logging.abstractions.3.0.0-preview.19074.2.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2019.01.29.16.20.13/microsoft.extensions.logging.abstractions.3.0.0-preview.19074.2.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger<T>\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger\n\nThis package was built from the source code at https://github.com/aspnet/Extensions/tree/0de62ae930da31048ba7e54c8cd0c6c0bcbd9095",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.0.0-preview.19074.2/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "",
+            "licenseUrl": "https://raw.githubusercontent.com/aspnet/AspNetCore/2.0.0/LICENSE.txt",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.0.0-preview.19074.2/microsoft.extensions.logging.abstractions.3.0.0-preview.19074.2.nupkg",
+            "projectUrl": "https://asp.net/",
+            "published": "2019-01-29T16:15:57.91+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "3.0.0-preview.19074.2"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.0.0-preview.19074.2/microsoft.extensions.logging.abstractions.3.0.0-preview.19074.2.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/3.0.0-preview3.19153.1.json",
+          "@type": "Package",
+          "commitId": "d0be419f-fa7f-468a-810a-199974e581cb",
+          "commitTimeStamp": "2020-02-08T10:17:57.2169171+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2019.03.06.17.17.30/microsoft.extensions.logging.abstractions.3.0.0-preview3.19153.1.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2019.03.06.17.17.30/microsoft.extensions.logging.abstractions.3.0.0-preview3.19153.1.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger<T>\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.0.0-preview3.19153.1/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "",
+            "licenseUrl": "https://raw.githubusercontent.com/aspnet/AspNetCore/2.0.0/LICENSE.txt",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.0.0-preview3.19153.1/microsoft.extensions.logging.abstractions.3.0.0-preview3.19153.1.nupkg",
+            "projectUrl": "https://asp.net/",
+            "published": "2019-03-06T17:13:16.867+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "3.0.0-preview3.19153.1"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.0.0-preview3.19153.1/microsoft.extensions.logging.abstractions.3.0.0-preview3.19153.1.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/3.0.0-preview4.19216.2.json",
+          "@type": "Package",
+          "commitId": "d0be419f-fa7f-468a-810a-199974e581cb",
+          "commitTimeStamp": "2020-02-08T10:17:57.2169171+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2019.04.18.19.42.30/microsoft.extensions.logging.abstractions.3.0.0-preview4.19216.2.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2019.04.18.19.42.30/microsoft.extensions.logging.abstractions.3.0.0-preview4.19216.2.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger<T>\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.0.0-preview4.19216.2/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "Apache-2.0",
+            "licenseUrl": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions/3.0.0-preview4.19216.2/license",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.0.0-preview4.19216.2/microsoft.extensions.logging.abstractions.3.0.0-preview4.19216.2.nupkg",
+            "projectUrl": "https://asp.net/",
+            "published": "2019-04-18T19:38:09.567+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "3.0.0-preview4.19216.2"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.0.0-preview4.19216.2/microsoft.extensions.logging.abstractions.3.0.0-preview4.19216.2.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/3.0.0-preview5.19227.9.json",
+          "@type": "Package",
+          "commitId": "d0be419f-fa7f-468a-810a-199974e581cb",
+          "commitTimeStamp": "2020-02-08T10:17:57.2169171+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2019.05.06.14.50.33/microsoft.extensions.logging.abstractions.3.0.0-preview5.19227.9.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2019.05.06.14.50.33/microsoft.extensions.logging.abstractions.3.0.0-preview5.19227.9.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger<T>\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.0.0-preview5.19227.9/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "Apache-2.0",
+            "licenseUrl": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions/3.0.0-preview5.19227.9/license",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.0.0-preview5.19227.9/microsoft.extensions.logging.abstractions.3.0.0-preview5.19227.9.nupkg",
+            "projectUrl": "https://asp.net/",
+            "published": "2019-05-06T14:46:21.077+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "3.0.0-preview5.19227.9"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.0.0-preview5.19227.9/microsoft.extensions.logging.abstractions.3.0.0-preview5.19227.9.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/3.0.0-preview6.19304.6.json",
+          "@type": "Package",
+          "commitId": "d0be419f-fa7f-468a-810a-199974e581cb",
+          "commitTimeStamp": "2020-02-08T10:17:57.2169171+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2019.06.12.15.45.47/microsoft.extensions.logging.abstractions.3.0.0-preview6.19304.6.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2019.06.12.15.45.47/microsoft.extensions.logging.abstractions.3.0.0-preview6.19304.6.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger<T>\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.0.0-preview6.19304.6/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "Apache-2.0",
+            "licenseUrl": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions/3.0.0-preview6.19304.6/license",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.0.0-preview6.19304.6/microsoft.extensions.logging.abstractions.3.0.0-preview6.19304.6.nupkg",
+            "projectUrl": "https://asp.net/",
+            "published": "2019-06-12T15:41:38.637+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "3.0.0-preview6.19304.6"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.0.0-preview6.19304.6/microsoft.extensions.logging.abstractions.3.0.0-preview6.19304.6.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/3.0.0-preview7.19362.4.json",
+          "@type": "Package",
+          "commitId": "d0be419f-fa7f-468a-810a-199974e581cb",
+          "commitTimeStamp": "2020-02-08T10:17:57.2169171+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2019.07.23.15.54.02/microsoft.extensions.logging.abstractions.3.0.0-preview7.19362.4.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2019.07.23.15.54.02/microsoft.extensions.logging.abstractions.3.0.0-preview7.19362.4.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger<T>\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.0.0-preview7.19362.4/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "Apache-2.0",
+            "licenseUrl": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions/3.0.0-preview7.19362.4/license",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.0.0-preview7.19362.4/microsoft.extensions.logging.abstractions.3.0.0-preview7.19362.4.nupkg",
+            "projectUrl": "https://asp.net/",
+            "published": "2019-07-23T15:49:51.01+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "3.0.0-preview7.19362.4"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.0.0-preview7.19362.4/microsoft.extensions.logging.abstractions.3.0.0-preview7.19362.4.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/3.0.0-preview8.19405.4.json",
+          "@type": "Package",
+          "commitId": "d0be419f-fa7f-468a-810a-199974e581cb",
+          "commitTimeStamp": "2020-02-08T10:17:57.2169171+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2019.08.13.15.45.01/microsoft.extensions.logging.abstractions.3.0.0-preview8.19405.4.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2019.08.13.15.45.01/microsoft.extensions.logging.abstractions.3.0.0-preview8.19405.4.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger<T>\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.0.0-preview8.19405.4/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "Apache-2.0",
+            "licenseUrl": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions/3.0.0-preview8.19405.4/license",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.0.0-preview8.19405.4/microsoft.extensions.logging.abstractions.3.0.0-preview8.19405.4.nupkg",
+            "projectUrl": "https://asp.net/",
+            "published": "2019-08-13T15:40:43.937+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "3.0.0-preview8.19405.4"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.0.0-preview8.19405.4/microsoft.extensions.logging.abstractions.3.0.0-preview8.19405.4.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/3.0.0-preview9.19423.4.json",
+          "@type": "Package",
+          "commitId": "d0be419f-fa7f-468a-810a-199974e581cb",
+          "commitTimeStamp": "2020-02-08T10:17:57.2169171+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2019.09.04.16.16.11/microsoft.extensions.logging.abstractions.3.0.0-preview9.19423.4.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2019.09.04.16.16.11/microsoft.extensions.logging.abstractions.3.0.0-preview9.19423.4.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger<T>\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.0.0-preview9.19423.4/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "Apache-2.0",
+            "licenseUrl": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions/3.0.0-preview9.19423.4/license",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.0.0-preview9.19423.4/microsoft.extensions.logging.abstractions.3.0.0-preview9.19423.4.nupkg",
+            "projectUrl": "https://asp.net/",
+            "published": "2019-09-04T16:11:49.76+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "3.0.0-preview9.19423.4"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.0.0-preview9.19423.4/microsoft.extensions.logging.abstractions.3.0.0-preview9.19423.4.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/3.0.0-rc1.19456.10.json",
+          "@type": "Package",
+          "commitId": "d0be419f-fa7f-468a-810a-199974e581cb",
+          "commitTimeStamp": "2020-02-08T10:17:57.2169171+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2019.09.16.15.35.06/microsoft.extensions.logging.abstractions.3.0.0-rc1.19456.10.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2019.09.16.15.35.06/microsoft.extensions.logging.abstractions.3.0.0-rc1.19456.10.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger<T>\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.0.0-rc1.19456.10/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "Apache-2.0",
+            "licenseUrl": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions/3.0.0-rc1.19456.10/license",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.0.0-rc1.19456.10/microsoft.extensions.logging.abstractions.3.0.0-rc1.19456.10.nupkg",
+            "projectUrl": "https://asp.net/",
+            "published": "2019-09-16T15:30:44.987+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "3.0.0-rc1.19456.10"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.0.0-rc1.19456.10/microsoft.extensions.logging.abstractions.3.0.0-rc1.19456.10.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/3.0.0.json",
+          "@type": "Package",
+          "commitId": "d0be419f-fa7f-468a-810a-199974e581cb",
+          "commitTimeStamp": "2020-02-08T10:17:57.2169171+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2019.09.23.14.19.58/microsoft.extensions.logging.abstractions.3.0.0.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2019.09.23.14.19.58/microsoft.extensions.logging.abstractions.3.0.0.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger<T>\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.0.0/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "Apache-2.0",
+            "licenseUrl": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions/3.0.0/license",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.0.0/microsoft.extensions.logging.abstractions.3.0.0.nupkg",
+            "projectUrl": "https://asp.net/",
+            "published": "2019-09-23T14:17:59.12+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "3.0.0"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.0.0/microsoft.extensions.logging.abstractions.3.0.0.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/3.0.1.json",
+          "@type": "Package",
+          "commitId": "d0be419f-fa7f-468a-810a-199974e581cb",
+          "commitTimeStamp": "2020-02-08T10:17:57.2169171+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2019.11.18.23.17.01/microsoft.extensions.logging.abstractions.3.0.1.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2019.11.18.23.17.01/microsoft.extensions.logging.abstractions.3.0.1.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger<T>\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.0.1/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "Apache-2.0",
+            "licenseUrl": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions/3.0.1/license",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.0.1/microsoft.extensions.logging.abstractions.3.0.1.nupkg",
+            "projectUrl": "https://asp.net/",
+            "published": "2019-11-18T23:14:48.28+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "3.0.1"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.0.1/microsoft.extensions.logging.abstractions.3.0.1.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/3.0.2.json",
+          "@type": "Package",
+          "commitId": "d0be419f-fa7f-468a-810a-199974e581cb",
+          "commitTimeStamp": "2020-02-08T10:17:57.2169171+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2020.01.14.23.13.40/microsoft.extensions.logging.abstractions.3.0.2.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2020.01.14.23.13.40/microsoft.extensions.logging.abstractions.3.0.2.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger<T>\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.0.2/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "Apache-2.0",
+            "licenseUrl": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions/3.0.2/license",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.0.2/microsoft.extensions.logging.abstractions.3.0.2.nupkg",
+            "projectUrl": "https://asp.net/",
+            "published": "2020-01-14T23:11:26.863+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "3.0.2"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.0.2/microsoft.extensions.logging.abstractions.3.0.2.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/3.0.3.json",
+          "@type": "Package",
+          "commitId": "ac32178b-57c4-4a28-b8ab-954f71bdc733",
+          "commitTimeStamp": "2020-02-18T16:32:43.3719717+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2020.02.18.16.32.32/microsoft.extensions.logging.abstractions.3.0.3.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2020.02.18.16.32.32/microsoft.extensions.logging.abstractions.3.0.3.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger<T>\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.0.3/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "Apache-2.0",
+            "licenseUrl": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions/3.0.3/license",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.0.3/microsoft.extensions.logging.abstractions.3.0.3.nupkg",
+            "projectUrl": "https://asp.net/",
+            "published": "2020-02-18T16:30:16.977+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "3.0.3"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.0.3/microsoft.extensions.logging.abstractions.3.0.3.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/3.1.0-preview1.19506.1.json",
+          "@type": "Package",
+          "commitId": "d0be419f-fa7f-468a-810a-199974e581cb",
+          "commitTimeStamp": "2020-02-08T10:17:57.2169171+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2019.10.15.16.00.17/microsoft.extensions.logging.abstractions.3.1.0-preview1.19506.1.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2019.10.15.16.00.17/microsoft.extensions.logging.abstractions.3.1.0-preview1.19506.1.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger<T>\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger",
+            "iconUrl": "",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "Apache-2.0",
+            "licenseUrl": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions/3.1.0-preview1.19506.1/license",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.1.0-preview1.19506.1/microsoft.extensions.logging.abstractions.3.1.0-preview1.19506.1.nupkg",
+            "projectUrl": "https://asp.net/",
+            "published": "2019-10-15T15:56:03.593+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "3.1.0-preview1.19506.1"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.1.0-preview1.19506.1/microsoft.extensions.logging.abstractions.3.1.0-preview1.19506.1.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/3.1.0-preview2.19525.4.json",
+          "@type": "Package",
+          "commitId": "d0be419f-fa7f-468a-810a-199974e581cb",
+          "commitTimeStamp": "2020-02-08T10:17:57.2169171+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2019.11.01.22.14.46/microsoft.extensions.logging.abstractions.3.1.0-preview2.19525.4.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2019.11.01.22.14.46/microsoft.extensions.logging.abstractions.3.1.0-preview2.19525.4.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger<T>\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger",
+            "iconUrl": "",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "Apache-2.0",
+            "licenseUrl": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions/3.1.0-preview2.19525.4/license",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.1.0-preview2.19525.4/microsoft.extensions.logging.abstractions.3.1.0-preview2.19525.4.nupkg",
+            "projectUrl": "https://asp.net/",
+            "published": "2019-11-01T22:12:36.597+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "3.1.0-preview2.19525.4"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.1.0-preview2.19525.4/microsoft.extensions.logging.abstractions.3.1.0-preview2.19525.4.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/3.1.0-preview3.19553.2.json",
+          "@type": "Package",
+          "commitId": "d0be419f-fa7f-468a-810a-199974e581cb",
+          "commitTimeStamp": "2020-02-08T10:17:57.2169171+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2019.11.13.23.14.34/microsoft.extensions.logging.abstractions.3.1.0-preview3.19553.2.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2019.11.13.23.14.34/microsoft.extensions.logging.abstractions.3.1.0-preview3.19553.2.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger<T>\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger",
+            "iconUrl": "",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "Apache-2.0",
+            "licenseUrl": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions/3.1.0-preview3.19553.2/license",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.1.0-preview3.19553.2/microsoft.extensions.logging.abstractions.3.1.0-preview3.19553.2.nupkg",
+            "projectUrl": "https://asp.net/",
+            "published": "2019-11-13T23:12:25.993+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "3.1.0-preview3.19553.2"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.1.0-preview3.19553.2/microsoft.extensions.logging.abstractions.3.1.0-preview3.19553.2.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/3.1.0.json",
+          "@type": "Package",
+          "commitId": "d0be419f-fa7f-468a-810a-199974e581cb",
+          "commitTimeStamp": "2020-02-08T10:17:57.2169171+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2019.12.03.16.45.32/microsoft.extensions.logging.abstractions.3.1.0.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2019.12.03.16.45.32/microsoft.extensions.logging.abstractions.3.1.0.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger<T>\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger",
+            "iconUrl": "",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "Apache-2.0",
+            "licenseUrl": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions/3.1.0/license",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.1.0/microsoft.extensions.logging.abstractions.3.1.0.nupkg",
+            "projectUrl": "https://asp.net/",
+            "published": "2019-12-03T16:43:27.33+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "3.1.0"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.1.0/microsoft.extensions.logging.abstractions.3.1.0.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/3.1.1.json",
+          "@type": "Package",
+          "commitId": "d0be419f-fa7f-468a-810a-199974e581cb",
+          "commitTimeStamp": "2020-02-08T10:17:57.2169171+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2020.01.14.23.17.55/microsoft.extensions.logging.abstractions.3.1.1.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2020.01.14.23.17.55/microsoft.extensions.logging.abstractions.3.1.1.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger<T>\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.1.1/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "Apache-2.0",
+            "licenseUrl": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions/3.1.1/license",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.1.1/microsoft.extensions.logging.abstractions.3.1.1.nupkg",
+            "projectUrl": "https://asp.net/",
+            "published": "2020-01-14T23:15:45.86+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "3.1.1"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.1.1/microsoft.extensions.logging.abstractions.3.1.1.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/3.1.2.json",
+          "@type": "Package",
+          "commitId": "6e83e137-f4cd-4433-b6c3-572fd7ff73e2",
+          "commitTimeStamp": "2020-02-18T16:36:34.6588629+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2020.02.18.16.36.06/microsoft.extensions.logging.abstractions.3.1.2.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2020.02.18.16.36.06/microsoft.extensions.logging.abstractions.3.1.2.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger<T>\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.1.2/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "Apache-2.0",
+            "licenseUrl": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions/3.1.2/license",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.1.2/microsoft.extensions.logging.abstractions.3.1.2.nupkg",
+            "projectUrl": "https://asp.net/",
+            "published": "2020-02-18T16:34:00.657+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "3.1.2"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.1.2/microsoft.extensions.logging.abstractions.3.1.2.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/3.1.3.json",
+          "@type": "Package",
+          "commitId": "3616574b-7673-4d5d-826d-4bcdc315f375",
+          "commitTimeStamp": "2020-03-24T17:19:17.8175088+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2020.03.24.17.18.43/microsoft.extensions.logging.abstractions.3.1.3.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2020.03.24.17.18.43/microsoft.extensions.logging.abstractions.3.1.3.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger<T>\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.1.3/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "Apache-2.0",
+            "licenseUrl": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions/3.1.3/license",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.1.3/microsoft.extensions.logging.abstractions.3.1.3.nupkg",
+            "projectUrl": "https://asp.net/",
+            "published": "2020-03-24T17:15:42.67+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "3.1.3"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.1.3/microsoft.extensions.logging.abstractions.3.1.3.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/3.1.4.json",
+          "@type": "Package",
+          "commitId": "4ffbd353-daa6-466a-a0b9-8c961ed6ad5e",
+          "commitTimeStamp": "2020-05-12T15:02:21.0358957+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2020.05.12.15.01.49/microsoft.extensions.logging.abstractions.3.1.4.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2020.05.12.15.01.49/microsoft.extensions.logging.abstractions.3.1.4.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger<T>\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.1.4/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "Apache-2.0",
+            "licenseUrl": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions/3.1.4/license",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.1.4/microsoft.extensions.logging.abstractions.3.1.4.nupkg",
+            "projectUrl": "https://asp.net/",
+            "published": "2020-05-12T14:59:32.017+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "3.1.4"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.1.4/microsoft.extensions.logging.abstractions.3.1.4.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/3.1.5.json",
+          "@type": "Package",
+          "commitId": "8a440fe1-3340-409b-985f-88ff5b3820ca",
+          "commitTimeStamp": "2020-06-09T14:50:20.7771059+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2020.06.09.14.49.52/microsoft.extensions.logging.abstractions.3.1.5.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2020.06.09.14.49.52/microsoft.extensions.logging.abstractions.3.1.5.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger<T>\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.1.5/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "Apache-2.0",
+            "licenseUrl": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions/3.1.5/license",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.1.5/microsoft.extensions.logging.abstractions.3.1.5.nupkg",
+            "projectUrl": "https://asp.net/",
+            "published": "2020-06-09T14:47:05.473+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "3.1.5"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.1.5/microsoft.extensions.logging.abstractions.3.1.5.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/3.1.6.json",
+          "@type": "Package",
+          "commitId": "d1bc44cf-5528-45a4-80a7-a647396196cc",
+          "commitTimeStamp": "2020-07-14T15:07:11.1234641+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2020.07.14.15.06.30/microsoft.extensions.logging.abstractions.3.1.6.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2020.07.14.15.06.30/microsoft.extensions.logging.abstractions.3.1.6.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger<T>\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.1.6/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "Apache-2.0",
+            "licenseUrl": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions/3.1.6/license",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.1.6/microsoft.extensions.logging.abstractions.3.1.6.nupkg",
+            "projectUrl": "https://asp.net/",
+            "published": "2020-07-14T15:04:14.35+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "3.1.6"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.1.6/microsoft.extensions.logging.abstractions.3.1.6.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/3.1.7.json",
+          "@type": "Package",
+          "commitId": "5e9ce523-75d0-4426-b986-4d26145ccb1e",
+          "commitTimeStamp": "2020-08-11T14:19:31.6645366+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2020.08.11.14.19.01/microsoft.extensions.logging.abstractions.3.1.7.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2020.08.11.14.19.01/microsoft.extensions.logging.abstractions.3.1.7.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger<T>\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.1.7/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "Apache-2.0",
+            "licenseUrl": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions/3.1.7/license",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.1.7/microsoft.extensions.logging.abstractions.3.1.7.nupkg",
+            "projectUrl": "https://asp.net/",
+            "published": "2020-08-11T14:16:54.75+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "3.1.7"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.1.7/microsoft.extensions.logging.abstractions.3.1.7.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/3.1.8.json",
+          "@type": "Package",
+          "commitId": "4e1ff5d2-0b5e-4723-9715-4fafb749a059",
+          "commitTimeStamp": "2020-09-08T14:14:12.2015531+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2020.09.08.14.13.45/microsoft.extensions.logging.abstractions.3.1.8.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2020.09.08.14.13.45/microsoft.extensions.logging.abstractions.3.1.8.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger<T>\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.1.8/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "Apache-2.0",
+            "licenseUrl": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions/3.1.8/license",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.1.8/microsoft.extensions.logging.abstractions.3.1.8.nupkg",
+            "projectUrl": "https://asp.net/",
+            "published": "2020-09-08T14:11:29.787+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "3.1.8"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.1.8/microsoft.extensions.logging.abstractions.3.1.8.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/3.1.9.json",
+          "@type": "Package",
+          "commitId": "a22cdf56-db74-485f-9483-6d7ded301d5d",
+          "commitTimeStamp": "2020-10-13T14:35:03.0602422+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2020.10.13.14.34.40/microsoft.extensions.logging.abstractions.3.1.9.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2020.10.13.14.34.40/microsoft.extensions.logging.abstractions.3.1.9.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger<T>\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.1.9/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "Apache-2.0",
+            "licenseUrl": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions/3.1.9/license",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.1.9/microsoft.extensions.logging.abstractions.3.1.9.nupkg",
+            "projectUrl": "https://asp.net/",
+            "published": "2020-10-13T14:29:15.24+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "3.1.9"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.1.9/microsoft.extensions.logging.abstractions.3.1.9.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/5.0.0-preview.1.20120.4.json",
+          "@type": "Package",
+          "commitId": "a85c04e5-7dfa-4d4f-a0ee-cf0f751a1191",
+          "commitTimeStamp": "2020-03-16T16:42:13.2327856+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2020.03.16.16.41.32/microsoft.extensions.logging.abstractions.5.0.0-preview.1.20120.4.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2020.03.16.16.41.32/microsoft.extensions.logging.abstractions.5.0.0-preview.1.20120.4.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger<T>\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/5.0.0-preview.1.20120.4/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "Apache-2.0",
+            "licenseUrl": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions/5.0.0-preview.1.20120.4/license",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/5.0.0-preview.1.20120.4/microsoft.extensions.logging.abstractions.5.0.0-preview.1.20120.4.nupkg",
+            "projectUrl": "https://asp.net/",
+            "published": "2020-03-16T16:39:25.05+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "5.0.0-preview.1.20120.4"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/5.0.0-preview.1.20120.4/microsoft.extensions.logging.abstractions.5.0.0-preview.1.20120.4.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/5.0.0-preview.2.20160.3.json",
+          "@type": "Package",
+          "commitId": "9180f20f-626c-45d3-99d3-297071915168",
+          "commitTimeStamp": "2020-04-02T13:41:11.4444719+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2020.04.02.13.40.42/microsoft.extensions.logging.abstractions.5.0.0-preview.2.20160.3.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2020.04.02.13.40.42/microsoft.extensions.logging.abstractions.5.0.0-preview.2.20160.3.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger<T>\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/5.0.0-preview.2.20160.3/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "MIT",
+            "licenseUrl": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions/5.0.0-preview.2.20160.3/license",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/5.0.0-preview.2.20160.3/microsoft.extensions.logging.abstractions.5.0.0-preview.2.20160.3.nupkg",
+            "projectUrl": "https://asp.net/",
+            "published": "2020-04-02T13:37:37.927+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "5.0.0-preview.2.20160.3"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/5.0.0-preview.2.20160.3/microsoft.extensions.logging.abstractions.5.0.0-preview.2.20160.3.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/5.0.0-preview.3.20215.2.json",
+          "@type": "Package",
+          "commitId": "815cca95-90d4-4a2f-b91b-b5f70fd454d4",
+          "commitTimeStamp": "2020-04-23T15:17:05.4227687+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2020.04.23.15.16.26/microsoft.extensions.logging.abstractions.5.0.0-preview.3.20215.2.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2020.04.23.15.16.26/microsoft.extensions.logging.abstractions.5.0.0-preview.3.20215.2.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\nCommonly used types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger<TCategoryName>\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger<T>\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/5.0.0-preview.3.20215.2/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "MIT",
+            "licenseUrl": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions/5.0.0-preview.3.20215.2/license",
+            "listed": true,
+            "minClientVersion": "",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/5.0.0-preview.3.20215.2/microsoft.extensions.logging.abstractions.5.0.0-preview.3.20215.2.nupkg",
+            "projectUrl": "https://asp.net/",
+            "published": "2020-04-23T15:13:55.17+00:00",
+            "requireLicenseAcceptance": true,
+            "summary": "",
+            "tags": [ "logging" ],
+            "title": "",
+            "version": "5.0.0-preview.3.20215.2"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/5.0.0-preview.3.20215.2/microsoft.extensions.logging.abstractions.5.0.0-preview.3.20215.2.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/5.0.0-preview.4.20251.6.json",
+          "@type": "Package",
+          "commitId": "32d0cf53-d706-4f96-8ea4-20bc6aac940f",
+          "commitTimeStamp": "2020-05-18T23:12:03.5065186+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2020.05.18.23.11.52/microsoft.extensions.logging.abstractions.5.0.0-preview.4.20251.6.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2020.05.18.23.11.52/microsoft.extensions.logging.abstractions.5.0.0-preview.4.20251.6.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\n\nCommonly Used Types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger&lt;TCategoryName&gt;\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger&lt;T&gt;\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger\n \nWhen using NuGet 3.x this package requires at least version 3.4.",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/5.0.0-preview.4.20251.6/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "MIT",
+            "licenseUrl": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions/5.0.0-preview.4.20251.6/license",
+            "listed": true,
+            "minClientVersion": "2.12",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/5.0.0-preview.4.20251.6/microsoft.extensions.logging.abstractions.5.0.0-preview.4.20251.6.nupkg",
+            "projectUrl": "https://github.com/dotnet/runtime",
+            "published": "2020-05-18T23:09:42.92+00:00",
+            "requireLicenseAcceptance": false,
+            "summary": "",
+            "tags": [ "" ],
+            "title": "Microsoft.Extensions.Logging.Abstractions",
+            "version": "5.0.0-preview.4.20251.6"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/5.0.0-preview.4.20251.6/microsoft.extensions.logging.abstractions.5.0.0-preview.4.20251.6.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/5.0.0-preview.5.20278.1.json",
+          "@type": "Package",
+          "commitId": "e5212850-f797-4f19-99bf-90a23db27bd7",
+          "commitTimeStamp": "2020-06-10T15:16:43.5286405+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2020.06.10.15.16.09/microsoft.extensions.logging.abstractions.5.0.0-preview.5.20278.1.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2020.06.10.15.16.09/microsoft.extensions.logging.abstractions.5.0.0-preview.5.20278.1.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\n\nCommonly Used Types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger&lt;TCategoryName&gt;\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger&lt;T&gt;\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger\n \nWhen using NuGet 3.x this package requires at least version 3.4.",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/5.0.0-preview.5.20278.1/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "MIT",
+            "licenseUrl": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions/5.0.0-preview.5.20278.1/license",
+            "listed": true,
+            "minClientVersion": "2.12",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/5.0.0-preview.5.20278.1/microsoft.extensions.logging.abstractions.5.0.0-preview.5.20278.1.nupkg",
+            "projectUrl": "https://github.com/dotnet/runtime",
+            "published": "2020-06-10T15:13:29.643+00:00",
+            "requireLicenseAcceptance": false,
+            "summary": "",
+            "tags": [ "" ],
+            "title": "Microsoft.Extensions.Logging.Abstractions",
+            "version": "5.0.0-preview.5.20278.1"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/5.0.0-preview.5.20278.1/microsoft.extensions.logging.abstractions.5.0.0-preview.5.20278.1.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/5.0.0-preview.6.20305.6.json",
+          "@type": "Package",
+          "commitId": "4611bd4a-019e-40ed-82de-cf9b205587dc",
+          "commitTimeStamp": "2020-06-25T15:05:21.7443446+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2020.06.25.15.04.39/microsoft.extensions.logging.abstractions.5.0.0-preview.6.20305.6.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2020.06.25.15.04.39/microsoft.extensions.logging.abstractions.5.0.0-preview.6.20305.6.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\n\nCommonly Used Types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger&lt;TCategoryName&gt;\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger&lt;T&gt;\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger\n \nWhen using NuGet 3.x this package requires at least version 3.4.",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/5.0.0-preview.6.20305.6/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "MIT",
+            "licenseUrl": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions/5.0.0-preview.6.20305.6/license",
+            "listed": true,
+            "minClientVersion": "2.12",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/5.0.0-preview.6.20305.6/microsoft.extensions.logging.abstractions.5.0.0-preview.6.20305.6.nupkg",
+            "projectUrl": "https://github.com/dotnet/runtime",
+            "published": "2020-06-25T15:01:59.597+00:00",
+            "requireLicenseAcceptance": false,
+            "summary": "",
+            "tags": [ "" ],
+            "title": "Microsoft.Extensions.Logging.Abstractions",
+            "version": "5.0.0-preview.6.20305.6"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/5.0.0-preview.6.20305.6/microsoft.extensions.logging.abstractions.5.0.0-preview.6.20305.6.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/5.0.0-preview.7.20364.11.json",
+          "@type": "Package",
+          "commitId": "79c3e852-4628-4a59-ac19-935f595f7f0a",
+          "commitTimeStamp": "2020-07-21T14:59:23.2343662+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2020.07.21.14.58.46/microsoft.extensions.logging.abstractions.5.0.0-preview.7.20364.11.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2020.07.21.14.58.46/microsoft.extensions.logging.abstractions.5.0.0-preview.7.20364.11.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\n\nCommonly Used Types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger&lt;TCategoryName&gt;\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger&lt;T&gt;\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger\n \nWhen using NuGet 3.x this package requires at least version 3.4.",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/5.0.0-preview.7.20364.11/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "MIT",
+            "licenseUrl": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions/5.0.0-preview.7.20364.11/license",
+            "listed": true,
+            "minClientVersion": "2.12",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/5.0.0-preview.7.20364.11/microsoft.extensions.logging.abstractions.5.0.0-preview.7.20364.11.nupkg",
+            "projectUrl": "https://github.com/dotnet/runtime",
+            "published": "2020-07-21T14:55:36.39+00:00",
+            "requireLicenseAcceptance": false,
+            "summary": "",
+            "tags": [ "" ],
+            "title": "Microsoft.Extensions.Logging.Abstractions",
+            "version": "5.0.0-preview.7.20364.11"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/5.0.0-preview.7.20364.11/microsoft.extensions.logging.abstractions.5.0.0-preview.7.20364.11.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/5.0.0-preview.8.20407.11.json",
+          "@type": "Package",
+          "commitId": "39919e2c-5a8e-46c7-901e-add02b559239",
+          "commitTimeStamp": "2020-08-25T14:40:33.8419812+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2020.08.25.14.40.17/microsoft.extensions.logging.abstractions.5.0.0-preview.8.20407.11.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2020.08.25.14.40.17/microsoft.extensions.logging.abstractions.5.0.0-preview.8.20407.11.json#dependencygroup/.netframework4.6.1",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETFramework4.6.1"
+              },
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2020.08.25.14.40.17/microsoft.extensions.logging.abstractions.5.0.0-preview.8.20407.11.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\n\nCommonly Used Types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger&lt;TCategoryName&gt;\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger&lt;T&gt;\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger\n \nWhen using NuGet 3.x this package requires at least version 3.4.",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/5.0.0-preview.8.20407.11/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "MIT",
+            "licenseUrl": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions/5.0.0-preview.8.20407.11/license",
+            "listed": true,
+            "minClientVersion": "2.12",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/5.0.0-preview.8.20407.11/microsoft.extensions.logging.abstractions.5.0.0-preview.8.20407.11.nupkg",
+            "projectUrl": "https://github.com/dotnet/runtime",
+            "published": "2020-08-25T14:38:04.2+00:00",
+            "requireLicenseAcceptance": false,
+            "summary": "",
+            "tags": [ "" ],
+            "title": "Microsoft.Extensions.Logging.Abstractions",
+            "version": "5.0.0-preview.8.20407.11"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/5.0.0-preview.8.20407.11/microsoft.extensions.logging.abstractions.5.0.0-preview.8.20407.11.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/5.0.0-rc.1.20451.14.json",
+          "@type": "Package",
+          "commitId": "cda0daaf-f4d2-4d16-bb07-e0b203903c10",
+          "commitTimeStamp": "2020-09-14T14:47:33.4815334+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2020.09.14.14.47.02/microsoft.extensions.logging.abstractions.5.0.0-rc.1.20451.14.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2020.09.14.14.47.02/microsoft.extensions.logging.abstractions.5.0.0-rc.1.20451.14.json#dependencygroup/.netframework4.6.1",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETFramework4.6.1"
+              },
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2020.09.14.14.47.02/microsoft.extensions.logging.abstractions.5.0.0-rc.1.20451.14.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\n\nCommonly Used Types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger&lt;TCategoryName&gt;\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger&lt;T&gt;\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger\n \nWhen using NuGet 3.x this package requires at least version 3.4.",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/5.0.0-rc.1.20451.14/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "MIT",
+            "licenseUrl": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions/5.0.0-rc.1.20451.14/license",
+            "listed": true,
+            "minClientVersion": "2.12",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/5.0.0-rc.1.20451.14/microsoft.extensions.logging.abstractions.5.0.0-rc.1.20451.14.nupkg",
+            "projectUrl": "https://github.com/dotnet/runtime",
+            "published": "2020-09-14T14:43:59.283+00:00",
+            "requireLicenseAcceptance": false,
+            "summary": "",
+            "tags": [ "" ],
+            "title": "Microsoft.Extensions.Logging.Abstractions",
+            "version": "5.0.0-rc.1.20451.14"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/5.0.0-rc.1.20451.14/microsoft.extensions.logging.abstractions.5.0.0-rc.1.20451.14.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        },
+        {
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/5.0.0-rc.2.20475.5.json",
+          "@type": "Package",
+          "commitId": "9021eb20-e3eb-4052-80e0-3f982f501caf",
+          "commitTimeStamp": "2020-10-13T14:44:10.4931057+00:00",
+          "catalogEntry": {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2020.10.13.14.43.46/microsoft.extensions.logging.abstractions.5.0.0-rc.2.20475.5.json",
+            "@type": "PackageDetails",
+            "authors": "Microsoft",
+            "dependencyGroups": [
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2020.10.13.14.43.46/microsoft.extensions.logging.abstractions.5.0.0-rc.2.20475.5.json#dependencygroup/.netframework4.6.1",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETFramework4.6.1"
+              },
+              {
+                "@id": "https://api.nuget.org/v3/catalog0/data/2020.10.13.14.43.46/microsoft.extensions.logging.abstractions.5.0.0-rc.2.20475.5.json#dependencygroup/.netstandard2.0",
+                "@type": "PackageDependencyGroup",
+                "targetFramework": ".NETStandard2.0"
+              }
+            ],
+            "deprecation": {
+              "@id": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/5.0.0-rc.2.20475.5.json#deprecation",
+              "@type": "deprecation",
+              "message": "This is deprecated.",
+              "reasons": [ "Legacy" ]
+            },
+            "description": "Logging abstractions for Microsoft.Extensions.Logging.\n\nCommonly Used Types:\nMicrosoft.Extensions.Logging.ILogger\nMicrosoft.Extensions.Logging.ILoggerFactory\nMicrosoft.Extensions.Logging.ILogger&lt;TCategoryName&gt;\nMicrosoft.Extensions.Logging.LogLevel\nMicrosoft.Extensions.Logging.Logger&lt;T&gt;\nMicrosoft.Extensions.Logging.LoggerMessage\nMicrosoft.Extensions.Logging.Abstractions.NullLogger\n \nWhen using NuGet 3.x this package requires at least version 3.4.",
+            "iconUrl": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/5.0.0-rc.2.20475.5/icon",
+            "id": "Microsoft.Extensions.Logging.Abstractions",
+            "language": "",
+            "licenseExpression": "MIT",
+            "licenseUrl": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions/5.0.0-rc.2.20475.5/license",
+            "listed": true,
+            "minClientVersion": "2.12",
+            "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/5.0.0-rc.2.20475.5/microsoft.extensions.logging.abstractions.5.0.0-rc.2.20475.5.nupkg",
+            "projectUrl": "https://github.com/dotnet/runtime",
+            "published": "2020-10-13T14:41:37.34+00:00",
+            "requireLicenseAcceptance": false,
+            "summary": "",
+            "tags": [ "" ],
+            "title": "Microsoft.Extensions.Logging.Abstractions",
+            "version": "5.0.0-rc.2.20475.5"
+          },
+          "packageContent": "https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/5.0.0-rc.2.20475.5/microsoft.extensions.logging.abstractions.5.0.0-rc.2.20475.5.nupkg",
+          "registration": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json"
+        }
+      ],
+      "parent": "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.abstractions/index.json",
+      "lower": "1.0.0-rc1-final",
+      "upper": "5.0.0-rc.2.20475.5"
+    }
+  ],
+  "@context": {
+    "@vocab": "http://schema.nuget.org/schema#",
+    "catalog": "http://schema.nuget.org/catalog#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "items": {
+      "@id": "catalog:item",
+      "@container": "@set"
+    },
+    "commitTimeStamp": {
+      "@id": "catalog:commitTimeStamp",
+      "@type": "xsd:dateTime"
+    },
+    "commitId": { "@id": "catalog:commitId" },
+    "count": { "@id": "catalog:count" },
+    "parent": {
+      "@id": "catalog:parent",
+      "@type": "@id"
+    },
+    "tags": {
+      "@id": "tag",
+      "@container": "@set"
+    },
+    "reasons": { "@container": "@set" },
+    "packageTargetFrameworks": {
+      "@id": "packageTargetFramework",
+      "@container": "@set"
+    },
+    "dependencyGroups": {
+      "@id": "dependencyGroup",
+      "@container": "@set"
+    },
+    "dependencies": {
+      "@id": "dependency",
+      "@container": "@set"
+    },
+    "packageContent": { "@type": "@id" },
+    "published": { "@type": "xsd:dateTime" },
+    "registration": { "@type": "@id" }
+  }
+}

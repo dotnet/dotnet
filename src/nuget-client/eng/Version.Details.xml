@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Dependencies>
+  <!--
+    Currently this file is required to publish builds to .NET build asset registry.
+    See https://github.com/dotnet/arcade/issues/2396 for details.
+    See https://github.com/dotnet/arcade/blob/master/Documentation/DependencyDescriptionFormat.md#details-file for schema.
+  -->
+</Dependencies>

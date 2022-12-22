@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" DefaultTargets="GetSymbolsAndAssembliesToIndex" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), 'README.md'))\build\common.props" />
+  
+  <!-- Configuration/global properties -->
+  <PropertyGroup>
+    <CommonMSBuildProperties>
+      Configuration=$(Configuration);
+      ReleaseLabel=$(ReleaseLabel);
+      BuildNumber=$(BuildNumber);
+      BuildRTM=$(BuildRTM);
+    </CommonMSBuildProperties>
+  </PropertyGroup>
+
+  <Target Name="GetSymbolsAndAssembliesToIndex">
+    <MSBuild
+      Projects="@(SolutionProjectsWithoutVSIX)"
+      Targets="GetSymbolsToIndex"
+      Properties="NoBuild=true;">
+
+      <Output
+          TaskParameter="TargetOutputs"
+          ItemName="SymbolsToIndex" />
+    </MSBuild>
+    <ItemGroup>
+      <FilteredSymbolsToIndex Include="@(SymbolsToIndex)" Condition="'%(SymbolsToIndex.Extension)' == '.dll' OR '%(SymbolsToIndex.Extension)' == '.exe'
+                                                          OR   '%(SymbolsToIndex.Extension)' == '.pdb'">
+          <DestinationDir>$(ArtifactsDirectory)symbolstoindex\$([MSBuild]::MakeRelative($(ArtifactsDirectory), %(SymbolsToIndex.Identity)))</DestinationDir>
+      </FilteredSymbolsToIndex>
+    </ItemGroup>
+    <Copy SourceFiles="@(FilteredSymbolsToIndex->'%(Identity)')" DestinationFiles="@(FilteredSymbolsToIndex->'%(DestinationDir)')"/>
+    <Message Text="SymbolsToIndex: @(FilteredSymbolsToIndex, '%0a')" Importance="High"/>
+  </Target>
+</Project>

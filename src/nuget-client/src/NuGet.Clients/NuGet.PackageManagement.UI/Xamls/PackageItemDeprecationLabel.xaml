@@ -1,0 +1,74 @@
+<UserControl x:Class="NuGet.PackageManagement.UI.PackageItemDeprecationLabel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:nuget="clr-namespace:NuGet.PackageManagement.UI"
+             xmlns:nugettel="clr-namespace:NuGet.PackageManagement.Telemetry;assembly=NuGet.PackageManagement.VisualStudio"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+  <UserControl.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <nuget:SharedResources />
+      </ResourceDictionary.MergedDictionaries>
+
+      <nuget:DeprecationToDeprecationLabelStateConverter x:Key="DataToStateConverter" />
+      <nuget:FormattedStringPartConverter x:Key="FormattedStringPartConverter" />
+      <nuget:ParametersToHyperlinkTupleConverter x:Key="ParametersToHyperlinkTupleConverter" />
+
+      <Style x:Key="DeprecationTextBlockStyle" TargetType="TextBlock">
+        <Setter Property="FontWeight" Value="Bold" />
+      </Style>
+
+      <ControlTemplate x:Key="TemplateDeprecated" TargetType="{x:Type nuget:PackageItemDeprecationLabel}">
+        <TextBlock Style="{StaticResource DeprecationTextBlockStyle}">
+          <Run Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FormatStringSingle, Mode=OneWay}" />
+        </TextBlock>
+      </ControlTemplate>
+
+      <ControlTemplate x:Key="TemplateDeprecatedAlternative" TargetType="{x:Type nuget:PackageItemDeprecationLabel}">
+        <DockPanel>
+          <TextBlock
+            Style="{StaticResource DeprecationTextBlockStyle}"
+            Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FormatStringAlternative, Mode=OneWay, Converter={StaticResource FormattedStringPartConverter}, ConverterParameter={x:Static nuget:FormattedStringPart.Prefix}}" />
+          <TextBlock
+            Style="{StaticResource DeprecationTextBlockStyle}">
+            <Hyperlink
+              ToolTip="{x:Static nuget:Resources.Deprecation_LinkTooltip}"
+              Command="{x:Static nuget:Commands.SearchPackageCommand}"
+              Style="{StaticResource HyperlinkStyleNoUriDeprecation}">
+              <Hyperlink.CommandParameter>
+                <MultiBinding Converter="{StaticResource ParametersToHyperlinkTupleConverter}" Mode="OneWay">
+                  <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="DataContext.AlternatePackage.PackageId" Mode="OneWay" />
+                  <Binding Source="{x:Static nugettel:HyperlinkType.DeprecationAlternativePackageItem}" />
+                </MultiBinding>
+              </Hyperlink.CommandParameter>
+              <Run Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=DataContext.AlternatePackage.PackageId, Mode=OneWay}" />
+            </Hyperlink>
+          </TextBlock>
+          <TextBlock
+            Style="{StaticResource DeprecationTextBlockStyle}"
+            Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FormatStringAlternative, Mode=OneWay, Converter={StaticResource FormattedStringPartConverter}, ConverterParameter={x:Static nuget:FormattedStringPart.Suffix}}" />
+        </DockPanel>
+      </ControlTemplate>
+    </ResourceDictionary>
+  </UserControl.Resources>
+  <UserControl.Style>
+    <Style TargetType="{x:Type nuget:PackageItemDeprecationLabel}">
+      <Style.Triggers>
+        <DataTrigger Binding="{Binding Converter={StaticResource DataToStateConverter}, Mode=OneWay}" Value="{x:Static nuget:PackageItemDeprecationLabelState.AlternativeAvailable}">
+          <Setter Property="Visibility" Value="Visible" />
+          <Setter Property="Template" Value="{StaticResource TemplateDeprecatedAlternative}" />
+        </DataTrigger>
+        <DataTrigger Binding="{Binding Converter={StaticResource DataToStateConverter}, Mode=OneWay}" Value="{x:Static nuget:PackageItemDeprecationLabelState.Deprecation}">
+          <Setter Property="Visibility" Value="Visible" />
+          <Setter Property="Template" Value="{StaticResource TemplateDeprecated}" />
+        </DataTrigger>
+        <DataTrigger Binding="{Binding Converter={StaticResource DataToStateConverter}, Mode=OneWay}" Value="{x:Static nuget:PackageItemDeprecationLabelState.Invisible}">
+          <Setter Property="Visibility" Value="Collapsed" />
+        </DataTrigger>
+      </Style.Triggers>
+    </Style>
+  </UserControl.Style>
+</UserControl>

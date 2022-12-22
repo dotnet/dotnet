@@ -1,0 +1,163 @@
+<UserControl x:Class="NuGet.PackageManagement.UI.ProjectView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:NuGet.PackageManagement.UI"
+             Background="{DynamicResource {x:Static local:Brushes.HeaderBackground}}"
+             Foreground="{DynamicResource {x:Static local:Brushes.UIText}}"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="350">
+  <UserControl.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <local:SharedResources />
+      </ResourceDictionary.MergedDictionaries>
+      <local:NotNullToBooleanConverter
+        x:Key="NotNullToBooleanConverter" />
+      <local:TooltipConverter
+        x:Key="TooltipConverter" />
+      <local:BooleanToFontWeightConverter
+        x:Key="BooleanToFontWeightConverter" />
+      <local:NotNullOrTrueToBooleanConverter
+        x:Key="NotNullOrTrueToBooleanConverter" />
+      <ControlTemplate
+        x:Key="SeparatorControlTemplate">
+        <Separator
+          HorizontalAlignment="Stretch"
+          IsEnabled="False" />
+      </ControlTemplate>
+      <DataTemplate DataType="{x:Type local:DisplayVersion}">
+        <TextBlock FontWeight="{Binding Path=IsCurrentInstalled,Converter={StaticResource BooleanToFontWeightConverter}}" Text="{Binding Path=.}" />
+      </DataTemplate>
+    </ResourceDictionary>
+  </UserControl.Resources>
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="auto" />
+      <RowDefinition Height="10" />
+      <RowDefinition Height="auto" />
+    </Grid.RowDefinitions>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="auto" />
+      <ColumnDefinition Width="6" />
+      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="6" />
+      <ColumnDefinition Width="auto" />
+    </Grid.ColumnDefinitions>
+
+    <!-- row 0 -->
+    <TextBlock
+      Name="_InstalledVersion"
+      Grid.Row="0"
+      Grid.Column="0"
+      FontWeight="Bold"
+      VerticalAlignment="Center"
+      Visibility="{Binding IsInstalledVersionTopLevel, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}"
+      Text="{x:Static local:Resources.Label_InstalledColon}" />
+
+    <Border
+      Grid.Row="0"
+      Grid.Column="2"
+      MinHeight="22"
+      BorderBrush="{DynamicResource {x:Static local:Brushes.ComboBoxBorderKey}}"
+      Visibility="{Binding IsInstalledVersionTopLevel, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}"
+      BorderThickness="1"
+      VerticalAlignment="Center">
+      <TextBox
+        Style="{DynamicResource SelectableTextBlockStyle}"
+        VerticalAlignment="Center"
+        AutomationProperties.LabeledBy="{Binding ElementName=_InstalledVersion}"
+        Margin="4,0,0,0"
+        Text="{Binding InstalledVersion, Converter={StaticResource VersionToStringConverter}, Mode=OneWay}" />
+    </Border>
+
+    <Button
+      Grid.Row="0"
+      Grid.Column="4"
+      MinWidth="100"
+      MinHeight="24"
+      AutomationProperties.AutomationId="Project_Button_Uninstall"
+      HorizontalAlignment="Left"
+      Visibility="{Binding IsInstalledVersionTopLevel, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}"
+      IsEnabled="{Binding InstalledVersionIsAutoReferenced,Converter={StaticResource NotNullOrTrueToBooleanConverter}}"
+      Click="UninstallButton_Clicked"
+      Content="{x:Static local:Resources.Button_Uninstall}" />
+
+    <!-- Row 2 -->
+    <TextBlock
+      Grid.Row="2"
+      Grid.Column="0"
+      FontWeight="Bold"
+      VerticalAlignment="Center"
+      Text="{x:Static local:Resources.Label_Version}" />
+
+    <Label Name="SubscriptionsLabel" Content="{x:Static local:Resources.Label_Version}" Visibility="Collapsed"/>
+    <ComboBox
+      x:Name="_versions"
+      Grid.Row="2"
+      Grid.Column="2"
+      MinHeight="22"
+      AutomationProperties.Name="{x:Static local:Resources.Label_Version}"
+      AutomationProperties.LabeledBy="{Binding ElementName=SubscriptionsLabel}"
+      IsEditable="{Binding IsProjectPackageReference, Converter={StaticResource InverseNullToVisibilityConverter}}"
+      IsTextSearchEnabled="{Binding IsProjectPackageReference, Converter={StaticResource NotNullOrTrueToBooleanConverter}}"
+      IsReadOnly="{Binding IsProjectPackageReference, Converter={StaticResource NotNullOrTrueToBooleanConverter}}"
+      StaysOpenOnEdit="{Binding IsProjectPackageReference, Converter={StaticResource InverseNullToVisibilityConverter}}"
+      ItemsSource="{Binding Path=VersionsView}"
+      Text="{Binding Path=UserInput, Mode=OneWay}"
+      SelectionChanged="Versions_SelectionChanged"
+      SelectedItem="{Binding Path=SelectedVersion, Mode=TwoWay}">
+      <ComboBox.ItemContainerStyle>
+            <Style TargetType="{x:Type ComboBoxItem}" BasedOn="{StaticResource {x:Type ComboBoxItem}}">
+                <Setter Property="Foreground" Value="{DynamicResource {x:Static local:Brushes.UIText}}" />
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding Path=IsValidVersion}" Value="false">
+                        <Setter Property="Foreground" Value="{x:Static SystemColors.GrayTextBrush}" />
+                    </DataTrigger>
+                    <DataTrigger
+                        Binding="{Binding Converter={StaticResource NotNullToBooleanConverter}}"
+                        Value="True" >
+                        <Setter
+                            Property="IsEnabled"
+                            Value="{Binding IsValidVersion}" />
+                        <Setter
+                            Property="ToolTipService.ShowOnDisabled"
+                            Value="True" />
+                        <Setter
+                            Property="ToolTip"
+                            Value="{Binding Converter={StaticResource TooltipConverter}}" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </ComboBox.ItemContainerStyle>
+    </ComboBox>
+
+    <!-- install button and update button. They are in fact the same button. Which
+         one is displayed depends on whether InstalledVersion is null.
+    -->
+    <Button
+      Grid.Row="2"
+      Grid.Column="4"
+      MinWidth="100"
+      MinHeight="24"
+      HorizontalAlignment="Left"
+      AutomationProperties.AutomationId="Button_Install"
+      Click="InstallButton_Clicked"
+      IsEnabled="{Binding IsInstallorUpdateButtonEnabled, Mode=OneWay}"
+      Visibility="{Binding IsInstalledVersionTopLevel, Converter={StaticResource NegatedBooleanToVisibilityConverter}, Mode=OneWay}"
+      Content="{x:Static local:Resources.Button_Install}" />
+
+    <Button
+      Grid.Row="2"
+      Grid.Column="4"
+      MinWidth="100"
+      MinHeight="24"
+      HorizontalAlignment="Left"
+      AutomationProperties.AutomationId="Project_Button_Update"
+      Click="InstallButton_Clicked"
+      Visibility="{Binding IsInstalledVersionTopLevel, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}"
+      IsEnabled="{Binding IsInstallorUpdateButtonEnabled, Mode=OneWay}"
+      Content="{x:Static local:Resources.Button_Update}" />
+  </Grid>
+</UserControl>

@@ -1,0 +1,1044 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Log_CheckingCompatibility" xml:space="preserve">
+    <value>Checking compatibility of packages on {0}.</value>
+  </data>
+  <data name="Log_CheckingPackageCompatibility" xml:space="preserve">
+    <value>Checking compatibility for {0} {1} with {2}.</value>
+  </data>
+  <data name="Log_GeneratingMsBuildFile" xml:space="preserve">
+    <value>Generating MSBuild file {0}.</value>
+  </data>
+  <data name="Log_MergingRuntimes" xml:space="preserve">
+    <value>Merging in runtimes defined in {0}.</value>
+  </data>
+  <data name="Log_MissingImplementationFx" xml:space="preserve">
+    <value>{0} {1} provides a compile-time reference assembly for {2} on {3}, but there is no compatible run-time assembly.</value>
+  </data>
+  <data name="Log_MissingImplementationFxRuntime" xml:space="preserve">
+    <value>{0} {1} provides a compile-time reference assembly for {2} on {3}, but there is no run-time assembly compatible with {4}.</value>
+  </data>
+  <data name="Log_PackageNotCompatibleWithFx" xml:space="preserve">
+    <value>Package {0} {1} is not compatible with {2}.</value>
+    <comment>0 - package id, 1 - version, 2 - target framework</comment>
+  </data>
+  <data name="Log_PackagesAndProjectsAreCompatible" xml:space="preserve">
+    <value>All packages and projects are compatible with {0}.</value>
+  </data>
+  <data name="Log_ProjectDoesNotSpecifyTargetFrameworks" xml:space="preserve">
+    <value>The project {0} does not specify any target frameworks in {1}.</value>
+  </data>
+  <data name="Log_ResolvingConflicts" xml:space="preserve">
+    <value>Resolving conflicts for {0}...</value>
+  </data>
+  <data name="Log_RestoringPackages" xml:space="preserve">
+    <value>Restoring packages for {0}...</value>
+  </data>
+  <data name="Log_ScanningForRuntimeJson" xml:space="preserve">
+    <value>Scanning packages for runtime.json files...</value>
+  </data>
+  <data name="Log_UnresolvedDependency" xml:space="preserve">
+    <value>Unable to resolve '{0}' for '{1}'.</value>
+  </data>
+  <data name="Log_UnknownCompatibilityProfile" xml:space="preserve">
+    <value>Unknown Compatibility Profile: {0}</value>
+  </data>
+  <data name="Log_ResolverConflict" xml:space="preserve">
+    <value>Unable to satisfy conflicting requests for '{0}': {1} Framework: {2}</value>
+    <comment>0 - package id, 1 - comma delimited list of conflicts, 2 - framework</comment>
+  </data>
+  <data name="ResolverRequest_ToStringFormat" xml:space="preserve">
+    <value>{0} (via {1})</value>
+  </data>
+  <data name="Log_DependencyBumpedUp" xml:space="preserve">
+    <value>Dependency specified was {0} {1} but ended up with {2} {3}.</value>
+  </data>
+  <data name="Log_ImportsFallbackWarning" xml:space="preserve">
+    <value>Package '{0}' was restored using '{1}' instead of the project target framework '{2}'. This package may not be fully compatible with your project.</value>
+  </data>
+  <data name="Log_CycleDetected" xml:space="preserve">
+    <value>Cycle detected.</value>
+  </data>
+  <data name="Log_DowngradeWarning" xml:space="preserve">
+    <value>Detected package downgrade: {0} from {1} to {2}. Reference the package directly from the project to select a different version.</value>
+    <comment>{0}: package id
+{1}: requested version
+{2}: resolved version</comment>
+  </data>
+  <data name="Log_VersionConflict" xml:space="preserve">
+    <value>Version conflict detected for {0}. Install/reference {1} directly to project {2} to resolve this issue.</value>
+  </data>
+  <data name="Error_UnknownBuildAction" xml:space="preserve">
+    <value>Package '{0}' specifies an invalid build action '{1}' for file '{2}'.</value>
+  </data>
+  <data name="Log_ConfigFileSummary" xml:space="preserve">
+    <value>NuGet Config files used:</value>
+  </data>
+  <data name="Log_ErrorSummary" xml:space="preserve">
+    <value>Errors in {0}</value>
+    <comment>0 - project name/type</comment>
+  </data>
+  <data name="Log_FeedsUsedSummary" xml:space="preserve">
+    <value>Feeds used:</value>
+  </data>
+  <data name="Log_InstalledSummary" xml:space="preserve">
+    <value>Installed:</value>
+  </data>
+  <data name="Log_AllProjectsUpToDate" xml:space="preserve">
+    <value>All projects are up-to-date for restore.</value>
+  </data>
+  <data name="Log_ProjectUpToDateSummary" xml:space="preserve">
+    <value>{0} of {1} projects are up-to-date for restore.</value>
+    <comment>0 - number of projects that were up-to-date
+1 - Total number of projects</comment>
+  </data>
+  <data name="Log_InstalledSummaryCount" xml:space="preserve">
+    <value>{0} package(s) to {1}</value>
+    <comment>0 - installed package count
+1 - folder path</comment>
+  </data>
+  <data name="Log_Committing" xml:space="preserve">
+    <value>Committing restore...</value>
+  </data>
+  <data name="Log_RestoreComplete" xml:space="preserve">
+    <value>Restored {0} (in {1}).</value>
+    <comment>{0} is the path to the project file. {1} is the restore duration.</comment>
+  </data>
+  <data name="Log_RestoreFailed" xml:space="preserve">
+    <value>Failed to restore {0} (in {1}).</value>
+    <comment>{0} is the path to the project file.
+    {1} is the restore duration.</comment>
+  </data>
+  <data name="Log_RunningNonParallelRestore" xml:space="preserve">
+    <value>Running non-parallel restore.</value>
+  </data>
+  <data name="Log_RunningParallelRestore" xml:space="preserve">
+    <value>Running restore with {0} concurrent jobs.</value>
+  </data>
+  <data name="Error_InvalidCommandLineInput" xml:space="preserve">
+    <value>Invalid input '{0}'. The file type was not recognized.</value>
+  </data>
+  <data name="Error_InvalidCommandLineInputJson" xml:space="preserve">
+    <value>Invalid input '{0}'. Valid file names are 'project.json' or '*.project.json'.</value>
+  </data>
+  <data name="Error_InvalidCommandLineInputConfig" xml:space="preserve">
+    <value>Invalid input '{0}'. Valid file names are 'packages.config' or 'packages.*.config'.</value>
+  </data>
+  <data name="Error_UnableToLocateRestoreTarget" xml:space="preserve">
+    <value>The folder '{0}' does not contain a project to restore.</value>
+  </data>
+  <data name="Error_MissingSourceParameter" xml:space="preserve">
+    <value>Source parameter was not specified.</value>
+  </data>
+  <data name="Log_PackageCommandAddedFile" xml:space="preserve">
+    <value>Added file '{0}'.</value>
+  </data>
+  <data name="InvalidSource" xml:space="preserve">
+    <value>The specified source '{0}' is invalid. Provide a valid source.</value>
+  </data>
+  <data name="Error_PackageCommandNoFilesForLibPackage" xml:space="preserve">
+    <value>Failed to build package. Ensure '{0}' includes assembly files. For help on building symbols package, visit {1}.</value>
+  </data>
+  <data name="Error_PackageCommandNoFilesForSymbolsPackage" xml:space="preserve">
+    <value>Failed to build package. Ensure '{0}' includes source and symbol files. For help on building symbols package, visit {1}.</value>
+  </data>
+  <data name="Error_CannotFindMsbuild" xml:space="preserve">
+    <value>Cannot find version of msbuild.</value>
+  </data>
+  <data name="NuGetDocs" xml:space="preserve">
+    <value>https://docs.nuget.org/</value>
+  </data>
+  <data name="Log_PackageCommandAttemptingToBuildSymbolsPackage" xml:space="preserve">
+    <value>Attempting to build symbols package for '{0}'.</value>
+  </data>
+  <data name="Log_PackageCommandSuccess" xml:space="preserve">
+    <value>Successfully created package '{0}'.</value>
+  </data>
+  <data name="Warning_DuplicatePropertyKey" xml:space="preserve">
+    <value>'{0}' key already exists in Properties collection. Overriding value.</value>
+  </data>
+  <data name="MSBuildWarning_MultiTarget" xml:space="preserve">
+    <value>Packages containing MSBuild targets and props files cannot be fully installed in projects targeting multiple frameworks. The MSBuild targets and props files have been ignored.</value>
+  </data>
+  <data name="FailedToBuildProject" xml:space="preserve">
+    <value>Failed to build '{0}'.</value>
+  </data>
+  <data name="FileNotAddedToPackage" xml:space="preserve">
+    <value>File '{0}' is not added because the package already contains file '{1}'</value>
+  </data>
+  <data name="Log_ProjectNotCompatibleWithFx" xml:space="preserve">
+    <value>Project {0} is not compatible with {1}.</value>
+  </data>
+  <data name="Log_PackageNotCompatibleWithFx_Supports" xml:space="preserve">
+    <value>Package {0} {1} supports:</value>
+    <comment>0 - package id, 1 - version</comment>
+  </data>
+  <data name="Log_ProjectNotCompatibleWithFx_Supports" xml:space="preserve">
+    <value>Project {0} supports:</value>
+  </data>
+  <data name="Log_FrameworkDisplay" xml:space="preserve">
+    <value>{0} ({1})</value>
+    <comment>0 - framework short name, 1 - System.FrameworkName</comment>
+  </data>
+  <data name="Log_FrameworkRIDDisplay" xml:space="preserve">
+    <value>{0} ({1}) / {2}</value>
+    <comment>0 - framework short name, 1 - System.FrameworkName, 2 - Runtime ID</comment>
+  </data>
+  <data name="Log_PackageNotCompatibleWithFx_NoSupports" xml:space="preserve">
+    <value>Package {0} {1} does not support any target frameworks.</value>
+  </data>
+  <data name="Log_ProjectNotCompatibleWithFx_NoSupports" xml:space="preserve">
+    <value>Project {0} does not support any target frameworks.</value>
+  </data>
+  <data name="Error_InputFileNotSpecified" xml:space="preserve">
+    <value>Specify a nuspec, project.json, or project file to use</value>
+  </data>
+  <data name="Error_PackFailed" xml:space="preserve">
+    <value>Failed to build package. {0}</value>
+  </data>
+  <data name="Error_InvalidTargetFramework" xml:space="preserve">
+    <value>Failed to build package because of an unsupported targetFramework value on '{0}'.</value>
+  </data>
+  <data name="Log_ConvertedPackageToOriginalCase" xml:space="preserve">
+    <value>The package {0} was converted to original case in the packages directory.</value>
+    <comment>{0} is the package identity.</comment>
+  </data>
+  <data name="LocalsCommand_ClearedSuccessful" xml:space="preserve">
+    <value>Local resources cleared.</value>
+  </data>
+  <data name="LocalsCommand_ClearFailed" xml:space="preserve">
+    <value>Clearing local resources failed: Unable to delete one or more files.</value>
+  </data>
+  <data name="LocalsCommand_ClearingNuGetGlobalPackagesFolder" xml:space="preserve">
+    <value>Clearing NuGet global packages folder: {0}</value>
+    <comment>{0} : Global packages cache path</comment>
+  </data>
+  <data name="LocalsCommand_ClearingNuGetHttpCache" xml:space="preserve">
+    <value>Clearing NuGet HTTP cache: {0}</value>
+    <comment>{0} : Http cache path</comment>
+  </data>
+  <data name="LocalsCommand_FailedToDeletePath" xml:space="preserve">
+    <value>Failed to delete '{0}'.</value>
+    <comment>{0} : Path to be deleted</comment>
+  </data>
+  <data name="LocalsCommand_InvalidLocalResourceName" xml:space="preserve">
+    <value>An invalid local resource name was provided. Provide one of the following values: http-cache, temp, global-packages, all.</value>
+  </data>
+  <data name="LocalsCommand_LocalResourcePathNotSet" xml:space="preserve">
+    <value>The location of local resource '{0}' is undefined.</value>
+  </data>
+  <data name="LocalsCommand_LocalsPartiallyCleared" xml:space="preserve">
+    <value>Local resources partially cleared.</value>
+  </data>
+  <data name="Log_ReadingProject" xml:space="preserve">
+    <value>Reading project file {0}.</value>
+  </data>
+  <data name="LocalsCommand_Help" xml:space="preserve">
+    <value>usage: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
+For more information, visit https://docs.nuget.org/docs/reference/command-line-reference</value>
+  </data>
+  <data name="InvalidRestoreInput" xml:space="preserve">
+    <value>Invalid restore input. {0}</value>
+    <comment>0 is an error message specific to the validation failure.</comment>
+  </data>
+  <data name="Error_UnableToLocateBuildOutput" xml:space="preserve">
+    <value>No build found in {0}. Use the -Build option or build the project.</value>
+    <comment>{0} is the project output directory</comment>
+  </data>
+  <data name="InvalidRestoreInputWithFiles" xml:space="preserve">
+    <value>Invalid restore input. {0} Input files: {1}.</value>
+    <comment>0 is an error message specific to the validation failure. 1 is a list of file paths.</comment>
+  </data>
+  <data name="MissingRequiredProperty" xml:space="preserve">
+    <value>Missing required property '{0}'.</value>
+  </data>
+  <data name="MissingRequiredPropertyForProjectType" xml:space="preserve">
+    <value>Missing required property '{0}' for project type '{1}'.</value>
+  </data>
+  <data name="PropertyNotAllowed" xml:space="preserve">
+    <value>Invalid input combination. Property '{0}' is not allowed.</value>
+  </data>
+  <data name="PropertyNotAllowedForProjectType" xml:space="preserve">
+    <value>Invalid input combination. Property '{0}' is not allowed for project type '{1}'.</value>
+  </data>
+  <data name="SpecValidationDuplicateFrameworks" xml:space="preserve">
+    <value>Duplicate frameworks found: '{0}'.</value>
+  </data>
+  <data name="SpecValidationInvalidFramework" xml:space="preserve">
+    <value>Invalid target framework '{0}'.</value>
+  </data>
+  <data name="SpecValidationMissingProject" xml:space="preserve">
+    <value>Missing project '{0}'.</value>
+  </data>
+  <data name="SpecValidationNoFrameworks" xml:space="preserve">
+    <value>No target frameworks specified.</value>
+  </data>
+  <data name="SpecValidationUAPSingleFramework" xml:space="preserve">
+    <value>UAP projects must contain exactly one target framework.</value>
+  </data>
+  <data name="SpecValidationZeroRestoreRequests" xml:space="preserve">
+    <value>Restore request does not contain any projects to restore.</value>
+  </data>
+  <data name="Error_XPROJNotAllowed" xml:space="preserve">
+    <value>Invalid input '{0}'. XProj support has been removed. Support for XProj and standalone project.json files has been removed, to continue working with legacy projects use NuGet 3.5.x from https://nuget.org/downloads</value>
+  </data>
+  <data name="LocalsCommand_ClearingNuGetTempCache" xml:space="preserve">
+    <value>Clearing NuGet Temp cache: {0}</value>
+    <comment>{0} : Temp cache path</comment>
+  </data>
+  <data name="Log_RestoreNoOpDGChanged" xml:space="preserve">
+    <value>The restore inputs for '{0}' have changed. Continuing restore.</value>
+  </data>
+  <data name="Log_RestoreNoOpFinish" xml:space="preserve">
+    <value>The restore inputs for '{0}' have not changed. No further actions are required to complete the restore.</value>
+  </data>
+  <data name="Log_SkippingAssetsFile" xml:space="preserve">
+    <value>Assets file has not changed. Skipping assets file writing. Path: {0}</value>
+  </data>
+  <data name="Log_ToolSkippingAssetsFile" xml:space="preserve">
+    <value>Tool assets file has not changed. Skipping assets file write. Path: {0}</value>
+  </data>
+  <data name="Log_ToolWritingCacheFile" xml:space="preserve">
+    <value>Writing tool cache file to disk. Path: {0}</value>
+  </data>
+  <data name="Log_ToolWritingAssetsFile" xml:space="preserve">
+    <value>Writing tool assets file to disk. Path: {0}</value>
+  </data>
+  <data name="Log_WritingCacheFile" xml:space="preserve">
+    <value>Writing cache file to disk. Path: {0}</value>
+  </data>
+  <data name="Log_WritingAssetsFile" xml:space="preserve">
+    <value>Writing assets file to disk. Path: {0}</value>
+  </data>
+  <data name="Log_SkippingCacheFile" xml:space="preserve">
+    <value>No-Op restore. The cache will not be updated. Path: {0}</value>
+    <comment>{0}: Path to cache file</comment>
+  </data>
+  <data name="Log_AssetsFileNotOnDisk" xml:space="preserve">
+    <value>The expected assets file for {0} does not exist, no-op is not possible. Continuing restore.</value>
+  </data>
+  <data name="Log_PropsFileNotOnDisk" xml:space="preserve">
+    <value>The props file for {0} at location {1} does not exist, no-op is not possible. Continuing restore.</value>
+  </data>
+  <data name="Log_TargetsFileNotOnDisk" xml:space="preserve">
+    <value>The targets file for {0} at location {1} does not exist, no-op is not possible. Continuing restore.</value>
+  </data>
+  <data name="Log_LockFileNotOnDisk" xml:space="preserve">
+    <value>The lock file for {0} at location {1} does not exist, no-op is not possible. Continuing restore.</value>
+  </data>
+  <data name="Warning_MinVersionDoesNotExist" xml:space="preserve">
+    <value>{0} depends on {1} but {2} was not found. An approximate best match of {3} was resolved.</value>
+  </data>
+  <data name="Warning_MinVersionNonInclusive" xml:space="preserve">
+    <value>{0} does not provide an inclusive lower bound for dependency {1}. An approximate best match of {2} was resolved.</value>
+  </data>
+  <data name="Warning_ProjectDependencyMissingLowerBound" xml:space="preserve">
+    <value>Project dependency {0} does not contain an inclusive lower bound. Include a lower bound in the dependency version to ensure consistent restore results.</value>
+  </data>
+  <data name="Error_NoPackageVersionsExist" xml:space="preserve">
+    <value>Unable to find package {0}. No packages exist with this id in source(s): {1}</value>
+  </data>
+  <data name="Error_NoPackageVersionsExistInRange" xml:space="preserve">
+    <value>Unable to find package {0} with version {1}</value>
+  </data>
+  <data name="Error_NoStablePackageVersionsExist" xml:space="preserve">
+    <value>Unable to find a stable package {0} with version {1}</value>
+  </data>
+  <data name="Error_ProjectDoesNotExist" xml:space="preserve">
+    <value>Unable to find project '{0}'. Check that the project reference is valid and that the project file exists.</value>
+  </data>
+  <data name="Error_UnableToFindProjectInfo" xml:space="preserve">
+    <value>Unable to find project information for '{0}'. If you are using Visual Studio, this may be because the project is unloaded or not part of the current solution so run a restore from the command-line. Otherwise, the project file may be invalid or missing targets required for restore.</value>
+  </data>
+  <data name="FoundVersionsInSource" xml:space="preserve">
+    <value>Found {0} version(s) in {1} [ Nearest version: {2} ]</value>
+  </data>
+  <data name="FoundVersionsInSourceWithoutMatch" xml:space="preserve">
+    <value>Found {0} version(s) in {1}</value>
+  </data>
+  <data name="Log_MissingPackagesOnDisk" xml:space="preserve">
+    <value>Not all packages are on disk for: {0}</value>
+  </data>
+  <data name="CannotBeUsedWithOtherValues" xml:space="preserve">
+    <value>'{0}' cannot be used in conjunction with other values.</value>
+  </data>
+  <data name="Error_InvalidATF" xml:space="preserve">
+    <value>PackageTargetFallback and AssetTargetFallback cannot be used together. Remove PackageTargetFallback(deprecated) references from the project environment.</value>
+  </data>
+  <data name="UnsupportedProject" xml:space="preserve">
+    <value>Skipping restore for project '{0}'. The project file may be invalid or missing targets required for restore.</value>
+  </data>
+  <data name="Error_EmptySourceFilePath" xml:space="preserve">
+    <value>A source file was added with an empty path.</value>
+  </data>
+  <data name="Error_EmptySourceFileProjectDirectory" xml:space="preserve">
+    <value>The project directory for the source file '{0}' could not be found.</value>
+  </data>
+  <data name="Error_WriteResolvedNuSpecOverwriteOriginal" xml:space="preserve">
+    <value>Unable to output resolved nuspec file because it would overwrite the original at '{0}'</value>
+  </data>
+  <data name="Log_PackageCommandInstallPackageToOutputPath" xml:space="preserve">
+    <value>Install {0} to output path '{1}'</value>
+  </data>
+  <data name="Warning_VersionAboveUpperBound" xml:space="preserve">
+    <value>Detected package version outside of dependency constraint: {0} requires {1} but version {2} was resolved.</value>
+  </data>
+  <data name="SignCommandDisplayCertificate" xml:space="preserve">
+    <value>Signing package(s) with certificate:</value>
+  </data>
+  <data name="SignCommandDialogMessage" xml:space="preserve">
+    <value>Select a valid certificate</value>
+  </data>
+  <data name="SignCommandDialogTitle" xml:space="preserve">
+    <value>NuGet Sign Certificate Selection</value>
+  </data>
+  <data name="SignCommandMultipleCertException" xml:space="preserve">
+    <value>Multiple certificates were found that meet all the given criteria. Use the '-{0}' option with the hash of the desired certificate.</value>
+    <comment>0 - CertificateFingerprint option</comment>
+  </data>
+  <data name="SignCommandNoCertException" xml:space="preserve">
+    <value>No certificates were found that meet all the given criteria. For a list of accepted ways to provide a certificate, visit https://docs.nuget.org/docs/reference/command-line-reference</value>
+  </data>
+  <data name="SignCommandSuccess" xml:space="preserve">
+    <value>Package(s) signed successfully.</value>
+  </data>
+  <data name="SignCommandCertificateFileNotFound" xml:space="preserve">
+    <value>Certificate file '{0}' not found. For a list of accepted ways to provide a certificate, visit https://docs.nuget.org/docs/reference/command-line-reference</value>
+    <comment>{0} is the certificate file path</comment>
+  </data>
+  <data name="SignCommandInvalidCertException" xml:space="preserve">
+    <value>Certificate file '{0}' is invalid. For a list of accepted ways to provide a certificate, visit https://docs.nuget.org/docs/reference/command-line-reference</value>
+    <comment>0 - certificate file path</comment>
+  </data>
+  <data name="SignCommandInvalidPasswordException" xml:space="preserve">
+    <value>Invalid password was provided for the certificate file '{0}'. Provide a valid password using the '-{1}' option</value>
+    <comment>0 - certificate file path
+1 - certificate password option</comment>
+  </data>
+  <data name="NonMatchingProperties" xml:space="preserve">
+    <value>Properties '{0}':'{1}' and '{2}':'{3}' do not match.</value>
+    <comment>0 - first property name
+1 - first property value
+2 - second property name
+3 - second property value</comment>
+  </data>
+  <data name="SignCommandDisplayTimestamper" xml:space="preserve">
+    <value>Timestamping package(s) with:</value>
+  </data>
+  <data name="VerifyCommand_PackageIsNotValid" xml:space="preserve">
+    <value>'{0}' is not a valid package file.</value>
+  </data>
+  <data name="VerifyCommand_VerificationTypeNotSupported" xml:space="preserve">
+    <value>Verification type not supported. Use only one of the following supported types: -All, -Signatures</value>
+  </data>
+  <data name="SignCommandOutputPath" xml:space="preserve">
+    <value>Signed package(s) output path:</value>
+  </data>
+  <data name="VerifyCommand_FinishedWithErrors" xml:space="preserve">
+    <value>Finished with {0} errors and {1} warnings.</value>
+    <comment>{0} is the number of errors produced and {1} is the number of warnings.</comment>
+  </data>
+  <data name="VerifyCommand_Success" xml:space="preserve">
+    <value>Successfully verified package '{0}'.</value>
+    <comment>0 - package id</comment>
+  </data>
+  <data name="VerifyCommand_VerifyingPackage" xml:space="preserve">
+    <value>Verifying {0}</value>
+    <comment>{0} should be the package identity of the package to verify</comment>
+  </data>
+  <data name="VerifyCommand_Failed" xml:space="preserve">
+    <value>Package signature validation failed.</value>
+  </data>
+  <data name="SignCommandCertificateStoreNotFound" xml:space="preserve">
+    <value>Certificate store '{0}' not found. For a list of accepted ways to provide a certificate, visit https://docs.nuget.org/docs/reference/command-line-reference</value>
+    <comment>{0} is the certificate store name</comment>
+  </data>
+  <data name="Error_ProjectWithIncorrectDependenciesCount" xml:space="preserve">
+    <value>Project {0} must have a single package reference(s).</value>
+  </data>
+  <data name="Log_SkippingCompatibiilityCheckOnRidlessGraphForDotnetToolReferenceProject" xml:space="preserve">
+    <value>Skipping compatibility checks of the ridless graph for DotnetToolReference project type. This graph is not used. </value>
+  </data>
+  <data name="Error_InvalidProjectPackageCombo" xml:space="preserve">
+    <value>Invalid project-package combination for {0} {1}. DotnetToolReference project style can only contain references of the DotnetTool type</value>
+  </data>
+  <data name="Error_ToolsPackageWithExtraPackageTypes" xml:space="preserve">
+    <value>Invalid tools package {0} {1}. Tools packages cannot contain more than one PackageType.</value>
+  </data>
+  <data name="Error_InvalidDependencyVersionConstraints" xml:space="preserve">
+    <value>Package version constraints for '{0}' return a version range that is empty.</value>
+  </data>
+  <data name="Error_UnableToSignPackage" xml:space="preserve">
+    <value>Unable to sign package.</value>
+  </data>
+  <data name="Warning_FileExcludedByDefault" xml:space="preserve">
+    <value>File '{0}' was not added to the package. Files and folders starting with '.' or ending with '.nupkg' are excluded by default. To include this file, use -NoDefaultExcludes from the commandline</value>
+  </data>
+  <data name="LocalsCommand_ClearingNuGetPluginsCache" xml:space="preserve">
+    <value>Clearing NuGet plugins cache: {0}</value>
+    <comment>{0}: Plugins cache path</comment>
+  </data>
+  <data name="Error_InvalidSymbolPackageFormat" xml:space="preserve">
+    <value>The provided SymbolPackageFormat value {0} is invalid. Allowed values : 'snupkg', 'symbols.nupkg'.</value>
+    <comment>Do not localize snupkg and symbols.nupkg</comment>
+  </data>
+  <data name="Error_RestoreInLockedMode" xml:space="preserve">
+    <value>The packages lock file is inconsistent with the project dependencies so restore can't be run in locked mode. Disable the RestoreLockedMode MSBuild property or pass an explicit --force-evaluate option to run restore to update the lock file.</value>
+  </data>
+  <data name="Error_PackageValidationFailed" xml:space="preserve">
+    <value>Package content hash validation failed for {0}. The package is different than the last restore.</value>
+    <comment>{0} - package id and version</comment>
+  </data>
+  <data name="Error_InvalidLockFileInput" xml:space="preserve">
+    <value>Invalid restore input where RestorePackagesWithLockFile property is set to false but a packages lock file exists at {0}.</value>
+    <comment>{0} - packages lock file path</comment>
+  </data>
+  <data name="Log_WritingPackagesLockFile" xml:space="preserve">
+    <value>Writing packages lock file at disk. Path: {0}</value>
+    <comment>{0} - Path to packages lock file</comment>
+  </data>
+  <data name="Error_NoMatchingCertificate" xml:space="preserve">
+    <value>The package signature did not match any of the allowed certificate fingerprints.</value>
+  </data>
+  <data name="Error_CannotTrustOwnersForAuthor" xml:space="preserve">
+    <value>Trusted owners are not supported in trusted author items.</value>
+  </data>
+  <data name="Error_InvalidCombinationOfArguments" xml:space="preserve">
+    <value>Invalid combination of arguments.</value>
+  </data>
+  <data name="Error_NoSignatureTrustedForPackage" xml:space="preserve">
+    <value>No signature to be trusted was specified for the package '{0}'. Specify either Author or Repository.</value>
+    <comment>0 - Package path</comment>
+  </data>
+  <data name="Error_NoSourcesInformation" xml:space="preserve">
+    <value>Unable to get package sources information.</value>
+  </data>
+  <data name="Error_NotSupportedHashAlgorithm" xml:space="preserve">
+    <value>'{0}' is not a supported hash algorithm.</value>
+    <comment>0 - hash algorithm</comment>
+  </data>
+  <data name="Error_PropertyCannotBeNullOrEmpty" xml:space="preserve">
+    <value>Property '{0}' should not be null or empty.</value>
+    <comment>0 - property name</comment>
+  </data>
+  <data name="Error_ServiceIndexShouldBeHttps" xml:space="preserve">
+    <value>The repository service index '{0}' is not a valid HTTPS url.</value>
+    <comment>0 - service index</comment>
+  </data>
+  <data name="Error_UnavailableSource" xml:space="preserve">
+    <value>Source '{0}' does not exist or cannot be retrived.</value>
+    <comment>0 - source name</comment>
+  </data>
+  <data name="NoTrustedSigners" xml:space="preserve">
+    <value>There are no trusted signers.</value>
+  </data>
+  <data name="NoTrustedSignersMatching" xml:space="preserve">
+    <value>No trusted signers with the name: '{0}' were found.</value>
+    <comment>0 - trusted signer name</comment>
+  </data>
+  <data name="RegsiteredTrustedSigners" xml:space="preserve">
+    <value>Registered trusted signers:</value>
+  </data>
+  <data name="SuccessfullyRemovedTrustedSigner" xml:space="preserve">
+    <value>Successfully removed the trusted signer '{0}'.</value>
+    <comment>0 - trusted signer name</comment>
+  </data>
+  <data name="TrustedSignerLogCertificates" xml:space="preserve">
+    <value>Certificate fingerprint(s):</value>
+  </data>
+  <data name="TrustedSignerLogCertificateSummaryAllowUntrustedRoot" xml:space="preserve">
+    <value>[U] {0} - {1}</value>
+    <comment>Do not localize
+
+0 - fingerprint algorithm
+1 - fingerprint</comment>
+  </data>
+  <data name="TrustedSignerLogCertificateSummaryUnallowUntrustedRoot" xml:space="preserve">
+    <value>{0} - {1}</value>
+    <comment>Do not localize
+
+0 - fingerprint algorithm
+1 - fingerprint</comment>
+  </data>
+  <data name="TrustedSignerLogOwners" xml:space="preserve">
+    <value>Trusted owners: {0}</value>
+    <comment>0 - semi-colon separated owners list</comment>
+  </data>
+  <data name="TrustedSignerLogServiceIndex" xml:space="preserve">
+    <value>Service Index: {0}</value>
+    <comment>0 - service index</comment>
+  </data>
+  <data name="TrustedSignerLogTitle" xml:space="preserve">
+    <value>{0} [{1}]</value>
+    <comment>0 - signer name
+1 - signer type
+</comment>
+  </data>
+  <data name="ArgumentCannotBeNullOrEmpty" xml:space="preserve">
+    <value>The argument cannot be null or empty.</value>
+  </data>
+  <data name="Error_AuthorTrustExpectedAuthorSignature" xml:space="preserve">
+    <value>Unable to add trusted author. The package is not author signed.</value>
+  </data>
+  <data name="Error_InvalidCertificateInformationFromServer" xml:space="preserve">
+    <value>Invalid certificate information from the service index '{0}'.</value>
+    <comment>0 - service index</comment>
+  </data>
+  <data name="Error_PackageNotSigned" xml:space="preserve">
+    <value>The package is not signed.</value>
+  </data>
+  <data name="Error_RepoTrustExpectedRepoSignature" xml:space="preserve">
+    <value>Unable to add trusted repository. The package is not repository signed or countersigned.</value>
+  </data>
+  <data name="Error_TrustedAuthorNoOwners" xml:space="preserve">
+    <value>A trusted author cannot have owners.</value>
+  </data>
+  <data name="Error_TrustedRepoAlreadyExists" xml:space="preserve">
+    <value>A trusted repository with the service index '{0}' already exists.</value>
+    <comment>0 - trusted repository name</comment>
+  </data>
+  <data name="Error_TrustedRepositoryDoesNotExist" xml:space="preserve">
+    <value>A trusted repository '{0}' does not exist.</value>
+    <comment>0 - trusted repository name</comment>
+  </data>
+  <data name="Error_TrustedSignerAlreadyExists" xml:space="preserve">
+    <value>A trusted signer '{0}' already exists.</value>
+    <comment>0 - trusted signer name</comment>
+  </data>
+  <data name="Error_UnsupportedTrustTarget" xml:space="preserve">
+    <value>The trust target '{0}' is unsupported.</value>
+    <comment>0 - VerificationTarget</comment>
+  </data>
+  <data name="UnsupportedHashAlgorithm" xml:space="preserve">
+    <value>The hash algorithm is unsupported:  '{0}'.</value>
+    <comment>0 - hash algorithm</comment>
+  </data>
+  <data name="Error_EmptyCertificateListInRepository" xml:space="preserve">
+    <value>The repository with the service index '{0}' does not list any trusted certificates.</value>
+    <comment>0 - service index</comment>
+  </data>
+  <data name="Error_CouldNotAdd" xml:space="preserve">
+    <value>Could not add the trusted signer: {0}</value>
+    <comment>0 - Reason</comment>
+  </data>
+  <data name="Error_CouldNotList" xml:space="preserve">
+    <value>Could not list the trusted signers: {0}</value>
+    <comment>0 - Reason</comment>
+  </data>
+  <data name="Error_CouldNotRemove" xml:space="preserve">
+    <value>Could not remove the trusted signer: {0}</value>
+    <comment>0 - Reason</comment>
+  </data>
+  <data name="Error_CouldNotSync" xml:space="preserve">
+    <value>Could not sync the trusted repository: {0}</value>
+    <comment>0 - Reason</comment>
+  </data>
+  <data name="SuccessfullUpdatedTrustedSigner" xml:space="preserve">
+    <value>Successfully updated the trusted signer '{0}'.</value>
+    <comment>0 - name</comment>
+  </data>
+  <data name="SuccessfullyAddedTrustedAuthor" xml:space="preserve">
+    <value>Successfully added a trusted author '{0}'.</value>
+    <comment>0 - name</comment>
+  </data>
+  <data name="SuccessfullyAddedTrustedRepository" xml:space="preserve">
+    <value>Successfully added a trusted repository '{0}'.</value>
+    <comment>0 - name</comment>
+  </data>
+  <data name="SuccessfullySynchronizedTrustedRepository" xml:space="preserve">
+    <value>Successfully synchronized the trusted repository '{0}'.</value>
+    <comment>0 - name</comment>
+  </data>
+  <data name="Log_RestoreCompleteDotnetTool" xml:space="preserve">
+    <value>Restored {0} (in {1}).</value>
+    <comment>{0} is the restore duration.</comment>
+  </data>
+  <data name="Log_RestoreFailedDotnetTool" xml:space="preserve">
+    <value>Failed to restore {0} (in {1}).</value>
+    <comment>{0} is the path to the project file. {1} is the restore duration.</comment>
+  </data>
+  <data name="Error_PackageDownload_OnlyExactVersionsAreAllowed" xml:space="preserve">
+    <value>'{0}' is not an exact version like '[1.0.0]'. Only exact versions are allowed with PackageDownload.</value>
+    <comment>0 - the version string that's not exact</comment>
+  </data>
+  <data name="Error_IncompatiblePackageType" xml:space="preserve">
+    <value>The package {0} {1} has a package type {2} that is incompatible with this project.</value>
+    <comment>0 - package id, 1 - version, 2 - package type</comment>
+  </data>
+  <data name="Error_ProjectRuntimeJsonNotFound" xml:space="preserve">
+    <value>The runtime.json specified in the project '{0}' could not be found.</value>
+    <comment>0 - runtime.json path, Please do not localize 'runtime.json'</comment>
+  </data>
+  <data name="Error_ProjectRuntimeJsonIsUnreadable" xml:space="preserve">
+    <value>The runtime.json specified in the project '{0}' could not be parsed. {1}</value>
+    <comment>0 - runtime.json path, 1 - Additional Message, Please do not localize 'runtime.json'.</comment>
+  </data>
+  <data name="Log_PackageContentHashValidationFailed" xml:space="preserve">
+    <value>Package content hash validation failed for {0}. Expected: {1} Actual: {2}</value>
+    <comment>0 - package ID, 1 - expected Sha, 2 - actual sha</comment>
+  </data>
+  <data name="Error_CentralPackageVersions_VersionsNotAllowed" xml:space="preserve">
+    <value>Projects that use central package version management should not define the version on the PackageReference items but on the PackageVersion items: {0}.</value>
+  </data>
+  <data name="Error_CentralPackageVersions_AutoreferencedReferencesNotAllowed" xml:space="preserve">
+    <value>The packages {0} are implicitly referenced. You do not typically need to reference them from your project or in your central package versions management file. For more information, see https://aka.ms/sdkimplicitrefs</value>
+  </data>
+  <data name="Error_CentralPackageVersions_VersionOverrideDisabled" xml:space="preserve">
+    <value>The package reference {0} specifies a VersionOverride but the ability to override a centrally defined version is currently disabled.</value>
+    <comment>0 - The name of a package reference.</comment>
+  </data>
+  <data name="Warning_CentralPackageVersions_MultipleSourcesWithoutPackageSourceMapping" xml:space="preserve">
+    <value>There are {0} package sources defined in your configuration. When using central package management, please map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: {1}</value>
+    <comment>0 - The number of package sources, 1 - The URL of the package sources, comma separated.</comment>
+  </data>
+  <data name="SourcesCommandNoMatchingSourcesFound" xml:space="preserve">
+    <value>Unable to find any package source(s) matching name: {0}.</value>
+  </data>
+  <data name="SourcesCommandSourceDisabledSuccessfully" xml:space="preserve">
+    <value>Package source with Name: {0} disabled successfully.</value>
+  </data>
+  <data name="SourcesCommandSourceEnabledSuccessfully" xml:space="preserve">
+    <value>Package source with Name: {0} enabled successfully.</value>
+  </data>
+  <data name="SourcesCommandSourceRemovedSuccessfully" xml:space="preserve">
+    <value>Package source with Name: {0} removed successfully.</value>
+  </data>
+  <data name="ReservedPackageNameAll" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="SourcesCommandAllNameIsReserved" xml:space="preserve">
+    <value>Package source name 'All' is a reserved name.</value>
+  </data>
+  <data name="SourcesCommandInvalidSource" xml:space="preserve">
+    <value>The source specified is invalid. Provide a valid source.</value>
+  </data>
+  <data name="SourcesCommandUniqueName" xml:space="preserve">
+    <value>The name specified has already been added to the list of available package sources. Provide a unique name.</value>
+  </data>
+  <data name="SourcesCommandUniqueSource" xml:space="preserve">
+    <value>The source specified has already been added to the list of available package sources. Provide a unique source.</value>
+  </data>
+  <data name="SourcesCommandSourceAddedSuccessfully" xml:space="preserve">
+    <value>Package source with Name: {0} added successfully.</value>
+  </data>
+  <data name="SourcesCommandClearingExistingAuthTypes" xml:space="preserve">
+    <value>Clearing existing authentication types settings for package source '{0}'.</value>
+  </data>
+  <data name="SourcesCommandUpdateSuccessful" xml:space="preserve">
+    <value>Package source "{0}" was successfully updated.</value>
+  </data>
+  <data name="SourcesCommandCredentialsRequired" xml:space="preserve">
+    <value>Both UserName and Password must be specified.</value>
+  </data>
+  <data name="SourcesCommandCredentialsRequiredWithAuthTypes" xml:space="preserve">
+    <value>Both UserName and Password must be specified if ValidAuthenticationTypes is specified.</value>
+  </data>
+  <data name="SourcesCommandNoSources" xml:space="preserve">
+    <value>No sources found.</value>
+  </data>
+  <data name="SourcesCommandRegisteredSources" xml:space="preserve">
+    <value>Registered Sources:</value>
+  </data>
+  <data name="SourcesCommandDisabled" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="SourcesCommandEnabled" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="Source_DefaultNamePrefix" xml:space="preserve">
+    <value>Package source </value>
+  </data>
+  <data name="Source_InvalidFormatValue" xml:space="preserve">
+    <value>invalid value for --format: {0}. Allowed values: 'detailed' or 'short'</value>
+    <comment>don't localize 'format', 'detailed' or 'short'</comment>
+  </data>
+  <data name="Error_CouldNotUpdateClientCertificate" xml:space="preserve">
+    <value>Could not update the client certificate: {0}</value>
+    <comment>0 - reason</comment>
+  </data>
+  <data name="Error_CouldNotUpdateMetadataLastAccessTime" xml:space="preserve">
+    <value>Updating last access time on file {0} failed with {1}</value>
+    <comment>0 - file path
+    1 - reason</comment>
+  </data>
+  <data name="Error_UnknownClientCertificatesStoreName" xml:space="preserve">
+    <value>The source name '{0}' is not recognized.</value>
+    <comment>0 - source name</comment>
+  </data>
+  <data name="Error_UnknownClientCertificatesStoreLocation" xml:space="preserve">
+    <value>The store location '{0}' is not recognized.</value>
+    <comment>0 - store location</comment>
+  </data>
+  <data name="Error_UnknownClientCertificatesFindBy" xml:space="preserve">
+    <value>The find by search type '{0}' is not recognized.</value>
+    <comment>0 - find type</comment>
+  </data>
+  <data name="NoClientCertificatesMatching" xml:space="preserve">
+    <value>There are no client certificates configured for the package source '{0}'.</value>
+    <comment>0 - package source name</comment>
+  </data>
+  <data name="ClientCertificateSuccessfullyRemoved" xml:space="preserve">
+    <value>Client certificate configured for the package source '{0}' was successfully removed.</value>
+    <comment>0 - package source name</comment>
+  </data>
+  <data name="ClientCertificateSuccessfullyUpdated" xml:space="preserve">
+    <value>Client certificate configured for the package source '{0}' was successfully updated.</value>
+    <comment>0 - package source name</comment>
+  </data>
+  <data name="Error_UnknownClientCertificateStoreType" xml:space="preserve">
+    <value>Cannot determine client certificate store type</value>
+  </data>
+  <data name="Error_ClientCertificatesNotFound" xml:space="preserve">
+    <value>Client certificates were not found.</value>
+  </data>
+  <data name="ClientCertificateSuccessfullyAdded" xml:space="preserve">
+    <value>Client certificate configured for the package source '{0}' was successfully added.</value>
+    <comment>0 - package source name</comment>
+  </data>
+  <data name="Error_ClientCertificateAlreadyExist" xml:space="preserve">
+    <value>Client certificate configured for the package source '{0}' already exists.</value>
+    <comment>0 - package source name</comment>
+  </data>
+  <data name="Error_ClientCertificateTypeMismatch" xml:space="preserve">
+    <value>Client certificate configured for the package source '{0}' cannot be modified due to a type mismatch.</value>
+    <comment>0 - package source name</comment>
+  </data>
+  <data name="Error_ClientCertificateNotExist" xml:space="preserve">
+    <value>Client certificate configured for the package source '{0}' does not exist</value>
+    <comment>0 - package source name</comment>
+  </data>
+  <data name="NoClientCertificates" xml:space="preserve">
+    <value>There are no client certificates.</value>
+  </data>
+  <data name="RegsiteredClientCertificates" xml:space="preserve">
+    <value>Registered client certificates:</value>
+  </data>
+  <data name="ClientCertificatesLogTitle" xml:space="preserve">
+    <value>{0}{1} [{2}]</value>
+    <comment>0 - default indentation
+    1 - package source name
+    2 - client certificate source type</comment>
+  </data>
+  <data name="ClientCertificatesFileCertFilePath" xml:space="preserve">
+    <value>{0}File path: {1}</value>
+    <comment>0 - default indentation
+    1 - file path</comment>
+  </data>
+  <data name="ClientCertificatesStoreCertStoreLocation" xml:space="preserve">
+    <value>{0}Store location: {1}</value>
+    <comment>0 - default indentation
+    1 - store location</comment>
+  </data>
+  <data name="ClientCertificatesStoreCertStoreName" xml:space="preserve">
+    <value>{0}Store name: {1}</value>
+    <comment>0 - default indentation
+    1 - store name
+</comment>
+  </data>
+  <data name="ClientCertificatesStoreCertFindBy" xml:space="preserve">
+    <value>{0}Find by: {1}</value>
+    <comment>0 - default indentation
+    1 - find type</comment>
+  </data>
+  <data name="ClientCertificatesStoreCertFindValue" xml:space="preserve">
+    <value>{0}Find value: {1}</value>
+    <comment>0 - default indentation
+    1 - find value</comment>
+  </data>
+  <data name="ClientCertificatesItemCertificateMessage" xml:space="preserve">
+    <value>{0}Certificate: {1}</value>
+    <comment>0 - default indentation
+    1 - certificate hash string
+</comment>
+  </data>
+  <data name="ClientCertificatesItemCertificateError" xml:space="preserve">
+    <value>{0}Certificates status: {1}</value>
+    <comment>0 - default indentation
+    1 - error message</comment>
+  </data>
+  <data name="ClientCertificatesFileCertNoPassword" xml:space="preserve">
+    <value>{0}Password: -</value>
+    <comment>0 - default indentation</comment>
+  </data>
+  <data name="ClientCertificatesFileCertWithPassword" xml:space="preserve">
+    <value>{0}Password: ****</value>
+    <comment>0 - default indentation</comment>
+  </data>
+  <data name="Log_CPVM_DowngradeError" xml:space="preserve">
+    <value>Detected package downgrade: {0} from {1} to centrally defined {2}. Update the centrally managed package version to a higher version.</value>
+    <comment>{0} is package id, {1} is the package version, {2} is the downgraded package version.</comment>
+  </data>
+  <data name="Error_CentralPackageVersions_MissingPackageVersion" xml:space="preserve">
+    <value>The PackageReference items {0} do not have corresponding PackageVersion.</value>
+  </data>
+  <data name="Error_CentralPackageVersions_FloatingVersionsAreNotAllowed" xml:space="preserve">
+    <value>Centrally defined floating package versions are not allowed.</value>
+  </data>
+  <data name="SpecValidation_OriginalTargetFrameworksMustMatchAliases" xml:space="preserve">
+    <value>The original target frameworks value must match the aliases. Original target frameworks: {0}, aliases: {1}.</value>
+  </data>
+  <data name="Error_MultiplePackagePaths" xml:space="preserve">
+    <value>{0} contains more than one path</value>
+  </data>
+  <data name="Error_PlatformVersionNotPresent" xml:space="preserve">
+    <value>Platform version is not present for one or more target frameworks, even though they have specified a platform: {0}</value>
+    <comment>0 - comma-separated list of TFMs missing a platform version</comment>
+  </data>
+  <data name="Log_SkippingPackagesLockFileGeneration" xml:space="preserve">
+    <value>Skipping the lock file regeneration for '{0}'.</value>
+  </data>
+  <data name="Multiple_Nupkgs_Detected" xml:space="preserve">
+    <value>Multiple nupkg files detected on '{0}' path to trust, only 1 is allowed.</value>
+  </data>
+  <data name="VerifyCommand_NotSupported" xml:space="preserve">
+    <value>Package signature validation command is not supported on this platform.</value>
+  </data>
+  <data name="Log_SourceMappingEnabledNoMatchingPackageSources" xml:space="preserve">
+    <value>PackageSourceMapping is enabled, the following source(s) were not considered: {0}.</value>
+    <comment>Please do not localize `PackageSourceMapping`. 0 - package source names list.</comment>
+  </data>
+  <data name="SourceNotConsidered" xml:space="preserve">
+    <value>Versions from {0} were not considered</value>
+    <comment>0 - source name</comment>
+  </data>
+  <data name="Warning_ProjectDependencyMissingVersion" xml:space="preserve">
+    <value>Project dependency '{0}' does not specify a version. Include a version for the dependency to ensure consistent restore results.</value>
+    <comment>0 - package id</comment>
+  </data>
+  <data name="Error_NoClientAllowList" xml:space="preserve">
+    <value>signatureValidationMode is set to require, so packages are allowed only if signed by trusted signers; however, no trusted signers were specified.</value>
+  </data>
+  <data name="Error_NoMatchingClientCertificate" xml:space="preserve">
+    <value>This package is signed but not by a trusted signer.</value>
+  </data>
+  <data name="Warning_HttpServerUsage" xml:space="preserve">
+    <value>You are running the '{0}' operation with an 'HTTP' source, '{1}'. Non-HTTPS access will be removed in a future version. Consider migrating to an 'HTTPS' source.</value>
+    <comment>0 - The command name. Ex. Push/Delete. 1 - server URI.</comment>
+  </data>
+  <data name="Warning_HttpServerUsage_MultipleSources" xml:space="preserve">
+    <value>You are running the '{0}' operation with 'HTTP' sources: {1}
+Non-HTTPS access will be removed in a future version. Consider migrating to 'HTTPS' sources.</value>
+    <comment>0 - The command name. Ex. Push/Delete. 1 - list of server URIs</comment>
+  </data>
+  <data name="WarningAsError" xml:space="preserve">
+    <value>Warning As Error: {0}</value>
+    <comment>{0} is a warning message</comment>
+  </data>
+</root>

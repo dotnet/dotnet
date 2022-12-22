@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>DependsOnLocalized</id>
+    <version>1.0</version>
+    <authors>test</authors>
+    <description>Package description</description>
+    <dependencies>
+        <dependency id="Localized" version="[2.0, 3.0)" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="lib\net40\DependOnLocalized.dll" target="lib\net40\DependOnLocalized.dll" />
+  </files>
+</package>

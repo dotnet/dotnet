@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <Extern href="stdidcmd.h"/>
+  <Extern href="vsshlids.h"/>
+  <!--  Include the definitions for images included in the VS image catalog -->
+  <Include href="KnownImageIds.vsct"/>
+
+  <Commands package="guidNuGetPackage">
+
+    <Menus>
+      <!-- This is the toolbar in the console -->
+      <Menu guid="guidPowerConsoleCmdSet" id="idToolbar" type="ToolWindowToolbar">
+        <Strings>
+          <ButtonText>Package Manager Console</ButtonText>
+        </Strings>
+      </Menu>
+      <Menu guid="guidToolsGroup" id="idLibraryPackageManager" type="Menu" priority="0x500">
+        <Parent guid="guidSHLMainMenu" id="IDG_VS_TOOLS_OTHER2" />
+        <Strings>
+          <ButtonText>NuGet Package Ma&amp;nager</ButtonText>
+        </Strings>
+      </Menu>
+    </Menus>
+
+    <Groups>
+      <Group guid="guidPowerConsoleCmdSet" id="idToolbarHostsGroup" priority="0x1000">
+        <Parent guid="guidPowerConsoleCmdSet" id="idToolbar"/>
+      </Group>
+      <Group guid="guidPowerConsoleCmdSet" id="idToolbarProjectGroup" priority="0x1500">
+        <Parent guid="guidPowerConsoleCmdSet" id="idToolbar"/>
+      </Group>
+      <Group guid="guidPowerConsoleCmdSet" id="idToolbarCommandsGroup" priority="0x2000">
+        <Parent guid="guidPowerConsoleCmdSet" id="idToolbar"/>
+      </Group>
+      <Group guid="guidToolsGroup" id="idToolsGroup" priority="0x100">
+        <Parent guid="guidToolsGroup" id="idLibraryPackageManager" />
+      </Group>
+      <Group guid="guidPackageManagementCmdSet" id="idPackageManagementGroup" priority="0x0100">
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_PACKAGEREFERENCE_GROUP"/>
+      </Group>
+      <Group guid="guidPackageManagementCmdSet" id="idPackageUpdateGroup" priority="0x0100">
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_PACKAGEREFERENCE"/>
+      </Group>
+    </Groups>
+
+    <Buttons>
+      <Button guid="guidPowerConsoleCmdSet" id="cmdidPowerConsole" priority="0x0100" type="Button">
+        <Icon guid="ImageCatalogGuid" id="Console" />
+        <CommandFlag>IconIsMoniker</CommandFlag>
+        <CommandFlag>AllowParams</CommandFlag>
+        <Strings>
+          <ButtonText>Package Manager C&amp;onsole</ButtonText>
+        </Strings>
+      </Button>
+
+      <Button guid="guidPowerConsoleCmdSet" id="cmdidSourceSettings" priority="0x1020" type="Button">
+        <Parent guid="guidPowerConsoleCmdSet" id="idToolbarHostsGroup"/>
+        <Icon guid="ImageCatalogGuid" id="Settings" />
+        <CommandFlag>IconIsMoniker</CommandFlag>
+        <Strings>
+          <ButtonText>&amp;Package Manager Settings</ButtonText>
+        </Strings>
+      </Button>
+
+      <Button guid="guidPowerConsoleCmdSet" id="cmdidClearHost" priority="0x1010" type="Button">
+        <Parent guid="guidPowerConsoleCmdSet" id="idToolbarCommandsGroup"/>
+        <Icon guid="ImageCatalogGuid" id="ClearWindowContent" />
+        <CommandFlag>IconIsMoniker</CommandFlag>
+        <Strings>
+          <ButtonText>&amp;Clear Console</ButtonText>
+        </Strings>
+      </Button>
+
+      <Button guid="guidPowerConsoleCmdSet" id="cmdidStopHost" priority="0x1020" type="Button">
+        <Parent guid="guidPowerConsoleCmdSet" id="idToolbarCommandsGroup"/>
+        <Icon guid="ImageCatalogGuid" id="Stop" />
+        <CommandFlag>IconIsMoniker</CommandFlag>
+        <Strings>
+          <ButtonText>&amp;Stop command execution</ButtonText>
+        </Strings>
+      </Button>
+
+      <Button guid="guidDialogCmdSet" id="cmdidAddPackages" priority="0x0100" type="Button">
+        <Parent guid="guidReferenceContext" id="cmdAddReferenceGroup" />
+        <Icon guid="ImageCatalogGuid" id="NuGet"/>
+        <CommandFlag>IconIsMoniker</CommandFlag>
+        <CommandFlag>AllowParams</CommandFlag>
+        <CommandFlag>DefaultInvisible</CommandFlag>
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <Strings>
+          <CommandName>cmdidAddPackages</CommandName>
+          <ButtonText>Manage &amp;NuGet Packages...</ButtonText>
+        </Strings>
+      </Button>
+
+      <Button guid="guidDialogCmdSet" id="cmdidUpgradeNuGetProject" priority="0x0400" type="Button">
+        <Parent guid="guidReferenceContext" id="cmdAddReferenceGroup" />
+        <CommandFlag>DefaultInvisible</CommandFlag>
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <Strings>
+          <CommandName>cmdidUpgradeNuGetProject</CommandName>
+          <ButtonText>&amp;Migrate packages.config to PackageReference...</ButtonText>
+        </Strings>
+      </Button>
+
+      <Button guid="guidDialogCmdSet" id="cmdidUpgradePackagesConfig" priority="0x0410" type="Button">
+        <Parent guid="guidReferenceContext" id="cmdAddReferenceGroup" />
+        <CommandFlag>DefaultInvisible</CommandFlag>
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <Strings>
+          <CommandName>cmdidUpgradePackagesConfig</CommandName>
+          <ButtonText>&amp;Migrate packages.config to PackageReference...</ButtonText>
+        </Strings>
+      </Button>
+
+      <Button guid="guidDialogCmdSet" id="cmdidAddPackagesForSolution" priority="0x0200" type="Button">
+        <Parent guid="guidReferenceContext" id="cmdAddReferenceGroup" />
+        <Icon guid="ImageCatalogGuid" id="NuGet"/>
+        <CommandFlag>IconIsMoniker</CommandFlag>
+        <CommandFlag>DefaultInvisible</CommandFlag>
+        <Strings>
+          <CommandName>cmdidAddPackagesForSolution</CommandName>
+          <ButtonText>Manage &amp;NuGet Packages for Solution...</ButtonText>
+        </Strings>
+      </Button>
+
+      <Button guid="guidToolsGroup" id="idGeneralSettings" priority="0xF200" type="Button">
+        <Parent guid="guidToolsGroup" id="idToolsGroup"/>
+        <Icon guid="ImageCatalogGuid" id="Settings" />
+        <CommandFlag>IconIsMoniker</CommandFlag>
+        <Strings>
+          <CommandName>cmdidGeneralSettings</CommandName>
+          <ButtonText>&amp;Package Manager Settings</ButtonText>
+        </Strings>
+      </Button>
+
+      <Button guid="guidDialogCmdSet" id="cmdidUpdatePackage" priority="0x0100" type="Button">
+        <Parent guid="guidPackageManagementCmdSet" id="idPackageUpdateGroup" />
+        <CommandFlag>AllowParams</CommandFlag>
+        <CommandFlag>DefaultInvisible</CommandFlag>
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <Strings>
+          <CommandName>cmdidUpdatePackage</CommandName>
+          <ButtonText>U&amp;pdate...</ButtonText>
+        </Strings>
+      </Button>
+
+      <Button guid="guidDialogCmdSet" id="cmdidUpdatePackages" priority="0x0100" type="Button">
+        <Parent guid="guidPackageManagementCmdSet" id="idPackageManagementGroup" />
+        <CommandFlag>AllowParams</CommandFlag>
+        <CommandFlag>DefaultInvisible</CommandFlag>
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <Strings>
+          <CommandName>cmdidUpdatePackages</CommandName>
+          <ButtonText>U&amp;pdate...</ButtonText>
+        </Strings>
+      </Button>
+    </Buttons>
+
+    <Combos>
+      <Combo guid="guidPowerConsoleCmdSet" id="cmdidSources" idCommandList="cmdidSourcesList" type="IndexCombo" defaultWidth="180" priority="0x1005">
+        <Parent guid="guidPowerConsoleCmdSet" id="idToolbarHostsGroup" />
+        <CommandFlag>IconAndText</CommandFlag>
+        <Strings>
+          <ButtonText>Pac&amp;kage source:</ButtonText>
+        </Strings>
+      </Combo>
+
+      <Combo guid="guidPowerConsoleCmdSet" id="cmdidProjects" idCommandList="cmdidProjectsList" type="IndexCombo" defaultWidth="270" priority="0x1010">
+        <Parent guid="guidPowerConsoleCmdSet" id="idToolbarProjectGroup" />
+        <CommandFlag>IconAndText</CommandFlag>
+        <Strings>
+          <ButtonText>Default pro&amp;ject:</ButtonText>
+        </Strings>
+      </Combo>
+    </Combos>
+  </Commands>
+
+  <Commands package="guidRestoreManagerPackage">
+    <Buttons>
+      <Button guid="guidDialogCmdSet" id="cmdidRestorePackages" priority="0x0300" type="Button">
+        <Parent guid="guidReferenceContext" id="cmdAddReferenceGroup" />
+        <Icon guid="ImageCatalogGuid" id="RestoreMTR" />
+        <CommandFlag>IconIsMoniker</CommandFlag>
+        <CommandFlag>DefaultInvisible</CommandFlag>
+        <CommandFlag>DefaultDisabled</CommandFlag>
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <Strings>
+          <CommandName>cmdRestorePackages</CommandName>
+          <ButtonText>Restore NuGet Packa&amp;ges</ButtonText>
+        </Strings>
+      </Button>
+    </Buttons>
+  </Commands>
+  
+  <VisibilityConstraints>
+    <VisibilityItem guid="guidDialogCmdSet" id="cmdidAddPackages" context="UICONTEXT_SolutionExistsAndNotBuildingAndNotDebugging" />
+    <VisibilityItem guid="guidDialogCmdSet" id="cmdidAddPackagesForSolution" context="UICONTEXT_SolutionExistsAndNotBuildingAndNotDebugging" />
+    <VisibilityItem guid="guidDialogCmdSet" id="cmdidRestorePackages" context="UICONTEXT_SolutionExistsAndNotBuildingAndNotDebugging" />
+    <VisibilityItem guid="guidDialogCmdSet" id="cmdidUpgradePackagesConfig" context="UICONTEXT_UpgradeableProjectLoaded" />
+    <VisibilityItem guid="guidDialogCmdSet" id="cmdidUpgradeNuGetProject" context="UICONTEXT_UpgradeableProjectLoaded" />
+  </VisibilityConstraints>
+
+  <CommandPlacements>
+    <CommandPlacement guid="guidPowerConsoleCmdSet" id="cmdidPowerConsole" priority="0x0100">
+      <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1"/>
+    </CommandPlacement>
+
+    <CommandPlacement guid="guidPowerConsoleCmdSet" id="cmdidPowerConsole" priority="0x0100">
+      <Parent guid="guidToolsGroup" id="idToolsGroup"/>
+    </CommandPlacement>
+
+    <CommandPlacement guid="guidNuGetDebugConsoleCmdSet" id="cmdidDebugConsole" priority="0x0900">
+      <Parent guid="guidToolsGroup" id="idToolsGroup"/>
+    </CommandPlacement>
+
+    <CommandPlacement guid="guidDialogCmdSet" id="cmdidAddPackagesForSolution" priority="0xF100">
+      <Parent guid="guidToolsGroup" id="idToolsGroup"/>
+    </CommandPlacement>
+    <CommandPlacement guid="guidDialogCmdSet" id="cmdidAddPackagesForSolution" priority="0xF100">
+      <Parent guid="guidSHLMainMenu" id="IDG_VS_CTXT_SOLUTION_BUILD" />
+    </CommandPlacement>
+    <CommandPlacement guid="guidDialogCmdSet" id="cmdidAddPackages" priority="0xF100">
+      <Parent guid="guidSHLMainMenu" id="IDG_VS_CTXT_REFROOT_ADD"/>
+    </CommandPlacement>
+    <CommandPlacement guid="guidDialogCmdSet" id="cmdidAddPackages" priority="0xF100">
+      <Parent guid="guidSHLMainMenu" id="IDG_VS_CTXT_PROJECT_ADD"/>
+    </CommandPlacement>
+    <CommandPlacement guid="guidDialogCmdSet" id="cmdidAddPackages" priority="0xF100">
+      <Parent guid="guidSHLMainMenu" id="IDG_VS_PROJ_OPTIONS"/>
+    </CommandPlacement>
+    <CommandPlacement guid="guidDialogCmdSet" id="cmdidAddPackages" priority="0xF100">
+      <Parent guid="guidVenusCmdId" id="IDG_VENUS_CTX_REFERENCE"/>
+    </CommandPlacement>
+    <CommandPlacement guid="guidDialogCmdSet" id="cmdidAddPackages" priority="0xF100">
+      <Parent guid="guidVenusCmdId" id="IDG_CTX_REFERENCE"/>
+    </CommandPlacement>
+    <CommandPlacement guid="guidDialogCmdSet" id="cmdidAddPackages" priority="0xF100">
+      <Parent guid="guidPackageManagementCmdSet" id="idPackageManagementGroup" />
+    </CommandPlacement>
+    <CommandPlacement guid="guidDialogCmdSet" id="cmdidUpgradePackagesConfig" priority="0xF101">
+      <Parent guid="guidSHLMainMenu" id="IDG_VS_CTXT_ITEM_OPEN"/>
+    </CommandPlacement>
+    <CommandPlacement guid="guidDialogCmdSet" id="cmdidUpgradeNuGetProject" priority="0xF101">
+      <Parent guid="guidSHLMainMenu" id="IDG_VS_CTXT_REFROOT_ADD"/>
+    </CommandPlacement>
+    <CommandPlacement guid="guidDialogCmdSet" id="cmdidRestorePackages" priority="0xF101">
+      <Parent guid="guidSHLMainMenu" id="IDG_VS_CTXT_SOLUTION_BUILD" />
+    </CommandPlacement>
+  </CommandPlacements>
+
+  <Symbols>
+    <GuidSymbol name="UICONTEXT_UpgradeableProjectLoaded" value="{1837160D-723F-43CD-8185-97758295A859}" /> 
+    <GuidSymbol name="guidNuGetPackage" value="{5fcc8577-4feb-4d04-ad72-d6c629b083cc}" />
+    <GuidSymbol name="guidRestoreManagerPackage" value="{2b52ac92-4551-426d-bd34-c6d7d9fdd1c5}" />
+    <GuidSymbol name="guidPowerConsoleCmdSet" value="{1E8A55F6-C18D-407F-91C8-94B02AE1CED6}">
+      <IDSymbol name="idToolbar" value="0x1010"/>
+      <IDSymbol name="idToolbarHostsGroup" value="0x2000"/>
+      <IDSymbol name="idToolbarProjectGroup" value="0x2005"/>
+      <IDSymbol name="idToolbarCommandsGroup" value="0x2010"/>
+      <IDSymbol name="cmdidPowerConsole" value="0x0100" />
+      <IDSymbol name="cmdidSourceSettings" value="0x0200" />
+      <IDSymbol name="cmdidClearHost" value="0x0300" />
+      <IDSymbol name="cmdidStopHost" value="0x0600" />
+      <IDSymbol name="cmdidSources" value="0x0400" />
+      <IDSymbol name="cmdidSourcesList" value="0x0410" />
+      <IDSymbol name="cmdidProjects" value="0x0500" />
+      <IDSymbol name="cmdidProjectsList" value="0x0510" />
+    </GuidSymbol>
+    <GuidSymbol name="guidToolsGroup" value="{C0D88179-5D25-4982-BFE6-EC5FD59AC103}">
+      <IDSymbol name="idLibraryPackageManager" value="0x100" />
+      <IDSymbol name="idToolsGroup" value="0x200" />
+      <IDSymbol name="idGeneralSettings" value="0x300" />
+    </GuidSymbol>
+    <GuidSymbol name="guidDialogCmdSet" value="{25fd982b-8cae-4cbd-a440-e03ffccde106}">
+      <IDSymbol name="cmdidAddPackages" value="0x0100" />
+      <IDSymbol name="cmdidAddPackagesForSolution" value="0x0200" />
+      <IDSymbol name="cmdidRestorePackages" value="0x0300" />
+      <IDSymbol name="cmdidUpgradeNuGetProject" value="0x0400" />
+      <IDSymbol name="cmdidUpgradePackagesConfig" value="0x0410" />
+      <IDSymbol name="cmdidUpdatePackage" value="0x0500" />
+      <IDSymbol name="cmdidUpdatePackages" value="0x0600" />
+    </GuidSymbol>
+    <GuidSymbol name="guidVenusCmdId" value="{C7547851-4E3A-4E5B-9173-FA6E9C8BD82C}" >
+      <IDSymbol name="IDG_VENUS_CTX_REFERENCE" value="27" />
+      <IDSymbol name="IDG_CTX_REFERENCE" value="0x102" />
+    </GuidSymbol>
+    <!--guidReferenceContext is aka: ShellMainMenu_guid -->
+    <GuidSymbol name="guidReferenceContext" value="{D309F791-903F-11D0-9EFC-00A0C911004F}">
+      <IDSymbol name="cmdAddReferenceGroup" value="0x450" />
+      <IDSymbol name="IDM_VS_CTXT_PACKAGEREFERENCE_GROUP" value="0x04A2"/>
+      <IDSymbol name="IDM_VS_CTXT_PACKAGEREFERENCE" value="0x04A3"/>
+    </GuidSymbol>
+    <GuidSymbol name="UICONTEXT_SolutionExistsAndNotBuildingAndNotDebugging" value="{D0E4DEEC-1B53-4CDA-8559-D454583AD23B}" />
+    <GuidSymbol name="guidNuGetDebugConsoleCmdSet" value="{DDC61543-6CA7-4A6F-A5B7-984BE723C52F}">
+      <IDSymbol name="cmdidDebugConsole" value="0x0900" />
+    </GuidSymbol>
+    <GuidSymbol name="PackageIconMonikers" value="{8F5EAE8F-9892-4CE2-826C-764BEDE6D2EC}">
+      <IDSymbol name="PrefixReservedIndicator" value="1" />
+      <IDSymbol name="UpdateAvailableIndicator" value="2" />
+      <IDSymbol name="UninstallIndicator" value="3" />
+      <IDSymbol name="DownloadIndicator" value="4" />
+    </GuidSymbol>
+    <GuidSymbol name="guidPackageManagementCmdSet" value="{E586270E-92EC-427D-B218-0E81A25226F5}">
+      <IDSymbol name="idPackageManagementGroup" value="0x0100" />
+      <IDSymbol name="idPackageUpdateGroup" value="0x0200" />
+    </GuidSymbol>
+  </Symbols>
+
+</CommandTable>

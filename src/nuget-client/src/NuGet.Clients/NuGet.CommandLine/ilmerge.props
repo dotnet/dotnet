@@ -1,0 +1,40 @@
+<Project>
+  <ItemGroup>
+    <MergeAllowdup Include="ArrayPool`1"/>
+    <MergeAllowdup Include="CompatibilityListProvider"/>
+    <MergeAllowdup Include="CompatibilityMappingComparer"/>
+    <MergeAllowdup Include="CompatibilityProvider"/>
+    <MergeAllowdup Include="CompatibilityTable"/>
+    <MergeAllowdup Include="DefaultCompatibilityProvider"/>
+    <MergeAllowdup Include="DefaultFrameworkMappings"/>
+    <MergeAllowdup Include="DefaultFrameworkNameProvider"/>
+    <MergeAllowdup Include="DefaultPortableFrameworkMappings"/>
+    <MergeAllowdup Include="FallbackFramework"/>
+    <MergeAllowdup Include="FrameworkConstants"/>
+    <MergeAllowdup Include="FrameworkException"/>
+    <MergeAllowdup Include="FrameworkExpander"/>
+    <MergeAllowdup Include="FrameworkNameHelpers"/>
+    <MergeAllowdup Include="FrameworkNameProvider"/>
+    <MergeAllowdup Include="FrameworkPrecedenceSorter"/>
+    <MergeAllowdup Include="FrameworkRange"/>
+    <MergeAllowdup Include="FrameworkRangeComparer"/>
+    <MergeAllowdup Include="FrameworkReducer"/>
+    <MergeAllowdup Include="FrameworkRuntimePair"/>
+    <MergeAllowdup Include="FrameworkSpecificMapping"/>
+    <MergeAllowdup Include="IFrameworkCompatibilityListProvider"/>
+    <MergeAllowdup Include="IFrameworkCompatibilityProvider"/>
+    <MergeAllowdup Include="IFrameworkMappings"/>
+    <MergeAllowdup Include="IFrameworkNameProvider"/>
+    <MergeAllowdup Include="IFrameworkSpecific"/>
+    <MergeAllowdup Include="IFrameworkTargetable"/>
+    <MergeAllowdup Include="IPortableFrameworkMappings"/>
+    <MergeAllowdup Include="NuGetFramework"/>
+    <MergeAllowdup Include="NuGetFrameworkExtensions"/>
+    <MergeAllowdup Include="NuGetFrameworkFullComparer"/>
+    <MergeAllowdup Include="NuGetFrameworkNameComparer"/>
+    <MergeAllowdup Include="NuGetFrameworkSorter"/>
+    <MergeAllowdup Include="NuGetFrameworkUtility"/>
+    <MergeAllowdup Include="OneWayCompatibilityMappingEntry"/>
+    <MergeAllowdup Include="Strings"/>
+  </ItemGroup>
+</Project>

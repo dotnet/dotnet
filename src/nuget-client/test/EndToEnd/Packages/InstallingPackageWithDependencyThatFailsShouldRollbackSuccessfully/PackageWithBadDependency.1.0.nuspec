@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <version>1.0</version>
+    <authors>David Fowler</authors>
+    <owners>David Fowler</owners>
+    <id>PackageWithBadDependency</id>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Meh</description>
+    <tags>Tag1 Tag2</tags>
+  </metadata>
+  <files>
+    <file src="content\bar.txt" target="content\bar.txt" />
+  </files>
+</package>

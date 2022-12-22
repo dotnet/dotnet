@@ -1,0 +1,99 @@
+#nullable enable
+NuGet.Credentials.CredentialResponse
+NuGet.Credentials.CredentialResponse.CredentialResponse(NuGet.Credentials.CredentialStatus status) -> void
+~NuGet.Credentials.CredentialResponse.CredentialResponse(System.Net.ICredentials credentials) -> void
+~NuGet.Credentials.CredentialResponse.Credentials.get -> System.Net.ICredentials
+NuGet.Credentials.CredentialResponse.Status.get -> NuGet.Credentials.CredentialStatus
+NuGet.Credentials.CredentialService
+~NuGet.Credentials.CredentialService.CredentialService(NuGet.Common.AsyncLazy<System.Collections.Generic.IEnumerable<NuGet.Credentials.ICredentialProvider>> providers, bool nonInteractive, bool handlesDefaultCredentials) -> void
+~NuGet.Credentials.CredentialService.GetCredentialsAsync(System.Uri uri, System.Net.IWebProxy proxy, NuGet.Configuration.CredentialRequestType type, string message, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Net.ICredentials>
+NuGet.Credentials.CredentialService.HandlesDefaultCredentials.get -> bool
+~NuGet.Credentials.CredentialService.TryGetLastKnownGoodCredentialsFromCache(System.Uri uri, bool isProxy, out System.Net.ICredentials credentials) -> bool
+NuGet.Credentials.CredentialStatus
+NuGet.Credentials.CredentialStatus.ProviderNotApplicable = 1 -> NuGet.Credentials.CredentialStatus
+NuGet.Credentials.CredentialStatus.Success = 0 -> NuGet.Credentials.CredentialStatus
+NuGet.Credentials.CredentialStatus.UserCanceled = 2 -> NuGet.Credentials.CredentialStatus
+NuGet.Credentials.CredentialsConstants
+NuGet.Credentials.DefaultCredentialServiceUtility
+NuGet.Credentials.DefaultNetworkCredentialsCredentialProvider
+NuGet.Credentials.DefaultNetworkCredentialsCredentialProvider.DefaultNetworkCredentialsCredentialProvider() -> void
+~NuGet.Credentials.DefaultNetworkCredentialsCredentialProvider.GetAsync(System.Uri uri, System.Net.IWebProxy proxy, NuGet.Configuration.CredentialRequestType type, string message, bool isRetry, bool nonInteractive, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.Credentials.CredentialResponse>
+~NuGet.Credentials.DefaultNetworkCredentialsCredentialProvider.Id.get -> string
+NuGet.Credentials.ICredentialProvider
+~NuGet.Credentials.ICredentialProvider.GetAsync(System.Uri uri, System.Net.IWebProxy proxy, NuGet.Configuration.CredentialRequestType type, string message, bool isRetry, bool nonInteractive, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.Credentials.CredentialResponse>
+~NuGet.Credentials.ICredentialProvider.Id.get -> string
+NuGet.Credentials.PluginCredentialProvider
+~NuGet.Credentials.PluginCredentialProvider.GetAsync(System.Uri uri, System.Net.IWebProxy proxy, NuGet.Configuration.CredentialRequestType type, string message, bool isRetry, bool nonInteractive, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.Credentials.CredentialResponse>
+~NuGet.Credentials.PluginCredentialProvider.Id.get -> string
+~NuGet.Credentials.PluginCredentialProvider.Path.get -> string
+~NuGet.Credentials.PluginCredentialProvider.PluginCredentialProvider(NuGet.Common.ILogger logger, string path, int timeoutSeconds, string verbosity) -> void
+NuGet.Credentials.PluginCredentialProvider.TimeoutSeconds.get -> int
+NuGet.Credentials.PluginCredentialProviderBuilder
+~NuGet.Credentials.PluginCredentialProviderBuilder.BuildAll(string verbosity) -> System.Collections.Generic.IEnumerable<NuGet.Credentials.ICredentialProvider>
+~NuGet.Credentials.PluginCredentialProviderBuilder.PluginCredentialProviderBuilder(NuGet.Configuration.IExtensionLocator extensionLocator, NuGet.Configuration.ISettings settings, NuGet.Common.ILogger logger) -> void
+~NuGet.Credentials.PluginCredentialProviderBuilder.PluginCredentialProviderBuilder(NuGet.Configuration.IExtensionLocator extensionLocator, NuGet.Configuration.ISettings settings, NuGet.Common.ILogger logger, NuGet.Common.IEnvironmentVariableReader envarReader) -> void
+NuGet.Credentials.PluginCredentialRequest
+NuGet.Credentials.PluginCredentialRequest.IsRetry.get -> bool
+NuGet.Credentials.PluginCredentialRequest.IsRetry.set -> void
+NuGet.Credentials.PluginCredentialRequest.NonInteractive.get -> bool
+NuGet.Credentials.PluginCredentialRequest.NonInteractive.set -> void
+NuGet.Credentials.PluginCredentialRequest.PluginCredentialRequest() -> void
+~NuGet.Credentials.PluginCredentialRequest.Uri.get -> string
+~NuGet.Credentials.PluginCredentialRequest.Uri.set -> void
+~NuGet.Credentials.PluginCredentialRequest.Verbosity.get -> string
+~NuGet.Credentials.PluginCredentialRequest.Verbosity.set -> void
+NuGet.Credentials.PluginCredentialResponse
+~NuGet.Credentials.PluginCredentialResponse.AuthTypes.get -> System.Collections.Generic.IList<string>
+~NuGet.Credentials.PluginCredentialResponse.AuthTypes.set -> void
+NuGet.Credentials.PluginCredentialResponse.IsValid.get -> bool
+~NuGet.Credentials.PluginCredentialResponse.Message.get -> string
+~NuGet.Credentials.PluginCredentialResponse.Message.set -> void
+~NuGet.Credentials.PluginCredentialResponse.Password.get -> string
+~NuGet.Credentials.PluginCredentialResponse.Password.set -> void
+NuGet.Credentials.PluginCredentialResponse.PluginCredentialResponse() -> void
+~NuGet.Credentials.PluginCredentialResponse.Username.get -> string
+~NuGet.Credentials.PluginCredentialResponse.Username.set -> void
+NuGet.Credentials.PluginCredentialResponseExitCode
+NuGet.Credentials.PluginCredentialResponseExitCode.Failure = 2 -> NuGet.Credentials.PluginCredentialResponseExitCode
+NuGet.Credentials.PluginCredentialResponseExitCode.ProviderNotApplicable = 1 -> NuGet.Credentials.PluginCredentialResponseExitCode
+NuGet.Credentials.PluginCredentialResponseExitCode.Success = 0 -> NuGet.Credentials.PluginCredentialResponseExitCode
+NuGet.Credentials.PluginException
+NuGet.Credentials.PluginException.PluginException() -> void
+~NuGet.Credentials.PluginException.PluginException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) -> void
+~NuGet.Credentials.PluginException.PluginException(string message) -> void
+~NuGet.Credentials.PluginException.PluginException(string message, System.Exception inner) -> void
+NuGet.Credentials.PluginUnexpectedStatusException
+NuGet.Credentials.PluginUnexpectedStatusException.PluginUnexpectedStatusException() -> void
+~NuGet.Credentials.PluginUnexpectedStatusException.PluginUnexpectedStatusException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) -> void
+~NuGet.Credentials.PluginUnexpectedStatusException.PluginUnexpectedStatusException(string message) -> void
+~NuGet.Credentials.PluginUnexpectedStatusException.PluginUnexpectedStatusException(string message, System.Exception inner) -> void
+NuGet.Credentials.PreviewFeatureSettings
+NuGet.Credentials.ProviderException
+NuGet.Credentials.ProviderException.ProviderException() -> void
+~NuGet.Credentials.ProviderException.ProviderException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) -> void
+~NuGet.Credentials.ProviderException.ProviderException(string message) -> void
+~NuGet.Credentials.ProviderException.ProviderException(string message, System.Exception inner) -> void
+NuGet.Credentials.SecurePluginCredentialProvider
+~NuGet.Credentials.SecurePluginCredentialProvider.GetAsync(System.Uri uri, System.Net.IWebProxy proxy, NuGet.Configuration.CredentialRequestType type, string message, bool isRetry, bool nonInteractive, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.Credentials.CredentialResponse>
+~NuGet.Credentials.SecurePluginCredentialProvider.Id.get -> string
+~NuGet.Credentials.SecurePluginCredentialProvider.SecurePluginCredentialProvider(NuGet.Protocol.Plugins.IPluginManager pluginManager, NuGet.Protocol.Plugins.PluginDiscoveryResult pluginDiscoveryResult, bool canShowDialog, NuGet.Common.ILogger logger) -> void
+NuGet.Credentials.SecurePluginCredentialProviderBuilder
+~NuGet.Credentials.SecurePluginCredentialProviderBuilder.BuildAllAsync() -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Credentials.ICredentialProvider>>
+~NuGet.Credentials.SecurePluginCredentialProviderBuilder.SecurePluginCredentialProviderBuilder(NuGet.Protocol.Plugins.IPluginManager pluginManager, bool canShowDialog, NuGet.Common.ILogger logger) -> void
+~const NuGet.Credentials.PreviewFeatureSettings.DefaultCredentialsAfterCredentialProvidersEnvironmentVariableName = "NUGET_CREDENTIAL_PROVIDER_OVERRIDE_DEFAULT" -> string
+~static NuGet.Credentials.DefaultCredentialServiceUtility.SetupDefaultCredentialService(NuGet.Common.ILogger logger, bool nonInteractive) -> void
+~static NuGet.Credentials.DefaultCredentialServiceUtility.UpdateCredentialServiceDelegatingLogger(NuGet.Common.ILogger log) -> void
+~static NuGet.Credentials.PluginException.Create(string path, System.Exception inner) -> NuGet.Credentials.PluginException
+~static NuGet.Credentials.PluginException.CreateAbortMessage(string path, string message) -> NuGet.Credentials.PluginException
+~static NuGet.Credentials.PluginException.CreateInvalidResponseExceptionMessage(string path, NuGet.Credentials.PluginCredentialResponseExitCode status, NuGet.Credentials.PluginCredentialResponse response) -> NuGet.Credentials.PluginException
+~static NuGet.Credentials.PluginException.CreateNotStartedMessage(string path) -> NuGet.Credentials.PluginException
+~static NuGet.Credentials.PluginException.CreatePathNotFoundMessage(string path, string attempted) -> NuGet.Credentials.PluginException
+~static NuGet.Credentials.PluginException.CreateTimeoutMessage(string path, int timeoutMillis) -> NuGet.Credentials.PluginException
+~static NuGet.Credentials.PluginException.CreateUnreadableResponseExceptionMessage(string path, NuGet.Credentials.PluginCredentialResponseExitCode status) -> NuGet.Credentials.PluginException
+~static NuGet.Credentials.PluginUnexpectedStatusException.CreateUnexpectedStatusMessage(string path, NuGet.Credentials.PluginCredentialResponseExitCode status) -> NuGet.Credentials.PluginException
+static NuGet.Credentials.PreviewFeatureSettings.DefaultCredentialsAfterCredentialProviders.get -> bool
+static NuGet.Credentials.PreviewFeatureSettings.DefaultCredentialsAfterCredentialProviders.set -> void
+static readonly NuGet.Credentials.CredentialsConstants.ProviderTimeoutSecondsDefault -> int
+~static readonly NuGet.Credentials.CredentialsConstants.ProviderTimeoutSecondsEnvar -> string
+~static readonly NuGet.Credentials.CredentialsConstants.ProviderTimeoutSecondsSetting -> string
+~virtual NuGet.Credentials.PluginCredentialProvider.Execute(System.Diagnostics.ProcessStartInfo startInfo, System.Threading.CancellationToken cancellationToken, out string stdOut) -> int

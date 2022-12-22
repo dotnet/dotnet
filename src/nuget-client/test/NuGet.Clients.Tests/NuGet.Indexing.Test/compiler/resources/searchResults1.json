@@ -1,0 +1,2104 @@
+{
+  "@context": {
+    "@vocab": "http://schema.nuget.org/schema#"
+  },
+  "totalHits": 1658,
+  "lastReopen": "2016-01-23T06:30:42.9707162Z",
+  "index": "v3-lucene0-031115",
+  "data": [
+    {
+      "@id": "https://api.nuget.org/v3/registration0/nuget.core/2.10.1.json",
+      "@type": "Package",
+      "registration": "https://api.nuget.org/v3/registration0/nuget.core/index.json",
+      "id": "NuGet.Core",
+      "description": "NuGet.Core is the core framework assembly for NuGet that the rest of NuGet builds upon.",
+      "title": "NuGet.Core",
+      "licenseUrl": "https://raw.githubusercontent.com/NuGet/NuGet2/master/LICENSE.txt",
+      "projectUrl": "https://github.com/NuGet/NuGet2",
+      "tags": [
+        "nuget"
+      ],
+      "authors": [
+        ""
+      ],
+      "totalDownloads": 1469550,
+      "version": "2.10.1",
+      "versions": [
+        {
+          "version": "1.0.1120.104",
+          "downloads": 3331,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.core/1.0.1120.104.json"
+        },
+        {
+          "version": "1.1.229.159",
+          "downloads": 613,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.core/1.1.229.159.json"
+        },
+        {
+          "version": "1.2.20325.9034",
+          "downloads": 1078,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.core/1.2.20325.9034.json"
+        },
+        {
+          "version": "1.3.20419.9005",
+          "downloads": 1988,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.core/1.3.20419.9005.json"
+        },
+        {
+          "version": "1.4.20615.9012",
+          "downloads": 5380,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.core/1.4.20615.9012.json"
+        },
+        {
+          "version": "1.5.20818.9011",
+          "downloads": 1071,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.core/1.5.20818.9011.json"
+        },
+        {
+          "version": "1.5.20902.9023",
+          "downloads": 265,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.core/1.5.20902.9023.json"
+        },
+        {
+          "version": "1.5.20902.9026",
+          "downloads": 6601,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.core/1.5.20902.9026.json"
+        },
+        {
+          "version": "1.6.0",
+          "downloads": 5462,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.core/1.6.0.json"
+        },
+        {
+          "version": "1.6.1",
+          "downloads": 499021,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.core/1.6.1.json"
+        },
+        {
+          "version": "1.6.2",
+          "downloads": 305398,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.core/1.6.2.json"
+        },
+        {
+          "version": "1.7.0",
+          "downloads": 5615,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.core/1.7.0.json"
+        },
+        {
+          "version": "1.8.0",
+          "downloads": 126493,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.core/1.8.0.json"
+        },
+        {
+          "version": "2.0.0-alpha001",
+          "downloads": 4793,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.core/2.0.0-alpha001.json"
+        },
+        {
+          "version": "2.0.0",
+          "downloads": 3988,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.core/2.0.0.json"
+        },
+        {
+          "version": "2.0.1",
+          "downloads": 54636,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.core/2.0.1.json"
+        },
+        {
+          "version": "2.1.0-alpha001",
+          "downloads": 3013,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.core/2.1.0-alpha001.json"
+        },
+        {
+          "version": "2.1.0",
+          "downloads": 10381,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.core/2.1.0.json"
+        },
+        {
+          "version": "2.1.1-alpha",
+          "downloads": 232,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.core/2.1.1-alpha.json"
+        },
+        {
+          "version": "2.1.1",
+          "downloads": 6088,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.core/2.1.1.json"
+        },
+        {
+          "version": "2.2.0-alpha004",
+          "downloads": 1815,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.core/2.2.0-alpha004.json"
+        },
+        {
+          "version": "2.2.0-alpha005",
+          "downloads": 971,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.core/2.2.0-alpha005.json"
+        },
+        {
+          "version": "2.2.0",
+          "downloads": 21020,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.core/2.2.0.json"
+        },
+        {
+          "version": "2.3.0-alpha001",
+          "downloads": 261,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.core/2.3.0-alpha001.json"
+        },
+        {
+          "version": "2.3.0-alpha002",
+          "downloads": 1000,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.core/2.3.0-alpha002.json"
+        },
+        {
+          "version": "2.3.0-alpha003",
+          "downloads": 2650,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.core/2.3.0-alpha003.json"
+        },
+        {
+          "version": "2.5.0",
+          "downloads": 41153,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.core/2.5.0.json"
+        },
+        {
+          "version": "2.6.0-alpha1",
+          "downloads": 1133,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.core/2.6.0-alpha1.json"
+        },
+        {
+          "version": "2.6.0",
+          "downloads": 5980,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.core/2.6.0.json"
+        },
+        {
+          "version": "2.6.0.1",
+          "downloads": 7382,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.core/2.6.0.1.json"
+        },
+        {
+          "version": "2.7.0-alpha",
+          "downloads": 772,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.core/2.7.0-alpha.json"
+        },
+        {
+          "version": "2.7.0",
+          "downloads": 11661,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.core/2.7.0.json"
+        },
+        {
+          "version": "2.7.1",
+          "downloads": 10769,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.core/2.7.1.json"
+        },
+        {
+          "version": "2.7.2",
+          "downloads": 18364,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.core/2.7.2.json"
+        },
+        {
+          "version": "2.8.0",
+          "downloads": 25046,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.core/2.8.0.json"
+        },
+        {
+          "version": "2.8.1",
+          "downloads": 21830,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.core/2.8.1.json"
+        },
+        {
+          "version": "2.8.2-beta",
+          "downloads": 323,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.core/2.8.2-beta.json"
+        },
+        {
+          "version": "2.8.2",
+          "downloads": 39303,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.core/2.8.2.json"
+        },
+        {
+          "version": "2.8.3-alpha0001",
+          "downloads": 2028,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.core/2.8.3-alpha0001.json"
+        },
+        {
+          "version": "2.8.3",
+          "downloads": 122725,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.core/2.8.3.json"
+        },
+        {
+          "version": "2.8.5",
+          "downloads": 34004,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.core/2.8.5.json"
+        },
+        {
+          "version": "2.8.6",
+          "downloads": 36733,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.core/2.8.6.json"
+        },
+        {
+          "version": "2.9.0",
+          "downloads": 4760,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.core/2.9.0.json"
+        },
+        {
+          "version": "2.10.1",
+          "downloads": 7808,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.core/2.10.1.json"
+        }
+      ]
+    },
+    {
+      "@id": "https://api.nuget.org/v3/registration0/nuget.server/2.10.0-master-0002.json",
+      "@type": "Package",
+      "registration": "https://api.nuget.org/v3/registration0/nuget.server/index.json",
+      "id": "NuGet.Server",
+      "description": "Web Application used to host a simple NuGet feed",
+      "title": "NuGet.Server",
+      "licenseUrl": "https://raw.githubusercontent.com/NuGet/NuGet.Server/dev/LICENSE.txt",
+      "projectUrl": "https://github.com/NuGet/NuGet.Server",
+      "tags": [
+        ""
+      ],
+      "authors": [
+        ""
+      ],
+      "totalDownloads": 104544,
+      "version": "2.10.0-master-0002",
+      "versions": [
+        {
+          "version": "1.2.2210.35",
+          "downloads": 677,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.server/1.2.2210.35.json"
+        },
+        {
+          "version": "1.2.20331.10",
+          "downloads": 245,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.server/1.2.20331.10.json"
+        },
+        {
+          "version": "1.2.20331.11",
+          "downloads": 234,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.server/1.2.20331.11.json"
+        },
+        {
+          "version": "1.2.20331.12",
+          "downloads": 556,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.server/1.2.20331.12.json"
+        },
+        {
+          "version": "1.3.20426.373",
+          "downloads": 1195,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.server/1.3.20426.373.json"
+        },
+        {
+          "version": "1.4.20609.9012",
+          "downloads": 362,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.server/1.4.20609.9012.json"
+        },
+        {
+          "version": "1.4.20623.9012",
+          "downloads": 1140,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.server/1.4.20623.9012.json"
+        },
+        {
+          "version": "1.5.20818.9011",
+          "downloads": 751,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.server/1.5.20818.9011.json"
+        },
+        {
+          "version": "1.5.20902.9023",
+          "downloads": 165,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.server/1.5.20902.9023.json"
+        },
+        {
+          "version": "1.5.20902.9026",
+          "downloads": 2040,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.server/1.5.20902.9026.json"
+        },
+        {
+          "version": "1.6.0",
+          "downloads": 531,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.server/1.6.0.json"
+        },
+        {
+          "version": "1.6.1",
+          "downloads": 2511,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.server/1.6.1.json"
+        },
+        {
+          "version": "1.7.0",
+          "downloads": 321,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.server/1.7.0.json"
+        },
+        {
+          "version": "1.7.1",
+          "downloads": 753,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.server/1.7.1.json"
+        },
+        {
+          "version": "1.7.2",
+          "downloads": 1089,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.server/1.7.2.json"
+        },
+        {
+          "version": "1.8.0",
+          "downloads": 1101,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.server/1.8.0.json"
+        },
+        {
+          "version": "2.0.0",
+          "downloads": 252,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.server/2.0.0.json"
+        },
+        {
+          "version": "2.0.1",
+          "downloads": 3425,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.server/2.0.1.json"
+        },
+        {
+          "version": "2.1.0",
+          "downloads": 1691,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.server/2.1.0.json"
+        },
+        {
+          "version": "2.1.1-alpha",
+          "downloads": 121,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.server/2.1.1-alpha.json"
+        },
+        {
+          "version": "2.1.1-beta",
+          "downloads": 131,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.server/2.1.1-beta.json"
+        },
+        {
+          "version": "2.1.1",
+          "downloads": 807,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.server/2.1.1.json"
+        },
+        {
+          "version": "2.2.2",
+          "downloads": 5611,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.server/2.2.2.json"
+        },
+        {
+          "version": "2.5.0.1",
+          "downloads": 2472,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.server/2.5.0.1.json"
+        },
+        {
+          "version": "2.6.0",
+          "downloads": 2355,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.server/2.6.0.json"
+        },
+        {
+          "version": "2.7.0-alpha",
+          "downloads": 130,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.server/2.7.0-alpha.json"
+        },
+        {
+          "version": "2.7.0",
+          "downloads": 4035,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.server/2.7.0.json"
+        },
+        {
+          "version": "2.7.1",
+          "downloads": 7987,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.server/2.7.1.json"
+        },
+        {
+          "version": "2.7.2",
+          "downloads": 4375,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.server/2.7.2.json"
+        },
+        {
+          "version": "2.8.0",
+          "downloads": 5092,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.server/2.8.0.json"
+        },
+        {
+          "version": "2.8.1",
+          "downloads": 3805,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.server/2.8.1.json"
+        },
+        {
+          "version": "2.8.2-beta",
+          "downloads": 168,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.server/2.8.2-beta.json"
+        },
+        {
+          "version": "2.8.2",
+          "downloads": 12366,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.server/2.8.2.json"
+        },
+        {
+          "version": "2.8.3",
+          "downloads": 11640,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.server/2.8.3.json"
+        },
+        {
+          "version": "2.8.5",
+          "downloads": 10068,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.server/2.8.5.json"
+        },
+        {
+          "version": "2.8.6",
+          "downloads": 13823,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.server/2.8.6.json"
+        },
+        {
+          "version": "2.10.0-master-0002",
+          "downloads": 139,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.server/2.10.0-master-0002.json"
+        }
+      ]
+    },
+    {
+      "@id": "https://api.nuget.org/v3/registration0/nugettest.common.core.nuget/1.0.136.json",
+      "@type": "Package",
+      "registration": "https://api.nuget.org/v3/registration0/nugettest.common.core.nuget/index.json",
+      "id": "NuGetTest.Common.Core.Nuget",
+      "description": "NuGetTest.Common.Core.Nuget",
+      "summary": "NuGetTest.Common.Core.Nuget",
+      "title": "NuGetTest.Common.Core.Nuget",
+      "tags": [
+        "NuGetTest.Common.Core.Nuget"
+      ],
+      "authors": [
+        "bbelanger"
+      ],
+      "totalDownloads": 439,
+      "version": "1.0.136",
+      "versions": [
+        {
+          "version": "1.0.124",
+          "downloads": 37,
+          "@id": "https://api.nuget.org/v3/registration0/nugettest.common.core.nuget/1.0.124.json"
+        },
+        {
+          "version": "1.0.128",
+          "downloads": 37,
+          "@id": "https://api.nuget.org/v3/registration0/nugettest.common.core.nuget/1.0.128.json"
+        },
+        {
+          "version": "1.0.129",
+          "downloads": 37,
+          "@id": "https://api.nuget.org/v3/registration0/nugettest.common.core.nuget/1.0.129.json"
+        },
+        {
+          "version": "1.0.131",
+          "downloads": 41,
+          "@id": "https://api.nuget.org/v3/registration0/nugettest.common.core.nuget/1.0.131.json"
+        },
+        {
+          "version": "1.0.136",
+          "downloads": 287,
+          "@id": "https://api.nuget.org/v3/registration0/nugettest.common.core.nuget/1.0.136.json"
+        }
+      ]
+    },
+    {
+      "@id": "https://api.nuget.org/v3/registration0/nugettest.common.web.nuget/1.0.136.json",
+      "@type": "Package",
+      "registration": "https://api.nuget.org/v3/registration0/nugettest.common.web.nuget/index.json",
+      "id": "NuGetTest.Common.Web.Nuget",
+      "description": "NuGetTest.Common.Web.Nuget",
+      "summary": "NuGetTest.Common.Web.Nuget",
+      "title": "NuGetTest.Common.Web.Nuget",
+      "tags": [
+        "NuGetTest.Common.Web.Nuget"
+      ],
+      "authors": [
+        "bbelanger"
+      ],
+      "totalDownloads": 361,
+      "version": "1.0.136",
+      "versions": [
+        {
+          "version": "1.0.128",
+          "downloads": 37,
+          "@id": "https://api.nuget.org/v3/registration0/nugettest.common.web.nuget/1.0.128.json"
+        },
+        {
+          "version": "1.0.129",
+          "downloads": 37,
+          "@id": "https://api.nuget.org/v3/registration0/nugettest.common.web.nuget/1.0.129.json"
+        },
+        {
+          "version": "1.0.131",
+          "downloads": 40,
+          "@id": "https://api.nuget.org/v3/registration0/nugettest.common.web.nuget/1.0.131.json"
+        },
+        {
+          "version": "1.0.136",
+          "downloads": 247,
+          "@id": "https://api.nuget.org/v3/registration0/nugettest.common.web.nuget/1.0.136.json"
+        }
+      ]
+    },
+    {
+      "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.powershellcmdlets/1.0.0-pre-20150120222735.json",
+      "@type": "Package",
+      "registration": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.powershellcmdlets/index.json",
+      "id": "NuGet.PackageManagement.PowerShellCmdlets",
+      "description": "nuget powershell cmdlets",
+      "title": "NuGet.PackageManagement.PowerShellCmdlets",
+      "projectUrl": "https://github.com/NuGet/NuGet.PackageManagement/",
+      "tags": [
+        "nuget",
+        "powershell",
+        "cmdlets"
+      ],
+      "authors": [
+        "NuGet"
+      ],
+      "totalDownloads": 902,
+      "version": "1.0.0-pre-20150120222735",
+      "versions": [
+        {
+          "version": "1.0.0-pre-20150108220120",
+          "downloads": 33,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.powershellcmdlets/1.0.0-pre-20150108220120.json"
+        },
+        {
+          "version": "1.0.0-pre-20150109041044",
+          "downloads": 35,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.powershellcmdlets/1.0.0-pre-20150109041044.json"
+        },
+        {
+          "version": "1.0.0-pre-20150109221438",
+          "downloads": 36,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.powershellcmdlets/1.0.0-pre-20150109221438.json"
+        },
+        {
+          "version": "1.0.0-pre-20150113002637",
+          "downloads": 35,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.powershellcmdlets/1.0.0-pre-20150113002637.json"
+        },
+        {
+          "version": "1.0.0-pre-20150114010525",
+          "downloads": 36,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.powershellcmdlets/1.0.0-pre-20150114010525.json"
+        },
+        {
+          "version": "1.0.0-pre-20150114203726",
+          "downloads": 33,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.powershellcmdlets/1.0.0-pre-20150114203726.json"
+        },
+        {
+          "version": "1.0.0-pre-20150115000116",
+          "downloads": 35,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.powershellcmdlets/1.0.0-pre-20150115000116.json"
+        },
+        {
+          "version": "1.0.0-pre-20150115005247",
+          "downloads": 34,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.powershellcmdlets/1.0.0-pre-20150115005247.json"
+        },
+        {
+          "version": "1.0.0-pre-20150115014018",
+          "downloads": 34,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.powershellcmdlets/1.0.0-pre-20150115014018.json"
+        },
+        {
+          "version": "1.0.0-pre-20150115032412",
+          "downloads": 34,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.powershellcmdlets/1.0.0-pre-20150115032412.json"
+        },
+        {
+          "version": "1.0.0-pre-20150115092313",
+          "downloads": 37,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.powershellcmdlets/1.0.0-pre-20150115092313.json"
+        },
+        {
+          "version": "1.0.0-pre-20150115233649",
+          "downloads": 38,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.powershellcmdlets/1.0.0-pre-20150115233649.json"
+        },
+        {
+          "version": "1.0.0-pre-20150116045818",
+          "downloads": 32,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.powershellcmdlets/1.0.0-pre-20150116045818.json"
+        },
+        {
+          "version": "1.0.0-pre-20150116184314",
+          "downloads": 32,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.powershellcmdlets/1.0.0-pre-20150116184314.json"
+        },
+        {
+          "version": "1.0.0-pre-20150116234335",
+          "downloads": 33,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.powershellcmdlets/1.0.0-pre-20150116234335.json"
+        },
+        {
+          "version": "1.0.0-pre-20150116235400",
+          "downloads": 38,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.powershellcmdlets/1.0.0-pre-20150116235400.json"
+        },
+        {
+          "version": "1.0.0-pre-20150117005009",
+          "downloads": 32,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.powershellcmdlets/1.0.0-pre-20150117005009.json"
+        },
+        {
+          "version": "1.0.0-pre-20150117062856-d",
+          "downloads": 39,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.powershellcmdlets/1.0.0-pre-20150117062856-d.json"
+        },
+        {
+          "version": "1.0.0-pre-20150119214850",
+          "downloads": 34,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.powershellcmdlets/1.0.0-pre-20150119214850.json"
+        },
+        {
+          "version": "1.0.0-pre-20150119215441",
+          "downloads": 33,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.powershellcmdlets/1.0.0-pre-20150119215441.json"
+        },
+        {
+          "version": "1.0.0-pre-20150120004859",
+          "downloads": 36,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.powershellcmdlets/1.0.0-pre-20150120004859.json"
+        },
+        {
+          "version": "1.0.0-pre-20150120222735",
+          "downloads": 173,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.powershellcmdlets/1.0.0-pre-20150120222735.json"
+        }
+      ]
+    },
+    {
+      "@id": "https://api.nuget.org/v3/registration0/tvl.nuget.buildtasks/1.0.0-alpha002.json",
+      "@type": "Package",
+      "registration": "https://api.nuget.org/v3/registration0/tvl.nuget.buildtasks/index.json",
+      "id": "Tvl.NuGet.BuildTasks",
+      "description": "MSBuild integration for NuGet package creation",
+      "summary": "MSBuild integration for NuGet package creation",
+      "title": "NuGet MSBuild Tasks by Tunnel Vision Labs",
+      "licenseUrl": "https://raw.github.com/tunnelvisionlabs/NuGetBuildTasks/master/LICENSE.md",
+      "projectUrl": "https://github.com/tunnelvisionlabs/NuGetBuildTasks",
+      "tags": [
+        "nuget",
+        "msbuild"
+      ],
+      "authors": [
+        "Sam Harwell"
+      ],
+      "totalDownloads": 1778,
+      "version": "1.0.0-alpha002",
+      "versions": [
+        {
+          "version": "1.0.0-alpha001",
+          "downloads": 35,
+          "@id": "https://api.nuget.org/v3/registration0/tvl.nuget.buildtasks/1.0.0-alpha001.json"
+        },
+        {
+          "version": "1.0.0-alpha002",
+          "downloads": 1743,
+          "@id": "https://api.nuget.org/v3/registration0/tvl.nuget.buildtasks/1.0.0-alpha002.json"
+        }
+      ]
+    },
+    {
+      "@id": "https://api.nuget.org/v3/registration0/baseclass.contrib.nuget.gitignorecontent/0.0.2.json",
+      "@type": "Package",
+      "registration": "https://api.nuget.org/v3/registration0/baseclass.contrib.nuget.gitignorecontent/index.json",
+      "id": "Baseclass.Contrib.Nuget.GitIgnoreContent",
+      "description": "Ignore nuget content files in git:\n\t\t\t- Generate entries in the .gitignore file to exclude nuget content files from the source repository\n\t\t\t- Restore nuget content files before building (Automatically in VS and manually with a powershell script\n\t\t\t- Use Initialize-GitIgnore to add it to an existing solution",
+      "summary": "Ignore nuget content files in git",
+      "title": "Baseclass.Contrib.Nuget.GitIgnoreContent",
+      "licenseUrl": "http://www.baseclass.ch/documents/MITLicense.txt",
+      "projectUrl": "http://www.baseclass.ch/Contrib/Nuget",
+      "tags": [
+        "Nuget",
+        "Content",
+        "Files",
+        "Git",
+        "Ignore",
+        "GitIgnore"
+      ],
+      "authors": [
+        "Daniel Romero"
+      ],
+      "totalDownloads": 580,
+      "version": "0.0.2",
+      "versions": [
+        {
+          "version": "0.0.2",
+          "downloads": 580,
+          "@id": "https://api.nuget.org/v3/registration0/baseclass.contrib.nuget.gitignorecontent/0.0.2.json"
+        }
+      ]
+    },
+    {
+      "@id": "https://api.nuget.org/v3/registration0/msbuild.nuget.pack/1.6.1.json",
+      "@type": "Package",
+      "registration": "https://api.nuget.org/v3/registration0/msbuild.nuget.pack/index.json",
+      "id": "MsBuild.NuGet.Pack",
+      "description": "This package contains the msbuild support for packaging a NuGet package for a project.",
+      "summary": "Includes MSBuild support for generating NuGet packages for a project.",
+      "title": "MsBuild NuGet Packager",
+      "projectUrl": "https://github.com/roryprimrose/MsBuild.NuGet.Pack",
+      "tags": [
+        "msbuild",
+        "nuget"
+      ],
+      "authors": [
+        "Rory Primrose"
+      ],
+      "totalDownloads": 1843,
+      "version": "1.6.1",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "downloads": 97,
+          "@id": "https://api.nuget.org/v3/registration0/msbuild.nuget.pack/1.0.0.0.json"
+        },
+        {
+          "version": "1.1.0",
+          "downloads": 46,
+          "@id": "https://api.nuget.org/v3/registration0/msbuild.nuget.pack/1.1.0.json"
+        },
+        {
+          "version": "1.2.0",
+          "downloads": 164,
+          "@id": "https://api.nuget.org/v3/registration0/msbuild.nuget.pack/1.2.0.json"
+        },
+        {
+          "version": "1.3.0",
+          "downloads": 49,
+          "@id": "https://api.nuget.org/v3/registration0/msbuild.nuget.pack/1.3.0.json"
+        },
+        {
+          "version": "1.4.0",
+          "downloads": 349,
+          "@id": "https://api.nuget.org/v3/registration0/msbuild.nuget.pack/1.4.0.json"
+        },
+        {
+          "version": "1.5.0",
+          "downloads": 63,
+          "@id": "https://api.nuget.org/v3/registration0/msbuild.nuget.pack/1.5.0.json"
+        },
+        {
+          "version": "1.6.0",
+          "downloads": 98,
+          "@id": "https://api.nuget.org/v3/registration0/msbuild.nuget.pack/1.6.0.json"
+        },
+        {
+          "version": "1.6.1",
+          "downloads": 977,
+          "@id": "https://api.nuget.org/v3/registration0/msbuild.nuget.pack/1.6.1.json"
+        }
+      ]
+    },
+    {
+      "@id": "https://api.nuget.org/v3/registration0/overmangroup.nuget.packager/1.2.0.json",
+      "@type": "Package",
+      "registration": "https://api.nuget.org/v3/registration0/overmangroup.nuget.packager/index.json",
+      "id": "OvermanGroup.NuGet.Packager",
+      "description": "This NuGet package adds configurable MSBuild tasks to your project so that you can easily create and publish NuGet packages automatically after your project is built.",
+      "summary": "MSBuild tasks for creating and publishing NuGet packages.",
+      "title": "OvermanGroup.NuGet.Packager",
+      "iconUrl": "https://raw.githubusercontent.com/OvermanGroup/OvermanGroup.NuGet.Packager/master/PackageIcon.png",
+      "licenseUrl": "https://raw.githubusercontent.com/OvermanGroup/OvermanGroup.NuGet.Packager/master/COPYRIGHT.txt",
+      "projectUrl": "https://github.com/OvermanGroup/OvermanGroup.NuGet.Packager",
+      "tags": [
+        "nuget",
+        "pack",
+        "push",
+        "package",
+        "build",
+        "msbuild",
+        "automation"
+      ],
+      "authors": [
+        "Overman Group,  LLC."
+      ],
+      "totalDownloads": 887,
+      "version": "1.2.0",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "downloads": 71,
+          "@id": "https://api.nuget.org/v3/registration0/overmangroup.nuget.packager/1.0.0.json"
+        },
+        {
+          "version": "1.0.1",
+          "downloads": 67,
+          "@id": "https://api.nuget.org/v3/registration0/overmangroup.nuget.packager/1.0.1.json"
+        },
+        {
+          "version": "1.1.0",
+          "downloads": 412,
+          "@id": "https://api.nuget.org/v3/registration0/overmangroup.nuget.packager/1.1.0.json"
+        },
+        {
+          "version": "1.2.0",
+          "downloads": 337,
+          "@id": "https://api.nuget.org/v3/registration0/overmangroup.nuget.packager/1.2.0.json"
+        }
+      ]
+    },
+    {
+      "@id": "https://api.nuget.org/v3/registration0/nuget.installcommandlineextension/1.1.json",
+      "@type": "Package",
+      "registration": "https://api.nuget.org/v3/registration0/nuget.installcommandlineextension/index.json",
+      "id": "NuGet.InstallCommandLineExtension",
+      "description": "Adds a Install-CommandLineExtension cmdlet to the NuGet Package Manager Console.",
+      "summary": "This NuGet package automates the installation of the NuGet command line extension packages into the LOCALAPPDATA\\NuGet\\Commands folder.",
+      "title": "NuGet InstallCommandLineExtension Cmdlet",
+      "licenseUrl": "https://github.com/xavierdecoster/NuGet.Analyze/blob/master/COPYRIGHT.txt",
+      "projectUrl": "https://github.com/xavierdecoster/NuGet.Analyze",
+      "tags": [
+        "extension",
+        "install",
+        "nuget",
+        "commandline",
+        "ConsoleExtension"
+      ],
+      "authors": [
+        "Xavier Decoster"
+      ],
+      "totalDownloads": 2513,
+      "version": "1.1",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "downloads": 967,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.installcommandlineextension/1.0.json"
+        },
+        {
+          "version": "1.1.0",
+          "downloads": 1546,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.installcommandlineextension/1.1.json"
+        }
+      ]
+    },
+    {
+      "@id": "https://api.nuget.org/v3/registration0/nuget.versioner/1.0.0.20926.json",
+      "@type": "Package",
+      "registration": "https://api.nuget.org/v3/registration0/nuget.versioner/index.json",
+      "id": "NuGet.Versioner",
+      "description": "NuGet.Versioner makes it a snap to automatically produce versioned NuGet packages by extracting version information from your .dll or .exe during Visual Studio Post-build events.\n\nPlease see project home page for details on how to use NuGet.Versioner.",
+      "summary": "NuGet.Versioner makes it a snap to automatically produce versioned NuGet packages by extracting version information from your .dll or .exe during Visual Studio Post-build events.",
+      "title": "NuGet.Versioner",
+      "licenseUrl": "http://nugetversioner.codeplex.com/license",
+      "projectUrl": "http://nugetversioner.codeplex.com/",
+      "tags": [
+        "NuGet"
+      ],
+      "authors": [
+        "Ryan Graham"
+      ],
+      "totalDownloads": 1891,
+      "version": "1.0.0.20926",
+      "versions": [
+        {
+          "version": "1.0.0.20926",
+          "downloads": 1891,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.versioner/1.0.0.20926.json"
+        }
+      ]
+    },
+    {
+      "@id": "https://api.nuget.org/v3/registration0/nuget.analyze/2.0.0-alpha.json",
+      "@type": "Package",
+      "registration": "https://api.nuget.org/v3/registration0/nuget.analyze/index.json",
+      "id": "NuGet.Analyze",
+      "description": "Adds an \"Analyze\" command to NuGet.exe, allowing you to analyze NuGet package dependencies directly from source control, even when no packages checked in.",
+      "summary": "Provides source code repository analysis functionality in terms of NuGet package dependencies.",
+      "title": "NuGet Analyze",
+      "licenseUrl": "https://github.com/xavierdecoster/NuGet.Analyze/blob/master/COPYRIGHT.txt",
+      "projectUrl": "https://github.com/xavierdecoster/NuGet.Analyze",
+      "tags": [
+        "extension",
+        "nuget",
+        "analyse",
+        "tfs",
+        "commandline",
+        "ConsoleExtension"
+      ],
+      "authors": [
+        "Xavier Decoster,  Maarten Balliauw"
+      ],
+      "totalDownloads": 1474,
+      "version": "2.0.0-alpha",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "downloads": 171,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.analyze/1.0.json"
+        },
+        {
+          "version": "1.1.0",
+          "downloads": 1204,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.analyze/1.1.json"
+        },
+        {
+          "version": "2.0.0-alpha",
+          "downloads": 99,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.analyze/2.0.0-alpha.json"
+        }
+      ]
+    },
+    {
+      "@id": "https://api.nuget.org/v3/registration0/more.build.tasks.nuget/1.0.2.json",
+      "@type": "Package",
+      "registration": "https://api.nuget.org/v3/registration0/more.build.tasks.nuget/index.json",
+      "id": "More.Build.Tasks.NuGet",
+      "description": "Microsoft Build tasks used to create NuGet packages and their references.",
+      "summary": "Provides MSBuild tasks for creating NuGet packages (*.nupkg). These tasks also integrate with T4 templates (*.tt) so that you can keep the version numbers of dependent packages in your solution up-to-date during the build process.",
+      "title": "More NuGet Build Tasks",
+      "iconUrl": "https://raw.githubusercontent.com/commonsensesoftware/More.Build/master/src/More.png",
+      "licenseUrl": "https://raw.githubusercontent.com/commonsensesoftware/More.Build/master/LICENSE",
+      "projectUrl": "https://github.com/commonsensesoftware/more.build",
+      "tags": [
+        "More",
+        "MSBuild",
+        "NuGet"
+      ],
+      "authors": [
+        ""
+      ],
+      "totalDownloads": 118,
+      "version": "1.0.2",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "downloads": 29,
+          "@id": "https://api.nuget.org/v3/registration0/more.build.tasks.nuget/1.0.0.json"
+        },
+        {
+          "version": "1.0.1",
+          "downloads": 48,
+          "@id": "https://api.nuget.org/v3/registration0/more.build.tasks.nuget/1.0.1.json"
+        },
+        {
+          "version": "1.0.2",
+          "downloads": 41,
+          "@id": "https://api.nuget.org/v3/registration0/more.build.tasks.nuget/1.0.2.json"
+        }
+      ]
+    },
+    {
+      "@id": "https://api.nuget.org/v3/registration0/workabyte.nuget.packager.core/1.0.2.json",
+      "@type": "Package",
+      "registration": "https://api.nuget.org/v3/registration0/workabyte.nuget.packager.core/index.json",
+      "id": "WorkAByte.NuGet.Packager.Core",
+      "description": "Some personal modifications to a great NuGet package template for visual studio.\n      Moved the files that should not be modified by the user to a NuGet package so that future improvements could be pulled into the project without having to recreate it",
+      "summary": "Files used to create and publish a NuGet package from a C# project.",
+      "title": "WorkAByte.NuGet.Packager.Core",
+      "iconUrl": "https://nuget.org/Content/Images/packageDefaultIcon-50x50.png",
+      "licenseUrl": "http://opensource.org/licenses/Apache-2.0",
+      "projectUrl": "https://nuget.org/packages/WorkAByte.NuGet.Packager.Core",
+      "tags": [
+        "NuGet",
+        "Project"
+      ],
+      "authors": [
+        "workabyte"
+      ],
+      "totalDownloads": 471,
+      "version": "1.0.2",
+      "versions": [
+        {
+          "version": "1.0.0-beta",
+          "downloads": 44,
+          "@id": "https://api.nuget.org/v3/registration0/workabyte.nuget.packager.core/1.0.0-beta.json"
+        },
+        {
+          "version": "1.0.1-beta",
+          "downloads": 38,
+          "@id": "https://api.nuget.org/v3/registration0/workabyte.nuget.packager.core/1.0.1-beta.json"
+        },
+        {
+          "version": "1.0.2",
+          "downloads": 389,
+          "@id": "https://api.nuget.org/v3/registration0/workabyte.nuget.packager.core/1.0.2.json"
+        }
+      ]
+    },
+    {
+      "@id": "https://api.nuget.org/v3/registration0/nuget.restore/1.0.1-pre.json",
+      "@type": "Package",
+      "registration": "https://api.nuget.org/v3/registration0/nuget.restore/index.json",
+      "id": "NuGet.Restore",
+      "description": "Provides the best-practice, NuGet-team blessed, most reliable and performant way of performing\n\t\t\tautomatic NuGet package restore across MSBuild and XBuild, without causing unnecessary extra\n\t\t\trestores from Visual Studio and Xamarin Studio, which handle the restore already by themselves.\n\n\t\t\tThe existing and obsolete import of NuGet.targets is explicitly advised against by the NuGet team.\n\t\t\tThis new approach leverages the built-in support in MSBuild for solution-level MSBuild imports\n\t\t\tso that restoring packages is done only ONCE for an entire solution, and it's NOT used when doing\n\t\t\tIDE builds.",
+      "summary": "Provides the best-practice, NuGet-team blessed, most reliable and performant way of performing\n\t\t\tautomatic NuGet package restore across MSBuild and XBuild, without causing unnecessary extra\n\t\t\trestores from Visual Studio and Xamarin Studio, which handle the restore already by themselves.",
+      "title": "NuGet Restore Ultimate Cross Platform",
+      "iconUrl": "https://raw.github.com/kzu/NuGet.Restore/master/img/icon.png",
+      "licenseUrl": "https://github.com/kzu/NuGet.Restore/blob/master/LICENSE",
+      "projectUrl": "https://github.com/kzu/NuGet.Restore",
+      "tags": [
+        "msbuild",
+        "nuget"
+      ],
+      "authors": [
+        "Daniel Cazzulino,  kzu"
+      ],
+      "totalDownloads": 143,
+      "version": "1.0.1-pre",
+      "versions": [
+        {
+          "version": "1.0.0-pre",
+          "downloads": 31,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.restore/1.0.0-pre.json"
+        },
+        {
+          "version": "1.0.1-pre",
+          "downloads": 112,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.restore/1.0.1-pre.json"
+        }
+      ]
+    },
+    {
+      "@id": "https://api.nuget.org/v3/registration0/wolfpack.contrib.checks.nuget/3.0.20.json",
+      "@type": "Package",
+      "registration": "https://api.nuget.org/v3/registration0/wolfpack.contrib.checks.nuget/index.json",
+      "id": "Wolfpack.Contrib.Checks.NuGet",
+      "description": "Provide a health check plugin for Wolfpack Distributed Monitoring System that will alert when a new version of a NuGet package is available",
+      "summary": "Provide a health check plugin for Wolfpack Distributed Monitoring System that will alert when a new version of a NuGet package is available",
+      "title": "Wolfpack.Contrib.Checks.NuGet",
+      "iconUrl": "http://download.codeplex.com/Project/Download/FileDownload.aspx?ProjectName=Wolfpack&DownloadId=140622&Build=17672",
+      "licenseUrl": "http://wolfpackcontrib.codeplex.com/license",
+      "projectUrl": "http://wolfpackcontrib.codeplex.com/",
+      "tags": [
+        "Wolfpack",
+        "Monitoring",
+        "NuGet"
+      ],
+      "authors": [
+        "James Simmonds"
+      ],
+      "totalDownloads": 1224,
+      "version": "3.0.20",
+      "versions": [
+        {
+          "version": "2.3.0.5",
+          "downloads": 298,
+          "@id": "https://api.nuget.org/v3/registration0/wolfpack.contrib.checks.nuget/2.3.0.5.json"
+        },
+        {
+          "version": "2.4.0",
+          "downloads": 469,
+          "@id": "https://api.nuget.org/v3/registration0/wolfpack.contrib.checks.nuget/2.4.0.json"
+        },
+        {
+          "version": "3.0.10-pre",
+          "downloads": 54,
+          "@id": "https://api.nuget.org/v3/registration0/wolfpack.contrib.checks.nuget/3.0.10-pre.json"
+        },
+        {
+          "version": "3.0.12-pre",
+          "downloads": 55,
+          "@id": "https://api.nuget.org/v3/registration0/wolfpack.contrib.checks.nuget/3.0.12-pre.json"
+        },
+        {
+          "version": "3.0.13-pre",
+          "downloads": 55,
+          "@id": "https://api.nuget.org/v3/registration0/wolfpack.contrib.checks.nuget/3.0.13-pre.json"
+        },
+        {
+          "version": "3.0.17",
+          "downloads": 68,
+          "@id": "https://api.nuget.org/v3/registration0/wolfpack.contrib.checks.nuget/3.0.17.json"
+        },
+        {
+          "version": "3.0.19",
+          "downloads": 55,
+          "@id": "https://api.nuget.org/v3/registration0/wolfpack.contrib.checks.nuget/3.0.19.json"
+        },
+        {
+          "version": "3.0.20",
+          "downloads": 170,
+          "@id": "https://api.nuget.org/v3/registration0/wolfpack.contrib.checks.nuget/3.0.20.json"
+        }
+      ]
+    },
+    {
+      "@id": "https://api.nuget.org/v3/registration0/nuget.lucene/3.1.0.json",
+      "@type": "Package",
+      "registration": "https://api.nuget.org/v3/registration0/nuget.lucene/index.json",
+      "id": "NuGet.Lucene",
+      "description": "Implementation of NuGet package repository that stores package metadata in a Lucene index for very fast package lookup and search capabilities. Includes an optional file system watcher that will keep packages on disk in sync with the Lucene index. This package does not serve as a standalone package feed or package server; instead it must be embedded in other projects.",
+      "summary": "Provides NuGet package repository that stores package metadata in a Lucene index for very fast package lookup and search capabilities.",
+      "title": "NuGet.Lucene",
+      "licenseUrl": "https://github.com/themotleyfool/NuGet.Lucene/blob/master/LICENSE.txt",
+      "projectUrl": "https://github.com/themotleyfool/NuGet.Lucene",
+      "tags": [
+        "nuget"
+      ],
+      "authors": [
+        ""
+      ],
+      "totalDownloads": 3236,
+      "version": "3.1.0",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "downloads": 107,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.lucene/1.0.0.json"
+        },
+        {
+          "version": "1.0.1",
+          "downloads": 101,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.lucene/1.0.1.json"
+        },
+        {
+          "version": "1.0.3",
+          "downloads": 245,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.lucene/1.0.3.json"
+        },
+        {
+          "version": "1.1.0",
+          "downloads": 77,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.lucene/1.1.0.json"
+        },
+        {
+          "version": "1.1.1",
+          "downloads": 139,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.lucene/1.1.1.json"
+        },
+        {
+          "version": "1.2.0",
+          "downloads": 138,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.lucene/1.2.0.json"
+        },
+        {
+          "version": "2.0.0",
+          "downloads": 91,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.lucene/2.0.0.json"
+        },
+        {
+          "version": "2.1.0",
+          "downloads": 90,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.lucene/2.1.0.json"
+        },
+        {
+          "version": "2.2.0",
+          "downloads": 77,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.lucene/2.2.0.json"
+        },
+        {
+          "version": "2.2.1",
+          "downloads": 78,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.lucene/2.2.1.json"
+        },
+        {
+          "version": "2.3.0",
+          "downloads": 104,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.lucene/2.3.0.json"
+        },
+        {
+          "version": "2.4.0",
+          "downloads": 74,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.lucene/2.4.0.json"
+        },
+        {
+          "version": "2.5.0",
+          "downloads": 80,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.lucene/2.5.0.json"
+        },
+        {
+          "version": "2.6.0",
+          "downloads": 130,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.lucene/2.6.0.json"
+        },
+        {
+          "version": "2.7.0",
+          "downloads": 81,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.lucene/2.7.0.json"
+        },
+        {
+          "version": "2.7.1",
+          "downloads": 75,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.lucene/2.7.1.json"
+        },
+        {
+          "version": "2.8.0",
+          "downloads": 75,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.lucene/2.8.0.json"
+        },
+        {
+          "version": "2.9.0",
+          "downloads": 69,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.lucene/2.9.0.json"
+        },
+        {
+          "version": "2.9.1",
+          "downloads": 74,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.lucene/2.9.1.json"
+        },
+        {
+          "version": "2.9.2",
+          "downloads": 83,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.lucene/2.9.2.json"
+        },
+        {
+          "version": "2.9.3",
+          "downloads": 70,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.lucene/2.9.3.json"
+        },
+        {
+          "version": "2.9.4",
+          "downloads": 615,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.lucene/2.9.4.json"
+        },
+        {
+          "version": "3.0.0",
+          "downloads": 87,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.lucene/3.0.0.json"
+        },
+        {
+          "version": "3.0.1",
+          "downloads": 182,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.lucene/3.0.1.json"
+        },
+        {
+          "version": "3.0.2",
+          "downloads": 72,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.lucene/3.0.2.json"
+        },
+        {
+          "version": "3.0.3",
+          "downloads": 113,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.lucene/3.0.3.json"
+        },
+        {
+          "version": "3.1.0",
+          "downloads": 109,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.lucene/3.1.0.json"
+        }
+      ]
+    },
+    {
+      "@id": "https://api.nuget.org/v3/registration0/nuget.client.v2/0.2.0-pre-20150114165552-d.json",
+      "@type": "Package",
+      "registration": "https://api.nuget.org/v3/registration0/nuget.client.v2/index.json",
+      "id": "NuGet.Client.V2",
+      "description": "NuGet v2.0.0 resources",
+      "title": "NuGet.Client.V2",
+      "projectUrl": "https://github.com/NuGet/NuGet.Client.V2/",
+      "authors": [
+        "NuGet"
+      ],
+      "totalDownloads": 169,
+      "version": "0.2.0-pre-20150114165552-d",
+      "versions": [
+        {
+          "version": "0.2.0-pre-20150114165552-d",
+          "downloads": 169,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v2/0.2.0-pre-20150114165552-d.json"
+        }
+      ]
+    },
+    {
+      "@id": "https://api.nuget.org/v3/registration0/nuget.client.basetypes/0.2.0-pre-20150112215135.json",
+      "@type": "Package",
+      "registration": "https://api.nuget.org/v3/registration0/nuget.client.basetypes/index.json",
+      "id": "NuGet.Client.BaseTypes",
+      "description": "NuGet v3.0.0 core types",
+      "title": "NuGet.Client.BaseTypes",
+      "projectUrl": "https://github.com/NuGet/NuGet.Client.V3/",
+      "authors": [
+        "NuGet"
+      ],
+      "totalDownloads": 3900,
+      "version": "0.2.0-pre-20150112215135",
+      "versions": [
+        {
+          "version": "0.1.0-clean-43652353",
+          "downloads": 39,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.basetypes/0.1.0-clean-43652353.json"
+        },
+        {
+          "version": "0.1.0-clean-43652357",
+          "downloads": 42,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.basetypes/0.1.0-clean-43652357.json"
+        },
+        {
+          "version": "0.1.0-clean-50022319",
+          "downloads": 41,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.basetypes/0.1.0-clean-50022319.json"
+        },
+        {
+          "version": "0.1.0-clean-50050608",
+          "downloads": 41,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.basetypes/0.1.0-clean-50050608.json"
+        },
+        {
+          "version": "0.1.0-clean-50050820",
+          "downloads": 47,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.basetypes/0.1.0-clean-50050820.json"
+        },
+        {
+          "version": "0.1.0-clean-50050929",
+          "downloads": 45,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.basetypes/0.1.0-clean-50050929.json"
+        },
+        {
+          "version": "0.1.0-clean-50060051",
+          "downloads": 38,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.basetypes/0.1.0-clean-50060051.json"
+        },
+        {
+          "version": "0.1.0-clean-50060056",
+          "downloads": 46,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.basetypes/0.1.0-clean-50060056.json"
+        },
+        {
+          "version": "0.1.0-Download-43572338",
+          "downloads": 0,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.basetypes/0.1.0-download-43572338.json"
+        },
+        {
+          "version": "0.1.0-master-43530216",
+          "downloads": 43,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.basetypes/0.1.0-master-43530216.json"
+        },
+        {
+          "version": "0.1.0-master-43530230",
+          "downloads": 71,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.basetypes/0.1.0-master-43530230.json"
+        },
+        {
+          "version": "0.1.0-pre-20150108021821",
+          "downloads": 36,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.basetypes/0.1.0-pre-20150108021821.json"
+        },
+        {
+          "version": "0.1.1-master-1224",
+          "downloads": 37,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.basetypes/0.1.1-master-1224.json"
+        },
+        {
+          "version": "0.1.1",
+          "downloads": 1296,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.basetypes/0.1.1.json"
+        },
+        {
+          "version": "0.1.2-master-1224",
+          "downloads": 60,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.basetypes/0.1.2-master-1224.json"
+        },
+        {
+          "version": "0.1.5-master-1230",
+          "downloads": 43,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.basetypes/0.1.5-master-1230.json"
+        },
+        {
+          "version": "0.1.8-master-1230",
+          "downloads": 59,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.basetypes/0.1.8-master-1230.json"
+        },
+        {
+          "version": "0.1.9-a20141231204536-119",
+          "downloads": 75,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.basetypes/0.1.9-a20141231204536-119.json"
+        },
+        {
+          "version": "0.1.9-a20150106051637-536",
+          "downloads": 864,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.basetypes/0.1.9-a20150106051637-536.json"
+        },
+        {
+          "version": "0.1.9-a20150108072730-966",
+          "downloads": 40,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.basetypes/0.1.9-a20150108072730-966.json"
+        },
+        {
+          "version": "0.2.0-pre-20150108022927",
+          "downloads": 42,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.basetypes/0.2.0-pre-20150108022927.json"
+        },
+        {
+          "version": "0.2.0-pre-20150108075218",
+          "downloads": 53,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.basetypes/0.2.0-pre-20150108075218.json"
+        },
+        {
+          "version": "0.2.0-pre-20150108075344",
+          "downloads": 37,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.basetypes/0.2.0-pre-20150108075344.json"
+        },
+        {
+          "version": "0.2.0-pre-20150109013546",
+          "downloads": 61,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.basetypes/0.2.0-pre-20150109013546.json"
+        },
+        {
+          "version": "0.2.0-pre-20150109205622",
+          "downloads": 35,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.basetypes/0.2.0-pre-20150109205622.json"
+        },
+        {
+          "version": "0.2.0-pre-20150109223208",
+          "downloads": 43,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.basetypes/0.2.0-pre-20150109223208.json"
+        },
+        {
+          "version": "0.2.0-pre-20150109225656",
+          "downloads": 66,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.basetypes/0.2.0-pre-20150109225656.json"
+        },
+        {
+          "version": "0.2.0-pre-20150112215135",
+          "downloads": 530,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.basetypes/0.2.0-pre-20150112215135.json"
+        }
+      ]
+    },
+    {
+      "@id": "https://api.nuget.org/v3/registration0/nuget.client.visualstudio/0.2.0-pre-20150112215430.json",
+      "@type": "Package",
+      "registration": "https://api.nuget.org/v3/registration0/nuget.client.visualstudio/index.json",
+      "id": "NuGet.Client.VisualStudio",
+      "description": "NuGet v3.0.0 visual studio types",
+      "title": "NuGet.Client.VisualStudio",
+      "projectUrl": "https://github.com/NuGet/NuGet.Client.V3/",
+      "authors": [
+        "NuGet"
+      ],
+      "totalDownloads": 1907,
+      "version": "0.2.0-pre-20150112215430",
+      "versions": [
+        {
+          "version": "0.1.0-clean-50010005",
+          "downloads": 37,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.visualstudio/0.1.0-clean-50010005.json"
+        },
+        {
+          "version": "0.1.0-clean-50050616",
+          "downloads": 38,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.visualstudio/0.1.0-clean-50050616.json"
+        },
+        {
+          "version": "0.1.0-clean-50052152",
+          "downloads": 37,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.visualstudio/0.1.0-clean-50052152.json"
+        },
+        {
+          "version": "0.1.0-clean-50060103",
+          "downloads": 42,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.visualstudio/0.1.0-clean-50060103.json"
+        },
+        {
+          "version": "0.1.0-Download-43572349",
+          "downloads": 0,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.visualstudio/0.1.0-download-43572349.json"
+        },
+        {
+          "version": "0.1.0-master-43530238",
+          "downloads": 64,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.visualstudio/0.1.0-master-43530238.json"
+        },
+        {
+          "version": "0.1.2-master-1224",
+          "downloads": 52,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.visualstudio/0.1.2-master-1224.json"
+        },
+        {
+          "version": "0.1.3-a20141231204717-158",
+          "downloads": 64,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.visualstudio/0.1.3-a20141231204717-158.json"
+        },
+        {
+          "version": "0.1.3-a20150105185427-016",
+          "downloads": 41,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.visualstudio/0.1.3-a20150105185427-016.json"
+        },
+        {
+          "version": "0.1.3-a20150106051707-928",
+          "downloads": 843,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.visualstudio/0.1.3-a20150106051707-928.json"
+        },
+        {
+          "version": "0.1.3-a20150108072746-556",
+          "downloads": 39,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.visualstudio/0.1.3-a20150108072746-556.json"
+        },
+        {
+          "version": "0.1.5-master-1230",
+          "downloads": 42,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.visualstudio/0.1.5-master-1230.json"
+        },
+        {
+          "version": "0.1.8-master-1230",
+          "downloads": 61,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.visualstudio/0.1.8-master-1230.json"
+        },
+        {
+          "version": "0.2.0-pre-20150108023312",
+          "downloads": 43,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.visualstudio/0.2.0-pre-20150108023312.json"
+        },
+        {
+          "version": "0.2.0-pre-20150108081726",
+          "downloads": 38,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.visualstudio/0.2.0-pre-20150108081726.json"
+        },
+        {
+          "version": "0.2.0-pre-20150109014424",
+          "downloads": 42,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.visualstudio/0.2.0-pre-20150109014424.json"
+        },
+        {
+          "version": "0.2.0-pre-20150109062345",
+          "downloads": 47,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.visualstudio/0.2.0-pre-20150109062345.json"
+        },
+        {
+          "version": "0.2.0-pre-20150109205952",
+          "downloads": 33,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.visualstudio/0.2.0-pre-20150109205952.json"
+        },
+        {
+          "version": "0.2.0-pre-20150110003113",
+          "downloads": 48,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.visualstudio/0.2.0-pre-20150110003113.json"
+        },
+        {
+          "version": "0.2.0-pre-20150112215430",
+          "downloads": 261,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.visualstudio/0.2.0-pre-20150112215430.json"
+        }
+      ]
+    },
+    {
+      "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3/1.0.1-pre-20150112215546.json",
+      "@type": "Package",
+      "registration": "https://api.nuget.org/v3/registration0/nuget.client.v3/index.json",
+      "id": "NuGet.Client.V3",
+      "description": "NuGet version 3.0.0 client library.",
+      "title": "NuGet.Client.V3",
+      "projectUrl": "https://github.com/NuGet/NuGet.Client.V3/",
+      "authors": [
+        "NuGet"
+      ],
+      "totalDownloads": 2430,
+      "version": "1.0.1-pre-20150112215546",
+      "versions": [
+        {
+          "version": "0.1.2-master-1224",
+          "downloads": 42,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3/0.1.2-master-1224.json"
+        },
+        {
+          "version": "0.1.3-master-1224",
+          "downloads": 54,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3/0.1.3-master-1224.json"
+        },
+        {
+          "version": "0.1.7-master-1230",
+          "downloads": 42,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3/0.1.7-master-1230.json"
+        },
+        {
+          "version": "0.1.8-master-1230",
+          "downloads": 40,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3/0.1.8-master-1230.json"
+        },
+        {
+          "version": "0.1.9-master-1230",
+          "downloads": 57,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3/0.1.9-master-1230.json"
+        },
+        {
+          "version": "1.0.0-a20141231205406-980",
+          "downloads": 66,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3/1.0.0-a20141231205406-980.json"
+        },
+        {
+          "version": "1.0.0-a20150105190653-502",
+          "downloads": 46,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3/1.0.0-a20150105190653-502.json"
+        },
+        {
+          "version": "1.0.0-a20150106053848-968",
+          "downloads": 818,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3/1.0.0-a20150106053848-968.json"
+        },
+        {
+          "version": "1.0.0-a20150108073128-447",
+          "downloads": 40,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3/1.0.0-a20150108073128-447.json"
+        },
+        {
+          "version": "1.0.0-a20150108162503-407",
+          "downloads": 37,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3/1.0.0-a20150108162503-407.json"
+        },
+        {
+          "version": "1.0.0-a20150108175210-183",
+          "downloads": 42,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3/1.0.0-a20150108175210-183.json"
+        },
+        {
+          "version": "1.0.0-clean-50010001",
+          "downloads": 41,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3/1.0.0-clean-50010001.json"
+        },
+        {
+          "version": "1.0.0-clean-50050226",
+          "downloads": 42,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3/1.0.0-clean-50050226.json"
+        },
+        {
+          "version": "1.0.0-clean-50050612",
+          "downloads": 43,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3/1.0.0-clean-50050612.json"
+        },
+        {
+          "version": "1.0.0-clean-50050824",
+          "downloads": 46,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3/1.0.0-clean-50050824.json"
+        },
+        {
+          "version": "1.0.0-clean-50060100",
+          "downloads": 47,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3/1.0.0-clean-50060100.json"
+        },
+        {
+          "version": "1.0.0-Download-43572346",
+          "downloads": 0,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3/1.0.0-download-43572346.json"
+        },
+        {
+          "version": "1.0.0-master-43452327",
+          "downloads": 43,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3/1.0.0-master-43452327.json"
+        },
+        {
+          "version": "1.0.0-master-43530237",
+          "downloads": 80,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3/1.0.0-master-43530237.json"
+        },
+        {
+          "version": "1.0.1-pre-20150108023137",
+          "downloads": 44,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3/1.0.1-pre-20150108023137.json"
+        },
+        {
+          "version": "1.0.1-pre-20150108081559",
+          "downloads": 46,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3/1.0.1-pre-20150108081559.json"
+        },
+        {
+          "version": "1.0.1-pre-20150109014018",
+          "downloads": 47,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3/1.0.1-pre-20150109014018.json"
+        },
+        {
+          "version": "1.0.1-pre-20150109090202",
+          "downloads": 52,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3/1.0.1-pre-20150109090202.json"
+        },
+        {
+          "version": "1.0.1-pre-20150110003021",
+          "downloads": 66,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3/1.0.1-pre-20150110003021.json"
+        },
+        {
+          "version": "1.0.1-pre-20150112215546",
+          "downloads": 509,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3/1.0.1-pre-20150112215546.json"
+        }
+      ]
+    },
+    {
+      "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3.visualstudio/0.2.0-pre-20150112215741.json",
+      "@type": "Package",
+      "registration": "https://api.nuget.org/v3/registration0/nuget.client.v3.visualstudio/index.json",
+      "id": "NuGet.Client.V3.VisualStudio",
+      "description": "NuGet v3.0.0 visual studio client",
+      "title": "NuGet.Client.V3.VisualStudio",
+      "projectUrl": "https://github.com/NuGet/NuGet.Client.V3/",
+      "authors": [
+        "NuGet"
+      ],
+      "totalDownloads": 1856,
+      "version": "0.2.0-pre-20150112215741",
+      "versions": [
+        {
+          "version": "0.1.0-clean-50010009",
+          "downloads": 37,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3.visualstudio/0.1.0-clean-50010009.json"
+        },
+        {
+          "version": "0.1.0-clean-50050620",
+          "downloads": 36,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3.visualstudio/0.1.0-clean-50050620.json"
+        },
+        {
+          "version": "0.1.0-clean-50052155",
+          "downloads": 35,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3.visualstudio/0.1.0-clean-50052155.json"
+        },
+        {
+          "version": "0.1.0-clean-50060101",
+          "downloads": 37,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3.visualstudio/0.1.0-clean-50060101.json"
+        },
+        {
+          "version": "0.1.0-clean-50060148",
+          "downloads": 43,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3.visualstudio/0.1.0-clean-50060148.json"
+        },
+        {
+          "version": "0.1.0-master-43530246",
+          "downloads": 43,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3.visualstudio/0.1.0-master-43530246.json"
+        },
+        {
+          "version": "0.1.2-master-1224",
+          "downloads": 38,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3.visualstudio/0.1.2-master-1224.json"
+        },
+        {
+          "version": "0.1.3-master-1224",
+          "downloads": 51,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3.visualstudio/0.1.3-master-1224.json"
+        },
+        {
+          "version": "0.1.4-a20141231205519-480",
+          "downloads": 39,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3.visualstudio/0.1.4-a20141231205519-480.json"
+        },
+        {
+          "version": "0.1.4-a20141231224234-030",
+          "downloads": 60,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3.visualstudio/0.1.4-a20141231224234-030.json"
+        },
+        {
+          "version": "0.1.4-a20150105190725-965",
+          "downloads": 43,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3.visualstudio/0.1.4-a20150105190725-965.json"
+        },
+        {
+          "version": "0.1.4-a20150106054137-621",
+          "downloads": 769,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3.visualstudio/0.1.4-a20150106054137-621.json"
+        },
+        {
+          "version": "0.1.4-a20150108073205-315",
+          "downloads": 35,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3.visualstudio/0.1.4-a20150108073205-315.json"
+        },
+        {
+          "version": "0.1.4-a20150108162518-683",
+          "downloads": 36,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3.visualstudio/0.1.4-a20150108162518-683.json"
+        },
+        {
+          "version": "0.1.4-a20150108175256-085",
+          "downloads": 38,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3.visualstudio/0.1.4-a20150108175256-085.json"
+        },
+        {
+          "version": "0.1.7-master-1230",
+          "downloads": 40,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3.visualstudio/0.1.7-master-1230.json"
+        },
+        {
+          "version": "0.1.8-master-1230",
+          "downloads": 39,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3.visualstudio/0.1.8-master-1230.json"
+        },
+        {
+          "version": "0.1.9-master-1230",
+          "downloads": 52,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3.visualstudio/0.1.9-master-1230.json"
+        },
+        {
+          "version": "0.2.0-pre-20150108023854",
+          "downloads": 41,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3.visualstudio/0.2.0-pre-20150108023854.json"
+        },
+        {
+          "version": "0.2.0-pre-20150109014920",
+          "downloads": 43,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3.visualstudio/0.2.0-pre-20150109014920.json"
+        },
+        {
+          "version": "0.2.0-pre-20150109063605",
+          "downloads": 37,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3.visualstudio/0.2.0-pre-20150109063605.json"
+        },
+        {
+          "version": "0.2.0-pre-20150109090354",
+          "downloads": 39,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3.visualstudio/0.2.0-pre-20150109090354.json"
+        },
+        {
+          "version": "0.2.0-pre-20150110003326",
+          "downloads": 45,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3.visualstudio/0.2.0-pre-20150110003326.json"
+        },
+        {
+          "version": "0.2.0-pre-20150112215741",
+          "downloads": 180,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v3.visualstudio/0.2.0-pre-20150112215741.json"
+        }
+      ]
+    },
+    {
+      "@id": "https://api.nuget.org/v3/registration0/nuget.client.v2.visualstudio/0.2.0-pre-20150114165736-d.json",
+      "@type": "Package",
+      "registration": "https://api.nuget.org/v3/registration0/nuget.client.v2.visualstudio/index.json",
+      "id": "NuGet.Client.V2.VisualStudio",
+      "description": "NuGet v2.0.0 VisualStudio resources",
+      "title": "NuGet.Client.V2.VisualStudio",
+      "projectUrl": "https://github.com/NuGet/NuGet.Client.V2.VisualStudio/",
+      "authors": [
+        "NuGet"
+      ],
+      "totalDownloads": 86,
+      "version": "0.2.0-pre-20150114165736-d",
+      "versions": [
+        {
+          "version": "0.2.0-pre-20150114165736-d",
+          "downloads": 86,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.client.v2.visualstudio/0.2.0-pre-20150114165736-d.json"
+        }
+      ]
+    },
+    {
+      "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.ui/3.2.0.json",
+      "@type": "Package",
+      "registration": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.ui/index.json",
+      "id": "NuGet.PackageManagement.UI",
+      "description": "NuGet's Package Management UI for Visual Studio",
+      "title": "NuGet's Package Management UI for Visual Studio",
+      "licenseUrl": "https://raw.githubusercontent.com/NuGet/NuGet.Protocol/master/LICENSE",
+      "projectUrl": "https://github.com/NuGet/NuGet.Protocol/",
+      "authors": [
+        "NuGet"
+      ],
+      "totalDownloads": 1569,
+      "version": "3.2.0",
+      "versions": [
+        {
+          "version": "1.0.0-master-50072039",
+          "downloads": 46,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.ui/1.0.0-master-50072039.json"
+        },
+        {
+          "version": "1.0.0-pre-20150113185431",
+          "downloads": 35,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.ui/1.0.0-pre-20150113185431.json"
+        },
+        {
+          "version": "1.0.0-pre-20150113213755",
+          "downloads": 41,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.ui/1.0.0-pre-20150113213755.json"
+        },
+        {
+          "version": "1.0.0-pre-20150113224715",
+          "downloads": 39,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.ui/1.0.0-pre-20150113224715.json"
+        },
+        {
+          "version": "1.0.0-pre-20150114175143",
+          "downloads": 37,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.ui/1.0.0-pre-20150114175143.json"
+        },
+        {
+          "version": "1.0.0-pre-20150114202419",
+          "downloads": 34,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.ui/1.0.0-pre-20150114202419.json"
+        },
+        {
+          "version": "1.0.0-pre-20150114225403",
+          "downloads": 33,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.ui/1.0.0-pre-20150114225403.json"
+        },
+        {
+          "version": "1.0.0-pre-20150114231830",
+          "downloads": 34,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.ui/1.0.0-pre-20150114231830.json"
+        },
+        {
+          "version": "1.0.0-pre-20150114233059",
+          "downloads": 34,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.ui/1.0.0-pre-20150114233059.json"
+        },
+        {
+          "version": "1.0.0-pre-20150115003026",
+          "downloads": 34,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.ui/1.0.0-pre-20150115003026.json"
+        },
+        {
+          "version": "1.0.0-pre-20150115013522",
+          "downloads": 33,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.ui/1.0.0-pre-20150115013522.json"
+        },
+        {
+          "version": "1.0.0-pre-20150115032317",
+          "downloads": 35,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.ui/1.0.0-pre-20150115032317.json"
+        },
+        {
+          "version": "1.0.0-pre-20150115092013",
+          "downloads": 38,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.ui/1.0.0-pre-20150115092013.json"
+        },
+        {
+          "version": "1.0.0-pre-20150117000710",
+          "downloads": 36,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.ui/1.0.0-pre-20150117000710.json"
+        },
+        {
+          "version": "1.0.0-pre-20150117062417",
+          "downloads": 39,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.ui/1.0.0-pre-20150117062417.json"
+        },
+        {
+          "version": "1.0.0-pre-20150119233009",
+          "downloads": 42,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.ui/1.0.0-pre-20150119233009.json"
+        },
+        {
+          "version": "1.0.0-pre-20150120004853",
+          "downloads": 37,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.ui/1.0.0-pre-20150120004853.json"
+        },
+        {
+          "version": "1.0.0-pre-20150120183407",
+          "downloads": 36,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.ui/1.0.0-pre-20150120183407.json"
+        },
+        {
+          "version": "1.0.0-pre-20150120213232",
+          "downloads": 35,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.ui/1.0.0-pre-20150120213232.json"
+        },
+        {
+          "version": "1.0.0-pre-20150121014550",
+          "downloads": 70,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.ui/1.0.0-pre-20150121014550.json"
+        },
+        {
+          "version": "3.2.0",
+          "downloads": 801,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.packagemanagement.ui/3.2.0.json"
+        }
+      ]
+    },
+    {
+      "@id": "https://api.nuget.org/v3/registration0/github-nuget-distributor.githubnugetdistributor/1.0.21.json",
+      "@type": "Package",
+      "registration": "https://api.nuget.org/v3/registration0/github-nuget-distributor.githubnugetdistributor/index.json",
+      "id": "github-nuget-distributor.GithubNugetDistributor",
+      "description": "This tool allows you to publish all (or specific) projects from your Github account directly into Nuget.",
+      "title": "github-nuget-distributor.GithubNugetDistributor",
+      "projectUrl": "https://github.com/ffMathy/github-nuget-distributor",
+      "authors": [
+        "Mathias Lykkegaard Lorenzen"
+      ],
+      "totalDownloads": 670,
+      "version": "1.0.21",
+      "versions": [
+        {
+          "version": "1.0.21",
+          "downloads": 392,
+          "@id": "https://api.nuget.org/v3/registration0/github-nuget-distributor.githubnugetdistributor/1.0.21.json"
+        }
+      ]
+    },
+    {
+      "@id": "https://api.nuget.org/v3/registration0/nuget.configuration/3.3.0.json",
+      "@type": "Package",
+      "registration": "https://api.nuget.org/v3/registration0/nuget.configuration/index.json",
+      "id": "NuGet.Configuration",
+      "description": "NuGet's client configuration settings implementation.",
+      "title": "NuGet.Configuration",
+      "licenseUrl": "https://raw.githubusercontent.com/NuGet/NuGet.Configuration/master/LICENSE",
+      "projectUrl": "https://github.com/NuGet/NuGet.Configuration/",
+      "tags": [
+        "nuget",
+        "configuration",
+        "nuget.config"
+      ],
+      "authors": [
+        ""
+      ],
+      "totalDownloads": 4404,
+      "version": "3.3.0",
+      "versions": [
+        {
+          "version": "1.0.0-master-50021939",
+          "downloads": 38,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.configuration/1.0.0-master-50021939.json"
+        },
+        {
+          "version": "1.0.0-master-50022312",
+          "downloads": 48,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.configuration/1.0.0-master-50022312.json"
+        },
+        {
+          "version": "1.0.0-master-50072103",
+          "downloads": 38,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.configuration/1.0.0-master-50072103.json"
+        },
+        {
+          "version": "1.0.0-master-50072112",
+          "downloads": 37,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.configuration/1.0.0-master-50072112.json"
+        },
+        {
+          "version": "1.0.0-master-50072129",
+          "downloads": 33,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.configuration/1.0.0-master-50072129.json"
+        },
+        {
+          "version": "1.0.0-master-50072141",
+          "downloads": 578,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.configuration/1.0.0-master-50072141.json"
+        },
+        {
+          "version": "1.0.0-master-50130044",
+          "downloads": 69,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.configuration/1.0.0-master-50130044.json"
+        },
+        {
+          "version": "1.0.0-pre-20150120004813",
+          "downloads": 123,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.configuration/1.0.0-pre-20150120004813.json"
+        },
+        {
+          "version": "1.0.0-pre-20150120213154",
+          "downloads": 125,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.configuration/1.0.0-pre-20150120213154.json"
+        },
+        {
+          "version": "1.0.0-pre-20150121001901",
+          "downloads": 172,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.configuration/1.0.0-pre-20150121001901.json"
+        },
+        {
+          "version": "1.0.0-pre-20150129080212",
+          "downloads": 106,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.configuration/1.0.0-pre-20150129080212.json"
+        },
+        {
+          "version": "1.0.0-pre-20150220022541",
+          "downloads": 29,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.configuration/1.0.0-pre-20150220022541.json"
+        },
+        {
+          "version": "1.0.0-pre-20150220022717",
+          "downloads": 1075,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.configuration/1.0.0-pre-20150220022717.json"
+        },
+        {
+          "version": "3.2.0",
+          "downloads": 1152,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.configuration/3.2.0.json"
+        },
+        {
+          "version": "3.3.0",
+          "downloads": 781,
+          "@id": "https://api.nuget.org/v3/registration0/nuget.configuration/3.3.0.json"
+        }
+      ]
+    }
+  ]
+}

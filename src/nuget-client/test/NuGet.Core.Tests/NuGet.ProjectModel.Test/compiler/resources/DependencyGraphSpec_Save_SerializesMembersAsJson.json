@@ -1,0 +1,25 @@
+{
+  "format": 1,
+  "restore": {
+    "a": {},
+    "b": {},
+    "c": {}
+  },
+  "projects": {
+    "a": {
+      "restore": {
+        "projectUniqueName": "a"
+      }
+    },
+    "b": {
+      "restore": {
+        "projectUniqueName": "b"
+      }
+    },
+    "c": {
+      "restore": {
+        "projectUniqueName": "c"
+      }
+    }
+  }
+}
