@@ -1,0 +1,25 @@
+{
+  "tools": {
+    "dotnet": "7.0.100-preview.7.22377.5",
+    "runtimes": {
+      "dotnet/x64": [
+        "$(MicrosoftNETCoreApp31Version)",
+        "$(MicrosoftNETCoreApp60Version)",
+        "$(VSRedistCommonNetCoreSharedFrameworkx6470Version)"
+      ],
+      "dotnet/x86": [
+        "$(MicrosoftNETCoreApp31Version)",
+        "$(MicrosoftNETCoreApp60Version)",
+        "$(VSRedistCommonNetCoreSharedFrameworkx6470Version)"
+      ],
+      "dotnet/arm64": [
+        "$(MicrosoftNETCoreApp60Version)",
+        "$(VSRedistCommonNetCoreSharedFrameworkx6470Version)"
+      ]
+    }
+  },
+  "msbuild-sdks": {
+    "Microsoft.Build.NoTargets": "3.5.0",
+    "Microsoft.DotNet.Arcade.Sdk": "7.0.0-beta.22419.1"
+  }
+}

@@ -1,0 +1,32 @@
+<Project>
+  <Import Project="$(MSBuildThisFileDirectory)..\Directory.Build.props"/>
+  <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
+
+  <PropertyGroup>
+    <IsShipping>false</IsShipping>
+    <WarnOnPackingNonPackableProject>false</WarnOnPackingNonPackableProject>
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+    <DebugSymbols>true</DebugSymbols>
+    <BundledToolsPath>$(ArtifactsDir)bundledtools/</BundledToolsPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net462'">
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)' != 'net462'">
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
+  <Import Project="$(RepositoryEngineeringDir)native\naming.props" />
+  <Import Condition="'$(DotNetBuildFromSource)' != 'true'"
+          Project="$(RepositoryEngineeringDir)Analyzers.props" />
+</Project>

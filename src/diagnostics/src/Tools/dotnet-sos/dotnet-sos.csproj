@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <ToolCommandName>dotnet-sos</ToolCommandName>
+    <RootNamespace>Microsoft.Diagnostics.Tools.SOS</RootNamespace>
+    <Description>Diagnostic SOS installer</Description>
+    <PackageTags>Diagnostic</PackageTags>
+    <PackageReleaseNotes>$(Description)</PackageReleaseNotes>
+    <SOSPackagePathPrefix>tools/$(TargetFramework)/any</SOSPackagePathPrefix>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\Common\CommandExtensions.cs" Link="CommandExtensions.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(MSBuildThisFileDirectory)..\..\SOS\SOS.InstallHelper\SOS.InstallHelper.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.CommandLine" Version="$(SystemCommandLineVersion)" />
+  </ItemGroup>
+
+  <Import Project="$(MSBuildThisFileDirectory)..\..\sos-packaging.props" />
+    
+  <ItemGroup>
+      <None Include="$(SOSExtensionsBinaries)">
+        <Visible>false</Visible>
+        <Pack>true</Pack>
+        <PackagePath>$(SOSPackagePathPrefix)/lib</PackagePath>
+        <Link Condition="'$(PublishSingleFile)' == 'true'">lib/%(Filename)%(Extension)</Link>
+        <CopyToOutputDirectory Condition="'$(PublishSingleFile)' == 'true'">PreserveNewest</CopyToOutputDirectory>
+      </None>
+  </ItemGroup>
+</Project>
