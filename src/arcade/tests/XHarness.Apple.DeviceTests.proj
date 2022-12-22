@@ -1,0 +1,20 @@
+<Project DefaultTargets="Test">
+  <Import Project="./XHarness.Tests.Common.props"/>
+
+  <!--
+    This is a project used in integration tests of Arcade.
+    It tests sending tvOS (XHarness) workloads using the Helix SDK.
+    It builds a mock project that does not build the apps but only downloads them from a storage account.
+   -->
+
+  <!-- Test project which builds app bundle to run via XHarness -->
+  <ItemGroup>
+    <XHarnessAppleProject Include="$(MSBuildThisFileDirectory)XHarness\XHarness.Apple.Device.Archived.proj" />
+    <HelixTargetQueue Include="osx.1015.amd64.appletv.open" />
+  </ItemGroup>
+
+  <Target Name="Pack"/>
+
+  <!-- See UnitTests.proj in above folder for why this is included directly-from-repo -->
+  <Import Project="$(MSBuildThisFileDirectory)\..\src\Microsoft.DotNet.Helix\Sdk\sdk\Sdk.targets"/>
+</Project>

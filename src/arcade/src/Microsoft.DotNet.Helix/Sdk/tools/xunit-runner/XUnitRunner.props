@@ -1,0 +1,5 @@
+<Project>
+  <PropertyGroup>
+    <_HelixMonoQueueTargets>$(_HelixMonoQueueTargets);$(MSBuildThisFileDirectory)XUnitRunner.targets</_HelixMonoQueueTargets>
+  </PropertyGroup>
+</Project>

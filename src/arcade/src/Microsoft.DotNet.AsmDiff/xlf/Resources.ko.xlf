@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="ko" original="../Resources.resx">
+    <body>
+      <trans-unit id="MarkdownAPIListTitle">
+        <source># API List of {0}</source>
+        <target state="translated"># {0}의 API 목록</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MarkdownDiffDescription">
+        <source>API listing follows standard diff formatting.
+Lines preceded by a '+' are additions and a '-' indicates removal.</source>
+        <target state="translated">API 목록은 표준 차이 서식을 따릅니다.
+앞에 '+'로 시작하는 줄은 추가이며 '-'는 제거를 나타냅니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MarkdownTitle">
+        <source># API Difference {0} vs {1}</source>
+        <target state="translated"># API 차이 {0} 및 {1}</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

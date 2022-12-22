@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <Import Project="..\Directory.Build.props" />
+
+  <!-- Don't let it restore lower versions of this package, which can come transitively from NetStandard package restores (CSProj only) -->
+  <ItemGroup Condition="'$(MSBuildProjectExtension)' == '.csproj'" >
+    <PackageReference Include="System.Security.Cryptography.X509Certificates" Version="$(SystemSecurityCryptographyX509CertificatesVersion)" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,53 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+  <UsingTask TaskName="ChooseBestTargetFrameworksTask" AssemblyFile="$(DotNetBuildTasksTargetFrameworkAssembly)" />
+
+  <!-- We filter _InnerBuildProjects items during DispatchToInnerBuilds and Clean to only run for best target frameworks. -->
+  <Target Name="RunOnlyBestTargetFrameworks"
+          Condition="'$(BuildTargetFramework)' != ''" 
+          BeforeTargets="DispatchToInnerBuilds;Clean"
+          DependsOnTargets="GetProjectWithBestTargetFrameworks">
+    <ItemGroup>
+      <_OriginalInnerBuildProjects Include="@(_InnerBuildProjects)" />
+      <_InnerBuildProjects Remove="@(_InnerBuildProjects)" />
+      <_InnerBuildProjects Include="@(InnerBuildProjectsWithBestTargetFramework)" />
+    </ItemGroup>
+  </Target>
+  
+  <!-- As _InnerBuildProjects items are used in the GetTargetFrameworks path as well (>= .NET 5), we restore the item state. -->
+  <Target Name="RestoreInnerBuildProjects"
+          BeforeTargets="GetTargetFrameworksWithPlatformFromInnerBuilds"
+          AfterTargets="DispatchToInnerBuilds;Clean"
+          Condition="'@(_OriginalInnerBuildProjects)' != ''">
+    <ItemGroup>
+      <_InnerBuildProjects Remove="@(_InnerBuildProjects)" />
+      <_InnerBuildProjects Include="@(_OriginalInnerBuildProjects)" />
+    </ItemGroup>
+  </Target>
+  
+  <Target Name="GetProjectWithBestTargetFrameworks">
+    <ItemGroup Condition="'$(BuildTargetFramework)' != ''">
+      <_BuildTargetFrameworkWithTargetOS Include="$(BuildTargetFramework)-$(TargetOS)" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(BuildTargetFramework)' == ''">
+      <_BuildTargetFrameworkWithoutOS Include="$([MSBuild]::Unescape($([System.Text.RegularExpressions.Regex]::Replace('$(TargetFrameworks)', '(-[^;]+)', ''))))" />
+      <!-- TODO: Find a better way to filter out non applicable TargetOS values for .NET Framework. -->
+      <_BuildTargetFrameworkWithTargetOS Include="@(_BuildTargetFrameworkWithoutOS->Distinct()->'%(Identity)-$(TargetOS)')"
+                                         Condition="'$(TargetOS)' == 'windows' or !$([System.String]::Copy('%(Identity)').StartsWith('net4'))" />
+    </ItemGroup>
+    
+    <ChooseBestTargetFrameworksTask BuildTargetFrameworks="@(_BuildTargetFrameworkWithTargetOS);$(AdditionalBuildTargetFrameworks)"
+                                    SupportedTargetFrameworks="$(TargetFrameworks)"
+                                    RuntimeGraph="$(RuntimeGraph)"
+                                    Distinct="true">
+      <Output TaskParameter="BestTargetFrameworks" ItemName="_BestTargetFramework" />
+    </ChooseBestTargetFrameworksTask>
+
+    <!-- Create inner build project nodes with the TargetFramework supplied via AdditionalProperties. -->
+    <ItemGroup>
+      <_BestTargetFramework Project="$(MSBuildProjectFile)" />
+      <InnerBuildProjectsWithBestTargetFramework Include="%(_BestTargetFramework.Project)"
+                                                 AdditionalProperties="TargetFramework=%(Identity)" />
+    </ItemGroup>
+  </Target>
+</Project>

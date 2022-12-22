@@ -1,0 +1,8 @@
+<Project>
+
+  <PropertyGroup>
+    <ArchiveFormat Condition="$([MSBuild]::IsOSPlatform(Windows)) AND '$(ArchiveFormat)' == ''">zip</ArchiveFormat>
+    <ArchiveFormat Condition="!$([MSBuild]::IsOSPlatform(Windows)) AND '$(ArchiveFormat)' == ''">tar.gz</ArchiveFormat>
+  </PropertyGroup>
+
+</Project>

@@ -1,0 +1,56 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net472;$(TargetFrameworkForNETSDK)</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Microsoft.Arcade.Test.Common\Microsoft.Arcade.Test.Common.csproj" />
+    <ProjectReference Include="..\Microsoft.DotNet.Build.Tasks.Workloads\src\Microsoft.DotNet.Build.Tasks.Workloads.csproj" />
+
+    <PackageReference Include="Microsoft.Build" Version="$(MicrosoftBuildVersion)" />
+    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="$(MicrosoftBuildTasksCoreVersion)" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="$(MicrosoftBuildUtilitiesCoreVersion)" />
+    <PackageReference Include="Microsoft.Build.Framework" Version="$(MicrosoftBuildFrameworkVersion)" />
+    <PackageReference Include="Microsoft.Deployment.DotNet.Releases" Version="$(MicrosoftDeploymentDotNetReleasesVersion)" />
+    <PackageReference Include="Microsoft.NET.Sdk.WorkloadManifestReader" Version="$(MicrosoftNetSdkWorkloadManifestReaderVersion)" />
+    <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
+    <PackageReference Include="System.Text.Json" Version="$(SystemTextJsonVersion)" Condition="'$(TargetFramework)' == 'net472'" />
+    <PackageReference Include="NuGet.Packaging" Version="$(NuGetVersion)" />
+    <PackageReference Include="Microsoft.Signed.Wix" Version="$(MicrosoftSignedWixVersion)" GeneratePathProperty="true"/>
+    <PackageReference Include="Microsoft.NET.Workload.Mono.ToolChain.Manifest-6.0.200" Version="6.0.3" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.iOS.Templates" Version="15.2.302-preview.14.122" GeneratePathProperty="true" />    
+
+    <!-- We can only test the task properly by building an actual workload end-to-end. EMSDK is the tiniest one available -->
+    <PackageReference Include="Microsoft.NET.Workload.Emscripten.Manifest-6.0.200" Version="6.0.4" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.NET.Runtime.Emscripten.2.0.23.Node.win-x64" Version="6.0.4" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.NET.Runtime.Emscripten.2.0.23.Python.win-x64" Version="6.0.4" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.NET.Runtime.Emscripten.2.0.23.Sdk.win-x64" Version="6.0.4" GeneratePathProperty="true" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="testassets\**\*" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="$(PkgMicrosoft_Signed_Wix)\tools\**\*" Link="testassets\wix\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <Content Include="$(PkgMicrosoft_NET_Workload_Mono_ToolChain_Manifest-6_0_200)\*.nupkg" Link="testassets\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <Content Include="$(PkgMicrosoft_iOS_Templates)\*.nupkg" Link="testassets\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <Content Include="$(PkgMicrosoft_NET_Workload_Emscripten_Manifest-6_0_200)\*.nupkg" Link="testassets\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <Content Include="$(PkgMicrosoft_NET_Runtime_Emscripten_2_0_23_Node_win-x64)\*.nupkg" Link="testassets\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <Content Include="$(PkgMicrosoft_NET_Runtime_Emscripten_2_0_23_Python_win-x64)\*.nupkg" Link="testassets\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <Content Include="$(PkgMicrosoft_NET_Runtime_Emscripten_2_0_23_Sdk_win-x64)\*.nupkg" Link="testassets\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="testassets\AliasedPacks.json" />
+    <None Remove="testassets\emsdkWorkloadManifest.json" />
+    <None Remove="testassets\emsdkWorkloadManifest2.json" />
+    <None Remove="testassets\mauiWorkloadManifest.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="$(WixInstallPath)\Microsoft.Deployment.Resources.dll" />
+    <Reference Include="$(WixInstallPath)\Microsoft.Deployment.Compression.dll" />
+    <Reference Include="$(WixInstallPath)\Microsoft.Deployment.Compression.Cab.dll" />
+    <Reference Include="$(WixInstallPath)\Microsoft.Deployment.WindowsInstaller.dll" />
+    <Reference Include="$(WixInstallPath)\Microsoft.Deployment.WindowsInstaller.Package.dll" />
+  </ItemGroup>
+</Project>

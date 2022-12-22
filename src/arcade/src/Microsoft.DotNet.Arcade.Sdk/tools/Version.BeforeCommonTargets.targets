@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+
+  <!--
+    Compute the IsShipping* properties
+
+    Unless specified otherwise project is assumed to produce artifacts (assembly, package, vsix, etc.) that ship.
+      Test projects automatically set IsShipping to false.
+
+      Some projects may produce packages that contain shipping assemblies but the packages themselves do not ship.
+      Thes projects shall specify IsShippingPackage=false and leave IsShipping unset (will default to true).
+
+      Targets that need to determine whether an artifact is shipping shall use the artifact specific IsShippingXxx property,
+      if available for the kind of artifact they operate on.
+  -->
+  <PropertyGroup>
+    <IsShipping Condition="'$(IsShipping)' == ''">true</IsShipping>
+
+    <IsShippingAssembly Condition="'$(IsShippingAssembly)' == ''">$(IsShipping)</IsShippingAssembly>
+    <IsShippingPackage Condition="'$(IsVisualStudioBuildPackage)' == 'true'">false</IsShippingPackage>
+    <IsShippingPackage Condition="'$(IsShippingPackage)' == ''">$(IsShipping)</IsShippingPackage>
+    <IsShippingVsix Condition="'$(IsShippingVsix)' == ''">$(IsShipping)</IsShippingVsix>
+  </PropertyGroup>
+
+  <!--
+    Specification: https://github.com/dotnet/arcade/blob/master/Documentation/CorePackages/Versioning.md
+
+    Workaround for https://github.com/dotnet/sdk/issues/3173:
+    The following must be evaluated after the project file is imported but before Microsoft.NET.DefaultAssemblyInfo.targets from .NET Core SDK is imported.
+    The project may set VersionPrefix, MajorVersion, MinorVersion, or AutoGenerateAssemblyVersion properties, which are consumed below.
+    Microsoft.NET.DefaultAssemblyInfo.targets consumes VersionPrefix property, which may be set below.
+  -->
+
+  <!--
+    Version numbers calculated here are date-based. In official builds this is given by OfficialBuildId parameter,
+    but other builds do not have such input and would therefore be non-deterministic.
+  -->
+  <PropertyGroup Condition="'$(OfficialBuild)' == 'true' or '$(DotNetUseShippingVersions)' == 'true'">
+    <!--
+      Building MSIs from dev build requires file versions to be increasing.
+      Use the current date in non-official builds. Note that this reduces the deterministic properties of the build
+      and should only be enabled when it's necessary to test-install the MSIs produced by the build.
+    -->
+    <_BuildNumber>$(OfficialBuildId)</_BuildNumber>
+    <_BuildNumber Condition="'$(OfficialBuildId)' == ''">$([System.DateTime]::Now.ToString(yyyyMMdd)).1</_BuildNumber>
+
+    <!--
+      OfficialBuildId is assumed to have format "20yymmdd.r" (the assumption is checked later in a target).
+    -->
+    <_BuildNumberYY>$(_BuildNumber.Substring(2, 2))</_BuildNumberYY>
+    <_BuildNumberMM>$(_BuildNumber.Substring(4, 2))</_BuildNumberMM>
+    <_BuildNumberDD>$(_BuildNumber.Substring(6, 2))</_BuildNumberDD>
+    <_BuildNumberR>$(_BuildNumber.Substring(9))</_BuildNumberR>
+
+    <!-- SHORT_DATE := yy * 1000 + mm * 50 + dd -->
+    <VersionSuffixDateStamp>$([MSBuild]::Add($([MSBuild]::Add($([MSBuild]::Multiply($(_BuildNumberYY), 1000)), $([MSBuild]::Multiply($(_BuildNumberMM), 50)))), $(_BuildNumberDD)))</VersionSuffixDateStamp>
+
+    <!-- REVISION := r -->
+    <VersionSuffixBuildOfTheDay>$(_BuildNumberR)</VersionSuffixBuildOfTheDay>
+    <VersionSuffixBuildOfTheDayPadded>$(VersionSuffixBuildOfTheDay.PadLeft(2, $([System.Convert]::ToChar(`0`))))</VersionSuffixBuildOfTheDayPadded>
+
+    <!-- PATCH_NUMBER := (SHORT_DATE - VersionBaseShortDate) * 100 + r -->
+    <_PatchNumber>$([MSBuild]::Add($([MSBuild]::Multiply($([MSBuild]::Subtract($(VersionSuffixDateStamp), $([MSBuild]::ValueOrDefault($(VersionBaseShortDate), 19000)))), 100)), $(_BuildNumberR)))</_PatchNumber>
+  </PropertyGroup>
+
+  <!--
+    Calculate VersionPrefix.
+  -->
+
+  <!--
+    The project can specify version either directly using the .NET SDK recognized property VersionPrefix, or using MajorVersion and MinorVersion properties.
+    Note that .NET Core SDK sets VersionPrefix to 1.0.0 if not set by the project. Override it here if the project sets MajorVersion, MinorVersion, and optionally a PatchVersion.
+  -->
+  <PropertyGroup>
+    <VersionPrefix Condition="'$(MajorVersion)' != '' and '$(MinorVersion)' != ''">$(MajorVersion).$(MinorVersion).$([MSBuild]::ValueOrDefault('$(PatchVersion)', '0'))</VersionPrefix>
+    <_OriginalVersionPrefix>$(VersionPrefix)</_OriginalVersionPrefix>
+  </PropertyGroup>
+
+  <!--
+    If a package is designated to be a release-only package (PreReleaseVersionLabel is empty) its package version does
+    not include any pre-release labels in official build. The 3rd component of the version prefix is overwritten either
+    by PATCH_NUMBER or '0' in non-official builds.
+  -->
+  <PropertyGroup Condition="'$(PreReleaseVersionLabel)' == ''">
+    <_VersionPrefixMajor>$(VersionPrefix.Split('.')[0])</_VersionPrefixMajor>
+    <_VersionPrefixMinor>$(VersionPrefix.Split('.')[1])</_VersionPrefixMinor>
+    <VersionPrefix>$(_VersionPrefixMajor).$(_VersionPrefixMinor).$([MSBuild]::ValueOrDefault($(_PatchNumber), '0'))</VersionPrefix>
+    <VersionSuffix/>
+  </PropertyGroup>
+
+  <!--
+    Calculate VersionSuffix.
+  -->
+  <PropertyGroup Condition="'$(PreReleaseVersionLabel)' != '' or '$(VersionSuffixDateStamp)' == ''">
+  <!--
+      Traditionally, .NET Core has used prerelease labels like:
+      - preview1
+      - beta1,
+      - preview9
+
+      For previews, this presents a problem if we decide to release more than 9 previews, as preview10 sorts
+      after preview9. This could be dealt with by using preview01, preview02, etc. but this is harder to read.
+      Instead, repos should use preview.1, preview.2, etc. if using SemVer2. NuGet will properly preference preview.10
+      over preview.9.
+
+      If PreReleaseVersionIteration is set and SemanticVersioningV1 is not set to true, then the prerelease version
+      number is appended with a '.' to PreReleaseVersionLabel to create the final prerelease label.
+    -->
+    <_PreReleaseLabel>$(PreReleaseVersionLabel)</_PreReleaseLabel>
+    <_PreReleaseLabel Condition="'$(SemanticVersioningV1)' != 'true' and '$(PreReleaseVersionIteration)' != ''">$(PreReleaseVersionLabel).$(PreReleaseVersionIteration)</_PreReleaseLabel>
+    <_PreReleaseLabel Condition="'$(SemanticVersioningV1)' == 'true'">$(PreReleaseVersionLabel)$(PreReleaseVersionIteration)</_PreReleaseLabel>
+    <_PreReleaseLabel Condition="'$(ContinuousIntegrationBuild)' == 'true' and '$(OfficialBuild)' != 'true'">ci</_PreReleaseLabel>
+    <_PreReleaseLabel Condition="'$(ContinuousIntegrationBuild)' != 'true'">dev</_PreReleaseLabel>
+
+    <_BuildNumberLabels Condition="'$(VersionSuffixDateStamp)' != '' and '$(SemanticVersioningV1)' != 'true'">.$(VersionSuffixDateStamp).$(VersionSuffixBuildOfTheDay)</_BuildNumberLabels>
+    <_BuildNumberLabels Condition="'$(VersionSuffixDateStamp)' != '' and '$(SemanticVersioningV1)' == 'true'">-$(VersionSuffixDateStamp)-$(VersionSuffixBuildOfTheDayPadded)</_BuildNumberLabels>
+
+    <!--
+      If DotNetFinalVersionKind is specified, overrides the package version produced by the build like so:
+        ""           1.2.3-beta.12345.67
+        "prerelease" 1.2.3-beta
+        "release"    1.2.3
+    -->
+    <VersionSuffix Condition="'$(DotNetFinalVersionKind)' == 'release'"/>
+    <VersionSuffix Condition="'$(DotNetFinalVersionKind)' == 'prerelease' and '$(SemanticVersioningV1)' != 'true'">$(_PreReleaseLabel).final</VersionSuffix>
+    <VersionSuffix Condition="'$(DotNetFinalVersionKind)' == 'prerelease' and '$(SemanticVersioningV1)' == 'true'">$(_PreReleaseLabel)-final</VersionSuffix>
+    <VersionSuffix Condition="'$(DotNetFinalVersionKind)' == ''">$(_PreReleaseLabel)$(_BuildNumberLabels)</VersionSuffix>
+
+    <!--
+      Some projects want to remain producing prerelease packages even if we are doing a final stable build because
+      they don't ship or aren't ready to ship stable. Those projects can set SuppressFinalPackageVersion property to true.
+
+      TODO: BlockStable is obsolete. Remove once repos update. https://github.com/dotnet/arcade/issues/1213
+    -->
+    <VersionSuffix Condition="'$(BlockStable)' == 'true' or '$(SuppressFinalPackageVersion)' == 'true'">$(_PreReleaseLabel)$(_BuildNumberLabels)</VersionSuffix>
+
+    <!--
+      If a project produces non-shipping packages, these packages should always include the build number label
+    -->
+    <VersionSuffix Condition="'$(IsShippingPackage)' != 'true'">$(_PreReleaseLabel)$(_BuildNumberLabels)</VersionSuffix>
+
+    <!--
+      Disable NuGet Pack warning that the version is SemVer 2.0.
+      SemVer 2.0 is supported by NuGet since 3.0.0 (July 2015) in some capacity, and fully since 3.5.0 (October 2016).
+    -->
+    <NoWarn Condition="'$(SemanticVersioningV1)' != 'true'">$(NoWarn);NU5105</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(VersionSuffixDateStamp)' == ''">
+    <!--
+      Don't include a commit SHA to AssemblyInformationalVersion.
+      It would reduce the possibility of sharing otherwise unchanged build artifacts across deterministic builds.
+    -->
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+  </PropertyGroup>
+
+  <!--
+    Workaround for https://github.com/dotnet/sdk/issues/3173.
+    Overwrite the value of Version set in Microsoft.NET.DefaultAssemblyInfo.targets.
+  -->
+  <PropertyGroup>
+    <VersionPrefix Condition="'$(VersionPrefix)' == ''">1.0.0</VersionPrefix>
+    <Version>$(VersionPrefix)</Version>
+    <Version Condition="'$(VersionSuffix)' != ''">$(Version)-$(VersionSuffix)</Version>
+  </PropertyGroup>
+</Project>

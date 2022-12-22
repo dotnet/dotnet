@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+  <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.GenerateChecksums" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" />
+
+  <!--
+    Generate Checksums for the specified assets. Runs after the build of a project.
+  -->
+  <Target Name="GenerateChecksums"
+          Condition="'@(GenerateChecksumItems)' != ''"
+          AfterTargets="Build">
+
+    <Error Condition="'%(GenerateChecksumItems.DestinationPath)' == ''"
+           Text="Item &quot;%(GenerateChecksumItems.Identity)&quot; does not define required metadata &quot;DestinationPath&quot;" />
+
+    <GenerateChecksums Items="@(GenerateChecksumItems)" />
+
+    <!-- Automatically include generated checksums in the asset manifest -->
+    <ItemGroup>
+      <ItemsToPushToBlobFeed Include="@(GenerateChecksumItems -> '%(DestinationPath)')" />
+    </ItemGroup>
+  </Target>
+
+</Project>

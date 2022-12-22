@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <PropertyGroup>
+    <_PackagingCommonTargetsImported>true</_PackagingCommonTargetsImported>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackagingTaskDir Condition="'$(PackagingTaskDir)' == '' AND '$(MSBuildRuntimeType)' == 'core'">$(MSBuildThisFileDirectory)../tools/net7.0/</PackagingTaskDir>
+    <PackagingTaskDir Condition="'$(PackagingTaskDir)' == '' AND '$(MSBuildRuntimeType)' != 'core'">$(MSBuildThisFileDirectory)../tools/net472/</PackagingTaskDir>
+    <RuntimeIdGraphDefinitionFile Condition="'$(RuntimeIdGraphDefinitionFile)' == ''">$(MSBuildThisFileDirectory)runtime.json</RuntimeIdGraphDefinitionFile>
+
+    <PackageOutputPath Condition="'$(PackageOutputPath)' == ''">$([MSBuild]::NormalizeDirectory('$(BaseOutputPath)', 'pkg'))</PackageOutputPath>
+    <PackageReportDir Condition="'$(PackageReportDir)' == ''">$([MSBuild]::NormalizeDirectory('$(ArtifactsPackagesDir)', 'reports'))</PackageReportDir>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(PackageTargetRuntimeSuffix)' != ''">
+    <PackageTargetRuntime Condition="'$(PackageTargetRuntime)' != ''">$(PackageTargetRuntime)-$(PackageTargetRuntimeSuffix)</PackageTargetRuntime>
+    <PackageTargetRuntime Condition="'$(PackageTargetRuntime)' == ''">$(PackageTargetRuntimeSuffix)</PackageTargetRuntime>
+  </PropertyGroup>
+
+  <UsingTask TaskName="ApplyBaseLine" AssemblyFile="$(PackagingTaskDir)Microsoft.DotNet.Build.Tasks.Packaging.dll"/>
+  <UsingTask TaskName="ApplyMetaPackages" AssemblyFile="$(PackagingTaskDir)Microsoft.DotNet.Build.Tasks.Packaging.dll"/>
+  <UsingTask TaskName="ApplyPreReleaseSuffix" AssemblyFile="$(PackagingTaskDir)Microsoft.DotNet.Build.Tasks.Packaging.dll"/>
+  <UsingTask TaskName="CreateTrimDependencyGroups" AssemblyFile="$(PackagingTaskDir)Microsoft.DotNet.Build.Tasks.Packaging.dll"/>
+  <UsingTask TaskName="FilterUnknownPackages" AssemblyFile="$(PackagingTaskDir)Microsoft.DotNet.Build.Tasks.Packaging.dll"/>
+  <UsingTask TaskName="GenerateNuSpec" AssemblyFile="$(PackagingTaskDir)Microsoft.DotNet.Build.Tasks.Packaging.dll"/>
+  <UsingTask TaskName="GeneratePackageReport" AssemblyFile="$(PackagingTaskDir)Microsoft.DotNet.Build.Tasks.Packaging.dll"/>
+  <UsingTask TaskName="GenerateRuntimeDependencies" AssemblyFile="$(PackagingTaskDir)Microsoft.DotNet.Build.Tasks.Packaging.dll"/>
+  <UsingTask TaskName="GenerateSourceWithPublicTypesAsInternal" AssemblyFile="$(PackagingTaskDir)Microsoft.DotNet.Build.Tasks.Packaging.dll" />
+  <UsingTask TaskName="GetApplicableAssetsFromPackages" AssemblyFile="$(PackagingTaskDir)Microsoft.DotNet.Build.Tasks.Packaging.dll"/>
+  <UsingTask TaskName="GetAssemblyReferences" AssemblyFile="$(PackagingTaskDir)Microsoft.DotNet.Build.Tasks.Packaging.dll"/>
+  <UsingTask TaskName="GetInboxFrameworks" AssemblyFile="$(PackagingTaskDir)Microsoft.DotNet.Build.Tasks.Packaging.dll"/>
+  <UsingTask TaskName="GetLastStablePackage" AssemblyFile="$(PackagingTaskDir)Microsoft.DotNet.Build.Tasks.Packaging.dll"/>
+  <UsingTask TaskName="GetMinimumNETStandard" AssemblyFile="$(PackagingTaskDir)Microsoft.DotNet.Build.Tasks.Packaging.dll"/>
+  <UsingTask TaskName="GetPackageDescription" AssemblyFile="$(PackagingTaskDir)Microsoft.DotNet.Build.Tasks.Packaging.dll"/>
+  <UsingTask TaskName="GetPackageDestination" AssemblyFile="$(PackagingTaskDir)Microsoft.DotNet.Build.Tasks.Packaging.dll"/>
+  <UsingTask TaskName="GetPackageFromModule" AssemblyFile="$(PackagingTaskDir)Microsoft.DotNet.Build.Tasks.Packaging.dll"/>
+  <UsingTask TaskName="GetPackageVersion" AssemblyFile="$(PackagingTaskDir)Microsoft.DotNet.Build.Tasks.Packaging.dll"/>
+  <UsingTask TaskName="HarvestPackage" AssemblyFile="$(PackagingTaskDir)Microsoft.DotNet.Build.Tasks.Packaging.dll"/>
+  <UsingTask TaskName="NuGetPack" AssemblyFile="$(PackagingTaskDir)Microsoft.DotNet.Build.Tasks.Packaging.dll"/>
+  <UsingTask TaskName="PromoteDependencies" AssemblyFile="$(PackagingTaskDir)Microsoft.DotNet.Build.Tasks.Packaging.dll"/>
+  <UsingTask TaskName="SplitDependenciesBySupport" AssemblyFile="$(PackagingTaskDir)Microsoft.DotNet.Build.Tasks.Packaging.dll"/>
+  <UsingTask TaskName="SplitReferences" AssemblyFile="$(PackagingTaskDir)Microsoft.DotNet.Build.Tasks.Packaging.dll"/>
+  <UsingTask TaskName="UpdatePackageIndex" AssemblyFile="$(PackagingTaskDir)Microsoft.DotNet.Build.Tasks.Packaging.dll"/>
+  <UsingTask TaskName="ValidatePackage" AssemblyFile="$(PackagingTaskDir)Microsoft.DotNet.Build.Tasks.Packaging.dll"/>
+  <UsingTask TaskName="ValidateFrameworkPackage" AssemblyFile="$(PackagingTaskDir)Microsoft.DotNet.Build.Tasks.Packaging.dll"/>
+  <UsingTask TaskName="GetSupportedPackagesFromPackageReports" AssemblyFile="$(PackagingTaskDir)Microsoft.DotNet.Build.Tasks.Packaging.dll"/>
+</Project>

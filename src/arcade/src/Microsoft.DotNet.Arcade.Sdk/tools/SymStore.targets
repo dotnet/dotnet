@@ -1,0 +1,93 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+
+  <!-- This file is only imported in CI build. The conversion thus does not affect dev build. -->
+  
+  <ItemGroup>
+    <PackageReference Include="Microsoft.DiaSymReader.Pdb2Pdb" Version="$(MicrosoftDiaSymReaderPdb2PdbVersion)" Condition="'$(UsingToolPdbConverter)' == 'true'" IsImplicitlyDefined="true" PrivateAssets="all" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <_SymbolProducerTarget Condition="'$(Language)' == 'C++'">BuildLink</_SymbolProducerTarget>
+    <_SymbolProducerTarget Condition="'$(Language)' != 'C++'">CoreBuild</_SymbolProducerTarget>
+  </PropertyGroup>
+
+  <Target Name="DeployToSymStore"
+          BeforeTargets="AfterBuild" 
+          DependsOnTargets="_DeployToSymStoreSetProperties;_DeployPortableSymbolsToSymStore;_DeployWindowsSymbolsToSymStore" />
+    
+  <Target Name="_DeployToSymStoreSetProperties"
+          DependsOnTargets="$(_SymbolProducerTarget)">
+
+    <PropertyGroup>
+      <_TargetPdbPath />
+      <_TargetPdbPath Condition="'$(DebugType)' != 'embedded'">$([System.IO.Path]::ChangeExtension($(TargetPath), '.pdb'))</_TargetPdbPath>
+      <_BuildsPortablePdb>false</_BuildsPortablePdb>
+      <_BuildsPortablePdb Condition="'$(DebugType)' == 'portable' or '$(DebugType)' == 'embedded'">true</_BuildsPortablePdb>
+
+      <_SymStoreTargetFramework>$(TargetFramework)</_SymStoreTargetFramework>
+      <_SymStoreOutputDir>$(ArtifactsSymStoreDirectory)$(OutDirName)\$(_SymStoreTargetFramework)\</_SymStoreOutputDir>
+      <_SymStoreOutputDir Condition="'$(PlatformName)' != 'AnyCPU'">$(_SymStoreOutputDir)$(PlatformName)\</_SymStoreOutputDir>
+
+      <_SymStorePdbPath>$(_SymStoreOutputDir)$(TargetName).pdb</_SymStorePdbPath>
+
+      <!-- By default publish Windows PDBs only for shipping components -->
+      <PublishWindowsPdb Condition="'$(PublishWindowsPdb)' == '' and '$(IsShippingAssembly)' == 'true' and Exists('$(TargetPath)') and ('$(DebugType)' == 'embedded' or Exists('$(_TargetPdbPath)'))">true</PublishWindowsPdb>
+    </PropertyGroup>
+  </Target>
+
+  <!-- 
+    Convert Portable and Embedded PDBs. 
+    We publish converted PDBs to Symbol Store so that WinDBG can find them when debugging crash dumps.
+    Convert source link to srcsvr so that both WinDBG and VS can open the source files.
+
+    We add SRC_INDEX=public srcsvr variable in order to preserve the source server stream when 
+    it's published to the public symbol server (msdl.microsoft.com).
+  -->
+  <Target Name="_DeployPortableSymbolsToSymStore"
+          DependsOnTargets="_DeployToSymStoreSetProperties"
+          Inputs="$(TargetPath);$(_TargetPdbPath)"
+          Outputs="$(_SymStorePdbPath)"
+          Condition="'$(PublishWindowsPdb)' == 'true' and $(_BuildsPortablePdb)">
+
+    <PropertyGroup>
+      <_PdbConverterPath>$(NuGetPackageRoot)microsoft.diasymreader.pdb2pdb\$(MicrosoftDiaSymReaderPdb2PdbVersion)\tools\Pdb2Pdb.exe</_PdbConverterPath>
+      <_PdbConverterCommandLineArgs>"$(TargetPath)" /out "$(_SymStorePdbPath)" /srcsvrvar SRC_INDEX=public</_PdbConverterCommandLineArgs>
+    </PropertyGroup>
+
+    <Error Text="Attempt to publish Portable PDB to SymStore without conversion: UsingToolPdbConverter property is false in project $(MSBuildProjectName)"
+           Condition="'$(UsingToolPdbConverter)' != 'true'"
+           ContinueOnError="false"/>
+
+    <MakeDir Directories="$(_SymStoreOutputDir)"/>
+   
+    <Exec Command='"$(_PdbConverterPath)" $(_PdbConverterCommandLineArgs)' IgnoreExitCode="false" />
+
+    <ItemGroup>
+      <FileWrites Include="$(_SymStorePdbPath)"/>
+    </ItemGroup>
+  </Target>
+
+  <!-- 
+    The current MicroBuild symbol indexing task doesn't support specifying list of files to index.
+    Therefore we create hardlinks to the files in output directory, where DLLs and EXEs are signed.
+    These targets are executed after the signing phase so that we publish signed binaries to the
+    symbol store even if the files are copies and not hardlinked.
+  -->
+  <Target Name="_DeployWindowsSymbolsToSymStore"
+          DependsOnTargets="_DeployToSymStoreSetProperties"
+          Condition="'$(PublishWindowsPdb)' == 'true' and !$(_BuildsPortablePdb)"
+          Inputs="$(_TargetPdbPath)"
+          Outputs="$(_SymStorePdbPath)">
+
+    <MakeDir Directories="$(_SymStoreOutputDir)"/>
+  
+    <Copy SourceFiles="$(_TargetPdbPath)"
+          DestinationFiles="$(_SymStorePdbPath)"
+          UseHardlinksIfPossible="true"/>
+
+    <ItemGroup>
+      <FileWrites Include="$(_SymStorePdbPath)"/>
+    </ItemGroup>
+  </Target>
+</Project>

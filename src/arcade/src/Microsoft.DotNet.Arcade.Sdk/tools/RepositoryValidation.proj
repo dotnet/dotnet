@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project DefaultTargets="Validate">
+
+  <Import Project="BuildTasks.props" />
+
+  <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.ValidateLicense" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" />
+  <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.GetLicenseFilePath" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" />
+
+  <Target Name="Validate" DependsOnTargets="_ValidateLicenseFile" >
+    <Message Text="Repository validated." Importance="low" />
+  </Target>
+
+  <Target Name="_ValidateLicenseFile" Condition="('$(PackageLicenseExpression)' != '' or '$(PackageLicenseExpressionInternal)' != '') and '$(SuppressLicenseValidation)' != 'true'">
+
+    <Error Text="Can't specify value for both PackageLicenseExpression ('$(PackageLicenseExpression)') and PackageLicenseExpressionInternal ('$(PackageLicenseExpressionInternal)')"
+           Condition="'$(PackageLicenseExpression)' != '' and '$(PackageLicenseExpressionInternal)' != ''"/>
+
+    <PropertyGroup>
+      <_LicenseExpression>$(PackageLicenseExpression)</_LicenseExpression>
+      <_LicenseExpression Condition="'$(_LicenseExpression)' == ''">$(PackageLicenseExpressionInternal)</_LicenseExpression>
+
+      <_ExpectedLicensePath>$(MSBuildThisFileDirectory)Licenses\$(_LicenseExpression).txt</_ExpectedLicensePath>
+    </PropertyGroup>
+
+    <Error Text="Unknown license expression: '$(_LicenseExpression)'."
+           Condition="!Exists('$(_ExpectedLicensePath)')"/>
+
+    <Microsoft.DotNet.Arcade.Sdk.GetLicenseFilePath Directory="$(RepoRoot)">
+      <Output TaskParameter="Path" PropertyName="_RepositoryLicensePath"/>
+    </Microsoft.DotNet.Arcade.Sdk.GetLicenseFilePath>
+
+    <Microsoft.DotNet.Arcade.Sdk.ValidateLicense LicensePath="$(_RepositoryLicensePath)" 
+                                                 ExpectedLicensePath="$(_ExpectedLicensePath)" />
+  </Target>
+
+</Project>

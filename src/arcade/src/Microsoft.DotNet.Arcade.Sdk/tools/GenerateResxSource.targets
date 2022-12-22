@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+
+  <!--
+    Generates a class source for EmbeddedResource whose GenerateSource property is set to true.
+    The source file is generated to intermediate output dir to avoid polluting the source tree.
+    See https://github.com/dotnet/sdk/issues/94 that tracks productization of this code.
+  -->
+
+  <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.GenerateResxSource" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" />
+  
+  <!-- Set the Generator metadata so that VS triggers design-time build whenever the .resx file is saved -->
+  <ItemGroup>
+    <EmbeddedResource Update="@(EmbeddedResource)">
+      <GenerateSource Condition="'%(Extension)' == '.resx' and '%(GenerateSource)' == '' and '$(GenerateResxSource)' == 'true'">true</GenerateSource>
+      <Generator Condition="'%(Extension)' == '.resx' and '%(Generator)' == '' and ('%(GenerateSource)' == 'true' or ('%(GenerateSource)' == '' and '$(GenerateResxSource)' == 'true') )">MSBuild:_GenerateResxSource</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <!--
+    Note: Targets that generate Compile items are expected to run before BeforeCompile targets (common targets convention).
+  -->
+  <Target Name="_GenerateResxSource"
+          BeforeTargets="BeforeCompile;CoreCompile"
+          DependsOnTargets="PrepareResourceNames;
+                            _GetEmbeddedResourcesWithSourceGeneration;
+                            _BatchGenerateResxSource">
+    <ItemGroup>
+      <GeneratedResxSource Include="@(EmbeddedResourceSGResx->'%(SourceOutputPath)')" />
+      <FileWrites Include="@(GeneratedResxSource)" />
+      <Compile Include="@(GeneratedResxSource)" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="_CustomizeResourceNames"
+          BeforeTargets="PrepareResourceNames">
+    <ItemGroup>
+      <EmbeddedResource>
+        <ManifestResourceName Condition="'%(EmbeddedResource.Namespace)' != ''">%(EmbeddedResource.Namespace).%(EmbeddedResource.Filename)</ManifestResourceName>
+      </EmbeddedResource>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="_BatchGenerateResxSource"
+          Inputs="@(EmbeddedResourceSGResx)"
+          Outputs="%(EmbeddedResourceSGResx.SourceOutputPath)">
+
+    <Microsoft.DotNet.Arcade.Sdk.GenerateResxSource
+      Language="$(Language)"
+      ResourceFile="%(EmbeddedResourceSGResx.FullPath)"
+      ResourceName="%(EmbeddedResourceSGResx.ManifestResourceName)"
+      ResourceClassName="%(EmbeddedResourceSGResx.ClassName)"
+      AsConstants="%(EmbeddedResourceSGResx.GenerateResourcesCodeAsConstants)"
+      OmitGetResourceString="$(GenerateResxSourceOmitGetResourceString)"
+      IncludeDefaultValues="$(GenerateResxSourceIncludeDefaultValues)"
+      EmitFormatMethods="$(GenerateResxSourceEmitFormatMethods)"
+      OutputPath="%(EmbeddedResourceSGResx.SourceOutputPath)" />
+  </Target>
+
+  <Target Name="_GetEmbeddedResourcesWithSourceGeneration" Condition="'@(EmbeddedResource)' != ''">
+    <PropertyGroup>
+      <_EmbeddedResourceSourceExtension Condition="'$(Language)' == 'C#'">cs</_EmbeddedResourceSourceExtension>
+      <_EmbeddedResourceSourceExtension Condition="'$(Language)' == 'VB'">vb</_EmbeddedResourceSourceExtension>
+      <_EmbeddedResourceSourceExtension Condition="'$(Language)' == 'F#'">fs</_EmbeddedResourceSourceExtension>
+    </PropertyGroup>
+    <Error Text="GenerateResxSource doesn't support language: '$(Language)'" Condition="'$(_EmbeddedResourceSourceExtension)' == ''"/>
+    <ItemGroup>
+      <EmbeddedResourceSG Include="@(EmbeddedResource)" Condition="'%(EmbeddedResource.GenerateSource)' == 'true' and '%(EmbeddedResource.XlfLanguage)' == ''" />
+      <EmbeddedResourceSG Condition="'$(Language)' != 'F#'">
+        <SourceOutputPath Condition="'%(EmbeddedResourceSG.SourceOutputPath)' == '' AND '%(EmbeddedResourceSG.ClassName)' != ''">$(IntermediateOutputPath)%(EmbeddedResourceSG.ClassName).$(_EmbeddedResourceSourceExtension)</SourceOutputPath>
+        <SourceOutputPath Condition="'%(EmbeddedResourceSG.SourceOutputPath)' == '' AND '%(EmbeddedResourceSG.ClassName)' == ''">$(IntermediateOutputPath)%(EmbeddedResourceSG.ManifestResourceName).$(_EmbeddedResourceSourceExtension)</SourceOutputPath>
+      </EmbeddedResourceSG>
+      <!-- Other source generators might exist, so create a separate group for the items that are set to use the generator from this targets file. -->
+      <EmbeddedResourceSGResx Include="@(EmbeddedResourceSG->WithMetadataValue('Generator', 'MSBuild:_GenerateResxSource'))" />
+    </ItemGroup>
+  </Target>
+</Project>

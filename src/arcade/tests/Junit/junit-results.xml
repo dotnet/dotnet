@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+   <testsuite name="HelixReporter.JUnit" errors="0" skipped="1" tests="3" failures="1" time="0.006" timestamp="2013-05-24T10:23:58">
+      <testcase classname="HelixReporterTests" name="failure1" time="0.006">
+         <failure message="Intentional Failure">
+            This failure is expected and is not the reason why your PR failed. This test is always failing in order to test failure reporting infrastructure. If your PR is blocked there must be another test or build error that is blocking your PR.
+         </failure>
+      </testcase>
+      <testcase classname="HelixReporterTests" name="failure2" time="0.006">
+         <error message="Intentional Failure">
+            This failure is expected and is not the reason why your PR failed. This test is always failing in order to test failure reporting infrastructure. If your PR is blocked there must be another test or build error that is blocking your PR.
+         </error>
+      </testcase>
+      <testcase classname="HelixReporterTests" name="skip1" time="0">
+         <skipped />
+      </testcase>
+      <testcase classname="HelixReporterTests" name="pass1" time="0" />
+   </testsuite>
+</testsuites>

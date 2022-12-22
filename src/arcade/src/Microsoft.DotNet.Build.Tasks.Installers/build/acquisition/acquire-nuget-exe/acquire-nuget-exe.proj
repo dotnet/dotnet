@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <UsingTask TaskName="DownloadFile" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" />
+
+  <!--
+    Acquire NuGet.exe, if not present.
+  -->
+  <Target Name="AcquireNuGetExeCore"
+          Condition="!Exists('$(NuGetExeFile)')"
+          DependsOnTargets="_GetAcquireNuGetExeProperties">
+    <MakeDir Directories="$(NuGetExeToolDir)" />
+    <DownloadFile
+      Uri="$(NuGetExeDownloadUrl)"
+      DestinationPath="$(NuGetExeFile)"
+      Overwrite="true" />
+  </Target>
+
+</Project>

@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>$(TargetFrameworkForNETSDK);net472</TargetFrameworks>
+    <PackageType>MSBuildSdk</PackageType>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Build" Version="$(MicrosoftBuildVersion)" Publish="false" />
+    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="$(MicrosoftBuildTasksCoreVersion)" Publish="false" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="$(MsbuildTaskMicrosoftCodeAnalysisCSharpVersion)" ExcludeAssets="analyzers" />
+    <PackageReference Include="NuGet.Frameworks" Version="$(NuGetVersion)" />
+    <PackageReference Include="NuGet.Packaging" Version="$(NuGetVersion)" />
+
+    <!-- This is here so that we agree with the project's transitive references to NewtonSoft.Json -->
+    <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Common\Internal\BuildTask.cs" />
+  </ItemGroup>
+
+  <Import Project="$(RepoRoot)eng\BuildTask.targets" />
+
+</Project>

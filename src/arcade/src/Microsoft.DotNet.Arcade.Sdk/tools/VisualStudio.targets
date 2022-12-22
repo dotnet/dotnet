@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+  <!-- 
+    Initialize VsixVersion. The project may specify 3-part prefix if it's different from VersionPrefix.
+  -->
+  <PropertyGroup>
+    <VsixVersionPrefix Condition="'$(VsixVersionPrefix)' == ''">$(VersionPrefix)</VsixVersionPrefix>
+    <VsixVersion>42.42.42.4242424</VsixVersion>
+    <VsixVersion Condition="'$(VersionSuffixDateStamp)' != ''">$(VsixVersionPrefix).$(VersionSuffixDateStamp)$(VersionSuffixBuildOfTheDayPadded)</VsixVersion>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(IsVsixProject)' == 'true' and '$(VSSDKTargetPlatformRegRootSuffix)' != ''">
+    <StartAction>Program</StartAction>
+    <StartProgram>$(DevEnvDir)devenv.exe</StartProgram>
+    <StartArguments>/rootsuffix $(VSSDKTargetPlatformRegRootSuffix) /log</StartArguments>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.DotNet.Build.Tasks.VisualStudio" Version="$(MicrosoftDotNetBuildTasksVisualStudioVersion)" PrivateAssets="all" IsImplicitlyDefined="true" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(VisualStudioInsertionComponent)' != ''">
+    <PackageReference Include="Microsoft.VisualStudioEng.MicroBuild.Plugins.SwixBuild" Version="$(MicrosoftVisualStudioEngMicroBuildPluginsSwixBuildVersion)" PrivateAssets="all" IsImplicitlyDefined="true" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(IsVsixProject)' == 'true' or '$(GeneratePkgDefFile)' == 'true'">
+    <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="$(MicrosoftVSSDKBuildToolsVersion)" PrivateAssets="all" IsImplicitlyDefined="true" />
+  </ItemGroup>
+
+  <!-- Returns the current build version. Used in .vsixmanifests to substitute our build version into them -->
+  <Target Name="GetVsixVersion" Returns="$(VsixVersion)" />
+
+  <!--
+    Do not import targets that build VSIXes at design time or when running in LUT.
+    
+    It is unnecessary to build the VSIXes, but also avoids VSSDK issue
+    https://dev.azure.com/devdiv/DevDiv/_workitems?id=365685&fullScreen=false&_a=edit.
+    The VSSDK implements targets VSIXIdentifierProjectOutputGroup, VSIXNameProjectOutputGroup. 
+    Since their name ends with OutputGroup, these targets would run during design time builds per convention. 
+    If the project is not a VSIX project and sets CreateVsixContainer=false these targets should be
+    a no-op. However they dont check for that and that's a bug.
+  -->
+  <Import Project="VisualStudio.VsixBuild.targets" Condition="'$(DesignTimeBuild)' != 'true' and '$(BuildingForLiveUnitTesting)' != 'true'"/>
+</Project>

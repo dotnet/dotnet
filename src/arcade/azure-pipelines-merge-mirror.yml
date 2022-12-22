@@ -1,0 +1,114 @@
+# Disable CI triggers, only called using Maestro
+trigger: none
+
+variables:
+  - group: Mirror-Credentials
+  - template: eng/common/templates/variables/pool-providers.yml
+
+# Merges code from GitHub into internal branches in internal repos
+jobs:
+- template: /eng/common/templates/jobs/jobs.yml
+  parameters:
+    enableTelemetry: true
+    helixRepo: dotnet/arcade
+    jobs:
+    - job: Merge_GitHub_to_Azure_DevOps
+      enableSBOM: false
+      pool:
+        ${{ if eq(variables['System.TeamProject'], 'DevDiv') }}:
+          name: VSEngSS-MicroBuild2022-1ES
+          demands: Cmd
+        # If it's not devdiv, it's dnceng
+        ${{ if ne(variables['System.TeamProject'], 'DevDiv') }}:
+          name: $(DncEngInternalBuildPool)
+          demands: ImageOverride -equals windows.vs2019.amd64
+      variables:
+      - name: WorkingDirectoryName
+        value: repo-dir
+      steps:
+      - ${{ if ne(variables['System.TeamProject'], 'DevDiv') }}:
+        - task: PowerShell@1
+          displayName: Calculate Merge Branch Names (DncEng)
+          inputs:
+            scriptType: inlineScript
+            arguments: '$(GithubRepo) $(BranchToMirror)'
+            inlineScript: |
+              param([string]$repo, [string]$branch)
+            
+              $azDORepo = $repo.Replace("/", "-");
+              # Check that the parameters look correct
+              if ($azDORepo -eq "" -or $branch -eq "")
+              {
+                Write-Error "Expected valid branch and GitHub repo in the form of owner/repo"
+              }
+              
+              $targetBranch = "internal/$branch"
+              Write-Host "##vso[task.setvariable variable=AzDORepoNameName]$azDORepo"
+              Write-Host "##vso[task.setvariable variable=TargetBranchName]$targetBranch"
+              Write-Host "Merging branch '$branch' in GitHub repo '$repo' to $targetBranch in Azure DevOps repo '$azDORepo'."
+      - ${{ if eq(variables['System.TeamProject'], 'DevDiv') }}:
+        - task: PowerShell@1
+          displayName: Calculate Merge Branch Names (DevDiv)
+          inputs:
+            scriptType: inlineScript
+            arguments: '$(GithubRepo) $(BranchToMirror)'
+            inlineScript: |
+              param([string]$repo, [string]$branch)
+            
+              $azDORepo = $repo.Replace("/", "-") + "-Trusted";
+              # Check that the parameters look correct
+              if ($azDORepo -eq "" -or $branch -eq "")
+              {
+                Write-Error "Expected valid branch and GitHub repo in the form of owner/repo"
+              }
+              
+              $targetBranch = "$branch-MSRC"
+              Write-Host "##vso[task.setvariable variable=AzDORepoNameName]$azDORepo"
+              Write-Host "##vso[task.setvariable variable=TargetBranchName]$targetBranch"
+              Write-Host "Merging branch '$branch' in GitHub repo '$repo' to $targetBranch in Azure DevOps repo '$azDORepo'."
+      - script: |
+          git clone https://dotnet-maestro-bot:$(BotAccount-dotnet-maestro-bot-PAT)@github.com/$(GithubRepo) $(WorkingDirectoryName) -b $(BranchToMirror)
+        displayName: Clone GitHub repo
+      - ${{ if ne(variables['System.TeamProject'], 'DevDiv') }}:
+        - script: |
+            git remote add azdo-mirror https://dn-bot:$(dn-bot-dnceng-build-rw-code-rw)@dev.azure.com/dnceng/internal/_git/$(AzDORepoNameName)
+          displayName: Add Azure DevOps remote (DncEng)
+          workingDirectory: $(WorkingDirectoryName)
+      - ${{ if eq(variables['System.TeamProject'], 'DevDiv') }}:
+        - script: |
+            git remote add azdo-mirror https://dn-bot:$(dn-bot-devdiv-build-rw-code-rw)@dev.azure.com/devdiv/devdiv/_git/$(AzDORepoNameName)
+          displayName: Add Azure DevOps remote (DevDiv)
+          workingDirectory: $(WorkingDirectoryName)
+      - script: |
+          git fetch azdo-mirror
+        displayName: Fetch AzDO repo
+        workingDirectory: $(WorkingDirectoryName)
+      - script: |
+          git checkout -b $(TargetBranchName) -t azdo-mirror/$(TargetBranchName) || git checkout -b $(TargetBranchName) -t azdo-mirror/$(BranchToMirror)
+        displayName: Check out target branch
+        workingDirectory: $(WorkingDirectoryName)
+      - script: |
+          git -c user.email="dotnet-bot@microsoft.com" -c user.name="dotnet-bot" merge origin/$(BranchToMirror) -m "Merge in '$(BranchToMirror)' changes" 
+        displayName: Merge open to target branch
+        workingDirectory: $(WorkingDirectoryName)
+      - script: |
+          git push azdo-mirror $(TargetBranchName) $(ExtraPushArgs)
+        displayName: Push changes to Azure DevOps repo
+        workingDirectory: $(WorkingDirectoryName)
+
+      - task: PowerShell@1
+        displayName: Broadcast target, branch, commit in metadata
+        continueOnError: true
+        condition: always()
+        inputs:
+          scriptType: inlineScript
+          arguments: '$(GithubRepo) $(BranchToMirror)'
+          workingDirectory: $(WorkingDirectoryName)
+          inlineScript: |
+            param([string]$repo, [string]$branch)
+
+            $commit = (git rev-parse HEAD).Substring(0, 7)
+            $target = "$repo $branch".Replace('/', ' ')
+
+            Write-Host "##vso[build.updatebuildnumber]$target $commit"
+            Write-Host "##vso[build.addbuildtag]$target"

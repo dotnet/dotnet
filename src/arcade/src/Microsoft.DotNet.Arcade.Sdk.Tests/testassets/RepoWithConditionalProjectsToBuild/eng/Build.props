@@ -1,0 +1,6 @@
+<Project>
+  <ItemGroup>
+    <ProjectToBuild Include="$(RepoRoot)src\Always\Always.csproj" />
+    <ProjectToBuild Include="$(RepoRoot)src\Maybe\Maybe.csproj" Condition=" '$(ShouldBuildMaybe)' == 'true' " />
+  </ItemGroup>
+</Project>

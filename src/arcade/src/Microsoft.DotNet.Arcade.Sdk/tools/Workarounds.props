@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+
+  <!--
+    Determine whether the project is WPF temp project.
+    Since .NET Framework 4.7.2 WPF temp project name ends with _wpftmp suffix and keeps the language specific extension (e.g. csproj). 
+  -->
+  <PropertyGroup Condition="'$(IsWpfTempProject)' == ''">
+    <IsWpfTempProject>false</IsWpfTempProject>
+    <IsWpfTempProject Condition="$(MSBuildProjectName.EndsWith('_wpftmp'))">true</IsWpfTempProject>
+  </PropertyGroup>
+
+  <!--
+    WPF temp-projects do not import .props and .targets files from NuGet packages.
+    (see https://github.com/dotnet/sourcelink/issues/91).
+    
+    Property _TargetAssemblyProjectName is set by GenerateTemporaryTargetAssembly task.
+
+    Disable Source Link and Xliff in WPF temp projects to avoid generating non-deterministic file names to obj dir.
+    The project name is non-deterministic and is included in the Source Link json file name and xlf directory names.
+    It's also not necessary to generate these assets.
+  -->
+  <PropertyGroup Condition="'$(IsWpfTempProject)' == 'true'">
+    <EnableSourceLink>false</EnableSourceLink>
+    <EmbedUntrackedSources>false</EmbedUntrackedSources>
+    <DeterministicSourcePaths>false</DeterministicSourcePaths>
+    <EnableXlfLocalization>false</EnableXlfLocalization>
+  </PropertyGroup>
+</Project>

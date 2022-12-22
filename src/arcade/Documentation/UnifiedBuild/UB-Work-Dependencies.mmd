@@ -1,0 +1,212 @@
+flowchart TB
+    classDef NETVersionSubgraph fill:#FFFFF8;
+    classDef ProductTeamWork fill:#D6EAF8,stroke:black,stroke-width:3px;
+    classDef UBTeamWork fill:#FFFFCA,stroke:black,stroke-width:3px;
+    %% Source-Build related UB work
+    classDef UBTeamWorkSB fill:#EFFFEA,stroke:black,stroke-width:3px
+
+    %% VMR-related nodes
+    VMRPOC["VMR Proof-of-concept"]
+    click VMRPOC href "https://github.com/dotnet/arcade/issues/9359"
+    class VMRPOC UBTeamWork;
+    
+    VMRLiteInfra["Build VMR-lite init/update process"]
+    click VMRLiteInfra href "https://github.com/dotnet/arcade/issues/9359"
+    class VMRLiteInfra UBTeamWork;
+    
+    PublishVMRLite["Publish VMR-lite to public (as of .NET7 GA)"]
+    click PublishVMRLite href "https://github.com/dotnet/arcade/issues/9359"
+    class PublishVMRLite UBTeamWork;
+    
+    VMRLiteValidation["Validate VMR-lite built SB product\n(tarball smoketests)"]
+    click VMRLiteValidation href "https://github.com/dotnet/arcade/issues/9359"
+    class VMRLiteValidation UBTeamWork;
+    
+    VMRLiteUsage["Replace tarball with VMR-lite"]
+    click VMRLiteUsage href "https://github.com/dotnet/arcade/issues/9359"
+    class VMRLiteUsage UBTeamWork;
+    
+    VMRToDotNetSecurityPartners[Deliver servicing releases from dotnet-security-partners]
+    class VMRToDotNetSecurityPartners UBTeamWork;
+    
+    SwitchToVMRFlow[Switch to full VMR flow]
+    class SwitchToVMRFlow UBTeamWork;
+    
+    ManualBackflowTooling[Manual Backflow Tooling]
+    class ManualBackflowTooling UBTeamWork;
+
+    %% Source-build infra
+    GenAPI["Roslyn-Based GenAPI Backend\n(arcade/10291)"]
+    click GenAPI href "https://github.com/dotnet/arcade/issues/10291"
+    class GenAPI UBTeamWork;
+    
+    SourceBuildNET8["Source-Build support for NET8 (p1)"]
+    class SourceBuildNET8 UBTeamWorkSB;
+   
+    DependencyIdentificationInfra[".NET 8: Generate report of non-explicit dependencies for each repo in source build\n(source-build/2982)"]
+    click DependencyIdentificationInfra href "https://github.com/dotnet/source-build/issues/2982"
+    class DependencyIdentificationInfra UBTeamWorkSB;
+
+    DependencyIdentification["Repositories fully identify their dependencies\n(source-build/2980)"]
+    click DependencyIdentification href "https://github.com/dotnet/source-build/issues/2980"
+    class DependencyIdentification ProductTeamWork;
+
+    EnableSBPrebuiltDetection["Enable repo-level prebuilt-detection\n(source-build/3017)"]
+    click EnableSBPrebuiltDetection href "https://github.com/dotnet/source-build/issues/3017"
+    class EnableSBPrebuiltDetection ProductTeamWork;
+    
+    MultiPlatformSBDesign["Design multi-platform source-build infra\n(source-build/2974)"]
+    click MultiPlatformSBDesign href "https://github.com/dotnet/source-build/issues/2974"
+    class MultiPlatformSBDesign UBTeamWorkSB;
+    
+    MultiPlatformSBApplication["Apply multi-platform source-build design to repos\n(source-build/2975)"]
+    click MultiPlatformSBApplication href "https://github.com/dotnet/source-build/issues/2975"
+    class MultiPlatformSBApplication ProductTeamWork;
+    
+    SBDeclaredDependencyFlow["Design and implement ability to flow only declared dependencies in SB\n(source-build/2979)"]
+    click SBDeclaredDependencyFlow href "https://github.com/dotnet/source-build/issues/2979"
+    class SBDeclaredDependencyFlow UBTeamWorkSB;
+    
+    ApplySBDeclaredDependencyFlow["Enable declared-dependency flow in repos\n(source-build/2979)"]
+    click ApplySBDeclaredDependencyFlow href "https://github.com/dotnet/source-build/issues/2979"
+    class ApplySBDeclaredDependencyFlow UBTeamWorkSB;
+
+    %% Source-built sustainability improvements
+    ToolingToIdentifyTFMs["Create tooling to identify TFMs used in build\n(source-build/3013)"]
+    click ToolingToIdentifyTFMs href "https://github.com/dotnet/source-build/issues/3013"
+    class ToolingToIdentifyTFMs UBTeamWorkSB;
+    
+    FullFrameworkTFMRemoval["Remove full-framework TFMs from Linux SB\n(source-build/3014)"]
+    click FullFrameworkTFMRemoval href "https://github.com/dotnet/source-build/issues/3014"
+    class FullFrameworkTFMRemoval ProductTeamWork;
+    
+    TFMReduction["Trim unused TFMs\n(source-build/3014)"]
+    click TFMReduction href "https://github.com/dotnet/source-build/issues/3014"
+    class TFMReduction ProductTeamWork;
+
+    %% Source-build new platforms
+    PortableLinuxSB[Source-build infra support for portable linux]
+    class PortableLinuxSB UBTeamWorkSB;
+    
+    PortableLinuxRuntimeSB[Add runtime source-build CI leg for portable Linux]
+    class PortableLinuxRuntimeSB ProductTeamWork;
+    
+    PortableLinuxSBCI[Add full portable Linux SB]
+    class PortableLinuxSBCI UBTeamWorkSB;
+    
+    MacSB[Add Mac SB]
+    WindowsSB[Add Windows SB]
+
+    %% Validation and testing
+    E2ETestingDesign[Design E2E test solution for SB]
+    class E2ETestingDesign UBTeamWorkSB;
+    
+    E2ETestingImplementation[Implement E2E testing infra for SB]
+    class E2ETestingImplementation UBTeamWorkSB;
+    
+    E2ESBTests[Solicit and add E2E product tests]
+    class E2ESBTests ProductTeamWork;
+    
+    VMRCIDesign[Design CI/PR pipelines for VMR]
+    class VMRCIDesign UBTeamWork;
+    
+    VMRCIImplementation[Implement CI/PR pipelines for VMR]
+    class VMRCIImplementation UBTeamWork;
+    
+    VMRUnitTestImplementation[Implement unit tests against VMR]
+    class VMRUnitTestImplementation ProductTeamWork;
+    
+    SBUnitTestDesign[Design unit VMR/isolate repo test solution]
+    class SBUnitTestDesign UBTeamWork;
+        
+    SBUnitTestImplementation[Implement VMR/isolated repo SB unit tests]
+    class SBUnitTestImplementation ProductTeamWork;
+
+    OrchestrationPointIdentification[Identify product build orchestration points]
+    class OrchestrationPointIdentification ProductTeamWork;
+    
+    VerticalBuildApplication[Apply vertical build design to each repository]
+    class VerticalBuildApplication ProductTeamWork;
+
+    FullVerticalBuildDesign[Design of vertical product build - VMR]
+    class FullVerticalBuildDesign UBTeamWork;
+
+    RepoVerticalBuildDesign[Design of vertical product build - Isolated Repos]
+    class RepoVerticalBuildDesign UBTeamWork;
+
+    TurnOffOfficialBuilds[Turn off existing official builds]    
+    class TurnOffOfficialBuilds ProductTeamWork;
+    
+    ShipSourceBuild[Ship source build]
+    class ShipSourceBuild UBTeamWork;
+
+    subgraph NET8[.NET 8]
+        direction LR
+        
+        %% VMR Lite
+        subgraph VMRLite["Area: Virtual Mono Repo (VMR) Lite (arcade/9359)"]
+        direction TB
+            VMRPOC-->VMRLiteInfra
+            VMRLiteInfra-->VMRLiteValidation
+            VMRLiteInfra-->PublishVMRLite
+            VMRLiteValidation --> VMRLiteUsage
+        end
+        
+        PublishVMRLite-->ManualBackflowTooling
+        
+        SourceBuildNET8-->VMRLiteValidation
+        
+        GenAPI-->EnableSBPrebuiltDetection
+        DependencyIdentificationInfra-->DependencyIdentification
+
+        subgraph MultiPlatformSBNET8["Area: Multi-platform Source-Build (.NET8)"]
+            MultiPlatformSBDesign-->MultiPlatformSBApplication
+            MultiPlatformSBDesign-->FullFrameworkTFMRemoval
+            ToolingToIdentifyTFMs-->TFMReduction
+            ToolingToIdentifyTFMs-->FullFrameworkTFMRemoval
+        end
+
+        %% We need the portable Linux source-build CI leg in runtime
+        %% Before we could effectively apply the pre-built detection
+        %% in downstream repos
+        PortableLinuxRuntimeSB-->EnableSBPrebuiltDetection
+
+        EnableSBPrebuiltDetection-->ApplySBDeclaredDependencyFlow
+        DependencyIdentification-->EnableSBPrebuiltDetection
+        SBDeclaredDependencyFlow-->ApplySBDeclaredDependencyFlow
+
+        E2ETestingDesign-->E2ETestingImplementation
+        E2ETestingImplementation-->E2ESBTests
+        VMRCIDesign-->VMRCIImplementation
+        VMRLiteUsage-->VMRCIImplementation
+        VMRLiteUsage-->VMRToDotNetSecurityPartners
+        VMRCIImplementation-->E2ETestingImplementation
+        VMRCIImplementation-->VMRUnitTestImplementation
+        SBUnitTestDesign
+
+        PortableLinuxSB-->PortableLinuxRuntimeSB
+        PortableLinuxRuntimeSB-->PortableLinuxSBCI
+
+        subgraph VerticalBuilds["Area: Vertical Builds"]
+            FullVerticalBuildDesign
+            OrchestrationPointIdentification-->VerticalBuildApplication
+            RepoVerticalBuildDesign-->VerticalBuildApplication
+        end
+
+    end
+
+    %% General .NET 8->.NET 9 dependency
+    NET8-->NET9
+
+    subgraph NET9[.NET 9]
+        direction TB
+        MacSB-->ShipSourceBuild
+        WindowsSB-->ShipSourceBuild
+        SBUnitTestImplementation-->SwitchToVMRFlow
+        ShipSourceBuild-->SwitchToVMRFlow
+        TurnOffOfficialBuilds-->SwitchToVMRFlow
+    end
+
+    class NET8 NETVersionSubgraph;
+    class NET9 NETVersionSubgraph;
+    

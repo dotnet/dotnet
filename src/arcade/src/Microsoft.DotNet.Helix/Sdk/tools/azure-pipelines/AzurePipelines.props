@@ -1,0 +1,32 @@
+<Project InitialTargets="ValidateAzurePipelinesConfiguration">
+  <PropertyGroup>
+    <AzurePipelinesAvailable Condition="'$(SYSTEM_ACCESSTOKEN)' != ''">true</AzurePipelinesAvailable>
+    <AzurePipelinesAvailable Condition="'$(AzurePipelinesAvailable)' != 'true'">false</AzurePipelinesAvailable>
+  </PropertyGroup>
+
+  <!-- We default the azure pipelines reporter to ON if we are running inside Azure Pipelines -->
+  <PropertyGroup Condition="$(AzurePipelinesAvailable)">
+    <EnableAzurePipelinesReporter Condition="'$(EnableAzurePipelinesReporter)' != 'false'">true</EnableAzurePipelinesReporter>
+    <FailOnTestFailure Condition="'$(FailOnTestFailure)' != 'false'">true</FailOnTestFailure>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="!$(AzurePipelinesAvailable)">
+    <EnableAzurePipelinesReporter Condition="'$(EnableAzurePipelinesReporter)' != 'true'">false</EnableAzurePipelinesReporter>
+    <FailOnTestFailure Condition="'$(FailOnTestFailure)' != 'false'">true</FailOnTestFailure>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <ImportAzurePipelinesTargets Condition="$(EnableAzurePipelinesReporter) AND $(AzurePipelinesAvailable)">true</ImportAzurePipelinesTargets>
+    <ImportAzurePipelinesTargets Condition="'$(ImportAzurePipelinesTargets)' != 'true'">false</ImportAzurePipelinesTargets>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(ImportAzurePipelinesTargets)">
+    <_HelixMonoQueueTargets>$(_HelixMonoQueueTargets);$(MSBuildThisFileDirectory)AzurePipelines.MonoQueue.targets</_HelixMonoQueueTargets>
+    <_HelixMultiQueueTargets>$(_HelixMultiQueueTargets);$(MSBuildThisFileDirectory)AzurePipelines.MultiQueue.targets</_HelixMultiQueueTargets>
+  </PropertyGroup>
+
+  <Target Name="ValidateAzurePipelinesConfiguration"
+          Condition="$(EnableAzurePipelinesReporter) AND '$(HelixTargetQueue)' == ''">
+    <Error Condition="!$(AzurePipelinesAvailable)" Text="Azure Pipelines SYSTEM_ACCESSTOKEN variable not found. Either the build is not running in Azure Pipelines, or the current step is not configured correctly. Please configure this step with the System.AccessToken variable, see: https://docs.microsoft.com/en-us/azure/devops/pipelines/process/variables?view=vsts&amp;tabs=yaml%2Cbatch#systemaccesstoken"/>
+  </Target>
+</Project>
