@@ -160,6 +160,8 @@ To enable full offline source-building of the VMR, we have no other choice than 
 *[dotnet/linker@2db841f](https://github.com/dotnet/linker/commit/2db841fc5f6bc7592b66ffe3bd0e1c888d022f93)*
     - `src/linker/external/cecil`  
     *[dotnet/cecil@1840b74](https://github.com/dotnet/cecil/commit/1840b7410d37a613e684b6f9650e39e2d4950bbb)*
+- `src/msbuild`  
+*[dotnet/msbuild@eb5ebc2](https://github.com/dotnet/msbuild/commit/eb5ebc23a99af31731a6b6c403ceda0b44aa9966)*
 - `src/roslyn`  
 *[dotnet/roslyn@c80d649](https://github.com/dotnet/roslyn/commit/c80d6495d55ebbd64372755d236d0e5971b2dfc7)*
 - `src/runtime`  

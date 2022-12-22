@@ -1,0 +1,16 @@
+{
+  "sdk": {
+    "allowPrerelease": true
+  },
+  "tools": {
+    "dotnet": "7.0.101",
+    "vs": {
+      "version": "17.4.1"
+    },
+    "xcopy-msbuild": "17.4.1"
+  },
+  "msbuild-sdks": {
+    "Microsoft.Build.CentralPackageVersions": "2.0.1",
+    "Microsoft.DotNet.Arcade.Sdk": "6.0.0-beta.22601.5"
+  }
+}
