@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="vsw543506.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="varlib.ilproj" />
+  </ItemGroup>
+</Project>

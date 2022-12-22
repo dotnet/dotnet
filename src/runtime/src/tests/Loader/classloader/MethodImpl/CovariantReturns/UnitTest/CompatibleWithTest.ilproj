@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk.IL">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <!-- Synthesized PGO may cause the expected TypeLoadExceptions in this test to appear at unexpected places -->
+    <SynthesizedPgoIncompatible>true</SynthesizedPgoIncompatible>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="CompatibleWithTest.il" />
+  </ItemGroup>
+</Project>

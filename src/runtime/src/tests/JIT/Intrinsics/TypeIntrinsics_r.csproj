@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <DebugType>None</DebugType>
+    <Optimize />
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="TypeIntrinsicsEnums.ilproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="TypeIntrinsics.cs" />
+    <Compile Include="TypeIntrinsics.IsAssignableFrom.cs" />
+    <Compile Include="TypeIntrinsics.IsAssignableTo.cs" />
+    <Compile Include="TypeIntrinsics.GetEnumUnderlyingType.cs" />
+  </ItemGroup>
+</Project>

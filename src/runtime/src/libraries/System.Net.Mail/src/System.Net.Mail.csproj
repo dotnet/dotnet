@@ -1,0 +1,153 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <TargetFrameworks>$(NetCoreAppCurrent)-windows;$(NetCoreAppCurrent)-Unix;$(NetCoreAppCurrent)-Browser;$(NetCoreAppCurrent)</TargetFrameworks>
+  </PropertyGroup>
+  <!-- DesignTimeBuild requires all the TargetFramework Derived Properties to not be present in the first property group. -->
+  <PropertyGroup>
+    <TargetPlatformIdentifier>$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)'))</TargetPlatformIdentifier>
+    <GeneratePlatformNotSupportedAssemblyMessage Condition="'$(TargetPlatformIdentifier)' == ''">SR.PlatformNotSupported_NetMail</GeneratePlatformNotSupportedAssemblyMessage>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(TargetPlatformIdentifier)' != ''">
+    <Compile Include="System\Net\Base64Stream.cs" />
+    <Compile Include="System\Net\Mime\MimePart.cs" />
+    <Compile Include="System\Net\Mime\Base64WriteStateInfo.cs" />
+    <Compile Include="System\Net\Mime\QuotedPrintableStream.cs" />
+    <Compile Include="System\Net\CloseableStream.cs" />
+    <Compile Include="System\Net\Mime\EightBitStream.cs" />
+    <Compile Include="System\Net\Mime\EncodedStreamFactory.cs" />
+    <Compile Include="System\Net\Mime\IEncodableStream.cs" />
+    <Compile Include="System\Net\Mime\QEncodedStream.cs" />
+    <Compile Include="System\Net\Mime\WriteStateInfoBase.cs" />
+    <Compile Include="System\Net\Mime\BaseWriter.cs" />
+    <Compile Include="System\Net\Mime\TransferEncoding.cs" />
+    <Compile Include="System\Net\Mime\ContentDisposition.cs" />
+    <Compile Include="System\Net\Mime\ContentType.cs" />
+    <Compile Include="System\Net\Mime\DispositionTypeNames.cs" />
+    <Compile Include="System\Net\Mime\HeaderCollection.cs" />
+    <Compile Include="System\Net\Mime\MediaTypeNames.cs" />
+    <Compile Include="System\Net\Mime\MimeBasePart.cs" />
+    <Compile Include="System\Net\Mime\SmtpDateTime.cs" />
+    <Compile Include="System\Net\Mime\MultiAsyncResult.cs" />
+    <Compile Include="System\Net\Mime\ByteEncoder.cs" />
+    <Compile Include="System\Net\Mime\Base64Encoder.cs" />
+    <Compile Include="System\Net\Mime\IByteEncoder.cs" />
+    <Compile Include="System\Net\Mime\QEncoder.cs" />
+    <Compile Include="System\Net\TrackingStringDictionary.cs" />
+    <Compile Include="System\Net\TrackingValidationObjectDictionary.cs" />
+    <Compile Include="System\Net\Mail\MailHeaderID.cs" />
+    <Compile Include="System\Net\Mail\MailHeaderInfo.cs" />
+    <Compile Include="System\Net\BufferBuilder.cs" />
+    <Compile Include="System\Net\Mail\AlternateView.cs" />
+    <Compile Include="System\Net\Mail\AlternateViewCollection.cs" />
+    <Compile Include="System\Net\Mail\Attachment.cs" />
+    <Compile Include="System\Net\Mail\AttachmentCollection.cs" />
+    <Compile Include="System\Net\BufferedReadStream.cs" />
+    <Compile Include="System\Net\Mail\LinkedResource.cs" />
+    <Compile Include="System\Net\Mail\LinkedResourceCollection.cs" />
+    <Compile Include="System\Net\Mail\DomainLiteralReader.cs" />
+    <Compile Include="System\Net\Mail\DotAtomReader.cs" />
+    <Compile Include="System\Net\Mail\MailAddress.cs" />
+    <Compile Include="System\Net\Mail\MailAddressCollection.cs" />
+    <Compile Include="System\Net\Mail\MailAddressParser.cs" />
+    <Compile Include="System\Net\Mail\MailBnfHelper.cs" />
+    <Compile Include="System\Net\Mail\MailMessage.cs" />
+    <Compile Include="System\Net\Mail\MailPriority.cs" />
+    <Compile Include="System\Net\Mail\QuotedPairReader.cs" />
+    <Compile Include="System\Net\Mail\QuotedStringFormatReader.cs" />
+    <Compile Include="System\Net\Mail\WhitespaceReader.cs" />
+    <Compile Include="System\Net\Mime\MimeMultiPart.cs" />
+    <Compile Include="System\Net\Mime\MimeMultiPartType.cs" />
+    <Compile Include="System\Net\Mime\MimeWriter.cs" />
+    <Compile Include="System\Net\Mail\SmtpException.cs" />
+    <Compile Include="System\Net\Mail\SmtpFailedRecipientException.cs" />
+    <Compile Include="System\Net\Mail\SmtpFailedRecipientsException.cs" />
+    <Compile Include="System\Net\Mail\SmtpStatusCode.cs" />
+    <Compile Include="System\Net\DelegatedStream.cs" />
+    <Compile Include="$(CommonPath)DisableRuntimeMarshalling.cs"
+             Link="Common\DisableRuntimeMarshalling.cs" />
+    <Compile Include="$(CommonPath)System\Net\LazyAsyncResult.cs"
+             Link="Common\System\Net\LazyAsyncResult.cs" />
+    <Compile Include="$(CommonPath)System\Net\Logging\NetEventSource.Common.cs"
+             Link="Common\System\Net\Logging\NetEventSource.Common.cs" />
+    <Compile Include="$(CommonPath)System\Net\Logging\NetEventSource.Common.Associate.cs"
+             Link="Common\System\Net\Logging\NetEventSource.Common.Associate.cs" />
+    <Compile Include="$(CommonPath)System\StringExtensions.cs"
+             Link="Common\System\StringExtensions.cs" />
+    <Compile Include="$(CommonPath)System\HexConverter.cs"
+             Link="Common\System\HexConverter.cs" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetPlatformIdentifier)' == 'Browser'">
+    <Compile Include="System\Net\Mail\SmtpClient.Browser.cs" />
+  </ItemGroup>
+
+  <!-- Non Browser specific files - internal and security -->
+  <ItemGroup Condition="'$(TargetPlatformIdentifier)' != '' and '$(TargetPlatformIdentifier)' != 'Browser'">
+    <Compile Include="System\Net\Mail\SmtpClient.cs" />
+    <Compile Include="System\Net\Mail\ISmtpAuthenticationModule.cs" />
+    <Compile Include="System\Net\Mail\SmtpAuthenticationManager.cs" />
+    <Compile Include="System\Net\Mail\SmtpCommands.cs" />
+    <Compile Include="System\Net\Mail\SmtpConnection.cs" />
+    <Compile Include="System\Net\Mail\SmtpConnection.Auth.cs" />
+    <Compile Include="System\Net\Mail\SmtpReplyReader.cs" />
+    <Compile Include="System\Net\Mail\SmtpReplyReaderFactory.cs" />
+    <Compile Include="System\Net\Mail\SmtpTransport.cs" />
+    <Compile Include="System\Net\Mail\SmtpLoginAuthenticationModule.cs" />
+    <Compile Include="System\Net\Mail\SmtpNegotiateAuthenticationModule.cs" />
+    <Compile Include="System\Net\Mail\SmtpNtlmAuthenticationModule.cs" />
+    <Compile Include="System\Net\Mail\MailWriter.cs" />
+    <Compile Include="System\Net\Mail\NetEventSource.Mail.cs" />
+    <Compile Include="$(CommonPath)System\Net\ContextAwareResult.cs"
+             Link="Common\System\Net\ContextAwareResult.cs" />
+    <Compile Include="$(CommonPath)System\Net\DebugSafeHandleZeroOrMinusOneIsInvalid.cs"
+             Link="Common\System\Net\DebugSafeHandleZeroOrMinusOneIsInvalid.cs" />
+    <Compile Include="$(CommonPath)System\Net\DebugSafeHandle.cs"
+             Link="Common\System\Net\DebugSafeHandle.cs" />
+    <Compile Include="$(CommonPath)System\Net\TlsStream.cs"
+             Link="Common\System\Net\TlsStream.cs" />
+    <Compile Include="$(CommonPath)System\Net\InternalException.cs"
+             Link="Common\System\Net\InternalException.cs" />
+    <Compile Include="$(CommonPath)System\Net\ExceptionCheck.cs"
+             Link="Common\System\Net\ExceptionCheck.cs" />
+    <Compile Include="$(CommonPath)System\Collections\Generic\BidirectionalDictionary.cs"
+             Link="Common\System\Collections\Generic\BidirectionalDictionary.cs" />
+    <Compile Include="$(CommonPath)System\NotImplemented.cs"
+             Link="Common\System\NotImplemented.cs" />
+    <Compile Include="$(CommonPath)System\Net\SecurityProtocol.cs"
+             Link="Common\System\Net\SecurityProtocol.cs" />
+  </ItemGroup>
+
+  <!-- Unix specific files -->
+  <ItemGroup Condition="'$(TargetPlatformIdentifier)' == 'Unix'">
+    <Compile Include="$(CommonPath)System\Net\ContextAwareResult.Unix.cs"
+             Link="Common\System\Net\ContextAwareResult.Unix.cs" />
+  </ItemGroup>
+
+  <!-- Windows specific files -->
+  <ItemGroup Condition="'$(TargetPlatformIdentifier)' == 'windows'">
+    <Compile Include="$(CommonPath)System\Net\ContextAwareResult.Windows.cs"
+             Link="Common\System\Net\ContextAwareResult.Windows.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Win32.Primitives" />
+    <Reference Include="System.Collections" />
+    <Reference Include="System.Collections.NonGeneric" />
+    <Reference Include="System.Collections.Specialized" />
+    <Reference Include="System.ComponentModel.EventBasedAsync" />
+    <Reference Include="System.Diagnostics.Tracing" />
+    <Reference Include="System.Memory" />
+    <Reference Include="System.Net.NetworkInformation" />
+    <Reference Include="System.Net.Primitives" />
+    <Reference Include="System.Net.Requests" />
+    <Reference Include="System.Net.Security" />
+    <Reference Include="System.Net.ServicePoint" />
+    <Reference Include="System.Net.Sockets" />
+    <Reference Include="System.Runtime" />
+    <Reference Include="System.Runtime.InteropServices" />
+    <Reference Include="System.Security.Claims" />
+    <Reference Include="System.Security.Cryptography" />
+    <Reference Include="System.Security.Principal.Windows" />
+    <Reference Include="System.Threading" />
+  </ItemGroup>
+</Project>

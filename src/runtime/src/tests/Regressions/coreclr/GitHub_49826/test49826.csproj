@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <CLRTestPriority>1</CLRTestPriority>
+    <Nullable>enable</Nullable>
+
+    <!-- ilasm round-trip testing test failure: https://github.com/dotnet/runtime/issues/49985 -->
+    <IlasmRoundTripIncompatible>true</IlasmRoundTripIncompatible>
+
+    <!-- This is an explicit crossgen test -->
+    <AlwaysUseCrossGen2>true</AlwaysUseCrossGen2>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="*.cs" />
+  </ItemGroup>
+</Project>

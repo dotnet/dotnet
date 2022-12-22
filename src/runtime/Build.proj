@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.Build.Traversal">
+
+  <ItemGroup>
+    <!-- Subsets are already imported by Directory.Build.props. -->
+    <ProjectReference Include="@(ProjectToBuild)" />
+    <!-- Only include tasks.proj during restore and build incrementally via a target. -->
+    <ProjectReference Include="$(RepoTasksDir)tasks.proj" Condition="'$(MSBuildRestoreSessionId)' != ''" />
+  </ItemGroup>
+
+  <Import Project="$(RepositoryEngineeringDir)SubsetValidation.targets" />
+
+  <!-- Upfront restore hooks -->
+  <Import Project="$(RepositoryEngineeringDir)restore\docs.targets" />
+  <Import Project="$(RepositoryEngineeringDir)restore\optimizationData.targets" Condition="'$(DotNetBuildFromSource)' != 'true'" />
+
+  <Target Name="BuildLocalTasks"
+          BeforeTargets="Build">
+    <MSBuild Projects="$(RepoTasksDir)tasks.proj"
+             Targets="BuildIncrementally" />
+  </Target>
+</Project>
