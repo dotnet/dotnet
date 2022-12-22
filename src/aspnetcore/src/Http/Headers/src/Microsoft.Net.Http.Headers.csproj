@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>HTTP header parser implementations.</Description>
+    <TargetFramework>$(DefaultNetCoreTargetFramework)</TargetFramework>
+    <IsAspNetCoreApp>true</IsAspNetCoreApp>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageTags>http</PackageTags>
+    <IsPackable>false</IsPackable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <IsTrimmable>true</IsTrimmable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.Extensions.Primitives" />
+    <Compile Include="..\..\Shared\CookieHeaderParserShared.cs" Link="CookieHeaderParserShared.cs" />
+    <Compile Include="..\..\Shared\HttpRuleParser.cs" />
+    <Compile Include="..\..\Shared\HttpParseResult.cs" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,58 @@
+{
+  "name": "company.webapplication1",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+//#if(RequiresHttps)
+    "prestart": "node aspnetcore-https",
+    "start": "run-script-os",
+    "start:windows": "ng serve --port 5002 --ssl --ssl-cert \"%APPDATA%\\ASP.NET\\https\\%npm_package_name%.pem\" --ssl-key \"%APPDATA%\\ASP.NET\\https\\%npm_package_name%.key\"",
+    "start:default": "ng serve --port 5002 --ssl --ssl-cert \"$HOME/.aspnet/https/${npm_package_name}.pem\" --ssl-key \"$HOME/.aspnet/https/${npm_package_name}.key\"",
+//#else
+    "start": "ng serve --port 5002",
+//#endif
+    "build": "ng build",
+    "build:ssr": "ng run Company.WebApplication1:server:dev",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/animations": "^14.2.7",
+    "@angular/common": "^14.2.7",
+    "@angular/compiler": "^14.2.7",
+    "@angular/core": "^14.2.7",
+    "@angular/forms": "^14.2.7",
+    "@angular/platform-browser": "^14.2.7",
+    "@angular/platform-browser-dynamic": "^14.2.7",
+    "@angular/platform-server": "^14.2.7",
+    "@angular/router": "^14.2.7",
+    "bootstrap": "^5.2.2",
+    "jquery": "^3.6.1",
+    "oidc-client": "^1.11.5",
+    "popper.js": "^1.16.0",
+    "run-script-os": "^1.1.6",
+    "rxjs": "~7.5.7",
+    "tslib": "^2.4.0",
+    "zone.js": "~0.11.8"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^14.2.6",
+    "@angular/cli": "^14.2.6",
+    "@angular/compiler-cli": "^14.2.7",
+    "@types/jasmine": "~4.3.0",
+    "@types/jasminewd2": "~2.0.10",
+    "@types/node": "^18.11.3",
+    "jasmine-core": "~4.4.0",
+    "karma": "~6.4.1",
+    "karma-chrome-launcher": "~3.1.1",
+    "karma-coverage": "~2.2.0",
+    "karma-jasmine": "~5.1.0",
+    "karma-jasmine-html-reporter": "^2.0.0",
+    "typescript": "~4.8.4"
+  },
+  "overrides": {
+    "autoprefixer": "10.4.5"
+  },
+  "optionalDependencies": {}
+}
