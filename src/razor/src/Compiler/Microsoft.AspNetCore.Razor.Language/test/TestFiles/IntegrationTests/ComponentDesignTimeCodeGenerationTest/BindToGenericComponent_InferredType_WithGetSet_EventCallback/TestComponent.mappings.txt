@@ -1,0 +1,18 @@
+Source Location: (30:0,30 [11] x:\dir\subdir\Test\TestComponent.cshtml)
+|ParentValue|
+Generated Location: (1001:25,30 [11] )
+|ParentValue|
+
+Source Location: (84:1,7 [140] x:\dir\subdir\Test\TestComponent.cshtml)
+|
+    public CustomValue ParentValue { get; set; } = new CustomValue();
+
+    public EventCallback<CustomValue> UpdateValue { get; set; }
+|
+Generated Location: (1596:43,7 [140] )
+|
+    public CustomValue ParentValue { get; set; } = new CustomValue();
+
+    public EventCallback<CustomValue> UpdateValue { get; set; }
+|
+

@@ -1,0 +1,10 @@
+﻿{
+  "host": "dotnet",
+  "hostId": "RoslynCodeAnalysisServiceS",
+  "hostGroupAllowed": true,
+  "entryPoint": {
+    "assemblyPath": "Microsoft.CodeAnalysis.Remote.Razor.dll",
+    "fullClassName": "Microsoft.CodeAnalysis.Remote.Razor.RemoteTagHelperProviderServiceFactory"
+  },
+  "friendServices": [ "Microsoft.VisualStudio.LanguageServices.DiagnosticAnalyzerCore64S" ]
+}

@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="ko" original="../SR.resx">
+    <body>
+      <trans-unit id="File_Externally_Modified">
+        <source>File was externally modified: {0}</source>
+        <target state="translated">{0}의 파일이 외부에서 수정되었습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Language_Services_Missing_Service">
+        <source>Razor language services not configured properly, missing language service '{0}'.</source>
+        <target state="translated">Razor 언어 서비스가 제대로 구성되지 않았습니다. 언어 서비스 '{0}'이(가) 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Unknown_ProjectChangeKind">
+        <source>Unknown ProjectChangeKind {0}</source>
+        <target state="translated">알 수 없는 ProjectChangeKind {0}</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -1,0 +1,251 @@
+﻿// Copyright (c) .NET Foundation. All rights reserved.
+// Licensed under the MIT license. See License.txt in the project root for license information.
+
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.IO;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.VisualStudio.Razor.IntegrationTests;
+using Microsoft.VisualStudio.Razor.IntegrationTests.InProcess;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.TextManager.Interop;
+using Microsoft.VisualStudio.Threading;
+using NuGet.SolutionRestoreManager;
+using Xunit;
+using Task = System.Threading.Tasks.Task;
+
+namespace Microsoft.VisualStudio.Extensibility.Testing;
+
+internal partial class SolutionExplorerInProcess
+{
+    public async Task CreateSolutionAsync(string solutionName, CancellationToken cancellationToken)
+    {
+        await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+
+        var solutionPath = CreateTemporaryPath();
+        await CreateSolutionAsync(solutionPath, solutionName, cancellationToken);
+    }
+
+    public Task AddProjectAsync(string projectName, string projectTemplate, string languageName, CancellationToken cancellationToken)
+        => AddProjectAsync(projectName, projectTemplate, groupId: null, templateId: null, languageName, cancellationToken);
+
+    public async Task AddProjectAsync(string projectName, string projectTemplate, string? groupId, string? templateId, string languageName, CancellationToken cancellationToken)
+    {
+        await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+
+        var projectPath = Path.Combine(await GetDirectoryNameAsync(cancellationToken), projectName);
+        var projectTemplatePath = await GetProjectTemplatePathAsync(projectTemplate, ConvertLanguageName(languageName), cancellationToken);
+        var solution = await GetRequiredGlobalServiceAsync<SVsSolution, IVsSolution6>(cancellationToken);
+
+        var args = new List<object>();
+        if (groupId is not null)
+            args.Add($"$groupid$={groupId}");
+        if (groupId is not null)
+            args.Add($"$templateid$={templateId}");
+
+        ErrorHandler.ThrowOnFailure(solution.AddNewProjectFromTemplate(projectTemplatePath, args.Any() ? args.ToArray() : null, null, projectPath, projectName, null, out _));
+    }
+
+    public async Task RestoreNuGetPackagesAsync(CancellationToken cancellationToken)
+    {
+        await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+
+        var dte = await GetRequiredGlobalServiceAsync<SDTE, EnvDTE.DTE>(cancellationToken);
+        var solution = (EnvDTE80.Solution2)dte.Solution;
+        foreach (var project in solution.Projects.OfType<EnvDTE.Project>())
+        {
+            await RestoreNuGetPackagesAsync(project.FullName, cancellationToken);
+        }
+    }
+
+    public async Task RestoreNuGetPackagesAsync(string projectName, CancellationToken cancellationToken)
+    {
+        await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+
+        await TestServices.Workspace.WaitForProjectSystemAsync(cancellationToken);
+
+        var solutionRestoreService = await GetComponentModelServiceAsync<IVsSolutionRestoreService>(cancellationToken);
+        await solutionRestoreService.CurrentRestoreOperation;
+
+        var projectFullPath = (await GetProjectAsync(projectName, cancellationToken)).FullName;
+        var solutionRestoreStatusProvider = await GetComponentModelServiceAsync<IVsSolutionRestoreStatusProvider>(cancellationToken);
+        if (await solutionRestoreStatusProvider.IsRestoreCompleteAsync(cancellationToken))
+        {
+            return;
+        }
+
+        var solutionRestoreService2 = (IVsSolutionRestoreService2)solutionRestoreService;
+        await solutionRestoreService2.NominateProjectAsync(projectFullPath, cancellationToken);
+
+        // Check IsRestoreCompleteAsync until it returns true (this stops the retry because true != default(bool))
+        await Helper.RetryAsync(
+            cancellationToken => solutionRestoreStatusProvider.IsRestoreCompleteAsync(cancellationToken),
+            TimeSpan.FromMilliseconds(50),
+            cancellationToken);
+    }
+
+    public async Task OpenFileAsync(string projectName, string relativeFilePath, CancellationToken cancellationToken)
+    {
+        await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+
+        var filePath = await GetAbsolutePathForProjectRelativeFilePathAsync(projectName, relativeFilePath, cancellationToken);
+        if (!File.Exists(filePath))
+        {
+            throw new FileNotFoundException(filePath);
+        }
+
+        VsShellUtilities.OpenDocument(ServiceProvider.GlobalProvider, filePath, VSConstants.LOGVIEWID.Code_guid, out _, out _, out _, out var view);
+
+        // Reliably set focus using NavigateToLineAndColumn
+        var textManager = await GetRequiredGlobalServiceAsync<SVsTextManager, IVsTextManager>(cancellationToken);
+        ErrorHandler.ThrowOnFailure(view.GetBuffer(out var textLines));
+        ErrorHandler.ThrowOnFailure(view.GetCaretPos(out var line, out var column));
+        ErrorHandler.ThrowOnFailure(textManager.NavigateToLineAndColumn(textLines, VSConstants.LOGVIEWID.Code_guid, line, column, line, column));
+    }
+
+    /// <summary>
+    /// Add new file to project.
+    /// </summary>
+    /// <param name="projectName">The project that contains the file.</param>
+    /// <param name="fileName">The name of the file to add.</param>
+    /// <param name="contents">The contents of the file to overwrite. An empty file is create if null is passed.</param>
+    /// <param name="open">Whether to open the file after it has been updated.</param>
+    /// <param name="cancellationToken"></param>
+    public async Task AddFileAsync(string projectName, string fileName, string? contents = null, bool open = false, CancellationToken cancellationToken = default)
+    {
+        await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+
+        var project = await GetProjectAsync(projectName, cancellationToken);
+        var projectDirectory = Path.GetDirectoryName(project.FullName);
+        var filePath = Path.Combine(projectDirectory, fileName);
+        var directoryPath = Path.GetDirectoryName(filePath);
+        Directory.CreateDirectory(directoryPath);
+
+        if (contents is not null)
+        {
+            File.WriteAllText(filePath, contents);
+        }
+        else if (!File.Exists(filePath))
+        {
+            File.Create(filePath).Dispose();
+        }
+
+        _ = project.ProjectItems.AddFromFile(filePath);
+
+        if (open)
+        {
+            await OpenFileAsync(projectName, fileName, cancellationToken);
+        }
+    }
+
+    private async Task CreateSolutionAsync(string solutionPath, string solutionName, CancellationToken cancellationToken)
+    {
+        await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+
+        await CloseSolutionAsync(cancellationToken);
+
+        var solutionFileName = Path.ChangeExtension(solutionName, ".sln");
+        Directory.CreateDirectory(solutionPath);
+
+        // Make sure the shell debugger package is loaded so it doesn't try to load during the synchronous portion
+        // of IVsSolution.CreateSolution.
+        //
+        // TODO: Identify the correct tracking bug
+        _ = await GetRequiredGlobalServiceAsync<SVsShellDebugger, IVsDebugger>(cancellationToken);
+
+        var solution = await GetRequiredGlobalServiceAsync<SVsSolution, IVsSolution>(cancellationToken);
+        ErrorHandler.ThrowOnFailure(solution.CreateSolution(solutionPath, solutionFileName, (uint)__VSCREATESOLUTIONFLAGS.CSF_SILENT));
+        ErrorHandler.ThrowOnFailure(solution.SaveSolutionElement((uint)__VSSLNSAVEOPTIONS.SLNSAVEOPT_ForceSave, null, 0));
+    }
+
+    private async Task<string> GetProjectTemplatePathAsync(string projectTemplate, string languageName, CancellationToken cancellationToken)
+    {
+        await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+
+        var dte = await GetRequiredGlobalServiceAsync<SDTE, EnvDTE.DTE>(cancellationToken);
+        var solution = (EnvDTE80.Solution2)dte.Solution;
+
+        if (string.Equals(languageName, "csharp", StringComparison.OrdinalIgnoreCase)
+            && GetCSharpProjectTemplates().TryGetValue(projectTemplate, out var csharpProjectTemplate))
+        {
+            return solution.GetProjectTemplate(csharpProjectTemplate, languageName);
+        }
+
+        throw new NotImplementedException();
+
+        static ImmutableDictionary<string, string> GetCSharpProjectTemplates()
+        {
+            var builder = ImmutableDictionary.CreateBuilder<string, string>();
+            builder[WellKnownProjectTemplates.BlazorProject] = "BlazorTemplate";
+            return builder.ToImmutable();
+        }
+    }
+
+    private static string ConvertLanguageName(string languageName)
+    {
+        return languageName switch
+        {
+            LanguageNames.CSharp => "CSharp",
+            LanguageNames.Razor => "CSharp",
+            _ => throw new ArgumentException($"'{languageName}' is not supported.", nameof(languageName)),
+        };
+    }
+
+    private async Task<string> GetAbsolutePathForProjectRelativeFilePathAsync(string projectName, string relativeFilePath, CancellationToken cancellationToken)
+    {
+        await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+
+        var dte = await GetRequiredGlobalServiceAsync<SDTE, EnvDTE.DTE>(cancellationToken);
+        var solution = dte.Solution;
+        Assumes.Present(solution);
+
+        var project = solution.Projects.Cast<EnvDTE.Project>().FirstOrDefault(x => x.Name == projectName);
+        if (project is null)
+        {
+            Assert.True(false, $"{projectName} doesn't exist, had {string.Join(",", solution.Projects.Cast<EnvDTE.Project>().Select(p => p.Name))}");
+            throw new NotImplementedException("Prevent null fallthrough");
+        }
+
+        Assert.NotNull(project);
+        var projectPath = Path.GetDirectoryName(project.FullName);
+        return Path.Combine(projectPath, relativeFilePath);
+    }
+
+    private async Task<string> GetDirectoryNameAsync(CancellationToken cancellationToken)
+    {
+        await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+
+        var solution = await GetRequiredGlobalServiceAsync<SVsSolution, IVsSolution>(cancellationToken);
+        ErrorHandler.ThrowOnFailure(solution.GetSolutionInfo(out _, out var solutionFileFullPath, out _));
+        if (string.IsNullOrEmpty(solutionFileFullPath))
+        {
+            throw new InvalidOperationException();
+        }
+
+        return Path.GetDirectoryName(solutionFileFullPath);
+    }
+
+    private static string CreateTemporaryPath()
+    {
+        return Path.Combine(Path.GetTempPath(), "razor-test", Path.GetRandomFileName());
+    }
+
+    private async Task<EnvDTE.Project> GetProjectAsync(string nameOrFileName, CancellationToken cancellationToken)
+    {
+        await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+
+        var dte = await GetRequiredGlobalServiceAsync<SDTE, EnvDTE.DTE>(cancellationToken);
+        var solution = (EnvDTE80.Solution2)dte.Solution;
+        return solution.Projects.OfType<EnvDTE.Project>().First(
+            project =>
+            {
+                ThreadHelper.ThrowIfNotOnUIThread();
+                return string.Equals(project.FileName, nameOrFileName, StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(project.Name, nameOrFileName, StringComparison.OrdinalIgnoreCase);
+            });
+    }
+}

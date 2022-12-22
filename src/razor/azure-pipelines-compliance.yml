@@ -1,0 +1,84 @@
+# Name: DotNet-Razor-Tooling-Compliance
+# URL: https://devdiv.visualstudio.com/DevDiv/_build?definitionId=16802
+#
+# Responsible for running compliance checks.
+
+#
+# NOTE: triggers for this build are defined in the Web UI instead of here in the YAML file so they
+#       apply to all branches.
+
+queue:
+  name: VSEngSS-MicroBuild2022-1ES
+  demands: Cmd
+  timeoutInMinutes: 90
+variables:
+  BuildConfiguration: Release
+  TeamName: AspNetCore
+  SignType: test
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  _DevDivDropAccessToken: $(System.AccessToken)
+
+steps:
+- template: eng/pipelines/checkout-windows-task.yml
+
+- task: PowerShell@2
+  displayName: Build
+  inputs:
+    filePath: eng/common/build.ps1
+    arguments: -ci
+               -restore
+               -build
+               -configuration $(BuildConfiguration)
+               /p:OfficialBuildId=$(Build.BuildNumber)
+               /p:ManifestBuildBranch=$(Build.SourceBranchName)
+               /p:ManifestBuildNumber=$(Build.BuildNumber)
+               /p:VisualStudioDropName=Products/dotnet/razor-tooling/$(Build.SourceBranchName)/$(Build.BuildNumber)
+
+- task: CopyFiles@2
+  # APIScan can take a long time, so here we copy (mostly) just the product binaries and related .pdbs
+  # in an effort to limit what it needs to work on.
+  displayName: Copy Razor Visual Studio assemblies for APIScan
+  inputs:
+    SourceFolder: '$(Build.SourcesDirectory)\artifacts\bin\Microsoft.VisualStudio.RazorExtension\$(BuildConfiguration)\net472'  # Limit to (mostly) product binaries
+    Contents: |
+      Microsoft.*Razor.LanguageServer*.dll
+      Microsoft.*Razor.LanguageServer*.pdb
+      Microsoft.CodeAnalysis.Razor.Workspaces.dll
+      Microsoft.CodeAnalysis.Razor.Workspaces.pdb
+      Microsoft.CodeAnalysis.Remote.Razor.dll
+      Microsoft.CodeAnalysis.Remote.Razor.pdb
+      Microsoft.VisualStudio.*.Razor.dll
+      Microsoft.VisualStudio.*.Razor.pdb
+      Microsoft.VisualStudio.RazorExtension.dll
+      Microsoft.VisualStudio.RazorExtension.pdb
+    TargetFolder: '$(Agent.TempDirectory)\APIScanFiles'
+  continueOnError: true
+
+- task: APIScan@2
+  # Scan for the use of undocumented APIs.
+  displayName: Run APIScan
+  inputs:
+    softwareFolder: '$(Agent.TempDirectory)\APIScanFiles' # Only examine the product binaries we previously copied.
+    softwareName: 'AspNetCore'
+    softwareVersionNum: '17.0'
+    softwareBuildNum: '$(Build.BuildId)'
+    symbolsFolder: 'SRV*http://symweb'
+  env:
+    AzureServicesAuthConnectionString: runAs=App;AppId=$(ApiScanClientId);TenantId=$(ApiScanTenant);AppKey=$(ApiScanSecret)
+  continueOnError: true
+
+- task: TSAUpload@2
+  # Scan the output of previous steps and create bugs for any problems.
+  displayName: Upload results and create bugs
+  inputs:
+    GdnPublishTsaOnboard: true
+    GdnPublishTsaConfigFile: '$(Build.SourcesDirectory)\eng\TSAConfig.gdntsa'  # All relevant settings are in this file.
+  continueOnError: true
+
+- task: PublishSecurityAnalysisLogs@3
+  displayName: Publishing analysis artifacts
+  inputs:
+    ArtifactName: 'CodeAnalysisLogs'
+    ArtifactType: 'Container'           # Associate the artifacts with the build.
+    AllTools: true                      # Look for logs from all tools.
+    ToolLogsNotFoundAction: 'Standard'  # If a log is not found just output a message to that effect.

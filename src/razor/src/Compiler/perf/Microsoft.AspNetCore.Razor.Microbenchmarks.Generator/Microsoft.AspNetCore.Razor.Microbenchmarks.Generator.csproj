@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Configurations>Debug;Release</Configurations>
+    <IsTestProject>true</IsTestProject>
+    <GenerateProgramFile>false</GenerateProgramFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="SampleApp\**" />
+    <EmbeddedResource Remove="SampleApp\**" />
+    <None Remove="SampleApp\**" />
+    <Content Include="SampleApp\**" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" />
+    <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" />
+    <PackageReference Include="Microsoft.Build.Locator" />
+
+    <!-- TestSDK brings in an earlier nuget frameworks that breaks loading the test project -->
+    <PackageReference Include="NuGet.Frameworks" VersionOverride="6.4.0" />
+  </ItemGroup>
+
+  <!-- Reference the local source generator when building in regular configurations -->
+  <ItemGroup Condition="'$(Configuration)' != 'Release_Nuget'">
+    <ProjectReference Include="..\..\Microsoft.NET.Sdk.Razor.SourceGenerators\Microsoft.NET.Sdk.Razor.SourceGenerators.csproj" />
+  </ItemGroup>
+
+  <!-- Grab the nuget package and reference its generator when building in Release_Nuget  -->
+  <ItemGroup Condition="'$(Configuration)' == 'Release_Nuget'">
+    <PackageReference Include="Microsoft.NET.Sdk.Razor.SourceGenerators.Transport" GeneratePathProperty="true" />
+    <Reference Include="$(PkgMicrosoft_NET_Sdk_Razor_SourceGenerators_Transport)\source-generators\*.dll" />
+  </ItemGroup>
+
+</Project>

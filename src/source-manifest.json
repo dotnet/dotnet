@@ -55,6 +55,12 @@
       "commitSha": "0e7accb78d0df80cda1bffbcf1d522945e8a1112"
     },
     {
+      "packageVersion": "7.0.0-preview.22615.2",
+      "path": "razor",
+      "remoteUri": "https://github.com/dotnet/razor",
+      "commitSha": "d1bfa89ca57172f048ac30941b9df9f8d451f95b"
+    },
+    {
       "packageVersion": "4.5.0-2.22613.14",
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
