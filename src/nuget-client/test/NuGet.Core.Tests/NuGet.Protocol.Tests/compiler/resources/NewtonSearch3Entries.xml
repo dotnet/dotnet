@@ -1,0 +1,150 @@
+﻿<feed xml:base="https://www.nuget.org/api/v2" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
+  <m:count>33</m:count>
+  <id>http://schemas.datacontract.org/2004/07/</id>
+  <title/>
+  <updated>2017-01-06T21:42:19Z</updated>
+  <link rel="self" href="https://www.nuget.org/api/v2/Packages"/>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='SisoDb.ServiceStack',Version='16.2.1')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme"/>
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='SisoDb.ServiceStack',Version='16.2.1')"/>
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='SisoDb.ServiceStack',Version='16.2.1')"/>
+    <title type="text">SisoDb.ServiceStack</title>
+    <summary type="text">SisoDb is the document-oriented provider for SQL-Server.</summary>
+    <updated>2013-03-12T20:03:44Z</updated>
+    <author>
+      <name>danielwertheim</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/SisoDb.ServiceStack/16.2.1"/>
+    <m:properties>
+      <d:Id>SisoDb.ServiceStack</d:Id>
+      <d:Version>16.2.1</d:Version>
+      <d:NormalizedVersion>16.2.1</d:NormalizedVersion>
+      <d:Authors>danielwertheim</d:Authors>
+      <d:Copyright>Daniel Wertheim</d:Copyright>
+      <d:Created m:type="Edm.DateTime">2013-03-12T20:03:44.297Z</d:Created>
+      <d:Dependencies>SisoDb:[16.2.1]:|ServiceStack.Text:3.9.38:</d:Dependencies>
+      <d:Description>SisoDb is a schemaless document-oriented provider for SQL-Server. Using JSON and key-value storage, it lets you persist object graphs without specifying any mappings or extending any base classes interfaces etc. It lets you perform queries against SQL-server, using lambda expressions. It syncs schemachanges on the fly and can assist you to handle more complex model updates. Basically, it is a simple data access tool.			This package is a package containing a serializer using ServiceStack.Text, which is the fastest JSON serializer in .Net.			The default serializer in SisoDb is a contained source-code version of ServiceStack.Text. This package allows you to keep up to date and use the latest ServiceStack.Text package.			There is also one package for NewtonSofts, JSON.Net serializer. SisoDb.JsonNet</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">942</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/SisoDb.ServiceStack/16.2.1</d:GalleryDetailsUrl>
+      <d:IconUrl>http://sisodb.com/logos/sisodb-logo-100x100.png</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true"/>
+      <d:LastUpdated m:type="Edm.DateTime">2013-03-12T20:03:44.297Z</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2013-03-12T20:03:44.297Z</d:Published>
+      <d:PackageHash>noyvxldbWV7cjPzzcoizIf8BBCfWiQvXxf7umi31LQ6548r52mySFkyPALpjeG7Wvrx8SBknyDyosca8KVfZXg==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">8472</d:PackageSize>
+      <d:ProjectUrl>http://www.sisodb.com/</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/packages/SisoDb.ServiceStack/16.2.1/ReportAbuse</d:ReportAbuseUrl>
+      <d:ReleaseNotes>http://www.sisodb.com/wiki/release-notes</d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary>SisoDb is the document-oriented provider for SQL-Server.</d:Summary>
+      <d:Tags xml:space="preserve"> servicestack sisodb document-database db structure key-value json poco blob sql sqlserver sql-server sql2005 sql2008 sql2012 sqlazure azure sqlce sqlce4 nosql </d:Tags>
+      <d:Title>SisoDb.ServiceStack - Simple Structure Oriented Db</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">378</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true"/>
+      <d:LastEdited m:null="true"/>
+      <d:LicenseUrl>https://github.com/danielwertheim/SisoDb-Provider/blob/master/Source/License-SisoDb.txt</d:LicenseUrl>
+      <d:LicenseNames m:null="true"/>
+      <d:LicenseReportUrl m:null="true"/>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='Sproc.Lock',Version='1.0.2')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme"/>
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='Sproc.Lock',Version='1.0.2')"/>
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='Sproc.Lock',Version='1.0.2')"/>
+    <title type="text">Sproc.Lock</title>
+    <summary type="text">SQL Server based distributed locking.</summary>
+    <updated>2016-10-17T14:47:02Z</updated>
+    <author>
+      <name>Michael Newton</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/Sproc.Lock/1.0.2"/>
+    <m:properties>
+      <d:Id>Sproc.Lock</d:Id>
+      <d:Version>1.0.2</d:Version>
+      <d:NormalizedVersion>1.0.2</d:NormalizedVersion>
+      <d:Authors>Michael Newton</d:Authors>
+      <d:Copyright>Copyright 2013</d:Copyright>
+      <d:Created m:type="Edm.DateTime">2016-10-17T14:47:02.597Z</d:Created>
+      <d:Dependencies/>
+      <d:Description>SQL Server based distributed locking library.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1678</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/Sproc.Lock/1.0.2</d:GalleryDetailsUrl>
+      <d:IconUrl>https://raw.githubusercontent.com/fsprojects/ProjectScaffold/master/docs/files/img/logo.png</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true"/>
+      <d:LastUpdated m:type="Edm.DateTime">2016-10-17T14:47:02.597Z</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2016-10-17T14:47:02.597Z</d:Published>
+      <d:PackageHash>8lW6Ytlh+gClLqgwJY5/HxZZz5AfkvhGocRJ1Gn8Dnmu4BzzC0Wcut2exN2YvLvKMmwzr3ZxR724uIoTEU7E5A==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">29520</d:PackageSize>
+      <d:ProjectUrl>http://fsprojects.github.com/Sproc.Lock</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/packages/Sproc.Lock/1.0.2/ReportAbuse</d:ReportAbuseUrl>
+      <d:ReleaseNotes>Updated FSharp.Core to 4.0.0.1 (4.4.0.0)Updated FsCheck to 2.0.6Updated Sproc.Lock to target .Net 4.5</d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary>SQL Server based distributed locking.</d:Summary>
+      <d:Tags>distributed_lock lock</d:Tags>
+      <d:Title>Sproc.Lock</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">118</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true"/>
+      <d:LastEdited m:null="true"/>
+      <d:LicenseUrl>http://github.com/fsprojects/Sproc.Lock/blob/master/LICENSE.txt</d:LicenseUrl>
+      <d:LicenseNames m:null="true"/>
+      <d:LicenseReportUrl m:null="true"/>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='UrlHandler',Version='0.1.1')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme"/>
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='UrlHandler',Version='0.1.1')"/>
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='UrlHandler',Version='0.1.1')"/>
+    <title type="text">UrlHandler</title>
+    <updated>2016-05-28T00:24:28Z</updated>
+    <author>
+      <name>Eric Newton</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/UrlHandler/0.1.1"/>
+    <m:properties>
+      <d:Id>UrlHandler</d:Id>
+      <d:Version>0.1.1</d:Version>
+      <d:NormalizedVersion>0.1.1</d:NormalizedVersion>
+      <d:Authors>Eric Newton</d:Authors>
+      <d:Copyright>Copyright 2016</d:Copyright>
+      <d:Created m:type="Edm.DateTime">2016-05-28T00:24:28.067Z</d:Created>
+      <d:Dependencies/>
+      <d:Description>UrlHandler helps with inter-application url handling, especially code that might exist in both environments.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">52</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/UrlHandler/0.1.1</d:GalleryDetailsUrl>
+      <d:IconUrl m:null="true"/>
+      <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true"/>
+      <d:LastUpdated m:type="Edm.DateTime">2016-05-28T00:24:28.067Z</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2016-05-28T00:24:28.067Z</d:Published>
+      <d:PackageHash>SndgpGtroWG1e2ncXeVAJCjp676mpkC+nhbkjh0yn8whzAD2eVHOPtsm9PeB6ymqTqyHorXg1iVmPRuhiZ/IuA==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">12103</d:PackageSize>
+      <d:ProjectUrl>https://github.com/ericnewton76/UrlHandler</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/packages/UrlHandler/0.1.1/ReportAbuse</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true"/>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary/>
+      <d:Tags/>
+      <d:Title>UrlHandler</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">52</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true"/>
+      <d:LastEdited m:null="true"/>
+      <d:LicenseUrl>http://www.apache.org/licenses/LICENSE-2.0.html</d:LicenseUrl>
+      <d:LicenseNames m:null="true"/>
+      <d:LicenseReportUrl m:null="true"/>
+    </m:properties>
+  </entry>
+</feed>

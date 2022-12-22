@@ -1,0 +1,181 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<data>  
+  <item>
+    <original>
+
+      <configuration>
+        <configSections>
+          <section name="entityFramework" type="System.Data.Entity.Internal.ConfigFile.EntityFrameworkSection, EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" requirePermission="false" />
+        </configSections>
+      </configuration>
+
+    </original>
+    <expectedPostTransform>
+
+      <configuration>
+        <configSections>
+          <section name="entityFramework" type="System.Data.Entity.Internal.ConfigFile.EntityFrameworkSection, EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" requirePermission="false" />
+          <section name="nlog" type="NLog.Config.ConfigSectionHandler, NLog" />
+        </configSections>
+        <nlog>
+          <extensions>
+            <add assembly="Microsoft.ApplicationInsights.NLogTarget" />
+          </extensions>
+          <targets>
+            <target type="ApplicationInsightsTarget" name="aiTarget" />
+          </targets>
+          <rules>
+            <logger name="*" minlevel="Trace" writeTo="aiTarget" />
+          </rules>
+        </nlog>
+      </configuration>
+
+    </expectedPostTransform>
+  </item>
+  <item>
+    <original>
+
+      <configuration>
+        <configSections>
+          <section name="entityFramework" type="System.Data.Entity.Internal.ConfigFile.EntityFrameworkSection, EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" requirePermission="false" />
+        </configSections>
+        <someConfig/>
+        <somesection>
+          <someconfig/>
+        </somesection>
+      </configuration>
+
+    </original>
+    <expectedPostTransform>
+
+      <configuration>
+        <configSections>
+          <section name="entityFramework" type="System.Data.Entity.Internal.ConfigFile.EntityFrameworkSection, EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" requirePermission="false" />
+          <section name="nlog" type="NLog.Config.ConfigSectionHandler, NLog" />
+        </configSections>
+        <someConfig/>
+        <somesection>
+          <someconfig/>
+        </somesection>
+        <nlog>
+          <extensions>
+            <add assembly="Microsoft.ApplicationInsights.NLogTarget" />
+          </extensions>
+          <targets>
+            <target type="ApplicationInsightsTarget" name="aiTarget" />
+          </targets>
+          <rules>
+            <logger name="*" minlevel="Trace" writeTo="aiTarget" />
+          </rules>
+        </nlog>
+      </configuration>
+
+    </expectedPostTransform>
+  </item>
+  <item>
+    <original>
+
+      <configuration>
+        <configSections>
+          <section name="entityFramework" type="System.Data.Entity.Internal.ConfigFile.EntityFrameworkSection, EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" requirePermission="false" />
+          <section name="nlog" type="NLog.Config.ConfigSectionHandler, NLog" />
+        </configSections>
+        <someConfig/>
+        <somesection>
+          <someconfig/>
+        </somesection>
+        <nlog>
+          <extensions>
+            <add assembly="SomeAssembly" />
+          </extensions>
+          <targets>
+            <target type="SomeAssembly" name="someTarget" />
+          </targets>
+          <rules>
+            <logger name="*" minlevel="Trace" writeTo="someTarget" />
+          </rules>
+        </nlog>
+      </configuration>
+
+    </original>
+    <expectedPostTransform>
+
+      <configuration>
+        <configSections>
+          <section name="entityFramework" type="System.Data.Entity.Internal.ConfigFile.EntityFrameworkSection, EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" requirePermission="false" />
+          <section name="nlog" type="NLog.Config.ConfigSectionHandler, NLog" />
+        </configSections>
+        <someConfig/>
+        <somesection>
+          <someconfig/>
+        </somesection>
+        <nlog>
+          <extensions>
+            <add assembly="SomeAssembly" />
+            <add assembly="Microsoft.ApplicationInsights.NLogTarget" />
+          </extensions>
+          <targets>
+            <target type="SomeAssembly" name="someTarget" />
+            <target type="ApplicationInsightsTarget" name="aiTarget" />
+          </targets>
+          <rules>
+            <logger name="*" minlevel="Trace" writeTo="someTarget" />
+            <logger name="*" minlevel="Trace" writeTo="aiTarget" />
+          </rules>
+        </nlog>
+      </configuration>
+
+    </expectedPostTransform>
+  </item>
+  <item>
+    <original>
+
+      <configuration>
+        <configSections>
+          <section name="entityFramework" type="System.Data.Entity.Internal.ConfigFile.EntityFrameworkSection, EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" requirePermission="false" />
+          <section name="nlog" type="NLog.Config.ConfigSectionHandler, NLog" />
+        </configSections>
+        <someConfig/>
+        <somesection>
+          <someconfig/>
+        </somesection>
+        <nlog>
+          <extensions>
+            <add assembly="SomeAssembly" />
+          </extensions>
+          <targets>
+            <target type="SomeAssembly" name="someTarget" />
+          </targets>
+        </nlog>
+      </configuration>
+
+    </original>
+    <expectedPostTransform>
+
+      <configuration>
+        <configSections>
+          <section name="entityFramework" type="System.Data.Entity.Internal.ConfigFile.EntityFrameworkSection, EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" requirePermission="false" />
+          <section name="nlog" type="NLog.Config.ConfigSectionHandler, NLog" />
+        </configSections>
+        <someConfig/>
+        <somesection>
+          <someconfig/>
+        </somesection>
+        <nlog>
+          <extensions>
+            <add assembly="SomeAssembly" />
+            <add assembly="Microsoft.ApplicationInsights.NLogTarget" />
+          </extensions>
+          <targets>
+            <target type="SomeAssembly" name="someTarget" />
+            <target type="ApplicationInsightsTarget" name="aiTarget" />
+          </targets>
+          <rules>
+            <logger name="*" minlevel="Trace" writeTo="aiTarget" />
+          </rules>
+        </nlog>
+      </configuration>
+
+    </expectedPostTransform>
+  </item>
+</data>

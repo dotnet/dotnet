@@ -1,0 +1,116 @@
+variables:
+- name: _TeamName
+  value: UnitTesting
+- name: _PublishUsingPipelines
+  value: true
+- name: _DotNetArtifactsCategory
+  value: .NETCore
+
+# CI and PR triggers
+trigger:
+- main
+- rel/*
+
+pr:
+- main
+- rel/*
+
+stages:
+- stage: build
+  displayName: Build
+  jobs:
+  - template: /eng/common/templates/jobs/jobs.yml
+    parameters:
+      enableMicrobuild: true
+      enablePublishBuildArtifacts: true
+      enablePublishTestResults: true
+      enablePublishBuildAssets: true
+      enablePublishUsingPipelines: $(_PublishUsingPipelines)
+      enableSourceBuild: true
+      enableTelemetry: true
+      helixRepo: dotnet/test-templates
+      jobs:
+      - job: Windows
+        pool:
+          # For public or PR jobs, use the hosted pool.  For internal jobs use the internal pool.
+          # Will eventually change this to two BYOC pools.
+          ${{ if or(eq(variables['System.TeamProject'], 'public'), in(variables['Build.Reason'], 'PullRequest')) }}:
+            name: NetCore-Public
+            demands: ImageOverride -equals Build.Windows.Amd64.VS2022.Open
+          ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+            name: NetCore1ESPool-Internal
+            demands: ImageOverride -equals Build.Windows.Amd64.VS2022
+        variables:
+        - _OfficialBuildArgs: ''
+        # Only enable publishing in official builds.
+        - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+          # DotNet-Blob-Feed provides: dotnetfeed-storage-access-key-1
+          # Publish-Build-Assets provides: MaestroAccessToken, BotAccount-dotnet-maestro-bot-PAT
+          - group: DotNet-Blob-Feed
+          - group: DotNet-Symbol-Server-Pats
+          - group: Publish-Build-Assets
+          - group: DotNet-VSTS-Infra-Access
+          - group: DotNet-DevDiv-Insertion-Workflow-Variables
+          - _VisualStudioDropName: Products/$(System.TeamProject)/$(Build.Repository.Name)/$(Build.SourceBranchName)/$(Build.BuildNumber)
+          - _OfficialBuildArgs: /p:DotNetSignType=$(_SignType) 
+                  /p:TeamName=$(_TeamName)
+                  /p:VisualStudioDropName=$(_VisualStudioDropName)
+                  /p:DotNetSymbolServerTokenMsdl=$(microsoft-symbol-server-pat)
+                  /p:DotNetSymbolServerTokenSymWeb=$(symweb-symbol-server-pat)
+                  /p:DotNetPublishBlobFeedKey=$(dotnetfeed-storage-access-key-1)
+                  /p:DotNetPublishBlobFeedUrl=https://dotnetfeed.blob.core.windows.net/dotnet-core/index.json
+                  /p:DotNetPublishToBlobFeed=$(_DotNetPublishToBlobFeed)
+                  /p:DotNetPublishUsingPipelines=$(_PublishUsingPipelines)
+                  /p:DotNetArtifactsCategory=$(_DotNetArtifactsCategory)
+                  /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
+          - name: CodeQL.Enabled
+            value: true
+        strategy:
+          matrix:
+            Debug:
+              _BuildConfig: Debug
+              _SignType: test
+              _DotNetPublishToBlobFeed: false
+              _BuildArgs: ''
+            Release:
+              _BuildConfig: Release
+              # PRs or external builds are not signed.
+              ${{ if or(eq(variables['System.TeamProject'], 'public'), in(variables['Build.Reason'], 'PullRequest')) }}:
+                _SignType: test
+                _DotNetPublishToBlobFeed: false
+                _BuildArgs: ''
+              ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+                _SignType: real
+                _DotNetPublishToBlobFeed: true
+                publishUsingPipelines: $(_PublishUsingPipelines)
+                _BuildArgs: $(_OfficialBuildArgs)
+        steps:
+        - checkout: self
+          clean: true
+        - script: eng\common\cibuild.cmd
+            -configuration $(_BuildConfig) 
+            -prepareMachine
+            $(_BuildArgs)
+          displayName: Build and Publish
+
+        - task: DotNetCoreCLI@2
+          displayName: 'dotnet test'
+          inputs:
+            command: test
+            projects: 'test\Microsoft.TestTemplates.Acceptance.Tests.sln'
+
+        - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+          - script: dir /S artifacts\VSSetup\$(_BuildConfig)\Insertion
+          - task: ms-vseng.MicroBuildTasks.4305a8de-ba66-4d8b-b2d1-0dc4ecbbf5e8.MicroBuildUploadVstsDropFolder@1
+            displayName: Upload Azure DevOps Drop
+            inputs:
+              DropName: $(_VisualStudioDropName)
+              DropFolder: 'artifacts\VSSetup\$(_BuildConfig)\Insertion'
+              AccessToken: $(dn-bot-devdiv-build-rw-code-rw-release-rw)
+            condition: and(succeeded(), eq(variables['_DotNetPublishToBlobFeed'], 'true'))
+
+- ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+  - template: \eng\common\templates\post-build\post-build.yml
+    parameters:
+      enableSourceLinkValidation: false
+      publishingInfraVersion: 3

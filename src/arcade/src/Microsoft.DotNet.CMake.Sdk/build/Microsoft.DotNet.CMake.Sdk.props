@@ -1,0 +1,23 @@
+<Project>
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <GenerateDependencyFile>false</GenerateDependencyFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(CMakeGenerator)' == ''">
+    <CMakeGenerator Condition="$([MSBuild]::IsOSPlatform(Windows))">Visual Studio</CMakeGenerator>
+    <CMakeGenerator Condition="!$([MSBuild]::IsOSPlatform(Windows))">Unix Makefiles</CMakeGenerator>
+    <CMakeCompilerToolchain Condition="$([MSBuild]::IsOSPlatform(Windows))">MSVC</CMakeCompilerToolchain>
+    <CMakeCompilerToolchain Condition="!$([MSBuild]::IsOSPlatform(Windows))">clang</CMakeCompilerToolchain>
+    <_CMakeMultiConfigurationGenerator>false</_CMakeMultiConfigurationGenerator>
+    <_CMakePassArchitectureToGenerator>false</_CMakePassArchitectureToGenerator>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <CMakeConfigureDependsOn></CMakeConfigureDependsOn>
+    <CMakeBuildDependsOn></CMakeBuildDependsOn>
+  </PropertyGroup>
+  
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+</Project>

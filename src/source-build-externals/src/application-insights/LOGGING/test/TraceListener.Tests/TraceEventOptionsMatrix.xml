@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Rows>
+  <Row>
+    <TraceOptions>Callstack,Timestamp,LogicalOperationStack</TraceOptions>
+  </Row>
+  <Row>
+    <TraceOptions>Callstack</TraceOptions>
+  </Row>
+  <Row>
+    <TraceOptions>Timestamp</TraceOptions>
+  </Row>
+  <Row>
+    <TraceOptions>LogicalOperationStack</TraceOptions>
+  </Row>
+  <Row>
+    <TraceOptions>None</TraceOptions>
+  </Row>
+</Rows>

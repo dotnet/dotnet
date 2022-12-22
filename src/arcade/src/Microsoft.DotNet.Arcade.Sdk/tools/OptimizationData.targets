@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+
+  <!--
+    Properties:
+      IbcOptimizationDataDir             The directory containing IBC optimization data. Optimization data are not applied if unset.
+      EnableNgenOptimization             Set to true to enable NGEN optimization (partial or full).
+      EnableNgenOptimizationLogDetails   Set to true to enable NGEN method logging output
+      ApplyNgenOptimization              Set to 'partial' or 'full' in a project to embed partial/full NGEN optimization data to the built binary.
+      IgnoreIbcMergeErrors               Set to true to ignore certain errors encountered while running ibcmerge, those problematic IBC files will be ignored.
+
+    Items:  
+      OptimizeAssembly                   Set of assemblies to apply Partial NGEN optimization data to.
+  -->
+
+  <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.Unsign" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" />
+  <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.GroupItemsBy" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" />
+  <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.ExtractNgenMethodList" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" />
+
+  <PropertyGroup>
+    <PostCompileBinaryModificationSentinelFile>$(IntermediateOutputPath)$(TargetFileName).pcbm</PostCompileBinaryModificationSentinelFile>
+
+    <EnableNgenOptimization Condition="'$(EnableNgenOptimization)' == '' and '$(Configuration)' == 'Release' and '$(OfficialBuild)' == 'true'">true</EnableNgenOptimization>
+    <EnableNgenOptimizationLogDetails Condition="'$(EnableNgenOptimizationLogDetails)' == ''">$(UsingToolVisualStudioIbcTraining)</EnableNgenOptimizationLogDetails>
+
+    <_IbcMergeXmlOutputDir>$(ArtifactsTmpDir)ibcxml</_IbcMergeXmlOutputDir>
+  </PropertyGroup>
+
+  <!--
+    We need to write out this sentinel file so that when ApplyOptimizations runs and compares the intermediate assembly location
+    against itself the PostCompileBinaryModificationSentinelFile will have a newer timestamp allowing the target to be run.
+  -->
+  <Target Name="PostCompileBinaryModification"
+          AfterTargets="CoreCompile"
+          DependsOnTargets="_InitializeAssemblyOptimizationWithTargetAssembly;ApplyOptimizations"
+          Condition="'$(IsWpfTempProject)' != 'true' and '$(EnableNgenOptimization)' == 'true' and '$(ApplyNgenOptimization)' != ''"
+          Inputs="$(MSBuildAllProjects);@(IntermediateAssembly)"
+          Outputs="@(IntermediateAssembly);$(PostCompileBinaryModificationSentinelFile)">
+
+    <!-- Write out a sentinel timestamp file to prevent unnecessary work in incremental builds. -->
+    <Touch AlwaysCreate="true" Files="$(PostCompileBinaryModificationSentinelFile)" />
+
+    <ItemGroup>
+      <FileWrites Include="$(PostCompileBinaryModificationSentinelFile)" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="_InitializeAssemblyOptimizationWithTargetAssembly">
+    <ItemGroup>
+      <OptimizeAssembly Include="@(IntermediateAssembly)" TargetFramework="$(TargetFramework)" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="_LocateIbcMerge">
+    <PropertyGroup>
+      <_IbcMergePath>$(NuGetPackageRoot)microsoft.dotnet.ibcmerge\$(MicrosoftDotNetIBCMergeVersion)\tools\netcoreapp2.0\ibcmerge.dll</_IbcMergePath>
+
+      <_RunIbcMerge>false</_RunIbcMerge>
+      <_RunIbcMerge Condition="'$(OfficialBuild)' == 'true' or Exists('$(_IbcMergePath)')">true</_RunIbcMerge>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="_CalculateIbcMergeInvocations">
+
+    <Error Text="Unexpected value specified for NgenOptimization: '$(ApplyNgenOptimization)'"
+           Condition="'$(ApplyNgenOptimization)' != 'partial' and '$(ApplyNgenOptimization)' != 'full'"/>
+
+    <Error Text="Directory specified in IbcOptimizationDataDir does not exist: '$(IbcOptimizationDataDir)'"
+           Condition="!Exists('$(IbcOptimizationDataDir)')" />
+
+    <Error Text="IbcOptimizationDataDir must end with slash"
+           Condition="!HasTrailingSlash('$(IbcOptimizationDataDir)')"/>
+
+    <ItemGroup>
+      <!--
+        Find all .ibc files generated for assemblies to optimize.
+
+        The optimization data directory has the following structure:
+          $(IbcOptimizationDataDir)path\{AssemblyFileName}\{AssemblyFileName}
+          $(IbcOptimizationDataDir)path\{AssemblyFileName}\Scenario1.ibc
+          $(IbcOptimizationDataDir)path\{AssemblyFileName}\Scenario2.ibc
+
+        One assembly might be copied to multiple subdirectories (e.g. in MSBuild and in IDE). 
+        We assume that these copies are the same and merge all scenarios together.
+        We could produce multiple different assemblies with IBC data embedded if there 
+        was a significant benefit in optimizing them separately.
+        This would however require a more complicated setup authoring.
+      -->
+      <_IbcFile Include="$(IbcOptimizationDataDir)**\%(OptimizeAssembly.FileName)%(OptimizeAssembly.Extension)\*.ibc" 
+                OptimizeAssemblyPath="%(OptimizeAssembly.Identity)"
+                TargetFramework="%(OptimizeAssembly.TargetFramework)" />
+
+      <_AssemblyWithoutRawIbcData Include="@(OptimizeAssembly)" Exclude="@(_IbcFile->'%(OptimizeAssemblyPath)')" />
+
+      <_IbcFile>
+        <PreviousAssemblyDir>$([System.IO.Path]::GetDirectoryName('%(Identity)'))</PreviousAssemblyDir>
+        <AssemblyFileName>$([System.IO.Path]::GetFileName($([System.IO.Path]::GetDirectoryName('%(Identity)'))))</AssemblyFileName>
+      </_IbcFile>
+
+      <_IbcFileByAssemblyName Include="@(_IbcFile->'%(AssemblyFileName)')"
+                              IbcFiles="%(_IbcFile.Identity)"
+                              PreviousAssemblyPath="%(_IbcFile.PreviousAssemblyDir)\%(_IbcFile.AssemblyFileName)"
+                              UniqueId="$([System.Guid]::NewGuid())"
+                              PreviousAssemblyCopyPath="$(ArtifactsTmpDir)OptimizedAssemblies\%(_IbcFileByAssemblyName.UniqueId)"
+                              OptimizeAssemblyPath="%(_IbcFile.OptimizeAssemblyPath)"
+                              TargetFramework="%(_IbcFile.TargetFramework)"
+                              XmlOutputPath="$(_IbcMergeXmlOutputDir)\%(_IbcFile.AssemblyFileName).%(_IbcFileByAssemblyName.UniqueId).temp.ibc.xml" />
+    </ItemGroup>
+
+    <Error Text="No optimization data found for assemblies: @(_AssemblyWithoutRawIbcData, ', ')"
+           Condition="'@(_AssemblyWithoutRawIbcData)' != ''" />
+
+    <Microsoft.DotNet.Arcade.Sdk.GroupItemsBy Items="@(_IbcFileByAssemblyName)" GroupMetadata="IbcFiles">
+      <Output TaskParameter="GroupedItems" ItemName="_AssemblyWithRawIbcData" />
+    </Microsoft.DotNet.Arcade.Sdk.GroupItemsBy>
+
+    <PropertyGroup>
+      <_PartialNgenArg/>
+      <_PartialNgenArg Condition="'$(ApplyNgenOptimization)' == 'partial'">-partialNGEN</_PartialNgenArg>
+      <_IgnoreMvidMismatchArg/>
+      <_IgnoreMvidMismatchArg Condition="'$(IgnoreIbcMergeErrors)' == 'true'">-ignoremvidmismatch</_IgnoreMvidMismatchArg>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <_IbcMergeInvocation Include="%(_AssemblyWithRawIbcData.AssemblyFileName) [MergeRawToPrevious]">
+        <CopyFilesSource>%(_AssemblyWithRawIbcData.PreviousAssemblyPath)</CopyFilesSource>
+        <CopyFilesDestination>%(_AssemblyWithRawIbcData.PreviousAssemblyCopyPath)</CopyFilesDestination>
+
+        <!--
+          -delete to delete data previously embedded in the binary. 
+        -->
+        <IbcMergeArgs>-q -f $(_PartialNgenArg) $(_IgnoreMvidMismatchArg) -minify -delete -mo "%(_AssemblyWithRawIbcData.PreviousAssemblyCopyPath)" "$([MSBuild]::ValueOrDefault('%(_AssemblyWithRawIbcData.IbcFiles)', '').Replace(';', '" "'))"</IbcMergeArgs>
+      </_IbcMergeInvocation>
+
+      <_IbcMergeInvocation Include="%(_AssemblyWithRawIbcData.AssemblyFileName) [MergePreviousToCurrent]">
+        <!--
+          -delete to delete data previously embedded in the binary. This is a no-op for binaries produced by this build, but is needed for dependencies such as System.Reflection.Metadata.
+          -incremental to map data stored in the optimized binary, which comes from a previous build, to the new build of the binary.
+        -->
+        <IbcMergeArgs>-q -f $(_PartialNgenArg) -minify -delete -mo "%(_AssemblyWithRawIbcData.OptimizeAssemblyPath)" -incremental "%(_AssemblyWithRawIbcData.PreviousAssemblyCopyPath)"</IbcMergeArgs>
+        <UnsignFile>%(_AssemblyWithRawIbcData.OptimizeAssemblyPath)</UnsignFile>
+        <XmlOutputPath Condition="'$(EnableNgenOptimizationLogDetails)' == 'true'">%(_AssemblyWithRawIbcData.XmlOutputPath)</XmlOutputPath>
+        <TargetFramework>%(_AssemblyWithRawIbcData.TargetFramework)</TargetFramework>
+
+        <!-- Files to copy to log dir if IbcMerge fails -->
+        <LogFilesOnFailure>%(_AssemblyWithRawIbcData.OptimizeAssemblyPath);%(_AssemblyWithRawIbcData.PreviousAssemblyCopyPath)</LogFilesOnFailure>
+        <LogFilesOnFailureDir>$(ArtifactsLogNgenDir)%(_AssemblyWithRawIbcData.UniqueId)\</LogFilesOnFailureDir>
+      </_IbcMergeInvocation>
+
+      <_IbcMergeInvocation>
+        <IbcMergeArgs Condition="'%(_IbcMergeInvocation.XmlOutputPath)' != ''">%(_IbcMergeInvocation.IbcMergeArgs) -dxml "%(_IbcMergeInvocation.XmlOutputPath)"</IbcMergeArgs>
+      </_IbcMergeInvocation>
+    </ItemGroup>
+  </Target>
+
+  <!--
+    Merges optimization data to assemblies specified in OptimizeAssembly item group.
+
+    Non-incremental. Calling targets need to handle incremental build if necessary.
+    Runs during any CI build. Performs the actual merge only when IBCMerge tool is available. It is expected to be available in an official build.
+  -->
+  <Target Name="ApplyOptimizations"
+          DependsOnTargets="_LocateIbcMerge;_CalculateIbcMergeInvocations"
+          Condition="'@(OptimizeAssembly)' != '' and '$(EnableNgenOptimization)' == 'true' and '$(ApplyNgenOptimization)' != ''">
+
+    <Message Text='IBCMerge tool will be run in an official build with arguments: %(_IbcMergeInvocation.IbcMergeArgs)'
+             Condition="'$(_RunIbcMerge)' != 'true'" 
+             Importance="normal"/>
+
+    <MakeDir Directories="$(_IbcMergeXmlOutputDir)" />
+
+    <Copy SourceFiles="%(_IbcMergeInvocation.CopyFilesSource)" 
+          DestinationFiles="%(_IbcMergeInvocation.CopyFilesDestination)" 
+          Condition="'%(_IbcMergeInvocation.CopyFilesSource)' != ''" />
+
+    <Exec Command='"$(DotNetTool)" exec "$(_IbcMergePath)" %(_IbcMergeInvocation.IbcMergeArgs)' ConsoleToMSBuild="true" Condition="'$(_RunIbcMerge)' == 'true'" IgnoreExitCode="true">
+      <Output TaskParameter="ConsoleOutput" PropertyName="_IbcMergeOutput" />
+      <Output TaskParameter="ExitCode" PropertyName="_IbcMergeErrorCode" />
+    </Exec>
+
+    <Message Text="$(_IbcMergeOutput)"
+             Importance="low"
+             Condition="'$(_RunIbcMerge)' == 'true'" />
+
+    <!-- Copy IBCMerge input assembly to logs if the tool fails, to allow investigation -->
+    <Copy SourceFiles="%(_IbcMergeInvocation.LogFilesOnFailure)"
+          DestinationFolder="%(_IbcMergeInvocation.LogFilesOnFailureDir)"
+          Condition="'$(_RunIbcMerge)' == 'true' and '$(_IbcMergeErrorCode)' != '0' and '%(_IbcMergeInvocation.LogFilesOnFailure)' != ''" />
+
+    <Error Text="IBCMerge failed with exit code $(_IbcMergeErrorCode)."
+           Condition="'$(_RunIbcMerge)' == 'true' and '$(_IbcMergeErrorCode)' != '0'" />
+
+    <!-- Remove Authenticode signing record if present. -->
+    <Microsoft.DotNet.Arcade.Sdk.Unsign FilePath="%(_IbcMergeInvocation.UnsignFile)" Condition="'%(_IbcMergeInvocation.UnsignFile)' != ''" />
+
+    <Microsoft.DotNet.Arcade.Sdk.ExtractNgenMethodList
+      IbcXmlFilePath="%(_IbcMergeInvocation.XmlOutputPath)" 
+      AssemblyFilePath="%(_IbcMergeInvocation.UnsignFile)"
+      AssemblyTargetFramework="%(_IbcMergeInvocation.TargetFramework)"
+      OutputDirectory="$(ArtifactsLogNgenDir)" 
+      Condition="'%(_IbcMergeInvocation.XmlOutputPath)' != ''"/>
+  </Target>
+
+</Project>

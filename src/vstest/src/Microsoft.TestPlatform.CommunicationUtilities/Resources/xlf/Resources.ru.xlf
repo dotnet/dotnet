@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../Resources.resx" target-language="ru">
+    <body>
+      <trans-unit id="AbortedTestRun">
+        <source>The active test run was aborted. Reason: {0}</source>
+        <note></note>
+        <target state="translated">Активный тестовый запуск прерван. Причина: {0}</target>
+      </trans-unit>
+      <trans-unit id="ConnectionClosed">
+        <source>An existing connection was forcibly closed by the remote host.</source>
+        <note></note>
+        <target state="translated">Существующее подключение принудительно закрыто удаленным узлом.</target>
+      </trans-unit>
+      <trans-unit id="AbortedTestDiscovery">
+        <source>The active test discovery was aborted.</source>
+        <note></note>
+        <target state="translated">Активное обнаружение тестов прервано.</target>
+      </trans-unit>
+      <trans-unit id="AbortedTestDiscoveryWithReason">
+        <source>The active test discovery was aborted. Reason: {0}</source>
+        <note></note>
+        <target state="translated">Активное обнаружение тестов прервано. Причина: {0}</target>
+      </trans-unit>
+      <trans-unit id="UnableToCommunicateToTestHost">
+        <source>Unable to communicate with test host process.</source>
+        <note></note>
+        <target state="translated">Не удалось связаться с хост-процессом теста.</target>
+      </trans-unit>
+      <trans-unit id="UnexpectedMessage">
+        <source>Unexpected message received. Expected MessageType : {0} Actual MessageType: {1}</source>
+        <target state="translated">Получено непредвиденное сообщение. Ожидаемый тип сообщения (MessageType): {0}, фактический тип сообщения (MessageType): {1}</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="VersionCheckFailed">
+        <source>Protocol version check failed. Make sure test runner and host are compatible.</source>
+        <target state="translated">Проверка версии протокола не пройдена. Убедитесь, что средство запуска теста и узел совместимы.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="VersionCheckTimedout">
+        <source>Failed to negotiate protocol, waiting for response timed out after {0} seconds. This may occur due to machine slowness, please set environment variable {1} to increase timeout.</source>
+        <target state="translated">Не удалось согласовать протокол, превышено время ожидания ответа по прошествии {0} с. Это может происходить из-за медленной работы компьютера. Увеличьте время ожидания в переменной среды {1}.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="ConnectionTimeoutErrorMessage">
+        <source>{0} process failed to connect to {1} process after {2} seconds. This may occur due to machine slowness, please set environment variable {3} to increase timeout.</source>
+        <target state="translated">Процесс {0} не смог подключиться к процессу {1} по прошествии {2} с. Это может происходить из-за медленной работы компьютера. Увеличьте время ожидания в переменной среды {3}.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TestHostProcessCrashed">
+        <source>Test host process crashed</source>
+        <target state="translated">Сбой хост-процесса теста</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="AttachDebuggerToDefaultTestHostFailure">
+        <source>Cannot attach the debugger to the default test host.</source>
+        <target state="translated">Не удается подключить отладчик к узлу тестирования по умолчанию.</target>
+        <note></note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

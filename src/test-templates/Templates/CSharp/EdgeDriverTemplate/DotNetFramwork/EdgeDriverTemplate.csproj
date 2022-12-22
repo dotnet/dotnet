@@ -1,0 +1,51 @@
+<Project  Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net461</TargetFramework>
+    <RootNamespace>EdgeTestTemplate</RootNamespace>
+    <AssemblyName>EdgeTestTemplate</AssemblyName>
+    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+    <GeneratePkgDefFile>false</GeneratePkgDefFile>
+    <EnableDefaultItems>false</EnableDefaultItems>
+    <IncludeAssemblyInVSIXContainer>false</IncludeAssemblyInVSIXContainer>
+    <!-- VS Insertion -->
+    <VisualStudioInsertionComponent>Microsoft.VisualStudio.Templates.CS.EdgeDriverTest</VisualStudioInsertionComponent>
+
+    <CreateVsixContainer>true</CreateVsixContainer>
+    <DeployExtension>False</DeployExtension>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <!--Reference Include="Microsoft.VisualStudio.CoreUtility">
+      <Private>False</Private>
+    </Reference-->
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ProjectTemplates\**">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="EdgeDriver.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="packages\MSTest.TestAdapter.2.2.10.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="packages\MSTest.TestFramework.2.2.10.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <!-- selenium.webdriver is not included here because it is not owned by Microsoft.
+    Therefore we can't sign it to let it be included in VS.-->
+  </ItemGroup>
+  <ItemGroup>
+    <VSTemplate Include="ProjectTemplates\CSharp\Test\EdgeDriverTemplate\EdgeDriverTemplate.vstemplate" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="source.extension.vsixmanifest">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <Import Project="$(RepoRoot)eng\Loc.targets" />
+</Project>

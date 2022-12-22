@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <RootNamespace>MSTestv2IntelliTestExtension</RootNamespace>
+    <AssemblyName>MSTestv2IntelliTestExtension</AssemblyName>
+    <TargetFramework>$(MSTestv2IntellitestFrameworkVersion)</TargetFramework>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="MSTestv2AssertMethodFilter.cs" />
+    <Compile Include="MSTestv2TestFramework.cs" />
+    <Compile Include="MSTestv2TestFrameworkMetadata.cs" />
+    <Compile Include="MSTestv2TestFrameworkPackage.cs" />
+    <Compile Include="MSTestv2TestFrameworkPackageAttribute.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Intellitest.Dependencies" Version="$(MicrosoftInternalIntelliTestVersion)"/>
+  </ItemGroup>
+</Project>

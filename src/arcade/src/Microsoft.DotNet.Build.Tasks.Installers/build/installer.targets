@@ -1,0 +1,158 @@
+<Project>
+  <Target Name="_GetCurrentProjectServicingConfiguration">
+    <ItemGroup>
+      <CurrentProjectServicingConfiguration
+        Include="@(ProjectServicingConfiguration)"
+        Condition="'%(Identity)' == '$(MSBuildProjectName)'" />
+    </ItemGroup>
+  </Target>
+
+  <!--
+    The Microsoft build's per-package servicing policy conflicts with the source-build restrictions.
+    Targeting packs, for example, are only built/published when there's a known change to release.
+    This is in contrast to runtime packs and the shared framework, which are always built and
+    published. This means it's common in the Microsoft build for downstream repos to depend on two
+    builds' outputs: the current build's runtime assets, and some old build's targeting pack.
+
+    The Microsoft build can simply download the old targeting pack from NuGet.org. Source-build
+    can't do this because the bits on NuGet.org are not built locally. Instead, source-build assumes
+    it's possible to use current sources to build a package with the old version. This target
+    applies the old build's patch version to make that happen.
+
+    This solution has pitfalls. More info at https://github.com/dotnet/core-setup/issues/8735. The
+    target supports SkipSetLastReleasedVersionForSourceBuild (unused as of writing) to allow
+    disabling this workaround if a better way forward is implemented.
+  -->
+  <Target Name="SetLastReleasedVersionForSourceBuild"
+          Condition="
+            '$(DotNetBuildFromSource)' == 'true' and
+            '$(SkipSetLastReleasedVersionForSourceBuild)' != 'true'"
+          BeforeTargets="GetProductVersions"
+          DependsOnTargets="_GetCurrentProjectServicingConfiguration">
+    <PropertyGroup>
+      <MostRecentProducedServicingPatchVersion>%(CurrentProjectServicingConfiguration.PatchVersion)</MostRecentProducedServicingPatchVersion>
+      <PatchVersion Condition="'$(MostRecentProducedServicingPatchVersion)' != ''">$(MostRecentProducedServicingPatchVersion)</PatchVersion>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="_GetSkipInstallerBuildProps"
+          DependsOnTargets="
+            _GetCurrentProjectServicingConfiguration;
+            SetLastReleasedVersionForSourceBuild">
+    <!--
+      Skip the build if there is an applicable servicing configuration, and the servicing
+      configuration indicates this project shouldn't build for this patch version.
+    -->
+    <PropertyGroup Condition="'@(CurrentProjectServicingConfiguration)' != ''">
+      <SkipInstallerBuild Condition="'%(CurrentProjectServicingConfiguration.PatchVersion)' != '$(PatchVersion)'">true</SkipInstallerBuild>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <_TargetInstallerRuntimeIdentifiers Include="$(InstallerRuntimeIdentifiers)" />
+    </ItemGroup>
+    
+    <PropertyGroup Condition="'$(InstallerRuntimeIdentifiers)' != '' and '$(InstallerRuntimeIdentifier)' != ''">
+      <!-- Avoid building a project when none of the possible InstallerRuntimeIdentifiers is the current InstallerRuntimeIdentifier. -->
+      <_InstallerRidInInstallerRidList Condition="'%(_TargetInstallerRuntimeIdentifiers.Identity)' == '$(InstallerRuntimeIdentifier)'">true</_InstallerRidInInstallerRidList>
+      <SkipInstallerBuild Condition="'$(_InstallerRidInInstallerRidList)' != 'true'">true</SkipInstallerBuild>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(SkipBuild)' == 'true'">
+      <SkipInstallerBuild>true</SkipInstallerBuild>
+    </PropertyGroup>
+  </Target>
+
+  <PropertyGroup>
+    <BuildDependsOn>$(BuildDependsOn);_GetSkipInstallerBuildProps</BuildDependsOn>
+    <_GlobalPropertiesToRemoveForPublish>
+      GenerateCrossArchMsi;
+      GenerateMSI;
+      GeneratePkg;
+      GenerateDeb;
+      GenerateRpm;
+      IsShipping;
+      ComponentMsiFile;
+      InstallerRuntimeIdentifier;
+      InstallerTargetArchitecture;
+      CrossArchContentsArch
+    </_GlobalPropertiesToRemoveForPublish>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <_GlobalPropertiesToRemoveForPublish Include="$(_GlobalPropertiesToRemoveForPublish)" />
+  </ItemGroup>
+  
+  <Target Name="_GetTargetOSArchInfo">
+    <Error Condition="'$(InstallerRuntimeIdentifier)' == ''"
+           Text="An InstallerRuntimeIdentifier must be specified when building installers." />
+    <PropertyGroup>
+      <TargetRuntimeOS>$(InstallerRuntimeIdentifier.Substring(0, $(InstallerRuntimeIdentifier.LastIndexOf('-'))))</TargetRuntimeOS>
+      <TargetArchitecture Condition="'$(TargetArchitecture)' == ''">$(InstallerRuntimeIdentifier.Substring($(InstallerRuntimeIdentifier.LastIndexOf('-'))).TrimStart('-'))</TargetArchitecture>
+      <_TargetArch>$(TargetArchitecture)</_TargetArch>
+      <_TargetArch Condition="'$(BuildRpmPackage)' == 'true' and '$(TargetArchitecture)' == 'arm64'">aarch64</_TargetArch>
+      <InstallerTargetArchitecture Condition="'$(InstallerTargetArchitecture)' == ''">$(_TargetArch)</InstallerTargetArchitecture>
+    </PropertyGroup>
+    <ItemGroup>
+      <CrossArchMsiToBuild Include="@(CrossArchSdkMsiInstallerArch)" Exclude="$(TargetArchitecture)" />
+    </ItemGroup>
+    <PropertyGroup>
+      <_osSupportsWixBasedInstallers Condition="$([MSBuild]::IsOsPlatform(Windows)) and '$(TargetRuntimeOS)' == 'win'">true</_osSupportsWixBasedInstallers>
+
+      <_osArchSupportsWixBasedInstallers>$(_osSupportsWixBasedInstallers)</_osArchSupportsWixBasedInstallers>
+      <_osArchSupportsWixBasedInstallers Condition="'$(TargetArchitecture)' == 'arm'">false</_osArchSupportsWixBasedInstallers>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="_GetVersionInfo">
+    <PropertyGroup>
+      <IncludePreReleaseLabelInPackageVersion Condition="'$(DotNetFinalVersionKind)' != 'release'">true</IncludePreReleaseLabelInPackageVersion>
+      <IncludePreReleaseLabelInPackageVersion Condition="'$(SuppressFinalPackageVersion)' == 'true'">true</IncludePreReleaseLabelInPackageVersion>
+      <IncludePreReleaseLabelInPackageVersion Condition="'$(IsShipping)' != 'true'">true</IncludePreReleaseLabelInPackageVersion>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="_GetProductBrandName" DependsOnTargets="_GetVersionInfo">
+    <PropertyGroup
+      Condition="
+        '$(ReleaseBrandSuffix)' == '' and
+        '$(PreReleaseVersionLabel)' != '' and
+        '$(PreReleaseVersionIteration)' != ''">
+      <!-- Convert 'preview.7' to 'Preview 7'.
+          'preview' will come from the pre-release version iteration and the numeric value
+          will be the PreReleaseVersionIteration. -->
+
+      <ReleaseBrandSuffix>$(PreReleaseVersionLabel.Substring(0,1).ToUpperInvariant())</ReleaseBrandSuffix>
+      <ReleaseBrandSuffix>$(ReleaseBrandSuffix)$(PreReleaseVersionLabel.Substring(1))</ReleaseBrandSuffix>
+      <ReleaseBrandSuffix Condition="'$(PreReleaseVersionLabel.ToUpperInvariant())' == 'RC'">RC</ReleaseBrandSuffix>
+      <ReleaseBrandSuffix>$(ReleaseBrandSuffix) $(PreReleaseVersionIteration)</ReleaseBrandSuffix>
+    </PropertyGroup>
+
+    <Error
+      Text="When building installers a ProductBrandPrefix is required."
+      Condition="'$(ProductBrandPrefix)' == ''" />
+    <Error
+      Text="When building installers a PackageBrandNameSuffix is required."
+      Condition="'$(PackageBrandNameSuffix)' == '' and '$(MSBuildProjectExtension)' != '.bundleproj'" />
+    <Error
+      Text="When building a bundle installer, a BundleNameSuffix must be specified."
+      Condition="'$(BundleNameSuffix)' == '' and '$(MSBuildProjectExtension)' == '.bundleproj'" />
+
+    <PropertyGroup>
+      <ProductBrandSuffix>$(VersionPrefix)</ProductBrandSuffix>
+      <ProductBrandSuffix Condition="'$(ReleaseBrandSuffix)'!=''">$(VersionPrefix) $(ReleaseBrandSuffix)</ProductBrandSuffix>
+      <ProductBrandName Condition="'$(MSBuildProjectExtension)' == '.bundleproj'">$(ProductBrandPrefix) $(BundleNameSuffix) - $(ProductBrandSuffix)</ProductBrandName>
+      <ProductBrandName Condition="'$(ProductBrandName)' == ''">$(ProductBrandPrefix) $(PackageBrandNameSuffix) - $(ProductBrandSuffix)</ProductBrandName>
+    </PropertyGroup>
+  </Target>
+  
+  <PropertyGroup>
+    <InstallerRuntimeIdentifiers Condition="'$(InstallerRuntimeIdentifiers)' == ''">$(RuntimeIdentifiers)</InstallerRuntimeIdentifiers>
+    <InstallerRuntimeIdentifier Condition="'$(InstallerRuntimeIdentifier)' == ''">$(RuntimeIdentifier)</InstallerRuntimeIdentifier>
+  </PropertyGroup>
+  
+  <Import Project="$(MSBuildThisFileDirectory)installer.singlerid.targets"
+          Condition="'$(MSBuildProjectExtension)' != '.bundleproj' and '$(GenerateInstallers)' == 'true' and '$(InstallerRuntimeIdentifier)' != ''" />
+  <Import Project="$(MSBuildThisFileDirectory)installer.multirid.targets"
+          Condition="'$(MSBuildProjectExtension)' != '.bundleproj' and '$(GenerateInstallers)' == 'true' and '$(InstallerRuntimeIdentifier)' == ''" />
+  <Import Project="$(MSBuildThisFileDirectory)bundle.targets"
+          Condition="'$(MSBuildProjectExtension)' == '.bundleproj'" />
+</Project>

@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?><span>
+<doc>
+  <assembly>
+    <name>System.AppContext</name>
+  </assembly>
+  <members>
+    <member name="T:System.AppContext">
+      <summary>Provides members for setting and retrieving data about an application's context.</summary>
+    </member>
+    <member name="P:System.AppContext.BaseDirectory">
+      <summary>Gets the pathname of the base directory that the assembly resolver uses to probe for assemblies.</summary>
+      <returns>the pathname of the base directory that the assembly resolver uses to probe for assemblies.</returns>
+    </member>
+    <member name="M:System.AppContext.GetData(System.String)">
+      <summary>Returns the value of the named data element assigned to the current application domain.</summary>
+      <param name="name">The name of the data element.</param>
+      <returns>The value of <paramref name="name">name</paramref>, if <paramref name="name">name</paramref> identifies a named value; otherwise, null.</returns>
+    </member>
+    <member name="M:System.AppContext.SetSwitch(System.String,System.Boolean)">
+      <summary>Sets the value of a switch.</summary>
+      <param name="switchName">The name of the switch.</param>
+      <param name="isEnabled">The value of the switch.</param>
+      <exception cref="T:System.ArgumentNullException"><paramref name="switchName">switchName</paramref> is null.</exception>
+      <exception cref="T:System.ArgumentException"><paramref name="switchName">switchName</paramref> is <see cref="F:System.String.Empty"></see>.</exception>
+    </member>
+    <member name="P:System.AppContext.TargetFrameworkName">
+      <summary>Gets the name of the framework version targeted by the current application.</summary>
+      <returns>The name of the framework version targeted by the current application.</returns>
+    </member>
+    <member name="M:System.AppContext.TryGetSwitch(System.String,System.Boolean@)">
+      <summary>Tries to get the value of a switch.</summary>
+      <param name="switchName">The name of the switch.</param>
+      <param name="isEnabled">When this method returns, contains the value of switchName if switchName was found, or false if switchName was not found. This parameter is passed uninitialized.</param>
+      <returns>true if <paramref name="switchName">switchName</paramref> was set and the <paramref name="isEnabled">isEnabled</paramref> argument contains the value of the switch; otherwise, false.</returns>
+      <exception cref="T:System.ArgumentNullException"><paramref name="switchName">switchName</paramref> is null.</exception>
+      <exception cref="T:System.ArgumentException"><paramref name="switchName">switchName</paramref> is <see cref="F:System.String.Empty"></see>.</exception>
+    </member>
+  </members>
+</doc></span>

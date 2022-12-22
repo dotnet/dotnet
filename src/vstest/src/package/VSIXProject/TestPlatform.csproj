@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <TestPlatformRoot>..\..\..\</TestPlatformRoot>
+    <MinimumVisualStudioVersion>15.0</MinimumVisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(TestPlatformRoot)scripts\build\TestPlatform.Dependencies.props" />
+  <Import Project="$(TestPlatformRoot)packages\microsoft.vssdk.buildtools\$(VSSdkBuildToolsVersion)\build\Microsoft.VSSDK.BuildTools.props" Condition="Exists('($TestPlatformRoot)packages\microsoft.vssdk.buildtools\$(VSSdkBuildToolsVersion)\build\Microsoft.VSSDK.BuildTools.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectTypeGuids>{82b43b9b-a64c-4715-b499-d71e9ca2bd60};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <ProjectGuid>{0625257F-549C-4558-97ED-C79EC43C3480}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>TestPlatform</RootNamespace>
+    <AssemblyName>TestPlatform</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <GeneratePkgDefFile>false</GeneratePkgDefFile>
+    <IncludeAssemblyInVSIXContainer>false</IncludeAssemblyInVSIXContainer>
+    <IncludeDebugSymbolsInVSIXContainer>false</IncludeDebugSymbolsInVSIXContainer>
+    <IncludeDebugSymbolsInLocalVSIXDeployment>false</IncludeDebugSymbolsInLocalVSIXDeployment>
+    <CopyBuildOutputToOutputDirectory>false</CopyBuildOutputToOutputDirectory>
+    <CopyOutputSymbolsToOutputDirectory>false</CopyOutputSymbolsToOutputDirectory>
+    <DeployExtension>False</DeployExtension>
+    <IsProductComponent>true</IsProductComponent>
+    <VsixInputFileLocation>$(TestPlatformRoot)artifacts\$(Configuration)\$(NetFrameworkMinimum)\win7-x64</VsixInputFileLocation>
+    <OutputPath>$(TestPlatformRoot)artifacts\$(Configuration)\VSIX</OutputPath>
+    <ExtensionInstallationFolder>TestPlatform</ExtensionInstallationFolder>
+    <ExtensionInstallationRelativeToVS>[installDir]\Common7\IDE\Extensions\TestPlatform</ExtensionInstallationRelativeToVS>
+
+    <!-- Disable warning that there are no source files. It is intentional. -->
+    <NoWarn>$(NoWarn);2008</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CopyVsixExtensionFiles>False</CopyVsixExtensionFiles>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+
+    <!-- Localized langpack files -->
+    <VsixSourceItem Include="Resources\cs\extension.vsixlangpack">
+      <VSIXSubPath>cs</VSIXSubPath>
+    </VsixSourceItem>
+    <VsixSourceItem Include="Resources\de\extension.vsixlangpack">
+      <VSIXSubPath>de</VSIXSubPath>
+    </VsixSourceItem>
+    <VsixSourceItem Include="Resources\es\extension.vsixlangpack">
+      <VSIXSubPath>es</VSIXSubPath>
+    </VsixSourceItem>
+    <VsixSourceItem Include="Resources\fr\extension.vsixlangpack">
+      <VSIXSubPath>fr</VSIXSubPath>
+    </VsixSourceItem>
+    <VsixSourceItem Include="Resources\it\extension.vsixlangpack">
+      <VSIXSubPath>it</VSIXSubPath>
+    </VsixSourceItem>
+    <VsixSourceItem Include="Resources\ja\extension.vsixlangpack">
+      <VSIXSubPath>ja</VSIXSubPath>
+    </VsixSourceItem>
+    <VsixSourceItem Include="Resources\ko\extension.vsixlangpack">
+      <VSIXSubPath>ko</VSIXSubPath>
+    </VsixSourceItem>
+    <VsixSourceItem Include="Resources\pl\extension.vsixlangpack">
+      <VSIXSubPath>pl</VSIXSubPath>
+    </VsixSourceItem>
+    <VsixSourceItem Include="Resources\pt-BR\extension.vsixlangpack">
+      <VSIXSubPath>pt-BR</VSIXSubPath>
+    </VsixSourceItem>
+    <VsixSourceItem Include="Resources\ru\extension.vsixlangpack">
+      <VSIXSubPath>ru</VSIXSubPath>
+    </VsixSourceItem>
+    <VsixSourceItem Include="Resources\tr\extension.vsixlangpack">
+      <VSIXSubPath>tr</VSIXSubPath>
+    </VsixSourceItem>
+    <VsixSourceItem Include="Resources\zh-Hans\extension.vsixlangpack">
+      <VSIXSubPath>zh-Hans</VSIXSubPath>
+    </VsixSourceItem>
+    <VsixSourceItem Include="Resources\zh-Hant\extension.vsixlangpack">
+      <VSIXSubPath>zh-Hant</VSIXSubPath>
+    </VsixSourceItem>
+
+    <!-- Localized resources -->
+    <VsixSourceItem Include="$(VsixInputFileLocation)\cs\*.dll">
+      <VSIXSubPath>cs</VSIXSubPath>
+    </VsixSourceItem>
+    <VsixSourceItem Include="$(VsixInputFileLocation)\de\*.dll">
+      <VSIXSubPath>de</VSIXSubPath>
+    </VsixSourceItem>
+    <VsixSourceItem Include="$(VsixInputFileLocation)\es\*.dll">
+      <VSIXSubPath>es</VSIXSubPath>
+    </VsixSourceItem>
+    <VsixSourceItem Include="$(VsixInputFileLocation)\fr\*.dll">
+      <VSIXSubPath>fr</VSIXSubPath>
+    </VsixSourceItem>
+    <VsixSourceItem Include="$(VsixInputFileLocation)\it\*.dll">
+      <VSIXSubPath>it</VSIXSubPath>
+    </VsixSourceItem>
+    <VsixSourceItem Include="$(VsixInputFileLocation)\ja\*.dll">
+      <VSIXSubPath>ja</VSIXSubPath>
+    </VsixSourceItem>
+    <VsixSourceItem Include="$(VsixInputFileLocation)\ko\*.dll">
+      <VSIXSubPath>ko</VSIXSubPath>
+    </VsixSourceItem>
+    <VsixSourceItem Include="$(VsixInputFileLocation)\pl\*.dll">
+      <VSIXSubPath>pl</VSIXSubPath>
+    </VsixSourceItem>
+    <VsixSourceItem Include="$(VsixInputFileLocation)\pt-BR\*.dll">
+      <VSIXSubPath>pt-BR</VSIXSubPath>
+    </VsixSourceItem>
+    <VsixSourceItem Include="$(VsixInputFileLocation)\ru\*.dll">
+      <VSIXSubPath>ru</VSIXSubPath>
+    </VsixSourceItem>
+    <VsixSourceItem Include="$(VsixInputFileLocation)\tr\*.dll">
+      <VSIXSubPath>tr</VSIXSubPath>
+    </VsixSourceItem>
+    <VsixSourceItem Include="$(VsixInputFileLocation)\zh-Hans\*.dll">
+      <VSIXSubPath>zh-Hans</VSIXSubPath>
+    </VsixSourceItem>
+    <VsixSourceItem Include="$(VsixInputFileLocation)\zh-Hant\*.dll">
+      <VSIXSubPath>zh-Hant</VSIXSubPath>
+    </VsixSourceItem>
+
+    <VsixSourceItem Include="$(VsixInputFileLocation)\Extensions\*.*" Exclude="$(VsixInputFileLocation)\Extensions\*.pdb">
+      <VSIXSubPath>Extensions</VSIXSubPath>
+    </VsixSourceItem>
+
+    <!-- Localized Extensions resources -->
+    <VsixSourceItem Include="$(VsixInputFileLocation)\Extensions\cs\*.dll">
+      <VSIXSubPath>Extensions\cs</VSIXSubPath>
+    </VsixSourceItem>
+    <VsixSourceItem Include="$(VsixInputFileLocation)\Extensions\de\*.dll">
+      <VSIXSubPath>Extensions\de</VSIXSubPath>
+    </VsixSourceItem>
+    <VsixSourceItem Include="$(VsixInputFileLocation)\Extensions\es\*.dll">
+      <VSIXSubPath>Extensions\es</VSIXSubPath>
+    </VsixSourceItem>
+    <VsixSourceItem Include="$(VsixInputFileLocation)\Extensions\fr\*.dll">
+      <VSIXSubPath>Extensions\fr</VSIXSubPath>
+    </VsixSourceItem>
+    <VsixSourceItem Include="$(VsixInputFileLocation)\Extensions\it\*.dll">
+      <VSIXSubPath>Extensions\it</VSIXSubPath>
+    </VsixSourceItem>
+    <VsixSourceItem Include="$(VsixInputFileLocation)\Extensions\ja\*.dll">
+      <VSIXSubPath>Extensions\ja</VSIXSubPath>
+    </VsixSourceItem>
+    <VsixSourceItem Include="$(VsixInputFileLocation)\Extensions\ko\*.dll">
+      <VSIXSubPath>Extensions\ko</VSIXSubPath>
+    </VsixSourceItem>
+    <VsixSourceItem Include="$(VsixInputFileLocation)\Extensions\pl\*.dll">
+      <VSIXSubPath>Extensions\pl</VSIXSubPath>
+    </VsixSourceItem>
+    <VsixSourceItem Include="$(VsixInputFileLocation)\Extensions\pt-BR\*.dll">
+      <VSIXSubPath>Extensions\pt-BR</VSIXSubPath>
+    </VsixSourceItem>
+    <VsixSourceItem Include="$(VsixInputFileLocation)\Extensions\ru\*.dll">
+      <VSIXSubPath>Extensions\ru</VSIXSubPath>
+    </VsixSourceItem>
+    <VsixSourceItem Include="$(VsixInputFileLocation)\Extensions\tr\*.dll">
+      <VSIXSubPath>Extensions\tr</VSIXSubPath>
+    </VsixSourceItem>
+    <VsixSourceItem Include="$(VsixInputFileLocation)\Extensions\zh-Hans\*.dll">
+      <VSIXSubPath>Extensions\zh-Hans</VSIXSubPath>
+    </VsixSourceItem>
+    <VsixSourceItem Include="$(VsixInputFileLocation)\Extensions\zh-Hant\*.dll">
+      <VSIXSubPath>Extensions\zh-Hant</VSIXSubPath>
+    </VsixSourceItem>
+
+    <VsixSourceItem Include="$(VsixInputFileLocation)\CoreCon\*.*">
+      <VSIXSubPath>CoreCon</VSIXSubPath>
+    </VsixSourceItem>
+    <VsixSourceItem Include="$(VsixInputFileLocation)\Extensions\Cpp\*.*" Exclude="$(VsixInputFileLocation)\Extensions\Cpp\*.pdb">
+      <VSIXSubPath>Extensions\Cpp</VSIXSubPath>
+    </VsixSourceItem>
+    <VsixSourceItem Include="$(VsixInputFileLocation)\Extensions\Cpp\x64\*.*" Exclude="$(VsixInputFileLocation)\Extensions\Cpp\x64\*.pdb">
+      <VSIXSubPath>Extensions\Cpp\x64</VSIXSubPath>
+    </VsixSourceItem>
+    <VsixSourceItem Include="$(VsixInputFileLocation)\Extensions\Cpp\arm64\*.*" Exclude="$(VsixInputFileLocation)\Extensions\Cpp\arm64\*.pdb">
+      <VSIXSubPath>Extensions\Cpp\arm64</VSIXSubPath>
+    </VsixSourceItem>
+
+    <VsixSourceItem Include="$(VsixInputFileLocation)\Extensions\TestImpact\ComComponents\x64\*.*">
+      <VSIXSubPath>Extensions\TestImpact\ComComponents\x64</VSIXSubPath>
+    </VsixSourceItem>
+    <VsixSourceItem Include="$(VsixInputFileLocation)\Extensions\TestImpact\ComComponents\x86\*.*">
+      <VSIXSubPath>Extensions\TestImpact\ComComponents\x86</VSIXSubPath>
+    </VsixSourceItem>
+
+    <!-- CUIT -->
+    <VsixSourceItem Include="$(VsixInputFileLocation)\CUITPlugins\*.*" Exclude="$(VsixInputFileLocation)\CUITPlugins\*.pdb">
+      <VSIXSubPath>CUITPlugins</VSIXSubPath>
+    </VsixSourceItem>
+
+    <!-- V1 Data Collectors -->
+    <VsixSourceItem Include="$(VsixInputFileLocation)\Extensions\V1\*.*" Exclude="$(VsixInputFileLocation)\Extensions\V1\*.pdb">
+      <VSIXSubPath>Extensions\V1</VSIXSubPath>
+    </VsixSourceItem>
+
+    <VsixSourceItem Include="$(VsixInputFileLocation)\Extensions\V1\x86\*.*" Exclude="$(VsixInputFileLocation)\Extensions\V1\*.pdb">
+      <VSIXSubPath>Extensions\V1\x86</VSIXSubPath>
+    </VsixSourceItem>
+
+    <VsixSourceItem Include="$(VsixInputFileLocation)\Extensions\V1\x64\*.*" Exclude="$(VsixInputFileLocation)\Extensions\V1\*.pdb">
+      <VSIXSubPath>Extensions\V1\x64</VSIXSubPath>
+    </VsixSourceItem>
+
+    <VsixSourceItem Include="$(VsixInputFileLocation)\Extensions\V1\TestImpact\ComComponents\x64\*.*">
+      <VSIXSubPath>Extensions\V1\TestImpact\ComComponents\x64</VSIXSubPath>
+    </VsixSourceItem>
+    <VsixSourceItem Include="$(VsixInputFileLocation)\Extensions\V1\TestImpact\ComComponents\x86\*.*">
+      <VSIXSubPath>Extensions\V1\TestImpact\ComComponents\x86</VSIXSubPath>
+    </VsixSourceItem>
+
+    <VsixSourceItem Include="$(VsixInputFileLocation)\Extensions\VideoRecorder\*.*">
+      <VSIXSubPath>Extensions\VideoRecorder</VSIXSubPath>
+    </VsixSourceItem>
+
+    <!-- Test host dependencies -->
+    <VsixSourceItem Include="$(VsixInputFileLocation)\x64\*.*">
+      <VSIXSubPath>x64</VSIXSubPath>
+    </VsixSourceItem>
+    <VsixSourceItem Include="$(VsixInputFileLocation)\x86\*.*">
+      <VSIXSubPath>x86</VSIXSubPath>
+    </VsixSourceItem>
+
+    <VsixSourceItem Include="$(VsixInputFileLocation)\*.*" Exclude="$(VsixInputFileLocation)\*.pdb" />
+
+<VsixSourceItem Include="$(VsixInputFileLocation)\*.*" Exclude="$(VsixInputFileLocation)\*.pdb" />
+    <VsixSourceItem Update="$(VsixInputFileLocation)\testhost.exe" Ngen="true" NgenArchitecture="X64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.exe" />
+    <VsixSourceItem Update="$(VsixInputFileLocation)\testhost.net47.exe" Ngen="true" NgenArchitecture="X64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net47.exe" />
+    <VsixSourceItem Update="$(VsixInputFileLocation)\testhost.net471.exe" Ngen="true" NgenArchitecture="X64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net471.exe" />
+    <VsixSourceItem Update="$(VsixInputFileLocation)\testhost.net472.exe" Ngen="true" NgenArchitecture="X64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net472.exe" />
+    <VsixSourceItem Update="$(VsixInputFileLocation)\testhost.net48.exe" Ngen="true" NgenArchitecture="X64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net48.exe" />
+
+    <VsixSourceItem Update="$(VsixInputFileLocation)\testhost.x86.exe" Ngen="true" NgenArchitecture="X86" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.x86.exe" />
+    <VsixSourceItem Update="$(VsixInputFileLocation)\testhost.net47.x86.exe" Ngen="true" NgenArchitecture="X86" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net47.x86.exe" />
+    <VsixSourceItem Update="$(VsixInputFileLocation)\testhost.net471.x86.exe" Ngen="true" NgenArchitecture="X86" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net471.x86.exe" />
+    <VsixSourceItem Update="$(VsixInputFileLocation)\testhost.net472.x86.exe" Ngen="true" NgenArchitecture="X86" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net472.x86.exe" />
+    <VsixSourceItem Update="$(VsixInputFileLocation)\testhost.net48.x86.exe" Ngen="true" NgenArchitecture="X86" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net48.x86.exe" />
+
+    <VsixSourceItem Update="$(VsixInputFileLocation)\testhost.arm64.exe" Ngen="true" NgenArchitecture="Arm64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.arm64.exe" />
+    <VsixSourceItem Update="$(VsixInputFileLocation)\testhost.net47.arm64.exe" Ngen="true" NgenArchitecture="Arm64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net47.arm64.exe" />
+    <VsixSourceItem Update="$(VsixInputFileLocation)\testhost.net471.arm64.exe" Ngen="true" NgenArchitecture="Arm64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net471.arm64.exe" />
+    <VsixSourceItem Update="$(VsixInputFileLocation)\testhost.net472.arm64.exe" Ngen="true" NgenArchitecture="Arm64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net472.arm64.exe" />
+    <VsixSourceItem Update="$(VsixInputFileLocation)\testhost.net48.arm64.exe" Ngen="true" NgenArchitecture="Arm64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net48.arm64.exe" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="License.rtf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="testplatform.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <None Include="source.extension.vsixmanifest">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(TestPlatformRoot)packages\microsoft.vssdk.buildtools\$(VSSdkBuildToolsVersion)\build\Microsoft.VSSDK.BuildTools.props')" Text="$([System.String]::Format('$(ErrorText)', '$(TestPlatformRoot)packages\microsoft.vssdk.buildtools\$(VSSdkBuildToolsVersion)\build\Microsoft.VSSDK.BuildTools.props'))" />
+    <Error Condition="!Exists('$(TestPlatformRoot)packages\microsoft.vssdk.buildtools\$(VSSdkBuildToolsVersion)\build\Microsoft.VSSDK.BuildTools.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(TestPlatformRoot)packages\microsoft.vssdk.buildtools\$(VSSdkBuildToolsVersion)\build\Microsoft.VSSDK.BuildTools.targets'))" />
+  </Target>
+  <Import Project="$(TestPlatformRoot)packages\microsoft.vssdk.buildtools\$(VSSdkBuildToolsVersion)\build\Microsoft.VSSDK.BuildTools.targets" Condition="Exists('$(TestPlatformRoot)packages\microsoft.vssdk.buildtools\$(VSSdkBuildToolsVersion)\build\Microsoft.VSSDK.BuildTools.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

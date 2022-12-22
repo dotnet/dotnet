@@ -1,0 +1,25 @@
+﻿#nullable enable
+Microsoft.VisualStudio.TestPlatform.ObjectModel.IPlatformEqtTrace.SetupListener(System.Diagnostics.TraceListener? listener) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.IPlatformEqtTrace.SetupRemoteEqtTraceListeners(System.AppDomain? childDomain) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.PlatformEqtTrace.InitializeTrace(string? customLogFile, Microsoft.VisualStudio.TestPlatform.ObjectModel.PlatformTraceLevel platformTraceLevel) -> bool
+Microsoft.VisualStudio.TestPlatform.ObjectModel.PlatformEqtTrace.MapPlatformTraceToTrace(Microsoft.VisualStudio.TestPlatform.ObjectModel.PlatformTraceLevel traceLevel) -> System.Diagnostics.TraceLevel
+Microsoft.VisualStudio.TestPlatform.ObjectModel.PlatformEqtTrace.SetupListener(System.Diagnostics.TraceListener? listener) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.PlatformEqtTrace.SetupRemoteEqtTraceListeners(System.AppDomain? childDomain) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.PlatformEqtTrace.WriteLine(Microsoft.VisualStudio.TestPlatform.ObjectModel.PlatformTraceLevel level, string? message) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.RemoteEqtTrace
+Microsoft.VisualStudio.TestPlatform.ObjectModel.RemoteEqtTrace.RemoteEqtTrace() -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.RemoteEqtTrace.TraceLevel.get -> System.Diagnostics.TraceLevel
+Microsoft.VisualStudio.TestPlatform.ObjectModel.RemoteEqtTrace.TraceLevel.set -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.RollingFileTraceListener
+Microsoft.VisualStudio.TestPlatform.ObjectModel.RollingFileTraceListener.RollingFileTraceListener(string! fileName, string! name, int rollSizeKB) -> void
+Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformAssemblyResolver.~PlatformAssemblyResolver() -> void
+Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformThread.Run(System.Action? action, Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformApartmentState apartmentState, bool waitForCompletion) -> void
+Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.ProcessHelper.LaunchProcess(string! processPath, string? arguments, string? workingDirectory, System.Collections.Generic.IDictionary<string!, string?>? envVariables, System.Action<object?, string?>? errorCallback, System.Action<object?>? exitCallBack, System.Action<object?, string?>? outputCallBack) -> object!
+Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.ProcessHelper.SetExitCallback(int processId, System.Action<object?>? callbackAction) -> void
+Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.ProcessStartInfoExtensions
+override Microsoft.VisualStudio.TestPlatform.ObjectModel.RollingFileTraceListener.Dispose(bool disposing) -> void
+override Microsoft.VisualStudio.TestPlatform.ObjectModel.RollingFileTraceListener.WriteLine(string? message) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.PlatformEqtTrace.LogFile.get -> string?
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.PlatformEqtTrace.TraceLevel.get -> System.Diagnostics.TraceLevel
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.PlatformEqtTrace.TraceLevel.set -> void
+static Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.ProcessStartInfoExtensions.AddEnvironmentVariable(this System.Diagnostics.ProcessStartInfo! startInfo, string! name, string? value) -> void

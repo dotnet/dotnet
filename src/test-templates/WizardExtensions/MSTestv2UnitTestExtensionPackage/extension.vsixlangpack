@@ -1,0 +1,6 @@
+﻿<PackageLanguagePackManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011">
+  <Metadata>
+    <DisplayName>MSTest V2 Create Unit Test Extension</DisplayName>
+    <Description>Allows developers to create unit test using MSTest V2.</Description>
+  </Metadata>
+</PackageLanguagePackManifest>

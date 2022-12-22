@@ -1,0 +1,25 @@
+name: Sync issue to Azure DevOps work item
+
+on:
+  issues:
+    types:
+      [labeled] #, opened, edited, deleted, closed, reopened, labeled, unlabeled, assigned
+
+jobs:
+  updateAzDO:
+    if: github.event.label.name == 'sprint'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: pavelhorak/github-actions-issue-to-work-item@main
+        env:
+          ado_token: "${{ secrets.ADO_PERSONAL_ACCESS_TOKEN }}"
+          github_token: "${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}"
+          ado_organization: "${{ secrets.ADO_ORGANIZATION }}"
+          ado_project: "${{ secrets.ADO_PROJECT }}"
+          ado_area_path: "${{ secrets.ADO_AREA_PATH }}"
+          ado_iteration_path: "${{ secrets.ADO_ITERATION_PATH }}" # this doesn't work: "@CurrentIteration('[DevDiv]\\.NET DevExp Prague')"
+          ado_wit: "User Story"
+          ado_new_state: "Committed"
+          ado_active_state: "In Progress"
+          ado_close_state: "Completed"
+          ado_bypassrules: false

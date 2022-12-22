@@ -1,0 +1,130 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>Microsoft.Extensions.WebEncoders</name>
+  </assembly>
+  <members>
+    <member name="T:Microsoft.Extensions.DependencyInjection.EncoderServiceCollectionExtensions">
+      <summary>Extension methods for setting up web encoding services in an <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.DependencyInjection.EncoderServiceCollectionExtensions.AddWebEncoders(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+      <summary>Adds <see cref="T:System.Text.Encodings.Web.HtmlEncoder" />, <see cref="T:System.Text.Encodings.Web.JavaScriptEncoder" /> and <see cref="T:System.Text.Encodings.Web.UrlEncoder" />
+            to the specified <paramref name="services" />.</summary>
+      <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.</param>
+      <returns>The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> so that additional calls can be chained.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.DependencyInjection.EncoderServiceCollectionExtensions.AddWebEncoders(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{Microsoft.Extensions.WebEncoders.WebEncoderOptions})">
+      <summary>Adds <see cref="T:System.Text.Encodings.Web.HtmlEncoder" />, <see cref="T:System.Text.Encodings.Web.JavaScriptEncoder" /> and <see cref="T:System.Text.Encodings.Web.UrlEncoder" />
+            to the specified <paramref name="services" />.</summary>
+      <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.</param>
+      <param name="setupAction">An <see cref="T:System.Action`1" /> to configure the provided <see cref="T:Microsoft.Extensions.WebEncoders.WebEncoderOptions" />.</param>
+      <returns>The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> so that additional calls can be chained.</returns>
+    </member>
+    <member name="T:Microsoft.Extensions.WebEncoders.Testing.HtmlTestEncoder">
+      <summary>Encoder used for unit testing.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.WebEncoders.Testing.HtmlTestEncoder.#ctor" />
+    <member name="M:Microsoft.Extensions.WebEncoders.Testing.HtmlTestEncoder.Encode(System.IO.TextWriter,System.Char[],System.Int32,System.Int32)">
+      <param name="output" />
+      <param name="value" />
+      <param name="startIndex" />
+      <param name="characterCount" />
+    </member>
+    <member name="M:Microsoft.Extensions.WebEncoders.Testing.HtmlTestEncoder.Encode(System.IO.TextWriter,System.String,System.Int32,System.Int32)">
+      <param name="output" />
+      <param name="value" />
+      <param name="startIndex" />
+      <param name="characterCount" />
+    </member>
+    <member name="M:Microsoft.Extensions.WebEncoders.Testing.HtmlTestEncoder.Encode(System.String)">
+      <param name="value" />
+    </member>
+    <member name="M:Microsoft.Extensions.WebEncoders.Testing.HtmlTestEncoder.FindFirstCharacterToEncode(System.Char*,System.Int32)">
+      <param name="text" />
+      <param name="textLength" />
+    </member>
+    <member name="M:Microsoft.Extensions.WebEncoders.Testing.HtmlTestEncoder.TryEncodeUnicodeScalar(System.Int32,System.Char*,System.Int32,System.Int32@)">
+      <param name="unicodeScalar" />
+      <param name="buffer" />
+      <param name="bufferLength" />
+      <param name="numberOfCharactersWritten" />
+    </member>
+    <member name="M:Microsoft.Extensions.WebEncoders.Testing.HtmlTestEncoder.WillEncode(System.Int32)">
+      <param name="unicodeScalar" />
+    </member>
+    <member name="P:Microsoft.Extensions.WebEncoders.Testing.HtmlTestEncoder.MaxOutputCharactersPerInputCharacter" />
+    <member name="T:Microsoft.Extensions.WebEncoders.Testing.JavaScriptTestEncoder">
+      <summary>Encoder used for unit testing.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.WebEncoders.Testing.JavaScriptTestEncoder.#ctor" />
+    <member name="M:Microsoft.Extensions.WebEncoders.Testing.JavaScriptTestEncoder.Encode(System.IO.TextWriter,System.Char[],System.Int32,System.Int32)">
+      <param name="output" />
+      <param name="value" />
+      <param name="startIndex" />
+      <param name="characterCount" />
+    </member>
+    <member name="M:Microsoft.Extensions.WebEncoders.Testing.JavaScriptTestEncoder.Encode(System.IO.TextWriter,System.String,System.Int32,System.Int32)">
+      <param name="output" />
+      <param name="value" />
+      <param name="startIndex" />
+      <param name="characterCount" />
+    </member>
+    <member name="M:Microsoft.Extensions.WebEncoders.Testing.JavaScriptTestEncoder.Encode(System.String)">
+      <param name="value" />
+    </member>
+    <member name="M:Microsoft.Extensions.WebEncoders.Testing.JavaScriptTestEncoder.FindFirstCharacterToEncode(System.Char*,System.Int32)">
+      <param name="text" />
+      <param name="textLength" />
+    </member>
+    <member name="M:Microsoft.Extensions.WebEncoders.Testing.JavaScriptTestEncoder.TryEncodeUnicodeScalar(System.Int32,System.Char*,System.Int32,System.Int32@)">
+      <param name="unicodeScalar" />
+      <param name="buffer" />
+      <param name="bufferLength" />
+      <param name="numberOfCharactersWritten" />
+    </member>
+    <member name="M:Microsoft.Extensions.WebEncoders.Testing.JavaScriptTestEncoder.WillEncode(System.Int32)">
+      <param name="unicodeScalar" />
+    </member>
+    <member name="P:Microsoft.Extensions.WebEncoders.Testing.JavaScriptTestEncoder.MaxOutputCharactersPerInputCharacter" />
+    <member name="T:Microsoft.Extensions.WebEncoders.Testing.UrlTestEncoder">
+      <summary>Encoder used for unit testing.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.WebEncoders.Testing.UrlTestEncoder.#ctor" />
+    <member name="M:Microsoft.Extensions.WebEncoders.Testing.UrlTestEncoder.Encode(System.IO.TextWriter,System.Char[],System.Int32,System.Int32)">
+      <param name="output" />
+      <param name="value" />
+      <param name="startIndex" />
+      <param name="characterCount" />
+    </member>
+    <member name="M:Microsoft.Extensions.WebEncoders.Testing.UrlTestEncoder.Encode(System.IO.TextWriter,System.String,System.Int32,System.Int32)">
+      <param name="output" />
+      <param name="value" />
+      <param name="startIndex" />
+      <param name="characterCount" />
+    </member>
+    <member name="M:Microsoft.Extensions.WebEncoders.Testing.UrlTestEncoder.Encode(System.String)">
+      <param name="value" />
+    </member>
+    <member name="M:Microsoft.Extensions.WebEncoders.Testing.UrlTestEncoder.FindFirstCharacterToEncode(System.Char*,System.Int32)">
+      <param name="text" />
+      <param name="textLength" />
+    </member>
+    <member name="M:Microsoft.Extensions.WebEncoders.Testing.UrlTestEncoder.TryEncodeUnicodeScalar(System.Int32,System.Char*,System.Int32,System.Int32@)">
+      <param name="unicodeScalar" />
+      <param name="buffer" />
+      <param name="bufferLength" />
+      <param name="numberOfCharactersWritten" />
+    </member>
+    <member name="M:Microsoft.Extensions.WebEncoders.Testing.UrlTestEncoder.WillEncode(System.Int32)">
+      <param name="unicodeScalar" />
+    </member>
+    <member name="P:Microsoft.Extensions.WebEncoders.Testing.UrlTestEncoder.MaxOutputCharactersPerInputCharacter" />
+    <member name="T:Microsoft.Extensions.WebEncoders.WebEncoderOptions">
+      <summary>Specifies options common to all three encoders (HtmlEncode, JavaScriptEncode, UrlEncode).</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.WebEncoders.WebEncoderOptions.#ctor" />
+    <member name="P:Microsoft.Extensions.WebEncoders.WebEncoderOptions.TextEncoderSettings">
+      <summary>Specifies which code points are allowed to be represented unescaped by the encoders.</summary>
+    </member>
+  </members>
+</doc>

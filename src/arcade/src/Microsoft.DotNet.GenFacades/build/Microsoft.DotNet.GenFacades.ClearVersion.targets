@@ -1,0 +1,28 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+
+  <UsingTask TaskName="ClearAssemblyReferenceVersions" AssemblyFile="$(GenFacadesTargetAssemblyPath)" />
+
+  <PropertyGroup>
+    <!-- Support zero version seeds by rewriting the output of the compiler. -->
+    <TargetsTriggeredByCompilation Condition="'$(DesignTimeBuild)' != 'true'">
+      $(TargetsTriggeredByCompilation);ClearAssemblyReferenceVersions
+    </TargetsTriggeredByCompilation>
+  </PropertyGroup>
+
+  <Target Name="ClearAssemblyReferenceVersions">
+    <PropertyGroup>
+      <_ClearAssemblyReferenceVersionsAssembly>$(IntermediateOutputPath)$(TargetName)$(TargetExt)</_ClearAssemblyReferenceVersionsAssembly>
+    </PropertyGroup>
+
+    <!-- Copy the original assembly for debugging purposes -->
+    <Copy SourceFiles="$(_ClearAssemblyReferenceVersionsAssembly)"
+          DestinationFolder="$(IntermediateOutputPath)ClearRef"
+          Condition="'$(GenFacadesForceZeroVersionSeedsDebugMode)' == 'true'">
+      <Output TaskParameter="CopiedFiles" ItemName="FileWrites" />
+    </Copy>
+
+    <ClearAssemblyReferenceVersions Assembly="$(_ClearAssemblyReferenceVersionsAssembly)" />
+  </Target>
+
+</Project>

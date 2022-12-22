@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), 'README.md'))\build\common.props" />
+
+  <PropertyGroup>
+    <OutputPath Condition="'$(OutputPath)' == ''">$(ArtifactsDirectory)OptProfV2</OutputPath>
+    <OutDir>$(OutputPath)</OutDir>
+    <MaxCpuCount>1</MaxCpuCount>
+    <TestSessionTimeout Condition=" '$(TestSessionTimeout)' == ''">9000000</TestSessionTimeout>
+    <TestAdaptersPaths>C:\Test;C:\NuGet</TestAdaptersPaths>
+    <ResultsDirectory>C:\Test\Results</ResultsDirectory>
+    <LingeringProcessCollector Condition=" '$(LingeringProcessCollector)' == '' ">enabled</LingeringProcessCollector>
+    <OptProfCollector Condition=" '$(OptProfCollector)' == '' ">disabled</OptProfCollector>
+    <ScreenshotCollector Condition=" '$(ScreenshotCollector)' == '' ">enabled</ScreenshotCollector>
+    <TestRunParametersLogger Condition=" '$(TestRunParametersLogger)' == '' ">enabled</TestRunParametersLogger>
+    <VideoRecorderCollector Condition=" '$(VideoRecorderCollector)' == '' ">enabled</VideoRecorderCollector>
+    <TRXLogger>enabled</TRXLogger>
+    <VsConfigPath Condition=" '$(VsConfigPath)' == '' ">tests.dev$(VsTargetMajorVersion).vsconfig</VsConfigPath>
+  </PropertyGroup>
+
+  <ItemDefinitionGroup>
+    <DataCollector>
+      <IsEnabled>true</IsEnabled>
+    </DataCollector>
+    <Logger>
+      <IsEnabled>true</IsEnabled>
+    </Logger>
+  </ItemDefinitionGroup>
+
+  <Target Name="ValidateTemplateInputs" BeforeTargets="Build">
+    <Error Condition=" '$(RunName)' == '' "
+      Text="RunName not specified" />
+    <Error Condition=" '$(FileName)' == '' "
+      Text="FileName not specified" />
+    <Error Condition=" '$(TestDrop)' == '' "
+      Text="TestDrop not specified" />
+    <Error Condition=" '$(IncludeProfilingInputs)' == 'true' AND '$(ProfilingInputsDrop)' == ''"
+      Text="ProfilingInputsDrop not specified" />
+    <Error Condition=" '$(VsConfigPath)' == '' AND '$(VsTargetMajorVersion)' == '' "
+      Text="Either VsConfigPath or VsTargetMajorVersion must be specified" />
+  </Target>
+
+  <ItemGroup Label="Test Stores">
+    <!-- This represents the location that contains the test container (test binary). -->
+    <TestStore Include="vstsdrop:$(TestDrop)" />
+    <!-- This represents the build drop that contains profiling inputs. -->
+    <TestStore Include="vstsdrop:$(ProfilingInputsDrop)" Condition=" '$(IncludeProfilingInputs)' == 'true' " />
+  </ItemGroup>
+
+  <ItemGroup Label="Test Containers">
+    <TestContainer Include="$(FileName)" />
+    <InstallationConfiguration Include="$(VsConfigPath)" />
+  </ItemGroup>
+
+  <ItemGroup Label="Data Collectors">
+    <DataCollector Condition="'$(RPSDataCollector)' == 'enabled' And '$(TestIterations)' != ''" Include="datacollector://Microsoft/DevDiv/TestExtensions/PerformanceDataCollector/v1">
+      <FriendlyName>RPS Data Collector</FriendlyName>
+      <Configuration>
+        <Iterations>$(TestIterations)</Iterations>
+        <AttachTracesToTestResult>$(AttachTracesToTestResult)</AttachTracesToTestResult>
+        <TraceOutputFolder>$(TraceOutputFolder)</TraceOutputFolder>
+        <Deployment PackageName="Microsoft.DevDiv.TestExtensions.PerformanceDataCollector" />
+      </Configuration>
+    </DataCollector>
+    <DataCollector Condition="'$(AttachmentCollector)' == 'enabled'" Include="datacollector://Microsoft/DevDiv/TestExtensions/AttachmentCollector/v1">
+      <FriendlyName>Attachment Collector</FriendlyName>
+      <Configuration>
+        <Sources>
+          <DirectorySource Path="%TestContainerDirectory%" Sinks="AggregateSink" Scopes="TestCase" NewFilesOnly="true">
+            <IncludeFiles Pattern="*OmniLog.html" />
+            <IncludeFiles Pattern="*.png" />
+            <IncludeFiles Pattern="*.log" />
+            <IncludeFiles Pattern="AppCertKit.*.zip" />
+          </DirectorySource>
+        </Sources>
+        <Sinks>
+          <VSTSTestResultSink Name="VSTSTestResultAttachment" />
+          <DirectorySink Name="VSTSDropDirectoryAttachment" Path="C:\Test\Attachments" />
+          <AggregateSink Name="AggregateSink" Heuristic="FirstSuccess">
+            <SinkReference Name="VSTSTestResultAttachment" />
+            <SinkReference Name="VSTSDropDirectoryAttachment" />
+          </AggregateSink>
+        </Sinks>
+        <Deployment PackageName="Microsoft.DevDiv.TestExtensions.AttachmentCollector" />
+      </Configuration>
+    </DataCollector>
+    <DataCollector Condition="'$(EnvironmentVariablesCollector)' == 'enabled'" Include="datacollector://Microsoft/DevDiv/TestExtensions/EnvironmentVariablesCollector/v1">
+      <FriendlyName>Environment Variables Collector</FriendlyName>
+      <Configuration>
+        <Triggers>OnTestCaseStart,OnTestCasePass,OnTestCaseFail</Triggers>
+        <Filters>
+          <ProcessName>testhost.x86</ProcessName>
+        </Filters>
+        <Deployment PackageName="Microsoft.DevDiv.TestExtensions.EnvironmentVariablesCollector" />
+      </Configuration>
+    </DataCollector>
+    <DataCollector Condition="'$(FusionLogsCollector)' == 'enabled'" Include="datacollector://Microsoft/DevDiv/TestExtensions/FusionLogsCollector/v1">
+      <FriendlyName>Fusion Logs Collector</FriendlyName>
+      <Configuration>
+        <Destination>C:\Test\Logs\Fusion</Destination>
+        <Scope>All</Scope>
+        <Deployment PackageName="Microsoft.DevDiv.TestExtensions.FusionLogsCollector" />
+      </Configuration>
+    </DataCollector>
+    <DataCollector Condition="'$(LingeringProcessCollector)' == 'enabled'" Include="datacollector://Microsoft/DevDiv/TestExtensions/LingeringProcessCollector/v1">
+      <FriendlyName>Lingering Process Collector</FriendlyName>
+      <Configuration>
+        <KillLingeringProcesses>true</KillLingeringProcesses>
+        <LoggingBehavior>Warning</LoggingBehavior>
+        <CollectDumps>true</CollectDumps>
+        <RootDumpDirectory>%SystemDrive%\Test\Logs\Dumps</RootDumpDirectory>
+        <ShutdownCommands>$(LingeringProcessCollectorShutdownCommands)</ShutdownCommands>
+        <WhiteList>
+          <ProcessName>conhost</ProcessName>
+          <ProcessName>CPC</ProcessName>
+          <ProcessName>MSBuild</ProcessName>
+          <ProcessName>MSpdbsrv</ProcessName>
+          <ProcessName>node</ProcessName>
+          <ProcessName>PerfSvc</ProcessName>
+          <ProcessName>PerfWatson2</ProcessName>
+          <ProcessName>Procmon</ProcessName>
+          <ProcessName>Procmon64</ProcessName>
+          <ProcessName>ServiceHub.DataWarehouseHost</ProcessName>
+          <ProcessName>ServiceHub.Host.CLR.x86</ProcessName>
+          <ProcessName>ServiceHub.Host.Node.x86</ProcessName>
+          <ProcessName>Microsoft.ServiceHub.Controller</ProcessName>
+          <ProcessName>ServiceHub.IdentityHost</ProcessName>
+          <ProcessName>ServiceHub.RoslynCodeAnalysisService32</ProcessName>
+          <ProcessName>ServiceHub.SettingsHost</ProcessName>
+          <ProcessName>ServiceHub.VSDetouredHost</ProcessName>
+          <ProcessName>VBCSCompiler</ProcessName>
+          <ProcessName>VCTip</ProcessName>
+          <ProcessName>VSTestVideoRecorder</ProcessName>
+          <ProcessName>wermgr</ProcessName>
+        </WhiteList>
+        <Deployment PackageName="Microsoft.DevDiv.TestExtensions.LingeringProcessCollector" />
+      </Configuration>
+    </DataCollector>
+    <DataCollector Condition="'$(ProcDumpCollector)' == 'enabled'" Include="datacollector://Microsoft/DevDiv/TestExtensions/ProcDumpCollector/v1">
+      <FriendlyName>ProcDump Collector</FriendlyName>
+      <Configuration>
+        <RootDumpDirectory>C:\Test\Logs\Dumps</RootDumpDirectory>
+        <Deployment PackageName="Microsoft.DevDiv.TestExtensions.ProcDumpCollector" />
+      </Configuration>
+    </DataCollector>
+    <DataCollector Condition="'$(ProcMonDataCollector)' == 'enabled'" Include="datacollector://Microsoft/DevDiv/TestExtensions/ProcMonDataCollector/v1">
+      <FriendlyName>ProcMon Data Collector</FriendlyName>
+      <Configuration>
+        <BackingDirectory>C:\Test\Logs\ProcMon</BackingDirectory>
+        <Scope>TestCase</Scope>
+        <Deployment PackageName="Microsoft.DevDiv.TestExtensions.ProcMonDataCollector" />
+      </Configuration>
+    </DataCollector>
+    <DataCollector Condition="'$(ScreenshotCollector)' == 'enabled'" Include="datacollector://Microsoft/DevDiv/TestExtensions/ScreenshotCollector/v1">
+      <FriendlyName>Screenshot Collector</FriendlyName>
+      <Configuration>
+        <Triggers>OnTestCaseFail</Triggers>
+        <Deployment PackageName="Microsoft.DevDiv.TestExtensions.ScreenshotCollector" />
+      </Configuration>
+    </DataCollector>
+    <DataCollector Condition="'$(TraitsCollector)' == 'enabled'" Include="datacollector://Microsoft/DevDiv/TestExtensions/TraitsCollector/v1">
+      <FriendlyName>Traits Collector</FriendlyName>
+      <Configuration>
+        <Deployment PackageName="Microsoft.DevDiv.TestExtensions.TraitsCollector" />
+      </Configuration>
+    </DataCollector>
+    <DataCollector Condition="'$(VideoRecorderCollector)' == 'enabled'" Include="datacollector://Microsoft/DevDiv/VideoRecorder/2.0">
+      <FriendlyName>Screen and Voice Recorder</FriendlyName>
+      <Configuration>
+        <Deployment PackageName="Microsoft.DevDiv.Validation.MediaRecorder" />
+      </Configuration>
+    </DataCollector>
+  </ItemGroup>
+
+  <ItemGroup Label="In-Proc Data Collectors">
+    <InProcDataCollector Condition="'$(OptProfCollector)' == 'enabled'" Include="datacollector://Microsoft/DevDiv/TestExtensions/OptProfDataCollector/v2">
+      <FriendlyName>OptProf Data Collector</FriendlyName>
+      <CodeBase>C:\Test\Extensions\Microsoft.DevDiv.TestExtensions.OptProfDataCollector\lib\net461\Microsoft.DevDiv.TestExtensions.OptProfDataCollector.dll</CodeBase>
+      <AssemblyQualifiedName>Microsoft.DevDiv.TestExtensions.OptProfDataCollector, Microsoft.DevDiv.TestExtensions.OptProfDataCollector, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null</AssemblyQualifiedName>
+      <Configuration>
+        <WorkingDirectory>C:\OptProf</WorkingDirectory>
+        <ProfilesDirectory>C:\Profiles</ProfilesDirectory>
+        <Deployment PackageName="Microsoft.DevDiv.TestExtensions.OptProfDataCollector" />
+      </Configuration>
+    </InProcDataCollector>
+  </ItemGroup>
+
+  <ItemGroup Label="Loggers">
+    <Logger Condition="'$(FailedRPSTestLogger)' == 'enabled'" Include="logger://Microsoft/DevDiv/TestExtensions/FailedPerformanceTestLogger/v1">
+      <FriendlyName>Failed RPS Test Logger</FriendlyName>
+      <Configuration>
+        <Deployment PackageName="Microsoft.DevDiv.TestExtensions.FailedPerformanceTest.TestLogger" />
+      </Configuration>
+    </Logger>
+    <Logger Condition="'$(TRXLogger)' == 'enabled'" Include="logger://Microsoft/TestPlatform/TrxLogger/v1">
+      <FriendlyName>TRX</FriendlyName>
+    </Logger>
+    <Logger Condition="'$(TestRunParametersLogger)' == 'enabled'" Include="logger://Microsoft/DevDiv/TestExtensions/TestRunParametersLogger/v1">
+      <FriendlyName>TestRunParameters Logger</FriendlyName>
+      <Configuration>
+        <Deployment PackageName="Microsoft.DevDiv.TestExtensions.TestRunParameters.TestLogger" />
+      </Configuration>
+    </Logger>
+    <Logger Condition="'$(TimeTravelLogger)' == 'enabled'" Include="logger://Microsoft/DevDiv/TestExtensions/TimeTravelLogger/v1">
+      <FriendlyName>TimeTravelLogger</FriendlyName>
+      <Configuration>
+        <Deployment PackageName="Microsoft.DevDiv.TestExtensions.TimeTravel.TestLogger" />
+      </Configuration>
+    </Logger>
+  </ItemGroup>
+
+  <ItemGroup Label="Test Adapter Settings">
+    <AdditionalSettings Include="MSTest">
+      <Settings>
+        <MapInconclusiveToFailed>True</MapInconclusiveToFailed>
+      </Settings>
+    </AdditionalSettings>
+  </ItemGroup>
+
+  <Import Project="$(SolutionPackagesFolder)Microsoft.DevDiv.Validation.TestPlatform.Settings.Tasks.1.0.655\build\Microsoft.DevDiv.Validation.TestPlatform.Settings.Tasks.targets" />
+  <Import Project="$(BuildCommonDirectory)common.targets" />
+</Project>

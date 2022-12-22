@@ -1,0 +1,105 @@
+// Copyright (c) .NET Foundation. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+
+using System;
+using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
+
+namespace NuGet.PackageManagement.UI
+{
+    public class PackageManagerToolWindowPane : ToolWindowPane, IVsWindowFrameNotify3
+    {
+        private PackageManagerControl _content;
+
+        /// <summary>
+        /// Initializes a new instance of the EditorPane class.
+        /// </summary>
+        public PackageManagerToolWindowPane(PackageManagerControl control, string projectGuid)
+            : base(null)
+        {
+            _content = control;
+            ProjectGuid = projectGuid;
+        }
+
+        public PackageManagerModel Model
+        {
+            get { return _content.Model; }
+        }
+
+        /// -----------------------------------------------------------------------------
+        /// <summary>
+        /// IVsWindowPane
+        /// </summary>
+        /// -----------------------------------------------------------------------------
+        public override object Content
+        {
+            get { return _content; }
+        }
+
+        public string ProjectGuid { get; }
+
+        private void CleanUp()
+        {
+            if (_content != null)
+            {
+                _content.Dispose();
+                _content = null;
+            }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            try
+            {
+                if (disposing)
+                {
+                    CleanUp();
+                }
+            }
+            finally
+            {
+                base.Dispose(disposing);
+            }
+        }
+
+        public event EventHandler<EventArgs> Closed;
+
+        public int OnClose(ref uint pgrfSaveOptions)
+        {
+            if (_content is PackageManagerControl content)
+            {
+                content.SaveSettings();
+                content.Model.Context.UserSettingsManager.PersistSettings();
+            }
+
+            Closed?.Invoke(this, EventArgs.Empty);
+
+            pgrfSaveOptions = (uint)__FRAMECLOSE.FRAMECLOSE_NoSave;
+
+            Dispose();
+
+            return VSConstants.S_OK;
+        }
+
+        public int OnDockableChange(int fDockable, int x, int y, int w, int h)
+        {
+            return VSConstants.S_OK;
+        }
+
+        public int OnMove(int x, int y, int w, int h)
+        {
+            return VSConstants.S_OK;
+        }
+
+        public int OnShow(int fShow)
+        {
+            return VSConstants.S_OK;
+        }
+
+        public int OnSize(int x, int y, int w, int h)
+        {
+            return VSConstants.S_OK;
+        }
+    }
+}

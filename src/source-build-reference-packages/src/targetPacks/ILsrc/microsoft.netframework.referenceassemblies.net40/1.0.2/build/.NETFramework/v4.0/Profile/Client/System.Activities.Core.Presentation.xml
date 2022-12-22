@@ -1,0 +1,186 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>System.Activities.Core.Presentation</name>
+  </assembly>
+  <members>
+    <member name="T:System.Activities.Core.Presentation.ConnectionPointType">
+      <summary>Specifies the type of connection point.</summary>
+    </member>
+    <member name="F:System.Activities.Core.Presentation.ConnectionPointType.Default">
+      <summary>A default connection point. </summary>
+    </member>
+    <member name="F:System.Activities.Core.Presentation.ConnectionPointType.Incoming">
+      <summary>An incoming connection point.</summary>
+    </member>
+    <member name="F:System.Activities.Core.Presentation.ConnectionPointType.Outgoing">
+      <summary>An outgoing connection point.</summary>
+    </member>
+    <member name="T:System.Activities.Core.Presentation.DesignerMetadata">
+      <summary>Contains metadata for the designer. </summary>
+    </member>
+    <member name="M:System.Activities.Core.Presentation.DesignerMetadata.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Activities.Core.Presentation.DesignerMetadata" /> class.</summary>
+    </member>
+    <member name="M:System.Activities.Core.Presentation.DesignerMetadata.Register">
+      <summary>Registers the runtime metadata.</summary>
+    </member>
+    <member name="T:System.Activities.Core.Presentation.FinalState">
+      <summary>An activity designer that creates a <see cref="T:System.Activities.Statements.State" /> that is preconfigured as a final state in a state machine. A state is a final state when its <see cref="P:System.Activities.Statements.State.IsFinal" /> property is true. A final state state is a state that terminates the state machine instance, and cannot have a <see cref="P:System.Activities.Statements.State.Transitions" /> collection or an <see cref="P:System.Activities.Statements.State.Exit" /> action.</summary>
+    </member>
+    <member name="M:System.Activities.Core.Presentation.FinalState.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Activities.Core.Presentation.FinalState" /> class.</summary>
+    </member>
+    <member name="T:System.Activities.Core.Presentation.FlowchartDesignerCommands">
+      <summary>Used by Visual Studio to raise flowchart designer commands.</summary>
+    </member>
+    <member name="F:System.Activities.Core.Presentation.FlowchartDesignerCommands.ConnectNodesCommand">
+      <summary>Specifies the command used to link flowchart nodes in the flowchart designer.</summary>
+    </member>
+    <member name="T:System.Activities.Core.Presentation.GenericTypeArgumentConverter">
+      <summary>Enables the retrieval of type arguments of generic types.</summary>
+    </member>
+    <member name="M:System.Activities.Core.Presentation.GenericTypeArgumentConverter.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Activities.Core.Presentation.GenericTypeArgumentConverter" /> class.</summary>
+    </member>
+    <member name="M:System.Activities.Core.Presentation.GenericTypeArgumentConverter.Convert(System.Object,System.Type,System.Object,System.Globalization.CultureInfo)">
+      <summary>Returns the type argument at the specified parameter position of the specified generic type.</summary>
+      <returns> The type argument.</returns>
+      <param name="value">The generic type in the binding source to get the type argument from.</param>
+      <param name="targetType">The type of the binding target property.</param>
+      <param name="parameter">The zero-based position of the type argument to get. This corresponds to the position of the argument in the order it appears in the list of type arguments for the generic type.</param>
+      <param name="culture">The culture information.</param>
+    </member>
+    <member name="M:System.Activities.Core.Presentation.GenericTypeArgumentConverter.ConvertBack(System.Object,System.Type,System.Object,System.Globalization.CultureInfo)">
+      <summary>Not implemented.</summary>
+      <returns>Throws a <see cref="T:System.NotSupportedException" />.</returns>
+      <param name="value">Not implemented.</param>
+      <param name="targetType">Not implemented.</param>
+      <param name="parameter">Not implemented.</param>
+      <param name="culture">Not implemented.</param>
+    </member>
+    <member name="T:System.Activities.Core.Presentation.LocationChangedEventArgs">
+      <summary>Contains the arguments for the LocationChanged event.  </summary>
+    </member>
+    <member name="M:System.Activities.Core.Presentation.LocationChangedEventArgs.#ctor(System.Windows.Point)">
+      <summary>Initializes a new instance of the <see cref="T:System.Activities.Core.Presentation.LocationChangedEventArgs" /> class. </summary>
+      <param name="newLocation">The new location. </param>
+    </member>
+    <member name="P:System.Activities.Core.Presentation.LocationChangedEventArgs.NewLocation">
+      <summary>Gets the new location. </summary>
+      <returns>An instance of <see cref="T:System.Windows.Point" /> that contains the new location.</returns>
+    </member>
+    <member name="T:System.Activities.Core.Presentation.Factories.ForEachWithBodyFactory`1">
+      <summary>Creates new <see cref="T:System.Activities.Statements.ForEach`1" /> activities with a body each. </summary>
+      <typeparam name="T">The type of the values provided in the <see cref="P:System.Activities.Statements.ForEach`1.Values" /> collection of the <see cref="T:System.Activities.Statements.ForEach`1" /> activity.</typeparam>
+    </member>
+    <member name="M:System.Activities.Core.Presentation.Factories.ForEachWithBodyFactory`1.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Activities.Core.Presentation.Factories.ForEachWithBodyFactory`1" /> class.</summary>
+    </member>
+    <member name="M:System.Activities.Core.Presentation.Factories.ForEachWithBodyFactory`1.Create(System.Windows.DependencyObject)">
+      <summary>Creates a new <see cref="T:System.Activities.Statements.ForEach`1" /> activity with a body.</summary>
+      <returns>A new <see cref="T:System.Activities.Statements.ForEach`1" /> activity with a body.</returns>
+      <param name="target">The workflow UI element that is the visual container of the new activity. </param>
+    </member>
+    <member name="T:System.Activities.Core.Presentation.Factories.ParallelForEachWithBodyFactory`1">
+      <summary>Creates new <see cref="T:System.Activities.Statements.ParallelForEach" /> activities with a body each.</summary>
+      <typeparam name="T">The type of the values provided in the <see cref="P:System.Activities.Statements.ParallelForEach`1.Values" /> collection of the <see cref="T:System.Activities.Statements.ParallelForEach`1" /> activity. </typeparam>
+    </member>
+    <member name="M:System.Activities.Core.Presentation.Factories.ParallelForEachWithBodyFactory`1.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Activities.Core.Presentation.Factories.ParallelForEachWithBodyFactory`1" /> class.</summary>
+    </member>
+    <member name="M:System.Activities.Core.Presentation.Factories.ParallelForEachWithBodyFactory`1.Create(System.Windows.DependencyObject)">
+      <summary>Creates a new <see cref="T:System.Activities.Statements.ParallelForEach`1" /> activity with a body.</summary>
+      <returns>A new <see cref="T:System.Activities.Statements.ParallelForEach`1" /> activity with a body.</returns>
+      <param name="target">The workflow UI element that is the visual container of the new activity. </param>
+    </member>
+    <member name="T:System.Activities.Core.Presentation.Factories.PickWithTwoBranchesFactory">
+      <summary>Creates <see cref="T:System.Activities.Statements.Pick" /> activities that contain two branches each. </summary>
+    </member>
+    <member name="M:System.Activities.Core.Presentation.Factories.PickWithTwoBranchesFactory.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Activities.Core.Presentation.Factories.PickWithTwoBranchesFactory" /> class.</summary>
+    </member>
+    <member name="M:System.Activities.Core.Presentation.Factories.PickWithTwoBranchesFactory.Create(System.Windows.DependencyObject)">
+      <summary>Creates a new <see cref="T:System.Activities.Statements.Pick" /> activity that contains two branches.</summary>
+      <returns>A new <see cref="T:System.Activities.Statements.Pick" /> activity that contains two branches.</returns>
+      <param name="target">The workflow UI element that is the visual container of the new activity. This parameter is ignored.</param>
+    </member>
+    <member name="T:System.Activities.Core.Presentation.Factories.StateMachineWithInitialStateFactory">
+      <summary>Creates a state machine activity that contains an initial state.</summary>
+    </member>
+    <member name="M:System.Activities.Core.Presentation.Factories.StateMachineWithInitialStateFactory.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Activities.Core.Presentation.Factories.StateMachineWithInitialStateFactory" /> class.</summary>
+    </member>
+    <member name="M:System.Activities.Core.Presentation.Factories.StateMachineWithInitialStateFactory.Create(System.Windows.DependencyObject)">
+      <summary>Creates a state machine activity that contains an initial state.</summary>
+      <returns>Returns <see cref="T:System.Activities.Activity" />.</returns>
+      <param name="target">The workflow UI element that is the visual container of the new activity. This parameter is ignored.</param>
+    </member>
+    <member name="T:System.Activities.Core.Presentation.Themes.DesignerStylesDictionary">
+      <summary>Provides a dictionary for designer styles.</summary>
+    </member>
+    <member name="M:System.Activities.Core.Presentation.Themes.DesignerStylesDictionary.InitializeComponent">
+      <summary>Initializes the current dictionary instance from a XAML file at a specific resource location.</summary>
+    </member>
+    <member name="P:System.Activities.Core.Presentation.Themes.DesignerStylesDictionary.SequenceStyle">
+      <summary>Gets the sequence style stored in this <see cref="T:System.Activities.Core.Presentation.Themes.DesignerStylesDictionary" /> instance. Also, seals the sequence style if it is not already sealed.</summary>
+      <returns>The sequence style stored in this <see cref="T:System.Activities.Core.Presentation.Themes.DesignerStylesDictionary" /> instance.</returns>
+    </member>
+    <member name="M:System.Activities.Core.Presentation.Themes.DesignerStylesDictionary.System#Windows#Markup#IComponentConnector#Connect(System.Int32,System.Object)">
+      <summary>Attaches events and names to compiled content. </summary>
+      <param name="connectionId">The connection ID.</param>
+      <param name="target">The target.</param>
+    </member>
+    <member name="T:System.Activities.Core.Presentation.Themes.StateMachineDesignerStylesDictionary"></member>
+    <member name="M:System.Activities.Core.Presentation.Themes.StateMachineDesignerStylesDictionary.InitializeComponent"></member>
+    <member name="M:System.Activities.Core.Presentation.Themes.StateMachineDesignerStylesDictionary.System#Windows#Markup#IComponentConnector#Connect(System.Int32,System.Object)"></member>
+    <member name="T:System.Activities.Presentation.DynamicArgumentDesignerOptions">
+      <summary>Provides options for the dynamic argument designer.</summary>
+    </member>
+    <member name="M:System.Activities.Presentation.DynamicArgumentDesignerOptions.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Activities.Presentation.DynamicArgumentDesignerOptions" /> class.</summary>
+    </member>
+    <member name="P:System.Activities.Presentation.DynamicArgumentDesignerOptions.ArgumentPrefix">
+      <summary>Gets or sets the default argument prefix.</summary>
+      <returns>The default argument prefix.</returns>
+    </member>
+    <member name="P:System.Activities.Presentation.DynamicArgumentDesignerOptions.Title">
+      <summary>Gets or sets the title of the dynamic argument designer.</summary>
+      <returns>The title of the dynamic argument designer.</returns>
+    </member>
+    <member name="T:System.Activities.Presentation.DynamicArgumentDialog">
+      <summary>Represents a dialog box for a dynamic argument element. </summary>
+    </member>
+    <member name="M:System.Activities.Presentation.DynamicArgumentDialog.ShowDialog(System.Activities.Presentation.Model.ModelItem,System.Activities.Presentation.Model.ModelItem,System.Activities.Presentation.EditingContext,System.Windows.DependencyObject,System.Activities.Presentation.DynamicArgumentDesignerOptions)">
+      <summary>Displays the dynamic argument dialog with OK and Cancel buttons and returns after the dialog is closed.</summary>
+      <returns>true if the user accepted the dialog; false if the user cancelled the dialog.</returns>
+      <param name="activity">The activity associated with the dynamic argument dialog.</param>
+      <param name="data">The data associated with the dynamic argument dialog.</param>
+      <param name="context">The editing context associated with the dynamic argument dialog.</param>
+      <param name="owner">The owner of the dynamic argument dialog.</param>
+      <param name="options">The options of the dynamic argument designer that contain the argument prefix and the designer title. The dynamic argument dialog contains the designer as its content.</param>
+    </member>
+    <member name="T:System.ServiceModel.Activities.Presentation.Factories.ReceiveAndSendReplyFactory">
+      <summary>Creates a configured instance of <see cref="T:System.ServiceModel.Activities.Receive" /> and <see cref="T:System.ServiceModel.Activities.SendReply" /> activity pairs. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Activities.Presentation.Factories.ReceiveAndSendReplyFactory.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Activities.Presentation.Factories.ReceiveAndSendReplyFactory" /> class. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Activities.Presentation.Factories.ReceiveAndSendReplyFactory.Create(System.Windows.DependencyObject)">
+      <summary>Creates a new <see cref="T:System.Activities.Statements.Sequence" /> activity composed of a <see cref="T:System.ServiceModel.Activities.Receive" /> and a <see cref="T:System.ServiceModel.Activities.SendReply" /> pair.</summary>
+      <returns>A new <see cref="T:System.Activities.Statements.Sequence" /> activity composed of a <see cref="T:System.ServiceModel.Activities.Receive" /> and a <see cref="T:System.ServiceModel.Activities.SendReply" /> pair.</returns>
+      <param name="target">The workflow UI element that is the visual container of the new activity.</param>
+    </member>
+    <member name="T:System.ServiceModel.Activities.Presentation.Factories.SendAndReceiveReplyFactory">
+      <summary>Creates a configured instance of <see cref="T:System.ServiceModel.Activities.Send" /> and <see cref="T:System.ServiceModel.Activities.ReceiveReply" /> activity pairs.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Activities.Presentation.Factories.SendAndReceiveReplyFactory.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Activities.Presentation.Factories.SendAndReceiveReplyFactory" /> class. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Activities.Presentation.Factories.SendAndReceiveReplyFactory.Create(System.Windows.DependencyObject)">
+      <summary>Creates a new <see cref="T:System.Activities.Statements.Sequence" /> activity composed of a <see cref="T:System.ServiceModel.Activities.Send" /> and a <see cref="T:System.ServiceModel.Activities.ReceiveReply" /> pair.</summary>
+      <returns>A new <see cref="T:System.Activities.Statements.Sequence" /> activity composed of a <see cref="T:System.ServiceModel.Activities.Send" /> and a <see cref="T:System.ServiceModel.Activities.ReceiveReply" /> pair.</returns>
+      <param name="target">The workflow UI element that is the visual container of the new activity.</param>
+    </member>
+  </members>
+</doc>

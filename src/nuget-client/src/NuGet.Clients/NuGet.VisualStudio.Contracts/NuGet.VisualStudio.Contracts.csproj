@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>$(NetStandardVersion)</TargetFramework>
+    <!-- Preview version of Microsoft.ServiceHub.Framework causes a NU5104 warning. When upgrading to a stable version of this package, remove the below NoWarn="NU5104". -->
+    <NoWarn>$(NoWarn);NU5104;RS0041</NoWarn>
+    <SkipShared>true</SkipShared>
+    <PackProject>true</PackProject>
+    <Shipping>true</Shipping>
+    <IncludeInVsix>true</IncludeInVsix>
+    <IncludeNuGetSharedFiles>true</IncludeNuGetSharedFiles>
+    <RootNamespace>NuGet.VisualStudio.Contracts</RootNamespace>
+    <Description>RPC contracts for NuGet's Visual Studio Service Broker extensibility APIs.</Description>
+    <!-- VS Extensibility APIs should use package version corresponding to VS version it targets, to reduce confusion. Also keep assembly version stable to minimize binding redirect issues. -->
+    <PackageVersion>$(NuGetSdkVsSemanticVersion)$(PreReleaseInformationVersion)</PackageVersion>
+    <AssemblyVersion>$(NuGetSdkVsSemanticVersion).0</AssemblyVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.ServiceHub.Framework" />
+    <!-- We do this to avoid the warning our build raises about keeping a consistent newtonsoft.json version. We don't need newtonsonft.json type in here, we don't use it. -->
+    <PackageReference Include="Newtonsoft.Json" PrivateAssets="all" ExcludeAssets="all" />
+  </ItemGroup>
+</Project>

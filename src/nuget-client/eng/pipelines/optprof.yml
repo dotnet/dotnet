@@ -1,0 +1,211 @@
+# NuGet OptProf profiling pipeline
+
+trigger: none # Prevents this pipeline from triggering on check-ins
+
+resources:
+  pipelines:
+  - pipeline: ComponentBuildUnderTest
+    source: NuGet.Client-Official
+    trigger:
+      branches:
+        - dev
+        - release-*
+  - pipeline: DartLab
+    source: DartLab
+    branch: main
+  - pipeline: DartLab.OptProf
+    source: DartLab.OptProf
+    branch: main
+  repositories:
+  - repository: DartLabTemplates
+    type: git
+    name: DartLab.Templates
+    ref: refs/heads/main
+  - repository: DartLabOptProfTemplates
+    type: git
+    name: DartLab.OptProf
+    ref: refs/heads/main
+
+parameters:
+# Whether or not commit should be tagged for manual deployments
+- name: CreateGitTagOnManualRun
+  type: boolean
+  default: false
+
+# Whether or not to delete the test machines after the run completes.
+- name: testMachineCleanUpStrategy
+  type: string
+  default: delete
+  values:
+  - delete
+  - stop
+
+stages:
+- template: \templates\stages\visual-studio\single-runsettings.yml@DartLabOptProfTemplates
+  parameters:
+    ##### Required #####
+    runSettingsURI: $(RunSettingsURI)
+    visualStudioBootstrapperURI: $(VisualStudio.InstallationUnderTest.BootstrapperURL)
+    ##### Optional #####
+    name: OptProf_ProfilingWorkflow
+    displayName: OptProf Profiling Workflow
+    variables:
+    - name: optDropName
+      value: OptimizationInputs/$(System.TeamProject)/$(Build.Repository.Name)/$(resources.pipeline.ComponentBuildUnderTest.sourceCommit)/$(Build.BuildId)/$(System.StageId)/$(System.StageAttempt)
+    - name: RunSettingsURI
+      value: $[dependencies.TestMachineConfiguration.outputs['SetRunSettingsURI.RunSettingsURI']]
+    optOptimizationInputsDropName: $(optDropName)
+    # Remove this parameter if you don't want LKG support
+    previousOptimizationInputsDropName: $(PreviousOptimizationInputsDropName)
+    testLabPoolName: VS-Platform
+    testMachineCleanUpStrategy: ${{parameters.testMachineCleanUpStrategy}}
+    visualStudioSigning: Test
+    ##### Step Hooks #####
+    preTestMachineConfigurationStepList:
+    - powershell: "Get-ChildItem Env: | Sort-Object Name | Format-Table -Wrap -AutoSize"
+      displayName: 'Print Environment Variables'
+    - powershell: |
+        $branch = "$(Resources.Pipeline.ComponentBuildUnderTest.SourceBranch)"
+        $refsHead = "refs/heads/"
+        if ($branch.StartsWith($refsHead)) {
+          $branch = $branch.SubString($refsHead.Length)
+        }
+        $branch = $branch.Replace('/', '_')
+        $commit = "$(Resources.Pipeline.ComponentBuildUnderTest.SourceCommit)"
+        $buildNumber = "$(Build.BuildNumber)"
+
+        $BuildName = "${branch}_${commit}_${buildNumber}"
+        Write-Host "Settings build name = $BuildName"
+        Write-Host "##vso[build.updatebuildnumber]$BuildName"
+      displayName: 'Set Build Name'
+    - download: ComponentBuildUnderTest
+      artifact: BuildInfo
+      displayName: 'Download buildinfo.json'
+    - powershell: |
+        try {
+          Write-Host "Set VSBranch, VsTargetChannel &  VsTargetMajorVersion variables"
+          $buildInfoJsonFilePath = "$(Pipeline.Workspace)\ComponentBuildUnderTest\BuildInfo\buildinfo.json"
+
+          Write-Host "buildinfo.json drop URI:  $buildInfoJsonFilePath"
+          $buildInfoJson = (Get-Content $buildInfoJsonFilePath -Raw) | ConvertFrom-Json
+          $VSBranch = $buildInfoJson.VsTargetBranch
+
+          Write-Host "Target Visual Studio branch (full name): $VSBranch"
+
+          # The value will be something like 'main' or 'rel/d16.4';
+          # however, the subsequent task which gets bootstrapper details has a parameter (VSBranch)
+          # which (as of writing this) requires the branch "short" name.
+          # For the 'main' branch, the short name is still 'main'.
+          # For the 'rel/d16.4' branch, the short name is 'd16.4'.
+          # Ideally, we would not need to figure out the branch short name ourselves,
+          # but short-term we will to unblock ourselves.
+          $branchParts = $VSBranch.Split('/')
+          $VSBranch = $branchParts[$branchParts.Count - 1]
+
+          Write-Host "Target Visual Studio branch (short name): $VSBranch"
+
+          Write-Host "Target Visual Studio branch: $VSBranch"
+          Set-AzurePipelinesVariable 'VSBranch' $VSBranch
+
+          $VsTargetChannel = $buildInfoJson.VsTargetChannel
+          Write-Host "Visual Studio target channel: $VsTargetChannel"
+          Set-AzurePipelinesVariable 'VsTargetChannel' $VsTargetChannel
+
+          $VsTargetMajorVersion = $buildInfoJson.VsTargetMajorVersion
+          Write-Host "Visual Studio major version: $VsTargetMajorVersion"
+          Set-AzurePipelinesVariable 'VsTargetMajorVersion' $VsTargetMajorVersion
+        }
+        catch {
+          Write-Host $_
+          Write-Error "Failed to set VSBranch, VsTargetChannel &  VsTargetMajorVersion pipeline variables"
+          throw
+        }
+      displayName: 'Set VSBranch variable'
+    - powershell : |
+        try {
+          $branchName = "$(resources.pipeline.ComponentBuildUnderTest.sourceBranch)"
+          $branchName = $branchName.Replace('refs/heads/', '')
+
+          $RunSettingsURI = "https://vsdrop.corp.microsoft.com/file/v1/RunSettings/$(System.TeamProject)/$(Build.Repository.Name)/$branchName/$(resources.pipeline.ComponentBuildUnderTest.runID);NuGet.OptProfV2.runsettings"
+          Write-Host "RunSettingsURI: $RunSettingsURI"
+          # non-output variable for VS config in the configure machine job
+          # output variable for test execution job
+          Set-AzurePipelinesVariable 'RunSettingsURI' $RunSettingsURI
+          Set-AzurePipelinesVariable -IsOutput 'RunSettingsURI' $RunSettingsURI
+        }
+        catch {
+          Write-Host $_
+          Write-Error "Failed to set SourceBranchName pipeline variable"
+          throw
+        }
+      displayName: 'Set RunSettingsURI variable'
+      name: SetRunSettingsURI
+    - download: ComponentBuildUnderTest
+      artifact: VS15
+      patterns: |
+        VS15/*
+        !VS15/EndToEnd.zip
+        !VS15/*.exe
+        !VS15/*.pdb
+      displayName: 'Download VS15 files from official build'
+    - task: MicroBuildSigningPlugin@1
+      inputs:
+        signType: "real"
+        esrpSigning: "true"
+      displayName: "Install Signing Plugin"
+    - task: MicroBuildSwixPlugin@4
+      displayName: "Install Swix Plugin"
+    - task: MicroBuildBuildVSBootstrapper@2
+      displayName: 'Build a Visual Studio bootstrapper'
+      inputs:
+        channelName: "$(VsTargetChannel)"
+        vsMajorVersion: "$(VsTargetMajorVersion)"
+        manifests: '$(Pipeline.Workspace)\ComponentBuildUnderTest\VS15\Microsoft.VisualStudio.NuGet.Core.vsman'
+        outputFolder: '$(Pipeline.Workspace)\ComponentBuildUnderTest\VS15'
+    - task: PowerShell@2
+      displayName: Set 'VisualStudio.InstallationUnderTest.BootstrapperURL'
+      inputs:
+        filePath: $(DartLab.Path)\Scripts\VisualStudio\Bootstrapper\Get-BootstrapperURL.ps1
+        arguments: -BootstrapperInfoJsonURI '$(Build.StagingDirectory)\MicroBuild\Output\BootstrapperInfo.json' -VSBranch '$(VSBranch)' -OutVariableName 'VisualStudio.InstallationUnderTest.BootstrapperURL'
+    - task: artifactDropTask@0
+      displayName: "Upload VSTS Drop"
+      inputs:
+        dropServiceURI: 'https://devdiv.artifacts.visualstudio.com'
+        buildNumber: 'Products/$(System.TeamProject)/$(Build.Repository.Name)/$(Build.SourceBranchName)/$(Build.BuildNumber)'
+        sourcePath: "$(Pipeline.Workspace)\\ComponentBuildUnderTest\\VS15"
+        toLowerCase: false
+        usePat: true
+        dropMetadataContainerName: "DropMetadata-Product"
+    # Remove this step hook and it's task if you don't want LKG support
+    prePublishOptimizationInputsDropStepList:
+    # Set parameter for PreviousOptimizationInputsDropName 
+    - powershell: |
+        try {
+          $artifactName = 'OptProf'
+          $BuildID = $(resources.pipeline.ComponentBuildUnderTest.runID)
+          $artifact = Get-BuildArtifact -InstanceURL 'https://dev.azure.com/devdiv' -ProjectName 'DevDiv' -BuildID $BuildID -ArtifactName $artifactName -OAuthAccessToken (ConvertTo-SecureString '$(System.AccessToken)' -AsPlainText -Force)
+          $containerName = $artifact.Resource.Data -Split '/' | Select-Object -Last 1
+          $fileName = Join-Path $containerName 'Metadata.json'
+          $jsonString = Read-BuildArtifactFile -InstanceURL 'https://dev.azure.com/devdiv' -ProjectName 'DevDiv' -BuildID $BuildID -ArtifactName $artifactName -FileName $fileName -OAuthAccessToken (ConvertTo-SecureString '$(System.AccessToken)' -AsPlainText -Force)
+          $json = $jsonString | ConvertFrom-Json
+
+          Write-Host "The content of the metadata.json file was $json"
+          $dropname = $json.OptimizationData
+          
+          Write-Host "PreviousOptimizationInputsDropName: $dropname"
+          Set-AzurePipelinesVariable 'PreviousOptimizationInputsDropName' $dropname
+        }
+        catch {
+          Write-Host $_
+          Write-Error "Failed to set OptimizationInputsDropName pipeline variable"
+          throw
+        }
+      displayName: Set PreviousOptimizationInputsDropName
+    postPublishOptimizationInputsDropStepList:
+    # Tag commit with OptizationInputsDrop name
+    - template: \steps\powershell\execute-script.yml@DartLabTemplates
+      parameters:
+        displayName: Create OptimizationInputs Tag in Repository
+        condition: and(succeeded(), or(in(variables['Build.Reason'], 'ResourceTrigger'), eq('${{parameters.CreateGitTagOnManualRun}}', 'true')))
+        filePath: $(DartLab.Path)\Scripts\AzureDevOps\Repos\New-GitAnnotatedTag.ps1
+        arguments: -InstanceURL '$(System.CollectionUri)' -ProjectName '$(System.TeamProject)' -RepositoryName '$(Build.Repository.Name)' -CommitID '$(resources.pipeline.ComponentBuildUnderTest.sourceCommit)' -TagName '$(optDropName)' -JSON @{ releaseWebURL = "$(System.TeamFoundationCollectionUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)" } -OAuthAccessToken (ConvertTo-SecureString '$(System.AccessToken)' -AsPlainText -Force)

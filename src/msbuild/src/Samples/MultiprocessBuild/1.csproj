@@ -1,0 +1,11 @@
+<Project>
+  <PropertyGroup>
+    <AssemblyPath Condition="'$(AssemblyPath)' == ''">PortableTask.dll</AssemblyPath>
+  </PropertyGroup>
+  <UsingTask TaskName="Sleep" AssemblyFile="$(AssemblyPath)"/>
+  <Target Name="t">
+     <Message Importance="high" Text="## starting 1 ##"/>
+     <Sleep Seconds="3" />
+     <Message Importance="high" Text="## finishing 1 ##"/>
+  </Target>
+</Project>

@@ -1,0 +1,65 @@
+#
+# See https://docs.microsoft.com/azure/devops/pipelines/yaml-schema for reference.
+#
+
+variables:
+- name: Build.Repository.Clean
+  value: true
+
+trigger:
+  branches:
+    include:
+      - main
+
+pr:
+  autoCancel: true
+  branches:
+    include:
+    - main
+
+stages:
+- stage: build
+  displayName: Build
+  jobs:
+  - template: /eng/common/templates/jobs/jobs.yml
+    parameters:
+      helixRepo: dotnet/razor-tooling
+      helixType: build.product/
+      enableRichCodeNavigation: true
+      richCodeNavigationEnvironment: 'production'
+      richCodeNavigationLanguage: 'csharp,typescript'
+      jobs:
+      - job: Windows
+        pool:
+          name: NetCore-Public
+          demands: ImageOverride -equals windows.vs2019.amd64.open
+
+        steps:
+        - task: NodeTool@0
+          displayName: Install Node 10.x
+          inputs:
+            versionSpec: 10.x
+        - powershell: npm install -g yarn
+          displayName: Install yarn
+          condition: succeeded()
+        - task: NuGetCommand@2
+          displayName: 'Clear NuGet caches'
+          condition: succeeded()
+          inputs:
+            command: custom
+            arguments: 'locals all -clear'
+
+        - task: PowerShell@2
+          displayName: Build
+          condition: succeeded()
+          inputs:
+            filePath: eng/common/build.ps1
+            arguments: -ci
+                       -restore
+                       -build
+                       -sign
+                       -pack
+                       -publish
+                       -configuration Debug
+                       -msbuildEngine dotnet
+                       -prepareMachine

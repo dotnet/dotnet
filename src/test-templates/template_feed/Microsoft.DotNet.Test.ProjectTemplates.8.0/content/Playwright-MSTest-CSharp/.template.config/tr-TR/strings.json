@@ -1,0 +1,7 @@
+{
+  "version": "1.0.0.0",
+  "strings": {
+    "name": "MSTest Test Projesi",
+    "description": "Windows, Linux ve MacOS'ta .NET üzerinde çalışabilen MSTest birim testlerini içeren bir proje."
+  }
+}

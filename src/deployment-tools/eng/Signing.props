@@ -1,0 +1,80 @@
+<Project>
+
+  <PropertyGroup>
+    <!--
+      Windows arm/arm64 jobs don't have MSIs to sign. Keep it simple: allow not finding any matches
+      here and rely on overall signing validation.
+    -->
+    <AllowEmptySignList Condition="'$(SignFinalPackages)' != 'true'">true</AllowEmptySignList>
+  </PropertyGroup>
+
+  <!-- Get artifact locations to sign. -->
+  <Import Project="$(RepositoryEngineeringDir)Configurations.props" />
+
+  <!-- We need  this to be inside a target to workaround: https://github.com/microsoft/msbuild/issues/5445 -->
+  <Target Name="PrepareItemsToSign" BeforeTargets="Sign">
+
+  <ItemGroup>
+    <!--
+      Replace the default items to sign with the specific set we want. This allows the build to call
+      Arcade's Sign.proj multiple times for different sets of files as the build progresses.
+    -->
+    <ItemsToSign Remove="@(ItemsToSign)" />
+
+    <!-- Find bundle artifacts, which need multiple stages to fully sign. -->
+    <BundleInstallerEngineArtifact Include="$(ArtifactsPackagesDir)**/*engine.exe" />
+    <BundleInstallerExeArtifact Include="$(ArtifactsPackagesDir)**/*.exe" />
+
+    <!-- Launcher is not signed, by design. -->
+    <FileSignInfo Include="Launcher.exe" CertificateName="None" />
+
+    <!-- Do not sign non-Microsoft binaries. -->
+    <FileSignInfo Include="MessagePack.dll" CertificateName="None" />
+    <FileSignInfo Include="MessagePack.Annotations.dll" CertificateName="None" />
+    <FileSignInfo Include="Nerdbank.Streams.dll" CertificateName="None" />
+
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(SignBinaries)' == 'true'">
+    <ItemsToSign Include="$(ArtifactsBinDir)win-$(TargetArchitecture).$(Configuration)\**\netcorecheck.exe" />
+    <ItemsToSign Include="$(ArtifactsBinDir)win-$(TargetArchitecture).$(Configuration)\**\netcorecheckca.dll" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(SignMsiFiles)' == 'true'">
+    <ItemsToSign Include="$(ArtifactsPackagesDir)**/*.msi" />
+    <ItemsToSign Include="$(ArtifactsPackagesDir)**/*.cab" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(SignBurnEngineFiles)' == 'true'">
+    <ItemsToSign Include="@(BundleInstallerEngineArtifact)" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(SignBurnBundleFiles)' == 'true'">
+    <!-- Sign the bundles, now that the engine is reattached. Avoid re-signing the engine. -->
+    <ItemsToSign
+      Include="@(BundleInstallerExeArtifact)"
+      Exclude="@(BundleInstallerEngineArtifact)" />
+    <!-- Note: wixstdba is internal to the engine bundle and does not get signed. -->
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(SignFinalPackages)' == 'true'">
+    <DownloadedSymbolPackages Include="$(DownloadDirectory)**\*.symbols.nupkg" />
+    <ItemsToSign Include="$(DownloadDirectory)**\*.nupkg" Exclude="@(DownloadedSymbolPackages)" />
+
+    <ItemsToSign Include="$(DownloadDirectory)**\*.deb" />
+    <ItemsToSign Include="$(DownloadDirectory)**\*.rpm" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ItemsToSign Update="@(ItemsToSign)" Authenticode="$(CertificateId)" />
+  </ItemGroup>
+
+  </Target>
+
+  <ItemGroup>
+    <FileExtensionSignInfo Include=".msi" CertificateName="Microsoft500" />
+    <FileExtensionSignInfo Include=".pkg" CertificateName="8003" />
+    <FileExtensionSignInfo Include=".deb;.rpm" CertificateName="LinuxSign" />
+  </ItemGroup>
+
+</Project>

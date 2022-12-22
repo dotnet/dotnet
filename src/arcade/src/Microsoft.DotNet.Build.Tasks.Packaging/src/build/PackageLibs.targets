@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <Import Condition="'$(_PackagingCommonTargetsImported)' != 'true'" Project="Packaging.common.targets"/>
+
+  <Target Name="UpdatePkgProjProjectReferences" BeforeTargets="AssignProjectConfiguration">
+    <!-- Update PkgProj references to call the GetPackageAssets target -->
+    <ItemGroup>
+      <ProjectReference Condition="'%(ProjectReference.Extension)'=='.pkgproj'">
+        <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+        <Targets>GetPackageAssets</Targets>
+        <OutputItemType>PkgProjAsset</OutputItemType>
+        <UndefineProperties>%(ProjectReference.UndefineProperties)</UndefineProperties>
+      </ProjectReference>
+    </ItemGroup>
+  </Target>
+
+  <PropertyGroup>
+    <!-- Resolve from pkgProjs before NuGet packages -->
+    <ResolveNugetPackagesDependsOn>$(ResolveNugetPackagesDependsOn);ResolvePkgProjReferences</ResolveNugetPackagesDependsOn>
+    <ResolvePkgProjReferencesDependsOn>$(ResolvePkgProjReferencesDependsOn);ResolveProjectReferences</ResolvePkgProjReferencesDependsOn>
+  </PropertyGroup>
+
+  <!-- Resolves applicable files from all files in PkgProjs. Similar to ResolveNuGetPackageAssets, except operates on a file list
+       without requiring actual nupkgs, project.json, or restore -->
+  <Target Name="ResolvePkgProjReferences" Condition="'@(PkgProjAsset)' != ''" DependsOnTargets="$(ResolvePkgProjReferencesDependsOn)">
+    <GetApplicableAssetsFromPackages PackageAssets="@(PkgProjAsset)"
+                                     TargetMonikers="$(NuGetTargetMoniker)"
+                                     RuntimeTargetMonikers="$(TestNuGetTargetMoniker)"
+                                     TargetRuntime="$(TestNugetRuntimeId)"
+                                     RuntimeFile="$(RuntimeIdGraphDefinitionFile)">
+      <Output TaskParameter="CompileAssets" ItemName="Reference" />
+      <Output TaskParameter="RuntimeAssets" ItemName="ReferenceCopyLocalPaths" />
+    </GetApplicableAssetsFromPackages>
+  </Target>
+
+  <!-- Returns the set of files to be included in the NuGet package
+       with appropriate metadata.-->
+  <Target Name="GetFilesToPackage"
+          Returns="@(FilesToPackage)"
+          Condition="'$(ExcludeFromPackage)' != 'true'">
+    <PropertyGroup>
+      <PackagePath Condition="'$(PackagePath)' == ''">$(TargetPath)</PackagePath>
+      <PackageIncludeDocs Condition="'$(PackageIncludeDocs)' == '' AND '$(IsReferenceAssembly)' == 'true'">true</PackageIncludeDocs>
+      <PackageIncludeDocs Condition="'$(PackageIncludeDocs)' == '' AND '$(DocumentationFile)' != ''">true</PackageIncludeDocs>
+    </PropertyGroup>
+
+    <!-- Find a root directory that is an ancestor of every possible source file, including
+         ones in bin and Tools. Allow configuration, otherwise prefer TFS root. -->
+    <PropertyGroup>
+      <ProjectRoot Condition="'$(ProjectRoot)'==''">$(SourcesRootPath)</ProjectRoot>
+      <ProjectRoot Condition="'$(ProjectRoot)'==''">$(ProjectDir)</ProjectRoot>
+      <ProjectRootLength>$(ProjectRoot.Length)</ProjectRootLength>
+    </PropertyGroup>
+
+    <!-- XmlDocFileRoot should be defined externally since these are currently not
+         part of the corefx repo. -->
+    <!-- This isn't a straight mapping to an algorithm using CultureInfo.
+         There are special cases for en-US and zh-* so we manually list
+         the mapping.-->
+    <ItemGroup>
+      <XmlDocFile Include="$(XmlDocFileRoot)/1028/$(TargetName).xml">
+        <SubFolder>/zh-hant</SubFolder>
+      </XmlDocFile>
+      <XmlDocFile Include="$(XmlDocFileRoot)/1031/$(TargetName).xml">
+        <SubFolder>/de</SubFolder>
+      </XmlDocFile>
+      <XmlDocFile Include="$(XmlDocFileRoot)/1033/$(TargetName).xml">
+        <SubFolder />
+        <!-- en docs go in root as neutral fall back -->
+      </XmlDocFile>
+      <XmlDocFile Include="$(XmlDocFileRoot)/1036/$(TargetName).xml">
+        <SubFolder>/fr</SubFolder>
+      </XmlDocFile>
+      <XmlDocFile Include="$(XmlDocFileRoot)/1040/$(TargetName).xml">
+        <SubFolder>/it</SubFolder>
+      </XmlDocFile>
+      <XmlDocFile Include="$(XmlDocFileRoot)/1041/$(TargetName).xml">
+        <SubFolder>/ja</SubFolder>
+      </XmlDocFile>
+      <XmlDocFile Include="$(XmlDocFileRoot)/1042/$(TargetName).xml">
+        <SubFolder>/ko</SubFolder>
+      </XmlDocFile>
+      <XmlDocFile Include="$(XmlDocFileRoot)/1049/$(TargetName).xml">
+        <SubFolder>/ru</SubFolder>
+      </XmlDocFile>
+      <XmlDocFile Include="$(XmlDocFileRoot)/2052/$(TargetName).xml">
+        <SubFolder>/zh-hans</SubFolder>
+      </XmlDocFile>
+      <XmlDocFile Include="$(XmlDocFileRoot)/3082/$(TargetName).xml">
+        <SubFolder>/es</SubFolder>
+      </XmlDocFile>
+    </ItemGroup>
+
+    <!-- currently behind a flag to avoid noise in the build -->
+    <Warning Condition="'$(ValidateDocs)' == 'true' AND '$(PackageIncludeDocs)' == 'true' AND !Exists('%(XmlDocFile.Identity)')"
+             Text="Documentation file %(XmlDocFile.Identity) was not found." />
+
+    <!-- remove any missing docs-->
+    <ItemGroup>
+      <XmlDocFile Remove="@(XmlDocFile)" Condition="!Exists('%(XmlDocFile.Identity)')"/>
+    </ItemGroup>
+
+    <PropertyGroup>
+      <!-- Desktop libraries that contain types in classic assemblies need to be included in ref
+         so that the types unify with the classic assemblies from the targeting pack. -->
+      <PackageDesktopAsRef Condition="'$(PackageDesktopAsRef)' == ''">$(IsPartialFacadeAssembly)</PackageDesktopAsRef>
+      <PackageDesktopAsRef Condition="'$(PackageAsRefAndLib)' != ''">$(PackageAsRefAndLib)</PackageDesktopAsRef>
+
+      <!-- Desktop libraries should also be packaged without a RID to work in packages.config projects -->
+      <PackageDesktopAsLib Condition="'$(PackageDesktopAsLib)' == ''">true</PackageDesktopAsLib>
+
+      <!-- A reference asset is any file contributed from a project that is contributing a reference,
+           not just the file in the ref folder. -->
+      <IsReferenceAsset Condition="'$(IsReferenceAsset)' == ''">$(IsReferenceAssembly)</IsReferenceAsset>
+      <IsReferenceAsset Condition="'$(IsReferenceAsset)' == ''">false</IsReferenceAsset>
+    </PropertyGroup>
+
+    <!-- *** determine destination path for assets ***
+         Order of precedence
+           @(PackageDestination) - used verbatim, must set identity to path and TargetFramework to target moniker.
+
+           $(PackageTargetFramework) & @(PackageTargetFramework) - combined to specify target monikers and optionally target runtime.  Path is calculated.
+           $(NuGetTargetMoniker) - specifies target moniker if nothing else is specified.  Path is calculated.
+    -->
+    <GetPackageDestination Condition="'@(PackageDestination)' == ''"
+                           PackageTargetFrameworks="$(PackageTargetFramework);@(PackageTargetFramework)"
+                           PackageTargetRuntime="$(PackageTargetRuntime)"
+                           NuGetTargetMoniker="$(NuGetTargetMoniker)"
+                           IsReferenceAssembly="$(IsReferenceAssembly)"
+                           PackageDesktopAsRef="$(PackageDesktopAsRef)"
+                           PackageDesktopAsLib="$(PackageDesktopAsLib)"
+                           SuppressPackageTargetFrameworkCompatibility="@(SuppressPackageTargetFrameworkCompatibility)">
+      <Output TaskParameter="PackageDestinations" ItemName="PackageDestination" />
+      <Output TaskParameter="IsReferenceAsset" PropertyName="IsReferenceAsset" />
+    </GetPackageDestination>
+
+    <!-- fail if not specified by the project  -->
+    <Error Condition="'@(PackageDestination)' == ''" Text="Error could not determine packaging destination.  Please set either PackageTargetFramework property, PackageTargetFramework item, NuGetTargetMoniker property or PackageDestination item." />
+
+    <!-- Be explicit about path separators for the target path for source files. When building packages on *nix, the use of the DOS separator
+         was causing us to include source files in our packages in a folder called src\src, instead of them being stripped. -->
+    <PropertyGroup>
+      <SourceFileTargetPathPrefix Condition="'$(OS)' == 'Windows_NT'">src\</SourceFileTargetPathPrefix>
+      <SourceFileTargetPathPrefix Condition="'$(OS)' != 'Windows_NT'">src/</SourceFileTargetPathPrefix>
+    </PropertyGroup>
+
+    <!-- *** include assets *** -->
+    <ItemGroup>
+      <!-- Include symbols output -->
+      <SymbolFileToPackage Include="$(PackagePath.Replace('.dll', '.pdb'))" Condition="Exists($(PackagePath.Replace('.dll', '.pdb')))">
+        <IsSymbolFile>true</IsSymbolFile>
+      </SymbolFileToPackage>
+
+      <!-- Include primary output -->
+      <FilesToPackage Include="$(PackagePath);@(SymbolFileToPackage)">
+        <AssemblyVersion>$(AssemblyVersion)</AssemblyVersion>
+        <TargetFramework>%(PackageDestination.TargetFramework)</TargetFramework>
+        <TargetPath>%(PackageDestination.Identity)</TargetPath>
+        <IsReferenceAsset>$(IsReferenceAsset)</IsReferenceAsset>
+      </FilesToPackage>
+
+      <!-- Include any additional items if specified -->
+      <FilesToPackage Include="@(AdditionalFileToPackage)">
+        <TargetFramework>%(PackageDestination.TargetFramework)</TargetFramework>
+        <TargetPath>%(PackageDestination.Identity)</TargetPath>
+        <IsReferenceAsset>$(IsReferenceAsset)</IsReferenceAsset>
+      </FilesToPackage>
+
+      <!-- Include doc output if it isn't centrally authored -->
+      <FilesToPackage Include="$(DocumentationFile)" Condition="'$(DocumentationFile)' != '' AND '@(XmlDocFile)' == '' AND '$(PackageIncludeDocs)' == 'true'">
+        <TargetPath>%(PackageDestination.Identity)</TargetPath>
+        <IsReferenceAsset>$(IsReferenceAsset)</IsReferenceAsset>
+        <!-- intentionally omit TargetFramework: no dependencies for docs -->
+      </FilesToPackage>
+
+      <!-- Include pre-authored docs if available and required -->
+      <FilesToPackage Include="@(XmlDocFile)" Condition="'$(PackageIncludeDocs)' == 'true'">
+        <TargetPath>%(PackageDestination.Identity)</TargetPath>
+        <IsReferenceAsset>$(IsReferenceAsset)</IsReferenceAsset>
+        <!-- intentionally omit TargetFramework: no dependencies for docs -->
+      </FilesToPackage>
+      <FilesToPackage Condition="'%(FilesToPackage.SubFolder)' != ''">
+        <TargetPath>%(TargetPath)%(FilesToPackage.SubFolder)</TargetPath>
+      </FilesToPackage>
+      
+    </ItemGroup>
+  </Target>
+</Project>

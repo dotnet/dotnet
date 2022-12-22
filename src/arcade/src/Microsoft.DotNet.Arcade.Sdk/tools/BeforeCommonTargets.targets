@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+  <Import Project="$(_ArcadeOverriddenCustomBeforeMicrosoftCommonTargets)" Condition="Exists('$(_ArcadeOverriddenCustomBeforeMicrosoftCommonTargets)')"/>
+
+  <PropertyGroup>
+    <_ArcadeBeforeCommonTargetsImported>true</_ArcadeBeforeCommonTargetsImported>
+  </PropertyGroup>
+
+  <Import Project="Version.BeforeCommonTargets.targets"/>
+</Project>

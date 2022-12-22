@@ -1,0 +1,924 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ConfigCommandDesc" xml:space="preserve">
+    <value>Gets or sets NuGet config values.</value>
+  </data>
+  <data name="ConfigCommandExamples" xml:space="preserve">
+    <value>nuget config -Set HTTP_PROXY=http://127.0.0.1 -Set HTTP_PROXY.USER=domain\user
+nuget config HTTP_PROXY</value>
+    <comment>Please don't localize this string</comment>
+  </data>
+  <data name="ConfigCommandSetDesc" xml:space="preserve">
+    <value>One on more key-value pairs to be set in config.</value>
+  </data>
+  <data name="ConfigCommandAsPathDesc" xml:space="preserve">
+    <value>Returns the config value as a path. This option is ignored when -Set is specified.</value>
+    <comment>Pease don't localize "-Set"</comment>
+  </data>
+  <data name="ConfigCommandSummary" xml:space="preserve">
+    <value>&lt;-Set name=value | name&gt;</value>
+    <comment>Please don't localize this string</comment>
+  </data>
+  <data name="DeleteCommandDescription" xml:space="preserve">
+    <value>Deletes a package from the server.</value>
+  </data>
+  <data name="DeleteCommandNoPromptDescription" xml:space="preserve">
+    <value>Do not prompt when deleting.</value>
+  </data>
+  <data name="DeleteCommandSourceDescription" xml:space="preserve">
+    <value>Package source (URL, UNC/folder path or package source name) to delete from. Defaults to DefaultPushSource if specified in NuGet.Config.</value>
+  </data>
+  <data name="DeleteCommandUsageDescription" xml:space="preserve">
+    <value>Specify the Id and version of the package to delete from the server.</value>
+  </data>
+  <data name="DeleteCommandUsageExamples" xml:space="preserve">
+    <value>nuget delete MyPackage 1.0
+    
+nuget delete MyPackage 1.0 -NoPrompt</value>
+    <comment>Please don't localize this string</comment>
+  </data>
+  <data name="DeleteCommandUsageSummary" xml:space="preserve">
+    <value>&lt;package Id&gt; &lt;package version&gt; [API Key] [options]</value>
+  </data>
+  <data name="HelpCommandAll" xml:space="preserve">
+    <value>Print detailed help for all available commands.</value>
+  </data>
+  <data name="HelpCommandDescription" xml:space="preserve">
+    <value>Displays general help information and help information about other commands.</value>
+  </data>
+  <data name="HelpCommandMarkdown" xml:space="preserve">
+    <value>Print detailed all help in markdown format.</value>
+  </data>
+  <data name="HelpCommandUsageDescription" xml:space="preserve">
+    <value>Pass a command name to display help information for that command.</value>
+  </data>
+  <data name="HelpCommandUsageExamples" xml:space="preserve">
+    <value>nuget help
+
+nuget help push
+
+nuget ?
+
+nuget push -?</value>
+    <comment>Please don't localize this string</comment>
+  </data>
+  <data name="HelpCommandUsageSummary" xml:space="preserve">
+    <value>[command]</value>
+  </data>
+  <data name="InstallCommandDescription" xml:space="preserve">
+    <value>Installs a package using the specified sources. If no sources are specified, all sources defined in the NuGet configuration file are used. If the configuration file specifies no sources, uses the default NuGet feed.</value>
+  </data>
+  <data name="InstallCommandExcludeVersionDescription" xml:space="preserve">
+    <value>If set, the destination folder will contain only the package name, not the version number</value>
+  </data>
+  <data name="CommandNoCache" xml:space="preserve">
+    <value>Disable using the machine cache as the first package source.</value>
+  </data>
+  <data name="InstallCommandOutputDirDescription" xml:space="preserve">
+    <value>Specifies the directory in which packages will be installed. If none specified, uses the current directory.</value>
+  </data>
+  <data name="InstallCommandPrerelease" xml:space="preserve">
+    <value>Allows prerelease packages to be installed. This flag is not required when restoring packages by installing from packages.config.</value>
+    <comment>Please don't localize "packages.config".</comment>
+  </data>
+  <data name="CommandSourceDescription" xml:space="preserve">
+    <value>A list of packages sources to use for this command.</value>
+  </data>
+  <data name="InstallCommandUsageDescription" xml:space="preserve">
+    <value>Specify the id and optionally the version of the package to install. If a path to a packages.config file is used instead of an id, all the packages it contains are installed.</value>
+    <comment>Please don't localize "packages.config".</comment>
+  </data>
+  <data name="InstallCommandUsageExamples" xml:space="preserve">
+    <value>nuget install elmah
+
+nuget install packages.config
+
+nuget install ninject -o c:\foo</value>
+    <comment>Please don't localize this string</comment>
+  </data>
+  <data name="InstallCommandUsageSummary" xml:space="preserve">
+    <value>packageId|pathToPackagesConfig [options]</value>
+  </data>
+  <data name="InstallCommandVersionDescription" xml:space="preserve">
+    <value>The version of the package to install.</value>
+  </data>
+  <data name="ListCommandAllVersionsDescription" xml:space="preserve">
+    <value>List all versions of a package. By default, only the latest package version is displayed.</value>
+  </data>
+  <data name="ListCommandDescription" xml:space="preserve">
+    <value>Displays a list of packages from a given source. If no sources are specified, all sources defined in %AppData%\NuGet\NuGet.config are used. If NuGet.config specifies no sources, uses the default NuGet feed.</value>
+    <comment>Please don't localize "%AppData%\NuGet\NuGet.config", "NuGet.config".</comment>
+  </data>
+  <data name="ListCommandPrerelease" xml:space="preserve">
+    <value>Allow prerelease packages to be shown.</value>
+  </data>
+  <data name="ListCommandIncludeDelisted" xml:space="preserve">
+    <value>Allow unlisted packages to be shown.</value>
+  </data>
+  <data name="ListCommandSourceDescription" xml:space="preserve">
+    <value>A list of packages sources to search.</value>
+  </data>
+  <data name="ListCommandUsageDescription" xml:space="preserve">
+    <value>Specify optional search terms.</value>
+  </data>
+  <data name="ListCommandUsageExamples" xml:space="preserve">
+    <value>nuget list
+
+nuget list -verbose -allversions</value>
+    <comment>Please don't localize this string</comment>
+  </data>
+  <data name="ListCommandUsageSummary" xml:space="preserve">
+    <value>[search terms] [options]</value>
+  </data>
+  <data name="ListCommandVerboseListDescription" xml:space="preserve">
+    <value>Displays a detailed list of information for each package.</value>
+  </data>
+  <data name="Option_NonInteractive" xml:space="preserve">
+    <value>Do not prompt for user input or confirmations.</value>
+  </data>
+  <data name="Option_Verbosity" xml:space="preserve">
+    <value>Display this amount of details in the output: normal, quiet, detailed.</value>
+    <comment>Please don't localize "normal", "quiet", "detailed"</comment>
+  </data>
+  <data name="PackageCommandBasePathDescription" xml:space="preserve">
+    <value>The base path of the files defined in the nuspec file.</value>
+  </data>
+  <data name="PackageCommandBuildDescription" xml:space="preserve">
+    <value>Determines if the project should be built before building the package.</value>
+  </data>
+  <data name="PackageCommandDescription" xml:space="preserve">
+    <value>Creates a NuGet package based on the specified nuspec or project file.</value>
+  </data>
+  <data name="PackageCommandExcludeDescription" xml:space="preserve">
+    <value>Specifies one or more wildcard patterns to exclude when creating a package.</value>
+  </data>
+  <data name="PackageCommandExcludeEmptyDirectories" xml:space="preserve">
+    <value>Prevent inclusion of empty directories when building the package.</value>
+  </data>
+  <data name="PackageCommandNoDefaultExcludes" xml:space="preserve">
+    <value>Prevent default exclusion of NuGet package files and files and folders starting with a dot e.g. .svn.</value>
+  </data>
+  <data name="PackageCommandNoRunAnalysis" xml:space="preserve">
+    <value>Specify if the command should not run package analysis after building the package.</value>
+  </data>
+  <data name="PackageCommandOutputDirDescription" xml:space="preserve">
+    <value>Specifies the directory for the created NuGet package file. If not specified, uses the current directory.</value>
+  </data>
+  <data name="PackageCommandPackagesDirectory" xml:space="preserve">
+    <value>Specifies the packages folder.</value>
+  </data>
+  <data name="PackageCommandPropertiesDescription" xml:space="preserve">
+    <value>Provides the ability to specify a semicolon ";" delimited list of properties when creating a package.</value>
+  </data>
+  <data name="PackageCommandSolutionDirectory" xml:space="preserve">
+    <value>Specifies the solution directory.</value>
+  </data>
+  <data name="PackageCommandSymbolsDescription" xml:space="preserve">
+    <value>Determines if a package containing sources and symbols should be created. When specified with a nuspec, creates a regular NuGet package file and the corresponding symbols package.</value>
+  </data>
+  <data name="PackageCommandToolDescription" xml:space="preserve">
+    <value>Determines if the output files of the project should be in the tool folder. </value>
+  </data>
+  <data name="PackageCommandUsageDescription" xml:space="preserve">
+    <value>Specify the location of the nuspec or project file to create a package.</value>
+  </data>
+  <data name="PackageCommandUsageSummary" xml:space="preserve">
+    <value>&lt;nuspec | project&gt; [options]</value>
+  </data>
+  <data name="PackageCommandVerboseDescription" xml:space="preserve">
+    <value>Shows verbose output for package building.</value>
+  </data>
+  <data name="PackageCommandVersionDescription" xml:space="preserve">
+    <value>Overrides the version number from the nuspec file.</value>
+  </data>
+  <data name="PackCommandUsageExamples" xml:space="preserve">
+    <value>nuget pack
+
+nuget pack foo.nuspec
+
+nuget pack foo.csproj
+
+nuget pack foo.csproj -Build -Symbols -Properties Configuration=Release
+
+nuget pack foo.nuspec -Version 2.1.0</value>
+    <comment>Please don't localize this string</comment>
+  </data>
+  <data name="PushCommandDescription" xml:space="preserve">
+    <value>Pushes a package to the server and publishes it.</value>
+  </data>
+  <data name="PushCommandSourceDescription" xml:space="preserve">
+    <value>Package source (URL, UNC/folder path or package source name) to push to. Defaults to DefaultPushSource if specified in NuGet.Config.</value>
+    <comment>Please don't localize "DefaultPushSource"</comment>
+  </data>
+  <data name="PushCommandSymbolSourceDescription" xml:space="preserve">
+    <value>Symbol server URL to push to.</value>
+  </data>
+  <data name="PushCommandTimeoutDescription" xml:space="preserve">
+    <value>Timeout for pushing to a server in seconds. Defaults to 300 seconds (5 minutes).</value>
+  </data>
+  <data name="PushCommandUsageDescription" xml:space="preserve">
+    <value>Specify the path to the package and your API key to push the package to the server.</value>
+  </data>
+  <data name="PushCommandUsageExamples" xml:space="preserve">
+    <value>nuget push foo.nupkg 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a
+
+nuget push foo.nupkg 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a -src http://customsource/
+
+nuget push foo.nupkg
+
+nuget push foo.nupkg.symbols
+
+nuget push foo.nupkg -Timeout 360</value>
+    <comment>Please don't localize this string</comment>
+  </data>
+  <data name="PushCommandUsageSummary" xml:space="preserve">
+    <value>&lt;package path&gt; [API key] [options]</value>
+  </data>
+  <data name="SearchCommandDescription" xml:space="preserve">
+    <value>Searches a given source using the query string provided. If no sources are specified, all sources defined in %AppData%\NuGet\NuGet.config are used.</value>
+    <comment>Please don't localize "%AppData%\NuGet\NuGet.config", "NuGet.config".</comment>
+  </data>
+  <data name="SearchCommandPreRelease" xml:space="preserve">
+    <value>Include prerelease packages.</value>
+  </data>
+  <data name="SearchCommandSourceDescription" xml:space="preserve">
+    <value>The package source to search. You can pass multiple -Source options to search multiple package sources.</value>
+  </data>
+  <data name="SearchCommandTake" xml:space="preserve">
+    <value>The number of results to return. The default value is 20.</value>
+  </data>
+  <data name="SearchCommandUsageDescription" xml:space="preserve">
+    <value>Specify search terms.</value>
+  </data>
+  <data name="SearchCommandUsageExamples" xml:space="preserve">
+    <value>nuget search foo
+
+nuget search foo -Verbosity detailed
+
+nuget search foo -PreRelease -Take 5</value>
+    <comment>Please don't localize this string</comment>
+  </data>
+  <data name="SearchCommandUsageSummary" xml:space="preserve">
+    <value>[search terms] [options]</value>
+  </data>
+  <data name="SetApiKeyCommandDescription" xml:space="preserve">
+    <value>Saves an API key for a given server URL. When no URL is provided API key is saved for the NuGet gallery.</value>
+  </data>
+  <data name="SetApiKeyCommandSourceDescription" xml:space="preserve">
+    <value>Server URL where the API key is valid.</value>
+  </data>
+  <data name="SetApiKeyCommandUsageDescription" xml:space="preserve">
+    <value>Specify the API key to save and an optional URL to the server that provided the API key.</value>
+  </data>
+  <data name="SetApiKeyCommandUsageExamples" xml:space="preserve">
+    <value>nuget setapikey 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a
+
+nuget setapikey 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a -Source http://example.com/nugetfeed</value>
+    <comment>Please don't localize this string</comment>
+  </data>
+  <data name="SetApiKeyCommandUsageSummary" xml:space="preserve">
+    <value>&lt;API key&gt; [options]</value>
+  </data>
+  <data name="SourcesCommandDescription" xml:space="preserve">
+    <value>Provides the ability to manage list of sources located in NuGet.config files.</value>
+  </data>
+  <data name="SourcesCommandNameDescription" xml:space="preserve">
+    <value>Name of the source.</value>
+  </data>
+  <data name="SourcesCommandPasswordDescription" xml:space="preserve">
+    <value>Password to be used when connecting to an authenticated source.</value>
+  </data>
+  <data name="SourcesCommandSourceDescription" xml:space="preserve">
+    <value>Path to the package(s) source.</value>
+  </data>
+  <data name="SourcesCommandFormatDescription" xml:space="preserve">
+    <value>Applies to the list action. Accepts two values: Detailed (the default) and Short.</value>
+  </data>
+  <data name="SourcesCommandUsageSummary" xml:space="preserve">
+    <value>&lt;List|Add|Remove|Enable|Disable|Update&gt; -Name [name] -Source [source]</value>
+    <comment>Only localize "[name]" and "[source]"</comment>
+  </data>
+  <data name="SourcesCommandUserNameDescription" xml:space="preserve">
+    <value>Username to be used when connecting to an authenticated source.</value>
+  </data>
+  <data name="SpecCommandAssemblyPathDescription" xml:space="preserve">
+    <value>Assembly to use for metadata.</value>
+  </data>
+  <data name="SpecCommandDescription" xml:space="preserve">
+    <value>Generates a nuspec for a new package. If this command is run in the same folder as a project file (.csproj, .vbproj, .fsproj), it will create a tokenized nuspec file.</value>
+  </data>
+  <data name="SpecCommandForceDescription" xml:space="preserve">
+    <value>Overwrite nuspec file if it exists.</value>
+  </data>
+  <data name="SpecCommandUsageExamples" xml:space="preserve">
+    <value>nuget spec
+
+nuget spec MyPackage
+
+nuget spec -a MyAssembly.dll</value>
+    <comment>Please don't localize this string</comment>
+  </data>
+  <data name="SpecCommandUsageSummary" xml:space="preserve">
+    <value>[package id]</value>
+  </data>
+  <data name="UpdateCommandDescription" xml:space="preserve">
+    <value>Update packages to latest available versions. This command also updates NuGet.exe itself.</value>
+  </data>
+  <data name="UpdateCommandIdDescription" xml:space="preserve">
+    <value>Package ids to update.</value>
+  </data>
+  <data name="UpdateCommandPrerelease" xml:space="preserve">
+    <value>Allows updating to prerelease versions. This flag is not required when updating prerelease packages that are already installed.</value>
+  </data>
+  <data name="UpdateCommandRepositoryPathDescription" xml:space="preserve">
+    <value>Path to the local packages folder (location where packages are installed).</value>
+  </data>
+  <data name="UpdateCommandSafeDescription" xml:space="preserve">
+    <value>Looks for updates with the highest version available within the same major and minor version as the installed package.</value>
+  </data>
+  <data name="UpdateCommandSelfDescription" xml:space="preserve">
+    <value>Update the running NuGet.exe to the newest version available from the server.</value>
+  </data>
+  <data name="UpdateCommandSourceDescription" xml:space="preserve">
+    <value>A list of package sources to search for updates.</value>
+  </data>
+  <data name="UpdateCommandVersionDescription" xml:space="preserve">
+    <value>Updates the package in -Id to the version indicated.  Requires -Id to contain exactly one package id.</value>
+  </data>
+  <data name="UpdateCommandUsageExamples" xml:space="preserve">
+    <value>nuget update
+    
+nuget update -Safe
+
+nuget update -Self</value>
+    <comment>Please don't localize this string</comment>
+  </data>
+  <data name="UpdateCommandVerboseDescription" xml:space="preserve">
+    <value>Show verbose output while updating.</value>
+  </data>
+  <data name="CommandApiKey" xml:space="preserve">
+    <value>The API key for the server.</value>
+  </data>
+  <data name="SymbolApiKey" xml:space="preserve">
+    <value>The API key for the symbol server.</value>
+  </data>
+  <data name="DefaultConfigDescription" xml:space="preserve">
+    <value>NuGet's default configuration is obtained by loading %AppData%\NuGet\NuGet.config, then loading any nuget.config or .nuget\nuget.config starting from root of drive and ending in current directory.</value>
+    <comment>Please don't localize "%AppData%\NuGet\NuGet.config", "nuget.config", ".nuget\nuget.config"</comment>
+  </data>
+  <data name="InstallCommandRequireConsent" xml:space="preserve">
+    <value>Checks if package restore consent is granted before installing a package.</value>
+  </data>
+  <data name="InstallCommandSolutionDirectory" xml:space="preserve">
+    <value>Solution root for package restore.</value>
+  </data>
+  <data name="Option_ConfigFile" xml:space="preserve">
+    <value>The NuGet configuration file. If specified, only the settings from this file will be used. If not specified, the hierarchy of configuration files from the current directory will be used. To learn more about NuGet configuration go to https://docs.microsoft.com/en-us/nuget/consume-packages/configuring-nuget-behavior.</value>
+  </data>
+  <data name="CommandDisableParallelProcessing" xml:space="preserve">
+    <value>Disable parallel processing of packages for this command.</value>
+  </data>
+  <data name="PackageCommandMinClientVersion" xml:space="preserve">
+    <value>Set the minClientVersion attribute for the created package.</value>
+    <comment>Please don't localize "minClientVersion"</comment>
+  </data>
+  <data name="CommandPackageSaveMode" xml:space="preserve">
+    <value>Specifies types of files to save after package installation: nuspec, nupkg, nuspec;nupkg.</value>
+  </data>
+  <data name="PackageCommandIncludeReferencedProjects" xml:space="preserve">
+    <value>Include referenced projects either as dependencies or as part of the package.</value>
+  </data>
+  <data name="UpdateCommandFileConflictAction" xml:space="preserve">
+    <value>Set default action when a file from a package already exists in the target project. Set to Overwrite to always overwrite files. Set to Ignore to skip files. If not specified, it will prompt for each conflicting file.</value>
+    <comment>Please don't localize "Overwrite", "Ignore".</comment>
+  </data>
+  <data name="SourcesCommandStorePasswordInClearTextDescription" xml:space="preserve">
+    <value>Enables storing portable package source credentials by disabling password encryption.</value>
+  </data>
+  <data name="RestoreCommandDescription" xml:space="preserve">
+    <value>Restores NuGet packages.</value>
+  </data>
+  <data name="RestoreCommandPackagesDirectory" xml:space="preserve">
+    <value>Specifies the packages folder.</value>
+  </data>
+  <data name="RestoreCommandRequireConsent" xml:space="preserve">
+    <value>Checks if package restore consent is granted before installing a package.</value>
+  </data>
+  <data name="RestoreCommandSolutionDirectory" xml:space="preserve">
+    <value>Specifies the solution directory. Not valid when restoring packages for a solution.</value>
+  </data>
+  <data name="RestoreCommandUsageDescription" xml:space="preserve">
+    <value>If a solution is specified, this command restores NuGet packages that are installed in the solution and in projects contained in the solution. Otherwise, the command restores packages listed in the specified packages.config file, Microsoft Build project, or project.json file.</value>
+  </data>
+  <data name="RestoreCommandUsageSummary" xml:space="preserve">
+    <value>[&lt;solution&gt; | &lt;packages.config file&gt; | &lt;Microsoft Build project&gt;] [options]</value>
+    <comment>Please don't localize "packages.config"</comment>
+  </data>
+  <data name="PushCommandDisableBufferingDescription" xml:space="preserve">
+    <value>Disable buffering when pushing to an HTTP(S) server to decrease memory usage. Note that when this option is enabled, integrated windows authentication might not work.</value>
+  </data>
+  <data name="PushCommandNoSymbolsDescription" xml:space="preserve">
+    <value>If a symbols package exists, it will not be pushed to a symbol server.</value>
+  </data>
+  <data name="CommandFallbackSourceDescription" xml:space="preserve">
+    <value>A list of package sources to use as fallbacks for this command.</value>
+  </data>
+  <data name="CommandMSBuildVersion" xml:space="preserve">
+    <value>Specifies the version of MSBuild to be used with this command. Supported values are 4, 12, 14, 15.1, 15.3, 15.4, 15.5, 15.6, 15.7, 15.8, 15.9, 16.0. By default the MSBuild in your path is picked, otherwise it defaults to the highest installed version of MSBuild.</value>
+  </data>
+  <data name="AddCommandDescription" xml:space="preserve">
+    <value>Adds the given package to a hierarchical source. http sources are not supported. For more info, goto https://docs.nuget.org/consume/command-line-reference#add-command.</value>
+  </data>
+  <data name="AddCommandUsageDescription" xml:space="preserve">
+    <value>Specifies the path to the package to be added and the package source, which is a folder or UNC share, to which the nupkg will be added. Http sources are not supported.</value>
+  </data>
+  <data name="AddCommandUsageExamples" xml:space="preserve">
+    <value>nuget add foo.nupkg  -Source c:\bar\
+
+nuget add foo.nupkg -Source \\bar\packages\</value>
+  </data>
+  <data name="AddCommandUsageSummary" xml:space="preserve">
+    <value>&lt;packagePath&gt; -Source &lt;folderBasedPackageSource&gt; [options]</value>
+  </data>
+  <data name="AddCommandSourceDescription" xml:space="preserve">
+    <value>Specifies the package source, which is a folder or UNC share, to which the nupkg will be added. Http sources are not supported.</value>
+  </data>
+  <data name="InitCommandDescription" xml:space="preserve">
+    <value>Adds all the packages from the &lt;srcPackageSourcePath&gt; to the hierarchical &lt;destPackageSourcePath&gt;. http feeds are not supported. For more info, goto https://docs.nuget.org/consume/command-line-reference#init-command.</value>
+  </data>
+  <data name="InitCommandUsageDescription" xml:space="preserve">
+    <value>Specify the path to source package source to be copied from and the path to the destination package source to be copied to.</value>
+  </data>
+  <data name="InitCommandUsageExamples" xml:space="preserve">
+    <value>nuget init c:\foo c:\bar
+
+nuget init \\foo\packages \\bar\packages</value>
+  </data>
+  <data name="InitCommandUsageSummary" xml:space="preserve">
+    <value>&lt;srcPackageSourcePath&gt; &lt;destPackageSourcePath&gt; [options]</value>
+  </data>
+  <data name="ExpandDescription" xml:space="preserve">
+    <value>If provided, a package added to offline feed is also expanded.</value>
+  </data>
+  <data name="LocalsCommandDescription" xml:space="preserve">
+    <value>Clears or lists local NuGet resources such as http requests cache, temp cache or machine-wide global packages folder.</value>
+  </data>
+  <data name="LocalsCommandExamples" xml:space="preserve">
+    <value>nuget locals all -clear
+
+nuget locals http-cache -clear
+
+nuget locals temp -list
+
+nuget locals global-packages -list</value>
+    <comment>Please don't localize this string</comment>
+  </data>
+  <data name="LocalsCommandSummary" xml:space="preserve">
+    <value>&lt;all | http-cache | global-packages | temp | plugins-cache&gt; [-clear | -list]</value>
+    <comment>Please don't localize this string</comment>
+  </data>
+  <data name="LocalsCommandClearDescription" xml:space="preserve">
+    <value>Clear the selected local resources or cache location(s).</value>
+  </data>
+  <data name="LocalsCommandListDescription" xml:space="preserve">
+    <value>List the selected local resources or cache location(s).</value>
+  </data>
+  <data name="RestoreCommandP2PTimeOut" xml:space="preserve">
+    <value>Timeout in seconds for resolving project to project references.</value>
+  </data>
+  <data name="PackageCommandSuffixDescription" xml:space="preserve">
+    <value>Appends a pre-release suffix to the internally generated version number.</value>
+  </data>
+  <data name="Option_ForceEnglishOutput" xml:space="preserve">
+    <value>Forces the application to run using an invariant, English-based culture.</value>
+  </data>
+  <data name="RestoreCommandUsageExamples" xml:space="preserve">
+    <value>nuget restore MySolution.sln</value>
+    <comment>command line example, do not localize</comment>
+  </data>
+  <data name="CommandDirectDownload" xml:space="preserve">
+    <value>Download directly without populating any caches with metadata or binaries.</value>
+  </data>
+  <data name="CommandMSBuildPath" xml:space="preserve">
+    <value>Specifies the path of MSBuild to be used with this command. This command will takes precedence over MSbuildVersion, nuget will always pick MSbuild from this specified path.</value>
+  </data>
+  <data name="RestoreCommandRecursive" xml:space="preserve">
+    <value>Restore all referenced projects for UWP and NETCore projects. This does not include packages.config projects.</value>
+  </data>
+  <data name="ForceRestoreCommand" xml:space="preserve">
+    <value>Forces all dependencies to be resolved even if the last restore was successful. This is equivalent to deleting project.assets.json. (Does not apply to packages.config)</value>
+  </data>
+  <data name="InstallCommandDependencyVersion" xml:space="preserve">
+    <value>Overrides the default dependency resolution behavior.</value>
+  </data>
+  <data name="InstallCommandFrameworkDescription" xml:space="preserve">
+    <value>Target framework used for selecting dependencies. Defaults to 'Any' if not specified.</value>
+  </data>
+  <data name="PackageCommandInstallPackageToOutputPath" xml:space="preserve">
+    <value>Specify if the command should prepare the package output directory to support share as feed.</value>
+  </data>
+  <data name="PackageCommandOutputFileNamesWithoutVersion" xml:space="preserve">
+    <value>Specify if the command should prepare the package output name without the version.</value>
+  </data>
+  <data name="PackageCommandConfigFile" xml:space="preserve">
+    <value>Specify the configuration file for the pack command.</value>
+  </data>
+  <data name="VerifyCommandDescription" xml:space="preserve">
+    <value>Verifies a signed NuGet package.</value>
+  </data>
+  <data name="VerifyCommandCertificateFingerprintDescription" xml:space="preserve">
+    <value>Verify that the signer certificate matches with one of the specified SHA256 fingerprints. A certificate SHA256 fingerprint is a SHA256 hash of the certificate used to identify the certificate. Multiple inputs should be semicolon separated.</value>
+  </data>
+  <data name="VerifyCommandUsageExamples" xml:space="preserve">
+    <value>nuget verify -Signatures .\..\MyPackage.nupkg -CertificateFingerprint "CE40881FF5F0AD3E58965DA20A9F571EF1651A56933748E1BF1C99E537C4E039;5F874AAF47BCB268A19357364E7FBB09D6BF9E8A93E1229909AC5CAC865802E2" -Verbosity detailed
+
+nuget verify -Signatures C:\packages\MyPackage.nupkg -CertificateFingerprint CE40881FF5F0AD3E58965DA20A9F571EF1651A56933748E1BF1C99E537C4E039
+
+nuget verify -Signatures MyPackage.nupkg -Verbosity quiet
+
+nuget verify -Signatures .\*.nupkg</value>
+    <comment>Please don't localize this string</comment>
+  </data>
+  <data name="VerifyCommandUsageSummary" xml:space="preserve">
+    <value>&lt;verification_type&gt; &lt;package_path&gt;  [options]</value>
+    <comment>Please don't localize this string</comment>
+  </data>
+  <data name="VerifyCommandSignaturesDescription" xml:space="preserve">
+    <value>Specifies that package signature verification should be performed.</value>
+  </data>
+  <data name="SignCommandCertificatePasswordDescription" xml:space="preserve">
+    <value>Password for the certificate, if needed.
+This option can be used to specify the password for the certificate. If no password is provided, the command will prompt for a password at run time, unless the -NonInteractive option is passed.</value>
+  </data>
+  <data name="SignCommandCertificatePathDescription" xml:space="preserve">
+    <value>File path to the certificate to be used while signing the package.</value>
+  </data>
+  <data name="SignCommandCertificateFingerprintDescription" xml:space="preserve">
+    <value>SHA-1 fingerprint of the certificate used to search a local certificate store for the certificate.
+The certificate store can be specified by -CertificateStoreName and -CertificateStoreLocation options.</value>
+  </data>
+  <data name="SignCommandCertificateSubjectNameDescription" xml:space="preserve">
+    <value>Subject name of the certificate used to search a local certificate store for the certificate. 
+The search is a case-insensitive string comparison using the supplied value, which will find all certificates with the subject name containing that string, regardless of other subject values.
+The certificate store can be specified by -CertificateStoreName and -CertificateStoreLocation options.</value>
+  </data>
+  <data name="SignCommandDescription" xml:space="preserve">
+    <value>Signs a NuGet package with the specified certificate.</value>
+  </data>
+  <data name="SignCommandExamples" xml:space="preserve">
+    <value>nuget sign MyPackage.nupkg -CertificatePath C:\certificate.pfx
+nuget sign MyPackage.nupkg -CertificatePath \\path\to\certificate.pfx
+nuget sign MyPackage.nupkg -CertificateFingerprint certificate_fingerprint -OutputDirectory .\signed\</value>
+    <comment>Please don't localize this string</comment>
+  </data>
+  <data name="SignCommandOverwriteDescription" xml:space="preserve">
+    <value>Switch to indicate if the current signature should be overwritten. By default the command will fail if the package already has a signature.</value>
+  </data>
+  <data name="SignCommandHashAlgorithmDescription" xml:space="preserve">
+    <value>Hash algorithm to be used to sign the package. Defaults to SHA256.</value>
+  </data>
+  <data name="SignCommandOutputDirectoryDescription" xml:space="preserve">
+    <value>Directory where the signed package should be saved. By default the original package is overwritten by the signed package.</value>
+  </data>
+  <data name="SignCommandSummary" xml:space="preserve">
+    <value>Signs a NuGet package.</value>
+  </data>
+  <data name="SignCommandTimestampHashAlgorithmDescription" xml:space="preserve">
+    <value>Hash algorithm to be used by the RFC 3161 timestamp server. Defaults to SHA256.</value>
+  </data>
+  <data name="SignCommandUsageDescription" xml:space="preserve">
+    <value>Signs a NuGet package.</value>
+  </data>
+  <data name="SignCommandUsageExamples" xml:space="preserve">
+    <value>nuget sign MyPackage.nupkg -Timestamper https://foo.bar
+
+nuget sign .\..\MyPackage.nupkg -Timestamper https://foo.bar -OutputDirectory .\..\Signed
+</value>
+    <comment>Please don't localize this string</comment>
+  </data>
+  <data name="SignCommandUsageSummary" xml:space="preserve">
+    <value>&lt;package_path&gt; -Timestamper &lt;timestamp_server_url&gt; [-CertificatePath &lt;certificate_path&gt; | [ -CertificateStoreName &lt;certificate_store_name&gt; -CertificateStoreLocation &lt;certificate_store_location&gt; [-CertificateSubjectName &lt;certificate_subject_name&gt; | -CertificateFingerprint &lt;certificate_fingerprint&gt;]]] [options]</value>
+    <comment>Please don't localize this string</comment>
+  </data>
+  <data name="SignCommandCertificateStoreLocationDescription" xml:space="preserve">
+    <value>Name of the X.509 certificate store use to search for the certificate. Defaults to "CurrentUser", the X.509 certificate store used by the current user.
+This option should be used when specifying the certificate via -CertificateSubjectName or -CertificateFingerprint options.</value>
+  </data>
+  <data name="SignCommandCertificateStoreNameDescription" xml:space="preserve">
+    <value>Name of the X.509 certificate store to use to search for the certificate. Defaults to "My", the X.509 certificate store for personal certificates.
+This option should be used when specifying the certificate via -CertificateSubjectName or -CertificateFingerprint options.</value>
+  </data>
+  <data name="SignCommandTimestamperDescription" xml:space="preserve">
+    <value>URL to an RFC 3161 timestamping server.</value>
+  </data>
+  <data name="CommandInvalidArgumentException" xml:space="preserve">
+    <value>Invalid value provided for '{0}'. For a list of accepted values, please visit https://docs.nuget.org/docs/reference/command-line-reference</value>
+    <comment>{0} - argument name</comment>
+  </data>
+  <data name="SignCommandMultipleCertificateException" xml:space="preserve">
+    <value>Multiple options were used to specify a certificate. For a list of accepted ways to provide a certificate, please visit https://docs.nuget.org/docs/reference/command-line-reference</value>
+  </data>
+  <data name="SignCommandNoArgumentException" xml:space="preserve">
+    <value>No value provided for '{0}'. For a list of accepted values, please visit https://docs.nuget.org/docs/reference/command-line-reference</value>
+    <comment>{0} - argument name</comment>
+  </data>
+  <data name="SignCommandNoCertificateException" xml:space="preserve">
+    <value>No certificate was provided. For a list of accepted ways to provide a certificate, please visit https://docs.nuget.org/docs/reference/command-line-reference</value>
+  </data>
+  <data name="SignCommandNoPackageException" xml:space="preserve">
+    <value>No package was provided. For a list of accepted ways to provide a package, please visit https://docs.nuget.org/docs/reference/command-line-reference</value>
+  </data>
+  <data name="SignCommandMissingArgumentException" xml:space="preserve">
+    <value>No value provided for '{0}', which is needed when using the '{1}' option. For a list of accepted values, please visit https://docs.nuget.org/docs/reference/command-line-reference</value>
+    <comment>0 - primary param name
+1 - other param name</comment>
+  </data>
+  <data name="SignCommandNoTimestamperWarning" xml:space="preserve">
+    <value>The '-Timestamper' option was not provided. The signed package will not be timestamped. To learn more about this option, please visit https://docs.nuget.org/docs/reference/command-line-reference</value>
+  </data>
+  <data name="VerifyCommandAllDescription" xml:space="preserve">
+    <value>Specifies that all verifications possible should be performed to the package(s).</value>
+  </data>
+  <data name="SourcesCommandTrustDescription" xml:space="preserve">
+    <value>Make a source a trusted repository for repository signature verification.</value>
+  </data>
+  <data name="CommandNoServiceEndpointDescription" xml:space="preserve">
+    <value>Does not append "api/v2/packages" to the source URL.</value>
+  </data>
+  <data name="SourcesCommandValidAuthenticationTypesDescription" xml:space="preserve">
+    <value>Comma-separated list of valid authentication types for this source. By default, all authentication types are valid. Example: basic,negotiate</value>
+    <comment>Please don't localize "basic,negotiate"</comment>
+  </data>
+  <data name="PackageCommandSymbolPackageFormat" xml:space="preserve">
+    <value>When creating a symbols package, allows to choose between the 'snupkg' and 'symbols.nupkg' format.</value>
+    <comment>Do not localize snupkg and symbols.nupkg</comment>
+  </data>
+  <data name="TrustedSignersCommandDescription" xml:space="preserve">
+    <value>Provides the ability to manage the list of trusted signers.</value>
+  </data>
+  <data name="TrustedSignersCommandUsageExamples" xml:space="preserve">
+    <value>nuget trusted-signers
+
+nuget trusted-signers Add -Name existingSource
+
+nuget trusted-signers Add -Name trustedRepo -ServiceIndex https://trustedRepo.test/v3ServiceIndex
+
+nuget trusted-signers Add -Name author1 -CertificateFingerprint CE40881FF5F0AD3E58965DA20A9F571EF1651A56933748E1BF1C99E537C4E039 -FingerprintAlgorithm SHA256
+
+nuget trusted-signers Add -Repository .\..\MyRepositorySignedPackage.nupkg -Name TrustedRepo
+
+nuget trusted-signers Remove -Name TrustedRepo</value>
+  </data>
+  <data name="TrustedSignersCommandUsageSummary" xml:space="preserve">
+    <value>&lt;List|Add|Remove|Sync&gt; [options]</value>
+  </data>
+  <data name="TrustedSignersCommandAllowUntrustedRootDescription" xml:space="preserve">
+    <value>Set allowUntrustedRoot to true for the trusted signer's certificate to be added.</value>
+  </data>
+  <data name="TrustedSignersCommandAuthorDescription" xml:space="preserve">
+    <value>Add the author signature of the package as a trusted author.</value>
+  </data>
+  <data name="TrustedSignersCommandCertificateFingerprintDescription" xml:space="preserve">
+    <value>Fingerprint of the certificate to trust.</value>
+  </data>
+  <data name="TrustedSignersCommandFingerprintAlgorithmDescription" xml:space="preserve">
+    <value>Hash algorithm used to calculate the certificate fingerprint. Defaults to SHA256.</value>
+  </data>
+  <data name="TrustedSignersCommandNameDescription" xml:space="preserve">
+    <value>Name of the trusted signer.</value>
+  </data>
+  <data name="TrustedSignersCommandOwnersDescription" xml:space="preserve">
+    <value>List of owners allowed for a package signed with the trusted repository.</value>
+  </data>
+  <data name="TrustedSignersCommandRepositoryDescription" xml:space="preserve">
+    <value>Add the repository signature or countersignature of the package as a trusted repository.</value>
+  </data>
+  <data name="TrustedSignersCommandServiceIndexDescription" xml:space="preserve">
+    <value>Service index for a repository to be trusted.</value>
+  </data>
+  <data name="UpdateCommandDependencyVersion" xml:space="preserve">
+    <value>Overrides the default dependency resolution behavior.</value>
+  </data>
+  <data name="PushCommandSkipDuplicateDescription" xml:space="preserve">
+    <value>If a package and version already exists, skip it and continue with the next package in the push, if any.</value>
+  </data>
+  <data name="RestoreCommandForceEvaluate" xml:space="preserve">
+    <value>Forces restore to reevaluate all dependencies even if a lock file already exists.</value>
+  </data>
+  <data name="RestoreCommandLockedMode" xml:space="preserve">
+    <value>Don't allow updating project lock file.</value>
+  </data>
+  <data name="RestoreCommandLockFilePath" xml:space="preserve">
+    <value>Output location where project lock file is written. By default, this is 'PROJECT_ROOT\packages.lock.json'.</value>
+  </data>
+  <data name="RestoreCommandUseLockFile" xml:space="preserve">
+    <value>Enables project lock file to be generated and used with restore.</value>
+  </data>
+  <data name="PackageCommandDeterministic" xml:space="preserve">
+    <value>Specify if the command should create a deterministic package. Multiple invocations of the pack command will create the exact same package.</value>
+  </data>
+  <data name="ClientCertificatesCommandFilePathDescription" xml:space="preserve">
+    <value>Path to certificate file.</value>
+  </data>
+  <data name="ClientCertificatesCommandFindByDescription" xml:space="preserve">
+    <value>Search method to find certificate in certificate store (see docs).</value>
+  </data>
+  <data name="ClientCertificatesCommandFindValueDescription" xml:space="preserve">
+    <value>Search the certificate store for the supplied value. Used with FindValue (see docs).</value>
+    <comment>Don't translate FindValue</comment>
+  </data>
+  <data name="ClientCertificatesCommandForceDescription" xml:space="preserve">
+    <value>Skip certificate validation.</value>
+  </data>
+  <data name="ClientCertificatesCommandPackageSourceDescription" xml:space="preserve">
+    <value>Package source name.</value>
+  </data>
+  <data name="ClientCertificatesCommandPasswordDescription" xml:space="preserve">
+    <value>Password for the certificate, if needed.</value>
+  </data>
+  <data name="ClientCertificatesCommandStoreLocationDescription" xml:space="preserve">
+    <value>Certificate store location (see docs).</value>
+  </data>
+  <data name="ClientCertificatesCommandStoreNameDescription" xml:space="preserve">
+    <value>Certificate store name (see docs).</value>
+  </data>
+  <data name="ClientCertificatesCommandStorePasswordInClearTextDescription" xml:space="preserve">
+    <value>Enables storing portable certificate password by disabling password encryption.</value>
+  </data>
+  <data name="ClientCertificatesDescription" xml:space="preserve">
+    <value>Provides the ability to manage list of client certificates located in NuGet.config files</value>
+  </data>
+  <data name="ClientCertificatesCommandUsageSummary" xml:space="preserve">
+    <value>&lt;List|Add|Update|Remove&gt; [options]</value>
+  </data>
+  <data name="ClientCertificatesCommandUsageExamples" xml:space="preserve">
+    <value>nuget client-certs Add -PackageSource Foo -Path .\MyCertificate.pfx
+
+nuget client-certs Add -PackageSource Contoso -Path c:\MyCertificate.pfx -Password 42
+
+nuget client-certs Add -PackageSource Foo -FindValue ca4e7b265780fc87f3cb90b6b89c54bf4341e755
+
+nuget client-certs Add -PackageSource Contoso -StoreLocation LocalMachine -StoreName My -FindBy Thumbprint -FindValue ca4e7b265780fc87f3cb90b6b89c54bf4341e755
+
+nuget client-certs Update -PackageSource Foo -FindValue ca4e7b265780fc87f3cb90b6b89c54bf4341e755
+
+nuget client-certs Remove -PackageSource certificateName
+
+nuget client-certs
+
+nuget client-certs List</value>
+  </data>
+  <data name="HelpCommand_Alias" xml:space="preserve">
+    <value>alias: {0}</value>
+    <comment>{0} - short command name (not localizable)</comment>
+  </data>
+  <data name="HelpCommand_AltText" xml:space="preserve">
+    <value> ({0})</value>
+    <comment>{0} - command alternative name (not localizable); do not localize this string</comment>
+  </data>
+  <data name="HelpCommand_AvailableCommands" xml:space="preserve">
+    <value>Available commands:</value>
+  </data>
+  <data name="HelpCommand_Examples" xml:space="preserve">
+    <value>examples:</value>
+  </data>
+  <data name="HelpCommand_Options" xml:space="preserve">
+    <value>options:</value>
+  </data>
+  <data name="HelpCommand_Suggestion" xml:space="preserve">
+    <value>Type '{0} help &lt;command&gt;' for help on a specific command.</value>
+    <comment>{0} - executable name: nuget.exe; Don't localize text enclosed in single quotes: '{0} help command'</comment>
+  </data>
+  <data name="HelpCommand_Title" xml:space="preserve">
+    <value>{0} Command</value>
+    <comment>{0} - command name (not localizable)</comment>
+  </data>
+  <data name="HelpCommand_Usage" xml:space="preserve">
+    <value>usage: {0} &lt;command&gt; [args] [options]</value>
+    <comment>{0} - executable name: nuget.exe; Don't localize '&lt;command&gt; [args] [options]'</comment>
+  </data>
+  <data name="HelpCommand_UsageDetail" xml:space="preserve">
+    <value>usage: {0} {1} {2}</value>
+    <comment>{0} - executable name: nuget.exe; {1} - command name (not localizable); {2} - command summary description</comment>
+  </data>
+  <data name="Option_Help" xml:space="preserve">
+    <value>Show command help and usage information.</value>
+  </data>
+</root>

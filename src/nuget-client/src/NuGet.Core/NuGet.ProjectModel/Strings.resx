@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ArgumentNullOrEmpty" xml:space="preserve">
+    <value>Argument cannot be null or empty.</value>
+  </data>
+  <data name="InvalidDependencyTarget" xml:space="preserve">
+    <value>Invalid dependency target value '{0}'.</value>
+  </data>
+  <data name="InvalidPackageType" xml:space="preserve">
+    <value>The pack options package type must be a string or array of strings in '{0}'.</value>
+    <comment>{0} is the project.json file name.</comment>
+  </data>
+  <data name="Log_ErrorReadingLockFile" xml:space="preserve">
+    <value>Error loading lock file '{0}' : {1}</value>
+  </data>
+  <data name="Log_ErrorReadingProjectJson" xml:space="preserve">
+    <value>Error reading '{0}' : {1}</value>
+  </data>
+  <data name="Log_ErrorReadingProjectJsonWithLocation" xml:space="preserve">
+    <value>Error reading '{0}' at line {1} column {2} : {3}</value>
+  </data>
+  <data name="Log_InvalidImportFramework" xml:space="preserve">
+    <value>Imports contains an invalid framework: '{0}' in '{1}'.</value>
+  </data>
+  <data name="Log_ProblemReadingCacheFile" xml:space="preserve">
+    <value>Problem reading the cache file {0} : {1}</value>
+    <comment>{0} is the file path, {1} is the exception message</comment>
+  </data>
+  <data name="MissingVersionOnDependency" xml:space="preserve">
+    <value>Package dependencies must specify a version range.</value>
+  </data>
+  <data name="MissingVersionOnTool" xml:space="preserve">
+    <value>Tools must specify a version range.</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="PackagesLockFile_CentralPackageVersionRemoved" xml:space="preserve">
+    <value>Central package management file(s) doesn't contain version range for {0} package which is specified as CentralTransitive dependency in the lock file.</value>
+  </data>
+  <data name="PackagesLockFile_IncompatibleLockFileVersion" xml:space="preserve">
+    <value>Version specified in the packages.lock.json file is incompatible. Current tooling supports version {0} and previous formats.</value>
+  </data>
+  <data name="PackagesLockFile_MismatchedTargetFrameworks" xml:space="preserve">
+    <value>The project target frameworks are different than the lock file's target frameworks. Lock file target frameworks: {0}. Project target frameworks {1}.</value>
+    <comment>0 - Semicolon delimited list of lock file target frameworks, 1 - semicolon delimited list of lock file target frameworks</comment>
+  </data>
+  <data name="PackagesLockFile_NewTargetFramework" xml:space="preserve">
+    <value>The project target framework {0} was not found in the lock file.</value>
+    <comment>0 - project target framework</comment>
+  </data>
+  <data name="PackagesLockFile_PackageReferenceAdded" xml:space="preserve">
+    <value>A new package reference was found {0} for the project target framework {1}.</value>
+  </data>
+  <data name="PackagesLockFile_PackageReferencesHaveChanged" xml:space="preserve">
+    <value>The package references have changed for {0}. Lock file's package references: {1}, project's package references: {2}.</value>
+    <comment>0 - tfm, 1 - lock file package references, 2 - project package references</comment>
+  </data>
+  <data name="PackagesLockFile_PackageReferenceVersionChanged" xml:space="preserve">
+    <value>The package reference {0} version has changed from {1} to {2}.</value>
+  </data>
+  <data name="PackagesLockFile_ProjectReferenceAdded" xml:space="preserve">
+    <value>A new project reference to {0} was found for {1} target framework.</value>
+  </data>
+  <data name="PackagesLockFile_ProjectReferenceDependenciesHasChanged" xml:space="preserve">
+    <value>The project references {0} whose dependencies has changed.</value>
+  </data>
+  <data name="PackagesLockFile_ProjectReferenceHasNoCompatibleTargetFramework" xml:space="preserve">
+    <value>The project {0} has no compatible target framework. </value>
+  </data>
+  <data name="PackagesLockFile_ProjectReferencesHasChange" xml:space="preserve">
+    <value>The project reference {0} has changed. Current dependencies: {1} lock file's dependencies: {2}.</value>
+  </data>
+  <data name="PackagesLockFile_ProjectTransitiveDependencyChanged" xml:space="preserve">
+    <value>Transitive dependency {0} moved to be centraly managed invalidated the lock file.</value>
+  </data>
+  <data name="PackagesLockFile_ProjectTransitiveDependencyVersionChanged" xml:space="preserve">
+    <value>Mistmatch between the requestedVersion of a lock file dependency marked as CentralTransitive and the the version specified in the central package management file. Lock file version {0}, central package management version {1}.</value>
+  </data>
+  <data name="PackagesLockFile_RestoreMetadataMissingTfms" xml:space="preserve">
+    <value>Restore metadata is mising the required target frameworks list. Please file a bug with repro steps on NuGet/Home if seen.</value>
+  </data>
+  <data name="PackagesLockFile_RuntimeIdentifiersChanged" xml:space="preserve">
+    <value>The project's runtime identifiers have changed from. Project's runtime identifiers: {0}, lock file's runtime identifiers {1}.</value>
+  </data>
+  <data name="PackagesLockFile_UnableToLoadPackagespec" xml:space="preserve">
+    <value>Unable to load package spec for {0} project.</value>
+  </data>
+</root>

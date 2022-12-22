@@ -1,0 +1,735 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>System.ServiceModel.Security</name>
+  </assembly>
+  <members>
+    <member name="T:System.IdentityModel.Policy.IAuthorizationPolicy">
+      <summary>Defines a set of rules for authorizing a user, given a set of claims.</summary>
+    </member>
+    <member name="T:System.IdentityModel.Tokens.GenericXmlSecurityKeyIdentifierClause">
+      <summary>Represents a key identifier clause that is based on XML.</summary>
+    </member>
+    <member name="M:System.IdentityModel.Tokens.GenericXmlSecurityKeyIdentifierClause.#ctor(System.Xml.XmlElement)">
+      <summary>Initializes a new instance of the <see cref="T:System.IdentityModel.Tokens.GenericXmlSecurityKeyIdentifierClause" /> class by using the specified XML element.</summary>
+      <param name="referenceXml">The XML element that represents the key identifier clause. Sets the value of the <see cref="P:System.IdentityModel.Tokens.GenericXmlSecurityKeyIdentifierClause.ReferenceXml" /> property.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="referenceXML" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="M:System.IdentityModel.Tokens.GenericXmlSecurityKeyIdentifierClause.#ctor(System.Xml.XmlElement,System.Byte[],System.Int32)">
+      <summary>Initializes a new instance of the <see cref="T:System.IdentityModel.Tokens.GenericXmlSecurityKeyIdentifierClause" /> class by using the specified XML element, nonce, and derivation length.</summary>
+      <param name="referenceXml">The XML element that represents the key identifier clause. Sets the value of the <see cref="P:System.IdentityModel.Tokens.GenericXmlSecurityKeyIdentifierClause.ReferenceXml" /> property.</param>
+      <param name="derivationNonce">An array of <see cref="T:System.Byte" /> that contains the nonce that was used to create a derived key. Sets the value that is returned by the <see cref="M:System.IdentityModel.Tokens.SecurityKeyIdentifierClause.GetDerivationNonce" /> method.</param>
+      <param name="derivationLength">The size of the derived key. Sets the value of the <see cref="P:System.IdentityModel.Tokens.SecurityKeyIdentifierClause.DerivationLength" /> property.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="referenceXML" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="M:System.IdentityModel.Tokens.GenericXmlSecurityKeyIdentifierClause.Matches(System.IdentityModel.Tokens.SecurityKeyIdentifierClause)">
+      <summary>Returns a value that indicates whether specified key identifier clause matches the current instance.</summary>
+      <param name="keyIdentifierClause">The key identifier clause to which to compare current instance.</param>
+      <returns>
+        <see langword="true" /> if the specified key identifier clause matches the current instance; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="P:System.IdentityModel.Tokens.GenericXmlSecurityKeyIdentifierClause.ReferenceXml">
+      <summary>Gets the XML element that represents the key identifier clause.</summary>
+      <returns>The XML element that represents the key identifier clause.</returns>
+    </member>
+    <member name="T:System.IdentityModel.Tokens.GenericXmlSecurityToken">
+      <summary>Represents a security token that is based upon XML.</summary>
+    </member>
+    <member name="M:System.IdentityModel.Tokens.GenericXmlSecurityToken.#ctor(System.Xml.XmlElement,System.IdentityModel.Tokens.SecurityToken,System.DateTime,System.DateTime,System.IdentityModel.Tokens.SecurityKeyIdentifierClause,System.IdentityModel.Tokens.SecurityKeyIdentifierClause,System.Collections.ObjectModel.ReadOnlyCollection{System.IdentityModel.Policy.IAuthorizationPolicy})">
+      <summary>Initializes a new instance of the <see cref="T:System.IdentityModel.Tokens.GenericXmlSecurityToken" /> class.</summary>
+      <param name="tokenXml">An <see cref="T:System.Xml.XmlElement" /> that represents the XML that is associated with the security token. Sets the <see cref="P:System.IdentityModel.Tokens.GenericXmlSecurityToken.TokenXml" /> property.</param>
+      <param name="proofToken">A <see cref="T:System.IdentityModel.Tokens.SecurityToken" /> that represents the proof token for the security token. Sets the <see cref="P:System.IdentityModel.Tokens.GenericXmlSecurityToken.ProofToken" /> property.</param>
+      <param name="effectiveTime">A <see cref="T:System.DateTime" /> that represents the first instant in time at which this security token is valid. Sets the <see cref="P:System.IdentityModel.Tokens.GenericXmlSecurityToken.ValidFrom" /> property.</param>
+      <param name="expirationTime">A <see cref="T:System.DateTime" /> that represents the last instant in time at which this security token is valid. Sets the <see cref="P:System.IdentityModel.Tokens.GenericXmlSecurityToken.ValidFrom" /> property.</param>
+      <param name="internalTokenReference">A <see cref="T:System.IdentityModel.Tokens.SecurityKeyIdentifierClause" /> that represents a reference to this security token when it is included in a SOAP message in which it is referenced. Sets the <see cref="P:System.IdentityModel.Tokens.GenericXmlSecurityToken.InternalTokenReference" /> property.</param>
+      <param name="externalTokenReference">A <see cref="T:System.IdentityModel.Tokens.SecurityKeyIdentifierClause" /> that represents a reference to this security token when it is not included in a SOAP message in which it is referenced. Sets the <see cref="P:System.IdentityModel.Tokens.GenericXmlSecurityToken.ValidFrom" /> property.</param>
+      <param name="authorizationPolicies">A <see cref="T:System.Collections.ObjectModel.ReadOnlyCollection`1" /> of type <see cref="T:System.IdentityModel.Policy.IAuthorizationPolicy" /> that contains the set authorization policies for this security token.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="tokenXml" /> is <see langword="null" />.  
+  
+ -or-  
+  
+ <paramref name="proofToken" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="M:System.IdentityModel.Tokens.GenericXmlSecurityToken.CanCreateKeyIdentifierClause``1">
+      <summary>Gets a value that indicates whether this security token is capable of creating the specified key identifier clause.</summary>
+      <typeparam name="T">A <see cref="T:System.IdentityModel.Tokens.SecurityKeyIdentifierClause" /> that specifies the key identifier to create.</typeparam>
+      <returns>
+        <see langword="true" /> when <paramref name="T" /> is not <see langword="null" /> and the same type as either the <see cref="P:System.IdentityModel.Tokens.GenericXmlSecurityToken.InternalTokenReference" /> or <see cref="P:System.IdentityModel.Tokens.GenericXmlSecurityToken.ExternalTokenReference" /> property values; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="M:System.IdentityModel.Tokens.GenericXmlSecurityToken.CreateKeyIdentifierClause``1">
+      <summary>Creates the specified key identifier clause.</summary>
+      <typeparam name="T">A <see cref="T:System.IdentityModel.Tokens.SecurityKeyIdentifierClause" /> that specifies the key identifier to create.</typeparam>
+      <exception cref="T:System.IdentityModel.Tokens.SecurityTokenException">
+        <paramref name="T" /> is not <see langword="null" /> and not the same type as one of the <see cref="P:System.IdentityModel.Tokens.GenericXmlSecurityToken.InternalTokenReference" /> or <see cref="P:System.IdentityModel.Tokens.GenericXmlSecurityToken.ExternalTokenReference" /> property values.</exception>
+      <returns>A <see cref="T:System.IdentityModel.Tokens.SamlAssertionKeyIdentifierClause" /> that is a key identifier clause for a <see cref="T:System.IdentityModel.Tokens.GenericXmlSecurityToken" /> security token.</returns>
+    </member>
+    <member name="M:System.IdentityModel.Tokens.GenericXmlSecurityToken.MatchesKeyIdentifierClause(System.IdentityModel.Tokens.SecurityKeyIdentifierClause)">
+      <summary>Returns a value that indicates whether the key identifier for this instance is equal to the specified key identifier.</summary>
+      <param name="keyIdentifierClause">An <see cref="T:System.IdentityModel.Tokens.SecurityKeyIdentifierClause" /> to compare to this instance.</param>
+      <returns>
+        <see langword="true" /> when <paramref name="keyIdentifierClause" /> is not <see langword="null" /> and matches either the <see cref="P:System.IdentityModel.Tokens.GenericXmlSecurityToken.InternalTokenReference" /> or <see cref="P:System.IdentityModel.Tokens.GenericXmlSecurityToken.ExternalTokenReference" /> property values; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="M:System.IdentityModel.Tokens.GenericXmlSecurityToken.ToString">
+      <summary>Returns the current object.</summary>
+      <returns>The current object.</returns>
+    </member>
+    <member name="P:System.IdentityModel.Tokens.GenericXmlSecurityToken.AuthorizationPolicies">
+      <summary>Gets the collection of authorization policies for this security token.</summary>
+      <returns>A <see cref="T:System.Collections.ObjectModel.ReadOnlyCollection`1" /> of type <see cref="T:System.IdentityModel.Policy.IAuthorizationPolicy" /> that contains the set authorization policies for this security token.</returns>
+    </member>
+    <member name="P:System.IdentityModel.Tokens.GenericXmlSecurityToken.ExternalTokenReference">
+      <summary>Gets a security key identifier clause that references this security token when this security token is not included in the SOAP message in which it is referenced.</summary>
+      <returns>A <see cref="T:System.IdentityModel.Tokens.SecurityKeyIdentifierClause" /> that represents a reference to this security token when it is not included in a SOAP message in which it is referenced.</returns>
+    </member>
+    <member name="P:System.IdentityModel.Tokens.GenericXmlSecurityToken.Id">
+      <summary>Gets a unique identifier of the security token.</summary>
+      <returns>The unique identifier of the security token.</returns>
+    </member>
+    <member name="P:System.IdentityModel.Tokens.GenericXmlSecurityToken.InternalTokenReference">
+      <summary>Gets a security key identifier clause that references this security token when this security token is included in the SOAP message in which it is referenced.</summary>
+      <returns>A <see cref="T:System.IdentityModel.Tokens.SecurityKeyIdentifierClause" /> that represents a reference to this security token when it is included in a SOAP message in which it is referenced.</returns>
+    </member>
+    <member name="P:System.IdentityModel.Tokens.GenericXmlSecurityToken.ProofToken">
+      <summary>Gets the proof token for the security token.</summary>
+      <returns>A <see cref="T:System.IdentityModel.Tokens.SecurityToken" /> that represents the proof token for the security token.</returns>
+    </member>
+    <member name="P:System.IdentityModel.Tokens.GenericXmlSecurityToken.SecurityKeys">
+      <summary>Gets the cryptographic keys associated with the proof token.</summary>
+      <returns>A <see cref="T:System.Collections.ObjectModel.ReadOnlyCollection`1" /> of type <see cref="T:System.IdentityModel.Tokens.SecurityKey" /> that contains the set of keys associated with the proof token.</returns>
+    </member>
+    <member name="P:System.IdentityModel.Tokens.GenericXmlSecurityToken.TokenXml">
+      <summary>Gets the XML that is associated with the security token.</summary>
+      <returns>An <see cref="T:System.Xml.XmlElement" /> that represents the XML that is associated with the security token.</returns>
+    </member>
+    <member name="P:System.IdentityModel.Tokens.GenericXmlSecurityToken.ValidFrom">
+      <summary>Gets the first instant in time at which this security token is valid.</summary>
+      <returns>A <see cref="T:System.DateTime" /> that represents the first instant in time at which this security token is valid.</returns>
+    </member>
+    <member name="P:System.IdentityModel.Tokens.GenericXmlSecurityToken.ValidTo">
+      <summary>Gets the last instant in time at which this security token is valid.</summary>
+      <returns>A <see cref="T:System.DateTime" /> that represents the last instant in time at which this security token is valid.</returns>
+    </member>
+    <member name="T:System.IdentityModel.Tokens.SecurityKeyType">
+      <summary>Specifies the type of key that is associated with a security token.</summary>
+    </member>
+    <member name="F:System.IdentityModel.Tokens.SecurityKeyType.AsymmetricKey">
+      <summary>Specifies that the key is an asymmetric key.</summary>
+    </member>
+    <member name="F:System.IdentityModel.Tokens.SecurityKeyType.BearerKey">
+      <summary>Specifies that the security token does not contain a proof-of-possession key.</summary>
+    </member>
+    <member name="F:System.IdentityModel.Tokens.SecurityKeyType.SymmetricKey">
+      <summary>Specifies that the key is a symmetric key.</summary>
+    </member>
+    <member name="T:System.ServiceModel.Channels.ISecurityCapabilities">
+      <summary>Defines the contract for specifying the security capabilities for bindings.</summary>
+    </member>
+    <member name="P:System.ServiceModel.Channels.ISecurityCapabilities.SupportedRequestProtectionLevel">
+      <summary>Gets the protection level requests supported by the binding.</summary>
+      <returns>The <see cref="T:System.Net.Security.ProtectionLevel" /> that specifies the protection level requests supported by the binding.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Channels.ISecurityCapabilities.SupportedResponseProtectionLevel">
+      <summary>Gets the protection level responses supported by the binding.</summary>
+      <returns>The <see cref="T:System.Net.Security.ProtectionLevel" /> that specifies the protection level responses supported by the binding.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Channels.ISecurityCapabilities.SupportsClientAuthentication">
+      <summary>Gets a value that indicates whether the binding supports client authentication.</summary>
+      <returns>
+        <see langword="true" /> if the binding can support client authentication; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Channels.ISecurityCapabilities.SupportsClientWindowsIdentity">
+      <summary>Gets a value that indicates whether the binding supports client Windows identity.</summary>
+      <returns>
+        <see langword="true" /> if the binding can support client Windows identity; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Channels.ISecurityCapabilities.SupportsServerAuthentication">
+      <summary>Gets a value that indicates whether the binding supports server authentication.</summary>
+      <returns>
+        <see langword="true" /> if the binding can support server authentication; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Channels.LocalClientSecuritySettings">
+      <summary>Specifies local client security settings.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Channels.LocalClientSecuritySettings.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.LocalClientSecuritySettings" /> class.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Channels.LocalClientSecuritySettings.Clone">
+      <summary>Creates a new instance of this class, which is a copy or clone of the current instance.</summary>
+      <returns>A new instance of <see cref="T:System.ServiceModel.Channels.LocalClientSecuritySettings" />.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Channels.LocalClientSecuritySettings.DetectReplays">
+      <summary>Gets or sets a value that indicates whether replay detection is enabled on messages the client receives from the service.</summary>
+      <returns>
+        <see langword="true" /> if replay detection is enabled; otherwise, <see langword="false" />. The default is <see langword="true" />.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Channels.LocalClientSecuritySettings.MaxClockSkew">
+      <summary>Gets or sets the maximum allowable time difference between the system clocks of the two parties that are communicating.</summary>
+      <exception cref="T:System.ArgumentOutOfRangeException">The property is <see langword="set" /> to a value less than 0.</exception>
+      <returns>A <see cref="T:System.TimeSpan" /> that represents the maximum allowable time difference between the system clocks of the two parties that are communicating. The default is 5 minutes.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Channels.LocalClientSecuritySettings.ReplayWindow">
+      <summary>Gets or sets the maximum time that a message nonce is valid.</summary>
+      <exception cref="T:System.ArgumentOutOfRangeException">The property is <see langword="set" /> to a value less than 0.</exception>
+      <returns>A <see cref="T:System.TimeSpan" /> that represents the maximum time that a message nonce is valid. The default is five minutes.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Channels.LocalClientSecuritySettings.TimestampValidityDuration">
+      <summary>Gets or sets the maximum duration that the messages are valid when sent by the client. If a message is received by the service after this duration, it should discard the message.</summary>
+      <exception cref="T:System.ArgumentOutOfRangeException">The property is <see langword="set" /> to a value less than 0.</exception>
+      <returns>A <see cref="T:System.TimeSpan" /> that represents the maximum duration that the messages are valid when sent by the client. The default is 5 minutes.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Channels.SecurityBindingElement">
+      <summary>An abstract class that, when implemented, represents a binding element that supports channel SOAP message security.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Channels.SecurityBindingElement.BuildChannelFactory``1(System.ServiceModel.Channels.BindingContext)">
+      <summary>Creates a channel factory based on the <see cref="T:System.ServiceModel.Channels.SecurityBindingElement" /> settings and the binding context passed in. The channel factory created is a SOAP message security channel factory, which internally has a reference to the channel factory that corresponds to the binding context, (which includes the transport channel factory).</summary>
+      <param name="context">The <see cref="T:System.ServiceModel.Channels.BindingContext" />.</param>
+      <typeparam name="TChannel">The type of channel factory.</typeparam>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="context" /> is <see langword="null" />.</exception>
+      <exception cref="T:System.ArgumentException">A channel of type <paramref name="TChannel" /> is not supported.</exception>
+      <returns>A channel factory based on the <see cref="T:System.ServiceModel.Channels.SecurityBindingElement" /> settings and the binding context passed in.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Channels.SecurityBindingElement.BuildChannelFactoryCore``1(System.ServiceModel.Channels.BindingContext)">
+      <summary>When implemented, creates a channel factory of a specified type.</summary>
+      <param name="context">The <see cref="T:System.ServiceModel.Channels.BindingContext" />.</param>
+      <typeparam name="TChannel">The type of channel factory.</typeparam>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="context" /> is <see langword="null" />.</exception>
+      <exception cref="T:System.ArgumentException">A channel of type <paramref name="TChannel" /> is not supported.</exception>
+      <returns>A channel factory of a specified type.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Channels.SecurityBindingElement.CanBuildChannelFactory``1(System.ServiceModel.Channels.BindingContext)">
+      <summary>Determines whether a channel factory of the specified type can be built.</summary>
+      <param name="context">The <see cref="T:System.ServiceModel.Channels.BindingContext" />.</param>
+      <typeparam name="TChannel">The type of channel factory.</typeparam>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="context" /> is <see langword="null" />.</exception>
+      <returns>
+        <see langword="true" /> if a channel factory of the specified type can be built; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Channels.SecurityBindingElement.CreateCertificateOverTransportBindingElement">
+      <summary>Creates a security binding element that expects clients to do certificate-based authentication using SOAP message security.</summary>
+      <returns>A <see cref="T:System.ServiceModel.Channels.TransportSecurityBindingElement" /> object.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Channels.SecurityBindingElement.CreateCertificateOverTransportBindingElement(System.ServiceModel.MessageSecurityVersion)">
+      <summary>Creates a security binding element that expects clients to do certificate-based authentication using SOAP message security.</summary>
+      <param name="version">The <see cref="T:System.ServiceModel.MessageSecurityVersion" /> for the binding.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="version" /> is <see langword="null" />.</exception>
+      <returns>A <see cref="T:System.ServiceModel.Channels.TransportSecurityBindingElement" /> object.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Channels.SecurityBindingElement.CreateIssuedTokenOverTransportBindingElement(System.ServiceModel.Security.Tokens.IssuedSecurityTokenParameters)">
+      <summary>Creates a security binding element configured to require SOAP security based client authentication using an issued token. This binding element requires the transport to provide server authentication and message protection (for example, HTTPS).</summary>
+      <param name="issuedTokenParameters">An <see cref="T:System.ServiceModel.Security.Tokens.IssuedSecurityTokenParameters" />.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="issuedTokenParameters" /> is <see langword="null" />.</exception>
+      <returns>A <see cref="T:System.ServiceModel.Channels.TransportSecurityBindingElement" /> object.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Channels.SecurityBindingElement.CreateSecureConversationBindingElement(System.ServiceModel.Channels.SecurityBindingElement)">
+      <summary>Creates a symmetric security binding element that is configured to establish a secure conversation between the client and service. The security context token issued at the end of the secure conversation handshake is used to secure the messages. The bootstrap security binding element specifies how the secure conversation handshake messages are secured.</summary>
+      <param name="bootstrapSecurity">A <see cref="T:System.ServiceModel.Channels.SecurityBindingElement" /> that contains specification on how the secure conversation handshake messages are secured.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="bootstrapSecurity" /> is <see langword="null" />.</exception>
+      <returns>A <see cref="T:System.ServiceModel.Channels.SecurityBindingElement" /> object.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Channels.SecurityBindingElement.CreateUserNameOverTransportBindingElement">
+      <summary>Creates a security binding element that is configured for client authentication based on a user name and password sent as part of the SOAP message. The binding element requires the transport to provide server authentication and message protection (for example, HTTPS).</summary>
+      <returns>A <see cref="T:System.ServiceModel.Channels.TransportSecurityBindingElement" /> object.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Channels.SecurityBindingElement.GetProperty``1(System.ServiceModel.Channels.BindingContext)">
+      <summary>Gets a specified object using the specified <see cref="T:System.ServiceModel.Channels.BindingContext" />.</summary>
+      <param name="context">The <see cref="T:System.ServiceModel.Channels.BindingContext" />.</param>
+      <typeparam name="T">The property to get.</typeparam>
+      <returns>The specified object from the <see cref="T:System.ServiceModel.Channels.BindingContext" /> or <see langword="null" /> if the object is not found.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Channels.SecurityBindingElement.ToString">
+      <summary>Returns a description of this class.</summary>
+      <returns>A description of the current <see cref="T:System.ServiceModel.Channels.SecurityBindingElement" /> instance.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Channels.SecurityBindingElement.DefaultAlgorithmSuite">
+      <summary>Gets or sets the message encryption and key-wrap algorithms.</summary>
+      <exception cref="T:System.ArgumentNullException">The value is null on a <see langword="set" />.</exception>
+      <returns>The <see cref="T:System.ServiceModel.Security.SecurityAlgorithmSuite" /> object that represents the message encryption and key-wrap algorithms.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Channels.SecurityBindingElement.EndpointSupportingTokenParameters">
+      <summary>Gets the endpoint that supports token parameters.</summary>
+      <returns>The <see cref="T:System.ServiceModel.Security.Tokens.SupportingTokenParameters" /> object that represents the endpoint that supports token parameters.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Channels.SecurityBindingElement.IncludeTimestamp">
+      <summary>Gets or sets a value that indicates whether time stamps are included in each message.</summary>
+      <returns>
+        <see langword="true" /> if time stamps are included in each message; otherwise, <see langword="false" />. The default is <see langword="true" />.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Channels.SecurityBindingElement.KeyEntropyMode">
+      <summary>Gets or sets the source of entropy used to create keys.</summary>
+      <returns>The <see cref="T:System.ServiceModel.Security.SecurityKeyEntropyMode" /> used to create keys. The default value is <see cref="F:System.ServiceModel.Security.SecurityKeyEntropyMode.CombinedEntropy" />.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Channels.SecurityBindingElement.LocalClientSettings">
+      <summary>Gets the binding properties specific to local security settings used by the client.</summary>
+      <returns>The <see cref="T:System.ServiceModel.Channels.LocalClientSecuritySettings" /> that represents the binding properties specific to local security settings used by the client.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Channels.SecurityBindingElement.MessageSecurityVersion">
+      <summary>Gets or sets the message security version.</summary>
+      <exception cref="T:System.ArgumentNullException">
+        <see langword="set" /> with a null value.</exception>
+      <returns>The <see cref="T:System.ServiceModel.MessageSecurityVersion" /> object that represents the message security version.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Channels.SecurityBindingElement.SecurityHeaderLayout">
+      <summary>Gets or sets the ordering of the elements in the security header for this binding.</summary>
+      <exception cref="T:System.ArgumentOutOfRangeException">The value is not a valid <see cref="T:System.ServiceModel.Channels.SecurityHeaderLayout" /> value.</exception>
+      <returns>The <see cref="T:System.ServiceModel.Channels.SecurityHeaderLayout" /> that represents the ordering of the elements in the security header for this binding. The default is <see cref="F:System.ServiceModel.Channels.SecurityHeaderLayout.Strict" />.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Channels.SecurityHeaderLayout">
+      <summary>Describes the layout of the security header.</summary>
+    </member>
+    <member name="F:System.ServiceModel.Channels.SecurityHeaderLayout.Lax">
+      <summary>Items are added to the security header in any order that confirms to WSS: SOAP Message security.</summary>
+    </member>
+    <member name="F:System.ServiceModel.Channels.SecurityHeaderLayout.Strict">
+      <summary>Items are added to the security header according to the general principle of "declare before use".</summary>
+    </member>
+    <member name="T:System.ServiceModel.Channels.TransportSecurityBindingElement">
+      <summary>Represents a custom binding element that supports mixed-mode security (such as, optimized message security over a secure transport).</summary>
+    </member>
+    <member name="M:System.ServiceModel.Channels.TransportSecurityBindingElement.#ctor">
+      <summary>Creates an instance of the <see cref="T:System.ServiceModel.Channels.TransportSecurityBindingElement" /> class.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Channels.TransportSecurityBindingElement.Clone">
+      <summary>Creates a new <see cref="T:System.ServiceModel.Channels.BindingElement" /> object initialized from the current class.</summary>
+      <returns>A <see cref="T:System.ServiceModel.Channels.BindingElement" /> object with property values equal to those of the current instance.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Channels.TransportSecurityBindingElement.GetProperty``1(System.ServiceModel.Channels.BindingContext)">
+      <summary>Gets a property from the specified <see cref="T:System.ServiceModel.Channels.BindingContext" />.</summary>
+      <param name="context">A <see cref="T:System.ServiceModel.Channels.BindingContext" />.</param>
+      <typeparam name="T">The property to get.</typeparam>
+      <returns>The property from the specified <see cref="T:System.ServiceModel.Channels.BindingContext" /> or <see langword="null" /> if the object is not found.</returns>
+    </member>
+    <member name="T:System.ServiceModel.DnsEndpointIdentity">
+      <summary>Specifies the DNS identity of the server.</summary>
+    </member>
+    <member name="M:System.ServiceModel.DnsEndpointIdentity.#ctor(System.String)">
+      <summary>Initializes a new instance of this class from a DNS name.</summary>
+      <param name="dnsName">The DNS name.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="dnsName" /> is <see langword="null" />.</exception>
+      <exception cref="T:System.ArgumentException">The claim type of <paramref name="dnsName" /> is not <see cref="P:System.IdentityModel.Claims.ClaimTypes.Dns" />.</exception>
+    </member>
+    <member name="T:System.ServiceModel.MessageSecurityVersion">
+      <summary>An abstract container class that, when implemented by several of its static properties, contains version information for security components.</summary>
+    </member>
+    <member name="P:System.ServiceModel.MessageSecurityVersion.BasicSecurityProfileVersion">
+      <summary>Gets the version information for the Basic Security Profile.</summary>
+      <returns>The <see cref="T:System.ServiceModel.Security.BasicSecurityProfileVersion" /> object.</returns>
+    </member>
+    <member name="P:System.ServiceModel.MessageSecurityVersion.SecureConversationVersion">
+      <summary>Gets the WS-SecureConversation version that corresponds to the message security version.</summary>
+      <returns>The <see cref="T:System.ServiceModel.Security.SecureConversationVersion" /> object that corresponds to the message security version.</returns>
+    </member>
+    <member name="P:System.ServiceModel.MessageSecurityVersion.SecurityPolicyVersion">
+      <summary>Gets the WS-SecurityPolicy version that corresponds to the message security version.</summary>
+      <returns>The <see cref="T:System.ServiceModel.Security.SecurityPolicyVersion" /> object that corresponds to the message security version.</returns>
+    </member>
+    <member name="P:System.ServiceModel.MessageSecurityVersion.SecurityVersion">
+      <summary>Gets the WS-Security version that corresponds to the message security version.</summary>
+      <returns>The <see cref="T:System.ServiceModel.Security.SecurityVersion" /> object that corresponds to the message security version.</returns>
+    </member>
+    <member name="P:System.ServiceModel.MessageSecurityVersion.TrustVersion">
+      <summary>Gets the WS-Trust version that corresponds to the message security version.</summary>
+      <returns>The <see cref="T:System.ServiceModel.Security.TrustVersion" /> object that corresponds to the message security version.</returns>
+    </member>
+    <member name="P:System.ServiceModel.MessageSecurityVersion.WSSecurity10WSTrustFebruary2005WSSecureConversationFebruary2005WSSecurityPolicy11BasicSecurityProfile10">
+      <summary>Gets the message security version that requires the Basic Security Profile 1.0 based on WS-Security 1.0, WS-Trust of February 2005, WS-SecureConversation of February 2005 and WS-SecurityPolicy 1.1 security specifications.</summary>
+      <returns>The <see cref="T:System.ServiceModel.MessageSecurityVersion" /> object that requires the Basic Security Profile 1.0 based on WS-Security 1.0, WS-Trust of February 2005, WS-SecureConversation of February 2005 and WS-SecurityPolicy 1.1 security specifications.</returns>
+    </member>
+    <member name="P:System.ServiceModel.MessageSecurityVersion.WSSecurity11WSTrust13WSSecureConversation13WSSecurityPolicy12BasicSecurityProfile10">
+      <summary>Gets the message security version that requires the WS-Security1.1, WS-Trust 1.3, WS-SecureConversation 1.3, WS-SecurityPolicy 1.2, and BasicSecurityProfile 1.0 security specifications.</summary>
+      <returns>The <see cref="T:System.ServiceModel.MessageSecurityVersion" /> object that requires the WS-Security1.1, WS-Trust 1.3, WS-SecureConversation 1.3, WS-SecurityPolicy 1.2, and BasicSecurityProfile 1.0 security specifications.</returns>
+    </member>
+    <member name="P:System.ServiceModel.MessageSecurityVersion.WSSecurity11WSTrustFebruary2005WSSecureConversationFebruary2005WSSecurityPolicy11">
+      <summary>Gets the message security version that requires the WS-Security 1.1, WS-Trust of February 2005, WS-SecureConversation of February 2005 and WS-SecurityPolicy 1.1 security specifications.</summary>
+      <returns>The <see cref="T:System.ServiceModel.MessageSecurityVersion" /> object that requires the WS-Security 1.1, WS-Trust of February 2005, WS-SecureConversation of February 2005 and WS-SecurityPolicy 1.1 security specifications.</returns>
+    </member>
+    <member name="P:System.ServiceModel.MessageSecurityVersion.WSSecurity11WSTrustFebruary2005WSSecureConversationFebruary2005WSSecurityPolicy11BasicSecurityProfile10">
+      <summary>Gets the message security version that requires the Basic Security Profile based on WS-Security 1.1, WS-Trust of February 2005, WS-SecureConversation of February 2005 and WS-SecurityPolicy 1.1 security specifications.</summary>
+      <returns>The <see cref="T:System.ServiceModel.MessageSecurityVersion" /> object that requires the Basic Security Profile based on WS-Security 1.1, WS-Trust of February 2005, WS-SecureConversation of February 2005 and WS-SecurityPolicy 1.1 security specifications.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Security.BasicSecurityProfileVersion">
+      <summary>Provides a message version that corresponds to the Basic Security Profile specification.</summary>
+    </member>
+    <member name="P:System.ServiceModel.Security.BasicSecurityProfileVersion.BasicSecurityProfile10">
+      <summary>Provides a message version that corresponds to the Basic Security Profile specification.</summary>
+      <returns>A class that has a <c>ToString</c> method that returns the version in text form.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Security.SecureConversationVersion">
+      <summary>Contains the set of supported WS-SecureConversation versions. This is an abstract class.</summary>
+    </member>
+    <member name="P:System.ServiceModel.Security.SecureConversationVersion.Default">
+      <summary>Gets the default version.</summary>
+      <returns>The default version.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Security.SecureConversationVersion.Namespace">
+      <summary>Gets the namespace for this WS-SecureConversation version.</summary>
+      <returns>The namespace for this WS-SecureConversation version.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Security.SecureConversationVersion.Prefix">
+      <summary>Gets the prefix for the WS-SecureConversation version.</summary>
+      <returns>The prefix for the WS-SecureConversation version.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Security.SecureConversationVersion.WSSecureConversation13">
+      <summary>Gets the version 1.3 of WS-SecureConversation.</summary>
+      <returns>The version 1.3 of WS-SecureConversation.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Security.SecureConversationVersion.WSSecureConversationFeb2005">
+      <summary>Gets the February 2005 version of WS-SecureConversation.</summary>
+      <returns>The February 2005 version of WS-SecureConversation.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Security.SecurityAlgorithmSuite">
+      <summary>Specifies properties of algorithms. This is an <see langword="abstract" /> class.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Security.SecurityAlgorithmSuite.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.SecurityAlgorithmSuite" /> class.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Security.SecurityAlgorithmSuite.IsAsymmetricKeyLengthSupported(System.Int32)">
+      <summary>Indicates whether a particular key length is supported by the asymmetric algorithm.</summary>
+      <param name="length">The key length to check.</param>
+      <returns>
+        <see langword="true" /> if the key length is supported by the asymmetric algorithm; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Security.SecurityAlgorithmSuite.IsSymmetricKeyLengthSupported(System.Int32)">
+      <summary>When overridden in a derived class, indicates whether a particular symmetric key length is supported.</summary>
+      <param name="length">The key length to check.</param>
+      <returns>
+        <see langword="true" /> if the symmetric key length is supported; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Security.SecurityAlgorithmSuite.Basic256">
+      <summary>Gets an algorithm suite that uses 256-bit Basic as the message encryption algorithm.</summary>
+      <returns>An algorithm suite that uses 256-bit Basic as the message encryption algorithm.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Security.SecurityAlgorithmSuite.Basic256Sha256">
+      <summary>Gets an algorithm suite that uses SHA256 for the signature digest and 256-bit Basic as the message encryption algorithm.</summary>
+      <returns>An algorithm suite that uses SHA256 for the signature digest and 256-bit Basic as the message encryption algorithm.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Security.SecurityAlgorithmSuite.Default">
+      <summary>Gets the default algorithm suite.</summary>
+      <returns>The default <see cref="T:System.ServiceModel.Security.SecurityAlgorithmSuite" /> is <see cref="P:System.ServiceModel.Security.SecurityAlgorithmSuite.Basic256" />, which specifies 256-bit Advanced Encryption Standard (AES) as the symmetric encryption algorithm.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Security.SecurityAlgorithmSuite.DefaultAsymmetricKeyWrapAlgorithm">
+      <summary>Gets the default asymmetric key wrap algorithm as a string.</summary>
+      <returns>The default asymmetric key wrap algorithm.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Security.SecurityAlgorithmSuite.DefaultAsymmetricSignatureAlgorithm">
+      <summary>Gets the default asymmetric signature algorithm as a string.</summary>
+      <returns>The default asymmetric signature algorithm.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Security.SecurityAlgorithmSuite.DefaultCanonicalizationAlgorithm">
+      <summary>Gets the default canonicalization algorithm as a string.</summary>
+      <returns>The default canonicalization algorithm.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Security.SecurityAlgorithmSuite.DefaultDigestAlgorithm">
+      <summary>Gets the default digest algorithm as a string.</summary>
+      <returns>The default digest algorithm.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Security.SecurityAlgorithmSuite.DefaultEncryptionAlgorithm">
+      <summary>Gets the default encryption algorithm as a string.</summary>
+      <returns>The default encryption algorithm.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Security.SecurityAlgorithmSuite.DefaultEncryptionKeyDerivationLength">
+      <summary>Gets the default encryption key derivation length as an <see cref="T:System.Int32" /> value.</summary>
+      <returns>The default encryption key derivation length.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Security.SecurityAlgorithmSuite.DefaultSignatureKeyDerivationLength">
+      <summary>Gets the default signature key derivation length as an <see cref="T:System.Int32" /> value.</summary>
+      <returns>The default signature key derivation length.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Security.SecurityAlgorithmSuite.DefaultSymmetricKeyLength">
+      <summary>Gets the default symmetric key length as an <see cref="T:System.Int32" /> value.</summary>
+      <returns>The default symmetric key length.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Security.SecurityAlgorithmSuite.DefaultSymmetricKeyWrapAlgorithm">
+      <summary>Gets the default symmetric key wrap algorithm as a string.</summary>
+      <returns>The default symmetric key wrap algorithm.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Security.SecurityAlgorithmSuite.DefaultSymmetricSignatureAlgorithm">
+      <summary>Gets the default symmetric signature algorithm as a string.</summary>
+      <returns>The default symmetric signature algorithm.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Security.SecurityAlgorithmSuite.TripleDes">
+      <summary>Gets the Triple Data Encryption Standard (DES) algorithm suite.</summary>
+      <returns>The Triple DES <see cref="T:System.ServiceModel.Security.SecurityAlgorithmSuite" />.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Security.SecurityKeyEntropyMode">
+      <summary>Describes the source of entropy used for key generation.</summary>
+    </member>
+    <member name="F:System.ServiceModel.Security.SecurityKeyEntropyMode.ClientEntropy">
+      <summary>The client provides the key used for the issued token.</summary>
+    </member>
+    <member name="F:System.ServiceModel.Security.SecurityKeyEntropyMode.CombinedEntropy">
+      <summary>The client and server both provide entropy that is combined using the P-SHA1 function to derive the key of the issued token. Due to collision problems with SHA1, Microsoft recommends a security model based on SHA256 or better.</summary>
+    </member>
+    <member name="F:System.ServiceModel.Security.SecurityKeyEntropyMode.ServerEntropy">
+      <summary>The server provides the key for the issued token.</summary>
+    </member>
+    <member name="T:System.ServiceModel.Security.SecurityPolicyVersion">
+      <summary>Contains the set of supported WS-SecurityPolicy versions. This is an abstract class.</summary>
+    </member>
+    <member name="P:System.ServiceModel.Security.SecurityPolicyVersion.Namespace">
+      <summary>Gets the namespace for this WS-SecurityPolicy version.</summary>
+      <returns>The namespace for this WS-SecurityPolicy version.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Security.SecurityPolicyVersion.Prefix">
+      <summary>Gets the prefix.</summary>
+      <returns>The prefix.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Security.SecurityPolicyVersion.WSSecurityPolicy11">
+      <summary>Gets the version 1.1 of WS-SecurityPolicy.</summary>
+      <returns>The version 1.1 of WS-SecurityPolicy.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Security.SecurityPolicyVersion.WSSecurityPolicy12">
+      <summary>Gets the version 1.2 of WS-SecurityPolicy.</summary>
+      <returns>The version 1.2 of WS-SecurityPolicy.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Security.SecurityVersion">
+      <summary>Contains the set of supported WS-Security versions. This is an abstract class.</summary>
+    </member>
+    <member name="P:System.ServiceModel.Security.SecurityVersion.WSSecurity10">
+      <summary>Gets the version 1.0 of WS-Security.</summary>
+      <returns>The version 1.0 of WS-Security.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Security.SecurityVersion.WSSecurity11">
+      <summary>Gets the version 1.1 of WS-Security.</summary>
+      <returns>The version 1.1 of WS-Security.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Security.Tokens.BinarySecretSecurityToken">
+      <summary>Represents a binary secret security token.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Security.Tokens.BinarySecretSecurityToken.#ctor(System.Byte[])">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.Tokens.BinarySecretSecurityToken" /> class.</summary>
+      <param name="key">A byte-array that represents the key.</param>
+    </member>
+    <member name="M:System.ServiceModel.Security.Tokens.BinarySecretSecurityToken.#ctor(System.String,System.Byte[])">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.Tokens.BinarySecretSecurityToken" /> class.</summary>
+      <param name="id">The token ID.</param>
+      <param name="key">A byte-array that represents the key.</param>
+    </member>
+    <member name="M:System.ServiceModel.Security.Tokens.BinarySecretSecurityToken.#ctor(System.String,System.Byte[],System.Boolean)">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.Tokens.BinarySecretSecurityToken" /> class.</summary>
+      <param name="id">The token ID.</param>
+      <param name="key">A byte-array that represents the key.</param>
+      <param name="allowCrypto">A <see cref="T:System.Boolean" /> that indicates whether to allow cryptography.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="key" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="M:System.ServiceModel.Security.Tokens.BinarySecretSecurityToken.#ctor(System.String,System.Int32,System.Boolean)">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.Tokens.BinarySecretSecurityToken" /> class.</summary>
+      <param name="id">The token ID.</param>
+      <param name="keySizeInBits">The key size in bits.</param>
+      <param name="allowCrypto">A <see cref="T:System.Boolean" /> that indicates whether to allow cryptography.</param>
+      <exception cref="T:System.ArgumentOutOfRangeException">Either <paramref name="keySizeInBits" /> is less than or equal to zero, or it is greater than or equal to 512, or it is not a multiple of 8.</exception>
+    </member>
+    <member name="M:System.ServiceModel.Security.Tokens.BinarySecretSecurityToken.GetKeyBytes">
+      <summary>Gets the bytes that represent the key.</summary>
+      <returns>The key.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Security.Tokens.BinarySecretSecurityToken.Id">
+      <summary>Gets the token ID.</summary>
+      <returns>The token ID.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Security.Tokens.BinarySecretSecurityToken.KeySize">
+      <summary>Gets the token key size.</summary>
+      <returns>The token key size.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Security.Tokens.BinarySecretSecurityToken.SecurityKeys">
+      <summary>Gets a collection of security keys.</summary>
+      <returns>A collection of  <see cref="T:System.IdentityModel.Tokens.SecurityKey" />s.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Security.Tokens.BinarySecretSecurityToken.ValidFrom">
+      <summary>Gets the token effective start time.</summary>
+      <returns>A <see cref="T:System.DateTime" /> that represents the token effective start time.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Security.Tokens.BinarySecretSecurityToken.ValidTo">
+      <summary>Gets the token effective start time.</summary>
+      <returns>A <see cref="T:System.DateTime" /> that represents the token effective start time.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Security.Tokens.IssuedSecurityTokenParameters">
+      <summary>Represents the parameters for a security token issued in a Federated security scenario.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Security.Tokens.IssuedSecurityTokenParameters.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.Tokens.IssuedSecurityTokenParameters" /> class.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Security.Tokens.IssuedSecurityTokenParameters.#ctor(System.ServiceModel.Security.Tokens.IssuedSecurityTokenParameters)">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.Tokens.IssuedSecurityTokenParameters" /> class.</summary>
+      <param name="other">The other instance of this class.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="other" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="M:System.ServiceModel.Security.Tokens.IssuedSecurityTokenParameters.CloneCore">
+      <summary>Clones another instance of this instance of the class.</summary>
+      <returns>A <see cref="T:System.ServiceModel.Security.Tokens.SecurityTokenParameters" /> that represents the copy.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Security.Tokens.IssuedSecurityTokenParameters.DefaultMessageSecurityVersion">
+      <summary>Gets or sets the default set of security specifications versions.</summary>
+      <returns>A <see cref="T:System.ServiceModel.MessageSecurityVersion" /> that represents the default set of security specifications versions.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Security.Tokens.IssuedSecurityTokenParameters.IssuerAddress">
+      <summary>Gets or sets the token issuer's address.</summary>
+      <returns>The <see cref="T:System.ServiceModel.EndpointAddress" /> of the token issuer.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Security.Tokens.IssuedSecurityTokenParameters.IssuerBinding">
+      <summary>Gets or sets the token issuer's binding, to be used by the client.</summary>
+      <returns>The <see cref="T:System.ServiceModel.Channels.Binding" /> of the token issuer, to be used by the client.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Security.Tokens.IssuedSecurityTokenParameters.KeyType">
+      <summary>Gets or sets the issued token key type.</summary>
+      <returns>One of the <see cref="T:System.IdentityModel.Tokens.SecurityKeyType" /> values.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Security.Tokens.IssuedSecurityTokenParameters.TokenType">
+      <summary>Gets or sets the issued token type.</summary>
+      <returns>The token type.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Security.Tokens.SecureConversationSecurityTokenParameters">
+      <summary>Represents the parameters for a secure conversation security token.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Security.Tokens.SecureConversationSecurityTokenParameters.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.Tokens.SecureConversationSecurityTokenParameters" /> class.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Security.Tokens.SecureConversationSecurityTokenParameters.#ctor(System.ServiceModel.Channels.SecurityBindingElement)">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.Tokens.SecureConversationSecurityTokenParameters" /> class from the properties of a specified <see cref="T:System.ServiceModel.Channels.SecurityBindingElement" />.</summary>
+      <param name="bootstrapSecurityBindingElement">The bootstrap security binding element.</param>
+    </member>
+    <member name="M:System.ServiceModel.Security.Tokens.SecureConversationSecurityTokenParameters.CloneCore">
+      <summary>Clones another instance of this instance of the class.</summary>
+      <returns>A <see cref="T:System.ServiceModel.Security.Tokens.SecureConversationSecurityTokenParameters" /> instance that represents the copy.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Security.Tokens.SecureConversationSecurityTokenParameters.BootstrapSecurityBindingElement">
+      <summary>Gets or sets the bootstrap security binding element.</summary>
+      <returns>The bootstrap security binding element.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Security.Tokens.SecureConversationSecurityTokenParameters.RequireCancellation">
+      <summary>Gets or sets a value that indicates whether cancellation is required.</summary>
+      <returns>
+        <see langword="true" /> if cancellation is required; otherwise, <see langword="false" />. The default is <see langword="true" />.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Security.Tokens.SecurityTokenParameters">
+      <summary>Specifies an <see langword="abstract" /> class that when implemented represents security token parameters.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Security.Tokens.SecurityTokenParameters.Clone">
+      <summary>Clones another instance of this instance of the class.</summary>
+      <exception cref="T:System.InvalidOperationException">Unable to clone this instance of the class.</exception>
+      <returns>A copy of <see cref="T:System.ServiceModel.Security.Tokens.SecurityTokenParameters" /> instance.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Security.Tokens.SecurityTokenParameters.CloneCore">
+      <summary>Clones another instance of this instance of the class.</summary>
+      <returns>A <see cref="T:System.ServiceModel.Security.Tokens.SecurityTokenParameters" /> instance that represents the copy.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Security.Tokens.SecurityTokenParameters.RequireDerivedKeys">
+      <summary>Gets or sets a value that indicates whether keys can be derived from the original proof keys.</summary>
+      <returns>
+        <see langword="true" /> if keys need to be derived from the token's key; otherwise, <see langword="false" />. The default is <see langword="true" />.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Security.Tokens.ServiceModelSecurityTokenRequirement">
+      <summary>An abstract class that when implemented specifies security property requirements of the token being requested or authenticated that are specific to Windows Communication Foundation (WCF). The security token manager constructs security token providers and security token authenticators that are used by the WCF security processor based on the token requirement.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Security.Tokens.ServiceModelSecurityTokenRequirement.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.Tokens.ServiceModelSecurityTokenRequirement" /> class.</summary>
+    </member>
+    <member name="P:System.ServiceModel.Security.Tokens.ServiceModelSecurityTokenRequirement.ChannelParametersCollectionProperty">
+      <summary>Gets the token requirement property name whose value is the channel parameters collection (client only).</summary>
+      <returns>The key for the <see langword="ChannelParametersCollection" /> in the token requirement's Properties dictionary.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Security.Tokens.SupportingTokenParameters">
+      <summary>Represents the parameters for supporting security tokens required by the security binding element.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Security.Tokens.SupportingTokenParameters.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.Tokens.SupportingTokenParameters" /> class.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Security.Tokens.SupportingTokenParameters.Clone">
+      <summary>Clones another instance of this instance of the class.</summary>
+      <returns>A <see cref="T:System.ServiceModel.Security.Tokens.SupportingTokenParameters" />.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Security.Tokens.SupportingTokenParameters.Endorsing">
+      <summary>Gets a collection of security token parameters for endorsing supporting tokens required by the security binding element.</summary>
+      <returns>A collection of <see cref="T:System.ServiceModel.Security.Tokens.SecurityTokenParameters" />.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Security.Tokens.SupportingTokenParameters.Signed">
+      <summary>Gets a collection of security token parameters for signed supporting tokens required by the security binding element.</summary>
+      <returns>A collection of <see cref="T:System.ServiceModel.Security.Tokens.SecurityTokenParameters" />.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Security.Tokens.SupportingTokenParameters.SignedEncrypted">
+      <summary>Gets a collection of security token parameters for signed and encrypted supporting tokens required by the security binding element.</summary>
+      <returns>A collection of <see cref="T:System.ServiceModel.Security.Tokens.SecurityTokenParameters" />.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Security.Tokens.UserNameSecurityTokenParameters">
+      <summary>Represents the parameters for a user name security token.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Security.Tokens.UserNameSecurityTokenParameters.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.Tokens.UserNameSecurityTokenParameters" /> class.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Security.Tokens.UserNameSecurityTokenParameters.CloneCore">
+      <summary>Clones another instance of this instance of the class.</summary>
+      <returns>An <see cref="T:System.ServiceModel.Security.Tokens.SecurityTokenParameters" />.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Security.TrustVersion">
+      <summary>Contains the set of supported WS-Trust versions. This is an abstract class.</summary>
+    </member>
+    <member name="P:System.ServiceModel.Security.TrustVersion.Default">
+      <summary>Gets the default version.</summary>
+      <returns>The default version.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Security.TrustVersion.Namespace">
+      <summary>Gets the namespace for this trust version.</summary>
+      <returns>The namespace for this trust version.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Security.TrustVersion.Prefix">
+      <summary>Gets the prefix.</summary>
+      <returns>The prefix.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Security.TrustVersion.WSTrust13">
+      <summary>Gets the version 1.3 of WS-Trust.</summary>
+      <returns>The version 1.3 of WS-Trust.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Security.TrustVersion.WSTrustFeb2005">
+      <summary>Gets the February 2005 version of WS-Trust.</summary>
+      <returns>The February 2005 version of WS-Trust.</returns>
+    </member>
+    <member name="T:System.ServiceModel.SpnEndpointIdentity">
+      <summary>Represents a service principal name (SPN) for an identity when the binding uses Kerberos.</summary>
+    </member>
+    <member name="M:System.ServiceModel.SpnEndpointIdentity.#ctor(System.String)">
+      <summary>Initializes a new instance of <see cref="T:System.ServiceModel.SpnEndpointIdentity" /> with the specified service principal name (SPN).</summary>
+      <param name="spnName">The SPN.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="spnName" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="P:System.ServiceModel.SpnEndpointIdentity.SpnLookupTime">
+      <summary>Specifies the maximum time allowed to look up the service principal name (SPN).</summary>
+      <exception cref="T:System.ArgumentOutOfRangeException">The value is set to less than 0.</exception>
+      <returns>A <see cref="T:System.TimeSpan" />. The default is 1 minute.</returns>
+    </member>
+    <member name="T:System.ServiceModel.UpnEndpointIdentity">
+      <summary>Represents a user principal name (UPN) for an identity which is used when the binding utilizes the SSPINegotiate authentication mode.</summary>
+    </member>
+    <member name="M:System.ServiceModel.UpnEndpointIdentity.#ctor(System.String)">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.UpnEndpointIdentity" /> class.</summary>
+      <param name="upnName">The UPN name.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="upnName" /> is <see langword="null" />.</exception>
+      <exception cref="T:System.ArgumentException">The claim type of <paramref name="upnName" /> is not <see cref="P:System.IdentityModel.Claims.ClaimTypes.Upn" />.</exception>
+    </member>
+    <member name="T:System.ServiceModel.X509CertificateEndpointIdentity">
+      <summary>Represents a certificate identity for the service endpoint. Clients that attempt to communicate with that service endpoint should authenticate the service based on the certificate provided in the endpoint identity.</summary>
+    </member>
+    <member name="M:System.ServiceModel.X509CertificateEndpointIdentity.#ctor(System.Security.Cryptography.X509Certificates.X509Certificate2)">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.X509CertificateEndpointIdentity" /> class using an existing certificate.</summary>
+      <param name="certificate">The certificate to clone.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="certificate" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="P:System.ServiceModel.X509CertificateEndpointIdentity.Certificates">
+      <summary>Gets the collection of certificates for this identity.</summary>
+      <returns>An <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate2Collection" /> object.</returns>
+    </member>
+  </members>
+</doc>

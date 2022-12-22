@@ -1,0 +1,394 @@
+#nullable enable
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.AbortTestRun = "TestExecution.Abort" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.AfterTestRunEnd = "DataCollection.AfterTestRunEnd" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.AfterTestRunEndResult = "DataCollection.AfterTestRunEndResult" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.AttachDebugger = "TestExecution.AttachDebugger" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.AttachDebuggerCallback = "TestExecution.AttachDebuggerCallback" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.BeforeTestRunStart = "DataCollection.BeforeTestRunStart" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.BeforeTestRunStartResult = "DataCollection.BeforeTestRunStartResult" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.CancelDiscovery = "TestDiscovery.Cancel" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.CancelTestRun = "TestExecution.Cancel" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.CustomTestHostLaunch = "TestExecution.CustomTestHostLaunch" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.CustomTestHostLaunchCallback = "TestExecution.CustomTestHostLaunchCallback" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.DataCollectionMessage = "DataCollection.SendMessage" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.DataCollectionTestEnd = "DataCollection.TestEnd" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.DataCollectionTestEndResult = "DataCollection.TestEndResult" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.DataCollectionTestStart = "DataCollection.TestStart" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.DataCollectionTestStartAck = "DataCollection.TestStartAck" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.DiscoveryComplete = "TestDiscovery.Completed" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.DiscoveryInitialize = "TestDiscovery.Initialize" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.EditorAttachDebugger = "TestExecution.EditorAttachDebugger" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.EditorAttachDebugger2 = "TestExecution.EditorAttachDebugger2" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.EditorAttachDebuggerCallback = "TestExecution.EditorAttachDebuggerCallback" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.ExecutionComplete = "TestExecution.Completed" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.ExecutionInitialize = "TestExecution.Initialize" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.ExtensionsInitialize = "Extensions.Initialize" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.GetTestRunnerProcessStartInfoForRunAll = "TestExecution.GetTestRunnerProcessStartInfoForRunAll" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.GetTestRunnerProcessStartInfoForRunSelected = "TestExecution.GetTestRunnerProcessStartInfoForRunSelected" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.LaunchAdapterProcessWithDebuggerAttached = "TestExecution.LaunchAdapterProcessWithDebuggerAttached" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.LaunchAdapterProcessWithDebuggerAttachedCallback = "TestExecution.LaunchAdapterProcessWithDebuggerAttachedCallback" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.ProtocolError = "ProtocolError" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.SessionAbort = "TestSession.Abort" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.SessionConnected = "TestSession.Connected" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.SessionEnd = "TestSession.Terminate" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.SessionStart = "TestSession.Start" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.StartDiscovery = "TestDiscovery.Start" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.StartTestExecutionWithSources = "TestExecution.StartWithSources" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.StartTestExecutionWithTests = "TestExecution.StartWithTests" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.StartTestSession = "TestSession.StartTestSession" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.StartTestSessionCallback = "TestSession.StartTestSessionCallback" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.StopTestSession = "TestSession.StopTestSession" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.StopTestSessionCallback = "TestSession.StopTestSessionCallback" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.TestCasesFound = "TestDiscovery.TestFound" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.TestHostLaunched = "DataCollection.TestHostLaunched" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.TestMessage = "TestSession.Message" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.TestRunAllSourcesWithDefaultHost = "TestExecution.RunAllWithDefaultHost" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.TestRunAttachmentsProcessingCancel = "TestRunAttachmentsProcessing.Cancel" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.TestRunAttachmentsProcessingComplete = "TestRunAttachmentsProcessing.Complete" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.TestRunAttachmentsProcessingProgress = "TestRunAttachmentsProcessing.Progress" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.TestRunAttachmentsProcessingStart = "TestRunAttachmentsProcessing.Start" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.TestRunSelectedTestCasesDefaultHost = "TestExecution.RunSelectedWithDefaultHost" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.TestRunStatsChange = "TestExecution.StatsChange" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.VersionCheck = "ProtocolVersion" -> string!
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketConstants.BufferSize = 16384 -> int
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.CommunicationEndpointFactory
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.CommunicationEndpointFactory.CommunicationEndpointFactory() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.CommunicationEndpointFactory.Create(Microsoft.VisualStudio.TestPlatform.ObjectModel.ConnectionRole role) -> Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationEndPoint!
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.DataCollection.DataCollectionRequestSender
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.DataCollection.DataCollectionRequestSender.Close() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.DataCollection.DataCollectionRequestSender.DataCollectionRequestSender() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.DataCollection.DataCollectionRequestSender.Dispose() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.DataCollection.DataCollectionRequestSender.InitializeCommunication() -> int
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.DataCollection.DataCollectionRequestSender.SendAfterTestRunEndAndGetResult(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.ITestMessageEventHandler? runEventsHandler, bool isCancelled) -> Microsoft.VisualStudio.TestPlatform.Common.DataCollection.AfterTestRunEndResult?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.DataCollection.DataCollectionRequestSender.SendBeforeTestRunStartAndGetResult(string? settingsXml, System.Collections.Generic.IEnumerable<string!>! sources, bool isTelemetryOptedIn, Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.ITestMessageEventHandler? runEventsHandler) -> Microsoft.VisualStudio.TestPlatform.Common.DataCollection.BeforeTestRunStartResult?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.DataCollection.DataCollectionRequestSender.SendTestHostLaunched(Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestHostLaunchedPayload! testHostLaunchedPayload) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.DataCollection.DataCollectionRequestSender.WaitForRequestHandlerConnection(int clientConnectionTimeout) -> bool
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.DataCollectionTestCaseEventSender
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.DataCollectionTestCaseEventSender.Close() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.DataCollectionTestCaseEventSender.DataCollectionTestCaseEventSender() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.DataCollectionTestCaseEventSender.DataCollectionTestCaseEventSender(Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationManager! communicationManager, Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.IDataSerializer! dataSerializer) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.DataCollectionTestCaseEventSender.InitializeCommunication(int port) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.DataCollectionTestCaseEventSender.SendTestCaseEnd(Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseEndEventArgs! e) -> System.Collections.ObjectModel.Collection<Microsoft.VisualStudio.TestPlatform.ObjectModel.AttachmentSet!>?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.DataCollectionTestCaseEventSender.SendTestCaseStart(Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseStartEventArgs! e) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.DataCollectionTestCaseEventSender.SendTestSessionEnd(Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.SessionEndEventArgs! e) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.DataCollectionTestCaseEventSender.WaitForRequestSenderConnection(int connectionTimeout) -> bool
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.EventHandlers.TestInitializeEventsHandler
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.EventHandlers.TestInitializeEventsHandler.HandleLogMessage(Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging.TestMessageLevel level, string? message) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.EventHandlers.TestInitializeEventsHandler.HandleRawMessage(string! rawMessage) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.EventHandlers.TestInitializeEventsHandler.TestInitializeEventsHandler(Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ITestRequestHandler! requestHandler) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.EventHandlers.TestRunEventsHandler
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.EventHandlers.TestRunEventsHandler.AttachDebuggerToProcess(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Interfaces.AttachDebuggerInfo! attachDebuggerInfo) -> bool
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.EventHandlers.TestRunEventsHandler.HandleLogMessage(Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging.TestMessageLevel level, string? message) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.EventHandlers.TestRunEventsHandler.HandleRawMessage(string! rawMessage) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.EventHandlers.TestRunEventsHandler.HandleTestRunComplete(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.TestRunCompleteEventArgs! testRunCompleteArgs, Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.TestRunChangedEventArgs? lastChunkArgs, System.Collections.Generic.ICollection<Microsoft.VisualStudio.TestPlatform.ObjectModel.AttachmentSet!>? runContextAttachments, System.Collections.Generic.ICollection<string!>? executorUris) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.EventHandlers.TestRunEventsHandler.HandleTestRunStatsChange(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.TestRunChangedEventArgs? testRunChangedArgs) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.EventHandlers.TestRunEventsHandler.LaunchProcessWithDebuggerAttached(Microsoft.VisualStudio.TestPlatform.ObjectModel.TestProcessStartInfo? testProcessStartInfo) -> int
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.EventHandlers.TestRunEventsHandler.TestRunEventsHandler(Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ITestRequestHandler! requestHandler) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.CommunicationException
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.CommunicationException.CommunicationException() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.CommunicationException.CommunicationException(string? message) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.CommunicationException.CommunicationException(string? message, System.Exception? inner) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ConnectedEventArgs
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ConnectedEventArgs.Channel.get -> Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationChannel?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ConnectedEventArgs.Connected.get -> bool
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ConnectedEventArgs.ConnectedEventArgs() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ConnectedEventArgs.ConnectedEventArgs(Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationChannel! channel) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ConnectedEventArgs.ConnectedEventArgs(System.Exception? faultException) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ConnectedEventArgs.Fault.get -> System.Exception?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.DisconnectedEventArgs
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.DisconnectedEventArgs.DisconnectedEventArgs() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.DisconnectedEventArgs.Error.get -> System.Exception?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.DisconnectedEventArgs.Error.set -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationChannel
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationChannel.MessageReceived -> System.EventHandler<Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.MessageReceivedEventArgs!>!
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationChannel.NotifyDataAvailable() -> System.Threading.Tasks.Task!
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationChannel.Send(string! data) -> System.Threading.Tasks.Task!
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationEndPoint
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationEndPoint.Connected -> System.EventHandler<Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ConnectedEventArgs!>!
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationEndPoint.Disconnected -> System.EventHandler<Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.DisconnectedEventArgs!>!
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationEndPoint.Start(string! endPoint) -> string?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationEndPoint.Stop() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationEndpointFactory
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationEndpointFactory.Create(Microsoft.VisualStudio.TestPlatform.ObjectModel.ConnectionRole role) -> Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationEndPoint!
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationManager
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationManager.AcceptClientAsync() -> System.Threading.Tasks.Task!
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationManager.DeserializePayload<T>(Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Message! message) -> T?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationManager.HostServer(System.Net.IPEndPoint! endpoint) -> System.Net.IPEndPoint!
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationManager.ReceiveMessage() -> Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Message?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationManager.ReceiveMessageAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Message?>!
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationManager.ReceiveRawMessage() -> string?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationManager.ReceiveRawMessageAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<string?>!
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationManager.SendMessage(string! messageType) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationManager.SendMessage(string! messageType, object! payload) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationManager.SendMessage(string! messageType, object! payload, int version) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationManager.SendRawMessage(string! rawMessage) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationManager.SetupClientAsync(System.Net.IPEndPoint! endpoint) -> System.Threading.Tasks.Task!
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationManager.StopClient() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationManager.StopServer() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationManager.WaitForClientConnection(int connectionTimeout) -> bool
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationManager.WaitForServerConnection(int connectionTimeout) -> bool
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.IDataCollectionTestCaseEventSender
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.IDataCollectionTestCaseEventSender.Close() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.IDataCollectionTestCaseEventSender.InitializeCommunication(int port) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.IDataCollectionTestCaseEventSender.SendTestCaseEnd(Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseEndEventArgs! e) -> System.Collections.ObjectModel.Collection<Microsoft.VisualStudio.TestPlatform.ObjectModel.AttachmentSet!>?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.IDataCollectionTestCaseEventSender.SendTestCaseStart(Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseStartEventArgs! e) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.IDataCollectionTestCaseEventSender.SendTestSessionEnd(Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.SessionEndEventArgs! e) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.IDataCollectionTestCaseEventSender.WaitForRequestSenderConnection(int connectionTimeout) -> bool
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.IDataSerializer
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.IDataSerializer.Clone<T>(T? obj) -> T?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.IDataSerializer.DeserializeMessage(string! rawMessage) -> Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Message!
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.IDataSerializer.DeserializePayload<T>(Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Message? message) -> T?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.IDataSerializer.SerializeMessage(string? messageType) -> string!
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.IDataSerializer.SerializePayload(string? messageType, object? payload) -> string!
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.IDataSerializer.SerializePayload(string? messageType, object? payload, int version) -> string!
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ITestRequestHandler
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ITestRequestHandler.AttachDebuggerToProcess(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Interfaces.AttachDebuggerInfo! attachDebuggerInfo) -> bool
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ITestRequestHandler.Close() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ITestRequestHandler.ConnectionInfo.get -> Microsoft.VisualStudio.TestPlatform.ObjectModel.TestHostConnectionInfo
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ITestRequestHandler.ConnectionInfo.set -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ITestRequestHandler.DiscoveryComplete(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.DiscoveryCompleteEventArgs! discoveryCompleteEventArgs, System.Collections.Generic.IEnumerable<Microsoft.VisualStudio.TestPlatform.ObjectModel.TestCase!>? lastChunk) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ITestRequestHandler.InitializeCommunication() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ITestRequestHandler.LaunchProcessWithDebuggerAttached(Microsoft.VisualStudio.TestPlatform.ObjectModel.TestProcessStartInfo? testProcessStartInfo) -> int
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ITestRequestHandler.ProcessRequests(Microsoft.VisualStudio.TestPlatform.ObjectModel.Engine.TesthostProtocol.ITestHostManagerFactory! testHostManagerFactory) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ITestRequestHandler.SendExecutionComplete(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.TestRunCompleteEventArgs! testRunCompleteArgs, Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.TestRunChangedEventArgs? lastChunkArgs, System.Collections.Generic.ICollection<Microsoft.VisualStudio.TestPlatform.ObjectModel.AttachmentSet!>? runContextAttachments, System.Collections.Generic.ICollection<string!>? executorUris) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ITestRequestHandler.SendLog(Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging.TestMessageLevel messageLevel, string? message) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ITestRequestHandler.SendTestCases(System.Collections.Generic.IEnumerable<Microsoft.VisualStudio.TestPlatform.ObjectModel.TestCase!>? discoveredTestCases) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ITestRequestHandler.SendTestRunStatistics(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.TestRunChangedEventArgs? testRunChangedArgs) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ITestRequestHandler.WaitForRequestSenderConnection(int connectionTimeout) -> bool
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ITestRequestSender
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ITestRequestSender.CheckVersionWithTestHost() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ITestRequestSender.Close() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ITestRequestSender.DiscoverTests(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.DiscoveryCriteria! discoveryCriteria, Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.ITestDiscoveryEventsHandler2! discoveryEventsHandler) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ITestRequestSender.EndSession() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ITestRequestSender.InitializeCommunication() -> int
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ITestRequestSender.InitializeDiscovery(System.Collections.Generic.IEnumerable<string!>! pathToAdditionalExtensions) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ITestRequestSender.InitializeExecution(System.Collections.Generic.IEnumerable<string!>! pathToAdditionalExtensions) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ITestRequestSender.OnClientProcessExit(string! stdError) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ITestRequestSender.SendDiscoveryAbort() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ITestRequestSender.SendTestRunAbort() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ITestRequestSender.SendTestRunCancel() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ITestRequestSender.StartTestRun(Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestRunCriteriaWithSources! runCriteria, Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.IInternalTestRunEventsHandler! eventHandler) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ITestRequestSender.StartTestRun(Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestRunCriteriaWithTests! runCriteria, Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.IInternalTestRunEventsHandler! eventHandler) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ITestRequestSender.WaitForRequestHandlerConnection(int connectionTimeout, System.Threading.CancellationToken cancellationToken) -> bool
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ITransport
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ITransport.Initialize() -> System.Net.IPEndPoint!
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ITransport.WaitForConnection(int connectionTimeout) -> bool
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.MessageReceivedEventArgs
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.MessageReceivedEventArgs.Data.get -> string?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.MessageReceivedEventArgs.Data.set -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.MessageReceivedEventArgs.MessageReceivedEventArgs() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.JsonDataSerializer
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.JsonDataSerializer.Clone<T>(T? obj) -> T?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.JsonDataSerializer.Deserialize<T>(string! json, int version = 1) -> T?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.JsonDataSerializer.DeserializeMessage(string! rawMessage) -> Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Message!
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.JsonDataSerializer.DeserializePayload<T>(Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Message? message) -> T?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.JsonDataSerializer.Serialize<T>(T data, int version = 1) -> string!
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.JsonDataSerializer.SerializeMessage(string? messageType) -> string!
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.JsonDataSerializer.SerializePayload(string? messageType, object? payload) -> string!
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.JsonDataSerializer.SerializePayload(string? messageType, object? payload, int version) -> string!
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.LengthPrefixCommunicationChannel
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.LengthPrefixCommunicationChannel.Dispose() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.LengthPrefixCommunicationChannel.LengthPrefixCommunicationChannel(System.IO.Stream! stream) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.LengthPrefixCommunicationChannel.MessageReceived -> System.EventHandler<Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.MessageReceivedEventArgs!>?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.LengthPrefixCommunicationChannel.NotifyDataAvailable() -> System.Threading.Tasks.Task!
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.LengthPrefixCommunicationChannel.Send(string! data) -> System.Threading.Tasks.Task!
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Message
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Message.Message() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Message.MessageType.get -> string?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Message.MessageType.set -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Message.Payload.get -> Newtonsoft.Json.Linq.JToken?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Message.Payload.set -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.BeforeTestRunStartPayload
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.BeforeTestRunStartPayload.BeforeTestRunStartPayload() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.BeforeTestRunStartPayload.IsTelemetryOptedIn.get -> bool
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.BeforeTestRunStartPayload.IsTelemetryOptedIn.set -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.BeforeTestRunStartPayload.SettingsXml.get -> string?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.BeforeTestRunStartPayload.SettingsXml.set -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.BeforeTestRunStartPayload.Sources.get -> System.Collections.Generic.IEnumerable<string!>?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.BeforeTestRunStartPayload.Sources.set -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.DiscoveryCompletePayload
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.DiscoveryCompletePayload.DiscoveredExtensions.get -> System.Collections.Generic.Dictionary<string!, System.Collections.Generic.HashSet<string!>!>?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.DiscoveryCompletePayload.DiscoveredExtensions.set -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.DiscoveryCompletePayload.DiscoveryCompletePayload() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.DiscoveryCompletePayload.FullyDiscoveredSources.get -> System.Collections.Generic.IList<string!>?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.DiscoveryCompletePayload.FullyDiscoveredSources.set -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.DiscoveryCompletePayload.IsAborted.get -> bool
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.DiscoveryCompletePayload.IsAborted.set -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.DiscoveryCompletePayload.LastDiscoveredTests.get -> System.Collections.Generic.IEnumerable<Microsoft.VisualStudio.TestPlatform.ObjectModel.TestCase!>?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.DiscoveryCompletePayload.LastDiscoveredTests.set -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.DiscoveryCompletePayload.Metrics.get -> System.Collections.Generic.IDictionary<string!, object!>?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.DiscoveryCompletePayload.Metrics.set -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.DiscoveryCompletePayload.NotDiscoveredSources.get -> System.Collections.Generic.IList<string!>?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.DiscoveryCompletePayload.NotDiscoveredSources.set -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.DiscoveryCompletePayload.PartiallyDiscoveredSources.get -> System.Collections.Generic.IList<string!>?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.DiscoveryCompletePayload.PartiallyDiscoveredSources.set -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.DiscoveryCompletePayload.SkippedDiscoverySources.get -> System.Collections.Generic.IList<string!>?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.DiscoveryCompletePayload.SkippedDiscoverySources.set -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.DiscoveryCompletePayload.TotalTests.get -> long
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.DiscoveryCompletePayload.TotalTests.set -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestHostLaunchedPayload
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestHostLaunchedPayload.ProcessId.get -> int
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestHostLaunchedPayload.ProcessId.set -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestHostLaunchedPayload.TestHostLaunchedPayload() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestMessagePayload
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestMessagePayload.Message.get -> string?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestMessagePayload.Message.set -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestMessagePayload.MessageLevel.get -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging.TestMessageLevel
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestMessagePayload.MessageLevel.set -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestMessagePayload.TestMessagePayload() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestRunAttachmentsProcessingCompletePayload
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestRunAttachmentsProcessingCompletePayload.Attachments.get -> System.Collections.Generic.IEnumerable<Microsoft.VisualStudio.TestPlatform.ObjectModel.AttachmentSet!>?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestRunAttachmentsProcessingCompletePayload.Attachments.set -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestRunAttachmentsProcessingCompletePayload.AttachmentsProcessingCompleteEventArgs.get -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.TestRunAttachmentsProcessingCompleteEventArgs?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestRunAttachmentsProcessingCompletePayload.AttachmentsProcessingCompleteEventArgs.set -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestRunAttachmentsProcessingCompletePayload.TestRunAttachmentsProcessingCompletePayload() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestRunAttachmentsProcessingProgressPayload
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestRunAttachmentsProcessingProgressPayload.AttachmentsProcessingProgressEventArgs.get -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.TestRunAttachmentsProcessingProgressEventArgs?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestRunAttachmentsProcessingProgressPayload.AttachmentsProcessingProgressEventArgs.set -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestRunAttachmentsProcessingProgressPayload.TestRunAttachmentsProcessingProgressPayload() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestRunCompletePayload
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestRunCompletePayload.ExecutorUris.get -> System.Collections.Generic.ICollection<string!>?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestRunCompletePayload.ExecutorUris.set -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestRunCompletePayload.LastRunTests.get -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.TestRunChangedEventArgs?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestRunCompletePayload.LastRunTests.set -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestRunCompletePayload.RunAttachments.get -> System.Collections.Generic.ICollection<Microsoft.VisualStudio.TestPlatform.ObjectModel.AttachmentSet!>?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestRunCompletePayload.RunAttachments.set -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestRunCompletePayload.TestRunCompleteArgs.get -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.TestRunCompleteEventArgs?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestRunCompletePayload.TestRunCompleteArgs.set -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestRunCompletePayload.TestRunCompletePayload() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestRunCriteriaWithSources
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestRunCriteriaWithSources.AdapterSourceMap.get -> System.Collections.Generic.Dictionary<string!, System.Collections.Generic.IEnumerable<string!>!>!
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestRunCriteriaWithSources.Package.get -> string?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestRunCriteriaWithSources.RunSettings.get -> string?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestRunCriteriaWithSources.TestExecutionContext.get -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Engine.ClientProtocol.TestExecutionContext!
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestRunCriteriaWithSources.TestExecutionContext.set -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestRunCriteriaWithSources.TestRunCriteriaWithSources(System.Collections.Generic.Dictionary<string!, System.Collections.Generic.IEnumerable<string!>!>! adapterSourceMap, string? package, string? runSettings, Microsoft.VisualStudio.TestPlatform.ObjectModel.Engine.ClientProtocol.TestExecutionContext! testExecutionContext) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestRunCriteriaWithTests
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestRunCriteriaWithTests.Package.get -> string?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestRunCriteriaWithTests.RunSettings.get -> string?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestRunCriteriaWithTests.TestExecutionContext.get -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Engine.ClientProtocol.TestExecutionContext!
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestRunCriteriaWithTests.TestExecutionContext.set -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestRunCriteriaWithTests.TestRunCriteriaWithTests(System.Collections.Generic.IEnumerable<Microsoft.VisualStudio.TestPlatform.ObjectModel.TestCase!>! tests, string? package, string? runSettings, Microsoft.VisualStudio.TestPlatform.ObjectModel.Engine.ClientProtocol.TestExecutionContext! testExecutionContext) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestRunCriteriaWithTests.Tests.get -> System.Collections.Generic.IEnumerable<Microsoft.VisualStudio.TestPlatform.ObjectModel.TestCase!>!
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestRunStatsPayload
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestRunStatsPayload.InProgressTestCases.get -> System.Collections.Generic.IEnumerable<Microsoft.VisualStudio.TestPlatform.ObjectModel.TestCase!>?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestRunStatsPayload.InProgressTestCases.set -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestRunStatsPayload.TestRunChangedArgs.get -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.TestRunChangedEventArgs?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestRunStatsPayload.TestRunChangedArgs.set -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestRunStatsPayload.TestRunStatsPayload() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Serialization.DefaultTestPlatformContractResolver
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Serialization.DefaultTestPlatformContractResolver.DefaultTestPlatformContractResolver() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Serialization.TestCaseConverter
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Serialization.TestCaseConverter.TestCaseConverter() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Serialization.TestObjectConverter
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Serialization.TestObjectConverter.TestObjectConverter() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Serialization.TestPlatformContractResolver1
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Serialization.TestPlatformContractResolver1.TestPlatformContractResolver1() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Serialization.TestResultConverter
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Serialization.TestResultConverter.TestResultConverter() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Serialization.TestRunStatisticsConverter
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Serialization.TestRunStatisticsConverter.TestRunStatisticsConverter() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketClient
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketClient.Connected -> System.EventHandler<Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ConnectedEventArgs!>?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketClient.Disconnected -> System.EventHandler<Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.DisconnectedEventArgs!>?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketClient.SocketClient() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketClient.SocketClient(System.Func<System.IO.Stream!, Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationChannel!>! channelFactory) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketClient.Start(string! endPoint) -> string!
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketClient.Stop() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketCommunicationManager
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketCommunicationManager.AcceptClientAsync() -> System.Threading.Tasks.Task!
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketCommunicationManager.DeserializePayload<T>(Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Message! message) -> T?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketCommunicationManager.HostServer(System.Net.IPEndPoint! endpoint) -> System.Net.IPEndPoint!
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketCommunicationManager.ReceiveMessage() -> Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Message?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketCommunicationManager.ReceiveMessageAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Message?>!
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketCommunicationManager.ReceiveRawMessage() -> string?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketCommunicationManager.ReceiveRawMessageAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<string?>!
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketCommunicationManager.SendMessage(string! messageType) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketCommunicationManager.SendMessage(string! messageType, object! payload) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketCommunicationManager.SendMessage(string! messageType, object! payload, int version) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketCommunicationManager.SendRawMessage(string! rawMessage) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketCommunicationManager.SetupClientAsync(System.Net.IPEndPoint! endpoint) -> System.Threading.Tasks.Task!
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketCommunicationManager.SocketCommunicationManager() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketCommunicationManager.StopClient() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketCommunicationManager.StopServer() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketCommunicationManager.WaitForClientConnection(int clientConnectionTimeout) -> bool
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketCommunicationManager.WaitForServerConnection(int connectionTimeout) -> bool
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketConstants
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketConstants.SocketConstants() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketServer
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketServer.Connected -> System.EventHandler<Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ConnectedEventArgs!>?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketServer.Disconnected -> System.EventHandler<Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.DisconnectedEventArgs!>?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketServer.SocketServer() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketServer.SocketServer(System.Func<System.IO.Stream!, Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationChannel!>! channelFactory) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketServer.Start(string! endPoint) -> string?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketServer.Stop() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketTransport
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketTransport.Dispose() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketTransport.Initialize() -> System.Net.IPEndPoint!
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketTransport.SocketTransport(Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationManager! communicationManager, Microsoft.VisualStudio.TestPlatform.ObjectModel.TestHostConnectionInfo connectionInfo) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketTransport.WaitForConnection(int connectionTimeout) -> bool
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.TestDiscoveryEventHandler
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.TestDiscoveryEventHandler.HandleDiscoveredTests(System.Collections.Generic.IEnumerable<Microsoft.VisualStudio.TestPlatform.ObjectModel.TestCase!>? discoveredTestCases) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.TestDiscoveryEventHandler.HandleDiscoveryComplete(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.DiscoveryCompleteEventArgs! discoveryCompleteEventArgs, System.Collections.Generic.IEnumerable<Microsoft.VisualStudio.TestPlatform.ObjectModel.TestCase!>? lastChunk) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.TestDiscoveryEventHandler.HandleLogMessage(Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging.TestMessageLevel level, string? message) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.TestDiscoveryEventHandler.HandleRawMessage(string! rawMessage) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.TestDiscoveryEventHandler.TestDiscoveryEventHandler(Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ITestRequestHandler! requestHandler) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.TestRequestSender
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.TestRequestSender.CheckVersionWithTestHost() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.TestRequestSender.Close() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.TestRequestSender.CloseConnectionOnOperationComplete.get -> bool
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.TestRequestSender.CloseConnectionOnOperationComplete.set -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.TestRequestSender.DiscoverTests(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.DiscoveryCriteria! discoveryCriteria, Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.ITestDiscoveryEventsHandler2! discoveryEventsHandler) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.TestRequestSender.Dispose() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.TestRequestSender.EndSession() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.TestRequestSender.InitializeCommunication() -> int
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.TestRequestSender.InitializeDiscovery(System.Collections.Generic.IEnumerable<string!>! pathToAdditionalExtensions) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.TestRequestSender.InitializeExecution(System.Collections.Generic.IEnumerable<string!>! pathToAdditionalExtensions) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.TestRequestSender.OnClientProcessExit(string! stdError) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.TestRequestSender.SendDiscoveryAbort() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.TestRequestSender.SendTestRunAbort() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.TestRequestSender.SendTestRunCancel() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.TestRequestSender.StartTestRun(Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestRunCriteriaWithSources! runCriteria, Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.IInternalTestRunEventsHandler! eventHandler) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.TestRequestSender.StartTestRun(Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.TestRunCriteriaWithTests! runCriteria, Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.IInternalTestRunEventsHandler! eventHandler) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.TestRequestSender.TestRequestSender(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.ProtocolConfig! protocolConfig, Microsoft.VisualStudio.TestPlatform.ObjectModel.Host.ITestRuntimeProvider! runtimeProvider) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.TestRequestSender.WaitForRequestHandlerConnection(int connectionTimeout, System.Threading.CancellationToken cancellationToken) -> bool
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.VersionedMessage
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.VersionedMessage.Version.get -> int
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.VersionedMessage.Version.set -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.VersionedMessage.VersionedMessage() -> void
+override Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Message.ToString() -> string!
+override Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Serialization.DefaultTestPlatformContractResolver.CreateContract(System.Type! objectType) -> Newtonsoft.Json.Serialization.JsonContract!
+override Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Serialization.TestCaseConverter.CanConvert(System.Type! objectType) -> bool
+override Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Serialization.TestCaseConverter.ReadJson(Newtonsoft.Json.JsonReader! reader, System.Type! objectType, object? existingValue, Newtonsoft.Json.JsonSerializer! serializer) -> object?
+override Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Serialization.TestCaseConverter.WriteJson(Newtonsoft.Json.JsonWriter! writer, object? value, Newtonsoft.Json.JsonSerializer! serializer) -> void
+override Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Serialization.TestObjectConverter.CanConvert(System.Type! objectType) -> bool
+override Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Serialization.TestObjectConverter.CanRead.get -> bool
+override Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Serialization.TestObjectConverter.CanWrite.get -> bool
+override Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Serialization.TestObjectConverter.ReadJson(Newtonsoft.Json.JsonReader! reader, System.Type! objectType, object? existingValue, Newtonsoft.Json.JsonSerializer! serializer) -> object!
+override Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Serialization.TestObjectConverter.WriteJson(Newtonsoft.Json.JsonWriter! writer, object? value, Newtonsoft.Json.JsonSerializer! serializer) -> void
+override Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Serialization.TestPlatformContractResolver1.CreateContract(System.Type! objectType) -> Newtonsoft.Json.Serialization.JsonContract!
+override Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Serialization.TestResultConverter.CanConvert(System.Type! objectType) -> bool
+override Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Serialization.TestResultConverter.ReadJson(Newtonsoft.Json.JsonReader! reader, System.Type! objectType, object? existingValue, Newtonsoft.Json.JsonSerializer! serializer) -> object!
+override Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Serialization.TestResultConverter.WriteJson(Newtonsoft.Json.JsonWriter! writer, object? value, Newtonsoft.Json.JsonSerializer! serializer) -> void
+override Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Serialization.TestRunStatisticsConverter.CanConvert(System.Type! objectType) -> bool
+override Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Serialization.TestRunStatisticsConverter.ReadJson(Newtonsoft.Json.JsonReader! reader, System.Type! objectType, object? existingValue, Newtonsoft.Json.JsonSerializer! serializer) -> object?
+override Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Serialization.TestRunStatisticsConverter.WriteJson(Newtonsoft.Json.JsonWriter! writer, object? value, Newtonsoft.Json.JsonSerializer! serializer) -> void
+static Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.DataCollectionTestCaseEventSender.Create() -> Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.DataCollectionTestCaseEventSender!
+static Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.DataCollectionTestCaseEventSender.Instance.get -> Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.DataCollectionTestCaseEventSender?
+static Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.JsonDataSerializer.Instance.get -> Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.JsonDataSerializer!
+~static Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources.AbortedTestDiscovery.get -> string
+~static Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources.AbortedTestDiscoveryWithReason.get -> string
+~static Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources.AbortedTestRun.get -> string
+~static Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources.AttachDebuggerToDefaultTestHostFailure.get -> string
+~static Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources.ConnectionClosed.get -> string
+~static Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources.ConnectionTimeoutErrorMessage.get -> string
+~static Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources.Culture.get -> System.Globalization.CultureInfo
+~static Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources.Culture.set -> void
+~static Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources.ResourceManager.get -> System.Resources.ResourceManager
+~static Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources.TestHostProcessCrashed.get -> string
+~static Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources.UnableToCommunicateToTestHost.get -> string
+~static Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources.UnexpectedMessage.get -> string
+~static Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources.VersionCheckFailed.get -> string
+~static Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources.VersionCheckTimedout.get -> string

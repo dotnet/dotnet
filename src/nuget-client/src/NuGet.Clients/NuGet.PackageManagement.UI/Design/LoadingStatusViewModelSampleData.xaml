@@ -1,0 +1,20 @@
+﻿<nuget:LoadingStatusViewModel
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:coll="clr-namespace:System.Collections;assembly=mscorlib"
+  xmlns:nuget="clr-namespace:NuGet.PackageManagement.UI"
+  xmlns:sys="clr-namespace:System;assembly=mscorlib"
+  PackageSearchStatus="ErrorOccurred"
+  IsMultiSource="True"
+  ItemsFound="10"
+  ItemsLoaded="2"
+  >
+  <nuget:LoadingStatusViewModel.SourceLoadingStatus>
+    <coll:SortedList>
+      <nuget:PackageSearchStatus x:Key="nuget.org">Loading</nuget:PackageSearchStatus>
+      <nuget:PackageSearchStatus x:Key="AspNetVNext">ErrorOccurred</nuget:PackageSearchStatus>
+      <nuget:PackageSearchStatus x:Key="Remote package repository with extraordinary long name given by user">Loading</nuget:PackageSearchStatus>
+    </coll:SortedList>
+  </nuget:LoadingStatusViewModel.SourceLoadingStatus>
+</nuget:LoadingStatusViewModel>

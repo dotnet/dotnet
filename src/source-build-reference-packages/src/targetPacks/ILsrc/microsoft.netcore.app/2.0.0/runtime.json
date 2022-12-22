@@ -1,0 +1,44 @@
+{
+  "runtimes": {
+    "linux-arm": {
+      "Microsoft.NETCore.App": {
+        "runtime.linux-arm.Microsoft.NETCore.App": "2.0.0"
+      }
+    },
+    "linux-x64": {
+      "Microsoft.NETCore.App": {
+        "runtime.linux-x64.Microsoft.NETCore.App": "2.0.0"
+      }
+    },
+    "osx-x64": {
+      "Microsoft.NETCore.App": {
+        "runtime.osx-x64.Microsoft.NETCore.App": "2.0.0"
+      }
+    },
+    "tizen.4.0.0-armel": {
+      "Microsoft.NETCore.App": {
+        "runtime.tizen.4.0.0-armel.Microsoft.NETCore.App": "2.0.0"
+      }
+    },
+    "win-arm": {
+      "Microsoft.NETCore.App": {
+        "runtime.win-arm.Microsoft.NETCore.App": "2.0.0"
+      }
+    },
+    "win-arm64": {
+      "Microsoft.NETCore.App": {
+        "runtime.win-arm64.Microsoft.NETCore.App": "2.0.0"
+      }
+    },
+    "win-x64": {
+      "Microsoft.NETCore.App": {
+        "runtime.win-x64.Microsoft.NETCore.App": "2.0.0"
+      }
+    },
+    "win-x86": {
+      "Microsoft.NETCore.App": {
+        "runtime.win-x86.Microsoft.NETCore.App": "2.0.0"
+      }
+    }
+  }
+}

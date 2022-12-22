@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="es" original="../Resources.resx">
+    <body>
+      <trans-unit id="MarkdownAPIListTitle">
+        <source># API List of {0}</source>
+        <target state="translated"># Lista de API de {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MarkdownDiffDescription">
+        <source>API listing follows standard diff formatting.
+Lines preceded by a '+' are additions and a '-' indicates removal.</source>
+        <target state="translated">La lista de API sigue el formato de diff estándar.
+Las líneas precedidas por un signo "+" son adiciones y un "-" indica una eliminación.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MarkdownTitle">
+        <source># API Difference {0} vs {1}</source>
+        <target state="translated"># Diferencias de API {0} frente a {1}</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../Resources.resx" target-language="ru">
+    <body>
+      <trans-unit id="BuildCompleted">
+        <source>Build completed.</source>
+        <target state="translated">Сборка выполнена.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="BuildStarted">
+        <source>Build started, please wait...</source>
+        <target state="translated">Сборка начата, подождите...</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TestRunningSummary">
+        <source>Test run for {0} ({1})</source>
+        <target state="translated">Тестовый запуск для {0} ({1})</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="UpdateTestSdkForCollectingCodeCoverage">
+        <source>Warning: Update the Microsoft.NET.Test.Sdk package reference to version 15.8.0 or later to collect code coverage.</source>
+        <target state="translated">Внимание. Для сбора данных об объеме протестированного кода обновите пакет Microsoft.NET.Test.Sdk по ссылке как минимум до версии 15.8.0.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="NoIsTestProjectProperty">
+        <source>Skipping running test for project {0}. To run tests with dotnet test add "&lt;IsTestProject&gt;true&lt;/IsTestProject&gt;" property to project file.</source>
+        <target state="translated">Пропуск выполнения теста для проекта {0}. Чтобы выполнить тесты с помощью теста dotnet, добавьте свойство "&lt;IsTestProject&gt;true&lt;/IsTestProject&gt;" в файл проекта.</target>
+        <note></note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

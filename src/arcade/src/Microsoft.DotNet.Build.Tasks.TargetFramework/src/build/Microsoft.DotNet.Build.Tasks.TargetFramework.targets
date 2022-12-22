@@ -1,0 +1,39 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+  <UsingTask TaskName="ChooseBestP2PTargetFrameworkTask" AssemblyFile="$(DotNetBuildTasksTargetFrameworkAssembly)" />
+  
+  <!--
+    Runs in a leaf project (csproj) to determine best configuration for ProjectReferences.
+    Make sure to run late enough for transitive dependencies which runs before AssignProjectConfiguration.
+  -->
+  <Target Name="ResolveP2PReferences"
+          Condition="'@(ProjectReference)' != ''"
+          BeforeTargets="AssignProjectConfiguration"
+          DependsOnTargets="ResolvePackageDependenciesForBuild">
+    <MSBuild Projects="@(ProjectReference)"
+             Targets="GetTargetFrameworks"
+             BuildInParallel="$(BuildInParallel)"
+             RemoveProperties="TargetFramework;RuntimeIdentifier"
+             Condition="'%(ProjectReference.SkipGetTargetFrameworkProperties)' != 'true'">
+      <Output TaskParameter="TargetOutputs" ItemName="_ProjectReferenceWithTargetFrameworks" />
+    </MSBuild>
+
+    <ItemGroup>
+      <_ProjectReferenceWithTargetFrameworks Include="@(ProjectReference->WithMetadataValue('SkipGetTargetFrameworkProperties', 'true'))" />
+    </ItemGroup>
+
+    <ChooseBestP2PTargetFrameworkTask ProjectReferencesWithTargetFrameworks="@(_ProjectReferenceWithTargetFrameworks)"
+                                      RuntimeGraph="$(RuntimeGraph)"
+                                      TargetFramework="$(TargetFramework)"
+                                      OmitIncompatibleProjectReferences="$(OmitIncompatibleProjectReferences)">
+      <Output TaskParameter="AnnotatedProjectReferencesWithSetTargetFramework" ItemName="_ProjectReferenceWithBestTargetFramework" />
+    </ChooseBestP2PTargetFrameworkTask>
+    
+    <ItemGroup>
+      <ProjectReference Remove="@(ProjectReference)" />
+      <ProjectReference Include="@(_ProjectReferenceWithBestTargetFramework)" />
+    </ItemGroup>
+  </Target>
+
+  <Import Project="BinPlace.targets" Condition="'$(EnableBinPlacing)' != 'false'" />
+</Project>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0">
+  <PropertyGroup>
+    <_WasCommonPropsImported>true</_WasCommonPropsImported>
+    <IsNetCoreProject>true</IsNetCoreProject>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(IsNetCoreProject)' == 'true' AND '$(Shipping)' == 'true' AND '$(IsXPlat)' != 'true'">
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+  <!-- Load config -->
+  <Import Project="config.props" />
+
+  <!-- Additional props -->
+  <Import Project="common.project.props"/>
+</Project>

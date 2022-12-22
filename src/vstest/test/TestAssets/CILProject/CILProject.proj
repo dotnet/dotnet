@@ -1,0 +1,68 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TestPlatformRoot Condition="$(TestPlatformRoot) == ''">..\..\..\</TestPlatformRoot>
+        <PackagesPath Condition="'$(TP_PACKAGES_DIR)' != ''">$(TP_PACKAGES_DIR)\</PackagesPath>
+        <PackagesPath Condition="'$(PackagesPath)' == ''">$(TestPlatformRoot)\packages\</PackagesPath>
+    </PropertyGroup>
+    <Import Project="$(TestPlatformRoot)scripts/build/TestPlatform.Dependencies.props" />
+
+    <!-- Required by Microsoft.Common.targets -->
+    <Target Name="CreateManifestResourceNames" Condition="'@(EmbeddedResource)' != ''" />
+
+    <PropertyGroup>
+        <TargetFramework>$(NetFrameworkMinimum)</TargetFramework>
+        <OutputPath>bin\$(Configuration)</OutputPath>
+        <RunningOnUnix Condition="$([MSBuild]::IsOSUnixLike())">true</RunningOnUnix>
+        <RunningOnUnix Condition="'$(RunningOnUnix)' == ''">false</RunningOnUnix>
+        <EnableDefaultItems>false</EnableDefaultItems>
+    </PropertyGroup>
+
+    <!-- Default to ILAsm shipped with buildtools -->
+    <PropertyGroup Condition="'$(IlasmToolPath)' == ''">
+        <IlasmPath>$(PackagesPath)microsoft.netcore.ilasm\$(ILAsmPackageVersion)\runtimes\native</IlasmPath>
+        <IlasmToolPath Condition="'$(RunningOnUnix)'!='true' And Exists('$(IlasmPath)ilasm.exe')">$(IlasmPath)ilasm.exe</IlasmToolPath>
+        <IlasmToolPath Condition="'$(RunningOnUnix)'=='true' And Exists('$(IlasmPath)ilasm')">$(IlasmPath)ilasm</IlasmToolPath>
+    </PropertyGroup>
+
+    <!-- If buildtools wasn't restored with ILAsm, on Windows we can fallback to ILAsm from the framework -->
+    <Target Name="GetIlasmPath" Condition="'$(RunningOnUnix)'!='true' And '$(IlasmToolPath)' == ''">
+        <GetFrameworkPath>
+            <Output TaskParameter="Path" PropertyName="IlasmPath" />
+        </GetFrameworkPath>
+        <PropertyGroup>
+            <IlasmPath>$(IlasmPath)\</IlasmPath>
+            <IlasmToolPath>$(IlasmPath)ilasm</IlasmToolPath>
+        </PropertyGroup>
+    </Target>
+
+    <ItemGroup>
+        <Compile Include="OrphanMethod.il" />
+    </ItemGroup>
+
+    <Target Name="CoreCompile" Inputs="$(MSBuildAllProjects);@(Compile)" Outputs="@(IntermediateAssembly);" Returns="" DependsOnTargets="GetIlasmPath;$(CoreCompileDependsOn)">
+        <Error Condition="'$(IlasmToolPath)' == ''" Text="IlasmToolPath must be set in order to build ilproj's outside of Windows." />
+        <Message Text="Is Unix: $(RunningOnUnix)" Importance="High" />
+        <Message Condition="'$(IlasmToolPath)' != ''" Text="ILAsm path: $(IlasmToolPath)" Importance="High" />
+        <PropertyGroup>
+            <_OutputTypeArgument Condition="'$(OutputType)' == 'Library'">-DLL</_OutputTypeArgument>
+            <_OutputTypeArgument Condition="'$(OutputType)' == 'Exe'">-EXE</_OutputTypeArgument>
+
+            <_KeyFileArgument Condition="'$(KeyOriginatorFile)' != ''">-KEY=$(KeyOriginatorFile)</_KeyFileArgument>
+
+            <_IlasmSwitches Condition="'$(FoldIdenticalMethods)' == 'True'">$(_IlasmSwitches) -FOLD</_IlasmSwitches>
+            <_IlasmSwitches Condition="'$(SizeOfStackReserve)' != ''">$(_IlasmSwitches) -STACK=$(SizeOfStackReserve)</_IlasmSwitches>
+            <_IlasmSwitches Condition="'$(DebugType)' == 'Full'">$(_IlasmSwitches) -DEBUG</_IlasmSwitches>
+            <_IlasmSwitches Condition="'$(DebugType)' == 'Impl'">$(_IlasmSwitches) -DEBUG=IMPL</_IlasmSwitches>
+            <_IlasmSwitches Condition="'$(DebugType)' == 'PdbOnly'">$(_IlasmSwitches) -DEBUG=OPT</_IlasmSwitches>
+            <_IlasmSwitches Condition="'$(Optimize)' == 'True'">$(_IlasmSwitches) -OPTIMIZE</_IlasmSwitches>
+            <_IlasmSwitches Condition="'$(IlasmResourceFile)' != ''">$(_IlasmSwitches) -RESOURCES=$(IlasmResourceFile)</_IlasmSwitches>
+        </PropertyGroup>
+
+        <Exec Command="$(IlasmToolPath) $(_IlasmSwitches) $(_OutputTypeArgument) $(IlasmFlags) -OUTPUT=@(IntermediateAssembly) $(_KeyFileArgument) @(Compile, ' ')">
+            <Output TaskParameter="ExitCode" PropertyName="_ILAsmExitCode" />
+        </Exec>
+        <Error Text="ILAsm failed" Condition="'$(_ILAsmExitCode)' != '0'" />
+
+        <CallTarget Targets="$(TargetsTriggeredByCompilation)" Condition="'$(TargetsTriggeredByCompilation)' != ''"/>
+    </Target>
+</Project>

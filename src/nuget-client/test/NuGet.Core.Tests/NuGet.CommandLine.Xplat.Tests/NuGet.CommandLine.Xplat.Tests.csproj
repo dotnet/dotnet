@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>$(TargetFrameworksExeForSigning)</TargetFrameworks>
+    <UseParallelXunit>true</UseParallelXunit>
+    <Description>Unit tests for NuGet.CommandLine.XPlat.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\TestUtilities\Test.Utility\Test.Utility.csproj" />
+    <ProjectReference Include="..\..\..\src\NuGet.Core\NuGet.CommandLine.XPlat\NuGet.CommandLine.XPlat.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.IO.Compression" />
+  </ItemGroup>
+
+  <ItemGroup>
+      <PackageReference Include="Microsoft.Build" ExcludeAssets="runtime" />
+      <PackageReference Include="Microsoft.Build.Framework" ExcludeAssets="runtime" />
+      <PackageReference Include="Microsoft.Build.Locator" />
+      <PackageReference Include="System.Memory" />
+  </ItemGroup>
+</Project>

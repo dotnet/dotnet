@@ -1,0 +1,27 @@
+﻿<VSTemplate Version="3.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="Project">
+  <TemplateData>
+    <Name Package="{CB22EE0E-4072-4ae7-96E2-90FCCF879544}" ID="1006" />
+    <Description Package="{CB22EE0E-4072-4ae7-96E2-90FCCF879544}" ID="1007" />
+    <Icon Package="{CB22EE0E-4072-4ae7-96E2-90FCCF879544}" ID="9020" />
+    <ProjectType>CSharp</ProjectType>
+    <TemplateGroupID>Silverlight</TemplateGroupID>
+    <TemplateID>Microsoft.Silverlight.CSharp.ClassLibrary</TemplateID>
+    <SortOrder>43</SortOrder>
+    <RequiredFrameworkVersion>2.0</RequiredFrameworkVersion>
+    <CreateNewFolder>true</CreateNewFolder>
+    <DefaultName>SilverlightClassLibrary</DefaultName>
+    <ProvideDefaultName>true</ProvideDefaultName>
+    <LocationField>Enabled</LocationField>
+    <PromptForSaveOnCreation>true</PromptForSaveOnCreation>
+    <EnableLocationBrowseButton>true</EnableLocationBrowseButton>
+    <NumberOfParentCategoriesToRollUp>1</NumberOfParentCategoriesToRollUp>
+  </TemplateData>
+  <TemplateContent>
+    <Project File="SilverlightClassLibrary.csproj" ReplaceParameters="true">
+      <ProjectItem OpenInEditor="true" ReplaceParameters="true">Class1.cs</ProjectItem>
+      <Folder Name="Properties" TargetFolderName="Properties">
+        <ProjectItem OpenInEditor="false" ReplaceParameters="true" TargetFileName="AssemblyInfo.cs">AssemblyInfo.cs</ProjectItem>
+      </Folder>
+    </Project>
+  </TemplateContent>
+</VSTemplate>

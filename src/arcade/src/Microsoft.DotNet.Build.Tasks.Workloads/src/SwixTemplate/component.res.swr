@@ -1,0 +1,7 @@
+use vs
+
+vs.localizedResources
+  vs.localizedResource language=en-us
+                       title="__VS_COMPONENT_TITLE__"
+                       description="__VS_COMPONENT_DESCRIPTION__"
+                       category="__VS_COMPONENT_CATEGORY__"

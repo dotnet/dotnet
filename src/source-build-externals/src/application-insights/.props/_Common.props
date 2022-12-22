@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Target Name="Info_CommonProps"  BeforeTargets="Build" Condition=" $(Internal_Logging) == 'true' ">
+    <Message Text="Info: Common.props imported by $(MSBuildProjectName)." Importance="high"/>
+  </Target>
+
+  <Import Project="$(PropsRoot)\_Signing.props" />
+
+  <PropertyGroup>
+    <!-- COMMON PROJECTS SETTINGS -->
+    
+    <!-- https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-options/errorreport-compiler-option -->
+    <ErrorReport>prompt</ErrorReport>
+    
+    <!-- https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-options/warn-compiler-option -->
+    <WarningLevel>4</WarningLevel>
+    
+  </PropertyGroup>
+  
+  <!-- 
+    Regarding Debug Type: 
+    FULL is the legacy Windows format. 
+    NetCore has switched to PORTABLE. https://github.com/dotnet/core/blob/master/Documentation/diagnostics/portable_pdb.md 
+    We tried switching to Portable in 2018, ago but Microsoft Symbol Server didn't support it yet.
+    I tried onboarding to Nuget Symbols Server in 2019, but they require Portable.
+
+    DotNet SDK recommends using PORTABLE  https://github.com/dotnet/sdk/issues/2679#issuecomment-441098067
+    
+    This needs to be revisited when someone has time.
+  -->
+  
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineConstants>$(DefineConstants);DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <DefineConstants>$(DefineConstants);TRACE</DefineConstants>
+  </PropertyGroup>
+
+</Project>

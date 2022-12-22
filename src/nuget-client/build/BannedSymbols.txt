@@ -1,0 +1,20 @@
+# Banned APIs across the project.
+
+# Syntax:
+#
+#       E:Event
+#       M:Method
+#       F:Field
+#       P:Property
+#       T:Type
+
+M: System.Xml.XmlReader.Create(string inputUri, System.Xml.XmlReaderSettings? settings, System.Xml.XmlParserContext? inputContext); Use one of the methods with a stream instead of path string because paths get escaped.
+M: System.Xml.XmlReader.Create(string inputUri, System.Xml.XmlReaderSettings? settings); Use one of the methods with a stream instead of path string because paths get escaped.
+
+M:Microsoft.VisualStudio.Shell.VsTaskLibraryHelper.FileAndForget(System.Threading.Tasks.Task,System.String,System.String,System.Func{System.Exception,System.Boolean}); NuGet.VisualStudio.Telemetry.INuGetTelemetryProvider.PostFault, NuGet.VisualStudio.Telemetry.TelemetryUtility.PostFaultAsync or NuGet.VisualStudio.Telemetry.INuGetTelemetryProvider.PostFaultAsync
+M:Microsoft.VisualStudio.Shell.VsTaskLibraryHelper.FileAndForget(Microsoft.VisualStudio.Threading.JoinableTask,System.String,System.String,System.Func{System.Exception,System.Boolean}); NuGet.VisualStudio.Telemetry.INuGetTelemetryProvider.PostFault, NuGet.VisualStudio.Telemetry.TelemetryUtility.PostFaultAsync or NuGet.VisualStudio.Telemetry.INuGetTelemetryProvider.PostFaultAsync
+
+M:Microsoft.VisualStudio.Shell.IAsyncServiceProvider.GetServiceAsync(System.Type); Do not use this method. Use the Microsoft.VisualStudio.Shell.ServiceExtensions.GetServiceAsync for services that have UI thread affinity or that you don't know about their affinity, and use NuGet.VisualStudio.ServiceProviderExtensions.GetFreeThreadedServiceAsync<TService, TInterface> for free threaded services.
+M:Microsoft.VisualStudio.Shell.AsyncPackage.GetServiceAsync(System.Type); Do not retrieve services from AsyncPackage, use the Async Service provider instead, which that class implements. Use the Microsoft.VisualStudio.Shell.ServiceExtensions.GetServiceAsync for services that have UI thread affinity or that you don't know about their affinity, and use NuGet.VisualStudio.ServiceProviderExtensions.GetFreeThreadedServiceAsync<TService, TInterface> for free threaded services.
+
+M:System.IO.Path.GetTempPath(); Use NuGetEnvironment.GetFolderPath(NuGetFolderPath.Temp)

@@ -1,0 +1,38 @@
+﻿<PermissionSet
+   version="1"
+   class="System.Security.NamedPermissionSet"
+   Name="Internet"
+   Description="Default rights given to Internet applications">
+   <IPermission
+      version="1"
+      class="System.Security.Permissions.FileDialogPermission, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+      Access="Open" />
+   <IPermission
+      UserQuota="1024000"
+      version="1"
+      class="System.Security.Permissions.IsolatedStorageFilePermission, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+      Allowed="ApplicationIsolationByUser" />
+   <IPermission
+      version="1"
+      class="System.Security.Permissions.SecurityPermission, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+      Flags="Execution" />
+   <IPermission
+      version="1"
+      class="System.Security.Permissions.UIPermission, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+      Clipboard="OwnClipboard"
+      Window="SafeTopLevelWindows" />
+   <IPermission
+      version="1"
+      class="System.Drawing.Printing.PrintingPermission, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+      Level="SafePrinting" />
+   <IPermission
+      version="1"
+      class="System.Security.Permissions.MediaPermission, WindowsBase, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"
+      Audio="SafeAudio"
+      Image="SafeImage"
+      Video="SafeVideo" />
+   <IPermission
+      version="1"
+      class="System.Security.Permissions.WebBrowserPermission, WindowsBase, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"
+      Level="Safe" />
+</PermissionSet>

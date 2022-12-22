@@ -1,0 +1,37 @@
+﻿<Project  Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>$(MSTestv2IntellitestFrameworkVersion)</TargetFramework>
+    <RootNamespace>MSTestv2IntelliTestExtensionPackage</RootNamespace>
+    <AssemblyName>MSTestv2IntelliTestExtensionPackage</AssemblyName>
+    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+    <GeneratePkgDefFile>false</GeneratePkgDefFile>
+    <EnableDefaultItems>false</EnableDefaultItems>
+    <IncludeAssemblyInVSIXContainer>false</IncludeAssemblyInVSIXContainer>
+    <!-- VS Insertion -->
+    <VisualStudioInsertionComponent>Microsoft.VisualStudio.TestTools.MSTestV2.WizardExtension.IntelliTest</VisualStudioInsertionComponent>
+
+    <CreateVsixContainer>true</CreateVsixContainer>
+    <DeployExtension>False</DeployExtension>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="IntelliTestExtensionLicense.rtf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <None Include="source.extension.vsixmanifest">
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="extension.vsixlangpack">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MSTestv2IntelliTestExtension\MSTestv2IntelliTestExtension.csproj">
+      <Name>MSTestv2IntelliTestExtension</Name>
+      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup</IncludeOutputGroupsInVSIX>
+    </ProjectReference>
+  </ItemGroup>
+   <Import Project="$(RepoRoot)eng\Loc.targets" />
+</Project>

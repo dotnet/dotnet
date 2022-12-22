@@ -1,0 +1,25 @@
+
+namespace AI
+
+[Description("Stack frame information.")]
+struct StackFrame
+{
+    [Description("Level in the call stack. For the long stacks SDK may not report every function in a call stack.")]
+    10: required int32 	 level;
+    
+    [Description("Method name.")]
+    [MaxStringLength("1024")]
+    20: required string 	 method;
+    
+    [Description("Name of the assembly (dll, jar, etc.) containing this function.")]
+    [MaxStringLength("1024")]
+    30: string 	 assembly;
+    
+    [Description("File name or URL of the method implementation.")]
+    [MaxStringLength("1024")]
+    50: string 	 fileName;
+    
+    [Description("Line number of the code implementation.")]
+    60: int32 	 line;
+    
+}

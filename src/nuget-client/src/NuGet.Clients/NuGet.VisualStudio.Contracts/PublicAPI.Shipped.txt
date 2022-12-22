@@ -1,0 +1,24 @@
+#nullable enable
+NuGet.VisualStudio.Contracts.INuGetProjectService
+~NuGet.VisualStudio.Contracts.INuGetProjectService.GetInstalledPackagesAsync(System.Guid projectId, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.VisualStudio.Contracts.InstalledPackagesResult>
+NuGet.VisualStudio.Contracts.InstalledPackageResultStatus
+NuGet.VisualStudio.Contracts.InstalledPackageResultStatus.ProjectInvalid = 3 -> NuGet.VisualStudio.Contracts.InstalledPackageResultStatus
+NuGet.VisualStudio.Contracts.InstalledPackageResultStatus.ProjectNotReady = 2 -> NuGet.VisualStudio.Contracts.InstalledPackageResultStatus
+NuGet.VisualStudio.Contracts.InstalledPackageResultStatus.Successful = 1 -> NuGet.VisualStudio.Contracts.InstalledPackageResultStatus
+NuGet.VisualStudio.Contracts.InstalledPackageResultStatus.Unknown = 0 -> NuGet.VisualStudio.Contracts.InstalledPackageResultStatus
+NuGet.VisualStudio.Contracts.InstalledPackagesResult
+~NuGet.VisualStudio.Contracts.InstalledPackagesResult.Packages.get -> System.Collections.Generic.IReadOnlyCollection<NuGet.VisualStudio.Contracts.NuGetInstalledPackage>
+NuGet.VisualStudio.Contracts.InstalledPackagesResult.Status.get -> NuGet.VisualStudio.Contracts.InstalledPackageResultStatus
+NuGet.VisualStudio.Contracts.NuGetContractsFactory
+NuGet.VisualStudio.Contracts.NuGetInstalledPackage
+NuGet.VisualStudio.Contracts.NuGetInstalledPackage.DirectDependency.get -> bool
+~NuGet.VisualStudio.Contracts.NuGetInstalledPackage.Id.get -> string
+~NuGet.VisualStudio.Contracts.NuGetInstalledPackage.InstallPath.get -> string
+~NuGet.VisualStudio.Contracts.NuGetInstalledPackage.RequestedRange.get -> string
+~NuGet.VisualStudio.Contracts.NuGetInstalledPackage.Version.get -> string
+NuGet.VisualStudio.Contracts.NuGetServices
+~const NuGet.VisualStudio.Contracts.NuGetServices.NuGetProjectServiceName = "Microsoft.VisualStudio.NuGet.NuGetProjectService" -> string
+~const NuGet.VisualStudio.Contracts.NuGetServices.Version1 = "1.0" -> string
+~static NuGet.VisualStudio.Contracts.NuGetContractsFactory.CreateInstalledPackagesResult(NuGet.VisualStudio.Contracts.InstalledPackageResultStatus status, System.Collections.Generic.IReadOnlyCollection<NuGet.VisualStudio.Contracts.NuGetInstalledPackage> packages) -> NuGet.VisualStudio.Contracts.InstalledPackagesResult
+~static NuGet.VisualStudio.Contracts.NuGetContractsFactory.CreateNuGetInstalledPackage(string id, string requestedRange, string version, string installPath, bool directDependency) -> NuGet.VisualStudio.Contracts.NuGetInstalledPackage
+~static NuGet.VisualStudio.Contracts.NuGetServices.NuGetProjectServiceV1.get -> Microsoft.ServiceHub.Framework.ServiceRpcDescriptor

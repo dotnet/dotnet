@@ -1,0 +1,824 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="pl" original="../Application.resx">
+    <body>
+      <trans-unit id="AddLauncherIsExclusive">
+        <source>'addlauncher' command can't be combined with any other command.</source>
+        <target state="translated">Polecenia „addlauncher” nie można połączyć z żadnym innym poleceniem.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ApplicationCacheCleared">
+        <source>Application cache cleared.</source>
+        <target state="translated">Wyczyszczono pamięć podręczną aplikacji.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ApplicationManifestCannotHaveHostInBrowserTag">
+        <source>The specified application manifest includes unsupported HostInBrowser tag.</source>
+        <target state="translated">Określony manifest aplikacji zawiera nieobsługiwany tag HostInBrowser.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DefaultAppName">
+        <source>New Application</source>
+        <target state="translated">Nowa aplikacja</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DeployManifestNotSigned">
+        <source>Deployment manifest is not signed - "{0}"</source>
+        <target state="translated">Manifest wdrożenia nie jest podpisany — „{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DeployManifestSignatureInvalid">
+        <source>Deployment manifest contains invalid signature - "{0}"</source>
+        <target state="translated">Manifest wdrożenia zawiera nieprawidłowy podpis — „{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorApplicactionCachedCleared">
+        <source>Failed to clear application cache.</source>
+        <target state="translated">Nie można wyczyścić pamięci podręcznej aplikacji.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorInvalidSignature">
+        <source>Manifest does not have a valid signature.</source>
+        <target state="translated">Manifest nie ma prawidłowego podpisu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorInvalidTimestampFormat">
+        <source>Timestamp is not encoded as a base64 string.</source>
+        <target state="translated">Sygnatura czasowa nie jest zakodowana jako ciąg Base64.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorMessage">
+        <source>Error</source>
+        <target state="translated">Błąd</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorMissingSignatureNode">
+        <source>Signature node is missing.</source>
+        <target state="translated">Brak węzła podpisu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorWritingOutputFile">
+        <source>Error writing output file "{0}".</source>
+        <target state="translated">Błąd podczas zapisywania pliku wyjściowego „{0}”.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToAddLauncher">
+        <source>Failed to add Launcher.</source>
+        <target state="translated">Nie można dodać programu Launcher.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToUpdateLauncherResources">
+        <source>Failed to update Launcher resources.</source>
+        <target state="translated">Nie można zaktualizować zasobów programu Launcher.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FileNotWriteable">
+        <source>Cannot write to file "{0}"</source>
+        <target state="translated">Nie można zapisać w pliku „{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FileTypeSpecificOption">
+        <source>The "{0}" option can only be used with the following type of files: "{1}"</source>
+        <target state="translated">Opcji „{0}” można używać tylko w przypadku następującego typu plików: „{1}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HelpTerse">
+        <source>Commands
+  -New &lt;file_type&gt;	          -n
+  -Update &lt;file_name&gt;	          -u
+  -Sign &lt;file_name&gt;	          -s
+  -ClearApplicationCache	  -cc
+  -Verify &lt;manifest_file_name&gt;    -ver
+  -AddLauncher &lt;binary_to_launch&gt; -al
+  -Help [verbose]		  -h -?
+
+
+
+Options
+  -Algorithm &lt;sha256RSA&gt;           -a
+  -AppCodeBase &lt;path&gt;	            -appc
+  -AppManifest &lt;path&gt;	            -appm
+  -CertFile &lt;file_name&gt;	            -cf
+  -CertHash &lt;hash&gt;                  -ch
+  -CryptoProvider &lt;name&gt;            -csp
+  -FromDirectory &lt;path&gt;	            -fd
+  -IconFile &lt;file_path&gt;             -if
+  -IncludeProviderURL &lt;true|false&gt;  -ip
+  -Install &lt;true|false&gt;             -i 
+  -KeyContainer &lt;name&gt;              -kc
+  -MinVersion &lt;version #|none&gt;      -mv
+  -Name &lt;name&gt;		            -n
+  -Password &lt;password&gt;	            -pwd
+  -Processor &lt;processor&gt;	    -p
+  -ProviderURL &lt;url&gt; 	            -pu
+  -Publisher &lt;publisher_name&gt;       -pub
+  -SupportURL &lt;support_url&gt;         -s
+  -TargetDirectory &lt;path&gt;	    -td
+  -TimeStampUri &lt;uri&gt;               -ti
+  -ToFile	&lt;file_name&gt;	    -t
+  -TrustLevel &lt;level&gt;	            -tr
+  -UseManifestForTrust &lt;true|false&gt; -um
+  -Version &lt;version&gt;	            -v
+
+Use "mage -help verbose" for more detailed help</source>
+        <target state="translated">Polecenia
+  -New &lt;typ_pliku&gt;	          -n
+  -Update &lt;nazwa_pliku&gt;	          -u
+  -Sign &lt;nazwa_pliku&gt;	          -s
+  -ClearApplicationCache	  -cc
+  -Verify &lt;nazwa_pliku_manifestu&gt;    -ver
+  -AddLauncher &lt;plik_binarny_do_uruchomienia&gt; -al
+  -Help [verbose]		  -h -?
+
+
+
+Opcje
+  -Algorithm &lt;sha256RSA&gt;           -a
+  -AppCodeBase &lt;ścieżka&gt;	            -appc
+  -AppManifest &lt;ścieżka&gt;	            -appm
+  -CertFile &lt;nazwa_pliku&gt;	            -cf
+  -CertHash &lt;skrót&gt;                  -ch
+  -CryptoProvider &lt;nazwa&gt;            -csp
+  -FromDirectory &lt;ścieżka&gt;	            -fd
+  -IconFile &lt;ścieżka_do_pliku&gt;             -if
+  -IncludeProviderURL &lt;true|false&gt;  -ip
+  -Install &lt;true|false&gt;             -i 
+  -KeyContainer &lt;nazwa&gt;              -kc
+  -MinVersion &lt;numer_wersji|none&gt;      -mv
+  -Name &lt;nazwa&gt;		            -n
+  -Password &lt;hasło&gt;	            -pwd
+  -Processor &lt;procesor&gt;	    -p
+  -ProviderURL &lt;adres_URL&gt; 	            -pu
+  -Publisher &lt;nazwa_wydawcy&gt;       -pub
+  -SupportURL &lt;adres_URL_pomocy_technicznej&gt;         -s
+  -TargetDirectory &lt;ścieżka&gt;	    -td
+  -TimeStampUri &lt;identyfikator_URI&gt;               -ti
+  -ToFile	&lt;nazwa_pliku&gt;	    -t
+  -TrustLevel &lt;poziom&gt;	            -tr
+  -UseManifestForTrust &lt;true|false&gt; -um
+  -Version &lt;wersja&gt;	            -v
+
+Wpisz polecenie „mage -help verbose”, aby uzyskać bardziej szczegółową pomoc</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HelpVerbose">
+        <source>Commands:
+
+  -New &lt;file_type&gt;        -n
+      Generate a new application manifest, deployment manifest, or trust
+      license, using the options listed below.
+      Examples:
+        -New Application -ToFile MyApp.manifest -Name MyApp -Processor X86
+        -New Deployment -ToFile MyApp.application -Name MyApp -Version 1.0.0.0
+    
+  -Update &lt;file_name&gt;     -u
+      Update an existing application manifest, deployment manifest, or trust
+      License, updating it as specified by the options listed below.
+      Examples:
+        -Update MyApp.manifest -FromDirectory bin/release
+        -Update MyApp.application -Version 2.1.0.123 -ToFile MyApp21.application 
+          
+  -Sign &lt;file_name&gt;       -s
+      Sign an existing manifest or license with a keypair or an X509
+      certificate.
+      Examples:
+        -Sign MyApp.manifest -CertFile MyCert.pfx -Password mycertpassword
+    
+  -Verify &lt;manifest_file_name&gt;       -ver
+      Verify if the manifest is signed correctly. Cannot be combined with other commands.
+      Example:
+        -Verify MyApp.manifest
+  
+  -AddLauncher &lt;binary_to_launch&gt;    -al
+      Adds Launcher to target directory and sets its binary to launch.
+      Example:
+        -AddLauncher myapp.dll -TargetDirectory bin/release
+
+  -ClearApplicationCache  -cc
+      Clear the downloaded application cache of all online-only applications. 
+
+  -Help [verbose]         -h -?
+      Print usage instructions.
+      Examples:
+        -Help
+        -Help Verbose
+
+Options:
+
+  -Algorithm &lt;sha256RSA&gt;      -a
+      Specifies the algorithm to generate digests.
+      Example:
+         -Algorithm sha256RSA
+
+  -AppCodeBase &lt;path&gt;     -appc
+      Specifies the code base of the app manifest to be placed in the
+      deployment manifest being generated or updated.
+      Example:
+         -AppCodeBase 1.0.0.0/myapp.manifest
+      
+  -AppManifest &lt;path&gt;     -appm
+      Specifies the local path to an application manifest that is being
+      referenced from the deployment manifest being generated or updated.
+      Example:
+        -AppManifest MyApp.manifest
+
+  -CertFile &lt;file_name&gt;   -cf
+      Specifies the name of an X509 certificate file with which to sign a
+      manifest or license file.  This option can be used in conjunction 
+      with the -Password option, if the certificate requires a password
+      for Personal Information Exchange (PFX) files. If the file does not 
+      contain private key a combination of -CryptoProvider and 
+      -KeyContainer options is required.
+      Example:
+        -CertFile MyCert.pfx
+        -CertFile MyCert.pfx -Password mycertpassword
+        -CertFile PublicKey.cer -KeyContainer name -CryptoProvider MyCspName
+
+  -CertHash &lt;hash&gt;        -ch
+      Specifies the hash of an X509 certificate in your local cert store.
+      Example:
+        -CertHash a1b2c3d4e5f6g7h8i9j0
+
+  -CryptoProvider &lt;name&gt;  -csp
+      Specifies the name of cryptographic service provider (CSP) that contains
+      the private key container.  This option requires the -KeyContainer option.
+      Example:
+        -CryptoProvider "Microsoft Enhanced Cryptographic Provider v1.0" -KeyContainer name
+
+  -FromDirectory &lt;path&gt;   -fd
+      Specifies the directory to recursively search for files to include in
+      an application manifest.  
+      Example:
+        -FromDirectory bin/release
+        
+  -IconFile &lt;file_path&gt;   -if
+      Specifies relative path and filename for the application icon.
+        
+  -IncludeProviderURL &lt;true|false&gt; -ip
+      Specifies if the deployment manifest will include the deployment 
+      provider URL.
+      
+  -Install &lt;true|false&gt;   -i
+      Specifies if the application will be an installed or an online only 
+      application.
+
+  -KeyContainer &lt;name&gt;    -kc
+      Specifies the key container that contains the name of the private key.
+      This option requires the -CryptoProvider option.
+      Example:
+        -KeyContainer name -CryptoProvider "Microsoft Enhanced Cryptographic Provider v1.0"
+
+  -MinVersion &lt;version #|none&gt;   -mv
+      Specifies whether the manifest being generated specifies a minimum version.
+      Must be of the form "0.0.0.0".  Specifying "none" removes this from the manifest.
+      Example:
+        -MinVersion 1.2.3.4
+        -MinVersion none
+
+  -Name &lt;name&gt;            -n
+      Specifies the name of the application whose manifest is being 
+      generated or updated.  Names which include spaces should be enclosed
+      in quotes.
+      Examples:
+        -Name MyApp
+        -Name "My Application"
+        
+  -Password &lt;password&gt;    -pwd
+      Specifies the password to use with an X509 certificate when signing
+      a manifest or license file.  See example above.
+
+  -Processor &lt;processor&gt;  -p
+      Specifies the processor architecture of the application whose manifest
+      is being generated or updated.
+      Examples:
+        -Processor MSIL
+        -Processor i386
+
+  -ProviderURL &lt;url&gt;      -pu
+      Specifies the provider URL to be use in the deployment manifest being
+      generated or updated.
+      Example:
+        -ProviderURL http://www.whatever.net/application
+
+  -Publisher &lt;publisher_name&gt;    -pub
+      Specifies the name of the publisher.  Names which include spaces should 
+      be enclosed in quotes.
+      Examples:
+        -Publisher MyCompany
+        -Publisher "My Company"
+
+  -SupportURL &lt;url&gt;       -s
+      Specifies the support URL for the application.
+      Example:
+        -SupportURL http://www.whatever.net/application/support
+
+  -TargetDirectory &lt;path&gt;	  -td
+      Specifies the directory to which to add the Launcher.
+      Example:
+        -TargetDirectory bin/release
+
+  -ToFile &lt;file_name&gt;     -t
+      Specifies the name of the file to save the output of a sign, new, or 
+      update command.
+      Example:
+        -ToFile MyApp.manifest
+
+  -TimeStampUri &lt;uri&gt;     -ti
+      Specifies the URI to use for timestamping during signing.
+
+  -TrustLevel &lt;level&gt;     -tr
+      Specifies the trust level to be included in the application manifest
+      being generated or updated. Valid values are: "Internet", "LocalIntranet",
+      and "FullTrust".
+      Example:
+        -TrustLevel FullTrust
+
+  -UseManifestForTrust &lt;true|false&gt; -um
+      Specifies if the application manifest will be used for certification and
+      branding information.
+            
+  -Version &lt;version&gt;                -v
+      Specifies the version of the application whose manifest is being 
+      generated or updated.  Must be of the form "0.0.0.0".
+      Example:
+        -Version 1.2.3.2112</source>
+        <target state="translated">Polecenia:
+
+  -New &lt;typ_pliku&gt;        -n
+      Wygeneruj nowy manifest aplikacji, manifest wdrożenia lub licencję
+      zaufania przy użyciu opcji wymienionych poniżej.
+      Przykłady:
+        -New Application -ToFile MyApp.manifest -Name MyApp -Processor X86
+        -New Deployment -ToFile MyApp.application -Name MyApp -Version 1.0.0.0
+    
+  -Update &lt;nazwa_pliku&gt;     -u
+      Zaktualizuj istniejący manifest aplikacji, manifest wdrożenia lub licencję
+      zaufania zgodnie z informacjami w opcjach wymienionych poniżej.
+      Przykłady:
+        -Update MyApp.manifest -FromDirectory bin/release
+        -Update MyApp.application -Version 2.1.0.123 -ToFile MyApp21.application 
+          
+  -Sign &lt;nazwa_pliku&gt;       -s
+      Podpisz istniejący manifest lub licencję przy użyciu pary kluczy lub certyfikatu
+      X.509.
+      Przykłady:
+        -Sign MyApp.manifest -CertFile MyCert.pfx -Password mycertpassword
+    
+  -Verify &lt;nazwa_pliku_manifestu&gt;       -ver
+      Zweryfikuj, czy manifest jest prawidłowo podpisany. Tego polecenia nie można łączyć z innymi poleceniami.
+      Przykład:
+        -Verify MyApp.manifest
+  
+  -AddLauncher &lt;plik_binarny_do_uruchomienia&gt;    -al
+      Dodaje moduł uruchamiania do katalogu docelowego i ustawia uruchamianie jego pliku binarnego.
+      Przykład:
+        -AddLauncher myapp.dll -TargetDirectory bin/release
+
+  -ClearApplicationCache  -cc
+      Wyczyść aplikacje działające tylko w trybie online z pobranej pamięci podręcznej aplikacji. 
+
+  -Help [verbose]         -h -?
+      Wyświetl instrukcje użycia.
+      Przykłady:
+        -Help
+        -Help Verbose
+
+Opcje:
+
+  -Algorithm &lt;sha256RSA&gt;      -a
+      Określa algorytm na potrzeby generowania skrótów.
+      Przykład:
+         -Algorithm sha256RSA
+
+  -AppCodeBase &lt;ścieżka&gt;     -appc
+      Określa bazę kodu manifestu aplikacji do umieszczenia
+      w generowanym lub aktualizowanym manifeście wdrożenia.
+      Przykład:
+         -AppCodeBase 1.0.0.0/myapp.manifest
+      
+  -AppManifest &lt;ścieżka&gt;     -appm
+      Określa ścieżkę lokalną do manifestu aplikacji przywoływanego
+      w generowanym lub aktualizowanym manifeście wdrożenia.
+      Przykład:
+        -AppManifest MyApp.manifest
+
+  -CertFile &lt;nazwa_pliku&gt;   -cf
+      Określa nazwę pliku certyfikatu X.509, za pomocą którego ma zostać podpisany
+      plik manifestu lub licencji. Tej opcji można użyć w połączeniu 
+      z opcją -Password, jeśli certyfikat wymaga hasła
+      na potrzeby plików wymiany informacji osobistych (PFX, Personal Information Exchange). Jeśli plik nie 
+      zawiera klucza prywatnego, wymagana jest kombinacja opcji -CryptoProvider 
+      i -KeyContainer.
+      Przykład:
+        -CertFile MyCert.pfx
+        -CertFile MyCert.pfx -Password mycertpassword
+        -CertFile PublicKey.cer -KeyContainer name -CryptoProvider MyCspName
+
+  -CertHash &lt;skrót&gt;        -ch
+      Określa skrót certyfikatu X.509 w lokalnym magazynie certyfikatów.
+      Przykład:
+        -CertHash a1b2c3d4e5f6g7h8i9j0
+
+  -CryptoProvider &lt;nazwa&gt;  -csp
+      Określa nazwę dostawcy usług kryptograficznych zawierającego
+      kontener klucza prywatnego. Ta opcja wymaga opcji -KeyContainer.
+      Przykład:
+        -CryptoProvider "Microsoft Enhanced Cryptographic Provider v1.0" -KeyContainer name
+
+  -FromDirectory &lt;ścieżka&gt;   -fd
+      Określa katalog, który ma zostać cyklicznie przeszukany pod kątem plików do uwzględnienia
+      w manifeście aplikacji. 
+      Przykład:
+        -FromDirectory bin/release
+        
+  -IconFile &lt;ścieżka_do_pliku&gt;   -if
+      Określa ścieżkę względną i nazwę pliku ikony aplikacji.
+        
+  -IncludeProviderURL &lt;true|false&gt; -ip
+      Określa, czy manifest wdrożenia będzie uwzględniać adres URL 
+      dostawcy wdrożenia.
+      
+  -Install &lt;true|false&gt;   -i
+      Określa, czy aplikacja będzie instalowana, czy będzie to aplikacja działająca 
+      tylko w trybie online.
+
+  -KeyContainer &lt;nazwa&gt;    -kc
+      Określa kontener kluczy zawierający nazwę klucza prywatnego.
+      Ta opcja wymaga opcji -CryptoProvider.
+      Przykład:
+        -KeyContainer name -CryptoProvider "Microsoft Enhanced Cryptographic Provider v1.0"
+
+  -MinVersion &lt;numer_wersji|none&gt;   -mv
+      Określa, czy generowany manifest wskazuje minimalną wersję.
+      Musi mieć format „0.0.0.0”. Określenie wartości „none” powoduje usunięcie minimalnej wersji z manifestu.
+      Przykład:
+        -MinVersion 1.2.3.4
+        -MinVersion none
+
+  -Name &lt;nazwa&gt;            -n
+      Określa nazwę aplikacji, której manifest jest 
+      generowany lub aktualizowany. Nazwy zawierające spacje należy ująć 
+      w cudzysłów.
+      Przykłady:
+        -Name MyApp
+        -Name "My Application"
+        
+  -Password &lt;hasło&gt;    -pwd
+      Określa hasło do użycia z certyfikatem X.509 podczas podpisywania
+      pliku manifestu lub licencji. Zobacz powyższy przykład.
+
+  -Processor &lt;procesor&gt;  -p
+      Określa architekturę procesora aplikacji, której manifest
+      jest generowany lub aktualizowany.
+      Przykłady:
+        -Processor MSIL
+        -Processor i386
+
+  -ProviderURL &lt;adres_URL&gt;      -pu
+      Określa adres URL do użycia w generowanym lub aktualizowanym
+      manifeście wdrożenia.
+      Przykład:
+        -ProviderURL http://www.whatever.net/application
+
+  -Publisher &lt;nazwa_wydawcy&gt;    -pub
+      Określa nazwę wydawcy. Nazwy zawierające spacje należy 
+      ująć w cudzysłów.
+      Przykłady:
+        -Publisher MyCompany
+        -Publisher "My Company"
+
+  -SupportURL &lt;adres_URL&gt;       -s
+      Określa adres URL pomocy technicznej aplikacji.
+      Przykład:
+        -SupportURL http://www.whatever.net/application/support
+
+  -TargetDirectory &lt;ścieżka&gt;	  -td
+      Określa katalog, do którego ma zostać dodany moduł uruchamiania.
+      Przykład:
+        -TargetDirectory bin/release
+
+  -ToFile &lt;nazwa_pliku&gt;     -t
+      Określa nazwę pliku, w którym mają zostać zapisane dane wyjściowe polecenia Sign, New lub 
+      Update.
+      Przykład:
+        -ToFile MyApp.manifest
+
+  -TimeStampUri &lt;identyfikator_URI&gt;     -ti
+      Określa identyfikator URI do użycia na potrzeby oznaczania sygnaturą czasową podczas podpisywania.
+
+  -TrustLevel &lt;poziom&gt;     -tr
+      Określa poziom zaufania do uwzględnienia w generowanym lub aktualizowanym 
+      manifeście aplikacji. Prawidłowe wartości: „Internet”, „LocalIntranet”
+      i „FullTrust”.
+      Przykład:
+        -TrustLevel FullTrust
+
+  -UseManifestForTrust &lt;true|false&gt; -um
+      Określa, czy manifest aplikacji będzie używany na potrzeby informacji
+      o certyfikacji i znakowaniu.
+            
+  -Version &lt;wersja&gt;                -v
+      Określa wersję aplikacji, której manifest jest 
+      generowany lub aktualizowany. Musi mieć format „0.0.0.0”.
+      Przykład:
+        -Version 1.2.3.2112</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InfoMessage">
+        <source>Info</source>
+        <target state="translated">Informacja</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InternalError">
+        <source>Internal error, please try again.</source>
+        <target state="translated">Błąd wewnętrzny, spróbuj ponownie.</target>
+        <note>trailing space is added at run-time</note>
+      </trans-unit>
+      <trans-unit id="InvalidAddLauncherOption">
+        <source>The "{0}" option can not be used with -AddLauncher command.</source>
+        <target state="translated">Opcji „{0}” nie można użyć z poleceniem -AddLauncher.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidAlgorithmValue">
+        <source>Algorithm has to be sha256RSA. Specified - "{0}".</source>
+        <target state="translated">Algorytmem musi być sha256RSA. Określono algorytm „{0}”.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidBinaryToLaunch">
+        <source>Binary to launch cannot include a path, it can only be a filename - {0}.</source>
+        <target state="translated">Plik binarny do uruchomienia nie może zawierać ścieżki. Może to być tylko nazwa pliku — {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidCertFile">
+        <source>Cert file is not of proper format - "{0}"</source>
+        <target state="translated">Format pliku certyfikatu nie jest prawidłowy — „{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidCertNoPrivateKey">
+        <source>This certificate does not contain a private key - "{0}"</source>
+        <target state="translated">Ten certyfikat nie zawiera klucza prywatnego — „{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidCertUsage">
+        <source>This certificate cannot be used for signing - "{0}"</source>
+        <target state="translated">Tego certyfikatu nie można używać do podpisywania — „{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidCodebase">
+        <source>The codebase is invalid - "{0}"</source>
+        <target state="translated">Baza kodu jest nieprawidłowa — „{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidDirectory">
+        <source>Directory not found - "{0}"</source>
+        <target state="translated">Nie znaleziono katalogu — „{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidFileType">
+        <source>Invalid file type, must be "Application", or "Deployment"</source>
+        <target state="translated">Nieprawidłowy typ pliku; typ musi mieć wartość „Application” lub „Deployment”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidHash">
+        <source>No cert found matching specified hash - "{0}"</source>
+        <target state="translated">Nie znaleziono certyfikatu zgodnego z określonym skrótem — „{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidIncludeProviderURL">
+        <source>The -IncludeProviderURL option must be "true", "false", "t", or "f" - "{0}"</source>
+        <target state="translated">Opcja -IncludeProviderURL musi mieć wartość „true”, „false”, „t” lub „f” — „{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidInputFile">
+        <source>Unrecognized file type - "{0}"</source>
+        <target state="translated">Nierozpoznany typ pliku — „{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidInstall">
+        <source>The -Install option must be "true", "false", "t", or "f" - "{0}"</source>
+        <target state="translated">Opcja -Install musi mieć wartość „true”, „false”, „t” lub „f” — „{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidKeyFile">
+        <source>Key file is not of proper format - "{0}"</source>
+        <target state="translated">Format pliku klucza nie jest prawidłowy — „{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidMinVersion">
+        <source>The minimum version specified is not valid.</source>
+        <target state="translated">Określona minimalna wersja nie jest prawidłowa.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidNonAddLauncherOption">
+        <source>The "{0}" option can only be used with -AddLauncher command.</source>
+        <target state="translated">Opcji „{0}” można użyć tylko z poleceniem -AddLauncher.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidNonManifestOption">
+        <source>The "{0}" option can only be used with the -Update or -New commands.</source>
+        <target state="translated">Opcji „{0}” można użyć tylko z poleceniem -Update lub -New.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidPassword">
+        <source>Cert password is incorrect - "{0}"</source>
+        <target state="translated">Hasło certyfikatu jest niepoprawne — „{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidPath">
+        <source>File not found - "{0}"</source>
+        <target state="translated">Nie znaleziono pliku — „{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidProcessor">
+        <source>Unknown processor type "{0}".  Supported processor types are:</source>
+        <target state="translated">Nieznany typ procesora: „{0}”. Obsługiwane typy procesorów to:</target>
+        <note>Will be followed by a list of processor types, after a newline is added at run-time</note>
+      </trans-unit>
+      <trans-unit id="InvalidRequiredUpdate">
+        <source>The -RequiredUpdate option must be "true", "false", "t", or "f" - "{0}"</source>
+        <target state="translated">Opcja -RequiredUpdate musi mieć wartość „true”, „false”, „t” lub „f” — „{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidSigningPlatform">
+        <source>Signing is only supported on Windows.</source>
+        <target state="translated">Podpisywanie jest obsługiwane tylko w systemie Windows.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidTimestamp">
+        <source>The timestamp URI specified is not valid.</source>
+        <target state="translated">Określony identyfikator URI sygnatury czasowej jest nieprawidłowy.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidTrustLevel">
+        <source>Invalid trust level, must be either "LocalIntranet", "Internet", or "FullTrust" - "{0}"</source>
+        <target state="translated">Nieprawidłowy poziom zaufania; poziom musi mieć wartość „LocalIntranet”, „Internet” lub „FullTrust” — „{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidUrl">
+        <source>The URL is not of the proper format - "{0}"</source>
+        <target state="translated">Format adresu URL nie jest prawidłowy — „{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidUseManifestForTrust">
+        <source>The -UseManifestForTrust option must be "true", "false", "t", or "f" - "{0}"</source>
+        <target state="translated">Opcja -UseManifestForTrust musi mieć wartość „true”, „false”, „t” lub „f” — „{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidVersion">
+        <source>Version must be of format X.X.X.X (ex 1.0.0.0) - "{0}"</source>
+        <target state="translated">Wersja musi mieć format X.X.X.X (np. 1.0.0.0) — „{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LauncherSuccessfullyAdded">
+        <source>Launcher successfully added.</source>
+        <target state="translated">Pomyślnie dodano program Launcher.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LockedFile">
+        <source>Not including locked file {0}</source>
+        <target state="translated">Bez uwzględniania zablokowanego pliku {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingAddLauncherOption">
+        <source>Missing {0} option, it is required with AddLauncher command.</source>
+        <target state="translated">Brak opcji {0}. Jest ona wymagana w przypadku polecenia AddLauncher.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingArgument">
+        <source>Missing value following the "{0}" option</source>
+        <target state="translated">Brak wartości po opcji „{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingBinaryToLaunch">
+        <source>Binary to launch cannot be empty.</source>
+        <target state="translated">Plik binarny do uruchomienia nie może być pusty.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingCspOrContainer">
+        <source>This certificate does not contain a private key - "{0}", if this is a public key certificate, please provide valid cryptographic service provider and key container names</source>
+        <target state="translated">Ten certyfikat nie zawiera klucza prywatnego — „{0}”; jeśli jest to certyfikat klucza publicznego, podaj prawidłowe nazwy dostawcy usług kryptograficznych i kontenera kluczy</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingDeploymentProviderUrl">
+        <source>The IncludeProviderURL option is set to true, but no deployment provider Url is provided.</source>
+        <target state="translated">Opcja IncludeProviderURL ma wartość true, ale nie podano adresu URL dostawcy wdrożenia.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingLauncherTemplate">
+        <source>Launcher template "{0}" does not exist.</source>
+        <target state="translated">Szablon programu Launcher „{0}” nie istnieje.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingPassword">
+        <source>Missing Password option, this is required when using the CertFile option.</source>
+        <target state="translated">Brak opcji Password. Jest ona wymagana w przypadku używania opcji CertFile.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingUseApplicationManifestForTrustInfo">
+        <source>When generating or updating an application manifest, the {0} option can only be used when the UseManifestForTrust option is set to true.</source>
+        <target state="translated">Opcji {0} można użyć podczas generowania lub aktualizowania manifestu aplikacji tylko wtedy, gdy opcja UseManifestForTrust ma wartość true.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MultipleKeys">
+        <source>Only one type of signing method may be specified.</source>
+        <target state="translated">Można określić tylko jeden typ metody podpisywania.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NewLicense">
+        <source>New License</source>
+        <target state="translated">Nowa licencja</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoKeySpecified">
+        <source>The -Sign command requires one of -CertFile, or -CertHash.</source>
+        <target state="translated">Polecenie -Sign wymaga jednej z następujących opcji: -CertFile lub -CertHash.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoOutputFileSpecified">
+        <source>No output file was specified.  Please use -ToFile &lt;filename&gt;.</source>
+        <target state="translated">Nie określono pliku wyjściowego. Użyj opcji -ToFile &lt;nazwa_pliku&gt;.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoVerb">
+        <source>The first argument must be one of the following: -New, -Update, -Sign, -Verify, -AddLauncher</source>
+        <target state="translated">Pierwszym argumentem musi być jeden z następujących: -New, -Update, -Sign, -Verify lub -AddLauncher</target>
+        <note>"-New, -Update, -Sign, -Verify, -AddLauncher" are command names and should not be translated</note>
+      </trans-unit>
+      <trans-unit id="NotAllowedCleanCache">
+        <source>ClearApplicationCache should not be used with any other switch.</source>
+        <target state="translated">Polecenia ClearApplicationCache nie należy używać z żadnym innym przełącznikiem.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ResultSomeErrorsEncountered">
+        <source>However, some errors were encountered.</source>
+        <target state="translated">Wystąpiły jednak pewne błędy.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ResultSuccessfullyCreated">
+        <source>successfully created</source>
+        <target state="translated">pomyślnie utworzono</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ResultSuccessfullySigned">
+        <source>successfully signed</source>
+        <target state="translated">pomyślnie podpisano</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ResultSuccessfullyUpdated">
+        <source>successfully updated</source>
+        <target state="translated">pomyślnie zaktualizowano</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SecurityMessage">
+        <source>Mage does not have the security permissions necessary to run.  Ensure that mage is not running from an untrusted source such as a network share or web site.</source>
+        <target state="translated">Narzędzie Mage nie ma uprawnień zabezpieczeń wymaganych do uruchomienia. Upewnij się, że narzędzie Mage nie jest uruchamiane z niezaufanego źródła, takiego jak udział sieciowy lub witryna internetowa.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignatureValidatedSuccessfully">
+        <source>Manifest has a valid signature.</source>
+        <target state="translated">Manifest ma prawidłowy podpis.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TooManyKeysSpecified">
+        <source>Only one of -KeyFile, -CertFile, or -CertHash can be used.</source>
+        <target state="translated">Można użyć tylko jednej z następujących opcji: -KeyFile, -CertFile lub -CertHash.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustLevelsNotSupportedOnNETCore">
+        <source>Setting trust level is not supported on .NET Core</source>
+        <target state="translated">Ustawianie poziomu zaufania nie jest obsługiwane na platformie .NET Core</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustLicenseNotSigned">
+        <source>Trust license is not signed - "{0}"</source>
+        <target state="translated">Licencja zaufania nie jest podpisana — „{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToOpenCertificate">
+        <source>Unable to open certificate "{0}":</source>
+        <target state="translated">Nie można otworzyć certyfikatu „{0}”:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToStartGUI">
+        <source>Unable to locate Mage UI - "{0}"</source>
+        <target state="translated">Nie można znaleźć interfejsu użytkownika narzędzia Mage — „{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnrecognizedParameter">
+        <source>Parameter not recognized - "{0}"</source>
+        <target state="translated">Nie rozpoznano parametru — „{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VerifyIsExclusive">
+        <source>'verify' command can't be combined with any other command.</source>
+        <target state="translated">Polecenia „verify” nie można połączyć z żadnym innym poleceniem.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WarningMessage">
+        <source>Warning</source>
+        <target state="translated">Ostrzeżenie</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -1,0 +1,287 @@
+StyleSheet
+    RuleSet
+        Selector
+            SimpleSelector
+                IdSelector
+                    HashName    #cnn_hdr
+            SimpleSelector
+                IdSelector
+                    HashName    #us-menu
+            Comma    ,
+        Selector
+            SimpleSelector
+                IdSelector
+                    HashName    #cnn_hdr
+            SimpleSelector
+                IdSelector
+                    HashName    #intl-menu
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    display
+                Colon    :
+                Identifier    block
+                Semicolon    ;
+            Declaration
+                Identifier    margin
+                Colon    :
+                NumericalValue
+                    Number    0
+                Identifier    auto
+                Semicolon    ;
+            Declaration
+                Identifier    width
+                Colon    :
+                UnitValue
+                    Number    980
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    height
+                Colon    :
+                UnitValue
+                    Number    35
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    border-left
+                Colon    :
+                UnitValue
+                    Number    1
+                    Units    px
+                Identifier    solid
+                HexColorValue
+                    HashName    #b60002
+            CloseCurlyBrace    }
+    CComment
+        OpenCComment    /*
+        CommentText    Test unknown blocks
+        CloseCComment    */
+    UnknownDirective
+        At    @
+        Identifier    foo
+        Identifier    bar
+        UnknownDirectiveBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    unknown
+                Colon    :
+                Identifier    block
+                Semicolon    ;
+            Declaration (PropertyNameMissing:BeforeItem)
+                UnknownBlock
+                    OpenFunctionBrace    (
+                    PropertyValueBlock
+                        OpenSquareBracket    [
+                        PropertyValueBlock
+                            OpenFunctionBrace    (
+                            UnitValue
+                                Number    1
+                                Units    px
+                            CloseFunctionBrace    )
+                        UrlItem
+                            Url    url(
+                            String    'url'
+                            CloseFunctionBrace    )
+                        CloseSquareBracket    ]
+                    NumericalValue
+                        Number    3
+                    CloseFunctionBrace    )
+            CloseCurlyBrace    }
+    UnknownDirective
+        At    @
+        Identifier    foo
+        Identifier    bar
+        UnknownDirectiveBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    unknown
+                Colon    :
+                Identifier    block
+                Semicolon    ;
+            RuleSet
+                Selector
+                    SimpleSelector
+                        PseudoElementFunctionSelector
+                            DoubleColon    ::
+                            Function
+                                Function    after(
+                                FunctionArgument
+                                    Identifier    foo
+                                    PropertyValueBlock
+                                        OpenSquareBracket    [
+                                        Identifier    bar
+                                        CloseSquareBracket    ]
+                                CloseFunctionBrace    )
+                RuleBlock
+                    OpenCurlyBrace    {
+                    Declaration
+                        Identifier    foo
+                        Colon    :
+                        Identifier    bar
+                        Semicolon    ;
+                    CloseCurlyBrace    }
+            Declaration
+                Identifier    color
+                Colon    :
+                Identifier    blue
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    div
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    grid-columns
+                Colon    :
+                Asterisk (PropertyValueExpected:WholeItem)    *
+                PropertyValueBlock
+                    OpenFunctionBrace    (
+                    UnitValue
+                        Number    1
+                        Units    em
+                    Asterisk    *
+                    CloseFunctionBrace    )
+                PropertyValueBlock
+                    OpenSquareBracket    [
+                    NumericalValue
+                        Number    2
+                    CloseSquareBracket    ]
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    div
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    grid-columns
+                Colon    :
+                PropertyValueBlock
+                    OpenSquareBracket (CloseBraceMismatch:AfterItem)    [
+                    FunctionColor
+                        Function    rgb(
+                        FunctionArgument
+                            NumericalValue
+                                Number    1
+                            Comma    ,
+                        FunctionArgument
+                            NumericalValue
+                                Number    2
+                            Comma    ,
+                        FunctionArgument
+                            NumericalValue
+                                Number    3
+                        CloseFunctionBrace    )
+            CloseCurlyBrace    }
+    CComment
+        OpenCComment    /*
+        CommentText    mis-matched close
+        CloseCComment    */
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    div
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    grid-columns
+                Colon    :
+                PropertyValueBlock
+                    OpenSquareBracket (CloseBraceMismatch:AfterItem)    [
+                    HexColorValue
+                        HashName    #123456
+                CloseFunctionBrace (PropertyValueExpected:WholeItem)    )
+                CloseFunctionBrace (PropertyValueExpected:WholeItem)    )
+            CloseCurlyBrace    }
+    CComment
+        OpenCComment    /*
+        CommentText    mis-matched close
+        CloseCComment    */
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    div
+        RuleBlock (CloseCurlyBraceMissing:AfterItem)
+            OpenCurlyBrace    {
+            Declaration (PropertyNameMissing:BeforeItem)
+                Number    0
+    RuleSet (SelectorBeforeRuleBlockMissing:BeforeItem)
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration (PropertyNameMissing:BeforeItem)
+                Number    1
+                UnknownBlock
+                    OpenSquareBracket    [
+                    NumericalValue
+                        Number    2
+                    PropertyValueBlock
+                        OpenSquareBracket    [
+                        NumericalValue
+                            Number    3
+                        PropertyValueBlock
+                            OpenFunctionBrace    (
+                            NumericalValue
+                                Number    4
+                            PropertyValueBlock
+                                OpenFunctionBrace    (
+                                NumericalValue
+                                    Number    5
+                                NumericalValue
+                                    Number    5
+                                CloseFunctionBrace    )
+                            NumericalValue
+                                Number    4
+                            CloseFunctionBrace    )
+                        NumericalValue
+                            Number    3
+                        CloseSquareBracket    ]
+                    NumericalValue
+                        Number    2
+                    CloseSquareBracket    ]
+                Number    1
+            CloseCurlyBrace    }
+    RuleSet (OpenCurlyBraceMissingForRule:AfterItem)
+        Selector
+            SimpleSelector
+                Number (SimpleSelectorExpected:WholeItem)    0
+    CloseCurlyBrace (UnexpectedToken:WholeItem)    }
+    UnknownDirective
+        At    @
+        Identifier    foo
+        UnknownBlock
+            OpenSquareBracket    [
+            Identifier    bar
+            CloseSquareBracket    ]
+        UnknownBlock
+            OpenFunctionBrace    (
+            Identifier    bar
+            CloseFunctionBrace    )
+        UnknownBlock
+            OpenSquareBracket    [
+            PropertyValueBlock
+                OpenSquareBracket    [
+                PropertyValueBlock
+                    OpenFunctionBrace    (
+                    PropertyValueBlock
+                        OpenFunctionBrace    (
+                        Identifier    bar
+                        CloseFunctionBrace    )
+                    CloseFunctionBrace    )
+                CloseSquareBracket    ]
+            CloseSquareBracket    ]
+        UnknownBlock (AtDirectiveSemicolonMissing:AfterItem)
+            OpenSquareBracket (CloseBraceMismatch:AfterItem)    [
+            Identifier    unclosed
+            Semicolon    ;

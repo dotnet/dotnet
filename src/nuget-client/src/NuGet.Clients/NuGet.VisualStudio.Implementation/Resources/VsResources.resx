@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="UnknownPackage" xml:space="preserve">
+    <value>Unable to find package '{0}'.</value>
+  </data>
+  <data name="TemplateWizard_ErrorDialogTitle" xml:space="preserve">
+    <value>Package Installation Error</value>
+  </data>
+  <data name="TemplateWizard_InvalidRepositoryAttribute" xml:space="preserve">
+    <value>The "repository" attribute of the package element has an invalid value: '{0}'. Valid values are: 'template' or 'extension'.</value>
+  </data>
+  <data name="TemplateWizard_InvalidWizardRunKind" xml:space="preserve">
+    <value>This template wizard can only be applied to single-project or project-item templates.</value>
+  </data>
+  <data name="PreinstalledPackages_FailedToInstallPackage" xml:space="preserve">
+    <value>Could not add all required packages to the project. The following packages failed to install from '{0}':</value>
+  </data>
+  <data name="PreinstalledPackages_PackageInstallStatus" xml:space="preserve">
+    <value>Adding {0}.{1} to project...</value>
+  </data>
+  <data name="TemplateWizard_MissingExtensionId" xml:space="preserve">
+    <value>The project template is configured to use an Extension-specific package repository but the Extension ID has not been specified. Use the "repositoryId" attribute to specify the Extension ID.</value>
+  </data>
+  <data name="PreinstalledPackages_InvalidExtensionId" xml:space="preserve">
+    <value>The preinstalled packages have a reference to a missing Extension. Could not find an Extension with ID '{0}'.</value>
+  </data>
+  <data name="TemplateWizard_InvalidPackageElementAttributes" xml:space="preserve">
+    <value>The project template lists one or more packages with missing, empty, or invalid values for the "id" or "version" attributes. Both attributes are required and must have valid values.</value>
+  </data>
+  <data name="PreinstalledPackages_ExtensionManagerError" xml:space="preserve">
+    <value>Error accessing Extension Manager.</value>
+  </data>
+  <data name="PreinstalledPackages_InvalidRegistryValue" xml:space="preserve">
+    <value>The preinstalled packages have a reference to a missing Registry value. Could not find a Registry key with name '{0}' under '{1}'.</value>
+  </data>
+  <data name="TemplateWizard_MissingRegistryKeyName" xml:space="preserve">
+    <value>The project template is configured to use a Registry-provided package repository but the Registry value name has not been specified. Use the "keyName" attribute to specify the Registry value.</value>
+  </data>
+  <data name="PreinstalledPackages_RegistryKeyError" xml:space="preserve">
+    <value>The preinstalled packages are configured to use a Registry-provided package repository but there was an error accessing Registry key '{0}'.</value>
+  </data>
+  <data name="PreinstalledPackages_VersionConflict" xml:space="preserve">
+    <value>Attempting to install version '{1}' of '{0}' but the project already includes a different version. Skipping...</value>
+  </data>
+  <data name="InvalidNuGetVersionString" xml:space="preserve">
+    <value>The provided version string is not a valid nuget version.</value>
+  </data>
+  <data name="InvalidSource" xml:space="preserve">
+    <value>The specified source '{0}' is invalid. Please provide a valid source.</value>
+  </data>
+  <data name="InvalidNetStandardFramework" xml:space="preserve">
+    <value>The specified framework name '{0}' must be .NETStandard.</value>
+  </data>
+  <data name="CouldNotGetShortFrameworkName" xml:space="preserve">
+    <value>The framework name '{0}' cannot be converted to a short framework name.</value>
+    <comment>Arguments in order:
+The string representation of the user's input framework name.</comment>
+  </data>
+  <data name="Error_ProjectNotInCache" xml:space="preserve">
+    <value>Project {0} does not exist in the project system cache.</value>
+  </data>
+  <data name="Error_FileNotExists" xml:space="preserve">
+    <value>The project file '{0}' does not exist on disk.</value>
+  </data>
+  <data name="PathContext_CreateContextError" xml:space="preserve">
+    <value>Failed creating a path context for "{0}". Reason: {1}</value>
+    <comment>{0} is the project name or full path, {1} is the error message generated earlier</comment>
+  </data>
+  <data name="PathContext_LockFileError" xml:space="preserve">
+    <value>The lock file doesn't exist or it's an older format that doesn't have the package folders property persisted.</value>
+  </data>
+  <data name="PathContext_PackageDirectoryNotFound" xml:space="preserve">
+    <value>Package directory for "{0}" is not found.</value>
+    <comment>{0} is the package ID</comment>
+  </data>
+  <data name="PackageReferenceBrowseObjectClassName" xml:space="preserve">
+    <value>Package Reference</value>
+  </data>
+  <data name="PackageReferenceNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="PackageReferenceNameDescription" xml:space="preserve">
+    <value>The package's name.</value>
+  </data>
+  <data name="PackageReferenceVersionDisplayName" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="PackageReferenceVersionDescription" xml:space="preserve">
+    <value>The package's version.</value>
+  </data>
+  <data name="PackageReferencePathDisplayName" xml:space="preserve">
+    <value>Path</value>
+  </data>
+  <data name="PackageReferencePathDescription" xml:space="preserve">
+    <value>The package's resolved full path.</value>
+  </data>
+  <data name="ProjectReferenceBrowseObjectClassName" xml:space="preserve">
+    <value>Project Reference</value>
+  </data>
+  <data name="ProjectReferenceNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="ProjectReferenceNameDescription" xml:space="preserve">
+    <value>The project's name.</value>
+  </data>
+  <data name="DiagnosticBrowseObjectClassName" xml:space="preserve">
+    <value>Diagnostic</value>
+  </data>
+  <data name="DiagnosticMessageDisplayName" xml:space="preserve">
+    <value>Message</value>
+  </data>
+  <data name="DiagnosticMessageDescription" xml:space="preserve">
+    <value>The diagnostic's descriptive message.</value>
+  </data>
+  <data name="DiagnosticCodeDisplayName" xml:space="preserve">
+    <value>Code</value>
+  </data>
+  <data name="DiagnosticCodeDescription" xml:space="preserve">
+    <value>The diagnostic's identifying code.</value>
+  </data>
+  <data name="DiagnosticLibraryNameDisplayName" xml:space="preserve">
+    <value>Library</value>
+  </data>
+  <data name="DiagnosticLibraryNameDescription" xml:space="preserve">
+    <value>The name of the package or project this diagnostic applies to.</value>
+  </data>
+  <data name="DiagnosticLevelDisplayName" xml:space="preserve">
+    <value>Level</value>
+  </data>
+  <data name="DiagnosticLevelDescription" xml:space="preserve">
+    <value>The diagnostic's level.</value>
+  </data>
+  <data name="DiagnosticWarningLevelDisplayName" xml:space="preserve">
+    <value>Warning Level</value>
+  </data>
+  <data name="DiagnosticWarningLevelDescription" xml:space="preserve">
+    <value>The diagnostic's warning level. Only applies to warnings.</value>
+  </data>
+  <data name="PackageCompileTimeAssemblyGroupName" xml:space="preserve">
+    <value>Compile Time Assemblies</value>
+  </data>
+  <data name="PackageContentFilesGroupName" xml:space="preserve">
+    <value>Content Files</value>
+  </data>
+  <data name="PackageContentFileBrowseObjectClassName" xml:space="preserve">
+    <value>Content File</value>
+  </data>
+  <data name="PackageContentFilePathDisplayName" xml:space="preserve">
+    <value>Path</value>
+  </data>
+  <data name="PackageContentFilePathDescription" xml:space="preserve">
+    <value>The content file's path.</value>
+  </data>
+  <data name="PackageContentFileOutputPathDisplayName" xml:space="preserve">
+    <value>Output Path</value>
+  </data>
+  <data name="PackageContentFileOutputPathDescription" xml:space="preserve">
+    <value>The content file's output path.</value>
+  </data>
+  <data name="PackageContentFilePPOutputPathDisplayName" xml:space="preserve">
+    <value>Preprocessed Output Path</value>
+  </data>
+  <data name="PackageContentFilePPOutputPathDescription" xml:space="preserve">
+    <value>The content file's preprocessed output path.</value>
+  </data>
+  <data name="PackageContentFileCodeLanguageDisplayName" xml:space="preserve">
+    <value>Code Language</value>
+  </data>
+  <data name="PackageContentFileCodeLanguageDescription" xml:space="preserve">
+    <value>Controls whether this file should be included in the referencing project based on that project's language.</value>
+  </data>
+  <data name="PackageContentFileBuildActionDisplayName" xml:space="preserve">
+    <value>Build Action</value>
+  </data>
+  <data name="PackageContentFileBuildActionDescription" xml:space="preserve">
+    <value>The content file's build action.</value>
+  </data>
+  <data name="PackageContentFileCopyToOutputDisplayName" xml:space="preserve">
+    <value>Copy to Output</value>
+  </data>
+  <data name="PackageContentFileCopyToOutputDescription" xml:space="preserve">
+    <value>Whether the content file is copied to the output directory during build.</value>
+  </data>
+  <data name="PackageAssemblyBrowseObjectClassName" xml:space="preserve">
+    <value>Assembly</value>
+  </data>
+  <data name="PackageAssemblyNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="PackageAssemblyNameDescription" xml:space="preserve">
+    <value>The assembly's name.</value>
+  </data>
+  <data name="PackageAssemblyPathDisplayName" xml:space="preserve">
+    <value>Path</value>
+  </data>
+  <data name="PackageAssemblyPathDescription" xml:space="preserve">
+    <value>The assembly's path.</value>
+  </data>
+  <data name="PackageFrameworkAssemblyGroupName" xml:space="preserve">
+    <value>Framework Assemblies</value>
+  </data>
+  <data name="PackageDocumentGroupName" xml:space="preserve">
+    <value>Documents</value>
+  </data>
+  <data name="PackageDocumentBrowseObjectClassName" xml:space="preserve">
+    <value>Package Document</value>
+  </data>
+  <data name="PackageDocumentPathDisplayName" xml:space="preserve">
+    <value>Path</value>
+  </data>
+  <data name="PackageDocumentPathDescription" xml:space="preserve">
+    <value>The document's path.</value>
+  </data>
+  <data name="PackageBuildFileGroupName" xml:space="preserve">
+    <value>Build Files</value>
+  </data>
+  <data name="PackageBuildMultiTargetingFileGroupName" xml:space="preserve">
+    <value>Build Files (Multi-targeting)</value>
+  </data>
+  <data name="PackageBuildFileBrowseObjectClassName" xml:space="preserve">
+    <value>Build File</value>
+  </data>
+  <data name="PackageBuildFileNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="PackageBuildFileNameDescription" xml:space="preserve">
+    <value>The build file's name.</value>
+  </data>
+  <data name="PackageBuildFilePathDisplayName" xml:space="preserve">
+    <value>Path</value>
+  </data>
+  <data name="PackageBuildFilePathDescription" xml:space="preserve">
+    <value>The build file's path.</value>
+  </data>
+  <data name="PropertyCannotBeNull" xml:space="preserve">
+    <value>'{0}' cannot be null.</value>
+    <comment>0 - property name</comment>
+  </data>
+</root>

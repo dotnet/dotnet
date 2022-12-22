@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
+
+  <PropertyGroup Condition="'$(CopyrightNetFoundation)' != ''">
+    <Copyright>$(CopyrightNetFoundation)</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Product>Microsoft® Build Tools®</Product>
+    <Configurations>Debug;Release;Debug-MONO;Release-MONO;MachineIndependent</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <FullFrameworkTFM>net472</FullFrameworkTFM>
+    
+    <!-- 
+        When updating the version of .NET Core for MSBuild, this property is the 'source of truth'.
+        Other locations to update the version number:
+          global.json
+          eng/cibuild_bootstrapped_msbuild.ps1
+          eng/cibuild_bootstrapped_msbuild.sh
+          scripts/Deploy-MSBuild.ps1
+          src/Framework/README.md
+          src/Utilities/README.md
+     -->
+    <LatestDotNetCoreForMSBuild>net7.0</LatestDotNetCoreForMSBuild>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <DOTNET_INSTALL_DIR Condition="'$(DOTNET_INSTALL_DIR)' == ''">$(RepoRoot).dotnet\</DOTNET_INSTALL_DIR>
+
+    <!-- Repository and project URLs (used in nuget packages) -->
+    <RepositoryUrl>https://github.com/dotnet/msbuild</RepositoryUrl>
+    <PackageProjectUrl>http://go.microsoft.com/fwlink/?LinkId=624683</PackageProjectUrl>
+    <PackageIcon>MSBuild-NuGet-Icon.png</PackageIcon>
+    <PackageTags>MSBuild</PackageTags>
+
+    <TargetMSBuildToolsVersion>Current</TargetMSBuildToolsVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <GenerateNeutralResourcesLanguageAttribute>false</GenerateNeutralResourcesLanguageAttribute>
+
+    <!-- NU1603: Microsoft.xunit.netcore.extensions package has dependencies to versions which aren't published, so ignore those warnings
+         NU5105: we're explicitly opting in to semver2, as is most of .NET Core
+        CS1701 and CS1702 are by default ignored by Microsoft.NET.Sdk, but if you define the NoWarn property in Directory.Build.props,
+        you don't get those defaults.
+        SYSLIB0011: Removing binary formatter will happen as part of a larger .NET-wide effort.
+        SYSLIB0037 & SYSLIB0044: The deprecated AssemblyName members could require a bigger refactor for us: https://github.com/dotnet/msbuild/issues/7902
+        RS0016 & RS0017: Roslyn analyzers seem to be bugged, claiming that API's that exist don't and vise-versa: https://github.com/dotnet/msbuild/issues/7903
+    -->
+
+    <NoWarn>$(NoWarn);NU1603;NU5105;1701;1702;SYSLIB0011;SYSLIB0037;SYSLIB0044;RS0016;RS0017;</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug-MONO'">
+    <DebugSymbols Condition="'$(DebugSymbols)' == ''">true</DebugSymbols>
+    <Optimize Condition="'$(Optimize)' == ''">false</Optimize>
+    <DefineConstants>$(DefineConstants);DEBUG</DefineConstants>
+    <MonoBuild>true</MonoBuild>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release-MONO'">
+    <DebugSymbols Condition="'$(DebugSymbols)' == ''">true</DebugSymbols>
+    <Optimize Condition="'$(Optimize)' == ''">true</Optimize>
+    <MonoBuild>true</MonoBuild>
+  </PropertyGroup>
+  <!-- Configuration MSBuild for portable (xcopy-install) toolsets: works on WinNT and linux/mac via Mono, isolates from machine environment:
+    uses only tools installed with it, ignores Registry and GAC and Visual Studio installations to provide the same build experience on all machines -->
+  <PropertyGroup Condition="'$(Configuration)' == 'MachineIndependent'">
+    <DebugSymbols Condition="'$(DebugSymbols)' == ''">true</DebugSymbols>
+    <Optimize Condition="'$(Optimize)' == ''">true</Optimize>
+    <DebugType Condition="'$(DebugType)' == ''">none</DebugType>
+    <MachineIndependentBuild>true</MachineIndependentBuild>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <AssemblyInformationCachePaths Condition="Exists('$(NetCoreRoot)sdk\$(NetCoreSdkVersion)\SdkPrecomputedAssemblyReferences.cache')">$(AssemblyInformationCachePaths);$(NetCoreRoot)sdk\$(NetCoreSdkVersion)\SDKPrecomputedAssemblyReferences.cache</AssemblyInformationCachePaths>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <DefaultItemExcludes>$(DefaultItemExcludes);*.log</DefaultItemExcludes>
+    <DefaultItemExcludes>$(DefaultItemExcludes);*.binlog</DefaultItemExcludes>
+
+    <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
+  </PropertyGroup>
+
+  <!-- Enable SDK supplied netanalyzers for all target frameworks -->
+  <PropertyGroup>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+  </PropertyGroup>
+  
+</Project>

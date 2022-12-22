@@ -1,0 +1,100 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <VersionPrefix>1.0.2</VersionPrefix>
+    <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks Condition=" '$(OS)' != 'Windows_NT' ">netstandard2.0</TargetFrameworks>
+    <DelaySign Condition=" '$(OS)' == 'Windows_NT' ">true</DelaySign>
+    <PreserveCompilationContext>true</PreserveCompilationContext>
+    <AssemblyName>ApplicationInsightsTypes</AssemblyName>
+    <AssemblyOriginatorKeyFile>../../keys/35MSSharedLib1024.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
+    <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
+    <PackageId>ApplicationInsightsTypes</PackageId>
+    <NetStandardImplicitPackageVersion>1.6.1</NetStandardImplicitPackageVersion>
+	<BondOutputDirectory>$(MSBuildThisFileDirectory)\Generated</BondOutputDirectory>
+	<EnableDefaultItems Condition="$(OS) == 'Windows_NT'">false</EnableDefaultItems>
+  </PropertyGroup>
+
+  
+  <ItemGroup>
+    <PackageReference Include="Bond.Core.CSharp" Version="7.0.0" />
+    <PackageReference Include="Bond.CSharp" Version="7.0.0" />    
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
+    <Reference Include="System" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(OS) == 'Windows_NT'">
+    <BondCodegen Include="..\..\Schema\PublicSchema\AvailabilityData.bond">
+      <Link>StackFrame.bond</Link>
+    </BondCodegen>
+    <BondCodegen Include="..\..\Schema\PublicSchema\Base.bond">
+      <Link>Base.bond</Link>
+    </BondCodegen>
+    <BondCodegen Include="..\..\Schema\PublicSchema\ContextTagKeys.bond">
+      <Link>ContextTagKeys.bond</Link>
+    </BondCodegen>
+    <BondCodegen Include="..\..\Schema\PublicSchema\Data.bond">
+      <Link>Data.bond</Link>
+    </BondCodegen>
+    <BondCodegen Include="..\..\Schema\PublicSchema\DataPoint.bond">
+      <Link>DataPoint.bond</Link>
+    </BondCodegen>
+    <BondCodegen Include="..\..\Schema\PublicSchema\DataPointType.bond">
+      <Link>DataPointType.bond</Link>
+    </BondCodegen>
+    <BondCodegen Include="..\..\Schema\PublicSchema\Domain.bond">
+      <Link>Domain.bond</Link>
+    </BondCodegen>
+    <BondCodegen Include="..\..\Schema\PublicSchema\Envelope.bond">
+      <Link>Envelope.bond</Link>
+    </BondCodegen>
+    <BondCodegen Include="..\..\Schema\PublicSchema\EventData.bond">
+      <Link>EventData.bond</Link>
+    </BondCodegen>
+    <BondCodegen Include="..\..\Schema\PublicSchema\ExceptionData.bond">
+      <Link>ExceptionData.bond</Link>
+    </BondCodegen>
+    <BondCodegen Include="..\..\Schema\PublicSchema\ExceptionDetails.bond">
+      <Link>ExceptionDetails.bond</Link>
+    </BondCodegen>
+    <BondCodegen Include="..\..\Schema\PublicSchema\MessageData.bond">
+      <Link>MessageData.bond</Link>
+    </BondCodegen>
+    <BondCodegen Include="..\..\Schema\PublicSchema\MetricData.bond">
+      <Link>MetricData.bond</Link>
+    </BondCodegen>
+    <BondCodegen Include="..\..\Schema\PublicSchema\PageViewData.bond">
+      <Link>PageViewData.bond</Link>
+    </BondCodegen>
+    <BondCodegen Include="..\..\Schema\PublicSchema\PageViewPerfData.bond">
+      <Link>PageViewPerfData.bond</Link>
+    </BondCodegen>
+    <BondCodegen Include="..\..\Schema\PublicSchema\RemoteDependencyData.bond">
+      <Link>RemoteDependencyData.bond</Link>
+    </BondCodegen>
+    <BondCodegen Include="..\..\Schema\PublicSchema\RequestData.bond">
+      <Link>RequestData.bond</Link>
+    </BondCodegen>
+    <BondCodegen Include="..\..\Schema\PublicSchema\SeverityLevel.bond">
+      <Link>SeverityLevel.bond</Link>
+    </BondCodegen>
+    <BondCodegen Include="..\..\Schema\PublicSchema\StackFrame.bond">
+      <Link>StackFrame.bond</Link>
+    </BondCodegen>
+  </ItemGroup>
+
+  <ItemGroup Condition="$(OS) == 'Windows_NT'">
+    <Compile Include="ItemType.cs" />
+    <Compile Include="TelemetryItem.cs" />
+    <Compile Include="TelemetryItemType.cs" />
+  </ItemGroup>
+
+</Project>

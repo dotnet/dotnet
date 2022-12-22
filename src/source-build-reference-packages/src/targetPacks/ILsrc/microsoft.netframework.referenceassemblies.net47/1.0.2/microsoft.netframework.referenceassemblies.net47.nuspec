@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.NETFramework.ReferenceAssemblies.net47</id>
+    <version>1.0.2</version>
+    <authors>Microsoft</authors>
+    <owners>Microsoft</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <developmentDependency>true</developmentDependency>
+    <licenseUrl>https://github.com/Microsoft/dotnet/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/Microsoft/dotnet/tree/master/releases/reference-assemblies</projectUrl>
+    <iconUrl>http://go.microsoft.com/fwlink/?LinkID=288859</iconUrl>
+    <description>Microsoft .NET Framework Reference Assemblies</description>
+    <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+    <dependencies>
+      <group targetFramework=".NETFramework4.7" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="*/**" target="/" exclude="obj/**/*.*;**/Debug/**/*.*" />
+    <file src="*" target="/" exclude="*.csproj" />
+  </files>
+</package>

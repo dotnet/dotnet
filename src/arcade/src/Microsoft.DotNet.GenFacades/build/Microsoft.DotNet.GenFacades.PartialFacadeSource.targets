@@ -1,0 +1,40 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+
+  <UsingTask TaskName="GenPartialFacadeSource" AssemblyFile="$(GenFacadesTargetAssemblyPath)" />
+
+  <PropertyGroup>
+    <GenFacadesReferencePathItemName Condition="'$(GenFacadesReferencePathItemName)' == ''">ReferencePath</GenFacadesReferencePathItemName>
+    <GenFacadesReferenceAssemblyItemName Condition="'$(GenFacadesReferenceAssemblyItemName)' == ''">ResolvedMatchingContract</GenFacadesReferenceAssemblyItemName>
+    <!-- Tell ResolveMatchingContract to run and resolve contract to project reference -->
+    <ResolveMatchingContract>true</ResolveMatchingContract>
+    <GeneratePartialFacadeSourceDependsOn>$(GeneratePartialFacadeSourceDependsOn);ResolveMatchingContract;_GetRoslynAssembliesPath</GeneratePartialFacadeSourceDependsOn>
+    <CoreCompileDependsOn Condition="'$(DesignTimeBuild)' != 'true'">$(CoreCompileDependsOn);GeneratePartialFacadeSource</CoreCompileDependsOn>
+    <GenFacadesOutputSourcePath Condition="'$(GenFacadesOutputSourcePath)' == ''">$(IntermediateOutputPath)$(AssemblyTitle).Forwards.cs</GenFacadesOutputSourcePath>
+  </PropertyGroup>
+
+  <Target Name="GeneratePartialFacadeSource"
+          Inputs="$(MSBuildAllProjects);@($(GenFacadesReferenceAssemblyItemName));@($(GenFacadesReferencePathItemName));@(Compile->WithMetadataValue('ExcludeFromGenFacades', ''))"
+          Outputs="$(GenFacadesOutputSourcePath)"
+          DependsOnTargets="$(GeneratePartialFacadeSourceDependsOn)">
+    <GenPartialFacadeSource
+      ReferencePaths="@($(GenFacadesReferencePathItemName))"
+      ReferenceAssembly="@($(GenFacadesReferenceAssemblyItemName))"
+      CompileFiles="@(Compile->WithMetadataValue('ExcludeFromGenFacades', ''))"
+      DefineConstants="$(DefineConstants)"
+      LangVersion="$(LangVersion)"
+      IgnoreMissingTypes="$(GenFacadesIgnoreMissingTypes)"
+      IgnoreMissingTypesList="@(GenFacadesIgnoreMissingType)"
+      OmitTypes="@(GenFacadesOmitType)"
+      OutputSourcePath="$(GenFacadesOutputSourcePath)"
+      SeedTypePreferences="@(SeedTypePreference)"
+      RoslynAssembliesPath="$(RoslynAssembliesPath)" />
+
+    <ItemGroup Condition="'$(GenFacadesAutoIncludeCompileItem)' != 'false' and
+                          Exists('$(GenFacadesOutputSourcePath)')">
+      <Compile Include="$(GenFacadesOutputSourcePath)" />
+      <FileWrites Include="$(GenFacadesOutputSourcePath)" />
+    </ItemGroup>
+  </Target>
+
+</Project>

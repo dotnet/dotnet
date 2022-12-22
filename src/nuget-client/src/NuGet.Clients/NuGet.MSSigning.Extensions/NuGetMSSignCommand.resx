@@ -1,0 +1,205 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="MSSignCommandCertificateFileDescription" xml:space="preserve">
+    <value>File path to the p7b file to be used while signing the package.</value>
+  </data>
+  <data name="MSSignCommandCertificateFingerprintDescription" xml:space="preserve">
+    <value>SHA-1 fingerprint of the certificate used to search a p7b file for the certificate.</value>
+  </data>
+  <data name="MSSignCommandCSPNameDescription" xml:space="preserve">
+    <value>Name of the cryptographic service provider which contains the private key container.</value>
+  </data>
+  <data name="MSSignCommandDescription" xml:space="preserve">
+    <value>Signs a NuGet package with the specified p7b file.</value>
+  </data>
+  <data name="MSSignCommandHashAlgorithmDescription" xml:space="preserve">
+    <value>Hash algorithm to be used while generating the package manifest file. Defaults to SHA256.</value>
+  </data>
+  <data name="MSSignCommandInvalidArgumentException" xml:space="preserve">
+    <value>Invalid value provided for '{0}'. For a list of accepted values, please visit https://docs.nuget.org/docs/reference/command-line-reference</value>
+    <comment>{0} - argument name</comment>
+  </data>
+  <data name="MSSignCommandInvalidCngKeyException" xml:space="preserve">
+    <value>Cng Key is not an RSA key.</value>
+  </data>
+  <data name="MSSignCommandKeyContainerDescription" xml:space="preserve">
+    <value>Name of the key container which has the private key.</value>
+  </data>
+  <data name="MSSignCommandNoCertException" xml:space="preserve">
+    <value>Can't find specified certificate.</value>
+  </data>
+  <data name="MSSignCommandNoCngKeyException" xml:space="preserve">
+    <value>Can't find cng key.</value>
+  </data>
+  <data name="MSSignCommandNoPackageException" xml:space="preserve">
+    <value>No package was provided. For a list of accepted ways to provide a package, please visit https://docs.nuget.org/docs/reference/command-line-reference</value>
+  </data>
+  <data name="MSSignCommandNoTimestamperWarning" xml:space="preserve">
+    <value>No '-Timestamper' option was provided the signed package will not be timestamped. To learn more about this option, please visit https://docs.nuget.org/docs/reference/command-line-reference</value>
+  </data>
+  <data name="MSSignCommandNoValidCertificateFileException" xml:space="preserve">
+    <value>No CertificateFile provided or provided file is not a p7b file.</value>
+  </data>
+  <data name="MSSignCommandOutputDirectoryDescription" xml:space="preserve">
+    <value>Directory where the signed package should be saved. By default the original package is overwritten by the signed package.</value>
+  </data>
+  <data name="MSSignCommandTimestamperDescription" xml:space="preserve">
+    <value>URL to an RFC 3161 timestamping server.</value>
+  </data>
+  <data name="MSSignCommandTimestampHashAlgorithmDescription" xml:space="preserve">
+    <value>Hash algorithm to be used by the RFC 3161 timestamp server. Defaults to SHA256.</value>
+  </data>
+  <data name="MSSignCommandUsageDescription" xml:space="preserve">
+    <value>Signs a NuGet package.</value>
+  </data>
+  <data name="MSSignCommandUsageExamples" xml:space="preserve">
+    <value>nuget mssign MyPackage.nupkg -Timestamper https://foo.bar -CertificateFile foo.p7b -CSPName "Cryptographic Service Provider"  -KeyContainer "4003d786-cc37-4004-bfdf-c4f3e8ef9b3a" -CertificateFingerprint "4003d786cc374004bfdfc4f3e8ef9b3a"  
+
+nuget mssign MyPackage.nupkg -Timestamper https://foo.bar -CertificateFile foo.p7b -CSPName "Cryptographic Service Provider"  -KeyContainer "4003d786-cc37-4004-bfdf-c4f3e8ef9b3a" -CertificateFingerprint "4003d786cc374004bfdfc4f3e8ef9b3a" -OutputDirectory .\..\Signed</value>
+    <comment>Please don't localize this string</comment>
+  </data>
+  <data name="MSSignCommandUsageSummary" xml:space="preserve">
+    <value>&lt;package_path&gt; -Timestamper &lt;timestamp_server_url&gt; -CertificateFile &lt;p7b_file_path&gt; -CSPName &lt;cryptographic_service _provider_name&gt;  -KeyContainer &lt;key_container_guid&gt;  -CertificateFingerprint &lt;certificate_fingerprint&gt;</value>
+    <comment>Please don't localize this string</comment>
+  </data>
+  <data name="MSSignCommandOverwriteDescription" xml:space="preserve">
+    <value>Switch to indicate if the current signature should be overwritten. By default the command will fail if the package already has a signature.</value>
+  </data>
+  <data name="RepoSignCommandDescription" xml:space="preserve">
+    <value>Sign a NuGet package by adding repository signature with specified p7b file.</value>
+  </data>
+  <data name="RepoSignCommandPackageOwnersDescription" xml:space="preserve">
+    <value>Semicolon-separated list of package owners.</value>
+  </data>
+  <data name="RepoSignCommandUsageDescription" xml:space="preserve">
+    <value>Sign a NuGet package with repository signature.</value>
+  </data>
+  <data name="RepoSignCommandUsageExamples" xml:space="preserve">
+    <value>nuget reposign MyPackage.nupkg -Timestamper http://timestamper.test -CertificateFile certificates.p7b -CSPName "Cryptographic Service Provider" -KeyContainer 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a -CertificateFingerprint 8599ADD1C62EE42E315EA887FF60908B7A7C6E9B -V3ServiceIndexUrl https://v3.index.test
+
+nuget reposign MyPackage.nupkg -Timestamper http://timestamper.test -CertificateFile certificates.p7b -CSPName "Cryptographic Service Provider" -KeyContainer 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a -CertificateFingerprint 8599ADD1C62EE42E315EA887FF60908B7A7C6E9B -OutputDirectory .\..\Signed -PackageOwners "owner1;owner2" -V3ServiceIndexUrl https://v3.index.test</value>
+  </data>
+  <data name="RepoSignCommandUsageSummary" xml:space="preserve">
+    <value>&lt;package_path&gt; -Timestamper &lt;timestamp_server_url&gt; -CertificateFile &lt;p7b_file_path&gt; -CSPName &lt;cryptographic_service_provider_name&gt; -KeyContainer &lt;key_container_guid&gt; -CertificateFingerprint &lt;certificate_fingerprint&gt; -PackageOwners &lt;package_owners&gt; -V3ServiceIndexUrl &lt;v3_service_index_url&gt;</value>
+  </data>
+  <data name="RepoSignCommandV3ServiceIndexUrlDescription" xml:space="preserve">
+    <value>Repository V3 service index URL.</value>
+  </data>
+</root>

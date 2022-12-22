@@ -1,0 +1,48 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+  <ItemGroup>
+    <_StubFiles Include="$(VisualStudioSetupIntermediateOutputPath)**\*.stub"/>
+    <_StubDirs Include="@(_StubFiles->'%(RecursiveDir)')"/>
+  </ItemGroup>
+
+  <PropertyGroup>
+    <GenerateSbom Condition="'$(GenerateSbom)' == ''">false</GenerateSbom>
+  </PropertyGroup>
+  <!---
+    This target is invoked in a separate phase after all input VSIX files are signed.
+    This is important since the manifest contain hashes of the VSIX files.
+  -->
+  <Target Name="GenerateVisualStudioInsertionManifests"
+          BeforeTargets="AfterPack"
+          Outputs="%(_StubDirs.Identity)"
+          Condition="'@(_StubDirs)' != ''">
+    <PropertyGroup>
+      <_ComponentDir>%(_StubDirs.Identity)</_ComponentDir>
+      <_ComponentName>$(_ComponentDir.TrimEnd('\'))</_ComponentName>
+    </PropertyGroup>
+
+    <Message Text="Generating manifest for VS component '$(_ComponentName)'" Importance="high"/>
+
+    <Error Condition="'$(VisualStudioDropName)' == '' and '$(OfficialBuild)' == 'true'"
+           Text="Property VisualStudioDropName must be specified in official build that produces Visual Studio insertion components." />
+
+    <ItemGroup>
+      <_Args Include="OfficialBuild=$(OfficialBuild)" />
+      <_Args Include="ComponentName=$(_ComponentName)"/>
+      <_Args Include="SetupOutputPath=$(VisualStudioSetupInsertionPath)"/>
+      <_Args Include="ComponentIntermediateOutputPath=$(VisualStudioSetupIntermediateOutputPath)$(_ComponentName)\"/>
+      <_Args Include="SwixBuildPath=$(NuGetPackageRoot)microsoft.visualstudioeng.microbuild.plugins.swixbuild\$(MicrosoftVisualStudioEngMicroBuildPluginsSwixBuildVersion)\"/>
+      <_Args Include="VisualStudioDropName=$(VisualStudioDropName)" />
+      <_Args Include="DotNetTool=$(DotNetTool)" />
+      <_Args Include="ManifestTool=$(NUGET_PACKAGES)microsoft.manifesttool.crossplatform\$(MicrosoftManifestToolCrossPlatformVersion)\Content\Microsoft.ManifestTool.dll"/>
+      <_Args Include="GenerateSbom=$(GenerateSbom)" />
+    </ItemGroup>
+
+    <!--
+      Invoke GenerateSetupManifest target directly (instead of Build) to skip logic in common targets that is not needed 
+      and adds unnecessary dependency on .NET Framework reference assemblies.
+    -->
+    <MSBuild Projects="VisualStudio.SetupPackage.vsmanproj" Properties="@(_Args)" Targets="_BuildManifest"/>
+  </Target>
+
+</Project>

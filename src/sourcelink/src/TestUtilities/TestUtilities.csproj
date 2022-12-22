@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. See the License.txt file in the project root for more information. -->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net472;net7.0</TargetFrameworks>
+    <IsShipping>false</IsShipping>
+    <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="NuGet.Versioning" Version="$(NuGetVersioningVersion)" />
+    <PackageReference Include="Microsoft.Build" Version="$(MicrosoftBuildVersion)" />
+    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="$(MicrosoftBuildTasksCore)" />
+    <PackageReference Include="xunit.core" Version="$(XunitVersion)" />
+    <PackageReference Include="xunit.assert" Version="$(XunitVersion)" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <_DotNetSdkBuildIInfoFile>BuildInfo.g.cs</_DotNetSdkBuildIInfoFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Common\NullableAttributes.cs" Link="Common\NullableAttributes.cs" />
+  </ItemGroup>
+
+  <Target Name="_GenerateSdkVersionAttribute" BeforeTargets="CoreCompile" Outputs="$(IntermediateOutputPath)$(_DotNetSdkBuildIInfoFile)">
+    <ItemGroup>
+      <_Attribute Include="TestUtilities.BuildInfoAttribute">
+        <_Parameter1>$(NETCoreSdkVersion)</_Parameter1>
+        <_Parameter2>$(ArtifactsShippingPackagesDir)</_Parameter2>
+        <_Parameter3>$(ArtifactsLogDir)</_Parameter3>
+      </_Attribute>
+    </ItemGroup>
+
+    <WriteCodeFragment AssemblyAttributes="@(_Attribute)" Language="$(Language)" OutputFile="$(IntermediateOutputPath)$(_DotNetSdkBuildIInfoFile)">
+      <Output TaskParameter="OutputFile" ItemName="Compile" />
+      <Output TaskParameter="OutputFile" ItemName="FileWrites" />
+    </WriteCodeFragment>
+  </Target>
+</Project>

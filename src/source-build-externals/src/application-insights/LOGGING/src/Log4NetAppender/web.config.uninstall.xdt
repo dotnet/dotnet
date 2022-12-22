@@ -1,0 +1,29 @@
+﻿<?xml version="1.0"?>
+<configuration xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+  
+  <log4net>
+    <root>
+      <appender-ref ref="aiAppender" xdt:Transform="Remove" xdt:Locator="Match(ref)" />
+      
+      <level value="ALL" xdt:Transform="Remove" xdt:Locator="Condition(@value = 'ALL' and count(./../appender-ref) = 0)"/>
+    </root>
+
+    <root xdt:Transform="Remove" xdt:Locator="Condition(count(child::*) = 0)"/>
+    
+    <appender name="aiAppender" xdt:Locator="Match(name)">
+      <layout type="log4net.Layout.PatternLayout" xdt:Transform="Remove"/>
+    </appender>
+
+    <appender name="aiAppender" xdt:Transform="Remove" xdt:Locator="Condition(@name = 'aiAppender' and count(child::*) = 0)"/>
+  </log4net>
+
+  <log4net xdt:Transform="Remove" xdt:Locator="Condition(count(child::*) = 0)"/>
+
+
+  <configSections>
+    <section name="log4net" xdt:Transform="Remove" xdt:Locator="Condition(@name = 'log4net' and count(/configuration/log4net) = 0)"/>
+  </configSections>
+
+  <configSections xdt:Transform="Remove" xdt:Locator="Condition(count(child::*) = 0)"/>
+
+</configuration>

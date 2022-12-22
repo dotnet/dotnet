@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <OutputType>Exe</OutputType>
+    <CLRTestPriority>1</CLRTestPriority>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Case2.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="Library1.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Argument_Cannot_Be_Null_Or_Empty" xml:space="preserve">
+    <value>Value cannot be null or empty string.</value>
+  </data>
+  <data name="AttributeNotAllowed" xml:space="preserve">
+    <value>Attribute '{0}' is not allowed in element '{1}'.</value>
+    <comment>0 - attribute name
+1 - element name</comment>
+  </data>
+  <data name="AttributeValueNotAllowed" xml:space="preserve">
+    <value>The attribute '{0}' has an unallowed value '{1}' in element '{2}'.</value>
+    <comment>0 - attribute name
+1 - attribute value
+2 - element name</comment>
+  </data>
+  <data name="CannotUpdateDifferentItems" xml:space="preserve">
+    <value>The item passed to the Update method cannot refer to a different item than the one being updated.</value>
+  </data>
+  <data name="CannotUpdateMachineWide" xml:space="preserve">
+    <value>Unable to update setting since it is in a machine-wide NuGet.Config.</value>
+  </data>
+  <data name="CannotUpdateNode" xml:space="preserve">
+    <value>Cannot update the node of a setting.</value>
+  </data>
+  <data name="CredentialsItemMustHaveUsernamePassword" xml:space="preserve">
+    <value>Credentials item must have username and password.</value>
+  </data>
+  <data name="Error_EncryptionUnsupported" xml:space="preserve">
+    <value>Encryption is not supported on non-Windows platforms.</value>
+  </data>
+  <data name="Error_InvalidAttribute" xml:space="preserve">
+    <value>The attribute {0}-{1} is not valid.</value>
+    <comment>0 - attribute name
+1 - attribute value</comment>
+  </data>
+  <data name="Error_MergeTwoDifferentSections" xml:space="preserve">
+    <value>Cannot merge two different sections.</value>
+  </data>
+  <data name="Error_MoreThanOnePassword" xml:space="preserve">
+    <value>A credentials item must have only one Password or ClearTextPassword entry.</value>
+  </data>
+  <data name="Error_MoreThanOneUsername" xml:space="preserve">
+    <value>A credentials item must have only one Username entry.</value>
+  </data>
+  <data name="Error_MoreThanOneValidAuthenticationTypes" xml:space="preserve">
+    <value>A credentials item must have only one ValidAuthenticationTypes entry.</value>
+  </data>
+  <data name="FileDoesNotExist" xml:space="preserve">
+    <value>File '{0}' does not exist.</value>
+  </data>
+  <data name="InvalidNullSettingsOperation" xml:space="preserve">
+    <value>"{0}" cannot be called on a NullSettings. This may be caused on account of insufficient permissions to read or write to "%AppData%\NuGet\NuGet.config".</value>
+  </data>
+  <data name="ItemDoesNotExist" xml:space="preserve">
+    <value>The item does not exist in the {0} section.</value>
+    <comment>0 - section name</comment>
+  </data>
+  <data name="MissingRequiredAttribute" xml:space="preserve">
+    <value>Missing required attribute '{0}' in element '{1}'.</value>
+    <comment>0 - attribute name
+1 - element name</comment>
+  </data>
+  <data name="MustContainAbsolutePath" xml:space="preserve">
+    <value>'{0}' must contain an absolute path '{1}'.</value>
+  </data>
+  <data name="NoAttributesAllowed" xml:space="preserve">
+    <value>The {0} item should not have any attributes and it was found with {1}.</value>
+    <comment>0 - item name
+1- attributes count</comment>
+  </data>
+  <data name="NoWritteableConfig" xml:space="preserve">
+    <value>There is no NuGet.Config that could be used for writing settings. Please create one at the desired location and restart the client.</value>
+  </data>
+  <data name="OwnersItemMustHaveAtLeastOneOwner" xml:space="preserve">
+    <value>Owners item must have at least one owner.</value>
+  </data>
+  <data name="OwnersMustOnlyHaveContent" xml:space="preserve">
+    <value>Owners item must only have text content and cannot be empty.</value>
+  </data>
+  <data name="PropertyCannotBeNullOrEmpty" xml:space="preserve">
+    <value>{0} cannot be null or empty.</value>
+    <comment>0 - property name</comment>
+  </data>
+  <data name="RepositoryMustHaveOneOwners" xml:space="preserve">
+    <value>The repository item with name '{0}' and service index '{1}' has more than one owners item in it.</value>
+    <comment>0 - repository name
+1 - service index</comment>
+  </data>
+  <data name="SectionDoesNotExist" xml:space="preserve">
+    <value>The section '{0}' does not exist in the settings.</value>
+    <comment>0 - section name</comment>
+  </data>
+  <data name="Settings_FileName_Cannot_Be_A_Path" xml:space="preserve">
+    <value>Parameter 'fileName' to Settings must be just a file name and not a path.</value>
+  </data>
+  <data name="ShowError_CannotHaveChildren" xml:space="preserve">
+    <value>Error parsing NuGet.Config. Element '{0}' cannot have descendant elements. Path: '{1}'.</value>
+  </data>
+  <data name="ShowError_ConfigHasInvalidPackageSource" xml:space="preserve">
+    <value>{0}: NuGet.Config has an invalid package source value '{1}'. Reason: {2}</value>
+    <comment>0 - NU log code
+1 - package source value
+2 - original exception message</comment>
+  </data>
+  <data name="ShowError_ConfigInvalidOperation" xml:space="preserve">
+    <value>NuGet.Config is malformed. Path: '{0}'.</value>
+  </data>
+  <data name="ShowError_ConfigInvalidXml" xml:space="preserve">
+    <value>NuGet.Config is not valid XML. Path: '{0}'.</value>
+  </data>
+  <data name="ShowError_ConfigRootInvalid" xml:space="preserve">
+    <value>NuGet.Config does not contain the expected root element: 'configuration'. Path: '{0}'.</value>
+  </data>
+  <data name="ShowError_ConfigUnauthorizedAccess" xml:space="preserve">
+    <value>Failed to read NuGet.Config due to unauthorized access. Path: '{0}'.</value>
+  </data>
+  <data name="TextShouldNotBeEmpty" xml:space="preserve">
+    <value>Text elements should not be empty.</value>
+  </data>
+  <data name="TrustedSignerMustHaveCertificates" xml:space="preserve">
+    <value>A trusted signer entry must have at least one certificate entry.</value>
+  </data>
+  <data name="UnknownHashAlgorithmNotSupported" xml:space="preserve">
+    <value>Unknown hash algorithm is not supported.</value>
+  </data>
+  <data name="Unknown_Config_Exception" xml:space="preserve">
+    <value>Unexpected failure reading NuGet.Config. Path: '{0}'.</value>
+  </data>
+  <data name="UnsupportedDecryptPassword" xml:space="preserve">
+    <value>Password decryption is not supported on .NET Core for this platform. The following feed uses an encrypted password: '{0}'. You can use a clear text password as a workaround.</value>
+  </data>
+  <data name="UnsupportedEncryptPassword" xml:space="preserve">
+    <value>Password encryption is not supported on .NET Core for this platform. The following feed try to use an encrypted password: '{0}'. You can use a clear text password as a workaround.</value>
+  </data>
+  <data name="UnsupportedHashAlgorithm" xml:space="preserve">
+    <value>Certificate entry has an unsupported hash algorithm: '{0}'.</value>
+    <comment>0 - hash algorithm</comment>
+  </data>
+  <data name="UserSettings_UnableToParseConfigFile" xml:space="preserve">
+    <value>Unable to parse config file because: {0} Path: '{1}'.</value>
+    <comment>0 - reason
+1- config file path</comment>
+  </data>
+  <data name="Error_StoreCertCertificateNotFound" xml:space="preserve">
+    <value>Certificate for the package source '{0}' was not found in '{1}.{2}' storage by '{3}' criteria with '{4}' value.</value>
+    <comment>0 - Package source name
+1 - Store location
+2 - Store name
+3 - Find by
+4 - Find value</comment>
+  </data>
+  <data name="FileCertItemPathFileNotExist" xml:space="preserve">
+    <value>A fileCert path specified a file that does not exist.</value>
+  </data>
+  <data name="FileCertItemPathFileNotSet" xml:space="preserve">
+    <value>A fileCert item path was not set.</value>
+  </data>
+  <data name="FileCertItemPasswordAndClearTextPasswordAtSameTime" xml:space="preserve">
+    <value>Password and ClearTextPassword cannot be used at the same time.</value>
+  </data>
+  <data name="ClientCertificateDuplicateConfiguration" xml:space="preserve">
+    <value>There are multiple client certificate configurations associated with the same package source(s): {0}</value>
+    <comment>0 - Package sources separated with comma</comment>
+  </data>
+  <data name="FileCertItemPasswordCannotBeDecrypted" xml:space="preserve">
+    <value>Client certificate configuration password for the package source '{0}' cannot be decrypted</value>
+    <comment>0 - Package name</comment>
+  </data>
+  <data name="CannotUpdateReadOnlyConfig" xml:space="preserve">
+    <value>Unable to update setting since it is in an uneditable config file.</value>
+  </data>
+  <data name="Error_ItemNeedsAtLeastOnePackagePattern" xml:space="preserve">
+    <value>Package source '{0}' must have at least one package pattern.</value>
+    <comment>0 - The name of the item.</comment>
+  </data>
+  <data name="Error_ItemNeedsAtLeastOnePackagePatternWithPath" xml:space="preserve">
+    <value>Package source '{0}' must have at least one package pattern. Path: '{1}'</value>
+    <comment>0 - The name of the item
+1 - file path</comment>
+  </data>
+  <data name="Argument_Cannot_Be_Null_Empty_Or_WhiteSpaceOnly" xml:space="preserve">
+    <value>Argument cannot be null, empty, or whitespace only.</value>
+  </data>
+  <data name="Error_DuplicatePackageSource" xml:space="preserve">
+    <value>PackageSourceMapping is enabled and there are multiple package sources associated with the same key(s): {0}. Path: {1}</value>
+    <comment>0 - package sources separated with comma 1 - path</comment>
+  </data>
+  <data name="ShowError_ConfigDuplicateDisabledSources" xml:space="preserve">
+    <value>Cannot update package sources, config file contains a duplicated key '{0}' in the disabled package sources section. Path: '{1}'</value>
+    <comment>0 - key 
+1 - config file path
+</comment>
+  </data>
+</root>

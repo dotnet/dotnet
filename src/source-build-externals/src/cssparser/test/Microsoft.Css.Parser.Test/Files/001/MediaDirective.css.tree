@@ -1,0 +1,256 @@
+StyleSheet
+    MediaDirective
+        At    @
+        Identifier    media
+        MediaQuery
+            Identifier    screen
+            MediaExpression
+                Identifier    and
+                OpenFunctionBrace    (
+                Identifier    color
+                Colon    :
+                Identifier    red
+                Slash    /
+                Identifier    blue
+                CloseFunctionBrace    )
+        MediaQuery
+            Comma    ,
+            Identifier    projection
+            MediaExpression
+                Identifier    and
+                OpenFunctionBrace    (
+                Identifier    color
+                CloseFunctionBrace    )
+        StyleSheet
+            OpenCurlyBrace    {
+            ImportDirective (AtDirectiveSemicolonMissing:AfterItem)
+                At    @
+                Identifier    import
+                UrlItem
+                    Url    url(
+                    UnquotedUrlString    http://www.example.com/color
+                    CloseFunctionBrace    )
+            CloseCurlyBrace    }
+    MediaDirective
+        At    @
+        Identifier    media
+        MediaQuery
+            Identifier    screen
+            MediaExpression
+                Identifier    and
+                OpenFunctionBrace    (
+                Identifier    device-aspect-ratio
+                Colon    :
+                NumericalValue
+                    Number    16
+                Slash    /
+                NumericalValue
+                    Number    9
+                CloseFunctionBrace    )
+        StyleSheet
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    MediaDirective
+        At    @
+        Identifier    media
+        MediaQuery
+            Identifier    handheld
+            MediaExpression
+                Identifier    and
+                OpenFunctionBrace    (
+                Identifier    device-aspect-ratio
+                Colon    :
+                NumericalValue
+                    Number    32
+                Slash    /
+                NumericalValue
+                    Number    18
+                CloseFunctionBrace    )
+        StyleSheet
+            OpenCurlyBrace    {
+            RuleSet
+                Selector
+                    SimpleSelector
+                        Namespace    
+                        Separator    
+                        Name    a
+                        PseudoClassSelector
+                            Colon    :
+                            Identifier    visited
+                RuleBlock
+                    OpenCurlyBrace    {
+                    Declaration
+                        Identifier    background-color
+                        Colon    :
+                        Identifier    red
+                        Semicolon    ;
+                    CloseCurlyBrace    }
+            CloseCurlyBrace    }
+    MediaDirective
+        At    @
+        Identifier    media
+        MediaQuery
+            Identifier    screen
+            MediaExpression
+                Identifier    and
+                OpenFunctionBrace    (
+                Identifier    device-aspect-ratio
+                Colon    :
+                NumericalValue
+                    Number    1280
+                Slash    /
+                NumericalValue
+                    Number    720
+                CloseFunctionBrace    )
+        StyleSheet
+            OpenCurlyBrace    {
+            RuleSet
+                Selector
+                    SimpleSelector
+                        Namespace    
+                        Separator    
+                        Name    E
+                        Greater    >
+                    SimpleSelector
+                        Namespace    
+                        Separator    
+                        Name    B
+                        PseudoClassSelector
+                            Colon    :
+                            Identifier    hover
+                RuleBlock
+                    OpenCurlyBrace    {
+                    Declaration
+                        Identifier    color
+                        Colon    :
+                        Identifier    blue
+                        Semicolon    ;
+                    CloseCurlyBrace    }
+            CloseCurlyBrace    }
+    MediaDirective
+        At    @
+        Identifier    media
+        MediaQuery
+            Identifier    screen
+            MediaExpression
+                Identifier    and
+                OpenFunctionBrace    (
+                Identifier    device-aspect-ratio
+                Colon    :
+                NumericalValue
+                    Number    2560
+                Slash    /
+                NumericalValue
+                    Number    1440
+                CloseFunctionBrace    )
+        StyleSheet
+            OpenCurlyBrace    {
+            RuleSet
+                Selector
+                    SimpleSelector
+                        ClassSelector
+                            Dot    .
+                            Identifier    foo
+                        PseudoElementFunctionSelector
+                            DoubleColon    ::
+                            Function
+                                Function    nth-child(
+                                FunctionArgument
+                                    NumericalValue
+                                        Number    2
+                                    Identifier    n
+                                CloseFunctionBrace    )
+                RuleBlock
+                    OpenCurlyBrace    {
+                    Declaration
+                        Identifier    background-image
+                        Colon    :
+                        UrlItem
+                            Url    url(
+                            String    "www.microsoft.com"
+                            CloseFunctionBrace    )
+                        Semicolon    ;
+                    Declaration
+                        Identifier    color
+                        Colon    :
+                        Identifier    blue
+                        Semicolon    ;
+                    CloseCurlyBrace    }
+            CloseCurlyBrace    }
+    CComment
+        OpenCComment    /*
+        CommentText    Dev12 bug 744783 - don't require a space after @media
+        CloseCComment    */
+    MediaDirective
+        At    @
+        Identifier    media
+        MediaQuery
+            MediaExpression
+                OpenFunctionBrace    (
+                Identifier    min-width
+                Colon    :
+                UnitValue
+                    Number    200
+                    Units    px
+                CloseFunctionBrace    )
+        StyleSheet
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    MediaDirective
+        At    @
+        Identifier    media
+        MediaQuery
+            MediaExpression
+                OpenFunctionBrace    (
+                Identifier    min-width
+                Colon    :
+                UnitValue
+                    Number    200
+                    Units    px
+                CloseFunctionBrace    )
+        StyleSheet
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    UnknownDirective
+        At (AtDirectiveNameMissing:AfterItem)    @
+        Function
+            Function    media(
+            FunctionArgument
+                Identifier    min-width
+                Colon    :
+                UnitValue
+                    Number    200
+                    Units    px
+            CloseFunctionBrace    )
+        UnknownDirectiveBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    UnknownDirective
+        At (AtDirectiveNameMissing:AfterItem)    @
+        Identifier    media
+        UnknownBlock
+            OpenFunctionBrace    (
+            Identifier    min-width
+            Colon    :
+            UnitValue
+                Number    200
+                Units    px
+            CloseFunctionBrace    )
+        UnknownDirectiveBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Function (SimpleSelectorExpected:WholeItem)
+                    Function    media(
+                    FunctionArgument
+                        Identifier    min-width
+                        Colon    :
+                        UnitValue
+                            Number    200
+                            Units    px
+                    CloseFunctionBrace    )
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }

@@ -1,0 +1,13 @@
+Source Location: (100:2,7 [79] x:\dir\subdir\Test\TestComponent.cshtml)
+|
+    public TParam ParentValue { get; set; }
+
+    public void Update() { }
+|
+Generated Location: (1093:28,7 [79] )
+|
+    public TParam ParentValue { get; set; }
+
+    public void Update() { }
+|
+

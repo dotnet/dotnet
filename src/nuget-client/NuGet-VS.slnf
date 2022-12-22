@@ -1,0 +1,22 @@
+{
+  "solution": {
+    "path": "NuGet.sln",
+    "projects": [
+      "src\\NuGet.Clients\\NuGet.Console\\NuGet.Console.csproj",
+      "src\\NuGet.Clients\\NuGet.Indexing\\NuGet.Indexing.csproj",
+      "src\\NuGet.Clients\\NuGet.PackageManagement.PowerShellCmdlets\\NuGet.PackageManagement.PowerShellCmdlets.csproj",
+      "src\\NuGet.Clients\\NuGet.PackageManagement.UI\\NuGet.PackageManagement.UI.csproj",
+      "src\\NuGet.Clients\\NuGet.PackageManagement.VisualStudio\\NuGet.PackageManagement.VisualStudio.csproj",
+      "src\\NuGet.Clients\\NuGet.SolutionRestoreManager\\NuGet.SolutionRestoreManager.csproj",
+      "src\\NuGet.Clients\\NuGet.Tools\\NuGet.Tools.csproj",
+      "src\\NuGet.Clients\\NuGet.VisualStudio\\NuGet.VisualStudio.csproj",
+      "src\\NuGet.Clients\\NuGet.VisualStudio.Client\\NuGet.VisualStudio.Client.csproj",
+      "src\\NuGet.Clients\\NuGet.VisualStudio.Common\\NuGet.VisualStudio.Common.csproj",
+      "src\\NuGet.Clients\\NuGet.VisualStudio.Contracts\\NuGet.VisualStudio.Contracts.csproj",
+      "src\\NuGet.Clients\\NuGet.VisualStudio.Implementation\\NuGet.VisualStudio.Implementation.csproj",
+      "src\\NuGet.Clients\\NuGet.VisualStudio.Internal.Contracts\\NuGet.VisualStudio.Internal.Contracts.csproj",
+      "src\\NuGet.Clients\\NuGet.VisualStudio.Interop\\NuGet.VisualStudio.Interop.csproj",
+      "src\\NuGet.Clients\\NuGet.VisualStudio.OnlineEnvironment.Client\\NuGet.VisualStudio.OnlineEnvironment.Client.csproj",
+    ]
+  }
+}

@@ -1,0 +1,2094 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>System.Data.SqlXml</name>
+  </assembly>
+  <members>
+    <member name="T:System.Xml.Xsl.Runtime.AncestorDocOrderIterator">
+      <summary>Iterates over all ancestor nodes according to the <see cref="N:System.Xml.XPath" /> ancestor axis rules, and returns the nodes in document order without duplicates.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.AncestorDocOrderIterator.Create(System.Xml.XPath.XPathNavigator,System.Xml.Xsl.Runtime.XmlNavigatorFilter,System.Boolean)">
+      <summary>Initializes the <see cref="T:System.Xml.Xsl.Runtime.AncestorDocOrderIterator" />.</summary>
+      <param name="context">The node from which you start traversing ancestors.</param>
+      <param name="filter">Enables you to filter nodes based on the name.  </param>
+      <param name="orSelf">true if you want the <paramref name="context" /> node to be returned as a part of the iteration, instead of being filtered out.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.AncestorDocOrderIterator.Current">
+      <summary>Returns the current result navigator. </summary>
+      <returns>The current result navigator.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.AncestorDocOrderIterator.MoveNext">
+      <summary>Positions the iterator on the next ancestor node in document order.</summary>
+      <returns>true if the iterator was set to the next ancestor node in document order; otherwise, false.</returns>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.AncestorIterator">
+      <summary>Iterates over all ancestor nodes according to the <see cref="N:System.Xml.XPath" /> ancestor axis rules, and returns the nodes in reverse document order.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.AncestorIterator.Create(System.Xml.XPath.XPathNavigator,System.Xml.Xsl.Runtime.XmlNavigatorFilter,System.Boolean)">
+      <summary>Initializes the <see cref="T:System.Xml.Xsl.Runtime.AncestorIterator" />.</summary>
+      <param name="context">The node from which you start traversing ancestors.</param>
+      <param name="filter">An instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlNavigatorFilter" /> class, which enables you to filter nodes based on the name. For more information, see <see cref="T:System.Xml.Xsl.Runtime.XmlNavigatorFilter" />.  </param>
+      <param name="orSelf">true if you want the <paramref name="context" /> node to be returned as a part of the iteration and not filtered out.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.AncestorIterator.Current">
+      <summary>Returns the current result navigator.  </summary>
+      <returns>The current result navigator.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.AncestorIterator.MoveNext">
+      <summary>Positions the iterator on the next ancestor node.  </summary>
+      <returns>true if the next ancestor node exists; otherwise, false. </returns>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.AttributeContentIterator">
+      <summary>Iterates over all attributes and child content nodes.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.AttributeContentIterator.Create(System.Xml.XPath.XPathNavigator)">
+      <summary>Initializes the <see cref="T:System.Xml.Xsl.Runtime.AttributeContentIterator" />.</summary>
+      <param name="context">The node from which you start traversing attribute and child content nodes.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.AttributeContentIterator.Current">
+      <summary>Returns the current result navigator.  </summary>
+      <returns>The current result navigator.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.AttributeContentIterator.MoveNext">
+      <summary>Positions the iterator on the next attribute or child content node.  </summary>
+      <returns>true if the next attribute or child content node exists; otherwise, false.</returns>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.AttributeIterator">
+      <summary>Iterates over all the attributes.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.AttributeIterator.Create(System.Xml.XPath.XPathNavigator)">
+      <summary>Initializes the <see cref="T:System.Xml.Xsl.Runtime.AttributeIterator" />.</summary>
+      <param name="context">The node from which you start traversing the attribute nodes.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.AttributeIterator.Current">
+      <summary>Returns the current result navigator. </summary>
+      <returns>The current result navigator.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.AttributeIterator.MoveNext">
+      <summary>Positions the iterator on the next attribute node.  </summary>
+      <returns>true if the next attribute node exists; otherwise, false.</returns>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.ContentIterator">
+      <summary>Iterates over all child content nodes of the current node.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.ContentIterator.Create(System.Xml.XPath.XPathNavigator)">
+      <summary>Initializes the <see cref="T:System.Xml.Xsl.Runtime.ContentIterator" />.</summary>
+      <param name="context">The node from which you start traversing the child content nodes.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.ContentIterator.Current">
+      <summary>Returns the current result navigator. </summary>
+      <returns>The current result navigator.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.ContentIterator.MoveNext">
+      <summary>Positions the iterator on the next child content node.  </summary>
+      <returns>true if the next child content node exists; otherwise, false.</returns>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.ContentMergeIterator">
+      <summary>Iterates over child content nodes or following sibling nodes. Maintains the nodes in document order. </summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.ContentMergeIterator.Create(System.Xml.Xsl.Runtime.XmlNavigatorFilter)">
+      <summary>Initializes the <see cref="T:System.Xml.Xsl.Runtime.ContentMergeIterator" />. Merges multiple sets of content nodes in document order and removes duplicates.</summary>
+      <param name="filter">An instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlNavigatorFilter" /> class, which enables you to filter nodes based on name.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.ContentMergeIterator.Current">
+      <summary>Returns the current result navigator.  </summary>
+      <returns>The current result navigator.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.ContentMergeIterator.MoveNext(System.Xml.XPath.XPathNavigator)">
+      <summary>Positions the iterator on the next content or sibling node.  </summary>
+      <returns>Returns <see cref="F:System.Xml.Xsl.Runtime.IteratorResult.NoMoreNodes" /> if there are no more content or sibling nodes. Returns <see cref="F:System.Xml.Xsl.Runtime.IteratorResult.NeedInputNode" /> if the next input node must be fetched first. Returns <see cref="F:System.Xml.Xsl.Runtime.IteratorResult.HaveCurrentNode" /> if the <see cref="P:System.Xml.Xsl.Runtime.ContentMergeIterator.Current" /> property was set to the next node while iterating through the nodes.</returns>
+      <param name="input">The input nodes. </param>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.DecimalAggregator">
+      <summary>Computes aggregates over a sequence of Decimal values.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.DecimalAggregator.Average(System.Decimal)">
+      <summary>Averages Decimal values.  </summary>
+      <param name="value">The Decimal value.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.DecimalAggregator.AverageResult">
+      <summary>Gets an average of the sequence of Decimal values.</summary>
+      <returns>The average of the sequence of Decimal values.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.DecimalAggregator.Create">
+      <summary>Initializes the <see cref="T:System.Xml.Xsl.Runtime.DecimalAggregator" />. </summary>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.DecimalAggregator.IsEmpty">
+      <summary>Gets a value indicating whether the <see cref="T:System.Xml.Xsl.Runtime.DecimalAggregator" /> contains a result.</summary>
+      <returns>true if the <see cref="T:System.Xml.Xsl.Runtime.DecimalAggregator" /> contains a result; otherwise, false.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.DecimalAggregator.Maximum(System.Decimal)">
+      <summary>Assigns the <paramref name="value" /> parameter to the existing result if the <paramref name="value" /> parameter is greater than the existing result.  </summary>
+      <param name="value">The Decimal value.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.DecimalAggregator.MaximumResult">
+      <summary>Gets the largest value among the sequence of Decimal values.</summary>
+      <returns>The largest value among the sequence of Decimal values.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.DecimalAggregator.Minimum(System.Decimal)">
+      <summary>Assigns the <paramref name="value" /> parameter to the existing result if the <paramref name="value" /> parameter is less than the existing result. </summary>
+      <param name="value">The Decimal value.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.DecimalAggregator.MinimumResult">
+      <summary>Gets the smallest value among the sequence of Decimal values.</summary>
+      <returns>The smallest value among the sequence of Decimal values.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.DecimalAggregator.Sum(System.Decimal)">
+      <summary>Adds a Decimal value to the existing result.  </summary>
+      <param name="value">The Decimal value.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.DecimalAggregator.SumResult">
+      <summary>Gets the sum of the sequence of Decimal values.</summary>
+      <returns>The sum of the sequence of Decimal values.</returns>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.DescendantIterator">
+      <summary>Iterates over all descendant nodes according to the <see cref="N:System.Xml.XPath" /> descendant axis rules.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.DescendantIterator.Create(System.Xml.XPath.XPathNavigator,System.Xml.Xsl.Runtime.XmlNavigatorFilter,System.Boolean)">
+      <summary>Initializes the <see cref="T:System.Xml.Xsl.Runtime.DescendantIterator" />.</summary>
+      <param name="input">
+        <see cref="T:System.Xml.XPath.XPathNavigator" /> that identifies the node from which you start traversing descendants.</param>
+      <param name="filter">An instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlNavigatorFilter" /> class, which enables you to filter nodes based on the name. For more information, see <see cref="T:System.Xml.Xsl.Runtime.XmlNavigatorFilter" />.</param>
+      <param name="orSelf">
+        <see cref="T:System.Boolean" /> that indicates whether the current node is returned as part of the iteration or filtered out.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.DescendantIterator.Current">
+      <summary>Returns the current result navigator.  </summary>
+      <returns>The current result navigator.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.DescendantIterator.MoveNext">
+      <summary>Positions the iterator on the next descendant node.</summary>
+      <returns>true if the next descendant node exists; otherwise, false.</returns>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.DescendantMergeIterator">
+      <summary>Iterate over all descendant content nodes according to XPath descendant axis rules. Eliminates duplicates by not querying over nodes that are contained in the subtree of the previous node.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.DescendantMergeIterator.Create(System.Xml.Xsl.Runtime.XmlNavigatorFilter,System.Boolean)">
+      <summary>Initializes the <see cref="T:System.Xml.Xsl.Runtime.DescendantMergeIterator" />. Merges multiple sets of descendant nodes in document order and removes duplicates.</summary>
+      <param name="filter">An instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlNavigatorFilter" /> class that enables you to filter nodes based on the name. For more information, see <see cref="T:System.Xml.Xsl.Runtime.XmlNavigatorFilter" />.  </param>
+      <param name="orSelf">
+        <see cref="T:System.Boolean" /> that indicates whether the current node is returned as part of the iteration or filtered out.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.DescendantMergeIterator.Current">
+      <summary>Returns the current result navigator.  </summary>
+      <returns>The current result navigator.  </returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.DescendantMergeIterator.MoveNext(System.Xml.XPath.XPathNavigator)">
+      <summary>Position this iterator to the next descendant node.  </summary>
+      <returns>Returns <see cref="F:System.Xml.Xsl.Runtime.IteratorResult.NoMoreNodes" /> if there are no more descendant nodes. Returns <see cref="F:System.Xml.Xsl.Runtime.IteratorResult.NeedInputNode" /> if the next input node needs to be fetched first. Returns <see cref="F:System.Xml.Xsl.Runtime.IteratorResult.HaveCurrentNode" /> if while iterating through the nodes the <see cref="P:System.Xml.Xsl.Runtime.DescendantMergeIterator.Current" /> property was set to the next node.</returns>
+      <param name="input">
+        <see cref="T:System.Xml.XPath.XPathNavigator" /> object that identifies the input node.</param>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.DifferenceIterator">
+      <summary>Positions the iterator to the next node in the difference between two sets of nodes.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.DifferenceIterator.Create(System.Xml.Xsl.Runtime.XmlQueryRuntime)">
+      <summary>Initializes the <see cref="T:System.Xml.Xsl.Runtime.DifferenceIterator" />.</summary>
+      <param name="runtime">The <see cref="T:System.Xml.Xsl.Runtime.XmlQueryRuntime" /> object.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.DifferenceIterator.Current">
+      <summary>Returns the current result navigator. </summary>
+      <returns>The current result navigator. </returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.DifferenceIterator.MoveNext(System.Xml.XPath.XPathNavigator)">
+      <summary>Positions this iterator to the next node in the union.</summary>
+      <returns>The <see cref="T:System.Xml.Xsl.Runtime.SetIteratorResult" />.</returns>
+      <param name="nestedNavigator">
+        <see cref="T:System.Xml.XPath.XPathNavigator" /> object that identifies the current node.</param>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.DodSequenceMerge">
+      <summary>Merges several doc-order-distinct sequences into a single doc-order-distinct sequence.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.DodSequenceMerge.AddSequence(System.Collections.Generic.IList{System.Xml.XPath.XPathNavigator})">
+      <summary>Adds a new sequence to the list of sequences to merge.</summary>
+      <param name="sequence">An instance of the <see cref="T:System.Xml.Xsl.Runtime.XPathNavigator" /> class.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.DodSequenceMerge.Create(System.Xml.Xsl.Runtime.XmlQueryRuntime)">
+      <summary>Initializes this instance of <see cref="T:System.Xml.Xsl.Runtime.DodSequenceMerge" /> .</summary>
+      <param name="runtime">An instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlQueryRuntime" /> class, which provides methods and properties to support the XSLT processor.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.DodSequenceMerge.MergeSequences">
+      <summary>Returns the fully-merged sequence.</summary>
+      <returns>The fully-merged sequence.</returns>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.DoubleAggregator">
+      <summary>Computes aggregates over a sequence of double values.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.DoubleAggregator.Average(System.Double)">
+      <summary>Returns the average of a sequence of double values.</summary>
+      <param name="value">A value of type double.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.DoubleAggregator.AverageResult">
+      <summary>Computes the average value over a sequence of double values.</summary>
+      <returns>The average result.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.DoubleAggregator.Create">
+      <summary>Initializes a sequence of double values.</summary>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.DoubleAggregator.IsEmpty">
+      <summary>Determines whether a sequence of double values is empty.</summary>
+      <returns>true if the result is empty; otherwise, false.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.DoubleAggregator.Maximum(System.Double)">
+      <summary>Assigns the <paramref name="value" /> parameter to the existing result if the <paramref name="value" /> parameter is greater than the existing result. </summary>
+      <param name="value">A value of type double.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.DoubleAggregator.MaximumResult">
+      <summary>Returns the maximum value of a sequence of double values.</summary>
+      <returns>The maximum result.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.DoubleAggregator.Minimum(System.Double)">
+      <summary>Assigns the <paramref name="value" /> parameter to the existing result if the <paramref name="value" /> parameter is less than the existing result. </summary>
+      <param name="value">A value of type double.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.DoubleAggregator.MinimumResult">
+      <summary>Returns the minimum value of a sequence of double values.</summary>
+      <returns>The minimum result.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.DoubleAggregator.Sum(System.Double)">
+      <summary>Adds a Double value to the existing result..</summary>
+      <param name="value">A value of type double.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.DoubleAggregator.SumResult">
+      <summary>Returns the sum of a sequence of double values.</summary>
+      <returns>The sum of all results.</returns>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.ElementContentIterator">
+      <summary>Iterates over all child elements with a matching name.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.ElementContentIterator.Create(System.Xml.XPath.XPathNavigator,System.String,System.String)">
+      <summary>Initializes the <see cref="T:System.Xml.Xsl.Runtime.ElementContentIterator" />.</summary>
+      <param name="context">The node from which you start traversing child elements.</param>
+      <param name="localName">The local name.</param>
+      <param name="ns">The namespace.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.ElementContentIterator.Current">
+      <summary>Returns the current result navigator. </summary>
+      <returns>The current result navigator.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.ElementContentIterator.MoveNext">
+      <summary>Positions the iterator on the next child element with a matching name.</summary>
+      <returns>true if the iterator was set to the next child element with the matching name; otherwise, false.</returns>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.FollowingSiblingIterator">
+      <summary>Iterates over all following sibling content nodes.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.FollowingSiblingIterator.Create(System.Xml.XPath.XPathNavigator,System.Xml.Xsl.Runtime.XmlNavigatorFilter)">
+      <summary>Initializes the <see cref="T:System.Xml.Xsl.Runtime.FollowingSiblingIterator" />.</summary>
+      <param name="context">The node from which you start traversing the child content nodes.</param>
+      <param name="filter">Enables you to filter nodes based on the name.  </param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.FollowingSiblingIterator.Current">
+      <summary>Returns the current result navigator. </summary>
+      <returns>The current result navigator.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.FollowingSiblingIterator.MoveNext">
+      <summary>Positions the iterator on the next sibling content node.  </summary>
+      <returns>true if the next sibling content node exists; otherwise, false.</returns>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.FollowingSiblingMergeIterator">
+      <summary>Iterates over child nodes byfollowing the sibling nodes.  </summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.FollowingSiblingMergeIterator.Create(System.Xml.Xsl.Runtime.XmlNavigatorFilter)">
+      <summary>Initializes the <see cref="T:System.Xml.Xsl.Runtime.FollowingSiblingMergeIterator" />.</summary>
+      <param name="filter">An instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlNavigatorFilter" /> class, which enables you to filter nodes based on the name.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.FollowingSiblingMergeIterator.Current">
+      <summary>Returns the current result navigator.  </summary>
+      <returns>The current result navigator.  </returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.FollowingSiblingMergeIterator.MoveNext(System.Xml.XPath.XPathNavigator)">
+      <summary>Position this iterator to the next content or sibling node.  </summary>
+      <returns>Returns <see cref="F:System.Xml.Xsl.Runtime.IteratorResult.NoMoreNodes" /> if there are no more content or sibling nodes. Returns <see cref="F:System.Xml.Xsl.Runtime.IteratorResult.NeedInputNode" /> if the next input node needs to be fetched first. Returns <see cref="F:System.Xml.Xsl.Runtime.IteratorResult.HaveCurrentNode" /> if, while iterating through the nodes, the <see cref="P:System.Xml.Xsl.Runtime.FollowingSiblingMergeIterator.Current" /> property was set to the next node.</returns>
+      <param name="navigator">
+        <see cref="T:System.Xml.XPath.XPathNavigator" /> object.</param>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.IdIterator">
+      <summary>Tokenizes a string that contains IDREF values and dereferences the values in order to get a list of ID elements.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.IdIterator.Create(System.Xml.XPath.XPathNavigator,System.String)">
+      <summary>Initializes the <see cref="T:System.Xml.Xsl.Runtime.IdIterator" />.</summary>
+      <param name="context">
+        <see cref="T:System.Xml.XPath.XPathNavigator" /> object that contains context.</param>
+      <param name="value">String to contain the value of the iterator.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.IdIterator.Current">
+      <summary>Returns the current result navigator.  </summary>
+      <returns>The current result navigator.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.IdIterator.MoveNext">
+      <summary>Positions the iterator on the next ID element.  </summary>
+      <returns>true if the next node exists; otherwise, false.</returns>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.Int32Aggregator">
+      <summary>Computes aggregates over a sequence of Int32 values.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.Int32Aggregator.Average(System.Int32)">
+      <summary>Finds the average of a sequence of Int32 values.</summary>
+      <param name="value">A value of type Int32 that identifies a group of items to average, such as a column in a table.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.Int32Aggregator.AverageResult">
+      <summary>Returns the average result of a sequence of Int32 values.</summary>
+      <returns>An Int32 value that contains the average result of a sequence of Int32 values.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.Int32Aggregator.Create">
+      <summary>Initializes a sequence of Int32 values.</summary>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.Int32Aggregator.IsEmpty">
+      <summary>Returns a Boolean value that indicates if the sequence is empty.</summary>
+      <returns>true if the sequence is empty, otherwise returns false.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.Int32Aggregator.Maximum(System.Int32)">
+      <summary>Assigns the <paramref name="value" /> parameter to the existing result if the <paramref name="value" /> parameter is greater than the existing result.</summary>
+      <param name="value">A value of type Int32.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.Int32Aggregator.MaximumResult">
+      <summary>Returns the largest value in a sequence of Int32 values.</summary>
+      <returns>An Int32 value that contains the maximum value in a sequence of Int32 values.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.Int32Aggregator.Minimum(System.Int32)">
+      <summary>Assigns the <paramref name="value" /> parameter to the existing result if the <paramref name="value" /> parameter is less than the existing result.</summary>
+      <param name="value">A value of type Int32</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.Int32Aggregator.MinimumResult">
+      <summary>Returns the smallest value in a sequence of Int32 values.</summary>
+      <returns>An Int32 value that contains the minimum value in a sequence of Int32 values.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.Int32Aggregator.Sum(System.Int32)">
+      <summary>Adds an Int32  value to the existing result.</summary>
+      <param name="value">A value of type Int32.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.Int32Aggregator.SumResult">
+      <summary>Returns the sum of a sequence of Int32 values.</summary>
+      <returns>An Int32 value that contains the sum of a sequence of Int32 values.</returns>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.Int64Aggregator">
+      <summary>Computes aggregates over a sequence of Int64 values.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.Int64Aggregator.Average(System.Int64)">
+      <summary>Finds an average of a sequence of Int64 values.</summary>
+      <param name="value">A value of type Int64.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.Int64Aggregator.AverageResult">
+      <summary>Returns an Int64 value that contains the average of a sequence of Int64 values.</summary>
+      <returns>An Int64 value that contains the average of a sequence of Int64 values.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.Int64Aggregator.Create">
+      <summary>Initializes a sequence of Int64 values.</summary>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.Int64Aggregator.IsEmpty">
+      <summary>Returns a Boolean value that indicates whether the sequence of Int64 values is empty.</summary>
+      <returns>true if the sequence of Int64 values is empty; otherwise, false.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.Int64Aggregator.Maximum(System.Int64)">
+      <summary>Assigns the <paramref name="value" /> parameter to the existing result if the <paramref name="value" /> parameter is greater than the existing result. </summary>
+      <param name="value">A value of type Int64.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.Int64Aggregator.MaximumResult">
+      <summary>Gets the largest Int64 value.</summary>
+      <returns>The largest Int64 value.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.Int64Aggregator.Minimum(System.Int64)">
+      <summary>Assigns the <paramref name="value" /> parameter to the existing result if the <paramref name="value" /> parameter is less than the existing result. </summary>
+      <param name="value">A value of type Int64.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.Int64Aggregator.MinimumResult">
+      <summary>Gest the smallest Int64 value.</summary>
+      <returns>The smallest Int64 value.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.Int64Aggregator.Sum(System.Int64)">
+      <summary>Adds an Int64 value to the existing result.</summary>
+      <param name="value">A value of type Int64.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.Int64Aggregator.SumResult">
+      <summary>Returns an Int64 value that contains the sum of a sequence of Int64 values.</summary>
+      <returns>An Int64 value that contains the sum of a sequence of Int64 values.</returns>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.IntersectIterator">
+      <summary>Positions the iterator to the next node in the intersection of two sets of nodes.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.IntersectIterator.Create(System.Xml.Xsl.Runtime.XmlQueryRuntime)">
+      <summary>Initializes the <see cref="T:System.Xml.Xsl.Runtime.IntersectIterator" />.</summary>
+      <param name="runtime">
+        <see cref="T:System.Xml.Xsl.Runtime.XmlQueryRuntime" /> object.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.IntersectIterator.Current">
+      <summary>Returns the current result navigator. </summary>
+      <returns>The current result navigator. </returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.IntersectIterator.MoveNext(System.Xml.XPath.XPathNavigator)">
+      <summary>Positions this iterator to the next node in the union.</summary>
+      <returns>The <see cref="T:System.Xml.Xsl.Runtime.SetIteratorResult" />.</returns>
+      <param name="nestedNavigator">
+        <see cref="T:System.Xml.XPath.XPathNavigator" /> object.</param>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.IteratorResult">
+      <summary>Iterators that use containment to control a nested iterator return one of the values in this enumeration.</summary>
+    </member>
+    <member name="F:System.Xml.Xsl.Runtime.IteratorResult.NoMoreNodes">
+      <summary>Iteration is complete; there are no more nodes</summary>
+    </member>
+    <member name="F:System.Xml.Xsl.Runtime.IteratorResult.NeedInputNode">
+      <summary>The next node must be fetched from the contained iterator before iteration can continue.</summary>
+    </member>
+    <member name="F:System.Xml.Xsl.Runtime.IteratorResult.HaveCurrentNode">
+      <summary>Iteration is complete; there are no more nodes.</summary>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.NamespaceIterator">
+      <summary>Iterate over all namespace nodes.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.NamespaceIterator.Create(System.Xml.XPath.XPathNavigator)">
+      <summary>Initializes the <see cref="T:System.Xml.Xsl.Runtime.NamespaceIterator" />.</summary>
+      <param name="context">
+        <see cref="T:System.Xml.XPath.XPathNavigator" /> that identifies the <see cref="T:System.Xml.Xsl.XsltContext" />.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.NamespaceIterator.Current">
+      <summary>Returns the current result navigator. </summary>
+      <returns>The current result navigator.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.NamespaceIterator.MoveNext">
+      <summary>Positions the iterator on the next namespace node.  </summary>
+      <returns>true if the next namespace node exists; otherwise, false.</returns>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.NodeKindContentIterator">
+      <summary>Iterates over all child content nodes with a matching node kind.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.NodeKindContentIterator.Create(System.Xml.XPath.XPathNavigator,System.Xml.XPath.XPathNodeType)">
+      <summary>Initializes the <see cref="T:System.Xml.Xsl.Runtime.NodeKindContentIterator" />.</summary>
+      <param name="context">
+        <see cref="T:System.Xml.XPath.XPathNavigator" /> object.</param>
+      <param name="nodeType">
+        <see cref="T:System.Xml.XPath.XPathNodeType" /> object.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.NodeKindContentIterator.Current">
+      <summary>Returns the current result navigator. </summary>
+      <returns>The current result navigator.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.NodeKindContentIterator.MoveNext">
+      <summary>Positions the iterator on the next child content node with a matching node kind.  </summary>
+      <returns>true if the next child content node with a matching node kind exists; otherwise, false.</returns>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.NodeRangeIterator">
+      <summary>Iterates over the singleton node if the starting node is the same node as the ending node. Iterates to the end of the document if the starting node is after the ending node or is in a different document.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.NodeRangeIterator.Create(System.Xml.XPath.XPathNavigator,System.Xml.Xsl.Runtime.XmlNavigatorFilter,System.Xml.XPath.XPathNavigator)">
+      <summary>Initializes the <see cref="T:System.Xml.Xsl.Runtime.NodeRangeIterator" />. </summary>
+      <param name="start">Node at which iteration begins.</param>
+      <param name="filter">Test expression that determines whether a node is to be filtered out.</param>
+      <param name="end">Node at which iteration ends.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.NodeRangeIterator.Current">
+      <summary>Returns the current result navigator.</summary>
+      <returns>The current result navigator.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.NodeRangeIterator.MoveNext">
+      <summary>Positions the iterator on the next node.  </summary>
+      <returns>true if the next node exists; otherwise, false.</returns>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.ParentIterator">
+      <summary>Iterates over the matching parent node according to the <see cref="N:System.Xml.XPath" />, parent axis rules.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.ParentIterator.Create(System.Xml.XPath.XPathNavigator,System.Xml.Xsl.Runtime.XmlNavigatorFilter)">
+      <summary>Initializes the <see cref="T:System.Xml.Xsl.Runtime.ParentIterator" />.</summary>
+      <param name="context">The node from which you start traversing the nodes.</param>
+      <param name="filter">An instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlNavigatorFilter" /> class, which enables you to filter nodes based on the name.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.ParentIterator.Current">
+      <summary>Returns the current result navigator. </summary>
+      <returns>The current result navigator.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.ParentIterator.MoveNext">
+      <summary>Positions the iterator on the next matching parent node.  </summary>
+      <returns>true if the next matching parent node exists; otherwise, false.</returns>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.PrecedingIterator">
+      <summary>Iterates over all the content-typed nodes which precede the starting node in document order. Returns nodes in reverse document order.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.PrecedingIterator.Create(System.Xml.XPath.XPathNavigator,System.Xml.Xsl.Runtime.XmlNavigatorFilter)">
+      <summary>Initializes the <see cref="T:System.Xml.Xsl.Runtime.PrecedingIterator" />. The <see cref="T:System.Xml.Xsl.Runtime.PrecedingIterator" /> does not contain duplicates.</summary>
+      <param name="context">The node from which you start traversing the nodes.</param>
+      <param name="filter">An instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlNavigatorFilter" /> class, which enables you to filter nodes based on the name.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.PrecedingIterator.Current">
+      <summary>Returns the current result navigator. </summary>
+      <returns>The current result navigator.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.PrecedingIterator.MoveNext">
+      <summary>Positions the iterator on the next preceding node in reverse document order.  </summary>
+      <returns>true if the next preceding node exists; otherwise, false.</returns>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.PrecedingSiblingDocOrderIterator">
+      <summary>Iterates over all preceding sibling content nodes in document order.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.PrecedingSiblingDocOrderIterator.Create(System.Xml.XPath.XPathNavigator,System.Xml.Xsl.Runtime.XmlNavigatorFilter)">
+      <summary>Initializes the <see cref="T:System.Xml.Xsl.Runtime.PrecedingSiblingDocOrderIterator" />.</summary>
+      <param name="context">The node from which you start traversing the nodes.</param>
+      <param name="filter">An instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlNavigatorFilter" /> class, which enables you to filter nodes based on the name. For more information, see <see cref="T:System.Xml.Xsl.Runtime.XmlNavigatorFilter" />.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.PrecedingSiblingDocOrderIterator.Current">
+      <summary>Returns the current result navigator. </summary>
+      <returns>The current result navigator.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.PrecedingSiblingDocOrderIterator.MoveNext">
+      <summary>Positions the iterator on the next preceding sibling node.  </summary>
+      <returns>true if the next preceding sibling node exists; otherwise, false.</returns>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.PrecedingSiblingIterator">
+      <summary>Iterates over all preceding sibling nodes according to the <see cref="N:System.Xml.XPath" /> preceding sibling axis rules and returns nodes in reverse document order.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.PrecedingSiblingIterator.Create(System.Xml.XPath.XPathNavigator,System.Xml.Xsl.Runtime.XmlNavigatorFilter)">
+      <summary>Initializes the <see cref="T:System.Xml.Xsl.Runtime.PrecedingSiblingIterator" />.</summary>
+      <param name="context">The node from which you start traversing the nodes.</param>
+      <param name="filter">Enables you to filter nodes based on the name. </param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.PrecedingSiblingIterator.Current">
+      <summary>Returns the current result navigator. </summary>
+      <returns>The current result navigator.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.PrecedingSiblingIterator.MoveNext">
+      <summary>Positions the iterator on the next preceding sibling node in the reverse document order. </summary>
+      <returns>true if the next preceding sibling node exists; otherwise, false.</returns>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.SetIteratorResult">
+      <summary>Sets iterators for combinations of elements by Union, Intersection, or Difference, which use containment to control two nested iterators. This will return one of the enumeration values from <see cref="M:System.Xml.Xsl.Runtime.IdIterator.MoveNext" />.</summary>
+    </member>
+    <member name="F:System.Xml.Xsl.Runtime.SetIteratorResult.NoMoreNodes">
+      <summary>Iteration is complete; there are no more nodes.</summary>
+    </member>
+    <member name="F:System.Xml.Xsl.Runtime.SetIteratorResult.InitRightIterator">
+      <summary>Initialize right-nested iterator.</summary>
+    </member>
+    <member name="F:System.Xml.Xsl.Runtime.SetIteratorResult.NeedLeftNode">
+      <summary>The next node needs to be fetched from the left-nested iterator.</summary>
+    </member>
+    <member name="F:System.Xml.Xsl.Runtime.SetIteratorResult.NeedRightNode">
+      <summary>The next node needs to be fetched from the right-nested iterator.</summary>
+    </member>
+    <member name="F:System.Xml.Xsl.Runtime.SetIteratorResult.HaveCurrentNode">
+      <summary>This iterator's <see cref="P:System.Xml.XPath.XPathNodeIterator.Current" /> property is set to the next node in the iteration.</summary>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.StringConcat">
+      <summary>Concatenates strings when the number of strings is not known beforehand.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.StringConcat.Clear">
+      <summary>Clears the result string.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.StringConcat.Concat(System.String)">
+      <summary>Concatenates a new string to the result.</summary>
+      <param name="value">A string value to be concatenated to the result.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.StringConcat.Delimiter">
+      <summary>Gets or sets the string that delimits concatenated strings.</summary>
+      <returns>Returns the <see cref="T:System.String" /> delimiter.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.StringConcat.GetResult">
+      <summary>Gets the result string.</summary>
+      <returns>A string value that contains the result.</returns>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.UnionIterator">
+      <summary>Manages two sets of nodes that are already in document order with no duplicates, and returns the union of these sets in document order with no duplicates.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.UnionIterator.Create(System.Xml.Xsl.Runtime.XmlQueryRuntime)">
+      <summary>Initializes the <see cref="T:System.Xml.Xsl.Runtime.UnionIterator" />.</summary>
+      <param name="runtime">
+        <see cref="T:System.Xml.Xsl.Runtime.XmlQueryRuntime" /> object.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.UnionIterator.Current">
+      <summary>Returns the current result navigator. </summary>
+      <returns>The current result navigator. </returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.UnionIterator.MoveNext(System.Xml.XPath.XPathNavigator)">
+      <summary>Positions this iterator to the next node in the union.</summary>
+      <returns>The <see cref="T:System.Xml.Xsl.Runtime.SetIteratorResult" />.</returns>
+      <param name="nestedNavigator">
+        <see cref="T:System.Xml.XPath.XPathNavigator" /> object.</param>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.XmlCollation">
+      <summary>Constructs a collation that uses the specified culture and compare options.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlCollation.Equals(System.Object)">
+      <summary>Returns true if this XML extension function has the same values as another XML extension function.</summary>
+      <returns>Returns true if this XML extension function has the same values as another XML extension function, otherwise false.</returns>
+      <param name="obj">
+        <see cref="T:System.Object" /> with which to determine equality..</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlCollation.GetHashCode">
+      <summary>Returns the object's hash code.</summary>
+      <returns>Returns the object's hash code.</returns>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.XmlILIndex">
+      <summary>Manages nodes from an input document, indexed by key value(s). This class is used as a cache of nodes indexed by xsl:key instructions and allows fast access to these nodes.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlILIndex.Add(System.String,System.Xml.XPath.XPathNavigator)">
+      <summary>Adds a node that is indexed by the specified key value.</summary>
+      <param name="key">The specified key.</param>
+      <param name="navigator">An instance of <see cref="T:System.Xml.XPath.XPathNavigator" />.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlILIndex.Lookup(System.String)">
+      <summary>Looks up a sequence of nodes that are indexed by the specified key value.</summary>
+      <returns>A sequence of nodes that are indexed by the specified key value.</returns>
+      <param name="key">The specified key.</param>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.XmlILStorageConverter">
+      <summary>This internal class contains static helper methods that get a value converter from <see cref="T:System.Xml.Xsl.Runtime.XmlQueryRuntime" /> to convert among several physical common language runtime (CLR) representations for the same logical XML type.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlILStorageConverter.BooleanToAtomicValue(System.Boolean,System.Int32,System.Xml.Xsl.Runtime.XmlQueryRuntime)">
+      <summary>Converts a Boolean value to an <see cref="T:System.Xml.Schema.XmlAtomicValue" />.</summary>
+      <returns>An <see cref="T:System.Xml.Schema.XmlAtomicValue" />.</returns>
+      <param name="value">The Boolean value to convert.</param>
+      <param name="index">A value of type Int32 that provides the index of the item to convert.</param>
+      <param name="runtime">An instance of the <see cref="System.Xml.Xsl.Runtime.XmlQueryRuntime" /> class.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlILStorageConverter.BytesToAtomicValue(System.Byte[],System.Int32,System.Xml.Xsl.Runtime.XmlQueryRuntime)">
+      <summary>Converts an array of bytes to an <see cref="T:System.Xml.Schema.XmlAtomicValue" />.</summary>
+      <returns>An <see cref="T:System.Xml.Schema.XmlAtomicValue" />.</returns>
+      <param name="value">An array of bytes to convert.</param>
+      <param name="index">A value of type Int32 that provides the index of the item to convert.</param>
+      <param name="runtime">An instance of the <see cref="System.Xml.Xsl.Runtime.XmlQueryRuntime" /> class.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlILStorageConverter.DateTimeToAtomicValue(System.DateTime,System.Int32,System.Xml.Xsl.Runtime.XmlQueryRuntime)">
+      <summary>Converts a DateTime value to an <see cref="T:System.Xml.Schema.XmlAtomicValue" />.</summary>
+      <returns>An <see cref="T:System.Xml.Schema.XmlAtomicValue" />.</returns>
+      <param name="value">A value of type DateTime to convert.</param>
+      <param name="index">A value of type Int32 that provides the index of the item to convert.</param>
+      <param name="runtime">An instance of the <see cref="System.Xml.Xsl.Runtime.XmlQueryRuntime" /> class.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlILStorageConverter.DecimalToAtomicValue(System.Decimal,System.Int32,System.Xml.Xsl.Runtime.XmlQueryRuntime)">
+      <summary>Converts a decimal value to an <see cref="T:System.Xml.Schema.XmlAtomicValue" />.</summary>
+      <returns>An <see cref="T:System.Xml.Schema.XmlAtomicValue" />.</returns>
+      <param name="value">A value of type decimal to convert.</param>
+      <param name="index">A value of type Int32 that provides the index of the item to convert.</param>
+      <param name="runtime">An instance of the <see cref="System.Xml.Xsl.Runtime.XmlQueryRuntime" /> class.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlILStorageConverter.DoubleToAtomicValue(System.Double,System.Int32,System.Xml.Xsl.Runtime.XmlQueryRuntime)">
+      <summary>Converts a double value to an <see cref="T:System.Xml.Schema.XmlAtomicValue" />.</summary>
+      <returns>An <see cref="T:System.Xml.Schema.XmlAtomicValue" />.</returns>
+      <param name="value">A value of type double to convert.</param>
+      <param name="index">A value of type Int32 that provides the index of the item to convert.</param>
+      <param name="runtime">An instance of the <see cref="System.Xml.Xsl.Runtime.XmlQueryRuntime" /> class.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlILStorageConverter.Int32ToAtomicValue(System.Int32,System.Int32,System.Xml.Xsl.Runtime.XmlQueryRuntime)">
+      <summary>Converts an Int32 value to an <see cref="T:System.Xml.Schema.XmlAtomicValue" />.</summary>
+      <returns>An <see cref="T:System.Xml.Schema.XmlAtomicValue" />.</returns>
+      <param name="value">A value of type Int32 to convert.</param>
+      <param name="index">A value of type Int32 that provides the index of the item to convert.</param>
+      <param name="runtime">An instance of the <see cref="System.Xml.Xsl.Runtime.XmlQueryRuntime" /> class.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlILStorageConverter.Int64ToAtomicValue(System.Int64,System.Int32,System.Xml.Xsl.Runtime.XmlQueryRuntime)">
+      <summary>Converts an Int64 value to an <see cref="T:System.Xml.Schema.XmlAtomicValue" />.</summary>
+      <returns>An <see cref="T:System.Xml.Schema.XmlAtomicValue" />.</returns>
+      <param name="value">A value of type Int64 to convert.</param>
+      <param name="index">A value of type Int32 that provides the index of the item to convert.</param>
+      <param name="runtime">An instance of the <see cref="System.Xml.Xsl.Runtime.XmlQueryRuntime" /> class.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlILStorageConverter.ItemsToNavigators(System.Collections.Generic.IList{System.Xml.XPath.XPathItem})">
+      <summary>Converts a list or sequence of <see cref="T:System.Xml.XPath.XPathItem" /> objects to a sequence of <see cref="T:System.Xml.XPath.XPathNavigator" /> objects or values.</summary>
+      <returns>Returns a generic list of type <see cref="T:System.Xml.XPath.XPathNavigator" />.</returns>
+      <param name="listItems">A sequence of <see cref="System.Xml.XPath.XPathItem" /> instances.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlILStorageConverter.NavigatorsToItems(System.Collections.Generic.IList{System.Xml.XPath.XPathNavigator})">
+      <summary>Converts a sequence of <see cref="T:System.Xml.XPath.XPathNavigator" /> objects or values to a list or sequence of <see cref="T:System.Xml.XPath.XPathItem" /> objects.</summary>
+      <returns>Returns a generic list of type <see cref="T:System.Xml.XPath.XPathItem" />.</returns>
+      <param name="listNavigators">A sequence of <see cref="System.Xml.XPath.XPathNavigator" /> instances.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlILStorageConverter.SingleToAtomicValue(System.Single,System.Int32,System.Xml.Xsl.Runtime.XmlQueryRuntime)">
+      <summary>Converts a single value to an <see cref="T:System.Xml.Schema.XmlAtomicValue" />.</summary>
+      <returns>An <see cref="T:System.Xml.Schema.XmlAtomicValue" />.</returns>
+      <param name="value">A value of type single to convert.</param>
+      <param name="index">A value of type Int32 that provides the index of the item to convert.</param>
+      <param name="runtime">An instance of the <see cref="System.Xml.Xsl.Runtime.XmlQueryRuntime" /> class.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlILStorageConverter.StringToAtomicValue(System.String,System.Int32,System.Xml.Xsl.Runtime.XmlQueryRuntime)">
+      <summary>Converts a string value to an <see cref="T:System.Xml.Schema.XmlAtomicValue" />.</summary>
+      <returns>An <see cref="T:System.Xml.Schema.XmlAtomicValue" />.</returns>
+      <param name="value">A value of type string to convert.</param>
+      <param name="index">A value of type Int32 that provides the index of the item to convert.</param>
+      <param name="runtime">An instance of the <see cref="System.Xml.Xsl.Runtime.XmlQueryRuntime" /> class.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlILStorageConverter.TimeSpanToAtomicValue(System.TimeSpan,System.Int32,System.Xml.Xsl.Runtime.XmlQueryRuntime)">
+      <summary>Converts a <see cref="T:System.TimeSpan" /> value to an <see cref="T:System.Xml.Schema.XmlAtomicValue" />.</summary>
+      <returns>An <see cref="T:System.Xml.Schema.XmlAtomicValue" />.</returns>
+      <param name="value">A value of type <see cref="T:System.TimeSpan" /> to convert.</param>
+      <param name="index">A value of type Int32 that provides the index of the item to convert.</param>
+      <param name="runtime">An instance of the <see cref="System.Xml.Xsl.Runtime.XmlQueryRuntime" /> class.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlILStorageConverter.XmlQualifiedNameToAtomicValue(System.Xml.XmlQualifiedName,System.Int32,System.Xml.Xsl.Runtime.XmlQueryRuntime)">
+      <summary>Converts an <see cref="T:System.Xml.XmlQualifiedName" /> value to an <see cref="T:System.Xml.Schema.XmlAtomicValue" />.</summary>
+      <returns>Returns a <see cref="T:System.Xml.Schema.XmlAtomicValue" />.</returns>
+      <param name="value">An instance of the <see cref="System.Xml.XmlQualifiedName" /> class to convert.</param>
+      <param name="index">A value of type Int32 that provides the index of the item to convert.</param>
+      <param name="runtime">An instance of the <see cref="System.Xml.Xsl.Runtime.XmlQueryRuntime" /> class.</param>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.XmlNavigatorFilter">
+      <summary>XmlNavigatorFilter provides a flexible filtering abstraction over <see cref="T:System.Xml.XPath.XPathNavigator" />. Callers do not know what type of filtering will occur; they simply call <see cref="M:System.Xml.Xsl.Runtime.XmlNavigatorFilter.MoveToContent(System.Xml.XPath.XPathNavigator)" /> or <see cref="M:System.Xml.Xsl.Runtime.XmlNavigatorFilter.MoveToFollowingSibling(System.Xml.XPath.XPathNavigator)" />. The filter implementation invokes the appropriate operation on the <see cref="T:System.Xml.XPath.XPathNavigator" /> in order to skip over filtered nodes.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlNavigatorFilter.#ctor">
+      <summary>Provides a flexible filtering abstraction over <see cref="T:System.Xml.XPath.XPathNavigator" />.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlNavigatorFilter.IsFiltered(System.Xml.XPath.XPathNavigator)">
+      <summary>Return true if the navigator's current node matches the filter condition.</summary>
+      <returns>true if the current node matches the condition, otherwise returns false.</returns>
+      <param name="navigator">An instance of the <see cref="System.Xml.XPath.XPathNavigator" /> class.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlNavigatorFilter.MoveToContent(System.Xml.XPath.XPathNavigator)">
+      <summary>Repositions the navigator to the first matching content node or attribute and skips over filtered nodes. If there are no matching nodes, the navigator does not move and the method returns false.</summary>
+      <returns>true if the navigator is repositioned on a child element with a matching name, otherwise false.</returns>
+      <param name="navigator">An instance of the <see cref="System.Xml.XPath.XPathNavigator" /> class.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlNavigatorFilter.MoveToFollowing(System.Xml.XPath.XPathNavigator,System.Xml.XPath.XPathNavigator)">
+      <summary>Repositions the navigator to the following matching content node or attribute and skips over filtered nodes. If there are no matching nodes, the navigator does not move and the method returns false.</summary>
+      <returns>true if the navigator is repositioned on the next element with a matching name, otherwise false.</returns>
+      <param name="navigator">An instance of the <see cref="System.Xml.XPath.XPathNavigator" /> class that identifies the beginning of the range over which navigation can move.</param>
+      <param name="navigatorEnd">An instance of the <see cref="System.Xml.XPath.XPathNavigator" /> class that identifies the end of the range over which navigation can move.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlNavigatorFilter.MoveToFollowingSibling(System.Xml.XPath.XPathNavigator)">
+      <summary>Repositions the navigator to the sibling matching content node or descendent and skips over filtered nodes. If there are no matching nodes, the navigator does not move and the method returns false.</summary>
+      <returns>true if the navigator is repositioned on the next element sibling with a matching name, otherwise false.</returns>
+      <param name="navigator">An instance of the <see cref="System.Xml.XPath.XPathNavigator" /> class.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlNavigatorFilter.MoveToNextContent(System.Xml.XPath.XPathNavigator)">
+      <summary>Repositions the navigator to the next matching content node or attribute and skips over filtered nodes. If there are no matching nodes, the navigator does not move and the method returns false.</summary>
+      <returns>true if the navigator is repositioned on the next element child with a matching name, otherwise false.</returns>
+      <param name="navigator">An instance of the <see cref="System.Xml.XPath.XPathNavigator" /> class.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlNavigatorFilter.MoveToPreviousSibling(System.Xml.XPath.XPathNavigator)">
+      <summary>Repositions the navigator to the previous matching sibling node and skips over filtered nodes. If there are no matching nodes, the navigator does not move and the method returns false.</summary>
+      <returns>true if the navigator is repositioned on the previous element sibling with a matching name, otherwise false.</returns>
+      <param name="navigator">An instance of the <see cref="System.Xml.XPath.XPathNavigator" /> class.</param>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.XmlQueryContext">
+      <summary>The context of a query consists of all user-provided information that influences the operation of the query.</summary>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.XmlQueryContext.DefaultDataSource">
+      <summary>Returns the document that is queried by default if no data source is explicitly selected in the query.</summary>
+      <returns>An instance of the <see cref="System.Xml.Xpath.XPathNavigator" /> class.</returns>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.XmlQueryContext.DefaultNameTable">
+      <summary>Returns the name table used by the default data source, or null if there is no default data source.</summary>
+      <returns>An instance of the <see cref="System.Xml.XmlNameTable" /> class.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryContext.GetDataSource(System.String,System.String)">
+      <summary>Gets the data source specified by the <paramref name="uriRelative" /> and <paramref name="uriBase" /> from the T:System.Xml.XmlResolver that the user provided.</summary>
+      <returns>An instance of the T:<see cref="System.Xml.Xpath.XPathNavigator" /> class.</returns>
+      <param name="uriRelative">A value of type string.</param>
+      <param name="uriBase">A value of type string.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryContext.GetLateBoundObject(System.String)">
+      <summary>Returns the extension object that is mapped to the specified namespace, or null if no object is mapped.</summary>
+      <returns>An extension object.</returns>
+      <param name="namespaceUri">A value of type string.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryContext.GetParameter(System.String,System.String)">
+      <summary>Gets a named parameter from the external argument list.</summary>
+      <returns>null if no argument list was provided, or if there is no parameter by that name; otherwise, a named parameter from the external argument list.</returns>
+      <param name="localName">A value of type string.</param>
+      <param name="namespaceUri">A value of type string.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryContext.InvokeXsltLateBoundFunction(System.String,System.String,System.Collections.Generic.IList{System.Xml.XPath.XPathItem}[])">
+      <summary>Gets a late-bound extension object from the external argument list.</summary>
+      <returns>Returns a generic list of type <see cref="T:System.Xml.XPath.XPathItem" />.</returns>
+      <param name="name">A value of type string.</param>
+      <param name="namespaceUri">A value of type string.</param>
+      <param name="args">A sequence of <see cref="System.Xml.XPath.XPathItem" /> instances.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryContext.LateBoundFunctionExists(System.String,System.String)">
+      <summary>Returns true if the late-bound object identified by <paramref name="namespaceUri" /> contains a method that matches <paramref name="name" />.</summary>
+      <returns>true if the late bound object matches name; otherwise false.</returns>
+      <param name="name">A value of type string.</param>
+      <param name="namespaceUri">A value of type string.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryContext.OnXsltMessageEncountered(System.String)">
+      <summary>Raises an <see cref="E:System.Xml.Xsl.XsltArgumentList.XsltMessageEncountered" /> event.</summary>
+      <param name="message">A value of type string.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.XmlQueryContext.QueryNameTable">
+      <summary>Gets the <see cref="T:System.Xml.XmlNameTable" /> instance.</summary>
+      <returns>Returns an instance of the <see cref="T:System.Xml.XmlNameTable" />.</returns>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.XmlQueryItemSequence">
+      <summary>A sequence of XML items that dynamically expands and allows random access to items.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryItemSequence.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlQueryItemSequence" /> class. </summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryItemSequence.#ctor(System.Int32)">
+      <summary>Initializes a new instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlQueryItemSequence" /> class. </summary>
+      <param name="capacity">A value of type Int32.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryItemSequence.#ctor(System.Xml.XPath.XPathItem)">
+      <summary>Initializes a new instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlQueryItemSequence" /> class. </summary>
+      <param name="item">An instance of the <see cref="T:System.Xml.XPath.XPathItem" /> class.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryItemSequence.AddClone(System.Xml.XPath.XPathItem)">
+      <summary>Adds an item to the sequence. If the item is a navigator, this method clones it before adding it to the sequence.</summary>
+      <param name="item">An instance of the <see cref="T:System.Xml.XPath.XPathItem" /> class.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryItemSequence.CreateOrReuse(System.Xml.Xsl.Runtime.XmlQueryItemSequence)">
+      <summary>Clears and reuses an <see cref="T:System.Xml.Xsl.Runtime.XmlQueryItemSequence" /> object if it is available. If the <paramref name="seq" /> parameter is null, creates a new <see cref="T:System.Xml.Xsl.Runtime.XmlQueryItemSequence" />.</summary>
+      <returns>An instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlQueryItemSequence" /> class.</returns>
+      <param name="seq">An instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlQueryItemSequence" /> class.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryItemSequence.CreateOrReuse(System.Xml.Xsl.Runtime.XmlQueryItemSequence,System.Xml.XPath.XPathItem)">
+      <summary>Clears and reuses an <see cref="T:System.Xml.Xsl.Runtime.XmlQueryItemSequence" /> object if it is available. If the <paramref name="seq" /> parameter is null, creates a new <see cref="T:System.Xml.Xsl.Runtime.XmlQueryItemSequence" />. This method then adds a new item to reused or new sequence.</summary>
+      <returns>An instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlQueryItemSequence" /> class.</returns>
+      <param name="seq">An instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlQueryItemSequence" /> class.</param>
+      <param name="item">An instance of the <see cref="T:System.Xml.XPath.XPathItem" /> class.</param>
+    </member>
+    <member name="F:System.Xml.Xsl.Runtime.XmlQueryItemSequence.Empty">
+      <summary>Returns a properly initialized, empty <see cref="T:XmlQueryItemSequence" />.</summary>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.XmlQueryNodeSequence">
+      <summary>A sequence of XML nodes that dynamically expands and allows random access to items.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryNodeSequence.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlQueryNodeSequence" /> class. </summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryNodeSequence.#ctor(System.Collections.Generic.IList{System.Xml.XPath.XPathNavigator})">
+      <summary>Initializes a new instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlQueryNodeSequence" /> class. </summary>
+      <param name="list">A sequence of <see cref="T:System.Xml.XPath.XPathNavigator" /> instances.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryNodeSequence.#ctor(System.Int32)">
+      <summary>Initializes a new instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlQueryNodeSequence" /> class. </summary>
+      <param name="capacity">A value of type Int32.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryNodeSequence.#ctor(System.Xml.XPath.XPathNavigator)">
+      <summary>Initializes a new instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlQueryNodeSequence" /> class. </summary>
+      <param name="navigator">An instance of the <see cref="T:System.Xml.XPath.XPathNavigator" /> class.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryNodeSequence.#ctor(System.Xml.XPath.XPathNavigator[],System.Int32)">
+      <summary>Initializes a new instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlQueryNodeSequence" /> class. </summary>
+      <param name="array">An array of instances of the <see cref="T:System.Xml.XPath.XPathNavigator" /> class.</param>
+      <param name="size">A value of type int.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryNodeSequence.AddClone(System.Xml.XPath.XPathNavigator)">
+      <summary>Clone the navigator and then adds a node to the sequence.</summary>
+      <param name="navigator">An instance of the <see cref="T:System.Xml.XPath.XPathNavigator" /> class.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryNodeSequence.CreateOrReuse(System.Xml.Xsl.Runtime.XmlQueryNodeSequence)">
+      <summary>Clears and reuses the specified <see cref="T:System.Xml.Xsl.Runtime.XmlQueryNodeSequence" /> if it is available. If the <paramref name="seq" /> parameter is null, creates a new <see cref="T:System.Xml.Xsl.Runtime.XmlQueryNodeSequence" />.</summary>
+      <returns>An instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlQueryNodeSequence" /> class.</returns>
+      <param name="seq">An instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlQueryNodeSequence" /> class.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryNodeSequence.CreateOrReuse(System.Xml.Xsl.Runtime.XmlQueryNodeSequence,System.Xml.XPath.XPathNavigator)">
+      <summary>Clears and reuses the specified <see cref="T:System.Xml.Xsl.Runtime.XmlQueryNodeSequence" /> if it is available. If the <paramref name="seq" /> parameter is null, creates a new <see cref="T:System.Xml.Xsl.Runtime.XmlQueryNodeSequence" /> and adds <paramref name="navigator" /> to the sequence.</summary>
+      <returns>An instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlQueryNodeSequence" /> class.</returns>
+      <param name="seq">An instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlQueryNodeSequence" /> class.</param>
+      <param name="navigator">An instance of the <see cref="T:System.Xml.XPath.XPathNavigator" /> class.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryNodeSequence.DocOrderDistinct(System.Collections.Generic.IComparer{System.Xml.XPath.XPathNavigator})">
+      <summary>Returns a sequence that contains all the distinct nodes in this cache, sorted in document order.</summary>
+      <returns>A sequence of <see cref="T:System.Xml.Xsl.Runtime.XmlQueryNodeSequence" /> class instances.</returns>
+      <param name="comparer">A sequence of <see cref="T:System.Xml.XPath.XPathNavigator" /> instances.</param>
+    </member>
+    <member name="F:System.Xml.Xsl.Runtime.XmlQueryNodeSequence.Empty">
+      <summary>Gets an empty <see cref="T:System.Xml.Xsl.Runtime.XmlQueryNodeSequence" /> that is properly initialized.</summary>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.XmlQueryNodeSequence.IsDocOrderDistinct">
+      <summary>If this property is true, the nodes in this cache are in document order with no duplicates.</summary>
+      <returns>true if the nodes are distinct, otherwise return false.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryNodeSequence.System#Collections#Generic#ICollection{T}#Add(System.Xml.XPath.XPathItem)">
+      <summary>Throws the <see cref="T:System.NotSupportedException" /> exception. </summary>
+      <param name="value">An instance of the <see cref="T:System.Xml.XPath.XPathItem" /> class.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryNodeSequence.System#Collections#Generic#ICollection{T}#Clear">
+      <summary>Throws the <see cref="T:System.NotSupportedException" /> exception. </summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryNodeSequence.System#Collections#Generic#ICollection{T}#Contains(System.Xml.XPath.XPathItem)">
+      <summary>Returns true if the specified value is in the sequence.</summary>
+      <returns>true if the value is in the sequence; otherwise, false.</returns>
+      <param name="value">An instance of the <see cref="T:System.Xml.XPath.XPathItem" /> class.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryNodeSequence.System#Collections#Generic#ICollection{T}#CopyTo(System.Xml.XPath.XPathItem[],System.Int32)">
+      <summary>Copies the contents of this sequence to the specified array, starting at the specified index in the target array.</summary>
+      <param name="array">An array of <see cref="T:System.Xml.XPath.XPathItem" /> instances.</param>
+      <param name="index">A value of type int.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.XmlQueryNodeSequence.System#Collections#Generic#ICollection{T}#IsReadOnly">
+      <summary>Specifies that items cannot be added, removed, or modified through the <see cref="T:System.Collections.Generic.ICollection`1" /> interface.</summary>
+      <returns>true if the collection is read only; otherwise, false.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryNodeSequence.System#Collections#Generic#ICollection{T}#Remove(System.Xml.XPath.XPathItem)">
+      <summary>Throws the <see cref="T:System.NotSupportedException" /> exception. </summary>
+      <returns>true if the item is removed; otherwise, false.</returns>
+      <param name="value">An instance of the <see cref="T:System.Xml.XPath.XPathItem" /> class.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryNodeSequence.System#Collections#Generic#IEnumerable{T}#GetEnumerator">
+      <summary>Returns the <see cref="T:System.Collections.Generic.IEnumerator" /> of <see cref="T:System.Xml.XPathItem" /> implementation.</summary>
+      <returns>The IEnumerator&lt;XPathItem&gt; implementation.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryNodeSequence.System#Collections#Generic#IList{T}#IndexOf(System.Xml.XPath.XPathItem)">
+      <summary>Returns the index of the specified value in the sequence.</summary>
+      <returns>The index of the specified value in the sequence.</returns>
+      <param name="value">An instance of the <see cref="T:System.Xml.XPath.XPathItem" /> class.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryNodeSequence.System#Collections#Generic#IList{T}#Insert(System.Int32,System.Xml.XPath.XPathItem)">
+      <summary>Throws the <see cref="T:System.NotSupportedException" /> exception. </summary>
+      <param name="index">A value of type int.</param>
+      <param name="value">An instance of the <see cref="T:System.Xml.XPath.XPathItem" /> class.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.XmlQueryNodeSequence.System#Collections#Generic#IList{T}#Item(System.Int32)">
+      <summary>Returns the item at the specified index.</summary>
+      <returns>An instance of the <see cref="T:System.Xml.XPath.XPathItem" /> class.</returns>
+      <param name="index">A value of type Int32.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryNodeSequence.System#Collections#Generic#IList{T}#RemoveAt(System.Int32)">
+      <summary>Throws the <see cref="T:System.NotSupportedException" /> exception. </summary>
+      <param name="index">A value of type int.</param>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.XmlQueryOutput">
+      <summary>Represents an <see cref="T:System.Xml.XmlWriter" /> that provides additional functionality that is required for outputting the results of XSLT transformations. </summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.Close">
+      <summary>This method is implemented as empty and does nothing.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.EndCopy(System.Xml.XPath.XPathNavigator)">
+      <summary>Ends the shallow copy of the navigator's current node. This method should only be called for element and document nodes.</summary>
+      <param name="navigator">
+        <see cref="T:System.Xml.XPath.XPathNavigator" /> object.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.EndTree">
+      <summary>Writes the end of the tree.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.Flush">
+      <summary>This method is implemented as empty and does nothing.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.LookupPrefix(System.String)">
+      <summary>Throws <see cref="T:System.NotSupportedException" />.</summary>
+      <returns>A string that contains the prefix.</returns>
+      <param name="ns">String that contains namespace name.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.StartCopy(System.Xml.XPath.XPathNavigator)">
+      <summary>Begins the shallow copy of the navigator's current node to output. </summary>
+      <returns>true if EndCopy should be called to complete the copy operation; otherwise, false.</returns>
+      <param name="navigator">
+        <see cref="T:System.Xml.XPath.XPathNavigator" /> object.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.StartElementContentUnchecked">
+      <summary>Called after an element's attributes have been enumerated, but before any children have been enumerated. Well-formedness is assumed, so no additional checks are performed.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.StartTree(System.Xml.XPath.XPathNodeType)">
+      <summary>Starts the construction of a new tree.</summary>
+      <param name="rootType">
+        <see cref="T:System.Xml.XPath.XPathNodeType" /> object.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteBase64(System.Byte[],System.Int32,System.Int32)">
+      <summary>Throws <see cref="T:System.NotSupportedException" />.</summary>
+      <param name="buffer">
+        <see cref="T:System.Byte" /> buffer object that contains data to write.</param>
+      <param name="index">
+        <see cref="T:System.Int32" /> that contains start index.</param>
+      <param name="count">
+        <see cref="T:System.Int32" /> that contains count bytes.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteCData(System.String)">
+      <summary> Empty implementation that does nothing.</summary>
+      <param name="text">String that contains data to write.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteCharEntity(System.Char)">
+      <summary>Throws <see cref="T:System.NotSupportedException" />.</summary>
+      <param name="ch">
+        <see cref="T:System.Char" /> that contains a character to write.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteChars(System.Char[],System.Int32,System.Int32)">
+      <summary>Throws <see cref="T:System.NotSupportedException" />.</summary>
+      <param name="buffer">
+        <see cref="T:System.Char" /> array of buffer that contains data to write.</param>
+      <param name="index">
+        <see cref="T:System.Int32" /> that contains start index.</param>
+      <param name="count">
+        <see cref="T:System.Int32" /> that contains count of characters to write.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteComment(System.String)">
+      <summary>Writes the comment. The method does not verify well-formedness. Other methods called by this one do the necessary checks.</summary>
+      <param name="text">String that contains the comment to write.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteCommentString(System.String)">
+      <summary>Cache the comment's string.</summary>
+      <param name="text">String that contains the comment to write.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteDocType(System.String,System.String,System.String,System.String)">
+      <summary>Throws <see cref="T:System.NotSupportedException" />. Should never be called.</summary>
+      <param name="name">String that contains document name.</param>
+      <param name="pubid">String that contains publication id.</param>
+      <param name="sysid">String that contains system id.</param>
+      <param name="subset">String that contains subset name.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteEndAttribute">
+      <summary>Checks the attribute for well-formedness and writes the end of the attribute.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteEndAttributeUnchecked">
+      <summary>Writes the end of the attribute. There is an assumption of well-formedness, so no additional checks are performed.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteEndComment">
+      <summary>Checks the comment for well-formedness and writes the end of the comment.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteEndDocument">
+      <summary>Throws <see cref="T:System.NotSupportedException" />.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteEndElement">
+      <summary>Checks the element for well-formedness and writes the end of the element.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteEndElementUnchecked(System.String)">
+      <summary>Writes the end of the element with local name. Well-formedness is assumed, so no additional checks are performed.</summary>
+      <param name="localName">String that contains local name of element.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteEndElementUnchecked(System.String,System.String,System.String)">
+      <summary>Writes the end of the element with prefix, local name, and namespace. No checks are performed.</summary>
+      <param name="prefix">String that contains element prefix.</param>
+      <param name="localName">String that contains local name of element.</param>
+      <param name="ns">String that contains namespace name.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteEndNamespace">
+      <summary>Checks the namespace for well-formedness and writes the namespace.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteEndProcessingInstruction">
+      <summary>Checks the processing instruction for well-formedness and writes the processing instruction.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteEndRoot">
+      <summary>Writes the end of the root of the tree and resets the state.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteEntityRef(System.String)">
+      <summary>Throws <see cref="T:System.NotSupportedException" />.</summary>
+      <param name="name">String that contains name of entity.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteFullEndElement">
+      <summary>Checks the element for well-formedness before writing the end of the element.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteItem(System.Xml.XPath.XPathItem)">
+      <summary>Write an item to output.  If currently constructing an Xml tree, then the item is always copied. At the top-level, the item's identity is preserved unless it is an atomic value.</summary>
+      <param name="item">
+        <see cref="T:System.Xml.XPath.XPathItem" /> object to write.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteNamespaceDeclaration(System.String,System.String)">
+      <summary>Checks the namespace declaration for well-formedness and writes the namespace declaration.</summary>
+      <param name="prefix">String that contains namespace prefix.</param>
+      <param name="ns">String that contains namespace name.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteNamespaceDeclarationUnchecked(System.String,System.String)">
+      <summary>Adds a new namespace declaration - xmlns:prefix="ns" - to the set of in-scope declarations. This method does not perform any additional checks.</summary>
+      <param name="prefix">String that contains namespace prefix.</param>
+      <param name="ns">String that contains namespace name.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteNamespaceString(System.String)">
+      <summary>Caches the namespace's text.</summary>
+      <param name="text">String that contains fully qualified namespace.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteProcessingInstruction(System.String,System.String)">
+      <summary>Writes the processing instruction. No checks for well-formedness are done by this method; the called methods do checks if needed.</summary>
+      <param name="target">String that contains target of instruction.</param>
+      <param name="text">String that contains text of instruction.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteProcessingInstructionString(System.String)">
+      <summary>Caches the processing instruction's text.</summary>
+      <param name="text">String that contains instruction.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteRaw(System.Char[],System.Int32,System.Int32)">
+      <summary>Throws <see cref="T:System.NotSupportedException" />.</summary>
+      <param name="buffer">
+        <see cref="T:System.Char" /> buffer array to be written.</param>
+      <param name="index">
+        <see cref="T:System.Int32" /> that contains start index.</param>
+      <param name="count">
+        <see cref="T:System.Int32" /> that contains count characters to write.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteRaw(System.String)">
+      <summary>Throws <see cref="T:System.NotSupportedException" />.</summary>
+      <param name="data">String that contains raw data.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteRawUnchecked(System.String)">
+      <summary>Writes a text block without escaping special characters.</summary>
+      <param name="text">String that contains text to write.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteStartAttribute(System.String,System.String,System.String)">
+      <summary>Checks the attribute for well-formedness before writing the start of the attribute.</summary>
+      <param name="prefix">String that contains prefix of attribute.</param>
+      <param name="localName">String that contains local name of attribute.</param>
+      <param name="ns">String that contains namespace of attribute.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteStartAttributeComputed(System.String,System.Int32)">
+      <summary>Writes an attribute with a name that is computed from a prefix:localName tag name and a set of prefix mappings.</summary>
+      <param name="tagName">String that contains tag name.</param>
+      <param name="prefixMappingsIndex">
+        <see cref="T:System.Int32" /> that contains prefix mapping index.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteStartAttributeComputed(System.String,System.String)">
+      <summary>Writes an attribute with a name that is computed from a "prefix:localName" tag name and a set of prefix mappings.</summary>
+      <param name="tagName">String that contains tag name of attribute.</param>
+      <param name="ns">String that contains namespace of attribute.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteStartAttributeComputed(System.Xml.XmlQualifiedName)">
+      <summary>Writes an attribute with a name that is computed from a prefix:localName tag name and a set of prefix mappings.</summary>
+      <param name="name">String that contains name of attribute.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteStartAttributeComputed(System.Xml.XPath.XPathNavigator)">
+      <summary>Writes an attribute with a name that is computed from a prefix:localName tag name and a set of prefix mappings.</summary>
+      <param name="navigator">
+        <see cref="T:System.Xml.XPath.XPathNavigator" /> object.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteStartAttributeLocalName(System.String)">
+      <summary>Writes the start of the attribute with an empty prefix, namespace, and null schema type.</summary>
+      <param name="localName">String that contains local name.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteStartAttributeUnchecked(System.String)">
+      <summary>Writes the start of the attribute with local name.</summary>
+      <param name="localName">String that contains the local name of the attribute.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteStartAttributeUnchecked(System.String,System.String,System.String)">
+      <summary>Writes the start of the attribute with prefix, local name and ns without checks for well-formedness.</summary>
+      <param name="prefix">String that contains the prefix of the namespace.</param>
+      <param name="localName">String that contains the local name of the attribute.</param>
+      <param name="ns">String that contains the namespace.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteStartComment">
+      <summary>Checks the start of the comment for well-formedness and writes the start of the comment.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteStartDocument">
+      <summary>Throws <see cref="T:System.NotSupportedException" />.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteStartDocument(System.Boolean)">
+      <summary>Throws <see cref="T:System.NotSupportedException" />.</summary>
+      <param name="standalone">Boolean that indicates whether to write the XML declaration with the version number that appears at the beginning of the document.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteStartElement(System.String,System.String,System.String)">
+      <summary>Writes start element after checks that ensure well-formedness.</summary>
+      <param name="prefix">String that contains the namespace prefix.</param>
+      <param name="localName">String that contains the local name of the element.</param>
+      <param name="ns">String that contains the namespace name.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteStartElementComputed(System.String,System.Int32)">
+      <summary>Writes an element with a name that is computed from a prefix:localName tag name and a set of prefix mappings.</summary>
+      <param name="tagName">String that contains the tag name.</param>
+      <param name="prefixMappingsIndex">
+        <see cref="T:System.Int32" /> that contains the index.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteStartElementComputed(System.String,System.String)">
+      <summary>Writes an element with a name that is computed from a prefix:localName tag name and a set of prefix mappings.</summary>
+      <param name="tagName">String that contains the tag name.</param>
+      <param name="ns">String that contains the namespace name.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteStartElementComputed(System.Xml.XmlQualifiedName)">
+      <summary>Writes an element with a name that is computed from a prefix:localName tag name and a set of prefix mappings.</summary>
+      <param name="name">
+        <see cref="T:System.Xml.XmlQualifiedName" /> that contains the name.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteStartElementComputed(System.Xml.XPath.XPathNavigator)">
+      <summary>Writes an element with a name that is computed from a prefix:localName tag name and a set of prefix mappings.</summary>
+      <param name="navigator">
+        <see cref="T:System.Xml.XPath.XPathNavigator" /> object.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteStartElementLocalName(System.String)">
+      <summary>Writes the local name with an empty prefix and namespace.</summary>
+      <param name="localName">String that contains the local name.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteStartElementUnchecked(System.String)">
+      <summary>Writes the start of an element. There is an assumption of well-formedness, so no additional checks are performed.</summary>
+      <param name="localName">String that contains the local name of the start element.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteStartElementUnchecked(System.String,System.String,System.String)">
+      <summary>Writes an element with a name that is computed from a prefix:localName tag name and a set of prefix mappings.</summary>
+      <param name="prefix">String that contains the namespace prefix.</param>
+      <param name="localName">String that contains the local name of the start element.</param>
+      <param name="ns">String that contains the namespace name.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteStartNamespace(System.String)">
+      <summary>Checks for well-formedness and writes the start of the namespace.</summary>
+      <param name="prefix">String that contains the namespace prefix.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteStartProcessingInstruction(System.String)">
+      <summary>Checks the comment for well-formedness and writes the start of the processing instruction.</summary>
+      <param name="target">String that contains the name of the target of the processing instruction.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteStartRoot">
+      <summary>Checks the root of the tree for well-formedness and writes the root of the tree.</summary>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteState">
+      <summary>Throws <see cref="T:System.NotSupportedException" />.</summary>
+      <returns>A <see cref="T:System.Xml.WriteState" /> object.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteString(System.String)">
+      <summary>Checks the string for well-formedness and writes text.</summary>
+      <param name="text">String that contains text to write.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteStringUnchecked(System.String)">
+      <summary>Writes text. Well-formedness is assumed, so no checks are performed.</summary>
+      <param name="text">String that contains text to write.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteSurrogateCharEntity(System.Char,System.Char)">
+      <summary>Throws <see cref="T:System.NotSupportedException" />.</summary>
+      <param name="lowChar">
+        <see cref="T:System.Char" /> of the low character.</param>
+      <param name="highChar">
+        <see cref="T:System.Char" /> of the high character.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.WriteWhitespace(System.String)">
+      <summary>Throws <see cref="T:System.NotSupportedException" />.</summary>
+      <param name="ws">String that contains the whitespace to write.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.XmlQueryOutput.XmlLang">
+      <summary>Throws <see cref="T:System.NotSupportedException" />.</summary>
+      <returns>A string that contains the language identifier.</returns>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.XmlQueryOutput.XmlSpace">
+      <summary>Throws <see cref="T:System.NotSupportedException" />.</summary>
+      <returns>The <see cref="T:System.Xml.XmlSpace" /> object.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryOutput.XsltCopyOf(System.Xml.XPath.XPathNavigator)">
+      <summary>Copies a node by value to output according to the following Xslt rules: identity is never preserved, if the item is an Rtf, preserve serialization hints when copying, and if the item is a root node, copy the children of the root.</summary>
+      <param name="navigator">
+        <see cref="T:System.Xml.XPath.XPathNavigator" /> object.</param>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.XmlQueryRuntime">
+      <summary>Provides methods and properties to support the XSLT processor.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryRuntime.AddNewIndex(System.Xml.XPath.XPathNavigator,System.Int32,System.Xml.Xsl.Runtime.XmlILIndex)">
+      <summary>Adds a newly built index over the specified context document to the existing collection of indexes.</summary>
+      <param name="context">An instance of the <see cref="T:System.Xml.XPath.XPathNavigator" /> class.</param>
+      <param name="indexId">A value of type int.</param>
+      <param name="index">An instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlILIndex" /> class.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryRuntime.ChangeTypeXsltArgument(System.Int32,System.Object,System.Type)">
+      <summary>Converts a value from the CLR type of the <paramref name="value" /> parameter to CLR <paramref name="destinationType" /> by using V1 XSLT rules. Converts any result tree fragment values to nodes.</summary>
+      <returns>A value of type object.</returns>
+      <param name="indexType">A value of type Int32.</param>
+      <param name="value">A value of type object.</param>
+      <param name="destinationType">A value of type Type.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryRuntime.ChangeTypeXsltResult(System.Int32,System.Object)">
+      <summary>Converts from the CLR type of the <paramref name="value" /> parameter to the default CLR type by which intermediate language generation represents the XML type, based on the conversion rules of the XML type.</summary>
+      <returns>A value of type object.</returns>
+      <param name="indexType">A value of type int.</param>
+      <param name="value">A value of type object.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryRuntime.ComparePosition(System.Xml.XPath.XPathNavigator,System.Xml.XPath.XPathNavigator)">
+      <summary>Compares the relative positions of two navigators.</summary>
+      <returns>-1 if <paramref name="navigatorThis" /> is before <paramref name="navigatorThat" />; 1 if <paramref name="navigatorThis" /> is after <paramref name="navigatorThat" />; 0 if both navigators are positioned at the same node.</returns>
+      <param name="navigatorThis">An instance of the <see cref="T:System.Xml.XPath.XPathNavigator" /> class.</param>
+      <param name="navigatorThat">An instance of the <see cref="T:System.Xml.XPath.XPathNavigator" /> class.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryRuntime.CreateCollation(System.String)">
+      <summary>Creates a collation from a string.</summary>
+      <returns>An instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlCollation" /> class.</returns>
+      <param name="collation">A value of type string.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryRuntime.DebugGetGlobalNames">
+      <summary>Returns an array containing the names of all the global variables and parameters used in this query.</summary>
+      <returns>An array of string values.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryRuntime.DebugGetGlobalValue(System.String)">
+      <summary>Gets the value of a global value that has the specified name.</summary>
+      <returns>A sequence of <see cref="T:System.Xml.XPath.XPathItem" /> instances, or null if there is no global value that has the specified name.</returns>
+      <param name="name">A value of type string.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryRuntime.DebugGetXsltValue(System.Collections.IList)">
+      <summary>Converts a sequence to its appropriate XSLT type.</summary>
+      <returns>A value of type object.</returns>
+      <param name="seq">An instance of the <see cref="T:System.Collections.IList" /> class.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryRuntime.DebugSetGlobalValue(System.String,System.Object)">
+      <summary>Sets the value of a global value that has the specified name.</summary>
+      <param name="name">A value of type string.</param>
+      <param name="value">A value of type object.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryRuntime.DocOrderDistinct(System.Collections.Generic.IList{System.Xml.XPath.XPathNavigator})">
+      <summary>Gets distinct sorted nodes from the specified sequence. </summary>
+      <returns>An <see cref="T:System.Collections.IList" /> of <see cref="T:System.Xml.XPath.XPathNavigator" /> objects.</returns>
+      <param name="seq">A sequence of <see cref="T:System.Xml.XPath.XPathNavigator" /> instances.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryRuntime.EarlyBoundFunctionExists(System.String,System.String)">
+      <summary>Determines whether the specified early-bound object contains a method with the specified name.</summary>
+      <returns>true if the early-bound object identified by <paramref name="namespaceUri" /> contains a method that matches <paramref name="name" />; otherwise, false.</returns>
+      <param name="name">The method name to look for.</param>
+      <param name="namespaceUri">Identifies the early-bound object.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryRuntime.EndRtfConstruction(System.Xml.Xsl.Runtime.XmlQueryOutput@)">
+      <summary>Finishes constructing an RTF.</summary>
+      <returns>An instance of the <see cref="T:System.Xml.XPath.XPathNavigator" /> class.</returns>
+      <param name="output">An instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlQueryOutput" /> class.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryRuntime.EndSequenceConstruction(System.Xml.Xsl.Runtime.XmlQueryOutput@)">
+      <summary>Finishes constructing a nested sequence of items.</summary>
+      <returns>A sequence of instances of the <see cref="T:System.Xml.XPath.XPathItem" /> class.</returns>
+      <param name="output">An instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlQueryOutput" /> class.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.XmlQueryRuntime.ExternalContext">
+      <summary>Returns the object that manages external user context information, such as data sources, parameters, extension objects, and so on.</summary>
+      <returns>An instance of the <see cref="T:System.Xml.Xsl.XmlQueryContext" /> class.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryRuntime.FindIndex(System.Xml.XPath.XPathNavigator,System.Int32,System.Xml.Xsl.Runtime.XmlILIndex@)">
+      <summary>Returns the index with the specified ID if it has already been created over the specified document, and returns true. Otherwise, creates a new, empty index and returns false.</summary>
+      <returns>An instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlILIndex" /> class.</returns>
+      <param name="context">The context document.</param>
+      <param name="indexId">The index ID to look for.</param>
+      <param name="index">The returned index.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryRuntime.GenerateId(System.Xml.XPath.XPathNavigator)">
+      <summary>Generate a unique string identifier for the specified node.</summary>
+      <returns>A value of type string.</returns>
+      <param name="navigator">An instance of the <see cref="T:System.Xml.XPath.XPathNavigator" /> class.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryRuntime.GetAtomizedName(System.Int32)">
+      <summary>Gets the atomized name at the specified index in the array of names.</summary>
+      <returns>A value of type string.</returns>
+      <param name="index">A value of type int.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryRuntime.GetCollation(System.Int32)">
+      <summary>Gets a collation that was statically created.</summary>
+      <returns>An instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlCollation" /> class.</returns>
+      <param name="index">A value of type int.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryRuntime.GetEarlyBoundObject(System.Int32)">
+      <summary>Gets the specifiied early-bound extension object. If this object does not yet exist, creates an instance using the corresponding <see cref="T:System.Reflection.ConstructorInfo" />.</summary>
+      <returns>A value of type object.</returns>
+      <param name="index">A value of type int.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryRuntime.GetGlobalValue(System.Int32)">
+      <summary>Returns the value that is bound to the specified global variable. If the value has not yet been computed, computes it and stores it in the global variable.</summary>
+      <returns>The value that is bound to the specified global variable. </returns>
+      <param name="index">A value of type int.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryRuntime.GetNameFilter(System.Int32)">
+      <summary>Gets the name filter at the specified index in the array of filters.</summary>
+      <returns>An instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlNavigatorFilter" /> class.</returns>
+      <param name="index">A value of type int.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryRuntime.GetTypeFilter(System.Xml.XPath.XPathNodeType)">
+      <summary>Gets a filter that filters nodes of the specified type.</summary>
+      <returns>An instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlNavigatorFilter" /> class.</returns>
+      <param name="nodeType">An instance of the <see cref="T:System.Xml.XPath.XPathNodeType" /> class.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryRuntime.IsGlobalComputed(System.Int32)">
+      <summary>Returns true if the specified global value has already been computed.</summary>
+      <returns>true if the value has been computed; otherwise, false.</returns>
+      <param name="index">A value of type int.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryRuntime.IsQNameEqual(System.Xml.XPath.XPathNavigator,System.Int32,System.Int32)">
+      <summary>Determines whether the <see cref="P:System.Xml.Xpath.LocalName" /> and <see cref="P:System.Xml.Xpath.NamespaceURI" /> properties of the specified <see cref="T:System.Xml.XPath.XPathNavigator" /> are equal to the names specified in the parameters.</summary>
+      <returns>true if the names are equal; otherwise, false.</returns>
+      <param name="navigator">An instance of the <see cref="T:System.Xml.XPath.XPathNavigator" /> class.</param>
+      <param name="indexLocalName">A value of type int.</param>
+      <param name="indexNamespaceUri">A value of type int.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryRuntime.IsQNameEqual(System.Xml.XPath.XPathNavigator,System.Xml.XPath.XPathNavigator)">
+      <summary>Compares the <see cref="P:System.Xml.Xpath.LocalName" /> and <see cref="P:System.Xml.Xpath.NamespaceURI" /> properties of two <see cref="T:System.Xml.XPath.XPathNavigator" /> instances to check if they are equal.</summary>
+      <returns>true if the names are equal; otherwise, false.</returns>
+      <param name="n1">An instance of the <see cref="T:System.Xml.XPath.XPathNavigator" /> class.</param>
+      <param name="n2">An instance of the <see cref="T:System.Xml.XPath.XPathNavigator" /> class.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryRuntime.MatchesXmlType(System.Collections.Generic.IList{System.Xml.XPath.XPathItem},System.Int32)">
+      <summary>Returns true if the type of every item in the specified sequence matches the XML type that the specified index identifies.</summary>
+      <returns>true if the type of <paramref name="seq" /> is a subtype of the <paramref name="indexType" />; otherwise, false.</returns>
+      <param name="seq">An <see cref="T:System.Collections.Generic.IList" /> of <see cref="T:System.Xml.XPath.XPathItem" />objects.</param>
+      <param name="indexType">The index.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryRuntime.MatchesXmlType(System.Collections.Generic.IList{System.Xml.XPath.XPathItem},System.Xml.Schema.XmlTypeCode)">
+      <summary>Determines whether the type of the specified sequence is a subtype of the specified singleton type.</summary>
+      <returns>true if the type of <paramref name="seq" /> is a subtype the type specified by <paramref name="code" />; otherwise, false.</returns>
+      <param name="seq">A sequence of <see cref="T:System.Xml.XPath.XPathItem" /> instances.</param>
+      <param name="code">A singleton type.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryRuntime.MatchesXmlType(System.Xml.XPath.XPathItem,System.Int32)">
+      <summary>Returns true if the type of the specified <see cref="T:System.Xml.XPath.XPathItem" /> object matches the specified XML type.</summary>
+      <returns>true if the type of the specified <see cref="T:System.Xml.XPathItem" /> matches the specified XML type; otherwise, false.</returns>
+      <param name="item">An instance of the <see cref="T:System.Xml.XPath.XPathItem" /> class.</param>
+      <param name="indexType">The index in the array of XML types..</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryRuntime.MatchesXmlType(System.Xml.XPath.XPathItem,System.Xml.Schema.XmlTypeCode)">
+      <summary>Returns true if the type of the <see cref="T:System.Xml.XPath.XPathItem" /> object is a subtype of a type identified by the specified <see cref="T:System.Xml.Schema.XmlTypeCode" />.</summary>
+      <returns>Returns true if the type of the <see cref="T:System.Xml.XPath.XPathItem" /> object is a subtype of a type identified by the specified <see cref="T:System.Xml.Schema.XmlTypeCode" />, otherwise, false.</returns>
+      <param name="item">An instance of the <see cref="T:System.Xml.XPath.XPathItem" /> class.</param>
+      <param name="code">An instance of the <see cref="T:System.Xml.Schema.XmlTypeCode" /> class.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.XmlQueryRuntime.NameTable">
+      <summary>Returns the name table used to atomize all names used by the query.</summary>
+      <returns>An instance of the <see cref="T:System.Xml.XmlNameTable" /> class.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryRuntime.OnCurrentNodeChanged(System.Xml.XPath.XPathNavigator)">
+      <summary>Used for debugging in Visual Studio. Called after the current node has changed.</summary>
+      <returns>An integer that indicates the status of the change. Used for internal testing only.</returns>
+      <param name="currentNode">
+        <see cref="T:System.Xml.XPath.XPathNavigator" /> object that identifies the node.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.XmlQueryRuntime.Output">
+      <summary>Gets the output writer object.</summary>
+      <returns>An instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlQueryOutput" /> class.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryRuntime.ParseTagName(System.String,System.Int32)">
+      <summary>Parses the specified tag name and resolves the resulting prefix. If the prefix cannot be resolved, an error is thrown. </summary>
+      <returns>An instance of the <see cref="T:System.Xml.XmlQualifiedName" /> class.</returns>
+      <param name="tagName">The tag name.</param>
+      <param name="indexPrefixMappings">The index. </param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryRuntime.ParseTagName(System.String,System.String)">
+      <summary>Parses the specified tag name. Returns an <see cref="T:System.Xml.XmlQualifiedName" /> that consists of the parsed local name and the specified namespace.</summary>
+      <returns>An instance of the <see cref="T:System.Xml.XmlQualifiedName" /> class.</returns>
+      <param name="tagName">The tag name.</param>
+      <param name="ns">The namespace.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryRuntime.SendMessage(System.String)">
+      <summary>Reports query execution information to the event handler.</summary>
+      <param name="message">A value of type string.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryRuntime.SetGlobalValue(System.Int32,System.Object)">
+      <summary>Returns the value that is bound to the specified global variable or parameter.</summary>
+      <param name="index">A value of type int.</param>
+      <param name="value">A value of type object.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryRuntime.StartRtfConstruction(System.String,System.Xml.Xsl.Runtime.XmlQueryOutput@)">
+      <summary>Starts constructing an RTF and returns a new <see cref="T:System.Xml.Xsl.Runtime.XmlQueryOutput" /> object that will be used to construct this RTF.</summary>
+      <param name="baseUri">A value of type string.</param>
+      <param name="output">An instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlQueryOutput" /> class.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryRuntime.StartSequenceConstruction(System.Xml.Xsl.Runtime.XmlQueryOutput@)">
+      <summary>Starts constructing a nested sequence of items. Returns a new <see cref="T:System.Xml.Xsl.Runtime.XmlQueryOutput" /> that will be used to construct this new sequence.</summary>
+      <param name="output">An instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlQueryOutput" /> class.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryRuntime.TextRtfConstruction(System.String,System.String)">
+      <summary>Constructs a new <see cref="T:System.Xml.XPath.XPathNavigator" /> from the specified text.</summary>
+      <returns>An instance of the <see cref="T:System.Xml.XPath.XPathNavigator" /> class.</returns>
+      <param name="text">A value of type string.</param>
+      <param name="baseUri">A value of type string.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQueryRuntime.ThrowException(System.String)">
+      <summary>Throws an XML exception that has the specified message text.</summary>
+      <param name="text">A value of type string.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.XmlQueryRuntime.XsltFunctions">
+      <summary>Returns the object that manages the state. The state object is required to implement various XSLT functions.</summary>
+      <returns>An instance of the <see cref="T:System.Xml.Xsl.Runtime.XsltLibrary" /> class.</returns>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.XmlQuerySequence`1">
+      <summary>A sequence of XML values that dynamically expands and allows random access to items.</summary>
+      <typeparam name="T">The type of this <see cref="T:System.Xml.Xsl.Runtime.XmlQuerySequence`1" />.</typeparam>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQuerySequence`1.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlQuerySequence`1" /> class. </summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQuerySequence`1.#ctor(System.Int32)">
+      <summary>Initializes a new instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlQuerySequence`1" /> class. </summary>
+      <param name="capacity">The size of this collection.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQuerySequence`1.#ctor(`0)">
+      <summary>Constructs a singleton <see cref="T:System.Xml.Xsl.Runtime.XmlQuerySequence`1" /> that has <paramref name="value" /> as its only element.</summary>
+      <param name="value">The only value in this <see cref="T:System.Xml.Xsl.Runtime.XmlQuerySequence`1" />.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQuerySequence`1.#ctor(`0[],System.Int32)">
+      <summary>Initializes a new instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlQuerySequence`1" /> class. </summary>
+      <param name="array">An array of <see cref="T:System.Xml.Xsl.Runtime.XmlQuerySequence" /> instances.</param>
+      <param name="size">The size of the array.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQuerySequence`1.Add(`0)">
+      <summary>Throws the <see cref="T:System.NotSupportedException" /> exception. </summary>
+      <param name="value">An object to add to the collection.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQuerySequence`1.Clear">
+      <summary>Throws the <see cref="T:System.NotSupportedException" /> exception. </summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQuerySequence`1.Contains(`0)">
+      <summary>Returns true if the specified value is in the sequence.</summary>
+      <returns>true if the specified value is in the sequence; otherwise, false.</returns>
+      <param name="value">The value to find in the <see cref="T:System.Collections.Generic.ICollection`1" />. </param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQuerySequence`1.CopyTo(`0[],System.Int32)">
+      <summary>Copies the contents of this sequence to the specified array, starting at the specified index in the array.</summary>
+      <param name="array">The array to copy the content of the <see cref="T:System.Collections.Generic.ICollection`1collection" /> to. </param>
+      <param name="index">A value of type int.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.XmlQuerySequence`1.Count">
+      <summary>Returns the number of items in the sequence.</summary>
+      <returns>A value of type int.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQuerySequence`1.CreateOrReuse(System.Xml.Xsl.Runtime.XmlQuerySequence{`0})">
+      <summary>Clears and reuses the specified <see cref="T:System.Xml.Xsl.Runtime.XmlQuerySequence`1" /> if it is available. If the <paramref name="seq" /> parameter is null, creates a new <see cref="T:System.Xml.Xsl.Runtime.XmlQuerySequence`1" />.</summary>
+      <returns>An instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlQuerySequence" /> class.</returns>
+      <param name="seq">An <see cref="T:System.Xml.Xsl.Runtime.XmlQuerySequence`1" /> instance to be reused.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQuerySequence`1.CreateOrReuse(System.Xml.Xsl.Runtime.XmlQuerySequence{`0},`0)">
+      <summary>Clears and reuses the specified <see cref="T:System.Xml.Xsl.Runtime.XmlQuerySequence`1" /> it is available. If the <paramref name="seq" /> parameter is null, creates a new <see cref="T:System.Xml.Xsl.Runtime.XmlQuerySequence`1" /> and adds <paramref name="item" /> to the collection.</summary>
+      <returns>An instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlQuerySequence`1" /> class.</returns>
+      <param name="seq">An <see cref="T:System.Xml.Xsl.Runtime.XmlQuerySequence`1" /> instance to be reused.</param>
+      <param name="item">An item to add. </param>
+    </member>
+    <member name="F:System.Xml.Xsl.Runtime.XmlQuerySequence`1.Empty">
+      <summary>Creates a new instance of <see cref="T:System.Xml.Xsl.Runtime.XmlQuerySequence" />.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQuerySequence`1.GetEnumerator">
+      <summary>Returns <see cref="T:System.Collections.Generic.IEnumerator`1" />.</summary>
+      <returns>An instance of the <see cref="T:System.Collections.Generic.IEnumerator`1" /> class.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQuerySequence`1.IndexOf(`0)">
+      <summary>Returns the index of the specified value in the sequence.</summary>
+      <returns>The index.</returns>
+      <param name="value">The value for which to get the index.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.XmlQuerySequence`1.Item(System.Int32)">
+      <summary>Returns the item at the specified index.</summary>
+      <returns>The item at the specified index. </returns>
+      <param name="index">A value of type int.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQuerySequence`1.OnItemsChanged">
+      <summary>Called when one or more items in the cache have been added or removed. This method can also be called from the <see cref="M:System.Xml.Xsl.Runtime.XmlQuerySequence`1.SortByKeys(System.Array)" /> method.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQuerySequence`1.SortByKeys(System.Array)">
+      <summary>Sort the items in the cache using the keys contained in the specified array.</summary>
+      <param name="keys">A value of type array.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQuerySequence`1.System#Collections#Generic#ICollection{T}#Add(`0)">
+      <summary>Throws the <see cref="T:System.NotSupportedException" /> exception.</summary>
+      <param name="value">The sequence value.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQuerySequence`1.System#Collections#Generic#ICollection{T}#Clear">
+      <summary>Throws the <see cref="T:System.NotSupportedException" /> exception.</summary>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.XmlQuerySequence`1.System#Collections#Generic#ICollection{T}#IsReadOnly">
+      <summary>If the <see cref="T:System.Xml.Xsl.Runtime.XmlQuerySequence`1" /> is read-only, this property returns true.</summary>
+      <returns>Returns true if the <see cref="T:System.Xml.Xsl.Runtime.XmlQuerySequence`1" /> is read-only; otherwise, false.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQuerySequence`1.System#Collections#Generic#ICollection{T}#Remove(`0)">
+      <summary>Removes the specified item from the collection</summary>
+      <returns>Returns true if the item was removed; otherwise, false.</returns>
+      <param name="value">The item to be removed.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQuerySequence`1.System#Collections#Generic#IList{T}#Insert(System.Int32,`0)">
+      <summary>Throws the <see cref="T:System.NotSupportedException" /> exception.</summary>
+      <param name="index">The sequence index.</param>
+      <param name="value">The sequence value.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQuerySequence`1.System#Collections#Generic#IList{T}#RemoveAt(System.Int32)">
+      <summary>Throws the <see cref="T:System.NotSupportedException" /> exception.</summary>
+      <param name="index">The sequence index.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQuerySequence`1.System#Collections#ICollection#CopyTo(System.Array,System.Int32)">
+      <summary>Copies the contents of this sequence to the specified array, starting at the specified index in the target array.</summary>
+      <param name="array">The specified array.</param>
+      <param name="index">The specified index.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.XmlQuerySequence`1.System#Collections#ICollection#IsSynchronized">
+      <summary>Returns false. The <see cref="T:System.Xml.Xsl.Runtime.XmlQuerySequence`1" /> is not thread-safe.</summary>
+      <returns>false</returns>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.XmlQuerySequence`1.System#Collections#ICollection#SyncRoot">
+      <summary>Returns this instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlQuerySequence`1" /> class. This instance can be used to synchronize access.</summary>
+      <returns>This instance of <see cref="T:System.Xml.Xsl.Runtime.XmlQuerySequence`1" />.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQuerySequence`1.System#Collections#IEnumerable#GetEnumerator">
+      <summary>Returns the <see cref="T:System.Collections.IEnumerator" />.</summary>
+      <returns>Returns the <see cref="T:System.Collections.IEnumerator" /> of the query sequence collection.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQuerySequence`1.System#Collections#IList#Add(System.Object)">
+      <summary>Throws the <see cref="T:System.NotSupportedException" /> exception.</summary>
+      <returns>The index of the item added.</returns>
+      <param name="value">The sequence value.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQuerySequence`1.System#Collections#IList#Clear">
+      <summary>Throws the <see cref="T:System.NotSupportedException" /> exception.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQuerySequence`1.System#Collections#IList#Contains(System.Object)">
+      <summary>Returns true if the specified value is in the sequence.</summary>
+      <returns>true if the specified value is in the sequence; otherwise, false.</returns>
+      <param name="value">The specified value.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQuerySequence`1.System#Collections#IList#IndexOf(System.Object)">
+      <summary>Returns the index of the specified value in the sequence.</summary>
+      <returns>The index of the specified value in the sequence.</returns>
+      <param name="value">The specified value.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQuerySequence`1.System#Collections#IList#Insert(System.Int32,System.Object)">
+      <summary>Throws the <see cref="T:System.NotSupportedException" /> exception.</summary>
+      <param name="index">The specified index.</param>
+      <param name="value">The specified value.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.XmlQuerySequence`1.System#Collections#IList#IsFixedSize">
+      <summary>Returns true. The items cannot be added, removed, or modified.</summary>
+      <returns>Returns true.</returns>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.XmlQuerySequence`1.System#Collections#IList#IsReadOnly">
+      <summary>If the <see cref="T:System.Xml.Xsl.Runtime.XmlQuerySequence`1" /> is read-only, this property returns true.</summary>
+      <returns>Returns true if the <see cref="T:System.Xml.Xsl.Runtime.XmlQuerySequence`1" /> is read-only; otherwise, false.</returns>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.XmlQuerySequence`1.System#Collections#IList#Item(System.Int32)">
+      <summary>Returns the item at the specified index.</summary>
+      <returns>An item at the specified index.</returns>
+      <param name="index">The specified index.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQuerySequence`1.System#Collections#IList#Remove(System.Object)">
+      <summary>Not implemented. Throws the <see cref="T:System.NotSupportedException" /> exception. </summary>
+      <param name="value">The specified value.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlQuerySequence`1.System#Collections#IList#RemoveAt(System.Int32)">
+      <summary>Throws the <see cref="T:System.NotSupportedException" /> exception.</summary>
+      <param name="index">The specified index.</param>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.XmlSortKeyAccumulator">
+      <summary>Accumulates a list of sort keys and stores them in an array.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlSortKeyAccumulator.AddDateTimeSortKey(System.Xml.Xsl.Runtime.XmlCollation,System.DateTime)">
+      <summary>Creates a new <see cref="T:System.DateTime" /> sort key and appends it to the current run of sort keys.</summary>
+      <param name="collation">An instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlCollation" /> class.</param>
+      <param name="value">A DateTime value.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlSortKeyAccumulator.AddDecimalSortKey(System.Xml.Xsl.Runtime.XmlCollation,System.Decimal)">
+      <summary>Creates a new <see cref="T:System.Decimal" /> sort key and appends it to the current run of sort keys.</summary>
+      <param name="collation">An instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlCollation" /> class.</param>
+      <param name="value">A decimal value.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlSortKeyAccumulator.AddDoubleSortKey(System.Xml.Xsl.Runtime.XmlCollation,System.Double)">
+      <summary>Creates a new <see cref="T:System.Double" /> sort key and appends it to the current run of sort keys.</summary>
+      <param name="collation">An instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlCollation" /> class.</param>
+      <param name="value">A double value.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlSortKeyAccumulator.AddEmptySortKey(System.Xml.Xsl.Runtime.XmlCollation)">
+      <summary>Creates a new empty sort key and appends it to the current run of sort keys.</summary>
+      <param name="collation">An instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlCollation" /> class.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlSortKeyAccumulator.AddIntegerSortKey(System.Xml.Xsl.Runtime.XmlCollation,System.Int64)">
+      <summary>Creates a new <see cref="T:System.Int64" /> sort key and appends it to the current run of sort keys.</summary>
+      <param name="collation">An instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlCollation" /> class.</param>
+      <param name="value">A value of type Int64.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlSortKeyAccumulator.AddIntSortKey(System.Xml.Xsl.Runtime.XmlCollation,System.Int32)">
+      <summary>Creates a new <see cref="T:System.Int32" /> sort key and appends it to the current run of sort keys.</summary>
+      <param name="collation">An instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlCollation" /> class.</param>
+      <param name="value">A value of type Int32.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlSortKeyAccumulator.AddStringSortKey(System.Xml.Xsl.Runtime.XmlCollation,System.String)">
+      <summary>Creates a new <see cref="T:System.String" /> sort key and appends it to the current run of sort keys.</summary>
+      <param name="collation">An instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlCollation" /> class.</param>
+      <param name="value">A value of type string.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlSortKeyAccumulator.Create">
+      <summary>Initializes the <see cref="T:System.Xml.Xsl.Runtime.XmlSortKeyAccumulator" />.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XmlSortKeyAccumulator.FinishSortKeys">
+      <summary>Finishes creating the current run of sort keys and begins a new run.</summary>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.XmlSortKeyAccumulator.Keys">
+      <summary>Gets an array of sort keys that was constructed by the internal <see cref="T:System.Xml.Xsl.Runtime.XmlSortKeyAccumulator" /> class.</summary>
+      <returns>An array of sort keys.</returns>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.XPathFollowingIterator">
+      <summary>Iterates over all following nodes according to the XPath following-axis rules.  </summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XPathFollowingIterator.Create(System.Xml.XPath.XPathNavigator,System.Xml.Xsl.Runtime.XmlNavigatorFilter)">
+      <summary>Initializes the <see cref="T:System.Xml.Xsl.Runtime.XPathFollowingIterator" />. The <see cref="T:System.Xml.Xsl.Runtime.XPathFollowingIterator" /> does not contain duplicates.</summary>
+      <param name="input">
+        <see cref="T:System.Xml.XPath.XPathNavigator" /> object.</param>
+      <param name="filter">
+        <see cref="T:System.Xml.Xsl.Runtime.XmlNavigatorFilter" /> object.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.XPathFollowingIterator.Current">
+      <summary>Returns the current result navigator. </summary>
+      <returns>The current result navigator.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XPathFollowingIterator.MoveNext">
+      <summary>Positions the iterator to the next following node.</summary>
+      <returns>true if the iterator was set to the next following node; otherwise, false.</returns>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.XPathFollowingMergeIterator">
+      <summary>Iterates over all following nodes according to the XPath following axis rules. </summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XPathFollowingMergeIterator.Create(System.Xml.Xsl.Runtime.XmlNavigatorFilter)">
+      <summary>Initializes the <see cref="T:System.Xml.Xsl.Runtime.XPathFollowingMergeIterator" />.</summary>
+      <param name="filter">An instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlNavigatorFilter" /> class, which enables you to filter nodes based on name.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.XPathFollowingMergeIterator.Current">
+      <summary>Returns the current result navigator.  </summary>
+      <returns>The current result navigator.  </returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XPathFollowingMergeIterator.MoveNext(System.Xml.XPath.XPathNavigator)">
+      <summary>Moves the iterator to the next following node.  </summary>
+      <returns>Returns <see cref="F:System.Xml.Xsl.Runtime.IteratorResult.NoMoreNodes" /> if there are no more following nodes. Returns <see cref="F:System.Xml.Xsl.Runtime.IteratorResult.NeedInputNode" /> if the next input node must be fetched first. Returns <see cref="F:System.Xml.Xsl.Runtime.IteratorResult.HaveCurrentNode" /> if the <see cref="P:System.Xml.Xsl.Runtime.XPathFollowingMergeIterator.Current" /> property was set to the next node while iterating through the nodes.</returns>
+      <param name="input">
+        <see cref="T:System.Xml.XPath.XPathNavigator" /> object.</param>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.XPathPrecedingDocOrderIterator">
+      <summary>Iterates over all preceding nodes according to the XPath preceding axis rules, and returns nodes in document order without duplicates.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XPathPrecedingDocOrderIterator.Create(System.Xml.XPath.XPathNavigator,System.Xml.Xsl.Runtime.XmlNavigatorFilter)">
+      <summary>Initializes the <see cref="T:System.Xml.Xsl.Runtime.XPathPrecedingDocOrderIterator" />.</summary>
+      <param name="input">
+        <see cref="T:System.Xml.XPath.XPathNavigator" /> object.</param>
+      <param name="filter">
+        <see cref="T:System.Xml.Xsl.Runtime.XmlNavigatorFilter" /> object.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.XPathPrecedingDocOrderIterator.Current">
+      <summary>Returns the current result navigator. </summary>
+      <returns>The current result navigator.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XPathPrecedingDocOrderIterator.MoveNext">
+      <summary>Positions the iterator on the next preceding node.</summary>
+      <returns>true if the iterator was set to the next preceding node; otherwise, false.</returns>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.XPathPrecedingIterator">
+      <summary>Iterates over all preceding nodes according to the XPath preceding axis rules, and returns nodes in reverse document order without duplicates.  </summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XPathPrecedingIterator.Create(System.Xml.XPath.XPathNavigator,System.Xml.Xsl.Runtime.XmlNavigatorFilter)">
+      <summary>Initializes the <see cref="T:System.Xml.Xsl.Runtime.XPathPrecedingIterator" />.</summary>
+      <param name="context">The node from which you start traversing ancestors.</param>
+      <param name="filter">An instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlNavigatorFilter" /> class, which enables you to filter nodes based on the name. For more information, see <see cref="T:System.Xml.Xsl.Runtime.XmlNavigatorFilter" />.  </param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.XPathPrecedingIterator.Current">
+      <summary>Returns the current result navigator. </summary>
+      <returns>The current result navigator.</returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XPathPrecedingIterator.MoveNext">
+      <summary>Positions the iterator on the next preceding node in reverse document order.</summary>
+      <returns>true if the iterator was set to the next preceding node; otherwise, false.</returns>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.XPathPrecedingMergeIterator">
+      <summary>Iterates over all preceding nodes according to the XPath preceding axis rules, except that nodes are always returned in document order. Merges multiple sets of preceding nodes in document order and removes duplicates.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XPathPrecedingMergeIterator.Create(System.Xml.Xsl.Runtime.XmlNavigatorFilter)">
+      <summary>Initializes the <see cref="T:System.Xml.Xsl.Runtime.XPathPrecedingMergeIterator" />.</summary>
+      <param name="filter">An instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlNavigatorFilter" /> class, which enables you to filter nodes based on the name.</param>
+    </member>
+    <member name="P:System.Xml.Xsl.Runtime.XPathPrecedingMergeIterator.Current">
+      <summary>Returns the current result navigator.  </summary>
+      <returns>The current result navigator.  </returns>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XPathPrecedingMergeIterator.MoveNext(System.Xml.XPath.XPathNavigator)">
+      <summary>Positions this iterator to the next preceding node in document order.  </summary>
+      <returns>Returns <see cref="F:System.Xml.Xsl.Runtime.IteratorResult.NoMoreNodes" /> if there are no more preceding nodes. Returns <see cref="F:System.Xml.Xsl.Runtime.IteratorResult.NeedInputNode" /> if the next input node must be fetched first. Returns <see cref="F:System.Xml.Xsl.Runtime.IteratorResult.HaveCurrentNode" /> if the <see cref="P:System.Xml.Xsl.Runtime.XPathPrecedingMergeIterator.Current" /> property was set to the next node while iterating through the nodes.</returns>
+      <param name="input">The input node. </param>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.XsltConvert">
+      <summary>Contains conversion routines used by XSLT.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltConvert.EnsureNodeSet(System.Collections.Generic.IList{System.Xml.XPath.XPathItem})">
+      <summary>Ensures that the specified sequence of objects is not a result tree fragment and that it can be converted to a node set.</summary>
+      <returns>A sequence of <see cref="T:System.Xml.XPath.XPathNavigator" /> instances.</returns>
+      <param name="listItems">A sequence of <see cref="T:System.Xml.XPath.XPathItem" /> instances.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltConvert.ToBoolean(System.Collections.Generic.IList{System.Xml.XPath.XPathItem})">
+      <summary>Converts a specified value to Boolean.</summary>
+      <returns>A value of type bool.</returns>
+      <param name="listItems">A sequence of <see cref="T:System.Xml.XPath.XPathItem" /> instances.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltConvert.ToBoolean(System.Xml.XPath.XPathItem)">
+      <summary>Converts the specified value to Boolean.</summary>
+      <returns>A value of type bool.</returns>
+      <param name="item">An instance of the <see cref="T:System.Xml.XPath.XPathItem" /> class.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltConvert.ToDateTime(System.String)">
+      <summary>Converts a specified value to a DateTime value.</summary>
+      <returns>A value of type DateTime.</returns>
+      <param name="value">A string value.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltConvert.ToDecimal(System.Double)">
+      <summary>Converts a specified value to decimal.</summary>
+      <returns>A value of type decimal.</returns>
+      <param name="value">A value of type double.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltConvert.ToDouble(System.Collections.Generic.IList{System.Xml.XPath.XPathItem})">
+      <summary>Converts a specified value to double.</summary>
+      <returns>A value of type double.</returns>
+      <param name="listItems">A sequence of <see cref="T:System.Xml.XPath.XPathItem" /> instances.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltConvert.ToDouble(System.Decimal)">
+      <summary>Converts the specified value to double.</summary>
+      <returns>A value of type double.</returns>
+      <param name="value">A value of type decimal.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltConvert.ToDouble(System.Int32)">
+      <summary>Converts the specified value to double.</summary>
+      <returns>A value of type double.</returns>
+      <param name="value">A value of type int.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltConvert.ToDouble(System.Int64)">
+      <summary>Converts the specified value to double.</summary>
+      <returns>A value of type double.</returns>
+      <param name="value">A value of type Int64.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltConvert.ToDouble(System.String)">
+      <summary>Converts a specified value to double.</summary>
+      <returns>A value of type double.</returns>
+      <param name="value">A value of type string.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltConvert.ToDouble(System.Xml.XPath.XPathItem)">
+      <summary>Converts a specified value to double.</summary>
+      <returns>A value of type double.</returns>
+      <param name="item">An instance of the <see cref="T:System.Xml.XPath.XPathItem" /> class.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltConvert.ToInt(System.Double)">
+      <summary>Converts the specified value to int.</summary>
+      <returns>A value of type int.</returns>
+      <param name="value">A value of type double.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltConvert.ToLong(System.Double)">
+      <summary>Converts the specified value to long.</summary>
+      <returns>A value of type long.</returns>
+      <param name="value">A value of type double.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltConvert.ToNode(System.Collections.Generic.IList{System.Xml.XPath.XPathItem})">
+      <summary>Converts a specified value to a node.</summary>
+      <returns>An instance of the <see cref="T:System.Xml.XPath.XPathNavigator" /> class.</returns>
+      <param name="listItems">A sequence of <see cref="T:System.Xml.XPath.XPathItem" /> instances.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltConvert.ToNode(System.Xml.XPath.XPathItem)">
+      <summary>Converts the specified value to a node.</summary>
+      <returns>An instance of the <see cref="T:System.Xml.XPath.XPathNavigator" /> class.</returns>
+      <param name="item">An instance of the <see cref="T:System.Xml.XPath.XPathItem" /> class.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltConvert.ToNodeSet(System.Collections.Generic.IList{System.Xml.XPath.XPathItem})">
+      <summary>Converts the items to a sequence of nodes.</summary>
+      <returns>A sequence of <see cref="T:System.Xml.XPath.XPathNavigator" /> instances.</returns>
+      <param name="listItems">A sequence of <see cref="T:System.Xml.XPath.XPathItem" /> instances.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltConvert.ToNodeSet(System.Xml.XPath.XPathItem)">
+      <summary>Converts the specified value to a node.</summary>
+      <returns>An instance of the <see cref="T:System.Xml.Xsl.Runtime.XmlQuerySequence" /> class.</returns>
+      <param name="item">An instance of the <see cref="T:System.Xml.XPath.XPathItem" /> class.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltConvert.ToString(System.Collections.Generic.IList{System.Xml.XPath.XPathItem})">
+      <summary>Converts the items to a string.</summary>
+      <returns>A value of type string.</returns>
+      <param name="listItems">A sequence of <see cref="T:System.Xml.XPath.XPathItem" /> instances.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltConvert.ToString(System.DateTime)">
+      <summary>Converts the specified value to a string.</summary>
+      <returns>A value of type string.</returns>
+      <param name="value">A value of type DateTime.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltConvert.ToString(System.Double)">
+      <summary>Converts the specified value to a string.</summary>
+      <returns>A value of type string.</returns>
+      <param name="value">A value of type double.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltConvert.ToString(System.Xml.XPath.XPathItem)">
+      <summary>Converts the specified value to a string.</summary>
+      <returns>A value of type string.</returns>
+      <param name="item">An instance of the <see cref="T:System.Xml.XPath.XPathItem" /> class.</param>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.XsltFunctions">
+      <summary>XSLT and XPath functions.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltFunctions.BaseUri(System.Xml.XPath.XPathNavigator)">
+      <summary>Returns the value of the base URI of the node of the node passed in by the <paramref name="navigator" /> parameter. Implements baseUri XPath function according to the W3C specification.</summary>
+      <returns>The base URI as <see cref="T:System.String" />.</returns>
+      <param name="navigator">The <see cref="T:System.Xml.XPath.XPathNavigator" /> instance that contains the node to be identified by URI.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltFunctions.Contains(System.String,System.String)">
+      <summary>Implements contains XPath function according to the W3C specification.</summary>
+      <returns>true if the first argument string contains the second argument string; otherwise, false.</returns>
+      <param name="s1">The string in which to locate <paramref name="s2" />.</param>
+      <param name="s2">The string to locate in s1. </param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltFunctions.EXslObjectType(System.Collections.Generic.IList{System.Xml.XPath.XPathItem})">
+      <summary>Implements exsl:object-type.</summary>
+      <returns>Object type as <see cref="T:System.String" />.</returns>
+      <param name="value">The <see cref="T:System.Xml.XPath.XPathItem" /> of which to determine type.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltFunctions.Lang(System.String,System.Xml.XPath.XPathNavigator)">
+      <summary>Implements the lang function according to the W3C XPath specification.</summary>
+      <returns>
+        <see cref="T:System.Boolean" />.</returns>
+      <param name="value">The specified string.</param>
+      <param name="context">
+        <see cref="T:System.Xml.XPath.XPathNavigator" /> object that contains context.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltFunctions.MSFormatDateTime(System.String,System.String,System.String,System.Boolean)">
+      <summary>Implements the ms:format-date and ms-format-timeMicrosoft XPath extension functions.</summary>
+      <returns>String that contains formatted date and time.</returns>
+      <param name="dateTime">String that contains date/time data.</param>
+      <param name="format">String that contains format.</param>
+      <param name="lang">String that contains language.</param>
+      <param name="isDate">Boolean value that indicates whether date/time contains a date.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltFunctions.MSLocalName(System.String)">
+      <summary>Implements the ms:local-nameMicrosoft XPath extension function. </summary>
+      <returns>Name as <see cref="T:System.String" />.</returns>
+      <param name="name">The name.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltFunctions.MSNamespaceUri(System.String,System.Xml.XPath.XPathNavigator)">
+      <summary>Implements the ms:namespace-uriMicrosoft XPath extension function. </summary>
+      <returns>Namespace URI as <see cref="T:System.String" />.</returns>
+      <param name="name">The name.</param>
+      <param name="currentNode">The <see cref="T:System.Xml.XPath.XPathNavigator" /> instance.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltFunctions.MSNumber(System.Collections.Generic.IList{System.Xml.XPath.XPathItem})">
+      <summary>Implements ms:numberMicrosoft XPath extension function.</summary>
+      <returns>
+        <see cref="T:System.Double" />.</returns>
+      <param name="value">
+        <see cref="T:System.Collections.Generic.List`1" /> of <see cref="T:System.Xml.XPath.XPathItem" />.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltFunctions.MSStringCompare(System.String,System.String,System.String,System.String)">
+      <summary>Implements ms:string-compareMicrosoft XPath extension function. </summary>
+      <returns>If <paramref name="s1" /> &lt; <paramref name="s2" /> the method returns -1. If <paramref name="s1" /> == <paramref name="s2" /> the method returns 0. If <paramref name="s1" /> &gt; <paramref name="s2" /> the method returns 1.</returns>
+      <param name="s1">The first string to compare.</param>
+      <param name="s2">The second string to compare.</param>
+      <param name="lang">The language. Optional</param>
+      <param name="options">Specifies whether the comparison is case-sensitive.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltFunctions.MSUtc(System.String)">
+      <summary>Implements the ms:utcMicrosoft XPath extension function.</summary>
+      <returns>A string that contains date/time information. If a string cannot be interpreted as a valid XSD date/time-related format, it returns an empty string.</returns>
+      <param name="dateTime">String that contains date/time data.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltFunctions.NormalizeSpace(System.String)">
+      <summary>Removes leading and trailing spaces from the specified string and returns the result. Implements normalize-space function from the W3C XPath standard.</summary>
+      <returns>A normalized string. </returns>
+      <param name="value">The specified string.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltFunctions.OuterXml(System.Xml.XPath.XPathNavigator)">
+      <summary>Gets the markup representing the opening and closing tags of the node and all child nodes of the node identified by the <see cref="T:System.Xml.XPath.XPathNavigator" /> argument.</summary>
+      <returns>A string that contains the opening and closing tags of the node and all child nodes of the node that is identified by the <paramref name="navigator" /> parameter.</returns>
+      <param name="navigator">
+        <see cref="T:System.Xml.XPath.XPathNavigator" /> that identifies the node.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltFunctions.Round(System.Double)">
+      <summary>Rounds value by using XPath rounding rules. Rounds towards positive infinity. Values between -0.5 and -0.0 are rounded to -0.0 (negative zero).</summary>
+      <returns>The rounded number as <see cref="T:System.Double" />.</returns>
+      <param name="value">
+        <see cref="T:System.Double" /> number to round.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltFunctions.StartsWith(System.String,System.String)">
+      <summary>Implements starts-with XPath function according to the W3C specification. </summary>
+      <returns>true if the first argument string starts with the second argument string; otherwise, false.</returns>
+      <param name="s1">A string, the beginning of which is compared to <paramref name="s2" />.</param>
+      <param name="s2">The string to compare to the beginning of <paramref name="s1" />. </param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltFunctions.Substring(System.String,System.Double)">
+      <summary>Implements substring XPath function according to the W3C specification.</summary>
+      <returns>The substring of the first argument starting at the position specified in the second argument</returns>
+      <param name="value">The string from which to retrieve the substring.</param>
+      <param name="startIndex">The starting character position of a substring in <paramref name="s" />.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltFunctions.Substring(System.String,System.Double,System.Double)">
+      <summary>Implements substring XPath function according to the W3C specification.</summary>
+      <returns>The substring of the first argument, starting at the position specified in the second argument, with the length specified in the third argument.</returns>
+      <param name="value">The string from which to retrieve the substring.</param>
+      <param name="startIndex">The starting character position of a substring in <paramref name="s" />.</param>
+      <param name="length">The number of characters in the substring.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltFunctions.SubstringAfter(System.String,System.String)">
+      <summary>Implements substring-after XPath function according to the W3C specification.</summary>
+      <returns>The characters in s1 that occur after s2, or the empty string if s1 does not contain s2.</returns>
+      <param name="s1">The string in which to locate s2. </param>
+      <param name="s2">The string to locate in <paramref name="s1" />.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltFunctions.SubstringBefore(System.String,System.String)">
+      <summary>Implements substring-before XPath function according to the W3C specification.</summary>
+      <returns>The characters in s1 that occur before s2, or the empty string if s1 does not contain s2.</returns>
+      <param name="s1">The string in which to locate s2. </param>
+      <param name="s2">The string to locate in <paramref name="s1" />.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltFunctions.SystemProperty(System.Xml.XmlQualifiedName)">
+      <summary>Implements system-property XSLT function according to the W3C specification.</summary>
+      <returns>The value of the system property specified by the <paramref name="name" />.</returns>
+      <param name="name">The name of the system property.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltFunctions.Translate(System.String,System.String,System.String)">
+      <summary>Implements translate XPath function according to the W3C specification.</summary>
+      <returns>The translated value as <see cref="T:System.String" />.</returns>
+      <param name="arg">The original string.</param>
+      <param name="mapString">The substring in <paramref name="arg" /> that should be replaced with <paramref name="transString" />.</param>
+      <param name="transString">The string to replace <paramref name="mapString" /> with.</param>
+    </member>
+    <member name="T:System.Xml.Xsl.Runtime.XsltLibrary">
+      <summary>Implements different XPath and XSLT functions.</summary>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltLibrary.CheckScriptNamespace(System.String)">
+      <summary>Checks that the extension and script namespaces do not clash.</summary>
+      <returns>An integer used for internal infrastructure only.</returns>
+      <param name="nsUri">The namespace URI.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltLibrary.ElementAvailable(System.Xml.XmlQualifiedName)">
+      <summary>Evaluates the argument to a string that is an XML qualified name. This method implements the element-available function specified by W3C XSL Transformations (XSLT).</summary>
+      <returns>true if the expanded name is the name of an instruction. If the expanded name has a namespace URI equal to the XSLT namespace URI, then it refers to an element defined by XSLT. Otherwise, the expanded-name refers to an extension element. If the expanded name has a null namespace URI, the element-available function will return false.</returns>
+      <param name="name">The XML qualified name.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltLibrary.EqualityOperator(System.Double,System.Collections.Generic.IList{System.Xml.XPath.XPathItem},System.Collections.Generic.IList{System.Xml.XPath.XPathItem})">
+      <summary>Determines equality between collections of type <see cref="T:System.Xml.XPath.XPathItem" />.</summary>
+      <returns>Returns true if the collections are equal, otherwise false.</returns>
+      <param name="opCode">
+        <see cref="T:System.Double" /> that specifies the operation to be performed</param>
+      <param name="left">
+        <see cref="T:System.Collections.Generic.IList" /> of type <see cref="T:System.Xml.XPath.XPathItem" />.</param>
+      <param name="right">
+        <see cref="T:System.Collections.Generic.IList" /> of type <see cref="T:System.Xml.XPath.XPathItem" />.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltLibrary.FormatMessage(System.String,System.Collections.Generic.IList{System.String})">
+      <summary>Formats an exception message composed of a format string supplied by the <paramref name="res" /> parameter and arguments contained by the <paramref name="args" /> parameter.</summary>
+      <returns>A string that contains the formatted exception message.</returns>
+      <param name="res">A string that contains the message resource.</param>
+      <param name="args">A list of strings that represent arguments to the method.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltLibrary.FormatNumberDynamic(System.Double,System.String,System.Xml.XmlQualifiedName,System.String)">
+      <summary>Implements the format-number() XSLT function. For more information, see the number formatting section in the W3C Recommendation. </summary>
+      <returns>Returns a string that indicates the number format. For more information, see the number formatting section in the W3C Recommendation.</returns>
+      <param name="value">
+        <see cref="T:System.Double" /> that contains the value to format.</param>
+      <param name="formatPicture">String that contains the format picture.</param>
+      <param name="decimalFormatName">
+        <see cref="T:System.Xml.XmlQualifiedName" /> that contains the format name.</param>
+      <param name="errorMessageName">String that contains the error message name.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltLibrary.FormatNumberStatic(System.Double,System.Double)">
+      <summary>Implements the format-number() XSLT function. For more information, see the number formatting section in the W3C Recommendation. </summary>
+      <returns>A string that indicates the format. For more information, see the number formatting section in the W3C Recommendation.</returns>
+      <param name="value">
+        <see cref="T:System.Double" /> that contains value to format.</param>
+      <param name="decimalFormatterIndex">
+        <see cref="T:System.Double" /> that contains the formatter index.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltLibrary.FunctionAvailable(System.Xml.XmlQualifiedName)">
+      <summary>Implements the function-available() XSLT function. </summary>
+      <returns>A Boolean value that is true if the function identified by <paramref name="name" /> is available.</returns>
+      <param name="name">
+        <see cref="T:System.Xml.XmlQualifiedName" /> name object.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltLibrary.IsSameNodeSort(System.Xml.XPath.XPathNavigator,System.Xml.XPath.XPathNavigator)">
+      <summary>Determines whether two nodes have the same node type and, if nodes of that node type have expanded-names, the same expanded names.</summary>
+      <returns>A Boolean value that is true if two nodes have the same node type and, if nodes of that node type have expanded names, the same expanded names.</returns>
+      <param name="nav1">
+        <see cref="T:System.Xml.XPath.XPathNavigator" /> object to compare.</param>
+      <param name="nav2">
+        <see cref="T:System.Xml.XPath.XPathNavigator" /> object to compare.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltLibrary.LangToLcid(System.String,System.Boolean)">
+      <summary>Converts the language identifier (as specified in the xml:lang attribute) to the culture identifier (LCID).</summary>
+      <returns>A string that contains the culture identifier.</returns>
+      <param name="lang">String that indicates language.</param>
+      <param name="forwardCompatibility">Boolean value that is true if language is forward compatible.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltLibrary.NumberFormat(System.Collections.Generic.IList{System.Xml.XPath.XPathItem},System.String,System.Double,System.String,System.String,System.Double)">
+      <summary>Gets a string that indicates the number format.</summary>
+      <returns>A string that indicates the number format. Used for internal infrastructure only.</returns>
+      <param name="value">
+        <see cref="T:System.Collections.Generic.IList" /> of strings that represent arguments to the method.</param>
+      <param name="formatString">
+        <see cref="T:System.Double" /> that indicates the format string.</param>
+      <param name="lang">
+        <see cref="T:System.Double" /> that indicates the language.</param>
+      <param name="letterValue">String that contains the letter value.</param>
+      <param name="groupingSeparator">String that contains the grouping separator.</param>
+      <param name="groupingSize">
+        <see cref="T:System.Double" /> that contains the grouping size.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltLibrary.RegisterDecimalFormat(System.Xml.XmlQualifiedName,System.String,System.String,System.String)">
+      <summary>Registers a decimal-format with the given expanded name. For more information, see the number formatting section in the W3C Recommendation. </summary>
+      <returns>In the current implementation the return value is always 0.</returns>
+      <param name="name">
+        <see cref="T:System.Xml.XmlQualifiedName" /> object that contains name.</param>
+      <param name="infinitySymbol">String containing infinity symbol.</param>
+      <param name="nanSymbol">String containing NaN symbol.</param>
+      <param name="characters">String containing characters to format.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltLibrary.RegisterDecimalFormatter(System.String,System.String,System.String,System.String)">
+      <summary>Registers a decimal formatter object and returns a unique index assigned to it. The decimal formatter object is used by the format-number() XSLT function. For more information, see the number formatting section in the W3C Recommendation.</summary>
+      <returns>Returns a unique index of type <see cref="T:System.Double" /> assigned to a decimal formatter object.</returns>
+      <param name="formatPicture">String that contains the format picture.</param>
+      <param name="infinitySymbol">String that contains the infinity symbol.</param>
+      <param name="nanSymbol">String that contains the NaN symbol.</param>
+      <param name="characters">String that contains characters to format.</param>
+    </member>
+    <member name="M:System.Xml.Xsl.Runtime.XsltLibrary.RelationalOperator(System.Double,System.Collections.Generic.IList{System.Xml.XPath.XPathItem},System.Collections.Generic.IList{System.Xml.XPath.XPathItem})">
+      <summary>Evaluates whether the <paramref name="left" /> expression is greater than or equal to, or less than or equal to, the <paramref name="right" /> expression based on the <paramref name="opCode" /> passed.</summary>
+      <returns>A Boolean value that is true if the left expression is greater than or equal to the right expression.</returns>
+      <param name="opCode">Specifies how to perform the evaluation of two expressions:If opCode is equal to 2, evaluates the XPath expression "left &lt; right".If opCode is equal to 3, evaluates the XPath expression "left &lt;= right".If opCode is equal to 4, evaluates the XPath expression "left &gt; right".If opCode is equal to 5, evaluates the XPath expression "left &gt;= right"</param>
+      <param name="left">Expression to evaluate.</param>
+      <param name="right">Expression to evaluate.</param>
+    </member>
+  </members>
+</doc>

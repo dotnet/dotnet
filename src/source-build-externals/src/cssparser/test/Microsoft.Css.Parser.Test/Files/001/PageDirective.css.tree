@@ -1,0 +1,249 @@
+StyleSheet
+    PageDirective
+        At    @
+        Identifier    page
+        PageDirectiveBlock
+            OpenCurlyBrace    {
+            MarginDirective
+                At    @
+                Identifier    top-left
+                RuleBlock
+                    OpenCurlyBrace    {
+                    Declaration
+                        Identifier    content
+                        Colon    :
+                        Function
+                            Function    string(
+                            FunctionArgument
+                                Identifier    entry
+                                Comma    ,
+                            FunctionArgument
+                                Identifier    first
+                            CloseFunctionBrace    )
+                    CloseCurlyBrace    }
+            CloseCurlyBrace    }
+    PageDirective
+        At    @
+        Identifier    page
+        PageDirectiveBlock
+            OpenCurlyBrace    {
+            MarginDirective
+                At    @
+                Identifier    top-right
+                RuleBlock
+                    OpenCurlyBrace    {
+                    Declaration
+                        Identifier    content
+                        Colon    :
+                        Function
+                            Function    string(
+                            FunctionArgument
+                                Identifier    entry
+                                Comma    ,
+                            FunctionArgument
+                                Identifier    last
+                            CloseFunctionBrace    )
+                    CloseCurlyBrace    }
+            CloseCurlyBrace    }
+    PageDirective
+        At    @
+        Identifier    page
+        PageDirectiveBlock
+            OpenCurlyBrace    {
+            MarginDirective
+                At    @
+                Identifier    top-center
+                RuleBlock
+                    OpenCurlyBrace    {
+                    Declaration
+                        Identifier    content
+                        Colon    :
+                        Function
+                            Function    string(
+                            FunctionArgument
+                                Identifier    index
+                                Comma    ,
+                            FunctionArgument
+                                Identifier    first
+                            CloseFunctionBrace    )
+                    CloseCurlyBrace    }
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    dt
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    string-set
+                Colon    :
+                Identifier    index
+                Identifier    first-letter
+                Comma    ,
+                Identifier    entry
+                Identifier    self
+            CloseCurlyBrace    }
+    PageDirective
+        At    @
+        Identifier    page
+        Colon    :
+        Identifier    left
+        PageDirectiveBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    margin-left
+                Colon    :
+                UnitValue
+                    Number    10
+                    Units    em
+                Semicolon    ;
+            MarginDirective
+                At    @
+                Identifier    sidenote
+                RuleBlock
+                    OpenCurlyBrace    {
+                    Declaration
+                        Identifier    position
+                        Colon    :
+                        Identifier    fixed
+                        Semicolon    ;
+                    Declaration
+                        Identifier    left
+                        Colon    :
+                        UnitValue
+                            Number    -8
+                            Units    em
+                        Semicolon    ;
+                    Declaration
+                        Identifier    width
+                        Colon    :
+                        UnitValue
+                            Number    6
+                            Units    em
+                    CloseCurlyBrace    }
+            CloseCurlyBrace    }
+    PageDirective
+        At    @
+        Identifier    page
+        Colon    :
+        Identifier    right
+        PageDirectiveBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    margin-right
+                Colon    :
+                UnitValue
+                    Number    10
+                    Units    em
+                Semicolon    ;
+            MarginDirective
+                At    @
+                Identifier    sidenote
+                RuleBlock
+                    OpenCurlyBrace    {
+                    Declaration
+                        Identifier    position
+                        Colon    :
+                        Identifier    fixed
+                        Semicolon    ;
+                    Declaration
+                        Identifier    right
+                        Colon    :
+                        UnitValue
+                            Number    -8
+                            Units    em
+                        Semicolon    ;
+                    Declaration
+                        Identifier    width
+                        Colon    :
+                        UnitValue
+                            Number    6
+                            Units    em
+                    CloseCurlyBrace    }
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    img
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    float
+                Colon    :
+                Identifier    sidenote
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                PseudoElementSelector
+                    DoubleColon    ::
+                    Identifier    footnote-call
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    content
+                Colon    :
+                FunctionCounter
+                    Function    counter(
+                    FunctionArgument
+                        Identifier    footnote
+                        Comma    ,
+                    FunctionArgument
+                        Function
+                            Function    symbols(
+                            FunctionArgument
+                                String    '*'
+                                Comma    ,
+                            FunctionArgument
+                                String    '+'
+                                Comma    ,
+                            FunctionArgument
+                                String    '!'
+                            CloseFunctionBrace    )
+                    CloseFunctionBrace    )
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                PseudoElementFunctionSelector
+                    DoubleColon    ::
+                    Function
+                        Function    line-number-left(
+                        FunctionArgument
+                            NumericalValue
+                                Number    5
+                        CloseFunctionBrace    )
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    font
+                Colon    :
+                UnitValue
+                    Number    10
+                    Units    pt
+                Identifier    serif
+                Semicolon    ;
+            Declaration
+                Identifier    content
+                Colon    :
+                FunctionCounter
+                    Function    counter(
+                    FunctionArgument
+                        Identifier    line
+                    CloseFunctionBrace    )
+                Semicolon    ;
+            CloseCurlyBrace    }
+    PageDirective
+        At    @
+        Identifier    page
+        PageDirectiveBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    counter-reset
+                Colon    :
+                Identifier    line
+            CloseCurlyBrace    }

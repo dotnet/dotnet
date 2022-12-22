@@ -1,0 +1,32 @@
+<!-- Everything in this file should have conditions that check $(RepoRoot). -->
+<Project>
+  <!--
+    When outside dotnet/aspnetcore, intentionally break the inheritance chain.
+    Isolate this repo from irrelevant settings in parent folders.
+  -->
+  <Import Project="$(RepoRoot)src/ProjectTemplates/Directory.Build.props" Condition=" '$(RepoRoot)' != '' " />
+
+  <PropertyGroup Condition=" '$(RepoRoot)' == '' ">
+    <RepositoryUrl>https://github.com/dotnet/spa-templates</RepositoryUrl>
+
+    <!-- Copied from https://github.com/dotnet/aspnetcore/blob/0c5456afe95096db6ac5400cecd3440299b42714/Directory.Build.props. -->
+    <NuspecBasePath>$(MSBuildProjectDirectory)</NuspecBasePath>
+    <!-- The SPDX name for the source license. See https://spdx.org/licenses/. -->
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://asp.net</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+
+    <!-- Copied from https://github.com/dotnet/arcade/blob/c6a28c81f96d196338b3ea520bc1e6dc7c440e/src/Microsoft.DotNet.Arcade.Sdk/tools/ProjectDefaults.props. -->
+    <Authors>Microsoft</Authors>
+    <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
+    <DevelopmentDependency>false</DevelopmentDependency>
+    <PackageIcon>Icon.png</PackageIcon>
+    <PackageIconFullPath>$(MSBuildThisFileDirectory)eng/DotNetPackageIcon.png</PackageIconFullPath>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Serviceable>true</Serviceable>
+  </PropertyGroup>
+
+  <Import Project="eng/TemplateProjects.props" Condition=" '$(RepoRoot)' == '' " />
+  <!-- The Arcade SDK auto-includes eng/Versions.props. -->
+  <Import Project="eng/Versions.props" Condition=" '$(RepoRoot)' == '' " />
+</Project>

@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. See the License.txt file in the project root for more information. -->
+<Project>
+  <ItemGroup>
+    <FileSignInfo Include="Microsoft.DiaSymReader.dll" PublicKeyToken="31bf3856ad364e35" TargetFramework=".NETFramework,Version=v2.0" CertificateName="MicrosoftWin8WinBlue"/>
+    <FileSignInfo Include="Microsoft.DiaSymReader.dll" PublicKeyToken="31bf3856ad364e35" TargetFramework=".NETStandard,Version=v1.1" CertificateName="Microsoft101240624"/>
+  </ItemGroup>
+
+  <PropertyGroup>
+    <UseDotNetCertificate>true</UseDotNetCertificate>
+  </PropertyGroup>
+</Project>

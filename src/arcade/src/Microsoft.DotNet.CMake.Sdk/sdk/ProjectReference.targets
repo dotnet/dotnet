@@ -1,0 +1,150 @@
+<Project>
+
+  <ItemDefinitionGroup>
+    <NativeProjectReference>
+      <CMakeProject></CMakeProject>
+    </NativeProjectReference>
+  </ItemDefinitionGroup>
+  
+  <Target Name="_RestoreNativeProjectReferences" DependsOnTargets="NormalizeNativeProjectReferences" BeforeTargets="_GenerateRestoreGraphProjectEntry">
+    <MSBuild Projects="%(NativeProjectReferenceNormalized.CMakeProject)" Targets="Restore" RemoveProperties="RestoreGraphProjectInput" />
+  </Target>
+
+  <Target Name="CopyNativeProjectBinaries">
+    <ItemGroup Condition="'$(IsMultiConfigurationGenerator)' == 'true'">
+      <NativeProjectBinaries Include="$(NativeProjectOutputFolder)\*.*" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(IsMultiConfigurationGenerator)' != 'true'">
+
+    <!-- ############################################################### -->
+    <!-- The following is required because the single configuration      -->
+    <!-- generators, unlike multi-configuration generators,              -->
+    <!-- do not place the binaries built into a separate                 -->
+    <!-- Debug/Checked/Release directory. Therefore we must filter       -->
+    <!-- the folder to only include dynamic libraries, static libraries  -->
+    <!--  and executables.                                               -->
+    <!--                                                                 -->
+    <!-- Please take care when modifying the following lines of code.    -->
+    <!-- ############################################################### -->
+
+    <!-- Include everything and then filter. -->
+    <NativeProjectBinariesMatched Include="$(NativeProjectOutputFolder)\*.*" />
+
+    <!-- Filter executables on unix -->
+    <NativeProjectBinariesExeFilter Condition="'%(Extension)' == ''" Include="@(NativeProjectBinariesMatched)" />
+    
+    <!-- Filter executables on Windows -->
+    <NativeProjectBinariesExeFilter Condition="'%(Extension)' == '.exe'" Include="@(NativeProjectBinariesMatched)" />
+
+    <!-- Filter out the *Make* files -->
+    <NativeProjectBinariesExeFilterRemovedMakeFile Condition="'%(FileName)' != 'Makefile'" Include="@(NativeProjectBinariesExeFilter)" />
+
+    <!-- Filter .dylib files for OSX -->
+    <NativeProjectBinariesDyLibFilter Condition="'%(Extension)' == '.dylib'" Include="@(NativeProjectBinariesMatched)" />
+
+    <!-- Filter .so files for Linux -->
+    <NativeProjectBinariesDyLibFilter Condition="'%(Extension)' == '.so'" Include="@(NativeProjectBinariesMatched)" />
+
+    <!-- Filter static lib files for Unix -->
+    <NativeProjectBinariesStaticLibFilter Condition="'%(Extension)' == '.a'" Include="@(NativeProjectBinariesMatched)" />
+
+    <!-- Filter dynamic lib files for Windows -->
+    <NativeProjectBinariesDyLibFilter Condition="'%(Extension)' == '.dll'" Include="@(NativeProjectBinariesMatched)" />
+
+    <!-- Filter symbol files for Windows -->
+    <NativeProjectsBinariesSymbolsFilter Condition="'%(Extension)' == '.pdb'" Include="@(NativeProjectBinariesMatched)" />
+
+    <!-- Filter static lib files for Windows -->
+    <NativeProjectBinariesStaticLibFilter Condition="'%(Extension)' == '.lib'" Include="@(NativeProjectBinariesMatched)" />
+
+    <!-- Merge the filtered lists -->
+    <NativeProjectBinaries Include="@(NativeProjectBinariesExeFilterRemovedMakeFile)" />
+    <NativeProjectBinaries Include="@(NativeProjectBinariesDyLibFilter)" />
+    <NativeProjectBinaries Include="@(NativeProjectBinariesStaticLibFilter)" />
+    <NativeProjectBinaries Include="@(NativeProjectsBinariesSymbolsFilter)" />
+
+    </ItemGroup>
+
+    <Error  Text="The native project files are missing in '$(NativeProjectOutputFolder)'. Please build '$(ReferencedCMakeProject)' at least once."
+            Condition="'@(NativeProjectBinaries)' == ''" />
+
+    <Copy
+      SourceFiles="@(NativeProjectBinaries)"
+      DestinationFiles="@(NativeProjectBinaries -> '$(OutDir)%(Filename)%(Extension)')"
+      SkipUnchangedFiles="$(SkipCopyUnchangedFiles)"
+      OverwriteReadOnlyFiles="$(OverwriteReadOnlyFiles)"
+      Retries="$(CopyRetryCount)"
+      RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)"
+      UseHardlinksIfPossible="$(CreateHardLinksForCopyFilesToOutputDirectoryIfPossible)">
+      <Output TaskParameter="DestinationFiles" ItemName="FileWrites" />
+    </Copy>
+
+    <ItemGroup>
+      <FileWrites Include="@(NativeProjectBinaries -> '$(OutDir)%(Filename)%(Extension)')" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="NormalizeNativeProjectReferences"
+          Condition="'@(NativeProjectReference)' != ''"
+          BeforeTargets="ConsolidateNativeProjectReference" >
+    <ItemGroup>
+      <NativeProjectReferenceNormalized Include="@(NativeProjectReference -> '%(FullPath)')" />
+    </ItemGroup>
+
+    <PropertyGroup>
+      <_NormalizedDefaultCMakeProject>$([MSBuild]::NormalizePath($(MSBuildProjectDirectory),$(DefaultCMakeProject)))</_NormalizedDefaultCMakeProject>
+    </PropertyGroup>
+
+    <Error Condition="'%(NativeProjectReferenceNormalized.CMakeProject)' != '' and !Exists('%(NativeProjectReferenceNormalized.CMakeProject)')" Text="The MSBuild CMake SDK project associated with the project reference to '%(NativeProjectReferenceNormalized.Identity)' does not exist." />
+    <Error Condition="!Exists('%(NativeProjectReferenceNormalized.Identity)')" Text="The CMakeLists.txt file at '%(NativeProjectReferenceNormalized.Identity)' does not exist." />
+
+    <Error Condition="'%(NativeProjectReferenceNormalized.CMakeProject)' == '' and '$(_NormalizedDefaultCMakeProject)' == '' and !Exists('$(_NormalizedDefaultCMakeProject)')"
+      Text="Each native project reference must be associated with an MSBuild CMake SDK project. Either set the 'CMakeProject' metadata on each ProjectReference item or set the 'DefaultCMakeProject' property." />
+
+    <ItemGroup>
+      <NativeProjectReferenceNormalized Condition="'%(CMakeProject)' == ''">
+          <CMakeProject>$(_NormalizedDefaultCMakeProject)</CMakeProject>
+      </NativeProjectReferenceNormalized>
+
+      <NativeProjectReferenceNormalized>
+          <CMakeListsFile>%(FullPath)</CMakeListsFile>
+      </NativeProjectReferenceNormalized>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="ConsolidateNativeProjectReference"
+          BeforeTargets="Build" >
+
+    <MSBuild Projects="%(NativeProjectReferenceNormalized.CMakeProject)"
+      Targets="GetOutputPathForProjectReference"
+      Properties="ReferencedCMakeLists=%(NativeProjectReferenceNormalized.Identity);%(NativeProjectReferenceNormalized.AdditionalProperties)">
+      <Output TaskParameter="TargetOutputs" ItemName="NativeProjectOutputFoldersToCopy" />
+    </MSBuild>
+
+    <ItemGroup>
+      <_NativeProjectReferenceToBuild Include="%(NativeProjectReferenceNormalized.CMakeProject)"
+                                      Condition="'%(NativeProjectReferenceNormalized.BuildNative)' == 'true'"
+                                      AdditionalProperties="%(NativeProjectReferenceNormalized.AdditionalProperties)" />
+    </ItemGroup>
+
+    <RemoveDuplicates Inputs="@(_NativeProjectReferenceToBuild)">
+      <Output TaskParameter="Filtered" ItemName="_UniqueNativeProjectReferenceToBuild" />
+    </RemoveDuplicates>
+    
+    <MSBuild Projects="@(_UniqueNativeProjectReferenceToBuild)" />
+
+    <Message Text= "Full native project references are :%(NativeProjectReferenceNormalized.Identity)" />
+    <Message Text= "Native binaries will be copied from :%(NativeProjectOutputFoldersToCopy.Identity)" />
+
+    <MSBuild Projects="$(MSBuildProjectFile)" 
+             Targets="CopyNativeProjectBinaries"
+             Properties="NativeProjectOutputFolder=%(NativeProjectOutputFoldersToCopy.Identity);
+                         ReferencedCMakeProject=%(NativeProjectOutputFoldersToCopy.MSBuildSourceProjectFile);
+                         IsMultiConfigurationGenerator=%(NativeProjectOutputFoldersToCopy.IsMultiConfigurationGenerator)"
+             Condition="'@(NativeProjectReference)' != ''" />
+
+  </Target>
+
+  <Target Name="CopyAllNativeProjectReferenceBinaries" DependsOnTargets="ResolveCMakeNativeProjectReference;ConsolidateNativeProjectReference" />
+
+</Project>

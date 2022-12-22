@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <VSSdkBuildToolsVersion>17.4.2116</VSSdkBuildToolsVersion>
+
+    <!-- Name of the elements must be in sync with test\Microsoft.TestPlatform.TestUtilities\IntegrationTestBase.cs -->
+
+    <!-- this version needs to be the same as in TestPlatform.Settings.targets, we might want to unify this into
+    a single .props file, but the other version is used by multiple build scripts, so I just query it and validate that
+    they are both the same during build -->
+    <!-- this version also needs to be "statically" readable because the test fixture will inspect this file for the version
+    and because during the test `dotnet test` will run and re-build some of the test projects and at that time the version
+    from a build parameter would not be available, so I am writing this version from the build.ps1 script to keep it in sync -->
+    <NETTestSdkVersion>17.5.0-dev</NETTestSdkVersion>
+
+    <!-- These versions are used for running unit tests, and running acceptance tests. They are also used as the default version for projects
+    in TestAssets.sln to allow running and debugging tests in that solution directly in VS without having to run them via AcceptanceTests. -->
+    <MSTestFrameworkVersion>2.3.0-preview-20220711-02</MSTestFrameworkVersion>
+    <MSTestAdapterVersion>2.3.0-preview-20220711-02</MSTestAdapterVersion>
+    <MSTestAssertExtensionVersion>1.0.3-preview</MSTestAssertExtensionVersion>
+
+    <XUnitFrameworkVersion>2.3.1</XUnitFrameworkVersion>
+    <XUnitAdapterVersion>2.3.1</XUnitAdapterVersion>
+    <XUnitConsoleRunnerVersion>2.3.1</XUnitConsoleRunnerVersion>
+
+    <NUnit3FrameworkVersion>3.10.1</NUnit3FrameworkVersion>
+    <NUnit3AdapterVersion>3.11.0</NUnit3AdapterVersion>
+    <NUnitConsoleRunnerVersion>3.8.0</NUnitConsoleRunnerVersion>
+
+    <ChutzpahAdapterVersion>4.4.13</ChutzpahAdapterVersion>
+    <FluentAssertionsVersion>6.7.0</FluentAssertionsVersion>
+
+    <!-- Versions that are used when building projects from TestAssets.sln for compatibility tests. See Invoke-TestAssetsBuild in scripts/build.ps1.
+    Exact versions are used to avoid Nuget substituting them by closest match, if we make a typo.
+    These versions need to be "statically" readable because we read this file as xml in our build and tests. -->
+    <!-- <MSTestFrameworkLatestVersion></MSTestFrameworkLatestVersion> is not here, because we don't build MSTest locally, so we don't have access to the latest version. -->
+    <MSTestFrameworkLatestPreviewVersion>[2.3.0-preview-20220613-02]</MSTestFrameworkLatestPreviewVersion>
+    <MSTestFrameworkLatestStableVersion>[2.2.10]</MSTestFrameworkLatestStableVersion>
+    <MSTestFrameworkRecentStableVersion>[2.2.9]</MSTestFrameworkRecentStableVersion>
+    <MSTestFrameworkMostDownloadedVersion>[2.1.0]</MSTestFrameworkMostDownloadedVersion>
+    <MSTestFrameworkPreviousStableVersion>[2.1.0]</MSTestFrameworkPreviousStableVersion>
+    <MSTestFrameworkLegacyStableVersion>[1.4.0]</MSTestFrameworkLegacyStableVersion>
+
+
+    <!-- Versions that are used to restore previous versions of console, translation layer, and test.sdk for compatibility tests.
+    See Invoke-TestAssetsBuild in scripts/build.ps1. Exact versions are used to avoid Nuget substituting them by closest match, if we make a typo.
+    These versions need to be "statically" readable because we read this file as xml in our build and tests. -->
+    <!-- <VSTestConsoleLatestVersion></VSTestConsoleLatestVersion> is not here, NETTestSdkVersion is used instead, because that is the version of the locally built latest package.  -->
+    <VSTestConsoleLatestPreviewVersion>[17.2.0-preview-20220401-08]</VSTestConsoleLatestPreviewVersion>
+    <VSTestConsoleLatestStableVersion>[17.2.0]</VSTestConsoleLatestStableVersion>
+    <VSTestConsoleRecentStableVersion>[17.1.0]</VSTestConsoleRecentStableVersion>
+    <VSTestConsoleMostDownloadedVersion>[16.6.1]</VSTestConsoleMostDownloadedVersion>
+    <VSTestConsolePreviousStableVersion>[16.11.0]</VSTestConsolePreviousStableVersion>
+    <VSTestConsoleLegacyStableVersion>[15.9.2]</VSTestConsoleLegacyStableVersion>
+
+
+    <!-- This version also needs to be updated in src\package\nuspec\TestPlatform.ObjectModel.nuspec -->
+    <NuGetFrameworksVersion>5.11.0</NuGetFrameworksVersion>
+    <ILAsmPackageVersion>5.0.0</ILAsmPackageVersion>
+    <JsonNetVersion>13.0.1</JsonNetVersion>
+
+    <!-- We cannot reuse $(msbuildvar) because we need the text value inside build.ps1 -->
+    <TestPlatformExternalsVersion>17.3.32621.448</TestPlatformExternalsVersion>
+    <!-- Portable CPP test runner -->
+    <TestPlatformRemoteExternalsVersion>17.3.32621.448</TestPlatformRemoteExternalsVersion>
+    <TestPlatformMSDiaVersion>17.3.32621.448</TestPlatformMSDiaVersion>
+    <InteropExternalsVersion>17.3.32621.448</InteropExternalsVersion>
+    <MicrosoftFakesVersion>17.4.0-beta.22478.3</MicrosoftFakesVersion>
+    <MicrosoftBuildPackageVersion>16.0.461</MicrosoftBuildPackageVersion>
+    <MicrosoftBuildFrameworkPackageVersion>$(MicrosoftBuildPackageVersion)</MicrosoftBuildFrameworkPackageVersion>
+    <MicrosoftBuildUtilitiesCorePackageVersion>$(MicrosoftBuildPackageVersion)</MicrosoftBuildUtilitiesCorePackageVersion>
+
+    <MicrosoftExtensionsDependencyModelPackageVersion>3.0.0-preview4-27615-11</MicrosoftExtensionsDependencyModelPackageVersion>
+    <MicrosoftExtensionsFileSystemGlobbingPackageVersion>1.1.1</MicrosoftExtensionsFileSystemGlobbingPackageVersion>
+
+    <CoverletCoverageVersion>1.2.0</CoverletCoverageVersion>
+    <RoslynPublicApiAnalyzersVersion>3.3.4-beta1.21554.2</RoslynPublicApiAnalyzersVersion>
+    <RoslynBannedApiAnalyzersVersion>3.3.3</RoslynBannedApiAnalyzersVersion>
+
+    <MicrosoftCodeCoverageVersion>17.2.0</MicrosoftCodeCoverageVersion>
+
+    <DependencyVersionsImported>true</DependencyVersionsImported>
+  </PropertyGroup>
+
+  <Import Project="$(MSBuildThisFileDirectory)..\..\eng\Versions.props" />
+  <Import Project="$(DotNetPackageVersionPropsPath)" Condition="'$(DotNetPackageVersionPropsPath)' != ''" />
+</Project>

@@ -1,0 +1,44 @@
+<Project>
+
+  <PropertyGroup>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <ThirdPartyNotice Condition=" '$(ThirdPartyNotice)' == '' ">$(RepoRoot)THIRDPARTYNOTICES.txt</ThirdPartyNotice>
+    <AssemblyTitle>$(TargetFileName)</AssemblyTitle>
+    <Description Condition="'$(Description)' == ''">$(TargetFileName)</Description>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(IsPackable)' == 'true' ">
+    <None Include="$(ThirdPartyNotice)" Pack="true" PackagePath="notices" Visible="false" />
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <!-- Global Analyzer Config -->
+  <ItemGroup Condition="'$(ProjectIsDeprecated)' != 'true'">
+    <!-- Include Common.globalconfig for non-deprecated projects-->
+    <EditorConfigFiles Include="$(MSBuildThisFileDirectory)eng/Common.globalconfig" />
+  </ItemGroup>
+
+  <!-- Test Project Global Analyzer Config -->
+  <ItemGroup Condition="'$(IsTestProject)' == 'true'">
+    <!-- Include Common.Test.globalconfig for Test projects-->
+    <EditorConfigFiles Include="$(MSBuildThisFileDirectory)eng/Common.Test.globalconfig" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <CentralPackagesFile>$(MSBuildThisFileDirectory)eng/Packages.props</CentralPackagesFile>
+  </PropertyGroup>
+  <Import Project="Sdk.targets" Sdk="Microsoft.Build.CentralPackageVersions" />
+  <Import Project="Sdk.targets" Sdk="Microsoft.DotNet.Arcade.Sdk" />
+
+  <Target Name="DeleteDevPackage" AfterTargets="GenerateNuspec">
+    <!-- If package just built was already in global packages folder, delete it.  This helps support a local dev cycle where you are consuming
+         a package from another repo without having to update the package version each time. -->
+
+    <PropertyGroup>
+      <_PackageFolderInGlobalPackages>$(NuGetPackageRoot)$(PackageId.ToLowerInvariant())\$(PackageVersion)</_PackageFolderInGlobalPackages>
+    </PropertyGroup>
+
+    <RemoveDir Directories="$(_PackageFolderInGlobalPackages)"
+               Condition="Exists('$(_PackageFolderInGlobalPackages)')" />
+  </Target>
+</Project>

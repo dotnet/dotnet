@@ -1,0 +1,110 @@
+[
+  {
+    "repo": "dotnet/aspnetcore",
+    "branch": "release/3.1"
+  },
+  {
+    "repo": "dotnet/aspnetcore-tooling",
+    "branch": "release/3.1"
+  },
+  {
+    "repo": "dotnet/ef6",
+    "branch": "release/6.4"
+  },
+  {
+    "repo": "dotnet/efcore",
+    "branch": "release/3.1"
+  },
+  {
+    "repo": "dotnet/extensions",
+    "branch": "release/3.1"
+  },
+  {
+    "repo": "dotnet/Scaffolding",
+    "branch": "release/3.1"
+  },
+  {
+    "repo": "dotnet/core-setup",
+    "branch": "release/3.1"
+  },
+  {
+    "repo": "dotnet/coreclr",
+    "branch": "release/3.1"
+  },
+  {
+    "repo": "dotnet/corefx",
+    "branch": "release/3.1"
+  },
+  {
+    "repo": "dotnet/templating",
+    "branch": "release/3.1"
+  },
+  {
+    "repo": "dotnet/winforms",
+    "branch": "release/3.1"
+  },
+  {
+    "repo": "dotnet/wpf",
+    "branch": "release/3.1"
+  },
+  {
+    "repo": "dotnet/toolset",
+    "branch": "release/3.1.1xx"
+  },
+  {
+    "repo": "dotnet/sdk",
+    "branch": "release/3.1.1xx"
+  },
+  {
+    "repo": "dotnet/installer",
+    "branch": "release/3.1.1xx"
+  },
+  {
+    "repo": "dotnet/cli",
+    "branch": "release/3.1.1xx"
+  },
+  {
+    "repo": "aspnet/websdk",
+    "branch": "release/3.1.1xx"
+  },
+  {
+    "repo": "dotnet/toolset",
+    "branch": "release/3.1.2xx"
+  },
+  {
+    "repo": "dotnet/sdk",
+    "branch": "release/3.1.2xx"
+  },
+  {
+    "repo": "dotnet/installer",
+    "branch": "release/3.1.2xx"
+  },
+  {
+    "repo": "dotnet/cli",
+    "branch": "release/3.1.2xx"
+  },
+  {
+    "repo": "aspnet/websdk",
+    "branch": "release/3.1.2xx"
+  },
+  {
+    "repo": "dotnet/toolset",
+    "branch": "release/3.1.3xx"
+  },
+  {
+    "repo": "dotnet/sdk",
+    "branch": "release/3.1.3xx"
+  },
+  {
+    "repo": "dotnet/installer",
+    "branch": "release/3.1.3xx"
+  },
+  {
+    "repo": "dotnet/cli",
+    "branch": "release/3.1.3xx"
+  },
+  {
+    "repo": "aspnet/websdk",
+    "branch": "release/3.1.3xx"
+  }
+]

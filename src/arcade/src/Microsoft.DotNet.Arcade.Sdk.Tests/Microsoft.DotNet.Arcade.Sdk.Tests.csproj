@@ -1,0 +1,85 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>$(TargetFrameworkForNETSDK)</TargetFramework>
+    <DefaultItemExcludes>$(DefaultItemExcludes);testassets\**\*</DefaultItemExcludes>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Microsoft.Arcade.Common\Microsoft.Arcade.Common.csproj" />
+    <ProjectReference Include="..\Common\Microsoft.Arcade.Test.Common\Microsoft.Arcade.Test.Common.csproj" />
+    <ProjectReference Include="..\Microsoft.DotNet.Arcade.Sdk\Microsoft.DotNet.Arcade.Sdk.csproj" />
+    <ProjectReference Include="..\Microsoft.DotNet.Internal.DependencyInjection.Testing\Microsoft.DotNet.Internal.DependencyInjection.Testing.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentAssertions" Version="5.10.3" />
+    <PackageReference Include="Microsoft.Build" Version="$(MicrosoftBuildVersion)" />
+    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="$(MicrosoftBuildTasksCoreVersion)" />
+    <PackageReference Include="Moq" Version="4.8.3" />
+
+    <!-- This is here so that we agree with the project's transitive references to NewtonSoft.Json -->
+    <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Content Include="testassets\**\*" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="$(RepoRoot)eng\common\**\*" LinkBase="testassets\boilerplate\eng\common\" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="$(RepoRoot)build.sh" LinkBase="testassets\boilerplate\" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="$(RepoRoot)Build.cmd" LinkBase="testassets\boilerplate\" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+      <_Parameter1>NuGetPackageRoot</_Parameter1>
+      <_Parameter2>$(NuGetPackageRoot)</_Parameter2>
+    </AssemblyAttribute>
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+      <_Parameter1>PackageVersion</_Parameter1>
+      <_Parameter2>$(PackageVersion)</_Parameter2>
+    </AssemblyAttribute>
+    <!-- Captures the logs from functional test. Useful for debugging test failures when developing Arcade SDK features. -->
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+      <_Parameter1>LogOutputDir</_Parameter1>
+      <_Parameter2>$(ArtifactsLogDir)tests\</_Parameter2>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <Target Name="GenerateTestGlobalJson" AfterTargets="CopyFilesToOutputDirectory">
+    <PropertyGroup>
+      <GlobalJsonContent>
+        {
+          "tools": {
+            "dotnet": "$(NETCoreSdkVersion)"
+          },
+          "msbuild-sdks": {
+            "Microsoft.DotNet.Arcade.Sdk": "$(PackageVersion)"
+          }
+        }
+      </GlobalJsonContent>
+    </PropertyGroup>
+    <WriteLinesToFile Lines="$(GlobalJsonContent)" File="$(TargetDir)testassets\boilerplate\global.json" Overwrite="true" />
+  </Target>
+
+  <Target Name="GenerateTestNuGetConfig" AfterTargets="CopyFilesToOutputDirectory">
+    <PropertyGroup>
+      <TestNuGetConfigContent>
+<![CDATA[
+<configuration>
+  <packageSources>
+    <clear />
+    <add key="non-shipping arcade" value="$(ArtifactsNonShippingPackagesDir)" />
+    <add key="shipping arcade" value="$(ArtifactsShippingPackagesDir)" />
+    <add key="dotnet-public" value="https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-public/nuget/v3/index.json" />
+  </packageSources>
+  <disabledPackageSources>
+    <clear />
+  </disabledPackageSources>
+</configuration>
+]]>
+      </TestNuGetConfigContent>
+    </PropertyGroup>
+    <WriteLinesToFile Lines="$(TestNuGetConfigContent)" File="$(TargetDir)testassets\boilerplate\NuGet.config" Overwrite="true" />
+  </Target>
+
+</Project>

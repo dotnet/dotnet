@@ -1,0 +1,56 @@
+#nullable enable
+NuGet.Resolver.CombinationSolver<T>
+NuGet.Resolver.CompareWrapper<T>
+NuGet.Resolver.CompareWrapper<T>.Compare(T x, T y) -> int
+~NuGet.Resolver.CompareWrapper<T>.CompareWrapper(System.Func<T, T, int> compareImpl) -> void
+NuGet.Resolver.DependencyBehavior
+NuGet.Resolver.DependencyBehavior.Highest = 4 -> NuGet.Resolver.DependencyBehavior
+NuGet.Resolver.DependencyBehavior.HighestMinor = 3 -> NuGet.Resolver.DependencyBehavior
+NuGet.Resolver.DependencyBehavior.HighestPatch = 2 -> NuGet.Resolver.DependencyBehavior
+NuGet.Resolver.DependencyBehavior.Ignore = 0 -> NuGet.Resolver.DependencyBehavior
+NuGet.Resolver.DependencyBehavior.Lowest = 1 -> NuGet.Resolver.DependencyBehavior
+NuGet.Resolver.NuGetResolverConstraintException
+~NuGet.Resolver.NuGetResolverConstraintException.NuGetResolverConstraintException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) -> void
+~NuGet.Resolver.NuGetResolverConstraintException.NuGetResolverConstraintException(string message) -> void
+NuGet.Resolver.NuGetResolverException
+~NuGet.Resolver.NuGetResolverException.NuGetResolverException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) -> void
+~NuGet.Resolver.NuGetResolverException.NuGetResolverException(string message) -> void
+NuGet.Resolver.NuGetResolverInputException
+~NuGet.Resolver.NuGetResolverInputException.NuGetResolverInputException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) -> void
+~NuGet.Resolver.NuGetResolverInputException.NuGetResolverInputException(string message) -> void
+NuGet.Resolver.PackageResolver
+NuGet.Resolver.PackageResolver.PackageResolver() -> void
+~NuGet.Resolver.PackageResolver.Resolve(NuGet.Resolver.PackageResolverContext context, System.Threading.CancellationToken token) -> System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageIdentity>
+NuGet.Resolver.PackageResolverContext
+~NuGet.Resolver.PackageResolverContext.AvailablePackages.get -> System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo>
+NuGet.Resolver.PackageResolverContext.DependencyBehavior.get -> NuGet.Resolver.DependencyBehavior
+~NuGet.Resolver.PackageResolverContext.Log.get -> NuGet.Common.ILogger
+~NuGet.Resolver.PackageResolverContext.PackageResolverContext(NuGet.Resolver.DependencyBehavior dependencyBehavior, System.Collections.Generic.IEnumerable<string> targetIds, System.Collections.Generic.IEnumerable<string> requiredPackageIds, System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageReference> packagesConfig, System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageIdentity> preferredVersions, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo> availablePackages, System.Collections.Generic.IEnumerable<NuGet.Configuration.PackageSource> packageSources, NuGet.Common.ILogger log) -> void
+~NuGet.Resolver.PackageResolverContext.PackageSources.get -> System.Collections.Generic.IEnumerable<NuGet.Configuration.PackageSource>
+~NuGet.Resolver.PackageResolverContext.PackagesConfig.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageReference>
+~NuGet.Resolver.PackageResolverContext.PreferredVersions.get -> System.Collections.Generic.HashSet<NuGet.Packaging.Core.PackageIdentity>
+~NuGet.Resolver.PackageResolverContext.RequiredPackageIds.get -> System.Collections.Generic.HashSet<string>
+~NuGet.Resolver.PackageResolverContext.TargetIds.get -> System.Collections.Generic.HashSet<string>
+NuGet.Resolver.ResolverComparer
+~NuGet.Resolver.ResolverComparer.Compare(NuGet.Resolver.ResolverPackage x, NuGet.Resolver.ResolverPackage y) -> int
+~NuGet.Resolver.ResolverComparer.ResolverComparer(NuGet.Resolver.DependencyBehavior dependencyBehavior, System.Collections.Generic.HashSet<NuGet.Packaging.Core.PackageIdentity> preferredVersions, System.Collections.Generic.HashSet<string> targetIds) -> void
+NuGet.Resolver.ResolverInputSort
+NuGet.Resolver.ResolverPackage
+NuGet.Resolver.ResolverPackage.Absent.get -> bool
+~NuGet.Resolver.ResolverPackage.Equals(NuGet.Resolver.ResolverPackage other) -> bool
+~NuGet.Resolver.ResolverPackage.FindDependencyRange(string id) -> NuGet.Versioning.VersionRange
+~NuGet.Resolver.ResolverPackage.ResolverPackage(NuGet.Packaging.Core.PackageDependencyInfo info, bool listed, bool absent) -> void
+~NuGet.Resolver.ResolverPackage.ResolverPackage(string id) -> void
+~NuGet.Resolver.ResolverPackage.ResolverPackage(string id, NuGet.Versioning.NuGetVersion version) -> void
+~NuGet.Resolver.ResolverPackage.ResolverPackage(string id, NuGet.Versioning.NuGetVersion version, System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageDependency> dependencies, bool listed, bool absent) -> void
+NuGet.Resolver.ResolverUtility
+~override NuGet.Resolver.ResolverPackage.Equals(object obj) -> bool
+override NuGet.Resolver.ResolverPackage.GetHashCode() -> int
+~override NuGet.Resolver.ResolverPackage.ToString() -> string
+~static NuGet.Resolver.CombinationSolver<T>.FindSolution(System.Collections.Generic.IEnumerable<System.Collections.Generic.IEnumerable<T>> groupedItems, System.Collections.Generic.IComparer<T> itemSorter, System.Func<T, T, bool> shouldRejectPairFunc, System.Action<System.Collections.Generic.IEnumerable<T>> diagnosticOutput) -> System.Collections.Generic.IEnumerable<T>
+~static NuGet.Resolver.ResolverInputSort.TreeFlatten(System.Collections.Generic.List<System.Collections.Generic.List<NuGet.Resolver.ResolverPackage>> grouped, NuGet.Resolver.PackageResolverContext context) -> System.Collections.Generic.List<System.Collections.Generic.List<NuGet.Resolver.ResolverPackage>>
+~static NuGet.Resolver.ResolverUtility.FindFirstCircularDependency(System.Collections.Generic.IEnumerable<NuGet.Resolver.ResolverPackage> solution) -> System.Collections.Generic.IEnumerable<NuGet.Resolver.ResolverPackage>
+~static NuGet.Resolver.ResolverUtility.GetDiagnosticMessage(System.Collections.Generic.IEnumerable<NuGet.Resolver.ResolverPackage> solution, System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageDependencyInfo> availablePackages, System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageReference> packagesConfig, System.Collections.Generic.IEnumerable<string> newPackageIds, System.Collections.Generic.IEnumerable<NuGet.Configuration.PackageSource> packageSources) -> string
+~static NuGet.Resolver.ResolverUtility.GetLowestDistanceFromTarget(string packageId, System.Collections.Generic.HashSet<string> targets, System.Collections.Generic.IEnumerable<NuGet.Resolver.ResolverPackage> packages) -> int
+~static NuGet.Resolver.ResolverUtility.IsDependencySatisfied(NuGet.Packaging.Core.PackageDependency dependency, NuGet.Packaging.Core.PackageIdentity package) -> bool
+~static NuGet.Resolver.ResolverUtility.TopologicalSort(System.Collections.Generic.IEnumerable<NuGet.Resolver.ResolverPackage> nodes) -> System.Collections.Generic.IEnumerable<NuGet.Resolver.ResolverPackage>

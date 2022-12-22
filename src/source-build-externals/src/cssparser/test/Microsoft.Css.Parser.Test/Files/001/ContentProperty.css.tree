@@ -1,0 +1,124 @@
+StyleSheet
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    H1
+                PseudoClassSelector
+                    Colon    :
+                    Identifier    before
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    content
+                Colon    :
+                FunctionCounter
+                    Function    counter(
+                    FunctionArgument
+                        Identifier    chno
+                        Comma    ,
+                    FunctionArgument
+                        Identifier    upper-latin
+                    CloseFunctionBrace    )
+                String    ". "
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    H2
+                PseudoClassSelector
+                    Colon    :
+                    Identifier    before
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    content
+                Colon    :
+                FunctionCounter
+                    Function    counter(
+                    FunctionArgument
+                        Identifier    section
+                        Comma    ,
+                    FunctionArgument
+                        Identifier    upper-roman
+                    CloseFunctionBrace    )
+                String    " - "
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    BLOCKQUOTE
+                PseudoClassSelector
+                    Colon    :
+                    Identifier    after
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    content
+                Colon    :
+                String    " ["
+                FunctionCounter
+                    Function    counter(
+                    FunctionArgument
+                        Identifier    bq
+                        Comma    ,
+                    FunctionArgument
+                        Identifier    lower-greek
+                    CloseFunctionBrace    )
+                String    "]"
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    DIV
+                ClassSelector
+                    Dot    .
+                    Identifier    note
+                PseudoClassSelector
+                    Colon    :
+                    Identifier    before
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    content
+                Colon    :
+                FunctionCounter
+                    Function    counter(
+                    FunctionArgument
+                        Identifier    notecntr
+                        Comma    ,
+                    FunctionArgument
+                        Identifier    disc
+                    CloseFunctionBrace    )
+                String    " "
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    P
+                PseudoClassSelector
+                    Colon    :
+                    Identifier    before
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    content
+                Colon    :
+                FunctionCounter
+                    Function    counter(
+                    FunctionArgument
+                        Identifier    p
+                        Comma    ,
+                    FunctionArgument
+                        Identifier    none
+                    CloseFunctionBrace    )
+            CloseCurlyBrace    }

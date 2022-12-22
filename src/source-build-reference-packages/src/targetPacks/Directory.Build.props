@@ -1,0 +1,24 @@
+<Project>
+  <Import Project="$([MSBuild]::GetPathOfFileAbove(Directory.Build.props, $(MSBuildThisFileDirectory)..))" />
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+
+    <RestoreIlTooling>true</RestoreIlTooling>
+
+    <!-- Disable NU5131: unclear warning caused by ref-only (https://github.com/NuGet/Home/issues/8684) -->
+    <NoWarn>$(NoWarn);NU5131</NoWarn>
+    <!-- Don't warn on NU5125 - The 'licenseUrl' element will be deprecated. -->
+    <NoWarn>$(NoWarn);NU5125</NoWarn>
+    <!-- Disable NU5128: we have dirs like 'netcoreapp' that NuGet thinks are like '.NETCoreApp0.0'. -->
+    <NoWarn>$(NoWarn);NU5128</NoWarn>
+    <!-- Disable NU5048: continue to use deprecated 'PackageIconUrl'/'iconUrl' for now. -->
+    <NoWarn>$(NoWarn);NU5048</NoWarn>
+    <!-- Disable NU5129: NuGet expects build/*.props, doesn't seem to consider build/{tfm}/*.props. -->
+    <NoWarn>$(NoWarn);NU5129</NoWarn>
+    <!-- Disable NU5109, NU5127: NuGet has some expectations and hints for _._ usage, but we have some specific packages to replicate. -->
+    <NoWarn>$(NoWarn);NU5109;NU5127</NoWarn>
+  </PropertyGroup>
+
+</Project>

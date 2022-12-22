@@ -1,0 +1,9 @@
+{
+    "tsaVersion": "TsaV2",
+    "codebaseName": "NuGet.Client-Trusted_dev",
+    "instanceUrl": "DEVDIV",
+    "projectName": "DevDiv",
+    "areaPath": "DevDiv\\NuGet\\NuGet Clients",
+    "iterationPath": "DevDiv",
+    "allTools": true
+}

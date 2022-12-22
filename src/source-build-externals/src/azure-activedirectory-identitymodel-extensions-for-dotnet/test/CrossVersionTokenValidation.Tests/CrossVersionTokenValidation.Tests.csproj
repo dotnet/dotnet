@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\build\commonTest.props" />
+
+  <PropertyGroup>
+    <TargetFrameworks>net452</TargetFrameworks>
+    <AssemblyName>CrossVersionTokenValidation.Tests</AssemblyName>
+    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)..\..\build\35MSSharedLib1024.snk</AssemblyOriginatorKeyFile>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <DefineConstants>CrossVersionTokenValidation</DefineConstants>
+    <SignAssembly>true</SignAssembly>
+    <DelaySign>true</DelaySign>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\Microsoft.IdentityModel.TestUtils\ClaimSets.cs" Link="ClaimSets.cs" />
+    <Compile Include="..\Microsoft.IdentityModel.TestUtils\CompareContext.cs" Link="CompareContext.cs" />
+    <Compile Include="..\Microsoft.IdentityModel.TestUtils\Default.cs" Link="Default.cs" />
+    <Compile Include="..\Microsoft.IdentityModel.TestUtils\ExpectedException.cs" Link="ExpectedException.cs" />
+    <Compile Include="..\Microsoft.IdentityModel.TestUtils\IdentityComparer.cs" Link="IdentityComparer.cs" />
+    <Compile Include="..\Microsoft.IdentityModel.TestUtils\KeyingMaterial.cs" Link="KeyingMaterial.cs" />
+    <Compile Include="..\Microsoft.IdentityModel.TestUtils\TestException.cs" Link="TestException.cs" />
+    <Compile Include="..\Microsoft.IdentityModel.TestUtils\TestUtilities.cs" Link="TestUtilities.cs" />
+    <Compile Include="..\Microsoft.IdentityModel.TestUtils\TheoryDataBase.cs" Link="TheoryDataBase.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.IdentityModel.Protocol.Extensions" Version="$(MicrosoftIdentityModelProtocolExtensionsVersion)" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="$(SystemIdentityModelTokensJwtVersion4x)" />
+  </ItemGroup>
+  
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
+    <Reference Include="System.IdentityModel" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Microsoft.IdentityModel.Tokens.Saml\Microsoft.IdentityModel.Tokens.Saml.csproj" />
+    <ProjectReference Include="..\..\src\Microsoft.IdentityModel.Tokens\Microsoft.IdentityModel.Tokens.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
+  </ItemGroup>
+</Project>

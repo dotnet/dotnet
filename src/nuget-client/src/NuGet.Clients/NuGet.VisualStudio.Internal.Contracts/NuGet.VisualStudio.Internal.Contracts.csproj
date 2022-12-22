@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>$(NETFXTargetFramework)</TargetFramework>
+    <SkipShared>true</SkipShared>
+    <PackProject>false</PackProject>
+    <Shipping>true</Shipping>
+    <IncludeInVsix>true</IncludeInVsix>
+    <RootNamespace>NuGet.VisualStudio.Internal.Contracts</RootNamespace>
+    <Nullable>enable</Nullable>
+    <!-- This project defines the over-the-wire protocol for Codespaces, hence we need to be backwards compatible, even if the project isn't shared as a nupkg. -->
+    <UsePublicApiAnalyzer>true</UsePublicApiAnalyzer>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Sdk" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.PackageManagement\NuGet.PackageManagement.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+</Project>

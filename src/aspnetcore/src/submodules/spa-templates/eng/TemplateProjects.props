@@ -1,0 +1,23 @@
+<!-- Copied from https://github.com/dotnet/aspnetcore/blob/0c5456afe95096db6ac5400cecd3440299b42714/src/ProjectTemplates/TemplateProjects.props. -->
+<Project>
+  <PropertyGroup>
+    <EnableDefaultItems>False</EnableDefaultItems>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <IncludeBuildOutput>False</IncludeBuildOutput>
+    <IncludeSymbols>false</IncludeSymbols>
+    <NoWarn>$(NoWarn);2008;8021</NoWarn>
+    <PackageTags>aspnet;templates</PackageTags>
+    <NuspecFile>$(MSBuildThisFileDirectory)templates.nuspec</NuspecFile>
+    <CopyBuildOutputToOutputDirectory>false</CopyBuildOutputToOutputDirectory>
+    <CopyOutputSymbolsToOutputDirectory>false</CopyOutputSymbolsToOutputDirectory>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(BuildingInsideVisualStudio)' == 'true'">
+    <!-- So you can make changes and re-run tests within VS without command-line builds -->
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="content/**" />
+  </ItemGroup>
+</Project>

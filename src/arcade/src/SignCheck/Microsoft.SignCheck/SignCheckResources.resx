@@ -1,0 +1,261 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ArgumentNullOrEmpty" xml:space="preserve">
+    <value>'{0}' cannot be null or empty.</value>
+  </data>
+  <data name="DetailCertChainValid" xml:space="preserve">
+    <value>Certificate chain appears valid.</value>
+  </data>
+  <data name="DetailDoNotSignFileSigned" xml:space="preserve">
+    <value>{0} matches a DO-NOT-SIGN exclusion and is signed.</value>
+  </data>
+  <data name="DetailErrorFailedToBuildCertChain" xml:space="preserve">
+    <value>Failed to build certificate chain.</value>
+  </data>
+  <data name="DetailExcluded" xml:space="preserve">
+    <value>Excluded</value>
+  </data>
+  <data name="DetailFile" xml:space="preserve">
+    <value>File: {0}</value>
+  </data>
+  <data name="DetailFullName" xml:space="preserve">
+    <value>Full Name: {0}</value>
+  </data>
+  <data name="DetailHResult" xml:space="preserve">
+    <value>hresult={0:x8}</value>
+  </data>
+  <data name="DetailIdentifyByHeaderAsType" xml:space="preserve">
+    <value>File identified as {0} using file header.</value>
+  </data>
+  <data name="DetailMiscFileType" xml:space="preserve">
+    <value>File type: {0} (inferred)</value>
+  </data>
+  <data name="DetailNativeImage" xml:space="preserve">
+    <value>No StrongName signature (NGEN/CrossGen image).</value>
+  </data>
+  <data name="DetailPublicKeyToken" xml:space="preserve">
+    <value>Public key = {0}</value>
+  </data>
+  <data name="DetailSigned" xml:space="preserve">
+    <value>Signed: {0}</value>
+  </data>
+  <data name="DetailSignedAuthentiCode" xml:space="preserve">
+    <value>AuthentiCode signed: {0}</value>
+  </data>
+  <data name="DetailSignedStrongName" xml:space="preserve">
+    <value>StrongName signed: {0}</value>
+  </data>
+  <data name="DetailSkipped" xml:space="preserve">
+    <value>Skipped</value>
+  </data>
+  <data name="DetailSkippedUnsupportedFileType" xml:space="preserve">
+    <value>Skipped (unsupported file type)</value>
+  </data>
+  <data name="DetailTimestamp" xml:space="preserve">
+    <value>Timestamp: {0:MM/dd/yy H:mm:ss} ({1})</value>
+  </data>
+  <data name="DetailTimestampError" xml:space="preserve">
+    <value>Timestamp: Error retrieving timestamp</value>
+  </data>
+  <data name="DetailTimestampInvalid" xml:space="preserve">
+    <value>Invalid timestamp</value>
+  </data>
+  <data name="DetailTimestampOutisdeCertValidity" xml:space="preserve">
+    <value>Timestamp ({0}) outside validity period ({1} to {2}).</value>
+  </data>
+  <data name="DetailTimestampSkipped" xml:space="preserve">
+    <value>Timestamp: Skipped</value>
+  </data>
+  <data name="DetailVirtualPath" xml:space="preserve">
+    <value>Virtual path: {0}</value>
+  </data>
+  <data name="DetailVsixMultipleSignatures" xml:space="preserve">
+    <value>Multiple signatures found.</value>
+  </data>
+  <data name="DetailXmlMultipleSignatures" xml:space="preserve">
+    <value>Multiple signatures found ({0}), only the first signature is checked.</value>
+  </data>
+  <data name="DetailXmlNoSignature" xml:space="preserve">
+    <value>No Signature element found.</value>
+  </data>
+  <data name="DiagCheckingStrongName" xml:space="preserve">
+    <value>Checking strong name signature.</value>
+  </data>
+  <data name="DiagCheckingTimestamps" xml:space="preserve">
+    <value>Checking timestamp(s).</value>
+  </data>
+  <data name="DiagCreatingFolder" xml:space="preserve">
+    <value>Creating folder {0}.</value>
+  </data>
+  <data name="DiagDeletingFolder" xml:space="preserve">
+    <value>Deleting folder {0}.</value>
+  </data>
+  <data name="DiagExtractingFileContents" xml:space="preserve">
+    <value>Extracting file contents to {0}</value>
+  </data>
+  <data name="DiagFileHeaderIdentifyExtensionType" xml:space="preserve">
+    <value>File will be treated as '{0}'.</value>
+  </data>
+  <data name="DiagFirstExclusion" xml:space="preserve">
+    <value>Checking {0} against the exclusion list.</value>
+  </data>
+  <data name="DiagGenerateExclusion" xml:space="preserve">
+    <value>Generating exclusion for {0}: {1}</value>
+  </data>
+  <data name="DiagSectionHeader" xml:space="preserve">
+    <value>Found section header '{0}'.</value>
+  </data>
+  <data name="DiagSkippingStrongName" xml:space="preserve">
+    <value>Skipping strong name signature check.</value>
+  </data>
+  <data name="DiagVerifyByFileHeader" xml:space="preserve">
+    <value>Examining file header to find applicable verifier.</value>
+  </data>
+  <data name="ErrorHResult" xml:space="preserve">
+    <value>HRESULT: {0:x8} ({1})</value>
+  </data>
+  <data name="ErrorInvalidOrMissingTimestamp" xml:space="preserve">
+    <value>Invalid or missing timestamp.</value>
+  </data>
+  <data name="ExclusionYourComment" xml:space="preserve">
+    <value>Add you comment here</value>
+  </data>
+  <data name="FileAlreadyExists" xml:space="preserve">
+    <value>A file named {0} already exists. The duplicate entry will be ignored.</value>
+  </data>
+  <data name="FileExtractedFromBinaryTable" xml:space="preserve">
+    <value>File was extracted from Binary table.</value>
+  </data>
+  <data name="NA" xml:space="preserve">
+    <value>N/A</value>
+  </data>
+  <data name="ProcessingFile" xml:space="preserve">
+    <value>Processing {0} (parent: {1})</value>
+  </data>
+  <data name="VsixChainBuildFailed" xml:space="preserve">
+    <value>Failed to build certificate chain.</value>
+  </data>
+  <data name="WixBundle" xml:space="preserve">
+    <value>Processing {0} as a WiX bundle.</value>
+  </data>
+  <data name="XmlSignatureNodes" xml:space="preserve">
+    <value>Number of XML Signature nodes: {0}.</value>
+  </data>
+</root>

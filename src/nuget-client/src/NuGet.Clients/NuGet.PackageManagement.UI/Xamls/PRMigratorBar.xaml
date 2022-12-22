@@ -1,0 +1,75 @@
+<UserControl x:Class="NuGet.PackageManagement.UI.PRMigratorBar"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Loaded="UserControl_Loaded"
+             xmlns:resx="clr-namespace:NuGet.PackageManagement.UI"
+             xmlns:nuget="clr-namespace:NuGet.PackageManagement.UI"
+             xmlns:imaging="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.Imaging"
+             xmlns:catalog="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.ImageCatalog">
+  <UserControl.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <nuget:SharedResources />
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+  </UserControl.Resources>
+  <Border x:Name="MigratorBar" VerticalAlignment="Center" Visibility="Collapsed">
+    <Grid Background="Transparent" Margin="0,3,0,3">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="Auto"/>
+      </Grid.ColumnDefinitions>
+      <StackPanel Margin="0,4,0,6" Grid.Column="0" Orientation="Horizontal">
+        <imaging:CrispImage
+          Margin="3,0,0,0"
+          Moniker="{x:Static catalog:KnownMonikers.StatusInformation}"
+          VerticalAlignment="Center"/>
+        <TextBlock
+        x:Name="UpgradeMessage"
+        Margin="5,0,5,0"
+        TextWrapping="Wrap"
+        VerticalAlignment="Center"
+        Text="{x:Static resx:Resources.AskForPRMigrator}" />
+        <TextBlock
+        TextWrapping="Wrap"
+        VerticalAlignment="Center"
+        Margin="15,0,5,0">
+        <Hyperlink
+          NavigateUri=" "
+          Style="{StaticResource HyperlinkStyle}"
+          Hyperlink.Click="OnMigrationLinkClick" >
+          <Run Text="{x:Static resx:Resources.Link_UpgradeOption}" />
+        </Hyperlink>
+        </TextBlock>
+        <TextBlock
+        TextWrapping="Wrap"
+        VerticalAlignment="Center"
+        Margin="15,0,5,0">
+        <Hyperlink
+          NavigateUri="https://aka.ms/nuget-pc2pr-migrator"
+          Style="{StaticResource HyperlinkStyle}"
+          RequestNavigate="OnMigrationHelpUrlNavigate" >
+          <Run Text="{x:Static resx:Resources.Link_MigratorHelp}" />
+        </Hyperlink>
+        </TextBlock>
+        <TextBlock
+        TextWrapping="Wrap"
+        VerticalAlignment="Center"
+        Margin="15,0,5,0">
+        <Hyperlink
+          NavigateUri=" "
+          Style="{StaticResource HyperlinkStyle}"
+          Hyperlink.Click="OnDoNotShowAgainClick" >
+          <Run Text="{x:Static resx:Resources.Link_DoNotShowAgain}" />
+        </Hyperlink>
+        </TextBlock>
+      </StackPanel>
+      <Button Click="OnDeclineMigrationLinkClick" Margin="8,0,5,0" 
+            VerticalAlignment="Center" HorizontalAlignment="Right" ToolTip="{x:Static resx:Resources.IgnoreUpgrade}" BorderThickness="0" Background="Transparent" Grid.Column="1">
+        <Path Data="F1M2.28484E-07,1.33331L1.33333,0 4.00001,2.66669 6.66667,6.10352E-05 8,1.33331 5.33334,4 8,6.66669 6.66667,8 4,5.33331 1.33333,8 1.086E-07,6.66669 2.66667,4 2.28484E-07,1.33331z"
+            Stretch="Uniform" Margin="3,1,2,2" Visibility="Visible" Width="9" Height="9"
+            Fill="{DynamicResource {x:Static nuget:Brushes.ButtonBorderBrushKey}}"/>
+      </Button>
+    </Grid>
+  </Border>
+</UserControl>

@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>FluentValidation</id>
+    <version>2.0.0.0</version>
+    <authors>Jeremy Skinner</authors>
+    <description>A validation library for .NET, Silverlight and WP7 that uses a fluent interface to construct strongly-typed validation rules.</description>
+    <language>en-US</language>
+  </metadata>
+  <files>
+    <file src="lib\NET35\de\FluentValidation.resources.dll" target="lib\NET35\de\FluentValidation.resources.dll" />
+    <file src="lib\NET35\es\FluentValidation.resources.dll" target="lib\NET35\es\FluentValidation.resources.dll" />
+    <file src="lib\NET35\fr\FluentValidation.resources.dll" target="lib\NET35\fr\FluentValidation.resources.dll" />
+    <file src="lib\NET35\it\FluentValidation.resources.dll" target="lib\NET35\it\FluentValidation.resources.dll" />
+    <file src="lib\NET35\nl\FluentValidation.resources.dll" target="lib\NET35\nl\FluentValidation.resources.dll" />
+    <file src="lib\NET35\pt\FluentValidation.resources.dll" target="lib\NET35\pt\FluentValidation.resources.dll" />
+    <file src="lib\NET35\sv\FluentValidation.resources.dll" target="lib\NET35\sv\FluentValidation.resources.dll" />
+    <file src="lib\NET35\FluentValidation.dll" target="lib\NET35\FluentValidation.dll" />
+    <file src="lib\NET35\FluentValidation.pdb" target="lib\NET35\FluentValidation.pdb" />
+    <file src="lib\NET35\FluentValidation.XML" target="lib\NET35\FluentValidation.XML" />
+    <file src="lib\SL4\de\FluentValidation.resources.dll" target="lib\SL4\de\FluentValidation.resources.dll" />
+    <file src="lib\SL4\es\FluentValidation.resources.dll" target="lib\SL4\es\FluentValidation.resources.dll" />
+    <file src="lib\SL4\fr\FluentValidation.resources.dll" target="lib\SL4\fr\FluentValidation.resources.dll" />
+    <file src="lib\SL4\it\FluentValidation.resources.dll" target="lib\SL4\it\FluentValidation.resources.dll" />
+    <file src="lib\SL4\nl\FluentValidation.resources.dll" target="lib\SL4\nl\FluentValidation.resources.dll" />
+    <file src="lib\SL4\pt\FluentValidation.resources.dll" target="lib\SL4\pt\FluentValidation.resources.dll" />
+    <file src="lib\SL4\sv\FluentValidation.resources.dll" target="lib\SL4\sv\FluentValidation.resources.dll" />
+    <file src="lib\SL4\FluentValidation.dll" target="lib\SL4\FluentValidation.dll" />
+    <file src="lib\SL4\FluentValidation.pdb" target="lib\SL4\FluentValidation.pdb" />
+  </files>
+</package>

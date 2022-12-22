@@ -1,0 +1,68 @@
+<Project>
+  <PropertyGroup>
+    <XUnitPublishTargetFramework Condition="'$(XUnitPublishTargetFramework)' == ''">net7.0</XUnitPublishTargetFramework>
+    <XUnitRuntimeTargetFramework Condition="'$(XUnitRuntimeTargetFramework)' == ''">netcoreapp2.0</XUnitRuntimeTargetFramework>
+
+    <XUnitRunnerVersion Condition="'$(XUnitRunnerVersion)' == ''">2.4.2</XUnitRunnerVersion>
+
+    <_XUnitPublishTargetsPath>$(MSBuildThisFileDirectory)XUnitPublish.targets</_XUnitPublishTargetsPath>
+
+    <XUnitArguments Condition="'$(XUnitArguments)' == ''">-nocolor</XUnitArguments>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'@(XUnitProject)' != ''">
+    <HelixCorrelationPayload Include="xunit-runner">
+      <Uri>https://pkgs.dev.azure.com/dnceng/9ee6d478-d288-47f7-aacc-f6e6d082ae6d/_packaging/1a5f89f6-d8da-4080-b15f-242650c914a8/nuget/v3/flat2/xunit.runner.console/$(XUnitRunnerVersion)/xunit.runner.console.$(XUnitRunnerVersion).nupkg</Uri>
+      <Destination>xunit-runner</Destination>
+    </HelixCorrelationPayload>
+  </ItemGroup>
+
+  <Target Name="RestoreXUnitProjects"
+          Condition="'@(XUnitProject)' != ''"
+          BeforeTargets="Restore"
+          Outputs="%(XUnitProject.Identity)%(XUnitProject.TargetFramework)%(XUnitProject.RuntimeTargetFramework)%(XUnitProject.AdditionalProperties)">
+    <MSBuild Projects="%(XUnitProject.Identity)"
+             Targets="Restore"
+             Properties="CustomAfterMicrosoftCommonTargets=$(_XUnitPublishTargetsPath);%(XUnitProject.AdditionalProperties)">
+    </MSBuild>
+  </Target>
+
+  <Target Name="BuildXUnitProjects"
+          Condition="'@(XUnitProject)' != ''"
+          BeforeTargets="CoreBuild"
+          Outputs="%(XUnitProject.Identity)%(XUnitProject.TargetFramework)%(XUnitProject.RuntimeTargetFramework)%(XUnitProject.AdditionalProperties)">
+    <PropertyGroup>
+      <_CurrentXUnitProject>%(XUnitProject.Identity)</_CurrentXUnitProject>
+      <_CurrentPublishTargetFramework>%(XUnitProject.TargetFramework)</_CurrentPublishTargetFramework>
+      <_CurrentPublishTargetFramework Condition="'$(_CurrentPublishTargetFramework)' == ''">$(XUnitPublishTargetFramework)</_CurrentPublishTargetFramework>
+      <_CurrentRuntimeTargetFramework>%(XUnitProject.RuntimeTargetFramework)</_CurrentRuntimeTargetFramework>
+      <_CurrentRuntimeTargetFramework Condition="'$(_CurrentRuntimeTargetFramework)' == ''">$(XUnitRuntimeTargetFramework)</_CurrentRuntimeTargetFramework>
+      <_CurrentAdditionalProperties>%(XUnitProject.AdditionalProperties)</_CurrentAdditionalProperties>
+    </PropertyGroup>
+    <MSBuild Projects="$(_CurrentXUnitProject)" Targets="PublishWithOutput" Properties="CustomAfterMicrosoftCommonTargets=$(_XUnitPublishTargetsPath);TargetFramework=$(_CurrentPublishTargetFramework);$(_CurrentAdditionalProperties)">
+      <Output TaskParameter="TargetOutputs" PropertyName="_PublishOutputDir" />
+    </MSBuild>
+    <MSBuild Projects="$(_CurrentXUnitProject)" Targets="GetTargetPath" Properties="CustomAfterMicrosoftCommonTargets=$(_XUnitPublishTargetsPath);TargetFramework=$(_CurrentPublishTargetFramework);$(_CurrentAdditionalProperties)">
+      <Output TaskParameter="TargetOutputs" PropertyName="_TargetPath" />
+    </MSBuild>
+
+    <ItemGroup>
+      <XUnitProject Condition="'%(Identity)' == '$(_CurrentXUnitProject)'">
+        <PublishDirectory>$(_PublishOutputDir)</PublishDirectory>
+        <TargetPath>$(_TargetPath)</TargetPath>
+        <PublishTargetFramework>$(_CurrentPublishTargetFramework)</PublishTargetFramework>
+        <RuntimeTargetFramework>$(_CurrentRuntimeTargetFramework)</RuntimeTargetFramework>
+      </XUnitProject>
+    </ItemGroup>
+  </Target>
+
+  
+  <Target Name="CreateXUnitWorkItems"
+          Condition="'@(XUnitProject)' != ''"
+          BeforeTargets="CoreTest">    
+    <CreateXUnitWorkItems XUnitProjects="@(XUnitProject)" IsPosixShell="$(IsPosixShell)" XUnitArguments="$(XUnitArguments)" XUnitWorkItemTimeout="$(XUnitWorkItemTimeout)" DotNetCliVersion="$(DotNetCliVersion)">
+      <Output TaskParameter="XUnitWorkItems" ItemName="HelixWorkItem"/>
+    </CreateXUnitWorkItems>
+  </Target>
+
+</Project>

@@ -1,0 +1,7 @@
+{
+  "version": "1.0.0.0",
+  "strings": {
+    "name": "MSTest 测试项目(.NET Core)",
+    "description": "包含 MSTest 单元测试的项目，该单元测试可在 Windows、Linux 和 MacOS 上的 .NET Core 上运行。"
+  }
+}

@@ -1,0 +1,38 @@
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="Code Coverage" uri="datacollector://Microsoft/CodeCoverage/2.0">
+        <Configuration>
+          <CodeCoverage>
+            <!-- Match assembly file paths: -->
+            <ModulePaths>
+             <Exclude>
+              <ModulePath>.*Tests.dll</ModulePath>
+              <ModulePath>.*msvcr.*dll$</ModulePath>
+              <ModulePath>.*msvcp.*dll$</ModulePath>
+              <ModulePath>.*clr.dll$</ModulePath>
+              <ModulePath>.*clr.ni.dll$</ModulePath>
+              <ModulePath>.*clrjit.dll$</ModulePath>
+              <ModulePath>.*clrjit.ni.dll$</ModulePath>
+              <ModulePath>.*mscoree.dll$</ModulePath>
+              <ModulePath>.*mscoreei.ni.dll$</ModulePath>
+              <ModulePath>.*mscorlib.dll$</ModulePath>
+              <ModulePath>.*mscorlib.ni.dll$</ModulePath>
+              <ModulePath>.*cryptbase.dll$</ModulePath>
+              <ModulePath>.*bcryptPrimitives.dll$</ModulePath>
+              <ModulePath>.*CodeCoverage.exe$</ModulePath>
+             </Exclude>
+            </ModulePaths>
+
+            <!-- We recommend you do not change the following values: -->
+            <UseVerifiableInstrumentation>True</UseVerifiableInstrumentation>
+            <AllowLowIntegrityProcesses>True</AllowLowIntegrityProcesses>
+            <CollectFromChildProcesses>True</CollectFromChildProcesses>
+            <CollectAspDotNet>False</CollectAspDotNet>
+
+          </CodeCoverage>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>

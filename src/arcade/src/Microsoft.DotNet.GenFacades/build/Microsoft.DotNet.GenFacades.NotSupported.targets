@@ -1,0 +1,69 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+
+  <UsingTask TaskName="NotSupportedAssemblyGenerator" AssemblyFile="$(GenFacadesTargetAssemblyPath)" />
+
+  <PropertyGroup Condition="'$(GeneratePlatformNotSupportedAssemblyMessage)' != ''">
+    <CoreCompileDependsOn>AddGenFacadeNotSupportedCompileItem;$(CoreCompileDependsOn)</CoreCompileDependsOn>
+    <!-- Not supported sources are created from the ref assembly, we currently don't produce finalizers in dummy assemblies, so we disable ApiCompat to not fail. -->
+    <RunApiCompat>false</RunApiCompat>
+    <!-- The refs contains some unsed private fields and empty finalizers.-->
+    <NoWarn>$(NoWarn);CA1823;CA1821;CS0169</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadata">
+      <_Parameter1>NotSupported</_Parameter1>
+      <_Parameter2>True</_Parameter2>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(GeneratePlatformNotSupportedAssemblyMessage)' != ''">
+    <ProjectReference Include="$(ContractProject)">
+      <Targets>SourceFilesProjectOutputGroup</Targets>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <OutputItemType>_contractSourceFilesGroup</OutputItemType>
+      <!-- MSBuild ignores the Target name in these cases and invokes GetTargetPath, avoid that by disabling build -->
+      <BuildReference Condition="'$(BuildingInsideVisualStudio)' == 'true' or '$(BuildProjectReferences)' != 'true'">false</BuildReference>
+    </ProjectReference>
+  </ItemGroup>
+
+  <Target Name="_GetGenFacadeNotSupportedCompileInputs">
+    <!-- Populates the Reference Sources while building in VS-->
+    <MSBuild
+      Projects="@(ProjectReference)"
+      Targets="SourceFilesProjectOutputGroup"
+      Properties="%(ProjectReference.SetTargetFramework)"
+      Condition="'%(ProjectReference.Targets)' == 'SourceFilesProjectOutputGroup' and ('$(BuildingInsideVisualStudio)' == 'true' or '$(BuildProjectReferences)' != 'true')">
+      <Output TaskParameter="TargetOutputs" ItemName="_contractSourceFilesGroup" />
+    </MSBuild>
+
+    <ItemGroup>
+      <_contractSourceFilesGroup IsRooted="$([System.IO.Path]::IsPathRooted('%(_contractSourceFilesGroup.OriginalItemSpec)'))" />
+      <!-- Filtering out the files from the ref folder. -->
+      <GenFacadeNotSupportedCompileInput Include="@(_contractSourceFilesGroup->WithMetadataValue('Extension', '.cs')->WithMetadataValue('IsRooted', 'false'))"
+                                         OutputPath="$(IntermediateOutputPath)%(Filename).notsupported%(Extension)" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="AddGenFacadeNotSupportedCompileItem"
+          DependsOnTargets="_GetGenFacadeNotSupportedCompileInputs;_GetRoslynAssembliesPath"
+          AfterTargets="ResolveProjectReferences"
+          Condition="'$(GeneratePlatformNotSupportedAssemblyMessage)' != ''"
+          Inputs="@(GenFacadeNotSupportedCompileInput)"
+          Outputs="@(GenFacadeNotSupportedCompileInput->'%(OutputPath)')" >
+
+    <NotSupportedAssemblyGenerator
+      SourceFiles="@(GenFacadeNotSupportedCompileInput)"
+      LangVersion="$(LangVersion)"
+      Message="$(GeneratePlatformNotSupportedAssemblyMessage)"
+      ApiExclusionListPath="$(ApiExclusionListPath)"
+      RoslynAssembliesPath="$(RoslynAssembliesPath)" />
+
+    <ItemGroup>
+      <Compile Include="@(GenFacadeNotSupportedCompileInput->'%(OutputPath)')" />
+      <FileWrites Include="@(GenFacadeNotSupportedCompileInput->'%(OutputPath)')" />
+    </ItemGroup>
+  </Target>
+
+</Project>

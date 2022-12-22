@@ -1,0 +1,1495 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<feed xml:base="https://www.nuget.org/api/v2" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
+  <m:count>33</m:count>
+  <id>http://schemas.datacontract.org/2004/07/</id>
+  <title />
+  <updated>2017-01-06T21:41:46Z</updated>
+  <link rel="self" href="https://www.nuget.org/api/v2/Packages" />
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='biz.dfch.CS.System.Utilities',Version='3.1.1')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='biz.dfch.CS.System.Utilities',Version='3.1.1')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='biz.dfch.CS.System.Utilities',Version='3.1.1')" />
+    <title type="text">biz.dfch.CS.System.Utilities</title>
+    <summary type="text">Collection of utility classes</summary>
+    <updated>2016-10-10T05:55:10Z</updated>
+    <author>
+      <name>d-fens GmbH</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/biz.dfch.CS.System.Utilities/3.1.1" />
+    <m:properties>
+      <d:Id>biz.dfch.CS.System.Utilities</d:Id>
+      <d:Version>3.1.1</d:Version>
+      <d:NormalizedVersion>3.1.1</d:NormalizedVersion>
+      <d:Authors>d-fens GmbH</d:Authors>
+      <d:Copyright>Copyright © 2014 - 2016 d-fens GmbH</d:Copyright>
+      <d:Created m:type="Edm.DateTime">2016-10-10T05:55:10.363Z</d:Created>
+      <d:Dependencies>log4net:[2.0.5, ):|Newtonsoft.Json:[6.0.8, ):</d:Dependencies>
+      <d:Description>
+        biz.dfch.CS.System.Utilities
+        ========================
+
+        Collection of utility classes that provide functionalities like
+
+        * StringValueAttribute for Enums
+        * Cryptography helper for password encryption and decryption
+        * Start-Process assembly for invocation of processes via Interop/CreateProcessWithLogonW for use with biz.dfch.PS.System.Utilities
+        See http://d-fens.ch/2014/10/11/bug-start-job-from-scheduled-task-fails-with-event-id-8197-when-invoked-via-different-credential-set/
+        * Log forwarders for System.Diagnostics.Debug/Trace for log4net
+        * Json helper methods for NewtonSoft.Json
+        * Introspection and Reflection for calling methods
+      </d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1416</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/biz.dfch.CS.System.Utilities/3.1.1</d:GalleryDetailsUrl>
+      <d:IconUrl>https://avatars1.githubusercontent.com/u/8310404?v=3&amp;s=200</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:LastUpdated m:type="Edm.DateTime">2016-10-10T05:55:10.363Z</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2016-10-10T05:55:10.363Z</d:Published>
+      <d:PackageHash>SxOuU4rz2zKcxpHZcHstA8Qyucs6aHdpcLT4a+SPuteIJESy41Qh5OxGD+8cnv2COCdZ7x2hCw8Cdy6BGkO+8w==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">24379</d:PackageSize>
+      <d:ProjectUrl>https://github.com/dfch/biz.dfch.CS.System.Utilities</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/packages/biz.dfch.CS.System.Utilities/3.1.1/ReportAbuse</d:ReportAbuseUrl>
+      <d:ReleaseNotes>
+        20161010
+        * added strong name to assembly
+      </d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">true</d:RequireLicenseAcceptance>
+      <d:Summary>Collection of utility classes</d:Summary>
+      <d:Tags>dfch utilities C#</d:Tags>
+      <d:Title>biz.dfch.CS.System.Utilities</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">56</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true" />
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>https://github.com/dfch/biz.dfch.CS.System.Utilities/blob/master/LICENSE</d:LicenseUrl>
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='Bond.CSharp',Version='5.1.0')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='Bond.CSharp',Version='5.1.0')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='Bond.CSharp',Version='5.1.0')" />
+    <title type="text">Bond.CSharp</title>
+    <summary type="text">Bond is an open source, cross-platform, cross-language framework for working with schematized data.</summary>
+    <updated>2016-11-15T01:34:52Z</updated>
+    <author>
+      <name>Microsoft</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/Bond.CSharp/5.1.0" />
+    <m:properties>
+      <d:Id>Bond.CSharp</d:Id>
+      <d:Version>5.1.0</d:Version>
+      <d:NormalizedVersion>5.1.0</d:NormalizedVersion>
+      <d:Authors>Microsoft</d:Authors>
+      <d:Copyright>Copyright (c) Microsoft</d:Copyright>
+      <d:Created m:type="Edm.DateTime">2016-11-15T01:34:52.53Z</d:Created>
+      <d:Dependencies>Bond.Core.CSharp:[5.1.0, 5.1.0]:|Bond.Runtime.CSharp:[5.1.0, 5.1.0]:</d:Dependencies>
+      <d:Description>
+        Bond is an open source, cross-platform framework for working with schematized data. It supports cross-language serialization/deserialization and powerful generic mechanisms for efficiently manipulating data.
+
+        Bond is published on GitHub at https://github.com/Microsoft/bond/
+
+        The C# documentation is available at https://microsoft.github.io/bond/manual/bond_cs.html
+
+        This package rolls up the other Bond C# packages and includes the code generator (gbc) and MSBuild targets. If you need finer control of dependencies (e.g., excluding Bond's JSON support to get rid of a NewtonSoft.JSON dependency), you'll need to add the smaller packages individually.
+      </d:Description>
+      <d:DownloadCount m:type="Edm.Int32">135187</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/Bond.CSharp/5.1.0</d:GalleryDetailsUrl>
+      <d:IconUrl>https://raw.githubusercontent.com/Microsoft/bond/master/doc/src/logos/bond-logo-64x64-transparent.png</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:LastUpdated m:type="Edm.DateTime">2016-11-15T01:34:52.53Z</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2016-11-15T01:34:52.53Z</d:Published>
+      <d:PackageHash>w8oXGerh2VUJTTj4jEBFzhUWC3O99UiHN8uY5me6CvzEZmCsf2Ikv5jqquS1YM4tUneLMAoiQyzrLbjucB2dwA==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">5375891</d:PackageSize>
+      <d:ProjectUrl>https://github.com/Microsoft/bond/</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/packages/Bond.CSharp/5.1.0/ReportAbuse</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true" />
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary>Bond is an open source, cross-platform, cross-language framework for working with schematized data.</d:Summary>
+      <d:Tags>Bond .NET C# serialization</d:Tags>
+      <d:Title>Bond C#</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">1168</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true" />
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>https://github.com/Microsoft/bond/blob/master/LICENSE</d:LicenseUrl>
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='Cauldron.Newton',Version='1.1.3.0')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='Cauldron.Newton',Version='1.1.3.0')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='Cauldron.Newton',Version='1.1.3.0')" />
+    <title type="text">Cauldron.Newton</title>
+    <updated>2015-11-05T00:42:08Z</updated>
+    <author>
+      <name>Hyrtwol</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/Cauldron.Newton/1.1.3.0" />
+    <m:properties>
+      <d:Id>Cauldron.Newton</d:Id>
+      <d:Version>1.1.3.0</d:Version>
+      <d:NormalizedVersion>1.1.3</d:NormalizedVersion>
+      <d:Authors>Hyrtwol</d:Authors>
+      <d:Copyright>Copyright Hyrtwol 2015</d:Copyright>
+      <d:Created m:type="Edm.DateTime">2015-11-05T00:42:08.353Z</d:Created>
+      <d:Dependencies>Cauldron.Core:1.1.3.0:|Cauldron.Mathematics:1.1.3.0:|Cauldron.Game:1.1.3.0:</d:Dependencies>
+      <d:Description>Newton Physics Engine for Cauldron.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">2409</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/Cauldron.Newton/1.1.3</d:GalleryDetailsUrl>
+      <d:IconUrl>http://hyrtwol.dk/icons/cauldron.ico</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:LastUpdated m:type="Edm.DateTime">2015-11-05T00:42:08.353Z</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2015-11-05T00:42:08.353Z</d:Published>
+      <d:PackageHash>7+OyvcevUQnyAkgsX3jWP3hV+GD0CX19gysVa9hPKaWt+oXtISYSoB41rsS++bi2L/xscMELKEijaVxvYZAjjQ==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">379196</d:PackageSize>
+      <d:ProjectUrl>http://hyrtwol.dk/cauldron/</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/packages/Cauldron.Newton/1.1.3/ReportAbuse</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true" />
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags>cauldron fmod</d:Tags>
+      <d:Title>Cauldron.Newton</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">415</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true" />
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl m:null="true" />
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='Chiron',Version='6.2.1')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='Chiron',Version='6.2.1')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='Chiron',Version='6.2.1')" />
+    <title type="text">Chiron</title>
+    <updated>2016-09-21T14:12:28Z</updated>
+    <author>
+      <name>Andrew Cherry, Michael Newton, Henrik Feldt, Marcus Griep, Tony Williams</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/Chiron/6.2.1" />
+    <m:properties>
+      <d:Id>Chiron</d:Id>
+      <d:Version>6.2.1</d:Version>
+      <d:NormalizedVersion>6.2.1</d:NormalizedVersion>
+      <d:Authors>Andrew Cherry, Michael Newton, Henrik Feldt, Marcus Griep, Tony Williams</d:Authors>
+      <d:Copyright>Copyright Xyncro Ltd 2015</d:Copyright>
+      <d:Created m:type="Edm.DateTime">2016-09-21T14:12:28.453Z</d:Created>
+      <d:Dependencies>Aether:[8.0.2, 9.0.0):|FParsec:[1.0.0, 2.0.0):</d:Dependencies>
+      <d:Description>JSON for F#</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">18171</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/Chiron/6.2.1</d:GalleryDetailsUrl>
+      <d:IconUrl m:null="true" />
+      <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:LastUpdated m:type="Edm.DateTime">2016-09-21T14:12:28.453Z</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2016-09-21T14:12:28.453Z</d:Published>
+      <d:PackageHash>yAFxEfielBikjcqKZULvaat4WC9hl9EUaGvMoL7xY3sd1ip1G37eGbIjKVXceu3ZorSq20ajB7SydfWg8bYPeg==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">319591</d:PackageSize>
+      <d:ProjectUrl>https://xyncro.tech/chiron</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/packages/Chiron/6.2.1/ReportAbuse</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true" />
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags>functional json f# optics</d:Tags>
+      <d:Title>Chiron</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">4524</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true" />
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>https://github.com/xyncro/chiron/blob/master/LICENSE.md</d:LicenseUrl>
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='datagen',Version='0.1.16')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='datagen',Version='0.1.16')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='datagen',Version='0.1.16')" />
+    <title type="text">datagen</title>
+    <updated>2015-12-03T00:05:45Z</updated>
+    <author>
+      <name>Eric Newton</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/datagen/0.1.16" />
+    <m:properties>
+      <d:Id>datagen</d:Id>
+      <d:Version>0.1.16</d:Version>
+      <d:NormalizedVersion>0.1.16</d:NormalizedVersion>
+      <d:Authors>Eric Newton</d:Authors>
+      <d:Copyright>Copyright 2015</d:Copyright>
+      <d:Created m:type="Edm.DateTime">2015-12-03T00:05:45.46Z</d:Created>
+      <d:Dependencies></d:Dependencies>
+      <d:Description>datagen generates data for seed and sample purposes.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">314</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/datagen/0.1.16</d:GalleryDetailsUrl>
+      <d:IconUrl m:null="true" />
+      <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:LastUpdated m:type="Edm.DateTime">2015-12-03T00:05:45.46Z</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2015-12-03T00:05:45.46Z</d:Published>
+      <d:PackageHash>4tiIH6b9P/HXst+kHDIhUay6Nwau4lMIevGVIZGwZ0E4TtvIheS6yeuk0GxPFnsrypCAZLtafgiCWRvzz8hUMA==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">15231</d:PackageSize>
+      <d:ProjectUrl>https://github.com/ericnewton76/datagen</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/packages/datagen/0.1.16/ReportAbuse</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true" />
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags>data generator seed sample</d:Tags>
+      <d:Title>datagen</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">145</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true" />
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl m:null="true" />
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='datauri',Version='0.9.5')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='datauri',Version='0.9.5')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='datauri',Version='0.9.5')" />
+    <title type="text">datauri</title>
+    <updated>2015-11-19T16:31:28Z</updated>
+    <author>
+      <name>Eric Newton</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/datauri/0.9.5" />
+    <m:properties>
+      <d:Id>datauri</d:Id>
+      <d:Version>0.9.5</d:Version>
+      <d:NormalizedVersion>0.9.5</d:NormalizedVersion>
+      <d:Authors>Eric Newton</d:Authors>
+      <d:Copyright>Copyright 2015</d:Copyright>
+      <d:Created m:type="Edm.DateTime">2015-11-19T16:31:28.567Z</d:Created>
+      <d:Dependencies></d:Dependencies>
+      <d:Description>DataUri utility library for working with data-uris.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1136</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/datauri/0.9.5</d:GalleryDetailsUrl>
+      <d:IconUrl m:null="true" />
+      <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:LastUpdated m:type="Edm.DateTime">2015-11-19T16:31:28.567Z</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2015-11-19T16:31:28.567Z</d:Published>
+      <d:PackageHash>JQc1iWqz1IBNJqLE5XzVrAt20xfYd50wDZQsU2D3FeTMrKtUwGJwNeLNG8KRfYd+Y2e97QCRglDDYekrvwz8AQ==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">8068</d:PackageSize>
+      <d:ProjectUrl>https://github.com/ericnewton76/datauri</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/packages/datauri/0.9.5/ReportAbuse</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true" />
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags>data uri</d:Tags>
+      <d:Title>DataUri</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">164</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true" />
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl m:null="true" />
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='DocaLabs.Http.Client.with.NewtonSoft.Json.Serializer',Version='3.0.0.0')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='DocaLabs.Http.Client.with.NewtonSoft.Json.Serializer',Version='3.0.0.0')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='DocaLabs.Http.Client.with.NewtonSoft.Json.Serializer',Version='3.0.0.0')" />
+    <title type="text">DocaLabs.Http.Client.with.NewtonSoft.Json.Serializer</title>
+    <summary type="text">Strong typed HTTP client library bundled with NewtonSoft Json Serializer.</summary>
+    <updated>2013-10-28T20:03:23Z</updated>
+    <author>
+      <name>Alexey Kadyrov</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/DocaLabs.Http.Client.with.NewtonSoft.Json.Serializer/3.0.0.0" />
+    <m:properties>
+      <d:Id>DocaLabs.Http.Client.with.NewtonSoft.Json.Serializer</d:Id>
+      <d:Version>3.0.0.0</d:Version>
+      <d:NormalizedVersion>3.0.0</d:NormalizedVersion>
+      <d:Authors>Alexey Kadyrov</d:Authors>
+      <d:Copyright>Copyright ©2013 Alexey Kadyrov</d:Copyright>
+      <d:Created m:type="Edm.DateTime">2013-10-28T20:03:23.407Z</d:Created>
+      <d:Dependencies>Newtonsoft.Json:5.0.6:|DocaLabs.Http.Client:3.0.0.0:</d:Dependencies>
+      <d:Description>Strong typed HTTP client with provider using. The main goal of the library is to minimize plumbing code to bare minimum.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">6099</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/DocaLabs.Http.Client.with.NewtonSoft.Json.Serializer/3.0.0</d:GalleryDetailsUrl>
+      <d:IconUrl m:null="true" />
+      <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:LastUpdated m:type="Edm.DateTime">2013-10-28T20:03:23.407Z</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2013-10-28T20:03:23.407Z</d:Published>
+      <d:PackageHash>p/CKTB9SJeSKdaityydP0Uf5vqCQ9HskIoOXz6ZtH6sEXsuNMU7MeOiSnN6KYUlsC3ocejUTS4kKTkFKhcBKVg==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">9436</d:PackageSize>
+      <d:ProjectUrl>https://github.com/alexey-kadyrov/DocaLabs.Http.Client</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/packages/DocaLabs.Http.Client.with.NewtonSoft.Json.Serializer/3.0.0/ReportAbuse</d:ReportAbuseUrl>
+      <d:ReleaseNotes>* Added full support for async execution</d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary>Strong typed HTTP client library bundled with NewtonSoft Json Serializer.</d:Summary>
+      <d:Tags>http client strong typed library</d:Tags>
+      <d:Title>DocaLabs.Http.Client with NewtonSoft Json Serializer</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">5800</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true" />
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>http://opensource.org/licenses/Apache-2.0</d:LicenseUrl>
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='DotNumerics',Version='1.1')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='DotNumerics',Version='1.1')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='DotNumerics',Version='1.1')" />
+    <title type="text">DotNumerics</title>
+    <updated>2015-07-12T20:20:34Z</updated>
+    <author>
+      <name>DotNumerics.com</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/DotNumerics/1.1" />
+    <m:properties>
+      <d:Id>DotNumerics</d:Id>
+      <d:Version>1.1</d:Version>
+      <d:NormalizedVersion>1.1.0</d:NormalizedVersion>
+      <d:Authors>DotNumerics.com</d:Authors>
+      <d:Copyright m:null="true" />
+      <d:Created m:type="Edm.DateTime">2015-07-12T20:20:34.99Z</d:Created>
+      <d:Dependencies></d:Dependencies>
+      <d:Description>
+        DotNumerics includes a Numerical Library for .NET. The library is written in pure C# and has more than 100,000 lines of code with the most advanced algorithms for Linear Algebra, Differential Equations and Optimization problems. The Linear Algebra library includes CSLapack, CSBlas and CSEispack, these libraries are the translation from Fortran to C# of LAPACK, BLAS and EISPACK, respectively.
+
+        Features.
+
+        Linear Algebra (CSLapack, CSBlas and CSEispack). Systems of linear equations, eigenvalue problems, least-squares solutions of linear systems and singular value problems.
+
+        Differential Equations. Initial-value problem for nonstiff and stiff ordinary differential equations ODEs (explicit Runge-Kutta, implicit Runge-Kutta, Gear’s BDF and Adams-Moulton).
+
+        Optimization. Unconstrained and bounded constrained optimization of multivariate functions (L-BFGS-B, Truncated Newton and Simplex methods).
+      </d:Description>
+      <d:DownloadCount m:type="Edm.Int32">820</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/DotNumerics/1.1.0</d:GalleryDetailsUrl>
+      <d:IconUrl>http://dotnumerics.com/</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:LastUpdated m:type="Edm.DateTime">2015-07-12T20:20:34.99Z</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2015-07-12T20:20:34.99Z</d:Published>
+      <d:PackageHash>uXB06Y7IP6AnoOK9/Cfyfmx5xxBxMfnqSHYcdxgT35+zUUqUEth9vyGy2EPj9HevGaDZFz76WngFXcMCBDvmUg==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">266907</d:PackageSize>
+      <d:ProjectUrl>http://dotnumerics.com/</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/packages/DotNumerics/1.1.0/ReportAbuse</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true" />
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags>C#</d:Tags>
+      <d:Title>DotNumerics</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">820</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true" />
+      <d:LastEdited m:type="Edm.DateTime">2015-08-06T14:29:23.437Z</d:LastEdited>
+      <d:LicenseUrl>http://dotnumerics.com/</d:LicenseUrl>
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='Newtonsoft.Dson',Version='1.0.3')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='Newtonsoft.Dson',Version='1.0.3')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='Newtonsoft.Dson',Version='1.0.3')" />
+    <title type="text">Newtonsoft.Dson</title>
+    <updated>2014-06-07T11:17:19Z</updated>
+    <author>
+      <name>James Newton-King</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/Newtonsoft.Dson/1.0.3" />
+    <m:properties>
+      <d:Id>Newtonsoft.Dson</d:Id>
+      <d:Version>1.0.3</d:Version>
+      <d:NormalizedVersion>1.0.3</d:NormalizedVersion>
+      <d:Authors>James Newton-King</d:Authors>
+      <d:Copyright m:null="true" />
+      <d:Created m:type="Edm.DateTime">2014-06-07T11:17:19.423Z</d:Created>
+      <d:Dependencies>Newtonsoft.Json:6.0.3:</d:Dependencies>
+      <d:Description>DSON (Doge Serialized Object Notation): a data-interchange format that is easy for Shiba Inu dogs to read and write.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">728</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/Newtonsoft.Dson/1.0.3</d:GalleryDetailsUrl>
+      <d:IconUrl m:null="true" />
+      <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language>en-US</d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2014-06-07T11:17:19.423Z</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2014-06-07T11:17:19.423Z</d:Published>
+      <d:PackageHash>Uf0dKBTrfTmQnMvzpk8r8lwUj9ts8C+uYqi8VmEA78xMLc8YfkgqKCUzf8lqJBAJsWMimEjGsSq/BZE3bfkTAQ==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">10011</d:PackageSize>
+      <d:ProjectUrl>https://github.com/JamesNK/Newtonsoft.Dson</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/packages/Newtonsoft.Dson/1.0.3/ReportAbuse</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true" />
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags>dson doge</d:Tags>
+      <d:Title>Dson.NET</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">564</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true" />
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>https://raw.github.com/JamesNK/Newtonsoft.Dson/master/LICENSE.md</d:LicenseUrl>
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='Eneter.JsonNet.Serializer',Version='1.0.1')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='Eneter.JsonNet.Serializer',Version='1.0.1')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='Eneter.JsonNet.Serializer',Version='1.0.1')" />
+    <title type="text">Eneter.JsonNet.Serializer</title>
+    <updated>2016-01-17T12:52:36Z</updated>
+    <author>
+      <name>Ondrej Uzovic</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/Eneter.JsonNet.Serializer/1.0.1" />
+    <m:properties>
+      <d:Id>Eneter.JsonNet.Serializer</d:Id>
+      <d:Version>1.0.1</d:Version>
+      <d:NormalizedVersion>1.0.1</d:NormalizedVersion>
+      <d:Authors>Ondrej Uzovic</d:Authors>
+      <d:Copyright>Ondrej Uzovic</d:Copyright>
+      <d:Created m:type="Edm.DateTime">2016-01-17T12:52:36.3Z</d:Created>
+      <d:Dependencies>Eneter.Messaging.Framework:[7.0.0, ):|Newtonsoft.Json:[7.0.1, ):</d:Dependencies>
+      <d:Description>This library integrates Json.NET serializer created by James Newton-King into Eneter Messaging Framework. It allows to serialize/deserialize messages to/from JSON faster than default .NET serializer DataContractJsonSerializer.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">315</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/Eneter.JsonNet.Serializer/1.0.1</d:GalleryDetailsUrl>
+      <d:IconUrl m:null="true" />
+      <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:LastUpdated m:type="Edm.DateTime">2016-01-17T12:52:36.3Z</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2016-01-17T12:52:36.3Z</d:Published>
+      <d:PackageHash>2Ds7C/idkC4paBOTgvlbMvgafjNc41ixukuRBvv1j1asHNbHZiMMQ3bYmg2fDitpa0eIFo5QqWrlGMqXT3bkqw==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">16097</d:PackageSize>
+      <d:ProjectUrl m:null="true" />
+      <d:ReportAbuseUrl>https://www.nuget.org/packages/Eneter.JsonNet.Serializer/1.0.1/ReportAbuse</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true" />
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags>json eneter serialization deserialization</d:Tags>
+      <d:Title>Eneter JsonNet Serializer</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">243</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true" />
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>https://www.apache.org/licenses/LICENSE-2.0.html</d:LicenseUrl>
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='FSharp.TypeProviders.StarterPack',Version='1.1.3.88')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='FSharp.TypeProviders.StarterPack',Version='1.1.3.88')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='FSharp.TypeProviders.StarterPack',Version='1.1.3.88')" />
+    <title type="text">FSharp.TypeProviders.StarterPack</title>
+    <summary type="text">Helper code and examples for getting started with Type Providers</summary>
+    <updated>2016-01-20T12:23:59Z</updated>
+    <author>
+      <name>Tomas Petricek, Gustavo Guerra, Michael Newton</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/FSharp.TypeProviders.StarterPack/1.1.3.88" />
+    <m:properties>
+      <d:Id>FSharp.TypeProviders.StarterPack</d:Id>
+      <d:Version>1.1.3.88</d:Version>
+      <d:NormalizedVersion>1.1.3.88</d:NormalizedVersion>
+      <d:Authors>Tomas Petricek, Gustavo Guerra, Michael Newton</d:Authors>
+      <d:Copyright>Copyright 2014</d:Copyright>
+      <d:Created m:type="Edm.DateTime">2016-01-20T12:23:59.72Z</d:Created>
+      <d:Dependencies></d:Dependencies>
+      <d:Description>The F# Type Provider Starter Pack contains everything you need to start building your own type providers.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">5706</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/FSharp.TypeProviders.StarterPack/1.1.3.88</d:GalleryDetailsUrl>
+      <d:IconUrl>https://raw.githubusercontent.com/fsprojects/FSharp.TypeProviders.StarterPack/master/docs/files/img/logo.png</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:LastUpdated m:type="Edm.DateTime">2016-01-20T12:23:59.72Z</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2016-01-20T12:23:59.72Z</d:Published>
+      <d:PackageHash>Y8eswCPkjpT0ywS0OGNzPMUkjje2Ky8ZCJvA9Bi20yOqCxD1gq8S5kxgQ/9Twm2OY5yVYMvPV5pxrKS+sKo0qg==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">42902</d:PackageSize>
+      <d:ProjectUrl>http://github.com/fsprojects/FSharp.TypeProviders.StarterPack</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/packages/FSharp.TypeProviders.StarterPack/1.1.3.88/ReportAbuse</d:ReportAbuseUrl>
+      <d:ReleaseNotes>Remove folders</d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary>Helper code and examples for getting started with Type Providers</d:Summary>
+      <d:Tags>F# fsharp typeprovider</d:Tags>
+      <d:Title>FSharp.TypeProviders.StarterPack</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">673</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true" />
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>http://github.com/fsprojects/FSharp.TypeProviders.StarterPack/blob/master/LICENSE.md</d:LicenseUrl>
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='Newtonsoft.Json.Glimpse',Version='1.0.2')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='Newtonsoft.Json.Glimpse',Version='1.0.2')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='Newtonsoft.Json.Glimpse',Version='1.0.2')" />
+    <title type="text">Newtonsoft.Json.Glimpse</title>
+    <updated>2014-04-27T08:00:59Z</updated>
+    <author>
+      <name>James Newton-King</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/Newtonsoft.Json.Glimpse/1.0.2" />
+    <m:properties>
+      <d:Id>Newtonsoft.Json.Glimpse</d:Id>
+      <d:Version>1.0.2</d:Version>
+      <d:NormalizedVersion>1.0.2</d:NormalizedVersion>
+      <d:Authors>James Newton-King</d:Authors>
+      <d:Copyright m:null="true" />
+      <d:Created m:type="Edm.DateTime">2014-04-27T08:00:59.077Z</d:Created>
+      <d:Dependencies>Glimpse:1.8.5:|Newtonsoft.Json:6.0.3:</d:Dependencies>
+      <d:Description>Debug JSON on the server with the Json.NET plugin for Glimpse, a diagnostics tool for ASP.NET</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">15413</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/Newtonsoft.Json.Glimpse/1.0.2</d:GalleryDetailsUrl>
+      <d:IconUrl>http://www.newtonsoft.com/content/images/nugeticon.png</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language>en-US</d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2014-04-27T08:00:59.077Z</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2014-04-27T08:00:59.077Z</d:Published>
+      <d:PackageHash>SqLAVx/IhjWMMv0Zyb8BReDGPEy/qgfH5LE01wLJ0c9SFSuVC4DPIO9VUdhE1BQl6+GIHkrPZHJwwBg9Hsht9A==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">11397</d:PackageSize>
+      <d:ProjectUrl>http://james.newtonking.com/json</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/packages/Newtonsoft.Json.Glimpse/1.0.2/ReportAbuse</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true" />
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags>json glimpse</d:Tags>
+      <d:Title>Glimpse for Json.NET</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">6612</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true" />
+      <d:LastEdited m:type="Edm.DateTime">2016-05-14T10:30:02.867Z</d:LastEdited>
+      <d:LicenseUrl>https://raw.github.com/JamesNK/Newtonsoft.Json.Glimpse/master/LICENSE.md</d:LicenseUrl>
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='gmaps-api-net',Version='0.13.30')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='gmaps-api-net',Version='0.13.30')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='gmaps-api-net',Version='0.13.30')" />
+    <title type="text">gmaps-api-net</title>
+    <updated>2016-08-17T14:46:09Z</updated>
+    <author>
+      <name>Eric Newton</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/gmaps-api-net/0.13.30" />
+    <m:properties>
+      <d:Id>gmaps-api-net</d:Id>
+      <d:Version>0.13.30</d:Version>
+      <d:NormalizedVersion>0.13.30</d:NormalizedVersion>
+      <d:Authors>Eric Newton</d:Authors>
+      <d:Copyright m:null="true" />
+      <d:Created m:type="Edm.DateTime">2016-08-17T14:46:09.883Z</d:Created>
+      <d:Dependencies>Newtonsoft.Json:[4.5.0, ):</d:Dependencies>
+      <d:Description>A library for interacting with Google Maps API web services using C# or VB.Net</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">15263</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/gmaps-api-net/0.13.30</d:GalleryDetailsUrl>
+      <d:IconUrl m:null="true" />
+      <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:LastUpdated m:type="Edm.DateTime">2016-08-17T14:46:09.883Z</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2016-08-17T14:46:09.883Z</d:Published>
+      <d:PackageHash>yaCM2C200sl7PnJJsLjQUsGM0txP8RoIgChJs6Gu2avU7Zxo3jMB2No8d3SRsbR2u/XN8PNdl/vF1wOIisXRjA==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">296171</d:PackageSize>
+      <d:ProjectUrl>http://github.com/ericnewton76/gmaps-api-net</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/packages/gmaps-api-net/0.13.30/ReportAbuse</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true" />
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags>google-maps maps c# google</d:Tags>
+      <d:Title>gmaps-api-net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">1697</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true" />
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</d:LicenseUrl>
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='httpsecurecookie',Version='0.1.1')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='httpsecurecookie',Version='0.1.1')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='httpsecurecookie',Version='0.1.1')" />
+    <title type="text">httpsecurecookie</title>
+    <updated>2013-02-14T03:39:12Z</updated>
+    <author>
+      <name>Eric Newton</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/httpsecurecookie/0.1.1" />
+    <m:properties>
+      <d:Id>httpsecurecookie</d:Id>
+      <d:Version>0.1.1</d:Version>
+      <d:NormalizedVersion>0.1.1</d:NormalizedVersion>
+      <d:Authors>Eric Newton</d:Authors>
+      <d:Copyright>Copyright 2013</d:Copyright>
+      <d:Created m:type="Edm.DateTime">2013-02-14T03:39:12.69Z</d:Created>
+      <d:Dependencies></d:Dependencies>
+      <d:Description>Store encrypted data within encoded cookies for use in server-side implementations without requiring sessions.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1751</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/httpsecurecookie/0.1.1</d:GalleryDetailsUrl>
+      <d:IconUrl m:null="true" />
+      <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:LastUpdated m:type="Edm.DateTime">2013-02-14T03:39:12.69Z</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2013-02-14T03:39:12.69Z</d:Published>
+      <d:PackageHash>repLO2mY2LsePy3cCKQBsU8keiByCcoF36kvudc1wm8PHWPeBjoZUcdolBzybFYT+xVYYhH/cygrk/BcFNwZPQ==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">7650</d:PackageSize>
+      <d:ProjectUrl>https://github.com/ericnewton76/httpsecurecookie</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/packages/httpsecurecookie/0.1.1/ReportAbuse</d:ReportAbuseUrl>
+      <d:ReleaseNotes>Initial release.</d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags xml:space="preserve"> c# cookie encryption </d:Tags>
+      <d:Title>httpsecurecookie</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">1668</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true" />
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl m:null="true" />
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='Interpolate',Version='2.0.0')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='Interpolate',Version='2.0.0')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='Interpolate',Version='2.0.0')" />
+    <title type="text">Interpolate</title>
+    <updated>2016-02-23T14:13:02Z</updated>
+    <author>
+      <name>Talles L &lt;talleslasmar@gmail.com&gt;</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/Interpolate/2.0.0" />
+    <m:properties>
+      <d:Id>Interpolate</d:Id>
+      <d:Version>2.0.0</d:Version>
+      <d:NormalizedVersion>2.0.0</d:NormalizedVersion>
+      <d:Authors>Talles L &lt;talleslasmar@gmail.com&gt;</d:Authors>
+      <d:Copyright m:null="true" />
+      <d:Created m:type="Edm.DateTime">2016-02-23T14:13:02.177Z</d:Created>
+      <d:Dependencies></d:Dependencies>
+      <d:Description>Multiple implementations of string interpolation.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">125</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/Interpolate/2.0.0</d:GalleryDetailsUrl>
+      <d:IconUrl m:null="true" />
+      <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:LastUpdated m:type="Edm.DateTime">2016-02-23T14:13:02.177Z</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2016-02-23T14:13:02.177Z</d:Published>
+      <d:PackageHash>yMscoe8o28XrsGcx4Ony7c2b8TlFuCtX9keo5a4Wn08JuDRcoTNVBJv5KRyz2FAC8dh8ynNikb+TndbrvggBUw==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">16074</d:PackageSize>
+      <d:ProjectUrl>https://github.com/tallesl/net-Interpolate</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/packages/Interpolate/2.0.0/ReportAbuse</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true" />
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags>named string format formatting string.Format phil haack scott hanselman henri wiechers james newton king oskar austegard</d:Tags>
+      <d:Title>Interpolate</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">125</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true" />
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>http://fairlicense.org/</d:LicenseUrl>
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='IppDotNetSdkForQuickBooksApiV3',Version='2.9.1')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='IppDotNetSdkForQuickBooksApiV3',Version='2.9.1')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='IppDotNetSdkForQuickBooksApiV3',Version='2.9.1')" />
+    <title type="text">IppDotNetSdkForQuickBooksApiV3</title>
+    <summary type="text">The IPP .NET SDK for QuickBooks V3 is a set of .NET classes that make it easier to call QuickBooks APIs.</summary>
+    <updated>2016-12-22T04:32:21Z</updated>
+    <author>
+      <name>Intuit,Inc.</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/IppDotNetSdkForQuickBooksApiV3/2.9.1" />
+    <m:properties>
+      <d:Id>IppDotNetSdkForQuickBooksApiV3</d:Id>
+      <d:Version>2.9.1</d:Version>
+      <d:NormalizedVersion>2.9.1</d:NormalizedVersion>
+      <d:Authors>Intuit,Inc.</d:Authors>
+      <d:Copyright>Copyright © 2016 Intuit, Inc.</d:Copyright>
+      <d:Created m:type="Edm.DateTime">2016-12-22T04:32:21.943+00:00</d:Created>
+      <d:Dependencies>DevDefined.OAuth:0.2.0:net40|Newtonsoft.Json:9.0.0:net40</d:Dependencies>
+      <d:Description>
+        The IPP .NET SDK for QuickBooks V3 is a set of .NET classes that make it easier to call QuickBooks APIs.  Some of the features included in this SDK are as follows:
+
+        -Ability to perform single and batch processing of CRUD operations on all QuickBooks entities.
+
+        -Request and Response Handler has common interface with two implemented classes to handle both synchronous and asynchronous requests.
+
+        -Support for both XML and JSON Request and Response format.
+
+        -Ability to configure app settings in the configuration file requiring no additional code change.
+
+        -Support for Gzip and Deflate compression formats to improve performance of QuickBooks API calls.
+
+        -Retry policy constructors to help apps handle transient errors.
+
+        -Logging mechanisms for trace, request/response, and Azure logging.
+
+        -Sync APIs that assist with data synchronization between QuickBooks Desktop and Intuit's cloud.
+
+        -Query Filters that enable you to write LINQ queries to retrieve QuickBooks entities whose properties meet specified criteria.
+
+        -LINQ queries for accessing QuickBooks Reports.
+
+        -Sparse Update to update writable properties specified in a request and leave the others unchanged.
+
+        -Change data that enables you to retrieve a list of entities modified during specified time points.
+
+        Dependencies-
+        .Net Framework 4.0
+        NewtonSoft.Json &gt;=9.0.1
+        DevDefined.OAuth &gt;=0.2
+      </d:Description>
+      <d:DownloadCount m:type="Edm.Int32">81551</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/IppDotNetSdkForQuickBooksApiV3/2.9.1</d:GalleryDetailsUrl>
+      <d:IconUrl>http://www.gravatar.com/avatar/c829bc76777c3b1df4ce13a229d0ec3d.pngV</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:LastUpdated m:type="Edm.DateTime">2016-12-22T04:32:21.943+00:00</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2016-12-22T04:32:21.943+00:00</d:Published>
+      <d:PackageHash>ZRV+Ap7lUbzCWp+BghrmFZE4nO0dwMEgcsDDndi8wBw2PlbGXh/KX9eB3LxitkPkNodnKCKrVAR2kJa/v0nMBA==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">669704</d:PackageSize>
+      <d:ProjectUrl>https://developer.intuit.com/docs/0100_quickbooks_online/0400_tools/0005_accounting</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/packages/IppDotNetSdkForQuickBooksApiV3/2.9.1/ReportAbuse</d:ReportAbuseUrl>
+      <d:ReleaseNotes>https://developer.intuit.com/docs/0100_quickbooks_online/0400_tools/0005_accounting/0010.net_tools/0070_.net_sdk_release_notes</d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">true</d:RequireLicenseAcceptance>
+      <d:Summary>The IPP .NET SDK for QuickBooks V3 is a set of .NET classes that make it easier to call QuickBooks APIs.</d:Summary>
+      <d:Tags>Intuit Developer Group IPP QuickBooks API V3 .NET</d:Tags>
+      <d:Title>IPP .NET SDK for QuickBooks V3</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">453</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true" />
+      <d:LastEdited m:type="Edm.DateTime">0001-01-01T00:00:00+00:00</d:LastEdited>
+      <d:LicenseUrl>https://developer.intuit.com/docs/0100_quickbooks_online/0100_essentials/legal_agreements/005_intuit_terms_of_use</d:LicenseUrl>
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='Newtonsoft.Json',Version='9.0.1')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='Newtonsoft.Json',Version='9.0.1')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='Newtonsoft.Json',Version='9.0.1')" />
+    <title type="text">Newtonsoft.Json</title>
+    <updated>2016-06-22T08:11:45Z</updated>
+    <author>
+      <name>James Newton-King</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/Newtonsoft.Json/9.0.1" />
+    <m:properties>
+      <d:Id>Newtonsoft.Json</d:Id>
+      <d:Version>9.0.1</d:Version>
+      <d:NormalizedVersion>9.0.1</d:NormalizedVersion>
+      <d:Authors>James Newton-King</d:Authors>
+      <d:Copyright m:null="true" />
+      <d:Created m:type="Edm.DateTime">2016-06-22T08:11:45.49Z</d:Created>
+      <d:Dependencies>::net45|::net40|::net35|::net20|::portable45-net45+win8+wp8+wpa81|::portable40-net40+sl5+win8+wp8+wpa81|Microsoft.CSharp:[4.0.1, ):netstandard1.0|System.Collections:[4.0.11, ):netstandard1.0|System.Diagnostics.Debug:[4.0.11, ):netstandard1.0|System.Dynamic.Runtime:[4.0.11, ):netstandard1.0|System.Globalization:[4.0.11, ):netstandard1.0|System.IO:[4.1.0, ):netstandard1.0|System.Linq:[4.1.0, ):netstandard1.0|System.Linq.Expressions:[4.1.0, ):netstandard1.0|System.ObjectModel:[4.0.12, ):netstandard1.0|System.Reflection:[4.1.0, ):netstandard1.0|System.Reflection.Extensions:[4.0.1, ):netstandard1.0|System.Resources.ResourceManager:[4.0.1, ):netstandard1.0|System.Runtime:[4.1.0, ):netstandard1.0|System.Runtime.Extensions:[4.1.0, ):netstandard1.0|System.Runtime.Serialization.Primitives:[4.1.1, ):netstandard1.0|System.Text.Encoding:[4.0.11, ):netstandard1.0|System.Text.Encoding.Extensions:[4.0.11, ):netstandard1.0|System.Text.RegularExpressions:[4.1.0, ):netstandard1.0|System.Threading:[4.0.11, ):netstandard1.0|System.Threading.Tasks:[4.0.11, ):netstandard1.0|System.Xml.ReaderWriter:[4.0.11, ):netstandard1.0|System.Xml.XDocument:[4.0.11, ):netstandard1.0</d:Dependencies>
+      <d:Description>Json.NET is a popular high-performance JSON framework for .NET</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">43904295</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/Newtonsoft.Json/9.0.1</d:GalleryDetailsUrl>
+      <d:IconUrl>http://www.newtonsoft.com/content/images/nugeticon.png</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language>en-US</d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2016-06-22T08:11:45.49Z</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2016-06-22T08:11:45.49Z</d:Published>
+      <d:PackageHash>U82mHQSKaIk+lpSVCbWYKNavmNH1i5xrExDEquU1i6I5pV6UMOqRnJRSlKO3cMPfcpp0RgDY+8jUXHdQ4IfXvw==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">1603487</d:PackageSize>
+      <d:ProjectUrl>http://www.newtonsoft.com/json</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/packages/Newtonsoft.Json/9.0.1/ReportAbuse</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true" />
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags>json</d:Tags>
+      <d:Title>Json.NET</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">3113731</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true" />
+      <d:LastEdited m:type="Edm.DateTime">2016-06-27T12:35:11.557Z</d:LastEdited>
+      <d:LicenseUrl>https://raw.github.com/JamesNK/Newtonsoft.Json/master/LICENSE.md</d:LicenseUrl>
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='Newtonsoft.Json.Legacy',Version='3.5.9')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='Newtonsoft.Json.Legacy',Version='3.5.9')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='Newtonsoft.Json.Legacy',Version='3.5.9')" />
+    <title type="text">Newtonsoft.Json.Legacy</title>
+    <updated>2016-12-28T16:37:50Z</updated>
+    <author>
+      <name>James Newton-King, Fabricio Godoy</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/Newtonsoft.Json.Legacy/3.5.9" />
+    <m:properties>
+      <d:Id>Newtonsoft.Json.Legacy</d:Id>
+      <d:Version>3.5.9</d:Version>
+      <d:NormalizedVersion>3.5.9</d:NormalizedVersion>
+      <d:Authors>James Newton-King, Fabricio Godoy</d:Authors>
+      <d:Copyright m:null="true" />
+      <d:Created m:type="Edm.DateTime">2016-12-28T16:37:50.13+00:00</d:Created>
+      <d:Dependencies>::net20|::net35|::net35-cf|::sl4</d:Dependencies>
+      <d:Description>Json.NET is a popular high-performance JSON framework for .NET</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">22</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/Newtonsoft.Json.Legacy/3.5.9</d:GalleryDetailsUrl>
+      <d:IconUrl>http://www.newtonsoft.com/content/images/nugeticon.png</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language>en-US</d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2016-12-28T16:37:50.13+00:00</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2016-12-28T16:37:50.13+00:00</d:Published>
+      <d:PackageHash>Hmzxr0DMz0w26QYVIa3TUXYUM2Cced4a6LULhBwR1ybhsfw/b/yysg8OAjuDNxypMI2dpG+g8EBUTwRh7mwZ6A==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">1662629</d:PackageSize>
+      <d:ProjectUrl>http://www.newtonsoft.com/json</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/packages/Newtonsoft.Json.Legacy/3.5.9/ReportAbuse</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true" />
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags>json pocketpc windowsce silverlight compact net35-cf net35 sl4 sl</d:Tags>
+      <d:Title>Json.NET Legacy</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">22</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true" />
+      <d:LastEdited m:type="Edm.DateTime">2016-12-28T16:39:07.63+00:00</d:LastEdited>
+      <d:LicenseUrl>https://raw.github.com/JamesNK/Newtonsoft.Json/master/LICENSE.md</d:LicenseUrl>
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='LibOptimization',Version='1.8.1')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='LibOptimization',Version='1.8.1')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='LibOptimization',Version='1.8.1')" />
+    <title type="text">LibOptimization</title>
+    <summary type="text">LibOptimization is optimization algorithm library for .NET Framework.Implementing optimization algorithm are Steepest Descent Method, Newton Method, Nelder Mead Method ,Pattern Search (Direct Search), Real-coded Genetic Algorithms, Particle Swarm Optimization(PSO), Differential Evolution(DE), Cuckoo Search(CS), FireFry and Simulated Annealing.</summary>
+    <updated>2015-12-29T04:56:06Z</updated>
+    <author>
+      <name>tomitomi3</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/LibOptimization/1.8.1" />
+    <m:properties>
+      <d:Id>LibOptimization</d:Id>
+      <d:Version>1.8.1</d:Version>
+      <d:NormalizedVersion>1.8.1</d:NormalizedVersion>
+      <d:Authors>tomitomi3</d:Authors>
+      <d:Copyright>Copyright 2015 tomitomi3</d:Copyright>
+      <d:Created m:type="Edm.DateTime">2015-12-29T04:56:06.387Z</d:Created>
+      <d:Dependencies></d:Dependencies>
+      <d:Description>LibOptimization is optimization algorithm library for .NET Framework. This library will probably simplify the optimization using C# and VB.Net and other .NET Framework language. Implementing optimization algorithm are Steepest Descent Method, Newton Method, Nelder Mead Method (Original ver, Wikipedia ver) ,Hooke and Jeeves of Pattern Search (Direct Search), Real-coded Genetic Algorithm(BLX-alpha and JGG, UNDX and JGG Simplex and JGG, REX and JGG, PCX and G3), Particle Swarm Optimization(Basic PSO, LDIW-PSO, CDIW-PSO, CRIW-PSO, AIW-PSO), Differential Evolution(DE/rand/1/bin, DE/best/1/bin, DE/rand/2/bin, DE/best/2/bin), Cuckoo Search(Standard), FireFry and Simulated Annealing.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">2378</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/LibOptimization/1.8.1</d:GalleryDetailsUrl>
+      <d:IconUrl>https://raw.github.com/tomitomi3/LibOptimization/master/github_pic/logo_liboptimization.png</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:LastUpdated m:type="Edm.DateTime">2015-12-29T04:56:06.387Z</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2015-12-29T04:56:06.387Z</d:Published>
+      <d:PackageHash>f0zKCLeQgxflY41JwX6EsFhdT1Cy6ofq8NLr4K/UkBgt7iJretXhSaalMcMMoxJtnFv8hTdYQh7hZqf4S5GTNw==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">54025</d:PackageSize>
+      <d:ProjectUrl>https://github.com/tomitomi3/LibOptimization</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/packages/LibOptimization/1.8.1/ReportAbuse</d:ReportAbuseUrl>
+      <d:ReleaseNotes>bug fix.</d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary>LibOptimization is optimization algorithm library for .NET Framework.Implementing optimization algorithm are Steepest Descent Method, Newton Method, Nelder Mead Method ,Pattern Search (Direct Search), Real-coded Genetic Algorithms, Particle Swarm Optimization(PSO), Differential Evolution(DE), Cuckoo Search(CS), FireFry and Simulated Annealing.</d:Summary>
+      <d:Tags>optimization heuristic nonlinear numerical math genetic algorithm GA PatternSearch NelderMead ParticleSwarmOptimization DifferentialEvolution CuckooSearch FireFly SimulatedAnnealing</d:Tags>
+      <d:Title>LibOptimization</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">304</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true" />
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>http://opensource.org/licenses/MS-PL</d:LicenseUrl>
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='NGon.SST',Version='1.0.1')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='NGon.SST',Version='1.0.1')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='NGon.SST',Version='1.0.1')" />
+    <title type="text">NGon.SST</title>
+    <updated>2013-07-14T09:02:41Z</updated>
+    <author>
+      <name>Greg Smith</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/NGon.SST/1.0.1" />
+    <m:properties>
+      <d:Id>NGon.SST</d:Id>
+      <d:Version>1.0.1</d:Version>
+      <d:NormalizedVersion>1.0.1</d:NormalizedVersion>
+      <d:Authors>Greg Smith</d:Authors>
+      <d:Copyright m:null="true" />
+      <d:Created m:type="Edm.DateTime">2013-07-14T09:02:41.497Z</d:Created>
+      <d:Dependencies>ServiceStack.Text:3.9.55:</d:Dependencies>
+      <d:Description>Fork of https://github.com/brooklynDev/NGon that takes dependency on ServiceStack.Text instead of NewtonSoft.Json</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">427</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/NGon.SST/1.0.1</d:GalleryDetailsUrl>
+      <d:IconUrl m:null="true" />
+      <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:LastUpdated m:type="Edm.DateTime">2013-07-14T09:02:41.497Z</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2013-07-14T09:02:41.497Z</d:Published>
+      <d:PackageHash>evob7E4Hm+xFmixXmNZdKDedUF3xAhTB36DDPtdJc1cnjbzVPn6vIrIvEVsxGDTt1hNa4mWjAL6kRiINQLvSRA==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">7794</d:PackageSize>
+      <d:ProjectUrl>https://github.com/gregjsmith/NGon</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/packages/NGon.SST/1.0.1/ReportAbuse</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true" />
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags>ngon</d:Tags>
+      <d:Title>NGon.SST</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">331</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true" />
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl m:null="true" />
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='NI.Data.MySql',Version='2.0.1.0')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='NI.Data.MySql',Version='2.0.1.0')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='NI.Data.MySql',Version='2.0.1.0')" />
+    <title type="text">NI.Data.MySql</title>
+    <updated>2015-03-16T14:06:18Z</updated>
+    <author>
+      <name>NewtonIdeas</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/NI.Data.MySql/2.0.1.0" />
+    <m:properties>
+      <d:Id>NI.Data.MySql</d:Id>
+      <d:Version>2.0.1.0</d:Version>
+      <d:NormalizedVersion>2.0.1</d:NormalizedVersion>
+      <d:Authors>NewtonIdeas</d:Authors>
+      <d:Copyright>Copyright 2004-2014 Newtonideas</d:Copyright>
+      <d:Created m:type="Edm.DateTime">2015-03-16T14:06:18.79Z</d:Created>
+      <d:Dependencies>MySql.Data:6.9.6:</d:Dependencies>
+      <d:Description>MySql Data Provider factory for DALC</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">743</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/NI.Data.MySql/2.0.1</d:GalleryDetailsUrl>
+      <d:IconUrl m:null="true" />
+      <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:LastUpdated m:type="Edm.DateTime">2015-03-16T14:06:18.79Z</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2015-03-16T14:06:18.79Z</d:Published>
+      <d:PackageHash>NXv13b0NHkPHCfBGCPiTGlGjLXnIPmW5RgmvGf98vjO8l16nfa8eNdOOAbWDAV4R4rnO+jycIQg2hrW1u0nDdw==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">5273</d:PackageSize>
+      <d:ProjectUrl>http://www.nrecosite.com/</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/packages/NI.Data.MySql/2.0.1/ReportAbuse</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true" />
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags>NI.Data MySql</d:Tags>
+      <d:Title>NI.Data.MySql</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">444</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true" />
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl m:null="true" />
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='NI.Data.SQLite',Version='2.0.0.0')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='NI.Data.SQLite',Version='2.0.0.0')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='NI.Data.SQLite',Version='2.0.0.0')" />
+    <title type="text">NI.Data.SQLite</title>
+    <updated>2014-07-28T20:06:44Z</updated>
+    <author>
+      <name>NewtonIdeas</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/NI.Data.SQLite/2.0.0.0" />
+    <m:properties>
+      <d:Id>NI.Data.SQLite</d:Id>
+      <d:Version>2.0.0.0</d:Version>
+      <d:NormalizedVersion>2.0.0</d:NormalizedVersion>
+      <d:Authors>NewtonIdeas</d:Authors>
+      <d:Copyright>Copyright 2004-2014 Newtonideas</d:Copyright>
+      <d:Created m:type="Edm.DateTime">2014-07-28T20:06:44.94Z</d:Created>
+      <d:Dependencies>System.Data.SQLite.Core:[1.0.92.0]:</d:Dependencies>
+      <d:Description>SQLite Data Provider factory for NI.Data</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">627</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/NI.Data.SQLite/2.0.0</d:GalleryDetailsUrl>
+      <d:IconUrl m:null="true" />
+      <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:LastUpdated m:type="Edm.DateTime">2014-07-28T20:06:44.94Z</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2014-07-28T20:06:44.94Z</d:Published>
+      <d:PackageHash>AWJxIyGKRfiSjtX1dMCrVyUb3NNN4J7Yy9oWp5tLXEdqK3bqnrFslBdlnk4QtRK8AVWVusTKrzl9w1o8mlpTNA==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">5233</d:PackageSize>
+      <d:ProjectUrl>http://www.nrecosite.com/dalc_net.aspx</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/packages/NI.Data.SQLite/2.0.0/ReportAbuse</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true" />
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags>NI.Data SQLite</d:Tags>
+      <d:Title>NI.Data.SQLite</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">627</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true" />
+      <d:LastEdited m:type="Edm.DateTime">2014-07-28T20:08:06.02Z</d:LastEdited>
+      <d:LicenseUrl m:null="true" />
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='NI.Email.Mime',Version='1.8.1.0')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='NI.Email.Mime',Version='1.8.1.0')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='NI.Email.Mime',Version='1.8.1.0')" />
+    <title type="text">NI.Email.Mime</title>
+    <updated>2014-03-05T11:15:47Z</updated>
+    <author>
+      <name>NewtonIdeas</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/NI.Email.Mime/1.8.1.0" />
+    <m:properties>
+      <d:Id>NI.Email.Mime</d:Id>
+      <d:Version>1.8.1.0</d:Version>
+      <d:NormalizedVersion>1.8.1</d:NormalizedVersion>
+      <d:Authors>NewtonIdeas</d:Authors>
+      <d:Copyright>Copyright 2014 NewtonIdeas.com</d:Copyright>
+      <d:Created m:type="Edm.DateTime">2014-03-05T11:15:47.12Z</d:Created>
+      <d:Dependencies></d:Dependencies>
+      <d:Description>
+        Email (MIME) parser and composer component that 100% compatible with RFC822 and MIME standards. Supports field encoding/decoding, attachment extraction, SMTP, extra large messages, infinite MIME streams. Ideal for custom spam filters, automatic emails processing, mail servers.&#xD;
+        &#xD;
+        This is FREE community version of Mime4Net component for non-commercial usage only. NOTE: ASP.NET projects require FREE license key for each non-localhost domain name (key generation link: http://www.mime4.net/download-free).
+      </d:Description>
+      <d:DownloadCount m:type="Edm.Int32">2513</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/NI.Email.Mime/1.8.1</d:GalleryDetailsUrl>
+      <d:IconUrl>http://www.mime4.net/favicon.ico</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:LastUpdated m:type="Edm.DateTime">2014-03-05T11:15:47.12Z</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2014-03-05T11:15:47.12Z</d:Published>
+      <d:PackageHash>4AkNGng2fe6BigjUp2csSEg3CjSQDAwQzHcuQEkppGAUhZJ4f3jhq23kYELeeBfs/KePA2tQXPHJOVbOxfNUZQ==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">42807</d:PackageSize>
+      <d:ProjectUrl>http://www.mime4.net/</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/packages/NI.Email.Mime/1.8.1/ReportAbuse</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true" />
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags>MIME Parsing Email MHTML RFC822 RFC2045 RFC2557</d:Tags>
+      <d:Title>NI.Email.Mime</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">2513</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true" />
+      <d:LastEdited m:type="Edm.DateTime">2014-03-05T11:24:56.687Z</d:LastEdited>
+      <d:LicenseUrl>http://www.mime4.net/full-source-code-license</d:LicenseUrl>
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='NI.Vfs',Version='2.0.0.0')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='NI.Vfs',Version='2.0.0.0')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='NI.Vfs',Version='2.0.0.0')" />
+    <title type="text">NI.Vfs</title>
+    <updated>2014-05-10T10:07:04Z</updated>
+    <author>
+      <name>NewtonIdeas</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/NI.Vfs/2.0.0.0" />
+    <m:properties>
+      <d:Id>NI.Vfs</d:Id>
+      <d:Version>2.0.0.0</d:Version>
+      <d:NormalizedVersion>2.0.0</d:NormalizedVersion>
+      <d:Authors>NewtonIdeas</d:Authors>
+      <d:Copyright>Copyright 2004-2012 NewtonIdeas, v2 2013-2014 Vitalii Fedorchenko</d:Copyright>
+      <d:Created m:type="Edm.DateTime">2014-05-10T10:07:04.373Z</d:Created>
+      <d:Dependencies></d:Dependencies>
+      <d:Description>Virtual file system (VFS) provides a single API for accessing various different file systems.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1709</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/NI.Vfs/2.0.0</d:GalleryDetailsUrl>
+      <d:IconUrl m:null="true" />
+      <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:LastUpdated m:type="Edm.DateTime">2014-05-10T10:07:04.373Z</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2014-05-10T10:07:04.373Z</d:Published>
+      <d:PackageHash>apRa9tOsWsEytroprc6yFdp9sP7gFp2RmfTH+dlCOk1AFuo0UdHCWhyYYS+LnvsqNReersY1D/SUDgPjGX5MQA==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">17415</d:PackageSize>
+      <d:ProjectUrl>http://www.nrecosite.com/vfs_net.aspx</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/packages/NI.Vfs/2.0.0/ReportAbuse</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true" />
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags>Vfs Filesystem</d:Tags>
+      <d:Title>NI.Vfs</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">1709</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true" />
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl m:null="true" />
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='NuGetPlus',Version='3.2.0.54')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='NuGetPlus',Version='3.2.0.54')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='NuGetPlus',Version='3.2.0.54')" />
+    <title type="text">NuGetPlus</title>
+    <updated>2014-12-31T11:32:24Z</updated>
+    <author>
+      <name>Michael Newton</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/NuGetPlus/3.2.0.54" />
+    <m:properties>
+      <d:Id>NuGetPlus</d:Id>
+      <d:Version>3.2.0.54</d:Version>
+      <d:NormalizedVersion>3.2.0.54</d:NormalizedVersion>
+      <d:Authors>Michael Newton</d:Authors>
+      <d:Copyright>Copyright 2013</d:Copyright>
+      <d:Created m:type="Edm.DateTime">2014-12-31T11:32:24.943Z</d:Created>
+      <d:Dependencies></d:Dependencies>
+      <d:Description>Command line Nuget wrapper.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">3909</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/NuGetPlus/3.2.0.54</d:GalleryDetailsUrl>
+      <d:IconUrl m:null="true" />
+      <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:LastUpdated m:type="Edm.DateTime">2014-12-31T11:32:24.943Z</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2014-12-31T11:32:24.943Z</d:Published>
+      <d:PackageHash>xdaC1QJKTKPO70L9yhAvLjs8wCsmMPiyvujniaf7/mMOAH7pOJbDxvWAe/I39lVSR0QkYL4WxGBv43Dq9NZyCQ==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">795324</d:PackageSize>
+      <d:ProjectUrl>https://github.com/mavnn/NuGetPlus</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/packages/NuGetPlus/3.2.0.54/ReportAbuse</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true" />
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags>BuildTools</d:Tags>
+      <d:Title>NuGetPlus</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">306</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true" />
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>https://raw.github.com/mavnn/NuGetPlus/master/licence.txt</d:LicenseUrl>
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='NuGetPlus.Core',Version='3.2.0.54')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='NuGetPlus.Core',Version='3.2.0.54')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='NuGetPlus.Core',Version='3.2.0.54')" />
+    <title type="text">NuGetPlus.Core</title>
+    <updated>2014-12-31T11:31:57Z</updated>
+    <author>
+      <name>Michael Newton</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/NuGetPlus.Core/3.2.0.54" />
+    <m:properties>
+      <d:Id>NuGetPlus.Core</d:Id>
+      <d:Version>3.2.0.54</d:Version>
+      <d:NormalizedVersion>3.2.0.54</d:NormalizedVersion>
+      <d:Authors>Michael Newton</d:Authors>
+      <d:Copyright>Copyright 2013</d:Copyright>
+      <d:Created m:type="Edm.DateTime">2014-12-31T11:31:57.3Z</d:Created>
+      <d:Dependencies>NuGet.Core:2.8.2:</d:Dependencies>
+      <d:Description>DLL for adding, removing, restoring, updating and downgrading NuGet references at project and solution level.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">2024</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/NuGetPlus.Core/3.2.0.54</d:GalleryDetailsUrl>
+      <d:IconUrl m:null="true" />
+      <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:LastUpdated m:type="Edm.DateTime">2014-12-31T11:31:57.3Z</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2014-12-31T11:31:57.3Z</d:Published>
+      <d:PackageHash>xVkqloIPk1dlpJSzbSyoyyzqYbA+s9HfDif6yI9IchLvUvcOQfCB0hJzPyMqV7wJlo+6HWFfV29H4OjAsbR1Dg==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">31206</d:PackageSize>
+      <d:ProjectUrl>https://github.com/mavnn/NuGetPlus</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/packages/NuGetPlus.Core/3.2.0.54/ReportAbuse</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true" />
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags></d:Tags>
+      <d:Title>NuGetPlus.Core</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">263</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true" />
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>https://raw.github.com/mavnn/NuGetPlus/master/licence.txt</d:LicenseUrl>
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='NullKill',Version='1.2.3.18')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='NullKill',Version='1.2.3.18')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='NullKill',Version='1.2.3.18')" />
+    <title type="text">NullKill</title>
+    <summary type="text">Check some common sources of nulls</summary>
+    <updated>2014-10-16T15:13:03Z</updated>
+    <author>
+      <name>Michael Newton (mavnn)</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/NullKill/1.2.3.18" />
+    <m:properties>
+      <d:Id>NullKill</d:Id>
+      <d:Version>1.2.3.18</d:Version>
+      <d:NormalizedVersion>1.2.3.18</d:NormalizedVersion>
+      <d:Authors>Michael Newton (mavnn)</d:Authors>
+      <d:Copyright>Copyright 2014</d:Copyright>
+      <d:Created m:type="Edm.DateTime">2014-10-16T15:13:03.683Z</d:Created>
+      <d:Dependencies></d:Dependencies>
+      <d:Description>Check some common sources of nulls</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1166</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/NullKill/1.2.3.18</d:GalleryDetailsUrl>
+      <d:IconUrl>http://blog.mavnn.co.uk/NullKill/img/logo.png</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:LastUpdated m:type="Edm.DateTime">2014-10-16T15:13:03.683Z</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2014-10-16T15:13:03.683Z</d:Published>
+      <d:PackageHash>Towvov1d6q3ID1DoirVwPuLzPgRbiPMlFETLRYc5VPrQ7hSVahaPwDQblNrCYrMFJjn7ac871jtaW03bHPWQZQ==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">8654</d:PackageSize>
+      <d:ProjectUrl>http://blog.mavnn.co.uk/NullKill/</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/packages/NullKill/1.2.3.18/ReportAbuse</d:ReportAbuseUrl>
+      <d:ReleaseNotes>Extra test, minor refactoring</d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary>Check some common sources of nulls</d:Summary>
+      <d:Tags></d:Tags>
+      <d:Title>NullKill</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">201</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true" />
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>http://github.com/mavnn/NullKill/blob/master/LICENSE.txt</d:LicenseUrl>
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='OrigoDB.JsonNetFormatter',Version='0.1.0')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='OrigoDB.JsonNetFormatter',Version='0.1.0')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='OrigoDB.JsonNetFormatter',Version='0.1.0')" />
+    <title type="text">OrigoDB.JsonNetFormatter</title>
+    <summary type="text">An IFormatter implementation based on NewtonSoft.Json</summary>
+    <updated>2014-11-23T21:46:10Z</updated>
+    <author>
+      <name>Robert Friberg</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/OrigoDB.JsonNetFormatter/0.1.0" />
+    <m:properties>
+      <d:Id>OrigoDB.JsonNetFormatter</d:Id>
+      <d:Version>0.1.0</d:Version>
+      <d:NormalizedVersion>0.1.0</d:NormalizedVersion>
+      <d:Authors>Robert Friberg</d:Authors>
+      <d:Copyright>Devrex Labs</d:Copyright>
+      <d:Created m:type="Edm.DateTime">2014-11-23T21:46:10.48Z</d:Created>
+      <d:Dependencies>NewtonSoft.Json:6.0.6:</d:Dependencies>
+      <d:Description>An IFormatter implementation based on NewtonSoft.Json</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">379</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/OrigoDB.JsonNetFormatter/0.1.0</d:GalleryDetailsUrl>
+      <d:IconUrl>http://devrexlabs.com/Content/icons/favicon.ico</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:LastUpdated m:type="Edm.DateTime">2014-11-23T21:46:10.48Z</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2014-11-23T21:46:10.48Z</d:Published>
+      <d:PackageHash>c3Gnzq5MzC8ifl1l9FC1h6FST0JGidNI4xhb6m+FrwAqoiY5qRLvR8gA+0PpkiO+RlWxvihpm2qhA2MEEaQVXw==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">5601</d:PackageSize>
+      <d:ProjectUrl>https://github.com/DevrexLabs/Modules.JsonNetFormatter</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/packages/OrigoDB.JsonNetFormatter/0.1.0/ReportAbuse</d:ReportAbuseUrl>
+      <d:ReleaseNotes>https://github.com/DevrexLabs/Modules.JsonNetFormatter</d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary>An IFormatter implementation based on NewtonSoft.Json</d:Summary>
+      <d:Tags>OrigoDB in-memory imdb nosql database</d:Tags>
+      <d:Title>OrigoDB JsonNetFormatter</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">379</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true" />
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>https://github.com/DevrexLabs/Modules.JsonNetFormatter/blob/master/LICENSE</d:LicenseUrl>
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='RedStar.Amounts.JsonNet',Version='1.5.0.0')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='RedStar.Amounts.JsonNet',Version='1.5.0.0')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='RedStar.Amounts.JsonNet',Version='1.5.0.0')" />
+    <title type="text">RedStar.Amounts.JsonNet</title>
+    <updated>2016-05-23T11:36:51Z</updated>
+    <author>
+      <name>Peter Morlion</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/RedStar.Amounts.JsonNet/1.5.0.0" />
+    <m:properties>
+      <d:Id>RedStar.Amounts.JsonNet</d:Id>
+      <d:Version>1.5.0.0</d:Version>
+      <d:NormalizedVersion>1.5.0</d:NormalizedVersion>
+      <d:Authors>Peter Morlion</d:Authors>
+      <d:Copyright m:null="true" />
+      <d:Created m:type="Edm.DateTime">2016-05-23T11:36:51.627Z</d:Created>
+      <d:Dependencies>Newtonsoft.Json:[8.0.3, ):|RedStar.Amounts:[1.5.0, ):</d:Dependencies>
+      <d:Description>Custom converters for serializing and deseriazling to JSON using NewtonSoft's JSON.NET library.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">102</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/RedStar.Amounts.JsonNet/1.5.0</d:GalleryDetailsUrl>
+      <d:IconUrl m:null="true" />
+      <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:LastUpdated m:type="Edm.DateTime">2016-05-23T11:36:51.627Z</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2016-05-23T11:36:51.627Z</d:Published>
+      <d:PackageHash>T5WHlVFa2ymXAe5VxgSvtnQ9hAlCIf0DHAdOS2ju4TKf1qR+NV9kOe5dI56wDoZgoel3lkOND3dh8K0oHTgjyQ==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">5833</d:PackageSize>
+      <d:ProjectUrl>https://github.com/petermorlion/RedStar.Amounts/wiki</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/packages/RedStar.Amounts.JsonNet/1.5.0/ReportAbuse</d:ReportAbuseUrl>
+      <d:ReleaseNotes>Initial release.</d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">true</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags>units amounts</d:Tags>
+      <d:Title>RedStar Amounts JSON.NET</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">66</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true" />
+      <d:LastEdited m:type="Edm.DateTime">2016-05-24T06:28:25.21Z</d:LastEdited>
+      <d:LicenseUrl>http://choosealicense.com/licenses/mit/</d:LicenseUrl>
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='Roots',Version='1.0')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='Roots',Version='1.0')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='Roots',Version='1.0')" />
+    <title type="text">Roots</title>
+    <updated>2013-10-21T21:44:11Z</updated>
+    <author>
+      <name>Andrew Gaspar</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/Roots/1.0" />
+    <m:properties>
+      <d:Id>Roots</d:Id>
+      <d:Version>1.0</d:Version>
+      <d:NormalizedVersion>1.0.0</d:NormalizedVersion>
+      <d:Authors>Andrew Gaspar</d:Authors>
+      <d:Copyright>Copyright 2013</d:Copyright>
+      <d:Created m:type="Edm.DateTime">2013-10-21T21:44:11.823Z</d:Created>
+      <d:Dependencies></d:Dependencies>
+      <d:Description>Find roots of an arbitrary function using bisection, newton, and secant method.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">398</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/Roots/1.0.0</d:GalleryDetailsUrl>
+      <d:IconUrl m:null="true" />
+      <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:LastUpdated m:type="Edm.DateTime">2013-10-21T21:44:11.823Z</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2013-10-21T21:44:11.823Z</d:Published>
+      <d:PackageHash>JbYsitQgPXI1YNQIZE5TPKgEmTUoM2gB4uBoTll7Ywe0FC+5zX4jX2KOfOBsh3NADZEGUH7YewUJfPmwnJi1dg==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">11358</d:PackageSize>
+      <d:ProjectUrl>https://github.com/AndrewGaspar/Roots</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/packages/Roots/1.0.0/ReportAbuse</d:ReportAbuseUrl>
+      <d:ReleaseNotes>This is the initial release.</d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags>Roots F# Numerical Analysis Functional Root Finding Newton Secant Bisection</d:Tags>
+      <d:Title>Root Finding in F#</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">398</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true" />
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>https://github.com/AndrewGaspar/Roots/blob/master/LICENSE</d:LicenseUrl>
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+</feed>

@@ -1,0 +1,21 @@
+import "Domain.bond"
+import "DataPoint.bond"
+
+namespace AI
+
+[Description("An instance of the Metric item is a list of measurements (single data points) and/or aggregations.")]
+struct MetricData
+    : Domain
+{
+    [Description("Schema version")]
+    10: required int32 	 ver = 2;
+    
+    [Description("List of metrics.")]
+    20: required vector<DataPoint> 	 metrics;
+    
+    [Description("Collection of custom properties.")]
+    [MaxKeyLength("150")]
+    [MaxValueLength("8192")]
+    100: map<string, string> 	 properties;
+    
+}

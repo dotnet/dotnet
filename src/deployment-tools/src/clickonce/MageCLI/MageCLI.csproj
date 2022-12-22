@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <BinplaceSymbols>true</BinplaceSymbols>
+    <AssemblyName>dotnet-mage</AssemblyName>
+    <OutputType>EXE</OutputType>
+    <SignAssemblyAttribute>true</SignAssemblyAttribute>
+    <RCSuppressManifest>true</RCSuppressManifest>
+    <AssemblyAttributeClsCompliant>false</AssemblyAttributeClsCompliant>
+    <TargetFramework>net6.0</TargetFramework>
+    <PlatformSpecificBuild>true</PlatformSpecificBuild>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+  </PropertyGroup>
+  <PropertyGroup>
+    <IsPackable Condition="'$(TargetArchitecture)' == 'x86'">true</IsPackable>
+    <PackAsTool>true</PackAsTool>
+    <IsShipping>true</IsShipping>
+    <IsShippingPackage>true</IsShippingPackage>
+    <PackageId>Microsoft.DotNet.Mage</PackageId>
+    <ContentTargetFolders>tools/$(TargetFramework)/any</ContentTargetFolders>
+  </PropertyGroup>
+  <PropertyGroup Condition="!$(TargetFramework.StartsWith('net4'))">
+    <DefineConstants>$(DefineConstants);RUNTIME_TYPE_NETCORE</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\Shared\NativeMethods.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Application.resx">
+      <LogicalName>Microsoft.Deployment.MageCLI.Application.resources</LogicalName>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Condition="$(TargetFramework.StartsWith('net4'))" Include="$(IntermediateOutputPath)\MageCLI.Application.resources">
+      <LogicalName>Microsoft.Deployment.MageCLI.Application.resources</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="$(MicrosoftBuildTasksCoreVersion)" />
+  </ItemGroup>
+  <ItemGroup Condition="!$(TargetFramework.StartsWith('net4'))">
+    <PackageReference Include="System.Security.Cryptography.Cng" Version="4.7.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="$(ArtifactsBinDir)Launcher/$(Configuration)/net45/Launcher.exe" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>System.Activities.DurableInstancing</name>
+  </assembly>
+  <members>
+    <member name="T:System.Activities.DurableInstancing.InstanceCompletionAction">
+      <summary>Contains options that specify whether the persistence provider should keep or delete the state information for an instance in the persistence store after the instance completes. </summary>
+    </member>
+    <member name="F:System.Activities.DurableInstancing.InstanceCompletionAction.DeleteNothing">
+      <summary>Specifies that data and metadata for a workflow instance must be kept in the persistence database even after the workflow instance completes.</summary>
+    </member>
+    <member name="F:System.Activities.DurableInstancing.InstanceCompletionAction.DeleteAll">
+      <summary>Specifies that data and metadata for a workflow instance must be deleted from the persistence store after the workflow instance completes.</summary>
+    </member>
+    <member name="T:System.Activities.DurableInstancing.InstanceEncodingOption">
+      <summary>Contains options that specify whether the persistence provider should encode the instance state information using the GZip algorithm before saving the state information into the persistence store. </summary>
+    </member>
+    <member name="F:System.Activities.DurableInstancing.InstanceEncodingOption.None">
+      <summary>Specifies that instance data is not compressed.</summary>
+    </member>
+    <member name="F:System.Activities.DurableInstancing.InstanceEncodingOption.GZip">
+      <summary>Specifies that instance data is compressed using the GZip algorithm.</summary>
+    </member>
+    <member name="T:System.Activities.DurableInstancing.InstanceLockedExceptionAction">
+      <summary>Contains options that specify what action the SQL persistence provider should take when it receives an exception when trying to lock an instance. </summary>
+    </member>
+    <member name="F:System.Activities.DurableInstancing.InstanceLockedExceptionAction.NoRetry">
+      <summary>Specifies that the persistence provider does not reattempt to lock an instance if the instance is already locked by another host. </summary>
+    </member>
+    <member name="F:System.Activities.DurableInstancing.InstanceLockedExceptionAction.BasicRetry">
+      <summary>Specifies that the persistence provider reattempts to lock the instance with a linear retry interval. The persistence provider passes the <see cref="T:System.Runtime.Persistence.InstanceLockedException" /> to the caller at the end of the sequence (after retrying predefined number of times).</summary>
+    </member>
+    <member name="F:System.Activities.DurableInstancing.InstanceLockedExceptionAction.AggressiveRetry">
+      <summary>Specifies that the persistence provider reattempts to lock an instance with an exponentially increasing delay between successive attempts. The persistence provider passes the <see cref="T:System.Runtime.Persistence.InstanceLockedException" /> to the caller at the end of the sequence (after retrying predefined number of times).</summary>
+    </member>
+    <member name="T:System.Activities.DurableInstancing.SqlWorkflowInstanceStore">
+      <summary>Derives from the abstract <see cref="T:System.Runtime.Persistence.InstanceStore" /> class of the persistence functionality and provides implementation to allow saving instance state information to and loading instance state information from an SQL Server 2005 or SQL Server 2008 database.</summary>
+    </member>
+    <member name="M:System.Activities.DurableInstancing.SqlWorkflowInstanceStore.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Activities.DurableInstancing.SqlWorkflowInstanceStore" /> class.</summary>
+    </member>
+    <member name="M:System.Activities.DurableInstancing.SqlWorkflowInstanceStore.#ctor(System.String)">
+      <summary>Initializes a new instance of the <see cref="T:System.Activities.DurableInstancing.SqlWorkflowInstanceStore" /> class by using the <paramref name="connectionString" /> parameter.</summary>
+      <param name="connectionString">The connection string to a persistence database.</param>
+    </member>
+    <member name="P:System.Activities.DurableInstancing.SqlWorkflowInstanceStore.ConnectionString">
+      <summary>Gets or sets a connection string with parameters that are used to connect to an underlying persistence database.</summary>
+      <returns>The connection string.</returns>
+    </member>
+    <member name="P:System.Activities.DurableInstancing.SqlWorkflowInstanceStore.EnqueueRunCommands">
+      <summary>Gets or set a value that indicates whether Run commands are enqueued. This property is used internally by the SQL Workflow Instance Store and it should not be used in your applications.</summary>
+      <returns>true if the Run commands are enqueued; otherwise false.</returns>
+    </member>
+    <member name="P:System.Activities.DurableInstancing.SqlWorkflowInstanceStore.HostLockRenewalPeriod">
+      <summary>Specifies the time period within which the host renews its lock on a workflow service instance. </summary>
+      <returns>The time period.</returns>
+    </member>
+    <member name="P:System.Activities.DurableInstancing.SqlWorkflowInstanceStore.InstanceCompletionAction">
+      <summary>Specifies the action to be taken after a workflow instance completes. Possible values are “DeleteNothing” and “DeleteAll”. The default value is “DeleteAll”. If the property is set to “DeleteNothing”, the persistence provider keeps all the instance data and metadata in the persistence database after the workflow instance completes. If the property is set to “DeleteAll”, the persistence provider deletes all the instance data and metadata after the workflow instance completes.</summary>
+      <returns>The action to be taken after a workflow completes.</returns>
+    </member>
+    <member name="P:System.Activities.DurableInstancing.SqlWorkflowInstanceStore.InstanceEncodingOption">
+      <summary>Specifies a value that indicates whether the instance data must be compressed. </summary>
+      <returns>The possible values are “None” and “GZip”. The default is “None”.</returns>
+    </member>
+    <member name="P:System.Activities.DurableInstancing.SqlWorkflowInstanceStore.InstanceLockedExceptionAction">
+      <summary>Specifies the action to be taken when the persistence provider catches an <see cref="T:System.Runtime.Persistence.InstanceLockedException" />.</summary>
+      <returns>The action to be taken when the persistence provider catches an <see cref="T:System.Runtime.Persistence.InstanceLockedException" /></returns>
+    </member>
+    <member name="P:System.Activities.DurableInstancing.SqlWorkflowInstanceStore.MaxConnectionRetries">
+      <summary>Gets or sets the maximum number of SQL connection retries.  The default value is 4.</summary>
+      <returns>An integer representing the maximum number of SQL connection retries.</returns>
+    </member>
+    <member name="M:System.Activities.DurableInstancing.SqlWorkflowInstanceStore.Promote(System.String,System.Collections.Generic.IEnumerable{System.Xml.Linq.XName},System.Collections.Generic.IEnumerable{System.Xml.Linq.XName})">
+      <summary>Associates the specified properties with a workflow instance so that you can query for instances based on specific values for these properties. These properties that can be used in external queries can be of simple types (for example: Int64, String, and so on) or of a serialized binary type (byte[]). Binary properties are typically used to store tracking data.</summary>
+      <param name="name">The name of the promotion itself.</param>
+      <param name="promoteAsVariant">The properties that must be promoted as variants.</param>
+      <param name="promoteAsBinary">The properties that must be promoted as a binary stream.</param>
+    </member>
+    <member name="P:System.Activities.DurableInstancing.SqlWorkflowInstanceStore.RunnableInstancesDetectionPeriod">
+      <summary>Specifies the time period after which the SQL Workflow Instance Store runs a detection task to detect any runnable or activatable workflow instances in the persistence database after the previous detection cycle.</summary>
+      <returns>Returns <see cref="T:System.TimeSpan" />.</returns>
+    </member>
+  </members>
+</doc>

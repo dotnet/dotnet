@@ -1,0 +1,482 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>System.Configuration.Install</name>
+  </assembly>
+  <members>
+    <member name="T:System.Configuration.Install.AssemblyInstaller">
+      <summary>Loads an assembly, and runs all the installers in it.</summary>
+    </member>
+    <member name="M:System.Configuration.Install.AssemblyInstaller.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Configuration.Install.AssemblyInstaller" /> class.</summary>
+    </member>
+    <member name="M:System.Configuration.Install.AssemblyInstaller.#ctor(System.Reflection.Assembly,System.String[])">
+      <summary>Initializes a new instance of the <see cref="T:System.Configuration.Install.AssemblyInstaller" /> class, and specifies both the assembly to install and the command line to use when creating a new <see cref="T:System.Configuration.Install.InstallContext" /> object.</summary>
+      <param name="assembly">The <see cref="T:System.Reflection.Assembly" /> to install. </param>
+      <param name="commandLine">The command line to use when creating a new <see cref="T:System.Configuration.Install.InstallContext" /> object for the assembly's installation. Can be a null value.</param>
+    </member>
+    <member name="M:System.Configuration.Install.AssemblyInstaller.#ctor(System.String,System.String[])">
+      <summary>Initializes a new instance of the <see cref="T:System.Configuration.Install.AssemblyInstaller" /> class, and specifies both the file name of the assembly to install and the command line to use when creating a new <see cref="T:System.Configuration.Install.InstallContext" /> object for the assembly's installation.</summary>
+      <param name="fileName">The file name of the assembly to install. </param>
+      <param name="commandLine">The command line to use when creating a new <see cref="T:System.Configuration.Install.InstallContext" /> object for the assembly's installation. Can be a null value.</param>
+    </member>
+    <member name="P:System.Configuration.Install.AssemblyInstaller.Assembly">
+      <summary>Gets or sets the assembly to install.</summary>
+      <returns>An <see cref="T:System.Reflection.Assembly" /> that defines the assembly to install.</returns>
+      <exception cref="T:System.ArgumentNullException">The property value is null. </exception>
+    </member>
+    <member name="M:System.Configuration.Install.AssemblyInstaller.CheckIfInstallable(System.String)">
+      <summary>Checks to see if the specified assembly can be installed.</summary>
+      <param name="assemblyName">The assembly in which to search for installers. </param>
+      <exception cref="T:System.Exception">The specified assembly cannot be installed. </exception>
+    </member>
+    <member name="P:System.Configuration.Install.AssemblyInstaller.CommandLine">
+      <summary>Gets or sets the command line to use when creating a new <see cref="T:System.Configuration.Install.InstallContext" /> object for the assembly's installation.</summary>
+      <returns>An array of type <see cref="T:System.String" /> that represents the command line to use when creating a new <see cref="T:System.Configuration.Install.InstallContext" /> object for the assembly's installation.</returns>
+    </member>
+    <member name="M:System.Configuration.Install.AssemblyInstaller.Commit(System.Collections.IDictionary)">
+      <summary>Completes the installation transaction.</summary>
+      <param name="savedState">An <see cref="T:System.Collections.IDictionary" /> that contains the state of the computer after all the installers in the installer collection have run. </param>
+      <exception cref="T:System.ArgumentException">The <paramref name="savedState" /> parameter is null.-or- The saved-state <see cref="T:System.Collections.IDictionary" /> might have been corrupted.-or- A file could not be found. </exception>
+      <exception cref="T:System.Exception">An error occurred in the <see cref="E:System.Configuration.Install.Installer.Committing" /> event handler of one of the installers in the collection.-or- An error occurred in the <see cref="E:System.Configuration.Install.Installer.Committed" /> event handler of one of the installers in the collection.-or- An exception occurred during the <see cref="M:System.Configuration.Install.AssemblyInstaller.Commit(System.Collections.IDictionary)" /> phase of the installation. The exception is ignored and the installation continues. However, the application might not function correctly after installation completes.-or- Installer types were not found in one of the assemblies.-or- An instance of one of the installer types could not be created. </exception>
+      <exception cref="T:System.Configuration.Install.InstallException">An exception occurred during the <see cref="M:System.Configuration.Install.AssemblyInstaller.Commit(System.Collections.IDictionary)" /> phase of the installation. The exception is ignored and the installation continues. However, the application might not function correctly after installation completes. </exception>
+    </member>
+    <member name="P:System.Configuration.Install.AssemblyInstaller.HelpText">
+      <summary>Gets the help text for all the installers in the installer collection.</summary>
+      <returns>The help text for all the installers in the installer collection, including the description of what each installer does and the command-line options (for the installation program) that can be passed to and understood by each installer.</returns>
+    </member>
+    <member name="M:System.Configuration.Install.AssemblyInstaller.Install(System.Collections.IDictionary)">
+      <summary>Performs the installation.</summary>
+      <param name="savedState">An <see cref="T:System.Collections.IDictionary" /> used to save information needed to perform a commit, rollback, or uninstall operation. </param>
+      <exception cref="T:System.ArgumentException">The <paramref name="savedState" /> parameter is null.-or- A file could not be found. </exception>
+      <exception cref="T:System.Exception">An exception occurred in the <see cref="E:System.Configuration.Install.Installer.BeforeInstall" /> event handler of one of the installers in the collection.-or- An exception occurred in the <see cref="E:System.Configuration.Install.Installer.AfterInstall" /> event handler of one of the installers in the collection.-or- Installer types were not found in one of the assemblies.-or- An instance of one of the installer types could not be created. </exception>
+    </member>
+    <member name="P:System.Configuration.Install.AssemblyInstaller.Path">
+      <summary>Gets or sets the path of the assembly to install.</summary>
+      <returns>The path of the assembly to install.</returns>
+    </member>
+    <member name="M:System.Configuration.Install.AssemblyInstaller.Rollback(System.Collections.IDictionary)">
+      <summary>Restores the computer to the state it was in before the installation.</summary>
+      <param name="savedState">An <see cref="T:System.Collections.IDictionary" /> that contains the pre-installation state of the computer. </param>
+      <exception cref="T:System.ArgumentException">The <paramref name="savedState" /> parameter is null.-or- The saved-state <see cref="T:System.Collections.IDictionary" /> might have been corrupted.-or- A file could not be found. </exception>
+      <exception cref="T:System.Exception">An exception occurred in the <see cref="E:System.Configuration.Install.Installer.BeforeRollback" /> event handler of one of the installers in the collection.-or- An exception occurred in the <see cref="E:System.Configuration.Install.Installer.AfterRollback" /> event handler of one of the installers in the collection.-or- An exception occurred during the <see cref="M:System.Configuration.Install.AssemblyInstaller.Rollback(System.Collections.IDictionary)" /> phase of the installation. The exception is ignored and the rollback continues. However, the computer might not be fully reverted to its initial state after the rollback completes.-or- Installer types were not found in one of the assemblies.-or- An instance of one of the installer types could not be created. </exception>
+      <exception cref="T:System.Configuration.Install.InstallException">An exception occurred during the <see cref="M:System.Configuration.Install.AssemblyInstaller.Rollback(System.Collections.IDictionary)" /> phase of the installation. The exception is ignored and the rollback continues. However, the computer might not be fully reverted to its initial state after the rollback completes. </exception>
+    </member>
+    <member name="M:System.Configuration.Install.AssemblyInstaller.Uninstall(System.Collections.IDictionary)">
+      <summary>Removes an installation.</summary>
+      <param name="savedState">An <see cref="T:System.Collections.IDictionary" /> that contains the post-installation state of the computer. </param>
+      <exception cref="T:System.ArgumentException">The saved-state <see cref="T:System.Collections.IDictionary" /> might have been corrupted.-or- A file could not be found. </exception>
+      <exception cref="T:System.Exception">An error occurred in the <see cref="E:System.Configuration.Install.Installer.BeforeUninstall" /> event handler of one of the installers in the collection.-or- An error occurred in the <see cref="E:System.Configuration.Install.Installer.AfterUninstall" /> event handler of one of the installers in the collection.-or- An exception occurred while uninstalling. The exception is ignored and the uninstall continues. However, the application might not be fully uninstalled after the uninstall completes.-or- Installer types were not found in one of the assemblies.-or- An instance of one of the installer types could not be created.-or- A file could not be deleted. </exception>
+      <exception cref="T:System.Configuration.Install.InstallException">An exception occurred while uninstalling. The exception is ignored and the uninstall continues. However, the application might not be fully uninstalled after the uninstall completes. </exception>
+    </member>
+    <member name="P:System.Configuration.Install.AssemblyInstaller.UseNewContext">
+      <summary>Gets or sets a value indicating whether to create a new <see cref="T:System.Configuration.Install.InstallContext" /> object for the assembly's installation.</summary>
+      <returns>true if a new <see cref="T:System.Configuration.Install.InstallContext" /> object should be created for the assembly's installation; otherwise, false. The default is true.</returns>
+    </member>
+    <member name="T:System.Configuration.Install.ComponentInstaller">
+      <summary>Specifies an installer that copies properties from a component to use at install time.</summary>
+    </member>
+    <member name="M:System.Configuration.Install.ComponentInstaller.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Configuration.Install.ComponentInstaller" /> class.</summary>
+    </member>
+    <member name="M:System.Configuration.Install.ComponentInstaller.CopyFromComponent(System.ComponentModel.IComponent)">
+      <summary>When overridden in a derived class, copies all the properties that are required at install time from the specified component.</summary>
+      <param name="component">The component to copy from. </param>
+    </member>
+    <member name="M:System.Configuration.Install.ComponentInstaller.IsEquivalentInstaller(System.Configuration.Install.ComponentInstaller)">
+      <summary>Determines if the specified installer installs the same object as this installer.</summary>
+      <returns>true if this installer and the installer specified by the <paramref name="otherInstaller" /> parameter install the same object; otherwise, false.</returns>
+      <param name="otherInstaller">The installer to compare. </param>
+    </member>
+    <member name="T:System.Configuration.Install.IManagedInstaller">
+      <summary>Provides an interface for a managed installer.</summary>
+    </member>
+    <member name="M:System.Configuration.Install.IManagedInstaller.ManagedInstall(System.String,System.Int32)">
+      <summary>Executes a managed installation.</summary>
+      <returns>The return code for installutil.exe. A successful installation returns 0. Other values indicate failure.</returns>
+      <param name="commandLine">The command line that specifies the installation.</param>
+      <param name="hInstall">The handle to the installation.</param>
+    </member>
+    <member name="T:System.Configuration.Install.InstallContext">
+      <summary>Contains information about the current installation.</summary>
+    </member>
+    <member name="M:System.Configuration.Install.InstallContext.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Configuration.Install.InstallContext" /> class.</summary>
+    </member>
+    <member name="M:System.Configuration.Install.InstallContext.#ctor(System.String,System.String[])">
+      <summary>Initializes a new instance of the <see cref="T:System.Configuration.Install.InstallContext" /> class, and creates a log file for the installation.</summary>
+      <param name="logFilePath">The path to the log file for this installation, or null if no log file should be created. </param>
+      <param name="commandLine">The command-line parameters entered when running the installation program, or null if none were entered. </param>
+    </member>
+    <member name="M:System.Configuration.Install.InstallContext.IsParameterTrue(System.String)">
+      <summary>Determines whether the specified command-line parameter is true.</summary>
+      <returns>true if the specified parameter is set to "yes", "true", "1", or an empty string (""); otherwise, false.</returns>
+      <param name="paramName">The name of the command-line parameter to check. </param>
+    </member>
+    <member name="M:System.Configuration.Install.InstallContext.LogMessage(System.String)">
+      <summary>Writes a message to the console and to the log file for the installation.</summary>
+      <param name="message">The message to write. </param>
+    </member>
+    <member name="P:System.Configuration.Install.InstallContext.Parameters">
+      <summary>Gets the command-line parameters that were entered when InstallUtil.exe was run.</summary>
+      <returns>A <see cref="T:System.Collections.Specialized.StringDictionary" /> that represents the command-line parameters that were entered when the installation executable was run.</returns>
+    </member>
+    <member name="M:System.Configuration.Install.InstallContext.ParseCommandLine(System.String[])">
+      <summary>Parses the command-line parameters into a string dictionary.</summary>
+      <returns>A <see cref="T:System.Collections.Specialized.StringDictionary" /> containing the parsed command-line parameters.</returns>
+      <param name="args">An array containing the command-line parameters. </param>
+    </member>
+    <member name="T:System.Configuration.Install.Installer">
+      <summary>Provides the foundation for custom installations.</summary>
+    </member>
+    <member name="M:System.Configuration.Install.Installer.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Configuration.Install.Installer" /> class.</summary>
+    </member>
+    <member name="E:System.Configuration.Install.Installer.AfterInstall">
+      <summary>Occurs after the <see cref="M:System.Configuration.Install.Installer.Install(System.Collections.IDictionary)" /> methods of all the installers in the <see cref="P:System.Configuration.Install.Installer.Installers" /> property have run.</summary>
+    </member>
+    <member name="E:System.Configuration.Install.Installer.AfterRollback">
+      <summary>Occurs after the installations of all the installers in the <see cref="P:System.Configuration.Install.Installer.Installers" /> property are rolled back.</summary>
+    </member>
+    <member name="E:System.Configuration.Install.Installer.AfterUninstall">
+      <summary>Occurs after all the installers in the <see cref="P:System.Configuration.Install.Installer.Installers" /> property perform their uninstallation operations.</summary>
+    </member>
+    <member name="E:System.Configuration.Install.Installer.BeforeInstall">
+      <summary>Occurs before the <see cref="M:System.Configuration.Install.Installer.Install(System.Collections.IDictionary)" /> method of each installer in the installer collection has run.</summary>
+    </member>
+    <member name="E:System.Configuration.Install.Installer.BeforeRollback">
+      <summary>Occurs before the installers in the <see cref="P:System.Configuration.Install.Installer.Installers" /> property are rolled back.</summary>
+    </member>
+    <member name="E:System.Configuration.Install.Installer.BeforeUninstall">
+      <summary>Occurs before the installers in the <see cref="P:System.Configuration.Install.Installer.Installers" /> property perform their uninstall operations.</summary>
+    </member>
+    <member name="M:System.Configuration.Install.Installer.Commit(System.Collections.IDictionary)">
+      <summary>When overridden in a derived class, completes the install transaction.</summary>
+      <param name="savedState">An <see cref="T:System.Collections.IDictionary" /> that contains the state of the computer after all the installers in the collection have run. </param>
+      <exception cref="T:System.ArgumentException">The <paramref name="savedState" /> parameter is null.-or- The saved-state <see cref="T:System.Collections.IDictionary" /> might have been corrupted. </exception>
+      <exception cref="T:System.Configuration.Install.InstallException">An exception occurred during the <see cref="M:System.Configuration.Install.Installer.Commit(System.Collections.IDictionary)" /> phase of the installation. This exception is ignored and the installation continues. However, the application might not function correctly after the installation is complete. </exception>
+    </member>
+    <member name="E:System.Configuration.Install.Installer.Committed">
+      <summary>Occurs after all the installers in the <see cref="P:System.Configuration.Install.Installer.Installers" /> property have committed their installations.</summary>
+    </member>
+    <member name="E:System.Configuration.Install.Installer.Committing">
+      <summary>Occurs before the installers in the <see cref="P:System.Configuration.Install.Installer.Installers" /> property committ their installations.</summary>
+    </member>
+    <member name="P:System.Configuration.Install.Installer.Context">
+      <summary>Gets or sets information about the current installation.</summary>
+      <returns>An <see cref="T:System.Configuration.Install.InstallContext" /> that contains information about the current installation.</returns>
+    </member>
+    <member name="P:System.Configuration.Install.Installer.HelpText">
+      <summary>Gets the help text for all the installers in the installer collection.</summary>
+      <returns>The help text for all the installers in the installer collection, including the description of what the installer does and the command line options for the installation executable, such as the InstallUtil.exe utility, that can be passed to and understood by this installer.</returns>
+      <exception cref="T:System.NullReferenceException">One of the installers in the installer collection specifies a null reference instead of help text. A likely cause for this exception is that a field to contain the help text is defined but not initialized.</exception>
+    </member>
+    <member name="M:System.Configuration.Install.Installer.Install(System.Collections.IDictionary)">
+      <summary>When overridden in a derived class, performs the installation.</summary>
+      <param name="stateSaver">An <see cref="T:System.Collections.IDictionary" /> used to save information needed to perform a commit, rollback, or uninstall operation. </param>
+      <exception cref="T:System.ArgumentException">The <paramref name="stateSaver" /> parameter is null. </exception>
+      <exception cref="T:System.Exception">An exception occurred in the <see cref="E:System.Configuration.Install.Installer.BeforeInstall" /> event handler of one of the installers in the collection.-or- An exception occurred in the <see cref="E:System.Configuration.Install.Installer.AfterInstall" /> event handler of one of the installers in the collection. </exception>
+    </member>
+    <member name="P:System.Configuration.Install.Installer.Installers">
+      <summary>Gets the collection of installers that this installer contains.</summary>
+      <returns>An <see cref="T:System.Configuration.Install.InstallerCollection" /> containing the collection of installers associated with this installer.</returns>
+    </member>
+    <member name="M:System.Configuration.Install.Installer.OnAfterInstall(System.Collections.IDictionary)">
+      <summary>Raises the <see cref="E:System.Configuration.Install.Installer.AfterInstall" /> event.</summary>
+      <param name="savedState">An <see cref="T:System.Collections.IDictionary" /> that contains the state of the computer after all the installers contained in the <see cref="P:System.Configuration.Install.Installer.Installers" /> property have completed their installations. </param>
+    </member>
+    <member name="M:System.Configuration.Install.Installer.OnAfterRollback(System.Collections.IDictionary)">
+      <summary>Raises the <see cref="E:System.Configuration.Install.Installer.AfterRollback" /> event.</summary>
+      <param name="savedState">An <see cref="T:System.Collections.IDictionary" /> that contains the state of the computer after the installers contained in the <see cref="P:System.Configuration.Install.Installer.Installers" /> property are rolled back. </param>
+    </member>
+    <member name="M:System.Configuration.Install.Installer.OnAfterUninstall(System.Collections.IDictionary)">
+      <summary>Raises the <see cref="E:System.Configuration.Install.Installer.AfterUninstall" /> event.</summary>
+      <param name="savedState">An <see cref="T:System.Collections.IDictionary" /> that contains the state of the computer after all the installers contained in the <see cref="P:System.Configuration.Install.Installer.Installers" /> property are uninstalled. </param>
+    </member>
+    <member name="M:System.Configuration.Install.Installer.OnBeforeInstall(System.Collections.IDictionary)">
+      <summary>Raises the <see cref="E:System.Configuration.Install.Installer.BeforeInstall" /> event.</summary>
+      <param name="savedState">An <see cref="T:System.Collections.IDictionary" /> that contains the state of the computer before the installers in the <see cref="P:System.Configuration.Install.Installer.Installers" /> property are installed. This <see cref="T:System.Collections.IDictionary" /> object should be empty at this point. </param>
+    </member>
+    <member name="M:System.Configuration.Install.Installer.OnBeforeRollback(System.Collections.IDictionary)">
+      <summary>Raises the <see cref="E:System.Configuration.Install.Installer.BeforeRollback" /> event.</summary>
+      <param name="savedState">An <see cref="T:System.Collections.IDictionary" /> that contains the state of the computer before the installers in the <see cref="P:System.Configuration.Install.Installer.Installers" /> property are rolled back. </param>
+    </member>
+    <member name="M:System.Configuration.Install.Installer.OnBeforeUninstall(System.Collections.IDictionary)">
+      <summary>Raises the <see cref="E:System.Configuration.Install.Installer.BeforeUninstall" /> event.</summary>
+      <param name="savedState">An <see cref="T:System.Collections.IDictionary" /> that contains the state of the computer before the installers in the <see cref="P:System.Configuration.Install.Installer.Installers" /> property uninstall their installations. </param>
+    </member>
+    <member name="M:System.Configuration.Install.Installer.OnCommitted(System.Collections.IDictionary)">
+      <summary>Raises the <see cref="E:System.Configuration.Install.Installer.Committed" /> event.</summary>
+      <param name="savedState">An <see cref="T:System.Collections.IDictionary" /> that contains the state of the computer after all the installers in the <see cref="P:System.Configuration.Install.Installer.Installers" /> property run. </param>
+    </member>
+    <member name="M:System.Configuration.Install.Installer.OnCommitting(System.Collections.IDictionary)">
+      <summary>Raises the <see cref="E:System.Configuration.Install.Installer.Committing" /> event.</summary>
+      <param name="savedState">An <see cref="T:System.Collections.IDictionary" /> that contains the state of the computer before the installers in the <see cref="P:System.Configuration.Install.Installer.Installers" /> property are committed. </param>
+    </member>
+    <member name="P:System.Configuration.Install.Installer.Parent">
+      <summary>Gets or sets the installer containing the collection that this installer belongs to.</summary>
+      <returns>An <see cref="T:System.Configuration.Install.Installer" /> containing the collection that this instance belongs to, or null if this instance does not belong to a collection.</returns>
+    </member>
+    <member name="M:System.Configuration.Install.Installer.Rollback(System.Collections.IDictionary)">
+      <summary>When overridden in a derived class, restores the pre-installation state of the computer.</summary>
+      <param name="savedState">An <see cref="T:System.Collections.IDictionary" /> that contains the pre-installation state of the computer. </param>
+      <exception cref="T:System.ArgumentException">The <paramref name="savedState" /> parameter is null.-or- The saved-state <see cref="T:System.Collections.IDictionary" /> might have been corrupted. </exception>
+      <exception cref="T:System.Configuration.Install.InstallException">An exception occurred during the <see cref="M:System.Configuration.Install.Installer.Rollback(System.Collections.IDictionary)" /> phase of the installation. This exception is ignored and the rollback continues. However, the computer might not be fully reverted to its initial state after the rollback completes. </exception>
+    </member>
+    <member name="M:System.Configuration.Install.Installer.Uninstall(System.Collections.IDictionary)">
+      <summary>When overridden in a derived class, removes an installation.</summary>
+      <param name="savedState">An <see cref="T:System.Collections.IDictionary" /> that contains the state of the computer after the installation was complete. </param>
+      <exception cref="T:System.ArgumentException">The saved-state <see cref="T:System.Collections.IDictionary" /> might have been corrupted. </exception>
+      <exception cref="T:System.Configuration.Install.InstallException">An exception occurred while uninstalling. This exception is ignored and the uninstall continues. However, the application might not be fully uninstalled after the uninstallation completes. </exception>
+    </member>
+    <member name="T:System.Configuration.Install.InstallerCollection">
+      <summary>Contains a collection of installers to be run during an installation.</summary>
+    </member>
+    <member name="M:System.Configuration.Install.InstallerCollection.Add(System.Configuration.Install.Installer)">
+      <summary>Adds the specified installer to this collection of installers.</summary>
+      <returns>The zero-based index of the added installer.</returns>
+      <param name="value">An <see cref="T:System.Configuration.Install.Installer" /> that represents the installer to add to the collection. </param>
+    </member>
+    <member name="M:System.Configuration.Install.InstallerCollection.AddRange(System.Configuration.Install.Installer[])">
+      <summary>Adds the specified array of installers to this collection.</summary>
+      <param name="value">An array of type <see cref="T:System.Configuration.Install.Installer" /> that represents the installers to add to this collection. </param>
+    </member>
+    <member name="M:System.Configuration.Install.InstallerCollection.AddRange(System.Configuration.Install.InstallerCollection)">
+      <summary>Adds the specified collection of installers to this collection.</summary>
+      <param name="value">An <see cref="T:System.Configuration.Install.InstallerCollection" /> that represents the installers to add to this collection. </param>
+    </member>
+    <member name="M:System.Configuration.Install.InstallerCollection.Contains(System.Configuration.Install.Installer)">
+      <summary>Determines whether the specified installer is included in collection.</summary>
+      <returns>true if the specified installer is in this collection; otherwise, false.</returns>
+      <param name="value">An <see cref="T:System.Configuration.Install.Installer" /> that represents the installer to look for. </param>
+    </member>
+    <member name="M:System.Configuration.Install.InstallerCollection.CopyTo(System.Configuration.Install.Installer[],System.Int32)">
+      <summary>Copies the items from the collection to an array, begining at the specified index.</summary>
+      <param name="array">The array to copy to. </param>
+      <param name="index">The index of the array at which to paste the collection. </param>
+    </member>
+    <member name="M:System.Configuration.Install.InstallerCollection.IndexOf(System.Configuration.Install.Installer)">
+      <summary>Determines the index of a specified installer in the collection.</summary>
+      <returns>The zero-based index of the installer in the collection.</returns>
+      <param name="value">The <see cref="T:System.Configuration.Install.Installer" /> to locate in the collection. </param>
+    </member>
+    <member name="M:System.Configuration.Install.InstallerCollection.Insert(System.Int32,System.Configuration.Install.Installer)">
+      <summary>Inserts the specified installer into the collection at the specified index.</summary>
+      <param name="index">The zero-based index at which to insert the installer. </param>
+      <param name="value">The <see cref="T:System.Configuration.Install.Installer" /> to insert. </param>
+    </member>
+    <member name="P:System.Configuration.Install.InstallerCollection.Item(System.Int32)">
+      <summary>Gets or sets an installer at the specified index.</summary>
+      <returns>An <see cref="T:System.Configuration.Install.Installer" /> that represents the installer at the specified index.</returns>
+      <param name="index">The zero-based index of the installer to get or set. </param>
+    </member>
+    <member name="M:System.Configuration.Install.InstallerCollection.OnInsert(System.Int32,System.Object)">
+      <summary>Performs additional custom processes before a new installer is inserted into the collection.</summary>
+      <param name="index">The zero-based index at which to insert <paramref name="value" />.</param>
+      <param name="value">The new value of the installer at <paramref name="index" />.</param>
+    </member>
+    <member name="M:System.Configuration.Install.InstallerCollection.OnRemove(System.Int32,System.Object)">
+      <summary>Performs additional custom processes before an installer is removed from the collection.</summary>
+      <param name="index">The zero-based index at which <paramref name="value" /> can be found.</param>
+      <param name="value">The installer to be removed from <paramref name="index" />. </param>
+    </member>
+    <member name="M:System.Configuration.Install.InstallerCollection.OnSet(System.Int32,System.Object,System.Object)">
+      <summary>Performs additional custom processes before an existing installer is set to a new value.</summary>
+      <param name="index">The zero-based index at which to replace <paramref name="oldValue" />.</param>
+      <param name="oldValue">The value to replace with <paramref name="newValue." /></param>
+      <param name="newValue">The new value of the installer at <paramref name="index" />.</param>
+    </member>
+    <member name="M:System.Configuration.Install.InstallerCollection.Remove(System.Configuration.Install.Installer)">
+      <summary>Removes the specified <see cref="T:System.Configuration.Install.Installer" /> from the collection.</summary>
+      <param name="value">An <see cref="T:System.Configuration.Install.Installer" /> that represents the installer to remove. </param>
+    </member>
+    <member name="T:System.Configuration.Install.InstallEventArgs">
+      <summary>Provides data for the events: <see cref="E:System.Configuration.Install.Installer.BeforeInstall" />, <see cref="E:System.Configuration.Install.Installer.AfterInstall" />, <see cref="E:System.Configuration.Install.Installer.Committing" />, <see cref="E:System.Configuration.Install.Installer.Committed" />, <see cref="E:System.Configuration.Install.Installer.BeforeRollback" />, <see cref="E:System.Configuration.Install.Installer.AfterRollback" />, <see cref="E:System.Configuration.Install.Installer.BeforeUninstall" />, <see cref="E:System.Configuration.Install.Installer.AfterUninstall" />.</summary>
+    </member>
+    <member name="M:System.Configuration.Install.InstallEventArgs.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Configuration.Install.InstallEventArgs" /> class, and leaves the <see cref="P:System.Configuration.Install.InstallEventArgs.SavedState" /> property empty.</summary>
+    </member>
+    <member name="M:System.Configuration.Install.InstallEventArgs.#ctor(System.Collections.IDictionary)">
+      <summary>Initializes a new instance of the <see cref="T:System.Configuration.Install.InstallEventArgs" /> class, and specifies the value for the <see cref="P:System.Configuration.Install.InstallEventArgs.SavedState" /> property.</summary>
+      <param name="savedState">An <see cref="T:System.Collections.IDictionary" /> that represents the current state of the installation. </param>
+    </member>
+    <member name="P:System.Configuration.Install.InstallEventArgs.SavedState">
+      <summary>Gets an <see cref="T:System.Collections.IDictionary" /> that represents the current state of the installation.</summary>
+      <returns>An <see cref="T:System.Collections.IDictionary" /> that represents the current state of the installation.</returns>
+    </member>
+    <member name="T:System.Configuration.Install.InstallEventHandler">
+      <summary>Represents the method that will handle the <see cref="E:System.Configuration.Install.Installer.BeforeInstall" />, <see cref="E:System.Configuration.Install.Installer.AfterInstall" />, <see cref="E:System.Configuration.Install.Installer.Committing" />, <see cref="E:System.Configuration.Install.Installer.Committed" />, <see cref="E:System.Configuration.Install.Installer.BeforeRollback" />, <see cref="E:System.Configuration.Install.Installer.AfterRollback" />, <see cref="E:System.Configuration.Install.Installer.BeforeUninstall" />, or <see cref="E:System.Configuration.Install.Installer.AfterUninstall" /> event of an <see cref="T:System.Configuration.Install.Installer" />.</summary>
+      <param name="sender">The source of the event. </param>
+      <param name="e">An <see cref="T:System.Configuration.Install.InstallEventArgs" /> that contains the event data. </param>
+    </member>
+    <member name="T:System.Configuration.Install.InstallException">
+      <summary>The exception that is thrown when an error occurs during the commit, rollback, or uninstall phase of an installation.</summary>
+    </member>
+    <member name="M:System.Configuration.Install.InstallException.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Configuration.Install.InstallException" /> class.</summary>
+    </member>
+    <member name="M:System.Configuration.Install.InstallException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Initializes a new instance of the <see cref="T:System.Configuration.Install.InstallException" /> class with serialized data.</summary>
+      <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> that holds the serialized object data about the exception being thrown. </param>
+      <param name="context">The <see cref="T:System.Runtime.Serialization.StreamingContext" /> that contains contextual information about the source or destination. </param>
+    </member>
+    <member name="M:System.Configuration.Install.InstallException.#ctor(System.String)">
+      <summary>Initializes a new instance of the <see cref="T:System.Configuration.Install.InstallException" /> class, and specifies the message to display to the user.</summary>
+      <param name="message">The message to display to the user. </param>
+    </member>
+    <member name="M:System.Configuration.Install.InstallException.#ctor(System.String,System.Exception)">
+      <summary>Initializes a new instance of the <see cref="T:System.Configuration.Install.InstallException" /> class, and specifies the message to display to the user, and a reference to the inner exception that is the cause of this exception.</summary>
+      <param name="message">The message to display to the user. </param>
+      <param name="innerException">The exception that is the cause of the current exception. If the <paramref name="innerException" /> parameter is not null, the current exception is raised in a catch block that handles the inner exception. </param>
+    </member>
+    <member name="T:System.Configuration.Install.ManagedInstallerClass">
+      <summary>Represents a managed install.</summary>
+    </member>
+    <member name="M:System.Configuration.Install.ManagedInstallerClass.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Configuration.Install.ManagedInstallerClass" /> class. </summary>
+    </member>
+    <member name="M:System.Configuration.Install.ManagedInstallerClass.InstallHelper(System.String[])">
+      <summary>Handles the functionality of the Installutil.exe (Installer Tool).</summary>
+      <param name="args">The arguments passed to the Installer Tool.</param>
+    </member>
+    <member name="M:System.Configuration.Install.ManagedInstallerClass.System#Configuration#Install#IManagedInstaller#ManagedInstall(System.String,System.Int32)">
+      <summary>For a description of this member, see <see cref="M:System.Configuration.Install.IManagedInstaller.ManagedInstall(System.String,System.Int32)" />.</summary>
+      <returns>The return code for installutil.exe. A successful installation returns 0. Other values indicate failure.</returns>
+      <param name="argString">The command line to install.</param>
+      <param name="hInstall">The handle to the installation.</param>
+    </member>
+    <member name="T:System.Configuration.Install.TransactedInstaller">
+      <summary>Defines an installer that either succeeds completely or fails and leaves the computer in its initial state.</summary>
+    </member>
+    <member name="M:System.Configuration.Install.TransactedInstaller.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Configuration.Install.TransactedInstaller" /> class.</summary>
+    </member>
+    <member name="M:System.Configuration.Install.TransactedInstaller.Install(System.Collections.IDictionary)">
+      <summary>Performs the installation.</summary>
+      <param name="savedState">An <see cref="T:System.Collections.IDictionary" /> in which this method saves information needed to perform a commit, rollback, or uninstall operation. </param>
+      <exception cref="T:System.ArgumentException">The <paramref name="savedState" /> parameter is null. </exception>
+      <exception cref="T:System.Exception">The installation failed, and is being rolled back. </exception>
+    </member>
+    <member name="M:System.Configuration.Install.TransactedInstaller.Uninstall(System.Collections.IDictionary)">
+      <summary>Removes an installation.</summary>
+      <param name="savedState">An <see cref="T:System.Collections.IDictionary" /> that contains the state of the computer after the installation completed. </param>
+    </member>
+    <member name="T:System.Configuration.Install.UninstallAction">
+      <summary>Specifies what an installer should do during an uninstallation.</summary>
+    </member>
+    <member name="F:System.Configuration.Install.UninstallAction.Remove">
+      <summary>Removes the resource the installer created.</summary>
+    </member>
+    <member name="F:System.Configuration.Install.UninstallAction.NoAction">
+      <summary>Leaves the resource created by the installer as is.</summary>
+    </member>
+    <member name="T:System.Diagnostics.EventLogInstaller">
+      <summary>Allows you to install and configure an event log that your application reads from or writes to when running. </summary>
+    </member>
+    <member name="M:System.Diagnostics.EventLogInstaller.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Diagnostics.EventLogInstaller" /> class. </summary>
+    </member>
+    <member name="P:System.Diagnostics.EventLogInstaller.CategoryCount">
+      <summary>Gets or sets the number of categories in the category resource file.</summary>
+      <returns>The number of categories in the category resource file. The default value is zero.</returns>
+    </member>
+    <member name="P:System.Diagnostics.EventLogInstaller.CategoryResourceFile">
+      <summary>Gets or sets the path of the resource file that contains category strings for the source.</summary>
+      <returns>The path of the category resource file. The default is an empty string ("").</returns>
+    </member>
+    <member name="M:System.Diagnostics.EventLogInstaller.CopyFromComponent(System.ComponentModel.IComponent)">
+      <summary>Copies the property values of an <see cref="T:System.Diagnostics.EventLog" /> component that are required at installation time for an event log.</summary>
+      <param name="component">An <see cref="T:System.ComponentModel.IComponent" /> to use as a template for the <see cref="T:System.Diagnostics.EventLogInstaller" />. </param>
+      <exception cref="T:System.ArgumentException">The specified component is not an <see cref="T:System.Diagnostics.EventLog" />.-or- The <see cref="P:System.Diagnostics.EventLog.Log" /> or <see cref="P:System.Diagnostics.EventLog.Source" /> property of the specified component is either null or empty. </exception>
+    </member>
+    <member name="M:System.Diagnostics.EventLogInstaller.Install(System.Collections.IDictionary)">
+      <summary>Performs the installation and writes event log information to the registry.</summary>
+      <param name="stateSaver">An <see cref="T:System.Collections.IDictionary" /> used to save information needed to perform a rollback or uninstall operation. </param>
+      <exception cref="T:System.PlatformNotSupportedException">The platform the installer is trying to use is not Windows NT 4.0 or later. </exception>
+      <exception cref="T:System.ArgumentException">The name specified in the <see cref="P:System.Diagnostics.EventLogInstaller.Source" />  property is already registered for a different event log.</exception>
+    </member>
+    <member name="M:System.Diagnostics.EventLogInstaller.IsEquivalentInstaller(System.Configuration.Install.ComponentInstaller)">
+      <summary>Determines whether an installer and another specified installer refer to the same source.</summary>
+      <returns>true if this installer and the installer specified by the <paramref name="otherInstaller" /> parameter would install or uninstall the same source; otherwise, false.</returns>
+      <param name="otherInstaller">The installer to compare. </param>
+    </member>
+    <member name="P:System.Diagnostics.EventLogInstaller.Log">
+      <summary>Gets or sets the name of the log to set the source to.</summary>
+      <returns>The name of the log. This can be Application, System, or a custom log name. The default is an empty string ("").</returns>
+    </member>
+    <member name="P:System.Diagnostics.EventLogInstaller.MessageResourceFile">
+      <summary>Gets or sets the path of the resource file that contains message formatting strings for the source.</summary>
+      <returns>The path of the message resource file. The default is an empty string ("").</returns>
+    </member>
+    <member name="P:System.Diagnostics.EventLogInstaller.ParameterResourceFile">
+      <summary>Gets or sets the path of the resource file that contains message parameter strings for the source.</summary>
+      <returns>The path of the message parameter resource file. The default is an empty string ("").</returns>
+    </member>
+    <member name="M:System.Diagnostics.EventLogInstaller.Rollback(System.Collections.IDictionary)">
+      <summary>Restores the computer to the state it was in before the installation by rolling back the event log information that the installation procedure wrote to the registry.</summary>
+      <param name="savedState">An <see cref="T:System.Collections.IDictionary" /> that contains the pre-installation state of the computer. </param>
+    </member>
+    <member name="P:System.Diagnostics.EventLogInstaller.Source">
+      <summary>Gets or sets the source name to register with the log.</summary>
+      <returns>The name to register with the event log as a source of entries. The default is an empty string ("").</returns>
+    </member>
+    <member name="M:System.Diagnostics.EventLogInstaller.Uninstall(System.Collections.IDictionary)">
+      <summary>Removes an installation by removing event log information from the registry.</summary>
+      <param name="savedState">An <see cref="T:System.Collections.IDictionary" /> that contains the pre-installation state of the computer. </param>
+    </member>
+    <member name="P:System.Diagnostics.EventLogInstaller.UninstallAction">
+      <summary>Gets or sets a value that indicates whether the Installutil.exe (Installer Tool) should remove the event log or leave it in its installed state at uninstall time.</summary>
+      <returns>One of the <see cref="T:System.Configuration.Install.UninstallAction" /> values that indicates what state to leave the event log in when the <see cref="T:System.Diagnostics.EventLog" /> is uninstalled. The default is Remove.</returns>
+      <exception cref="T:System.ComponentModel.InvalidEnumArgumentException">
+        <see cref="P:System.Diagnostics.EventLogInstaller.UninstallAction" /> contains an invalid value. The only valid values for this property are Remove and NoAction.</exception>
+    </member>
+    <member name="T:System.Diagnostics.PerformanceCounterInstaller">
+      <summary>Specifies an installer for the <see cref="T:System.Diagnostics.PerformanceCounter" /> component.</summary>
+    </member>
+    <member name="M:System.Diagnostics.PerformanceCounterInstaller.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Diagnostics.PerformanceCounterInstaller" /> class. </summary>
+    </member>
+    <member name="P:System.Diagnostics.PerformanceCounterInstaller.CategoryHelp">
+      <summary>Gets or sets the descriptive message for the performance counter.</summary>
+      <returns>The descriptive message for the performance counter.</returns>
+      <exception cref="T:System.ArgumentNullException">The value is set to null. </exception>
+    </member>
+    <member name="P:System.Diagnostics.PerformanceCounterInstaller.CategoryName">
+      <summary>Gets or sets the performance category name for the performance counter.</summary>
+      <returns>The performance category name for the performance counter.</returns>
+      <exception cref="T:System.ArgumentNullException">The value is set to null. </exception>
+      <exception cref="T:System.ArgumentException">The value is not a valid category name.</exception>
+    </member>
+    <member name="P:System.Diagnostics.PerformanceCounterInstaller.CategoryType">
+      <summary>Gets or sets the performance counter category type.</summary>
+      <returns>One of the <see cref="T:System.Diagnostics.PerformanceCounterCategoryType" /> values. </returns>
+      <exception cref="T:System.ComponentModel.InvalidEnumArgumentException">The value is not a <see cref="T:System.Diagnostics.PerformanceCounterCategoryType" />.</exception>
+    </member>
+    <member name="M:System.Diagnostics.PerformanceCounterInstaller.CopyFromComponent(System.ComponentModel.IComponent)">
+      <summary>Copies all the properties from the specified component that are required at install time for a performance counter.</summary>
+      <param name="component">The component to copy from. </param>
+      <exception cref="T:System.ArgumentException">The specified component is not a <see cref="T:System.Diagnostics.PerformanceCounter" />.-or- The specified <see cref="T:System.Diagnostics.PerformanceCounter" /> is incomplete.-or- Multiple counters in different categories are trying to be installed. </exception>
+    </member>
+    <member name="P:System.Diagnostics.PerformanceCounterInstaller.Counters">
+      <summary>Gets a collection of data that pertains to the counters to install.</summary>
+      <returns>A <see cref="T:System.Diagnostics.CounterCreationDataCollection" /> that contains the names, help messages, and types of the counters to install.</returns>
+    </member>
+    <member name="M:System.Diagnostics.PerformanceCounterInstaller.Install(System.Collections.IDictionary)">
+      <summary>Performs the installation.</summary>
+      <param name="stateSaver">An <see cref="T:System.Collections.IDictionary" /> that is used to save the information needed to perform a commit, rollback, or uninstall operation. </param>
+    </member>
+    <member name="M:System.Diagnostics.PerformanceCounterInstaller.Rollback(System.Collections.IDictionary)">
+      <summary>Restores the computer to the state it was in before the installation.</summary>
+      <param name="savedState">An <see cref="T:System.Collections.IDictionary" /> that contains the pre-installation state of the computer. </param>
+    </member>
+    <member name="M:System.Diagnostics.PerformanceCounterInstaller.Uninstall(System.Collections.IDictionary)">
+      <summary>Removes an installation.</summary>
+      <param name="savedState">An <see cref="T:System.Collections.IDictionary" /> that contains the post-installation state of the computer. </param>
+    </member>
+    <member name="P:System.Diagnostics.PerformanceCounterInstaller.UninstallAction">
+      <summary>Gets a value that indicates whether the performance counter should be removed at uninstall time.</summary>
+      <returns>One of the <see cref="T:System.Configuration.Install.UninstallAction" /> values. The default is Remove.</returns>
+      <exception cref="T:System.ComponentModel.InvalidEnumArgumentException">The value is not an <see cref="T:System.Configuration.Install.UninstallAction" />.</exception>
+    </member>
+  </members>
+</doc>

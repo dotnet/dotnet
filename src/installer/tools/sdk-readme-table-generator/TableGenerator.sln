@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29610.7
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TableGenerator", "TableGenerator\TableGenerator.fsproj", "{7F07B3CD-2E70-428F-8C7D-46A436211774}"
+EndProject
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "TableGenerator.Tests", "TableGenerator.Tests\TableGenerator.Tests.fsproj", "{4957E781-3178-41A1-BC65-0A00F41B2685}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7F07B3CD-2E70-428F-8C7D-46A436211774}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F07B3CD-2E70-428F-8C7D-46A436211774}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F07B3CD-2E70-428F-8C7D-46A436211774}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F07B3CD-2E70-428F-8C7D-46A436211774}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4957E781-3178-41A1-BC65-0A00F41B2685}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4957E781-3178-41A1-BC65-0A00F41B2685}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4957E781-3178-41A1-BC65-0A00F41B2685}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4957E781-3178-41A1-BC65-0A00F41B2685}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7B5BEADF-7D46-4729-A771-A306FBB2E154}
+	EndGlobalSection
+EndGlobal

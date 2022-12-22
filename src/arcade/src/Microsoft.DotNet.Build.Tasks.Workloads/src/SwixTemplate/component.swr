@@ -1,0 +1,10 @@
+use vs
+
+package name=__VS_PACKAGE_NAME__
+        version=__VS_PACKAGE_VERSION__
+        vs.package.type=component
+
+vs.properties
+  isUiGroup=__VS_IS_UI_GROUP__
+
+vs.dependencies

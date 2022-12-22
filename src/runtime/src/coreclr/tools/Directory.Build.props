@@ -1,0 +1,15 @@
+<Project>
+  <Import Project="../Directory.Build.props" />
+  <PropertyGroup>
+    <IsShipping>false</IsShipping>
+    <SignAssembly>false</SignAssembly>
+    <!-- None of the tools is localized. Strip System.CommandLine localized resources from the output. -->
+    <SatelliteResourceLanguages>en-US</SatelliteResourceLanguages>
+  </PropertyGroup>
+  
+  <!-- MSBuild doesn't understand the Checked configuration -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Checked'">
+    <Optimize Condition="'$(Optimize)' == ''">true</Optimize>
+    <DefineConstants>DEBUG;$(DefineConstants)</DefineConstants>
+  </PropertyGroup>
+</Project>

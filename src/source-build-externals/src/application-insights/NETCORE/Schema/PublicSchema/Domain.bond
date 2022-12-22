@@ -1,0 +1,7 @@
+
+namespace AI
+
+[Description("The abstract common base of all domains.")]
+struct Domain
+{
+}

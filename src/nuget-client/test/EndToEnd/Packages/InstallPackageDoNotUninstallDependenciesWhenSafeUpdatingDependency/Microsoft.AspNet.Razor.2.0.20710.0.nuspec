@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.AspNet.Razor</id>
+    <version>2.0.20710.0</version>
+    <title>Microsoft ASP.NET Razor 2</title>
+    <authors>Microsoft</authors>
+    <description>This package contains the runtime assemblies for ASP.NET Web Pages. ASP.NET Web Pages and the new Razor syntax provide a fast, terse, clean and lightweight way to combine server code with HTML to create dynamic web content.</description>
+  </metadata>
+  <files>
+    <file src="lib\net40\Razor.dll" target="lib\net40\Razor.dll" />
+  </files>
+</package>

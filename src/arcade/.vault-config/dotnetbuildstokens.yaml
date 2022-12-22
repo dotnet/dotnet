@@ -1,0 +1,126 @@
+storageLocation:
+  type: azure-key-vault
+  parameters:
+    subscription: 11c6037b-227b-4d63-bee1-18c7b68c3a40
+    name: dotnetbuildstokens
+
+references:
+  dotnetbuildskeys:
+    type: azure-key-vault
+    parameters:
+      subscription: 11c6037b-227b-4d63-bee1-18c7b68c3a40
+      name: dotnetbuildskeys
+
+secrets:
+  dotnetbuilds-internal-container-read-uri:
+    type: azure-storage-container-sas-uri
+    parameters:
+      connectionString:
+        name: dotnetbuilds-connection-string
+        location: dotnetbuildskeys
+      permissions: rl
+      container: internal
+
+  dotnetbuilds-internal-container-read-uri-base64:
+    type: base64-encoder
+    parameters:
+      secret: dotnetbuilds-internal-container-read-uri
+
+  dotnetbuilds-internal-container-read-token:
+    type: azure-storage-container-sas-token
+    parameters:
+      connectionString:
+        name: dotnetbuilds-connection-string
+        location: dotnetbuildskeys
+      permissions: rl
+      container: internal
+
+  dotnetbuilds-internal-container-read-token-base64:
+    type: base64-encoder
+    parameters:
+      secret: dotnetbuilds-internal-container-read-token
+
+  dotnetbuilds-internal-checksums-container-read-token:
+    type: azure-storage-container-sas-token
+    parameters:
+      connectionString:
+        name: dotnetbuilds-connection-string
+        location: dotnetbuildskeys
+      permissions: rl
+      container: internal-checksums
+
+  dotnetbuilds-internal-checksums-container-read-token-base64:
+    type: base64-encoder
+    parameters:
+      secret: dotnetbuilds-internal-checksums-container-read-token
+
+  dotnetbuilds-internal-container-uri:
+    type: azure-storage-container-sas-uri
+    parameters:
+      connectionString:
+        name: dotnetbuilds-connection-string
+        location: dotnetbuildskeys
+      permissions: rlwc
+      container: internal
+
+  dotnetbuilds-internal-container-uri-base64:
+    type: base64-encoder
+    parameters:
+      secret: dotnetbuilds-internal-container-uri
+
+  dotnetbuilds-internal-container-checksum-uri:
+    type: azure-storage-container-sas-uri
+    parameters:
+      connectionString:
+        name: dotnetbuilds-connection-string
+        location: dotnetbuildskeys
+      permissions: rlwc
+      container: internal-checksums
+
+  dotnetbuilds-internal-container-checksum-uri-base64:
+    type: base64-encoder
+    parameters:
+      secret: dotnetbuilds-internal-container-checksum-uri
+
+  dotnetbuilds-public-container-uri:
+    type: azure-storage-container-sas-uri
+    parameters:
+      connectionString:
+        name: dotnetbuilds-connection-string
+        location: dotnetbuildskeys
+      permissions: rlwc
+      container: public
+
+  dotnetbuilds-public-container-uri-base64:
+    type: base64-encoder
+    parameters:
+      secret: dotnetbuilds-public-container-uri
+
+  dotnetbuilds-public-container-checksum-uri:
+    type: azure-storage-container-sas-uri
+    parameters:
+      connectionString:
+        name: dotnetbuilds-connection-string
+        location: dotnetbuildskeys
+      permissions: rlwc
+      container: public-checksums
+
+  dotnetbuilds-public-container-checksum-uri-base64:
+    type: base64-encoder
+    parameters:
+      secret: dotnetbuilds-public-container-checksum-uri
+
+
+  dotnetbuilds-account-read-sas-token:
+    type: azure-storage-account-sas-token
+    parameters:
+      connectionString:
+        name: dotnetbuilds-connection-string
+        location: dotnetbuildskeys
+      permissions: rl
+      service: blob
+
+  dotnetbuilds-account-read-sas-token-base64:
+    type: base64-encoder
+    parameters:
+      secret: dotnetbuilds-account-read-sas-token

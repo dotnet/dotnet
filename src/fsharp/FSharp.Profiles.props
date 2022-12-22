@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c) Microsoft Corporation.  All Rights Reserved.  See License.txt in the project root for license information. -->
+<Project>
+
+  <Choose>
+    <When Condition=" '$(TargetFrameworkIdentifier)' == '.NETFramework' ">
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <DefineConstants>$(DefineConstants);NETSTANDARD</DefineConstants>
+        <DefineConstants>$(DefineConstants);FX_NO_WINFORMS</DefineConstants>
+        <OtherFlags>$(OtherFlags) --simpleresolution</OtherFlags>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+
+  <PropertyGroup>
+     <!-- Override the setting for the Arcade UserRuntimeConfig for fsc on .NET Core -->
+    <ServerGarbageCollection>true</ServerGarbageCollection>
+  </PropertyGroup>
+</Project>

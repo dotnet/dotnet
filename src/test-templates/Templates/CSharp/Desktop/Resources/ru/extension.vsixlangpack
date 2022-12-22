@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PackageLanguagePackManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011">
+  <Metadata>
+    <DisplayName>Шаблоны MSTest версии 2</DisplayName>
+    <Description>Предоставляет шаблон проекта Visual Studio для MSTest версии 2.</Description>
+  </Metadata>
+</PackageLanguagePackManifest>

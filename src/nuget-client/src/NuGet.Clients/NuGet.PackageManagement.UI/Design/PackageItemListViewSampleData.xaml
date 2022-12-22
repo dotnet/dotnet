@@ -1,0 +1,16 @@
+<x:Array
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:coll="clr-namespace:System.Collections;assembly=mscorlib"
+  xmlns:nuget="clr-namespace:NuGet.PackageManagement.UI"
+  xmlns:sys="clr-namespace:System;assembly=mscorlib"
+  Type="{x:Type nuget:PackageItemViewModel}"
+  >
+  <nuget:PackageItemViewModel
+    Id="TestPackage1"
+    />
+  <nuget:PackageItemViewModel
+    Id="TestPackage2"
+    />
+</x:Array>

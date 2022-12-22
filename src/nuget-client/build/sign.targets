@@ -1,0 +1,27 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!-- Use NuGet SNK by default for all projects except API.Test. -->
+  <PropertyGroup>
+    <StrongNameKey>$(NUGET_PFX_PATH)</StrongNameKey>
+    <DefaultStrongNameCert>67</DefaultStrongNameCert>
+  </PropertyGroup>
+
+  <!-- Use MSFT SNK for all NuGet.Core test and source projects and since we do not own MSFT SNK we can only delay sign the assemblies. -->
+  <PropertyGroup Condition = " $(MSBuildProjectFullPath.Contains('src\NuGet.Core')) == 'true' or $(MSBuildProjectFullPath.Contains('test/NuGet.Core')) == 'true' or
+                               $(MSBuildProjectFullPath.Contains('src/NuGet.Core')) == 'true' or $(MSBuildProjectFullPath.Contains('test\NuGet.Core')) == 'true' or
+                               $(MSBuildProjectFullPath.Contains('NuGet.CommandLine.csproj')) == 'true' or
+                               $(MSBuildProjectFullPath.Contains('NuGet.Indexing.csproj')) == 'true' ">
+
+    <StrongNameKey>$(MS_PFX_PATH)</StrongNameKey>
+    <DefaultStrongNameCert>MsSharedLib72</DefaultStrongNameCert>
+  </PropertyGroup>
+
+  <PropertyGroup Condition = " Exists($(StrongNameKey)) ">
+    <SignAssembly>true</SignAssembly>
+    <DelaySign Condition="'$(IsXplat)' != 'true'">true</DelaySign>
+    <PublicSign Condition="'$(IsXplat)' == 'true'">true</PublicSign>
+    <AssemblyOriginatorKeyFile Condition = " '$(AssemblyOriginatorKeyFile)' == '' ">$(StrongNameKey)</AssemblyOriginatorKeyFile>
+    <StrongNameCert Condition="'$(StrongNameCert)' == ''">$(DefaultStrongNameCert)</StrongNameCert>
+  </PropertyGroup>
+
+</Project>

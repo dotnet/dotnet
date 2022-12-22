@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!-- Languages supported. -->
+  <ItemGroup>
+    <ResxLang Include="cs;de;es;fr;it;ja;ko;pl;pt-BR;ru;tr;zh-Hans;zh-Hant" />
+  </ItemGroup>
+
+  <!-- Default Localization folder. -->
+  <PropertyGroup>
+    <ResourceDirectory>$(ProjectDir)Resources</ResourceDirectory>
+  </PropertyGroup>
+
+  <!-- Localization for vsix files.-->
+  <!-- Forcing the Localize task and the localized vsixlangpack inclusion to run before the vsix package is created. 
+Without this the vsix gets generated before localization and hence does not include localized assets. This is a workaround for an issue in the build system. -->
+  <Target Name="PostLocalizeCopyArtifacts" DependsOnTargets="CopyStaticResourcesToOutput" BeforeTargets="ZipProjects" Condition="'$(IsVsixProject)'=='true'">
+    <PropertyGroup>
+      <LocalizationPath>$(OutputPath)\localize</LocalizationPath>
+    </PropertyGroup>
+    <ItemGroup>
+        <Content Include="$(LocalizationPath)\zh-Hans\extension.vsixlangpack" Condition="Exists('$(LocalizationPath)\zh-Hans\extension.vsixlangpack')">
+          <Link>zh-Hans\extension.vsixlangpack</Link>
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+          <IncludeInVSIX>true</IncludeInVSIX>
+        </Content>
+        <Content Include="$(LocalizationPath)\zh-Hant\extension.vsixlangpack" Condition="Exists('$(LocalizationPath)\zh-Hant\extension.vsixlangpack')">
+          <Link>zh-Hant\extension.vsixlangpack</Link>
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+          <IncludeInVSIX>true</IncludeInVSIX>
+        </Content>
+        <Content Include="$(LocalizationPath)\cs\extension.vsixlangpack" Condition="Exists('$(LocalizationPath)\cs\extension.vsixlangpack')">
+          <Link>cs\extension.vsixlangpack</Link>
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+          <IncludeInVSIX>true</IncludeInVSIX>
+        </Content>
+        <Content Include="$(LocalizationPath)\de\extension.vsixlangpack" Condition="Exists('$(LocalizationPath)\de\extension.vsixlangpack')">
+          <Link>de\extension.vsixlangpack</Link>
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+          <IncludeInVSIX>true</IncludeInVSIX>
+        </Content>
+        <Content Include="$(LocalizationPath)\es\extension.vsixlangpack" Condition="Exists('$(LocalizationPath)\es\extension.vsixlangpack')">
+          <Link>es\extension.vsixlangpack</Link>
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+          <IncludeInVSIX>true</IncludeInVSIX>
+        </Content>
+        <Content Include="$(LocalizationPath)\fr\extension.vsixlangpack" Condition="Exists('$(LocalizationPath)\fr\extension.vsixlangpack')">
+          <Link>fr\extension.vsixlangpack</Link>
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+          <IncludeInVSIX>true</IncludeInVSIX>
+        </Content>
+        <Content Include="$(LocalizationPath)\it\extension.vsixlangpack" Condition="Exists('$(LocalizationPath)\it\extension.vsixlangpack')">
+          <Link>it\extension.vsixlangpack</Link>
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+          <IncludeInVSIX>true</IncludeInVSIX>
+        </Content>
+        <Content Include="$(LocalizationPath)\ja\extension.vsixlangpack" Condition="Exists('$(LocalizationPath)\ja\extension.vsixlangpack')">
+          <Link>ja\extension.vsixlangpack</Link>
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+          <IncludeInVSIX>true</IncludeInVSIX>
+        </Content>
+        <Content Include="$(LocalizationPath)\ko\extension.vsixlangpack" Condition="Exists('$(LocalizationPath)\ko\extension.vsixlangpack')">
+          <Link>ko\extension.vsixlangpack</Link>
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+          <IncludeInVSIX>true</IncludeInVSIX>
+        </Content>
+        <Content Include="$(LocalizationPath)\pl\extension.vsixlangpack" Condition="Exists('$(LocalizationPath)\pl\extension.vsixlangpack')">
+          <Link>pl\extension.vsixlangpack</Link>
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+          <IncludeInVSIX>true</IncludeInVSIX>
+        </Content>
+        <Content Include="$(LocalizationPath)\pt-BR\extension.vsixlangpack" Condition="Exists('$(LocalizationPath)\pt-BR\extension.vsixlangpack')">
+          <Link>pt-BR\extension.vsixlangpack</Link>
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+          <IncludeInVSIX>true</IncludeInVSIX>
+        </Content>
+        <Content Include="$(LocalizationPath)\ru\extension.vsixlangpack" Condition="Exists('$(LocalizationPath)\ru\extension.vsixlangpack')">
+          <Link>ru\extension.vsixlangpack</Link>
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+          <IncludeInVSIX>true</IncludeInVSIX>
+        </Content>
+        <Content Include="$(LocalizationPath)\tr\extension.vsixlangpack" Condition="Exists('$(LocalizationPath)\tr\extension.vsixlangpack')">
+          <Link>tr\extension.vsixlangpack</Link>
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+          <IncludeInVSIX>true</IncludeInVSIX>
+        </Content>
+      </ItemGroup>
+    </Target>
+
+  <Target Name ="CopyStaticResourcesToOutput">
+    <!-- Until we have a process of converting to/from loc friendly file formats like resx files, the already localized vsixlangpacks are checked in and packaged in the vsix.-->
+    <!-- If we have new vsix projects before we have a process setup, they would not contain localized descriptive infromation until the above process is setup.-->
+    <Exec Command="xcopy /Y /I /S /E $(ProjectDir)Resources $(OutDir)localize" Condition="Exists('$(ProjectDir)Resources')" />
+  </Target>
+</Project>

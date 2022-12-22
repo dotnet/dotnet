@@ -1,0 +1,65 @@
+<Project>
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+
+  <PropertyGroup>
+    <PackagesOutput>$(ProjectDirectory)/pack</PackagesOutput>
+    <RepoApiImplemented>false</RepoApiImplemented>
+    <DeterministicBuildOptOut>true</DeterministicBuildOptOut>
+  </PropertyGroup>
+
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+
+  <Target Name="RepoBuild">
+    <PropertyGroup>
+      <SystemIdentityModelTokensJwtProject>$(ProjectDirectory)src/System.IdentityModel.Tokens.Jwt/System.IdentityModel.Tokens.Jwt.csproj</SystemIdentityModelTokensJwtProject>
+      <MicrosoftIdentityModelsTokenProject>$(ProjectDirectory)src/Microsoft.IdentityModel.Tokens/Microsoft.IdentityModel.Tokens.csproj</MicrosoftIdentityModelsTokenProject>
+      <MicrosoftIdentityModelJsonWebTokensProject>$(ProjectDirectory)src/Microsoft.IdentityModel.JsonWebTokens/Microsoft.IdentityModel.JsonWebTokens.csproj</MicrosoftIdentityModelJsonWebTokensProject>
+      <MicrosoftIdentityModelAbstractionsProject>$(ProjectDirectory)src/Microsoft.IdentityModel.Abstractions/Microsoft.IdentityModel.Abstractions.csproj</MicrosoftIdentityModelAbstractionsProject>
+      <MicrosoftIdentityModelLoggingProject>$(ProjectDirectory)src/Microsoft.IdentityModel.Logging/Microsoft.IdentityModel.Logging.csproj</MicrosoftIdentityModelLoggingProject>
+
+      <BuildCommandArgs>$(BuildCommandArgs) /p:Configuration=$(Configuration)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:MicrosoftSourceLinkVersion=$(MicrosoftSourceLinkVersion)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /v:$(LogVerbosity)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) $(RedirectRepoOutputToLog)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:Version=6.21.0</BuildCommandArgs>
+
+      <PackCommandArgs>$(BuildCommandArgs) --output $(ProjectDirectory)pack</PackCommandArgs>
+    </PropertyGroup>
+
+    <Exec Command="$(DotnetToolCommand) restore /bl:restore.binlog $(SystemIdentityModelTokensJwtProject) $(BuildCommandArgs)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+
+    <Exec Command="$(DotnetToolCommand) build /bl:build.binlog $(SystemIdentityModelTokensJwtProject) $(BuildCommandArgs)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+
+    <Exec Command="$(DotnetToolCommand) pack /bl:pack_TokensJwt.binlog $(SystemIdentityModelTokensJwtProject) $(PackCommandArgs)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+
+    <Exec Command="$(DotnetToolCommand) pack /bl:pack_Tokens.binlog $(MicrosoftIdentityModelsTokenProject) $(PackCommandArgs)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+
+    <Exec Command="$(DotnetToolCommand) pack /bl:pack_JsonWebTokens.binlog $(MicrosoftIdentityModelJsonWebTokensProject) $(PackCommandArgs)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+
+    <Exec Command="$(DotnetToolCommand) pack /bl:pack_Abstractions.binlog $(MicrosoftIdentityModelAbstractionsProject) $(PackCommandArgs)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+
+    <Exec Command="$(DotnetToolCommand) pack /bl:pack_Logging.binlog $(MicrosoftIdentityModelLoggingProject) $(PackCommandArgs)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+  </Target>
+
+</Project>

@@ -1,0 +1,32 @@
+import "StackFrame.bond"
+
+namespace AI
+
+[Description("Exception details of the exception in a chain.")]
+struct ExceptionDetails
+{
+    [Description("In case exception is nested (outer exception contains inner one), the id and outerId properties are used to represent the nesting.")]
+    10: int32 	 id;
+    
+    [Description("The value of outerId is a reference to an element in ExceptionDetails that represents the outer exception")]
+    20: int32 	 outerId;
+    
+    [Description("Exception type name.")]
+    [MaxStringLength("1024")]
+    30: required string 	 typeName;
+    
+    [Description("Exception message.")]
+    [MaxStringLength("32768")]
+    40: required string 	 message;
+    
+    [Description("Indicates if full exception stack is provided in the exception. The stack may be trimmed, such as in the case of a StackOverflow exception.")]
+    50: bool 	 hasFullStack = true;
+    
+    [Description("Text describing the stack. Either stack or parsedStack should have a value.")]
+    [MaxStringLength("32768")]
+    60: string 	 stack;
+    
+    [Description("List of stack frames. Either stack or parsedStack should have a value.")]
+    70: vector<StackFrame> 	 parsedStack;
+    
+}

@@ -1,0 +1,62 @@
+Token Type           Length     Token Text
+Identifier           4          html
+Colon                1          :
+Function             5          lang(
+Identifier           5          fr-ca
+CloseFunctionBrace   1          )
+OpenCurlyBrace       1          {
+Identifier           6          quotes
+Colon                1          :
+String               4          '� '
+String               4          ' �'
+CloseCurlyBrace      1          }
+Identifier           4          html
+Colon                1          :
+Function             5          lang(
+Identifier           2          de
+CloseFunctionBrace   1          )
+OpenCurlyBrace       1          {
+Identifier           6          quotes
+Colon                1          :
+String               3          '�'
+String               3          '�'
+String               7          '\2039'
+String               7          '\203A'
+CloseCurlyBrace      1          }
+Colon                1          :
+Function             5          lang(
+Identifier           2          fr
+CloseFunctionBrace   1          )
+Greater              1          >
+Identifier           1          Q
+OpenCurlyBrace       1          {
+Identifier           6          quotes
+Colon                1          :
+String               4          '� '
+String               4          ' �'
+CloseCurlyBrace      1          }
+Colon                1          :
+Function             5          lang(
+Identifier           2          de
+CloseFunctionBrace   1          )
+Greater              1          >
+Identifier           1          Q
+OpenCurlyBrace       1          {
+Identifier           6          quotes
+Colon                1          :
+String               3          '�'
+String               3          '�'
+String               7          '\2039'
+String               7          '\203A'
+CloseCurlyBrace      1          }
+Identifier           2          li
+OpenCurlyBrace       1          {
+Identifier           10         list-style
+Colon                1          :
+UnicodeRange         5          U+F00
+UnicodeRange         3          U+A
+UnicodeRange         5          U+A-B
+UnicodeRange         5          U+A-C
+Identifier           4          -D-E
+CloseCurlyBrace      1          }
+EndOfFile            0          
