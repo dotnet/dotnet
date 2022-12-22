@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. See the LICENSE file in the project root for more information. -->
+<Project>
+  <PropertyGroup>
+    <NoConfig>true</NoConfig>
+    <NoStandardLib>true</NoStandardLib>
+    <NoCompilerStandardLib>true</NoCompilerStandardLib>
+    <FrameworkPathOverride>..\..\..\..\References\Debugger\CoreSystem</FrameworkPathOverride>
+    <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
+    <SkipGenerateVsdconfig>true</SkipGenerateVsdconfig>
+  </PropertyGroup>
+  <Target Name="CopyFilesToOutputDirectory">
+    <!--
+      Redefine CopyFileToOutputDirectory to be a NOOP.  It's not expedient to set properties
+      to suppress all copying that may occur in the original definition of the Target...
+    -->
+  </Target>
+</Project>

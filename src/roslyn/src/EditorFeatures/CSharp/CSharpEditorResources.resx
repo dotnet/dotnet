@@ -1,0 +1,197 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Fix_interpolated_verbatim_string" xml:space="preserve">
+    <value>Fix interpolated verbatim string</value>
+  </data>
+  <data name="Complete_statement_on_semicolon" xml:space="preserve">
+    <value>Complete statement on ;</value>
+  </data>
+  <data name="Press_TAB_to_insert" xml:space="preserve">
+    <value>     (Press TAB to insert)</value>
+  </data>
+  <data name="Smart_Indenting" xml:space="preserve">
+    <value>Smart Indenting</value>
+  </data>
+  <data name="Split_string" xml:space="preserve">
+    <value>Split string</value>
+  </data>
+  <data name="Chosen_version_0" xml:space="preserve">
+    <value>Chosen version: '{0}'</value>
+  </data>
+  <data name="Could_not_find_by_name_0" xml:space="preserve">
+    <value>Could not find by name: '{0}'</value>
+  </data>
+  <data name="Decompilation_log" xml:space="preserve">
+    <value>Decompilation log</value>
+  </data>
+  <data name="Found_0_assemblies_for_1" xml:space="preserve">
+    <value>Found '{0}' assemblies for '{1}':</value>
+  </data>
+  <data name="Found_exact_match_0" xml:space="preserve">
+    <value>Found exact match: '{0}'</value>
+  </data>
+  <data name="Found_higher_version_match_0" xml:space="preserve">
+    <value>Found higher version match: '{0}'</value>
+  </data>
+  <data name="Found_single_assembly_0" xml:space="preserve">
+    <value>Found single assembly: '{0}'</value>
+  </data>
+  <data name="Load_from_0" xml:space="preserve">
+    <value>Load from: '{0}'</value>
+  </data>
+  <data name="Module_not_found" xml:space="preserve">
+    <value>Module not found!</value>
+  </data>
+  <data name="Resolve_0" xml:space="preserve">
+    <value>Resolve: '{0}'</value>
+  </data>
+  <data name="Resolve_module_0_of_1" xml:space="preserve">
+    <value>Resolve module: '{0}' of '{1}'</value>
+  </data>
+  <data name="WARN_Version_mismatch_Expected_0_Got_1" xml:space="preserve">
+    <value>WARN: Version mismatch. Expected: '{0}', Got: '{1}'</value>
+  </data>
+  <data name="_0_items_in_cache" xml:space="preserve">
+    <value>'{0}' items in cache</value>
+  </data>
+  <data name="Generate_Event_Subscription" xml:space="preserve">
+    <value>Generate Event Subscription</value>
+  </data>
+  <data name="Adding_missing_usings" xml:space="preserve">
+    <value>Adding missing usings...</value>
+    <comment>Shown in a thread await dialog. "usings" is a language specific term and should not be localized</comment>
+  </data>
+  <data name="Add_Missing_Usings_on_Paste" xml:space="preserve">
+    <value>Add Missing Usings on Paste</value>
+    <comment>"usings" is a language specific term and should not be localized</comment>
+  </data>
+  <data name="Outside_namespace" xml:space="preserve">
+    <value>Outside namespace</value>
+  </data>
+  <data name="Split_raw_string" xml:space="preserve">
+    <value>Split raw string</value>
+  </data>
+  <data name="Grow_raw_string" xml:space="preserve">
+    <value>Grow raw string</value>
+  </data>
+  <data name="Fixing_string_literal_after_paste" xml:space="preserve">
+    <value>Fixing string literal after paste</value>
+  </data>
+</root>

@@ -25,6 +25,12 @@
       "commitSha": "2db841fc5f6bc7592b66ffe3bd0e1c888d022f93"
     },
     {
+      "packageVersion": "4.5.0-2.22613.14",
+      "path": "roslyn",
+      "remoteUri": "https://github.com/dotnet/roslyn",
+      "commitSha": "c80d6495d55ebbd64372755d236d0e5971b2dfc7"
+    },
+    {
       "packageVersion": "8.0.0-alpha.1.22605.1",
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
