@@ -1,0 +1,8 @@
+# Apply modern code styles (#3264)
+065f4d042e2ac8f1bd28deeabca38adf2c14b52a
+
+# Reformat projects and script files (#3290)
+5e425f80cb9b1de3be823b83c718c9a057df857a
+
+# Run dotnet format whitespace (#3307)
+cf2bd925e3e11a76bcbd965f5d337b2c8f4dbab1

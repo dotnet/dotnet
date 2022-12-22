@@ -1,0 +1,32 @@
+#nullable enable
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DefaultTestHostManager
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DefaultTestHostManager.AttachDebuggerToTestHost() -> bool
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DefaultTestHostManager.CanExecuteCurrentRunConfiguration(string? runsettingsXml) -> bool
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DefaultTestHostManager.CleanTestHostAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DefaultTestHostManager.DefaultTestHostManager() -> void
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DefaultTestHostManager.GetTestHostConnectionInfo() -> Microsoft.VisualStudio.TestPlatform.ObjectModel.TestHostConnectionInfo
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DefaultTestHostManager.GetTestPlatformExtensions(System.Collections.Generic.IEnumerable<string!>? sources, System.Collections.Generic.IEnumerable<string!>! extensions) -> System.Collections.Generic.IEnumerable<string!>!
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DefaultTestHostManager.GetTestSources(System.Collections.Generic.IEnumerable<string!>! sources) -> System.Collections.Generic.IEnumerable<string!>!
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DefaultTestHostManager.HostExited -> System.EventHandler<Microsoft.VisualStudio.TestPlatform.ObjectModel.Host.HostProviderEventArgs!>?
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DefaultTestHostManager.HostLaunched -> System.EventHandler<Microsoft.VisualStudio.TestPlatform.ObjectModel.Host.HostProviderEventArgs!>?
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DefaultTestHostManager.Initialize(Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging.IMessageLogger? logger, string! runsettingsXml) -> void
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DefaultTestHostManager.LaunchTestHostAsync(Microsoft.VisualStudio.TestPlatform.ObjectModel.TestProcessStartInfo! testHostStartInfo, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>!
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DefaultTestHostManager.Properties.get -> System.Collections.Generic.IDictionary<string!, string!>!
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DefaultTestHostManager.SetCustomLauncher(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Interfaces.ITestHostLauncher! customLauncher) -> void
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DefaultTestHostManager.Shared.get -> bool
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DotnetTestHostManager
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DotnetTestHostManager.AttachDebuggerToTestHost() -> bool
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DotnetTestHostManager.CanExecuteCurrentRunConfiguration(string? runsettingsXml) -> bool
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DotnetTestHostManager.CleanTestHostAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DotnetTestHostManager.DotnetTestHostManager() -> void
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DotnetTestHostManager.GetTestHostConnectionInfo() -> Microsoft.VisualStudio.TestPlatform.ObjectModel.TestHostConnectionInfo
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DotnetTestHostManager.GetTestPlatformExtensions(System.Collections.Generic.IEnumerable<string!>! sources, System.Collections.Generic.IEnumerable<string!>! extensions) -> System.Collections.Generic.IEnumerable<string!>!
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DotnetTestHostManager.GetTestSources(System.Collections.Generic.IEnumerable<string!>! sources) -> System.Collections.Generic.IEnumerable<string!>!
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DotnetTestHostManager.HostExited -> System.EventHandler<Microsoft.VisualStudio.TestPlatform.ObjectModel.Host.HostProviderEventArgs!>?
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DotnetTestHostManager.HostLaunched -> System.EventHandler<Microsoft.VisualStudio.TestPlatform.ObjectModel.Host.HostProviderEventArgs!>?
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DotnetTestHostManager.Initialize(Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging.IMessageLogger? logger, string! runsettingsXml) -> void
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DotnetTestHostManager.LaunchTestHostAsync(Microsoft.VisualStudio.TestPlatform.ObjectModel.TestProcessStartInfo! testHostStartInfo, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>!
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DotnetTestHostManager.SetCustomLauncher(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Interfaces.ITestHostLauncher! customLauncher) -> void
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DotnetTestHostManager.Shared.get -> bool
+virtual Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DefaultTestHostManager.GetTestHostProcessStartInfo(System.Collections.Generic.IEnumerable<string!>! sources, System.Collections.Generic.IDictionary<string!, string?>? environmentVariables, Microsoft.VisualStudio.TestPlatform.ObjectModel.TestRunnerConnectionInfo connectionInfo) -> Microsoft.VisualStudio.TestPlatform.ObjectModel.TestProcessStartInfo!
+virtual Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DotnetTestHostManager.GetTestHostProcessStartInfo(System.Collections.Generic.IEnumerable<string!>! sources, System.Collections.Generic.IDictionary<string!, string?>? environmentVariables, Microsoft.VisualStudio.TestPlatform.ObjectModel.TestRunnerConnectionInfo connectionInfo) -> Microsoft.VisualStudio.TestPlatform.ObjectModel.TestProcessStartInfo!

@@ -1,0 +1,59 @@
+﻿<html xmlns:tp="http://schemas.datacontract.org/2004/07/Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger" xmlns:msxsl="urn:schemas-microsoft-com:xslt">
+  <body>
+    <h1>TestResults</h1>
+    <div class="summary">
+      <h2>Summary</h2><span>
+      TotalTests:  
+    </span><span class="totalTests">1</span><br><span>
+      FailedTests: 
+    </span><span class="failedTests">0</span><br><span>
+      PassedTests: 
+    </span><span class="passedTests">1</span><br><span>
+      SkippedTests:
+    </span><span class="skippedTests">0</span><br><br></div>
+    <h2>Results</h2>
+    <div class="row" onclick="ToggleClass('ID0EE')">
+      <div><span class="pass">
+        ✔
+      </span><span>SampleUnitTestProject.UnitTest1.PassingTest</span><div class="duration"><span>7ms</span><br></div>
+      </div><br></div>
+  </body><script language="javascript">
+        function ToggleClass(id) {
+        var elem = document.getElementById(id);
+        if (elem.style.display == "none") {
+        elem.style.display = "block";
+        }
+        else {
+        elem.style.display = "none";
+        }
+        }
+      </script><style>
+        #testtable {
+        border-collapse: collapse;
+        }
+        #testtable, th, td {
+        border: 1px solid black;
+        }
+        body { font-family: Calibri, Verdana, Arial, sans-serif; background-color: White; color: Black; }
+        h2 {
+        margin-top: 0;
+        }
+        .summary {background-color: #f4f4e1;font-family:monospace; }
+        .row {
+        background-color: #f0f5fa;
+        cursor:pointer;
+        width:100%;
+        }
+        .innerRow{
+        background-color :#e9e1f4;
+        cursor:pointer;
+        width:100%;
+        }
+        .pass { color: #0c0; }
+        .fail { color: #c00; }
+        .errorMessage{ color : brown; }
+        .errorStackTrace{ color: brown; }
+        .duration{float:right;}
+
+      </style>
+</html>

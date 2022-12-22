@@ -1,0 +1,225 @@
+trigger:
+- main
+- rel/*
+
+pr:
+- main
+- rel/*
+
+jobs:
+- job: Windows
+  timeoutInMinutes: 120
+  pool:
+    vmImage: 'windows-latest'
+  variables:
+    buildConfiguration: 'Release'
+  steps:
+  - checkout: self
+    fetchDepth: 1
+    clean: true
+  - task: BatchScript@1
+    displayName: 'Run script build.cmd'
+    inputs:
+      filename: build.cmd
+      arguments: '-verbose -configuration $(buildConfiguration) -ci -steps "InstallDotnet, Restore, UpdateLocalization, Build, Publish, Pack, Manifest"'
+      modifyEnvironment: false
+      failOnStandardError: true
+
+  - task: PowerShell@2
+    displayName: 'Disable Strong Name Validation'
+    inputs:
+      targetType: 'inline'
+      script: |
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\.NETFramework" -Name "AllowStrongNameBypass" -Value 1 -Force
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\.NETFramework" -Name "AllowStrongNameBypass" -Value 1 -Force
+        reg DELETE "HKLM\Software\Microsoft\StrongName\Verification" /f
+        reg DELETE "HKLM\Software\Wow6432Node\Microsoft\StrongName\Verification" /f
+        reg ADD "HKLM\Software\Microsoft\StrongName\Verification\*,*" /f
+        reg ADD "HKLM\Software\Wow6432Node\Microsoft\StrongName\Verification\*,*" /f
+
+  - task: BatchScript@1
+    displayName: 'Run Unit Tests'
+    inputs:
+      filename: test.cmd
+      arguments: '-verbose -configuration $(buildConfiguration)'
+      modifyEnvironment: false
+      failOnStandardError: true
+
+  - task: PublishTestResults@2
+    displayName: 'Publish Test Results **\*.trx'
+    inputs:
+      testResultsFormat: VSTest
+      testResultsFiles: '**\*.trx'
+    condition: succeededOrFailed()
+
+  - task: PublishPipelineArtifact@1
+    inputs:
+      targetPath: '$(Build.SourcesDirectory)\artifacts'
+      artifact: 'testArtifacts'
+      publishLocation: 'pipeline'
+
+- job: WindowsAcceptance
+  dependsOn: Windows
+  timeoutInMinutes: 120
+  pool:
+    vmImage: 'windows-latest'
+  variables:
+    buildConfiguration: 'Release'
+  steps:
+  - checkout: self
+    fetchDepth: 1
+    clean: true
+  - task: PowerShell@2
+    displayName: 'Free space'
+    inputs:
+      targetType: 'inline'
+      script: 'Get-PSDrive -PSProvider FileSystem | Out-String'
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifactName: 'testArtifacts'
+      targetPath: '$(Build.SourcesDirectory)\artifacts'
+
+  - task: PowerShell@2
+    displayName: 'Free space'
+    inputs:
+      targetType: 'inline'
+      script: 'Get-PSDrive -PSProvider FileSystem | Out-String' 
+
+  - task: PowerShell@2
+    inputs:
+      targetType: 'inline'
+      script: 'ls "$(Build.SourcesDirectory)\artifacts\" -Recurse -Dir'
+
+  - task: BatchScript@1
+    displayName: 'Run script build.cmd'
+    inputs:
+      filename: build.cmd
+      # build should not be needed in the end, we are copying the build task from the build folder, but we should get
+      # it either from artifacts, if present, or from extracted package file
+      # Adding it at the moment to avoid this error: #[error]Copy-Item : Cannot find path 'D:\a\1\s\src\Microsoft.TestPlatform.Build\bin\Release\netstandard2.0' because it does  not exist.
+      arguments: '-verbose -configuration $(buildConfiguration) -ci -steps "InstallDotnet, Restore, Build, PrepareAcceptanceTests"'
+      modifyEnvironment: false
+      failOnStandardError: true
+
+  - task: PowerShell@2
+    inputs:
+      targetType: 'inline'
+      script: 'ls "$(Build.SourcesDirectory)\artifacts\Release\packages"'
+
+  - task: PowerShell@2
+    displayName: 'Free space'
+    inputs:
+      targetType: 'inline'
+      script: 'Get-PSDrive -PSProvider FileSystem | Out-String'
+
+  - task: PowerShell@2
+    displayName: 'Disable Strong Name Validation'
+    inputs:
+      targetType: 'inline'
+      script: |
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\.NETFramework" -Name "AllowStrongNameBypass" -Value 1 -Force
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\.NETFramework" -Name "AllowStrongNameBypass" -Value 1 -Force
+        reg DELETE "HKLM\Software\Microsoft\StrongName\Verification" /f
+        reg DELETE "HKLM\Software\Wow6432Node\Microsoft\StrongName\Verification" /f
+        reg ADD "HKLM\Software\Microsoft\StrongName\Verification\*,*" /f
+        reg ADD "HKLM\Software\Wow6432Node\Microsoft\StrongName\Verification\*,*" /f
+
+  - task: BatchScript@1
+    displayName: 'Run Acceptance Tests'
+    inputs:
+      filename: test.cmd
+      arguments: '-verbose -configuration $(buildConfiguration) -p AcceptanceTests -f net48'
+      modifyEnvironment: false
+      failOnStandardError: true
+
+  - task: BatchScript@1
+    displayName: 'Run Platform Tests'
+    inputs:
+      filename: test.cmd
+      arguments: '-verbose -configuration $(buildConfiguration) -p platformtests'
+      modifyEnvironment: false
+      failOnStandardError: true
+
+  - task: BatchScript@1
+    displayName: 'Run Smoke Tests'
+    inputs:
+      filename: test.cmd
+      arguments: '-verbose -configuration $(buildConfiguration) -p smoke'
+      modifyEnvironment: false
+      failOnStandardError: true
+
+  - task: BatchScript@1
+    displayName: 'Run Performance Tests'
+    inputs:
+      filename: test.cmd
+      arguments: '-verbose -configuration $(buildConfiguration) -p Performance -f net48'
+      modifyEnvironment: false
+      failOnStandardError: true
+
+  - task: PublishTestResults@2
+    displayName: 'Publish Test Results **\*.trx'
+    inputs:
+      testResultsFormat: VSTest
+      testResultsFiles: '**\*.trx'
+    condition: succeededOrFailed()
+
+- job: OtherOSes
+  dependsOn: Windows
+  workspace:
+    clean: all
+  strategy:
+    matrix:
+      Ubuntu_22_04:
+        vmImage: ubuntu-22.04
+        pwsh: true
+      macOS_11:
+        vmImage: macOS-11
+        pwsh: true
+  pool:
+    vmImage: $[ variables['vmImage'] ]
+  variables:
+      buildConfiguration: 'Release'
+      VSTestRTMBuild: 'false'
+  steps:
+  - checkout: self
+    fetchDepth: 1
+    clean: true
+  - script: chmod +x ./scripts/vsts-prebuild.sh
+    displayName: 'Preparing for set version'
+
+  - script: ./scripts/vsts-prebuild.sh -build "preview-$(Build.BuildNumber)" -rtm "$(VSTestRTMBuild)" -branch "$(Build.SourceBranch)"
+    displayName: 'Set Version'
+
+  - script: ./build.sh -c $(buildConfiguration) -v "$(BuildVersionPrefix)" -vs "$(BuildVersionSuffix)" -ci true -verbose
+    displayName: 'Build'
+
+  - script: ./test.sh -c $(buildConfiguration) -p Unit
+    displayName: 'Unit tests'
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifactName: 'testArtifacts'
+      targetPath: '$(Build.SourcesDirectory)/artifacts'
+
+  - script: ./tools/dotnet-linux/dotnet build -c $(buildConfiguration) ./test/TestAssets/TestAssets.sln
+    displayName: 'Build test assets'
+
+  - script: ./test.sh -c $(buildConfiguration) -p Acceptance
+    displayName: 'Acceptance tests'
+
+  - task: PublishTestResults@2
+    displayName: 'Publish Test Results **/*.trx'
+    inputs:
+      testResultsFormat: VSTest
+      testResultsFiles: '**/*.trx'
+    condition: succeededOrFailed()
+
+- template: /eng/common/templates/job/source-build.yml
+  parameters:
+    platform:
+      name: Managed
+      container: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-7
+      buildScript: eng/common/build.sh

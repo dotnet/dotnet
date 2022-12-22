@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TestPlatformRoot Condition="$(TestPlatformRoot) == ''">..\..\</TestPlatformRoot>
+    <TestProject>true</TestProject>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+  <Import Project="$(TestPlatformRoot)scripts/build/TestPlatform.Settings.targets" />
+  <PropertyGroup>
+    <TargetFrameworks>net6.0;net48</TargetFrameworks>
+    <TargetFrameworks Condition=" '$(DotNetBuildFromSource)' == 'true' ">netcoreapp3.1</TargetFrameworks>
+    <OutputType Condition=" '$(TargetFramework)' != 'net48' ">Exe</OutputType>
+    <AssemblyName>TranslationLayer.UnitTests</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Microsoft.TestPlatform.VsTestConsole.TranslationLayer\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
+    <Reference Include="System" />
+    <Reference Include="System.Runtime" />
+    <Reference Include="System.Threading.Tasks" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+  <Import Project="$(TestPlatformRoot)scripts\build\TestPlatform.targets" />
+  <Target Name="WorkAroundToSkipPreprocessingBinaries" BeforeTargets="RunProduceContentAssets">
+    <ItemGroup>
+      <FileDependencies>
+        <codeLanguage Condition="'%(FileDependencies.codeLanguage)' == 'any' and '%(FileDependencies.Extension)' == '.dll'">binary</codeLanguage>
+      </FileDependencies>
+    </ItemGroup>
+  </Target>
+</Project>

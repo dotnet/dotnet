@@ -1,0 +1,31 @@
+<coverage line-rate="1" branch-rate="1" complexity="8" version="1.9" timestamp="1631015306" lines-covered="6" branches-covered="1">
+  <sources />
+  <packages>
+    <package line-rate="1" branch-rate="1" complexity="8" name="branches">
+      <classes>
+        <class line-rate="1" branch-rate="1" complexity="8" name="Branches.SwitchConditions" filename="D:\Code\CoverletTester\Branches\SwitchConditions.cs">
+          <methods>
+            <method line-rate="1" branch-rate="1" complexity="8" name="SpecialSwitch" signature="(System.DayOfWeek)">
+              <lines>
+                <line number="12" hits="1" branch="False" />
+                <line number="14" hits="1" branch="False" />
+                <line number="16" hits="1" branch="False" />
+                <line number="18" hits="1" branch="False" />
+                <line number="20" hits="1" branch="False" />
+                <line number="22" hits="1" branch="False" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="12" hits="1" branch="False" />
+            <line number="14" hits="1" branch="False" />
+            <line number="16" hits="1" branch="False" />
+            <line number="18" hits="1" branch="False" />
+            <line number="20" hits="1" branch="False" />
+            <line number="22" hits="1" branch="False" />
+          </lines>
+        </class>
+      </classes>
+    </package>
+  </packages>
+</coverage>

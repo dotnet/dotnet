@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../Resources.resx">
+    <body>
+      <trans-unit id="BuildCompleted">
+        <source>Build completed.</source>
+        <target state="new">Build completed.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="BuildStarted">
+        <source>Build started, please wait...</source>
+        <target state="new">Build started, please wait...</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TestRunningSummary">
+        <source>Test run for {0} ({1})</source>
+        <target state="new">Test run for {0}({1})</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="UpdateTestSdkForCollectingCodeCoverage">
+        <source>Warning: Update the Microsoft.NET.Test.Sdk package reference to version 15.8.0 or later to collect code coverage.</source>
+        <target state="new">To collect code coverage update Microsoft.NET.Test.Sdk package version to latest.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="NoIsTestProjectProperty">
+        <source>Skipping running test for project {0}. To run tests with dotnet test add "&lt;IsTestProject&gt;true&lt;/IsTestProject&gt;" property to project file.</source>
+        <target state="new">Skipping running test for project {0}. To run tests with dotnet test add "&lt;IsTestProject&gt;true&lt;/IsTestProject&gt;" property to project file.</target>
+        <note></note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

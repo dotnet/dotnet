@@ -1,0 +1,35 @@
+﻿<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.TestPlatform.CLI</id>
+    <version>15.0.0</version>
+    <title>Microsoft.TestPlatform.CLI</title>
+    <authors>Microsoft</authors>
+    <owners>Microsoft</owners>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>The cross platform Microsoft Test Platform.</description>
+    <license type="file">LICENSE_NET.txt</license>
+    <iconUrl>http://go.microsoft.com/fwlink/?LinkID=288859</iconUrl>
+    <icon>Icon.png</icon>
+    <projectUrl>https://github.com/microsoft/vstest/</projectUrl>
+    <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+    <tags>vstest visual-studio unittest testplatform mstest microsoft test testing</tags>
+    <repository type="git" 
+                url="https://github.com/microsoft/vstest" 
+                branch="$BranchName$" 
+                commit="$CommitId$" />
+                
+    <contentFiles>
+      <files include="**/*.*" copyToOutput="true" flatten="false" buildAction="None" />
+    </contentFiles>
+  </metadata>
+  <files>
+    <file src="Icon.png" target="" />
+    <file src="licenses\LICENSE_NET.txt" target="" />
+    <!-- Add a third party notice file -->
+    <file src="ThirdPartyNotices.txt" target="" />
+    
+    <!-- excluding dbghelp and cpp as they cannot be re-distributed with sdk, but need to be distributed with VS -->
+    <file src="$TargetFramework$\**\*.*" exclude="**\*.pdb;**\dbghelp.dll;**\*TestTools.CppUnitTestFramework*" target="contentFiles\any\$TargetFramework$" />
+  </files>
+</package>

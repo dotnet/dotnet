@@ -1,0 +1,1239 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../Resources.resx" target-language="ko">
+    <body>
+      <trans-unit id="FileNotFound">
+        <source>'{0}' not found.</source>
+        <note></note>
+        <target state="translated">'{0}'을(를) 찾을 수 없습니다.</target>
+      </trans-unit>
+      <trans-unit id="AvailableDiscoverersHeaderMessage">
+        <source>The following Test Discovery Add-Ins are available:</source>
+        <note></note>
+        <target state="translated">다음 테스트 검색 추가 기능을 사용할 수 있습니다.</target>
+      </trans-unit>
+      <trans-unit id="AvailableExecutorsHeaderMessage">
+        <source>The following Test Execution Add-Ins are available:</source>
+        <note></note>
+        <target state="translated">다음 테스트 실행 추가 기능을 사용할 수 있습니다.</target>
+      </trans-unit>
+      <trans-unit id="AvailableExtensionFormat">
+        <source>    {0}</source>
+        <note>{Locked}</note>
+        <target state="new">    {0}</target>
+      </trans-unit>
+      <trans-unit id="AvailableExtensionsMetadataFormat">
+        <source>        {0}: {1}</source>
+        <note></note>
+        <target state="translated">        {0}: {1}</target>
+      </trans-unit>
+      <trans-unit id="AvailableLoggersHeaderMessage">
+        <source>The following Test Logger Add-Ins are available:</source>
+        <note></note>
+        <target state="translated">다음 테스트 로거 추가 기능을 사용할 수 있습니다.</target>
+      </trans-unit>
+      <trans-unit id="AvailableTestsFormat">
+        <source>    {0}</source>
+        <note>{Locked}</note>
+        <target state="new">    {0}</target>
+      </trans-unit>
+      <trans-unit id="CommandLineError">
+        <source>Error: {0}</source>
+        <note></note>
+        <target state="translated">오류: {0}</target>
+      </trans-unit>
+      <trans-unit id="CommaSeparatedFormat">
+        <source>, {0}</source>
+        <note>Format used to comma separate a list of values.</note>
+        <target state="translated">, {0}</target>
+      </trans-unit>
+      <trans-unit id="DuplicateArgumentError">
+        <source>The parameter "{0}" should be provided only once.</source>
+        <note></note>
+        <target state="translated">"{0}" 매개 변수는 한 번만 제공해야 합니다.</target>
+      </trans-unit>
+      <trans-unit id="ExceptionFromExtension">
+        <source>Exception occurred when instantiating extension '{0}': {1}</source>
+        <note></note>
+        <target state="translated">'{0}' 확장을 인스턴스화할 때 예외가 발생했습니다. {1}</target>
+      </trans-unit>
+      <trans-unit id="ListTestsHeaderMessage">
+        <source>The following Tests are available:</source>
+        <note></note>
+        <target state="translated">다음 테스트를 사용할 수 있습니다.</target>
+      </trans-unit>
+      <trans-unit id="NoArgumentProcessorFound">
+        <source>Unrecognized parameter "{0}".</source>
+        <note></note>
+        <target state="translated">"{0}" 매개 변수를 인식할 수 없습니다.</target>
+      </trans-unit>
+      <trans-unit id="TestSourceFileNotFound">
+        <source>The test source file "{0}" provided was not found.</source>
+        <note></note>
+        <target state="translated">제공된 테스트 소스 파일 "{0}"을(를) 찾을 수 없습니다.</target>
+      </trans-unit>
+      <trans-unit id="LoggerUriInvalid">
+        <source>The Test Logger URI '{0}' is not valid.  The Test Logger will be ignored.</source>
+        <note></note>
+        <target state="translated">테스트 로거 URI '{0}'이(가) 잘못되었습니다. 테스트 로거를 무시합니다.</target>
+      </trans-unit>
+      <trans-unit id="CommandLineInformational">
+        <source>Information: {0}</source>
+        <note></note>
+        <target state="translated">정보: {0}</target>
+      </trans-unit>
+      <trans-unit id="CommandLineWarning">
+        <source>Warning: {0}</source>
+        <note></note>
+        <target state="translated">경고: {0}</target>
+      </trans-unit>
+      <trans-unit id="HelpArgumentHelp">
+        <source>-?|--Help|/?|/Help
+      Display this usage message.</source>
+        <note></note>
+        <target state="translated">-?|--Help|/?|/Help
+      이 사용법 메시지를 표시합니다.</target>
+      </trans-unit>
+      <trans-unit id="CopyrightCommandLineTitle">
+        <source>Copyright (c) Microsoft Corporation.  All rights reserved.</source>
+        <note></note>
+        <target state="translated">Copyright (c) Microsoft Corporation. All rights reserved.</target>
+      </trans-unit>
+      <trans-unit id="MicrosoftCommandLineTitle">
+        <source>Microsoft (R) Test Execution Command Line Tool Version {0}</source>
+        <note></note>
+        <target state="translated">Microsoft (R) Test Execution Command Line Tool Version {0}</target>
+      </trans-unit>
+      <trans-unit id="EnableLoggersArgumentHelp">
+        <source>--logger|/logger:&lt;Logger Uri/FriendlyName&gt;
+      Specify a logger for test results. For example, to log results into a 
+      Visual Studio Test Results File (TRX) use /logger:trx[;LogFileName=&lt;Defaults to unique file name&gt;]
+      Creates file in TestResults directory with given LogFileName.
+
+      Change the verbosity level in log messages for console logger as shown below
+      Example: /logger:console;verbosity=&lt;Defaults to "normal"&gt;
+      Allowed values for verbosity: quiet, minimal, normal and detailed.
+
+      Change the diagnostic level prefix for console logger as shown below
+      Example: /logger:console;prefix=&lt;Defaults to "false"&gt;
+      More info on Console Logger here : https://aka.ms/console-logger</source>
+        <note></note>
+        <target state="translated">--logger|/logger:&lt;Logger Uri/FriendlyName&gt;
+      테스트 결과의 로거를 지정합니다. 예를 들어 
+      Visual Studio TRX(테스트 결과 파일)에 결과를 기록하려면 /logger:trx[;LogFileName=&lt;Defaults to unique file name&gt;]를 사용합니다.
+      지정된 LogFileName으로 TestResults 디렉터리에서 파일을 만듭니다.
+
+      아래 표시된 대로 콘솔 로거에 대한 로그 메시지에서 세부 정보 표시 수준을 변경합니다.
+      예: /logger:console;verbosity=&lt;Defaults to "normal"&gt;
+      허용된 세부 정보 표시 값: quiet, minimal, normal 및 detailed.
+
+      아래 표시된 대로 콘솔 로거에 대한 진단 수준 접두사를 변경합니다.
+      예: /logger:console;prefix=&lt;Defaults to "false"&gt;
+      콘솔 로거에 대한 자세한 내용은 https://aka.ms/console-logger를 참조하세요.</target>
+      </trans-unit>
+      <trans-unit id="HelpDescriptionText">
+        <source>Description: Runs tests from the specified files.</source>
+        <note></note>
+        <target state="translated">설명: 지정한 파일에서 테스트를 실행합니다.</target>
+      </trans-unit>
+      <trans-unit id="HelpOptionsText">
+        <source>Options:</source>
+        <note>Section Header for subsequent command help listing</note>
+        <target state="translated">옵션:</target>
+      </trans-unit>
+      <trans-unit id="HelpUsageText">
+        <source>Usage: vstest.console.exe [Arguments] [Options] [[--] &lt;RunSettings arguments&gt;...]]</source>
+        <note></note>
+        <target state="translated">사용법: vstest.console.exe [Arguments] [Options] [[--] &lt;RunSettings arguments&gt;...]]</target>
+      </trans-unit>
+      <trans-unit id="MissingTestSourceFile">
+        <source>No test source files were specified.</source>
+        <note></note>
+        <target state="translated">테스트 소스 파일을 지정하지 않았습니다.</target>
+      </trans-unit>
+      <trans-unit id="NoArgumentsProvided">
+        <source>No arguments were specified.</source>
+        <note></note>
+        <target state="translated">인수를 지정하지 않았습니다.</target>
+      </trans-unit>
+      <trans-unit id="RunTestsArgumentHelp">
+        <source>[TestFileNames]
+      Run tests from the specified files or wild card pattern. Separate multiple test file names or pattern
+      by spaces. Set console logger verbosity to detailed to view matched test files.
+      Examples: mytestproject.dll
+                mytestproject.dll myothertestproject.exe
+                testproject*.dll my*project.dll</source>
+        <note></note>
+        <target state="translated">[TestFileNames]
+      지정된 파일 또는 와일드카드 패턴에서 테스트를 실행합니다. 여러 테스트 파일 이름 또는 패턴을
+      공백으로 구분합니다. 일치한 테스트 파일을 보려면 콘솔 로거 세부 정보 표시를 [상세]로 설정합니다.
+      예: mytestproject.dll
+                mytestproject.dll myothertestproject.exe
+                testproject*.dll my*project.dll</target>
+      </trans-unit>
+      <trans-unit id="AvailableSettingsProvidersHeaderMessage">
+        <source>The following Settings Providers Add-Ins are available:</source>
+        <note></note>
+        <target state="translated">다음 설정 공급자 추가 기능을 사용할 수 있습니다.</target>
+      </trans-unit>
+      <trans-unit id="RunSettingsArgumentHelp">
+        <source>--Settings|/Settings:&lt;Settings File&gt;
+      Settings to use when running tests.</source>
+        <note></note>
+        <target state="translated">--Settings|/Settings:&lt;Settings File&gt;
+      테스트를 실행할 때 사용할 설정입니다.</target>
+      </trans-unit>
+      <trans-unit id="RunSettingsRequired">
+        <source>The /Settings parameter requires a settings file to be provided.</source>
+        <note></note>
+        <target state="translated">/Settings 매개 변수에는 설정 파일을 제공해야 합니다.</target>
+      </trans-unit>
+      <trans-unit id="RunSettingsFileNotFound">
+        <source>The Settings file '{0}' could not be found.</source>
+        <note></note>
+        <target state="translated">설정 파일 '{0}'을(를) 찾을 수 없습니다.</target>
+      </trans-unit>
+      <trans-unit id="TestRunFailed">
+        <source>Test Run Failed.</source>
+        <note></note>
+        <target state="translated">테스트 실행이 실패했습니다.</target>
+      </trans-unit>
+      <trans-unit id="TestRunSuccessful">
+        <source>Test Run Successful.</source>
+        <note></note>
+        <target state="translated">테스트를 실행했습니다.</target>
+      </trans-unit>
+      <trans-unit id="InvalidInIsolationCommand">
+        <source>Argument {0} is not expected in the 'InIsolation' command. Specify the command without the argument (Example: vstest.console.exe myTests.dll /InIsolation) and try again.</source>
+        <note></note>
+        <target state="translated">'InIsolation' 명령에는 {0} 인수가 필요하지 않습니다. 인수 없이 명령을 지정한 다음(예: vstest.console.exe myTests.dll /InIsolation) 다시 시도하세요.</target>
+      </trans-unit>
+      <trans-unit id="UseVsixExtensionsValueRequired">
+        <source>The /UseVsixExtensions parameter requires a value. If 'true', the installed VSIX extensions (if any) will be used in the test run. If false, they will be ignored.   Example:  /UseVsixExtensions:true</source>
+        <note></note>
+        <target state="translated">/UseVsixExtensions 매개 변수에는 값이 필요합니다. 'true'인 경우 테스트 실행에서 설치된 VSIX 확장(있는 경우)이 사용됩니다. false인 경우에는 확장이 무시됩니다.   예:  /UseVsixExtensions:true</target>
+      </trans-unit>
+      <trans-unit id="InvalidUseVsixExtensionsCommand">
+        <source>Argument {0} is not expected in the 'UseVsixExtensions' command. Specify the command indicating whether the vsix extensions should be used or skipped (Example: vstest.console.exe myTests.dll /UseVsixExtensions:true) and try again.</source>
+        <note></note>
+        <target state="translated">'UseVsixExtensions' 명령에는 {0} 인수가 필요하지 않습니다. vstest.console.exe myTests.dll /UseVsixExtensions:true와 같이 vsix 확장을 사용할지 건너뛸지를 나타내는 명령을 지정하고 다시 시도하세요.</target>
+      </trans-unit>
+      <trans-unit id="InIsolationHelp">
+        <source>--InIsolation|/InIsolation
+      Runs the tests in an isolated process. This makes vstest.console.exe 
+      process less likely to be stopped on an error in the tests, but tests 
+      may run slower.</source>
+        <note></note>
+        <target state="translated">--InIsolation|/InIsolation
+      격리 모드에서 테스트를 실행합니다. 이렇게 하면 테스트에서 오류가 발생해도 
+      vstest.console.exe가 중지될 가능성이 작아지지만 테스트 실행 속도가 
+      느려질 수 있습니다.</target>
+      </trans-unit>
+      <trans-unit id="UseVsixExtensionsHelp">
+        <source>/UseVsixExtensions
+      This makes vstest.console.exe process use or skip the VSIX extensions 
+      installed(if any) in the test run. 
+      Example  /UseVsixExtensions:true</source>
+        <note></note>
+        <target state="translated">/UseVsixExtensions
+      이 옵션을 사용하면 vstest.console.exe 프로세스가 테스트 실행에서 설치된 VSIX 확장(있는 경우)을 
+      사용하거나 건너뛸 수 있습니다. 
+      예:  /UseVsixExtensions:true</target>
+      </trans-unit>
+      <trans-unit id="BatchSizeRequired">
+        <source>The /BatchSize argument requires the size of the batch.  Example:  /BatchSize:10</source>
+        <note></note>
+        <target state="translated">/BatchSize 인수에는 일괄 처리 크기가 필요합니다. 예: /BatchSize:10</target>
+      </trans-unit>
+      <trans-unit id="InvalidBatchSize">
+        <source>Invalid batch size {0}. The batch size should be greater than zero. Example:  /BatchSize:10</source>
+        <note></note>
+        <target state="translated">일괄 처리 크기 {0}이(가) 잘못되었습니다. 일괄 처리 크기는 0보다 커야 합니다. 예: /BatchSize:10</target>
+      </trans-unit>
+      <trans-unit id="Examples">
+        <source>  To run tests:
+    &gt;vstest.console.exe tests.dll 
+  To run tests with additional settings such as  data collectors:
+    &gt;vstest.console.exe  tests.dll /Settings:Local.RunSettings</source>
+        <note></note>
+        <target state="translated">  테스트를 실행하려면:
+    &gt;vstest.console.exe tests.dll 
+  데이터 수집기와 같은 추가 설정을 사용하여 테스트를 실행하려면:
+    &gt;vstest.console.exe  tests.dll /Settings:Local.RunSettings</target>
+      </trans-unit>
+      <trans-unit id="ListDiscoverersHelp">
+        <source>/ListDiscoverers
+      Lists installed test discoverers.</source>
+        <note></note>
+        <target state="translated">/ListDiscoverers
+      설치된 테스트 Discoverer를 나열합니다.</target>
+      </trans-unit>
+      <trans-unit id="ListExecutorsHelp">
+        <source>/ListExecutors
+      Lists installed test executors.</source>
+        <note></note>
+        <target state="translated">/ListExecutors
+      설치된 테스트 Executor를 나열합니다.</target>
+      </trans-unit>
+      <trans-unit id="ListLoggersHelp">
+        <source>/ListLoggers
+      Lists installed test loggers.</source>
+        <note></note>
+        <target state="translated">/ListLoggers
+      설치된 테스트 로거를 나열합니다.</target>
+      </trans-unit>
+      <trans-unit id="ListSettingsProvidersHelp">
+        <source>/ListSettingsProviders
+      Lists installed test settings providers.</source>
+        <note></note>
+        <target state="translated">/ListSettingsProviders
+      설치된 테스트 설정 공급자를 나열합니다.</target>
+      </trans-unit>
+      <trans-unit id="ListTestsHelp">
+        <source>-lt|--ListTests|/lt|/ListTests:&lt;File Name&gt;
+      Lists all discovered tests from the given test container.</source>
+        <note></note>
+        <target state="translated">-lt|--ListTests|/lt|/ListTests:&lt;File Name&gt;
+      지정된 테스트 컨테이너에서 검색된 모든 테스트를 나열합니다.</target>
+      </trans-unit>
+      <trans-unit id="TimeElapsed">
+        <source>Time elapsed :</source>
+        <note></note>
+        <target state="translated">경과 시간:</target>
+      </trans-unit>
+      <trans-unit id="SpecificTestsRequired">
+        <source>The /Tests argument requires one or more specific test names or their substrings.
+       Examples: /Tests:TestsMethod1, /Tests:TestMethod1,method2 </source>
+        <note></note>
+        <target state="translated">/Tests 인수에는 하나 이상의 특정 테스트 이름 또는 해당 하위 문자열이 필요합니다.
+       예: /Tests:TestsMethod1, /Tests:TestMethod1,method2 </target>
+      </trans-unit>
+      <trans-unit id="NoTestsAvailableAfterFiltering">
+        <source>A total of {0} tests were discovered but no test matches the specified selection criteria({1}). Use right value(s) and try again.</source>
+        <note></note>
+        <target state="translated">총 {0}개의 테스트가 검색되었지만 지정된 선택 기준({1})과 일치하는 테스트가 없습니다. 올바른 값을 사용하여 다시 시도하세요.</target>
+      </trans-unit>
+      <trans-unit id="SearchStringDelimiter">
+        <source>,</source>
+        <note></note>
+        <target state="translated">,</target>
+      </trans-unit>
+      <trans-unit id="RunSpecificTestsHelp">
+        <source>--Tests|/Tests:&lt;Test Names&gt;
+      Run tests with names that match the provided values. To provide multiple
+      values, separate them by commas.
+      Examples: /Tests:TestMethod1
+                /Tests:TestMethod1,testMethod2</source>
+        <note>Please verify if the console output looks good after modifiaction. </note>
+        <target state="translated">--Tests|/Tests:&lt;Test Names&gt;
+      제공된 값과 일치하는 이름으로 테스트를 실행합니다. 여러 값을 제공하려면 
+      쉼표로 구분합니다.
+      예: /Tests:TestMethod1
+                /Tests:TestMethod1,testMethod2</target>
+      </trans-unit>
+      <trans-unit id="SwitchToNoIsolation">
+        <source>Using Isolation mode to run the tests as diagnostic data adapters were enabled in the runsettings. Use the /inIsolation parameter to suppress this warning.</source>
+        <note></note>
+        <target state="translated">진단 데이터 어댑터가 runsettings에서 사용하도록 설정되었으므로 격리 모드를 사용하여 테스트를 실행합니다. 이 경고를 표시하지 않으려면 /inIsolation 매개 변수를 사용하세요.</target>
+      </trans-unit>
+      <trans-unit id="SwitchToIsolationInAppContainerMode">
+        <source>Using Isolation mode to run unit tests for Windows Store apps. Use the /InIsolation parameter to suppress this warning.</source>
+        <note></note>
+        <target state="translated">격리 모드를 사용하여 Windows 스토어 앱에 대한 단위 테스트를 실행합니다. 이 경고를 표시하지 않으려면 /InIsolation 매개 변수를 사용하세요.</target>
+      </trans-unit>
+      <trans-unit id="DisablingDataCollectionInAppContainerTestExecution">
+        <source>Diagnostic data adapters are not supported when running unit tests for Windows Store apps. Remove diagnostic data adapters settings from settings.</source>
+        <note></note>
+        <target state="translated">Windows 스토어 앱에 대한 단위 테스트를 실행할 때는 진단 데이터 어댑터가 지원되지 않습니다. 설정에서 진단 데이터 어댑터 설정을 제거하세요.</target>
+      </trans-unit>
+      <trans-unit id="LoggerFriendlyNameFormat">
+        <source>        FriendlyName: {0}</source>
+        <note></note>
+        <target state="translated">        FriendlyName: {0}</target>
+      </trans-unit>
+      <trans-unit id="ExtensionUriFormat">
+        <source>        Uri: {0}</source>
+        <note></note>
+        <target state="translated">        URI: {0}</target>
+      </trans-unit>
+      <trans-unit id="SettingFormat">
+        <source>        SettingName: {0}</source>
+        <note></note>
+        <target state="translated">        SettingName: {0}</target>
+      </trans-unit>
+      <trans-unit id="SupportedFileTypesIndicator">
+        <source>        Supported File Types:</source>
+        <note></note>
+        <target state="translated">        지원되는 파일 형식:</target>
+      </trans-unit>
+      <trans-unit id="SupportedFileWithoutSeparator">
+        <source> {0}</source>
+        <note></note>
+        <target state="translated"> {0}</target>
+      </trans-unit>
+      <trans-unit id="SupportedFileWithSeparator">
+        <source> {0},</source>
+        <note></note>
+        <target state="translated"> {0},</target>
+      </trans-unit>
+      <trans-unit id="UriOfDefaultExecutor">
+        <source>        Default Executor Uri: {0}</source>
+        <note></note>
+        <target state="translated">        기본 Executor URI: {0}</target>
+      </trans-unit>
+      <trans-unit id="LoggerUriFormat">
+        <source>        Uri: {0}</source>
+        <note></note>
+        <target state="translated">        URI: {0}</target>
+      </trans-unit>
+      <trans-unit id="InvalidPlatformType">
+        <source>Invalid platform type: {0}. Valid platform types are {1}.</source>
+        <note>0 is the platform type e.g. x86, and 1 is a list of the built in platforms, e.g. x86, x64</note>
+        <target state="translated">{0} 플랫폼 형식이 잘못되었습니다. 올바른 플랫폼 형식은 {1}입니다.</target>
+      </trans-unit>
+      <trans-unit id="PlatformTypeRequired">
+        <source>The /Platform argument requires the target platform type for the test run to be provided.   Example:  /Platform:x86</source>
+        <note></note>
+        <target state="translated">/Platform 인수에는 테스트 실행의 대상 플랫폼 형식을 제공해야 합니다. 예: /Platform:x86</target>
+      </trans-unit>
+      <trans-unit id="PlatformArgumentHelp">
+        <source>--Platform|/Platform:&lt;Platform type&gt;
+      Target platform architecture to be used for test execution. 
+      Valid values are x86, x64 and ARM.</source>
+        <note></note>
+        <target state="translated">--Platform|/Platform:&lt;Platform type&gt;
+      테스트를 실행하는 데 사용할 대상 플랫폼 아키텍처입니다. 
+      유효한 값은 x86, x64 및 ARM입니다.</target>
+      </trans-unit>
+      <trans-unit id="SwitchToIsolationInMultiTargetingMode">
+        <source>Using Isolation mode to run tests as required by effective Platform:{0} and .Net Framework:{1} settings for test run. Use the /inIsolation parameter to suppress this warning.</source>
+        <note></note>
+        <target state="translated">유효 플랫폼 {0} 및 .NET Framework {1} 설정에서 테스트 실행에 요구하는 대로 격리 모드를 사용하여 테스트를 실행합니다. 이 경고를 표시하지 않으려면 /inIsolation 매개 변수를 사용하세요.</target>
+      </trans-unit>
+      <trans-unit id="FrameworkArgumentHelp">
+        <source>--Framework|/Framework:&lt;Framework Version&gt;
+      Target .Net Framework version to be used for test execution. 
+      Valid values are ".NETFramework,Version=v4.5.1", ".NETCoreApp,Version=v1.0" etc.
+      Other supported values are Framework40, Framework45, FrameworkCore10 and FrameworkUap10.</source>
+        <note></note>
+        <target state="translated">--Framework|/Framework:&lt;Framework Version&gt;
+      테스트 실행에 사용할 대상 .NET Framework 버전입니다. 
+      유효한 값은 ".NETFramework,Version=v4.5.1", ".NETCoreApp,Version=v1.0" 등입니다.
+      기타 지원되는 값은 Framework40, Framework45, FrameworkCore10 및 FrameworkUap10입니다.</target>
+      </trans-unit>
+      <trans-unit id="FrameworkVersionRequired">
+        <source>The /Framework argument requires the target .Net Framework version for the test run.   Example:  /Framework:".NETFramework,Version=v4.5.1"</source>
+        <note></note>
+        <target state="translated">/Framework 인수에는 테스트 실행의 대상 .NET Framework 버전이 필요합니다. 예: /Framework:".NETFramework,Version=v4.5.1"</target>
+      </trans-unit>
+      <trans-unit id="InvalidFrameworkVersion">
+        <source>Invalid .Net Framework version:{0}. Please give the fullname of the TargetFramework(Example: .NETCoreApp,Version=v2.0). Other supported .Net Framework versions are Framework40, Framework45, FrameworkCore10 and FrameworkUap10.</source>
+        <note></note>
+        <target state="translated">.NET Framework 버전 {0}이(가) 잘못되었습니다. TargetFramework의 전체 이름을 지정하세요(예: .NETCoreApp,Version=v2.0). 지원되는 다른 .NET Framework 버전은 Framework40, Framework45, FrameworkCore10 및 FrameworkUap10입니다.</target>
+      </trans-unit>
+      <trans-unit id="AppContainerTestPrerequisiteFail">
+        <source>Could not start test run for unit tests for Windows Store app: {0}.</source>
+        <note></note>
+        <target state="translated">Windows 스토어 앱에 대한 단위 테스트의 테스트 실행을 시작할 수 없습니다. {0}.</target>
+      </trans-unit>
+      <trans-unit id="TestCaseFilterArgumentHelp">
+        <source>--TestCaseFilter|/TestCaseFilter:&lt;Expression&gt;
+      Run tests that match the given expression.
+      &lt;Expression&gt; is of the format &lt;property&gt;Operator&lt;value&gt;[|&amp;&lt;Expression&gt;]
+         where Operator is one of =, != or ~  (Operator ~ has 'contains'
+         semantics and is applicable for string properties like DisplayName).
+         Parenthesis () can be used to group sub-expressions.
+      Examples: /TestCaseFilter:"Priority=1"
+                /TestCaseFilter:"(FullyQualifiedName~Nightly
+                                  |Name=MyTestMethod)"</source>
+        <note></note>
+        <target state="translated">--TestCaseFilter|/TestCaseFilter:&lt;Expression&gt;
+      지정된 식과 일치하는 테스트를 실행합니다.
+      &lt;Expression&gt;은 &lt;property&gt;연산자&lt;value&gt;[|&amp;&lt;Expression&gt;]
+         형식이며, 여기서 연산자는 =, !=, ~ 중 하나입니다(~ 연산자는 '포함' 의미 체계를
+         사용하며 DisplayName 같은 문자열 속성에 적용됩니다).
+         괄호 ()를 사용하여 하위 식을 그룹화할 수 있습니다.
+      예: /TestCaseFilter:"Priority=1"
+                /TestCaseFilter:"(FullyQualifiedName~Nightly
+                                  |Name=MyTestMethod)"</target>
+      </trans-unit>
+      <trans-unit id="TestCaseFilterValueRequired">
+        <source>The /TestCaseFilter argument requires the filter value.
+        Filter value can be &lt;property&gt;=&lt;value&gt; type.
+        Examples: "Priority=1", "TestCategory=Nightly"</source>
+        <note></note>
+        <target state="translated">/TestCaseFilter 인수에는 필터 값이 필요합니다.
+        필터 값은 &lt;property&gt;=&lt;value&gt; 형식이 될 수 있습니다.
+        예: "Priority=1", "TestCategory=Nightly"</target>
+      </trans-unit>
+      <trans-unit id="InvalidTestCaseFilterValueForSpecificTests">
+        <source>The /TestCaseFilter argument cannot be specified with /Tests. Filtering of test cases is not applicable when tests are specified.</source>
+        <note></note>
+        <target state="translated">/TestCaseFilter 인수는 /Tests로 지정할 수 없습니다. 테스트가 지정된 경우 테스트 사례 필터링은 적용할 수 없습니다.</target>
+      </trans-unit>
+      <trans-unit id="NonDefaultFrameworkAndOrArchDetected">
+        <source>{0} is built for {1}/{2}. The test assemblies specified in a run should have a common target .Net framework and platform.</source>
+        <note></note>
+        <target state="translated">{0}은(는) {1}/{2}에 대해 빌드됩니다. 실행 중에 지정된 테스트 어셈블리는 공통 대상 .NET Framework와 플랫폼을 사용해야 합니다.</target>
+      </trans-unit>
+      <trans-unit id="RunSingleAppContainerSource">
+        <source>Only one app package (.appx file) can be specified for running tests.</source>
+        <note></note>
+        <target state="translated">테스트 실행을 위해 하나의 app 패키지(.appx file)만 지정할 수 있습니다.</target>
+      </trans-unit>
+      <trans-unit id="StartingDiscovery">
+        <source>Starting test discovery, please wait...</source>
+        <note></note>
+        <target state="translated">테스트 검색을 시작하는 중입니다. 잠시 기다려 주세요...</target>
+      </trans-unit>
+      <trans-unit id="StartingExecution">
+        <source>Starting test execution, please wait...</source>
+        <note></note>
+        <target state="translated">테스트 실행을 시작하는 중입니다. 잠시 기다려 주세요...</target>
+      </trans-unit>
+      <trans-unit id="DisablingDCOnExceptionWhileParsingDCInfo">
+        <source>Reading diagnostic data adapter settings threw an running '{0}'. All diagnostic data adapters will be skipped in this run.</source>
+        <note></note>
+        <target state="translated">진단 데이터 어댑터 설정을 읽는 중에 실행 중인 '{0}'이(가) throw되었습니다. 이 실행에서 모든 진단 데이터 어댑터를 건너뜁니다.</target>
+      </trans-unit>
+      <trans-unit id="EnableCodeCoverageArgumentProcessorHelp">
+        <source>/EnableCodeCoverage
+      Enables data collector 'CodeCoverage' for the test run.</source>
+        <note></note>
+        <target state="translated">/EnableCodeCoverage
+      테스트 실행에 대해 데이터 수집기 'CodeCoverage'를 사용하도록 설정합니다.</target>
+      </trans-unit>
+      <trans-unit id="InvalidEnableCodeCoverageCommand">
+        <source>Argument {0} is not expected in the 'EnableCodeCoverage' command. Specify the command without the argument (Example: vstest.console.exe myTests.dll /EnableCodeCoverage) and try again.</source>
+        <note></note>
+        <target state="translated">'EnableCodeCoverage' 명령에는 {0} 인수가 필요하지 않습니다. 인수 없이 명령을 지정한 다음(예: vstest.console.exe myTests.dll /EnableCodeCoverage) 다시 시도하세요.</target>
+      </trans-unit>
+      <trans-unit id="NoTestEntryPoint">
+        <source>App package '{0}' does not has test executor entry point. For running unit tests for Windows Store apps, create app package using Windows Store app Unit Test Library project.</source>
+        <note></note>
+        <target state="translated">앱 패키지 '{0}'에 테스트 Executor 진입점이 없습니다. Windows 스토어 앱에 대한 단위 테스트를 실행하려면 Windows 스토어 앱 단위 테스트 라이브러리 프로젝트를 사용하여 앱 패키지를 만드세요.</target>
+      </trans-unit>
+      <trans-unit id="DisablingCodeCoverageInAppContainerTestExecution">
+        <source>Code coverage is not available for Windows Store apps. Code coverage analysis skipped for this test run.</source>
+        <note></note>
+        <target state="translated">Windows 스토어 앱에서는 코드 검사를 사용할 수 없습니다. 이 테스트 실행에 대해 코드 검사 분석을 건너뛰었습니다.</target>
+      </trans-unit>
+      <trans-unit id="SomeTestsUnavailableAfterFiltering">
+        <source>A total of {0} tests were discovered but some tests do not match the specified selection criteria({1}). Use right value(s) and try again.</source>
+        <note></note>
+        <target state="translated">총 {0}개의 테스트가 검색되었지만 일부 테스트는 지정된 선택 기준({1})과 일치하지 않습니다. 올바른 값을 사용하여 다시 시도하세요.</target>
+      </trans-unit>
+      <trans-unit id="TestAdapterPathHelp">
+        <source>--TestAdapterPath|/TestAdapterPath
+      This makes vstest.console.exe process use custom test adapters
+      from a given path (if any) in the test run. 
+      Example  /TestAdapterPath:&lt;pathToCustomAdapters&gt;</source>
+        <note></note>
+        <target state="translated">--TestAdapterPath|/TestAdapterPath
+      이 옵션을 사용하면 vstest.console.exe 프로세스가 테스트 실행 시
+      지정된 경로(있는 경우)에서 사용자 지정 테스트 어댑터를 사용합니다. 
+      예:  /TestAdapterPath:&lt;pathToCustomAdapters&gt;</target>
+      </trans-unit>
+      <trans-unit id="TestAdapterPathValueRequired">
+        <source>The /TestAdapterPath parameter requires a value, which is path of a location containing custom test adapters. Example:  /TestAdapterPath:c:\MyCustomAdapters</source>
+        <note></note>
+        <target state="translated">/TestAdapterPath 매개 변수에는 사용자 지정 테스트 어댑터가 포함된 위치의 일부인 값이 필요합니다. 예: /TestAdapterPath:c:\MyCustomAdapters</target>
+      </trans-unit>
+      <trans-unit id="InvalidTestAdapterPathCommand">
+        <source>The path '{0}' specified in the 'TestAdapterPath' is invalid. Error: {1}</source>
+        <note></note>
+        <target state="translated">'TestAdapterPath'에 지정된 경로 '{0}'이(가) 잘못되었습니다. 오류: {1}</target>
+      </trans-unit>
+      <trans-unit id="TestAdapterPathDoesNotExist">
+        <source>The custom test adapter search path provided was not found, provide a valid path and try again.</source>
+        <note></note>
+        <target state="translated">제공한 사용자 지정 테스트 어댑터 검색 경로를 찾을 수 없습니다. 올바른 경로를 제공하고 다시 시도하세요.</target>
+      </trans-unit>
+      <trans-unit id="NoAdaptersFoundInTestAdapterPath">
+        <source>The path '{0}' specified in the 'TestAdapterPath' does not contain any test adapters, provide a valid path and try again.</source>
+        <note></note>
+        <target state="translated">'TestAdapterPath'에 지정된 경로 '{0}'에 테스트 어댑터가 포함되지 않습니다. 올바른 경로를 제공하고 다시 시도하세요.</target>
+      </trans-unit>
+      <trans-unit id="PhoneAppContainerTestPrerequisiteFail">
+        <source>Could not start test run for the tests for Windows Phone app: {0}.</source>
+        <note></note>
+        <target state="translated">Windows Phone 앱 {0}에 대한 테스트를 위해 테스트 실행을 시작할 수 없습니다.</target>
+      </trans-unit>
+      <trans-unit id="SwitchToIsolationInPhoneAppContainerMode">
+        <source>Using Isolation mode to run unit tests for Windows Phone apps. Use the /InIsolation parameter to suppress this warning.</source>
+        <note></note>
+        <target state="translated">격리 모드를 사용하여 Windows Phone 앱에 대한 단위 테스트를 실행합니다. 이 경고를 표시하지 않으려면 /InIsolation 매개 변수를 사용하세요.</target>
+      </trans-unit>
+      <trans-unit id="DisablingCodeCoverageInPhoneAppContainerTestExecution">
+        <source>Code coverage is not available for Windows Phone apps. Code coverage analysis skipped for this test run.</source>
+        <note></note>
+        <target state="translated">Windows Phone 앱에서는 코드 검사를 사용할 수 없습니다. 이 테스트 실행에 대해 코드 검사 분석을 건너뛰었습니다.</target>
+      </trans-unit>
+      <trans-unit id="DisablingDataCollectionInPhoneAppContainerTestExecution">
+        <source>Diagnostic data adapters are not supported when running unit tests for Windows Phone apps. Remove diagnostic data adapters settings from settings.</source>
+        <note></note>
+        <target state="translated">Windows Phone 앱에 대한 단위 테스트를 실행할 때는 진단 데이터 어댑터가 지원되지 않습니다. 설정에서 진단 데이터 어댑터 설정을 제거하세요.</target>
+      </trans-unit>
+      <trans-unit id="PhoneNoTestEntryPoint">
+        <source>App package '{0}' does not has test executor entry point. For running unit tests for Windows Phone apps, create app package using Windows Phone Unit Test App project.</source>
+        <note></note>
+        <target state="translated">앱 패키지 '{0}'에 테스트 Executor 진입점이 없습니다. Windows Phone 앱에 대한 단위 테스트를 실행하려면 Windows Phone 앱 단위 테스트 앱 프로젝트를 사용하여 앱 패키지를 만드세요.</target>
+      </trans-unit>
+      <trans-unit id="TestSettingsFrameworkMismatch">
+        <source>Using framework {0} to run the tests. Specify /Framework:{1} to suppress this warning.</source>
+        <note></note>
+        <target state="translated">{0} 프레임워크를 사용하여 테스트를 실행합니다. 이 경고가 표시되지 않게 하려면 /Framework:{1}을(를) 지정하세요.</target>
+      </trans-unit>
+      <trans-unit id="AppxBundleSourceWarning">
+        <source>No test found in the specified test containers. Additionally, Microsoft Windows Store Unit test adapter does not support .appxbundle files. Create an appx (set Generate App bundle option to Never) when creating App Package and try again.</source>
+        <note></note>
+        <target state="translated">지정한 테스트 컨테이너에 테스트가 없습니다. 또한 Microsoft Windows 스토어 단위 테스트 어댑터에서 .appxbundle 파일을 지원하지 않습니다. 앱 패키지를 만들 때는 appx를 생성([앱 번들 생성] 옵션을 [사용 안 함]으로 설정)하고 다시 시도하세요.</target>
+      </trans-unit>
+      <trans-unit id="ParallelArgumentProcessorHelp">
+        <source>--Parallel|/Parallel
+      Specifies that the tests be executed in parallel. By default up
+      to all available cores on the machine may be used.
+      The number of cores to use may be configured using a settings file.</source>
+        <note></note>
+        <target state="translated">--Parallel|/Parallel
+      테스트가 병렬로 실행되도록 지정합니다. 기본적으로
+      컴퓨터에서 사용 가능한 모든 코어를 사용할 수 있습니다.
+      사용할 코어 수는 설정 파일을 사용하여 구성할 수 있습니다.</target>
+      </trans-unit>
+      <trans-unit id="InvalidParallelCommand">
+        <source>Argument {0} is not expected in the 'Parallel' command. Specify the command without the argument (Example: vstest.console.exe myTests.dll /Parallel) and try again.</source>
+        <note></note>
+        <target state="translated">'Parallel' 명령에는 {0} 인수가 필요하지 않습니다. 인수 없이 명령을 지정한 다음(예: vstest.console.exe myTests.dll /Parallel) 다시 시도하세요.</target>
+      </trans-unit>
+      <trans-unit id="CannotBeNullOrEmpty">
+        <source>Cannot be null or empty</source>
+        <note></note>
+        <target state="translated">null이거나 비워 둘 수 없습니다.</target>
+      </trans-unit>
+      <trans-unit id="PortArgumentHelp">
+        <source>--Port|/Port:&lt;Port&gt;
+      The Port for socket connection and receiving the event messages.</source>
+        <note></note>
+        <target state="translated">--Port|/Port:&lt;Port&gt;
+      소켓 연결 및 이벤트 메시지 수신용 포트입니다.</target>
+      </trans-unit>
+      <trans-unit id="InvalidPortArgument">
+        <source>The --Port|/Port argument requires the port number which is an integer. Specify the port for socket connection and receiving the event messages.</source>
+        <note></note>
+        <target state="translated">--Port|/Port 인수에는 정수인 포트 번호가 필요합니다. 소켓 연결 및 이벤트 메시지 수신에 사용할 포트를 지정하세요.</target>
+      </trans-unit>
+      <trans-unit id="AssemblyPathInvalid">
+        <source>Unable to find the assembly under test. Please make sure that the project is built.</source>
+        <note></note>
+        <target state="translated">테스트 중인 어셈블리를 찾을 수 없습니다. 프로젝트가 빌드되었는지 확인하세요.</target>
+      </trans-unit>
+      <trans-unit id="ProjectPathNotFound">
+        <source>The Path {0} does not exist.</source>
+        <note></note>
+        <target state="translated">{0} 경로가 없습니다.</target>
+      </trans-unit>
+      <trans-unit id="BuildBasePathArgumentHelp">
+        <source>--BuildBasePath|/BuildBasePath:&lt;BuildBasePath&gt;
+      The directory containing the temporary outputs.</source>
+        <note></note>
+        <target state="translated">--BuildBasePath|/BuildBasePath:&lt;BuildBasePath&gt;
+      임시 출력을 포함하는 디렉터리입니다.</target>
+      </trans-unit>
+      <trans-unit id="ConfigurationArgumentHelp">
+        <source>-c|--Configuration|/c|/Configuration:&lt;Configuration&gt;
+      The configuration the project is built for i.e. Debug/Release</source>
+        <note></note>
+        <target state="translated">-c|--Configuration|/c|/Configuration:&lt;Configuration&gt;
+      디버그/릴리스를 위해 프로젝트가 빌드되는 구성입니다.</target>
+      </trans-unit>
+      <trans-unit id="InvalidConfiguration">
+        <source>The given configuration is invalid.</source>
+        <note></note>
+        <target state="translated">지정된 구성이 잘못되었습니다.</target>
+      </trans-unit>
+      <trans-unit id="OutputArgumentHelp">
+        <source>-o|--Output|/o|/Output:&lt;Output&gt;
+      The directory containing the binaries to run.</source>
+        <note></note>
+        <target state="translated">-o|--Output|/o|/Output:&lt;Output&gt;
+      실행할 이진 파일을 포함하는 디렉터리입니다.</target>
+      </trans-unit>
+      <trans-unit id="BuildBasePathNotFound">
+        <source>The BuildBasePath was not found, provide a valid path and try again.</source>
+        <note></note>
+        <target state="translated">BuildBasePath를 찾을 수 없습니다. 올바른 경로를 제공하고 다시 시도하세요.</target>
+      </trans-unit>
+      <trans-unit id="OutputPathNotFound">
+        <source>The Output path was not found, provide a valid path and try again.</source>
+        <note></note>
+        <target state="translated">출력 경로를 찾을 수 없습니다. 올바른 경로를 제공하고 다시 시도하세요.</target>
+      </trans-unit>
+      <trans-unit id="AddnlInfoMessagesBanner">
+        <source>Additional Information Messages:</source>
+        <note></note>
+        <target state="translated">추가 정보 메시지:</target>
+      </trans-unit>
+      <trans-unit id="Days">
+        <source>Days</source>
+        <note></note>
+        <target state="translated">일</target>
+      </trans-unit>
+      <trans-unit id="ErrorMessageBanner">
+        <source>Error Message:</source>
+        <note></note>
+        <target state="translated">오류 메시지:</target>
+      </trans-unit>
+      <trans-unit id="ExecutionTimeFormatString">
+        <source> Total time: {0:0.0000} {1}</source>
+        <note></note>
+        <target state="translated"> 총 시간: {0:0.0000} {1}</target>
+      </trans-unit>
+      <trans-unit id="Hours">
+        <source>Hours</source>
+        <note></note>
+        <target state="translated">시간</target>
+      </trans-unit>
+      <trans-unit id="LoggerNotFound">
+        <source>Could not find a test logger with URI or FriendlyName '{0}'.</source>
+        <note></note>
+        <target state="translated">URI 또는 FriendlyName이 '{0}'인 테스트 로거를 찾을 수 없습니다.</target>
+      </trans-unit>
+      <trans-unit id="Minutes">
+        <source>Minutes</source>
+        <note></note>
+        <target state="translated">분</target>
+      </trans-unit>
+      <trans-unit id="Seconds">
+        <source>Seconds</source>
+        <note></note>
+        <target state="translated">초</target>
+      </trans-unit>
+      <trans-unit id="StacktraceBanner">
+        <source>Stack Trace:</source>
+        <note></note>
+        <target state="translated">스택 추적:</target>
+      </trans-unit>
+      <trans-unit id="StdErrMessagesBanner">
+        <source>Standard Error Messages:</source>
+        <note></note>
+        <target state="translated">표준 오류 메시지:</target>
+      </trans-unit>
+      <trans-unit id="StdOutMessagesBanner">
+        <source>Standard Output Messages:</source>
+        <note></note>
+        <target state="translated">표준 출력 메시지:</target>
+      </trans-unit>
+      <trans-unit id="AttachmentsBanner">
+        <source>Attachments:</source>
+        <note></note>
+        <target state="translated">첨부 파일:</target>
+      </trans-unit>
+      <trans-unit id="AttachmentOutputFormat">
+        <source>  {0}</source>
+        <note></note>
+        <target state="translated">  {0}</target>
+      </trans-unit>
+      <trans-unit id="NoTestsAvailableInSources">
+        <source>No test is available in {0}. Make sure that installed test discoverers &amp; executors, platform &amp; framework version settings are appropriate and try again.</source>
+        <note></note>
+        <target state="translated">{0}에서 테스트를 사용할 수 없습니다. 설치된 테스트 Discoverer와 Executor, 플랫폼 및 프레임워크 버전 설정이 적절한지 확인한 후에 다시 시도하세요.</target>
+      </trans-unit>
+      <trans-unit id="FailedTestIndicator">
+        <source>Failed</source>
+        <note>Message which is written to the console when a test fails.</note>
+        <target state="translated">실패</target>
+      </trans-unit>
+      <trans-unit id="PassedTestIndicator">
+        <source>Passed</source>
+        <note>Message which is written to the console when a test passes.</note>
+        <target state="translated">통과</target>
+      </trans-unit>
+      <trans-unit id="SkippedTestIndicator">
+        <source>Skipped</source>
+        <note></note>
+        <target state="translated">건너뜀</target>
+      </trans-unit>
+      <trans-unit id="DiscoveryFailed">
+        <source>Discovery failed for given sources. Exception : {0}</source>
+        <note></note>
+        <target state="translated">지정한 소스에 대한 검색이 실패했습니다. 예외: {0}</target>
+      </trans-unit>
+      <trans-unit id="ParentProcessIdArgumentHelp">
+        <source>--ParentProcessId|/ParentProcessId:&lt;ParentProcessId&gt;
+      Process Id of the Parent Process responsible for launching current process.</source>
+        <note></note>
+        <target state="translated">--ParentProcessId|/ParentProcessId:&lt;ParentProcessId&gt;
+      현재 프로세스를 시작해야 하는 부모 프로세스의 프로세스 ID입니다.</target>
+      </trans-unit>
+      <trans-unit id="InvalidParentProcessIdArgument">
+        <source>The --ParentProcessId|/ParentProcessId argument requires the process id which is an integer. Specify the process id of the parent process that launched this process.</source>
+        <note></note>
+        <target state="translated">--ParentProcessId|/ParentProcessId 인수에는 정수인 프로세스 ID가 필요합니다. 이 프로세스를 시작한 부모 프로세스의 프로세스 ID를 지정하세요.</target>
+      </trans-unit>
+      <trans-unit id="HelpArgumentsText">
+        <source>Arguments:</source>
+        <note></note>
+        <target state="translated">인수:</target>
+      </trans-unit>
+      <trans-unit id="EnableDiagUsage">
+        <source>--Diag|/Diag:&lt;Path to log file&gt;
+      Enable logs for test platform.
+      Logs are written to the provided file.
+
+      Change the trace level for logs as shown below
+      Example: /Diag:&lt;Path to log file&gt;;tracelevel=&lt;Defaults to "verbose"&gt;
+      Allowed values for tracelevel: off, error, warning, info and verbose.</source>
+        <note></note>
+        <target state="translated">--Diag|/Diag:&lt;Path to log file&gt;
+      테스트 플랫폼의 로그를 사용하도록 설정합니다.
+      로그는 제공된 파일에 기록됩니다.
+
+      아래 표시된 대로 로그의 추적 수준을 변경합니다.
+      예: /Diag:&lt;Path to log file&gt;;tracelevel=&lt;Defaults to "verbose"&gt;
+      허용되는 추적 수준 값: off, error, warning, info 및 verbose.</target>
+      </trans-unit>
+      <trans-unit id="LoggerFileIsReadOnly">
+        <source>The file {0} provided is read only</source>
+        <note></note>
+        <target state="translated">제공한 {0} 파일은 읽기 전용입니다.</target>
+      </trans-unit>
+      <trans-unit id="DesignModeClientTimeoutError">
+        <source>Timeout to connect or process request for DesignModeClient on port: {0}</source>
+        <target state="translated">포트에서 DesignModeClient에 대한 요청을 연결하거나 처리하는 작업에 대한 시간 제한: {0}</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="NotRunTestIndicator">
+        <source>Not Run</source>
+        <target state="translated">실행되지 않음</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="CLIRunSettingsArgumentHelp">
+        <source>RunSettings arguments:
+      Arguments to pass runsettings configurations through commandline. Arguments may be specified as name-value pair of the form [name]=[value] after "-- ". Note the space after --. 
+      Use a space to separate multiple [name]=[value].
+      More info on RunSettings arguments support: https://aka.ms/vstest-runsettings-arguments</source>
+        <target state="translated">RunSettings 인수:
+      명령줄을 통해 runsettings 구성을 전달하기 위한 인수입니다. 인수는 "--" 뒤에 [name]=[value] 형식의 이름-값 쌍으로 지정할 수 있습니다. -- 뒤의 공백에 주의하세요. 
+      여러 [name]=[value]를 구분하려면 공백을 사용합니다.
+      RunSettings 인수 지원에 대한 자세한 정보: https://aka.ms/vstest-runsettings-arguments</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="MalformedRunSettingsKey">
+        <source>One or more runsettings provided contain invalid token</source>
+        <target state="translated">제공된 하나 이상의 runsettings에 잘못된 토큰이 포함되어 있습니다.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="ResultsDirectoryArgumentHelp">
+        <source>--ResultsDirectory|/ResultsDirectory
+      Test results directory will be created in specified path if not exists.
+      Example  /ResultsDirectory:&lt;pathToResultsDirectory&gt;</source>
+        <target state="translated">--ResultsDirectory|/ResultsDirectory
+      테스트 결과 디렉터리가 지정된 경로에 생성됩니다(없는 경우).
+      예: /ResultsDirectory:&lt;pathToResultsDirectory&gt;</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="ResultsDirectoryValueRequired">
+        <source>The /ResultsDirectory parameter requires a value, where the test results should be saved. Example:  /ResultsDirectory:c:\MyTestResultsDirectory</source>
+        <target state="translated">/ResultsDirectory 매개 변수에는 테스트 결과가 저장되어야 하는 값이 필요합니다. 예:  /ResultsDirectory:c:\MyTestResultsDirectory</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="InvalidResultsDirectoryPathCommand">
+        <source>The path '{0}' specified in the 'ResultsDirectory' is invalid. Error: {1}</source>
+        <target state="translated">'ResultsDirectory'에 지정된 경로 '{0}'이(가) 잘못되었습니다. 오류: {1}</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="InIsolationDeprecated">
+        <source>The /InIsolation flag is deprecated. The tests are always run in a separate process</source>
+        <target state="translated">/InIsolation 플래그는 사용되지 않습니다. 테스트는 항상 별도의 프로세스에서 실행됩니다.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="VstestDiagLogOutputPath">
+        <source>Logging Vstest Diagnostics in file: {0}</source>
+        <target state="translated">파일에 Vstest Diagnostics 로깅 중: {0}</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="CollectArgumentHelp">
+        <source>--Collect|/Collect:&lt;DataCollector FriendlyName&gt;
+      Enables data collector for the test run. More info here : https://aka.ms/vstest-collect</source>
+        <target state="translated">--Collect|/Collect:&lt;DataCollector FriendlyName&gt;
+      테스트 실행을 위해 데이터 수집기를 사용하도록 설정합니다. 자세한 내용은 https://aka.ms/vstest-collect를 참조하세요.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="DataCollectorFriendlyNameInvalid">
+        <source>The Data Collector friendly name '{0}' is not valid.  The Data Collector will be ignored.</source>
+        <target state="translated">데이터 수집기 이름 '{0}'이(가) 잘못되었습니다. 데이터 수집기가 무시됩니다.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="DbgTrcMessagesBanner">
+        <source>Debug Traces Messages:</source>
+        <target state="translated">디버그 추적 메시지:</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="EnableBlameUsage">
+        <source>--Blame|/Blame:[CollectDump];[CollectAlways]=[Value];[DumpType]=[Value]
+      Runs the test in blame mode. This option is helpful in isolating the problematic test causing test host crash.
+      It creates an output file in the current directory as "Sequence.xml",
+      that captures the order of execution of test before the crash.
+      You may optionally choose to collect process dump for the test host.
+      When you choose to collect dump, by default, a mini dump will be collected on a crash.
+      You may also choose to override this default behaviour by some optional parameters:
+      CollectAlways - To collect dump on exit even if there is no crash (true/false) 
+      DumpType - To specify dump type (mini/full).
+      Example: /Blame
+               /Blame:CollectDump
+               /Blame:CollectDump;CollectAlways=true;DumpType=full</source>
+        <target state="translated">--Blame|/Blame:[CollectDump];[CollectAlways]=[Value];[DumpType]=[Value]
+      원인 모드에서 테스트를 실행합니다. 이 옵션은 테스트 호스트 크래시를 유발하는 문제 있는 테스트를 격리하는 데 유용합니다.
+      이 경우 현재 디렉터리에 "Sequence.xml"라는 출력 파일을 만들며,
+      이 파일에는 크래시 이전 테스트 실행 순서가 캡처되어 있습니다.
+      필요에 따라 테스트 호스트에 대한 프로세스 덤프를 수집하도록 선택할 수 있습니다.
+      덤프를 수집하도록 선택하는 경우 기본적으로 크래시에 대한 미니 덤프가 수집됩니다.
+      다음과 같은 몇 가지 선택적 매개 변수로 이 기본 동작을 재정의하도록 선택할 수도 있습니다.
+      CollectAlways - 크래시가 없는 경우에도 종료 시 덤프를 수집함(true/false) 
+      DumpType - 덤프 유형을 지정함(mini/full).
+      예: /Blame
+               /Blame:CollectDump
+               /Blame:CollectDump;CollectAlways=true;DumpType=full</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TestRunAborted">
+        <source>Test Run Aborted.</source>
+        <target state="translated">테스트 실행이 중단되었습니다.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TestRunCanceled">
+        <source>Test Run Canceled.</source>
+        <target state="translated">테스트 실행이 취소되었습니다.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="OpenResponseFileError">
+        <source>Error opening response file '{0}'</source>
+        <target state="translated">지시 파일 '{0}'을(를) 여는 중 오류가 발생했습니다.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="ResponseFileArgumentHelp">
+        <source>@&lt;file&gt;
+      Read response file for more options.</source>
+        <target state="translated">@&lt;file&gt;
+      추가 옵션에 대한 지시 파일을 읽습니다.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TestRunSummaryForCanceledOrAbortedRun">
+        <source>Total tests: Unknown</source>
+        <target state="translated">총 테스트 수: 알 수 없음</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="StringFormatToJoinTwoStrings">
+        <source>{0} {1}</source>
+        <target state="translated">{0} {1}</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="SuggestTestAdapterPathIfNoTestsIsFound">
+        <source>Additionally, path to test adapters can be specified using /TestAdapterPath command. Example  /TestAdapterPath:&lt;pathToCustomAdapters&gt;.</source>
+        <target state="translated">또한 테스트 어댑터의 경로는 /TestAdapterPath 명령을 사용하여 지정할 수 있습니다. 예: /TestAdapterPath:&lt;pathToCustomAdapters&gt;.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="UseVsixExtensionsDeprecation">
+        <source>/UseVsixExtensions is getting deprecated. Please use /TestAdapterPath instead.</source>
+        <target state="translated">/UseVsixExtensions는 더 이상 사용되지 않습니다. 대신 /TestAdapterPath를 사용하세요.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="DisableAutoFakesUsage">
+        <source>--DisableAutoFakes|/DisableAutoFakes:&lt;true/false&gt;
+     Example: /DisableAutoFakes:true</source>
+        <target state="translated">--DisableAutoFakes|/DisableAutoFakes:&lt;true/false&gt;
+     예: /DisableAutoFakes:true</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="CollectWithTestSettingErrorMessage">
+        <source>--Collect|/Collect:"{0}" is not supported if test run is configured using testsettings.</source>
+        <target state="translated">--Collect|/Collect:testsettings를 사용하여 테스트 실행을 구성하는 경우 "{0}"은(는) 지원되지 않습니다.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="RunsettingsWithDCErrorMessage">
+        <source>Data collectors other than Code Coverage and Microsoft Fakes configured via run settings are not supported with embedded test settings. Please see https://aka.ms/vstest-configure-datacollector for more information. Run settings: {0}.</source>
+        <target state="translated">실행 설정을 통해 구성된 코드 검사 및 Microsoft Fakes 이외의 데이터 수집기는 포함된 테스트 설정으로는 지원되지 않습니다. 자세한 내용은 https://aka.ms/vstest-configure-datacollector를 참조하세요. 실행 설정: {0}.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="EnableLoggerArgumentsInNetCore">
+        <source>--logger|/logger:&lt;Logger Uri/FriendlyName&gt;
+      Specify a logger for test results. For example, to log results into a 
+      Visual Studio Test Results File (TRX) use /logger:trx[;LogFileName=&lt;Defaults to unique file name&gt;]
+      Creates file in TestResults directory with given LogFileName.
+
+      Change the verbosity level in log messages for console logger as shown below
+      Example: /logger:console;verbosity=&lt;Defaults to "minimal"&gt;
+      Allowed values for verbosity: quiet, minimal, normal and detailed.
+
+      Change the diagnostic level prefix for console logger as shown below
+      Example: /logger:console;prefix=&lt;Defaults to "false"&gt;
+      More info on Console Logger here : https://aka.ms/console-logger</source>
+        <target state="translated">--logger|/logger:&lt;Logger Uri/FriendlyName&gt;
+      테스트 결과의 로거를 지정합니다. 예를 들어 
+      Visual Studio TRX(테스트 결과 파일)에 결과를 기록하려면 /logger:trx[;LogFileName=&lt;Defaults to unique file name&gt;]를 사용합니다.
+      지정된 LogFileName으로 TestResults 디렉터리에서 파일을 만듭니다.
+
+      아래 표시된 대로 콘솔 로거에 대한 로그 메시지에서 세부 정보 표시 수준을 변경합니다.
+      예: /logger:console;verbosity=&lt;Defaults to "minimal"&gt;
+      허용된 세부 정보 표시 값: quiet, minimal, normal 및 detailed.
+
+      아래 표시된 대로 콘솔 로거에 대한 진단 수준 접두사를 변경합니다.
+      예: /logger:console;prefix=&lt;Defaults to "false"&gt;
+      콘솔 로거에 대한 자세한 내용은 https://aka.ms/console-logger를 참조하세요.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="BlameCollectDumpNotSupportedForPlatform">
+        <source>Collecting crash dumps by option CollectDump for Blame is not supported for this platform.</source>
+        <target state="translated">Blame에 대한 CollectDump 옵션에 의한 크래시 덤프 수집은 이 플랫폼에서 지원되지 않습니다.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="BlameIncorrectOption">
+        <source>The blame parameter specified with blame, {0} is invalid. Ignoring this parameter.</source>
+        <target state="translated">blame으로 지정된 blame 매개 변수 {0}이(가) 잘못되었습니다. 이 매개 변수를 무시합니다.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="InvalidDiagFilePath">
+        <source>Diag file path '{0}' is not valid.</source>
+        <target state="translated">Diag 파일 경로 '{0}'이(가) 잘못되었습니다.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="InvalidBlameArgument">
+        <source>Blame argument '{0}' is not valid.</source>
+        <target state="translated">Blame 인수 '{0}'이(가) 잘못되었습니다.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="InvalidDiagArgument">
+        <source>Diag argument '{0}' is not valid.</source>
+        <target state="translated">Diag 인수 '{0}'이(가) 잘못되었습니다.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="InvalidLoggerArgument">
+        <source>Logger argument '{0}' is not valid.</source>
+        <target state="translated">Logger 인수 '{0}'이(가) 잘못되었습니다.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="Framework35NotSupported">
+        <source>Framework35 is not supported. For projects targeting .Net Framework 3.5, test will run in CLR 4.0 "compatibility mode".</source>
+        <target state="translated">Framework35가 지원되지 않습니다. .NET Framework 3.5를 대상으로 하는 프로젝트의 경우 테스트가 CLR 4.0 "호환 모드"에서 실행됩니다.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="ProgressIndicatorString">
+        <source>Test run in progress</source>
+        <target state="translated">테스트 실행 중</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TestRunSummaryTotalTests">
+        <source>Total tests: {0}</source>
+        <target state="translated">총 테스트 수: {0}</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TestRunSummaryFailedTests">
+        <source>     Failed: {0}</source>
+        <target state="translated">     실패: {0}</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TestRunSummaryPassedTests">
+        <source>     Passed: {0}</source>
+        <target state="translated">     통과: {0}</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TestRunSummarySkippedTests">
+        <source>    Skipped: {0}</source>
+        <target state="translated">    건너뜀: {0}</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="InvalidArgument">
+        <source>The argument {0} is invalid. Please use the /help option to check the list of valid arguments.</source>
+        <target state="translated">{0} 인수가 잘못되었습니다. /help 옵션을 사용하여 유효한 인수 목록을 확인하세요.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TestSourcesDiscovered">
+        <source>A total of {0} test files matched the specified pattern.</source>
+        <target state="translated">지정된 패턴과 일치한 총 테스트 파일 수는 {0}개입니다.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="InvalidTestRunParameterArgument">
+        <source>The test run parameter argument '{0}' is invalid. Please use the format below.
+     Format: TestRunParameters.Parameter(name=\"&lt;name&gt;\", value=\"&lt;value&gt;\")</source>
+        <target state="translated">테스트 실행 매개 변수 인수 '{0}'이(가) 잘못되었습니다. 아래 형식을 사용하세요.
+     형식: TestRunParameters.Parameter(name=\"&lt;name&gt;\", value=\"&lt;value&gt;\")</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="BlameCollectDumpTestTimeoutNotSupportedForPlatform">
+        <source>Collecting hang dumps by option CollectDump with TestTimeout for Blame is not supported for this platform.</source>
+        <target state="translated">Blame에 대한 TestTimeout이 있는 CollectDump 옵션에 의한 중단 덤프 수집은 이 플랫폼에서 지원되지 않습니다.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TestRunSummary">
+        <source>{0} - Failed: {1}, Passed: {2}, Skipped: {3}, Total: {4}, Duration: {5}</source>
+        <target state="translated">{0} - 실패: {1}, 통과: {2}, 건너뜀: {3}, 전체: {4}, 기간: {5}</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="None">
+        <source>None</source>
+        <target state="translated">없음</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TestRunSummaryAssemblyAndFramework">
+        <source> - {0} {1}</source>
+        <target state="translated"> - {0} {1}</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="EnvironmentArgumentHelp">
+        <source>-e|--Environment|/e|/Environment:&lt;NAME&gt;=&lt;VALUE&gt;
+      Sets the value of an environment variable. Creates the variable if it does not exist, overrides if it does. This will imply /InIsolation switch and force the tests to be run in an isolated process.
+      
+      This argument can be specified multiple times to provide multiple variables.
+
+      Example: -e:VARIABLE1=VALUE1
+               -e:ANOTHER_VARIABLE="VALUE WITH SPACES"
+               -e:ANOTHER_VARIABLE="VALUE;seperated with;semicolons"</source>
+        <target state="translated">-e|--Environment|/e|/Environment:&lt;NAME&gt;=&lt;VALUE&gt;
+      환경 변수의 값을 설정합니다. 변수가 없는 경우 변수를 만들고, 변수가 있으면 재정의합니다. 이는 /InIsolation 전환을 의미하며 격리된 프로세스에서 테스트를 강제로 실행합니다.
+      
+      이 인수를 여러 번 지정하여 여러 변수를 제공할 수 있습니다.
+
+      예: -e:VARIABLE1=VALUE1
+               -e:ANOTHER_VARIABLE="VALUE WITH SPACES"
+               -e:ANOTHER_VARIABLE="VALUE;seperated with;semicolons"</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="EnvironmentVariableXIsOverriden">
+        <source>Environment variable '{0}' was already defined, but it's overridden by -Environment argument.</source>
+        <target state="translated">환경 변수 '{0}'이(가) 이미 정의되어 있지만 -Environment 인수로 재정의되었습니다.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TestRunAbortedWithError">
+        <source>Test Run Aborted with error {0}.</source>
+        <target state="translated">테스트 실행이 {0} 오류로 인해 중단되었습니다.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="InvalidTestSessionCorrelationId">
+        <source>Invalid testSessionCorrelationId</source>
+        <target state="translated">잘못된 testSessionCorrelationId</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TestAdapterLoadingStrategyHelp">
+        <source>--TestAdapterLoadingStrategy|/TestAdapterLoadingStrategy:&lt;strategy&gt;
+      This affects adapter loading behavior.
+
+      Currently supported behaviors:
+        - Explicit: Test Platform will only load adapters specified by /TestAdapterPath (or RunConfiguration.TestAdaptersPaths node). 
+                    If a specific adapter path is provided, adapter will be loaded; if a directory path is provided adapters directly in that folder will be loaded, unless Recursive option is also specified.
+                    If no adapter path is specified, test run will fail.
+                    This will imply /InIsolation switch and force the tests to be run in an isolated process.
+        
+        - Default: Test Platform will load adapters is if this argument has not been specified. 
+                   It will pick up extensions from next to source, provided additional adapter paths and from the default directory.
+
+        - DefaultRuntimeProviders: Load default runtime providers shipped with Test Platform. 
+                                   If this is not specified when "Explicit" option is set, a test host provider need to be specified explicitly.
+
+        - ExtensionsDirectory: Load adapters inside Extensions folder.
+
+        - NextToSource: Load adapters next to source. 
+
+        - Recursive: Recursively search folders when loading adapters. This requires "Explicit" or "NextToSource" to be specified too.</source>
+        <target state="translated">--TestAdapterLoadingStrategy|/TestAdapterLoadingStrategy:&lt;strategy&gt;
+      이는 어댑터 로딩 동작에 영향을 미칩니다.
+
+      현재 지원되는 동작:
+      - 명시적: 테스트 플랫폼은 /TestAdapterPath(또는 RunConfiguration.TestAdaptersPaths 노드)에 지정된 어댑터만 로드합니다. 
+      특정 어댑터 경로가 제공되면 어댑터가 로드됩니다. 디렉터리 경로가 제공되면 재귀 옵션도 지정되지 않는 한 해당 폴더에 직접 어댑터가 로드됩니다.
+     어댑터 경로를 지정하지 않으면 테스트 실행이 실패합니다.
+   이는 /InIsolation을 전환을 의미하고 테스트가 격리된 프로세스에서 실행되도록 합니다.
+ 
+ - 기본값: 테스트 플랫폼은 이 인수가 지정되지 않은 경우 어댑터를 로드합니다. 
+        추가 어댑터 경로를 제공하고 기본 디렉터리에서 소스 옆에 있는 확장 프로그램을 선택합니다.
+
+ -      DefaultRuntimeProviders: 테스트 플랫폼과 함께 제공되는 기본 런타임 공급자를 로드합니다. 
+ '명시적' 옵션이 설정되어 있을 때 지정하지 않으면 테스트 호스트 공급자를 명시적으로 지정해야 합니다.
+
+       - ExtensionsDirectory: Extensions 폴더 내부에 어댑터를 로드합니다. 
+
+       - NextToSource: 소스 옆에 어댑터를 로드합니다. 
+
+        - 재귀: 어댑터를 로드할 때 폴더를 재귀적으로 검색합니다. 이렇게 하려면 "명시적" 또는 "NextToSource"도 지정해야 합니다.</target>
+        <note>Do not translate "Default", "DefaultRuntimeProviders", "ExtensionsDirectory", "NextToSource" or "Recursive".</note>
+      </trans-unit>
+      <trans-unit id="TestAdapterLoadingStrategyValueInvalid">
+        <source>Specified value ({0}) for /TestAdapterLoadingStrategy is invalid!</source>
+        <target state="translated">/TestAdapterLoadingStrategy에 대해 지정된 값({0})이 잘못되었습니다!</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TestAdapterLoadingStrategyValueInvalidRecursive">
+        <source>Recursive adapter loading strategy is cannot be used by itself. Please combine with one or more of: {0}</source>
+        <target state="translated">재귀 어댑터 로드 전략은 단독으로 사용할 수 없습니다. 다음 중 하나 이상과 결합하세요. {0}</target>
+        <note>
+        - Do not translate "Recursive",
+        - {0} is the strategy names, seperated by comma: for example "Explicit, NextToSource"
+    </note>
+      </trans-unit>
+      <trans-unit id="TestAdapterPathValueRequiredWhenStrategyXIsUsed">
+        <source>The /TestAdapterPath parameter needs to be provided when "{0}" test adapter loading strategy is specified!</source>
+        <target state="translated">"{0}" 테스트 어댑터 로드 전략이 지정된 경우 /TestAdapterPath 매개 변수를 제공해야 합니다!</target>
+        <note>{0} is the strategy name, "Explicit" for example.</note>
+      </trans-unit>
+      <trans-unit id="WarningEmulatedOnArm64">
+        <source>vstest.console.exe is running in emulated mode as {0}. For better performance, please consider using the native runner vstest.console.arm64.exe.</source>
+        <target state="translated">vstest.console.exe가 에뮬레이트 모드에서 {0}(으)로 실행 중입니다. 더 나은 성능을 위해 네이티브 실행기 vstest.console.arm64.exe 사용을 고려하세요.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="RequestHandlerConnectionTimedOut">
+        <source>Waiting for request handler connection timed out after {0} seconds.</source>
+        <target state="translated">{0}초 후에 요청 처리기 연결 대기 시간이 초과되었습니다.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="StartTestSessionTimedOut">
+        <source>Waiting for start test session timed out after {0} seconds.</source>
+        <target state="translated">{0}초 후에 테스트 시작 세션 대기 시간이 초과되었습니다.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="StopTestSessionTimedOut">
+        <source>Waiting for stop test session timed out after {0} seconds.</source>
+        <target state="translated">{0}초 후에 테스트 중지 세션 대기 시간이 초과되었습니다.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="ErrorHostingCommunicationChannel">
+        <source>Error hosting communication channel.</source>
+        <target state="translated">통신 채널을 호스트하는 동안 오류가 발생했습니다.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="ProcDumpToolDirectoryPathArgumenNotFound">
+        <source>ProcDumpToolDirectoryPath should be specified to install or unistall the post mortem debugger.</source>
+        <target state="translated">사후 디버거를 설치하거나 제거하려면 ProcDumpToolDirectoryPath를 지정해야 합니다.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="PostmortemDebuggerNotSupportedForCurrentOS">
+        <source>Postmortem debugger is not supported in the current OS.</source>
+        <target state="translated">포스트모템 디버거는 현재 OS에서 지원되지 않습니다.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="InvalidProcDumpToolDirectoryPath">
+        <source>The directory specified for the procdump executable is not valid and the tool was not found inside environment variables (PROCDUMP_PATH, PATH)</source>
+        <target state="translated">procdump 실행 파일에 대해 지정된 디렉터리가 유효하지 않으며 도구가 환경 변수(PROCDUMP_PATH, PATH) 내에서 발견되지 않았습니다.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="ProcDumpFileNameNotFound">
+        <source>Procdump file name not found: '{0}'</source>
+        <target state="translated">Procdump 파일 이름을 찾을 수 없음: '{0}'</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="ProcDumpDirectoryPathArgumenNotFound">
+        <source>DumpDirectoryPath should be specified to install the post mortem debugger.</source>
+        <target state="translated">사후 디버거를 설치하려면 DumpDirectoryPath를 지정해야 합니다.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="InvalidProcDumpDirectoryPath">
+        <source>The directory specified is not valid: '{0}'</source>
+        <target state="translated">지정된 디렉터리가 유효하지 않습니다: '{0}'</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="InvalidAeDebuggerArgument">
+        <source>AeDebugger argument '{0}' is not valid.</source>
+        <target state="translated">AeDebugger 인수 '{0}'이(가) 유효하지 않습니다.</target>
+        <note></note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

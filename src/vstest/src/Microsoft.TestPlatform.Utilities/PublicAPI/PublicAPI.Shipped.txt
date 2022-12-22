@@ -1,0 +1,42 @@
+#nullable enable
+Microsoft.VisualStudio.TestPlatform.Utilities.ClientUtilities
+Microsoft.VisualStudio.TestPlatform.Utilities.CodeCoverageDataAttachmentsHandler
+Microsoft.VisualStudio.TestPlatform.Utilities.CodeCoverageDataAttachmentsHandler.CodeCoverageDataAttachmentsHandler() -> void
+Microsoft.VisualStudio.TestPlatform.Utilities.CodeCoverageDataAttachmentsHandler.GetExtensionUris() -> System.Collections.Generic.IEnumerable<System.Uri!>?
+Microsoft.VisualStudio.TestPlatform.Utilities.CodeCoverageDataAttachmentsHandler.ProcessAttachmentSetsAsync(System.Xml.XmlElement! configurationElement, System.Collections.Generic.ICollection<Microsoft.VisualStudio.TestPlatform.ObjectModel.AttachmentSet!>? attachments, System.IProgress<int>! progressReporter, Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging.IMessageLogger? logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.ICollection<Microsoft.VisualStudio.TestPlatform.ObjectModel.AttachmentSet!>!>!
+Microsoft.VisualStudio.TestPlatform.Utilities.CodeCoverageDataAttachmentsHandler.SupportsIncrementalProcessing.get -> bool
+Microsoft.VisualStudio.TestPlatform.Utilities.CodeCoverageRunSettingsProcessor
+Microsoft.VisualStudio.TestPlatform.Utilities.CodeCoverageRunSettingsProcessor.CodeCoverageRunSettingsProcessor(System.Xml.XmlNode! defaultSettingsRootNode) -> void
+Microsoft.VisualStudio.TestPlatform.Utilities.CodeCoverageRunSettingsProcessor.Process(string? currentSettings) -> System.Xml.XmlNode?
+Microsoft.VisualStudio.TestPlatform.Utilities.CodeCoverageRunSettingsProcessor.Process(System.Xml.XmlDocument? currentSettingsDocument) -> System.Xml.XmlNode?
+Microsoft.VisualStudio.TestPlatform.Utilities.CodeCoverageRunSettingsProcessor.Process(System.Xml.XmlNode? currentSettingsRootNode) -> System.Xml.XmlNode?
+Microsoft.VisualStudio.TestPlatform.Utilities.CommandLineUtilities
+Microsoft.VisualStudio.TestPlatform.Utilities.InferRunSettingsHelper
+Microsoft.VisualStudio.TestPlatform.Utilities.InferRunSettingsHelper.InferRunSettingsHelper() -> void
+Microsoft.VisualStudio.TestPlatform.Utilities.MSTestSettingsUtilities
+Microsoft.VisualStudio.TestPlatform.Utilities.ParallelRunSettingsUtilities
+Microsoft.VisualStudio.TestPlatform.Utilities.StringExtensions
+static Microsoft.VisualStudio.TestPlatform.Utilities.ClientUtilities.FixRelativePathsInRunSettings(System.Xml.XmlDocument! xmlDocument, string! path) -> void
+static Microsoft.VisualStudio.TestPlatform.Utilities.CommandLineUtilities.SplitCommandLineIntoArguments(string! args, out string![]! arguments) -> bool
+static Microsoft.VisualStudio.TestPlatform.Utilities.InferRunSettingsHelper.AreRunSettingsCollectorsIncompatibleWithTestSettings(string? runsettings) -> bool
+static Microsoft.VisualStudio.TestPlatform.Utilities.InferRunSettingsHelper.FilterCompatibleSources(Microsoft.VisualStudio.TestPlatform.ObjectModel.Architecture chosenPlatform, Microsoft.VisualStudio.TestPlatform.ObjectModel.Architecture defaultArchitecture, Microsoft.VisualStudio.TestPlatform.ObjectModel.Framework! chosenFramework, System.Collections.Generic.IDictionary<string!, Microsoft.VisualStudio.TestPlatform.ObjectModel.Architecture>! sourcePlatforms, System.Collections.Generic.IDictionary<string!, Microsoft.VisualStudio.TestPlatform.ObjectModel.Framework!>! sourceFrameworks, out string! incompatibleSettingWarning) -> System.Collections.Generic.IEnumerable<string!>!
+static Microsoft.VisualStudio.TestPlatform.Utilities.InferRunSettingsHelper.GetEnvironmentVariables(string? runSettings) -> System.Collections.Generic.Dictionary<string!, string?>?
+static Microsoft.VisualStudio.TestPlatform.Utilities.InferRunSettingsHelper.IsTestSettingsEnabled(string? runsettingsXml) -> bool
+static Microsoft.VisualStudio.TestPlatform.Utilities.InferRunSettingsHelper.MakeRunsettingsCompatible(string? runsettingsXml) -> string?
+static Microsoft.VisualStudio.TestPlatform.Utilities.InferRunSettingsHelper.RemoveTargetPlatformElement(string? runsettingsXml) -> string?
+static Microsoft.VisualStudio.TestPlatform.Utilities.InferRunSettingsHelper.TryGetDeviceXml(System.Xml.XPath.XPathNavigator! runSettingsNavigator, out string? deviceXml) -> bool
+static Microsoft.VisualStudio.TestPlatform.Utilities.InferRunSettingsHelper.TryGetFrameworkXml(System.Xml.XPath.XPathNavigator! runSettingsNavigator, out string? frameworkXml) -> bool
+static Microsoft.VisualStudio.TestPlatform.Utilities.InferRunSettingsHelper.TryGetLegacySettingElements(string! runsettingsXml, out System.Collections.Generic.Dictionary<string!, string!>! legacySettingsTelemetry) -> bool
+static Microsoft.VisualStudio.TestPlatform.Utilities.InferRunSettingsHelper.TryGetPlatformXml(System.Xml.XPath.XPathNavigator! runSettingsNavigator, out string? platformXml) -> bool
+static Microsoft.VisualStudio.TestPlatform.Utilities.InferRunSettingsHelper.UpdateCollectSourceInformation(System.Xml.XmlDocument! runSettingsDocument, bool collectSourceInformationValue) -> void
+static Microsoft.VisualStudio.TestPlatform.Utilities.InferRunSettingsHelper.UpdateDesignMode(System.Xml.XmlDocument! runSettingsDocument, bool designModeValue) -> void
+static Microsoft.VisualStudio.TestPlatform.Utilities.InferRunSettingsHelper.UpdateRunSettingsWithUserProvidedSwitches(System.Xml.XmlDocument! runSettingsDocument, Microsoft.VisualStudio.TestPlatform.ObjectModel.Architecture architecture, Microsoft.VisualStudio.TestPlatform.ObjectModel.Framework! framework, string? resultsDirectory) -> void
+static Microsoft.VisualStudio.TestPlatform.Utilities.InferRunSettingsHelper.UpdateTargetDevice(System.Xml.XmlDocument! runSettingsDocument, string! targetDevice) -> void
+static Microsoft.VisualStudio.TestPlatform.Utilities.InferRunSettingsHelper.UpdateTargetFramework(System.Xml.XmlDocument! runSettingsDocument, string! framework, bool overwrite = false) -> void
+static Microsoft.VisualStudio.TestPlatform.Utilities.InferRunSettingsHelper.UpdateTargetPlatform(System.Xml.XmlDocument! runSettingsDocument, string! platform, bool overwrite = false) -> void
+static Microsoft.VisualStudio.TestPlatform.Utilities.MSTestSettingsUtilities.Import(string! settingsFile, System.Xml.XmlDocument! defaultRunSettings) -> System.Xml.XmlDocument!
+static Microsoft.VisualStudio.TestPlatform.Utilities.MSTestSettingsUtilities.IsLegacyTestSettingsFile(string? settingsFile) -> bool
+static Microsoft.VisualStudio.TestPlatform.Utilities.ParallelRunSettingsUtilities.UpdateRunSettingsWithParallelSettingIfNotConfigured(System.Xml.XPath.XPathNavigator! navigator) -> void
+static Microsoft.VisualStudio.TestPlatform.Utilities.StringExtensions.Tokenize(this string? input, char separator, char escape) -> System.Collections.Generic.IEnumerable<string!>!
+static Microsoft.VisualStudio.TestPlatform.Utilities.InferRunSettingsHelper.UpdateBatchSize(System.Xml.XmlDocument! runSettingsDocument, long batchSizeValue) -> void
+

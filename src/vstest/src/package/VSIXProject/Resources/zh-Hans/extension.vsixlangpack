@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PackageLanguagePackManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011">
+  <Metadata>
+    <DisplayName>Microsoft Visual Studio 测试平台</DisplayName>
+    <Description>允许开发人员发现、执行和分析自动化测试的可扩展测试平台</Description>
+  </Metadata>
+</PackageLanguagePackManifest>

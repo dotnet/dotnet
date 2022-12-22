@@ -1,0 +1,6 @@
+#nullable enable
+Microsoft.VisualStudio.TestPlatform.Extensions.TrxLogger.TrxLogger
+Microsoft.VisualStudio.TestPlatform.Extensions.TrxLogger.TrxLogger.Initialize(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.TestLoggerEvents! events, string! testResultsDirPath) -> void
+Microsoft.VisualStudio.TestPlatform.Extensions.TrxLogger.TrxLogger.Initialize(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.TestLoggerEvents! events, System.Collections.Generic.Dictionary<string!, string?>! parameters) -> void
+Microsoft.VisualStudio.TestPlatform.Extensions.TrxLogger.TrxLogger.TrxLogger() -> void
+Microsoft.VisualStudio.TestPlatform.Extensions.TrxLogger.TrxLogger.TrxLogger(Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces.IFileHelper! fileHelper) -> void

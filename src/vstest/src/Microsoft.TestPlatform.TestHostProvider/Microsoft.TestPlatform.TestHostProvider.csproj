@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TestPlatformRoot Condition="$(TestPlatformRoot) == ''">..\..\</TestPlatformRoot>
+  </PropertyGroup>
+  <Import Project="$(TestPlatformRoot)scripts/build/TestPlatform.Settings.targets" />
+  <PropertyGroup>
+    <AssemblyName>Microsoft.TestPlatform.TestHostRuntimeProvider</AssemblyName>
+    <TargetFrameworks>net7.0;net6.0;netstandard2.0;$(NetFrameworkMinimum)</TargetFrameworks>
+    <TargetFrameworks Condition=" '$(DotNetBuildFromSource)' == 'true' ">net7.0;</TargetFrameworks>
+    <DefineConstants Condition=" '$(DotNetBuildFromSource)' == 'true' ">$(DefineConstants);DOTNET_BUILD_FROM_SOURCE</DefineConstants>
+    <IsTestProject>false</IsTestProject>
+    <UseBannedApiAnalyzers>true</UseBannedApiAnalyzers>
+  </PropertyGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == '$(NetFrameworkMinimum)' ">
+    <Reference Include="System" />
+    <Reference Include="System.Runtime" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="BannedSymbols.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.TestPlatform.PlatformAbstractions\Microsoft.TestPlatform.PlatformAbstractions.csproj" />
+    <ProjectReference Include="..\Microsoft.TestPlatform.ObjectModel\Microsoft.TestPlatform.ObjectModel.csproj" />
+    <ProjectReference Include="..\Microsoft.TestPlatform.CoreUtilities\Microsoft.TestPlatform.CoreUtilities.csproj">
+      <FromP2P>true</FromP2P>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="$(JsonNetVersion)" />
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="$(MicrosoftExtensionsDependencyModelPackageVersion)" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.2" Condition=" '$(DotNetBuildFromSource)' != 'true' " />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Resources.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="NullableHelpers.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>NullableHelpers.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="NullableHelpers.tt">
+      <LastGenOutput>NullableHelpers.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+    <None Update="Resources\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <PropertyGroup Label="Configuration">
+    <RootNamespace>Microsoft.TestPlatform.TestHostProvider</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- API that is common to all frameworks that we build for. -->
+    <AdditionalFiles Include="BannedSymbols.txt" />
+    <AdditionalFiles Include="PublicAPI/PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="PublicAPI/PublicAPI.Unshipped.txt" />
+    <!-- Framework specific API -->
+    <AdditionalFiles Include="PublicAPI/$(TargetFramework)/PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="PublicAPI/$(TargetFramework)/PublicAPI.Unshipped.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+  <Import Project="$(TestPlatformRoot)scripts\build\TestPlatform.targets" />
+</Project>

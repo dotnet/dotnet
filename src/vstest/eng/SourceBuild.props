@@ -1,0 +1,18 @@
+<Project>
+
+  <PropertyGroup>
+    <GitHubRepositoryName>vstest</GitHubRepositoryName>
+    <SourceBuildManagedOnly>true</SourceBuildManagedOnly>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <BaseInnerSourceBuildCommand>./build.sh</BaseInnerSourceBuildCommand>
+
+    <InnerBuildArgs>-DotNetBuildFromSource</InnerBuildArgs>
+    <InnerBuildArgs>$(InnerBuildArgs) -v "$(BuildVersionPrefix)"</InnerBuildArgs>
+    <InnerBuildArgs>$(InnerBuildArgs) -vs "$(BuildVersionSuffix)"</InnerBuildArgs>
+    <InnerBuildArgs>$(InnerBuildArgs) -DotNetCoreSdkDir $(DotNetRoot)</InnerBuildArgs>
+    <InnerBuildArgs>$(InnerBuildArgs) -c $(Configuration)</InnerBuildArgs>
+  </PropertyGroup>
+
+</Project>

@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LCX SchemaVersion="6.0" Name="CommonResources.xlf" PsrId="308" FileType="1" SrcCul="en-US" TgtCul="pl-PL" xmlns="http://schemas.microsoft.com/locstudio/2006/6/lcx">
+  <OwnedComments>
+    <Cmt Name="Dev" />
+    <Cmt Name="LcxAdmin" />
+    <Cmt Name="Rccx" />
+  </OwnedComments>
+  <Settings Name="@vsLocTools@\default.lss" Type="Lss" />
+  <Item ItemId=";Xliff file" ItemType="0" PsrId="308" Leaf="false">
+    <Disp Icon="Expand" Expand="true" Disp="true" LocTbl="false" />
+    <Item ItemId=";Xliff Resources" ItemType="0" PsrId="308" Leaf="false">
+      <Disp Icon="Str" Disp="true" LocTbl="false" />
+      <Item ItemId=";CannotBeNullOrEmpty" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The parameter cannot be null or empty.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Parametr nie może mieć wartości null ani być pusty.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";DisplayChosenSettings" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Test run detected DLL(s) which would use different framework and platform versions. Following DLL(s) do not match current settings, which are {0} framework and {1} platform.{2}Go to {3} for more details on managing these settings.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Przebieg testowy wykrył biblioteki DLL używające innych wersji struktury i platformy. Następujące biblioteki DLL są niezgodne z bieżącymi ustawieniami (określającymi strukturę {0} i platformę {1}).{2}Aby uzyskać więcej informacji o zarządzaniu tymi ustawieniami, przejdź do: {3}.]]></Val>
+          </Tgt>
+          <Prev Cat="Text">
+            <Val><![CDATA[Test run detected DLL(s) which were built for different framework and platform versions. Following DLL(s) do not match current settings, which are {0} framework and {1} platform.{2}Go to {3} for more details on managing these settings.]]></Val>
+          </Prev>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";MalformedRunSettingsFile" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Settings file provided does not conform to required format.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Podany plik ustawień nie jest zgodny z wymaganym formatem.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";NoMatchingSourcesFound" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[None of the provided test containers match the Platform Architecture and .Net Framework settings for the test run. Platform: {0}  .Net Framework: {1}. Go to http://go.microsoft.com/fwlink/?LinkID=330428 for more details on managing these settings.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Żaden z dostarczonych kontenerów testów nie odpowiada architekturze platformy i ustawieniom programu .NET Framework dotyczącym przebiegu testu. Platforma: {0}. Program .NET Framework: {1}. Aby uzyskać więcej informacji na temat zarządzania tymi ustawieniami, przejdź do strony http://go.microsoft.com/fwlink/?LinkID=330428.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";SourceIncompatible" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[{0} would use Framework {1} and Platform {2}.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[{0} będzie używać struktury {1} i platformy {2}.]]></Val>
+          </Tgt>
+          <Prev Cat="Text">
+            <Val><![CDATA[{0} is built for Framework {1} and Platform {2}.]]></Val>
+          </Prev>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+    </Item>
+  </Item>
+</LCX>

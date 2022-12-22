@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+  <assemblyIdentity version="1.0.0.0" processorArchitecture="X86" name="TestPlatform.ObjectModel.x86" type="win32"></assemblyIdentity>
+  <description>Visual Studio Automation</description>
+  <dependency optional="yes">
+    <dependentAssembly>
+      <assemblyIdentity type="win32" processorArchitecture="X86" name="ComComponents\x86\msdia140.dll" version="1.0.0.0"></assemblyIdentity>
+    </dependentAssembly>
+  </dependency>
+</assembly>

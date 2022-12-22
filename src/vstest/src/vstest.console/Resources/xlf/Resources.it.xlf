@@ -1,0 +1,1239 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../Resources.resx" target-language="it">
+    <body>
+      <trans-unit id="FileNotFound">
+        <source>'{0}' not found.</source>
+        <note></note>
+        <target state="translated">'{0}' non è stato trovato.</target>
+      </trans-unit>
+      <trans-unit id="AvailableDiscoverersHeaderMessage">
+        <source>The following Test Discovery Add-Ins are available:</source>
+        <note></note>
+        <target state="translated">Sono disponibili i componenti aggiuntivi di individuazione dei test seguenti:</target>
+      </trans-unit>
+      <trans-unit id="AvailableExecutorsHeaderMessage">
+        <source>The following Test Execution Add-Ins are available:</source>
+        <note></note>
+        <target state="translated">Sono disponibili i componenti aggiuntivi di esecuzione dei test seguenti:</target>
+      </trans-unit>
+      <trans-unit id="AvailableExtensionFormat">
+        <source>    {0}</source>
+        <note>{Locked}</note>
+        <target state="new">    {0}</target>
+      </trans-unit>
+      <trans-unit id="AvailableExtensionsMetadataFormat">
+        <source>        {0}: {1}</source>
+        <note></note>
+        <target state="translated">        {0}: {1}</target>
+      </trans-unit>
+      <trans-unit id="AvailableLoggersHeaderMessage">
+        <source>The following Test Logger Add-Ins are available:</source>
+        <note></note>
+        <target state="translated">Sono disponibili i componenti aggiuntivi di logger di test seguenti:</target>
+      </trans-unit>
+      <trans-unit id="AvailableTestsFormat">
+        <source>    {0}</source>
+        <note>{Locked}</note>
+        <target state="new">    {0}</target>
+      </trans-unit>
+      <trans-unit id="CommandLineError">
+        <source>Error: {0}</source>
+        <note></note>
+        <target state="translated">Errore: {0}</target>
+      </trans-unit>
+      <trans-unit id="CommaSeparatedFormat">
+        <source>, {0}</source>
+        <note>Format used to comma separate a list of values.</note>
+        <target state="translated">, {0}</target>
+      </trans-unit>
+      <trans-unit id="DuplicateArgumentError">
+        <source>The parameter "{0}" should be provided only once.</source>
+        <note></note>
+        <target state="translated">Il parametro "{0}" deve essere specificato una sola volta.</target>
+      </trans-unit>
+      <trans-unit id="ExceptionFromExtension">
+        <source>Exception occurred when instantiating extension '{0}': {1}</source>
+        <note></note>
+        <target state="translated">Si è verificata un'eccezione durante la creazione dell'istanza dell'estensione '{0}': {1}</target>
+      </trans-unit>
+      <trans-unit id="ListTestsHeaderMessage">
+        <source>The following Tests are available:</source>
+        <note></note>
+        <target state="translated">Sono disponibili i test seguenti:</target>
+      </trans-unit>
+      <trans-unit id="NoArgumentProcessorFound">
+        <source>Unrecognized parameter "{0}".</source>
+        <note></note>
+        <target state="translated">Il parametro "{0}" non è stato riconosciuto.</target>
+      </trans-unit>
+      <trans-unit id="TestSourceFileNotFound">
+        <source>The test source file "{0}" provided was not found.</source>
+        <note></note>
+        <target state="translated">Il file di origine test "{0}" specificato non è stato trovato.</target>
+      </trans-unit>
+      <trans-unit id="LoggerUriInvalid">
+        <source>The Test Logger URI '{0}' is not valid.  The Test Logger will be ignored.</source>
+        <note></note>
+        <target state="translated">L'URI del logger di test '{0}' non è valido. Il logger di test verrà ignorato.</target>
+      </trans-unit>
+      <trans-unit id="CommandLineInformational">
+        <source>Information: {0}</source>
+        <note></note>
+        <target state="translated">Informazioni: {0}</target>
+      </trans-unit>
+      <trans-unit id="CommandLineWarning">
+        <source>Warning: {0}</source>
+        <note></note>
+        <target state="translated">Avviso: {0}</target>
+      </trans-unit>
+      <trans-unit id="HelpArgumentHelp">
+        <source>-?|--Help|/?|/Help
+      Display this usage message.</source>
+        <note></note>
+        <target state="translated">-?|--Help|/?|/Help
+      Visualizza questo messaggio relativo alla sintassi.</target>
+      </trans-unit>
+      <trans-unit id="CopyrightCommandLineTitle">
+        <source>Copyright (c) Microsoft Corporation.  All rights reserved.</source>
+        <note></note>
+        <target state="translated">Copyright (c) Microsoft Corporation. Tutti i diritti sono riservati.</target>
+      </trans-unit>
+      <trans-unit id="MicrosoftCommandLineTitle">
+        <source>Microsoft (R) Test Execution Command Line Tool Version {0}</source>
+        <note></note>
+        <target state="translated">Strumento da riga di comando per l'esecuzione di test Microsoft (R) Versione {0}</target>
+      </trans-unit>
+      <trans-unit id="EnableLoggersArgumentHelp">
+        <source>--logger|/logger:&lt;Logger Uri/FriendlyName&gt;
+      Specify a logger for test results. For example, to log results into a 
+      Visual Studio Test Results File (TRX) use /logger:trx[;LogFileName=&lt;Defaults to unique file name&gt;]
+      Creates file in TestResults directory with given LogFileName.
+
+      Change the verbosity level in log messages for console logger as shown below
+      Example: /logger:console;verbosity=&lt;Defaults to "normal"&gt;
+      Allowed values for verbosity: quiet, minimal, normal and detailed.
+
+      Change the diagnostic level prefix for console logger as shown below
+      Example: /logger:console;prefix=&lt;Defaults to "false"&gt;
+      More info on Console Logger here : https://aka.ms/console-logger</source>
+        <note></note>
+        <target state="translated">--logger|/logger:&lt;URI/Nome descrittivo logger&gt;
+      Specifica un logger per i risultati dei test. Ad esempio, per registrare risultati in un 
+      file di risultati dei test di Visual Studio (TRX), usare /logger:trx[;LogFileName=&lt;impostazione predefinita: nome file univoco&gt;]
+      Crea nella directory TestResults il file con il valore specificato per LogFileName.
+
+      Consente di cambiare il livello di dettaglio nei messaggi del log per il logger di console come illustrato di seguito:
+      Esempio: /logger:console;verbosity=&lt;impostazione predefinita: "normal"&gt;
+      Valori consentiti per verbosity: quiet, minimal, normal e detailed.
+
+      Consente di cambiare il prefisso del livello di diagnostica per il logger di console come illustrato di seguito:
+      Esempio: /logger:console;prefix=&lt;impostazione predefinita: "false"&gt;
+      Per altre informazioni sul logger di console, vedere: https://aka.ms/console-logger</target>
+      </trans-unit>
+      <trans-unit id="HelpDescriptionText">
+        <source>Description: Runs tests from the specified files.</source>
+        <note></note>
+        <target state="translated">Descrizione: esegue test dai file specificati.</target>
+      </trans-unit>
+      <trans-unit id="HelpOptionsText">
+        <source>Options:</source>
+        <note>Section Header for subsequent command help listing</note>
+        <target state="translated">Opzioni:</target>
+      </trans-unit>
+      <trans-unit id="HelpUsageText">
+        <source>Usage: vstest.console.exe [Arguments] [Options] [[--] &lt;RunSettings arguments&gt;...]]</source>
+        <note></note>
+        <target state="translated">Utilizzo: vstest.console.exe [Argomenti] [Opzioni] [[--] &lt;argomenti di RunSettings&gt;...]]</target>
+      </trans-unit>
+      <trans-unit id="MissingTestSourceFile">
+        <source>No test source files were specified.</source>
+        <note></note>
+        <target state="translated">Non sono stati specificati file di origine test.</target>
+      </trans-unit>
+      <trans-unit id="NoArgumentsProvided">
+        <source>No arguments were specified.</source>
+        <note></note>
+        <target state="translated">Non sono stati specificati argomenti.</target>
+      </trans-unit>
+      <trans-unit id="RunTestsArgumentHelp">
+        <source>[TestFileNames]
+      Run tests from the specified files or wild card pattern. Separate multiple test file names or pattern
+      by spaces. Set console logger verbosity to detailed to view matched test files.
+      Examples: mytestproject.dll
+                mytestproject.dll myothertestproject.exe
+                testproject*.dll my*project.dll</source>
+        <note></note>
+        <target state="translated">[NomiFileDiTest]
+      Esegue i test corrispondenti ai file specificati o al carattere jolly. Separare più nomi di file di test o
+       caratteri jolly con uno spazio. Impostare il livello di dettaglio del logger della console su dettagliato per visualizzare i file di test corrispondenti.
+      Esempi: mytestproject.dll
+                mytestproject.dll myothertestproject.exe
+                testproject*.dll my*project.dll</target>
+      </trans-unit>
+      <trans-unit id="AvailableSettingsProvidersHeaderMessage">
+        <source>The following Settings Providers Add-Ins are available:</source>
+        <note></note>
+        <target state="translated">Sono disponibili i componenti aggiuntivi di provider di impostazioni seguenti:</target>
+      </trans-unit>
+      <trans-unit id="RunSettingsArgumentHelp">
+        <source>--Settings|/Settings:&lt;Settings File&gt;
+      Settings to use when running tests.</source>
+        <note></note>
+        <target state="translated">--Settings|/Settings:&lt;FileImpostazioni&gt;
+      Impostazioni da usare per l'esecuzione dei test.</target>
+      </trans-unit>
+      <trans-unit id="RunSettingsRequired">
+        <source>The /Settings parameter requires a settings file to be provided.</source>
+        <note></note>
+        <target state="translated">Con il parametro /Settings è necessario specificare un file di impostazioni.</target>
+      </trans-unit>
+      <trans-unit id="RunSettingsFileNotFound">
+        <source>The Settings file '{0}' could not be found.</source>
+        <note></note>
+        <target state="translated">Il file di impostazioni '{0}' non è stato trovato.</target>
+      </trans-unit>
+      <trans-unit id="TestRunFailed">
+        <source>Test Run Failed.</source>
+        <note></note>
+        <target state="translated">L'esecuzione dei test non è riuscita.</target>
+      </trans-unit>
+      <trans-unit id="TestRunSuccessful">
+        <source>Test Run Successful.</source>
+        <note></note>
+        <target state="translated">L'esecuzione dei test è riuscita.</target>
+      </trans-unit>
+      <trans-unit id="InvalidInIsolationCommand">
+        <source>Argument {0} is not expected in the 'InIsolation' command. Specify the command without the argument (Example: vstest.console.exe myTests.dll /InIsolation) and try again.</source>
+        <note></note>
+        <target state="translated">L'argomento {0} non è previsto nel comando 'InIsolation'. Specificare il comando senza l'argomento, ad esempio: vstest.console.exe myTests.dll /InIsolation, quindi riprovare.</target>
+      </trans-unit>
+      <trans-unit id="UseVsixExtensionsValueRequired">
+        <source>The /UseVsixExtensions parameter requires a value. If 'true', the installed VSIX extensions (if any) will be used in the test run. If false, they will be ignored.   Example:  /UseVsixExtensions:true</source>
+        <note></note>
+        <target state="translated">Con il parametro /UseVsixExtensions è richiesto un valore. Se è 'true', le estensioni VSIX eventualmente installate verranno usate nell'esecuzione dei test. Se è false, verranno ignorate. Esempio: /UseVsixExtensions:true</target>
+      </trans-unit>
+      <trans-unit id="InvalidUseVsixExtensionsCommand">
+        <source>Argument {0} is not expected in the 'UseVsixExtensions' command. Specify the command indicating whether the vsix extensions should be used or skipped (Example: vstest.console.exe myTests.dll /UseVsixExtensions:true) and try again.</source>
+        <note></note>
+        <target state="translated">L'argomento {0} non è previsto nel comando 'UseVsixExtensions'. Specificare il comando indicando se le estensioni vsix devono essere usate o ignorate, ad esempio vstest.console.exe myTests.dll /UseVsixExtensions:true, quindi riprovare.</target>
+      </trans-unit>
+      <trans-unit id="InIsolationHelp">
+        <source>--InIsolation|/InIsolation
+      Runs the tests in an isolated process. This makes vstest.console.exe 
+      process less likely to be stopped on an error in the tests, but tests 
+      may run slower.</source>
+        <note></note>
+        <target state="translated">--InIsolation|/InIsolation
+      Esegue i test in un processo isolato. In questo modo è meno probabile che 
+      il processo vstest.console.exe venga arrestato in caso di errore nei test,
+      che però potrebbero risultare più lenti.</target>
+      </trans-unit>
+      <trans-unit id="UseVsixExtensionsHelp">
+        <source>/UseVsixExtensions
+      This makes vstest.console.exe process use or skip the VSIX extensions 
+      installed(if any) in the test run. 
+      Example  /UseVsixExtensions:true</source>
+        <note></note>
+        <target state="translated">/UseVsixExtensions
+      Determina se il processo vstest.console.exe usa o ignora le estensioni VSIX 
+      eventualmente installate nell'esecuzione dei test. 
+      Esempio: /UseVsixExtensions:true</target>
+      </trans-unit>
+      <trans-unit id="BatchSizeRequired">
+        <source>The /BatchSize argument requires the size of the batch.  Example:  /BatchSize:10</source>
+        <note></note>
+        <target state="translated">Con l'argomento /BatchSize sono richieste le dimensioni del batch. Esempio: /BatchSize:10</target>
+      </trans-unit>
+      <trans-unit id="InvalidBatchSize">
+        <source>Invalid batch size {0}. The batch size should be greater than zero. Example:  /BatchSize:10</source>
+        <note></note>
+        <target state="translated">Le dimensioni {0} del batch non sono valide. Devono essere maggiori di zero. Esempio: /BatchSize:10</target>
+      </trans-unit>
+      <trans-unit id="Examples">
+        <source>  To run tests:
+    &gt;vstest.console.exe tests.dll 
+  To run tests with additional settings such as  data collectors:
+    &gt;vstest.console.exe  tests.dll /Settings:Local.RunSettings</source>
+        <note></note>
+        <target state="translated">  Per eseguire test:
+    &gt;vstest.console.exe tests.dll 
+  Per eseguire test con impostazioni aggiuntive, quali agenti di raccolta dati:
+    &gt;vstest.console.exe  tests.dll /Settings:Local.RunSettings</target>
+      </trans-unit>
+      <trans-unit id="ListDiscoverersHelp">
+        <source>/ListDiscoverers
+      Lists installed test discoverers.</source>
+        <note></note>
+        <target state="translated">/ListDiscoverers
+      Elenca gli agenti di individuazione test installati.</target>
+      </trans-unit>
+      <trans-unit id="ListExecutorsHelp">
+        <source>/ListExecutors
+      Lists installed test executors.</source>
+        <note></note>
+        <target state="translated">/ListExecutors
+      Elenca gli executor di test installati.</target>
+      </trans-unit>
+      <trans-unit id="ListLoggersHelp">
+        <source>/ListLoggers
+      Lists installed test loggers.</source>
+        <note></note>
+        <target state="translated">/ListLoggers
+      Elenca i logger di test installati.</target>
+      </trans-unit>
+      <trans-unit id="ListSettingsProvidersHelp">
+        <source>/ListSettingsProviders
+      Lists installed test settings providers.</source>
+        <note></note>
+        <target state="translated">/ListSettingsProviders
+      Elenca i provider di impostazioni test installati.</target>
+      </trans-unit>
+      <trans-unit id="ListTestsHelp">
+        <source>-lt|--ListTests|/lt|/ListTests:&lt;File Name&gt;
+      Lists all discovered tests from the given test container.</source>
+        <note></note>
+        <target state="translated">-lt|--ListTests|/lt|/ListTests:&lt;Nome file&gt;
+      Elenca tutti i test individuati dal contenitore di test specificato.</target>
+      </trans-unit>
+      <trans-unit id="TimeElapsed">
+        <source>Time elapsed :</source>
+        <note></note>
+        <target state="translated">Tempo trascorso:</target>
+      </trans-unit>
+      <trans-unit id="SpecificTestsRequired">
+        <source>The /Tests argument requires one or more specific test names or their substrings.
+       Examples: /Tests:TestsMethod1, /Tests:TestMethod1,method2 </source>
+        <note></note>
+        <target state="translated">Con l'argomento /Tests sono richiesti uno o più nomi di test specifici o relative sottostringhe.
+       Esempi: /Tests:TestsMethod1, /Tests:TestMethod1,method2 </target>
+      </trans-unit>
+      <trans-unit id="NoTestsAvailableAfterFiltering">
+        <source>A total of {0} tests were discovered but no test matches the specified selection criteria({1}). Use right value(s) and try again.</source>
+        <note></note>
+        <target state="translated">In totale sono stati individuati {0} test, ma nessuno corrisponde ai criteri di selezione specificati ({1}). Usare i valori corretti e riprovare.</target>
+      </trans-unit>
+      <trans-unit id="SearchStringDelimiter">
+        <source>,</source>
+        <note></note>
+        <target state="translated">,</target>
+      </trans-unit>
+      <trans-unit id="RunSpecificTestsHelp">
+        <source>--Tests|/Tests:&lt;Test Names&gt;
+      Run tests with names that match the provided values. To provide multiple
+      values, separate them by commas.
+      Examples: /Tests:TestMethod1
+                /Tests:TestMethod1,testMethod2</source>
+        <note>Please verify if the console output looks good after modifiaction. </note>
+        <target state="translated">--Tests|/Tests:&lt;Nomi test&gt;
+      Esegue test con nomi corrispondenti ai valori specificati. Per specificare più
+      valori, separarli con virgole.
+      Esempi: /Tests:TestMethod1
+                /Tests:TestMethod1,testMethod2</target>
+      </trans-unit>
+      <trans-unit id="SwitchToNoIsolation">
+        <source>Using Isolation mode to run the tests as diagnostic data adapters were enabled in the runsettings. Use the /inIsolation parameter to suppress this warning.</source>
+        <note></note>
+        <target state="translated">Per eseguire i test, verrà usata la modalità di isolamento perché gli adattatori dati di diagnostica sono stati abilitati in runsettings. Usare il parametro /inIsolation per non visualizzare più questo avviso.</target>
+      </trans-unit>
+      <trans-unit id="SwitchToIsolationInAppContainerMode">
+        <source>Using Isolation mode to run unit tests for Windows Store apps. Use the /InIsolation parameter to suppress this warning.</source>
+        <note></note>
+        <target state="translated">Per eseguire gli unit test per le app di Windows Store, verrà usata la modalità di isolamento. Usare il parametro /InIsolation per non visualizzare più questo avviso.</target>
+      </trans-unit>
+      <trans-unit id="DisablingDataCollectionInAppContainerTestExecution">
+        <source>Diagnostic data adapters are not supported when running unit tests for Windows Store apps. Remove diagnostic data adapters settings from settings.</source>
+        <note></note>
+        <target state="translated">Gli adattatori dati di diagnostica non sono supportati durante l'esecuzione di unit test per app di Windows Store. Rimuovere le impostazioni degli adattatori dati di diagnostica dalle impostazioni.</target>
+      </trans-unit>
+      <trans-unit id="LoggerFriendlyNameFormat">
+        <source>        FriendlyName: {0}</source>
+        <note></note>
+        <target state="translated">        Nome descrittivo: {0}</target>
+      </trans-unit>
+      <trans-unit id="ExtensionUriFormat">
+        <source>        Uri: {0}</source>
+        <note></note>
+        <target state="translated">        URI: {0}</target>
+      </trans-unit>
+      <trans-unit id="SettingFormat">
+        <source>        SettingName: {0}</source>
+        <note></note>
+        <target state="translated">        Nome impostazione: {0}</target>
+      </trans-unit>
+      <trans-unit id="SupportedFileTypesIndicator">
+        <source>        Supported File Types:</source>
+        <note></note>
+        <target state="translated">        Tipi di file supportati:</target>
+      </trans-unit>
+      <trans-unit id="SupportedFileWithoutSeparator">
+        <source> {0}</source>
+        <note></note>
+        <target state="translated"> {0}</target>
+      </trans-unit>
+      <trans-unit id="SupportedFileWithSeparator">
+        <source> {0},</source>
+        <note></note>
+        <target state="translated"> {0},</target>
+      </trans-unit>
+      <trans-unit id="UriOfDefaultExecutor">
+        <source>        Default Executor Uri: {0}</source>
+        <note></note>
+        <target state="translated">        URI executor predefinito: {0}</target>
+      </trans-unit>
+      <trans-unit id="LoggerUriFormat">
+        <source>        Uri: {0}</source>
+        <note></note>
+        <target state="translated">        URI: {0}</target>
+      </trans-unit>
+      <trans-unit id="InvalidPlatformType">
+        <source>Invalid platform type: {0}. Valid platform types are {1}.</source>
+        <note>0 is the platform type e.g. x86, and 1 is a list of the built in platforms, e.g. x86, x64</note>
+        <target state="translated">Tipo di piattaforma non valido: {0}. I tipi di piattaforma validi sono {1}.</target>
+      </trans-unit>
+      <trans-unit id="PlatformTypeRequired">
+        <source>The /Platform argument requires the target platform type for the test run to be provided.   Example:  /Platform:x86</source>
+        <note></note>
+        <target state="translated">L'argomento /Platform richiede il tipo di piattaforma di destinazione per l'esecuzione dei test. Ad esempio: /Platform:x86</target>
+      </trans-unit>
+      <trans-unit id="PlatformArgumentHelp">
+        <source>--Platform|/Platform:&lt;Platform type&gt;
+      Target platform architecture to be used for test execution. 
+      Valid values are x86, x64 and ARM.</source>
+        <note></note>
+        <target state="translated">--Platform|/Platform:&lt;Tipo di piattaforma&gt;
+       Architettura della piattaforma di destinazione da usare per l'esecuzione dei test. 
+       Valori validi: x86, x64 e ARM.</target>
+      </trans-unit>
+      <trans-unit id="SwitchToIsolationInMultiTargetingMode">
+        <source>Using Isolation mode to run tests as required by effective Platform:{0} and .Net Framework:{1} settings for test run. Use the /inIsolation parameter to suppress this warning.</source>
+        <note></note>
+        <target state="translated">Per eseguire i test, verrà usata la modalità di isolamento in base a quanto specificato nelle impostazioni effettive di piattaforma {0} e .NET Framework {1} per l'esecuzione dei test. Usare il parametro /inIsolation per non visualizzare più questo avviso.</target>
+      </trans-unit>
+      <trans-unit id="FrameworkArgumentHelp">
+        <source>--Framework|/Framework:&lt;Framework Version&gt;
+      Target .Net Framework version to be used for test execution. 
+      Valid values are ".NETFramework,Version=v4.5.1", ".NETCoreApp,Version=v1.0" etc.
+      Other supported values are Framework40, Framework45, FrameworkCore10 and FrameworkUap10.</source>
+        <note></note>
+        <target state="translated">--Framework|/Framework:&lt;Versione framework&gt;
+      Versione di .NET Framework di destinazione da usare per l'esecuzione dei test. 
+      Valori validi: ".NETFramework,Version=v4.5.1", ".NETCoreApp,Version=v1.0" e così via.
+      Altri valori supportati: Framework40, Framework45, FrameworkCore10 e FrameworkUap10.</target>
+      </trans-unit>
+      <trans-unit id="FrameworkVersionRequired">
+        <source>The /Framework argument requires the target .Net Framework version for the test run.   Example:  /Framework:".NETFramework,Version=v4.5.1"</source>
+        <note></note>
+        <target state="translated">Con l'argomento /Framework è richiesta la versione di .NET Framework di destinazione per l'esecuzione dei test. Esempio: /Framework:".NETFramework,Version=v4.5.1"</target>
+      </trans-unit>
+      <trans-unit id="InvalidFrameworkVersion">
+        <source>Invalid .Net Framework version:{0}. Please give the fullname of the TargetFramework(Example: .NETCoreApp,Version=v2.0). Other supported .Net Framework versions are Framework40, Framework45, FrameworkCore10 and FrameworkUap10.</source>
+        <note></note>
+        <target state="translated">La versione di .NET Framework {0} non è valida. Specificare il nome completo della versione di .NET Framework di destinazione ad esempio .NETCoreApp,Version=v2.0. Altre versioni di .NET Framework supportate: Framework40, Framework45, FrameworkCore10 e FrameworkUap10.</target>
+      </trans-unit>
+      <trans-unit id="AppContainerTestPrerequisiteFail">
+        <source>Could not start test run for unit tests for Windows Store app: {0}.</source>
+        <note></note>
+        <target state="translated">Non è stato possibile avviare l'esecuzione dei test per unit test per l'app di Windows Store: {0}.</target>
+      </trans-unit>
+      <trans-unit id="TestCaseFilterArgumentHelp">
+        <source>--TestCaseFilter|/TestCaseFilter:&lt;Expression&gt;
+      Run tests that match the given expression.
+      &lt;Expression&gt; is of the format &lt;property&gt;Operator&lt;value&gt;[|&amp;&lt;Expression&gt;]
+         where Operator is one of =, != or ~  (Operator ~ has 'contains'
+         semantics and is applicable for string properties like DisplayName).
+         Parenthesis () can be used to group sub-expressions.
+      Examples: /TestCaseFilter:"Priority=1"
+                /TestCaseFilter:"(FullyQualifiedName~Nightly
+                                  |Name=MyTestMethod)"</source>
+        <note></note>
+        <target state="translated">--TestCaseFilter|/TestCaseFilter:&lt;Espressione&gt;
+      Esegue test corrispondenti all'espressione specificata.
+      &lt;Espressione&gt; è nel formato &lt;proprietà&gt;Operatore&lt;valore&gt;[|&amp;&lt;Espressione&gt;]
+         dopo l'operatore è =, != oppure ~  (l'operatore ~ implica semantica 'contains'
+         ed è applicabile solo per proprietà di stringhe quali DisplayName).
+         È possibile usare le parentesi () per raggruppare sottoespressioni.
+      Esempi: /TestCaseFilter:"Priority=1"
+                /TestCaseFilter:"(FullyQualifiedName~Nightly
+                                  |Name=MyTestMethod)"</target>
+      </trans-unit>
+      <trans-unit id="TestCaseFilterValueRequired">
+        <source>The /TestCaseFilter argument requires the filter value.
+        Filter value can be &lt;property&gt;=&lt;value&gt; type.
+        Examples: "Priority=1", "TestCategory=Nightly"</source>
+        <note></note>
+        <target state="translated">L'argomento /TestCaseFilter richiede il valore di filtro.
+        Il valore di filtro può essere di tipo &lt;proprietà&gt;=&lt;valore&gt;.
+        Esempi: "Priority=1", "TestCategory=Nightly"</target>
+      </trans-unit>
+      <trans-unit id="InvalidTestCaseFilterValueForSpecificTests">
+        <source>The /TestCaseFilter argument cannot be specified with /Tests. Filtering of test cases is not applicable when tests are specified.</source>
+        <note></note>
+        <target state="translated">Non è possibile specificare l'argomento /TestCaseFilter con /Tests. Il filtro dei test case non è applicabile quando si specificano test.</target>
+      </trans-unit>
+      <trans-unit id="NonDefaultFrameworkAndOrArchDetected">
+        <source>{0} is built for {1}/{2}. The test assemblies specified in a run should have a common target .Net framework and platform.</source>
+        <note></note>
+        <target state="translated">{0} è compilato per {1}/{2}. Gli assembly di test specificati in un'esecuzione devono disporre di una piattaforma e di un .NET Framework di destinazione comuni.</target>
+      </trans-unit>
+      <trans-unit id="RunSingleAppContainerSource">
+        <source>Only one app package (.appx file) can be specified for running tests.</source>
+        <note></note>
+        <target state="translated">Per i test in esecuzione è possibile specificare un solo pacchetto dell'app (file con estensione appx).</target>
+      </trans-unit>
+      <trans-unit id="StartingDiscovery">
+        <source>Starting test discovery, please wait...</source>
+        <note></note>
+        <target state="translated">Avvio dell'individuazione dei test in corso. Attendere...</target>
+      </trans-unit>
+      <trans-unit id="StartingExecution">
+        <source>Starting test execution, please wait...</source>
+        <note></note>
+        <target state="translated">Avvio dell'esecuzione dei test in corso. Attendere...</target>
+      </trans-unit>
+      <trans-unit id="DisablingDCOnExceptionWhileParsingDCInfo">
+        <source>Reading diagnostic data adapter settings threw an running '{0}'. All diagnostic data adapters will be skipped in this run.</source>
+        <note></note>
+        <target state="translated">La lettura delle impostazioni dell'adattatore dati di diagnostica ha generato un oggetto '{0}' di esecuzione. Tutti gli adattatori dati di diagnostica verranno ignorati durante questa esecuzione.</target>
+      </trans-unit>
+      <trans-unit id="EnableCodeCoverageArgumentProcessorHelp">
+        <source>/EnableCodeCoverage
+      Enables data collector 'CodeCoverage' for the test run.</source>
+        <note></note>
+        <target state="translated">/EnableCodeCoverage
+      Abilita l'agente di raccolta dati 'CodeCoverage' per l'esecuzione dei test.</target>
+      </trans-unit>
+      <trans-unit id="InvalidEnableCodeCoverageCommand">
+        <source>Argument {0} is not expected in the 'EnableCodeCoverage' command. Specify the command without the argument (Example: vstest.console.exe myTests.dll /EnableCodeCoverage) and try again.</source>
+        <note></note>
+        <target state="translated">L'argomento {0} non è previsto nel comando 'EnableCodeCoverage'. Specificare il comando senza l'argomento, ad esempio: vstest.console.exe myTests.dll /EnableCodeCoverage, quindi riprovare.</target>
+      </trans-unit>
+      <trans-unit id="NoTestEntryPoint">
+        <source>App package '{0}' does not has test executor entry point. For running unit tests for Windows Store apps, create app package using Windows Store app Unit Test Library project.</source>
+        <note></note>
+        <target state="translated">Il pacchetto dell'app '{0}' non contiene un punto di ingresso dell'executor di test. Per eseguire unit test per le app di Windows Store, creare il pacchetto dell'app usando il progetto Libreria unit test per app di Windows Store.</target>
+      </trans-unit>
+      <trans-unit id="DisablingCodeCoverageInAppContainerTestExecution">
+        <source>Code coverage is not available for Windows Store apps. Code coverage analysis skipped for this test run.</source>
+        <note></note>
+        <target state="translated">Il code coverage non è disponibile per le app di Windows Store. L'analisi del code coverage verrà ignorata per questa esecuzione dei test.</target>
+      </trans-unit>
+      <trans-unit id="SomeTestsUnavailableAfterFiltering">
+        <source>A total of {0} tests were discovered but some tests do not match the specified selection criteria({1}). Use right value(s) and try again.</source>
+        <note></note>
+        <target state="translated">In totale sono stati individuati {0} test, ma alcuni test non corrispondono ai criteri di selezione specificati ({1}). Usare i valori corretti e riprovare.</target>
+      </trans-unit>
+      <trans-unit id="TestAdapterPathHelp">
+        <source>--TestAdapterPath|/TestAdapterPath
+      This makes vstest.console.exe process use custom test adapters
+      from a given path (if any) in the test run. 
+      Example  /TestAdapterPath:&lt;pathToCustomAdapters&gt;</source>
+        <note></note>
+        <target state="translated">--TestAdapterPath|/TestAdapterPath
+      Determina se il processo vstest.console.exe usa adattatori di test personalizzati
+      da un percorso eventualmente specificato nell'esecuzione dei test. 
+      Esempio  /TestAdapterPath:&lt;percorsoAdattatoriPersonalizzati&gt;</target>
+      </trans-unit>
+      <trans-unit id="TestAdapterPathValueRequired">
+        <source>The /TestAdapterPath parameter requires a value, which is path of a location containing custom test adapters. Example:  /TestAdapterPath:c:\MyCustomAdapters</source>
+        <note></note>
+        <target state="translated">Con il parametro /TestAdapterPath è richiesto un valore, corrispondente al percorso di una posizione contenente adattatori di test personalizzati. Esempio: /TestAdapterPath:c:\MyCustomAdapters</target>
+      </trans-unit>
+      <trans-unit id="InvalidTestAdapterPathCommand">
+        <source>The path '{0}' specified in the 'TestAdapterPath' is invalid. Error: {1}</source>
+        <note></note>
+        <target state="translated">Il percorso '{0}' specificato in 'TestAdapterPath' non è valido. Errore: {1}</target>
+      </trans-unit>
+      <trans-unit id="TestAdapterPathDoesNotExist">
+        <source>The custom test adapter search path provided was not found, provide a valid path and try again.</source>
+        <note></note>
+        <target state="translated">Il percorso di ricerca dell'adattatore di test personalizzato non è stato trovato. Specificare un percorso valido e riprovare.</target>
+      </trans-unit>
+      <trans-unit id="NoAdaptersFoundInTestAdapterPath">
+        <source>The path '{0}' specified in the 'TestAdapterPath' does not contain any test adapters, provide a valid path and try again.</source>
+        <note></note>
+        <target state="translated">Il percorso '{0}' specificato in 'TestAdapterPath' non contiene alcun adattatore di test. Specificare un percorso valido e riprovare.</target>
+      </trans-unit>
+      <trans-unit id="PhoneAppContainerTestPrerequisiteFail">
+        <source>Could not start test run for the tests for Windows Phone app: {0}.</source>
+        <note></note>
+        <target state="translated">Non è stato possibile avviare l'esecuzione dei test per i test per l'app di Windows Phone: {0}.</target>
+      </trans-unit>
+      <trans-unit id="SwitchToIsolationInPhoneAppContainerMode">
+        <source>Using Isolation mode to run unit tests for Windows Phone apps. Use the /InIsolation parameter to suppress this warning.</source>
+        <note></note>
+        <target state="translated">Per eseguire gli unit test per le app di Windows Phone, verrà usata la modalità di isolamento. Usare il parametro /InIsolation per non visualizzare più questo avviso.</target>
+      </trans-unit>
+      <trans-unit id="DisablingCodeCoverageInPhoneAppContainerTestExecution">
+        <source>Code coverage is not available for Windows Phone apps. Code coverage analysis skipped for this test run.</source>
+        <note></note>
+        <target state="translated">Il code coverage non è disponibile per le app di Windows Phone. L'analisi del code coverage verrà ignorata per questa esecuzione dei test.</target>
+      </trans-unit>
+      <trans-unit id="DisablingDataCollectionInPhoneAppContainerTestExecution">
+        <source>Diagnostic data adapters are not supported when running unit tests for Windows Phone apps. Remove diagnostic data adapters settings from settings.</source>
+        <note></note>
+        <target state="translated">Gli adattatori dati di diagnostica non sono supportati durante l'esecuzione di unit test per app di Windows Phone. Rimuovere le impostazioni degli adattatori dati di diagnostica dalle impostazioni.</target>
+      </trans-unit>
+      <trans-unit id="PhoneNoTestEntryPoint">
+        <source>App package '{0}' does not has test executor entry point. For running unit tests for Windows Phone apps, create app package using Windows Phone Unit Test App project.</source>
+        <note></note>
+        <target state="translated">Il pacchetto dell'app '{0}' non contiene un punto di ingresso dell'executor di test. Per eseguire unit test per le app di Windows Phone, creare il pacchetto dell'app con il progetto App unit test di Windows Phone.</target>
+      </trans-unit>
+      <trans-unit id="TestSettingsFrameworkMismatch">
+        <source>Using framework {0} to run the tests. Specify /Framework:{1} to suppress this warning.</source>
+        <note></note>
+        <target state="translated">Per eseguire i test, verrà usato il framework {0}. Specificare /Framework:{1} per non visualizzare più questo avviso.</target>
+      </trans-unit>
+      <trans-unit id="AppxBundleSourceWarning">
+        <source>No test found in the specified test containers. Additionally, Microsoft Windows Store Unit test adapter does not support .appxbundle files. Create an appx (set Generate App bundle option to Never) when creating App Package and try again.</source>
+        <note></note>
+        <target state="translated">Non è stato trovato alcun test nei contenitori di test specificati. L'adattatore di unit test di Microsoft Windows Store, inoltre, non supporta i file con estensione appxbundle. Durante la creazione di un pacchetto dell'app, creare un file appx impostando l'opzione Genera il bundle dell'app su Mai, quindi riprovare.</target>
+      </trans-unit>
+      <trans-unit id="ParallelArgumentProcessorHelp">
+        <source>--Parallel|/Parallel
+      Specifies that the tests be executed in parallel. By default up
+      to all available cores on the machine may be used.
+      The number of cores to use may be configured using a settings file.</source>
+        <note></note>
+        <target state="translated">--Parallel|/Parallel
+      Specifica che i test devono essere eseguiti in parallelo. Per impostazione
+       predefinita, è possibile usare al massimo tutti i core disponibili in questo computer.
+       Il numero di core da usare può essere configurato con un file di impostazioni.</target>
+      </trans-unit>
+      <trans-unit id="InvalidParallelCommand">
+        <source>Argument {0} is not expected in the 'Parallel' command. Specify the command without the argument (Example: vstest.console.exe myTests.dll /Parallel) and try again.</source>
+        <note></note>
+        <target state="translated">L'argomento {0} non è previsto nel comando 'Parallel'. Specificare il comando senza l'argomento, ad esempio: vstest.console.exe myTests.dll /Parallel, quindi riprovare.</target>
+      </trans-unit>
+      <trans-unit id="CannotBeNullOrEmpty">
+        <source>Cannot be null or empty</source>
+        <note></note>
+        <target state="translated">Non può essere Null o vuoto</target>
+      </trans-unit>
+      <trans-unit id="PortArgumentHelp">
+        <source>--Port|/Port:&lt;Port&gt;
+      The Port for socket connection and receiving the event messages.</source>
+        <note></note>
+        <target state="translated">--Port|/Port:&lt;Porta&gt;
+      Porta per la connessione socket e la ricezione dei messaggi dell'evento.</target>
+      </trans-unit>
+      <trans-unit id="InvalidPortArgument">
+        <source>The --Port|/Port argument requires the port number which is an integer. Specify the port for socket connection and receiving the event messages.</source>
+        <note></note>
+        <target state="translated">Con l'argomento --Port|/Port è richiesto un numero di porta che corrisponde a un numero intero. Specificare la porta per la connessione socket e la ricezione dei messaggi dell'evento.</target>
+      </trans-unit>
+      <trans-unit id="AssemblyPathInvalid">
+        <source>Unable to find the assembly under test. Please make sure that the project is built.</source>
+        <note></note>
+        <target state="translated">L'assembly sottoposto a test non è stato trovato. Assicurarsi che il progetto sia compilato.</target>
+      </trans-unit>
+      <trans-unit id="ProjectPathNotFound">
+        <source>The Path {0} does not exist.</source>
+        <note></note>
+        <target state="translated">Il percorso {0} non esiste.</target>
+      </trans-unit>
+      <trans-unit id="BuildBasePathArgumentHelp">
+        <source>--BuildBasePath|/BuildBasePath:&lt;BuildBasePath&gt;
+      The directory containing the temporary outputs.</source>
+        <note></note>
+        <target state="translated">--BuildBasePath|/BuildBasePath:&lt;PercorsoBaseCompilazione&gt;
+      Directory che contiene gli output temporanei.</target>
+      </trans-unit>
+      <trans-unit id="ConfigurationArgumentHelp">
+        <source>-c|--Configuration|/c|/Configuration:&lt;Configuration&gt;
+      The configuration the project is built for i.e. Debug/Release</source>
+        <note></note>
+        <target state="translated">-c|--Configuration|/c|/Configuration:&lt;Configurazione&gt;
+      Configurazione per cui viene compilato il progetto, ad esempio Debug/Release</target>
+      </trans-unit>
+      <trans-unit id="InvalidConfiguration">
+        <source>The given configuration is invalid.</source>
+        <note></note>
+        <target state="translated">La configurazione specificata non è valida.</target>
+      </trans-unit>
+      <trans-unit id="OutputArgumentHelp">
+        <source>-o|--Output|/o|/Output:&lt;Output&gt;
+      The directory containing the binaries to run.</source>
+        <note></note>
+        <target state="translated">-o|--Output|/o|/Output:&lt;Output&gt;
+      Directory contenente i file binari da eseguire.</target>
+      </trans-unit>
+      <trans-unit id="BuildBasePathNotFound">
+        <source>The BuildBasePath was not found, provide a valid path and try again.</source>
+        <note></note>
+        <target state="translated">Il percorso di base di compilazione non è stato trovato. Specificare un percorso valido e riprovare.</target>
+      </trans-unit>
+      <trans-unit id="OutputPathNotFound">
+        <source>The Output path was not found, provide a valid path and try again.</source>
+        <note></note>
+        <target state="translated">Il percorso di output non è stato trovato. Specificare un percorso valido e riprovare.</target>
+      </trans-unit>
+      <trans-unit id="AddnlInfoMessagesBanner">
+        <source>Additional Information Messages:</source>
+        <note></note>
+        <target state="translated">Ulteriori messaggi informativi:</target>
+      </trans-unit>
+      <trans-unit id="Days">
+        <source>Days</source>
+        <note></note>
+        <target state="translated">Giorni</target>
+      </trans-unit>
+      <trans-unit id="ErrorMessageBanner">
+        <source>Error Message:</source>
+        <note></note>
+        <target state="translated">Messaggio di errore:</target>
+      </trans-unit>
+      <trans-unit id="ExecutionTimeFormatString">
+        <source> Total time: {0:0.0000} {1}</source>
+        <note></note>
+        <target state="translated"> Tempo totale: {0:0.0000} {1}</target>
+      </trans-unit>
+      <trans-unit id="Hours">
+        <source>Hours</source>
+        <note></note>
+        <target state="translated">Ore</target>
+      </trans-unit>
+      <trans-unit id="LoggerNotFound">
+        <source>Could not find a test logger with URI or FriendlyName '{0}'.</source>
+        <note></note>
+        <target state="translated">Non è stato trovato alcun logger di test con URI o nome descrittivo '{0}'.</target>
+      </trans-unit>
+      <trans-unit id="Minutes">
+        <source>Minutes</source>
+        <note></note>
+        <target state="translated">Minuti</target>
+      </trans-unit>
+      <trans-unit id="Seconds">
+        <source>Seconds</source>
+        <note></note>
+        <target state="translated">Secondi</target>
+      </trans-unit>
+      <trans-unit id="StacktraceBanner">
+        <source>Stack Trace:</source>
+        <note></note>
+        <target state="translated">Analisi dello stack:</target>
+      </trans-unit>
+      <trans-unit id="StdErrMessagesBanner">
+        <source>Standard Error Messages:</source>
+        <note></note>
+        <target state="translated">Messaggi di errore standard:</target>
+      </trans-unit>
+      <trans-unit id="StdOutMessagesBanner">
+        <source>Standard Output Messages:</source>
+        <note></note>
+        <target state="translated">Messaggi di output standard:</target>
+      </trans-unit>
+      <trans-unit id="AttachmentsBanner">
+        <source>Attachments:</source>
+        <note></note>
+        <target state="translated">Allegati:</target>
+      </trans-unit>
+      <trans-unit id="AttachmentOutputFormat">
+        <source>  {0}</source>
+        <note></note>
+        <target state="translated">  {0}</target>
+      </trans-unit>
+      <trans-unit id="NoTestsAvailableInSources">
+        <source>No test is available in {0}. Make sure that installed test discoverers &amp; executors, platform &amp; framework version settings are appropriate and try again.</source>
+        <note></note>
+        <target state="translated">Non è disponibile alcun test in {0}. Verificare che le impostazioni delle versioni installate di piattaforma e framework, agenti di individuazione ed executor di test siano appropriate e riprovare.</target>
+      </trans-unit>
+      <trans-unit id="FailedTestIndicator">
+        <source>Failed</source>
+        <note>Message which is written to the console when a test fails.</note>
+        <target state="translated">Non superato</target>
+      </trans-unit>
+      <trans-unit id="PassedTestIndicator">
+        <source>Passed</source>
+        <note>Message which is written to the console when a test passes.</note>
+        <target state="translated">Superato</target>
+      </trans-unit>
+      <trans-unit id="SkippedTestIndicator">
+        <source>Skipped</source>
+        <note></note>
+        <target state="translated">Ignorato</target>
+      </trans-unit>
+      <trans-unit id="DiscoveryFailed">
+        <source>Discovery failed for given sources. Exception : {0}</source>
+        <note></note>
+        <target state="translated">L'individuazione non è riuscita per le origini specificate. Eccezione: {0}</target>
+      </trans-unit>
+      <trans-unit id="ParentProcessIdArgumentHelp">
+        <source>--ParentProcessId|/ParentProcessId:&lt;ParentProcessId&gt;
+      Process Id of the Parent Process responsible for launching current process.</source>
+        <note></note>
+        <target state="translated">--ParentProcessId|/ParentProcessId:&lt;ParentProcessId&gt;
+      ID del processo padre responsabile dell'avvio del processo corrente.</target>
+      </trans-unit>
+      <trans-unit id="InvalidParentProcessIdArgument">
+        <source>The --ParentProcessId|/ParentProcessId argument requires the process id which is an integer. Specify the process id of the parent process that launched this process.</source>
+        <note></note>
+        <target state="translated">Con l'argomento --ParentProcessId|/ParentProcessId è richiesto l'ID processo che corrisponde a un numero intero. Specificare l'ID del processo padre che ha avviato questo processo.</target>
+      </trans-unit>
+      <trans-unit id="HelpArgumentsText">
+        <source>Arguments:</source>
+        <note></note>
+        <target state="translated">Argomenti:</target>
+      </trans-unit>
+      <trans-unit id="EnableDiagUsage">
+        <source>--Diag|/Diag:&lt;Path to log file&gt;
+      Enable logs for test platform.
+      Logs are written to the provided file.
+
+      Change the trace level for logs as shown below
+      Example: /Diag:&lt;Path to log file&gt;;tracelevel=&lt;Defaults to "verbose"&gt;
+      Allowed values for tracelevel: off, error, warning, info and verbose.</source>
+        <note></note>
+        <target state="translated">--Diag|/Diag:&lt;percorso del file di log&gt;
+      Abilita i log per la piattaforma di test.
+      I log vengono scritti nel file specificato.
+
+      Modifica il livello di traccia per i log come illustrato di seguito:
+      Esempio: /Diag:&lt;percorso del file di logfile&gt;;tracelevel=&lt;impostazione predefinita: "verbose"&gt;
+      Valori consentiti per tracelevel: off, error, warning, info e verbose.</target>
+      </trans-unit>
+      <trans-unit id="LoggerFileIsReadOnly">
+        <source>The file {0} provided is read only</source>
+        <note></note>
+        <target state="translated">Il file specificato {0} è di sola lettura</target>
+      </trans-unit>
+      <trans-unit id="DesignModeClientTimeoutError">
+        <source>Timeout to connect or process request for DesignModeClient on port: {0}</source>
+        <target state="translated">Timeout per la connessione o l'elaborazione della richiesta relativa a DesignModeClient sulla porta: {0}</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="NotRunTestIndicator">
+        <source>Not Run</source>
+        <target state="translated">Non eseguito</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="CLIRunSettingsArgumentHelp">
+        <source>RunSettings arguments:
+      Arguments to pass runsettings configurations through commandline. Arguments may be specified as name-value pair of the form [name]=[value] after "-- ". Note the space after --. 
+      Use a space to separate multiple [name]=[value].
+      More info on RunSettings arguments support: https://aka.ms/vstest-runsettings-arguments</source>
+        <target state="translated">Argomenti di RunSettings:
+      Argomenti per passare le configurazioni di runsettings tramite la riga di comando. È possibile specificare gli argomenti come coppia nome-valore in formato [nome]=[valore] dopo "-- ". Notare lo spazio dopo --. 
+      Usare uno spazio per separare più coppie [nome]=[valore].
+      Per altre informazioni sul supporto degli argomenti di RunSettings, vedere: https://aka.ms/vstest-runsettings-arguments</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="MalformedRunSettingsKey">
+        <source>One or more runsettings provided contain invalid token</source>
+        <target state="translated">Uno o più file runsettings specificati contengono un token non valido</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="ResultsDirectoryArgumentHelp">
+        <source>--ResultsDirectory|/ResultsDirectory
+      Test results directory will be created in specified path if not exists.
+      Example  /ResultsDirectory:&lt;pathToResultsDirectory&gt;</source>
+        <target state="translated">--ResultsDirectory|/ResultsDirectory
+      Se non esiste già, la directory dei risultati dei test verrà creata nel percorso specificato.
+      Esempio: /ResultsDirectory:&lt;percorsoDirectoryRisultati&gt;</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="ResultsDirectoryValueRequired">
+        <source>The /ResultsDirectory parameter requires a value, where the test results should be saved. Example:  /ResultsDirectory:c:\MyTestResultsDirectory</source>
+        <target state="translated">Con il parametro /ResultsDirectory è richiesto un valore, corrispondente alla directory in cui verranno salvati i risultati dei test. Esempio: /ResultsDirectory:c:\MyTestResultsDirectory</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="InvalidResultsDirectoryPathCommand">
+        <source>The path '{0}' specified in the 'ResultsDirectory' is invalid. Error: {1}</source>
+        <target state="translated">Il percorso '{0}' specificato in 'ResultsDirectory' non è valido. Errore: {1}</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="InIsolationDeprecated">
+        <source>The /InIsolation flag is deprecated. The tests are always run in a separate process</source>
+        <target state="translated">Il flag /InIsolation è deprecato. I test verranno sempre eseguiti in un processo separato</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="VstestDiagLogOutputPath">
+        <source>Logging Vstest Diagnostics in file: {0}</source>
+        <target state="translated">Registrazione della diagnostica di Vstest nel file: {0}</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="CollectArgumentHelp">
+        <source>--Collect|/Collect:&lt;DataCollector FriendlyName&gt;
+      Enables data collector for the test run. More info here : https://aka.ms/vstest-collect</source>
+        <target state="translated">--Collect|/Collect:&lt;Nome descrittivo agente di raccolta dati&gt;
+      Abilita l'agente di raccolta dati per l'esecuzione dei test. Per altre informazioni, vedere: https://aka.ms/vstest-collect</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="DataCollectorFriendlyNameInvalid">
+        <source>The Data Collector friendly name '{0}' is not valid.  The Data Collector will be ignored.</source>
+        <target state="translated">Il nome descrittivo '{0}' dell'agente di raccolta dati non è valido. L'agente di raccolta dati verrà ignorato.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="DbgTrcMessagesBanner">
+        <source>Debug Traces Messages:</source>
+        <target state="translated">Messaggi delle tracce di debug:</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="EnableBlameUsage">
+        <source>--Blame|/Blame:[CollectDump];[CollectAlways]=[Value];[DumpType]=[Value]
+      Runs the test in blame mode. This option is helpful in isolating the problematic test causing test host crash.
+      It creates an output file in the current directory as "Sequence.xml",
+      that captures the order of execution of test before the crash.
+      You may optionally choose to collect process dump for the test host.
+      When you choose to collect dump, by default, a mini dump will be collected on a crash.
+      You may also choose to override this default behaviour by some optional parameters:
+      CollectAlways - To collect dump on exit even if there is no crash (true/false) 
+      DumpType - To specify dump type (mini/full).
+      Example: /Blame
+               /Blame:CollectDump
+               /Blame:CollectDump;CollectAlways=true;DumpType=full</source>
+        <target state="translated">--Blame|/Blame:[CollectDump];[CollectAlways]=[Valore];[DumpType]=[Valore]
+      Esegue il test in modalità di segnalazione errore. Questa opzione è utile per isolare il test problematico che causa l'arresto anomalo di Test Host.
+      Crea nella directory corrente un file di output "Sequence.xml", che
+      acquisisce l'ordine di esecuzione del test prima dell'arresto anomalo.
+      Si può scegliere di raccogliere il dump del processo per Test Host.
+      Quando si sceglie di raccogliere il dump, per impostazione predefinita viene raccolto un minidump in caso di arresto anomalo.
+      Si può anche scegliere di eseguire l'override di questo comportamento predefinito usando alcuni parametri facoltativi:
+      CollectAlways: per raccogliere il dump all'uscita anche in assenza di arresto anomalo (true/false) 
+      DumpType: per specificare il tipo di dump (mini/full).
+      Esempio: /Blame
+               /Blame:CollectDump
+               /Blame:CollectDump;CollectAlways=true;DumpType=full</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TestRunAborted">
+        <source>Test Run Aborted.</source>
+        <target state="translated">Esecuzione dei test interrotta.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TestRunCanceled">
+        <source>Test Run Canceled.</source>
+        <target state="translated">Esecuzione dei test annullata.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="OpenResponseFileError">
+        <source>Error opening response file '{0}'</source>
+        <target state="translated">Si è verificato un errore durante l'apertura del file di risposta '{0}'</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="ResponseFileArgumentHelp">
+        <source>@&lt;file&gt;
+      Read response file for more options.</source>
+        <target state="translated">@&lt;file&gt;
+      Legge il file di risposta per altre opzioni.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TestRunSummaryForCanceledOrAbortedRun">
+        <source>Total tests: Unknown</source>
+        <target state="translated">Totale test: sconosciuto</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="StringFormatToJoinTwoStrings">
+        <source>{0} {1}</source>
+        <target state="translated">{0} {1}</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="SuggestTestAdapterPathIfNoTestsIsFound">
+        <source>Additionally, path to test adapters can be specified using /TestAdapterPath command. Example  /TestAdapterPath:&lt;pathToCustomAdapters&gt;.</source>
+        <target state="translated">È anche possibile specificare il percorso degli adattatori di test con il comando /TestAdapterPath. Esempio: /TestAdapterPath:&lt;percorsoAdattatoriPersonalizzati&gt;.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="UseVsixExtensionsDeprecation">
+        <source>/UseVsixExtensions is getting deprecated. Please use /TestAdapterPath instead.</source>
+        <target state="translated">/UseVsixExtensions verrà deprecato. Usare /TestAdapterPath.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="DisableAutoFakesUsage">
+        <source>--DisableAutoFakes|/DisableAutoFakes:&lt;true/false&gt;
+     Example: /DisableAutoFakes:true</source>
+        <target state="translated">--DisableAutoFakes|/DisableAutoFakes:&lt;true/false&gt;
+     Esempio: /DisableAutoFakes:true</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="CollectWithTestSettingErrorMessage">
+        <source>--Collect|/Collect:"{0}" is not supported if test run is configured using testsettings.</source>
+        <target state="translated">--Collect|/Collect:"{0}" non è supportato se l'esecuzione dei test viene configurata con testsettings.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="RunsettingsWithDCErrorMessage">
+        <source>Data collectors other than Code Coverage and Microsoft Fakes configured via run settings are not supported with embedded test settings. Please see https://aka.ms/vstest-configure-datacollector for more information. Run settings: {0}.</source>
+        <target state="translated">Gli agenti di raccolta dati diversi da Code Coverage e Microsoft Fakes configurati tramite le impostazioni esecuzione test non sono supportati con impostazioni di test incorporate. Per altre informazioni, vedere https://aka.ms/vstest-configure-datacollector. Impostazioni esecuzione test: {0}.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="EnableLoggerArgumentsInNetCore">
+        <source>--logger|/logger:&lt;Logger Uri/FriendlyName&gt;
+      Specify a logger for test results. For example, to log results into a 
+      Visual Studio Test Results File (TRX) use /logger:trx[;LogFileName=&lt;Defaults to unique file name&gt;]
+      Creates file in TestResults directory with given LogFileName.
+
+      Change the verbosity level in log messages for console logger as shown below
+      Example: /logger:console;verbosity=&lt;Defaults to "minimal"&gt;
+      Allowed values for verbosity: quiet, minimal, normal and detailed.
+
+      Change the diagnostic level prefix for console logger as shown below
+      Example: /logger:console;prefix=&lt;Defaults to "false"&gt;
+      More info on Console Logger here : https://aka.ms/console-logger</source>
+        <target state="translated">--logger|/logger:&lt;URI/Nome descrittivo logger&gt;
+      Specifica un logger per i risultati dei test. Ad esempio, per registrare risultati in un 
+      file di risultati dei test di Visual Studio (TRX), usare /logger:trx[;LogFileName=&lt;impostazione predefinita: nome file univoco&gt;]
+      Crea nella directory TestResults il file con il valore specificato per LogFileName.
+
+      Consente di cambiare il livello di dettaglio nei messaggi del log per il logger di console come illustrato di seguito:
+      Esempio: /logger:console;verbosity=&lt;impostazione predefinita: "minimal"&gt;
+      Valori consentiti per verbosity: quiet, minimal, normal e detailed.
+
+      Consente di cambiare il prefisso del livello di diagnostica per il logger di console come illustrato di seguito:
+      Esempio: /logger:console;prefix=&lt;impostazione predefinita: "false"&gt;
+      Per altre informazioni sul logger di console, vedere: https://aka.ms/console-logger</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="BlameCollectDumpNotSupportedForPlatform">
+        <source>Collecting crash dumps by option CollectDump for Blame is not supported for this platform.</source>
+        <target state="translated">L'opzione CollectDump per Blame non supporta la raccolta dei dump di arresto anomalo del sistema per questa piattaforma.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="BlameIncorrectOption">
+        <source>The blame parameter specified with blame, {0} is invalid. Ignoring this parameter.</source>
+        <target state="translated">Il parametro di Blame specificato con Blame {0} non è valido e verrà ignorato.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="InvalidDiagFilePath">
+        <source>Diag file path '{0}' is not valid.</source>
+        <target state="translated">Il percorso '{0}' del file di Diag non è valido.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="InvalidBlameArgument">
+        <source>Blame argument '{0}' is not valid.</source>
+        <target state="translated">L'argomento '{0}' di Blame non è valido.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="InvalidDiagArgument">
+        <source>Diag argument '{0}' is not valid.</source>
+        <target state="translated">L'argomento '{0}' di Diag non è valido.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="InvalidLoggerArgument">
+        <source>Logger argument '{0}' is not valid.</source>
+        <target state="translated">L'argomento '{0}' di Logger non è valido.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="Framework35NotSupported">
+        <source>Framework35 is not supported. For projects targeting .Net Framework 3.5, test will run in CLR 4.0 "compatibility mode".</source>
+        <target state="translated">Framework35 non è supportato. Per i progetti destinati a .NET Framework 3.5, i test verranno eseguiti nella modalità di compatibilità di CLR 4.0.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="ProgressIndicatorString">
+        <source>Test run in progress</source>
+        <target state="translated">Esecuzione dei test in corso</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TestRunSummaryTotalTests">
+        <source>Total tests: {0}</source>
+        <target state="translated">Totale test: {0}</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TestRunSummaryFailedTests">
+        <source>     Failed: {0}</source>
+        <target state="translated">     Non superati: {0}</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TestRunSummaryPassedTests">
+        <source>     Passed: {0}</source>
+        <target state="translated">     Superati: {0}</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TestRunSummarySkippedTests">
+        <source>    Skipped: {0}</source>
+        <target state="translated">    Ignorati: {0}</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="InvalidArgument">
+        <source>The argument {0} is invalid. Please use the /help option to check the list of valid arguments.</source>
+        <target state="translated">L'argomento {0} non è valido. Usare l'opzione/help per verificare l'elenco di argomenti validi.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TestSourcesDiscovered">
+        <source>A total of {0} test files matched the specified pattern.</source>
+        <target state="translated">Un totale di {0} file di test corrisponde al criterio specificato.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="InvalidTestRunParameterArgument">
+        <source>The test run parameter argument '{0}' is invalid. Please use the format below.
+     Format: TestRunParameters.Parameter(name=\"&lt;name&gt;\", value=\"&lt;value&gt;\")</source>
+        <target state="translated">L'argomento '{0}' del parametro di esecuzione dei test non è valido. Usare il formato seguente.
+     Formato: TestRunParameters.Parameter(name=\"&lt;name&gt;\", value=\"&lt;value&gt;\")</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="BlameCollectDumpTestTimeoutNotSupportedForPlatform">
+        <source>Collecting hang dumps by option CollectDump with TestTimeout for Blame is not supported for this platform.</source>
+        <target state="translated">L'opzione CollectDump con TestTimeout per Blame non supporta la raccolta dei dump di blocco per questa piattaforma.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TestRunSummary">
+        <source>{0} - Failed: {1}, Passed: {2}, Skipped: {3}, Total: {4}, Duration: {5}</source>
+        <target state="translated">{0} - Non superati: {1}. Superati: {2}. Ignorati: {3}. Totale: {4}. Durata: {5}</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="None">
+        <source>None</source>
+        <target state="translated">Nessuno</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TestRunSummaryAssemblyAndFramework">
+        <source> - {0} {1}</source>
+        <target state="translated"> - {0} {1}</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="EnvironmentArgumentHelp">
+        <source>-e|--Environment|/e|/Environment:&lt;NAME&gt;=&lt;VALUE&gt;
+      Sets the value of an environment variable. Creates the variable if it does not exist, overrides if it does. This will imply /InIsolation switch and force the tests to be run in an isolated process.
+      
+      This argument can be specified multiple times to provide multiple variables.
+
+      Example: -e:VARIABLE1=VALUE1
+               -e:ANOTHER_VARIABLE="VALUE WITH SPACES"
+               -e:ANOTHER_VARIABLE="VALUE;seperated with;semicolons"</source>
+        <target state="translated">-e|--Environment|/e|/Environment:&lt;NOME&gt;=&lt;VALORE&gt;
+      Imposta il valore di una variabile di ambiente. Crea la variabile se non esiste e la sostituisce se esiste. Implica l'opzione /InIsolation e forza l'esecuzione dei test in un processo isolato.
+      
+      È possibile specificare più volte questo argomento per fornire più variabili.
+
+      Esempio: -e:VARIABILE1=VALORE1
+               -e:ALTRA_VARIABILE="VALORE CON SPAZI"
+               -e:ALTRA_VARIABILE="VALORE;delimitato da;punti e virgola"</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="EnvironmentVariableXIsOverriden">
+        <source>Environment variable '{0}' was already defined, but it's overridden by -Environment argument.</source>
+        <target state="translated">La variabile di ambiente '{0}' è già stata definita, ma viene sostituita dall'argomento -Environment.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TestRunAbortedWithError">
+        <source>Test Run Aborted with error {0}.</source>
+        <target state="translated">Esecuzione dei test interrotta con errore {0}.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="InvalidTestSessionCorrelationId">
+        <source>Invalid testSessionCorrelationId</source>
+        <target state="translated">TestSessionCorrelationId non valido</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TestAdapterLoadingStrategyHelp">
+        <source>--TestAdapterLoadingStrategy|/TestAdapterLoadingStrategy:&lt;strategy&gt;
+      This affects adapter loading behavior.
+
+      Currently supported behaviors:
+        - Explicit: Test Platform will only load adapters specified by /TestAdapterPath (or RunConfiguration.TestAdaptersPaths node). 
+                    If a specific adapter path is provided, adapter will be loaded; if a directory path is provided adapters directly in that folder will be loaded, unless Recursive option is also specified.
+                    If no adapter path is specified, test run will fail.
+                    This will imply /InIsolation switch and force the tests to be run in an isolated process.
+        
+        - Default: Test Platform will load adapters is if this argument has not been specified. 
+                   It will pick up extensions from next to source, provided additional adapter paths and from the default directory.
+
+        - DefaultRuntimeProviders: Load default runtime providers shipped with Test Platform. 
+                                   If this is not specified when "Explicit" option is set, a test host provider need to be specified explicitly.
+
+        - ExtensionsDirectory: Load adapters inside Extensions folder.
+
+        - NextToSource: Load adapters next to source. 
+
+        - Recursive: Recursively search folders when loading adapters. This requires "Explicit" or "NextToSource" to be specified too.</source>
+        <target state="translated">--TestAdapterLoadingStrategy|/TestAdapterLoadingStrategy:&lt;strategy&gt;
+      Influisce sul comportamento di caricamento dell'adattatore.
+
+      Comportamenti attualmente supportati:
+        - Explicit: la piattaforma di test caricherà solo gli adattatori specificati da /TestAdapterPath (o dal nodo RunConfiguration.TestAdaptersPaths). 
+                    Se viene specificato un percorso specifico dell'adattatore, verrà caricato l'adattatore; se viene specificato un percorso di directory, verranno caricati direttamente gli adattatori presenti in tale cartella, a meno che non sia specificata anche l'opzione Recursive.
+                    Se non viene specificato alcun percorso dell'adattatore, l'esecuzione dei test non riuscirà.
+                    Implica l'opzione /InIsolation e forza l'esecuzione dei test in un processo isolato.
+        
+        - Default: la piattaforma di test caricherà gli adattatori se questo argomento non è stato specificato. 
+                   Verranno selezionate le estensioni accanto all'origine, specificati percorsi aggiuntivi dell'adattatore e dalla directory predefinita.
+
+        - DefaultRuntimeProviders: carica i provider di runtime predefiniti forniti con la piattaforma di test. 
+                                   Se questa opzione non viene specificata quando viene impostata l'opzione "Explicit", è necessario specificare in modo esplicito un provider host di test.
+
+        - ExtensionsDirectory: carica gli adattatori all'interno della cartella Extensions.
+
+        - NextToSource: caricare gli adattatori accanto all'origine. 
+
+        - Recursive: esegue una ricerca ricorsiva nelle cartelle durante il caricamento degli adattatori. È necessario specificare anche "Explicit" o "NextToSource".</target>
+        <note>Do not translate "Default", "DefaultRuntimeProviders", "ExtensionsDirectory", "NextToSource" or "Recursive".</note>
+      </trans-unit>
+      <trans-unit id="TestAdapterLoadingStrategyValueInvalid">
+        <source>Specified value ({0}) for /TestAdapterLoadingStrategy is invalid!</source>
+        <target state="translated">Il valore specificato ({0}) per /TestAdapterLoadingStrategy non è valido.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="TestAdapterLoadingStrategyValueInvalidRecursive">
+        <source>Recursive adapter loading strategy is cannot be used by itself. Please combine with one or more of: {0}</source>
+        <target state="translated">La strategia di caricamento ricorsivo dell'adattatore non può essere usata da sola. Combinare con uno o più di: {0}</target>
+        <note>
+        - Do not translate "Recursive",
+        - {0} is the strategy names, seperated by comma: for example "Explicit, NextToSource"
+    </note>
+      </trans-unit>
+      <trans-unit id="TestAdapterPathValueRequiredWhenStrategyXIsUsed">
+        <source>The /TestAdapterPath parameter needs to be provided when "{0}" test adapter loading strategy is specified!</source>
+        <target state="translated">È necessario specificare il parametro /TestAdapterPath quando si specifica la strategia di caricamento dell'adattatore di test "{0}".</target>
+        <note>{0} is the strategy name, "Explicit" for example.</note>
+      </trans-unit>
+      <trans-unit id="WarningEmulatedOnArm64">
+        <source>vstest.console.exe is running in emulated mode as {0}. For better performance, please consider using the native runner vstest.console.arm64.exe.</source>
+        <target state="translated">vstest.console.exe è in esecuzione in modalità emulata come {0}. Per prestazioni migliori, è consigliabile usare lo strumento di esecuzione nativo vstest.console.arm64.exe.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="RequestHandlerConnectionTimedOut">
+        <source>Waiting for request handler connection timed out after {0} seconds.</source>
+        <target state="translated">Timeout dell'attesa della connessione del gestore richieste dopo {0} secondi.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="StartTestSessionTimedOut">
+        <source>Waiting for start test session timed out after {0} seconds.</source>
+        <target state="translated">Timeout dell'attesa dell'avvio della sessione di test dopo {0} secondi.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="StopTestSessionTimedOut">
+        <source>Waiting for stop test session timed out after {0} seconds.</source>
+        <target state="translated">Timeout dell'attesa di arresto della sessione di test dopo {0} secondi.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="ErrorHostingCommunicationChannel">
+        <source>Error hosting communication channel.</source>
+        <target state="translated">Errore nell'hosting del canale di comunicazione.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="ProcDumpToolDirectoryPathArgumenNotFound">
+        <source>ProcDumpToolDirectoryPath should be specified to install or unistall the post mortem debugger.</source>
+        <target state="translated">È necessario specificare ProcDumpToolDirectoryPath per installare o annullare l'installazione del debugger effettuato dopo che l'applicazione è terminata.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="PostmortemDebuggerNotSupportedForCurrentOS">
+        <source>Postmortem debugger is not supported in the current OS.</source>
+        <target state="translated">Il debugger effettuato dopo che l'applicazione è terminata non è supportato nel sistema operativo corrente.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="InvalidProcDumpToolDirectoryPath">
+        <source>The directory specified for the procdump executable is not valid and the tool was not found inside environment variables (PROCDUMP_PATH, PATH)</source>
+        <target state="translated">La directory specificata per l'eseguibile procdump non è valida e lo strumento non è stato trovato nelle variabili di ambiente (PROCDUMP_PATH, PATH)</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="ProcDumpFileNameNotFound">
+        <source>Procdump file name not found: '{0}'</source>
+        <target state="translated">Il nome del file Procdump non è stato trovato: '{0}'</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="ProcDumpDirectoryPathArgumenNotFound">
+        <source>DumpDirectoryPath should be specified to install the post mortem debugger.</source>
+        <target state="translated">È necessario specificare DumpDirectoryPath per installare il debugger effettuato dopo che l'applicazione è terminata.</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="InvalidProcDumpDirectoryPath">
+        <source>The directory specified is not valid: '{0}'</source>
+        <target state="translated">La directory specificata non è valida: '{0}'</target>
+        <note></note>
+      </trans-unit>
+      <trans-unit id="InvalidAeDebuggerArgument">
+        <source>AeDebugger argument '{0}' is not valid.</source>
+        <target state="translated">L'argomento '{0}' di AeDebugger non è valido.</target>
+        <note></note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

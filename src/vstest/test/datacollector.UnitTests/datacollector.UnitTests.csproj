@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TestPlatformRoot Condition="$(TestPlatformRoot) == ''">..\..\</TestPlatformRoot>
+    <TestProject>true</TestProject>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+  <Import Project="$(TestPlatformRoot)scripts/build/TestPlatform.Settings.targets" />
+  <PropertyGroup Label="Configuration">
+    <RootNamespace>Microsoft.VisualStudio.TestPlatform.DataCollector.UnitTests</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OutputType Condition=" $(TargetFramework.StartsWith('net6')) ">Exe</OutputType>
+    <TargetFrameworks>net6.0;net48</TargetFrameworks>
+    <TargetFrameworks Condition=" '$(DotNetBuildFromSource)' == 'true' ">netcoreapp3.1</TargetFrameworks>
+    <AssemblyName>datacollector.UnitTests</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\datacollector\datacollector.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
+    <Reference Include="System.Runtime" />
+    <Reference Include="System" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <Import Project="$(TestPlatformRoot)scripts\build\TestPlatform.targets" />
+</Project>

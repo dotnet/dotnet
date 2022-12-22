@@ -1,0 +1,55 @@
+﻿using Xunit;
+
+namespace Tests
+{
+<#
+    int classes = 500;
+    int passedTests = 20;
+    int failedTests = 0;
+    String padding = "00";
+
+    String testmethodprefix = "Test_";
+#>
+<#
+    for(int c=1;c<=classes;c++)
+    {
+    String className = "TestClass_" + c.ToString(padding);
+#>
+    public class <#=className#>
+    {
+        #region PassingTests
+<#
+    for(int t=1;t<=passedTests;t++)
+    {
+    String methodName= testmethodprefix + c.ToString(padding) + "_" + t.ToString(padding);
+#>
+        [Fact]
+        public void <#=methodName#>()
+        {
+        }
+
+<#
+    }
+#>
+        #endregion
+
+        #region FailingTests
+<#
+    for(int t=1;t<=failedTests;t++)
+    {
+    String methodName= testmethodprefix + c.ToString(padding) + "_" + t.ToString(padding);
+#>
+        [Fact]
+        public void <#=methodName#>()
+        {
+            Assert.Fail();
+        }
+<#
+    }
+#>
+        #endregion
+    }
+<#
+    }
+#>
+}

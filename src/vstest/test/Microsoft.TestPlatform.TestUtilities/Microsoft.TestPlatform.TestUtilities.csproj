@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TestPlatformRoot Condition="$(TestPlatformRoot) == ''">..\..\</TestPlatformRoot>
+  </PropertyGroup>
+  <Import Project="$(TestPlatformRoot)scripts\build\TestPlatform.Settings.targets" />
+  <PropertyGroup>
+    <AssemblyName>Microsoft.TestPlatform.TestUtilities</AssemblyName>
+    <TargetFrameworks>net6.0;net48</TargetFrameworks>
+    <TargetFrameworks Condition=" '$(DotNetBuildFromSource)' == 'true' ">netcoreapp3.1</TargetFrameworks>
+    <IsTestProject>false</IsTestProject>
+    <UseBannedApiAnalyzers>true</UseBannedApiAnalyzers>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="BannedSymbols.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <AdditionalFiles Include="BannedSymbols.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\shared\NullableAttributes.cs" Link="NullableAttributes.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Microsoft.TestPlatform.Common\Microsoft.TestPlatform.Common.csproj" />
+    <ProjectReference Include="..\..\src\Microsoft.TestPlatform.ObjectModel\Microsoft.TestPlatform.ObjectModel.csproj" />
+    <ProjectReference Include="..\..\src\Microsoft.TestPlatform.CoreUtilities\Microsoft.TestPlatform.CoreUtilities.csproj">
+      <FromP2P>true</FromP2P>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\Microsoft.TestPlatform.VsTestConsole.TranslationLayer\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="FluentAssertions" Version="$(FluentAssertionsVersion)" />
+    <PackageReference Include="Moq" Version="$(MoqVersion)" />
+    <PackageReference Include="MSTest.TestFramework" Version="$(MSTestFrameworkVersion)" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
+    <PackageReference Include="Microsoft.Diagnostics.Tracing.TraceEvent" Version="1.0.41" />
+    <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
+
+    <Reference Include="System" />
+    <Reference Include="System.Runtime" />
+    <Reference Include="System.Text.RegularExpressions" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+  <Import Project="$(TestPlatformRoot)scripts\build\TestPlatform.targets" />
+</Project>

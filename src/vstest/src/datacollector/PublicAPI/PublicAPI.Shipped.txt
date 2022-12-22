@@ -1,0 +1,7 @@
+#nullable enable
+Microsoft.VisualStudio.TestPlatform.DataCollector.DataCollectorMain
+Microsoft.VisualStudio.TestPlatform.DataCollector.DataCollectorMain.DataCollectorMain() -> void
+Microsoft.VisualStudio.TestPlatform.DataCollector.DataCollectorMain.Run(string![]? args) -> void
+Microsoft.VisualStudio.TestPlatform.DataCollector.Program
+Microsoft.VisualStudio.TestPlatform.DataCollector.Program.Program() -> void
+static Microsoft.VisualStudio.TestPlatform.DataCollector.Program.Main(string![]? args) -> void
