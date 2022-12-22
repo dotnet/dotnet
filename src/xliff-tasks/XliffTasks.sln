@@ -1,0 +1,68 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27128.1
+MinimumVisualStudioVersion = 15.0.26124.0
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{98146936-8B66-495D-B99F-AE2E7BFA426F}"
+	ProjectSection(SolutionItems) = preProject
+		build\build.ps1 = build\build.ps1
+		build\build.sh = build\build.sh
+		build\cibuild.cmd = build\cibuild.cmd
+		build\cibuild.sh = build\cibuild.sh
+		build\NuGet.props = build\NuGet.props
+		build\SignToolData.json = build\SignToolData.json
+		build\Toolset.proj = build\Toolset.proj
+		build\Versions.props = build\Versions.props
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B133F078-1582-4361-B64D-EA69A227D941}"
+	ProjectSection(SolutionItems) = preProject
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		build.cmd = build.cmd
+		build.sh = build.sh
+		Directory.Build.props = Directory.Build.props
+		LICENSE.TXT = LICENSE.TXT
+		netci.groovy = netci.groovy
+		README.md = README.md
+		restore.cmd = restore.cmd
+		restore.sh = restore.sh
+		test.cmd = test.cmd
+		test.sh = test.sh
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6BFF6507-DEAA-4197-A71D-248BBA3AFD1A}"
+	ProjectSection(SolutionItems) = preProject
+		src\Directory.Build.props = src\Directory.Build.props
+		src\Directory.Build.targets = src\Directory.Build.targets
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XliffTasks", "src\XliffTasks\XliffTasks.csproj", "{FD587030-E29D-498C-AFC2-7610D8833B06}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XliffTasks.Tests", "src\XliffTasks.Tests\XliffTasks.Tests.csproj", "{4805F195-D026-4D2D-B7C5-17BC389FCD23}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FD587030-E29D-498C-AFC2-7610D8833B06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD587030-E29D-498C-AFC2-7610D8833B06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD587030-E29D-498C-AFC2-7610D8833B06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD587030-E29D-498C-AFC2-7610D8833B06}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4805F195-D026-4D2D-B7C5-17BC389FCD23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4805F195-D026-4D2D-B7C5-17BC389FCD23}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4805F195-D026-4D2D-B7C5-17BC389FCD23}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4805F195-D026-4D2D-B7C5-17BC389FCD23}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{FD587030-E29D-498C-AFC2-7610D8833B06} = {6BFF6507-DEAA-4197-A71D-248BBA3AFD1A}
+		{4805F195-D026-4D2D-B7C5-17BC389FCD23} = {6BFF6507-DEAA-4197-A71D-248BBA3AFD1A}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {600C36BA-F566-47AE-A9FF-286046BA003C}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,8 @@
+<Project>
+
+  <PropertyGroup>
+    <GitHubRepositoryName>xliff-tasks</GitHubRepositoryName>
+    <SourceBuildManagedOnly>true</SourceBuildManagedOnly>
+  </PropertyGroup>
+
+</Project>

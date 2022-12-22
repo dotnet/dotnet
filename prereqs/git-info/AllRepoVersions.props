@@ -35,5 +35,7 @@
     <testtemplatesOutputPackageVersion>1.1.0-rc.22558.1</testtemplatesOutputPackageVersion>
     <vstestGitCommitHash>d7b66728d22dd5cdee5fb1e2bc385f9f2cd03171</vstestGitCommitHash>
     <vstestOutputPackageVersion>17.5.0-preview-20221214-01</vstestOutputPackageVersion>
+    <xlifftasksGitCommitHash>e3a6aaa38a3ad2284de2d50ff65ae4a8916db003</xlifftasksGitCommitHash>
+    <xlifftasksOutputPackageVersion>1.0.0-beta.22611.1</xlifftasksOutputPackageVersion>
   </PropertyGroup>
 </Project>
