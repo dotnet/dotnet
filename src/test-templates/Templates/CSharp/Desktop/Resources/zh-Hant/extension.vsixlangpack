@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PackageLanguagePackManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011">
+  <Metadata>
+    <DisplayName>MSTest V2 範本</DisplayName>
+    <Description>提供 MSTest V2 的 Visual Studio 專案範本。</Description>
+  </Metadata>
+</PackageLanguagePackManifest>

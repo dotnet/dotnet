@@ -1,0 +1,6 @@
+﻿<PackageLanguagePackManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011">
+  <Metadata>
+    <DisplayName>MSTest V2 Templates</DisplayName>
+    <Description>Provides Visual Studio project template for MSTest V2.</Description>
+  </Metadata>
+</PackageLanguagePackManifest>

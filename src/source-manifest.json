@@ -17,6 +17,12 @@
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
       "commitSha": "1a37caf773a3b857ccff49a31be3333d4fdc491f"
+    },
+    {
+      "packageVersion": "1.1.0-rc.22558.1",
+      "path": "test-templates",
+      "remoteUri": "https://github.com/dotnet/test-templates",
+      "commitSha": "bb3695688177f5f80eeb3c0498168612e31549d5"
     }
   ],
   "submodules": [

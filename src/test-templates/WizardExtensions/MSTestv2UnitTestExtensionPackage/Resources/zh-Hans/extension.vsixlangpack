@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PackageLanguagePackManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011">
+  <Metadata>
+    <DisplayName>MSTest V2 创建单元测试扩展</DisplayName>
+    <Description>允许开发人员使用 MSTest V2 创建单元测试。</Description>
+  </Metadata>
+</PackageLanguagePackManifest>

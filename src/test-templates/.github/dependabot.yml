@@ -1,0 +1,7 @@
+version: 2
+updates:
+- package-ecosystem: nuget
+  directory: "/template_feed"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10

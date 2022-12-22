@@ -1,0 +1,7 @@
+{
+  "version": "1.0.0.0",
+  "strings": {
+    "name": "xUnit 測試專案",
+    "description": "此專案包含 xUnit.net 測試，可以在 Windows、Linux 及 MacOS 的 .NET 上執行。"
+  }
+}

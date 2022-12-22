@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PackageLanguagePackManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011">
+  <Metadata>
+    <DisplayName>Extensão de Teste de Unidades de Criação do MSTest V2</DisplayName>
+    <Description>Permite que desenvolvedores criem um teste de unidade usando o MSTest V2.</Description>
+  </Metadata>
+</PackageLanguagePackManifest>

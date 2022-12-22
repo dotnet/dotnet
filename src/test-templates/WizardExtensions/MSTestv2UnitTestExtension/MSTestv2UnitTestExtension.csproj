@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <RootNamespace>MSTestv2UnitTestExtension</RootNamespace>
+    <AssemblyName>MSTestv2UnitTestExtension</AssemblyName>
+    <TargetFramework>net461</TargetFramework>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.ComponentModelHost" Version="$(MicrosoftVisualStudioComponentModelHostVersion)" />
+    <PackageReference Include="Microsoft.VisualStudio.Interop" Version="$(MicrosoftVisualStudioInteropVersion)" />
+    <PackageReference Include="Microsoft.Internal.CreateUnitTest" Version="$(MicrosoftInternalCreateUnitTestVersion)" />
+    <!--Temporarly adding this package, after all package sync together and have same version,
+     this can be delated, cause this package comes with Microsoft.VisualStudio.Interop-->
+    <PackageReference Include="Microsoft.VisualStudio.Imaging.Interop.14.0.DesignTime" Version="17.0.0-preview-1-31125-102" />      
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="MSTestv2FrameworkProvider.cs" />
+    <Compile Include="MSTestv2SolutionManager.cs" />
+    <Compile Include="MSTestv2UnitTestClassManager.cs" />
+    <Compile Include="MSTestv2UnitTestProjectManager.cs" />
+  </ItemGroup>
+</Project>

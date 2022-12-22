@@ -1,0 +1,7 @@
+{
+  "version": "1.0.0.0",
+  "strings": {
+    "name": "NUnit 測試專案 (.NET Core)",
+    "description": "包含可在 Windows、Linux 和 MacOS 上於 .NET Core 執行之 NUnit 測試的專案。"
+  }
+}

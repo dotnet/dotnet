@@ -1,0 +1,7 @@
+{
+  "version": "1.0.0.0",
+  "strings": {
+    "name": "Projet de test NUnit (.NET Core)",
+    "description": "Projet qui contient des tests NUnit qui peuvent s'exécuter sur .NET Core sur Windows, Linux et MacOS."
+  }
+}
