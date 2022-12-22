@@ -23,6 +23,8 @@
     <sdkOutputPackageVersion>8.0.100-alpha.1.22615.13</sdkOutputPackageVersion>
     <sourcebuildexternalsGitCommitHash>0c829ba73b00f015ab35d14f3cc974e79eb79ef0</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>8.0.0-alpha.1.22615.1</sourcebuildexternalsOutputPackageVersion>
+    <symreaderGitCommitHash>7b9791daa3a3477eb22ec805946c9fff8b42d8ca</symreaderGitCommitHash>
+    <symreaderOutputPackageVersion>1.4.0-beta2-21475-02</symreaderOutputPackageVersion>
     <testtemplatesGitCommitHash>bb3695688177f5f80eeb3c0498168612e31549d5</testtemplatesGitCommitHash>
     <testtemplatesOutputPackageVersion>1.1.0-rc.22558.1</testtemplatesOutputPackageVersion>
     <vstestGitCommitHash>d7b66728d22dd5cdee5fb1e2bc385f9f2cd03171</vstestGitCommitHash>
