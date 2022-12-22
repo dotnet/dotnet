@@ -373,12 +373,11 @@ stages:
 # the VMR synchronization step is run to validate that the PR can be merged and later
 # synchronized into the VMR without problems.
 # You can do this by allowing the Synchronize_VMR stage from above in PRs.
-# TODO - Temporarily disabled (https://github.com/dotnet/source-build/issues/3184)
-# - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
-#   - template: eng/pipelines/templates/stages/vmr-build.yml
-#     parameters:
-#       vmrBranch: ${{ parameters.vmrBranch }}
-#       isBuiltFromVmr: false
+- ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+  - template: eng/pipelines/templates/stages/vmr-build.yml
+    parameters:
+      vmrBranch: ${{ parameters.vmrBranch }}
+      isBuiltFromVmr: false
 
 - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
   - stage: Publish
