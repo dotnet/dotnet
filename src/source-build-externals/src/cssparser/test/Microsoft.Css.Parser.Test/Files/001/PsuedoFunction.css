@@ -1,0 +1,19 @@
+/* Simple */
+
+html|*:not(:link):not(:visited) { }
+html|*:matches(:link, :visited):matches(:visited) { }
+
+/* Multiple parameters */
+
+:not(.foo, #bar, :baz, [foo=bar]) { }
+:not(.foo#bar:baz, body table > td) { }
+:not(.foo,, #bar,) { }
+
+:matches(.foo, #bar, :baz, [foo=bar]) { }
+:matches(.foo#bar:baz, body table > td) { }
+:matches(.foo,, #bar,) { }
+
+/* nested () */
+
+:not([bar=baz]:not(.foo:not(), label)) { }
+:matches([bar=baz]:not(.foo:matches(), label)) { }

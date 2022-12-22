@@ -1,0 +1,14 @@
+body > P { line-height: 1.3 }
+div ol>li p { }
+math + p { text-indent: 0 }
+h1 + h2 { margin-top: -5mm }
+h1.opener + h2 { margin-top: -5mm }
+h1 ~ h2 { }
+h1.opener ~ h2 { }
+
+/* ID-reference */
+label /id/ input { }
+/id/ input { }
+label /id/ { }
+label /"id"/ input { }
+label /// input { }

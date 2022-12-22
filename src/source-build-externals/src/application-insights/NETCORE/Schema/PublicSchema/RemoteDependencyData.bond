@@ -1,0 +1,53 @@
+import "Domain.bond"
+
+namespace AI
+
+[Description("An instance of Remote Dependency represents an interaction of the monitored component with a remote component/service like SQL or an HTTP endpoint.")]
+struct RemoteDependencyData
+    : Domain
+{
+    [Description("Schema version")]
+    10: required int32 	 ver = 2;
+    
+    [MaxStringLength("1024")]
+    [Description("Name of the command initiated with this dependency call. Low cardinality value. Examples are stored procedure name and URL path template.")]
+    20: required string 	 name;
+    
+    [MaxStringLength("128")]
+    [Description("Identifier of a dependency call instance. Used for correlation with the request telemetry item corresponding to this dependency call.")]
+    30: string 	 id;
+    
+    [MaxStringLength("1024")]
+    [Description("Result code of a dependency call. Examples are SQL error code and HTTP status code.")]
+    40: string 	 resultCode;
+    
+    [CSType("TimeSpan")]
+    [Description("Request duration in TimeSpan 'G' (general long) format: d:hh:mm:ss.fffffff.")]
+    [ActAsRequired("Renaming value to duration.")]
+    61: required string 	 duration;
+    
+    [Description("Indication of successful or unsuccessful call.")]
+    120: bool	 success = true;
+    
+    [MaxStringLength("8192")]
+    [Description("Command initiated by this dependency call. Examples are SQL statement and HTTP URL's with all query parameters.")]
+    151: string 	 data;
+    
+    [MaxStringLength("1024")]
+    [Description("Dependency type name. Very low cardinality value for logical grouping of dependencies and interpretation of other fields like commandName and resultCode. Examples are SQL, Azure table, and HTTP.")]
+    162: string 	 type;
+    
+    [MaxStringLength("1024")]
+    [Description("Target site of a dependency call. Examples are server name, host address.")]
+    161: string 	 target;
+    
+    [Description("Collection of custom properties.")]
+    [MaxKeyLength("150")]
+    [MaxValueLength("8192")]
+    200: map<string, string> 	 properties;
+    
+    [Description("Collection of custom measurements.")]
+    [MaxKeyLength("150")]
+    300: map<string, double> 	 measurements;
+    
+}

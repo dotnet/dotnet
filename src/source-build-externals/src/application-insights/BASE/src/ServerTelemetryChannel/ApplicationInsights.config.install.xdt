@@ -1,0 +1,50 @@
+<ApplicationInsights xmlns="http://schemas.microsoft.com/ApplicationInsights/2013/Settings" xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+
+  <TelemetryChannel xdt:Transform="Remove" />
+  <TelemetryProcessors xdt:Transform="Remove"/>
+
+
+  <TelemetrySinks xdt:Transform="InsertIfMissing">
+  </TelemetrySinks>
+
+  <TelemetrySinks xdt:Transform="InsertIfMissing">
+    <Add Name="default" xdt:Transform="InsertIfMissing">
+    </Add>
+  </TelemetrySinks>
+
+  <TelemetrySinks>
+    <Add Name="default" xdt:Transform="InsertIfMissing">
+    <TelemetryChannel xdt:Transform="Remove" />
+    <TelemetryChannel xdt:Transform="Insert" Type="Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel.ServerTelemetryChannel, Microsoft.AI.ServerTelemetryChannel" />
+
+    <TelemetryProcessors>
+      <Add Type="Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel.SamplingTelemetryProcessor, Microsoft.AI.ServerTelemetryChannel"
+           xdt:Transform="Remove"
+           xdt:Locator="Match(Type)">
+      </Add>
+    </TelemetryProcessors>
+
+    <TelemetryProcessors xdt:Transform="InsertIfMissing">
+      <Add Type="Microsoft.ApplicationInsights.Extensibility.AutocollectedMetricsExtractor, Microsoft.ApplicationInsights"
+           xdt:Transform="InsertIfMissing"
+           xdt:Locator="Match(Type)"/>
+    </TelemetryProcessors>
+    <TelemetryProcessors xdt:Transform="InsertIfMissing">
+      <Add Type="Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel.AdaptiveSamplingTelemetryProcessor, Microsoft.AI.ServerTelemetryChannel"
+         xdt:Transform="InsertIfMissing"
+         xdt:Locator="Condition(starts-with(@Type, 'Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel.AdaptiveSamplingTelemetryProcessor') and count(./ExcludedTypes[text() = 'Event']) = 1)">
+        <MaxTelemetryItemsPerSecond>5</MaxTelemetryItemsPerSecond>
+        <ExcludedTypes>Event</ExcludedTypes>
+      </Add>
+    </TelemetryProcessors>
+    <TelemetryProcessors xdt:Transform="InsertIfMissing">
+      <Add Type="Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel.AdaptiveSamplingTelemetryProcessor, Microsoft.AI.ServerTelemetryChannel"
+         xdt:Transform="InsertIfMissing"
+          xdt:Locator="Condition(starts-with(@Type, 'Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel.AdaptiveSamplingTelemetryProcessor') and count(./IncludedTypes[text() = 'Event']) = 1)">
+        <MaxTelemetryItemsPerSecond>5</MaxTelemetryItemsPerSecond>
+        <IncludedTypes>Event</IncludedTypes>
+      </Add>
+    </TelemetryProcessors>
+    </Add>
+  </TelemetrySinks>
+</ApplicationInsights>

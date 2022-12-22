@@ -1,0 +1,49 @@
+Token Type           Length     Token Text
+Identifier           1          a
+HashName             2          #b
+OpenCurlyBrace       1          {
+Identifier           1          a
+Colon                1          :
+String               20         "this is a 'string'"
+Semicolon            1          ;
+Identifier           1          b
+Colon                1          :
+String               22         "this is a \"string\""
+Semicolon            1          ;
+Identifier           1          c
+Colon                1          :
+String               20         'this is a "string"'
+Semicolon            1          ;
+Identifier           1          d
+Colon                1          :
+String               22         'this is a \'string\''
+Semicolon            1          ;
+CloseCurlyBrace      1          }
+Identifier           2          li
+OpenCurlyBrace       1          {
+Identifier           10         list-style
+Colon                1          :
+Url                  4          url(
+InvalidString        43         "http://www.example.com/redball.png) disc }
+Identifier           2          li
+OpenCurlyBrace       1          {
+Identifier           10         list-style
+Colon                1          :
+Url                  4          url(
+InvalidString        43         'http://www.example.com/redball.png) disc }
+Identifier           2          li
+OpenCurlyBrace       1          {
+Identifier           10         list-style
+Colon                1          :
+Url                  4          url(
+InvalidString        44         "http://www.example.com/redball.png') disc }
+Identifier           2          li
+OpenCurlyBrace       1          {
+Identifier           10         list-style
+Colon                1          :
+Url                  4          url(
+InvalidString        44         'http://www.example.com/redball.png") disc }
+Identifier           2          li
+OpenCurlyBrace       1          {
+CloseCurlyBrace      1          }
+EndOfFile            0          

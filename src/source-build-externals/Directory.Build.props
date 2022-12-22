@@ -1,0 +1,81 @@
+<Project>
+
+  <PropertyGroup>
+    <ImportNetSdkFromRepoToolset>false</ImportNetSdkFromRepoToolset>
+    <_SuppressSdkImports>true</_SuppressSdkImports>
+    <Configuration Condition="$(Configuration) == ''">Release</Configuration>
+  </PropertyGroup>
+
+  <Import Condition="'$(SkipArcadeSdkImport)' != 'true'" Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
+  <PropertyGroup>
+    <!-- Fake, for SDK. -->
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <!-- We have no projects targeting multiple frameworks, so don't include in output path. -->
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+
+  <!-- This repo's projects are entirely infrastructure and do not ship. -->
+  <PropertyGroup>
+    <IsShipping>false</IsShipping>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <ProjectDir>$(MSBuildThisFileDirectory)</ProjectDir>
+    <TargetsDir>$(ProjectDir)targets/</TargetsDir>
+    <KeysDir>$(ProjectDir)keys/</KeysDir>
+    <DotNetCliToolDir Condition="'$(DotNetCliToolDir)' == '' and '$(CustomDotNetSdkDir)' != ''">$([MSBuild]::EnsureTrailingSlash('$(CustomDotNetSdkDir)'))</DotNetCliToolDir>
+    <DotNetCliToolDir Condition="'$(DotNetCliToolDir)' == '' and '$(DOTNET_INSTALL_DIR)' != ''">$([MSBuild]::NormalizeDirectory('$(DOTNET_INSTALL_DIR)'))</DotNetCliToolDir>
+    <DotNetCliToolDir Condition="'$(DotNetCliToolDir)' == ''">$(ProjectDir).dotnet/</DotNetCliToolDir>
+    <DotnetToolCommand>$(DotNetCliToolDir)dotnet</DotnetToolCommand>
+    <PatchesDir>$(ProjectDir)patches/</PatchesDir>
+    <!-- if we're not currently building,  Visual Studio will still set this -->
+    <SDK_VERSION Condition="'$(SDK_VERSION)' == ''">$(NETCoreSdkVersion)</SDK_VERSION>
+  </PropertyGroup>
+
+  <!--
+    '.proj' has no DefaultLanguageSourceExtension, causing **/* to be collected
+    in Compile items! Avoid this by disabling the default items.
+  -->
+  <PropertyGroup Condition="'$(MSBuildProjectExtension)' == '.proj'">
+    <EnableDefaultItems>false</EnableDefaultItems>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <LogVerbosity Condition="'$(LogVerbosity)'==''">minimal</LogVerbosity>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <BuildInParallel Condition="'$(BuildInParallel)'==''">false</BuildInParallel>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <ShellExtension Condition="'$(OS)' == 'Windows_NT'">.cmd</ShellExtension>
+    <ShellExtension Condition="'$(OS)' != 'Windows_NT'">.sh</ShellExtension>
+    <TarBallExtension Condition="'$(OS)' == 'Windows_NT'">.zip</TarBallExtension>
+    <TarBallExtension Condition="'$(OS)' != 'Windows_NT'">.tar.gz</TarBallExtension>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <SubmoduleDirectory Condition="'$(SubmoduleDirectory)' == ''">$(ProjectDir)src/</SubmoduleDirectory>
+    <GitModulesPath>$(ProjectDir).gitmodules</GitModulesPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- Init basic Arcade props, if the project importing this file doesn't use Arcade. -->
+    <ArtifactsDir Condition="'$(ArtifactsDir)' == ''">$(ProjectDir)artifacts/</ArtifactsDir>
+    <RepositoryEngineeringDir Condition="'$(RepositoryEngineeringDir)' == ''">$(ProjectDir)eng/</RepositoryEngineeringDir>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <SourceBuiltPackagesPath>$(ArtifactsPackagesDir)</SourceBuiltPackagesPath>
+    <LoggingDir>$(BaseOutputPath)logs/</LoggingDir>
+  </PropertyGroup>
+
+  <!--
+    Semaphore path for incremental builds
+  -->
+  <PropertyGroup>
+    <CompletedSemaphorePath>$(BaseIntermediatePath)semaphores/</CompletedSemaphorePath>
+  </PropertyGroup>
+
+</Project>

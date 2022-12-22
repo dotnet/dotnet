@@ -1,0 +1,13 @@
+{"Registrations":[ 
+    {
+      "component": { 
+       "type": "git", 
+       "git": { 
+         "repositoryUrl": "https://github.com/JamesNK/Newtonsoft.Json", 
+         "commitHash": "509643a8952ce731e0207710c429ad6e67dc43db" 
+         }
+       }
+    }
+ ],
+ "Version": 1
+}

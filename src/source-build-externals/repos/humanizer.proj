@@ -1,0 +1,42 @@
+<Project>
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+
+  <PropertyGroup>
+    <PackagesOutput>$(ProjectDirectory)/src/Humanizer/bin/Release</PackagesOutput>
+    <RepoApiImplemented>false</RepoApiImplemented>
+    <DeterministicBuildOptOut>true</DeterministicBuildOptOut>
+    <NuGetConfigFile>$(ProjectDirectory)/src/NuGet.config</NuGetConfigFile>
+  </PropertyGroup>
+
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+
+  <Target Name="RepoBuild">
+    <PropertyGroup>
+      <BuildCommandArgs>$(ProjectDirectory)src/Humanizer/Humanizer.csproj</BuildCommandArgs>
+      <!-- Always build release mode: nuspecs in repo are hard-coded to Release config outputs. -->
+      <BuildCommandArgs>$(BuildCommandArgs) /p:Configuration=Release</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /v:$(LogVerbosity)</BuildCommandArgs>
+
+      <PackCommandArgs>$(BuildCommandArgs)</PackCommandArgs>
+      <PackCommandArgs>$(PackCommandArgs) /p:NuspecFile=$(ProjectDirectory)NuSpecs/Humanizer.Core.nuspec</PackCommandArgs>
+      <PackCommandArgs>$(PackCommandArgs) /p:NuspecBasePath=$(ProjectDirectory)src/</PackCommandArgs>
+      <PackCommandArgs>$(PackCommandArgs) /p:NuspecProperties=Version=$(HumanizerCorePackageVersion)</PackCommandArgs>
+    </PropertyGroup>
+
+    <Exec Command="$(DotnetToolCommand) restore /bl:restore.binlog $(BuildCommandArgs) $(RedirectRepoOutputToLog)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+
+    <Exec Command="$(DotnetToolCommand) build /bl:build.binlog $(BuildCommandArgs) $(RedirectRepoOutputToLog)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+
+    <Exec Command="$(DotnetToolCommand) pack /bl:pack.binlog $(PackCommandArgs) $(RedirectRepoOutputToLog)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+  </Target>
+
+</Project>

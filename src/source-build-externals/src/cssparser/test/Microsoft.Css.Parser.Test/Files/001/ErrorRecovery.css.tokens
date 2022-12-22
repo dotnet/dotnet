@@ -1,0 +1,54 @@
+Token Type           Length     Token Text
+Identifier           1          p
+Identifier           5          color
+Colon                1          :
+Identifier           5          green
+Semicolon            1          ;
+Identifier           5          color
+OpenCurlyBrace       1          {
+Semicolon            1          ;
+Identifier           5          color
+Colon                1          :
+Identifier           6          maroon
+CloseCurlyBrace      1          }
+CloseCurlyBrace      1          }
+OpenCComment         2          /*
+CommentText          21         unexpected tokens { }
+CloseCComment        2          */
+Identifier           1          p
+OpenCurlyBrace       1          {
+Identifier           5          color
+Colon                1          :
+Identifier           3          red
+Semicolon            1          ;
+Identifier           5          color
+OpenCurlyBrace       1          {
+Semicolon            1          ;
+Identifier           5          color
+Colon                1          :
+Identifier           6          maroon
+CloseCurlyBrace      1          }
+Semicolon            1          ;
+Identifier           5          color
+Colon                1          :
+Identifier           5          green
+CloseCurlyBrace      1          }
+OpenCComment         2          /*
+CommentText          18         same with recovery
+CloseCComment        2          */
+Identifier           1          p
+Colon                1          :
+Identifier           6          before
+OpenCurlyBrace       1          {
+Identifier           7          content
+Colon                1          :
+Function             8          counter(
+Identifier           7          par-num
+Comma                1          ,
+Identifier           11         upper-roman
+CloseFunctionBrace   1          )
+String               2          ""
+Dot                  1          .
+String               2          ""
+CloseCurlyBrace      1          }
+EndOfFile            0          
