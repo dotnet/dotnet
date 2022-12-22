@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <ItemGroup>
+    <RestoreProjects Include="$(RepoRoot)artifacts/targetRestoreProjects/*.csproj" />
+  </ItemGroup>
+
+  <Target Name="ErrorEmptyRestoreProjects" BeforeTargets="RestoreAllProjects" Condition=" '@(RestoreProjects)' == '' ">
+    <Error Text="There are no projects to restore." />
+  </Target>
+
+  <Target Name="RestoreAllProjects" BeforeTargets="_IsProjectRestoreSupported">
+    <Message Importance="High" Text="==> Restoring all target packages to $(TargetPackagesPath)" />
+
+    <Exec Command="$(DOTNET_INSTALL_DIR)/dotnet restore %(RestoreProjects.Identity) /p:TargetPackagesPath=$(TargetPackagesPath) /p:RestoreAdditionalProjectSources=$(RestoreAdditionalProjectSources)" />
+  </Target>
+</Project>

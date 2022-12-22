@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), dir.props))/dir.props" />
+  <PropertyGroup>
+    <TargetFrameworks>netstandard1.0</TargetFrameworks>
+    <NuspecFile>$(ArtifactsBinDir)system.reflection.extensions/4.0.1/system.reflection.extensions.nuspec</NuspecFile>
+   </PropertyGroup>
+
+  <PropertyGroup>
+    <OutputPath>$(ArtifactsBinDir)system.reflection.extensions/4.0.1/ref/</OutputPath>
+    <IntermediateOutputPath>$(ArtifactsObjDir)system.reflection.extensions/4.0.1</IntermediateOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="**/ref/$(TargetFramework)/*.cs" />
+    <Compile Include="**/lib/$(TargetFramework)/*.cs" />
+  </ItemGroup>
+
+    <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.0' ">
+        <PackageReference Include="Microsoft.NETCore.Platforms" Version="1.0.1" />
+        <PackageReference Include="Microsoft.NETCore.Targets" Version="1.0.1" />
+        <PackageReference Include="System.Reflection" Version="4.1.0" />
+        <PackageReference Include="System.Runtime" Version="4.1.0" />
+    </ItemGroup>
+
+  
+</Project>

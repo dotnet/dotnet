@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?><span>
+<doc>
+  <assembly>
+    <name>System.Runtime.InteropServices.RuntimeInformation</name>
+  </assembly>
+  <members>
+    <member name="T:System.Runtime.InteropServices.Architecture">
+      
+    </member>
+    <member name="F:System.Runtime.InteropServices.Architecture.Arm">
+      <returns></returns>
+    </member>
+    <member name="F:System.Runtime.InteropServices.Architecture.Arm64">
+      <returns></returns>
+    </member>
+    <member name="F:System.Runtime.InteropServices.Architecture.X64">
+      <returns></returns>
+    </member>
+    <member name="F:System.Runtime.InteropServices.Architecture.X86">
+      <returns></returns>
+    </member>
+    <member name="T:System.Runtime.InteropServices.OSPlatform">
+      
+    </member>
+    <member name="M:System.Runtime.InteropServices.OSPlatform.Create(System.String)">
+      <param name="osPlatform"></param>
+      <returns></returns>
+    </member>
+    <member name="M:System.Runtime.InteropServices.OSPlatform.Equals(System.Object)">
+      <param name="obj"></param>
+      <returns></returns>
+    </member>
+    <member name="M:System.Runtime.InteropServices.OSPlatform.Equals(System.Runtime.InteropServices.OSPlatform)">
+      <param name="other"></param>
+      <returns></returns>
+    </member>
+    <member name="M:System.Runtime.InteropServices.OSPlatform.GetHashCode">
+      <returns></returns>
+    </member>
+    <member name="P:System.Runtime.InteropServices.OSPlatform.Linux">
+      <returns></returns>
+    </member>
+    <member name="M:System.Runtime.InteropServices.OSPlatform.op_Equality(System.Runtime.InteropServices.OSPlatform,System.Runtime.InteropServices.OSPlatform)">
+      <param name="left"></param>
+      <param name="right"></param>
+      <returns></returns>
+    </member>
+    <member name="M:System.Runtime.InteropServices.OSPlatform.op_Inequality(System.Runtime.InteropServices.OSPlatform,System.Runtime.InteropServices.OSPlatform)">
+      <param name="left"></param>
+      <param name="right"></param>
+      <returns></returns>
+    </member>
+    <member name="P:System.Runtime.InteropServices.OSPlatform.OSX">
+      <returns></returns>
+    </member>
+    <member name="M:System.Runtime.InteropServices.OSPlatform.ToString">
+      <returns></returns>
+    </member>
+    <member name="P:System.Runtime.InteropServices.OSPlatform.Windows">
+      <returns></returns>
+    </member>
+    <member name="T:System.Runtime.InteropServices.RuntimeInformation">
+      
+    </member>
+    <member name="P:System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription">
+      <returns></returns>
+    </member>
+    <member name="M:System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform)">
+      <param name="osPlatform"></param>
+      <returns></returns>
+    </member>
+    <member name="P:System.Runtime.InteropServices.RuntimeInformation.OSArchitecture">
+      <returns></returns>
+    </member>
+    <member name="P:System.Runtime.InteropServices.RuntimeInformation.OSDescription">
+      <returns></returns>
+    </member>
+    <member name="P:System.Runtime.InteropServices.RuntimeInformation.ProcessArchitecture">
+      <returns></returns>
+    </member>
+  </members>
+</doc></span>

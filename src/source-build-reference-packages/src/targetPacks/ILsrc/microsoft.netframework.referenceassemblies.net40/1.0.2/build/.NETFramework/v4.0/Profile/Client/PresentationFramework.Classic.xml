@@ -1,0 +1,126 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>PresentationFramework.Classic</name>
+  </assembly>
+  <members>
+    <member name="T:Microsoft.Windows.Themes.ClassicBorderDecorator">
+      <summary>Creates the theme-specific look for <see cref="T:System.Windows.Controls.Decorator" /> types, for use with the Classic theme.</summary>
+    </member>
+    <member name="M:Microsoft.Windows.Themes.ClassicBorderDecorator.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:Microsoft.Windows.Themes.ClassicBorderDecorator" /> class.</summary>
+    </member>
+    <member name="P:Microsoft.Windows.Themes.ClassicBorderDecorator.Background">
+      <summary>Gets or sets the brush used to fill the background of the element.  </summary>
+      <returns>The brush used to fill the background of the element.</returns>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.ClassicBorderDecorator.BackgroundProperty">
+      <summary>Identifies the <see cref="P:Microsoft.Windows.Themes.ClassicBorderDecorator.Background" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="P:Microsoft.Windows.Themes.ButtonChrome.Background" /> dependency property.</returns>
+    </member>
+    <member name="P:Microsoft.Windows.Themes.ClassicBorderDecorator.BorderBrush">
+      <summary>Gets or sets the brush used to draw the outer border of the element.  </summary>
+      <returns>The brush used to draw the outer border of the element.</returns>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.ClassicBorderDecorator.BorderBrushProperty">
+      <summary>Identifies the <see cref="P:Microsoft.Windows.Themes.ClassicBorderDecorator.BorderBrush" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="P:Microsoft.Windows.Themes.ButtonChrome.BorderBrush" /> dependency property.</returns>
+    </member>
+    <member name="P:Microsoft.Windows.Themes.ClassicBorderDecorator.BorderStyle">
+      <summary>Gets or sets the <see cref="T:Microsoft.Windows.Themes.ClassicBorderStyle" /> used to draw the border of the element.  </summary>
+      <returns>The <see cref="T:Microsoft.Windows.Themes.ClassicBorderStyle" /> used to draw the border of the element.</returns>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.ClassicBorderDecorator.BorderStyleProperty">
+      <summary>Identifies the <see cref="P:Microsoft.Windows.Themes.ClassicBorderDecorator.BorderStyle" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="P:Microsoft.Windows.Themes.ClassicBorderDecorator.BorderStyle" /> dependency property.</returns>
+    </member>
+    <member name="P:Microsoft.Windows.Themes.ClassicBorderDecorator.BorderThickness">
+      <summary>Gets or sets the width of the border.  </summary>
+      <returns>The width of the border.</returns>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.ClassicBorderDecorator.BorderThicknessProperty">
+      <summary>Identifies the <see cref="P:Microsoft.Windows.Themes.ClassicBorderDecorator.BorderThickness" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="P:Microsoft.Windows.Themes.ClassicBorderDecorator.BorderThickness" /> dependency property.</returns>
+    </member>
+    <member name="P:Microsoft.Windows.Themes.ClassicBorderDecorator.ClassicBorderBrush">
+      <summary>Gets the brush used to draw the border.</summary>
+      <returns>The brush used to draw the border.</returns>
+    </member>
+    <member name="T:Microsoft.Windows.Themes.ClassicBorderStyle">
+      <summary>Specifics the type of <see cref="T:System.Windows.Controls.Border" /> to draw. </summary>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.ClassicBorderStyle.None">
+      <summary>No border.</summary>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.ClassicBorderStyle.Raised">
+      <summary>Used for <see cref="T:System.Windows.Controls.Button" /> elements in their normal state.</summary>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.ClassicBorderStyle.RaisedPressed">
+      <summary>Used for <see cref="T:System.Windows.Controls.Button" /> elements in their pressed state.</summary>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.ClassicBorderStyle.RaisedFocused">
+      <summary>Used for <see cref="T:System.Windows.Controls.Button" /> elements that have keyboard focus or are the default <see cref="T:System.Windows.Controls.Button" />.</summary>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.ClassicBorderStyle.Sunken">
+      <summary>Used for <see cref="T:System.Windows.Controls.ListBox" />, <see cref="T:System.Windows.Controls.TextBox" />, and <see cref="T:System.Windows.Controls.CheckBox" />.</summary>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.ClassicBorderStyle.Etched">
+      <summary>Used for <see cref="T:System.Windows.Controls.GroupBox" />.</summary>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.ClassicBorderStyle.HorizontalLine">
+      <summary>Used for horizontal <see cref="T:System.Windows.Controls.Separator" />.</summary>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.ClassicBorderStyle.VerticalLine">
+      <summary>Used for vertical <see cref="T:System.Windows.Controls.Separator" />.</summary>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.ClassicBorderStyle.TabRight">
+      <summary>Used for <see cref="T:System.Windows.Controls.TabItem" />. </summary>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.ClassicBorderStyle.TabTop">
+      <summary>Used for <see cref="T:System.Windows.Controls.TabItem" />.</summary>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.ClassicBorderStyle.TabLeft">
+      <summary>Used for <see cref="T:System.Windows.Controls.TabItem" />.</summary>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.ClassicBorderStyle.TabBottom">
+      <summary>Used for <see cref="T:System.Windows.Controls.TabItem" />.</summary>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.ClassicBorderStyle.ThinRaised">
+      <summary>Used for top level <see cref="T:System.Windows.Controls.MenuItem" /> when the mouse or other input device is hovering over them.</summary>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.ClassicBorderStyle.ThinPressed">
+      <summary>Used for top level <see cref="T:System.Windows.Controls.MenuItem" /> in their pressed state.</summary>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.ClassicBorderStyle.AltRaised">
+      <summary>Used for the <see cref="T:System.Windows.Controls.Primitives.Thumb" /> on a <see cref="T:System.Windows.Controls.Primitives.ScrollBar" /> in a normal state.</summary>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.ClassicBorderStyle.AltPressed">
+      <summary>Used for the <see cref="T:System.Windows.Controls.Primitives.Thumb" /> on a <see cref="T:System.Windows.Controls.Primitives.ScrollBar" /> in their pressed state.</summary>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.ClassicBorderStyle.RadioButton">
+      <summary>A <see cref="T:System.Windows.Controls.RadioButton" /> border.</summary>
+    </member>
+    <member name="T:Microsoft.Windows.Themes.SystemDropShadowChrome">
+      <summary>Creates a theme specific look for drop shadow effects.</summary>
+    </member>
+    <member name="M:Microsoft.Windows.Themes.SystemDropShadowChrome.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:Microsoft.Windows.Themes.SystemDropShadowChrome" /> class.</summary>
+    </member>
+    <member name="P:Microsoft.Windows.Themes.SystemDropShadowChrome.Color">
+      <summary>Gets or sets the color used by the drop shadow.  </summary>
+      <returns>The color.</returns>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.SystemDropShadowChrome.ColorProperty">
+      <summary>Identifies the <see cref="P:Microsoft.Windows.Themes.SystemDropShadowChrome.Color" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="P:Microsoft.Windows.Themes.SystemDropShadowChrome.Color" /> dependency property.</returns>
+    </member>
+    <member name="P:Microsoft.Windows.Themes.SystemDropShadowChrome.CornerRadius">
+      <summary>Gets or sets the radii of a rectangle's corners.  </summary>
+      <returns>The radii of a rectangle's corners.</returns>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.SystemDropShadowChrome.CornerRadiusProperty">
+      <summary>Identifies the <see cref="P:Microsoft.Windows.Themes.SystemDropShadowChrome.CornerRadius" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="P:Microsoft.Windows.Themes.SystemDropShadowChrome.CornerRadius" /> dependency property.</returns>
+    </member>
+  </members>
+</doc>

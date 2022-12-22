@@ -1,0 +1,81 @@
+<Project>
+
+  <ItemGroup Condition=" '$(GeneratePackageSource)' == 'true' ">
+    <ProjectToBuild Include="$(RepoRoot)src/referencePackageSourceGenerator/Tasks/GenerateProjectsTask.csproj" />
+    <ProjectToBuild Include="$(RepoRoot)src/referencePackageSourceGenerator/GenerateSource/GenerateSource.proj" />
+    <ProjectToBuild Include="$(Reporoot)src/referencePackageSourceGenerator/GenerateProjects/GenerateProjects.proj" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(GeneratePackageSource)' != 'true' ">
+    <!--
+      The following DependencyPackageProjects are ones on which other packages depend on that do
+      not exist in the source-build package cache.  Adding them to this ItemGroup will ensure that
+      they get built first and in order of inclusion.  Also, packages included here will be added
+      to the source-build package cache when building with source-build to allow them to be
+      considered in prebuilt reporting.
+
+      Format:
+      <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Extensions.Options.5.0.0.csproj" />
+    -->
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Data.SqlClient.4.8.5.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\textOnlyPackages\src\**\Microsoft.NETCore.Platforms.3.1.4.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Drawing.Common.4.7.2.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Security.Cryptography.Xml.4.7.1.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Windows.Extensions.4.7.0.csproj" />
+
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Collections.Immutable.6.0.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Reflection.Metadata.6.0.0.csproj" />
+
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.ComponentModel.Composition.4.5.0.csproj" />
+
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Extensions.Logging.Abstractions.7.0.0.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(BuildDependencyPackageProjects)' == 'true' ">
+    <!-- Building an empty project triggers building the Arcade Tools.proj which is needed before BuildDependencyPackageProjects -->
+    <ProjectToBuild Include="$(RepoRoot)\eng\NoOp.csproj" />
+  </ItemGroup>
+
+  <Target Name="BuildDependencyPackageProjects"
+          AfterTargets="Execute"
+          Condition="'$(BuildDependencyPackageProjects)' == 'true'"
+          Outputs="%(DependencyPackageProjects.Identity)">
+    <MSBuild Condition="'@(DependencyPackageProjects)' != ''"
+             Projects="@(DependencyPackageProjects)"
+             Targets="Restore;Build;Pack" />
+
+    <Copy Condition="'$(LocalNuGetPackageCacheDirectory)' != ''"
+          SourceFiles="@(DependencyPackageProjects->'$(ArtifactsShippingPackagesDir)%(FileName).nupkg')"
+          DestinationFolder="$(LocalNuGetPackageCacheDirectory)" />
+  </Target>
+
+  <ItemGroup Condition=" '$(GeneratePackageSource)' != 'true' and '$(BuildDependencyPackageProjects)' != 'true'">
+    <TargetingPackageProject Include="$(RepoRoot)src\targetPacks\ILsrc\**\*.csproj" />
+    <ProjectToBuild Include="@(TargetingPackageProject)" />
+
+    <TextOnlyPackageProject Include="$(RepoRoot)src\textOnlyPackages\src\*\*\*.csproj" />
+    <ProjectToBuild Include="@(TextOnlyPackageProject)" />
+
+    <ReferencePackageProject Include="$(RepoRoot)src\referencePackages\src\**\*.csproj" />
+    <ProjectToBuild Include="@(ReferencePackageProject)" />
+
+    <ProjectToBuild Remove="@(DependencyPackageProjects)" />
+  </ItemGroup>
+
+  <!--
+    Adding new projects is somewhat copy-paste heavy and may result in project name overlaps. Catch
+    that early, as it may cause binclash otherwise.
+  -->
+  <Target Name="EnsureUniqueProjectNames"
+          BeforeTargets="Execute">
+    <ItemGroup>
+      <ProjectToBuildName Include="@(ProjectToBuild -> '%(Filename)%(Extension)')" />
+      <DistinctProjectToBuildName Include="@(ProjectToBuildName->Distinct())" />
+    </ItemGroup>
+
+    <Error
+      Condition="@(ProjectToBuildName->Count()) != @(DistinctProjectToBuildName->Count())"
+      Text="A project name is duplicated. Every project name must be distinct to have separate output directories." />
+  </Target>
+
+</Project>

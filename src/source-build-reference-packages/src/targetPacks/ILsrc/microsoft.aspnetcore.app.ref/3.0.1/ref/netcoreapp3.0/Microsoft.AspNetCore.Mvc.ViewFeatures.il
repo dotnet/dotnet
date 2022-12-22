@@ -1,0 +1,17093 @@
+
+//  Microsoft (R) .NET Framework IL Disassembler.  Version 4.5.30319.0
+
+
+// ----- DOS Header:
+// Magic:                      0x5a4d
+// Bytes on last page:         0x0090
+// Pages in file:              0x0003
+// Relocations:                0x0000
+// Size of header (paragraphs):0x0004
+// Min extra paragraphs:       0x0000
+// Max extra paragraphs:       0xffff
+// Initial (relative) SS:      0x0000
+// Initial SP:                 0x00b8
+// Checksum:                   0x0000
+// Initial IP:                 0x0000
+// Initial (relative) CS:      0x0000
+// File addr. of reloc table:  0x0040
+// Overlay number:             0x0000
+// OEM identifier:             0x0000
+// OEM info:                   0x0000
+// File addr. of COFF header:  0x0080
+// ----- COFF/PE Headers:
+// Signature:                  0x00004550
+// ----- COFF Header:
+// Machine:                    0x014c
+// Number of sections:         0x0003
+// Time-date stamp:            0xcefa0753
+// Ptr to symbol table:        0x00000000
+// Number of symbols:          0x00000000
+// Size of optional header:    0x00e0
+// Characteristics:            0x2022
+// ----- PE Optional Header (32 bit):
+// Magic:                          0x010b
+// Major linker version:           0x30
+// Minor linker version:           0x00
+// Size of code:                   0x00011e00
+// Size of init.data:              0x00000800
+// Size of uninit.data:            0x00000000
+// Addr. of entry point:           0x00013d1e
+// Base of code:                   0x00002000
+// Base of data:                   0x00014000
+// Image base:                     0x10000000
+// Section alignment:              0x00002000
+// File alignment:                 0x00000200
+// Major OS version:               0x0004
+// Minor OS version:               0x0000
+// Major image version:            0x0000
+// Minor image version:            0x0000
+// Major subsystem version:        0x0004
+// Minor subsystem version:        0x0000
+// Size of image:                  0x00018000
+// Size of headers:                0x00000200
+// Checksum:                       0x000243fb
+// Subsystem:                      0x0003
+// DLL characteristics:            0x8560
+// Size of stack reserve:          0x00100000
+// Size of stack commit:           0x00001000
+// Size of heap reserve:           0x00100000
+// Size of heap commit:            0x00001000
+// Loader flags:                   0x00000000
+// Directories:                    0x00000010
+// 0x00000000 [0x00000000] address [size] of Export Directory:          
+// 0x00013cca [0x0000004f] address [size] of Import Directory:          
+// 0x00014000 [0x0000045c] address [size] of Resource Directory:        
+// 0x00000000 [0x00000000] address [size] of Exception Directory:       
+// 0x00012800 [0x00002460] address [size] of Security Directory:        
+// 0x00016000 [0x0000000c] address [size] of Base Relocation Table:     
+// 0x00013bbc [0x00000054] address [size] of Debug Directory:           
+// 0x00000000 [0x00000000] address [size] of Architecture Specific:     
+// 0x00000000 [0x00000000] address [size] of Global Pointer:            
+// 0x00000000 [0x00000000] address [size] of TLS Directory:             
+// 0x00000000 [0x00000000] address [size] of Load Config Directory:     
+// 0x00000000 [0x00000000] address [size] of Bound Import Directory:    
+// 0x00002000 [0x00000008] address [size] of Import Address Table:      
+// 0x00000000 [0x00000000] address [size] of Delay Load IAT:            
+// 0x00002008 [0x00000048] address [size] of CLR Header:                
+
+
+// Image sections:
+//              .text
+//              0x00011d24 Virtual Size
+//              0x00002000 Virtual Address
+//              0x00011e00 Size of Raw Data
+//              0x00000200 Pointer to Raw Data
+//              0x00000000 Pointer to Relocations
+//              0x00000000 Pointer to Linenumbers
+//                  0x0000 Number of Relocations
+//                  0x0000 Number of Linenumbers
+//              0x60000020 Characteristics
+//                         CNT_CODE
+//                         MEM_EXECUTE
+//                         MEM_READ
+
+//              .rsrc
+//              0x0000045c Virtual Size
+//              0x00014000 Virtual Address
+//              0x00000600 Size of Raw Data
+//              0x00012000 Pointer to Raw Data
+//              0x00000000 Pointer to Relocations
+//              0x00000000 Pointer to Linenumbers
+//                  0x0000 Number of Relocations
+//                  0x0000 Number of Linenumbers
+//              0x40000040 Characteristics
+//                         CNT_INITIALIZED_DATA
+//                         MEM_READ
+
+//              .reloc
+//              0x0000000c Virtual Size
+//              0x00016000 Virtual Address
+//              0x00000200 Size of Raw Data
+//              0x00012600 Pointer to Raw Data
+//              0x00000000 Pointer to Relocations
+//              0x00000000 Pointer to Linenumbers
+//                  0x0000 Number of Relocations
+//                  0x0000 Number of Linenumbers
+//              0x42000040 Characteristics
+//                         CNT_INITIALIZED_DATA
+//                         MEM_DISCARDABLE
+//                         MEM_READ
+
+// Base Relocation Table
+//              0x00013000 Page RVA
+//              0x0000000c Block Size
+//              0x00000002 Number of Entries
+//              Entry 1: Type 0x3 Offset 0x00000d20
+//              Entry 2: Type 0x0 Offset 0x00000000
+
+// Import Address Table
+//     DLL : mscoree.dll
+//              0x00002000 Import Address Table
+//              0x00013d0c Import Name Table
+//              0          Time Date Stamp
+//              0          Index of First Forwarder Reference
+//
+//              0x0000  _CorDllMain
+
+// Delay Load Import Address Table
+// No data.
+
+// Entry point code:
+//FF 25 00 20 00 10 
+
+
+// ----- CLR Header:
+// Header size:                        0x00000048
+// Major runtime version:              0x0002
+// Minor runtime version:              0x0005
+// 0x00002dec [0x00010d50] address [size] of Metadata Directory:        
+// Flags:                              0x00000009
+// Entry point token:                  0x00000000
+// 0x00000000 [0x00000000] address [size] of Resources Directory:       
+// 0x00013b3c [0x00000080] address [size] of Strong Name Signature:     
+// 0x00000000 [0x00000000] address [size] of CodeManager Table:         
+// 0x00000000 [0x00000000] address [size] of VTableFixups Directory:    
+// 0x00000000 [0x00000000] address [size] of Export Address Table:      
+// 0x00000000 [0x00000000] address [size] of Precompile Header:         
+
+// Metadata Header
+//    Storage Signature:
+//              0x424a5342 Signature
+//                  0x0001 Major Version
+//                  0x0001 Minor Version
+//              0x00000000 Extra Data Offset
+//              0x0000000c Version String Length
+//              'v4.0.30319' Version String
+//    Storage Header:
+//                    0x00 Flags
+//                  0x0005 Number of Streams
+//    Stream 1:
+//              0x0000006c Offset
+//              0x00009d18 Size
+//              '#~' Name
+//    Stream 2:
+//              0x00009d84 Offset
+//              0x000046f4 Size
+//              '#Strings' Name
+//    Stream 3:
+//              0x0000e478 Offset
+//              0x00000004 Size
+//              '#US' Name
+//    Stream 4:
+//              0x0000e47c Offset
+//              0x00000010 Size
+//              '#GUID' Name
+//    Stream 5:
+//              0x0000e48c Offset
+//              0x000028c4 Size
+//              '#Blob' Name
+
+//    Metadata Stream Header:
+//              0x00000000 Reserved
+//                    0x02 Major
+//                    0x00 Minor
+//                    0x00 Heaps
+//                    0x01 Rid
+//      0x000016090ba05f57 MaskValid
+//      0x000016003301fa00 Sorted
+
+// Code Manager Table:
+//  default
+
+
+// Export Address Table Jumps:
+// No data.
+
+// File size            : 85088
+// PE header size       : 512 (496 used)    ( 0.60%)
+// PE additional info   : 10683             (12.56%)
+// Num.of PE sections   : 3
+// CLR header size     : 72                 ( 0.08%)
+// CLR meta-data size  : 68944              (81.03%)
+// CLR additional info : 128                ( 0.15%)
+// CLR method headers  : 1004               ( 1.18%)
+// Managed code         : 2477              ( 2.91%)
+// Data                 : 2048              ( 2.41%)
+// Unaccounted          : -780              (-0.92%)
+
+// Num.of PE sections   : 3
+//   .text    - 73216
+//   .rsrc    - 1536
+//   .reloc   - 512
+
+// CLR meta-data size  : 68944
+//   Module        -    1 (10 bytes)
+//   TypeDef       -  157 (2198 bytes)    27 interfaces, 0 explicit layout
+//   TypeRef       -  137 (822 bytes)
+//   MethodDef     - 1140 (15960 bytes)   132 abstract, 0 native, 1004 bodies
+//   FieldDef      -   87 (522 bytes)     17 constant
+//   MemberRef     -   47 (282 bytes)
+//   ParamDef      - 1843 (11058 bytes)
+//   MethodImpl    -   16 (96 bytes)
+//   Constant      -   28 (168 bytes)
+//   CustomAttribute-  499 (2994 bytes)
+//   InterfaceImpl -   90 (360 bytes)
+//   PropertyMap   -   74 (296 bytes)
+//   Property      -  264 (1584 bytes)
+//   MethodSemantic-  358 (2148 bytes)
+//   Security      -    1 (6 bytes)
+//   TypeSpec      -   16 (32 bytes)
+//   Assembly      -    1 (22 bytes)
+//   AssemblyRef   -   25 (500 bytes)
+//   NestedClass   -    2 (8 bytes)
+//   GenericParam  -  128 (1024 bytes)
+//   GenericParamConstraint-    4 (16 bytes)
+//   Strings       - 18161 bytes
+//   Blobs         - 10436 bytes
+//   UserStrings   -     4 bytes
+//   Guids         -    16 bytes
+//   Uncategorized -   221 bytes
+
+// CLR additional info : 128
+
+// CLR method headers : 1004
+//   Num.of method bodies  - 1004
+//   Num.of fat headers    - 0
+//   Num.of tiny headers   - 1004
+
+// Managed code : 2477
+//   Ave method size - 2
+// Classes defined in this module:
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Class MvcViewFeaturesMvcBuilderExtensions (public) (abstract) (auto) (ansi) (sealed) 
+// Class MvcViewFeaturesMvcCoreBuilderExtensions (public) (abstract) (auto) (ansi) (sealed) 
+// Class MvcViewOptionsSetup            (auto) (ansi) 
+// Class TempDataMvcOptionsSetup        (auto) (ansi) 
+// Class AutoValidateAntiforgeryTokenAttribute (public) (auto) (ansi) 
+// Class Controller                     (public) (abstract) (auto) (ansi) 
+// Class CookieTempDataProviderOptions  (public) (auto) (ansi) 
+// Class IgnoreAntiforgeryTokenAttribute (public) (auto) (ansi) 
+// Interface IViewComponentHelper           (public) (abstract) (auto) (ansi) 
+// Interface IViewComponentResult           (public) (abstract) (auto) (ansi) 
+// Class MvcViewOptions                 (public) (auto) (ansi) 
+// Class PageRemoteAttribute            (public) (auto) (ansi) 
+// Class PartialViewResult              (public) (auto) (ansi) 
+// Class RemoteAttribute                (public) (auto) (ansi) 
+// Class RemoteAttributeBase            (public) (abstract) (auto) (ansi) 
+// Class SkipStatusCodePagesAttribute   (public) (auto) (ansi) 
+// Class TempDataAttribute              (public) (auto) (ansi) (sealed) 
+// Class ValidateAntiForgeryTokenAttribute (public) (auto) (ansi) 
+// Class ViewComponent                  (public) (abstract) (auto) (ansi) 
+// Class ViewComponentAttribute         (public) (auto) (ansi) 
+// Class ViewComponentResult            (public) (auto) (ansi) 
+// Class ViewDataAttribute              (public) (auto) (ansi) (sealed) 
+// Class ViewResult                     (public) (auto) (ansi) 
+// Class AntiforgeryExtensions          (public) (abstract) (auto) (ansi) (sealed) 
+// Class AttributeDictionary            (public) (auto) (ansi) 
+// Class CookieTempDataProvider         (public) (auto) (ansi) 
+// Class DefaultHtmlGenerator           (public) (auto) (ansi) 
+// Class DefaultHtmlGeneratorExtensions (public) (abstract) (auto) (ansi) (sealed) 
+// Class DefaultValidationHtmlAttributeProvider (public) (auto) (ansi) 
+// Class FormContext                    (public) (auto) (ansi) 
+// Class HtmlHelper                     (public) (auto) (ansi) 
+// Class HtmlHelperOptions              (public) (auto) (ansi) 
+// Class HtmlHelper`1                   (public) (auto) (ansi) 
+// Interface IAntiforgeryPolicy             (public) (abstract) (auto) (ansi) 
+// Interface IFileVersionProvider           (public) (abstract) (auto) (ansi) 
+// Interface IHtmlGenerator                 (public) (abstract) (auto) (ansi) 
+// Interface IModelExpressionProvider       (public) (abstract) (auto) (ansi) 
+// Class InputType                      (public) (auto) (ansi) (sealed) 
+// Interface ITempDataDictionary            (public) (abstract) (auto) (ansi) 
+// Interface ITempDataDictionaryFactory     (public) (abstract) (auto) (ansi) 
+// Interface ITempDataProvider              (public) (abstract) (auto) (ansi) 
+// Interface IViewContextAware              (public) (abstract) (auto) (ansi) 
+// Class ModelExplorer                  (public) (auto) (ansi) 
+// Class ModelExplorerExtensions        (public) (abstract) (auto) (ansi) (sealed) 
+// Class ModelExpression                (public) (auto) (ansi) (sealed) 
+// Class ModelExpressionProvider        (public) (auto) (ansi) 
+// Class ModelMetadataProviderExtensions (public) (abstract) (auto) (ansi) (sealed) 
+// Class PartialViewResultExecutor      (public) (auto) (ansi) 
+// Class SaveTempDataAttribute          (public) (auto) (ansi) 
+// Class SessionStateTempDataProvider   (public) (auto) (ansi) 
+// Class StringHtmlContent              (public) (auto) (ansi) 
+// Class TempDataDictionary             (public) (auto) (ansi) 
+// Class TempDataDictionaryFactory      (public) (auto) (ansi) 
+// Class TemplateInfo                   (public) (auto) (ansi) 
+// Class TryGetValueDelegate            (public) (auto) (ansi) (sealed) 
+// Class TryGetValueProvider            (public) (abstract) (auto) (ansi) (sealed) 
+// Class ValidationHtmlAttributeProvider (public) (abstract) (auto) (ansi) 
+// Class ViewComponentResultExecutor    (public) (auto) (ansi) 
+// Class ViewContextAttribute           (public) (auto) (ansi) 
+// Class ViewDataDictionary             (public) (auto) (ansi) 
+// Class ViewDataDictionaryAttribute    (public) (auto) (ansi) 
+// Class ViewDataDictionaryControllerPropertyActivator (public) (auto) (ansi) 
+// Class ViewDataDictionary`1           (public) (auto) (ansi) 
+// Class ViewDataEvaluator              (public) (abstract) (auto) (ansi) (sealed) 
+// Class ViewDataInfo                   (public) (auto) (ansi) 
+// Class ViewExecutor                   (public) (auto) (ansi) 
+// Class ViewResultExecutor             (public) (auto) (ansi) 
+// Class TempDataApplicationModelProvider (auto) (ansi) 
+// Class NullView                       (auto) (ansi) 
+// Class TemplateRenderer               (auto) (ansi) 
+// Class FormatWeekHelper               (abstract) (auto) (ansi) (sealed) 
+// Class ViewDataDictionaryFactory      (abstract) (auto) (ansi) (sealed) 
+// Class ViewDataAttributeApplicationModelProvider (auto) (ansi) 
+// Class ViewDataAttributePropertyProvider (abstract) (auto) (ansi) (sealed) 
+// Interface ISaveTempDataCallback          (abstract) (auto) (ansi) 
+// Interface IViewDataValuesProviderFeature (abstract) (auto) (ansi) 
+// Class SaveTempDataPropertyFilterBase (abstract) (auto) (ansi) 
+// Class LifecycleProperty              (sequential) (ansi) (sealed) 
+// Class TempDataSerializer             (public) (abstract) (auto) (ansi) 
+// Class DefaultTempDataSerializer      (auto) (ansi) 
+// Interface IViewBufferScope               (public) (abstract) (auto) (ansi) 
+// Class ViewBufferValue                (public) (sequential) (ansi) (sealed) 
+// Class CharArrayBufferSource          (auto) (ansi) 
+// Interface ICharBufferSource              (abstract) (auto) (ansi) 
+// Class PagedCharBuffer                (auto) (ansi) 
+// Class ViewBuffer                     (auto) (ansi) 
+// Class ViewBufferTextWriter           (auto) (ansi) 
+// Class ViewBufferPage                 (auto) (ansi) 
+// Class CompositeViewEngine            (public) (auto) (ansi) 
+// Interface ICompositeViewEngine           (public) (abstract) (auto) (ansi) 
+// Interface IView                          (public) (abstract) (auto) (ansi) 
+// Interface IViewEngine                    (public) (abstract) (auto) (ansi) 
+// Class ViewEngineResult               (public) (auto) (ansi) 
+// Class ContentViewComponentResult     (public) (auto) (ansi) 
+// Class DefaultViewComponentDescriptorCollectionProvider (public) (auto) (ansi) 
+// Class DefaultViewComponentDescriptorProvider (public) (auto) (ansi) 
+// Class DefaultViewComponentFactory    (public) (auto) (ansi) 
+// Class DefaultViewComponentHelper     (public) (auto) (ansi) 
+// Class DefaultViewComponentSelector   (public) (auto) (ansi) 
+// Class HtmlContentViewComponentResult (public) (auto) (ansi) 
+// Interface IViewComponentActivator        (public) (abstract) (auto) (ansi) 
+// Interface IViewComponentDescriptorCollectionProvider (public) (abstract) (auto) (ansi) 
+// Interface IViewComponentDescriptorProvider (public) (abstract) (auto) (ansi) 
+// Interface IViewComponentFactory          (public) (abstract) (auto) (ansi) 
+// Interface IViewComponentInvoker          (public) (abstract) (auto) (ansi) 
+// Interface IViewComponentInvokerFactory   (public) (abstract) (auto) (ansi) 
+// Interface IViewComponentSelector         (public) (abstract) (auto) (ansi) 
+// Class ServiceBasedViewComponentActivator (public) (auto) (ansi) 
+// Class ViewComponentContext           (public) (auto) (ansi) 
+// Class ViewComponentContextAttribute  (public) (auto) (ansi) 
+// Class ViewComponentConventions       (public) (abstract) (auto) (ansi) (sealed) 
+// Class ViewComponentDescriptor        (public) (auto) (ansi) 
+// Class ViewComponentDescriptorCollection (public) (auto) (ansi) 
+// Class ViewComponentFeature           (public) (auto) (ansi) 
+// Class ViewComponentFeatureProvider   (public) (auto) (ansi) 
+// Class ViewViewComponentResult        (public) (auto) (ansi) 
+// Class FormMethod                     (public) (auto) (ansi) (sealed) 
+// Class Html5DateRenderingMode         (public) (auto) (ansi) (sealed) 
+// Class HtmlHelperComponentExtensions  (public) (abstract) (auto) (ansi) (sealed) 
+// Class HtmlHelperDisplayExtensions    (public) (abstract) (auto) (ansi) (sealed) 
+// Class HtmlHelperDisplayNameExtensions (public) (abstract) (auto) (ansi) (sealed) 
+// Class HtmlHelperEditorExtensions     (public) (abstract) (auto) (ansi) (sealed) 
+// Class HtmlHelperFormExtensions       (public) (abstract) (auto) (ansi) (sealed) 
+// Class HtmlHelperInputExtensions      (public) (abstract) (auto) (ansi) (sealed) 
+// Class HtmlHelperLabelExtensions      (public) (abstract) (auto) (ansi) (sealed) 
+// Class HtmlHelperLinkExtensions       (public) (abstract) (auto) (ansi) (sealed) 
+// Class HtmlHelperNameExtensions       (public) (abstract) (auto) (ansi) (sealed) 
+// Class HtmlHelperPartialExtensions    (public) (abstract) (auto) (ansi) (sealed) 
+// Class HtmlHelperSelectExtensions     (public) (abstract) (auto) (ansi) (sealed) 
+// Class HtmlHelperValidationExtensions (public) (abstract) (auto) (ansi) (sealed) 
+// Class HtmlHelperValueExtensions      (public) (abstract) (auto) (ansi) (sealed) 
+// Interface IHtmlHelper                    (public) (abstract) (auto) (ansi) 
+// Interface IHtmlHelper`1                  (public) (abstract) (auto) (ansi) 
+// Interface IJsonHelper                    (public) (abstract) (auto) (ansi) 
+// Class MultiSelectList                (public) (auto) (ansi) 
+// Class MvcForm                        (public) (auto) (ansi) 
+// Class RenderMode                     (public) (auto) (ansi) (sealed) 
+// Class SelectList                     (public) (auto) (ansi) 
+// Class SelectListGroup                (public) (auto) (ansi) 
+// Class SelectListItem                 (public) (auto) (ansi) 
+// Class TagBuilder                     (public) (auto) (ansi) 
+// Class TagRenderMode                  (public) (auto) (ansi) (sealed) 
+// Class ViewComponentHelperExtensions  (public) (abstract) (auto) (ansi) (sealed) 
+// Class ViewContext                    (public) (auto) (ansi) 
+// Class SystemTextJsonHelper           (auto) (ansi) 
+// Class ModelStateDictionaryExtensions (public) (abstract) (auto) (ansi) (sealed) 
+// Class AfterViewComponentEventData    (public) (auto) (ansi) (sealed) 
+// Class AfterViewEventData             (public) (auto) (ansi) (sealed) 
+// Class BeforeViewComponentEventData   (public) (auto) (ansi) (sealed) 
+// Class BeforeViewEventData            (public) (auto) (ansi) (sealed) 
+// Class ViewComponentAfterViewExecuteEventData (public) (auto) (ansi) (sealed) 
+// Class ViewComponentBeforeViewExecuteEventData (public) (auto) (ansi) (sealed) 
+// Class ViewFoundEventData             (public) (auto) (ansi) (sealed) 
+// Class ViewNotFoundEventData          (public) (auto) (ansi) (sealed) 
+// Class Enumerator                     (sequential) (ansi) (sealed) (nested public) 
+// Class EncodingWrapper                (auto) (ansi) (nested private) 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+// Metadata version: v4.0.30319
+.assembly extern /*23000001*/ System.Runtime
+{
+  .publickeytoken = (B0 3F 5F 7F 11 D5 0A 3A )                         // .?_....:
+  .ver 4:2:1:0
+}
+.assembly extern /*23000002*/ System.Resources.ResourceManager
+{
+  .publickeytoken = (B0 3F 5F 7F 11 D5 0A 3A )                         // .?_....:
+  .ver 4:1:1:0
+}
+.assembly extern /*23000003*/ System.Runtime.Extensions
+{
+  .publickeytoken = (B0 3F 5F 7F 11 D5 0A 3A )                         // .?_....:
+  .ver 4:2:1:0
+}
+.assembly extern /*23000004*/ Microsoft.AspNetCore.Mvc.Core
+{
+  .publickeytoken = (AD B9 79 38 29 DD AE 60 )                         // ..y8)..`
+  .ver 3:0:0:0
+}
+.assembly extern /*23000005*/ Microsoft.Extensions.Options
+{
+  .publickeytoken = (AD B9 79 38 29 DD AE 60 )                         // ..y8)..`
+  .ver 3:0:0:0
+}
+.assembly extern /*23000006*/ Microsoft.AspNetCore.Mvc.DataAnnotations
+{
+  .publickeytoken = (AD B9 79 38 29 DD AE 60 )                         // ..y8)..`
+  .ver 3:0:0:0
+}
+.assembly extern /*23000007*/ Microsoft.Extensions.Localization.Abstractions
+{
+  .publickeytoken = (AD B9 79 38 29 DD AE 60 )                         // ..y8)..`
+  .ver 3:0:0:0
+}
+.assembly extern /*23000008*/ Microsoft.AspNetCore.Mvc.Abstractions
+{
+  .publickeytoken = (AD B9 79 38 29 DD AE 60 )                         // ..y8)..`
+  .ver 3:0:0:0
+}
+.assembly extern /*23000009*/ System.ComponentModel
+{
+  .publickeytoken = (B0 3F 5F 7F 11 D5 0A 3A )                         // .?_....:
+  .ver 4:0:3:0
+}
+.assembly extern /*2300000A*/ System.Linq.Expressions
+{
+  .publickeytoken = (B0 3F 5F 7F 11 D5 0A 3A )                         // .?_....:
+  .ver 4:2:1:0
+}
+.assembly extern /*2300000B*/ Microsoft.AspNetCore.Http.Abstractions
+{
+  .publickeytoken = (AD B9 79 38 29 DD AE 60 )                         // ..y8)..`
+  .ver 3:0:0:0
+}
+.assembly extern /*2300000C*/ Microsoft.AspNetCore.Html.Abstractions
+{
+  .publickeytoken = (AD B9 79 38 29 DD AE 60 )                         // ..y8)..`
+  .ver 3:0:0:0
+}
+.assembly extern /*2300000D*/ System.ComponentModel.Annotations
+{
+  .publickeytoken = (B0 3F 5F 7F 11 D5 0A 3A )                         // .?_....:
+  .ver 4:3:0:0
+}
+.assembly extern /*2300000E*/ Microsoft.AspNetCore.Routing.Abstractions
+{
+  .publickeytoken = (AD B9 79 38 29 DD AE 60 )                         // ..y8)..`
+  .ver 3:0:0:0
+}
+.assembly extern /*2300000F*/ System.Security.Principal
+{
+  .publickeytoken = (B0 3F 5F 7F 11 D5 0A 3A )                         // .?_....:
+  .ver 4:1:1:0
+}
+.assembly extern /*23000010*/ System.Security.Claims
+{
+  .publickeytoken = (B0 3F 5F 7F 11 D5 0A 3A )                         // .?_....:
+  .ver 4:1:1:0
+}
+.assembly extern /*23000011*/ System.Diagnostics.Debug
+{
+  .publickeytoken = (B0 3F 5F 7F 11 D5 0A 3A )                         // .?_....:
+  .ver 4:1:1:0
+}
+.assembly extern /*23000012*/ Microsoft.AspNetCore.Antiforgery
+{
+  .publickeytoken = (AD B9 79 38 29 DD AE 60 )                         // ..y8)..`
+  .ver 3:0:0:0
+}
+.assembly extern /*23000013*/ Microsoft.AspNetCore.DataProtection.Abstractions
+{
+  .publickeytoken = (AD B9 79 38 29 DD AE 60 )                         // ..y8)..`
+  .ver 3:0:0:0
+}
+.assembly extern /*23000014*/ Microsoft.Extensions.Logging.Abstractions
+{
+  .publickeytoken = (AD B9 79 38 29 DD AE 60 )                         // ..y8)..`
+  .ver 3:0:0:0
+}
+.assembly extern /*23000015*/ System.Text.Encodings.Web
+{
+  .publickeytoken = (CC 7B 13 FF CD 2D DD 51 )                         // .{...-.Q
+  .ver 4:0:4:0
+}
+.assembly extern /*23000016*/ System.Diagnostics.DiagnosticSource
+{
+  .publickeytoken = (CC 7B 13 FF CD 2D DD 51 )                         // .{...-.Q
+  .ver 4:0:4:0
+}
+.assembly extern /*23000017*/ System.Collections
+{
+  .publickeytoken = (B0 3F 5F 7F 11 D5 0A 3A )                         // .?_....:
+  .ver 4:1:1:0
+}
+.assembly extern /*23000018*/ System.Text.Json
+{
+  .publickeytoken = (CC 7B 13 FF CD 2D DD 51 )                         // .{...-.Q
+  .ver 4:0:0:0
+}
+.assembly extern /*23000019*/ Microsoft.AspNetCore.Components
+{
+  .publickeytoken = (AD B9 79 38 29 DD AE 60 )                         // ..y8)..`
+  .ver 3:0:0:0
+}
+.assembly /*20000001*/ noplatform Microsoft.AspNetCore.Mvc.ViewFeatures
+{
+  .custom /*0C000003:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+  .custom /*0C000004:0A000002*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilationRelaxationsAttribute/*01000002*/::.ctor(int32) /* 0A000002 */ = ( 01 00 08 00 00 00 00 00 ) 
+  .custom /*0C000005:0A000003*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.RuntimeCompatibilityAttribute/*01000003*/::.ctor() /* 0A000003 */ = ( 01 00 01 00 54 02 16 57 72 61 70 4E 6F 6E 45 78   // ....T..WrapNonEx
+                                                                                                                                                                                63 65 70 74 69 6F 6E 54 68 72 6F 77 73 01 )       // ceptionThrows.
+
+  // --- The following custom attribute is added automatically, do not uncomment -------
+  //  .custom /*0C000006:0A000004*/ instance void [System.Runtime/*23000001*/]System.Diagnostics.DebuggableAttribute/*01000004*/::.ctor(valuetype [System.Runtime/*23000001*/]System.Diagnostics.DebuggableAttribute/*01000004*//DebuggingModes/*01000005*/) /* 0A000004 */ = ( 01 00 02 00 00 00 00 00 ) 
+
+  .custom /*0C000007:0A000005*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.InternalsVisibleToAttribute/*01000006*/::.ctor(string) /* 0A000005 */ = ( 01 00 81 64 4D 69 63 72 6F 73 6F 66 74 2E 41 73   // ...dMicrosoft.As
+                                                                                                                                                                                    70 4E 65 74 43 6F 72 65 2E 4D 76 63 2C 20 50 75   // pNetCore.Mvc, Pu
+                                                                                                                                                                                    62 6C 69 63 4B 65 79 3D 30 30 32 34 30 30 30 30   // blicKey=00240000
+                                                                                                                                                                                    30 34 38 30 30 30 30 30 39 34 30 30 30 30 30 30   // 0480000094000000
+                                                                                                                                                                                    30 36 30 32 30 30 30 30 30 30 32 34 30 30 30 30   // 0602000000240000
+                                                                                                                                                                                    35 32 35 33 34 31 33 31 30 30 30 34 30 30 30 30   // 5253413100040000
+                                                                                                                                                                                    30 31 30 30 30 31 30 30 66 33 33 61 32 39 30 34   // 01000100f33a2904
+                                                                                                                                                                                    34 66 61 39 64 37 34 30 63 39 62 33 32 31 33 61   // 4fa9d740c9b3213a
+                                                                                                                                                                                    39 33 65 35 37 63 38 34 62 34 37 32 63 38 34 65   // 93e57c84b472c84e
+                                                                                                                                                                                    30 62 38 61 30 65 31 61 65 34 38 65 36 37 61 39   // 0b8a0e1ae48e67a9
+                                                                                                                                                                                    66 38 66 36 64 65 39 64 35 66 37 66 33 64 35 32   // f8f6de9d5f7f3d52
+                                                                                                                                                                                    61 63 32 33 65 34 38 61 63 35 31 38 30 31 66 31   // ac23e48ac51801f1
+                                                                                                                                                                                    64 63 39 35 30 61 62 65 39 30 31 64 61 33 34 64   // dc950abe901da34d
+                                                                                                                                                                                    32 61 39 65 33 62 61 61 64 62 31 34 31 61 31 37   // 2a9e3baadb141a17
+                                                                                                                                                                                    63 37 37 65 66 33 63 35 36 35 64 64 35 65 65 35   // c77ef3c565dd5ee5
+                                                                                                                                                                                    30 35 34 62 39 31 63 66 36 33 62 62 33 63 36 61   // 054b91cf63bb3c6a
+                                                                                                                                                                                    62 38 33 66 37 32 61 62 33 61 61 66 65 39 33 64   // b83f72ab3aafe93d
+                                                                                                                                                                                    30 66 63 33 63 32 33 34 38 62 37 36 34 66 61 66   // 0fc3c2348b764faf
+                                                                                                                                                                                    62 30 62 31 63 30 37 33 33 64 65 35 31 34 35 39   // b0b1c0733de51459
+                                                                                                                                                                                    61 65 61 62 34 36 35 38 30 33 38 34 62 66 39 64   // aeab46580384bf9d
+                                                                                                                                                                                    37 34 63 34 65 32 38 31 36 34 62 37 63 64 65 32   // 74c4e28164b7cde2
+                                                                                                                                                                                    34 37 66 38 39 31 62 61 30 37 38 39 31 63 39 64   // 47f891ba07891c9d
+                                                                                                                                                                                    38 37 32 61 64 32 62 62 00 00 )                   // 872ad2bb..
+  .custom /*0C000008:0A000005*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.InternalsVisibleToAttribute/*01000006*/::.ctor(string) /* 0A000005 */ = ( 01 00 81 6A 4D 69 63 72 6F 73 6F 66 74 2E 41 73   // ...jMicrosoft.As
+                                                                                                                                                                                    70 4E 65 74 43 6F 72 65 2E 4D 76 63 2E 52 61 7A   // pNetCore.Mvc.Raz
+                                                                                                                                                                                    6F 72 2C 20 50 75 62 6C 69 63 4B 65 79 3D 30 30   // or, PublicKey=00
+                                                                                                                                                                                    32 34 30 30 30 30 30 34 38 30 30 30 30 30 39 34   // 2400000480000094
+                                                                                                                                                                                    30 30 30 30 30 30 30 36 30 32 30 30 30 30 30 30   // 0000000602000000
+                                                                                                                                                                                    32 34 30 30 30 30 35 32 35 33 34 31 33 31 30 30   // 2400005253413100
+                                                                                                                                                                                    30 34 30 30 30 30 30 31 30 30 30 31 30 30 66 33   // 04000001000100f3
+                                                                                                                                                                                    33 61 32 39 30 34 34 66 61 39 64 37 34 30 63 39   // 3a29044fa9d740c9
+                                                                                                                                                                                    62 33 32 31 33 61 39 33 65 35 37 63 38 34 62 34   // b3213a93e57c84b4
+                                                                                                                                                                                    37 32 63 38 34 65 30 62 38 61 30 65 31 61 65 34   // 72c84e0b8a0e1ae4
+                                                                                                                                                                                    38 65 36 37 61 39 66 38 66 36 64 65 39 64 35 66   // 8e67a9f8f6de9d5f
+                                                                                                                                                                                    37 66 33 64 35 32 61 63 32 33 65 34 38 61 63 35   // 7f3d52ac23e48ac5
+                                                                                                                                                                                    31 38 30 31 66 31 64 63 39 35 30 61 62 65 39 30   // 1801f1dc950abe90
+                                                                                                                                                                                    31 64 61 33 34 64 32 61 39 65 33 62 61 61 64 62   // 1da34d2a9e3baadb
+                                                                                                                                                                                    31 34 31 61 31 37 63 37 37 65 66 33 63 35 36 35   // 141a17c77ef3c565
+                                                                                                                                                                                    64 64 35 65 65 35 30 35 34 62 39 31 63 66 36 33   // dd5ee5054b91cf63
+                                                                                                                                                                                    62 62 33 63 36 61 62 38 33 66 37 32 61 62 33 61   // bb3c6ab83f72ab3a
+                                                                                                                                                                                    61 66 65 39 33 64 30 66 63 33 63 32 33 34 38 62   // afe93d0fc3c2348b
+                                                                                                                                                                                    37 36 34 66 61 66 62 30 62 31 63 30 37 33 33 64   // 764fafb0b1c0733d
+                                                                                                                                                                                    65 35 31 34 35 39 61 65 61 62 34 36 35 38 30 33   // e51459aeab465803
+                                                                                                                                                                                    38 34 62 66 39 64 37 34 63 34 65 32 38 31 36 34   // 84bf9d74c4e28164
+                                                                                                                                                                                    62 37 63 64 65 32 34 37 66 38 39 31 62 61 30 37   // b7cde247f891ba07
+                                                                                                                                                                                    38 39 31 63 39 64 38 37 32 61 64 32 62 62 00 00 ) // 891c9d872ad2bb..
+  .custom /*0C000009:0A000005*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.InternalsVisibleToAttribute/*01000006*/::.ctor(string) /* 0A000005 */ = ( 01 00 81 6F 4D 69 63 72 6F 73 6F 66 74 2E 41 73   // ...oMicrosoft.As
+                                                                                                                                                                                    70 4E 65 74 43 6F 72 65 2E 4D 76 63 2E 52 61 7A   // pNetCore.Mvc.Raz
+                                                                                                                                                                                    6F 72 50 61 67 65 73 2C 20 50 75 62 6C 69 63 4B   // orPages, PublicK
+                                                                                                                                                                                    65 79 3D 30 30 32 34 30 30 30 30 30 34 38 30 30   // ey=0024000004800
+                                                                                                                                                                                    30 30 30 39 34 30 30 30 30 30 30 30 36 30 32 30   // 0009400000006020
+                                                                                                                                                                                    30 30 30 30 30 32 34 30 30 30 30 35 32 35 33 34   // 0000024000052534
+                                                                                                                                                                                    31 33 31 30 30 30 34 30 30 30 30 30 31 30 30 30   // 1310004000001000
+                                                                                                                                                                                    31 30 30 66 33 33 61 32 39 30 34 34 66 61 39 64   // 100f33a29044fa9d
+                                                                                                                                                                                    37 34 30 63 39 62 33 32 31 33 61 39 33 65 35 37   // 740c9b3213a93e57
+                                                                                                                                                                                    63 38 34 62 34 37 32 63 38 34 65 30 62 38 61 30   // c84b472c84e0b8a0
+                                                                                                                                                                                    65 31 61 65 34 38 65 36 37 61 39 66 38 66 36 64   // e1ae48e67a9f8f6d
+                                                                                                                                                                                    65 39 64 35 66 37 66 33 64 35 32 61 63 32 33 65   // e9d5f7f3d52ac23e
+                                                                                                                                                                                    34 38 61 63 35 31 38 30 31 66 31 64 63 39 35 30   // 48ac51801f1dc950
+                                                                                                                                                                                    61 62 65 39 30 31 64 61 33 34 64 32 61 39 65 33   // abe901da34d2a9e3
+                                                                                                                                                                                    62 61 61 64 62 31 34 31 61 31 37 63 37 37 65 66   // baadb141a17c77ef
+                                                                                                                                                                                    33 63 35 36 35 64 64 35 65 65 35 30 35 34 62 39   // 3c565dd5ee5054b9
+                                                                                                                                                                                    31 63 66 36 33 62 62 33 63 36 61 62 38 33 66 37   // 1cf63bb3c6ab83f7
+                                                                                                                                                                                    32 61 62 33 61 61 66 65 39 33 64 30 66 63 33 63   // 2ab3aafe93d0fc3c
+                                                                                                                                                                                    32 33 34 38 62 37 36 34 66 61 66 62 30 62 31 63   // 2348b764fafb0b1c
+                                                                                                                                                                                    30 37 33 33 64 65 35 31 34 35 39 61 65 61 62 34   // 0733de51459aeab4
+                                                                                                                                                                                    36 35 38 30 33 38 34 62 66 39 64 37 34 63 34 65   // 6580384bf9d74c4e
+                                                                                                                                                                                    32 38 31 36 34 62 37 63 64 65 32 34 37 66 38 39   // 28164b7cde247f89
+                                                                                                                                                                                    31 62 61 30 37 38 39 31 63 39 64 38 37 32 61 64   // 1ba07891c9d872ad
+                                                                                                                                                                                    32 62 62 00 00 )                                  // 2bb..
+  .custom /*0C00000A:0A000005*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.InternalsVisibleToAttribute/*01000006*/::.ctor(string) /* 0A000005 */ = ( 01 00 81 6F 4D 69 63 72 6F 73 6F 66 74 2E 41 73   // ...oMicrosoft.As
+                                                                                                                                                                                    70 4E 65 74 43 6F 72 65 2E 4D 76 63 2E 54 61 67   // pNetCore.Mvc.Tag
+                                                                                                                                                                                    48 65 6C 70 65 72 73 2C 20 50 75 62 6C 69 63 4B   // Helpers, PublicK
+                                                                                                                                                                                    65 79 3D 30 30 32 34 30 30 30 30 30 34 38 30 30   // ey=0024000004800
+                                                                                                                                                                                    30 30 30 39 34 30 30 30 30 30 30 30 36 30 32 30   // 0009400000006020
+                                                                                                                                                                                    30 30 30 30 30 32 34 30 30 30 30 35 32 35 33 34   // 0000024000052534
+                                                                                                                                                                                    31 33 31 30 30 30 34 30 30 30 30 30 31 30 30 30   // 1310004000001000
+                                                                                                                                                                                    31 30 30 66 33 33 61 32 39 30 34 34 66 61 39 64   // 100f33a29044fa9d
+                                                                                                                                                                                    37 34 30 63 39 62 33 32 31 33 61 39 33 65 35 37   // 740c9b3213a93e57
+                                                                                                                                                                                    63 38 34 62 34 37 32 63 38 34 65 30 62 38 61 30   // c84b472c84e0b8a0
+                                                                                                                                                                                    65 31 61 65 34 38 65 36 37 61 39 66 38 66 36 64   // e1ae48e67a9f8f6d
+                                                                                                                                                                                    65 39 64 35 66 37 66 33 64 35 32 61 63 32 33 65   // e9d5f7f3d52ac23e
+                                                                                                                                                                                    34 38 61 63 35 31 38 30 31 66 31 64 63 39 35 30   // 48ac51801f1dc950
+                                                                                                                                                                                    61 62 65 39 30 31 64 61 33 34 64 32 61 39 65 33   // abe901da34d2a9e3
+                                                                                                                                                                                    62 61 61 64 62 31 34 31 61 31 37 63 37 37 65 66   // baadb141a17c77ef
+                                                                                                                                                                                    33 63 35 36 35 64 64 35 65 65 35 30 35 34 62 39   // 3c565dd5ee5054b9
+                                                                                                                                                                                    31 63 66 36 33 62 62 33 63 36 61 62 38 33 66 37   // 1cf63bb3c6ab83f7
+                                                                                                                                                                                    32 61 62 33 61 61 66 65 39 33 64 30 66 63 33 63   // 2ab3aafe93d0fc3c
+                                                                                                                                                                                    32 33 34 38 62 37 36 34 66 61 66 62 30 62 31 63   // 2348b764fafb0b1c
+                                                                                                                                                                                    30 37 33 33 64 65 35 31 34 35 39 61 65 61 62 34   // 0733de51459aeab4
+                                                                                                                                                                                    36 35 38 30 33 38 34 62 66 39 64 37 34 63 34 65   // 6580384bf9d74c4e
+                                                                                                                                                                                    32 38 31 36 34 62 37 63 64 65 32 34 37 66 38 39   // 28164b7cde247f89
+                                                                                                                                                                                    31 62 61 30 37 38 39 31 63 39 64 38 37 32 61 64   // 1ba07891c9d872ad
+                                                                                                                                                                                    32 62 62 00 00 )                                  // 2bb..
+  .custom /*0C00000B:0A000005*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.InternalsVisibleToAttribute/*01000006*/::.ctor(string) /* 0A000005 */ = ( 01 00 81 64 44 79 6E 61 6D 69 63 50 72 6F 78 79   // ...dDynamicProxy
+                                                                                                                                                                                    47 65 6E 41 73 73 65 6D 62 6C 79 32 2C 20 50 75   // GenAssembly2, Pu
+                                                                                                                                                                                    62 6C 69 63 4B 65 79 3D 30 30 32 34 30 30 30 30   // blicKey=00240000
+                                                                                                                                                                                    30 34 38 30 30 30 30 30 39 34 30 30 30 30 30 30   // 0480000094000000
+                                                                                                                                                                                    30 36 30 32 30 30 30 30 30 30 32 34 30 30 30 30   // 0602000000240000
+                                                                                                                                                                                    35 32 35 33 34 31 33 31 30 30 30 34 30 30 30 30   // 5253413100040000
+                                                                                                                                                                                    30 31 30 30 30 31 30 30 63 35 34 37 63 61 63 33   // 01000100c547cac3
+                                                                                                                                                                                    37 61 62 64 39 39 63 38 64 62 32 32 35 65 66 32   // 7abd99c8db225ef2
+                                                                                                                                                                                    66 36 63 38 61 33 36 30 32 66 33 62 33 36 30 36   // f6c8a3602f3b3606
+                                                                                                                                                                                    63 63 39 38 39 31 36 30 35 64 30 32 62 61 61 35   // cc9891605d02baa5
+                                                                                                                                                                                    36 31 30 34 66 34 63 66 63 30 37 33 34 61 61 33   // 6104f4cfc0734aa3
+                                                                                                                                                                                    39 62 39 33 62 66 37 38 35 32 66 37 64 39 32 36   // 9b93bf7852f7d926
+                                                                                                                                                                                    36 36 35 34 37 35 33 63 63 32 39 37 65 37 64 32   // 6654753cc297e7d2
+                                                                                                                                                                                    65 64 66 65 30 62 61 63 31 63 64 63 66 39 66 37   // edfe0bac1cdcf9f7
+                                                                                                                                                                                    31 37 32 34 31 35 35 30 65 30 61 37 62 31 39 31   // 17241550e0a7b191
+                                                                                                                                                                                    31 39 35 62 37 36 36 37 62 62 34 66 36 34 62 63   // 195b7667bb4f64bc
+                                                                                                                                                                                    62 38 65 32 31 32 31 33 38 30 66 64 31 64 39 64   // b8e2121380fd1d9d
+                                                                                                                                                                                    34 36 61 64 32 64 39 32 64 32 64 31 35 36 30 35   // 46ad2d92d2d15605
+                                                                                                                                                                                    30 39 33 39 32 34 63 63 65 61 66 37 34 63 34 38   // 093924cceaf74c48
+                                                                                                                                                                                    36 31 65 66 66 36 32 61 62 66 36 39 62 39 32 39   // 61eff62abf69b929
+                                                                                                                                                                                    31 65 64 30 61 33 34 30 65 31 31 33 62 65 31 31   // 1ed0a340e113be11
+                                                                                                                                                                                    65 36 61 37 64 33 31 31 33 65 39 32 34 38 34 63   // e6a7d3113e92484c
+                                                                                                                                                                                    66 37 30 34 35 63 63 37 00 00 )                   // f7045cc7..
+  .custom /*0C00000C:0A000006*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ReferenceAssemblyAttribute/*01000007*/::.ctor() /* 0A000006 */ = ( 01 00 00 00 ) 
+  .custom /*0C00000D:0A000007*/ instance void [System.Runtime/*23000001*/]System.Runtime.Versioning.TargetFrameworkAttribute/*01000008*/::.ctor(string) /* 0A000007 */ = ( 01 00 18 2E 4E 45 54 43 6F 72 65 41 70 70 2C 56   // ....NETCoreApp,V
+                                                                                                                                                                           65 72 73 69 6F 6E 3D 76 33 2E 30 01 00 54 0E 14   // ersion=v3.0..T..
+                                                                                                                                                                           46 72 61 6D 65 77 6F 72 6B 44 69 73 70 6C 61 79   // FrameworkDisplay
+                                                                                                                                                                           4E 61 6D 65 00 )                                  // Name.
+  .custom /*0C00000E:0A000008*/ instance void [System.Runtime/*23000001*/]System.Reflection.AssemblyMetadataAttribute/*01000009*/::.ctor(string,
+                                                                                                                                         string) /* 0A000008 */ = ( 01 00 0A 43 6F 6D 6D 69 74 48 61 73 68 28 32 32   // ...CommitHash(22
+                                                                                                                                                                    64 65 64 63 62 32 66 30 64 65 35 39 30 32 32 65   // dedcb2f0de59022e
+                                                                                                                                                                    30 33 38 33 65 31 66 30 35 63 39 63 61 66 66 63   // 0383e1f05c9caffc
+                                                                                                                                                                    37 30 38 35 32 32 00 00 )                         // 708522..
+  .custom /*0C00000F:0A000008*/ instance void [System.Runtime/*23000001*/]System.Reflection.AssemblyMetadataAttribute/*01000009*/::.ctor(string,
+                                                                                                                                         string) /* 0A000008 */ = ( 01 00 0F 53 6F 75 72 63 65 43 6F 6D 6D 69 74 55   // ...SourceCommitU
+                                                                                                                                                                    72 6C 52 68 74 74 70 73 3A 2F 2F 67 69 74 68 75   // rlRhttps://githu
+                                                                                                                                                                    62 2E 63 6F 6D 2F 61 73 70 6E 65 74 2F 41 73 70   // b.com/aspnet/Asp
+                                                                                                                                                                    4E 65 74 43 6F 72 65 2F 74 72 65 65 2F 32 32 64   // NetCore/tree/22d
+                                                                                                                                                                    65 64 63 62 32 66 30 64 65 35 39 30 32 32 65 30   // edcb2f0de59022e0
+                                                                                                                                                                    33 38 33 65 31 66 30 35 63 39 63 61 66 66 63 37   // 383e1f05c9caffc7
+                                                                                                                                                                    30 38 35 32 32 00 00 )                            // 08522..
+  .custom /*0C000010:0A000008*/ instance void [System.Runtime/*23000001*/]System.Reflection.AssemblyMetadataAttribute/*01000009*/::.ctor(string,
+                                                                                                                                         string) /* 0A000008 */ = ( 01 00 0B 53 65 72 76 69 63 65 61 62 6C 65 04 54   // ...Serviceable.T
+                                                                                                                                                                    72 75 65 00 00 )                                  // rue..
+  .custom /*0C000011:0A000009*/ instance void [System.Runtime/*23000001*/]System.Reflection.AssemblyCompanyAttribute/*0100000A*/::.ctor(string) /* 0A000009 */ = ( 01 00 15 4D 69 63 72 6F 73 6F 66 74 20 43 6F 72   // ...Microsoft Cor
+                                                                                                                                                                   70 6F 72 61 74 69 6F 6E 00 00 )                   // poration..
+  .custom /*0C000012:0A00000A*/ instance void [System.Runtime/*23000001*/]System.Reflection.AssemblyConfigurationAttribute/*0100000B*/::.ctor(string) /* 0A00000A */ = ( 01 00 07 52 65 6C 65 61 73 65 00 00 )             // ...Release..
+  .custom /*0C000013:0A00000B*/ instance void [System.Runtime/*23000001*/]System.Reflection.AssemblyCopyrightAttribute/*0100000C*/::.ctor(string) /* 0A00000B */ = ( 01 00 2E C2 A9 20 4D 69 63 72 6F 73 6F 66 74 20   // ..... Microsoft 
+                                                                                                                                                                     43 6F 72 70 6F 72 61 74 69 6F 6E 2E 20 41 6C 6C   // Corporation. All
+                                                                                                                                                                     20 72 69 67 68 74 73 20 72 65 73 65 72 76 65 64   //  rights reserved
+                                                                                                                                                                     2E 00 00 )                                        // ...
+  .custom /*0C000014:0A00000C*/ instance void [System.Runtime/*23000001*/]System.Reflection.AssemblyFileVersionAttribute/*0100000D*/::.ctor(string) /* 0A00000C */ = ( 01 00 0D 33 2E 30 2E 31 31 39 2E 35 35 34 30 37   // ...3.0.119.55407
+                                                                                                                                                                       00 00 ) 
+  .custom /*0C000015:0A00000D*/ instance void [System.Runtime/*23000001*/]System.Reflection.AssemblyInformationalVersionAttribute/*0100000E*/::.ctor(string) /* 0A00000D */ = ( 01 00 05 33 2E 30 2E 31 00 00 )                   // ...3.0.1..
+  .custom /*0C000016:0A00000E*/ instance void [System.Runtime/*23000001*/]System.Reflection.AssemblyProductAttribute/*0100000F*/::.ctor(string) /* 0A00000E */ = ( 01 00 16 4D 69 63 72 6F 73 6F 66 74 20 41 53 50   // ...Microsoft ASP
+                                                                                                                                                                   2E 4E 45 54 20 43 6F 72 65 00 00 )                // .NET Core..
+  .custom /*0C000017:0A00000F*/ instance void [System.Runtime/*23000001*/]System.Reflection.AssemblyTitleAttribute/*01000010*/::.ctor(string) /* 0A00000F */ = ( 01 00 25 4D 69 63 72 6F 73 6F 66 74 2E 41 73 70   // ..%Microsoft.Asp
+                                                                                                                                                                 4E 65 74 43 6F 72 65 2E 4D 76 63 2E 56 69 65 77   // NetCore.Mvc.View
+                                                                                                                                                                 46 65 61 74 75 72 65 73 00 00 )                   // Features..
+  .custom /*0C000018:0A000010*/ instance void [System.Resources.ResourceManager/*23000002*/]System.Resources.NeutralResourcesLanguageAttribute/*01000011*/::.ctor(string) /* 0A000010 */ = ( 01 00 05 65 6E 2D 55 53 00 00 )                   // ...en-US..
+  .permissionset reqmin
+             = {[System.Runtime.Extensions/*23000003*/]System.Security.Permissions.SecurityPermissionAttribute/*01000013*/ = {property bool 'SkipVerification' = bool(true)}}
+  .publickey = (00 24 00 00 04 80 00 00 94 00 00 00 06 02 00 00   // .$..............
+                00 24 00 00 52 53 41 31 00 04 00 00 01 00 01 00   // .$..RSA1........
+                F3 3A 29 04 4F A9 D7 40 C9 B3 21 3A 93 E5 7C 84   // .:).O..@..!:..|.
+                B4 72 C8 4E 0B 8A 0E 1A E4 8E 67 A9 F8 F6 DE 9D   // .r.N......g.....
+                5F 7F 3D 52 AC 23 E4 8A C5 18 01 F1 DC 95 0A BE   // _.=R.#..........
+                90 1D A3 4D 2A 9E 3B AA DB 14 1A 17 C7 7E F3 C5   // ...M*.;......~..
+                65 DD 5E E5 05 4B 91 CF 63 BB 3C 6A B8 3F 72 AB   // e.^..K..c.<j.?r.
+                3A AF E9 3D 0F C3 C2 34 8B 76 4F AF B0 B1 C0 73   // :..=...4.vO....s
+                3D E5 14 59 AE AB 46 58 03 84 BF 9D 74 C4 E2 81   // =..Y..FX....t...
+                64 B7 CD E2 47 F8 91 BA 07 89 1C 9D 87 2A D2 BB ) // d...G........*..
+  .hash algorithm 0x00008004
+  .ver 3:0:0:0
+}
+.module Microsoft.AspNetCore.Mvc.ViewFeatures.dll
+// MVID: {18ca72ff-e7e3-4a9a-ae5d-73e2e08b3cc0}
+.custom /*0C000002:0A000012*/ instance void [System.Runtime/*23000001*/]System.Security.UnverifiableCodeAttribute/*01000014*/::.ctor() /* 0A000012 */ = ( 01 00 00 00 ) 
+.imagebase 0x10000000
+.file alignment 0x00000200
+.stackreserve 0x00100000
+.subsystem 0x0003       // WINDOWS_CUI
+.corflags 0x00000009    //  ILONLY
+// Image base: 0x00007FFA501AF000
+
+
+// =============== CLASS MEMBERS DECLARATION ===================
+
+.class /*02000002*/ public abstract auto ansi sealed beforefieldinit Microsoft.Extensions.DependencyInjection.MvcViewFeaturesMvcBuilderExtensions
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .custom /*0C00001A:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+  .method /*06000001*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.Extensions.DependencyInjection.IMvcBuilder/*01000016*/ 
+          AddCookieTempDataProvider(class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.Extensions.DependencyInjection.IMvcBuilder/*01000016*/ builder) cil managed
+  // SIG: 00 01 12 59 12 59
+  {
+    .custom /*0C000001:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2050
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method MvcViewFeaturesMvcBuilderExtensions::AddCookieTempDataProvider
+
+  .method /*06000002*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.Extensions.DependencyInjection.IMvcBuilder/*01000016*/ 
+          AddCookieTempDataProvider(class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.Extensions.DependencyInjection.IMvcBuilder/*01000016*/ builder,
+                                    class [System.Runtime/*23000001*/]System.Action`1/*01000017*/<class Microsoft.AspNetCore.Mvc.CookieTempDataProviderOptions/*02000008*/> setupAction) cil managed
+  // SIG: 00 02 12 59 12 59 15 12 5D 01 12 20
+  {
+    .custom /*0C000019:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2053
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method MvcViewFeaturesMvcBuilderExtensions::AddCookieTempDataProvider
+
+  .method /*06000003*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.Extensions.DependencyInjection.IMvcBuilder/*01000016*/ 
+          AddSessionStateTempDataProvider(class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.Extensions.DependencyInjection.IMvcBuilder/*01000016*/ builder) cil managed
+  // SIG: 00 01 12 59 12 59
+  {
+    .custom /*0C00001B:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2056
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method MvcViewFeaturesMvcBuilderExtensions::AddSessionStateTempDataProvider
+
+  .method /*06000004*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.Extensions.DependencyInjection.IMvcBuilder/*01000016*/ 
+          AddViewComponentsAsServices(class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.Extensions.DependencyInjection.IMvcBuilder/*01000016*/ builder) cil managed
+  // SIG: 00 01 12 59 12 59
+  {
+    .custom /*0C00001D:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2059
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method MvcViewFeaturesMvcBuilderExtensions::AddViewComponentsAsServices
+
+  .method /*06000005*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.Extensions.DependencyInjection.IMvcBuilder/*01000016*/ 
+          AddViewOptions(class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.Extensions.DependencyInjection.IMvcBuilder/*01000016*/ builder,
+                         class [System.Runtime/*23000001*/]System.Action`1/*01000017*/<class Microsoft.AspNetCore.Mvc.MvcViewOptions/*0200000C*/> setupAction) cil managed
+  // SIG: 00 02 12 59 12 59 15 12 5D 01 12 30
+  {
+    .custom /*0C00001F:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x205c
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method MvcViewFeaturesMvcBuilderExtensions::AddViewOptions
+
+} // end of class Microsoft.Extensions.DependencyInjection.MvcViewFeaturesMvcBuilderExtensions
+
+.class /*02000003*/ public abstract auto ansi sealed beforefieldinit Microsoft.Extensions.DependencyInjection.MvcViewFeaturesMvcCoreBuilderExtensions
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .custom /*0C00001C:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+  .method /*06000006*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.Extensions.DependencyInjection.IMvcCoreBuilder/*01000018*/ 
+          AddCookieTempDataProvider(class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.Extensions.DependencyInjection.IMvcCoreBuilder/*01000018*/ builder) cil managed
+  // SIG: 00 01 12 61 12 61
+  {
+    .custom /*0C000021:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x205f
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method MvcViewFeaturesMvcCoreBuilderExtensions::AddCookieTempDataProvider
+
+  .method /*06000007*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.Extensions.DependencyInjection.IMvcCoreBuilder/*01000018*/ 
+          AddCookieTempDataProvider(class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.Extensions.DependencyInjection.IMvcCoreBuilder/*01000018*/ builder,
+                                    class [System.Runtime/*23000001*/]System.Action`1/*01000017*/<class Microsoft.AspNetCore.Mvc.CookieTempDataProviderOptions/*02000008*/> setupAction) cil managed
+  // SIG: 00 02 12 61 12 61 15 12 5D 01 12 20
+  {
+    .custom /*0C000023:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2062
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method MvcViewFeaturesMvcCoreBuilderExtensions::AddCookieTempDataProvider
+
+  .method /*06000008*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.Extensions.DependencyInjection.IMvcCoreBuilder/*01000018*/ 
+          AddViews(class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.Extensions.DependencyInjection.IMvcCoreBuilder/*01000018*/ builder) cil managed
+  // SIG: 00 01 12 61 12 61
+  {
+    .custom /*0C000024:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2065
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method MvcViewFeaturesMvcCoreBuilderExtensions::AddViews
+
+  .method /*06000009*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.Extensions.DependencyInjection.IMvcCoreBuilder/*01000018*/ 
+          AddViews(class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.Extensions.DependencyInjection.IMvcCoreBuilder/*01000018*/ builder,
+                   class [System.Runtime/*23000001*/]System.Action`1/*01000017*/<class Microsoft.AspNetCore.Mvc.MvcViewOptions/*0200000C*/> setupAction) cil managed
+  // SIG: 00 02 12 61 12 61 15 12 5D 01 12 30
+  {
+    .custom /*0C000025:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2068
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method MvcViewFeaturesMvcCoreBuilderExtensions::AddViews
+
+  .method /*0600000A*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.Extensions.DependencyInjection.IMvcCoreBuilder/*01000018*/ 
+          ConfigureViews(class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.Extensions.DependencyInjection.IMvcCoreBuilder/*01000018*/ builder,
+                         class [System.Runtime/*23000001*/]System.Action`1/*01000017*/<class Microsoft.AspNetCore.Mvc.MvcViewOptions/*0200000C*/> setupAction) cil managed
+  // SIG: 00 02 12 61 12 61 15 12 5D 01 12 30
+  {
+    .custom /*0C000027:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x206b
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method MvcViewFeaturesMvcCoreBuilderExtensions::ConfigureViews
+
+} // end of class Microsoft.Extensions.DependencyInjection.MvcViewFeaturesMvcCoreBuilderExtensions
+
+.class /*02000004*/ private auto ansi beforefieldinit Microsoft.Extensions.DependencyInjection.MvcViewOptionsSetup
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .field /*04000001*/ private initonly class [Microsoft.Extensions.Options/*23000005*/]Microsoft.Extensions.Options.IOptions`1/*01000019*/<class [Microsoft.AspNetCore.Mvc.DataAnnotations/*23000006*/]Microsoft.AspNetCore.Mvc.DataAnnotations.MvcDataAnnotationsLocalizationOptions/*0100001A*/> _dataAnnotationsLocalizationOptions
+  .field /*04000002*/ private initonly class [Microsoft.Extensions.Localization.Abstractions/*23000007*/]Microsoft.Extensions.Localization.IStringLocalizerFactory/*0100001B*/ _stringLocalizerFactory
+  .field /*04000003*/ private initonly class [Microsoft.AspNetCore.Mvc.DataAnnotations/*23000006*/]Microsoft.AspNetCore.Mvc.DataAnnotations.IValidationAttributeAdapterProvider/*0100001C*/ _validationAttributeAdapterProvider
+  .method /*0600000B*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class [Microsoft.Extensions.Options/*23000005*/]Microsoft.Extensions.Options.IOptions`1/*01000019*/<class [Microsoft.AspNetCore.Mvc.DataAnnotations/*23000006*/]Microsoft.AspNetCore.Mvc.DataAnnotations.MvcDataAnnotationsLocalizationOptions/*0100001A*/> dataAnnotationLocalizationOptions,
+                               class [Microsoft.AspNetCore.Mvc.DataAnnotations/*23000006*/]Microsoft.AspNetCore.Mvc.DataAnnotations.IValidationAttributeAdapterProvider/*0100001C*/ validationAttributeAdapterProvider) cil managed
+  // SIG: 20 02 01 15 12 65 01 12 69 12 71
+  {
+    // Method begins at RVA 0x206e
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method MvcViewOptionsSetup::.ctor
+
+  .method /*0600000C*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class [Microsoft.Extensions.Options/*23000005*/]Microsoft.Extensions.Options.IOptions`1/*01000019*/<class [Microsoft.AspNetCore.Mvc.DataAnnotations/*23000006*/]Microsoft.AspNetCore.Mvc.DataAnnotations.MvcDataAnnotationsLocalizationOptions/*0100001A*/> dataAnnotationOptions,
+                               class [Microsoft.AspNetCore.Mvc.DataAnnotations/*23000006*/]Microsoft.AspNetCore.Mvc.DataAnnotations.IValidationAttributeAdapterProvider/*0100001C*/ validationAttributeAdapterProvider,
+                               class [Microsoft.Extensions.Localization.Abstractions/*23000007*/]Microsoft.Extensions.Localization.IStringLocalizerFactory/*0100001B*/ stringLocalizerFactory) cil managed
+  // SIG: 20 03 01 15 12 65 01 12 69 12 71 12 6D
+  {
+    // Method begins at RVA 0x2076
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method MvcViewOptionsSetup::.ctor
+
+  .method /*0600000D*/ public hidebysig instance void 
+          Configure(class Microsoft.AspNetCore.Mvc.MvcViewOptions/*0200000C*/ options) cil managed
+  // SIG: 20 01 01 12 30
+  {
+    // Method begins at RVA 0x207e
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method MvcViewOptionsSetup::Configure
+
+} // end of class Microsoft.Extensions.DependencyInjection.MvcViewOptionsSetup
+
+.class /*02000005*/ private auto ansi beforefieldinit Microsoft.Extensions.DependencyInjection.TempDataMvcOptionsSetup
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .method /*0600000E*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x2080
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method TempDataMvcOptionsSetup::.ctor
+
+  .method /*0600000F*/ public hidebysig instance void 
+          Configure(class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.MvcOptions/*0100001D*/ options) cil managed
+  // SIG: 20 01 01 12 75
+  {
+    // Method begins at RVA 0x2088
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method TempDataMvcOptionsSetup::Configure
+
+} // end of class Microsoft.Extensions.DependencyInjection.TempDataMvcOptionsSetup
+
+.class /*02000006*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.AutoValidateAntiforgeryTokenAttribute
+       extends [System.Runtime/*23000001*/]System.Attribute/*01000020*/
+       implements [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.Filters.IFilterFactory/*01000021*/,
+                  [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.Filters.IFilterMetadata/*01000022*/,
+                  [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.Filters.IOrderedFilter/*01000023*/
+{
+  .custom /*0C000022:0A000013*/ instance void [System.Runtime/*23000001*/]System.AttributeUsageAttribute/*0100001F*/::.ctor(valuetype [System.Runtime/*23000001*/]System.AttributeTargets/*0100001E*/) /* 0A000013 */ = ( 01 00 44 00 00 00 02 00 54 02 0D 41 6C 6C 6F 77   // ..D.....T..Allow
+                                                                                                                                                                                                                          4D 75 6C 74 69 70 6C 65 00 54 02 09 49 6E 68 65   // Multiple.T..Inhe
+                                                                                                                                                                                                                          72 69 74 65 64 01 )                               // rited.
+  .method /*06000010*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x208a
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000029       */ call       instance void [System.Runtime/*23000001*/]System.Attribute/*01000020*/::.ctor() /* 0A000029 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method AutoValidateAntiforgeryTokenAttribute::.ctor
+
+  .method /*06000011*/ public hidebysig newslot specialname virtual final 
+          instance bool  get_IsReusable() cil managed
+  // SIG: 20 00 02
+  {
+    // Method begins at RVA 0x2092
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method AutoValidateAntiforgeryTokenAttribute::get_IsReusable
+
+  .method /*06000012*/ public hidebysig newslot specialname virtual final 
+          instance int32  get_Order() cil managed
+  // SIG: 20 00 08
+  {
+    .custom /*0C00002C:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2095
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method AutoValidateAntiforgeryTokenAttribute::get_Order
+
+  .method /*06000013*/ public hidebysig specialname 
+          instance void  set_Order(int32 'value') cil managed
+  // SIG: 20 01 01 08
+  {
+    .custom /*0C00002E:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2098
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method AutoValidateAntiforgeryTokenAttribute::set_Order
+
+  .method /*06000014*/ public hidebysig newslot virtual final 
+          instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.Filters.IFilterMetadata/*01000022*/ 
+          CreateInstance(class [System.ComponentModel/*23000009*/]System.IServiceProvider/*01000025*/ serviceProvider) cil managed
+  // SIG: 20 01 12 80 89 12 80 95
+  {
+    // Method begins at RVA 0x209a
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method AutoValidateAntiforgeryTokenAttribute::CreateInstance
+
+  .property /*17000001*/ instance bool IsReusable()
+  {
+    .get instance bool Microsoft.AspNetCore.Mvc.AutoValidateAntiforgeryTokenAttribute/*02000006*/::get_IsReusable() /* 06000011 */
+  } // end of property AutoValidateAntiforgeryTokenAttribute::IsReusable
+  .property /*17000002*/ instance int32 Order()
+  {
+    .get instance int32 Microsoft.AspNetCore.Mvc.AutoValidateAntiforgeryTokenAttribute/*02000006*/::get_Order() /* 06000012 */
+    .set instance void Microsoft.AspNetCore.Mvc.AutoValidateAntiforgeryTokenAttribute/*02000006*/::set_Order(int32) /* 06000013 */
+  } // end of property AutoValidateAntiforgeryTokenAttribute::Order
+} // end of class Microsoft.AspNetCore.Mvc.AutoValidateAntiforgeryTokenAttribute
+
+.class /*02000007*/ public abstract auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.Controller
+       extends [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.ControllerBase/*01000026*/
+       implements [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.Filters.IActionFilter/*01000027*/,
+                  [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.Filters.IFilterMetadata/*01000022*/,
+                  [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.Filters.IAsyncActionFilter/*01000028*/,
+                  [System.Runtime/*23000001*/]System.IDisposable/*01000029*/
+{
+  .method /*06000015*/ family hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x209d
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)00002A       */ call       instance void [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.ControllerBase/*01000026*/::.ctor() /* 0A00002A */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method Controller::.ctor
+
+  .method /*06000016*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/ 
+          get_TempData() cil managed
+  // SIG: 20 00 12 80 A0
+  {
+    // Method begins at RVA 0x20a5
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method Controller::get_TempData
+
+  .method /*06000017*/ public hidebysig specialname 
+          instance void  set_TempData(class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/ 'value') cil managed
+  // SIG: 20 01 01 12 80 A0
+  {
+    // Method begins at RVA 0x20a8
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method Controller::set_TempData
+
+  .method /*06000018*/ public hidebysig specialname 
+          instance object  get_ViewBag() cil managed
+  // SIG: 20 00 1C
+  {
+    .param [0]/*0800001A*/ 
+    .custom /*0C000035:0A000015*/ instance void [System.Linq.Expressions/*2300000A*/]System.Runtime.CompilerServices.DynamicAttribute/*0100002A*/::.ctor() /* 0A000015 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x20aa
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method Controller::get_ViewBag
+
+  .method /*06000019*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ 
+          get_ViewData() cil managed
+  // SIG: 20 00 12 80 F4
+  {
+    // Method begins at RVA 0x20ad
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method Controller::get_ViewData
+
+  .method /*0600001A*/ public hidebysig specialname 
+          instance void  set_ViewData(class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ 'value') cil managed
+  // SIG: 20 01 01 12 80 F4
+  {
+    // Method begins at RVA 0x20b0
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method Controller::set_ViewData
+
+  .method /*0600001B*/ public hidebysig newslot virtual final 
+          instance void  Dispose() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x20b2
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method Controller::Dispose
+
+  .method /*0600001C*/ family hidebysig newslot virtual 
+          instance void  Dispose(bool disposing) cil managed
+  // SIG: 20 01 01 02
+  {
+    // Method begins at RVA 0x20b4
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method Controller::Dispose
+
+  .method /*0600001D*/ public hidebysig newslot virtual 
+          instance class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.JsonResult/*0100002C*/ 
+          Json(object data) cil managed
+  // SIG: 20 01 12 80 B1 1C
+  {
+    .custom /*0C000036:0A000016*/ instance void [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.NonActionAttribute/*0100002B*/::.ctor() /* 0A000016 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x20b6
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method Controller::Json
+
+  .method /*0600001E*/ public hidebysig newslot virtual 
+          instance class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.JsonResult/*0100002C*/ 
+          Json(object data,
+               object serializerSettings) cil managed
+  // SIG: 20 02 12 80 B1 1C 1C
+  {
+    .custom /*0C000038:0A000016*/ instance void [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.NonActionAttribute/*0100002B*/::.ctor() /* 0A000016 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x20b9
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method Controller::Json
+
+  .method /*0600001F*/ public hidebysig newslot virtual 
+          instance void  OnActionExecuted(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.Filters.ActionExecutedContext/*0100002D*/ context) cil managed
+  // SIG: 20 01 01 12 80 B5
+  {
+    .custom /*0C000039:0A000016*/ instance void [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.NonActionAttribute/*0100002B*/::.ctor() /* 0A000016 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x20bc
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method Controller::OnActionExecuted
+
+  .method /*06000020*/ public hidebysig newslot virtual 
+          instance void  OnActionExecuting(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.Filters.ActionExecutingContext/*0100002E*/ context) cil managed
+  // SIG: 20 01 01 12 80 B9
+  {
+    .custom /*0C00003A:0A000016*/ instance void [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.NonActionAttribute/*0100002B*/::.ctor() /* 0A000016 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x20be
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method Controller::OnActionExecuting
+
+  .method /*06000021*/ public hidebysig newslot virtual 
+          instance class [System.Runtime/*23000001*/]System.Threading.Tasks.Task/*0100002F*/ 
+          OnActionExecutionAsync(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.Filters.ActionExecutingContext/*0100002E*/ context,
+                                 class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.Filters.ActionExecutionDelegate/*01000030*/ next) cil managed
+  // SIG: 20 02 12 80 BD 12 80 B9 12 80 C1
+  {
+    .custom /*0C00003B:0A000016*/ instance void [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.NonActionAttribute/*0100002B*/::.ctor() /* 0A000016 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x20c0
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method Controller::OnActionExecutionAsync
+
+  .method /*06000022*/ public hidebysig newslot virtual 
+          instance class Microsoft.AspNetCore.Mvc.PartialViewResult/*0200000E*/ 
+          PartialView() cil managed
+  // SIG: 20 00 12 38
+  {
+    .custom /*0C00003C:0A000016*/ instance void [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.NonActionAttribute/*0100002B*/::.ctor() /* 0A000016 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x20c3
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method Controller::PartialView
+
+  .method /*06000023*/ public hidebysig newslot virtual 
+          instance class Microsoft.AspNetCore.Mvc.PartialViewResult/*0200000E*/ 
+          PartialView(object model) cil managed
+  // SIG: 20 01 12 38 1C
+  {
+    .custom /*0C00003D:0A000016*/ instance void [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.NonActionAttribute/*0100002B*/::.ctor() /* 0A000016 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x20c6
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method Controller::PartialView
+
+  .method /*06000024*/ public hidebysig newslot virtual 
+          instance class Microsoft.AspNetCore.Mvc.PartialViewResult/*0200000E*/ 
+          PartialView(string viewName) cil managed
+  // SIG: 20 01 12 38 0E
+  {
+    .custom /*0C00003F:0A000016*/ instance void [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.NonActionAttribute/*0100002B*/::.ctor() /* 0A000016 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x20c9
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method Controller::PartialView
+
+  .method /*06000025*/ public hidebysig newslot virtual 
+          instance class Microsoft.AspNetCore.Mvc.PartialViewResult/*0200000E*/ 
+          PartialView(string viewName,
+                      object model) cil managed
+  // SIG: 20 02 12 38 0E 1C
+  {
+    .custom /*0C000041:0A000016*/ instance void [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.NonActionAttribute/*0100002B*/::.ctor() /* 0A000016 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x20cc
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method Controller::PartialView
+
+  .method /*06000026*/ public hidebysig newslot virtual 
+          instance class Microsoft.AspNetCore.Mvc.ViewResult/*02000018*/ 
+          View() cil managed
+  // SIG: 20 00 12 60
+  {
+    .custom /*0C000042:0A000016*/ instance void [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.NonActionAttribute/*0100002B*/::.ctor() /* 0A000016 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x20cf
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method Controller::View
+
+  .method /*06000027*/ public hidebysig newslot virtual 
+          instance class Microsoft.AspNetCore.Mvc.ViewResult/*02000018*/ 
+          View(object model) cil managed
+  // SIG: 20 01 12 60 1C
+  {
+    .custom /*0C000043:0A000016*/ instance void [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.NonActionAttribute/*0100002B*/::.ctor() /* 0A000016 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x20d2
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method Controller::View
+
+  .method /*06000028*/ public hidebysig newslot virtual 
+          instance class Microsoft.AspNetCore.Mvc.ViewResult/*02000018*/ 
+          View(string viewName) cil managed
+  // SIG: 20 01 12 60 0E
+  {
+    .custom /*0C000044:0A000016*/ instance void [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.NonActionAttribute/*0100002B*/::.ctor() /* 0A000016 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x20d5
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method Controller::View
+
+  .method /*06000029*/ public hidebysig newslot virtual 
+          instance class Microsoft.AspNetCore.Mvc.ViewResult/*02000018*/ 
+          View(string viewName,
+               object model) cil managed
+  // SIG: 20 02 12 60 0E 1C
+  {
+    .custom /*0C000045:0A000016*/ instance void [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.NonActionAttribute/*0100002B*/::.ctor() /* 0A000016 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x20d8
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method Controller::View
+
+  .method /*0600002A*/ public hidebysig newslot virtual 
+          instance class Microsoft.AspNetCore.Mvc.ViewComponentResult/*02000016*/ 
+          ViewComponent(string componentName) cil managed
+  // SIG: 20 01 12 58 0E
+  {
+    .custom /*0C000046:0A000016*/ instance void [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.NonActionAttribute/*0100002B*/::.ctor() /* 0A000016 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x20db
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method Controller::ViewComponent
+
+  .method /*0600002B*/ public hidebysig newslot virtual 
+          instance class Microsoft.AspNetCore.Mvc.ViewComponentResult/*02000016*/ 
+          ViewComponent(string componentName,
+                        object arguments) cil managed
+  // SIG: 20 02 12 58 0E 1C
+  {
+    .custom /*0C000047:0A000016*/ instance void [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.NonActionAttribute/*0100002B*/::.ctor() /* 0A000016 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x20de
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method Controller::ViewComponent
+
+  .method /*0600002C*/ public hidebysig newslot virtual 
+          instance class Microsoft.AspNetCore.Mvc.ViewComponentResult/*02000016*/ 
+          ViewComponent(class [System.Runtime/*23000001*/]System.Type/*01000031*/ componentType) cil managed
+  // SIG: 20 01 12 58 12 80 C5
+  {
+    .custom /*0C000048:0A000016*/ instance void [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.NonActionAttribute/*0100002B*/::.ctor() /* 0A000016 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x20e1
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method Controller::ViewComponent
+
+  .method /*0600002D*/ public hidebysig newslot virtual 
+          instance class Microsoft.AspNetCore.Mvc.ViewComponentResult/*02000016*/ 
+          ViewComponent(class [System.Runtime/*23000001*/]System.Type/*01000031*/ componentType,
+                        object arguments) cil managed
+  // SIG: 20 02 12 58 12 80 C5 1C
+  {
+    .custom /*0C00004A:0A000016*/ instance void [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.NonActionAttribute/*0100002B*/::.ctor() /* 0A000016 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x20e4
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method Controller::ViewComponent
+
+  .property /*17000003*/ instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/
+          TempData()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/ Microsoft.AspNetCore.Mvc.Controller/*02000007*/::get_TempData() /* 06000016 */
+    .set instance void Microsoft.AspNetCore.Mvc.Controller/*02000007*/::set_TempData(class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/) /* 06000017 */
+  } // end of property Controller::TempData
+  .property /*17000004*/ instance object ViewBag()
+  {
+    .custom /*0C00001E:0A000015*/ instance void [System.Linq.Expressions/*2300000A*/]System.Runtime.CompilerServices.DynamicAttribute/*0100002A*/::.ctor() /* 0A000015 */ = ( 01 00 00 00 ) 
+    .get instance object Microsoft.AspNetCore.Mvc.Controller/*02000007*/::get_ViewBag() /* 06000018 */
+  } // end of property Controller::ViewBag
+  .property /*17000005*/ instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/
+          ViewData()
+  {
+    .custom /*0C000020:06000201*/ instance void Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionaryAttribute/*0200003E*/::.ctor() /* 06000201 */ = ( 01 00 00 00 ) 
+    .get instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ Microsoft.AspNetCore.Mvc.Controller/*02000007*/::get_ViewData() /* 06000019 */
+    .set instance void Microsoft.AspNetCore.Mvc.Controller/*02000007*/::set_ViewData(class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/) /* 0600001A */
+  } // end of property Controller::ViewData
+} // end of class Microsoft.AspNetCore.Mvc.Controller
+
+.class /*02000008*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.CookieTempDataProviderOptions
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .method /*0600002E*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x20e7
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method CookieTempDataProviderOptions::.ctor
+
+  .method /*0600002F*/ public hidebysig specialname 
+          instance class [Microsoft.AspNetCore.Http.Abstractions/*2300000B*/]Microsoft.AspNetCore.Http.CookieBuilder/*01000032*/ 
+          get_Cookie() cil managed
+  // SIG: 20 00 12 80 C9
+  {
+    // Method begins at RVA 0x20ef
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method CookieTempDataProviderOptions::get_Cookie
+
+  .method /*06000030*/ public hidebysig specialname 
+          instance void  set_Cookie(class [Microsoft.AspNetCore.Http.Abstractions/*2300000B*/]Microsoft.AspNetCore.Http.CookieBuilder/*01000032*/ 'value') cil managed
+  // SIG: 20 01 01 12 80 C9
+  {
+    // Method begins at RVA 0x20f2
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method CookieTempDataProviderOptions::set_Cookie
+
+  .property /*17000006*/ instance class [Microsoft.AspNetCore.Http.Abstractions/*2300000B*/]Microsoft.AspNetCore.Http.CookieBuilder/*01000032*/
+          Cookie()
+  {
+    .get instance class [Microsoft.AspNetCore.Http.Abstractions/*2300000B*/]Microsoft.AspNetCore.Http.CookieBuilder/*01000032*/ Microsoft.AspNetCore.Mvc.CookieTempDataProviderOptions/*02000008*/::get_Cookie() /* 0600002F */
+    .set instance void Microsoft.AspNetCore.Mvc.CookieTempDataProviderOptions/*02000008*/::set_Cookie(class [Microsoft.AspNetCore.Http.Abstractions/*2300000B*/]Microsoft.AspNetCore.Http.CookieBuilder/*01000032*/) /* 06000030 */
+  } // end of property CookieTempDataProviderOptions::Cookie
+} // end of class Microsoft.AspNetCore.Mvc.CookieTempDataProviderOptions
+
+.class /*02000009*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.IgnoreAntiforgeryTokenAttribute
+       extends [System.Runtime/*23000001*/]System.Attribute/*01000020*/
+       implements [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.Filters.IFilterMetadata/*01000022*/,
+                  [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.Filters.IOrderedFilter/*01000023*/,
+                  Microsoft.AspNetCore.Mvc.ViewFeatures.IAntiforgeryPolicy/*02000023*/
+{
+  .custom /*0C000026:0A000013*/ instance void [System.Runtime/*23000001*/]System.AttributeUsageAttribute/*0100001F*/::.ctor(valuetype [System.Runtime/*23000001*/]System.AttributeTargets/*0100001E*/) /* 0A000013 */ = ( 01 00 44 00 00 00 02 00 54 02 0D 41 6C 6C 6F 77   // ..D.....T..Allow
+                                                                                                                                                                                                                          4D 75 6C 74 69 70 6C 65 00 54 02 09 49 6E 68 65   // Multiple.T..Inhe
+                                                                                                                                                                                                                          72 69 74 65 64 01 )                               // rited.
+  .method /*06000031*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x20f4
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000029       */ call       instance void [System.Runtime/*23000001*/]System.Attribute/*01000020*/::.ctor() /* 0A000029 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method IgnoreAntiforgeryTokenAttribute::.ctor
+
+  .method /*06000032*/ public hidebysig newslot specialname virtual final 
+          instance int32  get_Order() cil managed
+  // SIG: 20 00 08
+  {
+    .custom /*0C00004D:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x20fc
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method IgnoreAntiforgeryTokenAttribute::get_Order
+
+  .method /*06000033*/ public hidebysig specialname 
+          instance void  set_Order(int32 'value') cil managed
+  // SIG: 20 01 01 08
+  {
+    .custom /*0C00004F:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x20ff
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method IgnoreAntiforgeryTokenAttribute::set_Order
+
+  .property /*17000007*/ instance int32 Order()
+  {
+    .get instance int32 Microsoft.AspNetCore.Mvc.IgnoreAntiforgeryTokenAttribute/*02000009*/::get_Order() /* 06000032 */
+    .set instance void Microsoft.AspNetCore.Mvc.IgnoreAntiforgeryTokenAttribute/*02000009*/::set_Order(int32) /* 06000033 */
+  } // end of property IgnoreAntiforgeryTokenAttribute::Order
+} // end of class Microsoft.AspNetCore.Mvc.IgnoreAntiforgeryTokenAttribute
+
+.class /*0200000A*/ interface public abstract auto ansi Microsoft.AspNetCore.Mvc.IViewComponentHelper
+{
+  .method /*06000034*/ public hidebysig newslot abstract virtual 
+          instance class [System.Runtime/*23000001*/]System.Threading.Tasks.Task`1/*01000033*/<class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/> 
+          InvokeAsync(string name,
+                      object arguments) cil managed
+  // SIG: 20 02 15 12 80 CD 01 12 80 D1 0E 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IViewComponentHelper::InvokeAsync
+
+  .method /*06000035*/ public hidebysig newslot abstract virtual 
+          instance class [System.Runtime/*23000001*/]System.Threading.Tasks.Task`1/*01000033*/<class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/> 
+          InvokeAsync(class [System.Runtime/*23000001*/]System.Type/*01000031*/ componentType,
+                      object arguments) cil managed
+  // SIG: 20 02 15 12 80 CD 01 12 80 D1 12 80 C5 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IViewComponentHelper::InvokeAsync
+
+} // end of class Microsoft.AspNetCore.Mvc.IViewComponentHelper
+
+.class /*0200000B*/ interface public abstract auto ansi Microsoft.AspNetCore.Mvc.IViewComponentResult
+{
+  .method /*06000036*/ public hidebysig newslot abstract virtual 
+          instance void  Execute(class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/ context) cil managed
+  // SIG: 20 01 01 12 81 B8
+  {
+    // Method begins at RVA 0x0
+  } // end of method IViewComponentResult::Execute
+
+  .method /*06000037*/ public hidebysig newslot abstract virtual 
+          instance class [System.Runtime/*23000001*/]System.Threading.Tasks.Task/*0100002F*/ 
+          ExecuteAsync(class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/ context) cil managed
+  // SIG: 20 01 12 80 BD 12 81 B8
+  {
+    // Method begins at RVA 0x0
+  } // end of method IViewComponentResult::ExecuteAsync
+
+} // end of class Microsoft.AspNetCore.Mvc.IViewComponentResult
+
+.class /*0200000C*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.MvcViewOptions
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+       implements class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.Infrastructure.ICompatibilitySwitch/*01000036*/>/*1B000001*/,
+                  [System.Runtime/*23000001*/]System.Collections.IEnumerable/*01000038*/
+{
+  .method /*06000038*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x2101
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method MvcViewOptions::.ctor
+
+  .method /*06000039*/ public hidebysig specialname 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.IList`1/*0100003A*/<class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.Validation.IClientModelValidatorProvider/*0100003B*/> 
+          get_ClientModelValidatorProviders() cil managed
+  // SIG: 20 00 15 12 80 E9 01 12 80 ED
+  {
+    .custom /*0C000052:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2109
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method MvcViewOptions::get_ClientModelValidatorProviders
+
+  .method /*0600003A*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.ViewFeatures.HtmlHelperOptions/*02000021*/ 
+          get_HtmlHelperOptions() cil managed
+  // SIG: 20 00 12 80 84
+  {
+    // Method begins at RVA 0x210c
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method MvcViewOptions::get_HtmlHelperOptions
+
+  .method /*0600003B*/ public hidebysig specialname 
+          instance void  set_HtmlHelperOptions(class Microsoft.AspNetCore.Mvc.ViewFeatures.HtmlHelperOptions/*02000021*/ 'value') cil managed
+  // SIG: 20 01 01 12 80 84
+  {
+    // Method begins at RVA 0x210f
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method MvcViewOptions::set_HtmlHelperOptions
+
+  .method /*0600003C*/ public hidebysig specialname 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.IList`1/*0100003A*/<class Microsoft.AspNetCore.Mvc.ViewEngines.IViewEngine/*0200005D*/> 
+          get_ViewEngines() cil managed
+  // SIG: 20 00 15 12 80 E9 01 12 81 74
+  {
+    .custom /*0C000053:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2111
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method MvcViewOptions::get_ViewEngines
+
+  .method /*0600003D*/ private hidebysig newslot virtual final 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerator`1/*01000037*/<class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.Infrastructure.ICompatibilitySwitch/*01000036*/> 
+          'System.Collections.Generic.IEnumerable<Microsoft.AspNetCore.Mvc.Infrastructure.ICompatibilitySwitch>.GetEnumerator'() cil managed
+  // SIG: 20 00 15 12 80 DD 01 12 80 D9
+  {
+    .override  method instance class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerator`1/*01000037*/<!0> class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.Infrastructure.ICompatibilitySwitch/*01000036*/>/*1B000001*/::GetEnumerator() /* 0A000017 */
+    // Method begins at RVA 0x2114
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method MvcViewOptions::'System.Collections.Generic.IEnumerable<Microsoft.AspNetCore.Mvc.Infrastructure.ICompatibilitySwitch>.GetEnumerator'
+
+  .method /*0600003E*/ private hidebysig newslot virtual final 
+          instance class [System.Runtime/*23000001*/]System.Collections.IEnumerator/*01000039*/ 
+          System.Collections.IEnumerable.GetEnumerator() cil managed
+  // SIG: 20 00 12 80 E5
+  {
+    .override [System.Runtime/*23000001*/]System.Collections.IEnumerable/*01000038*/::GetEnumerator /*01000038::0A000018*/ 
+    // Method begins at RVA 0x2117
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method MvcViewOptions::System.Collections.IEnumerable.GetEnumerator
+
+  .property /*17000008*/ instance class [System.Runtime/*23000001*/]System.Collections.Generic.IList`1/*0100003A*/<class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.Validation.IClientModelValidatorProvider/*0100003B*/>
+          ClientModelValidatorProviders()
+  {
+    .get instance class [System.Runtime/*23000001*/]System.Collections.Generic.IList`1/*0100003A*/<class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.Validation.IClientModelValidatorProvider/*0100003B*/> Microsoft.AspNetCore.Mvc.MvcViewOptions/*0200000C*/::get_ClientModelValidatorProviders() /* 06000039 */
+  } // end of property MvcViewOptions::ClientModelValidatorProviders
+  .property /*17000009*/ instance class Microsoft.AspNetCore.Mvc.ViewFeatures.HtmlHelperOptions/*02000021*/
+          HtmlHelperOptions()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewFeatures.HtmlHelperOptions/*02000021*/ Microsoft.AspNetCore.Mvc.MvcViewOptions/*0200000C*/::get_HtmlHelperOptions() /* 0600003A */
+    .set instance void Microsoft.AspNetCore.Mvc.MvcViewOptions/*0200000C*/::set_HtmlHelperOptions(class Microsoft.AspNetCore.Mvc.ViewFeatures.HtmlHelperOptions/*02000021*/) /* 0600003B */
+  } // end of property MvcViewOptions::HtmlHelperOptions
+  .property /*1700000A*/ instance class [System.Runtime/*23000001*/]System.Collections.Generic.IList`1/*0100003A*/<class Microsoft.AspNetCore.Mvc.ViewEngines.IViewEngine/*0200005D*/>
+          ViewEngines()
+  {
+    .get instance class [System.Runtime/*23000001*/]System.Collections.Generic.IList`1/*0100003A*/<class Microsoft.AspNetCore.Mvc.ViewEngines.IViewEngine/*0200005D*/> Microsoft.AspNetCore.Mvc.MvcViewOptions/*0200000C*/::get_ViewEngines() /* 0600003C */
+  } // end of property MvcViewOptions::ViewEngines
+} // end of class Microsoft.AspNetCore.Mvc.MvcViewOptions
+
+.class /*0200000D*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.PageRemoteAttribute
+       extends Microsoft.AspNetCore.Mvc.RemoteAttributeBase/*02000010*/
+{
+  .custom /*0C000028:0A000013*/ instance void [System.Runtime/*23000001*/]System.AttributeUsageAttribute/*0100001F*/::.ctor(valuetype [System.Runtime/*23000001*/]System.AttributeTargets/*0100001E*/) /* 0A000013 */ = ( 01 00 80 00 00 00 02 00 54 02 0D 41 6C 6C 6F 77   // ........T..Allow
+                                                                                                                                                                                                                          4D 75 6C 74 69 70 6C 65 00 54 02 09 49 6E 68 65   // Multiple.T..Inhe
+                                                                                                                                                                                                                          72 69 74 65 64 01 )                               // rited.
+  .method /*0600003F*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x211a
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (06)00005B       */ call       instance void Microsoft.AspNetCore.Mvc.RemoteAttributeBase/*02000010*/::.ctor() /* 0600005B */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method PageRemoteAttribute::.ctor
+
+  .method /*06000040*/ public hidebysig specialname 
+          instance string  get_PageHandler() cil managed
+  // SIG: 20 00 0E
+  {
+    .custom /*0C000057:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2122
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method PageRemoteAttribute::get_PageHandler
+
+  .method /*06000041*/ public hidebysig specialname 
+          instance void  set_PageHandler(string 'value') cil managed
+  // SIG: 20 01 01 0E
+  {
+    .custom /*0C000058:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2125
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method PageRemoteAttribute::set_PageHandler
+
+  .method /*06000042*/ public hidebysig specialname 
+          instance string  get_PageName() cil managed
+  // SIG: 20 00 0E
+  {
+    .custom /*0C000059:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2127
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method PageRemoteAttribute::get_PageName
+
+  .method /*06000043*/ public hidebysig specialname 
+          instance void  set_PageName(string 'value') cil managed
+  // SIG: 20 01 01 0E
+  {
+    .custom /*0C00005A:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x212a
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method PageRemoteAttribute::set_PageName
+
+  .method /*06000044*/ family hidebysig virtual 
+          instance string  GetUrl(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.Validation.ClientModelValidationContext/*0100003C*/ context) cil managed
+  // SIG: 20 01 0E 12 80 F1
+  {
+    // Method begins at RVA 0x212c
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method PageRemoteAttribute::GetUrl
+
+  .property /*1700000B*/ instance string PageHandler()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.PageRemoteAttribute/*0200000D*/::get_PageHandler() /* 06000040 */
+    .set instance void Microsoft.AspNetCore.Mvc.PageRemoteAttribute/*0200000D*/::set_PageHandler(string) /* 06000041 */
+  } // end of property PageRemoteAttribute::PageHandler
+  .property /*1700000C*/ instance string PageName()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.PageRemoteAttribute/*0200000D*/::get_PageName() /* 06000042 */
+    .set instance void Microsoft.AspNetCore.Mvc.PageRemoteAttribute/*0200000D*/::set_PageName(string) /* 06000043 */
+  } // end of property PageRemoteAttribute::PageName
+} // end of class Microsoft.AspNetCore.Mvc.PageRemoteAttribute
+
+.class /*0200000E*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.PartialViewResult
+       extends [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.ActionResult/*0100003D*/
+       implements [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.IActionResult/*0100003E*/,
+                  [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.Infrastructure.IStatusCodeActionResult/*0100003F*/
+{
+  .method /*06000045*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x212f
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)00002B       */ call       instance void [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.ActionResult/*0100003D*/::.ctor() /* 0A00002B */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method PartialViewResult::.ctor
+
+  .method /*06000046*/ public hidebysig specialname 
+          instance string  get_ContentType() cil managed
+  // SIG: 20 00 0E
+  {
+    .custom /*0C00005B:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2137
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method PartialViewResult::get_ContentType
+
+  .method /*06000047*/ public hidebysig specialname 
+          instance void  set_ContentType(string 'value') cil managed
+  // SIG: 20 01 01 0E
+  {
+    .custom /*0C00005C:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x213a
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method PartialViewResult::set_ContentType
+
+  .method /*06000048*/ public hidebysig specialname 
+          instance object  get_Model() cil managed
+  // SIG: 20 00 1C
+  {
+    // Method begins at RVA 0x213c
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method PartialViewResult::get_Model
+
+  .method /*06000049*/ public hidebysig newslot specialname virtual final 
+          instance valuetype [System.Runtime/*23000001*/]System.Nullable`1/*01000040*/<int32> 
+          get_StatusCode() cil managed
+  // SIG: 20 00 15 11 81 01 01 08
+  {
+    .custom /*0C00005D:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x213f
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method PartialViewResult::get_StatusCode
+
+  .method /*0600004A*/ public hidebysig specialname 
+          instance void  set_StatusCode(valuetype [System.Runtime/*23000001*/]System.Nullable`1/*01000040*/<int32> 'value') cil managed
+  // SIG: 20 01 01 15 11 81 01 01 08
+  {
+    .custom /*0C00005E:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2142
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method PartialViewResult::set_StatusCode
+
+  .method /*0600004B*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/ 
+          get_TempData() cil managed
+  // SIG: 20 00 12 80 A0
+  {
+    .custom /*0C00005F:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2144
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method PartialViewResult::get_TempData
+
+  .method /*0600004C*/ public hidebysig specialname 
+          instance void  set_TempData(class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/ 'value') cil managed
+  // SIG: 20 01 01 12 80 A0
+  {
+    .custom /*0C000060:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2147
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method PartialViewResult::set_TempData
+
+  .method /*0600004D*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ 
+          get_ViewData() cil managed
+  // SIG: 20 00 12 80 F4
+  {
+    .custom /*0C000061:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2149
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method PartialViewResult::get_ViewData
+
+  .method /*0600004E*/ public hidebysig specialname 
+          instance void  set_ViewData(class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ 'value') cil managed
+  // SIG: 20 01 01 12 80 F4
+  {
+    .custom /*0C000063:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x214c
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method PartialViewResult::set_ViewData
+
+  .method /*0600004F*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.ViewEngines.IViewEngine/*0200005D*/ 
+          get_ViewEngine() cil managed
+  // SIG: 20 00 12 81 74
+  {
+    .custom /*0C000064:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x214e
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method PartialViewResult::get_ViewEngine
+
+  .method /*06000050*/ public hidebysig specialname 
+          instance void  set_ViewEngine(class Microsoft.AspNetCore.Mvc.ViewEngines.IViewEngine/*0200005D*/ 'value') cil managed
+  // SIG: 20 01 01 12 81 74
+  {
+    .custom /*0C000066:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2151
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method PartialViewResult::set_ViewEngine
+
+  .method /*06000051*/ public hidebysig specialname 
+          instance string  get_ViewName() cil managed
+  // SIG: 20 00 0E
+  {
+    .custom /*0C000067:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2153
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method PartialViewResult::get_ViewName
+
+  .method /*06000052*/ public hidebysig specialname 
+          instance void  set_ViewName(string 'value') cil managed
+  // SIG: 20 01 01 0E
+  {
+    .custom /*0C000068:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2156
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method PartialViewResult::set_ViewName
+
+  .method /*06000053*/ public hidebysig virtual 
+          instance class [System.Runtime/*23000001*/]System.Threading.Tasks.Task/*0100002F*/ 
+          ExecuteResultAsync(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ActionContext/*01000041*/ context) cil managed
+  // SIG: 20 01 12 80 BD 12 81 05
+  {
+    // Method begins at RVA 0x2158
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method PartialViewResult::ExecuteResultAsync
+
+  .property /*1700000D*/ instance string ContentType()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.PartialViewResult/*0200000E*/::get_ContentType() /* 06000046 */
+    .set instance void Microsoft.AspNetCore.Mvc.PartialViewResult/*0200000E*/::set_ContentType(string) /* 06000047 */
+  } // end of property PartialViewResult::ContentType
+  .property /*1700000E*/ instance object Model()
+  {
+    .get instance object Microsoft.AspNetCore.Mvc.PartialViewResult/*0200000E*/::get_Model() /* 06000048 */
+  } // end of property PartialViewResult::Model
+  .property /*1700000F*/ instance valuetype [System.Runtime/*23000001*/]System.Nullable`1/*01000040*/<int32>
+          StatusCode()
+  {
+    .get instance valuetype [System.Runtime/*23000001*/]System.Nullable`1/*01000040*/<int32> Microsoft.AspNetCore.Mvc.PartialViewResult/*0200000E*/::get_StatusCode() /* 06000049 */
+    .set instance void Microsoft.AspNetCore.Mvc.PartialViewResult/*0200000E*/::set_StatusCode(valuetype [System.Runtime/*23000001*/]System.Nullable`1/*01000040*/<int32>) /* 0600004A */
+  } // end of property PartialViewResult::StatusCode
+  .property /*17000010*/ instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/
+          TempData()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/ Microsoft.AspNetCore.Mvc.PartialViewResult/*0200000E*/::get_TempData() /* 0600004B */
+    .set instance void Microsoft.AspNetCore.Mvc.PartialViewResult/*0200000E*/::set_TempData(class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/) /* 0600004C */
+  } // end of property PartialViewResult::TempData
+  .property /*17000011*/ instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/
+          ViewData()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ Microsoft.AspNetCore.Mvc.PartialViewResult/*0200000E*/::get_ViewData() /* 0600004D */
+    .set instance void Microsoft.AspNetCore.Mvc.PartialViewResult/*0200000E*/::set_ViewData(class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/) /* 0600004E */
+  } // end of property PartialViewResult::ViewData
+  .property /*17000012*/ instance class Microsoft.AspNetCore.Mvc.ViewEngines.IViewEngine/*0200005D*/
+          ViewEngine()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewEngines.IViewEngine/*0200005D*/ Microsoft.AspNetCore.Mvc.PartialViewResult/*0200000E*/::get_ViewEngine() /* 0600004F */
+    .set instance void Microsoft.AspNetCore.Mvc.PartialViewResult/*0200000E*/::set_ViewEngine(class Microsoft.AspNetCore.Mvc.ViewEngines.IViewEngine/*0200005D*/) /* 06000050 */
+  } // end of property PartialViewResult::ViewEngine
+  .property /*17000013*/ instance string ViewName()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.PartialViewResult/*0200000E*/::get_ViewName() /* 06000051 */
+    .set instance void Microsoft.AspNetCore.Mvc.PartialViewResult/*0200000E*/::set_ViewName(string) /* 06000052 */
+  } // end of property PartialViewResult::ViewName
+} // end of class Microsoft.AspNetCore.Mvc.PartialViewResult
+
+.class /*0200000F*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.RemoteAttribute
+       extends Microsoft.AspNetCore.Mvc.RemoteAttributeBase/*02000010*/
+{
+  .custom /*0C000029:0A000013*/ instance void [System.Runtime/*23000001*/]System.AttributeUsageAttribute/*0100001F*/::.ctor(valuetype [System.Runtime/*23000001*/]System.AttributeTargets/*0100001E*/) /* 0A000013 */ = ( 01 00 80 00 00 00 02 00 54 02 0D 41 6C 6C 6F 77   // ........T..Allow
+                                                                                                                                                                                                                          4D 75 6C 74 69 70 6C 65 00 54 02 09 49 6E 68 65   // Multiple.T..Inhe
+                                                                                                                                                                                                                          72 69 74 65 64 01 )                               // rited.
+  .method /*06000054*/ family hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x215b
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (06)00005B       */ call       instance void Microsoft.AspNetCore.Mvc.RemoteAttributeBase/*02000010*/::.ctor() /* 0600005B */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method RemoteAttribute::.ctor
+
+  .method /*06000055*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(string routeName) cil managed
+  // SIG: 20 01 01 0E
+  {
+    // Method begins at RVA 0x2163
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (06)00005B       */ call       instance void Microsoft.AspNetCore.Mvc.RemoteAttributeBase/*02000010*/::.ctor() /* 0600005B */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method RemoteAttribute::.ctor
+
+  .method /*06000056*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(string action,
+                               string controller) cil managed
+  // SIG: 20 02 01 0E 0E
+  {
+    // Method begins at RVA 0x216b
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (06)00005B       */ call       instance void Microsoft.AspNetCore.Mvc.RemoteAttributeBase/*02000010*/::.ctor() /* 0600005B */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method RemoteAttribute::.ctor
+
+  .method /*06000057*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(string action,
+                               string controller,
+                               string areaName) cil managed
+  // SIG: 20 03 01 0E 0E 0E
+  {
+    // Method begins at RVA 0x2173
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (06)00005B       */ call       instance void Microsoft.AspNetCore.Mvc.RemoteAttributeBase/*02000010*/::.ctor() /* 0600005B */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method RemoteAttribute::.ctor
+
+  .method /*06000058*/ family hidebysig specialname 
+          instance string  get_RouteName() cil managed
+  // SIG: 20 00 0E
+  {
+    .custom /*0C00006C:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x217b
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method RemoteAttribute::get_RouteName
+
+  .method /*06000059*/ family hidebysig specialname 
+          instance void  set_RouteName(string 'value') cil managed
+  // SIG: 20 01 01 0E
+  {
+    .custom /*0C00006D:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x217e
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method RemoteAttribute::set_RouteName
+
+  .method /*0600005A*/ family hidebysig virtual 
+          instance string  GetUrl(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.Validation.ClientModelValidationContext/*0100003C*/ context) cil managed
+  // SIG: 20 01 0E 12 80 F1
+  {
+    // Method begins at RVA 0x2180
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method RemoteAttribute::GetUrl
+
+  .property /*17000014*/ instance string RouteName()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.RemoteAttribute/*0200000F*/::get_RouteName() /* 06000058 */
+    .set instance void Microsoft.AspNetCore.Mvc.RemoteAttribute/*0200000F*/::set_RouteName(string) /* 06000059 */
+  } // end of property RemoteAttribute::RouteName
+} // end of class Microsoft.AspNetCore.Mvc.RemoteAttribute
+
+.class /*02000010*/ public abstract auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.RemoteAttributeBase
+       extends [System.ComponentModel.Annotations/*2300000D*/]System.ComponentModel.DataAnnotations.ValidationAttribute/*01000042*/
+       implements [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.Validation.IClientModelValidator/*01000043*/
+{
+  .custom /*0C00002A:0A000013*/ instance void [System.Runtime/*23000001*/]System.AttributeUsageAttribute/*0100001F*/::.ctor(valuetype [System.Runtime/*23000001*/]System.AttributeTargets/*0100001E*/) /* 0A000013 */ = ( 01 00 80 00 00 00 02 00 54 02 0D 41 6C 6C 6F 77   // ........T..Allow
+                                                                                                                                                                                                                          4D 75 6C 74 69 70 6C 65 00 54 02 09 49 6E 68 65   // Multiple.T..Inhe
+                                                                                                                                                                                                                          72 69 74 65 64 01 )                               // rited.
+  .method /*0600005B*/ family hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x2183
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)00002C       */ call       instance void [System.ComponentModel.Annotations/*2300000D*/]System.ComponentModel.DataAnnotations.ValidationAttribute/*01000042*/::.ctor() /* 0A00002C */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method RemoteAttributeBase::.ctor
+
+  .method /*0600005C*/ public hidebysig specialname 
+          instance string  get_AdditionalFields() cil managed
+  // SIG: 20 00 0E
+  {
+    // Method begins at RVA 0x218b
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method RemoteAttributeBase::get_AdditionalFields
+
+  .method /*0600005D*/ public hidebysig specialname 
+          instance void  set_AdditionalFields(string 'value') cil managed
+  // SIG: 20 01 01 0E
+  {
+    // Method begins at RVA 0x218e
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method RemoteAttributeBase::set_AdditionalFields
+
+  .method /*0600005E*/ public hidebysig specialname 
+          instance string  get_HttpMethod() cil managed
+  // SIG: 20 00 0E
+  {
+    .custom /*0C00006F:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2190
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method RemoteAttributeBase::get_HttpMethod
+
+  .method /*0600005F*/ public hidebysig specialname 
+          instance void  set_HttpMethod(string 'value') cil managed
+  // SIG: 20 01 01 0E
+  {
+    .custom /*0C000070:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2193
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method RemoteAttributeBase::set_HttpMethod
+
+  .method /*06000060*/ family hidebysig specialname 
+          instance class [Microsoft.AspNetCore.Http.Abstractions/*2300000B*/]Microsoft.AspNetCore.Routing.RouteValueDictionary/*01000044*/ 
+          get_RouteData() cil managed
+  // SIG: 20 00 12 81 11
+  {
+    .custom /*0C000071:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2195
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method RemoteAttributeBase::get_RouteData
+
+  .method /*06000061*/ public hidebysig newslot virtual 
+          instance void  AddValidation(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.Validation.ClientModelValidationContext/*0100003C*/ context) cil managed
+  // SIG: 20 01 01 12 80 F1
+  {
+    // Method begins at RVA 0x2198
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method RemoteAttributeBase::AddValidation
+
+  .method /*06000062*/ public hidebysig instance string 
+          FormatAdditionalFieldsForClientValidation(string 'property') cil managed
+  // SIG: 20 01 0E 0E
+  {
+    // Method begins at RVA 0x219a
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method RemoteAttributeBase::FormatAdditionalFieldsForClientValidation
+
+  .method /*06000063*/ public hidebysig virtual 
+          instance string  FormatErrorMessage(string name) cil managed
+  // SIG: 20 01 0E 0E
+  {
+    // Method begins at RVA 0x219d
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method RemoteAttributeBase::FormatErrorMessage
+
+  .method /*06000064*/ public hidebysig static 
+          string  FormatPropertyForClientValidation(string 'property') cil managed
+  // SIG: 00 01 0E 0E
+  {
+    // Method begins at RVA 0x21a0
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method RemoteAttributeBase::FormatPropertyForClientValidation
+
+  .method /*06000065*/ family hidebysig newslot abstract virtual 
+          instance string  GetUrl(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.Validation.ClientModelValidationContext/*0100003C*/ context) cil managed
+  // SIG: 20 01 0E 12 80 F1
+  {
+    // Method begins at RVA 0x0
+  } // end of method RemoteAttributeBase::GetUrl
+
+  .method /*06000066*/ public hidebysig virtual 
+          instance bool  IsValid(object 'value') cil managed
+  // SIG: 20 01 02 1C
+  {
+    // Method begins at RVA 0x21a3
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method RemoteAttributeBase::IsValid
+
+  .property /*17000015*/ instance string AdditionalFields()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.RemoteAttributeBase/*02000010*/::get_AdditionalFields() /* 0600005C */
+    .set instance void Microsoft.AspNetCore.Mvc.RemoteAttributeBase/*02000010*/::set_AdditionalFields(string) /* 0600005D */
+  } // end of property RemoteAttributeBase::AdditionalFields
+  .property /*17000016*/ instance string HttpMethod()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.RemoteAttributeBase/*02000010*/::get_HttpMethod() /* 0600005E */
+    .set instance void Microsoft.AspNetCore.Mvc.RemoteAttributeBase/*02000010*/::set_HttpMethod(string) /* 0600005F */
+  } // end of property RemoteAttributeBase::HttpMethod
+  .property /*17000017*/ instance class [Microsoft.AspNetCore.Http.Abstractions/*2300000B*/]Microsoft.AspNetCore.Routing.RouteValueDictionary/*01000044*/
+          RouteData()
+  {
+    .get instance class [Microsoft.AspNetCore.Http.Abstractions/*2300000B*/]Microsoft.AspNetCore.Routing.RouteValueDictionary/*01000044*/ Microsoft.AspNetCore.Mvc.RemoteAttributeBase/*02000010*/::get_RouteData() /* 06000060 */
+  } // end of property RemoteAttributeBase::RouteData
+} // end of class Microsoft.AspNetCore.Mvc.RemoteAttributeBase
+
+.class /*02000011*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.SkipStatusCodePagesAttribute
+       extends [System.Runtime/*23000001*/]System.Attribute/*01000020*/
+       implements [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.Filters.IFilterMetadata/*01000022*/,
+                  [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.Filters.IResourceFilter/*01000045*/
+{
+  .custom /*0C00002B:0A000013*/ instance void [System.Runtime/*23000001*/]System.AttributeUsageAttribute/*0100001F*/::.ctor(valuetype [System.Runtime/*23000001*/]System.AttributeTargets/*0100001E*/) /* 0A000013 */ = ( 01 00 44 00 00 00 02 00 54 02 0D 41 6C 6C 6F 77   // ..D.....T..Allow
+                                                                                                                                                                                                                          4D 75 6C 74 69 70 6C 65 00 54 02 09 49 6E 68 65   // Multiple.T..Inhe
+                                                                                                                                                                                                                          72 69 74 65 64 01 )                               // rited.
+  .method /*06000067*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x21a6
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000029       */ call       instance void [System.Runtime/*23000001*/]System.Attribute/*01000020*/::.ctor() /* 0A000029 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method SkipStatusCodePagesAttribute::.ctor
+
+  .method /*06000068*/ public hidebysig newslot virtual final 
+          instance void  OnResourceExecuted(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.Filters.ResourceExecutedContext/*01000046*/ context) cil managed
+  // SIG: 20 01 01 12 81 19
+  {
+    // Method begins at RVA 0x21ae
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method SkipStatusCodePagesAttribute::OnResourceExecuted
+
+  .method /*06000069*/ public hidebysig newslot virtual final 
+          instance void  OnResourceExecuting(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.Filters.ResourceExecutingContext/*01000047*/ context) cil managed
+  // SIG: 20 01 01 12 81 1D
+  {
+    // Method begins at RVA 0x21b0
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method SkipStatusCodePagesAttribute::OnResourceExecuting
+
+} // end of class Microsoft.AspNetCore.Mvc.SkipStatusCodePagesAttribute
+
+.class /*02000012*/ public auto ansi sealed beforefieldinit Microsoft.AspNetCore.Mvc.TempDataAttribute
+       extends [System.Runtime/*23000001*/]System.Attribute/*01000020*/
+{
+  .custom /*0C00002D:0A000013*/ instance void [System.Runtime/*23000001*/]System.AttributeUsageAttribute/*0100001F*/::.ctor(valuetype [System.Runtime/*23000001*/]System.AttributeTargets/*0100001E*/) /* 0A000013 */ = ( 01 00 80 00 00 00 02 00 54 02 09 49 6E 68 65 72   // ........T..Inher
+                                                                                                                                                                                                                          69 74 65 64 01 54 02 0D 41 6C 6C 6F 77 4D 75 6C   // ited.T..AllowMul
+                                                                                                                                                                                                                          74 69 70 6C 65 00 )                               // tiple.
+  .method /*0600006A*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x21b2
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000029       */ call       instance void [System.Runtime/*23000001*/]System.Attribute/*01000020*/::.ctor() /* 0A000029 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method TempDataAttribute::.ctor
+
+  .method /*0600006B*/ public hidebysig specialname 
+          instance string  get_Key() cil managed
+  // SIG: 20 00 0E
+  {
+    .custom /*0C000072:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x21ba
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method TempDataAttribute::get_Key
+
+  .method /*0600006C*/ public hidebysig specialname 
+          instance void  set_Key(string 'value') cil managed
+  // SIG: 20 01 01 0E
+  {
+    .custom /*0C000073:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x21bd
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method TempDataAttribute::set_Key
+
+  .property /*17000018*/ instance string Key()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.TempDataAttribute/*02000012*/::get_Key() /* 0600006B */
+    .set instance void Microsoft.AspNetCore.Mvc.TempDataAttribute/*02000012*/::set_Key(string) /* 0600006C */
+  } // end of property TempDataAttribute::Key
+} // end of class Microsoft.AspNetCore.Mvc.TempDataAttribute
+
+.class /*02000013*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ValidateAntiForgeryTokenAttribute
+       extends [System.Runtime/*23000001*/]System.Attribute/*01000020*/
+       implements [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.Filters.IFilterFactory/*01000021*/,
+                  [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.Filters.IFilterMetadata/*01000022*/,
+                  [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.Filters.IOrderedFilter/*01000023*/
+{
+  .custom /*0C00002F:0A000013*/ instance void [System.Runtime/*23000001*/]System.AttributeUsageAttribute/*0100001F*/::.ctor(valuetype [System.Runtime/*23000001*/]System.AttributeTargets/*0100001E*/) /* 0A000013 */ = ( 01 00 44 00 00 00 02 00 54 02 0D 41 6C 6C 6F 77   // ..D.....T..Allow
+                                                                                                                                                                                                                          4D 75 6C 74 69 70 6C 65 00 54 02 09 49 6E 68 65   // Multiple.T..Inhe
+                                                                                                                                                                                                                          72 69 74 65 64 01 )                               // rited.
+  .method /*0600006D*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x21bf
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000029       */ call       instance void [System.Runtime/*23000001*/]System.Attribute/*01000020*/::.ctor() /* 0A000029 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ValidateAntiForgeryTokenAttribute::.ctor
+
+  .method /*0600006E*/ public hidebysig newslot specialname virtual final 
+          instance bool  get_IsReusable() cil managed
+  // SIG: 20 00 02
+  {
+    // Method begins at RVA 0x21c7
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ValidateAntiForgeryTokenAttribute::get_IsReusable
+
+  .method /*0600006F*/ public hidebysig newslot specialname virtual final 
+          instance int32  get_Order() cil managed
+  // SIG: 20 00 08
+  {
+    .custom /*0C000074:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x21ca
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ValidateAntiForgeryTokenAttribute::get_Order
+
+  .method /*06000070*/ public hidebysig specialname 
+          instance void  set_Order(int32 'value') cil managed
+  // SIG: 20 01 01 08
+  {
+    .custom /*0C000076:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x21cd
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ValidateAntiForgeryTokenAttribute::set_Order
+
+  .method /*06000071*/ public hidebysig newslot virtual final 
+          instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.Filters.IFilterMetadata/*01000022*/ 
+          CreateInstance(class [System.ComponentModel/*23000009*/]System.IServiceProvider/*01000025*/ serviceProvider) cil managed
+  // SIG: 20 01 12 80 89 12 80 95
+  {
+    // Method begins at RVA 0x21cf
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ValidateAntiForgeryTokenAttribute::CreateInstance
+
+  .property /*17000019*/ instance bool IsReusable()
+  {
+    .get instance bool Microsoft.AspNetCore.Mvc.ValidateAntiForgeryTokenAttribute/*02000013*/::get_IsReusable() /* 0600006E */
+  } // end of property ValidateAntiForgeryTokenAttribute::IsReusable
+  .property /*1700001A*/ instance int32 Order()
+  {
+    .get instance int32 Microsoft.AspNetCore.Mvc.ValidateAntiForgeryTokenAttribute/*02000013*/::get_Order() /* 0600006F */
+    .set instance void Microsoft.AspNetCore.Mvc.ValidateAntiForgeryTokenAttribute/*02000013*/::set_Order(int32) /* 06000070 */
+  } // end of property ValidateAntiForgeryTokenAttribute::Order
+} // end of class Microsoft.AspNetCore.Mvc.ValidateAntiForgeryTokenAttribute
+
+.class /*02000014*/ public abstract auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewComponent
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .custom /*0C000030:06000088*/ instance void Microsoft.AspNetCore.Mvc.ViewComponentAttribute/*02000015*/::.ctor() /* 06000088 */ = ( 01 00 00 00 ) 
+  .method /*06000072*/ family hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x21d2
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ViewComponent::.ctor
+
+  .method /*06000073*/ public hidebysig specialname 
+          instance class [Microsoft.AspNetCore.Http.Abstractions/*2300000B*/]Microsoft.AspNetCore.Http.HttpContext/*01000048*/ 
+          get_HttpContext() cil managed
+  // SIG: 20 00 12 81 21
+  {
+    // Method begins at RVA 0x21da
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponent::get_HttpContext
+
+  .method /*06000074*/ public hidebysig specialname 
+          instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary/*01000049*/ 
+          get_ModelState() cil managed
+  // SIG: 20 00 12 81 25
+  {
+    // Method begins at RVA 0x21dd
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponent::get_ModelState
+
+  .method /*06000075*/ public hidebysig specialname 
+          instance class [Microsoft.AspNetCore.Http.Abstractions/*2300000B*/]Microsoft.AspNetCore.Http.HttpRequest/*0100004A*/ 
+          get_Request() cil managed
+  // SIG: 20 00 12 81 29
+  {
+    // Method begins at RVA 0x21e0
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponent::get_Request
+
+  .method /*06000076*/ public hidebysig specialname 
+          instance class [Microsoft.AspNetCore.Routing.Abstractions/*2300000E*/]Microsoft.AspNetCore.Routing.RouteData/*0100004B*/ 
+          get_RouteData() cil managed
+  // SIG: 20 00 12 81 2D
+  {
+    // Method begins at RVA 0x21e3
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponent::get_RouteData
+
+  .method /*06000077*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/ 
+          get_TempData() cil managed
+  // SIG: 20 00 12 80 A0
+  {
+    // Method begins at RVA 0x21e6
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponent::get_TempData
+
+  .method /*06000078*/ public hidebysig specialname 
+          instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.IUrlHelper/*0100004C*/ 
+          get_Url() cil managed
+  // SIG: 20 00 12 81 31
+  {
+    // Method begins at RVA 0x21e9
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponent::get_Url
+
+  .method /*06000079*/ public hidebysig specialname 
+          instance void  set_Url(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.IUrlHelper/*0100004C*/ 'value') cil managed
+  // SIG: 20 01 01 12 81 31
+  {
+    // Method begins at RVA 0x21ec
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewComponent::set_Url
+
+  .method /*0600007A*/ public hidebysig specialname 
+          instance class [System.Security.Principal/*2300000F*/]System.Security.Principal.IPrincipal/*0100004D*/ 
+          get_User() cil managed
+  // SIG: 20 00 12 81 35
+  {
+    // Method begins at RVA 0x21ee
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponent::get_User
+
+  .method /*0600007B*/ public hidebysig specialname 
+          instance class [System.Security.Claims/*23000010*/]System.Security.Claims.ClaimsPrincipal/*0100004E*/ 
+          get_UserClaimsPrincipal() cil managed
+  // SIG: 20 00 12 81 39
+  {
+    // Method begins at RVA 0x21f1
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponent::get_UserClaimsPrincipal
+
+  .method /*0600007C*/ public hidebysig specialname 
+          instance object  get_ViewBag() cil managed
+  // SIG: 20 00 1C
+  {
+    .param [0]/*0800005B*/ 
+    .custom /*0C00006E:0A000015*/ instance void [System.Linq.Expressions/*2300000A*/]System.Runtime.CompilerServices.DynamicAttribute/*0100002A*/::.ctor() /* 0A000015 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x21f4
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponent::get_ViewBag
+
+  .method /*0600007D*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/ 
+          get_ViewComponentContext() cil managed
+  // SIG: 20 00 12 81 B8
+  {
+    // Method begins at RVA 0x21f7
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponent::get_ViewComponentContext
+
+  .method /*0600007E*/ public hidebysig specialname 
+          instance void  set_ViewComponentContext(class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/ 'value') cil managed
+  // SIG: 20 01 01 12 81 B8
+  {
+    // Method begins at RVA 0x21fa
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewComponent::set_ViewComponentContext
+
+  .method /*0600007F*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ 
+          get_ViewContext() cil managed
+  // SIG: 20 00 12 82 44
+  {
+    // Method begins at RVA 0x21fc
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponent::get_ViewContext
+
+  .method /*06000080*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ 
+          get_ViewData() cil managed
+  // SIG: 20 00 12 80 F4
+  {
+    // Method begins at RVA 0x21ff
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponent::get_ViewData
+
+  .method /*06000081*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.ViewEngines.ICompositeViewEngine/*0200005B*/ 
+          get_ViewEngine() cil managed
+  // SIG: 20 00 12 81 6C
+  {
+    // Method begins at RVA 0x2202
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponent::get_ViewEngine
+
+  .method /*06000082*/ public hidebysig specialname 
+          instance void  set_ViewEngine(class Microsoft.AspNetCore.Mvc.ViewEngines.ICompositeViewEngine/*0200005B*/ 'value') cil managed
+  // SIG: 20 01 01 12 81 6C
+  {
+    // Method begins at RVA 0x2205
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewComponent::set_ViewEngine
+
+  .method /*06000083*/ public hidebysig instance class Microsoft.AspNetCore.Mvc.ViewComponents.ContentViewComponentResult/*0200005F*/ 
+          Content(string content) cil managed
+  // SIG: 20 01 12 81 7C 0E
+  {
+    // Method begins at RVA 0x2207
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponent::Content
+
+  .method /*06000084*/ public hidebysig instance class Microsoft.AspNetCore.Mvc.ViewComponents.ViewViewComponentResult/*02000075*/ 
+          View() cil managed
+  // SIG: 20 00 12 81 D4
+  {
+    // Method begins at RVA 0x220a
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponent::View
+
+  .method /*06000085*/ public hidebysig instance class Microsoft.AspNetCore.Mvc.ViewComponents.ViewViewComponentResult/*02000075*/ 
+          View(string viewName) cil managed
+  // SIG: 20 01 12 81 D4 0E
+  {
+    // Method begins at RVA 0x220d
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponent::View
+
+  .method /*06000086*/ public hidebysig instance class Microsoft.AspNetCore.Mvc.ViewComponents.ViewViewComponentResult/*02000075*/ 
+          View<TModel>(string viewName,
+                       !!TModel model) cil managed
+  // SIG: 30 01 02 12 81 D4 0E 1E 00
+  {
+    // Method begins at RVA 0x2210
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponent::View
+
+  .method /*06000087*/ public hidebysig instance class Microsoft.AspNetCore.Mvc.ViewComponents.ViewViewComponentResult/*02000075*/ 
+          View<TModel>(!!TModel model) cil managed
+  // SIG: 30 01 01 12 81 D4 1E 00
+  {
+    // Method begins at RVA 0x2213
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponent::View
+
+  .property /*1700001B*/ instance class [Microsoft.AspNetCore.Http.Abstractions/*2300000B*/]Microsoft.AspNetCore.Http.HttpContext/*01000048*/
+          HttpContext()
+  {
+    .get instance class [Microsoft.AspNetCore.Http.Abstractions/*2300000B*/]Microsoft.AspNetCore.Http.HttpContext/*01000048*/ Microsoft.AspNetCore.Mvc.ViewComponent/*02000014*/::get_HttpContext() /* 06000073 */
+  } // end of property ViewComponent::HttpContext
+  .property /*1700001C*/ instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary/*01000049*/
+          ModelState()
+  {
+    .get instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary/*01000049*/ Microsoft.AspNetCore.Mvc.ViewComponent/*02000014*/::get_ModelState() /* 06000074 */
+  } // end of property ViewComponent::ModelState
+  .property /*1700001D*/ instance class [Microsoft.AspNetCore.Http.Abstractions/*2300000B*/]Microsoft.AspNetCore.Http.HttpRequest/*0100004A*/
+          Request()
+  {
+    .get instance class [Microsoft.AspNetCore.Http.Abstractions/*2300000B*/]Microsoft.AspNetCore.Http.HttpRequest/*0100004A*/ Microsoft.AspNetCore.Mvc.ViewComponent/*02000014*/::get_Request() /* 06000075 */
+  } // end of property ViewComponent::Request
+  .property /*1700001E*/ instance class [Microsoft.AspNetCore.Routing.Abstractions/*2300000E*/]Microsoft.AspNetCore.Routing.RouteData/*0100004B*/
+          RouteData()
+  {
+    .get instance class [Microsoft.AspNetCore.Routing.Abstractions/*2300000E*/]Microsoft.AspNetCore.Routing.RouteData/*0100004B*/ Microsoft.AspNetCore.Mvc.ViewComponent/*02000014*/::get_RouteData() /* 06000076 */
+  } // end of property ViewComponent::RouteData
+  .property /*1700001F*/ instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/
+          TempData()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/ Microsoft.AspNetCore.Mvc.ViewComponent/*02000014*/::get_TempData() /* 06000077 */
+  } // end of property ViewComponent::TempData
+  .property /*17000020*/ instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.IUrlHelper/*0100004C*/
+          Url()
+  {
+    .get instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.IUrlHelper/*0100004C*/ Microsoft.AspNetCore.Mvc.ViewComponent/*02000014*/::get_Url() /* 06000078 */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewComponent/*02000014*/::set_Url(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.IUrlHelper/*0100004C*/) /* 06000079 */
+  } // end of property ViewComponent::Url
+  .property /*17000021*/ instance class [System.Security.Principal/*2300000F*/]System.Security.Principal.IPrincipal/*0100004D*/
+          User()
+  {
+    .get instance class [System.Security.Principal/*2300000F*/]System.Security.Principal.IPrincipal/*0100004D*/ Microsoft.AspNetCore.Mvc.ViewComponent/*02000014*/::get_User() /* 0600007A */
+  } // end of property ViewComponent::User
+  .property /*17000022*/ instance class [System.Security.Claims/*23000010*/]System.Security.Claims.ClaimsPrincipal/*0100004E*/
+          UserClaimsPrincipal()
+  {
+    .get instance class [System.Security.Claims/*23000010*/]System.Security.Claims.ClaimsPrincipal/*0100004E*/ Microsoft.AspNetCore.Mvc.ViewComponent/*02000014*/::get_UserClaimsPrincipal() /* 0600007B */
+  } // end of property ViewComponent::UserClaimsPrincipal
+  .property /*17000023*/ instance object ViewBag()
+  {
+    .custom /*0C00003E:0A000015*/ instance void [System.Linq.Expressions/*2300000A*/]System.Runtime.CompilerServices.DynamicAttribute/*0100002A*/::.ctor() /* 0A000015 */ = ( 01 00 00 00 ) 
+    .get instance object Microsoft.AspNetCore.Mvc.ViewComponent/*02000014*/::get_ViewBag() /* 0600007C */
+  } // end of property ViewComponent::ViewBag
+  .property /*17000024*/ instance class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/
+          ViewComponentContext()
+  {
+    .custom /*0C000040:060002DA*/ instance void Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContextAttribute/*0200006F*/::.ctor() /* 060002DA */ = ( 01 00 00 00 ) 
+    .get instance class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/ Microsoft.AspNetCore.Mvc.ViewComponent/*02000014*/::get_ViewComponentContext() /* 0600007D */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewComponent/*02000014*/::set_ViewComponentContext(class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/) /* 0600007E */
+  } // end of property ViewComponent::ViewComponentContext
+  .property /*17000025*/ instance class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/
+          ViewContext()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ Microsoft.AspNetCore.Mvc.ViewComponent/*02000014*/::get_ViewContext() /* 0600007F */
+  } // end of property ViewComponent::ViewContext
+  .property /*17000026*/ instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/
+          ViewData()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ Microsoft.AspNetCore.Mvc.ViewComponent/*02000014*/::get_ViewData() /* 06000080 */
+  } // end of property ViewComponent::ViewData
+  .property /*17000027*/ instance class Microsoft.AspNetCore.Mvc.ViewEngines.ICompositeViewEngine/*0200005B*/
+          ViewEngine()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewEngines.ICompositeViewEngine/*0200005B*/ Microsoft.AspNetCore.Mvc.ViewComponent/*02000014*/::get_ViewEngine() /* 06000081 */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewComponent/*02000014*/::set_ViewEngine(class Microsoft.AspNetCore.Mvc.ViewEngines.ICompositeViewEngine/*0200005B*/) /* 06000082 */
+  } // end of property ViewComponent::ViewEngine
+} // end of class Microsoft.AspNetCore.Mvc.ViewComponent
+
+.class /*02000015*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewComponentAttribute
+       extends [System.Runtime/*23000001*/]System.Attribute/*01000020*/
+{
+  .custom /*0C000031:0A000013*/ instance void [System.Runtime/*23000001*/]System.AttributeUsageAttribute/*0100001F*/::.ctor(valuetype [System.Runtime/*23000001*/]System.AttributeTargets/*0100001E*/) /* 0A000013 */ = ( 01 00 04 00 00 00 02 00 54 02 0D 41 6C 6C 6F 77   // ........T..Allow
+                                                                                                                                                                                                                          4D 75 6C 74 69 70 6C 65 00 54 02 09 49 6E 68 65   // Multiple.T..Inhe
+                                                                                                                                                                                                                          72 69 74 65 64 01 )                               // rited.
+  .method /*06000088*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x2216
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000029       */ call       instance void [System.Runtime/*23000001*/]System.Attribute/*01000020*/::.ctor() /* 0A000029 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ViewComponentAttribute::.ctor
+
+  .method /*06000089*/ public hidebysig specialname 
+          instance string  get_Name() cil managed
+  // SIG: 20 00 0E
+  {
+    .custom /*0C000085:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x221e
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentAttribute::get_Name
+
+  .method /*0600008A*/ public hidebysig specialname 
+          instance void  set_Name(string 'value') cil managed
+  // SIG: 20 01 01 0E
+  {
+    .custom /*0C000086:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2221
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewComponentAttribute::set_Name
+
+  .property /*17000028*/ instance string Name()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.ViewComponentAttribute/*02000015*/::get_Name() /* 06000089 */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewComponentAttribute/*02000015*/::set_Name(string) /* 0600008A */
+  } // end of property ViewComponentAttribute::Name
+} // end of class Microsoft.AspNetCore.Mvc.ViewComponentAttribute
+
+.class /*02000016*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewComponentResult
+       extends [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.ActionResult/*0100003D*/
+       implements [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.IActionResult/*0100003E*/,
+                  [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.Infrastructure.IStatusCodeActionResult/*0100003F*/
+{
+  .method /*0600008B*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x2223
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)00002B       */ call       instance void [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.ActionResult/*0100003D*/::.ctor() /* 0A00002B */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ViewComponentResult::.ctor
+
+  .method /*0600008C*/ public hidebysig specialname 
+          instance object  get_Arguments() cil managed
+  // SIG: 20 00 1C
+  {
+    .custom /*0C000087:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x222b
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentResult::get_Arguments
+
+  .method /*0600008D*/ public hidebysig specialname 
+          instance void  set_Arguments(object 'value') cil managed
+  // SIG: 20 01 01 1C
+  {
+    .custom /*0C000088:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x222e
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewComponentResult::set_Arguments
+
+  .method /*0600008E*/ public hidebysig specialname 
+          instance string  get_ContentType() cil managed
+  // SIG: 20 00 0E
+  {
+    .custom /*0C000089:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2230
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentResult::get_ContentType
+
+  .method /*0600008F*/ public hidebysig specialname 
+          instance void  set_ContentType(string 'value') cil managed
+  // SIG: 20 01 01 0E
+  {
+    .custom /*0C00008B:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2233
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewComponentResult::set_ContentType
+
+  .method /*06000090*/ public hidebysig specialname 
+          instance object  get_Model() cil managed
+  // SIG: 20 00 1C
+  {
+    // Method begins at RVA 0x2235
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentResult::get_Model
+
+  .method /*06000091*/ public hidebysig newslot specialname virtual final 
+          instance valuetype [System.Runtime/*23000001*/]System.Nullable`1/*01000040*/<int32> 
+          get_StatusCode() cil managed
+  // SIG: 20 00 15 11 81 01 01 08
+  {
+    .custom /*0C00008D:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2238
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentResult::get_StatusCode
+
+  .method /*06000092*/ public hidebysig specialname 
+          instance void  set_StatusCode(valuetype [System.Runtime/*23000001*/]System.Nullable`1/*01000040*/<int32> 'value') cil managed
+  // SIG: 20 01 01 15 11 81 01 01 08
+  {
+    .custom /*0C00008E:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x223b
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewComponentResult::set_StatusCode
+
+  .method /*06000093*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/ 
+          get_TempData() cil managed
+  // SIG: 20 00 12 80 A0
+  {
+    .custom /*0C00008F:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x223d
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentResult::get_TempData
+
+  .method /*06000094*/ public hidebysig specialname 
+          instance void  set_TempData(class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/ 'value') cil managed
+  // SIG: 20 01 01 12 80 A0
+  {
+    .custom /*0C000091:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2240
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewComponentResult::set_TempData
+
+  .method /*06000095*/ public hidebysig specialname 
+          instance string  get_ViewComponentName() cil managed
+  // SIG: 20 00 0E
+  {
+    .custom /*0C000093:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2242
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentResult::get_ViewComponentName
+
+  .method /*06000096*/ public hidebysig specialname 
+          instance void  set_ViewComponentName(string 'value') cil managed
+  // SIG: 20 01 01 0E
+  {
+    .custom /*0C000095:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2245
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewComponentResult::set_ViewComponentName
+
+  .method /*06000097*/ public hidebysig specialname 
+          instance class [System.Runtime/*23000001*/]System.Type/*01000031*/ 
+          get_ViewComponentType() cil managed
+  // SIG: 20 00 12 80 C5
+  {
+    .custom /*0C000097:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2247
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentResult::get_ViewComponentType
+
+  .method /*06000098*/ public hidebysig specialname 
+          instance void  set_ViewComponentType(class [System.Runtime/*23000001*/]System.Type/*01000031*/ 'value') cil managed
+  // SIG: 20 01 01 12 80 C5
+  {
+    .custom /*0C000099:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x224a
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewComponentResult::set_ViewComponentType
+
+  .method /*06000099*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ 
+          get_ViewData() cil managed
+  // SIG: 20 00 12 80 F4
+  {
+    .custom /*0C00009B:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x224c
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentResult::get_ViewData
+
+  .method /*0600009A*/ public hidebysig specialname 
+          instance void  set_ViewData(class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ 'value') cil managed
+  // SIG: 20 01 01 12 80 F4
+  {
+    .custom /*0C00009D:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x224f
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewComponentResult::set_ViewData
+
+  .method /*0600009B*/ public hidebysig virtual 
+          instance class [System.Runtime/*23000001*/]System.Threading.Tasks.Task/*0100002F*/ 
+          ExecuteResultAsync(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ActionContext/*01000041*/ context) cil managed
+  // SIG: 20 01 12 80 BD 12 81 05
+  {
+    // Method begins at RVA 0x2251
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentResult::ExecuteResultAsync
+
+  .property /*17000029*/ instance object Arguments()
+  {
+    .get instance object Microsoft.AspNetCore.Mvc.ViewComponentResult/*02000016*/::get_Arguments() /* 0600008C */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewComponentResult/*02000016*/::set_Arguments(object) /* 0600008D */
+  } // end of property ViewComponentResult::Arguments
+  .property /*1700002A*/ instance string ContentType()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.ViewComponentResult/*02000016*/::get_ContentType() /* 0600008E */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewComponentResult/*02000016*/::set_ContentType(string) /* 0600008F */
+  } // end of property ViewComponentResult::ContentType
+  .property /*1700002B*/ instance object Model()
+  {
+    .get instance object Microsoft.AspNetCore.Mvc.ViewComponentResult/*02000016*/::get_Model() /* 06000090 */
+  } // end of property ViewComponentResult::Model
+  .property /*1700002C*/ instance valuetype [System.Runtime/*23000001*/]System.Nullable`1/*01000040*/<int32>
+          StatusCode()
+  {
+    .get instance valuetype [System.Runtime/*23000001*/]System.Nullable`1/*01000040*/<int32> Microsoft.AspNetCore.Mvc.ViewComponentResult/*02000016*/::get_StatusCode() /* 06000091 */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewComponentResult/*02000016*/::set_StatusCode(valuetype [System.Runtime/*23000001*/]System.Nullable`1/*01000040*/<int32>) /* 06000092 */
+  } // end of property ViewComponentResult::StatusCode
+  .property /*1700002D*/ instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/
+          TempData()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/ Microsoft.AspNetCore.Mvc.ViewComponentResult/*02000016*/::get_TempData() /* 06000093 */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewComponentResult/*02000016*/::set_TempData(class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/) /* 06000094 */
+  } // end of property ViewComponentResult::TempData
+  .property /*1700002E*/ instance string ViewComponentName()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.ViewComponentResult/*02000016*/::get_ViewComponentName() /* 06000095 */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewComponentResult/*02000016*/::set_ViewComponentName(string) /* 06000096 */
+  } // end of property ViewComponentResult::ViewComponentName
+  .property /*1700002F*/ instance class [System.Runtime/*23000001*/]System.Type/*01000031*/
+          ViewComponentType()
+  {
+    .get instance class [System.Runtime/*23000001*/]System.Type/*01000031*/ Microsoft.AspNetCore.Mvc.ViewComponentResult/*02000016*/::get_ViewComponentType() /* 06000097 */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewComponentResult/*02000016*/::set_ViewComponentType(class [System.Runtime/*23000001*/]System.Type/*01000031*/) /* 06000098 */
+  } // end of property ViewComponentResult::ViewComponentType
+  .property /*17000030*/ instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/
+          ViewData()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ Microsoft.AspNetCore.Mvc.ViewComponentResult/*02000016*/::get_ViewData() /* 06000099 */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewComponentResult/*02000016*/::set_ViewData(class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/) /* 0600009A */
+  } // end of property ViewComponentResult::ViewData
+} // end of class Microsoft.AspNetCore.Mvc.ViewComponentResult
+
+.class /*02000017*/ public auto ansi sealed beforefieldinit Microsoft.AspNetCore.Mvc.ViewDataAttribute
+       extends [System.Runtime/*23000001*/]System.Attribute/*01000020*/
+{
+  .custom /*0C000032:0A000013*/ instance void [System.Runtime/*23000001*/]System.AttributeUsageAttribute/*0100001F*/::.ctor(valuetype [System.Runtime/*23000001*/]System.AttributeTargets/*0100001E*/) /* 0A000013 */ = ( 01 00 80 00 00 00 02 00 54 02 09 49 6E 68 65 72   // ........T..Inher
+                                                                                                                                                                                                                          69 74 65 64 01 54 02 0D 41 6C 6C 6F 77 4D 75 6C   // ited.T..AllowMul
+                                                                                                                                                                                                                          74 69 70 6C 65 00 )                               // tiple.
+  .method /*0600009C*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x2254
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000029       */ call       instance void [System.Runtime/*23000001*/]System.Attribute/*01000020*/::.ctor() /* 0A000029 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ViewDataAttribute::.ctor
+
+  .method /*0600009D*/ public hidebysig specialname 
+          instance string  get_Key() cil managed
+  // SIG: 20 00 0E
+  {
+    .custom /*0C0000A0:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x225c
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewDataAttribute::get_Key
+
+  .method /*0600009E*/ public hidebysig specialname 
+          instance void  set_Key(string 'value') cil managed
+  // SIG: 20 01 01 0E
+  {
+    .custom /*0C0000A1:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x225f
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewDataAttribute::set_Key
+
+  .property /*17000031*/ instance string Key()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.ViewDataAttribute/*02000017*/::get_Key() /* 0600009D */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewDataAttribute/*02000017*/::set_Key(string) /* 0600009E */
+  } // end of property ViewDataAttribute::Key
+} // end of class Microsoft.AspNetCore.Mvc.ViewDataAttribute
+
+.class /*02000018*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewResult
+       extends [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.ActionResult/*0100003D*/
+       implements [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.IActionResult/*0100003E*/,
+                  [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.Infrastructure.IStatusCodeActionResult/*0100003F*/
+{
+  .method /*0600009F*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x2261
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)00002B       */ call       instance void [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.ActionResult/*0100003D*/::.ctor() /* 0A00002B */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ViewResult::.ctor
+
+  .method /*060000A0*/ public hidebysig specialname 
+          instance string  get_ContentType() cil managed
+  // SIG: 20 00 0E
+  {
+    .custom /*0C0000A2:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2269
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewResult::get_ContentType
+
+  .method /*060000A1*/ public hidebysig specialname 
+          instance void  set_ContentType(string 'value') cil managed
+  // SIG: 20 01 01 0E
+  {
+    .custom /*0C0000A3:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x226c
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewResult::set_ContentType
+
+  .method /*060000A2*/ public hidebysig specialname 
+          instance object  get_Model() cil managed
+  // SIG: 20 00 1C
+  {
+    // Method begins at RVA 0x226e
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewResult::get_Model
+
+  .method /*060000A3*/ public hidebysig newslot specialname virtual final 
+          instance valuetype [System.Runtime/*23000001*/]System.Nullable`1/*01000040*/<int32> 
+          get_StatusCode() cil managed
+  // SIG: 20 00 15 11 81 01 01 08
+  {
+    .custom /*0C0000A4:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2271
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewResult::get_StatusCode
+
+  .method /*060000A4*/ public hidebysig specialname 
+          instance void  set_StatusCode(valuetype [System.Runtime/*23000001*/]System.Nullable`1/*01000040*/<int32> 'value') cil managed
+  // SIG: 20 01 01 15 11 81 01 01 08
+  {
+    .custom /*0C0000A5:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2274
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewResult::set_StatusCode
+
+  .method /*060000A5*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/ 
+          get_TempData() cil managed
+  // SIG: 20 00 12 80 A0
+  {
+    .custom /*0C0000A6:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2276
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewResult::get_TempData
+
+  .method /*060000A6*/ public hidebysig specialname 
+          instance void  set_TempData(class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/ 'value') cil managed
+  // SIG: 20 01 01 12 80 A0
+  {
+    .custom /*0C0000A7:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2279
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewResult::set_TempData
+
+  .method /*060000A7*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ 
+          get_ViewData() cil managed
+  // SIG: 20 00 12 80 F4
+  {
+    .custom /*0C0000A8:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x227b
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewResult::get_ViewData
+
+  .method /*060000A8*/ public hidebysig specialname 
+          instance void  set_ViewData(class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ 'value') cil managed
+  // SIG: 20 01 01 12 80 F4
+  {
+    .custom /*0C0000A9:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x227e
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewResult::set_ViewData
+
+  .method /*060000A9*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.ViewEngines.IViewEngine/*0200005D*/ 
+          get_ViewEngine() cil managed
+  // SIG: 20 00 12 81 74
+  {
+    .custom /*0C0000AA:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2280
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewResult::get_ViewEngine
+
+  .method /*060000AA*/ public hidebysig specialname 
+          instance void  set_ViewEngine(class Microsoft.AspNetCore.Mvc.ViewEngines.IViewEngine/*0200005D*/ 'value') cil managed
+  // SIG: 20 01 01 12 81 74
+  {
+    .custom /*0C0000AB:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2283
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewResult::set_ViewEngine
+
+  .method /*060000AB*/ public hidebysig specialname 
+          instance string  get_ViewName() cil managed
+  // SIG: 20 00 0E
+  {
+    .custom /*0C0000AC:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2285
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewResult::get_ViewName
+
+  .method /*060000AC*/ public hidebysig specialname 
+          instance void  set_ViewName(string 'value') cil managed
+  // SIG: 20 01 01 0E
+  {
+    .custom /*0C0000AD:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2288
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewResult::set_ViewName
+
+  .method /*060000AD*/ public hidebysig virtual 
+          instance class [System.Runtime/*23000001*/]System.Threading.Tasks.Task/*0100002F*/ 
+          ExecuteResultAsync(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ActionContext/*01000041*/ context) cil managed
+  // SIG: 20 01 12 80 BD 12 81 05
+  {
+    .custom /*0C0000AE:0A000019*/ instance void [System.Diagnostics.Debug/*23000011*/]System.Diagnostics.DebuggerStepThroughAttribute/*0100004F*/::.ctor() /* 0A000019 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x228a
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewResult::ExecuteResultAsync
+
+  .property /*17000032*/ instance string ContentType()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.ViewResult/*02000018*/::get_ContentType() /* 060000A0 */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewResult/*02000018*/::set_ContentType(string) /* 060000A1 */
+  } // end of property ViewResult::ContentType
+  .property /*17000033*/ instance object Model()
+  {
+    .get instance object Microsoft.AspNetCore.Mvc.ViewResult/*02000018*/::get_Model() /* 060000A2 */
+  } // end of property ViewResult::Model
+  .property /*17000034*/ instance valuetype [System.Runtime/*23000001*/]System.Nullable`1/*01000040*/<int32>
+          StatusCode()
+  {
+    .get instance valuetype [System.Runtime/*23000001*/]System.Nullable`1/*01000040*/<int32> Microsoft.AspNetCore.Mvc.ViewResult/*02000018*/::get_StatusCode() /* 060000A3 */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewResult/*02000018*/::set_StatusCode(valuetype [System.Runtime/*23000001*/]System.Nullable`1/*01000040*/<int32>) /* 060000A4 */
+  } // end of property ViewResult::StatusCode
+  .property /*17000035*/ instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/
+          TempData()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/ Microsoft.AspNetCore.Mvc.ViewResult/*02000018*/::get_TempData() /* 060000A5 */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewResult/*02000018*/::set_TempData(class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/) /* 060000A6 */
+  } // end of property ViewResult::TempData
+  .property /*17000036*/ instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/
+          ViewData()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ Microsoft.AspNetCore.Mvc.ViewResult/*02000018*/::get_ViewData() /* 060000A7 */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewResult/*02000018*/::set_ViewData(class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/) /* 060000A8 */
+  } // end of property ViewResult::ViewData
+  .property /*17000037*/ instance class Microsoft.AspNetCore.Mvc.ViewEngines.IViewEngine/*0200005D*/
+          ViewEngine()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewEngines.IViewEngine/*0200005D*/ Microsoft.AspNetCore.Mvc.ViewResult/*02000018*/::get_ViewEngine() /* 060000A9 */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewResult/*02000018*/::set_ViewEngine(class Microsoft.AspNetCore.Mvc.ViewEngines.IViewEngine/*0200005D*/) /* 060000AA */
+  } // end of property ViewResult::ViewEngine
+  .property /*17000038*/ instance string ViewName()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.ViewResult/*02000018*/::get_ViewName() /* 060000AB */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewResult/*02000018*/::set_ViewName(string) /* 060000AC */
+  } // end of property ViewResult::ViewName
+} // end of class Microsoft.AspNetCore.Mvc.ViewResult
+
+.class /*02000019*/ public abstract auto ansi sealed beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.AntiforgeryExtensions
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .custom /*0C000033:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+  .method /*060000AE*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          GetHtml(class [Microsoft.AspNetCore.Antiforgery/*23000012*/]Microsoft.AspNetCore.Antiforgery.IAntiforgery/*01000050*/ antiforgery,
+                  class [Microsoft.AspNetCore.Http.Abstractions/*2300000B*/]Microsoft.AspNetCore.Http.HttpContext/*01000048*/ httpContext) cil managed
+  // SIG: 00 02 12 80 D1 12 81 41 12 81 21
+  {
+    .custom /*0C0000AF:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x228d
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method AntiforgeryExtensions::GetHtml
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.AntiforgeryExtensions
+
+.class /*0200001A*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.AttributeDictionary
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+       implements class [System.Runtime/*23000001*/]System.Collections.Generic.ICollection`1/*01000054*/<valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,string>>/*1B000004*/,
+                  class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,string>>/*1B000003*/,
+                  [System.Runtime/*23000001*/]System.Collections.IEnumerable/*01000038*/,
+                  class [System.Runtime/*23000001*/]System.Collections.Generic.IDictionary`2/*01000055*/<string,string>/*1B000005*/,
+                  class [System.Runtime/*23000001*/]System.Collections.Generic.IReadOnlyCollection`1/*01000056*/<valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,string>>/*1B000006*/,
+                  class [System.Runtime/*23000001*/]System.Collections.Generic.IReadOnlyDictionary`2/*01000052*/<string,string>/*1B000002*/
+{
+  .custom /*0C000034:0A00001A*/ instance void [System.Runtime/*23000001*/]System.Reflection.DefaultMemberAttribute/*01000051*/::.ctor(string) /* 0A00001A */ = ( 01 00 04 49 74 65 6D 00 00 )                      // ...Item..
+  .class /*0200009C*/ sequential ansi sealed nested public beforefieldinit Enumerator
+         extends [System.Runtime/*23000001*/]System.ValueType/*01000057*/
+         implements class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerator`1/*01000037*/<valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,string>>/*1B000007*/,
+                    [System.Runtime/*23000001*/]System.Collections.IEnumerator/*01000039*/,
+                    [System.Runtime/*23000001*/]System.IDisposable/*01000029*/
+  {
+    .field /*04000055*/ private object _dummy
+    .field /*04000056*/ private int32 _dummyPrimitive
+    .method /*0600046D*/ public hidebysig specialname rtspecialname 
+            instance void  .ctor(class Microsoft.AspNetCore.Mvc.ViewFeatures.AttributeDictionary/*0200001A*/ attributes) cil managed
+    // SIG: 20 01 01 12 68
+    {
+      // Method begins at RVA 0x2dcf
+      // Code size       2 (0x2)
+      .maxstack  8
+      IL_0000:  /* 14   |                  */ ldnull
+      IL_0001:  /* 7A   |                  */ throw
+    } // end of method Enumerator::.ctor
+
+    .method /*0600046E*/ public hidebysig newslot specialname virtual final 
+            instance valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,string> 
+            get_Current() cil managed
+    // SIG: 20 00 15 11 81 4D 02 0E 0E
+    {
+      // Method begins at RVA 0x2dd2
+      // Code size       2 (0x2)
+      .maxstack  8
+      IL_0000:  /* 14   |                  */ ldnull
+      IL_0001:  /* 7A   |                  */ throw
+    } // end of method Enumerator::get_Current
+
+    .method /*0600046F*/ private hidebysig newslot specialname virtual final 
+            instance object  System.Collections.IEnumerator.get_Current() cil managed
+    // SIG: 20 00 1C
+    {
+      .override [System.Runtime/*23000001*/]System.Collections.IEnumerator/*01000039*/::get_Current /*01000039::0A00001E*/ 
+      // Method begins at RVA 0x2dd5
+      // Code size       2 (0x2)
+      .maxstack  8
+      IL_0000:  /* 14   |                  */ ldnull
+      IL_0001:  /* 7A   |                  */ throw
+    } // end of method Enumerator::System.Collections.IEnumerator.get_Current
+
+    .method /*06000470*/ public hidebysig newslot virtual final 
+            instance void  Dispose() cil managed
+    // SIG: 20 00 01
+    {
+      // Method begins at RVA 0x2dd8
+      // Code size       1 (0x1)
+      .maxstack  8
+      IL_0000:  /* 2A   |                  */ ret
+    } // end of method Enumerator::Dispose
+
+    .method /*06000471*/ public hidebysig newslot virtual final 
+            instance bool  MoveNext() cil managed
+    // SIG: 20 00 02
+    {
+      // Method begins at RVA 0x2dda
+      // Code size       2 (0x2)
+      .maxstack  8
+      IL_0000:  /* 14   |                  */ ldnull
+      IL_0001:  /* 7A   |                  */ throw
+    } // end of method Enumerator::MoveNext
+
+    .method /*06000472*/ public hidebysig newslot virtual final 
+            instance void  Reset() cil managed
+    // SIG: 20 00 01
+    {
+      // Method begins at RVA 0x2ddd
+      // Code size       1 (0x1)
+      .maxstack  8
+      IL_0000:  /* 2A   |                  */ ret
+    } // end of method Enumerator::Reset
+
+    .property /*17000107*/ instance valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,string>
+            Current()
+    {
+      .get instance valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,string> Microsoft.AspNetCore.Mvc.ViewFeatures.AttributeDictionary/*0200001A*//Enumerator/*0200009C*/::get_Current() /* 0600046E */
+    } // end of property Enumerator::Current
+    .property /*17000108*/ instance object
+            System.Collections.IEnumerator.Current()
+    {
+      .get instance object Microsoft.AspNetCore.Mvc.ViewFeatures.AttributeDictionary/*0200001A*//Enumerator/*0200009C*/::System.Collections.IEnumerator.get_Current() /* 0600046F */
+    } // end of property Enumerator::System.Collections.IEnumerator.Current
+  } // end of class Enumerator
+
+  .method /*060000AF*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x2290
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method AttributeDictionary::.ctor
+
+  .method /*060000B0*/ public hidebysig newslot specialname virtual final 
+          instance int32  get_Count() cil managed
+  // SIG: 20 00 08
+  {
+    // Method begins at RVA 0x2298
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method AttributeDictionary::get_Count
+
+  .method /*060000B1*/ public hidebysig newslot specialname virtual final 
+          instance bool  get_IsReadOnly() cil managed
+  // SIG: 20 00 02
+  {
+    // Method begins at RVA 0x229b
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method AttributeDictionary::get_IsReadOnly
+
+  .method /*060000B2*/ public hidebysig newslot specialname virtual final 
+          instance string  get_Item(string key) cil managed
+  // SIG: 20 01 0E 0E
+  {
+    // Method begins at RVA 0x229e
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method AttributeDictionary::get_Item
+
+  .method /*060000B3*/ public hidebysig newslot specialname virtual final 
+          instance void  set_Item(string key,
+                                  string 'value') cil managed
+  // SIG: 20 02 01 0E 0E
+  {
+    // Method begins at RVA 0x22a1
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method AttributeDictionary::set_Item
+
+  .method /*060000B4*/ public hidebysig newslot specialname virtual final 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.ICollection`1/*01000054*/<string> 
+          get_Keys() cil managed
+  // SIG: 20 00 15 12 81 51 01 0E
+  {
+    // Method begins at RVA 0x22a3
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method AttributeDictionary::get_Keys
+
+  .method /*060000B5*/ private hidebysig newslot specialname virtual final 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<string> 
+          'System.Collections.Generic.IReadOnlyDictionary<System.String,System.String>.get_Keys'() cil managed
+  // SIG: 20 00 15 12 80 D5 01 0E
+  {
+    .override  method instance class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<!0> class [System.Runtime/*23000001*/]System.Collections.Generic.IReadOnlyDictionary`2/*01000052*/<string,string>/*1B000002*/::get_Keys() /* 0A00001B */
+    // Method begins at RVA 0x22a6
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method AttributeDictionary::'System.Collections.Generic.IReadOnlyDictionary<System.String,System.String>.get_Keys'
+
+  .method /*060000B6*/ private hidebysig newslot specialname virtual final 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<string> 
+          'System.Collections.Generic.IReadOnlyDictionary<System.String,System.String>.get_Values'() cil managed
+  // SIG: 20 00 15 12 80 D5 01 0E
+  {
+    .override  method instance class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<!1> class [System.Runtime/*23000001*/]System.Collections.Generic.IReadOnlyDictionary`2/*01000052*/<string,string>/*1B000002*/::get_Values() /* 0A00001C */
+    // Method begins at RVA 0x22a9
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method AttributeDictionary::'System.Collections.Generic.IReadOnlyDictionary<System.String,System.String>.get_Values'
+
+  .method /*060000B7*/ public hidebysig newslot specialname virtual final 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.ICollection`1/*01000054*/<string> 
+          get_Values() cil managed
+  // SIG: 20 00 15 12 81 51 01 0E
+  {
+    // Method begins at RVA 0x22ac
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method AttributeDictionary::get_Values
+
+  .method /*060000B8*/ public hidebysig newslot virtual final 
+          instance void  Add(valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,string> item) cil managed
+  // SIG: 20 01 01 15 11 81 4D 02 0E 0E
+  {
+    // Method begins at RVA 0x22af
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method AttributeDictionary::Add
+
+  .method /*060000B9*/ public hidebysig newslot virtual final 
+          instance void  Add(string key,
+                             string 'value') cil managed
+  // SIG: 20 02 01 0E 0E
+  {
+    // Method begins at RVA 0x22b1
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method AttributeDictionary::Add
+
+  .method /*060000BA*/ public hidebysig newslot virtual final 
+          instance void  Clear() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x22b3
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method AttributeDictionary::Clear
+
+  .method /*060000BB*/ public hidebysig newslot virtual final 
+          instance bool  Contains(valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,string> item) cil managed
+  // SIG: 20 01 02 15 11 81 4D 02 0E 0E
+  {
+    // Method begins at RVA 0x22b5
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method AttributeDictionary::Contains
+
+  .method /*060000BC*/ public hidebysig newslot virtual final 
+          instance bool  ContainsKey(string key) cil managed
+  // SIG: 20 01 02 0E
+  {
+    // Method begins at RVA 0x22b8
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method AttributeDictionary::ContainsKey
+
+  .method /*060000BD*/ public hidebysig newslot virtual final 
+          instance void  CopyTo(valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,string>[] 'array',
+                                int32 arrayIndex) cil managed
+  // SIG: 20 02 01 1D 15 11 81 4D 02 0E 0E 08
+  {
+    // Method begins at RVA 0x22bb
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method AttributeDictionary::CopyTo
+
+  .method /*060000BE*/ public hidebysig instance valuetype Microsoft.AspNetCore.Mvc.ViewFeatures.AttributeDictionary/*0200001A*//Enumerator/*0200009C*/ 
+          GetEnumerator() cil managed
+  // SIG: 20 00 11 82 70
+  {
+    // Method begins at RVA 0x22bd
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method AttributeDictionary::GetEnumerator
+
+  .method /*060000BF*/ public hidebysig newslot virtual final 
+          instance bool  Remove(valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,string> item) cil managed
+  // SIG: 20 01 02 15 11 81 4D 02 0E 0E
+  {
+    // Method begins at RVA 0x22c0
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method AttributeDictionary::Remove
+
+  .method /*060000C0*/ public hidebysig newslot virtual final 
+          instance bool  Remove(string key) cil managed
+  // SIG: 20 01 02 0E
+  {
+    // Method begins at RVA 0x22c3
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method AttributeDictionary::Remove
+
+  .method /*060000C1*/ private hidebysig newslot virtual final 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerator`1/*01000037*/<valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,string>> 
+          'System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<System.String,System.String>>.GetEnumerator'() cil managed
+  // SIG: 20 00 15 12 80 DD 01 15 11 81 4D 02 0E 0E
+  {
+    .override  method instance class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerator`1/*01000037*/<!0> class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,string>>/*1B000003*/::GetEnumerator() /* 0A00001D */
+    // Method begins at RVA 0x22c6
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method AttributeDictionary::'System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<System.String,System.String>>.GetEnumerator'
+
+  .method /*060000C2*/ private hidebysig newslot virtual final 
+          instance class [System.Runtime/*23000001*/]System.Collections.IEnumerator/*01000039*/ 
+          System.Collections.IEnumerable.GetEnumerator() cil managed
+  // SIG: 20 00 12 80 E5
+  {
+    .override [System.Runtime/*23000001*/]System.Collections.IEnumerable/*01000038*/::GetEnumerator /*01000038::0A000018*/ 
+    // Method begins at RVA 0x22c9
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method AttributeDictionary::System.Collections.IEnumerable.GetEnumerator
+
+  .method /*060000C3*/ public hidebysig newslot virtual final 
+          instance bool  TryGetValue(string key,
+                                     [out] string& 'value') cil managed
+  // SIG: 20 02 02 0E 10 0E
+  {
+    // Method begins at RVA 0x22cc
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method AttributeDictionary::TryGetValue
+
+  .property /*17000039*/ instance int32 Count()
+  {
+    .get instance int32 Microsoft.AspNetCore.Mvc.ViewFeatures.AttributeDictionary/*0200001A*/::get_Count() /* 060000B0 */
+  } // end of property AttributeDictionary::Count
+  .property /*1700003A*/ instance bool IsReadOnly()
+  {
+    .get instance bool Microsoft.AspNetCore.Mvc.ViewFeatures.AttributeDictionary/*0200001A*/::get_IsReadOnly() /* 060000B1 */
+  } // end of property AttributeDictionary::IsReadOnly
+  .property /*1700003B*/ instance string Item(string)
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.ViewFeatures.AttributeDictionary/*0200001A*/::get_Item(string) /* 060000B2 */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewFeatures.AttributeDictionary/*0200001A*/::set_Item(string,
+                                                                                                       string) /* 060000B3 */
+  } // end of property AttributeDictionary::Item
+  .property /*1700003C*/ instance class [System.Runtime/*23000001*/]System.Collections.Generic.ICollection`1/*01000054*/<string>
+          Keys()
+  {
+    .get instance class [System.Runtime/*23000001*/]System.Collections.Generic.ICollection`1/*01000054*/<string> Microsoft.AspNetCore.Mvc.ViewFeatures.AttributeDictionary/*0200001A*/::get_Keys() /* 060000B4 */
+  } // end of property AttributeDictionary::Keys
+  .property /*1700003D*/ instance class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<string>
+          'System.Collections.Generic.IReadOnlyDictionary<System.String,System.String>.Keys'()
+  {
+    .get instance class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<string> Microsoft.AspNetCore.Mvc.ViewFeatures.AttributeDictionary/*0200001A*/::'System.Collections.Generic.IReadOnlyDictionary<System.String,System.String>.get_Keys'() /* 060000B5 */
+  } // end of property AttributeDictionary::'System.Collections.Generic.IReadOnlyDictionary<System.String,System.String>.Keys'
+  .property /*1700003E*/ instance class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<string>
+          'System.Collections.Generic.IReadOnlyDictionary<System.String,System.String>.Values'()
+  {
+    .get instance class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<string> Microsoft.AspNetCore.Mvc.ViewFeatures.AttributeDictionary/*0200001A*/::'System.Collections.Generic.IReadOnlyDictionary<System.String,System.String>.get_Values'() /* 060000B6 */
+  } // end of property AttributeDictionary::'System.Collections.Generic.IReadOnlyDictionary<System.String,System.String>.Values'
+  .property /*1700003F*/ instance class [System.Runtime/*23000001*/]System.Collections.Generic.ICollection`1/*01000054*/<string>
+          Values()
+  {
+    .get instance class [System.Runtime/*23000001*/]System.Collections.Generic.ICollection`1/*01000054*/<string> Microsoft.AspNetCore.Mvc.ViewFeatures.AttributeDictionary/*0200001A*/::get_Values() /* 060000B7 */
+  } // end of property AttributeDictionary::Values
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.AttributeDictionary
+
+.class /*0200001B*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.CookieTempDataProvider
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+       implements Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataProvider/*0200002A*/
+{
+  .field /*04000004*/ public static initonly string CookieName
+  .method /*060000C4*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class [Microsoft.AspNetCore.DataProtection.Abstractions/*23000013*/]Microsoft.AspNetCore.DataProtection.IDataProtectionProvider/*01000058*/ dataProtectionProvider,
+                               class [Microsoft.Extensions.Logging.Abstractions/*23000014*/]Microsoft.Extensions.Logging.ILoggerFactory/*01000059*/ loggerFactory,
+                               class [Microsoft.Extensions.Options/*23000005*/]Microsoft.Extensions.Options.IOptions`1/*01000019*/<class Microsoft.AspNetCore.Mvc.CookieTempDataProviderOptions/*02000008*/> options,
+                               class Microsoft.AspNetCore.Mvc.ViewFeatures.Infrastructure.TempDataSerializer/*02000050*/ tempDataSerializer) cil managed
+  // SIG: 20 04 01 12 81 61 12 81 65 15 12 65 01 12 20 12 81 40
+  {
+    // Method begins at RVA 0x22cf
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method CookieTempDataProvider::.ctor
+
+  .method /*060000C5*/ public hidebysig newslot virtual final 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.IDictionary`2/*01000055*/<string,object> 
+          LoadTempData(class [Microsoft.AspNetCore.Http.Abstractions/*2300000B*/]Microsoft.AspNetCore.Http.HttpContext/*01000048*/ context) cil managed
+  // SIG: 20 01 15 12 81 55 02 0E 1C 12 81 21
+  {
+    // Method begins at RVA 0x22d7
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method CookieTempDataProvider::LoadTempData
+
+  .method /*060000C6*/ public hidebysig newslot virtual final 
+          instance void  SaveTempData(class [Microsoft.AspNetCore.Http.Abstractions/*2300000B*/]Microsoft.AspNetCore.Http.HttpContext/*01000048*/ context,
+                                      class [System.Runtime/*23000001*/]System.Collections.Generic.IDictionary`2/*01000055*/<string,object> values) cil managed
+  // SIG: 20 02 01 12 81 21 15 12 81 55 02 0E 1C
+  {
+    // Method begins at RVA 0x22da
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method CookieTempDataProvider::SaveTempData
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.CookieTempDataProvider
+
+.class /*0200001C*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.DefaultHtmlGenerator
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+       implements Microsoft.AspNetCore.Mvc.ViewFeatures.IHtmlGenerator/*02000025*/
+{
+  .method /*060000C7*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class [Microsoft.AspNetCore.Antiforgery/*23000012*/]Microsoft.AspNetCore.Antiforgery.IAntiforgery/*01000050*/ antiforgery,
+                               class [Microsoft.Extensions.Options/*23000005*/]Microsoft.Extensions.Options.IOptions`1/*01000019*/<class Microsoft.AspNetCore.Mvc.MvcViewOptions/*0200000C*/> optionsAccessor,
+                               class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.IModelMetadataProvider/*0100005A*/ metadataProvider,
+                               class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.Routing.IUrlHelperFactory/*0100005B*/ urlHelperFactory,
+                               class [System.Text.Encodings.Web/*23000015*/]System.Text.Encodings.Web.HtmlEncoder/*0100005C*/ htmlEncoder,
+                               class Microsoft.AspNetCore.Mvc.ViewFeatures.ValidationHtmlAttributeProvider/*0200003A*/ validationAttributeProvider) cil managed
+  // SIG: 20 06 01 12 81 41 15 12 65 01 12 30 12 81 69 12 81 6D 12 81 71 12 80 E8
+  {
+    // Method begins at RVA 0x22dc
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method DefaultHtmlGenerator::.ctor
+
+  .method /*060000C8*/ family hidebysig specialname 
+          instance bool  get_AllowRenderingMaxLengthAttribute() cil managed
+  // SIG: 20 00 02
+  {
+    .custom /*0C0000B1:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x22e4
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method DefaultHtmlGenerator::get_AllowRenderingMaxLengthAttribute
+
+  .method /*060000C9*/ public hidebysig newslot specialname virtual final 
+          instance string  get_IdAttributeDotReplacement() cil managed
+  // SIG: 20 00 0E
+  {
+    .custom /*0C0000B2:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x22e7
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method DefaultHtmlGenerator::get_IdAttributeDotReplacement
+
+  .method /*060000CA*/ family hidebysig newslot virtual 
+          instance void  AddMaxLengthAttribute(class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ viewData,
+                                               class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/ tagBuilder,
+                                               class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer,
+                                               string expression) cil managed
+  // SIG: 20 04 01 12 80 F4 12 82 38 12 80 B0 0E
+  {
+    // Method begins at RVA 0x22ea
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method DefaultHtmlGenerator::AddMaxLengthAttribute
+
+  .method /*060000CB*/ family hidebysig newslot virtual 
+          instance void  AddPlaceholderAttribute(class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ viewData,
+                                                 class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/ tagBuilder,
+                                                 class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer,
+                                                 string expression) cil managed
+  // SIG: 20 04 01 12 80 F4 12 82 38 12 80 B0 0E
+  {
+    // Method begins at RVA 0x22ec
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method DefaultHtmlGenerator::AddPlaceholderAttribute
+
+  .method /*060000CC*/ family hidebysig newslot virtual 
+          instance void  AddValidationAttributes(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                                                 class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/ tagBuilder,
+                                                 class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer,
+                                                 string expression) cil managed
+  // SIG: 20 04 01 12 82 44 12 82 38 12 80 B0 0E
+  {
+    // Method begins at RVA 0x22ee
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method DefaultHtmlGenerator::AddValidationAttributes
+
+  .method /*060000CD*/ public hidebysig newslot virtual final 
+          instance string  Encode(object 'value') cil managed
+  // SIG: 20 01 0E 1C
+  {
+    // Method begins at RVA 0x22f0
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method DefaultHtmlGenerator::Encode
+
+  .method /*060000CE*/ public hidebysig newslot virtual final 
+          instance string  Encode(string 'value') cil managed
+  // SIG: 20 01 0E 0E
+  {
+    // Method begins at RVA 0x22f3
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method DefaultHtmlGenerator::Encode
+
+  .method /*060000CF*/ public hidebysig newslot virtual final 
+          instance string  FormatValue(object 'value',
+                                       string format) cil managed
+  // SIG: 20 02 0E 1C 0E
+  {
+    // Method begins at RVA 0x22f6
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method DefaultHtmlGenerator::FormatValue
+
+  .method /*060000D0*/ public hidebysig newslot virtual 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/ 
+          GenerateActionLink(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                             string linkText,
+                             string actionName,
+                             string controllerName,
+                             string protocol,
+                             string hostname,
+                             string fragment,
+                             object routeValues,
+                             object htmlAttributes) cil managed
+  // SIG: 20 09 12 82 38 12 82 44 0E 0E 0E 0E 0E 0E 1C 1C
+  {
+    // Method begins at RVA 0x22f9
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method DefaultHtmlGenerator::GenerateActionLink
+
+  .method /*060000D1*/ public hidebysig newslot virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          GenerateAntiforgery(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext) cil managed
+  // SIG: 20 01 12 80 D1 12 82 44
+  {
+    // Method begins at RVA 0x22fc
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method DefaultHtmlGenerator::GenerateAntiforgery
+
+  .method /*060000D2*/ public hidebysig newslot virtual 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/ 
+          GenerateCheckBox(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                           class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer,
+                           string expression,
+                           valuetype [System.Runtime/*23000001*/]System.Nullable`1/*01000040*/<bool> isChecked,
+                           object htmlAttributes) cil managed
+  // SIG: 20 05 12 82 38 12 82 44 12 80 B0 0E 15 11 81 01 01 02 1C
+  {
+    // Method begins at RVA 0x22ff
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method DefaultHtmlGenerator::GenerateCheckBox
+
+  .method /*060000D3*/ public hidebysig newslot virtual 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/ 
+          GenerateForm(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                       string actionName,
+                       string controllerName,
+                       object routeValues,
+                       string 'method',
+                       object htmlAttributes) cil managed
+  // SIG: 20 06 12 82 38 12 82 44 0E 0E 1C 0E 1C
+  {
+    // Method begins at RVA 0x2302
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method DefaultHtmlGenerator::GenerateForm
+
+  .method /*060000D4*/ family hidebysig newslot virtual 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/ 
+          GenerateFormCore(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                           string action,
+                           string 'method',
+                           object htmlAttributes) cil managed
+  // SIG: 20 04 12 82 38 12 82 44 0E 0E 1C
+  {
+    // Method begins at RVA 0x2305
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method DefaultHtmlGenerator::GenerateFormCore
+
+  .method /*060000D5*/ public hidebysig newslot virtual final 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          GenerateGroupsAndOptions(string optionLabel,
+                                   class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<class Microsoft.AspNetCore.Mvc.Rendering.SelectListItem/*0200008D*/> selectList) cil managed
+  // SIG: 20 02 12 80 D1 0E 15 12 80 D5 01 12 82 34
+  {
+    // Method begins at RVA 0x2308
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method DefaultHtmlGenerator::GenerateGroupsAndOptions
+
+  .method /*060000D6*/ public hidebysig newslot virtual 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/ 
+          GenerateHidden(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                         class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer,
+                         string expression,
+                         object 'value',
+                         bool useViewData,
+                         object htmlAttributes) cil managed
+  // SIG: 20 06 12 82 38 12 82 44 12 80 B0 0E 1C 02 1C
+  {
+    // Method begins at RVA 0x230b
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method DefaultHtmlGenerator::GenerateHidden
+
+  .method /*060000D7*/ public hidebysig newslot virtual 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/ 
+          GenerateHiddenForCheckbox(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                                    class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer,
+                                    string expression) cil managed
+  // SIG: 20 03 12 82 38 12 82 44 12 80 B0 0E
+  {
+    // Method begins at RVA 0x230e
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method DefaultHtmlGenerator::GenerateHiddenForCheckbox
+
+  .method /*060000D8*/ family hidebysig newslot virtual 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/ 
+          GenerateInput(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                        valuetype Microsoft.AspNetCore.Mvc.ViewFeatures.InputType/*02000027*/ inputType,
+                        class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer,
+                        string expression,
+                        object 'value',
+                        bool useViewData,
+                        bool isChecked,
+                        bool setId,
+                        bool isExplicitValue,
+                        string format,
+                        class [System.Runtime/*23000001*/]System.Collections.Generic.IDictionary`2/*01000055*/<string,object> htmlAttributes) cil managed
+  // SIG: 20 0B 12 82 38 12 82 44 11 80 9C 12 80 B0 0E 1C 02 02 02 02 0E 15 12 81 55 02 0E 1C
+  {
+    // Method begins at RVA 0x2311
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method DefaultHtmlGenerator::GenerateInput
+
+  .method /*060000D9*/ public hidebysig newslot virtual 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/ 
+          GenerateLabel(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                        class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer,
+                        string expression,
+                        string labelText,
+                        object htmlAttributes) cil managed
+  // SIG: 20 05 12 82 38 12 82 44 12 80 B0 0E 0E 1C
+  {
+    // Method begins at RVA 0x2314
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method DefaultHtmlGenerator::GenerateLabel
+
+  .method /*060000DA*/ family hidebysig newslot virtual 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/ 
+          GenerateLink(string linkText,
+                       string url,
+                       object htmlAttributes) cil managed
+  // SIG: 20 03 12 82 38 0E 0E 1C
+  {
+    // Method begins at RVA 0x2317
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method DefaultHtmlGenerator::GenerateLink
+
+  .method /*060000DB*/ public hidebysig newslot virtual 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/ 
+          GeneratePageForm(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                           string pageName,
+                           string pageHandler,
+                           object routeValues,
+                           string fragment,
+                           string 'method',
+                           object htmlAttributes) cil managed
+  // SIG: 20 07 12 82 38 12 82 44 0E 0E 1C 0E 0E 1C
+  {
+    // Method begins at RVA 0x231a
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method DefaultHtmlGenerator::GeneratePageForm
+
+  .method /*060000DC*/ public hidebysig newslot virtual 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/ 
+          GeneratePageLink(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                           string linkText,
+                           string pageName,
+                           string pageHandler,
+                           string protocol,
+                           string hostname,
+                           string fragment,
+                           object routeValues,
+                           object htmlAttributes) cil managed
+  // SIG: 20 09 12 82 38 12 82 44 0E 0E 0E 0E 0E 0E 1C 1C
+  {
+    // Method begins at RVA 0x231d
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method DefaultHtmlGenerator::GeneratePageLink
+
+  .method /*060000DD*/ public hidebysig newslot virtual 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/ 
+          GeneratePassword(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                           class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer,
+                           string expression,
+                           object 'value',
+                           object htmlAttributes) cil managed
+  // SIG: 20 05 12 82 38 12 82 44 12 80 B0 0E 1C 1C
+  {
+    // Method begins at RVA 0x2320
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method DefaultHtmlGenerator::GeneratePassword
+
+  .method /*060000DE*/ public hidebysig newslot virtual 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/ 
+          GenerateRadioButton(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                              class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer,
+                              string expression,
+                              object 'value',
+                              valuetype [System.Runtime/*23000001*/]System.Nullable`1/*01000040*/<bool> isChecked,
+                              object htmlAttributes) cil managed
+  // SIG: 20 06 12 82 38 12 82 44 12 80 B0 0E 1C 15 11 81 01 01 02 1C
+  {
+    // Method begins at RVA 0x2323
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method DefaultHtmlGenerator::GenerateRadioButton
+
+  .method /*060000DF*/ public hidebysig newslot virtual final 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/ 
+          GenerateRouteForm(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                            string routeName,
+                            object routeValues,
+                            string 'method',
+                            object htmlAttributes) cil managed
+  // SIG: 20 05 12 82 38 12 82 44 0E 1C 0E 1C
+  {
+    // Method begins at RVA 0x2326
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method DefaultHtmlGenerator::GenerateRouteForm
+
+  .method /*060000E0*/ public hidebysig newslot virtual 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/ 
+          GenerateRouteLink(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                            string linkText,
+                            string routeName,
+                            string protocol,
+                            string hostName,
+                            string fragment,
+                            object routeValues,
+                            object htmlAttributes) cil managed
+  // SIG: 20 08 12 82 38 12 82 44 0E 0E 0E 0E 0E 1C 1C
+  {
+    // Method begins at RVA 0x2329
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method DefaultHtmlGenerator::GenerateRouteLink
+
+  .method /*060000E1*/ public hidebysig newslot virtual final 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/ 
+          GenerateSelect(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                         class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer,
+                         string optionLabel,
+                         string expression,
+                         class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<class Microsoft.AspNetCore.Mvc.Rendering.SelectListItem/*0200008D*/> selectList,
+                         bool allowMultiple,
+                         object htmlAttributes) cil managed
+  // SIG: 20 07 12 82 38 12 82 44 12 80 B0 0E 0E 15 12 80 D5 01 12 82 34 02 1C
+  {
+    // Method begins at RVA 0x232c
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method DefaultHtmlGenerator::GenerateSelect
+
+  .method /*060000E2*/ public hidebysig newslot virtual 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/ 
+          GenerateSelect(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                         class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer,
+                         string optionLabel,
+                         string expression,
+                         class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<class Microsoft.AspNetCore.Mvc.Rendering.SelectListItem/*0200008D*/> selectList,
+                         class [System.Runtime/*23000001*/]System.Collections.Generic.ICollection`1/*01000054*/<string> currentValues,
+                         bool allowMultiple,
+                         object htmlAttributes) cil managed
+  // SIG: 20 08 12 82 38 12 82 44 12 80 B0 0E 0E 15 12 80 D5 01 12 82 34 15 12 81 51 01 0E 02 1C
+  {
+    // Method begins at RVA 0x232f
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method DefaultHtmlGenerator::GenerateSelect
+
+  .method /*060000E3*/ public hidebysig newslot virtual 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/ 
+          GenerateTextArea(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                           class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer,
+                           string expression,
+                           int32 rows,
+                           int32 columns,
+                           object htmlAttributes) cil managed
+  // SIG: 20 06 12 82 38 12 82 44 12 80 B0 0E 08 08 1C
+  {
+    // Method begins at RVA 0x2332
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method DefaultHtmlGenerator::GenerateTextArea
+
+  .method /*060000E4*/ public hidebysig newslot virtual 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/ 
+          GenerateTextBox(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                          class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer,
+                          string expression,
+                          object 'value',
+                          string format,
+                          object htmlAttributes) cil managed
+  // SIG: 20 06 12 82 38 12 82 44 12 80 B0 0E 1C 0E 1C
+  {
+    // Method begins at RVA 0x2335
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method DefaultHtmlGenerator::GenerateTextBox
+
+  .method /*060000E5*/ public hidebysig newslot virtual 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/ 
+          GenerateValidationMessage(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                                    class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer,
+                                    string expression,
+                                    string message,
+                                    string tag,
+                                    object htmlAttributes) cil managed
+  // SIG: 20 06 12 82 38 12 82 44 12 80 B0 0E 0E 0E 1C
+  {
+    // Method begins at RVA 0x2338
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method DefaultHtmlGenerator::GenerateValidationMessage
+
+  .method /*060000E6*/ public hidebysig newslot virtual 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/ 
+          GenerateValidationSummary(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                                    bool excludePropertyErrors,
+                                    string message,
+                                    string headerTag,
+                                    object htmlAttributes) cil managed
+  // SIG: 20 05 12 82 38 12 82 44 02 0E 0E 1C
+  {
+    // Method begins at RVA 0x233b
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method DefaultHtmlGenerator::GenerateValidationSummary
+
+  .method /*060000E7*/ public hidebysig newslot virtual 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.ICollection`1/*01000054*/<string> 
+          GetCurrentValues(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                           class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer,
+                           string expression,
+                           bool allowMultiple) cil managed
+  // SIG: 20 04 15 12 81 51 01 0E 12 82 44 12 80 B0 0E 02
+  {
+    // Method begins at RVA 0x233e
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method DefaultHtmlGenerator::GetCurrentValues
+
+  .property /*17000040*/ instance bool AllowRenderingMaxLengthAttribute()
+  {
+    .get instance bool Microsoft.AspNetCore.Mvc.ViewFeatures.DefaultHtmlGenerator/*0200001C*/::get_AllowRenderingMaxLengthAttribute() /* 060000C8 */
+  } // end of property DefaultHtmlGenerator::AllowRenderingMaxLengthAttribute
+  .property /*17000041*/ instance string IdAttributeDotReplacement()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.ViewFeatures.DefaultHtmlGenerator/*0200001C*/::get_IdAttributeDotReplacement() /* 060000C9 */
+  } // end of property DefaultHtmlGenerator::IdAttributeDotReplacement
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.DefaultHtmlGenerator
+
+.class /*0200001D*/ public abstract auto ansi sealed beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.DefaultHtmlGeneratorExtensions
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .custom /*0C000037:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+  .method /*060000E8*/ public hidebysig static 
+          class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/ 
+          GenerateForm(class Microsoft.AspNetCore.Mvc.ViewFeatures.IHtmlGenerator/*02000025*/ generator,
+                       class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                       string actionName,
+                       string controllerName,
+                       string fragment,
+                       object routeValues,
+                       string 'method',
+                       object htmlAttributes) cil managed
+  // SIG: 00 08 12 82 38 12 80 94 12 82 44 0E 0E 0E 1C 0E 1C
+  {
+    .custom /*0C0000B4:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2341
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method DefaultHtmlGeneratorExtensions::GenerateForm
+
+  .method /*060000E9*/ public hidebysig static 
+          class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/ 
+          GenerateRouteForm(class Microsoft.AspNetCore.Mvc.ViewFeatures.IHtmlGenerator/*02000025*/ generator,
+                            class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                            string routeName,
+                            object routeValues,
+                            string fragment,
+                            string 'method',
+                            object htmlAttributes) cil managed
+  // SIG: 00 07 12 82 38 12 80 94 12 82 44 0E 1C 0E 0E 1C
+  {
+    .custom /*0C0000B5:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2344
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method DefaultHtmlGeneratorExtensions::GenerateRouteForm
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.DefaultHtmlGeneratorExtensions
+
+.class /*0200001E*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.DefaultValidationHtmlAttributeProvider
+       extends Microsoft.AspNetCore.Mvc.ViewFeatures.ValidationHtmlAttributeProvider/*0200003A*/
+{
+  .method /*060000EA*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class [Microsoft.Extensions.Options/*23000005*/]Microsoft.Extensions.Options.IOptions`1/*01000019*/<class Microsoft.AspNetCore.Mvc.MvcViewOptions/*0200000C*/> optionsAccessor,
+                               class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.IModelMetadataProvider/*0100005A*/ metadataProvider,
+                               class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.ModelBinding.Validation.ClientValidatorCache/*0100005D*/ clientValidatorCache) cil managed
+  // SIG: 20 03 01 15 12 65 01 12 30 12 81 69 12 81 75
+  {
+    // Method begins at RVA 0x2347
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (06)0001D7       */ call       instance void Microsoft.AspNetCore.Mvc.ViewFeatures.ValidationHtmlAttributeProvider/*0200003A*/::.ctor() /* 060001D7 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method DefaultValidationHtmlAttributeProvider::.ctor
+
+  .method /*060000EB*/ public hidebysig virtual 
+          instance void  AddValidationAttributes(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                                                 class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer,
+                                                 class [System.Runtime/*23000001*/]System.Collections.Generic.IDictionary`2/*01000055*/<string,string> attributes) cil managed
+  // SIG: 20 03 01 12 82 44 12 80 B0 15 12 81 55 02 0E 0E
+  {
+    // Method begins at RVA 0x234f
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method DefaultValidationHtmlAttributeProvider::AddValidationAttributes
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.DefaultValidationHtmlAttributeProvider
+
+.class /*0200001F*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.FormContext
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .method /*060000EC*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x2351
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method FormContext::.ctor
+
+  .method /*060000ED*/ public hidebysig specialname 
+          instance bool  get_CanRenderAtEndOfForm() cil managed
+  // SIG: 20 00 02
+  {
+    .custom /*0C0000B6:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2359
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method FormContext::get_CanRenderAtEndOfForm
+
+  .method /*060000EE*/ public hidebysig specialname 
+          instance void  set_CanRenderAtEndOfForm(bool 'value') cil managed
+  // SIG: 20 01 01 02
+  {
+    .custom /*0C0000B7:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x235c
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method FormContext::set_CanRenderAtEndOfForm
+
+  .method /*060000EF*/ public hidebysig specialname 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.IList`1/*0100003A*/<class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/> 
+          get_EndOfFormContent() cil managed
+  // SIG: 20 00 15 12 80 E9 01 12 80 D1
+  {
+    // Method begins at RVA 0x235e
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method FormContext::get_EndOfFormContent
+
+  .method /*060000F0*/ public hidebysig specialname 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.IDictionary`2/*01000055*/<string,object> 
+          get_FormData() cil managed
+  // SIG: 20 00 15 12 81 55 02 0E 1C
+  {
+    // Method begins at RVA 0x2361
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method FormContext::get_FormData
+
+  .method /*060000F1*/ public hidebysig specialname 
+          instance bool  get_HasAntiforgeryToken() cil managed
+  // SIG: 20 00 02
+  {
+    .custom /*0C0000B8:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2364
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method FormContext::get_HasAntiforgeryToken
+
+  .method /*060000F2*/ public hidebysig specialname 
+          instance void  set_HasAntiforgeryToken(bool 'value') cil managed
+  // SIG: 20 01 01 02
+  {
+    .custom /*0C0000B9:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2367
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method FormContext::set_HasAntiforgeryToken
+
+  .method /*060000F3*/ public hidebysig specialname 
+          instance bool  get_HasEndOfFormContent() cil managed
+  // SIG: 20 00 02
+  {
+    // Method begins at RVA 0x2369
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method FormContext::get_HasEndOfFormContent
+
+  .method /*060000F4*/ public hidebysig specialname 
+          instance bool  get_HasFormData() cil managed
+  // SIG: 20 00 02
+  {
+    // Method begins at RVA 0x236c
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method FormContext::get_HasFormData
+
+  .method /*060000F5*/ public hidebysig instance bool 
+          RenderedField(string fieldName) cil managed
+  // SIG: 20 01 02 0E
+  {
+    // Method begins at RVA 0x236f
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method FormContext::RenderedField
+
+  .method /*060000F6*/ public hidebysig instance void 
+          RenderedField(string fieldName,
+                        bool 'value') cil managed
+  // SIG: 20 02 01 0E 02
+  {
+    // Method begins at RVA 0x2372
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method FormContext::RenderedField
+
+  .property /*17000042*/ instance bool CanRenderAtEndOfForm()
+  {
+    .get instance bool Microsoft.AspNetCore.Mvc.ViewFeatures.FormContext/*0200001F*/::get_CanRenderAtEndOfForm() /* 060000ED */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewFeatures.FormContext/*0200001F*/::set_CanRenderAtEndOfForm(bool) /* 060000EE */
+  } // end of property FormContext::CanRenderAtEndOfForm
+  .property /*17000043*/ instance class [System.Runtime/*23000001*/]System.Collections.Generic.IList`1/*0100003A*/<class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/>
+          EndOfFormContent()
+  {
+    .get instance class [System.Runtime/*23000001*/]System.Collections.Generic.IList`1/*0100003A*/<class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/> Microsoft.AspNetCore.Mvc.ViewFeatures.FormContext/*0200001F*/::get_EndOfFormContent() /* 060000EF */
+  } // end of property FormContext::EndOfFormContent
+  .property /*17000044*/ instance class [System.Runtime/*23000001*/]System.Collections.Generic.IDictionary`2/*01000055*/<string,object>
+          FormData()
+  {
+    .get instance class [System.Runtime/*23000001*/]System.Collections.Generic.IDictionary`2/*01000055*/<string,object> Microsoft.AspNetCore.Mvc.ViewFeatures.FormContext/*0200001F*/::get_FormData() /* 060000F0 */
+  } // end of property FormContext::FormData
+  .property /*17000045*/ instance bool HasAntiforgeryToken()
+  {
+    .get instance bool Microsoft.AspNetCore.Mvc.ViewFeatures.FormContext/*0200001F*/::get_HasAntiforgeryToken() /* 060000F1 */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewFeatures.FormContext/*0200001F*/::set_HasAntiforgeryToken(bool) /* 060000F2 */
+  } // end of property FormContext::HasAntiforgeryToken
+  .property /*17000046*/ instance bool HasEndOfFormContent()
+  {
+    .get instance bool Microsoft.AspNetCore.Mvc.ViewFeatures.FormContext/*0200001F*/::get_HasEndOfFormContent() /* 060000F3 */
+  } // end of property FormContext::HasEndOfFormContent
+  .property /*17000047*/ instance bool HasFormData()
+  {
+    .get instance bool Microsoft.AspNetCore.Mvc.ViewFeatures.FormContext/*0200001F*/::get_HasFormData() /* 060000F4 */
+  } // end of property FormContext::HasFormData
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.FormContext
+
+.class /*02000020*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.HtmlHelper
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+       implements Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/,
+                  Microsoft.AspNetCore.Mvc.ViewFeatures.IViewContextAware/*0200002B*/
+{
+  .field /*04000005*/ public static initonly string ValidationInputCssClassName
+  .field /*04000006*/ public static initonly string ValidationInputValidCssClassName
+  .field /*04000007*/ public static initonly string ValidationMessageCssClassName
+  .field /*04000008*/ public static initonly string ValidationMessageValidCssClassName
+  .field /*04000009*/ public static initonly string ValidationSummaryCssClassName
+  .field /*0400000A*/ public static initonly string ValidationSummaryValidCssClassName
+  .method /*060000F7*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class Microsoft.AspNetCore.Mvc.ViewFeatures.IHtmlGenerator/*02000025*/ htmlGenerator,
+                               class Microsoft.AspNetCore.Mvc.ViewEngines.ICompositeViewEngine/*0200005B*/ viewEngine,
+                               class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.IModelMetadataProvider/*0100005A*/ metadataProvider,
+                               class Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.IViewBufferScope/*02000052*/ bufferScope,
+                               class [System.Text.Encodings.Web/*23000015*/]System.Text.Encodings.Web.HtmlEncoder/*0100005C*/ htmlEncoder,
+                               class [System.Text.Encodings.Web/*23000015*/]System.Text.Encodings.Web.UrlEncoder/*0100005E*/ urlEncoder) cil managed
+  // SIG: 20 06 01 12 80 94 12 81 6C 12 81 69 12 81 48 12 81 71 12 81 79
+  {
+    // Method begins at RVA 0x2374
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method HtmlHelper::.ctor
+
+  .method /*060000F8*/ public hidebysig newslot specialname virtual final 
+          instance valuetype Microsoft.AspNetCore.Mvc.Rendering.Html5DateRenderingMode/*02000077*/ 
+          get_Html5DateRenderingMode() cil managed
+  // SIG: 20 00 11 81 DC
+  {
+    // Method begins at RVA 0x237c
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::get_Html5DateRenderingMode
+
+  .method /*060000F9*/ public hidebysig newslot specialname virtual final 
+          instance void  set_Html5DateRenderingMode(valuetype Microsoft.AspNetCore.Mvc.Rendering.Html5DateRenderingMode/*02000077*/ 'value') cil managed
+  // SIG: 20 01 01 11 81 DC
+  {
+    // Method begins at RVA 0x237f
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method HtmlHelper::set_Html5DateRenderingMode
+
+  .method /*060000FA*/ public hidebysig newslot specialname virtual final 
+          instance string  get_IdAttributeDotReplacement() cil managed
+  // SIG: 20 00 0E
+  {
+    // Method begins at RVA 0x2381
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::get_IdAttributeDotReplacement
+
+  .method /*060000FB*/ public hidebysig newslot specialname virtual final 
+          instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.IModelMetadataProvider/*0100005A*/ 
+          get_MetadataProvider() cil managed
+  // SIG: 20 00 12 81 69
+  {
+    .custom /*0C0000BA:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2384
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::get_MetadataProvider
+
+  .method /*060000FC*/ public hidebysig newslot specialname virtual final 
+          instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/ 
+          get_TempData() cil managed
+  // SIG: 20 00 12 80 A0
+  {
+    // Method begins at RVA 0x2387
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::get_TempData
+
+  .method /*060000FD*/ public hidebysig newslot specialname virtual final 
+          instance class [System.Text.Encodings.Web/*23000015*/]System.Text.Encodings.Web.UrlEncoder/*0100005E*/ 
+          get_UrlEncoder() cil managed
+  // SIG: 20 00 12 81 79
+  {
+    .custom /*0C0000BB:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x238a
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::get_UrlEncoder
+
+  .method /*060000FE*/ public hidebysig newslot specialname virtual final 
+          instance object  get_ViewBag() cil managed
+  // SIG: 20 00 1C
+  {
+    .param [0]/*0800014B*/ 
+    .custom /*0C0000C7:0A000015*/ instance void [System.Linq.Expressions/*2300000A*/]System.Runtime.CompilerServices.DynamicAttribute/*0100002A*/::.ctor() /* 0A000015 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x238d
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::get_ViewBag
+
+  .method /*060000FF*/ public hidebysig newslot specialname virtual final 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ 
+          get_ViewContext() cil managed
+  // SIG: 20 00 12 82 44
+  {
+    // Method begins at RVA 0x2390
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::get_ViewContext
+
+  .method /*06000100*/ public hidebysig newslot specialname virtual final 
+          instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ 
+          get_ViewData() cil managed
+  // SIG: 20 00 12 80 F4
+  {
+    // Method begins at RVA 0x2393
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::get_ViewData
+
+  .method /*06000101*/ public hidebysig newslot virtual final 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          ActionLink(string linkText,
+                     string actionName,
+                     string controllerName,
+                     string protocol,
+                     string hostname,
+                     string fragment,
+                     object routeValues,
+                     object htmlAttributes) cil managed
+  // SIG: 20 08 12 80 D1 0E 0E 0E 0E 0E 0E 1C 1C
+  {
+    // Method begins at RVA 0x2396
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::ActionLink
+
+  .method /*06000102*/ public hidebysig static 
+          class [System.Runtime/*23000001*/]System.Collections.Generic.IDictionary`2/*01000055*/<string,object> 
+          AnonymousObjectToHtmlAttributes(object htmlAttributes) cil managed
+  // SIG: 00 01 15 12 81 55 02 0E 1C 1C
+  {
+    // Method begins at RVA 0x2399
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::AnonymousObjectToHtmlAttributes
+
+  .method /*06000103*/ public hidebysig newslot virtual final 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          AntiForgeryToken() cil managed
+  // SIG: 20 00 12 80 D1
+  {
+    // Method begins at RVA 0x239c
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::AntiForgeryToken
+
+  .method /*06000104*/ public hidebysig newslot virtual final 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.MvcForm/*02000089*/ 
+          BeginForm(string actionName,
+                    string controllerName,
+                    object routeValues,
+                    valuetype Microsoft.AspNetCore.Mvc.Rendering.FormMethod/*02000076*/ 'method',
+                    valuetype [System.Runtime/*23000001*/]System.Nullable`1/*01000040*/<bool> antiforgery,
+                    object htmlAttributes) cil managed
+  // SIG: 20 06 12 82 24 0E 0E 1C 11 81 D8 15 11 81 01 01 02 1C
+  {
+    // Method begins at RVA 0x239f
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::BeginForm
+
+  .method /*06000105*/ public hidebysig newslot virtual final 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.MvcForm/*02000089*/ 
+          BeginRouteForm(string routeName,
+                         object routeValues,
+                         valuetype Microsoft.AspNetCore.Mvc.Rendering.FormMethod/*02000076*/ 'method',
+                         valuetype [System.Runtime/*23000001*/]System.Nullable`1/*01000040*/<bool> antiforgery,
+                         object htmlAttributes) cil managed
+  // SIG: 20 05 12 82 24 0E 1C 11 81 D8 15 11 81 01 01 02 1C
+  {
+    // Method begins at RVA 0x23a2
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::BeginRouteForm
+
+  .method /*06000106*/ public hidebysig newslot virtual final 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          CheckBox(string expression,
+                   valuetype [System.Runtime/*23000001*/]System.Nullable`1/*01000040*/<bool> isChecked,
+                   object htmlAttributes) cil managed
+  // SIG: 20 03 12 80 D1 0E 15 11 81 01 01 02 1C
+  {
+    // Method begins at RVA 0x23a5
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::CheckBox
+
+  .method /*06000107*/ public hidebysig newslot virtual 
+          instance void  Contextualize(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext) cil managed
+  // SIG: 20 01 01 12 82 44
+  {
+    // Method begins at RVA 0x23a8
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method HtmlHelper::Contextualize
+
+  .method /*06000108*/ family hidebysig newslot virtual 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.MvcForm/*02000089*/ 
+          CreateForm() cil managed
+  // SIG: 20 00 12 82 24
+  {
+    // Method begins at RVA 0x23aa
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::CreateForm
+
+  .method /*06000109*/ public hidebysig newslot virtual final 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          Display(string expression,
+                  string templateName,
+                  string htmlFieldName,
+                  object additionalViewData) cil managed
+  // SIG: 20 04 12 80 D1 0E 0E 0E 1C
+  {
+    // Method begins at RVA 0x23ad
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::Display
+
+  .method /*0600010A*/ public hidebysig newslot virtual final 
+          instance string  DisplayName(string expression) cil managed
+  // SIG: 20 01 0E 0E
+  {
+    // Method begins at RVA 0x23b0
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::DisplayName
+
+  .method /*0600010B*/ public hidebysig newslot virtual final 
+          instance string  DisplayText(string expression) cil managed
+  // SIG: 20 01 0E 0E
+  {
+    // Method begins at RVA 0x23b3
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::DisplayText
+
+  .method /*0600010C*/ public hidebysig newslot virtual final 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          DropDownList(string expression,
+                       class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<class Microsoft.AspNetCore.Mvc.Rendering.SelectListItem/*0200008D*/> selectList,
+                       string optionLabel,
+                       object htmlAttributes) cil managed
+  // SIG: 20 04 12 80 D1 0E 15 12 80 D5 01 12 82 34 0E 1C
+  {
+    // Method begins at RVA 0x23b6
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::DropDownList
+
+  .method /*0600010D*/ public hidebysig newslot virtual final 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          Editor(string expression,
+                 string templateName,
+                 string htmlFieldName,
+                 object additionalViewData) cil managed
+  // SIG: 20 04 12 80 D1 0E 0E 0E 1C
+  {
+    // Method begins at RVA 0x23b9
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::Editor
+
+  .method /*0600010E*/ public hidebysig newslot virtual final 
+          instance string  Encode(object 'value') cil managed
+  // SIG: 20 01 0E 1C
+  {
+    // Method begins at RVA 0x23bc
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::Encode
+
+  .method /*0600010F*/ public hidebysig newslot virtual final 
+          instance string  Encode(string 'value') cil managed
+  // SIG: 20 01 0E 0E
+  {
+    // Method begins at RVA 0x23bf
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::Encode
+
+  .method /*06000110*/ public hidebysig newslot virtual final 
+          instance void  EndForm() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x23c2
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method HtmlHelper::EndForm
+
+  .method /*06000111*/ public hidebysig newslot virtual final 
+          instance string  FormatValue(object 'value',
+                                       string format) cil managed
+  // SIG: 20 02 0E 1C 0E
+  {
+    // Method begins at RVA 0x23c4
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::FormatValue
+
+  .method /*06000112*/ family hidebysig newslot virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          GenerateCheckBox(class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer,
+                           string expression,
+                           valuetype [System.Runtime/*23000001*/]System.Nullable`1/*01000040*/<bool> isChecked,
+                           object htmlAttributes) cil managed
+  // SIG: 20 04 12 80 D1 12 80 B0 0E 15 11 81 01 01 02 1C
+  {
+    // Method begins at RVA 0x23c7
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::GenerateCheckBox
+
+  .method /*06000113*/ family hidebysig newslot virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          GenerateDisplay(class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer,
+                          string htmlFieldName,
+                          string templateName,
+                          object additionalViewData) cil managed
+  // SIG: 20 04 12 80 D1 12 80 B0 0E 0E 1C
+  {
+    // Method begins at RVA 0x23ca
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::GenerateDisplay
+
+  .method /*06000114*/ family hidebysig newslot virtual 
+          instance string  GenerateDisplayName(class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer,
+                                               string expression) cil managed
+  // SIG: 20 02 0E 12 80 B0 0E
+  {
+    // Method begins at RVA 0x23cd
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::GenerateDisplayName
+
+  .method /*06000115*/ family hidebysig newslot virtual 
+          instance string  GenerateDisplayText(class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer) cil managed
+  // SIG: 20 01 0E 12 80 B0
+  {
+    // Method begins at RVA 0x23d0
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::GenerateDisplayText
+
+  .method /*06000116*/ family hidebysig instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          GenerateDropDown(class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer,
+                           string expression,
+                           class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<class Microsoft.AspNetCore.Mvc.Rendering.SelectListItem/*0200008D*/> selectList,
+                           string optionLabel,
+                           object htmlAttributes) cil managed
+  // SIG: 20 05 12 80 D1 12 80 B0 0E 15 12 80 D5 01 12 82 34 0E 1C
+  {
+    // Method begins at RVA 0x23d3
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::GenerateDropDown
+
+  .method /*06000117*/ family hidebysig newslot virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          GenerateEditor(class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer,
+                         string htmlFieldName,
+                         string templateName,
+                         object additionalViewData) cil managed
+  // SIG: 20 04 12 80 D1 12 80 B0 0E 0E 1C
+  {
+    // Method begins at RVA 0x23d6
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::GenerateEditor
+
+  .method /*06000118*/ family hidebysig newslot virtual 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.MvcForm/*02000089*/ 
+          GenerateForm(string actionName,
+                       string controllerName,
+                       object routeValues,
+                       valuetype Microsoft.AspNetCore.Mvc.Rendering.FormMethod/*02000076*/ 'method',
+                       valuetype [System.Runtime/*23000001*/]System.Nullable`1/*01000040*/<bool> antiforgery,
+                       object htmlAttributes) cil managed
+  // SIG: 20 06 12 82 24 0E 0E 1C 11 81 D8 15 11 81 01 01 02 1C
+  {
+    // Method begins at RVA 0x23d9
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::GenerateForm
+
+  .method /*06000119*/ family hidebysig newslot virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          GenerateHidden(class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer,
+                         string expression,
+                         object 'value',
+                         bool useViewData,
+                         object htmlAttributes) cil managed
+  // SIG: 20 05 12 80 D1 12 80 B0 0E 1C 02 1C
+  {
+    // Method begins at RVA 0x23dc
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::GenerateHidden
+
+  .method /*0600011A*/ family hidebysig newslot virtual 
+          instance string  GenerateId(string expression) cil managed
+  // SIG: 20 01 0E 0E
+  {
+    // Method begins at RVA 0x23df
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::GenerateId
+
+  .method /*0600011B*/ public hidebysig newslot virtual final 
+          instance string  GenerateIdFromName(string fullName) cil managed
+  // SIG: 20 01 0E 0E
+  {
+    // Method begins at RVA 0x23e2
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::GenerateIdFromName
+
+  .method /*0600011C*/ family hidebysig newslot virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          GenerateLabel(class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer,
+                        string expression,
+                        string labelText,
+                        object htmlAttributes) cil managed
+  // SIG: 20 04 12 80 D1 12 80 B0 0E 0E 1C
+  {
+    // Method begins at RVA 0x23e5
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::GenerateLabel
+
+  .method /*0600011D*/ family hidebysig instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          GenerateListBox(class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer,
+                          string expression,
+                          class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<class Microsoft.AspNetCore.Mvc.Rendering.SelectListItem/*0200008D*/> selectList,
+                          object htmlAttributes) cil managed
+  // SIG: 20 04 12 80 D1 12 80 B0 0E 15 12 80 D5 01 12 82 34 1C
+  {
+    // Method begins at RVA 0x23e8
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::GenerateListBox
+
+  .method /*0600011E*/ family hidebysig newslot virtual 
+          instance string  GenerateName(string expression) cil managed
+  // SIG: 20 01 0E 0E
+  {
+    // Method begins at RVA 0x23eb
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::GenerateName
+
+  .method /*0600011F*/ family hidebysig newslot virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          GeneratePassword(class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer,
+                           string expression,
+                           object 'value',
+                           object htmlAttributes) cil managed
+  // SIG: 20 04 12 80 D1 12 80 B0 0E 1C 1C
+  {
+    // Method begins at RVA 0x23ee
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::GeneratePassword
+
+  .method /*06000120*/ family hidebysig newslot virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          GenerateRadioButton(class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer,
+                              string expression,
+                              object 'value',
+                              valuetype [System.Runtime/*23000001*/]System.Nullable`1/*01000040*/<bool> isChecked,
+                              object htmlAttributes) cil managed
+  // SIG: 20 05 12 80 D1 12 80 B0 0E 1C 15 11 81 01 01 02 1C
+  {
+    // Method begins at RVA 0x23f1
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::GenerateRadioButton
+
+  .method /*06000121*/ family hidebysig newslot virtual 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.MvcForm/*02000089*/ 
+          GenerateRouteForm(string routeName,
+                            object routeValues,
+                            valuetype Microsoft.AspNetCore.Mvc.Rendering.FormMethod/*02000076*/ 'method',
+                            valuetype [System.Runtime/*23000001*/]System.Nullable`1/*01000040*/<bool> antiforgery,
+                            object htmlAttributes) cil managed
+  // SIG: 20 05 12 82 24 0E 1C 11 81 D8 15 11 81 01 01 02 1C
+  {
+    // Method begins at RVA 0x23f4
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::GenerateRouteForm
+
+  .method /*06000122*/ family hidebysig newslot virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          GenerateTextArea(class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer,
+                           string expression,
+                           int32 rows,
+                           int32 columns,
+                           object htmlAttributes) cil managed
+  // SIG: 20 05 12 80 D1 12 80 B0 0E 08 08 1C
+  {
+    // Method begins at RVA 0x23f7
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::GenerateTextArea
+
+  .method /*06000123*/ family hidebysig newslot virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          GenerateTextBox(class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer,
+                          string expression,
+                          object 'value',
+                          string format,
+                          object htmlAttributes) cil managed
+  // SIG: 20 05 12 80 D1 12 80 B0 0E 1C 0E 1C
+  {
+    // Method begins at RVA 0x23fa
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::GenerateTextBox
+
+  .method /*06000124*/ family hidebysig newslot virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          GenerateValidationMessage(class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer,
+                                    string expression,
+                                    string message,
+                                    string tag,
+                                    object htmlAttributes) cil managed
+  // SIG: 20 05 12 80 D1 12 80 B0 0E 0E 0E 1C
+  {
+    // Method begins at RVA 0x23fd
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::GenerateValidationMessage
+
+  .method /*06000125*/ family hidebysig newslot virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          GenerateValidationSummary(bool excludePropertyErrors,
+                                    string message,
+                                    object htmlAttributes,
+                                    string tag) cil managed
+  // SIG: 20 04 12 80 D1 02 0E 1C 0E
+  {
+    // Method begins at RVA 0x2400
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::GenerateValidationSummary
+
+  .method /*06000126*/ family hidebysig newslot virtual 
+          instance string  GenerateValue(string expression,
+                                         object 'value',
+                                         string format,
+                                         bool useViewData) cil managed
+  // SIG: 20 04 0E 0E 1C 0E 02
+  {
+    // Method begins at RVA 0x2403
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::GenerateValue
+
+  .method /*06000127*/ family hidebysig newslot virtual 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<class Microsoft.AspNetCore.Mvc.Rendering.SelectListItem/*0200008D*/> 
+          GetEnumSelectList(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.ModelMetadata/*0100005F*/ metadata) cil managed
+  // SIG: 20 01 15 12 80 D5 01 12 82 34 12 81 7D
+  {
+    // Method begins at RVA 0x2406
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::GetEnumSelectList
+
+  .method /*06000128*/ public hidebysig newslot virtual final 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<class Microsoft.AspNetCore.Mvc.Rendering.SelectListItem/*0200008D*/> 
+          GetEnumSelectList(class [System.Runtime/*23000001*/]System.Type/*01000031*/ enumType) cil managed
+  // SIG: 20 01 15 12 80 D5 01 12 82 34 12 80 C5
+  {
+    // Method begins at RVA 0x2409
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::GetEnumSelectList
+
+  .method /*06000129*/ public hidebysig newslot virtual final 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<class Microsoft.AspNetCore.Mvc.Rendering.SelectListItem/*0200008D*/> 
+          GetEnumSelectList<valuetype .ctor ([System.Runtime/*23000001*/]System.ValueType/*01000057*/) TEnum>() cil managed
+  // SIG: 30 01 00 15 12 80 D5 01 12 82 34
+  {
+    // Method begins at RVA 0x240c
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::GetEnumSelectList
+
+  .method /*0600012A*/ public hidebysig static 
+          string  GetFormMethodString(valuetype Microsoft.AspNetCore.Mvc.Rendering.FormMethod/*02000076*/ 'method') cil managed
+  // SIG: 00 01 0E 11 81 D8
+  {
+    // Method begins at RVA 0x240f
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::GetFormMethodString
+
+  .method /*0600012B*/ public hidebysig newslot virtual final 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          Hidden(string expression,
+                 object 'value',
+                 object htmlAttributes) cil managed
+  // SIG: 20 03 12 80 D1 0E 1C 1C
+  {
+    // Method begins at RVA 0x2412
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::Hidden
+
+  .method /*0600012C*/ public hidebysig newslot virtual final 
+          instance string  Id(string expression) cil managed
+  // SIG: 20 01 0E 0E
+  {
+    // Method begins at RVA 0x2415
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::Id
+
+  .method /*0600012D*/ public hidebysig newslot virtual final 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          Label(string expression,
+                string labelText,
+                object htmlAttributes) cil managed
+  // SIG: 20 03 12 80 D1 0E 0E 1C
+  {
+    // Method begins at RVA 0x2418
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::Label
+
+  .method /*0600012E*/ public hidebysig newslot virtual final 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          ListBox(string expression,
+                  class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<class Microsoft.AspNetCore.Mvc.Rendering.SelectListItem/*0200008D*/> selectList,
+                  object htmlAttributes) cil managed
+  // SIG: 20 03 12 80 D1 0E 15 12 80 D5 01 12 82 34 1C
+  {
+    // Method begins at RVA 0x241b
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::ListBox
+
+  .method /*0600012F*/ public hidebysig newslot virtual final 
+          instance string  Name(string expression) cil managed
+  // SIG: 20 01 0E 0E
+  {
+    // Method begins at RVA 0x241e
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::Name
+
+  .method /*06000130*/ public hidebysig static 
+          class [System.Runtime/*23000001*/]System.Collections.Generic.IDictionary`2/*01000055*/<string,object> 
+          ObjectToDictionary(object 'value') cil managed
+  // SIG: 00 01 15 12 81 55 02 0E 1C 1C
+  {
+    // Method begins at RVA 0x2421
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::ObjectToDictionary
+
+  .method /*06000131*/ public hidebysig newslot virtual final 
+          instance class [System.Runtime/*23000001*/]System.Threading.Tasks.Task`1/*01000033*/<class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/> 
+          PartialAsync(string partialViewName,
+                       object model,
+                       class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ viewData) cil managed
+  // SIG: 20 03 15 12 80 CD 01 12 80 D1 0E 1C 12 80 F4
+  {
+    .custom /*0C0000BC:0A000019*/ instance void [System.Diagnostics.Debug/*23000011*/]System.Diagnostics.DebuggerStepThroughAttribute/*0100004F*/::.ctor() /* 0A000019 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2424
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::PartialAsync
+
+  .method /*06000132*/ public hidebysig newslot virtual final 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          Password(string expression,
+                   object 'value',
+                   object htmlAttributes) cil managed
+  // SIG: 20 03 12 80 D1 0E 1C 1C
+  {
+    // Method begins at RVA 0x2427
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::Password
+
+  .method /*06000133*/ public hidebysig newslot virtual final 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          RadioButton(string expression,
+                      object 'value',
+                      valuetype [System.Runtime/*23000001*/]System.Nullable`1/*01000040*/<bool> isChecked,
+                      object htmlAttributes) cil managed
+  // SIG: 20 04 12 80 D1 0E 1C 15 11 81 01 01 02 1C
+  {
+    // Method begins at RVA 0x242a
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::RadioButton
+
+  .method /*06000134*/ public hidebysig newslot virtual final 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          Raw(object 'value') cil managed
+  // SIG: 20 01 12 80 D1 1C
+  {
+    // Method begins at RVA 0x242d
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::Raw
+
+  .method /*06000135*/ public hidebysig newslot virtual final 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          Raw(string 'value') cil managed
+  // SIG: 20 01 12 80 D1 0E
+  {
+    // Method begins at RVA 0x2430
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::Raw
+
+  .method /*06000136*/ public hidebysig newslot virtual final 
+          instance class [System.Runtime/*23000001*/]System.Threading.Tasks.Task/*0100002F*/ 
+          RenderPartialAsync(string partialViewName,
+                             object model,
+                             class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ viewData) cil managed
+  // SIG: 20 03 12 80 BD 0E 1C 12 80 F4
+  {
+    // Method begins at RVA 0x2433
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::RenderPartialAsync
+
+  .method /*06000137*/ family hidebysig newslot virtual 
+          instance class [System.Runtime/*23000001*/]System.Threading.Tasks.Task/*0100002F*/ 
+          RenderPartialCoreAsync(string partialViewName,
+                                 object model,
+                                 class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ viewData,
+                                 class [System.Runtime.Extensions/*23000003*/]System.IO.TextWriter/*01000060*/ writer) cil managed
+  // SIG: 20 04 12 80 BD 0E 1C 12 80 F4 12 81 81
+  {
+    .custom /*0C0000BD:0A000019*/ instance void [System.Diagnostics.Debug/*23000011*/]System.Diagnostics.DebuggerStepThroughAttribute/*0100004F*/::.ctor() /* 0A000019 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2436
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::RenderPartialCoreAsync
+
+  .method /*06000138*/ public hidebysig newslot virtual final 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          RouteLink(string linkText,
+                    string routeName,
+                    string protocol,
+                    string hostName,
+                    string fragment,
+                    object routeValues,
+                    object htmlAttributes) cil managed
+  // SIG: 20 07 12 80 D1 0E 0E 0E 0E 0E 1C 1C
+  {
+    // Method begins at RVA 0x2439
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::RouteLink
+
+  .method /*06000139*/ public hidebysig newslot virtual final 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          TextArea(string expression,
+                   string 'value',
+                   int32 rows,
+                   int32 columns,
+                   object htmlAttributes) cil managed
+  // SIG: 20 05 12 80 D1 0E 0E 08 08 1C
+  {
+    // Method begins at RVA 0x243c
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::TextArea
+
+  .method /*0600013A*/ public hidebysig newslot virtual final 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          TextBox(string expression,
+                  object 'value',
+                  string format,
+                  object htmlAttributes) cil managed
+  // SIG: 20 04 12 80 D1 0E 1C 0E 1C
+  {
+    // Method begins at RVA 0x243f
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::TextBox
+
+  .method /*0600013B*/ public hidebysig newslot virtual final 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          ValidationMessage(string expression,
+                            string message,
+                            object htmlAttributes,
+                            string tag) cil managed
+  // SIG: 20 04 12 80 D1 0E 0E 1C 0E
+  {
+    // Method begins at RVA 0x2442
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::ValidationMessage
+
+  .method /*0600013C*/ public hidebysig newslot virtual final 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          ValidationSummary(bool excludePropertyErrors,
+                            string message,
+                            object htmlAttributes,
+                            string tag) cil managed
+  // SIG: 20 04 12 80 D1 02 0E 1C 0E
+  {
+    // Method begins at RVA 0x2445
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::ValidationSummary
+
+  .method /*0600013D*/ public hidebysig newslot virtual final 
+          instance string  Value(string expression,
+                                 string format) cil managed
+  // SIG: 20 02 0E 0E 0E
+  {
+    // Method begins at RVA 0x2448
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper::Value
+
+  .property /*17000048*/ instance valuetype Microsoft.AspNetCore.Mvc.Rendering.Html5DateRenderingMode/*02000077*/
+          Html5DateRenderingMode()
+  {
+    .get instance valuetype Microsoft.AspNetCore.Mvc.Rendering.Html5DateRenderingMode/*02000077*/ Microsoft.AspNetCore.Mvc.ViewFeatures.HtmlHelper/*02000020*/::get_Html5DateRenderingMode() /* 060000F8 */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewFeatures.HtmlHelper/*02000020*/::set_Html5DateRenderingMode(valuetype Microsoft.AspNetCore.Mvc.Rendering.Html5DateRenderingMode/*02000077*/) /* 060000F9 */
+  } // end of property HtmlHelper::Html5DateRenderingMode
+  .property /*17000049*/ instance string IdAttributeDotReplacement()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.ViewFeatures.HtmlHelper/*02000020*/::get_IdAttributeDotReplacement() /* 060000FA */
+  } // end of property HtmlHelper::IdAttributeDotReplacement
+  .property /*1700004A*/ instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.IModelMetadataProvider/*0100005A*/
+          MetadataProvider()
+  {
+    .get instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.IModelMetadataProvider/*0100005A*/ Microsoft.AspNetCore.Mvc.ViewFeatures.HtmlHelper/*02000020*/::get_MetadataProvider() /* 060000FB */
+  } // end of property HtmlHelper::MetadataProvider
+  .property /*1700004B*/ instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/
+          TempData()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/ Microsoft.AspNetCore.Mvc.ViewFeatures.HtmlHelper/*02000020*/::get_TempData() /* 060000FC */
+  } // end of property HtmlHelper::TempData
+  .property /*1700004C*/ instance class [System.Text.Encodings.Web/*23000015*/]System.Text.Encodings.Web.UrlEncoder/*0100005E*/
+          UrlEncoder()
+  {
+    .get instance class [System.Text.Encodings.Web/*23000015*/]System.Text.Encodings.Web.UrlEncoder/*0100005E*/ Microsoft.AspNetCore.Mvc.ViewFeatures.HtmlHelper/*02000020*/::get_UrlEncoder() /* 060000FD */
+  } // end of property HtmlHelper::UrlEncoder
+  .property /*1700004D*/ instance object ViewBag()
+  {
+    .custom /*0C000062:0A000015*/ instance void [System.Linq.Expressions/*2300000A*/]System.Runtime.CompilerServices.DynamicAttribute/*0100002A*/::.ctor() /* 0A000015 */ = ( 01 00 00 00 ) 
+    .get instance object Microsoft.AspNetCore.Mvc.ViewFeatures.HtmlHelper/*02000020*/::get_ViewBag() /* 060000FE */
+  } // end of property HtmlHelper::ViewBag
+  .property /*1700004E*/ instance class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/
+          ViewContext()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ Microsoft.AspNetCore.Mvc.ViewFeatures.HtmlHelper/*02000020*/::get_ViewContext() /* 060000FF */
+  } // end of property HtmlHelper::ViewContext
+  .property /*1700004F*/ instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/
+          ViewData()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ Microsoft.AspNetCore.Mvc.ViewFeatures.HtmlHelper/*02000020*/::get_ViewData() /* 06000100 */
+  } // end of property HtmlHelper::ViewData
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.HtmlHelper
+
+.class /*02000021*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.HtmlHelperOptions
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .method /*0600013E*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x244b
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method HtmlHelperOptions::.ctor
+
+  .method /*0600013F*/ public hidebysig specialname 
+          instance bool  get_ClientValidationEnabled() cil managed
+  // SIG: 20 00 02
+  {
+    .custom /*0C0000BE:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2453
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperOptions::get_ClientValidationEnabled
+
+  .method /*06000140*/ public hidebysig specialname 
+          instance void  set_ClientValidationEnabled(bool 'value') cil managed
+  // SIG: 20 01 01 02
+  {
+    .custom /*0C0000BF:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2456
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method HtmlHelperOptions::set_ClientValidationEnabled
+
+  .method /*06000141*/ public hidebysig specialname 
+          instance valuetype Microsoft.AspNetCore.Mvc.Rendering.Html5DateRenderingMode/*02000077*/ 
+          get_Html5DateRenderingMode() cil managed
+  // SIG: 20 00 11 81 DC
+  {
+    .custom /*0C0000C0:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2458
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperOptions::get_Html5DateRenderingMode
+
+  .method /*06000142*/ public hidebysig specialname 
+          instance void  set_Html5DateRenderingMode(valuetype Microsoft.AspNetCore.Mvc.Rendering.Html5DateRenderingMode/*02000077*/ 'value') cil managed
+  // SIG: 20 01 01 11 81 DC
+  {
+    .custom /*0C0000C1:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x245b
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method HtmlHelperOptions::set_Html5DateRenderingMode
+
+  .method /*06000143*/ public hidebysig specialname 
+          instance string  get_IdAttributeDotReplacement() cil managed
+  // SIG: 20 00 0E
+  {
+    // Method begins at RVA 0x245d
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperOptions::get_IdAttributeDotReplacement
+
+  .method /*06000144*/ public hidebysig specialname 
+          instance void  set_IdAttributeDotReplacement(string 'value') cil managed
+  // SIG: 20 01 01 0E
+  {
+    // Method begins at RVA 0x2460
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method HtmlHelperOptions::set_IdAttributeDotReplacement
+
+  .method /*06000145*/ public hidebysig specialname 
+          instance string  get_ValidationMessageElement() cil managed
+  // SIG: 20 00 0E
+  {
+    .custom /*0C0000C2:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2462
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperOptions::get_ValidationMessageElement
+
+  .method /*06000146*/ public hidebysig specialname 
+          instance void  set_ValidationMessageElement(string 'value') cil managed
+  // SIG: 20 01 01 0E
+  {
+    .custom /*0C0000C3:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2465
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method HtmlHelperOptions::set_ValidationMessageElement
+
+  .method /*06000147*/ public hidebysig specialname 
+          instance string  get_ValidationSummaryMessageElement() cil managed
+  // SIG: 20 00 0E
+  {
+    .custom /*0C0000C4:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2467
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperOptions::get_ValidationSummaryMessageElement
+
+  .method /*06000148*/ public hidebysig specialname 
+          instance void  set_ValidationSummaryMessageElement(string 'value') cil managed
+  // SIG: 20 01 01 0E
+  {
+    .custom /*0C0000C5:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x246a
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method HtmlHelperOptions::set_ValidationSummaryMessageElement
+
+  .property /*17000050*/ instance bool ClientValidationEnabled()
+  {
+    .get instance bool Microsoft.AspNetCore.Mvc.ViewFeatures.HtmlHelperOptions/*02000021*/::get_ClientValidationEnabled() /* 0600013F */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewFeatures.HtmlHelperOptions/*02000021*/::set_ClientValidationEnabled(bool) /* 06000140 */
+  } // end of property HtmlHelperOptions::ClientValidationEnabled
+  .property /*17000051*/ instance valuetype Microsoft.AspNetCore.Mvc.Rendering.Html5DateRenderingMode/*02000077*/
+          Html5DateRenderingMode()
+  {
+    .get instance valuetype Microsoft.AspNetCore.Mvc.Rendering.Html5DateRenderingMode/*02000077*/ Microsoft.AspNetCore.Mvc.ViewFeatures.HtmlHelperOptions/*02000021*/::get_Html5DateRenderingMode() /* 06000141 */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewFeatures.HtmlHelperOptions/*02000021*/::set_Html5DateRenderingMode(valuetype Microsoft.AspNetCore.Mvc.Rendering.Html5DateRenderingMode/*02000077*/) /* 06000142 */
+  } // end of property HtmlHelperOptions::Html5DateRenderingMode
+  .property /*17000052*/ instance string IdAttributeDotReplacement()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.ViewFeatures.HtmlHelperOptions/*02000021*/::get_IdAttributeDotReplacement() /* 06000143 */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewFeatures.HtmlHelperOptions/*02000021*/::set_IdAttributeDotReplacement(string) /* 06000144 */
+  } // end of property HtmlHelperOptions::IdAttributeDotReplacement
+  .property /*17000053*/ instance string ValidationMessageElement()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.ViewFeatures.HtmlHelperOptions/*02000021*/::get_ValidationMessageElement() /* 06000145 */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewFeatures.HtmlHelperOptions/*02000021*/::set_ValidationMessageElement(string) /* 06000146 */
+  } // end of property HtmlHelperOptions::ValidationMessageElement
+  .property /*17000054*/ instance string ValidationSummaryMessageElement()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.ViewFeatures.HtmlHelperOptions/*02000021*/::get_ValidationSummaryMessageElement() /* 06000147 */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewFeatures.HtmlHelperOptions/*02000021*/::set_ValidationSummaryMessageElement(string) /* 06000148 */
+  } // end of property HtmlHelperOptions::ValidationSummaryMessageElement
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.HtmlHelperOptions
+
+.class /*02000022*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.HtmlHelper`1<TModel>
+       extends Microsoft.AspNetCore.Mvc.ViewFeatures.HtmlHelper/*02000020*/
+       implements Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/,
+                  class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper`1/*02000086*/<!TModel>/*1B000008*/
+{
+  .method /*06000149*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class Microsoft.AspNetCore.Mvc.ViewFeatures.IHtmlGenerator/*02000025*/ htmlGenerator,
+                               class Microsoft.AspNetCore.Mvc.ViewEngines.ICompositeViewEngine/*0200005B*/ viewEngine,
+                               class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.IModelMetadataProvider/*0100005A*/ metadataProvider,
+                               class Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.IViewBufferScope/*02000052*/ bufferScope,
+                               class [System.Text.Encodings.Web/*23000015*/]System.Text.Encodings.Web.HtmlEncoder/*0100005C*/ htmlEncoder,
+                               class [System.Text.Encodings.Web/*23000015*/]System.Text.Encodings.Web.UrlEncoder/*0100005E*/ urlEncoder,
+                               class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExpressionProvider/*0200002F*/ modelExpressionProvider) cil managed
+  // SIG: 20 07 01 12 80 94 12 81 6C 12 81 69 12 81 48 12 81 71 12 81 79 12 80 BC
+  {
+    // Method begins at RVA 0x246c
+    // Code size       13 (0xd)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 14   |                  */ ldnull
+    IL_0002:  /* 14   |                  */ ldnull
+    IL_0003:  /* 14   |                  */ ldnull
+    IL_0004:  /* 14   |                  */ ldnull
+    IL_0005:  /* 14   |                  */ ldnull
+    IL_0006:  /* 14   |                  */ ldnull
+    IL_0007:  /* 28   | (06)0000F7       */ call       instance void Microsoft.AspNetCore.Mvc.ViewFeatures.HtmlHelper/*02000020*/::.ctor(class Microsoft.AspNetCore.Mvc.ViewFeatures.IHtmlGenerator/*02000025*/,
+                                                                                                                                         class Microsoft.AspNetCore.Mvc.ViewEngines.ICompositeViewEngine/*0200005B*/,
+                                                                                                                                         class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.IModelMetadataProvider/*0100005A*/,
+                                                                                                                                         class Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.IViewBufferScope/*02000052*/,
+                                                                                                                                         class [System.Text.Encodings.Web/*23000015*/]System.Text.Encodings.Web.HtmlEncoder/*0100005C*/,
+                                                                                                                                         class [System.Text.Encodings.Web/*23000015*/]System.Text.Encodings.Web.UrlEncoder/*0100005E*/) /* 060000F7 */
+    IL_000c:  /* 2A   |                  */ ret
+  } // end of method HtmlHelper`1::.ctor
+
+  .method /*0600014A*/ public hidebysig newslot specialname virtual final 
+          instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary`1/*02000040*/<!TModel> 
+          get_ViewData() cil managed
+  // SIG: 20 00 15 12 81 00 01 13 00
+  {
+    .custom /*0C0000C6:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x247a
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper`1::get_ViewData
+
+  .method /*0600014B*/ public hidebysig newslot virtual final 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          CheckBoxFor(class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!TModel,bool>> expression,
+                      object htmlAttributes) cil managed
+  // SIG: 20 02 12 80 D1 15 12 81 85 01 15 12 81 89 02 13 00 02 1C
+  {
+    // Method begins at RVA 0x247d
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper`1::CheckBoxFor
+
+  .method /*0600014C*/ public hidebysig virtual 
+          instance void  Contextualize(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext) cil managed
+  // SIG: 20 01 01 12 82 44
+  {
+    // Method begins at RVA 0x2480
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method HtmlHelper`1::Contextualize
+
+  .method /*0600014D*/ public hidebysig newslot virtual final 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          DisplayFor<TResult>(class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!TModel,!!TResult>> expression,
+                              string templateName,
+                              string htmlFieldName,
+                              object additionalViewData) cil managed
+  // SIG: 30 01 04 12 80 D1 15 12 81 85 01 15 12 81 89 02 13 00 1E 00 0E 0E 1C
+  {
+    // Method begins at RVA 0x2482
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper`1::DisplayFor
+
+  .method /*0600014E*/ public hidebysig newslot virtual final 
+          instance string  DisplayNameForInnerType<TModelItem,TResult>(class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!!TModelItem,!!TResult>> expression) cil managed
+  // SIG: 30 02 01 0E 15 12 81 85 01 15 12 81 89 02 1E 00 1E 01
+  {
+    // Method begins at RVA 0x2485
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper`1::DisplayNameForInnerType
+
+  .method /*0600014F*/ public hidebysig newslot virtual final 
+          instance string  DisplayNameFor<TResult>(class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!TModel,!!TResult>> expression) cil managed
+  // SIG: 30 01 01 0E 15 12 81 85 01 15 12 81 89 02 13 00 1E 00
+  {
+    // Method begins at RVA 0x2488
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper`1::DisplayNameFor
+
+  .method /*06000150*/ public hidebysig newslot virtual final 
+          instance string  DisplayTextFor<TResult>(class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!TModel,!!TResult>> expression) cil managed
+  // SIG: 30 01 01 0E 15 12 81 85 01 15 12 81 89 02 13 00 1E 00
+  {
+    // Method begins at RVA 0x248b
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper`1::DisplayTextFor
+
+  .method /*06000151*/ public hidebysig newslot virtual final 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          DropDownListFor<TResult>(class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!TModel,!!TResult>> expression,
+                                   class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<class Microsoft.AspNetCore.Mvc.Rendering.SelectListItem/*0200008D*/> selectList,
+                                   string optionLabel,
+                                   object htmlAttributes) cil managed
+  // SIG: 30 01 04 12 80 D1 15 12 81 85 01 15 12 81 89 02 13 00 1E 00 15 12 80 D5 01 12 82 34 0E 1C
+  {
+    // Method begins at RVA 0x248e
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper`1::DropDownListFor
+
+  .method /*06000152*/ public hidebysig newslot virtual final 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          EditorFor<TResult>(class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!TModel,!!TResult>> expression,
+                             string templateName,
+                             string htmlFieldName,
+                             object additionalViewData) cil managed
+  // SIG: 30 01 04 12 80 D1 15 12 81 85 01 15 12 81 89 02 13 00 1E 00 0E 0E 1C
+  {
+    // Method begins at RVA 0x2491
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper`1::EditorFor
+
+  .method /*06000153*/ family hidebysig instance string 
+          GetExpressionName<TResult>(class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!TModel,!!TResult>> expression) cil managed
+  // SIG: 30 01 01 0E 15 12 81 85 01 15 12 81 89 02 13 00 1E 00
+  {
+    // Method begins at RVA 0x2494
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper`1::GetExpressionName
+
+  .method /*06000154*/ family hidebysig instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ 
+          GetModelExplorer<TResult>(class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!TModel,!!TResult>> expression) cil managed
+  // SIG: 30 01 01 12 80 B0 15 12 81 85 01 15 12 81 89 02 13 00 1E 00
+  {
+    // Method begins at RVA 0x2497
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper`1::GetModelExplorer
+
+  .method /*06000155*/ public hidebysig newslot virtual final 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          HiddenFor<TResult>(class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!TModel,!!TResult>> expression,
+                             object htmlAttributes) cil managed
+  // SIG: 30 01 02 12 80 D1 15 12 81 85 01 15 12 81 89 02 13 00 1E 00 1C
+  {
+    // Method begins at RVA 0x249a
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper`1::HiddenFor
+
+  .method /*06000156*/ public hidebysig newslot virtual final 
+          instance string  IdFor<TResult>(class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!TModel,!!TResult>> expression) cil managed
+  // SIG: 30 01 01 0E 15 12 81 85 01 15 12 81 89 02 13 00 1E 00
+  {
+    // Method begins at RVA 0x249d
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper`1::IdFor
+
+  .method /*06000157*/ public hidebysig newslot virtual final 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          LabelFor<TResult>(class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!TModel,!!TResult>> expression,
+                            string labelText,
+                            object htmlAttributes) cil managed
+  // SIG: 30 01 03 12 80 D1 15 12 81 85 01 15 12 81 89 02 13 00 1E 00 0E 1C
+  {
+    // Method begins at RVA 0x24a0
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper`1::LabelFor
+
+  .method /*06000158*/ public hidebysig newslot virtual final 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          ListBoxFor<TResult>(class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!TModel,!!TResult>> expression,
+                              class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<class Microsoft.AspNetCore.Mvc.Rendering.SelectListItem/*0200008D*/> selectList,
+                              object htmlAttributes) cil managed
+  // SIG: 30 01 03 12 80 D1 15 12 81 85 01 15 12 81 89 02 13 00 1E 00 15 12 80 D5 01 12 82 34 1C
+  {
+    // Method begins at RVA 0x24a3
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper`1::ListBoxFor
+
+  .method /*06000159*/ public hidebysig newslot virtual final 
+          instance string  NameFor<TResult>(class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!TModel,!!TResult>> expression) cil managed
+  // SIG: 30 01 01 0E 15 12 81 85 01 15 12 81 89 02 13 00 1E 00
+  {
+    // Method begins at RVA 0x24a6
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper`1::NameFor
+
+  .method /*0600015A*/ public hidebysig newslot virtual final 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          PasswordFor<TResult>(class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!TModel,!!TResult>> expression,
+                               object htmlAttributes) cil managed
+  // SIG: 30 01 02 12 80 D1 15 12 81 85 01 15 12 81 89 02 13 00 1E 00 1C
+  {
+    // Method begins at RVA 0x24a9
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper`1::PasswordFor
+
+  .method /*0600015B*/ public hidebysig newslot virtual final 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          RadioButtonFor<TResult>(class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!TModel,!!TResult>> expression,
+                                  object 'value',
+                                  object htmlAttributes) cil managed
+  // SIG: 30 01 03 12 80 D1 15 12 81 85 01 15 12 81 89 02 13 00 1E 00 1C 1C
+  {
+    // Method begins at RVA 0x24ac
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper`1::RadioButtonFor
+
+  .method /*0600015C*/ public hidebysig newslot virtual final 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          TextAreaFor<TResult>(class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!TModel,!!TResult>> expression,
+                               int32 rows,
+                               int32 columns,
+                               object htmlAttributes) cil managed
+  // SIG: 30 01 04 12 80 D1 15 12 81 85 01 15 12 81 89 02 13 00 1E 00 08 08 1C
+  {
+    // Method begins at RVA 0x24af
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper`1::TextAreaFor
+
+  .method /*0600015D*/ public hidebysig newslot virtual final 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          TextBoxFor<TResult>(class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!TModel,!!TResult>> expression,
+                              string format,
+                              object htmlAttributes) cil managed
+  // SIG: 30 01 03 12 80 D1 15 12 81 85 01 15 12 81 89 02 13 00 1E 00 0E 1C
+  {
+    // Method begins at RVA 0x24b2
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper`1::TextBoxFor
+
+  .method /*0600015E*/ public hidebysig newslot virtual final 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          ValidationMessageFor<TResult>(class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!TModel,!!TResult>> expression,
+                                        string message,
+                                        object htmlAttributes,
+                                        string tag) cil managed
+  // SIG: 30 01 04 12 80 D1 15 12 81 85 01 15 12 81 89 02 13 00 1E 00 0E 1C 0E
+  {
+    // Method begins at RVA 0x24b5
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper`1::ValidationMessageFor
+
+  .method /*0600015F*/ public hidebysig newslot virtual final 
+          instance string  ValueFor<TResult>(class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!TModel,!!TResult>> expression,
+                                             string format) cil managed
+  // SIG: 30 01 02 0E 15 12 81 85 01 15 12 81 89 02 13 00 1E 00 0E
+  {
+    // Method begins at RVA 0x24b8
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelper`1::ValueFor
+
+  .property /*17000055*/ instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary`1/*02000040*/<!TModel>
+          ViewData()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary`1/*02000040*/<!TModel> Microsoft.AspNetCore.Mvc.ViewFeatures.HtmlHelper`1/*02000022*/::get_ViewData() /* 0600014A */
+  } // end of property HtmlHelper`1::ViewData
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.HtmlHelper`1
+
+.class /*02000023*/ interface public abstract auto ansi Microsoft.AspNetCore.Mvc.ViewFeatures.IAntiforgeryPolicy
+       implements [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.Filters.IFilterMetadata/*01000022*/
+{
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.IAntiforgeryPolicy
+
+.class /*02000024*/ interface public abstract auto ansi Microsoft.AspNetCore.Mvc.ViewFeatures.IFileVersionProvider
+{
+  .method /*06000160*/ public hidebysig newslot abstract virtual 
+          instance string  AddFileVersionToPath(valuetype [Microsoft.AspNetCore.Http.Abstractions/*2300000B*/]Microsoft.AspNetCore.Http.PathString/*01000063*/ requestPathBase,
+                                                string path) cil managed
+  // SIG: 20 02 0E 11 81 8D 0E
+  {
+    // Method begins at RVA 0x0
+  } // end of method IFileVersionProvider::AddFileVersionToPath
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.IFileVersionProvider
+
+.class /*02000025*/ interface public abstract auto ansi Microsoft.AspNetCore.Mvc.ViewFeatures.IHtmlGenerator
+{
+  .method /*06000161*/ public hidebysig newslot specialname abstract virtual 
+          instance string  get_IdAttributeDotReplacement() cil managed
+  // SIG: 20 00 0E
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlGenerator::get_IdAttributeDotReplacement
+
+  .method /*06000162*/ public hidebysig newslot abstract virtual 
+          instance string  Encode(object 'value') cil managed
+  // SIG: 20 01 0E 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlGenerator::Encode
+
+  .method /*06000163*/ public hidebysig newslot abstract virtual 
+          instance string  Encode(string 'value') cil managed
+  // SIG: 20 01 0E 0E
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlGenerator::Encode
+
+  .method /*06000164*/ public hidebysig newslot abstract virtual 
+          instance string  FormatValue(object 'value',
+                                       string format) cil managed
+  // SIG: 20 02 0E 1C 0E
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlGenerator::FormatValue
+
+  .method /*06000165*/ public hidebysig newslot abstract virtual 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/ 
+          GenerateActionLink(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                             string linkText,
+                             string actionName,
+                             string controllerName,
+                             string protocol,
+                             string hostname,
+                             string fragment,
+                             object routeValues,
+                             object htmlAttributes) cil managed
+  // SIG: 20 09 12 82 38 12 82 44 0E 0E 0E 0E 0E 0E 1C 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlGenerator::GenerateActionLink
+
+  .method /*06000166*/ public hidebysig newslot abstract virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          GenerateAntiforgery(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext) cil managed
+  // SIG: 20 01 12 80 D1 12 82 44
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlGenerator::GenerateAntiforgery
+
+  .method /*06000167*/ public hidebysig newslot abstract virtual 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/ 
+          GenerateCheckBox(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                           class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer,
+                           string expression,
+                           valuetype [System.Runtime/*23000001*/]System.Nullable`1/*01000040*/<bool> isChecked,
+                           object htmlAttributes) cil managed
+  // SIG: 20 05 12 82 38 12 82 44 12 80 B0 0E 15 11 81 01 01 02 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlGenerator::GenerateCheckBox
+
+  .method /*06000168*/ public hidebysig newslot abstract virtual 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/ 
+          GenerateForm(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                       string actionName,
+                       string controllerName,
+                       object routeValues,
+                       string 'method',
+                       object htmlAttributes) cil managed
+  // SIG: 20 06 12 82 38 12 82 44 0E 0E 1C 0E 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlGenerator::GenerateForm
+
+  .method /*06000169*/ public hidebysig newslot abstract virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          GenerateGroupsAndOptions(string optionLabel,
+                                   class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<class Microsoft.AspNetCore.Mvc.Rendering.SelectListItem/*0200008D*/> selectList) cil managed
+  // SIG: 20 02 12 80 D1 0E 15 12 80 D5 01 12 82 34
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlGenerator::GenerateGroupsAndOptions
+
+  .method /*0600016A*/ public hidebysig newslot abstract virtual 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/ 
+          GenerateHidden(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                         class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer,
+                         string expression,
+                         object 'value',
+                         bool useViewData,
+                         object htmlAttributes) cil managed
+  // SIG: 20 06 12 82 38 12 82 44 12 80 B0 0E 1C 02 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlGenerator::GenerateHidden
+
+  .method /*0600016B*/ public hidebysig newslot abstract virtual 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/ 
+          GenerateHiddenForCheckbox(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                                    class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer,
+                                    string expression) cil managed
+  // SIG: 20 03 12 82 38 12 82 44 12 80 B0 0E
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlGenerator::GenerateHiddenForCheckbox
+
+  .method /*0600016C*/ public hidebysig newslot abstract virtual 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/ 
+          GenerateLabel(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                        class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer,
+                        string expression,
+                        string labelText,
+                        object htmlAttributes) cil managed
+  // SIG: 20 05 12 82 38 12 82 44 12 80 B0 0E 0E 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlGenerator::GenerateLabel
+
+  .method /*0600016D*/ public hidebysig newslot abstract virtual 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/ 
+          GeneratePageForm(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                           string pageName,
+                           string pageHandler,
+                           object routeValues,
+                           string fragment,
+                           string 'method',
+                           object htmlAttributes) cil managed
+  // SIG: 20 07 12 82 38 12 82 44 0E 0E 1C 0E 0E 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlGenerator::GeneratePageForm
+
+  .method /*0600016E*/ public hidebysig newslot abstract virtual 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/ 
+          GeneratePageLink(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                           string linkText,
+                           string pageName,
+                           string pageHandler,
+                           string protocol,
+                           string hostname,
+                           string fragment,
+                           object routeValues,
+                           object htmlAttributes) cil managed
+  // SIG: 20 09 12 82 38 12 82 44 0E 0E 0E 0E 0E 0E 1C 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlGenerator::GeneratePageLink
+
+  .method /*0600016F*/ public hidebysig newslot abstract virtual 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/ 
+          GeneratePassword(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                           class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer,
+                           string expression,
+                           object 'value',
+                           object htmlAttributes) cil managed
+  // SIG: 20 05 12 82 38 12 82 44 12 80 B0 0E 1C 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlGenerator::GeneratePassword
+
+  .method /*06000170*/ public hidebysig newslot abstract virtual 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/ 
+          GenerateRadioButton(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                              class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer,
+                              string expression,
+                              object 'value',
+                              valuetype [System.Runtime/*23000001*/]System.Nullable`1/*01000040*/<bool> isChecked,
+                              object htmlAttributes) cil managed
+  // SIG: 20 06 12 82 38 12 82 44 12 80 B0 0E 1C 15 11 81 01 01 02 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlGenerator::GenerateRadioButton
+
+  .method /*06000171*/ public hidebysig newslot abstract virtual 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/ 
+          GenerateRouteForm(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                            string routeName,
+                            object routeValues,
+                            string 'method',
+                            object htmlAttributes) cil managed
+  // SIG: 20 05 12 82 38 12 82 44 0E 1C 0E 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlGenerator::GenerateRouteForm
+
+  .method /*06000172*/ public hidebysig newslot abstract virtual 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/ 
+          GenerateRouteLink(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                            string linkText,
+                            string routeName,
+                            string protocol,
+                            string hostName,
+                            string fragment,
+                            object routeValues,
+                            object htmlAttributes) cil managed
+  // SIG: 20 08 12 82 38 12 82 44 0E 0E 0E 0E 0E 1C 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlGenerator::GenerateRouteLink
+
+  .method /*06000173*/ public hidebysig newslot abstract virtual 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/ 
+          GenerateSelect(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                         class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer,
+                         string optionLabel,
+                         string expression,
+                         class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<class Microsoft.AspNetCore.Mvc.Rendering.SelectListItem/*0200008D*/> selectList,
+                         bool allowMultiple,
+                         object htmlAttributes) cil managed
+  // SIG: 20 07 12 82 38 12 82 44 12 80 B0 0E 0E 15 12 80 D5 01 12 82 34 02 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlGenerator::GenerateSelect
+
+  .method /*06000174*/ public hidebysig newslot abstract virtual 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/ 
+          GenerateSelect(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                         class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer,
+                         string optionLabel,
+                         string expression,
+                         class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<class Microsoft.AspNetCore.Mvc.Rendering.SelectListItem/*0200008D*/> selectList,
+                         class [System.Runtime/*23000001*/]System.Collections.Generic.ICollection`1/*01000054*/<string> currentValues,
+                         bool allowMultiple,
+                         object htmlAttributes) cil managed
+  // SIG: 20 08 12 82 38 12 82 44 12 80 B0 0E 0E 15 12 80 D5 01 12 82 34 15 12 81 51 01 0E 02 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlGenerator::GenerateSelect
+
+  .method /*06000175*/ public hidebysig newslot abstract virtual 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/ 
+          GenerateTextArea(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                           class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer,
+                           string expression,
+                           int32 rows,
+                           int32 columns,
+                           object htmlAttributes) cil managed
+  // SIG: 20 06 12 82 38 12 82 44 12 80 B0 0E 08 08 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlGenerator::GenerateTextArea
+
+  .method /*06000176*/ public hidebysig newslot abstract virtual 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/ 
+          GenerateTextBox(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                          class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer,
+                          string expression,
+                          object 'value',
+                          string format,
+                          object htmlAttributes) cil managed
+  // SIG: 20 06 12 82 38 12 82 44 12 80 B0 0E 1C 0E 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlGenerator::GenerateTextBox
+
+  .method /*06000177*/ public hidebysig newslot abstract virtual 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/ 
+          GenerateValidationMessage(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                                    class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer,
+                                    string expression,
+                                    string message,
+                                    string tag,
+                                    object htmlAttributes) cil managed
+  // SIG: 20 06 12 82 38 12 82 44 12 80 B0 0E 0E 0E 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlGenerator::GenerateValidationMessage
+
+  .method /*06000178*/ public hidebysig newslot abstract virtual 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/ 
+          GenerateValidationSummary(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                                    bool excludePropertyErrors,
+                                    string message,
+                                    string headerTag,
+                                    object htmlAttributes) cil managed
+  // SIG: 20 05 12 82 38 12 82 44 02 0E 0E 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlGenerator::GenerateValidationSummary
+
+  .method /*06000179*/ public hidebysig newslot abstract virtual 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.ICollection`1/*01000054*/<string> 
+          GetCurrentValues(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                           class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer,
+                           string expression,
+                           bool allowMultiple) cil managed
+  // SIG: 20 04 15 12 81 51 01 0E 12 82 44 12 80 B0 0E 02
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlGenerator::GetCurrentValues
+
+  .property /*17000056*/ instance string IdAttributeDotReplacement()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.ViewFeatures.IHtmlGenerator/*02000025*/::get_IdAttributeDotReplacement() /* 06000161 */
+  } // end of property IHtmlGenerator::IdAttributeDotReplacement
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.IHtmlGenerator
+
+.class /*02000026*/ interface public abstract auto ansi Microsoft.AspNetCore.Mvc.ViewFeatures.IModelExpressionProvider
+{
+  .method /*0600017A*/ public hidebysig newslot abstract virtual 
+          instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExpression/*0200002E*/ 
+          CreateModelExpression<TModel,TValue>(class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary`1/*02000040*/<!!TModel> viewData,
+                                               class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!!TModel,!!TValue>> expression) cil managed
+  // SIG: 30 02 02 12 80 B8 15 12 81 00 01 1E 00 15 12 81 85 01 15 12 81 89 02 1E 00 1E 01
+  {
+    // Method begins at RVA 0x0
+  } // end of method IModelExpressionProvider::CreateModelExpression
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.IModelExpressionProvider
+
+.class /*02000027*/ public auto ansi sealed Microsoft.AspNetCore.Mvc.ViewFeatures.InputType
+       extends [System.Runtime/*23000001*/]System.Enum/*01000064*/
+{
+  .field /*0400000B*/ public specialname rtspecialname int32 value__
+  .field /*0400000C*/ public static literal valuetype Microsoft.AspNetCore.Mvc.ViewFeatures.InputType/*02000027*/ CheckBox = int32(0x00000000)
+  .field /*0400000D*/ public static literal valuetype Microsoft.AspNetCore.Mvc.ViewFeatures.InputType/*02000027*/ Hidden = int32(0x00000001)
+  .field /*0400000E*/ public static literal valuetype Microsoft.AspNetCore.Mvc.ViewFeatures.InputType/*02000027*/ Password = int32(0x00000002)
+  .field /*0400000F*/ public static literal valuetype Microsoft.AspNetCore.Mvc.ViewFeatures.InputType/*02000027*/ Radio = int32(0x00000003)
+  .field /*04000010*/ public static literal valuetype Microsoft.AspNetCore.Mvc.ViewFeatures.InputType/*02000027*/ Text = int32(0x00000004)
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.InputType
+
+.class /*02000028*/ interface public abstract auto ansi Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary
+       implements class [System.Runtime/*23000001*/]System.Collections.Generic.ICollection`1/*01000054*/<valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object>>/*1B000009*/,
+                  class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object>>/*1B00000A*/,
+                  [System.Runtime/*23000001*/]System.Collections.IEnumerable/*01000038*/,
+                  class [System.Runtime/*23000001*/]System.Collections.Generic.IDictionary`2/*01000055*/<string,object>/*1B00000B*/
+{
+  .method /*0600017B*/ public hidebysig newslot abstract virtual 
+          instance void  Keep() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x0
+  } // end of method ITempDataDictionary::Keep
+
+  .method /*0600017C*/ public hidebysig newslot abstract virtual 
+          instance void  Keep(string key) cil managed
+  // SIG: 20 01 01 0E
+  {
+    // Method begins at RVA 0x0
+  } // end of method ITempDataDictionary::Keep
+
+  .method /*0600017D*/ public hidebysig newslot abstract virtual 
+          instance void  Load() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x0
+  } // end of method ITempDataDictionary::Load
+
+  .method /*0600017E*/ public hidebysig newslot abstract virtual 
+          instance object  Peek(string key) cil managed
+  // SIG: 20 01 1C 0E
+  {
+    // Method begins at RVA 0x0
+  } // end of method ITempDataDictionary::Peek
+
+  .method /*0600017F*/ public hidebysig newslot abstract virtual 
+          instance void  Save() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x0
+  } // end of method ITempDataDictionary::Save
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary
+
+.class /*02000029*/ interface public abstract auto ansi Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionaryFactory
+{
+  .method /*06000180*/ public hidebysig newslot abstract virtual 
+          instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/ 
+          GetTempData(class [Microsoft.AspNetCore.Http.Abstractions/*2300000B*/]Microsoft.AspNetCore.Http.HttpContext/*01000048*/ context) cil managed
+  // SIG: 20 01 12 80 A0 12 81 21
+  {
+    // Method begins at RVA 0x0
+  } // end of method ITempDataDictionaryFactory::GetTempData
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionaryFactory
+
+.class /*0200002A*/ interface public abstract auto ansi Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataProvider
+{
+  .method /*06000181*/ public hidebysig newslot abstract virtual 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.IDictionary`2/*01000055*/<string,object> 
+          LoadTempData(class [Microsoft.AspNetCore.Http.Abstractions/*2300000B*/]Microsoft.AspNetCore.Http.HttpContext/*01000048*/ context) cil managed
+  // SIG: 20 01 15 12 81 55 02 0E 1C 12 81 21
+  {
+    // Method begins at RVA 0x0
+  } // end of method ITempDataProvider::LoadTempData
+
+  .method /*06000182*/ public hidebysig newslot abstract virtual 
+          instance void  SaveTempData(class [Microsoft.AspNetCore.Http.Abstractions/*2300000B*/]Microsoft.AspNetCore.Http.HttpContext/*01000048*/ context,
+                                      class [System.Runtime/*23000001*/]System.Collections.Generic.IDictionary`2/*01000055*/<string,object> values) cil managed
+  // SIG: 20 02 01 12 81 21 15 12 81 55 02 0E 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method ITempDataProvider::SaveTempData
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataProvider
+
+.class /*0200002B*/ interface public abstract auto ansi Microsoft.AspNetCore.Mvc.ViewFeatures.IViewContextAware
+{
+  .method /*06000183*/ public hidebysig newslot abstract virtual 
+          instance void  Contextualize(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext) cil managed
+  // SIG: 20 01 01 12 82 44
+  {
+    // Method begins at RVA 0x0
+  } // end of method IViewContextAware::Contextualize
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.IViewContextAware
+
+.class /*0200002C*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .custom /*0C000049:0A00001F*/ instance void [System.Diagnostics.Debug/*23000011*/]System.Diagnostics.DebuggerDisplayAttribute/*01000065*/::.ctor(string) /* 0A00001F */ = ( 01 00 4B 44 65 63 6C 61 72 65 64 54 79 70 65 3D   // ..KDeclaredType=
+                                                                                                                                                                              7B 4D 65 74 61 64 61 74 61 2E 4D 6F 64 65 6C 54   // {Metadata.ModelT
+                                                                                                                                                                              79 70 65 2E 4E 61 6D 65 7D 20 50 72 6F 70 65 72   // ype.Name} Proper
+                                                                                                                                                                              74 79 4E 61 6D 65 3D 7B 4D 65 74 61 64 61 74 61   // tyName={Metadata
+                                                                                                                                                                              2E 50 72 6F 70 65 72 74 79 4E 61 6D 65 7D 00 00 ) // .PropertyName}..
+  .method /*06000184*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.IModelMetadataProvider/*0100005A*/ metadataProvider,
+                               class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.ModelMetadata/*0100005F*/ metadata,
+                               object model) cil managed
+  // SIG: 20 03 01 12 81 69 12 81 7D 1C
+  {
+    // Method begins at RVA 0x24bb
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ModelExplorer::.ctor
+
+  .method /*06000185*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.IModelMetadataProvider/*0100005A*/ metadataProvider,
+                               class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ container,
+                               class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.ModelMetadata/*0100005F*/ metadata,
+                               class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<object,object> modelAccessor) cil managed
+  // SIG: 20 04 01 12 81 69 12 80 B0 12 81 7D 15 12 81 89 02 1C 1C
+  {
+    // Method begins at RVA 0x24c3
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ModelExplorer::.ctor
+
+  .method /*06000186*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.IModelMetadataProvider/*0100005A*/ metadataProvider,
+                               class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ container,
+                               class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.ModelMetadata/*0100005F*/ metadata,
+                               object model) cil managed
+  // SIG: 20 04 01 12 81 69 12 80 B0 12 81 7D 1C
+  {
+    // Method begins at RVA 0x24cb
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ModelExplorer::.ctor
+
+  .method /*06000187*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ 
+          get_Container() cil managed
+  // SIG: 20 00 12 80 B0
+  {
+    .custom /*0C0000C8:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x24d3
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ModelExplorer::get_Container
+
+  .method /*06000188*/ public hidebysig specialname 
+          instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.ModelMetadata/*0100005F*/ 
+          get_Metadata() cil managed
+  // SIG: 20 00 12 81 7D
+  {
+    .custom /*0C0000C9:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x24d6
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ModelExplorer::get_Metadata
+
+  .method /*06000189*/ public hidebysig specialname 
+          instance object  get_Model() cil managed
+  // SIG: 20 00 1C
+  {
+    // Method begins at RVA 0x24d9
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ModelExplorer::get_Model
+
+  .method /*0600018A*/ public hidebysig specialname 
+          instance class [System.Runtime/*23000001*/]System.Type/*01000031*/ 
+          get_ModelType() cil managed
+  // SIG: 20 00 12 80 C5
+  {
+    // Method begins at RVA 0x24dc
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ModelExplorer::get_ModelType
+
+  .method /*0600018B*/ public hidebysig specialname 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/> 
+          get_Properties() cil managed
+  // SIG: 20 00 15 12 80 D5 01 12 80 B0
+  {
+    // Method begins at RVA 0x24df
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ModelExplorer::get_Properties
+
+  .method /*0600018C*/ public hidebysig instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ 
+          GetExplorerForExpression(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.ModelMetadata/*0100005F*/ metadata,
+                                   class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<object,object> modelAccessor) cil managed
+  // SIG: 20 02 12 80 B0 12 81 7D 15 12 81 89 02 1C 1C
+  {
+    // Method begins at RVA 0x24e2
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ModelExplorer::GetExplorerForExpression
+
+  .method /*0600018D*/ public hidebysig instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ 
+          GetExplorerForExpression(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.ModelMetadata/*0100005F*/ metadata,
+                                   object model) cil managed
+  // SIG: 20 02 12 80 B0 12 81 7D 1C
+  {
+    // Method begins at RVA 0x24e5
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ModelExplorer::GetExplorerForExpression
+
+  .method /*0600018E*/ public hidebysig instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ 
+          GetExplorerForExpression(class [System.Runtime/*23000001*/]System.Type/*01000031*/ modelType,
+                                   class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<object,object> modelAccessor) cil managed
+  // SIG: 20 02 12 80 B0 12 80 C5 15 12 81 89 02 1C 1C
+  {
+    // Method begins at RVA 0x24e8
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ModelExplorer::GetExplorerForExpression
+
+  .method /*0600018F*/ public hidebysig instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ 
+          GetExplorerForExpression(class [System.Runtime/*23000001*/]System.Type/*01000031*/ modelType,
+                                   object model) cil managed
+  // SIG: 20 02 12 80 B0 12 80 C5 1C
+  {
+    // Method begins at RVA 0x24eb
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ModelExplorer::GetExplorerForExpression
+
+  .method /*06000190*/ public hidebysig instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ 
+          GetExplorerForModel(object model) cil managed
+  // SIG: 20 01 12 80 B0 1C
+  {
+    // Method begins at RVA 0x24ee
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ModelExplorer::GetExplorerForModel
+
+  .method /*06000191*/ public hidebysig instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ 
+          GetExplorerForProperty(string name) cil managed
+  // SIG: 20 01 12 80 B0 0E
+  {
+    // Method begins at RVA 0x24f1
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ModelExplorer::GetExplorerForProperty
+
+  .method /*06000192*/ public hidebysig instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ 
+          GetExplorerForProperty(string name,
+                                 class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<object,object> modelAccessor) cil managed
+  // SIG: 20 02 12 80 B0 0E 15 12 81 89 02 1C 1C
+  {
+    // Method begins at RVA 0x24f4
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ModelExplorer::GetExplorerForProperty
+
+  .method /*06000193*/ public hidebysig instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ 
+          GetExplorerForProperty(string name,
+                                 object model) cil managed
+  // SIG: 20 02 12 80 B0 0E 1C
+  {
+    // Method begins at RVA 0x24f7
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ModelExplorer::GetExplorerForProperty
+
+  .property /*17000057*/ instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/
+          Container()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/::get_Container() /* 06000187 */
+  } // end of property ModelExplorer::Container
+  .property /*17000058*/ instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.ModelMetadata/*0100005F*/
+          Metadata()
+  {
+    .get instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.ModelMetadata/*0100005F*/ Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/::get_Metadata() /* 06000188 */
+  } // end of property ModelExplorer::Metadata
+  .property /*17000059*/ instance object Model()
+  {
+    .get instance object Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/::get_Model() /* 06000189 */
+  } // end of property ModelExplorer::Model
+  .property /*1700005A*/ instance class [System.Runtime/*23000001*/]System.Type/*01000031*/
+          ModelType()
+  {
+    .get instance class [System.Runtime/*23000001*/]System.Type/*01000031*/ Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/::get_ModelType() /* 0600018A */
+  } // end of property ModelExplorer::ModelType
+  .property /*1700005B*/ instance class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/>
+          Properties()
+  {
+    .get instance class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/> Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/::get_Properties() /* 0600018B */
+  } // end of property ModelExplorer::Properties
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer
+
+.class /*0200002D*/ public abstract auto ansi sealed beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorerExtensions
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .custom /*0C00004B:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+  .method /*06000194*/ public hidebysig static 
+          string  GetSimpleDisplayText(class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer) cil managed
+  // SIG: 00 01 0E 12 80 B0
+  {
+    .custom /*0C0000CA:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x24fa
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ModelExplorerExtensions::GetSimpleDisplayText
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorerExtensions
+
+.class /*0200002E*/ public auto ansi sealed beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExpression
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .method /*06000195*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(string name,
+                               class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer) cil managed
+  // SIG: 20 02 01 0E 12 80 B0
+  {
+    // Method begins at RVA 0x24fd
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ModelExpression::.ctor
+
+  .method /*06000196*/ public hidebysig specialname 
+          instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.ModelMetadata/*0100005F*/ 
+          get_Metadata() cil managed
+  // SIG: 20 00 12 81 7D
+  {
+    // Method begins at RVA 0x2505
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ModelExpression::get_Metadata
+
+  .method /*06000197*/ public hidebysig specialname 
+          instance object  get_Model() cil managed
+  // SIG: 20 00 1C
+  {
+    // Method begins at RVA 0x2508
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ModelExpression::get_Model
+
+  .method /*06000198*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ 
+          get_ModelExplorer() cil managed
+  // SIG: 20 00 12 80 B0
+  {
+    .custom /*0C0000CB:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x250b
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ModelExpression::get_ModelExplorer
+
+  .method /*06000199*/ public hidebysig specialname 
+          instance string  get_Name() cil managed
+  // SIG: 20 00 0E
+  {
+    .custom /*0C0000CC:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x250e
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ModelExpression::get_Name
+
+  .property /*1700005C*/ instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.ModelMetadata/*0100005F*/
+          Metadata()
+  {
+    .get instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.ModelMetadata/*0100005F*/ Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExpression/*0200002E*/::get_Metadata() /* 06000196 */
+  } // end of property ModelExpression::Metadata
+  .property /*1700005D*/ instance object Model()
+  {
+    .get instance object Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExpression/*0200002E*/::get_Model() /* 06000197 */
+  } // end of property ModelExpression::Model
+  .property /*1700005E*/ instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/
+          ModelExplorer()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExpression/*0200002E*/::get_ModelExplorer() /* 06000198 */
+  } // end of property ModelExpression::ModelExplorer
+  .property /*1700005F*/ instance string Name()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExpression/*0200002E*/::get_Name() /* 06000199 */
+  } // end of property ModelExpression::Name
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExpression
+
+.class /*0200002F*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExpressionProvider
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+       implements Microsoft.AspNetCore.Mvc.ViewFeatures.IModelExpressionProvider/*02000026*/
+{
+  .method /*0600019A*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.IModelMetadataProvider/*0100005A*/ modelMetadataProvider) cil managed
+  // SIG: 20 01 01 12 81 69
+  {
+    // Method begins at RVA 0x2511
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ModelExpressionProvider::.ctor
+
+  .method /*0600019B*/ public hidebysig instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExpression/*0200002E*/ 
+          CreateModelExpression<TModel>(class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary`1/*02000040*/<!!TModel> viewData,
+                                        string expression) cil managed
+  // SIG: 30 01 02 12 80 B8 15 12 81 00 01 1E 00 0E
+  {
+    // Method begins at RVA 0x2519
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ModelExpressionProvider::CreateModelExpression
+
+  .method /*0600019C*/ public hidebysig newslot virtual final 
+          instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExpression/*0200002E*/ 
+          CreateModelExpression<TModel,TValue>(class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary`1/*02000040*/<!!TModel> viewData,
+                                               class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!!TModel,!!TValue>> expression) cil managed
+  // SIG: 30 02 02 12 80 B8 15 12 81 00 01 1E 00 15 12 81 85 01 15 12 81 89 02 1E 00 1E 01
+  {
+    // Method begins at RVA 0x251c
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ModelExpressionProvider::CreateModelExpression
+
+  .method /*0600019D*/ public hidebysig instance string 
+          GetExpressionText<TModel,TValue>(class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!!TModel,!!TValue>> expression) cil managed
+  // SIG: 30 02 01 0E 15 12 81 85 01 15 12 81 89 02 1E 00 1E 01
+  {
+    // Method begins at RVA 0x251f
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ModelExpressionProvider::GetExpressionText
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExpressionProvider
+
+.class /*02000030*/ public abstract auto ansi sealed beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.ModelMetadataProviderExtensions
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .custom /*0C00004C:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+  .method /*0600019E*/ public hidebysig static 
+          class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ 
+          GetModelExplorerForType(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.IModelMetadataProvider/*0100005A*/ provider,
+                                  class [System.Runtime/*23000001*/]System.Type/*01000031*/ modelType,
+                                  object model) cil managed
+  // SIG: 00 03 12 80 B0 12 81 69 12 80 C5 1C
+  {
+    .custom /*0C0000CD:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2522
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ModelMetadataProviderExtensions::GetModelExplorerForType
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelMetadataProviderExtensions
+
+.class /*02000031*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.PartialViewResultExecutor
+       extends Microsoft.AspNetCore.Mvc.ViewFeatures.ViewExecutor/*02000043*/
+       implements class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.Infrastructure.IActionResultExecutor`1/*01000066*/<class Microsoft.AspNetCore.Mvc.PartialViewResult/*0200000E*/>/*1B00000C*/
+{
+  .method /*0600019F*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class [Microsoft.Extensions.Options/*23000005*/]Microsoft.Extensions.Options.IOptions`1/*01000019*/<class Microsoft.AspNetCore.Mvc.MvcViewOptions/*0200000C*/> viewOptions,
+                               class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.Infrastructure.IHttpResponseStreamWriterFactory/*01000067*/ writerFactory,
+                               class Microsoft.AspNetCore.Mvc.ViewEngines.ICompositeViewEngine/*0200005B*/ viewEngine,
+                               class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionaryFactory/*02000029*/ tempDataFactory,
+                               class [System.Diagnostics.DiagnosticSource/*23000016*/]System.Diagnostics.DiagnosticListener/*01000068*/ diagnosticListener,
+                               class [Microsoft.Extensions.Logging.Abstractions/*23000014*/]Microsoft.Extensions.Logging.ILoggerFactory/*01000059*/ loggerFactory,
+                               class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.IModelMetadataProvider/*0100005A*/ modelMetadataProvider) cil managed
+  // SIG: 20 07 01 15 12 65 01 12 30 12 81 9D 12 81 6C 12 80 A4 12 81 A1 12 81 65 12 81 69
+  {
+    // Method begins at RVA 0x2525
+    // Code size       13 (0xd)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 14   |                  */ ldnull
+    IL_0002:  /* 14   |                  */ ldnull
+    IL_0003:  /* 14   |                  */ ldnull
+    IL_0004:  /* 14   |                  */ ldnull
+    IL_0005:  /* 14   |                  */ ldnull
+    IL_0006:  /* 14   |                  */ ldnull
+    IL_0007:  /* 28   | (06)000214       */ call       instance void Microsoft.AspNetCore.Mvc.ViewFeatures.ViewExecutor/*02000043*/::.ctor(class [Microsoft.Extensions.Options/*23000005*/]Microsoft.Extensions.Options.IOptions`1/*01000019*/<class Microsoft.AspNetCore.Mvc.MvcViewOptions/*0200000C*/>,
+                                                                                                                                           class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.Infrastructure.IHttpResponseStreamWriterFactory/*01000067*/,
+                                                                                                                                           class Microsoft.AspNetCore.Mvc.ViewEngines.ICompositeViewEngine/*0200005B*/,
+                                                                                                                                           class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionaryFactory/*02000029*/,
+                                                                                                                                           class [System.Diagnostics.DiagnosticSource/*23000016*/]System.Diagnostics.DiagnosticListener/*01000068*/,
+                                                                                                                                           class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.IModelMetadataProvider/*0100005A*/) /* 06000214 */
+    IL_000c:  /* 2A   |                  */ ret
+  } // end of method PartialViewResultExecutor::.ctor
+
+  .method /*060001A0*/ family hidebysig specialname 
+          instance class [Microsoft.Extensions.Logging.Abstractions/*23000014*/]Microsoft.Extensions.Logging.ILogger/*01000069*/ 
+          get_Logger() cil managed
+  // SIG: 20 00 12 81 A5
+  {
+    .custom /*0C0000CE:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2533
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method PartialViewResultExecutor::get_Logger
+
+  .method /*060001A1*/ public hidebysig newslot virtual 
+          instance class [System.Runtime/*23000001*/]System.Threading.Tasks.Task/*0100002F*/ 
+          ExecuteAsync(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ActionContext/*01000041*/ context,
+                       class Microsoft.AspNetCore.Mvc.PartialViewResult/*0200000E*/ result) cil managed
+  // SIG: 20 02 12 80 BD 12 81 05 12 38
+  {
+    .custom /*0C0000CF:0A000019*/ instance void [System.Diagnostics.Debug/*23000011*/]System.Diagnostics.DebuggerStepThroughAttribute/*0100004F*/::.ctor() /* 0A000019 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2536
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method PartialViewResultExecutor::ExecuteAsync
+
+  .method /*060001A2*/ public hidebysig newslot virtual 
+          instance class [System.Runtime/*23000001*/]System.Threading.Tasks.Task/*0100002F*/ 
+          ExecuteAsync(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ActionContext/*01000041*/ actionContext,
+                       class Microsoft.AspNetCore.Mvc.ViewEngines.IView/*0200005C*/ view,
+                       class Microsoft.AspNetCore.Mvc.PartialViewResult/*0200000E*/ viewResult) cil managed
+  // SIG: 20 03 12 80 BD 12 81 05 12 81 70 12 38
+  {
+    // Method begins at RVA 0x2539
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method PartialViewResultExecutor::ExecuteAsync
+
+  .method /*060001A3*/ public hidebysig newslot virtual 
+          instance class Microsoft.AspNetCore.Mvc.ViewEngines.ViewEngineResult/*0200005E*/ 
+          FindView(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ActionContext/*01000041*/ actionContext,
+                   class Microsoft.AspNetCore.Mvc.PartialViewResult/*0200000E*/ viewResult) cil managed
+  // SIG: 20 02 12 81 78 12 81 05 12 38
+  {
+    // Method begins at RVA 0x253c
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method PartialViewResultExecutor::FindView
+
+  .property /*17000060*/ instance class [Microsoft.Extensions.Logging.Abstractions/*23000014*/]Microsoft.Extensions.Logging.ILogger/*01000069*/
+          Logger()
+  {
+    .get instance class [Microsoft.Extensions.Logging.Abstractions/*23000014*/]Microsoft.Extensions.Logging.ILogger/*01000069*/ Microsoft.AspNetCore.Mvc.ViewFeatures.PartialViewResultExecutor/*02000031*/::get_Logger() /* 060001A0 */
+  } // end of property PartialViewResultExecutor::Logger
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.PartialViewResultExecutor
+
+.class /*02000032*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.SaveTempDataAttribute
+       extends [System.Runtime/*23000001*/]System.Attribute/*01000020*/
+       implements [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.Filters.IFilterFactory/*01000021*/,
+                  [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.Filters.IFilterMetadata/*01000022*/,
+                  [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.Filters.IOrderedFilter/*01000023*/
+{
+  .custom /*0C00004E:0A000013*/ instance void [System.Runtime/*23000001*/]System.AttributeUsageAttribute/*0100001F*/::.ctor(valuetype [System.Runtime/*23000001*/]System.AttributeTargets/*0100001E*/) /* 0A000013 */ = ( 01 00 44 00 00 00 02 00 54 02 0D 41 6C 6C 6F 77   // ..D.....T..Allow
+                                                                                                                                                                                                                          4D 75 6C 74 69 70 6C 65 00 54 02 09 49 6E 68 65   // Multiple.T..Inhe
+                                                                                                                                                                                                                          72 69 74 65 64 01 )                               // rited.
+  .method /*060001A4*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x253f
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000029       */ call       instance void [System.Runtime/*23000001*/]System.Attribute/*01000020*/::.ctor() /* 0A000029 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method SaveTempDataAttribute::.ctor
+
+  .method /*060001A5*/ public hidebysig newslot specialname virtual final 
+          instance bool  get_IsReusable() cil managed
+  // SIG: 20 00 02
+  {
+    // Method begins at RVA 0x2547
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method SaveTempDataAttribute::get_IsReusable
+
+  .method /*060001A6*/ public hidebysig newslot specialname virtual final 
+          instance int32  get_Order() cil managed
+  // SIG: 20 00 08
+  {
+    .custom /*0C0000D0:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x254a
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method SaveTempDataAttribute::get_Order
+
+  .method /*060001A7*/ public hidebysig specialname 
+          instance void  set_Order(int32 'value') cil managed
+  // SIG: 20 01 01 08
+  {
+    .custom /*0C0000D1:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x254d
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method SaveTempDataAttribute::set_Order
+
+  .method /*060001A8*/ public hidebysig newslot virtual final 
+          instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.Filters.IFilterMetadata/*01000022*/ 
+          CreateInstance(class [System.ComponentModel/*23000009*/]System.IServiceProvider/*01000025*/ serviceProvider) cil managed
+  // SIG: 20 01 12 80 89 12 80 95
+  {
+    // Method begins at RVA 0x254f
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method SaveTempDataAttribute::CreateInstance
+
+  .property /*17000061*/ instance bool IsReusable()
+  {
+    .get instance bool Microsoft.AspNetCore.Mvc.ViewFeatures.SaveTempDataAttribute/*02000032*/::get_IsReusable() /* 060001A5 */
+  } // end of property SaveTempDataAttribute::IsReusable
+  .property /*17000062*/ instance int32 Order()
+  {
+    .get instance int32 Microsoft.AspNetCore.Mvc.ViewFeatures.SaveTempDataAttribute/*02000032*/::get_Order() /* 060001A6 */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewFeatures.SaveTempDataAttribute/*02000032*/::set_Order(int32) /* 060001A7 */
+  } // end of property SaveTempDataAttribute::Order
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.SaveTempDataAttribute
+
+.class /*02000033*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.SessionStateTempDataProvider
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+       implements Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataProvider/*0200002A*/
+{
+  .method /*060001A9*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class Microsoft.AspNetCore.Mvc.ViewFeatures.Infrastructure.TempDataSerializer/*02000050*/ tempDataSerializer) cil managed
+  // SIG: 20 01 01 12 81 40
+  {
+    // Method begins at RVA 0x2552
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method SessionStateTempDataProvider::.ctor
+
+  .method /*060001AA*/ public hidebysig newslot virtual 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.IDictionary`2/*01000055*/<string,object> 
+          LoadTempData(class [Microsoft.AspNetCore.Http.Abstractions/*2300000B*/]Microsoft.AspNetCore.Http.HttpContext/*01000048*/ context) cil managed
+  // SIG: 20 01 15 12 81 55 02 0E 1C 12 81 21
+  {
+    // Method begins at RVA 0x255a
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method SessionStateTempDataProvider::LoadTempData
+
+  .method /*060001AB*/ public hidebysig newslot virtual 
+          instance void  SaveTempData(class [Microsoft.AspNetCore.Http.Abstractions/*2300000B*/]Microsoft.AspNetCore.Http.HttpContext/*01000048*/ context,
+                                      class [System.Runtime/*23000001*/]System.Collections.Generic.IDictionary`2/*01000055*/<string,object> values) cil managed
+  // SIG: 20 02 01 12 81 21 15 12 81 55 02 0E 1C
+  {
+    // Method begins at RVA 0x255d
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method SessionStateTempDataProvider::SaveTempData
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.SessionStateTempDataProvider
+
+.class /*02000034*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.StringHtmlContent
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+       implements [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/
+{
+  .custom /*0C000050:0A00001F*/ instance void [System.Diagnostics.Debug/*23000011*/]System.Diagnostics.DebuggerDisplayAttribute/*01000065*/::.ctor(string) /* 0A00001F */ = ( 01 00 14 7B 44 65 62 75 67 67 65 72 54 6F 53 74   // ...{DebuggerToSt
+                                                                                                                                                                              72 69 6E 67 28 29 7D 00 00 )                      // ring()}..
+  .method /*060001AC*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(string input) cil managed
+  // SIG: 20 01 01 0E
+  {
+    // Method begins at RVA 0x255f
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method StringHtmlContent::.ctor
+
+  .method /*060001AD*/ public hidebysig newslot virtual final 
+          instance void  WriteTo(class [System.Runtime.Extensions/*23000003*/]System.IO.TextWriter/*01000060*/ writer,
+                                 class [System.Text.Encodings.Web/*23000015*/]System.Text.Encodings.Web.HtmlEncoder/*0100005C*/ encoder) cil managed
+  // SIG: 20 02 01 12 81 81 12 81 71
+  {
+    // Method begins at RVA 0x2567
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method StringHtmlContent::WriteTo
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.StringHtmlContent
+
+.class /*02000035*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.TempDataDictionary
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+       implements Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/,
+                  class [System.Runtime/*23000001*/]System.Collections.Generic.ICollection`1/*01000054*/<valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object>>/*1B000009*/,
+                  class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object>>/*1B00000A*/,
+                  [System.Runtime/*23000001*/]System.Collections.IEnumerable/*01000038*/,
+                  class [System.Runtime/*23000001*/]System.Collections.Generic.IDictionary`2/*01000055*/<string,object>/*1B00000B*/
+{
+  .custom /*0C000051:0A00001A*/ instance void [System.Runtime/*23000001*/]System.Reflection.DefaultMemberAttribute/*01000051*/::.ctor(string) /* 0A00001A */ = ( 01 00 04 49 74 65 6D 00 00 )                      // ...Item..
+  .method /*060001AE*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class [Microsoft.AspNetCore.Http.Abstractions/*2300000B*/]Microsoft.AspNetCore.Http.HttpContext/*01000048*/ context,
+                               class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataProvider/*0200002A*/ provider) cil managed
+  // SIG: 20 02 01 12 81 21 12 80 A8
+  {
+    // Method begins at RVA 0x2569
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method TempDataDictionary::.ctor
+
+  .method /*060001AF*/ public hidebysig newslot specialname virtual final 
+          instance int32  get_Count() cil managed
+  // SIG: 20 00 08
+  {
+    // Method begins at RVA 0x2571
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method TempDataDictionary::get_Count
+
+  .method /*060001B0*/ public hidebysig newslot specialname virtual final 
+          instance object  get_Item(string key) cil managed
+  // SIG: 20 01 1C 0E
+  {
+    // Method begins at RVA 0x2574
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method TempDataDictionary::get_Item
+
+  .method /*060001B1*/ public hidebysig newslot specialname virtual final 
+          instance void  set_Item(string key,
+                                  object 'value') cil managed
+  // SIG: 20 02 01 0E 1C
+  {
+    // Method begins at RVA 0x2577
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method TempDataDictionary::set_Item
+
+  .method /*060001B2*/ public hidebysig newslot specialname virtual final 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.ICollection`1/*01000054*/<string> 
+          get_Keys() cil managed
+  // SIG: 20 00 15 12 81 51 01 0E
+  {
+    // Method begins at RVA 0x2579
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method TempDataDictionary::get_Keys
+
+  .method /*060001B3*/ private hidebysig newslot specialname virtual final 
+          instance bool  'System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,System.Object>>.get_IsReadOnly'() cil managed
+  // SIG: 20 00 02
+  {
+    .override  method instance bool class [System.Runtime/*23000001*/]System.Collections.Generic.ICollection`1/*01000054*/<valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object>>/*1B000009*/::get_IsReadOnly() /* 0A000020 */
+    // Method begins at RVA 0x257c
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method TempDataDictionary::'System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,System.Object>>.get_IsReadOnly'
+
+  .method /*060001B4*/ public hidebysig newslot specialname virtual final 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.ICollection`1/*01000054*/<object> 
+          get_Values() cil managed
+  // SIG: 20 00 15 12 81 51 01 1C
+  {
+    // Method begins at RVA 0x257f
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method TempDataDictionary::get_Values
+
+  .method /*060001B5*/ public hidebysig newslot virtual final 
+          instance void  Add(string key,
+                             object 'value') cil managed
+  // SIG: 20 02 01 0E 1C
+  {
+    // Method begins at RVA 0x2582
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method TempDataDictionary::Add
+
+  .method /*060001B6*/ public hidebysig newslot virtual final 
+          instance void  Clear() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x2584
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method TempDataDictionary::Clear
+
+  .method /*060001B7*/ public hidebysig newslot virtual final 
+          instance bool  ContainsKey(string key) cil managed
+  // SIG: 20 01 02 0E
+  {
+    // Method begins at RVA 0x2586
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method TempDataDictionary::ContainsKey
+
+  .method /*060001B8*/ public hidebysig instance bool 
+          ContainsValue(object 'value') cil managed
+  // SIG: 20 01 02 1C
+  {
+    // Method begins at RVA 0x2589
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method TempDataDictionary::ContainsValue
+
+  .method /*060001B9*/ public hidebysig newslot virtual final 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerator`1/*01000037*/<valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object>> 
+          GetEnumerator() cil managed
+  // SIG: 20 00 15 12 80 DD 01 15 11 81 4D 02 0E 1C
+  {
+    // Method begins at RVA 0x258c
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method TempDataDictionary::GetEnumerator
+
+  .method /*060001BA*/ public hidebysig newslot virtual final 
+          instance void  Keep() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x258f
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method TempDataDictionary::Keep
+
+  .method /*060001BB*/ public hidebysig newslot virtual final 
+          instance void  Keep(string key) cil managed
+  // SIG: 20 01 01 0E
+  {
+    // Method begins at RVA 0x2591
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method TempDataDictionary::Keep
+
+  .method /*060001BC*/ public hidebysig newslot virtual final 
+          instance void  Load() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x2593
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method TempDataDictionary::Load
+
+  .method /*060001BD*/ public hidebysig newslot virtual final 
+          instance object  Peek(string key) cil managed
+  // SIG: 20 01 1C 0E
+  {
+    // Method begins at RVA 0x2595
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method TempDataDictionary::Peek
+
+  .method /*060001BE*/ public hidebysig newslot virtual final 
+          instance bool  Remove(string key) cil managed
+  // SIG: 20 01 02 0E
+  {
+    // Method begins at RVA 0x2598
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method TempDataDictionary::Remove
+
+  .method /*060001BF*/ public hidebysig newslot virtual final 
+          instance void  Save() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x259b
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method TempDataDictionary::Save
+
+  .method /*060001C0*/ private hidebysig newslot virtual final 
+          instance void  'System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,System.Object>>.Add'(valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object> keyValuePair) cil managed
+  // SIG: 20 01 01 15 11 81 4D 02 0E 1C
+  {
+    .override  method instance void class [System.Runtime/*23000001*/]System.Collections.Generic.ICollection`1/*01000054*/<valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object>>/*1B000009*/::Add(!0) /* 0A000021 */
+    // Method begins at RVA 0x259d
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method TempDataDictionary::'System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,System.Object>>.Add'
+
+  .method /*060001C1*/ private hidebysig newslot virtual final 
+          instance bool  'System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,System.Object>>.Contains'(valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object> keyValuePair) cil managed
+  // SIG: 20 01 02 15 11 81 4D 02 0E 1C
+  {
+    .override  method instance bool class [System.Runtime/*23000001*/]System.Collections.Generic.ICollection`1/*01000054*/<valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object>>/*1B000009*/::Contains(!0) /* 0A000022 */
+    // Method begins at RVA 0x259f
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method TempDataDictionary::'System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,System.Object>>.Contains'
+
+  .method /*060001C2*/ private hidebysig newslot virtual final 
+          instance void  'System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,System.Object>>.CopyTo'(valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object>[] 'array',
+                                                                                                                                               int32 index) cil managed
+  // SIG: 20 02 01 1D 15 11 81 4D 02 0E 1C 08
+  {
+    .override  method instance void class [System.Runtime/*23000001*/]System.Collections.Generic.ICollection`1/*01000054*/<valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object>>/*1B000009*/::CopyTo(!0[],
+                                                                                                                                                                                                                                                           int32) /* 0A000023 */
+    // Method begins at RVA 0x25a2
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method TempDataDictionary::'System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,System.Object>>.CopyTo'
+
+  .method /*060001C3*/ private hidebysig newslot virtual final 
+          instance bool  'System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,System.Object>>.Remove'(valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object> keyValuePair) cil managed
+  // SIG: 20 01 02 15 11 81 4D 02 0E 1C
+  {
+    .override  method instance bool class [System.Runtime/*23000001*/]System.Collections.Generic.ICollection`1/*01000054*/<valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object>>/*1B000009*/::Remove(!0) /* 0A000024 */
+    // Method begins at RVA 0x25a4
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method TempDataDictionary::'System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,System.Object>>.Remove'
+
+  .method /*060001C4*/ private hidebysig newslot virtual final 
+          instance class [System.Runtime/*23000001*/]System.Collections.IEnumerator/*01000039*/ 
+          System.Collections.IEnumerable.GetEnumerator() cil managed
+  // SIG: 20 00 12 80 E5
+  {
+    .override [System.Runtime/*23000001*/]System.Collections.IEnumerable/*01000038*/::GetEnumerator /*01000038::0A000018*/ 
+    // Method begins at RVA 0x25a7
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method TempDataDictionary::System.Collections.IEnumerable.GetEnumerator
+
+  .method /*060001C5*/ public hidebysig newslot virtual final 
+          instance bool  TryGetValue(string key,
+                                     [out] object& 'value') cil managed
+  // SIG: 20 02 02 0E 10 1C
+  {
+    // Method begins at RVA 0x25aa
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method TempDataDictionary::TryGetValue
+
+  .property /*17000063*/ instance int32 Count()
+  {
+    .get instance int32 Microsoft.AspNetCore.Mvc.ViewFeatures.TempDataDictionary/*02000035*/::get_Count() /* 060001AF */
+  } // end of property TempDataDictionary::Count
+  .property /*17000064*/ instance object Item(string)
+  {
+    .get instance object Microsoft.AspNetCore.Mvc.ViewFeatures.TempDataDictionary/*02000035*/::get_Item(string) /* 060001B0 */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewFeatures.TempDataDictionary/*02000035*/::set_Item(string,
+                                                                                                      object) /* 060001B1 */
+  } // end of property TempDataDictionary::Item
+  .property /*17000065*/ instance class [System.Runtime/*23000001*/]System.Collections.Generic.ICollection`1/*01000054*/<string>
+          Keys()
+  {
+    .get instance class [System.Runtime/*23000001*/]System.Collections.Generic.ICollection`1/*01000054*/<string> Microsoft.AspNetCore.Mvc.ViewFeatures.TempDataDictionary/*02000035*/::get_Keys() /* 060001B2 */
+  } // end of property TempDataDictionary::Keys
+  .property /*17000066*/ instance bool 'System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,System.Object>>.IsReadOnly'()
+  {
+    .get instance bool Microsoft.AspNetCore.Mvc.ViewFeatures.TempDataDictionary/*02000035*/::'System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,System.Object>>.get_IsReadOnly'() /* 060001B3 */
+  } // end of property TempDataDictionary::'System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,System.Object>>.IsReadOnly'
+  .property /*17000067*/ instance class [System.Runtime/*23000001*/]System.Collections.Generic.ICollection`1/*01000054*/<object>
+          Values()
+  {
+    .get instance class [System.Runtime/*23000001*/]System.Collections.Generic.ICollection`1/*01000054*/<object> Microsoft.AspNetCore.Mvc.ViewFeatures.TempDataDictionary/*02000035*/::get_Values() /* 060001B4 */
+  } // end of property TempDataDictionary::Values
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.TempDataDictionary
+
+.class /*02000036*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.TempDataDictionaryFactory
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+       implements Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionaryFactory/*02000029*/
+{
+  .method /*060001C6*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataProvider/*0200002A*/ provider) cil managed
+  // SIG: 20 01 01 12 80 A8
+  {
+    // Method begins at RVA 0x25ad
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method TempDataDictionaryFactory::.ctor
+
+  .method /*060001C7*/ public hidebysig newslot virtual final 
+          instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/ 
+          GetTempData(class [Microsoft.AspNetCore.Http.Abstractions/*2300000B*/]Microsoft.AspNetCore.Http.HttpContext/*01000048*/ context) cil managed
+  // SIG: 20 01 12 80 A0 12 81 21
+  {
+    // Method begins at RVA 0x25b5
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method TempDataDictionaryFactory::GetTempData
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.TempDataDictionaryFactory
+
+.class /*02000037*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.TemplateInfo
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .method /*060001C8*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x25b8
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method TemplateInfo::.ctor
+
+  .method /*060001C9*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class Microsoft.AspNetCore.Mvc.ViewFeatures.TemplateInfo/*02000037*/ original) cil managed
+  // SIG: 20 01 01 12 80 DC
+  {
+    // Method begins at RVA 0x25c0
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method TemplateInfo::.ctor
+
+  .method /*060001CA*/ public hidebysig specialname 
+          instance object  get_FormattedModelValue() cil managed
+  // SIG: 20 00 1C
+  {
+    // Method begins at RVA 0x25c8
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method TemplateInfo::get_FormattedModelValue
+
+  .method /*060001CB*/ public hidebysig specialname 
+          instance void  set_FormattedModelValue(object 'value') cil managed
+  // SIG: 20 01 01 1C
+  {
+    // Method begins at RVA 0x25cb
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method TemplateInfo::set_FormattedModelValue
+
+  .method /*060001CC*/ public hidebysig specialname 
+          instance string  get_HtmlFieldPrefix() cil managed
+  // SIG: 20 00 0E
+  {
+    // Method begins at RVA 0x25cd
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method TemplateInfo::get_HtmlFieldPrefix
+
+  .method /*060001CD*/ public hidebysig specialname 
+          instance void  set_HtmlFieldPrefix(string 'value') cil managed
+  // SIG: 20 01 01 0E
+  {
+    // Method begins at RVA 0x25d0
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method TemplateInfo::set_HtmlFieldPrefix
+
+  .method /*060001CE*/ public hidebysig specialname 
+          instance int32  get_TemplateDepth() cil managed
+  // SIG: 20 00 08
+  {
+    // Method begins at RVA 0x25d2
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method TemplateInfo::get_TemplateDepth
+
+  .method /*060001CF*/ public hidebysig instance bool 
+          AddVisited(object 'value') cil managed
+  // SIG: 20 01 02 1C
+  {
+    // Method begins at RVA 0x25d5
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method TemplateInfo::AddVisited
+
+  .method /*060001D0*/ public hidebysig instance string 
+          GetFullHtmlFieldName(string partialFieldName) cil managed
+  // SIG: 20 01 0E 0E
+  {
+    // Method begins at RVA 0x25d8
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method TemplateInfo::GetFullHtmlFieldName
+
+  .method /*060001D1*/ public hidebysig instance bool 
+          Visited(class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer) cil managed
+  // SIG: 20 01 02 12 80 B0
+  {
+    // Method begins at RVA 0x25db
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method TemplateInfo::Visited
+
+  .property /*17000068*/ instance object FormattedModelValue()
+  {
+    .get instance object Microsoft.AspNetCore.Mvc.ViewFeatures.TemplateInfo/*02000037*/::get_FormattedModelValue() /* 060001CA */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewFeatures.TemplateInfo/*02000037*/::set_FormattedModelValue(object) /* 060001CB */
+  } // end of property TemplateInfo::FormattedModelValue
+  .property /*17000069*/ instance string HtmlFieldPrefix()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.ViewFeatures.TemplateInfo/*02000037*/::get_HtmlFieldPrefix() /* 060001CC */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewFeatures.TemplateInfo/*02000037*/::set_HtmlFieldPrefix(string) /* 060001CD */
+  } // end of property TemplateInfo::HtmlFieldPrefix
+  .property /*1700006A*/ instance int32 TemplateDepth()
+  {
+    .get instance int32 Microsoft.AspNetCore.Mvc.ViewFeatures.TemplateInfo/*02000037*/::get_TemplateDepth() /* 060001CE */
+  } // end of property TemplateInfo::TemplateDepth
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.TemplateInfo
+
+.class /*02000038*/ public auto ansi sealed Microsoft.AspNetCore.Mvc.ViewFeatures.TryGetValueDelegate
+       extends [System.Runtime/*23000001*/]System.MulticastDelegate/*0100006A*/
+{
+  .method /*060001D2*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(object 'object',
+                               native int 'method') runtime managed
+  // SIG: 20 02 01 1C 18
+  {
+  } // end of method TryGetValueDelegate::.ctor
+
+  .method /*060001D3*/ public hidebysig newslot virtual 
+          instance bool  Invoke(object dictionary,
+                                string key,
+                                [out] object& 'value') runtime managed
+  // SIG: 20 03 02 1C 0E 10 1C
+  {
+  } // end of method TryGetValueDelegate::Invoke
+
+  .method /*060001D4*/ public hidebysig newslot virtual 
+          instance class [System.Runtime/*23000001*/]System.IAsyncResult/*0100006B*/ 
+          BeginInvoke(object dictionary,
+                      string key,
+                      [out] object& 'value',
+                      class [System.Runtime/*23000001*/]System.AsyncCallback/*0100006C*/ callback,
+                      object 'object') runtime managed
+  // SIG: 20 05 12 81 AD 1C 0E 10 1C 12 81 B1 1C
+  {
+  } // end of method TryGetValueDelegate::BeginInvoke
+
+  .method /*060001D5*/ public hidebysig newslot virtual 
+          instance bool  EndInvoke([out] object& 'value',
+                                   class [System.Runtime/*23000001*/]System.IAsyncResult/*0100006B*/ result) runtime managed
+  // SIG: 20 02 02 10 1C 12 81 AD
+  {
+  } // end of method TryGetValueDelegate::EndInvoke
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.TryGetValueDelegate
+
+.class /*02000039*/ public abstract auto ansi sealed beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.TryGetValueProvider
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .method /*060001D6*/ public hidebysig static 
+          class Microsoft.AspNetCore.Mvc.ViewFeatures.TryGetValueDelegate/*02000038*/ 
+          CreateInstance(class [System.Runtime/*23000001*/]System.Type/*01000031*/ targetType) cil managed
+  // SIG: 00 01 12 80 E0 12 80 C5
+  {
+    // Method begins at RVA 0x25de
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method TryGetValueProvider::CreateInstance
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.TryGetValueProvider
+
+.class /*0200003A*/ public abstract auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.ValidationHtmlAttributeProvider
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .method /*060001D7*/ family hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x25e1
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ValidationHtmlAttributeProvider::.ctor
+
+  .method /*060001D8*/ public hidebysig newslot virtual 
+          instance void  AddAndTrackValidationAttributes(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                                                         class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer,
+                                                         string expression,
+                                                         class [System.Runtime/*23000001*/]System.Collections.Generic.IDictionary`2/*01000055*/<string,string> attributes) cil managed
+  // SIG: 20 04 01 12 82 44 12 80 B0 0E 15 12 81 55 02 0E 0E
+  {
+    // Method begins at RVA 0x25e9
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ValidationHtmlAttributeProvider::AddAndTrackValidationAttributes
+
+  .method /*060001D9*/ public hidebysig newslot abstract virtual 
+          instance void  AddValidationAttributes(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                                                 class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer,
+                                                 class [System.Runtime/*23000001*/]System.Collections.Generic.IDictionary`2/*01000055*/<string,string> attributes) cil managed
+  // SIG: 20 03 01 12 82 44 12 80 B0 15 12 81 55 02 0E 0E
+  {
+    // Method begins at RVA 0x0
+  } // end of method ValidationHtmlAttributeProvider::AddValidationAttributes
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.ValidationHtmlAttributeProvider
+
+.class /*0200003B*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.ViewComponentResultExecutor
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+       implements class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.Infrastructure.IActionResultExecutor`1/*01000066*/<class Microsoft.AspNetCore.Mvc.ViewComponentResult/*02000016*/>/*1B00000D*/
+{
+  .method /*060001DA*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class [Microsoft.Extensions.Options/*23000005*/]Microsoft.Extensions.Options.IOptions`1/*01000019*/<class Microsoft.AspNetCore.Mvc.MvcViewOptions/*0200000C*/> mvcHelperOptions,
+                               class [Microsoft.Extensions.Logging.Abstractions/*23000014*/]Microsoft.Extensions.Logging.ILoggerFactory/*01000059*/ loggerFactory,
+                               class [System.Text.Encodings.Web/*23000015*/]System.Text.Encodings.Web.HtmlEncoder/*0100005C*/ htmlEncoder,
+                               class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.IModelMetadataProvider/*0100005A*/ modelMetadataProvider,
+                               class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionaryFactory/*02000029*/ tempDataDictionaryFactory) cil managed
+  // SIG: 20 05 01 15 12 65 01 12 30 12 81 65 12 81 71 12 81 69 12 80 A4
+  {
+    .custom /*0C0000D2:0A000025*/ instance void [System.Runtime/*23000001*/]System.ObsoleteAttribute/*0100006D*/::.ctor(string) /* 0A000025 */ = ( 01 00 45 54 68 69 73 20 63 6F 6E 73 74 72 75 63   // ..EThis construc
+                                                                                                                                                   74 6F 72 20 69 73 20 6F 62 73 6F 6C 65 74 65 20   // tor is obsolete 
+                                                                                                                                                   61 6E 64 20 77 69 6C 6C 20 62 65 20 72 65 6D 6F   // and will be remo
+                                                                                                                                                   76 65 64 20 69 6E 20 61 20 66 75 74 75 72 65 20   // ved in a future 
+                                                                                                                                                   76 65 72 73 69 6F 6E 2E 00 00 )                   // version...
+    // Method begins at RVA 0x25eb
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ViewComponentResultExecutor::.ctor
+
+  .method /*060001DB*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class [Microsoft.Extensions.Options/*23000005*/]Microsoft.Extensions.Options.IOptions`1/*01000019*/<class Microsoft.AspNetCore.Mvc.MvcViewOptions/*0200000C*/> mvcHelperOptions,
+                               class [Microsoft.Extensions.Logging.Abstractions/*23000014*/]Microsoft.Extensions.Logging.ILoggerFactory/*01000059*/ loggerFactory,
+                               class [System.Text.Encodings.Web/*23000015*/]System.Text.Encodings.Web.HtmlEncoder/*0100005C*/ htmlEncoder,
+                               class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.IModelMetadataProvider/*0100005A*/ modelMetadataProvider,
+                               class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionaryFactory/*02000029*/ tempDataDictionaryFactory,
+                               class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.Infrastructure.IHttpResponseStreamWriterFactory/*01000067*/ writerFactory) cil managed
+  // SIG: 20 06 01 15 12 65 01 12 30 12 81 65 12 81 71 12 81 69 12 80 A4 12 81 9D
+  {
+    // Method begins at RVA 0x25f3
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ViewComponentResultExecutor::.ctor
+
+  .method /*060001DC*/ public hidebysig newslot virtual 
+          instance class [System.Runtime/*23000001*/]System.Threading.Tasks.Task/*0100002F*/ 
+          ExecuteAsync(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ActionContext/*01000041*/ context,
+                       class Microsoft.AspNetCore.Mvc.ViewComponentResult/*02000016*/ result) cil managed
+  // SIG: 20 02 12 80 BD 12 81 05 12 58
+  {
+    .custom /*0C0000D3:0A000019*/ instance void [System.Diagnostics.Debug/*23000011*/]System.Diagnostics.DebuggerStepThroughAttribute/*0100004F*/::.ctor() /* 0A000019 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x25fb
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentResultExecutor::ExecuteAsync
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewComponentResultExecutor
+
+.class /*0200003C*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.ViewContextAttribute
+       extends [System.Runtime/*23000001*/]System.Attribute/*01000020*/
+{
+  .custom /*0C000054:0A000013*/ instance void [System.Runtime/*23000001*/]System.AttributeUsageAttribute/*0100001F*/::.ctor(valuetype [System.Runtime/*23000001*/]System.AttributeTargets/*0100001E*/) /* 0A000013 */ = ( 01 00 80 00 00 00 02 00 54 02 0D 41 6C 6C 6F 77   // ........T..Allow
+                                                                                                                                                                                                                          4D 75 6C 74 69 70 6C 65 00 54 02 09 49 6E 68 65   // Multiple.T..Inhe
+                                                                                                                                                                                                                          72 69 74 65 64 01 )                               // rited.
+  .method /*060001DD*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x25fe
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000029       */ call       instance void [System.Runtime/*23000001*/]System.Attribute/*01000020*/::.ctor() /* 0A000029 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ViewContextAttribute::.ctor
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewContextAttribute
+
+.class /*0200003D*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+       implements class [System.Runtime/*23000001*/]System.Collections.Generic.ICollection`1/*01000054*/<valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object>>/*1B000009*/,
+                  class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object>>/*1B00000A*/,
+                  [System.Runtime/*23000001*/]System.Collections.IEnumerable/*01000038*/,
+                  class [System.Runtime/*23000001*/]System.Collections.Generic.IDictionary`2/*01000055*/<string,object>/*1B00000B*/
+{
+  .custom /*0C000055:0A00001A*/ instance void [System.Runtime/*23000001*/]System.Reflection.DefaultMemberAttribute/*01000051*/::.ctor(string) /* 0A00001A */ = ( 01 00 04 49 74 65 6D 00 00 )                      // ...Item..
+  .method /*060001DE*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.IModelMetadataProvider/*0100005A*/ metadataProvider,
+                               class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary/*01000049*/ modelState) cil managed
+  // SIG: 20 02 01 12 81 69 12 81 25
+  {
+    // Method begins at RVA 0x2606
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ViewDataDictionary::.ctor
+
+  .method /*060001DF*/ family hidebysig specialname rtspecialname 
+          instance void  .ctor(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.IModelMetadataProvider/*0100005A*/ metadataProvider,
+                               class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary/*01000049*/ modelState,
+                               class [System.Runtime/*23000001*/]System.Type/*01000031*/ declaredModelType) cil managed
+  // SIG: 20 03 01 12 81 69 12 81 25 12 80 C5
+  {
+    // Method begins at RVA 0x260e
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ViewDataDictionary::.ctor
+
+  .method /*060001E0*/ family hidebysig specialname rtspecialname 
+          instance void  .ctor(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.IModelMetadataProvider/*0100005A*/ metadataProvider,
+                               class [System.Runtime/*23000001*/]System.Type/*01000031*/ declaredModelType) cil managed
+  // SIG: 20 02 01 12 81 69 12 80 C5
+  {
+    // Method begins at RVA 0x2616
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ViewDataDictionary::.ctor
+
+  .method /*060001E1*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ source) cil managed
+  // SIG: 20 01 01 12 80 F4
+  {
+    // Method begins at RVA 0x261e
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ViewDataDictionary::.ctor
+
+  .method /*060001E2*/ family hidebysig specialname rtspecialname 
+          instance void  .ctor(class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ source,
+                               object model,
+                               class [System.Runtime/*23000001*/]System.Type/*01000031*/ declaredModelType) cil managed
+  // SIG: 20 03 01 12 80 F4 1C 12 80 C5
+  {
+    // Method begins at RVA 0x2626
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ViewDataDictionary::.ctor
+
+  .method /*060001E3*/ family hidebysig specialname rtspecialname 
+          instance void  .ctor(class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ source,
+                               class [System.Runtime/*23000001*/]System.Type/*01000031*/ declaredModelType) cil managed
+  // SIG: 20 02 01 12 80 F4 12 80 C5
+  {
+    // Method begins at RVA 0x262e
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ViewDataDictionary::.ctor
+
+  .method /*060001E4*/ public hidebysig newslot specialname virtual final 
+          instance int32  get_Count() cil managed
+  // SIG: 20 00 08
+  {
+    // Method begins at RVA 0x2636
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewDataDictionary::get_Count
+
+  .method /*060001E5*/ public hidebysig newslot specialname virtual final 
+          instance bool  get_IsReadOnly() cil managed
+  // SIG: 20 00 02
+  {
+    // Method begins at RVA 0x2639
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewDataDictionary::get_IsReadOnly
+
+  .method /*060001E6*/ public hidebysig newslot specialname virtual final 
+          instance object  get_Item(string index) cil managed
+  // SIG: 20 01 1C 0E
+  {
+    // Method begins at RVA 0x263c
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewDataDictionary::get_Item
+
+  .method /*060001E7*/ public hidebysig newslot specialname virtual final 
+          instance void  set_Item(string index,
+                                  object 'value') cil managed
+  // SIG: 20 02 01 0E 1C
+  {
+    // Method begins at RVA 0x263f
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewDataDictionary::set_Item
+
+  .method /*060001E8*/ public hidebysig newslot specialname virtual final 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.ICollection`1/*01000054*/<string> 
+          get_Keys() cil managed
+  // SIG: 20 00 15 12 81 51 01 0E
+  {
+    // Method begins at RVA 0x2641
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewDataDictionary::get_Keys
+
+  .method /*060001E9*/ public hidebysig specialname 
+          instance object  get_Model() cil managed
+  // SIG: 20 00 1C
+  {
+    // Method begins at RVA 0x2644
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewDataDictionary::get_Model
+
+  .method /*060001EA*/ public hidebysig specialname 
+          instance void  set_Model(object 'value') cil managed
+  // SIG: 20 01 01 1C
+  {
+    // Method begins at RVA 0x2647
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewDataDictionary::set_Model
+
+  .method /*060001EB*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ 
+          get_ModelExplorer() cil managed
+  // SIG: 20 00 12 80 B0
+  {
+    .custom /*0C0000D4:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2649
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewDataDictionary::get_ModelExplorer
+
+  .method /*060001EC*/ public hidebysig specialname 
+          instance void  set_ModelExplorer(class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ 'value') cil managed
+  // SIG: 20 01 01 12 80 B0
+  {
+    .custom /*0C0000D5:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x264c
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewDataDictionary::set_ModelExplorer
+
+  .method /*060001ED*/ public hidebysig specialname 
+          instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.ModelMetadata/*0100005F*/ 
+          get_ModelMetadata() cil managed
+  // SIG: 20 00 12 81 7D
+  {
+    // Method begins at RVA 0x264e
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewDataDictionary::get_ModelMetadata
+
+  .method /*060001EE*/ public hidebysig specialname 
+          instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary/*01000049*/ 
+          get_ModelState() cil managed
+  // SIG: 20 00 12 81 25
+  {
+    .custom /*0C0000D6:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2651
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewDataDictionary::get_ModelState
+
+  .method /*060001EF*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.ViewFeatures.TemplateInfo/*02000037*/ 
+          get_TemplateInfo() cil managed
+  // SIG: 20 00 12 80 DC
+  {
+    .custom /*0C0000D7:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2654
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewDataDictionary::get_TemplateInfo
+
+  .method /*060001F0*/ public hidebysig newslot specialname virtual final 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.ICollection`1/*01000054*/<object> 
+          get_Values() cil managed
+  // SIG: 20 00 15 12 81 51 01 1C
+  {
+    // Method begins at RVA 0x2657
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewDataDictionary::get_Values
+
+  .method /*060001F1*/ public hidebysig newslot virtual final 
+          instance void  Add(valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object> item) cil managed
+  // SIG: 20 01 01 15 11 81 4D 02 0E 1C
+  {
+    // Method begins at RVA 0x265a
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewDataDictionary::Add
+
+  .method /*060001F2*/ public hidebysig newslot virtual final 
+          instance void  Add(string key,
+                             object 'value') cil managed
+  // SIG: 20 02 01 0E 1C
+  {
+    // Method begins at RVA 0x265c
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewDataDictionary::Add
+
+  .method /*060001F3*/ public hidebysig newslot virtual final 
+          instance void  Clear() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x265e
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewDataDictionary::Clear
+
+  .method /*060001F4*/ public hidebysig newslot virtual final 
+          instance bool  Contains(valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object> item) cil managed
+  // SIG: 20 01 02 15 11 81 4D 02 0E 1C
+  {
+    // Method begins at RVA 0x2660
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewDataDictionary::Contains
+
+  .method /*060001F5*/ public hidebysig newslot virtual final 
+          instance bool  ContainsKey(string key) cil managed
+  // SIG: 20 01 02 0E
+  {
+    // Method begins at RVA 0x2663
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewDataDictionary::ContainsKey
+
+  .method /*060001F6*/ public hidebysig newslot virtual final 
+          instance void  CopyTo(valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object>[] 'array',
+                                int32 arrayIndex) cil managed
+  // SIG: 20 02 01 1D 15 11 81 4D 02 0E 1C 08
+  {
+    // Method begins at RVA 0x2666
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewDataDictionary::CopyTo
+
+  .method /*060001F7*/ public hidebysig instance object 
+          Eval(string expression) cil managed
+  // SIG: 20 01 1C 0E
+  {
+    // Method begins at RVA 0x2668
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewDataDictionary::Eval
+
+  .method /*060001F8*/ public hidebysig instance string 
+          Eval(string expression,
+               string format) cil managed
+  // SIG: 20 02 0E 0E 0E
+  {
+    // Method begins at RVA 0x266b
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewDataDictionary::Eval
+
+  .method /*060001F9*/ public hidebysig static 
+          string  FormatValue(object 'value',
+                              string format) cil managed
+  // SIG: 00 02 0E 1C 0E
+  {
+    // Method begins at RVA 0x266e
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewDataDictionary::FormatValue
+
+  .method /*060001FA*/ public hidebysig instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataInfo/*02000042*/ 
+          GetViewDataInfo(string expression) cil managed
+  // SIG: 20 01 12 81 08 0E
+  {
+    // Method begins at RVA 0x2671
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewDataDictionary::GetViewDataInfo
+
+  .method /*060001FB*/ public hidebysig newslot virtual final 
+          instance bool  Remove(valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object> item) cil managed
+  // SIG: 20 01 02 15 11 81 4D 02 0E 1C
+  {
+    // Method begins at RVA 0x2674
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewDataDictionary::Remove
+
+  .method /*060001FC*/ public hidebysig newslot virtual final 
+          instance bool  Remove(string key) cil managed
+  // SIG: 20 01 02 0E
+  {
+    // Method begins at RVA 0x2677
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewDataDictionary::Remove
+
+  .method /*060001FD*/ family hidebysig newslot virtual 
+          instance void  SetModel(object 'value') cil managed
+  // SIG: 20 01 01 1C
+  {
+    // Method begins at RVA 0x267a
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewDataDictionary::SetModel
+
+  .method /*060001FE*/ private hidebysig newslot virtual final 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerator`1/*01000037*/<valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object>> 
+          'System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<System.String,System.Object>>.GetEnumerator'() cil managed
+  // SIG: 20 00 15 12 80 DD 01 15 11 81 4D 02 0E 1C
+  {
+    .override  method instance class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerator`1/*01000037*/<!0> class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object>>/*1B00000A*/::GetEnumerator() /* 0A000026 */
+    // Method begins at RVA 0x267c
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewDataDictionary::'System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<System.String,System.Object>>.GetEnumerator'
+
+  .method /*060001FF*/ private hidebysig newslot virtual final 
+          instance class [System.Runtime/*23000001*/]System.Collections.IEnumerator/*01000039*/ 
+          System.Collections.IEnumerable.GetEnumerator() cil managed
+  // SIG: 20 00 12 80 E5
+  {
+    .override [System.Runtime/*23000001*/]System.Collections.IEnumerable/*01000038*/::GetEnumerator /*01000038::0A000018*/ 
+    // Method begins at RVA 0x267f
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewDataDictionary::System.Collections.IEnumerable.GetEnumerator
+
+  .method /*06000200*/ public hidebysig newslot virtual final 
+          instance bool  TryGetValue(string key,
+                                     [out] object& 'value') cil managed
+  // SIG: 20 02 02 0E 10 1C
+  {
+    // Method begins at RVA 0x2682
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewDataDictionary::TryGetValue
+
+  .property /*1700006B*/ instance int32 Count()
+  {
+    .get instance int32 Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/::get_Count() /* 060001E4 */
+  } // end of property ViewDataDictionary::Count
+  .property /*1700006C*/ instance bool IsReadOnly()
+  {
+    .get instance bool Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/::get_IsReadOnly() /* 060001E5 */
+  } // end of property ViewDataDictionary::IsReadOnly
+  .property /*1700006D*/ instance object Item(string)
+  {
+    .get instance object Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/::get_Item(string) /* 060001E6 */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/::set_Item(string,
+                                                                                                      object) /* 060001E7 */
+  } // end of property ViewDataDictionary::Item
+  .property /*1700006E*/ instance class [System.Runtime/*23000001*/]System.Collections.Generic.ICollection`1/*01000054*/<string>
+          Keys()
+  {
+    .get instance class [System.Runtime/*23000001*/]System.Collections.Generic.ICollection`1/*01000054*/<string> Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/::get_Keys() /* 060001E8 */
+  } // end of property ViewDataDictionary::Keys
+  .property /*1700006F*/ instance object Model()
+  {
+    .get instance object Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/::get_Model() /* 060001E9 */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/::set_Model(object) /* 060001EA */
+  } // end of property ViewDataDictionary::Model
+  .property /*17000070*/ instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/
+          ModelExplorer()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/::get_ModelExplorer() /* 060001EB */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/::set_ModelExplorer(class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/) /* 060001EC */
+  } // end of property ViewDataDictionary::ModelExplorer
+  .property /*17000071*/ instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.ModelMetadata/*0100005F*/
+          ModelMetadata()
+  {
+    .get instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.ModelMetadata/*0100005F*/ Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/::get_ModelMetadata() /* 060001ED */
+  } // end of property ViewDataDictionary::ModelMetadata
+  .property /*17000072*/ instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary/*01000049*/
+          ModelState()
+  {
+    .get instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary/*01000049*/ Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/::get_ModelState() /* 060001EE */
+  } // end of property ViewDataDictionary::ModelState
+  .property /*17000073*/ instance class Microsoft.AspNetCore.Mvc.ViewFeatures.TemplateInfo/*02000037*/
+          TemplateInfo()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewFeatures.TemplateInfo/*02000037*/ Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/::get_TemplateInfo() /* 060001EF */
+  } // end of property ViewDataDictionary::TemplateInfo
+  .property /*17000074*/ instance class [System.Runtime/*23000001*/]System.Collections.Generic.ICollection`1/*01000054*/<object>
+          Values()
+  {
+    .get instance class [System.Runtime/*23000001*/]System.Collections.Generic.ICollection`1/*01000054*/<object> Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/::get_Values() /* 060001F0 */
+  } // end of property ViewDataDictionary::Values
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary
+
+.class /*0200003E*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionaryAttribute
+       extends [System.Runtime/*23000001*/]System.Attribute/*01000020*/
+{
+  .custom /*0C000056:0A000013*/ instance void [System.Runtime/*23000001*/]System.AttributeUsageAttribute/*0100001F*/::.ctor(valuetype [System.Runtime/*23000001*/]System.AttributeTargets/*0100001E*/) /* 0A000013 */ = ( 01 00 80 00 00 00 02 00 54 02 0D 41 6C 6C 6F 77   // ........T..Allow
+                                                                                                                                                                                                                          4D 75 6C 74 69 70 6C 65 00 54 02 09 49 6E 68 65   // Multiple.T..Inhe
+                                                                                                                                                                                                                          72 69 74 65 64 01 )                               // rited.
+  .method /*06000201*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x2685
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000029       */ call       instance void [System.Runtime/*23000001*/]System.Attribute/*01000020*/::.ctor() /* 0A000029 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ViewDataDictionaryAttribute::.ctor
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionaryAttribute
+
+.class /*0200003F*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionaryControllerPropertyActivator
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .method /*06000202*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.IModelMetadataProvider/*0100005A*/ modelMetadataProvider) cil managed
+  // SIG: 20 01 01 12 81 69
+  {
+    // Method begins at RVA 0x268d
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ViewDataDictionaryControllerPropertyActivator::.ctor
+
+  .method /*06000203*/ public hidebysig instance void 
+          Activate(class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.ControllerContext/*0100006E*/ actionContext,
+                   object controller) cil managed
+  // SIG: 20 02 01 12 81 B9 1C
+  {
+    // Method begins at RVA 0x2695
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewDataDictionaryControllerPropertyActivator::Activate
+
+  .method /*06000204*/ public hidebysig instance class [System.Runtime/*23000001*/]System.Action`2/*0100006F*/<class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.ControllerContext/*0100006E*/,object> 
+          GetActivatorDelegate(class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.Controllers.ControllerActionDescriptor/*01000070*/ actionDescriptor) cil managed
+  // SIG: 20 01 15 12 81 BD 02 12 81 B9 1C 12 81 C1
+  {
+    // Method begins at RVA 0x2697
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewDataDictionaryControllerPropertyActivator::GetActivatorDelegate
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionaryControllerPropertyActivator
+
+.class /*02000040*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary`1<TModel>
+       extends Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/
+{
+  .method /*06000205*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.IModelMetadataProvider/*0100005A*/ metadataProvider,
+                               class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary/*01000049*/ modelState) cil managed
+  // SIG: 20 02 01 12 81 69 12 81 25
+  {
+    // Method begins at RVA 0x269a
+    // Code size       9 (0x9)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 14   |                  */ ldnull
+    IL_0002:  /* 14   |                  */ ldnull
+    IL_0003:  /* 28   | (06)0001DE       */ call       instance void Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/::.ctor(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.IModelMetadataProvider/*0100005A*/,
+                                                                                                                                                 class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary/*01000049*/) /* 060001DE */
+    IL_0008:  /* 2A   |                  */ ret
+  } // end of method ViewDataDictionary`1::.ctor
+
+  .method /*06000206*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ source) cil managed
+  // SIG: 20 01 01 12 80 F4
+  {
+    // Method begins at RVA 0x26a4
+    // Code size       9 (0x9)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 14   |                  */ ldnull
+    IL_0002:  /* 14   |                  */ ldnull
+    IL_0003:  /* 28   | (06)0001DE       */ call       instance void Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/::.ctor(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.IModelMetadataProvider/*0100005A*/,
+                                                                                                                                                 class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary/*01000049*/) /* 060001DE */
+    IL_0008:  /* 2A   |                  */ ret
+  } // end of method ViewDataDictionary`1::.ctor
+
+  .method /*06000207*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ source,
+                               object model) cil managed
+  // SIG: 20 02 01 12 80 F4 1C
+  {
+    // Method begins at RVA 0x26ae
+    // Code size       9 (0x9)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 14   |                  */ ldnull
+    IL_0002:  /* 14   |                  */ ldnull
+    IL_0003:  /* 28   | (06)0001DE       */ call       instance void Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/::.ctor(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.IModelMetadataProvider/*0100005A*/,
+                                                                                                                                                 class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary/*01000049*/) /* 060001DE */
+    IL_0008:  /* 2A   |                  */ ret
+  } // end of method ViewDataDictionary`1::.ctor
+
+  .method /*06000208*/ public hidebysig specialname 
+          instance !TModel  get_Model() cil managed
+  // SIG: 20 00 13 00
+  {
+    // Method begins at RVA 0x26b8
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewDataDictionary`1::get_Model
+
+  .method /*06000209*/ public hidebysig specialname 
+          instance void  set_Model(!TModel 'value') cil managed
+  // SIG: 20 01 01 13 00
+  {
+    // Method begins at RVA 0x26bb
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewDataDictionary`1::set_Model
+
+  .property /*17000075*/ instance !TModel
+          Model()
+  {
+    .get instance !TModel Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary`1/*02000040*/::get_Model() /* 06000208 */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary`1/*02000040*/::set_Model(!TModel) /* 06000209 */
+  } // end of property ViewDataDictionary`1::Model
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary`1
+
+.class /*02000041*/ public abstract auto ansi sealed beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataEvaluator
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .method /*0600020A*/ public hidebysig static 
+          class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataInfo/*02000042*/ 
+          Eval(class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ viewData,
+               string expression) cil managed
+  // SIG: 00 02 12 81 08 12 80 F4 0E
+  {
+    // Method begins at RVA 0x26bd
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewDataEvaluator::Eval
+
+  .method /*0600020B*/ public hidebysig static 
+          class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataInfo/*02000042*/ 
+          Eval(object indexableObject,
+               string expression) cil managed
+  // SIG: 00 02 12 81 08 1C 0E
+  {
+    // Method begins at RVA 0x26c0
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewDataEvaluator::Eval
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataEvaluator
+
+.class /*02000042*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataInfo
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .method /*0600020C*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(object container,
+                               object 'value') cil managed
+  // SIG: 20 02 01 1C 1C
+  {
+    // Method begins at RVA 0x26c3
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ViewDataInfo::.ctor
+
+  .method /*0600020D*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(object container,
+                               class [System.Runtime/*23000001*/]System.Reflection.PropertyInfo/*01000071*/ propertyInfo) cil managed
+  // SIG: 20 02 01 1C 12 81 C5
+  {
+    // Method begins at RVA 0x26cb
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ViewDataInfo::.ctor
+
+  .method /*0600020E*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(object container,
+                               class [System.Runtime/*23000001*/]System.Reflection.PropertyInfo/*01000071*/ propertyInfo,
+                               class [System.Runtime/*23000001*/]System.Func`1/*01000072*/<object> valueAccessor) cil managed
+  // SIG: 20 03 01 1C 12 81 C5 15 12 81 C9 01 1C
+  {
+    // Method begins at RVA 0x26d3
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ViewDataInfo::.ctor
+
+  .method /*0600020F*/ public hidebysig specialname 
+          instance object  get_Container() cil managed
+  // SIG: 20 00 1C
+  {
+    .custom /*0C0000D8:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x26db
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewDataInfo::get_Container
+
+  .method /*06000210*/ public hidebysig specialname 
+          instance class [System.Runtime/*23000001*/]System.Reflection.PropertyInfo/*01000071*/ 
+          get_PropertyInfo() cil managed
+  // SIG: 20 00 12 81 C5
+  {
+    .custom /*0C0000D9:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x26de
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewDataInfo::get_PropertyInfo
+
+  .method /*06000211*/ public hidebysig specialname 
+          instance object  get_Value() cil managed
+  // SIG: 20 00 1C
+  {
+    // Method begins at RVA 0x26e1
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewDataInfo::get_Value
+
+  .method /*06000212*/ public hidebysig specialname 
+          instance void  set_Value(object 'value') cil managed
+  // SIG: 20 01 01 1C
+  {
+    // Method begins at RVA 0x26e4
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewDataInfo::set_Value
+
+  .property /*17000076*/ instance object Container()
+  {
+    .get instance object Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataInfo/*02000042*/::get_Container() /* 0600020F */
+  } // end of property ViewDataInfo::Container
+  .property /*17000077*/ instance class [System.Runtime/*23000001*/]System.Reflection.PropertyInfo/*01000071*/
+          PropertyInfo()
+  {
+    .get instance class [System.Runtime/*23000001*/]System.Reflection.PropertyInfo/*01000071*/ Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataInfo/*02000042*/::get_PropertyInfo() /* 06000210 */
+  } // end of property ViewDataInfo::PropertyInfo
+  .property /*17000078*/ instance object Value()
+  {
+    .get instance object Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataInfo/*02000042*/::get_Value() /* 06000211 */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataInfo/*02000042*/::set_Value(object) /* 06000212 */
+  } // end of property ViewDataInfo::Value
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataInfo
+
+.class /*02000043*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.ViewExecutor
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .field /*04000011*/ public static initonly string DefaultContentType
+  .method /*06000213*/ family hidebysig specialname rtspecialname 
+          instance void  .ctor(class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.Infrastructure.IHttpResponseStreamWriterFactory/*01000067*/ writerFactory,
+                               class Microsoft.AspNetCore.Mvc.ViewEngines.ICompositeViewEngine/*0200005B*/ viewEngine,
+                               class [System.Diagnostics.DiagnosticSource/*23000016*/]System.Diagnostics.DiagnosticListener/*01000068*/ diagnosticListener) cil managed
+  // SIG: 20 03 01 12 81 9D 12 81 6C 12 81 A1
+  {
+    // Method begins at RVA 0x26e6
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ViewExecutor::.ctor
+
+  .method /*06000214*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class [Microsoft.Extensions.Options/*23000005*/]Microsoft.Extensions.Options.IOptions`1/*01000019*/<class Microsoft.AspNetCore.Mvc.MvcViewOptions/*0200000C*/> viewOptions,
+                               class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.Infrastructure.IHttpResponseStreamWriterFactory/*01000067*/ writerFactory,
+                               class Microsoft.AspNetCore.Mvc.ViewEngines.ICompositeViewEngine/*0200005B*/ viewEngine,
+                               class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionaryFactory/*02000029*/ tempDataFactory,
+                               class [System.Diagnostics.DiagnosticSource/*23000016*/]System.Diagnostics.DiagnosticListener/*01000068*/ diagnosticListener,
+                               class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.IModelMetadataProvider/*0100005A*/ modelMetadataProvider) cil managed
+  // SIG: 20 06 01 15 12 65 01 12 30 12 81 9D 12 81 6C 12 80 A4 12 81 A1 12 81 69
+  {
+    // Method begins at RVA 0x26ee
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ViewExecutor::.ctor
+
+  .method /*06000215*/ family hidebysig specialname 
+          instance class [System.Diagnostics.DiagnosticSource/*23000016*/]System.Diagnostics.DiagnosticListener/*01000068*/ 
+          get_DiagnosticListener() cil managed
+  // SIG: 20 00 12 81 A1
+  {
+    .custom /*0C0000DA:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x26f6
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewExecutor::get_DiagnosticListener
+
+  .method /*06000216*/ family hidebysig specialname 
+          instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.IModelMetadataProvider/*0100005A*/ 
+          get_ModelMetadataProvider() cil managed
+  // SIG: 20 00 12 81 69
+  {
+    .custom /*0C0000DB:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x26f9
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewExecutor::get_ModelMetadataProvider
+
+  .method /*06000217*/ family hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionaryFactory/*02000029*/ 
+          get_TempDataFactory() cil managed
+  // SIG: 20 00 12 80 A4
+  {
+    .custom /*0C0000DC:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x26fc
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewExecutor::get_TempDataFactory
+
+  .method /*06000218*/ family hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.ViewEngines.IViewEngine/*0200005D*/ 
+          get_ViewEngine() cil managed
+  // SIG: 20 00 12 81 74
+  {
+    .custom /*0C0000DD:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x26ff
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewExecutor::get_ViewEngine
+
+  .method /*06000219*/ family hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.MvcViewOptions/*0200000C*/ 
+          get_ViewOptions() cil managed
+  // SIG: 20 00 12 30
+  {
+    .custom /*0C0000DE:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2702
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewExecutor::get_ViewOptions
+
+  .method /*0600021A*/ family hidebysig specialname 
+          instance class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.Infrastructure.IHttpResponseStreamWriterFactory/*01000067*/ 
+          get_WriterFactory() cil managed
+  // SIG: 20 00 12 81 9D
+  {
+    .custom /*0C0000DF:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2705
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewExecutor::get_WriterFactory
+
+  .method /*0600021B*/ public hidebysig newslot virtual 
+          instance class [System.Runtime/*23000001*/]System.Threading.Tasks.Task/*0100002F*/ 
+          ExecuteAsync(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ActionContext/*01000041*/ actionContext,
+                       class Microsoft.AspNetCore.Mvc.ViewEngines.IView/*0200005C*/ view,
+                       class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ viewData,
+                       class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/ tempData,
+                       string contentType,
+                       valuetype [System.Runtime/*23000001*/]System.Nullable`1/*01000040*/<int32> statusCode) cil managed
+  // SIG: 20 06 12 80 BD 12 81 05 12 81 70 12 80 F4 12 80 A0 0E 15 11 81 01 01 08
+  {
+    .custom /*0C0000E0:0A000019*/ instance void [System.Diagnostics.Debug/*23000011*/]System.Diagnostics.DebuggerStepThroughAttribute/*0100004F*/::.ctor() /* 0A000019 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2708
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewExecutor::ExecuteAsync
+
+  .method /*0600021C*/ family hidebysig instance class [System.Runtime/*23000001*/]System.Threading.Tasks.Task/*0100002F*/ 
+          ExecuteAsync(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                       string contentType,
+                       valuetype [System.Runtime/*23000001*/]System.Nullable`1/*01000040*/<int32> statusCode) cil managed
+  // SIG: 20 03 12 80 BD 12 82 44 0E 15 11 81 01 01 08
+  {
+    .custom /*0C0000E1:0A000019*/ instance void [System.Diagnostics.Debug/*23000011*/]System.Diagnostics.DebuggerStepThroughAttribute/*0100004F*/::.ctor() /* 0A000019 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x270b
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewExecutor::ExecuteAsync
+
+  .property /*17000079*/ instance class [System.Diagnostics.DiagnosticSource/*23000016*/]System.Diagnostics.DiagnosticListener/*01000068*/
+          DiagnosticListener()
+  {
+    .get instance class [System.Diagnostics.DiagnosticSource/*23000016*/]System.Diagnostics.DiagnosticListener/*01000068*/ Microsoft.AspNetCore.Mvc.ViewFeatures.ViewExecutor/*02000043*/::get_DiagnosticListener() /* 06000215 */
+  } // end of property ViewExecutor::DiagnosticListener
+  .property /*1700007A*/ instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.IModelMetadataProvider/*0100005A*/
+          ModelMetadataProvider()
+  {
+    .get instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.IModelMetadataProvider/*0100005A*/ Microsoft.AspNetCore.Mvc.ViewFeatures.ViewExecutor/*02000043*/::get_ModelMetadataProvider() /* 06000216 */
+  } // end of property ViewExecutor::ModelMetadataProvider
+  .property /*1700007B*/ instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionaryFactory/*02000029*/
+          TempDataFactory()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionaryFactory/*02000029*/ Microsoft.AspNetCore.Mvc.ViewFeatures.ViewExecutor/*02000043*/::get_TempDataFactory() /* 06000217 */
+  } // end of property ViewExecutor::TempDataFactory
+  .property /*1700007C*/ instance class Microsoft.AspNetCore.Mvc.ViewEngines.IViewEngine/*0200005D*/
+          ViewEngine()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewEngines.IViewEngine/*0200005D*/ Microsoft.AspNetCore.Mvc.ViewFeatures.ViewExecutor/*02000043*/::get_ViewEngine() /* 06000218 */
+  } // end of property ViewExecutor::ViewEngine
+  .property /*1700007D*/ instance class Microsoft.AspNetCore.Mvc.MvcViewOptions/*0200000C*/
+          ViewOptions()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.MvcViewOptions/*0200000C*/ Microsoft.AspNetCore.Mvc.ViewFeatures.ViewExecutor/*02000043*/::get_ViewOptions() /* 06000219 */
+  } // end of property ViewExecutor::ViewOptions
+  .property /*1700007E*/ instance class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.Infrastructure.IHttpResponseStreamWriterFactory/*01000067*/
+          WriterFactory()
+  {
+    .get instance class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.Infrastructure.IHttpResponseStreamWriterFactory/*01000067*/ Microsoft.AspNetCore.Mvc.ViewFeatures.ViewExecutor/*02000043*/::get_WriterFactory() /* 0600021A */
+  } // end of property ViewExecutor::WriterFactory
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewExecutor
+
+.class /*02000044*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.ViewResultExecutor
+       extends Microsoft.AspNetCore.Mvc.ViewFeatures.ViewExecutor/*02000043*/
+       implements class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.Infrastructure.IActionResultExecutor`1/*01000066*/<class Microsoft.AspNetCore.Mvc.ViewResult/*02000018*/>/*1B00000E*/
+{
+  .method /*0600021D*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class [Microsoft.Extensions.Options/*23000005*/]Microsoft.Extensions.Options.IOptions`1/*01000019*/<class Microsoft.AspNetCore.Mvc.MvcViewOptions/*0200000C*/> viewOptions,
+                               class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.Infrastructure.IHttpResponseStreamWriterFactory/*01000067*/ writerFactory,
+                               class Microsoft.AspNetCore.Mvc.ViewEngines.ICompositeViewEngine/*0200005B*/ viewEngine,
+                               class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionaryFactory/*02000029*/ tempDataFactory,
+                               class [System.Diagnostics.DiagnosticSource/*23000016*/]System.Diagnostics.DiagnosticListener/*01000068*/ diagnosticListener,
+                               class [Microsoft.Extensions.Logging.Abstractions/*23000014*/]Microsoft.Extensions.Logging.ILoggerFactory/*01000059*/ loggerFactory,
+                               class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.IModelMetadataProvider/*0100005A*/ modelMetadataProvider) cil managed
+  // SIG: 20 07 01 15 12 65 01 12 30 12 81 9D 12 81 6C 12 80 A4 12 81 A1 12 81 65 12 81 69
+  {
+    // Method begins at RVA 0x270e
+    // Code size       13 (0xd)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 14   |                  */ ldnull
+    IL_0002:  /* 14   |                  */ ldnull
+    IL_0003:  /* 14   |                  */ ldnull
+    IL_0004:  /* 14   |                  */ ldnull
+    IL_0005:  /* 14   |                  */ ldnull
+    IL_0006:  /* 14   |                  */ ldnull
+    IL_0007:  /* 28   | (06)000214       */ call       instance void Microsoft.AspNetCore.Mvc.ViewFeatures.ViewExecutor/*02000043*/::.ctor(class [Microsoft.Extensions.Options/*23000005*/]Microsoft.Extensions.Options.IOptions`1/*01000019*/<class Microsoft.AspNetCore.Mvc.MvcViewOptions/*0200000C*/>,
+                                                                                                                                           class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.Infrastructure.IHttpResponseStreamWriterFactory/*01000067*/,
+                                                                                                                                           class Microsoft.AspNetCore.Mvc.ViewEngines.ICompositeViewEngine/*0200005B*/,
+                                                                                                                                           class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionaryFactory/*02000029*/,
+                                                                                                                                           class [System.Diagnostics.DiagnosticSource/*23000016*/]System.Diagnostics.DiagnosticListener/*01000068*/,
+                                                                                                                                           class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.IModelMetadataProvider/*0100005A*/) /* 06000214 */
+    IL_000c:  /* 2A   |                  */ ret
+  } // end of method ViewResultExecutor::.ctor
+
+  .method /*0600021E*/ family hidebysig specialname 
+          instance class [Microsoft.Extensions.Logging.Abstractions/*23000014*/]Microsoft.Extensions.Logging.ILogger/*01000069*/ 
+          get_Logger() cil managed
+  // SIG: 20 00 12 81 A5
+  {
+    .custom /*0C0000E2:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x271c
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewResultExecutor::get_Logger
+
+  .method /*0600021F*/ public hidebysig newslot virtual final 
+          instance class [System.Runtime/*23000001*/]System.Threading.Tasks.Task/*0100002F*/ 
+          ExecuteAsync(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ActionContext/*01000041*/ context,
+                       class Microsoft.AspNetCore.Mvc.ViewResult/*02000018*/ result) cil managed
+  // SIG: 20 02 12 80 BD 12 81 05 12 60
+  {
+    .custom /*0C0000E3:0A000019*/ instance void [System.Diagnostics.Debug/*23000011*/]System.Diagnostics.DebuggerStepThroughAttribute/*0100004F*/::.ctor() /* 0A000019 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x271f
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewResultExecutor::ExecuteAsync
+
+  .method /*06000220*/ public hidebysig newslot virtual 
+          instance class Microsoft.AspNetCore.Mvc.ViewEngines.ViewEngineResult/*0200005E*/ 
+          FindView(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ActionContext/*01000041*/ actionContext,
+                   class Microsoft.AspNetCore.Mvc.ViewResult/*02000018*/ viewResult) cil managed
+  // SIG: 20 02 12 81 78 12 81 05 12 60
+  {
+    // Method begins at RVA 0x2722
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewResultExecutor::FindView
+
+  .property /*1700007F*/ instance class [Microsoft.Extensions.Logging.Abstractions/*23000014*/]Microsoft.Extensions.Logging.ILogger/*01000069*/
+          Logger()
+  {
+    .get instance class [Microsoft.Extensions.Logging.Abstractions/*23000014*/]Microsoft.Extensions.Logging.ILogger/*01000069*/ Microsoft.AspNetCore.Mvc.ViewFeatures.ViewResultExecutor/*02000044*/::get_Logger() /* 0600021E */
+  } // end of property ViewResultExecutor::Logger
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewResultExecutor
+
+.class /*02000045*/ private auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.TempDataApplicationModelProvider
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .field /*04000012*/ private initonly class Microsoft.AspNetCore.Mvc.ViewFeatures.Infrastructure.TempDataSerializer/*02000050*/ _tempDataSerializer
+  .method /*06000221*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class Microsoft.AspNetCore.Mvc.ViewFeatures.Infrastructure.TempDataSerializer/*02000050*/ tempDataSerializer) cil managed
+  // SIG: 20 01 01 12 81 40
+  {
+    // Method begins at RVA 0x2725
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method TempDataApplicationModelProvider::.ctor
+
+  .method /*06000222*/ public hidebysig specialname 
+          instance int32  get_Order() cil managed
+  // SIG: 20 00 08
+  {
+    // Method begins at RVA 0x272d
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method TempDataApplicationModelProvider::get_Order
+
+  .method /*06000223*/ public hidebysig instance void 
+          OnProvidersExecuted(class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.ApplicationModels.ApplicationModelProviderContext/*01000073*/ context) cil managed
+  // SIG: 20 01 01 12 81 CD
+  {
+    // Method begins at RVA 0x2730
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method TempDataApplicationModelProvider::OnProvidersExecuted
+
+  .method /*06000224*/ public hidebysig instance void 
+          OnProvidersExecuting(class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.ApplicationModels.ApplicationModelProviderContext/*01000073*/ context) cil managed
+  // SIG: 20 01 01 12 81 CD
+  {
+    // Method begins at RVA 0x2732
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method TempDataApplicationModelProvider::OnProvidersExecuting
+
+  .property /*17000080*/ instance int32 Order()
+  {
+    .get instance int32 Microsoft.AspNetCore.Mvc.ViewFeatures.TempDataApplicationModelProvider/*02000045*/::get_Order() /* 06000222 */
+  } // end of property TempDataApplicationModelProvider::Order
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.TempDataApplicationModelProvider
+
+.class /*02000046*/ private auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.NullView
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+       implements Microsoft.AspNetCore.Mvc.ViewEngines.IView/*0200005C*/
+{
+  .field /*04000013*/ public static initonly class Microsoft.AspNetCore.Mvc.ViewFeatures.NullView/*02000046*/ Instance
+  .method /*06000225*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x2734
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method NullView::.ctor
+
+  .method /*06000226*/ public hidebysig newslot specialname virtual final 
+          instance string  get_Path() cil managed
+  // SIG: 20 00 0E
+  {
+    // Method begins at RVA 0x273c
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method NullView::get_Path
+
+  .method /*06000227*/ public hidebysig newslot virtual final 
+          instance class [System.Runtime/*23000001*/]System.Threading.Tasks.Task/*0100002F*/ 
+          RenderAsync(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ context) cil managed
+  // SIG: 20 01 12 80 BD 12 82 44
+  {
+    // Method begins at RVA 0x273f
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method NullView::RenderAsync
+
+  .property /*17000081*/ instance string Path()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.ViewFeatures.NullView/*02000046*/::get_Path() /* 06000226 */
+  } // end of property NullView::Path
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.NullView
+
+.class /*02000047*/ private auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.TemplateRenderer
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .field /*04000014*/ private static literal string DisplayTemplateViewPath = "DisplayTemplates"
+  .field /*04000015*/ private static literal string EditorTemplateViewPath = "EditorTemplates"
+  .field /*04000016*/ public static literal string IEnumerableOfIFormFileName = "IEnumerable`IFormFile"
+  .field /*04000017*/ private initonly class Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.IViewBufferScope/*02000052*/ _bufferScope
+  .field /*04000018*/ private static initonly class [System.Collections/*23000017*/]System.Collections.Generic.Dictionary`2/*01000074*/<string,class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/,class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/>> _defaultDisplayActions
+  .field /*04000019*/ private static initonly class [System.Collections/*23000017*/]System.Collections.Generic.Dictionary`2/*01000074*/<string,class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/,class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/>> _defaultEditorActions
+  .field /*0400001A*/ private initonly bool _readOnly
+  .field /*0400001B*/ private initonly string _templateName
+  .field /*0400001C*/ private initonly class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ _viewContext
+  .field /*0400001D*/ private initonly class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ _viewData
+  .field /*0400001E*/ private initonly class Microsoft.AspNetCore.Mvc.ViewEngines.IViewEngine/*0200005D*/ _viewEngine
+  .method /*06000228*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class Microsoft.AspNetCore.Mvc.ViewEngines.IViewEngine/*0200005D*/ viewEngine,
+                               class Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.IViewBufferScope/*02000052*/ bufferScope,
+                               class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                               class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ viewData,
+                               string templateName,
+                               bool readOnly) cil managed
+  // SIG: 20 06 01 12 81 74 12 81 48 12 82 44 12 80 F4 0E 02
+  {
+    // Method begins at RVA 0x2742
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method TemplateRenderer::.ctor
+
+  .method /*06000229*/ private hidebysig 
+          instance class [System.Collections/*23000017*/]System.Collections.Generic.Dictionary`2/*01000074*/<string,class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/,class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/>> 
+          GetDefaultActions() cil managed
+  // SIG: 20 00 15 12 81 D1 02 0E 15 12 81 89 02 12 82 14 12 80 D1
+  {
+    // Method begins at RVA 0x274a
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method TemplateRenderer::GetDefaultActions
+
+  .method /*0600022A*/ public hidebysig static 
+          class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<string> 
+          GetTypeNames(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.ModelMetadata/*0100005F*/ modelMetadata,
+                       class [System.Runtime/*23000001*/]System.Type/*01000031*/ fieldType) cil managed
+  // SIG: 00 02 15 12 80 D5 01 0E 12 81 7D 12 80 C5
+  {
+    // Method begins at RVA 0x274d
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method TemplateRenderer::GetTypeNames
+
+  .method /*0600022B*/ private hidebysig 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<string> 
+          GetViewNames() cil managed
+  // SIG: 20 00 15 12 80 D5 01 0E
+  {
+    // Method begins at RVA 0x2750
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method TemplateRenderer::GetViewNames
+
+  .method /*0600022C*/ private hidebysig static 
+          class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ 
+          MakeHtmlHelper(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                         class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ viewData) cil managed
+  // SIG: 00 02 12 82 14 12 82 44 12 80 F4
+  {
+    // Method begins at RVA 0x2753
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method TemplateRenderer::MakeHtmlHelper
+
+  .method /*0600022D*/ public hidebysig instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          Render() cil managed
+  // SIG: 20 00 12 80 D1
+  {
+    // Method begins at RVA 0x2756
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method TemplateRenderer::Render
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.TemplateRenderer
+
+.class /*02000048*/ private abstract auto ansi sealed beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.FormatWeekHelper
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .method /*0600022E*/ public hidebysig static 
+          string  GetFormattedWeek(class Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExplorer/*0200002C*/ modelExplorer) cil managed
+  // SIG: 00 01 0E 12 80 B0
+  {
+    // Method begins at RVA 0x2759
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method FormatWeekHelper::GetFormattedWeek
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.FormatWeekHelper
+
+.class /*02000049*/ private abstract auto ansi sealed beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionaryFactory
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .method /*0600022F*/ public hidebysig static 
+          class [System.Runtime/*23000001*/]System.Func`3/*01000075*/<class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.IModelMetadataProvider/*0100005A*/,class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary/*01000049*/,class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/> 
+          CreateFactory(class [System.Runtime/*23000001*/]System.Reflection.TypeInfo/*01000076*/ modelType) cil managed
+  // SIG: 00 01 15 12 81 D5 03 12 81 69 12 81 25 12 80 F4 12 81 D9
+  {
+    // Method begins at RVA 0x275c
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewDataDictionaryFactory::CreateFactory
+
+  .method /*06000230*/ public hidebysig static 
+          class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/,class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/> 
+          CreateNestedFactory(class [System.Runtime/*23000001*/]System.Reflection.TypeInfo/*01000076*/ modelType) cil managed
+  // SIG: 00 01 15 12 81 89 02 12 80 F4 12 80 F4 12 81 D9
+  {
+    // Method begins at RVA 0x275f
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewDataDictionaryFactory::CreateNestedFactory
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionaryFactory
+
+.class /*0200004A*/ private auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.Filters.ViewDataAttributeApplicationModelProvider
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .method /*06000231*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x2762
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ViewDataAttributeApplicationModelProvider::.ctor
+
+  .method /*06000232*/ public hidebysig specialname 
+          instance int32  get_Order() cil managed
+  // SIG: 20 00 08
+  {
+    // Method begins at RVA 0x276a
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewDataAttributeApplicationModelProvider::get_Order
+
+  .method /*06000233*/ public hidebysig instance void 
+          OnProvidersExecuted(class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.ApplicationModels.ApplicationModelProviderContext/*01000073*/ context) cil managed
+  // SIG: 20 01 01 12 81 CD
+  {
+    // Method begins at RVA 0x276d
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewDataAttributeApplicationModelProvider::OnProvidersExecuted
+
+  .method /*06000234*/ public hidebysig instance void 
+          OnProvidersExecuting(class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.ApplicationModels.ApplicationModelProviderContext/*01000073*/ context) cil managed
+  // SIG: 20 01 01 12 81 CD
+  {
+    // Method begins at RVA 0x276f
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewDataAttributeApplicationModelProvider::OnProvidersExecuting
+
+  .property /*17000082*/ instance int32 Order()
+  {
+    .get instance int32 Microsoft.AspNetCore.Mvc.ViewFeatures.Filters.ViewDataAttributeApplicationModelProvider/*0200004A*/::get_Order() /* 06000232 */
+  } // end of property ViewDataAttributeApplicationModelProvider::Order
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.Filters.ViewDataAttributeApplicationModelProvider
+
+.class /*0200004B*/ private abstract auto ansi sealed beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.Filters.ViewDataAttributePropertyProvider
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .method /*06000235*/ public hidebysig static 
+          class [System.Runtime/*23000001*/]System.Collections.Generic.IReadOnlyList`1/*01000077*/<valuetype Microsoft.AspNetCore.Mvc.ViewFeatures.Filters.LifecycleProperty/*0200004F*/> 
+          GetViewDataProperties(class [System.Runtime/*23000001*/]System.Type/*01000031*/ 'type') cil managed
+  // SIG: 00 01 15 12 81 DD 01 11 81 3C 12 80 C5
+  {
+    // Method begins at RVA 0x2771
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewDataAttributePropertyProvider::GetViewDataProperties
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.Filters.ViewDataAttributePropertyProvider
+
+.class /*0200004C*/ interface private abstract auto ansi Microsoft.AspNetCore.Mvc.ViewFeatures.Filters.ISaveTempDataCallback
+{
+  .method /*06000236*/ public hidebysig newslot abstract virtual 
+          instance void  OnTempDataSaving(class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/ tempData) cil managed
+  // SIG: 20 01 01 12 80 A0
+  {
+    // Method begins at RVA 0x0
+  } // end of method ISaveTempDataCallback::OnTempDataSaving
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.Filters.ISaveTempDataCallback
+
+.class /*0200004D*/ interface private abstract auto ansi Microsoft.AspNetCore.Mvc.ViewFeatures.Filters.IViewDataValuesProviderFeature
+{
+  .method /*06000237*/ public hidebysig newslot abstract virtual 
+          instance void  ProvideViewDataValues(class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ viewData) cil managed
+  // SIG: 20 01 01 12 80 F4
+  {
+    // Method begins at RVA 0x0
+  } // end of method IViewDataValuesProviderFeature::ProvideViewDataValues
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.Filters.IViewDataValuesProviderFeature
+
+.class /*0200004E*/ private abstract auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.Filters.SaveTempDataPropertyFilterBase
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+       implements Microsoft.AspNetCore.Mvc.ViewFeatures.Filters.ISaveTempDataCallback/*0200004C*/
+{
+  .field /*0400001F*/ family initonly class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionaryFactory/*02000029*/ _tempDataFactory
+  .field /*04000020*/ private initonly class [System.Runtime/*23000001*/]System.Collections.Generic.IDictionary`2/*01000055*/<class [System.Runtime/*23000001*/]System.Reflection.PropertyInfo/*01000071*/,object> _OriginalValues_k__BackingField
+  .field /*04000021*/ private class [System.Runtime/*23000001*/]System.Collections.Generic.IReadOnlyList`1/*01000077*/<valuetype Microsoft.AspNetCore.Mvc.ViewFeatures.Filters.LifecycleProperty/*0200004F*/> _Properties_k__BackingField
+  .field /*04000022*/ private object _Subject_k__BackingField
+  .method /*06000238*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionaryFactory/*02000029*/ tempDataFactory) cil managed
+  // SIG: 20 01 01 12 80 A4
+  {
+    // Method begins at RVA 0x2774
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method SaveTempDataPropertyFilterBase::.ctor
+
+  .method /*06000239*/ public hidebysig specialname 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.IDictionary`2/*01000055*/<class [System.Runtime/*23000001*/]System.Reflection.PropertyInfo/*01000071*/,object> 
+          get_OriginalValues() cil managed
+  // SIG: 20 00 15 12 81 55 02 12 81 C5 1C
+  {
+    // Method begins at RVA 0x277c
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method SaveTempDataPropertyFilterBase::get_OriginalValues
+
+  .method /*0600023A*/ public hidebysig specialname 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.IReadOnlyList`1/*01000077*/<valuetype Microsoft.AspNetCore.Mvc.ViewFeatures.Filters.LifecycleProperty/*0200004F*/> 
+          get_Properties() cil managed
+  // SIG: 20 00 15 12 81 DD 01 11 81 3C
+  {
+    // Method begins at RVA 0x277f
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method SaveTempDataPropertyFilterBase::get_Properties
+
+  .method /*0600023B*/ public hidebysig specialname 
+          instance void  set_Properties(class [System.Runtime/*23000001*/]System.Collections.Generic.IReadOnlyList`1/*01000077*/<valuetype Microsoft.AspNetCore.Mvc.ViewFeatures.Filters.LifecycleProperty/*0200004F*/> 'value') cil managed
+  // SIG: 20 01 01 15 12 81 DD 01 11 81 3C
+  {
+    // Method begins at RVA 0x2782
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method SaveTempDataPropertyFilterBase::set_Properties
+
+  .method /*0600023C*/ public hidebysig specialname 
+          instance object  get_Subject() cil managed
+  // SIG: 20 00 1C
+  {
+    // Method begins at RVA 0x2784
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method SaveTempDataPropertyFilterBase::get_Subject
+
+  .method /*0600023D*/ public hidebysig specialname 
+          instance void  set_Subject(object 'value') cil managed
+  // SIG: 20 01 01 1C
+  {
+    // Method begins at RVA 0x2787
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method SaveTempDataPropertyFilterBase::set_Subject
+
+  .method /*0600023E*/ public hidebysig static 
+          class [System.Runtime/*23000001*/]System.Collections.Generic.IReadOnlyList`1/*01000077*/<valuetype Microsoft.AspNetCore.Mvc.ViewFeatures.Filters.LifecycleProperty/*0200004F*/> 
+          GetTempDataProperties(class Microsoft.AspNetCore.Mvc.ViewFeatures.Infrastructure.TempDataSerializer/*02000050*/ tempDataSerializer,
+                                class [System.Runtime/*23000001*/]System.Type/*01000031*/ 'type') cil managed
+  // SIG: 00 02 15 12 81 DD 01 11 81 3C 12 81 40 12 80 C5
+  {
+    // Method begins at RVA 0x2789
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method SaveTempDataPropertyFilterBase::GetTempDataProperties
+
+  .method /*0600023F*/ public hidebysig newslot virtual final 
+          instance void  OnTempDataSaving(class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/ tempData) cil managed
+  // SIG: 20 01 01 12 80 A0
+  {
+    // Method begins at RVA 0x278c
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method SaveTempDataPropertyFilterBase::OnTempDataSaving
+
+  .method /*06000240*/ family hidebysig instance void 
+          SetPropertyValues(class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/ tempData) cil managed
+  // SIG: 20 01 01 12 80 A0
+  {
+    // Method begins at RVA 0x278e
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method SaveTempDataPropertyFilterBase::SetPropertyValues
+
+  .method /*06000241*/ private hidebysig static 
+          bool  ValidateProperty(class Microsoft.AspNetCore.Mvc.ViewFeatures.Infrastructure.TempDataSerializer/*02000050*/ tempDataSerializer,
+                                 class [System.Collections/*23000017*/]System.Collections.Generic.List`1/*01000078*/<string> errorMessages,
+                                 class [System.Runtime/*23000001*/]System.Reflection.PropertyInfo/*01000071*/ 'property') cil managed
+  // SIG: 00 03 02 12 81 40 15 12 81 E1 01 0E 12 81 C5
+  {
+    // Method begins at RVA 0x2790
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method SaveTempDataPropertyFilterBase::ValidateProperty
+
+  .property /*17000083*/ instance class [System.Runtime/*23000001*/]System.Collections.Generic.IDictionary`2/*01000055*/<class [System.Runtime/*23000001*/]System.Reflection.PropertyInfo/*01000071*/,object>
+          OriginalValues()
+  {
+    .get instance class [System.Runtime/*23000001*/]System.Collections.Generic.IDictionary`2/*01000055*/<class [System.Runtime/*23000001*/]System.Reflection.PropertyInfo/*01000071*/,object> Microsoft.AspNetCore.Mvc.ViewFeatures.Filters.SaveTempDataPropertyFilterBase/*0200004E*/::get_OriginalValues() /* 06000239 */
+  } // end of property SaveTempDataPropertyFilterBase::OriginalValues
+  .property /*17000084*/ instance class [System.Runtime/*23000001*/]System.Collections.Generic.IReadOnlyList`1/*01000077*/<valuetype Microsoft.AspNetCore.Mvc.ViewFeatures.Filters.LifecycleProperty/*0200004F*/>
+          Properties()
+  {
+    .get instance class [System.Runtime/*23000001*/]System.Collections.Generic.IReadOnlyList`1/*01000077*/<valuetype Microsoft.AspNetCore.Mvc.ViewFeatures.Filters.LifecycleProperty/*0200004F*/> Microsoft.AspNetCore.Mvc.ViewFeatures.Filters.SaveTempDataPropertyFilterBase/*0200004E*/::get_Properties() /* 0600023A */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewFeatures.Filters.SaveTempDataPropertyFilterBase/*0200004E*/::set_Properties(class [System.Runtime/*23000001*/]System.Collections.Generic.IReadOnlyList`1/*01000077*/<valuetype Microsoft.AspNetCore.Mvc.ViewFeatures.Filters.LifecycleProperty/*0200004F*/>) /* 0600023B */
+  } // end of property SaveTempDataPropertyFilterBase::Properties
+  .property /*17000085*/ instance object Subject()
+  {
+    .get instance object Microsoft.AspNetCore.Mvc.ViewFeatures.Filters.SaveTempDataPropertyFilterBase/*0200004E*/::get_Subject() /* 0600023C */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewFeatures.Filters.SaveTempDataPropertyFilterBase/*0200004E*/::set_Subject(object) /* 0600023D */
+  } // end of property SaveTempDataPropertyFilterBase::Subject
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.Filters.SaveTempDataPropertyFilterBase
+
+.class /*0200004F*/ private sequential ansi sealed beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.Filters.LifecycleProperty
+       extends [System.Runtime/*23000001*/]System.ValueType/*01000057*/
+{
+  .custom /*0C000065:0A000027*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.IsReadOnlyAttribute/*01000079*/::.ctor() /* 0A000027 */ = ( 01 00 00 00 ) 
+  .field /*04000023*/ private initonly object _dummy
+  .field /*04000024*/ private initonly int32 _dummyPrimitive
+  .method /*06000242*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class [System.Runtime/*23000001*/]System.Reflection.PropertyInfo/*01000071*/ propertyInfo,
+                               string key) cil managed
+  // SIG: 20 02 01 12 81 C5 0E
+  {
+    // Method begins at RVA 0x2793
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method LifecycleProperty::.ctor
+
+  .method /*06000243*/ public hidebysig specialname 
+          instance string  get_Key() cil managed
+  // SIG: 20 00 0E
+  {
+    // Method begins at RVA 0x2796
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method LifecycleProperty::get_Key
+
+  .method /*06000244*/ public hidebysig specialname 
+          instance class [System.Runtime/*23000001*/]System.Reflection.PropertyInfo/*01000071*/ 
+          get_PropertyInfo() cil managed
+  // SIG: 20 00 12 81 C5
+  {
+    // Method begins at RVA 0x2799
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method LifecycleProperty::get_PropertyInfo
+
+  .method /*06000245*/ public hidebysig instance object 
+          GetValue(object 'instance') cil managed
+  // SIG: 20 01 1C 1C
+  {
+    // Method begins at RVA 0x279c
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method LifecycleProperty::GetValue
+
+  .method /*06000246*/ public hidebysig instance void 
+          SetValue(object 'instance',
+                   object 'value') cil managed
+  // SIG: 20 02 01 1C 1C
+  {
+    // Method begins at RVA 0x279f
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method LifecycleProperty::SetValue
+
+  .property /*17000086*/ instance string Key()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.ViewFeatures.Filters.LifecycleProperty/*0200004F*/::get_Key() /* 06000243 */
+  } // end of property LifecycleProperty::Key
+  .property /*17000087*/ instance class [System.Runtime/*23000001*/]System.Reflection.PropertyInfo/*01000071*/
+          PropertyInfo()
+  {
+    .get instance class [System.Runtime/*23000001*/]System.Reflection.PropertyInfo/*01000071*/ Microsoft.AspNetCore.Mvc.ViewFeatures.Filters.LifecycleProperty/*0200004F*/::get_PropertyInfo() /* 06000244 */
+  } // end of property LifecycleProperty::PropertyInfo
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.Filters.LifecycleProperty
+
+.class /*02000050*/ public abstract auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.Infrastructure.TempDataSerializer
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .method /*06000247*/ family hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x27a1
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method TempDataSerializer::.ctor
+
+  .method /*06000248*/ public hidebysig newslot virtual 
+          instance bool  CanSerializeType(class [System.Runtime/*23000001*/]System.Type/*01000031*/ 'type') cil managed
+  // SIG: 20 01 02 12 80 C5
+  {
+    // Method begins at RVA 0x27a9
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method TempDataSerializer::CanSerializeType
+
+  .method /*06000249*/ public hidebysig newslot abstract virtual 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.IDictionary`2/*01000055*/<string,object> 
+          Deserialize(uint8[] unprotectedData) cil managed
+  // SIG: 20 01 15 12 81 55 02 0E 1C 1D 05
+  {
+    // Method begins at RVA 0x0
+  } // end of method TempDataSerializer::Deserialize
+
+  .method /*0600024A*/ public hidebysig newslot abstract virtual 
+          instance uint8[]  Serialize(class [System.Runtime/*23000001*/]System.Collections.Generic.IDictionary`2/*01000055*/<string,object> values) cil managed
+  // SIG: 20 01 1D 05 15 12 81 55 02 0E 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method TempDataSerializer::Serialize
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.Infrastructure.TempDataSerializer
+
+.class /*02000051*/ private auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.Infrastructure.DefaultTempDataSerializer
+       extends Microsoft.AspNetCore.Mvc.ViewFeatures.Infrastructure.TempDataSerializer/*02000050*/
+{
+  .method /*0600024B*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x27ac
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (06)000247       */ call       instance void Microsoft.AspNetCore.Mvc.ViewFeatures.Infrastructure.TempDataSerializer/*02000050*/::.ctor() /* 06000247 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method DefaultTempDataSerializer::.ctor
+
+  .method /*0600024C*/ public hidebysig virtual 
+          instance bool  CanSerializeType(class [System.Runtime/*23000001*/]System.Type/*01000031*/ 'type') cil managed
+  // SIG: 20 01 02 12 80 C5
+  {
+    // Method begins at RVA 0x27b4
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method DefaultTempDataSerializer::CanSerializeType
+
+  .method /*0600024D*/ public hidebysig virtual 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.IDictionary`2/*01000055*/<string,object> 
+          Deserialize(uint8[] 'value') cil managed
+  // SIG: 20 01 15 12 81 55 02 0E 1C 1D 05
+  {
+    // Method begins at RVA 0x27b7
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method DefaultTempDataSerializer::Deserialize
+
+  .method /*0600024E*/ private hidebysig static 
+          object  DeserializeArray([in] valuetype [System.Text.Json/*23000018*/]System.Text.Json.JsonElement/*0100007A*/& arrayElement) cil managed
+  // SIG: 00 01 1C 10 11 81 E9
+  {
+    .param [1]/*080003BC*/ 
+    .custom /*0C0001A3:0A000027*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.IsReadOnlyAttribute/*01000079*/::.ctor() /* 0A000027 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x27ba
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method DefaultTempDataSerializer::DeserializeArray
+
+  .method /*0600024F*/ private hidebysig 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.IDictionary`2/*01000055*/<string,object> 
+          DeserializeDictionary(valuetype [System.Text.Json/*23000018*/]System.Text.Json.JsonElement/*0100007A*/ rootElement) cil managed
+  // SIG: 20 01 15 12 81 55 02 0E 1C 11 81 E9
+  {
+    // Method begins at RVA 0x27bd
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method DefaultTempDataSerializer::DeserializeDictionary
+
+  .method /*06000250*/ private hidebysig static 
+          object  DeserializeDictionaryEntry([in] valuetype [System.Text.Json/*23000018*/]System.Text.Json.JsonElement/*0100007A*/& objectElement) cil managed
+  // SIG: 00 01 1C 10 11 81 E9
+  {
+    .param [1]/*080003BE*/ 
+    .custom /*0C0001A4:0A000027*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.IsReadOnlyAttribute/*01000079*/::.ctor() /* 0A000027 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x27c0
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method DefaultTempDataSerializer::DeserializeDictionaryEntry
+
+  .method /*06000251*/ public hidebysig virtual 
+          instance uint8[]  Serialize(class [System.Runtime/*23000001*/]System.Collections.Generic.IDictionary`2/*01000055*/<string,object> values) cil managed
+  // SIG: 20 01 1D 05 15 12 81 55 02 0E 1C
+  {
+    // Method begins at RVA 0x27c3
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method DefaultTempDataSerializer::Serialize
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.Infrastructure.DefaultTempDataSerializer
+
+.class /*02000052*/ interface public abstract auto ansi Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.IViewBufferScope
+{
+  .method /*06000252*/ public hidebysig newslot abstract virtual 
+          instance class [System.Runtime.Extensions/*23000003*/]System.IO.TextWriter/*01000060*/ 
+          CreateWriter(class [System.Runtime.Extensions/*23000003*/]System.IO.TextWriter/*01000060*/ writer) cil managed
+  // SIG: 20 01 12 81 81 12 81 81
+  {
+    // Method begins at RVA 0x0
+  } // end of method IViewBufferScope::CreateWriter
+
+  .method /*06000253*/ public hidebysig newslot abstract virtual 
+          instance valuetype Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ViewBufferValue/*02000053*/[] 
+          GetPage(int32 pageSize) cil managed
+  // SIG: 20 01 1D 11 81 4C 08
+  {
+    // Method begins at RVA 0x0
+  } // end of method IViewBufferScope::GetPage
+
+  .method /*06000254*/ public hidebysig newslot abstract virtual 
+          instance void  ReturnSegment(valuetype Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ViewBufferValue/*02000053*/[] segment) cil managed
+  // SIG: 20 01 01 1D 11 81 4C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IViewBufferScope::ReturnSegment
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.IViewBufferScope
+
+.class /*02000053*/ public sequential ansi sealed beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ViewBufferValue
+       extends [System.Runtime/*23000001*/]System.ValueType/*01000057*/
+{
+  .custom /*0C000069:0A000027*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.IsReadOnlyAttribute/*01000079*/::.ctor() /* 0A000027 */ = ( 01 00 00 00 ) 
+  .custom /*0C00006A:0A00001F*/ instance void [System.Diagnostics.Debug/*23000011*/]System.Diagnostics.DebuggerDisplayAttribute/*01000065*/::.ctor(string) /* 0A00001F */ = ( 01 00 14 7B 44 65 62 75 67 67 65 72 54 6F 53 74   // ...{DebuggerToSt
+                                                                                                                                                                              72 69 6E 67 28 29 7D 00 00 )                      // ring()}..
+  .field /*04000025*/ private initonly object _dummy
+  .method /*06000255*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ content) cil managed
+  // SIG: 20 01 01 12 80 D1
+  {
+    // Method begins at RVA 0x27c6
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewBufferValue::.ctor
+
+  .method /*06000256*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(string 'value') cil managed
+  // SIG: 20 01 01 0E
+  {
+    // Method begins at RVA 0x27c9
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewBufferValue::.ctor
+
+  .method /*06000257*/ public hidebysig specialname 
+          instance object  get_Value() cil managed
+  // SIG: 20 00 1C
+  {
+    .custom /*0C0000E4:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x27cc
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewBufferValue::get_Value
+
+  .property /*17000088*/ instance object Value()
+  {
+    .get instance object Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ViewBufferValue/*02000053*/::get_Value() /* 06000257 */
+  } // end of property ViewBufferValue::Value
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ViewBufferValue
+
+.class /*02000054*/ private auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.CharArrayBufferSource
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+       implements Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ICharBufferSource/*02000055*/
+{
+  .field /*04000026*/ public static initonly class Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.CharArrayBufferSource/*02000054*/ Instance
+  .method /*06000258*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x27cf
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method CharArrayBufferSource::.ctor
+
+  .method /*06000259*/ public hidebysig newslot virtual final 
+          instance char[]  Rent(int32 bufferSize) cil managed
+  // SIG: 20 01 1D 03 08
+  {
+    // Method begins at RVA 0x27d7
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method CharArrayBufferSource::Rent
+
+  .method /*0600025A*/ public hidebysig newslot virtual final 
+          instance void  Return(char[] buffer) cil managed
+  // SIG: 20 01 01 1D 03
+  {
+    // Method begins at RVA 0x27da
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method CharArrayBufferSource::Return
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.CharArrayBufferSource
+
+.class /*02000055*/ interface private abstract auto ansi Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ICharBufferSource
+{
+  .method /*0600025B*/ public hidebysig newslot abstract virtual 
+          instance char[]  Rent(int32 bufferSize) cil managed
+  // SIG: 20 01 1D 03 08
+  {
+    // Method begins at RVA 0x0
+  } // end of method ICharBufferSource::Rent
+
+  .method /*0600025C*/ public hidebysig newslot abstract virtual 
+          instance void  Return(char[] buffer) cil managed
+  // SIG: 20 01 01 1D 03
+  {
+    // Method begins at RVA 0x0
+  } // end of method ICharBufferSource::Return
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ICharBufferSource
+
+.class /*02000056*/ private auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.PagedCharBuffer
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .field /*04000027*/ public static literal int32 PageSize = int32(0x00000400)
+  .field /*04000028*/ private int32 _charIndex
+  .field /*04000029*/ private initonly class Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ICharBufferSource/*02000055*/ _BufferSource_k__BackingField
+  .field /*0400002A*/ private char[] _CurrentPage_k__BackingField
+  .field /*0400002B*/ private initonly class [System.Collections/*23000017*/]System.Collections.Generic.List`1/*01000078*/<char[]> _Pages_k__BackingField
+  .method /*0600025D*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ICharBufferSource/*02000055*/ bufferSource) cil managed
+  // SIG: 20 01 01 12 81 54
+  {
+    // Method begins at RVA 0x27dc
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method PagedCharBuffer::.ctor
+
+  .method /*0600025E*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ICharBufferSource/*02000055*/ 
+          get_BufferSource() cil managed
+  // SIG: 20 00 12 81 54
+  {
+    // Method begins at RVA 0x27e4
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method PagedCharBuffer::get_BufferSource
+
+  .method /*0600025F*/ private hidebysig specialname 
+          instance char[]  get_CurrentPage() cil managed
+  // SIG: 20 00 1D 03
+  {
+    // Method begins at RVA 0x27e7
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method PagedCharBuffer::get_CurrentPage
+
+  .method /*06000260*/ private hidebysig specialname 
+          instance void  set_CurrentPage(char[] 'value') cil managed
+  // SIG: 20 01 01 1D 03
+  {
+    // Method begins at RVA 0x27ea
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method PagedCharBuffer::set_CurrentPage
+
+  .method /*06000261*/ public hidebysig specialname 
+          instance int32  get_Length() cil managed
+  // SIG: 20 00 08
+  {
+    // Method begins at RVA 0x27ec
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method PagedCharBuffer::get_Length
+
+  .method /*06000262*/ public hidebysig specialname 
+          instance class [System.Collections/*23000017*/]System.Collections.Generic.List`1/*01000078*/<char[]> 
+          get_Pages() cil managed
+  // SIG: 20 00 15 12 81 E1 01 1D 03
+  {
+    // Method begins at RVA 0x27ef
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method PagedCharBuffer::get_Pages
+
+  .method /*06000263*/ public hidebysig instance void 
+          Append(char 'value') cil managed
+  // SIG: 20 01 01 03
+  {
+    // Method begins at RVA 0x27f2
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method PagedCharBuffer::Append
+
+  .method /*06000264*/ public hidebysig instance void 
+          Append(char[] buffer,
+                 int32 index,
+                 int32 count) cil managed
+  // SIG: 20 03 01 1D 03 08 08
+  {
+    // Method begins at RVA 0x27f4
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method PagedCharBuffer::Append
+
+  .method /*06000265*/ public hidebysig instance void 
+          Append(string 'value') cil managed
+  // SIG: 20 01 01 0E
+  {
+    // Method begins at RVA 0x27f6
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method PagedCharBuffer::Append
+
+  .method /*06000266*/ public hidebysig instance void 
+          Clear() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x27f8
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method PagedCharBuffer::Clear
+
+  .method /*06000267*/ public hidebysig instance void 
+          Dispose() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x27fa
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method PagedCharBuffer::Dispose
+
+  .method /*06000268*/ private hidebysig 
+          instance char[]  GetCurrentPage() cil managed
+  // SIG: 20 00 1D 03
+  {
+    // Method begins at RVA 0x27fc
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method PagedCharBuffer::GetCurrentPage
+
+  .method /*06000269*/ private hidebysig 
+          instance char[]  NewPage() cil managed
+  // SIG: 20 00 1D 03
+  {
+    // Method begins at RVA 0x27ff
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method PagedCharBuffer::NewPage
+
+  .property /*17000089*/ instance class Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ICharBufferSource/*02000055*/
+          BufferSource()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ICharBufferSource/*02000055*/ Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.PagedCharBuffer/*02000056*/::get_BufferSource() /* 0600025E */
+  } // end of property PagedCharBuffer::BufferSource
+  .property /*1700008A*/ instance char[] CurrentPage()
+  {
+    .get instance char[] Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.PagedCharBuffer/*02000056*/::get_CurrentPage() /* 0600025F */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.PagedCharBuffer/*02000056*/::set_CurrentPage(char[]) /* 06000260 */
+  } // end of property PagedCharBuffer::CurrentPage
+  .property /*1700008B*/ instance int32 Length()
+  {
+    .get instance int32 Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.PagedCharBuffer/*02000056*/::get_Length() /* 06000261 */
+  } // end of property PagedCharBuffer::Length
+  .property /*1700008C*/ instance class [System.Collections/*23000017*/]System.Collections.Generic.List`1/*01000078*/<char[]>
+          Pages()
+  {
+    .get instance class [System.Collections/*23000017*/]System.Collections.Generic.List`1/*01000078*/<char[]> Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.PagedCharBuffer/*02000056*/::get_Pages() /* 06000262 */
+  } // end of property PagedCharBuffer::Pages
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.PagedCharBuffer
+
+.class /*02000057*/ private auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ViewBuffer
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+       implements [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContentBuilder/*0100007B*/,
+                  [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/,
+                  [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContentContainer/*0100007C*/
+{
+  .custom /*0C00006B:0A00001A*/ instance void [System.Runtime/*23000001*/]System.Reflection.DefaultMemberAttribute/*01000051*/::.ctor(string) /* 0A00001A */ = ( 01 00 04 49 74 65 6D 00 00 )                      // ...Item..
+  .class /*0200009D*/ auto ansi nested private beforefieldinit EncodingWrapper
+         extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+  {
+    .field /*04000057*/ private initonly string _unencoded
+    .method /*06000473*/ public hidebysig specialname rtspecialname 
+            instance void  .ctor(string unencoded) cil managed
+    // SIG: 20 01 01 0E
+    {
+      // Method begins at RVA 0x2ddf
+      // Code size       7 (0x7)
+      .maxstack  8
+      IL_0000:  /* 02   |                  */ ldarg.0
+      IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+      IL_0006:  /* 2A   |                  */ ret
+    } // end of method EncodingWrapper::.ctor
+
+    .method /*06000474*/ public hidebysig 
+            instance void  WriteTo(class [System.Runtime.Extensions/*23000003*/]System.IO.TextWriter/*01000060*/ writer,
+                                   class [System.Text.Encodings.Web/*23000015*/]System.Text.Encodings.Web.HtmlEncoder/*0100005C*/ encoder) cil managed
+    // SIG: 20 02 01 12 81 81 12 81 71
+    {
+      // Method begins at RVA 0x2de7
+      // Code size       1 (0x1)
+      .maxstack  8
+      IL_0000:  /* 2A   |                  */ ret
+    } // end of method EncodingWrapper::WriteTo
+
+  } // end of class EncodingWrapper
+
+  .field /*0400002C*/ public static initonly int32 PartialViewPageSize
+  .field /*0400002D*/ public static initonly int32 TagHelperPageSize
+  .field /*0400002E*/ public static initonly int32 ViewComponentPageSize
+  .field /*0400002F*/ public static initonly int32 ViewPageSize
+  .field /*04000030*/ private initonly class Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.IViewBufferScope/*02000052*/ _bufferScope
+  .field /*04000031*/ private class Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ViewBufferPage/*02000059*/ _currentPage
+  .field /*04000032*/ private class [System.Collections/*23000017*/]System.Collections.Generic.List`1/*01000078*/<class Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ViewBufferPage/*02000059*/> _multiplePages
+  .field /*04000033*/ private initonly string _name
+  .field /*04000034*/ private initonly int32 _pageSize
+  .method /*0600026A*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.IViewBufferScope/*02000052*/ bufferScope,
+                               string name,
+                               int32 pageSize) cil managed
+  // SIG: 20 03 01 12 81 48 0E 08
+  {
+    // Method begins at RVA 0x2802
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ViewBuffer::.ctor
+
+  .method /*0600026B*/ public hidebysig specialname 
+          instance int32  get_Count() cil managed
+  // SIG: 20 00 08
+  {
+    // Method begins at RVA 0x280a
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewBuffer::get_Count
+
+  .method /*0600026C*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ViewBufferPage/*02000059*/ 
+          get_Item(int32 index) cil managed
+  // SIG: 20 01 12 81 64 08
+  {
+    // Method begins at RVA 0x280d
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewBuffer::get_Item
+
+  .method /*0600026D*/ private hidebysig 
+          instance void  AddPage(class Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ViewBufferPage/*02000059*/ page) cil managed
+  // SIG: 20 01 01 12 81 64
+  {
+    // Method begins at RVA 0x2810
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewBuffer::AddPage
+
+  .method /*0600026E*/ public hidebysig newslot virtual final 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContentBuilder/*0100007B*/ 
+          Append(string unencoded) cil managed
+  // SIG: 20 01 12 81 ED 0E
+  {
+    // Method begins at RVA 0x2812
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewBuffer::Append
+
+  .method /*0600026F*/ public hidebysig newslot virtual final 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContentBuilder/*0100007B*/ 
+          AppendHtml(class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ content) cil managed
+  // SIG: 20 01 12 81 ED 12 80 D1
+  {
+    // Method begins at RVA 0x2815
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewBuffer::AppendHtml
+
+  .method /*06000270*/ public hidebysig newslot virtual final 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContentBuilder/*0100007B*/ 
+          AppendHtml(string encoded) cil managed
+  // SIG: 20 01 12 81 ED 0E
+  {
+    // Method begins at RVA 0x2818
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewBuffer::AppendHtml
+
+  .method /*06000271*/ private hidebysig 
+          instance class Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ViewBufferPage/*02000059*/ 
+          AppendNewPage() cil managed
+  // SIG: 20 00 12 81 64
+  {
+    // Method begins at RVA 0x281b
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewBuffer::AppendNewPage
+
+  .method /*06000272*/ private hidebysig 
+          instance void  AppendValue(valuetype Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ViewBufferValue/*02000053*/ 'value') cil managed
+  // SIG: 20 01 01 11 81 4C
+  {
+    // Method begins at RVA 0x281e
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewBuffer::AppendValue
+
+  .method /*06000273*/ public hidebysig newslot virtual final 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContentBuilder/*0100007B*/ 
+          Clear() cil managed
+  // SIG: 20 00 12 81 ED
+  {
+    // Method begins at RVA 0x2820
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewBuffer::Clear
+
+  .method /*06000274*/ public hidebysig newslot virtual final 
+          instance void  CopyTo(class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContentBuilder/*0100007B*/ destination) cil managed
+  // SIG: 20 01 01 12 81 ED
+  {
+    // Method begins at RVA 0x2823
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewBuffer::CopyTo
+
+  .method /*06000275*/ private hidebysig 
+          instance string  DebuggerToString() cil managed
+  // SIG: 20 00 0E
+  {
+    // Method begins at RVA 0x2825
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewBuffer::DebuggerToString
+
+  .method /*06000276*/ private hidebysig 
+          instance class Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ViewBufferPage/*02000059*/ 
+          GetCurrentPage() cil managed
+  // SIG: 20 00 12 81 64
+  {
+    // Method begins at RVA 0x2828
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewBuffer::GetCurrentPage
+
+  .method /*06000277*/ public hidebysig newslot virtual final 
+          instance void  MoveTo(class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContentBuilder/*0100007B*/ destination) cil managed
+  // SIG: 20 01 01 12 81 ED
+  {
+    // Method begins at RVA 0x282b
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewBuffer::MoveTo
+
+  .method /*06000278*/ private hidebysig 
+          instance void  MoveTo(class Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ViewBuffer/*02000057*/ destination) cil managed
+  // SIG: 20 01 01 12 81 5C
+  {
+    // Method begins at RVA 0x282d
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewBuffer::MoveTo
+
+  .method /*06000279*/ public hidebysig newslot virtual final 
+          instance void  WriteTo(class [System.Runtime.Extensions/*23000003*/]System.IO.TextWriter/*01000060*/ writer,
+                                 class [System.Text.Encodings.Web/*23000015*/]System.Text.Encodings.Web.HtmlEncoder/*0100005C*/ encoder) cil managed
+  // SIG: 20 02 01 12 81 81 12 81 71
+  {
+    // Method begins at RVA 0x282f
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewBuffer::WriteTo
+
+  .method /*0600027A*/ public hidebysig instance class [System.Runtime/*23000001*/]System.Threading.Tasks.Task/*0100002F*/ 
+          WriteToAsync(class [System.Runtime.Extensions/*23000003*/]System.IO.TextWriter/*01000060*/ writer,
+                       class [System.Text.Encodings.Web/*23000015*/]System.Text.Encodings.Web.HtmlEncoder/*0100005C*/ encoder) cil managed
+  // SIG: 20 02 12 80 BD 12 81 81 12 81 71
+  {
+    // Method begins at RVA 0x2831
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewBuffer::WriteToAsync
+
+  .property /*1700008D*/ instance int32 Count()
+  {
+    .get instance int32 Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ViewBuffer/*02000057*/::get_Count() /* 0600026B */
+  } // end of property ViewBuffer::Count
+  .property /*1700008E*/ instance class Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ViewBufferPage/*02000059*/
+          Item(int32)
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ViewBufferPage/*02000059*/ Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ViewBuffer/*02000057*/::get_Item(int32) /* 0600026C */
+  } // end of property ViewBuffer::Item
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ViewBuffer
+
+.class /*02000058*/ private auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ViewBufferTextWriter
+       extends [System.Runtime.Extensions/*23000003*/]System.IO.TextWriter/*01000060*/
+{
+  .field /*04000035*/ private initonly class [System.Text.Encodings.Web/*23000015*/]System.Text.Encodings.Web.HtmlEncoder/*0100005C*/ _htmlEncoder
+  .field /*04000036*/ private initonly class [System.Runtime.Extensions/*23000003*/]System.IO.TextWriter/*01000060*/ _inner
+  .field /*04000037*/ private initonly class Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ViewBuffer/*02000057*/ _Buffer_k__BackingField
+  .field /*04000038*/ private initonly class [System.Runtime/*23000001*/]System.Text.Encoding/*0100007D*/ _Encoding_k__BackingField
+  .field /*04000039*/ private bool _Flushed_k__BackingField
+  .method /*0600027B*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ViewBuffer/*02000057*/ buffer,
+                               class [System.Runtime/*23000001*/]System.Text.Encoding/*0100007D*/ encoding) cil managed
+  // SIG: 20 02 01 12 81 5C 12 81 F5
+  {
+    // Method begins at RVA 0x2834
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)00002D       */ call       instance void [System.Runtime.Extensions/*23000003*/]System.IO.TextWriter/*01000060*/::.ctor() /* 0A00002D */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ViewBufferTextWriter::.ctor
+
+  .method /*0600027C*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ViewBuffer/*02000057*/ buffer,
+                               class [System.Runtime/*23000001*/]System.Text.Encoding/*0100007D*/ encoding,
+                               class [System.Text.Encodings.Web/*23000015*/]System.Text.Encodings.Web.HtmlEncoder/*0100005C*/ htmlEncoder,
+                               class [System.Runtime.Extensions/*23000003*/]System.IO.TextWriter/*01000060*/ inner) cil managed
+  // SIG: 20 04 01 12 81 5C 12 81 F5 12 81 71 12 81 81
+  {
+    // Method begins at RVA 0x283c
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)00002D       */ call       instance void [System.Runtime.Extensions/*23000003*/]System.IO.TextWriter/*01000060*/::.ctor() /* 0A00002D */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ViewBufferTextWriter::.ctor
+
+  .method /*0600027D*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ViewBuffer/*02000057*/ 
+          get_Buffer() cil managed
+  // SIG: 20 00 12 81 5C
+  {
+    // Method begins at RVA 0x2844
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewBufferTextWriter::get_Buffer
+
+  .method /*0600027E*/ public hidebysig specialname virtual 
+          instance class [System.Runtime/*23000001*/]System.Text.Encoding/*0100007D*/ 
+          get_Encoding() cil managed
+  // SIG: 20 00 12 81 F5
+  {
+    // Method begins at RVA 0x2847
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewBufferTextWriter::get_Encoding
+
+  .method /*0600027F*/ public hidebysig specialname 
+          instance bool  get_Flushed() cil managed
+  // SIG: 20 00 02
+  {
+    // Method begins at RVA 0x284a
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewBufferTextWriter::get_Flushed
+
+  .method /*06000280*/ private hidebysig specialname 
+          instance void  set_Flushed(bool 'value') cil managed
+  // SIG: 20 01 01 02
+  {
+    // Method begins at RVA 0x284d
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewBufferTextWriter::set_Flushed
+
+  .method /*06000281*/ public hidebysig virtual 
+          instance void  Flush() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x284f
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewBufferTextWriter::Flush
+
+  .method /*06000282*/ public hidebysig virtual 
+          instance class [System.Runtime/*23000001*/]System.Threading.Tasks.Task/*0100002F*/ 
+          FlushAsync() cil managed
+  // SIG: 20 00 12 80 BD
+  {
+    // Method begins at RVA 0x2851
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewBufferTextWriter::FlushAsync
+
+  .method /*06000283*/ public hidebysig instance void 
+          Write(class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 'value') cil managed
+  // SIG: 20 01 01 12 80 D1
+  {
+    // Method begins at RVA 0x2854
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewBufferTextWriter::Write
+
+  .method /*06000284*/ public hidebysig instance void 
+          Write(class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContentContainer/*0100007C*/ 'value') cil managed
+  // SIG: 20 01 01 12 81 F1
+  {
+    // Method begins at RVA 0x2856
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewBufferTextWriter::Write
+
+  .method /*06000285*/ public hidebysig virtual 
+          instance void  Write(char 'value') cil managed
+  // SIG: 20 01 01 03
+  {
+    // Method begins at RVA 0x2858
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewBufferTextWriter::Write
+
+  .method /*06000286*/ public hidebysig virtual 
+          instance void  Write(char[] buffer,
+                               int32 index,
+                               int32 count) cil managed
+  // SIG: 20 03 01 1D 03 08 08
+  {
+    // Method begins at RVA 0x285a
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewBufferTextWriter::Write
+
+  .method /*06000287*/ public hidebysig virtual 
+          instance void  Write(object 'value') cil managed
+  // SIG: 20 01 01 1C
+  {
+    // Method begins at RVA 0x285c
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewBufferTextWriter::Write
+
+  .method /*06000288*/ public hidebysig virtual 
+          instance void  Write(string 'value') cil managed
+  // SIG: 20 01 01 0E
+  {
+    // Method begins at RVA 0x285e
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewBufferTextWriter::Write
+
+  .method /*06000289*/ public hidebysig virtual 
+          instance class [System.Runtime/*23000001*/]System.Threading.Tasks.Task/*0100002F*/ 
+          WriteAsync(char 'value') cil managed
+  // SIG: 20 01 12 80 BD 03
+  {
+    // Method begins at RVA 0x2860
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewBufferTextWriter::WriteAsync
+
+  .method /*0600028A*/ public hidebysig virtual 
+          instance class [System.Runtime/*23000001*/]System.Threading.Tasks.Task/*0100002F*/ 
+          WriteAsync(char[] buffer,
+                     int32 index,
+                     int32 count) cil managed
+  // SIG: 20 03 12 80 BD 1D 03 08 08
+  {
+    // Method begins at RVA 0x2863
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewBufferTextWriter::WriteAsync
+
+  .method /*0600028B*/ public hidebysig virtual 
+          instance class [System.Runtime/*23000001*/]System.Threading.Tasks.Task/*0100002F*/ 
+          WriteAsync(string 'value') cil managed
+  // SIG: 20 01 12 80 BD 0E
+  {
+    // Method begins at RVA 0x2866
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewBufferTextWriter::WriteAsync
+
+  .method /*0600028C*/ public hidebysig virtual 
+          instance void  WriteLine() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x2869
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewBufferTextWriter::WriteLine
+
+  .method /*0600028D*/ public hidebysig virtual 
+          instance void  WriteLine(object 'value') cil managed
+  // SIG: 20 01 01 1C
+  {
+    // Method begins at RVA 0x286b
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewBufferTextWriter::WriteLine
+
+  .method /*0600028E*/ public hidebysig virtual 
+          instance void  WriteLine(string 'value') cil managed
+  // SIG: 20 01 01 0E
+  {
+    // Method begins at RVA 0x286d
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewBufferTextWriter::WriteLine
+
+  .method /*0600028F*/ public hidebysig virtual 
+          instance class [System.Runtime/*23000001*/]System.Threading.Tasks.Task/*0100002F*/ 
+          WriteLineAsync() cil managed
+  // SIG: 20 00 12 80 BD
+  {
+    // Method begins at RVA 0x286f
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewBufferTextWriter::WriteLineAsync
+
+  .method /*06000290*/ public hidebysig virtual 
+          instance class [System.Runtime/*23000001*/]System.Threading.Tasks.Task/*0100002F*/ 
+          WriteLineAsync(char 'value') cil managed
+  // SIG: 20 01 12 80 BD 03
+  {
+    // Method begins at RVA 0x2872
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewBufferTextWriter::WriteLineAsync
+
+  .method /*06000291*/ public hidebysig virtual 
+          instance class [System.Runtime/*23000001*/]System.Threading.Tasks.Task/*0100002F*/ 
+          WriteLineAsync(char[] 'value',
+                         int32 start,
+                         int32 offset) cil managed
+  // SIG: 20 03 12 80 BD 1D 03 08 08
+  {
+    // Method begins at RVA 0x2875
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewBufferTextWriter::WriteLineAsync
+
+  .method /*06000292*/ public hidebysig virtual 
+          instance class [System.Runtime/*23000001*/]System.Threading.Tasks.Task/*0100002F*/ 
+          WriteLineAsync(string 'value') cil managed
+  // SIG: 20 01 12 80 BD 0E
+  {
+    // Method begins at RVA 0x2878
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewBufferTextWriter::WriteLineAsync
+
+  .property /*1700008F*/ instance class Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ViewBuffer/*02000057*/
+          Buffer()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ViewBuffer/*02000057*/ Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ViewBufferTextWriter/*02000058*/::get_Buffer() /* 0600027D */
+  } // end of property ViewBufferTextWriter::Buffer
+  .property /*17000090*/ instance class [System.Runtime/*23000001*/]System.Text.Encoding/*0100007D*/
+          Encoding()
+  {
+    .get instance class [System.Runtime/*23000001*/]System.Text.Encoding/*0100007D*/ Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ViewBufferTextWriter/*02000058*/::get_Encoding() /* 0600027E */
+  } // end of property ViewBufferTextWriter::Encoding
+  .property /*17000091*/ instance bool Flushed()
+  {
+    .get instance bool Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ViewBufferTextWriter/*02000058*/::get_Flushed() /* 0600027F */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ViewBufferTextWriter/*02000058*/::set_Flushed(bool) /* 06000280 */
+  } // end of property ViewBufferTextWriter::Flushed
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ViewBufferTextWriter
+
+.class /*02000059*/ private auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ViewBufferPage
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .field /*0400003A*/ private initonly valuetype Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ViewBufferValue/*02000053*/[] _Buffer_k__BackingField
+  .field /*0400003B*/ private int32 _Count_k__BackingField
+  .method /*06000293*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(valuetype Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ViewBufferValue/*02000053*/[] buffer) cil managed
+  // SIG: 20 01 01 1D 11 81 4C
+  {
+    // Method begins at RVA 0x287b
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ViewBufferPage::.ctor
+
+  .method /*06000294*/ public hidebysig specialname 
+          instance valuetype Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ViewBufferValue/*02000053*/[] 
+          get_Buffer() cil managed
+  // SIG: 20 00 1D 11 81 4C
+  {
+    // Method begins at RVA 0x2883
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewBufferPage::get_Buffer
+
+  .method /*06000295*/ public hidebysig specialname 
+          instance int32  get_Capacity() cil managed
+  // SIG: 20 00 08
+  {
+    // Method begins at RVA 0x2886
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewBufferPage::get_Capacity
+
+  .method /*06000296*/ public hidebysig specialname 
+          instance int32  get_Count() cil managed
+  // SIG: 20 00 08
+  {
+    // Method begins at RVA 0x2889
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewBufferPage::get_Count
+
+  .method /*06000297*/ public hidebysig specialname 
+          instance void  set_Count(int32 'value') cil managed
+  // SIG: 20 01 01 08
+  {
+    // Method begins at RVA 0x288c
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewBufferPage::set_Count
+
+  .method /*06000298*/ public hidebysig specialname 
+          instance bool  get_IsFull() cil managed
+  // SIG: 20 00 02
+  {
+    // Method begins at RVA 0x288e
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewBufferPage::get_IsFull
+
+  .method /*06000299*/ public hidebysig instance void 
+          Append(valuetype Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ViewBufferValue/*02000053*/ 'value') cil managed
+  // SIG: 20 01 01 11 81 4C
+  {
+    // Method begins at RVA 0x2891
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewBufferPage::Append
+
+  .property /*17000092*/ instance valuetype Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ViewBufferValue/*02000053*/[]
+          Buffer()
+  {
+    .get instance valuetype Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ViewBufferValue/*02000053*/[] Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ViewBufferPage/*02000059*/::get_Buffer() /* 06000294 */
+  } // end of property ViewBufferPage::Buffer
+  .property /*17000093*/ instance int32 Capacity()
+  {
+    .get instance int32 Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ViewBufferPage/*02000059*/::get_Capacity() /* 06000295 */
+  } // end of property ViewBufferPage::Capacity
+  .property /*17000094*/ instance int32 Count()
+  {
+    .get instance int32 Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ViewBufferPage/*02000059*/::get_Count() /* 06000296 */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ViewBufferPage/*02000059*/::set_Count(int32) /* 06000297 */
+  } // end of property ViewBufferPage::Count
+  .property /*17000095*/ instance bool IsFull()
+  {
+    .get instance bool Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ViewBufferPage/*02000059*/::get_IsFull() /* 06000298 */
+  } // end of property ViewBufferPage::IsFull
+} // end of class Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.ViewBufferPage
+
+.class /*0200005A*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewEngines.CompositeViewEngine
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+       implements Microsoft.AspNetCore.Mvc.ViewEngines.ICompositeViewEngine/*0200005B*/,
+                  Microsoft.AspNetCore.Mvc.ViewEngines.IViewEngine/*0200005D*/
+{
+  .method /*0600029A*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class [Microsoft.Extensions.Options/*23000005*/]Microsoft.Extensions.Options.IOptions`1/*01000019*/<class Microsoft.AspNetCore.Mvc.MvcViewOptions/*0200000C*/> optionsAccessor) cil managed
+  // SIG: 20 01 01 15 12 65 01 12 30
+  {
+    // Method begins at RVA 0x2893
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method CompositeViewEngine::.ctor
+
+  .method /*0600029B*/ public hidebysig newslot specialname virtual final 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.IReadOnlyList`1/*01000077*/<class Microsoft.AspNetCore.Mvc.ViewEngines.IViewEngine/*0200005D*/> 
+          get_ViewEngines() cil managed
+  // SIG: 20 00 15 12 81 DD 01 12 81 74
+  {
+    .custom /*0C0000E5:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x289b
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method CompositeViewEngine::get_ViewEngines
+
+  .method /*0600029C*/ public hidebysig newslot virtual final 
+          instance class Microsoft.AspNetCore.Mvc.ViewEngines.ViewEngineResult/*0200005E*/ 
+          FindView(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ActionContext/*01000041*/ context,
+                   string viewName,
+                   bool isMainPage) cil managed
+  // SIG: 20 03 12 81 78 12 81 05 0E 02
+  {
+    // Method begins at RVA 0x289e
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method CompositeViewEngine::FindView
+
+  .method /*0600029D*/ public hidebysig newslot virtual final 
+          instance class Microsoft.AspNetCore.Mvc.ViewEngines.ViewEngineResult/*0200005E*/ 
+          GetView(string executingFilePath,
+                  string viewPath,
+                  bool isMainPage) cil managed
+  // SIG: 20 03 12 81 78 0E 0E 02
+  {
+    // Method begins at RVA 0x28a1
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method CompositeViewEngine::GetView
+
+  .property /*17000096*/ instance class [System.Runtime/*23000001*/]System.Collections.Generic.IReadOnlyList`1/*01000077*/<class Microsoft.AspNetCore.Mvc.ViewEngines.IViewEngine/*0200005D*/>
+          ViewEngines()
+  {
+    .get instance class [System.Runtime/*23000001*/]System.Collections.Generic.IReadOnlyList`1/*01000077*/<class Microsoft.AspNetCore.Mvc.ViewEngines.IViewEngine/*0200005D*/> Microsoft.AspNetCore.Mvc.ViewEngines.CompositeViewEngine/*0200005A*/::get_ViewEngines() /* 0600029B */
+  } // end of property CompositeViewEngine::ViewEngines
+} // end of class Microsoft.AspNetCore.Mvc.ViewEngines.CompositeViewEngine
+
+.class /*0200005B*/ interface public abstract auto ansi Microsoft.AspNetCore.Mvc.ViewEngines.ICompositeViewEngine
+       implements Microsoft.AspNetCore.Mvc.ViewEngines.IViewEngine/*0200005D*/
+{
+  .method /*0600029E*/ public hidebysig newslot specialname abstract virtual 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.IReadOnlyList`1/*01000077*/<class Microsoft.AspNetCore.Mvc.ViewEngines.IViewEngine/*0200005D*/> 
+          get_ViewEngines() cil managed
+  // SIG: 20 00 15 12 81 DD 01 12 81 74
+  {
+    // Method begins at RVA 0x0
+  } // end of method ICompositeViewEngine::get_ViewEngines
+
+  .property /*17000097*/ instance class [System.Runtime/*23000001*/]System.Collections.Generic.IReadOnlyList`1/*01000077*/<class Microsoft.AspNetCore.Mvc.ViewEngines.IViewEngine/*0200005D*/>
+          ViewEngines()
+  {
+    .get instance class [System.Runtime/*23000001*/]System.Collections.Generic.IReadOnlyList`1/*01000077*/<class Microsoft.AspNetCore.Mvc.ViewEngines.IViewEngine/*0200005D*/> Microsoft.AspNetCore.Mvc.ViewEngines.ICompositeViewEngine/*0200005B*/::get_ViewEngines() /* 0600029E */
+  } // end of property ICompositeViewEngine::ViewEngines
+} // end of class Microsoft.AspNetCore.Mvc.ViewEngines.ICompositeViewEngine
+
+.class /*0200005C*/ interface public abstract auto ansi Microsoft.AspNetCore.Mvc.ViewEngines.IView
+{
+  .method /*0600029F*/ public hidebysig newslot specialname abstract virtual 
+          instance string  get_Path() cil managed
+  // SIG: 20 00 0E
+  {
+    // Method begins at RVA 0x0
+  } // end of method IView::get_Path
+
+  .method /*060002A0*/ public hidebysig newslot abstract virtual 
+          instance class [System.Runtime/*23000001*/]System.Threading.Tasks.Task/*0100002F*/ 
+          RenderAsync(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ context) cil managed
+  // SIG: 20 01 12 80 BD 12 82 44
+  {
+    // Method begins at RVA 0x0
+  } // end of method IView::RenderAsync
+
+  .property /*17000098*/ instance string Path()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.ViewEngines.IView/*0200005C*/::get_Path() /* 0600029F */
+  } // end of property IView::Path
+} // end of class Microsoft.AspNetCore.Mvc.ViewEngines.IView
+
+.class /*0200005D*/ interface public abstract auto ansi Microsoft.AspNetCore.Mvc.ViewEngines.IViewEngine
+{
+  .method /*060002A1*/ public hidebysig newslot abstract virtual 
+          instance class Microsoft.AspNetCore.Mvc.ViewEngines.ViewEngineResult/*0200005E*/ 
+          FindView(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ActionContext/*01000041*/ context,
+                   string viewName,
+                   bool isMainPage) cil managed
+  // SIG: 20 03 12 81 78 12 81 05 0E 02
+  {
+    // Method begins at RVA 0x0
+  } // end of method IViewEngine::FindView
+
+  .method /*060002A2*/ public hidebysig newslot abstract virtual 
+          instance class Microsoft.AspNetCore.Mvc.ViewEngines.ViewEngineResult/*0200005E*/ 
+          GetView(string executingFilePath,
+                  string viewPath,
+                  bool isMainPage) cil managed
+  // SIG: 20 03 12 81 78 0E 0E 02
+  {
+    // Method begins at RVA 0x0
+  } // end of method IViewEngine::GetView
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewEngines.IViewEngine
+
+.class /*0200005E*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewEngines.ViewEngineResult
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .method /*060002A3*/ assembly hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x28a4
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ViewEngineResult::.ctor
+
+  .method /*060002A4*/ public hidebysig specialname 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<string> 
+          get_SearchedLocations() cil managed
+  // SIG: 20 00 15 12 80 D5 01 0E
+  {
+    .custom /*0C0000E6:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x28ac
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewEngineResult::get_SearchedLocations
+
+  .method /*060002A5*/ public hidebysig specialname 
+          instance bool  get_Success() cil managed
+  // SIG: 20 00 02
+  {
+    // Method begins at RVA 0x28af
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewEngineResult::get_Success
+
+  .method /*060002A6*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.ViewEngines.IView/*0200005C*/ 
+          get_View() cil managed
+  // SIG: 20 00 12 81 70
+  {
+    .custom /*0C0000E7:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x28b2
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewEngineResult::get_View
+
+  .method /*060002A7*/ public hidebysig specialname 
+          instance string  get_ViewName() cil managed
+  // SIG: 20 00 0E
+  {
+    .custom /*0C0000E8:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x28b5
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewEngineResult::get_ViewName
+
+  .method /*060002A8*/ public hidebysig instance class Microsoft.AspNetCore.Mvc.ViewEngines.ViewEngineResult/*0200005E*/ 
+          EnsureSuccessful(class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<string> originalLocations) cil managed
+  // SIG: 20 01 12 81 78 15 12 80 D5 01 0E
+  {
+    // Method begins at RVA 0x28b8
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewEngineResult::EnsureSuccessful
+
+  .method /*060002A9*/ public hidebysig static 
+          class Microsoft.AspNetCore.Mvc.ViewEngines.ViewEngineResult/*0200005E*/ 
+          Found(string viewName,
+                class Microsoft.AspNetCore.Mvc.ViewEngines.IView/*0200005C*/ view) cil managed
+  // SIG: 00 02 12 81 78 0E 12 81 70
+  {
+    // Method begins at RVA 0x28bb
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewEngineResult::Found
+
+  .method /*060002AA*/ public hidebysig static 
+          class Microsoft.AspNetCore.Mvc.ViewEngines.ViewEngineResult/*0200005E*/ 
+          NotFound(string viewName,
+                   class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<string> searchedLocations) cil managed
+  // SIG: 00 02 12 81 78 0E 15 12 80 D5 01 0E
+  {
+    // Method begins at RVA 0x28be
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewEngineResult::NotFound
+
+  .property /*17000099*/ instance class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<string>
+          SearchedLocations()
+  {
+    .get instance class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<string> Microsoft.AspNetCore.Mvc.ViewEngines.ViewEngineResult/*0200005E*/::get_SearchedLocations() /* 060002A4 */
+  } // end of property ViewEngineResult::SearchedLocations
+  .property /*1700009A*/ instance bool Success()
+  {
+    .get instance bool Microsoft.AspNetCore.Mvc.ViewEngines.ViewEngineResult/*0200005E*/::get_Success() /* 060002A5 */
+  } // end of property ViewEngineResult::Success
+  .property /*1700009B*/ instance class Microsoft.AspNetCore.Mvc.ViewEngines.IView/*0200005C*/
+          View()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewEngines.IView/*0200005C*/ Microsoft.AspNetCore.Mvc.ViewEngines.ViewEngineResult/*0200005E*/::get_View() /* 060002A6 */
+  } // end of property ViewEngineResult::View
+  .property /*1700009C*/ instance string ViewName()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.ViewEngines.ViewEngineResult/*0200005E*/::get_ViewName() /* 060002A7 */
+  } // end of property ViewEngineResult::ViewName
+} // end of class Microsoft.AspNetCore.Mvc.ViewEngines.ViewEngineResult
+
+.class /*0200005F*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewComponents.ContentViewComponentResult
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+       implements Microsoft.AspNetCore.Mvc.IViewComponentResult/*0200000B*/
+{
+  .method /*060002AB*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(string content) cil managed
+  // SIG: 20 01 01 0E
+  {
+    // Method begins at RVA 0x28c1
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ContentViewComponentResult::.ctor
+
+  .method /*060002AC*/ public hidebysig specialname 
+          instance string  get_Content() cil managed
+  // SIG: 20 00 0E
+  {
+    .custom /*0C0000E9:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x28c9
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ContentViewComponentResult::get_Content
+
+  .method /*060002AD*/ public hidebysig newslot virtual final 
+          instance void  Execute(class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/ context) cil managed
+  // SIG: 20 01 01 12 81 B8
+  {
+    // Method begins at RVA 0x28cc
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ContentViewComponentResult::Execute
+
+  .method /*060002AE*/ public hidebysig newslot virtual final 
+          instance class [System.Runtime/*23000001*/]System.Threading.Tasks.Task/*0100002F*/ 
+          ExecuteAsync(class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/ context) cil managed
+  // SIG: 20 01 12 80 BD 12 81 B8
+  {
+    // Method begins at RVA 0x28ce
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ContentViewComponentResult::ExecuteAsync
+
+  .property /*1700009D*/ instance string Content()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.ViewComponents.ContentViewComponentResult/*0200005F*/::get_Content() /* 060002AC */
+  } // end of property ContentViewComponentResult::Content
+} // end of class Microsoft.AspNetCore.Mvc.ViewComponents.ContentViewComponentResult
+
+.class /*02000060*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewComponents.DefaultViewComponentDescriptorCollectionProvider
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+       implements Microsoft.AspNetCore.Mvc.ViewComponents.IViewComponentDescriptorCollectionProvider/*02000067*/
+{
+  .method /*060002AF*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class Microsoft.AspNetCore.Mvc.ViewComponents.IViewComponentDescriptorProvider/*02000068*/ descriptorProvider) cil managed
+  // SIG: 20 01 01 12 81 A0
+  {
+    // Method begins at RVA 0x28d1
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method DefaultViewComponentDescriptorCollectionProvider::.ctor
+
+  .method /*060002B0*/ public hidebysig newslot specialname virtual final 
+          instance class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentDescriptorCollection/*02000072*/ 
+          get_ViewComponents() cil managed
+  // SIG: 20 00 12 81 C8
+  {
+    // Method begins at RVA 0x28d9
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method DefaultViewComponentDescriptorCollectionProvider::get_ViewComponents
+
+  .property /*1700009E*/ instance class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentDescriptorCollection/*02000072*/
+          ViewComponents()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentDescriptorCollection/*02000072*/ Microsoft.AspNetCore.Mvc.ViewComponents.DefaultViewComponentDescriptorCollectionProvider/*02000060*/::get_ViewComponents() /* 060002B0 */
+  } // end of property DefaultViewComponentDescriptorCollectionProvider::ViewComponents
+} // end of class Microsoft.AspNetCore.Mvc.ViewComponents.DefaultViewComponentDescriptorCollectionProvider
+
+.class /*02000061*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewComponents.DefaultViewComponentDescriptorProvider
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+       implements Microsoft.AspNetCore.Mvc.ViewComponents.IViewComponentDescriptorProvider/*02000068*/
+{
+  .method /*060002B1*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.ApplicationParts.ApplicationPartManager/*0100007E*/ partManager) cil managed
+  // SIG: 20 01 01 12 81 F9
+  {
+    // Method begins at RVA 0x28dc
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method DefaultViewComponentDescriptorProvider::.ctor
+
+  .method /*060002B2*/ family hidebysig newslot virtual 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<class [System.Runtime/*23000001*/]System.Reflection.TypeInfo/*01000076*/> 
+          GetCandidateTypes() cil managed
+  // SIG: 20 00 15 12 80 D5 01 12 81 D9
+  {
+    // Method begins at RVA 0x28e4
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method DefaultViewComponentDescriptorProvider::GetCandidateTypes
+
+  .method /*060002B3*/ public hidebysig newslot virtual 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentDescriptor/*02000071*/> 
+          GetViewComponents() cil managed
+  // SIG: 20 00 15 12 80 D5 01 12 81 C4
+  {
+    // Method begins at RVA 0x28e7
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method DefaultViewComponentDescriptorProvider::GetViewComponents
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewComponents.DefaultViewComponentDescriptorProvider
+
+.class /*02000062*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewComponents.DefaultViewComponentFactory
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+       implements Microsoft.AspNetCore.Mvc.ViewComponents.IViewComponentFactory/*02000069*/
+{
+  .method /*060002B4*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class Microsoft.AspNetCore.Mvc.ViewComponents.IViewComponentActivator/*02000066*/ activator) cil managed
+  // SIG: 20 01 01 12 81 98
+  {
+    // Method begins at RVA 0x28ea
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method DefaultViewComponentFactory::.ctor
+
+  .method /*060002B5*/ public hidebysig newslot virtual final 
+          instance object  CreateViewComponent(class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/ context) cil managed
+  // SIG: 20 01 1C 12 81 B8
+  {
+    // Method begins at RVA 0x28f2
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method DefaultViewComponentFactory::CreateViewComponent
+
+  .method /*060002B6*/ public hidebysig newslot virtual final 
+          instance void  ReleaseViewComponent(class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/ context,
+                                              object component) cil managed
+  // SIG: 20 02 01 12 81 B8 1C
+  {
+    // Method begins at RVA 0x28f5
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method DefaultViewComponentFactory::ReleaseViewComponent
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewComponents.DefaultViewComponentFactory
+
+.class /*02000063*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewComponents.DefaultViewComponentHelper
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+       implements Microsoft.AspNetCore.Mvc.IViewComponentHelper/*0200000A*/,
+                  Microsoft.AspNetCore.Mvc.ViewFeatures.IViewContextAware/*0200002B*/
+{
+  .method /*060002B7*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class Microsoft.AspNetCore.Mvc.ViewComponents.IViewComponentDescriptorCollectionProvider/*02000067*/ descriptorProvider,
+                               class [System.Text.Encodings.Web/*23000015*/]System.Text.Encodings.Web.HtmlEncoder/*0100005C*/ htmlEncoder,
+                               class Microsoft.AspNetCore.Mvc.ViewComponents.IViewComponentSelector/*0200006C*/ selector,
+                               class Microsoft.AspNetCore.Mvc.ViewComponents.IViewComponentInvokerFactory/*0200006B*/ invokerFactory,
+                               class Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers.IViewBufferScope/*02000052*/ viewBufferScope) cil managed
+  // SIG: 20 05 01 12 81 9C 12 81 71 12 81 B0 12 81 AC 12 81 48
+  {
+    // Method begins at RVA 0x28f7
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method DefaultViewComponentHelper::.ctor
+
+  .method /*060002B8*/ public hidebysig newslot virtual final 
+          instance void  Contextualize(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext) cil managed
+  // SIG: 20 01 01 12 82 44
+  {
+    // Method begins at RVA 0x28ff
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method DefaultViewComponentHelper::Contextualize
+
+  .method /*060002B9*/ public hidebysig newslot virtual final 
+          instance class [System.Runtime/*23000001*/]System.Threading.Tasks.Task`1/*01000033*/<class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/> 
+          InvokeAsync(string name,
+                      object arguments) cil managed
+  // SIG: 20 02 15 12 80 CD 01 12 80 D1 0E 1C
+  {
+    // Method begins at RVA 0x2901
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method DefaultViewComponentHelper::InvokeAsync
+
+  .method /*060002BA*/ public hidebysig newslot virtual final 
+          instance class [System.Runtime/*23000001*/]System.Threading.Tasks.Task`1/*01000033*/<class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/> 
+          InvokeAsync(class [System.Runtime/*23000001*/]System.Type/*01000031*/ componentType,
+                      object arguments) cil managed
+  // SIG: 20 02 15 12 80 CD 01 12 80 D1 12 80 C5 1C
+  {
+    // Method begins at RVA 0x2904
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method DefaultViewComponentHelper::InvokeAsync
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewComponents.DefaultViewComponentHelper
+
+.class /*02000064*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewComponents.DefaultViewComponentSelector
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+       implements Microsoft.AspNetCore.Mvc.ViewComponents.IViewComponentSelector/*0200006C*/
+{
+  .method /*060002BB*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class Microsoft.AspNetCore.Mvc.ViewComponents.IViewComponentDescriptorCollectionProvider/*02000067*/ descriptorProvider) cil managed
+  // SIG: 20 01 01 12 81 9C
+  {
+    // Method begins at RVA 0x2907
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method DefaultViewComponentSelector::.ctor
+
+  .method /*060002BC*/ public hidebysig newslot virtual final 
+          instance class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentDescriptor/*02000071*/ 
+          SelectComponent(string componentName) cil managed
+  // SIG: 20 01 12 81 C4 0E
+  {
+    // Method begins at RVA 0x290f
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method DefaultViewComponentSelector::SelectComponent
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewComponents.DefaultViewComponentSelector
+
+.class /*02000065*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewComponents.HtmlContentViewComponentResult
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+       implements Microsoft.AspNetCore.Mvc.IViewComponentResult/*0200000B*/
+{
+  .method /*060002BD*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ encodedContent) cil managed
+  // SIG: 20 01 01 12 80 D1
+  {
+    // Method begins at RVA 0x2912
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method HtmlContentViewComponentResult::.ctor
+
+  .method /*060002BE*/ public hidebysig specialname 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          get_EncodedContent() cil managed
+  // SIG: 20 00 12 80 D1
+  {
+    .custom /*0C0000EA:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x291a
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlContentViewComponentResult::get_EncodedContent
+
+  .method /*060002BF*/ public hidebysig newslot virtual final 
+          instance void  Execute(class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/ context) cil managed
+  // SIG: 20 01 01 12 81 B8
+  {
+    // Method begins at RVA 0x291d
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method HtmlContentViewComponentResult::Execute
+
+  .method /*060002C0*/ public hidebysig newslot virtual final 
+          instance class [System.Runtime/*23000001*/]System.Threading.Tasks.Task/*0100002F*/ 
+          ExecuteAsync(class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/ context) cil managed
+  // SIG: 20 01 12 80 BD 12 81 B8
+  {
+    // Method begins at RVA 0x291f
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlContentViewComponentResult::ExecuteAsync
+
+  .property /*1700009F*/ instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/
+          EncodedContent()
+  {
+    .get instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ Microsoft.AspNetCore.Mvc.ViewComponents.HtmlContentViewComponentResult/*02000065*/::get_EncodedContent() /* 060002BE */
+  } // end of property HtmlContentViewComponentResult::EncodedContent
+} // end of class Microsoft.AspNetCore.Mvc.ViewComponents.HtmlContentViewComponentResult
+
+.class /*02000066*/ interface public abstract auto ansi Microsoft.AspNetCore.Mvc.ViewComponents.IViewComponentActivator
+{
+  .method /*060002C1*/ public hidebysig newslot abstract virtual 
+          instance object  Create(class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/ context) cil managed
+  // SIG: 20 01 1C 12 81 B8
+  {
+    // Method begins at RVA 0x0
+  } // end of method IViewComponentActivator::Create
+
+  .method /*060002C2*/ public hidebysig newslot abstract virtual 
+          instance void  Release(class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/ context,
+                                 object viewComponent) cil managed
+  // SIG: 20 02 01 12 81 B8 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IViewComponentActivator::Release
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewComponents.IViewComponentActivator
+
+.class /*02000067*/ interface public abstract auto ansi Microsoft.AspNetCore.Mvc.ViewComponents.IViewComponentDescriptorCollectionProvider
+{
+  .method /*060002C3*/ public hidebysig newslot specialname abstract virtual 
+          instance class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentDescriptorCollection/*02000072*/ 
+          get_ViewComponents() cil managed
+  // SIG: 20 00 12 81 C8
+  {
+    // Method begins at RVA 0x0
+  } // end of method IViewComponentDescriptorCollectionProvider::get_ViewComponents
+
+  .property /*170000A0*/ instance class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentDescriptorCollection/*02000072*/
+          ViewComponents()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentDescriptorCollection/*02000072*/ Microsoft.AspNetCore.Mvc.ViewComponents.IViewComponentDescriptorCollectionProvider/*02000067*/::get_ViewComponents() /* 060002C3 */
+  } // end of property IViewComponentDescriptorCollectionProvider::ViewComponents
+} // end of class Microsoft.AspNetCore.Mvc.ViewComponents.IViewComponentDescriptorCollectionProvider
+
+.class /*02000068*/ interface public abstract auto ansi Microsoft.AspNetCore.Mvc.ViewComponents.IViewComponentDescriptorProvider
+{
+  .method /*060002C4*/ public hidebysig newslot abstract virtual 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentDescriptor/*02000071*/> 
+          GetViewComponents() cil managed
+  // SIG: 20 00 15 12 80 D5 01 12 81 C4
+  {
+    // Method begins at RVA 0x0
+  } // end of method IViewComponentDescriptorProvider::GetViewComponents
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewComponents.IViewComponentDescriptorProvider
+
+.class /*02000069*/ interface public abstract auto ansi Microsoft.AspNetCore.Mvc.ViewComponents.IViewComponentFactory
+{
+  .method /*060002C5*/ public hidebysig newslot abstract virtual 
+          instance object  CreateViewComponent(class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/ context) cil managed
+  // SIG: 20 01 1C 12 81 B8
+  {
+    // Method begins at RVA 0x0
+  } // end of method IViewComponentFactory::CreateViewComponent
+
+  .method /*060002C6*/ public hidebysig newslot abstract virtual 
+          instance void  ReleaseViewComponent(class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/ context,
+                                              object component) cil managed
+  // SIG: 20 02 01 12 81 B8 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IViewComponentFactory::ReleaseViewComponent
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewComponents.IViewComponentFactory
+
+.class /*0200006A*/ interface public abstract auto ansi Microsoft.AspNetCore.Mvc.ViewComponents.IViewComponentInvoker
+{
+  .method /*060002C7*/ public hidebysig newslot abstract virtual 
+          instance class [System.Runtime/*23000001*/]System.Threading.Tasks.Task/*0100002F*/ 
+          InvokeAsync(class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/ context) cil managed
+  // SIG: 20 01 12 80 BD 12 81 B8
+  {
+    // Method begins at RVA 0x0
+  } // end of method IViewComponentInvoker::InvokeAsync
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewComponents.IViewComponentInvoker
+
+.class /*0200006B*/ interface public abstract auto ansi Microsoft.AspNetCore.Mvc.ViewComponents.IViewComponentInvokerFactory
+{
+  .method /*060002C8*/ public hidebysig newslot abstract virtual 
+          instance class Microsoft.AspNetCore.Mvc.ViewComponents.IViewComponentInvoker/*0200006A*/ 
+          CreateInstance(class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/ context) cil managed
+  // SIG: 20 01 12 81 A8 12 81 B8
+  {
+    // Method begins at RVA 0x0
+  } // end of method IViewComponentInvokerFactory::CreateInstance
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewComponents.IViewComponentInvokerFactory
+
+.class /*0200006C*/ interface public abstract auto ansi Microsoft.AspNetCore.Mvc.ViewComponents.IViewComponentSelector
+{
+  .method /*060002C9*/ public hidebysig newslot abstract virtual 
+          instance class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentDescriptor/*02000071*/ 
+          SelectComponent(string componentName) cil managed
+  // SIG: 20 01 12 81 C4 0E
+  {
+    // Method begins at RVA 0x0
+  } // end of method IViewComponentSelector::SelectComponent
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewComponents.IViewComponentSelector
+
+.class /*0200006D*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewComponents.ServiceBasedViewComponentActivator
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+       implements Microsoft.AspNetCore.Mvc.ViewComponents.IViewComponentActivator/*02000066*/
+{
+  .method /*060002CA*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x2922
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ServiceBasedViewComponentActivator::.ctor
+
+  .method /*060002CB*/ public hidebysig newslot virtual final 
+          instance object  Create(class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/ context) cil managed
+  // SIG: 20 01 1C 12 81 B8
+  {
+    // Method begins at RVA 0x292a
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ServiceBasedViewComponentActivator::Create
+
+  .method /*060002CC*/ public hidebysig newslot virtual 
+          instance void  Release(class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/ context,
+                                 object viewComponent) cil managed
+  // SIG: 20 02 01 12 81 B8 1C
+  {
+    // Method begins at RVA 0x292d
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ServiceBasedViewComponentActivator::Release
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewComponents.ServiceBasedViewComponentActivator
+
+.class /*0200006E*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .method /*060002CD*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x292f
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ViewComponentContext::.ctor
+
+  .method /*060002CE*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentDescriptor/*02000071*/ viewComponentDescriptor,
+                               class [System.Runtime/*23000001*/]System.Collections.Generic.IDictionary`2/*01000055*/<string,object> arguments,
+                               class [System.Text.Encodings.Web/*23000015*/]System.Text.Encodings.Web.HtmlEncoder/*0100005C*/ htmlEncoder,
+                               class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                               class [System.Runtime.Extensions/*23000003*/]System.IO.TextWriter/*01000060*/ writer) cil managed
+  // SIG: 20 05 01 12 81 C4 15 12 81 55 02 0E 1C 12 81 71 12 82 44 12 81 81
+  {
+    // Method begins at RVA 0x2937
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ViewComponentContext::.ctor
+
+  .method /*060002CF*/ public hidebysig specialname 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.IDictionary`2/*01000055*/<string,object> 
+          get_Arguments() cil managed
+  // SIG: 20 00 15 12 81 55 02 0E 1C
+  {
+    .custom /*0C0000EB:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x293f
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentContext::get_Arguments
+
+  .method /*060002D0*/ public hidebysig specialname 
+          instance void  set_Arguments(class [System.Runtime/*23000001*/]System.Collections.Generic.IDictionary`2/*01000055*/<string,object> 'value') cil managed
+  // SIG: 20 01 01 15 12 81 55 02 0E 1C
+  {
+    .custom /*0C0000EC:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2942
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewComponentContext::set_Arguments
+
+  .method /*060002D1*/ public hidebysig specialname 
+          instance class [System.Text.Encodings.Web/*23000015*/]System.Text.Encodings.Web.HtmlEncoder/*0100005C*/ 
+          get_HtmlEncoder() cil managed
+  // SIG: 20 00 12 81 71
+  {
+    .custom /*0C0000ED:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2944
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentContext::get_HtmlEncoder
+
+  .method /*060002D2*/ public hidebysig specialname 
+          instance void  set_HtmlEncoder(class [System.Text.Encodings.Web/*23000015*/]System.Text.Encodings.Web.HtmlEncoder/*0100005C*/ 'value') cil managed
+  // SIG: 20 01 01 12 81 71
+  {
+    .custom /*0C0000EE:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2947
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewComponentContext::set_HtmlEncoder
+
+  .method /*060002D3*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/ 
+          get_TempData() cil managed
+  // SIG: 20 00 12 80 A0
+  {
+    // Method begins at RVA 0x2949
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentContext::get_TempData
+
+  .method /*060002D4*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentDescriptor/*02000071*/ 
+          get_ViewComponentDescriptor() cil managed
+  // SIG: 20 00 12 81 C4
+  {
+    .custom /*0C0000EF:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x294c
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentContext::get_ViewComponentDescriptor
+
+  .method /*060002D5*/ public hidebysig specialname 
+          instance void  set_ViewComponentDescriptor(class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentDescriptor/*02000071*/ 'value') cil managed
+  // SIG: 20 01 01 12 81 C4
+  {
+    .custom /*0C0000F0:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x294f
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewComponentContext::set_ViewComponentDescriptor
+
+  .method /*060002D6*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ 
+          get_ViewContext() cil managed
+  // SIG: 20 00 12 82 44
+  {
+    .custom /*0C0000F1:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2951
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentContext::get_ViewContext
+
+  .method /*060002D7*/ public hidebysig specialname 
+          instance void  set_ViewContext(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ 'value') cil managed
+  // SIG: 20 01 01 12 82 44
+  {
+    .custom /*0C0000F2:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2954
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewComponentContext::set_ViewContext
+
+  .method /*060002D8*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ 
+          get_ViewData() cil managed
+  // SIG: 20 00 12 80 F4
+  {
+    // Method begins at RVA 0x2956
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentContext::get_ViewData
+
+  .method /*060002D9*/ public hidebysig specialname 
+          instance class [System.Runtime.Extensions/*23000003*/]System.IO.TextWriter/*01000060*/ 
+          get_Writer() cil managed
+  // SIG: 20 00 12 81 81
+  {
+    // Method begins at RVA 0x2959
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentContext::get_Writer
+
+  .property /*170000A1*/ instance class [System.Runtime/*23000001*/]System.Collections.Generic.IDictionary`2/*01000055*/<string,object>
+          Arguments()
+  {
+    .get instance class [System.Runtime/*23000001*/]System.Collections.Generic.IDictionary`2/*01000055*/<string,object> Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/::get_Arguments() /* 060002CF */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/::set_Arguments(class [System.Runtime/*23000001*/]System.Collections.Generic.IDictionary`2/*01000055*/<string,object>) /* 060002D0 */
+  } // end of property ViewComponentContext::Arguments
+  .property /*170000A2*/ instance class [System.Text.Encodings.Web/*23000015*/]System.Text.Encodings.Web.HtmlEncoder/*0100005C*/
+          HtmlEncoder()
+  {
+    .get instance class [System.Text.Encodings.Web/*23000015*/]System.Text.Encodings.Web.HtmlEncoder/*0100005C*/ Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/::get_HtmlEncoder() /* 060002D1 */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/::set_HtmlEncoder(class [System.Text.Encodings.Web/*23000015*/]System.Text.Encodings.Web.HtmlEncoder/*0100005C*/) /* 060002D2 */
+  } // end of property ViewComponentContext::HtmlEncoder
+  .property /*170000A3*/ instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/
+          TempData()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/ Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/::get_TempData() /* 060002D3 */
+  } // end of property ViewComponentContext::TempData
+  .property /*170000A4*/ instance class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentDescriptor/*02000071*/
+          ViewComponentDescriptor()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentDescriptor/*02000071*/ Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/::get_ViewComponentDescriptor() /* 060002D4 */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/::set_ViewComponentDescriptor(class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentDescriptor/*02000071*/) /* 060002D5 */
+  } // end of property ViewComponentContext::ViewComponentDescriptor
+  .property /*170000A5*/ instance class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/
+          ViewContext()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/::get_ViewContext() /* 060002D6 */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/::set_ViewContext(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/) /* 060002D7 */
+  } // end of property ViewComponentContext::ViewContext
+  .property /*170000A6*/ instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/
+          ViewData()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/::get_ViewData() /* 060002D8 */
+  } // end of property ViewComponentContext::ViewData
+  .property /*170000A7*/ instance class [System.Runtime.Extensions/*23000003*/]System.IO.TextWriter/*01000060*/
+          Writer()
+  {
+    .get instance class [System.Runtime.Extensions/*23000003*/]System.IO.TextWriter/*01000060*/ Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/::get_Writer() /* 060002D9 */
+  } // end of property ViewComponentContext::Writer
+} // end of class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext
+
+.class /*0200006F*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContextAttribute
+       extends [System.Runtime/*23000001*/]System.Attribute/*01000020*/
+{
+  .custom /*0C000075:0A000013*/ instance void [System.Runtime/*23000001*/]System.AttributeUsageAttribute/*0100001F*/::.ctor(valuetype [System.Runtime/*23000001*/]System.AttributeTargets/*0100001E*/) /* 0A000013 */ = ( 01 00 80 00 00 00 02 00 54 02 0D 41 6C 6C 6F 77   // ........T..Allow
+                                                                                                                                                                                                                          4D 75 6C 74 69 70 6C 65 00 54 02 09 49 6E 68 65   // Multiple.T..Inhe
+                                                                                                                                                                                                                          72 69 74 65 64 01 )                               // rited.
+  .method /*060002DA*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x295c
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000029       */ call       instance void [System.Runtime/*23000001*/]System.Attribute/*01000020*/::.ctor() /* 0A000029 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ViewComponentContextAttribute::.ctor
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContextAttribute
+
+.class /*02000070*/ public abstract auto ansi sealed beforefieldinit Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentConventions
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .field /*0400003C*/ public static initonly string ViewComponentSuffix
+  .method /*060002DB*/ public hidebysig static 
+          string  GetComponentFullName(class [System.Runtime/*23000001*/]System.Reflection.TypeInfo/*01000076*/ componentType) cil managed
+  // SIG: 00 01 0E 12 81 D9
+  {
+    // Method begins at RVA 0x2964
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentConventions::GetComponentFullName
+
+  .method /*060002DC*/ public hidebysig static 
+          string  GetComponentName(class [System.Runtime/*23000001*/]System.Reflection.TypeInfo/*01000076*/ componentType) cil managed
+  // SIG: 00 01 0E 12 81 D9
+  {
+    // Method begins at RVA 0x2967
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentConventions::GetComponentName
+
+  .method /*060002DD*/ public hidebysig static 
+          bool  IsComponent(class [System.Runtime/*23000001*/]System.Reflection.TypeInfo/*01000076*/ typeInfo) cil managed
+  // SIG: 00 01 02 12 81 D9
+  {
+    // Method begins at RVA 0x296a
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentConventions::IsComponent
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentConventions
+
+.class /*02000071*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentDescriptor
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .custom /*0C000077:0A00001F*/ instance void [System.Diagnostics.Debug/*23000011*/]System.Diagnostics.DebuggerDisplayAttribute/*01000065*/::.ctor(string) /* 0A00001F */ = ( 01 00 0D 7B 44 69 73 70 6C 61 79 4E 61 6D 65 7D   // ...{DisplayName}
+                                                                                                                                                                              00 00 ) 
+  .method /*060002DE*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x296d
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ViewComponentDescriptor::.ctor
+
+  .method /*060002DF*/ public hidebysig specialname 
+          instance string  get_DisplayName() cil managed
+  // SIG: 20 00 0E
+  {
+    // Method begins at RVA 0x2975
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentDescriptor::get_DisplayName
+
+  .method /*060002E0*/ public hidebysig specialname 
+          instance void  set_DisplayName(string 'value') cil managed
+  // SIG: 20 01 01 0E
+  {
+    // Method begins at RVA 0x2978
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewComponentDescriptor::set_DisplayName
+
+  .method /*060002E1*/ public hidebysig specialname 
+          instance string  get_FullName() cil managed
+  // SIG: 20 00 0E
+  {
+    .custom /*0C0000F3:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x297a
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentDescriptor::get_FullName
+
+  .method /*060002E2*/ public hidebysig specialname 
+          instance void  set_FullName(string 'value') cil managed
+  // SIG: 20 01 01 0E
+  {
+    .custom /*0C0000F4:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x297d
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewComponentDescriptor::set_FullName
+
+  .method /*060002E3*/ public hidebysig specialname 
+          instance string  get_Id() cil managed
+  // SIG: 20 00 0E
+  {
+    .custom /*0C0000F5:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x297f
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentDescriptor::get_Id
+
+  .method /*060002E4*/ public hidebysig specialname 
+          instance void  set_Id(string 'value') cil managed
+  // SIG: 20 01 01 0E
+  {
+    .custom /*0C0000F6:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2982
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewComponentDescriptor::set_Id
+
+  .method /*060002E5*/ public hidebysig specialname 
+          instance class [System.Runtime/*23000001*/]System.Reflection.MethodInfo/*0100007F*/ 
+          get_MethodInfo() cil managed
+  // SIG: 20 00 12 81 FD
+  {
+    .custom /*0C0000F7:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2984
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentDescriptor::get_MethodInfo
+
+  .method /*060002E6*/ public hidebysig specialname 
+          instance void  set_MethodInfo(class [System.Runtime/*23000001*/]System.Reflection.MethodInfo/*0100007F*/ 'value') cil managed
+  // SIG: 20 01 01 12 81 FD
+  {
+    .custom /*0C0000F8:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2987
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewComponentDescriptor::set_MethodInfo
+
+  .method /*060002E7*/ public hidebysig specialname 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.IReadOnlyList`1/*01000077*/<class [System.Runtime/*23000001*/]System.Reflection.ParameterInfo/*01000080*/> 
+          get_Parameters() cil managed
+  // SIG: 20 00 15 12 81 DD 01 12 82 01
+  {
+    .custom /*0C0000F9:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2989
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentDescriptor::get_Parameters
+
+  .method /*060002E8*/ public hidebysig specialname 
+          instance void  set_Parameters(class [System.Runtime/*23000001*/]System.Collections.Generic.IReadOnlyList`1/*01000077*/<class [System.Runtime/*23000001*/]System.Reflection.ParameterInfo/*01000080*/> 'value') cil managed
+  // SIG: 20 01 01 15 12 81 DD 01 12 82 01
+  {
+    .custom /*0C0000FA:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x298c
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewComponentDescriptor::set_Parameters
+
+  .method /*060002E9*/ public hidebysig specialname 
+          instance string  get_ShortName() cil managed
+  // SIG: 20 00 0E
+  {
+    .custom /*0C0000FB:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x298e
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentDescriptor::get_ShortName
+
+  .method /*060002EA*/ public hidebysig specialname 
+          instance void  set_ShortName(string 'value') cil managed
+  // SIG: 20 01 01 0E
+  {
+    .custom /*0C0000FC:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2991
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewComponentDescriptor::set_ShortName
+
+  .method /*060002EB*/ public hidebysig specialname 
+          instance class [System.Runtime/*23000001*/]System.Reflection.TypeInfo/*01000076*/ 
+          get_TypeInfo() cil managed
+  // SIG: 20 00 12 81 D9
+  {
+    .custom /*0C0000FD:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2993
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentDescriptor::get_TypeInfo
+
+  .method /*060002EC*/ public hidebysig specialname 
+          instance void  set_TypeInfo(class [System.Runtime/*23000001*/]System.Reflection.TypeInfo/*01000076*/ 'value') cil managed
+  // SIG: 20 01 01 12 81 D9
+  {
+    .custom /*0C0000FE:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2996
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewComponentDescriptor::set_TypeInfo
+
+  .property /*170000A8*/ instance string DisplayName()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentDescriptor/*02000071*/::get_DisplayName() /* 060002DF */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentDescriptor/*02000071*/::set_DisplayName(string) /* 060002E0 */
+  } // end of property ViewComponentDescriptor::DisplayName
+  .property /*170000A9*/ instance string FullName()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentDescriptor/*02000071*/::get_FullName() /* 060002E1 */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentDescriptor/*02000071*/::set_FullName(string) /* 060002E2 */
+  } // end of property ViewComponentDescriptor::FullName
+  .property /*170000AA*/ instance string Id()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentDescriptor/*02000071*/::get_Id() /* 060002E3 */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentDescriptor/*02000071*/::set_Id(string) /* 060002E4 */
+  } // end of property ViewComponentDescriptor::Id
+  .property /*170000AB*/ instance class [System.Runtime/*23000001*/]System.Reflection.MethodInfo/*0100007F*/
+          MethodInfo()
+  {
+    .get instance class [System.Runtime/*23000001*/]System.Reflection.MethodInfo/*0100007F*/ Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentDescriptor/*02000071*/::get_MethodInfo() /* 060002E5 */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentDescriptor/*02000071*/::set_MethodInfo(class [System.Runtime/*23000001*/]System.Reflection.MethodInfo/*0100007F*/) /* 060002E6 */
+  } // end of property ViewComponentDescriptor::MethodInfo
+  .property /*170000AC*/ instance class [System.Runtime/*23000001*/]System.Collections.Generic.IReadOnlyList`1/*01000077*/<class [System.Runtime/*23000001*/]System.Reflection.ParameterInfo/*01000080*/>
+          Parameters()
+  {
+    .get instance class [System.Runtime/*23000001*/]System.Collections.Generic.IReadOnlyList`1/*01000077*/<class [System.Runtime/*23000001*/]System.Reflection.ParameterInfo/*01000080*/> Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentDescriptor/*02000071*/::get_Parameters() /* 060002E7 */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentDescriptor/*02000071*/::set_Parameters(class [System.Runtime/*23000001*/]System.Collections.Generic.IReadOnlyList`1/*01000077*/<class [System.Runtime/*23000001*/]System.Reflection.ParameterInfo/*01000080*/>) /* 060002E8 */
+  } // end of property ViewComponentDescriptor::Parameters
+  .property /*170000AD*/ instance string ShortName()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentDescriptor/*02000071*/::get_ShortName() /* 060002E9 */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentDescriptor/*02000071*/::set_ShortName(string) /* 060002EA */
+  } // end of property ViewComponentDescriptor::ShortName
+  .property /*170000AE*/ instance class [System.Runtime/*23000001*/]System.Reflection.TypeInfo/*01000076*/
+          TypeInfo()
+  {
+    .get instance class [System.Runtime/*23000001*/]System.Reflection.TypeInfo/*01000076*/ Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentDescriptor/*02000071*/::get_TypeInfo() /* 060002EB */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentDescriptor/*02000071*/::set_TypeInfo(class [System.Runtime/*23000001*/]System.Reflection.TypeInfo/*01000076*/) /* 060002EC */
+  } // end of property ViewComponentDescriptor::TypeInfo
+} // end of class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentDescriptor
+
+.class /*02000072*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentDescriptorCollection
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .method /*060002ED*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentDescriptor/*02000071*/> items,
+                               int32 version) cil managed
+  // SIG: 20 02 01 15 12 80 D5 01 12 81 C4 08
+  {
+    // Method begins at RVA 0x2998
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ViewComponentDescriptorCollection::.ctor
+
+  .method /*060002EE*/ public hidebysig specialname 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.IReadOnlyList`1/*01000077*/<class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentDescriptor/*02000071*/> 
+          get_Items() cil managed
+  // SIG: 20 00 15 12 81 DD 01 12 81 C4
+  {
+    .custom /*0C0000FF:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x29a0
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentDescriptorCollection::get_Items
+
+  .method /*060002EF*/ public hidebysig specialname 
+          instance int32  get_Version() cil managed
+  // SIG: 20 00 08
+  {
+    .custom /*0C000100:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x29a3
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentDescriptorCollection::get_Version
+
+  .property /*170000AF*/ instance class [System.Runtime/*23000001*/]System.Collections.Generic.IReadOnlyList`1/*01000077*/<class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentDescriptor/*02000071*/>
+          Items()
+  {
+    .get instance class [System.Runtime/*23000001*/]System.Collections.Generic.IReadOnlyList`1/*01000077*/<class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentDescriptor/*02000071*/> Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentDescriptorCollection/*02000072*/::get_Items() /* 060002EE */
+  } // end of property ViewComponentDescriptorCollection::Items
+  .property /*170000B0*/ instance int32 Version()
+  {
+    .get instance int32 Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentDescriptorCollection/*02000072*/::get_Version() /* 060002EF */
+  } // end of property ViewComponentDescriptorCollection::Version
+} // end of class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentDescriptorCollection
+
+.class /*02000073*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentFeature
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .method /*060002F0*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x29a6
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ViewComponentFeature::.ctor
+
+  .method /*060002F1*/ public hidebysig specialname 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.IList`1/*0100003A*/<class [System.Runtime/*23000001*/]System.Reflection.TypeInfo/*01000076*/> 
+          get_ViewComponents() cil managed
+  // SIG: 20 00 15 12 80 E9 01 12 81 D9
+  {
+    .custom /*0C000101:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x29ae
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentFeature::get_ViewComponents
+
+  .property /*170000B1*/ instance class [System.Runtime/*23000001*/]System.Collections.Generic.IList`1/*0100003A*/<class [System.Runtime/*23000001*/]System.Reflection.TypeInfo/*01000076*/>
+          ViewComponents()
+  {
+    .get instance class [System.Runtime/*23000001*/]System.Collections.Generic.IList`1/*0100003A*/<class [System.Runtime/*23000001*/]System.Reflection.TypeInfo/*01000076*/> Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentFeature/*02000073*/::get_ViewComponents() /* 060002F1 */
+  } // end of property ViewComponentFeature::ViewComponents
+} // end of class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentFeature
+
+.class /*02000074*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentFeatureProvider
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+       implements [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.ApplicationParts.IApplicationFeatureProvider/*01000081*/,
+                  class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.ApplicationParts.IApplicationFeatureProvider`1/*01000082*/<class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentFeature/*02000073*/>/*1B00000F*/
+{
+  .method /*060002F2*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x29b1
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ViewComponentFeatureProvider::.ctor
+
+  .method /*060002F3*/ public hidebysig newslot virtual final 
+          instance void  PopulateFeature(class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.ApplicationParts.ApplicationPart/*01000083*/> parts,
+                                         class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentFeature/*02000073*/ feature) cil managed
+  // SIG: 20 02 01 15 12 80 D5 01 12 82 0D 12 81 CC
+  {
+    // Method begins at RVA 0x29b9
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewComponentFeatureProvider::PopulateFeature
+
+} // end of class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentFeatureProvider
+
+.class /*02000075*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.ViewComponents.ViewViewComponentResult
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+       implements Microsoft.AspNetCore.Mvc.IViewComponentResult/*0200000B*/
+{
+  .method /*060002F4*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x29bb
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ViewViewComponentResult::.ctor
+
+  .method /*060002F5*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/ 
+          get_TempData() cil managed
+  // SIG: 20 00 12 80 A0
+  {
+    .custom /*0C000102:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x29c3
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewViewComponentResult::get_TempData
+
+  .method /*060002F6*/ public hidebysig specialname 
+          instance void  set_TempData(class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/ 'value') cil managed
+  // SIG: 20 01 01 12 80 A0
+  {
+    .custom /*0C000103:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x29c6
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewViewComponentResult::set_TempData
+
+  .method /*060002F7*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ 
+          get_ViewData() cil managed
+  // SIG: 20 00 12 80 F4
+  {
+    .custom /*0C000104:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x29c8
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewViewComponentResult::get_ViewData
+
+  .method /*060002F8*/ public hidebysig specialname 
+          instance void  set_ViewData(class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ 'value') cil managed
+  // SIG: 20 01 01 12 80 F4
+  {
+    .custom /*0C000105:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x29cb
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewViewComponentResult::set_ViewData
+
+  .method /*060002F9*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.ViewEngines.IViewEngine/*0200005D*/ 
+          get_ViewEngine() cil managed
+  // SIG: 20 00 12 81 74
+  {
+    .custom /*0C000106:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x29cd
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewViewComponentResult::get_ViewEngine
+
+  .method /*060002FA*/ public hidebysig specialname 
+          instance void  set_ViewEngine(class Microsoft.AspNetCore.Mvc.ViewEngines.IViewEngine/*0200005D*/ 'value') cil managed
+  // SIG: 20 01 01 12 81 74
+  {
+    .custom /*0C000107:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x29d0
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewViewComponentResult::set_ViewEngine
+
+  .method /*060002FB*/ public hidebysig specialname 
+          instance string  get_ViewName() cil managed
+  // SIG: 20 00 0E
+  {
+    .custom /*0C000108:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x29d2
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewViewComponentResult::get_ViewName
+
+  .method /*060002FC*/ public hidebysig specialname 
+          instance void  set_ViewName(string 'value') cil managed
+  // SIG: 20 01 01 0E
+  {
+    .custom /*0C000109:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x29d5
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewViewComponentResult::set_ViewName
+
+  .method /*060002FD*/ public hidebysig newslot virtual final 
+          instance void  Execute(class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/ context) cil managed
+  // SIG: 20 01 01 12 81 B8
+  {
+    // Method begins at RVA 0x29d7
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewViewComponentResult::Execute
+
+  .method /*060002FE*/ public hidebysig newslot virtual final 
+          instance class [System.Runtime/*23000001*/]System.Threading.Tasks.Task/*0100002F*/ 
+          ExecuteAsync(class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/ context) cil managed
+  // SIG: 20 01 12 80 BD 12 81 B8
+  {
+    .custom /*0C00010A:0A000019*/ instance void [System.Diagnostics.Debug/*23000011*/]System.Diagnostics.DebuggerStepThroughAttribute/*0100004F*/::.ctor() /* 0A000019 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x29d9
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewViewComponentResult::ExecuteAsync
+
+  .property /*170000B2*/ instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/
+          TempData()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/ Microsoft.AspNetCore.Mvc.ViewComponents.ViewViewComponentResult/*02000075*/::get_TempData() /* 060002F5 */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewComponents.ViewViewComponentResult/*02000075*/::set_TempData(class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/) /* 060002F6 */
+  } // end of property ViewViewComponentResult::TempData
+  .property /*170000B3*/ instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/
+          ViewData()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ Microsoft.AspNetCore.Mvc.ViewComponents.ViewViewComponentResult/*02000075*/::get_ViewData() /* 060002F7 */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewComponents.ViewViewComponentResult/*02000075*/::set_ViewData(class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/) /* 060002F8 */
+  } // end of property ViewViewComponentResult::ViewData
+  .property /*170000B4*/ instance class Microsoft.AspNetCore.Mvc.ViewEngines.IViewEngine/*0200005D*/
+          ViewEngine()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewEngines.IViewEngine/*0200005D*/ Microsoft.AspNetCore.Mvc.ViewComponents.ViewViewComponentResult/*02000075*/::get_ViewEngine() /* 060002F9 */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewComponents.ViewViewComponentResult/*02000075*/::set_ViewEngine(class Microsoft.AspNetCore.Mvc.ViewEngines.IViewEngine/*0200005D*/) /* 060002FA */
+  } // end of property ViewViewComponentResult::ViewEngine
+  .property /*170000B5*/ instance string ViewName()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.ViewComponents.ViewViewComponentResult/*02000075*/::get_ViewName() /* 060002FB */
+    .set instance void Microsoft.AspNetCore.Mvc.ViewComponents.ViewViewComponentResult/*02000075*/::set_ViewName(string) /* 060002FC */
+  } // end of property ViewViewComponentResult::ViewName
+} // end of class Microsoft.AspNetCore.Mvc.ViewComponents.ViewViewComponentResult
+
+.class /*02000076*/ public auto ansi sealed Microsoft.AspNetCore.Mvc.Rendering.FormMethod
+       extends [System.Runtime/*23000001*/]System.Enum/*01000064*/
+{
+  .field /*0400003D*/ public specialname rtspecialname int32 value__
+  .field /*0400003E*/ public static literal valuetype Microsoft.AspNetCore.Mvc.Rendering.FormMethod/*02000076*/ Get = int32(0x00000000)
+  .field /*0400003F*/ public static literal valuetype Microsoft.AspNetCore.Mvc.Rendering.FormMethod/*02000076*/ Post = int32(0x00000001)
+} // end of class Microsoft.AspNetCore.Mvc.Rendering.FormMethod
+
+.class /*02000077*/ public auto ansi sealed Microsoft.AspNetCore.Mvc.Rendering.Html5DateRenderingMode
+       extends [System.Runtime/*23000001*/]System.Enum/*01000064*/
+{
+  .field /*04000040*/ public specialname rtspecialname int32 value__
+  .field /*04000041*/ public static literal valuetype Microsoft.AspNetCore.Mvc.Rendering.Html5DateRenderingMode/*02000077*/ Rfc3339 = int32(0x00000000)
+  .field /*04000042*/ public static literal valuetype Microsoft.AspNetCore.Mvc.Rendering.Html5DateRenderingMode/*02000077*/ CurrentCulture = int32(0x00000001)
+} // end of class Microsoft.AspNetCore.Mvc.Rendering.Html5DateRenderingMode
+
+.class /*02000078*/ public abstract auto ansi sealed beforefieldinit Microsoft.AspNetCore.Mvc.Rendering.HtmlHelperComponentExtensions
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .custom /*0C000078:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+  .method /*060002FF*/ public hidebysig static 
+          class [System.Runtime/*23000001*/]System.Threading.Tasks.Task`1/*01000033*/<class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/> 
+          RenderComponentAsync<([Microsoft.AspNetCore.Components/*23000019*/]Microsoft.AspNetCore.Components.IComponent/*01000084*/) TComponent>(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                                                                                                                                                 valuetype Microsoft.AspNetCore.Mvc.Rendering.RenderMode/*0200008A*/ renderMode) cil managed
+  // SIG: 10 01 02 15 12 80 CD 01 12 80 D1 12 82 14 11 82 28
+  {
+    .custom /*0C00010B:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x29dc
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperComponentExtensions::RenderComponentAsync
+
+  .method /*06000300*/ public hidebysig static 
+          class [System.Runtime/*23000001*/]System.Threading.Tasks.Task`1/*01000033*/<class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/> 
+          RenderComponentAsync<([Microsoft.AspNetCore.Components/*23000019*/]Microsoft.AspNetCore.Components.IComponent/*01000084*/) TComponent>(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                                                                                                                                                 valuetype Microsoft.AspNetCore.Mvc.Rendering.RenderMode/*0200008A*/ renderMode,
+                                                                                                                                                 object parameters) cil managed
+  // SIG: 10 01 03 15 12 80 CD 01 12 80 D1 12 82 14 11 82 28 1C
+  {
+    .custom /*0C00010C:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    .custom /*0C00010D:0A000019*/ instance void [System.Diagnostics.Debug/*23000011*/]System.Diagnostics.DebuggerStepThroughAttribute/*0100004F*/::.ctor() /* 0A000019 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x29df
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperComponentExtensions::RenderComponentAsync
+
+} // end of class Microsoft.AspNetCore.Mvc.Rendering.HtmlHelperComponentExtensions
+
+.class /*02000079*/ public abstract auto ansi sealed beforefieldinit Microsoft.AspNetCore.Mvc.Rendering.HtmlHelperDisplayExtensions
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .custom /*0C000079:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+  .method /*06000301*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          Display(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                  string expression) cil managed
+  // SIG: 00 02 12 80 D1 12 82 14 0E
+  {
+    .custom /*0C00010E:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x29e2
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperDisplayExtensions::Display
+
+  .method /*06000302*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          Display(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                  string expression,
+                  object additionalViewData) cil managed
+  // SIG: 00 03 12 80 D1 12 82 14 0E 1C
+  {
+    .custom /*0C00010F:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x29e5
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperDisplayExtensions::Display
+
+  .method /*06000303*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          Display(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                  string expression,
+                  string templateName) cil managed
+  // SIG: 00 03 12 80 D1 12 82 14 0E 0E
+  {
+    .custom /*0C000110:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x29e8
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperDisplayExtensions::Display
+
+  .method /*06000304*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          Display(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                  string expression,
+                  string templateName,
+                  object additionalViewData) cil managed
+  // SIG: 00 04 12 80 D1 12 82 14 0E 0E 1C
+  {
+    .custom /*0C000111:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x29eb
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperDisplayExtensions::Display
+
+  .method /*06000305*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          Display(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                  string expression,
+                  string templateName,
+                  string htmlFieldName) cil managed
+  // SIG: 00 04 12 80 D1 12 82 14 0E 0E 0E
+  {
+    .custom /*0C000112:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x29ee
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperDisplayExtensions::Display
+
+  .method /*06000306*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          DisplayForModel(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper) cil managed
+  // SIG: 00 01 12 80 D1 12 82 14
+  {
+    .custom /*0C000113:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x29f1
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperDisplayExtensions::DisplayForModel
+
+  .method /*06000307*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          DisplayForModel(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                          object additionalViewData) cil managed
+  // SIG: 00 02 12 80 D1 12 82 14 1C
+  {
+    .custom /*0C000114:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x29f4
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperDisplayExtensions::DisplayForModel
+
+  .method /*06000308*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          DisplayForModel(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                          string templateName) cil managed
+  // SIG: 00 02 12 80 D1 12 82 14 0E
+  {
+    .custom /*0C000115:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x29f7
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperDisplayExtensions::DisplayForModel
+
+  .method /*06000309*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          DisplayForModel(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                          string templateName,
+                          object additionalViewData) cil managed
+  // SIG: 00 03 12 80 D1 12 82 14 0E 1C
+  {
+    .custom /*0C000116:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x29fa
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperDisplayExtensions::DisplayForModel
+
+  .method /*0600030A*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          DisplayForModel(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                          string templateName,
+                          string htmlFieldName) cil managed
+  // SIG: 00 03 12 80 D1 12 82 14 0E 0E
+  {
+    .custom /*0C000117:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x29fd
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperDisplayExtensions::DisplayForModel
+
+  .method /*0600030B*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          DisplayForModel(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                          string templateName,
+                          string htmlFieldName,
+                          object additionalViewData) cil managed
+  // SIG: 00 04 12 80 D1 12 82 14 0E 0E 1C
+  {
+    .custom /*0C000118:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a00
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperDisplayExtensions::DisplayForModel
+
+  .method /*0600030C*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          DisplayFor<TModel,TResult>(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper`1/*02000086*/<!!TModel> htmlHelper,
+                                     class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!!TModel,!!TResult>> expression) cil managed
+  // SIG: 10 02 02 12 80 D1 15 12 82 18 01 1E 00 15 12 81 85 01 15 12 81 89 02 1E 00 1E 01
+  {
+    .custom /*0C000119:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a03
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperDisplayExtensions::DisplayFor
+
+  .method /*0600030D*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          DisplayFor<TModel,TResult>(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper`1/*02000086*/<!!TModel> htmlHelper,
+                                     class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!!TModel,!!TResult>> expression,
+                                     object additionalViewData) cil managed
+  // SIG: 10 02 03 12 80 D1 15 12 82 18 01 1E 00 15 12 81 85 01 15 12 81 89 02 1E 00 1E 01 1C
+  {
+    .custom /*0C00011A:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a06
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperDisplayExtensions::DisplayFor
+
+  .method /*0600030E*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          DisplayFor<TModel,TResult>(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper`1/*02000086*/<!!TModel> htmlHelper,
+                                     class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!!TModel,!!TResult>> expression,
+                                     string templateName) cil managed
+  // SIG: 10 02 03 12 80 D1 15 12 82 18 01 1E 00 15 12 81 85 01 15 12 81 89 02 1E 00 1E 01 0E
+  {
+    .custom /*0C00011B:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a09
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperDisplayExtensions::DisplayFor
+
+  .method /*0600030F*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          DisplayFor<TModel,TResult>(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper`1/*02000086*/<!!TModel> htmlHelper,
+                                     class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!!TModel,!!TResult>> expression,
+                                     string templateName,
+                                     object additionalViewData) cil managed
+  // SIG: 10 02 04 12 80 D1 15 12 82 18 01 1E 00 15 12 81 85 01 15 12 81 89 02 1E 00 1E 01 0E 1C
+  {
+    .custom /*0C00011C:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a0c
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperDisplayExtensions::DisplayFor
+
+  .method /*06000310*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          DisplayFor<TModel,TResult>(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper`1/*02000086*/<!!TModel> htmlHelper,
+                                     class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!!TModel,!!TResult>> expression,
+                                     string templateName,
+                                     string htmlFieldName) cil managed
+  // SIG: 10 02 04 12 80 D1 15 12 82 18 01 1E 00 15 12 81 85 01 15 12 81 89 02 1E 00 1E 01 0E 0E
+  {
+    .custom /*0C00011D:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a0f
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperDisplayExtensions::DisplayFor
+
+} // end of class Microsoft.AspNetCore.Mvc.Rendering.HtmlHelperDisplayExtensions
+
+.class /*0200007A*/ public abstract auto ansi sealed beforefieldinit Microsoft.AspNetCore.Mvc.Rendering.HtmlHelperDisplayNameExtensions
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .custom /*0C00007A:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+  .method /*06000311*/ public hidebysig static 
+          string  DisplayNameForModel(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper) cil managed
+  // SIG: 00 01 0E 12 82 14
+  {
+    .custom /*0C00011E:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a12
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperDisplayNameExtensions::DisplayNameForModel
+
+  .method /*06000312*/ public hidebysig static 
+          string  DisplayNameFor<TModelItem,TResult>(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper`1/*02000086*/<class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<!!TModelItem>> htmlHelper,
+                                                     class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!!TModelItem,!!TResult>> expression) cil managed
+  // SIG: 10 02 02 0E 15 12 82 18 01 15 12 80 D5 01 1E 00 15 12 81 85 01 15 12 81 89 02 1E 00 1E 01
+  {
+    .custom /*0C00011F:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a15
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperDisplayNameExtensions::DisplayNameFor
+
+} // end of class Microsoft.AspNetCore.Mvc.Rendering.HtmlHelperDisplayNameExtensions
+
+.class /*0200007B*/ public abstract auto ansi sealed beforefieldinit Microsoft.AspNetCore.Mvc.Rendering.HtmlHelperEditorExtensions
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .custom /*0C00007B:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+  .method /*06000313*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          Editor(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                 string expression) cil managed
+  // SIG: 00 02 12 80 D1 12 82 14 0E
+  {
+    .custom /*0C000120:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a18
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperEditorExtensions::Editor
+
+  .method /*06000314*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          Editor(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                 string expression,
+                 object additionalViewData) cil managed
+  // SIG: 00 03 12 80 D1 12 82 14 0E 1C
+  {
+    .custom /*0C000121:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a1b
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperEditorExtensions::Editor
+
+  .method /*06000315*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          Editor(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                 string expression,
+                 string templateName) cil managed
+  // SIG: 00 03 12 80 D1 12 82 14 0E 0E
+  {
+    .custom /*0C000122:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a1e
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperEditorExtensions::Editor
+
+  .method /*06000316*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          Editor(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                 string expression,
+                 string templateName,
+                 object additionalViewData) cil managed
+  // SIG: 00 04 12 80 D1 12 82 14 0E 0E 1C
+  {
+    .custom /*0C000123:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a21
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperEditorExtensions::Editor
+
+  .method /*06000317*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          Editor(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                 string expression,
+                 string templateName,
+                 string htmlFieldName) cil managed
+  // SIG: 00 04 12 80 D1 12 82 14 0E 0E 0E
+  {
+    .custom /*0C000124:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a24
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperEditorExtensions::Editor
+
+  .method /*06000318*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          EditorForModel(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper) cil managed
+  // SIG: 00 01 12 80 D1 12 82 14
+  {
+    .custom /*0C000125:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a27
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperEditorExtensions::EditorForModel
+
+  .method /*06000319*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          EditorForModel(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                         object additionalViewData) cil managed
+  // SIG: 00 02 12 80 D1 12 82 14 1C
+  {
+    .custom /*0C000126:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a2a
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperEditorExtensions::EditorForModel
+
+  .method /*0600031A*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          EditorForModel(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                         string templateName) cil managed
+  // SIG: 00 02 12 80 D1 12 82 14 0E
+  {
+    .custom /*0C000127:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a2d
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperEditorExtensions::EditorForModel
+
+  .method /*0600031B*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          EditorForModel(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                         string templateName,
+                         object additionalViewData) cil managed
+  // SIG: 00 03 12 80 D1 12 82 14 0E 1C
+  {
+    .custom /*0C000128:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a30
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperEditorExtensions::EditorForModel
+
+  .method /*0600031C*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          EditorForModel(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                         string templateName,
+                         string htmlFieldName) cil managed
+  // SIG: 00 03 12 80 D1 12 82 14 0E 0E
+  {
+    .custom /*0C000129:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a33
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperEditorExtensions::EditorForModel
+
+  .method /*0600031D*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          EditorForModel(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                         string templateName,
+                         string htmlFieldName,
+                         object additionalViewData) cil managed
+  // SIG: 00 04 12 80 D1 12 82 14 0E 0E 1C
+  {
+    .custom /*0C00012A:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a36
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperEditorExtensions::EditorForModel
+
+  .method /*0600031E*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          EditorFor<TModel,TResult>(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper`1/*02000086*/<!!TModel> htmlHelper,
+                                    class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!!TModel,!!TResult>> expression) cil managed
+  // SIG: 10 02 02 12 80 D1 15 12 82 18 01 1E 00 15 12 81 85 01 15 12 81 89 02 1E 00 1E 01
+  {
+    .custom /*0C00012B:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a39
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperEditorExtensions::EditorFor
+
+  .method /*0600031F*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          EditorFor<TModel,TResult>(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper`1/*02000086*/<!!TModel> htmlHelper,
+                                    class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!!TModel,!!TResult>> expression,
+                                    object additionalViewData) cil managed
+  // SIG: 10 02 03 12 80 D1 15 12 82 18 01 1E 00 15 12 81 85 01 15 12 81 89 02 1E 00 1E 01 1C
+  {
+    .custom /*0C00012C:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a3c
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperEditorExtensions::EditorFor
+
+  .method /*06000320*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          EditorFor<TModel,TResult>(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper`1/*02000086*/<!!TModel> htmlHelper,
+                                    class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!!TModel,!!TResult>> expression,
+                                    string templateName) cil managed
+  // SIG: 10 02 03 12 80 D1 15 12 82 18 01 1E 00 15 12 81 85 01 15 12 81 89 02 1E 00 1E 01 0E
+  {
+    .custom /*0C00012D:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a3f
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperEditorExtensions::EditorFor
+
+  .method /*06000321*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          EditorFor<TModel,TResult>(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper`1/*02000086*/<!!TModel> htmlHelper,
+                                    class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!!TModel,!!TResult>> expression,
+                                    string templateName,
+                                    object additionalViewData) cil managed
+  // SIG: 10 02 04 12 80 D1 15 12 82 18 01 1E 00 15 12 81 85 01 15 12 81 89 02 1E 00 1E 01 0E 1C
+  {
+    .custom /*0C00012E:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a42
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperEditorExtensions::EditorFor
+
+  .method /*06000322*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          EditorFor<TModel,TResult>(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper`1/*02000086*/<!!TModel> htmlHelper,
+                                    class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!!TModel,!!TResult>> expression,
+                                    string templateName,
+                                    string htmlFieldName) cil managed
+  // SIG: 10 02 04 12 80 D1 15 12 82 18 01 1E 00 15 12 81 85 01 15 12 81 89 02 1E 00 1E 01 0E 0E
+  {
+    .custom /*0C00012F:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a45
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperEditorExtensions::EditorFor
+
+} // end of class Microsoft.AspNetCore.Mvc.Rendering.HtmlHelperEditorExtensions
+
+.class /*0200007C*/ public abstract auto ansi sealed beforefieldinit Microsoft.AspNetCore.Mvc.Rendering.HtmlHelperFormExtensions
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .custom /*0C00007C:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+  .method /*06000323*/ public hidebysig static 
+          class Microsoft.AspNetCore.Mvc.Rendering.MvcForm/*02000089*/ 
+          BeginForm(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper) cil managed
+  // SIG: 00 01 12 82 24 12 82 14
+  {
+    .custom /*0C000130:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a48
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperFormExtensions::BeginForm
+
+  .method /*06000324*/ public hidebysig static 
+          class Microsoft.AspNetCore.Mvc.Rendering.MvcForm/*02000089*/ 
+          BeginForm(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                    valuetype Microsoft.AspNetCore.Mvc.Rendering.FormMethod/*02000076*/ 'method') cil managed
+  // SIG: 00 02 12 82 24 12 82 14 11 81 D8
+  {
+    .custom /*0C000131:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a4b
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperFormExtensions::BeginForm
+
+  .method /*06000325*/ public hidebysig static 
+          class Microsoft.AspNetCore.Mvc.Rendering.MvcForm/*02000089*/ 
+          BeginForm(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                    valuetype Microsoft.AspNetCore.Mvc.Rendering.FormMethod/*02000076*/ 'method',
+                    valuetype [System.Runtime/*23000001*/]System.Nullable`1/*01000040*/<bool> antiforgery,
+                    object htmlAttributes) cil managed
+  // SIG: 00 04 12 82 24 12 82 14 11 81 D8 15 11 81 01 01 02 1C
+  {
+    .custom /*0C000132:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a4e
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperFormExtensions::BeginForm
+
+  .method /*06000326*/ public hidebysig static 
+          class Microsoft.AspNetCore.Mvc.Rendering.MvcForm/*02000089*/ 
+          BeginForm(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                    valuetype Microsoft.AspNetCore.Mvc.Rendering.FormMethod/*02000076*/ 'method',
+                    object htmlAttributes) cil managed
+  // SIG: 00 03 12 82 24 12 82 14 11 81 D8 1C
+  {
+    .custom /*0C000133:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a51
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperFormExtensions::BeginForm
+
+  .method /*06000327*/ public hidebysig static 
+          class Microsoft.AspNetCore.Mvc.Rendering.MvcForm/*02000089*/ 
+          BeginForm(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                    valuetype [System.Runtime/*23000001*/]System.Nullable`1/*01000040*/<bool> antiforgery) cil managed
+  // SIG: 00 02 12 82 24 12 82 14 15 11 81 01 01 02
+  {
+    .custom /*0C000134:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a54
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperFormExtensions::BeginForm
+
+  .method /*06000328*/ public hidebysig static 
+          class Microsoft.AspNetCore.Mvc.Rendering.MvcForm/*02000089*/ 
+          BeginForm(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                    object routeValues) cil managed
+  // SIG: 00 02 12 82 24 12 82 14 1C
+  {
+    .custom /*0C000135:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a57
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperFormExtensions::BeginForm
+
+  .method /*06000329*/ public hidebysig static 
+          class Microsoft.AspNetCore.Mvc.Rendering.MvcForm/*02000089*/ 
+          BeginForm(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                    string actionName,
+                    string controllerName) cil managed
+  // SIG: 00 03 12 82 24 12 82 14 0E 0E
+  {
+    .custom /*0C000136:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a5a
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperFormExtensions::BeginForm
+
+  .method /*0600032A*/ public hidebysig static 
+          class Microsoft.AspNetCore.Mvc.Rendering.MvcForm/*02000089*/ 
+          BeginForm(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                    string actionName,
+                    string controllerName,
+                    valuetype Microsoft.AspNetCore.Mvc.Rendering.FormMethod/*02000076*/ 'method') cil managed
+  // SIG: 00 04 12 82 24 12 82 14 0E 0E 11 81 D8
+  {
+    .custom /*0C000137:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a5d
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperFormExtensions::BeginForm
+
+  .method /*0600032B*/ public hidebysig static 
+          class Microsoft.AspNetCore.Mvc.Rendering.MvcForm/*02000089*/ 
+          BeginForm(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                    string actionName,
+                    string controllerName,
+                    valuetype Microsoft.AspNetCore.Mvc.Rendering.FormMethod/*02000076*/ 'method',
+                    object htmlAttributes) cil managed
+  // SIG: 00 05 12 82 24 12 82 14 0E 0E 11 81 D8 1C
+  {
+    .custom /*0C000138:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a60
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperFormExtensions::BeginForm
+
+  .method /*0600032C*/ public hidebysig static 
+          class Microsoft.AspNetCore.Mvc.Rendering.MvcForm/*02000089*/ 
+          BeginForm(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                    string actionName,
+                    string controllerName,
+                    object routeValues) cil managed
+  // SIG: 00 04 12 82 24 12 82 14 0E 0E 1C
+  {
+    .custom /*0C000139:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a63
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperFormExtensions::BeginForm
+
+  .method /*0600032D*/ public hidebysig static 
+          class Microsoft.AspNetCore.Mvc.Rendering.MvcForm/*02000089*/ 
+          BeginForm(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                    string actionName,
+                    string controllerName,
+                    object routeValues,
+                    valuetype Microsoft.AspNetCore.Mvc.Rendering.FormMethod/*02000076*/ 'method') cil managed
+  // SIG: 00 05 12 82 24 12 82 14 0E 0E 1C 11 81 D8
+  {
+    .custom /*0C00013A:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a66
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperFormExtensions::BeginForm
+
+  .method /*0600032E*/ public hidebysig static 
+          class Microsoft.AspNetCore.Mvc.Rendering.MvcForm/*02000089*/ 
+          BeginRouteForm(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                         object routeValues) cil managed
+  // SIG: 00 02 12 82 24 12 82 14 1C
+  {
+    .custom /*0C00013B:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a69
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperFormExtensions::BeginRouteForm
+
+  .method /*0600032F*/ public hidebysig static 
+          class Microsoft.AspNetCore.Mvc.Rendering.MvcForm/*02000089*/ 
+          BeginRouteForm(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                         object routeValues,
+                         valuetype [System.Runtime/*23000001*/]System.Nullable`1/*01000040*/<bool> antiforgery) cil managed
+  // SIG: 00 03 12 82 24 12 82 14 1C 15 11 81 01 01 02
+  {
+    .custom /*0C00013C:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a6c
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperFormExtensions::BeginRouteForm
+
+  .method /*06000330*/ public hidebysig static 
+          class Microsoft.AspNetCore.Mvc.Rendering.MvcForm/*02000089*/ 
+          BeginRouteForm(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                         string routeName) cil managed
+  // SIG: 00 02 12 82 24 12 82 14 0E
+  {
+    .custom /*0C00013D:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a6f
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperFormExtensions::BeginRouteForm
+
+  .method /*06000331*/ public hidebysig static 
+          class Microsoft.AspNetCore.Mvc.Rendering.MvcForm/*02000089*/ 
+          BeginRouteForm(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                         string routeName,
+                         valuetype Microsoft.AspNetCore.Mvc.Rendering.FormMethod/*02000076*/ 'method') cil managed
+  // SIG: 00 03 12 82 24 12 82 14 0E 11 81 D8
+  {
+    .custom /*0C00013E:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a72
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperFormExtensions::BeginRouteForm
+
+  .method /*06000332*/ public hidebysig static 
+          class Microsoft.AspNetCore.Mvc.Rendering.MvcForm/*02000089*/ 
+          BeginRouteForm(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                         string routeName,
+                         valuetype Microsoft.AspNetCore.Mvc.Rendering.FormMethod/*02000076*/ 'method',
+                         object htmlAttributes) cil managed
+  // SIG: 00 04 12 82 24 12 82 14 0E 11 81 D8 1C
+  {
+    .custom /*0C00013F:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a75
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperFormExtensions::BeginRouteForm
+
+  .method /*06000333*/ public hidebysig static 
+          class Microsoft.AspNetCore.Mvc.Rendering.MvcForm/*02000089*/ 
+          BeginRouteForm(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                         string routeName,
+                         valuetype [System.Runtime/*23000001*/]System.Nullable`1/*01000040*/<bool> antiforgery) cil managed
+  // SIG: 00 03 12 82 24 12 82 14 0E 15 11 81 01 01 02
+  {
+    .custom /*0C000140:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a78
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperFormExtensions::BeginRouteForm
+
+  .method /*06000334*/ public hidebysig static 
+          class Microsoft.AspNetCore.Mvc.Rendering.MvcForm/*02000089*/ 
+          BeginRouteForm(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                         string routeName,
+                         object routeValues) cil managed
+  // SIG: 00 03 12 82 24 12 82 14 0E 1C
+  {
+    .custom /*0C000141:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a7b
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperFormExtensions::BeginRouteForm
+
+  .method /*06000335*/ public hidebysig static 
+          class Microsoft.AspNetCore.Mvc.Rendering.MvcForm/*02000089*/ 
+          BeginRouteForm(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                         string routeName,
+                         object routeValues,
+                         valuetype Microsoft.AspNetCore.Mvc.Rendering.FormMethod/*02000076*/ 'method') cil managed
+  // SIG: 00 04 12 82 24 12 82 14 0E 1C 11 81 D8
+  {
+    .custom /*0C000142:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a7e
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperFormExtensions::BeginRouteForm
+
+} // end of class Microsoft.AspNetCore.Mvc.Rendering.HtmlHelperFormExtensions
+
+.class /*0200007D*/ public abstract auto ansi sealed beforefieldinit Microsoft.AspNetCore.Mvc.Rendering.HtmlHelperInputExtensions
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .custom /*0C00007D:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+  .method /*06000336*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          CheckBox(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                   string expression) cil managed
+  // SIG: 00 02 12 80 D1 12 82 14 0E
+  {
+    .custom /*0C000143:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a81
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperInputExtensions::CheckBox
+
+  .method /*06000337*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          CheckBox(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                   string expression,
+                   bool isChecked) cil managed
+  // SIG: 00 03 12 80 D1 12 82 14 0E 02
+  {
+    .custom /*0C000144:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a84
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperInputExtensions::CheckBox
+
+  .method /*06000338*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          CheckBox(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                   string expression,
+                   object htmlAttributes) cil managed
+  // SIG: 00 03 12 80 D1 12 82 14 0E 1C
+  {
+    .custom /*0C000145:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a87
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperInputExtensions::CheckBox
+
+  .method /*06000339*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          CheckBoxFor<TModel>(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper`1/*02000086*/<!!TModel> htmlHelper,
+                              class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!!TModel,bool>> expression) cil managed
+  // SIG: 10 01 02 12 80 D1 15 12 82 18 01 1E 00 15 12 81 85 01 15 12 81 89 02 1E 00 02
+  {
+    .custom /*0C000146:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a8a
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperInputExtensions::CheckBoxFor
+
+  .method /*0600033A*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          Hidden(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                 string expression) cil managed
+  // SIG: 00 02 12 80 D1 12 82 14 0E
+  {
+    .custom /*0C000147:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a8d
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperInputExtensions::Hidden
+
+  .method /*0600033B*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          Hidden(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                 string expression,
+                 object 'value') cil managed
+  // SIG: 00 03 12 80 D1 12 82 14 0E 1C
+  {
+    .custom /*0C000148:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a90
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperInputExtensions::Hidden
+
+  .method /*0600033C*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          HiddenFor<TModel,TResult>(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper`1/*02000086*/<!!TModel> htmlHelper,
+                                    class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!!TModel,!!TResult>> expression) cil managed
+  // SIG: 10 02 02 12 80 D1 15 12 82 18 01 1E 00 15 12 81 85 01 15 12 81 89 02 1E 00 1E 01
+  {
+    .custom /*0C000149:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a93
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperInputExtensions::HiddenFor
+
+  .method /*0600033D*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          Password(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                   string expression) cil managed
+  // SIG: 00 02 12 80 D1 12 82 14 0E
+  {
+    .custom /*0C00014A:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a96
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperInputExtensions::Password
+
+  .method /*0600033E*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          Password(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                   string expression,
+                   object 'value') cil managed
+  // SIG: 00 03 12 80 D1 12 82 14 0E 1C
+  {
+    .custom /*0C00014B:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a99
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperInputExtensions::Password
+
+  .method /*0600033F*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          PasswordFor<TModel,TResult>(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper`1/*02000086*/<!!TModel> htmlHelper,
+                                      class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!!TModel,!!TResult>> expression) cil managed
+  // SIG: 10 02 02 12 80 D1 15 12 82 18 01 1E 00 15 12 81 85 01 15 12 81 89 02 1E 00 1E 01
+  {
+    .custom /*0C00014C:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a9c
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperInputExtensions::PasswordFor
+
+  .method /*06000340*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          RadioButton(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                      string expression,
+                      object 'value') cil managed
+  // SIG: 00 03 12 80 D1 12 82 14 0E 1C
+  {
+    .custom /*0C00014D:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2a9f
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperInputExtensions::RadioButton
+
+  .method /*06000341*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          RadioButton(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                      string expression,
+                      object 'value',
+                      bool isChecked) cil managed
+  // SIG: 00 04 12 80 D1 12 82 14 0E 1C 02
+  {
+    .custom /*0C00014E:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2aa2
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperInputExtensions::RadioButton
+
+  .method /*06000342*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          RadioButton(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                      string expression,
+                      object 'value',
+                      object htmlAttributes) cil managed
+  // SIG: 00 04 12 80 D1 12 82 14 0E 1C 1C
+  {
+    .custom /*0C00014F:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2aa5
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperInputExtensions::RadioButton
+
+  .method /*06000343*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          RadioButtonFor<TModel,TResult>(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper`1/*02000086*/<!!TModel> htmlHelper,
+                                         class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!!TModel,!!TResult>> expression,
+                                         object 'value') cil managed
+  // SIG: 10 02 03 12 80 D1 15 12 82 18 01 1E 00 15 12 81 85 01 15 12 81 89 02 1E 00 1E 01 1C
+  {
+    .custom /*0C000150:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2aa8
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperInputExtensions::RadioButtonFor
+
+  .method /*06000344*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          TextArea(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                   string expression) cil managed
+  // SIG: 00 02 12 80 D1 12 82 14 0E
+  {
+    .custom /*0C000151:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2aab
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperInputExtensions::TextArea
+
+  .method /*06000345*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          TextArea(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                   string expression,
+                   object htmlAttributes) cil managed
+  // SIG: 00 03 12 80 D1 12 82 14 0E 1C
+  {
+    .custom /*0C000152:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2aae
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperInputExtensions::TextArea
+
+  .method /*06000346*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          TextArea(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                   string expression,
+                   string 'value') cil managed
+  // SIG: 00 03 12 80 D1 12 82 14 0E 0E
+  {
+    .custom /*0C000153:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2ab1
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperInputExtensions::TextArea
+
+  .method /*06000347*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          TextArea(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                   string expression,
+                   string 'value',
+                   object htmlAttributes) cil managed
+  // SIG: 00 04 12 80 D1 12 82 14 0E 0E 1C
+  {
+    .custom /*0C000154:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2ab4
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperInputExtensions::TextArea
+
+  .method /*06000348*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          TextAreaFor<TModel,TResult>(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper`1/*02000086*/<!!TModel> htmlHelper,
+                                      class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!!TModel,!!TResult>> expression) cil managed
+  // SIG: 10 02 02 12 80 D1 15 12 82 18 01 1E 00 15 12 81 85 01 15 12 81 89 02 1E 00 1E 01
+  {
+    .custom /*0C000155:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2ab7
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperInputExtensions::TextAreaFor
+
+  .method /*06000349*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          TextAreaFor<TModel,TResult>(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper`1/*02000086*/<!!TModel> htmlHelper,
+                                      class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!!TModel,!!TResult>> expression,
+                                      object htmlAttributes) cil managed
+  // SIG: 10 02 03 12 80 D1 15 12 82 18 01 1E 00 15 12 81 85 01 15 12 81 89 02 1E 00 1E 01 1C
+  {
+    .custom /*0C000156:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2aba
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperInputExtensions::TextAreaFor
+
+  .method /*0600034A*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          TextBox(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                  string expression) cil managed
+  // SIG: 00 02 12 80 D1 12 82 14 0E
+  {
+    .custom /*0C000157:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2abd
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperInputExtensions::TextBox
+
+  .method /*0600034B*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          TextBox(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                  string expression,
+                  object 'value') cil managed
+  // SIG: 00 03 12 80 D1 12 82 14 0E 1C
+  {
+    .custom /*0C000158:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2ac0
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperInputExtensions::TextBox
+
+  .method /*0600034C*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          TextBox(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                  string expression,
+                  object 'value',
+                  object htmlAttributes) cil managed
+  // SIG: 00 04 12 80 D1 12 82 14 0E 1C 1C
+  {
+    .custom /*0C000159:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2ac3
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperInputExtensions::TextBox
+
+  .method /*0600034D*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          TextBox(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                  string expression,
+                  object 'value',
+                  string format) cil managed
+  // SIG: 00 04 12 80 D1 12 82 14 0E 1C 0E
+  {
+    .custom /*0C00015A:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2ac6
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperInputExtensions::TextBox
+
+  .method /*0600034E*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          TextBoxFor<TModel,TResult>(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper`1/*02000086*/<!!TModel> htmlHelper,
+                                     class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!!TModel,!!TResult>> expression) cil managed
+  // SIG: 10 02 02 12 80 D1 15 12 82 18 01 1E 00 15 12 81 85 01 15 12 81 89 02 1E 00 1E 01
+  {
+    .custom /*0C00015B:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2ac9
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperInputExtensions::TextBoxFor
+
+  .method /*0600034F*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          TextBoxFor<TModel,TResult>(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper`1/*02000086*/<!!TModel> htmlHelper,
+                                     class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!!TModel,!!TResult>> expression,
+                                     object htmlAttributes) cil managed
+  // SIG: 10 02 03 12 80 D1 15 12 82 18 01 1E 00 15 12 81 85 01 15 12 81 89 02 1E 00 1E 01 1C
+  {
+    .custom /*0C00015C:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2acc
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperInputExtensions::TextBoxFor
+
+  .method /*06000350*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          TextBoxFor<TModel,TResult>(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper`1/*02000086*/<!!TModel> htmlHelper,
+                                     class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!!TModel,!!TResult>> expression,
+                                     string format) cil managed
+  // SIG: 10 02 03 12 80 D1 15 12 82 18 01 1E 00 15 12 81 85 01 15 12 81 89 02 1E 00 1E 01 0E
+  {
+    .custom /*0C00015D:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2acf
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperInputExtensions::TextBoxFor
+
+} // end of class Microsoft.AspNetCore.Mvc.Rendering.HtmlHelperInputExtensions
+
+.class /*0200007E*/ public abstract auto ansi sealed beforefieldinit Microsoft.AspNetCore.Mvc.Rendering.HtmlHelperLabelExtensions
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .custom /*0C00007E:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+  .method /*06000351*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          Label(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                string expression) cil managed
+  // SIG: 00 02 12 80 D1 12 82 14 0E
+  {
+    .custom /*0C00015E:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2ad2
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperLabelExtensions::Label
+
+  .method /*06000352*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          Label(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                string expression,
+                string labelText) cil managed
+  // SIG: 00 03 12 80 D1 12 82 14 0E 0E
+  {
+    .custom /*0C00015F:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2ad5
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperLabelExtensions::Label
+
+  .method /*06000353*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          LabelForModel(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper) cil managed
+  // SIG: 00 01 12 80 D1 12 82 14
+  {
+    .custom /*0C000160:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2ad8
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperLabelExtensions::LabelForModel
+
+  .method /*06000354*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          LabelForModel(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                        object htmlAttributes) cil managed
+  // SIG: 00 02 12 80 D1 12 82 14 1C
+  {
+    .custom /*0C000161:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2adb
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperLabelExtensions::LabelForModel
+
+  .method /*06000355*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          LabelForModel(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                        string labelText) cil managed
+  // SIG: 00 02 12 80 D1 12 82 14 0E
+  {
+    .custom /*0C000162:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2ade
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperLabelExtensions::LabelForModel
+
+  .method /*06000356*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          LabelForModel(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                        string labelText,
+                        object htmlAttributes) cil managed
+  // SIG: 00 03 12 80 D1 12 82 14 0E 1C
+  {
+    .custom /*0C000163:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2ae1
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperLabelExtensions::LabelForModel
+
+  .method /*06000357*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          LabelFor<TModel,TResult>(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper`1/*02000086*/<!!TModel> htmlHelper,
+                                   class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!!TModel,!!TResult>> expression) cil managed
+  // SIG: 10 02 02 12 80 D1 15 12 82 18 01 1E 00 15 12 81 85 01 15 12 81 89 02 1E 00 1E 01
+  {
+    .custom /*0C000164:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2ae4
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperLabelExtensions::LabelFor
+
+  .method /*06000358*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          LabelFor<TModel,TResult>(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper`1/*02000086*/<!!TModel> htmlHelper,
+                                   class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!!TModel,!!TResult>> expression,
+                                   object htmlAttributes) cil managed
+  // SIG: 10 02 03 12 80 D1 15 12 82 18 01 1E 00 15 12 81 85 01 15 12 81 89 02 1E 00 1E 01 1C
+  {
+    .custom /*0C000165:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2ae7
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperLabelExtensions::LabelFor
+
+  .method /*06000359*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          LabelFor<TModel,TResult>(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper`1/*02000086*/<!!TModel> htmlHelper,
+                                   class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!!TModel,!!TResult>> expression,
+                                   string labelText) cil managed
+  // SIG: 10 02 03 12 80 D1 15 12 82 18 01 1E 00 15 12 81 85 01 15 12 81 89 02 1E 00 1E 01 0E
+  {
+    .custom /*0C000166:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2aea
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperLabelExtensions::LabelFor
+
+} // end of class Microsoft.AspNetCore.Mvc.Rendering.HtmlHelperLabelExtensions
+
+.class /*0200007F*/ public abstract auto ansi sealed beforefieldinit Microsoft.AspNetCore.Mvc.Rendering.HtmlHelperLinkExtensions
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .custom /*0C00007F:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+  .method /*0600035A*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          ActionLink(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ helper,
+                     string linkText,
+                     string actionName) cil managed
+  // SIG: 00 03 12 80 D1 12 82 14 0E 0E
+  {
+    .custom /*0C000167:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2aed
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperLinkExtensions::ActionLink
+
+  .method /*0600035B*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          ActionLink(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ helper,
+                     string linkText,
+                     string actionName,
+                     object routeValues) cil managed
+  // SIG: 00 04 12 80 D1 12 82 14 0E 0E 1C
+  {
+    .custom /*0C000168:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2af0
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperLinkExtensions::ActionLink
+
+  .method /*0600035C*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          ActionLink(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ helper,
+                     string linkText,
+                     string actionName,
+                     object routeValues,
+                     object htmlAttributes) cil managed
+  // SIG: 00 05 12 80 D1 12 82 14 0E 0E 1C 1C
+  {
+    .custom /*0C000169:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2af3
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperLinkExtensions::ActionLink
+
+  .method /*0600035D*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          ActionLink(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ helper,
+                     string linkText,
+                     string actionName,
+                     string controllerName) cil managed
+  // SIG: 00 04 12 80 D1 12 82 14 0E 0E 0E
+  {
+    .custom /*0C00016A:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2af6
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperLinkExtensions::ActionLink
+
+  .method /*0600035E*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          ActionLink(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ helper,
+                     string linkText,
+                     string actionName,
+                     string controllerName,
+                     object routeValues) cil managed
+  // SIG: 00 05 12 80 D1 12 82 14 0E 0E 0E 1C
+  {
+    .custom /*0C00016B:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2af9
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperLinkExtensions::ActionLink
+
+  .method /*0600035F*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          ActionLink(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ helper,
+                     string linkText,
+                     string actionName,
+                     string controllerName,
+                     object routeValues,
+                     object htmlAttributes) cil managed
+  // SIG: 00 06 12 80 D1 12 82 14 0E 0E 0E 1C 1C
+  {
+    .custom /*0C00016C:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2afc
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperLinkExtensions::ActionLink
+
+  .method /*06000360*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          RouteLink(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                    string linkText,
+                    object routeValues) cil managed
+  // SIG: 00 03 12 80 D1 12 82 14 0E 1C
+  {
+    .custom /*0C00016D:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2aff
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperLinkExtensions::RouteLink
+
+  .method /*06000361*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          RouteLink(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                    string linkText,
+                    object routeValues,
+                    object htmlAttributes) cil managed
+  // SIG: 00 04 12 80 D1 12 82 14 0E 1C 1C
+  {
+    .custom /*0C00016E:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b02
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperLinkExtensions::RouteLink
+
+  .method /*06000362*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          RouteLink(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                    string linkText,
+                    string routeName) cil managed
+  // SIG: 00 03 12 80 D1 12 82 14 0E 0E
+  {
+    .custom /*0C00016F:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b05
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperLinkExtensions::RouteLink
+
+  .method /*06000363*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          RouteLink(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                    string linkText,
+                    string routeName,
+                    object routeValues) cil managed
+  // SIG: 00 04 12 80 D1 12 82 14 0E 0E 1C
+  {
+    .custom /*0C000170:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b08
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperLinkExtensions::RouteLink
+
+  .method /*06000364*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          RouteLink(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                    string linkText,
+                    string routeName,
+                    object routeValues,
+                    object htmlAttributes) cil managed
+  // SIG: 00 05 12 80 D1 12 82 14 0E 0E 1C 1C
+  {
+    .custom /*0C000171:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b0b
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperLinkExtensions::RouteLink
+
+} // end of class Microsoft.AspNetCore.Mvc.Rendering.HtmlHelperLinkExtensions
+
+.class /*02000080*/ public abstract auto ansi sealed beforefieldinit Microsoft.AspNetCore.Mvc.Rendering.HtmlHelperNameExtensions
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .custom /*0C000080:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+  .method /*06000365*/ public hidebysig static 
+          string  IdForModel(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper) cil managed
+  // SIG: 00 01 0E 12 82 14
+  {
+    .custom /*0C000172:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b0e
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperNameExtensions::IdForModel
+
+  .method /*06000366*/ public hidebysig static 
+          string  NameForModel(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper) cil managed
+  // SIG: 00 01 0E 12 82 14
+  {
+    .custom /*0C000173:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b11
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperNameExtensions::NameForModel
+
+} // end of class Microsoft.AspNetCore.Mvc.Rendering.HtmlHelperNameExtensions
+
+.class /*02000081*/ public abstract auto ansi sealed beforefieldinit Microsoft.AspNetCore.Mvc.Rendering.HtmlHelperPartialExtensions
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .custom /*0C000081:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+  .method /*06000367*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          Partial(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                  string partialViewName) cil managed
+  // SIG: 00 02 12 80 D1 12 82 14 0E
+  {
+    .custom /*0C000174:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b14
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperPartialExtensions::Partial
+
+  .method /*06000368*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          Partial(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                  string partialViewName,
+                  class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ viewData) cil managed
+  // SIG: 00 03 12 80 D1 12 82 14 0E 12 80 F4
+  {
+    .custom /*0C000175:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b17
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperPartialExtensions::Partial
+
+  .method /*06000369*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          Partial(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                  string partialViewName,
+                  object model) cil managed
+  // SIG: 00 03 12 80 D1 12 82 14 0E 1C
+  {
+    .custom /*0C000176:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b1a
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperPartialExtensions::Partial
+
+  .method /*0600036A*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          Partial(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                  string partialViewName,
+                  object model,
+                  class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ viewData) cil managed
+  // SIG: 00 04 12 80 D1 12 82 14 0E 1C 12 80 F4
+  {
+    .custom /*0C000177:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b1d
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperPartialExtensions::Partial
+
+  .method /*0600036B*/ public hidebysig static 
+          class [System.Runtime/*23000001*/]System.Threading.Tasks.Task`1/*01000033*/<class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/> 
+          PartialAsync(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                       string partialViewName) cil managed
+  // SIG: 00 02 15 12 80 CD 01 12 80 D1 12 82 14 0E
+  {
+    .custom /*0C000178:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b20
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperPartialExtensions::PartialAsync
+
+  .method /*0600036C*/ public hidebysig static 
+          class [System.Runtime/*23000001*/]System.Threading.Tasks.Task`1/*01000033*/<class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/> 
+          PartialAsync(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                       string partialViewName,
+                       class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ viewData) cil managed
+  // SIG: 00 03 15 12 80 CD 01 12 80 D1 12 82 14 0E 12 80 F4
+  {
+    .custom /*0C000179:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b23
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperPartialExtensions::PartialAsync
+
+  .method /*0600036D*/ public hidebysig static 
+          class [System.Runtime/*23000001*/]System.Threading.Tasks.Task`1/*01000033*/<class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/> 
+          PartialAsync(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                       string partialViewName,
+                       object model) cil managed
+  // SIG: 00 03 15 12 80 CD 01 12 80 D1 12 82 14 0E 1C
+  {
+    .custom /*0C00017A:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b26
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperPartialExtensions::PartialAsync
+
+  .method /*0600036E*/ public hidebysig static 
+          void  RenderPartial(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                              string partialViewName) cil managed
+  // SIG: 00 02 01 12 82 14 0E
+  {
+    .custom /*0C00017B:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b29
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method HtmlHelperPartialExtensions::RenderPartial
+
+  .method /*0600036F*/ public hidebysig static 
+          void  RenderPartial(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                              string partialViewName,
+                              class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ viewData) cil managed
+  // SIG: 00 03 01 12 82 14 0E 12 80 F4
+  {
+    .custom /*0C00017C:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b2b
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method HtmlHelperPartialExtensions::RenderPartial
+
+  .method /*06000370*/ public hidebysig static 
+          void  RenderPartial(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                              string partialViewName,
+                              object model) cil managed
+  // SIG: 00 03 01 12 82 14 0E 1C
+  {
+    .custom /*0C00017D:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b2d
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method HtmlHelperPartialExtensions::RenderPartial
+
+  .method /*06000371*/ public hidebysig static 
+          void  RenderPartial(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                              string partialViewName,
+                              object model,
+                              class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ viewData) cil managed
+  // SIG: 00 04 01 12 82 14 0E 1C 12 80 F4
+  {
+    .custom /*0C00017E:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b2f
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method HtmlHelperPartialExtensions::RenderPartial
+
+  .method /*06000372*/ public hidebysig static 
+          class [System.Runtime/*23000001*/]System.Threading.Tasks.Task/*0100002F*/ 
+          RenderPartialAsync(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                             string partialViewName) cil managed
+  // SIG: 00 02 12 80 BD 12 82 14 0E
+  {
+    .custom /*0C00017F:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b31
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperPartialExtensions::RenderPartialAsync
+
+  .method /*06000373*/ public hidebysig static 
+          class [System.Runtime/*23000001*/]System.Threading.Tasks.Task/*0100002F*/ 
+          RenderPartialAsync(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                             string partialViewName,
+                             class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ viewData) cil managed
+  // SIG: 00 03 12 80 BD 12 82 14 0E 12 80 F4
+  {
+    .custom /*0C000180:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b34
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperPartialExtensions::RenderPartialAsync
+
+  .method /*06000374*/ public hidebysig static 
+          class [System.Runtime/*23000001*/]System.Threading.Tasks.Task/*0100002F*/ 
+          RenderPartialAsync(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                             string partialViewName,
+                             object model) cil managed
+  // SIG: 00 03 12 80 BD 12 82 14 0E 1C
+  {
+    .custom /*0C000181:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b37
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperPartialExtensions::RenderPartialAsync
+
+} // end of class Microsoft.AspNetCore.Mvc.Rendering.HtmlHelperPartialExtensions
+
+.class /*02000082*/ public abstract auto ansi sealed beforefieldinit Microsoft.AspNetCore.Mvc.Rendering.HtmlHelperSelectExtensions
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .custom /*0C000082:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+  .method /*06000375*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          DropDownList(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                       string expression) cil managed
+  // SIG: 00 02 12 80 D1 12 82 14 0E
+  {
+    .custom /*0C000182:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b3a
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperSelectExtensions::DropDownList
+
+  .method /*06000376*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          DropDownList(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                       string expression,
+                       class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<class Microsoft.AspNetCore.Mvc.Rendering.SelectListItem/*0200008D*/> selectList) cil managed
+  // SIG: 00 03 12 80 D1 12 82 14 0E 15 12 80 D5 01 12 82 34
+  {
+    .custom /*0C000183:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b3d
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperSelectExtensions::DropDownList
+
+  .method /*06000377*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          DropDownList(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                       string expression,
+                       class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<class Microsoft.AspNetCore.Mvc.Rendering.SelectListItem/*0200008D*/> selectList,
+                       object htmlAttributes) cil managed
+  // SIG: 00 04 12 80 D1 12 82 14 0E 15 12 80 D5 01 12 82 34 1C
+  {
+    .custom /*0C000184:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b40
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperSelectExtensions::DropDownList
+
+  .method /*06000378*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          DropDownList(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                       string expression,
+                       class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<class Microsoft.AspNetCore.Mvc.Rendering.SelectListItem/*0200008D*/> selectList,
+                       string optionLabel) cil managed
+  // SIG: 00 04 12 80 D1 12 82 14 0E 15 12 80 D5 01 12 82 34 0E
+  {
+    .custom /*0C000185:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b43
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperSelectExtensions::DropDownList
+
+  .method /*06000379*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          DropDownList(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                       string expression,
+                       string optionLabel) cil managed
+  // SIG: 00 03 12 80 D1 12 82 14 0E 0E
+  {
+    .custom /*0C000186:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b46
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperSelectExtensions::DropDownList
+
+  .method /*0600037A*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          DropDownListFor<TModel,TResult>(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper`1/*02000086*/<!!TModel> htmlHelper,
+                                          class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!!TModel,!!TResult>> expression,
+                                          class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<class Microsoft.AspNetCore.Mvc.Rendering.SelectListItem/*0200008D*/> selectList) cil managed
+  // SIG: 10 02 03 12 80 D1 15 12 82 18 01 1E 00 15 12 81 85 01 15 12 81 89 02 1E 00 1E 01 15 12 80 D5 01
+  //      12 82 34
+  {
+    .custom /*0C000187:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b49
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperSelectExtensions::DropDownListFor
+
+  .method /*0600037B*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          DropDownListFor<TModel,TResult>(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper`1/*02000086*/<!!TModel> htmlHelper,
+                                          class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!!TModel,!!TResult>> expression,
+                                          class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<class Microsoft.AspNetCore.Mvc.Rendering.SelectListItem/*0200008D*/> selectList,
+                                          object htmlAttributes) cil managed
+  // SIG: 10 02 04 12 80 D1 15 12 82 18 01 1E 00 15 12 81 85 01 15 12 81 89 02 1E 00 1E 01 15 12 80 D5 01
+  //      12 82 34 1C
+  {
+    .custom /*0C000188:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b4c
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperSelectExtensions::DropDownListFor
+
+  .method /*0600037C*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          DropDownListFor<TModel,TResult>(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper`1/*02000086*/<!!TModel> htmlHelper,
+                                          class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!!TModel,!!TResult>> expression,
+                                          class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<class Microsoft.AspNetCore.Mvc.Rendering.SelectListItem/*0200008D*/> selectList,
+                                          string optionLabel) cil managed
+  // SIG: 10 02 04 12 80 D1 15 12 82 18 01 1E 00 15 12 81 85 01 15 12 81 89 02 1E 00 1E 01 15 12 80 D5 01
+  //      12 82 34 0E
+  {
+    .custom /*0C000189:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b4f
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperSelectExtensions::DropDownListFor
+
+  .method /*0600037D*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          ListBox(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                  string expression) cil managed
+  // SIG: 00 02 12 80 D1 12 82 14 0E
+  {
+    .custom /*0C00018A:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b52
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperSelectExtensions::ListBox
+
+  .method /*0600037E*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          ListBox(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                  string expression,
+                  class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<class Microsoft.AspNetCore.Mvc.Rendering.SelectListItem/*0200008D*/> selectList) cil managed
+  // SIG: 00 03 12 80 D1 12 82 14 0E 15 12 80 D5 01 12 82 34
+  {
+    .custom /*0C00018B:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b55
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperSelectExtensions::ListBox
+
+  .method /*0600037F*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          ListBoxFor<TModel,TResult>(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper`1/*02000086*/<!!TModel> htmlHelper,
+                                     class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!!TModel,!!TResult>> expression,
+                                     class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<class Microsoft.AspNetCore.Mvc.Rendering.SelectListItem/*0200008D*/> selectList) cil managed
+  // SIG: 10 02 03 12 80 D1 15 12 82 18 01 1E 00 15 12 81 85 01 15 12 81 89 02 1E 00 1E 01 15 12 80 D5 01
+  //      12 82 34
+  {
+    .custom /*0C00018C:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b58
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperSelectExtensions::ListBoxFor
+
+} // end of class Microsoft.AspNetCore.Mvc.Rendering.HtmlHelperSelectExtensions
+
+.class /*02000083*/ public abstract auto ansi sealed beforefieldinit Microsoft.AspNetCore.Mvc.Rendering.HtmlHelperValidationExtensions
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .custom /*0C000083:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+  .method /*06000380*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          ValidationMessage(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                            string expression) cil managed
+  // SIG: 00 02 12 80 D1 12 82 14 0E
+  {
+    .custom /*0C00018D:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b5b
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperValidationExtensions::ValidationMessage
+
+  .method /*06000381*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          ValidationMessage(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                            string expression,
+                            object htmlAttributes) cil managed
+  // SIG: 00 03 12 80 D1 12 82 14 0E 1C
+  {
+    .custom /*0C00018E:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b5e
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperValidationExtensions::ValidationMessage
+
+  .method /*06000382*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          ValidationMessage(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                            string expression,
+                            string message) cil managed
+  // SIG: 00 03 12 80 D1 12 82 14 0E 0E
+  {
+    .custom /*0C00018F:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b61
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperValidationExtensions::ValidationMessage
+
+  .method /*06000383*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          ValidationMessage(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                            string expression,
+                            string message,
+                            object htmlAttributes) cil managed
+  // SIG: 00 04 12 80 D1 12 82 14 0E 0E 1C
+  {
+    .custom /*0C000190:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b64
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperValidationExtensions::ValidationMessage
+
+  .method /*06000384*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          ValidationMessage(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                            string expression,
+                            string message,
+                            string tag) cil managed
+  // SIG: 00 04 12 80 D1 12 82 14 0E 0E 0E
+  {
+    .custom /*0C000191:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b67
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperValidationExtensions::ValidationMessage
+
+  .method /*06000385*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          ValidationMessageFor<TModel,TResult>(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper`1/*02000086*/<!!TModel> htmlHelper,
+                                               class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!!TModel,!!TResult>> expression) cil managed
+  // SIG: 10 02 02 12 80 D1 15 12 82 18 01 1E 00 15 12 81 85 01 15 12 81 89 02 1E 00 1E 01
+  {
+    .custom /*0C000192:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b6a
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperValidationExtensions::ValidationMessageFor
+
+  .method /*06000386*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          ValidationMessageFor<TModel,TResult>(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper`1/*02000086*/<!!TModel> htmlHelper,
+                                               class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!!TModel,!!TResult>> expression,
+                                               string message) cil managed
+  // SIG: 10 02 03 12 80 D1 15 12 82 18 01 1E 00 15 12 81 85 01 15 12 81 89 02 1E 00 1E 01 0E
+  {
+    .custom /*0C000193:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b6d
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperValidationExtensions::ValidationMessageFor
+
+  .method /*06000387*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          ValidationMessageFor<TModel,TResult>(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper`1/*02000086*/<!!TModel> htmlHelper,
+                                               class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!!TModel,!!TResult>> expression,
+                                               string message,
+                                               object htmlAttributes) cil managed
+  // SIG: 10 02 04 12 80 D1 15 12 82 18 01 1E 00 15 12 81 85 01 15 12 81 89 02 1E 00 1E 01 0E 1C
+  {
+    .custom /*0C000194:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b70
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperValidationExtensions::ValidationMessageFor
+
+  .method /*06000388*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          ValidationMessageFor<TModel,TResult>(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper`1/*02000086*/<!!TModel> htmlHelper,
+                                               class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!!TModel,!!TResult>> expression,
+                                               string message,
+                                               string tag) cil managed
+  // SIG: 10 02 04 12 80 D1 15 12 82 18 01 1E 00 15 12 81 85 01 15 12 81 89 02 1E 00 1E 01 0E 0E
+  {
+    .custom /*0C000195:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b73
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperValidationExtensions::ValidationMessageFor
+
+  .method /*06000389*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          ValidationSummary(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper) cil managed
+  // SIG: 00 01 12 80 D1 12 82 14
+  {
+    .custom /*0C000196:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b76
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperValidationExtensions::ValidationSummary
+
+  .method /*0600038A*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          ValidationSummary(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                            bool excludePropertyErrors) cil managed
+  // SIG: 00 02 12 80 D1 12 82 14 02
+  {
+    .custom /*0C000197:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b79
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperValidationExtensions::ValidationSummary
+
+  .method /*0600038B*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          ValidationSummary(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                            bool excludePropertyErrors,
+                            string message) cil managed
+  // SIG: 00 03 12 80 D1 12 82 14 02 0E
+  {
+    .custom /*0C000198:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b7c
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperValidationExtensions::ValidationSummary
+
+  .method /*0600038C*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          ValidationSummary(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                            bool excludePropertyErrors,
+                            string message,
+                            object htmlAttributes) cil managed
+  // SIG: 00 04 12 80 D1 12 82 14 02 0E 1C
+  {
+    .custom /*0C000199:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b7f
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperValidationExtensions::ValidationSummary
+
+  .method /*0600038D*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          ValidationSummary(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                            bool excludePropertyErrors,
+                            string message,
+                            string tag) cil managed
+  // SIG: 00 04 12 80 D1 12 82 14 02 0E 0E
+  {
+    .custom /*0C00019A:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b82
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperValidationExtensions::ValidationSummary
+
+  .method /*0600038E*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          ValidationSummary(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                            string message) cil managed
+  // SIG: 00 02 12 80 D1 12 82 14 0E
+  {
+    .custom /*0C00019B:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b85
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperValidationExtensions::ValidationSummary
+
+  .method /*0600038F*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          ValidationSummary(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                            string message,
+                            object htmlAttributes) cil managed
+  // SIG: 00 03 12 80 D1 12 82 14 0E 1C
+  {
+    .custom /*0C00019C:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b88
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperValidationExtensions::ValidationSummary
+
+  .method /*06000390*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          ValidationSummary(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                            string message,
+                            object htmlAttributes,
+                            string tag) cil managed
+  // SIG: 00 04 12 80 D1 12 82 14 0E 1C 0E
+  {
+    .custom /*0C00019D:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b8b
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperValidationExtensions::ValidationSummary
+
+  .method /*06000391*/ public hidebysig static 
+          class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          ValidationSummary(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                            string message,
+                            string tag) cil managed
+  // SIG: 00 03 12 80 D1 12 82 14 0E 0E
+  {
+    .custom /*0C00019E:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b8e
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperValidationExtensions::ValidationSummary
+
+} // end of class Microsoft.AspNetCore.Mvc.Rendering.HtmlHelperValidationExtensions
+
+.class /*02000084*/ public abstract auto ansi sealed beforefieldinit Microsoft.AspNetCore.Mvc.Rendering.HtmlHelperValueExtensions
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .custom /*0C000084:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+  .method /*06000392*/ public hidebysig static 
+          string  Value(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                        string expression) cil managed
+  // SIG: 00 02 0E 12 82 14 0E
+  {
+    .custom /*0C00019F:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b91
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperValueExtensions::Value
+
+  .method /*06000393*/ public hidebysig static 
+          string  ValueForModel(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper) cil managed
+  // SIG: 00 01 0E 12 82 14
+  {
+    .custom /*0C0001A0:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b94
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperValueExtensions::ValueForModel
+
+  .method /*06000394*/ public hidebysig static 
+          string  ValueForModel(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/ htmlHelper,
+                                string format) cil managed
+  // SIG: 00 02 0E 12 82 14 0E
+  {
+    .custom /*0C0001A1:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b97
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperValueExtensions::ValueForModel
+
+  .method /*06000395*/ public hidebysig static 
+          string  ValueFor<TModel,TResult>(class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper`1/*02000086*/<!!TModel> htmlHelper,
+                                           class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!!TModel,!!TResult>> expression) cil managed
+  // SIG: 10 02 02 0E 15 12 82 18 01 1E 00 15 12 81 85 01 15 12 81 89 02 1E 00 1E 01
+  {
+    .custom /*0C0001A2:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2b9a
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method HtmlHelperValueExtensions::ValueFor
+
+} // end of class Microsoft.AspNetCore.Mvc.Rendering.HtmlHelperValueExtensions
+
+.class /*02000085*/ interface public abstract auto ansi Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper
+{
+  .method /*06000396*/ public hidebysig newslot specialname abstract virtual 
+          instance valuetype Microsoft.AspNetCore.Mvc.Rendering.Html5DateRenderingMode/*02000077*/ 
+          get_Html5DateRenderingMode() cil managed
+  // SIG: 20 00 11 81 DC
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper::get_Html5DateRenderingMode
+
+  .method /*06000397*/ public hidebysig newslot specialname abstract virtual 
+          instance void  set_Html5DateRenderingMode(valuetype Microsoft.AspNetCore.Mvc.Rendering.Html5DateRenderingMode/*02000077*/ 'value') cil managed
+  // SIG: 20 01 01 11 81 DC
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper::set_Html5DateRenderingMode
+
+  .method /*06000398*/ public hidebysig newslot specialname abstract virtual 
+          instance string  get_IdAttributeDotReplacement() cil managed
+  // SIG: 20 00 0E
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper::get_IdAttributeDotReplacement
+
+  .method /*06000399*/ public hidebysig newslot specialname abstract virtual 
+          instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.IModelMetadataProvider/*0100005A*/ 
+          get_MetadataProvider() cil managed
+  // SIG: 20 00 12 81 69
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper::get_MetadataProvider
+
+  .method /*0600039A*/ public hidebysig newslot specialname abstract virtual 
+          instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/ 
+          get_TempData() cil managed
+  // SIG: 20 00 12 80 A0
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper::get_TempData
+
+  .method /*0600039B*/ public hidebysig newslot specialname abstract virtual 
+          instance class [System.Text.Encodings.Web/*23000015*/]System.Text.Encodings.Web.UrlEncoder/*0100005E*/ 
+          get_UrlEncoder() cil managed
+  // SIG: 20 00 12 81 79
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper::get_UrlEncoder
+
+  .method /*0600039C*/ public hidebysig newslot specialname abstract virtual 
+          instance object  get_ViewBag() cil managed
+  // SIG: 20 00 1C
+  {
+    .param [0]/*0800060E*/ 
+    .custom /*0C0001F2:0A000015*/ instance void [System.Linq.Expressions/*2300000A*/]System.Runtime.CompilerServices.DynamicAttribute/*0100002A*/::.ctor() /* 0A000015 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper::get_ViewBag
+
+  .method /*0600039D*/ public hidebysig newslot specialname abstract virtual 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ 
+          get_ViewContext() cil managed
+  // SIG: 20 00 12 82 44
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper::get_ViewContext
+
+  .method /*0600039E*/ public hidebysig newslot specialname abstract virtual 
+          instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ 
+          get_ViewData() cil managed
+  // SIG: 20 00 12 80 F4
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper::get_ViewData
+
+  .method /*0600039F*/ public hidebysig newslot abstract virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          ActionLink(string linkText,
+                     string actionName,
+                     string controllerName,
+                     string protocol,
+                     string hostname,
+                     string fragment,
+                     object routeValues,
+                     object htmlAttributes) cil managed
+  // SIG: 20 08 12 80 D1 0E 0E 0E 0E 0E 0E 1C 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper::ActionLink
+
+  .method /*060003A0*/ public hidebysig newslot abstract virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          AntiForgeryToken() cil managed
+  // SIG: 20 00 12 80 D1
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper::AntiForgeryToken
+
+  .method /*060003A1*/ public hidebysig newslot abstract virtual 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.MvcForm/*02000089*/ 
+          BeginForm(string actionName,
+                    string controllerName,
+                    object routeValues,
+                    valuetype Microsoft.AspNetCore.Mvc.Rendering.FormMethod/*02000076*/ 'method',
+                    valuetype [System.Runtime/*23000001*/]System.Nullable`1/*01000040*/<bool> antiforgery,
+                    object htmlAttributes) cil managed
+  // SIG: 20 06 12 82 24 0E 0E 1C 11 81 D8 15 11 81 01 01 02 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper::BeginForm
+
+  .method /*060003A2*/ public hidebysig newslot abstract virtual 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.MvcForm/*02000089*/ 
+          BeginRouteForm(string routeName,
+                         object routeValues,
+                         valuetype Microsoft.AspNetCore.Mvc.Rendering.FormMethod/*02000076*/ 'method',
+                         valuetype [System.Runtime/*23000001*/]System.Nullable`1/*01000040*/<bool> antiforgery,
+                         object htmlAttributes) cil managed
+  // SIG: 20 05 12 82 24 0E 1C 11 81 D8 15 11 81 01 01 02 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper::BeginRouteForm
+
+  .method /*060003A3*/ public hidebysig newslot abstract virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          CheckBox(string expression,
+                   valuetype [System.Runtime/*23000001*/]System.Nullable`1/*01000040*/<bool> isChecked,
+                   object htmlAttributes) cil managed
+  // SIG: 20 03 12 80 D1 0E 15 11 81 01 01 02 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper::CheckBox
+
+  .method /*060003A4*/ public hidebysig newslot abstract virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          Display(string expression,
+                  string templateName,
+                  string htmlFieldName,
+                  object additionalViewData) cil managed
+  // SIG: 20 04 12 80 D1 0E 0E 0E 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper::Display
+
+  .method /*060003A5*/ public hidebysig newslot abstract virtual 
+          instance string  DisplayName(string expression) cil managed
+  // SIG: 20 01 0E 0E
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper::DisplayName
+
+  .method /*060003A6*/ public hidebysig newslot abstract virtual 
+          instance string  DisplayText(string expression) cil managed
+  // SIG: 20 01 0E 0E
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper::DisplayText
+
+  .method /*060003A7*/ public hidebysig newslot abstract virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          DropDownList(string expression,
+                       class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<class Microsoft.AspNetCore.Mvc.Rendering.SelectListItem/*0200008D*/> selectList,
+                       string optionLabel,
+                       object htmlAttributes) cil managed
+  // SIG: 20 04 12 80 D1 0E 15 12 80 D5 01 12 82 34 0E 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper::DropDownList
+
+  .method /*060003A8*/ public hidebysig newslot abstract virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          Editor(string expression,
+                 string templateName,
+                 string htmlFieldName,
+                 object additionalViewData) cil managed
+  // SIG: 20 04 12 80 D1 0E 0E 0E 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper::Editor
+
+  .method /*060003A9*/ public hidebysig newslot abstract virtual 
+          instance string  Encode(object 'value') cil managed
+  // SIG: 20 01 0E 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper::Encode
+
+  .method /*060003AA*/ public hidebysig newslot abstract virtual 
+          instance string  Encode(string 'value') cil managed
+  // SIG: 20 01 0E 0E
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper::Encode
+
+  .method /*060003AB*/ public hidebysig newslot abstract virtual 
+          instance void  EndForm() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper::EndForm
+
+  .method /*060003AC*/ public hidebysig newslot abstract virtual 
+          instance string  FormatValue(object 'value',
+                                       string format) cil managed
+  // SIG: 20 02 0E 1C 0E
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper::FormatValue
+
+  .method /*060003AD*/ public hidebysig newslot abstract virtual 
+          instance string  GenerateIdFromName(string fullName) cil managed
+  // SIG: 20 01 0E 0E
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper::GenerateIdFromName
+
+  .method /*060003AE*/ public hidebysig newslot abstract virtual 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<class Microsoft.AspNetCore.Mvc.Rendering.SelectListItem/*0200008D*/> 
+          GetEnumSelectList(class [System.Runtime/*23000001*/]System.Type/*01000031*/ enumType) cil managed
+  // SIG: 20 01 15 12 80 D5 01 12 82 34 12 80 C5
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper::GetEnumSelectList
+
+  .method /*060003AF*/ public hidebysig newslot abstract virtual 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<class Microsoft.AspNetCore.Mvc.Rendering.SelectListItem/*0200008D*/> 
+          GetEnumSelectList<valuetype .ctor ([System.Runtime/*23000001*/]System.ValueType/*01000057*/) TEnum>() cil managed
+  // SIG: 30 01 00 15 12 80 D5 01 12 82 34
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper::GetEnumSelectList
+
+  .method /*060003B0*/ public hidebysig newslot abstract virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          Hidden(string expression,
+                 object 'value',
+                 object htmlAttributes) cil managed
+  // SIG: 20 03 12 80 D1 0E 1C 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper::Hidden
+
+  .method /*060003B1*/ public hidebysig newslot abstract virtual 
+          instance string  Id(string expression) cil managed
+  // SIG: 20 01 0E 0E
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper::Id
+
+  .method /*060003B2*/ public hidebysig newslot abstract virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          Label(string expression,
+                string labelText,
+                object htmlAttributes) cil managed
+  // SIG: 20 03 12 80 D1 0E 0E 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper::Label
+
+  .method /*060003B3*/ public hidebysig newslot abstract virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          ListBox(string expression,
+                  class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<class Microsoft.AspNetCore.Mvc.Rendering.SelectListItem/*0200008D*/> selectList,
+                  object htmlAttributes) cil managed
+  // SIG: 20 03 12 80 D1 0E 15 12 80 D5 01 12 82 34 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper::ListBox
+
+  .method /*060003B4*/ public hidebysig newslot abstract virtual 
+          instance string  Name(string expression) cil managed
+  // SIG: 20 01 0E 0E
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper::Name
+
+  .method /*060003B5*/ public hidebysig newslot abstract virtual 
+          instance class [System.Runtime/*23000001*/]System.Threading.Tasks.Task`1/*01000033*/<class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/> 
+          PartialAsync(string partialViewName,
+                       object model,
+                       class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ viewData) cil managed
+  // SIG: 20 03 15 12 80 CD 01 12 80 D1 0E 1C 12 80 F4
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper::PartialAsync
+
+  .method /*060003B6*/ public hidebysig newslot abstract virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          Password(string expression,
+                   object 'value',
+                   object htmlAttributes) cil managed
+  // SIG: 20 03 12 80 D1 0E 1C 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper::Password
+
+  .method /*060003B7*/ public hidebysig newslot abstract virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          RadioButton(string expression,
+                      object 'value',
+                      valuetype [System.Runtime/*23000001*/]System.Nullable`1/*01000040*/<bool> isChecked,
+                      object htmlAttributes) cil managed
+  // SIG: 20 04 12 80 D1 0E 1C 15 11 81 01 01 02 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper::RadioButton
+
+  .method /*060003B8*/ public hidebysig newslot abstract virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          Raw(object 'value') cil managed
+  // SIG: 20 01 12 80 D1 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper::Raw
+
+  .method /*060003B9*/ public hidebysig newslot abstract virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          Raw(string 'value') cil managed
+  // SIG: 20 01 12 80 D1 0E
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper::Raw
+
+  .method /*060003BA*/ public hidebysig newslot abstract virtual 
+          instance class [System.Runtime/*23000001*/]System.Threading.Tasks.Task/*0100002F*/ 
+          RenderPartialAsync(string partialViewName,
+                             object model,
+                             class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ viewData) cil managed
+  // SIG: 20 03 12 80 BD 0E 1C 12 80 F4
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper::RenderPartialAsync
+
+  .method /*060003BB*/ public hidebysig newslot abstract virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          RouteLink(string linkText,
+                    string routeName,
+                    string protocol,
+                    string hostName,
+                    string fragment,
+                    object routeValues,
+                    object htmlAttributes) cil managed
+  // SIG: 20 07 12 80 D1 0E 0E 0E 0E 0E 1C 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper::RouteLink
+
+  .method /*060003BC*/ public hidebysig newslot abstract virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          TextArea(string expression,
+                   string 'value',
+                   int32 rows,
+                   int32 columns,
+                   object htmlAttributes) cil managed
+  // SIG: 20 05 12 80 D1 0E 0E 08 08 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper::TextArea
+
+  .method /*060003BD*/ public hidebysig newslot abstract virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          TextBox(string expression,
+                  object 'value',
+                  string format,
+                  object htmlAttributes) cil managed
+  // SIG: 20 04 12 80 D1 0E 1C 0E 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper::TextBox
+
+  .method /*060003BE*/ public hidebysig newslot abstract virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          ValidationMessage(string expression,
+                            string message,
+                            object htmlAttributes,
+                            string tag) cil managed
+  // SIG: 20 04 12 80 D1 0E 0E 1C 0E
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper::ValidationMessage
+
+  .method /*060003BF*/ public hidebysig newslot abstract virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          ValidationSummary(bool excludePropertyErrors,
+                            string message,
+                            object htmlAttributes,
+                            string tag) cil managed
+  // SIG: 20 04 12 80 D1 02 0E 1C 0E
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper::ValidationSummary
+
+  .method /*060003C0*/ public hidebysig newslot abstract virtual 
+          instance string  Value(string expression,
+                                 string format) cil managed
+  // SIG: 20 02 0E 0E 0E
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper::Value
+
+  .property /*170000B6*/ instance valuetype Microsoft.AspNetCore.Mvc.Rendering.Html5DateRenderingMode/*02000077*/
+          Html5DateRenderingMode()
+  {
+    .get instance valuetype Microsoft.AspNetCore.Mvc.Rendering.Html5DateRenderingMode/*02000077*/ Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/::get_Html5DateRenderingMode() /* 06000396 */
+    .set instance void Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/::set_Html5DateRenderingMode(valuetype Microsoft.AspNetCore.Mvc.Rendering.Html5DateRenderingMode/*02000077*/) /* 06000397 */
+  } // end of property IHtmlHelper::Html5DateRenderingMode
+  .property /*170000B7*/ instance string IdAttributeDotReplacement()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/::get_IdAttributeDotReplacement() /* 06000398 */
+  } // end of property IHtmlHelper::IdAttributeDotReplacement
+  .property /*170000B8*/ instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.IModelMetadataProvider/*0100005A*/
+          MetadataProvider()
+  {
+    .get instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.IModelMetadataProvider/*0100005A*/ Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/::get_MetadataProvider() /* 06000399 */
+  } // end of property IHtmlHelper::MetadataProvider
+  .property /*170000B9*/ instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/
+          TempData()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/ Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/::get_TempData() /* 0600039A */
+  } // end of property IHtmlHelper::TempData
+  .property /*170000BA*/ instance class [System.Text.Encodings.Web/*23000015*/]System.Text.Encodings.Web.UrlEncoder/*0100005E*/
+          UrlEncoder()
+  {
+    .get instance class [System.Text.Encodings.Web/*23000015*/]System.Text.Encodings.Web.UrlEncoder/*0100005E*/ Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/::get_UrlEncoder() /* 0600039B */
+  } // end of property IHtmlHelper::UrlEncoder
+  .property /*170000BB*/ instance object ViewBag()
+  {
+    .custom /*0C0000B0:0A000015*/ instance void [System.Linq.Expressions/*2300000A*/]System.Runtime.CompilerServices.DynamicAttribute/*0100002A*/::.ctor() /* 0A000015 */ = ( 01 00 00 00 ) 
+    .get instance object Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/::get_ViewBag() /* 0600039C */
+  } // end of property IHtmlHelper::ViewBag
+  .property /*170000BC*/ instance class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/
+          ViewContext()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/::get_ViewContext() /* 0600039D */
+  } // end of property IHtmlHelper::ViewContext
+  .property /*170000BD*/ instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/
+          ViewData()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/::get_ViewData() /* 0600039E */
+  } // end of property IHtmlHelper::ViewData
+} // end of class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper
+
+.class /*02000086*/ interface public abstract auto ansi Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper`1<TModel>
+       implements Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper/*02000085*/
+{
+  .method /*060003C1*/ public hidebysig newslot specialname abstract virtual 
+          instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary`1/*02000040*/<!TModel> 
+          get_ViewData() cil managed
+  // SIG: 20 00 15 12 81 00 01 13 00
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper`1::get_ViewData
+
+  .method /*060003C2*/ public hidebysig newslot abstract virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          CheckBoxFor(class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!TModel,bool>> expression,
+                      object htmlAttributes) cil managed
+  // SIG: 20 02 12 80 D1 15 12 81 85 01 15 12 81 89 02 13 00 02 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper`1::CheckBoxFor
+
+  .method /*060003C3*/ public hidebysig newslot abstract virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          DisplayFor<TResult>(class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!TModel,!!TResult>> expression,
+                              string templateName,
+                              string htmlFieldName,
+                              object additionalViewData) cil managed
+  // SIG: 30 01 04 12 80 D1 15 12 81 85 01 15 12 81 89 02 13 00 1E 00 0E 0E 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper`1::DisplayFor
+
+  .method /*060003C4*/ public hidebysig newslot abstract virtual 
+          instance string  DisplayNameForInnerType<TModelItem,TResult>(class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!!TModelItem,!!TResult>> expression) cil managed
+  // SIG: 30 02 01 0E 15 12 81 85 01 15 12 81 89 02 1E 00 1E 01
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper`1::DisplayNameForInnerType
+
+  .method /*060003C5*/ public hidebysig newslot abstract virtual 
+          instance string  DisplayNameFor<TResult>(class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!TModel,!!TResult>> expression) cil managed
+  // SIG: 30 01 01 0E 15 12 81 85 01 15 12 81 89 02 13 00 1E 00
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper`1::DisplayNameFor
+
+  .method /*060003C6*/ public hidebysig newslot abstract virtual 
+          instance string  DisplayTextFor<TResult>(class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!TModel,!!TResult>> expression) cil managed
+  // SIG: 30 01 01 0E 15 12 81 85 01 15 12 81 89 02 13 00 1E 00
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper`1::DisplayTextFor
+
+  .method /*060003C7*/ public hidebysig newslot abstract virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          DropDownListFor<TResult>(class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!TModel,!!TResult>> expression,
+                                   class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<class Microsoft.AspNetCore.Mvc.Rendering.SelectListItem/*0200008D*/> selectList,
+                                   string optionLabel,
+                                   object htmlAttributes) cil managed
+  // SIG: 30 01 04 12 80 D1 15 12 81 85 01 15 12 81 89 02 13 00 1E 00 15 12 80 D5 01 12 82 34 0E 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper`1::DropDownListFor
+
+  .method /*060003C8*/ public hidebysig newslot abstract virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          EditorFor<TResult>(class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!TModel,!!TResult>> expression,
+                             string templateName,
+                             string htmlFieldName,
+                             object additionalViewData) cil managed
+  // SIG: 30 01 04 12 80 D1 15 12 81 85 01 15 12 81 89 02 13 00 1E 00 0E 0E 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper`1::EditorFor
+
+  .method /*060003C9*/ public hidebysig newslot abstract virtual 
+          instance string  Encode(object 'value') cil managed
+  // SIG: 20 01 0E 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper`1::Encode
+
+  .method /*060003CA*/ public hidebysig newslot abstract virtual 
+          instance string  Encode(string 'value') cil managed
+  // SIG: 20 01 0E 0E
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper`1::Encode
+
+  .method /*060003CB*/ public hidebysig newslot abstract virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          HiddenFor<TResult>(class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!TModel,!!TResult>> expression,
+                             object htmlAttributes) cil managed
+  // SIG: 30 01 02 12 80 D1 15 12 81 85 01 15 12 81 89 02 13 00 1E 00 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper`1::HiddenFor
+
+  .method /*060003CC*/ public hidebysig newslot abstract virtual 
+          instance string  IdFor<TResult>(class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!TModel,!!TResult>> expression) cil managed
+  // SIG: 30 01 01 0E 15 12 81 85 01 15 12 81 89 02 13 00 1E 00
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper`1::IdFor
+
+  .method /*060003CD*/ public hidebysig newslot abstract virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          LabelFor<TResult>(class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!TModel,!!TResult>> expression,
+                            string labelText,
+                            object htmlAttributes) cil managed
+  // SIG: 30 01 03 12 80 D1 15 12 81 85 01 15 12 81 89 02 13 00 1E 00 0E 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper`1::LabelFor
+
+  .method /*060003CE*/ public hidebysig newslot abstract virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          ListBoxFor<TResult>(class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!TModel,!!TResult>> expression,
+                              class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<class Microsoft.AspNetCore.Mvc.Rendering.SelectListItem/*0200008D*/> selectList,
+                              object htmlAttributes) cil managed
+  // SIG: 30 01 03 12 80 D1 15 12 81 85 01 15 12 81 89 02 13 00 1E 00 15 12 80 D5 01 12 82 34 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper`1::ListBoxFor
+
+  .method /*060003CF*/ public hidebysig newslot abstract virtual 
+          instance string  NameFor<TResult>(class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!TModel,!!TResult>> expression) cil managed
+  // SIG: 30 01 01 0E 15 12 81 85 01 15 12 81 89 02 13 00 1E 00
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper`1::NameFor
+
+  .method /*060003D0*/ public hidebysig newslot abstract virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          PasswordFor<TResult>(class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!TModel,!!TResult>> expression,
+                               object htmlAttributes) cil managed
+  // SIG: 30 01 02 12 80 D1 15 12 81 85 01 15 12 81 89 02 13 00 1E 00 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper`1::PasswordFor
+
+  .method /*060003D1*/ public hidebysig newslot abstract virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          RadioButtonFor<TResult>(class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!TModel,!!TResult>> expression,
+                                  object 'value',
+                                  object htmlAttributes) cil managed
+  // SIG: 30 01 03 12 80 D1 15 12 81 85 01 15 12 81 89 02 13 00 1E 00 1C 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper`1::RadioButtonFor
+
+  .method /*060003D2*/ public hidebysig newslot abstract virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          Raw(object 'value') cil managed
+  // SIG: 20 01 12 80 D1 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper`1::Raw
+
+  .method /*060003D3*/ public hidebysig newslot abstract virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          Raw(string 'value') cil managed
+  // SIG: 20 01 12 80 D1 0E
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper`1::Raw
+
+  .method /*060003D4*/ public hidebysig newslot abstract virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          TextAreaFor<TResult>(class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!TModel,!!TResult>> expression,
+                               int32 rows,
+                               int32 columns,
+                               object htmlAttributes) cil managed
+  // SIG: 30 01 04 12 80 D1 15 12 81 85 01 15 12 81 89 02 13 00 1E 00 08 08 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper`1::TextAreaFor
+
+  .method /*060003D5*/ public hidebysig newslot abstract virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          TextBoxFor<TResult>(class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!TModel,!!TResult>> expression,
+                              string format,
+                              object htmlAttributes) cil managed
+  // SIG: 30 01 03 12 80 D1 15 12 81 85 01 15 12 81 89 02 13 00 1E 00 0E 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper`1::TextBoxFor
+
+  .method /*060003D6*/ public hidebysig newslot abstract virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          ValidationMessageFor<TResult>(class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!TModel,!!TResult>> expression,
+                                        string message,
+                                        object htmlAttributes,
+                                        string tag) cil managed
+  // SIG: 30 01 04 12 80 D1 15 12 81 85 01 15 12 81 89 02 13 00 1E 00 0E 1C 0E
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper`1::ValidationMessageFor
+
+  .method /*060003D7*/ public hidebysig newslot abstract virtual 
+          instance string  ValueFor<TResult>(class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!TModel,!!TResult>> expression,
+                                             string format) cil managed
+  // SIG: 30 01 02 0E 15 12 81 85 01 15 12 81 89 02 13 00 1E 00 0E
+  {
+    // Method begins at RVA 0x0
+  } // end of method IHtmlHelper`1::ValueFor
+
+  .property /*170000BE*/ instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary`1/*02000040*/<!TModel>
+          ViewData()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary`1/*02000040*/<!TModel> Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper`1/*02000086*/::get_ViewData() /* 060003C1 */
+  } // end of property IHtmlHelper`1::ViewData
+} // end of class Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper`1
+
+.class /*02000087*/ interface public abstract auto ansi Microsoft.AspNetCore.Mvc.Rendering.IJsonHelper
+{
+  .method /*060003D8*/ public hidebysig newslot abstract virtual 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          Serialize(object 'value') cil managed
+  // SIG: 20 01 12 80 D1 1C
+  {
+    // Method begins at RVA 0x0
+  } // end of method IJsonHelper::Serialize
+
+} // end of class Microsoft.AspNetCore.Mvc.Rendering.IJsonHelper
+
+.class /*02000088*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.Rendering.MultiSelectList
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+       implements class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<class Microsoft.AspNetCore.Mvc.Rendering.SelectListItem/*0200008D*/>/*1B000010*/,
+                  [System.Runtime/*23000001*/]System.Collections.IEnumerable/*01000038*/
+{
+  .method /*060003D9*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class [System.Runtime/*23000001*/]System.Collections.IEnumerable/*01000038*/ items) cil managed
+  // SIG: 20 01 01 12 80 E1
+  {
+    // Method begins at RVA 0x2b9d
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method MultiSelectList::.ctor
+
+  .method /*060003DA*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class [System.Runtime/*23000001*/]System.Collections.IEnumerable/*01000038*/ items,
+                               class [System.Runtime/*23000001*/]System.Collections.IEnumerable/*01000038*/ selectedValues) cil managed
+  // SIG: 20 02 01 12 80 E1 12 80 E1
+  {
+    // Method begins at RVA 0x2ba5
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method MultiSelectList::.ctor
+
+  .method /*060003DB*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class [System.Runtime/*23000001*/]System.Collections.IEnumerable/*01000038*/ items,
+                               string dataValueField,
+                               string dataTextField) cil managed
+  // SIG: 20 03 01 12 80 E1 0E 0E
+  {
+    // Method begins at RVA 0x2bad
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method MultiSelectList::.ctor
+
+  .method /*060003DC*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class [System.Runtime/*23000001*/]System.Collections.IEnumerable/*01000038*/ items,
+                               string dataValueField,
+                               string dataTextField,
+                               class [System.Runtime/*23000001*/]System.Collections.IEnumerable/*01000038*/ selectedValues) cil managed
+  // SIG: 20 04 01 12 80 E1 0E 0E 12 80 E1
+  {
+    // Method begins at RVA 0x2bb5
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method MultiSelectList::.ctor
+
+  .method /*060003DD*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class [System.Runtime/*23000001*/]System.Collections.IEnumerable/*01000038*/ items,
+                               string dataValueField,
+                               string dataTextField,
+                               class [System.Runtime/*23000001*/]System.Collections.IEnumerable/*01000038*/ selectedValues,
+                               string dataGroupField) cil managed
+  // SIG: 20 05 01 12 80 E1 0E 0E 12 80 E1 0E
+  {
+    // Method begins at RVA 0x2bbd
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method MultiSelectList::.ctor
+
+  .method /*060003DE*/ public hidebysig specialname 
+          instance string  get_DataGroupField() cil managed
+  // SIG: 20 00 0E
+  {
+    .custom /*0C0001A5:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2bc5
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method MultiSelectList::get_DataGroupField
+
+  .method /*060003DF*/ public hidebysig specialname 
+          instance string  get_DataTextField() cil managed
+  // SIG: 20 00 0E
+  {
+    .custom /*0C0001A6:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2bc8
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method MultiSelectList::get_DataTextField
+
+  .method /*060003E0*/ public hidebysig specialname 
+          instance string  get_DataValueField() cil managed
+  // SIG: 20 00 0E
+  {
+    .custom /*0C0001A7:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2bcb
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method MultiSelectList::get_DataValueField
+
+  .method /*060003E1*/ public hidebysig specialname 
+          instance class [System.Runtime/*23000001*/]System.Collections.IEnumerable/*01000038*/ 
+          get_Items() cil managed
+  // SIG: 20 00 12 80 E1
+  {
+    .custom /*0C0001A8:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2bce
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method MultiSelectList::get_Items
+
+  .method /*060003E2*/ public hidebysig specialname 
+          instance class [System.Runtime/*23000001*/]System.Collections.IEnumerable/*01000038*/ 
+          get_SelectedValues() cil managed
+  // SIG: 20 00 12 80 E1
+  {
+    .custom /*0C0001A9:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2bd1
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method MultiSelectList::get_SelectedValues
+
+  .method /*060003E3*/ public hidebysig newslot virtual 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerator`1/*01000037*/<class Microsoft.AspNetCore.Mvc.Rendering.SelectListItem/*0200008D*/> 
+          GetEnumerator() cil managed
+  // SIG: 20 00 15 12 80 DD 01 12 82 34
+  {
+    // Method begins at RVA 0x2bd4
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method MultiSelectList::GetEnumerator
+
+  .method /*060003E4*/ private hidebysig newslot virtual final 
+          instance class [System.Runtime/*23000001*/]System.Collections.IEnumerator/*01000039*/ 
+          System.Collections.IEnumerable.GetEnumerator() cil managed
+  // SIG: 20 00 12 80 E5
+  {
+    .override [System.Runtime/*23000001*/]System.Collections.IEnumerable/*01000038*/::GetEnumerator /*01000038::0A000018*/ 
+    // Method begins at RVA 0x2bd7
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method MultiSelectList::System.Collections.IEnumerable.GetEnumerator
+
+  .property /*170000BF*/ instance string DataGroupField()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.Rendering.MultiSelectList/*02000088*/::get_DataGroupField() /* 060003DE */
+  } // end of property MultiSelectList::DataGroupField
+  .property /*170000C0*/ instance string DataTextField()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.Rendering.MultiSelectList/*02000088*/::get_DataTextField() /* 060003DF */
+  } // end of property MultiSelectList::DataTextField
+  .property /*170000C1*/ instance string DataValueField()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.Rendering.MultiSelectList/*02000088*/::get_DataValueField() /* 060003E0 */
+  } // end of property MultiSelectList::DataValueField
+  .property /*170000C2*/ instance class [System.Runtime/*23000001*/]System.Collections.IEnumerable/*01000038*/
+          Items()
+  {
+    .get instance class [System.Runtime/*23000001*/]System.Collections.IEnumerable/*01000038*/ Microsoft.AspNetCore.Mvc.Rendering.MultiSelectList/*02000088*/::get_Items() /* 060003E1 */
+  } // end of property MultiSelectList::Items
+  .property /*170000C3*/ instance class [System.Runtime/*23000001*/]System.Collections.IEnumerable/*01000038*/
+          SelectedValues()
+  {
+    .get instance class [System.Runtime/*23000001*/]System.Collections.IEnumerable/*01000038*/ Microsoft.AspNetCore.Mvc.Rendering.MultiSelectList/*02000088*/::get_SelectedValues() /* 060003E2 */
+  } // end of property MultiSelectList::SelectedValues
+} // end of class Microsoft.AspNetCore.Mvc.Rendering.MultiSelectList
+
+.class /*02000089*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.Rendering.MvcForm
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+       implements [System.Runtime/*23000001*/]System.IDisposable/*01000029*/
+{
+  .method /*060003E5*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                               class [System.Text.Encodings.Web/*23000015*/]System.Text.Encodings.Web.HtmlEncoder/*0100005C*/ htmlEncoder) cil managed
+  // SIG: 20 02 01 12 82 44 12 81 71
+  {
+    // Method begins at RVA 0x2bda
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method MvcForm::.ctor
+
+  .method /*060003E6*/ public hidebysig newslot virtual final 
+          instance void  Dispose() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x2be2
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method MvcForm::Dispose
+
+  .method /*060003E7*/ public hidebysig instance void 
+          EndForm() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x2be4
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method MvcForm::EndForm
+
+  .method /*060003E8*/ family hidebysig newslot virtual 
+          instance void  GenerateEndForm() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x2be6
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method MvcForm::GenerateEndForm
+
+} // end of class Microsoft.AspNetCore.Mvc.Rendering.MvcForm
+
+.class /*0200008A*/ public auto ansi sealed Microsoft.AspNetCore.Mvc.Rendering.RenderMode
+       extends [System.Runtime/*23000001*/]System.Enum/*01000064*/
+{
+  .field /*04000043*/ public specialname rtspecialname int32 value__
+  .field /*04000044*/ public static literal valuetype Microsoft.AspNetCore.Mvc.Rendering.RenderMode/*0200008A*/ Static = int32(0x00000001)
+  .field /*04000045*/ public static literal valuetype Microsoft.AspNetCore.Mvc.Rendering.RenderMode/*0200008A*/ Server = int32(0x00000002)
+  .field /*04000046*/ public static literal valuetype Microsoft.AspNetCore.Mvc.Rendering.RenderMode/*0200008A*/ ServerPrerendered = int32(0x00000003)
+} // end of class Microsoft.AspNetCore.Mvc.Rendering.RenderMode
+
+.class /*0200008B*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.Rendering.SelectList
+       extends Microsoft.AspNetCore.Mvc.Rendering.MultiSelectList/*02000088*/
+{
+  .method /*060003E9*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class [System.Runtime/*23000001*/]System.Collections.IEnumerable/*01000038*/ items) cil managed
+  // SIG: 20 01 01 12 80 E1
+  {
+    // Method begins at RVA 0x2be8
+    // Code size       8 (0x8)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 14   |                  */ ldnull
+    IL_0002:  /* 28   | (06)0003D9       */ call       instance void Microsoft.AspNetCore.Mvc.Rendering.MultiSelectList/*02000088*/::.ctor(class [System.Runtime/*23000001*/]System.Collections.IEnumerable/*01000038*/) /* 060003D9 */
+    IL_0007:  /* 2A   |                  */ ret
+  } // end of method SelectList::.ctor
+
+  .method /*060003EA*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class [System.Runtime/*23000001*/]System.Collections.IEnumerable/*01000038*/ items,
+                               object selectedValue) cil managed
+  // SIG: 20 02 01 12 80 E1 1C
+  {
+    // Method begins at RVA 0x2bf1
+    // Code size       8 (0x8)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 14   |                  */ ldnull
+    IL_0002:  /* 28   | (06)0003D9       */ call       instance void Microsoft.AspNetCore.Mvc.Rendering.MultiSelectList/*02000088*/::.ctor(class [System.Runtime/*23000001*/]System.Collections.IEnumerable/*01000038*/) /* 060003D9 */
+    IL_0007:  /* 2A   |                  */ ret
+  } // end of method SelectList::.ctor
+
+  .method /*060003EB*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class [System.Runtime/*23000001*/]System.Collections.IEnumerable/*01000038*/ items,
+                               string dataValueField,
+                               string dataTextField) cil managed
+  // SIG: 20 03 01 12 80 E1 0E 0E
+  {
+    // Method begins at RVA 0x2bfa
+    // Code size       8 (0x8)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 14   |                  */ ldnull
+    IL_0002:  /* 28   | (06)0003D9       */ call       instance void Microsoft.AspNetCore.Mvc.Rendering.MultiSelectList/*02000088*/::.ctor(class [System.Runtime/*23000001*/]System.Collections.IEnumerable/*01000038*/) /* 060003D9 */
+    IL_0007:  /* 2A   |                  */ ret
+  } // end of method SelectList::.ctor
+
+  .method /*060003EC*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class [System.Runtime/*23000001*/]System.Collections.IEnumerable/*01000038*/ items,
+                               string dataValueField,
+                               string dataTextField,
+                               object selectedValue) cil managed
+  // SIG: 20 04 01 12 80 E1 0E 0E 1C
+  {
+    // Method begins at RVA 0x2c03
+    // Code size       8 (0x8)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 14   |                  */ ldnull
+    IL_0002:  /* 28   | (06)0003D9       */ call       instance void Microsoft.AspNetCore.Mvc.Rendering.MultiSelectList/*02000088*/::.ctor(class [System.Runtime/*23000001*/]System.Collections.IEnumerable/*01000038*/) /* 060003D9 */
+    IL_0007:  /* 2A   |                  */ ret
+  } // end of method SelectList::.ctor
+
+  .method /*060003ED*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class [System.Runtime/*23000001*/]System.Collections.IEnumerable/*01000038*/ items,
+                               string dataValueField,
+                               string dataTextField,
+                               object selectedValue,
+                               string dataGroupField) cil managed
+  // SIG: 20 05 01 12 80 E1 0E 0E 1C 0E
+  {
+    // Method begins at RVA 0x2c0c
+    // Code size       8 (0x8)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 14   |                  */ ldnull
+    IL_0002:  /* 28   | (06)0003D9       */ call       instance void Microsoft.AspNetCore.Mvc.Rendering.MultiSelectList/*02000088*/::.ctor(class [System.Runtime/*23000001*/]System.Collections.IEnumerable/*01000038*/) /* 060003D9 */
+    IL_0007:  /* 2A   |                  */ ret
+  } // end of method SelectList::.ctor
+
+  .method /*060003EE*/ public hidebysig specialname 
+          instance object  get_SelectedValue() cil managed
+  // SIG: 20 00 1C
+  {
+    .custom /*0C0001AA:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2c15
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method SelectList::get_SelectedValue
+
+  .property /*170000C4*/ instance object SelectedValue()
+  {
+    .get instance object Microsoft.AspNetCore.Mvc.Rendering.SelectList/*0200008B*/::get_SelectedValue() /* 060003EE */
+  } // end of property SelectList::SelectedValue
+} // end of class Microsoft.AspNetCore.Mvc.Rendering.SelectList
+
+.class /*0200008C*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.Rendering.SelectListGroup
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .method /*060003EF*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x2c18
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method SelectListGroup::.ctor
+
+  .method /*060003F0*/ public hidebysig specialname 
+          instance bool  get_Disabled() cil managed
+  // SIG: 20 00 02
+  {
+    .custom /*0C0001AB:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2c20
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method SelectListGroup::get_Disabled
+
+  .method /*060003F1*/ public hidebysig specialname 
+          instance void  set_Disabled(bool 'value') cil managed
+  // SIG: 20 01 01 02
+  {
+    .custom /*0C0001AC:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2c23
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method SelectListGroup::set_Disabled
+
+  .method /*060003F2*/ public hidebysig specialname 
+          instance string  get_Name() cil managed
+  // SIG: 20 00 0E
+  {
+    .custom /*0C0001AD:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2c25
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method SelectListGroup::get_Name
+
+  .method /*060003F3*/ public hidebysig specialname 
+          instance void  set_Name(string 'value') cil managed
+  // SIG: 20 01 01 0E
+  {
+    .custom /*0C0001AE:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2c28
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method SelectListGroup::set_Name
+
+  .property /*170000C5*/ instance bool Disabled()
+  {
+    .get instance bool Microsoft.AspNetCore.Mvc.Rendering.SelectListGroup/*0200008C*/::get_Disabled() /* 060003F0 */
+    .set instance void Microsoft.AspNetCore.Mvc.Rendering.SelectListGroup/*0200008C*/::set_Disabled(bool) /* 060003F1 */
+  } // end of property SelectListGroup::Disabled
+  .property /*170000C6*/ instance string Name()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.Rendering.SelectListGroup/*0200008C*/::get_Name() /* 060003F2 */
+    .set instance void Microsoft.AspNetCore.Mvc.Rendering.SelectListGroup/*0200008C*/::set_Name(string) /* 060003F3 */
+  } // end of property SelectListGroup::Name
+} // end of class Microsoft.AspNetCore.Mvc.Rendering.SelectListGroup
+
+.class /*0200008D*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .method /*060003F4*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x2c2a
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method SelectListItem::.ctor
+
+  .method /*060003F5*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(string text,
+                               string 'value') cil managed
+  // SIG: 20 02 01 0E 0E
+  {
+    // Method begins at RVA 0x2c32
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method SelectListItem::.ctor
+
+  .method /*060003F6*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(string text,
+                               string 'value',
+                               bool selected) cil managed
+  // SIG: 20 03 01 0E 0E 02
+  {
+    // Method begins at RVA 0x2c3a
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method SelectListItem::.ctor
+
+  .method /*060003F7*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(string text,
+                               string 'value',
+                               bool selected,
+                               bool disabled) cil managed
+  // SIG: 20 04 01 0E 0E 02 02
+  {
+    // Method begins at RVA 0x2c42
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method SelectListItem::.ctor
+
+  .method /*060003F8*/ public hidebysig specialname 
+          instance bool  get_Disabled() cil managed
+  // SIG: 20 00 02
+  {
+    .custom /*0C0001AF:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2c4a
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method SelectListItem::get_Disabled
+
+  .method /*060003F9*/ public hidebysig specialname 
+          instance void  set_Disabled(bool 'value') cil managed
+  // SIG: 20 01 01 02
+  {
+    .custom /*0C0001B0:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2c4d
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method SelectListItem::set_Disabled
+
+  .method /*060003FA*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.SelectListGroup/*0200008C*/ 
+          get_Group() cil managed
+  // SIG: 20 00 12 82 30
+  {
+    .custom /*0C0001B1:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2c4f
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method SelectListItem::get_Group
+
+  .method /*060003FB*/ public hidebysig specialname 
+          instance void  set_Group(class Microsoft.AspNetCore.Mvc.Rendering.SelectListGroup/*0200008C*/ 'value') cil managed
+  // SIG: 20 01 01 12 82 30
+  {
+    .custom /*0C0001B2:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2c52
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method SelectListItem::set_Group
+
+  .method /*060003FC*/ public hidebysig specialname 
+          instance bool  get_Selected() cil managed
+  // SIG: 20 00 02
+  {
+    .custom /*0C0001B3:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2c54
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method SelectListItem::get_Selected
+
+  .method /*060003FD*/ public hidebysig specialname 
+          instance void  set_Selected(bool 'value') cil managed
+  // SIG: 20 01 01 02
+  {
+    .custom /*0C0001B4:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2c57
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method SelectListItem::set_Selected
+
+  .method /*060003FE*/ public hidebysig specialname 
+          instance string  get_Text() cil managed
+  // SIG: 20 00 0E
+  {
+    .custom /*0C0001B5:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2c59
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method SelectListItem::get_Text
+
+  .method /*060003FF*/ public hidebysig specialname 
+          instance void  set_Text(string 'value') cil managed
+  // SIG: 20 01 01 0E
+  {
+    .custom /*0C0001B6:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2c5c
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method SelectListItem::set_Text
+
+  .method /*06000400*/ public hidebysig specialname 
+          instance string  get_Value() cil managed
+  // SIG: 20 00 0E
+  {
+    .custom /*0C0001B7:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2c5e
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method SelectListItem::get_Value
+
+  .method /*06000401*/ public hidebysig specialname 
+          instance void  set_Value(string 'value') cil managed
+  // SIG: 20 01 01 0E
+  {
+    .custom /*0C0001B8:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2c61
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method SelectListItem::set_Value
+
+  .property /*170000C7*/ instance bool Disabled()
+  {
+    .get instance bool Microsoft.AspNetCore.Mvc.Rendering.SelectListItem/*0200008D*/::get_Disabled() /* 060003F8 */
+    .set instance void Microsoft.AspNetCore.Mvc.Rendering.SelectListItem/*0200008D*/::set_Disabled(bool) /* 060003F9 */
+  } // end of property SelectListItem::Disabled
+  .property /*170000C8*/ instance class Microsoft.AspNetCore.Mvc.Rendering.SelectListGroup/*0200008C*/
+          Group()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.Rendering.SelectListGroup/*0200008C*/ Microsoft.AspNetCore.Mvc.Rendering.SelectListItem/*0200008D*/::get_Group() /* 060003FA */
+    .set instance void Microsoft.AspNetCore.Mvc.Rendering.SelectListItem/*0200008D*/::set_Group(class Microsoft.AspNetCore.Mvc.Rendering.SelectListGroup/*0200008C*/) /* 060003FB */
+  } // end of property SelectListItem::Group
+  .property /*170000C9*/ instance bool Selected()
+  {
+    .get instance bool Microsoft.AspNetCore.Mvc.Rendering.SelectListItem/*0200008D*/::get_Selected() /* 060003FC */
+    .set instance void Microsoft.AspNetCore.Mvc.Rendering.SelectListItem/*0200008D*/::set_Selected(bool) /* 060003FD */
+  } // end of property SelectListItem::Selected
+  .property /*170000CA*/ instance string Text()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.Rendering.SelectListItem/*0200008D*/::get_Text() /* 060003FE */
+    .set instance void Microsoft.AspNetCore.Mvc.Rendering.SelectListItem/*0200008D*/::set_Text(string) /* 060003FF */
+  } // end of property SelectListItem::Text
+  .property /*170000CB*/ instance string Value()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.Rendering.SelectListItem/*0200008D*/::get_Value() /* 06000400 */
+    .set instance void Microsoft.AspNetCore.Mvc.Rendering.SelectListItem/*0200008D*/::set_Value(string) /* 06000401 */
+  } // end of property SelectListItem::Value
+} // end of class Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
+
+.class /*0200008E*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.Rendering.TagBuilder
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+       implements [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/
+{
+  .custom /*0C00008A:0A00001F*/ instance void [System.Diagnostics.Debug/*23000011*/]System.Diagnostics.DebuggerDisplayAttribute/*01000065*/::.ctor(string) /* 0A00001F */ = ( 01 00 14 7B 44 65 62 75 67 67 65 72 54 6F 53 74   // ...{DebuggerToSt
+                                                                                                                                                                              72 69 6E 67 28 29 7D 00 00 )                      // ring()}..
+  .method /*06000402*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(string tagName) cil managed
+  // SIG: 20 01 01 0E
+  {
+    // Method begins at RVA 0x2c63
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method TagBuilder::.ctor
+
+  .method /*06000403*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.ViewFeatures.AttributeDictionary/*0200001A*/ 
+          get_Attributes() cil managed
+  // SIG: 20 00 12 68
+  {
+    // Method begins at RVA 0x2c6b
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method TagBuilder::get_Attributes
+
+  .method /*06000404*/ public hidebysig specialname 
+          instance bool  get_HasInnerHtml() cil managed
+  // SIG: 20 00 02
+  {
+    // Method begins at RVA 0x2c6e
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method TagBuilder::get_HasInnerHtml
+
+  .method /*06000405*/ public hidebysig specialname 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContentBuilder/*0100007B*/ 
+          get_InnerHtml() cil managed
+  // SIG: 20 00 12 81 ED
+  {
+    // Method begins at RVA 0x2c71
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method TagBuilder::get_InnerHtml
+
+  .method /*06000406*/ public hidebysig specialname 
+          instance string  get_TagName() cil managed
+  // SIG: 20 00 0E
+  {
+    .custom /*0C0001B9:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2c74
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method TagBuilder::get_TagName
+
+  .method /*06000407*/ public hidebysig specialname 
+          instance valuetype Microsoft.AspNetCore.Mvc.Rendering.TagRenderMode/*0200008F*/ 
+          get_TagRenderMode() cil managed
+  // SIG: 20 00 11 82 3C
+  {
+    .custom /*0C0001BA:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2c77
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method TagBuilder::get_TagRenderMode
+
+  .method /*06000408*/ public hidebysig specialname 
+          instance void  set_TagRenderMode(valuetype Microsoft.AspNetCore.Mvc.Rendering.TagRenderMode/*0200008F*/ 'value') cil managed
+  // SIG: 20 01 01 11 82 3C
+  {
+    .custom /*0C0001BB:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2c7a
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method TagBuilder::set_TagRenderMode
+
+  .method /*06000409*/ public hidebysig instance void 
+          AddCssClass(string 'value') cil managed
+  // SIG: 20 01 01 0E
+  {
+    // Method begins at RVA 0x2c7c
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method TagBuilder::AddCssClass
+
+  .method /*0600040A*/ public hidebysig static 
+          string  CreateSanitizedId(string name,
+                                    string invalidCharReplacement) cil managed
+  // SIG: 00 02 0E 0E 0E
+  {
+    // Method begins at RVA 0x2c7e
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method TagBuilder::CreateSanitizedId
+
+  .method /*0600040B*/ public hidebysig instance void 
+          GenerateId(string name,
+                     string invalidCharReplacement) cil managed
+  // SIG: 20 02 01 0E 0E
+  {
+    // Method begins at RVA 0x2c81
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method TagBuilder::GenerateId
+
+  .method /*0600040C*/ public hidebysig instance void 
+          MergeAttribute(string key,
+                         string 'value') cil managed
+  // SIG: 20 02 01 0E 0E
+  {
+    // Method begins at RVA 0x2c83
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method TagBuilder::MergeAttribute
+
+  .method /*0600040D*/ public hidebysig instance void 
+          MergeAttribute(string key,
+                         string 'value',
+                         bool replaceExisting) cil managed
+  // SIG: 20 03 01 0E 0E 02
+  {
+    // Method begins at RVA 0x2c85
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method TagBuilder::MergeAttribute
+
+  .method /*0600040E*/ public hidebysig instance void 
+          MergeAttributes<TKey,TValue>(class [System.Runtime/*23000001*/]System.Collections.Generic.IDictionary`2/*01000055*/<!!TKey,!!TValue> attributes) cil managed
+  // SIG: 30 02 01 01 15 12 81 55 02 1E 00 1E 01
+  {
+    // Method begins at RVA 0x2c87
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method TagBuilder::MergeAttributes
+
+  .method /*0600040F*/ public hidebysig instance void 
+          MergeAttributes<TKey,TValue>(class [System.Runtime/*23000001*/]System.Collections.Generic.IDictionary`2/*01000055*/<!!TKey,!!TValue> attributes,
+                                       bool replaceExisting) cil managed
+  // SIG: 30 02 02 01 15 12 81 55 02 1E 00 1E 01 02
+  {
+    // Method begins at RVA 0x2c89
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method TagBuilder::MergeAttributes
+
+  .method /*06000410*/ public hidebysig instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          RenderBody() cil managed
+  // SIG: 20 00 12 80 D1
+  {
+    // Method begins at RVA 0x2c8b
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method TagBuilder::RenderBody
+
+  .method /*06000411*/ public hidebysig instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          RenderEndTag() cil managed
+  // SIG: 20 00 12 80 D1
+  {
+    // Method begins at RVA 0x2c8e
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method TagBuilder::RenderEndTag
+
+  .method /*06000412*/ public hidebysig instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          RenderSelfClosingTag() cil managed
+  // SIG: 20 00 12 80 D1
+  {
+    // Method begins at RVA 0x2c91
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method TagBuilder::RenderSelfClosingTag
+
+  .method /*06000413*/ public hidebysig instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          RenderStartTag() cil managed
+  // SIG: 20 00 12 80 D1
+  {
+    // Method begins at RVA 0x2c94
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method TagBuilder::RenderStartTag
+
+  .method /*06000414*/ public hidebysig newslot virtual final 
+          instance void  WriteTo(class [System.Runtime.Extensions/*23000003*/]System.IO.TextWriter/*01000060*/ writer,
+                                 class [System.Text.Encodings.Web/*23000015*/]System.Text.Encodings.Web.HtmlEncoder/*0100005C*/ encoder) cil managed
+  // SIG: 20 02 01 12 81 81 12 81 71
+  {
+    // Method begins at RVA 0x2c97
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method TagBuilder::WriteTo
+
+  .property /*170000CC*/ instance class Microsoft.AspNetCore.Mvc.ViewFeatures.AttributeDictionary/*0200001A*/
+          Attributes()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewFeatures.AttributeDictionary/*0200001A*/ Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/::get_Attributes() /* 06000403 */
+  } // end of property TagBuilder::Attributes
+  .property /*170000CD*/ instance bool HasInnerHtml()
+  {
+    .get instance bool Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/::get_HasInnerHtml() /* 06000404 */
+  } // end of property TagBuilder::HasInnerHtml
+  .property /*170000CE*/ instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContentBuilder/*0100007B*/
+          InnerHtml()
+  {
+    .get instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContentBuilder/*0100007B*/ Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/::get_InnerHtml() /* 06000405 */
+  } // end of property TagBuilder::InnerHtml
+  .property /*170000CF*/ instance string TagName()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/::get_TagName() /* 06000406 */
+  } // end of property TagBuilder::TagName
+  .property /*170000D0*/ instance valuetype Microsoft.AspNetCore.Mvc.Rendering.TagRenderMode/*0200008F*/
+          TagRenderMode()
+  {
+    .get instance valuetype Microsoft.AspNetCore.Mvc.Rendering.TagRenderMode/*0200008F*/ Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/::get_TagRenderMode() /* 06000407 */
+    .set instance void Microsoft.AspNetCore.Mvc.Rendering.TagBuilder/*0200008E*/::set_TagRenderMode(valuetype Microsoft.AspNetCore.Mvc.Rendering.TagRenderMode/*0200008F*/) /* 06000408 */
+  } // end of property TagBuilder::TagRenderMode
+} // end of class Microsoft.AspNetCore.Mvc.Rendering.TagBuilder
+
+.class /*0200008F*/ public auto ansi sealed Microsoft.AspNetCore.Mvc.Rendering.TagRenderMode
+       extends [System.Runtime/*23000001*/]System.Enum/*01000064*/
+{
+  .field /*04000047*/ public specialname rtspecialname int32 value__
+  .field /*04000048*/ public static literal valuetype Microsoft.AspNetCore.Mvc.Rendering.TagRenderMode/*0200008F*/ Normal = int32(0x00000000)
+  .field /*04000049*/ public static literal valuetype Microsoft.AspNetCore.Mvc.Rendering.TagRenderMode/*0200008F*/ StartTag = int32(0x00000001)
+  .field /*0400004A*/ public static literal valuetype Microsoft.AspNetCore.Mvc.Rendering.TagRenderMode/*0200008F*/ EndTag = int32(0x00000002)
+  .field /*0400004B*/ public static literal valuetype Microsoft.AspNetCore.Mvc.Rendering.TagRenderMode/*0200008F*/ SelfClosing = int32(0x00000003)
+} // end of class Microsoft.AspNetCore.Mvc.Rendering.TagRenderMode
+
+.class /*02000090*/ public abstract auto ansi sealed beforefieldinit Microsoft.AspNetCore.Mvc.Rendering.ViewComponentHelperExtensions
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .custom /*0C00008C:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+  .method /*06000415*/ public hidebysig static 
+          class [System.Runtime/*23000001*/]System.Threading.Tasks.Task`1/*01000033*/<class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/> 
+          InvokeAsync(class Microsoft.AspNetCore.Mvc.IViewComponentHelper/*0200000A*/ helper,
+                      string name) cil managed
+  // SIG: 00 02 15 12 80 CD 01 12 80 D1 12 28 0E
+  {
+    .custom /*0C0001BC:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2c99
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentHelperExtensions::InvokeAsync
+
+  .method /*06000416*/ public hidebysig static 
+          class [System.Runtime/*23000001*/]System.Threading.Tasks.Task`1/*01000033*/<class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/> 
+          InvokeAsync(class Microsoft.AspNetCore.Mvc.IViewComponentHelper/*0200000A*/ helper,
+                      class [System.Runtime/*23000001*/]System.Type/*01000031*/ componentType) cil managed
+  // SIG: 00 02 15 12 80 CD 01 12 80 D1 12 28 12 80 C5
+  {
+    .custom /*0C0001BD:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2c9c
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentHelperExtensions::InvokeAsync
+
+  .method /*06000417*/ public hidebysig static 
+          class [System.Runtime/*23000001*/]System.Threading.Tasks.Task`1/*01000033*/<class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/> 
+          InvokeAsync<TComponent>(class Microsoft.AspNetCore.Mvc.IViewComponentHelper/*0200000A*/ helper) cil managed
+  // SIG: 10 01 01 15 12 80 CD 01 12 80 D1 12 28
+  {
+    .custom /*0C0001BE:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2c9f
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentHelperExtensions::InvokeAsync
+
+  .method /*06000418*/ public hidebysig static 
+          class [System.Runtime/*23000001*/]System.Threading.Tasks.Task`1/*01000033*/<class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/> 
+          InvokeAsync<TComponent>(class Microsoft.AspNetCore.Mvc.IViewComponentHelper/*0200000A*/ helper,
+                                  object arguments) cil managed
+  // SIG: 10 01 02 15 12 80 CD 01 12 80 D1 12 28 1C
+  {
+    .custom /*0C0001BF:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2ca2
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentHelperExtensions::InvokeAsync
+
+} // end of class Microsoft.AspNetCore.Mvc.Rendering.ViewComponentHelperExtensions
+
+.class /*02000091*/ public auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.Rendering.ViewContext
+       extends [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ActionContext/*01000041*/
+{
+  .method /*06000419*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  // SIG: 20 00 01
+  {
+    // Method begins at RVA 0x2ca5
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)00002E       */ call       instance void [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ActionContext/*01000041*/::.ctor() /* 0A00002E */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ViewContext::.ctor
+
+  .method /*0600041A*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ActionContext/*01000041*/ actionContext,
+                               class Microsoft.AspNetCore.Mvc.ViewEngines.IView/*0200005C*/ view,
+                               class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ viewData,
+                               class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/ tempData,
+                               class [System.Runtime.Extensions/*23000003*/]System.IO.TextWriter/*01000060*/ writer,
+                               class Microsoft.AspNetCore.Mvc.ViewFeatures.HtmlHelperOptions/*02000021*/ htmlHelperOptions) cil managed
+  // SIG: 20 06 01 12 81 05 12 81 70 12 80 F4 12 80 A0 12 81 81 12 80 84
+  {
+    // Method begins at RVA 0x2cad
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)00002E       */ call       instance void [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ActionContext/*01000041*/::.ctor() /* 0A00002E */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ViewContext::.ctor
+
+  .method /*0600041B*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext,
+                               class Microsoft.AspNetCore.Mvc.ViewEngines.IView/*0200005C*/ view,
+                               class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ viewData,
+                               class [System.Runtime.Extensions/*23000003*/]System.IO.TextWriter/*01000060*/ writer) cil managed
+  // SIG: 20 04 01 12 82 44 12 81 70 12 80 F4 12 81 81
+  {
+    // Method begins at RVA 0x2cb5
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)00002E       */ call       instance void [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ActionContext/*01000041*/::.ctor() /* 0A00002E */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ViewContext::.ctor
+
+  .method /*0600041C*/ public hidebysig specialname 
+          instance bool  get_ClientValidationEnabled() cil managed
+  // SIG: 20 00 02
+  {
+    .custom /*0C0001C0:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2cbd
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewContext::get_ClientValidationEnabled
+
+  .method /*0600041D*/ public hidebysig specialname 
+          instance void  set_ClientValidationEnabled(bool 'value') cil managed
+  // SIG: 20 01 01 02
+  {
+    .custom /*0C0001C1:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2cc0
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewContext::set_ClientValidationEnabled
+
+  .method /*0600041E*/ public hidebysig specialname 
+          instance string  get_ExecutingFilePath() cil managed
+  // SIG: 20 00 0E
+  {
+    .custom /*0C0001C2:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2cc2
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewContext::get_ExecutingFilePath
+
+  .method /*0600041F*/ public hidebysig specialname 
+          instance void  set_ExecutingFilePath(string 'value') cil managed
+  // SIG: 20 01 01 0E
+  {
+    .custom /*0C0001C3:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2cc5
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewContext::set_ExecutingFilePath
+
+  .method /*06000420*/ public hidebysig newslot specialname virtual 
+          instance class Microsoft.AspNetCore.Mvc.ViewFeatures.FormContext/*0200001F*/ 
+          get_FormContext() cil managed
+  // SIG: 20 00 12 7C
+  {
+    // Method begins at RVA 0x2cc7
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewContext::get_FormContext
+
+  .method /*06000421*/ public hidebysig newslot specialname virtual 
+          instance void  set_FormContext(class Microsoft.AspNetCore.Mvc.ViewFeatures.FormContext/*0200001F*/ 'value') cil managed
+  // SIG: 20 01 01 12 7C
+  {
+    // Method begins at RVA 0x2cca
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewContext::set_FormContext
+
+  .method /*06000422*/ public hidebysig specialname 
+          instance valuetype Microsoft.AspNetCore.Mvc.Rendering.Html5DateRenderingMode/*02000077*/ 
+          get_Html5DateRenderingMode() cil managed
+  // SIG: 20 00 11 81 DC
+  {
+    .custom /*0C0001C4:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2ccc
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewContext::get_Html5DateRenderingMode
+
+  .method /*06000423*/ public hidebysig specialname 
+          instance void  set_Html5DateRenderingMode(valuetype Microsoft.AspNetCore.Mvc.Rendering.Html5DateRenderingMode/*02000077*/ 'value') cil managed
+  // SIG: 20 01 01 11 81 DC
+  {
+    .custom /*0C0001C5:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2ccf
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewContext::set_Html5DateRenderingMode
+
+  .method /*06000424*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/ 
+          get_TempData() cil managed
+  // SIG: 20 00 12 80 A0
+  {
+    .custom /*0C0001C6:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2cd1
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewContext::get_TempData
+
+  .method /*06000425*/ public hidebysig specialname 
+          instance void  set_TempData(class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/ 'value') cil managed
+  // SIG: 20 01 01 12 80 A0
+  {
+    .custom /*0C0001C7:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2cd4
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewContext::set_TempData
+
+  .method /*06000426*/ public hidebysig specialname 
+          instance string  get_ValidationMessageElement() cil managed
+  // SIG: 20 00 0E
+  {
+    .custom /*0C0001C8:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2cd6
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewContext::get_ValidationMessageElement
+
+  .method /*06000427*/ public hidebysig specialname 
+          instance void  set_ValidationMessageElement(string 'value') cil managed
+  // SIG: 20 01 01 0E
+  {
+    .custom /*0C0001C9:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2cd9
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewContext::set_ValidationMessageElement
+
+  .method /*06000428*/ public hidebysig specialname 
+          instance string  get_ValidationSummaryMessageElement() cil managed
+  // SIG: 20 00 0E
+  {
+    .custom /*0C0001CA:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2cdb
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewContext::get_ValidationSummaryMessageElement
+
+  .method /*06000429*/ public hidebysig specialname 
+          instance void  set_ValidationSummaryMessageElement(string 'value') cil managed
+  // SIG: 20 01 01 0E
+  {
+    .custom /*0C0001CB:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2cde
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewContext::set_ValidationSummaryMessageElement
+
+  .method /*0600042A*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.ViewEngines.IView/*0200005C*/ 
+          get_View() cil managed
+  // SIG: 20 00 12 81 70
+  {
+    .custom /*0C0001CC:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2ce0
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewContext::get_View
+
+  .method /*0600042B*/ public hidebysig specialname 
+          instance void  set_View(class Microsoft.AspNetCore.Mvc.ViewEngines.IView/*0200005C*/ 'value') cil managed
+  // SIG: 20 01 01 12 81 70
+  {
+    .custom /*0C0001CD:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2ce3
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewContext::set_View
+
+  .method /*0600042C*/ public hidebysig specialname 
+          instance object  get_ViewBag() cil managed
+  // SIG: 20 00 1C
+  {
+    .param [0]/*080006F9*/ 
+    .custom /*0C0001F3:0A000015*/ instance void [System.Linq.Expressions/*2300000A*/]System.Runtime.CompilerServices.DynamicAttribute/*0100002A*/::.ctor() /* 0A000015 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2ce5
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewContext::get_ViewBag
+
+  .method /*0600042D*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ 
+          get_ViewData() cil managed
+  // SIG: 20 00 12 80 F4
+  {
+    .custom /*0C0001CE:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2ce8
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewContext::get_ViewData
+
+  .method /*0600042E*/ public hidebysig specialname 
+          instance void  set_ViewData(class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ 'value') cil managed
+  // SIG: 20 01 01 12 80 F4
+  {
+    .custom /*0C0001CF:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2ceb
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewContext::set_ViewData
+
+  .method /*0600042F*/ public hidebysig specialname 
+          instance class [System.Runtime.Extensions/*23000003*/]System.IO.TextWriter/*01000060*/ 
+          get_Writer() cil managed
+  // SIG: 20 00 12 81 81
+  {
+    .custom /*0C0001D0:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2ced
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewContext::get_Writer
+
+  .method /*06000430*/ public hidebysig specialname 
+          instance void  set_Writer(class [System.Runtime.Extensions/*23000003*/]System.IO.TextWriter/*01000060*/ 'value') cil managed
+  // SIG: 20 01 01 12 81 81
+  {
+    .custom /*0C0001D1:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2cf0
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ViewContext::set_Writer
+
+  .method /*06000431*/ public hidebysig instance class Microsoft.AspNetCore.Mvc.ViewFeatures.FormContext/*0200001F*/ 
+          GetFormContextForClientValidation() cil managed
+  // SIG: 20 00 12 7C
+  {
+    // Method begins at RVA 0x2cf2
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewContext::GetFormContextForClientValidation
+
+  .property /*170000D1*/ instance bool ClientValidationEnabled()
+  {
+    .get instance bool Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/::get_ClientValidationEnabled() /* 0600041C */
+    .set instance void Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/::set_ClientValidationEnabled(bool) /* 0600041D */
+  } // end of property ViewContext::ClientValidationEnabled
+  .property /*170000D2*/ instance string ExecutingFilePath()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/::get_ExecutingFilePath() /* 0600041E */
+    .set instance void Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/::set_ExecutingFilePath(string) /* 0600041F */
+  } // end of property ViewContext::ExecutingFilePath
+  .property /*170000D3*/ instance class Microsoft.AspNetCore.Mvc.ViewFeatures.FormContext/*0200001F*/
+          FormContext()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewFeatures.FormContext/*0200001F*/ Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/::get_FormContext() /* 06000420 */
+    .set instance void Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/::set_FormContext(class Microsoft.AspNetCore.Mvc.ViewFeatures.FormContext/*0200001F*/) /* 06000421 */
+  } // end of property ViewContext::FormContext
+  .property /*170000D4*/ instance valuetype Microsoft.AspNetCore.Mvc.Rendering.Html5DateRenderingMode/*02000077*/
+          Html5DateRenderingMode()
+  {
+    .get instance valuetype Microsoft.AspNetCore.Mvc.Rendering.Html5DateRenderingMode/*02000077*/ Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/::get_Html5DateRenderingMode() /* 06000422 */
+    .set instance void Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/::set_Html5DateRenderingMode(valuetype Microsoft.AspNetCore.Mvc.Rendering.Html5DateRenderingMode/*02000077*/) /* 06000423 */
+  } // end of property ViewContext::Html5DateRenderingMode
+  .property /*170000D5*/ instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/
+          TempData()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/ Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/::get_TempData() /* 06000424 */
+    .set instance void Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/::set_TempData(class Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary/*02000028*/) /* 06000425 */
+  } // end of property ViewContext::TempData
+  .property /*170000D6*/ instance string ValidationMessageElement()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/::get_ValidationMessageElement() /* 06000426 */
+    .set instance void Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/::set_ValidationMessageElement(string) /* 06000427 */
+  } // end of property ViewContext::ValidationMessageElement
+  .property /*170000D7*/ instance string ValidationSummaryMessageElement()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/::get_ValidationSummaryMessageElement() /* 06000428 */
+    .set instance void Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/::set_ValidationSummaryMessageElement(string) /* 06000429 */
+  } // end of property ViewContext::ValidationSummaryMessageElement
+  .property /*170000D8*/ instance class Microsoft.AspNetCore.Mvc.ViewEngines.IView/*0200005C*/
+          View()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewEngines.IView/*0200005C*/ Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/::get_View() /* 0600042A */
+    .set instance void Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/::set_View(class Microsoft.AspNetCore.Mvc.ViewEngines.IView/*0200005C*/) /* 0600042B */
+  } // end of property ViewContext::View
+  .property /*170000D9*/ instance object ViewBag()
+  {
+    .custom /*0C0000B3:0A000015*/ instance void [System.Linq.Expressions/*2300000A*/]System.Runtime.CompilerServices.DynamicAttribute/*0100002A*/::.ctor() /* 0A000015 */ = ( 01 00 00 00 ) 
+    .get instance object Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/::get_ViewBag() /* 0600042C */
+  } // end of property ViewContext::ViewBag
+  .property /*170000DA*/ instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/
+          ViewData()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/ Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/::get_ViewData() /* 0600042D */
+    .set instance void Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/::set_ViewData(class Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary/*0200003D*/) /* 0600042E */
+  } // end of property ViewContext::ViewData
+  .property /*170000DB*/ instance class [System.Runtime.Extensions/*23000003*/]System.IO.TextWriter/*01000060*/
+          Writer()
+  {
+    .get instance class [System.Runtime.Extensions/*23000003*/]System.IO.TextWriter/*01000060*/ Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/::get_Writer() /* 0600042F */
+    .set instance void Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/::set_Writer(class [System.Runtime.Extensions/*23000003*/]System.IO.TextWriter/*01000060*/) /* 06000430 */
+  } // end of property ViewContext::Writer
+} // end of class Microsoft.AspNetCore.Mvc.Rendering.ViewContext
+
+.class /*02000092*/ private auto ansi beforefieldinit Microsoft.AspNetCore.Mvc.Rendering.SystemTextJsonHelper
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+       implements Microsoft.AspNetCore.Mvc.Rendering.IJsonHelper/*02000087*/
+{
+  .field /*0400004C*/ private initonly class [System.Text.Json/*23000018*/]System.Text.Json.JsonSerializerOptions/*01000085*/ _htmlSafeJsonSerializerOptions
+  .method /*06000432*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class [Microsoft.Extensions.Options/*23000005*/]Microsoft.Extensions.Options.IOptions`1/*01000019*/<class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.JsonOptions/*01000086*/> options) cil managed
+  // SIG: 20 01 01 15 12 65 01 12 82 19
+  {
+    // Method begins at RVA 0x2cf5
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)000028       */ call       instance void [System.Runtime/*23000001*/]System.Object/*01000015*/::.ctor() /* 0A000028 */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method SystemTextJsonHelper::.ctor
+
+  .method /*06000433*/ private hidebysig static 
+          class [System.Text.Json/*23000018*/]System.Text.Json.JsonSerializerOptions/*01000085*/ 
+          GetHtmlSafeSerializerOptions(class [System.Text.Json/*23000018*/]System.Text.Json.JsonSerializerOptions/*01000085*/ serializerOptions) cil managed
+  // SIG: 00 01 12 82 15 12 82 15
+  {
+    // Method begins at RVA 0x2cfd
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method SystemTextJsonHelper::GetHtmlSafeSerializerOptions
+
+  .method /*06000434*/ public hidebysig newslot virtual final 
+          instance class [Microsoft.AspNetCore.Html.Abstractions/*2300000C*/]Microsoft.AspNetCore.Html.IHtmlContent/*01000034*/ 
+          Serialize(object 'value') cil managed
+  // SIG: 20 01 12 80 D1 1C
+  {
+    // Method begins at RVA 0x2d00
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method SystemTextJsonHelper::Serialize
+
+} // end of class Microsoft.AspNetCore.Mvc.Rendering.SystemTextJsonHelper
+
+.class /*02000093*/ public abstract auto ansi sealed beforefieldinit Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionaryExtensions
+       extends [System.Runtime/*23000001*/]System.Object/*01000015*/
+{
+  .custom /*0C000090:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+  .method /*06000435*/ public hidebysig static 
+          void  AddModelError<TModel>(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary/*01000049*/ modelState,
+                                      class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!!TModel,object>> expression,
+                                      class [System.Runtime/*23000001*/]System.Exception/*01000087*/ exception,
+                                      class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.ModelMetadata/*0100005F*/ metadata) cil managed
+  // SIG: 10 01 04 01 12 81 25 15 12 81 85 01 15 12 81 89 02 1E 00 1C 12 82 1D 12 81 7D
+  {
+    .custom /*0C0001D2:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2d03
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ModelStateDictionaryExtensions::AddModelError
+
+  .method /*06000436*/ public hidebysig static 
+          void  AddModelError<TModel>(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary/*01000049*/ modelState,
+                                      class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!!TModel,object>> expression,
+                                      string errorMessage) cil managed
+  // SIG: 10 01 03 01 12 81 25 15 12 81 85 01 15 12 81 89 02 1E 00 1C 0E
+  {
+    .custom /*0C0001D3:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2d05
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ModelStateDictionaryExtensions::AddModelError
+
+  .method /*06000437*/ public hidebysig static 
+          void  RemoveAll<TModel>(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary/*01000049*/ modelState,
+                                  class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!!TModel,object>> expression) cil managed
+  // SIG: 10 01 02 01 12 81 25 15 12 81 85 01 15 12 81 89 02 1E 00 1C
+  {
+    .custom /*0C0001D4:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2d07
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ModelStateDictionaryExtensions::RemoveAll
+
+  .method /*06000438*/ public hidebysig static 
+          bool  Remove<TModel>(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary/*01000049*/ modelState,
+                               class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!!TModel,object>> expression) cil managed
+  // SIG: 10 01 02 02 12 81 25 15 12 81 85 01 15 12 81 89 02 1E 00 1C
+  {
+    .custom /*0C0001D5:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2d09
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ModelStateDictionaryExtensions::Remove
+
+  .method /*06000439*/ public hidebysig static 
+          void  TryAddModelException<TModel>(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary/*01000049*/ modelState,
+                                             class [System.Linq.Expressions/*2300000A*/]System.Linq.Expressions.Expression`1/*01000061*/<class [System.Runtime/*23000001*/]System.Func`2/*01000062*/<!!TModel,object>> expression,
+                                             class [System.Runtime/*23000001*/]System.Exception/*01000087*/ exception) cil managed
+  // SIG: 10 01 03 01 12 81 25 15 12 81 85 01 15 12 81 89 02 1E 00 1C 12 82 1D
+  {
+    .custom /*0C0001D6:0A000001*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.ExtensionAttribute/*01000001*/::.ctor() /* 0A000001 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2d0c
+    // Code size       1 (0x1)
+    .maxstack  8
+    IL_0000:  /* 2A   |                  */ ret
+  } // end of method ModelStateDictionaryExtensions::TryAddModelException
+
+} // end of class Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionaryExtensions
+
+.class /*02000094*/ public auto ansi sealed beforefieldinit Microsoft.AspNetCore.Mvc.Diagnostics.AfterViewComponentEventData
+       extends [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.Diagnostics.EventData/*01000088*/
+{
+  .custom /*0C000092:0A00001A*/ instance void [System.Runtime/*23000001*/]System.Reflection.DefaultMemberAttribute/*01000051*/::.ctor(string) /* 0A00001A */ = ( 01 00 04 49 74 65 6D 00 00 )                      // ...Item..
+  .field /*0400004D*/ public static literal string EventName = "Microsoft.AspNetCore.Mvc.AfterViewComponent"
+  .method /*0600043A*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.Abstractions.ActionDescriptor/*01000089*/ actionDescriptor,
+                               class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/ viewComponentContext,
+                               class Microsoft.AspNetCore.Mvc.IViewComponentResult/*0200000B*/ viewComponentResult,
+                               object viewComponent) cil managed
+  // SIG: 20 04 01 12 82 25 12 81 B8 12 2C 1C
+  {
+    // Method begins at RVA 0x2d0e
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)00002F       */ call       instance void [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.Diagnostics.EventData/*01000088*/::.ctor() /* 0A00002F */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method AfterViewComponentEventData::.ctor
+
+  .method /*0600043B*/ public hidebysig specialname 
+          instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.Abstractions.ActionDescriptor/*01000089*/ 
+          get_ActionDescriptor() cil managed
+  // SIG: 20 00 12 82 25
+  {
+    .custom /*0C0001D7:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2d16
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method AfterViewComponentEventData::get_ActionDescriptor
+
+  .method /*0600043C*/ family hidebysig specialname virtual 
+          instance int32  get_Count() cil managed
+  // SIG: 20 00 08
+  {
+    // Method begins at RVA 0x2d19
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method AfterViewComponentEventData::get_Count
+
+  .method /*0600043D*/ family hidebysig specialname virtual 
+          instance valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object> 
+          get_Item(int32 index) cil managed
+  // SIG: 20 01 15 11 81 4D 02 0E 1C 08
+  {
+    // Method begins at RVA 0x2d1c
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method AfterViewComponentEventData::get_Item
+
+  .method /*0600043E*/ public hidebysig specialname 
+          instance object  get_ViewComponent() cil managed
+  // SIG: 20 00 1C
+  {
+    .custom /*0C0001D8:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2d1f
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method AfterViewComponentEventData::get_ViewComponent
+
+  .method /*0600043F*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/ 
+          get_ViewComponentContext() cil managed
+  // SIG: 20 00 12 81 B8
+  {
+    .custom /*0C0001D9:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2d22
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method AfterViewComponentEventData::get_ViewComponentContext
+
+  .method /*06000440*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.IViewComponentResult/*0200000B*/ 
+          get_ViewComponentResult() cil managed
+  // SIG: 20 00 12 2C
+  {
+    .custom /*0C0001DA:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2d25
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method AfterViewComponentEventData::get_ViewComponentResult
+
+  .property /*170000DC*/ instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.Abstractions.ActionDescriptor/*01000089*/
+          ActionDescriptor()
+  {
+    .get instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.Abstractions.ActionDescriptor/*01000089*/ Microsoft.AspNetCore.Mvc.Diagnostics.AfterViewComponentEventData/*02000094*/::get_ActionDescriptor() /* 0600043B */
+  } // end of property AfterViewComponentEventData::ActionDescriptor
+  .property /*170000DD*/ instance int32 Count()
+  {
+    .get instance int32 Microsoft.AspNetCore.Mvc.Diagnostics.AfterViewComponentEventData/*02000094*/::get_Count() /* 0600043C */
+  } // end of property AfterViewComponentEventData::Count
+  .property /*170000DE*/ instance valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object>
+          Item(int32)
+  {
+    .get instance valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object> Microsoft.AspNetCore.Mvc.Diagnostics.AfterViewComponentEventData/*02000094*/::get_Item(int32) /* 0600043D */
+  } // end of property AfterViewComponentEventData::Item
+  .property /*170000DF*/ instance object ViewComponent()
+  {
+    .get instance object Microsoft.AspNetCore.Mvc.Diagnostics.AfterViewComponentEventData/*02000094*/::get_ViewComponent() /* 0600043E */
+  } // end of property AfterViewComponentEventData::ViewComponent
+  .property /*170000E0*/ instance class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/
+          ViewComponentContext()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/ Microsoft.AspNetCore.Mvc.Diagnostics.AfterViewComponentEventData/*02000094*/::get_ViewComponentContext() /* 0600043F */
+  } // end of property AfterViewComponentEventData::ViewComponentContext
+  .property /*170000E1*/ instance class Microsoft.AspNetCore.Mvc.IViewComponentResult/*0200000B*/
+          ViewComponentResult()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.IViewComponentResult/*0200000B*/ Microsoft.AspNetCore.Mvc.Diagnostics.AfterViewComponentEventData/*02000094*/::get_ViewComponentResult() /* 06000440 */
+  } // end of property AfterViewComponentEventData::ViewComponentResult
+} // end of class Microsoft.AspNetCore.Mvc.Diagnostics.AfterViewComponentEventData
+
+.class /*02000095*/ public auto ansi sealed beforefieldinit Microsoft.AspNetCore.Mvc.Diagnostics.AfterViewEventData
+       extends [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.Diagnostics.EventData/*01000088*/
+{
+  .custom /*0C000094:0A00001A*/ instance void [System.Runtime/*23000001*/]System.Reflection.DefaultMemberAttribute/*01000051*/::.ctor(string) /* 0A00001A */ = ( 01 00 04 49 74 65 6D 00 00 )                      // ...Item..
+  .field /*0400004E*/ public static literal string EventName = "Microsoft.AspNetCore.Mvc.AfterView"
+  .method /*06000441*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class Microsoft.AspNetCore.Mvc.ViewEngines.IView/*0200005C*/ view,
+                               class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext) cil managed
+  // SIG: 20 02 01 12 81 70 12 82 44
+  {
+    // Method begins at RVA 0x2d28
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)00002F       */ call       instance void [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.Diagnostics.EventData/*01000088*/::.ctor() /* 0A00002F */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method AfterViewEventData::.ctor
+
+  .method /*06000442*/ family hidebysig specialname virtual 
+          instance int32  get_Count() cil managed
+  // SIG: 20 00 08
+  {
+    // Method begins at RVA 0x2d30
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method AfterViewEventData::get_Count
+
+  .method /*06000443*/ family hidebysig specialname virtual 
+          instance valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object> 
+          get_Item(int32 index) cil managed
+  // SIG: 20 01 15 11 81 4D 02 0E 1C 08
+  {
+    // Method begins at RVA 0x2d33
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method AfterViewEventData::get_Item
+
+  .method /*06000444*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.ViewEngines.IView/*0200005C*/ 
+          get_View() cil managed
+  // SIG: 20 00 12 81 70
+  {
+    .custom /*0C0001DB:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2d36
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method AfterViewEventData::get_View
+
+  .method /*06000445*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ 
+          get_ViewContext() cil managed
+  // SIG: 20 00 12 82 44
+  {
+    .custom /*0C0001DC:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2d39
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method AfterViewEventData::get_ViewContext
+
+  .property /*170000E2*/ instance int32 Count()
+  {
+    .get instance int32 Microsoft.AspNetCore.Mvc.Diagnostics.AfterViewEventData/*02000095*/::get_Count() /* 06000442 */
+  } // end of property AfterViewEventData::Count
+  .property /*170000E3*/ instance valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object>
+          Item(int32)
+  {
+    .get instance valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object> Microsoft.AspNetCore.Mvc.Diagnostics.AfterViewEventData/*02000095*/::get_Item(int32) /* 06000443 */
+  } // end of property AfterViewEventData::Item
+  .property /*170000E4*/ instance class Microsoft.AspNetCore.Mvc.ViewEngines.IView/*0200005C*/
+          View()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewEngines.IView/*0200005C*/ Microsoft.AspNetCore.Mvc.Diagnostics.AfterViewEventData/*02000095*/::get_View() /* 06000444 */
+  } // end of property AfterViewEventData::View
+  .property /*170000E5*/ instance class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/
+          ViewContext()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ Microsoft.AspNetCore.Mvc.Diagnostics.AfterViewEventData/*02000095*/::get_ViewContext() /* 06000445 */
+  } // end of property AfterViewEventData::ViewContext
+} // end of class Microsoft.AspNetCore.Mvc.Diagnostics.AfterViewEventData
+
+.class /*02000096*/ public auto ansi sealed beforefieldinit Microsoft.AspNetCore.Mvc.Diagnostics.BeforeViewComponentEventData
+       extends [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.Diagnostics.EventData/*01000088*/
+{
+  .custom /*0C000096:0A00001A*/ instance void [System.Runtime/*23000001*/]System.Reflection.DefaultMemberAttribute/*01000051*/::.ctor(string) /* 0A00001A */ = ( 01 00 04 49 74 65 6D 00 00 )                      // ...Item..
+  .field /*0400004F*/ public static literal string EventName = "Microsoft.AspNetCore.Mvc.BeforeViewComponent"
+  .method /*06000446*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.Abstractions.ActionDescriptor/*01000089*/ actionDescriptor,
+                               class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/ viewComponentContext,
+                               object viewComponent) cil managed
+  // SIG: 20 03 01 12 82 25 12 81 B8 1C
+  {
+    // Method begins at RVA 0x2d3c
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)00002F       */ call       instance void [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.Diagnostics.EventData/*01000088*/::.ctor() /* 0A00002F */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method BeforeViewComponentEventData::.ctor
+
+  .method /*06000447*/ public hidebysig specialname 
+          instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.Abstractions.ActionDescriptor/*01000089*/ 
+          get_ActionDescriptor() cil managed
+  // SIG: 20 00 12 82 25
+  {
+    .custom /*0C0001DD:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2d44
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method BeforeViewComponentEventData::get_ActionDescriptor
+
+  .method /*06000448*/ family hidebysig specialname virtual 
+          instance int32  get_Count() cil managed
+  // SIG: 20 00 08
+  {
+    // Method begins at RVA 0x2d47
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method BeforeViewComponentEventData::get_Count
+
+  .method /*06000449*/ family hidebysig specialname virtual 
+          instance valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object> 
+          get_Item(int32 index) cil managed
+  // SIG: 20 01 15 11 81 4D 02 0E 1C 08
+  {
+    // Method begins at RVA 0x2d4a
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method BeforeViewComponentEventData::get_Item
+
+  .method /*0600044A*/ public hidebysig specialname 
+          instance object  get_ViewComponent() cil managed
+  // SIG: 20 00 1C
+  {
+    .custom /*0C0001DE:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2d4d
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method BeforeViewComponentEventData::get_ViewComponent
+
+  .method /*0600044B*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/ 
+          get_ViewComponentContext() cil managed
+  // SIG: 20 00 12 81 B8
+  {
+    .custom /*0C0001DF:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2d50
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method BeforeViewComponentEventData::get_ViewComponentContext
+
+  .property /*170000E6*/ instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.Abstractions.ActionDescriptor/*01000089*/
+          ActionDescriptor()
+  {
+    .get instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.Abstractions.ActionDescriptor/*01000089*/ Microsoft.AspNetCore.Mvc.Diagnostics.BeforeViewComponentEventData/*02000096*/::get_ActionDescriptor() /* 06000447 */
+  } // end of property BeforeViewComponentEventData::ActionDescriptor
+  .property /*170000E7*/ instance int32 Count()
+  {
+    .get instance int32 Microsoft.AspNetCore.Mvc.Diagnostics.BeforeViewComponentEventData/*02000096*/::get_Count() /* 06000448 */
+  } // end of property BeforeViewComponentEventData::Count
+  .property /*170000E8*/ instance valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object>
+          Item(int32)
+  {
+    .get instance valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object> Microsoft.AspNetCore.Mvc.Diagnostics.BeforeViewComponentEventData/*02000096*/::get_Item(int32) /* 06000449 */
+  } // end of property BeforeViewComponentEventData::Item
+  .property /*170000E9*/ instance object ViewComponent()
+  {
+    .get instance object Microsoft.AspNetCore.Mvc.Diagnostics.BeforeViewComponentEventData/*02000096*/::get_ViewComponent() /* 0600044A */
+  } // end of property BeforeViewComponentEventData::ViewComponent
+  .property /*170000EA*/ instance class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/
+          ViewComponentContext()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/ Microsoft.AspNetCore.Mvc.Diagnostics.BeforeViewComponentEventData/*02000096*/::get_ViewComponentContext() /* 0600044B */
+  } // end of property BeforeViewComponentEventData::ViewComponentContext
+} // end of class Microsoft.AspNetCore.Mvc.Diagnostics.BeforeViewComponentEventData
+
+.class /*02000097*/ public auto ansi sealed beforefieldinit Microsoft.AspNetCore.Mvc.Diagnostics.BeforeViewEventData
+       extends [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.Diagnostics.EventData/*01000088*/
+{
+  .custom /*0C000098:0A00001A*/ instance void [System.Runtime/*23000001*/]System.Reflection.DefaultMemberAttribute/*01000051*/::.ctor(string) /* 0A00001A */ = ( 01 00 04 49 74 65 6D 00 00 )                      // ...Item..
+  .field /*04000050*/ public static literal string EventName = "Microsoft.AspNetCore.Mvc.BeforeView"
+  .method /*0600044C*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class Microsoft.AspNetCore.Mvc.ViewEngines.IView/*0200005C*/ view,
+                               class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ viewContext) cil managed
+  // SIG: 20 02 01 12 81 70 12 82 44
+  {
+    // Method begins at RVA 0x2d53
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)00002F       */ call       instance void [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.Diagnostics.EventData/*01000088*/::.ctor() /* 0A00002F */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method BeforeViewEventData::.ctor
+
+  .method /*0600044D*/ family hidebysig specialname virtual 
+          instance int32  get_Count() cil managed
+  // SIG: 20 00 08
+  {
+    // Method begins at RVA 0x2d5b
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method BeforeViewEventData::get_Count
+
+  .method /*0600044E*/ family hidebysig specialname virtual 
+          instance valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object> 
+          get_Item(int32 index) cil managed
+  // SIG: 20 01 15 11 81 4D 02 0E 1C 08
+  {
+    // Method begins at RVA 0x2d5e
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method BeforeViewEventData::get_Item
+
+  .method /*0600044F*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.ViewEngines.IView/*0200005C*/ 
+          get_View() cil managed
+  // SIG: 20 00 12 81 70
+  {
+    .custom /*0C0001E0:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2d61
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method BeforeViewEventData::get_View
+
+  .method /*06000450*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ 
+          get_ViewContext() cil managed
+  // SIG: 20 00 12 82 44
+  {
+    .custom /*0C0001E1:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2d64
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method BeforeViewEventData::get_ViewContext
+
+  .property /*170000EB*/ instance int32 Count()
+  {
+    .get instance int32 Microsoft.AspNetCore.Mvc.Diagnostics.BeforeViewEventData/*02000097*/::get_Count() /* 0600044D */
+  } // end of property BeforeViewEventData::Count
+  .property /*170000EC*/ instance valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object>
+          Item(int32)
+  {
+    .get instance valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object> Microsoft.AspNetCore.Mvc.Diagnostics.BeforeViewEventData/*02000097*/::get_Item(int32) /* 0600044E */
+  } // end of property BeforeViewEventData::Item
+  .property /*170000ED*/ instance class Microsoft.AspNetCore.Mvc.ViewEngines.IView/*0200005C*/
+          View()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewEngines.IView/*0200005C*/ Microsoft.AspNetCore.Mvc.Diagnostics.BeforeViewEventData/*02000097*/::get_View() /* 0600044F */
+  } // end of property BeforeViewEventData::View
+  .property /*170000EE*/ instance class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/
+          ViewContext()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.Rendering.ViewContext/*02000091*/ Microsoft.AspNetCore.Mvc.Diagnostics.BeforeViewEventData/*02000097*/::get_ViewContext() /* 06000450 */
+  } // end of property BeforeViewEventData::ViewContext
+} // end of class Microsoft.AspNetCore.Mvc.Diagnostics.BeforeViewEventData
+
+.class /*02000098*/ public auto ansi sealed beforefieldinit Microsoft.AspNetCore.Mvc.Diagnostics.ViewComponentAfterViewExecuteEventData
+       extends [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.Diagnostics.EventData/*01000088*/
+{
+  .custom /*0C00009A:0A00001A*/ instance void [System.Runtime/*23000001*/]System.Reflection.DefaultMemberAttribute/*01000051*/::.ctor(string) /* 0A00001A */ = ( 01 00 04 49 74 65 6D 00 00 )                      // ...Item..
+  .field /*04000051*/ public static literal string EventName = "Microsoft.AspNetCore.Mvc.ViewComponentAfterViewExe"
+  + "cute"
+  .method /*06000451*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.Abstractions.ActionDescriptor/*01000089*/ actionDescriptor,
+                               class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/ viewComponentContext,
+                               class Microsoft.AspNetCore.Mvc.ViewEngines.IView/*0200005C*/ view) cil managed
+  // SIG: 20 03 01 12 82 25 12 81 B8 12 81 70
+  {
+    // Method begins at RVA 0x2d67
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)00002F       */ call       instance void [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.Diagnostics.EventData/*01000088*/::.ctor() /* 0A00002F */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ViewComponentAfterViewExecuteEventData::.ctor
+
+  .method /*06000452*/ public hidebysig specialname 
+          instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.Abstractions.ActionDescriptor/*01000089*/ 
+          get_ActionDescriptor() cil managed
+  // SIG: 20 00 12 82 25
+  {
+    .custom /*0C0001E2:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2d6f
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentAfterViewExecuteEventData::get_ActionDescriptor
+
+  .method /*06000453*/ family hidebysig specialname virtual 
+          instance int32  get_Count() cil managed
+  // SIG: 20 00 08
+  {
+    // Method begins at RVA 0x2d72
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentAfterViewExecuteEventData::get_Count
+
+  .method /*06000454*/ family hidebysig specialname virtual 
+          instance valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object> 
+          get_Item(int32 index) cil managed
+  // SIG: 20 01 15 11 81 4D 02 0E 1C 08
+  {
+    // Method begins at RVA 0x2d75
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentAfterViewExecuteEventData::get_Item
+
+  .method /*06000455*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.ViewEngines.IView/*0200005C*/ 
+          get_View() cil managed
+  // SIG: 20 00 12 81 70
+  {
+    .custom /*0C0001E3:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2d78
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentAfterViewExecuteEventData::get_View
+
+  .method /*06000456*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/ 
+          get_ViewComponentContext() cil managed
+  // SIG: 20 00 12 81 B8
+  {
+    .custom /*0C0001E4:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2d7b
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentAfterViewExecuteEventData::get_ViewComponentContext
+
+  .property /*170000EF*/ instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.Abstractions.ActionDescriptor/*01000089*/
+          ActionDescriptor()
+  {
+    .get instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.Abstractions.ActionDescriptor/*01000089*/ Microsoft.AspNetCore.Mvc.Diagnostics.ViewComponentAfterViewExecuteEventData/*02000098*/::get_ActionDescriptor() /* 06000452 */
+  } // end of property ViewComponentAfterViewExecuteEventData::ActionDescriptor
+  .property /*170000F0*/ instance int32 Count()
+  {
+    .get instance int32 Microsoft.AspNetCore.Mvc.Diagnostics.ViewComponentAfterViewExecuteEventData/*02000098*/::get_Count() /* 06000453 */
+  } // end of property ViewComponentAfterViewExecuteEventData::Count
+  .property /*170000F1*/ instance valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object>
+          Item(int32)
+  {
+    .get instance valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object> Microsoft.AspNetCore.Mvc.Diagnostics.ViewComponentAfterViewExecuteEventData/*02000098*/::get_Item(int32) /* 06000454 */
+  } // end of property ViewComponentAfterViewExecuteEventData::Item
+  .property /*170000F2*/ instance class Microsoft.AspNetCore.Mvc.ViewEngines.IView/*0200005C*/
+          View()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewEngines.IView/*0200005C*/ Microsoft.AspNetCore.Mvc.Diagnostics.ViewComponentAfterViewExecuteEventData/*02000098*/::get_View() /* 06000455 */
+  } // end of property ViewComponentAfterViewExecuteEventData::View
+  .property /*170000F3*/ instance class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/
+          ViewComponentContext()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/ Microsoft.AspNetCore.Mvc.Diagnostics.ViewComponentAfterViewExecuteEventData/*02000098*/::get_ViewComponentContext() /* 06000456 */
+  } // end of property ViewComponentAfterViewExecuteEventData::ViewComponentContext
+} // end of class Microsoft.AspNetCore.Mvc.Diagnostics.ViewComponentAfterViewExecuteEventData
+
+.class /*02000099*/ public auto ansi sealed beforefieldinit Microsoft.AspNetCore.Mvc.Diagnostics.ViewComponentBeforeViewExecuteEventData
+       extends [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.Diagnostics.EventData/*01000088*/
+{
+  .custom /*0C00009C:0A00001A*/ instance void [System.Runtime/*23000001*/]System.Reflection.DefaultMemberAttribute/*01000051*/::.ctor(string) /* 0A00001A */ = ( 01 00 04 49 74 65 6D 00 00 )                      // ...Item..
+  .field /*04000052*/ public static literal string EventName = "Microsoft.AspNetCore.Mvc.ViewComponentBeforeViewEx"
+  + "ecute"
+  .method /*06000457*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.Abstractions.ActionDescriptor/*01000089*/ actionDescriptor,
+                               class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/ viewComponentContext,
+                               class Microsoft.AspNetCore.Mvc.ViewEngines.IView/*0200005C*/ view) cil managed
+  // SIG: 20 03 01 12 82 25 12 81 B8 12 81 70
+  {
+    // Method begins at RVA 0x2d7e
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)00002F       */ call       instance void [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.Diagnostics.EventData/*01000088*/::.ctor() /* 0A00002F */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ViewComponentBeforeViewExecuteEventData::.ctor
+
+  .method /*06000458*/ public hidebysig specialname 
+          instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.Abstractions.ActionDescriptor/*01000089*/ 
+          get_ActionDescriptor() cil managed
+  // SIG: 20 00 12 82 25
+  {
+    .custom /*0C0001E5:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2d86
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentBeforeViewExecuteEventData::get_ActionDescriptor
+
+  .method /*06000459*/ family hidebysig specialname virtual 
+          instance int32  get_Count() cil managed
+  // SIG: 20 00 08
+  {
+    // Method begins at RVA 0x2d89
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentBeforeViewExecuteEventData::get_Count
+
+  .method /*0600045A*/ family hidebysig specialname virtual 
+          instance valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object> 
+          get_Item(int32 index) cil managed
+  // SIG: 20 01 15 11 81 4D 02 0E 1C 08
+  {
+    // Method begins at RVA 0x2d8c
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentBeforeViewExecuteEventData::get_Item
+
+  .method /*0600045B*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.ViewEngines.IView/*0200005C*/ 
+          get_View() cil managed
+  // SIG: 20 00 12 81 70
+  {
+    .custom /*0C0001E6:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2d8f
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentBeforeViewExecuteEventData::get_View
+
+  .method /*0600045C*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/ 
+          get_ViewComponentContext() cil managed
+  // SIG: 20 00 12 81 B8
+  {
+    .custom /*0C0001E7:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2d92
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewComponentBeforeViewExecuteEventData::get_ViewComponentContext
+
+  .property /*170000F4*/ instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.Abstractions.ActionDescriptor/*01000089*/
+          ActionDescriptor()
+  {
+    .get instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.Abstractions.ActionDescriptor/*01000089*/ Microsoft.AspNetCore.Mvc.Diagnostics.ViewComponentBeforeViewExecuteEventData/*02000099*/::get_ActionDescriptor() /* 06000458 */
+  } // end of property ViewComponentBeforeViewExecuteEventData::ActionDescriptor
+  .property /*170000F5*/ instance int32 Count()
+  {
+    .get instance int32 Microsoft.AspNetCore.Mvc.Diagnostics.ViewComponentBeforeViewExecuteEventData/*02000099*/::get_Count() /* 06000459 */
+  } // end of property ViewComponentBeforeViewExecuteEventData::Count
+  .property /*170000F6*/ instance valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object>
+          Item(int32)
+  {
+    .get instance valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object> Microsoft.AspNetCore.Mvc.Diagnostics.ViewComponentBeforeViewExecuteEventData/*02000099*/::get_Item(int32) /* 0600045A */
+  } // end of property ViewComponentBeforeViewExecuteEventData::Item
+  .property /*170000F7*/ instance class Microsoft.AspNetCore.Mvc.ViewEngines.IView/*0200005C*/
+          View()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewEngines.IView/*0200005C*/ Microsoft.AspNetCore.Mvc.Diagnostics.ViewComponentBeforeViewExecuteEventData/*02000099*/::get_View() /* 0600045B */
+  } // end of property ViewComponentBeforeViewExecuteEventData::View
+  .property /*170000F8*/ instance class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/
+          ViewComponentContext()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewComponents.ViewComponentContext/*0200006E*/ Microsoft.AspNetCore.Mvc.Diagnostics.ViewComponentBeforeViewExecuteEventData/*02000099*/::get_ViewComponentContext() /* 0600045C */
+  } // end of property ViewComponentBeforeViewExecuteEventData::ViewComponentContext
+} // end of class Microsoft.AspNetCore.Mvc.Diagnostics.ViewComponentBeforeViewExecuteEventData
+
+.class /*0200009A*/ public auto ansi sealed beforefieldinit Microsoft.AspNetCore.Mvc.Diagnostics.ViewFoundEventData
+       extends [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.Diagnostics.EventData/*01000088*/
+{
+  .custom /*0C00009E:0A00001A*/ instance void [System.Runtime/*23000001*/]System.Reflection.DefaultMemberAttribute/*01000051*/::.ctor(string) /* 0A00001A */ = ( 01 00 04 49 74 65 6D 00 00 )                      // ...Item..
+  .field /*04000053*/ public static literal string EventName = "Microsoft.AspNetCore.Mvc.ViewFound"
+  .method /*0600045D*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ActionContext/*01000041*/ actionContext,
+                               bool isMainPage,
+                               class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.ActionResult/*0100003D*/ result,
+                               string viewName,
+                               class Microsoft.AspNetCore.Mvc.ViewEngines.IView/*0200005C*/ view) cil managed
+  // SIG: 20 05 01 12 81 05 02 12 80 F5 0E 12 81 70
+  {
+    // Method begins at RVA 0x2d95
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)00002F       */ call       instance void [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.Diagnostics.EventData/*01000088*/::.ctor() /* 0A00002F */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ViewFoundEventData::.ctor
+
+  .method /*0600045E*/ public hidebysig specialname 
+          instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ActionContext/*01000041*/ 
+          get_ActionContext() cil managed
+  // SIG: 20 00 12 81 05
+  {
+    .custom /*0C0001E8:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2d9d
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewFoundEventData::get_ActionContext
+
+  .method /*0600045F*/ family hidebysig specialname virtual 
+          instance int32  get_Count() cil managed
+  // SIG: 20 00 08
+  {
+    // Method begins at RVA 0x2da0
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewFoundEventData::get_Count
+
+  .method /*06000460*/ public hidebysig specialname 
+          instance bool  get_IsMainPage() cil managed
+  // SIG: 20 00 02
+  {
+    .custom /*0C0001E9:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2da3
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewFoundEventData::get_IsMainPage
+
+  .method /*06000461*/ family hidebysig specialname virtual 
+          instance valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object> 
+          get_Item(int32 index) cil managed
+  // SIG: 20 01 15 11 81 4D 02 0E 1C 08
+  {
+    // Method begins at RVA 0x2da6
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewFoundEventData::get_Item
+
+  .method /*06000462*/ public hidebysig specialname 
+          instance class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.ActionResult/*0100003D*/ 
+          get_Result() cil managed
+  // SIG: 20 00 12 80 F5
+  {
+    .custom /*0C0001EA:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2da9
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewFoundEventData::get_Result
+
+  .method /*06000463*/ public hidebysig specialname 
+          instance class Microsoft.AspNetCore.Mvc.ViewEngines.IView/*0200005C*/ 
+          get_View() cil managed
+  // SIG: 20 00 12 81 70
+  {
+    .custom /*0C0001EB:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2dac
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewFoundEventData::get_View
+
+  .method /*06000464*/ public hidebysig specialname 
+          instance string  get_ViewName() cil managed
+  // SIG: 20 00 0E
+  {
+    .custom /*0C0001EC:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2daf
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewFoundEventData::get_ViewName
+
+  .property /*170000F9*/ instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ActionContext/*01000041*/
+          ActionContext()
+  {
+    .get instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ActionContext/*01000041*/ Microsoft.AspNetCore.Mvc.Diagnostics.ViewFoundEventData/*0200009A*/::get_ActionContext() /* 0600045E */
+  } // end of property ViewFoundEventData::ActionContext
+  .property /*170000FA*/ instance int32 Count()
+  {
+    .get instance int32 Microsoft.AspNetCore.Mvc.Diagnostics.ViewFoundEventData/*0200009A*/::get_Count() /* 0600045F */
+  } // end of property ViewFoundEventData::Count
+  .property /*170000FB*/ instance bool IsMainPage()
+  {
+    .get instance bool Microsoft.AspNetCore.Mvc.Diagnostics.ViewFoundEventData/*0200009A*/::get_IsMainPage() /* 06000460 */
+  } // end of property ViewFoundEventData::IsMainPage
+  .property /*170000FC*/ instance valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object>
+          Item(int32)
+  {
+    .get instance valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object> Microsoft.AspNetCore.Mvc.Diagnostics.ViewFoundEventData/*0200009A*/::get_Item(int32) /* 06000461 */
+  } // end of property ViewFoundEventData::Item
+  .property /*170000FD*/ instance class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.ActionResult/*0100003D*/
+          Result()
+  {
+    .get instance class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.ActionResult/*0100003D*/ Microsoft.AspNetCore.Mvc.Diagnostics.ViewFoundEventData/*0200009A*/::get_Result() /* 06000462 */
+  } // end of property ViewFoundEventData::Result
+  .property /*170000FE*/ instance class Microsoft.AspNetCore.Mvc.ViewEngines.IView/*0200005C*/
+          View()
+  {
+    .get instance class Microsoft.AspNetCore.Mvc.ViewEngines.IView/*0200005C*/ Microsoft.AspNetCore.Mvc.Diagnostics.ViewFoundEventData/*0200009A*/::get_View() /* 06000463 */
+  } // end of property ViewFoundEventData::View
+  .property /*170000FF*/ instance string ViewName()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.Diagnostics.ViewFoundEventData/*0200009A*/::get_ViewName() /* 06000464 */
+  } // end of property ViewFoundEventData::ViewName
+} // end of class Microsoft.AspNetCore.Mvc.Diagnostics.ViewFoundEventData
+
+.class /*0200009B*/ public auto ansi sealed beforefieldinit Microsoft.AspNetCore.Mvc.Diagnostics.ViewNotFoundEventData
+       extends [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.Diagnostics.EventData/*01000088*/
+{
+  .custom /*0C00009F:0A00001A*/ instance void [System.Runtime/*23000001*/]System.Reflection.DefaultMemberAttribute/*01000051*/::.ctor(string) /* 0A00001A */ = ( 01 00 04 49 74 65 6D 00 00 )                      // ...Item..
+  .field /*04000054*/ public static literal string EventName = "Microsoft.AspNetCore.Mvc.ViewNotFound"
+  .method /*06000465*/ public hidebysig specialname rtspecialname 
+          instance void  .ctor(class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ActionContext/*01000041*/ actionContext,
+                               bool isMainPage,
+                               class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.ActionResult/*0100003D*/ result,
+                               string viewName,
+                               class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<string> searchedLocations) cil managed
+  // SIG: 20 05 01 12 81 05 02 12 80 F5 0E 15 12 80 D5 01 0E
+  {
+    // Method begins at RVA 0x2db2
+    // Code size       7 (0x7)
+    .maxstack  8
+    IL_0000:  /* 02   |                  */ ldarg.0
+    IL_0001:  /* 28   | (0A)00002F       */ call       instance void [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.Diagnostics.EventData/*01000088*/::.ctor() /* 0A00002F */
+    IL_0006:  /* 2A   |                  */ ret
+  } // end of method ViewNotFoundEventData::.ctor
+
+  .method /*06000466*/ public hidebysig specialname 
+          instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ActionContext/*01000041*/ 
+          get_ActionContext() cil managed
+  // SIG: 20 00 12 81 05
+  {
+    .custom /*0C0001ED:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2dba
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewNotFoundEventData::get_ActionContext
+
+  .method /*06000467*/ family hidebysig specialname virtual 
+          instance int32  get_Count() cil managed
+  // SIG: 20 00 08
+  {
+    // Method begins at RVA 0x2dbd
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewNotFoundEventData::get_Count
+
+  .method /*06000468*/ public hidebysig specialname 
+          instance bool  get_IsMainPage() cil managed
+  // SIG: 20 00 02
+  {
+    .custom /*0C0001EE:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2dc0
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewNotFoundEventData::get_IsMainPage
+
+  .method /*06000469*/ family hidebysig specialname virtual 
+          instance valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object> 
+          get_Item(int32 index) cil managed
+  // SIG: 20 01 15 11 81 4D 02 0E 1C 08
+  {
+    // Method begins at RVA 0x2dc3
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewNotFoundEventData::get_Item
+
+  .method /*0600046A*/ public hidebysig specialname 
+          instance class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.ActionResult/*0100003D*/ 
+          get_Result() cil managed
+  // SIG: 20 00 12 80 F5
+  {
+    .custom /*0C0001EF:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2dc6
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewNotFoundEventData::get_Result
+
+  .method /*0600046B*/ public hidebysig specialname 
+          instance class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<string> 
+          get_SearchedLocations() cil managed
+  // SIG: 20 00 15 12 80 D5 01 0E
+  {
+    .custom /*0C0001F0:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2dc9
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewNotFoundEventData::get_SearchedLocations
+
+  .method /*0600046C*/ public hidebysig specialname 
+          instance string  get_ViewName() cil managed
+  // SIG: 20 00 0E
+  {
+    .custom /*0C0001F1:0A000014*/ instance void [System.Runtime/*23000001*/]System.Runtime.CompilerServices.CompilerGeneratedAttribute/*01000024*/::.ctor() /* 0A000014 */ = ( 01 00 00 00 ) 
+    // Method begins at RVA 0x2dcc
+    // Code size       2 (0x2)
+    .maxstack  8
+    IL_0000:  /* 14   |                  */ ldnull
+    IL_0001:  /* 7A   |                  */ throw
+  } // end of method ViewNotFoundEventData::get_ViewName
+
+  .property /*17000100*/ instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ActionContext/*01000041*/
+          ActionContext()
+  {
+    .get instance class [Microsoft.AspNetCore.Mvc.Abstractions/*23000008*/]Microsoft.AspNetCore.Mvc.ActionContext/*01000041*/ Microsoft.AspNetCore.Mvc.Diagnostics.ViewNotFoundEventData/*0200009B*/::get_ActionContext() /* 06000466 */
+  } // end of property ViewNotFoundEventData::ActionContext
+  .property /*17000101*/ instance int32 Count()
+  {
+    .get instance int32 Microsoft.AspNetCore.Mvc.Diagnostics.ViewNotFoundEventData/*0200009B*/::get_Count() /* 06000467 */
+  } // end of property ViewNotFoundEventData::Count
+  .property /*17000102*/ instance bool IsMainPage()
+  {
+    .get instance bool Microsoft.AspNetCore.Mvc.Diagnostics.ViewNotFoundEventData/*0200009B*/::get_IsMainPage() /* 06000468 */
+  } // end of property ViewNotFoundEventData::IsMainPage
+  .property /*17000103*/ instance valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object>
+          Item(int32)
+  {
+    .get instance valuetype [System.Runtime/*23000001*/]System.Collections.Generic.KeyValuePair`2/*01000053*/<string,object> Microsoft.AspNetCore.Mvc.Diagnostics.ViewNotFoundEventData/*0200009B*/::get_Item(int32) /* 06000469 */
+  } // end of property ViewNotFoundEventData::Item
+  .property /*17000104*/ instance class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.ActionResult/*0100003D*/
+          Result()
+  {
+    .get instance class [Microsoft.AspNetCore.Mvc.Core/*23000004*/]Microsoft.AspNetCore.Mvc.ActionResult/*0100003D*/ Microsoft.AspNetCore.Mvc.Diagnostics.ViewNotFoundEventData/*0200009B*/::get_Result() /* 0600046A */
+  } // end of property ViewNotFoundEventData::Result
+  .property /*17000105*/ instance class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<string>
+          SearchedLocations()
+  {
+    .get instance class [System.Runtime/*23000001*/]System.Collections.Generic.IEnumerable`1/*01000035*/<string> Microsoft.AspNetCore.Mvc.Diagnostics.ViewNotFoundEventData/*0200009B*/::get_SearchedLocations() /* 0600046B */
+  } // end of property ViewNotFoundEventData::SearchedLocations
+  .property /*17000106*/ instance string ViewName()
+  {
+    .get instance string Microsoft.AspNetCore.Mvc.Diagnostics.ViewNotFoundEventData/*0200009B*/::get_ViewName() /* 0600046C */
+  } // end of property ViewNotFoundEventData::ViewName
+} // end of class Microsoft.AspNetCore.Mvc.Diagnostics.ViewNotFoundEventData
+
+
+// =============================================================
+
+// *********** DISASSEMBLY COMPLETE ***********************

@@ -1,0 +1,1279 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>System.Runtime.Remoting</name>
+  </assembly>
+  <members>
+    <member name="T:System.Runtime.Remoting.Channels.BinaryClientFormatterSink">
+      <summary>Provides the implementation for a client formatter sink that uses the <see cref="T:System.Runtime.Serialization.Formatters.Binary.BinaryFormatter" />.</summary>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.BinaryClientFormatterSink.#ctor(System.Runtime.Remoting.Channels.IClientChannelSink)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.BinaryClientFormatterSink" /> class.</summary>
+      <param name="nextSink">The next <see cref="T:System.Runtime.Remoting.Channels.IClientChannelSink" /> in the sink chain. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.BinaryClientFormatterSink.AsyncProcessMessage(System.Runtime.Remoting.Messaging.IMessage,System.Runtime.Remoting.Messaging.IMessageSink)">
+      <summary>Asynchronously processes the provided message.</summary>
+      <returns>A <see cref="T:System.Runtime.Remoting.Messaging.IMessageCtrl" /> that provides a way to control the asynchronous message after it has been dispatched.</returns>
+      <param name="msg">The message to process. </param>
+      <param name="replySink">The sink that will receive the reply to the provided message. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.BinaryClientFormatterSink.AsyncProcessRequest(System.Runtime.Remoting.Channels.IClientChannelSinkStack,System.Runtime.Remoting.Messaging.IMessage,System.Runtime.Remoting.Channels.ITransportHeaders,System.IO.Stream)">
+      <summary>Requests asynchronous processing of a method call on the current sink.</summary>
+      <param name="sinkStack">A stack of channel sinks that called the current sink. </param>
+      <param name="msg">The message to process. </param>
+      <param name="headers">The headers to add to the outgoing message that is heading to the server. </param>
+      <param name="stream">The stream that is headed toward the transport sink. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.BinaryClientFormatterSink.AsyncProcessResponse(System.Runtime.Remoting.Channels.IClientResponseChannelSinkStack,System.Object,System.Runtime.Remoting.Channels.ITransportHeaders,System.IO.Stream)">
+      <summary>Requests asynchronous processing of a response to a method call on the current sink.</summary>
+      <param name="sinkStack">A stack of sinks that called the current sink. </param>
+      <param name="state">Information that is associated with the current sink, generated on the request side and needed on the response side. </param>
+      <param name="headers">The headers that are retrieved from the server response stream. </param>
+      <param name="stream">The stream that is coming back from the transport sink. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.BinaryClientFormatterSink.GetRequestStream(System.Runtime.Remoting.Messaging.IMessage,System.Runtime.Remoting.Channels.ITransportHeaders)">
+      <summary>Returns the <see cref="T:System.IO.Stream" /> onto which the provided message is to be serialized.</summary>
+      <returns>The <see cref="T:System.IO.Stream" /> onto which the provided message is to be serialized.</returns>
+      <param name="msg">The <see cref="T:System.Runtime.Remoting.Messaging.IMethodCallMessage" /> that contains details about the method call. </param>
+      <param name="headers">The headers to add to the outgoing message that is heading to the server. </param>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.BinaryClientFormatterSink.NextChannelSink">
+      <summary>Gets the next <see cref="T:System.Runtime.Remoting.Channels.IClientChannelSink" /> in the sink chain.</summary>
+      <returns>The next <see cref="T:System.Runtime.Remoting.Channels.IClientChannelSink" /> in the sink chain.</returns>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.BinaryClientFormatterSink.NextSink">
+      <summary>Gets the next <see cref="T:System.Runtime.Remoting.Messaging.IMessageSink" /> in the sink chain.</summary>
+      <returns>The next <see cref="T:System.Runtime.Remoting.Messaging.IMessageSink" /> in the sink chain.</returns>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.BinaryClientFormatterSink.ProcessMessage(System.Runtime.Remoting.Messaging.IMessage,System.Runtime.Remoting.Channels.ITransportHeaders,System.IO.Stream,System.Runtime.Remoting.Channels.ITransportHeaders@,System.IO.Stream@)">
+      <summary>Requests message processing from the current sink.</summary>
+      <param name="msg">The message to process. </param>
+      <param name="requestHeaders">The headers to add to the outgoing message that is heading to the server. </param>
+      <param name="requestStream">The stream that is headed toward the transport sink. </param>
+      <param name="responseHeaders">When this method returns, contains a <see cref="T:System.Runtime.Remoting.Channels.ITransportHeaders" /> interface that holds the headers that the server returned. This parameter is passed uninitialized. </param>
+      <param name="responseStream">When this method returns, contains a <see cref="T:System.IO.Stream" /> that is coming back from the transport sink. This parameter is passed uninitialized. </param>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.BinaryClientFormatterSink.Properties">
+      <summary>Gets a <see cref="T:System.Collections.IDictionary" /> of properties for the current channel sink.</summary>
+      <returns>A <see cref="T:System.Collections.IDictionary" /> of properties for the current channel sink.</returns>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.BinaryClientFormatterSink.SyncProcessMessage(System.Runtime.Remoting.Messaging.IMessage)">
+      <summary>Synchronously processes the provided message.</summary>
+      <returns>The response to the processed message.</returns>
+      <param name="msg">The message to process. </param>
+    </member>
+    <member name="T:System.Runtime.Remoting.Channels.BinaryClientFormatterSinkProvider">
+      <summary>Provides the implementation for the binary client formatter sink provider.</summary>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.BinaryClientFormatterSinkProvider.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.BinaryClientFormatterSinkProvider" /> class with default values.</summary>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.BinaryClientFormatterSinkProvider.#ctor(System.Collections.IDictionary,System.Collections.ICollection)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.BinaryClientFormatterSinkProvider" /> class with the given properties and provider data.</summary>
+      <param name="properties">A <see cref="T:System.Collections.IDictionary" /> of configuration properties to use with the new instance of <see cref="T:System.Runtime.Remoting.Channels.BinaryClientFormatterSinkProvider" />. </param>
+      <param name="providerData">A <see cref="T:System.Collections.ICollection" /> of <see cref="T:System.Runtime.Remoting.Channels.SinkProviderData" /> objects that contain provider data to use with the new instance of <see cref="T:System.Runtime.Remoting.Channels.BinaryClientFormatterSinkProvider" />. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.BinaryClientFormatterSinkProvider.CreateSink(System.Runtime.Remoting.Channels.IChannelSender,System.String,System.Object)">
+      <summary>Creates a sink chain.</summary>
+      <returns>The first sink of the newly formed channel sink chain, or null, which indicates that this provider will not or cannot provide a connection for this endpoint.</returns>
+      <param name="channel">Channel for which this sink chain is being constructed. </param>
+      <param name="url">URL of object to connect to or the channel URI for the target object. </param>
+      <param name="remoteChannelData">A channel data object that describes a channel on the remote server. </param>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.BinaryClientFormatterSinkProvider.Next">
+      <summary>Gets or sets the next <see cref="T:System.Runtime.Remoting.Channels.IClientChannelSinkProvider" /> in the sink provider chain.</summary>
+      <returns>The next <see cref="T:System.Runtime.Remoting.Channels.IClientChannelSinkProvider" /> in the sink provider chain.</returns>
+    </member>
+    <member name="T:System.Runtime.Remoting.Channels.BinaryServerFormatterSink">
+      <summary>Provides the implementation for a server formatter sink that uses the <see cref="T:System.Runtime.Serialization.Formatters.Binary.BinaryFormatter" />.</summary>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.BinaryServerFormatterSink.#ctor(System.Runtime.Remoting.Channels.BinaryServerFormatterSink.Protocol,System.Runtime.Remoting.Channels.IServerChannelSink,System.Runtime.Remoting.Channels.IChannelReceiver)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.BinaryServerFormatterSink" /> class.</summary>
+      <param name="protocol">The <see cref="T:System.Runtime.Remoting.Channels.BinaryServerFormatterSink.Protocol" /> that will be used with the current instance of <see cref="T:System.Runtime.Remoting.Channels.BinaryServerFormatterSink" />. </param>
+      <param name="nextSink">The next sink in the channel sink chain. </param>
+      <param name="receiver">Indicates the channel that will receive the messages that are serialized by the new instance of <see cref="T:System.Runtime.Remoting.Channels.BinaryServerFormatterSink" />. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.BinaryServerFormatterSink.AsyncProcessResponse(System.Runtime.Remoting.Channels.IServerResponseChannelSinkStack,System.Object,System.Runtime.Remoting.Messaging.IMessage,System.Runtime.Remoting.Channels.ITransportHeaders,System.IO.Stream)">
+      <summary>Requests processing of the response from a method call that is sent asynchronously.</summary>
+      <param name="sinkStack">A stack of sinks that is leading back to the server transport sink. </param>
+      <param name="state">Information that is associated with the current sink, generated on the request side, and needed on the response side. </param>
+      <param name="msg">The response message. </param>
+      <param name="headers">The headers to add to the return message that is heading to the client. </param>
+      <param name="stream">The stream that is heading back to the transport sink. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.BinaryServerFormatterSink.GetResponseStream(System.Runtime.Remoting.Channels.IServerResponseChannelSinkStack,System.Object,System.Runtime.Remoting.Messaging.IMessage,System.Runtime.Remoting.Channels.ITransportHeaders)">
+      <summary>Returns the <see cref="T:System.IO.Stream" /> onto which the provided response message is to be serialized.</summary>
+      <returns>The <see cref="T:System.IO.Stream" /> onto which the provided response message is to be serialized.</returns>
+      <param name="sinkStack">A stack of sinks that is leading back to the server transport sink. </param>
+      <param name="state">Information that is associated with the current sink, generated on the request side, and needed on the response side. </param>
+      <param name="msg">The response message to serialize. </param>
+      <param name="headers">The headers to put in the response stream to the client. </param>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.BinaryServerFormatterSink.NextChannelSink">
+      <summary>Gets the next <see cref="T:System.Runtime.Remoting.Channels.IServerChannelSink" /> in the sink chain.</summary>
+      <returns>The next <see cref="T:System.Runtime.Remoting.Channels.IServerChannelSink" /> in the sink chain.</returns>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.BinaryServerFormatterSink.ProcessMessage(System.Runtime.Remoting.Channels.IServerChannelSinkStack,System.Runtime.Remoting.Messaging.IMessage,System.Runtime.Remoting.Channels.ITransportHeaders,System.IO.Stream,System.Runtime.Remoting.Messaging.IMessage@,System.Runtime.Remoting.Channels.ITransportHeaders@,System.IO.Stream@)">
+      <summary>Requests message processing from the current sink.</summary>
+      <returns>A <see cref="T:System.Runtime.Remoting.Channels.ServerProcessing" /> status value that provides information about how the message was processed.</returns>
+      <param name="sinkStack">A stack of channel sinks that called the current sink. </param>
+      <param name="requestMsg">The message that contains the request. </param>
+      <param name="requestHeaders">Headers that are retrieved from the incoming message from the client. </param>
+      <param name="requestStream">The stream that needs to be processed and passed on to the deserialization sink. </param>
+      <param name="responseMsg">When this method returns, contains a <see cref="T:System.Runtime.Remoting.Messaging.IMessage" /> that holds the response message. This parameter is passed uninitialized. </param>
+      <param name="responseHeaders">When this method returns, contains a <see cref="T:System.Runtime.Remoting.Channels.ITransportHeaders" /> that holds the headers to add to the return message that is heading to the client. This parameter is passed uninitialized. </param>
+      <param name="responseStream">When this method returns, contains a <see cref="T:System.IO.Stream" /> that is heading to the transport sink. This parameter is passed uninitialized. </param>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.BinaryServerFormatterSink.Properties">
+      <summary>Gets a <see cref="T:System.Collections.IDictionary" /> of properties for the current channel sink.</summary>
+      <returns>A <see cref="T:System.Collections.IDictionary" /> of properties for the current channel sink.</returns>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.BinaryServerFormatterSink.TypeFilterLevel">
+      <summary>Gets or sets the TypeFilterLevel value of automatic deserialization that the BinaryServerFormatterSink performs.</summary>
+      <returns>The TypeFilterLevel that represents the current automatic deserialization level.</returns>
+    </member>
+    <member name="T:System.Runtime.Remoting.Channels.BinaryServerFormatterSink.Protocol">
+      <summary>Specifies the protocol to use with the <see cref="T:System.Runtime.Remoting.Channels.BinaryServerFormatterSink" /> class.</summary>
+    </member>
+    <member name="F:System.Runtime.Remoting.Channels.BinaryServerFormatterSink.Protocol.Http">
+      <summary>Indicates that the current formatter sink is using the HTTP protocol, and therefore requires special processing.</summary>
+    </member>
+    <member name="F:System.Runtime.Remoting.Channels.BinaryServerFormatterSink.Protocol.Other">
+      <summary>Indicates that a protocol other than HTTP is used with the current formatter sink.</summary>
+    </member>
+    <member name="T:System.Runtime.Remoting.Channels.BinaryServerFormatterSinkProvider">
+      <summary>Provides the implementation for the server formatter channel sink provider that uses the <see cref="T:System.Runtime.Serialization.Formatters.Binary.BinaryFormatter" />.</summary>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.BinaryServerFormatterSinkProvider.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.BinaryServerFormatterSinkProvider" /> class with default values.</summary>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.BinaryServerFormatterSinkProvider.#ctor(System.Collections.IDictionary,System.Collections.ICollection)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.BinaryServerFormatterSinkProvider" /> class with the provided properties and provider data.</summary>
+      <param name="properties">A <see cref="T:System.Collections.IDictionary" /> of configuration properties to use with the new instance of <see cref="T:System.Runtime.Remoting.Channels.BinaryServerFormatterSinkProvider" />. </param>
+      <param name="providerData">A <see cref="T:System.Collections.ICollection" /> of <see cref="T:System.Runtime.Remoting.Channels.SinkProviderData" /> to use with the new instance of <see cref="T:System.Runtime.Remoting.Channels.BinaryServerFormatterSinkProvider" />. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.BinaryServerFormatterSinkProvider.CreateSink(System.Runtime.Remoting.Channels.IChannelReceiver)">
+      <summary>Creates a sink chain.</summary>
+      <returns>The first sink of the newly formed channel sink chain.</returns>
+      <param name="channel">The channel for which to create the channel sink chain. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.BinaryServerFormatterSinkProvider.GetChannelData(System.Runtime.Remoting.Channels.IChannelDataStore)">
+      <summary>Returns the channel data for the channel that the current sink is associated with.</summary>
+      <param name="channelData">A <see cref="T:System.Runtime.Remoting.Channels.IChannelDataStore" /> object in which the channel data is to be returned. </param>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.BinaryServerFormatterSinkProvider.Next">
+      <summary>Gets or sets the next <see cref="T:System.Runtime.Remoting.Channels.IServerChannelSinkProvider" /> in the sink provider chain.</summary>
+      <returns>The next <see cref="T:System.Runtime.Remoting.Channels.IServerChannelSinkProvider" /> in the sink provider chain.</returns>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.BinaryServerFormatterSinkProvider.TypeFilterLevel">
+      <summary>Gets or sets the TypeFilterLevel value of automatic deserialization the BinaryServerFormatterSink performs.</summary>
+      <returns>The TypeFilterLevel that represents the current automatic deserialization level.</returns>
+    </member>
+    <member name="T:System.Runtime.Remoting.Channels.CommonTransportKeys">
+      <summary>The transport keys associated with common values used by the channels.</summary>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.CommonTransportKeys.#ctor">
+      <summary>Creates an instance of <see cref="T:System.Runtime.Remoting.Channels.CommonTransportKeys" />.</summary>
+    </member>
+    <member name="F:System.Runtime.Remoting.Channels.CommonTransportKeys.ConnectionId">
+      <summary>The transport key associated with a unique ID given to each incoming socket connection.</summary>
+    </member>
+    <member name="F:System.Runtime.Remoting.Channels.CommonTransportKeys.IPAddress">
+      <summary>The transport key associated with the IP address from which an incoming request arrived.</summary>
+    </member>
+    <member name="F:System.Runtime.Remoting.Channels.CommonTransportKeys.RequestUri">
+      <summary>The transport key associated with the URI that made the request.</summary>
+    </member>
+    <member name="T:System.Runtime.Remoting.Channels.IAuthorizeRemotingConnection">
+      <summary>The <see cref="T:System.Runtime.Remoting.Channels.IAuthorizeRemotingConnection" /> interface provides methods that indicate whether a client is authorized to connect on the current channel, based on the client's network address and user identity.</summary>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.IAuthorizeRemotingConnection.IsConnectingEndPointAuthorized(System.Net.EndPoint)">
+      <summary>Gets a Boolean value that indicates whether the network address of the client is authorized to connect on the current channel.</summary>
+      <returns>true if the network address of the client is authorized; otherwise, false.</returns>
+      <param name="endPoint">The <see cref="T:System.Net.EndPoint" /> that identifies the network address of the client.</param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.IAuthorizeRemotingConnection.IsConnectingIdentityAuthorized(System.Security.Principal.IIdentity)">
+      <summary>Gets a Boolean value that indicates whether the user identity of the client is authorized to connect on the current channel.</summary>
+      <returns>true if the user identity of the client is authorized; otherwise, false.</returns>
+      <param name="identity">The <see cref="T:System.Security.Principal.IIdentity" /> that represents the user identity of the client.</param>
+    </member>
+    <member name="T:System.Runtime.Remoting.Channels.SoapClientFormatterSink">
+      <summary>Provides the implementation for a client formatter sink that uses the <see cref="T:System.Runtime.Serialization.Formatters.Soap.SoapFormatter" />.</summary>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.SoapClientFormatterSink.#ctor(System.Runtime.Remoting.Channels.IClientChannelSink)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.SoapClientFormatterSink" /> class.</summary>
+      <param name="nextSink">The next sink in the channel sink chain. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.SoapClientFormatterSink.AsyncProcessMessage(System.Runtime.Remoting.Messaging.IMessage,System.Runtime.Remoting.Messaging.IMessageSink)">
+      <summary>Asynchronously processes the provided message.</summary>
+      <returns>A <see cref="T:System.Runtime.Remoting.Messaging.IMessageCtrl" /> that provides a way to control the asynchronous message after it has been dispatched.</returns>
+      <param name="msg">The message to process. </param>
+      <param name="replySink">The sink that will receive the reply to the provided message. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.SoapClientFormatterSink.AsyncProcessRequest(System.Runtime.Remoting.Channels.IClientChannelSinkStack,System.Runtime.Remoting.Messaging.IMessage,System.Runtime.Remoting.Channels.ITransportHeaders,System.IO.Stream)">
+      <summary>Requests asynchronous processing of a method call on the current sink.</summary>
+      <param name="sinkStack">A stack of channel sinks that called the current sink. </param>
+      <param name="msg">The message to process. </param>
+      <param name="headers">The headers to add to the outgoing message heading to the server. </param>
+      <param name="stream">The stream headed to the transport sink. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.SoapClientFormatterSink.AsyncProcessResponse(System.Runtime.Remoting.Channels.IClientResponseChannelSinkStack,System.Object,System.Runtime.Remoting.Channels.ITransportHeaders,System.IO.Stream)">
+      <summary>Requests asynchronous processing of a response to a method call on the current sink.</summary>
+      <param name="sinkStack">A stack of sinks that called the current sink. </param>
+      <param name="state">The state associated with the current sink. </param>
+      <param name="headers">The headers retrieved from the server response stream. </param>
+      <param name="stream">The stream coming back from the transport sink. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.SoapClientFormatterSink.GetRequestStream(System.Runtime.Remoting.Messaging.IMessage,System.Runtime.Remoting.Channels.ITransportHeaders)">
+      <summary>Returns the <see cref="T:System.IO.Stream" /> onto which the provided message is to be serialized.</summary>
+      <returns>The <see cref="T:System.IO.Stream" /> onto which the provided message is to be serialized.</returns>
+      <param name="msg">The <see cref="T:System.Runtime.Remoting.Messaging.IMethodCallMessage" /> containing details about the method call. </param>
+      <param name="headers">The headers to add to the outgoing message heading to the server. </param>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.SoapClientFormatterSink.NextChannelSink">
+      <summary>Gets the next <see cref="T:System.Runtime.Remoting.Channels.IClientChannelSink" /> in the sink chain.</summary>
+      <returns>The next <see cref="T:System.Runtime.Remoting.Channels.IClientChannelSink" /> in the sink chain.</returns>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.SoapClientFormatterSink.NextSink">
+      <summary>Gets the next <see cref="T:System.Runtime.Remoting.Messaging.IMessageSink" /> in the sink chain.</summary>
+      <returns>The next <see cref="T:System.Runtime.Remoting.Messaging.IMessageSink" /> in the sink chain.</returns>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.SoapClientFormatterSink.ProcessMessage(System.Runtime.Remoting.Messaging.IMessage,System.Runtime.Remoting.Channels.ITransportHeaders,System.IO.Stream,System.Runtime.Remoting.Channels.ITransportHeaders@,System.IO.Stream@)">
+      <summary>Requests message processing from the current sink.</summary>
+      <param name="msg">The message to process. </param>
+      <param name="requestHeaders">The headers to add to the outgoing message heading to the server. </param>
+      <param name="requestStream">The stream headed toward the transport sink. </param>
+      <param name="responseHeaders">When this method returns, contains a <see cref="T:System.Runtime.Remoting.Channels.ITransportHeaders" /> interface that holds the headers that the server returned. This parameter is passed uninitialized. </param>
+      <param name="responseStream">When this method returns, contains a <see cref="T:System.IO.Stream" /> coming back from the transport sink. This parameter is passed uninitialized. </param>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.SoapClientFormatterSink.Properties">
+      <summary>Gets a <see cref="T:System.Collections.IDictionary" /> of properties for the current channel sink.</summary>
+      <returns>A <see cref="T:System.Collections.IDictionary" /> of properties for the current channel sink.</returns>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.SoapClientFormatterSink.SyncProcessMessage(System.Runtime.Remoting.Messaging.IMessage)">
+      <summary>Synchronously processes the provided message.</summary>
+      <returns>The response to the processed message.</returns>
+      <param name="msg">The message to process. </param>
+    </member>
+    <member name="T:System.Runtime.Remoting.Channels.SoapClientFormatterSinkProvider">
+      <summary>Provides the implementation for a client formatter sink provider.</summary>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.SoapClientFormatterSinkProvider.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.SoapClientFormatterSinkProvider" /> class with default values.</summary>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.SoapClientFormatterSinkProvider.#ctor(System.Collections.IDictionary,System.Collections.ICollection)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.SoapClientFormatterSinkProvider" /> class with the given properties and provider data.</summary>
+      <param name="properties">A <see cref="T:System.Collections.IDictionary" /> of configuration properties to use with the new instance of <see cref="T:System.Runtime.Remoting.Channels.SoapClientFormatterSinkProvider" />. </param>
+      <param name="providerData">A <see cref="T:System.Collections.ICollection" /> of provider data to use with the new instance of <see cref="T:System.Runtime.Remoting.Channels.SoapClientFormatterSinkProvider" />. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.SoapClientFormatterSinkProvider.CreateSink(System.Runtime.Remoting.Channels.IChannelSender,System.String,System.Object)">
+      <summary>Creates a sink chain.</summary>
+      <returns>The first sink of the newly formed channel sink chain, or null, which indicates that this provider will not or cannot provide a connection for this endpoint.</returns>
+      <param name="channel">Channel for which this sink chain is being constructed. </param>
+      <param name="url">URL of object to connect to or the channel URI for the target object. </param>
+      <param name="remoteChannelData">A channel data object describing a channel on the remote server. </param>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.SoapClientFormatterSinkProvider.Next">
+      <summary>Gets or sets the next <see cref="T:System.Runtime.Remoting.Channels.IClientChannelSinkProvider" /> in the sink provider chain.</summary>
+      <returns>The next <see cref="T:System.Runtime.Remoting.Channels.IClientChannelSinkProvider" /> in the sink provider chain.</returns>
+    </member>
+    <member name="T:System.Runtime.Remoting.Channels.SoapServerFormatterSink">
+      <summary>Provides the implementation for a server formatter sink that uses the <see cref="T:System.Runtime.Serialization.Formatters.Soap.SoapFormatter" />.</summary>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.SoapServerFormatterSink.#ctor(System.Runtime.Remoting.Channels.SoapServerFormatterSink.Protocol,System.Runtime.Remoting.Channels.IServerChannelSink,System.Runtime.Remoting.Channels.IChannelReceiver)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.SoapServerFormatterSink" /> class.</summary>
+      <param name="protocol">The <see cref="T:System.Runtime.Remoting.Channels.SoapServerFormatterSink.Protocol" /> that will be used with the current instance of <see cref="T:System.Runtime.Remoting.Channels.SoapServerFormatterSink" />. </param>
+      <param name="nextSink">The next sink in the channel sink chain. </param>
+      <param name="receiver">Indicates the channel that will receive the messages serialized by the new instance of <see cref="T:System.Runtime.Remoting.Channels.SoapServerFormatterSink" />. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.SoapServerFormatterSink.AsyncProcessResponse(System.Runtime.Remoting.Channels.IServerResponseChannelSinkStack,System.Object,System.Runtime.Remoting.Messaging.IMessage,System.Runtime.Remoting.Channels.ITransportHeaders,System.IO.Stream)">
+      <summary>Requests processing from the current sink of the response from a method call sent asynchronously.</summary>
+      <param name="sinkStack">A stack of sinks leading back to the server transport sink. </param>
+      <param name="state">Information associated with the current sink, generated on the request side, and needed on the response side. </param>
+      <param name="msg">The response message. </param>
+      <param name="headers">The headers to add to the return message heading to the client. </param>
+      <param name="stream">The stream heading back to the transport sink. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.SoapServerFormatterSink.GetResponseStream(System.Runtime.Remoting.Channels.IServerResponseChannelSinkStack,System.Object,System.Runtime.Remoting.Messaging.IMessage,System.Runtime.Remoting.Channels.ITransportHeaders)">
+      <summary>Returns the <see cref="T:System.IO.Stream" /> onto which the provided response message is to be serialized.</summary>
+      <returns>The <see cref="T:System.IO.Stream" /> onto which the provided response message is to be serialized.</returns>
+      <param name="sinkStack">A stack of sinks leading back to the server transport sink. </param>
+      <param name="state">Information associated with the current sink, generated on the request side, and needed on the response side. </param>
+      <param name="msg">The response message that is to be serialized. </param>
+      <param name="headers">The headers to put in the response stream to the client. </param>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.SoapServerFormatterSink.NextChannelSink">
+      <summary>Gets the next <see cref="T:System.Runtime.Remoting.Channels.IServerChannelSink" /> in the sink chain.</summary>
+      <returns>The next <see cref="T:System.Runtime.Remoting.Channels.IServerChannelSink" /> in the sink chain.</returns>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.SoapServerFormatterSink.ProcessMessage(System.Runtime.Remoting.Channels.IServerChannelSinkStack,System.Runtime.Remoting.Messaging.IMessage,System.Runtime.Remoting.Channels.ITransportHeaders,System.IO.Stream,System.Runtime.Remoting.Messaging.IMessage@,System.Runtime.Remoting.Channels.ITransportHeaders@,System.IO.Stream@)">
+      <summary>Requests message processing from the current sink.</summary>
+      <returns>A <see cref="T:System.Runtime.Remoting.Channels.ServerProcessing" /> status value that provides information about how the message was processed.</returns>
+      <param name="sinkStack">The stack of sinks that transports the message. </param>
+      <param name="requestMsg">The message that contains the request. </param>
+      <param name="requestHeaders">Headers retrieved from the incoming message from the client. </param>
+      <param name="requestStream">The stream that needs to be processed and passed on to the deserialization sink. </param>
+      <param name="responseMsg">When this method returns, contains a <see cref="T:System.Runtime.Remoting.Messaging.IMessage" /> that holds the response message. This parameter is passed uninitialized. </param>
+      <param name="responseHeaders">When this method returns, contains a <see cref="T:System.Runtime.Remoting.Channels.ITransportHeaders" /> that holds the headers to add to the return message heading to the client. This parameter is passed uninitialized. </param>
+      <param name="responseStream">When this method returns, contains a <see cref="T:System.IO.Stream" /> that is heading back to the transport sink. This parameter is passed uninitialized. </param>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.SoapServerFormatterSink.Properties">
+      <summary>Gets a <see cref="T:System.Collections.IDictionary" /> of properties for the current channel sink.</summary>
+      <returns>A <see cref="T:System.Collections.IDictionary" /> of properties for the current channel sink. For more information, see Channel and Formatter Configuration Properties.</returns>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.SoapServerFormatterSink.TypeFilterLevel">
+      <summary>Gets or sets the TypeFilterLevel value of automatic deserialization the SoapServerFormatterSink performs.</summary>
+      <returns>The TypeFilterLevel that represents the current automatic deserialization level.</returns>
+    </member>
+    <member name="T:System.Runtime.Remoting.Channels.SoapServerFormatterSink.Protocol">
+      <summary>Specifies the protocol to use with the <see cref="T:System.Runtime.Remoting.Channels.SoapServerFormatterSink" /> class.</summary>
+    </member>
+    <member name="F:System.Runtime.Remoting.Channels.SoapServerFormatterSink.Protocol.Http">
+      <summary>Indicates that the current formatter sink is using the HTTP protocol, and therefore requires special processing.</summary>
+    </member>
+    <member name="F:System.Runtime.Remoting.Channels.SoapServerFormatterSink.Protocol.Other">
+      <summary>Indicates that a protocol other than HTTP is used with the current formatter sink.</summary>
+    </member>
+    <member name="T:System.Runtime.Remoting.Channels.SoapServerFormatterSinkProvider">
+      <summary>Provides the implementation for a server formatter channel sink provider that uses the <see cref="T:System.Runtime.Serialization.Formatters.Soap.SoapFormatter" />.</summary>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.SoapServerFormatterSinkProvider.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.SoapServerFormatterSinkProvider" /> class with default values.</summary>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.SoapServerFormatterSinkProvider.#ctor(System.Collections.IDictionary,System.Collections.ICollection)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.SoapServerFormatterSinkProvider" /> class with the provided properties and provider data.</summary>
+      <param name="properties">A <see cref="T:System.Collections.IDictionary" /> of configuration properties to use with the new instance of <see cref="T:System.Runtime.Remoting.Channels.SoapClientFormatterSinkProvider" />. </param>
+      <param name="providerData">A <see cref="T:System.Collections.ICollection" /> of provider data to use with the new instance of <see cref="T:System.Runtime.Remoting.Channels.SoapClientFormatterSinkProvider" />. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.SoapServerFormatterSinkProvider.CreateSink(System.Runtime.Remoting.Channels.IChannelReceiver)">
+      <summary>Creates a sink chain.</summary>
+      <returns>The first sink of the newly formed channel sink chain.</returns>
+      <param name="channel">The channel for which to create the channel sink chain. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.SoapServerFormatterSinkProvider.GetChannelData(System.Runtime.Remoting.Channels.IChannelDataStore)">
+      <summary>Returns the channel data for the channel that the current sink is associated with.</summary>
+      <param name="channelData">A <see cref="T:System.Runtime.Remoting.Channels.IChannelDataStore" /> object in which the channel data is to be returned. </param>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.SoapServerFormatterSinkProvider.Next">
+      <summary>Gets or sets the next <see cref="T:System.Runtime.Remoting.Channels.IServerChannelSinkProvider" /> in the sink provider chain.</summary>
+      <returns>The next <see cref="T:System.Runtime.Remoting.Channels.IServerChannelSinkProvider" /> in the sink provider chain.</returns>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.SoapServerFormatterSinkProvider.TypeFilterLevel">
+      <summary>Gets or sets the TypeFilterLevel value of automatic deserialization the SoapServerFormatterSink performs.</summary>
+      <returns>The TypeFilterLevel that represents the current automatic deserialization level.</returns>
+    </member>
+    <member name="T:System.Runtime.Remoting.Channels.SocketCachePolicy">
+      <summary>Specifies the policy for removing clients from the cache maintained by remoting clients.</summary>
+    </member>
+    <member name="F:System.Runtime.Remoting.Channels.SocketCachePolicy.Default">
+      <summary>Remove a socket from the cache a fixed time after its last use.</summary>
+    </member>
+    <member name="F:System.Runtime.Remoting.Channels.SocketCachePolicy.AbsoluteTimeout">
+      <summary>Remove a socket from the cache a fixed time after its creation.</summary>
+    </member>
+    <member name="T:System.Runtime.Remoting.Channels.Http.HttpChannel">
+      <summary>Implements a client channel for remote calls that uses the HTTP protocol to transmit messages.</summary>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Http.HttpChannel.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.Http.HttpChannel" /> class.</summary>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Http.HttpChannel.#ctor(System.Collections.IDictionary,System.Runtime.Remoting.Channels.IClientChannelSinkProvider,System.Runtime.Remoting.Channels.IServerChannelSinkProvider)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.Http.HttpChannel" /> class with the specified configuration properties and sinks.</summary>
+      <param name="properties">A <see cref="T:System.Collections.IDictionary" /> collection that specifies values for configuration properties to be used by the client and server channels. </param>
+      <param name="clientSinkProvider">The <see cref="T:System.Runtime.Remoting.Channels.IClientChannelSinkProvider" /> implementation to be used by the client channel. </param>
+      <param name="serverSinkProvider">The <see cref="T:System.Runtime.Remoting.Channels.IServerChannelSinkProvider" /> implementation to be used by the server channel.</param>
+      <exception cref="T:System.ArgumentException">A configuration property was incorrectly formatted. </exception>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Http.HttpChannel.#ctor(System.Int32)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.Http.HttpChannel" /> class with a server channel that listens on the specified port.</summary>
+      <param name="port">The port on which the server channel listens.</param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Http.HttpChannel.AddHookChannelUri(System.String)">
+      <summary>Adds a URI on which the channel hook should listen.</summary>
+      <param name="channelUri">Should always be a null reference (Nothing in Visual Basic) for <see cref="T:System.Runtime.Remoting.Channels.Http.HttpChannel" /></param>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Http.HttpChannel.ChannelData">
+      <summary>Gets the channel-specific data.</summary>
+      <returns>The channel data.</returns>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Http.HttpChannel.ChannelName">
+      <summary>Gets the name of the current channel.</summary>
+      <returns>A <see cref="T:System.String" /> that contains the name of the channel.</returns>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Http.HttpChannel.ChannelPriority">
+      <summary>Gets the priority of the current channel.</summary>
+      <returns>An integer that represents the priority assigned to the channel.</returns>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Http.HttpChannel.ChannelScheme">
+      <summary>Gets the type of listener to hook into (for example, "http").</summary>
+      <returns>The type of listener to hook into.</returns>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Http.HttpChannel.ChannelSinkChain">
+      <summary>Gets the channel sink chain that the current channel is using.</summary>
+      <returns>The channel sink chain that the current channel is using.</returns>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Http.HttpChannel.CreateMessageSink(System.String,System.Object,System.String@)">
+      <summary>Returns a channel message sink that delivers messages to the specified URL or channel data object.</summary>
+      <returns>A channel message sink that delivers messages to the specified URL or channel data object.</returns>
+      <param name="url">The URL to which the new sink will deliver messages. Can be null. </param>
+      <param name="remoteChannelData">The channel data object of the remote host to which the new sink will deliver messages. Can be null. </param>
+      <param name="objectURI">When this method returns, contains a URI of the new channel message sink that delivers messages to the specified URL or channel data object. This parameter is passed uninitialized. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Http.HttpChannel.GetUrlsForUri(System.String)">
+      <summary>Returns an array of all the URLs for an object with the specified URI, hosted on the current <see cref="T:System.Runtime.Remoting.Channels.Http.HttpChannel" />.</summary>
+      <returns>An array of the URLs for an object with the specified URI, hosted on the current <see cref="T:System.Runtime.Remoting.Channels.Http.HttpChannel" />.</returns>
+      <param name="objectURI">The URI of the object for which URL's are required. </param>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Http.HttpChannel.IsSecured">
+      <summary>Gets or sets a Boolean value that indicates whether the current channel is secure.</summary>
+      <returns>A Boolean value that indicates whether the current instance is secure.</returns>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Http.HttpChannel.Item(System.Object)">
+      <summary>Returns the specified channel property.</summary>
+      <returns>A <see cref="T:System.Object" /> that represents the channel property specified by <paramref name="key" />.</returns>
+      <param name="key">The key of the channel property to retrieve.</param>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Http.HttpChannel.Keys">
+      <summary>Gets a <see cref="T:System.Collections.ICollection" /> of keys that the channel properties are associated with.</summary>
+      <returns>A <see cref="T:System.Collections.ICollection" /> of keys that the channel properties are associated with.</returns>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Http.HttpChannel.Parse(System.String,System.String@)">
+      <summary>Extracts the channel URI and the remote well-known object URI from the specified URL.</summary>
+      <returns>The URI of the current channel, or null if the specified URL is not an HTTP URL.</returns>
+      <param name="url">The URL from which to extract the URI of the remote well-known object. </param>
+      <param name="objectURI">When this method returns, contains a <see cref="T:System.String" /> that holds the URI of the remote well-known object. This parameter is passed uninitialized. </param>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Http.HttpChannel.Properties">
+      <summary>Gets a <see cref="T:System.Collections.IDictionary" /> of the channel properties associated with the current channel.</summary>
+      <returns>A <see cref="T:System.Collections.IDictionary" /> of the channel properties associated with the current channel.</returns>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Http.HttpChannel.StartListening(System.Object)">
+      <summary>Instructs the current channel to start listening for requests.</summary>
+      <param name="data">Should always be a null reference (Nothing in Visual Basic) for <see cref="T:System.Runtime.Remoting.Channels.Http.HttpChannel" />. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Http.HttpChannel.StopListening(System.Object)">
+      <summary>Instructs the current channel to stop listening for requests.</summary>
+      <param name="data">The channel URI on which the channel hook is listening.</param>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Http.HttpChannel.WantsToListen">
+      <summary>Gets a Boolean value that indicates whether the current instance wants to be hooked into the outside listener service.</summary>
+      <returns>A Boolean value that indicates whether <see cref="T:System.Runtime.Remoting.Channels.IChannelReceiverHook" /> wants to be hooked into the outside listener service.</returns>
+    </member>
+    <member name="T:System.Runtime.Remoting.Channels.Http.HttpClientChannel">
+      <summary>Implements a client channel for remote calls that uses the HTTP protocol to transmit messages.</summary>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Http.HttpClientChannel.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.Http.HttpClientChannel" /> class.</summary>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Http.HttpClientChannel.#ctor(System.Collections.IDictionary,System.Runtime.Remoting.Channels.IClientChannelSinkProvider)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.Http.HttpClientChannel" /> class with the specified configuration properties and sink.</summary>
+      <param name="properties">A <see cref="T:System.Collections.IDictionary" /> collection that specifies values for configuration properties to be used by the channel. </param>
+      <param name="sinkProvider">The <see cref="T:System.Runtime.Remoting.Channels.IClientChannelSinkProvider" /> implementation to be used by the channel. </param>
+      <exception cref="T:System.ArgumentException">A configuration property was incorrectly formatted. </exception>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Http.HttpClientChannel.#ctor(System.String,System.Runtime.Remoting.Channels.IClientChannelSinkProvider)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.Http.HttpClientChannel" /> class with the specified name and sink.</summary>
+      <param name="name">The name of the new instance of the <see cref="T:System.Runtime.Remoting.Channels.Http.HttpClientChannel" />. </param>
+      <param name="sinkProvider">The <see cref="T:System.Runtime.Remoting.Channels.IClientChannelSinkProvider" /> to be used by the channel. </param>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Http.HttpClientChannel.ChannelName">
+      <summary>Gets the name of the current channel.</summary>
+      <returns>A <see cref="T:System.String" /> that contains the name of the channel.</returns>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Http.HttpClientChannel.ChannelPriority">
+      <summary>Gets the priority of the current channel.</summary>
+      <returns>An integer that represents the priority assigned to the channel.</returns>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Http.HttpClientChannel.CreateMessageSink(System.String,System.Object,System.String@)">
+      <summary>Returns a channel message sink that delivers messages to the specified URL or channel data object.</summary>
+      <returns>A channel message sink that delivers messages to the specified URL or channel data object.</returns>
+      <param name="url">The URL to which the new sink will deliver messages. Can be null. </param>
+      <param name="remoteChannelData">The channel data object of the remote host to which the new sink will deliver messages. Can be null. </param>
+      <param name="objectURI">When this method returns, contains a URI of the new channel message sink that delivers messages to the specified URL or channel data object. This parameter is passed uninitialized. </param>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Http.HttpClientChannel.IsSecured">
+      <summary>Gets or sets whether the client channel is secured.</summary>
+      <returns>true is the client channel is secured otherwise false.</returns>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Http.HttpClientChannel.Item(System.Object)">
+      <summary>Returns the specified channel property.</summary>
+      <returns>A <see cref="T:System.Object" /> that represents the channel property specified by <paramref name="key" />.</returns>
+      <param name="key">The key of the channel property to retrieve.</param>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Http.HttpClientChannel.Keys">
+      <summary>Gets a <see cref="T:System.Collections.ICollection" /> of keys that the channel properties are associated with.</summary>
+      <returns>A <see cref="T:System.Collections.ICollection" /> of keys that the channel properties are associated with.</returns>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Http.HttpClientChannel.Parse(System.String,System.String@)">
+      <summary>Extracts the channel URI and the remote well-known object URI from the specified URL.</summary>
+      <returns>The URI of the current channel, or null if the specified URL is not an HTTP URL.</returns>
+      <param name="url">The URL from which to extract the URI of the remote well-known object. </param>
+      <param name="objectURI">When this method returns, contains a <see cref="T:System.String" /> that holds the URI of the remote well-known object. This parameter is passed uninitialized. </param>
+    </member>
+    <member name="T:System.Runtime.Remoting.Channels.Http.HttpRemotingHandler">
+      <summary>Implements an ASP.NET handler that forwards requests to the remoting HTTP channel.</summary>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Http.HttpRemotingHandler.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.Http.HttpRemotingHandler" /> class with default values.</summary>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Http.HttpRemotingHandler.#ctor(System.Type,System.Object)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.Http.HttpRemotingHandler" /> class with default values. </summary>
+      <param name="type">The constructor ignores the <paramref name="type" /> parameter.</param>
+      <param name="srvID">The constructor ignores the <paramref name="srvID" /> parameter.</param>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Http.HttpRemotingHandler.IsReusable">
+      <summary>Gets a Boolean value that indicates whether another request can use the <see cref="T:System.Runtime.Remoting.Channels.Http.HttpRemotingHandler" />.</summary>
+      <returns>true for all instances of <see cref="T:System.Runtime.Remoting.Channels.Http.HttpRemotingHandler" />.</returns>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Http.HttpRemotingHandler.ProcessRequest(System.Web.HttpContext)">
+      <summary>Enables processing of HTTP Web requests by the current instance.</summary>
+      <param name="context">A <see cref="T:System.Web.HttpContext" /> that provides references to the intrinsic server objects (for example, Request, Response, Session, and Server) used to service HTTP requests. </param>
+    </member>
+    <member name="T:System.Runtime.Remoting.Channels.Http.HttpRemotingHandlerFactory">
+      <summary>Initializes new instances of the <see cref="T:System.Runtime.Remoting.Channels.Http.HttpRemotingHandler" /> class.</summary>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Http.HttpRemotingHandlerFactory.#ctor">
+      <summary>Creates an instance of <see cref="T:System.Runtime.Remoting.Channels.Http.HttpRemotingHandlerFactory" />.</summary>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Http.HttpRemotingHandlerFactory.GetHandler(System.Web.HttpContext,System.String,System.String,System.String)">
+      <summary>Returns an instance of the <see cref="T:System.Runtime.Remoting.Channels.Http.HttpRemotingHandler" /> class.</summary>
+      <returns>A new <see cref="T:System.Runtime.Remoting.Channels.Http.HttpRemotingHandler" /> that processes the request.</returns>
+      <param name="context">An instance of the <see cref="T:System.Web.HttpContext" /> class that provides references to intrinsic server objects (for example, Request, Response, Session, and Server) used to service HTTP requests. </param>
+      <param name="verb">The HTTP data transfer method (GET or POST) that the client uses. </param>
+      <param name="url">The <see cref="P:System.Web.HttpRequest.RawUrl" /> of the requested resource. </param>
+      <param name="filePath">The <see cref="P:System.Web.HttpRequest.PhysicalApplicationPath" /> to the requested resource. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Http.HttpRemotingHandlerFactory.ReleaseHandler(System.Web.IHttpHandler)">
+      <summary>Enables a factory to reuse the specified <see cref="T:System.Runtime.Remoting.Channels.Http.HttpRemotingHandler" />.</summary>
+      <param name="handler">The <see cref="T:System.Web.IHttpHandler" /> to release. </param>
+    </member>
+    <member name="T:System.Runtime.Remoting.Channels.Http.HttpServerChannel">
+      <summary>Implements a server channel for remote calls that uses the HTTP protocol to transmit messages.</summary>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Http.HttpServerChannel.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.Http.HttpServerChannel" /> class.</summary>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Http.HttpServerChannel.#ctor(System.Collections.IDictionary,System.Runtime.Remoting.Channels.IServerChannelSinkProvider)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.Http.HttpServerChannel" /> class with the specified channel properties and sink.</summary>
+      <param name="properties">A <see cref="T:System.Collections.IDictionary" /> of the channel properties that hold the configuration information for the current channel. </param>
+      <param name="sinkProvider">The <see cref="T:System.Runtime.Remoting.Channels.IServerChannelSinkProvider" /> to use with the new instance of the <see cref="T:System.Runtime.Remoting.Channels.Http.HttpServerChannel" />. </param>
+      <exception cref="T:System.ArgumentException">A configuration property was incorrectly formatted. </exception>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Http.HttpServerChannel.#ctor(System.Int32)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.Http.HttpServerChannel" /> class that listens on the specified port.</summary>
+      <param name="port">The port on which the channel listens. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Http.HttpServerChannel.#ctor(System.String,System.Int32)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.Http.HttpServerChannel" /> class with the given name and that listens on the specified port.</summary>
+      <param name="name">The name of the channel. </param>
+      <param name="port">The port on which the channel listens. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Http.HttpServerChannel.#ctor(System.String,System.Int32,System.Runtime.Remoting.Channels.IServerChannelSinkProvider)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.Http.HttpServerChannel" /> class at the specified port with the given name, which listens on the specified port, and uses the specified sink.</summary>
+      <param name="name">The name of the channel. </param>
+      <param name="port">The port on which the channel listens. </param>
+      <param name="sinkProvider">The <see cref="T:System.Runtime.Remoting.Channels.IServerChannelSinkProvider" /> to be used by the channel. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Http.HttpServerChannel.AddHookChannelUri(System.String)">
+      <summary>Adds a URI on which the channel hook must listen.</summary>
+      <param name="channelUri">A URI on which the channel hook must listen. </param>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Http.HttpServerChannel.ChannelData">
+      <summary>Gets channel-specific data.</summary>
+      <returns>A <see cref="T:System.Runtime.Remoting.Channels.ChannelDataStore" /> instance that contains channel-specific data.</returns>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Http.HttpServerChannel.ChannelName">
+      <summary>Gets the name of the current channel.</summary>
+      <returns>A <see cref="T:System.String" /> object that contains the name of the channel.</returns>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Http.HttpServerChannel.ChannelPriority">
+      <summary>Gets the priority of the current channel.</summary>
+      <returns>An integer that represents the priority assigned to the channel.</returns>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Http.HttpServerChannel.ChannelScheme">
+      <summary>Gets the type of listener to hook into (for example, "http").</summary>
+      <returns>The type of listener to hook into.</returns>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Http.HttpServerChannel.ChannelSinkChain">
+      <summary>Gets the channel sink chain that the current channel is using.</summary>
+      <returns>The channel sink chain that the current channel is using.</returns>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Http.HttpServerChannel.GetChannelUri">
+      <summary>Returns the URI of the current channel.</summary>
+      <returns>The URI of the current channel.</returns>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Http.HttpServerChannel.GetUrlsForUri(System.String)">
+      <summary>Returns an array of all the URLs for an object with the specified URI, hosted on the current <see cref="T:System.Runtime.Remoting.Channels.Http.HttpChannel" />.</summary>
+      <returns>An array of the URLs for an object with the specified URI, hosted on the current <see cref="T:System.Runtime.Remoting.Channels.Http.HttpChannel" />.</returns>
+      <param name="objectUri">The URI of the object for which URLs are required. </param>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Http.HttpServerChannel.Item(System.Object)">
+      <summary>Returns the specified channel property.</summary>
+      <returns>A <see cref="T:System.Object" /> that represents the channel property specified by <paramref name="key" />.</returns>
+      <param name="key">The key of the channel property to retrieve.</param>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Http.HttpServerChannel.Keys">
+      <summary>Gets a <see cref="T:System.Collections.ICollection" /> of keys the channel properties are associated with.</summary>
+      <returns>A <see cref="T:System.Collections.ICollection" /> of keys the channel properties are associated with.</returns>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Http.HttpServerChannel.Parse(System.String,System.String@)">
+      <summary>Extracts the channel URI and the remote well-known object URI from the specified URL.</summary>
+      <returns>The channel URI.</returns>
+      <param name="url">The URL from which to extract the URIs. </param>
+      <param name="objectURI">When this method returns, contains a <see cref="T:System.String" /> that holds the URI of the remote well-known object. This parameter is passed uninitialized. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Http.HttpServerChannel.StartListening(System.Object)">
+      <summary>Instructs the current channel to start listening for requests.</summary>
+      <param name="data">Should always be null for <see cref="T:System.Runtime.Remoting.Channels.Http.HttpChannel" />. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Http.HttpServerChannel.StopListening(System.Object)">
+      <summary>Instructs the current channel to stop listening for requests.</summary>
+      <param name="data">Should always be null for <see cref="T:System.Runtime.Remoting.Channels.Http.HttpChannel" />. </param>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Http.HttpServerChannel.WantsToListen">
+      <summary>Gets a Boolean value that indicates whether <see cref="T:System.Runtime.Remoting.Channels.IChannelReceiverHook" /> wants to be hooked into the outside listener service.</summary>
+      <returns>A Boolean value that indicates whether <see cref="T:System.Runtime.Remoting.Channels.IChannelReceiverHook" /> wants to be hooked into the outside listener service.</returns>
+    </member>
+    <member name="T:System.Runtime.Remoting.Channels.Ipc.IpcChannel">
+      <summary>Provides a channel implementation that uses the IPC protocol to transmit messages.</summary>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Ipc.IpcChannel.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.Ipc.IpcChannel" /> class, activating only a client channel, and not a server channel.</summary>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Ipc.IpcChannel.#ctor(System.Collections.IDictionary,System.Runtime.Remoting.Channels.IClientChannelSinkProvider,System.Runtime.Remoting.Channels.IServerChannelSinkProvider)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.Ipc.IpcChannel" /> class with the specified configuration properties and sinks.</summary>
+      <param name="properties">A <see cref="T:System.Collections.IDictionary" /> collection specifying values for configuration properties to be used by the client and server channels. </param>
+      <param name="clientSinkProvider">The <see cref="T:System.Runtime.Remoting.Channels.IClientChannelSinkProvider" /> implementation to be used by the client channel. </param>
+      <param name="serverSinkProvider">The <see cref="T:System.Runtime.Remoting.Channels.IServerChannelSinkProvider" /> implementation to be used by the server channel. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Ipc.IpcChannel.#ctor(System.Collections.IDictionary,System.Runtime.Remoting.Channels.IClientChannelSinkProvider,System.Runtime.Remoting.Channels.IServerChannelSinkProvider,System.Security.AccessControl.CommonSecurityDescriptor)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.Ipc.IpcChannel" /> class with the specified configuration properties and sinks.</summary>
+      <param name="properties">A <see cref="T:System.Collections.IDictionary" /> collection specifying values for configuration properties to be used by the client and server channels. </param>
+      <param name="clientSinkProvider">The <see cref="T:System.Runtime.Remoting.Channels.IClientChannelSinkProvider" /> implementation to be used by the client channel. </param>
+      <param name="serverSinkProvider">The <see cref="T:System.Runtime.Remoting.Channels.IServerChannelSinkProvider" /> implementation to be used by the server channel. </param>
+      <param name="securityDescriptor">The security descriptor.</param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Ipc.IpcChannel.#ctor(System.String)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.Ipc.IpcChannel" /> class with a server channel that listens on the specified IPC port.</summary>
+      <param name="portName">The name of the IPC port.</param>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Ipc.IpcChannel.ChannelData">
+      <summary>Gets the channel-specific data.</summary>
+      <returns>A <see cref="T:System.Runtime.Remoting.Channels.ChannelDataStore" /> instance that contains channel-specific data.</returns>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Ipc.IpcChannel.ChannelName">
+      <summary>Gets the name of the current channel.</summary>
+      <returns>A <see cref="T:System.String" /> that contains the name of the channel.</returns>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Ipc.IpcChannel.ChannelPriority">
+      <summary>Gets the priority of the current channel.</summary>
+      <returns>An integer that represents the priority assigned to the channel.</returns>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Ipc.IpcChannel.CreateMessageSink(System.String,System.Object,System.String@)">
+      <summary>Returns a channel message sink that delivers messages to the specified URL or channel data object.</summary>
+      <returns>A channel message sink that delivers messages to the specified URL or channel data object.</returns>
+      <param name="url">The URL to which the new sink should deliver messages. Can be null. </param>
+      <param name="remoteChannelData">The channel data object of the remote host to which the new sink should deliver messages. Can be null. </param>
+      <param name="objectURI">When this method returns, contains a URI of the new channel message sink that delivers messages to the specified URL or channel data object. This parameter is passed uninitialized. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Ipc.IpcChannel.GetUrlsForUri(System.String)">
+      <summary>Returns an array of all the URLs for an object with the specified URI, hosted on the current <see cref="T:System.Runtime.Remoting.Channels.Ipc.IpcChannel" />.</summary>
+      <returns>An array of the URLs for an object with the specified URI, hosted on the current <see cref="T:System.Runtime.Remoting.Channels.Ipc.IpcChannel" />.</returns>
+      <param name="objectURI">The URI of the object for which URLs are required. </param>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Ipc.IpcChannel.IsSecured">
+      <summary>Gets or sets a Boolean value that indicates whether the current channel is secure.</summary>
+      <returns>A Boolean value that indicates whether the current instance is secure.</returns>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Ipc.IpcChannel.Parse(System.String,System.String@)">
+      <summary>Extracts the channel URI and the remote well-known object URI from the specified URL.</summary>
+      <returns>The URI of the current channel.</returns>
+      <param name="url">The URL from which to extract the URI of the remote well-known object. </param>
+      <param name="objectURI">When this method returns, contains a <see cref="T:System.String" /> that holds the URI of the remote well-known object. This parameter is passed uninitialized. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Ipc.IpcChannel.StartListening(System.Object)">
+      <summary>Instructs the current channel to start listening for requests.</summary>
+      <param name="data">Optional initialization information. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Ipc.IpcChannel.StopListening(System.Object)">
+      <summary>Instructs the current channel to stop listening for requests.</summary>
+      <param name="data">Optional state information for the channel. </param>
+    </member>
+    <member name="T:System.Runtime.Remoting.Channels.Ipc.IpcClientChannel">
+      <summary>Implements a client channel for remote calls that uses the IPC protocol to transmit messages.</summary>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Ipc.IpcClientChannel.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.Ipc.IpcServerChannel" /> class.</summary>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Ipc.IpcClientChannel.#ctor(System.Collections.IDictionary,System.Runtime.Remoting.Channels.IClientChannelSinkProvider)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.Ipc.IpcClientChannel" /> class with the specified configuration properties and sink.</summary>
+      <param name="properties">A <see cref="T:System.Collections.IDictionary" /> collection that specifies values for configuration properties to be used by the channel.</param>
+      <param name="sinkProvider">The <see cref="T:System.Runtime.Remoting.Channels.IServerChannelSinkProvider" /> implementation to be used by the channel.</param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Ipc.IpcClientChannel.#ctor(System.String,System.Runtime.Remoting.Channels.IClientChannelSinkProvider)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.Ipc.IpcClientChannel" /> class with the specified name and sink.</summary>
+      <param name="name">The name of the channel.</param>
+      <param name="sinkProvider">The <see cref="T:System.Runtime.Remoting.Channels.IClientChannelSinkProvider" /> implementation to be used by the channel.</param>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Ipc.IpcClientChannel.ChannelName">
+      <summary>Gets the name of the current channel.</summary>
+      <returns>A <see cref="T:System.String" /> instance that contains the name of the channel.</returns>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Ipc.IpcClientChannel.ChannelPriority">
+      <summary>Gets the priority of the current channel.</summary>
+      <returns>An integer that indicates the priority assigned to the channel.</returns>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Ipc.IpcClientChannel.CreateMessageSink(System.String,System.Object,System.String@)">
+      <summary>Returns a channel message sink that delivers messages to the specified URL or channel data object.</summary>
+      <returns>A channel message sink that delivers messages to the specified URL or channel data object.</returns>
+      <param name="url">The URL to which the new sink delivers messages. This parameter can be null.</param>
+      <param name="remoteChannelData">The channel data object of the remote host to which the new sink will deliver messages. This parameter can be null. </param>
+      <param name="objectURI">When this method returns, contains the URI of the new channel message sink that delivers messages to the specified URL or channel data object. This parameter is passed uninitialized.</param>
+      <exception cref="T:System.Runtime.Remoting.RemotingException">The provided sink does not implement <see cref="T:System.Runtime.Remoting.Messaging.IMessageSink" />.</exception>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Ipc.IpcClientChannel.IsSecured">
+      <summary>Gets or sets a Boolean value that indicates whether the current channel is secure.</summary>
+      <returns>A Boolean value that indicates whether the current instance is secure.</returns>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Ipc.IpcClientChannel.Parse(System.String,System.String@)">
+      <summary>Extracts the channel URI and the remote well-known object URI from the specified URL.</summary>
+      <returns>A <see cref="T:System.String" /> that contains the channel URI.</returns>
+      <param name="url">The URL from which to extract the object URI.</param>
+      <param name="objectURI">When this method returns, a <see cref="T:System.String" /> instance that holds the URI of the remote well-known object. This parameter is passed uninitialized.</param>
+    </member>
+    <member name="T:System.Runtime.Remoting.Channels.Ipc.IpcServerChannel">
+      <summary>Implements a server channel for remote calls that uses the IPC system to transmit messages.</summary>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Ipc.IpcServerChannel.#ctor(System.Collections.IDictionary,System.Runtime.Remoting.Channels.IServerChannelSinkProvider)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.Ipc.IpcServerChannel" /> class with the specified channel properties and sink.</summary>
+      <param name="properties">A <see cref="T:System.Collections.IDictionary" /> collection that specifies values for configuration properties to be used by the channel.</param>
+      <param name="sinkProvider">The <see cref="T:System.Runtime.Remoting.Channels.IServerChannelSinkProvider" /> implementation to be used by the channel.</param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Ipc.IpcServerChannel.#ctor(System.Collections.IDictionary,System.Runtime.Remoting.Channels.IServerChannelSinkProvider,System.Security.AccessControl.CommonSecurityDescriptor)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.Ipc.IpcServerChannel" /> class with the specified channel properties, sink, and security descriptor.</summary>
+      <param name="properties">A <see cref="T:System.Collections.IDictionary" /> collection that specifies values for configuration properties to be used by the channel.</param>
+      <param name="sinkProvider">The <see cref="T:System.Runtime.Remoting.Channels.IServerChannelSinkProvider" /> implementation to be used by the channel.</param>
+      <param name="securityDescriptor">A <see cref="T:System.Security.AccessControl.CommonSecurityDescriptor" /> to be used by the channel.</param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Ipc.IpcServerChannel.#ctor(System.String)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.Ipc.IpcServerChannel" /> class with the specified IPC port name.</summary>
+      <param name="portName">The name of the IPC port to be used by the channel.</param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Ipc.IpcServerChannel.#ctor(System.String,System.String)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.Ipc.IpcServerChannel" /> class with the specified channel name and IPC port name.</summary>
+      <param name="name">The name of the channel.</param>
+      <param name="portName">The name of the IPC port to be used by the channel.</param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Ipc.IpcServerChannel.#ctor(System.String,System.String,System.Runtime.Remoting.Channels.IServerChannelSinkProvider)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.Ipc.IpcServerChannel" /> class with the specified channel name, IPC port name, and sink.</summary>
+      <param name="name">The name of the channel.</param>
+      <param name="portName">The name of the IPC port to be used by the channel.</param>
+      <param name="sinkProvider">The <see cref="T:System.Runtime.Remoting.Channels.IServerChannelSinkProvider" /> implementation to be used by the channel.</param>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Ipc.IpcServerChannel.ChannelData">
+      <summary>Gets channel-specific data.</summary>
+      <returns>A <see cref="T:System.Runtime.Remoting.Channels.ChannelDataStore" /> instance that contains channel-specific data.</returns>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Ipc.IpcServerChannel.ChannelName">
+      <summary>Gets the name of the current channel.</summary>
+      <returns>A <see cref="T:System.String" /> instance that contains the name of the channel.</returns>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Ipc.IpcServerChannel.ChannelPriority">
+      <summary>Gets the priority of the current channel.</summary>
+      <returns>An integer that indicates the priority assigned to the channel.</returns>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Ipc.IpcServerChannel.GetChannelUri">
+      <summary>Returns the URI of the current channel.</summary>
+      <returns>A <see cref="T:System.String" /> that contains the URI of the channel.</returns>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Ipc.IpcServerChannel.GetUrlsForUri(System.String)">
+      <summary>Returns an array of all the URLs for the object with the specified URI, hosted on the current <see cref="T:System.Runtime.Remoting.Channels.Ipc.IpcChannel" /> instance.</summary>
+      <returns>An array of the URLs for an object with the specified URI, hosted on the current <see cref="T:System.Runtime.Remoting.Channels.Tcp.TcpChannel" /> instance.</returns>
+      <param name="objectUri">The URI of the object for which URLs are required.</param>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Ipc.IpcServerChannel.IsSecured">
+      <summary>Gets or sets a Boolean value that indicates whether the current channel is secure.</summary>
+      <returns>A Boolean value that indicates whether the current instance is secure.</returns>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Ipc.IpcServerChannel.Parse(System.String,System.String@)">
+      <summary>Extracts the channel URI and the remote well-known object URI from the specified URL.</summary>
+      <returns>The URI of the current channel.</returns>
+      <param name="url">The URL from which to extract the URI of the remote well-known object.</param>
+      <param name="objectURI">When this method returns, contains a <see cref="T:System.String" /> instance that holds the URI of the remote well-known object. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Ipc.IpcServerChannel.StartListening(System.Object)">
+      <summary>Instructs the current channel to start listening for requests.</summary>
+      <param name="data">An object that specifies an initialization state, or null, if you do not want to pass a specific state to the channel.</param>
+      <exception cref="T:System.Exception">The specified listening port is not available.</exception>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Ipc.IpcServerChannel.StopListening(System.Object)">
+      <summary>Instructs the current channel to stop listening for requests.</summary>
+      <param name="data">An object that specifies an initialization state, or null, if you do not want to pass a specific state to the channel.</param>
+    </member>
+    <member name="T:System.Runtime.Remoting.Channels.Tcp.TcpChannel">
+      <summary>Provides a channel implementation that uses the TCP protocol to transmit messages.</summary>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Tcp.TcpChannel.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.Tcp.TcpChannel" /> class, activating only a client channel, and not a server channel.</summary>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Tcp.TcpChannel.#ctor(System.Collections.IDictionary,System.Runtime.Remoting.Channels.IClientChannelSinkProvider,System.Runtime.Remoting.Channels.IServerChannelSinkProvider)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.Tcp.TcpChannel" /> class with the specified configuration properties and sinks.</summary>
+      <param name="properties">A <see cref="T:System.Collections.IDictionary" /> collection that specifies values for configuration properties to be used by the client and server channels. </param>
+      <param name="clientSinkProvider">The <see cref="T:System.Runtime.Remoting.Channels.IClientChannelSinkProvider" /> implementation to be used by the client channel. </param>
+      <param name="serverSinkProvider">The <see cref="T:System.Runtime.Remoting.Channels.IServerChannelSinkProvider" /> implementation to be used by the server channel. </param>
+      <exception cref="T:System.ArgumentException">A provided channel property was improperly formatted. </exception>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Tcp.TcpChannel.#ctor(System.Int32)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.Tcp.TcpChannel" /> class with a server channel that listens on the specified port.</summary>
+      <param name="port">The port on which the server channel listens. </param>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Tcp.TcpChannel.ChannelData">
+      <summary>Gets the channel-specific data.</summary>
+      <returns>A <see cref="T:System.Runtime.Remoting.Channels.ChannelDataStore" /> instance that contains channel-specific data.</returns>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Tcp.TcpChannel.ChannelName">
+      <summary>Gets the name of the current channel.</summary>
+      <returns>A <see cref="T:System.String" /> that contains the name of the channel.</returns>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Tcp.TcpChannel.ChannelPriority">
+      <summary>Gets the priority of the current channel.</summary>
+      <returns>An integer that represents the priority assigned to the channel.</returns>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Tcp.TcpChannel.CreateMessageSink(System.String,System.Object,System.String@)">
+      <summary>Returns a channel message sink that delivers messages to the specified URL or channel data object.</summary>
+      <returns>A channel message sink that delivers messages to the specified URL or channel data object.</returns>
+      <param name="url">The URL to which the new sink should deliver messages. Can be null. </param>
+      <param name="remoteChannelData">The channel data object of the remote host to which the new sink should deliver messages. Can be null. </param>
+      <param name="objectURI">When this method returns, contains a URI of the new channel message sink that delivers messages to the specified URL or channel data object. This parameter is passed uninitialized. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Tcp.TcpChannel.GetUrlsForUri(System.String)">
+      <summary>Returns an array of all the URLs for an object with the specified URI, hosted on the current <see cref="T:System.Runtime.Remoting.Channels.Tcp.TcpChannel" />.</summary>
+      <returns>An array of the URLs for an object with the specified URI, hosted on the current <see cref="T:System.Runtime.Remoting.Channels.Tcp.TcpChannel" />.</returns>
+      <param name="objectURI">The URI of the object for which URLs are required. </param>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Tcp.TcpChannel.IsSecured">
+      <summary>Gets or sets a Boolean value that indicates whether the current channel is secure.</summary>
+      <returns>A Boolean value that indicates whether the current instance is secure.</returns>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Tcp.TcpChannel.Parse(System.String,System.String@)">
+      <summary>Extracts the channel URI and the remote well-known object URI from the specified URL.</summary>
+      <returns>The URI of the current channel.</returns>
+      <param name="url">The URL from which to extract the URI of the remote well-known object. </param>
+      <param name="objectURI">When this method returns, contains a <see cref="T:System.String" /> that holds the URI of the remote well-known object. This parameter is passed uninitialized. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Tcp.TcpChannel.StartListening(System.Object)">
+      <summary>Instructs the current channel to start listening for requests.</summary>
+      <param name="data">Optional initialization information. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Tcp.TcpChannel.StopListening(System.Object)">
+      <summary>Instructs the current channel to stop listening for requests.</summary>
+      <param name="data">Optional state information for the channel. </param>
+    </member>
+    <member name="T:System.Runtime.Remoting.Channels.Tcp.TcpClientChannel">
+      <summary>For remote calls, implements a client channel that uses the TCP protocol to transmit messages.</summary>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Tcp.TcpClientChannel.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.Tcp.TcpClientChannel" /> class.</summary>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Tcp.TcpClientChannel.#ctor(System.Collections.IDictionary,System.Runtime.Remoting.Channels.IClientChannelSinkProvider)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.Tcp.TcpClientChannel" /> class with the specified configuration properties and sink.</summary>
+      <param name="properties">A <see cref="T:System.Collections.IDictionary" /> collection that specifies values for configuration properties to be used by the channel. </param>
+      <param name="sinkProvider">The <see cref="T:System.Runtime.Remoting.Channels.IServerChannelSinkProvider" /> implementation to be used by the channel. </param>
+      <exception cref="T:System.ArgumentException">A configuration property was incorrectly formatted. </exception>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Tcp.TcpClientChannel.#ctor(System.String,System.Runtime.Remoting.Channels.IClientChannelSinkProvider)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.Tcp.TcpClientChannel" /> class with the specified name and sink.</summary>
+      <param name="name">The name of the channel. </param>
+      <param name="sinkProvider">The <see cref="T:System.Runtime.Remoting.Channels.IClientChannelSinkProvider" /> implementation to be used by the channel. </param>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Tcp.TcpClientChannel.ChannelName">
+      <summary>Gets the name of the current channel.</summary>
+      <returns>A <see cref="T:System.String" /> instance that contains the name of the channel.</returns>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Tcp.TcpClientChannel.ChannelPriority">
+      <summary>Gets the priority of the current channel.</summary>
+      <returns>An integer that represents the priority assigned to the channel.</returns>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Tcp.TcpClientChannel.CreateMessageSink(System.String,System.Object,System.String@)">
+      <summary>Returns a channel message sink that delivers messages to the specified URL or channel data object.</summary>
+      <returns>A channel message sink that delivers messages to the specified URL or channel data object.</returns>
+      <param name="url">The URL to which the new sink delivers messages. Can be null. </param>
+      <param name="remoteChannelData">The channel data object of the remote host to which the new sink will deliver messages. Can be null. </param>
+      <param name="objectURI">When this method returns, contains a URI of the new channel message sink that delivers messages to the specified URL or channel data object. This parameter is passed uninitialized. </param>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Tcp.TcpClientChannel.IsSecured">
+      <summary>Gets or sets a Boolean value that indicates whether the current channel is secure</summary>
+      <returns>A Boolean value that indicates whether the current instance is secure.</returns>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Tcp.TcpClientChannel.Parse(System.String,System.String@)">
+      <summary>Extracts the channel URI and the remote well-known object URI from the specified URL.</summary>
+      <returns>The channel URI.</returns>
+      <param name="url">The URL from which to extract the URIs. </param>
+      <param name="objectURI">When this method returns, contains a <see cref="T:System.String" /> instance that holds the URI of the remote well-known object. This parameter is passed uninitialized. </param>
+    </member>
+    <member name="T:System.Runtime.Remoting.Channels.Tcp.TcpServerChannel">
+      <summary>Implements a server channel for remote calls that uses the TCP protocol to transmit messages.</summary>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Tcp.TcpServerChannel.#ctor(System.Collections.IDictionary,System.Runtime.Remoting.Channels.IServerChannelSinkProvider)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.Tcp.TcpServerChannel" /> class with the specified channel properties and sink.</summary>
+      <param name="properties">A <see cref="T:System.Collections.IDictionary" /> collection specifying values for configuration properties to be used by the channel. </param>
+      <param name="sinkProvider">The <see cref="T:System.Runtime.Remoting.Channels.IServerChannelSinkProvider" /> implementation to be used by the channel. </param>
+      <exception cref="T:System.ArgumentException">A provided channel property was badly formatted. </exception>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Tcp.TcpServerChannel.#ctor(System.Collections.IDictionary,System.Runtime.Remoting.Channels.IServerChannelSinkProvider,System.Runtime.Remoting.Channels.IAuthorizeRemotingConnection)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.Tcp.TcpServerChannel" /> class with the specified channel properties, sink, and authorization provider.</summary>
+      <param name="properties">A <see cref="T:System.Collections.IDictionary" /> collection that specifies values for configuration properties to be used by the channel. </param>
+      <param name="sinkProvider">The <see cref="T:System.Runtime.Remoting.Channels.IServerChannelSinkProvider" /> implementation to be used by the channel. </param>
+      <param name="authorizeCallback">The <see cref="T:System.Runtime.Remoting.Channels.IAuthorizeRemotingConnection" /> implementation to be used by the channel.</param>
+      <exception cref="T:System.ArgumentException">A provided channel property was badly formatted. </exception>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Tcp.TcpServerChannel.#ctor(System.Int32)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.Tcp.TcpServerChannel" /> class that listens on the specified port.</summary>
+      <param name="port">The port on which the channel listens. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Tcp.TcpServerChannel.#ctor(System.String,System.Int32)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.Tcp.TcpServerChannel" /> class with the given name and that listens on the specified port.</summary>
+      <param name="name">The name of the channel. </param>
+      <param name="port">The port on which the channel listens. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Tcp.TcpServerChannel.#ctor(System.String,System.Int32,System.Runtime.Remoting.Channels.IServerChannelSinkProvider)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.Tcp.TcpServerChannel" /> class with the given name, which listens on the specified port, and uses the specified sink.</summary>
+      <param name="name">The name of the channel. </param>
+      <param name="port">The port on which the channel listens. </param>
+      <param name="sinkProvider">The <see cref="T:System.Runtime.Remoting.Channels.IServerChannelSinkProvider" /> implementation to be used by the channel. </param>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Tcp.TcpServerChannel.ChannelData">
+      <summary>Gets channel-specific data.</summary>
+      <returns>A <see cref="T:System.Runtime.Remoting.Channels.ChannelDataStore" /> instance containing channel-specific data.</returns>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Tcp.TcpServerChannel.ChannelName">
+      <summary>Gets the name of the current channel.</summary>
+      <returns>A <see cref="T:System.String" /> instance that contains the name of the channel.</returns>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Tcp.TcpServerChannel.ChannelPriority">
+      <summary>Gets the priority of the current channel.</summary>
+      <returns>An integer that represents the priority assigned to the channel.</returns>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Tcp.TcpServerChannel.GetChannelUri">
+      <summary>Returns the URI of the current channel.</summary>
+      <returns>The URI of the current channel.</returns>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Tcp.TcpServerChannel.GetUrlsForUri(System.String)">
+      <summary>Returns an array of all the URLs for an object with the specified URI, hosted on the current <see cref="T:System.Runtime.Remoting.Channels.Tcp.TcpChannel" /> instance.</summary>
+      <returns>An array of the URLs for an object with the specified URI, hosted on the current <see cref="T:System.Runtime.Remoting.Channels.Tcp.TcpChannel" /> instance.</returns>
+      <param name="objectUri">The URI of the object for which URLs are required. </param>
+    </member>
+    <member name="P:System.Runtime.Remoting.Channels.Tcp.TcpServerChannel.IsSecured">
+      <summary>Gets or sets a Boolean value that indicates whether the current channel is secure.</summary>
+      <returns>A Boolean value that indicates whether the current instance is secure.</returns>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Tcp.TcpServerChannel.Parse(System.String,System.String@)">
+      <summary>Extracts the channel URI and the remote well-known object URI from the specified URL.</summary>
+      <returns>The URI of the current channel.</returns>
+      <param name="url">The URL from which to extract the URI of the remote well-known object. </param>
+      <param name="objectURI">When this method returns, contains a <see cref="T:System.String" /> instance that holds the URI of the remote well-known object. This parameter is passed uninitialized. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Tcp.TcpServerChannel.StartListening(System.Object)">
+      <summary>Instructs the current channel to start listening for requests.</summary>
+      <param name="data">Optional initialization information. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Channels.Tcp.TcpServerChannel.StopListening(System.Object)">
+      <summary>Instructs the current channel to stop listening for requests.</summary>
+      <param name="data">Optional state information for the channel. </param>
+    </member>
+    <member name="T:System.Runtime.Remoting.MetadataServices.MetaData">
+      <summary>Provides methods that allow you to work with XML schema.</summary>
+    </member>
+    <member name="M:System.Runtime.Remoting.MetadataServices.MetaData.#ctor">
+      <summary>Creates an instance of <see cref="T:System.Runtime.Remoting.MetadataServices.MetaData" />.</summary>
+    </member>
+    <member name="M:System.Runtime.Remoting.MetadataServices.MetaData.ConvertCodeSourceFileToAssemblyFile(System.String,System.String,System.String)">
+      <summary>Compiles a specified code source file into a runtime assembly file.</summary>
+      <param name="codePath">The path to the file that contains the source code. </param>
+      <param name="assemblyPath">The location where the new run-time assembly is generated. </param>
+      <param name="strongNameFilename">The strong name to compile into the new assembly. Can be <see cref="F:System.String.Empty" />. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.MetadataServices.MetaData.ConvertCodeSourceStreamToAssemblyFile(System.Collections.ArrayList,System.String,System.String)">
+      <summary>Compiles specified code source streams into a run-time assembly file.</summary>
+      <param name="outCodeStreamList">A <see cref="T:System.Collections.ArrayList" /> of streams with the source code. </param>
+      <param name="assemblyPath">The location where the new run-time assembly is generated. </param>
+      <param name="strongNameFilename">The strong name to compile into the new run-time assembly. Can be <see cref="F:System.String.Empty" />. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.MetadataServices.MetaData.ConvertSchemaStreamToCodeSourceStream(System.Boolean,System.String,System.IO.Stream,System.Collections.ArrayList)">
+      <summary>Converts the specified schema definition into C# proxy source code.</summary>
+      <param name="clientProxy">Indicates the type of proxy to generate. If true, generates a simple proxy (also known as wrapped proxy) that automatically loads the channels, exposes all the methods of the remote object, and provides access to the channel properties. If false, generates a transparent proxy that exposes all the methods of the remote object. </param>
+      <param name="outputDirectory">The directory where the new C# source code files with the proxy are created. </param>
+      <param name="inputStream">The input stream that contains the schema definition in Web Services Description Language (WSDL) format. </param>
+      <param name="outCodeStreamList">The list of file names for the code streams that are generated. Note that the <see cref="M:System.Runtime.Remoting.MetadataServices.MetaData.ConvertSchemaStreamToCodeSourceStream(System.Boolean,System.String,System.IO.Stream,System.Collections.ArrayList,System.String,System.String)" /> method can create multiple source code streams. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.MetadataServices.MetaData.ConvertSchemaStreamToCodeSourceStream(System.Boolean,System.String,System.IO.Stream,System.Collections.ArrayList,System.String)">
+      <summary>Converts the specified schema definition into C# proxy source code for a remote object that is located at the specified URL.</summary>
+      <param name="clientProxy">Indicates the type of proxy to generate. If true, generates a simple proxy (also known as wrapped proxy) that automatically loads the channels, exposes all the methods of the remote object, and provides access to the channel properties. If false, generates a transparent proxy that exposes all the methods of the remote object. </param>
+      <param name="outputDirectory">The directory where the new C# source code files with the proxy are created. </param>
+      <param name="inputStream">The input stream that contains the schema definition in Web Services Description Language (WSDL) format. </param>
+      <param name="outCodeStreamList">The list of file names for the code streams that are generated. Note that the <see cref="M:System.Runtime.Remoting.MetadataServices.MetaData.ConvertSchemaStreamToCodeSourceStream(System.Boolean,System.String,System.IO.Stream,System.Collections.ArrayList,System.String,System.String)" /> method can create multiple source code streams. </param>
+      <param name="proxyUrl">The URL where the target remote object that is represented by the new proxy will be located. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.MetadataServices.MetaData.ConvertSchemaStreamToCodeSourceStream(System.Boolean,System.String,System.IO.Stream,System.Collections.ArrayList,System.String,System.String)">
+      <summary>Converts the specified schema definition into C# proxy source code for a remote object that is located at the specified URL and in the provided class namespace.</summary>
+      <param name="clientProxy">Indicates the type of proxy to generate. If true, generates a simple proxy (also known as wrapped proxy) that automatically loads the channels, exposes all the methods of the remote object, and provides access to the channel properties. If false, generates a transparent proxy that exposes all the methods of the remote object. </param>
+      <param name="outputDirectory">The directory where the new C# source code files with the proxy are created. </param>
+      <param name="inputStream">The input stream containing the schema definition in Web Services Description Language (WSDL) format. </param>
+      <param name="outCodeStreamList">The list of file names for the code streams that are generated. Note that the <see cref="M:System.Runtime.Remoting.MetadataServices.MetaData.ConvertSchemaStreamToCodeSourceStream(System.Boolean,System.String,System.IO.Stream,System.Collections.ArrayList,System.String,System.String)" /> method can create multiple source code streams. </param>
+      <param name="proxyUrl">The URL where the target remote object that is represented by the new proxy will be located. </param>
+      <param name="proxyNamespace">The namespace of the newly created proxy. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.MetadataServices.MetaData.ConvertTypesToSchemaToFile(System.Runtime.Remoting.MetadataServices.ServiceType[],System.Runtime.Remoting.MetadataServices.SdlType,System.String)">
+      <summary>Converts the specified service types to XML schema, and writes it to a file that is specified by name.</summary>
+      <param name="types">The <see cref="T:System.Runtime.Remoting.MetadataServices.ServiceType" /> instances to convert to XML schema. </param>
+      <param name="sdlType">The type of service description language to use for the XML schema. </param>
+      <param name="path">The path of the XML file. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.MetadataServices.MetaData.ConvertTypesToSchemaToFile(System.Type[],System.Runtime.Remoting.MetadataServices.SdlType,System.String)">
+      <summary>Converts the specified object types to XML schema, and writes it to a file that is specified by name.</summary>
+      <param name="types">The object types to convert to XML schema. </param>
+      <param name="sdlType">The type of service description language to use for the XML schema. </param>
+      <param name="path">The path of the XML file. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.MetadataServices.MetaData.ConvertTypesToSchemaToStream(System.Runtime.Remoting.MetadataServices.ServiceType[],System.Runtime.Remoting.MetadataServices.SdlType,System.IO.Stream)">
+      <summary>Converts the specified service types to XML schema, and writes it to a specified stream.</summary>
+      <param name="serviceTypes">The <see cref="T:System.Runtime.Remoting.MetadataServices.ServiceType" /> instances to convert to XML schema. </param>
+      <param name="sdlType">The type of service description language to use for the XML schema. </param>
+      <param name="outputStream">The <see cref="T:System.IO.Stream" /> that the schema is written to. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.MetadataServices.MetaData.ConvertTypesToSchemaToStream(System.Type[],System.Runtime.Remoting.MetadataServices.SdlType,System.IO.Stream)">
+      <summary>Converts the specified object types to XML schema, and writes it to a specified stream.</summary>
+      <param name="types">The object types to convert to XML schema. </param>
+      <param name="sdlType">The type of service description language to use for the XML schema. </param>
+      <param name="outputStream">The <see cref="T:System.IO.Stream" /> that the schema is written to. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.MetadataServices.MetaData.RetrieveSchemaFromUrlToFile(System.String,System.String)">
+      <summary>Downloads the XML schema from a URL, and writes it to the specified file.</summary>
+      <param name="url">The URL where the XML schema is located. </param>
+      <param name="path">The path of the file that the schema is written to. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.MetadataServices.MetaData.RetrieveSchemaFromUrlToStream(System.String,System.IO.Stream)">
+      <summary>Downloads the XML schema from a URL, and writes it to the specified stream.</summary>
+      <param name="url">The URL where the XML schema is located. </param>
+      <param name="outputStream">The <see cref="T:System.IO.Stream" /> that the schema is written to. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.MetadataServices.MetaData.SaveStreamToFile(System.IO.Stream,System.String)">
+      <summary>Saves the input stream to a file with the specified name.</summary>
+      <param name="inputStream">The stream to write to the specified file. </param>
+      <param name="path">The file that the input stream is written to. </param>
+    </member>
+    <member name="T:System.Runtime.Remoting.MetadataServices.SdlChannelSink">
+      <summary>Provides the implementation for a server channel sink that generates Web Services Description Language (WSDL) dynamically on the server.</summary>
+    </member>
+    <member name="M:System.Runtime.Remoting.MetadataServices.SdlChannelSink.#ctor(System.Runtime.Remoting.Channels.IChannelReceiver,System.Runtime.Remoting.Channels.IServerChannelSink)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.MetadataServices.SdlChannelSink" /> class.</summary>
+      <param name="receiver">Indicates the channel that will receive the messages serialized by the new instance of <see cref="T:System.Runtime.Remoting.MetadataServices.SdlChannelSink" />. </param>
+      <param name="nextSink">The next sink in the sink chain. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.MetadataServices.SdlChannelSink.AsyncProcessResponse(System.Runtime.Remoting.Channels.IServerResponseChannelSinkStack,System.Object,System.Runtime.Remoting.Messaging.IMessage,System.Runtime.Remoting.Channels.ITransportHeaders,System.IO.Stream)">
+      <summary>Requests processing from the current sink of the response from a method call that was sent asynchronously.</summary>
+      <param name="sinkStack">A stack of sinks that lead back to the server transport sink. </param>
+      <param name="state">Information associated with the current sink, generated on the request side, and needed on the response side. </param>
+      <param name="msg">The response message. </param>
+      <param name="headers">The headers to add to the return message heading to the client. </param>
+      <param name="stream">The stream heading back to the transport sink. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.MetadataServices.SdlChannelSink.GetResponseStream(System.Runtime.Remoting.Channels.IServerResponseChannelSinkStack,System.Object,System.Runtime.Remoting.Messaging.IMessage,System.Runtime.Remoting.Channels.ITransportHeaders)">
+      <summary>Returns the <see cref="T:System.IO.Stream" /> onto which the provided response message is to be serialized.</summary>
+      <returns>The <see cref="T:System.IO.Stream" /> onto which the provided response message is to be serialized.</returns>
+      <param name="sinkStack">A stack of sinks that lead back to the server transport sink. </param>
+      <param name="state">Information associated with the current sink, generated on the request side, and needed on the response side. </param>
+      <param name="msg">The response message to serialize. </param>
+      <param name="headers">The headers to put in the response stream to the client. </param>
+    </member>
+    <member name="P:System.Runtime.Remoting.MetadataServices.SdlChannelSink.NextChannelSink">
+      <summary>Gets the next <see cref="T:System.Runtime.Remoting.Channels.IServerChannelSink" /> in the sink chain.</summary>
+      <returns>The next <see cref="T:System.Runtime.Remoting.Channels.IServerChannelSink" /> in the sink chain.</returns>
+    </member>
+    <member name="M:System.Runtime.Remoting.MetadataServices.SdlChannelSink.ProcessMessage(System.Runtime.Remoting.Channels.IServerChannelSinkStack,System.Runtime.Remoting.Messaging.IMessage,System.Runtime.Remoting.Channels.ITransportHeaders,System.IO.Stream,System.Runtime.Remoting.Messaging.IMessage@,System.Runtime.Remoting.Channels.ITransportHeaders@,System.IO.Stream@)">
+      <summary>Requests message processing from the current sink.</summary>
+      <returns>A <see cref="T:System.Runtime.Remoting.Channels.ServerProcessing" /> status value that provides information about how the message was processed.</returns>
+      <param name="sinkStack">A stack of channel sinks that called the current sink. </param>
+      <param name="requestMsg">The message that contains the request. </param>
+      <param name="requestHeaders">The headers that are retrieved from the incoming message from the client. </param>
+      <param name="requestStream">The stream that needs to be processed and passed on to the deserialization sink. </param>
+      <param name="responseMsg">When this method returns, contains a <see cref="T:System.Runtime.Remoting.Messaging.IMessage" /> that holds the response message. This parameter is passed uninitialized. </param>
+      <param name="responseHeaders">When this method returns, contains a <see cref="T:System.Runtime.Remoting.Channels.ITransportHeaders" /> that holds the headers to add to return message heading to the client. This parameter is passed uninitialized. </param>
+      <param name="responseStream">When this method returns, contains a <see cref="T:System.IO.Stream" /> that is heading to the transport sink. This parameter is passed uninitialized. </param>
+    </member>
+    <member name="P:System.Runtime.Remoting.MetadataServices.SdlChannelSink.Properties">
+      <summary>Gets a <see cref="T:System.Collections.IDictionary" /> of properties for the current channel sink.</summary>
+      <returns>A <see cref="T:System.Collections.IDictionary" /> of properties for the current channel sink.</returns>
+    </member>
+    <member name="T:System.Runtime.Remoting.MetadataServices.SdlChannelSinkProvider">
+      <summary>Provides the implementation for the server channel sink provider that creates <see cref="T:System.Runtime.Remoting.MetadataServices.SdlChannelSink" /> instances.</summary>
+    </member>
+    <member name="M:System.Runtime.Remoting.MetadataServices.SdlChannelSinkProvider.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.MetadataServices.SdlChannelSinkProvider" /> class with default values.</summary>
+    </member>
+    <member name="M:System.Runtime.Remoting.MetadataServices.SdlChannelSinkProvider.#ctor(System.Collections.IDictionary,System.Collections.ICollection)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.MetadataServices.SdlChannelSinkProvider" /> class with specified properties and provider data.</summary>
+      <param name="properties">A <see cref="T:System.Collections.IDictionary" /> of configuration properties to use with the new instance of <see cref="T:System.Runtime.Remoting.MetadataServices.SdlChannelSinkProvider" />. </param>
+      <param name="providerData">A <see cref="T:System.Collections.ICollection" /> of <see cref="T:System.Runtime.Remoting.Channels.SinkProviderData" /> instances to use with the new instance of <see cref="T:System.Runtime.Remoting.Channels.BinaryServerFormatterSinkProvider" />. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.MetadataServices.SdlChannelSinkProvider.CreateSink(System.Runtime.Remoting.Channels.IChannelReceiver)">
+      <summary>Creates a sink chain.</summary>
+      <returns>The first sink of the newly formed channel sink chain.</returns>
+      <param name="channel">The channel for which to create the channel sink chain. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.MetadataServices.SdlChannelSinkProvider.GetChannelData(System.Runtime.Remoting.Channels.IChannelDataStore)">
+      <summary>Returns the channel data for the channel that the current sink is associated with.</summary>
+      <param name="localChannelData">A <see cref="T:System.Runtime.Remoting.Channels.IChannelDataStore" /> object in which the channel data is to be returned. </param>
+    </member>
+    <member name="P:System.Runtime.Remoting.MetadataServices.SdlChannelSinkProvider.Next">
+      <summary>Gets or sets the next <see cref="T:System.Runtime.Remoting.Channels.IServerChannelSinkProvider" /> in the sink provider chain.</summary>
+      <returns>The next <see cref="T:System.Runtime.Remoting.Channels.IServerChannelSinkProvider" /> in the sink provider chain.</returns>
+    </member>
+    <member name="T:System.Runtime.Remoting.MetadataServices.SdlType">
+      <summary>Specifies the schema type that is used to describe services that are provided by an application.</summary>
+    </member>
+    <member name="F:System.Runtime.Remoting.MetadataServices.SdlType.Sdl">
+      <summary>Indicates that basic Services Description Language (SDL) is used to describe services that are provided by an application. This value is obsolete.</summary>
+    </member>
+    <member name="F:System.Runtime.Remoting.MetadataServices.SdlType.Wsdl">
+      <summary>Indicates that the Web Services Description Language (WSDL) is used to describe services that are provided by an application.</summary>
+    </member>
+    <member name="T:System.Runtime.Remoting.MetadataServices.ServiceType">
+      <summary>Associates a well-known object type that is passed to the Web Services Description Language (WSDL) generator with a remote endpoint that can process messages that are sent to a method on the type.</summary>
+    </member>
+    <member name="M:System.Runtime.Remoting.MetadataServices.ServiceType.#ctor(System.Type)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.MetadataServices.ServiceType" /> class with the object <see cref="T:System.Type" /> that is passed to the Web Services Description Language (WSDL) generator.</summary>
+      <param name="type">The object <see cref="T:System.Type" /> that is passed to the WSDL generator. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.MetadataServices.ServiceType.#ctor(System.Type,System.String)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.MetadataServices.ServiceType" /> class with the URL and <see cref="T:System.Type" /> of an object that is passed to the Web Services Description Language (WSDL) generator.</summary>
+      <param name="type">The object <see cref="T:System.Type" /> that is passed to the WSDL generator. </param>
+      <param name="url">The well-known endpoint that can process messages that are sent to a method on the object type that is specified in the <paramref name="type" /> parameter. </param>
+    </member>
+    <member name="P:System.Runtime.Remoting.MetadataServices.ServiceType.ObjectType">
+      <summary>Gets the object <see cref="T:System.Type" /> that is passed to the Web Services Description Language (WSDL) generator.</summary>
+      <returns>The object <see cref="T:System.Type" /> that the current <see cref="T:System.Runtime.Remoting.MetadataServices.ServiceType" /> was created for.</returns>
+    </member>
+    <member name="P:System.Runtime.Remoting.MetadataServices.ServiceType.Url">
+      <summary>Gets the URL of an object <see cref="T:System.Type" /> that is passed to the Web Services Description Language (WSDL) generator.</summary>
+      <returns>The URL of an object <see cref="T:System.Type" /> that the current <see cref="T:System.Runtime.Remoting.MetadataServices.ServiceType" /> was created for.</returns>
+    </member>
+    <member name="T:System.Runtime.Remoting.MetadataServices.SUDSGeneratorException">
+      <summary>The exception that is thrown if an error occurs during the generation of Web Services Description Language (WSDL).</summary>
+    </member>
+    <member name="M:System.Runtime.Remoting.MetadataServices.SUDSGeneratorException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.MetadataServices.SUDSGeneratorException" /> class.</summary>
+      <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> that holds the serialized object data about the exception being thrown.</param>
+      <param name="context">The <see cref="T:System.Runtime.Serialization.StreamingContext" /> that contains contextual information about the source or destination.</param>
+    </member>
+    <member name="T:System.Runtime.Remoting.MetadataServices.SUDSParserException">
+      <summary>The exception that is thrown if an error occurs during parsing of the Web Services Description Language (WSDL).</summary>
+    </member>
+    <member name="M:System.Runtime.Remoting.MetadataServices.SUDSParserException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.MetadataServices.SUDSParserException" /> class.</summary>
+      <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> that holds the serialized object data about the exception being thrown.</param>
+      <param name="context">The <see cref="T:System.Runtime.Serialization.StreamingContext" /> that contains contextual information about the source or destination.</param>
+    </member>
+    <member name="T:System.Runtime.Remoting.Services.RemotingClientProxy">
+      <summary>The abstract base class for proxies to well-known objects that were generated by the Soapsuds tool.</summary>
+    </member>
+    <member name="M:System.Runtime.Remoting.Services.RemotingClientProxy.#ctor">
+      <summary>Creates an instance of <see cref="T:System.Runtime.Remoting.Services.RemotingClientProxy" />.</summary>
+    </member>
+    <member name="F:System.Runtime.Remoting.Services.RemotingClientProxy._tp">
+      <summary>The transparent proxy inside the remoting client proxy object.</summary>
+    </member>
+    <member name="F:System.Runtime.Remoting.Services.RemotingClientProxy._type">
+      <summary>Indicates the type of the object that the current proxy represents.</summary>
+    </member>
+    <member name="F:System.Runtime.Remoting.Services.RemotingClientProxy._url">
+      <summary>Indicates the URL of the object that the current proxy represents.</summary>
+    </member>
+    <member name="P:System.Runtime.Remoting.Services.RemotingClientProxy.AllowAutoRedirect">
+      <summary>Gets or sets a value that indicates whether the automatic handling of server redirects is enabled.</summary>
+      <returns>A Boolean value that indicates whether the automatic handling of server redirects is enabled.</returns>
+    </member>
+    <member name="M:System.Runtime.Remoting.Services.RemotingClientProxy.ConfigureProxy(System.Type,System.String)">
+      <summary>Internal. Automatically configures the proxy by loading the channels, if they are not already loaded and creating the proxy.</summary>
+      <param name="type">The <see cref="T:System.Type" /> class type of the object that the current proxy represents. </param>
+      <param name="url">The URL of the object that the current proxy represents. </param>
+    </member>
+    <member name="M:System.Runtime.Remoting.Services.RemotingClientProxy.ConnectProxy">
+      <summary>Internal. Connects the proxy to the remoting channel that is specified by the <see cref="P:System.Runtime.Remoting.Services.RemotingClientProxy.Url" /> property.</summary>
+    </member>
+    <member name="P:System.Runtime.Remoting.Services.RemotingClientProxy.Cookies">
+      <summary>This property is not currently implemented. The property returns null (Nothing in Visual Basic).</summary>
+      <returns>The cookies for the current proxy.</returns>
+    </member>
+    <member name="P:System.Runtime.Remoting.Services.RemotingClientProxy.Domain">
+      <summary>Gets or sets the domain name to be used for basic authentication and digest authentication.</summary>
+      <returns>The name of the domain to use for basic authentication and digest authentication.</returns>
+    </member>
+    <member name="P:System.Runtime.Remoting.Services.RemotingClientProxy.EnableCookies">
+      <summary>This property is not currently implemented. The property throws a <see cref="T:System.NotSupportedException" />.</summary>
+      <returns>A Boolean value that indicates whether the handling of cookies received from the server is enabled.</returns>
+    </member>
+    <member name="P:System.Runtime.Remoting.Services.RemotingClientProxy.Password">
+      <summary>Gets or sets the password to use for basic authentication and digest authentication.</summary>
+      <returns>The password to use for basic authentication and digest authentication.</returns>
+    </member>
+    <member name="P:System.Runtime.Remoting.Services.RemotingClientProxy.Path">
+      <summary>Gets or sets the base URL to the server to use for requests.</summary>
+      <returns>The base URL to the server to use for requests.</returns>
+    </member>
+    <member name="P:System.Runtime.Remoting.Services.RemotingClientProxy.PreAuthenticate">
+      <summary>Gets or sets a value that indicates whether preauthentication of requests is enabled.</summary>
+      <returns>A Boolean value that indicates whether preauthentication of requests is enabled.</returns>
+    </member>
+    <member name="P:System.Runtime.Remoting.Services.RemotingClientProxy.ProxyName">
+      <summary>Gets or sets the name of the proxy server to use for requests.</summary>
+      <returns>The name of the proxy server to use for requests.</returns>
+    </member>
+    <member name="P:System.Runtime.Remoting.Services.RemotingClientProxy.ProxyPort">
+      <summary>Gets or sets the port number of the proxy server to use for requests.</summary>
+      <returns>The port number of the proxy server to use for requests.</returns>
+    </member>
+    <member name="P:System.Runtime.Remoting.Services.RemotingClientProxy.Timeout">
+      <summary>Gets or sets the time-out in milliseconds to use for synchronous calls.</summary>
+      <returns>The time-out in milliseconds to use for synchronous calls.</returns>
+    </member>
+    <member name="P:System.Runtime.Remoting.Services.RemotingClientProxy.Url">
+      <summary>Gets or sets the base URL to the server to use for requests.</summary>
+      <returns>The base URL to the server to use for requests.</returns>
+    </member>
+    <member name="P:System.Runtime.Remoting.Services.RemotingClientProxy.UserAgent">
+      <summary>Gets or sets the user agent HTTP header for the request.</summary>
+      <returns>The user agent HTTP header for the request.</returns>
+    </member>
+    <member name="P:System.Runtime.Remoting.Services.RemotingClientProxy.Username">
+      <summary>Gets or sets the user name to send for basic authentication and digest authentication.</summary>
+      <returns>The user name to send for basic authentication and digest authentication.</returns>
+    </member>
+    <member name="T:System.Runtime.Remoting.Services.RemotingService">
+      <summary>Provides the base implementation for the remoting XML Web services.</summary>
+    </member>
+    <member name="M:System.Runtime.Remoting.Services.RemotingService.#ctor">
+      <summary>Creates an instance of <see cref="T:System.Runtime.Remoting.Services.RemotingService" />.</summary>
+    </member>
+    <member name="P:System.Runtime.Remoting.Services.RemotingService.Application">
+      <summary>Gets a reference to the application object for the current HTTP request.</summary>
+      <returns>A reference to the application object for the current HTTP request.</returns>
+    </member>
+    <member name="P:System.Runtime.Remoting.Services.RemotingService.Context">
+      <summary>Gets the current HTTP-specific context that is used by the HTTP server to process Web requests.</summary>
+      <returns>The current HTTP-specific context that is used by the HTTP server to process Web requests.</returns>
+    </member>
+    <member name="P:System.Runtime.Remoting.Services.RemotingService.Server">
+      <summary>Gets the <see cref="T:System.Web.HttpServerUtility" /> for the current request.</summary>
+      <returns>The <see cref="T:System.Web.HttpServerUtility" /> for the current request.</returns>
+    </member>
+    <member name="P:System.Runtime.Remoting.Services.RemotingService.Session">
+      <summary>Gets the <see cref="T:System.Web.SessionState.HttpSessionState" /> for the current request.</summary>
+      <returns>The <see cref="T:System.Web.SessionState.HttpSessionState" /> for the current request.</returns>
+    </member>
+    <member name="P:System.Runtime.Remoting.Services.RemotingService.User">
+      <summary>Gets the security context of the user on whose behalf the code is running, including that user's identity and any roles that the user belongs to.</summary>
+      <returns>The security context of the user.</returns>
+    </member>
+  </members>
+</doc>

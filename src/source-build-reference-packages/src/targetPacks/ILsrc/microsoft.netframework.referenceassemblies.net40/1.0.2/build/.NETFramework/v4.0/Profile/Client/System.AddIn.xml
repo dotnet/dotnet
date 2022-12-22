@@ -1,0 +1,651 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>System.AddIn</name>
+  </assembly>
+  <members>
+    <member name="T:System.AddIn.AddInAttribute">
+      <summary>Identifies an object as an add-in.</summary>
+    </member>
+    <member name="M:System.AddIn.AddInAttribute.#ctor(System.String)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.AddInAttribute" /> class. </summary>
+      <param name="name">The name of the add-in.</param>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="name" /> is a zero-length string.</exception>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="name" /> is null.</exception>
+    </member>
+    <member name="P:System.AddIn.AddInAttribute.Description">
+      <summary>Gets or sets the description of an add-in.</summary>
+      <returns>The current description of the add-in.</returns>
+    </member>
+    <member name="P:System.AddIn.AddInAttribute.Name">
+      <summary>Gets the name of the add-In.</summary>
+      <returns>The name of the add-in.</returns>
+    </member>
+    <member name="P:System.AddIn.AddInAttribute.Publisher">
+      <summary>Gets or sets the publisher of the add-in.</summary>
+      <returns>The publisher of the add-in.</returns>
+    </member>
+    <member name="P:System.AddIn.AddInAttribute.Version">
+      <summary>Gets or sets the software version of the add-in.</summary>
+      <returns>The software version of the add-in.</returns>
+    </member>
+    <member name="T:System.AddIn.Hosting.AddInController">
+      <summary>Provides access to an add-in for a variety of tasks.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="P:System.AddIn.Hosting.AddInController.AddInEnvironment">
+      <summary>Gets an <see cref="T:System.AddIn.Hosting.AddInEnvironment" /> object.</summary>
+      <returns>An object that can be used to activate other add-ins in the same environment as the original add-in.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="P:System.AddIn.Hosting.AddInController.AppDomain">
+      <summary>Gets the application domain that contains an add-in. </summary>
+      <returns>The application domain of the add-in.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Hosting.AddInController.GetAddInController(System.Object)">
+      <summary>Obtains the controller for an add-in.</summary>
+      <returns>The controller for the add-in.</returns>
+      <param name="addIn">The host view of the add-in.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Hosting.AddInController.Shutdown">
+      <summary>Disables an add-in.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="P:System.AddIn.Hosting.AddInController.Token">
+      <summary>Gets the token that represents the add-in.</summary>
+      <returns>An object that represents the add-in.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.AddIn.Hosting.AddInEnvironment">
+      <summary>Provides access to the application domain and process of an add-in.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Hosting.AddInEnvironment.#ctor(System.AppDomain)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Hosting.AddInEnvironment" /> class. </summary>
+      <param name="appDomain">The application domain that contains the add-in.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="appDomain" /> is null.</exception>
+      <exception cref="T:System.Security.SecurityException">Full-trust permission is demanded. A caller in the call chain does not have sufficient permission.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="P:System.AddIn.Hosting.AddInEnvironment.Process">
+      <summary>Gets the <see cref="T:System.AddIn.Hosting.AddInProcess" /> object that represents the process in which the add-in is running.</summary>
+      <returns>The process in which the add-in is running.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.AddIn.Hosting.AddInProcess">
+      <summary>Provides an external process for running add-ins out-of-process from the host application.</summary>
+    </member>
+    <member name="M:System.AddIn.Hosting.AddInProcess.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Hosting.AddInProcess" /> class. </summary>
+    </member>
+    <member name="M:System.AddIn.Hosting.AddInProcess.#ctor(System.AddIn.Hosting.Platform)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Hosting.AddInProcess" /> class, specifying the bits-per-word of the process in which the add-in runs.</summary>
+      <param name="platform">A value that specifies the bits-per-word of the process that runs the add-in.</param>
+      <exception cref="T:System.InvalidOperationException">The registry entry for the path to the executable (AddInProcess.exe or AddInProcess32.exe) is missing.-or-The executable is missing.</exception>
+    </member>
+    <member name="P:System.AddIn.Hosting.AddInProcess.IsCurrentProcess">
+      <summary>Gets a value that indicates whether the current <see cref="T:System.AddIn.Hosting.AddInProcess" /> object represents the host application process.</summary>
+      <returns>true if the <see cref="T:System.AddIn.Hosting.AddInProcess" /> object corresponds to the current process; otherwise, false. </returns>
+    </member>
+    <member name="P:System.AddIn.Hosting.AddInProcess.KeepAlive">
+      <summary>Gets or sets a value that indicates whether to keep the external process alive.</summary>
+      <returns>true if the external process should be kept alive; otherwise, false. The default is false.</returns>
+    </member>
+    <member name="P:System.AddIn.Hosting.AddInProcess.Platform">
+      <summary>Gets the bits-per-word of the process in which the out-of-process add-in is run.</summary>
+      <returns>The bits-per-word of the process that runs the add-in.</returns>
+    </member>
+    <member name="P:System.AddIn.Hosting.AddInProcess.ProcessId">
+      <summary>Gets the process ID of the external process.</summary>
+      <returns>The process ID, or -1 if the external process has not started.</returns>
+    </member>
+    <member name="M:System.AddIn.Hosting.AddInProcess.Shutdown">
+      <summary>Forcibly shuts down the external process.</summary>
+      <returns>true if the external process was running and is successfully shut down; false if there is no active process associated with the <see cref="T:System.AddIn.Hosting.AddInProcess" />.</returns>
+      <exception cref="T:System.InvalidOperationException">The add-in is running in-process with the host application. Starting and stopping the process is allowed only for external processes, not for the host process.</exception>
+    </member>
+    <member name="E:System.AddIn.Hosting.AddInProcess.ShuttingDown">
+      <summary>Occurs when the process represented by the <see cref="T:System.AddIn.Hosting.AddInProcess" /> object is about to be shut down.</summary>
+    </member>
+    <member name="M:System.AddIn.Hosting.AddInProcess.Start">
+      <summary>Starts the external process.</summary>
+      <returns>true if the process is successfully started; false if the process is already running.</returns>
+      <exception cref="T:System.InvalidOperationException">The add-in is running in-process with the host application. Starting and stopping the process is allowed only for external processes, not for the host process.</exception>
+    </member>
+    <member name="P:System.AddIn.Hosting.AddInProcess.StartupTimeout">
+      <summary>Gets or sets the number of seconds to allow for the process to start.</summary>
+      <returns>The number of seconds to allow for process startup.</returns>
+      <exception cref="T:System.InvalidOperationException">The process is already running.</exception>
+      <exception cref="T:System.ArgumentOutOfRangeException">The assigned value is less than 0 (zero).</exception>
+    </member>
+    <member name="T:System.AddIn.Hosting.AddInSecurityLevel">
+      <summary>Specifies the trust level that is granted to the application domain that an add-in is loaded into. </summary>
+    </member>
+    <member name="F:System.AddIn.Hosting.AddInSecurityLevel.Internet">
+      <summary>Use the Internet security level for add-ins that have a low trust level.</summary>
+    </member>
+    <member name="F:System.AddIn.Hosting.AddInSecurityLevel.Intranet">
+      <summary>Use the Intranet security level for add-ins that are located on a company's intranet. These add-ins can have a greater trust level because the servers and information are within a company's firewall. </summary>
+    </member>
+    <member name="F:System.AddIn.Hosting.AddInSecurityLevel.FullTrust">
+      <summary>Use the full trust security level for add-ins that are allowed to read and write to the local file system, create network connections, and read from the registry. This security level grants full access to the add-in's code access security (CAS) by applying the <see cref="F:System.Security.Permissions.PermissionState.Unrestricted" /> field. </summary>
+    </member>
+    <member name="F:System.AddIn.Hosting.AddInSecurityLevel.Host">
+      <summary>Use the host security level to give the add-in the same permissions currently granted to the hosting code.</summary>
+    </member>
+    <member name="T:System.AddIn.Hosting.AddInSegmentDirectoryNotFoundException">
+      <summary>The exception that is thrown when a segment directory is missing from the pipeline directory structure.</summary>
+    </member>
+    <member name="M:System.AddIn.Hosting.AddInSegmentDirectoryNotFoundException.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Hosting.AddInSegmentDirectoryNotFoundException" /> class.</summary>
+    </member>
+    <member name="M:System.AddIn.Hosting.AddInSegmentDirectoryNotFoundException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Hosting.AddInSegmentDirectoryNotFoundException" /> class with serialization data.</summary>
+      <param name="info">The object that holds the serialized object data. </param>
+      <param name="context">The contextual information about the source or destination object data. </param>
+    </member>
+    <member name="M:System.AddIn.Hosting.AddInSegmentDirectoryNotFoundException.#ctor(System.String)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Hosting.AddInSegmentDirectoryNotFoundException" /> class with a specified message.</summary>
+      <param name="message">A message that describes the error.</param>
+    </member>
+    <member name="M:System.AddIn.Hosting.AddInSegmentDirectoryNotFoundException.#ctor(System.String,System.Exception)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Hosting.AddInSegmentDirectoryNotFoundException" /> class with a specified error message and a reference to the inner exception that is the cause of this exception.</summary>
+      <param name="message">A message that describes the error. </param>
+      <param name="innerException">The exception that is the cause of the current exception. If the <paramref name="innerException" /> parameter is not a null reference, the current exception is raised in a catch block that handles the inner exception. </param>
+    </member>
+    <member name="T:System.AddIn.Hosting.AddInSegmentType">
+      <summary>Specifies the type of a pipeline segment.</summary>
+    </member>
+    <member name="F:System.AddIn.Hosting.AddInSegmentType.HostViewOfAddIn">
+      <summary>Specifies the host view of the add-in segment.</summary>
+    </member>
+    <member name="F:System.AddIn.Hosting.AddInSegmentType.HostSideAdapter">
+      <summary>Specifies a host-side adapter segment.</summary>
+    </member>
+    <member name="F:System.AddIn.Hosting.AddInSegmentType.Contract">
+      <summary>Specifies a contract segment.</summary>
+    </member>
+    <member name="F:System.AddIn.Hosting.AddInSegmentType.AddInSideAdapter">
+      <summary>Specifies an add-in-side adapter segment.</summary>
+    </member>
+    <member name="F:System.AddIn.Hosting.AddInSegmentType.AddInView">
+      <summary>Specifies an add-in view segment.</summary>
+    </member>
+    <member name="F:System.AddIn.Hosting.AddInSegmentType.AddIn">
+      <summary>Specifies an add-in segment.</summary>
+    </member>
+    <member name="T:System.AddIn.Hosting.AddInStore">
+      <summary>Provides methods to store and find information about available add-ins and pipeline segments.</summary>
+    </member>
+    <member name="M:System.AddIn.Hosting.AddInStore.FindAddIn(System.Type,System.String,System.String,System.String)">
+      <summary>Finds a specific add-in.</summary>
+      <returns>A collection of tokens that contains only the token representing the add-in that was found.</returns>
+      <param name="hostViewOfAddIn">The type that defines the host's view of the add-in. </param>
+      <param name="pipelineRootFolderPath">The path to the root of the pipeline directory structure.</param>
+      <param name="addInFilePath">The path and file name of the add-in to find.</param>
+      <param name="addInTypeName">The type name of the add-in.</param>
+      <exception cref="T:System.ArgumentException">The length of <paramref name="pipelineRootFolderPath" /> or <paramref name="addInFilePath" /> or <paramref name="addInTypeName" /> is 0.- or -The add-in file does not exist in <paramref name="addInfilePath" />.</exception>
+      <exception cref="T:System.ArgumentNullException">One or more parameters are null.</exception>
+      <exception cref="T:System.Security.SecurityException">The caller does not have read access permission to <paramref name="pipelineRootFolderPath" />.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Hosting.AddInStore.FindAddIns(System.Type,System.AddIn.Hosting.PipelineStoreLocation)">
+      <summary>Finds all add-ins for a specified host view of the add-in at a location specified by the <see cref="T:System.AddIn.Hosting.PipelineStoreLocation" /> enumeration value.</summary>
+      <returns>A collection of tokens that represent the add-ins that were found.</returns>
+      <param name="hostViewOfAddIn">The type that defines the host's view of the add-in.</param>
+      <param name="location">The host application's base directory.</param>
+      <exception cref="T:System.AddIn.Hosting.InvalidPipelineStoreException">There is an access violation to the pipeline directory structure. </exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="location" /> is an invalid <see cref="T:System.AddIn.Hosting.PipelineStoreLocation" /> value. </exception>
+    </member>
+    <member name="M:System.AddIn.Hosting.AddInStore.FindAddIns(System.Type,System.AddIn.Hosting.PipelineStoreLocation,System.String[])">
+      <summary>Finds all add-ins for a specified host view of the add-in at the location specified by a <see cref="T:System.AddIn.Hosting.PipelineStoreLocation" /> value and an optional add-ins folder. </summary>
+      <returns>A collection of tokens that represent the add-ins that were found.</returns>
+      <param name="hostViewOfAddIn">The type that defines the host's view of the add-in.</param>
+      <param name="location">One of the enumeration values.Currently the only value in this enumeration is the directory specified by the <see cref="P:System.AppDomainSetup.ApplicationBase" />  property that was used to set up the host's application domain. </param>
+      <param name="addInFolderPaths">(Optional). The path of the directory that contains one or more subdirectories of add-ins. Because this parameter takes an array of strings, you can specify more than one path.This parameter is not required if your add-ins are located in the pipeline directory structure under the AddIns folder.</param>
+      <exception cref="T:System.AddIn.Hosting.InvalidPipelineStoreException">There is an access violation to the pipeline directory structure. </exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="location" /> is an invalid <see cref="T:System.AddIn.Hosting.PipelineStoreLocation" /> value. </exception>
+    </member>
+    <member name="M:System.AddIn.Hosting.AddInStore.FindAddIns(System.Type,System.String,System.String[])">
+      <summary>Finds all add-ins for a specified host view of the add-in from a specified root directory. </summary>
+      <returns>A collection of tokens that represent the add-ins that were found.</returns>
+      <param name="hostViewOfAddIn">The type that defines the host's view of the add-in.</param>
+      <param name="pipelineRootFolderPath">The path of the root of the pipeline directory structure.</param>
+      <param name="addInFolderPaths">(Optional). The path of the directory that contains one or more subdirectories of add-ins. Because this parameter takes an array of strings, you can specify more than one path.This parameter is not required if your add-ins are located in the pipeline directory structure under the AddIns folder.</param>
+      <exception cref="T:System.AddIn.Hosting.InvalidPipelineStoreException">There is an access violation to the pipeline directory structure. </exception>
+    </member>
+    <member name="M:System.AddIn.Hosting.AddInStore.Rebuild(System.AddIn.Hosting.PipelineStoreLocation)">
+      <summary>Rebuilds the pipeline segments cache and includes new segments at the location specified by a <see cref="T:System.AddIn.Hosting.PipelineStoreLocation" /> value.</summary>
+      <returns>A collection of strings that describe warnings as the pipeline segments are evaluated.</returns>
+      <param name="location">One of the enumeration values.Currently the only value in this enumeration is the directory specified by the <see cref="P:System.AppDomainSetup.ApplicationBase" />  property that was used to set up the host's application domain. </param>
+      <exception cref="T:System.AddIn.Hosting.AddInSegmentDirectoryNotFoundException">A segment directory is missing from the pipeline directory structure. </exception>
+      <exception cref="T:System.AddIn.Hosting.InvalidPipelineStoreException">There is an access violation to the pipeline directory structure. </exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="location" /> is an invalid <see cref="T:System.AddIn.Hosting.PipelineStoreLocation" /> value.</exception>
+    </member>
+    <member name="M:System.AddIn.Hosting.AddInStore.Rebuild(System.String)">
+      <summary>Rebuilds the pipeline segments cache and includes new segments from a specified root directory.</summary>
+      <returns>A collection of strings that describe warnings as the pipeline segments are evaluated.</returns>
+      <param name="pipelineRootFolderPath">The path of the root of the pipeline directory structure.</param>
+      <exception cref="T:System.AddIn.Hosting.AddInSegmentDirectoryNotFoundException">A segment directory is missing from the pipeline directory structure. </exception>
+      <exception cref="T:System.AddIn.Hosting.InvalidPipelineStoreException">There is an access violation to the pipeline directory structure. </exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Hosting.AddInStore.RebuildAddIns(System.String)">
+      <summary>Rebuilds the add-in cache and includes new add-ins from a specified root directory.</summary>
+      <returns>A collection of strings that describe warnings as the pipeline segments are evaluated.</returns>
+      <param name="addInsFolderPath">The path of the directory that contains one or more subdirectories of add-ins.</param>
+      <exception cref="T:System.AddIn.Hosting.AddInSegmentDirectoryNotFoundException">A segment directory is missing from the pipeline directory structure. </exception>
+      <exception cref="T:System.AddIn.Hosting.InvalidPipelineStoreException">There is an access violation to the pipeline directory structure. </exception>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="addInsFolderPath" /> is null. </exception>
+      <exception cref="T:System.Security.SecurityException">Caller does not have both read and write access permissions to the location that is specified by <paramref name="addInsFolderPath" />. </exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Hosting.AddInStore.Update(System.AddIn.Hosting.PipelineStoreLocation)">
+      <summary>Updates the pipeline segments cache with new segments at the location specified by a <see cref="T:System.AddIn.Hosting.PipelineStoreLocation" /> value.</summary>
+      <returns>A collection of strings that describe warnings as the pipeline segments are evaluated.</returns>
+      <param name="location">One of the enumeration values.Currently the only value in this enumeration is the directory as specified by the <see cref="P:System.AppDomainSetup.ApplicationBase" />  property that was used to set up the host's application domain. </param>
+      <exception cref="T:System.AddIn.Hosting.AddInSegmentDirectoryNotFoundException">A segment directory is missing from the pipeline directory structure. </exception>
+      <exception cref="T:System.AddIn.Hosting.InvalidPipelineStoreException">There is an access violation to the pipeline directory structure. </exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="location" /> is an invalid <see cref="T:System.AddIn.Hosting.PipelineStoreLocation" /> value.</exception>
+    </member>
+    <member name="M:System.AddIn.Hosting.AddInStore.Update(System.String)">
+      <summary>Updates the pipeline segments cache with new segments from a specified root directory.</summary>
+      <returns>A collection of strings that describe warnings as the pipeline segments are evaluated.</returns>
+      <param name="pipelineRootFolderPath">The path of the root of the pipeline directory structure.</param>
+      <exception cref="T:System.AddIn.Hosting.AddInSegmentDirectoryNotFoundException">A segment directory is missing from the pipeline directory structure. </exception>
+      <exception cref="T:System.AddIn.Hosting.InvalidPipelineStoreException">There is an access violation to the pipeline directory structure. </exception>
+    </member>
+    <member name="M:System.AddIn.Hosting.AddInStore.UpdateAddIns(System.String)">
+      <summary>Updates the add-in cache and includes new add-ins at a specified location. </summary>
+      <returns>A collection of strings that describe warnings as the pipeline segments are evaluated.</returns>
+      <param name="addInsFolderPath">The path of the directory that contains one or more subdirectories of add-ins.</param>
+      <exception cref="T:System.AddIn.Hosting.AddInSegmentDirectoryNotFoundException">A segment directory is missing from the pipeline directory structure. </exception>
+      <exception cref="T:System.AddIn.Hosting.InvalidPipelineStoreException">There is an access violation to the pipeline directory structure. </exception>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="addInsFolderPath" /> is null. </exception>
+      <exception cref="T:System.Security.SecurityException">Caller does not have both read and write access permissions to the location that is specified by <paramref name="addInsFolderPath" />. </exception>
+    </member>
+    <member name="T:System.AddIn.Hosting.AddInToken">
+      <summary>Represents an add-in that can be activated. </summary>
+    </member>
+    <member name="M:System.AddIn.Hosting.AddInToken.Activate``1(System.AddIn.Hosting.AddInEnvironment)">
+      <summary>Activates an add-in in the environment of another add-in.</summary>
+      <returns>The host view of the add-in.</returns>
+      <param name="environment">The application domain and process that contains the original add-in. </param>
+      <typeparam name="T">The interface or abstract base type that represents the host view of the add-in.</typeparam>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Hosting.AddInToken.Activate``1(System.AddIn.Hosting.AddInProcess,System.AddIn.Hosting.AddInSecurityLevel)">
+      <summary>Activates an add-in in an external process, in a new application domain, and with a specified trust level.</summary>
+      <returns>The host view of the add-in.</returns>
+      <param name="process">The external process in which to activate the add-in.</param>
+      <param name="level">One of the enumeration values that specifies the trust level.</param>
+      <typeparam name="T">The interface or abstract base type that represents the host view of the add-in.</typeparam>
+    </member>
+    <member name="M:System.AddIn.Hosting.AddInToken.Activate``1(System.AddIn.Hosting.AddInProcess,System.Security.PermissionSet)">
+      <summary>Activates an add-in in an external process, in a new application domain, and with a specified permission set.</summary>
+      <returns>The host view of the add-in.</returns>
+      <param name="process">The external process in which to activate the add-in.</param>
+      <param name="permissionSet">The required permission set granted for the add-in.</param>
+      <typeparam name="T">The interface or abstract base type that represents the host view of the add-in.</typeparam>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Hosting.AddInToken.Activate``1(System.AddIn.Hosting.AddInSecurityLevel)">
+      <summary>Activates an add-in with a specified trust level in a new application domain.</summary>
+      <returns>The host view of the add-in.</returns>
+      <param name="trustLevel">One of the enumeration values that specifies the trust level.</param>
+      <typeparam name="T">The interface or abstract base type that represents the host view of the add-in.</typeparam>
+    </member>
+    <member name="M:System.AddIn.Hosting.AddInToken.Activate``1(System.AddIn.Hosting.AddInSecurityLevel,System.String)">
+      <summary>Activates an add-in in a new application domain with a specified name and trust level.</summary>
+      <returns>The host view of the add-in.</returns>
+      <param name="trustLevel">One of the enumeration values that specifies the trust level.</param>
+      <param name="appDomainName">The friendly name to assign to the new application domain.</param>
+      <typeparam name="T">The interface or abstract base type that represents the host view of the add-in.</typeparam>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Hosting.AddInToken.Activate``1(System.AppDomain)">
+      <summary>Activates an add-in in an existing application domain.</summary>
+      <returns>The host view of the add-in.</returns>
+      <param name="target">The application domain that the add-in should be activated in. </param>
+      <typeparam name="T">The interface or abstract base type that represents the host view of the add-in.</typeparam>
+      <exception cref="T:System.Security.SecurityException">Full-trust permission is demanded. A caller in the call chain does not have sufficient permission. </exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Hosting.AddInToken.Activate``1(System.Security.PermissionSet)">
+      <summary>Activates an add-in with a specified permission set in a new application domain.</summary>
+      <returns>The host view of the add-in.</returns>
+      <param name="permissions">The permissions granted for the add-in.</param>
+      <typeparam name="T">The interface or abstract base type that represents the host view of the add-in.</typeparam>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="permissions" /> is null.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="P:System.AddIn.Hosting.AddInToken.AddInFullName">
+      <summary>Gets the namespace and type of the add-in.</summary>
+      <returns>The type of the add-in, fully qualified by its namespace.</returns>
+    </member>
+    <member name="P:System.AddIn.Hosting.AddInToken.AssemblyName">
+      <summary>Gets the name of the assembly that contains the add-in.</summary>
+      <returns>The name of the assembly.</returns>
+    </member>
+    <member name="P:System.AddIn.Hosting.AddInToken.Description">
+      <summary>Gets the description of the add-in.</summary>
+      <returns>A description of the add-in, or null if the description is not specified in the <see cref="T:System.AddIn.AddInAttribute" /> attribute.</returns>
+    </member>
+    <member name="P:System.AddIn.Hosting.AddInToken.EnableDirectConnect">
+      <summary>Gets and sets a value that indicates whether add-ins should be directly connected to their hosts when conditions permit.</summary>
+      <returns>true if the add-in should be directly connected to the host; otherwise, false. The default is false.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Hosting.AddInToken.Equals(System.Object)">
+      <summary>Determines whether a specified object is equal to the current instance.</summary>
+      <returns>true if the specified object and the current instance are equal; otherwise, false. </returns>
+      <param name="obj">The object to compare with the current instance.</param>
+    </member>
+    <member name="M:System.AddIn.Hosting.AddInToken.GetEnumerator">
+      <summary>Returns an enumerator for the qualification data of the pipeline segments that are associated with this token.</summary>
+      <returns>An enumerator that can be used to iterate through the qualification data of the pipeline segments that are associated with the current token.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Hosting.AddInToken.GetHashCode">
+      <summary>Serves as a hash function for a token.</summary>
+      <returns>A hash code for the current token.</returns>
+    </member>
+    <member name="P:System.AddIn.Hosting.AddInToken.Name">
+      <summary>Gets the name of the add-in.</summary>
+      <returns>The name of the add-in.</returns>
+    </member>
+    <member name="P:System.AddIn.Hosting.AddInToken.Publisher">
+      <summary>Gets the publisher of the add-in.</summary>
+      <returns>The publisher of the add-in, or null if the publisher is not specified in the <see cref="T:System.AddIn.AddInAttribute" /> attribute.</returns>
+    </member>
+    <member name="P:System.AddIn.Hosting.AddInToken.QualificationData">
+      <summary>Gets a dictionary of data about the segments in the pipeline associated with the current token.</summary>
+      <returns>A dictionary whose keys are pipeline segments and whose values are dictionaries of name/value pairs that represent qualification data for each segment.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Hosting.AddInToken.System#Collections#IEnumerable#GetEnumerator">
+      <summary>Returns an enumerator for the qualification data of the pipeline segments that are associated with this token. </summary>
+      <returns>An enumerator that can be used to iterate through the qualification data of the pipeline segments that are associated with the current token.</returns>
+    </member>
+    <member name="M:System.AddIn.Hosting.AddInToken.ToString">
+      <summary>Returns a string that represents the token.</summary>
+      <returns>A string that represents the token.</returns>
+    </member>
+    <member name="P:System.AddIn.Hosting.AddInToken.Version">
+      <summary>Gets the version of the add-in, as specified in the <see cref="T:System.AddIn.AddInAttribute" /> attribute.</summary>
+      <returns>The version of the add-in, or null if the version number is not specified in the <see cref="T:System.AddIn.AddInAttribute" /> attribute.</returns>
+    </member>
+    <member name="T:System.AddIn.Hosting.InvalidPipelineStoreException">
+      <summary>The exception that is thrown when a directory is not found and the user does not have permission to access the pipeline root path or an add-in path.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Hosting.InvalidPipelineStoreException.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Hosting.InvalidPipelineStoreException" /> class.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Hosting.InvalidPipelineStoreException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Hosting.InvalidPipelineStoreException" /> class with serialization and streaming context information.</summary>
+      <param name="info">The serialized object data.</param>
+      <param name="context">The contextual information about the source or destination object data.</param>
+    </member>
+    <member name="M:System.AddIn.Hosting.InvalidPipelineStoreException.#ctor(System.String)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Hosting.InvalidPipelineStoreException" /> class with the specified message.</summary>
+      <param name="message">A description of the error.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Hosting.InvalidPipelineStoreException.#ctor(System.String,System.Exception)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Hosting.InvalidPipelineStoreException" /> class with the specified message and a reference to the inner exception that is the cause of this exception.</summary>
+      <param name="message">A description of the error.</param>
+      <param name="innerException">The exception that is the cause of the current exception. If the <paramref name="innerException" /> parameter is not a null reference, the current exception is raised in a catch block that handles the inner exception.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.AddIn.Hosting.PipelineStoreLocation">
+      <summary>Specifies alternative locations for a pipeline store instead of a path to a directory.</summary>
+    </member>
+    <member name="F:System.AddIn.Hosting.PipelineStoreLocation.ApplicationBase">
+      <summary>The location specified by the <see cref="P:System.AppDomainSetup.ApplicationBase" /> property for setting up the application domain's host.</summary>
+    </member>
+    <member name="T:System.AddIn.Hosting.Platform">
+      <summary>Specifies the bits-per-word of the process in which an out-of-process add-in is run.</summary>
+    </member>
+    <member name="F:System.AddIn.Hosting.Platform.Host">
+      <summary>The add-in is loaded into an external process with the same bits-per-word as the host process.</summary>
+    </member>
+    <member name="F:System.AddIn.Hosting.Platform.AnyCpu">
+      <summary>The add-in is loaded into an external process with the same bits-per-word as the operating system.</summary>
+    </member>
+    <member name="F:System.AddIn.Hosting.Platform.X86">
+      <summary>The add-in is loaded into a 32-bit external process.</summary>
+    </member>
+    <member name="F:System.AddIn.Hosting.Platform.X64">
+      <summary>The add-in is loaded into a 64-bit external process.</summary>
+    </member>
+    <member name="T:System.AddIn.Hosting.QualificationDataItem">
+      <summary>Represents information supplied by the developer of a pipeline segment, for use by the host. </summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Hosting.QualificationDataItem.Equals(System.Object)">
+      <summary>Determines whether a specified object is equal to the current qualification data item.</summary>
+      <returns>true if <paramref name="obj" /> is equal to the current instance; otherwise, false.</returns>
+      <param name="obj">The object to compare.</param>
+    </member>
+    <member name="M:System.AddIn.Hosting.QualificationDataItem.GetHashCode">
+      <summary>Gets the hash code for this qualification data item.</summary>
+      <returns>The hash code.</returns>
+    </member>
+    <member name="P:System.AddIn.Hosting.QualificationDataItem.Name">
+      <summary>Gets the name of the qualification data item.</summary>
+      <returns>The name of the qualification data item.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Hosting.QualificationDataItem.op_Equality(System.AddIn.Hosting.QualificationDataItem,System.AddIn.Hosting.QualificationDataItem)">
+      <summary>Determines whether two <see cref="T:System.AddIn.Hosting.QualificationDataItem" /> structures are equal.</summary>
+      <returns>true if <paramref name="item1" /> and <paramref name="item2" /> are equal; otherwise, false.</returns>
+      <param name="item1">The first <see cref="T:System.AddIn.Hosting.QualificationDataItem" /> to compare.</param>
+      <param name="item2">The second <see cref="T:System.AddIn.Hosting.QualificationDataItem" /> to compare.</param>
+    </member>
+    <member name="M:System.AddIn.Hosting.QualificationDataItem.op_Inequality(System.AddIn.Hosting.QualificationDataItem,System.AddIn.Hosting.QualificationDataItem)">
+      <summary>Determines whether two <see cref="T:System.AddIn.Hosting.QualificationDataItem" /> structures are different.</summary>
+      <returns>true if <paramref name="item1" /> and <paramref name="item2" /> are not equal; otherwise, false.</returns>
+      <param name="item1">The first <see cref="T:System.AddIn.Hosting.QualificationDataItem" /> to compare.</param>
+      <param name="item2">The second <see cref="T:System.AddIn.Hosting.QualificationDataItem" /> to compare.</param>
+    </member>
+    <member name="P:System.AddIn.Hosting.QualificationDataItem.Segment">
+      <summary>Gets a value that identifies the pipeline segment the qualification data item was applied to.</summary>
+      <returns>The kind of pipeline segment the data item was applied to. </returns>
+    </member>
+    <member name="P:System.AddIn.Hosting.QualificationDataItem.Value">
+      <summary>Gets the value of the qualification data item.</summary>
+      <returns>The value of the item.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.AddIn.Pipeline.AddInAdapterAttribute">
+      <summary>Identifies an object as an add-in-side adapter segment of the pipeline.</summary>
+    </member>
+    <member name="M:System.AddIn.Pipeline.AddInAdapterAttribute.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Pipeline.AddInAdapterAttribute" /> class. </summary>
+    </member>
+    <member name="T:System.AddIn.Pipeline.AddInBaseAttribute">
+      <summary>Identifies an object as an add-in view segment of the pipeline.</summary>
+    </member>
+    <member name="M:System.AddIn.Pipeline.AddInBaseAttribute.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Pipeline.AddInBaseAttribute" /> class. </summary>
+    </member>
+    <member name="P:System.AddIn.Pipeline.AddInBaseAttribute.ActivatableAs">
+      <summary>Gets or sets one or more add-in base types that a single add-in-side adapter can use to construct the pipeline.</summary>
+      <returns>An array of add-in base types.</returns>
+    </member>
+    <member name="T:System.AddIn.Pipeline.CollectionAdapters">
+      <summary>Enables collections to be passed between an add-in and its host application. </summary>
+    </member>
+    <member name="M:System.AddIn.Pipeline.CollectionAdapters.ToIList``1(System.AddIn.Contract.IListContract{``0})">
+      <summary>Converts the specified <see cref="T:System.AddIn.Contract.IListContract`1" /> collection to an <see cref="T:System.Collections.Generic.IList`1" /> collection.</summary>
+      <returns>The converted collection.</returns>
+      <param name="collection">The collection from the other side of the pipeline.</param>
+      <typeparam name="T">The type of objects that are contained in the list. <paramref name="T" /> must be serializable.</typeparam>
+    </member>
+    <member name="M:System.AddIn.Pipeline.CollectionAdapters.ToIList``2(System.AddIn.Contract.IListContract{``0},System.Converter{``0,``1},System.Converter{``1,``0})">
+      <summary>Converts a specified <see cref="T:System.AddIn.Contract.IListContract`1" /> collection to an <see cref="T:System.Collections.Generic.IList`1" /> collection by using converter adapters.</summary>
+      <returns>The converted collection.</returns>
+      <param name="collection">The collection to pass to the other side of the pipeline.</param>
+      <param name="contractViewAdapter">A converter that adapts the data from the type defined in the contract to the type expected in the view.</param>
+      <param name="viewContractAdapter">A converter that adapts the data from the type defined in the view to the type expected by the contract. </param>
+      <typeparam name="TContract">The type that defines the contract for passing objects of type <paramref name="TView" /> across the isolation boundary.</typeparam>
+      <typeparam name="TView">The type that defines the view of the objects in the list.</typeparam>
+    </member>
+    <member name="M:System.AddIn.Pipeline.CollectionAdapters.ToIListContract``1(System.Collections.Generic.IList{``0})">
+      <summary>Converts a specified <see cref="T:System.Collections.Generic.IList`1" /> collection to an <see cref="T:System.AddIn.Contract.IListContract`1" /> collection.</summary>
+      <returns>The converted collection.</returns>
+      <param name="collection">The collection to convert.</param>
+      <typeparam name="T">The type of objects that are contained in the list. <paramref name="T" /> must be serializable.</typeparam>
+    </member>
+    <member name="M:System.AddIn.Pipeline.CollectionAdapters.ToIListContract``2(System.Collections.Generic.IList{``0},System.Converter{``0,``1},System.Converter{``1,``0})">
+      <summary>Converts a specified <see cref="T:System.Collections.Generic.IList`1" /> collection to an <see cref="T:System.AddIn.Contract.IListContract`1" /> collection by using converter adapters.</summary>
+      <returns>The converted collection.</returns>
+      <param name="collection">The collection to convert.</param>
+      <param name="viewContractAdapter">A converter that adapts the data from the type defined in the view to the type expected by the contract.  </param>
+      <param name="contractViewAdapter">A converter that adapts the data from the type defined in the contract to the type expected in the view.</param>
+      <typeparam name="TView">The type that defines the view of the objects in the list.</typeparam>
+      <typeparam name="TContract">The type that defines the contract for passing objects of type <paramref name="TView" /> across the isolation boundary.</typeparam>
+    </member>
+    <member name="T:System.AddIn.Pipeline.ContractAdapter">
+      <summary>Provides methods for sharing and readapting add-ins.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Pipeline.ContractAdapter.ContractToViewAdapter``1(System.AddIn.Pipeline.ContractHandle,System.AddIn.Hosting.PipelineStoreLocation)">
+      <summary>Obtains a host view of an add-in if a suitable host-side adapter is found at a location specified by a value from the <see cref="T:System.AddIn.Hosting.PipelineStoreLocation" /> enumeration.</summary>
+      <returns>The host view of the add-in that is shared.</returns>
+      <param name="contract">A handle to the contract used by the add-in to be shared.</param>
+      <param name="location">The host's application base.</param>
+      <typeparam name="TView">The type that defines the host view of the add-in.</typeparam>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="location" /> is invalid.</exception>
+    </member>
+    <member name="M:System.AddIn.Pipeline.ContractAdapter.ContractToViewAdapter``1(System.AddIn.Pipeline.ContractHandle,System.String)">
+      <summary>Obtains a host view of an add-in if a suitable host-side adapter is found at a location specified by a path.</summary>
+      <returns>The host view of the add-in that is shared.</returns>
+      <param name="contract">A handle to the contract used by the add-in to be shared.</param>
+      <param name="pipelineRoot">A path to the add-in store.</param>
+      <typeparam name="TView">The type that defines the host view of the add-in.</typeparam>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Pipeline.ContractAdapter.ViewToContractAdapter(System.Object)">
+      <summary>Gets the handle to the contract for a provided host view of an add-in.</summary>
+      <returns>A handle to the contract.</returns>
+      <param name="view">The host view of an add-in activated by the system from the current application domain.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="view" /> is null.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.AddIn.Pipeline.ContractBase">
+      <summary>Provides a default implementation of <see cref="T:System.AddIn.Contract.IContract" /> members.</summary>
+    </member>
+    <member name="M:System.AddIn.Pipeline.ContractBase.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Pipeline.ContractBase" /> class. </summary>
+    </member>
+    <member name="M:System.AddIn.Pipeline.ContractBase.AcquireLifetimeToken">
+      <summary>Obtains a lifetime token.</summary>
+      <returns>A random number that identifies a token.</returns>
+      <exception cref="T:System.InvalidOperationException">All previously acquired tokens have been revoked.  No further tokens are available.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Pipeline.ContractBase.GetRemoteHashCode">
+      <summary>Gets the hash code for the current <see cref="T:System.AddIn.Pipeline.ContractBase" /> object.</summary>
+      <returns>A hash code for the current <see cref="T:System.AddIn.Pipeline.ContractBase" /> object.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Pipeline.ContractBase.OnFinalRevoke">
+      <summary>When overridden in an add-in-side adapter, releases native resources held by the adapter.</summary>
+    </member>
+    <member name="M:System.AddIn.Pipeline.ContractBase.QueryContract(System.String)">
+      <summary>Reflects over the instance of a contract and returns the this pointer if the current object implements that contract.</summary>
+      <returns>The this pointer to an <see cref="T:System.AddIn.Contract.IContract" /> interface, or null if the contract is not implemented.</returns>
+      <param name="contractIdentifier">The full name of the contract, including its assembly name.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="contractIdentifier" /> is null.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Pipeline.ContractBase.RemoteEquals(System.AddIn.Contract.IContract)">
+      <summary>Compares an object with a remote object for equality.</summary>
+      <returns>true if the object is equal to the remote object; otherwise, false. </returns>
+      <param name="contract">The object to test for equality with the remote object.</param>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Pipeline.ContractBase.RemoteToString">
+      <summary>Gets a string that identifies a remote object. </summary>
+      <returns>A string that identifies the remote object.</returns>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Pipeline.ContractBase.Renewal(System.Runtime.Remoting.Lifetime.ILease)">
+      <summary>Requests a sponsoring client to renew the lease for the specified object. </summary>
+      <returns>The renewed lease.</returns>
+      <param name="lease">The lifetime lease object that is used by the remoting lifetime service.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="lease" /> is null.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Pipeline.ContractBase.RevokeLifetimeToken(System.Int32)">
+      <summary>Removes the specified token from the list of outstanding lifetime tokens.</summary>
+      <param name="token">The token number.</param>
+      <exception cref="T:System.InvalidOperationException">
+        <paramref name="token" /> is not found in the list of outstanding lifetime tokens.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="T:System.AddIn.Pipeline.ContractHandle">
+      <summary>Provides methods that control the lifetime of an add-in.</summary>
+    </member>
+    <member name="M:System.AddIn.Pipeline.ContractHandle.#ctor(System.AddIn.Contract.IContract)">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Pipeline.ContractHandle" /> class. </summary>
+      <param name="contract">The contract to use in the pipeline.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="contract" /> is null.</exception>
+    </member>
+    <member name="M:System.AddIn.Pipeline.ContractHandle.AppDomainOwner(System.AppDomain)">
+      <summary>Gets the instance of the add-in-side adapter when the application domain was created.</summary>
+      <returns>An <see cref="T:System.AddIn.Contract.IContract" /> object that represents the owner of the application domain.</returns>
+      <param name="domain">The application domain to check.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="domain" /> is null.</exception>
+    </member>
+    <member name="P:System.AddIn.Pipeline.ContractHandle.Contract">
+      <summary>Gets the contract used by a pipeline.</summary>
+      <returns>The contract, which is derived from <see cref="T:System.AddIn.Contract.IContract" />. </returns>
+    </member>
+    <member name="M:System.AddIn.Pipeline.ContractHandle.ContractOwnsAppDomain(System.AddIn.Contract.IContract,System.AppDomain)">
+      <summary>Determines whether an application domain is owned by the specified contract.</summary>
+      <returns>true if the contract owns the application domain; otherwise, false. </returns>
+      <param name="contract">The contract to check.</param>
+      <param name="domain">The application domain to check.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="contract" /> or <paramref name="domain" /> is null.</exception>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Pipeline.ContractHandle.Dispose">
+      <summary>Revokes the lifetime token on a contract, regardless of input.</summary>
+      <filterpriority>2</filterpriority>
+    </member>
+    <member name="M:System.AddIn.Pipeline.ContractHandle.Dispose(System.Boolean)">
+      <summary>Revokes the lifetime token on the contract regardless of input and optionally releases the managed resources. </summary>
+      <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
+    </member>
+    <member name="M:System.AddIn.Pipeline.ContractHandle.Finalize"></member>
+    <member name="T:System.AddIn.Pipeline.HostAdapterAttribute">
+      <summary>Identifies an object as a host-side adapter segment of the pipeline.</summary>
+    </member>
+    <member name="M:System.AddIn.Pipeline.HostAdapterAttribute.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.AddIn.Pipeline.HostAdapterAttribute" /> class. </summary>
+    </member>
+  </members>
+</doc>

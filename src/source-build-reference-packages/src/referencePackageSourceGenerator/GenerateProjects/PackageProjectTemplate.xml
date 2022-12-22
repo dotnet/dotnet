@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), dir.props))/dir.props" />
+
+  <PropertyGroup>
+    <TargetFrameworks>#TargetFrameworks#</TargetFrameworks>
+    <NuspecFile>$(ArtifactsBinDir)#RelativePath#/#LowerCaseFileName#.nuspec</NuspecFile>#KeyFileTag##EnableImplicitReferencesTag#
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <OutputPath>$(ArtifactsBinDir)#RelativePath#/ref/</OutputPath>
+    <IntermediateOutputPath>$(ArtifactsObjDir)#RelativePath#</IntermediateOutputPath>
+  </PropertyGroup>
+#OutputPathByTfm#  <ItemGroup>
+    <Compile Include="**/ref/$(TargetFramework)/*.cs" />
+    <Compile Include="**/lib/$(TargetFramework)/*.cs" />
+  </ItemGroup>
+#PackageReferences#</Project>

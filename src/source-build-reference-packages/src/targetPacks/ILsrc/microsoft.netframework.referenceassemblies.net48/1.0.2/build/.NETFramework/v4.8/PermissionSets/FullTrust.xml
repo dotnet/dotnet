@@ -1,0 +1,4 @@
+﻿<PermissionSet
+   version="1"
+   class="System.Security.PermissionSet"
+   Unrestricted="true" />

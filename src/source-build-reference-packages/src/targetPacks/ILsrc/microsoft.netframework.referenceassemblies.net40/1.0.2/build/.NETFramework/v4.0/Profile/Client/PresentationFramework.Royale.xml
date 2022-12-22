@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>PresentationFramework.Royale</name>
+  </assembly>
+  <members>
+    <member name="T:Microsoft.Windows.Themes.BulletChrome">
+      <summary>Creates the theme-specific look for Windows Presentation Foundation (WPF) <see cref="P:System.Windows.Controls.Primitives.BulletDecorator.Bullet" /> elements. A <see cref="P:System.Windows.Controls.Primitives.BulletDecorator.Bullet" /> defines the appearance of <see cref="T:System.Windows.Controls.CheckBox" /> and <see cref="T:System.Windows.Controls.RadioButton" /> elements.</summary>
+    </member>
+    <member name="M:Microsoft.Windows.Themes.BulletChrome.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:Microsoft.Windows.Themes.BulletChrome" /> class.</summary>
+    </member>
+    <member name="P:Microsoft.Windows.Themes.BulletChrome.Background">
+      <summary>Gets or sets the brush used to fill the background of the <see cref="P:System.Windows.Controls.Primitives.BulletDecorator.Bullet" />.  </summary>
+      <returns>The brush used to fill the background of the <see cref="P:System.Windows.Controls.Primitives.BulletDecorator.Bullet" />.</returns>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.BulletChrome.BackgroundProperty">
+      <summary>Identifies the <see cref="P:Microsoft.Windows.Themes.BulletChrome.Background" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="P:Microsoft.Windows.Themes.BulletChrome.Background" /> dependency property.</returns>
+    </member>
+    <member name="P:Microsoft.Windows.Themes.BulletChrome.BorderBrush">
+      <summary>Gets or sets the brush used to draw the outer border of the <see cref="P:System.Windows.Controls.Primitives.BulletDecorator.Bullet" />.  </summary>
+      <returns>The brush used to draw the outer border of the <see cref="P:System.Windows.Controls.Primitives.BulletDecorator.Bullet" />.</returns>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.BulletChrome.BorderBrushProperty">
+      <summary>Identifies the <see cref="P:Microsoft.Windows.Themes.BulletChrome.BorderBrush" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="P:Microsoft.Windows.Themes.BulletChrome.BorderBrush" /> dependency property.</returns>
+    </member>
+    <member name="P:Microsoft.Windows.Themes.BulletChrome.BorderThickness">
+      <summary>Gets or sets the thickness used to draw the outer border of the <see cref="P:System.Windows.Controls.Primitives.BulletDecorator.Bullet" />.  </summary>
+      <returns>The thickness used to draw the border of the <see cref="P:System.Windows.Controls.Primitives.BulletDecorator.Bullet" />.</returns>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.BulletChrome.BorderThicknessProperty">
+      <summary>Identifies the <see cref="P:Microsoft.Windows.Themes.BulletChrome.BorderThickness" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="P:Microsoft.Windows.Themes.BulletChrome.BorderThickness" /> dependency property.</returns>
+    </member>
+    <member name="P:Microsoft.Windows.Themes.BulletChrome.IsChecked">
+      <summary>Gets or sets a value indicating whether the <see cref="P:System.Windows.Controls.Primitives.BulletDecorator.Bullet" /> is checked.  </summary>
+      <returns>true if the <see cref="P:System.Windows.Controls.Primitives.BulletDecorator.Bullet" /> is checked; false if the <see cref="P:System.Windows.Controls.Primitives.BulletDecorator.Bullet" /> is not checked; otherwise, null.</returns>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.BulletChrome.IsCheckedProperty">
+      <summary>Identifies the <see cref="P:Microsoft.Windows.Themes.BulletChrome.IsChecked" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="P:Microsoft.Windows.Themes.BulletChrome.IsChecked" /> dependency property.</returns>
+    </member>
+    <member name="P:Microsoft.Windows.Themes.BulletChrome.IsRound">
+      <summary>Gets or sets a value indicating whether the <see cref="P:System.Windows.Controls.Primitives.BulletDecorator.Bullet" /> has round corners.   </summary>
+      <returns>true if the <see cref="P:System.Windows.Controls.Primitives.BulletDecorator.Bullet" /> has round corners; otherwise false.</returns>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.BulletChrome.IsRoundProperty">
+      <summary>Identifies the <see cref="P:Microsoft.Windows.Themes.BulletChrome.IsRound" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="P:Microsoft.Windows.Themes.BulletChrome.IsRound" /> dependency property.</returns>
+    </member>
+    <member name="P:Microsoft.Windows.Themes.BulletChrome.RenderMouseOver">
+      <summary>Gets or sets a value indicating whether the <see cref="P:System.Windows.Controls.Primitives.BulletDecorator.Bullet" /> appears as if the mouse is over it.  </summary>
+      <returns>true if the <see cref="P:System.Windows.Controls.Primitives.BulletDecorator.Bullet" /> appears as if the mouse is over it; otherwise false.</returns>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.BulletChrome.RenderMouseOverProperty">
+      <summary>Identifies the <see cref="P:Microsoft.Windows.Themes.BulletChrome.RenderMouseOver" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="P:Microsoft.Windows.Themes.BulletChrome.RenderMouseOver" /> dependency property.</returns>
+    </member>
+    <member name="P:Microsoft.Windows.Themes.BulletChrome.RenderPressed">
+      <summary>Gets or sets a value indicating whether the <see cref="P:System.Windows.Controls.Primitives.BulletDecorator.Bullet" /> appears pressed.  </summary>
+      <returns>true if the <see cref="P:System.Windows.Controls.Primitives.BulletDecorator.Bullet" /> appears pressed; otherwise false.</returns>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.BulletChrome.RenderPressedProperty">
+      <summary>Identifies the <see cref="P:Microsoft.Windows.Themes.BulletChrome.RenderPressed" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="P:Microsoft.Windows.Themes.BulletChrome.RenderPressed" /> dependency property.</returns>
+    </member>
+    <member name="P:Microsoft.Windows.Themes.ButtonChrome.Fill">
+      <summary>Gets or sets the brush used to draw the color inside the <see cref="T:System.Windows.Controls.Button" />.  </summary>
+      <returns>The brush.</returns>
+    </member>
+    <member name="F:Microsoft.Windows.Themes.ButtonChrome.FillProperty">
+      <summary>Identifies the <see cref="P:Microsoft.Windows.Themes.ButtonChrome.Fill" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="P:Microsoft.Windows.Themes.ButtonChrome.Fill" /> dependency property.</returns>
+    </member>
+    <member name="T:Microsoft.Windows.Themes.ProgressBarBrushConverter">
+      <summary>Creates the <see cref="T:System.Windows.Media.Brush" /> used to draw the <see cref="T:System.Windows.Controls.ProgressBar" />.</summary>
+    </member>
+    <member name="M:Microsoft.Windows.Themes.ProgressBarBrushConverter.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:Microsoft.Windows.Themes.ProgressBarBrushConverter" /> class.</summary>
+    </member>
+    <member name="M:Microsoft.Windows.Themes.ProgressBarBrushConverter.Convert(System.Object[],System.Type,System.Object,System.Globalization.CultureInfo)">
+      <summary>Creates the <see cref="T:System.Windows.Media.DrawingBrush" /> for the <see cref="T:System.Windows.Controls.ProgressBar" />.</summary>
+      <returns>A <see cref="T:System.Windows.Media.DrawingBrush" />.</returns>
+      <param name="values">ForegroundBrush, IsIndeterminate, Indicator Width, Indicator Height, Track WidthThe <see cref="T:System.Windows.Media.Brush" /> used for the <see cref="P:System.Windows.Controls.Control.Foreground" /> of the <see cref="T:System.Windows.Controls.ProgressBar" />, the Boolean indicating whether the <see cref="P:System.Windows.Controls.ProgressBar.IsIndeterminate" /> is true, the <see cref="T:System.Double" /> defining the <see cref="P:System.Windows.FrameworkElement.Width" /> of the indicator, and the <see cref="T:System.Double" /> defining the <see cref="P:System.Windows.FrameworkElement.Height" /> of the indicator, and the <see cref="T:System.Double" /> defining the width of the <see cref="T:System.Windows.Controls.Primitives.Track" />. </param>
+      <param name="targetType">This parameter is not used.</param>
+      <param name="parameter">This parameter is not used.</param>
+      <param name="culture">This parameter is not used.</param>
+    </member>
+    <member name="M:Microsoft.Windows.Themes.ProgressBarBrushConverter.ConvertBack(System.Object,System.Type[],System.Object,System.Globalization.CultureInfo)">
+      <summary>Not implemented.</summary>
+      <returns>null.</returns>
+      <param name="value">This parameter is not used.</param>
+      <param name="targetTypes">This parameter is not used.</param>
+      <param name="parameter">This parameter is not used.</param>
+      <param name="culture">This parameter is not used.</param>
+    </member>
+  </members>
+</doc>

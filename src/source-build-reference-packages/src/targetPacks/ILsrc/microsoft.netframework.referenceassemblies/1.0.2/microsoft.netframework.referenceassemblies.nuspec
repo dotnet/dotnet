@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.NETFramework.ReferenceAssemblies</id>
+    <version>1.0.2</version>
+    <authors>Microsoft</authors>
+    <owners>Microsoft</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <developmentDependency>true</developmentDependency>
+    <licenseUrl>https://github.com/Microsoft/dotnet/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/Microsoft/dotnet/tree/master/releases/reference-assemblies</projectUrl>
+    <iconUrl>http://go.microsoft.com/fwlink/?LinkID=288859</iconUrl>
+    <description>Microsoft .NET Framework Reference Assemblies</description>
+    <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+    <dependencies>
+      <group targetFramework=".NETFramework2.0">
+        <dependency id="Microsoft.NETFramework.ReferenceAssemblies.net20" version="1.0.2" include="Runtime,Compile,Build,Native,ContentFiles" />
+      </group>
+      <group targetFramework=".NETFramework3.5">
+        <dependency id="Microsoft.NETFramework.ReferenceAssemblies.net35" version="1.0.2" include="Runtime,Compile,Build,Native,ContentFiles" />
+      </group>
+      <group targetFramework=".NETFramework4.0">
+        <dependency id="Microsoft.NETFramework.ReferenceAssemblies.net40" version="1.0.2" include="Runtime,Compile,Build,Native,ContentFiles" />
+      </group>
+      <group targetFramework=".NETFramework4.5">
+        <dependency id="Microsoft.NETFramework.ReferenceAssemblies.net45" version="1.0.2" include="Runtime,Compile,Build,Native,ContentFiles" />
+      </group>
+      <group targetFramework=".NETFramework4.5.1">
+        <dependency id="Microsoft.NETFramework.ReferenceAssemblies.net451" version="1.0.2" include="Runtime,Compile,Build,Native,ContentFiles" />
+      </group>
+      <group targetFramework=".NETFramework4.5.2">
+        <dependency id="Microsoft.NETFramework.ReferenceAssemblies.net452" version="1.0.2" include="Runtime,Compile,Build,Native,ContentFiles" />
+      </group>
+      <group targetFramework=".NETFramework4.6">
+        <dependency id="Microsoft.NETFramework.ReferenceAssemblies.net46" version="1.0.2" include="Runtime,Compile,Build,Native,ContentFiles" />
+      </group>
+      <group targetFramework=".NETFramework4.6.1">
+        <dependency id="Microsoft.NETFramework.ReferenceAssemblies.net461" version="1.0.2" include="Runtime,Compile,Build,Native,ContentFiles" />
+      </group>
+      <group targetFramework=".NETFramework4.6.2">
+        <dependency id="Microsoft.NETFramework.ReferenceAssemblies.net462" version="1.0.2" include="Runtime,Compile,Build,Native,ContentFiles" />
+      </group>
+      <group targetFramework=".NETFramework4.7">
+        <dependency id="Microsoft.NETFramework.ReferenceAssemblies.net47" version="1.0.2" include="Runtime,Compile,Build,Native,ContentFiles" />
+      </group>
+      <group targetFramework=".NETFramework4.7.1">
+        <dependency id="Microsoft.NETFramework.ReferenceAssemblies.net471" version="1.0.2" include="Runtime,Compile,Build,Native,ContentFiles" />
+      </group>
+      <group targetFramework=".NETFramework4.7.2">
+        <dependency id="Microsoft.NETFramework.ReferenceAssemblies.net472" version="1.0.2" include="Runtime,Compile,Build,Native,ContentFiles" />
+      </group>
+      <group targetFramework=".NETFramework4.8">
+        <dependency id="Microsoft.NETFramework.ReferenceAssemblies.net48" version="1.0.2" include="Runtime,Compile,Build,Native,ContentFiles" />
+      </group>
+    </dependencies>
+  </metadata>
+</package>

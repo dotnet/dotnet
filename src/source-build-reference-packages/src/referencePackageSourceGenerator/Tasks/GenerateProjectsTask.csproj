@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <EnableSourceLink>false</EnableSourceLink>
+  </PropertyGroup>
+
+  <Target Name="CreateManifestResourceNames" />
+  <Target Name="CoreCompile" />
+
+  <!--
+    Use some assemblies from the SDK, instead of package references. This ensures they match what's
+    found when the task is loaded by the SDK's MSBuild.
+  -->
+  <PropertyGroup>
+    <SdkReferenceDir>$(DOTNET_INSTALL_DIR)/sdk/$(NETCoreSdkVersion)/</SdkReferenceDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <SdkAssembly Include="$(SdkReferenceDir)Newtonsoft.Json.dll" />
+    <SdkAssembly Include="$(SdkReferenceDir)NuGet.*.dll" />
+    <None Update="./ProjectTemplate.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="./AssemblyVersionTemplate.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Build" Version="15.6.82" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="15.6.82" />
+    <Reference Include="@(SdkAssembly -> '%(Filename)')">
+      <HintPath>$(SdkReferenceDir)%(Identity).dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <Import Project="$(ArtifactsDir)toolset/Common/Tools.proj.nuget.g.targets" />
+
+  <Target Name="PublishPackagesToBlobFeed" />
+</Project>

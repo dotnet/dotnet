@@ -1,0 +1,2036 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>System.ServiceModel.Discovery</name>
+  </assembly>
+  <members>
+    <member name="T:System.ServiceModel.Discovery.AnnouncementClient">
+      <summary>Used by services to send discovery announcement messages. Clients can use the discovery mechanism, specifically the corresponding <see cref="T:System.ServiceModel.Discovery.AnnouncementService" /> class to listen and act on the announcement messages. An announcement message contains information about the service such as its fully-qualified contract name, any scopes that the service is operating in as well as any custom metadata the service wants to send. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.AnnouncementClient.#ctor">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.AnnouncementClient" /> class. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.AnnouncementClient.#ctor(System.ServiceModel.Discovery.AnnouncementEndpoint)">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Discovery.AnnouncementClient" /> class with the specified <see cref="T:System.ServiceModel.Discovery.AnnouncementEndpoint" />.</summary>
+      <param name="announcementEndpoint">The announcement endpoint.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.AnnouncementClient.#ctor(System.String)">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Discovery.AnnouncementClient" /> class with the specified endpoint configuration.</summary>
+      <param name="endpointConfigurationName">The name of the endpoint configuration to use.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.AnnouncementClient.AnnounceOffline(System.ServiceModel.Discovery.EndpointDiscoveryMetadata)">
+      <summary>Causes an offline announcement message (Bye) to be sent with the specified endpoint discovery metadata.</summary>
+      <param name="discoveryMetadata">The endpoint discovery metadata.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.AnnouncementClient.AnnounceOfflineAsync(System.ServiceModel.Discovery.EndpointDiscoveryMetadata)">
+      <summary>Causes an offline announcement message (Bye) to be sent asynchronously with the specified endpoint discovery metadata.</summary>
+      <param name="discoveryMetadata">The endpoint discovery metadata.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.AnnouncementClient.AnnounceOfflineAsync(System.ServiceModel.Discovery.EndpointDiscoveryMetadata,System.Object)">
+      <summary>Causes an offline announcement message (Bye) to be sent asynchronously with the specified endpoint discovery metadata and user-defined state.</summary>
+      <param name="discoveryMetadata">The endpoint discovery metadata.</param>
+      <param name="userState">The user-defined state data.</param>
+    </member>
+    <member name="E:System.ServiceModel.Discovery.AnnouncementClient.AnnounceOfflineCompleted">
+      <summary>Occurs when an asynchronous offline announcement (Bye) completes.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.AnnouncementClient.AnnounceOnline(System.ServiceModel.Discovery.EndpointDiscoveryMetadata)">
+      <summary>Causes an online announcement message (Hello) to be sent asynchronously.</summary>
+      <param name="discoveryMetadata">The endpoint discovery metadata.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.AnnouncementClient.AnnounceOnlineAsync(System.ServiceModel.Discovery.EndpointDiscoveryMetadata)">
+      <summary>Causes an online announcement (Hello) message to be sent asynchronously with the specified endpoint discovery metadata.</summary>
+      <param name="discoveryMetadata">The endpoint discovery metadata.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.AnnouncementClient.AnnounceOnlineAsync(System.ServiceModel.Discovery.EndpointDiscoveryMetadata,System.Object)">
+      <summary>Causes an online announcement (Hello) message to be sent asynchronously with the specified endpoint discovery metadata and user-defined state.</summary>
+      <param name="discoveryMetadata">The endpoint discovery metadata.</param>
+      <param name="userState">The user-defined state data.</param>
+    </member>
+    <member name="E:System.ServiceModel.Discovery.AnnouncementClient.AnnounceOnlineCompleted">
+      <summary>Occurs when an asynchronous online announcement (Hello) completes.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.AnnouncementClient.BeginAnnounceOffline(System.ServiceModel.Discovery.EndpointDiscoveryMetadata,System.AsyncCallback,System.Object)">
+      <summary>Causes an offline announcement (Bye) message to be sent asynchronously with the specified endpoint discovery metadata and user-defined state. The specified <see cref="T:System.AsyncCallback" /> is called when the operation completes.</summary>
+      <returns>An <see cref="T:System.IAsyncResult" /> instance.</returns>
+      <param name="discoveryMetadata">The endpoint discovery metadata.</param>
+      <param name="callback">The <see cref="T:System.AsyncCallback" />.</param>
+      <param name="state">The user-defined state data.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.AnnouncementClient.BeginAnnounceOnline(System.ServiceModel.Discovery.EndpointDiscoveryMetadata,System.AsyncCallback,System.Object)">
+      <summary>Causes an online announcement (Hello) message to be sent asynchronously with the specified endpoint discovery metadata and user-defined state. The specified <see cref="T:System.AsyncCallback" /> is called when the operation completes.</summary>
+      <returns>An <see cref="T:System.IAsyncResult" /> instance.</returns>
+      <param name="discoveryMetadata">The endpoint discovery metadata.</param>
+      <param name="callback">The <see cref="T:System.AsyncCallback" />.</param>
+      <param name="state">The user-defined state data.</param>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.AnnouncementClient.ChannelFactory">
+      <summary>Gets the channel factory associated with the <see cref="T:System.ServiceModel.Discovery.AnnouncementClient" />.</summary>
+      <returns>A <see cref="T:System.ServiceModel.ChannelFactory" /> instance.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.AnnouncementClient.ClientCredentials">
+      <summary>Gets the client credentials associated with the <see cref="T:System.ServiceModel.Discovery.AnnouncementClient" />.</summary>
+      <returns>A <see cref="T:System.ServiceModel.Description.ClientCredentials" /> instance.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.AnnouncementClient.Close">
+      <summary>Closes the <see cref="T:System.ServiceModel.Discovery.AnnouncementClient" />.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.AnnouncementClient.EndAnnounceOffline(System.IAsyncResult)">
+      <summary>Waits for a pending asynchronous offline announcement to complete.</summary>
+      <param name="result">A reference to the pending asynchronous operation.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.AnnouncementClient.EndAnnounceOnline(System.IAsyncResult)">
+      <summary>Waits for a pending asynchronous online announcement to complete.</summary>
+      <param name="result">A reference to the pending asynchronous operation.</param>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.AnnouncementClient.Endpoint">
+      <summary>Gets the <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> associated with the <see cref="T:System.ServiceModel.Discovery.AnnouncementClient" />.</summary>
+      <returns>A <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> instance.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.AnnouncementClient.InnerChannel">
+      <summary>Gets the inner channel associated with the <see cref="T:System.ServiceModel.Discovery.AnnouncementClient" />.</summary>
+      <returns>An <see cref="T:System.ServiceModel.IClientChannel" /> instance.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.AnnouncementClient.MessageSequenceGenerator">
+      <summary>Gets or sets the message sequence generator associated with the <see cref="T:System.ServiceModel.Discovery.AnnouncementClient" />.</summary>
+      <returns>A <see cref="T:System.ServiceModel.Discovery.DiscoveryMessageSequenceGenerator" /> instance.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.AnnouncementClient.Open">
+      <summary>Opens the <see cref="T:System.ServiceModel.Discovery.AnnouncementClient" />.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.AnnouncementClient.System#IDisposable#Dispose">
+      <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.AnnouncementClient.System#ServiceModel#ICommunicationObject#Abort">
+      <summary>Causes a communication object to transition immediately from its current state into the closed state.  </summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.AnnouncementClient.System#ServiceModel#ICommunicationObject#BeginClose(System.AsyncCallback,System.Object)">
+      <summary>Begins an asynchronous operation to close a communication object.</summary>
+      <returns>The <see cref="T:System.IAsyncResult" /> that references the asynchronous close operation.</returns>
+      <param name="callback">The <see cref="T:System.AsyncCallback" /> delegate that receives notification of the completion of the asynchronous close operation.</param>
+      <param name="state">An object, specified by the application, that contains state information associated with the asynchronous close operation.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.AnnouncementClient.System#ServiceModel#ICommunicationObject#BeginClose(System.TimeSpan,System.AsyncCallback,System.Object)">
+      <summary>Begins an asynchronous operation to close a communication object with a specified timeout.</summary>
+      <returns>The <see cref="T:System.IAsyncResult" /> that references the asynchronous close operation.</returns>
+      <param name="timeout">The <see cref="T:System.Timespan" /> that specifies how long the send operation has to complete before timing out.</param>
+      <param name="callback">The <see cref="T:System.AsyncCallback" /> delegate that receives notification of the completion of the asynchronous close operation.</param>
+      <param name="state">An object, specified by the application, that contains state information associated with the asynchronous close operation.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.AnnouncementClient.System#ServiceModel#ICommunicationObject#BeginOpen(System.AsyncCallback,System.Object)">
+      <summary>Begins an asynchronous operation to open a communication object.</summary>
+      <returns>The <see cref="T:System.IAsyncResult" /> that references the asynchronous open operation.</returns>
+      <param name="callback">The <see cref="T:System.AsyncCallback" /> delegate that receives notification of the completion of the asynchronous open operation.</param>
+      <param name="state">An object, specified by the application, that contains state information associated with the asynchronous open operation.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.AnnouncementClient.System#ServiceModel#ICommunicationObject#BeginOpen(System.TimeSpan,System.AsyncCallback,System.Object)">
+      <summary>Begins an asynchronous operation to open a communication object within a specified interval of time.</summary>
+      <returns>The <see cref="T:System.IAsyncResult" /> that references the asynchronous open operation.</returns>
+      <param name="timeout">The <see cref="T:System.Timespan" /> that specifies how long the send operation has to complete before timing out.</param>
+      <param name="callback">The <see cref="T:System.AsyncCallback" /> delegate that receives notification of the completion of the asynchronous open operation.</param>
+      <param name="state">An object, specified by the application, that contains state information associated with the asynchronous open operation.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.AnnouncementClient.System#ServiceModel#ICommunicationObject#Close">
+      <summary>Causes a communication object to transition from its current state into the closed state. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.AnnouncementClient.System#ServiceModel#ICommunicationObject#Close(System.TimeSpan)">
+      <summary>Causes a communication object to transition from its current state into the closed state.  </summary>
+      <param name="timeout">The <see cref="T:System.Timespan" /> that specifies how long the send operation has to complete before timing out.</param>
+    </member>
+    <member name="E:System.ServiceModel.Discovery.AnnouncementClient.System#ServiceModel#ICommunicationObject#Closed">
+      <summary>Occurs when the communication object completes its transition from the closing state into the closed state.</summary>
+    </member>
+    <member name="E:System.ServiceModel.Discovery.AnnouncementClient.System#ServiceModel#ICommunicationObject#Closing">
+      <summary>Occurs when the communication object first enters the closing state.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.AnnouncementClient.System#ServiceModel#ICommunicationObject#EndClose(System.IAsyncResult)">
+      <summary>Completes an asynchronous operation to close a communication object.</summary>
+      <param name="result">The <see cref="T:System.IAsyncResult" /> that is returned by a call to the <see cref="M:System.ServiceModel.ICommunicationObject.BeginClose" /> method.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.AnnouncementClient.System#ServiceModel#ICommunicationObject#EndOpen(System.IAsyncResult)">
+      <summary>Completes an asynchronous operation to open a communication object.</summary>
+      <param name="result">The <see cref="T:System.IAsyncResult" /> that is returned by a call to the <see cref="M:System.ServiceModel.ICommunicationObject.BeginOpen" /> method.</param>
+    </member>
+    <member name="E:System.ServiceModel.Discovery.AnnouncementClient.System#ServiceModel#ICommunicationObject#Faulted">
+      <summary>Occurs when the communication object first enters the faulted state.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.AnnouncementClient.System#ServiceModel#ICommunicationObject#Open">
+      <summary>Causes a communication object to transition from the created state into the opened state.  </summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.AnnouncementClient.System#ServiceModel#ICommunicationObject#Open(System.TimeSpan)">
+      <summary>Causes a communication object to transition from the created state into the opened state within a specified interval of time.</summary>
+      <param name="timeout">The <see cref="T:System.Timespan" /> that specifies how long the send operation has to complete before timing out.</param>
+    </member>
+    <member name="E:System.ServiceModel.Discovery.AnnouncementClient.System#ServiceModel#ICommunicationObject#Opened">
+      <summary>Occurs when the communication object completes its transition from the opening state into the opened state.</summary>
+    </member>
+    <member name="E:System.ServiceModel.Discovery.AnnouncementClient.System#ServiceModel#ICommunicationObject#Opening">
+      <summary>Occurs when the communication object first enters the opening state.</summary>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.AnnouncementClient.System#ServiceModel#ICommunicationObject#State">
+      <summary>Gets the current state of the communication-oriented object.</summary>
+      <returns>The value of the <see cref="T:System.ServiceModel.CommunicationState" /> of the object.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.AnnouncementEndpoint">
+      <summary>A standard endpoint that is used by services to send announcement messages. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.AnnouncementEndpoint.#ctor">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.AnnouncementEndpoint" /> class. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.AnnouncementEndpoint.#ctor(System.ServiceModel.Channels.Binding,System.ServiceModel.EndpointAddress)">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.AnnouncementEndpoint" /> class with the specified binding and address.</summary>
+      <param name="binding">The binding.</param>
+      <param name="address">The address.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.AnnouncementEndpoint.#ctor(System.ServiceModel.Discovery.DiscoveryVersion)">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.AnnouncementEndpoint" /> class that supports the specified <see cref="T:System.ServiceModel.Discovery.DiscoveryVersion" />.</summary>
+      <param name="discoveryVersion">The discovery version to use.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.AnnouncementEndpoint.#ctor(System.ServiceModel.Discovery.DiscoveryVersion,System.ServiceModel.Channels.Binding,System.ServiceModel.EndpointAddress)">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.AnnouncementEndpoint" /> class that supports the specified <see cref="T:System.ServiceModel.Discovery.DiscoveryVersion" /> with the specified binding and address.</summary>
+      <param name="discoveryVersion">The discovery version to use.</param>
+      <param name="binding">The binding to use.</param>
+      <param name="address">The address of the endpoint.</param>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.AnnouncementEndpoint.DiscoveryVersion">
+      <summary>Gets the discovery version this announcement endpoint supports.</summary>
+      <returns>A  <see cref="T:System.ServiceModel.Discovery.DiscoveryVersion" /> instance.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.AnnouncementEndpoint.MaxAnnouncementDelay">
+      <summary>Gets or sets the maximum announcement delay.</summary>
+      <returns>A <see cref="T:System.TimeSpan" /> instance that contains the maximum announcement delay.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.AnnouncementEventArgs">
+      <summary>Used to pass announcement event arguments.</summary>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.AnnouncementEventArgs.EndpointDiscoveryMetadata">
+      <summary>Gets the service metadata sent by the service as part of its announcement message from this <see cref="T:System.ServiceModel.Discovery.AnnouncementEventArgs" /> instance.</summary>
+      <returns>The discoverable service metadata.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.AnnouncementEventArgs.MessageSequence">
+      <summary>Gets the discovery message sequence from this <see cref="T:System.ServiceModel.Discovery.AnnouncementEventArgs" /> instance.</summary>
+      <returns>The discovery message sequence.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.AnnouncementService">
+      <summary>A self-hosted implementation of the announcement service. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.AnnouncementService.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Discovery.AnnouncementService" /> class. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.AnnouncementService.#ctor(System.Int32)">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Discovery.AnnouncementService" /> class with the specified length of the duplicate message history.</summary>
+      <param name="duplicateMessageHistoryLength">The maximum number of message hashes used by the transport for identifying duplicate messages. The default value is 0.</param>
+    </member>
+    <member name="E:System.ServiceModel.Discovery.AnnouncementService.OfflineAnnouncementReceived">
+      <summary>Occurs when an offline announcement (Bye) message is received,</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.AnnouncementService.OnBeginOfflineAnnouncement(System.ServiceModel.Discovery.DiscoveryMessageSequence,System.ServiceModel.Discovery.EndpointDiscoveryMetadata,System.AsyncCallback,System.Object)">
+      <summary>Starts the processing of incoming offline announcement (Bye) messages.</summary>
+      <returns>The status of the pending asynchronous request.</returns>
+      <param name="messageSequence">The position of this message in the sequence for the current notification.</param>
+      <param name="endpointDiscoveryMetadata">An object that provides endpoint metadata, for example scopes, listen URI, contract names, and endpoint address.</param>
+      <param name="callback">The method to call when the asynchronous operation is complete.</param>
+      <param name="state">Infrastructure-defined state data.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.AnnouncementService.OnBeginOnlineAnnouncement(System.ServiceModel.Discovery.DiscoveryMessageSequence,System.ServiceModel.Discovery.EndpointDiscoveryMetadata,System.AsyncCallback,System.Object)">
+      <summary>Starts the processing of incoming online announcement (Hello) messages.</summary>
+      <returns>The status of the pending asynchronous request.</returns>
+      <param name="messageSequence">The position of this message in the sequence for the current notification.</param>
+      <param name="endpointDiscoveryMetadata">An object that provides endpoint metadata, for example scopes, listen URI, contract names, and endpoint address.</param>
+      <param name="callback">The method to call when the asynchronous operation is complete.</param>
+      <param name="state">Infrastructure-defined state data.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.AnnouncementService.OnEndOfflineAnnouncement(System.IAsyncResult)">
+      <summary>Users that inherit from <see cref="T:System.ServiceModel.Discovery.AnnouncementService" /> to implement a custom announcement listener service must override this method and begin to process incoming offline announcement (Bye) messages here.</summary>
+      <param name="result">An asynchronous result returned by the corresponding <see cref="M:System.ServiceModel.Discovery.DiscoveryProxyBase.OnBeginOnlineAnnouncement(System.ServiceModel.Discovery.AnnouncementMessage,System.AsyncCallback,System.Object)" />.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.AnnouncementService.OnEndOnlineAnnouncement(System.IAsyncResult)">
+      <summary>Users that inherit from <see cref="T:System.ServiceModel.Discovery.AnnouncementService" /> to implement a custom announcement listener service must override this method and begin to process incoming offline announcement (Bye) messages here.</summary>
+      <param name="result">An asynchronous result returned by the corresponding <see cref="M:System.ServiceModel.Discovery.DiscoveryProxyBase.OnBeginOnlineAnnouncement(System.ServiceModel.Discovery.AnnouncementMessage,System.AsyncCallback,System.Object)" />.</param>
+    </member>
+    <member name="E:System.ServiceModel.Discovery.AnnouncementService.OnlineAnnouncementReceived">
+      <summary>Occurs when an online announcement (Hello) is received.</summary>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.DiscoveryClient">
+      <summary>Allows you to discover available services. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryClient.#ctor">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.DiscoveryClient" /> class. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryClient.#ctor(System.ServiceModel.Discovery.DiscoveryEndpoint)">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.DiscoveryClient" /> class. </summary>
+      <param name="discoveryEndpoint">The discovery endpoint to use when sending discovery messages.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryClient.#ctor(System.String)">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.DiscoveryClient" /> class with the specified endpoint configuration.</summary>
+      <param name="endpointConfigurationName">The endpoint configuration name to use.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryClient.CancelAsync(System.Object)">
+      <summary>Cancels a pending asynchronous operation.</summary>
+      <param name="userState">A user specified state object that is passed to the <see cref="M:System.ServiceModel.Discovery.DiscoveryClient.FindAsync" /> method or one of the <see cref="M:System.ServiceModel.Discovery.DiscoveryClient.ResolveAsync" /> methods. It identifies the pending asynchronous operation to cancel.</param>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.DiscoveryClient.ChannelFactory">
+      <summary>Gets the channel factory for the <see cref="T:System.ServiceModel.Discovery.DiscoveryClient" />.</summary>
+      <returns>A channel factory.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.DiscoveryClient.ClientCredentials">
+      <summary>Gets the client credentials for the <see cref="T:System.ServiceModel.Discovery.DiscoveryClient" />.</summary>
+      <returns>The client credentials for the <see cref="T:System.ServiceModel.Discovery.DiscoveryClient" />.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryClient.Close">
+      <summary>Closes the discovery client.</summary>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.DiscoveryClient.Endpoint">
+      <summary>Gets the endpoint used to send discovery messages.</summary>
+      <returns>The endpoint used to send discovery messages.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryClient.Find(System.ServiceModel.Discovery.FindCriteria)">
+      <summary>Sends a request to find services that match the specified criteria.</summary>
+      <returns>The discoverable metadata of the matching service endpoints.</returns>
+      <param name="criteria">The criteria for finding services.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryClient.FindAsync(System.ServiceModel.Discovery.FindCriteria)">
+      <summary>Begins an asynchronous find operation with the specified criteria.</summary>
+      <param name="criteria">The criteria for finding services.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryClient.FindAsync(System.ServiceModel.Discovery.FindCriteria,System.Object)">
+      <summary>Begins an asynchronous find operation with the specified criteria and user defined state object.</summary>
+      <param name="criteria">The criteria for finding services.</param>
+      <param name="userState">A user specified object to identify the asynchronous find operation.</param>
+    </member>
+    <member name="E:System.ServiceModel.Discovery.DiscoveryClient.FindCompleted">
+      <summary>Occurs when the entire find operation completes.</summary>
+    </member>
+    <member name="E:System.ServiceModel.Discovery.DiscoveryClient.FindProgressChanged">
+      <summary>Occurs every time the client receives a response from a particular service. </summary>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.DiscoveryClient.InnerChannel">
+      <summary>Gets the channel used to send discovery messages.</summary>
+      <returns>The channel used to send discovery messages. </returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryClient.Open">
+      <summary>Opens the <see cref="T:System.ServiceModel.Discovery.DiscoveryClient" />.</summary>
+    </member>
+    <member name="E:System.ServiceModel.Discovery.DiscoveryClient.ProxyAvailable">
+      <summary>Occurs when a multicast suppression message is received from a discovery proxy in response to the find or resolve operation.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryClient.Resolve(System.ServiceModel.Discovery.ResolveCriteria)">
+      <summary>Begins an asynchronous resolve operation with the specified criteria.</summary>
+      <returns>The discoverable metadata of the service endpoint at the specified address, or null if no service endpoint is found at the specified address.</returns>
+      <param name="criteria">The criteria for matching a service endpoint.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryClient.ResolveAsync(System.ServiceModel.Discovery.ResolveCriteria)">
+      <summary>Begins an asynchronous resolve operation with the specified criteria.</summary>
+      <param name="criteria">The criteria for matching a service endpoint.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryClient.ResolveAsync(System.ServiceModel.Discovery.ResolveCriteria,System.Object)">
+      <summary>Begins an asynchronous resolve operation with the specified criteria and user-defined state object.</summary>
+      <param name="criteria">The criteria for matching a service endpoint.</param>
+      <param name="userState">A user specified object to identify the asynchronous resolve operation.</param>
+    </member>
+    <member name="E:System.ServiceModel.Discovery.DiscoveryClient.ResolveCompleted">
+      <summary>Occurs when an asynchronous resolve operation is completed.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryClient.System#IDisposable#Dispose">
+      <summary>An implementation of the <see cref="M:System.IDisposible.Dispose" /> method.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryClient.System#ServiceModel#ICommunicationObject#Abort">
+      <summary>Causes a communication object to transition immediately from its current state into the closed state.  </summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryClient.System#ServiceModel#ICommunicationObject#BeginClose(System.AsyncCallback,System.Object)">
+      <summary>Begins an asynchronous operation to close a communication object.</summary>
+      <returns>The <see cref="T:System.IAsyncResult" /> that references the asynchronous close operation.</returns>
+      <param name="callback">The <see cref="T:System.AsyncCallback" /> delegate that receives notification of the completion of the asynchronous close operation.</param>
+      <param name="state">An object, specified by the application, that contains state information associated with the asynchronous close operation.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryClient.System#ServiceModel#ICommunicationObject#BeginClose(System.TimeSpan,System.AsyncCallback,System.Object)">
+      <summary>Begins an asynchronous operation to close a communication object with a specified timeout.</summary>
+      <returns>The <see cref="T:System.IAsyncResult" /> that references the asynchronous close operation.</returns>
+      <param name="timeout">The <see cref="T:System.Timespan" /> that specifies how long the send operation has to complete before timing out.</param>
+      <param name="callback">The <see cref="T:System.AsyncCallback" /> delegate that receives notification of the completion of the asynchronous close operation.</param>
+      <param name="state">An object, specified by the application, that contains state information associated with the asynchronous close operation.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryClient.System#ServiceModel#ICommunicationObject#BeginOpen(System.AsyncCallback,System.Object)">
+      <summary>Begins an asynchronous operation to open a communication object.</summary>
+      <returns>The <see cref="T:System.IAsyncResult" /> that references the asynchronous open operation.</returns>
+      <param name="callback">The <see cref="T:System.AsyncCallback" /> delegate that receives notification of the completion of the asynchronous open operation.</param>
+      <param name="state">An object, specified by the application, that contains state information associated with the asynchronous open operation.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryClient.System#ServiceModel#ICommunicationObject#BeginOpen(System.TimeSpan,System.AsyncCallback,System.Object)">
+      <summary>Begins an asynchronous operation to open a communication object within a specified interval of time.</summary>
+      <returns>The <see cref="T:System.IAsyncResult" /> that references the asynchronous open operation.</returns>
+      <param name="timeout">The <see cref="T:System.Timespan" /> that specifies how long the send operation has to complete before timing out.</param>
+      <param name="callback">The <see cref="T:System.AsyncCallback" /> delegate that receives notification of the completion of the asynchronous open operation.</param>
+      <param name="state">An object, specified by the application, that contains state information associated with the asynchronous open operation.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryClient.System#ServiceModel#ICommunicationObject#Close">
+      <summary>Causes a communication object to transition from its current state into the closed state. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryClient.System#ServiceModel#ICommunicationObject#Close(System.TimeSpan)">
+      <summary>Causes a communication object to transition from its current state into the closed state.  </summary>
+      <param name="timeout">The <see cref="T:System.Timespan" /> that specifies how long the send operation has to complete before timing out.</param>
+    </member>
+    <member name="E:System.ServiceModel.Discovery.DiscoveryClient.System#ServiceModel#ICommunicationObject#Closed">
+      <summary>Occurs when the communication object completes its transition from the closing state into the closed state.</summary>
+    </member>
+    <member name="E:System.ServiceModel.Discovery.DiscoveryClient.System#ServiceModel#ICommunicationObject#Closing">
+      <summary>Occurs when the communication object first enters the closing state.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryClient.System#ServiceModel#ICommunicationObject#EndClose(System.IAsyncResult)">
+      <summary>Completes an asynchronous operation to close a communication object.</summary>
+      <param name="result">The <see cref="T:System.IAsyncResult" /> that is returned by a call to the <see cref="M:System.ServiceModel.ICommunicationObject.BeginClose" /> method.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryClient.System#ServiceModel#ICommunicationObject#EndOpen(System.IAsyncResult)">
+      <summary>Completes an asynchronous operation to open a communication object.</summary>
+      <param name="result">The <see cref="T:System.IAsyncResult" /> that is returned by a call to the <see cref="M:System.ServiceModel.ICommunicationObject.BeginOpen" /> method.</param>
+    </member>
+    <member name="E:System.ServiceModel.Discovery.DiscoveryClient.System#ServiceModel#ICommunicationObject#Faulted">
+      <summary>Occurs when the communication object first enters the faulted state.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryClient.System#ServiceModel#ICommunicationObject#Open">
+      <summary>Causes a communication object to transition from the created state into the opened state.  </summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryClient.System#ServiceModel#ICommunicationObject#Open(System.TimeSpan)">
+      <summary>Causes a communication object to transition from the created state into the opened state within a specified interval of time.</summary>
+      <param name="timeout">The <see cref="T:System.Timespan" /> that specifies how long the send operation has to complete before timing out.</param>
+    </member>
+    <member name="E:System.ServiceModel.Discovery.DiscoveryClient.System#ServiceModel#ICommunicationObject#Opened">
+      <summary>Occurs when the communication object completes its transition from the opening state into the opened state.</summary>
+    </member>
+    <member name="E:System.ServiceModel.Discovery.DiscoveryClient.System#ServiceModel#ICommunicationObject#Opening">
+      <summary>Occurs when the communication object first enters the opening state.</summary>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.DiscoveryClient.System#ServiceModel#ICommunicationObject#State">
+      <summary>Gets the current state of the communication-oriented object.</summary>
+      <returns>The value of the <see cref="T:System.ServiceModel.CommunicationState" /> of the object.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.DiscoveryClientBindingElement">
+      <summary>A binding element that can be added to a  client application to take advantage of the Discovery client channel. The Discovery client channel allows a  client application to access a discoverable service without knowing the endpoint address in advance. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryClientBindingElement.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Discovery.DiscoveryClientBindingElement" /> class with default values.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryClientBindingElement.#ctor(System.ServiceModel.Discovery.DiscoveryEndpointProvider,System.ServiceModel.Discovery.FindCriteria)">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Discovery.DiscoveryClientBindingElement" /> class with the specified endpoint provider and service finding criteria.</summary>
+      <param name="discoveryEndpointProvider">An object that gets a discovery endpoint.</param>
+      <param name="findCriteria">An object that contains the information required to search for a service provider.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryClientBindingElement.BuildChannelFactory``1(System.ServiceModel.Channels.BindingContext)">
+      <summary>Initializes a channel factory for producing channels of a specific type from the binding context.</summary>
+      <returns>The channel factory of the specified type initialized from the binding context.</returns>
+      <param name="context">The binding context.</param>
+      <typeparam name="TChannel">The type of channel factory to create.</typeparam>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryClientBindingElement.BuildChannelListener``1(System.ServiceModel.Channels.BindingContext)">
+      <summary>Building a channel listener is not supported by the Discovery client channel. This method can be overridden to initialize a channel listener to accept channels of a specified type from the binding context.</summary>
+      <returns>The channel listener of the specified type initialized from the context.</returns>
+      <param name="context">The binding context.</param>
+      <typeparam name="TChannel">The type of channel listener to create.</typeparam>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryClientBindingElement.CanBuildChannelFactory``1(System.ServiceModel.Channels.BindingContext)">
+      <summary>Returns a value that indicates whether the current binding can build a channel factory stack on the client.</summary>
+      <returns>true if the specified channel factory stack can be built on the client; otherwise false.</returns>
+      <param name="context">The binding context.</param>
+      <typeparam name="TChannel">The type of channel for which the factory is being tested.</typeparam>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryClientBindingElement.CanBuildChannelListener``1(System.ServiceModel.Channels.BindingContext)">
+      <summary>Because building a channel listener is not supported by the Discovery client channel, this method always returns false. It may be extended to return a value that indicates whether the binding element can build a listener for a specific type of channel.</summary>
+      <returns>true if the <see cref="T:System.ServiceModel.Channels.IChannelListener`1" /> of the specified type can be built by the binding element, otherwise false.</returns>
+      <param name="context">The binding context.</param>
+      <typeparam name="TChannel">The type of channel the listener accepts.</typeparam>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryClientBindingElement.Clone">
+      <summary>Creates a copy of the binding element.</summary>
+      <returns>A copy of the binding element.</returns>
+    </member>
+    <member name="F:System.ServiceModel.Discovery.DiscoveryClientBindingElement.DiscoveryEndpointAddress">
+      <summary>A static temporary address that acts as a placeholder until the actual service address is resolved. </summary>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.DiscoveryClientBindingElement.DiscoveryEndpointProvider">
+      <summary>Gets the discovery endpoint provider.</summary>
+      <returns>The endpoint provider.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.DiscoveryClientBindingElement.FindCriteria">
+      <summary>Gets or sets the find criteria.</summary>
+      <returns>The find criteria.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryClientBindingElement.GetProperty``1(System.ServiceModel.Channels.BindingContext)">
+      <summary>Returns an object of the requested type, if present in the binding stack.</summary>
+      <returns>An object of the specified type if present, otherwise null.</returns>
+      <param name="context">The binding context.</param>
+      <typeparam name="T">The type of object to retrieve.</typeparam>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.DiscoveryEndpoint">
+      <summary>A standard discovery endpoint.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryEndpoint.#ctor">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.DiscoveryEndpoint" /> class. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryEndpoint.#ctor(System.ServiceModel.Channels.Binding,System.ServiceModel.EndpointAddress)">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.DiscoveryEndpoint" /> class with the specified binding and endpoint address.</summary>
+      <param name="binding">The binding.</param>
+      <param name="endpointAddress">The endpoint address.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryEndpoint.#ctor(System.ServiceModel.Discovery.DiscoveryVersion,System.ServiceModel.Discovery.ServiceDiscoveryMode)">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Discovery.DiscoveryEndpoint" /> class with the specified discovery version and mode.</summary>
+      <param name="discoveryVersion">An enumerated value representing one of the versions of the WS-Discovery protocols.</param>
+      <param name="discoveryMode">An enumerated value representing one of the modes used to send discovery messages.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryEndpoint.#ctor(System.ServiceModel.Discovery.DiscoveryVersion,System.ServiceModel.Discovery.ServiceDiscoveryMode,System.ServiceModel.Channels.Binding,System.ServiceModel.EndpointAddress)">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Discovery.DiscoveryEndpoint" /> class with the specified discovery version, mode, binding, and endpoint address.</summary>
+      <param name="discoveryVersion">An enumerated value representing one of the versions of the WS-Discovery protocols.</param>
+      <param name="discoveryMode">An enumerated value representing one of the modes used to send discovery messages.</param>
+      <param name="binding">The binding elements that specify the protocols, transports, and message encoders used for communication between clients and services.</param>
+      <param name="endpointAddress">The unique address of the discovery endpoint.</param>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.DiscoveryEndpoint.DiscoveryMode">
+      <summary>Gets the <see cref="T:System.ServiceModel.Discovery.DiscoveryMode" /> for the endpoint.</summary>
+      <returns>One of the <see cref="T:System.ServiceModel.Discovery.DiscoveryMode" /> enumeration values.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.DiscoveryEndpoint.DiscoveryVersion">
+      <summary>Gets the <see cref="T:System.ServiceModel.Discovery.DiscoveryVersion" /> for the endpoint.</summary>
+      <returns>One of the <see cref="T:System.ServiceModel.Discovery.DiscoveryVersion" /> enumeration values.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.DiscoveryEndpoint.MaxResponseDelay">
+      <summary>Gets or sets the maximum <see cref="T:System.Timespan" /> within which all of the ProbeMatches for a service that respond to a probe operation are sent.</summary>
+      <returns>A <see cref="T:System.TimeSpan" /> instance that contains the maximum time span within which all of the ProbeMatches for a service that respond to a probe operation are sent. </returns>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.DiscoveryEndpointProvider">
+      <summary>Provides a discovery endpoint.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryEndpointProvider.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Discovery.DiscoveryEndpointProvider" /> class.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryEndpointProvider.GetDiscoveryEndpoint">
+      <summary>Gets the discovery endpoint.</summary>
+      <returns>The discovery endpoint.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.DiscoveryMessageSequence">
+      <summary>Represents the AppSequence header defined in the WS-Discovery protocol. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryMessageSequence.CanCompareTo(System.ServiceModel.Discovery.DiscoveryMessageSequence)">
+      <summary>Gets a value that indicates whether the specified <see cref="T:System.ServiceModel.Discovery.DiscoveryMessageSequence" /> instance is comparable to the current <see cref="T:System.ServiceModel.Discovery.DiscoveryMessageSequence" /> instance.</summary>
+      <returns>true if the two discovery message sequences are comparable; otherwise false.</returns>
+      <param name="other">The discovery message sequence to compare.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryMessageSequence.CompareTo(System.ServiceModel.Discovery.DiscoveryMessageSequence)">
+      <summary>Compares the specified <see cref="T:System.ServiceModel.Discovery.DiscoveryMessageSequence" /> instance with the current <see cref="T:System.ServiceModel.Discovery.DiscoveryMessageSequence" /> instance.</summary>
+      <returns>0 if the two discovery message sequences are equal, a negative number if the message number of <paramref name="other" /> is greater than the message number of the current discovery sequence.</returns>
+      <param name="other">The discovery message sequence to compare.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryMessageSequence.Equals(System.Object)">
+      <summary>Determines if the specified object is equal to the current <see cref="T:System.ServiceModel.Discovery.DiscoveryMessageSequence" /> instance.</summary>
+      <returns>true if the specified object is equal to the current discovery message sequence.</returns>
+      <param name="obj">The object to compare.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryMessageSequence.Equals(System.ServiceModel.Discovery.DiscoveryMessageSequence)">
+      <summary>Determines if the specified <see cref="T:System.ServiceModel.Discovery.DiscoveryMessageSequence" /> instance is comparable to the current <see cref="T:System.ServiceModel.Discovery.DiscoveryMessageSequence" /> instance.</summary>
+      <returns>true if the two discovery message sequences are comparable; otherwise, false.</returns>
+      <param name="other">The discovery message sequence to compare.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryMessageSequence.GetHashCode">
+      <summary>Gets a hash code for the current <see cref="T:System.ServiceModel.Discovery.DiscoveryMessageSequence" /> instance.</summary>
+      <returns>A hash code value.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.DiscoveryMessageSequence.InstanceId">
+      <summary>Gets the instance ID.</summary>
+      <returns>The instance ID.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.DiscoveryMessageSequence.MessageNumber">
+      <summary>Gets the message number.</summary>
+      <returns>The message number.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryMessageSequence.op_Equality(System.ServiceModel.Discovery.DiscoveryMessageSequence,System.ServiceModel.Discovery.DiscoveryMessageSequence)">
+      <summary>Determines if two specified instances of <see cref="T:System.ServiceModel.Discovery.DiscoveryMessageSequence" /> are equal.</summary>
+      <returns>true if the two discovery message sequence instances are equal; otherwise false.</returns>
+      <param name="messageSequence1">A discovery message sequence.</param>
+      <param name="messageSequence2">A discovery message sequence.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryMessageSequence.op_Inequality(System.ServiceModel.Discovery.DiscoveryMessageSequence,System.ServiceModel.Discovery.DiscoveryMessageSequence)">
+      <summary>Determines if two specified instances of <see cref="T:System.ServiceModel.Discovery.DiscoveryMessageSequence" /> are not equal.</summary>
+      <returns>true if the two discovery message sequence instances are not equal; otherwise false.</returns>
+      <param name="messageSequence1">A discovery message sequence.</param>
+      <param name="messageSequence2">A discovery message sequence.</param>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.DiscoveryMessageSequence.SequenceId">
+      <summary>Gets the sequence ID.</summary>
+      <returns>The sequence ID.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryMessageSequence.ToString">
+      <summary>Creates a string representation of the <see cref="T:System.ServiceModel.Discovery.DiscoveryMessageSequence" /> instance.</summary>
+      <returns>The discovery message sequence.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.DiscoveryMessageSequenceGenerator">
+      <summary>A helper class that creates <see cref="T:System.ServiceModel.Discovery.DiscoveryMessageSequence" /> instances.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryMessageSequenceGenerator.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Discovery.DiscoveryMessageSequenceGenerator" /> class. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryMessageSequenceGenerator.#ctor(System.Int64,System.Uri)">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Discovery.DiscoveryMessageSequenceGenerator" /> class with the specified instance ID and sequence ID.</summary>
+      <param name="instanceId">The instance ID.</param>
+      <param name="sequenceId">The sequence ID.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryMessageSequenceGenerator.Next">
+      <summary>Creates the next <see cref="T:System.ServiceModel.Discovery.DiscoveryMessageSequence" /> object.</summary>
+      <returns>The next <see cref="T:System.ServiceModel.Discovery.DiscoveryMessageSequence" />.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.DiscoveryOperationContextExtension">
+      <summary>An operation context extension used to make various configuration items available to the discovery runtime.</summary>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.DiscoveryOperationContextExtension.DiscoveryMode">
+      <summary>Gets the <see cref="T:System.ServiceModel.Discovery.ServiceDiscoveryMode" />.</summary>
+      <returns>One of the <see cref="T:System.ServiceModel.Discovery.ServiceDiscoveryMode" /> enumeration values.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.DiscoveryOperationContextExtension.DiscoveryVersion">
+      <summary>Gets the <see cref="T:System.ServiceModel.Discovery.DiscoveryVersion" />.</summary>
+      <returns>The discovery version.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.DiscoveryOperationContextExtension.MaxResponseDelay">
+      <summary>Gets a <see cref="T:System.TimeSpan" /> that specifies the maximum response delay.</summary>
+      <returns>The maximum response delay.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryOperationContextExtension.System#ServiceModel#IExtension{T}#Attach(System.ServiceModel.OperationContext)">
+      <summary>An implementation of the <see cref="M:System.ServiceModel.IExtension`1.Attach(System.ServiceModel.OperationContext)" /> method.</summary>
+      <param name="owner">The operation context to attach the extension to.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryOperationContextExtension.System#ServiceModel#IExtension{T}#Detach(System.ServiceModel.OperationContext)">
+      <summary>An implementation of the <see cref="M:System.ServiceModel.IExtension`1.Detach(System.ServiceModel.OperationContext)" /> method.</summary>
+      <param name="owner">The operation context to attach the extension to.</param>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.DiscoveryProxy">
+      <summary>An abstract base class used to implement a discovery proxy.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryProxy.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Discovery.DiscoveryProxy" /> class. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryProxy.#ctor(System.ServiceModel.Discovery.DiscoveryMessageSequenceGenerator)">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Discovery.DiscoveryProxy" /> class with the specified <see cref="T:System.ServiceModel.Discovery.DiscoveryMessageSequenceGenerator" />.</summary>
+      <param name="messageSequenceGenerator">The message sequence generator.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryProxy.#ctor(System.ServiceModel.Discovery.DiscoveryMessageSequenceGenerator,System.Int32)">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Discovery.DiscoveryProxy" /> class with the specified <see cref="T:System.ServiceModel.Discovery.DiscoveryMessageSequenceGenerator" /> and duplicate message history length.</summary>
+      <param name="messageSequenceGenerator">The message sequence generator.</param>
+      <param name="duplicateMessageHistoryLength">The maximum number of message hashes used by the transport for identifying duplicate messages. The default value is 0.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryProxy.BeginShouldRedirectFind(System.ServiceModel.Discovery.FindCriteria,System.AsyncCallback,System.Object)">
+      <summary>Override this method to allow the discovery proxy to send out multicast suppression messages when it receives a multicast find request.</summary>
+      <returns>A reference to the pending asynchronous operation.</returns>
+      <param name="resolveCriteria">The resolve criteria that describes the service to find.</param>
+      <param name="callback">The callback delegate to call when the operation has completed.</param>
+      <param name="state">The user-defined state data.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryProxy.BeginShouldRedirectResolve(System.ServiceModel.Discovery.ResolveCriteria,System.AsyncCallback,System.Object)">
+      <summary>Override this method to allow the discovery proxy to send out multicast suppression messages when it receives a multicast resolve request.</summary>
+      <returns>A reference to the pending asynchronous operation.</returns>
+      <param name="findCriteria">The find criteria that describes the service to find.</param>
+      <param name="callback">The callback delegate to call when the operation is completed.</param>
+      <param name="state">The user-defined state data.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryProxy.EndShouldRedirectFind(System.IAsyncResult,System.Collections.ObjectModel.Collection{System.ServiceModel.Discovery.EndpointDiscoveryMetadata}@)">
+      <summary>Override this method to handle the completion of sending the multicast suppression message for find requests.</summary>
+      <returns>true if the find operation should be redirected, otherwise false.</returns>
+      <param name="result">A reference to the completed asynchronous operation.</param>
+      <param name="redirectionEndpoints">A collection of endpoint discovery metadata that describes the redirection endpoints.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryProxy.EndShouldRedirectResolve(System.IAsyncResult,System.Collections.ObjectModel.Collection{System.ServiceModel.Discovery.EndpointDiscoveryMetadata}@)">
+      <summary>Override this method to handle the completion of sending the multicast suppression message for resolve requests.</summary>
+      <returns>true if the resolve operation should be redirected, otherwise false.</returns>
+      <param name="result">A reference to the completed asynchronous operation.</param>
+      <param name="redirectionEndpoints">A collection of endpoint discovery metadata that describes the redirection endpoints.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryProxy.OnBeginFind(System.ServiceModel.Discovery.FindRequestContext,System.AsyncCallback,System.Object)">
+      <summary>Override this method to handle a find operation.</summary>
+      <returns>A reference to the pending asynchronous operation.</returns>
+      <param name="findRequestContext">The find request context that describes the service to discover.</param>
+      <param name="callback">The callback delegate to call when the operation is completed.</param>
+      <param name="state">The user-defined state data.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryProxy.OnBeginOfflineAnnouncement(System.ServiceModel.Discovery.DiscoveryMessageSequence,System.ServiceModel.Discovery.EndpointDiscoveryMetadata,System.AsyncCallback,System.Object)">
+      <summary>Override this method to handle an offline announcement message.</summary>
+      <returns>A reference to the pending asynchronous operation.</returns>
+      <param name="messageSequence">The discovery message sequence.</param>
+      <param name="endpointDiscoveryMetadata">The endpoint discovery metadata.</param>
+      <param name="callback">The callback delegate to call when the operation is completed.</param>
+      <param name="state">The user-defined state data.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryProxy.OnBeginOnlineAnnouncement(System.ServiceModel.Discovery.DiscoveryMessageSequence,System.ServiceModel.Discovery.EndpointDiscoveryMetadata,System.AsyncCallback,System.Object)">
+      <summary>Override this method to handle an online announcement message.</summary>
+      <returns>A reference to the pending asynchronous operation.</returns>
+      <param name="messageSequence">The discovery message sequence.</param>
+      <param name="endpointDiscoveryMetadata">The endpoint discovery metadata.</param>
+      <param name="callback">The callback delegate to call when the operation is completed.</param>
+      <param name="state">The user-defined state data.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryProxy.OnBeginResolve(System.ServiceModel.Discovery.ResolveCriteria,System.AsyncCallback,System.Object)">
+      <summary>Override this method to handle a resolve operation.</summary>
+      <returns>A reference to the pending asynchronous operation.</returns>
+      <param name="resolveCriteria">The resolve criteria that describes the service to discover.</param>
+      <param name="callback">The callback delegate to call when the operation is completed.</param>
+      <param name="state">The user-defined state data.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryProxy.OnEndFind(System.IAsyncResult)">
+      <summary>Override this method to handle the completion of a find operation.</summary>
+      <param name="result">A reference to the completed asynchronous operation.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryProxy.OnEndOfflineAnnouncement(System.IAsyncResult)">
+      <summary>Override this method to handle the completion of an offline announcement message.</summary>
+      <param name="result">A reference to the completed asynchronous operation.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryProxy.OnEndOnlineAnnouncement(System.IAsyncResult)">
+      <summary>Override this method to handle the completion of an online announcement message.</summary>
+      <param name="result">A reference to the completed asynchronous operation.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryProxy.OnEndResolve(System.IAsyncResult)">
+      <summary>Override this method to handle the completion of a resolve operation.</summary>
+      <returns>Endpoint discovery metadata for the resolved service.</returns>
+      <param name="result">A reference to the completed asynchronous operation.</param>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.DiscoveryService">
+      <summary>An abstract base class used to implement a discovery service.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryService.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Discovery.DiscoveryService" /> class. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryService.#ctor(System.ServiceModel.Discovery.DiscoveryMessageSequenceGenerator)">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Discovery.DiscoveryService" /> class with the specified <see cref="T:System.ServiceModel.Discovery.DiscoveryMessageSequenceGenerator" />.</summary>
+      <param name="discoveryMessageSequenceGenerator">The discovery message sequence generator.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryService.#ctor(System.ServiceModel.Discovery.DiscoveryMessageSequenceGenerator,System.Int32)">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Discovery.DiscoveryService" /> class with the specified <see cref="T:System.ServiceModel.Discovery.DiscoveryMessageSequenceGenerator" /> and duplicate message history length.</summary>
+      <param name="discoveryMessageSequenceGenerator">The discovery message sequence generator.</param>
+      <param name="duplicateMessageHistoryLength">The maximum number of message hashes used by the transport for identifying duplicate messages. The default value is 0.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryService.OnBeginFind(System.ServiceModel.Discovery.FindRequestContext,System.AsyncCallback,System.Object)">
+      <summary>Override this method to handle a find operation.</summary>
+      <returns>A reference to the pending asynchronous operation.</returns>
+      <param name="findRequestContext">The find request context that describes the service to discover.</param>
+      <param name="callback">The callback delegate to call when the operation is completed.</param>
+      <param name="state">The user-defined state data.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryService.OnBeginResolve(System.ServiceModel.Discovery.ResolveCriteria,System.AsyncCallback,System.Object)">
+      <summary>Override this method to handle a resolve operation.</summary>
+      <returns>A reference to the pending asynchronous operation.</returns>
+      <param name="resolveCriteria">The find request context that describes the service to discover.</param>
+      <param name="callback">The callback delegate to call when the operation is completed.</param>
+      <param name="state">The user-defined state data.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryService.OnEndFind(System.IAsyncResult)">
+      <summary>Override this method to handle the completion of a find operation.</summary>
+      <param name="result">A reference to the completed asynchronous operation.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryService.OnEndResolve(System.IAsyncResult)">
+      <summary>Override this method to handle the completion of a resolve operation.</summary>
+      <returns>The endpoint discovery metadata that describes the resolved service.</returns>
+      <param name="result">A reference to the completed asynchronous operation.</param>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.DiscoveryServiceExtension">
+      <summary>An abstract WCF extension class for specifying a custom discovery service or for getting the published endpoints.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryServiceExtension.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Discovery.DiscoveryServiceExtension" /> class. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryServiceExtension.GetDiscoveryService">
+      <summary>Override this method to return your custom <see cref="T:System.ServiceModel.Discovery.DiscoveryService" /> implementation.</summary>
+      <returns>A custom discovery service implementation.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.DiscoveryServiceExtension.PublishedEndpoints">
+      <summary>Gets a read-only collection of published endpoints.</summary>
+      <returns>A read-only collection of published endpoints.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryServiceExtension.System#ServiceModel#IExtension{T}#Attach(System.ServiceModel.ServiceHostBase)">
+      <summary>Attaches the extension to the specified service host. </summary>
+      <param name="owner">The service host to attach the extension to.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryServiceExtension.System#ServiceModel#IExtension{T}#Detach(System.ServiceModel.ServiceHostBase)">
+      <summary>Overload this method to allow the extension to be detached from its service host.</summary>
+      <param name="owner">The service host to detach from.</param>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.DiscoveryVersion">
+      <summary>Specifies the version of the WS-Discovery protocol to use.</summary>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.DiscoveryVersion.AdhocAddress">
+      <summary>Gets the address to which ad hoc discovery messages are sent.</summary>
+      <returns>The discovery address.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryVersion.FromName(System.String)">
+      <summary>Gets the specified discovery version.</summary>
+      <returns>The discovery version.</returns>
+      <param name="name">The name of the discovery version requested.</param>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.DiscoveryVersion.MessageVersion">
+      <summary>Gets the message version.</summary>
+      <returns>The message version.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.DiscoveryVersion.Name">
+      <summary>Gets the name of the discovery version.</summary>
+      <returns>The discovery version name.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.DiscoveryVersion.Namespace">
+      <summary>Gets the discovery version namespace.</summary>
+      <returns>The discovery version namespace.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DiscoveryVersion.ToString">
+      <summary>Creates a string representation of the WS-Discovery protocol version.</summary>
+      <returns>The WS-Discovery protocol version.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.DiscoveryVersion.WSDiscovery11">
+      <summary>Gets the 1.1 version of the WS-Discovery protocol. </summary>
+      <returns>The 1.1 version of the WS-Discovery protocol.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.DiscoveryVersion.WSDiscoveryApril2005">
+      <summary>Gets the April 2005 version of the WS-Discovery protocol.</summary>
+      <returns>The April 2005 version of the WS-Discovery protocol.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.DiscoveryVersion.WSDiscoveryCD1">
+      <summary>Gets the Committee Draft 1 version of the WS-Discovery protocol.</summary>
+      <returns>The Committee Draft 1 version of the WS-Discovery protocol.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.DynamicEndpoint">
+      <summary>An endpoint that uses WS-Discovery to find the endpoint address dynamically at runtime.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.DynamicEndpoint.#ctor(System.ServiceModel.Description.ContractDescription,System.ServiceModel.Channels.Binding)">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Discovery.DynamicEndpoint" /> class with the specified <see cref="T:System.ServiceModel.Description.ContractDescription" /> and <see cref="T:System.ServiceModel.Channels.Binding" />.</summary>
+      <param name="contract">The contract.</param>
+      <param name="binding">The binding.</param>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.DynamicEndpoint.DiscoveryEndpointProvider">
+      <summary>Gets or sets an object that provides a discovery endpoint.</summary>
+      <returns>A discovery endpoint provider.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.DynamicEndpoint.FindCriteria">
+      <summary>Gets or sets the <see cref="T:System.ServiceModel.Discovery.FindCriteria" /> used to search for a service.</summary>
+      <returns>The find criteria.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.EndpointDiscoveryBehavior">
+      <summary>Controls the content of the <see cref="T:System.ServiceModel.Discovery.EndpointDiscoveryMetadata" /> returned by a discovery endpoint.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.EndpointDiscoveryBehavior.#ctor">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.EndpointDiscoveryBehavior" /> class. </summary>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.EndpointDiscoveryBehavior.ContractTypeNames">
+      <summary>Gets the contract type names associated with the endpoint.</summary>
+      <returns>The contract type names associated with the endpoint.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.EndpointDiscoveryBehavior.Enabled">
+      <summary>Gets or sets a value that controls the discoverability of the associated endpoint.</summary>
+      <returns>true if the endpoint is enabled, otherwise false.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.EndpointDiscoveryBehavior.Extensions">
+      <summary>Gets the extensions associated with the endpoint.</summary>
+      <returns>A collection of extensions associated with the endpoint.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.EndpointDiscoveryBehavior.Scopes">
+      <summary>Gets the scopes associated with the endpoint.</summary>
+      <returns>A collection of scopes. </returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.EndpointDiscoveryBehavior.System#ServiceModel#Description#IEndpointBehavior#AddBindingParameters(System.ServiceModel.Description.ServiceEndpoint,System.ServiceModel.Channels.BindingParameterCollection)">
+      <summary>Not implemented.</summary>
+      <param name="endpoint">Not implemented.</param>
+      <param name="bindingParameters">Not implemented.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.EndpointDiscoveryBehavior.System#ServiceModel#Description#IEndpointBehavior#ApplyClientBehavior(System.ServiceModel.Description.ServiceEndpoint,System.ServiceModel.Dispatcher.ClientRuntime)">
+      <summary>Not implemented.</summary>
+      <param name="endpoint">Not implemented.</param>
+      <param name="clientRuntime">Not implemented.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.EndpointDiscoveryBehavior.System#ServiceModel#Description#IEndpointBehavior#ApplyDispatchBehavior(System.ServiceModel.Description.ServiceEndpoint,System.ServiceModel.Dispatcher.EndpointDispatcher)">
+      <summary>Not implemented.</summary>
+      <param name="endpoint">Not implemented.</param>
+      <param name="endpointDispatcher">Not implemented.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.EndpointDiscoveryBehavior.System#ServiceModel#Description#IEndpointBehavior#Validate(System.ServiceModel.Description.ServiceEndpoint)">
+      <summary>Not implemented.</summary>
+      <param name="endpoint">Not implemented.</param>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.EndpointDiscoveryMetadata">
+      <summary>Contains the metadata for a discoverable service.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.EndpointDiscoveryMetadata.#ctor">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.EndpointDiscoveryMetadata" /> class. </summary>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.EndpointDiscoveryMetadata.Address">
+      <summary>Gets or sets the endpoint address for the endpoint the <see cref="T:System.ServiceModel.Discovery.EndpointDiscoveryMetadata" /> instance describes.</summary>
+      <returns>The endpoint address for the service endpoint the <see cref="T:System.ServiceModel.Discovery.EndpointDiscoveryMetadata" /> instance describes.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.EndpointDiscoveryMetadata.ContractTypeNames">
+      <summary>Gets a collection of contract type names implemented by the service described by the <see cref="T:System.ServiceModel.Discovery.EndpointDiscoveryMetadata" />.</summary>
+      <returns>A collection of contract type names.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.EndpointDiscoveryMetadata.Extensions">
+      <summary>Gets the extensions associated with this <see cref="T:System.ServiceModel.Discovery.EndpointDiscoveryMetadata" /> instance.</summary>
+      <returns>A collection of extensions.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.EndpointDiscoveryMetadata.FromServiceEndpoint(System.ServiceModel.Description.ServiceEndpoint)">
+      <summary>Creates a new <see cref="T:System.ServiceModel.Discovery.EndpointDiscoveryMetadata" /> from a <see cref="T:System.ServiceModel.Description.ServiceEndpoint" />.</summary>
+      <returns>A new <see cref="T:System.ServiceModel.Discovery.EndpointDiscoveryMetadata" /> instance.</returns>
+      <param name="endpoint">A service endpoint.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.EndpointDiscoveryMetadata.FromServiceEndpoint(System.ServiceModel.Description.ServiceEndpoint,System.ServiceModel.Dispatcher.EndpointDispatcher)">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.EndpointDiscoveryMetadata" /> class using the specified service endpoint and endpoint dispatcher.</summary>
+      <returns>A new <see cref="T:System.ServiceModel.Discovery.EndpointDiscoveryMetadata" /> instance.</returns>
+      <param name="endpoint">The endpoint.</param>
+      <param name="endpointDispatcher">The endpoint dispatcher.</param>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.EndpointDiscoveryMetadata.ListenUris">
+      <summary>Gets the listen URIs for the service described by this <see cref="T:System.ServiceModel.Discovery.EndpointDiscoveryMetadata" /> instance.</summary>
+      <returns>A collection of listen URIs.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.EndpointDiscoveryMetadata.Scopes">
+      <summary>Gets the scopes associated with this <see cref="T:System.ServiceModel.Discovery.EndpointDiscoveryMetadata" /> instance.</summary>
+      <returns>A collection of absolute URIs.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.EndpointDiscoveryMetadata.Version">
+      <summary>Gets or sets the version of the published <see cref="T:System.ServiceModel.Discovery.EndpointDiscoveryMetadata" />.</summary>
+      <returns>The version of the published <see cref="T:System.ServiceModel.Discovery.EndpointDiscoveryMetadata" />.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.FindCompletedEventArgs">
+      <summary>Arguments for the <see cref="E:System.ServiceModel.Discovery.DiscoveryClient.FindCompleted" /> event.</summary>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.FindCompletedEventArgs.Result">
+      <summary>Gets the <see cref="T:System.ServiceModel.Discovery.FindResponse" /> returned by the find operation.</summary>
+      <returns>The results of the find operation.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.FindCriteria">
+      <summary>Represents the criteria to use when searching for services.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.FindCriteria.#ctor">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.FindCriteria" />.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.FindCriteria.#ctor(System.Type)">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.FindCriteria" /> class with the specified name of a contract type.</summary>
+      <param name="contractType">The name of the contract type to search for. </param>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.FindCriteria.ContractTypeNames">
+      <summary>Gets the collection of contract type names to search for.</summary>
+      <returns>The contract type names to search for.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.FindCriteria.CreateMetadataExchangeEndpointCriteria">
+      <summary>Creates metadata exchange endpoint criteria to use when searching for services.</summary>
+      <returns>The endpoint criteria to use to find services.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.FindCriteria.CreateMetadataExchangeEndpointCriteria(System.Collections.Generic.IEnumerable{System.Xml.XmlQualifiedName})">
+      <summary>Creates an object that contains metadata exchange endpoint criteria derived from the specified collection of XML qualified names.</summary>
+      <returns>The endpoint criteria to use to find services.</returns>
+      <param name="contractTypeNames">A collection of enumerations that represent contract type names.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.FindCriteria.CreateMetadataExchangeEndpointCriteria(System.Type)">
+      <summary>Creates an object that contains metadata exchange endpoint criteria derived from the specified contract type.</summary>
+      <returns>The endpoint criteria to use to find services.</returns>
+      <param name="contractType">A type of service contract.</param>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.FindCriteria.Duration">
+      <summary>Gets or sets a <see cref="T:System.Timespan" /> that specifies the find operation time-out period.</summary>
+      <returns>The time-out period of the find operation.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.FindCriteria.Extensions">
+      <summary>Gets a collection of extensions in the <see cref="T:System.ServiceModel.Discovery.FindCriteria" /> instance.</summary>
+      <returns>The XML extensions.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.FindCriteria.IsMatch(System.ServiceModel.Discovery.EndpointDiscoveryMetadata)">
+      <summary>Determines whether a set of criteria matches the service described by the specified <see cref="T:System.ServiceModel.Discovery.EndpointDiscoveryMetadata" /> instance.</summary>
+      <returns>true if the service matches the criteria, otherwise false.</returns>
+      <param name="endpointDiscoveryMetadata">The endpoint discovery metadata that describes the service in question.</param>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.FindCriteria.MaxResults">
+      <summary>Gets or sets the maximum number of responses required from the find operation.</summary>
+      <returns>The maximum number of response required from the find operation.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.FindCriteria.ScopeMatchBy">
+      <summary>Gets or sets a URI that specifies how scopes are matched.</summary>
+      <returns>The URI that specifies how scopes are matched.</returns>
+    </member>
+    <member name="F:System.ServiceModel.Discovery.FindCriteria.ScopeMatchByExact">
+      <summary>Specifies that scopes are matched by using a case-sensitive comparison (http://schemas.xmlsoap.org/ws/2004/10/discovery/strcmp0) as defined by the WS-Discovery Specification.</summary>
+    </member>
+    <member name="F:System.ServiceModel.Discovery.FindCriteria.ScopeMatchByLdap">
+      <summary>Specifies that scopes are matched by using the LDAP method (http://schemas.xmlsoap.org/ws/2004/10/discovery/ldap) as defined by the WS-Discovery Specification.</summary>
+    </member>
+    <member name="F:System.ServiceModel.Discovery.FindCriteria.ScopeMatchByNone">
+      <summary>Specifies that scopes are ignored as defined by the WS-Discovery Specification.</summary>
+    </member>
+    <member name="F:System.ServiceModel.Discovery.FindCriteria.ScopeMatchByPrefix">
+      <summary>Specifies that scopes are matched using the prefix method (http://schemas.xmlsoap.org/ws/2004/10/discovery/rfc2396) as defined by the WS-Discovery Specification.</summary>
+    </member>
+    <member name="F:System.ServiceModel.Discovery.FindCriteria.ScopeMatchByUuid">
+      <summary>Specifies that scopes are matched by using the UUID method (http://schemas.xmlsoap.org/ws/2004/10/discovery/uuid) as defined by the WS-Discovery Specification.</summary>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.FindCriteria.Scopes">
+      <summary>Gets a collection of absolute URIs that represents scopes used to search for a service.</summary>
+      <returns>A collection of absolute URIs used to search for a service.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.FindProgressChangedEventArgs">
+      <summary>Arguments for the <see cref="E:System.ServiceModel.Discovery.DiscoveryClient.FindProgressChanged" /> event. </summary>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.FindProgressChangedEventArgs.EndpointDiscoveryMetadata">
+      <summary>Gets the <see cref="T:System.ServiceModel.Discovery.EndpointDiscoveryMetadata" /> instance associated with the current ongoing find operation.</summary>
+      <returns>The endpoint discovery metadata.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.FindProgressChangedEventArgs.MessageSequence">
+      <summary>Gets the <see cref="T:System.ServiceModel.Discovery.DiscoveryMessageSequence" /> instance associated with the current ongoing find operation.</summary>
+      <returns>The discovery message sequence. </returns>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.FindRequestContext">
+      <summary>Represents a find request sent by a client.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.FindRequestContext.#ctor(System.ServiceModel.Discovery.FindCriteria)">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Discovery.FindRequestContext" /> class using the specified <see cref="T:System.ServiceModel.Discovery.FindCriteria" />.</summary>
+      <param name="criteria">The find criteria.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.FindRequestContext.AddMatchingEndpoint(System.ServiceModel.Discovery.EndpointDiscoveryMetadata)">
+      <summary>Enables the discovery service to send results back to the client as they are received.</summary>
+      <param name="matchingEndpoint">The endpoint discovery metadata to send back to the client.</param>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.FindRequestContext.Criteria">
+      <summary>Gets the <see cref="T:System.ServiceModel.Discovery.FindCriteria" /> associated with the <see cref="T:System.ServiceModel.Discovery.FindRequestContext" /> sent by the client. </summary>
+      <returns>The find criteria sent by the client.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.FindRequestContext.OnAddMatchingEndpoint(System.ServiceModel.Discovery.EndpointDiscoveryMetadata)">
+      <summary>Called after the user adds an endpoint to the <see cref="T:System.ServiceModel.Discovery.FindRequestContext" /> by calling <see cref="M:System.ServiceModel.Discovery.FindRequestContext.AddMatchingEndpoint(System.ServiceModel.Discovery.EndpointDiscoveryMetadata)" />.</summary>
+      <param name="matchingEndpoint">The endpoint discovery metadata to send back to the client.</param>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.FindResponse">
+      <summary>Represents the response from a find request.</summary>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.FindResponse.Endpoints">
+      <summary>Gets a collection of <see cref="T:System.ServiceModel.Discovery.EndpointDiscoveryMetadata" /> for the discoverable services that matched the find request.</summary>
+      <returns>A collection of endpoint discovery metadata.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.FindResponse.GetMessageSequence(System.ServiceModel.Discovery.EndpointDiscoveryMetadata)">
+      <summary>Gets the <see cref="T:System.ServiceModel.Discovery.DiscoveryMessageSequence" /> associated with the specified <see cref="T:System.ServiceModel.Discovery.EndpointDiscoveryMetadata" />.</summary>
+      <returns>The discovery message sequence.</returns>
+      <param name="endpointDiscoveryMetadata">The endpoint discovery metadata</param>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.ResolveCompletedEventArgs">
+      <summary>Arguments for the <see cref="E:System.ServiceModel.Discovery.DiscoveryClient.ResolveCompleted" /> event.</summary>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.ResolveCompletedEventArgs.Result">
+      <summary>Gets the <see cref="T:System.ServiceModel.Discovery.ResolveResponse" /> returned by the resolve operation.</summary>
+      <returns>The results of the resolve operation.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.ResolveCriteria">
+      <summary>Represents the criteria to use when resolving a service.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.ResolveCriteria.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Discovery.ResolveCriteria" /> class. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.ResolveCriteria.#ctor(System.ServiceModel.EndpointAddress)">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Discovery.ResolveCriteria" /> class with the specified <see cref="T:System.ServiceModel.EndpointAddress" />.</summary>
+      <param name="address">The endpoint address.</param>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.ResolveCriteria.Address">
+      <summary>The endpoint address of the service to resolve.</summary>
+      <returns>The endpoint address.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.ResolveCriteria.Duration">
+      <summary>Gets or sets a <see cref="T:System.Timespan" /> that specifies a time span within which the resolve operation must complete before timing out.</summary>
+      <returns>A <see cref="T:System.TimeSpan" /> instance.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.ResolveCriteria.Extensions">
+      <summary>Gets a collection of extensions in the <see cref="T:System.ServiceModel.Discovery.ResolveCriteria" /> instance.</summary>
+      <returns>A <see cref="T:System.Collections.ObjectModel.Collection`1" /> instance that contains the XML extensions.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.ResolveResponse">
+      <summary>Represents the response from a resolve request.</summary>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.ResolveResponse.EndpointDiscoveryMetadata">
+      <summary>Gets the <see cref="T:System.ServiceModel.Discovery.EndpointDiscoveryMetadata" /> that matched the resolve request.</summary>
+      <returns>The endpoint discovery metadata.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.ResolveResponse.MessageSequence">
+      <summary>Gets the <see cref="T:System.ServiceModel.Discovery.DiscoveryMessageSequence" /> associated with the <see cref="T:System.ServiceModel.Discovery.ResolveResponse" />.</summary>
+      <returns>The discovery message sequence.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.ServiceDiscoveryBehavior">
+      <summary>This class controls the discoverability of service endpoints.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.ServiceDiscoveryBehavior.#ctor">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.ServiceDiscoveryBehavior" /> class.</summary>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.ServiceDiscoveryBehavior.AnnouncementEndpoints">
+      <summary>Gets a collection of announcement endpoints. Use this collection to specify the endpoints to use for sending announcement messages.</summary>
+      <returns>A <see cref="T:System.Collections.ObjectModel.Collection`1" /> instance that contains a collection of announcement endpoints.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.ServiceDiscoveryBehavior.System#ServiceModel#Description#IServiceBehavior#AddBindingParameters(System.ServiceModel.Description.ServiceDescription,System.ServiceModel.ServiceHostBase,System.Collections.ObjectModel.Collection{System.ServiceModel.Description.ServiceEndpoint},System.ServiceModel.Channels.BindingParameterCollection)">
+      <summary>An implementation of the <see cref="M:System.ServiceModel.Description.IServiceBehavior.AddBindingParameters(System.ServiceModel.Description.ServiceDescription,System.ServiceModel.ServiceHostBase,System.Collections.ObjectModel.Collection{System.ServiceModel.Description.ServiceEndpoint},System.ServiceModel.Channels.BindingParameterCollection)" /> method.</summary>
+      <param name="serviceDescription">The service description.</param>
+      <param name="serviceHostBase">The host for the service.</param>
+      <param name="endpoints">The endpoints exposed by the service.</param>
+      <param name="bindingParameters">The binding parameters to be configured to support the service behavior.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.ServiceDiscoveryBehavior.System#ServiceModel#Description#IServiceBehavior#ApplyDispatchBehavior(System.ServiceModel.Description.ServiceDescription,System.ServiceModel.ServiceHostBase)">
+      <summary>An implementation of the <see cref="M:System.ServiceModel.Description.IServiceBehavior.ApplyDispatchBehavior(System.ServiceModel.Description.ServiceDescription,System.ServiceModel.ServiceHostBase)" /> method. See also </summary>
+      <param name="serviceDescription">The service description.</param>
+      <param name="serviceHostBase">The host for the service.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.ServiceDiscoveryBehavior.System#ServiceModel#Description#IServiceBehavior#Validate(System.ServiceModel.Description.ServiceDescription,System.ServiceModel.ServiceHostBase)">
+      <summary>An implementation of the <see cref="M:System.ServiceModel.Description.IServiceBehavior.Validate(System.ServiceModel.Description.ServiceDescription,System.ServiceModel.ServiceHostBase)" /> method.</summary>
+      <param name="serviceDescription">The service description.</param>
+      <param name="serviceHostBase">The host for the service.</param>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.ServiceDiscoveryMode">
+      <summary>Specifies the discovery mode to use.</summary>
+    </member>
+    <member name="F:System.ServiceModel.Discovery.ServiceDiscoveryMode.Adhoc">
+      <summary>The ad hoc discovery mode.</summary>
+    </member>
+    <member name="F:System.ServiceModel.Discovery.ServiceDiscoveryMode.Managed">
+      <summary>The managed discovery mode.</summary>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.UdpAnnouncementEndpoint">
+      <summary>A standard endpoint that is used by services to send announcement messages over a UDP binding. This endpoint inherits from <see cref="T:System.ServiceModel.Discovery.AnnouncementEndpoint" /> and similarly has a fixed contract and supports two discovery versions. In addition it has a fixed UDP binding and a default address value as specified in the WS-Discovery specifications (WS-Discovery April 2005 or WS-Discovery version 1.1). Therefore, in the simplest case you do not have to specify any of these values when you create an <see cref="T:System.ServiceModel.Discovery.AnnouncementEndpoint" /> and add it to a service.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.UdpAnnouncementEndpoint.#ctor">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.UdpAnnouncementEndpoint" /> class. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.UdpAnnouncementEndpoint.#ctor(System.ServiceModel.Discovery.DiscoveryVersion)">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.UdpAnnouncementEndpoint" /> class that is configured to use the specified <see cref="T:System.ServiceModel.Discovery.DiscoveryVersion" />.</summary>
+      <param name="discoveryVersion">The version of the WS-Discovery protocol to use.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.UdpAnnouncementEndpoint.#ctor(System.ServiceModel.Discovery.DiscoveryVersion,System.String)">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.UdpAnnouncementEndpoint" /> that is configured to use the specified <see cref="T:System.ServiceModel.Discovery.DiscoveryVersion" /> and multicast address.</summary>
+      <param name="discoveryVersion">The version of the WS-Discovery protocol to use.</param>
+      <param name="multicastAddress">The multicast address to use.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.UdpAnnouncementEndpoint.#ctor(System.ServiceModel.Discovery.DiscoveryVersion,System.Uri)">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.UdpAnnouncementEndpoint" /> that is configured to use the specified <see cref="T:System.ServiceModel.Discovery.DiscoveryVersion" /> and multicast address.</summary>
+      <param name="discoveryVersion">The version of the WS-Discovery protocol to use.</param>
+      <param name="multicastAddress">The multicast address to use.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.UdpAnnouncementEndpoint.#ctor(System.String)">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.UdpAnnouncementEndpoint" /> class with the specified multicast address.</summary>
+      <param name="multicastAddress">The multicast address.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.UdpAnnouncementEndpoint.#ctor(System.Uri)">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.UdpAnnouncementEndpoint" /> class with the specified multicast address.</summary>
+      <param name="multicastAddress">The multicast address.</param>
+    </member>
+    <member name="F:System.ServiceModel.Discovery.UdpAnnouncementEndpoint.DefaultIPv4MulticastAddress">
+      <summary>The default UDP multicast address for IPv4.</summary>
+    </member>
+    <member name="F:System.ServiceModel.Discovery.UdpAnnouncementEndpoint.DefaultIPv6MulticastAddress">
+      <summary>The default UDP multicast address for IPv6.</summary>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.UdpAnnouncementEndpoint.MulticastAddress">
+      <summary>Gets or sets the endpoint’s multicast address.</summary>
+      <returns>A <see cref="T:System.Uri" /> instance.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.UdpAnnouncementEndpoint.TransportSettings">
+      <summary>Gets the UDP transport settings associated with the <see cref="T:System.ServiceModel.Discovery.UdpAnnouncementEndpoint" /> instance.</summary>
+      <returns>The UDP transport settings.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.UdpDiscoveryEndpoint">
+      <summary>A standard endpoint that is pre-configured for discovery operations over a UDP multicast binding. This endpoint inherits from <see cref="T:System.ServiceModel.Discovery.DiscoveryEndpoint" /> and similarly has a fixed contract and supports two WS-Discovery protocol versions. In addition, it has a fixed UDP binding and a default address as specified in the WS-Discovery specifications (WS-Discovery April 2005 or WS-Discovery V1.1).</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.UdpDiscoveryEndpoint.#ctor">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.UdpDiscoveryEndpoint" /> class. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.UdpDiscoveryEndpoint.#ctor(System.ServiceModel.Discovery.DiscoveryVersion)">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.UdpDiscoveryEndpoint" /> class with the specified <see cref="T:System.ServiceModel.Discovery.DiscoveryVersion" />.</summary>
+      <param name="discoveryVersion">The <see cref="T:System.ServiceModel.Discovery.DiscoveryVersion" /> to use.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.UdpDiscoveryEndpoint.#ctor(System.ServiceModel.Discovery.DiscoveryVersion,System.String)">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.UdpDiscoveryEndpoint" /> class with the specified <see cref="T:System.ServiceModel.Discovery.DiscoveryVersion" /> and multicast address.</summary>
+      <param name="discoveryVersion">The <see cref="T:System.ServiceModel.Discovery.DiscoveryVersion" /> to use.</param>
+      <param name="multicastAddress">The multicast address for the UDP discovery endpoint.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.UdpDiscoveryEndpoint.#ctor(System.ServiceModel.Discovery.DiscoveryVersion,System.Uri)">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.UdpDiscoveryEndpoint" /> class with the specified <see cref="T:System.ServiceModel.Discovery.DiscoveryVersion" /> and multicast address.</summary>
+      <param name="discoveryVersion">The <see cref="T:System.ServiceModel.Discovery.DiscoveryVersion" /> to use.</param>
+      <param name="multicastAddress">A <see cref="T:System.Uri" /> with the multicast address. </param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.UdpDiscoveryEndpoint.#ctor(System.String)">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.UdpDiscoveryEndpoint" /> class with the specified multicast address.</summary>
+      <param name="multicastAddress">The multicast address.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.UdpDiscoveryEndpoint.#ctor(System.Uri)">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.UdpDiscoveryEndpoint" /> class with the specified multicast address.</summary>
+      <param name="multicastAddress">The multicast address.</param>
+    </member>
+    <member name="F:System.ServiceModel.Discovery.UdpDiscoveryEndpoint.DefaultIPv4MulticastAddress">
+      <summary>The default UDP multicast address for IPv4.</summary>
+    </member>
+    <member name="F:System.ServiceModel.Discovery.UdpDiscoveryEndpoint.DefaultIPv6MulticastAddress">
+      <summary>The default UDP multicast address for IPv6.</summary>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.UdpDiscoveryEndpoint.MulticastAddress">
+      <summary>Gets or sets the multicast address.</summary>
+      <returns>A <see cref="T:System.Uri" /> instance that contains the multicast address.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.UdpDiscoveryEndpoint.TransportSettings">
+      <summary>Gets the <see cref="T:System.ServiceModel.Discovery.UdpTransportSettings" /> instance associated with the <see cref="T:System.ServiceModel.Discovery.UdpDiscoveryEndpoint" />.</summary>
+      <returns>The UDP transport settings for the endpoint.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.UdpTransportSettings">
+      <summary>Enables you to set UDP transport settings.</summary>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.UdpTransportSettings.DuplicateMessageHistoryLength">
+      <summary>Gets or sets a value that specifies the maximum number of message hashes used by the transport for identifying duplicate messages.</summary>
+      <returns>The maximum number of message hashes to use.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.UdpTransportSettings.MaxBufferPoolSize">
+      <summary>Gets or sets the maximum size, in bytes, of any buffer pools used by the transport.</summary>
+      <returns>The maximum buffer pool size.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.UdpTransportSettings.MaxMulticastRetransmitCount">
+      <summary>Gets or sets a value that specifies the maximum number of times a multicast message should be retransmitted (In addition to the first send).</summary>
+      <returns>The maximum number of times a multicast message is retransmitted.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.UdpTransportSettings.MaxPendingMessageCount">
+      <summary>Gets or sets a value that specifies the maximum number of messages that have been received but not yet removed from the input queue for an individual channel instance.</summary>
+      <returns>The number of messages.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.UdpTransportSettings.MaxReceivedMessageSize">
+      <summary>Gets or sets the maximum size, in bytes, of a message that can be processed by the binding.</summary>
+      <returns>The maximum size of a message.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.UdpTransportSettings.MaxUnicastRetransmitCount">
+      <summary>Gets or sets a value that specifies the maximum number of times a unicast message should be retransmitted (in addition to the first send).</summary>
+      <returns>The maximum number of times a unicast message is retransmitted.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.UdpTransportSettings.MulticastInterfaceId">
+      <summary>Gets or sets a value that uniquely identifies the network adapter that is used when sending and receiving multicast messages.</summary>
+      <returns>The network adapter identifier. </returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.UdpTransportSettings.SocketReceiveBufferSize">
+      <summary>Gets or sets the receive buffer size on the underlying WinSock socket.</summary>
+      <returns>The receive buffer size. </returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.UdpTransportSettings.TimeToLive">
+      <summary>Gets or sets a value that specifies the number of network segment hops that a multicast packet can traverse.</summary>
+      <returns>The number of network segment hops. </returns>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.Configuration.AnnouncementChannelEndpointElementCollection">
+      <summary>Represents a container for <see cref="T:System.ServiceModel.Configuration.ChannelEndpointElement" /> configuration elements.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.AnnouncementChannelEndpointElementCollection.#ctor">
+      <summary>Creates a new instance of <see cref="T:System.ServiceModel.Discovery.Configuration.AnnouncementChannelEndpointElementCollection" /> class.</summary>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.Configuration.AnnouncementEndpointCollectionElement">
+      <summary>Represents a container for <see cref="T:System.ServiceModel.Discovery.Configuration.AnnouncementEndpointElement" /> configuration elements.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.AnnouncementEndpointCollectionElement.#ctor">
+      <summary>Creates a new instance of <see cref="T:System.ServiceModel.Discovery.Configuration.AnnouncementEndpointCollectionElement" /> class.</summary>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.Configuration.AnnouncementEndpointElement">
+      <summary>Defines a configuration element for an announcement endpoint. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.AnnouncementEndpointElement.#ctor">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.Configuration.AnnouncementEndpointElement" /> class. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.AnnouncementEndpointElement.CreateServiceEndpoint(System.ServiceModel.Description.ContractDescription)">
+      <summary>When called or overridden by a derived class, creates and initializes a new instance of the <see cref="T:System.ServiceModel.Discovery.AnnouncementEndpoint" /> class that uses the contract description of the current Discovery protocol version.</summary>
+      <returns>An announcement endpoint. </returns>
+      <param name="contractDescription">Not used. </param>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.AnnouncementEndpointElement.DiscoveryVersion">
+      <summary>Gets or sets the version of the WS-Discovery specification that the announcement endpoint supports.</summary>
+      <returns>The WS-Discovery version.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.AnnouncementEndpointElement.EndpointType">
+      <summary>Gets the type of the announcement endpoint.</summary>
+      <returns>The type of the announcement endpoint.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.AnnouncementEndpointElement.InitializeFrom(System.ServiceModel.Description.ServiceEndpoint)">
+      <summary>Converts the specified <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> into an <see cref="T:System.ServiceModel.Discovery.AnnouncementEndpoint" />.</summary>
+      <param name="endpoint">The service endpoint object to convert.</param>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.AnnouncementEndpointElement.MaxAnnouncementDelay">
+      <summary>Gets or sets the maximum delay a service is required to wait before sending announcement messages. </summary>
+      <returns>The maximum delay.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.AnnouncementEndpointElement.OnApplyConfiguration(System.ServiceModel.Description.ServiceEndpoint,System.ServiceModel.Configuration.ChannelEndpointElement)">
+      <summary>When called or overridden by a derived class, converts the specified <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> to an announcement endpoint.</summary>
+      <param name="endpoint">The service endpoint to which announcement configuration settings are applied.</param>
+      <param name="serviceEndpointElement">Not used.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.AnnouncementEndpointElement.OnApplyConfiguration(System.ServiceModel.Description.ServiceEndpoint,System.ServiceModel.Configuration.ServiceEndpointElement)">
+      <summary>When called or overridden by a derived class, converts the specified <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> to an announcement endpoint.</summary>
+      <param name="endpoint">The service endpoint to which announcement configuration settings are applied.</param>
+      <param name="serviceEndpointElement">Not used.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.AnnouncementEndpointElement.OnInitializeAndValidate(System.ServiceModel.Configuration.ChannelEndpointElement)">
+      <summary>When called or overridden by a derived class, initializes and validates the specified instance of a <see cref="T:System.ServiceModel.Configuration.ChannelEndpointElement" />.</summary>
+      <param name="channelEndpointElement">The channel endpoint element to initialize and validate. </param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.AnnouncementEndpointElement.OnInitializeAndValidate(System.ServiceModel.Configuration.ServiceEndpointElement)">
+      <summary>When called or overridden by a derived class, initializes and validates the specified instance of a <see cref="T:System.ServiceModel.Configuration.ServiceEndpointElement" />.</summary>
+      <param name="serviceEndpointElement">The service endpoint element to initialize and validate. </param>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.AnnouncementEndpointElement.Properties">
+      <summary>When called or overridden in a derived class, gets a collection of the configuration settings contained in the <see cref="T:System.ServiceModel.Discovery.Configuration.AnnouncementEndpointElement" /> instance. </summary>
+      <returns>A collection of configuration settings. </returns>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.Configuration.ContractTypeNameElement">
+      <summary>Represents a workflow element that identifies by name the workflow service contract being searched for.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.ContractTypeNameElement.#ctor">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.Configuration.ContractTypeNameElement" /> class. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.ContractTypeNameElement.#ctor(System.String,System.String)">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.Configuration.ContractTypeNameElement" /> class using the specified contract type name and namespace name.</summary>
+      <param name="name">The type name of a workflow service contract.</param>
+      <param name="ns">The namespace name of the workflow service contract.</param>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.ContractTypeNameElement.Name">
+      <summary>Gets or sets the name of the contract type.</summary>
+      <returns>An alphanumeric name.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.ContractTypeNameElement.Namespace">
+      <summary>Gets or sets the namespace of the contract type.</summary>
+      <returns>An alphanumeric name.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.Configuration.ContractTypeNameElementCollection">
+      <summary>Represents a collection of <see cref="T:System.ServiceModel.Discovery.Configuration.ContractTypeNameElement" /> objects.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.ContractTypeNameElementCollection.#ctor">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.Configuration.ContractTypeNameElementCollection" /> class.</summary>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.Configuration.DiscoveryClientElement">
+      <summary>Represents a configuration element that enables a client application to automatically search for a discoverable workflow service and find its address at runtime.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.DiscoveryClientElement.#ctor">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.Configuration.DiscoveryClientElement" /> class. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.DiscoveryClientElement.ApplyConfiguration(System.ServiceModel.Channels.BindingElement)">
+      <summary>Adds the criteria from the specified binding element to the current <see cref="T:System.ServiceModel.Discovery.Configuration.DiscoveryClientElement" />.</summary>
+      <param name="bindingElement">An element that builds the channel factories and channel listeners for various types of channels that are used to process outgoing and incoming messages.</param>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.DiscoveryClientElement.BindingElementType">
+      <summary>Gets the type of the <see cref="T:System.ServiceModel.Discovery.DiscoveryClientBindingElement" />.</summary>
+      <returns>A type object.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.DiscoveryClientElement.CopyFrom(System.ServiceModel.Configuration.ServiceModelExtensionElement)">
+      <summary>Copies the content of the specified <see cref="T:System.ServiceModel.Configuration.ServiceModelExtensionElement" /> to the current configuration element.</summary>
+      <param name="from">The <see cref="T:System.ServiceModel.Configuration.ServiceModelExtensionElement" /> to be copied.</param>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.DiscoveryClientElement.DiscoveryEndpoint">
+      <summary>Gets a <see cref="T:System.ServiceModel.Configuration.ChannelEndpointElement" /> that enables a client application to automatically search for a discoverable workflow service and find its address at runtime.</summary>
+      <returns>A channel endpoint.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.DiscoveryClientElement.FindCriteria">
+      <summary>Gets a <see cref="T:System.ServiceModel.Discovery.Configuration.FindCriteriaElement" /> that supplies a set of criteria used by a client application to search for a discovery workflow service.</summary>
+      <returns>A find criteria element.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.Configuration.DiscoveryClientSettingsElement">
+      <summary>Provides the configuration element whose settings enable a client application to automatically search for a discoverable workflow service and find its address at runtime.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.DiscoveryClientSettingsElement.#ctor">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.Configuration.DiscoveryClientSettingsElement" /> class.</summary>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.DiscoveryClientSettingsElement.DiscoveryEndpoint">
+      <summary>Gets a <see cref="T:System.ServiceModel.Configuration.ChannelEndpointElement" /> that enables a client application to automatically search for a discoverable workflow service and find its address at runtime.</summary>
+      <returns>A channel endpoint.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.DiscoveryClientSettingsElement.FindCriteria">
+      <summary>Gets a <see cref="T:System.ServiceModel.Discovery.Configuration.FindCriteriaElement" /> that supplies a set of criteria used by a client application to search for a discovery workflow service.</summary>
+      <returns>A find criteria element.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.Configuration.DiscoveryEndpointCollectionElement">
+      <summary>Represents a container for <see cref="T:System.ServiceModel.Discovery.Configuration.DiscoveryEndpointElement" /> configuration elements.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.DiscoveryEndpointCollectionElement.#ctor">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.Configuration.DiscoveryEndpointCollectionElement" /> class.</summary>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.Configuration.DiscoveryEndpointElement">
+      <summary>Defines a configuration element for a discovery endpoint.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.DiscoveryEndpointElement.#ctor">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.Configuration.DiscoveryEndpointElement" /> class. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.DiscoveryEndpointElement.CreateServiceEndpoint(System.ServiceModel.Description.ContractDescription)">
+      <summary>When called or overridden by a derived class, creates and initializes a new instance of the <see cref="T:System.ServiceModel.Discovery.DiscoveryEndpoint" /> class that uses the default Discovery protocol version and mode.</summary>
+      <returns>A discovery endpoint. </returns>
+      <param name="contractDescription">Not implemented.</param>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.DiscoveryEndpointElement.DiscoveryMode">
+      <summary>Gets or sets the discovery mode that the discovery endpoint uses. </summary>
+      <returns>The discovery mode.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.DiscoveryEndpointElement.DiscoveryVersion">
+      <summary>Gets or sets the version of the WS-Discovery specification that the discovery should use.</summary>
+      <returns>The WS-Discovery version.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.DiscoveryEndpointElement.EndpointType">
+      <summary>When called or overridden by a derived class, gets the type of the discovery endpoint.</summary>
+      <returns>The type of the endpoint. </returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.DiscoveryEndpointElement.InitializeFrom(System.ServiceModel.Description.ServiceEndpoint)">
+      <summary>Initializes a <see cref="T:System.ServiceModel.Discovery.DiscoveryEndpoint" /> from a given endpoint.</summary>
+      <param name="endpoint">The service endpoint object to convert.</param>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.DiscoveryEndpointElement.MaxResponseDelay">
+      <summary>Gets or sets the maximum amount of delay that the service can introduce between ProbeMatches while sending response to the client. </summary>
+      <returns>The maximum response delay.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.DiscoveryEndpointElement.OnApplyConfiguration(System.ServiceModel.Description.ServiceEndpoint,System.ServiceModel.Configuration.ChannelEndpointElement)">
+      <summary>When called or overridden by a derived class, applies the ConfigurationProperties on the specified <see cref="T:System.ServiceModel.Discovery.DiscoveryEndpoint" />.</summary>
+      <param name="endpoint">A service endpoint to which the discovery configuration settings are applied.</param>
+      <param name="serviceEndpointElement">Not implemented. </param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.DiscoveryEndpointElement.OnApplyConfiguration(System.ServiceModel.Description.ServiceEndpoint,System.ServiceModel.Configuration.ServiceEndpointElement)">
+      <summary>When called or overridden by a derived class, applies the ConfigurationProperties on the specified <see cref="T:System.ServiceModel.Discovery.DiscoveryEndpoint" />.</summary>
+      <param name="endpoint">A service endpoint to which the discovery configuration settings are applied.</param>
+      <param name="serviceEndpointElement">Not Implemented. </param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.DiscoveryEndpointElement.OnInitializeAndValidate(System.ServiceModel.Configuration.ChannelEndpointElement)">
+      <summary>When called or overridden by a derived class, initializes and validates a specified instance of <see cref="T:System.ServiceModel.Configuration.ChannelEndpointElement" />. </summary>
+      <param name="channelEndpointElement">The channel endpoint element to initialize and validate. </param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.DiscoveryEndpointElement.OnInitializeAndValidate(System.ServiceModel.Configuration.ServiceEndpointElement)">
+      <summary>When called or overridden by a derived class, initializes and validates the specified instance of <see cref="T:System.ServiceModel.Configuration.ServiceEndpointElement" />. </summary>
+      <param name="serviceEndpointElement">The service endpoint element to initialize and validate. </param>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.DiscoveryEndpointElement.Properties">
+      <summary>When called or overridden by a derived class, gets a collection of the configuration settings contained in the <see cref="T:System.ServiceModel.Discovery.Configuration.DiscoveryEndpointElement" /> instance. </summary>
+      <returns>A collection of configuration settings. </returns>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.Configuration.DiscoveryVersionConverter">
+      <summary>Provides functionality to change a WS-Discovery protocol version to another type. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.DiscoveryVersionConverter.#ctor">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.Configuration.DiscoveryVersionConverter" /> class.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.DiscoveryVersionConverter.CanConvertFrom(System.ComponentModel.ITypeDescriptorContext,System.Type)">
+      <summary>Returns a value that indicates whether it is possible to change the given <see cref="T:System.ServiceModel.Discovery.DiscoveryVersion" /> object to the type of this converter and using the specified context and culture information.</summary>
+      <returns>true if it is possible to change the specified <see cref="T:System.ServiceModel.Discovery.DiscoveryVersion" /> object to the type of this converter; otherwise, false.</returns>
+      <param name="context">Type descriptor format information that assists in the conversion of a <see cref="T:System.ServiceModel.Discovery.DiscoveryVersion" /> object to another type.</param>
+      <param name="sourceType">The <see cref="T:System.ServiceModel.Discovery.DiscoveryVersion" /> object that is changed to the type of this converter.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.DiscoveryVersionConverter.CanConvertTo(System.ComponentModel.ITypeDescriptorContext,System.Type)">
+      <summary>Returns a value that indicates whether it is possible to change the given <see cref="T:System.ServiceModel.Discovery.DiscoveryVersion" /> to the specified type and using the specified context and culture information.</summary>
+      <returns>true if it is possible to change the specified <see cref="T:System.ServiceModel.Discovery.DiscoveryVersion" /> object to the specified type; otherwise, false.</returns>
+      <param name="context">Type descriptor format information that assists in the conversion of a <see cref="T:System.ServiceModel.Discovery.DiscoveryVersion" /> object to another type.</param>
+      <param name="destinationType">The type to which the <see cref="T:System.ServiceModel.Discovery.DiscoveryVersion" /> object is changed.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.DiscoveryVersionConverter.ConvertFrom(System.ComponentModel.ITypeDescriptorContext,System.Globalization.CultureInfo,System.Object)">
+      <summary>Converts the given <see cref="T:System.ServiceModel.Discovery.DiscoveryVersion" /> object to the type of this converter, using the specified context and culture information.</summary>
+      <returns>A <see cref="T:System.ServiceModel.Discovery.DiscoveryVersion" /> that has been changed to the type of this converter.</returns>
+      <param name="context">Type descriptor format information that assists in the conversion of a <see cref="T:System.ServiceModel.Discovery.DiscoveryVersion" /> object to another type.</param>
+      <param name="culture">The culture information to use in the type conversion.</param>
+      <param name="value">The <see cref="T:System.ServiceModel.Discovery.DiscoveryVersion" /> object to change.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.DiscoveryVersionConverter.ConvertTo(System.ComponentModel.ITypeDescriptorContext,System.Globalization.CultureInfo,System.Object,System.Type)">
+      <summary>Converts the given <see cref="T:System.ServiceModel.Discovery.DiscoveryVersion" /> to the specified type, using the specified context and culture information.</summary>
+      <returns>A <see cref="T:System.ServiceModel.Discovery.DiscoveryVersion" /> that has been changed to the specified type.</returns>
+      <param name="context">Type descriptor format information that assists in the conversion of a <see cref="T:System.ServiceModel.Discovery.DiscoveryVersion" /> object to another type.</param>
+      <param name="culture">The culture information to use in the type conversion.</param>
+      <param name="value">The <see cref="T:System.ServiceModel.Discovery.DiscoveryVersion" /> to change.</param>
+      <param name="destinationType">The type to which the <see cref="T:System.ServiceModel.Discovery.DiscoveryVersion" /> object is being changed.</param>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.Configuration.DynamicEndpointCollectionElement">
+      <summary>Represents a workflow configuration element that provides a collection of endpoints that each contain information to enable an application to function as a client program that can search for, find, and use a workflow service during runtime.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.DynamicEndpointCollectionElement.#ctor">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.Configuration.DynamicEndpointCollectionElement" /> class.</summary>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.Configuration.DynamicEndpointElement">
+      <summary>Represents a configuration element that provides information to enable an application to function as a client program that can search for, find, and use a workflow service during runtime.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.DynamicEndpointElement.#ctor">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.Configuration.DynamicEndpointElement" /> class.</summary>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.DynamicEndpointElement.DiscoveryClientSettings">
+      <summary>Gets the <see cref="T:System.ServiceModel.Discovery.Configuration.DiscoveryClientSettingsElement" /> that contains the settings needed by an application to participate in the service discovery process as a client.</summary>
+      <returns>An element that contains discovery settings required by a client application.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.Configuration.EndpointDiscoveryElement">
+      <summary>A configuration element that controls the discovery functionality of an endpoint. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.EndpointDiscoveryElement.#ctor">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.Configuration.EndpointDiscoveryElement" /> class.</summary>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.EndpointDiscoveryElement.BehaviorType">
+      <summary>Gets the behavior type associated with the <see cref="T:System.ServiceModel.Discovery.Configuration.EndpointDiscoveryElement" />.</summary>
+      <returns>The behavior type. </returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.EndpointDiscoveryElement.ContractTypeNames">
+      <summary>Gets the contract type names associated with the endpoint.</summary>
+      <returns>The contract type names associated with the endpoint.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.EndpointDiscoveryElement.Enabled">
+      <summary>Gets or sets a value that indicates the discoverability of this endpoint.</summary>
+      <returns>true if the discoverability of this endpoint is enabled, otherwise false. </returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.EndpointDiscoveryElement.Extensions">
+      <summary>Gets the extensions associated with the <see cref="T:System.ServiceModel.Discovery.Configuration.EndpointDiscoveryElement" />.</summary>
+      <returns>The extensions.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.EndpointDiscoveryElement.Scopes">
+      <summary>Gets a collection of scopes for this endpoint.</summary>
+      <returns>A collection of scopes associated with this endpoint.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.Configuration.FindCriteriaElement">
+      <summary>Manages a configuration element that contains a set of criteria used by a client application to search for workflow services over a network or the Internet.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.FindCriteriaElement.#ctor">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.Configuration.FindCriteriaElement" /> class.</summary>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.FindCriteriaElement.ContractTypeNames">
+      <summary>Gets a collection of configuration elements that contain the names of workflow service contract types.</summary>
+      <returns>A collection of elements.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.FindCriteriaElement.Duration">
+      <summary>Gets or sets the maximum time to wait for replies from services on a network or the Internet.</summary>
+      <returns>A timespan object the defines the waiting period.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.FindCriteriaElement.Extensions">
+      <summary>Gets the <see cref="T:System.ServiceModel.Configuration.XmlElementElementCollection" /> object that provide extensions for a <see cref="T:System.ServiceModel.Discovery.Configuration.FindCriteriaElement" />.</summary>
+      <returns>A collection of elements.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.FindCriteriaElement.MaxResults">
+      <summary>Gets or sets the maximum number of replies to wait for, from services on a network or the Internet. </summary>
+      <returns>A maximum number.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.FindCriteriaElement.ScopeMatchBy">
+      <summary>Gets or sets a URI that designates the name and location of a service that is being searched for and against which members of the <see cref="P:System.ServiceModel.Discovery.Configuration.FindCriteriaElement.Scopes" /> collection are matched.</summary>
+      <returns>The URI of a service application.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.FindCriteriaElement.Scopes">
+      <summary>Gets a collection of <see cref="T:System.ServiceModel.Discovery.Configuration.FindCriteriaElement" /> objects that contain absolute URIs that are used during a find operation to locate a specific service or services.</summary>
+      <returns>A collection of elements that contain URIs.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.Configuration.ScopeElement">
+      <summary>Represents a scope URI for an endpoint.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.ScopeElement.#ctor">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.Configuration.ScopeElement" /> class.</summary>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.ScopeElement.Scope">
+      <summary>Gets or sets the scope URI.</summary>
+      <returns>The scope URI.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.Configuration.ScopeElementCollection">
+      <summary>A configuration element that contains a collection of scope elements. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.ScopeElementCollection.#ctor">
+      <summary>Creates a new instance of the <see cref="M:System.ServiceModel.Discovery.Configuration.ScopeElementCollection.#ctor" /> class.</summary>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.Configuration.ServiceDiscoveryElement">
+      <summary>Represents a configuration element that controls the discoverability of a service.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.ServiceDiscoveryElement.#ctor">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.Configuration.ServiceDiscoveryElement" /> class.</summary>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.ServiceDiscoveryElement.AnnouncementEndpoints">
+      <summary>Gets a collection of announcement endpoints.</summary>
+      <returns>A <see cref="T:System.ServiceModel.Configuration.ChannelEndpointElementCollection" /> that contains announcement endpoints.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.ServiceDiscoveryElement.BehaviorType">
+      <summary>Gets the type of behavior.</summary>
+      <returns>The type of the behavior.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.Configuration.UdpAnnouncementEndpointCollectionElement">
+      <summary>Represents a container for <see cref="T:System.ServiceModel.Discovery.Configuration.UdpAnnouncementEndpointElement" /> configuration elements.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.UdpAnnouncementEndpointCollectionElement.#ctor">
+      <summary>Creates a new instance of <see cref="T:System.ServiceModel.Discovery.Configuration.UdpAnnouncementEndpointCollectionElement" /> class.</summary>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.Configuration.UdpAnnouncementEndpointElement">
+      <summary>Defines a configuration element for a UDP announcement endpoint.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.UdpAnnouncementEndpointElement.#ctor">
+      <summary>Creates a new instance of <see cref="T:System.ServiceModel.Discovery.Configuration.UdpAnnouncementEndpointElement" /> class. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.UdpAnnouncementEndpointElement.CreateServiceEndpoint(System.ServiceModel.Description.ContractDescription)">
+      <summary>When called or overridden by a derived class, creates and initializes a new instance of the <see cref="T:System.ServiceModel.Discovery.UdpAnnouncementEndpoint" /> class that uses the contract description of the current Discovery protocol version and mode.</summary>
+      <returns>A UDP announcement endpoint.</returns>
+      <param name="contractDescription">Not implemented.</param>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.UdpAnnouncementEndpointElement.EndpointType">
+      <summary>When called or overridden by a derived class, gets the type of the UDP announcement endpoint.</summary>
+      <returns>The type of the UDP announcement endpoint.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.UdpAnnouncementEndpointElement.InitializeFrom(System.ServiceModel.Description.ServiceEndpoint)">
+      <summary>Converts the specified <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> into a <see cref="T:System.ServiceModel.Discovery.UdpAnnouncementEndpoint" />.</summary>
+      <param name="endpoint">The service endpoint object to convert.</param>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.UdpAnnouncementEndpointElement.MaxAnnouncementDelay">
+      <summary>Gets or sets the maximum delay a service is required to wait before sending announcement messages.</summary>
+      <returns>The maximum delay.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.UdpAnnouncementEndpointElement.MulticastAddress">
+      <summary>Gets or sets the <see cref="P:System.ServiceModel.Discovery.Configuration.UdpAnnouncementEndpointElement.MulticastAddress" /> property of a UDP announcement endpoint element.</summary>
+      <returns>A URI address.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.UdpAnnouncementEndpointElement.OnApplyConfiguration(System.ServiceModel.Description.ServiceEndpoint,System.ServiceModel.Configuration.ChannelEndpointElement)">
+      <summary>When called or overridden by a derived class, converts the specified <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> to a UDP announcement endpoint.</summary>
+      <param name="endpoint">The service endpoint to which UDP announcement configuration settings are applied.</param>
+      <param name="serviceEndpointElement">Not implemented.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.UdpAnnouncementEndpointElement.OnApplyConfiguration(System.ServiceModel.Description.ServiceEndpoint,System.ServiceModel.Configuration.ServiceEndpointElement)">
+      <summary>When called or overridden by a derived class, converts the specified <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> to a UDP announcement endpoint.</summary>
+      <param name="endpoint">The service endpoint to which UDP announcement configuration settings are applied.</param>
+      <param name="serviceEndpointElement">Not implemented.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.UdpAnnouncementEndpointElement.OnInitializeAndValidate(System.ServiceModel.Configuration.ChannelEndpointElement)">
+      <summary>When called or overridden by a derived class, initializes and validates the specified instance of a <see cref="T:System.ServiceModel.Configuration.ChannelEndpointElement" />.</summary>
+      <param name="channelEndpointElement">The channel endpoint element to initialize and validate.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.UdpAnnouncementEndpointElement.OnInitializeAndValidate(System.ServiceModel.Configuration.ServiceEndpointElement)">
+      <summary>When called or overridden by a derived class, initializes and validates the specified instance of a <see cref="T:System.ServiceModel.Configuration.ServiceEndpointElement" />.</summary>
+      <param name="serviceEndpointElement">The service endpoint element to initialize and validate.</param>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.UdpAnnouncementEndpointElement.Properties">
+      <summary>When called or overridden by a derived class, gets a collection of the configuration settings contained in a <see cref="T:System.ServiceModel.Discovery.Configuration.UdpAnnouncementEndpointElement" /> instance.</summary>
+      <returns>A collection of configuration settings.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.UdpAnnouncementEndpointElement.TransportSettings">
+      <summary>Gets the binding settings of a UDP transport configuration element.</summary>
+      <returns>A UDP configuration element.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.Configuration.UdpDiscoveryEndpointCollectionElement">
+      <summary>Represents a container for <see cref="T:System.ServiceModel.Discovery.Configuration.UdpDiscoveryEndpointElement" /> configuration elements.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.UdpDiscoveryEndpointCollectionElement.#ctor">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.Configuration.UdpDiscoveryEndpointCollectionElement" />.</summary>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.Configuration.UdpDiscoveryEndpointElement">
+      <summary>Defines a configuration element for a UDP discovery endpoint. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.UdpDiscoveryEndpointElement.#ctor">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.Configuration.UdpDiscoveryEndpointElement" /> class. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.UdpDiscoveryEndpointElement.CreateServiceEndpoint(System.ServiceModel.Description.ContractDescription)">
+      <summary>When called or overridden by a derived class, creates and initializes a new instance of the <see cref="T:System.ServiceModel.Discovery.UdpDiscoveryEndpoint" /> class that uses the contract description of the current Discovery protocol version and mode.</summary>
+      <returns>A UDP discovery endpoint.</returns>
+      <param name="contractDescription">Not implemented.</param>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.UdpDiscoveryEndpointElement.DiscoveryMode">
+      <summary>Gets or sets the discovery mode that is used by the discovery endpoint.</summary>
+      <returns>The discovery mode.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.UdpDiscoveryEndpointElement.EndpointType">
+      <summary>When called or overridden by a derived class, gets the type of the UDP discovery endpoint.</summary>
+      <returns>The type of the discovery endpoint.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.UdpDiscoveryEndpointElement.InitializeFrom(System.ServiceModel.Description.ServiceEndpoint)">
+      <summary>Converts the specified <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> into a <see cref="T:System.ServiceModel.Discovery.UdpDiscoveryEndpoint" />.</summary>
+      <param name="endpoint">The service endpoint object to convert.</param>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.UdpDiscoveryEndpointElement.MaxResponseDelay">
+      <summary>Gets or sets the maximum <see cref="T:System.Timespan" /> within which all of the ProbeMatches for a service that respond to a probe operation are sent..</summary>
+      <returns>The maximum delay.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.UdpDiscoveryEndpointElement.MulticastAddress">
+      <summary>Gets or sets the <see cref="P:System.ServiceModel.Discovery.Configuration.UdpDiscoveryEndpointElement.MulticastAddress" /> property of a UDP discovery endpoint element.</summary>
+      <returns>An IP address.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.UdpDiscoveryEndpointElement.OnApplyConfiguration(System.ServiceModel.Description.ServiceEndpoint,System.ServiceModel.Configuration.ChannelEndpointElement)">
+      <summary>When called or overridden by a derived class, converts the specified <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> to a UDP discovery endpoint.</summary>
+      <param name="endpoint">The service endpoint to which the configuration settings are applied.</param>
+      <param name="serviceEndpointElement">Not implemented.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.UdpDiscoveryEndpointElement.OnApplyConfiguration(System.ServiceModel.Description.ServiceEndpoint,System.ServiceModel.Configuration.ServiceEndpointElement)">
+      <summary>When called or overridden by a derived class, converts the specified <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> to a UDP discovery endpoint.</summary>
+      <param name="endpoint">The service endpoint to which the configuration settings are applied.</param>
+      <param name="serviceEndpointElement">Not implemented.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.UdpDiscoveryEndpointElement.OnInitializeAndValidate(System.ServiceModel.Configuration.ChannelEndpointElement)">
+      <summary>When called or overridden by a derived class, initializes and validates the specified instance of a <see cref="T:System.ServiceModel.Configuration.ChannelEndpointElement" />.</summary>
+      <param name="channelEndpointElement">The channel endpoint element to initialize and validate.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.UdpDiscoveryEndpointElement.OnInitializeAndValidate(System.ServiceModel.Configuration.ServiceEndpointElement)">
+      <summary>When called or overridden by a derived class, initializes and validates the specified instance of a <see cref="T:System.ServiceModel.Configuration.ServiceEndpointElement" />.</summary>
+      <param name="serviceEndpointElement">The service endpoint element to initialize and validate.</param>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.UdpDiscoveryEndpointElement.Properties">
+      <summary>When called or overridden by a derived class, gets a collection of the configuration settings contained in the <see cref="T:System.ServiceModel.Discovery.Configuration.UdpDiscoveryEndpointElement" /> instance.</summary>
+      <returns>A collection of configuration settings.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.UdpDiscoveryEndpointElement.TransportSettings">
+      <summary>Gets the binding settings of a UDP transport configuration element.</summary>
+      <returns>A UDP configuration element.</returns>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.Configuration.UdpTransportSettingsElement">
+      <summary>Allows you to set the settings of a UDP transport. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Configuration.UdpTransportSettingsElement.#ctor">
+      <summary>Creates a new instance of the <see cref="T:System.ServiceModel.Discovery.Configuration.UdpTransportSettingsElement" /> class.</summary>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.UdpTransportSettingsElement.DuplicateMessageHistoryLength">
+      <summary>Gets or sets the value of the <see cref="P:System.ServiceModel.Discovery.UdpTransportSettings.DuplicateMessageHistoryLength" /> property in a UDP transport configuration element.</summary>
+      <returns>The maximum number of message hashes used by the transport to identify duplicate messages.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.UdpTransportSettingsElement.MaxBufferPoolSize">
+      <summary>Gets or sets a maximum allotment, in bytes, of memory for the process of reading and writing pages of data into memory from the disk.</summary>
+      <returns>A number that indicates the size of a buffer pool.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.UdpTransportSettingsElement.MaxMulticastRetransmitCount">
+      <summary>Gets or sets the value of the <see cref="P:System.ServiceModel.Discovery.UdpTransportSettings.MaxMulticastRetransmitCount" /> property in a UDP transport configuration element.</summary>
+      <returns>The maximum number of times a multicast message can be retransmitted.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.UdpTransportSettingsElement.MaxPendingMessageCount">
+      <summary>Gets or sets the value of the <see cref="P:System.ServiceModel.Discovery.UdpTransportSettings.MaxPendingMessageCount" /> property in a UDP transport configuration element.</summary>
+      <returns>The maximum number of messages that are received but not yet removed from the input queue for an individual channel instance.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.UdpTransportSettingsElement.MaxReceivedMessageSize">
+      <summary>Gets or sets the value of the <see cref="P:System.ServiceModel.Discovery.Configuration.UdpTransportSettingsElement.MaxReceivedMessageSize" /> property in a UDP transport configuration element.</summary>
+      <returns>The maximum size, in bytes, for a message that can be processed by the binding.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.UdpTransportSettingsElement.MaxUnicastRetransmitCount">
+      <summary>Gets or sets the value of the <see cref="P:System.ServiceModel.Discovery.UdpTransportSettings.MaxUnicastRetransmitCount" /> property in a UDP transport configuration element.</summary>
+      <returns>The maximum number of times a unicast message can be retransmitted.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.UdpTransportSettingsElement.MulticastInterfaceId">
+      <summary>Gets or sets the value of the <see cref="P:System.ServiceModel.Discovery.UdpTransportSettings.MulticastInterfaceId" /> property in a UDP transport configuration element.</summary>
+      <returns>The network adapter that is used when sending and receiving multicast traffic on multi-honed machines.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.UdpTransportSettingsElement.SocketReceiveBufferSize">
+      <summary>Gets or sets the value of the <see cref="P:System.ServiceModel.Discovery.UdpTransportSettings.SocketReceiveBufferSize" /> property in a UDP transport configuration element.</summary>
+      <returns>The receive buffer size on the underlying WinSock socket.</returns>
+    </member>
+    <member name="P:System.ServiceModel.Discovery.Configuration.UdpTransportSettingsElement.TimeToLive">
+      <summary>Gets or sets the value of the <see cref="P:System.ServiceModel.Discovery.Configuration.UdpTransportSettingsElement.TimeToLive" /> property in a UDP transport configuration element.</summary>
+      <returns>The number of network segment hops that a multicast packet can traverse. </returns>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.Version11.DiscoveryMessageSequence11">
+      <summary>Represents the AppSequence header defined in version 1.1 of the WS-Discovery Protocol. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Version11.DiscoveryMessageSequence11.FromDiscoveryMessageSequence(System.ServiceModel.Discovery.DiscoveryMessageSequence)">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Discovery.Version11.DiscoveryMessageSequence11" /> class from the specified <see cref="T:System.ServiceModel.Discovery.DiscoveryMessageSequence" /> instance.</summary>
+      <returns>An <see cref="T:System.ServiceModel.Discovery.Version11.DiscoveryMessageSequence11" /> instance.</returns>
+      <param name="discoveryMessageSequence">The discovery message sequence.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Version11.DiscoveryMessageSequence11.GetSchema">
+      <summary>Gets the schema for the AppSequence header as defined in version 1.1 of the WS-Discovery protocol.</summary>
+      <returns>The schema for the AppSequence header.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Version11.DiscoveryMessageSequence11.GetSchema(System.Xml.Schema.XmlSchemaSet)">
+      <summary>Gets the schema for the AppSequence header as defined in version 1.1 of the WS-Discovery protocol and adds it to the specified schema set if the schema set does not already contain the schema.</summary>
+      <returns>The XML-qualified name of the schema.</returns>
+      <param name="schemaSet">The schema set.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Version11.DiscoveryMessageSequence11.ReadXml(System.Xml.XmlReader)">
+      <summary>Reads a discovery message sequence from XML.</summary>
+      <param name="reader">The XML reader to read from.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Version11.DiscoveryMessageSequence11.ToDiscoveryMessageSequence">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Discovery.DiscoveryMessageSequence" /> class from the current <see cref="T:System.ServiceModel.Discovery.Version11.DiscoveryMessageSequence11" /> instance.</summary>
+      <returns>A <see cref="T:System.ServiceModel.Discovery.DiscoveryMessageSequence" /> instance.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Version11.DiscoveryMessageSequence11.WriteXml(System.Xml.XmlWriter)">
+      <summary>Writes the <see cref="T:System.ServiceModel.Discovery.Version11.DiscoveryMessageSequence11" /> instance to XML.</summary>
+      <param name="writer">The XML writer to write to.</param>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.Version11.EndpointDiscoveryMetadata11">
+      <summary>Contains the metadata for a discoverable service based on version 1.1 of the WS-Discovery protocol. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Version11.EndpointDiscoveryMetadata11.FromEndpointDiscoveryMetadata(System.ServiceModel.Discovery.EndpointDiscoveryMetadata)">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Discovery.Version11.EndpointDiscoveryMetadata11" /> class with the specified <see cref="T:System.ServiceModel.Discovery.EndpointDiscoveryMetadata" /> instance.</summary>
+      <returns>A <see cref="T:System.ServiceModel.Discovery.Version11.EndpointDiscoveryMetadata11" /> instance.</returns>
+      <param name="endpointDiscoveryMetadata">The endpoint discovery metadata.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Version11.EndpointDiscoveryMetadata11.GetSchema">
+      <summary>Gets the schema for endpoint discovery metadata for version 1.1 of the WS-Discovery protocol.</summary>
+      <returns>The XML qualified name of the schema.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Version11.EndpointDiscoveryMetadata11.GetSchema(System.Xml.Schema.XmlSchemaSet)">
+      <summary>Gets the schema for endpoint discovery metadata for version 1.1 of the WS-Discovery protocol and adds it to the specified schema set if it is not already present.</summary>
+      <returns>The XML qualified name of the schema.</returns>
+      <param name="schemaSet">The schema set.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Version11.EndpointDiscoveryMetadata11.ReadXml(System.Xml.XmlReader)">
+      <summary>Reads an <see cref="T:System.ServiceModel.Discovery.Version11.EndpointDiscoveryMetadata11" /> instance from XML.</summary>
+      <param name="reader">The XML reader to read from.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Version11.EndpointDiscoveryMetadata11.ToEndpointDiscoveryMetadata">
+      <summary>Gets the <see cref="T:System.ServiceModel.Discovery.EndpointDiscoveryMetadata" /> associated with this <see cref="T:System.ServiceModel.Discovery.Version11.EndpointDiscoveryMetadata11" /> instance.</summary>
+      <returns>A <see cref="T:System.ServiceModel.Discovery.Version11.EndpointDiscoveryMetadata11" /> instance.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Version11.EndpointDiscoveryMetadata11.WriteXml(System.Xml.XmlWriter)">
+      <summary>Writes a <see cref="T:System.ServiceModel.Discovery.Version11.EndpointDiscoveryMetadata11" /> instance to XML.</summary>
+      <param name="writer">The XML writer to write to.</param>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.Version11.FindCriteria11">
+      <summary>Represents the criteria to use when searching for services using version 1.1 of the WS-Discovery protocol. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Version11.FindCriteria11.FromFindCriteria(System.ServiceModel.Discovery.FindCriteria)">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Discovery.Version11.FindCriteria11" /> using the specified <see cref="T:System.ServiceModel.Discovery.FindCriteria" /> instance.</summary>
+      <returns>A new<see cref="T:System.ServiceModel.Discovery.Version11.FindCriteria11" /> instance.</returns>
+      <param name="findCriteria">The find criteria.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Version11.FindCriteria11.GetSchema">
+      <summary>Gets the find criteria schema.</summary>
+      <returns>The find criteria schema.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Version11.FindCriteria11.GetSchema(System.Xml.Schema.XmlSchemaSet)">
+      <summary>Gets the find criteria schema from the specified <see cref="T:System.Xml.Schema.XmlSchemaSet" />. </summary>
+      <returns>The <see cref="T:System.Xml.XmlQualifiedName" /> of the schema.</returns>
+      <param name="schemaSet">The schema set.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Version11.FindCriteria11.ReadXml(System.Xml.XmlReader)">
+      <summary>Reads a <see cref="T:System.ServiceModel.Discovery.Version11.FindCriteria11" /> instance from XML.</summary>
+      <param name="reader">The XML reader to read from.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Version11.FindCriteria11.ToFindCriteria">
+      <summary>Gets the <see cref="T:System.ServiceModel.Discovery.FindCriteria" /> associated with this <see cref="T:System.ServiceModel.Discovery.Version11.FindCriteria11" /> instance.</summary>
+      <returns>The find criteria.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Version11.FindCriteria11.WriteXml(System.Xml.XmlWriter)">
+      <summary>Writes the <see cref="T:System.ServiceModel.Discovery.Version11.FindCriteria11" /> to XML.</summary>
+      <param name="writer">The XML writer to write to.</param>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.Version11.ResolveCriteria11">
+      <summary>Represents the criteria to use when resolving a service using version 1.1 of the WS-Discovery protocol. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Version11.ResolveCriteria11.FromResolveCriteria(System.ServiceModel.Discovery.ResolveCriteria)">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Discovery.Version11.ResolveCriteria11" /> using the specified <see cref="T:System.ServiceModel.Discovery.ResolveCriteria" /> instance.</summary>
+      <returns>A <see cref="T:System.ServiceModel.Discovery.Version11.ResolveCriteria11" /> instance.</returns>
+      <param name="resolveCriteria">The resolve criteria.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Version11.ResolveCriteria11.GetSchema">
+      <summary>Gets the resolve criteria schema.</summary>
+      <returns>The resolve criteria schema.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Version11.ResolveCriteria11.GetSchema(System.Xml.Schema.XmlSchemaSet)">
+      <summary>Gets the find criteria schema from the specified <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</summary>
+      <returns>The <see cref="T:System.Xml.XmlQualifiedName" /> of the schema.</returns>
+      <param name="schemaSet">The schema set.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Version11.ResolveCriteria11.ReadXml(System.Xml.XmlReader)">
+      <summary>Reads a <see cref="T:System.ServiceModel.Discovery.Version11.ResolveCriteria11" /> instance from XML.</summary>
+      <param name="reader">The XML reader to read from.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Version11.ResolveCriteria11.ToResolveCriteria">
+      <summary>Gets the <see cref="T:System.ServiceModel.Discovery.ResolveCriteria" /> associated with this <see cref="T:System.ServiceModel.Discovery.Version11.ResolveCriteria11" /> instance.</summary>
+      <returns>The resolve criteria.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.Version11.ResolveCriteria11.WriteXml(System.Xml.XmlWriter)">
+      <summary>Writes a <see cref="T:System.ServiceModel.Discovery.Version11.ResolveCriteria11" /> instance to XML.</summary>
+      <param name="writer">The XML writer to write to.</param>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.VersionApril2005.DiscoveryMessageSequenceApril2005">
+      <summary>Represents the AppSequence header defined in the April 2005 version of the WS-Discovery Protocol.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionApril2005.DiscoveryMessageSequenceApril2005.FromDiscoveryMessageSequence(System.ServiceModel.Discovery.DiscoveryMessageSequence)">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Discovery.VersionApril2005.DiscoveryMessageSequenceApril2005" /> class from the specified <see cref="T:System.ServiceModel.Discovery.DiscoveryMessageSequence" /> instance.</summary>
+      <returns>An <see cref="T:System.ServiceModel.Discovery.VersionApril2005.DiscoveryMessageSequenceApril2005" /> instance.</returns>
+      <param name="discoveryMessageSequence">The discovery message sequence.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionApril2005.DiscoveryMessageSequenceApril2005.GetSchema">
+      <summary>Gets the schema for the AppSequence header for the April 2005 version of the WS-Discovery protocol.</summary>
+      <returns>The schema for the AppSequence header.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionApril2005.DiscoveryMessageSequenceApril2005.GetSchema(System.Xml.Schema.XmlSchemaSet)">
+      <summary>Gets the schema for the AppSequence header for the April 2005 version of the WS-Discovery protocol and adds it to the specified schema set if the schema set does not already contain the schema.</summary>
+      <returns>The XML qualified name of the schema.</returns>
+      <param name="schemaSet">The schema set.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionApril2005.DiscoveryMessageSequenceApril2005.ReadXml(System.Xml.XmlReader)">
+      <summary>Reads a discovery message sequence from XML.</summary>
+      <param name="reader">The XML reader to read from.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionApril2005.DiscoveryMessageSequenceApril2005.ToDiscoveryMessageSequence">
+      <summary>Initializes a new instance of the  <see cref="T:System.ServiceModel.Discovery.DiscoveryMessageSequence" /> class from the <see cref="T:System.ServiceModel.Discovery.VersionApril2005.DiscoveryMessageSequenceApril2005" /> instance.</summary>
+      <returns>A <see cref="T:System.ServiceModel.Discovery.DiscoveryMessageSequence" /> instance.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionApril2005.DiscoveryMessageSequenceApril2005.WriteXml(System.Xml.XmlWriter)">
+      <summary>Writes the <see cref="T:System.ServiceModel.Discovery.VersionApril2005.DiscoveryMessageSequenceApril2005" /> to XML.</summary>
+      <param name="writer">The XML writer to write to.</param>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.VersionApril2005.EndpointDiscoveryMetadataApril2005">
+      <summary>Contains the metadata for a discoverable service based on the April 2005 version of the WS-Discovery protocol.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionApril2005.EndpointDiscoveryMetadataApril2005.FromEndpointDiscoveryMetadata(System.ServiceModel.Discovery.EndpointDiscoveryMetadata)">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Discovery.VersionApril2005.EndpointDiscoveryMetadataApril2005" /> with the specified <see cref="T:System.ServiceModel.Discovery.EndpointDiscoveryMetadata" /> instance.</summary>
+      <returns>A <see cref="T:System.ServiceModel.Discovery.VersionApril2005.EndpointDiscoveryMetadataApril2005" /> instance.</returns>
+      <param name="endpointDiscoveryMetadata">The endpoint discovery metadata.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionApril2005.EndpointDiscoveryMetadataApril2005.GetSchema">
+      <summary>Gets the schema for endpoint discovery metadata for the April 2005 version of the WS-Discovery protocol.</summary>
+      <returns>A <see cref="T:System.Xml.Schema.XmlSchema" /> instance.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionApril2005.EndpointDiscoveryMetadataApril2005.GetSchema(System.Xml.Schema.XmlSchemaSet)">
+      <summary>Gets the schema for endpoint discovery metadata for the April 2005 version of the WS-Discovery protocol and adds it to the specified schema set if it is not already present.</summary>
+      <returns>The XML qualified name of the schema.</returns>
+      <param name="schemaSet">The schema set.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionApril2005.EndpointDiscoveryMetadataApril2005.ReadXml(System.Xml.XmlReader)">
+      <summary>Reads a <see cref="T:System.ServiceModel.Discovery.VersionApril2005.EndpointDiscoveryMetadataApril2005" /> instance from XML.</summary>
+      <param name="reader">The XML reader to read.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionApril2005.EndpointDiscoveryMetadataApril2005.ToEndpointDiscoveryMetadata">
+      <summary>Gets the <see cref="T:System.ServiceModel.Discovery.EndpointDiscoveryMetadata" /> associated with this <see cref="T:System.ServiceModel.Discovery.VersionApril2005.EndpointDiscoveryMetadataApril2005" /> instance.</summary>
+      <returns>A <see cref="T:System.ServiceModel.Discovery.EndpointDiscoveryMetadata" /> instance.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionApril2005.EndpointDiscoveryMetadataApril2005.WriteXml(System.Xml.XmlWriter)">
+      <summary>Writes the current <see cref="T:System.ServiceModel.Discovery.VersionApril2005.EndpointDiscoveryMetadataApril2005" /> instance to XML.</summary>
+      <param name="writer">The XML writer.</param>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.VersionApril2005.FindCriteriaApril2005">
+      <summary>Represents the criteria to use when searching for services using the April 2005 version of the WS-Discovery protocol.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionApril2005.FindCriteriaApril2005.FromFindCriteria(System.ServiceModel.Discovery.FindCriteria)">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Discovery.VersionApril2005.FindCriteriaApril2005" /> class with the specified <see cref="T:System.ServiceModel.Discovery.FindCriteria" /> instance.</summary>
+      <returns>A <see cref="T:System.ServiceModel.Discovery.VersionApril2005.FindCriteriaApril2005" /> instance.</returns>
+      <param name="findCriteria">The find criteria.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionApril2005.FindCriteriaApril2005.GetSchema">
+      <summary>Gets the schema of find criteria for the April 2005 version of the WS-Discovery protocol.</summary>
+      <returns>The schema.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionApril2005.FindCriteriaApril2005.GetSchema(System.Xml.Schema.XmlSchemaSet)">
+      <summary>Gets the schema of find criteria for the April 2005 version of the WS-Discovery protocol and adds it to the specified schema set if it is not already present.</summary>
+      <returns>The XML qualified name of the schema.</returns>
+      <param name="schemaSet">The schema set.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionApril2005.FindCriteriaApril2005.ReadXml(System.Xml.XmlReader)">
+      <summary>Reads an instance of <see cref="T:System.ServiceModel.Discovery.VersionApril2005.FindCriteriaApril2005" /> from the specified XML reader.</summary>
+      <param name="reader">The XML reader.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionApril2005.FindCriteriaApril2005.ToFindCriteria">
+      <summary>Gets the <see cref="T:System.ServiceModel.Discovery.FindCriteria" /> associated with this <see cref="T:System.ServiceModel.Discovery.VersionApril2005.FindCriteriaApril2005" /> instance.</summary>
+      <returns>The find criteria.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionApril2005.FindCriteriaApril2005.WriteXml(System.Xml.XmlWriter)">
+      <summary>Writes the current <see cref="T:System.ServiceModel.Discovery.VersionApril2005.FindCriteriaApril2005" /> instance to XML.</summary>
+      <param name="writer">The XML writer.</param>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.VersionApril2005.ResolveCriteriaApril2005">
+      <summary>Represents the criteria to use when resolving a service using the April 2005 version of the WS-Discovery protocol.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionApril2005.ResolveCriteriaApril2005.FromResolveCriteria(System.ServiceModel.Discovery.ResolveCriteria)">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Discovery.VersionApril2005.ResolveCriteriaApril2005" /> class with the specified <see cref="T:System.ServiceModel.Discovery.ResolveCriteria" /> instance.</summary>
+      <returns>A <see cref="T:System.ServiceModel.Discovery.VersionApril2005.ResolveCriteriaApril2005" /> instance.</returns>
+      <param name="resolveCriteria">The resolve criteria.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionApril2005.ResolveCriteriaApril2005.GetSchema">
+      <summary>Gets the XML schema for resolve criteria defined in the April 2005 version of the WS-Discovery protocol.</summary>
+      <returns>The XML schema of resolve criteria.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionApril2005.ResolveCriteriaApril2005.GetSchema(System.Xml.Schema.XmlSchemaSet)">
+      <summary>Gets the XML schema for resolve criteria defined in the April 2005 version of the WS-Discovery protocol and adds it to the specified <see cref="T:System.Xml.Schema.XmlSchemaSet" /> instance.</summary>
+      <returns>The XML qualified name of the schema. </returns>
+      <param name="schemaSet">The schema set.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionApril2005.ResolveCriteriaApril2005.ReadXml(System.Xml.XmlReader)">
+      <summary>Reads a <see cref="T:System.ServiceModel.Discovery.VersionApril2005.ResolveCriteriaApril2005" /> instance from XML.</summary>
+      <param name="reader">The XML reader.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionApril2005.ResolveCriteriaApril2005.ToResolveCriteria">
+      <summary>Gets the <see cref="T:System.ServiceModel.Discovery.ResolveCriteria" /> instance associated with the current <see cref="T:System.ServiceModel.Discovery.VersionApril2005.ResolveCriteriaApril2005" /> instance.</summary>
+      <returns>The resolve criteria.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionApril2005.ResolveCriteriaApril2005.WriteXml(System.Xml.XmlWriter)">
+      <summary>Writes the current <see cref="T:System.ServiceModel.Discovery.VersionApril2005.ResolveCriteriaApril2005" /> instance to XML.</summary>
+      <param name="writer">The XML writer.</param>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.VersionCD1.DiscoveryMessageSequenceCD1">
+      <summary>Represents the AppSequence header defined in the Committee Draft 1 version of the WS-Discovery Protocol.</summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionCD1.DiscoveryMessageSequenceCD1.FromDiscoveryMessageSequence(System.ServiceModel.Discovery.DiscoveryMessageSequence)">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Discovery.VersionCD1.DiscoveryMessageSequenceCD1" /> class from the specified <see cref="T:System.ServiceModel.Discovery.DiscoveryMessageSequence" /> instance.</summary>
+      <returns>An <see cref="T:System.ServiceModel.Discovery.VersionCD1.DiscoveryMessageSequenceCD1" /> instance.</returns>
+      <param name="discoveryMessageSequence">The discovery message sequence.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionCD1.DiscoveryMessageSequenceCD1.GetSchema">
+      <summary>Gets the schema for the AppSequence header as defined in the Committee Draft 1 version of the WS-Discovery protocol.</summary>
+      <returns>The schema for the AppSequence header.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionCD1.DiscoveryMessageSequenceCD1.GetSchema(System.Xml.Schema.XmlSchemaSet)">
+      <summary>Gets the schema for the AppSequence header as defined in the Committee Draft 1 version of the WS-Discovery protocol and adds it to the specified schema set if the schema set does not already contain the schema.</summary>
+      <returns>The XML-qualified name of the schema.</returns>
+      <param name="schemaSet">The schema set.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionCD1.DiscoveryMessageSequenceCD1.ReadXml(System.Xml.XmlReader)">
+      <summary>Reads a discovery message sequence from XML.</summary>
+      <param name="reader">The XML reader to read from.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionCD1.DiscoveryMessageSequenceCD1.ToDiscoveryMessageSequence">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Discovery.DiscoveryMessageSequence" /> class from the current <see cref="T:System.ServiceModel.Discovery.VersionCD1.DiscoveryMessageSequenceCD1" /> instance.</summary>
+      <returns>A <see cref="T:System.ServiceModel.Discovery.DiscoveryMessageSequence" /> instance.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionCD1.DiscoveryMessageSequenceCD1.WriteXml(System.Xml.XmlWriter)">
+      <summary>Writes the <see cref="T:System.ServiceModel.Discovery.VersionCD1.DiscoveryMessageSequenceCD1" /> instance to XML.</summary>
+      <param name="writer">The XML writer to write to.</param>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.VersionCD1.EndpointDiscoveryMetadataCD1">
+      <summary>Contains the metadata for a discoverable service based on the Committee Draft 1 version of the WS-Discovery protocol. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionCD1.EndpointDiscoveryMetadataCD1.FromEndpointDiscoveryMetadata(System.ServiceModel.Discovery.EndpointDiscoveryMetadata)">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Discovery.VersionCD1.EndpointDiscoveryMetadataCD1" /> class with the specified <see cref="T:System.ServiceModel.Discovery.EndpointDiscoveryMetadata" /> instance.</summary>
+      <returns>A <see cref="T:System.ServiceModel.Discovery.VersionCD1.EndpointDiscoveryMetadataCD1" /> instance.</returns>
+      <param name="endpointDiscoveryMetadata">The endpoint discovery metadata.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionCD1.EndpointDiscoveryMetadataCD1.GetSchema">
+      <summary>Gets the schema for endpoint discovery metadata for the Committee Draft 1 version of the WS-Discovery protocol.</summary>
+      <returns>The XML qualified name of the schema.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionCD1.EndpointDiscoveryMetadataCD1.GetSchema(System.Xml.Schema.XmlSchemaSet)">
+      <summary>Gets the schema for endpoint discovery metadata for the Committee Draft 1 version of the WS-Discovery protocol and adds it to the specified schema set if it is not already present.</summary>
+      <returns>The XML qualified name of the schema.</returns>
+      <param name="schemaSet">The schema set.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionCD1.EndpointDiscoveryMetadataCD1.ReadXml(System.Xml.XmlReader)">
+      <summary>Reads an <see cref="T:System.ServiceModel.Discovery.VersionCD1.EndpointDiscoveryMetadataCD1" /> instance from XML.</summary>
+      <param name="reader">The XML reader to read from.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionCD1.EndpointDiscoveryMetadataCD1.ToEndpointDiscoveryMetadata">
+      <summary>Gets the <see cref="T:System.ServiceModel.Discovery.EndpointDiscoveryMetadata" /> associated with this <see cref="T:System.ServiceModel.Discovery.VersionCD1.EndpointDiscoveryMetadataCD1" /> instance.</summary>
+      <returns>A <see cref="T:System.ServiceModel.Discovery.VersionCD1.EndpointDiscoveryMetadataCD1" /> instance.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionCD1.EndpointDiscoveryMetadataCD1.WriteXml(System.Xml.XmlWriter)">
+      <summary>Writes a <see cref="T:System.ServiceModel.Discovery.VersionCD1.EndpointDiscoveryMetadataCD1" /> instance to XML.</summary>
+      <param name="writer">The XML writer to write to.</param>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.VersionCD1.FindCriteriaCD1">
+      <summary>Represents the criteria to use when searching for services using the Committee Draft 1 version of the WS-Discovery protocol. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionCD1.FindCriteriaCD1.FromFindCriteria(System.ServiceModel.Discovery.FindCriteria)">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Discovery.VersionCD1.FindCriteriaCD1" /> using the specified <see cref="T:System.ServiceModel.Discovery.FindCriteria" /> instance.</summary>
+      <returns>A new<see cref="T:System.ServiceModel.Discovery.VersionCD1.FindCriteriaCD1" /> instance.</returns>
+      <param name="findCriteria">The find criteria.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionCD1.FindCriteriaCD1.GetSchema">
+      <summary>Gets the find criteria schema.</summary>
+      <returns>The find criteria schema.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionCD1.FindCriteriaCD1.GetSchema(System.Xml.Schema.XmlSchemaSet)">
+      <summary>Gets the find criteria schema from the specified <see cref="T:System.Xml.Schema.XmlSchemaSet" />. </summary>
+      <returns>The <see cref="T:System.Xml.XmlQualifiedName" /> of the schema.</returns>
+      <param name="schemaSet">The schema set.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionCD1.FindCriteriaCD1.ReadXml(System.Xml.XmlReader)">
+      <summary>Reads a <see cref="T:System.ServiceModel.Discovery.VersionCD1.FindCriteriaCD1" /> instance from XML.</summary>
+      <param name="reader">The XML reader to read from.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionCD1.FindCriteriaCD1.ToFindCriteria">
+      <summary>Gets the <see cref="T:System.ServiceModel.Discovery.FindCriteria" /> associated with this <see cref="T:System.ServiceModel.Discovery.VersionCD1.FindCriteriaCD1" /> instance.</summary>
+      <returns>The find criteria.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionCD1.FindCriteriaCD1.WriteXml(System.Xml.XmlWriter)">
+      <summary>Writes the <see cref="T:System.ServiceModel.Discovery.VersionCD1.FindCriteriaCD1" /> to XML.</summary>
+      <param name="writer">The XML writer to write to.</param>
+    </member>
+    <member name="T:System.ServiceModel.Discovery.VersionCD1.ResolveCriteriaCD1">
+      <summary>Represents the criteria to use when resolving a service using the Committee Draft 1 version of the WS-Discovery protocol. </summary>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionCD1.ResolveCriteriaCD1.FromResolveCriteria(System.ServiceModel.Discovery.ResolveCriteria)">
+      <summary>Initializes a new instance of the <see cref="T:System.ServiceModel.Discovery.VersionCD1.ResolveCriteriaCD1" /> using the specified <see cref="T:System.ServiceModel.Discovery.ResolveCriteria" /> instance.</summary>
+      <returns>A <see cref="T:System.ServiceModel.Discovery.VersionCD1.ResolveCriteriaCD1" /> instance.</returns>
+      <param name="resolveCriteria">The resolve criteria.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionCD1.ResolveCriteriaCD1.GetSchema">
+      <summary>Gets the resolve criteria schema.</summary>
+      <returns>The resolve criteria schema.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionCD1.ResolveCriteriaCD1.GetSchema(System.Xml.Schema.XmlSchemaSet)">
+      <summary>Gets the find criteria schema from the specified <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</summary>
+      <returns>The <see cref="T:System.Xml.XmlQualifiedName" /> of the schema.</returns>
+      <param name="schemaSet">The schema set.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionCD1.ResolveCriteriaCD1.ReadXml(System.Xml.XmlReader)">
+      <summary>Reads a <see cref="T:System.ServiceModel.Discovery.VersionCD1.ResolveCriteriaCD1" /> instance from XML.</summary>
+      <param name="reader">The XML reader to read from.</param>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionCD1.ResolveCriteriaCD1.ToResolveCriteria">
+      <summary>Gets the <see cref="T:System.ServiceModel.Discovery.ResolveCriteria" /> associated with this <see cref="T:System.ServiceModel.Discovery.VersionCD1.ResolveCriteriaCD1" /> instance.</summary>
+      <returns>The resolve criteria.</returns>
+    </member>
+    <member name="M:System.ServiceModel.Discovery.VersionCD1.ResolveCriteriaCD1.WriteXml(System.Xml.XmlWriter)">
+      <summary>Writes a <see cref="T:System.ServiceModel.Discovery.VersionCD1.ResolveCriteriaCD1" /> instance to XML.</summary>
+      <param name="writer">The XML writer to write to.</param>
+    </member>
+  </members>
+</doc>
