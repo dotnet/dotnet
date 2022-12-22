@@ -1,0 +1,127 @@
+trigger:
+  batch: true
+  branches:
+    include:
+    - main
+    - release/*
+    - internal/release/*
+
+pr:
+- main
+- release/*
+- internal/release/*
+
+
+name: $(Date:yyyyMMdd)$(Rev:.r)
+
+variables:
+  - name: TeamName
+    value: dotnet-core-acquisition
+  # Skip Running CI tests
+  - name: SkipTests
+    value: false
+  # Set Official Build Id
+  - name: OfficialBuildId
+    value: $(Build.BuildNumber)
+  - name: PostBuildSign
+    value: false
+
+  # Set the target blob feed for package publish during official and validation builds.
+  - name: _DotNetArtifactsCategory
+    value: .NETCore
+  - name: _DotNetValidationArtifactsCategory
+    value: .NETCoreValidation
+
+  # Produce test-signed build for PR and Public builds
+  - ${{ if or(eq(variables['System.TeamProject'], 'public'), in(variables['Build.Reason'], 'PullRequest')) }}:
+    - name: SignType
+      value: test
+
+  # Set up non-PR build from internal project
+  - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+    - name: SignType
+      value: $[ coalesce(variables.OfficialSignType, 'real') ]
+    # Values for SDLValidationParameters
+    - group: core-setup-sdl-validation
+
+stages:
+- stage: Build
+  jobs:
+  - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.SourceBranch'], 'refs/heads/main')) }}:
+    - template: /eng/common/templates/job/onelocbuild.yml
+      parameters:
+        MirrorRepo: deployment-tools
+        LclSource: lclFilesfromPackage
+        LclPackageId: 'LCL-JUNO-PROD-MAGE'
+  # -------- Build Windows legs --------
+  # Windows x64
+  - template: /eng/jobs/windows-build.yml
+    parameters:
+      name: Windows_x64
+      publishRidAgnosticPackages: true
+      targetArchitecture: x64
+
+  # Windows x86
+  - template: /eng/jobs/windows-build.yml
+    parameters:
+      name: Windows_x86
+      targetArchitecture: x86
+
+  # Windows arm64
+  - template: /eng/jobs/windows-build.yml
+    parameters:
+      name: Windows_arm64
+      targetArchitecture: arm64
+  
+  # Source-build
+  - template: /eng/common/templates/job/source-build.yml
+    parameters:
+      platform:
+        name: 'Managed'
+        container: 'mcr.microsoft.com/dotnet-buildtools/prereqs:centos-7-3e800f1-20190501005343'
+        skipPublishValidation: true
+
+- ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+  - stage: PrepareForPublish
+    displayName: Prepare for Publish
+    dependsOn: Build
+    jobs:
+    # Prep artifacts: sign them and upload pipeline artifacts expected by stages-based publishing.
+    - template: /eng/jobs/prepare-signed-artifacts.yml
+      parameters:
+        PublishRidAgnosticPackagesFromJobName: Windows_x64
+    # Publish to Build Asset Registry in order to generate the ReleaseConfigs artifact.
+    - template: /eng/common/templates/job/publish-build-assets.yml
+      parameters:
+        publishUsingPipelines: true
+        dependsOn: PrepareSignedArtifacts
+        pool:
+          name: NetCore1ESPool-Internal
+          demands: ImageOverride -equals Build.Server.Amd64.VS2019
+
+# Stages-based publishing entry point
+- ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+  - template: /eng/common/templates/post-build/post-build.yml
+    parameters:
+      validateDependsOn:
+      - PrepareForPublish
+      publishingInfraVersion: 3
+      enableSymbolValidation: false
+      enableSigningValidation: false
+      enableNugetValidation: false
+      enableSourceLinkValidation: false
+      publishInstallersAndChecksums: true
+      # Enable SDL validation, passing through values from the 'deployment-tools-sdl-validation' group.
+      SDLValidationParameters:
+        enable: false
+        params: >-
+          -SourceToolsList @("policheck","credscan")
+          -TsaInstanceURL "$(TsaInstanceURL)"
+          -TsaProjectName "$(TsaProjectName)"
+          -TsaNotificationEmail "$(TsaNotificationEmail)"
+          -TsaCodebaseAdmin "$(TsaCodebaseAdmin)"
+          -TsaBugAreaPath "$(TsaBugAreaPath)"
+          -TsaIterationPath "$(TsaIterationPath)"
+          -TsaRepositoryName "$(TsaRepositoryName)"
+          -TsaCodebaseName "$(TsaCodebaseName)"
+          -TsaPublish $True
