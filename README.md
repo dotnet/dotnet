@@ -156,6 +156,8 @@ To enable full offline source-building of the VMR, we have no other choice than 
 *[dotnet/installer@5aac0db](https://github.com/dotnet/installer/commit/5aac0db522c1e9471c91c21516c7049a783bd4db)*
 - `src/runtime`  
 *[dotnet/runtime@1a37caf](https://github.com/dotnet/runtime/commit/1a37caf773a3b857ccff49a31be3333d4fdc491f)*
+- `src/sdk`  
+*[dotnet/sdk@99c0174](https://github.com/dotnet/sdk/commit/99c01747309cac187b8999f23291555b1607337c)*
 - `src/test-templates`  
 *[dotnet/test-templates@bb36956](https://github.com/dotnet/test-templates/commit/bb3695688177f5f80eeb3c0498168612e31549d5)*
 <!-- component list end -->
