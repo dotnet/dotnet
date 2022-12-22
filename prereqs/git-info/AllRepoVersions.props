@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <PropertyGroup>
+    <installerGitCommitHash>5aac0db522c1e9471c91c21516c7049a783bd4db</installerGitCommitHash>
+    <installerOutputPackageVersion>8.0.100</installerOutputPackageVersion>
+  </PropertyGroup>
+</Project>

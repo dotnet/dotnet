@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <Import Project="Sdk.targets" Sdk="Microsoft.DotNet.Arcade.Sdk" />
+
+  <!-- Explicitly remove Android, iOS, and macCatalyst from CA1416 analyzer warnings -->
+  <!-- https://github.com/dotnet/sdk/pull/16489 -->
+  <ItemGroup>
+    <SupportedPlatform Remove="Android" />
+    <SupportedPlatform Remove="iOS" />
+    <SupportedPlatform Remove="macCatalyst" />
+  </ItemGroup>
+
+  <!-- Update KnownFrameworkReferences to target the right version of the runtime -->
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'
+                          and $(MicrosoftNETCoreAppRefPackageVersion.StartsWith('$(_TargetFrameworkVersionWithoutV)'))
+                          and '$(MSBuildProjectName)' != 'core-sdk-tasks'">
+    <FrameworkReference
+        Update="Microsoft.NETCore.App"
+        TargetingPackVersion="$(MicrosoftNETCoreAppRefPackageVersion)"
+        RuntimeFrameworkVersion="$(MicrosoftNETCoreAppRuntimePackageVersion)" />
+  </ItemGroup>
+</Project>

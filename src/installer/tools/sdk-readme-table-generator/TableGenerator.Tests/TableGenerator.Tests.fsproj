@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FsUnit.Xunit" Version="3.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="DomainTests.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TableGenerator\TableGenerator.fsproj" />
+  </ItemGroup>
+</Project>

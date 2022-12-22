@@ -1,0 +1,21 @@
+<Project>
+  <Choose>
+      <When Condition=" '$(InitializeVMR)' == 'true' ">
+        <!-- VMR bootstrap -->
+        <ItemGroup>
+          <ProjectToBuild Include="$(RepoRoot)src/VirtualMonoRepo/Tasks/VirtualMonoRepo.Tasks.csproj" BuildInParallel="false" />
+          <ProjectToBuild Include="$(RepoRoot)src/VirtualMonoRepo/InitializeVMR.proj" BuildInParallel="false" />
+        </ItemGroup>
+      </When>
+
+      <Otherwise>
+        <!-- Regular build -->
+        <ItemGroup>
+          <ProjectToBuild Include="$(RepoRoot)Microsoft.DotNet.Cli.sln" />
+          <ProjectToBuild Condition="'$(OS)' == 'Windows_NT' And ('$(Architecture)' == 'x86' Or '$(Architecture)' == 'x64' Or '$(Architecture)' == 'arm64' Or '$(Architecture)' == 'arm')"
+                          Include="$(RepoRoot)eng\version.csproj;
+                                   $(RepoRoot)eng\native.proj" />
+        </ItemGroup>
+      </Otherwise>
+  </Choose>
+</Project>
