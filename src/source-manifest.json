@@ -13,6 +13,12 @@
       "commitSha": "232ec2e3a48b0c1f60dd02617891ca84b87aa9bf"
     },
     {
+      "packageVersion": "0.1.356401",
+      "path": "command-line-api",
+      "remoteUri": "https://github.com/dotnet/command-line-api",
+      "commitSha": "8374d5fca634a93458c84414b1604c12f765d1ab"
+    },
+    {
       "packageVersion": "1.0.0-preview5.1.22263.1",
       "path": "deployment-tools",
       "remoteUri": "https://github.com/dotnet/deployment-tools",
