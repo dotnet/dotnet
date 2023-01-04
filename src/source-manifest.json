@@ -46,7 +46,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "70205ded0cf7e5b1a45e8fe51dc2afc8050e44c0"
+      "commitSha": "a9186e3ed4b8f5b2a31f4149aab2054b57f996c8"
     },
     {
       "packageVersion": "8.0.100-1.22612.2",
@@ -103,10 +103,10 @@
       "commitSha": "0c829ba73b00f015ab35d14f3cc974e79eb79ef0"
     },
     {
-      "packageVersion": "8.0.0-alpha.1.22616.1",
+      "packageVersion": "8.0.0-alpha.1.23053.1",
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "31f422237eabbd5c89ecbd0f4a6f53e2c495422f"
+      "commitSha": "9e4ae1f23e429bd64744dc71b202a5f1f4d822ce"
     },
     {
       "packageVersion": "1.2.0-beta-22518-02",
