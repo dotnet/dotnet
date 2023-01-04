@@ -135,6 +135,10 @@ tar -zxf artifacts/x64/Release/dotnet-sdk-8.0.100-centos.8-x64.tar.gz -C $HOME/.
 ln -s $HOME/.dotnet/dotnet /usr/bin/dotnet
 ```
 
+### Codespaces
+
+You can also utilize [GitHub Codespaces](https://github.com/features/codespaces) where you can find preset containers in this repository.
+
 ## List of components
 
 To enable full offline source-building of the VMR, we have no other choice than to synchronize all the necessary code into the VMR. This also includes any code referenced via git submodules. More details on why and how this is done can be found here:
@@ -165,7 +169,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@3130e06](https://github.com/dotnet/fsharp/commit/3130e06ce88bc3d6171f5127cdb9972e776af911)*
 - `src/installer`  
-*[dotnet/installer@a9186e3](https://github.com/dotnet/installer/commit/a9186e3ed4b8f5b2a31f4149aab2054b57f996c8)*
+*[dotnet/installer@db1564e](https://github.com/dotnet/installer/commit/db1564e21dcf306e7268d10b3232eec938517b14)*
 - `src/linker`  
 *[dotnet/linker@2db841f](https://github.com/dotnet/linker/commit/2db841fc5f6bc7592b66ffe3bd0e1c888d022f93)*
     - `src/linker/external/cecil`  
