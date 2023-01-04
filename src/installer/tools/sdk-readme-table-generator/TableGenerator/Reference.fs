@@ -4,21 +4,21 @@ open System
 open TableGenerator.Shared
 
 let referenceTemplate: ReferenceTemplate = {
-    LegacyTemplate = """[{0}-badge-{1}]: https://dotnetcli.blob.core.windows.net/dotnet/Sdk/{2}/{3}_Release_version_badge.svg
+    LegacyTemplate = """[{0}-badge-{1}]: https://dotnetcli.blob.core.windows.net/dotnet/Sdk/{2}/{3}_Release_version_badge.svg?no-cache
 [{0}-version-{1}]: https://dotnetcli.blob.core.windows.net/dotnet/Sdk/{2}/latest.version
 [{0}-installer-{1}]: https://dotnetcli.blob.core.windows.net/dotnet/Sdk/{2}/dotnet-sdk-latest-{0}.exe
 [{0}-installer-checksum-{1}]: https://dotnetclichecksums.blob.core.windows.net/dotnet/Sdk/{2}/dotnet-sdk-latest-{0}.exe.sha
 [{0}-zip-{1}]: https://dotnetcli.blob.core.windows.net/dotnet/Sdk/{2}/dotnet-sdk-latest-{0}.zip
 [{0}-zip-checksum-{1}]: https://dotnetclichecksums.blob.core.windows.net/dotnet/Sdk/{2}/dotnet-sdk-latest-{0}.zip.sha"""
 
-    AkaMSLegacyTemplate = """[{0}-badge-{1}]: https://aka.ms/dotnet/{4}/Sdk/{3}_Release_version_badge.svg
+    AkaMSLegacyTemplate = """[{0}-badge-{1}]: https://aka.ms/dotnet/{4}/Sdk/{3}_Release_version_badge.svg?no-cache
 [{0}-version-{1}]: https://aka.ms/dotnet/{4}/Sdk/productCommit-{0}.txt
 [{0}-installer-{1}]: https://aka.ms/dotnet/{4}/Sdk/dotnet-sdk-{0}.exe
 [{0}-installer-checksum-{1}]: https://aka.ms/dotnet/{4}/Sdk/dotnet-sdk-{0}.exe.sha
 [{0}-zip-{1}]: https://aka.ms/dotnet/{4}/Sdk/dotnet-sdk-{0}.zip
 [{0}-zip-checksum-{1}]: https://aka.ms/dotnet/{4}/Sdk/dotnet-sdk-{0}.zip.sha"""
 
-    AkaMSTemplate = """[{0}-badge-{1}]: https://aka.ms/dotnet/{4}/{3}_Release_version_badge.svg
+    AkaMSTemplate = """[{0}-badge-{1}]: https://aka.ms/dotnet/{4}/{3}_Release_version_badge.svg?no-cache
 [{0}-version-{1}]: https://aka.ms/dotnet/{4}/productCommit-{0}.txt
 [{0}-installer-{1}]: https://aka.ms/dotnet/{4}/dotnet-sdk-{0}.exe
 [{0}-installer-checksum-{1}]: https://aka.ms/dotnet/{4}/dotnet-sdk-{0}.exe.sha
@@ -27,53 +27,53 @@ let referenceTemplate: ReferenceTemplate = {
 }
 
 let targzReferenceTemplate: ReferenceTemplate = {
-    LegacyTemplate = """[{0}-badge-{1}]: https://dotnetcli.blob.core.windows.net/dotnet/Sdk/{2}/{3}_Release_version_badge.svg
+    LegacyTemplate = """[{0}-badge-{1}]: https://dotnetcli.blob.core.windows.net/dotnet/Sdk/{2}/{3}_Release_version_badge.svg?no-cache
 [{0}-version-{1}]: https://dotnetcli.blob.core.windows.net/dotnet/Sdk/{2}/latest.version
 [{0}-targz-{1}]: https://dotnetcli.blob.core.windows.net/dotnet/Sdk/{2}/dotnet-sdk-latest-{0}.tar.gz
 [{0}-targz-checksum-{1}]: https://dotnetclichecksums.blob.core.windows.net/dotnet/Sdk/{2}/dotnet-sdk-latest-{0}.tar.gz.sha"""
 
-    AkaMSLegacyTemplate = """[{0}-badge-{1}]: https://aka.ms/dotnet/{4}/Sdk/{3}_Release_version_badge.svg
+    AkaMSLegacyTemplate = """[{0}-badge-{1}]: https://aka.ms/dotnet/{4}/Sdk/{3}_Release_version_badge.svg?no-cache
 [{0}-version-{1}]: https://aka.ms/dotnet/{4}/Sdk/productCommit-{0}.txt
 [{0}-targz-{1}]: https://aka.ms/dotnet/{4}/Sdk/dotnet-sdk-{0}.tar.gz
 [{0}-targz-checksum-{1}]: https://aka.ms/dotnet/{4}/Sdk/dotnet-sdk-{0}.tar.gz.sha"""
 
-    AkaMSTemplate = """[{0}-badge-{1}]: https://aka.ms/dotnet/{4}/{3}_Release_version_badge.svg
+    AkaMSTemplate = """[{0}-badge-{1}]: https://aka.ms/dotnet/{4}/{3}_Release_version_badge.svg?no-cache
 [{0}-version-{1}]: https://aka.ms/dotnet/{4}/productCommit-{0}.txt
 [{0}-targz-{1}]: https://aka.ms/dotnet/{4}/dotnet-sdk-{0}.tar.gz
 [{0}-targz-checksum-{1}]: https://aka.ms/dotnet/{4}/dotnet-sdk-{0}.tar.gz.sha""" }
 
 let linuxArmNoArchitectureReferenceTemplate: ReferenceTemplate = {
-    LegacyTemplate = """[{0}-badge-{1}]: https://dotnetcli.blob.core.windows.net/dotnet/Sdk/{2}/{3}_Release_version_badge.svg
+    LegacyTemplate = """[{0}-badge-{1}]: https://dotnetcli.blob.core.windows.net/dotnet/Sdk/{2}/{3}_Release_version_badge.svg?no-cache
 [{0}-version-{1}]: https://dotnetcli.blob.core.windows.net/dotnet/Sdk/{2}/latest.version
 [{0}-targz-{1}]: https://dotnetcli.blob.core.windows.net/dotnet/Sdk/{2}/dotnet-sdk-latest-{0}.tar.gz
 [{0}-targz-checksum-{1}]: https://dotnetclichecksums.blob.core.windows.net/dotnet/Sdk/{2}/dotnet-sdk-latest-{0}.tar.gz.sha"""
 
-    AkaMSLegacyTemplate = """[{0}-badge-{1}]: https://aka.ms/dotnet/{4}/Sdk/{3}_Release_version_badge.svg
+    AkaMSLegacyTemplate = """[{0}-badge-{1}]: https://aka.ms/dotnet/{4}/Sdk/{3}_Release_version_badge.svg?no-cache
 [{0}-version-{1}]: https://aka.ms/dotnet/{4}/Sdk/productCommit-{0}.txt
 [{0}-targz-{1}]: https://aka.ms/dotnet/{4}/Sdk/dotnet-sdk-{0}.tar.gz
 [{0}-targz-checksum-{1}]: https://aka.ms/dotnet/{4}/Sdk/dotnet-sdk-{0}.tar.gz.sha"""
 
-    AkaMSTemplate = """[{0}-badge-{1}]: https://aka.ms/dotnet/{4}/{3}_Release_version_badge.svg
+    AkaMSTemplate = """[{0}-badge-{1}]: https://aka.ms/dotnet/{4}/{3}_Release_version_badge.svg?no-cache
 [{0}-version-{1}]: https://aka.ms/dotnet/{4}/productCommit-{0}.txt
 [{0}-targz-{1}]: https://aka.ms/dotnet/{4}/dotnet-sdk-{0}.tar.gz
 [{0}-targz-checksum-{1}]: https://aka.ms/dotnet/{4}/dotnet-sdk-{0}.tar.gz.sha""" }
 
 let osxReferenceTemplate: ReferenceTemplate = {
-    LegacyTemplate = """[{0}-badge-{1}]: https://dotnetcli.blob.core.windows.net/dotnet/Sdk/{2}/{3}_Release_version_badge.svg
+    LegacyTemplate = """[{0}-badge-{1}]: https://dotnetcli.blob.core.windows.net/dotnet/Sdk/{2}/{3}_Release_version_badge.svg?no-cache
 [{0}-version-{1}]: https://dotnetcli.blob.core.windows.net/dotnet/Sdk/{2}/latest.version
 [{0}-installer-{1}]: https://dotnetcli.blob.core.windows.net/dotnet/Sdk/{2}/dotnet-sdk-latest-{0}.pkg
 [{0}-installer-checksum-{1}]: https://dotnetclichecksums.blob.core.windows.net/dotnet/Sdk/{2}/dotnet-sdk-latest-{0}.pkg.sha
 [{0}-targz-{1}]: https://dotnetcli.blob.core.windows.net/dotnet/Sdk/{2}/dotnet-sdk-latest-{0}.tar.gz
 [{0}-targz-checksum-{1}]: https://dotnetclichecksums.blob.core.windows.net/dotnet/Sdk/{2}/dotnet-sdk-latest-{0}.tar.gz.sha"""
 
-    AkaMSLegacyTemplate = """[{0}-badge-{1}]: https://aka.ms/dotnet/{4}/Sdk/{3}_Release_version_badge.svg
+    AkaMSLegacyTemplate = """[{0}-badge-{1}]: https://aka.ms/dotnet/{4}/Sdk/{3}_Release_version_badge.svg?no-cache
 [{0}-version-{1}]: https://aka.ms/dotnet/{4}/Sdk/productCommit-{0}.txt
 [{0}-installer-{1}]: https://aka.ms/dotnet/{4}/Sdk/dotnet-sdk-{0}.pkg
 [{0}-installer-checksum-{1}]: https://aka.ms/dotnet/{4}/Sdk/dotnet-sdk-{0}.pkg.sha
 [{0}-targz-{1}]: https://aka.ms/dotnet/{4}/Sdk/dotnet-sdk-{0}.tar.gz
 [{0}-targz-checksum-{1}]: https://aka.ms/dotnet/{4}/Sdk/dotnet-sdk-{0}.pkg.tar.gz.sha"""
 
-    AkaMSTemplate = """[{0}-badge-{1}]: https://aka.ms/dotnet/{4}/{3}_Release_version_badge.svg
+    AkaMSTemplate = """[{0}-badge-{1}]: https://aka.ms/dotnet/{4}/{3}_Release_version_badge.svg?no-cache
 [{0}-version-{1}]: https://aka.ms/dotnet/{4}/productCommit-{0}.txt
 [{0}-installer-{1}]: https://aka.ms/dotnet/{4}/dotnet-sdk-{0}.pkg
 [{0}-installer-checksum-{1}]: https://aka.ms/dotnet/{4}/dotnet-sdk-{0}.pkg.sha
@@ -82,7 +82,7 @@ let osxReferenceTemplate: ReferenceTemplate = {
 }
 
 let linuxReferenceTemplate: ReferenceTemplate = {
-    LegacyTemplate = """[linux-badge-{1}]: https://dotnetcli.blob.core.windows.net/dotnet/Sdk/{2}/{3}_Release_version_badge.svg
+    LegacyTemplate = """[linux-badge-{1}]: https://dotnetcli.blob.core.windows.net/dotnet/Sdk/{2}/{3}_Release_version_badge.svg?no-cache
 [linux-version-{1}]: https://dotnetcli.blob.core.windows.net/dotnet/Sdk/{2}/latest.version
 [linux-DEB-installer-{1}]: https://dotnetcli.blob.core.windows.net/dotnet/Sdk/{2}/dotnet-sdk-latest-x64.deb
 [linux-DEB-installer-checksum-{1}]: https://dotnetclichecksums.blob.core.windows.net/dotnet/Sdk/{2}/dotnet-sdk-latest-x64.deb.sha
@@ -91,7 +91,7 @@ let linuxReferenceTemplate: ReferenceTemplate = {
 [linux-targz-{1}]: https://dotnetcli.blob.core.windows.net/dotnet/Sdk/{2}/dotnet-sdk-latest-{0}.tar.gz
 [linux-targz-checksum-{1}]: https://dotnetclichecksums.blob.core.windows.net/dotnet/Sdk/{2}/dotnet-sdk-latest-{0}.tar.gz.sha"""
 
-    AkaMSLegacyTemplate = """[linux-badge-{1}]: https://aka.ms/dotnet/{4}/Sdk/{3}_Release_version_badge.svg
+    AkaMSLegacyTemplate = """[linux-badge-{1}]: https://aka.ms/dotnet/{4}/Sdk/{3}_Release_version_badge.svg?no-cache
 [linux-version-{1}]: https://aka.ms/dotnet/{4}/Sdk/productCommit-{0}.txt
 [linux-DEB-installer-{1}]: https://aka.ms/dotnet/{4}/Sdk/dotnet-sdk-x64.deb
 [linux-DEB-installer-checksum-{1}]: https://aka.ms/dotnet/{4}/Sdk/dotnet-sdk-x64.deb.sha
@@ -100,7 +100,7 @@ let linuxReferenceTemplate: ReferenceTemplate = {
 [linux-targz-{1}]: https://aka.ms/dotnet/{4}/Sdk/dotnet-sdk-{0}.tar.gz
 [linux-targz-checksum-{1}]: https://aka.ms/dotnet/{4}/Sdk/dotnet-sdk-{0}.tar.gz.sha"""
 
-    AkaMSTemplate = """[linux-badge-{1}]: https://aka.ms/dotnet/{4}/{3}_Release_version_badge.svg
+    AkaMSTemplate = """[linux-badge-{1}]: https://aka.ms/dotnet/{4}/{3}_Release_version_badge.svg?no-cache
 [linux-version-{1}]: https://aka.ms/dotnet/{4}/productCommit-{0}.txt
 [linux-DEB-installer-{1}]: https://aka.ms/dotnet/{4}/dotnet-sdk-x64.deb
 [linux-DEB-installer-checksum-{1}]: https://aka.ms/dotnet/{4}/dotnet-sdk-x64.deb.sha
@@ -111,51 +111,51 @@ let linuxReferenceTemplate: ReferenceTemplate = {
 }
 
 let rhel6ReferenceTemplate: ReferenceTemplate = {
-    LegacyTemplate = """[rhel-6-badge-{1}]: https://dotnetcli.blob.core.windows.net/dotnet/Sdk/{2}/{3}_Release_version_badge.svg
+    LegacyTemplate = """[rhel-6-badge-{1}]: https://dotnetcli.blob.core.windows.net/dotnet/Sdk/{2}/{3}_Release_version_badge.svg?no-cache
 [rhel-6-version-{1}]: https://dotnetcli.blob.core.windows.net/dotnet/Sdk/{2}/latest.version
 [rhel-6-targz-{1}]: https://dotnetcli.blob.core.windows.net/dotnet/Sdk/{2}/dotnet-sdk-latest-{0}.tar.gz
 [rhel-6-targz-checksum-{1}]: https://dotnetclichecksums.blob.core.windows.net/dotnet/Sdk/{2}/dotnet-sdk-latest-{0}.tar.gz.sha"""
     
-    AkaMSLegacyTemplate = """[rhel-6-badge-{1}]: https://aka.ms/dotnet/{4}/Sdk/{3}_Release_version_badge.svg
+    AkaMSLegacyTemplate = """[rhel-6-badge-{1}]: https://aka.ms/dotnet/{4}/Sdk/{3}_Release_version_badge.svg?no-cache
 [rhel-6-version-{1}]: https://aka.ms/dotnet/{4}/Sdk/productCommit-{0}.txt
 [rhel-6-targz-{1}]: https://aka.ms/dotnet/{4}/Sdk/dotnet-sdk-{0}.tar.gz
 [rhel-6-targz-checksum-{1}]: https://aka.ms/dotnet/{4}/Sdk/dotnet-sdk-{0}.tar.gz.sha"""
 
-    AkaMSTemplate = """[rhel-6-badge-{1}]: https://aka.ms/dotnet/{4}/{3}_Release_version_badge.svg
+    AkaMSTemplate = """[rhel-6-badge-{1}]: https://aka.ms/dotnet/{4}/{3}_Release_version_badge.svg?no-cache
 [rhel-6-version-{1}]: https://aka.ms/dotnet/{4}/productCommit-{0}.txt
 [rhel-6-targz-{1}]: https://aka.ms/dotnet/{4}/dotnet-sdk-{0}.tar.gz
 [rhel-6-targz-checksum-{1}]: https://aka.ms/dotnet/{4}/dotnet-sdk-{0}.tar.gz.sha"""
 }
 
 let linuxMuslReferenceTemplate: ReferenceTemplate = {
-    LegacyTemplate = """[{0}-badge-{1}]: https://dotnetcli.blob.core.windows.net/dotnet/Sdk/{2}/{3}_Release_version_badge.svg
+    LegacyTemplate = """[{0}-badge-{1}]: https://dotnetcli.blob.core.windows.net/dotnet/Sdk/{2}/{3}_Release_version_badge.svg?no-cache
 [{0}-version-{1}]: https://dotnetcli.blob.core.windows.net/dotnet/Sdk/{2}/latest.version
 [{0}-targz-{1}]: https://dotnetcli.blob.core.windows.net/dotnet/Sdk/{2}/dotnet-sdk-latest-{0}.tar.gz
 [{0}-targz-checksum-{1}]: https://dotnetclichecksums.blob.core.windows.net/dotnet/Sdk/{2}/dotnet-sdk-latest-{0}.tar.gz.sha"""
 
-    AkaMSLegacyTemplate = """[{0}-badge-{1}]: https://aka.ms/dotnet/{4}/Sdk/{3}_Release_version_badge.svg
+    AkaMSLegacyTemplate = """[{0}-badge-{1}]: https://aka.ms/dotnet/{4}/Sdk/{3}_Release_version_badge.svg?no-cache
 [{0}-version-{1}]: https://aka.ms/dotnet/{4}/Sdk/productCommit-{0}.txt
 [{0}-targz-{1}]: https://aka.ms/dotnet/{4}/Sdk/dotnet-sdk-{0}.tar.gz
 [{0}-targz-checksum-{1}]: https://aka.ms/dotnet/{4}/Sdk/dotnet-sdk-{0}.tar.gz.sha"""
 
-    AkaMSTemplate = """[{0}-badge-{1}]: https://aka.ms/dotnet/{4}/{3}_Release_version_badge.svg
+    AkaMSTemplate = """[{0}-badge-{1}]: https://aka.ms/dotnet/{4}/{3}_Release_version_badge.svg?no-cache
 [{0}-version-{1}]: https://aka.ms/dotnet/{4}/productCommit-{0}.txt
 [{0}-targz-{1}]: https://aka.ms/dotnet/{4}/dotnet-sdk-{0}.tar.gz
 [{0}-targz-checksum-{1}]: https://aka.ms/dotnet/{4}/dotnet-sdk-{0}.tar.gz.sha"""
 }
 
 let winMuslReferenceTemplate: ReferenceTemplate = {
-    LegacyTemplate = """[{0}-badge-{1}]: https://dotnetcli.blob.core.windows.net/dotnet/Sdk/{2}/{3}_Release_version_badge.svg
+    LegacyTemplate = """[{0}-badge-{1}]: https://dotnetcli.blob.core.windows.net/dotnet/Sdk/{2}/{3}_Release_version_badge.svg?no-cache
 [{0}-version-{1}]: https://dotnetcli.blob.core.windows.net/dotnet/Sdk/{2}/latest.version
 [{0}-zip-{1}]: https://dotnetcli.blob.core.windows.net/dotnet/Sdk/{2}/dotnet-sdk-latest-{0}.zip
 [{0}-zip-checksum-{1}]: https://dotnetclichecksums.blob.core.windows.net/dotnet/Sdk/{2}/dotnet-sdk-latest-{0}.zip.sha"""
 
-    AkaMSLegacyTemplate = """[{0}-badge-{1}]: https://aka.ms/dotnet/{4}/Sdk/{3}_Release_version_badge.svg
+    AkaMSLegacyTemplate = """[{0}-badge-{1}]: https://aka.ms/dotnet/{4}/Sdk/{3}_Release_version_badge.svg?no-cache
 [{0}-version-{1}]: https://aka.ms/dotnet/{4}/Sdk/productCommit-{0}.txt
 [{0}-zip-{1}]: https://aka.ms/dotnet/{4}/Sdk/dotnet-sdk-{0}.zip
 [{0}-zip-checksum-{1}]: https://aka.ms/dotnet/{4}/Sdk/dotnet-sdk-{0}.zip.sha"""
 
-    AkaMSTemplate = """[{0}-badge-{1}]: https://aka.ms/dotnet/{4}/{3}_Release_version_badge.svg
+    AkaMSTemplate = """[{0}-badge-{1}]: https://aka.ms/dotnet/{4}/{3}_Release_version_badge.svg?no-cache
 [{0}-version-{1}]: https://aka.ms/dotnet/{4}/productCommit-{0}.txt
 [{0}-zip-{1}]: https://aka.ms/dotnet/{4}/dotnet-sdk-{0}.zip
 [{0}-zip-checksum-{1}]: https://aka.ms/dotnet/{4}/dotnet-sdk-{0}.zip.sha"""
