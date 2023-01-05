@@ -40,7 +40,7 @@ namespace Analyzer.Utilities.Extensions
                 {
                     return beforeConversion ?
                         GetReceiverType(firstArg.Value.Syntax, compilation, cancellationToken) :
-                        firstArg.Type as INamedTypeSymbol;
+                        firstArg.Value.Type as INamedTypeSymbol;
                 }
                 else if (invocation.TargetMethod.Parameters[0].IsParams)
                 {
@@ -143,9 +143,9 @@ namespace Analyzer.Utilities.Extensions
                         builder.AddRange(operations, i);
                     }
                 }
-                else if (builder != null)
+                else
                 {
-                    builder.Add(operation);
+                    builder?.Add(operation);
                 }
             }
 
