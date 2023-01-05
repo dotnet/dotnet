@@ -227,6 +227,50 @@ namespace Test
     }
 
     [Fact]
+    public void ComponentWithBooleanParameter()
+    {
+        // Arrange
+
+        // Act
+        var generated = CompileToCSharp(@"
+<strong>@TestBool</strong>
+
+<TestComponent TestBool=""true"" />
+
+@code {
+    [Parameter]
+    public bool TestBool { get; set; }
+}");
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
+    [Fact]
+    public void ComponentWithBooleanParameter_Minimized()
+    {
+        // Arrange
+
+        // Act
+        var generated = CompileToCSharp(@"
+<strong>@TestBool</strong>
+
+<TestComponent TestBool />
+
+@code {
+    [Parameter]
+    public bool TestBool { get; set; }
+}");
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
+    [Fact]
     public void ComponentWithDynamicParameter()
     {
         // Arrange

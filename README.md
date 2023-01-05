@@ -149,11 +149,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 
 <!-- component list beginning -->
 - `src/arcade`  
-*[dotnet/arcade@cb37e1f](https://github.com/dotnet/arcade/commit/cb37e1f67041bfc6484ec47525bda461606efe92)*
+*[dotnet/arcade@5a5ae41](https://github.com/dotnet/arcade/commit/5a5ae41c42e475e280342b668e668ff34539e36d)*
 - `src/aspnetcore`  
-*[dotnet/aspnetcore@232ec2e](https://github.com/dotnet/aspnetcore/commit/232ec2e3a48b0c1f60dd02617891ca84b87aa9bf)*
+*[dotnet/aspnetcore@09b0db0](https://github.com/dotnet/aspnetcore/commit/09b0db035fb8415c02bf1a3406a425841aa56a13)*
     - `src/aspnetcore/src/submodules/googletest`  
-    *[google/googletest@516940f](https://github.com/google/googletest/commit/516940f16d6b35d9c90b20eceb6d1f511407845e)*
+    *[google/googletest@71140c3](https://github.com/google/googletest/commit/71140c3ca7a87bb1b5b9c9f1500fea8858cce344)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
     *[aspnet/MessagePack-CSharp@fe9fa08](https://github.com/aspnet/MessagePack-CSharp/commit/fe9fa0834d18492eb229ff2923024af2c87553f8)*
     - `src/aspnetcore/src/submodules/spa-templates`  
@@ -165,31 +165,31 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/diagnostics`  
 *[dotnet/diagnostics@e3e1490](https://github.com/dotnet/diagnostics/commit/e3e1490a23f27a6e0ed30d323035660c3ffc52cd)*
 - `src/format`  
-*[dotnet/format@10004a9](https://github.com/dotnet/format/commit/10004a91fe2334ab5df72201b529d78aa2319700)*
+*[dotnet/format@dcbc301](https://github.com/dotnet/format/commit/dcbc3017454ff21254cbedb9a86660befb355085)*
 - `src/fsharp`  
-*[dotnet/fsharp@3130e06](https://github.com/dotnet/fsharp/commit/3130e06ce88bc3d6171f5127cdb9972e776af911)*
+*[dotnet/fsharp@794b7c2](https://github.com/dotnet/fsharp/commit/794b7c259d9646a7eb685dad865aa27da7940a21)*
 - `src/installer`  
-*[dotnet/installer@b992eff](https://github.com/dotnet/installer/commit/b992eff366179ecd2774968ca14cfcea9945f200)*
+*[dotnet/installer@c125386](https://github.com/dotnet/installer/commit/c125386caec39f9de42f96fa92392ce569430bfa)*
 - `src/linker`  
-*[dotnet/linker@2db841f](https://github.com/dotnet/linker/commit/2db841fc5f6bc7592b66ffe3bd0e1c888d022f93)*
+*[dotnet/linker@72d05e4](https://github.com/dotnet/linker/commit/72d05e415bbc6801af9b2963d6fd8a8dc261f2ae)*
     - `src/linker/external/cecil`  
     *[dotnet/cecil@1840b74](https://github.com/dotnet/cecil/commit/1840b7410d37a613e684b6f9650e39e2d4950bbb)*
 - `src/msbuild`  
-*[dotnet/msbuild@eb5ebc2](https://github.com/dotnet/msbuild/commit/eb5ebc23a99af31731a6b6c403ceda0b44aa9966)*
+*[dotnet/msbuild@762ae6c](https://github.com/dotnet/msbuild/commit/762ae6c6bbeb21471d4d685a061ed05b47cfcb05)*
 - `src/nuget-client`  
-*[NuGet/NuGet.Client@0e7accb](https://github.com/NuGet/NuGet.Client/commit/0e7accb78d0df80cda1bffbcf1d522945e8a1112)*
+*[nuget/nuget.client@743503c](https://github.com/nuget/nuget.client/commit/743503cb3c7e9ced2602ee2e29c38d63cc339451)*
     - `src/nuget-client/submodules/NuGet.Build.Localization`  
     *[NuGet/NuGet.Build.Localization@f15db7b](https://github.com/NuGet/NuGet.Build.Localization/commit/f15db7b7c6f5affbea268632ef8333d2687c8031)*
 - `src/razor`  
-*[dotnet/razor@d1bfa89](https://github.com/dotnet/razor/commit/d1bfa89ca57172f048ac30941b9df9f8d451f95b)*
+*[dotnet/razor@8711799](https://github.com/dotnet/razor/commit/87117991bc8746f39ad3e99cb0d3d33bee954241)*
 - `src/roslyn`  
-*[dotnet/roslyn@c80d649](https://github.com/dotnet/roslyn/commit/c80d6495d55ebbd64372755d236d0e5971b2dfc7)*
+*[dotnet/roslyn@bfd06c8](https://github.com/dotnet/roslyn/commit/bfd06c888292f8b6eaa616b0583566792f931024)*
 - `src/roslyn-analyzers`  
-*[dotnet/roslyn-analyzers@7af823a](https://github.com/dotnet/roslyn-analyzers/commit/7af823a5e1c822dd1dd90956a44e505a3b57cc89)*
+*[dotnet/roslyn-analyzers@60f592c](https://github.com/dotnet/roslyn-analyzers/commit/60f592cb113cb6930300ed49b762f9c1e7abb849)*
 - `src/runtime`  
-*[dotnet/runtime@1a37caf](https://github.com/dotnet/runtime/commit/1a37caf773a3b857ccff49a31be3333d4fdc491f)*
+*[dotnet/runtime@7bbee52](https://github.com/dotnet/runtime/commit/7bbee52b2aaa22f3116b96aedb6a758a2d5bd63b)*
 - `src/sdk`  
-*[dotnet/sdk@99c0174](https://github.com/dotnet/sdk/commit/99c01747309cac187b8999f23291555b1607337c)*
+*[dotnet/sdk@45a2b2f](https://github.com/dotnet/sdk/commit/45a2b2f8cbe8891e0cab2fba9ea5d59592c64319)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@5ba938b](https://github.com/dotnet/source-build-externals/commit/5ba938b8c5edaba9c469ff7854d043d1e74d3cd3)*
     - `src/source-build-externals/src/application-insights`  
@@ -211,15 +211,15 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/symreader`  
 *[dotnet/symreader@7b9791d](https://github.com/dotnet/symreader/commit/7b9791daa3a3477eb22ec805946c9fff8b42d8ca)*
 - `src/templating`  
-*[dotnet/templating@ded4b54](https://github.com/dotnet/templating/commit/ded4b54c7cb41ff433e585cb981ecd032d7f6c27)*
+*[dotnet/templating@76a5989](https://github.com/dotnet/templating/commit/76a5989d2215e5675756ddf4878f7f4c0f3c1dfe)*
 - `src/test-templates`  
 *[dotnet/test-templates@bb36956](https://github.com/dotnet/test-templates/commit/bb3695688177f5f80eeb3c0498168612e31549d5)*
 - `src/vstest`  
-*[microsoft/vstest@d7b6672](https://github.com/microsoft/vstest/commit/d7b66728d22dd5cdee5fb1e2bc385f9f2cd03171)*
+*[microsoft/vstest@3df8944](https://github.com/microsoft/vstest/commit/3df8944ab0f4581c8077c867e8c76c35db81acd2)*
 - `src/xdt`  
 *[dotnet/xdt@9a1c3e1](https://github.com/dotnet/xdt/commit/9a1c3e1b7f0c8763d4c96e593961a61a72679a7b)*
 - `src/xliff-tasks`  
-*[dotnet/xliff-tasks@e3a6aaa](https://github.com/dotnet/xliff-tasks/commit/e3a6aaa38a3ad2284de2d50ff65ae4a8916db003)*
+*[dotnet/xliff-tasks@ca611a6](https://github.com/dotnet/xliff-tasks/commit/ca611a68bb48cedf72a782d41622453cb2dab100)*
 <!-- component list end -->
 
 The repository also contains a [JSON manifest](https://github.com/dotnet/dotnet/blob/main/src/source-manifest.json) listing all components in a machine-readable format.

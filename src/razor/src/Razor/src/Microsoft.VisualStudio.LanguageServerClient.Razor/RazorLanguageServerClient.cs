@@ -4,10 +4,12 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
+using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -33,6 +35,9 @@ internal class RazorLanguageServerClient : ILanguageClient, ILanguageClientCusto
 {
     private const string LogFileIdentifier = "Razor.RazorLanguageServerClient";
 
+    private readonly ILanguageClientBroker _languageClientBroker;
+    private readonly ILanguageServiceBroker2 _languageServiceBroker;
+    private readonly ITelemetryReporter _telemetryReporter;
     private readonly RazorLanguageServerCustomMessageTarget _customMessageTarget;
     private readonly ILanguageClientMiddleLayer _middleLayer;
     private readonly LSPRequestInvoker _requestInvoker;
@@ -62,6 +67,9 @@ internal class RazorLanguageServerClient : ILanguageClient, ILanguageClientCusto
         RazorLanguageServerLogHubLoggerProviderFactory logHubLoggerProviderFactory,
         LanguageServerFeatureOptions languageServerFeatureOptions,
         ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
+        ILanguageClientBroker languageClientBroker,
+        ILanguageServiceBroker2 languageServiceBroker,
+        ITelemetryReporter telemetryReporter,
         [Import(AllowDefault = true)] VisualStudioHostServicesProvider? vsHostWorkspaceServicesProvider)
     {
         if (customTarget is null)
@@ -99,6 +107,21 @@ internal class RazorLanguageServerClient : ILanguageClient, ILanguageClientCusto
             throw new ArgumentNullException(nameof(languageServerFeatureOptions));
         }
 
+        if (languageClientBroker is null)
+        {
+            throw new ArgumentNullException(nameof(languageClientBroker));
+        }
+
+        if (languageServiceBroker is null)
+        {
+            throw new ArgumentNullException(nameof(languageServiceBroker));
+        }
+
+        if (telemetryReporter is null)
+        {
+            throw new ArgumentNullException(nameof(telemetryReporter));
+        }
+
         _customMessageTarget = customTarget;
         _middleLayer = middleLayer;
         _requestInvoker = requestInvoker;
@@ -106,7 +129,10 @@ internal class RazorLanguageServerClient : ILanguageClient, ILanguageClientCusto
         _logHubLoggerProviderFactory = logHubLoggerProviderFactory;
         _languageServerFeatureOptions = languageServerFeatureOptions;
         _vsHostWorkspaceServicesProvider = vsHostWorkspaceServicesProvider;
+        _languageClientBroker = languageClientBroker;
+        _languageServiceBroker = languageServiceBroker;
         _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher;
+        _telemetryReporter = telemetryReporter;
     }
 
     public string Name => RazorLSPConstants.RazorLanguageServerName;
@@ -143,11 +169,67 @@ internal class RazorLanguageServerClient : ILanguageClient, ILanguageClientCusto
         _loggerProvider = (LogHubLoggerProvider)await _logHubLoggerProviderFactory.GetOrCreateAsync(LogFileIdentifier, token).ConfigureAwait(false);
 
         var logHubLogger = _loggerProvider.CreateLogger("Razor");
-        var razorLogger = new LoggerAdapter(logHubLogger);
+        var razorLogger = new LoggerAdapter(logHubLogger, _telemetryReporter);
         _server = RazorLanguageServerWrapper.Create(serverStream, serverStream, razorLogger, _projectSnapshotManagerDispatcher, ConfigureLanguageServer, _languageServerFeatureOptions);
-
+        // This must not happen on an RPC endpoint due to UIThread concerns, so ActivateAsync was chosen.
+        await EnsureContainedLanguageServersInitializedAsync();
         var connection = new Connection(clientStream, clientStream);
         return connection;
+    }
+
+    internal static IEnumerable<Lazy<ILanguageClient, LanguageServer.Client.IContentTypeMetadata>> GetReleventContainedLanguageClientsAndMetadata(ILanguageServiceBroker2 languageServiceBroker)
+    {
+        var releventClientAndMetadata = new List<Lazy<ILanguageClient, LanguageServer.Client.IContentTypeMetadata>>();
+
+#pragma warning disable CS0618 // Type or member is obsolete
+        foreach (var languageClientAndMetadata in languageServiceBroker.LanguageClients)
+#pragma warning restore CS0618 // Type or member is obsolete
+        {
+            if (languageClientAndMetadata.Metadata is not ILanguageClientMetadata metadata)
+            {
+                continue;
+            }
+
+            if (metadata is IIsUserExperienceDisabledMetadata userExperienceDisabledMetadata &&
+                userExperienceDisabledMetadata.IsUserExperienceDisabled)
+            {
+                continue;
+            }
+
+            if (IsCSharpApplicable(metadata) ||
+                metadata.ContentTypes.Contains(RazorLSPConstants.HtmlLSPDelegationContentTypeName))
+            {
+                releventClientAndMetadata.Add(languageClientAndMetadata);
+            }
+        }
+
+        return releventClientAndMetadata;
+
+        static bool IsCSharpApplicable(ILanguageClientMetadata metadata)
+        {
+            return metadata.ContentTypes.Contains(RazorLSPConstants.CSharpContentTypeName) &&
+                metadata.ClientName == CSharpVirtualDocumentFactory.CSharpClientName;
+        }
+    }
+
+    private async Task EnsureContainedLanguageServersInitializedAsync()
+    {
+        var releventClientsAndMetadata = GetReleventContainedLanguageClientsAndMetadata(_languageServiceBroker);
+
+        var clientLoadTasks = new List<Task>();
+
+        foreach (var languageClientAndMetadata in releventClientsAndMetadata)
+        {
+            if (languageClientAndMetadata.Metadata is not ILanguageClientMetadata metadata)
+            {
+                continue;
+            }
+
+            var loadAsyncTask = _languageClientBroker.LoadAsync(metadata, languageClientAndMetadata.Value);
+            clientLoadTasks.Add(loadAsyncTask);
+        }
+
+        await Task.WhenAll(clientLoadTasks).ConfigureAwait(false);
     }
 
     private void ConfigureLanguageServer(IServiceCollection serviceCollection)

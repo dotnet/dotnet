@@ -34,6 +34,9 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Client;
 [SuppressMessage("Design", "CA1001:Types that own disposable fields should be disposable", Justification = "Would cause a breaking change if users are inheriting this class and implement IDisposable")]
 public class ProxyOperationManager
 {
+    internal const string DotnetTesthostFriendlyName = "DotnetTestHost";
+    internal const string DefaultTesthostFriendlyName = "DefaultTestHost";
+
     private readonly string _versionCheckPropertyName = "IsVersionCheckRequired";
     private readonly string _makeRunsettingsCompatiblePropertyName = "MakeRunsettingsCompatible";
     private readonly ManualResetEventSlim _testHostExited = new(false);
@@ -114,7 +117,13 @@ public class ProxyOperationManager
     /// <summary>
     /// Gets the proxy operation manager id for proxy test session manager internal organization.
     /// </summary>
-    public int Id { get; set; } = -1;
+    internal int Id { get; set; } = -1;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the current proxy operation manager is part of a
+    /// test session.
+    /// </summary>
+    internal bool IsTestSessionEnabled { get; set; }
 
     /// <summary>
     /// Gets or sets the cancellation token source.
@@ -175,6 +184,13 @@ public class ProxyOperationManager
         if (_initialized)
         {
             return true;
+        }
+
+        // Check whether test sessions are supported if the current proxy operation manager is to
+        // be part of one.
+        if (IsTestSessionEnabled && !IsTesthostCompatibleWithTestSessions())
+        {
+            return false;
         }
 
         var connTimeout = EnvironmentHelper.GetConnectionTimeout();
@@ -401,6 +417,42 @@ public class ProxyOperationManager
         updatedRunSettingsXml = InferRunSettingsHelper.RemoveTargetPlatformElement(updatedRunSettingsXml);
 
         return updatedRunSettingsXml;
+    }
+
+    internal virtual string ReadTesthostFriendlyName()
+    {
+        var friendlyNameAttribute = TestHostManager.GetType().GetCustomAttributes(
+                typeof(FriendlyNameAttribute), true)
+            .FirstOrDefault();
+
+        return (friendlyNameAttribute is not null and FriendlyNameAttribute friendlyName)
+            ? friendlyName.FriendlyName : string.Empty;
+    }
+
+    internal bool IsTesthostCompatibleWithTestSessions()
+    {
+        // These constants should be kept in line with the friendly names found in
+        // DotnetTestHostManager.cs, respectively DefaultTestHostManager.cs.
+        //
+        // We agreed on checking the test session compatibility this way (i.e. by reading the
+        // friendly name and making sure it's one of the testhosts we control) instead of a more
+        // generic alternative that was initially proposed (i.e. by decorating each testhost
+        // manager with a capability attribute that could tell us if the test session scenario
+        // is supported for the testhost in discussion) because of the breaking risks associated
+        // with the latter approach. Also, there is no formal specification for now of what it
+        // means to support test sessions. Should extending session functionality to 3rd party
+        // testhosts be something we want to address in the future, we should come up with such
+        // a specification first.
+        var friendlyName = ReadTesthostFriendlyName();
+        if (!friendlyName.IsNullOrEmpty())
+        {
+            var isSessionSupported = friendlyName is (DotnetTesthostFriendlyName or DefaultTesthostFriendlyName);
+            EqtTrace.Verbose($"ProxyOperationManager.IsTesthostCompatibleWithTestSessions: Testhost friendly name: {friendlyName}; Sessions support: {isSessionSupported};");
+
+            return isSessionSupported;
+        }
+
+        return false;
     }
 
     [return: NotNullIfNotNull("logFile")]

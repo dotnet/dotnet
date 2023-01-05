@@ -50,6 +50,8 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting;
 public class DotnetTestHostManager : ITestRuntimeProvider2
 {
     private const string DotnetTestHostUri = "HostProvider://DotnetTestHost";
+    // Should the friendly name ever change, please make sure to change the corresponding constant
+    // inside ProxyOperationManager::IsTesthostCompatibleWithTestSessions().
     private const string DotnetTestHostFriendlyName = "DotnetTestHost";
     private const string TestAdapterRegexPattern = @"TestAdapter.dll";
     private const string PROCESSOR_ARCHITECTURE = nameof(PROCESSOR_ARCHITECTURE);

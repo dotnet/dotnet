@@ -5,6 +5,16 @@ Generated Location: (997:26,15 [23] )
 
 Source Location: (66:0,66 [13] x:\dir\subdir\Test\TestComponent.cshtml)
 |"Some string"|
-Generated Location: (1522:36,66 [13] )
+Generated Location: (1594:36,66 [13] )
 |"Some string"|
+
+Source Location: (49:0,49 [13] x:\dir\subdir\Test\TestComponent.cshtml)
+|OverrideParam|
+Generated Location: (1861:45,49 [13] )
+|OverrideParam|
+
+Source Location: (6:0,6 [5] x:\dir\subdir\Test\TestComponent.cshtml)
+|Items|
+Generated Location: (2275:63,6 [5] )
+|Items|
 

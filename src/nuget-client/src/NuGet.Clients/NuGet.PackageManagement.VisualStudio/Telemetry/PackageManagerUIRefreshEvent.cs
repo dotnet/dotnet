@@ -3,6 +3,7 @@
 
 using System;
 using NuGet.Common;
+using NuGet.VisualStudio.Internal.Contracts;
 
 namespace NuGet.PackageManagement.Telemetry
 {
@@ -10,15 +11,17 @@ namespace NuGet.PackageManagement.Telemetry
     {
         private const string EventName = "PMUIRefresh";
 
-        public PackageManagerUIRefreshEvent(
+        private PackageManagerUIRefreshEvent(
             Guid parentId,
             bool isSolutionLevel,
             RefreshOperationSource refreshSource,
             RefreshOperationStatus refreshStatus,
-            string tab,
+            ItemFilter tab,
             bool isUIFiltering,
             TimeSpan timeSinceLastRefresh,
-            double? duration) : base(EventName)
+            double? duration,
+            string projectId = null,
+            NuGetProjectKind? projectKind = null) : base(EventName)
         {
             base["ParentId"] = parentId.ToString();
             base["IsSolutionLevel"] = isSolutionLevel;
@@ -28,10 +31,70 @@ namespace NuGet.PackageManagement.Telemetry
             base["IsUIFiltering"] = isUIFiltering;
             base["TimeSinceLastRefresh"] = timeSinceLastRefresh.TotalMilliseconds;
 
+            if (!isSolutionLevel)
+            {
+                if (projectId != null)
+                {
+                    base["ProjectId"] = projectId;
+                }
+                if (projectKind.HasValue)
+                {
+                    base["ProjectKind"] = projectKind;
+                }
+            }
+
             if (duration.HasValue)
             {
                 base["Duration"] = duration;
             }
+        }
+
+        public static PackageManagerUIRefreshEvent ForProject(
+            Guid parentId,
+            RefreshOperationSource refreshSource,
+            RefreshOperationStatus refreshStatus,
+            ItemFilter tab,
+            bool isUIFiltering,
+            TimeSpan timeSinceLastRefresh,
+            double? duration,
+            string projectId,
+            NuGetProjectKind projectKind)
+        {
+            var evt = new PackageManagerUIRefreshEvent(
+                parentId,
+                isSolutionLevel: false,
+                refreshSource,
+                refreshStatus,
+                tab,
+                isUIFiltering,
+                timeSinceLastRefresh,
+                duration,
+                projectId,
+                projectKind);
+
+            return evt;
+        }
+
+        public static PackageManagerUIRefreshEvent ForSolution(
+                Guid parentId,
+                RefreshOperationSource refreshSource,
+                RefreshOperationStatus refreshStatus,
+                ItemFilter tab,
+                bool isUIFiltering,
+                TimeSpan timeSinceLastRefresh,
+                double? duration)
+        {
+            var evt = new PackageManagerUIRefreshEvent(
+                parentId,
+                isSolutionLevel: true,
+                refreshSource,
+                refreshStatus,
+                tab,
+                isUIFiltering,
+                timeSinceLastRefresh,
+                duration);
+
+            return evt;
         }
     }
 

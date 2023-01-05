@@ -60,6 +60,15 @@ __o = typeof(global::Test.Column<>);
 #nullable disable
             }
             ));
+            __o = ((global::Test.Grid<DateTime>)default).
+#nullable restore
+#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
+                       Items
+
+#line default
+#line hidden
+#nullable disable
+            ;
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
 __o = typeof(global::Test.Grid<>);

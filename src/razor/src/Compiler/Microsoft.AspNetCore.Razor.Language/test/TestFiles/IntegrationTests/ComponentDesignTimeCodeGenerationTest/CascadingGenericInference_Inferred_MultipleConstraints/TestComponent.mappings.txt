@@ -8,3 +8,8 @@ Source Location: (39:0,39 [30] x:\dir\subdir\Test\TestComponent.cshtml)
 Generated Location: (1120:34,39 [30] )
 |Array.Empty<WeatherForecast>()|
 
+Source Location: (126:2,29 [9] x:\dir\subdir\Test\TestComponent.cshtml)
+|FieldName|
+Generated Location: (1699:45,29 [9] )
+|FieldName|
+

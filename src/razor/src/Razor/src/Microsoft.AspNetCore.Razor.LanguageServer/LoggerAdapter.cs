@@ -2,6 +2,9 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Immutable;
+using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.Extensions.Logging;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
@@ -11,10 +14,12 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 public class LoggerAdapter : IRazorLogger
 {
     private readonly ILogger _logger;
+    private readonly ITelemetryReporter? _telemetryReporter;
 
-    public LoggerAdapter(ILogger logger)
+    public LoggerAdapter(ILogger logger, ITelemetryReporter? telemetryReporter)
     {
         _logger = logger;
+        _telemetryReporter = telemetryReporter;
     }
 
     public IDisposable BeginScope<TState>(TState state)
@@ -41,11 +46,26 @@ public class LoggerAdapter : IRazorLogger
     {
 #pragma warning disable CA2254 // Template should be a static expression
         _logger.LogError(message, @params);
+
+        if (_telemetryReporter is not null)
+        {
+            using var _ = DictionaryPool<string, object>.GetPooledObject(out var props);
+
+            var index = 0;
+            foreach (var param in @params)
+            {
+                props.Add("param" + index++, param);
+            }
+
+            props.Add("message", message);
+            _telemetryReporter.ReportEvent("lsperror", VisualStudio.Telemetry.TelemetrySeverity.High, props.ToImmutableDictionary());
+        }
     }
 
     public void LogException(Exception exception, string? message = null, params object[] @params)
     {
         _logger.LogError(exception, message, @params);
+        _telemetryReporter?.ReportFault(exception, message, @params);
     }
 
     public void LogInformation(string message, params object[] @params)

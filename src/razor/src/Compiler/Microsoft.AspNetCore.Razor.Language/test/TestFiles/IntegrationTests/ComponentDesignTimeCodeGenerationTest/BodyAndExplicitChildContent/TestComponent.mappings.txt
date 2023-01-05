@@ -18,3 +18,8 @@ Source Location: (113:1,21 [6] x:\dir\subdir\Test\TestComponent.cshtml)
 Generated Location: (1614:48,21 [6] )
 |header|
 
+Source Location: (105:1,13 [6] x:\dir\subdir\Test\TestComponent.cshtml)
+|Header|
+Generated Location: (2147:63,13 [6] )
+|Header|
+

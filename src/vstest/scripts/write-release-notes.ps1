@@ -15,7 +15,7 @@
 param
 (
     [string] $Path = ".",
-    [ValidatePattern("^\d+\.\d+\.\d+(-preview-\d{8}-\d{2})?$")][string] $PackageVersion
+    [ValidatePattern("^\d+\.\d+\.\d+(-(preview|release)-\d{8}-\d{2})?$")][string] $PackageVersion
 )
 
 $repoUrl = $(if ((git -C $Path remote -v) -match "upstream") {

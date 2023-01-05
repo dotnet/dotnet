@@ -123,7 +123,7 @@
     <PropertyGroup>
       <_NativeScriptsDir>$([MSBuild]::NormalizeDirectory('$(RepositoryEngineeringDir)', 'common', 'native'))</_NativeScriptsDir>
       <CMakeCompilerSearchScript>
-      . &quot;$([MSBuild]::MakeRelative('$(MSBuildProjectDirectory)', '$(_NativeScriptsDir)/init-compiler.sh'))&quot; &quot;$(_NativeScriptsDir)&quot; &quot;$(Platform)&quot; &quot;$(CMakeCompilerToolchain)&quot;
+      build_arch=&quot;$(Platform)&quot; compiler=&quot;$(CMakeCompilerToolchain)&quot; . &quot;$([MSBuild]::MakeRelative('$(MSBuildProjectDirectory)', '$(_NativeScriptsDir)/init-compiler.sh'))&quot;
       </CMakeCompilerSearchScript>
     </PropertyGroup>
   </Target>

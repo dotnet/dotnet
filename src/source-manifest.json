@@ -1,16 +1,16 @@
 {
   "repositories": [
     {
-      "packageVersion": "8.0.0-beta.22612.4",
+      "packageVersion": "8.0.0-beta.23052.2",
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "cb37e1f67041bfc6484ec47525bda461606efe92"
+      "commitSha": "5a5ae41c42e475e280342b668e668ff34539e36d"
     },
     {
-      "packageVersion": "8.0.0-alpha.1.22615.1",
+      "packageVersion": "8.0.0-alpha.1.23053.19",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "232ec2e3a48b0c1f60dd02617891ca84b87aa9bf"
+      "commitSha": "09b0db035fb8415c02bf1a3406a425841aa56a13"
     },
     {
       "packageVersion": "0.1.356401",
@@ -31,70 +31,70 @@
       "commitSha": "e3e1490a23f27a6e0ed30d323035660c3ffc52cd"
     },
     {
-      "packageVersion": "8.0.361301",
+      "packageVersion": "8.0.405401",
       "path": "format",
       "remoteUri": "https://github.com/dotnet/format",
-      "commitSha": "10004a91fe2334ab5df72201b529d78aa2319700"
+      "commitSha": "dcbc3017454ff21254cbedb9a86660befb355085"
     },
     {
-      "packageVersion": "7.0.1-beta.22612.4",
+      "packageVersion": "7.0.1-beta.23053.5",
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "3130e06ce88bc3d6171f5127cdb9972e776af911"
+      "commitSha": "794b7c259d9646a7eb685dad865aa27da7940a21"
     },
     {
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "b992eff366179ecd2774968ca14cfcea9945f200"
+      "commitSha": "c125386caec39f9de42f96fa92392ce569430bfa"
     },
     {
-      "packageVersion": "8.0.100-1.22612.2",
+      "packageVersion": "8.0.100-1.23053.1",
       "path": "linker",
       "remoteUri": "https://github.com/dotnet/linker",
-      "commitSha": "2db841fc5f6bc7592b66ffe3bd0e1c888d022f93"
+      "commitSha": "72d05e415bbc6801af9b2963d6fd8a8dc261f2ae"
     },
     {
-      "packageVersion": "17.5.0-preview-22615-01",
+      "packageVersion": "17.5.0-preview-23054-02",
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "eb5ebc23a99af31731a6b6c403ceda0b44aa9966"
+      "commitSha": "762ae6c6bbeb21471d4d685a061ed05b47cfcb05"
     },
     {
-      "packageVersion": "6.5.0-preview.3.130",
+      "packageVersion": "6.5.0-preview.3.136",
       "path": "nuget-client",
-      "remoteUri": "https://github.com/NuGet/NuGet.Client",
-      "commitSha": "0e7accb78d0df80cda1bffbcf1d522945e8a1112"
+      "remoteUri": "https://github.com/nuget/nuget.client",
+      "commitSha": "743503cb3c7e9ced2602ee2e29c38d63cc339451"
     },
     {
-      "packageVersion": "7.0.0-preview.22615.2",
+      "packageVersion": "7.0.0-preview.23053.2",
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "d1bfa89ca57172f048ac30941b9df9f8d451f95b"
+      "commitSha": "87117991bc8746f39ad3e99cb0d3d33bee954241"
     },
     {
-      "packageVersion": "4.5.0-2.22613.14",
+      "packageVersion": "4.5.0-3.23053.22",
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "c80d6495d55ebbd64372755d236d0e5971b2dfc7"
+      "commitSha": "bfd06c888292f8b6eaa616b0583566792f931024"
     },
     {
-      "packageVersion": "3.3.4-beta1.22615.1",
+      "packageVersion": "3.3.4-beta1.23053.6",
       "path": "roslyn-analyzers",
       "remoteUri": "https://github.com/dotnet/roslyn-analyzers",
-      "commitSha": "7af823a5e1c822dd1dd90956a44e505a3b57cc89"
+      "commitSha": "60f592cb113cb6930300ed49b762f9c1e7abb849"
     },
     {
-      "packageVersion": "8.0.0-alpha.1.22605.1",
+      "packageVersion": "8.0.0-alpha.1.23053.7",
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "1a37caf773a3b857ccff49a31be3333d4fdc491f"
+      "commitSha": "7bbee52b2aaa22f3116b96aedb6a758a2d5bd63b"
     },
     {
-      "packageVersion": "8.0.100-alpha.1.22615.13",
+      "packageVersion": "8.0.100-alpha.1.23054.22",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "99c01747309cac187b8999f23291555b1607337c"
+      "commitSha": "45a2b2f8cbe8891e0cab2fba9ea5d59592c64319"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23053.2",
@@ -121,10 +121,10 @@
       "commitSha": "7b9791daa3a3477eb22ec805946c9fff8b42d8ca"
     },
     {
-      "packageVersion": "8.0.100-alpha.1.22611.1",
+      "packageVersion": "8.0.100-alpha.1.23054.12",
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "ded4b54c7cb41ff433e585cb981ecd032d7f6c27"
+      "commitSha": "76a5989d2215e5675756ddf4878f7f4c0f3c1dfe"
     },
     {
       "packageVersion": "1.1.0-rc.22558.1",
@@ -133,10 +133,10 @@
       "commitSha": "bb3695688177f5f80eeb3c0498168612e31549d5"
     },
     {
-      "packageVersion": "17.5.0-preview-20221214-01",
+      "packageVersion": "17.6.0-preview-20230103-01",
       "path": "vstest",
       "remoteUri": "https://github.com/microsoft/vstest",
-      "commitSha": "d7b66728d22dd5cdee5fb1e2bc385f9f2cd03171"
+      "commitSha": "3df8944ab0f4581c8077c867e8c76c35db81acd2"
     },
     {
       "packageVersion": "7.0.0-preview.22423.2",
@@ -145,17 +145,17 @@
       "commitSha": "9a1c3e1b7f0c8763d4c96e593961a61a72679a7b"
     },
     {
-      "packageVersion": "1.0.0-beta.22611.1",
+      "packageVersion": "1.0.0-beta.22631.1",
       "path": "xliff-tasks",
       "remoteUri": "https://github.com/dotnet/xliff-tasks",
-      "commitSha": "e3a6aaa38a3ad2284de2d50ff65ae4a8916db003"
+      "commitSha": "ca611a68bb48cedf72a782d41622453cb2dab100"
     }
   ],
   "submodules": [
     {
       "path": "aspnetcore/src/submodules/googletest",
       "remoteUri": "https://github.com/google/googletest",
-      "commitSha": "516940f16d6b35d9c90b20eceb6d1f511407845e"
+      "commitSha": "71140c3ca7a87bb1b5b9c9f1500fea8858cce344"
     },
     {
       "path": "aspnetcore/src/submodules/MessagePack-CSharp",

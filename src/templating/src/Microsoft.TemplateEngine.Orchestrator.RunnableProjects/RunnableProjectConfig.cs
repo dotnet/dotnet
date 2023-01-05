@@ -202,6 +202,11 @@ namespace Microsoft.TemplateEngine.Orchestrator.RunnableProjects
 
         internal TemplateConfigModel ConfigurationModel { get; private set; }
 
+        public void RemoveParameter(ITemplateParameter parameter)
+        {
+            ConfigurationModel.RemoveSymbol(parameter.Name);
+        }
+
         public void Evaluate(IVariableCollection rootVariableCollection)
         {
             bool stable = false;
@@ -250,7 +255,7 @@ namespace Microsoft.TemplateEngine.Orchestrator.RunnableProjects
             }
             BindSymbolEvaluator bindSymbolEvaluator = new BindSymbolEvaluator(settings);
 
-            return bindSymbolEvaluator.EvaluateBindedSymbolsAsync(bindSymbols, variableCollection, cancellationToken);
+            return bindSymbolEvaluator.EvaluateBindSymbolsAsync(bindSymbols, variableCollection, cancellationToken);
         }
 
         /// <summary>
@@ -354,13 +359,13 @@ namespace Microsoft.TemplateEngine.Orchestrator.RunnableProjects
                     throw new TemplateAuthoringException(string.Format(LocalizableStrings.SimpleConfigModel_AuthoringException_MergeConfiguration_InvalidFileName, partialConfigFileName, RunnableProjectGenerator.TemplateConfigFileName), partialConfigFileName);
                 }
 
-                IFile? partialConfigFile = primarySourceConfig.Parent?.EnumerateFiles(partialConfigFileName, SearchOption.TopDirectoryOnly).FirstOrDefault(x => string.Equals(x.Name, partialConfigFileName));
-
-                if (partialConfigFile == null)
-                {
-                    throw new TemplateAuthoringException(string.Format(LocalizableStrings.SimpleConfigModel_AuthoringException_MergeConfiguration_FileNotFound, partialConfigFileName), partialConfigFileName);
-                }
-
+                IFile? partialConfigFile = (primarySourceConfig.Parent?.EnumerateFiles(partialConfigFileName, SearchOption.TopDirectoryOnly)
+                    .FirstOrDefault(x => string.Equals(x.Name, partialConfigFileName)))
+                    ?? throw new TemplateAuthoringException(
+                        string.Format(
+                            LocalizableStrings.SimpleConfigModel_AuthoringException_MergeConfiguration_FileNotFound,
+                            partialConfigFileName),
+                        partialConfigFileName);
                 JObject partialConfigJson = partialConfigFile.ReadJObjectFromIFile();
                 combinedSource.Merge(partialConfigJson);
             }

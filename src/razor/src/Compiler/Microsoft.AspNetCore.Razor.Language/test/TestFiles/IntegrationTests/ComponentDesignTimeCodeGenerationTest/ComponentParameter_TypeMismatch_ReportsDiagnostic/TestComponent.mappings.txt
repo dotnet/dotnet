@@ -3,3 +3,8 @@ Source Location: (27:0,27 [11] x:\dir\subdir\Test\TestComponent.cshtml)
 Generated Location: (1019:25,27 [11] )
 |"very-cool"|
 
+Source Location: (15:0,15 [8] x:\dir\subdir\Test\TestComponent.cshtml)
+|Coolness|
+Generated Location: (1404:37,15 [8] )
+|Coolness|
+

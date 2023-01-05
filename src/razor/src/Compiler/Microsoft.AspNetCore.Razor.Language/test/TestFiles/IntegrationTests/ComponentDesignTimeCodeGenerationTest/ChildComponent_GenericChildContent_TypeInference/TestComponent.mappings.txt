@@ -1,10 +1,15 @@
 Source Location: (21:0,21 [4] x:\dir\subdir\Test\TestComponent.cshtml)
 |"hi"|
-Generated Location: (992:25,21 [4] )
+Generated Location: (1034:25,21 [4] )
 |"hi"|
 
 Source Location: (38:1,8 [17] x:\dir\subdir\Test\TestComponent.cshtml)
 |context.ToLower()|
-Generated Location: (1176:33,8 [17] )
+Generated Location: (1218:33,8 [17] )
 |context.ToLower()|
+
+Source Location: (13:0,13 [4] x:\dir\subdir\Test\TestComponent.cshtml)
+|Item|
+Generated Location: (1458:43,13 [4] )
+|Item|
 

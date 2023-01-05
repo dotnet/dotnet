@@ -783,4 +783,33 @@ Non-HTTPS access will be removed in a future version. Consider migrating to 'HTT
     <value>'--output-version' option not applicable for console output, it can only be used together with `--format json` option.</value>
     <comment>Don't localize '--output-version' and `--format json`</comment>
   </data>
+  <data name="Error_CentralPackageVersions_VersionsNotAllowed" xml:space="preserve">
+    <value>Projects that use central package version management should not define the version on the PackageReference items but on the PackageVersion items: {0}</value>
+    <comment>0 - package id</comment>
+  </data>
+  <data name="Error_AddPkg_CentralPackageVersions_EmptyVersionOverride" xml:space="preserve">
+    <value>VersionOverride for package '{0}' should not be empty.</value>
+    <comment>0 - package id</comment>
+  </data>
+  <data name="Error_AddPkg_CentralPackageVersions_PackageReference_WrongLocation" xml:space="preserve">
+    <value>Package reference for package '{0}' defined in incorrect location, PackageReference should be defined in project file.</value>
+    <comment>0 - package id</comment>
+  </data>
+  <data name="Error_AddPkg_CentralPackageVersions_PackageVersion_WrongLocation" xml:space="preserve">
+    <value>PackageVersion for package '{0}' defined in incorrect location, PackageVersion should be defined in Directory.Package.props.</value>
+    <comment>0 - package id</comment>
+  </data>
+  <data name="Error_CentralPackageVersions_AutoreferencedReferencesNotAllowed" xml:space="preserve">
+    <value>The packages {0} are implicitly referenced. You do not typically need to reference them from your project or in your central package versions management file. For more information, see https://aka.ms/sdkimplicitrefs</value>
+  </data>
+  <data name="Error_CentralPackageVersions_FloatingVersionsAreNotAllowed" xml:space="preserve">
+    <value>Centrally defined floating package versions are not allowed.</value>
+  </data>
+  <data name="Error_CentralPackageVersions_MissingPackageVersion" xml:space="preserve">
+    <value>The PackageReference items {0} do not have corresponding PackageVersion.</value>
+  </data>
+  <data name="Error_CentralPackageVersions_VersionOverrideDisabled" xml:space="preserve">
+    <value>The package reference {0} specifies a VersionOverride but the ability to override a centrally defined version is currently disabled.</value>
+    <comment>0 - packagereference name</comment>
+  </data>
 </root>

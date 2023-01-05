@@ -49,6 +49,8 @@ internal class FindAllReferencesEndpoint : AbstractRazorDelegatingEndpoint<Refer
 
     protected override string CustomMessageTarget => RazorLanguageServerCustomMessageTargets.RazorReferencesEndpointName;
 
+    protected override bool PreferCSharpOverHtmlIfPossible => true;
+
     protected override Task<IDelegatedParams?> CreateDelegatedParamsAsync(ReferenceParamsBridge request, RazorRequestContext requestContext, Projection projection, CancellationToken cancellationToken)
     {
         // HTML doesn't need to do FAR

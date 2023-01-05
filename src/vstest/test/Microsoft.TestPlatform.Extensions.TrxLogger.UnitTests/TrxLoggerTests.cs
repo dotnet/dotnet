@@ -857,6 +857,17 @@ public class TrxLoggerTests
         Assert.ThrowsException<ArgumentException>(() => _testableTrxLogger.Initialize(_events.Object, _parameters));
     }
 
+    [TestMethod]
+    public void SkipInitializeDictionaryShouldNotFail()
+    {
+        var logger = new TestableTrxLogger();
+        logger.Initialize(_events.Object, Path.GetTempPath());
+        var testRunCompleteEventArgs = CreateTestRunCompleteEventArgs();
+        logger.TestRunCompleteHandler(new object(), testRunCompleteEventArgs);
+        Assert.IsTrue(File.Exists(logger.TrxFile));
+        File.Delete(logger.TrxFile);
+    }
+
     private void ValidateTestIdAndNameInTrx()
     {
         TestCase testCase = CreateTestCase("TestCase");

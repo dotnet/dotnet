@@ -8,3 +8,8 @@ Source Location: (32:0,32 [23] x:\dir\subdir\Test\TestComponent.cshtml)
 Generated Location: (1246:34,32 [23] )
 |Array.Empty<DateTime>()|
 
+Source Location: (23:0,23 [5] x:\dir\subdir\Test\TestComponent.cshtml)
+|Items|
+Generated Location: (1946:54,23 [5] )
+|Items|
+

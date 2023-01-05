@@ -323,6 +323,7 @@ internal abstract class CSharpFormattingPassBase : FormattingPassBase
         }
 
         if (IsRazorComment() ||
+            IsInHtmlAttributeName() ||
             IsInHtmlAttributeValue() ||
             IsInDirectiveWithNoKind() ||
             IsInSingleLineDirective() ||
@@ -364,6 +365,20 @@ internal abstract class CSharpFormattingPassBase : FormattingPassBase
 
             // Not an implicit statement.
             return false;
+        }
+
+        bool IsInHtmlAttributeName()
+        {
+            // E.g, (| is position)
+            //
+            // `<p |csharpattr="Variable">` - true
+            //
+            // Because we map attributes, so rename and FAR works, there could be C# mapping for them,
+            // but only if they're actually bound attributes
+
+            return owner.AncestorsAndSelf().Any(
+                n => n is MarkupTagHelperAttributeSyntax { TagHelperAttributeInfo: { Bound: true } } or
+                          MarkupTagHelperDirectiveAttributeSyntax { TagHelperAttributeInfo: { Bound: true } });
         }
 
         bool IsInHtmlAttributeValue()

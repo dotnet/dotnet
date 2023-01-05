@@ -30,7 +30,7 @@ global::System.Object TParam = null!;
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
-            global::__Blazor.Test.TestComponent.TypeInference.CreateMyComponent_0(__builder, -1, -1, 
+            var __typeInference_CreateMyComponent_0 = global::__Blazor.Test.TestComponent.TypeInference.CreateMyComponent_0(__builder, -1, -1, 
 #nullable restore
 #line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
                               ParentValue
@@ -66,12 +66,13 @@ namespace __Blazor.Test.TestComponent
     #line hidden
     internal static class TypeInference
     {
-        public static void CreateMyComponent_0<TValue>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, TValue __arg0, int __seq1, global::System.Action<TValue> __arg1)
+        public static global::Test.MyComponent<TValue> CreateMyComponent_0<TValue>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, TValue __arg0, int __seq1, global::System.Action<TValue> __arg1)
         {
         __builder.OpenComponent<global::Test.MyComponent<TValue>>(seq);
         __builder.AddAttribute(__seq0, "Value", __arg0);
         __builder.AddAttribute(__seq1, "ValueChanged", __arg1);
         __builder.CloseComponent();
+        return default;
         }
     }
 }

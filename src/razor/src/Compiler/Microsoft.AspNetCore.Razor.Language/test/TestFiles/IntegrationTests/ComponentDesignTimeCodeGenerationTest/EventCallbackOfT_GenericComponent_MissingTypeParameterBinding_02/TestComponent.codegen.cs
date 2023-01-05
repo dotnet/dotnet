@@ -20,7 +20,7 @@ namespace Test
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
-            global::__Blazor.Test.TestComponent.TypeInference.CreateMyComponent_0(__builder, -1, -1, 
+            var __typeInference_CreateMyComponent_0 = global::__Blazor.Test.TestComponent.TypeInference.CreateMyComponent_0(__builder, -1, -1, 
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
                         (MyType arg) => counter++
@@ -53,11 +53,12 @@ namespace __Blazor.Test.TestComponent
     #line hidden
     internal static class TypeInference
     {
-        public static void CreateMyComponent_0<T, T2>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, global::System.Object __arg0)
+        public static global::Test.MyComponent<System.Object, System.Object> CreateMyComponent_0<T, T2>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, global::System.Object __arg0)
         {
         __builder.OpenComponent<global::Test.MyComponent<System.Object, System.Object>>(seq);
         __builder.AddAttribute(__seq0, "OnClick", __arg0);
         __builder.CloseComponent();
+        return default;
         }
     }
 }

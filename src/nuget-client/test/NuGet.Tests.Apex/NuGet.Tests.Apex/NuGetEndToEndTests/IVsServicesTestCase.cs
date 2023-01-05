@@ -82,7 +82,7 @@ namespace NuGet.Tests.Apex
             userPackagesFolder.Should().NotBe(_pathContext.UserPackagesFolder);
         }
 
-        [StaFact]
+        [StaFact(Skip = "https://github.com/NuGet/Home/issues/11308")]
         public async Task SimpleInstallFromIVsInstaller_PackageSourceMapping_WithSingleFeed()
         {
             // Arrange

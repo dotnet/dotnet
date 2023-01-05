@@ -8,6 +8,7 @@ using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Microsoft.AspNetCore.Razor.Telemetry;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
@@ -51,7 +52,7 @@ internal class RazorRequestContextFactory : IRequestContextFactory<RazorRequestC
 
         var loggerFactory = _lspServices.GetRequiredService<ILoggerFactory>();
         var logger = loggerFactory.CreateLogger(queueItem.MethodName);
-        var lspLogger = new LoggerAdapter(logger);
+        var lspLogger = new LoggerAdapter(logger, _lspServices.GetRequiredService<ITelemetryReporter>());
 
         var requestContext = new RazorRequestContext(documentContext, lspLogger, _lspServices);
 

@@ -5,6 +5,11 @@ Generated Location: (997:26,15 [23] )
 
 Source Location: (62:0,62 [4] x:\dir\subdir\Test\TestComponent.cshtml)
 |long|
-Generated Location: (1446:36,62 [4] )
+Generated Location: (1481:36,62 [4] )
 |long|
+
+Source Location: (6:0,6 [5] x:\dir\subdir\Test\TestComponent.cshtml)
+|Items|
+Generated Location: (2076:57,6 [5] )
+|Items|
 

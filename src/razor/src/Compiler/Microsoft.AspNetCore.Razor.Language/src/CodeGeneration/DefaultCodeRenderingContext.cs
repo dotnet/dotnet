@@ -120,14 +120,18 @@ internal class DefaultCodeRenderingContext : CodeRenderingContext
             return;
         }
 
+        AddSourceMappingFor(node.Source.Value);
+    }
+
+    public override void AddSourceMappingFor(SourceSpan source)
+    {
         if (SourceDocument.FilePath != null &&
-            !string.Equals(SourceDocument.FilePath, node.Source.Value.FilePath, StringComparison.OrdinalIgnoreCase))
+            !string.Equals(SourceDocument.FilePath, source.FilePath, StringComparison.OrdinalIgnoreCase))
         {
             // We don't want to generate line mappings for imports.
             return;
         }
 
-        var source = node.Source.Value;
         var generatedLocation = new SourceSpan(CodeWriter.Location, source.Length);
         var sourceMapping = new SourceMapping(source, generatedLocation);
 

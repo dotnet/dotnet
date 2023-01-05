@@ -33,7 +33,7 @@ using System.Collections.Generic;
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
-            global::__Blazor.Test.TestComponent.TypeInference.CreateMyComponent_0(__builder, -1, -1, 
+            var __typeInference_CreateMyComponent_0 = global::__Blazor.Test.TestComponent.TypeInference.CreateMyComponent_0(__builder, -1, -1, 
 #nullable restore
 #line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
                    3
@@ -50,6 +50,24 @@ using System.Collections.Generic;
 #line hidden
 #nullable disable
             ));
+            __o = __typeInference_CreateMyComponent_0.
+#nullable restore
+#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
+             Item
+
+#line default
+#line hidden
+#nullable disable
+            ;
+            __o = __typeInference_CreateMyComponent_0.
+#nullable restore
+#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
+                      MyEvent
+
+#line default
+#line hidden
+#nullable disable
+            ;
 #nullable restore
 #line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
 __o = typeof(global::Test.MyComponent<>);
@@ -66,12 +84,13 @@ namespace __Blazor.Test.TestComponent
     #line hidden
     internal static class TypeInference
     {
-        public static void CreateMyComponent_0<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, TItem __arg0, int __seq1, global::Microsoft.AspNetCore.Components.EventCallback<global::System.Collections.Generic.IEnumerable<TItem>> __arg1)
+        public static global::Test.MyComponent<TItem> CreateMyComponent_0<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, TItem __arg0, int __seq1, global::Microsoft.AspNetCore.Components.EventCallback<global::System.Collections.Generic.IEnumerable<TItem>> __arg1)
         {
         __builder.OpenComponent<global::Test.MyComponent<TItem>>(seq);
         __builder.AddAttribute(__seq0, "Item", __arg0);
         __builder.AddAttribute(__seq1, "MyEvent", __arg1);
         __builder.CloseComponent();
+        return default;
         }
     }
 }

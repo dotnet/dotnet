@@ -18,3 +18,8 @@ Source Location: (69:2,37 [16] x:\dir\subdir\Test\TestComponent.cshtml)
 Generated Location: (1704:51,37 [16] )
 |(TChild x) => {}|
 
+Source Location: (60:2,28 [7] x:\dir\subdir\Test\TestComponent.cshtml)
+|MyEvent|
+Generated Location: (2114:63,28 [7] )
+|MyEvent|
+

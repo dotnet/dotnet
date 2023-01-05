@@ -37,7 +37,7 @@ global::System.Object TParam = null!;
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
-            global::__Blazor.Test.TestComponent.TypeInference.CreateTestComponent_0(__builder, -1, -1, 
+            var __typeInference_CreateTestComponent_0 = global::__Blazor.Test.TestComponent.TypeInference.CreateTestComponent_0(__builder, -1, -1, 
 #nullable restore
 #line 12 "x:\dir\subdir\Test\TestComponent.cshtml"
                            1
@@ -62,6 +62,15 @@ global::System.Object TParam = null!;
 #nullable disable
             }
             );
+            __o = __typeInference_CreateTestComponent_0.
+#nullable restore
+#line 12 "x:\dir\subdir\Test\TestComponent.cshtml"
+               InferParam
+
+#line default
+#line hidden
+#nullable disable
+            ;
 #nullable restore
 #line 12 "x:\dir\subdir\Test\TestComponent.cshtml"
 __o = typeof(global::Test.TestComponent<>);
@@ -90,12 +99,13 @@ namespace __Blazor.Test.TestComponent
     #line hidden
     internal static class TypeInference
     {
-        public static void CreateTestComponent_0<TParam>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, TParam __arg0, int __seq1, global::Microsoft.AspNetCore.Components.RenderFragment<(global::N.MyClass I1, global::N.MyStruct I2, TParam P)> __arg1)
+        public static global::Test.TestComponent<TParam> CreateTestComponent_0<TParam>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, TParam __arg0, int __seq1, global::Microsoft.AspNetCore.Components.RenderFragment<(global::N.MyClass I1, global::N.MyStruct I2, TParam P)> __arg1)
         {
         __builder.OpenComponent<global::Test.TestComponent<TParam>>(seq);
         __builder.AddAttribute(__seq0, "InferParam", __arg0);
         __builder.AddAttribute(__seq1, "Template", __arg1);
         __builder.CloseComponent();
+        return default;
         }
     }
 }

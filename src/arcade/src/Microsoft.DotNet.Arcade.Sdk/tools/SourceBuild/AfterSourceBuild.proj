@@ -21,6 +21,9 @@
     <ItemGroup>
       <AllRestoredPackageFiles Include="$(CurrentRepoSourceBuildPackageCache)**/*.nupkg" />
       <SourceBuiltPackageFiles Include="$(CurrentRepoSourceBuiltNupkgCacheDir)**/*.nupkg" />
+      <SourceBuiltPackageFiles Include="$(AdditionalSourceBuiltNupkgCacheDir)**/*.nupkg" Condition=" '$(AdditionalSourceBuiltNupkgCacheDir)' != '' " />
+      <SourceBuiltPackageFiles Include="$(ReferencePackageNupkgCacheDir)**/*.nupkg" Condition=" '$(ReferencePackageNupkgCacheDir)' != '' " />
+      <SourceBuiltPackageFiles Include="$(PreviouslySourceBuiltNupkgCacheDir)**/*.nupkg" Condition=" '$(PreviouslySourceBuiltNupkgCacheDir)' != '' " />
 
       <!-- Add some other potential top-level project directories for a more specific report. -->
       <ProjectDirectories Include="$(CurrentRepoSourceBuildSourceDir)" />
@@ -69,7 +72,8 @@
       OutputBaselineFile="$(SourceBuildSelfPrebuiltReportDir)generated-new-baseline.xml"
       OutputReportFile="$(SourceBuildSelfPrebuiltReportDir)baseline-comparison.xml"
       AllowTestProjectUsage="$(AllowTestProjectUsage)"
-      ContinueOnError="$(ContinueOnPrebuiltBaselineError)" />
+      ContinueOnError="$(ContinueOnPrebuiltBaselineError)"
+      Condition="'$(DotNetBuildFromSourceFlavor)' != 'Product'" />
   </Target>
 
   <!--
@@ -147,7 +151,7 @@
         SourceBuildArcadeTargetsFile=$(MSBuildThisFileDirectory)SourceBuildArcade.targets;
         SourceBuildIntermediateNupkgLicenseFile=$(SourceBuildIntermediateNupkgLicenseFile);
         "
-      BuildInParallel="true"/>
+      BuildInParallel="false"/>
   </Target>
 
   <Import Project="SourceBuildArcade.targets" />

@@ -8,11 +8,16 @@ Source Location: (35:0,35 [25] x:\dir\subdir\Test\TestComponent.cshtml)
 Generated Location: (1338:34,35 [25] )
 |(MyType arg) => counter++|
 
+Source Location: (24:0,24 [7] x:\dir\subdir\Test\TestComponent.cshtml)
+|OnClick|
+Generated Location: (1753:46,24 [7] )
+|OnClick|
+
 Source Location: (75:2,7 [28] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     private int counter;
 |
-Generated Location: (1884:54,7 [28] )
+Generated Location: (2116:63,7 [28] )
 |
     private int counter;
 |

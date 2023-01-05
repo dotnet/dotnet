@@ -904,7 +904,7 @@ using ::testing::Contains;
 using ::testing::Property;
 
 inline constexpr auto HasFoo = [](const auto& f) {
-  return Property(&MyClass::foo, Contains(f));
+  return Property("foo", &MyClass::foo, Contains(f));
 };
 ...
   EXPECT_THAT(x, HasFoo("blah"));
@@ -1158,7 +1158,7 @@ int IsEven(int n) { return (n % 2) == 0 ? 1 : 0; }
 ```
 
 Note that the predicate function / functor doesn't have to return `bool`. It
-works as long as the return value can be used as the condition in in statement
+works as long as the return value can be used as the condition in the statement
 `if (condition) ...`.
 
 ### Matching Arguments that Are Not Copyable
@@ -1345,7 +1345,7 @@ class BarPlusBazEqMatcher {
 
 ...
   Foo foo;
-  EXPECT_CALL(foo, BarPlusBazEq(5))...;
+  EXPECT_THAT(foo, BarPlusBazEq(5))...;
 ```
 
 ### Matching Containers

@@ -43,7 +43,13 @@ namespace Microsoft.DotNet.Helix.AzureDevOps
         {
             foreach (int testRunId in TestRunIds)
             {
-                JObject data = await RetryAsync(
+                bool runComplete = false;
+                int triesToWait = 3;
+                JObject data = null;
+
+                do
+                {
+                    data = await RetryAsync(
                     async () =>
                     {
                         using var req = new HttpRequestMessage(
@@ -52,6 +58,16 @@ namespace Microsoft.DotNet.Helix.AzureDevOps
                         using HttpResponseMessage res = await client.SendAsync(req);
                         return await ParseResponseAsync(req, res);
                     });
+                    // This retry does not use the RetryAsync() function as that one only retries for network/timeout issues
+                    triesToWait--;
+                    runComplete = CheckAzurePipelinesTestRunIsComplete(data);
+                    if (!runComplete && triesToWait > 0)
+                    {
+                        Log.LogWarning($"Test run {testRunId} is not in completed state.  Will check back in 10 seconds.");
+                        await Task.Delay(10000);
+                    }
+                }
+                while (!runComplete && triesToWait > 0);
 
                 if (data != null && data["runStatistics"] is JArray runStatistics)
                 {
@@ -67,6 +83,22 @@ namespace Microsoft.DotNet.Helix.AzureDevOps
                     }
                 }
             }
+        }
+
+        private bool CheckAzurePipelinesTestRunIsComplete(JObject data)
+        {
+            // Context: https://github.com/dotnet/arcade/issues/11942
+            // it seems it's possible if checking immediately after a run is closed to not see all results
+            // Since we pass/fail build tasks based off failed test items, it's very important that we not miss this.
+            // This check will add logging if /_apis/test/runs/ manages to get called while incomplete.
+            if (data == null)
+            {
+                return false;
+            }
+            var stateCompleted = data["state"]?.Value<string>()?.Equals("Completed");
+            var postProcessStateCompleted = data["postProcessState"]?.Value<string>()?.Equals("Complete");
+
+            return (stateCompleted == true && postProcessStateCompleted == true);
         }
 
         private async Task LogErrorsForFailedRun(HttpClient client, int testRunId)

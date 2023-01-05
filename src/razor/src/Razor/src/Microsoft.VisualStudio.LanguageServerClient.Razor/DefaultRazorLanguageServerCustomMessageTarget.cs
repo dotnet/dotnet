@@ -713,11 +713,9 @@ internal class DefaultRazorLanguageServerCustomMessageTarget : RazorLanguageServ
             }
         }, cancellationToken);
 
-        var allTasks = Task.WhenAll(htmlTask, csharpTask);
-
         try
         {
-            await allTasks.ConfigureAwait(false);
+            await Task.WhenAll(htmlTask, csharpTask).ConfigureAwait(false);
         }
         catch (Exception)
         {
@@ -1100,11 +1098,9 @@ internal class DefaultRazorLanguageServerCustomMessageTarget : RazorLanguageServ
         var csharpTask = Task.Run(() => GetVirtualDocumentPullDiagnosticsAsync<CSharpVirtualDocumentSnapshot>(request.HostDocument, RazorLSPConstants.RazorCSharpLanguageServerName, cancellationToken), cancellationToken);
         var htmlTask = Task.Run(() => GetVirtualDocumentPullDiagnosticsAsync<HtmlVirtualDocumentSnapshot>(request.HostDocument, RazorLSPConstants.HtmlLanguageServerName, cancellationToken), cancellationToken);
 
-        var allTasks = Task.WhenAll(htmlTask, csharpTask);
-
         try
         {
-            await allTasks.ConfigureAwait(false);
+            await Task.WhenAll(htmlTask, csharpTask).ConfigureAwait(false);
         }
         catch (Exception)
         {

@@ -18,3 +18,8 @@ Source Location: (108:1,30 [8] x:\dir\subdir\Test\TestComponent.cshtml)
 Generated Location: (1594:48,30 [8] )
 |template|
 
+Source Location: (91:1,13 [14] x:\dir\subdir\Test\TestComponent.cshtml)
+|PersonTemplate|
+Generated Location: (1972:60,13 [14] )
+|PersonTemplate|
+

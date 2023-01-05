@@ -46,6 +46,11 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
     // Currently the same for design time and runtime
     public override void WriteComponentTypeInferenceMethod(CodeRenderingContext context, ComponentTypeInferenceMethodIntermediateNode node)
     {
+        WriteComponentTypeInferenceMethod(context, node, returnComponentType: false);
+    }
+
+    protected void WriteComponentTypeInferenceMethod(CodeRenderingContext context, ComponentTypeInferenceMethodIntermediateNode node, bool returnComponentType)
+    {
         if (context == null)
         {
             throw new ArgumentNullException(nameof(context));
@@ -79,7 +84,16 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
         // name if it contains generics, and we can't write the variable they want to assign to.
         var writer = context.CodeWriter;
 
-        writer.Write("public static void ");
+        writer.Write("public static ");
+        if (returnComponentType)
+        {
+            writer.Write(node.Component.TypeName);
+        }
+        else
+        {
+            writer.Write("void");
+        }
+        writer.Write(" ");
         writer.Write(node.MethodName);
         writer.Write("<");
         writer.Write(string.Join(", ", node.Component.Component.GetTypeParameters().Select(a => a.Name)));
@@ -209,6 +223,11 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
         }
 
         context.CodeWriter.WriteInstanceMethodInvocation(ComponentsApi.RenderTreeBuilder.BuilderParameter, ComponentsApi.RenderTreeBuilder.CloseComponent);
+
+        if (returnComponentType)
+        {
+            writer.WriteLine("return default;");
+        }
 
         writer.WriteLine("}");
 

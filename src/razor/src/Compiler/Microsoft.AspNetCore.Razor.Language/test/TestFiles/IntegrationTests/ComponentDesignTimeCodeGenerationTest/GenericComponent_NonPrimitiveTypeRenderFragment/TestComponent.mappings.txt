@@ -1,10 +1,15 @@
 Source Location: (19:0,19 [16] x:\dir\subdir\Test\TestComponent.cshtml)
 |new CustomType()|
-Generated Location: (990:25,19 [16] )
+Generated Location: (1032:25,19 [16] )
 |new CustomType()|
 
 Source Location: (38:0,38 [18] x:\dir\subdir\Test\TestComponent.cshtml)
 |context.ToString()|
-Generated Location: (1216:33,38 [18] )
+Generated Location: (1258:33,38 [18] )
 |context.ToString()|
+
+Source Location: (13:0,13 [4] x:\dir\subdir\Test\TestComponent.cshtml)
+|Item|
+Generated Location: (1499:43,13 [4] )
+|Item|
 

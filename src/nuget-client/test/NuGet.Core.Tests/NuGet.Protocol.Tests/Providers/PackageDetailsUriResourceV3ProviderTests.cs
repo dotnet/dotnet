@@ -15,9 +15,9 @@ namespace NuGet.Protocol.Providers.Tests
 {
     public class PackageDetailsUriResourceV3ProviderTests
     {
-        private const string _resourceType = "PackageDetailsUriTemplate/5.1.0";
+        private const string ResourceType = "PackageDetailsUriTemplate/5.1.0";
 
-        private static readonly SemanticVersion _defaultVersion = new SemanticVersion(0, 0, 0);
+        private static readonly SemanticVersion DefaultVersion = new SemanticVersion(0, 0, 0);
 
         private readonly PackageSource _packageSource;
         private readonly PackageDetailsUriResourceV3Provider _target;
@@ -55,7 +55,7 @@ namespace NuGet.Protocol.Providers.Tests
         [InlineData("  \t\n")]
         public async Task TryCreate_WhenResourceHasInvalidAbsoluteUri_ReturnsNoResource(string uri)
         {
-            var serviceEntry = new RawServiceIndexEntry(uri, _resourceType);
+            var serviceEntry = new RawServiceIndexEntry(uri, ResourceType);
             var resourceProviders = new ResourceProvider[]
             {
                 CreateServiceIndexResourceV3Provider(serviceEntry),
@@ -72,7 +72,7 @@ namespace NuGet.Protocol.Providers.Tests
         [Fact]
         public async Task TryCreate_WhenResourceExists_ReturnsValidResource()
         {
-            var serviceEntry = new RawServiceIndexEntry("https://unit.test/packages/{id}/{version}", _resourceType);
+            var serviceEntry = new RawServiceIndexEntry("https://unit.test/packages/{id}/{version}", ResourceType);
             var resourceProviders = new ResourceProvider[]
             {
                 CreateServiceIndexResourceV3Provider(serviceEntry),

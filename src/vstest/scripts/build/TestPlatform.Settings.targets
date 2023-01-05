@@ -5,7 +5,7 @@
     <!-- This version is read by vsts-prebuild.ps1 and is a base for the current version, this should be updated
     at the start of new iteration to the goal number. This is also used to version the local packages. This version needs to be statically
     readable when we read the file as xml, don't move it to a .props file, unless you change the build server process -->
-    <TPVersionPrefix>17.5.0</TPVersionPrefix>
+    <TPVersionPrefix>17.6.0</TPVersionPrefix>
     <LangVersion>preview</LangVersion>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <AnalysisLevel>preview</AnalysisLevel>

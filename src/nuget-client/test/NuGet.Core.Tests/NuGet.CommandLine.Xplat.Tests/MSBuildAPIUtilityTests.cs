@@ -21,7 +21,6 @@ namespace NuGet.CommandLine.Xplat.Tests
         {
             MSBuildLocator.RegisterDefaults();
         }
-
         [PlatformFact(Platform.Windows)]
         public void GetDirectoryBuildPropsRootElementWhenItExists_Success()
         {
@@ -383,6 +382,75 @@ namespace NuGet.CommandLine.Xplat.Tests
             string updatedPropsFile = File.ReadAllText(Path.Combine(testDirectory, "Directory.Packages.props"));
             Assert.Contains(@$"<PackageVersion Include=""X"" Version=""2.0.0"" />", updatedPropsFile);
             Assert.DoesNotContain(@$"<PackageVersion Include=""X"" Version=""1.0.0"" />", updatedPropsFile);
+        }
+
+        [PlatformFact(Platform.Windows)]
+        public void UpdateVersionOverrideInPropsFileWhenItExists_Success()
+        {
+            // Arrange
+            var testDirectory = TestDirectory.Create();
+            var projectCollection = new ProjectCollection(
+                            globalProperties: null,
+                            remoteLoggers: null,
+                            loggers: null,
+                            toolsetDefinitionLocations: ToolsetDefinitionLocations.Default,
+                            // Having more than 1 node spins up multiple msbuild.exe instances to run builds in parallel
+                            // However, these targets complete so quickly that the added overhead makes it take longer
+                            maxNodeCount: 1,
+                            onlyLogCriticalEvents: false,
+                            loadProjectsReadOnly: false);
+
+            var projectOptions = new ProjectOptions
+            {
+                LoadSettings = ProjectLoadSettings.DoNotEvaluateElementsWithFalseCondition,
+                ProjectCollection = projectCollection
+            };
+
+            // Arrange Directory.Packages.props file
+            var propsFile =
+@$"<Project>
+    <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    </PropertyGroup>
+    <ItemGroup>
+    <PackageVersion Include=""X"" Version=""1.0.0"" />
+    </ItemGroup>
+</Project>";
+            File.WriteAllText(Path.Combine(testDirectory, "Directory.Packages.props"), propsFile);
+
+            // Arrange project file
+            string projectContent =
+@$"<Project Sdk=""Microsoft.NET.Sdk"">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include=""X"" VersionOverride=""3.0.0"" />
+  </ItemGroup>
+</Project>";
+            File.WriteAllText(Path.Combine(testDirectory, "projectA.csproj"), projectContent);
+            var project = Project.FromFile(Path.Combine(testDirectory, "projectA.csproj"), projectOptions);
+
+            var msObject = new MSBuildAPIUtility(logger: new TestLogger());
+            // Get package version if it already exists in the props file. Returns null if there is no matching package version.
+            ProjectItem packageVersionInProps = project.Items.LastOrDefault(i => i.ItemType == "PackageReference" && i.EvaluatedInclude.Equals("X"));
+
+            var libraryDependency = new LibraryDependency
+            {
+                LibraryRange = new LibraryRange(
+                        name: "X",
+                        versionRange: VersionRange.Parse("3.0.0"),
+                        typeConstraint: LibraryDependencyTarget.Package)
+            };
+
+            // Act
+            msObject.UpdateVersionOverride(project, packageVersionInProps, "3.0.0");
+
+            // Assert
+            Assert.Equal(projectContent, File.ReadAllText(Path.Combine(testDirectory, "projectA.csproj")));
+            string updatedPropsFile = File.ReadAllText(Path.Combine(testDirectory, "Directory.Packages.props"));
+            Assert.Contains(@$"<PackageVersion Include=""X"" Version=""1.0.0"" />", updatedPropsFile);
+            Assert.DoesNotContain(@$"<PackageVersion Include=""X"" VersionOverride=""3.0.0"" />", updatedPropsFile);
         }
     }
 }

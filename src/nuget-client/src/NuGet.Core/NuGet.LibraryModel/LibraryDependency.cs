@@ -124,7 +124,7 @@ namespace NuGet.LibraryModel
                    GeneratePathProperty == other.GeneratePathProperty &&
                    VersionCentrallyManaged == other.VersionCentrallyManaged &&
                    Aliases == other.Aliases &&
-                   VersionOverride == other.VersionOverride &&
+                   EqualityUtility.EqualsWithNullCheck(VersionOverride, other.VersionOverride) &&
                    ReferenceType == other.ReferenceType;
         }
 

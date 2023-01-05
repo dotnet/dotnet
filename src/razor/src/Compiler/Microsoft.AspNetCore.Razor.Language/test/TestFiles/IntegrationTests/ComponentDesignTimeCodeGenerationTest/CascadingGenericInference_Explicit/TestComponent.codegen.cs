@@ -39,7 +39,7 @@ namespace Test
 #nullable disable
             );
             __builder.AddAttribute(-1, "ChildContent", (global::Microsoft.AspNetCore.Components.RenderFragment)((__builder2) => {
-                global::__Blazor.Test.TestComponent.TypeInference.CreateColumn_0(__builder2, -1, default(DateTime));
+                var __typeInference_CreateColumn_0 = global::__Blazor.Test.TestComponent.TypeInference.CreateColumn_0(__builder2, -1, default(DateTime));
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
 __o = typeof(global::Test.Column<>);
@@ -47,7 +47,7 @@ __o = typeof(global::Test.Column<>);
 #line default
 #line hidden
 #nullable disable
-                global::__Blazor.Test.TestComponent.TypeInference.CreateColumn_1(__builder2, -1, default(DateTime));
+                var __typeInference_CreateColumn_1 = global::__Blazor.Test.TestComponent.TypeInference.CreateColumn_1(__builder2, -1, default(DateTime));
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
 __o = typeof(global::Test.Column<>);
@@ -57,6 +57,15 @@ __o = typeof(global::Test.Column<>);
 #nullable disable
             }
             ));
+            __o = ((global::Test.Grid<DateTime>)default).
+#nullable restore
+#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
+                       Items
+
+#line default
+#line hidden
+#nullable disable
+            ;
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
 __o = typeof(global::Test.Grid<>);
@@ -73,15 +82,17 @@ namespace __Blazor.Test.TestComponent
     #line hidden
     internal static class TypeInference
     {
-        public static void CreateColumn_0<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, TItem __syntheticArg0)
+        public static global::Test.Column<TItem> CreateColumn_0<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, TItem __syntheticArg0)
         {
         __builder.OpenComponent<global::Test.Column<TItem>>(seq);
         __builder.CloseComponent();
+        return default;
         }
-        public static void CreateColumn_1<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, TItem __syntheticArg0)
+        public static global::Test.Column<TItem> CreateColumn_1<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, TItem __syntheticArg0)
         {
         __builder.OpenComponent<global::Test.Column<TItem>>(seq);
         __builder.CloseComponent();
+        return default;
         }
     }
 }

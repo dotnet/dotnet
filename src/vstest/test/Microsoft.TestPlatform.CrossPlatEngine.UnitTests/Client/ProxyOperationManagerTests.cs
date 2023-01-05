@@ -103,6 +103,31 @@ public class ProxyOperationManagerTests : ProxyBaseManagerTests
     }
 
     [TestMethod]
+    [DataRow("Dummy", true, false, false)]
+    [DataRow(ProxyOperationManager.DefaultTesthostFriendlyName, true, true, true)]
+    [DataRow(ProxyOperationManager.DotnetTesthostFriendlyName, true, true, true)]
+    public void SetupChannelOutcomeShouldTakeTesthostSessionSupportIntoAccount(
+        string testhostFriendlyName,
+        bool isTestSessionEnabled,
+        bool expectedCompatibilityCheckResult,
+        bool expectedSetupResult)
+    {
+        _mockRequestSender.Setup(rs => rs.InitializeCommunication()).Returns(123);
+
+        var testOperationManager = new TestableProxyOperationManager(
+            _mockRequestData.Object,
+            _mockRequestSender.Object,
+            _mockTestHostManager.Object)
+        {
+            IsTestSessionEnabled = isTestSessionEnabled,
+            TesthostFriendlyName = testhostFriendlyName
+        };
+
+        Assert.IsTrue(testOperationManager.IsTesthostCompatibleWithTestSessions() == expectedCompatibilityCheckResult);
+        Assert.IsTrue(testOperationManager.SetupChannel(Enumerable.Empty<string>(), DefaultRunSettings) == expectedSetupResult);
+    }
+
+    [TestMethod]
     public void SetupChannelShouldAddRunnerProcessIdForTestHost()
     {
         _mockRequestSender.Setup(rs => rs.InitializeCommunication()).Returns(123);
@@ -518,6 +543,13 @@ public class ProxyOperationManagerTests : ProxyBaseManagerTests
             CancellationTokenSource cancellationTokenSource) : base(requestData, requestSender, testHostManager, Framework.DefaultFramework)
         {
             CancellationTokenSource = cancellationTokenSource;
+        }
+
+        public string TesthostFriendlyName { get; set; } = "Dummy";
+
+        internal override string ReadTesthostFriendlyName()
+        {
+            return TesthostFriendlyName;
         }
     }
 

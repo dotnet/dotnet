@@ -46,7 +46,7 @@ For example, in below command the final value for `MapInconclusiveToFailed` will
 dotnet test --settings additionalargs.runsettings -- MSTest.MapInconclusiveToFailed=False
 ```
 
-You can also set `TestRunParameters` using command line option:
+Starting from .NET SDK 5.0 you can also set `TestRunParameters` using command line option:
 
 ```cmd
 # cmd

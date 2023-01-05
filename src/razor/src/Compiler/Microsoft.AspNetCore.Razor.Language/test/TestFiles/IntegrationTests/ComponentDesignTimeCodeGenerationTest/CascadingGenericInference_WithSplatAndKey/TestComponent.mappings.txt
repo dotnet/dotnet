@@ -10,16 +10,21 @@ Generated Location: (1199:33,33 [23] )
 
 Source Location: (179:2,53 [17] x:\dir\subdir\Test\TestComponent.cshtml)
 |DateTime.MinValue|
-Generated Location: (1748:43,53 [17] )
+Generated Location: (1820:43,53 [17] )
 |DateTime.MinValue|
 
 Source Location: (145:2,19 [8] x:\dir\subdir\Test\TestComponent.cshtml)
 |childKey|
-Generated Location: (1934:51,19 [8] )
+Generated Location: (2006:51,19 [8] )
 |childKey|
 
 Source Location: (78:1,13 [9] x:\dir\subdir\Test\TestComponent.cshtml)
 |parentKey|
-Generated Location: (2302:68,13 [9] )
+Generated Location: (2374:68,13 [9] )
 |parentKey|
+
+Source Location: (89:1,24 [5] x:\dir\subdir\Test\TestComponent.cshtml)
+|Items|
+Generated Location: (2602:77,24 [5] )
+|Items|
 

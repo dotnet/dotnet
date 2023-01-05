@@ -14,19 +14,20 @@ namespace Microsoft.DotNet.Build.Tasks.TargetFramework
     /// This class uses NuGet's asset selection logic to choose the best TargetFramework given the list of supported TargetFrameworks.
     /// This behaves in a same way as NuGet selects lib files from a nuget package for a particular TargetFramework.
     /// </summary>
-    public class TargetFrameworkResolver
+    internal class TargetFrameworkResolver
     {
+        private static readonly Dictionary<string, TargetFrameworkResolver> s_targetFrameworkResolverCache = new();
         private readonly ManagedCodeConventions _conventions;
         private readonly PatternSet _configStringPattern;
 
-        public TargetFrameworkResolver(string runtimeGraph)
+        private TargetFrameworkResolver(string runtimeGraph)
         {
             _conventions = new ManagedCodeConventions(JsonRuntimeFormat.ReadRuntimeGraph(runtimeGraph));
             _configStringPattern = new PatternSet(
                 _conventions.Properties,
                 groupPatterns: new PatternDefinition[]
                 {
-                    // In order to use Nuget's asset allocation, the input needs to file paths and should contain a trailing slash.
+                    // In order to use Nuget's asset allocation, the input needs to be file paths and should contain a trailing slash.
                     new PatternDefinition("{tfm}/"),
                     new PatternDefinition("{tfm}-{rid}/")
                 },
@@ -37,17 +38,28 @@ namespace Microsoft.DotNet.Build.Tasks.TargetFramework
                 });
         }
 
-        public string GetBestSupportedTargetFramework(IEnumerable<string> supportedTargetFrameworks, string targetFramework)
+        public static TargetFrameworkResolver CreateOrGet(string runtimeGraph)
         {
-            var contentCollection = new ContentItemCollection();
-            contentCollection.Load(supportedTargetFrameworks.Select(t => t + '/').ToArray());
+            if (!s_targetFrameworkResolverCache.TryGetValue(runtimeGraph, out TargetFrameworkResolver? targetFrameworkResolver))
+            {
+                targetFrameworkResolver = new TargetFrameworkResolver(runtimeGraph);
+                s_targetFrameworkResolverCache.Add(runtimeGraph, targetFrameworkResolver);
+            }
 
-            string[] splitStrings = targetFramework.Split('-');
-            string targetFrameworkWithoutSuffix = splitStrings[0];
-            string targetFrameworkSuffix = splitStrings.Length > 1 ? splitStrings[1] : string.Empty;
+            return targetFrameworkResolver!;
+        }
 
-            SelectionCriteria criteria = _conventions.Criteria.ForFrameworkAndRuntime(NuGetFramework.Parse(targetFrameworkWithoutSuffix), targetFrameworkSuffix);
-            string bestTargetFrameworkString = contentCollection.FindBestItemGroup(criteria, _configStringPattern)?.Items[0].Path;                  
+        public string? GetNearest(IEnumerable<string> frameworks, NuGetFramework framework)
+        {
+            NuGetFramework frameworkWithoutPlatform = NuGetFramework.Parse(framework.DotNetFrameworkName);
+
+            ContentItemCollection contentCollection = new();
+            contentCollection.Load(frameworks.Select(f => f + '/').ToArray());
+
+            // The platform is expected to be passed-in lower-case but the SDK normalizes "windows" to "Windows" which is why it is lowered again.
+            SelectionCriteria criteria = _conventions.Criteria.ForFrameworkAndRuntime(frameworkWithoutPlatform, framework.Platform.ToLowerInvariant());
+            string? bestTargetFrameworkString = contentCollection.FindBestItemGroup(criteria, _configStringPattern)?.Items[0].Path;
+
             return bestTargetFrameworkString?.Remove(bestTargetFrameworkString.Length - 1);
         }
     }
