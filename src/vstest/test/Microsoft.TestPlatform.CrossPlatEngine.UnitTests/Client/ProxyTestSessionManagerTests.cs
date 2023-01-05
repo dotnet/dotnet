@@ -207,6 +207,61 @@ public class ProxyTestSessionManagerTests
     }
 
     [TestMethod]
+    public void StartSessionShouldNotFailIfSetupChannelReturnsFalseButTheProxyDisposalPolicyAllowsFailures()
+    {
+        var mockProxyOperationManager = new Mock<ProxyOperationManager>(null, null, null, null);
+        mockProxyOperationManager.SetupSequence(pom => pom.SetupChannel(It.IsAny<IEnumerable<string>>(), It.IsAny<string>()))
+            .Returns(true)
+            .Returns(false)
+            .Returns(false)
+            .Returns(false)
+            .Returns(false)
+            .Returns(false)
+            .Returns(false)
+            .Returns(false);
+        mockProxyOperationManager.Setup(pom => pom.Close()).Callback(() => { });
+
+        var testSessionCriteria = CreateTestSession(_fakeTestMultipleSources, _fakeRunSettings);
+        var proxyManager = CreateProxy(testSessionCriteria, mockProxyOperationManager.Object);
+        proxyManager.DisposalPolicy = ProxyDisposalOnCreationFailPolicy.AllowProxySetupFailures;
+
+        // Call fails because SetupChannel returns false.
+        Assert.IsTrue(proxyManager.StartSession(_mockEventsHandler.Object, _mockRequestData.Object));
+        mockProxyOperationManager.Verify(pom => pom.SetupChannel(
+                It.IsAny<IEnumerable<string>>(),
+                It.IsAny<string>()),
+            Times.Exactly(_fakeTestMultipleSources.Count));
+        mockProxyOperationManager.Verify(pom => pom.Close(), Times.Never);
+        _mockEventsHandler.Verify(eh => eh.HandleStartTestSessionComplete(
+                It.IsAny<StartTestSessionCompleteEventArgs>()),
+            Times.Once);
+    }
+
+    [TestMethod]
+    public void StartSessionShouldStillFailIfSetupChannelReturnsFalseAndTheProxyDisposalPolicyAllowsFailuresButNoTesthostIsSpawned()
+    {
+        var mockProxyOperationManager = new Mock<ProxyOperationManager>(null, null, null, null);
+        mockProxyOperationManager.Setup(pom => pom.SetupChannel(It.IsAny<IEnumerable<string>>(), It.IsAny<string>()))
+            .Returns(false);
+        mockProxyOperationManager.Setup(pom => pom.Close()).Callback(() => { });
+
+        var testSessionCriteria = CreateTestSession(_fakeTestSources, _fakeRunSettings);
+        var proxyManager = CreateProxy(testSessionCriteria, mockProxyOperationManager.Object);
+        proxyManager.DisposalPolicy = ProxyDisposalOnCreationFailPolicy.AllowProxySetupFailures;
+
+        // Call fails because SetupChannel returns false.
+        Assert.IsFalse(proxyManager.StartSession(_mockEventsHandler.Object, _mockRequestData.Object));
+        mockProxyOperationManager.Verify(pom => pom.SetupChannel(
+                It.IsAny<IEnumerable<string>>(),
+                It.IsAny<string>()),
+            Times.Exactly(_fakeTestSources.Count));
+        mockProxyOperationManager.Verify(pom => pom.Close(), Times.Never);
+        _mockEventsHandler.Verify(eh => eh.HandleStartTestSessionComplete(
+                It.IsAny<StartTestSessionCompleteEventArgs>()),
+            Times.Never);
+    }
+
+    [TestMethod]
     public void StartSessionShouldFailIfSetupChannelThrowsException()
     {
         var mockProxyOperationManager = new Mock<ProxyOperationManager>(null, null, null, null);

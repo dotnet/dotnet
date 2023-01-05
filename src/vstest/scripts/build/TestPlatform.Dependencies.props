@@ -11,7 +11,8 @@
     <!-- this version also needs to be "statically" readable because the test fixture will inspect this file for the version
     and because during the test `dotnet test` will run and re-build some of the test projects and at that time the version
     from a build parameter would not be available, so I am writing this version from the build.ps1 script to keep it in sync -->
-    <NETTestSdkVersion>17.5.0-dev</NETTestSdkVersion>
+		<!-- Note that before bumping this version, you need to have one NuGet package available -->
+    <NETTestSdkVersion>17.6.0-dev</NETTestSdkVersion>
 
     <!-- These versions are used for running unit tests, and running acceptance tests. They are also used as the default version for projects
     in TestAssets.sln to allow running and debugging tests in that solution directly in VS without having to run them via AcceptanceTests. -->

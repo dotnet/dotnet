@@ -420,14 +420,22 @@ public class TestEngine : ITestEngine
                     requestSender,
                     hostManager,
                     // There is always at least one, and all of them have the same framework and architecture.
-                    testRuntimeProviderInfo.SourceDetails[0].Framework!);
+                    testRuntimeProviderInfo.SourceDetails[0].Framework!)
+                {
+                    IsTestSessionEnabled = true
+                };
         };
 
         // TODO: This condition should be returning the maxParallel level to avoid pre-starting way too many testhosts, because maxParallel level,
         // can be smaller than the number of sources to run.
         var maxTesthostCount = isParallelRun ? testSessionCriteria.Sources.Count : 1;
 
-        return new ProxyTestSessionManager(testSessionCriteria, maxTesthostCount, proxyCreator, testRuntimeProviders);
+        return new ProxyTestSessionManager(testSessionCriteria, maxTesthostCount, proxyCreator, testRuntimeProviders)
+        {
+            // Individual proxy setup failures are tolerated since SetupChannel may fail if the
+            // testhost it tries to start is not compatible with the test session feature.
+            DisposalPolicy = ProxyDisposalOnCreationFailPolicy.AllowProxySetupFailures
+        };
     }
 
     private List<TestRuntimeProviderInfo> GetTestRuntimeProvidersForUniqueConfigurations(

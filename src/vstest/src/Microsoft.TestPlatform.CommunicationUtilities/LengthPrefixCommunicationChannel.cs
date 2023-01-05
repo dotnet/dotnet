@@ -111,9 +111,17 @@ public class LengthPrefixCommunicationChannel : ICommunicationChannel
     /// <inheritdoc />
     public void Dispose()
     {
-        EqtTrace.Verbose("LengthPrefixCommunicationChannel.Dispose: Dispose reader and writer.");
-        _reader.Dispose();
-        _writer.Dispose();
+        try
+        {
+            EqtTrace.Verbose("LengthPrefixCommunicationChannel.Dispose: Dispose reader and writer.");
+            _reader.Dispose();
+            _writer.Dispose();
+        }
+        catch (ObjectDisposedException)
+        {
+            // We don't own the underlying stream lifecycle so it's possible that it's already disposed.
+        }
+
         GC.SuppressFinalize(this);
     }
 }

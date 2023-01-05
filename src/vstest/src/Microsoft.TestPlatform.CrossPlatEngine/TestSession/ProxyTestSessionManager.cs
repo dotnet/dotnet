@@ -20,6 +20,12 @@ using CrossPlatResources = Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.R
 
 namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine;
 
+internal enum ProxyDisposalOnCreationFailPolicy
+{
+    DisposeAllOnFailure,
+    AllowProxySetupFailures
+}
+
 /// <summary>
 /// Orchestrates test session operations for the engine communicating with the client.
 /// </summary>
@@ -46,6 +52,8 @@ public class ProxyTestSessionManager : IProxyTestSessionManager
     private readonly Stopwatch _testSessionStopwatch;
     private readonly Dictionary<string, TestRuntimeProviderInfo> _sourceToRuntimeProviderInfoMap;
     private Dictionary<string, string?> _testSessionEnvironmentVariables = new();
+
+    internal ProxyDisposalOnCreationFailPolicy DisposalPolicy { get; set; } = ProxyDisposalOnCreationFailPolicy.DisposeAllOnFailure;
 
     private IDictionary<string, string?> TestSessionEnvironmentVariables
     {
@@ -149,13 +157,25 @@ public class ProxyTestSessionManager : IProxyTestSessionManager
             stopwatch.Elapsed.TotalSeconds);
 
         // Dispose of all proxies if even one of them failed during setup.
+        //
+        // Update: With the introduction of the proxy creation fail disposal policy, we now support
+        // the scenario of individual proxy setup failures. What this means is that we don't mark
+        // the whole session as failed if a single proxy fails, but instead we'll reuse the spinned
+        // off testhosts when possible and create on-demand testhosts for the sources that we failed
+        // to create proxies for.
         if (_proxySetupFailed)
         {
-            requestData?.MetricsCollection.Add(
-                TelemetryDataConstants.TestSessionState,
-                TestSessionState.Error.ToString());
-            DisposeProxies();
-            return false;
+            if (DisposalPolicy == ProxyDisposalOnCreationFailPolicy.DisposeAllOnFailure
+                || _proxyContainerList.Count == 0)
+            {
+                requestData?.MetricsCollection.Add(
+                    TelemetryDataConstants.TestSessionState,
+                    TestSessionState.Error.ToString());
+                DisposeProxies();
+                return false;
+            }
+
+            EqtTrace.Info($"ProxyTestSessionManager.StartSession: At least one proxy setup failed, but failures are tolerated by policy.");
         }
 
         // Make the session available.
