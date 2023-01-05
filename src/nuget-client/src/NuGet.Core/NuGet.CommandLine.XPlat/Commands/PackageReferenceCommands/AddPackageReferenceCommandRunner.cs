@@ -102,6 +102,12 @@ namespace NuGet.CommandLine.XPlat
 
             var originalPackageSpec = matchingPackageSpecs.FirstOrDefault();
 
+            // Check if the project files are correct for CPM
+            if (originalPackageSpec.RestoreMetadata.CentralPackageVersionsEnabled && !msBuild.AreCentralVersionRequirementsSatisfied(packageReferenceArgs, originalPackageSpec))
+            {
+                return 1;
+            }
+
             // 2. Determine the version
 
             // Setup the Credential Service before making any potential http calls.

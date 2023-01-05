@@ -361,16 +361,31 @@ namespace NuGet.PackageManagement.UI
 
         private void EmitRefreshEvent(TimeSpan timeSpan, RefreshOperationSource refreshOperationSource, RefreshOperationStatus status, bool isUIFiltering = false, double? duration = null)
         {
-            TelemetryActivity.EmitTelemetryEvent(
-                new PackageManagerUIRefreshEvent(
+            if (Model.IsSolution)
+            {
+                TelemetryActivity.EmitTelemetryEvent(PackageManagerUIRefreshEvent.ForSolution(
                     _sessionGuid,
-                    Model.IsSolution,
                     refreshOperationSource,
                     status,
-                    _topPanel.Filter.ToString(),
+                    UIUtility.ToContractsItemFilter(_topPanel.Filter),
                     isUIFiltering,
                     timeSpan,
                     duration));
+            }
+            else
+            {
+                IProjectContextInfo project = Model.Context.Projects.First();
+                TelemetryActivity.EmitTelemetryEvent(PackageManagerUIRefreshEvent.ForProject(
+                    _sessionGuid,
+                    refreshOperationSource,
+                    status,
+                    UIUtility.ToContractsItemFilter(_topPanel.Filter),
+                    isUIFiltering,
+                    timeSpan,
+                    duration,
+                    project.ProjectId,
+                    project.ProjectKind));
+            }
         }
 
         private void EmitPMUIClosingTelemetry()

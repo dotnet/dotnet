@@ -881,10 +881,6 @@ function Test-CreateVsPathContextWithConfiguration {
 	$settingFileContent -f $userPackageFolder, $fallbackPackageFolderA, $fallbackPackageFolderB `
 	    | Out-File -Encoding "UTF8" $settingFile
 
-	SaveAs-Solution($solutionFile)
-	Close-Solution
-	Open-Solution $solutionFile
-
 	$p = Get-Project
 
 	# Act

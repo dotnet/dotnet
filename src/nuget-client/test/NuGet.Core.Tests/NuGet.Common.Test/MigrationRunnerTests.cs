@@ -62,5 +62,38 @@ namespace NuGet.Common.Test
             Assert.Equal(1, files.Length);
             Assert.Equal(Path.Combine(directory, "1"), files[0]);
         }
+
+        [Fact]
+        public void Run_WhenAThreadAbandonsMutexThenNextMigrationRunReleasesMutexAndCreatesMigrationFile_Success()
+        {
+            Mutex _orphan = new Mutex(false, "NuGet-Migrations");
+            bool signal = false;
+
+            // Arrange
+            Thread t = new Thread(new ThreadStart(AbandonMutex));
+            t.Start();
+            t.Join();
+            Assert.True(signal, userMessage: "Failed to acquire the mutex.");
+            
+            string directory = MigrationRunner.GetMigrationsDirectory();
+            if (Directory.Exists(directory))
+                Directory.Delete(path: directory, recursive: true);
+
+            // Act
+            MigrationRunner.Run();
+
+            // Assert
+            Assert.True(Directory.Exists(directory));
+            var files = Directory.GetFiles(directory);
+            Assert.Equal(1, files.Length);
+            Assert.Equal(Path.Combine(directory, "1"), files[0]);
+            
+
+            void AbandonMutex()
+            {
+                signal = _orphan.WaitOne(TimeSpan.FromMinutes(1), false);
+                // Abandon the mutex by exiting the method without releasing
+            }
+        }
     }
 }

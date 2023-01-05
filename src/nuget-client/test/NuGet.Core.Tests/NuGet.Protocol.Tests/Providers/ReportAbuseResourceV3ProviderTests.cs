@@ -2,8 +2,8 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Threading;
 using System.Threading.Tasks;
+using System.Threading;
 using Moq;
 using Newtonsoft.Json.Linq;
 using NuGet.Configuration;
@@ -11,25 +11,23 @@ using NuGet.Protocol.Core.Types;
 using NuGet.Versioning;
 using Xunit;
 
-namespace NuGet.Protocol.Providers.Tests
+namespace NuGet.Protocol.Tests.Providers
 {
-    public class PackageDetailsUriResourceV3ProviderTests
+    public class ReportAbuseResourceV3ProviderTests
     {
-        private const string ResourceType = "PackageDetailsUriTemplate/5.1.0";
-
-        private static readonly SemanticVersion DefaultVersion = new SemanticVersion(0, 0, 0);
+        private const string ResourceType = "ReportAbuseUriTemplate/3.0.0";
 
         private readonly PackageSource _packageSource;
-        private readonly PackageDetailsUriResourceV3Provider _target;
+        private readonly ReportAbuseResourceV3Provider _target;
 
-        public PackageDetailsUriResourceV3ProviderTests()
+        public ReportAbuseResourceV3ProviderTests()
         {
             _packageSource = new PackageSource("https://unit.test");
-            _target = new PackageDetailsUriResourceV3Provider();
+            _target = new ReportAbuseResourceV3Provider();
         }
 
         [Fact]
-        public async Task TryCreate_WhenResourceDoesNotExist_ReturnsNoResource()
+        public async Task TryCreate_WhenResourceDoesNotExist_ReturnsFallbackUriAsync()
         {
             var resourceProviders = new ResourceProvider[]
             {
@@ -38,22 +36,22 @@ namespace NuGet.Protocol.Providers.Tests
             };
             var sourceRepository = new SourceRepository(_packageSource, resourceProviders);
 
-            var result = await _target.TryCreate(sourceRepository, CancellationToken.None);
+            Tuple<bool, INuGetResource> result = await _target.TryCreate(sourceRepository, CancellationToken.None);
 
-            Assert.False(result.Item1);
-            Assert.Null(result.Item2);
+            Assert.True(result.Item1);
+            Assert.IsType<ReportAbuseResourceV3>(result.Item2);
+            Assert.Equal("https://www.nuget.org/packages/MyPackage/1.0.0/ReportAbuse",
+                         ((ReportAbuseResourceV3)result.Item2).GetReportAbuseUrl("MyPackage", NuGetVersion.Parse("1.0.0")).OriginalString);
         }
 
         [Theory]
+        [InlineData("https:\\bar")]
         [InlineData("foo")]
         [InlineData("../somepath")]
-        [InlineData(@"C:\packages\{id}\{version}\index.html")]
-        [InlineData("http://unit.test/packages/{id}/{version}")]
-        [InlineData("file:///my/path")]
         [InlineData(null)]
         [InlineData("")]
         [InlineData("  \t\n")]
-        public async Task TryCreate_WhenResourceHasInvalidAbsoluteUri_ReturnsNoResource(string uri)
+        public async Task TryCreate_WhenResourceHasInvalidAbsoluteUri_ReturnsFallbackUriAsync(string uri)
         {
             var serviceEntry = new RawServiceIndexEntry(uri, ResourceType);
             var resourceProviders = new ResourceProvider[]
@@ -63,16 +61,18 @@ namespace NuGet.Protocol.Providers.Tests
             };
             var sourceRepository = new SourceRepository(_packageSource, resourceProviders);
 
-            var result = await _target.TryCreate(sourceRepository, CancellationToken.None);
+            Tuple<bool, INuGetResource> result = await _target.TryCreate(sourceRepository, CancellationToken.None);
 
-            Assert.False(result.Item1);
-            Assert.Null(result.Item2);
+            Assert.True(result.Item1);
+            Assert.IsType<ReportAbuseResourceV3>(result.Item2);
+            Assert.Equal("https://www.nuget.org/packages/MyPackage/1.0.0/ReportAbuse",
+                         ((ReportAbuseResourceV3)result.Item2).GetReportAbuseUrl("MyPackage", NuGetVersion.Parse("1.0.0")).OriginalString);
         }
 
-        [Fact]
-        public async Task TryCreate_WhenResourceExists_ReturnsValidResource()
+        [Fact(Skip = "The behavior of ReportAbuseResourceV3Provider in this case is incorrect, and was reported in issue: https://github.com/NuGet/Home/issues/7478")]
+        public async Task TryCreate_WhenResourceExists_ReturnsValidResourceAsync()
         {
-            var serviceEntry = new RawServiceIndexEntry("https://unit.test/packages/{id}/{version}", ResourceType);
+            var serviceEntry = new RawServiceIndexEntry("https://unit.test/packages/{id}/{version}/ReportAbuse", ResourceType);
             var resourceProviders = new ResourceProvider[]
             {
                 CreateServiceIndexResourceV3Provider(serviceEntry),
@@ -80,14 +80,13 @@ namespace NuGet.Protocol.Providers.Tests
             };
             var sourceRepository = new SourceRepository(_packageSource, resourceProviders);
 
-            var result = await _target.TryCreate(sourceRepository, CancellationToken.None);
+            Tuple<bool, INuGetResource> result = await _target.TryCreate(sourceRepository, CancellationToken.None);
 
             Assert.True(result.Item1);
-            Assert.NotNull(result.Item2);
-            var resource = Assert.IsType<PackageDetailsUriResourceV3>(result.Item2);
+            Assert.IsType<ReportAbuseResourceV3>(result.Item2);
             Assert.Equal(
-                "https://unit.test/packages/MyPackage/1.0.0",
-                resource.GetUri("MyPackage", NuGetVersion.Parse("1.0.0")).OriginalString);
+                "https://unit.test/packages/MyPackage/1.0.0/ReportAbuse",
+                ((ReportAbuseResourceV3)result.Item2).GetReportAbuseUrl("MyPackage", NuGetVersion.Parse("1.0.0")).OriginalString);
         }
 
         private static ServiceIndexResourceV3Provider CreateServiceIndexResourceV3Provider(params RawServiceIndexEntry[] entries)

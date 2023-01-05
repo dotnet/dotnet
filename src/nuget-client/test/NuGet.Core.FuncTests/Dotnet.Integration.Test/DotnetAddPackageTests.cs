@@ -685,6 +685,7 @@ namespace Dotnet.Integration.Test
             }
         }
 
+        [Fact]
         public async Task AddPkg_WithCPM_WhenPackageVersionDoesNotExistAndVersionCLIArgNotPassed_Success()
         {
             using var pathContext = new SimpleTestPathContext();
@@ -940,6 +941,770 @@ namespace Dotnet.Integration.Test
     < Content Include = ""SomeFile"" />
     <PackageVersion Include=""X"" Version=""1.0.0"" />
   </ ItemGroup >", propsFileFromDisk);
+        }
+
+        [Fact]
+        public async Task AddPkg_WithCPM_WithPackageReference_NoVersionOverride_NoPackageVersion_NoVersionCLI_Errors()
+        {
+            using var pathContext = new SimpleTestPathContext();
+
+            // Set up solution and project
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+            var projectA = XPlatTestUtils.CreateProject("projectA", pathContext, "net6.0");
+
+            const string version1 = "1.0.0";
+            const string version2 = "2.0.0";
+            const string packageX = "X";
+
+            var packageFrameworks = "net5.0";
+            var packageX100 = XPlatTestUtils.CreatePackage(packageX, version1, frameworkString: packageFrameworks);
+            var packageX200 = XPlatTestUtils.CreatePackage(packageX, version2, frameworkString: packageFrameworks);
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                    pathContext.PackageSource,
+                    PackageSaveMode.Defaultv3,
+                    packageX100,
+                    packageX200);
+
+            var propsFile = @$"<Project>
+                                <PropertyGroup>
+                                    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                                </PropertyGroup>
+                            </Project>
+                            ";
+
+            solution.Projects.Add(projectA);
+            solution.Create(pathContext.SolutionRoot);
+
+
+            File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props"), propsFile);
+            var projectADirectory = Path.Combine(pathContext.SolutionRoot, projectA.ProjectName);
+
+            // Arrange project file
+            string projectContent =
+@$"<Project  Sdk=""Microsoft.NET.Sdk"">
+<PropertyGroup>                   
+	<TargetFramework>net6.0</TargetFramework>
+	</PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include=""X"" Version=""1.0.0""/>
+    </ItemGroup>
+</Project>";
+            File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "projectA", "projectA.csproj"), projectContent);
+
+            //Act
+            var result = _fixture.RunDotnet(projectADirectory, $"add {projectA.ProjectPath} package {packageX} ", ignoreExitCode: true);
+
+            // Assert
+            Assert.False(result.Success);
+            Assert.Contains("error: Projects that use central package version management should not define the version on the PackageReference items but on the PackageVersion items: X", result.Output);
+            Assert.DoesNotContain(@$"<ItemGroup>
+    <PackageVersion Include=""X"" Version=""2.0.0"" />
+  </ItemGroup>", File.ReadAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props")));
+            Assert.Contains(@$" <ItemGroup>
+        <PackageReference Include=""X"" Version=""1.0.0""/>
+    </ItemGroup>", File.ReadAllText(Path.Combine(projectADirectory, "projectA.csproj")));
+        }
+
+        [Fact]
+        public async Task AddPkg_WithCPM_WithPackageReference_NoVersionOverride_NoPackageVersion_WithVersionCLI_Errors()
+        {
+            using var pathContext = new SimpleTestPathContext();
+
+            // Set up solution and project
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+            var projectA = XPlatTestUtils.CreateProject("projectA", pathContext, "net6.0");
+
+            const string version1 = "1.0.0";
+            const string version2 = "2.0.0";
+            const string packageX = "X";
+
+            var packageFrameworks = "net5.0";
+            var packageX100 = XPlatTestUtils.CreatePackage(packageX, version1, frameworkString: packageFrameworks);
+            var packageX200 = XPlatTestUtils.CreatePackage(packageX, version2, frameworkString: packageFrameworks);
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                    pathContext.PackageSource,
+                    PackageSaveMode.Defaultv3,
+                    packageX100,
+                    packageX200);
+
+            var propsFile = @$"<Project>
+                                <PropertyGroup>
+                                    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                                </PropertyGroup>
+                            </Project>
+                            ";
+
+            solution.Projects.Add(projectA);
+            solution.Create(pathContext.SolutionRoot);
+
+
+            File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props"), propsFile);
+            var projectADirectory = Path.Combine(pathContext.SolutionRoot, projectA.ProjectName);
+
+            // Arrange project file
+            string projectContent =
+@$"<Project  Sdk=""Microsoft.NET.Sdk"">
+<PropertyGroup>                   
+	<TargetFramework>net6.0</TargetFramework>
+	</PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include=""X"" Version=""1.0.0""/>
+    </ItemGroup>
+</Project>";
+            File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "projectA", "projectA.csproj"), projectContent);
+
+            //Act
+            var result = _fixture.RunDotnet(projectADirectory, $"add {projectA.ProjectPath} package {packageX} -v {version2}", ignoreExitCode: true);
+
+            // Assert
+            Assert.False(result.Success);
+            Assert.Contains("error: Projects that use central package version management should not define the version on the PackageReference items but on the PackageVersion items: X", result.Output);
+            Assert.DoesNotContain(@$"<ItemGroup>
+    <PackageVersion Include=""X"" Version=""2.0.0"" />
+  </ItemGroup>", File.ReadAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props")));
+            Assert.Contains(@$"<ItemGroup>
+        <PackageReference Include=""X"" Version=""1.0.0""/>
+    </ItemGroup>", File.ReadAllText(Path.Combine(projectADirectory, "projectA.csproj")));
+        }
+
+        [Fact]
+        public async Task AddPkg_WithCPM_WithPackageReference_NoVersionOverride_WithPackageVersion_NoVersionCLI_NoOps()
+        {
+            using var pathContext = new SimpleTestPathContext();
+
+            // Set up solution and project
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+            var projectA = XPlatTestUtils.CreateProject("projectA", pathContext, "net6.0");
+
+            const string version1 = "1.0.0";
+            const string version2 = "2.0.0";
+            const string packageX = "X";
+
+            var packageFrameworks = "net5.0";
+            var packageX100 = XPlatTestUtils.CreatePackage(packageX, version1, frameworkString: packageFrameworks);
+            var packageX200 = XPlatTestUtils.CreatePackage(packageX, version2, frameworkString: packageFrameworks);
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                    pathContext.PackageSource,
+                    PackageSaveMode.Defaultv3,
+                    packageX100,
+                    packageX200);
+
+            var propsFile = @$"<Project>
+                                <PropertyGroup>
+                                    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                                    <ItemGroup>
+                                        <PackageVersion Include=""X"" Version=""1.0.0"" />
+                                    </ItemGroup>
+                                </PropertyGroup>
+                            </Project>
+                            ";
+
+            solution.Projects.Add(projectA);
+            solution.Create(pathContext.SolutionRoot);
+
+
+            File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props"), propsFile);
+            var projectADirectory = Path.Combine(pathContext.SolutionRoot, projectA.ProjectName);
+
+            // Arrange project file
+            string projectContent =
+@$"<Project  Sdk=""Microsoft.NET.Sdk"">
+<PropertyGroup>                   
+	<TargetFramework>net6.0</TargetFramework>
+	</PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include=""X"" />
+    </ItemGroup>
+</Project>";
+            File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "projectA", "projectA.csproj"), projectContent);
+
+            //Act
+            var result = _fixture.RunDotnet(projectADirectory, $"add {projectA.ProjectPath} package {packageX} ", ignoreExitCode: true);
+
+            // Assert
+            Assert.False(result.Success);
+            Assert.DoesNotContain("error: Projects that use central package version management should not define the version on the PackageReference items but on the PackageVersion items: X", result.Output);
+            Assert.Contains(@$"<ItemGroup>
+                                        <PackageVersion Include=""X"" Version=""1.0.0"" />
+                                    </ItemGroup>", File.ReadAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props")));
+            Assert.Contains(@$"<ItemGroup>
+        <PackageReference Include=""X"" />
+    </ItemGroup>", File.ReadAllText(Path.Combine(projectADirectory, "projectA.csproj")));
+        }
+
+        [Fact]
+        public async Task AddPkg_WithCPM_WithPackageReference_NoVersionOverride_WithPackageVersion_WithVersionCLI_Success()
+        {
+            using var pathContext = new SimpleTestPathContext();
+
+            // Set up solution and project
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+            var projectA = XPlatTestUtils.CreateProject("projectA", pathContext, "net6.0");
+
+            const string version1 = "1.0.0";
+            const string version2 = "2.0.0";
+            const string packageX = "X";
+
+            var packageFrameworks = "net5.0";
+            var packageX100 = XPlatTestUtils.CreatePackage(packageX, version1, frameworkString: packageFrameworks);
+            var packageX200 = XPlatTestUtils.CreatePackage(packageX, version2, frameworkString: packageFrameworks);
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                    pathContext.PackageSource,
+                    PackageSaveMode.Defaultv3,
+                    packageX100,
+                    packageX200);
+
+            var propsFile = @$"<Project>
+                                <PropertyGroup>
+                                <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                                </PropertyGroup>
+                                <ItemGroup>
+                                <PackageVersion Include=""X"" Version=""1.0.0"" />
+                                </ItemGroup>
+                            </Project>
+                            ";
+
+            solution.Projects.Add(projectA);
+            solution.Create(pathContext.SolutionRoot);
+
+
+            File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props"), propsFile);
+            var projectADirectory = Path.Combine(pathContext.SolutionRoot, projectA.ProjectName);
+
+            // Arrange project file
+            string projectContent =
+@$"<Project  Sdk=""Microsoft.NET.Sdk"">
+    <PropertyGroup>                   
+	    <TargetFramework>net6.0</TargetFramework>
+	</PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include=""X"" />
+    </ItemGroup>
+</Project>";
+            File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "projectA", "projectA.csproj"), projectContent);
+
+            //Act
+            var result = _fixture.RunDotnet(projectADirectory, $"add {projectA.ProjectPath} package {packageX} -v {version2}", ignoreExitCode: true);
+
+            // Assert
+            Assert.True(result.Success, result.Output);
+            Assert.Contains(@$"<ItemGroup>
+    <PackageVersion Include=""X"" Version=""2.0.0"" />
+  </ItemGroup>", File.ReadAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props")));
+        }
+
+        [Fact]
+        public async Task AddPkg_WithCPM_WithPackageReference_WithVersionOverride_NoPackageVersion_NoVersionCLI_NoOps()
+        {
+            using var pathContext = new SimpleTestPathContext();
+
+            // Set up solution and project
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+            var projectA = XPlatTestUtils.CreateProject("projectA", pathContext, "net6.0");
+
+            const string version1 = "1.0.0";
+            const string version2 = "2.0.0";
+            const string packageX = "X";
+
+            var packageFrameworks = "net5.0";
+            var packageX100 = XPlatTestUtils.CreatePackage(packageX, version1, frameworkString: packageFrameworks);
+            var packageX200 = XPlatTestUtils.CreatePackage(packageX, version2, frameworkString: packageFrameworks);
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                    pathContext.PackageSource,
+                    PackageSaveMode.Defaultv3,
+                    packageX100,
+                    packageX200);
+
+            var propsFile = @$"<Project>
+                                <PropertyGroup>
+                                <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                                </PropertyGroup>
+                            </Project>
+                            ";
+
+            solution.Projects.Add(projectA);
+            solution.Create(pathContext.SolutionRoot);
+
+
+            File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props"), propsFile);
+            var projectADirectory = Path.Combine(pathContext.SolutionRoot, projectA.ProjectName);
+
+            // Arrange project file
+            string projectContent =
+@$"<Project  Sdk=""Microsoft.NET.Sdk"">
+<PropertyGroup>                   
+	<TargetFramework>net6.0</TargetFramework>
+	</PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include=""X"" VersionOverride=""1.0.0""/>
+    </ItemGroup>
+</Project>";
+            File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "projectA", "projectA.csproj"), projectContent);
+
+            //Act
+            var result = _fixture.RunDotnet(projectADirectory, $"add {projectA.ProjectPath} package {packageX}", ignoreExitCode: true);
+
+            // Assert
+            Assert.False(result.Success);
+            Assert.DoesNotContain("error: Projects that use central package version management should not define the version on the PackageReference items but on the PackageVersion items: X", result.Output);
+            Assert.DoesNotContain(@$"<ItemGroup>
+    <PackageVersion Include=""X"" Version=""2.0.0"" />
+  </ItemGroup>", File.ReadAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props")));
+            Assert.Contains(@$"<ItemGroup>
+        <PackageReference Include=""X"" VersionOverride=""1.0.0""/>
+    </ItemGroup>", File.ReadAllText(Path.Combine(projectADirectory, "projectA.csproj")));
+        }
+
+        [Fact]
+        public async Task AddPkg_WithCPM_WithPackageReference_WithVersionOverride_NoPackageVersion_WithVersionCLI_Success()
+        {
+            using var pathContext = new SimpleTestPathContext();
+
+            // Set up solution and project
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+            var projectA = XPlatTestUtils.CreateProject("projectA", pathContext, "net6.0");
+
+            const string version1 = "1.0.0";
+            const string version2 = "2.0.0";
+            const string packageX = "X";
+
+            var packageFrameworks = "net5.0";
+            var packageX100 = XPlatTestUtils.CreatePackage(packageX, version1, frameworkString: packageFrameworks);
+            var packageX200 = XPlatTestUtils.CreatePackage(packageX, version2, frameworkString: packageFrameworks);
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                    pathContext.PackageSource,
+                    PackageSaveMode.Defaultv3,
+                    packageX100,
+                    packageX200);
+
+            var propsFile = @$"<Project>
+                                <PropertyGroup>
+                                <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                                </PropertyGroup>
+                            </Project>
+                            ";
+
+            solution.Projects.Add(projectA);
+            solution.Create(pathContext.SolutionRoot);
+
+
+            File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props"), propsFile);
+            var projectADirectory = Path.Combine(pathContext.SolutionRoot, projectA.ProjectName);
+
+            // Arrange project file
+            string projectContent =
+@$"<Project  Sdk=""Microsoft.NET.Sdk"">
+<PropertyGroup>                   
+	<TargetFramework>net6.0</TargetFramework>
+	</PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include=""X"" VersionOverride=""1.0.0""/>
+    </ItemGroup>
+</Project>";
+            File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "projectA", "projectA.csproj"), projectContent);
+
+            //Act
+            var result = _fixture.RunDotnet(projectADirectory, $"add {projectA.ProjectPath} package {packageX} -v {version2}", ignoreExitCode: true);
+
+            // Assert
+            Assert.True(result.Success, result.Output);
+            Assert.DoesNotContain(@$"<ItemGroup>
+                                    <PackageVersion Include=""X"" Version=""2.0.0"" />
+                                </ItemGroup>", File.ReadAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props")));
+            Assert.Contains(@$"<ItemGroup>
+        <PackageReference Include=""X"" VersionOverride=""2.0.0"" />
+    </ItemGroup>", File.ReadAllText(Path.Combine(projectADirectory, "projectA.csproj")));
+        }
+
+        [Fact]
+        public async Task AddPkg_WithCPM_WithPackageReference_WithVersionOverride_WithPackageVersion_NoVersionCLI_NoOps()
+        {
+            using var pathContext = new SimpleTestPathContext();
+
+            // Set up solution and project
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+            var projectA = XPlatTestUtils.CreateProject("projectA", pathContext, "net6.0");
+
+            const string version1 = "1.0.0";
+            const string version2 = "2.0.0";
+            const string packageX = "X";
+
+            var packageFrameworks = "net5.0";
+            var packageX100 = XPlatTestUtils.CreatePackage(packageX, version1, frameworkString: packageFrameworks);
+            var packageX200 = XPlatTestUtils.CreatePackage(packageX, version2, frameworkString: packageFrameworks);
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                    pathContext.PackageSource,
+                    PackageSaveMode.Defaultv3,
+                    packageX100,
+                    packageX200);
+
+            var propsFile = @$"<Project>
+                                <PropertyGroup>
+                                <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                                </PropertyGroup>
+                                <ItemGroup>
+                                <PackageVersion Include=""X"" Version=""1.0.0"" />
+                                </ItemGroup>
+                            </Project>
+                            ";
+
+            solution.Projects.Add(projectA);
+            solution.Create(pathContext.SolutionRoot);
+
+
+            File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props"), propsFile);
+            var projectADirectory = Path.Combine(pathContext.SolutionRoot, projectA.ProjectName);
+
+            // Arrange project file
+            string projectContent =
+@$"<Project  Sdk=""Microsoft.NET.Sdk"">
+<PropertyGroup>                   
+	<TargetFramework>net6.0</TargetFramework>
+	</PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include=""X"" VersionOverride=""1.0.0""/>
+    </ItemGroup>
+</Project>";
+            File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "projectA", "projectA.csproj"), projectContent);
+
+            //Act
+            var result = _fixture.RunDotnet(projectADirectory, $"add {projectA.ProjectPath} package {packageX}", ignoreExitCode: true);
+
+            // Assert
+            Assert.False(result.Success);
+            Assert.DoesNotContain("error: Projects that use central package version management should not define the version on the PackageReference items but on the PackageVersion items: X", result.Output);
+            Assert.Contains(@$"<ItemGroup>
+                                <PackageVersion Include=""X"" Version=""1.0.0"" />
+                                </ItemGroup>", File.ReadAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props")));
+            Assert.Contains(@$"<ItemGroup>
+        <PackageReference Include=""X"" VersionOverride=""1.0.0""/>
+    </ItemGroup>", File.ReadAllText(Path.Combine(projectADirectory, "projectA.csproj")));
+        }
+
+        [Fact]
+        public async Task AddPkg_WithCPM_WithPackageReference_WithVersionOverride_WithPackageVersion_WithVersionCLI_Success()
+        {
+            using var pathContext = new SimpleTestPathContext();
+
+            // Set up solution and project
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+            var projectA = XPlatTestUtils.CreateProject("projectA", pathContext, "net6.0");
+
+            const string version1 = "1.0.0";
+            const string version2 = "2.0.0";
+            const string packageX = "X";
+
+            var packageFrameworks = "net5.0";
+            var packageX100 = XPlatTestUtils.CreatePackage(packageX, version1, frameworkString: packageFrameworks);
+            var packageX200 = XPlatTestUtils.CreatePackage(packageX, version2, frameworkString: packageFrameworks);
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                    pathContext.PackageSource,
+                    PackageSaveMode.Defaultv3,
+                    packageX100,
+                    packageX200);
+
+            var propsFile = @$"<Project>
+                                <PropertyGroup>
+                                <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                                </PropertyGroup>
+                                <ItemGroup>
+                                <PackageVersion Include=""X"" Version=""1.0.0"" />
+                                </ItemGroup>
+                            </Project>
+                            ";
+
+            solution.Projects.Add(projectA);
+            solution.Create(pathContext.SolutionRoot);
+
+
+            File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props"), propsFile);
+            var projectADirectory = Path.Combine(pathContext.SolutionRoot, projectA.ProjectName);
+
+            // Arrange project file
+            string projectContent =
+@$"<Project  Sdk=""Microsoft.NET.Sdk"">
+<PropertyGroup>                   
+	<TargetFramework>net6.0</TargetFramework>
+	</PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include=""X"" VersionOverride=""1.0.0""/>
+    </ItemGroup>
+</Project>";
+            File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "projectA", "projectA.csproj"), projectContent);
+
+            //Act
+            var result = _fixture.RunDotnet(projectADirectory, $"add {projectA.ProjectPath} package {packageX} -v {version2}", ignoreExitCode: true);
+
+            // Assert
+            Assert.True(result.Success, result.Output);
+            Assert.DoesNotContain(@$"<ItemGroup>
+                                    <PackageVersion Include=""X"" Version=""2.0.0"" />
+                                </ItemGroup>", File.ReadAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props")));
+            Assert.Contains(@$"<ItemGroup>
+        <PackageReference Include=""X"" VersionOverride=""2.0.0"" />
+    </ItemGroup>", File.ReadAllText(Path.Combine(projectADirectory, "projectA.csproj")));
+        }
+
+        [Fact]
+        public async Task AddPkg_WithCPM_WithPackageReference_EmptyVersionOverride_WithPackageVersion_WithVersionCLI_IgnoreEmptyVersionOverride_Success()
+        {
+            using var pathContext = new SimpleTestPathContext();
+
+            // Set up solution and project
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+            var projectA = XPlatTestUtils.CreateProject("projectA", pathContext, "net6.0");
+
+            const string version1 = "1.0.0";
+            const string version2 = "2.0.0";
+            const string packageX = "X";
+
+            var packageFrameworks = "net5.0";
+            var packageX100 = XPlatTestUtils.CreatePackage(packageX, version1, frameworkString: packageFrameworks);
+            var packageX200 = XPlatTestUtils.CreatePackage(packageX, version2, frameworkString: packageFrameworks);
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                    pathContext.PackageSource,
+                    PackageSaveMode.Defaultv3,
+                    packageX100,
+                    packageX200);
+
+            var propsFile = @$"<Project>
+                                <PropertyGroup>
+                                <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                                </PropertyGroup>
+                                <ItemGroup>
+                                <PackageVersion Include=""X"" Version=""1.0.0"" />
+                                </ItemGroup>
+                            </Project>
+                            ";
+
+            solution.Projects.Add(projectA);
+            solution.Create(pathContext.SolutionRoot);
+
+
+            File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props"), propsFile);
+            var projectADirectory = Path.Combine(pathContext.SolutionRoot, projectA.ProjectName);
+
+            // Arrange project file
+            string projectContent =
+@$"<Project  Sdk=""Microsoft.NET.Sdk"">
+<PropertyGroup>                   
+	<TargetFramework>net6.0</TargetFramework>
+	</PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include=""X"" VersionOverride=""   ""/>
+    </ItemGroup>
+</Project>";
+            File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "projectA", "projectA.csproj"), projectContent);
+
+            //Act
+            var result = _fixture.RunDotnet(projectADirectory, $"add {projectA.ProjectPath} package {packageX} -v {version2}", ignoreExitCode: true);
+
+            // Assert
+            Assert.True(result.Success, result.Output);
+            // Assert
+            Assert.True(result.Success, result.Output);
+            Assert.Contains(@$"<ItemGroup>
+    <PackageVersion Include=""X"" Version=""2.0.0"" />
+  </ItemGroup>", File.ReadAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props")));
+            Assert.DoesNotContain(@$"<ItemGroup>
+        <PackageReference Include=""X"" VersionOverride=""2.0.0"" />
+    </ItemGroup>", File.ReadAllText(Path.Combine(projectADirectory, "projectA.csproj")));
+        }
+
+        [Fact]
+        public async Task AddPkg_WithCPM_WrongPackageReference_WithVersionOverride_WithPackageVersion_WithVersionCLI_WrongConfiguration_Error()
+        {
+            using var pathContext = new SimpleTestPathContext();
+
+            // Set up solution and project
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+            var projectA = XPlatTestUtils.CreateProject("projectA", pathContext, "net6.0");
+
+            const string version1 = "1.0.0";
+            const string version2 = "2.0.0";
+            const string packageX = "X";
+
+            var packageFrameworks = "net5.0";
+            var packageX100 = XPlatTestUtils.CreatePackage(packageX, version1, frameworkString: packageFrameworks);
+            var packageX200 = XPlatTestUtils.CreatePackage(packageX, version2, frameworkString: packageFrameworks);
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                    pathContext.PackageSource,
+                    PackageSaveMode.Defaultv3,
+                    packageX100,
+                    packageX200);
+
+            var propsFile = @$"<Project>
+                                    <PropertyGroup>
+                                    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                                    </PropertyGroup>
+                                    <ItemGroup>
+                                    <PackageVersion Include=""X"" Version=""1.0.0"" />
+                                    <PackageReference Include=""X"" VersionOverride=""1.0.0""/>
+                                    </ItemGroup>
+                                </Project>
+                                ";
+
+            solution.Projects.Add(projectA);
+            solution.Create(pathContext.SolutionRoot);
+
+
+            File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props"), propsFile);
+            var projectADirectory = Path.Combine(pathContext.SolutionRoot, projectA.ProjectName);
+
+            // Arrange project file
+            string projectContent =
+    @$"<Project  Sdk=""Microsoft.NET.Sdk"">
+    <PropertyGroup>                   
+	    <TargetFramework>net6.0</TargetFramework>
+	    </PropertyGroup>
+    </Project>";
+            File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "projectA", "projectA.csproj"), projectContent);
+
+            //Act
+            var result = _fixture.RunDotnet(projectADirectory, $"add {projectA.ProjectPath} package {packageX} -v {version2}", ignoreExitCode: true);
+
+            // Assert
+            Assert.False(result.Success);
+            Assert.Contains("error: Package reference for package 'X' defined in incorrect location, PackageReference should be defined in project file.", result.Output);
+            Assert.Contains(@$"<PackageVersion Include=""X"" Version=""1.0.0"" />", File.ReadAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props")));
+            Assert.DoesNotContain(@$"<ItemGroup>
+        <PackageReference Include=""X"" VersionOverride=""2.0.0"" />
+    </ItemGroup>", File.ReadAllText(Path.Combine(projectADirectory, "projectA.csproj")));
+        }
+
+        [Fact]
+        public async Task AddPkg_WithCPM_WithPackageReference_WithVersionOverride_WrongPackageVersion_WithVersionCLI_WrongConfiguration_Error()
+        {
+            using var pathContext = new SimpleTestPathContext();
+
+            // Set up solution and project
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+            var projectA = XPlatTestUtils.CreateProject("projectA", pathContext, "net6.0");
+
+            const string version1 = "1.0.0";
+            const string version2 = "2.0.0";
+            const string packageX = "X";
+
+            var packageFrameworks = "net5.0";
+            var packageX100 = XPlatTestUtils.CreatePackage(packageX, version1, frameworkString: packageFrameworks);
+            var packageX200 = XPlatTestUtils.CreatePackage(packageX, version2, frameworkString: packageFrameworks);
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                    pathContext.PackageSource,
+                    PackageSaveMode.Defaultv3,
+                    packageX100,
+                    packageX200);
+
+            var propsFile = @$"<Project>
+                                    <PropertyGroup>
+                                    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                                    </PropertyGroup>
+                                </Project>
+                                ";
+
+            solution.Projects.Add(projectA);
+            solution.Create(pathContext.SolutionRoot);
+
+
+            File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props"), propsFile);
+            var projectADirectory = Path.Combine(pathContext.SolutionRoot, projectA.ProjectName);
+
+            // Arrange project file
+            string projectContent =
+    @$"<Project  Sdk=""Microsoft.NET.Sdk"">
+    <PropertyGroup>                   
+	    <TargetFramework>net6.0</TargetFramework>
+	    </PropertyGroup>
+        <ItemGroup>
+            <PackageVersion Include=""X"" Version=""1.0.0"" />
+            <PackageReference Include=""X"" VersionOverride=""1.0.0""/>
+        </ItemGroup>
+    </Project>";
+            File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "projectA", "projectA.csproj"), projectContent);
+
+            //Act
+            var result = _fixture.RunDotnet(projectADirectory, $"add {projectA.ProjectPath} package {packageX} -v {version2}", ignoreExitCode: true);
+
+            // Assert
+            Assert.False(result.Success);
+            Assert.Contains(" PackageVersion for package 'X' defined in incorrect location, PackageVersion should be defined in Directory.Package.props.", result.Output);
+            Assert.DoesNotContain(@$"<PackageVersion Include=""X"" Version=""2.0.0"" />", File.ReadAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props")));
+            Assert.Contains(@$"<ItemGroup>
+            <PackageVersion Include=""X"" Version=""1.0.0"" />
+            <PackageReference Include=""X"" VersionOverride=""1.0.0""/>
+        </ItemGroup>", File.ReadAllText(Path.Combine(projectADirectory, "projectA.csproj")));
+        }
+
+        [Fact]
+        public async Task AddPkg_WithCPM_WithPackageReference_DisabledVersionOverride_WrongPackageVersion_WithVersionCLI_WrongConfiguration_Error()
+        {
+            using var pathContext = new SimpleTestPathContext();
+
+            // Set up solution and project
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+            var projectA = XPlatTestUtils.CreateProject("projectA", pathContext, "net6.0");
+
+            const string version1 = "1.0.0";
+            const string version2 = "2.0.0";
+            const string packageX = "X";
+
+            var packageFrameworks = "net5.0";
+            var packageX100 = XPlatTestUtils.CreatePackage(packageX, version1, frameworkString: packageFrameworks);
+            var packageX200 = XPlatTestUtils.CreatePackage(packageX, version2, frameworkString: packageFrameworks);
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                    pathContext.PackageSource,
+                    PackageSaveMode.Defaultv3,
+                    packageX100,
+                    packageX200);
+
+            var propsFile = @$"<Project>
+                                    <PropertyGroup>
+                                    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+                                    </PropertyGroup>
+                                </Project>
+                                ";
+
+            solution.Projects.Add(projectA);
+            solution.Create(pathContext.SolutionRoot);
+
+
+            File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props"), propsFile);
+            var projectADirectory = Path.Combine(pathContext.SolutionRoot, projectA.ProjectName);
+
+            // Arrange project file
+            string projectContent =
+    @$"<Project  Sdk=""Microsoft.NET.Sdk"">
+    <PropertyGroup>                   
+	    <TargetFramework>net6.0</TargetFramework>
+        <CentralPackageVersionOverrideEnabled>false</CentralPackageVersionOverrideEnabled>
+	    </PropertyGroup>
+        <ItemGroup>
+            <PackageReference Include=""X"" VersionOverride=""1.0.0""/>
+        </ItemGroup>
+    </Project>";
+            File.WriteAllText(Path.Combine(pathContext.SolutionRoot, "projectA", "projectA.csproj"), projectContent);
+
+            //Act
+            var result = _fixture.RunDotnet(projectADirectory, $"add {projectA.ProjectPath} package {packageX} -v {version2}", ignoreExitCode: true);
+
+            // Assert
+            Assert.False(result.Success);
+            Assert.Contains("The package reference X specifies a VersionOverride but the ability to override a centrally defined version is currently disabled.", result.Output);
+            Assert.DoesNotContain(@$"<PackageVersion Include=""X"" Version=""2.0.0"" />", File.ReadAllText(Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props")));
+            Assert.Contains(@$"<ItemGroup>
+            <PackageReference Include=""X"" VersionOverride=""1.0.0""/>
+        </ItemGroup>", File.ReadAllText(Path.Combine(projectADirectory, "projectA.csproj")));
         }
     }
 }

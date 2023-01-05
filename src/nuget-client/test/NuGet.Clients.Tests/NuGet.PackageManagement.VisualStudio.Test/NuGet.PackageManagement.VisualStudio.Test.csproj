@@ -51,6 +51,7 @@
     <Compile Include="Services\TestSharedServiceState.cs" />
     <Compile Include="Services\NuGetPackageSearchServiceTests.cs" />
     <Compile Include="Telemetry\ActionsTelemetryServiceTests.cs" />
+    <Compile Include="Telemetry\PackageManagerUIRefreshTelemetryTests.cs" />
     <Compile Include="Telemetry\TelemetryOnceEmitterTests.cs" />
     <Compile Include="Telemetry\HyperlinkClickedTelemetryEventTests.cs" />
     <Compile Include="Telemetry\IntervalTrackerTests.cs" />
@@ -58,6 +59,9 @@
     <Compile Include="Telemetry\RestoreTelemetryServiceTests.cs" />
     <Compile Include="Telemetry\SearchSelectionTelemetryEventTests.cs" />
     <Compile Include="Telemetry\TestTelemetryUtility.cs" />
+    <Compile Include="Utility\FileWatchers\FileWatcherFactoryTests.cs" />
+    <Compile Include="Utility\FileWatchers\SolutionConfigFileWatcherTests.cs" />
+    <Compile Include="Utility\FileWatchers\UserConfigFileWatcherTests.cs" />
     <Compile Include="Utility\GetPackageReferenceUtilityTests.cs" />
     <Compile Include="VisualStudioCredentialProviderTests.cs" />
     <Compile Include="VsCredentialProviderAdapterTests.cs" />
@@ -65,6 +69,7 @@
     <Compile Include="VsProjectBuildPropertiesTelemetryTests.cs" />
     <Compile Include="VSRestoreSettingsUtilityTests.cs" />
     <Compile Include="Telemetry\VsTelemetrySessionTest.cs" />
+    <Compile Include="VSSettingsTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="compiler\resources\EntityFrameworkSearch.json" />

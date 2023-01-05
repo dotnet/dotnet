@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using NuGet.Frameworks;
+using NuGet.PackageManagement.VisualStudio.Utility;
 using NuGet.Packaging.Core;
 using NuGet.Versioning;
 using Xunit;
@@ -18,8 +19,8 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 TargetFramework = NuGetFramework.Parse("net472"),
                 Packages = new()
                 {
-                    ["package1"] = new Utility.ProjectInstalledPackage(VersionRange.Parse("1.0.0"), new PackageIdentity("package1", NuGetVersion.Parse("1.0.0"))),
-                    ["package2"] = new Utility.ProjectInstalledPackage(VersionRange.Parse("1.0.0"), new PackageIdentity("package2", NuGetVersion.Parse("1.0.0"))),
+                    ["package1"] = new ProjectInstalledPackage(VersionRange.Parse("1.0.0"), new PackageIdentity("package1", NuGetVersion.Parse("1.0.0"))),
+                    ["package2"] = new ProjectInstalledPackage(VersionRange.Parse("1.0.0"), new PackageIdentity("package2", NuGetVersion.Parse("1.0.0"))),
                 }
             };
 
@@ -28,8 +29,8 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 TargetFramework = NuGetFramework.Parse("net472"),
                 Packages = new()
                 {
-                    ["package1"] = new Utility.ProjectInstalledPackage(VersionRange.Parse("1.0.0"), new PackageIdentity("package1", NuGetVersion.Parse("1.0.0"))),
-                    ["package2"] = new Utility.ProjectInstalledPackage(VersionRange.Parse("1.0.0"), new PackageIdentity("package2", NuGetVersion.Parse("1.0.0"))),
+                    ["package1"] = new ProjectInstalledPackage(VersionRange.Parse("1.0.0"), new PackageIdentity("package1", NuGetVersion.Parse("1.0.0"))),
+                    ["package2"] = new ProjectInstalledPackage(VersionRange.Parse("1.0.0"), new PackageIdentity("package2", NuGetVersion.Parse("1.0.0"))),
                 }
             };
 
