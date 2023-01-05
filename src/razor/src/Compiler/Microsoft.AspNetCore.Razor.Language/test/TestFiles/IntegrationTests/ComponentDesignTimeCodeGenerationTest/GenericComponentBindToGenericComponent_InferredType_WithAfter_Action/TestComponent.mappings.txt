@@ -5,7 +5,7 @@ Generated Location: (581:17,22 [6] )
 
 Source Location: (49:1,30 [11] x:\dir\subdir\Test\TestComponent.cshtml)
 |ParentValue|
-Generated Location: (1228:35,30 [11] )
+Generated Location: (1270:35,30 [11] )
 |ParentValue|
 
 Source Location: (100:2,7 [79] x:\dir\subdir\Test\TestComponent.cshtml)
@@ -14,7 +14,7 @@ Source Location: (100:2,7 [79] x:\dir\subdir\Test\TestComponent.cshtml)
 
     public void Update() { }
 |
-Generated Location: (1760:53,7 [79] )
+Generated Location: (1802:53,7 [79] )
 |
     public TParam ParentValue { get; set; }
 

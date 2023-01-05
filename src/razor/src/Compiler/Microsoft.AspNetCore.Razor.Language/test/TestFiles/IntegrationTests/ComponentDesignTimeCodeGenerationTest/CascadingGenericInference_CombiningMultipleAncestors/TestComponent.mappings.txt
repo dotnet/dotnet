@@ -5,6 +5,16 @@ Generated Location: (1006:26,19 [12] )
 
 Source Location: (59:1,24 [7] x:\dir\subdir\Test\TestComponent.cshtml)
 |"Hello"|
-Generated Location: (1511:37,24 [7] )
+Generated Location: (1551:37,24 [7] )
 |"Hello"|
+
+Source Location: (50:1,15 [5] x:\dir\subdir\Test\TestComponent.cshtml)
+|Value|
+Generated Location: (2447:57,15 [5] )
+|Value|
+
+Source Location: (11:0,11 [5] x:\dir\subdir\Test\TestComponent.cshtml)
+|Value|
+Generated Location: (2893:76,11 [5] )
+|Value|
 

@@ -20,7 +20,7 @@ namespace Test
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
-            global::__Blazor.Test.TestComponent.TypeInference.CreateMyComponent_0(__builder, -1, -1, 
+            var __typeInference_CreateMyComponent_0 = global::__Blazor.Test.TestComponent.TypeInference.CreateMyComponent_0(__builder, -1, -1, 
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
                               ParentValue
@@ -30,6 +30,15 @@ namespace Test
 #nullable disable
             , -1, global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create(this, 
             global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, __value => ParentValue = __value, ParentValue)), -1, () => ParentValue);
+            __o = __typeInference_CreateMyComponent_0.
+#nullable restore
+#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
+                   SomeParam
+
+#line default
+#line hidden
+#nullable disable
+            ;
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
 __o = typeof(global::Test.MyComponent<>);
@@ -54,13 +63,14 @@ namespace __Blazor.Test.TestComponent
     #line hidden
     internal static class TypeInference
     {
-        public static void CreateMyComponent_0<T>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, global::System.Collections.Generic.IEnumerable<T> __arg0, int __seq1, global::Microsoft.AspNetCore.Components.EventCallback<global::System.Collections.Generic.IEnumerable<T>> __arg1, int __seq2, global::System.Linq.Expressions.Expression<global::System.Func<global::System.Collections.Generic.IEnumerable<T>>> __arg2)
+        public static global::Test.MyComponent<T> CreateMyComponent_0<T>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, global::System.Collections.Generic.IEnumerable<T> __arg0, int __seq1, global::Microsoft.AspNetCore.Components.EventCallback<global::System.Collections.Generic.IEnumerable<T>> __arg1, int __seq2, global::System.Linq.Expressions.Expression<global::System.Func<global::System.Collections.Generic.IEnumerable<T>>> __arg2)
         {
         __builder.OpenComponent<global::Test.MyComponent<T>>(seq);
         __builder.AddAttribute(__seq0, "SomeParam", __arg0);
         __builder.AddAttribute(__seq1, "SomeParamChanged", __arg1);
         __builder.AddAttribute(__seq2, "SomeParamExpression", __arg2);
         __builder.CloseComponent();
+        return default;
         }
     }
 }

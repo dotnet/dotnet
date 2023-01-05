@@ -5,23 +5,38 @@ Generated Location: (323:12,0 [10] )
 
 Source Location: (35:1,22 [5] x:\dir\subdir\Test\UseTestComponent.cshtml)
 |item1|
-Generated Location: (1140:32,22 [5] )
+Generated Location: (1184:32,22 [5] )
 |item1|
 
 Source Location: (49:1,36 [5] x:\dir\subdir\Test\UseTestComponent.cshtml)
 |items|
-Generated Location: (1326:40,36 [5] )
+Generated Location: (1370:40,36 [5] )
 |items|
 
 Source Location: (62:1,49 [5] x:\dir\subdir\Test\UseTestComponent.cshtml)
 |item1|
-Generated Location: (1525:48,49 [5] )
+Generated Location: (1569:48,49 [5] )
 |item1|
 
 Source Location: (78:2,8 [7] x:\dir\subdir\Test\UseTestComponent.cshtml)
 |context|
-Generated Location: (1713:56,8 [7] )
+Generated Location: (1757:56,8 [7] )
 |context|
+
+Source Location: (28:1,15 [5] x:\dir\subdir\Test\UseTestComponent.cshtml)
+|Item1|
+Generated Location: (1994:66,15 [5] )
+|Item1|
+
+Source Location: (41:1,28 [6] x:\dir\subdir\Test\UseTestComponent.cshtml)
+|Items2|
+Generated Location: (2225:75,28 [6] )
+|Items2|
+
+Source Location: (55:1,42 [5] x:\dir\subdir\Test\UseTestComponent.cshtml)
+|Item3|
+Generated Location: (2471:84,42 [5] )
+|Item3|
 
 Source Location: (118:5,7 [268] x:\dir\subdir\Test\UseTestComponent.cshtml)
 |
@@ -30,7 +45,7 @@ Source Location: (118:5,7 [268] x:\dir\subdir\Test\UseTestComponent.cshtml)
     static Tag tag2 = new Tag() { description = "Another description."};
     List<Tag> items = new List<Tag>() { tag1, tag2 };
 |
-Generated Location: (2103:74,7 [268] )
+Generated Location: (2842:101,7 [268] )
 |
     Image item1 = new Image() { id = 1, url="https://example.com"};
     static Tag tag1 = new Tag() { description = "A description."};

@@ -13,3 +13,8 @@ Source Location: (51:1,8 [17] x:\dir\subdir\Test\TestComponent.cshtml)
 Generated Location: (1504:43,8 [17] )
 |context.ToLower()|
 
+Source Location: (26:0,26 [4] x:\dir\subdir\Test\TestComponent.cshtml)
+|Item|
+Generated Location: (1766:53,26 [4] )
+|Item|
+

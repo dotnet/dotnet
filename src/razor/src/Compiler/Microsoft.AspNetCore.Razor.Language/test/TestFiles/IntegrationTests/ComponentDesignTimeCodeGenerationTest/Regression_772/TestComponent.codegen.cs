@@ -36,6 +36,15 @@ global::System.Object __typeHelper = "/";
             __builder.AddAttribute(-1, "ChildContent", (global::Microsoft.AspNetCore.Components.RenderFragment)((__builder2) => {
             }
             ));
+            __o = ((global::Test.SurveyPrompt)default).
+#nullable restore
+#line 7 "x:\dir\subdir\Test\TestComponent.cshtml"
+              Title
+
+#line default
+#line hidden
+#nullable disable
+            ;
 #nullable restore
 #line 7 "x:\dir\subdir\Test\TestComponent.cshtml"
 __o = typeof(global::Test.SurveyPrompt);

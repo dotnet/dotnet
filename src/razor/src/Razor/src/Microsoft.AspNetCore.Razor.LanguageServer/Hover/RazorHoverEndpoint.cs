@@ -45,6 +45,8 @@ internal class RazorHoverEndpoint : AbstractRazorDelegatingEndpoint<TextDocument
         return new RegistrationExtensionResult(AssociatedServerCapability, new SumType<bool, HoverOptions>(registrationOptions));
     }
 
+    protected override bool PreferCSharpOverHtmlIfPossible => true;
+
     protected override string CustomMessageTarget => RazorLanguageServerCustomMessageTargets.RazorHoverEndpointName;
 
     protected override Task<IDelegatedParams?> CreateDelegatedParamsAsync(TextDocumentPositionParamsBridge request, RazorRequestContext requestContext, Projection projection, CancellationToken cancellationToken)
@@ -66,9 +68,14 @@ internal class RazorHoverEndpoint : AbstractRazorDelegatingEndpoint<TextDocument
             return null;
         }
 
-        var location = new SourceLocation(projection.AbsoluteIndex, request.Position.Line, request.Position.Character);
-        var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken);
+        // Sometimes what looks like a html attribute can actually map to C#, in which case its better to let Roslyn try to handle this.
+        var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
+        if (_documentMappingService.TryMapToProjectedDocumentPosition(codeDocument, projection.AbsoluteIndex, out _, out _))
+        {
+            return null;
+        }
 
+        var location = new SourceLocation(projection.AbsoluteIndex, request.Position.Line, request.Position.Character);
         return _hoverInfoService.GetHoverInfo(codeDocument, location, _clientCapabilities!);
     }
 

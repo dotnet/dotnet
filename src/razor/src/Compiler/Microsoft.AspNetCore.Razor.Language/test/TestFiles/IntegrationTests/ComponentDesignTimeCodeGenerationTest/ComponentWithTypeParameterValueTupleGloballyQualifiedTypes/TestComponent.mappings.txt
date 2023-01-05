@@ -10,18 +10,23 @@ Generated Location: (711:24,22 [6] )
 
 Source Location: (239:11,27 [1] x:\dir\subdir\Test\TestComponent.cshtml)
 |1|
-Generated Location: (1358:42,27 [1] )
+Generated Location: (1402:42,27 [1] )
 |1|
 
 Source Location: (269:13,9 [20] x:\dir\subdir\Test\TestComponent.cshtml)
 |context.I1.MyClassId|
-Generated Location: (1541:50,9 [20] )
+Generated Location: (1585:50,9 [20] )
 |context.I1.MyClassId|
 
 Source Location: (293:13,33 [21] x:\dir\subdir\Test\TestComponent.cshtml)
 |context.I2.MyStructId|
-Generated Location: (1718:57,33 [21] )
+Generated Location: (1762:57,33 [21] )
 |context.I2.MyStructId|
+
+Source Location: (227:11,15 [10] x:\dir\subdir\Test\TestComponent.cshtml)
+|InferParam|
+Generated Location: (2011:67,15 [10] )
+|InferParam|
 
 Source Location: (38:3,7 [169] x:\dir\subdir\Test\TestComponent.cshtml)
 |
@@ -31,7 +36,7 @@ Source Location: (38:3,7 [169] x:\dir\subdir\Test\TestComponent.cshtml)
     [Parameter]
     public RenderFragment<(MyClass I1, MyStruct I2, TParam P)> Template { get; set; }
 |
-Generated Location: (2115:75,7 [169] )
+Generated Location: (2380:84,7 [169] )
 |
     [Parameter]
     public TParam InferParam { get; set; }

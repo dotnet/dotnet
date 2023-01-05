@@ -27,10 +27,24 @@ internal partial class EditorInProcess
         await ExecuteCommandAsync(commandGuid, (uint)commandId, cancellationToken);
     }
 
+    public async Task InvokeFindAllReferencesAsync(CancellationToken cancellationToken)
+    {
+        var commandGuid = typeof(VSStd97CmdID).GUID;
+        var commandId = VSStd97CmdID.FindReferences;
+        await ExecuteCommandAsync(commandGuid, (uint)commandId, cancellationToken);
+    }
+
     public async Task InvokeGoToImplementationAsync(CancellationToken cancellationToken)
     {
         var commandGuid = typeof(VSStd97CmdID).GUID;
         var commandId = VSStd97CmdID.GotoDecl;
+        await ExecuteCommandAsync(commandGuid, (uint)commandId, cancellationToken);
+    }
+
+    public async Task InvokeRenameAsync(CancellationToken cancellationToken)
+    {
+        var commandGuid = typeof(VSStd2KCmdID).GUID;
+        var commandId = VSStd2KCmdID.RENAME;
         await ExecuteCommandAsync(commandGuid, (uint)commandId, cancellationToken);
     }
 

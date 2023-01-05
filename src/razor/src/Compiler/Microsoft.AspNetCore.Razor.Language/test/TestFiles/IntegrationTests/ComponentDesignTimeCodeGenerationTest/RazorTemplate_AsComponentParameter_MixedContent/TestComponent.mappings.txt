@@ -23,3 +23,8 @@ Source Location: (136:1,24 [8] x:\dir\subdir\Test\TestComponent.cshtml)
 Generated Location: (1864:55,24 [8] )
 |template|
 
+Source Location: (125:1,13 [8] x:\dir\subdir\Test\TestComponent.cshtml)
+|Template|
+Generated Location: (2242:67,13 [8] )
+|Template|
+

@@ -5,6 +5,11 @@ Generated Location: (997:26,15 [23] )
 
 Source Location: (50:0,50 [12] x:\dir\subdir\Test\TestComponent.cshtml)
 |context.Year|
-Generated Location: (1565:36,50 [12] )
+Generated Location: (1637:36,50 [12] )
 |context.Year|
+
+Source Location: (6:0,6 [5] x:\dir\subdir\Test\TestComponent.cshtml)
+|Items|
+Generated Location: (2075:55,6 [5] )
+|Items|
 

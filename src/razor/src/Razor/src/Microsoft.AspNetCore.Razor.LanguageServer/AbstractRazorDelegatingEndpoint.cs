@@ -37,6 +37,12 @@ internal abstract class AbstractRazorDelegatingEndpoint<TRequest, TResponse> : I
     protected virtual bool OnlySingleServer { get; } = true;
 
     /// <summary>
+    /// When <see langword="true" />, we'll try to map the cursor position to C# even when it is in a Html context, for example
+    /// for component attributes that are fully within a Html context, but map to a C# property write in the generated document.
+    /// </summary>
+    protected virtual bool PreferCSharpOverHtmlIfPossible { get; } = false;
+
+    /// <summary>
     /// The name of the endpoint to delegate to, from <see cref="RazorLanguageServerCustomMessageTargets"/>. This is the
     /// custom endpoint that is sent via <see cref="ClientNotifierServiceBase"/> which returns
     /// a response by delegating to C#/HTML.
@@ -112,11 +118,24 @@ internal abstract class AbstractRazorDelegatingEndpoint<TRequest, TResponse> : I
             return default;
         }
 
-        // We can only delegate to C# and HTML, so if we're in a Razor context and our inheritor didn't want to provide
-        // any response then that's all we can do.
         if (projection.LanguageKind == RazorLanguageKind.Razor)
         {
+            // We can only delegate to C# and HTML, so if we're in a Razor context and our inheritor didn't want to provide
+            // any response then that's all we can do.
             return default;
+        }
+        else if (projection.LanguageKind == RazorLanguageKind.Html && PreferCSharpOverHtmlIfPossible)
+        {
+            // Sometimes Html can actually be mapped to C#, like for example component attributes, which map to
+            // C# properties, even though they appear entirely in a Html context. Since remapping is pretty cheap
+            // it's easier to just try mapping, and see what happens, rather than checking for specific syntax nodes.
+            var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
+            if (_documentMappingService.TryMapToProjectedDocumentPosition(codeDocument, projection.AbsoluteIndex, out var csharpPosition, out _))
+            {
+                // We're just gonna pretend this mapped perfectly normally onto C#. Moving this logic to the actual projection
+                // calculating code is possible, but could have untold effects, so opt-in is better (for now?)
+                projection = new Projection(RazorLanguageKind.CSharp, csharpPosition, projection.AbsoluteIndex);
+            }
         }
 
         var delegatedParams = await CreateDelegatedParamsAsync(request, requestContext, projection, cancellationToken);

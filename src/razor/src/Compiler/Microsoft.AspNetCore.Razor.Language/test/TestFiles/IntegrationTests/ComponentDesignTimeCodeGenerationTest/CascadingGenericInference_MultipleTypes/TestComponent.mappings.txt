@@ -10,6 +10,21 @@ Generated Location: (1318:34,83 [17] )
 
 Source Location: (133:1,29 [23] x:\dir\subdir\Test\TestComponent.cshtml)
 |new[] { 'a', 'b', 'c' }|
-Generated Location: (1921:44,29 [23] )
+Generated Location: (1994:44,29 [23] )
 |new[] { 'a', 'b', 'c' }|
+
+Source Location: (115:1,11 [14] x:\dir\subdir\Test\TestComponent.cshtml)
+|ChildOnlyItems|
+Generated Location: (2232:53,11 [14] )
+|ChildOnlyItems|
+
+Source Location: (8:0,8 [4] x:\dir\subdir\Test\TestComponent.cshtml)
+|Data|
+Generated Location: (2653:71,8 [4] )
+|Data|
+
+Source Location: (75:0,75 [5] x:\dir\subdir\Test\TestComponent.cshtml)
+|Other|
+Generated Location: (2928:80,75 [5] )
+|Other|
 

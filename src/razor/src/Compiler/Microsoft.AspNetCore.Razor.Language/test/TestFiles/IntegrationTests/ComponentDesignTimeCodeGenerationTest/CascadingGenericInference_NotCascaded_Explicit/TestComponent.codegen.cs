@@ -39,7 +39,7 @@ namespace Test
 #nullable disable
             );
             __builder.AddAttribute(-1, "ChildContent", (global::Microsoft.AspNetCore.Components.RenderFragment)((__builder2) => {
-                global::__Blazor.Test.TestComponent.TypeInference.CreateColumn_0(__builder2, -1);
+                var __typeInference_CreateColumn_0 = global::__Blazor.Test.TestComponent.TypeInference.CreateColumn_0(__builder2, -1);
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
 __o = typeof(global::Test.Column<>);
@@ -49,6 +49,15 @@ __o = typeof(global::Test.Column<>);
 #nullable disable
             }
             ));
+            __o = ((global::Test.Grid<DateTime>)default).
+#nullable restore
+#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
+                       Items
+
+#line default
+#line hidden
+#nullable disable
+            ;
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
 __o = typeof(global::Test.Grid<>);
@@ -65,10 +74,11 @@ namespace __Blazor.Test.TestComponent
     #line hidden
     internal static class TypeInference
     {
-        public static void CreateColumn_0<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq)
+        public static global::Test.Column<System.Object> CreateColumn_0<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq)
         {
         __builder.OpenComponent<global::Test.Column<System.Object>>(seq);
         __builder.CloseComponent();
+        return default;
         }
     }
 }

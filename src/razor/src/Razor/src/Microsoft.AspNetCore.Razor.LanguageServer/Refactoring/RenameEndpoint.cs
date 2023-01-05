@@ -63,6 +63,8 @@ internal class RenameEndpoint : AbstractRazorDelegatingEndpoint<RenameParamsBrid
         return new RegistrationExtensionResult(ServerCapability, new SumType<bool, RenameOptions>(options));
     }
 
+    protected override bool PreferCSharpOverHtmlIfPossible => true;
+
     protected override string CustomMessageTarget => RazorLanguageServerCustomMessageTargets.RazorRenameEndpointName;
 
     protected override async Task<WorkspaceEdit?> TryHandleAsync(RenameParamsBridge request, RazorRequestContext requestContext, Projection projection, CancellationToken cancellationToken)
@@ -96,7 +98,7 @@ internal class RenameEndpoint : AbstractRazorDelegatingEndpoint<RenameParamsBrid
                 request.NewName));
     }
 
-    protected override async Task<WorkspaceEdit?> HandleDelegatedResponseAsync(WorkspaceEdit? response, RenameParamsBridge request, RazorRequestContext reqeuestContext, Projection projection, CancellationToken cancellationToken)
+    protected override async Task<WorkspaceEdit?> HandleDelegatedResponseAsync(WorkspaceEdit? response, RenameParamsBridge request, RazorRequestContext requestContext, Projection projection, CancellationToken cancellationToken)
     {
         if (response is null)
         {

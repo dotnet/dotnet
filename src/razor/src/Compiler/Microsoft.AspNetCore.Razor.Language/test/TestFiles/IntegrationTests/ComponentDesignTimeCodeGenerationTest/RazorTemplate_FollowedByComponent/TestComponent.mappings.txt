@@ -10,16 +10,21 @@ Source Location: (73:1,69 [11] x:\dir\subdir\Test\TestComponent.cshtml)
 Generated Location: (1266:34,69 [11] )
 |person.Name|
 
+Source Location: (66:1,62 [4] x:\dir\subdir\Test\TestComponent.cshtml)
+|Name|
+Generated Location: (1717:46,62 [4] )
+|Name|
+
 Source Location: (93:1,89 [3] x:\dir\subdir\Test\TestComponent.cshtml)
 |;
 |
-Generated Location: (1860:53,89 [3] )
+Generated Location: (2127:62,89 [3] )
 |;
 |
 
 Source Location: (116:4,2 [15] x:\dir\subdir\Test\TestComponent.cshtml)
 |"hello, world!"|
-Generated Location: (2120:61,6 [15] )
+Generated Location: (2387:70,6 [15] )
 |"hello, world!"|
 
 Source Location: (159:7,7 [76] x:\dir\subdir\Test\TestComponent.cshtml)
@@ -29,7 +34,7 @@ Source Location: (159:7,7 [76] x:\dir\subdir\Test\TestComponent.cshtml)
         public string Name { get; set; }
     }
 |
-Generated Location: (2507:79,7 [76] )
+Generated Location: (2774:88,7 [76] )
 |
     class Person
     {

@@ -34,6 +34,8 @@ public abstract class CodeRenderingContext
 
     public abstract void AddSourceMappingFor(IntermediateNode node);
 
+    public abstract void AddSourceMappingFor(SourceSpan node);
+
     public abstract void RenderNode(IntermediateNode node);
 
     public abstract void RenderNode(IntermediateNode node, IntermediateNodeWriter writer);

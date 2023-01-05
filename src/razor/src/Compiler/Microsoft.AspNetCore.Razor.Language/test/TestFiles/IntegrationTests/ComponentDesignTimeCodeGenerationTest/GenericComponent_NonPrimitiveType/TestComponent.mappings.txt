@@ -8,3 +8,8 @@ Source Location: (38:0,38 [16] x:\dir\subdir\Test\TestComponent.cshtml)
 Generated Location: (1215:34,38 [16] )
 |new CustomType()|
 
+Source Location: (32:0,32 [4] x:\dir\subdir\Test\TestComponent.cshtml)
+|Item|
+Generated Location: (1632:46,32 [4] )
+|Item|
+

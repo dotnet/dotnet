@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
@@ -356,6 +357,10 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
             throw new ArgumentNullException(nameof(node));
         }
 
+        // We might need a scope for inferring types, 
+        CodeWriterExtensions.CSharpCodeWritingScope? typeInferenceCaptureScope = null;
+        string typeInferenceLocalName = null;
+
         if (node.TypeInferenceNode == null)
         {
             // Writes something like:
@@ -426,7 +431,6 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
             // into two parts. First we call an inference method that captures all the parameters in local variables,
             // then we use those to call the real type inference method that emits the component. The reason for this
             // is so the captured variables can be used by descendants without re-evaluating the expressions.
-            CodeWriterExtensions.CSharpCodeWritingScope? typeInferenceCaptureScope = null;
             if (node.Component.SuppliesCascadingGenericParameters())
             {
                 typeInferenceCaptureScope = context.CodeWriter.BuildScope();
@@ -464,6 +468,17 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
             //
             // __Blazor.MyComponent.TypeInference.CreateMyComponent_0(__builder, 0, 1, ..., 2, ..., 3, ....);
 
+            // We don't need an instance of this component, but having its type information is useful later for allowing
+            // Roslyn to bind to properties that represent component attributes.
+            // It's a bit silly that this variable will be called __typeInference_CreateMyComponent_0 with "Create" in the
+            // name, but since we've already done the work to create a unique name, we should reuse it.
+
+            typeInferenceLocalName = $"__typeInference_{node.TypeInferenceNode.MethodName}";
+
+            context.CodeWriter.Write("var ");
+            context.CodeWriter.Write(typeInferenceLocalName);
+            context.CodeWriter.Write(" = ");
+
             context.CodeWriter.Write("global::");
             context.CodeWriter.Write(node.TypeInferenceNode.FullTypeName);
             context.CodeWriter.Write(".");
@@ -490,12 +505,19 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
 
             context.CodeWriter.Write(");");
             context.CodeWriter.WriteLine();
+        }
 
-            if (typeInferenceCaptureScope.HasValue)
+        // We need to write property access here in case we're in a scope for capturing types, because we need to re-use
+        // the type inference local for accessing property names
+        foreach (var child in node.Children)
+        {
+            if (child is ComponentAttributeIntermediateNode attribute)
             {
-                typeInferenceCaptureScope.Value.Dispose();
+                WritePropertyAccess(context, attribute, node, typeInferenceLocalName);
             }
         }
+
+        typeInferenceCaptureScope?.Dispose();
 
         // We want to generate something that references the Component type to avoid
         // the "usings directive is unnecessary" message.
@@ -534,6 +556,11 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
             context.CodeWriter.Write(");");
             context.CodeWriter.WriteLine();
         }
+    }
+
+    public override void WriteComponentTypeInferenceMethod(CodeRenderingContext context, ComponentTypeInferenceMethodIntermediateNode node)
+    {
+        base.WriteComponentTypeInferenceMethod(context, node, returnComponentType: true);
     }
 
     private void WriteTypeInferenceMethodParameterInnards(CodeRenderingContext context, TypeInferenceMethodParameter parameter)
@@ -591,6 +618,100 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
 
         // Following the same design pattern as the runtime codegen
         WriteComponentAttributeInnards(context, node, canTypeCheck: true);
+
+        context.CodeWriter.Write(";");
+        context.CodeWriter.WriteLine();
+    }
+
+    private void WritePropertyAccess(CodeRenderingContext context, ComponentAttributeIntermediateNode node, ComponentIntermediateNode componentNode, string typeInferenceLocalName)
+    {
+        if (node?.TagHelper?.Name is null || node.Annotations["OriginalAttributeSpan"] is null)
+        {
+            return;
+        }
+
+        // Write the name of the property, for rename support.
+        // __o = ((global::ComponentName)default).PropertyName;
+        var originalAttributeName = node.Annotations[ComponentMetadata.Common.OriginalAttributeName]?.ToString() ?? node.AttributeName;
+
+        int offset;
+        if (originalAttributeName == node.PropertyName)
+        {
+            offset = 0;
+        }
+        else if (originalAttributeName.StartsWith($"@bind-{node.PropertyName}", StringComparison.Ordinal))
+        {
+            offset = 5;
+        }
+        else
+        {
+            return;
+        }
+
+        var attributeSourceSpan = (SourceSpan)node.Annotations["OriginalAttributeSpan"];
+        attributeSourceSpan = new SourceSpan(attributeSourceSpan.FilePath, attributeSourceSpan.AbsoluteIndex + offset, attributeSourceSpan.LineIndex, attributeSourceSpan.CharacterIndex + offset, node.PropertyName.Length, attributeSourceSpan.LineCount, attributeSourceSpan.CharacterIndex + offset + node.PropertyName.Length);
+
+        context.CodeWriter.Write(DesignTimeVariable);
+        context.CodeWriter.Write(" = ");
+
+        if (componentNode.TypeInferenceNode == null)
+        {
+            context.CodeWriter.Write("((global::");
+            context.CodeWriter.Write(componentNode.Component.GetTypeNamespace());
+            context.CodeWriter.Write(".");
+            context.CodeWriter.Write(componentNode.Component.GetTypeNameIdentifier());
+            if (componentNode.Component.IsGenericTypedComponent())
+            {
+                // If there are generic type components, but no type inference node, then it means
+                // the user specified the type parameters, so we can use them directly
+                context.CodeWriter.Write("<");
+
+                var i = 0;
+                foreach (var typeArgumentNode in componentNode.Children.OfType<ComponentTypeArgumentIntermediateNode>())
+                {
+                    if (i++ > 0)
+                    {
+                        context.CodeWriter.Write(", ");
+                    }
+
+                    foreach (var token in typeArgumentNode.Children.OfType<IntermediateToken>())
+                    {
+                        // As per WriteComponentTypeArgument, we expect every token to be C#, but check just in case
+                        if (token.IsCSharp)
+                        {
+                            context.CodeWriter.Write(token.Content);
+                        }
+                        else
+                        {
+                            Debug.Fail($"Unexpected non-C# content in a generic type parameter: '{token.Content}'");
+                        }
+                    }
+                }
+                context.CodeWriter.Write(">");
+            }
+            context.CodeWriter.Write(")default)");
+        }
+        else
+        {
+            if (typeInferenceLocalName is null)
+            {
+                throw new InvalidOperationException("No type inference local name was supplied, but type inference is required to reference a component type.");
+            }
+
+            // Earlier when we did the type inference stuff, we captured a variable which the compiler would know the type information
+            // for explicitly for the purposes of using it now
+            context.CodeWriter.Write(typeInferenceLocalName);
+        }
+
+        context.CodeWriter.Write(".");
+        context.CodeWriter.WriteLine();
+
+        using (context.CodeWriter.BuildLinePragma(attributeSourceSpan, context))
+        {
+            context.CodeWriter.WritePadding(0, attributeSourceSpan, context);
+            context.AddSourceMappingFor(attributeSourceSpan);
+            context.CodeWriter.WriteLine(node.PropertyName);
+        }
 
         context.CodeWriter.Write(";");
         context.CodeWriter.WriteLine();

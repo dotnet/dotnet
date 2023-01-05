@@ -3,6 +3,11 @@ Source Location: (23:0,23 [9] x:\dir\subdir\Test\TestComponent.cshtml)
 Generated Location: (1123:25,23 [9] )
 |Increment|
 
+Source Location: (13:0,13 [7] x:\dir\subdir\Test\TestComponent.cshtml)
+|OnClick|
+Generated Location: (1503:37,13 [7] )
+|OnClick|
+
 Source Location: (46:2,7 [123] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     private int counter;
@@ -11,7 +16,7 @@ Source Location: (46:2,7 [123] x:\dir\subdir\Test\TestComponent.cshtml)
         return Task.CompletedTask;
     }
 |
-Generated Location: (1651:45,7 [123] )
+Generated Location: (1864:54,7 [123] )
 |
     private int counter;
     private Task Increment() {

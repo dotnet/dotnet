@@ -105,6 +105,20 @@ internal partial class EditorInProcess
             cancellationToken);
     }
 
+    public async Task WaitForCurrentLineTextStartsWithAsync(string text, CancellationToken cancellationToken)
+    {
+        await Helper.RetryAsync(async ct =>
+            {
+                var view = await GetActiveTextViewAsync(cancellationToken);
+                var caret = view.Caret.Position.BufferPosition;
+                var line = view.TextBuffer.CurrentSnapshot.GetLineFromPosition(caret).GetText();
+
+                return line.Trim().StartsWith(text.Trim());
+            },
+            TimeSpan.FromMilliseconds(50),
+            cancellationToken);
+    }
+
     public async Task WaitForActiveWindowAsync(string windowTitle, CancellationToken cancellationToken)
     {
         await Helper.RetryAsync(async ct =>

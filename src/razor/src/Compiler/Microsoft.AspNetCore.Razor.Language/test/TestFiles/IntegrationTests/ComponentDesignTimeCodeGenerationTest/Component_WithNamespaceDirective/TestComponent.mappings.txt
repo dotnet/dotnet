@@ -8,3 +8,13 @@ Source Location: (24:1,11 [11] x:\dir\subdir\Test\TestComponent.cshtml)
 Generated Location: (735:24,44 [11] )
 |AnotherTest|
 
+Source Location: (56:3,17 [6] x:\dir\subdir\Test\TestComponent.cshtml)
+|Header|
+Generated Location: (1510:46,17 [6] )
+|Header|
+
+Source Location: (109:5,17 [6] x:\dir\subdir\Test\TestComponent.cshtml)
+|Footer|
+Generated Location: (2088:66,17 [6] )
+|Footer|
+

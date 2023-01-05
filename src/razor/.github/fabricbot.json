@@ -746,7 +746,7 @@
           {
             "name": "noActivitySince",
             "parameters": {
-              "days": 4
+              "days": 7
             }
           },
           {
@@ -767,7 +767,7 @@
           {
             "name": "addReply",
             "parameters": {
-              "comment": "This issue has been automatically marked as stale because it has been marked as requiring author feedback but has not had any activity for **4 days**. It will be closed if no further activity occurs **within 3 days of this comment**. If it *is* closed, feel free to comment when you are able to provide the additional information and we will re-investigate.\n\nPlease see our [Issue Management Policies](https://github.com/dotnet/razor-tooling/blob/main/docs/IssueManagementPolicies.md) for more information."
+              "comment": "This issue has been automatically marked as stale because it has been marked as requiring author feedback but has not had any activity for **7 days**. It will be closed if no further activity occurs **within 7 days of this comment**. If it *is* closed, feel free to comment when you are able to provide the additional information and we will re-investigate.\n\nPlease see our [Issue Management Policies](https://github.com/dotnet/razor-tooling/blob/main/docs/IssueManagementPolicies.md) for more information."
             }
           }
         ]
@@ -955,7 +955,7 @@
           {
             "name": "noActivitySince",
             "parameters": {
-              "days": 3
+              "days": 7
             }
           }
         ],

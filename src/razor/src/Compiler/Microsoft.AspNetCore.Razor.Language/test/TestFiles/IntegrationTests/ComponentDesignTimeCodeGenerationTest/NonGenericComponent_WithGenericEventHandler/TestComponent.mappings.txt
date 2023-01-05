@@ -1,8 +1,13 @@
+Source Location: (13:0,13 [4] x:\dir\subdir\Test\TestComponent.cshtml)
+|Item|
+Generated Location: (1146:30,13 [4] )
+|Item|
+
 Source Location: (64:2,7 [39] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     public void MyEventHandler() {}
 |
-Generated Location: (1294:38,7 [39] )
+Generated Location: (1504:47,7 [39] )
 |
     public void MyEventHandler() {}
 |

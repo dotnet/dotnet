@@ -53,6 +53,11 @@ public sealed class ComponentAttributeIntermediateNode : IntermediateNode
         TagHelper = propertyNode.TagHelper;
         TypeName = propertyNode.BoundAttribute.IsWeaklyTyped() ? null : propertyNode.BoundAttribute.TypeName;
 
+        foreach (var annotation in propertyNode.Annotations)
+        {
+            Annotations[annotation.Key] = annotation.Value;
+        }
+
         for (var i = 0; i < propertyNode.Children.Count; i++)
         {
             Children.Add(propertyNode.Children[i]);
@@ -78,6 +83,11 @@ public sealed class ComponentAttributeIntermediateNode : IntermediateNode
         Source = directiveAttributeNode.Source;
         TagHelper = directiveAttributeNode.TagHelper;
         TypeName = directiveAttributeNode.BoundAttribute.IsWeaklyTyped() ? null : directiveAttributeNode.BoundAttribute.TypeName;
+
+        foreach (var annotation in directiveAttributeNode.Annotations)
+        {
+            Annotations[annotation.Key] = annotation.Value;
+        }
 
         for (var i = 0; i < directiveAttributeNode.Children.Count; i++)
         {
