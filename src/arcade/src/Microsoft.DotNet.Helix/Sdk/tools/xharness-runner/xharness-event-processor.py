@@ -263,6 +263,12 @@ def analyze_operation(command: str, platform: str, device: str, is_device: bool,
                 retry = True
                 return
 
+            if exit_code == 78: # PACKAGE_INSTALLATION_FAILURE
+                print(f'    Encountered PACKAGE_INSTALLATION_FAILURE. This might be a transient issue with the device')
+                retry = True
+                reboot = True
+                return
+
         else:
             if exit_code == 78: # PACKAGE_INSTALLATION_FAILURE
                 print(f'    Encountered PACKAGE_INSTALLATION_FAILURE. This might be caused by a corrupt simulator')

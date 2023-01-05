@@ -5,33 +5,101 @@
   <!--
     Runs in a leaf project (csproj) to determine best configuration for ProjectReferences.
     Make sure to run late enough for transitive dependencies which runs before AssignProjectConfiguration.
+    Keep target in sync with SDK's _GetProjectReferenceTargetFrameworkProperties target.
   -->
   <Target Name="ResolveP2PReferences"
           Condition="'@(ProjectReference)' != ''"
           BeforeTargets="AssignProjectConfiguration"
-          DependsOnTargets="ResolvePackageDependenciesForBuild">
+          DependsOnTargets="ResolvePackageDependenciesForBuild;_AddOutputPathToGlobalPropertiesToRemove">
+    <!--
+      Select the moniker to send to each project reference  if not already set. NugetTargetMoniker (NTM) is preferred by default over
+      TargetFrameworkMoniker (TFM) because it is required to disambiguate the UWP case where TFM is fixed at .NETCore,Version=v5.0 and
+      has floating NTM=UAP,Version=vX.Y.Z. However, in other cases (classic PCLs), NTM contains multiple values and that will cause the MSBuild
+      invocation below to fail by passing invalid properties. Therefore we do not use the NTM if it contains a semicolon.
+    -->
+    <PropertyGroup Condition="'$(ReferringTargetFrameworkForProjectReferences)' == ''">
+      <ReferringTargetFrameworkForProjectReferences Condition="'$(NuGetTargetMoniker)' != '' and !$(NuGetTargetMoniker.Contains(';'))">$(NuGetTargetMoniker)</ReferringTargetFrameworkForProjectReferences>
+      <ReferringTargetFrameworkForProjectReferences Condition="'$(NuGetTargetMoniker)' == ''">$(TargetFrameworkMoniker)</ReferringTargetFrameworkForProjectReferences>
+    </PropertyGroup>
+
+    <!--
+       Allow project references to specify which target framework properties to set and their values
+       without consulting the referenced project. This has two use cases:
+
+       1. A caller may wish to pick a compatible but sub-optimal target framework. For example,
+          to unit test the .NETStandard implementation using a .NETFramework caller even though
+          there is also a .NETFramework implementation.
+
+       2. As an escape hatch for cases where the compatibility check performed by
+          GetTargetFrameworkProperties is faulty.
+    -->
+    <ItemGroup>
+      <ProjectReference Condition="'%(ProjectReference.SetTargetFramework)' != ''">
+        <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
+      </ProjectReference>
+    </ItemGroup>
+
+    <!--
+       SetPlatform negotiation requires the 'GetTargetFrameworks' MSBuild call to NOT pass global properties. This is to verify
+       whether or not the referenced project would build as the same platform as the current project by default.
+    -->
     <MSBuild Projects="@(ProjectReference)"
              Targets="GetTargetFrameworks"
              BuildInParallel="$(BuildInParallel)"
-             RemoveProperties="TargetFramework;RuntimeIdentifier"
+             Properties="%(ProjectReference.SetConfiguration);%(ProjectReference.SetPlatform)"
+             RemoveProperties="%(ProjectReference.GlobalPropertiesToRemove);TargetFramework;RuntimeIdentifier;SelfContained;$(_GlobalPropertiesToRemoveFromProjectReferences)"
              Condition="'%(ProjectReference.SkipGetTargetFrameworkProperties)' != 'true'">
       <Output TaskParameter="TargetOutputs" ItemName="_ProjectReferenceWithTargetFrameworks" />
     </MSBuild>
 
-    <ItemGroup>
-      <_ProjectReferenceWithTargetFrameworks Include="@(ProjectReference->WithMetadataValue('SkipGetTargetFrameworkProperties', 'true'))" />
-    </ItemGroup>
-
-    <ChooseBestP2PTargetFrameworkTask ProjectReferencesWithTargetFrameworks="@(_ProjectReferenceWithTargetFrameworks)"
-                                      RuntimeGraph="$(RuntimeGraph)"
-                                      TargetFramework="$(TargetFramework)"
+    <ChooseBestP2PTargetFrameworkTask AnnotatedProjectReferences="@(_ProjectReferenceWithTargetFrameworks)"
+                                      CurrentProjectTargetFramework="$(ReferringTargetFrameworkForProjectReferences)"
+                                      CurrentProjectTargetPlatform="$(TargetPlatformMoniker)"
+                                      RuntimeGraph="$(BundledRuntimeIdentifierGraphFile)"
                                       OmitIncompatibleProjectReferences="$(OmitIncompatibleProjectReferences)">
-      <Output TaskParameter="AnnotatedProjectReferencesWithSetTargetFramework" ItemName="_ProjectReferenceWithBestTargetFramework" />
+      <Output TaskParameter="AssignedProjects" ItemName="AnnotatedProjects" />
     </ChooseBestP2PTargetFrameworkTask>
+
+    <!-- IsRidAgnostic metadata is used to determine whether global properties such as RuntimeIdentifier and SelfContained flow to a referenced project.
+         However, for multi-targeted projects there may be a different IsRidAgnostic value for each TargetFramework.  In that case, this task selects
+         the IsRidAgnostic value for the NearestTargetFramework for the project. -->
+    <SetRidAgnosticValueForProjects Projects="@(AnnotatedProjects)">
+      <Output ItemName="UpdatedAnnotatedProjects" TaskParameter="UpdatedProjects" />
+    </SetRidAgnosticValueForProjects>
     
     <ItemGroup>
-      <ProjectReference Remove="@(ProjectReference)" />
-      <ProjectReference Include="@(_ProjectReferenceWithBestTargetFramework)" />
+      <AnnotatedProjects Remove="@(AnnotatedProjects)" />
+      <AnnotatedProjects Include="@(UpdatedAnnotatedProjects)" />
+      <UpdatedAnnotatedProjects Remove="@(UpdatedAnnotatedProjects)" />
+
+      <!-- If the NearestTargetFramework property was set and the project multi-targets, SetTargetFramework must be set. -->
+      <AnnotatedProjects Condition="'%(AnnotatedProjects.NearestTargetFramework)' != '' and '%(AnnotatedProjects.HasSingleTargetFramework)' != 'true'">
+        <SetTargetFramework>TargetFramework=%(AnnotatedProjects.NearestTargetFramework)</SetTargetFramework>
+      </AnnotatedProjects>
+
+      <!--
+         If the NearestTargetFramework property was not set or the project has a single TargetFramework, we need to Undefine
+         TargetFramework to avoid another project evaluation.
+      -->
+      <AnnotatedProjects Condition="'%(AnnotatedProjects.NearestTargetFramework)' == '' or '%(AnnotatedProjects.HasSingleTargetFramework)' == 'true'">
+        <UndefineProperties>%(AnnotatedProjects.UndefineProperties);TargetFramework</UndefineProperties>
+      </AnnotatedProjects>
+
+      <!-- Add RuntimeIdentifier and SelfContained to the list of global properties that should not flow to the referenced project,
+           unless the project is expecting those properties to flow. -->
+      <AnnotatedProjects Condition="'%(AnnotatedProjects.IsRidAgnostic)' != 'false'">
+        <UndefineProperties>%(AnnotatedProjects.UndefineProperties);RuntimeIdentifier;SelfContained</UndefineProperties>
+      </AnnotatedProjects>
+
+      <!--
+         Remove the items we've touched from _MSBuildProjectReferenceExistent. This will leave all projects where
+         SkipGetTargetFrameworkProperties was set. Then add all AnnotatedProjects back and mark them with
+         SkipGetTargetFrameworkProperties so that the SDK's _GetProjectReferenceTargetFrameworkProperties target doesn't
+         retrieve the target framework properties again.
+      -->
+      <ProjectReference Remove="@(ProjectReference)" Condition="'%(ProjectReference.SkipGetTargetFrameworkProperties)' != 'true'" />
+      <ProjectReference Include="@(AnnotatedProjects)" SkipGetTargetFrameworkProperties="true" />
+      <AnnotatedProjects Remove="@(AnnotatedProjects)" />
     </ItemGroup>
   </Target>
 
