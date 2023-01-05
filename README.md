@@ -165,11 +165,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/diagnostics`  
 *[dotnet/diagnostics@e3e1490](https://github.com/dotnet/diagnostics/commit/e3e1490a23f27a6e0ed30d323035660c3ffc52cd)*
 - `src/format`  
-*[dotnet/format@dcbc301](https://github.com/dotnet/format/commit/dcbc3017454ff21254cbedb9a86660befb355085)*
+*[dotnet/format@2cb3e68](https://github.com/dotnet/format/commit/2cb3e68c6b9a966114572fd63f2a20d2cb54a288)*
 - `src/fsharp`  
 *[dotnet/fsharp@794b7c2](https://github.com/dotnet/fsharp/commit/794b7c259d9646a7eb685dad865aa27da7940a21)*
 - `src/installer`  
-*[dotnet/installer@20892be](https://github.com/dotnet/installer/commit/20892be849c2732be3d4c5b19fef03513dd50e37)*
+*[dotnet/installer@ad192d3](https://github.com/dotnet/installer/commit/ad192d3eff1acf53e94cc0ed4d54029632908c81)*
 - `src/linker`  
 *[dotnet/linker@4b3f78c](https://github.com/dotnet/linker/commit/4b3f78cbc7284b4198652a695e9fe0267133728e)*
     - `src/linker/external/cecil`  
@@ -187,9 +187,9 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/roslyn-analyzers`  
 *[dotnet/roslyn-analyzers@2f82379](https://github.com/dotnet/roslyn-analyzers/commit/2f82379cbe1a75e87cc968a5bec08165dbd8a7b1)*
 - `src/runtime`  
-*[dotnet/runtime@7bbee52](https://github.com/dotnet/runtime/commit/7bbee52b2aaa22f3116b96aedb6a758a2d5bd63b)*
+*[dotnet/runtime@a224371](https://github.com/dotnet/runtime/commit/a2243718922e85370f137bdfa3e30a8eedebe954)*
 - `src/sdk`  
-*[dotnet/sdk@770df6c](https://github.com/dotnet/sdk/commit/770df6c35cd91de37c4cc7499c8304246f51ff6e)*
+*[dotnet/sdk@4a5827e](https://github.com/dotnet/sdk/commit/4a5827e6b6c2a3f17abecdadd88f3de4c6f59c93)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@5ba938b](https://github.com/dotnet/source-build-externals/commit/5ba938b8c5edaba9c469ff7854d043d1e74d3cd3)*
     - `src/source-build-externals/src/application-insights`  
@@ -211,11 +211,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/symreader`  
 *[dotnet/symreader@7b9791d](https://github.com/dotnet/symreader/commit/7b9791daa3a3477eb22ec805946c9fff8b42d8ca)*
 - `src/templating`  
-*[dotnet/templating@76a5989](https://github.com/dotnet/templating/commit/76a5989d2215e5675756ddf4878f7f4c0f3c1dfe)*
+*[dotnet/templating@fc40ad9](https://github.com/dotnet/templating/commit/fc40ad9c52d30cdf0a2d9f009cd2d7607b3419f7)*
 - `src/test-templates`  
 *[dotnet/test-templates@bb36956](https://github.com/dotnet/test-templates/commit/bb3695688177f5f80eeb3c0498168612e31549d5)*
 - `src/vstest`  
-*[microsoft/vstest@3df8944](https://github.com/microsoft/vstest/commit/3df8944ab0f4581c8077c867e8c76c35db81acd2)*
+*[microsoft/vstest@a6db0cb](https://github.com/microsoft/vstest/commit/a6db0cba146e24d734af08251f98ff84f5afac42)*
 - `src/xdt`  
 *[dotnet/xdt@9a1c3e1](https://github.com/dotnet/xdt/commit/9a1c3e1b7f0c8763d4c96e593961a61a72679a7b)*
 - `src/xliff-tasks`  
