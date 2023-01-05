@@ -60,6 +60,7 @@ namespace Microsoft.TemplateEngine.Orchestrator.RunnableProjects.ConfigModel
             Author = source.ToString(nameof(Author));
             Classifications = source.ArrayAsStrings(nameof(Classifications));
             DefaultName = source.ToString(nameof(DefaultName));
+            PreferDefaultName = source.ToBool(nameof(PreferDefaultName));
             Description = source.ToString(nameof(Description)) ?? string.Empty;
             GroupIdentity = source.ToString(nameof(GroupIdentity));
             Precedence = source.ToInt32(nameof(Precedence));
@@ -253,6 +254,11 @@ namespace Microsoft.TemplateEngine.Orchestrator.RunnableProjects.ConfigModel
         public bool PreferNameDirectory { get; internal init; }
 
         /// <summary>
+        /// Indicates whether to use the template's default name or parent folder's name for template name ("preferDefaultName: JSON property).
+        /// </summary>
+        public bool PreferDefaultName { get; internal init; }
+
+        /// <summary>
         /// Gets the collection of template tags ("tags" JSON property).
         /// </summary>
         public IReadOnlyDictionary<string, string> Tags
@@ -384,7 +390,7 @@ namespace Microsoft.TemplateEngine.Orchestrator.RunnableProjects.ConfigModel
         /// </summary>
         public IReadOnlyList<CustomFileGlobModel> SpecialCustomOperations { get; internal init; } = Array.Empty<CustomFileGlobModel>();
 
-        internal BaseSymbol NameSymbol { get; private set; } = SetupDefaultNameSymbol(null);
+        internal BaseSymbol NameSymbol { get; private init; } = SetupDefaultNameSymbol(null);
 
         private static IReadOnlyList<BindSymbol> ImplicitBindSymbols { get; } = SetupImplicitBindSymbols();
 
@@ -432,6 +438,15 @@ namespace Microsoft.TemplateEngine.Orchestrator.RunnableProjects.ConfigModel
         internal static TemplateConfigModel FromJObject(JObject source, ILogger? logger = null, string? baselineName = null, string? filename = null)
         {
             return new TemplateConfigModel(source, logger, baselineName, filename);
+        }
+
+        internal void RemoveSymbol(string name)
+        {
+            _symbols.Remove(name);
+            if (name.Equals(NameSymbolName, StringComparison.Ordinal))
+            {
+                _symbols[name] = NameSymbol;
+            }
         }
 
         /// <summary>
