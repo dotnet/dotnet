@@ -102,22 +102,22 @@
       <Uri>https://github.com/dotnet/test-templates</Uri>
       <Sha>bb3695688177f5f80eeb3c0498168612e31549d5</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Common.ItemTemplates" Version="8.0.100-alpha.1.23054.48">
+    <Dependency Name="Microsoft.DotNet.Common.ItemTemplates" Version="8.0.100-alpha.1.23055.7">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>7b78b17f96270d40208cfcd2d90805a83a6890c9</Sha>
+      <Sha>770df6c35cd91de37c4cc7499c8304246f51ff6e</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.TemplateEngine.Cli" Version="8.0.100-alpha.1.23054.48">
+    <Dependency Name="Microsoft.TemplateEngine.Cli" Version="8.0.100-alpha.1.23055.7">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>7b78b17f96270d40208cfcd2d90805a83a6890c9</Sha>
+      <Sha>770df6c35cd91de37c4cc7499c8304246f51ff6e</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Sdk" Version="8.0.100-alpha.1.23054.48">
+    <Dependency Name="Microsoft.NET.Sdk" Version="8.0.100-alpha.1.23055.7">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>7b78b17f96270d40208cfcd2d90805a83a6890c9</Sha>
+      <Sha>770df6c35cd91de37c4cc7499c8304246f51ff6e</Sha>
       <SourceBuild RepoName="sdk" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.MSBuildSdkResolver" Version="8.0.100-alpha.1.23054.48">
+    <Dependency Name="Microsoft.DotNet.MSBuildSdkResolver" Version="8.0.100-alpha.1.23055.7">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>7b78b17f96270d40208cfcd2d90805a83a6890c9</Sha>
+      <Sha>770df6c35cd91de37c4cc7499c8304246f51ff6e</Sha>
     </Dependency>
     <!-- For coherency purposes, these versions should be gated by the versions of winforms and wpf routed via windowsdesktop -->
     <Dependency Name="Microsoft.Dotnet.WinForms.ProjectTemplates" Version="8.0.0-alpha.1.22628.4" CoherentParentDependency="Microsoft.WindowsDesktop.App.Runtime.win-x64">
@@ -142,9 +142,9 @@
       <Sha>3df8944ab0f4581c8077c867e8c76c35db81acd2</Sha>
       <SourceBuildTarball RepoName="vstest" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.NET.ILLink.Tasks" Version="8.0.100-1.23053.1" CoherentParentDependency="Microsoft.NET.Sdk">
+    <Dependency Name="Microsoft.NET.ILLink.Tasks" Version="8.0.100-1.23055.2" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://github.com/dotnet/linker</Uri>
-      <Sha>72d05e415bbc6801af9b2963d6fd8a8dc261f2ae</Sha>
+      <Sha>4b3f78cbc7284b4198652a695e9fe0267133728e</Sha>
       <SourceBuild RepoName="linker" ManagedOnly="true" />
       <RepoName>linker</RepoName>
     </Dependency>
@@ -217,9 +217,9 @@
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>af841c8b33cecc92d74222298f1e45bf7bf3d90a</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.23053.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.23055.1">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>9e4ae1f23e429bd64744dc71b202a5f1f4d822ce</Sha>
+      <Sha>a7d9aec195d309a8d25022553a43561441a599a8</Sha>
       <SourceBuildTarball RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.SourceLink.GitHub" Version="1.2.0-beta-22518-02" CoherentParentDependency="Microsoft.DotNet.Arcade.Sdk">
