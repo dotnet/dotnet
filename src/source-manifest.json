@@ -49,10 +49,10 @@
       "commitSha": "c125386caec39f9de42f96fa92392ce569430bfa"
     },
     {
-      "packageVersion": "8.0.100-1.22612.2",
+      "packageVersion": "8.0.100-1.23053.1",
       "path": "linker",
       "remoteUri": "https://github.com/dotnet/linker",
-      "commitSha": "2db841fc5f6bc7592b66ffe3bd0e1c888d022f93"
+      "commitSha": "72d05e415bbc6801af9b2963d6fd8a8dc261f2ae"
     },
     {
       "packageVersion": "17.5.0-preview-22615-01",
