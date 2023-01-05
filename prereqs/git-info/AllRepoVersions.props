@@ -11,8 +11,8 @@
     <deploymenttoolsOutputPackageVersion>1.0.0-preview5.1.22263.1</deploymenttoolsOutputPackageVersion>
     <diagnosticsGitCommitHash>e3e1490a23f27a6e0ed30d323035660c3ffc52cd</diagnosticsGitCommitHash>
     <diagnosticsOutputPackageVersion>6.0.0-preview.22424.1</diagnosticsOutputPackageVersion>
-    <formatGitCommitHash>10004a91fe2334ab5df72201b529d78aa2319700</formatGitCommitHash>
-    <formatOutputPackageVersion>8.0.361301</formatOutputPackageVersion>
+    <formatGitCommitHash>dcbc3017454ff21254cbedb9a86660befb355085</formatGitCommitHash>
+    <formatOutputPackageVersion>8.0.405401</formatOutputPackageVersion>
     <fsharpGitCommitHash>794b7c259d9646a7eb685dad865aa27da7940a21</fsharpGitCommitHash>
     <fsharpOutputPackageVersion>7.0.1-beta.23053.5</fsharpOutputPackageVersion>
     <installerGitCommitHash>c125386caec39f9de42f96fa92392ce569430bfa</installerGitCommitHash>
