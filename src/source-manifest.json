@@ -7,10 +7,10 @@
       "commitSha": "5a5ae41c42e475e280342b668e668ff34539e36d"
     },
     {
-      "packageVersion": "8.0.0-alpha.1.23054.21",
+      "packageVersion": "8.0.0-alpha.1.23055.4",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "316587939f9c24465f924c68c06dbcbeae4f35c3"
+      "commitSha": "5b43ed1b8355c9fdebb44b0035d215a563435562"
     },
     {
       "packageVersion": "0.1.356401",
@@ -46,7 +46,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "ad192d3eff1acf53e94cc0ed4d54029632908c81"
+      "commitSha": "4e7acfa274935b974b16ed46ec447d0db8d73f1b"
     },
     {
       "packageVersion": "8.0.100-1.23055.2",
@@ -79,10 +79,10 @@
       "commitSha": "4d9a89ae8a5262fa0b77780bb8887e31c1733d5e"
     },
     {
-      "packageVersion": "3.3.4-beta1.23054.1",
+      "packageVersion": "3.3.4-beta1.23055.3",
       "path": "roslyn-analyzers",
       "remoteUri": "https://github.com/dotnet/roslyn-analyzers",
-      "commitSha": "2f82379cbe1a75e87cc968a5bec08165dbd8a7b1"
+      "commitSha": "14e2eceee7c6de501f766528a8e608c14620f2ff"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23054.18",
@@ -91,10 +91,10 @@
       "commitSha": "a2243718922e85370f137bdfa3e30a8eedebe954"
     },
     {
-      "packageVersion": "8.0.100-alpha.1.23055.27",
+      "packageVersion": "8.0.100-alpha.1.23055.30",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "4a5827e6b6c2a3f17abecdadd88f3de4c6f59c93"
+      "commitSha": "aca69f4e5c38e80ddc54604e412401e854c3a4aa"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23053.2",
