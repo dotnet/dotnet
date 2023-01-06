@@ -37,8 +37,8 @@ internal class SplatTagHelperDescriptorProvider : ITagHelperDescriptorProvider
             return;
         }
 
-        var targetAssembly = context.Items.GetTargetAssembly();
-        if (targetAssembly is not null && !SymbolEqualityComparer.Default.Equals(targetAssembly, renderTreeBuilder.ContainingAssembly))
+        var targetSymbol = context.Items.GetTargetSymbol();
+        if (targetSymbol is not null && !SymbolEqualityComparer.Default.Equals(targetSymbol, renderTreeBuilder.ContainingAssembly))
         {
             return;
         }

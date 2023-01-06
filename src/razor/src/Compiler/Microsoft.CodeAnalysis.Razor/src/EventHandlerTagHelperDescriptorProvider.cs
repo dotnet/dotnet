@@ -49,10 +49,10 @@ internal class EventHandlerTagHelperDescriptorProvider : ITagHelperDescriptorPro
         var types = new List<INamedTypeSymbol>();
         var visitor = new EventHandlerDataVisitor(types);
 
-        var targetAssembly = context.Items.GetTargetAssembly();
-        if (targetAssembly is not null)
+        var targetSymbol = context.Items.GetTargetSymbol();
+        if (targetSymbol is not null)
         {
-            visitor.Visit(targetAssembly.GlobalNamespace);
+            visitor.Visit(targetSymbol);
         }
         else
         {

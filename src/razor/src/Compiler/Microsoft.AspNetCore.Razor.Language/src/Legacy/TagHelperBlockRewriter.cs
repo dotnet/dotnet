@@ -576,7 +576,7 @@ internal static class TagHelperBlockRewriter
             {
                 // Change to a MarkupChunkGenerator so that the '@' \ parenthesis is generated as part of the output.
                 var context = node.GetSpanContext();
-                var newContext = new SpanContext(new MarkupChunkGenerator(), context.EditHandler);
+                var newContext = new SpanContext(MarkupChunkGenerator.Instance, context.EditHandler);
 
                 var expression = SyntaxFactory.CSharpExpressionLiteral(new SyntaxList<SyntaxToken>(node.Transition)).WithSpanContext(newContext);
 
@@ -596,7 +596,7 @@ internal static class TagHelperBlockRewriter
                 // Convert transition.
                 // Change to a MarkupChunkGenerator so that the '@' \ parenthesis is generated as part of the output.
                 var context = node.GetSpanContext();
-                var newContext = new SpanContext(new MarkupChunkGenerator(), context?.EditHandler ?? SpanEditHandler.CreateDefault((content) => Enumerable.Empty<Syntax.InternalSyntax.SyntaxToken>()));
+                var newContext = new SpanContext(MarkupChunkGenerator.Instance, context?.EditHandler ?? SpanEditHandler.CreateDefault((content) => Enumerable.Empty<Syntax.InternalSyntax.SyntaxToken>()));
 
                 var expression = SyntaxFactory.CSharpExpressionLiteral(new SyntaxList<SyntaxToken>(node.Transition.Transition)).WithSpanContext(newContext);
                 expression = (CSharpExpressionLiteralSyntax)VisitCSharpExpressionLiteral(expression);
@@ -624,7 +624,7 @@ internal static class TagHelperBlockRewriter
                 // Convert transition.
                 // Change to a MarkupChunkGenerator so that the '@' \ parenthesis is generated as part of the output.
                 var context = node.GetSpanContext();
-                var newContext = new SpanContext(new MarkupChunkGenerator(), context?.EditHandler ?? SpanEditHandler.CreateDefault((content) => Enumerable.Empty<Syntax.InternalSyntax.SyntaxToken>()));
+                var newContext = new SpanContext(MarkupChunkGenerator.Instance, context?.EditHandler ?? SpanEditHandler.CreateDefault((content) => Enumerable.Empty<Syntax.InternalSyntax.SyntaxToken>()));
 
                 var expression = SyntaxFactory.CSharpExpressionLiteral(new SyntaxList<SyntaxToken>(node.Transition.Transition)).WithSpanContext(newContext);
                 expression = (CSharpExpressionLiteralSyntax)VisitCSharpExpressionLiteral(expression);
@@ -671,7 +671,7 @@ internal static class TagHelperBlockRewriter
             {
                 // Change to a MarkupChunkGenerator so that the '@' \ parenthesis is generated as part of the output.
                 var context = node.GetSpanContext();
-                var newContext = new SpanContext(new MarkupChunkGenerator(), context.EditHandler);
+                var newContext = new SpanContext(MarkupChunkGenerator.Instance, context.EditHandler);
 
                 var expression = SyntaxFactory.CSharpExpressionLiteral(new SyntaxList<SyntaxToken>(node.MetaCode)).WithSpanContext(newContext);
 

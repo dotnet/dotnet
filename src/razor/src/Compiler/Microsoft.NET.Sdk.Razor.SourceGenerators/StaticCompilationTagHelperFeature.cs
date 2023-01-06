@@ -25,7 +25,10 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
             var results = new List<TagHelperDescriptor>();
             var context = TagHelperDescriptorProviderContext.Create(results);
             context.SetCompilation(Compilation);
-            context.Items.SetTargetAssembly(TargetAssembly!);
+            if (TargetSymbol is not null)
+            {
+                context.Items.SetTargetSymbol(TargetSymbol);
+            }
 
             for (var i = 0; i < _providers?.Length; i++)
             {
@@ -39,7 +42,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
 
         public Compilation? Compilation { get; set; }
 
-        public IAssemblySymbol? TargetAssembly { get; set; }
+        public ISymbol? TargetSymbol { get; set; }
 
         protected override void OnInitialized()
         {
