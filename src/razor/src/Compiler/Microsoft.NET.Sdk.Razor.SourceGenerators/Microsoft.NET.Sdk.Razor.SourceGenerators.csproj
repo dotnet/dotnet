@@ -4,9 +4,11 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <StrongNameKeyId>MicrosoftAspNetCore</StrongNameKeyId>
 
-    <!-- This is not a package, it is part of Razor SDK. -->
+    <!-- This is not a package, it is part of Razor SDK, but it does ship in the VSIX. -->
     <IsPackable>false</IsPackable>
     <IsShipping>false</IsShipping>
+    <!-- setting IsShippingAssembly because we want symbols stored for this DLL, since it ships in the VSIX -->
+    <IsShippingAssembly>true</IsShippingAssembly>
     <NoWarn>$(NoWarn);RS2008</NoWarn>
     <Nullable>enable</Nullable>
     <ExcludeFromSourceBuild>false</ExcludeFromSourceBuild>

@@ -1095,7 +1095,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             var originalContext = rewritten.GetSpanContext();
             if (originalContext != null)
             {
-                rewritten = rewritten.WithSpanContext(new SpanContext(new MarkupChunkGenerator(), originalContext.EditHandler));
+                rewritten = rewritten.WithSpanContext(new SpanContext(MarkupChunkGenerator.Instance, originalContext.EditHandler));
             }
 
             return rewritten;
@@ -2083,7 +2083,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             var originalContext = rewritten.GetSpanContext();
             if (originalContext != null)
             {
-                rewritten = rewritten.WithSpanContext(new SpanContext(new MarkupChunkGenerator(), originalContext.EditHandler));
+                rewritten = rewritten.WithSpanContext(new SpanContext(MarkupChunkGenerator.Instance, originalContext.EditHandler));
             }
 
             return rewritten;

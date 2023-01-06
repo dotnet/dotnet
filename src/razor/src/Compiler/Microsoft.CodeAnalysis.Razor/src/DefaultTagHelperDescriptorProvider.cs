@@ -37,10 +37,10 @@ public sealed class DefaultTagHelperDescriptorProvider : RazorEngineFeatureBase,
         var types = new List<INamedTypeSymbol>();
         var visitor = new TagHelperTypeVisitor(iTagHelper, types);
 
-        var targetAssembly = context.Items.GetTargetAssembly();
-        if (targetAssembly is not null)
+        var targetSymbol = context.Items.GetTargetSymbol();
+        if (targetSymbol is not null)
         {
-            visitor.Visit(targetAssembly.GlobalNamespace);
+            visitor.Visit(targetSymbol);
         }
         else
         {

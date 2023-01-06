@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 #nullable disable
@@ -17,6 +17,11 @@ internal class TagHelperTypeVisitor : SymbolVisitor
     {
         _interface = @interface;
         _results = results;
+    }
+
+    public override void VisitAssembly(IAssemblySymbol symbol)
+    {
+        Visit(symbol.GlobalNamespace);
     }
 
     public override void VisitNamedType(INamedTypeSymbol symbol)

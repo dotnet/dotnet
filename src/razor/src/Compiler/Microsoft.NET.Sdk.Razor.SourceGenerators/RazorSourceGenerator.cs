@@ -106,7 +106,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                     var compilationWithDeclarations = compilation.AddSyntaxTrees(generatedDeclarationSyntaxTrees);
 
                     tagHelperFeature.Compilation = compilationWithDeclarations;
-                    tagHelperFeature.TargetAssembly = compilationWithDeclarations.Assembly;
+                    tagHelperFeature.TargetSymbol = compilationWithDeclarations.Assembly;
 
                     var result = (IList<TagHelperDescriptor>)tagHelperFeature.GetDescriptors();
                     RazorSourceGeneratorEventSource.Log.DiscoverTagHelpersFromCompilationStop();
@@ -177,7 +177,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                     {
                         if (compilation.GetAssemblyOrModuleSymbol(reference) is IAssemblySymbol assembly)
                         {
-                            tagHelperFeature.TargetAssembly = assembly;
+                            tagHelperFeature.TargetSymbol = assembly;
                             descriptors.AddRange(tagHelperFeature.GetDescriptors());
                         }
                     }

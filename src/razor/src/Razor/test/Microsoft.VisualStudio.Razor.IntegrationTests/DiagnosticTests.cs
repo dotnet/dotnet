@@ -114,6 +114,46 @@ public class DiagnosticTests : AbstractRazorEditorTest
     }
 
     [IdeFact]
+    public async Task Diagnostics_ShowErrors_CSharp_NoDocType()
+    {
+        // Why this test, when we have the above test, and they seem so similar, and we also have Diagnostics_ShowErrors_CSharpAndHtml you ask? Well I'll tell you!
+        //
+        // In the above test, with a doctype, the Html LSP server returns a diagnostic result containing one item, which has an empty array of actual diagnostics within it.
+        // In Diagnostics_ShowErrors_CSharpAndHtml, the Html LSP server returns a diagnostic result containing one item, which has one actual diagnostic inside it.
+        // In this test, with no doctype, the Html LSP server returns a diagnostic result containing one item, which has null for the actual diagnostics within it.
+        //
+        // The Visual Studio error system (squiggles and error list) didn't like that last case, so given that quirkiness and the slight differences in results, there
+        // is value in having a range of tests to make sure nothing regresses.
+
+        // Arrange
+        await TestServices.SolutionExplorer.OpenFileAsync(RazorProjectConstants.BlazorProjectName, RazorProjectConstants.ErrorCshtmlFile, ControlledHangMitigatingCancellationToken);
+
+        await TestServices.Editor.SetTextAsync(@"
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<html lang=""en"">
+<head>
+</head>
+
+<body>
+    <input asp-for=""Test"" />
+</body>
+</html>
+
+", ControlledHangMitigatingCancellationToken);
+
+        // Act
+        var errors = await TestServices.ErrorList.WaitForErrorsAsync("Error.cshtml", expectedCount: 1, ControlledHangMitigatingCancellationToken);
+
+        // Assert
+        Assert.Collection(errors,
+            (error) =>
+            {
+                Assert.Equal("Error.cshtml(9, 21): error CS1963: An expression tree may not contain a dynamic operation", error);
+            });
+    }
+
+    [IdeFact]
     public async Task Diagnostics_ShowErrors_CSharpAndHtml()
     {
         // Arrange

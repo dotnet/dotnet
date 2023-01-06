@@ -16,6 +16,7 @@ using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Nerdbank.Streams;
 
 namespace Microsoft.AspNetCore.Razor.Microbenchmarks.LanguageServer;
 
@@ -31,9 +32,9 @@ public class RazorLanguageServerBenchmarkBase : ProjectSnapshotManagerBenchmarkB
 
         RepoRoot = current.FullName;
 
-        using var memoryStream = new MemoryStream();
+        var (_, serverStream) = FullDuplexStream.CreatePair();
         var logger = new NoopLogger();
-        RazorLanguageServer = RazorLanguageServerWrapper.Create(memoryStream, memoryStream, logger, configure: (collection) => {
+        RazorLanguageServer = RazorLanguageServerWrapper.Create(serverStream, serverStream, logger, configure: (collection) => {
             collection.AddSingleton<ClientNotifierServiceBase, NoopClientNotifierService>();
             Builder(collection);
         });

@@ -46,7 +46,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "9701b8488da6dfe94b875e1fe434d2f6be0e41eb"
+      "commitSha": "932429391246c555d0513e2cf83fd3c18cbafb43"
     },
     {
       "packageVersion": "8.0.100-1.23055.2",
@@ -67,34 +67,34 @@
       "commitSha": "743503cb3c7e9ced2602ee2e29c38d63cc339451"
     },
     {
-      "packageVersion": "7.0.0-preview.23053.2",
+      "packageVersion": "7.0.0-preview.23055.2",
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "87117991bc8746f39ad3e99cb0d3d33bee954241"
+      "commitSha": "e0f81639fc489b6b7427f53e5d71dfff47ca9276"
     },
     {
-      "packageVersion": "4.5.0-3.23054.10",
+      "packageVersion": "4.5.0-3.23055.12",
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "4d9a89ae8a5262fa0b77780bb8887e31c1733d5e"
+      "commitSha": "7f58562b0af1968736bc5f405b80ba58df475453"
     },
     {
-      "packageVersion": "3.3.4-beta1.23055.3",
+      "packageVersion": "3.3.4-beta1.23055.4",
       "path": "roslyn-analyzers",
       "remoteUri": "https://github.com/dotnet/roslyn-analyzers",
-      "commitSha": "14e2eceee7c6de501f766528a8e608c14620f2ff"
+      "commitSha": "6ae2683c5033dfde0b73d4e73b372f00ca6ceacd"
     },
     {
-      "packageVersion": "8.0.0-alpha.1.23054.18",
+      "packageVersion": "8.0.0-alpha.1.23055.3",
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "a2243718922e85370f137bdfa3e30a8eedebe954"
+      "commitSha": "9197fd555152762b2f400459d46cb14ad741bf75"
     },
     {
-      "packageVersion": "8.0.100-alpha.1.23055.30",
+      "packageVersion": "8.0.100-alpha.1.23056.7",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "aca69f4e5c38e80ddc54604e412401e854c3a4aa"
+      "commitSha": "11605e9b8afdb6a2fa92d2a7efe5a0b5aac6cd9c"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23053.2",

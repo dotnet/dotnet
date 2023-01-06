@@ -17,7 +17,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
             {
                 if (compilation.GetAssemblyOrModuleSymbol(reference) is IAssemblySymbol assembly)
                 {
-                    tagHelperFeature.TargetAssembly = assembly;
+                    tagHelperFeature.TargetSymbol = assembly;
                     descriptors.AddRange(tagHelperFeature.GetDescriptors());
                 }
             }
@@ -29,7 +29,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
             var compilationWithDeclarations = compilation.AddSyntaxTrees(syntaxTrees);
 
             tagHelperFeature.Compilation = compilationWithDeclarations;
-            tagHelperFeature.TargetAssembly = compilationWithDeclarations.Assembly;
+            tagHelperFeature.TargetSymbol = compilationWithDeclarations.Assembly;
 
             return tagHelperFeature.GetDescriptors();
         }

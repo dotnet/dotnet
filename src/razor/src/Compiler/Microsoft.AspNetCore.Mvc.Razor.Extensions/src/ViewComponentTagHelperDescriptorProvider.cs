@@ -40,10 +40,10 @@ public sealed class ViewComponentTagHelperDescriptorProvider : RazorEngineFeatur
         var types = new List<INamedTypeSymbol>();
         var visitor = new ViewComponentTypeVisitor(vcAttribute, nonVCAttribute, types);
 
-        var targetAssembly = context.Items.GetTargetAssembly();
-        if (targetAssembly is not null)
+        var targetSymbol = context.Items.GetTargetSymbol();
+        if (targetSymbol is not null)
         {
-            visitor.Visit(targetAssembly.GlobalNamespace);
+            visitor.Visit(targetSymbol);
         }
         else
         {
