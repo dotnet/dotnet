@@ -13,5 +13,7 @@
                 "eamodio.gitlens"
             ]
         }
-    }
+    },
+    // GitHub Codespaces sets this and it conflicts with source-build scripts
+    "postCreateCommand": "unset RepositoryName"
 }
