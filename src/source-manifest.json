@@ -7,10 +7,10 @@
       "commitSha": "5a5ae41c42e475e280342b668e668ff34539e36d"
     },
     {
-      "packageVersion": "8.0.0-alpha.1.23056.6",
+      "packageVersion": "8.0.0-alpha.1.23058.7",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "041a6736dd822ba52fb257ab98fd95f2243de8bf"
+      "commitSha": "cefc6ccf4b23ac9f07418cd10e374cf533276eee"
     },
     {
       "packageVersion": "0.1.356401",
@@ -46,7 +46,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "d907b86282d261d590a28f0a44619fb3ce82a3ba"
+      "commitSha": "06a961544f09119f2193cc3970f5fa992037c9e3"
     },
     {
       "packageVersion": "8.0.100-1.23055.2",
@@ -91,10 +91,10 @@
       "commitSha": "e4ada8481aba5a7515ddce704dac15ac95cadcbd"
     },
     {
-      "packageVersion": "8.0.100-alpha.1.23058.3",
+      "packageVersion": "8.0.100-alpha.1.23058.4",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "d65a6e7d244b6ac50a1ef78d5953713bd886785b"
+      "commitSha": "9a1a5af2f81323e763ac34019ea680379e1f93b8"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23055.2",
