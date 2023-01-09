@@ -1,7 +1,10 @@
 #!/bin/bash
 
-### This script helps to reproduce potential failures of the 'Synchronize dotnet/dotnet'
-### build step from the **VMR Source-Build** job locally.
+### This script is used for synchronizing the dotnet/dotnet repository locally
+### It is used during CI to ingest new code based on dotnet/installer
+### I can also help for reproducing potential failures during installer's PRs,
+### namely during errors during the 'Synchronize dotnet/dotnet' build step from
+### the 'VMR Source-Build'.
 ### The following scenario is assumed:
 ### - There is a PR in dotnet/installer
 ### - The PR is failing on the 'VMR Source-Build' job in the 'Synchronize dotnet/dotnet' step
@@ -44,6 +47,9 @@
 ###   -b, --branch, --vmr-branch BRANCH_NAME
 ###       Optional. Branch of the 'dotnet/dotnet' repo to synchronize to
 ###       This should match the target branch of the PR, defaults to 'main'
+###   --target-ref GIT_REF
+###       Optional. Git ref to synchronize to. This can be a specific commit, branch, tag..
+###       Defaults to the revision of the parent installer repo
 ###   --debug
 ###       Optional. Turns on the most verbose logging for the VMR tooling
 
@@ -81,9 +87,8 @@ installer_dir="$scriptroot/../"
 tmp_dir=''
 vmr_dir=''
 vmr_branch='main'
+target_ref=''
 verbosity=verbose
-# hashed name coming from the VMR tooling
-INSTALLER_TMP_DIR_NAME='03298978DFFFCD23'
 
 while [[ $# -gt 0 ]]; do
   opt="$(echo "$1" | tr "[:upper:]" "[:lower:]")"
@@ -102,6 +107,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     -d|--debug)
       verbosity=debug
+      ;;
+    --target-ref)
+      target_ref=$2
+      shift
       ;;
     -h|--help)
       print_help
@@ -135,6 +144,10 @@ if [[ ! -d "$tmp_dir" ]]; then
   mkdir -p "$tmp_dir"
 fi
 
+if [[ "$verbosity" == "debug" ]]; then
+  set -x
+fi
+
 if [[ ! -d "$vmr_dir" ]]; then
   highlight "Cloning 'dotnet/dotnet' into $vmr_dir.."
   git clone https://github.com/dotnet/dotnet "$vmr_dir"
@@ -151,12 +164,6 @@ fi
 
 set -e
 
-# These lines makes sure the temp dir (which the tooling would clone)
-# has the synchronized commit inside as well
-highlight 'Preparing the temporary directory..'
-rm -rf "${tmp_dir:?}/$INSTALLER_TMP_DIR_NAME"
-git clone "$installer_dir" "${tmp_dir:?}/$INSTALLER_TMP_DIR_NAME"
-
 # Prepare darc
 highlight 'Installing .NET, preparing the tooling..'
 source "$scriptroot/common/tools.sh"
@@ -165,15 +172,22 @@ dotnet="$scriptroot/../.dotnet/dotnet"
 "$dotnet" tool restore
 
 # Run the sync
-target_sha=$(git -C "$installer_dir" rev-parse HEAD)
-highlight "Starting the synchronization to $target_sha.."
+if [[ -z "$target_ref" ]]; then
+  target_ref=$(git -C "$installer_dir" rev-parse HEAD)
+fi
+
+highlight "Starting the synchronization to '$target_ref'.."
 set +e
 
-if "$dotnet" darc vmr update --vmr "$vmr_dir" --tmp "$tmp_dir" --$verbosity --recursive installer:$target_sha; then
+# Temporary workaround while we fix fetching commits
+rm -rf "$tmp_dir/installer"
+cp -r "$installer_dir" "$tmp_dir/installer"
+
+if "$dotnet" darc vmr update --vmr "$vmr_dir" --tmp "$tmp_dir" --$verbosity --recursive --additional-remotes "installer:$installer_dir" "installer:$target_ref"; then
   highlight "Synchronization succeeded"
 else
-  fail "Synchronization of dotnet/dotnet to $target_sha failed!"
-  fail "$vmr_dir is left in its last state (re-run of this script will reset it)."
+  fail "Synchronization of dotnet/dotnet to '$target_ref' failed!"
+  fail "'$vmr_dir' is left in its last state (re-run of this script will reset it)."
   fail "Please inspect the logs which contain path to the failing patch file (use --debug to get all the details)."
   fail "Once you make changes to the conflicting VMR patch, commit it locally and re-run this script."
   exit 1
