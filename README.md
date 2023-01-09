@@ -151,7 +151,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/arcade`  
 *[dotnet/arcade@5a5ae41](https://github.com/dotnet/arcade/commit/5a5ae41c42e475e280342b668e668ff34539e36d)*
 - `src/aspnetcore`  
-*[dotnet/aspnetcore@5b43ed1](https://github.com/dotnet/aspnetcore/commit/5b43ed1b8355c9fdebb44b0035d215a563435562)*
+*[dotnet/aspnetcore@041a673](https://github.com/dotnet/aspnetcore/commit/041a6736dd822ba52fb257ab98fd95f2243de8bf)*
     - `src/aspnetcore/src/submodules/googletest`  
     *[google/googletest@71140c3](https://github.com/google/googletest/commit/71140c3ca7a87bb1b5b9c9f1500fea8858cce344)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
@@ -167,9 +167,9 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/format`  
 *[dotnet/format@2cb3e68](https://github.com/dotnet/format/commit/2cb3e68c6b9a966114572fd63f2a20d2cb54a288)*
 - `src/fsharp`  
-*[dotnet/fsharp@3808a0e](https://github.com/dotnet/fsharp/commit/3808a0effad9cb26cc270797d530915b4b227b8f)*
+*[dotnet/fsharp@8fdf58a](https://github.com/dotnet/fsharp/commit/8fdf58a63cc05a964a57f66a4ab8924984c13042)*
 - `src/installer`  
-*[dotnet/installer@7bea0af](https://github.com/dotnet/installer/commit/7bea0af7fe9caaa8eb61d661b6bbddd4f3e537b9)*
+*[dotnet/installer@d907b86](https://github.com/dotnet/installer/commit/d907b86282d261d590a28f0a44619fb3ce82a3ba)*
 - `src/linker`  
 *[dotnet/linker@4b3f78c](https://github.com/dotnet/linker/commit/4b3f78cbc7284b4198652a695e9fe0267133728e)*
     - `src/linker/external/cecil`  
@@ -185,11 +185,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/roslyn`  
 *[dotnet/roslyn@e5390ea](https://github.com/dotnet/roslyn/commit/e5390ea70c8cb9dbda25a9fb58abe0fc8eea1521)*
 - `src/roslyn-analyzers`  
-*[dotnet/roslyn-analyzers@6ae2683](https://github.com/dotnet/roslyn-analyzers/commit/6ae2683c5033dfde0b73d4e73b372f00ca6ceacd)*
+*[dotnet/roslyn-analyzers@adb9c1c](https://github.com/dotnet/roslyn-analyzers/commit/adb9c1cf0416e1dc2b547b7a962a171e54cfb85d)*
 - `src/runtime`  
-*[dotnet/runtime@9197fd5](https://github.com/dotnet/runtime/commit/9197fd555152762b2f400459d46cb14ad741bf75)*
+*[dotnet/runtime@e4ada84](https://github.com/dotnet/runtime/commit/e4ada8481aba5a7515ddce704dac15ac95cadcbd)*
 - `src/sdk`  
-*[dotnet/sdk@e6a7de2](https://github.com/dotnet/sdk/commit/e6a7de2ae5eb677294729ab2c72b14c45405c254)*
+*[dotnet/sdk@d65a6e7](https://github.com/dotnet/sdk/commit/d65a6e7d244b6ac50a1ef78d5953713bd886785b)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@54fb156](https://github.com/dotnet/source-build-externals/commit/54fb15633d58bf41248a7ea4bf366b4ea4798b89)*
     - `src/source-build-externals/src/application-insights`  
@@ -211,11 +211,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/symreader`  
 *[dotnet/symreader@7b9791d](https://github.com/dotnet/symreader/commit/7b9791daa3a3477eb22ec805946c9fff8b42d8ca)*
 - `src/templating`  
-*[dotnet/templating@f2e487f](https://github.com/dotnet/templating/commit/f2e487f88f92aace6eb0f6f34361fbf6a2d3bd1b)*
+*[dotnet/templating@d11f8de](https://github.com/dotnet/templating/commit/d11f8deeab8225b8a3306f6c9c3e92cc602ca5af)*
 - `src/test-templates`  
 *[dotnet/test-templates@bb36956](https://github.com/dotnet/test-templates/commit/bb3695688177f5f80eeb3c0498168612e31549d5)*
 - `src/vstest`  
-*[microsoft/vstest@a6db0cb](https://github.com/microsoft/vstest/commit/a6db0cba146e24d734af08251f98ff84f5afac42)*
+*[microsoft/vstest@acd1eca](https://github.com/microsoft/vstest/commit/acd1eca1e1b690c2899b518c52ffe1501a8d05dc)*
 - `src/xdt`  
 *[dotnet/xdt@9a1c3e1](https://github.com/dotnet/xdt/commit/9a1c3e1b7f0c8763d4c96e593961a61a72679a7b)*
 - `src/xliff-tasks`  
