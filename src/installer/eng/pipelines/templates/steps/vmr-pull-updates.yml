@@ -23,35 +23,16 @@ steps:
   path: installer
 
 - script: |
-    source ./eng/common/tools.sh
-    InitializeDotNetCli true
-    ./.dotnet/dotnet tool restore
-  displayName: Restore darc
-  workingDirectory: $(Agent.BuildDirectory)/installer
-
-- script: |
     git checkout -B ${{ parameters.vmrBranch }}
     echo "##vso[task.setvariable variable=vmrBranch]${{ parameters.vmrBranch }}"
   displayName: Prepare branch ${{ parameters.vmrBranch }}
   workingDirectory: ${{ parameters.vmrPath }}
 
-# This step make sure that darc finds the PR commit (which might be in a fork of installer)
-# The cloned folder does have the commit so we copy it into temp where the tooling will find it
-# We also cannot keep the AzDO remote as pulling from it would require a token
-- script: |
-    cp -r $(Agent.BuildDirectory)/installer $(Agent.TempDirectory)/03298978DFFFCD23
-    cd $(Agent.TempDirectory)/03298978DFFFCD23
-    git remote remove origin
-    git remote add origin https://github.com/dotnet/installer
-  displayName: Prepare dotnet/installer clone
-
 - script: >
-    $(Agent.BuildDirectory)/installer/.dotnet/dotnet darc vmr update
+    ./eng/vmr-sync.sh
     --vmr ${{ parameters.vmrPath }}
     --tmp $(Agent.TempDirectory)
-    --github-pat $(BotAccount-dotnet-bot-repo-PAT)
-    --recursive
-    --verbose
-    installer:${{ parameters.targetRef }}
+    --branch ${{ parameters.vmrBranch }}
+    --target-ref ${{ parameters.targetRef }}
   displayName: Synchronize dotnet/dotnet
   workingDirectory: $(Agent.BuildDirectory)/installer
