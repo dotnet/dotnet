@@ -11,6 +11,10 @@ pr:
     - main
     - release/*
 
+variables:
+  - name: Codeql.Enabled
+    value: true
+
 stages:
 - stage: build
   displayName: Build
@@ -35,3 +39,4 @@ stages:
       #Nuget and Signing Validation are not needed as we only produce a transport package.
       enableSigningValidation: false
       enableNugetValidation: false
+
