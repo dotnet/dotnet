@@ -73,6 +73,6 @@ git -C "$GIT_ROOT" archive                               \
   --add-virtual-file "$filename/.git/HEAD:$revision"     \
   --add-virtual-file "$filename/.git/config:$git_config" \
   --prefix "$filename/"                                  \
-  HEAD "$GIT_ROOT"
+  "$revision" "$GIT_ROOT"
 
 echo 'Done.'
