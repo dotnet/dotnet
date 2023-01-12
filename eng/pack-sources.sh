@@ -8,7 +8,7 @@
 ###   ./pack-sources.sh -o dotnet.tar.gz
 ### Options:
 ###   -o, --output PATH
-###       Optional. Path where the archive is created.
+###       Optional. Path or dir where the archive is created.
 ###       Defaults to artifacts/packages/dotnet-[SHA].tar.gz
 
 source="${BASH_SOURCE[0]}"
@@ -59,20 +59,38 @@ if [[ -z "$output" ]]; then
   output="$GIT_ROOT/artifacts/packages/$filename.tar.gz"
 fi
 
+# If output is directory, use the default filename
+if [[ -d "$output" ]]; then
+  output="$output/$filename.tar.gz"
+fi
+
 set -e
 
 echo "Packing sources of $revision to $output.."
 mkdir -p "$(dirname "$output")"
 rm -f "$output"
 
-# We need to had `.git/HEAD` and `.git/config` to the archive as the build expects those
-git_config=$'[remote "origin"]\nurl="http://github.com/dotnet/dotnet"'
+tmp="$GIT_ROOT/artifacts/tmp"
+mkdir -p "$tmp"
+config_file="$tmp/config"
+HEAD_file="$tmp/HEAD"
 
-git -C "$GIT_ROOT" archive                               \
-  -o "$output"                                           \
-  --add-virtual-file "$filename/.git/HEAD:$revision"     \
-  --add-virtual-file "$filename/.git/config:$git_config" \
-  --prefix "$filename/"                                  \
+start_time=$(date +%s)
+
+# We need to had `.git/HEAD` and `.git/config` to the archive as the build expects those
+echo $'[remote "origin"]\nurl="http://github.com/dotnet/dotnet"' > "$config_file"
+echo "$revision" > "$HEAD_file"
+
+git -C "$GIT_ROOT" archive   \
+  -o "$output"               \
+  --prefix "$filename/.git/" \
+  --add-file "$config_file"  \
+  --add-file "$HEAD_file"    \
+  --prefix "$filename/"      \
   "$revision" "$GIT_ROOT"
 
-echo 'Done.'
+end_time=$(date +%s)
+elapsed=$(( end_time - start_time ))
+
+duration=$(date -u +%H:%M:%S "-d@$elapsed")
+echo "Archive created in $duration"
