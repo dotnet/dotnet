@@ -69,7 +69,7 @@ index a69e3a9..9fadb38 100644
      <file src="Humanizer\bin\Release\netstandard1.0\af\*.*" target="lib\netstandard1.0\af" />
      <file src="Humanizer\bin\Release\netstandard2.0\af\*.*" target="lib\netstandard2.0\af" />
 -    <file src="Humanizer\bin\Release\net6.0\af\*.*" target="lib\net6.0\af" />
-+    <file src="Humanizer\bin\Release\net7.0\af\*.*" target="lib\net7.0\af" />
++    <file src="Humanizer\bin\Release\net8.0\af\*.*" target="lib\net8.0\af" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -83,7 +83,7 @@ index 3abb642..3719029 100644
      <file src="Humanizer\bin\Release\netstandard1.0\ar\*.*" target="lib\netstandard1.0\ar" />
      <file src="Humanizer\bin\Release\netstandard2.0\ar\*.*" target="lib\netstandard2.0\ar" />
 -    <file src="Humanizer\bin\Release\net6.0\ar\*.*" target="lib\net6.0\ar" />
-+    <file src="Humanizer\bin\Release\net7.0\ar\*.*" target="lib\net7.0\ar" />
++    <file src="Humanizer\bin\Release\net8.0\ar\*.*" target="lib\net8.0\ar" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -97,7 +97,7 @@ index d6c4a00..876ea46 100644
      <file src="Humanizer\bin\Release\netstandard1.0\az\*.*" target="lib\netstandard1.0\az" />
      <file src="Humanizer\bin\Release\netstandard2.0\az\*.*" target="lib\netstandard2.0\az" />
 -    <file src="Humanizer\bin\Release\net6.0\az\*.*" target="lib\net6.0\az" />
-+    <file src="Humanizer\bin\Release\net7.0\az\*.*" target="lib\net7.0\az" />
++    <file src="Humanizer\bin\Release\net8.0\az\*.*" target="lib\net8.0\az" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -111,7 +111,7 @@ index 93924d0..8a7f2c5 100644
      <file src="Humanizer\bin\Release\netstandard1.0\bg\*.*" target="lib\netstandard1.0\bg" />
      <file src="Humanizer\bin\Release\netstandard2.0\bg\*.*" target="lib\netstandard2.0\bg" />
 -    <file src="Humanizer\bin\Release\net6.0\bg\*.*" target="lib\net6.0\bg" />
-+    <file src="Humanizer\bin\Release\net7.0\bg\*.*" target="lib\net7.0\bg" />
++    <file src="Humanizer\bin\Release\net8.0\bg\*.*" target="lib\net8.0\bg" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -125,7 +125,7 @@ index 27585ce..f1f7e87 100644
      <file src="Humanizer\bin\Release\netstandard1.0\bn-BD\*.*" target="lib\netstandard1.0\bn-BD" />
      <file src="Humanizer\bin\Release\netstandard2.0\bn-BD\*.*" target="lib\netstandard2.0\bn-BD" />
 -    <file src="Humanizer\bin\Release\net6.0\bn-BD\*.*" target="lib\net6.0\bn-BD" />
-+    <file src="Humanizer\bin\Release\net7.0\bn-BD\*.*" target="lib\net7.0\bn-BD" />
++    <file src="Humanizer\bin\Release\net8.0\bn-BD\*.*" target="lib\net8.0\bn-BD" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -139,7 +139,7 @@ index 8a5fb02..5be0d87 100644
      <file src="Humanizer\bin\Release\netstandard1.0\cs\*.*" target="lib\netstandard1.0\cs" />
      <file src="Humanizer\bin\Release\netstandard2.0\cs\*.*" target="lib\netstandard2.0\cs" />
 -    <file src="Humanizer\bin\Release\net6.0\cs\*.*" target="lib\net6.0\cs" />
-+    <file src="Humanizer\bin\Release\net7.0\cs\*.*" target="lib\net7.0\cs" />
++    <file src="Humanizer\bin\Release\net8.0\cs\*.*" target="lib\net8.0\cs" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -153,7 +153,7 @@ index 4eeaf71..2bccd73 100644
      <file src="Humanizer\bin\Release\netstandard1.0\da\*.*" target="lib\netstandard1.0\da" />
      <file src="Humanizer\bin\Release\netstandard2.0\da\*.*" target="lib\netstandard2.0\da" />
 -    <file src="Humanizer\bin\Release\net6.0\da\*.*" target="lib\net6.0\da" />
-+    <file src="Humanizer\bin\Release\net7.0\da\*.*" target="lib\net7.0\da" />
++    <file src="Humanizer\bin\Release\net8.0\da\*.*" target="lib\net8.0\da" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -167,7 +167,7 @@ index 3e248df..3d02e39 100644
      <file src="Humanizer\bin\Release\netstandard1.0\de\*.*" target="lib\netstandard1.0\de" />
      <file src="Humanizer\bin\Release\netstandard2.0\de\*.*" target="lib\netstandard2.0\de" />
 -    <file src="Humanizer\bin\Release\net6.0\de\*.*" target="lib\net6.0\de" />
-+    <file src="Humanizer\bin\Release\net7.0\de\*.*" target="lib\net7.0\de" />
++    <file src="Humanizer\bin\Release\net8.0\de\*.*" target="lib\net8.0\de" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -181,7 +181,7 @@ index 7bb205d..19d71fc 100644
      <file src="Humanizer\bin\Release\netstandard1.0\el\*.*" target="lib\netstandard1.0\el" />
      <file src="Humanizer\bin\Release\netstandard2.0\el\*.*" target="lib\netstandard2.0\el" />
 -    <file src="Humanizer\bin\Release\net6.0\el\*.*" target="lib\net6.0\el" />
-+    <file src="Humanizer\bin\Release\net7.0\el\*.*" target="lib\net7.0\el" />
++    <file src="Humanizer\bin\Release\net8.0\el\*.*" target="lib\net8.0\el" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -195,7 +195,7 @@ index cd050bd..bd83984 100644
      <file src="Humanizer\bin\Release\netstandard1.0\es\*.*" target="lib\netstandard1.0\es" />
      <file src="Humanizer\bin\Release\netstandard2.0\es\*.*" target="lib\netstandard2.0\es" />
 -    <file src="Humanizer\bin\Release\net6.0\es\*.*" target="lib\net6.0\es" />
-+    <file src="Humanizer\bin\Release\net7.0\es\*.*" target="lib\net7.0\es" />
++    <file src="Humanizer\bin\Release\net8.0\es\*.*" target="lib\net8.0\es" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -209,7 +209,7 @@ index 3a8cc94..71631da 100644
      <file src="Humanizer\bin\Release\netstandard1.0\fa\*.*" target="lib\netstandard1.0\fa" />
      <file src="Humanizer\bin\Release\netstandard2.0\fa\*.*" target="lib\netstandard2.0\fa" />
 -    <file src="Humanizer\bin\Release\net6.0\fa\*.*" target="lib\net6.0\fa" />
-+    <file src="Humanizer\bin\Release\net7.0\fa\*.*" target="lib\net7.0\fa" />
++    <file src="Humanizer\bin\Release\net8.0\fa\*.*" target="lib\net8.0\fa" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -223,7 +223,7 @@ index 35796ee..4ad5baa 100644
      <file src="Humanizer\bin\Release\netstandard1.0\fi-FI\*.*" target="lib\netstandard1.0\fi-FI" />
      <file src="Humanizer\bin\Release\netstandard2.0\fi-FI\*.*" target="lib\netstandard2.0\fi-FI" />
 -    <file src="Humanizer\bin\Release\net6.0\fi-FI\*.*" target="lib\net6.0\fi-FI" />
-+    <file src="Humanizer\bin\Release\net7.0\fi-FI\*.*" target="lib\net7.0\fi-FI" />
++    <file src="Humanizer\bin\Release\net8.0\fi-FI\*.*" target="lib\net8.0\fi-FI" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -237,7 +237,7 @@ index 0cd678b..ac7aff9 100644
      <file src="Humanizer\bin\Release\netstandard1.0\fil-PH\*.*" target="lib\netstandard1.0\fil-PH" />
      <file src="Humanizer\bin\Release\netstandard2.0\fil-PH\*.*" target="lib\netstandard2.0\fil-PH" />
 -    <file src="Humanizer\bin\Release\net6.0\fil-PH\*.*" target="lib\net6.0\fil-PH" />
-+    <file src="Humanizer\bin\Release\net7.0\fil-PH\*.*" target="lib\net7.0\fil-PH" />
++    <file src="Humanizer\bin\Release\net8.0\fil-PH\*.*" target="lib\net8.0\fil-PH" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -251,7 +251,7 @@ index 6d2851e..efaa567 100644
      <file src="Humanizer\bin\Release\netstandard1.0\fr-BE\*.*" target="lib\netstandard1.0\fr-BE" />
      <file src="Humanizer\bin\Release\netstandard2.0\fr-BE\*.*" target="lib\netstandard2.0\fr-BE" />
 -    <file src="Humanizer\bin\Release\net6.0\fr-BE\*.*" target="lib\net6.0\fr-BE" />
-+    <file src="Humanizer\bin\Release\net7.0\fr-BE\*.*" target="lib\net7.0\fr-BE" />
++    <file src="Humanizer\bin\Release\net8.0\fr-BE\*.*" target="lib\net8.0\fr-BE" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -265,7 +265,7 @@ index 5d84bd3..ec72947 100644
      <file src="Humanizer\bin\Release\netstandard1.0\fr\*.*" target="lib\netstandard1.0\fr" />
      <file src="Humanizer\bin\Release\netstandard2.0\fr\*.*" target="lib\netstandard2.0\fr" />
 -    <file src="Humanizer\bin\Release\net6.0\fr\*.*" target="lib\net6.0\fr" />
-+    <file src="Humanizer\bin\Release\net7.0\fr\*.*" target="lib\net7.0\fr" />
++    <file src="Humanizer\bin\Release\net8.0\fr\*.*" target="lib\net8.0\fr" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -279,7 +279,7 @@ index 4bd3936..be326e8 100644
      <file src="Humanizer\bin\Release\netstandard1.0\he\*.*" target="lib\netstandard1.0\he" />
      <file src="Humanizer\bin\Release\netstandard2.0\he\*.*" target="lib\netstandard2.0\he" />
 -    <file src="Humanizer\bin\Release\net6.0\he\*.*" target="lib\net6.0\he" />
-+    <file src="Humanizer\bin\Release\net7.0\he\*.*" target="lib\net7.0\he" />
++    <file src="Humanizer\bin\Release\net8.0\he\*.*" target="lib\net8.0\he" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -293,7 +293,7 @@ index 736a05a..7b3c6ff 100644
      <file src="Humanizer\bin\Release\netstandard1.0\hr\*.*" target="lib\netstandard1.0\hr" />
      <file src="Humanizer\bin\Release\netstandard2.0\hr\*.*" target="lib\netstandard2.0\hr" />
 -    <file src="Humanizer\bin\Release\net6.0\hr\*.*" target="lib\net6.0\hr" />
-+    <file src="Humanizer\bin\Release\net7.0\hr\*.*" target="lib\net7.0\hr" />
++    <file src="Humanizer\bin\Release\net8.0\hr\*.*" target="lib\net8.0\hr" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -307,7 +307,7 @@ index 3842c724..c4fc7ff 100644
      <file src="Humanizer\bin\Release\netstandard1.0\hu\*.*" target="lib\netstandard1.0\hu" />
      <file src="Humanizer\bin\Release\netstandard2.0\hu\*.*" target="lib\netstandard2.0\hu" />
 -    <file src="Humanizer\bin\Release\net6.0\hu\*.*" target="lib\net6.0\hu" />
-+    <file src="Humanizer\bin\Release\net7.0\hu\*.*" target="lib\net7.0\hu" />
++    <file src="Humanizer\bin\Release\net8.0\hu\*.*" target="lib\net8.0\hu" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -321,7 +321,7 @@ index ac8827d..42fc8cb 100644
      <file src="Humanizer\bin\Release\netstandard1.0\hy\*.*" target="lib\netstandard1.0\hy" />
      <file src="Humanizer\bin\Release\netstandard2.0\hy\*.*" target="lib\netstandard2.0\hy" />
 -    <file src="Humanizer\bin\Release\net6.0\hy\*.*" target="lib\net6.0\hy" />
-+    <file src="Humanizer\bin\Release\net7.0\hy\*.*" target="lib\net7.0\hy" />
++    <file src="Humanizer\bin\Release\net8.0\hy\*.*" target="lib\net8.0\hy" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -334,7 +334,7 @@ index c38c48c..2d689d8 100644
      <file src="Humanizer\bin\Release\netstandard1.0\id\*.*" target="lib\netstandard1.0\id" />
      <file src="Humanizer\bin\Release\netstandard2.0\id\*.*" target="lib\netstandard2.0\id" />
 -    <file src="Humanizer\bin\Release\net6.0\id\*.*" target="lib\net6.0\id" />
-+    <file src="Humanizer\bin\Release\net7.0\id\*.*" target="lib\net7.0\id" />
++    <file src="Humanizer\bin\Release\net8.0\id\*.*" target="lib\net8.0\id" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -348,7 +348,7 @@ index 0cedfee..46e50a5 100644
      <file src="Humanizer\bin\Release\netstandard1.0\is\*.*" target="lib\netstandard1.0\is" />
      <file src="Humanizer\bin\Release\netstandard2.0\is\*.*" target="lib\netstandard2.0\is" />
 -    <file src="Humanizer\bin\Release\net6.0\is\*.*" target="lib\net6.0\is" />
-+    <file src="Humanizer\bin\Release\net7.0\is\*.*" target="lib\net7.0\is" />
++    <file src="Humanizer\bin\Release\net8.0\is\*.*" target="lib\net8.0\is" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -362,7 +362,7 @@ index a6a1cc4..44466b2 100644
      <file src="Humanizer\bin\Release\netstandard1.0\it\*.*" target="lib\netstandard1.0\it" />
      <file src="Humanizer\bin\Release\netstandard2.0\it\*.*" target="lib\netstandard2.0\it" />
 -    <file src="Humanizer\bin\Release\net6.0\it\*.*" target="lib\net6.0\it" />
-+    <file src="Humanizer\bin\Release\net7.0\it\*.*" target="lib\net7.0\it" />
++    <file src="Humanizer\bin\Release\net8.0\it\*.*" target="lib\net8.0\it" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -376,7 +376,7 @@ index 6da99ed..b7a6b2b 100644
      <file src="Humanizer\bin\Release\netstandard1.0\ja\*.*" target="lib\netstandard1.0\ja" />
      <file src="Humanizer\bin\Release\netstandard2.0\ja\*.*" target="lib\netstandard2.0\ja" />
 -    <file src="Humanizer\bin\Release\net6.0\ja\*.*" target="lib\net6.0\ja" />
-+    <file src="Humanizer\bin\Release\net7.0\ja\*.*" target="lib\net7.0\ja" />
++    <file src="Humanizer\bin\Release\net8.0\ja\*.*" target="lib\net8.0\ja" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -390,7 +390,7 @@ index 5c99b9f..3a7cbd0 100644
      <file src="Humanizer\bin\Release\netstandard1.0\ku\*.*" target="lib\netstandard1.0\ku" />
      <file src="Humanizer\bin\Release\netstandard2.0\ku\*.*" target="lib\netstandard2.0\ku" />
 -    <file src="Humanizer\bin\Release\net6.0\ku\*.*" target="lib\net6.0\ku" />
-+    <file src="Humanizer\bin\Release\net7.0\ku\*.*" target="lib\net7.0\ku" />
++    <file src="Humanizer\bin\Release\net8.0\ku\*.*" target="lib\net8.0\ku" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -404,7 +404,7 @@ index f2a5d1f..4a8f693 100644
      <file src="Humanizer\bin\Release\netstandard1.0\lv\*.*" target="lib\netstandard1.0\lv" />
      <file src="Humanizer\bin\Release\netstandard2.0\lv\*.*" target="lib\netstandard2.0\lv" />
 -    <file src="Humanizer\bin\Release\net6.0\lv\*.*" target="lib\net6.0\lv" />
-+    <file src="Humanizer\bin\Release\net7.0\lv\*.*" target="lib\net7.0\lv" />
++    <file src="Humanizer\bin\Release\net8.0\lv\*.*" target="lib\net8.0\lv" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -418,7 +418,7 @@ index 038c6f0..661d8ad 100644
      <file src="Humanizer\bin\Release\netstandard1.0\nb-NO\*.*" target="lib\netstandard1.0\nb-NO" />
      <file src="Humanizer\bin\Release\netstandard2.0\nb-NO\*.*" target="lib\netstandard2.0\nb-NO" />
 -    <file src="Humanizer\bin\Release\net6.0\nb-NO\*.*" target="lib\net6.0\nb-NO" />
-+    <file src="Humanizer\bin\Release\net7.0\nb-NO\*.*" target="lib\net7.0\nb-NO" />
++    <file src="Humanizer\bin\Release\net8.0\nb-NO\*.*" target="lib\net8.0\nb-NO" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -432,7 +432,7 @@ index f0cb4ac..a99764e 100644
      <file src="Humanizer\bin\Release\netstandard1.0\nb\*.*" target="lib\netstandard1.0\nb" />
      <file src="Humanizer\bin\Release\netstandard2.0\nb\*.*" target="lib\netstandard2.0\nb" />
 -    <file src="Humanizer\bin\Release\net6.0\nb\*.*" target="lib\net6.0\nb" />
-+    <file src="Humanizer\bin\Release\net7.0\nb\*.*" target="lib\net7.0\nb" />
++    <file src="Humanizer\bin\Release\net8.0\nb\*.*" target="lib\net8.0\nb" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -446,7 +446,7 @@ index 8c495bc..5577e12 100644
      <file src="Humanizer\bin\Release\netstandard1.0\nl\*.*" target="lib\netstandard1.0\nl" />
      <file src="Humanizer\bin\Release\netstandard2.0\nl\*.*" target="lib\netstandard2.0\nl" />
 -    <file src="Humanizer\bin\Release\net6.0\nl\*.*" target="lib\net6.0\nl" />
-+    <file src="Humanizer\bin\Release\net7.0\nl\*.*" target="lib\net7.0\nl" />
++    <file src="Humanizer\bin\Release\net8.0\nl\*.*" target="lib\net8.0\nl" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -460,7 +460,7 @@ index c6e3a0f..a825da0 100644
        </group>
        <group targetFramework="netstandard2.0" />
 -      <group targetFramework="net6.0" />
-+      <group targetFramework="net7.0" />
++      <group targetFramework="net8.0" />
      </dependencies>
    </metadata>
    <files>
@@ -470,8 +470,8 @@ index c6e3a0f..a825da0 100644
      <file src="Humanizer\bin\Release\netstandard2.0\*.xml" target="lib\netstandard2.0" />
 -    <file src="Humanizer\bin\Release\net6.0\*.dll" target="lib\net6.0" />
 -    <file src="Humanizer\bin\Release\net6.0\*.xml" target="lib\net6.0" />
-+    <file src="Humanizer\bin\Release\net7.0\*.dll" target="lib\net7.0" />
-+    <file src="Humanizer\bin\Release\net7.0\*.xml" target="lib\net7.0" />
++    <file src="Humanizer\bin\Release\net8.0\*.dll" target="lib\net8.0" />
++    <file src="Humanizer\bin\Release\net8.0\*.xml" target="lib\net8.0" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -485,7 +485,7 @@ index 75593a0..849b644 100644
      <file src="Humanizer\bin\Release\netstandard1.0\pl\*.*" target="lib\netstandard1.0\pl" />
      <file src="Humanizer\bin\Release\netstandard2.0\pl\*.*" target="lib\netstandard2.0\pl" />
 -    <file src="Humanizer\bin\Release\net6.0\pl\*.*" target="lib\net6.0\pl" />
-+    <file src="Humanizer\bin\Release\net7.0\pl\*.*" target="lib\net7.0\pl" />
++    <file src="Humanizer\bin\Release\net8.0\pl\*.*" target="lib\net8.0\pl" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -499,7 +499,7 @@ index 084ff71..4863d65 100644
      <file src="Humanizer\bin\Release\netstandard1.0\pt\*.*" target="lib\netstandard1.0\pt" />
      <file src="Humanizer\bin\Release\netstandard2.0\pt\*.*" target="lib\netstandard2.0\pt" />
 -    <file src="Humanizer\bin\Release\net6.0\pt\*.*" target="lib\net6.0\pt" />
-+    <file src="Humanizer\bin\Release\net7.0\pt\*.*" target="lib\net7.0\pt" />
++    <file src="Humanizer\bin\Release\net8.0\pt\*.*" target="lib\net8.0\pt" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -513,7 +513,7 @@ index 4eb8746..e3c80dd 100644
      <file src="Humanizer\bin\Release\netstandard1.0\ro\*.*" target="lib\netstandard1.0\ro" />
      <file src="Humanizer\bin\Release\netstandard2.0\ro\*.*" target="lib\netstandard2.0\ro" />
 -    <file src="Humanizer\bin\Release\net6.0\ro\*.*" target="lib\net6.0\ro" />
-+    <file src="Humanizer\bin\Release\net7.0\ro\*.*" target="lib\net7.0\ro" />
++    <file src="Humanizer\bin\Release\net8.0\ro\*.*" target="lib\net8.0\ro" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -527,7 +527,7 @@ index 9c953e7..d69e384 100644
      <file src="Humanizer\bin\Release\netstandard1.0\ru\*.*" target="lib\netstandard1.0\ru" />
      <file src="Humanizer\bin\Release\netstandard2.0\ru\*.*" target="lib\netstandard2.0\ru" />
 -    <file src="Humanizer\bin\Release\net6.0\ru\*.*" target="lib\net6.0\ru" />
-+    <file src="Humanizer\bin\Release\net7.0\ru\*.*" target="lib\net7.0\ru" />
++    <file src="Humanizer\bin\Release\net8.0\ru\*.*" target="lib\net8.0\ru" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -541,7 +541,7 @@ index 10ea8c0..3e6acef 100644
      <file src="Humanizer\bin\Release\netstandard1.0\sk\*.*" target="lib\netstandard1.0\sk" />
      <file src="Humanizer\bin\Release\netstandard2.0\sk\*.*" target="lib\netstandard2.0\sk" />
 -    <file src="Humanizer\bin\Release\net6.0\sk\*.*" target="lib\net6.0\sk" />
-+    <file src="Humanizer\bin\Release\net7.0\sk\*.*" target="lib\net7.0\sk" />
++    <file src="Humanizer\bin\Release\net8.0\sk\*.*" target="lib\net8.0\sk" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -555,7 +555,7 @@ index 3ba1e17..f593386 100644
      <file src="Humanizer\bin\Release\netstandard1.0\sl\*.*" target="lib\netstandard1.0\sl" />
      <file src="Humanizer\bin\Release\netstandard2.0\sl\*.*" target="lib\netstandard2.0\sl" />
 -    <file src="Humanizer\bin\Release\net6.0\sl\*.*" target="lib\net6.0\sl" />
-+    <file src="Humanizer\bin\Release\net7.0\sl\*.*" target="lib\net7.0\sl" />
++    <file src="Humanizer\bin\Release\net8.0\sl\*.*" target="lib\net8.0\sl" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -569,7 +569,7 @@ index 8312104..8091496 100644
      <file src="Humanizer\bin\Release\netstandard1.0\sr-Latn\*.*" target="lib\netstandard1.0\sr-Latn" />
      <file src="Humanizer\bin\Release\netstandard2.0\sr-Latn\*.*" target="lib\netstandard2.0\sr-Latn" />
 -    <file src="Humanizer\bin\Release\net6.0\sr-Latn\*.*" target="lib\net6.0\sr-Latn" />
-+    <file src="Humanizer\bin\Release\net7.0\sr-Latn\*.*" target="lib\net7.0\sr-Latn" />
++    <file src="Humanizer\bin\Release\net8.0\sr-Latn\*.*" target="lib\net8.0\sr-Latn" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -583,7 +583,7 @@ index 464a316..b06c38d 100644
      <file src="Humanizer\bin\Release\netstandard1.0\sr\*.*" target="lib\netstandard1.0\sr" />
      <file src="Humanizer\bin\Release\netstandard2.0\sr\*.*" target="lib\netstandard2.0\sr" />
 -    <file src="Humanizer\bin\Release\net6.0\sr\*.*" target="lib\net6.0\sr" />
-+    <file src="Humanizer\bin\Release\net7.0\sr\*.*" target="lib\net7.0\sr" />
++    <file src="Humanizer\bin\Release\net8.0\sr\*.*" target="lib\net8.0\sr" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -597,7 +597,7 @@ index 13215b7..b226ff8 100644
      <file src="Humanizer\bin\Release\netstandard1.0\sv\*.*" target="lib\netstandard1.0\sv" />
      <file src="Humanizer\bin\Release\netstandard2.0\sv\*.*" target="lib\netstandard2.0\sv" />
 -    <file src="Humanizer\bin\Release\net6.0\sv\*.*" target="lib\net6.0\sv" />
-+    <file src="Humanizer\bin\Release\net7.0\sv\*.*" target="lib\net7.0\sv" />
++    <file src="Humanizer\bin\Release\net8.0\sv\*.*" target="lib\net8.0\sv" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -611,7 +611,7 @@ index 74c9d43..dd3223c 100644
      <file src="Humanizer\bin\Release\netstandard1.0\ta\*.*" target="lib\netstandard1.0\ta" />
      <file src="Humanizer\bin\Release\netstandard2.0\ta\*.*" target="lib\netstandard2.0\ta" />
 -    <file src="Humanizer\bin\Release\net6.0\ta\*.*" target="lib\net6.0\ta" />
-+    <file src="Humanizer\bin\Release\net7.0\ta\*.*" target="lib\net7.0\ta" />
++    <file src="Humanizer\bin\Release\net8.0\ta\*.*" target="lib\net8.0\ta" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -624,7 +624,7 @@ index c06ecea..5f375e0 100644
      <file src="Humanizer\bin\Release\netstandard1.0\tr\*.*" target="lib\netstandard1.0\tr" />
      <file src="Humanizer\bin\Release\netstandard2.0\tr\*.*" target="lib\netstandard2.0\tr" />
 -    <file src="Humanizer\bin\Release\net6.0\tr\*.*" target="lib\net6.0\tr" />
-+    <file src="Humanizer\bin\Release\net7.0\tr\*.*" target="lib\net7.0\tr" />
++    <file src="Humanizer\bin\Release\net8.0\tr\*.*" target="lib\net8.0\tr" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -638,7 +638,7 @@ index 489d09e..0f0c301 100644
      <file src="Humanizer\bin\Release\netstandard1.0\uk\*.*" target="lib\netstandard1.0\uk" />
      <file src="Humanizer\bin\Release\netstandard2.0\uk\*.*" target="lib\netstandard2.0\uk" />
 -    <file src="Humanizer\bin\Release\net6.0\uk\*.*" target="lib\net6.0\uk" />
-+    <file src="Humanizer\bin\Release\net7.0\uk\*.*" target="lib\net7.0\uk" />
++    <file src="Humanizer\bin\Release\net8.0\uk\*.*" target="lib\net8.0\uk" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -652,7 +652,7 @@ index 324e201..df3d248 100644
      <file src="Humanizer\bin\Release\netstandard1.0\uz-Cyrl-UZ\*.*" target="lib\netstandard1.0\uz-Cyrl-UZ" />
      <file src="Humanizer\bin\Release\netstandard2.0\uz-Cyrl-UZ\*.*" target="lib\netstandard2.0\uz-Cyrl-UZ" />
 -    <file src="Humanizer\bin\Release\net6.0\uz-Cyrl-UZ\*.*" target="lib\net6.0\uz-Cyrl-UZ" />
-+    <file src="Humanizer\bin\Release\net7.0\uz-Cyrl-UZ\*.*" target="lib\net7.0\uz-Cyrl-UZ" />
++    <file src="Humanizer\bin\Release\net8.0\uz-Cyrl-UZ\*.*" target="lib\net8.0\uz-Cyrl-UZ" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -666,7 +666,7 @@ index 98668f0..407f726 100644
      <file src="Humanizer\bin\Release\netstandard1.0\uz-Latn-UZ\*.*" target="lib\netstandard1.0\uz-Latn-UZ" />
      <file src="Humanizer\bin\Release\netstandard2.0\uz-Latn-UZ\*.*" target="lib\netstandard2.0\uz-Latn-UZ" />
 -    <file src="Humanizer\bin\Release\net6.0\uz-Latn-UZ\*.*" target="lib\net6.0\uz-Latn-UZ" />
-+    <file src="Humanizer\bin\Release\net7.0\uz-Latn-UZ\*.*" target="lib\net7.0\uz-Latn-UZ" />
++    <file src="Humanizer\bin\Release\net8.0\uz-Latn-UZ\*.*" target="lib\net8.0\uz-Latn-UZ" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -680,7 +680,7 @@ index 1f7288b..a981868 100644
      <file src="Humanizer\bin\Release\netstandard1.0\vi\*.*" target="lib\netstandard1.0\vi" />
      <file src="Humanizer\bin\Release\netstandard2.0\vi\*.*" target="lib\netstandard2.0\vi" />
 -    <file src="Humanizer\bin\Release\net6.0\vi\*.*" target="lib\net6.0\vi" />
-+    <file src="Humanizer\bin\Release\net7.0\vi\*.*" target="lib\net7.0\vi" />
++    <file src="Humanizer\bin\Release\net8.0\vi\*.*" target="lib\net8.0\vi" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -694,7 +694,7 @@ index d693eb7..cefd67b 100644
      <file src="Humanizer\bin\Release\netstandard1.0\zh-CN\*.*" target="lib\netstandard1.0\zh-CN" />
      <file src="Humanizer\bin\Release\netstandard2.0\zh-CN\*.*" target="lib\netstandard2.0\zh-CN" />
 -    <file src="Humanizer\bin\Release\net6.0\zh-CN\*.*" target="lib\net6.0\zh-CN" />
-+    <file src="Humanizer\bin\Release\net7.0\zh-CN\*.*" target="lib\net7.0\zh-CN" />
++    <file src="Humanizer\bin\Release\net8.0\zh-CN\*.*" target="lib\net8.0\zh-CN" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -708,7 +708,7 @@ index daf32b8..512231f 100644
      <file src="Humanizer\bin\Release\netstandard1.0\zh-Hans\*.*" target="lib\netstandard1.0\zh-Hans" />
      <file src="Humanizer\bin\Release\netstandard2.0\zh-Hans\*.*" target="lib\netstandard2.0\zh-Hans" />
 -    <file src="Humanizer\bin\Release\net6.0\zh-Hans\*.*" target="lib\net6.0\zh-Hans" />
-+    <file src="Humanizer\bin\Release\net7.0\zh-Hans\*.*" target="lib\net7.0\zh-Hans" />
++    <file src="Humanizer\bin\Release\net8.0\zh-Hans\*.*" target="lib\net8.0\zh-Hans" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -722,7 +722,7 @@ index 0a219d4..b801e73 100644
      <file src="Humanizer\bin\Release\netstandard1.0\zh-Hant\*.*" target="lib\netstandard1.0\zh-Hant" />
      <file src="Humanizer\bin\Release\netstandard2.0\zh-Hant\*.*" target="lib\netstandard2.0\zh-Hant" />
 -    <file src="Humanizer\bin\Release\net6.0\zh-Hant\*.*" target="lib\net6.0\zh-Hant" />
-+    <file src="Humanizer\bin\Release\net7.0\zh-Hant\*.*" target="lib\net7.0\zh-Hant" />
++    <file src="Humanizer\bin\Release\net8.0\zh-Hant\*.*" target="lib\net8.0\zh-Hant" />
      <file src="..\logo.png" target="logo.png" />
    </files>
  </package>
@@ -752,7 +752,7 @@ index 5b2f8ad..145ac3a 100644
    <PropertyGroup>
 -    <TargetFrameworks>netstandard1.0;netstandard2.0;net6.0</TargetFrameworks>    
 +    <Version>2.14.1</Version>
-+    <TargetFrameworks>netstandard1.0;netstandard2.0;net7.0</TargetFrameworks>    
++    <TargetFrameworks>netstandard1.0;netstandard2.0;net8.0</TargetFrameworks>    
      <Authors>Mehdi Khalili, Claire Novotny</Authors>
      <PackageLicenseUrl>https://raw.githubusercontent.com/Humanizr/Humanizer/master/LICENSE</PackageLicenseUrl>
      <PackageProjectUrl>https://github.com/Humanizr/Humanizer</PackageProjectUrl>

@@ -17,6 +17,10 @@ pr:
     exclude:
     - '*.md'
 
+variables:
+  - name: Codeql.Enable
+    value: true
+
 stages:
 - stage: build
   displayName: Build
@@ -57,3 +61,4 @@ stages:
       publishingInfraVersion: 3
       enableSourceLinkValidation: false
       enableSigningValidation: false
+

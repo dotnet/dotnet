@@ -200,8 +200,8 @@
     <XamarinMacOSWorkloadManifestVersion>12.3.2372</XamarinMacOSWorkloadManifestVersion>
     <XamarinTvOSWorkloadManifestVersion>16.0.1478</XamarinTvOSWorkloadManifestVersion>
     <MonoWorkloadManifestVersion>$(MicrosoftNETCoreAppRefPackageVersion)</MonoWorkloadManifestVersion>
-    <MicrosoftNETWorkloadEmscriptennet6Manifest80100Version>8.0.0-alpha.1.23054.1</MicrosoftNETWorkloadEmscriptennet6Manifest80100Version>
-    <MicrosoftNETWorkloadEmscriptennet7Manifest80100Version>8.0.0-alpha.1.23054.1</MicrosoftNETWorkloadEmscriptennet7Manifest80100Version>
+    <MicrosoftNETWorkloadEmscriptennet6Manifest80100Version>8.0.0-alpha.1.23061.1</MicrosoftNETWorkloadEmscriptennet6Manifest80100Version>
+    <MicrosoftNETWorkloadEmscriptennet7Manifest80100Version>8.0.0-alpha.1.23061.1</MicrosoftNETWorkloadEmscriptennet7Manifest80100Version>
     <EmscriptenWorkloadManifestVersion>$(MicrosoftNETWorkloadEmscriptennet7Manifest80100Version)</EmscriptenWorkloadManifestVersion>
   </PropertyGroup>
   <!-- dependencies for VMR initialization -->
