@@ -68,11 +68,12 @@ stages:
         name: ${{ variables.defaultPoolName }}
         demands: ${{ variables.defaultPoolDemands }}
       container: ${{ parameters.centOSStream8Container }}
-      bootstrapPrep: false            # 🚫
-      enablePoison: false             # 🚫
-      excludeSdkContentTests: true    # ✅
-      excludeOmniSharpTests: true     # ✅
-      runOnline: true                 # ✅
+      bootstrapPrep: false          # 🚫
+      enablePoison: false           # 🚫
+      excludeSdkContentTests: true  # ✅
+      excludeOmniSharpTests: true   # ✅
+      runOnline: true               # ✅
+      buildFromArchive: false       # 🚫
 
   - ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
     - template: ../jobs/vmr-build.yml
@@ -90,6 +91,7 @@ stages:
         excludeSdkContentTests: false # 🚫
         excludeOmniSharpTests: true   # ✅
         runOnline: false              # 🚫
+        buildFromArchive: true        # ✅
 
     - template: ../jobs/vmr-build.yml
       parameters:
@@ -106,6 +108,7 @@ stages:
         excludeSdkContentTests: false # 🚫
         excludeOmniSharpTests: false  # 🚫
         runOnline: false              # 🚫
+        buildFromArchive: true        # ✅
 
     - template: ../jobs/vmr-build.yml
       parameters:
@@ -122,6 +125,7 @@ stages:
         excludeSdkContentTests: false # 🚫
         excludeOmniSharpTests: false  # 🚫
         runOnline: false              # 🚫
+        buildFromArchive: true        # ✅
 
     - template: ../jobs/vmr-build.yml
       parameters:
@@ -138,6 +142,7 @@ stages:
         excludeSdkContentTests: false # 🚫
         excludeOmniSharpTests: false  # 🚫
         runOnline: false              # 🚫
+        buildFromArchive: false       # 🚫
 
     - template: ../jobs/vmr-build.yml
       parameters:
@@ -152,6 +157,7 @@ stages:
         excludeSdkContentTests: false # 🚫
         excludeOmniSharpTests: false  # 🚫
         runOnline: false              # 🚫
+        buildFromArchive: false       # 🚫
 
     - template: ../jobs/vmr-build.yml
       parameters:
@@ -168,4 +174,5 @@ stages:
         excludeSdkContentTests: true  # ✅
         excludeOmniSharpTests: false  # 🚫
         runOnline: false              # 🚫
+        buildFromArchive: false       # 🚫
         reuseBuildArtifactsFrom: Fedora36_Offline

@@ -51,6 +51,10 @@ parameters:
 - name: enablePoison
   type: boolean
 
+# Instead of building the VMR directly, exports the sources into a tarball and builds from that
+- name: buildFromArchive
+  type: boolean
+
 jobs:
 - job: ${{ parameters.buildName }}_${{ parameters.architecture }}
   timeoutInMinutes: 150
@@ -75,6 +79,15 @@ jobs:
     - name: additionalBuildArgs
       value: ' --with-sdk /vmr/.dotnet'
 
+  # Location of the VMR sources
+  # We either build the repo directly, or we extract them outside (which is what partners do)
+  - ${{ if parameters.buildFromArchive }}:
+    - name: sourcesPath
+      value: $(Build.StagingDirectory)/dotnet-sources/
+  - ${{ else }}:
+    - name: sourcesPath
+      value: ${{ parameters.vmrPath }}
+
   steps:
   - template: ../steps/vmr-prepare.yml
     parameters:
@@ -90,15 +103,24 @@ jobs:
         vmrBranch: ${{ parameters.vmrBranch }}
         targetRef: $(Build.SourceVersion) # Synchronize the current installer commit
 
+  - ${{ if parameters.buildFromArchive }}:
+    - script: |
+        set -ex
+        "${{ parameters.vmrPath }}/eng/pack-sources.sh" -o "$(Build.StagingDirectory)/dotnet-sources.tar.gz"
+        tar -xf dotnet-sources.tar.gz
+        mv "dotnet-$(Build.SourceVersion)" "$(sourcesPath)"
+      displayName: Export VMR sources
+      workingDirectory: $(Build.StagingDirectory)
+
   - ${{ if ne(variables['System.TeamProject'], 'public') }}:
-    - script: cp ${{ parameters.vmrPath }}/src/installer/NuGet.config ${{ parameters.vmrPath }}/test/Microsoft.DotNet.SourceBuild.SmokeTests/assets/online.NuGet.Config
+    - script: cp "$(sourcesPath)/src/installer/NuGet.config" "$(sourcesPath)/test/Microsoft.DotNet.SourceBuild.SmokeTests/assets/online.NuGet.Config"
       displayName: Copy Test NuGet Config
 
     - task: Bash@3
       displayName: Setup Private Feeds Credentials
       inputs:
-        filePath: ${{ parameters.vmrPath }}/src/installer/eng/common/SetupNugetSources.sh
-        arguments: ${{ parameters.vmrPath }}/test/Microsoft.DotNet.SourceBuild.SmokeTests/assets/online.NuGet.Config $Token
+        filePath: $(sourcesPath)/src/installer/eng/common/SetupNugetSources.sh
+        arguments: $(sourcesPath)/test/Microsoft.DotNet.SourceBuild.SmokeTests/assets/online.NuGet.Config $Token
       env:
         Token: $(dn-bot-dnceng-artifact-feeds-rw)
 
@@ -119,7 +141,7 @@ jobs:
       inputs:
         SourceFolder: $(Pipeline.Workspace)/${{ parameters.reuseBuildArtifactsFrom }}_${{ parameters.architecture }}_Artifacts
         Contents: '*.tar.gz'
-        TargetFolder: ${{ parameters.vmrPath }}/packages/archive/
+        TargetFolder: ${{ variables.sourcesPath }}/packages/archive/
 
   - script: |
       set -x
@@ -130,11 +152,11 @@ jobs:
           customPrepArgs='--bootstrap'
         fi
 
-        docker run --rm -v ${{ parameters.vmrPath }}:/vmr -w /vmr ${{ parameters.container }} ./prep.sh ${customPrepArgs}
+        docker run --rm -v "$(sourcesPath):/vmr" -w /vmr ${{ parameters.container }} ./prep.sh ${customPrepArgs}
       else
-        mkdir ${{ parameters.vmrPath }}/.dotnet
-        previousSdkPath="${{ parameters.vmrPath }}/packages/archive/dotnet-sdk-*.tar.gz"
-        eval tar -ozxf "$previousSdkPath" -C "${{ parameters.vmrPath }}/.dotnet"
+        mkdir $(sourcesPath)/.dotnet
+        previousSdkPath="$(sourcesPath)/packages/archive/dotnet-sdk-*.tar.gz"
+        eval tar -ozxf "$previousSdkPath" -C "$(sourcesPath)/.dotnet"
         eval rm -f "$previousSdkPath"
       fi
     displayName: Prep the Build
@@ -155,13 +177,13 @@ jobs:
         customBuildArgs="$customBuildArgs --poison"
       fi
 
-      docker run --rm -v ${{ parameters.vmrPath }}:/vmr -w /vmr ${networkArgs} ${{ parameters.container }} ./build.sh --clean-while-building $(additionalBuildArgs) ${customBuildArgs}
+      docker run --rm -v "$(sourcesPath):/vmr" -w /vmr ${networkArgs} ${{ parameters.container }} ./build.sh --clean-while-building $(additionalBuildArgs) ${customBuildArgs}
     displayName: Build
 
   - script: |
       set -x
 
-      dockerVolumeArgs="-v ${{ parameters.vmrPath }}:/vmr"
+      dockerVolumeArgs="-v $(sourcesPath):/vmr"
       dockerEnvArgs="-e SMOKE_TESTS_EXCLUDE_OMNISHARP=${{ parameters.excludeOmniSharpTests }} -e SMOKE_TESTS_WARN_SDK_CONTENT_DIFFS=true"
       poisonArg=''
 
@@ -186,7 +208,7 @@ jobs:
       targetFolder=$(Build.StagingDirectory)/BuildLogs/
       mkdir -p ${targetFolder}
 
-      cd "${{ parameters.vmrPath }}"
+      cd "$(sourcesPath)"
       find artifacts/ -type f -name "*.binlog" -exec cp {} --parents -t ${targetFolder} \;
       find artifacts/ -type f -name "*.log" -exec cp {} --parents -t ${targetFolder} \;
       find artifacts/prebuilt-report/ -exec cp {} --parents -t ${targetFolder} \;
@@ -212,12 +234,12 @@ jobs:
     inputs:
       testRunner: vSTest
       testResultsFiles: 'test/**/*.trx'
-      searchFolder: ${{ parameters.vmrPath }}
+      searchFolder: ${{ variables.sourcesPath }}
       mergeTestResults: true
       publishRunAttachments: true
       testRunTitle: SourceBuild_SmokeTests_$(Agent.JobName)
 
-  - publish: '${{ parameters.vmrPath }}/artifacts/${{ parameters.architecture }}/Release/'
+  - publish: '${{ variables.sourcesPath }}/artifacts/${{ parameters.architecture }}/Release/'
     artifact: $(Agent.JobName)_Artifacts
     displayName: Publish Artifacts
     condition: succeededOrFailed()
