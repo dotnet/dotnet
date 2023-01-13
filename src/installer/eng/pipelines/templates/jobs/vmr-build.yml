@@ -80,10 +80,10 @@ jobs:
       value: ' --with-sdk /vmr/.dotnet'
   - ${{ if parameters.buildFromArchive }}:
     - name: vmrPath
-      value: ${{ parameters.vmrPath }}
+      value: $(Build.StagingDirectory)/dotnet-sources/
   - ${{ else }}:
     - name: vmrPath
-      value: $(Build.StagingDirectory)/dotnet-sources/
+      value: ${{ parameters.vmrPath }}
 
   steps:
   - template: ../steps/vmr-prepare.yml
@@ -102,12 +102,12 @@ jobs:
 
   - ${{ if parameters.buildFromArchive }}:
     - script: |
-        set -x
+        set -ex
         "${{ parameters.vmrPath }}/eng/pack-sources.sh" -o "$(Build.StagingDirectory)/dotnet-sources.tar.gz"
         tar -xf dotnet-sources.tar.gz
         mv "dotnet-$(Build.SourceVersion)" dotnet-sources
       displayName: Export VMR sources
-      workingDirectory: $(Build.SourcesDirectory)
+      workingDirectory: $(Build.StagingDirectory)
 
   - ${{ if ne(variables['System.TeamProject'], 'public') }}:
     - script: cp $(vmrPath)/src/installer/NuGet.config $(vmrPath)/test/Microsoft.DotNet.SourceBuild.SmokeTests/assets/online.NuGet.Config
@@ -149,7 +149,7 @@ jobs:
           customPrepArgs='--bootstrap'
         fi
 
-        docker run --rm -v $(vmrPath):/vmr -w /vmr ${{ parameters.container }} ./prep.sh ${customPrepArgs}
+        docker run --rm -v "$(vmrPath):/vmr" -w /vmr ${{ parameters.container }} ./prep.sh ${customPrepArgs}
       else
         mkdir $(vmrPath)/.dotnet
         previousSdkPath="$(vmrPath)/packages/archive/dotnet-sdk-*.tar.gz"
