@@ -83,7 +83,7 @@ function highlight () {
   echo "${COLOR_CYAN}$FAILURE_PREFIX${1//${COLOR_RESET}/${COLOR_CYAN}}${COLOR_CLEAR}"
 }
 
-installer_dir="$scriptroot/../"
+installer_dir=$(realpath "$scriptroot/../")
 tmp_dir=''
 vmr_dir=''
 vmr_branch='main'
@@ -178,10 +178,6 @@ fi
 
 highlight "Starting the synchronization to '$target_ref'.."
 set +e
-
-# Temporary workaround while we fix fetching commits
-rm -rf "$tmp_dir/installer"
-cp -r "$installer_dir" "$tmp_dir/installer"
 
 if "$dotnet" darc vmr update --vmr "$vmr_dir" --tmp "$tmp_dir" --$verbosity --recursive --additional-remotes "installer:$installer_dir" "installer:$target_ref"; then
   highlight "Synchronization succeeded"
