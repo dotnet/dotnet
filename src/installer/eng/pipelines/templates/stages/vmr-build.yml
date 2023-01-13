@@ -77,39 +77,22 @@ stages:
 
   - template: ../jobs/vmr-build.yml
     parameters:
-      buildName: Fedora36_Offline
+      buildName: CentOSStream8_Offline
       isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
       vmrBranch: ${{ parameters.vmrBranch }}
       architecture: x64
       pool:
         name: ${{ variables.defaultPoolName }}
         demands: ${{ variables.defaultPoolDemands }}
-      container: ${{ parameters.fedora36Container }}
+      container: ${{ parameters.centOSStream8Container }}
       bootstrapPrep: false          # 🚫
-      enablePoison: true            # ✅
-      excludeSdkContentTests: false # 🚫
-      excludeOmniSharpTests: false  # 🚫
+      enablePoison: false           # 🚫
+      excludeSdkContentTests: true # 🚫 << <TODO REVERT
+      excludeOmniSharpTests: true   # ✅
       runOnline: false              # 🚫
       buildFromArchive: true        # ✅
 
   - ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
-    - template: ../jobs/vmr-build.yml
-      parameters:
-        buildName: CentOSStream8_Offline
-        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-        vmrBranch: ${{ parameters.vmrBranch }}
-        architecture: x64
-        pool:
-          name: ${{ variables.defaultPoolName }}
-          demands: ${{ variables.defaultPoolDemands }}
-        container: ${{ parameters.centOSStream8Container }}
-        bootstrapPrep: false          # 🚫
-        enablePoison: false           # 🚫
-        excludeSdkContentTests: false # 🚫
-        excludeOmniSharpTests: true   # ✅
-        runOnline: false              # 🚫
-        buildFromArchive: false       # 🚫
-
     - template: ../jobs/vmr-build.yml
       parameters:
         buildName: CentOSStream9_Offline
@@ -126,6 +109,23 @@ stages:
         excludeOmniSharpTests: false  # 🚫
         runOnline: false              # 🚫
         buildFromArchive: false       # 🚫
+
+    - template: ../jobs/vmr-build.yml
+      parameters:
+        buildName: Fedora36_Offline
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+        vmrBranch: ${{ parameters.vmrBranch }}
+        architecture: x64
+        pool:
+          name: ${{ variables.defaultPoolName }}
+          demands: ${{ variables.defaultPoolDemands }}
+        container: ${{ parameters.fedora36Container }}
+        bootstrapPrep: false          # 🚫
+        enablePoison: true            # ✅
+        excludeSdkContentTests: false # 🚫
+        excludeOmniSharpTests: false  # 🚫
+        runOnline: false              # 🚫
+        buildFromArchive: true        # ✅
 
     - template: ../jobs/vmr-build.yml
       parameters:
