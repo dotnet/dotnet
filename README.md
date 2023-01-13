@@ -139,6 +139,12 @@ ln -s $HOME/.dotnet/dotnet /usr/bin/dotnet
 
 You can also utilize [GitHub Codespaces](https://github.com/features/codespaces) where you can find preset containers in this repository.
 
+### Exporting a source archive
+
+In case you'd like to export a more lightweight archive of sources that can be built outside of this git repository, a simple copy of the working tree won't do.
+The build is using some git metadata (information from the `.git` directory) that are needed to be kept with the sources.
+To export a `tar.gz` archive of the sources, you need to use the `eng/pack-sources.sh` script from within a clone of the VMR checked out at the revision that you're interested in.
+
 ## List of components
 
 To enable full offline source-building of the VMR, we have no other choice than to synchronize all the necessary code into the VMR. This also includes any code referenced via git submodules. More details on why and how this is done can be found here:
@@ -169,7 +175,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@8fdf58a](https://github.com/dotnet/fsharp/commit/8fdf58a63cc05a964a57f66a4ab8924984c13042)*
 - `src/installer`  
-*[dotnet/installer@a768243](https://github.com/dotnet/installer/commit/a768243c3c8691b5fbe648b3a543d8d39bceb09f)*
+*[dotnet/installer@65e01a1](https://github.com/dotnet/installer/commit/65e01a1eef5e0b4353d17bc096463b54de4d791d)*
 - `src/linker`  
 *[dotnet/linker@4b3f78c](https://github.com/dotnet/linker/commit/4b3f78cbc7284b4198652a695e9fe0267133728e)*
     - `src/linker/external/cecil`  
