@@ -60,7 +60,13 @@ For the latest information about Source-Build support for new .NET versions, ple
 
 The dependencies for building .NET from source can be found [here](https://github.com/dotnet/runtime/blob/main/docs/workflow/requirements/linux-requirements.md).
 
-## Building
+## Building .NET 8.0
+
+.NET 8.0 (currently in prerelease) and newer will be built from the [dotnet/dotnet](https://github.com/dotnet/dotnet) repo.
+Clone the dotnet/dotnet repo and check out the tag for the desired release.
+Then, follow the instructions in [dotnet/dotnet's README](https://github.com/dotnet/dotnet/blob/main/README.md#dev-instructions) to build .NET from source.
+
+## Building .NET 7.0 and .NET 6.0
 
 1. Create a .NET source tarball.
 
