@@ -50,3 +50,5 @@ stages:
     ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
       dependsOn: Build_MSFT_SDK
       condition: always()
+
+- template: /eng/pipelines/templates/stages/vmr-scan.yml

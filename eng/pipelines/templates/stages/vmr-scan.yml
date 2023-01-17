@@ -1,0 +1,22 @@
+stages:
+- stage: VMR_Scan
+  displayName: VMR Scan
+  dependsOn: []
+  jobs:
+  - job: Scan
+    displayName: Scan
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - checkout: self
+
+    - script: |
+        source ./eng/common/tools.sh
+        InitializeDotNetCli true
+        dotnet='./.dotnet/dotnet'
+        "$dotnet" tool restore
+      displayName: Initialize tooling
+
+    - script: |
+        "$dotnet" darc vmr --vmr "$(Build.SourcesDirectory)" --tmp "$(Agent.TempDirectory)"
+      displayName: Scan binaries
