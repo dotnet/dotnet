@@ -28,11 +28,9 @@ stages:
       displayName: Initialize tooling
       workingDirectory: $(Build.SourcesDirectory)/src/installer
 
-    - script: |
-        set -x
-        PATH=$PATH:$(Build.SourcesDirectory)/.dotnet
-        export DOTNET_ROOT="$(pwd)/.dotnet"
-        ./.dotnet/dotnet darc vmr ${{ parameters.command }} --vmr "$(Build.SourcesDirectory)" --tmp "$(Agent.TempDirectory)"
-        darc vmr scan --vmr "$(Build.SourcesDirectory)" --tmp "$(Agent.TempDirectory)"
+    - script: >
+        ./.dotnet/dotnet darc vmr ${{ parameters.command }}
+        --vmr "$(Build.SourcesDirectory)"
+        --tmp "$(Agent.TempDirectory)"
       displayName: Scan ${{ parameters.name }}
       workingDirectory: $(Build.SourcesDirectory)/src/installer
