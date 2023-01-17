@@ -1,4 +1,4 @@
-Markup span at (0:0,0 [0] test.cshtml) (Accepts:Any) - Parent: Markup block at (0:0,0 [18] test.cshtml)
+﻿Markup span at (0:0,0 [0] test.cshtml) (Accepts:Any) - Parent: Markup block at (0:0,0 [18] test.cshtml)
 Transition span at (0:0,0 [1] test.cshtml) (Accepts:None) - Parent: Statement block at (0:0,0 [18] test.cshtml)
 MetaCode span at (1:0,1 [1] test.cshtml) (Accepts:None) - Parent: Statement block at (0:0,0 [18] test.cshtml)
 Code span at (2:0,2 [6] test.cshtml) (Accepts:Any) - Parent: Statement block at (0:0,0 [18] test.cshtml)

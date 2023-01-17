@@ -164,7 +164,7 @@ internal sealed class DiscoveryDataAggregator
     /// Handles race conditions as this aggregator is shared across various event handler for the
     /// same discovery request but we want to notify only once.
     /// </remarks>
-    /// <returns><c>true</c> if first to send the message; <c>false</c> otherwise.</returns>
+    /// <returns><see langword="true"/> if first to send the message; <see langword="false"/> otherwise.</returns>
     public bool TryAggregateIsMessageSent()
         => Interlocked.CompareExchange(ref _isMessageSent, 1, 0) == 0;
 

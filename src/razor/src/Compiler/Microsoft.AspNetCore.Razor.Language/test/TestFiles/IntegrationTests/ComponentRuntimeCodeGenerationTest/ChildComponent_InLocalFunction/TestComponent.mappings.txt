@@ -1,4 +1,4 @@
-Source Location: (54:1,2 [42] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (54:1,2 [42] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     void RenderChildComponent()
     {

@@ -1,4 +1,4 @@
-parameters:
+﻿parameters:
   # See schema documentation in /Documentation/AzureDevOps/TemplateSchema.md
   continueOnError: false
   # Required: A collection of jobs to run - https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema?view=vsts&tabs=schema#job

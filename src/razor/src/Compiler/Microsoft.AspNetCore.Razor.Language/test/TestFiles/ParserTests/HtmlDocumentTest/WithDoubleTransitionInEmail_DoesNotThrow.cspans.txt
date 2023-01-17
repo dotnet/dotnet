@@ -1,4 +1,4 @@
-Markup span at (0:0,0 [1] ) (Accepts:Any) - Parent: Markup block at (0:0,0 [44] )
+﻿Markup span at (0:0,0 [1] ) (Accepts:Any) - Parent: Markup block at (0:0,0 [44] )
 Markup span at (1:0,1 [5] ) (Accepts:Any) - Parent: Tag block at (1:0,1 [42] )
 Markup span at (6:0,6 [6] ) (Accepts:Any) - Parent: Markup block at (6:0,6 [34] )
 Markup span at (12:0,12 [11] ) (Accepts:Any) - Parent: Markup block at (6:0,6 [34] )

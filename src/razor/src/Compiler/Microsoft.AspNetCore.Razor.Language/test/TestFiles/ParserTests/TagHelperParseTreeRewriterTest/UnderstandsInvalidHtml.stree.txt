@@ -1,4 +1,4 @@
-RazorDocument - [0..58)::58 - [<a onclick="() => {}"><a/></a><strong>Miscolored!</strong>]
+﻿RazorDocument - [0..58)::58 - [<a onclick="() => {}"><a/></a><strong>Miscolored!</strong>]
     MarkupBlock - [0..58)::58
         MarkupTagHelperElement - [0..30)::30 - a[StartTagAndEndTag] - InputTagHelper1
             MarkupTagHelperStartTag - [0..22)::22 - [<a onclick="() => {}">] - Gen<Markup> - SpanEditHandler;Accepts:Any

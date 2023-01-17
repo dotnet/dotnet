@@ -1,4 +1,4 @@
-RazorDocument - [0..68)::68 - [<script>foo < bar && quantity.toString() !== orderQty.val()</script>]
+﻿RazorDocument - [0..68)::68 - [<script>foo < bar && quantity.toString() !== orderQty.val()</script>]
     MarkupBlock - [0..68)::68
         MarkupElement - [0..68)::68
             MarkupStartTag - [0..8)::8 - [<script>] - Gen<Markup> - SpanEditHandler;Accepts:Any

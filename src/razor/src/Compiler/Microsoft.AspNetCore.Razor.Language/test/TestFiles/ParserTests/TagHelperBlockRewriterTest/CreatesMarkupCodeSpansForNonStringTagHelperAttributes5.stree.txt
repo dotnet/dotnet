@@ -1,4 +1,4 @@
-RazorDocument - [0..22)::22 - [<person name="John" />]
+﻿RazorDocument - [0..22)::22 - [<person name="John" />]
     MarkupBlock - [0..22)::22
         MarkupTagHelperElement - [0..22)::22 - person[SelfClosing] - PersonTagHelper
             MarkupTagHelperStartTag - [0..22)::22 - [<person name="John" />] - Gen<Markup> - SpanEditHandler;Accepts:Any

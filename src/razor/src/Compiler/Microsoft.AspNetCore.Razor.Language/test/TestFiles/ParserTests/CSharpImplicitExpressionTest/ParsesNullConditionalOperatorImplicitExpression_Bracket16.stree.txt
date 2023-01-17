@@ -1,4 +1,4 @@
-RazorDocument - [0..20)::20 - [@val?[abc?.gef?[-1]]]
+﻿RazorDocument - [0..20)::20 - [@val?[abc?.gef?[-1]]]
     MarkupBlock - [0..20)::20
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

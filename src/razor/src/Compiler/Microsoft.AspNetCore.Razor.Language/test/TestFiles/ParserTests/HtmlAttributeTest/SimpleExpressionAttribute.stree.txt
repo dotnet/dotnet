@@ -1,4 +1,4 @@
-RazorDocument - [0..20)::20 - [@{<a href='@foo' />}]
+﻿RazorDocument - [0..20)::20 - [@{<a href='@foo' />}]
     MarkupBlock - [0..20)::20
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

@@ -1,4 +1,4 @@
-Source Location: (1:0,1 [15] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings.cshtml)
+﻿Source Location: (1:0,1 [15] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings.cshtml)
 |using System.IO|
 Generated Location: (248:7,0 [15] )
 |using System.IO|

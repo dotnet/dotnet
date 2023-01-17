@@ -1,4 +1,4 @@
-name: ASP.NET Razor
+﻿name: ASP.NET Razor
 scopeName: text.aspnetcorerazor
 fileTypes:
   - 'razor'

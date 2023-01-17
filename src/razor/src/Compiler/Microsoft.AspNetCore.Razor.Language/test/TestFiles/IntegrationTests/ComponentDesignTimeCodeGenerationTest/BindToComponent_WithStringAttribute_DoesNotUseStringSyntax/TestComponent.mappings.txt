@@ -1,4 +1,4 @@
-Source Location: (24:0,24 [11] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (24:0,24 [11] x:\dir\subdir\Test\TestComponent.cshtml)
 |person.Name|
 Generated Location: (1017:25,24 [11] )
 |person.Name|

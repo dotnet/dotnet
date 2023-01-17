@@ -1,4 +1,4 @@
-RazorDocument - [0..39)::39 - [@{<foo><![CDATA[ foo @bar baz]]></foo>}]
+﻿RazorDocument - [0..39)::39 - [@{<foo><![CDATA[ foo @bar baz]]></foo>}]
     MarkupBlock - [0..39)::39
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

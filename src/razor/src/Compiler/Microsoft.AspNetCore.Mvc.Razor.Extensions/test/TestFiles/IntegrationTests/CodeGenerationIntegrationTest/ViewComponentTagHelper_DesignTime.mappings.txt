@@ -1,4 +1,4 @@
-Source Location: (14:0,14 [12] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ViewComponentTagHelper.cshtml)
+﻿Source Location: (14:0,14 [12] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ViewComponentTagHelper.cshtml)
 |"*, AppCode"|
 Generated Location: (1802:31,37 [12] )
 |"*, AppCode"|

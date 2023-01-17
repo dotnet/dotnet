@@ -1,4 +1,4 @@
-RazorDocument - [0..162)::162 - [@if(foo) {LF    var foo = "After this statement there are 10 spaces";          LF    <p>LF        FooLF        @barLF    </p>LF    @:Hello!LF    var biz = boz;LF}]
+﻿RazorDocument - [0..162)::162 - [@if(foo) {LF    var foo = "After this statement there are 10 spaces";          LF    <p>LF        FooLF        @barLF    </p>LF    @:Hello!LF    var biz = boz;LF}]
     MarkupBlock - [0..162)::162
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

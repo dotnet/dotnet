@@ -1,4 +1,4 @@
-* text=auto
+﻿* text=auto
 
 # Collapse these files in PRs by default
 *.xlf linguist-generated=true

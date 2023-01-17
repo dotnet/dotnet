@@ -1,4 +1,4 @@
-Source Location: (40:3,5 [55] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (40:3,5 [55] x:\dir\subdir\Test\TestComponent.cshtml)
 |foreach (var item in Enumerable.Range(1, 100))
     {
 |

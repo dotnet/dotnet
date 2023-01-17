@@ -1,4 +1,4 @@
-Markup span at (0:0,0 [6] ) (Accepts:Any) - Parent: Tag block at (0:0,0 [6] )
+﻿Markup span at (0:0,0 [6] ) (Accepts:Any) - Parent: Tag block at (0:0,0 [6] )
 Markup span at (6:0,6 [7] ) (Accepts:Any) - Parent: Tag block at (6:0,6 [7] )
 Transition span at (13:0,13 [1] ) (Accepts:None) - Parent: Comment block at (13:0,13 [19] )
 MetaCode span at (14:0,14 [1] ) (Accepts:None) - Parent: Comment block at (13:0,13 [19] )

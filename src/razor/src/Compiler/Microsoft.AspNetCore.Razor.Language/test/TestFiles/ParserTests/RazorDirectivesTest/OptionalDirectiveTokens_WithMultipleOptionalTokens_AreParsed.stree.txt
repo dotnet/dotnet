@@ -1,4 +1,4 @@
-RazorDocument - [0..43)::43 - [@custom "{formaction}?/{id}?" System.String]
+﻿RazorDocument - [0..43)::43 - [@custom "{formaction}?/{id}?" System.String]
     MarkupBlock - [0..43)::43
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

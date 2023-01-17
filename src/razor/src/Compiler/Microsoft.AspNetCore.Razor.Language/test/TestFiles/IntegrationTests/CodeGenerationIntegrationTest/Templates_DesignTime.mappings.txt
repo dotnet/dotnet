@@ -1,4 +1,4 @@
-Source Location: (284:10,2 [34] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml)
+﻿Source Location: (284:10,2 [34] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml)
 |
     Func<dynamic, object> foo = |
 Generated Location: (739:19,2 [34] )

@@ -1,4 +1,4 @@
-Source Location: (1:0,1 [15] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NestedCodeBlocks.cshtml)
+﻿Source Location: (1:0,1 [15] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NestedCodeBlocks.cshtml)
 |if(foo) {
     |
 Generated Location: (751:19,1 [15] )

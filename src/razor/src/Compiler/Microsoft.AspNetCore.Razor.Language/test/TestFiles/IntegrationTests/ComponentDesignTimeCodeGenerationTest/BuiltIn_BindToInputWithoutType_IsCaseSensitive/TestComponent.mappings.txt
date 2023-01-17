@@ -1,4 +1,4 @@
-Source Location: (15:0,15 [11] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (15:0,15 [11] x:\dir\subdir\Test\TestComponent.cshtml)
 |ParentValue|
 Generated Location: (903:25,15 [11] )
 |ParentValue|

@@ -1,4 +1,4 @@
-Source Location: (14:0,14 [17] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithTemplate.cshtml)
+﻿Source Location: (14:0,14 [17] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithTemplate.cshtml)
 |"*, TestAssembly"|
 Generated Location: (1065:19,37 [17] )
 |"*, TestAssembly"|

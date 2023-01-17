@@ -1,4 +1,4 @@
-Source Location: (24:0,24 [25] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (24:0,24 [25] x:\dir\subdir\Test\TestComponent.cshtml)
 |(MyType arg) => counter++|
 Generated Location: (1112:25,24 [25] )
 |(MyType arg) => counter++|

@@ -1,4 +1,4 @@
-# This file is a temporary workaround for internal builds to be able to restore from private AzDO feeds.
+﻿# This file is a temporary workaround for internal builds to be able to restore from private AzDO feeds.
 # This file should be removed as part of this issue: https://github.com/dotnet/arcade/issues/4080
 #
 # What the script does is iterate over all package sources in the pointed NuGet.config and add a credential entry

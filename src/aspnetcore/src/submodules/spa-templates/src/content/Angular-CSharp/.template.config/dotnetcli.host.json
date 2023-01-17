@@ -40,6 +40,10 @@
     "UseProgramMain": {
       "longName": "use-program-main",
       "shortName": ""
+    },
+    "ProxyPort": {
+      "longName": "proxy-port",
+      "shortName": "p"
     }
   },
   "usageExamples": [

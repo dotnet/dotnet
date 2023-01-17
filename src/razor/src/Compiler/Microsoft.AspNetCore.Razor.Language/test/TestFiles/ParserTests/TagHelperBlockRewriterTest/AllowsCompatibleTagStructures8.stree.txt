@@ -1,4 +1,4 @@
-RazorDocument - [0..15)::15 - [<input></input>]
+﻿RazorDocument - [0..15)::15 - [<input></input>]
     MarkupBlock - [0..15)::15
         MarkupElement - [0..15)::15
             MarkupTagHelperElement - [0..7)::7 - input[StartTagOnly] - InputTagHelper1 - InputTagHelper2

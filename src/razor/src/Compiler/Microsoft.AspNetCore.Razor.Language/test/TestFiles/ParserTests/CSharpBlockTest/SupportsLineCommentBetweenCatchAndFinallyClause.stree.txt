@@ -1,4 +1,4 @@
-RazorDocument - [0..73)::73 - [@try { bar(); } catch(bar) { baz(); }LF// FooLF// BarLFfinally { biz(); }]
+﻿RazorDocument - [0..73)::73 - [@try { bar(); } catch(bar) { baz(); }LF// FooLF// BarLFfinally { biz(); }]
     MarkupBlock - [0..73)::73
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

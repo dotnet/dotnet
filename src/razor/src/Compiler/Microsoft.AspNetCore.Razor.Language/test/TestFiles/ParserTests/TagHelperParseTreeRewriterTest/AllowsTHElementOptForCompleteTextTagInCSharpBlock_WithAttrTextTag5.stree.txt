@@ -1,4 +1,4 @@
-RazorDocument - [0..50)::50 - [@{<!text class='btn1 @DateTime.Now btn2'></!text>}]
+﻿RazorDocument - [0..50)::50 - [@{<!text class='btn1 @DateTime.Now btn2'></!text>}]
     MarkupBlock - [0..50)::50
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

@@ -1,4 +1,4 @@
-Document - 
+﻿Document - 
     RazorCompiledItemAttribute - 
     CSharpCode - 
         IntermediateToken -  - CSharp - [assembly:global::Microsoft.AspNetCore.Mvc.Razor.Compilation.RazorViewAttribute(@"/TestFiles/IntegrationTests/InstrumentationPassIntegrationTest/BasicTest.cshtml", typeof(AspNetCore.TestFiles_IntegrationTests_InstrumentationPassIntegrationTest_BasicTest))]

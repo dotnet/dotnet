@@ -1,4 +1,4 @@
-RazorDocument - [0..88)::88 - [<person age="1 + @value + 2" birthday='(bool)@Bag["val"] ? @@DateTime : @DateTime.Now'/>]
+﻿RazorDocument - [0..88)::88 - [<person age="1 + @value + 2" birthday='(bool)@Bag["val"] ? @@DateTime : @DateTime.Now'/>]
     MarkupBlock - [0..88)::88
         MarkupTagHelperElement - [0..88)::88 - person[SelfClosing] - PersonTagHelper
             MarkupTagHelperStartTag - [0..88)::88 - [<person age="1 + @value + 2" birthday='(bool)@Bag["val"] ? @@DateTime : @DateTime.Now'/>] - Gen<Markup> - SpanEditHandler;Accepts:Any

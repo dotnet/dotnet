@@ -4888,7 +4888,8 @@ std::string StreamingListener::UrlEncode(const char* str) {
       case '=':
       case '&':
       case '\n':
-        result.append("%" + String::FormatByte(static_cast<unsigned char>(ch)));
+        result.push_back('%');
+        result.append(String::FormatByte(static_cast<unsigned char>(ch)));
         break;
       default:
         result.push_back(ch);
@@ -5029,7 +5030,7 @@ class ScopedPrematureExitFile {
   }
 
   ~ScopedPrematureExitFile() {
-#if !defined GTEST_OS_ESP8266
+#if !GTEST_OS_ESP8266
     if (!premature_exit_filepath_.empty()) {
       int retval = remove(premature_exit_filepath_.c_str());
       if (retval) {

@@ -1,4 +1,4 @@
-RazorDocument - [0..60)::60 - [@typeparam TItem;LF<ul>LF</ul>LF@code {LF    // somethingLF}]
+﻿RazorDocument - [0..60)::60 - [@typeparam TItem;LF<ul>LF</ul>LF@code {LF    // somethingLF}]
     MarkupBlock - [0..60)::60
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

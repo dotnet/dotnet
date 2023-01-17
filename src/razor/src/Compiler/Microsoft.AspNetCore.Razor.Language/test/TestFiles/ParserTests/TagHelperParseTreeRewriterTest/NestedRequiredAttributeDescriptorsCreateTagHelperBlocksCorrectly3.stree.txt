@@ -1,4 +1,4 @@
-RazorDocument - [0..43)::43 - [<p class="btn"><strong><p></p></strong></p>]
+﻿RazorDocument - [0..43)::43 - [<p class="btn"><strong><p></p></strong></p>]
     MarkupBlock - [0..43)::43
         MarkupTagHelperElement - [0..43)::43 - p[StartTagAndEndTag] - pTagHelper
             MarkupTagHelperStartTag - [0..15)::15 - [<p class="btn">] - Gen<Markup> - SpanEditHandler;Accepts:Any

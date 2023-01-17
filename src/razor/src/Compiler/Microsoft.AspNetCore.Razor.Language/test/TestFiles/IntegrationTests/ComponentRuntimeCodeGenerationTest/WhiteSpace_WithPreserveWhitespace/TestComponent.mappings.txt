@@ -1,4 +1,4 @@
-Source Location: (95:6,11 [29] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (95:6,11 [29] x:\dir\subdir\Test\TestComponent.cshtml)
 |
         int Foo = 18;
     |

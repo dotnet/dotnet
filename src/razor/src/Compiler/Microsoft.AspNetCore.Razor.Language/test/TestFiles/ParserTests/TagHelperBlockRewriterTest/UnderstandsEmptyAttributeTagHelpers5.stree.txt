@@ -1,4 +1,4 @@
-RazorDocument - [0..31)::31 - [<p class1=''class2=""class3= />]
+﻿RazorDocument - [0..31)::31 - [<p class1=''class2=""class3= />]
     MarkupBlock - [0..31)::31
         MarkupTagHelperElement - [0..31)::31 - p[SelfClosing] - ptaghelper
             MarkupTagHelperStartTag - [0..31)::31 - [<p class1=''class2=""class3= />] - Gen<Markup> - SpanEditHandler;Accepts:Any

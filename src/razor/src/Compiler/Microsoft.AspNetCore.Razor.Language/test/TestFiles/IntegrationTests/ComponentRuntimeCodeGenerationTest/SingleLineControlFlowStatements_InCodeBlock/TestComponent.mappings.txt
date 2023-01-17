@@ -1,4 +1,4 @@
-Source Location: (56:2,2 [134] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (56:2,2 [134] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     var output = string.Empty;
     if (__builder == null) output = "Builder is null!";

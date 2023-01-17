@@ -1,4 +1,4 @@
-# This script looks for each archive file in a directory and extracts it into the target directory.
+﻿# This script looks for each archive file in a directory and extracts it into the target directory.
 # For example, the file "$InputPath/bin.tar.gz" extracts to "$ExtractPath/bin.tar.gz.extracted/**".
 # Uses the "tar" utility added to Windows 10 / Windows 2019 that supports tar.gz and zip.
 param(

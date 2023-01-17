@@ -1,4 +1,4 @@
-RazorDocument - [0..35)::35 - [@{<p bound-string class='btn'></p>}]
+﻿RazorDocument - [0..35)::35 - [@{<p bound-string class='btn'></p>}]
     MarkupBlock - [0..35)::35
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

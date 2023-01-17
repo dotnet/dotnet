@@ -14,11 +14,11 @@
     <projectUrl>https://github.com/microsoft/vstest/</projectUrl>
     <copyright>© Microsoft Corporation. All rights reserved.</copyright>
     <tags>vstest visual-studio unittest testplatform mstest microsoft test testing</tags>
-    <repository type="git" 
-                url="https://github.com/microsoft/vstest" 
-                branch="$BranchName$" 
+    <repository type="git"
+                url="https://github.com/microsoft/vstest"
+                branch="$BranchName$"
                 commit="$CommitId$" />
-                
+
     <contentFiles>
       <files include="**/*.*" copyToOutput="true" flatten="false" buildAction="None" />
     </contentFiles>
@@ -28,8 +28,8 @@
     <file src="licenses\LICENSE_NET.txt" target="" />
     <!-- Add a third party notice file -->
     <file src="ThirdPartyNotices.txt" target="" />
-    
+
     <!-- excluding dbghelp and cpp as they cannot be re-distributed with sdk, but need to be distributed with VS -->
-    <file src="$TargetFramework$\**\*.*" exclude="**\*.pdb;**\dbghelp.dll;**\*TestTools.CppUnitTestFramework*" target="contentFiles\any\$TargetFramework$" />
+    <file src="$TargetFramework$\**\*.*" exclude="**\*.pdb;**\*.xml;**\dbghelp.dll;**\*TestTools.CppUnitTestFramework*" target="contentFiles\any\$TargetFramework$" />
   </files>
 </package>

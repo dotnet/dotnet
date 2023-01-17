@@ -1,4 +1,4 @@
-RazorDocument - [0..28)::28 - [@{<span foo='abc @@ def' />}]
+﻿RazorDocument - [0..28)::28 - [@{<span foo='abc @@ def' />}]
     MarkupBlock - [0..28)::28
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

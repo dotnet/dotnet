@@ -1,1 +1,1 @@
-(1,14): Error RZ1030: TagHelper attributes must be well-formed.
+﻿(1,14): Error RZ1030: TagHelper attributes must be well-formed.

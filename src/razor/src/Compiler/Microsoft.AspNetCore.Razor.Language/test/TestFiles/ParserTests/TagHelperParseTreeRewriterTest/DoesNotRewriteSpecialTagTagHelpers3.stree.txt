@@ -1,4 +1,4 @@
-RazorDocument - [0..31)::31 - [<foo><?xml Hello World ?></foo>]
+﻿RazorDocument - [0..31)::31 - [<foo><?xml Hello World ?></foo>]
     MarkupBlock - [0..31)::31
         MarkupElement - [0..31)::31
             MarkupStartTag - [0..5)::5 - [<foo>] - Gen<Markup> - SpanEditHandler;Accepts:Any

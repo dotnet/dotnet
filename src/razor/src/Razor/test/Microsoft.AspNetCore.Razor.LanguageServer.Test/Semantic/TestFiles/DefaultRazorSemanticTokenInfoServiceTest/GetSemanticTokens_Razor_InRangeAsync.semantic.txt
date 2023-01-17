@@ -1,2 +1,2 @@
-//line,characterPos,length,tokenType,modifier
+﻿//line,characterPos,length,tokenType,modifier
 1 1 5 82 0 //razorTagHelperElement

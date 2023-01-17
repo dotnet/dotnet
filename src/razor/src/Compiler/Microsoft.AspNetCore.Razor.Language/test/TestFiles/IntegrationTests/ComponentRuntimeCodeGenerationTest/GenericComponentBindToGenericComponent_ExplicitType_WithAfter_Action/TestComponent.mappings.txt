@@ -1,4 +1,4 @@
-Source Location: (116:2,7 [79] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (116:2,7 [79] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     public TParam ParentValue { get; set; }
 

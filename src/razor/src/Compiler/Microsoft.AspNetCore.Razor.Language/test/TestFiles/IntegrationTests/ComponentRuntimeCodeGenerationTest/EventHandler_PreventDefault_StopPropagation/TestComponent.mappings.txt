@@ -1,4 +1,4 @@
-Source Location: (202:2,7 [30] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (202:2,7 [30] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     bool Foo { get; set; }
 |

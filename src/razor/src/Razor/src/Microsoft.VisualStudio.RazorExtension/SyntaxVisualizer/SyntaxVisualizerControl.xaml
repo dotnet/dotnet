@@ -21,6 +21,7 @@
         </ResourceDictionary>
     </UserControl.Resources>
     <DockPanel>
+        <Label x:Name="infoLabel" AutomationProperties.Name="Info" DockPanel.Dock="Top" Content="&lt;info&gt;" />
         <TreeView x:Name="treeView" AutomationProperties.Name="Nodes" KeyUp="treeView_KeyUp">
             <TreeView.Resources>
                 <!-- Style the inactive selection the same as active -->

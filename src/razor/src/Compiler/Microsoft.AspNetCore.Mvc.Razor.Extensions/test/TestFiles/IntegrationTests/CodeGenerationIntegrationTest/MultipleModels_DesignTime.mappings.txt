@@ -1,4 +1,4 @@
-Source Location: (7:0,7 [21] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/MultipleModels.cshtml)
+﻿Source Location: (7:0,7 [21] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/MultipleModels.cshtml)
 |ThisShouldBeGenerated|
 Generated Location: (1107:24,0 [21] )
 |ThisShouldBeGenerated|

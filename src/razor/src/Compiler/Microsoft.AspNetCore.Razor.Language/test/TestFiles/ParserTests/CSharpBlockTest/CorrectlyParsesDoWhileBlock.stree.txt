@@ -1,4 +1,4 @@
-RazorDocument - [0..41)::41 - [@do { var foo = bar; } while(foo != bar);]
+﻿RazorDocument - [0..41)::41 - [@do { var foo = bar; } while(foo != bar);]
     MarkupBlock - [0..41)::41
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

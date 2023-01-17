@@ -1,4 +1,4 @@
-Source Location: (9:0,9 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InlineBlocks.cshtml)
+﻿Source Location: (9:0,9 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InlineBlocks.cshtml)
 |Link|
 Generated Location: (510:12,22 [4] )
 |Link|

@@ -1,4 +1,4 @@
-RazorDocument - [0..63)::63 - [@{<input data-required='@DateTime.Now middle @DateTime.Now' />}]
+﻿RazorDocument - [0..63)::63 - [@{<input data-required='@DateTime.Now middle @DateTime.Now' />}]
     MarkupBlock - [0..63)::63
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

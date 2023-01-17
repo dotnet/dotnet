@@ -1,4 +1,4 @@
-Source Location: (24:2,2 [44] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml)
+﻿Source Location: (24:2,2 [44] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml)
 |
     if (DateTime.Now.ToBinary() % 2 == 0) |
 Generated Location: (782:19,2 [44] )

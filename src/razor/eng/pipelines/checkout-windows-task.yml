@@ -1,4 +1,4 @@
-# Shallow checkout sources on Windows
+﻿# Shallow checkout sources on Windows
 steps:
   - checkout: none
 

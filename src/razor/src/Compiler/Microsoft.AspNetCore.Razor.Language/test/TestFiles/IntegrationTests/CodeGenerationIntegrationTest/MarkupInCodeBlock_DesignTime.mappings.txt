@@ -1,4 +1,4 @@
-Source Location: (2:0,2 [46] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/MarkupInCodeBlock.cshtml)
+﻿Source Location: (2:0,2 [46] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/MarkupInCodeBlock.cshtml)
 |
     for(int i = 1; i <= 10; i++) {
         |

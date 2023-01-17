@@ -1,4 +1,4 @@
-RazorDocument - [0..59)::59 - [@functions { public void Foo() { @Model!.Name![0]!?.Bar } }]
+﻿RazorDocument - [0..59)::59 - [@functions { public void Foo() { @Model!.Name![0]!?.Bar } }]
     MarkupBlock - [0..59)::59
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

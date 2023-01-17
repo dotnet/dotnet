@@ -1,4 +1,4 @@
-RazorDocument - [0..166)::166 - [LF@switch ((1, 2))LF{LF    case ITuple (1, 2):LF        <strong>Property expressions are supported by the razor syntax in the year 2022.</strong>LF        break;LF}LF]
+﻿RazorDocument - [0..166)::166 - [LF@switch ((1, 2))LF{LF    case ITuple (1, 2):LF        <strong>Property expressions are supported by the razor syntax in the year 2022.</strong>LF        break;LF}LF]
     MarkupBlock - [0..166)::166
         MarkupTextLiteral - [0..2)::2 - [LF] - Gen<Markup> - SpanEditHandler;Accepts:Any
             NewLine;[LF];

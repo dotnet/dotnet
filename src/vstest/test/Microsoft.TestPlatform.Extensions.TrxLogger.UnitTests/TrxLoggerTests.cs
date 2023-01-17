@@ -901,15 +901,13 @@ public class TrxLoggerTests
 
     private static string? GetElementValueFromTrx(string trxFileName, string fieldName)
     {
-        using (FileStream file = File.OpenRead(trxFileName))
-        using (XmlReader reader = XmlReader.Create(file))
+        using FileStream file = File.OpenRead(trxFileName);
+        using XmlReader reader = XmlReader.Create(file);
+        while (reader.Read())
         {
-            while (reader.Read())
+            if (reader.Name.Equals(fieldName) && reader.NodeType == XmlNodeType.Element)
             {
-                if (reader.Name.Equals(fieldName) && reader.NodeType == XmlNodeType.Element)
-                {
-                    return reader.ReadElementContentAsString();
-                }
+                return reader.ReadElementContentAsString();
             }
         }
 

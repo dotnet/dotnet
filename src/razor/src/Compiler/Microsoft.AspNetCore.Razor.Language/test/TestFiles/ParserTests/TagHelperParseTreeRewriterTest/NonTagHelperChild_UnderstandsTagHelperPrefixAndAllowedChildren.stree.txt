@@ -1,4 +1,4 @@
-RazorDocument - [0..30)::30 - [<th:p><strong></strong></th:p>]
+﻿RazorDocument - [0..30)::30 - [<th:p><strong></strong></th:p>]
     MarkupBlock - [0..30)::30
         MarkupTagHelperElement - [0..30)::30 - th:p[StartTagAndEndTag] - PTagHelper
             MarkupTagHelperStartTag - [0..6)::6 - [<th:p>] - Gen<Markup> - SpanEditHandler;Accepts:Any

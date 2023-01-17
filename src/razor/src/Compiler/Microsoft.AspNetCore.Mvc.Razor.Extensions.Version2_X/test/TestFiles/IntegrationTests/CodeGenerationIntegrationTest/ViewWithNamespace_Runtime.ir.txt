@@ -1,4 +1,4 @@
-Document - 
+﻿Document - 
     RazorCompiledItemAttribute - 
     CSharpCode - 
         IntermediateToken -  - CSharp - [assembly:global::Microsoft.AspNetCore.Mvc.Razor.Compilation.RazorViewAttribute(@"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ViewWithNamespace.cshtml", typeof(Test.Namespace.TestFiles_IntegrationTests_CodeGenerationIntegrationTest_ViewWithNamespace))]

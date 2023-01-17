@@ -1,4 +1,4 @@
-RazorDocument - [0..147)::147 - [LF@functions {LF    string GetAnnouncmentText(string message)LF    {LF        if (message.Length > 0) return "Anouncement: " + message;LF    }LF}LF]
+﻿RazorDocument - [0..147)::147 - [LF@functions {LF    string GetAnnouncmentText(string message)LF    {LF        if (message.Length > 0) return "Anouncement: " + message;LF    }LF}LF]
     MarkupBlock - [0..147)::147
         MarkupTextLiteral - [0..2)::2 - [LF] - Gen<Markup> - SpanEditHandler;Accepts:Any
             NewLine;[LF];

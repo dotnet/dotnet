@@ -1,4 +1,4 @@
-parameters:
+﻿parameters:
   helixSource: 'undefined_defaulted_in_telemetry.yml'
   helixType: 'undefined_defaulted_in_telemetry.yml'
   buildConfig: ''

@@ -1,4 +1,4 @@
-RazorDocument - [0..46)::46 - [@{<input string-prefix-value='some string' />}]
+﻿RazorDocument - [0..46)::46 - [@{<input string-prefix-value='some string' />}]
     MarkupBlock - [0..46)::46
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

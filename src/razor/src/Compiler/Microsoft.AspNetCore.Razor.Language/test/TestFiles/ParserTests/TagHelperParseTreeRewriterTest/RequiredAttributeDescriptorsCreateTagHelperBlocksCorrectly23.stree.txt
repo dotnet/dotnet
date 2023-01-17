@@ -1,4 +1,4 @@
-RazorDocument - [0..63)::63 - [<div style="" class="btn">words<strong>and</strong>spaces</div>]
+﻿RazorDocument - [0..63)::63 - [<div style="" class="btn">words<strong>and</strong>spaces</div>]
     MarkupBlock - [0..63)::63
         MarkupTagHelperElement - [0..63)::63 - div[StartTagAndEndTag] - divTagHelper
             MarkupTagHelperStartTag - [0..26)::26 - [<div style="" class="btn">] - Gen<Markup> - SpanEditHandler;Accepts:Any

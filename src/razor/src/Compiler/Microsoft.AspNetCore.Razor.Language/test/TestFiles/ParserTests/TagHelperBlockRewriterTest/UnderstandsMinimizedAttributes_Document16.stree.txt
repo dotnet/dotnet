@@ -1,4 +1,4 @@
-RazorDocument - [0..48)::48 - [<input unbound-required bound-required-string />]
+﻿RazorDocument - [0..48)::48 - [<input unbound-required bound-required-string />]
     MarkupBlock - [0..48)::48
         MarkupTagHelperElement - [0..48)::48 - input[SelfClosing] - InputTagHelper1 - InputTagHelper3
             MarkupTagHelperStartTag - [0..48)::48 - [<input unbound-required bound-required-string />] - Gen<Markup> - SpanEditHandler;Accepts:Any

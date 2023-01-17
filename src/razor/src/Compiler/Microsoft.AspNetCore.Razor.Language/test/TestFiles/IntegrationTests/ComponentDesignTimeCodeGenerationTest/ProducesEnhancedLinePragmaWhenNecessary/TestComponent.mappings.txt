@@ -1,4 +1,4 @@
-Source Location: (41:2,7 [12] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (41:2,7 [12] x:\dir\subdir\Test\TestComponent.cshtml)
 |DateTime.Now|
 Generated Location: (875:24,7 [12] )
 |DateTime.Now|

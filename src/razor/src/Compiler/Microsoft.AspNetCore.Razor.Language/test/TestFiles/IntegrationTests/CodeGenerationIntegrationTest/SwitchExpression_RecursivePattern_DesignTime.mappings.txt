@@ -1,4 +1,4 @@
-Source Location: (1:0,1 [69] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SwitchExpression_RecursivePattern.cshtml)
+﻿Source Location: (1:0,1 [69] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SwitchExpression_RecursivePattern.cshtml)
 |switch (DateTimeOffset.UtcNow)
 {
     case { Year: 2022 }:

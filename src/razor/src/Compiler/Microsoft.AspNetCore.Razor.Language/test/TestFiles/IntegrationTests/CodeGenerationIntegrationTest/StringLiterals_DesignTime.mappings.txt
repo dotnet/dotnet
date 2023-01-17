@@ -1,4 +1,4 @@
-Source Location: (2022:85,9 [21] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/StringLiterals.cshtml)
+﻿Source Location: (2022:85,9 [21] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/StringLiterals.cshtml)
 |WriteLiteralsToInHere|
 Generated Location: (515:12,22 [21] )
 |WriteLiteralsToInHere|

@@ -1,4 +1,4 @@
-Source Location: (2:0,2 [25] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (2:0,2 [25] x:\dir\subdir\Test\TestComponent.cshtml)
 | var x = "anotherevent"; |
 Generated Location: (602:17,2 [25] )
 | var x = "anotherevent"; |

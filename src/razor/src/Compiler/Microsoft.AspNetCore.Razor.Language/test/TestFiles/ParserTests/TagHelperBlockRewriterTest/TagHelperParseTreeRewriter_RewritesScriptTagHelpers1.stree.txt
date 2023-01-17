@@ -1,4 +1,4 @@
-RazorDocument - [0..31)::31 - [<script><script></foo></script>]
+﻿RazorDocument - [0..31)::31 - [<script><script></foo></script>]
     MarkupBlock - [0..31)::31
         MarkupTagHelperElement - [0..31)::31 - script[StartTagAndEndTag] - scripttaghelper
             MarkupTagHelperStartTag - [0..8)::8 - [<script>] - Gen<Markup> - SpanEditHandler;Accepts:Any

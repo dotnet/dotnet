@@ -1,4 +1,4 @@
-RazorDocument - [0..46)::46 - [<input data-required='prefix @DateTime.Now' />]
+﻿RazorDocument - [0..46)::46 - [<input data-required='prefix @DateTime.Now' />]
     MarkupBlock - [0..46)::46
         MarkupTagHelperElement - [0..46)::46 - input[SelfClosing] - inputtaghelper
             MarkupTagHelperStartTag - [0..46)::46 - [<input data-required='prefix @DateTime.Now' />] - Gen<Markup> - SpanEditHandler;Accepts:Any

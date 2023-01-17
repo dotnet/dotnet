@@ -358,7 +358,7 @@ public class RunSettingsArgumentProcessorTests
     {
         var settingsXml = @"<RunSettings><RunConfiguration></RunConfiguration></RunSettings>";
 
-        /// Arrange.
+        // Arrange.
         var fileName = "C:\\temp\\r.runsettings";
 
         var executor = new TestableRunSettingsArgumentExecutor(

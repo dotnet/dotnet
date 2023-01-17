@@ -1,4 +1,4 @@
-param(
+﻿param(
   [Parameter(Mandatory=$true)][int] $BuildId,
   [Parameter(Mandatory=$true)][int] $ChannelId,
   [Parameter(Mandatory=$true)][string] $MaestroApiAccessToken,

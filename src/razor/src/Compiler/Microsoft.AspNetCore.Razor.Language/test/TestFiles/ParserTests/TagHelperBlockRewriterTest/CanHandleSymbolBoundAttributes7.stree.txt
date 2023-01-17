@@ -1,4 +1,4 @@
-RazorDocument - [0..32)::32 - [<div bound #local='value'></div>]
+﻿RazorDocument - [0..32)::32 - [<div bound #local='value'></div>]
     MarkupBlock - [0..32)::32
         MarkupTagHelperElement - [0..32)::32 - div[StartTagAndEndTag] - CatchAllTagHelper
             MarkupTagHelperStartTag - [0..26)::26 - [<div bound #local='value'>] - Gen<Markup> - SpanEditHandler;Accepts:Any

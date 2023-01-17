@@ -291,7 +291,7 @@ public class JsonDataSerializer : IDataSerializer
     /// <param name="json">JSON string.</param>
     /// <param name="version">Version of serializer to be used.</param>
     /// <typeparam name="T">Target type to deserialize.</typeparam>
-    /// <returns>An instance of <see cref="T"/>.</returns>
+    /// <returns>An instance of <typeparamref name="T"/>.</returns>
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Part of the public API")]
     public T? Deserialize<T>(string json, int version = 1)
     {

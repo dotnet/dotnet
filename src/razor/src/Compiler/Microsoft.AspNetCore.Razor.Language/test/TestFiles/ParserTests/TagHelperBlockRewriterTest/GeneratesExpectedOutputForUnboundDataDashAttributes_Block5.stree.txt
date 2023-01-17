@@ -1,4 +1,4 @@
-RazorDocument - [0..56)::56 - [@{<input data-required='prefix @DateTime.Now suffix' />}]
+﻿RazorDocument - [0..56)::56 - [@{<input data-required='prefix @DateTime.Now suffix' />}]
     MarkupBlock - [0..56)::56
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

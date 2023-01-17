@@ -1,4 +1,4 @@
-RazorDocument - [0..42)::42 - [<p>LF@* hello *@ content @* world *@LF</p>]
+﻿RazorDocument - [0..42)::42 - [<p>LF@* hello *@ content @* world *@LF</p>]
     MarkupBlock - [0..42)::42
         MarkupElement - [0..42)::42
             MarkupStartTag - [0..3)::3 - [<p>] - Gen<Markup> - SpanEditHandler;Accepts:Any

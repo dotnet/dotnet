@@ -1,4 +1,4 @@
-Source Location: (8:0,8 [5] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Inject.cshtml)
+﻿Source Location: (8:0,8 [5] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Inject.cshtml)
 |MyApp|
 Generated Location: (748:19,0 [5] )
 |MyApp|

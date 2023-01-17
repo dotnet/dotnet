@@ -1,4 +1,4 @@
-Source Location: (52:0,52 [14] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (52:0,52 [14] x:\dir\subdir\Test\TestComponent.cshtml)
 |someAttributes|
 Generated Location: (1188:26,52 [14] )
 |someAttributes|

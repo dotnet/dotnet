@@ -1,4 +1,4 @@
-Source Location: (24:0,24 [45] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (24:0,24 [45] x:\dir\subdir\Test\TestComponent.cshtml)
 |EventCallback.Factory.Create(this, Increment)|
 Generated Location: (1124:25,24 [45] )
 |EventCallback.Factory.Create(this, Increment)|

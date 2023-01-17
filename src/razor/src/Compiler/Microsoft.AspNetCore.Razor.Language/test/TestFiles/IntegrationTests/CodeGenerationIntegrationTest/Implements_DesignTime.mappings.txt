@@ -1,4 +1,4 @@
-Source Location: (12:0,12 [11] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Implements.cshtml)
+﻿Source Location: (12:0,12 [11] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Implements.cshtml)
 |IDisposable|
 Generated Location: (498:12,0 [11] )
 |IDisposable|

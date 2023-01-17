@@ -1,4 +1,4 @@
-RazorDocument - [0..21)::21 - [<input value=@foo />}]
+﻿RazorDocument - [0..21)::21 - [<input value=@foo />}]
     MarkupBlock - [0..21)::21
         MarkupElement - [0..20)::20
             MarkupStartTag - [0..20)::20 - [<input value=@foo />] - Gen<Markup> - SpanEditHandler;Accepts:Any

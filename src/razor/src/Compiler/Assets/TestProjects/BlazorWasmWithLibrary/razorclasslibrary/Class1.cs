@@ -1,4 +1,4 @@
-namespace RazorClassLibrary
+﻿namespace RazorClassLibrary
 {
     public class Class1
     {

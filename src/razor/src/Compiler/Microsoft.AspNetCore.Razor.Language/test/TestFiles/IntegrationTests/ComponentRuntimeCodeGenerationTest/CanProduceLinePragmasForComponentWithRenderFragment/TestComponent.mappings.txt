@@ -1,4 +1,4 @@
-Source Location: (84:2,3 [22] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (84:2,3 [22] x:\dir\subdir\Test\TestComponent.cshtml)
 |if (!Collapsed)
   {
 |

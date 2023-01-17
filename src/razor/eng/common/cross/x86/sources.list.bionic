@@ -1,4 +1,4 @@
-deb http://archive.ubuntu.com/ubuntu/ bionic main restricted universe
+﻿deb http://archive.ubuntu.com/ubuntu/ bionic main restricted universe
 deb-src http://archive.ubuntu.com/ubuntu/ bionic main restricted universe
 
 deb http://archive.ubuntu.com/ubuntu/ bionic-updates main restricted universe

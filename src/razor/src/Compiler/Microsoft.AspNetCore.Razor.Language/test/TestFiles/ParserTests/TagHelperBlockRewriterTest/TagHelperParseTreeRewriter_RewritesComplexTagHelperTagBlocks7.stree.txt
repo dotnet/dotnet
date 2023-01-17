@@ -1,4 +1,4 @@
-RazorDocument - [0..77)::77 - [<p>Hello @DateTime.Now<strong>inside of @DateTime.Now strong tag</strong></p>]
+﻿RazorDocument - [0..77)::77 - [<p>Hello @DateTime.Now<strong>inside of @DateTime.Now strong tag</strong></p>]
     MarkupBlock - [0..77)::77
         MarkupTagHelperElement - [0..77)::77 - p[StartTagAndEndTag] - ptaghelper
             MarkupTagHelperStartTag - [0..3)::3 - [<p>] - Gen<Markup> - SpanEditHandler;Accepts:Any

@@ -1,4 +1,4 @@
-RazorDocument - [0..34)::34 - [<th:myth2 bound="@DateTime.Now" />]
+﻿RazorDocument - [0..34)::34 - [<th:myth2 bound="@DateTime.Now" />]
     MarkupBlock - [0..34)::34
         MarkupTagHelperElement - [0..34)::34 - th:myth2[SelfClosing] - mythTagHelper2
             MarkupTagHelperStartTag - [0..34)::34 - [<th:myth2 bound="@DateTime.Now" />] - Gen<Markup> - SpanEditHandler;Accepts:Any

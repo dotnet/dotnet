@@ -1,4 +1,4 @@
-RazorDocument - [0..53)::53 - [<script>Hel<p>lo</p></script> <p><div>World</div></p>]
+﻿RazorDocument - [0..53)::53 - [<script>Hel<p>lo</p></script> <p><div>World</div></p>]
     MarkupBlock - [0..53)::53
         MarkupTagHelperElement - [0..29)::29 - script[StartTagAndEndTag] - scripttaghelper
             MarkupTagHelperStartTag - [0..8)::8 - [<script>] - Gen<Markup> - SpanEditHandler;Accepts:Any

@@ -1,4 +1,4 @@
-RazorDocument - [0..83)::83 - [LF@custom [SomeCustom(new int[]LF    {LF        1,LF        2,LF        3LF    }]LF]
+﻿RazorDocument - [0..83)::83 - [LF@custom [SomeCustom(new int[]LF    {LF        1,LF        2,LF        3LF    }]LF]
     MarkupBlock - [0..83)::83
         MarkupTextLiteral - [0..2)::2 - [LF] - Gen<Markup> - SpanEditHandler;Accepts:Any
             NewLine;[LF];

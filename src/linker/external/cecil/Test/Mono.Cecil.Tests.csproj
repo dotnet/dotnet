@@ -1,9 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="Current">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\Mono.Cecil.Tests.props" />
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1;net40</TargetFrameworks>
+    <TargetFramework>$(NetCoreAppTestsCurrent)</TargetFramework>
   </PropertyGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == '$(NetCoreAppTestsCurrent)' ">
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp">
       <Version>2.10.0</Version>
     </PackageReference>
@@ -25,5 +25,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\**\*" />
+  </ItemGroup>
+  <ItemGroup>
+    <RuntimeHostConfigurationOption Include="Mono.Cecil.ResourcesDirectory">
+      <Value>$(MSBuildThisFileDirectory)Resources</Value>
+    </RuntimeHostConfigurationOption>
   </ItemGroup>
 </Project>

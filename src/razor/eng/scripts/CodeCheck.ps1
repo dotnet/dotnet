@@ -1,4 +1,4 @@
-#requires -version 5
+﻿#requires -version 5
 <#
 .SYNOPSIS
 This script runs a quick check for common errors, such as checking that Visual Studio solutions are up to date or that generated code has been committed to source.

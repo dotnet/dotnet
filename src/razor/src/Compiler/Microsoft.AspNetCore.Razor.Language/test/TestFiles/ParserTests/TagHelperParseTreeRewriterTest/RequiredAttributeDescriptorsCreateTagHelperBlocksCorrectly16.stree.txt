@@ -1,4 +1,4 @@
-RazorDocument - [0..33)::33 - [<p notRequired="a" class="btn" />]
+﻿RazorDocument - [0..33)::33 - [<p notRequired="a" class="btn" />]
     MarkupBlock - [0..33)::33
         MarkupTagHelperElement - [0..33)::33 - p[SelfClosing] - pTagHelper
             MarkupTagHelperStartTag - [0..33)::33 - [<p notRequired="a" class="btn" />] - Gen<Markup> - SpanEditHandler;Accepts:Any

@@ -1,4 +1,4 @@
-<Project DefaultTargets="Build">
+﻿<Project DefaultTargets="Build">
 
   <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), Directory.Build.props))\Directory.Build.props" />
 

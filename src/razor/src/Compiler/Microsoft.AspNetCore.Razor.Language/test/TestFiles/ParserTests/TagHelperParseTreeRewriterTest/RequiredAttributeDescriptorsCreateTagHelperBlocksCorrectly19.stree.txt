@@ -1,4 +1,4 @@
-RazorDocument - [0..28)::28 - [<div style="" class="btn" />]
+﻿RazorDocument - [0..28)::28 - [<div style="" class="btn" />]
     MarkupBlock - [0..28)::28
         MarkupTagHelperElement - [0..28)::28 - div[SelfClosing] - divTagHelper
             MarkupTagHelperStartTag - [0..28)::28 - [<div style="" class="btn" />] - Gen<Markup> - SpanEditHandler;Accepts:Any

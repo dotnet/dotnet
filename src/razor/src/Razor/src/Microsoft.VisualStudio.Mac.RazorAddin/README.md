@@ -1,4 +1,4 @@
-# Debugging VS4Mac
+﻿# Debugging VS4Mac
 
 1. [Install latest VS4Mac](https://visualstudio.microsoft.com/vs/mac/). Can upgrade installed version to the [preview channel](https://docs.microsoft.com/en-us/visualstudio/mac/install-preview?view=vsmac-2019) if needed.
 2. Open the Razor.sln

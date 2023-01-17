@@ -1,4 +1,4 @@
-RazorDocument - [0..18)::18 - [<p>Hello World</p>]
+﻿RazorDocument - [0..18)::18 - [<p>Hello World</p>]
     MarkupBlock - [0..18)::18
         MarkupTagHelperElement - [0..18)::18 - p[StartTagAndEndTag] - ptaghelper
             MarkupTagHelperStartTag - [0..3)::3 - [<p>] - Gen<Markup> - SpanEditHandler;Accepts:Any

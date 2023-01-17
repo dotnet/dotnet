@@ -1,4 +1,4 @@
-Source Location: (46:0,46 [14] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (46:0,46 [14] x:\dir\subdir\Test\TestComponent.cshtml)
 |NullableAction|
 Generated Location: (960:25,46 [14] )
 |NullableAction|

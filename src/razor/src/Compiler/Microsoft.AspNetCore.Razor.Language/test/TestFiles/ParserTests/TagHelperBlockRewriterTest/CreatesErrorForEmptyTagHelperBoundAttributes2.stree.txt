@@ -1,4 +1,4 @@
-RazorDocument - [0..25)::25 - [<myth bound='    true' />]
+﻿RazorDocument - [0..25)::25 - [<myth bound='    true' />]
     MarkupBlock - [0..25)::25
         MarkupTagHelperElement - [0..25)::25 - myth[SelfClosing] - mythTagHelper
             MarkupTagHelperStartTag - [0..25)::25 - [<myth bound='    true' />] - Gen<Markup> - SpanEditHandler;Accepts:Any

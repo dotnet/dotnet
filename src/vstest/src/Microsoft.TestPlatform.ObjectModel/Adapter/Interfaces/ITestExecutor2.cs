@@ -20,8 +20,8 @@ public interface ITestExecutor2 : ITestExecutor
     /// <param name="sources">Path to test container files to look for tests in.</param>
     /// <param name="runContext">Context to use when executing the tests.</param>
     /// <returns>
-    /// <see cref="true"/> if the default test host process should be attached to,
-    /// <see cref="false"/> otherwise.
+    /// <see langword="true"/> if the default test host process should be attached to,
+    /// <see langword="false"/> otherwise.
     /// </returns>
     bool ShouldAttachToTestHost(IEnumerable<string>? sources, IRunContext runContext);
 
@@ -31,8 +31,8 @@ public interface ITestExecutor2 : ITestExecutor
     /// <param name="tests">Tests to be run.</param>
     /// <param name="runContext">Context to use when executing the tests.</param>
     /// <returns>
-    /// <see cref="true"/> if the default test host process should be attached to,
-    /// <see cref="false"/> otherwise.
+    /// <see langword="true"/> if the default test host process should be attached to,
+    /// <see langword="false"/> otherwise.
     /// </returns>
     bool ShouldAttachToTestHost(IEnumerable<TestCase>? tests, IRunContext runContext);
 }

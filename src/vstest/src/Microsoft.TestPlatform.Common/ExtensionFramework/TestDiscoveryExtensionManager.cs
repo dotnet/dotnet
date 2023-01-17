@@ -185,8 +185,8 @@ internal class TestDiscovererMetadata : ITestDiscovererCapabilities
     }
 
     /// <summary>
-    /// <c>true</c> if the discoverer plugin is decorated with <see cref="DirectoryBasedTestDiscovererAttribute"/>,
-    /// <c>false</c> otherwise.
+    /// <see langword="true"/> if the discoverer plugin is decorated with <see cref="DirectoryBasedTestDiscovererAttribute"/>,
+    /// <see langword="false"/> otherwise.
     /// </summary>
     public bool IsDirectoryBased
     {

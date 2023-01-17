@@ -1,4 +1,4 @@
-Source Location: (57:1,7 [57] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (57:1,7 [57] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     void MyMethod(RenderTreeBuilder __builder)
     {

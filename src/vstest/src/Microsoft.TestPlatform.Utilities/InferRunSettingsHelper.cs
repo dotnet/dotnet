@@ -477,27 +477,25 @@ public class InferRunSettingsHelper
             return false;
         }
 
-        using (var stream = new StringReader(runsettingsXml))
-        using (var reader = XmlReader.Create(stream, XmlRunSettingsUtilities.ReaderSettings))
+        using var stream = new StringReader(runsettingsXml);
+        using var reader = XmlReader.Create(stream, XmlRunSettingsUtilities.ReaderSettings);
+        var document = new XmlDocument();
+        document.Load(reader);
+
+        var runSettingsNavigator = document.CreateNavigator()!;
+
+        // Move navigator to MSTest node
+        if (!runSettingsNavigator.MoveToChild(RunSettingsNodeName, string.Empty) ||
+            !runSettingsNavigator.MoveToChild("MSTest", string.Empty))
         {
-            var document = new XmlDocument();
-            document.Load(reader);
+            EqtTrace.Info("InferRunSettingsHelper.IsTestSettingsEnabled: Unable to navigate to RunSettings/MSTest. Current node: " + runSettingsNavigator.LocalName);
+            return false;
+        }
 
-            var runSettingsNavigator = document.CreateNavigator()!;
-
-            // Move navigator to MSTest node
-            if (!runSettingsNavigator.MoveToChild(RunSettingsNodeName, string.Empty) ||
-                !runSettingsNavigator.MoveToChild("MSTest", string.Empty))
-            {
-                EqtTrace.Info("InferRunSettingsHelper.IsTestSettingsEnabled: Unable to navigate to RunSettings/MSTest. Current node: " + runSettingsNavigator.LocalName);
-                return false;
-            }
-
-            var node = runSettingsNavigator.SelectSingleNode(@"/RunSettings/MSTest/SettingsFile");
-            if (node != null && !node.InnerXml.IsNullOrEmpty())
-            {
-                return true;
-            }
+        var node = runSettingsNavigator.SelectSingleNode(@"/RunSettings/MSTest/SettingsFile");
+        if (node != null && !node.InnerXml.IsNullOrEmpty())
+        {
+            return true;
         }
 
         return false;

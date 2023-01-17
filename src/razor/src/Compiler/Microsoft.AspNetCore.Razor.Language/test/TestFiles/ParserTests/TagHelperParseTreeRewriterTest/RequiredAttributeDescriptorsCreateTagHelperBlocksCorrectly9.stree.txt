@@ -1,4 +1,4 @@
-RazorDocument - [0..50)::50 - [<p class="btn">words<strong>and</strong>spaces</p>]
+﻿RazorDocument - [0..50)::50 - [<p class="btn">words<strong>and</strong>spaces</p>]
     MarkupBlock - [0..50)::50
         MarkupTagHelperElement - [0..50)::50 - p[StartTagAndEndTag] - pTagHelper
             MarkupTagHelperStartTag - [0..15)::15 - [<p class="btn">] - Gen<Markup> - SpanEditHandler;Accepts:Any

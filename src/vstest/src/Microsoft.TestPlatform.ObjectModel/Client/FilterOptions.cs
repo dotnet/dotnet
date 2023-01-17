@@ -20,8 +20,8 @@ public class FilterOptions
     public string? FilterRegEx { get; set; }
 
     /// <summary>
-    /// Gets or sets the optional regular expression replacement string. When this property is set, <see cref="System.Text.RegularExpressions.Regex.Replace"/>
-    /// will be called upon property value instead of <see cref="System.Text.RegularExpressions.Regex.Match"/> before matching.
+    /// Gets or sets the optional regular expression replacement string. When this property is set, <see cref="System.Text.RegularExpressions.Regex.Replace(string)"/>
+    /// will be called upon property value instead of <see cref="System.Text.RegularExpressions.Regex.Match(string)"/> before matching.
     /// </summary>
     [DataMember]
     public string? FilterRegExReplacement { get; set; }

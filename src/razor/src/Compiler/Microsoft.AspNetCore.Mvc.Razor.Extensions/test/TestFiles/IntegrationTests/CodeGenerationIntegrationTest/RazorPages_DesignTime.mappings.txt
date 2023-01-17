@@ -1,4 +1,4 @@
-Source Location: (55:4,1 [41] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorPages.cshtml)
+﻿Source Location: (55:4,1 [41] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorPages.cshtml)
 |using Microsoft.AspNetCore.Mvc.RazorPages|
 Generated Location: (494:15,0 [41] )
 |using Microsoft.AspNetCore.Mvc.RazorPages|

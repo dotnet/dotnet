@@ -57,7 +57,7 @@ public class ManagedNameParser
     /// </param>
     /// <param name="parameterTypes">
     /// When this method returns, contains the parsed parameter types of the <paramref name="managedMethodName"/>.
-    /// If there are no parameter types in <paramref name="managedMethodName"/>, <paramref name="parameterTypes"/> is set to <c>null</c>.
+    /// If there are no parameter types in <paramref name="managedMethodName"/>, <paramref name="parameterTypes"/> is set to <see langword="null"/>.
     /// This parameter is passed uninitialized; any value originally supplied in result will be overwritten.
     /// </param>
     /// <exception cref="InvalidManagedNameException">

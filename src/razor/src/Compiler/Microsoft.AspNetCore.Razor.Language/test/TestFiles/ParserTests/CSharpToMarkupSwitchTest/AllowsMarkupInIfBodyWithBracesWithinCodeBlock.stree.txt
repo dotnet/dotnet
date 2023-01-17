@@ -1,4 +1,4 @@
-RazorDocument - [0..75)::75 - [@{ if(foo) { <p>Bar</p> } else if(bar) { <p>Baz</p> } else { <p>Boz</p> } }]
+﻿RazorDocument - [0..75)::75 - [@{ if(foo) { <p>Bar</p> } else if(bar) { <p>Baz</p> } else { <p>Boz</p> } }]
     MarkupBlock - [0..75)::75
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

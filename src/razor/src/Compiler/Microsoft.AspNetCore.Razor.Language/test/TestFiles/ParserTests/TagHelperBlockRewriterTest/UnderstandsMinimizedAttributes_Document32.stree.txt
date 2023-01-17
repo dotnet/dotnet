@@ -1,4 +1,4 @@
-RazorDocument - [0..126)::126 - [<input    bound-required-int class='@DateTime.Now + 1'   bound-required-string class='@DateTime.Now + 1'  unbound-required  />]
+﻿RazorDocument - [0..126)::126 - [<input    bound-required-int class='@DateTime.Now + 1'   bound-required-string class='@DateTime.Now + 1'  unbound-required  />]
     MarkupBlock - [0..126)::126
         MarkupTagHelperElement - [0..126)::126 - input[SelfClosing] - InputTagHelper1 - InputTagHelper2 - InputTagHelper3
             MarkupTagHelperStartTag - [0..126)::126 - [<input    bound-required-int class='@DateTime.Now + 1'   bound-required-string class='@DateTime.Now + 1'  unbound-required  />] - Gen<Markup> - SpanEditHandler;Accepts:Any
