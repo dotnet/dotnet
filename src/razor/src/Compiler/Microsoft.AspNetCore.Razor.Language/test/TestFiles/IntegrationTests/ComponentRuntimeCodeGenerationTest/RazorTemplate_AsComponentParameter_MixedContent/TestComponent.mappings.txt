@@ -1,4 +1,4 @@
-Source Location: (2:0,2 [54] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (2:0,2 [54] x:\dir\subdir\Test\TestComponent.cshtml)
 | RenderFragment<Test.Context> template = (context) => |
 Generated Location: (602:17,2 [54] )
 | RenderFragment<Test.Context> template = (context) => |

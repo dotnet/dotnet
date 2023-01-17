@@ -1,4 +1,4 @@
-RazorDocument - [0..36)::36 - [@{ using var foo = someDisposable; }]
+﻿RazorDocument - [0..36)::36 - [@{ using var foo = someDisposable; }]
     MarkupBlock - [0..36)::36
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

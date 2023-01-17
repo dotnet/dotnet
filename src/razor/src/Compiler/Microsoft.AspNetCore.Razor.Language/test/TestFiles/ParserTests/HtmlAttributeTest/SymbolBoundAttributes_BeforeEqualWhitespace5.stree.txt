@@ -1,4 +1,4 @@
-RazorDocument - [0..46)::46 - [@{<a *somethingLF='Foo'	*something=LF'Bar' />}]
+﻿RazorDocument - [0..46)::46 - [@{<a *somethingLF='Foo'	*something=LF'Bar' />}]
     MarkupBlock - [0..46)::46
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

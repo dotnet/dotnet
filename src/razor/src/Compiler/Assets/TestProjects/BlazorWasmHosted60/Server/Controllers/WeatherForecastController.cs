@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using BlazorWasmHosted60.Shared;
 
 namespace BlazorWasmHosted60.Server.Controllers;

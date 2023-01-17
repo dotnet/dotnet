@@ -1,4 +1,4 @@
-Source Location: (7:0,7 [8] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ModelExpressionTagHelper.cshtml)
+﻿Source Location: (7:0,7 [8] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ModelExpressionTagHelper.cshtml)
 |DateTime|
 Generated Location: (1259:25,0 [8] )
 |DateTime|

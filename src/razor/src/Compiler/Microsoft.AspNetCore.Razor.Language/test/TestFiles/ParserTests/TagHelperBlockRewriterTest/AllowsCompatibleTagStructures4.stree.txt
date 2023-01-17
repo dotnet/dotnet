@@ -1,4 +1,4 @@
-RazorDocument - [0..14)::14 - [<input><input>]
+﻿RazorDocument - [0..14)::14 - [<input><input>]
     MarkupBlock - [0..14)::14
         MarkupTagHelperElement - [0..7)::7 - input[StartTagOnly] - InputTagHelper1 - InputTagHelper2
             MarkupTagHelperStartTag - [0..7)::7 - [<input>] - Gen<Markup> - SpanEditHandler;Accepts:Any

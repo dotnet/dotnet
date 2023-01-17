@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
 Entry point script for installing native tools
 

@@ -1,4 +1,4 @@
-RazorDocument - [0..45)::45 - [<p notRequired="@DateTime.Now" class="btn" />]
+﻿RazorDocument - [0..45)::45 - [<p notRequired="@DateTime.Now" class="btn" />]
     MarkupBlock - [0..45)::45
         MarkupTagHelperElement - [0..45)::45 - p[SelfClosing] - pTagHelper
             MarkupTagHelperStartTag - [0..45)::45 - [<p notRequired="@DateTime.Now" class="btn" />] - Gen<Markup> - SpanEditHandler;Accepts:Any

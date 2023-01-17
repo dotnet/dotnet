@@ -1,4 +1,4 @@
-# BuildDropPath - The root folder of the drop directory for which the manifest file will be generated.
+﻿# BuildDropPath - The root folder of the drop directory for which the manifest file will be generated.
 # PackageName - The name of the package this SBOM represents.
 # PackageVersion - The version of the package this SBOM represents. 
 # ManifestDirPath - The path of the directory where the generated manifest files will be placed

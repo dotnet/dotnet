@@ -1,4 +1,4 @@
-RazorDocument - [0..12)::12 - [<input <p />]
+﻿RazorDocument - [0..12)::12 - [<input <p />]
     MarkupBlock - [0..12)::12
         MarkupElement - [0..7)::7
             MarkupStartTag - [0..7)::7 - [<input ] - Gen<Markup> - SpanEditHandler;Accepts:Any

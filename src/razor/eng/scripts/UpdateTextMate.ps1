@@ -1,4 +1,4 @@
-# This script updates our *.tmLanguage.json files from the latest copies int eh VS Code repo.
+﻿# This script updates our *.tmLanguage.json files from the latest copies int eh VS Code repo.
 #
 # We pull these files from the VS Code repo, and VS Code in turn pulls them from various repos,
 # but rather than pull directly from them, by using the VS Code repo we get the benefit of their

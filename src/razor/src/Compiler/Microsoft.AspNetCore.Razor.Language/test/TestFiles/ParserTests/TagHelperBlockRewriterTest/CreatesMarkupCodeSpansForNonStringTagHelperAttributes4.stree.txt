@@ -1,4 +1,4 @@
-RazorDocument - [0..36)::36 - [<person age=" @DateTime.Now.Year" />]
+﻿RazorDocument - [0..36)::36 - [<person age=" @DateTime.Now.Year" />]
     MarkupBlock - [0..36)::36
         MarkupTagHelperElement - [0..36)::36 - person[SelfClosing] - PersonTagHelper
             MarkupTagHelperStartTag - [0..36)::36 - [<person age=" @DateTime.Now.Year" />] - Gen<Markup> - SpanEditHandler;Accepts:Any

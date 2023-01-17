@@ -1,4 +1,4 @@
-Source Location: (40:0,40 [12] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (40:0,40 [12] x:\dir\subdir\Test\TestComponent.cshtml)
 |someDate.Day|
 Generated Location: (1148:30,40 [12] )
 |someDate.Day|

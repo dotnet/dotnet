@@ -1,4 +1,4 @@
-Document - 
+﻿Document - 
     NamespaceDeclaration -  - Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
         CSharpCode - (11:0,11 [56] AttributeDirective.cshtml)
             IntermediateToken - (11:0,11 [56] AttributeDirective.cshtml) - CSharp - [System.Runtime.InteropServices.DllImport("user32.dll")]

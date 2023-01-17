@@ -1,4 +1,4 @@
-Transition span at (9:0,9 [1] ) (Accepts:None) - Parent: Statement block at (9:0,9 [34] )
+﻿Transition span at (9:0,9 [1] ) (Accepts:None) - Parent: Statement block at (9:0,9 [34] )
 Code span at (10:0,10 [10] ) (Accepts:Any) - Parent: Statement block at (9:0,9 [34] )
 Markup span at (20:0,20 [2] ) (Accepts:Any) - Parent: Tag block at (20:0,20 [15] )
 Markup span at (22:0,22 [7] ) (Accepts:Any) - Parent: Markup block at (22:0,22 [12] )

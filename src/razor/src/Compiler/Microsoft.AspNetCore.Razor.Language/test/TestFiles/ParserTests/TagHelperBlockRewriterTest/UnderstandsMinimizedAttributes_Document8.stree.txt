@@ -1,4 +1,4 @@
-RazorDocument - [0..21)::21 - [<input int-prefix- />]
+﻿RazorDocument - [0..21)::21 - [<input int-prefix- />]
     MarkupBlock - [0..21)::21
         MarkupTagHelperElement - [0..21)::21 - input[SelfClosing] - InputTagHelper3
             MarkupTagHelperStartTag - [0..21)::21 - [<input int-prefix- />] - Gen<Markup> - SpanEditHandler;Accepts:Any

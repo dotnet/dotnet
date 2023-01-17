@@ -1,4 +1,4 @@
-RazorDocument - [0..41)::41 - [<script class="foo" style="color:red;" />]
+﻿RazorDocument - [0..41)::41 - [<script class="foo" style="color:red;" />]
     MarkupBlock - [0..41)::41
         MarkupTagHelperElement - [0..41)::41 - script[SelfClosing] - scripttaghelper
             MarkupTagHelperStartTag - [0..41)::41 - [<script class="foo" style="color:red;" />] - Gen<Markup> - SpanEditHandler;Accepts:Any

@@ -1,4 +1,4 @@
-Source Location: (2:0,2 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/UnfinishedExpressionInCode.cshtml)
+﻿Source Location: (2:0,2 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/UnfinishedExpressionInCode.cshtml)
 |
 |
 Generated Location: (772:19,2 [2] )

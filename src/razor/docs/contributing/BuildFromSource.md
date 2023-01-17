@@ -1,22 +1,22 @@
-# Build Razor Tooling from Source
+﻿# Build Razor Tooling from Source
 
-Building Razor Tooling from source allows you to tweak and customize the Razor tooling experience for ASP.NET Core, and to contribute your improvements back to the project.
+Building Razor from source allows you to tweak and customize the Razor compiler and tooling experience for ASP.NET Core, and to contribute your improvements back to the project.
 
-See <https://github.com/dotnet/razor-tooling/issues> for known issues and to track ongoing work.
+See <https://github.com/dotnet/razor/issues> for known issues and to track ongoing work.
 
 ## Clone the source code
 
 For a new copy of the project, run:
 
 ```ps1
-git clone https://github.com/dotnet/razor-tooling.git
+git clone https://github.com/dotnet/razor.git
 ```
 
 ## Install pre-requisites
 
 ### Windows
 
-Building Razor Tooling on Windows requires:
+Building Razor on Windows requires:
 
 * Windows 10, version 1803 or newer
 * At least 10 GB of disk space and a good internet connection (our build scripts download a lot of tools and dependencies)
@@ -27,7 +27,7 @@ Building Razor Tooling on Windows requires:
 
 ### macOS/Linux
 
-Building Razor Tooling on macOS or Linux requires:
+Building Razor on macOS or Linux requires:
 
 * If using macOS, you need macOS Sierra or newer.
 * If using Linux, you need a machine with all .NET Core Linux prerequisites: <https://docs.microsoft.com/en-us/dotnet/core/linux-prerequisites>
@@ -59,7 +59,15 @@ Before opening the `Razor.sln` file in Visual Studio or VS Code, you need to per
    in PowerShell. For more information on execution policies, you can read the [execution policy docs](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.security/set-executionpolicy).
 
 2. Use the `.\startvs.cmd Razor.sln` script to open Visual Studio with the Razor solution. This script first sets the required
-environment variables.
+environment variables. In addition, the following switches can be specified:
+
+   * `-chooseVS`: When specified, displays a list of the installed Visual Studio instances and prompts to
+     pick an instance to launch. By default, the newest recently installed instance of Visual Studio is
+     launched.
+   * `-includeRoslynDeps`: When specified, sets an environment variable that causes the Roslyn dependences
+     of Razor to be deployed. This can be useful if the latest Razor bits depend on a breaking change in
+     Roslyn that isn't available in the version of Visual Studio being targeted. If you encounter errors
+     when debugging the Razor bits that you've built and deployed, setting this switch _might_ fix them.
 
 3. Set `Microsoft.VisualStudio.RazorExtension` as the startup project.
 

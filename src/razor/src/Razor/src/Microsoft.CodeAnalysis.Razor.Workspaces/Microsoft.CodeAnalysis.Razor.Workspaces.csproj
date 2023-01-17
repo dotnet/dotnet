@@ -6,6 +6,11 @@
     <EnableApiCheck>false</EnableApiCheck>
     <IsShippingPackage>false</IsShippingPackage>
     <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
+    <!--
+      The NonCapturingTimer package is a source package, and the source files in there don't conform to our header
+      poilcy, so we have to ignore that error code for this project.
+    -->
+    <NoWarn>$(NoWarn);IDE0073</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

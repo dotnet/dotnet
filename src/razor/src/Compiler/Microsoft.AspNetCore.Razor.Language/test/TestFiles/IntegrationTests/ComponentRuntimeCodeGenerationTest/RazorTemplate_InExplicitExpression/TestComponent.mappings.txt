@@ -1,4 +1,4 @@
-Source Location: (62:1,7 [138] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (62:1,7 [138] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     class Person
     {

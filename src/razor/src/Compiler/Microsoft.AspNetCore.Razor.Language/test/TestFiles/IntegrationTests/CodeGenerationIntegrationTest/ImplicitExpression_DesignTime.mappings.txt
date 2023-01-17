@@ -1,4 +1,4 @@
-Source Location: (1:0,1 [36] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ImplicitExpression.cshtml)
+﻿Source Location: (1:0,1 [36] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ImplicitExpression.cshtml)
 |for(int i = 1; i <= 10; i++) {
     |
 Generated Location: (755:19,1 [36] )

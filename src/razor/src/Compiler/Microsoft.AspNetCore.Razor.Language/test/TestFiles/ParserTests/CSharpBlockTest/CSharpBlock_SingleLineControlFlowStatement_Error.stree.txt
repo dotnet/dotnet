@@ -1,4 +1,4 @@
-RazorDocument - [0..382)::382 - [@{LF    var time = DateTime.Now;LF    if (time.ToBinary() % 2 == 0) <p>The time: @time</p>LFLF    if (time.ToBinary() %3 == 0)LF        // For some reason we want to render the time now?LF        <p>The confusing time: @time</p>LFLF    if (time.ToBinary() % 4 == 0)LF        @: <p>The time: @time</p>LFLF    if (time.ToBinary() % 5 == 0) @@SomeGitHubUserName <strong>Hi!</strong>LF}]
+﻿RazorDocument - [0..382)::382 - [@{LF    var time = DateTime.Now;LF    if (time.ToBinary() % 2 == 0) <p>The time: @time</p>LFLF    if (time.ToBinary() %3 == 0)LF        // For some reason we want to render the time now?LF        <p>The confusing time: @time</p>LFLF    if (time.ToBinary() % 4 == 0)LF        @: <p>The time: @time</p>LFLF    if (time.ToBinary() % 5 == 0) @@SomeGitHubUserName <strong>Hi!</strong>LF}]
     MarkupBlock - [0..382)::382
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

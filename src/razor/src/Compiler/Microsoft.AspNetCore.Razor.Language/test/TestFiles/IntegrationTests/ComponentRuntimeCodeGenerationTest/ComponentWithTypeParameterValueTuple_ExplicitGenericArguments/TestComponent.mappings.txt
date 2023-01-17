@@ -1,0 +1,11 @@
+Source Location: (161:5,7 [87] x:\dir\subdir\Test\TestComponent.cshtml)
+|
+    [Parameter]
+    public List<(TDomain Domain, TValue Value)> Data { get; set; }
+|
+Generated Location: (1224:32,7 [87] )
+|
+    [Parameter]
+    public List<(TDomain Domain, TValue Value)> Data { get; set; }
+|
+

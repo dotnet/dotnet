@@ -1,4 +1,4 @@
-RazorDocument - [0..87)::87 - [@inherits System.Web.Mvc.WebViewPage<IEnumerable<MvcApplication2.Models.RegisterModel>>]
+﻿RazorDocument - [0..87)::87 - [@inherits System.Web.Mvc.WebViewPage<IEnumerable<MvcApplication2.Models.RegisterModel>>]
     MarkupBlock - [0..87)::87
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

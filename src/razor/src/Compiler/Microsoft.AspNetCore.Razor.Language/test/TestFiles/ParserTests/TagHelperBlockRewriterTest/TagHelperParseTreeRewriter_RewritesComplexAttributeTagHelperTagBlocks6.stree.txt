@@ -1,4 +1,4 @@
-RazorDocument - [0..171)::171 - [<p class="@do { var foo = bar; <text>Foo</text> foo++; } while (foo<bar>);">Hello</p> <p style='@do { var foo = bar; <text>Foo</text> foo++; } while (foo<bar>);'>World</p>]
+﻿RazorDocument - [0..171)::171 - [<p class="@do { var foo = bar; <text>Foo</text> foo++; } while (foo<bar>);">Hello</p> <p style='@do { var foo = bar; <text>Foo</text> foo++; } while (foo<bar>);'>World</p>]
     MarkupBlock - [0..171)::171
         MarkupTagHelperElement - [0..85)::85 - p[StartTagAndEndTag] - ptaghelper
             MarkupTagHelperStartTag - [0..76)::76 - [<p class="@do { var foo = bar; <text>Foo</text> foo++; } while (foo<bar>);">] - Gen<Markup> - SpanEditHandler;Accepts:Any

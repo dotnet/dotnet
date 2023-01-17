@@ -1,4 +1,4 @@
-Source Location: (38:0,38 [8] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (38:0,38 [8] x:\dir\subdir\Test\TestComponent.cshtml)
 |_someKey|
 Generated Location: (1045:28,38 [8] )
 |_someKey|

@@ -1,4 +1,4 @@
-Source Location: (2:0,2 [32] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Instrumented.cshtml)
+﻿Source Location: (2:0,2 [32] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Instrumented.cshtml)
 |
     int i = 1;
     var foo = |

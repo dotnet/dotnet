@@ -1,4 +1,4 @@
-RazorDocument - [0..24)::24 - [<input @onclick="@test">]
+﻿RazorDocument - [0..24)::24 - [<input @onclick="@test">]
     MarkupBlock - [0..24)::24
         MarkupElement - [0..24)::24
             MarkupStartTag - [0..24)::24 - [<input @onclick="@test">] - Gen<Markup> - SpanEditHandler;Accepts:Any

@@ -1,4 +1,4 @@
-RazorDocument - [0..117)::117 - [<p class=foo dynamic=@DateTime.Now style=color:red;>Hello World <strong class="foo">inside of strong tag</strong></p>]
+﻿RazorDocument - [0..117)::117 - [<p class=foo dynamic=@DateTime.Now style=color:red;>Hello World <strong class="foo">inside of strong tag</strong></p>]
     MarkupBlock - [0..117)::117
         MarkupTagHelperElement - [0..117)::117 - p[StartTagAndEndTag] - ptaghelper
             MarkupTagHelperStartTag - [0..52)::52 - [<p class=foo dynamic=@DateTime.Now style=color:red;>] - Gen<Markup> - SpanEditHandler;Accepts:Any

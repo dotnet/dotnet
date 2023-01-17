@@ -1,4 +1,4 @@
-<Project>
+﻿<Project>
 
   <Target Name="_PublishLanguageServerRids" AfterTargets="Pack" Condition=" '$(OS)' == 'Windows_NT' ">
     <PropertyGroup>

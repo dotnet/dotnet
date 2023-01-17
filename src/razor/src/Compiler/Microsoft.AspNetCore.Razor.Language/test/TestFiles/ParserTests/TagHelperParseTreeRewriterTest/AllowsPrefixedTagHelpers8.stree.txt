@@ -1,4 +1,4 @@
-RazorDocument - [0..23)::23 - [<th:myth class="btn" />]
+﻿RazorDocument - [0..23)::23 - [<th:myth class="btn" />]
     MarkupBlock - [0..23)::23
         MarkupTagHelperElement - [0..23)::23 - th:myth[SelfClosing] - mythTagHelper
             MarkupTagHelperStartTag - [0..23)::23 - [<th:myth class="btn" />] - Gen<Markup> - SpanEditHandler;Accepts:Any

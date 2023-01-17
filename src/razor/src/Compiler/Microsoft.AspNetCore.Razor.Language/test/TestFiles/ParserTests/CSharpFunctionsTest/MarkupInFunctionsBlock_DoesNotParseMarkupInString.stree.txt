@@ -1,4 +1,4 @@
-RazorDocument - [0..81)::81 - [LF@functions {LF    void Announcment(string message) => "<h3>@message</h3>";LF}LF]
+﻿RazorDocument - [0..81)::81 - [LF@functions {LF    void Announcment(string message) => "<h3>@message</h3>";LF}LF]
     MarkupBlock - [0..81)::81
         MarkupTextLiteral - [0..2)::2 - [LF] - Gen<Markup> - SpanEditHandler;Accepts:Any
             NewLine;[LF];

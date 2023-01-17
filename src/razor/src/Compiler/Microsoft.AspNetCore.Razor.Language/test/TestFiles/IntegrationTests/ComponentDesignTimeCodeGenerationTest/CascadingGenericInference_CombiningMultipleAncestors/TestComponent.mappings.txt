@@ -1,4 +1,4 @@
-Source Location: (19:0,19 [12] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (19:0,19 [12] x:\dir\subdir\Test\TestComponent.cshtml)
 |int.MaxValue|
 Generated Location: (1006:26,19 [12] )
 |int.MaxValue|

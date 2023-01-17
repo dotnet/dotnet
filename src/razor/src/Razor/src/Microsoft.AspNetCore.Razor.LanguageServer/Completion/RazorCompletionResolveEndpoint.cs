@@ -36,7 +36,6 @@ internal class RazorCompletionResolveEndpoint : IVSCompletionResolveEndpoint, IO
 
     public async Task<VSInternalCompletionItem> HandleRequestAsync(VSInternalCompletionItem completionItem, RazorRequestContext requestContext, CancellationToken cancellationToken)
     {
-
         if (!completionItem.TryGetCompletionListResultIds(out var resultIds))
         {
             // Unable to lookup completion item result info
@@ -44,7 +43,7 @@ internal class RazorCompletionResolveEndpoint : IVSCompletionResolveEndpoint, IO
         }
 
         object? originalRequestContext = null;
-        VSInternalCompletionList? containingCompletionlist = null;
+        VSInternalCompletionList? containingCompletionList = null;
         foreach (var resultId in resultIds)
         {
             if (!_completionListCache.TryGet(resultId, out var cacheEntry))
@@ -57,20 +56,20 @@ internal class RazorCompletionResolveEndpoint : IVSCompletionResolveEndpoint, IO
             if (cacheEntry.CompletionList.Items.Any(completion => string.Equals(completionItem.Label, completion.Label, StringComparison.Ordinal)))
             {
                 originalRequestContext = cacheEntry.Context;
-                containingCompletionlist = cacheEntry.CompletionList;
+                containingCompletionList = cacheEntry.CompletionList;
                 break;
             }
         }
 
-        if (containingCompletionlist is null)
+        if (containingCompletionList is null)
         {
-            // Couldn't find an assocaited completion list
+            // Couldn't find an associated completion list
             return completionItem;
         }
 
         var resolvedCompletionItem = await _completionItemResolver.ResolveAsync(
             completionItem,
-            containingCompletionlist,
+            containingCompletionList,
             originalRequestContext,
             _clientCapabilities,
             cancellationToken).ConfigureAwait(false);

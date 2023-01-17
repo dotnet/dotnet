@@ -1,4 +1,4 @@
-RazorDocument - [0..24)::24 - [@{<text><!text></!text>}]
+﻿RazorDocument - [0..24)::24 - [@{<text><!text></!text>}]
     MarkupBlock - [0..24)::24
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

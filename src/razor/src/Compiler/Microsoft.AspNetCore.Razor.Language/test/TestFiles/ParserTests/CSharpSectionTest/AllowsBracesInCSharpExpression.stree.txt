@@ -1,4 +1,4 @@
-RazorDocument - [0..76)::76 - [@section foo { I really want to render a close brace, so here I go: @("}") }]
+﻿RazorDocument - [0..76)::76 - [@section foo { I really want to render a close brace, so here I go: @("}") }]
     MarkupBlock - [0..76)::76
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

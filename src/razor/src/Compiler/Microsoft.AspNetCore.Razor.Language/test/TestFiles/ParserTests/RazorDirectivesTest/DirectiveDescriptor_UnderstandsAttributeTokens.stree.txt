@@ -1,4 +1,4 @@
-RazorDocument - [0..102)::102 - [LF@custom [Serializable]LF@custom [DllImport("user32.dll", SetLastError=false, ExactSpelling=false)]LF]
+﻿RazorDocument - [0..102)::102 - [LF@custom [Serializable]LF@custom [DllImport("user32.dll", SetLastError=false, ExactSpelling=false)]LF]
     MarkupBlock - [0..102)::102
         MarkupTextLiteral - [0..2)::2 - [LF] - Gen<Markup> - SpanEditHandler;Accepts:Any
             NewLine;[LF];

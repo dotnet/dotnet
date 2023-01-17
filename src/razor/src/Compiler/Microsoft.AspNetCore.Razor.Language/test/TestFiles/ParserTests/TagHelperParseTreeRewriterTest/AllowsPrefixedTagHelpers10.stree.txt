@@ -1,4 +1,4 @@
-RazorDocument - [0..47)::47 - [<th:myth class="btn">words and spaces</th:myth>]
+﻿RazorDocument - [0..47)::47 - [<th:myth class="btn">words and spaces</th:myth>]
     MarkupBlock - [0..47)::47
         MarkupTagHelperElement - [0..47)::47 - th:myth[StartTagAndEndTag] - mythTagHelper
             MarkupTagHelperStartTag - [0..21)::21 - [<th:myth class="btn">] - Gen<Markup> - SpanEditHandler;Accepts:Any

@@ -31,9 +31,9 @@ internal class TextEditResponseRewriter : DelegatedCompletionResponseRewriter
         var hostDocumentPosition = new Position(lineNumber, characterOffset);
         completionList = TranslateTextEdits(hostDocumentPosition, delegatedParameters.ProjectedPosition, completionList);
 
-        if (completionList.ItemDefaults?.EditRange != null)
+        if (completionList.ItemDefaults?.EditRange is { } editRange)
         {
-            completionList.ItemDefaults.EditRange = TranslateRange(hostDocumentPosition, delegatedParameters.ProjectedPosition, completionList.ItemDefaults.EditRange);
+            completionList.ItemDefaults.EditRange = TranslateRange(hostDocumentPosition, delegatedParameters.ProjectedPosition, editRange);
         }
 
         return completionList;
@@ -53,12 +53,12 @@ internal class TextEditResponseRewriter : DelegatedCompletionResponseRewriter
 
         foreach (var item in completionList.Items)
         {
-            if (item.TextEdit != null)
+            if (item.TextEdit is { } textEdit)
             {
-                var translatedRange = TranslateRange(hostDocumentPosition, projectedPosition, item.TextEdit.Range);
-                item.TextEdit.Range = translatedRange;
+                var translatedRange = TranslateRange(hostDocumentPosition, projectedPosition, textEdit.Range);
+                textEdit.Range = translatedRange;
             }
-            else if (item.AdditionalTextEdits != null)
+            else if (item.AdditionalTextEdits is not null)
             {
                 // Additional text edits should typically only be provided at resolve time. We don't support them in the normal completion flow.
                 item.AdditionalTextEdits = null;

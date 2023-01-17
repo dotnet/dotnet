@@ -1,4 +1,4 @@
-RazorDocument - [0..75)::75 - [@{ var foo = bar; Html.ExecuteTemplate(foo, @<p foo='@@'>Foo #@item</p>); }]
+﻿RazorDocument - [0..75)::75 - [@{ var foo = bar; Html.ExecuteTemplate(foo, @<p foo='@@'>Foo #@item</p>); }]
     MarkupBlock - [0..75)::75
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

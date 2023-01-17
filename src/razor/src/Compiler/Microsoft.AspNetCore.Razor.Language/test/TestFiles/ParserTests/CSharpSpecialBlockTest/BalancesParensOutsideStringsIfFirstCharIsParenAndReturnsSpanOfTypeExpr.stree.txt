@@ -1,4 +1,4 @@
-RazorDocument - [0..53)::53 - [@(foo"b)ar" if(condition) { string.Format("{0}"); } )]
+﻿RazorDocument - [0..53)::53 - [@(foo"b)ar" if(condition) { string.Format("{0}"); } )]
     MarkupBlock - [0..53)::53
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

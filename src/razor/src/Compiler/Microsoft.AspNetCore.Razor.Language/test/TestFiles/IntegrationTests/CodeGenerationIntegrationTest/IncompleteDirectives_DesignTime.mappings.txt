@@ -1,4 +1,4 @@
-Source Location: (100:2,13 [0] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml)
+﻿Source Location: (100:2,13 [0] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml)
 ||
 Generated Location: (542:12,38 [0] )
 ||

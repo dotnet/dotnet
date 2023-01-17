@@ -1,4 +1,4 @@
-#
+﻿#
 # This file must be used by invoking ". .\activate.ps1" from the command line.
 # You cannot run it directly. See https://docs.microsoft.com/powershell/module/microsoft.powershell.core/about/about_scripts#script-scope-and-dot-sourcing
 #

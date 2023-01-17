@@ -1,4 +1,4 @@
-RazorDocument - [0..51)::51 - [<p notRequired="a" class="btn">words and spaces</p>]
+﻿RazorDocument - [0..51)::51 - [<p notRequired="a" class="btn">words and spaces</p>]
     MarkupBlock - [0..51)::51
         MarkupTagHelperElement - [0..51)::51 - p[StartTagAndEndTag] - pTagHelper
             MarkupTagHelperStartTag - [0..31)::31 - [<p notRequired="a" class="btn">] - Gen<Markup> - SpanEditHandler;Accepts:Any

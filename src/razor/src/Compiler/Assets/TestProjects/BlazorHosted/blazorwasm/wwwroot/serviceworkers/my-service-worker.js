@@ -1,1 +1,1 @@
-// This is the development service worker
+﻿// This is the development service worker

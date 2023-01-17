@@ -1,4 +1,4 @@
-RazorDocument - [0..18)::18 - [if (true) { @foo }]
+﻿RazorDocument - [0..18)::18 - [if (true) { @foo }]
     MarkupBlock - [0..18)::18
         MarkupTextLiteral - [0..12)::12 - [if (true) { ] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Text;[if];

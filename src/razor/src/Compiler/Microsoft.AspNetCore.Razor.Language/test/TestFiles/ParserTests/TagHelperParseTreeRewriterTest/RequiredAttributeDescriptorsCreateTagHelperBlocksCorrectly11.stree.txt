@@ -1,4 +1,4 @@
-RazorDocument - [0..35)::35 - [<strong catchAll="@DateTime.Now" />]
+﻿RazorDocument - [0..35)::35 - [<strong catchAll="@DateTime.Now" />]
     MarkupBlock - [0..35)::35
         MarkupTagHelperElement - [0..35)::35 - strong[SelfClosing] - catchAllTagHelper
             MarkupTagHelperStartTag - [0..35)::35 - [<strong catchAll="@DateTime.Now" />] - Gen<Markup> - SpanEditHandler;Accepts:Any

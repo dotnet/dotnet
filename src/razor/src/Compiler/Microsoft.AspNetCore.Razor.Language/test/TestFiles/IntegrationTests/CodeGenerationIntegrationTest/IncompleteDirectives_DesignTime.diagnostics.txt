@@ -1,4 +1,4 @@
-TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml(3,2): Error RZ1018: Directive 'addTagHelper' must have a value.
+﻿TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml(3,2): Error RZ1018: Directive 'addTagHelper' must have a value.
 TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml(3,14): Error RZ1036: Invalid tag helper directive look up text ''. The correct look up text format is: "name, assemblyName".
 TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml(4,2): Error RZ1018: Directive 'addTagHelper' must have a value.
 TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml(4,15): Error RZ1036: Invalid tag helper directive look up text ''. The correct look up text format is: "name, assemblyName".

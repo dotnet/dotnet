@@ -1,4 +1,4 @@
-Source Location: (2:0,2 [39] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (2:0,2 [39] x:\dir\subdir\Test\TestComponent.cshtml)
 |
   var myValue = "Expression value";
 |

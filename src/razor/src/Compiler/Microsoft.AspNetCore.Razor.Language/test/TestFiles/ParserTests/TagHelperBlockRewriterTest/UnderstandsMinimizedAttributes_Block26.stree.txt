@@ -1,4 +1,4 @@
-RazorDocument - [0..43)::43 - [@{<input bound-required-int class='btn' />}]
+﻿RazorDocument - [0..43)::43 - [@{<input bound-required-int class='btn' />}]
     MarkupBlock - [0..43)::43
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

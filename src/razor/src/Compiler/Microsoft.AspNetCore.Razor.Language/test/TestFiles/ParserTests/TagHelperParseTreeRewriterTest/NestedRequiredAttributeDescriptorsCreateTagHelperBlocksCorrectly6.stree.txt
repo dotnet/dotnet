@@ -1,4 +1,4 @@
-RazorDocument - [0..67)::67 - [<strong catchAll="hi"><p class="btn"><strong></strong></p></strong>]
+﻿RazorDocument - [0..67)::67 - [<strong catchAll="hi"><p class="btn"><strong></strong></p></strong>]
     MarkupBlock - [0..67)::67
         MarkupTagHelperElement - [0..67)::67 - strong[StartTagAndEndTag] - catchAllTagHelper
             MarkupTagHelperStartTag - [0..22)::22 - [<strong catchAll="hi">] - Gen<Markup> - SpanEditHandler;Accepts:Any

@@ -1,4 +1,4 @@
-Source Location: (192:9,39 [11] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Await.cshtml)
+﻿Source Location: (192:9,39 [11] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Await.cshtml)
 |await Foo()|
 Generated Location: (768:19,39 [11] )
 |await Foo()|

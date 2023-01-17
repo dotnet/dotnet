@@ -1,4 +1,4 @@
-RazorDocument - [0..67)::67 - [@section foo { <script>(function foo() { return 1; })();</script> }]
+﻿RazorDocument - [0..67)::67 - [@section foo { <script>(function foo() { return 1; })();</script> }]
     MarkupBlock - [0..67)::67
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

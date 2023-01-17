@@ -1,4 +1,4 @@
-RazorDocument - [0..44)::44 - [LF@{LF    @*LFThis is a commentLF    *@LF}LF]
+﻿RazorDocument - [0..44)::44 - [LF@{LF    @*LFThis is a commentLF    *@LF}LF]
     MarkupBlock - [0..44)::44
         MarkupTextLiteral - [0..2)::2 - [LF] - Gen<Markup> - SpanEditHandler;Accepts:Any
             NewLine;[LF];

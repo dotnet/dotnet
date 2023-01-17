@@ -1,4 +1,4 @@
-RazorDocument - [0..21)::21 - [@{<a #local='Foo' />}]
+﻿RazorDocument - [0..21)::21 - [@{<a #local='Foo' />}]
     MarkupBlock - [0..21)::21
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

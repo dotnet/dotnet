@@ -1,4 +1,4 @@
-RazorDocument - [0..64)::64 - [@custom System.Text.Encoding.ASCIIEncoding Some_Member "AString"]
+﻿RazorDocument - [0..64)::64 - [@custom System.Text.Encoding.ASCIIEncoding Some_Member "AString"]
     MarkupBlock - [0..64)::64
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

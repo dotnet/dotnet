@@ -29,7 +29,7 @@ internal class DelegatedCompletionItemResolver : CompletionItemResolver
 
     public override async Task<VSInternalCompletionItem?> ResolveAsync(
         VSInternalCompletionItem item,
-        VSInternalCompletionList containingCompletionlist,
+        VSInternalCompletionList containingCompletionList,
         object? originalRequestContext,
         VSInternalClientCapabilities? clientCapabilities,
         CancellationToken cancellationToken)
@@ -41,7 +41,7 @@ internal class DelegatedCompletionItemResolver : CompletionItemResolver
         }
 
         var labelQuery = item.Label;
-        var associatedDelegatedCompletion = containingCompletionlist.Items.FirstOrDefault(completion => string.Equals(labelQuery, completion.Label, StringComparison.Ordinal));
+        var associatedDelegatedCompletion = containingCompletionList.Items.FirstOrDefault(completion => string.Equals(labelQuery, completion.Label, StringComparison.Ordinal));
         if (associatedDelegatedCompletion is null)
         {
             return null;

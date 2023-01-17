@@ -1,4 +1,4 @@
-Source Location: (2:0,2 [48] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes.cshtml)
+﻿Source Location: (2:0,2 [48] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes.cshtml)
 |
     var ch = true;
     var cls = "bar";

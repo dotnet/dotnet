@@ -1,4 +1,4 @@
-Source Location: (9:0,9 [8] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (9:0,9 [8] x:\dir\subdir\Test\TestComponent.cshtml)
 |TestBool|
 Generated Location: (877:24,9 [8] )
 |TestBool|

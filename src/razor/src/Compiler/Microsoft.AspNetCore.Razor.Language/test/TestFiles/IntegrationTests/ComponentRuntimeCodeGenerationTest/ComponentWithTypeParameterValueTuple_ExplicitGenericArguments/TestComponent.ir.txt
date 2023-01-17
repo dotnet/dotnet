@@ -1,0 +1,18 @@
+Document - 
+    NamespaceDeclaration -  - Test
+        UsingDirective - (3:1,1 [14] ) - System
+        UsingDirective - (18:2,1 [34] ) - System.Collections.Generic
+        UsingDirective - (53:3,1 [19] ) - System.Linq
+        UsingDirective - (73:4,1 [30] ) - System.Threading.Tasks
+        UsingDirective - (104:5,1 [39] ) - Microsoft.AspNetCore.Components
+        ClassDeclaration -  - public partial - TestComponent - global::Microsoft.AspNetCore.Components.ComponentBase -  - TDomain, TValue
+            MethodDeclaration -  - protected override - void - BuildRenderTree
+                Component - (86:3,0 [64] x:\dir\subdir\Test\TestComponent.cshtml) - TestComponent
+                    ComponentAttribute - (107:3,21 [4] x:\dir\subdir\Test\TestComponent.cshtml) - Data - Data - AttributeStructure.DoubleQuotes
+                        LazyIntermediateToken - (107:3,21 [4] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - null
+                    ComponentTypeArgument - (122:3,36 [7] x:\dir\subdir\Test\TestComponent.cshtml) - TDomain
+                        LazyIntermediateToken - (122:3,36 [7] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - decimal
+                    ComponentTypeArgument - (139:3,53 [7] x:\dir\subdir\Test\TestComponent.cshtml) - TValue
+                        LazyIntermediateToken - (139:3,53 [7] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - decimal
+            CSharpCode - (161:5,7 [87] x:\dir\subdir\Test\TestComponent.cshtml)
+                LazyIntermediateToken - (161:5,7 [87] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - \n    [Parameter]\n    public List<(TDomain Domain, TValue Value)> Data { get; set; }\n

@@ -1,4 +1,4 @@
-RazorDocument - [0..22)::22 - [<strong></!p></strong>]
+﻿RazorDocument - [0..22)::22 - [<strong></!p></strong>]
     MarkupBlock - [0..22)::22
         MarkupTagHelperElement - [0..22)::22 - strong[StartTagAndEndTag] - strongtaghelper
             MarkupTagHelperStartTag - [0..8)::8 - [<strong>] - Gen<Markup> - SpanEditHandler;Accepts:Any

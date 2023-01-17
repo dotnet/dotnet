@@ -1,4 +1,4 @@
-#nullable enable
+﻿#nullable enable
 ~abstract Microsoft.AspNetCore.Razor.Language.AllowedChildTagDescriptorBuilder.Diagnostics.get -> Microsoft.AspNetCore.Razor.Language.RazorDiagnosticCollection
 ~abstract Microsoft.AspNetCore.Razor.Language.AllowedChildTagDescriptorBuilder.DisplayName.get -> string
 ~abstract Microsoft.AspNetCore.Razor.Language.AllowedChildTagDescriptorBuilder.DisplayName.set -> void

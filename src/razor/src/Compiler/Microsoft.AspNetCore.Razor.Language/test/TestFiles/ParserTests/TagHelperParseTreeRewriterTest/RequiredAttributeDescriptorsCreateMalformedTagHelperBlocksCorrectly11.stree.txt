@@ -1,4 +1,4 @@
-RazorDocument - [0..34)::34 - [<p class='foo'>@if(true){</p>}</p>]
+﻿RazorDocument - [0..34)::34 - [<p class='foo'>@if(true){</p>}</p>]
     MarkupBlock - [0..34)::34
         MarkupTagHelperElement - [0..34)::34 - p[StartTagAndEndTag] - pTagHelper
             MarkupTagHelperStartTag - [0..15)::15 - [<p class='foo'>] - Gen<Markup> - SpanEditHandler;Accepts:Any

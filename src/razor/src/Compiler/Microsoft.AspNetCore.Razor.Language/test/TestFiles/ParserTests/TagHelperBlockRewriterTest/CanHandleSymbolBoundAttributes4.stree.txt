@@ -1,4 +1,4 @@
-RazorDocument - [0..56)::56 - [<button bound (^click)='doSomething()'>Click Me</button>]
+﻿RazorDocument - [0..56)::56 - [<button bound (^click)='doSomething()'>Click Me</button>]
     MarkupBlock - [0..56)::56
         MarkupTagHelperElement - [0..56)::56 - button[StartTagAndEndTag] - CatchAllTagHelper
             MarkupTagHelperStartTag - [0..39)::39 - [<button bound (^click)='doSomething()'>] - Gen<Markup> - SpanEditHandler;Accepts:Any

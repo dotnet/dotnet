@@ -1,4 +1,4 @@
-Source Location: (24:0,24 [21] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (24:0,24 [21] x:\dir\subdir\Test\TestComponent.cshtml)
 |e => { Increment(); }|
 Generated Location: (956:25,24 [21] )
 |e => { Increment(); }|

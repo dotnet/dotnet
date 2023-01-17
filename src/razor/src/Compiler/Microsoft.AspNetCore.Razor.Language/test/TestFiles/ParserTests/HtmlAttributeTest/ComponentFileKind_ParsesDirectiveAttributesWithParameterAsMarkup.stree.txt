@@ -1,4 +1,4 @@
-RazorDocument - [0..33)::33 - [<span @class:param='@foo'></span>]
+﻿RazorDocument - [0..33)::33 - [<span @class:param='@foo'></span>]
     MarkupBlock - [0..33)::33
         MarkupElement - [0..33)::33
             MarkupStartTag - [0..26)::26 - [<span @class:param='@foo'>] - Gen<Markup> - SpanEditHandler;Accepts:Any

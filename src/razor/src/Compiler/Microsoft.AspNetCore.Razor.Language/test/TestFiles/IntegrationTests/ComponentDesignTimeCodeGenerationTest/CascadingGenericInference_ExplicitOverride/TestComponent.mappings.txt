@@ -1,4 +1,4 @@
-Source Location: (13:0,13 [8] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (13:0,13 [8] x:\dir\subdir\Test\TestComponent.cshtml)
 |DateTime|
 Generated Location: (908:25,13 [8] )
 |DateTime|

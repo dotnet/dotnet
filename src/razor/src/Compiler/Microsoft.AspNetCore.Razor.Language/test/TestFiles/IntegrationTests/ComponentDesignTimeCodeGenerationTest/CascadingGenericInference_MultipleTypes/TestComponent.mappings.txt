@@ -1,4 +1,4 @@
-Source Location: (16:0,16 [56] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (16:0,16 [56] x:\dir\subdir\Test\TestComponent.cshtml)
 |new System.Collections.Generic.Dictionary<int, string>()|
 Generated Location: (1000:26,16 [56] )
 |new System.Collections.Generic.Dictionary<int, string>()|

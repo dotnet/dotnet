@@ -1,4 +1,4 @@
-Source Location: (130:2,7 [95] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (130:2,7 [95] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     void OnFocus(FocusEventArgs e) { }
 

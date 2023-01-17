@@ -1,4 +1,4 @@
-# Select a pool provider based off branch name. Anything with branch name containing 'release' must go into an -Svc pool, 
+﻿# Select a pool provider based off branch name. Anything with branch name containing 'release' must go into an -Svc pool, 
 # otherwise it should go into the "normal" pools. This separates out the queueing and billing of released branches.
 
 # Motivation: 

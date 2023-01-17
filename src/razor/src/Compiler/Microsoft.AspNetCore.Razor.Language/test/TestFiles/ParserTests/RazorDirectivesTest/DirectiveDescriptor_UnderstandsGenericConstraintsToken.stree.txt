@@ -1,4 +1,4 @@
-RazorDocument - [0..47)::47 - [LF@custom TSomething where TSomething : classLF]
+﻿RazorDocument - [0..47)::47 - [LF@custom TSomething where TSomething : classLF]
     MarkupBlock - [0..47)::47
         MarkupTextLiteral - [0..2)::2 - [LF] - Gen<Markup> - SpanEditHandler;Accepts:Any
             NewLine;[LF];

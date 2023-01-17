@@ -1,4 +1,4 @@
-RazorDocument - [0..17)::17 - [@tagHelperPrefix ]
+﻿RazorDocument - [0..17)::17 - [@tagHelperPrefix ]
     MarkupBlock - [0..17)::17
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

@@ -1,4 +1,4 @@
-Source Location: (10:0,10 [26] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InheritsViewModel.cshtml)
+﻿Source Location: (10:0,10 [26] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InheritsViewModel.cshtml)
 |MyBasePageForViews<TModel>|
 Generated Location: (740:19,0 [26] )
 |MyBasePageForViews<TModel>|

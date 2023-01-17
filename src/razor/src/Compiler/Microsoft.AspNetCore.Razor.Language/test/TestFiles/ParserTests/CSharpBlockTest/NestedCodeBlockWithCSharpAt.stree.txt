@@ -1,4 +1,4 @@
-RazorDocument - [0..50)::50 - [@{ if (true) { var val = @x; if (val != 3) { } } }]
+﻿RazorDocument - [0..50)::50 - [@{ if (true) { var val = @x; if (val != 3) { } } }]
     MarkupBlock - [0..50)::50
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

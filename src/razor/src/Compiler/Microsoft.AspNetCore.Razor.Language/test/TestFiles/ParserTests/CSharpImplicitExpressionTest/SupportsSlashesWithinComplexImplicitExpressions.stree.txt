@@ -1,4 +1,4 @@
-RazorDocument - [0..103)::103 - [@DataGridColumn.Template("Years of Service", e => (int)Math.Round((DateTime.Now - dt).TotalDays / 365))]
+﻿RazorDocument - [0..103)::103 - [@DataGridColumn.Template("Years of Service", e => (int)Math.Round((DateTime.Now - dt).TotalDays / 365))]
     MarkupBlock - [0..103)::103
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

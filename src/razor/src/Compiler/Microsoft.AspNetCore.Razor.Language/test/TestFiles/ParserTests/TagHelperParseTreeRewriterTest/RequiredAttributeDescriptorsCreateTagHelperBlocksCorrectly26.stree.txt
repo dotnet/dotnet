@@ -1,4 +1,4 @@
-RazorDocument - [0..42)::42 - [<div style="" class="btn" catchAll="hi" />]
+﻿RazorDocument - [0..42)::42 - [<div style="" class="btn" catchAll="hi" />]
     MarkupBlock - [0..42)::42
         MarkupTagHelperElement - [0..42)::42 - div[SelfClosing] - divTagHelper - catchAllTagHelper
             MarkupTagHelperStartTag - [0..42)::42 - [<div style="" class="btn" catchAll="hi" />] - Gen<Markup> - SpanEditHandler;Accepts:Any

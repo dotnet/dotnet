@@ -1,4 +1,4 @@
-Source Location: (2:0,2 [25] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (2:0,2 [25] x:\dir\subdir\Test\TestComponent.cshtml)
 |RenderPerson((person) => |
 Generated Location: (874:24,6 [25] )
 |RenderPerson((person) => |

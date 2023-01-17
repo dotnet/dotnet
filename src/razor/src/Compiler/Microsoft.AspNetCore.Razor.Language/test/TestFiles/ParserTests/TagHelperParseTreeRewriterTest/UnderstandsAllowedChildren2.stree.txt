@@ -1,4 +1,4 @@
-RazorDocument - [0..17)::17 - [<p>LF<br />LF</p>]
+﻿RazorDocument - [0..17)::17 - [<p>LF<br />LF</p>]
     MarkupBlock - [0..17)::17
         MarkupTagHelperElement - [0..17)::17 - p[StartTagAndEndTag] - PTagHelper
             MarkupTagHelperStartTag - [0..3)::3 - [<p>] - Gen<Markup> - SpanEditHandler;Accepts:Any

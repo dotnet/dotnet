@@ -1,4 +1,4 @@
-Source Location: (14:0,14 [17] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EnumTagHelpers.cshtml)
+﻿Source Location: (14:0,14 [17] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EnumTagHelpers.cshtml)
 |"*, TestAssembly"|
 Generated Location: (1115:19,37 [17] )
 |"*, TestAssembly"|

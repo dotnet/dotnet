@@ -1,4 +1,4 @@
-RazorDocument - [0..32)::32 - [@{<span data-foo='@foo'></span>}]
+﻿RazorDocument - [0..32)::32 - [@{<span data-foo='@foo'></span>}]
     MarkupBlock - [0..32)::32
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

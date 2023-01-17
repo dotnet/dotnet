@@ -1,4 +1,4 @@
-//line,characterPos,length,tokenType,modifier
+﻿//line,characterPos,length,tokenType,modifier
 0 0 1 84 0 //razorTransition
 0 1 12 87 0 //razorDirective
 1 0 4 97 0 //markupCommentPunctuation

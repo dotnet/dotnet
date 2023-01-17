@@ -1,4 +1,4 @@
-RazorDocument - [0..25)::25 - [<!p>words and spaces</!p>]
+﻿RazorDocument - [0..25)::25 - [<!p>words and spaces</!p>]
     MarkupBlock - [0..25)::25
         MarkupElement - [0..25)::25
             MarkupStartTag - [0..4)::4 - [<!p>] - Gen<Markup> - SpanEditHandler;Accepts:Any

@@ -1,4 +1,4 @@
-RazorDocument - [0..162)::162 - [@switch(foo) {LF    case 0:LF        break;LF    case 1:LF        {LF            break;LF        }LF    case 2:LF        return;LF    default:LF        return;LF}]
+﻿RazorDocument - [0..162)::162 - [@switch(foo) {LF    case 0:LF        break;LF    case 1:LF        {LF            break;LF        }LF    case 2:LF        return;LF    default:LF        return;LF}]
     MarkupBlock - [0..162)::162
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

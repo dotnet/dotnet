@@ -1,4 +1,4 @@
-RazorDocument - [0..34)::34 - [@{<foo>anurse@microsoft.com</foo>}]
+﻿RazorDocument - [0..34)::34 - [@{<foo>anurse@microsoft.com</foo>}]
     MarkupBlock - [0..34)::34
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

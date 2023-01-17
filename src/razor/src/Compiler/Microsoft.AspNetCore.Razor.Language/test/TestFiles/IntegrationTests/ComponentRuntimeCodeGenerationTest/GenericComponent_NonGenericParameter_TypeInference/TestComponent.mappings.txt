@@ -1,4 +1,4 @@
-Source Location: (68:3,7 [38] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (68:3,7 [38] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     MyClass Hello = new MyClass();
 |

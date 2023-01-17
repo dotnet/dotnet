@@ -1,4 +1,4 @@
-RazorDocument - [0..40)::40 - [<th:myth><th:my2th></th:my2th></th:myth>]
+﻿RazorDocument - [0..40)::40 - [<th:myth><th:my2th></th:my2th></th:myth>]
     MarkupBlock - [0..40)::40
         MarkupTagHelperElement - [0..40)::40 - th:myth[StartTagAndEndTag] - mythTagHelper
             MarkupTagHelperStartTag - [0..9)::9 - [<th:myth>] - Gen<Markup> - SpanEditHandler;Accepts:Any

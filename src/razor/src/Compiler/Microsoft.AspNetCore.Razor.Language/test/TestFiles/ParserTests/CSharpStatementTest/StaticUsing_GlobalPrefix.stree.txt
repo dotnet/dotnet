@@ -1,4 +1,4 @@
-RazorDocument - [0..36)::36 - [@using static global::System.Console]
+﻿RazorDocument - [0..36)::36 - [@using static global::System.Console]
     MarkupBlock - [0..36)::36
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

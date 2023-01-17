@@ -1,4 +1,4 @@
-Source Location: (55:2,2 [34] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (55:2,2 [34] x:\dir\subdir\Test\TestComponent.cshtml)
 | RenderChildComponent(__builder); |
 Generated Location: (772:24,2 [34] )
 | RenderChildComponent(__builder); |

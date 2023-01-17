@@ -1,4 +1,4 @@
-Source Location: (2:0,2 [60] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (2:0,2 [60] x:\dir\subdir\Test\TestComponent.cshtml)
 | var parentKey = new object(); var childKey = new object(); |
 Generated Location: (870:24,2 [60] )
 | var parentKey = new object(); var childKey = new object(); |

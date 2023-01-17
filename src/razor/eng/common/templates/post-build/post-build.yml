@@ -1,4 +1,4 @@
-parameters:
+﻿parameters:
   # Which publishing infra should be used. THIS SHOULD MATCH THE VERSION ON THE BUILD MANIFEST.
   # Publishing V1 is no longer supported
   # Publishing V2 is no longer supported

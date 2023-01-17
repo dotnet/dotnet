@@ -1,4 +1,4 @@
-Source Location: (170:4,12 [35] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (170:4,12 [35] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     private string text = "hi";
 |

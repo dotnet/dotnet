@@ -1,4 +1,4 @@
-parameters:
+﻿parameters:
   # This template adds arcade-powered source-build to CI.
 
   # This is a 'steps' template, and is intended for advanced scenarios where the existing build

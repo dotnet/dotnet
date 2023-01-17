@@ -1,4 +1,4 @@
-deb http://archive.ubuntu.com/ubuntu/ jammy main restricted universe
+﻿deb http://archive.ubuntu.com/ubuntu/ jammy main restricted universe
 deb-src http://archive.ubuntu.com/ubuntu/ jammy main restricted universe
 
 deb http://archive.ubuntu.com/ubuntu/ jammy-updates main restricted universe

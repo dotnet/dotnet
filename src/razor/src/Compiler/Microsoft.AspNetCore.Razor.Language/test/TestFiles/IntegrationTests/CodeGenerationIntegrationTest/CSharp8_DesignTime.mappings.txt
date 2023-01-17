@@ -1,4 +1,4 @@
-Source Location: (1:0,1 [32] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml)
+﻿Source Location: (1:0,1 [32] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml)
 |using System.Collections.Generic|
 Generated Location: (249:7,0 [32] )
 |using System.Collections.Generic|

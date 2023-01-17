@@ -1,4 +1,4 @@
-RazorDocument - [0..176)::176 - [@custom string? string?[] global::System.Int32? KeyValuePair<string, string>? KeyValuePair<string, string>?[] global::System.Collections.Generic.KeyValuePair<string, string>?[]]
+﻿RazorDocument - [0..176)::176 - [@custom string? string?[] global::System.Int32? KeyValuePair<string, string>? KeyValuePair<string, string>?[] global::System.Collections.Generic.KeyValuePair<string, string>?[]]
     MarkupBlock - [0..176)::176
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

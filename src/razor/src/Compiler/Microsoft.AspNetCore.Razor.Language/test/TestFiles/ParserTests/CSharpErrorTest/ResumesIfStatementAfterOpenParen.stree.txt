@@ -1,4 +1,4 @@
-RazorDocument - [0..25)::25 - [@if(LFelse { <p>Foo</p> }]
+﻿RazorDocument - [0..25)::25 - [@if(LFelse { <p>Foo</p> }]
     MarkupBlock - [0..25)::25
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

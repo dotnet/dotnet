@@ -1,4 +1,4 @@
-Param(
+﻿Param(
   [string] $GuardianPackageName,                                                                 # Required: the name of guardian CLI package (not needed if GuardianCliLocation is specified)
   [string] $NugetPackageDirectory,                                                               # Required: directory where NuGet packages are installed (not needed if GuardianCliLocation is specified)
   [string] $GuardianCliLocation,                                                                 # Optional: Direct location of Guardian CLI executable if GuardianPackageName & NugetPackageDirectory are not specified

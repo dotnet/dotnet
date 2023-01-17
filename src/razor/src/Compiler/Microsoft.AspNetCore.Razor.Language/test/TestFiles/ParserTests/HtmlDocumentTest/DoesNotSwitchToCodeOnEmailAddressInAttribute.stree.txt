@@ -1,4 +1,4 @@
-RazorDocument - [0..51)::51 - [<a href="mailto:example@microsoft.com">Email me</a>]
+﻿RazorDocument - [0..51)::51 - [<a href="mailto:example@microsoft.com">Email me</a>]
     MarkupBlock - [0..51)::51
         MarkupElement - [0..51)::51
             MarkupStartTag - [0..39)::39 - [<a href="mailto:example@microsoft.com">] - Gen<Markup> - SpanEditHandler;Accepts:Any
