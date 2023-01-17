@@ -1,10 +1,20 @@
+parameters:
+- name: name
+  type: string
+
+- name: type
+  type: string
+
+- name: command
+  type: string
+
 stages:
-- stage: VMR_Scan
-  displayName: VMR Scan
+- stage: VMR_Scan_${{ parameters.type }}
+  displayName: Scan ${{ parameters.name }}
   dependsOn: []
   jobs:
   - job: Scan
-    displayName: Scan
+    displayName: Scan ${{ parameters.name }}
     pool:
       vmImage: 'ubuntu-latest'
     steps:
@@ -16,11 +26,13 @@ stages:
         dotnet='./.dotnet/dotnet'
         "$dotnet" tool restore
       displayName: Initialize tooling
+      workingDirectory: $(Build.SourcesDirectory)/src/installer
 
     - script: |
         set -x
         PATH=$PATH:$(Build.SourcesDirectory)/.dotnet
         export DOTNET_ROOT="$(pwd)/.dotnet"
-        ./.dotnet/dotnet darc vmr scan --vmr "$(Build.SourcesDirectory)" --tmp "$(Agent.TempDirectory)"
+        ./.dotnet/dotnet darc vmr ${{ parameters.command }} --vmr "$(Build.SourcesDirectory)" --tmp "$(Agent.TempDirectory)"
         darc vmr scan --vmr "$(Build.SourcesDirectory)" --tmp "$(Agent.TempDirectory)"
-      displayName: Scan binaries
+      displayName: Scan ${{ parameters.name }}
+      workingDirectory: $(Build.SourcesDirectory)/src/installer

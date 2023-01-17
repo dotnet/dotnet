@@ -52,3 +52,13 @@ stages:
 #       condition: always()
 
 - template: /eng/pipelines/templates/stages/vmr-scan.yml
+  parameters:
+    name: binaries
+    type: binaries
+    command: scan-binary-files
+
+- template: /eng/pipelines/templates/stages/vmr-scan.yml
+  parameters:
+    name: cloaked files
+    type: cloaked_files
+    command: scan-cloaked-files
