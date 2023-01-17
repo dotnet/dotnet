@@ -8,8 +8,8 @@
   ],
   "description": "A project template for creating an ASP.NET Core application with React.js",
   "groupIdentity": "Microsoft.DotNet.Web.Spa.ProjectTemplates.React",
-  "precedence": "9000",
-  "identity": "Microsoft.DotNet.Web.Spa.ProjectTemplates.React.CSharp.7.0",
+  "precedence": "9800",
+  "identity": "Microsoft.DotNet.Web.Spa.ProjectTemplates.React.CSharp.8.0",
   "name": "ASP.NET Core with React.js",
   "preferNameDirectory": true,
   "primaryOutputs": [
@@ -274,12 +274,12 @@
       "datatype": "choice",
       "choices": [
         {
-          "choice": "net7.0",
-          "description": "Target net7.0"
+          "choice": "net8.0",
+          "description": "Target net8.0"
         }
       ],
-      "replaces": "net7.0",
-      "defaultValue": "net7.0"
+      "replaces": "net8.0",
+      "defaultValue": "net8.0"
     },
     "HostIdentifier": {
       "type": "bind",
