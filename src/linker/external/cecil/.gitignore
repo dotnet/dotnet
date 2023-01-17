@@ -5,7 +5,6 @@ obj
 *.user
 *.pidb
 *.userprefs
-*.xml
 *.nupkg
 **/test-results/*
 *Resharper*
@@ -16,3 +15,8 @@ project.lock.json
 .idea/
 packages/*
 nuget.exe
+
+# arcade artifacts
+.dotnet
+.packages
+artifacts

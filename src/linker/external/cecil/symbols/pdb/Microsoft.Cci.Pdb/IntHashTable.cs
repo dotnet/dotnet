@@ -140,13 +140,13 @@ namespace Microsoft.Cci.Pdb {
 
     // The hash table data.
     // This cannot be serialised
-    private struct bucket {
+    private struct Bucket {
       internal int key;
       internal int hash_coll;   // Store hash code; sign bit means there was a collision.
       internal Object val;
     }
 
-    private bucket[] buckets;
+    private Bucket[] buckets;
 
     // The total number of entries in the hash table.
     private int count;
@@ -200,7 +200,7 @@ namespace Microsoft.Cci.Pdb {
       this.loadFactorPerc = (loadFactorPerc * 72) / 100;
 
       int hashsize = GetPrime((int)(capacity / this.loadFactorPerc));
-      buckets = new bucket[hashsize];
+      buckets = new Bucket[hashsize];
 
       loadsize = (int)(this.loadFactorPerc * hashsize) / 100;
       if (loadsize >= hashsize)
@@ -293,11 +293,11 @@ namespace Microsoft.Cci.Pdb {
         uint seed;
         uint incr;
         // Take a snapshot of buckets, in case another thread does a resize
-        bucket[] lbuckets = buckets;
+        Bucket[] lbuckets = buckets;
         uint hashcode = InitHash(key, lbuckets.Length, out seed, out incr);
         int ntry = 0;
 
-        bucket b;
+        Bucket b;
         do {
           int bucketNumber = (int)(seed % (uint)lbuckets.Length);
           b = lbuckets[bucketNumber];
@@ -343,12 +343,12 @@ namespace Microsoft.Cci.Pdb {
       //      at all times
       //   2) Protect against an OutOfMemoryException while allocating this
       //      new bucket[].
-      bucket[] newBuckets = new bucket[newsize];
+      Bucket[] newBuckets = new Bucket[newsize];
 
       // rehash table into new buckets
       int nb;
       for (nb = 0; nb < buckets.Length; nb++) {
-        bucket oldb = buckets[nb];
+        Bucket oldb = buckets[nb];
         if (oldb.val != null) {
           putEntry(newBuckets, oldb.key, oldb.val, oldb.hash_coll & 0x7FFFFFFF);
         }
@@ -475,7 +475,7 @@ namespace Microsoft.Cci.Pdb {
       throw new InvalidOperationException("InvalidOperation_HashInsertFailed");
     }
 
-    private void putEntry(bucket[] newBuckets, int key, Object nvalue, int hashcode) {
+    private void putEntry(Bucket[] newBuckets, int key, Object nvalue, int hashcode) {
       uint seed = (uint)hashcode;
       uint incr = (uint)(1 + (((seed >> 5) + 1) % ((uint)newBuckets.Length - 1)));
 

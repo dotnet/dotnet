@@ -99,14 +99,8 @@ namespace Mono.Cecil.Tests {
 
 		public static string FindResourcesDirectory (string sourceFilePath)
 		{
-			var path = Path.GetDirectoryName (sourceFilePath);
-			while (!Directory.Exists (Path.Combine (path, "Resources"))) {
-				var old = path;
-				path = Path.GetDirectoryName (path);
-				Assert.AreNotEqual (old, path);
-			}
-
-			return Path.Combine (path, "Resources");
+			var resourcesDirectory = (string)AppContext.GetData ("Mono.Cecil.ResourcesDirectory")!;
+			return Path.GetFullPath (resourcesDirectory);
 		}
 
 		public static void AssertCode (string expected, MethodDefinition method)

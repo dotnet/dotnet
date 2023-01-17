@@ -177,9 +177,9 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/installer`  
 *[dotnet/installer@8cc66d4](https://github.com/dotnet/installer/commit/8cc66d4073799b5f7d5e65ecceff37310ddf9cee)*
 - `src/linker`  
-*[dotnet/linker@4b3f78c](https://github.com/dotnet/linker/commit/4b3f78cbc7284b4198652a695e9fe0267133728e)*
+*[dotnet/linker@4452038](https://github.com/dotnet/linker/commit/44520382eda0c82c5a4d3f38d3f59965f3ba90b0)*
     - `src/linker/external/cecil`  
-    *[dotnet/cecil@1840b74](https://github.com/dotnet/cecil/commit/1840b7410d37a613e684b6f9650e39e2d4950bbb)*
+    *[dotnet/cecil@2941911](https://github.com/dotnet/cecil/commit/2941911af1e028ec4b508cbb8c326003089bc610)*
 - `src/msbuild`  
 *[dotnet/msbuild@d89d4bc](https://github.com/dotnet/msbuild/commit/d89d4bc91a0c4cf5087c4a0ed2e88b03407eba97)*
 - `src/nuget-client`  

@@ -1,7 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="Current">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\..\Mono.Cecil.Tests.props" />
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1;net40</TargetFrameworks>
+    <TargetFramework>$(NetCoreAppTestsCurrent)</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Mono.Cecil.csproj">
@@ -19,5 +19,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\**\*" />
+  </ItemGroup>
+  <ItemGroup>
+    <RuntimeHostConfigurationOption Include="Mono.Cecil.ResourcesDirectory">
+      <Value>$(MSBuildThisFileDirectory)Resources</Value>
+    </RuntimeHostConfigurationOption>
   </ItemGroup>
 </Project>

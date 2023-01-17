@@ -79,10 +79,12 @@ namespace Mono.Cecil.Pdb
 		public void Close ()
 		{
 			writer.Close ();
+#pragma warning disable CA1416 // Validate platform compatibility
 			Marshal.ReleaseComObject (writer);
 
 			foreach (var document in documents)
 				Marshal.ReleaseComObject (document);
+#pragma warning restore CA1416 // Validate platform compatibility
 		}
 
 		public void CloseMethod ()
