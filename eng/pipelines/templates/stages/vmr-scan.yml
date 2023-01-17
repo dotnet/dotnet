@@ -18,5 +18,9 @@ stages:
       displayName: Initialize tooling
 
     - script: |
-        "$dotnet" darc vmr --vmr "$(Build.SourcesDirectory)" --tmp "$(Agent.TempDirectory)"
+        set -x
+        PATH=$PATH:$(Build.SourcesDirectory)/.dotnet
+        export DOTNET_ROOT="$(pwd)/.dotnet"
+        ./.dotnet/dotnet darc vmr scan --vmr "$(Build.SourcesDirectory)" --tmp "$(Agent.TempDirectory)"
+        darc vmr scan --vmr "$(Build.SourcesDirectory)" --tmp "$(Agent.TempDirectory)"
       displayName: Scan binaries
