@@ -297,8 +297,8 @@ internal abstract class BaseRunTests
     /// <param name="executorUriExtensionTuple">The executor URI.</param>
     /// <param name="runContext">The run context.</param>
     /// <returns>
-    /// <see cref="true"/> if must attach the debugger to the default test host,
-    /// <see cref="false"/> otherwise.
+    /// <see langword="true"/> if must attach the debugger to the default test host,
+    /// <see langword="false"/> otherwise.
     /// </returns>
     protected abstract bool ShouldAttachDebuggerToTestHost(
         LazyExtension<ITestExecutor, ITestExecutorCapabilities> executor,

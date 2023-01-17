@@ -157,7 +157,7 @@ public class CodeCoverageRunSettingsProcessor
     /// </param>
     /// <param name="pathComponents">The path components.</param>
     ///
-    /// <returns>The requested node if successful, <see cref="null"/> otherwise.</returns>
+    /// <returns>The requested node if successful, <see langword="null"/> otherwise.</returns>
     private static XmlNode? SelectNodeOrAddDefaults(
         XmlNode currentRootNode,
         XmlNode? defaultRootNode,
@@ -215,7 +215,7 @@ public class CodeCoverageRunSettingsProcessor
     /// <param name="node">The current exclusion node.</param>
     ///
     /// <returns>
-    /// <see cref="true"/> if the node should be processed, <see cref="false"/> otherwise.
+    /// <see langword="true"/> if the node should be processed, <see langword="false"/> otherwise.
     /// </returns>
     private static bool ShouldProcessCurrentExclusion(XmlNode node)
     {
@@ -258,7 +258,7 @@ public class CodeCoverageRunSettingsProcessor
     /// <param name="node">The root to be used for extraction.</param>
     /// <param name="path">The path used to specify the requested node.</param>
     ///
-    /// <returns>The extracted node if successful, <see cref="null"/> otherwise.</returns>
+    /// <returns>The extracted node if successful, <see langword="null"/> otherwise.</returns>
     private static XmlNode? ExtractNode(XmlNode? node, string path)
     {
         try

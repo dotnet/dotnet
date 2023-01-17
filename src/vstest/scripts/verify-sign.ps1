@@ -78,6 +78,10 @@ function Verify-Assemblies
                     elseif ($signature.SignerCertificate.Thumbprint -eq "62009AAABDAE749FD47D19150958329BF6FF4B34") {
                         Write-Debug "Valid ($($signature.SignerCertificate.Thumbprint)): $Path [Prod Signed]"
                     }
+                    # For some dlls sign certificate is different signature. Skip such binaries.
+                    elseif ($signature.SignerCertificate.Thumbprint -eq "F9A36937C16D0A69A43981DACB6B5686FAD84543") {
+                        Write-Debug "Valid ($($signature.SignerCertificate.Thumbprint)): $Path [Prod Signed]"
+                    }
                     # Microsoft 3rd Party Authenticode Signature
                     elseif ($signature.SignerCertificate.Thumbprint -eq "899FA016DEE8E665FF2A315A1151C43FB96C430B") {
                         Write-Debug "Valid ($($signature.SignerCertificate.Thumbprint)): $Path [Prod Signed]"

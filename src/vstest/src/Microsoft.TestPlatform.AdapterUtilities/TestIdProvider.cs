@@ -36,7 +36,7 @@ public class TestIdProvider
     /// </summary>
     /// <param name="str">String to append to the id seed.</param>
     /// <exception cref="InvalidOperationException">Thrown if <see cref="GetHash"/> or <see cref="GetId"/> is called already.</exception>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="str"/> is <c>null</c>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="str"/> is <see langword="null"/>.</exception>
     public void AppendString(string str)
     {
         if (_hash != null)
@@ -55,7 +55,7 @@ public class TestIdProvider
     /// </summary>
     /// <param name="bytes">Array to append to the id seed.</param>
     /// <exception cref="InvalidOperationException">Thrown if <see cref="GetHash"/> or <see cref="GetId"/> is called already.</exception>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="bytes"/> is <c>null</c>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="bytes"/> is <see langword="null"/>.</exception>
     public void AppendBytes(byte[] bytes)
     {
         if (_hash != null)

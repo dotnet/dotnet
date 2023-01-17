@@ -72,8 +72,8 @@ internal class TestDiscovererPluginInformation : TestPluginInformation
     }
 
     /// <summary>
-    /// <c>true</c> if the discoverer plugin is decorated with <see cref="DirectoryBasedTestDiscovererAttribute"/>,
-    /// <c>false</c> otherwise.
+    /// <see langword="true"/> if the discoverer plugin is decorated with <see cref="DirectoryBasedTestDiscovererAttribute"/>,
+    /// <see langword="false"/> otherwise.
     /// </summary>
     public bool IsDirectoryBased
     {
@@ -107,7 +107,7 @@ internal class TestDiscovererPluginInformation : TestPluginInformation
     }
 
     /// <summary>
-    /// Returns the value of default executor Uri on this type. <c>null</c> if not present.
+    /// Returns the value of default executor Uri on this type. <see langword="null"/> if not present.
     /// </summary>
     /// <param name="testDiscovererType"> The test discoverer Type. </param>
     /// <returns> The default executor URI. </returns>
@@ -147,8 +147,8 @@ internal class TestDiscovererPluginInformation : TestPluginInformation
     }
 
     /// <summary>
-    /// Returns <c>true</c> if the discoverer plugin is decorated with
-    /// <see cref="DirectoryBasedTestDiscovererAttribute"/>, <c>false</c> otherwise.
+    /// Returns <see langword="true"/> if the discoverer plugin is decorated with
+    /// <see cref="DirectoryBasedTestDiscovererAttribute"/>, <see langword="false"/> otherwise.
     /// </summary>
     /// <param name="testDiscovererType">Data type of the test discoverer</param>
     private static bool GetIsDirectoryBased(Type testDiscovererType)

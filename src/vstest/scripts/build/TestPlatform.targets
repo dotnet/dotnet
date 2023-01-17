@@ -3,7 +3,14 @@
   <PropertyGroup>
     <TestPlatformRoot>$(MSBuildThisFileDirectory)..\..\</TestPlatformRoot>
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
-    <NoWarn>$(NoWarn);CA1416;RS0037</NoWarn>
+    <!-- Cleanup issue: https://github.com/microsoft/vstest/issues/4236
+    CS1570: XML comment on '<construct>' has badly formed XML
+    CS1572: XML comment on 'construct' has a param tag for 'parameter', but there is no parameter by that name
+    CS1573: Parameter 'parameter' has no matching param tag in the XML comment for 'parameter' (but other parameters do)
+    CS1574: XML comment on 'construct' has syntactically incorrect cref attribute 'name'
+    CS1591: Missing XML comment for publicly visible type or member 'Type_or_Member'
+    -->
+    <NoWarn>$(NoWarn);CA1416;RS0037;CS1570;CS1572;CS1573;CS1574;CS1591</NoWarn>
   </PropertyGroup>
 
   <Import Project="$(MSBuildThisFileDirectory)TestPlatform.Localization.targets" />

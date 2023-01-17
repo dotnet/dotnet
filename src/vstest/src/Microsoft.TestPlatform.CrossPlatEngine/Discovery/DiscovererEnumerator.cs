@@ -119,7 +119,7 @@ internal class DiscovererEnumerator
     /// <param name="extensionAssembly"> The extension Assembly. </param>
     /// <param name="sources"> The sources.   </param>
     /// <param name="settings"> The settings.   </param>
-    /// <param name="settings"> The test case filter. </param>
+    /// <param name="testCaseFilter"> The test case filter. </param>
     /// <param name="logger"> The logger.  </param>
     private void LoadTestsFromAnExtension(string extensionAssembly, IEnumerable<string> sources, IRunSettings? settings, string? testCaseFilter, IMessageLogger logger)
     {

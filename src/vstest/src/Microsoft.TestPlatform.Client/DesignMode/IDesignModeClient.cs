@@ -35,7 +35,7 @@ public interface IDesignModeClient : IDisposable
     /// </summary>
     /// <param name="attachDebuggerInfo">Process Id and other information about the process that IDE should attach to.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns><see cref="true"/> if the debugger was successfully attached to the requested process, <see cref="false"/> otherwise.</returns>
+    /// <returns><see langword="true"/> if the debugger was successfully attached to the requested process, <see langword="false"/> otherwise.</returns>
     bool AttachDebuggerToProcess(AttachDebuggerInfo attachDebuggerInfo, CancellationToken cancellationToken);
 
     /// <summary>

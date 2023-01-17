@@ -199,15 +199,13 @@ public class LoggerTests : AcceptanceTestBase
 
     private static string? GetElementAtributeValueFromTrx(string trxFileName, string fieldName, string attributeName)
     {
-        using (FileStream file = File.OpenRead(trxFileName))
-        using (XmlReader reader = XmlReader.Create(file))
+        using FileStream file = File.OpenRead(trxFileName);
+        using XmlReader reader = XmlReader.Create(file);
+        while (reader.Read())
         {
-            while (reader.Read())
+            if (reader.Name.Equals(fieldName) && reader.NodeType == XmlNodeType.Element && reader.HasAttributes)
             {
-                if (reader.Name.Equals(fieldName) && reader.NodeType == XmlNodeType.Element && reader.HasAttributes)
-                {
-                    return reader.GetAttribute(attributeName);
-                }
+                return reader.GetAttribute(attributeName);
             }
         }
 

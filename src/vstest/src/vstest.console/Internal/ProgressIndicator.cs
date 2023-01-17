@@ -62,9 +62,9 @@ internal sealed class ProgressIndicator : IProgressIndicator, IDisposable
     }
 
     /// <summary>
-    // Get the current cursor position
-    // Clear the console starting given position
-    // Reset the cursor position back
+    /// Get the current cursor position
+    /// Clear the console starting given position
+    /// Reset the cursor position back
     /// </summary>
     /// <param name="startPos">the starting position</param>
     private void Clear(int startPos)

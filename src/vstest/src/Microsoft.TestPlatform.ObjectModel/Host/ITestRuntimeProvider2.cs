@@ -13,8 +13,8 @@ public interface ITestRuntimeProvider2 : ITestRuntimeProvider
     /// Attach the debugger to an already running testhost process.
     /// </summary>
     /// <returns>
-    /// <see cref="true"/> if the debugger was successfully attached to the running testhost
-    /// process, <see cref="false"/> otherwise.
+    /// <see langword="true"/> if the debugger was successfully attached to the running testhost
+    /// process, <see langword="false"/> otherwise.
     /// </returns>
     bool AttachDebuggerToTestHost();
 }

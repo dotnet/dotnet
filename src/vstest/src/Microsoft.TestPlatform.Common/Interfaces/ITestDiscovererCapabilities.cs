@@ -29,8 +29,8 @@ public interface ITestDiscovererCapabilities
     AssemblyType AssemblyType { get; }
 
     /// <summary>
-    /// <c>true</c> if the discoverer plugin is decorated with <see cref="DirectoryBasedTestDiscovererAttribute"/>,
-    /// <c>false</c> otherwise.
+    /// <see langword="true"/> if the discoverer plugin is decorated with <see cref="DirectoryBasedTestDiscovererAttribute"/>,
+    /// <see langword="false"/> otherwise.
     /// </summary>
     bool IsDirectoryBased { get; }
 }

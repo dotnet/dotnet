@@ -29,7 +29,7 @@ namespace Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter
         /// Attach debugger to an already running process.
         /// </summary>
         /// <param name="pid">Process ID of the process to which the debugger should be attached.</param>
-        /// <returns><see cref="true"/> if the debugger was successfully attached to the requested process, <see cref="false"/> otherwise.</returns>
+        /// <returns><see langword="true"/> if the debugger was successfully attached to the requested process, <see langword="false"/> otherwise.</returns>
         bool AttachDebuggerToProcess(int pid);
     }
 }
@@ -69,7 +69,7 @@ namespace Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter
         /// </summary>
         /// <param name="sources">Path to test container files to look for tests in.</param>
         /// <param name="runContext">Context to use when executing the tests.</param>
-        /// <returns><see cref="true"/> if the default test host process should be attached to, <see cref="false"/> otherwise.</returns>
+        /// <returns><see langword="true"/> if the default test host process should be attached to, <see langword="false"/> otherwise.</returns>
         bool ShouldAttachToTestHost(IEnumerable<string> sources, IRunContext runContext);
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter
         /// </summary>
         /// <param name="tests">Tests to be run.</param>
         /// <param name="runContext">Context to use when executing the tests.</param>
-        /// <returns><see cref="true"/> if the default test host process should be attached to, <see cref="false"/> otherwise.</returns>
+        /// <returns><see langword="true"/> if the default test host process should be attached to, <see langword="false"/> otherwise.</returns>
         bool ShouldAttachToTestHost(IEnumerable<TestCase> tests, IRunContext runContext);
     }
 }
@@ -97,7 +97,7 @@ namespace Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Interfaces
         /// Attach to already running custom test host process.
         /// </summary>
         /// <param name="pid">Process ID of the process to attach.</param>
-        /// <returns><see cref="true"/> if the attach was successful, <see cref="false"/> otherwise.</returns>
+        /// <returns><see langword="true"/> if the attach was successful, <see langword="false"/> otherwise.</returns>
         bool AttachToProcess(int pid);
 
         /// <summary>
@@ -105,7 +105,7 @@ namespace Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Interfaces
         /// </summary>
         /// <param name="pid">Process ID of the process to attach.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns><see cref="true"/> if the attach was successful, <see cref="false"/> otherwise.</returns>
+        /// <returns><see langword="true"/> if the attach was successful, <see langword="false"/> otherwise.</returns>
         bool AttachToProcess(int pid, CancellationToken cancellationToken);
     }
 }

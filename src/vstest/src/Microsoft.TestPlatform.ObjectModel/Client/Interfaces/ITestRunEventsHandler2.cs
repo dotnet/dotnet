@@ -16,7 +16,7 @@ public interface ITestRunEventsHandler2 : ITestRunEventsHandler
     /// Attach debugger to an already running process.
     /// </summary>
     /// <param name="pid">Process ID of the process to which the debugger should be attached.</param>
-    /// <returns><see cref="true"/> if the debugger was successfully attached to the requested process, <see cref="false"/> otherwise.</returns>
+    /// <returns><see langword="true"/> if the debugger was successfully attached to the requested process, <see langword="false"/> otherwise.</returns>
     [Obsolete("You don't have to implement this it is never called back. To attach to debugger implement ITestHostLauncher2 or ITestHostLauncher3.")]
     bool AttachDebuggerToProcess(int pid);
 }
