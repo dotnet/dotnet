@@ -3,13 +3,13 @@
   "isRoot": true,
   "tools": {
     "microsoft.dnceng.secretmanager": {
-      "version": "1.1.0-beta.22517.1",
+      "version": "1.1.0-beta.22580.1",
       "commands": [
         "secret-manager"
       ]
     },
     "microsoft.dnceng.patgeneratortool": {
-      "version": "1.1.0-beta.22166.1",
+      "version": "1.1.0-beta.22580.1",
       "commands": [
         "pat-generator"
       ]
