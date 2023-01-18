@@ -45,11 +45,11 @@ namespace XliffTasks.Model
 
         private static string GenerateIdForDisplayNameOrDescription(XAttribute attribute)
         {
-            XElement parent = attribute.Parent;
+            XElement parent = attribute.Parent!;
 
             if (XmlName(parent) == "EnumValue")
             {
-                XElement grandparent = parent.Parent;
+                XElement grandparent = parent.Parent!;
                 return $"{XmlName(parent)}|{AttributedName(grandparent)}.{AttributedName(parent)}|{XmlName(attribute)}";
             }
 
@@ -58,7 +58,7 @@ namespace XliffTasks.Model
 
         private static string GenerateIdForPropertyMetadata(XElement element)
         {
-            XElement grandParent = element.Parent.Parent;
+            XElement grandParent = element.Parent!.Parent!;
 
             return $"{XmlName(grandParent)}|{AttributedName(grandParent)}|Metadata|{AttributedName(element)}";
         }
@@ -83,6 +83,6 @@ namespace XliffTasks.Model
 
         private static string XmlName(XAttribute attribute) => attribute.Name.LocalName;
 
-        private static string AttributedName(XElement element) => element.Attribute("Name").Value;
+        private static string AttributedName(XElement element) => element.Attribute("Name")!.Value;
     }
 }

@@ -5,6 +5,7 @@ artifacts/
 bin/
 obj/
 .dotnet/
+msbuild.binlog
 
 ###############################################################################
 # Visual Studio

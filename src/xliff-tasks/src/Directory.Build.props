@@ -1,5 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (c) .NET Foundation and contributors. All rights reserved. Licensed under the MIT license. See License.txt in the project root for full license information. -->
 <Project>
 
   <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
@@ -7,16 +5,10 @@
   <PropertyGroup>
     <Copyright>$(CopyrightMicrosoft)</Copyright>
     <StrongNameKeyId>MicrosoftAspNetCore</StrongNameKeyId>
-    <NetStandardImplicitPackageVersion>1.6.0</NetStandardImplicitPackageVersion>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
-    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
-    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <LangVersion>latest</LangVersion>
+    <CheckForOverflowUnderflow Condition="'$(Configuration)' == 'Debug'">true</CheckForOverflowUnderflow>
   </PropertyGroup>
 
 </Project>

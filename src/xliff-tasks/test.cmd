@@ -1,3 +1,3 @@
 @echo off
-powershell -NoLogo -NoProfile -ExecutionPolicy ByPass %~dp0eng\common\build.ps1 -test %*
-exit /b %ErrorLevel%
+powershell -ExecutionPolicy ByPass -NoProfile -command "& """%~dp0eng\common\Build.ps1""" -test %*"
+exit /b %ERRORLEVEL%
