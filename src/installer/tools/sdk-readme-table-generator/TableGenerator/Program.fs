@@ -9,9 +9,9 @@ let inputBranches =
         [ { GitBranchName = "main"
             DisplayName = "main<br>(8.0.x&nbsp;Runtime)"
             AkaMsChannel = Some("8.0.1xx/daily") }
-          { GitBranchName = "release/7.0.2xx"
-            DisplayName = "Release/7.0.2xx<br>(7.0.x&nbsp;Runtime)"
-            AkaMsChannel = Some("7.0.2xx/daily") }]
+          { GitBranchName = "release/7.0.3xx"
+            DisplayName = "Release/7.0.3xx<br>(7.0.x&nbsp;Runtime)"
+            AkaMsChannel = Some("7.0.3xx/daily") }]
 
 
 let referentNotes = """Reference notes:
@@ -19,7 +19,7 @@ let referentNotes = """Reference notes:
 > * [Host, Host FX Resolver, and Shared Framework](https://github.com/dotnet/runtime/blob/main/docs/project/dogfooding.md#nightly-builds-table)
 > * [ASP.NET Core Shared Framework](https://github.com/aspnet/AspNetCore/blob/main/docs/DailyBuilds.md)
 
-.NET Core SDK 2.x downloads can be found here: [.NET Core SDK 2.x Installers and Binaries](Downloads2.x.md)"""
+.NET Core SDK 2.x downloads can be found at [.NET Core SDK 2.x Installers and Binaries](Downloads2.x.md) but they are [out of support](https://dotnet.microsoft.com/platform/support/policy/dotnet-core)."""
 
 let sdksha2 =
     "[sdk-shas-2.2.1XX]: https://github.com/dotnet/versions/tree/master/build-info/dotnet/product/cli/release/2.2#built-repositories"
