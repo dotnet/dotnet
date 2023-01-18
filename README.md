@@ -157,7 +157,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/arcade`  
 *[dotnet/arcade@5a5ae41](https://github.com/dotnet/arcade/commit/5a5ae41c42e475e280342b668e668ff34539e36d)*
 - `src/aspnetcore`  
-*[dotnet/aspnetcore@6f1752a](https://github.com/dotnet/aspnetcore/commit/6f1752a798a9460b8a039750e30b827578528c90)*
+*[dotnet/aspnetcore@e523876](https://github.com/dotnet/aspnetcore/commit/e5238763bddd7100823751c4a4ae0220d78160aa)*
     - `src/aspnetcore/src/submodules/googletest`  
     *[google/googletest@9345421](https://github.com/google/googletest/commit/934542165899c786cb5d8a710529c37184730183)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
@@ -175,7 +175,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@679719f](https://github.com/dotnet/fsharp/commit/679719f94009d61e28df5c3b5ec87f1448c803e9)*
 - `src/installer`  
-*[dotnet/installer@68f6eca](https://github.com/dotnet/installer/commit/68f6ecae2c006df2282a3d4be6741bf385d75bdd)*
+*[dotnet/installer@9d42e35](https://github.com/dotnet/installer/commit/9d42e35e748361b2933626d6ea04cdf8ef035044)*
 - `src/linker`  
 *[dotnet/linker@c790896](https://github.com/dotnet/linker/commit/c790896f128957acd2999208f44f09ae1e826c8c)*
     - `src/linker/external/cecil`  
@@ -195,7 +195,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/runtime`  
 *[dotnet/runtime@1936b44](https://github.com/dotnet/runtime/commit/1936b44855b8f30ea406f0b088b05839682bc20c)*
 - `src/sdk`  
-*[dotnet/sdk@522b847](https://github.com/dotnet/sdk/commit/522b8470460b3b0bff52318a10a1a46d20223da1)*
+*[dotnet/sdk@1f93d98](https://github.com/dotnet/sdk/commit/1f93d9887853d1aeaefefcd8857044de56bcfe04)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@df9dd3b](https://github.com/dotnet/source-build-externals/commit/df9dd3b66b2fa6d86eb01bb5b2493435bdfa2649)*
     - `src/source-build-externals/src/application-insights`  
