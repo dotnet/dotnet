@@ -157,9 +157,9 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/arcade`  
 *[dotnet/arcade@3600aa8](https://github.com/dotnet/arcade/commit/3600aa80a01e90f38a7b86b9d7c1264e091aa5a8)*
 - `src/aspnetcore`  
-*[dotnet/aspnetcore@e523876](https://github.com/dotnet/aspnetcore/commit/e5238763bddd7100823751c4a4ae0220d78160aa)*
+*[dotnet/aspnetcore@d8f7f80](https://github.com/dotnet/aspnetcore/commit/d8f7f80ecc6d8d27c92b1cae7c9b3a0afb4b0e20)*
     - `src/aspnetcore/src/submodules/googletest`  
-    *[google/googletest@9345421](https://github.com/google/googletest/commit/934542165899c786cb5d8a710529c37184730183)*
+    *[google/googletest@356fc30](https://github.com/google/googletest/commit/356fc301251378e0f6fa6aa794d73714202887ac)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
     *[aspnet/MessagePack-CSharp@fe9fa08](https://github.com/aspnet/MessagePack-CSharp/commit/fe9fa0834d18492eb229ff2923024af2c87553f8)*
     - `src/aspnetcore/src/submodules/spa-templates`  
@@ -175,13 +175,13 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@679719f](https://github.com/dotnet/fsharp/commit/679719f94009d61e28df5c3b5ec87f1448c803e9)*
 - `src/installer`  
-*[dotnet/installer@b59d45a](https://github.com/dotnet/installer/commit/b59d45a49ad4ebf06ebd09790860634d6ed92d00)*
+*[dotnet/installer@e3f8208](https://github.com/dotnet/installer/commit/e3f82087a2051b0fcd0a9332c42bdb36ac8ba80f)*
 - `src/linker`  
 *[dotnet/linker@c790896](https://github.com/dotnet/linker/commit/c790896f128957acd2999208f44f09ae1e826c8c)*
     - `src/linker/external/cecil`  
     *[dotnet/cecil@2941911](https://github.com/dotnet/cecil/commit/2941911af1e028ec4b508cbb8c326003089bc610)*
 - `src/msbuild`  
-*[dotnet/msbuild@7711999](https://github.com/dotnet/msbuild/commit/7711999070e51442c3e527f576159828f01cb3bf)*
+*[dotnet/msbuild@98924b8](https://github.com/dotnet/msbuild/commit/98924b86bbc19aff3360f9cc3a2922df6a5c5d6a)*
 - `src/nuget-client`  
 *[nuget/nuget.client@743503c](https://github.com/nuget/nuget.client/commit/743503cb3c7e9ced2602ee2e29c38d63cc339451)*
     - `src/nuget-client/submodules/NuGet.Build.Localization`  
@@ -191,11 +191,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/roslyn`  
 *[dotnet/roslyn@7061c64](https://github.com/dotnet/roslyn/commit/7061c64ddbd931d55b9a97f95243fcf91d04d7b1)*
 - `src/roslyn-analyzers`  
-*[dotnet/roslyn-analyzers@7e5059a](https://github.com/dotnet/roslyn-analyzers/commit/7e5059a25de35d6402a7669ba150a3f20767bf86)*
+*[dotnet/roslyn-analyzers@b08c60a](https://github.com/dotnet/roslyn-analyzers/commit/b08c60aab8f6249ecccdeee580c35bea824e1276)*
 - `src/runtime`  
-*[dotnet/runtime@1936b44](https://github.com/dotnet/runtime/commit/1936b44855b8f30ea406f0b088b05839682bc20c)*
+*[dotnet/runtime@19fc478](https://github.com/dotnet/runtime/commit/19fc478d67c2fc55e62b50676935f903a77f5a4d)*
 - `src/sdk`  
-*[dotnet/sdk@1f93d98](https://github.com/dotnet/sdk/commit/1f93d9887853d1aeaefefcd8857044de56bcfe04)*
+*[dotnet/sdk@6e29edd](https://github.com/dotnet/sdk/commit/6e29edd9ff2ade63b54c6f9c7ba4a98bdffa6936)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@df9dd3b](https://github.com/dotnet/source-build-externals/commit/df9dd3b66b2fa6d86eb01bb5b2493435bdfa2649)*
     - `src/source-build-externals/src/application-insights`  
@@ -217,7 +217,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/symreader`  
 *[dotnet/symreader@7b9791d](https://github.com/dotnet/symreader/commit/7b9791daa3a3477eb22ec805946c9fff8b42d8ca)*
 - `src/templating`  
-*[dotnet/templating@b1fcea3](https://github.com/dotnet/templating/commit/b1fcea318f07681249f4d9ac33005eb99e77adb1)*
+*[dotnet/templating@4827cbc](https://github.com/dotnet/templating/commit/4827cbc295e50af2f7162172e81514ad3b671bf0)*
 - `src/test-templates`  
 *[dotnet/test-templates@bb36956](https://github.com/dotnet/test-templates/commit/bb3695688177f5f80eeb3c0498168612e31549d5)*
 - `src/vstest`  
