@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup Condition="'$(MicrosoftDotNetSwaggerGeneratorMSBuildTasksAssembly)' == ''">
-    <MicrosoftDotNetSwaggerGeneratorMSBuildTasksAssembly Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)../tools/net7.0/Microsoft.DotNet.SwaggerGenerator.MSBuild.dll</MicrosoftDotNetSwaggerGeneratorMSBuildTasksAssembly>
+    <MicrosoftDotNetSwaggerGeneratorMSBuildTasksAssembly Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)../tools/net8.0/Microsoft.DotNet.SwaggerGenerator.MSBuild.dll</MicrosoftDotNetSwaggerGeneratorMSBuildTasksAssembly>
     <MicrosoftDotNetSwaggerGeneratorMSBuildTasksAssembly Condition="'$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)../tools/net472/Microsoft.DotNet.SwaggerGenerator.MSBuild.dll</MicrosoftDotNetSwaggerGeneratorMSBuildTasksAssembly>
   </PropertyGroup>
 

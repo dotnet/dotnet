@@ -36,7 +36,7 @@ stages:
           name: VSEngSS-MicroBuild2022-1ES
           demands: Cmd
         # If it's not devdiv, it's dnceng: 
-        # Publishing cannot use eng/common/templates/variables/pool-providers.yml since it always runs from 'main',
+        # Publishing cannot use /eng/common/templates/variables/pool-providers.yml since it always runs from 'main',
         # including in the servicing build case.  Instead the 'useServicingBuildPools' parameter dictates this.
         # If useServicingBuildPools = false, it's a main branch. 
         ${{ if and(ne(variables['System.TeamProject'], 'DevDiv'), eq(parameters['useServicingBuildPools'], false)) }}:
@@ -155,7 +155,7 @@ stages:
           displayName: Enable cross-org publishing
           inputs:
             filePath: $(Build.SourcesDirectory)/eng/common/enable-cross-org-publishing.ps1
-            arguments: -token $(dn-bot-dnceng-artifact-feeds-rw)
+            arguments: -token $(dn-bot-all-orgs-artifact-feeds-rw)
 
         - task: PowerShell@2
           displayName: Publish packages, blobs and symbols
@@ -180,7 +180,7 @@ stages:
               /p:InternalInstallersAzureAccountKey=$(dotnetclimsrc-access-key)
               /p:ChecksumsAzureAccountKey=$(dotnetclichecksums-storage-key)
               /p:InternalChecksumsAzureAccountKey=$(dotnetclichecksumsmsrc-storage-key)
-              /p:AzureDevOpsFeedsKey='$(dn-bot-dnceng-artifact-feeds-rw)'
+              /p:AzureDevOpsFeedsKey='$(dn-bot-all-orgs-artifact-feeds-rw)'
               /p:AzureStorageTargetFeedPAT='$(dotnetfeed-storage-access-key-1)'
               /p:AkaMSClientId=$(akams-client-id)
               /p:AkaMSClientSecret=$(akams-client-secret)

@@ -54,8 +54,8 @@ In order to run them, one has to publish the SDK locally so that the unit tests 
     ```
 3. Publish Arcade SDK and Helix SDK
     ```sh
-    dotnet publish -f net7.0 src/Microsoft.DotNet.Arcade.Sdk/Microsoft.DotNet.Arcade.Sdk.csproj
-    dotnet publish -f net7.0 src/Microsoft.DotNet.Helix/Sdk/Microsoft.DotNet.Helix.Sdk.csproj
+    dotnet publish -f net8.0 src/Microsoft.DotNet.Arcade.Sdk/Microsoft.DotNet.Arcade.Sdk.csproj
+    dotnet publish -f net8.0 src/Microsoft.DotNet.Helix/Sdk/Microsoft.DotNet.Helix.Sdk.csproj
     ```
 4. Pick one of the test `.proj` files, set some env variables and build it  
     Bash

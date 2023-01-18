@@ -943,6 +943,15 @@ Set to `false` to override the default (uncommon).
 
 Set to `partial` or `full` in a shipping project to require IBC optimization data to be available for the project and embed them into the binary during official build. The value of `partial` indicates partial NGEN, whereas `full` means full NGEN optimization.
 
+### `NetCurrent/NetPrevious/NetMinimum/NetFrameworkMinimum`
+
+Properties that define TargetFramework for use by projects so their targeting easily aligns with the current .NET version in development as well as those that are supported. Arcade will update these properties to match the current supported .NET versions, as well as the release being currently developed.
+
+- NetCurrent - The TFM of the major release of .NET that the Arcade SDK aligns with.
+- NetPrevious - The previously released version of .NET (e.g. this would be net7 if NetCurrent is net8)
+- NetMinimum - Lowest supported version of .NET the time of the release of NetCurrent. E.g. if NetCurrent is net8, then NetMinimum is net6
+- NetFrameworkMinimum - Lowest supported version of .NET Framework the time of the release of NetCurrent. E.g. if NetCurrent is net8, then NetFrameworkMinimum is net462
+
 ### `SkipTests` (bool)
 
 Set to `true` in a test project to skip running tests.

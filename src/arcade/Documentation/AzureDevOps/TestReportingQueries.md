@@ -139,6 +139,57 @@ subtable
 
 :part_alternation_mark: [Link](https://dataexplorer.azure.com/clusters/engsrvprod/databases/engineeringdata?query=H4sIAAAAAAAAA51Uy24TQRC8+ytakSKthYkThQOK5UiBgLgEI5MfaHt64yGzM6t52N6IA7/B7/ElqZkljmPlgPDJ24+q6ureHY9pLtFrCcReqBG2kaKjZBfGLe+JraLWy1oQZlokbRTV3jVUszba3pFKkuufHqOEOEIdQFbSFcwQtTGkrdJLjnot5GrAb0Akihay4rV2fkSD8Tj3eKmdlxFthKygANjRM5Ss3AadUSx0ZBZqOQTI3qwQ8nszaBu9U2kp6oQ+bS/oqi9fMdJ0dnp6XDrJc5ReqbOm62HA3+vIDV7e+mTRBFKP1jxiAj7M8B0FvaWcHlFwpOOfX78DybaVZZ5qzQa2YJAdiA70/vzk/PiEBkZgTqApnb1TE3r1Bwm3upHQsu2xSpOX1qHtSLloJY7ZL1nJ0WSvadZG7SybCwpS1ihNG6EV5mA3uqbOJcrOAyskAxVll4z9ZPCgo8s2FraQFpEXRsB49YC5r2U9a8MtnAnfU9Ow7wY/s2twZI5eH69hKF1Oie9cFcOwnI6u66qXDd1Ho1JZWLoceX46zOSeHuEbdjWz+Ua7jy5B+SWdgjgUCfoBV5IawS6dnyJWHZYPR6TEuqYkP2ODJfrmlTIOszqPMG14Wz1PNKRFRx/y3V9Lra3OBn/lBqeTrej/Xfk7iLDxC4fVpJjHe5Ebbv/XwxeDQsc+0TNtmAyelrWDK0P/9co4d59aqg5EDXH4LxBR2nr3Ayf8rwPj+m/wxdhzc54drKJTLkFOtVvOkPBWPUWLuCE8P1zDdFcPNhfZzJPtE6UFAp1XeBlhxSu8k0dFwXcxzQQAAA==) to query editor
 
+## Overall Average Pass Rate for a Test (Including Retries)
+
+Query suggested by @dougbu for getting the overall average pass rate for tests, including retries. 
+
+<details>
+  <summary>Expand for query</summary>
+
+Variables: 
+- `ts`: [Kusto timespan format](https://docs.microsoft.com/en-us/azure/data-explorer/kusto/query/scalar-data-types/timespan). How many days ago to query.
+- `definition`: Build definition name. 
+- `repo`: Repository to filter on. Set to empty string to inclue all repositories. 
+- `branch`: Name of the target branch. 
+- `testName`: Test name. 
+- `excludeAlwaysPassing`: Set to true to filter out tests that are always passing. 
+
+```
+let ts = 30d;                                                  // Timespan value to find test results after. 
+let definition = "";                                           // Optional: The name of the build definition, leave as empty string for all build definitions.
+let repo = "dotnet/aspnetcore";                                // Optional: set to empty string if you want results from all repositories
+let branch = "";                                               // Optional: The name of the target branch the test ran against.
+let testName="Templates.Test.GrpcTemplateTest.GrpcTemplate";   // Optional: The name of the test
+let excludeAlwaysPassing = "";                                 // Boolean. Set to true to exclude test results that are always passing
+let subtable = AzureDevOpsTestsSummary
+    | where ReportDate >= ago(ts)
+    | where isempty(definition) or BuildDefinitionName has definition
+    | where isempty(repo) or Repository has repo
+    | where isempty(branch) or Branch has branch
+    | where isempty(testName) or TestName has testName
+    | summarize
+        numerator=sum(PassCount),
+        denomerator=sum(PassCount) + sum(FailCount) + sum(PassOnRetryCount),
+        passOnRetryCount=sum(PassOnRetryCount)
+        by TestName, ArgumentHash;
+let argumentHashMap = AzureDevOpsTestsSummary
+    | where ReportDate >= ago(ts)
+    | summarize by ArgumentHash, Arguments;
+subtable
+| where denomerator > 0 and (isempty(excludeAlwaysPassing) or (todouble(numerator) / todouble(denomerator)) < 1)
+| lookup (argumentHashMap) on ArgumentHash
+| project
+    TestName,
+    Arguments,
+    MeanPassRate=(todouble(numerator) / todouble(denomerator)),
+    PassCount=numerator,
+    PassOnRetryCount=passOnRetryCount,
+    TotalRunCount=denomerator;
+```
+</details>
+
+:part_alternation_mark: [Link](https://dataexplorer.azure.com/clusters/engsrvprod/databases/engineeringdata?query=H4sIAAAAAAAAA61UwW7bMAy95yuInmysSDrstswF2hXbLl2HND/AxEziTZYMiUrmYh8/SqqdOA3aBZgviSiS7/E92ooY2EEBH67KKZz9TCYwr2pyDWrYovIEbGBV6RKYHIMl55W0xxWTHcNICVpJcl9xZbSgXlycAypoD02oRPUR5hsCjTWBWQHL/4WvVHnQ/RIU4ZYAHVDdcAuObaXXsDIWUKkX+W4c6VlqTCBWGtbEE3SN/CyNpbeZDui5IKwZQlcraI2HHeq9NCtr6sgnALuKja3IRSYLi3q5OVukN4VitOt9+xiJXomFuMZKO05KhOh3qSsu5jKFQjmP5xIbf7XNsgu9CESur+NLSQSg30vlS7pRO2zdD3QuaPRv4wrArTFisB7DY1Kabdq+567DBeQNMqCVbYhg0CS0SMP5BeNCkUDfPHlLd7R9aFwYzD36ukbbjgLkH9htSDrMxCfLdzIqXBeimMnY5YOMykXXs/1u5SBLdxsW7q6PBWlhI9u5TzvZJexFrJ91C9LGshA/WZCMTZDJ45CeoicLOqNjyfz5EIu6m+cyF+WontI5PNrXZFE4FXKXBQ8/G685v+wzStLmdA68Cw2zL1ipQSBkPOgZsW2PmzVHV8XJ/D590fbjXMKNXQtZzd/QbabReDyI3GPzH/zvBQrQh4B7eDcddQs36loeaATXcAUo38+sc+fUWxKdytiUxkufrHchhwn00YOueQ6f4H0ugMqYX76B7Gh2aagHhCW1seYnLTmO1ssYT/0s6Xgvr2EgNhNNirNYpfp+JYq+ZH8xsPvY/5Q2N4xq5nXKOQCY/gUanUNL3gYAAA==) to query editor
+
 ## Search Failed Test Results as with Runfo
 
 The `AzureDevOpsTests` table collects the details of failed test results, making it searchable as one would with [searching for tests with Runfo](https://runfo.azurewebsites.net/search/tests/#test). Here's a query to get you started: 
