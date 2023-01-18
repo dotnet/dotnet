@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
   <PropertyGroup>
-    <arcadeGitCommitHash>e52b885a6ec2fc87c9e94b80d9ff7a862786390b</arcadeGitCommitHash>
-    <arcadeOutputPackageVersion>8.0.0-beta.23066.1</arcadeOutputPackageVersion>
+    <arcadeGitCommitHash>3600aa80a01e90f38a7b86b9d7c1264e091aa5a8</arcadeGitCommitHash>
+    <arcadeOutputPackageVersion>8.0.0-beta.23067.5</arcadeOutputPackageVersion>
     <aspnetcoreGitCommitHash>e5238763bddd7100823751c4a4ae0220d78160aa</aspnetcoreGitCommitHash>
     <aspnetcoreOutputPackageVersion>8.0.0-alpha.1.23067.9</aspnetcoreOutputPackageVersion>
     <commandlineapiGitCommitHash>8374d5fca634a93458c84414b1604c12f765d1ab</commandlineapiGitCommitHash>
@@ -15,7 +15,7 @@
     <formatOutputPackageVersion>8.0.405501</formatOutputPackageVersion>
     <fsharpGitCommitHash>679719f94009d61e28df5c3b5ec87f1448c803e9</fsharpGitCommitHash>
     <fsharpOutputPackageVersion>7.0.1-beta.23062.7</fsharpOutputPackageVersion>
-    <installerGitCommitHash>8db7870976434852e4e59b66d99c93632c9f8e40</installerGitCommitHash>
+    <installerGitCommitHash>b59d45a49ad4ebf06ebd09790860634d6ed92d00</installerGitCommitHash>
     <installerOutputPackageVersion>8.0.100</installerOutputPackageVersion>
     <linkerGitCommitHash>c790896f128957acd2999208f44f09ae1e826c8c</linkerGitCommitHash>
     <linkerOutputPackageVersion>8.0.100-1.23067.1</linkerOutputPackageVersion>
@@ -49,7 +49,7 @@
     <vstestOutputPackageVersion>17.6.0-preview-20230117-02</vstestOutputPackageVersion>
     <xdtGitCommitHash>9a1c3e1b7f0c8763d4c96e593961a61a72679a7b</xdtGitCommitHash>
     <xdtOutputPackageVersion>7.0.0-preview.22423.2</xdtOutputPackageVersion>
-    <xlifftasksGitCommitHash>dd8717d7d4f4bbb6885bd6caaf9de990a2be92b8</xlifftasksGitCommitHash>
-    <xlifftasksOutputPackageVersion>1.0.0-beta.23064.1</xlifftasksOutputPackageVersion>
+    <xlifftasksGitCommitHash>db632746f5ea995c60cc63a25229818558434018</xlifftasksGitCommitHash>
+    <xlifftasksOutputPackageVersion>1.0.0-beta.23066.1</xlifftasksOutputPackageVersion>
   </PropertyGroup>
 </Project>

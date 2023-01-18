@@ -142,6 +142,7 @@ secrets:
   microsoft-symbol-server-pat:
     type: azure-devops-access-token
     parameters:
+      domainAccountName: dn-bot
       domainAccountSecret:
           location: helixkv
           name: dn-bot-account-redmond
@@ -152,6 +153,7 @@ secrets:
   symweb-symbol-server-pat:
     type: azure-devops-access-token
     parameters:
+      domainAccountName: dn-bot
       domainAccountSecret:
           location: helixkv
           name: dn-bot-account-redmond

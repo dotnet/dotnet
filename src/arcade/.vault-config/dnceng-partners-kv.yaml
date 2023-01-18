@@ -17,6 +17,12 @@ references:
       subscription: 11c6037b-227b-4d63-bee1-18c7b68c3a40
       name: dotnetstagekeys
 
+  helixkv:
+    type: azure-key-vault
+    parameters:
+      subscription: a4fc5514-21a9-4296-bfaf-5c7ee7fa35d1
+      name: helixkv
+
 secrets:
   dotnetbuilds-internal-container-read-token:
     type: azure-storage-container-sas-token
@@ -45,3 +51,12 @@ secrets:
       permissions: rl
       service: blob|file
 
+  dn-dependabot-dnceng-package-rw-pat:
+    type: azure-devops-access-token
+    parameters:
+      organizations: dnceng
+      scopes: packaging_write
+      domainAccountName: dn-dependabot
+      domainAccountSecret:
+        name: dn-dependabot-account-redmond
+        location: helixkv

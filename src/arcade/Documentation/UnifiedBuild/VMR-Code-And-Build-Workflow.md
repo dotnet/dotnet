@@ -202,6 +202,75 @@ Large, cross stack changes may be better suited to VMR work. Experiments where t
 
 Ideally, the VMR PR/CI pipelines will provide a full swath of product coverage. It is not ideal to be dependent on backflow to validate product functionality. However, some specialized pipelines and testing may only be available against the development repositories. For certain changes that depend on this testing, working in the development repo may be more desirable.
 
+## Internal code flow and releases
+
+Following section describes how code flows into the (internal) release branches of the VMR.
+
+```mermaid
+flowchart TD
+    subgraph GitHub / public
+        PublicRepos[(Public repos)]
+        PublicInstaller[(github.com\ndotnet/installer)]
+        PublicVMR[(Public VMR\ngithub.com/dotnet/dotnet)]
+        PublicRepos-- Maestro flow\nmain, release/* -->PublicInstaller
+    end
+
+    PublicInstaller-.triggers build.->CodeMirror
+    PublicVMR-.triggers build.->CodeMirror2
+
+    subgraph AzDO / internal
+        InternalRepos[(Internal repos)]
+        InternalInstaller[(dev.azure.com\ndotnet/installer)]
+        InternalVMR[(Internal VMR\ndev.azure.com/dotnet-dotnet)]
+        CodeMirror[code-mirror]
+        CodeMirror2[code-mirror]
+        InstallerBuild[dotnet-installer-official-ci]
+        Releases[Partner releases]
+
+        CodeMirror-- code-mirror\nmain, release/* -->InternalInstaller
+        InternalRepos-- Maestro flow\ninternal/release/* -->InternalInstaller
+        InternalInstaller-.triggers build.->InstallerBuild
+        InstallerBuild-- VMR synchronization\ninternal/release/* -->InternalVMR
+        InstallerBuild-- VMR synchronization\nmain, release/*\nPotential leak -->PublicVMR
+        CodeMirror2-.triggers build.->InternalVMR
+        InternalVMR-->Releases
+    end
+
+    class CodeMirror,CodeMirror2,InstallerBuild Build;
+    class PublicVMR PublicVMR_;
+    class InternalVMR InternalVMR_;
+
+    classDef Build fill:#2487DF,stroke:#2487DF,stroke-width:4px,color:#fff;
+    classDef PublicVMR_ fill:#B5E61D,stroke:#000,color:#000;
+    classDef InternalVMR_ fill:#E6631C,stroke:#fff,color:#fff;
+    linkStyle 7 stroke-width:2px,fill:none,stroke:red,color:red;
+```
+
+On the diagram, you can see two main code flows. The first one for `main` and `release/*` branches (public flow):
+1. Changes are made to product repos as usual (e.g. `dotnet/runtime`).
+2. Runtime flows into `dotnet/installer` as part of the regular Maestro package flow.
+3. `dotnet/installer` is mirrored internally.
+4. The official build of `dotnet/installer` is triggered and performs the synchronization of VMR sources.
+5. Changes are pushed to the public VMR.
+6. The public VMR is mirrored internally.
+
+The second flow is for internal changes:
+1. Changes are made to an internal release branch of an internal mirror of some product repo.
+2. These changes are flown to an internal release branch of the internal mirror of `dotnet/installer`.
+3. The official build of `dotnet/installer` is triggered and performs the synchronization of VMR sources.
+4. Changes are pushed to the internal VMR.
+
+### Security considerations
+
+As you can see from the diagram above, there are some security risks connected to the VMR code flow. The problem arises from the fact that code is being pushed from the internal AzDO instance back to GitHub. This direction of code flow does not happen for the product repos where we always cross the boundary the other way only.  
+Furthermore, the official build of the internal mirror of `dotnet/installer` is handling both internal and public synchronization of the VMR.
+
+For this reason, we had to put some security mechanisms in place so that a commit from an internal release branch is not pushed in the public VMR:
+
+1. When building an internal release branch of the internal mirror of `dotnet/installer`, the credentials used for pushing to the public VMR are not available.
+2. Before pushing to the public VMR, we verify that each commit of each product repo, that is being synchronized into the VMR, is available in the respective public product repository as well.
+3. We verify branch names of where the build is running from and where it wants to push.
+
 ## What happens when...?
 
 In any dependency flow system, there are possible issues that may arise. Below are listed possible scenarios and how they are handled in the VMR:
