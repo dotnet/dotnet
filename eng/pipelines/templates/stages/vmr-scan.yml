@@ -32,7 +32,7 @@ stages:
         ./.dotnet/dotnet darc vmr ${{ parameters.command }}
         --vmr "$(Build.SourcesDirectory)"
         --tmp "$(Agent.TempDirectory)"
-        || echo '##[error]Found ${{ parameters.name }} in the VMR'
+        || (echo '##[error]Found ${{ parameters.name }} in the VMR' && exit 1)
       displayName: Scan ${{ parameters.name }}
       workingDirectory: $(Build.SourcesDirectory)/src/installer
       continueOnError: true
