@@ -3,7 +3,7 @@ trigger: none
 
 variables:
   - group: Mirror-Credentials
-  - template: eng/common/templates/variables/pool-providers.yml
+  - template: /eng/common/templates/variables/pool-providers.yml
 
 # Merges code from GitHub into internal branches in internal repos
 jobs:

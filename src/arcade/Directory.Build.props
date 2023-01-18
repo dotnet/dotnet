@@ -2,7 +2,7 @@
 <Project>
   <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
 
-  <Import Project="$(RepositoryEngineeringDir)TargetFrameworkDefaults.props" />
+  
 
   <PropertyGroup>
     <Copyright>$(CopyrightNetFoundation)</Copyright>
@@ -11,6 +11,7 @@
     <DebugType>embedded</DebugType>
     <DebugSymbols>true</DebugSymbols>
     <LangVersion>Latest</LangVersion>
+    <TargetFrameworkForNETSDK>net8.0</TargetFrameworkForNETSDK>
 
     <!--
       Tools and packages produced by this repository support infrastructure and are not shipping on NuGet or via any other official channel.

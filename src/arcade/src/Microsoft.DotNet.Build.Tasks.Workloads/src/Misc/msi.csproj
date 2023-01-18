@@ -20,7 +20,7 @@
     <PackageType>DotnetPlatform</PackageType>
     <PackageVersion>__PACKAGE_VERSION__</PackageVersion>
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>

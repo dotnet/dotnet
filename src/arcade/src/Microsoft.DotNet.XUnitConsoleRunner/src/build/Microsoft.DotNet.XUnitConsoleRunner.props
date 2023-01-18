@@ -1,7 +1,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
-    <XunitConsoleNetCore21AppPath>$(MSBuildThisFileDirectory)..\tools\net7.0\xunit.console.dll</XunitConsoleNetCore21AppPath>
+    <XunitConsoleNetCore21AppPath>$(MSBuildThisFileDirectory)..\tools\net8.0\xunit.console.dll</XunitConsoleNetCore21AppPath>
   </PropertyGroup>
 
 </Project>

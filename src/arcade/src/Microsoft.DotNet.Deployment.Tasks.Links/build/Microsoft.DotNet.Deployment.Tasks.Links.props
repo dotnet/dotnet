@@ -1,6 +1,6 @@
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <MicrosoftDotNetDeploymentTasksLinksTaskAssembly Condition=" '$(MSBuildRuntimeType)' == 'Core' ">$(MSBuildThisFileDirectory)net7.0\Microsoft.DotNet.Deployment.Tasks.Links.dll</MicrosoftDotNetDeploymentTasksLinksTaskAssembly>
+    <MicrosoftDotNetDeploymentTasksLinksTaskAssembly Condition=" '$(MSBuildRuntimeType)' == 'Core' ">$(MSBuildThisFileDirectory)net8.0\Microsoft.DotNet.Deployment.Tasks.Links.dll</MicrosoftDotNetDeploymentTasksLinksTaskAssembly>
     <MicrosoftDotNetDeploymentTasksLinksTaskAssembly Condition=" '$(MSBuildRuntimeType)' != 'Core' ">$(MSBuildThisFileDirectory)net472\Microsoft.DotNet.Deployment.Tasks.Links.dll</MicrosoftDotNetDeploymentTasksLinksTaskAssembly>
   </PropertyGroup>
 

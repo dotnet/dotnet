@@ -18,8 +18,8 @@ pr:
     - templates
 
 variables:
-- template: eng/common-variables.yml
-- template: eng/common/templates/variables/pool-providers.yml
+- template: /eng/common-variables.yml
+- template: /eng/common/templates/variables/pool-providers.yml
 
 resources:
   containers:

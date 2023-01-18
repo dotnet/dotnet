@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
     <DotNetPackageTestingAssembly Condition="'$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)..\tools\net472\Microsoft.DotNet.PackageTesting.dll</DotNetPackageTestingAssembly>
-    <DotNetPackageTestingAssembly Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)..\tools\net7.0\Microsoft.DotNet.PackageTesting.dll</DotNetPackageTestingAssembly>
+    <DotNetPackageTestingAssembly Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)..\tools\net8.0\Microsoft.DotNet.PackageTesting.dll</DotNetPackageTestingAssembly>
   </PropertyGroup>
 
   <UsingTask TaskName="GetCompatiblePackageTargetFrameworks" AssemblyFile="$(DotNetPackageTestingAssembly)" />
@@ -11,6 +11,7 @@
   <ItemGroup>
     <SupportedTestFramework Include="net6.0" />
     <SupportedTestFramework Include="net7.0" />
+    <SupportedTestFramework Include="net8.0" />
   </ItemGroup>
 
   <ItemGroup>

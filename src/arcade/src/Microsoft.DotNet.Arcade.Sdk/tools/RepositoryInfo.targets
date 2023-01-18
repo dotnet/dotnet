@@ -5,8 +5,8 @@
     Include both GitHub and Azure DevOps packages to enable SourceLink in repositories that mirror to Azure DevOps.
   -->
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="$(MicrosoftSourceLinkVersion)" PrivateAssets="all" IsImplicitlyDefined="true" />
-    <PackageReference Include="Microsoft.SourceLink.AzureRepos.Git" Version="$(MicrosoftSourceLinkVersion)" PrivateAssets="all" IsImplicitlyDefined="true" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="$(MicrosoftSourceLinkGitHubVersion)" PrivateAssets="all" IsImplicitlyDefined="true" />
+    <PackageReference Include="Microsoft.SourceLink.AzureRepos.Git" Version="$(MicrosoftSourceLinkAzureReposGitVersion)" PrivateAssets="all" IsImplicitlyDefined="true" />
   </ItemGroup>
 
   <!-- Opt-in switch to disable source link (i.e. for local builds). -->
@@ -17,26 +17,27 @@
   </PropertyGroup>
 
   <!--
-    Set the SourceRoot to repo root to facilitate deterministic source paths when SCM queries are disabled.
+    Set the SourceRoot to repo root to facilitate deterministic source paths when SCM queries are disabled, unless during design-time build.
     Set the RepositoryUrl to the Build.Repository.Uri Azure DevOps build variable if on CI, otherwise to local repo path.
+    Do not set these properties during design-time build to avoid differences between design-time and reuglar builds.
   -->
 
-  <ItemGroup Condition="'$(EnableSourceControlManagerQueries)' != 'true'">
+  <ItemGroup Condition="'$(EnableSourceControlManagerQueries)' != 'true' and '$(DesignTimeBuild)' != 'true'">
     <SourceRoot Include="$(RepoRoot)" />
   </ItemGroup>
 
-  <PropertyGroup Condition="'$(EnableSourceControlManagerQueries)' != 'true' and '$(RepositoryUrl)' == ''">
+  <PropertyGroup Condition="'$(EnableSourceControlManagerQueries)' != 'true' and '$(DesignTimeBuild)' != 'true' and '$(RepositoryUrl)' == ''">
     <RepositoryUrl Condition="'$(BUILD_REPOSITORY_URI)' != '' and '$(DisableSourceLinkUrlTranslation)' != 'true'">$([System.Text.RegularExpressions.Regex]::Replace($(BUILD_REPOSITORY_URI), $(_TranslateUrlPattern), $(_TranslateUrlReplacement)))</RepositoryUrl>
     <RepositoryUrl Condition="'$(BUILD_REPOSITORY_URI)' != '' and '$(DisableSourceLinkUrlTranslation)' == 'true'">$(BUILD_REPOSITORY_URI)</RepositoryUrl>
     <RepositoryUrl Condition="'$(BUILD_REPOSITORY_URI)' == ''">file://$(RepoRoot)</RepositoryUrl>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(EnableSourceControlManagerQueries)' != 'true' and '$(RepositoryCommit)' == ''">
+  <PropertyGroup Condition="'$(EnableSourceControlManagerQueries)' != 'true' and '$(DesignTimeBuild)' != 'true' and '$(RepositoryCommit)' == ''">
     <RepositoryCommit Condition="'$(BUILD_SOURCEVERSION)' != ''">$(BUILD_SOURCEVERSION)</RepositoryCommit>
     <RepositoryCommit Condition="'$(BUILD_SOURCEVERSION)' == ''">0000000000000000000000000000000000000000</RepositoryCommit>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(EnableSourceControlManagerQueries)' != 'true' and '$(RepositoryType)' == ''">
+  <PropertyGroup Condition="'$(EnableSourceControlManagerQueries)' != 'true' and '$(DesignTimeBuild)' != 'true' and '$(RepositoryType)' == ''">
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 

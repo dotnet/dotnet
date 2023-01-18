@@ -1,11 +1,9 @@
-﻿<!-- Copyright (c) .NET Foundation and contributors. All rights reserved.                               -->
-<!-- Licensed under the MIT license. See LICENSE file in the project root for full license information. -->
-
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. See the LICENSE file in the project root for more information. -->
 <Project>
 
   <PropertyGroup>
-    <XliffTasksDirectory Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)..\tools\net7.0\</XliffTasksDirectory>
-    <XliffTasksDirectory Condition="'$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)..\tools\net46\</XliffTasksDirectory>
+    <XliffTasksDirectory Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)..\tools\net8.0\</XliffTasksDirectory>
+    <XliffTasksDirectory Condition="'$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)..\tools\net462\</XliffTasksDirectory>
     <XliffTasksAssembly>$(XliffTasksDirectory)Microsoft.DotNet.XliffTasks.dll</XliffTasksAssembly>
   </PropertyGroup>
 
@@ -48,8 +46,7 @@
     <WriteLinesToFile File="$(_XlfSourceList)"
                       Lines="@(XlfSource)"
                       Overwrite="true"
-                      WriteOnlyWhenDifferent="true"
-                      />
+                      WriteOnlyWhenDifferent="true" />
 
     <ItemGroup>
       <FileWrites Include="$(_XlfSourceList)" />
@@ -59,17 +56,14 @@
   <Target Name="UpdateXlfOnBuild"
           Condition="'$(EnableXlfLocalization)' == 'true' and '$(UpdateXlfOnBuild)' == 'true' and '$(_IsInnerXlfBuild)' != 'true'"
           BeforeTargets="BeforeBuild"
-          DependsOnTargets="UpdateXlf"
-          />
+          DependsOnTargets="UpdateXlf" />
 
   <Target Name="EnsureXlfIsUpToDate"
           Condition="'$(ErrorOnOutOfDateXlf)' == 'true' and '$(DesignTimeBuild)' != 'true' and '$(BuildingProject)' != 'false'"
-          DependsOnTargets="_DisallowXlfModification;_UpdateXlf"
-          />
+          DependsOnTargets="_DisallowXlfModification;_UpdateXlf" />
 
   <Target Name="UpdateXlf"
-          DependsOnTargets="_AllowXlfModification;_UpdateXlf"
-          />
+          DependsOnTargets="_AllowXlfModification;_UpdateXlf" />
 
   <Target Name="_AllowXlfModification">
     <PropertyGroup>
@@ -86,12 +80,10 @@
   <Target Name="_UpdateXlf"
           DependsOnTargets="GetXlfSources;UpdateXlfSourceList"
           Inputs="@(XlfSource);$(_XlfSourceList)"
-          Outputs="$(_UpdateXlfLastRun)"
-          >
+          Outputs="$(_UpdateXlfLastRun)">
     <UpdateXlf Sources="@(XlfSource)"
                Languages="$(XlfLanguages)"
-               AllowModification="$(_AllowXlfModification)"
-               />
+               AllowModification="$(_AllowXlfModification)" />
 
     <Touch Files="$(_UpdateXlfLastRun)" AlwaysCreate="true" />
 
@@ -118,12 +110,10 @@
   </Target>
 
   <Target Name="GatherXlf"
-          DependsOnTargets="GetXlfSources;EnsureXlfIsUpToDate"
-          >
+          DependsOnTargets="GetXlfSources;EnsureXlfIsUpToDate">
     <GatherXlf Sources="@(XlfSource)"
                Languages="$(XlfLanguages)"
-               TranslatedOutputDirectory="$(XlfIntermediateOutputPath)"
-               >
+               TranslatedOutputDirectory="$(XlfIntermediateOutputPath)">
       <Output TaskParameter="Outputs" ItemName="Xlf" />
     </GatherXlf>
   </Target>
@@ -131,8 +121,7 @@
   <Target Name="TranslateSourceFromXlf"
           Condition="'$(EnableXlfLocalization)' == 'true'"
           DependsOnTargets="GatherXlf;BatchTranslateSourceFromXlf"
-          BeforeTargets="VSCTCompile;PrepareResourceNames;$(PrepareResourceNamesDependsOn)"
-          >
+          BeforeTargets="VSCTCompile;PrepareResourceNames;$(PrepareResourceNamesDependsOn)">
     <GatherTranslatedSource XlfFiles="@(Xlf)" Condition="'@(Xlf)' != ''">
       <Output TaskParameter="Outputs" ItemName="%(Xlf.XlfOutputItem)" />
       <Output TaskParameter="Outputs" ItemName="FileWrites" />
@@ -161,8 +150,7 @@
 
   <Target Name="BatchTranslateSourceFromXlf"
           Inputs="@(Xlf);%(Xlf.XlfSource)"
-          Outputs="%(Xlf.XlfTranslatedFullPath)"
-          >
+          Outputs="%(Xlf.XlfTranslatedFullPath)">
     <TranslateSource XlfFile="@(Xlf)" />
   </Target>
 
@@ -170,21 +158,17 @@
     Sorts the trans-unit elements in the .xlf files by the value of their id attributes.
   -->
   <Target Name="SortXlf"
-          DependsOnTargets="GetXlfSources"
-          >
+          DependsOnTargets="GetXlfSources">
     <SortXlf Sources="@(XlfSource)"
-             Languages="$(XlfLanguages)"
-             />
+             Languages="$(XlfLanguages)" />
   </Target>
 
   <!--
     Checks that all trans-unit elements in the .xlf files have an up-to-date translation.
   -->
   <Target Name="EnsureAllResourcesTranslated"
-          DependsOnTargets="GetXlfSources"
-          >
+          DependsOnTargets="GetXlfSources">
     <EnsureAllResourcesTranslated Sources="@(XlfSource)"
-                                  Languages="$(XlfLanguages)"
-                                  />
+                                  Languages="$(XlfLanguages)" />
   </Target>
 </Project>

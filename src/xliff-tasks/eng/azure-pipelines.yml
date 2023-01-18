@@ -33,10 +33,10 @@ stages:
         pool:
           ${{ if or(eq(variables['System.TeamProject'], 'public'), in(variables['Build.Reason'], 'PullRequest')) }}:
             name: NetCore-Public
-            demands: ImageOverride -equals windows.vs2017.amd64.open
+            demands: ImageOverride -equals windows.vs2022.amd64.open
           ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
             name: NetCore1ESPool-Internal
-            demands: ImageOverride -equals windows.vs2017.amd64
+            demands: ImageOverride -equals windows.vs2022.amd64
         variables:
         # Enable signing for internal, non-PR builds
         - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
@@ -79,7 +79,6 @@ stages:
         - script: eng\common\cibuild.cmd
             -configuration $(_BuildConfig)
             -prepareMachine
-            -warnaserror:0
             $(_BuildArgs)
           displayName: Windows Build / Publish
 
@@ -109,6 +108,3 @@ stages:
   - template: /eng/common/templates/post-build/post-build.yml
     parameters:
       publishingInfraVersion: 3
-      # Symbol validation isn't being very reliable lately. This should be enabled back
-      # once this issue is resolved: https://github.com/dotnet/arcade/issues/2871
-      enableSymbolValidation: false

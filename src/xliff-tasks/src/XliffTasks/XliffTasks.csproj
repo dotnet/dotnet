@@ -1,44 +1,28 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (c) .NET Foundation and contributors. All rights reserved. Licensed under the MIT license. See License.txt in the project root for full license information. -->
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net7.0;net46</TargetFrameworks>
-    <TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">net7.0</TargetFrameworks>
+    <TargetFrameworks>net8.0</TargetFrameworks>
+    <TargetFrameworks Condition="'$(DotNetBuildFromSource)' != 'true'">$(TargetFrameworks);net462</TargetFrameworks>
     <BuildOutputTargetFolder>tools</BuildOutputTargetFolder>
-    <EnableDefaultItems>false</EnableDefaultItems>
-    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
     <IsPackable>true</IsPackable>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <LangVersion>10</LangVersion>
+    <!-- NU5128: Some target frameworks declared in the dependencies group of the nuspec and the lib/ref folder do not have exact matches in the other location. -->
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
     <AssemblyName>Microsoft.DotNet.XliffTasks</AssemblyName>
     <RootNamespace>XliffTasks</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="**\*.cs" />
-    <Content Include="build\*" PackagePath="build" />
-    <Content Include="buildCrossTargeting\*" PackagePath="buildCrossTargeting" />
+    <None Include="build\*" Pack="true" PackagePath="build" />
+    <None Include="buildCrossTargeting\*" Pack="true" PackagePath="buildCrossTargeting" />
   </ItemGroup>
 
   <ItemGroup>
     <InternalsVisibleTo Include="XliffTasks.Tests" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
-    <PackageReference Include="Microsoft.Build.Framework" Version="15.1.1012" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="15.1.1012" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.NETCore.App" Version="2.0.0" PrivateAssets="All" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net46'">
-    <Reference Include="System" Pack="false" />
-    <Reference Include="System.Core" Pack="false" />
-    <Reference Include="System.Xml" Pack="false" />
-    <Reference Include="System.Xml.Linq" Pack="false" />
-    <Reference Include="Microsoft.Build.Framework" Pack="false" />
-    <Reference Include="Microsoft.Build.Utilities.v4.0" Pack="false" />
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Build.Framework" Version="$(MicrosoftBuildPackageVersion)" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="$(MicrosoftBuildUtilitiesCoreVersion)" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>

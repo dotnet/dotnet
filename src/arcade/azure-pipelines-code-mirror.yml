@@ -3,7 +3,7 @@ trigger: none
 
 variables:
   - group: Mirror-Credentials
-  - template: eng/common/templates/variables/pool-providers.yml
+  - template: /eng/common/templates/variables/pool-providers.yml
 
 # Moves code from GitHub into internal repos
 jobs:

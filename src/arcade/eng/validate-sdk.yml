@@ -24,7 +24,7 @@ jobs:
     - _BuildConfig: ${{ parameters.buildConfig }}
     - _BuildArgs: ${{ parameters.buildArgs }}
     - _ValidateBlobFeedUrl: ${{ parameters.validateBlobFeedUrl }}
-    - template: eng/common/templates/variables/pool-providers.yml
+    - template: /eng/common/templates/variables/pool-providers.yml
     pool:
       name: $(DncEngInternalBuildPool)
       demands: ImageOverride -equals windows.vs2019.amd64

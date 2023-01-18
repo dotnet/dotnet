@@ -18,7 +18,7 @@
   <Import Condition="Exists('$(BuildManifestFile)')" Project="$(BuildManifestFile)" />
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <NETCORE_ENGINEERING_TELEMETRY>Build</NETCORE_ENGINEERING_TELEMETRY>
     <SignCheckTaskAssembly>$(NuGetPackageRoot)Microsoft.DotNet.SignCheck\$(MicrosoftDotNetSignCheckVersion)\tools\Microsoft.DotNet.SignCheck.exe</SignCheckTaskAssembly>
   </PropertyGroup>

@@ -1,9 +1,9 @@
-using Microsoft.Build.Framework;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Build.Framework;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Microsoft.DotNet.Helix.AzureDevOps
 {
@@ -12,11 +12,16 @@ namespace Microsoft.DotNet.Helix.AzureDevOps
         [Required]
         public int TestRunId { get; set; }
 
+        [Required]
+        public string TestRunName { get; set; }
+
         protected override async Task ExecuteCoreAsync(HttpClient client)
         {
             await RetryAsync(
                 async () =>
                 {
+                    Log.LogMessage(MessageImportance.High, $"Stopping Azure Pipelines Test Run {TestRunName} (Results: {CollectionUri}{TeamProject}/_build/results?buildId={BuildId}&view=ms.vss-test-web.build-test-results-tab )");
+
                     using (var req =
                         new HttpRequestMessage(
                             new HttpMethod("PATCH"),
