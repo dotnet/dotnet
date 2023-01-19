@@ -66,6 +66,15 @@ The dependencies for building .NET from source can be found [here](https://githu
 Clone the dotnet/dotnet repo and check out the tag for the desired release.
 Then, follow the instructions in [dotnet/dotnet's README](https://github.com/dotnet/dotnet/blob/main/README.md#dev-instructions) to build .NET from source.
 
+### Codespaces
+
+It is also possible to utilize [GitHub Codespaces](https://github.com/features/codespaces) and build .NET from the `dotnet/dotnet` repository from source that way.
+You can either create a Codespace in `dotnet/dotnet` directly or you can also make one from a PR branch in `dotnet/installer`. This will give you an environment with the VMR checked out and containing all of new changes from the PR.
+This can be especially valuable for investigations of source-build failures during PRs.
+
+To create a Codespace for a `dotnet/installer` PR, use the `vmr-source-build` devcontainer configuration (select this when "newing the Codespace with options" under the three-dots-menu).
+Further instructions on how to build inside of the Codespace will be available upon launch.
+
 ## Building .NET 7.0 and .NET 6.0
 
 1. Create a .NET source tarball.
