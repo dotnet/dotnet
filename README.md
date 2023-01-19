@@ -173,9 +173,9 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/format`  
 *[dotnet/format@2cb3e68](https://github.com/dotnet/format/commit/2cb3e68c6b9a966114572fd63f2a20d2cb54a288)*
 - `src/fsharp`  
-*[dotnet/fsharp@679719f](https://github.com/dotnet/fsharp/commit/679719f94009d61e28df5c3b5ec87f1448c803e9)*
+*[dotnet/fsharp@6ebe669](https://github.com/dotnet/fsharp/commit/6ebe669cd147075a2e66699cf4e1b1a338f89fe5)*
 - `src/installer`  
-*[dotnet/installer@e1c9ddb](https://github.com/dotnet/installer/commit/e1c9ddb5ccac52a72615db837ee01cbb624d3772)*
+*[dotnet/installer@1670d4f](https://github.com/dotnet/installer/commit/1670d4fa6e6ded8998e9734f78a5a44e655c4af2)*
 - `src/linker`  
 *[dotnet/linker@c790896](https://github.com/dotnet/linker/commit/c790896f128957acd2999208f44f09ae1e826c8c)*
     - `src/linker/external/cecil`  
@@ -189,13 +189,13 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/razor`  
 *[dotnet/razor@b2d15be](https://github.com/dotnet/razor/commit/b2d15be01c8b9615b819fb8cffed4ccd02cdff2f)*
 - `src/roslyn`  
-*[dotnet/roslyn@7061c64](https://github.com/dotnet/roslyn/commit/7061c64ddbd931d55b9a97f95243fcf91d04d7b1)*
+*[dotnet/roslyn@3bb9af8](https://github.com/dotnet/roslyn/commit/3bb9af87333b7453ada242d81fb7f38be42a9aef)*
 - `src/roslyn-analyzers`  
 *[dotnet/roslyn-analyzers@b08c60a](https://github.com/dotnet/roslyn-analyzers/commit/b08c60aab8f6249ecccdeee580c35bea824e1276)*
 - `src/runtime`  
 *[dotnet/runtime@19fc478](https://github.com/dotnet/runtime/commit/19fc478d67c2fc55e62b50676935f903a77f5a4d)*
 - `src/sdk`  
-*[dotnet/sdk@6e29edd](https://github.com/dotnet/sdk/commit/6e29edd9ff2ade63b54c6f9c7ba4a98bdffa6936)*
+*[dotnet/sdk@be8529b](https://github.com/dotnet/sdk/commit/be8529b23ca7d3748343df9f2e699b401abcd9ea)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@df9dd3b](https://github.com/dotnet/source-build-externals/commit/df9dd3b66b2fa6d86eb01bb5b2493435bdfa2649)*
     - `src/source-build-externals/src/application-insights`  
