@@ -1,0 +1,39 @@
+parameters:
+- name: name
+  type: string
+
+- name: type
+  type: string
+
+- name: command
+  type: string
+
+stages:
+- stage: VMR_Scan_${{ parameters.type }}
+  displayName: Scan ${{ parameters.name }}
+  dependsOn: []
+  jobs:
+  - job: Scan
+    displayName: Scan ${{ parameters.name }}
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - checkout: self
+
+    - script: |
+        source ./eng/common/tools.sh
+        InitializeDotNetCli true
+        dotnet='./.dotnet/dotnet'
+        "$dotnet" tool restore
+      displayName: Initialize tooling
+      workingDirectory: $(Build.SourcesDirectory)/src/installer
+
+    - script: >
+        ./.dotnet/dotnet darc vmr ${{ parameters.command }}
+        --vmr "$(Build.SourcesDirectory)"
+        --tmp "$(Agent.TempDirectory)"
+        || (echo '##[error]Found ${{ parameters.name }} in the VMR' &&
+            echo '##vso[task.complete result=Failed]Failed')
+      displayName: Scan ${{ parameters.name }}
+      workingDirectory: $(Build.SourcesDirectory)/src/installer
+      # continueOnError: true
