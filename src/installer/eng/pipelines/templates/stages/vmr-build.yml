@@ -68,12 +68,13 @@ stages:
         name: ${{ variables.defaultPoolName }}
         demands: ${{ variables.defaultPoolDemands }}
       container: ${{ parameters.centOSStream8Container }}
-      bootstrapPrep: false          # 🚫
-      enablePoison: false           # 🚫
-      excludeSdkContentTests: true  # ✅
-      excludeOmniSharpTests: true   # ✅
-      runOnline: true               # ✅
-      buildFromArchive: false       # 🚫
+      bootstrapPrep: false               # 🚫
+      buildFromArchive: false            # 🚫
+      enablePoison: false                # 🚫
+      excludeOmniSharpTests: true        # ✅
+      excludeSdkContentTests: true       # ✅
+      overrideDistroDisablingSha1: false # 🚫
+      runOnline: true                    # ✅
 
   - ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
     - template: ../jobs/vmr-build.yml
@@ -86,12 +87,13 @@ stages:
           name: ${{ variables.defaultPoolName }}
           demands: ${{ variables.defaultPoolDemands }}
         container: ${{ parameters.centOSStream8Container }}
-        bootstrapPrep: false          # 🚫
-        enablePoison: false           # 🚫
-        excludeSdkContentTests: false # 🚫
-        excludeOmniSharpTests: true   # ✅
-        runOnline: false              # 🚫
-        buildFromArchive: true        # ✅
+        bootstrapPrep: false               # 🚫
+        buildFromArchive: true             # ✅
+        enablePoison: false                # 🚫
+        excludeOmniSharpTests: true        # ✅
+        excludeSdkContentTests: false      # 🚫
+        overrideDistroDisablingSha1: false # 🚫
+        runOnline: false                   # 🚫
 
     - template: ../jobs/vmr-build.yml
       parameters:
@@ -103,12 +105,13 @@ stages:
           name: ${{ variables.defaultPoolName }}
           demands: ${{ variables.defaultPoolDemands }}
         container: ${{ parameters.centOSStream9Container }}
-        bootstrapPrep: false          # 🚫
-        enablePoison: false           # 🚫
-        excludeSdkContentTests: false # 🚫
-        excludeOmniSharpTests: false  # 🚫
-        runOnline: false              # 🚫
-        buildFromArchive: true        # ✅
+        bootstrapPrep: false              # 🚫
+        buildFromArchive: true            # ✅
+        enablePoison: false               # 🚫
+        excludeOmniSharpTests: false      # 🚫
+        excludeSdkContentTests: false     # 🚫
+        overrideDistroDisablingSha1: true # ✅
+        runOnline: false                  # 🚫
 
     - template: ../jobs/vmr-build.yml
       parameters:
@@ -120,12 +123,13 @@ stages:
           name: ${{ variables.defaultPoolName }}
           demands: ${{ variables.defaultPoolDemands }}
         container: ${{ parameters.fedora36Container }}
-        bootstrapPrep: false          # 🚫
-        enablePoison: true            # ✅
-        excludeSdkContentTests: false # 🚫
-        excludeOmniSharpTests: false  # 🚫
-        runOnline: false              # 🚫
-        buildFromArchive: true        # ✅
+        bootstrapPrep: false               # 🚫
+        buildFromArchive: true             # ✅
+        enablePoison: true                 # ✅
+        excludeOmniSharpTests: false       # 🚫
+        excludeSdkContentTests: false      # 🚫
+        overrideDistroDisablingSha1: false # 🚫
+        runOnline: false                   # 🚫
 
     - template: ../jobs/vmr-build.yml
       parameters:
@@ -137,12 +141,13 @@ stages:
           name: ${{ variables.defaultPoolName }}
           demands: ${{ variables.defaultPoolDemands }}
         container: ${{ parameters.ubuntu2004Container }}
-        bootstrapPrep: false          # 🚫
-        enablePoison: false           # 🚫
-        excludeSdkContentTests: false # 🚫
-        excludeOmniSharpTests: false  # 🚫
-        runOnline: false              # 🚫
-        buildFromArchive: false       # 🚫
+        bootstrapPrep: false               # 🚫
+        buildFromArchive: false            # 🚫
+        enablePoison: false                # 🚫
+        excludeOmniSharpTests: false       # 🚫
+        excludeSdkContentTests: false      # 🚫
+        overrideDistroDisablingSha1: false # 🚫
+        runOnline: false                   # 🚫
 
     - template: ../jobs/vmr-build.yml
       parameters:
@@ -152,12 +157,13 @@ stages:
         architecture: arm64
         pool: ${{ parameters.poolInternalArm64 }}
         container: ${{ parameters.debian11Arm64Container }}
-        bootstrapPrep: true           # ✅
-        enablePoison: false           # 🚫
-        excludeSdkContentTests: false # 🚫
-        excludeOmniSharpTests: false  # 🚫
-        runOnline: false              # 🚫
-        buildFromArchive: false       # 🚫
+        bootstrapPrep: true                # ✅
+        buildFromArchive: false            # 🚫
+        enablePoison: false                # 🚫
+        excludeOmniSharpTests: false       # 🚫
+        excludeSdkContentTests: false      # 🚫
+        overrideDistroDisablingSha1: false # 🚫
+        runOnline: false                   # 🚫
 
     - template: ../jobs/vmr-build.yml
       parameters:
@@ -169,10 +175,11 @@ stages:
           name: ${{ variables.defaultPoolName }}
           demands: ${{ variables.defaultPoolDemands }}
         container: ${{ parameters.fedora36Container }}
-        bootstrapPrep: false          # 🚫
-        enablePoison: false           # 🚫
-        excludeSdkContentTests: true  # ✅
-        excludeOmniSharpTests: false  # 🚫
-        runOnline: false              # 🚫
-        buildFromArchive: false       # 🚫
+        bootstrapPrep: false               # 🚫
+        buildFromArchive: false            # 🚫
+        enablePoison: false                # 🚫
+        excludeOmniSharpTests: false       # 🚫
+        excludeSdkContentTests: true       # ✅
+        overrideDistroDisablingSha1: false # 🚫
+        runOnline: false                   # 🚫
         reuseBuildArtifactsFrom: Fedora36_Offline
