@@ -82,7 +82,7 @@
          JS etc.) is risky. This can break setup authoring and cause runtime failures in workloads
          where Rolsyn is not installed. -->
     <MicrosoftCodeAnalysisVersion>3.8.0-3.20427.2</MicrosoftCodeAnalysisVersion>
-    <MicrosoftInternalCodeCoverageVersion>17.6.1-beta.23063.9</MicrosoftInternalCodeCoverageVersion>
+    <MicrosoftInternalCodeCoverageVersion>17.6.1-beta.23067.1</MicrosoftInternalCodeCoverageVersion>
     <MicrosoftDiagnosticsNETCoreClientVersion>0.2.0-preview.22424.1</MicrosoftDiagnosticsNETCoreClientVersion>
     <MicrosoftSourceBuildIntermediatediagnosticsVersion>6.0.0-preview.22424.1</MicrosoftSourceBuildIntermediatediagnosticsVersion>
     <MicrosoftVisualStudioTelemetryVersion>16.6.11</MicrosoftVisualStudioTelemetryVersion>
