@@ -413,8 +413,7 @@ let ParseInput
         lexbuf: UnicodeLexing.Lexbuf,
         defaultNamespace,
         fileName,
-        isLastCompiland,
-        identCapture
+        isLastCompiland
     ) =
     // The assert below is almost ok, but it fires in two cases:
     //  - fsi.exe sometimes passes "stdin" as a dummy file name
@@ -434,29 +433,25 @@ let ParseInput
         let input =
             let identStore = HashSet<string>()
 
-            let lexer =
-                if identCapture then
-                    (fun x ->
-                        let token = lexer x
+            let identCaptureLexer x =
+                let token = lexer x
 
-                        match token with
-                        | Parser.token.PERCENT_OP ident
-                        | Parser.token.FUNKY_OPERATOR_NAME ident
-                        | Parser.token.ADJACENT_PREFIX_OP ident
-                        | Parser.token.PLUS_MINUS_OP ident
-                        | Parser.token.INFIX_AMP_OP ident
-                        | Parser.token.INFIX_STAR_DIV_MOD_OP ident
-                        | Parser.token.PREFIX_OP ident
-                        | Parser.token.INFIX_BAR_OP ident
-                        | Parser.token.INFIX_AT_HAT_OP ident
-                        | Parser.token.INFIX_COMPARE_OP ident
-                        | Parser.token.INFIX_STAR_STAR_OP ident
-                        | Parser.token.IDENT ident -> identStore.Add ident |> ignore
-                        | _ -> ()
+                match token with
+                | Parser.token.PERCENT_OP ident
+                | Parser.token.FUNKY_OPERATOR_NAME ident
+                | Parser.token.ADJACENT_PREFIX_OP ident
+                | Parser.token.PLUS_MINUS_OP ident
+                | Parser.token.INFIX_AMP_OP ident
+                | Parser.token.INFIX_STAR_DIV_MOD_OP ident
+                | Parser.token.PREFIX_OP ident
+                | Parser.token.INFIX_BAR_OP ident
+                | Parser.token.INFIX_AT_HAT_OP ident
+                | Parser.token.INFIX_COMPARE_OP ident
+                | Parser.token.INFIX_STAR_STAR_OP ident
+                | Parser.token.IDENT ident -> identStore.Add ident |> ignore
+                | _ -> ()
 
-                        token)
-                else
-                    lexer
+                token
 
             if FSharpMLCompatFileSuffixes |> List.exists (FileSystemUtils.checkSuffix fileName) then
                 if lexbuf.SupportsFeature LanguageFeature.MLCompatRevisions then
@@ -466,14 +461,14 @@ let ParseInput
 
             // Call the appropriate parser - for signature files or implementation files
             if FSharpImplFileSuffixes |> List.exists (FileSystemUtils.checkSuffix fileName) then
-                let impl = Parser.implementationFile lexer lexbuf
+                let impl = Parser.implementationFile identCaptureLexer lexbuf
 
                 let tripleSlashComments =
                     LexbufLocalXmlDocStore.ReportInvalidXmlDocPositions(lexbuf)
 
                 PostParseModuleImpls(defaultNamespace, fileName, isLastCompiland, impl, lexbuf, tripleSlashComments, Set identStore)
             elif FSharpSigFileSuffixes |> List.exists (FileSystemUtils.checkSuffix fileName) then
-                let intfs = Parser.signatureFile lexer lexbuf
+                let intfs = Parser.signatureFile identCaptureLexer lexbuf
 
                 let tripleSlashComments =
                     LexbufLocalXmlDocStore.ReportInvalidXmlDocPositions(lexbuf)
@@ -645,8 +640,7 @@ let ParseOneInputLexbuf (tcConfig: TcConfig, lexResourceManager, lexbuf, fileNam
                         lexbuf,
                         None,
                         fileName,
-                        isLastCompiland,
-                        tcConfig.captureIdentifiersWhenParsing
+                        isLastCompiland
                     )
 
                 // Report the statistics for testing purposes

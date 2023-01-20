@@ -101,6 +101,12 @@ module Result =
         | Error _ -> []
         | Ok x -> [ x ]
 
+    [<CompiledName("ToSeq")>]
+    let toSeq result =
+        match result with
+        | Error _ -> []
+        | Ok x -> [ x ]
+
     [<CompiledName("ToOption")>]
     let toOption result =
         match result with

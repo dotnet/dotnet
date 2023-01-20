@@ -530,8 +530,7 @@ module internal ParseAndCheckFile =
         fileName: string *
         options: FSharpParsingOptions *
         userOpName: string *
-        suggestNamesForErrors: bool *
-        identCapture: bool ->
+        suggestNamesForErrors: bool ->
             FSharpDiagnostic[] * ParsedInput * bool
 
     val matchBraces:

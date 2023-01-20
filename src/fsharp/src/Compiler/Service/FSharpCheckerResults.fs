@@ -2345,15 +2345,7 @@ module internal ParseAndCheckFile =
 
         matchingBraces.ToArray()
 
-    let parseFile
-        (
-            sourceText: ISourceText,
-            fileName,
-            options: FSharpParsingOptions,
-            userOpName: string,
-            suggestNamesForErrors: bool,
-            identCapture: bool
-        ) =
+    let parseFile (sourceText: ISourceText, fileName, options: FSharpParsingOptions, userOpName: string, suggestNamesForErrors: bool) =
         Trace.TraceInformation("FCS: {0}.{1} ({2})", userOpName, "parseFile", fileName)
 
         use act =
@@ -2385,8 +2377,7 @@ module internal ParseAndCheckFile =
                         lexbuf,
                         None,
                         fileName,
-                        (isLastCompiland, isExe),
-                        identCapture
+                        (isLastCompiland, isExe)
                     )
                 with e ->
                     errHandler.DiagnosticsLogger.StopProcessingRecovery e range0 // don't re-raise any exceptions, we must return None.
@@ -3189,14 +3180,7 @@ type FsiInteractiveChecker(legacyReferenceResolver, tcConfig: TcConfig, tcGlobal
                 FSharpParsingOptions.FromTcConfig(tcConfig, [| fileName |], true)
 
             let parseErrors, parsedInput, anyErrors =
-                ParseAndCheckFile.parseFile (
-                    sourceText,
-                    fileName,
-                    parsingOptions,
-                    userOpName,
-                    suggestNamesForErrors,
-                    tcConfig.captureIdentifiersWhenParsing
-                )
+                ParseAndCheckFile.parseFile (sourceText, fileName, parsingOptions, userOpName, suggestNamesForErrors)
 
             let dependencyFiles = [||] // interactions have no dependencies
 

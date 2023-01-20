@@ -1440,8 +1440,7 @@ type IncrementalBuilder(initialState: IncrementalBuilderInitialState, state: Inc
             enablePartialTypeChecking: bool,
             enableParallelCheckingWithSignatureFiles: bool,
             dependencyProvider,
-            parallelReferenceResolution,
-            captureIdentifiersWhenParsing
+            parallelReferenceResolution
         ) =
 
       let useSimpleResolutionSwitch = "--simpleresolution"
@@ -1524,8 +1523,7 @@ type IncrementalBuilder(initialState: IncrementalBuilderInitialState, state: Inc
 
                 tcConfigB.parallelCheckingWithSignatureFiles <- enableParallelCheckingWithSignatureFiles
                 tcConfigB.parallelReferenceResolution <- parallelReferenceResolution
-                tcConfigB.captureIdentifiersWhenParsing <- captureIdentifiersWhenParsing
-
+                
                 tcConfigB, sourceFilesNew
 
             // If this is a builder for a script, re-apply the settings inferred from the

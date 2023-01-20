@@ -8,7 +8,9 @@ open FSharp.Test.Compiler
 
 module AssemblySigning =
 
-    [<FactForDESKTOP>]
+#if !NETCOREAPP
+    [<Fact>]
+#endif
     let ``--keycontainer:name DESKTOP`` () =
         FSharp """
 module SignMe
@@ -24,7 +26,9 @@ open System.Reflection
         |> withDiagnosticMessageMatches "The command-line option '--keycontainer' has been deprecated. Use '--keyfile' instead."
         |> ignore
 
-    [<FactForNETCOREAPP>]
+#if NETCOREAPP
+    [<Fact>]
+#endif
     let ``--keycontainer:name NETCOREAPP`` () =
         FSharp """
 module SignMe
@@ -41,7 +45,9 @@ open System.Reflection
         |> ignore
 
     //Expects: warning FS3392: The 'AssemblyKeyNameAttribute' has been deprecated. Use 'AssemblyKeyFileAttribute' instead.
-    [<FactForDESKTOP>]
+#if !NETCOREAPP
+    [<Fact>]
+#endif
     let ``AssemblyKeyNameAttribute DESKTOP`` () =
         FSharp """
 module SignMe
@@ -60,7 +66,9 @@ do ()
              |> ignore
 
     //Expects: warning FS3392: The 'AssemblyKeyNameAttribute' has been deprecated. Use 'AssemblyKeyFileAttribute' instead.
-    [<FactForNETCOREAPP>]
+#if NETCOREAPP
+    [<Fact>]
+#endif
     let ``AssemblyKeyNameAttribute NETCOREAPP`` () =
         FSharp """
 module SignMe

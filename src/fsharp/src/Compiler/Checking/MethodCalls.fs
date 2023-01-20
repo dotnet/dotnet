@@ -1806,9 +1806,9 @@ module ProvidedMethodCalls =
              expr: Tainted<ProvidedExpr>) = 
 
         let varConv =
-            // note: Assuming the size based on paramVars
-            // Doubling to decrease chance of collisions
-            let dict = Dictionary.newWithSize (paramVars.Length*2)
+            // note: using paramVars.Length as assumed initial size, but this might not 
+            // be the optimal value; this wasn't checked before obsoleting Dictionary.ofList
+            let dict = Dictionary.newWithSize paramVars.Length
             for v, e in Seq.zip (paramVars |> Seq.map (fun x -> x.PUntaint(id, m))) (Option.toList thisArg @ allArgs) do
                 dict.Add(v, (None, e))
             dict

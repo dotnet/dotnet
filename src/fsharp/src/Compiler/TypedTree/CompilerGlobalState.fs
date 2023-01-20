@@ -4,10 +4,7 @@
 
 module FSharp.Compiler.CompilerGlobalState
 
-open System
 open System.Collections.Generic
-open System.Collections.Concurrent
-open System.Threading
 open FSharp.Compiler.Syntax.PrettyNaming
 open FSharp.Compiler.Text
 
@@ -18,15 +15,26 @@ open FSharp.Compiler.Text
 /// It is made concurrency-safe since a global instance of the type is allocated in tast.fs, and it is good
 /// policy to make all globally-allocated objects concurrency safe in case future versions of the compiler
 /// are used to host multiple concurrent instances of compilation.
-type NiceNameGenerator() =    
-    let basicNameCounts = ConcurrentDictionary<string,Ref<int>>(max Environment.ProcessorCount 1, 127)
-   
+type NiceNameGenerator() =
+
+    let lockObj = obj()
+    let basicNameCounts = Dictionary<string, int>(100)
+
     member _.FreshCompilerGeneratedName (name, m: range) =
+      lock lockObj (fun () ->
         let basicName = GetBasicNameOfPossibleCompilerGeneratedName name
-        let countCell = basicNameCounts.GetOrAdd(basicName,fun k -> ref 0)
-        let count = Interlocked.Increment(countCell)
-        
-        CompilerGeneratedNameSuffix basicName (string m.StartLine + (match (count-1) with 0 -> "" | n -> "-" + string n))
+        let n =
+            match basicNameCounts.TryGetValue basicName with
+            | true, count -> count
+            | _ -> 0
+        let nm = CompilerGeneratedNameSuffix basicName (string m.StartLine + (match n with 0 -> "" | n -> "-" + string n))
+        basicNameCounts[basicName] <- n + 1
+        nm)
+
+    member _.Reset () =
+      lock lockObj (fun () ->
+        basicNameCounts.Clear()
+      )
 
 /// Generates compiler-generated names marked up with a source code location, but if given the same unique value then
 /// return precisely the same name. Each name generated also includes the StartLine number of the range passed in
@@ -34,15 +42,35 @@ type NiceNameGenerator() =
 ///
 /// This type may be accessed concurrently, though in practice it is only used from the compilation thread.
 /// It is made concurrency-safe since a global instance of the type is allocated in tast.fs.
-type StableNiceNameGenerator() = 
+type StableNiceNameGenerator() =
 
-    let niceNames = ConcurrentDictionary<string * int64, string>(max Environment.ProcessorCount 1, 127)
-    let innerGenerator = new NiceNameGenerator()
+    let lockObj = obj()
+
+    let names = Dictionary<string * int64, string>(100)
+    let basicNameCounts = Dictionary<string, int>(100)
 
     member x.GetUniqueCompilerGeneratedName (name, m: range, uniq) =
-        let basicName = GetBasicNameOfPossibleCompilerGeneratedName name
-        let key = basicName, uniq
-        niceNames.GetOrAdd(key, fun _ -> innerGenerator.FreshCompilerGeneratedName(name, m))
+        lock lockObj (fun () ->
+            let basicName = GetBasicNameOfPossibleCompilerGeneratedName name
+            let key = basicName, uniq
+            match names.TryGetValue key with
+            | true, nm -> nm
+            | _ ->
+                let n =
+                    match basicNameCounts.TryGetValue basicName with
+                    | true, c -> c
+                    | _ -> 0
+                let nm = CompilerGeneratedNameSuffix basicName (string m.StartLine + (match n with 0 -> "" | n -> "-" + string n))
+                names[key] <- nm
+                basicNameCounts[basicName] <- n + 1
+                nm
+        )
+
+    member x.Reset () =
+      lock lockObj (fun () ->
+        basicNameCounts.Clear()
+        names.Clear()
+      )
 
 type internal CompilerGlobalState () =
     /// A global generator of compiler generated names
@@ -64,10 +92,12 @@ type internal CompilerGlobalState () =
 type Unique = int64
 
 //++GLOBAL MUTABLE STATE (concurrency-safe)
-let mutable private uniqueCount = 0L
-let newUnique() = System.Threading.Interlocked.Increment &uniqueCount
+let newUnique =
+    let i = ref 0L
+    fun () -> System.Threading.Interlocked.Increment i
 
 /// Unique name generator for stamps attached to to val_specs, tycon_specs etc.
 //++GLOBAL MUTABLE STATE (concurrency-safe)
-let mutable private stampCount = 0L
-let newStamp() = System.Threading.Interlocked.Increment &stampCount
+let newStamp =
+    let i = ref 0L
+    fun () -> System.Threading.Interlocked.Increment i

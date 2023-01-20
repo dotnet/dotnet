@@ -29,6 +29,8 @@ module FSharpSymbolPatterns =
                     res)))
             |> Option.isSome
 
+    let UnnamedUnionFieldRegex = Regex("^Item(\d+)?$", RegexOptions.Compiled)
+    
     let (|AbbreviatedType|_|) (entity: FSharpEntity) =
         if entity.IsFSharpAbbreviation then Some entity.AbbreviatedType
         else None

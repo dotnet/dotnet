@@ -42,7 +42,11 @@ module ``Required and init-only properties`` =
     }""" |> withCSharpLanguageVersion CSharpLanguageVersion.Preview |> withName "csLib"
 
 
-    [<FactForNETCOREAPP>]
+#if !NETCOREAPP
+    [<Fact(Skip = "NET472 is unsupported runtime for this kind of test.")>]
+#else
+    [<Fact>]
+#endif
     let ``F# can init both set and init-only`` () =
 
         let csharpLib = csharpBaseClass
@@ -68,7 +72,11 @@ let main _ =
         |> compileAndRun
         |> shouldSucceed
 
-    [<FactForNETCOREAPP>]
+#if !NETCOREAPP
+    [<Fact(Skip = "NET472 is unsupported runtime for this kind of test.")>]
+#else
+    [<Fact>]
+#endif
     let ``F# can change set property`` () =
 
         let csharpLib = csharpBaseClass
@@ -99,7 +107,11 @@ let main _ =
         |> compileAndRun
         |> shouldSucceed
     
-    [<FactForNETCOREAPP>]
+#if !NETCOREAPP
+    [<Fact(Skip = "NET472 is unsupported runtime for this kind of test.")>]
+#else
+    [<Fact>]
+#endif
     let ``F# can change set property via calling an explicit setter`` () =
 
         let csharpLib = csharpBaseClass
@@ -130,7 +142,11 @@ let main _ =
         |> compileAndRun
         |> shouldSucceed
 
-    [<FactForNETCOREAPP>]
+#if !NETCOREAPP
+    [<Fact(Skip = "NET472 is unsupported runtime for this kind of test.")>]
+#else
+    [<Fact>]
+#endif
     let ``F# can get property via calling an explicit getter`` () =
 
         let csharpLib = csharpBaseClass
@@ -156,7 +172,11 @@ let main _ =
         |> compileAndRun
         |> shouldSucceed
 
-    [<FactForNETCOREAPP>]
+#if !NETCOREAPP
+    [<Fact(Skip = "NET472 is unsupported runtime for this kind of test.")>]
+#else
+    [<Fact>]
+#endif
     let ``F# cannot change init-only property`` () =
 
         let csharpLib = csharpBaseClass
@@ -184,7 +204,11 @@ let main _ =
             Error 810, Line 9, Col 5, Line 9, Col 17, "Init-only property 'GetInit' cannot be set outside the initialization code. See https://aka.ms/fsharp-assigning-values-to-properties-at-initialization"
         ]
 
-    [<FactForNETCOREAPP>]
+#if !NETCOREAPP
+    [<Fact(Skip = "NET472 is unsupported runtime for this kind of test.")>]
+#else
+    [<Fact>]
+#endif
     let ``F# cannot change init-only property via calling an explicit setter`` () =
 
         let csharpLib = csharpBaseClass
@@ -212,7 +236,11 @@ let main _ =
             Error 810, Line 9, Col 5, Line 9, Col 21, "Cannot call 'set_GetInit' - a setter for init-only property, please use object initialization instead. See https://aka.ms/fsharp-assigning-values-to-properties-at-initialization"
         ]
 
-    [<FactForNETCOREAPP>]
+#if !NETCOREAPP
+    [<Fact(Skip = "NET472 is unsupported runtime for this kind of test.")>]
+#else
+    [<Fact>]
+#endif
     let ``F# cannot change init-only property via calling an initializer on instance`` () =
 
         let csharpLib = csharpBaseClass
@@ -239,7 +267,11 @@ let main _ =
             Error 810, Line 9, Col 38, Line 9, Col 40, "Init-only property 'GetInit' cannot be set outside the initialization code. See https://aka.ms/fsharp-assigning-values-to-properties-at-initialization"
         ]
 
-    [<FactForNETCOREAPP>]
+#if !NETCOREAPP
+    [<Fact(Skip = "IWSAMs are not supported by NET472.")>]
+#else
+    [<Fact>]
+#endif
     let ``F# can change init-only property via SRTP`` () =
 
         let csharpLib = csharpBaseClass
@@ -264,7 +296,11 @@ let main _ =
         |> compile
         |> shouldSucceed
 
-    [<FactForNETCOREAPP>]
+ #if !NETCOREAPP
+    [<Fact(Skip = "IWSAMs are not supported by NET472.")>]
+#else
+    [<Fact>]
+#endif
     let ``F# can call special-named methods via SRTP`` () =
 
         let csharpLib = csharpRecord
@@ -289,7 +325,11 @@ let main _ =
         |> compile
         |> shouldSucceed
 
-    [<FactForNETCOREAPP>]
+#if !NETCOREAPP
+    [<Fact(Skip = "NET472 is unsupported runtime for this kind of test.")>]
+#else
+    [<Fact>]
+#endif
     let ``F# should produce compile-time error when required properties are not specified in the initializer`` () =
 
         let csharpLib = csharpRBaseClass
@@ -316,7 +356,11 @@ let main _ =
             Error 3545, Line 8, Col 16, Line 8, Col 22, "The following required properties have to be initalized:" + Environment.NewLine + "   property RAIO.GetSet: int with get, set" + Environment.NewLine + "   property RAIO.GetInit: int with get, set"
         ]
 
-    [<FactForNETCOREAPP>]
+#if !NETCOREAPP
+    [<Fact(Skip = "NET472 is unsupported runtime for this kind of test.")>]
+#else
+    [<Fact>]
+#endif
     let ``F# should produce compile-time error when some required properties are not specified in the initializer`` () =
 
         let csharpLib = csharpRBaseClass
@@ -343,7 +387,11 @@ let main _ =
             Error 3545, Line 8, Col 16, Line 8, Col 30, "The following required properties have to be initalized:" + Environment.NewLine + "   property RAIO.GetInit: int with get, set"
         ]
 
-    [<FactForNETCOREAPP>]
+#if !NETCOREAPP
+    [<Fact(Skip = "NET472 is unsupported runtime for this kind of test.")>]
+#else
+    [<Fact>]
+#endif
     let ``F# should not produce compile-time error when all required properties are specified in the initializer`` () =
 
         let csharpLib = csharpRBaseClass
@@ -372,7 +420,11 @@ let main _ =
         |> compileAndRun
         |> shouldSucceed
 
-    [<FactForNETCOREAPP>]
+    #if !NETCOREAPP
+    [<Fact(Skip = "NET472 is unsupported runtime for this kind of test.")>]
+    #else
+    [<Fact>]
+    #endif
     let ``F# should only be able to explicitly call constructors which set SetsRequiredMembersAttribute`` () =
 
         let csharpLib =
@@ -429,7 +481,11 @@ let main _ =
         |> shouldFail
         |> withSingleDiagnostic (Error 3545, Line 7, Col 21, Line 7, Col 30, "The following required properties have to be initalized:" + Environment.NewLine + "   property RAIO.GetSet: int with get, set" + Environment.NewLine + "   property RAIO.GetInit: int with get, set")
 
-    [<FactForNETCOREAPP>]
+#if !NETCOREAPP
+    [<Fact(Skip = "NET472 is unsupported runtime for this kind of test.")>]
+#else
+    [<Fact>]
+#endif
     let ``F# should produce a warning if RequiredMemberAttribute is specified`` () =
         let fsharpSource =
             """
