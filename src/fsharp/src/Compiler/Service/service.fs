@@ -188,8 +188,7 @@ type BackgroundCompiler
         enableBackgroundItemKeyStoreAndSemanticClassification,
         enablePartialTypeChecking,
         enableParallelCheckingWithSignatureFiles,
-        parallelReferenceResolution,
-        captureIdentifiersWhenParsing
+        parallelReferenceResolution
     ) as self =
 
     let beforeFileChecked = Event<string * FSharpProjectOptions>()
@@ -321,8 +320,7 @@ type BackgroundCompiler
                     enablePartialTypeChecking,
                     enableParallelCheckingWithSignatureFiles,
                     dependencyProvider,
-                    parallelReferenceResolution,
-                    captureIdentifiersWhenParsing
+                    parallelReferenceResolution
                 )
 
             match builderOpt with
@@ -498,14 +496,14 @@ type BackgroundCompiler
                     Interlocked.Increment(&actualParseFileCount) |> ignore
 
                     let parseDiagnostics, parseTree, anyErrors =
-                        ParseAndCheckFile.parseFile (sourceText, fileName, options, userOpName, suggestNamesForErrors, captureIdentifiersWhenParsing)
+                        ParseAndCheckFile.parseFile (sourceText, fileName, options, userOpName, suggestNamesForErrors)
 
                     let res = FSharpParseFileResults(parseDiagnostics, parseTree, anyErrors, options.SourceFiles)
                     parseCacheLock.AcquireLock(fun ltok -> parseFileCache.Set(ltok, (fileName, hash, options), res))
                     return res
             else
                 let parseDiagnostics, parseTree, anyErrors =
-                    ParseAndCheckFile.parseFile (sourceText, fileName, options, userOpName, false, captureIdentifiersWhenParsing)
+                    ParseAndCheckFile.parseFile (sourceText, fileName, options, userOpName, false)
 
                 return FSharpParseFileResults(parseDiagnostics, parseTree, anyErrors, options.SourceFiles)
         }
@@ -752,14 +750,7 @@ type BackgroundCompiler
                     GraphNode.SetPreferredUILang tcPrior.TcConfig.preferredUiLang
 
                     let parseDiagnostics, parseTree, anyErrors =
-                        ParseAndCheckFile.parseFile (
-                            sourceText,
-                            fileName,
-                            parsingOptions,
-                            userOpName,
-                            suggestNamesForErrors,
-                            captureIdentifiersWhenParsing
-                        )
+                        ParseAndCheckFile.parseFile (sourceText, fileName, parsingOptions, userOpName, suggestNamesForErrors)
 
                     let parseResults =
                         FSharpParseFileResults(parseDiagnostics, parseTree, anyErrors, builder.AllDependenciesDeprecated)
@@ -1233,8 +1224,7 @@ type FSharpChecker
         enableBackgroundItemKeyStoreAndSemanticClassification,
         enablePartialTypeChecking,
         enableParallelCheckingWithSignatureFiles,
-        parallelReferenceResolution,
-        captureIdentifiersWhenParsing
+        parallelReferenceResolution
     ) =
 
     let backgroundCompiler =
@@ -1249,8 +1239,7 @@ type FSharpChecker
             enableBackgroundItemKeyStoreAndSemanticClassification,
             enablePartialTypeChecking,
             enableParallelCheckingWithSignatureFiles,
-            parallelReferenceResolution,
-            captureIdentifiersWhenParsing
+            parallelReferenceResolution
         )
 
     static let globalInstance = lazy FSharpChecker.Create()
@@ -1293,8 +1282,7 @@ type FSharpChecker
             ?enableBackgroundItemKeyStoreAndSemanticClassification,
             ?enablePartialTypeChecking,
             ?enableParallelCheckingWithSignatureFiles,
-            ?parallelReferenceResolution: bool,
-            ?captureIdentifiersWhenParsing: bool
+            ?parallelReferenceResolution
         ) =
 
         use _ = Activity.startNoTags "FSharpChecker.Create"
@@ -1316,7 +1304,6 @@ type FSharpChecker
 
         let enablePartialTypeChecking = defaultArg enablePartialTypeChecking false
         let enableParallelCheckingWithSignatureFiles = defaultArg enableParallelCheckingWithSignatureFiles false
-        let captureIdentifiersWhenParsing = defaultArg captureIdentifiersWhenParsing false
 
         if keepAssemblyContents && enablePartialTypeChecking then
             invalidArg "enablePartialTypeChecking" "'keepAssemblyContents' and 'enablePartialTypeChecking' cannot be both enabled."
@@ -1334,8 +1321,7 @@ type FSharpChecker
             enableBackgroundItemKeyStoreAndSemanticClassification,
             enablePartialTypeChecking,
             enableParallelCheckingWithSignatureFiles,
-            parallelReferenceResolution,
-            captureIdentifiersWhenParsing
+            parallelReferenceResolution
         )
 
     member _.ReferenceResolver = legacyReferenceResolver
@@ -1513,7 +1499,7 @@ type FSharpChecker
         let userOpName = defaultArg userOpName "Unknown"
 
         node {
-            if fastCheck <> Some true || not captureIdentifiersWhenParsing then
+            if fastCheck <> Some true then
                 return! backgroundCompiler.FindReferencesInFile(fileName, options, symbol, canInvalidateProject, userOpName)
             else
                 let! parseResults = backgroundCompiler.GetBackgroundParseResultsForFileInProject(fileName, options, userOpName)

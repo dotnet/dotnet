@@ -142,6 +142,10 @@ type LanguagePrimitivesModule() =
         let resultRef = LanguagePrimitives.GenericComparison "ABC" null
         Assert.AreEqual(1, resultRef)
 
+
+#if NETSTANDARD1_6 || NETCOREAPP
+// TODO named #define ?
+#else  
     [<Fact>]
     member this.GenericComparisonBiModal() =
         // value type
@@ -173,6 +177,8 @@ type LanguagePrimitivesModule() =
 
         let resultRef = LanguagePrimitives.GenericComparisonWithComparer System.Collections.Comparer.Default null "abc"
         Assert.AreEqual(-1, sign resultRef)
+        
+#endif
         
     [<Fact>]
     member this.GenericEquality() =
@@ -729,6 +735,9 @@ type UnitType() =
         let u:Unit = ()
         CheckThrowsNullRefException(fun() ->u.Equals(null) |>ignore) 
 
+#if NETSTANDARD1_6 || NETCOREAPP
+// TODO named #define ?
+#else
 type SourceConstructFlagsEnum() =
 
     [<Fact>]
@@ -738,12 +747,15 @@ type SourceConstructFlagsEnum() =
                        "KindMask";"NonPublicRepresentation" |]
         Assert.AreEqual(names, SourceConstructFlags.GetNames(typeof<SourceConstructFlags>))
 
+
 type CompilationRepresentationFlagsEnum() =
 
     [<Fact>]
     member this.Getvalue() =
         let names = [| "None";"Static";"Instance";"ModuleSuffix";"UseNullAsTrueValue";"Event" |]
         Assert.AreEqual(names, SourceConstructFlags.GetNames(typeof<CompilationRepresentationFlags>))
+#endif
+
 
 type MiscStuff() =
 

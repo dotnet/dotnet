@@ -8,6 +8,10 @@ open Microsoft.FSharp.Control
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 [<RequireQualifiedAccess>]
 module Event =
+    [<CompiledName("Create")>]
+    let create<'T> () =
+        let ev = new Event<'T>()
+        ev.Trigger, ev.Publish
 
     [<CompiledName("Map")>]
     let map mapping (sourceEvent: IEvent<'Delegate, 'T>) =

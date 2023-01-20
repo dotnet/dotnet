@@ -149,6 +149,11 @@ let isInfix token =
     | QMARK_QMARK -> true
     | _ -> false
 
+let isNonAssocInfixToken token = 
+    match token with 
+    | EQUALS -> true
+    | _ -> false
+
 let infixTokenLength token = 
     match token with 
     | COMMA -> 1
@@ -386,6 +391,16 @@ let rec isWithAugmentBlockContinuator token =
     //                          end 
     | END -> true    
     | ODUMMY token -> isWithAugmentBlockContinuator token
+    | _ -> false
+
+let isLongIdentifier token =
+    match token with
+    | IDENT _ | DOT -> true
+    | _ -> false
+
+let isLongIdentifierOrGlobal token =
+    match token with
+    | GLOBAL | IDENT _ | DOT -> true
     | _ -> false
 
 let isAtomicExprEndToken token = 

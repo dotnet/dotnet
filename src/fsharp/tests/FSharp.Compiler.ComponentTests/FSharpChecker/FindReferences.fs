@@ -96,12 +96,8 @@ secondA.DoNothing(secondB)
 
         }
 
-[<Theory>]
-[<InlineData(true, true)>]
-[<InlineData(true, false)>]
-[<InlineData(false, true)>]
-[<InlineData(false, false)>]
-let ``Finding references in project`` (fastCheck, captureIdentifiersWhenParsing) =
+[<Fact>]
+let ``Finding references in project`` () =
     let size = 20
 
     let project =
@@ -115,12 +111,10 @@ let ``Finding references in project`` (fastCheck, captureIdentifiersWhenParsing)
         |> updateFile "File005" (addDependency "File000")
         |> updateFile "File010" (addDependency "File000")
 
-    let checker = FSharpChecker.Create(
-        enableBackgroundItemKeyStoreAndSemanticClassification = true,
-        captureIdentifiersWhenParsing = captureIdentifiersWhenParsing)
+    let checker = FSharpChecker.Create(enableBackgroundItemKeyStoreAndSemanticClassification = true)
 
     project.WorkflowWith checker {
-        findAllReferencesToModuleFromFile "File000" fastCheck (expectNumberOfResults 5)
+        findAllReferencesToModuleFromFile "File000" true (expectNumberOfResults 5)
     }
 
 [<Fact>]

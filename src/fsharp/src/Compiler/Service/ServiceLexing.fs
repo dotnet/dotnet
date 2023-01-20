@@ -27,6 +27,7 @@ module FSharpTokenTag =
     let String = tagOfToken (STRING("a", SynStringKind.Regular, LexCont.Default))
 
     let IDENT = tagOfToken (IDENT "a")
+    let HASH_IDENT = tagOfToken (HASH_IDENT "a")
     let STRING = String
 
     let INTERP_STRING_BEGIN_END =

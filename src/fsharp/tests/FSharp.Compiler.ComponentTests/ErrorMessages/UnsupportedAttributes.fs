@@ -2,12 +2,13 @@
 
 namespace FSharp.Compiler.ComponentTests.ErrorMessages
 
+#if NETCOREAPP
 open Xunit
 open FSharp.Test.Compiler
 
 module ``Unsupported Attributes`` =
 
-    [<FSharp.Test.FactForNETCOREAPP>]
+    [<Fact>]
     let ``Warn successfully`` () =
         """
 open System.Runtime.CompilerServices
@@ -51,3 +52,4 @@ type C() =
               Message =
                "This attribute is currently unsupported by the F# compiler. Applying it will not achieve its intended effect." }
         ]
+#endif

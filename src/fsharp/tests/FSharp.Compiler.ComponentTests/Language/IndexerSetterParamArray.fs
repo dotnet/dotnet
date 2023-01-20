@@ -5,10 +5,11 @@ namespace FSharp.Compiler.ComponentTests
 open Xunit
 open FSharp.Test.Compiler
 
+#if NETCOREAPP
 // Test cases for https://github.com/dotnet/fsharp/issues/9369
 module IndexerSetterParamArray =
 
-    [<FSharp.Test.FactForNETCOREAPP>]
+    [<Fact>]
     let ``Indexer setter can use ParamArray`` () =
         FSharp """
 module One
@@ -58,7 +59,7 @@ if v5 <> "set([|2|], 7); get([|2|])" then failwith "not right value"
 
 
     // In this case the indexers take one initial arg then a ParamArray
-    [<FSharp.Test.FactForNETCOREAPP>]
+    [<Fact>]
     let ``Indexer setter can use ParamArray with one initial arg`` () =
         FSharp """
 module One
@@ -117,7 +118,7 @@ if v5 <> "set(1, [|2|], 7); get(1, [|2|])" then failwith "not right value"
      |> compileExeAndRun
      |> shouldSucceed
 
-    [<FSharp.Test.FactForNETCOREAPP>]
+    [<Fact>]
     let ``Indexer setter via extension can use ParamArray`` () =
         FSharp """
 module One
@@ -169,3 +170,5 @@ if v5 <> "set([|2|], 7); get([|2|])" then failwith "not right value"
      |> ignoreWarnings
      |> compileExeAndRun
      |> shouldSucceed
+
+#endif
