@@ -116,20 +116,18 @@ public class DifferentTestFrameworkSimpleTests : AcceptanceTestBase
     [TestMethod]
     [TestCategory("Windows-Review")]
     [NetFullTargetFrameworkDataSource]
-    public void RunTestsWithChutzpahAdapter(RunnerInfo runnerInfo)
+    public void RunTestsWithNonDllAdapter(RunnerInfo runnerInfo)
     {
+        // This used to be test for Chutzpah, but it has long running problem with updating dependencies,
+        // so we test against our own test framework, to ensure that we can run test files that are not using
+        // *.dll as extension.
         SetTestEnvironment(_testEnvironment, runnerInfo);
         Setup();
 
         var jsSource = Path.Combine(_testEnvironment.TestAssetsPath, "test.js");
-
-        // Chuzpah adapter creates _Chutzpah temp files, to give data back from the runner.
-        // But when cleaning up it deletes all the _Chutzpah files, not just the one it owns,
-        // so when we run in parallel, the slower process will never find it's own file, because it was already deleted:
-        // https://github.com/mmanela/chutzpah/issues/812
         var jsInTemp = TempDirectory.CopyFile(jsSource);
 
-        var testAdapterPath = Directory.EnumerateFiles(GetTestAdapterPath(UnitTestFramework.Chutzpah), "*.TestAdapter.dll").ToList();
+        var testAdapterPath = Directory.EnumerateFiles(GetTestAdapterPath(UnitTestFramework.NonDll), "*.TestAdapter.dll").ToList();
         _vstestConsoleWrapper.InitializeExtensions(new List<string>() { testAdapterPath.First() });
 
         _vstestConsoleWrapper.RunTests(
@@ -140,9 +138,8 @@ public class DifferentTestFrameworkSimpleTests : AcceptanceTestBase
         var testCase = _runEventHandler.TestResults.Where(tr => tr.TestCase.DisplayName.Equals("TestMethod1"));
 
         // Assert
-        Assert.AreEqual(2, _runEventHandler.TestResults.Count);
+        Assert.AreEqual(1, _runEventHandler.TestResults.Count);
         Assert.AreEqual(1, _runEventHandler.TestResults.Count(t => t.Outcome == TestOutcome.Passed));
-        Assert.AreEqual(1, _runEventHandler.TestResults.Count(t => t.Outcome == TestOutcome.Failed));
-        Assert.AreEqual(1, testCase.First().TestCase.LineNumber);
+        Assert.AreEqual(0, _runEventHandler.TestResults.Count(t => t.Outcome == TestOutcome.Failed));
     }
 }
