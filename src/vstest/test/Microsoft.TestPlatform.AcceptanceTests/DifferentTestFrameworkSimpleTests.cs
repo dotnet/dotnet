@@ -16,16 +16,21 @@ public class DifferentTestFrameworkSimpleTests : AcceptanceTestBase
 {
     [TestMethod]
     [NetFullTargetFrameworkDataSource(inIsolation: true, inProcess: true)]
-    public void ChutzpahRunAllTestExecution(RunnerInfo runnerInfo)
+    public void NonDllRunAllTestExecution(RunnerInfo runnerInfo)
     {
+        // This used to test Chutzpah, to prove that we can run tests that are not shipped in dlls.
+        // But that framework is not fixing vulnerable dependencies for a long time, so we use our custom, test adapter
+        // that simply returns 1 discovered test on discovery, and 1 passed test on execution.
+        // We do not really test that we can run JavaScript tests, but we test that we can trigger tests that are not shipped
+        // in a dll, and pick up the provided test adapter.
         SetTestEnvironment(_testEnvironment, runnerInfo);
         string fileName = "test.js";
         var testJSFileAbsolutePath = Path.Combine(_testEnvironment.TestAssetsPath, fileName);
         string tempPath = Path.Combine(TempDirectory.Path, fileName);
         File.Copy(testJSFileAbsolutePath, tempPath);
-        var arguments = PrepareArguments(tempPath, GetTestAdapterPath(UnitTestFramework.Chutzpah), string.Empty, FrameworkArgValue, runnerInfo.InIsolationValue, resultsDirectory: TempDirectory.Path);
+        var arguments = PrepareArguments(tempPath, GetTestAdapterPath(UnitTestFramework.NonDll), string.Empty, FrameworkArgValue, runnerInfo.InIsolationValue, resultsDirectory: TempDirectory.Path);
         InvokeVsTest(arguments);
-        ValidateSummaryStatus(1, 1, 0);
+        ValidateSummaryStatus(1, 0, 0);
     }
 
     [TestMethod]

@@ -15,7 +15,7 @@
     <formatOutputPackageVersion>8.0.405501</formatOutputPackageVersion>
     <fsharpGitCommitHash>e391694876e891d2cdc4089e62fe7b1138d8294e</fsharpGitCommitHash>
     <fsharpOutputPackageVersion>7.0.200-beta.23069.2</fsharpOutputPackageVersion>
-    <installerGitCommitHash>175d75755121625bb45fa3ce1644902c330346aa</installerGitCommitHash>
+    <installerGitCommitHash>779a6442daf6b95c5662d2f0c20801de5e179a05</installerGitCommitHash>
     <installerOutputPackageVersion>8.0.100</installerOutputPackageVersion>
     <linkerGitCommitHash>c790896f128957acd2999208f44f09ae1e826c8c</linkerGitCommitHash>
     <linkerOutputPackageVersion>8.0.100-1.23067.1</linkerOutputPackageVersion>
@@ -31,8 +31,8 @@
     <roslynOutputPackageVersion>4.5.0-3.23069.8</roslynOutputPackageVersion>
     <runtimeGitCommitHash>ddb69889684da95dc8d83a51b987774de5e47598</runtimeGitCommitHash>
     <runtimeOutputPackageVersion>8.0.0-alpha.1.23070.1</runtimeOutputPackageVersion>
-    <sdkGitCommitHash>9d7dd8b72154fd9cd0877352ffb1f058c35c7328</sdkGitCommitHash>
-    <sdkOutputPackageVersion>8.0.100-alpha.1.23070.12</sdkOutputPackageVersion>
+    <sdkGitCommitHash>c31c88e2bdad106a37fab635d61f8e2d942b7d55</sdkGitCommitHash>
+    <sdkOutputPackageVersion>8.0.100-alpha.1.23070.17</sdkOutputPackageVersion>
     <sourcebuildexternalsGitCommitHash>85115c949d0e38ef3a077885e0a0d16dffc80e08</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>8.0.0-alpha.1.23068.1</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>44c3e166651615f4ae66f0dfa236f082de84d7c5</sourcebuildreferencepackagesGitCommitHash>
@@ -45,8 +45,8 @@
     <templatingOutputPackageVersion>8.0.100-alpha.1.23069.10</templatingOutputPackageVersion>
     <testtemplatesGitCommitHash>bb3695688177f5f80eeb3c0498168612e31549d5</testtemplatesGitCommitHash>
     <testtemplatesOutputPackageVersion>1.1.0-rc.22558.1</testtemplatesOutputPackageVersion>
-    <vstestGitCommitHash>dc34cb54b40b479a23e1e8518dc131d39e6e9f85</vstestGitCommitHash>
-    <vstestOutputPackageVersion>17.6.0-preview-20230118-01</vstestOutputPackageVersion>
+    <vstestGitCommitHash>f516f7de1594ff3e53450e5ed026e981988e0558</vstestGitCommitHash>
+    <vstestOutputPackageVersion>17.6.0-preview-20230120-03</vstestOutputPackageVersion>
     <xdtGitCommitHash>9a1c3e1b7f0c8763d4c96e593961a61a72679a7b</xdtGitCommitHash>
     <xdtOutputPackageVersion>7.0.0-preview.22423.2</xdtOutputPackageVersion>
     <xlifftasksGitCommitHash>db632746f5ea995c60cc63a25229818558434018</xlifftasksGitCommitHash>

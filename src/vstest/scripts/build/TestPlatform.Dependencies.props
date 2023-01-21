@@ -28,7 +28,6 @@
     <NUnit3AdapterVersion>3.11.0</NUnit3AdapterVersion>
     <NUnitConsoleRunnerVersion>3.8.0</NUnitConsoleRunnerVersion>
 
-    <ChutzpahAdapterVersion>4.4.13</ChutzpahAdapterVersion>
     <FluentAssertionsVersion>6.7.0</FluentAssertionsVersion>
 
     <!-- Versions that are used when building projects from TestAssets.sln for compatibility tests. See Invoke-TestAssetsBuild in scripts/build.ps1.

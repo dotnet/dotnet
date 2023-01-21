@@ -48,11 +48,10 @@ public class IntegrationTestBase
     private readonly string _testAdapterRelativePath = @"mstest.testadapter\{0}\build\_common".Replace('\\', Path.DirectorySeparatorChar);
     private readonly string _nUnitTestAdapterRelativePath = @"nunit3testadapter\{0}\build".Replace('\\', Path.DirectorySeparatorChar);
     private readonly string _xUnitTestAdapterRelativePath = @"xunit.runner.visualstudio\{0}\build\_common".Replace('\\', Path.DirectorySeparatorChar);
-    private readonly string _chutzpahTestAdapterRelativePath = @"chutzpah\{0}\tools".Replace('\\', Path.DirectorySeparatorChar);
 
     public enum UnitTestFramework
     {
-        NUnit, XUnit, MSTest, CPP, Chutzpah
+        NUnit, XUnit, MSTest, CPP, NonDll
     }
 
     public IntegrationTestBase()
@@ -574,6 +573,12 @@ public class IntegrationTestBase
 
     protected string GetTestAdapterPath(UnitTestFramework testFramework = UnitTestFramework.MSTest)
     {
+        if (testFramework == UnitTestFramework.NonDll)
+        {
+            var dllPath = _testEnvironment.GetTestAsset("NonDll.TestAdapter.dll", "netstandard2.0");
+            return Path.GetDirectoryName(dllPath)!;
+        }
+
         string adapterRelativePath = string.Empty;
 
         if (testFramework == UnitTestFramework.MSTest)
@@ -587,10 +592,6 @@ public class IntegrationTestBase
         else if (testFramework == UnitTestFramework.XUnit)
         {
             adapterRelativePath = string.Format(CultureInfo.InvariantCulture, _xUnitTestAdapterRelativePath, IntegrationTestEnvironment.DependencyVersions["XUnitAdapterVersion"]);
-        }
-        else if (testFramework == UnitTestFramework.Chutzpah)
-        {
-            adapterRelativePath = string.Format(CultureInfo.InvariantCulture, _chutzpahTestAdapterRelativePath, IntegrationTestEnvironment.DependencyVersions["ChutzpahAdapterVersion"]);
         }
 
         return _testEnvironment.GetNugetPackage(adapterRelativePath);
