@@ -7,10 +7,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using Microsoft.DotNet.Build.Tasks.Workloads.Wix;
-using NuGet.Versioning;
 
 namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
 {
@@ -33,7 +33,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
 \par
 }";
         /// <summary>
-        /// The UUID namesapce to use for generating an upgrade code.
+        /// The UUID namespace to use for generating an upgrade code.
         /// </summary>
         internal static readonly Guid UpgradeCodeNamespaceUuid = Guid.Parse("C743F81B-B3B5-4E77-9F6D-474EFF3A722C");
 
@@ -41,6 +41,14 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         /// Metadata for the MSI such as package ID, version, author information, etc.
         /// </summary>
         public MsiMetadata Metadata
+        {
+            get;
+        }
+
+        /// <summary>
+        /// The filename of the MSI. The name excludes the platform identifier and extension.
+        /// </summary>
+        protected abstract string BaseOutputName
         {
             get;
         }
@@ -71,7 +79,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         /// </summary>
         protected string Manufacturer =>
             (!string.IsNullOrWhiteSpace(Metadata.Authors) && (Metadata.Authors.IndexOf("Microsoft", StringComparison.OrdinalIgnoreCase) < 0)) ?
-            Metadata.Authors : 
+            Metadata.Authors :
             DefaultValues.Manufacturer;
 
         /// <summary>
@@ -81,6 +89,11 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         {
             get;
         }
+
+        /// <summary>
+        /// The filename of the MSI file to generate.
+        /// </summary>
+        protected string OutputName => $"{Utils.GetHash(BaseOutputName, HashAlgorithmName.MD5)}-{Platform}.msi";
 
         /// <summary>
         /// The directory where the WiX source code will be generated.
@@ -100,7 +113,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
 
         public Dictionary<string, string> NuGetPackageFiles { get; set; } = new();
 
-        public MsiBase(MsiMetadata metadata, IBuildEngine buildEngine, string wixToolsetPath, 
+        public MsiBase(MsiMetadata metadata, IBuildEngine buildEngine, string wixToolsetPath,
             string platform, string baseIntermediateOutputPath)
         {
             BuildEngine = buildEngine;

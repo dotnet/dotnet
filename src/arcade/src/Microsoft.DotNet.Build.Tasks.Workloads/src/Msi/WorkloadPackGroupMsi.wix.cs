@@ -5,8 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 using Microsoft.Build.Framework;
 using Microsoft.DotNet.Build.Tasks.Workloads.Wix;
@@ -17,6 +15,9 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
     internal class WorkloadPackGroupMsi : MsiBase
     {
         WorkloadPackGroupPackage _package;
+
+        /// <inheritdoc />
+        protected override string BaseOutputName => Metadata.Id;
 
         public WorkloadPackGroupMsi(WorkloadPackGroupPackage package, string platform, IBuildEngine buildEngine, string wixToolsetPath,
             string baseIntermediatOutputPath)
@@ -139,14 +140,13 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
                 throw new Exception(Strings.FailedToCompileMsi);
             }
 
-            string msiFileName = Path.Combine(outputPath, Metadata.Id + $"-{Platform}.msi");
+            string msiFileName = Path.Combine(outputPath, OutputName);
 
             ITaskItem msi = Link(candle.OutputPath, msiFileName, iceSuppressions);
 
             AddDefaultPackageFiles(msi);
 
             return msi;
-
         }
 
         class MsiDirectory

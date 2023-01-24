@@ -28,13 +28,13 @@
 
 
   <!-- TemplateLocalizer for localizing 'dotnet new' templates -->
-  <PropertyGroup Condition="'$(UsingToolTemplateLocalizer)' == 'true'">
+  <PropertyGroup Condition="'$(UsingToolTemplateLocalizer)' == 'true' AND '$(DotNetBuildFromSource)' != 'true'">
     <!-- Run localizer when building on dev machine. -->
     <LocalizeTemplates Condition="'$(ContinuousIntegrationBuild)' != 'true'">true</LocalizeTemplates>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.TemplateEngine.Authoring.Tasks" Version="$(MicrosoftTemplateEngineAuthoringTasksVersion)" PrivateAssets="all" IsImplicitlyDefined="true" Condition="'$(UsingToolTemplateLocalizer)' == 'true'" />
+    <PackageReference Include="Microsoft.TemplateEngine.Authoring.Tasks" Version="$(MicrosoftTemplateEngineAuthoringTasksVersion)" PrivateAssets="all" IsImplicitlyDefined="true" Condition="'$(UsingToolTemplateLocalizer)' == 'true' AND '$(DotNetBuildFromSource)' != 'true'" />
   </ItemGroup>
 
 </Project>

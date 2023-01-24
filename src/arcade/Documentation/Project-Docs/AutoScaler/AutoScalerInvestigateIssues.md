@@ -81,8 +81,8 @@ The autoscaler is not the only service that logs data on that App Insights, so y
 When looking for an error starting with the exceptions can give information faster, in most cases, you are going to need information about ProcessAutoScaleService and AutoScaleActorService having a query like the following one:
 
 	exceptions
-	| where cloud_RoleName == "fabric:/CustomAutoScale ProcessAutoScaleService"
-	or cloud_RoleName == "fabric:/CustomAutoScale/AutoScaleActorService"
+	| where cloud_RoleName == "fabric:/Helix/ProcessAutoScaleService"
+	or cloud_RoleName == "fabric:/Helix/AutoScaleActorService"
 	| sort by timestamp desc
 
 Remember to always use `Time range` to limit the information as much as you can.

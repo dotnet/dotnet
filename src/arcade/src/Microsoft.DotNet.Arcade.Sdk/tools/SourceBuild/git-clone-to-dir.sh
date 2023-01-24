@@ -124,12 +124,14 @@ fi
       # * '--no-local' allows a shallow clone from a git dir on the same filesystem. This means the
       #   clone will not use hard links and takes up more space. However, since we're doing a shallow
       #   clone anyway, the difference is probably not significant. (This has not been measured.)
-      git clone --depth=1 --no-local --no-checkout "$sourceDir" "$destDir"
+      # * '-c protocol.file.allow=alwyas allows cloning from the local filesystem even on newer versions
+      #   of git which have disabled this for security reasons.
+      git clone -c protocol.file.allow=always --depth=1 --no-local --no-checkout "$sourceDir" "$destDir"
 
       # Put the 'shallow' file back so operations on the outer Git repo continue to work normally.
       printf "%s" "$shallowContent" > "$shallowFile"
     else
-      git clone --no-checkout "$sourceDir" "$destDir"
+      git clone -c protocol.file.allow=always --no-checkout "$sourceDir" "$destDir"
     fi
 
     (

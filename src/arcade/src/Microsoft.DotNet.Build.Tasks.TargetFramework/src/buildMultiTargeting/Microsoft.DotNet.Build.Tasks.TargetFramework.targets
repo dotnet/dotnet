@@ -26,16 +26,20 @@
   </Target>
   
   <Target Name="GetProjectWithBestTargetFrameworks">
-    <ItemGroup Condition="'$(BuildTargetFramework)' != ''">
-      <_BuildTargetFrameworkWithTargetOS Include="$(BuildTargetFramework)-$(TargetOS.ToLowerInvariant())" />
+    <ItemGroup>
+      <_BuildTargetFramework Include="$(BuildTargetFramework)"
+                             Condition="'$(BuildTargetFramework)' != ''" />
+      <_BuildTargetFramework Include="$([MSBuild]::Unescape($([System.Text.RegularExpressions.Regex]::Replace('$(TargetFrameworks)', '(-[^;]+)', ''))))"
+                             Condition="'$(BuildTargetFramework)' == ''" />
     </ItemGroup>
-    <ItemGroup Condition="'$(BuildTargetFramework)' == ''">
-      <_BuildTargetFrameworkWithoutOS Include="$([MSBuild]::Unescape($([System.Text.RegularExpressions.Regex]::Replace('$(TargetFrameworks)', '(-[^;]+)', ''))))" />
-      <!-- TODO: Find a better way to filter out non applicable TargetOS values for .NET Framework. -->
-      <_BuildTargetFrameworkWithTargetOS Include="@(_BuildTargetFrameworkWithoutOS->Distinct()->'%(Identity)-$(TargetOS.ToLowerInvariant())')"
-                                         Condition="'$(TargetOS)' == 'windows' or !$([System.String]::Copy('%(Identity)').StartsWith('net4'))" />
+
+    <ItemGroup>
+      <_BuildTargetFrameworkWithTargetOS Include="@(_BuildTargetFramework->Distinct()->'%(Identity)-$(TargetOS)')"
+                                         Condition="!$([System.String]::Copy('%(Identity)').StartsWith('net4'))" />
+      <_BuildTargetFrameworkWithTargetOS Include="@(_BuildTargetFramework->Distinct())"
+                                         Condition="$([System.String]::Copy('%(Identity)').StartsWith('net4'))" />
     </ItemGroup>
-    
+
     <ChooseBestTargetFrameworksTask BuildTargetFrameworks="@(_BuildTargetFrameworkWithTargetOS);$(AdditionalBuildTargetFrameworks)"
                                     SupportedTargetFrameworks="$(TargetFrameworks)"
                                     RuntimeGraph="$(BundledRuntimeIdentifierGraphFile)"

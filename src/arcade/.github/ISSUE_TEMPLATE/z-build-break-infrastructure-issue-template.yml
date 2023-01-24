@@ -39,7 +39,9 @@ body:
          ```json
          {
             "ErrorMessage" : "",
-            "BuildRetry": false
+            "BuildRetry": false,
+            "ErrorPattern": "",
+            "ExcludeConsoleLog": false
          }
          ```
 
