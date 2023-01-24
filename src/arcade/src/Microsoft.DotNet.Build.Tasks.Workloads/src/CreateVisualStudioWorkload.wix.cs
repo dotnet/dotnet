@@ -195,7 +195,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
                 // TODO: trim out duplicate manifests.
                 List<WorkloadManifestPackage> manifestPackages = new();
                 List<WorkloadManifestMsi> manifestMsisToBuild = new();
-                List<SwixComponent> swixComponents = new();
+                HashSet<SwixComponent> swixComponents = new();
                 Dictionary<string, BuildData> buildData = new();
                 Dictionary<string, WorkloadPackGroupPackage> packGroupPackages = new();
 
@@ -358,6 +358,14 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
                             // Finally, add a component for the workload in Visual Studio.
                             SwixComponent component = SwixComponent.Create(manifestPackage.SdkFeatureBand, workload, manifest, packGroupId,
                                 ComponentResources, ShortNames);
+
+                            // Check for duplicates, e.g. manifests that were copied without changing workload definition IDs and
+                            // provide a more usable error message so users can track down the duplication.
+                            if (swixComponents.Contains(component))
+                            {
+                                Log.LogError($"Duplicate workload ID: {workload.Id}. A SWIX component with the same workload ID already exists.");
+                            }
+
                             swixComponents.Add(component);
                         }
                     }

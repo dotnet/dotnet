@@ -2,12 +2,12 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Text;
 using System.IO;
 using System.Security.Cryptography;
+using System.Text;
 using Microsoft.Build.Framework;
-using Microsoft.DotNet.Build.Tasks.Workloads.Msi;
 using Microsoft.Deployment.DotNet.Releases;
+using Microsoft.DotNet.Build.Tasks.Workloads.Msi;
 
 namespace Microsoft.DotNet.Build.Tasks.Workloads.Swix
 {
@@ -87,7 +87,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Swix
             // For drop publishing all the JSON manifests and payloads must reside in the same folder so we shorten the project names
             // and use a hashed filename to avoid path too long errors.
             string hashInputs = $"{Id},{Version.ToString(3)},{sdkFeatureBand},{Platform},{Chip},{machineArch}";
-            ProjectFile = $"{Utils.GetHash(hashInputs, HashAlgorithmName.MD5)}.swixproj"; // lgtm [cs/weak-crypto] Hash algorithm used only for determining file uniqueness
+            ProjectFile = $"{Utils.GetHash(hashInputs, HashAlgorithmName.MD5)}.swixproj";
 
             ReplacementTokens[SwixTokens.__VS_PAYLOAD_SOURCE__] = msi.GetMetadata(Metadata.FullPath);
         }

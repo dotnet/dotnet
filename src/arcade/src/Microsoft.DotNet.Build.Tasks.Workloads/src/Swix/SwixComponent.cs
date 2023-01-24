@@ -152,6 +152,17 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Swix
             _dependencies.Add(new SwixDependency($"{pack.Id.ToString().Replace(ShortNames)}.{pack.Version}", new NuGetVersion(pack.Version).Version, maxVersion: null));
         }
 
+        /// <inheritdoc/>
+        public override int GetHashCode() => Name.GetHashCode();
+
+        /// <inheritdoc/>
+        public override bool Equals(object? obj)
+        {
+            SwixComponent? c = obj as SwixComponent;
+
+            return c != null && c.Name.Equals(Name);
+        }
+
         /// <summary>
         /// Creates a SWIX component representing a workload definition.
         /// </summary>

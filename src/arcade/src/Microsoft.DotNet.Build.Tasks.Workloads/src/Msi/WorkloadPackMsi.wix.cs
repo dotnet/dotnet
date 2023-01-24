@@ -5,7 +5,6 @@
 
 using System;
 using System.IO;
-using System.IO.Packaging;
 using Microsoft.Build.Framework;
 using Microsoft.DotNet.Build.Tasks.Workloads.Wix;
 using Microsoft.NET.Sdk.WorkloadManifestReader;
@@ -15,6 +14,9 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
     internal class WorkloadPackMsi : MsiBase
     {
         private WorkloadPackPackage _package;
+
+        /// <inheritdoc />
+        protected override string BaseOutputName => _package.ShortName;
 
         public WorkloadPackMsi(WorkloadPackPackage package, string platform, IBuildEngine buildEngine, string wixToolsetPath,
             string baseIntermediatOutputPath) :
@@ -72,9 +74,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
                 throw new Exception(Strings.FailedToCompileMsi);
             }
 
-            ITaskItem msi = Link(candle.OutputPath,
-                Path.Combine(outputPath, _package.ShortName + $"-{Platform}.msi"),
-                iceSuppressions);
+            ITaskItem msi = Link(candle.OutputPath, Path.Combine(outputPath, OutputName), iceSuppressions);
 
             AddDefaultPackageFiles(msi);
 

@@ -46,6 +46,11 @@ namespace Microsoft.DotNet.RemoteExecutor
 
         static RemoteExecutor()
         {
+            if (!IsSupported)
+            {
+                return;
+            }
+
             string processFileName = Process.GetCurrentProcess().MainModule?.FileName;
             if (processFileName == null)
             {

@@ -42,7 +42,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             // Generated MSI should return the path where the .wixobj files are located so
             // WiX packs can be created for post-build signing.
             Assert.NotNull(item.GetMetadata(Metadata.WixObj));
-        }       
+        }
 
         [WindowsOnlyFact]
         public void ItCanBuildATemplatePackMsi()

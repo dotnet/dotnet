@@ -27,9 +27,11 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
 
         public List<WorkloadPackGroupJson> WorkloadPackGroups { get; } = new();
 
+        /// <inheritdoc />
+        protected override string BaseOutputName => Path.GetFileNameWithoutExtension(Package.PackagePath);
 
         public WorkloadManifestMsi(WorkloadManifestPackage package, string platform, IBuildEngine buildEngine, string wixToolsetPath,
-            string baseIntermediateOutputPath) : 
+            string baseIntermediateOutputPath) :
             base(MsiMetadata.Create(package), buildEngine, wixToolsetPath, platform, baseIntermediateOutputPath)
         {
             Package = package;
@@ -136,15 +138,12 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
                 throw new Exception(Strings.FailedToCompileMsi);
             }
 
-            ITaskItem msi = Link(candle.OutputPath, 
-                Path.Combine(outputPath, Path.GetFileNameWithoutExtension(Package.PackagePath) + $"-{Platform}.msi"),
-                iceSuppressions);
+            ITaskItem msi = Link(candle.OutputPath, Path.Combine(outputPath, OutputName), iceSuppressions);
 
             AddDefaultPackageFiles(msi);
-                        
+
             return msi;
         }
-
 
         public class WorkloadPackGroupJson
         {
