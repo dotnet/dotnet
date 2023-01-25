@@ -24,7 +24,6 @@ Some of these tasks of nearly identical behavior but just use different names. S
 
  - `GenerateFileFromTemplate` / `ReplaceFileContents` / `PreprocessFile`
  - `SetEnvVar` / `SetEnvironmentVariable`
- - `ExecWithRetriesForNuGetPush` / `PushNuGetPackages`
  - `UnzipArchive` / `ZipFileExtractToDirectory`
 
 ## Usage

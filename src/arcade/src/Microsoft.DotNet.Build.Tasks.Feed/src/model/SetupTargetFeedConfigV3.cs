@@ -164,8 +164,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                         continue;
                     }
                     var feedType = feed.StartsWith("https://pkgs.dev.azure.com")
-                        ? FeedType.AzDoNugetFeed
-                        : (sasUri != null ? FeedType.AzureStorageContainer : FeedType.AzureStorageFeed);
+                        ? FeedType.AzDoNugetFeed : FeedType.AzureStorageContainer;
                     yield return new TargetFeedConfig(
                         type,
                         sasUri ?? feed,

@@ -144,7 +144,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                         new TargetFeedConfig(
                             contentType,
                             PublishingConstants.FeedStagingForInstallers,
-                            FeedType.AzureStorageFeed,
+                            FeedType.AzureStorageContainer,
                             InstallersTargetStaticFeedKey,
                             latestLinkShortUrlPrefixes: new List<string>() { $"{LatestLinkShortUrlPrefix}/{BuildQuality}" },
                             assetSelection: AssetSelection.All,
@@ -158,7 +158,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                     new TargetFeedConfig(
                         TargetFeedContentType.Checksum,
                         PublishingConstants.FeedStagingForChecksums,
-                        FeedType.AzureStorageFeed,
+                        FeedType.AzureStorageContainer,
                         ChecksumsTargetStaticFeedKey,
                         latestLinkShortUrlPrefixes: new List<string>() { $"{LatestLinkShortUrlPrefix}/{BuildQuality}" },
                         assetSelection: AssetSelection.All,
@@ -236,7 +236,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                         new TargetFeedConfig(
                             contentType,
                             PublishingConstants.FeedStagingForInstallers,
-                            FeedType.AzureStorageFeed,
+                            FeedType.AzureStorageContainer,
                             InstallersTargetStaticFeedKey,
                             latestLinkShortUrlPrefixes: new List<string>() { $"{LatestLinkShortUrlPrefix}/{BuildQuality}" },
                             assetSelection: AssetSelection.All,
@@ -251,7 +251,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                     new TargetFeedConfig(
                         TargetFeedContentType.Checksum,
                         PublishingConstants.FeedStagingForChecksums,
-                        FeedType.AzureStorageFeed,
+                        FeedType.AzureStorageContainer,
                         ChecksumsTargetStaticFeedKey,
                         latestLinkShortUrlPrefixes: new List<string>() { $"{LatestLinkShortUrlPrefix}/{BuildQuality}" },
                         assetSelection: AssetSelection.All,
@@ -268,7 +268,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                     new TargetFeedConfig(
                         TargetFeedContentType.Symbols,
                         PublishingConstants.FeedStagingForInstallers,
-                        FeedType.AzureStorageFeed,
+                        FeedType.AzureStorageContainer,
                         InstallersTargetStaticFeedKey,
                         latestLinkShortUrlPrefixes: new List<string>() { $"{LatestLinkShortUrlPrefix}/{BuildQuality}" },
                         assetSelection: AssetSelection.All,
@@ -345,7 +345,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                         new TargetFeedConfig(
                             contentType,
                             PublishingConstants.FeedStagingForInstallers,
-                            FeedType.AzureStorageFeed,
+                            FeedType.AzureStorageContainer,
                             InstallersTargetStaticFeedKey,
                             latestLinkShortUrlPrefixes: new List<string>() { $"{LatestLinkShortUrlPrefix}/{BuildQuality}" },
                             assetSelection: AssetSelection.All,
@@ -360,7 +360,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                     new TargetFeedConfig(
                         TargetFeedContentType.Checksum,
                         PublishingConstants.FeedStagingForChecksums,
-                        FeedType.AzureStorageFeed,
+                        FeedType.AzureStorageContainer,
                         ChecksumsTargetStaticFeedKey,
                         latestLinkShortUrlPrefixes: new List<string>() { $"{LatestLinkShortUrlPrefix}/{BuildQuality}" },
                         assetSelection: AssetSelection.All,
@@ -376,7 +376,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                     new TargetFeedConfig(
                         TargetFeedContentType.Symbols,
                         PublishingConstants.FeedStagingForInstallers,
-                        FeedType.AzureStorageFeed,
+                        FeedType.AzureStorageContainer,
                         InstallersTargetStaticFeedKey,
                         latestLinkShortUrlPrefixes: new List<string>() { $"{LatestLinkShortUrlPrefix}/{BuildQuality}" },
                         assetSelection: AssetSelection.All,

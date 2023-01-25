@@ -95,7 +95,11 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             {
                 Log.LogMessage(MessageImportance.High, "Performing feed push...");
 
-                if (ItemsToPush == null)
+                if (!PublishFlatContainer)
+                {
+                    Log.LogError($"Blob feeds are no longer supported. PublishFlatContainer == false no longer supported.");
+                }
+                else if (ItemsToPush == null)
                 {
                     Log.LogError($"No items to push. Please check ItemGroup ItemsToPush.");
                 }
@@ -129,52 +133,16 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 };
 
                 IEnumerable<BlobArtifactModel> blobArtifacts = Enumerable.Empty<BlobArtifactModel>();
-                IEnumerable<PackageArtifactModel> packageArtifacts = Enumerable.Empty<PackageArtifactModel>();
 
                 if (!SkipCreateContainer)
                 {
-                    await blobFeedAction.CreateContainerAsync(BuildEngine, PublishFlatContainer);
+                    await blobFeedAction.CreateContainerAsync(BuildEngine);
                 }
 
-                if (PublishFlatContainer)
-                {
-                    await blobFeedAction.PublishToFlatContainerAsync(ItemsToPush, 
-                        MaxClients, 
-                        pushOptions);
-                    blobArtifacts = ConcatBlobArtifacts(blobArtifacts, ItemsToPush);
-                }
-                else
-                {
-                    ITaskItem[] symbolItems = ItemsToPush
-                        .Where(i => i.ItemSpec.Contains("symbols.nupkg"))
-                        .Select(i =>
-                        {
-                            string fileName = Path.GetFileName(i.ItemSpec);
-                            i.SetMetadata("RelativeBlobPath", $"{AssetsVirtualDir}symbols/{fileName}");
-                            return i;
-                        })
-                        .ToArray();
-
-                    ITaskItem[] packageItems = ItemsToPush
-                        .Where(i => !symbolItems.Contains(i))
-                        .ToArray();
-
-                    var packagePaths = packageItems.Select(i => i.ItemSpec);
-
-                    if(!blobFeedAction.PushToFeedAsync(packagePaths, pushOptions).Result)
-                    {
-                        return !Log.HasLoggedErrors;
-                    }
-
-                    await blobFeedAction.PublishToFlatContainerAsync(symbolItems, MaxClients, pushOptions);
-                    if (Log.HasLoggedErrors)
-                    {
-                        return !Log.HasLoggedErrors;
-                    }
-
-                    packageArtifacts = ConcatPackageArtifacts(packageArtifacts, packageItems);
-                    blobArtifacts = ConcatBlobArtifacts(blobArtifacts, symbolItems);
-                }
+                await blobFeedAction.PublishToFlatContainerAsync(ItemsToPush, 
+                    MaxClients, 
+                    pushOptions);
+                blobArtifacts = ConcatBlobArtifacts(blobArtifacts, ItemsToPush);
 
                 if (!(MSBuildListSplitter.GetNamedProperties(ManifestBuildData).ContainsKey("Location") || 
                     MSBuildListSplitter.GetNamedProperties(ManifestBuildData).ContainsKey("InitialAssetsLocation")))
@@ -185,7 +153,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
                 _buildModelFactory.CreateBuildManifest(
                     blobArtifacts,
-                    packageArtifacts,
+                    Enumerable.Empty<PackageArtifactModel>(),
                     AssetManifestPath,
                     ManifestRepoUri,
                     ManifestBuildId,

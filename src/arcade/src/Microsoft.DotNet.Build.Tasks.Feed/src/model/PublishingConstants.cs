@@ -9,23 +9,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
 {
     public class PublishingConstants
     {
-        public static readonly string LegacyDotNetBlobFeedURL = "https://dotnetfeed.blob.core.windows.net/dotnet-core/index.json";
         public static readonly string ExpectedFeedUrlSuffix = "index.json";
-
-        // Matches package feeds like
-        // https://dotnet-feed-internal.azurewebsites.net/container/dotnet-core-internal/sig/dsdfasdfasdf234234s/se/2020-02-02/darc-int-dotnet-arcade-services-babababababe-08/index.json
-        public static readonly string AzureStorageProxyFeedPattern =
-            @"(?<feedURL>https://([a-z-]+).azurewebsites.net/container/(?<container>[^/]+)/sig/\w+/se/([0-9]{4}-[0-9]{2}-[0-9]{2})/(?<baseFeedName>darc-(?<type>int|pub)-(?<repository>.+?)-(?<sha>[A-Fa-f0-9]{7,40})-?(?<subversion>\d*)/))index.json";
-
-        // Matches package feeds like the one below. Special case for static internal proxy-backed feed
-        // https://dotnet-feed-internal.azurewebsites.net/container/dotnet-core-internal/sig/dsdfasdfasdf234234s/se/2020-02-02/darc-int-dotnet-arcade-services-babababababe-08/index.json
-        public static readonly string AzureStorageProxyFeedStaticPattern =
-            @"(?<feedURL>https://([a-z-]+).azurewebsites.net/container/(?<container>[^/]+)/sig/\w+/se/([0-9]{4}-[0-9]{2}-[0-9]{2})/(?<baseFeedName>[^/]+/))index.json";
-
-        // Matches package feeds like
-        // https://dotnetfeed.blob.core.windows.net/dotnet-core/index.json
-        public static readonly string AzureStorageStaticBlobFeedPattern =
-            @"https://([a-z-]+).blob.core.windows.net/[^/]+/index.json";
 
         // Matches package feeds like
         // https://pkgs.dev.azure.com/dnceng/public/_packaging/public-feed-name/nuget/v3/index.json

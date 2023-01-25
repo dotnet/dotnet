@@ -31,7 +31,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             feedConfigsForSymbols.Add(new TargetFeedConfig(
                 TargetFeedContentType.Symbols,
                 "TargetUrl",
-                FeedType.AzureStorageFeed,
+                FeedType.AzDoNugetFeed,
                 MsdlToken,
                 new List<string>(),
                 AssetSelection.All,
@@ -54,7 +54,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             feedConfigsForSymbols.Add(new TargetFeedConfig(
                 TargetFeedContentType.Symbols,
                 "testUrl",
-                FeedType.AzureStorageFeed,
+                FeedType.AzDoNugetFeed,
                 SymWebToken,
                 new List<string>(),
                 AssetSelection.All,
@@ -119,7 +119,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             feedConfigsForSymbols.Add(new TargetFeedConfig(
                 TargetFeedContentType.Symbols,
                 TargetUrl,
-                FeedType.AzureStorageFeed,
+                FeedType.AzDoNugetFeed,
                 SymWebToken,
                 new List<string>(),
                 AssetSelection.All,

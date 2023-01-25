@@ -54,7 +54,6 @@
     <NuGetVersioningVersion>4.4.0</NuGetVersioningVersion>
     <NuGetVersion>6.2.2</NuGetVersion>
     <OctokitVersion>0.32.0</OctokitVersion>
-    <DotNetSleetLibVersion>2.2.143</DotNetSleetLibVersion>
     <SwashbuckleAspNetCoreSwaggerVersion>3.0.0</SwashbuckleAspNetCoreSwaggerVersion>
     <SystemBuffersVersion>4.5.1</SystemBuffersVersion>
     <SystemCollectionsImmutableVersion>1.5.0</SystemCollectionsImmutableVersion>

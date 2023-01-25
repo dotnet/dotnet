@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
   <ProductDependencies>
+  </ProductDependencies>
+  <ToolsetDependencies>
     <Dependency Name="Microsoft.SymbolUploader.Build.Task" Version="2.0.0-preview.1.21526.15">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-symuploader</Uri>
       <Sha>62ceb439e80bf0814d0ffa17f022d4624ea4aa6c</Sha>
@@ -13,8 +15,6 @@
       <Uri>https://github.com/dotnet/templating</Uri>
       <Sha>e8dfaedd3447147d191dd5a2a132e1c0b6cc507c</Sha>
     </Dependency>
-  </ProductDependencies>
-  <ToolsetDependencies>
     <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.23073.10">
       <Uri>https://github.com/dotnet/arcade</Uri>
       <Sha>083fc0406279952794c853630a08a141eef7244f</Sha>
@@ -75,6 +75,10 @@
     <Dependency Name="Microsoft.DotNet.XliffTasks" Version="1.0.0-beta.23073.2">
       <Uri>https://github.com/dotnet/xliff-tasks</Uri>
       <Sha>ee48da80a3094f5273480398268095bfa973840b</Sha>
+    </Dependency>
+    <Dependency Name="NuGet.Packaging" Version="6.2.2">
+      <Uri>https://github.com/NuGet/NuGet.Client</Uri>
+      <Sha>027ca8b8ef4b4dc94995f87b9c441d2bcf742c1d</Sha>
     </Dependency>
   </ToolsetDependencies>
 </Dependencies>
