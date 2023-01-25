@@ -18,12 +18,14 @@ namespace Microsoft.DotNet.Helix.Client
             string file,
             string id,
             string job,
+            bool? latestOnly = default,
             CancellationToken cancellationToken = default
         );
 
         Task<IImmutableList<Models.UploadedFile>> ListFilesAsync(
             string id,
             string job,
+            bool? latestOnly = default,
             CancellationToken cancellationToken = default
         );
 
@@ -63,6 +65,7 @@ namespace Microsoft.DotNet.Helix.Client
             string file,
             string id,
             string job,
+            bool? latestOnly = default,
             CancellationToken cancellationToken = default
         )
         {
@@ -91,6 +94,10 @@ namespace Microsoft.DotNet.Helix.Client
                 "/api/jobs/{job}/workitems/{id}/files/{file}".Replace("{job}", Uri.EscapeDataString(Client.Serialize(job))).Replace("{id}", Uri.EscapeDataString(Client.Serialize(id))).Replace("{file}", Uri.EscapeDataString(Client.Serialize(file))),
                 false);
 
+            if (latestOnly != default(bool?))
+            {
+                _url.AppendQuery("latestOnly", Client.Serialize(latestOnly));
+            }
             _url.AppendQuery("api-version", Client.Serialize(apiVersion));
 
 
@@ -144,6 +151,7 @@ namespace Microsoft.DotNet.Helix.Client
         public async Task<IImmutableList<Models.UploadedFile>> ListFilesAsync(
             string id,
             string job,
+            bool? latestOnly = default,
             CancellationToken cancellationToken = default
         )
         {
@@ -167,6 +175,10 @@ namespace Microsoft.DotNet.Helix.Client
                 "/api/jobs/{job}/workitems/{id}/files".Replace("{job}", Uri.EscapeDataString(Client.Serialize(job))).Replace("{id}", Uri.EscapeDataString(Client.Serialize(id))),
                 false);
 
+            if (latestOnly != default(bool?))
+            {
+                _url.AppendQuery("latestOnly", Client.Serialize(latestOnly));
+            }
             _url.AppendQuery("api-version", Client.Serialize(apiVersion));
 
 
