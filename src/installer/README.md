@@ -360,5 +360,6 @@ For all feedback, use the Issues on the [.NET SDK](https://github.com/dotnet/sdk
 License
 -------
 
-By downloading the .zip you are agreeing to the terms in the project [EULA](https://aka.ms/dotnet-core-eula).
+The .NET project uses the [MIT license](LICENSE).
 
+The LICENSE and ThirdPartyNotices in any downloaded archives are authoritative.
