@@ -15,13 +15,19 @@ Our documentation is now live on GitHub Pages at
 https://google.github.io/googletest/. We recommend browsing the documentation on
 GitHub Pages rather than directly in the repository.
 
-#### Release 1.12.1
+#### Release 1.13.0
 
-[Release 1.12.1](https://github.com/google/googletest/releases/tag/release-1.12.1)
-is now available.
+[Release 1.13.0](https://github.com/google/googletest/releases/tag/v1.13.0) is
+now available.
 
-The 1.12.x branch will be the last to support C++11. Future releases will
-require at least C++14.
+The 1.13.x branch requires at least C++14.
+
+#### Continuous Integration
+
+We use Google's internal systems for continuous integration. \
+GitHub Actions were added for the convenience of open source contributors. They
+are exclusively maintained by the open source community and not used by the
+GoogleTest team.
 
 #### Coming Soon
 
