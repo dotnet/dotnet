@@ -45,17 +45,11 @@
     <_MicrosoftDotNetBuildTasksFeedTaskDir>$(MSBuildThisFileDirectory)../tools/net472/</_MicrosoftDotNetBuildTasksFeedTaskDir>
     <_MicrosoftDotNetBuildTasksFeedTaskDir Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)../tools/net8.0/</_MicrosoftDotNetBuildTasksFeedTaskDir>
   </PropertyGroup>
-  <UsingTask TaskName="ConfigureInputFeeds" AssemblyFile="$(_MicrosoftDotNetBuildTasksFeedTaskDir)Microsoft.DotNet.Build.Tasks.Feed.dll"/>
-  <UsingTask TaskName="CopyBlobDirectory" AssemblyFile="$(_MicrosoftDotNetBuildTasksFeedTaskDir)Microsoft.DotNet.Build.Tasks.Feed.dll"/>
-  <UsingTask TaskName="GetBlobFeedPackageList" AssemblyFile="$(_MicrosoftDotNetBuildTasksFeedTaskDir)Microsoft.DotNet.Build.Tasks.Feed.dll"/>
-  <UsingTask TaskName="ParseBlobUrl" AssemblyFile="$(_MicrosoftDotNetBuildTasksFeedTaskDir)Microsoft.DotNet.Build.Tasks.Feed.dll"/>
+
   <UsingTask TaskName="PushToBlobFeed" AssemblyFile="$(_MicrosoftDotNetBuildTasksFeedTaskDir)Microsoft.DotNet.Build.Tasks.Feed.dll"/>
   <UsingTask TaskName="PushToAzureDevOpsArtifacts" AssemblyFile="$(_MicrosoftDotNetBuildTasksFeedTaskDir)Microsoft.DotNet.Build.Tasks.Feed.dll"/>
   <UsingTask TaskName="PublishArtifactsInManifest" AssemblyFile="$(_MicrosoftDotNetBuildTasksFeedTaskDir)Microsoft.DotNet.Build.Tasks.Feed.dll"/>
   <UsingTask TaskName="CreateAzureDevOpsFeed" AssemblyFile="$(_MicrosoftDotNetBuildTasksFeedTaskDir)Microsoft.DotNet.Build.Tasks.Feed.dll" />
-  <UsingTask TaskName="CreateAzureStorageBlobFeed" AssemblyFile="$(_MicrosoftDotNetBuildTasksFeedTaskDir)Microsoft.DotNet.Build.Tasks.Feed.dll" />
-  <UsingTask TaskName="ExecWithRetriesForNuGetPush" AssemblyFile="$(_MicrosoftDotNetBuildTasksFeedTaskDir)Microsoft.DotNet.Build.Tasks.Feed.dll" />
-  <UsingTask TaskName="ParseBuildManifest" AssemblyFile="$(_MicrosoftDotNetBuildTasksFeedTaskDir)Microsoft.DotNet.Build.Tasks.Feed.dll" />
   <UsingTask TaskName="PublishSignedAssets" AssemblyFile="$(_MicrosoftDotNetBuildTasksFeedTaskDir)Microsoft.DotNet.Build.Tasks.Feed.dll" />
   
   <PropertyGroup>
@@ -65,33 +59,6 @@
     <FileRelativePathBase Condition="!HasTrailingSlash('$(FileRelativePathBase)')">$(FileRelativePathBase)/</FileRelativePathBase>
     <ManifestName Condition="'$(ManifestName)' == ''">$(GitHubRepositoryName)</ManifestName>
   </PropertyGroup>
-
-  <Target Name="PublishPackagesToBlobFeed" DependsOnTargets="@(PublishPackagesToBlobFeedDependsOn)" >
-    <Error Text="The ExpectedFeedUrl property wasn't supplied."
-          Condition="'$(ExpectedFeedUrl)' == ''" />
-    <Error Text="The AccountKey property wasn't supplied."
-          Condition="'$(AccountKey)' == ''" />
-
-    <ItemGroup>
-      <_ItemsToPush Remove="@(_ItemsToPush)" />
-      <_ItemsToPush Condition="'$(PackagesToPublishPattern)' != ''" Include="$(PackagesToPublishPattern)" />
-      <_ItemsToPush Include="@(PackagesToPublish)" />
-    </ItemGroup>
-
-    <Error Condition="'@(_ItemsToPush)' == ''" Text="No packages to push." />
-
-    <PushToBlobFeed ExpectedFeedUrl="$(ExpectedFeedUrl)"
-                    AccountKey="$(AccountKey)"
-                    ItemsToPush="@(_ItemsToPush)"
-                    Overwrite="$(PushToBlobFeed_Overwrite)"
-                    MaxClients="$(PushToBlobFeed_MaxClients)"
-                    ManifestBuildId="$(ManifestBuildId)"
-                    ManifestBranch="$(ManifestBranch)"
-                    ManifestCommit="$(ManifestCommit)"
-                    ManifestBuildData="$(ManifestBuildData)"
-                    ManifestRepoUri="$(ManifestRepoUri)"
-                    AssetManifestPath="$(AssetManifestFilePath)" />
-  </Target>
 
   <Target Name="PublishFilesToBlobFeed">
     <Error Text="The ExpectedFeedUrl property wasn't supplied."

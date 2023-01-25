@@ -23,9 +23,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             {
                 case FeedType.AzDoNugetFeed:
                     return new AzureDevOpsNugetFeedAssetPublisher(_log, feedConfig.TargetURL, feedConfig.Token, task);
-                case FeedType.AzureStorageFeed:
-                    var action = new BlobFeedAction(feedConfig.TargetURL, feedConfig.Token, _log);
-                    return new AzureStorageFeedAssetPublisher(action.AccountName, action.AccountKey, action.ContainerName, _log);
                 case FeedType.AzureStorageContainer:
                     return new AzureStorageContainerAssetPublisher(new Uri(feedConfig.TargetURL), _log);
                 default:

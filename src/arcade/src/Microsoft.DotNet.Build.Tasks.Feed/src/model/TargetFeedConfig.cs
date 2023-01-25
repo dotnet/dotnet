@@ -165,12 +165,11 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
     }
 
     /// <summary>
-    /// Whether the target feed URL points to an Azure Feed or an Sleet Feed.
+    /// Whether the target feed URL points to an AzDO feed or a storage container
     /// </summary>
     public enum FeedType
     {
         AzDoNugetFeed,
-        AzureStorageFeed,
         AzureStorageContainer,
     }
 

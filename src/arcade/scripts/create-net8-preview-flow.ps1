@@ -82,7 +82,6 @@ MakeDefaultChannel https://github.com/dotnet/installer $SdkBranch $SdkChannel
 MakeDefaultChannel https://github.com/dotnet/sdk $SdkBranch $SdkChannel
 MakeDefaultChannel https://github.com/dotnet/roslyn-analyzers $SdkBranch $SdkChannel
 MakeDefaultChannel https://github.com/dotnet/templating $SdkBranch $SdkChannel
-MakeDefaultChannel https://github.com/dotnet/razor-compiler $SdkBranch $SdkChannel
 
 if ($AddInternalFlow) {
     # Because of where internal fixes tend to be, we eliminate some leaves in the sdk graph
@@ -115,7 +114,6 @@ AddArcadeFlow https://github.com/dotnet/installer $SdkBranch
 AddArcadeFlow https://github.com/dotnet/sdk $SdkBranch
 AddArcadeFlow https://github.com/dotnet/roslyn-analyzers $SdkBranch
 AddArcadeFlow https://github.com/dotnet/templating $SdkBranch
-AddArcadeFlow https://github.com/dotnet/razor-compiler $SdkBranch
 
 Write-Host "Adding runtime -> runtime flow"
 AddFlow https://dev.azure.com/dnceng/internal/_git/dotnet-wpf-int $RuntimeChannel https://github.com/dotnet/wpf $RuntimeBranch EveryBuild
@@ -165,7 +163,6 @@ Write-Host "Add sdk->sdk flow"
 AddFlow https://github.com/dotnet/sdk $SdkChannel https://github.com/dotnet/installer $SdkBranch EveryBuild
 AddFlow https://github.com/dotnet/roslyn-analyzers $SdkChannel https://github.com/dotnet/sdk $SdkBranch EveryBuild
 AddFlow https://github.com/dotnet/templating $SdkChannel https://github.com/dotnet/sdk $SdkBranch EveryBuild
-AddFlow https://github.com/dotnet/razor-compiler $SdkChannel https://github.com/dotnet/sdk $SdkBranch EveryBuild
 
 if ($AddInternalFlow) {
     Write-Host "Adding internal sdk->internal sdk flow"
@@ -182,6 +179,7 @@ AddFlow https://github.com/nuget/nuget.client $VSChannel https://github.com/dotn
 AddFlow https://github.com/dotnet/roslyn $VSChannel https://github.com/dotnet/sdk $SdkBranch EveryBuild
 AddFlow https://github.com/dotnet/fsharp $VSChannel https://github.com/dotnet/sdk $SdkBranch EveryBuild
 AddFlow https://github.com/dotnet/msbuild $VSChannel https://github.com/dotnet/sdk $SdkBranch EveryBuild
+AddFlow https://github.com/dotnet/razor $VSChannel https://github.com/dotnet/sdk $SdkBranch EveryBuild
 
 
 

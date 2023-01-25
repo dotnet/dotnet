@@ -10,12 +10,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Build.Framework;
 using Microsoft.DotNet.Build.CloudTestTasks;
-using Microsoft.WindowsAzure.Storage;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using NuGet.Packaging.Core;
-using Sleet;
 using MSBuild = Microsoft.Build.Utilities;
 
 namespace Microsoft.DotNet.Build.Tasks.Feed
@@ -27,7 +25,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         private static readonly CancellationToken CancellationToken = TokenSource.Token;
         private const string feedRegex = @"(?<feedurl>https:\/\/(?<accountname>[^\.-]+)(?<domain>[^\/]*)\/((?<token>[a-zA-Z0-9+\/]*?\/\d{4}-\d{2}-\d{2})\/)?(?<containername>[^\/]+)\/(?<relativepath>.*\/)?)index\.json";
         private string feedUrl;
-        private SleetSource source;
         private bool hasToken = false;
 
         public string AccountName { get; }
@@ -52,74 +49,11 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
                 feedUrl = m.Groups["feedurl"].Value;
                 hasToken = !string.IsNullOrEmpty(m.Groups["token"].Value);
-
-                source = new SleetSource
-                {
-                    Name = ContainerName,
-                    Type = "azure",
-                    Path = feedUrl,
-                    Container = ContainerName,
-                    FeedSubPath = RelativePath,
-                    ConnectionString = $"DefaultEndpointsProtocol=https;AccountName={AccountName};AccountKey={AccountKey};EndpointSuffix=core.windows.net"
-                };
             }
             else
             {
                 throw new Exception("Unable to parse expected feed. Please check ExpectedFeedUrl.");
             }
-        }
-
-        public BlobFeedAction(SleetSource sleetSource, string accountKey, MSBuild.TaskLoggingHelper log)
-        {
-            ContainerName = sleetSource.Container;
-            RelativePath = sleetSource.FeedSubPath;
-            AccountName = sleetSource.AccountName;
-            AccountKey = accountKey;
-            hasToken = true;
-            Log = log;
-            source = sleetSource;
-        }
-
-        public async Task<bool> PushToFeedAsync(
-            IEnumerable<string> items,
-            PushOptions options)
-        {
-            if (IsSanityChecked(items))
-            {
-                if (CancellationToken.IsCancellationRequested)
-                {
-                    Log.LogError("Task PushToFeed cancelled");
-                    CancellationToken.ThrowIfCancellationRequested();
-                }
-
-                await PushItemsToFeedAsync(items, options);
-            }
-
-            return !Log.HasLoggedErrors;
-        }
-
-        public async Task<bool> PushItemsToFeedAsync(
-            IEnumerable<string> items,
-            PushOptions options)
-        {
-            Log.LogMessage(MessageImportance.Low, $"START pushing items to feed");
-
-            if (!items.Any())
-            {
-                Log.LogMessage("No items to push found in the items list.");
-                return true;
-            }
-
-            try
-            {
-                return await PushAsync(items, options);
-            }
-            catch (Exception e)
-            {
-                Log.LogErrorFromException(e);
-            }
-
-            return !Log.HasLoggedErrors;
         }
 
         public async Task PublishToFlatContainerAsync(IEnumerable<ITaskItem> taskItems, int maxClients,
@@ -219,7 +153,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             }
         }
 
-        public async Task CreateContainerAsync(IBuildEngine buildEngine, bool publishFlatContainer)
+        public async Task CreateContainerAsync(IBuildEngine buildEngine)
         {
             Log.LogMessage($"Creating container {ContainerName}...");
 
@@ -236,157 +170,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             await createContainer.ExecuteAsync();
 
             Log.LogMessage($"Creating container {ContainerName} succeeded!");
-
-            if (!publishFlatContainer)
-            {
-                try
-                {
-                    bool result = await InitAsync();
-
-                    if (result)
-                    {
-                        Log.LogMessage($"Initializing sub-feed {source.FeedSubPath} succeeded!");
-                    }
-                    else
-                    {
-                        throw new Exception($"Initializing sub-feed {source.FeedSubPath} failed!");
-                    }
-                }
-                catch (Exception e)
-                {
-                    Log.LogErrorFromException(e);
-                }
-            }
-        }
-
-        public async Task<ISet<PackageIdentity>> GetPackageIdentitiesAsync()
-        {
-            using (var fileCache = CreateFileCache())
-            {
-                var context = new SleetContext
-                {
-                    LocalSettings = GetSettings(),
-                    Log = new SleetLogger(Log, NuGet.Common.LogLevel.Verbose),
-                    Source = GetAzureFileSystem(fileCache),
-                    Token = CancellationToken
-                };
-                context.SourceSettings = await FeedSettingsUtility.GetSettingsOrDefault(
-                    context.Source,
-                    context.Log,
-                    context.Token);
-
-                var packageIndex = new PackageIndex(context);
-
-                return await packageIndex.GetPackagesAsync();
-            }
-        }
-
-        private bool IsSanityChecked(IEnumerable<string> items)
-        {
-            Log.LogMessage(MessageImportance.Low, $"START checking sanitized items for feed");
-            foreach (var item in items)
-            {
-                if (items.Any(s => Path.GetExtension(item) != ".nupkg"))
-                {
-                    Log.LogError($"{item} is not a nupkg");
-                    return false;
-                }
-            }
-            List<string> duplicates = items.GroupBy(x => x)
-                    .Where(group => group.Count() > 1)
-                    .Select(group => group.Key).ToList();
-            if (duplicates.Count > 0)
-            {
-                Log.LogError($"Duplicates found: {string.Join(", ", duplicates)}");
-                return false;
-            }
-            Log.LogMessage(MessageImportance.Low, $"DONE checking for sanitized items for feed");
-            return true;
-        }
-
-        private LocalSettings GetSettings()
-        {
-            SleetSettings sleetSettings = new SleetSettings()
-            {
-                Sources = new List<SleetSource>
-                    {
-                       source
-                    }
-            };
-
-            var jsonSerializer = JsonSerializer.Create(
-                new JsonSerializerSettings
-                {
-                    ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                    NullValueHandling = NullValueHandling.Ignore
-                });
-
-            LocalSettings settings = new LocalSettings
-            {
-                Json = JObject.FromObject(sleetSettings, jsonSerializer)
-            };
-
-            return settings;
-        }
-
-        private ISleetFileSystem GetAzureFileSystem(LocalCache fileCache)
-        {
-            try
-            {
-                CloudStorageAccount storageAccount = CloudStorageAccount.Parse(source.ConnectionString);
-                return new AzureFileSystem(fileCache, new Uri(source.Path), new Uri(source.Path), storageAccount, source.Name, source.FeedSubPath);
-            }
-            catch
-            {
-                return FileSystemFactory.CreateFileSystem(GetSettings(), fileCache, source.Name);
-            }
-        }
-
-        public async Task<bool> PushAsync(IEnumerable<string> items, PushOptions options)
-        {
-            LocalSettings settings = GetSettings();
-            SleetLogger log = new SleetLogger(Log, NuGet.Common.LogLevel.Verbose);
-            var packagesToPush = items.ToList();
-
-            // Create a new cache to be used once a lock is obtained.
-            using (var fileCache = CreateFileCache())
-            {
-                var lockedFileSystem = GetAzureFileSystem(fileCache);
-
-                return await PushCommand.RunAsync(
-                    settings,
-                    lockedFileSystem,
-                    packagesToPush,
-                    force: options.AllowOverwrite,
-                    skipExisting: !options.AllowOverwrite,
-                    log: log);
-            }
-        }
-
-        public async Task<bool> InitAsync()
-        {
-            AzureStorageUtils blobUtils = new AzureStorageUtils(AccountName, AccountKey, ContainerName);
-
-            if (!await blobUtils.CheckIfContainerExistsAsync())
-            {
-                throw new Exception($"The informed container for the feed '{ContainerName}' doesn't exist!");
-            }
-
-            using (var fileCache = CreateFileCache())
-            {
-                LocalSettings settings = GetSettings();
-                var fileSystem = FileSystemFactory.CreateFileSystem(settings, fileCache, source.Name);
-                bool result = await InitCommand.RunAsync(settings, fileSystem, enableCatalog: false, enableSymbols: false, log: new SleetLogger(Log, NuGet.Common.LogLevel.Verbose), token: CancellationToken);
-                return result;
-            }
-        }
-
-        private static LocalCache CreateFileCache()
-        {
-            // By default a folder is created inside %temp% to store the cache, to 
-            // change this location pass a folder path to the LocalCache constructor.
-            // Passing PerfTracker in so a summary is logged at the end of publishing.
-            return new LocalCache(new PerfTracker());
         }
     }
 }

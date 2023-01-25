@@ -800,9 +800,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                                         feedConfig,
                                         clientThrottle));
                                 break;
-                            case FeedType.AzureStorageFeed:
-                                Log.LogWarning($"Publishing of packages to Azure storage feed is deprecated.");
-                                break;
                             default:
                                 Log.LogError(
                                     $"Unknown target feed type for category '{category}': '{feedConfig.Type}'.");
@@ -1680,8 +1677,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 await PublishAssetsWithoutStreamingPublishingAsync(assetPublisher, assetsToPublish, buildAssets, feedConfig);
             }
 
-            if (feedConfig.Type == FeedType.AzureStorageContainer ||
-                feedConfig.Type == FeedType.AzureStorageFeed)
+            if (feedConfig.Type == FeedType.AzureStorageContainer)
             {
 
                 if (LinkManager == null)
@@ -1824,45 +1820,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             using var clientThrottle = new SemaphoreSlim(MaxClients, MaxClients);
             await Task.WhenAll(assets.Select(asset =>
                 assetPublisher.PublishAssetAsync(asset.localBlobPath, asset.id, pushOptions, clientThrottle)));
-        }
-
-        private BlobFeedAction CreateBlobFeedAction(TargetFeedConfig feedConfig)
-        {
-            var proxyBackedFeedMatch = Regex.Match(feedConfig.TargetURL, PublishingConstants.AzureStorageProxyFeedPattern);
-            var proxyBackedStaticFeedMatch = Regex.Match(feedConfig.TargetURL, PublishingConstants.AzureStorageProxyFeedStaticPattern);
-            var azureStorageStaticBlobFeedMatch = Regex.Match(feedConfig.TargetURL, PublishingConstants.AzureStorageStaticBlobFeedPattern);
-
-            if (proxyBackedFeedMatch.Success || proxyBackedStaticFeedMatch.Success)
-            {
-                var regexMatch = (proxyBackedFeedMatch.Success) ? proxyBackedFeedMatch : proxyBackedStaticFeedMatch;
-                var containerName = regexMatch.Groups["container"].Value;
-                var baseFeedName = regexMatch.Groups["baseFeedName"].Value;
-                var feedURL = regexMatch.Groups["feedURL"].Value;
-                var storageAccountName = "dotnetfeed";
-
-                // Initialize the feed using sleet
-                SleetSource sleetSource = new SleetSource()
-                {
-                    Name = baseFeedName,
-                    Type = "azure",
-                    BaseUri = feedURL,
-                    AccountName = storageAccountName,
-                    Container = containerName,
-                    FeedSubPath = baseFeedName,
-                    ConnectionString = $"DefaultEndpointsProtocol=https;AccountName={storageAccountName};AccountKey={feedConfig.Token};EndpointSuffix=core.windows.net"
-                };
-
-                return new BlobFeedAction(sleetSource, feedConfig.Token, Log);
-            }
-            else if (azureStorageStaticBlobFeedMatch.Success)
-            {
-                return new BlobFeedAction(feedConfig.TargetURL, feedConfig.Token, Log);
-            }
-            else
-            {
-                Log.LogError($"Could not parse Azure feed URL: '{feedConfig.TargetURL}'");
-                return null;
-            }
         }
 
         private async Task PushPackageToNugetFeed(
