@@ -1704,13 +1704,13 @@ option in the `SWPrecacheWebpackPlugin` section of
 ### Progressive Web App Metadata
 
 The default configuration includes a web app manifest located at
-[`public/manifest.json`](public/manifest.json), that you can customize with
-details specific to your web application.
+[`public/manifest.webmanifest`](public/manifest.webmanifest), that you can
+customize with details specific to your web application.
 
 When a user adds a web app to their homescreen using Chrome or Firefox on
-Android, the metadata in [`manifest.json`](public/manifest.json) determines what
-icons, names, and branding colors to use when the web app is displayed.
-[The Web App Manifest guide](https://developers.google.com/web/fundamentals/engage-and-retain/web-app-manifest/)
+Android, the metadata in [`manifest.webmanifest`](public/manifest.webmanifest)
+determines what icons, names, and branding colors to use when the web app is
+displayed. [The Web App Manifest guide](https://developers.google.com/web/fundamentals/engage-and-retain/web-app-manifest/)
 provides more context about what each field means, and how your customizations
 will affect your users' experience.
 
@@ -1836,7 +1836,7 @@ service worker navigation routing can be configured or disabled by
 and [`navigateFallbackWhitelist`](https://github.com/GoogleChrome/sw-precache#navigatefallbackwhitelist-arrayregexp)
 options of the `SWPreachePlugin` [configuration](../config/webpack.config.prod.js).
 
-When users install your app to the homescreen of their device the default configuration will make a shortcut to `/index.html`. This may not work for client-side routers which expect the app to be served from `/`. Edit the web app manifest at [`public/manifest.json`](public/manifest.json) and change `start_url` to match the required URL scheme, for example:
+When users install your app to the homescreen of their device the default configuration will make a shortcut to `/index.html`. This may not work for client-side routers which expect the app to be served from `/`. Edit the web app manifest at [`public/manifest.webmanifest`](public/manifest.webmanifest) and change `start_url` to match the required URL scheme, for example:
 
 ```js
   "start_url": ".",

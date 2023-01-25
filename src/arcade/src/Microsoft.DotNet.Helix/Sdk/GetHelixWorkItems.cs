@@ -92,7 +92,8 @@ namespace Microsoft.DotNet.Helix.Sdk
                 try
                 {
                     // Do this serially with a delay because total failure can hit throttling
-                    var files = await HelixApi.WorkItem.ListFilesAsync(wi, jobName, cancellationToken).ConfigureAwait(false);
+                    // latestOnly parameter is set false here to download all possible files
+                    var files = await HelixApi.WorkItem.ListFilesAsync(wi, jobName, false, cancellationToken).ConfigureAwait(false);
 
                     if (!string.IsNullOrEmpty(AccessToken))
                     {

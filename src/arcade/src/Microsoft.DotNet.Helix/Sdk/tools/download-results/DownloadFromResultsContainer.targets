@@ -23,8 +23,8 @@
 
     <DownloadFromResultsContainer
         Condition="$(_shouldDownloadResults) AND '%(SentJob.ResultsContainerUri)' != ''"
+        AccessToken="$(HelixAccessToken)"
         WorkItems="@(_workItemsWithDownloadMetadata)"
-        ResultsContainer="%(SentJob.ResultsContainerUri)"
         OutputDirectory="$(HelixResultsDestinationDir)"
         MetadataToWrite="@(HelixDownloadResultsMetadata)"
         JobId="%(SentJob.Identity)"

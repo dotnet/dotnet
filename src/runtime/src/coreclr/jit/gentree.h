@@ -560,6 +560,7 @@ enum GenTreeFlags : unsigned int
     GTF_ICON_BBC_PTR            = 0x0F000000, // GT_CNS_INT -- constant is a basic block count pointer
     GTF_ICON_STATIC_BOX_PTR     = 0x10000000, // GT_CNS_INT -- constant is an address of the box for a STATIC_IN_HEAP field
     GTF_ICON_FIELD_SEQ          = 0x11000000, // <--------> -- constant is a FieldSeq* (used only as VNHandle)
+    GTF_ICON_STATIC_ADDR_PTR    = 0x13000000, // GT_CNS_INT -- constant is a pointer to a static base address
 
  // GTF_ICON_REUSE_REG_VAL      = 0x00800000  // GT_CNS_INT -- GTF_REUSE_REG_VAL, defined above
     GTF_ICON_SIMD_COUNT         = 0x00200000, // GT_CNS_INT -- constant is Vector<T>.Count
@@ -1970,9 +1971,8 @@ public:
         return const_cast<GenTreeLclVarCommon*>(static_cast<const GenTree*>(this)->IsLocalAddrExpr());
     }
 
-    // Determine if this tree represents the value of an entire implicit byref parameter,
-    // and if so return the tree for the parameter.
-    GenTreeLclVar* IsImplicitByrefParameterValue(Compiler* compiler);
+    GenTreeLclVarCommon* IsImplicitByrefParameterValuePreMorph(Compiler* compiler);
+    GenTreeLclVar* IsImplicitByrefParameterValuePostMorph(Compiler* compiler, GenTree** addr);
 
     // Determine whether this is an assignment tree of the form X = X (op) Y,
     // where Y is an arbitrary tree, and X is a lclVar.
@@ -7449,6 +7449,7 @@ public:
     Statement(GenTree* expr DEBUGARG(unsigned stmtID))
         : m_rootNode(expr)
         , m_treeList(nullptr)
+        , m_treeListEnd(nullptr)
         , m_next(nullptr)
         , m_prev(nullptr)
 #ifdef DEBUG
@@ -7478,9 +7479,29 @@ public:
         return m_treeList;
     }
 
+    GenTree** GetTreeListPointer()
+    {
+        return &m_treeList;
+    }
+
     void SetTreeList(GenTree* treeHead)
     {
         m_treeList = treeHead;
+    }
+
+    GenTree* GetTreeListEnd() const
+    {
+        return m_treeListEnd;
+    }
+
+    GenTree** GetTreeListEndPointer()
+    {
+        return &m_treeListEnd;
+    }
+
+    void SetTreeListEnd(GenTree* end)
+    {
+        m_treeListEnd = end;
     }
 
     GenTreeList       TreeList() const;
@@ -7558,6 +7579,12 @@ private:
     // The tree list head (for forward walks in evaluation order).
     // The value is `nullptr` until we have set the sequencing of the nodes.
     GenTree* m_treeList;
+
+    // The tree list tail. Only valid when locals are linked (fgNodeThreading
+    // == AllLocals), in which case this is the last local.
+    // When all nodes are linked (fgNodeThreading == AllTrees), m_rootNode
+    // should be considered the last node.
+    GenTree* m_treeListEnd;
 
     // The statement nodes are doubly-linked. The first statement node in a block points
     // to the last node in the block via its `m_prev` link. Note that the last statement node

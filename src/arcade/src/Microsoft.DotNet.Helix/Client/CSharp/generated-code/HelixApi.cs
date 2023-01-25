@@ -27,6 +27,7 @@ namespace Microsoft.DotNet.Helix.Client
         IAnalysis Analysis { get; }
         IInformation Information { get; }
         IJob Job { get; }
+        ILogSearch LogSearch { get; }
         IMachine Machine { get; }
         IScaleSets ScaleSets { get; }
         IStorage Storage { get; }
@@ -115,6 +116,8 @@ namespace Microsoft.DotNet.Helix.Client
 
         public IJob Job { get; }
 
+        public ILogSearch LogSearch { get; }
+
         public IMachine Machine { get; }
 
         public IScaleSets ScaleSets { get; }
@@ -138,6 +141,7 @@ namespace Microsoft.DotNet.Helix.Client
             Analysis = new Analysis(this);
             Information = new Information(this);
             Job = new Job(this);
+            LogSearch = new LogSearch(this);
             Machine = new Machine(this);
             ScaleSets = new ScaleSets(this);
             Storage = new Storage(this);

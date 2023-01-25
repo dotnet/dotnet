@@ -3,8 +3,10 @@
 
 #nullable enable
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Xml.Linq;
 
 namespace XliffTasks.Model
@@ -22,10 +24,52 @@ namespace XliffTasks.Model
         {
             foreach (XElement? element in Document.Descendants())
             {
+                // first, let's check if the element has a descendent by the name of {elementLocalName.Description/DisplayName}
+                var descendentDisplayName = element.Descendants(XName.Get($"{element.Name.LocalName}.DisplayName", element.Name.NamespaceName)).FirstOrDefault();
+                var descendentDescription = element.Descendants(XName.Get($"{element.Name.LocalName}.Description", element.Name.NamespaceName)).FirstOrDefault();
+
+                if (descendentDisplayName is not null)
+                {
+                    yield return new TranslatableXmlElement(
+                        id: GenerateIdForDisplayNameOrDescription(descendentDisplayName),
+                        source: descendentDisplayName.Value,
+                        note: GetComment(descendentDisplayName, XmlName(descendentDisplayName)),
+                        element: descendentDisplayName
+                    );
+                }
+                
+                if (descendentDescription is not null)
+                {
+                    yield return new TranslatableXmlElement(
+                        id: GenerateIdForDisplayNameOrDescription(descendentDescription),
+                        source: descendentDescription.Value,
+                        note: GetComment(descendentDescription, XmlName(descendentDescription)),
+                        element: descendentDescription
+                    );
+                }
+                
+                var localizableProperties = element.Attribute(XName.Get(LocalizedPropertiesAttributeName, XliffTasksNs))?.Value?.Split(';');
+
+                if (localizableProperties is not null)
+                {
+                    // we could have any number of descendent localizable properties
+                    foreach (var localizableProperty in localizableProperties)
+                    {
+                        if (element.Descendants(XName.Get($"{element.Name.LocalName}.{localizableProperty}", element.Name.NamespaceName)).FirstOrDefault() is { } descendentValue)
+                        {
+                            yield return new TranslatableXmlElement(
+                                id: GenerateIdForPropertyMetadata(descendentValue),
+                                source: descendentValue.Value,
+                                note: GetComment(descendentValue, localizableProperty),
+                                element: descendentValue);
+                        }
+                    }
+                }
+
                 foreach (XAttribute? attribute in element.Attributes())
                 {
-                    if (XmlName(attribute) == "DisplayName"
-                        || XmlName(attribute) == "Description")
+                    if ((descendentDisplayName is null && XmlName(attribute) == "DisplayName")
+                        || (descendentDescription is null && XmlName(attribute) == "Description"))
                     {
                         yield return new TranslatableXmlAttribute(
                             id: GenerateIdForDisplayNameOrDescription(attribute),
@@ -33,18 +77,35 @@ namespace XliffTasks.Model
                             note: GetComment(element, XmlName(attribute)),
                             attribute: attribute);
                     }
-                    else if (XmlName(attribute) == "Value" && AttributedName(element) == "SearchTerms")
+                    else if (AttributedName(element) == "SearchTerms" && (XmlName(attribute) == "Value" || element.Descendants(XName.Get($"{element.Name.LocalName}.Value", element.Name.NamespaceName)).FirstOrDefault() is { }))
                     {
-                        yield return new TranslatableXmlAttribute(
-                            id: GenerateIdForPropertyMetadata(element),
-                            source: attribute.Value,
-                            note: GetComment(element, XmlName(attribute)),
-                            attribute: attribute);
+                        if (XmlName(attribute) == "Value")
+                        {
+                            yield return new TranslatableXmlAttribute(
+                                id: GenerateIdForPropertyMetadata(element),
+                                source: attribute.Value,
+                                note: GetComment(element, XmlName(attribute)),
+                                attribute: attribute);
+                        }
+                        // else if we have a descendent in the form of {elementLocalName}.Value, we should translate that descendent
+                        else if (element.Descendants(XName.Get($"{element.Name.LocalName}.Value", element.Name.NamespaceName)).FirstOrDefault() is { } descendentValue)
+                        {
+                            yield return new TranslatableXmlElement(
+                                id: GenerateIdForPropertyMetadata(element),
+                                source: descendentValue.Value,
+                                note: GetComment(descendentValue, XmlName(attribute)),
+                                element: descendentValue);
+                        }
                     }
                     else
                     {
-                        var localizableProperties = element.Attribute(XName.Get(LocalizedPropertiesAttributeName, XliffTasksNs))?.Value?.Split(';');
-                        if (localizableProperties is not null && localizableProperties.Contains(attribute.Name.LocalName))
+                        if (localizableProperties is null)
+                        {
+                            continue;
+                        }
+                        
+                        // if the property value is directly specified as an attribute
+                        if (localizableProperties.Contains(attribute.Name.LocalName))
                         {
                             yield return new TranslatableXmlAttribute(
                                 id: GenerateIdForPropertyMetadata(element, attribute),
@@ -57,25 +118,75 @@ namespace XliffTasks.Model
             }
         }
 
-        private static string GenerateIdForDisplayNameOrDescription(XAttribute attribute)
+        private static string GenerateIdForDisplayNameOrDescription(XObject xObject)
         {
-            XElement parent = attribute.Parent!;
+            var parent = xObject.Parent;
+            if (parent is null)
+            {
+                throw new ArgumentException("Attribute must have a parent element", nameof(xObject));
+            }
 
             if (XmlName(parent) == "EnumValue")
             {
-                XElement grandparent = parent.Parent!;
-                return $"{XmlName(parent)}|{AttributedName(grandparent)}.{AttributedName(parent)}|{XmlName(attribute)}";
+                var grandparent = parent.Parent;
+                if (grandparent is null)
+                {
+                    throw new ArgumentException("Attribute must have a grandparent element", nameof(xObject));
+                }
+                
+                return $"{XmlName(parent)}|{AttributedName(grandparent)}.{AttributedName(parent)}|{XmlName(xObject)}";
             }
 
-            return $"{XmlName(parent)}|{AttributedName(parent)}|{XmlName(attribute)}";
+            return $"{XmlName(parent)}|{AttributedName(parent)}|{XmlName(xObject)}";
         }
 
         private static string GenerateIdForPropertyMetadata(XElement element, XAttribute? attribute = null)
         {
-            XElement grandParent = element.Parent!.Parent!;
+            var ancestorWithNameAttributeCandidate = element.Parent?.Parent; // start at grandparent
+            var idBuilder = new StringBuilder();
 
-            var elementBaseId = $"{XmlName(grandParent)}|{AttributedName(grandParent)}|Metadata|{AttributedName(element)}";
-            return attribute is null ? elementBaseId : $"{elementBaseId}|{attribute.Name.LocalName}";
+            // if has no grandparent, we'll try parent
+            if (ancestorWithNameAttributeCandidate is null)
+            {
+                if (element.Parent is not null)
+                {
+                    idBuilder.Append(element.Parent.Attribute("Name") is null ? XmlName(element.Parent) : $"{XmlName(element.Parent)}|{AttributedName(element.Parent)}");
+                    idBuilder.Append("|Metadata|");
+                }
+
+                idBuilder.Append(XmlName(element));
+                if (element.Attribute("Name") is null)
+                {
+                    idBuilder.Append($"|{AttributedName(element)}");
+                }
+                
+                if (attribute is not null)
+                {
+                    idBuilder.Append($"|{XmlName(attribute)}");
+                }
+
+                return idBuilder.ToString();
+            }
+
+            // while the current ancestor has a parent and does not have a name, append its XmlName to the id and go up a level  
+            while (ancestorWithNameAttributeCandidate?.Attribute("Name") is null && ancestorWithNameAttributeCandidate?.Parent is not null) {
+            {
+                idBuilder.Insert(0, $"{XmlName(ancestorWithNameAttributeCandidate)}|");
+                ancestorWithNameAttributeCandidate = ancestorWithNameAttributeCandidate.Parent;
+            }}
+
+            idBuilder.Insert(0, $"{XmlName(ancestorWithNameAttributeCandidate!)}|{AttributedName(ancestorWithNameAttributeCandidate!)}|");
+
+            idBuilder.Append($"Metadata|");
+            idBuilder.Append(element.Attribute("Name") is not null ? AttributedName(element) : XmlName(element));
+
+            if (attribute is not null)
+            {
+                idBuilder.Append($"|{attribute.Name.LocalName}");
+            }
+
+
+            return idBuilder.ToString();
         }
 
         private static string? GetComment(XElement element, string attributeName)
@@ -94,10 +205,16 @@ namespace XliffTasks.Model
             return null;
         }
 
-        private static string XmlName(XElement element) => element.Name.LocalName;
+        private static string XmlName(XObject container) => container is XElement element ? XmlName(element) : XmlName((XAttribute)container);
+        private static string XmlName(XElement element)
+        {
+            var localName = element.Name.LocalName;
+            // if we have a descendent element, we should only take the last part of the name after the dot
+            return localName.Contains('.') ? localName.Split('.').Last() : localName;
+        }
 
         private static string XmlName(XAttribute attribute) => attribute.Name.LocalName;
 
-        private static string AttributedName(XElement element) => element.Attribute("Name")!.Value;
+        private static string? AttributedName(XElement element) => element.Attribute("Name")?.Value;
     }
 }

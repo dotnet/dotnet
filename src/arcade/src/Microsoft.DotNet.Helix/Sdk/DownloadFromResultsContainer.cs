@@ -9,13 +9,10 @@ using Microsoft.Build.Framework;
 
 namespace Microsoft.DotNet.Helix.Sdk
 {
-    public class DownloadFromResultsContainer : BaseTask, ICancelableTask
+    public class DownloadFromResultsContainer : HelixTask, ICancelableTask
     {
         [Required]
         public ITaskItem[] WorkItems { get; set; }
-
-        [Required]
-        public string ResultsContainer { get; set; }
 
         [Required]
         public string OutputDirectory { get; set; }
@@ -32,15 +29,8 @@ namespace Microsoft.DotNet.Helix.Sdk
 
         private readonly CancellationTokenSource _cancellationSource = new CancellationTokenSource();
 
-        public void Cancel() => _cancellationSource.Cancel();
-
-        public override bool Execute()
+        protected override async Task ExecuteCore(CancellationToken cancellationToken) 
         {
-            if (string.IsNullOrEmpty(ResultsContainer))
-            {
-                LogRequiredParameterError(nameof(ResultsContainer));
-            }
-
             if (string.IsNullOrEmpty(OutputDirectory))
             {
                 LogRequiredParameterError(nameof(OutputDirectory));
@@ -51,17 +41,13 @@ namespace Microsoft.DotNet.Helix.Sdk
                 LogRequiredParameterError(nameof(JobId));
             }
 
-            if (!Log.HasLoggedErrors)
+            if (Log.HasLoggedErrors)
             {
-                Log.LogMessage(MessageImportance.High, $"Downloading result files for job {JobId}");
-                ExecuteCore().GetAwaiter().GetResult();
+                return;                
             }
 
-            return !Log.HasLoggedErrors;
-        }
+            Log.LogMessage(MessageImportance.High, $"Downloading result files for job {JobId}");
 
-        private async Task ExecuteCore()
-        {
             DirectoryInfo directory = Directory.CreateDirectory(Path.Combine(OutputDirectory, JobId));
             using (FileStream stream = File.Open(Path.Combine(directory.FullName, MetadataFile), FileMode.Create, FileAccess.Write))
             using (var writer = new StreamWriter(stream))
@@ -71,10 +57,7 @@ namespace Microsoft.DotNet.Helix.Sdk
                     await writer.WriteLineAsync(metadata.GetMetadata("Identity"));
                 }
             }
-
-            ResultsContainer = ResultsContainer.EndsWith("/") ? ResultsContainer : ResultsContainer + "/";
             await Task.WhenAll(WorkItems.Select(wi => DownloadFilesForWorkItem(wi, directory.FullName, _cancellationSource.Token)));
-            return;
         }
 
         private async Task DownloadFilesForWorkItem(ITaskItem workItem, string directoryPath, CancellationToken ct)
@@ -86,25 +69,48 @@ namespace Microsoft.DotNet.Helix.Sdk
                 string workItemName = workItem.GetMetadata("Identity");
                 string[] filesToDownload = files.Split(';');
 
+                // Use the Helix API to get the last possible iteration of the work item's execution 
+                var allAvailableFiles = await HelixApi.WorkItem.ListFilesAsync(workItemName, JobId, true, ct);
+
                 DirectoryInfo destinationDir = Directory.CreateDirectory(Path.Combine(directoryPath, workItemName));
-                foreach (var file in filesToDownload)
+                foreach (string file in filesToDownload)
                 {
                     try
                     {
                         string destinationFile = Path.Combine(destinationDir.FullName, file);
-                        Log.LogMessage(MessageImportance.Normal, $"Downloading {file} => {destinationFile}...");
+                        Log.LogMessage(MessageImportance.Normal, $"Downloading {file} => {destinationFile} ...");
 
-                        // Currently the blob storage includes the retry iteration, however there is no good way
-                        // to get the "best" iteration number to download the files from. For now, use always iteration
-                        // 1 until helix provides an API to get result files from the "good" iteration run.
-                        // https://github.com/dotnet/core-eng/issues/13983
-                        var uri = new Uri($"{ResultsContainer}{workItemName}/1/{file}");
-                        BlobClient blob = string.IsNullOrEmpty(ResultsContainerReadSAS) ? new BlobClient(uri) : new BlobClient(uri, new AzureSasCredential(ResultsContainerReadSAS));
+                        // Ensure directory exists - A noop if it already does
+                        Directory.CreateDirectory(Path.Combine(destinationDir.FullName, Path.GetDirectoryName(file)));
+
+                        // Helix clients currently provide file paths in the format of the executing OS;
+                        // the Arcade feature historically only worked with / so only check one direction of conversion.
+                        var fileAvailableForDownload = allAvailableFiles.Where(f => f.Name == file || f.Name.Replace('\\', '/') == file).FirstOrDefault();
+
+                        if (fileAvailableForDownload == null) 
+                        {
+                            Log.LogWarning($"Work item {workItemName} in Job {JobId} did not upload a result file with path '{file}' ");
+                            continue;
+                        }
+                        
+                        BlobClient blob;
+                        // If we have no read SAS token from the build, make a best-effort attempt using the URL from the Helix API.
+                        // For restricted queues, there will be no read SAS token available to use in the Helix API's result
+                        // (but hopefully the 'else' branch will be hit in this case)
+                        if (string.IsNullOrEmpty(ResultsContainerReadSAS)) 
+                        {
+                            blob = new BlobClient(new Uri(fileAvailableForDownload.Link));
+                        }
+                        else 
+                        {
+                            var strippedFileUri = new Uri(fileAvailableForDownload.Link.Substring(0, fileAvailableForDownload.Link.LastIndexOf('?')));
+                            blob = new BlobClient(strippedFileUri, new AzureSasCredential(ResultsContainerReadSAS));
+                        }
                         await blob.DownloadToAsync(destinationFile);
                     }
                     catch (RequestFailedException rfe)
                     {
-                        Log.LogWarning($"Failed to download {workItemName}/1/{file} blob from results container: {rfe.Message}");
+                        Log.LogWarning($"Failed to download file '{file}' from results container for work item '{workItemName}': {rfe.Message}");
                     }
                 }
             };
