@@ -1,4 +1,4 @@
-﻿Source Location: (2:0,2 [18] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NoLinePragmas.cshtml)
+Source Location: (2:0,2 [18] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NoLinePragmas.cshtml)
 |
     int i = 1;
 |

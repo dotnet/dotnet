@@ -1,4 +1,4 @@
-﻿parameters:
+parameters:
   # This template adds arcade-powered source-build to CI. The template produces a server job with a
   # default ID 'Source_Build_Complete' to put in a dependency list if necessary.
 

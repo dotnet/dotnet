@@ -1,4 +1,4 @@
-﻿RazorDocument - [0..52)::52 - [</  /<  ><p>@DateTime.Now / ><strong></p></        >]
+RazorDocument - [0..52)::52 - [</  /<  ><p>@DateTime.Now / ><strong></p></        >]
     MarkupBlock - [0..52)::52
         MarkupElement - [0..4)::4
             MarkupEndTag - [0..4)::4 - [</  ] - Gen<Markup> - SpanEditHandler;Accepts:Any

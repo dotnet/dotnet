@@ -1,4 +1,4 @@
-﻿RazorDocument - [0..26)::26 - [LF  @addTagHelper "*, Foo"]
+RazorDocument - [0..26)::26 - [LF  @addTagHelper "*, Foo"]
     MarkupBlock - [0..26)::26
         MarkupTextLiteral - [0..2)::2 - [LF] - Gen<Markup> - SpanEditHandler;Accepts:Any
             NewLine;[LF];

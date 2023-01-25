@@ -1,4 +1,4 @@
-﻿. $PSScriptRoot\common\tools.ps1
+. $PSScriptRoot\common\tools.ps1
 
 $vsInfo = LocateVisualStudio
 if ($null -eq $vsInfo) {

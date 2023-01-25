@@ -1,4 +1,4 @@
-﻿parameters:
+parameters:
   # if parameter1 equals parameter 2, run 'ifScript' command, else run 'elsescript' command
   parameter1: ''
   parameter2: ''

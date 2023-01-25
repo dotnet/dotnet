@@ -1,4 +1,4 @@
-﻿RazorDocument - [0..47)::47 - [@(Request["description"] ?? @photo.Description)]
+RazorDocument - [0..47)::47 - [@(Request["description"] ?? @photo.Description)]
     MarkupBlock - [0..47)::47
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

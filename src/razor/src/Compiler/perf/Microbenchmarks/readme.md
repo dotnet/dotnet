@@ -1,4 +1,4 @@
-﻿Compile the solution in Release mode (so binaries are available in release)
+Compile the solution in Release mode (so binaries are available in release)
 
 To run a specific benchmark add it as parameter.
 ```

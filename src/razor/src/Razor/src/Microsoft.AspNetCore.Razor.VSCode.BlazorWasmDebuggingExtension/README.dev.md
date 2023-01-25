@@ -1,4 +1,4 @@
-﻿# Microsoft.AspNetCore.Razor.VSCode.BlazorWasmDebuggingExtension
+# Microsoft.AspNetCore.Razor.VSCode.BlazorWasmDebuggingExtension
 
 **Warning:** This extension is intended for use alongside the [C# extension](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp).
 

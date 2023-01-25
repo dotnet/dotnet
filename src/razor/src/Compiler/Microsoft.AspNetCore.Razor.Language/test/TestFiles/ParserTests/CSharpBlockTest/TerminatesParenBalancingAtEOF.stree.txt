@@ -1,4 +1,4 @@
-﻿RazorDocument - [0..15)::15 - [@Html.En(code()]
+RazorDocument - [0..15)::15 - [@Html.En(code()]
     MarkupBlock - [0..15)::15
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

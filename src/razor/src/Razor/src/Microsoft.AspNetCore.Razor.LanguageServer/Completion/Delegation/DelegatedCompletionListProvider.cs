@@ -1,12 +1,14 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
+using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
@@ -14,15 +16,16 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion.Delegation;
 
 internal class DelegatedCompletionListProvider
 {
-    private static readonly ImmutableHashSet<string> s_razorTriggerCharacters = new[] { "@" }.ToImmutableHashSet();
-    private static readonly ImmutableHashSet<string> s_csharpTriggerCharacters = new[] { " ", "(", "=", "#", ".", "<", "[", "{", "\"", "/", ":", "~" }.ToImmutableHashSet();
-    private static readonly ImmutableHashSet<string> s_htmlTriggerCharacters = new[] { ":", "@", "#", ".", "!", "*", ",", "(", "[", "-", "<", "&", "\\", "/", "'", "\"", "=", ":", " ", "`" }.ToImmutableHashSet();
+    private static readonly IReadOnlyList<string> s_razorTriggerCharacters = new[] { "@" };
+    private static readonly IReadOnlyList<string> s_cSharpTriggerCharacters = new[] { " ", "(", "=", "#", ".", "<", "[", "{", "\"", "/", ":", "~" };
+    private static readonly IReadOnlyList<string> s_htmlTriggerCharacters = new[] { ":", "@", "#", ".", "!", "*", ",", "(", "[", "-", "<", "&", "\\", "/", "'", "\"", "=", ":", " ", "`" };
     private static readonly ImmutableHashSet<string> s_allTriggerCharacters =
-        s_csharpTriggerCharacters
-            .Union(s_htmlTriggerCharacters)
-            .Union(s_razorTriggerCharacters);
+        s_cSharpTriggerCharacters
+            .Concat(s_htmlTriggerCharacters)
+            .Concat(s_razorTriggerCharacters)
+            .ToImmutableHashSet();
 
-    private readonly ImmutableArray<DelegatedCompletionResponseRewriter> _responseRewriters;
+    private readonly IReadOnlyList<DelegatedCompletionResponseRewriter> _responseRewriters;
     private readonly RazorDocumentMappingService _documentMappingService;
     private readonly ClientNotifierServiceBase _languageServer;
     private readonly CompletionListCache _completionListCache;
@@ -33,7 +36,7 @@ internal class DelegatedCompletionListProvider
         ClientNotifierServiceBase languageServer,
         CompletionListCache completionListCache)
     {
-        _responseRewriters = responseRewriters.OrderBy(rewriter => rewriter.Order).ToImmutableArray();
+        _responseRewriters = responseRewriters.OrderBy(rewriter => rewriter.Order).ToArray();
         _documentMappingService = documentMappingService;
         _languageServer = languageServer;
         _completionListCache = completionListCache;
@@ -74,7 +77,6 @@ internal class DelegatedCompletionListProvider
             projection.LanguageKind,
             completionContext,
             provisionalTextEdit);
-
         var delegatedResponse = await _languageServer.SendRequestAsync<DelegatedCompletionParams, VSInternalCompletionList?>(
             LanguageServerConstants.RazorCompletionEndpointName,
             delegatedParams,
@@ -85,55 +87,52 @@ internal class DelegatedCompletionListProvider
             return null;
         }
 
-        var rewrittenResponse = delegatedResponse;
-
+        var rewrittenCompletionList = delegatedResponse;
         foreach (var rewriter in _responseRewriters)
         {
-            rewrittenResponse = await rewriter.RewriteAsync(
-                rewrittenResponse,
-                absoluteIndex,
-                documentContext,
-                delegatedParams,
-                cancellationToken).ConfigureAwait(false);
+            rewrittenCompletionList = await rewriter.RewriteAsync(rewrittenCompletionList,
+                                                                  absoluteIndex,
+                                                                  documentContext,
+                                                                  delegatedParams,
+                                                                  cancellationToken).ConfigureAwait(false);
         }
 
         var completionCapability = clientCapabilities?.TextDocument?.Completion as VSInternalCompletionSetting;
-        var resolutionContext = new DelegatedCompletionResolutionContext(delegatedParams, rewrittenResponse.Data);
-        var resultId = _completionListCache.Add(rewrittenResponse, resolutionContext);
-        rewrittenResponse.SetResultId(resultId, completionCapability);
+        var resolutionContext = new DelegatedCompletionResolutionContext(delegatedParams, rewrittenCompletionList.Data);
+        var resultId = _completionListCache.Set(rewrittenCompletionList, resolutionContext);
+        rewrittenCompletionList.SetResultId(resultId, completionCapability);
 
-        return rewrittenResponse;
+        return rewrittenCompletionList;
     }
 
     private static VSInternalCompletionContext RewriteContext(VSInternalCompletionContext context, RazorLanguageKind languageKind)
     {
-        if (context.TriggerKind != CompletionTriggerKind.TriggerCharacter ||
-            context.TriggerCharacter is not { } triggerCharacter)
+        if (context.TriggerKind != CompletionTriggerKind.TriggerCharacter)
         {
             // Non-triggered based completion, the existing context is valid.
             return context;
         }
 
-        if (languageKind == RazorLanguageKind.CSharp && s_csharpTriggerCharacters.Contains(triggerCharacter))
+        if (languageKind == RazorLanguageKind.CSharp && s_cSharpTriggerCharacters.Contains(context.TriggerCharacter))
         {
             // C# trigger character for C# content
             return context;
         }
 
-        if (languageKind == RazorLanguageKind.Html && s_htmlTriggerCharacters.Contains(triggerCharacter))
+        if (languageKind == RazorLanguageKind.Html && s_htmlTriggerCharacters.Contains(context.TriggerCharacter))
         {
             // HTML trigger character for HTML content
             return context;
         }
 
-        // Trigger character not associated with the current language. Transform the context into an invoked context.
+        // Trigger character not associated with the current langauge. Transform the context into an invoked context.
         var rewrittenContext = new VSInternalCompletionContext()
         {
             InvokeKind = context.InvokeKind,
             TriggerKind = CompletionTriggerKind.Invoked,
         };
 
-        if (languageKind == RazorLanguageKind.CSharp && s_razorTriggerCharacters.Contains(triggerCharacter))
+        if (languageKind == RazorLanguageKind.CSharp && s_razorTriggerCharacters.Contains(context.TriggerCharacter))
         {
             // The C# language server will not return any completions for the '@' character unless we
             // send the completion request explicitly.
@@ -163,16 +162,11 @@ internal class DelegatedCompletionListProvider
             return null;
         }
 
-        var previousCharacterProjection = await _documentMappingService
-            .GetProjectionAsync(documentContext, projection.AbsoluteIndex - 1, cancellationToken)
-            .ConfigureAwait(false);
-
+        var previousCharacterProjection = await _documentMappingService.GetProjectionAsync(documentContext, projection.AbsoluteIndex - 1, cancellationToken).ConfigureAwait(false);
         if (previousCharacterProjection.LanguageKind != RazorLanguageKind.CSharp)
         {
             return null;
         }
-
-        var previousPosition = previousCharacterProjection.Position;
 
         // Edit the CSharp projected document to contain a '.'. This allows C# completion to provide valid
         // completion items for moments when a user has typed a '.' that's typically interpreted as Html.
@@ -180,19 +174,17 @@ internal class DelegatedCompletionListProvider
         {
             Range = new Range()
             {
-                Start = previousPosition,
-                End = previousPosition,
+                Start = previousCharacterProjection.Position,
+                End = previousCharacterProjection.Position,
             },
             NewText = ".",
         };
-
         var provisionalProjection = new Projection(
             RazorLanguageKind.CSharp,
             new Position(
-                previousPosition.Line,
-                previousPosition.Character + 1),
+                previousCharacterProjection.Position.Line,
+                previousCharacterProjection.Position.Character + 1),
             previousCharacterProjection.AbsoluteIndex + 1);
-
         return new ProvisionalCompletionInfo(addProvisionalDot, provisionalProjection);
     }
 

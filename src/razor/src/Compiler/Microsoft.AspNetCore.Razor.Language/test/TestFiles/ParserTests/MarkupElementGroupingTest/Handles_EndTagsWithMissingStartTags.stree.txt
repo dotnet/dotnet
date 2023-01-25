@@ -1,4 +1,4 @@
-﻿RazorDocument - [0..13)::13 - [LFFoo</div>LF]
+RazorDocument - [0..13)::13 - [LFFoo</div>LF]
     MarkupBlock - [0..13)::13
         MarkupTextLiteral - [0..5)::5 - [LFFoo] - Gen<Markup> - SpanEditHandler;Accepts:Any
             NewLine;[LF];

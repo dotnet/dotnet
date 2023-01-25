@@ -36,8 +36,8 @@
     -->
   </Runtime>
   <Dependencies>
-    <Addin id="::MonoDevelop.Core" version="17.3" />
-    <Addin id="::MonoDevelop.Ide" version="17.3" />
+    <Addin id="::MonoDevelop.Core" version="17.5" />
+    <Addin id="::MonoDevelop.Ide" version="17.5" />
   </Dependencies>
 
   <!-- MEF catalog -->

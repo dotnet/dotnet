@@ -1,4 +1,4 @@
-﻿param(
+param(
   [Parameter(Mandatory=$true)][string] $SourceRepo,
   [Parameter(Mandatory=$true)][int] $ChannelId,
   [Parameter(Mandatory=$true)][string] $MaestroApiAccessToken,

@@ -1,4 +1,4 @@
-﻿namespace blazor31
+namespace blazor31
 {
     public class Program
     {

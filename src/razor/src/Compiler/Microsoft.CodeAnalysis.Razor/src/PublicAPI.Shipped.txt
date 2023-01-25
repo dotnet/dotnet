@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 ~const Microsoft.CodeAnalysis.Razor.RazorLanguage.ContentType = "RazorCSharp" -> string
 ~const Microsoft.CodeAnalysis.Razor.RazorLanguage.CoreContentType = "RazorCoreCSharp" -> string
 ~const Microsoft.CodeAnalysis.Razor.RazorLanguage.Name = "Razor" -> string

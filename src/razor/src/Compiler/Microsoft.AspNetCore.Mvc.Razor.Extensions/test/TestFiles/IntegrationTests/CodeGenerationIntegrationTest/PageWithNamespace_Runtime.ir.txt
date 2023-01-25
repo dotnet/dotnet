@@ -1,4 +1,4 @@
-﻿Document - 
+Document - 
     RazorCompiledItemAttribute - 
     NamespaceDeclaration -  - Test.Namespace
         UsingDirective - (1:0,1 [14] ) - System

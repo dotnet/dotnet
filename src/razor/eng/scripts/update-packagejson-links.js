@@ -1,4 +1,4 @@
-﻿const path = require("path");
+const path = require("path");
 const fs = require("fs");
 
 const args = process.argv.slice(2);

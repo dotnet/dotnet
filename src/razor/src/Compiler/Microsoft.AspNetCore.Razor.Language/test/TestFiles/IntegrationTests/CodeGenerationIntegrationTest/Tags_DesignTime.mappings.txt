@@ -1,4 +1,4 @@
-﻿Source Location: (2:0,2 [6] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Tags.cshtml)
+Source Location: (2:0,2 [6] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Tags.cshtml)
 |
     |
 Generated Location: (728:19,2 [6] )

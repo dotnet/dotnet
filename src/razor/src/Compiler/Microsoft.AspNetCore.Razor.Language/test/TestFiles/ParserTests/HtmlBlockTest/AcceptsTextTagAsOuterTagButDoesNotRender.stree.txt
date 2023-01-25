@@ -1,4 +1,4 @@
-﻿RazorDocument - [0..38)::38 - [@{<text>Foo Bar <foo> Baz</text> zoop}]
+RazorDocument - [0..38)::38 - [@{<text>Foo Bar <foo> Baz</text> zoop}]
     MarkupBlock - [0..38)::38
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

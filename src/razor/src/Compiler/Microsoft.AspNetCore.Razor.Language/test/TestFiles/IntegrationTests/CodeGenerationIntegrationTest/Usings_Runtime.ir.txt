@@ -1,4 +1,4 @@
-﻿Document - 
+Document - 
     RazorCompiledItemAttribute - 
     NamespaceDeclaration -  - Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
         UsingDirective - (1:0,1 [17] Usings.cshtml) - System.IO

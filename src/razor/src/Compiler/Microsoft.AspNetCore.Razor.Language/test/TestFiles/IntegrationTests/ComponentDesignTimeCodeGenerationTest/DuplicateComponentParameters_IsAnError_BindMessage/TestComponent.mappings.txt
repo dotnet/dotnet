@@ -1,4 +1,4 @@
-﻿Source Location: (23:0,23 [7] x:\dir\subdir\Test\TestComponent.cshtml)
+Source Location: (23:0,23 [7] x:\dir\subdir\Test\TestComponent.cshtml)
 |message|
 Generated Location: (1016:25,23 [7] )
 |message|

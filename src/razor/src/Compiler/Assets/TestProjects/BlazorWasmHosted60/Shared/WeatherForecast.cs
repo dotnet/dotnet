@@ -1,4 +1,4 @@
-﻿namespace BlazorWasmHosted60.Shared;
+namespace BlazorWasmHosted60.Shared;
 
 public class WeatherForecast
 {

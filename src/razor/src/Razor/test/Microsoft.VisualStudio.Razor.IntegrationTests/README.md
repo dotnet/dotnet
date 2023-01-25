@@ -1,4 +1,4 @@
-﻿# Razor Tooling Visual Studio Integration tests
+# Razor Tooling Visual Studio Integration tests
 
 ## Running
 

@@ -1,4 +1,4 @@
-﻿# Layers
+# Layers
 
 ## Product Layers
 
