@@ -1,4 +1,4 @@
-﻿RazorDocument - [0..31)::31 - [<input string-prefix-value=''/>]
+RazorDocument - [0..31)::31 - [<input string-prefix-value=''/>]
     MarkupBlock - [0..31)::31
         MarkupTagHelperElement - [0..31)::31 - input[SelfClosing] - InputTagHelper3
             MarkupTagHelperStartTag - [0..31)::31 - [<input string-prefix-value=''/>] - Gen<Markup> - SpanEditHandler;Accepts:Any

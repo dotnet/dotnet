@@ -1,4 +1,4 @@
-﻿<Addin id="RazorAddin" namespace="Microsoft.VisualStudio.Mac" version="17.3" name="Razor Language Services" author="Microsoft" description="Language services for ASP.NET Core Razor" category="Web Development">
+<Addin id="RazorAddin" namespace="Microsoft.VisualStudio.Mac" version="17.5" name="Razor Language Services" author="Microsoft" description="Language services for ASP.NET Core Razor" category="Web Development">
   <Runtime>
     <Import assembly="Microsoft.VisualStudio.Editor.Razor.dll" />
     <Import assembly="Microsoft.CodeAnalysis.Razor.Workspaces.dll" />
@@ -36,8 +36,8 @@
     -->
   </Runtime>
   <Dependencies>
-    <Addin id="::MonoDevelop.Core" version="17.3" />
-    <Addin id="::MonoDevelop.Ide" version="17.3" />
-    <Addin id="::MonoDevelop.TextEditor" version="17.3" />
+    <Addin id="::MonoDevelop.Core" version="17.5" />
+    <Addin id="::MonoDevelop.Ide" version="17.5" />
+    <Addin id="::MonoDevelop.TextEditor" version="17.5" />
   </Dependencies>
 </Addin>

@@ -2,30 +2,28 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 
 internal sealed class CompletionListCache
 {
-    private record struct Slot(
-        int Id,
-        VSInternalCompletionList CompletionList,
-        object? Context,
-        bool Used = true);
-
     // Internal for testing
-    internal const int MaxCacheSize = 10;
+    internal static readonly int MaxCacheSize = 10;
 
-    private readonly object _accessLock = new();
+    private readonly object _accessLock;
+    private readonly List<CacheEntry> _resultIdToCacheEntry;
+    private int _nextResultId;
 
-    // This is used as a circular buffer.
-    private readonly Slot[] _items = new Slot[MaxCacheSize];
+    public CompletionListCache()
+    {
+        _accessLock = new object();
+        _resultIdToCacheEntry = new List<CacheEntry>();
+    }
 
-    private int _nextIndex;
-    private int _nextId;
-
-    public int Add(VSInternalCompletionList completionList, object? context)
+    public int Set(VSInternalCompletionList completionList, object? context)
     {
         if (completionList is null)
         {
@@ -34,63 +32,41 @@ internal sealed class CompletionListCache
 
         lock (_accessLock)
         {
-            var index = _nextIndex++;
-            var id = _nextId++;
-
-            _items[index] = new Slot(id, completionList, context);
-
-            // _nextIndex should always point to the index where we'll access the next element
-            // in the circular buffer. Here, we check to see if it is after the last index.
-            // If it is, we change it to the first index to properly "wrap around" the array.
-            if (_nextIndex == MaxCacheSize)
+            // If cache exceeds maximum size, remove the oldest list in the cache
+            if (_resultIdToCacheEntry.Count >= MaxCacheSize)
             {
-                _nextIndex = 0;
+                _resultIdToCacheEntry.RemoveAt(0);
             }
 
-            // Return generated id so the completion list can be retrieved later.
-            return id;
+            var resultId = _nextResultId++;
+            var cacheEntry = new CacheEntry(resultId, completionList, context);
+            _resultIdToCacheEntry.Add(cacheEntry);
+
+            // Return generated resultId so completion list can later be retrieved from cache
+            return resultId;
         }
     }
 
-    public bool TryGet(int id, out (VSInternalCompletionList CompletionList, object? Context) result)
+    public bool TryGet(int resultId, [NotNullWhen(returnValue: true)] out CacheEntry? cachedEntry)
     {
         lock (_accessLock)
         {
-            var index = _nextIndex;
-            var count = MaxCacheSize;
-
-            // Search back to front because the items in the back are the most recently added
-            // which are most frequently accessed.
-            while (count > 0)
+            // Search back -> front because the items in the back are the most recently added which are most frequently accessed.
+            for (var i = _resultIdToCacheEntry.Count - 1; i >= 0; i--)
             {
-                index--;
-
-                // If we're before the first index in the array, switch to the last index to
-                // "wrap around" the array.
-                if (index < 0)
+                var entry = _resultIdToCacheEntry[i];
+                if (entry.ResultId == resultId)
                 {
-                    index = MaxCacheSize - 1;
-                }
-
-                var slot = _items[index];
-
-                if (!slot.Used)
-                {
-                    break;
-                }
-
-                if (slot.Id == id)
-                {
-                    result = (slot.CompletionList, slot.Context);
+                    cachedEntry = entry;
                     return true;
                 }
-
-                count--;
             }
 
-            // A cache entry associated with the given id was not found.
-            result = default;
+            // A cache entry associated with the given resultId was not found
+            cachedEntry = null;
             return false;
         }
     }
+
+    public record CacheEntry(int ResultId, VSInternalCompletionList CompletionList, object? Context);
 }

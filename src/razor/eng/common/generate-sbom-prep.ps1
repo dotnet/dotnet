@@ -1,4 +1,4 @@
-﻿Param(
+Param(
     [Parameter(Mandatory=$true)][string] $ManifestDirPath    # Manifest directory where sbom will be placed
 )
 

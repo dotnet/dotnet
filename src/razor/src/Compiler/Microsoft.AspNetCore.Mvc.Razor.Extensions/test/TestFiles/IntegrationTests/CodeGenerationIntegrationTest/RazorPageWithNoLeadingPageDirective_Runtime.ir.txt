@@ -1,4 +1,4 @@
-﻿Document - 
+Document - 
     RazorCompiledItemAttribute - 
     NamespaceDeclaration -  - AspNetCore
         UsingDirective - (1:0,1 [14] ) - System

@@ -1,1 +1,1 @@
-﻿(1,17): Error RZ1017: Unexpected literal following the 'custom' directive. Expected 'line break'.
+(1,17): Error RZ1017: Unexpected literal following the 'custom' directive. Expected 'line break'.

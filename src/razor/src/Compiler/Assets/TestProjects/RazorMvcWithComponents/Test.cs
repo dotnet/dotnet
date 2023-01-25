@@ -1,4 +1,4 @@
-﻿namespace MvcWithComponents
+namespace MvcWithComponents
 {
     public class Test
     {

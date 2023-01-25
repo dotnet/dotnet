@@ -1,4 +1,4 @@
-﻿# How to contribute
+# How to contribute
 
 One of the easiest ways to contribute is to participate in discussions on GitHub issues and provide feedback. You can also contribute by submitting pull requests with code changes.
 

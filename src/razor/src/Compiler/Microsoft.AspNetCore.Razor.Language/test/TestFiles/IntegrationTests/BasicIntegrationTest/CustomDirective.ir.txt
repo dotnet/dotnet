@@ -1,4 +1,4 @@
-﻿Document - 
+Document - 
     RazorCompiledItemAttribute - 
     NamespaceDeclaration -  - Razor
         RazorSourceChecksumAttribute - 

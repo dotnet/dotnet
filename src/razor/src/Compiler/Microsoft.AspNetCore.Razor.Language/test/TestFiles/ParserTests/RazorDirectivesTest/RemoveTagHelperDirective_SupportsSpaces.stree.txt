@@ -1,4 +1,4 @@
-﻿RazorDocument - [0..35)::35 - [@removeTagHelper     Foo,   Bar    ]
+RazorDocument - [0..35)::35 - [@removeTagHelper     Foo,   Bar    ]
     MarkupBlock - [0..35)::35
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

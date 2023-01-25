@@ -1,4 +1,4 @@
-﻿# Creating a C# Language Server Framework
+# Creating a C# Language Server Framework
 
 ## Background
 

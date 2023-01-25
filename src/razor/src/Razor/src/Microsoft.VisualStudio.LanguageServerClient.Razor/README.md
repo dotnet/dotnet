@@ -1,4 +1,4 @@
-﻿# Running this extension as the "Experimental instance"
+# Running this extension as the "Experimental instance"
 
 ## Having a "proper" VS build
 

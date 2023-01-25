@@ -1,4 +1,4 @@
-﻿RazorDocument - [0..41)::41 - [LF<div>content<span>footer</div></span>LF]
+RazorDocument - [0..41)::41 - [LF<div>content<span>footer</div></span>LF]
     MarkupBlock - [0..41)::41
         MarkupTextLiteral - [0..2)::2 - [LF] - Gen<Markup> - SpanEditHandler;Accepts:Any
             NewLine;[LF];

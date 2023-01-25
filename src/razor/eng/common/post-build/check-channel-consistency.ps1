@@ -1,4 +1,4 @@
-﻿param(
+param(
   [Parameter(Mandatory=$true)][string] $PromoteToChannels,            # List of channels that the build should be promoted to
   [Parameter(Mandatory=$true)][array] $AvailableChannelIds            # List of channel IDs available in the YAML implementation
 )
