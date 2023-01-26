@@ -9,7 +9,7 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="$(MicrosoftExtensionsDependencyInjectionVersion)" />
     <!-- This is here so that we agree with the project's transitive references to NewtonSoft.Json -->
     <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
-    <PackageReference Include="NuGet.Frameworks" Version="$(NuGetVersion)" />
+    <PackageReference Include="NuGet.Frameworks" Version="$(NuGetPackagingVersion)" />
   </ItemGroup>
 
   <ItemGroup>

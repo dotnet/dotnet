@@ -27,7 +27,7 @@
     <PackageReference Include="System.Reflection.Metadata" Version="$(SystemReflectionMetadataVersion)" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="$(MicrosoftBuildUtilitiesCoreVersion)" />
     <PackageReference Include="Microsoft.Build.Framework" Version="$(MicrosoftBuildFrameworkVersion)" />
-    <PackageReference Include="NuGet.Packaging.Core" Version="$(NuGetVersion)" />
+    <PackageReference Include="NuGet.Packaging.Core" Version="$(NuGetPackagingVersion)" />
     <!-- This is here so that we agree with the project's transitive references to NewtonSoft.Json -->
     <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
   </ItemGroup>

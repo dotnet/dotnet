@@ -56,9 +56,9 @@
     <!--Need to reference version 2.8.2 of CodeAnalysis so that we don't have downgrade issues with System.Reflection.Metadata version-->
     <PackageReference Include="Microsoft.CodeAnalysis" Version="2.8.2" Condition="'$(DotNetBuildFromSource)' != 'true'" />
     <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
-    <PackageReference Include="NuGet.Commands" Version="$(NuGetVersion)" />
-    <PackageReference Include="NuGet.Packaging" Version="$(NuGetVersion)" />
-    <PackageReference Include="NuGet.ProjectModel" Version="$(NuGetVersion)" />
+    <PackageReference Include="NuGet.Commands" Version="$(NuGetPackagingVersion)" />
+    <PackageReference Include="NuGet.Packaging" Version="$(NuGetPackagingVersion)" />
+    <PackageReference Include="NuGet.ProjectModel" Version="$(NuGetPackagingVersion)" />
     <PackageReference Include="System.Text.Json" Version="$(SystemTextJsonVersion)" />
     <PackageReference Include="System.Reflection.Metadata" Version="$(SystemReflectionMetadataVersion)" />
     <PackageReference Include="Microsoft.NETCore.Platforms" Version="$(MicrosoftNETCorePlatformsVersion)" />

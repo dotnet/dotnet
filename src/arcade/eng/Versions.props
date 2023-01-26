@@ -51,8 +51,7 @@
     <McMasterExtensionsCommandLineUtils>2.3.0</McMasterExtensionsCommandLineUtils>
     <NewtonsoftJsonVersion>13.0.1</NewtonsoftJsonVersion>
     <SystemTextJsonVersion>6.0.0</SystemTextJsonVersion>
-    <NuGetVersioningVersion>4.4.0</NuGetVersioningVersion>
-    <NuGetVersion>6.2.2</NuGetVersion>
+    <NuGetPackagingVersion>6.2.2</NuGetPackagingVersion>
     <OctokitVersion>0.32.0</OctokitVersion>
     <SwashbuckleAspNetCoreSwaggerVersion>3.0.0</SwashbuckleAspNetCoreSwaggerVersion>
     <SystemBuffersVersion>4.5.1</SystemBuffersVersion>
