@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>$(NetCurrent)</TargetFramework>
     <TargetPackagesPath>$(ArtifactsDir)textOnlyPackages/</TargetPackagesPath>
     <CsProjTemplatePath>./textOnlyPackage.csproj.template</CsProjTemplatePath>
   </PropertyGroup>

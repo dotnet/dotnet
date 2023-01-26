@@ -3,7 +3,7 @@
   <!-- This project is a workaround utilized by the DependencyPackageProjects infrastructure -->
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>$(NetCurrent)</TargetFramework>
   </PropertyGroup>
 
   <Target Name="Build" />
