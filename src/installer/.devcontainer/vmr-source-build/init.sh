@@ -19,11 +19,13 @@ git -C "$installer_dir" fetch --all --unshallow
 # We need this to figure out, which VMR branch to use
 vmr_branch=$(git log --pretty=format:'%D' HEAD^ | grep 'origin/' | head -n1 | sed 's@origin/@@' | sed 's@,.*@@')
 
-"$installer_dir/eng/vmr-sync.sh" \
-    --vmr "$vmr_dir"             \
-    --tmp "$tmp_dir"             \
-    --branch "$vmr_branch"       \
+pushd "$installer_dir"
+  "./eng/vmr-sync.sh"      \
+    --vmr "$vmr_dir"       \
+    --tmp "$tmp_dir"       \
+    --branch "$vmr_branch" \
     --debug
+popd
 
 # Run prep.sh
 unset RepositoryName
