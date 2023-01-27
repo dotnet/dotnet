@@ -74,7 +74,7 @@ namespace NuGet.SolutionRestoreManager
 
                 return complete;
             }
-            catch (Exception ex)
+            catch (Exception ex) when (!(ex is OperationCanceledException && token.IsCancellationRequested))
             {
                 await _telemetryProvider.PostFaultAsync(ex, nameof(VsSolutionRestoreStatusProvider));
                 throw;

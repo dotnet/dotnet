@@ -2,12 +2,10 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using NuGet.Common;
-using NuGet.Configuration;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using NuGet.Protocol.Core.Types;
@@ -188,7 +186,6 @@ namespace NuGet.PackageManagement
             telemetryEvent["PackageFetchTime"] = _packageFetchTime;
             telemetryEvent["TaskReturnTime"] = _taskReturnTime;
 
-            var packageId = CryptoHashUtility.GenerateUniqueToken(Package.ToString());
             telemetryEvent.AddPiiData("PackageId", Package.ToString());
 
             if (parentId != Guid.Empty)

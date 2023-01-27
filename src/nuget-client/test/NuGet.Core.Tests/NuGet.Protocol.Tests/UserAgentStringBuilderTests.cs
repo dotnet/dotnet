@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System.Net.Http;
 using NuGet.Protocol.Core.Types;
 using Xunit;
 using Xunit.Abstractions;
@@ -95,6 +96,22 @@ namespace NuGet.Protocol.Tests
             Assert.True(userAgentString2.Contains(builder.NuGetClientVersion));
             Assert.True(userAgentString3.Contains(builder.NuGetClientVersion));
             Assert.True(userAgentString4.Contains(builder.NuGetClientVersion));
+        }
+
+        [Theory]
+        [InlineData("Custom Kernel (123")]
+        [InlineData("Custom Kernel 123)")]
+        public void Build_OsDescriptionWithUnmatchedParenthesis_IsValid(string osDescription)
+        {
+            // Arrange
+            UserAgentStringBuilder target = new();
+
+            // Act
+            string result = target.WithOSDescription(osDescription).Build();
+
+            // Assert
+            HttpRequestMessage httpRequest = new();
+            httpRequest.Headers.Add("User-Agent", result);
         }
     }
 }
