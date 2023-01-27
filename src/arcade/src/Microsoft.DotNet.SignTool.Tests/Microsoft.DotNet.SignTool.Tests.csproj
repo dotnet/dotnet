@@ -13,7 +13,7 @@
     <PackageReference Include="Microsoft.Build.Framework" Version="$(MicrosoftBuildFrameworkVersion)" />
     <PackageReference Include="Microsoft.Signed.Wix" Version="$(MicrosoftSignedWixVersion)" GeneratePathProperty="true" />
     <PackageReference Include="Xunit.SkippableFact" Version="1.4.13" />
-    <PackageReference Include="NuGet.Packaging.Core" Version="$(NuGetVersion)" />
+    <PackageReference Include="NuGet.Packaging.Core" Version="$(NuGetPackagingVersion)" />
     <PackageReference Include="System.Collections.Immutable" Version="$(SystemCollectionsImmutableVersion)" />
 
     <!-- This is here so that we agree with the project's transitive references to NewtonSoft.Json -->

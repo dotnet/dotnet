@@ -12,15 +12,10 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Build.Tasks.Core" Version="$(MicrosoftBuildTasksCoreVersion)" Publish="false" />
     <PackageReference Include="Microsoft.Build" Version="$(MicrosoftBuildVersion)" Publish="false" />
-    <!--
-      Microsoft.DotNet.Arcade.Sdk uses "NuGetVersioningVersion" for its NuGet library dependency.
-      Other libraries in dotnet/arcade that depend on NuGet libraries use "NuGetVersion".
-      See https://github.com/dotnet/arcade/issues/6014
-    -->
-    <PackageReference Include="NuGet.Frameworks" Version="$(NuGetVersion)" />
-    <PackageReference Include="NuGet.Packaging" Version="$(NuGetVersion)" />
-    <PackageReference Include="NuGet.ProjectModel" Version="$(NuGetVersion)" />
-    <PackageReference Include="NuGet.Versioning" Version="$(NuGetVersion)" />
+    <PackageReference Include="NuGet.Frameworks" Version="$(NuGetPackagingVersion)" />
+    <PackageReference Include="NuGet.Packaging" Version="$(NuGetPackagingVersion)" />
+    <PackageReference Include="NuGet.ProjectModel" Version="$(NuGetPackagingVersion)" />
+    <PackageReference Include="NuGet.Versioning" Version="$(NuGetPackagingVersion)" />
 
     <!-- This is here so that we agree with the project's transitive references to NewtonSoft.Json -->
     <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />

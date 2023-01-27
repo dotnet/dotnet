@@ -13,18 +13,18 @@
       <Sha>4ed7440e89d5fe7d4375102a441c713fadd5357c</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.23054.2">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.23075.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>eae015fb1c92ceef69126164b3969447d0355c08</Sha>
+      <Sha>74a74c44f54249ac59d045b49f9f8da922e0b8d8</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.GenAPI" Version="8.0.0-beta.23054.2">
+    <Dependency Name="Microsoft.DotNet.GenAPI" Version="8.0.0-beta.23075.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>eae015fb1c92ceef69126164b3969447d0355c08</Sha>
+      <Sha>74a74c44f54249ac59d045b49f9f8da922e0b8d8</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.GitHub" Version="1.2.0-beta-23053-01" CoherentParentDependency="Microsoft.DotNet.Arcade.Sdk">
+    <Dependency Name="Microsoft.SourceLink.GitHub" Version="1.2.0-beta-23073-01" CoherentParentDependency="Microsoft.DotNet.Arcade.Sdk">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>8a6cbd4c912ffb7d342b670850f499e0792e5a50</Sha>
+      <Sha>de25d2565e5b89ff1d7eee1bce066005b272e365</Sha>
       <SourceBuild RepoName="sourcelink" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.NETCore.ILAsm" Version="5.0.0-preview.4.20202.18">

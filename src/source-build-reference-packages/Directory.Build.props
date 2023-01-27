@@ -2,4 +2,8 @@
 
   <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
 
+  <PropertyGroup>
+    <NetCurrent>net8.0</NetCurrent>
+  </PropertyGroup>
+
 </Project>

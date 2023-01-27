@@ -13,7 +13,7 @@
     <PackageReference Include="Moq" Version="$(MoqVersion)" />
     <!-- This is here so that we agree with the project's transitive references to NewtonSoft.Json -->
     <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
-    <PackageReference Include="NuGet.Versioning" Version="$(NuGetVersion)" />
+    <PackageReference Include="NuGet.Versioning" Version="$(NuGetPackagingVersion)" />
     <PackageReference Include="System.Text.Encodings.Web" Version="$(SystemTextEncodingsWebVersion)" />
   </ItemGroup>
 
