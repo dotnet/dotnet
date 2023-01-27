@@ -36,6 +36,7 @@ stages:
         ./.dotnet/dotnet darc vmr scan-binary-files
         --vmr "$(Build.SourcesDirectory)"
         --tmp "$(Agent.TempDirectory)"
+        --baseline-file "(Build.SourcesDirectory)\src\installer\src\VirtualMonoRepo\baseline-file.txt"
         || (echo '##[error]Found binaries in the VMR' && exit 1)
       displayName: Scan for binaries
       workingDirectory: $(Build.SourcesDirectory)/src/installer
@@ -45,6 +46,7 @@ stages:
         ./.dotnet/dotnet darc vmr scan-cloaked-files
         --vmr "$(Build.SourcesDirectory)"
         --tmp "$(Agent.TempDirectory)"
+        --baseline-file "(Build.SourcesDirectory)\src\installer\src\VirtualMonoRepo\baseline-file.txt"
         || (echo '##[error]Found cloaked files in the VMR' && exit 1)
       displayName: Scan for cloaked files
       workingDirectory: $(Build.SourcesDirectory)/src/installer
