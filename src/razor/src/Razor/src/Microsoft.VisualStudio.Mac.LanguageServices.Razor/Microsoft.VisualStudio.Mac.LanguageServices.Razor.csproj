@@ -8,6 +8,7 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
     <IsShippingPackage>false</IsShippingPackage>
+    <IsPackable Condition="'$(OS)' != 'Windows_NT'">false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>

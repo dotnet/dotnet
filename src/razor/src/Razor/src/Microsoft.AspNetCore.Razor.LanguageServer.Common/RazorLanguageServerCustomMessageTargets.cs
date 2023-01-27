@@ -19,6 +19,8 @@ internal static class RazorLanguageServerCustomMessageTargets
 
     public const string RazorProvideHtmlDocumentColorEndpoint = "razor/provideHtmlDocumentColor";
 
+    public const string RazorProvideHtmlColorPresentationEndpoint = "razor/provideHtmlColorPresentation";
+
     public const string RazorInlineCompletionEndpoint = "razor/inlineCompletion";
 
     public const string RazorFoldingRangeEndpoint = "razor/foldingRange";

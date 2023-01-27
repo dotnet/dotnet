@@ -1,4 +1,4 @@
-RazorDocument - [0..27)::27 - [<input string-dictionary />]
+﻿RazorDocument - [0..27)::27 - [<input string-dictionary />]
     MarkupBlock - [0..27)::27
         MarkupTagHelperElement - [0..27)::27 - input[SelfClosing] - InputTagHelper3
             MarkupTagHelperStartTag - [0..27)::27 - [<input string-dictionary />] - Gen<Markup> - SpanEditHandler;Accepts:Any

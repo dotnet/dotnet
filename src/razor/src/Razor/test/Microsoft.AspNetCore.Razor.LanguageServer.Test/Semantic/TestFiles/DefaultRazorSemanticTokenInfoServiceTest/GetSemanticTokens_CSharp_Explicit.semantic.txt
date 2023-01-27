@@ -1,4 +1,4 @@
-//line,characterPos,length,tokenType,modifier
+﻿//line,characterPos,length,tokenType,modifier
 0 0 1 razorTransition 0
 0 1 5 keyword 0
 0 6 6 namespace name 0

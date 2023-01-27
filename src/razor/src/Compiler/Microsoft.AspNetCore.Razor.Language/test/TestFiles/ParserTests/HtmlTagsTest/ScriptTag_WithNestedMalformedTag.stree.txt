@@ -1,4 +1,4 @@
-RazorDocument - [0..39)::39 - [<script>var four = 4; /* </ */</script>]
+﻿RazorDocument - [0..39)::39 - [<script>var four = 4; /* </ */</script>]
     MarkupBlock - [0..39)::39
         MarkupElement - [0..39)::39
             MarkupStartTag - [0..8)::8 - [<script>] - Gen<Markup> - SpanEditHandler;Accepts:Any

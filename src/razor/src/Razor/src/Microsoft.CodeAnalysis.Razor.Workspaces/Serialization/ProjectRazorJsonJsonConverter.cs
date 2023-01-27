@@ -25,7 +25,8 @@ internal class ProjectRazorJsonJsonConverter : JsonConverter
     {
         if (reader.TokenType != JsonToken.StartObject)
         {
-            return null;
+            var canConvert = typeof(ProjectRazorJson).IsAssignableFrom(objectType);
+            return canConvert;
         }
 
         var (_, _, _, _, serializationFormat, serializationFilePath, filePath, configuration, rootNamespace, projectWorkspaceState, documents) = reader.ReadProperties(static (propertyName, arg) =>

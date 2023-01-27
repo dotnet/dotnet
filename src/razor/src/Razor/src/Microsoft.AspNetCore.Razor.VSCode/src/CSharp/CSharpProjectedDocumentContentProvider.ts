@@ -1,12 +1,12 @@
-/* --------------------------------------------------------------------------------------------
+﻿/* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
+import { IRazorDocumentChangeEvent } from '../Document/IRazorDocumentChangeEvent';
+import { IRazorDocumentManager } from '../Document/IRazorDocumentManager';
+import { RazorDocumentChangeKind } from '../Document/RazorDocumentChangeKind';
 import { IEventEmitterFactory } from '../IEventEmitterFactory';
-import { IRazorDocumentChangeEvent } from '../IRazorDocumentChangeEvent';
-import { IRazorDocumentManager } from '../IRazorDocumentManager';
-import { RazorDocumentChangeKind } from '../RazorDocumentChangeKind';
 import { RazorLogger } from '../RazorLogger';
 import { getUriPath } from '../UriPaths';
 import * as vscode from '../vscodeAdapter';
@@ -20,7 +20,7 @@ export class CSharpProjectedDocumentContentProvider implements vscode.TextDocume
         private readonly documentManager: IRazorDocumentManager,
         eventEmitterFactory: IEventEmitterFactory,
         private readonly logger: RazorLogger) {
-        documentManager.onChange((event) => this.documentChanged(event));
+        documentManager.onChange((event: IRazorDocumentChangeEvent) => this.documentChanged(event));
         this.onDidChangeEmitter = eventEmitterFactory.create<vscode.Uri>();
     }
 

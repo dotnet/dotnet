@@ -47,7 +47,7 @@ public class RenameEndpointTest : LanguageServerTestBase
     public async Task Handle_Rename_FileManipulationNotSupported_ReturnsNull()
     {
         // Arrange
-        var languageServerFeatureOptions = Mock.Of<LanguageServerFeatureOptions>(options => options.SupportsFileManipulation == false, MockBehavior.Strict);
+        var languageServerFeatureOptions = Mock.Of<LanguageServerFeatureOptions>(options => options.SupportsFileManipulation == false && options.ReturnCodeActionAndRenamePathsWithPrefixedSlash == false, MockBehavior.Strict);
         var endpoint = CreateEndpoint(languageServerFeatureOptions);
         var uri = new Uri("file:///c:/First/Component1.razor");
         var request = new RenameParamsBridge
@@ -421,7 +421,8 @@ public class RenameEndpointTest : LanguageServerTestBase
     public async Task Handle_Rename_SingleServer_CallsDelegatedLanguageServer()
     {
         // Arrange
-        var languageServerFeatureOptions = Mock.Of<LanguageServerFeatureOptions>(options => options.SupportsFileManipulation == true && options.SingleServerSupport == true, MockBehavior.Strict);
+        var languageServerFeatureOptions = Mock.Of<LanguageServerFeatureOptions>(
+            options => options.SupportsFileManipulation == true && options.SingleServerSupport == true && options.ReturnCodeActionAndRenamePathsWithPrefixedSlash == false, MockBehavior.Strict);
 
         var delegatedEdit = new WorkspaceEdit();
 
@@ -469,7 +470,8 @@ public class RenameEndpointTest : LanguageServerTestBase
     public async Task Handle_Rename_SingleServer_DoesntDelegateForRazor()
     {
         // Arrange
-        var languageServerFeatureOptions = Mock.Of<LanguageServerFeatureOptions>(options => options.SupportsFileManipulation == true && options.SingleServerSupport == true, MockBehavior.Strict);
+        var languageServerFeatureOptions = Mock.Of<LanguageServerFeatureOptions>(
+            options => options.SupportsFileManipulation == true && options.SingleServerSupport == true && options.ReturnCodeActionAndRenamePathsWithPrefixedSlash == false, MockBehavior.Strict);
         var languageServerMock = new Mock<ClientNotifierServiceBase>(MockBehavior.Strict);
         var documentMappingServiceMock = new Mock<RazorDocumentMappingService>(MockBehavior.Strict);
         documentMappingServiceMock
@@ -498,9 +500,9 @@ public class RenameEndpointTest : LanguageServerTestBase
         Assert.Null(result);
     }
 
-    private Task<DocumentContext> GetDocumentContextAsync(Uri file)
+    private Task<VersionedDocumentContext> GetDocumentContextAsync(Uri file)
     {
-        return _documentContextFactory.TryCreateAsync(file, DisposalToken);
+        return _documentContextFactory.TryCreateForOpenDocumentAsync(file, DisposalToken);
     }
 
     private static IEnumerable<TagHelperDescriptor> CreateRazorComponentTagHelperDescriptors(string assemblyName, string namespaceName, string tagName)
@@ -530,7 +532,7 @@ public class RenameEndpointTest : LanguageServerTestBase
         };
     }
 
-    private static DocumentContext CreateRazorDocumentContext(RazorProjectEngine projectEngine, TestRazorProjectItem item, string rootNamespaceName, IReadOnlyList<TagHelperDescriptor> tagHelpers)
+    private static VersionedDocumentContext CreateRazorDocumentContext(RazorProjectEngine projectEngine, TestRazorProjectItem item, string rootNamespaceName, IReadOnlyList<TagHelperDescriptor> tagHelpers)
     {
         var codeDocument = projectEngine.ProcessDesignTime(item);
 
@@ -550,7 +552,7 @@ public class RenameEndpointTest : LanguageServerTestBase
             d.GetTextAsync() == Task.FromResult(sourceText) &&
             d.Project == projectSnapshot, MockBehavior.Strict);
         var version = 1337;
-        var documentSnapshot = new DocumentContext(new Uri(item.FilePath), snapshot, version);
+        var documentSnapshot = new VersionedDocumentContext(new Uri(item.FilePath), snapshot, version);
 
         return documentSnapshot;
     }
@@ -595,16 +597,27 @@ public class RenameEndpointTest : LanguageServerTestBase
         var directory1Component = CreateRazorDocumentContext(projectEngine, itemDirectory1, "Test.Components", tagHelperDescriptors);
         var directory2Component = CreateRazorDocumentContext(projectEngine, itemDirectory2, "Test.Components", tagHelperDescriptors);
 
+        // Normally, the document context factory would be able to retrieve the same document as either versioned or not. Due to the
+        // way mocks work, sadly we have to add each one twice 🤦‍
         _documentContextFactory = Mock.Of<DocumentContextFactory>(d =>
-            d.TryCreateAsync(new Uri("c:/First/Component1.razor"), It.IsAny<CancellationToken>()) == Task.FromResult(component1) &&
-            d.TryCreateAsync(new Uri("c:/First/Component2.razor"), It.IsAny<CancellationToken>()) == Task.FromResult(component2) &&
-            d.TryCreateAsync(new Uri("c:/Second/Component3.razor"), It.IsAny<CancellationToken>()) == Task.FromResult(component3) &&
-            d.TryCreateAsync(new Uri("c:/Second/Component4.razor"), It.IsAny<CancellationToken>()) == Task.FromResult(component4) &&
-            d.TryCreateAsync(new Uri("c:/Second/ComponentWithParam.razor"), It.IsAny<CancellationToken>()) == Task.FromResult(componentWithParam) &&
-            d.TryCreateAsync(new Uri(index.FilePath), It.IsAny<CancellationToken>()) == Task.FromResult(index) &&
-            d.TryCreateAsync(new Uri(component1337.FilePath), It.IsAny<CancellationToken>()) == Task.FromResult(component1337) &&
-            d.TryCreateAsync(new Uri(itemDirectory1.FilePath), It.IsAny<CancellationToken>()) == Task.FromResult(directory1Component) &&
-            d.TryCreateAsync(new Uri(itemDirectory2.FilePath), It.IsAny<CancellationToken>()) == Task.FromResult(directory2Component), MockBehavior.Strict);
+            d.TryCreateAsync(new Uri("c:/First/Component1.razor"), It.IsAny<CancellationToken>()) == Task.FromResult((DocumentContext)component1) &&
+            d.TryCreateAsync(new Uri("c:/First/Component2.razor"), It.IsAny<CancellationToken>()) == Task.FromResult((DocumentContext)component2) &&
+            d.TryCreateAsync(new Uri("c:/Second/Component3.razor"), It.IsAny<CancellationToken>()) == Task.FromResult((DocumentContext)component3) &&
+            d.TryCreateAsync(new Uri("c:/Second/Component4.razor"), It.IsAny<CancellationToken>()) == Task.FromResult((DocumentContext)component4) &&
+            d.TryCreateAsync(new Uri("c:/Second/ComponentWithParam.razor"), It.IsAny<CancellationToken>()) == Task.FromResult((DocumentContext)componentWithParam) &&
+            d.TryCreateAsync(new Uri(index.FilePath), It.IsAny<CancellationToken>()) == Task.FromResult((DocumentContext)index) &&
+            d.TryCreateAsync(new Uri(component1337.FilePath), It.IsAny<CancellationToken>()) == Task.FromResult((DocumentContext)component1337) &&
+            d.TryCreateAsync(new Uri(itemDirectory1.FilePath), It.IsAny<CancellationToken>()) == Task.FromResult((DocumentContext)directory1Component) &&
+            d.TryCreateAsync(new Uri(itemDirectory2.FilePath), It.IsAny<CancellationToken>()) == Task.FromResult((DocumentContext)directory2Component) &&
+            d.TryCreateForOpenDocumentAsync(new Uri("c:/First/Component1.razor"), It.IsAny<CancellationToken>()) == Task.FromResult(component1) &&
+            d.TryCreateForOpenDocumentAsync(new Uri("c:/First/Component2.razor"), It.IsAny<CancellationToken>()) == Task.FromResult(component2) &&
+            d.TryCreateForOpenDocumentAsync(new Uri("c:/Second/Component3.razor"), It.IsAny<CancellationToken>()) == Task.FromResult(component3) &&
+            d.TryCreateForOpenDocumentAsync(new Uri("c:/Second/Component4.razor"), It.IsAny<CancellationToken>()) == Task.FromResult(component4) &&
+            d.TryCreateForOpenDocumentAsync(new Uri("c:/Second/ComponentWithParam.razor"), It.IsAny<CancellationToken>()) == Task.FromResult(componentWithParam) &&
+            d.TryCreateForOpenDocumentAsync(new Uri(index.FilePath), It.IsAny<CancellationToken>()) == Task.FromResult(index) &&
+            d.TryCreateForOpenDocumentAsync(new Uri(component1337.FilePath), It.IsAny<CancellationToken>()) == Task.FromResult(component1337) &&
+            d.TryCreateForOpenDocumentAsync(new Uri(itemDirectory1.FilePath), It.IsAny<CancellationToken>()) == Task.FromResult(directory1Component) &&
+            d.TryCreateForOpenDocumentAsync(new Uri(itemDirectory2.FilePath), It.IsAny<CancellationToken>()) == Task.FromResult(directory2Component), MockBehavior.Strict);
 
         var firstProject = Mock.Of<ProjectSnapshot>(p =>
             p.FilePath == "c:/First/First.csproj" &&
@@ -628,19 +641,9 @@ public class RenameEndpointTest : LanguageServerTestBase
 
         var projectSnapshotManagerDispatcher = new LSPProjectSnapshotManagerDispatcher(LoggerFactory);
 
-        _documentContextFactory = Mock.Of<DocumentContextFactory>(d =>
-            d.TryCreateAsync(new Uri("c:/First/Component1.razor"), It.IsAny<CancellationToken>()) == Task.FromResult(component1) &&
-            d.TryCreateAsync(new Uri("c:/First/Component2.razor"), It.IsAny<CancellationToken>()) == Task.FromResult(component2) &&
-            d.TryCreateAsync(new Uri("c:/Second/Component3.razor"), It.IsAny<CancellationToken>()) == Task.FromResult(component3) &&
-            d.TryCreateAsync(new Uri("c:/Second/Component4.razor"), It.IsAny<CancellationToken>()) == Task.FromResult(component4) &&
-            d.TryCreateAsync(new Uri("c:/Second/ComponentWithParam.razor"), It.IsAny<CancellationToken>()) == Task.FromResult(componentWithParam) &&
-            d.TryCreateAsync(new Uri(index.FilePath), It.IsAny<CancellationToken>()) == Task.FromResult(index) &&
-            d.TryCreateAsync(new Uri(component1337.FilePath), It.IsAny<CancellationToken>()) == Task.FromResult(component1337) &&
-            d.TryCreateAsync(new Uri(itemDirectory1.FilePath), It.IsAny<CancellationToken>()) == Task.FromResult(directory1Component) &&
-            d.TryCreateAsync(new Uri(itemDirectory2.FilePath), It.IsAny<CancellationToken>()) == Task.FromResult(directory2Component), MockBehavior.Strict);
-
         var searchEngine = new DefaultRazorComponentSearchEngine(Dispatcher, projectSnapshotManagerAccessor, LoggerFactory);
-        languageServerFeatureOptions ??= Mock.Of<LanguageServerFeatureOptions>(options => options.SupportsFileManipulation == true && options.SingleServerSupport == false, MockBehavior.Strict);
+        languageServerFeatureOptions ??= Mock.Of<LanguageServerFeatureOptions>(
+            options => options.SupportsFileManipulation == true && options.SingleServerSupport == false && options.ReturnCodeActionAndRenamePathsWithPrefixedSlash == false, MockBehavior.Strict);
 
         var documentMappingServiceMock = new Mock<RazorDocumentMappingService>(MockBehavior.Strict);
         documentMappingServiceMock

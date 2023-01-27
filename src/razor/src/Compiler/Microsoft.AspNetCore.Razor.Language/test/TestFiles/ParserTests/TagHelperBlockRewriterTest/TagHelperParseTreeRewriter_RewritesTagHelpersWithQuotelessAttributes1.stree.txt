@@ -1,4 +1,4 @@
-RazorDocument - [0..56)::56 - [<p class=foo dynamic=@DateTime.Now style=color:red;></p>]
+﻿RazorDocument - [0..56)::56 - [<p class=foo dynamic=@DateTime.Now style=color:red;></p>]
     MarkupBlock - [0..56)::56
         MarkupTagHelperElement - [0..56)::56 - p[StartTagAndEndTag] - ptaghelper
             MarkupTagHelperStartTag - [0..52)::52 - [<p class=foo dynamic=@DateTime.Now style=color:red;>] - Gen<Markup> - SpanEditHandler;Accepts:Any

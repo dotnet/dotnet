@@ -1,4 +1,4 @@
-RazorDocument - [0..26)::26 - [@custom "string1""string2"]
+﻿RazorDocument - [0..26)::26 - [@custom "string1""string2"]
     MarkupBlock - [0..26)::26
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

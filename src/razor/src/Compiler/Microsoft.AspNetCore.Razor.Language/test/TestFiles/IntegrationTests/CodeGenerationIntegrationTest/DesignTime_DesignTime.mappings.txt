@@ -1,4 +1,4 @@
-Source Location: (173:11,9 [6] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DesignTime.cshtml)
+﻿Source Location: (173:11,9 [6] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DesignTime.cshtml)
 |Footer|
 Generated Location: (507:12,22 [6] )
 |Footer|

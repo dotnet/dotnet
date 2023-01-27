@@ -46,7 +46,7 @@ internal class RazorCompletionListProvider
     public virtual async Task<VSInternalCompletionList?> GetCompletionListAsync(
         int absoluteIndex,
         VSInternalCompletionContext completionContext,
-        DocumentContext documentContext,
+        VersionedDocumentContext documentContext,
         VSInternalClientCapabilities clientCapabilities,
         HashSet<string>? existingCompletions,
         CancellationToken cancellationToken)
@@ -86,7 +86,7 @@ internal class RazorCompletionListProvider
         var completionCapability = clientCapabilities?.TextDocument?.Completion as VSInternalCompletionSetting;
 
         // The completion list is cached and can be retrieved via this result id to enable the resolve completion functionality.
-        var resultId = _completionListCache.Set(completionList, razorCompletionItems);
+        var resultId = _completionListCache.Add(completionList, razorCompletionItems);
         completionList.SetResultId(resultId, completionCapability);
 
         return completionList;

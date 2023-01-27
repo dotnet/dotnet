@@ -5,7 +5,7 @@
 
 namespace Microsoft.AspNetCore.Razor.OmniSharpPlugin;
 
-public interface IOmniSharpProjectSnapshotManagerChangeTrigger
+internal interface IOmniSharpProjectSnapshotManagerChangeTrigger
 {
     void Initialize(OmniSharpProjectSnapshotManagerBase projectManager);
 }

@@ -30,7 +30,7 @@ public class DocumentSnapshotTextLoaderTest : TestBase
         var textLoader = new DocumentSnapshotTextLoader(snapshot);
 
         // Act
-        var actual = await textLoader.LoadTextAndVersionAsync(default, default, default);
+        var actual = await textLoader.LoadTextAndVersionAsync(default, default);
 
         // Assert
         Assert.Same(expectedSourceText, actual.Text);

@@ -765,7 +765,7 @@ public class DefaultRazorHoverInfoServiceTest : TagHelperServiceTestBase
         return await endpoint.HandleRequestAsync(request, requestContext, DisposalToken);
     }
 
-    private DocumentContext CreateDefaultDocumentContext()
+    private VersionedDocumentContext CreateDefaultDocumentContext()
     {
         var txt = """
                 @addTagHelper *, TestAssembly
@@ -788,7 +788,7 @@ public class DefaultRazorHoverInfoServiceTest : TagHelperServiceTestBase
             d.GetTextAsync() == Task.FromResult(sourceText) &&
             d.Project == projectSnapshot, MockBehavior.Strict);
 
-        var documentContext = new DocumentContext(new Uri(path), snapshot, 1337);
+        var documentContext = new VersionedDocumentContext(new Uri(path), snapshot, 1337);
 
         return documentContext;
     }

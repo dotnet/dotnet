@@ -40,7 +40,21 @@ public class DefaultDocumentContextFactoryTest : LanguageServerTestBase
     }
 
     [Fact]
-    public async Task TryCreateAsync_CanNotResolveVersion_ReturnsNull()
+    public async Task TryCreateForOpenDocumentAsync_CanNotResolveDocument_ReturnsNull()
+    {
+        // Arrange
+        var uri = new Uri("C:/path/to/file.cshtml");
+        var factory = new DefaultDocumentContextFactory(Dispatcher, new TestDocumentResolver(), _documentVersionCache, LoggerFactory);
+
+        // Act
+        var documentContext = await factory.TryCreateForOpenDocumentAsync(uri, DisposalToken);
+
+        // Assert
+        Assert.Null(documentContext);
+    }
+
+    [Fact]
+    public async Task TryCreateForOpenDocumentAsync_CanNotResolveVersion_ReturnsNull()
     {
         // Arrange
         var uri = new Uri("C:/path/to/file.cshtml");
@@ -49,7 +63,7 @@ public class DefaultDocumentContextFactoryTest : LanguageServerTestBase
         var factory = new DefaultDocumentContextFactory(Dispatcher, documentResolver, _documentVersionCache, LoggerFactory);
 
         // Act
-        var documentContext = await factory.TryCreateAsync(uri, DisposalToken);
+        var documentContext = await factory.TryCreateForOpenDocumentAsync(uri, DisposalToken);
 
         // Assert
         Assert.Null(documentContext);
@@ -64,11 +78,31 @@ public class DefaultDocumentContextFactoryTest : LanguageServerTestBase
         var codeDocument = RazorCodeDocument.Create(RazorSourceDocument.Create(string.Empty, documentSnapshot.FilePath));
         documentSnapshot.With(codeDocument);
         var documentResolver = new TestDocumentResolver(documentSnapshot);
-        await Dispatcher.RunOnDispatcherThreadAsync(() => _documentVersionCache.TrackDocumentVersion(documentSnapshot, version: 1337), DisposalToken);
         var factory = new DefaultDocumentContextFactory(Dispatcher, documentResolver, _documentVersionCache, LoggerFactory);
 
         // Act
         var documentContext = await factory.TryCreateAsync(uri, DisposalToken);
+
+        // Assert
+        Assert.NotNull(documentContext);
+        Assert.Equal(uri, documentContext.Uri);
+        Assert.Same(documentSnapshot, documentContext.Snapshot);
+    }
+
+    [Fact]
+    public async Task TryCreateForOpenDocumentAsync_ResolvesContent()
+    {
+        // Arrange
+        var uri = new Uri("C:/path/to/file.cshtml");
+        var documentSnapshot = TestDocumentSnapshot.Create(uri.GetAbsoluteOrUNCPath());
+        var codeDocument = RazorCodeDocument.Create(RazorSourceDocument.Create(string.Empty, documentSnapshot.FilePath));
+        documentSnapshot.With(codeDocument);
+        var documentResolver = new TestDocumentResolver(documentSnapshot);
+        await Dispatcher.RunOnDispatcherThreadAsync(() => _documentVersionCache.TrackDocumentVersion(documentSnapshot, version: 1337), DisposalToken);
+        var factory = new DefaultDocumentContextFactory(Dispatcher, documentResolver, _documentVersionCache, LoggerFactory);
+
+        // Act
+        var documentContext = await factory.TryCreateForOpenDocumentAsync(uri, DisposalToken);
 
         // Assert
         Assert.NotNull(documentContext);

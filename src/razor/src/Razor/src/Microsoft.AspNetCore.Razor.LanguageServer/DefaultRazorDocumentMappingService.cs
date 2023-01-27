@@ -123,7 +123,7 @@ internal class DefaultRazorDocumentMappingService : RazorDocumentMappingService
                 // Strictly speaking we could be dropping more lines than we need to, because our mapping point could be anywhere within the edit
                 // but we know that the C# formatter will only be returning blank lines up until the first bit of content that needs to be indented
                 // so we can ignore all but the last line. This assert ensures that is true, just in case something changes in Roslyn
-                Debug.Assert(lastNewLine == 0 || edit.NewText.Substring(0, lastNewLine - 1).All(c => c == '\r' || c == '\n'), "We are throwing away part of an edit that has more than just empty lines!");
+                Debug.Assert(lastNewLine == 0 || edit.NewText[..(lastNewLine - 1)].All(c => c == '\r' || c == '\n'), "We are throwing away part of an edit that has more than just empty lines!");
 
                 var proposedRange = new Range { Start = new Position(range.End.Line, 0), End = new Position(range.End.Line, range.End.Character) };
                 startSync = proposedRange.Start.TryGetAbsoluteIndex(csharpSourceText, _logger, out startIndex);
@@ -140,7 +140,7 @@ internal class DefaultRazorDocumentMappingService : RazorDocumentMappingService
                 {
                     projectedEdits.Add(new TextEdit()
                     {
-                        NewText = edit.NewText.Substring(lastNewLine),
+                        NewText = edit.NewText[lastNewLine..],
                         Range = new Range { Start = hostDocumentStart!, End = hostDocumentEnd! },
                     });
                     continue;
@@ -418,10 +418,9 @@ internal class DefaultRazorDocumentMappingService : RazorDocumentMappingService
             throw new ArgumentNullException(nameof(codeDocument));
         }
 
-        var syntaxTree = codeDocument.GetSyntaxTree();
-        var classifiedSpans = syntaxTree.GetClassifiedSpans();
-        var tagHelperSpans = syntaxTree.GetTagHelperSpans();
-        var documentLength = codeDocument.GetSourceText().Length;
+        var classifiedSpans = GetClassifiedSpans(codeDocument);
+        var tagHelperSpans = GetTagHelperSpans(codeDocument);
+        var documentLength = codeDocument.Source.Length;
         var languageKind = GetLanguageKindCore(classifiedSpans, tagHelperSpans, originalIndex, documentLength, rightAssociative);
 
         return languageKind;
@@ -810,7 +809,7 @@ internal class DefaultRazorDocumentMappingService : RazorDocumentMappingService
             }
 
             var razorDocumentUri = _languageServerFeatureOptions.GetRazorDocumentUri(virtualDocumentUri);
-            var documentContext = await _documentContextFactory.TryCreateAsync(razorDocumentUri, cancellationToken).ConfigureAwait(false);
+            var documentContext = await _documentContextFactory.TryCreateForOpenDocumentAsync(razorDocumentUri, cancellationToken).ConfigureAwait(false);
             if (documentContext is null)
             {
                 continue;
@@ -902,5 +901,45 @@ internal class DefaultRazorDocumentMappingService : RazorDocumentMappingService
         }
 
         return edits;
+    }
+
+    private static IReadOnlyList<ClassifiedSpanInternal> GetClassifiedSpans(RazorCodeDocument document)
+    {
+        // Since this service is called so often, we get a good performance improvement by caching these values
+        // for this code document. If the document changes, as the user types, then the document instance will be
+        // different, so we don't need to worry about invalidating the cache.
+        var classifiedSpans = (IReadOnlyList<ClassifiedSpanInternal>)document.Items[typeof(ClassifiedSpanInternal)];
+        if (classifiedSpans is null)
+        {
+            var syntaxTree = document.GetSyntaxTree();
+
+            var visitor = new ClassifiedSpanVisitor(syntaxTree.Source);
+            visitor.Visit(syntaxTree.Root);
+            classifiedSpans = visitor.ClassifiedSpans;
+
+            document.Items[typeof(ClassifiedSpanInternal)] = classifiedSpans;
+        }
+
+        return classifiedSpans;
+    }
+
+    private static IReadOnlyList<TagHelperSpanInternal> GetTagHelperSpans(RazorCodeDocument document)
+    {
+        // Since this service is called so often, we get a good performance improvement by caching these values
+        // for this code document. If the document changes, as the user types, then the document instance will be
+        // different, so we don't need to worry about invalidating the cache.
+        var tagHelperSpans = (IReadOnlyList<TagHelperSpanInternal>)document.Items[typeof(TagHelperSpanInternal)];
+        if (tagHelperSpans is null)
+        {
+            var syntaxTree = document.GetSyntaxTree();
+
+            var visitor = new TagHelperSpanVisitor(syntaxTree.Source);
+            visitor.Visit(syntaxTree.Root);
+            tagHelperSpans = visitor.TagHelperSpans;
+
+            document.Items[typeof(TagHelperSpanInternal)] = tagHelperSpans;
+        }
+
+        return tagHelperSpans;
     }
 }

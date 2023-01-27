@@ -1,4 +1,4 @@
-RazorDocument - [0..452)::452 - [@{LF<area>var x = true;LF}LF@{LF<base>var x = true;LF}LF@{LF<br>var x = true;LF}LF@{LF<col>var x = true;LF}LF@{LF<command>var x = true;LF}LF@{LF<embed>var x = true;LF}LF@{LF<hr>var x = true;LF}LF@{LF<img>var x = true;LF}LF@{LF<input>var x = true;LF}LF@{LF<keygen>var x = true;LF}LF@{LF<link>var x = true;LF}LF@{LF<meta>var x = true;LF}LF@{LF<param>var x = true;LF}LF@{LF<source>var x = true;LF}LF@{LF<track>var x = true;LF}LF@{LF<wbr>var x = true;LF}LF]
+﻿RazorDocument - [0..452)::452 - [@{LF<area>var x = true;LF}LF@{LF<base>var x = true;LF}LF@{LF<br>var x = true;LF}LF@{LF<col>var x = true;LF}LF@{LF<command>var x = true;LF}LF@{LF<embed>var x = true;LF}LF@{LF<hr>var x = true;LF}LF@{LF<img>var x = true;LF}LF@{LF<input>var x = true;LF}LF@{LF<keygen>var x = true;LF}LF@{LF<link>var x = true;LF}LF@{LF<meta>var x = true;LF}LF@{LF<param>var x = true;LF}LF@{LF<source>var x = true;LF}LF@{LF<track>var x = true;LF}LF@{LF<wbr>var x = true;LF}LF]
     MarkupBlock - [0..452)::452
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

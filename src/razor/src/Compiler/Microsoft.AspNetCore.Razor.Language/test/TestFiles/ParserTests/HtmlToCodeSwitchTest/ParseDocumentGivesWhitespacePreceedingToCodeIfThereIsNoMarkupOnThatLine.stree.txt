@@ -1,4 +1,4 @@
-RazorDocument - [0..95)::95 - [   <ul>LF    @foreach(var p in Products) {LF        <li>Product: @p.Name</li>LF    }LF    </ul>]
+﻿RazorDocument - [0..95)::95 - [   <ul>LF    @foreach(var p in Products) {LF        <li>Product: @p.Name</li>LF    }LF    </ul>]
     MarkupBlock - [0..95)::95
         MarkupTextLiteral - [0..3)::3 - [   ] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Whitespace;[   ];

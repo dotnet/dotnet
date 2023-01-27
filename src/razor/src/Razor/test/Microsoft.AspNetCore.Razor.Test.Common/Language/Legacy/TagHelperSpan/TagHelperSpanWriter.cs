@@ -41,7 +41,7 @@ internal class TagHelperSpanWriter
             WriteSeparator();
 
             // Get the type name without the namespace.
-            var typeName = tagHelper.Name.Substring(tagHelper.Name.LastIndexOf('.') + 1);
+            var typeName = tagHelper.Name[(tagHelper.Name.LastIndexOf('.') + 1)..];
             Write(typeName);
         }
     }

@@ -1,4 +1,4 @@
-param(
+﻿param(
   [Parameter(Mandatory=$true)][string] $InputPath,              # Full path to directory where artifact packages are stored
   [Parameter(Mandatory=$true)][string] $ExtractPath            # Full path to directory where the packages will be extracted
 )

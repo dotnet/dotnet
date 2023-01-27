@@ -90,7 +90,7 @@ internal sealed class SourceMappingTagger : ITagger<SourceMappingTag>
 
                 // To 50 chars past the position (or document length maximum)
                 var end = Math.Min(position + 50, code.Length);
-                return code.Substring(start, end - start);
+                return code[start..end];
             }
         }
     }

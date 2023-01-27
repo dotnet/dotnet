@@ -13,20 +13,13 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 
 internal class RazorDocumentFormattingEndpoint : IVSDocumentFormattingEndpoint
 {
-    private readonly DocumentContextFactory _documentContextFactory;
     private readonly RazorFormattingService _razorFormattingService;
     private readonly IOptionsMonitor<RazorLSPOptions> _optionsMonitor;
 
     public RazorDocumentFormattingEndpoint(
-        DocumentContextFactory documentContextFactory,
         RazorFormattingService razorFormattingService,
         IOptionsMonitor<RazorLSPOptions> optionsMonitor)
     {
-        if (documentContextFactory is null)
-        {
-            throw new ArgumentNullException(nameof(documentContextFactory));
-        }
-
         if (razorFormattingService is null)
         {
             throw new ArgumentNullException(nameof(razorFormattingService));
@@ -37,7 +30,6 @@ internal class RazorDocumentFormattingEndpoint : IVSDocumentFormattingEndpoint
             throw new ArgumentNullException(nameof(optionsMonitor));
         }
 
-        _documentContextFactory = documentContextFactory;
         _razorFormattingService = razorFormattingService;
         _optionsMonitor = optionsMonitor;
     }
@@ -63,7 +55,7 @@ internal class RazorDocumentFormattingEndpoint : IVSDocumentFormattingEndpoint
             return null;
         }
 
-        var documentContext = await _documentContextFactory.TryCreateAsync(request.TextDocument.Uri, cancellationToken).ConfigureAwait(false);
+        var documentContext = requestContext.DocumentContext;
         if (documentContext is null || cancellationToken.IsCancellationRequested)
         {
             return null;

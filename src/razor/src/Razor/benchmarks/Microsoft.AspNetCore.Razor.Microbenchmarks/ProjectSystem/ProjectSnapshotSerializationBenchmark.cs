@@ -37,7 +37,7 @@ public class ProjectSnapshotSerializationBenchmark : ProjectSnapshotManagerBench
         using (originalStream = new MemoryStream())
         using (var writer = new StreamWriter(originalStream, Encoding.UTF8, bufferSize: 4096))
         {
-            Serializer.Serialize(writer, ProjectSnapshot);
+            Serializer.Serialize(writer, new ProjectSnapshotHandle(ProjectSnapshot));
         }
 
         ProjectSnapshotHandle deserializedResult;

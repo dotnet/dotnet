@@ -22,7 +22,7 @@ namespace Microsoft.AspNetCore.Razor.Microbenchmarks.LanguageServer;
 
 public class RazorSemanticTokensBenchmark : RazorLanguageServerBenchmarkBase
 {
-    private DefaultRazorSemanticTokensInfoService RazorSemanticTokenService { get; set; }
+    private RazorSemanticTokensInfoService RazorSemanticTokenService { get; set; }
 
     private DocumentVersionCache VersionCache { get; set; }
 
@@ -30,7 +30,7 @@ public class RazorSemanticTokensBenchmark : RazorLanguageServerBenchmarkBase
 
     private DocumentSnapshot DocumentSnapshot => DocumentContext.Snapshot;
 
-    private DocumentContext DocumentContext { get; set; }
+    private VersionedDocumentContext DocumentContext { get; set; }
 
     private Range Range { get; set; }
 
@@ -56,7 +56,7 @@ public class RazorSemanticTokensBenchmark : RazorLanguageServerBenchmarkBase
         var documentUri = new Uri(filePath);
         var documentSnapshot = GetDocumentSnapshot(ProjectFilePath, filePath, TargetPath);
         var version = 1;
-        DocumentContext = new DocumentContext(documentUri, documentSnapshot, version);
+        DocumentContext = new VersionedDocumentContext(documentUri, documentSnapshot, version);
 
         var text = await DocumentContext.GetSourceTextAsync(CancellationToken.None).ConfigureAwait(false);
         Range = new Range
@@ -116,14 +116,17 @@ public class RazorSemanticTokensBenchmark : RazorLanguageServerBenchmarkBase
     private void EnsureServicesInitialized()
     {
         var languageServer = RazorLanguageServer.GetInnerLanguageServerForTesting();
-        RazorSemanticTokenService = languageServer.GetRequiredService<RazorSemanticTokensInfoService>() as TestRazorSemanticTokensInfoService;
+        RazorSemanticTokenService = languageServer.GetRequiredService<RazorSemanticTokensInfoService>();
         VersionCache = languageServer.GetRequiredService<DocumentVersionCache>();
         ProjectSnapshotManagerDispatcher = languageServer.GetRequiredService<ProjectSnapshotManagerDispatcher>();
     }
 
     internal class TestRazorSemanticTokensInfoService : DefaultRazorSemanticTokensInfoService
     {
-        public TestRazorSemanticTokensInfoService(ClientNotifierServiceBase languageServer, RazorDocumentMappingService documentMappingService, LoggerFactory loggerFactory)
+        public TestRazorSemanticTokensInfoService(
+            ClientNotifierServiceBase languageServer,
+            RazorDocumentMappingService documentMappingService,
+            ILoggerFactory loggerFactory)
             : base(languageServer, documentMappingService, loggerFactory)
         {
         }

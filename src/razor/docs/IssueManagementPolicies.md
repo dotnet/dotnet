@@ -1,4 +1,4 @@
-# Issue Management Policies
+﻿# Issue Management Policies
 
 We have a lot of issue traffic to manage, so we have some policies in place to help us do that. This is a brief summary of some of the policies we have in place and the justification for them.
 

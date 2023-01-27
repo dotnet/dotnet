@@ -1,4 +1,4 @@
-RazorDocument - [0..38)::38 - [@foreach(var f in Foo) { / foo bar baz]
+﻿RazorDocument - [0..38)::38 - [@foreach(var f in Foo) { / foo bar baz]
     MarkupBlock - [0..38)::38
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

@@ -1,4 +1,4 @@
-Source Location: (1:0,1 [17] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (1:0,1 [17] x:\dir\subdir\Test\TestComponent.cshtml)
 |using Test.Shared|
 Generated Location: (320:12,0 [17] )
 |using Test.Shared|

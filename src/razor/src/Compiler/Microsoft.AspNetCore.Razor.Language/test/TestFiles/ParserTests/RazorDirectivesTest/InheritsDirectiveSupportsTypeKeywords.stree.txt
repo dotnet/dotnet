@@ -1,4 +1,4 @@
-RazorDocument - [0..16)::16 - [@inherits string]
+﻿RazorDocument - [0..16)::16 - [@inherits string]
     MarkupBlock - [0..16)::16
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

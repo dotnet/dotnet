@@ -1,4 +1,4 @@
-# Running Microbenchmarks
+﻿# Running Microbenchmarks
 
 Compile the solution in Release mode (so binaries are available in release)
 
@@ -14,11 +14,14 @@ Command Line:
 To run a specific benchmark add it as parameter.
 
 ```cmd
-dotnet run --config profile -c Release -f net472 <benchmark_name>
+dotnet run -c Release -f net472 <benchmark_name>
 ```
 
 If you run without any parameters, you'll be offered the list of all benchmarks and get to choose.
 
 ```cmd
-dotnet run --config profile -c Release -f net472
+dotnet run -c Release -f net472
 ```
+
+Profiling:
+To configure BDM generate an .etl stack trace (Windows only), specify "--profiler ETW" at the command-line.

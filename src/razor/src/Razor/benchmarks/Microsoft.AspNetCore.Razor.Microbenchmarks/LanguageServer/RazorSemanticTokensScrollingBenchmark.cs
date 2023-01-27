@@ -20,11 +20,11 @@ namespace Microsoft.AspNetCore.Razor.Microbenchmarks.LanguageServer;
 
 public class RazorSemanticTokensScrollingBenchmark : RazorLanguageServerBenchmarkBase
 {
-    private DefaultRazorSemanticTokensInfoService RazorSemanticTokenService { get; set; }
+    private RazorSemanticTokensInfoService RazorSemanticTokenService { get; set; }
 
     private DocumentVersionCache VersionCache { get; set; }
 
-    private DocumentContext DocumentContext { get; set; }
+    private VersionedDocumentContext DocumentContext { get; set; }
 
     private Uri DocumentUri => DocumentContext.Uri;
 
@@ -53,7 +53,7 @@ public class RazorSemanticTokensScrollingBenchmark : RazorLanguageServerBenchmar
 
         var documentUri = new Uri(filePath);
         var documentSnapshot = GetDocumentSnapshot(ProjectFilePath, filePath, TargetPath);
-        DocumentContext = new DocumentContext(documentUri, documentSnapshot, version: 1);
+        DocumentContext = new VersionedDocumentContext(documentUri, documentSnapshot, version: 1);
 
         var text = await DocumentSnapshot.GetTextAsync().ConfigureAwait(false);
         Range = new Range
@@ -129,7 +129,7 @@ public class RazorSemanticTokensScrollingBenchmark : RazorLanguageServerBenchmar
     private void EnsureServicesInitialized()
     {
         var languageServer = RazorLanguageServer.GetInnerLanguageServerForTesting();
-        RazorSemanticTokenService = (languageServer.GetRequiredService<RazorSemanticTokensInfoService>() as TestRazorSemanticTokensInfoService)!;
+        RazorSemanticTokenService = languageServer.GetRequiredService<RazorSemanticTokensInfoService>();
         VersionCache = languageServer.GetRequiredService<DocumentVersionCache>();
         ProjectSnapshotManagerDispatcher = languageServer.GetRequiredService<ProjectSnapshotManagerDispatcher>();
     }

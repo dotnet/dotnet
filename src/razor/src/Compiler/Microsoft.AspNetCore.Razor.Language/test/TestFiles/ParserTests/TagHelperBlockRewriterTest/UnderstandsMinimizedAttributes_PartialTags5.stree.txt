@@ -1,4 +1,4 @@
-RazorDocument - [0..15)::15 - [<p bound-string]
+﻿RazorDocument - [0..15)::15 - [<p bound-string]
     MarkupBlock - [0..15)::15
         MarkupTagHelperElement - [0..15)::15 - p[StartTagAndEndTag] - PTagHelper
             MarkupTagHelperStartTag - [0..15)::15 - [<p bound-string] - Gen<Markup> - SpanEditHandler;Accepts:Any

@@ -1,4 +1,4 @@
-Source Location: (81:3,2 [6] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorComments.cshtml)
+﻿Source Location: (81:3,2 [6] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorComments.cshtml)
 |
     |
 Generated Location: (746:19,2 [6] )

@@ -13,7 +13,7 @@ using Microsoft.VisualStudio.Threading;
 
 namespace Microsoft.AspNetCore.Razor.OmniSharpPlugin.StrongNamed;
 
-public class OmniSharpWorkspaceProjectStateChangeDetector : IOmniSharpProjectSnapshotManagerChangeTrigger
+internal class OmniSharpWorkspaceProjectStateChangeDetector : IOmniSharpProjectSnapshotManagerChangeTrigger
 {
     public OmniSharpWorkspaceProjectStateChangeDetector(
         OmniSharpProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,

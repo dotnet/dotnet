@@ -118,7 +118,7 @@ public partial class SyntaxVisualizerControl : UserControl, IVsRunningDocTableEv
             return;
         }
 
-        var codeDocument = _joinableTaskFactory.Run(() => _codeDocumentProvider.GetRazorCodeDocumentAsync(textDocument.FilePath, CancellationToken.None));
+        var codeDocument = GetCodeDocument(textDocument);
         if (codeDocument is null)
         {
             return;
@@ -158,7 +158,7 @@ public partial class SyntaxVisualizerControl : UserControl, IVsRunningDocTableEv
             return;
         }
 
-        var codeDocument = _joinableTaskFactory.Run(() => _codeDocumentProvider.GetRazorCodeDocumentAsync(textDocument.FilePath, CancellationToken.None));
+        var codeDocument = GetCodeDocument(textDocument);
         if (codeDocument is null)
         {
             return;
@@ -316,6 +316,21 @@ public partial class SyntaxVisualizerControl : UserControl, IVsRunningDocTableEv
 
         var caret = _activeWpfTextView.Selection.StreamSelectionSpan.SnapshotSpan.Span.Start;
 
+        var codeDocument = GetCodeDocument();
+        if (codeDocument is null)
+        {
+            return;
+        }
+
+        var tree = codeDocument.GetSyntaxTree();
+
+        var change = new SourceChange(caret, 0, string.Empty);
+        // Sadly introducing the namespace to allow us to call the extension method causes heaps of type name conflicts
+        var owner = AspNetCore.Razor.Language.Legacy.LegacySyntaxNodeExtensions.LocateOwner(tree.Root, change);
+
+        var ownerString = owner is null ? "(null)" : $"{owner.Kind} [{owner.SpanStart}-{owner.Span.End}]";
+        infoLabel.Content = $"Owner: {ownerString}, {AspNetCore.Razor.Language.Syntax.SyntaxNodeExtensions.GetContent(owner).Replace("\n", "\\n").Replace("\r", "\\r")}";
+
         var node = FindNodeForPosition((TreeViewItem)treeView.Items[0], caret);
         if (node is null)
         {
@@ -369,16 +384,7 @@ public partial class SyntaxVisualizerControl : UserControl, IVsRunningDocTableEv
             return;
         }
 
-        var textBuffer = _activeWpfTextView.TextBuffer;
-
-        EnsureInitialized();
-
-        if (!_textDocumentFactoryService.TryGetTextDocument(textBuffer, out var textDocument))
-        {
-            return;
-        }
-
-        var codeDocument = _joinableTaskFactory.Run(() => _codeDocumentProvider.GetRazorCodeDocumentAsync(textDocument.FilePath, CancellationToken.None));
+        var codeDocument = GetCodeDocument();
         if (codeDocument is null)
         {
             return;
@@ -502,5 +508,37 @@ public partial class SyntaxVisualizerControl : UserControl, IVsRunningDocTableEv
         _activeWpfTextView.Caret.MoveTo(caretPoint);
         _activeWpfTextView.VisualElement.Focus();
         _isNavigatingFromTreeToSource = false;
+    }
+
+    private RazorCodeDocument? GetCodeDocument()
+    {
+        if (_activeWpfTextView is null)
+        {
+            return null;
+        }
+
+        EnsureInitialized();
+
+        var textBuffer = _activeWpfTextView.TextBuffer;
+
+        if (!_textDocumentFactoryService.TryGetTextDocument(textBuffer, out var textDocument))
+        {
+            return null;
+        }
+
+        return GetCodeDocument(textDocument);
+    }
+
+    private RazorCodeDocument? GetCodeDocument(ITextDocument textDocument)
+    {
+        EnsureInitialized();
+
+        var codeDocument = _joinableTaskFactory.Run(() => _codeDocumentProvider.GetRazorCodeDocumentAsync(textDocument.FilePath, CancellationToken.None));
+        if (codeDocument is null)
+        {
+            return null;
+        }
+
+        return codeDocument;
     }
 }

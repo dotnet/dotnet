@@ -1,4 +1,4 @@
-RazorDocument - [0..30)::30 - [LF<div>Foo</div>LF<p>Bar</p>LF]
+﻿RazorDocument - [0..30)::30 - [LF<div>Foo</div>LF<p>Bar</p>LF]
     MarkupBlock - [0..30)::30
         MarkupTextLiteral - [0..2)::2 - [LF] - Gen<Markup> - SpanEditHandler;Accepts:Any
             NewLine;[LF];

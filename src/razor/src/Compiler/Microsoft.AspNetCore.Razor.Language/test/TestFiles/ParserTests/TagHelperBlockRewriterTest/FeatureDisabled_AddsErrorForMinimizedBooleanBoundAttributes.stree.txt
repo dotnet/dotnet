@@ -1,4 +1,4 @@
-RazorDocument - [0..37)::37 - [<input boundbool boundbooldict-key />]
+﻿RazorDocument - [0..37)::37 - [<input boundbool boundbooldict-key />]
     MarkupBlock - [0..37)::37
         MarkupTagHelperElement - [0..37)::37 - input[SelfClosing] - InputTagHelper
             MarkupTagHelperStartTag - [0..37)::37 - [<input boundbool boundbooldict-key />] - Gen<Markup> - SpanEditHandler;Accepts:Any

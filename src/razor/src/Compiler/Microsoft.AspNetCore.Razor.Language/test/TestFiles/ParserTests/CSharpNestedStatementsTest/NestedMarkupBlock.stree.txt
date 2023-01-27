@@ -1,4 +1,4 @@
-RazorDocument - [0..29)::29 - [@while(true) { <p>Hello</p> }]
+﻿RazorDocument - [0..29)::29 - [@while(true) { <p>Hello</p> }]
     MarkupBlock - [0..29)::29
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

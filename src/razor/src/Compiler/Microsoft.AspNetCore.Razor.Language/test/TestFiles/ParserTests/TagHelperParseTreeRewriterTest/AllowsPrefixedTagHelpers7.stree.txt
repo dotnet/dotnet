@@ -1,4 +1,4 @@
-RazorDocument - [0..21)::21 - [<!th:myth></!th:myth>]
+﻿RazorDocument - [0..21)::21 - [<!th:myth></!th:myth>]
     MarkupBlock - [0..21)::21
         MarkupElement - [0..21)::21
             MarkupStartTag - [0..10)::10 - [<!th:myth>] - Gen<Markup> - SpanEditHandler;Accepts:Any

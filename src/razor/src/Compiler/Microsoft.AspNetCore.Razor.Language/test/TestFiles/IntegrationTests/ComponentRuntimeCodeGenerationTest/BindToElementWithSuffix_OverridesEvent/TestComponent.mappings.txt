@@ -1,4 +1,4 @@
-Source Location: (76:1,7 [55] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (76:1,7 [55] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     public string ParentValue { get; set; } = "hi";
 |

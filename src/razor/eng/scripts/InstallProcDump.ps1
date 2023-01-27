@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Installs ProcDump into a folder in this repo.
 .DESCRIPTION

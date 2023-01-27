@@ -25,6 +25,7 @@
     <IncludeAssemblyInVSIXContainer>false</IncludeAssemblyInVSIXContainer>
     <IncludeDebugSymbolsInVSIXContainer>false</IncludeDebugSymbolsInVSIXContainer>
     <IncludeDebugSymbolsInLocalVSIXDeployment>false</IncludeDebugSymbolsInLocalVSIXDeployment>
+    <DefineConstants Condition="'$(IncludeRoslynDeps)' == 'true'">$(DefineConstants);INCLUDE_ROSLYN_DEPS</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -42,22 +43,30 @@
     <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" Version="$(MicrosoftVisualStudioShell150PackageVersion)" />
   </ItemGroup>
 
+  <!-- Reference the LSP protocol dlls so that we can include them in the code base and output them with the VSIX. -->
   <ItemGroup>
-    <!-- Reference the Roslyn dependencies so that Preview builds work -->
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Version="$(Tooling_MicrosoftCodeAnalysisCSharpFeaturesPackageVersion)" />
-    <PackageReference Include="Microsoft.CodeAnalysis.EditorFeatures" Version="$(RoslynPackageVersion)" />
-    <PackageReference Include="Microsoft.CodeAnalysis.EditorFeatures.Wpf" Version="$(RoslynPackageVersion)" />
-    <PackageReference Include="Microsoft.CodeAnalysis.ExternalAccess.Razor" Version="$(Tooling_MicrosoftCodeAnalysisExternalAccessRazorPackageVersion)" />
-    <PackageReference Include="Microsoft.CodeAnalysis.ExternalAccess.FSharp" Version="$(Tooling_MicrosoftCodeAnalysisExternalAccessRazorPackageVersion)" />
-    <PackageReference Include="Microsoft.VisualStudio.LanguageServices" Version="$(Tooling_MicrosoftVisualStudioLanguageServicesPackageVersion)" />
-
-    <!-- Reference the LSP protocol dlls so that we can include them in the code base and output them with the VSIX. -->
     <PackageReference Include="Microsoft.VisualStudio.LanguageServer.Protocol" Version="$(MicrosoftVisualStudioLanguageServerProtocolPackageVersion)" />
     <PackageReference Include="Microsoft.VisualStudio.LanguageServer.Protocol.Extensions" Version="$(MicrosoftVisualStudioLanguageServerProtocolExtensionsPackageVersion)" />
     <PackageReference Include="Microsoft.VisualStudio.LanguageServer.Protocol.Internal" Version="$(MicrosoftVisualStudioLanguageServerProtocolInternalPackageVersion)" />
   </ItemGroup>
 
   <ItemGroup>
+    <VSIXSourceItem Include="$(OutputPath)Microsoft.VisualStudio.LanguageServer.Protocol.dll" />
+    <VSIXSourceItem Include="$(OutputPath)Microsoft.VisualStudio.LanguageServer.Protocol.Extensions.dll" />
+    <VSIXSourceItem Include="$(OutputPath)Microsoft.VisualStudio.LanguageServer.Protocol.Internal.dll" />
+  </ItemGroup>
+
+  <!-- Reference the Roslyn dependencies so that Preview builds work -->
+  <ItemGroup Condition="'$(IncludeRoslynDeps)' == 'true'">
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Version="$(Tooling_MicrosoftCodeAnalysisCSharpFeaturesPackageVersion)" />
+    <PackageReference Include="Microsoft.CodeAnalysis.EditorFeatures" Version="$(RoslynPackageVersion)" />
+    <PackageReference Include="Microsoft.CodeAnalysis.EditorFeatures.Wpf" Version="$(RoslynPackageVersion)" />
+    <PackageReference Include="Microsoft.CodeAnalysis.ExternalAccess.Razor" Version="$(Tooling_MicrosoftCodeAnalysisExternalAccessRazorPackageVersion)" />
+    <PackageReference Include="Microsoft.CodeAnalysis.ExternalAccess.FSharp" Version="$(Tooling_MicrosoftCodeAnalysisExternalAccessRazorPackageVersion)" />
+    <PackageReference Include="Microsoft.VisualStudio.LanguageServices" Version="$(Tooling_MicrosoftVisualStudioLanguageServicesPackageVersion)" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(IncludeRoslynDeps)' == 'true'">
     <VSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.dll" />
     <VSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.CSharp.dll" />
     <VSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.CSharp.Features.dll" />
@@ -72,8 +81,5 @@
     <VSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.Remote.Workspaces.dll" />
     <VSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.Workspaces.dll" />
     <VSIXSourceItem Include="$(OutputPath)Microsoft.VisualStudio.LanguageServices.dll" />
-    <VSIXSourceItem Include="$(OutputPath)Microsoft.VisualStudio.LanguageServer.Protocol.dll" />
-    <VSIXSourceItem Include="$(OutputPath)Microsoft.VisualStudio.LanguageServer.Protocol.Extensions.dll" />
-    <VSIXSourceItem Include="$(OutputPath)Microsoft.VisualStudio.LanguageServer.Protocol.Internal.dll" />
   </ItemGroup>
 </Project>

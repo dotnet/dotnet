@@ -1,4 +1,4 @@
-RazorDocument - [0..43)::43 - [<p attr="@if (true) <p attr='@foo'> }"></p>]
+﻿RazorDocument - [0..43)::43 - [<p attr="@if (true) <p attr='@foo'> }"></p>]
     MarkupBlock - [0..43)::43
         MarkupTagHelperElement - [0..43)::43 - p[StartTagAndEndTag] - ptaghelper
             MarkupTagHelperStartTag - [0..43)::43 - [<p attr="@if (true) <p attr='@foo'> }"></p>] - Gen<Markup> - SpanEditHandler;Accepts:Any

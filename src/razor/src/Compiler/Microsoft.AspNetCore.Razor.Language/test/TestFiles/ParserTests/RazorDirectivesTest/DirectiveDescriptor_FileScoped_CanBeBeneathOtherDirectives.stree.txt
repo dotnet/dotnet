@@ -1,4 +1,4 @@
-RazorDocument - [0..59)::59 - [@custom System.Text.Encoding.ASCIIEncodingLF@something Else]
+﻿RazorDocument - [0..59)::59 - [@custom System.Text.Encoding.ASCIIEncodingLF@something Else]
     MarkupBlock - [0..59)::59
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

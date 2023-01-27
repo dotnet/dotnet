@@ -1,4 +1,4 @@
-RazorDocument - [0..130)::130 - [@* There are two directives beneath this *@LF@custom System.Text.Encoding.ASCIIEncodingLFLF@something ElseLFLF<p>This is extra</p>]
+﻿RazorDocument - [0..130)::130 - [@* There are two directives beneath this *@LF@custom System.Text.Encoding.ASCIIEncodingLFLF@something ElseLFLF<p>This is extra</p>]
     MarkupBlock - [0..130)::130
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

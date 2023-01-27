@@ -1,4 +1,4 @@
-namespace SampleApp.Data;
+﻿namespace SampleApp.Data;
 
 public class WeatherForecastService
 {

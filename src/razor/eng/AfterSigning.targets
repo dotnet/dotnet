@@ -1,5 +1,5 @@
-<Project>
-  <Target Name="_EnsureVSIXWasGenerated" AfterTargets="GenerateVisualStudioInsertionManifests" Condition="'$(OS)'=='WINDOWS_NT' AND '$(DotNetBuildFromSource)' != 'true'">
+﻿<Project>
+  <Target Name="_EnsureVSIXWasGenerated" AfterTargets="GenerateVisualStudioInsertionManifests" Condition="'$(OS)'=='WINDOWS_NT' AND '$(ArcadeBuildFromSource)' != 'true'">
     <PropertyGroup>
       <VSSetupDir>$(ArtifactsDir)VSSetup\</VSSetupDir>
       <RazorExtensionVSIXName>Microsoft.VisualStudio.RazorExtension.vsix</RazorExtensionVSIXName>
@@ -9,7 +9,7 @@
       Condition="!Exists('$(VSSetupDir)$(Configuration)\$(RazorExtensionVSIXName)')" />
   </Target>
 
-  <Target Name="_ZipLanguageServerBinaries" AfterTargets="Pack"  Condition=" '$(OS)' == 'Windows_NT' ">
+  <Target Name="_ZipLanguageServerBinaries" AfterTargets="Pack" Condition="'$(ArcadeBuildFromSource)' != 'true'">
     <!-- This target is defined in eng/targets/Packaging.targets and included in every project. -->
     <MSBuild Projects="$(RepoRoot)src\Razor\src\Microsoft.AspNetCore.Razor.LanguageServer\Microsoft.AspNetCore.Razor.LanguageServer.csproj"
         Targets="_GetPackageVersionInfo"
@@ -34,6 +34,21 @@
 
     <MakeDir Directories="$(ZipOutputDir)" />
     <Delete Files="%(LanguageServiceBinary.ZipFile)" />
-    <Exec Command="powershell.exe -NonInteractive -command &quot;&amp;{ Write-Host &quot;Writing %(LanguageServiceBinary.ZipFile)...&quot; ; Add-Type -AssemblyName System.IO.Compression.FileSystem; [System.IO.Compression.ZipFile]::CreateFromDirectory('%(LanguageServiceBinary.SourceDir)', '%(LanguageServiceBinary.ZipFile)') }&quot;" />
+
+    <!-- Build a .zip file from each platform's directory and write it to 'artifacts' -->
+
+    <!-- Mac -->
+    <Exec Command="pwsh -NonInteractive -command &quot;&amp;{ Write-Host &quot;Writing %(LanguageServiceBinary.ZipFile)...&quot; ; Add-Type -AssemblyName System.IO.Compression.FileSystem; [System.IO.Compression.ZipFile]::CreateFromDirectory('%(LanguageServiceBinary.SourceDir)', '%(LanguageServiceBinary.ZipFile)') }&quot;"
+          Condition="$([MSBuild]::IsOSPlatform('OSX'))" />
+
+    <!-- Windows -->
+    <Exec Command="powershell.exe -NonInteractive -command &quot;&amp;{ Write-Host &quot;Writing %(LanguageServiceBinary.ZipFile)...&quot; ; Add-Type -AssemblyName System.IO.Compression.FileSystem; [System.IO.Compression.ZipFile]::CreateFromDirectory('%(LanguageServiceBinary.SourceDir)', '%(LanguageServiceBinary.ZipFile)') }&quot;"
+          Condition="$([MSBuild]::IsOSPlatform('Windows'))" />
+
+    <!-- Linux -->
+    <Exec Command="curl https://packages.microsoft.com/config/rhel/8/prod.repo | sudo tee /etc/yum.repos.d/microsoft.repo" Condition="$([MSBuild]::IsOSPlatform('Linux'))" />
+    <Exec Command="sudo yum install -y powershell 2>/dev/null" Condition="$([MSBuild]::IsOSPlatform('Linux'))" />
+    <Exec Command="pwsh -NonInteractive -command &quot;&amp;{ Write-Host &quot;Writing %(LanguageServiceBinary.ZipFile)...&quot; ; Add-Type -AssemblyName System.IO.Compression.FileSystem; [System.IO.Compression.ZipFile]::CreateFromDirectory('%(LanguageServiceBinary.SourceDir)', '%(LanguageServiceBinary.ZipFile)') }&quot;"
+          Condition="$([MSBuild]::IsOSPlatform('Linux'))" />
   </Target>
 </Project>

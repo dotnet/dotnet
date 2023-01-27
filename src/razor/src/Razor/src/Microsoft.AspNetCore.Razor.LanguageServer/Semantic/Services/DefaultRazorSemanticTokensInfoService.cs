@@ -47,7 +47,7 @@ internal class DefaultRazorSemanticTokensInfoService : RazorSemanticTokensInfoSe
     public override async Task<SemanticTokens?> GetSemanticTokensAsync(
         TextDocumentIdentifier textDocumentIdentifier,
         Range range,
-        DocumentContext documentContext,
+        VersionedDocumentContext documentContext,
         CancellationToken cancellationToken)
     {
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken);

@@ -1,4 +1,4 @@
-Source Location: (37:0,37 [3] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (37:0,37 [3] x:\dir\subdir\Test\TestComponent.cshtml)
 |Min|
 Generated Location: (925:25,37 [3] )
 |Min|

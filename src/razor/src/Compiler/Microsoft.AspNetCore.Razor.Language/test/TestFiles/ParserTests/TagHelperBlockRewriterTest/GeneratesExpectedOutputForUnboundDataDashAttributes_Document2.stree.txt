@@ -1,4 +1,4 @@
-RazorDocument - [0..31)::31 - [<input data-required='value' />]
+﻿RazorDocument - [0..31)::31 - [<input data-required='value' />]
     MarkupBlock - [0..31)::31
         MarkupTagHelperElement - [0..31)::31 - input[SelfClosing] - inputtaghelper
             MarkupTagHelperStartTag - [0..31)::31 - [<input data-required='value' />] - Gen<Markup> - SpanEditHandler;Accepts:Any

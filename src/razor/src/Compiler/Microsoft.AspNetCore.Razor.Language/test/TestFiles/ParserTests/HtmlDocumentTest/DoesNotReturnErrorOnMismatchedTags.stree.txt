@@ -1,4 +1,4 @@
-RazorDocument - [0..24)::24 - [Foo <div><p></p></p> Baz]
+﻿RazorDocument - [0..24)::24 - [Foo <div><p></p></p> Baz]
     MarkupBlock - [0..24)::24
         MarkupTextLiteral - [0..4)::4 - [Foo ] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Text;[Foo];

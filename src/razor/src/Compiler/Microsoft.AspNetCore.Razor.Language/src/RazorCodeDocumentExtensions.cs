@@ -1,10 +1,11 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 #nullable disable
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
@@ -17,6 +18,7 @@ public static class RazorCodeDocumentExtensions
     private static readonly char[] PathSeparators = new char[] { '/', '\\' };
     private static readonly char[] NamespaceSeparators = new char[] { '.' };
     private static readonly object CssScopeKey = new object();
+    private static readonly object NamespaceKey = new object();
 
     public static TagHelperDocumentContext GetTagHelperContext(this RazorCodeDocument document)
     {
@@ -56,6 +58,46 @@ public static class RazorCodeDocumentExtensions
         }
 
         document.Items[typeof(TagHelpersHolder)] = new TagHelpersHolder(tagHelpers);
+    }
+
+    internal static ISet<TagHelperDescriptor> GetReferencedTagHelpers(this RazorCodeDocument document)
+    {
+        if (document == null)
+        {
+            throw new ArgumentNullException(nameof(document));
+        }
+
+        return document.Items[nameof(GetReferencedTagHelpers)] as ISet<TagHelperDescriptor>;
+    }
+
+    internal static void SetReferencedTagHelpers(this RazorCodeDocument document, ISet<TagHelperDescriptor> tagHelpers)
+    {
+        if (document == null)
+        {
+            throw new ArgumentNullException(nameof(document));
+        }
+
+        document.Items[nameof(GetReferencedTagHelpers)] = tagHelpers;
+    }
+
+    public static RazorSyntaxTree GetPreTagHelperSyntaxTree(this RazorCodeDocument document)
+    {
+        if (document == null)
+        {
+            throw new ArgumentNullException(nameof(document));
+        }
+
+        return document.Items[nameof(GetPreTagHelperSyntaxTree)] as RazorSyntaxTree;
+    }
+
+    public static void SetPreTagHelperSyntaxTree(this RazorCodeDocument document, RazorSyntaxTree syntaxTree)
+    {
+        if (document == null)
+        {
+            throw new ArgumentNullException(nameof(document));
+        }
+
+        document.Items[nameof(GetPreTagHelperSyntaxTree)] = syntaxTree;
     }
 
     public static RazorSyntaxTree GetSyntaxTree(this RazorCodeDocument document)
@@ -251,107 +293,102 @@ public static class RazorCodeDocumentExtensions
             throw new ArgumentNullException(nameof(document));
         }
 
-        var filePath = document.Source.FilePath;
-        if (filePath == null || document.Source.RelativePath == null || filePath.Length < document.Source.RelativePath.Length)
+        @namespace = (string)document.Items[NamespaceKey];
+        if (@namespace is null)
         {
-            @namespace = null;
-            return false;
+            var result = TryComputeNamespaceCore(document, fallbackToRootNamespace, out @namespace);
+            document.Items[NamespaceKey] = @namespace;
+            return result;
         }
 
-        // If the document or it's imports contains a @namespace directive, we want to use that over the root namespace.
-        var baseNamespace = string.Empty;
-        var appendSuffix = true;
-        var lastNamespaceContent = string.Empty;
-        var lastNamespaceLocation = SourceSpan.Undefined;
-        var importSyntaxTrees = document.GetImportSyntaxTrees();
-        if (importSyntaxTrees != null)
+#if DEBUG
+        // In debug mode, even if we're cached, lets take the hit to run this again and make sure the cached value is correct.
+        // This is to help us find issues with caching logic during development.
+        var validateResult = TryComputeNamespaceCore(document, fallbackToRootNamespace, out var validateNamespace);
+        Debug.Assert(validateResult, "We couldn't compute the namespace, but have a cached value, so something has gone wrong");
+        Debug.Assert(validateNamespace == @namespace, $"We cached a namespace of {@namespace} but calculated that it should be {validateNamespace}");
+#endif
+
+        return true;
+
+        bool TryComputeNamespaceCore(RazorCodeDocument document, bool fallbackToRootNamespace, out string @namespace)
         {
-            // ImportSyntaxTrees is usually set. Just being defensive.
-            foreach (var importSyntaxTree in importSyntaxTrees)
+            var filePath = document.Source.FilePath;
+            if (filePath == null || document.Source.RelativePath == null || filePath.Length < document.Source.RelativePath.Length)
             {
-                if (importSyntaxTree != null && NamespaceVisitor.TryGetLastNamespaceDirective(importSyntaxTree, out var importNamespaceContent, out var importNamespaceLocation))
+                @namespace = null;
+                return false;
+            }
+
+            // If the document or it's imports contains a @namespace directive, we want to use that over the root namespace.
+            var baseNamespace = string.Empty;
+            var appendSuffix = true;
+            var lastNamespaceContent = string.Empty;
+            var lastNamespaceLocation = SourceSpan.Undefined;
+            var importSyntaxTrees = document.GetImportSyntaxTrees();
+            if (importSyntaxTrees != null)
+            {
+                // ImportSyntaxTrees is usually set. Just being defensive.
+                foreach (var importSyntaxTree in importSyntaxTrees)
                 {
-                    lastNamespaceContent = importNamespaceContent;
-                    lastNamespaceLocation = importNamespaceLocation;
+                    if (importSyntaxTree != null && NamespaceVisitor.TryGetLastNamespaceDirective(importSyntaxTree, out var importNamespaceContent, out var importNamespaceLocation))
+                    {
+                        lastNamespaceContent = importNamespaceContent;
+                        lastNamespaceLocation = importNamespaceLocation;
+                    }
                 }
             }
-        }
 
-        var syntaxTree = document.GetSyntaxTree();
-        if (syntaxTree != null && NamespaceVisitor.TryGetLastNamespaceDirective(syntaxTree, out var namespaceContent, out var namespaceLocation))
-        {
-            lastNamespaceContent = namespaceContent;
-            lastNamespaceLocation = namespaceLocation;
-        }
-
-        StringSegment relativePath = document.Source.RelativePath;
-
-        // If there are multiple @namespace directives in the hierarchy,
-        // we want to pick the closest one to the current document.
-        if (!string.IsNullOrEmpty(lastNamespaceContent))
-        {
-            baseNamespace = lastNamespaceContent;
-            var directiveLocationDirectory = NormalizeDirectory(lastNamespaceLocation.FilePath);
-
-            var sourceFilePath = new StringSegment(document.Source.FilePath);
-            // We're specifically using OrdinalIgnoreCase here because Razor treats all paths as case-insensitive.
-            if (!sourceFilePath.StartsWith(directiveLocationDirectory, StringComparison.OrdinalIgnoreCase) ||
-                sourceFilePath.Length <= directiveLocationDirectory.Length)
+            var syntaxTree = document.GetSyntaxTree();
+            if (syntaxTree != null && NamespaceVisitor.TryGetLastNamespaceDirective(syntaxTree, out var namespaceContent, out var namespaceLocation))
             {
-                // The most relevant directive is not from the directory hierarchy, can't compute a suffix.
-                appendSuffix = false;
-            }
-            else
-            {
-                // We know that the document containing the namespace directive is in the current document's hierarchy.
-                // Let's compute the actual relative path that we'll use to compute the namespace suffix.
-                relativePath = sourceFilePath.Subsegment(directiveLocationDirectory.Length);
-            }
-        }
-        else if (fallbackToRootNamespace)
-        {
-            var options = document.GetCodeGenerationOptions() ?? document.GetDocumentIntermediateNode()?.Options;
-            baseNamespace = options?.RootNamespace;
-            appendSuffix = true;
-        }
-
-        if (string.IsNullOrEmpty(baseNamespace))
-        {
-            // There was no valid @namespace directive and we couldn't compute the RootNamespace.
-            @namespace = null;
-            return false;
-        }
-
-        var builder = new StringBuilder();
-
-        // Sanitize the base namespace, but leave the dots.
-        var segments = new StringTokenizer(baseNamespace, NamespaceSeparators);
-        var first = true;
-        foreach (var token in segments)
-        {
-            if (token.IsEmpty)
-            {
-                continue;
+                lastNamespaceContent = namespaceContent;
+                lastNamespaceLocation = namespaceLocation;
             }
 
-            if (first)
+            StringSegment relativePath = document.Source.RelativePath;
+
+            // If there are multiple @namespace directives in the hierarchy,
+            // we want to pick the closest one to the current document.
+            if (!string.IsNullOrEmpty(lastNamespaceContent))
             {
-                first = false;
+                baseNamespace = lastNamespaceContent;
+                var directiveLocationDirectory = NormalizeDirectory(lastNamespaceLocation.FilePath);
+
+                var sourceFilePath = new StringSegment(document.Source.FilePath);
+                // We're specifically using OrdinalIgnoreCase here because Razor treats all paths as case-insensitive.
+                if (!sourceFilePath.StartsWith(directiveLocationDirectory, StringComparison.OrdinalIgnoreCase) ||
+                    sourceFilePath.Length <= directiveLocationDirectory.Length)
+                {
+                    // The most relevant directive is not from the directory hierarchy, can't compute a suffix.
+                    appendSuffix = false;
+                }
+                else
+                {
+                    // We know that the document containing the namespace directive is in the current document's hierarchy.
+                    // Let's compute the actual relative path that we'll use to compute the namespace suffix.
+                    relativePath = sourceFilePath.Subsegment(directiveLocationDirectory.Length);
+                }
             }
-            else
+            else if (fallbackToRootNamespace)
             {
-                builder.Append('.');
+                var options = document.GetCodeGenerationOptions() ?? document.GetDocumentIntermediateNode()?.Options;
+                baseNamespace = options?.RootNamespace;
+                appendSuffix = true;
             }
 
-            CSharpIdentifier.AppendSanitized(builder, token);
+            if (string.IsNullOrEmpty(baseNamespace))
+            {
+                // There was no valid @namespace directive and we couldn't compute the RootNamespace.
+                @namespace = null;
+                return false;
+            }
 
-        }
+            var builder = new StringBuilder();
 
-        if (appendSuffix)
-        {
-            // If we get here, we already have a base namespace and the relative path that should be used as the namespace suffix.
-            segments = new StringTokenizer(relativePath, PathSeparators);
-            var previousLength = builder.Length;
+            // Sanitize the base namespace, but leave the dots.
+            var segments = new StringTokenizer(baseNamespace, NamespaceSeparators);
+            var first = true;
             foreach (var token in segments)
             {
                 if (token.IsEmpty)
@@ -359,19 +396,45 @@ public static class RazorCodeDocumentExtensions
                     continue;
                 }
 
-                previousLength = builder.Length;
+                if (first)
+                {
+                    first = false;
+                }
+                else
+                {
+                    builder.Append('.');
+                }
 
-                builder.Append('.');
                 CSharpIdentifier.AppendSanitized(builder, token);
+
             }
 
-            // Trim the last segment because it's the FileName.
-            builder.Length = previousLength;
+            if (appendSuffix)
+            {
+                // If we get here, we already have a base namespace and the relative path that should be used as the namespace suffix.
+                segments = new StringTokenizer(relativePath, PathSeparators);
+                var previousLength = builder.Length;
+                foreach (var token in segments)
+                {
+                    if (token.IsEmpty)
+                    {
+                        continue;
+                    }
+
+                    previousLength = builder.Length;
+
+                    builder.Append('.');
+                    CSharpIdentifier.AppendSanitized(builder, token);
+                }
+
+                // Trim the last segment because it's the FileName.
+                builder.Length = previousLength;
+            }
+
+            @namespace = builder.ToString();
+
+            return true;
         }
-
-        @namespace = builder.ToString();
-
-        return true;
 
         // We want to normalize the path of the file containing the '@namespace' directive to just the containing
         // directory with a trailing separator.

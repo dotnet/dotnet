@@ -1,4 +1,4 @@
-/* --------------------------------------------------------------------------------------------
+﻿/* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
@@ -6,9 +6,9 @@
 import * as vscode from 'vscode';
 import { RazorLanguageServerClient } from '../RazorLanguageServerClient';
 import { RazorLogger } from '../RazorLogger';
-import { RazorCodeAction } from '../RPC/RazorCodeAction';
-import { RazorCodeActionResolutionParams } from '../RPC/RazorCodeActionResolutionParams';
 import { convertWorkspaceEditFromSerializable } from '../RPC/SerializableWorkspaceEdit';
+import { RazorCodeAction } from './RazorCodeAction';
+import { RazorCodeActionResolutionParams } from './RazorCodeActionResolutionParams';
 
 export class RazorCodeActionRunner {
     private static readonly codeActionResolveEndpoint = 'textDocument/codeActionResolve';

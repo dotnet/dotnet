@@ -1,4 +1,4 @@
-RazorDocument - [0..18)::18 - [@if(foo) { @foo. }]
+﻿RazorDocument - [0..18)::18 - [@if(foo) { @foo. }]
     MarkupBlock - [0..18)::18
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

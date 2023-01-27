@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
@@ -30,22 +31,22 @@ public class FindAllReferencesTests : AbstractRazorEditorTest
         // Assert
         var results = await TestServices.FindReferencesWindow.WaitForContentsAsync(ControlledHangMitigatingCancellationToken, expected: 2);
 
+        var orderedResults = OrderResults(results);
+
         Assert.Collection(
-            results,
-            new Action<ITableEntryHandle2>[]
+            orderedResults,
+            new Action<TableEntry>[]
             {
                 reference =>
                 {
-                    Assert.Equal(expected: "private void IncrementCount()", actual: reference.TryGetValue(StandardTableKeyNames.Text, out string code) ? code : null);
-                    Assert.True(reference.TryGetValue(StandardTableKeyNames.DocumentName, out string documentName));
-                    Assert.Equal(expected: "Counter.razor", Path.GetFileName(documentName));
+                    Assert.Equal(expected: "IncrementCount", actual: reference.Code);
+                    Assert.Equal(expected: "Counter.razor", Path.GetFileName(reference.DocumentName));
                 },
                 reference =>
                 {
-                    Assert.Equal(expected: "IncrementCount", actual: reference.TryGetValue(StandardTableKeyNames.Text, out string code) ? code : null);
-                    Assert.True(reference.TryGetValue(StandardTableKeyNames.DocumentName, out string documentName));
-                    Assert.Equal(expected: "Counter.razor", Path.GetFileName(documentName));
-                }
+                    Assert.Equal(expected: "private void IncrementCount()", actual: reference.Code);
+                    Assert.Equal(expected: "Counter.razor", Path.GetFileName(reference.DocumentName));
+                },
             });
     }
 
@@ -65,6 +66,7 @@ public class FindAllReferencesTests : AbstractRazorEditorTest
         // Assert
         var results = await TestServices.FindReferencesWindow.WaitForContentsAsync(ControlledHangMitigatingCancellationToken, expected: 3);
 
+        // Don't care about order, but Assert.Collection does
         var orderedResults = OrderResults(results);
 
         Assert.Collection(
@@ -180,29 +182,38 @@ public class FindAllReferencesTests : AbstractRazorEditorTest
 
         Assert.Collection(
             orderedResults,
-            reference =>
+            new Action<TableEntry>[]
             {
-                Assert.Equal(expected: "MyComponent.razor", reference.DocumentName);
-                Assert.Equal(expected: "@MyProperty", reference.Code);
-            },
-            reference =>
-            {
-                Assert.Equal(expected: "MyComponent.razor.cs", reference.DocumentName);
-                Assert.Equal(expected: "public string? MyProperty { get; set; }", reference.Code);
-            },
-            reference =>
-            {
-                Assert.Equal(expected: "MyPage.razor", reference.DocumentName);
-                Assert.Equal(expected: "<MyComponent MyProperty=\"123\" />", reference.Code);
+                reference =>
+                {
+                    Assert.Equal(expected: "@MyProperty", actual: reference.Code);
+                    Assert.Equal(expected: "MyComponent.razor", Path.GetFileName(reference.DocumentName));
+                },
+                reference =>
+                {
+                    Assert.Equal(expected: "public string? MyProperty { get; set; }", actual: reference.Code);
+                    Assert.Equal(expected: "MyComponent.razor.cs", Path.GetFileName(reference.DocumentName));
+                },
+                reference =>
+                {
+                    Assert.Equal(expected: "<MyComponent MyProperty=\"123\" />", actual: reference.Code);
+                    Assert.Equal(expected: "MyPage.razor", Path.GetFileName(reference.DocumentName));
+                },
             });
     }
 
-    private static (string Code, string DocumentName)[] OrderResults(ImmutableArray<ITableEntryHandle2> results)
-    => results.Select(r =>
+    private static IEnumerable<TableEntry> OrderResults(ImmutableArray<ITableEntryHandle2> results)
+    {
+        var orderedResults = results.Select(r =>
         {
             Assert.True(r.TryGetValue(StandardTableKeyNames.Text, out string code));
             Assert.True(r.TryGetValue(StandardTableKeyNames.DocumentName, out string documentName));
 
-            return (Code: code, DocumentName: Path.GetFileName(documentName));
+            return new TableEntry(code, Path.GetFileName(documentName));
         }).OrderBy(r => r.DocumentName).ThenBy(r => r.Code).ToArray();
+
+        return orderedResults;
+    }
+
+    internal record TableEntry(string Code, string DocumentName);
 }

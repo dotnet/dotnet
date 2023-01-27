@@ -36,9 +36,4 @@
   <ItemGroup>
     <PackageReference Include="Moq" Version="$(MoqPackageVersion)" />
   </ItemGroup>
-
-  <ItemGroup>
-    <!-- Package changes to enable dev17 builds that have incoherent versions -->
-    <PackageReference Include="Microsoft.IO.Redist" Version="4.7.1" />
-  </ItemGroup>
 </Project>

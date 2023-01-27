@@ -1,4 +1,4 @@
-Source Location: (2:0,2 [18] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Blocks.cshtml)
+﻿Source Location: (2:0,2 [18] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Blocks.cshtml)
 |
     int i = 1;
 |

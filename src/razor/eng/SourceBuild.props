@@ -1,4 +1,4 @@
-<Project>
+﻿<Project>
   <PropertyGroup>
     <GitHubRepositoryName>razor</GitHubRepositoryName>
     <SourceBuildManagedOnly>true</SourceBuildManagedOnly>

@@ -6,6 +6,7 @@
     <EnableApiCheck>false</EnableApiCheck>
     <IsShippingPackage>false</IsShippingPackage>
     <RootNamespace>Microsoft.AspNetCore.Razor</RootNamespace>
+    <IsPackable Condition="'$(OS)' != 'Windows_NT'">false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>

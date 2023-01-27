@@ -1,4 +1,4 @@
-Source Location: (2:0,2 [31] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ParserError.cshtml)
+﻿Source Location: (2:0,2 [31] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ParserError.cshtml)
 |
 /*
 int i =10;

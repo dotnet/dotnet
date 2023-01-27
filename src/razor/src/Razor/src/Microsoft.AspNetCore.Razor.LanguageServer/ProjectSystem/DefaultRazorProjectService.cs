@@ -104,7 +104,7 @@ internal class DefaultRazorProjectService : RazorProjectService
         if (targetFilePath.StartsWith(projectDirectory, FilePathComparison.Instance))
         {
             // Make relative
-            targetFilePath = textDocumentPath.Substring(projectDirectory.Length);
+            targetFilePath = textDocumentPath[projectDirectory.Length..];
         }
 
         // Representing all of our host documents with a re-normalized target path to workaround GetRelatedDocument limitations.
@@ -489,8 +489,7 @@ internal class DefaultRazorProjectService : RazorProjectService
             _fromDocument = fromDocument ?? throw new ArgumentNullException(nameof(fromDocument));
         }
         public override async Task<TextAndVersion> LoadTextAndVersionAsync(
-           Workspace? workspace,
-           DocumentId? documentId,
+           LoadTextOptions options,
            CancellationToken cancellationToken)
         {
             var sourceText = await _fromDocument.GetTextAsync();

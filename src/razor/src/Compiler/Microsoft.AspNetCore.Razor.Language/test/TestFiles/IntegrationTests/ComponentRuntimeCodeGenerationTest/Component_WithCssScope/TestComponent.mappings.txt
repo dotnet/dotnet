@@ -1,4 +1,4 @@
-Source Location: (318:6,30 [20] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (318:6,30 [20] x:\dir\subdir\Test\TestComponent.cshtml)
 |myComponentReference|
 Generated Location: (2153:62,30 [20] )
 |myComponentReference|

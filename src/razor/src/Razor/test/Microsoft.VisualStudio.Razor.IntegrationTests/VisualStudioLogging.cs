@@ -52,7 +52,7 @@ internal static class VisualStudioLogging
     private static void RazorMEFErrorLogger(string filePath)
     {
         var hiveDirectory = GetHiveDirectory();
-        var errorFile = Path.Combine(hiveDirectory, "ComponentModelCache", "Microsoft.VisualStudio.Defaullt.err");
+        var errorFile = Path.Combine(hiveDirectory, "ComponentModelCache", "Microsoft.VisualStudio.Default.err");
         if (File.Exists(errorFile))
         {
             File.Copy(errorFile, filePath);
@@ -191,7 +191,7 @@ internal static class VisualStudioLogging
             {
                 var name = Path.GetFileName(file);
 
-                // Only caputre loghub
+                // Only capture LogHub
                 if (name.Contains(expectedFilePart) && Path.GetExtension(file) == ".zip")
                 {
                     await Task.Run(() =>

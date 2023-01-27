@@ -109,11 +109,10 @@ internal class WorkspaceProjectStateChangeDetector : ProjectSnapshotChangeTrigge
 
                 if (_workQueue is null)
                 {
-                    var errorReporter = _projectManager.Workspace.Services.GetRequiredService<ErrorReporter>();
                     _workQueue = new BatchingWorkQueue(
                        s_batchingDelay,
                        FilePathComparer.Instance,
-                       errorReporter);
+                       _projectManager.ErrorReporter);
                 }
             }
         }

@@ -1,4 +1,4 @@
-RazorDocument - [0..33)::33 - [<text @* razor comment *@></text>]
+﻿RazorDocument - [0..33)::33 - [<text @* razor comment *@></text>]
     MarkupBlock - [0..33)::33
         MarkupElement - [0..33)::33
             MarkupStartTag - [0..26)::26 - [<text @* razor comment *@>] - Gen<Markup> - SpanEditHandler;Accepts:Any

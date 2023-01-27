@@ -1,2 +1,2 @@
-is_global = true
+﻿is_global = true
 build_property.SuppressRazorSourceGenerator = true

@@ -27,12 +27,12 @@ public class CompletionListSerializationBenchmark : TagHelperBenchmarkBase
         var htmlFactsService = new DefaultHtmlFactsService();
         var tagHelperCompletionProvider = new TagHelperCompletionProvider(completionService, htmlFactsService, tagHelperFactsService);
 
+        Serializer = JsonSerializer.Create();
+
         var documentContent = "<";
         var queryIndex = 1;
         CompletionList = GenerateCompletionList(documentContent, queryIndex, tagHelperCompletionProvider);
         _completionListBuffer = GenerateBuffer(CompletionList);
-
-        Serializer = JsonSerializer.Create();
     }
 
     private JsonSerializer Serializer { get; }

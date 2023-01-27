@@ -1,4 +1,4 @@
-Source Location: (14:0,14 [17] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NestedScriptTagTagHelpers.cshtml)
+﻿Source Location: (14:0,14 [17] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NestedScriptTagTagHelpers.cshtml)
 |"*, TestAssembly"|
 Generated Location: (1211:20,37 [17] )
 |"*, TestAssembly"|

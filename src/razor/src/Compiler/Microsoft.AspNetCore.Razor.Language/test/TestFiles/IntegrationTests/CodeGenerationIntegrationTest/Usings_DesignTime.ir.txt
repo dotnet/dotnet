@@ -1,4 +1,4 @@
-Document - 
+﻿Document - 
     NamespaceDeclaration -  - Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
         UsingDirective - (1:0,1 [15] Usings.cshtml) - System.IO
         UsingDirective - (19:1,1 [32] Usings.cshtml) - Foo = System.Text.Encoding

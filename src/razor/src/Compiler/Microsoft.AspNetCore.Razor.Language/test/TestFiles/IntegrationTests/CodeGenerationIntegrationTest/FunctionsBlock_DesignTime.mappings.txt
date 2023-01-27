@@ -1,4 +1,4 @@
-Source Location: (167:11,25 [11] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/FunctionsBlock.cshtml)
+﻿Source Location: (167:11,25 [11] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/FunctionsBlock.cshtml)
 |RandomInt()|
 Generated Location: (772:19,25 [11] )
 |RandomInt()|

@@ -1,4 +1,4 @@
-RazorDocument - [0..56)::56 - [@try { var foo = new { } } finally { var foo = new { } }]
+﻿RazorDocument - [0..56)::56 - [@try { var foo = new { } } finally { var foo = new { } }]
     MarkupBlock - [0..56)::56
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

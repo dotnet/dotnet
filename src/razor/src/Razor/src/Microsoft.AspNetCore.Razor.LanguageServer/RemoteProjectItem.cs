@@ -15,7 +15,7 @@ internal class RemoteProjectItem : RazorProjectItem
         PhysicalPath = physicalPath;
         FileKind = fileKind ?? FileKinds.GetFileKindFromFilePath(FilePath);
         RelativePhysicalPath = FilePath.StartsWith("/", StringComparison.Ordinal)
-            ? FilePath.Substring(1)
+            ? FilePath[1..]
             : FilePath;
     }
 
@@ -33,7 +33,7 @@ internal class RemoteProjectItem : RazorProjectItem
     {
         get
         {
-            var platformPath = PhysicalPath.Substring(1);
+            var platformPath = PhysicalPath[1..];
             if (Path.IsPathRooted(platformPath))
             {
                 return File.Exists(platformPath);

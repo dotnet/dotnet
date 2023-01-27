@@ -1,4 +1,4 @@
-Source Location: (29:0,29 [11] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (29:0,29 [11] x:\dir\subdir\Test\TestComponent.cshtml)
 |CurrentDate|
 Generated Location: (983:25,29 [11] )
 |CurrentDate|

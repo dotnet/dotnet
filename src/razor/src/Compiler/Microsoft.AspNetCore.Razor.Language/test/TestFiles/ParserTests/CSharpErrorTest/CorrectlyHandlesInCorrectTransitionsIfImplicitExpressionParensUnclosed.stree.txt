@@ -1,4 +1,4 @@
-RazorDocument - [0..34)::34 - [@Href(LF<h1>@Html.Foo(Bar);</h1>LF]
+﻿RazorDocument - [0..34)::34 - [@Href(LF<h1>@Html.Foo(Bar);</h1>LF]
     MarkupBlock - [0..34)::34
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

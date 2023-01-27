@@ -347,7 +347,7 @@ public class RazorCompletionListProvierTest : LanguageServerTestBase
         // Arrange
         var documentPath = "C:/path/to/document.cshtml";
         var codeDocument = CreateCodeDocument("@");
-        var documentContext = TestDocumentContext.From(documentPath, codeDocument);
+        var documentContext = TestDocumentContext.From(documentPath, codeDocument, hostDocumentVersion: 0);
         var provider = new RazorCompletionListProvider(_completionFactsService, _completionListCache, LoggerFactory);
 
         // Act
@@ -373,7 +373,7 @@ public class RazorCompletionListProvierTest : LanguageServerTestBase
         // Arrange
         var documentPath = "C:/path/to/document.cshtml";
         var codeDocument = CreateCodeDocument("@");
-        var documentContext = TestDocumentContext.From(documentPath, codeDocument);
+        var documentContext = TestDocumentContext.From(documentPath, codeDocument, hostDocumentVersion: 0);
         var completionContext = new VSInternalCompletionContext()
         {
             TriggerKind = CompletionTriggerKind.TriggerForIncompleteCompletions,
@@ -406,7 +406,7 @@ public class RazorCompletionListProvierTest : LanguageServerTestBase
         var tagHelperContext = TagHelperDocumentContext.Create(prefix: string.Empty, new[] { tagHelper });
         var codeDocument = CreateCodeDocument("@in");
         codeDocument.SetTagHelperContext(tagHelperContext);
-        var documentContext = TestDocumentContext.From(documentPath, codeDocument);
+        var documentContext = TestDocumentContext.From(documentPath, codeDocument, hostDocumentVersion: 0);
         var provider = new RazorCompletionListProvider(_completionFactsService, _completionListCache, LoggerFactory);
         var completionContext = new VSInternalCompletionContext()
         {
@@ -440,7 +440,7 @@ public class RazorCompletionListProvierTest : LanguageServerTestBase
         var tagHelperContext = TagHelperDocumentContext.Create(prefix: string.Empty, new[] { tagHelper });
         var codeDocument = CreateCodeDocument("@inje");
         codeDocument.SetTagHelperContext(tagHelperContext);
-        var documentContext = TestDocumentContext.From(documentPath, codeDocument);
+        var documentContext = TestDocumentContext.From(documentPath, codeDocument, hostDocumentVersion: 0);
         var provider = new RazorCompletionListProvider(_completionFactsService, _completionListCache, LoggerFactory);
         var completionContext = new VSInternalCompletionContext()
         {
@@ -468,7 +468,7 @@ public class RazorCompletionListProvierTest : LanguageServerTestBase
         var tagHelperContext = TagHelperDocumentContext.Create(prefix: string.Empty, new[] { tagHelper });
         var codeDocument = CreateCodeDocument("@inje");
         codeDocument.SetTagHelperContext(tagHelperContext);
-        var documentContext = TestDocumentContext.From(documentPath, codeDocument);
+        var documentContext = TestDocumentContext.From(documentPath, codeDocument, hostDocumentVersion: 0);
         var provider = new RazorCompletionListProvider(_completionFactsService, _completionListCache, LoggerFactory);
         var completionContext = new VSInternalCompletionContext()
         {
@@ -503,7 +503,7 @@ public class RazorCompletionListProvierTest : LanguageServerTestBase
         var tagHelperContext = TagHelperDocumentContext.Create(prefix: string.Empty, new[] { tagHelper });
         var codeDocument = CreateCodeDocument("<");
         codeDocument.SetTagHelperContext(tagHelperContext);
-        var documentContext = TestDocumentContext.From(documentPath, codeDocument);
+        var documentContext = TestDocumentContext.From(documentPath, codeDocument, hostDocumentVersion: 0);
         var provider = new RazorCompletionListProvider(_completionFactsService, _completionListCache, LoggerFactory);
 
         // Act
@@ -533,7 +533,7 @@ public class RazorCompletionListProvierTest : LanguageServerTestBase
         var tagHelperContext = TagHelperDocumentContext.Create(prefix: string.Empty, new[] { tagHelper });
         var codeDocument = CreateCodeDocument("<test  ");
         codeDocument.SetTagHelperContext(tagHelperContext);
-        var documentContext = TestDocumentContext.From(documentPath, codeDocument);
+        var documentContext = TestDocumentContext.From(documentPath, codeDocument, hostDocumentVersion: 0);
         var provider = new RazorCompletionListProvider(_completionFactsService, _completionListCache, LoggerFactory);
 
         // Act

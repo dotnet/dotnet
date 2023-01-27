@@ -1,4 +1,4 @@
-RazorDocument - [0..344)::344 - [@{LF<area></areaLF}LF@{LF<base></baseLF}LF@{LF<br></brLF}LF@{LF<col></colLF}LF@{LF<command></commandLF}LF@{LF<embed></embedLF}LF@{LF<hr></hrLF}LF@{LF<img></imgLF}LF@{LF<input></inputLF}LF@{LF<keygen></keygenLF}LF@{LF<link></linkLF}LF@{LF<meta></metaLF}LF@{LF<param></paramLF}LF@{LF<source></sourceLF}LF@{LF<track></trackLF}LF@{LF<wbr></wbrLF}LF]
+﻿RazorDocument - [0..344)::344 - [@{LF<area></areaLF}LF@{LF<base></baseLF}LF@{LF<br></brLF}LF@{LF<col></colLF}LF@{LF<command></commandLF}LF@{LF<embed></embedLF}LF@{LF<hr></hrLF}LF@{LF<img></imgLF}LF@{LF<input></inputLF}LF@{LF<keygen></keygenLF}LF@{LF<link></linkLF}LF@{LF<meta></metaLF}LF@{LF<param></paramLF}LF@{LF<source></sourceLF}LF@{LF<track></trackLF}LF@{LF<wbr></wbrLF}LF]
     MarkupBlock - [0..344)::344
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

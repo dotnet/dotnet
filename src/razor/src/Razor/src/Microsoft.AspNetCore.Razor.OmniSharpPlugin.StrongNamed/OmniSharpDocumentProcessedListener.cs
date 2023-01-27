@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Razor.Language;
 
 namespace Microsoft.AspNetCore.Razor.OmniSharpPlugin.StrongNamed;
 
-public abstract class OmniSharpDocumentProcessedListener
+internal abstract class OmniSharpDocumentProcessedListener
 {
     public abstract void Initialize(OmniSharpProjectSnapshotManager projectManager);
 

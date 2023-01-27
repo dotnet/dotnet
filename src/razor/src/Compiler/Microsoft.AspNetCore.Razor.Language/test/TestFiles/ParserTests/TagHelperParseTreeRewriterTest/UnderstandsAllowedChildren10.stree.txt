@@ -1,4 +1,4 @@
-RazorDocument - [0..69)::69 - [<p><strong>Title:<br><em>A Very Cool</em></strong><br />Something</p>]
+﻿RazorDocument - [0..69)::69 - [<p><strong>Title:<br><em>A Very Cool</em></strong><br />Something</p>]
     MarkupBlock - [0..69)::69
         MarkupTagHelperElement - [0..69)::69 - p[StartTagAndEndTag] - PTagHelper
             MarkupTagHelperStartTag - [0..3)::3 - [<p>] - Gen<Markup> - SpanEditHandler;Accepts:Any

@@ -1,4 +1,4 @@
-RazorDocument - [0..53)::53 - [@section Foo { <script>foo<bar baz='@boz'></script> }]
+﻿RazorDocument - [0..53)::53 - [@section Foo { <script>foo<bar baz='@boz'></script> }]
     MarkupBlock - [0..53)::53
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

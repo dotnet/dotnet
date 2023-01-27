@@ -1,4 +1,4 @@
-Source Location: (65:1,46 [10] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (65:1,46 [10] x:\dir\subdir\Test\TestComponent.cshtml)
 |ActionText|
 Generated Location: (914:24,46 [10] )
 |ActionText|

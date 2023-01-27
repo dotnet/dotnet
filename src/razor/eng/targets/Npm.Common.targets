@@ -1,4 +1,4 @@
-<Project DefaultTargets="Build" InitialTargets="_CheckForInvalidConfiguration">
+﻿<Project DefaultTargets="Build" InitialTargets="_CheckForInvalidConfiguration">
 
   <!-- Version of this SDK is set in global.json -->
   <Sdk Name="Yarn.MSBuild" />

@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Common.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
@@ -56,6 +57,7 @@ internal class CodeActionEndpoint : IVSCodeActionEndpoint
 
         _allAvailableCodeActionNames = GetAllAvailableCodeActionNames();
     }
+
     public async Task<SumType<Command, CodeAction>[]?> HandleRequestAsync(CodeActionParams request, RazorRequestContext requestContext, CancellationToken cancellationToken)
     {
         if (request is null)
@@ -81,41 +83,57 @@ internal class CodeActionEndpoint : IVSCodeActionEndpoint
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        var delegatedCodeActions = await GetDelegatedCodeActionsAsync(documentContext, razorCodeActionContext, cancellationToken).ConfigureAwait(false);
+        // HTML code actions aren't currently supported in VS Code:
+        // https://github.com/dotnet/razor/issues/8062
+        var delegatedCodeActions = _languageServerFeatureOptions.SupportsDelegatedCodeActions
+            ? await GetDelegatedCodeActionsAsync(documentContext, razorCodeActionContext, cancellationToken).ConfigureAwait(false)
+            : ImmutableArray.Create<RazorVSInternalCodeAction>();
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        var codeActions = Enumerable.Concat(
-            razorCodeActions ?? Array.Empty<RazorVSInternalCodeAction>(),
-            delegatedCodeActions ?? Array.Empty<RazorVSInternalCodeAction>());
+        using var _ = ArrayBuilderPool<SumType<Command, CodeAction>>.GetPooledObject(out var commandsOrCodeActions);
 
-        if (!codeActions.Any())
-        {
-            return null;
-        }
-
-        // We must cast the RazorCodeAction into a platform compliant code action
-        // For VS (SupportsCodeActionResolve = true) this means just encapsulating the RazorCodeAction in the `CommandOrCodeAction` struct
-        // For VS Code (SupportsCodeActionResolve = false) we must convert it into a CodeAction or Command before encapsulating in the `CommandOrCodeAction` struct.
-        var commandsOrCodeActions = codeActions.Select(c =>
-            _supportsCodeActionResolve ? c : c.AsVSCodeCommandOrCodeAction());
+        ConvertCodeActionsToSumType(razorCodeActions);
+        ConvertCodeActionsToSumType(delegatedCodeActions);
 
         return commandsOrCodeActions.ToArray();
+
+        void ConvertCodeActionsToSumType(ImmutableArray<RazorVSInternalCodeAction> codeActions)
+        {
+            // We must cast the RazorCodeAction into a platform compliant code action
+            // For VS (SupportsCodeActionResolve = true) this means just encapsulating the RazorCodeAction in the `CommandOrCodeAction` struct
+            // For VS Code (SupportsCodeActionResolve = false) we must convert it into a CodeAction or Command before encapsulating in the `CommandOrCodeAction` struct.
+            if (_supportsCodeActionResolve)
+            {
+                foreach (var action in codeActions)
+                {
+                    commandsOrCodeActions.Add(action);
+                }
+            }
+            else
+            {
+                foreach (var action in codeActions)
+                {
+                    commandsOrCodeActions.Add(action.AsVSCodeCommandOrCodeAction());
+                }
+            }
+        }
     }
 
     public RegistrationExtensionResult GetRegistration(VSInternalClientCapabilities clientCapabilities)
     {
-        _supportsCodeActionResolve = clientCapabilities.TextDocument?.CodeAction?.ResolveSupport != null;
+        _supportsCodeActionResolve = clientCapabilities.TextDocument?.CodeAction?.ResolveSupport is not null;
 
         const string ServerCapability = "codeActionProvider";
 
         var options = new CodeActionOptions
         {
-            CodeActionKinds = new[] {
-                    CodeActionKind.RefactorExtract,
-                    CodeActionKind.QuickFix,
-                    CodeActionKind.Refactor
-                },
+            CodeActionKinds = new[]
+            {
+                CodeActionKind.RefactorExtract,
+                CodeActionKind.QuickFix,
+                CodeActionKind.Refactor
+            },
             ResolveProvider = true,
         };
         return new RegistrationExtensionResult(ServerCapability, new SumType<bool, CodeActionOptions>(options));
@@ -167,20 +185,20 @@ internal class CodeActionEndpoint : IVSCodeActionEndpoint
         return context;
     }
 
-    private async Task<IEnumerable<RazorVSInternalCodeAction>?> GetDelegatedCodeActionsAsync(DocumentContext documentContext, RazorCodeActionContext context, CancellationToken cancellationToken)
+    private async Task<ImmutableArray<RazorVSInternalCodeAction>> GetDelegatedCodeActionsAsync(VersionedDocumentContext documentContext, RazorCodeActionContext context, CancellationToken cancellationToken)
     {
         var languageKind = _documentMappingService.GetLanguageKind(context.CodeDocument, context.Location.AbsoluteIndex, rightAssociative: false);
 
         // No point delegating if we're in a Razor context
         if (languageKind == RazorLanguageKind.Razor)
         {
-            return null;
+            return ImmutableArray<RazorVSInternalCodeAction>.Empty;
         }
 
         var codeActions = await GetCodeActionsFromLanguageServerAsync(languageKind, documentContext, context, cancellationToken);
-        if (codeActions is null || !codeActions.Any())
+        if (codeActions is not [_, ..])
         {
-            return null;
+            return ImmutableArray<RazorVSInternalCodeAction>.Empty;
         }
 
         IEnumerable<ICodeActionProvider> providers;
@@ -197,15 +215,17 @@ internal class CodeActionEndpoint : IVSCodeActionEndpoint
         return await FilterCodeActionsAsync(context, codeActions, providers, cancellationToken);
     }
 
-    private IEnumerable<RazorVSInternalCodeAction> ExtractCSharpCodeActionNamesFromData(IEnumerable<RazorVSInternalCodeAction> codeActions)
+    private RazorVSInternalCodeAction[] ExtractCSharpCodeActionNamesFromData(RazorVSInternalCodeAction[] codeActions)
     {
-        return codeActions.Where(codeAction =>
+        using var _ = ArrayBuilderPool<RazorVSInternalCodeAction>.GetPooledObject(out var actions);
+
+        foreach (var codeAction in codeActions)
         {
             // Note: we may see a perf benefit from using a JsonConverter
             var tags = ((JToken?)codeAction.Data)?["CustomTags"]?.ToObject<string[]>();
             if (tags is null || tags.Length == 0)
             {
-                return false;
+                continue;
             }
 
             foreach (var tag in tags)
@@ -219,56 +239,47 @@ internal class CodeActionEndpoint : IVSCodeActionEndpoint
 
             if (string.IsNullOrEmpty(codeAction.Name))
             {
-                return false;
+                continue;
             }
 
-            return true;
-        }).ToArray();
+            actions.Add(codeAction);
+        }
+
+        return actions.ToArray();
     }
 
-    private async Task<IEnumerable<RazorVSInternalCodeAction>?> FilterCodeActionsAsync(
+    private async Task<ImmutableArray<RazorVSInternalCodeAction>> FilterCodeActionsAsync(
         RazorCodeActionContext context,
-        IEnumerable<RazorVSInternalCodeAction> codeActions,
+        RazorVSInternalCodeAction[] codeActions,
         IEnumerable<ICodeActionProvider> providers,
         CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var tasks = new List<Task<IReadOnlyList<RazorVSInternalCodeAction>?>>();
+        using var _ = ArrayBuilderPool<Task<IReadOnlyList<RazorVSInternalCodeAction>?>>.GetPooledObject(out var tasks);
 
         foreach (var provider in providers)
         {
-            var result = provider.ProvideAsync(context, codeActions, cancellationToken);
-            if (result != null)
-            {
-                tasks.Add(result);
-            }
+            tasks.Add(provider.ProvideAsync(context, codeActions, cancellationToken));
         }
 
-        return await ConsolidateCodeActionsFromProvidersAsync(tasks, cancellationToken);
+        return await ConsolidateCodeActionsFromProvidersAsync(tasks.ToImmutableArray(), cancellationToken);
     }
 
     // Internal for testing
-    internal async Task<IEnumerable<RazorVSInternalCodeAction>> GetCodeActionsFromLanguageServerAsync(RazorLanguageKind languageKind, DocumentContext documentContext, RazorCodeActionContext context, CancellationToken cancellationToken)
+    internal async Task<RazorVSInternalCodeAction[]> GetCodeActionsFromLanguageServerAsync(RazorLanguageKind languageKind, VersionedDocumentContext documentContext, RazorCodeActionContext context, CancellationToken cancellationToken)
     {
-        if (languageKind == Protocol.RazorLanguageKind.CSharp)
+        if (languageKind == RazorLanguageKind.CSharp)
         {
             // For C# we have to map the ranges to the generated document
-            if (!_documentMappingService.TryMapToProjectedDocumentRange(
-                    context.CodeDocument,
-                    context.Request.Range,
-                    out var projectedRange))
+            if (!_documentMappingService.TryMapToProjectedDocumentRange(context.CodeDocument, context.Request.Range, out var projectedRange))
             {
                 return Array.Empty<RazorVSInternalCodeAction>();
             }
 
             var newContext = context.Request.Context;
-            if (context.Request.Context is VSInternalCodeActionContext vsContext &&
-                vsContext.SelectionRange is not null &&
-                _documentMappingService.TryMapToProjectedDocumentRange(
-                    context.CodeDocument,
-                    vsContext.SelectionRange,
-                    out var selectionRange))
+            if (context.Request.Context is VSInternalCodeActionContext { SelectionRange: not null } vsContext &&
+                _documentMappingService.TryMapToProjectedDocumentRange(context.CodeDocument, vsContext.SelectionRange, out var selectionRange))
             {
                 vsContext.SelectionRange = selectionRange;
                 newContext = vsContext;
@@ -290,49 +301,44 @@ internal class CodeActionEndpoint : IVSCodeActionEndpoint
         return await _languageServer.SendRequestAsync<DelegatedCodeActionParams, RazorVSInternalCodeAction[]>(RazorLanguageServerCustomMessageTargets.RazorProvideCodeActionsEndpoint, delegatedParams, cancellationToken);
     }
 
-    private async Task<IEnumerable<RazorVSInternalCodeAction>?> GetRazorCodeActionsAsync(RazorCodeActionContext context, CancellationToken cancellationToken)
+    private async Task<ImmutableArray<RazorVSInternalCodeAction>> GetRazorCodeActionsAsync(RazorCodeActionContext context, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var tasks = new List<Task<IReadOnlyList<RazorVSInternalCodeAction>?>>();
+        using var _ = ArrayBuilderPool<Task<IReadOnlyList<RazorVSInternalCodeAction>?>>.GetPooledObject(out var tasks);
 
         foreach (var provider in _razorCodeActionProviders)
         {
-            var result = provider.ProvideAsync(context, cancellationToken);
-            if (result != null)
-            {
-                tasks.Add(result);
-            }
+            tasks.Add(provider.ProvideAsync(context, cancellationToken));
         }
 
-        return await ConsolidateCodeActionsFromProvidersAsync(tasks, cancellationToken);
+        return await ConsolidateCodeActionsFromProvidersAsync(tasks.ToImmutableArray(), cancellationToken);
     }
 
-    private static async Task<IEnumerable<RazorVSInternalCodeAction>?> ConsolidateCodeActionsFromProvidersAsync(
-        List<Task<IReadOnlyList<RazorVSInternalCodeAction>?>> tasks,
+    private static async Task<ImmutableArray<RazorVSInternalCodeAction>> ConsolidateCodeActionsFromProvidersAsync(
+        ImmutableArray<Task<IReadOnlyList<RazorVSInternalCodeAction>?>> tasks,
         CancellationToken cancellationToken)
     {
         var results = await Task.WhenAll(tasks).ConfigureAwait(false);
-        var codeActions = new List<RazorVSInternalCodeAction>();
+
+        using var _ = ArrayBuilderPool<RazorVSInternalCodeAction>.GetPooledObject(out var codeActions);
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        for (var i = 0; i < results.Length; i++)
+        foreach (var result in results)
         {
-            var result = results[i];
-
             if (result is not null)
             {
                 codeActions.AddRange(result);
             }
         }
 
-        return codeActions;
+        return codeActions.ToImmutableArray();
     }
 
     private static ImmutableHashSet<string> GetAllAvailableCodeActionNames()
     {
-        var availableCodeActionNames = new HashSet<string>();
+        using var _ = ArrayBuilderPool<string>.GetPooledObject(out var availableCodeActionNames);
 
         var refactoringProviderNames = typeof(RazorPredefinedCodeRefactoringProviderNames)
             .GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Static | BindingFlags.Public)
@@ -345,8 +351,8 @@ internal class CodeActionEndpoint : IVSCodeActionEndpoint
             .Select(property => property.GetValue(null) as string)
             .WithoutNull();
 
-        availableCodeActionNames.UnionWith(refactoringProviderNames);
-        availableCodeActionNames.UnionWith(codeFixProviderNames);
+        availableCodeActionNames.AddRange(refactoringProviderNames);
+        availableCodeActionNames.AddRange(codeFixProviderNames);
         availableCodeActionNames.Add(LanguageServerConstants.CodeActions.CodeActionFromVSCode);
 
         return availableCodeActionNames.ToImmutableHashSet();

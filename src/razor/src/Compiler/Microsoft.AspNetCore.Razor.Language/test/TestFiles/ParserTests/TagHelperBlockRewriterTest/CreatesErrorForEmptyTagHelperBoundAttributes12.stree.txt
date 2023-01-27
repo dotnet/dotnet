@@ -1,4 +1,4 @@
-RazorDocument - [0..32)::32 - [<myth BOUND= nAMe='john'></myth>]
+﻿RazorDocument - [0..32)::32 - [<myth BOUND= nAMe='john'></myth>]
     MarkupBlock - [0..32)::32
         MarkupTagHelperElement - [0..32)::32 - myth[StartTagAndEndTag] - mythTagHelper
             MarkupTagHelperStartTag - [0..25)::25 - [<myth BOUND= nAMe='john'>] - Gen<Markup> - SpanEditHandler;Accepts:Any

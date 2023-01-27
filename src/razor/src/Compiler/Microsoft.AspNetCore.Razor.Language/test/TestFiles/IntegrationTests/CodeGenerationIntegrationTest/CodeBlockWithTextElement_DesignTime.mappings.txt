@@ -1,4 +1,4 @@
-Source Location: (2:0,2 [17] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CodeBlockWithTextElement.cshtml)
+﻿Source Location: (2:0,2 [17] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CodeBlockWithTextElement.cshtml)
 |
     var a = 1; |
 Generated Location: (768:19,2 [17] )

@@ -8,7 +8,7 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 namespace Microsoft.AspNetCore.Razor.OmniSharpPlugin;
 
-public sealed class OmniSharpDocumentSnapshot
+internal sealed class OmniSharpDocumentSnapshot
 {
     private readonly DocumentSnapshot _documentSnapshot;
     private readonly object _projectLock;
@@ -53,10 +53,7 @@ public sealed class OmniSharpDocumentSnapshot
         {
             lock (_projectLock)
             {
-                if (_project is null)
-                {
-                    _project = new OmniSharpProjectSnapshot(_documentSnapshot.Project);
-                }
+                _project ??= new OmniSharpProjectSnapshot(_documentSnapshot.Project);
             }
 
             return _project;

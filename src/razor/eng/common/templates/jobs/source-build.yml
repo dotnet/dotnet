@@ -1,4 +1,4 @@
-parameters:
+﻿parameters:
   # This template adds arcade-powered source-build to CI. A job is created for each platform, as
   # well as an optional server job that completes when all platform jobs complete.
 

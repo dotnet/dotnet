@@ -386,7 +386,7 @@ public class OnAutoInsertEndpointTest : SingleServerDelegatingEndpointTestBase
         await VerifyCSharpOnAutoInsertAsync(input, expected, character);
     }
 
-    private async Task<RazorRequestContext> CreateOnAutoInsertRequestContextAsync(DocumentContext? documentContext)
+    private async Task<RazorRequestContext> CreateOnAutoInsertRequestContextAsync(VersionedDocumentContext? documentContext)
     {
         var lspServices = new Mock<ILspServices>(MockBehavior.Strict);
         lspServices
@@ -425,7 +425,7 @@ public class OnAutoInsertEndpointTest : SingleServerDelegatingEndpointTestBase
                 InsertSpaces = true
             },
         };
-        var documentContext = await DocumentContextFactory.TryCreateAsync(@params.TextDocument.Uri, DisposalToken);
+        var documentContext = await DocumentContextFactory.TryCreateForOpenDocumentAsync(@params.TextDocument.Uri, DisposalToken);
 
         var requestContext = await CreateOnAutoInsertRequestContextAsync(documentContext);
 

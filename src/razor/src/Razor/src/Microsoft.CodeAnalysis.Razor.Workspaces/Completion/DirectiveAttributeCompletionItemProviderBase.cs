@@ -198,9 +198,9 @@ internal abstract class DirectiveAttributeCompletionItemProviderBase : RazorComp
             return;
         }
 
-        parameterName = attributeName.Substring(colonIndex + 1);
+        parameterName = attributeName[(colonIndex + 1)..];
         parameterLocation = new TextSpan(attributeNameLocation.Start + colonIndex + 1, parameterName.Length);
-        name = attributeName.Substring(0, colonIndex);
+        name = attributeName[..colonIndex];
         nameLocation = new TextSpan(attributeNameLocation.Start, name.Length);
     }
 }

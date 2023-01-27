@@ -1,4 +1,4 @@
-RazorDocument - [0..21)::21 - [<p class="@do {"></p>]
+﻿RazorDocument - [0..21)::21 - [<p class="@do {"></p>]
     MarkupBlock - [0..21)::21
         MarkupTagHelperElement - [0..21)::21 - p[StartTagAndEndTag] - ptaghelper
             MarkupTagHelperStartTag - [0..21)::21 - [<p class="@do {"></p>] - Gen<Markup> - SpanEditHandler;Accepts:Any

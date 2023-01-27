@@ -1,4 +1,4 @@
-//line,characterPos,length,tokenType,modifier
+﻿//line,characterPos,length,tokenType,modifier
 0 0 1 markupTagDelimiter 0
 0 1 1 markupElement 0
 0 2 4 markupAttribute 0

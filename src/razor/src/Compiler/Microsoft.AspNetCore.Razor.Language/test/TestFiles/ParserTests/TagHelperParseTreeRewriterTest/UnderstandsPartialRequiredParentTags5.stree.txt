@@ -1,4 +1,4 @@
-RazorDocument - [0..37)::37 - [<<p><<strong></</strong></strong></p>]
+﻿RazorDocument - [0..37)::37 - [<<p><<strong></</strong></strong></p>]
     MarkupBlock - [0..37)::37
         MarkupElement - [0..1)::1
             MarkupStartTag - [0..1)::1 - [<] - Gen<Markup> - SpanEditHandler;Accepts:Any

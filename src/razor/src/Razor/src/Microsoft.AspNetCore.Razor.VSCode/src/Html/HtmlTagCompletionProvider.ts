@@ -1,4 +1,4 @@
-/* --------------------------------------------------------------------------------------------
+﻿/* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
@@ -9,7 +9,7 @@ import {
     LanguageService as HtmlLanguageService,
 } from 'vscode-html-languageservice';
 import { TextDocument as ServiceTextDocument } from 'vscode-languageserver-textdocument';
-import { IRazorDocumentManager } from '../IRazorDocumentManager';
+import { IRazorDocumentManager } from '../Document/IRazorDocumentManager';
 import { RazorLanguage } from '../RazorLanguage';
 import { RazorLanguageServiceClient } from '../RazorLanguageServiceClient';
 import { LanguageKind } from '../RPC/LanguageKind';

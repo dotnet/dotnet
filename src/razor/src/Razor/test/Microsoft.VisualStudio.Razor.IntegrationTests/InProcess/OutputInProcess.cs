@@ -14,7 +14,7 @@ namespace Microsoft.VisualStudio.Extensibility.Testing;
 [TestService]
 internal partial class OutputInProcess
 {
-    private const string RazorPaneName = "Razor Language Server Client";
+    private const string RazorPaneName = "Razor Logger Output";
 
     public async Task<bool> HasErrorsAsync(CancellationToken cancellationToken)
     {

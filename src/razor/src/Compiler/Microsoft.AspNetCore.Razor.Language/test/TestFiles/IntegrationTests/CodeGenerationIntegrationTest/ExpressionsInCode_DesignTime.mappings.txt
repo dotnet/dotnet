@@ -1,4 +1,4 @@
-Source Location: (2:0,2 [51] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ExpressionsInCode.cshtml)
+﻿Source Location: (2:0,2 [51] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ExpressionsInCode.cshtml)
 |
     object foo = null;
     string bar = "Foo";

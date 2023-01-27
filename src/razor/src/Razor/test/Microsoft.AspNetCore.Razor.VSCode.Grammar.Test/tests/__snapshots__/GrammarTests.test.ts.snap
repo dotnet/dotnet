@@ -8117,6 +8117,90 @@ exports[`Grammar tests else [if ( ... )] { ... } Unspaced else if part 1`] = `
 "
 `;
 
+exports[`Grammar tests script block function function declaration 1`] = `
+"Line: <script>
+ - token from 0 to 1 (<) with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.script.start.html, punctuation.definition.tag.begin.html
+ - token from 1 to 7 (script) with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.script.start.html, entity.name.tag.html
+ - token from 7 to 8 (>) with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.script.start.html, punctuation.definition.tag.end.html
+
+Line:     function f()
+ - token from 0 to 4 (    ) with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js
+ - token from 4 to 12 (function) with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js, meta.function.js, storage.type.function.js
+ - token from 12 to 13 ( ) with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js, meta.function.js
+ - token from 13 to 14 (f) with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js, meta.function.js, meta.definition.function.js, entity.name.function.js
+ - token from 14 to 15 (() with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js, meta.function.js, meta.parameters.js, punctuation.definition.parameters.begin.js
+ - token from 15 to 16 ()) with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js, meta.function.js, meta.parameters.js, punctuation.definition.parameters.end.js
+
+Line:     {
+ - token from 0 to 4 (    ) with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js, meta.function.js
+ - token from 4 to 5 ({) with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js, meta.function.js, meta.block.js, punctuation.definition.block.js
+
+Line:     }
+ - token from 0 to 4 (    ) with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js, meta.function.js, meta.block.js
+ - token from 4 to 5 (}) with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js, meta.function.js, meta.block.js, punctuation.definition.block.js
+
+Line: </script>
+ - token from 0 to 1 (<) with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.script.end.html, punctuation.definition.tag.begin.html, source.js-ignored-vscode
+ - token from 1 to 2 (/) with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.script.end.html, punctuation.definition.tag.begin.html
+ - token from 2 to 8 (script) with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.script.end.html, entity.name.tag.html
+ - token from 8 to 9 (>) with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.script.end.html, punctuation.definition.tag.end.html
+"
+`;
+
+exports[`Grammar tests script block function script block import 1`] = `
+"Line: <script>
+ - token from 0 to 1 (<) with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.script.start.html, punctuation.definition.tag.begin.html
+ - token from 1 to 7 (script) with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.script.start.html, entity.name.tag.html
+ - token from 7 to 8 (>) with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.script.start.html, punctuation.definition.tag.end.html
+
+Line:     import fs from 'fs';
+ - token from 0 to 4 (    ) with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js
+ - token from 4 to 10 (import) with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js, meta.import.js, keyword.control.import.js
+ - token from 10 to 11 ( ) with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js, meta.import.js
+ - token from 11 to 13 (fs) with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js, meta.import.js, variable.other.readwrite.alias.js
+ - token from 13 to 14 ( ) with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js, meta.import.js
+ - token from 14 to 18 (from) with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js, meta.import.js, keyword.control.from.js
+ - token from 18 to 19 ( ) with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js, meta.import.js
+ - token from 19 to 20 (') with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js, meta.import.js, string.quoted.single.js, punctuation.definition.string.begin.js
+ - token from 20 to 22 (fs) with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js, meta.import.js, string.quoted.single.js
+ - token from 22 to 23 (') with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js, meta.import.js, string.quoted.single.js, punctuation.definition.string.end.js
+ - token from 23 to 24 (;) with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js, punctuation.terminator.statement.js
+
+Line: </script>
+ - token from 0 to 1 (<) with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.script.end.html, punctuation.definition.tag.begin.html, source.js-ignored-vscode
+ - token from 1 to 2 (/) with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.script.end.html, punctuation.definition.tag.begin.html
+ - token from 2 to 8 (script) with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.script.end.html, entity.name.tag.html
+ - token from 8 to 9 (>) with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.script.end.html, punctuation.definition.tag.end.html
+"
+`;
+
+exports[`Grammar tests script block function script block var plain 1`] = `
+"Line: <script>
+ - token from 0 to 1 (<) with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.script.start.html, punctuation.definition.tag.begin.html
+ - token from 1 to 7 (script) with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.script.start.html, entity.name.tag.html
+ - token from 7 to 8 (>) with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.script.start.html, punctuation.definition.tag.end.html
+
+Line:     var x = \\"test\\";
+ - token from 0 to 4 (    ) with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js
+ - token from 4 to 7 (var) with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js, meta.var.expr.js, storage.type.js
+ - token from 7 to 8 ( ) with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js, meta.var.expr.js
+ - token from 8 to 9 (x) with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js, meta.var.expr.js, meta.var-single-variable.expr.js, meta.definition.variable.js, variable.other.readwrite.js
+ - token from 9 to 10 ( ) with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js, meta.var.expr.js, meta.var-single-variable.expr.js
+ - token from 10 to 11 (=) with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js, meta.var.expr.js, keyword.operator.assignment.js
+ - token from 11 to 12 ( ) with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js, meta.var.expr.js
+ - token from 12 to 13 (\\") with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js, meta.var.expr.js, string.quoted.double.js, punctuation.definition.string.begin.js
+ - token from 13 to 17 (test) with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js, meta.var.expr.js, string.quoted.double.js
+ - token from 17 to 18 (\\") with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js, meta.var.expr.js, string.quoted.double.js, punctuation.definition.string.end.js
+ - token from 18 to 19 (;) with scopes text.aspnetcorerazor, meta.embedded.block.html, source.js, punctuation.terminator.statement.js
+
+Line: </script>
+ - token from 0 to 1 (<) with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.script.end.html, punctuation.definition.tag.begin.html, source.js-ignored-vscode
+ - token from 1 to 2 (/) with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.script.end.html, punctuation.definition.tag.begin.html
+ - token from 2 to 8 (script) with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.script.end.html, entity.name.tag.html
+ - token from 8 to 9 (>) with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.script.end.html, punctuation.definition.tag.end.html
+"
+`;
+
 exports[`Grammar tests style block colors css colors declaration 1`] = `
 "Line: <style>
  - token from 0 to 1 (<) with scopes text.aspnetcorerazor, meta.embedded.block.html, meta.tag.metadata.style.start.html, punctuation.definition.tag.begin.html

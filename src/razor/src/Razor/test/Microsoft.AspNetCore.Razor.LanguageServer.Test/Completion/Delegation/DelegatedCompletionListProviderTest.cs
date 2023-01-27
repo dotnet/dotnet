@@ -38,7 +38,7 @@ public class DelegatedCompletionListProviderTest : LanguageServerTestBase
         // Arrange
         var completionContext = new VSInternalCompletionContext();
         var codeDocument = CreateCodeDocument("<");
-        var documentContext = TestDocumentContext.From("C:/path/to/file.cshtml", codeDocument);
+        var documentContext = TestDocumentContext.From("C:/path/to/file.cshtml", codeDocument, hostDocumentVersion: 0);
         var rewriter1 = new TestResponseRewriter(order: 100);
         var rewriter2 = new TestResponseRewriter(order: 20);
         var provider = TestDelegatedCompletionListProvider.Create(LoggerFactory, rewriter1, rewriter2);

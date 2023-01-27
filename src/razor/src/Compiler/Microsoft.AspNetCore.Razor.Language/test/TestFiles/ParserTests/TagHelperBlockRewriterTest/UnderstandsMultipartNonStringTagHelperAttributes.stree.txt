@@ -1,4 +1,4 @@
-RazorDocument - [0..30)::30 - [<person age="(() => 123)()" />]
+﻿RazorDocument - [0..30)::30 - [<person age="(() => 123)()" />]
     MarkupBlock - [0..30)::30
         MarkupTagHelperElement - [0..30)::30 - person[SelfClosing] - PersonTagHelper
             MarkupTagHelperStartTag - [0..30)::30 - [<person age="(() => 123)()" />] - Gen<Markup> - SpanEditHandler;Accepts:Any

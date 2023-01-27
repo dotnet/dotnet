@@ -31,7 +31,13 @@ internal class DefaultDocumentContextFactory : DocumentContextFactory
         _logger = loggerFactory.CreateLogger<DefaultDocumentContextFactory>();
     }
 
-    public override async Task<DocumentContext?> TryCreateAsync(Uri documentUri, CancellationToken cancellationToken)
+    public override Task<DocumentContext?> TryCreateAsync(Uri documentUri, CancellationToken cancellationToken)
+        => TryCreateCoreAsync(documentUri, versioned: false, cancellationToken);
+
+    public async override Task<VersionedDocumentContext?> TryCreateForOpenDocumentAsync(Uri documentUri, CancellationToken cancellationToken)
+        => (VersionedDocumentContext?)await TryCreateCoreAsync(documentUri, versioned: true, cancellationToken).ConfigureAwait(false);
+
+    private async Task<DocumentContext?> TryCreateCoreAsync(Uri documentUri, bool versioned, CancellationToken cancellationToken)
     {
         var filePath = documentUri.GetAbsoluteOrUNCPath();
 
@@ -39,6 +45,11 @@ internal class DefaultDocumentContextFactory : DocumentContextFactory
         {
             if (_documentResolver.TryResolveDocument(filePath, out var documentSnapshot))
             {
+                if (!versioned)
+                {
+                    return new DocumentSnapshotAndVersion(documentSnapshot, Version: null);
+                }
+
                 if (_documentVersionCache.TryGetDocumentVersion(documentSnapshot, out var version))
                 {
                     return new DocumentSnapshotAndVersion(documentSnapshot, version.Value);
@@ -70,9 +81,19 @@ internal class DefaultDocumentContextFactory : DocumentContextFactory
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        var context = new DocumentContext(documentUri, documentSnapshot, version);
-        return context;
+        if (versioned)
+        {
+            // If we were asked for a versioned document, but have no version info, then we didn't find the document
+            if (version is null)
+            {
+                return null;
+            }
+
+            return new VersionedDocumentContext(documentUri, documentSnapshot, version.Value);
+        }
+
+        return new DocumentContext(documentUri, documentSnapshot);
     }
 
-    private record DocumentSnapshotAndVersion(DocumentSnapshot Snapshot, int Version);
+    private record DocumentSnapshotAndVersion(DocumentSnapshot Snapshot, int? Version);
 }

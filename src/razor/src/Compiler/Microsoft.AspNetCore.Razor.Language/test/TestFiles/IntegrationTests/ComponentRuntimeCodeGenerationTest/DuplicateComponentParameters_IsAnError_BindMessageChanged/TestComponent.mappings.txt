@@ -1,4 +1,4 @@
-Source Location: (84:1,12 [30] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (84:1,12 [30] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     string message = "hi";
 |

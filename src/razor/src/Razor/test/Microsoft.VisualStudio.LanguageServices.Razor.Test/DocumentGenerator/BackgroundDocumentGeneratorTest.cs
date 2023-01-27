@@ -56,7 +56,7 @@ public class BackgroundDocumentGeneratorTest : ProjectSnapshotManagerDispatcherW
         // We utilize a task completion source here so we can "fake" a document parse taking a significant amount of time
         var tcs = new TaskCompletionSource<TextAndVersion>();
         var textLoader = new Mock<TextLoader>(MockBehavior.Strict);
-        textLoader.Setup(loader => loader.LoadTextAndVersionAsync(It.IsAny<Workspace>(), It.IsAny<DocumentId>(), It.IsAny<CancellationToken>()))
+        textLoader.Setup(loader => loader.LoadTextAndVersionAsync(It.IsAny<LoadTextOptions>(), It.IsAny<CancellationToken>()))
             .Returns(tcs.Task);
         var hostDocument = _documents[0];
 
@@ -100,7 +100,7 @@ public class BackgroundDocumentGeneratorTest : ProjectSnapshotManagerDispatcherW
         projectManager.ProjectAdded(_hostProject1);
 
         var textLoader = new Mock<TextLoader>(MockBehavior.Strict);
-        textLoader.Setup(loader => loader.LoadTextAndVersionAsync(It.IsAny<Workspace>(), It.IsAny<DocumentId>(), It.IsAny<CancellationToken>()))
+        textLoader.Setup(loader => loader.LoadTextAndVersionAsync(It.IsAny<LoadTextOptions>(), It.IsAny<CancellationToken>()))
             .Throws<FileNotFoundException>();
         projectManager.DocumentAdded(_hostProject1, _documents[0], textLoader.Object);
 
@@ -131,7 +131,7 @@ public class BackgroundDocumentGeneratorTest : ProjectSnapshotManagerDispatcherW
         projectManager.ProjectAdded(_hostProject1);
 
         var textLoader = new Mock<TextLoader>(MockBehavior.Strict);
-        textLoader.Setup(loader => loader.LoadTextAndVersionAsync(It.IsAny<Workspace>(), It.IsAny<DocumentId>(), It.IsAny<CancellationToken>()))
+        textLoader.Setup(loader => loader.LoadTextAndVersionAsync(It.IsAny<LoadTextOptions>(), It.IsAny<CancellationToken>()))
             .Throws<UnauthorizedAccessException>();
         projectManager.DocumentAdded(_hostProject1, _documents[0], textLoader.Object);
 

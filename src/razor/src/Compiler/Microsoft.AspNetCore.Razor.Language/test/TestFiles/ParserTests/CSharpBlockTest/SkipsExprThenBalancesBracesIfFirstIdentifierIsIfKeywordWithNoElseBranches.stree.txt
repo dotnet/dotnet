@@ -1,4 +1,4 @@
-RazorDocument - [0..82)::82 - [@if(int i = 0; i < 10; new Foo { Bar = "baz" }) { Debug.WriteLine(@"foo } bar"); }]
+﻿RazorDocument - [0..82)::82 - [@if(int i = 0; i < 10; new Foo { Bar = "baz" }) { Debug.WriteLine(@"foo } bar"); }]
     MarkupBlock - [0..82)::82
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

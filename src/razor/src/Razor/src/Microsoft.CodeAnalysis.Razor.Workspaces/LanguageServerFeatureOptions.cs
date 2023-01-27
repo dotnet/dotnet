@@ -19,6 +19,12 @@ internal abstract class LanguageServerFeatureOptions
 
     public abstract bool SingleServerSupport { get; }
 
+    public abstract bool SupportsDelegatedCodeActions { get; }
+
+    // Code action and rename paths in Windows VS Code need to be prefixed with '/':
+    // https://github.com/dotnet/razor/issues/8131
+    public abstract bool ReturnCodeActionAndRenamePathsWithPrefixedSlash { get; }
+
     public string GetRazorCSharpFilePath(string razorFilePath) => razorFilePath + CSharpVirtualDocumentSuffix;
 
     public string GetRazorHtmlFilePath(string razorFilePath) => razorFilePath + HtmlVirtualDocumentSuffix;

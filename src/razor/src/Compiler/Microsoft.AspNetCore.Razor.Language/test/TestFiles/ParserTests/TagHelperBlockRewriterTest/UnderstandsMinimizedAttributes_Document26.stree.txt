@@ -1,4 +1,4 @@
-RazorDocument - [0..40)::40 - [<input bound-required-int class='btn' />]
+﻿RazorDocument - [0..40)::40 - [<input bound-required-int class='btn' />]
     MarkupBlock - [0..40)::40
         MarkupTagHelperElement - [0..40)::40 - input[SelfClosing] - InputTagHelper2 - InputTagHelper3
             MarkupTagHelperStartTag - [0..40)::40 - [<input bound-required-int class='btn' />] - Gen<Markup> - SpanEditHandler;Accepts:Any

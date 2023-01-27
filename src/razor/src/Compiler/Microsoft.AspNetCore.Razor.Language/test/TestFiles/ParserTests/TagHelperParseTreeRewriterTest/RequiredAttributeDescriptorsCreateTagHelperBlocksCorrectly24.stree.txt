@@ -1,4 +1,4 @@
-RazorDocument - [0..31)::31 - [<p class="btn" catchAll="hi" />]
+﻿RazorDocument - [0..31)::31 - [<p class="btn" catchAll="hi" />]
     MarkupBlock - [0..31)::31
         MarkupTagHelperElement - [0..31)::31 - p[SelfClosing] - pTagHelper - catchAllTagHelper
             MarkupTagHelperStartTag - [0..31)::31 - [<p class="btn" catchAll="hi" />] - Gen<Markup> - SpanEditHandler;Accepts:Any

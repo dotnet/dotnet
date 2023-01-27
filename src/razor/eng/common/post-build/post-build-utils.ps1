@@ -1,4 +1,4 @@
-# Most of the functions in this file require the variables `MaestroApiEndPoint`, 
+﻿# Most of the functions in this file require the variables `MaestroApiEndPoint`, 
 # `MaestroApiVersion` and `MaestroApiAccessToken` to be globally available.
 
 $ErrorActionPreference = 'Stop'

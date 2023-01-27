@@ -212,14 +212,14 @@ public abstract class TagHelperServiceTestBase : LanguageServerTestBase
         };
     }
 
-    internal static (Queue<DocumentContext>, Queue<TextDocumentIdentifier>) CreateDocumentContext(
+    internal static (Queue<VersionedDocumentContext>, Queue<TextDocumentIdentifier>) CreateDocumentContext(
         DocumentContentVersion[] textArray,
         bool[] isRazorArray,
         TagHelperDescriptor[] tagHelpers,
         VersionStamp projectVersion = default,
         int? documentVersion = null)
     {
-        var documentContexts = new Queue<DocumentContext>();
+        var documentContexts = new Queue<VersionedDocumentContext>();
         var identifiers = new Queue<TextDocumentIdentifier>();
         foreach (var (text, isRazorFile) in textArray.Zip(isRazorArray, (t, r) => (t, r)))
         {
@@ -231,7 +231,7 @@ public abstract class TagHelperServiceTestBase : LanguageServerTestBase
                 .Returns(projectVersion);
 
             var documentSnapshot = Mock.Of<DocumentSnapshot>(MockBehavior.Strict);
-            var documentContext = new Mock<DocumentContext>(MockBehavior.Strict, new Uri("c:/path/to/file.razor"), documentSnapshot, 0);
+            var documentContext = new Mock<VersionedDocumentContext>(MockBehavior.Strict, new Uri("c:/path/to/file.razor"), documentSnapshot, 0);
             documentContext.Setup(d => d.GetCodeDocumentAsync(It.IsAny<CancellationToken>()))
                 .ReturnsAsync(document);
 

@@ -1,4 +1,4 @@
-RazorDocument - [0..68)::68 - [@{LF    <!-- Hello, I'm a comment that shouldn't break razor --->LF}]
+﻿RazorDocument - [0..68)::68 - [@{LF    <!-- Hello, I'm a comment that shouldn't break razor --->LF}]
     MarkupBlock - [0..68)::68
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

@@ -1,4 +1,4 @@
-RazorDocument - [0..220)::220 - [LF@functions {LF    void Announcment(string message)LF    {LF        <div>LF            @if (message.Length > 0)LF            {LF                Repeat(@<p>@message.Length</p>);LF            }LF        </div>LF    }LF}LF]
+﻿RazorDocument - [0..220)::220 - [LF@functions {LF    void Announcment(string message)LF    {LF        <div>LF            @if (message.Length > 0)LF            {LF                Repeat(@<p>@message.Length</p>);LF            }LF        </div>LF    }LF}LF]
     MarkupBlock - [0..220)::220
         MarkupTextLiteral - [0..2)::2 - [LF] - Gen<Markup> - SpanEditHandler;Accepts:Any
             NewLine;[LF];

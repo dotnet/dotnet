@@ -51,7 +51,7 @@ public class StringTextSnapshot : ITextSnapshot2
 
             var nextLineStartIndex = delimiterIndex != -1 ? delimiterIndex + delimiterLength : Content.Length;
 
-            var lineText = Content.Substring(start, nextLineStartIndex - start);
+            var lineText = Content[start..nextLineStartIndex];
             _lines.Add(new SnapshotLine(lineText, start, this));
 
             start = nextLineStartIndex;
@@ -219,11 +219,11 @@ public class StringTextSnapshot : ITextSnapshot2
 
             if (_content.EndsWith("\r\n", StringComparison.Ordinal))
             {
-                _content = _content.Substring(0, _content.Length - 2);
+                _content = _content[..^2];
             }
             else if(_content.Length > 0 && ParserHelpers.IsNewLine(_content[_content.Length - 1]))
             {
-                _content = _content.Substring(0, _content.Length - 1);
+                _content = _content[..^1];
             }
 
             Start = new SnapshotPoint(owner, start);
@@ -244,7 +244,7 @@ public class StringTextSnapshot : ITextSnapshot2
 
         public string GetText() => _content;
 
-        public string GetLineBreakText() => _contentWithLineBreak.Substring(_content.Length);
+        public string GetLineBreakText() => _contentWithLineBreak[_content.Length..];
 
         public string GetTextIncludingLineBreak() => _contentWithLineBreak;
 

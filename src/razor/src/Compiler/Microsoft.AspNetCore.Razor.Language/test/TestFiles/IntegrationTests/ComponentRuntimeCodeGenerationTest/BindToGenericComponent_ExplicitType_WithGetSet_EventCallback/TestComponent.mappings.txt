@@ -1,4 +1,4 @@
-Source Location: (105:1,7 [140] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (105:1,7 [140] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     public CustomValue ParentValue { get; set; } = new CustomValue();
 

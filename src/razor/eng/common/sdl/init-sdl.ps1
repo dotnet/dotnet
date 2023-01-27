@@ -1,4 +1,4 @@
-Param(
+﻿Param(
   [string] $GuardianCliLocation,
   [string] $Repository,
   [string] $BranchName='master',

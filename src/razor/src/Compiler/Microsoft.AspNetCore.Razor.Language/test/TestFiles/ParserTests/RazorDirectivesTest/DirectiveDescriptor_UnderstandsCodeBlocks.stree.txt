@@ -1,4 +1,4 @@
-RazorDocument - [0..32)::32 - [@custom "Name" { foo(); bar(); }]
+﻿RazorDocument - [0..32)::32 - [@custom "Name" { foo(); bar(); }]
     MarkupBlock - [0..32)::32
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

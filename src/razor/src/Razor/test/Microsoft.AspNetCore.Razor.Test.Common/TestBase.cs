@@ -70,7 +70,7 @@ public abstract class TestBase : IAsyncLifetime
     /// <summary>
     ///  An <see cref="IRazorLogger"/> for the currently running test.
     /// </summary>
-    protected IRazorLogger Logger => _logger ??= new LoggerAdapter(LoggerFactory.CreateLogger(GetType()), new TelemetryReporter(LoggerFactory));
+    protected IRazorLogger Logger => _logger ??= new LoggerAdapter(new[] { LoggerFactory.CreateLogger(GetType()) }, new TelemetryReporter(LoggerFactory));
 
     protected TestBase(ITestOutputHelper testOutput)
     {

@@ -1,4 +1,4 @@
-RazorDocument - [0..408)::408 - [LF@functions {LF    string GetAnnouncmentText(string message)LF    {LF        if (message.Length > 0) <p>Message: @message</p>LFLF        if (message == null)LF            // Nothing to renderLF            <p>Message was null</p>LFLF        if (DateTime.Now.ToBinary() % 2 == 0)LF            @: <p>The time: @time</p>LFLF        if (message != null) @@SomeGitHubUserName <strong>@message</strong>LF    }LF}LF]
+﻿RazorDocument - [0..408)::408 - [LF@functions {LF    string GetAnnouncmentText(string message)LF    {LF        if (message.Length > 0) <p>Message: @message</p>LFLF        if (message == null)LF            // Nothing to renderLF            <p>Message was null</p>LFLF        if (DateTime.Now.ToBinary() % 2 == 0)LF            @: <p>The time: @time</p>LFLF        if (message != null) @@SomeGitHubUserName <strong>@message</strong>LF    }LF}LF]
     MarkupBlock - [0..408)::408
         MarkupTextLiteral - [0..2)::2 - [LF] - Gen<Markup> - SpanEditHandler;Accepts:Any
             NewLine;[LF];

@@ -1,4 +1,4 @@
-Source Location: (74:4,7 [59] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (74:4,7 [59] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     [Parameter]
     public bool TestBool { get; set; }

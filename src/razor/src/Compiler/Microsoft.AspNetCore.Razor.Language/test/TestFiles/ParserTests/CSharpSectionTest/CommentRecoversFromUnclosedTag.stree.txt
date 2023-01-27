@@ -1,4 +1,4 @@
-RazorDocument - [0..33)::33 - [@section s {LF<aLF<!--  > " '-->}]
+﻿RazorDocument - [0..33)::33 - [@section s {LF<aLF<!--  > " '-->}]
     MarkupBlock - [0..33)::33
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

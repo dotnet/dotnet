@@ -1,4 +1,4 @@
-RazorDocument - [0..130)::130 - [@{@section foo {LF    <ul>LF        @foreach(var p in Products) {LF            <li>Product: @p.Name</li>LF        }LF    </ul>LF}}]
+﻿RazorDocument - [0..130)::130 - [@{@section foo {LF    <ul>LF        @foreach(var p in Products) {LF            <li>Product: @p.Name</li>LF        }LF    </ul>LF}}]
     MarkupBlock - [0..130)::130
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

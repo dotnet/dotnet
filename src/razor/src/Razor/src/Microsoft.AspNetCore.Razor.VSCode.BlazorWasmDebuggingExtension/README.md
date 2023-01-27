@@ -1,4 +1,4 @@
-# Microsoft.AspNetCore.Razor.VSCode.BlazorWasmDebuggingExtension
+﻿# Microsoft.AspNetCore.Razor.VSCode.BlazorWasmDebuggingExtension
 
 This is a companion extension to the [C# extension](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp) that brings some improvements to the experience for debugging Blazor WebAssembly in VS Code. This extension should **not** be installed by itself and will automatically install the C# extension.
 

@@ -25,11 +25,6 @@ internal class RazorDidOpenTextDocumentEndpoint : IVSDidOpenTextDocumentEndpoint
         _projectService = razorProjectService;
     }
 
-    public Uri GetTextDocumentIdentifier(DidOpenTextDocumentParams request)
-    {
-        return request.TextDocument.Uri;
-    }
-
     public async Task HandleNotificationAsync(DidOpenTextDocumentParams request, RazorRequestContext requestContext, CancellationToken cancellationToken)
     {
         var sourceText = SourceText.From(request.TextDocument.Text);

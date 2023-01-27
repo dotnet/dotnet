@@ -1,4 +1,4 @@
-<Project>
+﻿<Project>
   <ItemGroup>
     <!--
       This is here to workaround flakiness in the NuGet SDK resolver in MSBuild.

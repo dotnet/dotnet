@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
 Helper module to install an archive to a directory
 

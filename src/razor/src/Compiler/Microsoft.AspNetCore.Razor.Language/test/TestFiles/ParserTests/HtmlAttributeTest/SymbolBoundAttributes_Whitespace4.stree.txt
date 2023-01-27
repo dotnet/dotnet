@@ -1,4 +1,4 @@
-RazorDocument - [0..44)::44 - [@{<a LF  (^click)='Foo'	LF(^click)='Bar' />}]
+﻿RazorDocument - [0..44)::44 - [@{<a LF  (^click)='Foo'	LF(^click)='Bar' />}]
     MarkupBlock - [0..44)::44
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

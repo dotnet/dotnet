@@ -203,8 +203,8 @@ public class TestTextBuffer : ITextBuffer
         public bool Replace(int startPosition, int charsToReplace, string replaceWith)
         {
             var initialSnapshot = _editSnapshot;
-            var preText = initialSnapshot.Content.Substring(0, startPosition);
-            var postText = initialSnapshot.Content.Substring(startPosition + charsToReplace);
+            var preText = initialSnapshot.Content[..startPosition];
+            var postText = initialSnapshot.Content[(startPosition + charsToReplace)..];
             var newText = preText + replaceWith + postText;
             var initialVersionNumber = initialSnapshot.Version.VersionNumber;
             var changedSnapshot = new StringTextSnapshot(newText, initialVersionNumber + 1);

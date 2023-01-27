@@ -1,4 +1,4 @@
-RazorDocument - [0..101)::101 - [<p    bound-int class='@DateTime.Now + 1'   bound-string class='@DateTime.Now + 1'  bound-string></p>]
+﻿RazorDocument - [0..101)::101 - [<p    bound-int class='@DateTime.Now + 1'   bound-string class='@DateTime.Now + 1'  bound-string></p>]
     MarkupBlock - [0..101)::101
         MarkupTagHelperElement - [0..101)::101 - p[StartTagAndEndTag] - PTagHelper
             MarkupTagHelperStartTag - [0..97)::97 - [<p    bound-int class='@DateTime.Now + 1'   bound-string class='@DateTime.Now + 1'  bound-string>] - Gen<Markup> - SpanEditHandler;Accepts:Any

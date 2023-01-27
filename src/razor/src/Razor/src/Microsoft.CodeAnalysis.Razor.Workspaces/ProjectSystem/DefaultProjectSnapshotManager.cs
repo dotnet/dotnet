@@ -22,7 +22,6 @@ internal class DefaultProjectSnapshotManager : ProjectSnapshotManagerBase
 {
     public override event EventHandler<ProjectChangeEventArgs> Changed;
 
-    private readonly ErrorReporter _errorReporter;
     private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
     private readonly ProjectSnapshotChangeTrigger[] _triggers;
 
@@ -30,6 +29,7 @@ internal class DefaultProjectSnapshotManager : ProjectSnapshotManagerBase
     // created lazily.
     private readonly Dictionary<string, Entry> _projects;
     private readonly HashSet<string> _openDocuments;
+    private readonly LoadTextOptions LoadTextOptions = new LoadTextOptions(SourceHashAlgorithm.Sha256);
 
     // We have a queue for changes because if one change results in another change aka, add -> open we want to make sure the "add" finishes running first before "open" is notified.
     private readonly Queue<ProjectChangeEventArgs> _notificationWork;
@@ -61,9 +61,9 @@ internal class DefaultProjectSnapshotManager : ProjectSnapshotManagerBase
         }
 
         _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher;
-        _errorReporter = errorReporter;
         _triggers = triggers.OrderByDescending(trigger => trigger.InitializePriority).ToArray();
         Workspace = workspace;
+        ErrorReporter = errorReporter;
 
         _projects = new Dictionary<string, Entry>(FilePathComparer.Instance);
         _openDocuments = new HashSet<string>(FilePathComparer.Instance);
@@ -125,6 +125,8 @@ internal class DefaultProjectSnapshotManager : ProjectSnapshotManagerBase
     }
 
     public override Workspace Workspace { get; }
+
+    public override ErrorReporter ErrorReporter { get; }
 
     public override ProjectSnapshot GetLoadedProject(string filePath)
     {
@@ -193,7 +195,7 @@ internal class DefaultProjectSnapshotManager : ProjectSnapshotManagerBase
             {
                 var loader = textLoader is null
                     ? DocumentState.EmptyLoader
-                    : (() => textLoader.LoadTextAndVersionAsync(Workspace, documentId: null, CancellationToken.None));
+                    : (() => textLoader.LoadTextAndVersionAsync(LoadTextOptions, CancellationToken.None));
                 var state = entry.State.WithAddedHostDocument(document, loader);
 
                 // Document updates can no-op.
@@ -343,7 +345,7 @@ internal class DefaultProjectSnapshotManager : ProjectSnapshotManagerBase
             {
                 var state = entry.State.WithChangedHostDocument(
                     older.HostDocument,
-                    async () => await textLoader.LoadTextAndVersionAsync(Workspace, documentId: null, cancellationToken: default));
+                    async () => await textLoader.LoadTextAndVersionAsync(LoadTextOptions, cancellationToken: default));
 
                 _openDocuments.Remove(documentFilePath);
 
@@ -455,7 +457,7 @@ internal class DefaultProjectSnapshotManager : ProjectSnapshotManagerBase
             {
                 var state = entry.State.WithChangedHostDocument(
                     older.HostDocument,
-                    async () => await textLoader.LoadTextAndVersionAsync(Workspace, documentId: default, cancellationToken: default));
+                    async () => await textLoader.LoadTextAndVersionAsync(LoadTextOptions, cancellationToken: default));
 
                 // Document updates can no-op.
                 if (!ReferenceEquals(state, entry.State))
@@ -598,7 +600,7 @@ internal class DefaultProjectSnapshotManager : ProjectSnapshotManagerBase
             throw new ArgumentNullException(nameof(exception));
         }
 
-        _errorReporter.ReportError(exception);
+        ErrorReporter.ReportError(exception);
     }
 
     public override void ReportError(Exception exception, ProjectSnapshot project)
@@ -608,7 +610,7 @@ internal class DefaultProjectSnapshotManager : ProjectSnapshotManagerBase
             throw new ArgumentNullException(nameof(exception));
         }
 
-        _errorReporter.ReportError(exception, project);
+        ErrorReporter.ReportError(exception, project);
     }
 
     public override void ReportError(Exception exception, HostProject hostProject)
@@ -619,7 +621,7 @@ internal class DefaultProjectSnapshotManager : ProjectSnapshotManagerBase
         }
 
         var snapshot = hostProject?.FilePath is null ? null : GetLoadedProject(hostProject.FilePath);
-        _errorReporter.ReportError(exception, snapshot);
+        ErrorReporter.ReportError(exception, snapshot);
     }
 
     private void NotifyListeners(ProjectSnapshot older, ProjectSnapshot newer, string documentFilePath, ProjectChangeKind kind)

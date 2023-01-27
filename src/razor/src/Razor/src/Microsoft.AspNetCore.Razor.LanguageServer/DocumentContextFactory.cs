@@ -10,4 +10,6 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 internal abstract class DocumentContextFactory
 {
     public abstract Task<DocumentContext?> TryCreateAsync(Uri documentUri, CancellationToken cancellationToken);
+
+    public abstract Task<VersionedDocumentContext?> TryCreateForOpenDocumentAsync(Uri documentUri, CancellationToken cancellationToken);
 }

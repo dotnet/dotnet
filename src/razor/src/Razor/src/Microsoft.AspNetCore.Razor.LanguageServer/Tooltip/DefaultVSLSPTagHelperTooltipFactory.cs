@@ -294,7 +294,7 @@ internal class DefaultVSLSPTagHelperTooltipFactory : VSLSPTagHelperTooltipFactor
         if (nullableType)
         {
             // Classify the '?' symbol separately from the rest of the type since it's considered punctuation.
-            typeName = typeName.Substring(0, typeName.Length - 1);
+            typeName = typeName[..^1];
         }
 
         // Case 1: Type can be aliased as a C# built-in type (e.g. Boolean -> bool, Int32 -> int, etc.).

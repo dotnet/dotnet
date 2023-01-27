@@ -1,4 +1,4 @@
-diff -u -r a/usr/include/urcu/uatomic/generic.h b/usr/include/urcu/uatomic/generic.h
+﻿diff -u -r a/usr/include/urcu/uatomic/generic.h b/usr/include/urcu/uatomic/generic.h
 --- a/usr/include/urcu/uatomic/generic.h	2014-10-22 15:00:58.000000000 -0700
 +++ b/usr/include/urcu/uatomic/generic.h	2020-10-30 21:38:28.550000000 -0700
 @@ -69,10 +69,10 @@

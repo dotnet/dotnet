@@ -148,7 +148,7 @@ internal class DirectiveAttributeCompletionItemProvider : DirectiveAttributeComp
             if (insertText.EndsWith("...", StringComparison.Ordinal))
             {
                 // Indexer attribute, we don't want to insert with the triple dot.
-                insertText = insertText.Substring(0, insertText.Length - 3);
+                insertText = insertText[..^3];
             }
 
             if (insertText.StartsWith("@", StringComparison.Ordinal))
@@ -156,7 +156,7 @@ internal class DirectiveAttributeCompletionItemProvider : DirectiveAttributeComp
                 // Strip off the @ from the insertion text. This change is here to align the insertion text with the
                 // completion hooks into VS and VSCode. Basically, completion triggers when `@` is typed so we don't
                 // want to insert `@bind` because `@` already exists.
-                insertText = insertText.Substring(1);
+                insertText = insertText[1..];
             }
 
             var (attributeDescriptionInfos, commitCharacters) = completion.Value;

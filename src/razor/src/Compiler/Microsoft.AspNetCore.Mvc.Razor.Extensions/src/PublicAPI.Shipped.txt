@@ -1,4 +1,4 @@
-#nullable enable
+﻿#nullable enable
 ~Microsoft.AspNetCore.Mvc.Razor.Extensions.IInjectTargetExtension.WriteInjectProperty(Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeRenderingContext context, Microsoft.AspNetCore.Mvc.Razor.Extensions.InjectIntermediateNode node) -> void
 ~Microsoft.AspNetCore.Mvc.Razor.Extensions.InjectIntermediateNode.MemberName.get -> string
 ~Microsoft.AspNetCore.Mvc.Razor.Extensions.InjectIntermediateNode.MemberName.set -> void

@@ -1,4 +1,4 @@
-Source Location: (11:0,11 [6] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (11:0,11 [6] x:\dir\subdir\Test\TestComponent.cshtml)
 |TParam|
 Generated Location: (581:17,22 [6] )
 |TParam|

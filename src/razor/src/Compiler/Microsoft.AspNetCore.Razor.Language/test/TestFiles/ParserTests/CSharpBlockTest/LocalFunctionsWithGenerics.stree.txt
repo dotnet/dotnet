@@ -1,4 +1,4 @@
-RazorDocument - [0..230)::230 - [@{LF    void Foo()LF    {LF        <strong>Hello the time is @{ DisplayCount(new List<string>()); }</strong>LF    }LFLF    void DisplayCount<T>(List<T> something)LF    {LF        <text>The count is something.Count</text>LF    }LF}]
+﻿RazorDocument - [0..230)::230 - [@{LF    void Foo()LF    {LF        <strong>Hello the time is @{ DisplayCount(new List<string>()); }</strong>LF    }LFLF    void DisplayCount<T>(List<T> something)LF    {LF        <text>The count is something.Count</text>LF    }LF}]
     MarkupBlock - [0..230)::230
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

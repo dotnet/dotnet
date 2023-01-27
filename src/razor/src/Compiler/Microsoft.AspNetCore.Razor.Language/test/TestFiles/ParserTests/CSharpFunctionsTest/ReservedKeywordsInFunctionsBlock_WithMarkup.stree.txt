@@ -1,4 +1,4 @@
-RazorDocument - [0..140)::140 - [LF@functions {LF    class PersonLF    {LF        public void DoSomething()LF        {LF            <p>Just do it!</p>LF        }LF    }LF}LF]
+﻿RazorDocument - [0..140)::140 - [LF@functions {LF    class PersonLF    {LF        public void DoSomething()LF        {LF            <p>Just do it!</p>LF        }LF    }LF}LF]
     MarkupBlock - [0..140)::140
         MarkupTextLiteral - [0..2)::2 - [LF] - Gen<Markup> - SpanEditHandler;Accepts:Any
             NewLine;[LF];

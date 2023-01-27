@@ -181,7 +181,7 @@ public abstract class IntegrationTestBase
         }
 
         var suffixIndex = FileName.LastIndexOf("_", StringComparison.Ordinal);
-        var normalizedFileName = suffixIndex == -1 ? FileName : FileName.Substring(0, suffixIndex);
+        var normalizedFileName = suffixIndex == -1 ? FileName : FileName[..suffixIndex];
         var sourceFileName = Path.ChangeExtension(normalizedFileName, FileExtension);
         var testFile = TestFile.Create(sourceFileName, GetType().GetTypeInfo().Assembly);
         if (!testFile.Exists())

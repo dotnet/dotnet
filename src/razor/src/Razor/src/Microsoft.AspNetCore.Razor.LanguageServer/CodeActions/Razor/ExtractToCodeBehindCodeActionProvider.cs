@@ -1,8 +1,8 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
@@ -16,12 +16,25 @@ using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Razor;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Elfie.Diagnostics;
+using Microsoft.Extensions.Logging;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
 internal class ExtractToCodeBehindCodeActionProvider : RazorCodeActionProvider
 {
     private static readonly Task<IReadOnlyList<RazorVSInternalCodeAction>?> s_emptyResult = Task.FromResult<IReadOnlyList<RazorVSInternalCodeAction>?>(null);
+    private readonly ILogger<ExtractToCodeBehindCodeActionProvider> _logger;
+
+    public ExtractToCodeBehindCodeActionProvider(ILoggerFactory loggerFactory)
+    {
+        if (loggerFactory is null)
+        {
+            throw new ArgumentNullException(nameof(loggerFactory));
+        }
+
+        _logger = loggerFactory.CreateLogger<ExtractToCodeBehindCodeActionProvider>();
+    }
 
     public override Task<IReadOnlyList<RazorVSInternalCodeAction>?> ProvideAsync(RazorCodeActionContext context, CancellationToken cancellationToken)
     {
@@ -50,12 +63,21 @@ internal class ExtractToCodeBehindCodeActionProvider : RazorCodeActionProvider
         var owner = syntaxTree.Root.LocateOwner(change);
         if (owner is null)
         {
-            Debug.Fail("Owner should never be null.");
+            _logger.LogWarning("Owner should never be null.");
             return s_emptyResult;
         }
 
-        var node = owner.Ancestors().FirstOrDefault(n => n.Kind == SyntaxKind.RazorDirective);
-        if (node is not RazorDirectiveSyntax directiveNode)
+        var directiveNode = owner?.Parent switch
+        {
+            // When the caret is '@code$$ {' or '@code$${' then tree is:
+            // RazorDirective -> RazorDirectiveBody -> CSharpCodeBlock -> (MetaCode or TextLiteral)
+            CSharpCodeBlockSyntax { Parent: { Parent: RazorDirectiveSyntax d } } => d,
+            // When the caret is '@$$code' or '@c$$ode' or '@co$$de' or '@cod$$e' then tree is:
+            // RazorDirective -> RazorDirectiveBody -> MetaCode
+            RazorDirectiveBodySyntax { Parent: RazorDirectiveSyntax d } => d,
+            _ => null
+        };
+        if (directiveNode is null)
         {
             return s_emptyResult;
         }
@@ -73,19 +95,19 @@ internal class ExtractToCodeBehindCodeActionProvider : RazorCodeActionProvider
             return s_emptyResult;
         }
 
-        var csharpCodeBlockNode = directiveNode.Body.DescendantNodes().FirstOrDefault(n => n is CSharpCodeBlockSyntax);
+        var csharpCodeBlockNode = (directiveNode.Body as RazorDirectiveBodySyntax)?.CSharpCode;
         if (csharpCodeBlockNode is null)
-        {
-            return s_emptyResult;
-        }
-
-        if (HasUnsupportedChildren(csharpCodeBlockNode))
         {
             return s_emptyResult;
         }
 
         // Do not provide code action if the cursor is inside the code block
         if (context.Location.AbsoluteIndex > csharpCodeBlockNode.SpanStart)
+        {
+            return s_emptyResult;
+        }
+
+        if (HasUnsupportedChildren(csharpCodeBlockNode))
         {
             return s_emptyResult;
         }

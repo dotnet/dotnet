@@ -1,4 +1,4 @@
-Source Location: (2:0,2 [115] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CodeBlock.cshtml)
+﻿Source Location: (2:0,2 [115] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CodeBlock.cshtml)
 |
     for(int i = 1; i <= 10; i++) {
         Output.Write("<p>Hello from C#, #" + i.ToString() + "</p>");

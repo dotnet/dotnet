@@ -36,7 +36,7 @@ public class CreateComponentCodeActionResolverTest : LanguageServerTestBase
     public async Task Handle_MissingFile()
     {
         // Arrange
-        var resolver = new CreateComponentCodeActionResolver(_emptyDocumentContextFactory);
+        var resolver = new CreateComponentCodeActionResolver(_emptyDocumentContextFactory, TestLanguageServerFeatureOptions.Instance);
         var data = JObject.FromObject(new CreateComponentCodeActionParams()
         {
             Uri = new Uri("c:/Test.razor"),
@@ -59,7 +59,7 @@ public class CreateComponentCodeActionResolverTest : LanguageServerTestBase
         var codeDocument = CreateCodeDocument(contents);
         codeDocument.SetUnsupported();
 
-        var resolver = new CreateComponentCodeActionResolver(CreateDocumentContextFactory(documentPath, codeDocument));
+        var resolver = new CreateComponentCodeActionResolver(CreateDocumentContextFactory(documentPath, codeDocument), TestLanguageServerFeatureOptions.Instance);
         var data = JObject.FromObject(new CreateComponentCodeActionParams()
         {
             Uri = documentPath,
@@ -82,7 +82,7 @@ public class CreateComponentCodeActionResolverTest : LanguageServerTestBase
         var codeDocument = CreateCodeDocument(contents);
         codeDocument.SetFileKind(FileKinds.Legacy);
 
-        var resolver = new CreateComponentCodeActionResolver(CreateDocumentContextFactory(documentPath, codeDocument));
+        var resolver = new CreateComponentCodeActionResolver(CreateDocumentContextFactory(documentPath, codeDocument), TestLanguageServerFeatureOptions.Instance);
         var data = JObject.FromObject(new CreateComponentCodeActionParams()
         {
             Uri = documentPath,
@@ -104,7 +104,7 @@ public class CreateComponentCodeActionResolverTest : LanguageServerTestBase
         var contents = $"@page \"/test\"";
         var codeDocument = CreateCodeDocument(contents);
 
-        var resolver = new CreateComponentCodeActionResolver(CreateDocumentContextFactory(documentPath, codeDocument));
+        var resolver = new CreateComponentCodeActionResolver(CreateDocumentContextFactory(documentPath, codeDocument), TestLanguageServerFeatureOptions.Instance);
         var actionParams = new CreateComponentCodeActionParams
         {
             Uri = documentPath,
@@ -132,7 +132,7 @@ public class CreateComponentCodeActionResolverTest : LanguageServerTestBase
         var contents = $"@page \"/test\"{Environment.NewLine}@namespace Another.Namespace";
         var codeDocument = CreateCodeDocument(contents);
 
-        var resolver = new CreateComponentCodeActionResolver(CreateDocumentContextFactory(documentPath, codeDocument));
+        var resolver = new CreateComponentCodeActionResolver(CreateDocumentContextFactory(documentPath, codeDocument), TestLanguageServerFeatureOptions.Instance);
         var actionParams = new CreateComponentCodeActionParams
         {
             Uri = documentPath,

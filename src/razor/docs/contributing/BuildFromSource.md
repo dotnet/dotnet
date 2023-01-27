@@ -1,22 +1,22 @@
-# Build Razor Tooling from Source
+﻿# Build Razor Tooling from Source
 
-Building Razor Tooling from source allows you to tweak and customize the Razor tooling experience for ASP.NET Core, and to contribute your improvements back to the project.
+Building Razor from source allows you to tweak and customize the Razor compiler and tooling experience for ASP.NET Core, and to contribute your improvements back to the project.
 
-See <https://github.com/dotnet/razor-tooling/issues> for known issues and to track ongoing work.
+See <https://github.com/dotnet/razor/issues> for known issues and to track ongoing work.
 
 ## Clone the source code
 
 For a new copy of the project, run:
 
 ```ps1
-git clone https://github.com/dotnet/razor-tooling.git
+git clone https://github.com/dotnet/razor.git
 ```
 
 ## Install pre-requisites
 
 ### Windows
 
-Building Razor Tooling on Windows requires:
+Building Razor on Windows requires:
 
 * Windows 10, version 1803 or newer
 * At least 10 GB of disk space and a good internet connection (our build scripts download a lot of tools and dependencies)
@@ -27,7 +27,7 @@ Building Razor Tooling on Windows requires:
 
 ### macOS/Linux
 
-Building Razor Tooling on macOS or Linux requires:
+Building Razor on macOS or Linux requires:
 
 * If using macOS, you need macOS Sierra or newer.
 * If using Linux, you need a machine with all .NET Core Linux prerequisites: <https://docs.microsoft.com/en-us/dotnet/core/linux-prerequisites>
@@ -59,7 +59,15 @@ Before opening the `Razor.sln` file in Visual Studio or VS Code, you need to per
    in PowerShell. For more information on execution policies, you can read the [execution policy docs](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.security/set-executionpolicy).
 
 2. Use the `.\startvs.cmd Razor.sln` script to open Visual Studio with the Razor solution. This script first sets the required
-environment variables.
+environment variables. In addition, the following switches can be specified:
+
+   * `-chooseVS`: When specified, displays a list of the installed Visual Studio instances and prompts to
+     pick an instance to launch. By default, the newest recently installed instance of Visual Studio is
+     launched.
+   * `-includeRoslynDeps`: When specified, sets an environment variable that causes the Roslyn dependences
+     of Razor to be deployed. This can be useful if the latest Razor bits depend on a breaking change in
+     Roslyn that isn't available in the version of Visual Studio being targeted. If you encounter errors
+     when debugging the Razor bits that you've built and deployed, setting this switch _might_ fix them.
 
 3. Set `Microsoft.VisualStudio.RazorExtension` as the startup project.
 
@@ -76,29 +84,25 @@ In most cases, this is because the option _Use previews of the .NET Core SDK_ in
 
 Note, the [Visual Studio Code C# Extension](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp) is required.
 
-Using Visual Studio Code with this repo requires setting environment variables on command line first.
-Use these command to launch VS Code with the right settings.
+1. Run `Restore.cmd` on the command line.
+1. Launch the `razor-tooling` repo in VS Code.
+2. Open VS Code settings (`CTRL+,`) and navigate to the `Razor > Plugin: Path` setting:
+![image](https://user-images.githubusercontent.com/16968319/192892840-ae2b102c-a282-472f-b1f1-ef3dad671874.png)
+3. Set path to `C:\path_to_razor_repo\razor-tooling\artifacts\bin\Microsoft.AspNetCore.Razor.OmniSharpPlugin\Debug\net472\Microsoft.AspNetCore.Razor.OmniSharpPlugin.dll`.
+4. Launch extension via `Run and Debug -> Run Extension`.
+5. Install missing assets if prompted.
 
-On Windows (requires PowerShell):
+### If you want to make changes within the Razor language server
+1. Make the changes, then run `Build.cmd -pack`.
+2. To debug through the language server code, open VS Code settings and check the box `Razor > Language Server: Debug`.
+![image](https://user-images.githubusercontent.com/16968319/192892444-1e4e514a-d41a-4aea-b739-cecee48d12d6.png)
+3. Attach your Visual Studio instance to `rzls.exe`.
 
-```ps1
-# The extra dot at the beginning is required to 'dot source' this file into the right scope.
-
-. .\activate.ps1
-code .
-```
-
-On macOS/Linux:
-
-```bash
-source activate.sh
-code .
-```
-
-Note that if you are using the "Remote-WSL" extension in VSCode, the environment is not supplied
-to the process in WSL.  You can workaround this by explicitly setting the environment variables
-in `~/.vscode-server/server-env-setup`.
-See <https://code.visualstudio.com/docs/remote/wsl#_advanced-environment-setup-script> for details.
+### If you want to make changes within Razor VS Code
+(i.e. anywhere within the `Microsoft.AspNetCore.Razor.VSCode` folder)
+1. Make the changes, then delete the existing `node_modules` folder within `Microsoft.AspNetCore.Razor.VSCode.Extension` if one exists. (Deleting the `node_modules` folder is supposed to be unnecessary, but there is currently a bug preventing changes from being detected - tracked by [#6788](https://github.com/dotnet/razor-tooling/issues/6788)).
+2. Run `Restore.cmd`.
+3. When debugging, ensure breakpoints are set within the `*.js` equivalent of a given `*.ts` file. This file can generally be found in the `node_modules` folder within `Microsoft.AspNetCore.Razor.VSCode.Extension`.
 
 ## Building on command-line
 

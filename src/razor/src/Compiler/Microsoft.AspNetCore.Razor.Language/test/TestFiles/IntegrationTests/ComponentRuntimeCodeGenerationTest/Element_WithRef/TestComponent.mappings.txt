@@ -1,4 +1,4 @@
-Source Location: (37:0,37 [6] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (37:0,37 [6] x:\dir\subdir\Test\TestComponent.cshtml)
 |myElem|
 Generated Location: (888:21,37 [6] )
 |myElem|

@@ -1,4 +1,4 @@
-is_global = true
+﻿is_global = true
 
 # CA1707: Remove the underscores from member name 'name'
 dotnet_diagnostic.CA1707.severity = none
