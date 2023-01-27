@@ -10,6 +10,7 @@
 *.rtf
 *.gif
 *.vsd
+*.vsdx
 src/aspnetcore/src/*.woff
 src/aspnetcore/src/*.woff2
 src/aspnetcore/src/*.eot
@@ -20,11 +21,3 @@ src/fsharp/tests/fsharp/core/resources/*.wav
 src/runtime/src/mono/mono/eglib/test/*.txt # Some non UTF8 text files
 src/runtime/src/mono/mono/tests/exiting/*.out # Text test files with a NULL char at the end
 src/runtime/src/native/external/brotli/common/dictionary.bin.br
-src/sdk/*.ico
-src/source-build-externals/*.xlsx
-src/source-build-externals/*.docx
-src/source-build-externals/*.rtf
-src/source-build-reference-packages/*.rtf
-src/vstest/*.vsdx
-
-
