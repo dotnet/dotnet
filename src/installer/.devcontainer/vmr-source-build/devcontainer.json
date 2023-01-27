@@ -16,9 +16,10 @@
         },
         "codespaces": {
             "openFiles": [
-                ".devcontainer/vmr-source-build/README.md"
+                "installer/.devcontainer/vmr-source-build/README.md"
             ]
         }
     },
-    "onCreateCommand": "${containerWorkspaceFolder}/.devcontainer/vmr-source-build/init.sh"
+    "onCreateCommand": "${containerWorkspaceFolder}/installer/.devcontainer/vmr-source-build/init.sh",
+    "workspaceFolder": "/workspaces"
 }
