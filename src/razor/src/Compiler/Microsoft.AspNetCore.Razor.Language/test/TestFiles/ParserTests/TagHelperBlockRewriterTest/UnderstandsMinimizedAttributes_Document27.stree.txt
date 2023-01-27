@@ -1,4 +1,4 @@
-RazorDocument - [0..29)::29 - [<p bound-int class='btn'></p>]
+﻿RazorDocument - [0..29)::29 - [<p bound-int class='btn'></p>]
     MarkupBlock - [0..29)::29
         MarkupTagHelperElement - [0..29)::29 - p[StartTagAndEndTag] - PTagHelper
             MarkupTagHelperStartTag - [0..25)::25 - [<p bound-int class='btn'>] - Gen<Markup> - SpanEditHandler;Accepts:Any

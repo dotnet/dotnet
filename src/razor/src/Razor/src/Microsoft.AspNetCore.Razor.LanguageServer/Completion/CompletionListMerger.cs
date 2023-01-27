@@ -23,7 +23,7 @@ internal static class CompletionListMerger
             return delegatedCompletionList;
         }
 
-        if (delegatedCompletionList is null)
+        if (delegatedCompletionList?.Items is null)
         {
             return razorCompletionList;
         }

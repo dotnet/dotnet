@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
+using StreamJsonRpc;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
@@ -52,7 +53,7 @@ internal abstract class AbstractRazorDelegatingEndpoint<TRequest, TResponse> : I
     /// </remarks>
     protected abstract string CustomMessageTarget { get; }
 
-    public bool MutatesSolutionState { get; } = false;
+    public virtual bool MutatesSolutionState { get; } = false;
 
     /// <summary>
     /// The delegated object to send to the <see cref="CustomMessageTarget"/>
@@ -146,10 +147,19 @@ internal abstract class AbstractRazorDelegatingEndpoint<TRequest, TResponse> : I
             return default;
         }
 
-        var delegatedRequest = await _languageServer.SendRequestAsync<IDelegatedParams, TResponse>(CustomMessageTarget, delegatedParams, cancellationToken).ConfigureAwait(false);
-        if (delegatedRequest is null)
+        TResponse? delegatedRequest;
+        try
         {
-            return default;
+            delegatedRequest = await _languageServer.SendRequestAsync<IDelegatedParams, TResponse>(CustomMessageTarget, delegatedParams, cancellationToken).ConfigureAwait(false);
+            if (delegatedRequest is null)
+            {
+                return default;
+            }
+        }
+        catch (RemoteInvocationException e)
+        {
+            requestContext.Logger.LogException(e);
+            throw;
         }
 
         var remappedResponse = await HandleDelegatedResponseAsync(delegatedRequest, request, requestContext, projection, cancellationToken).ConfigureAwait(false);

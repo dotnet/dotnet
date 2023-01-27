@@ -1,4 +1,4 @@
-RazorDocument - [0..22)::22 - [@{<li><p>Foo</P></lI>}]
+﻿RazorDocument - [0..22)::22 - [@{<li><p>Foo</P></lI>}]
     MarkupBlock - [0..22)::22
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

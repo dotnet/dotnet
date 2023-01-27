@@ -1,4 +1,4 @@
-RazorDocument - [0..60)::60 - [@if(foo) { bar(); }LF// FooLF// BarLFelse if(bar) { baz(); }]
+﻿RazorDocument - [0..60)::60 - [@if(foo) { bar(); }LF// FooLF// BarLFelse if(bar) { baz(); }]
     MarkupBlock - [0..60)::60
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

@@ -1,4 +1,4 @@
-<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <!-- Opt-in arcade features -->
   <PropertyGroup>
     <UsingToolVSSDK>true</UsingToolVSSDK>
@@ -75,10 +75,10 @@
     <Tooling_HtmlEditorPackageVersion>17.5.101-preview-0002</Tooling_HtmlEditorPackageVersion>
     <!-- Several packages share the MS.CA.Testing version -->
     <Tooling_MicrosoftCodeAnalysisTestingVersion>1.1.2-beta1.22512.1</Tooling_MicrosoftCodeAnalysisTestingVersion>
-    <MicrosoftVisualStudioShellPackagesVersion>17.4.0-preview-2-32826-307</MicrosoftVisualStudioShellPackagesVersion>
-    <MicrosoftVisualStudioPackagesVersion>17.5.42-preview</MicrosoftVisualStudioPackagesVersion>
-    <RoslynPackageVersion>4.5.0-2.22527.10</RoslynPackageVersion>
-    <VisualStudioLanguageServerProtocolVersion>17.4.1008-preview</VisualStudioLanguageServerProtocolVersion>
+    <MicrosoftVisualStudioShellPackagesVersion>17.5.0-preview-2-33111-355</MicrosoftVisualStudioShellPackagesVersion>
+    <MicrosoftVisualStudioPackagesVersion>17.5.143-preview</MicrosoftVisualStudioPackagesVersion>
+    <RoslynPackageVersion>4.5.0-2.22580.13</RoslynPackageVersion>
+    <VisualStudioLanguageServerProtocolVersion>17.5.20-preview</VisualStudioLanguageServerProtocolVersion>
     <MicrosoftNetCompilersToolsetVersion>4.4.0</MicrosoftNetCompilersToolsetVersion>
     <MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion>$(RoslynPackageVersion)</MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion>
     <!-- dotnet/runtime packages -->
@@ -90,7 +90,7 @@
     <SystemTextEncodingsWebPackageVersion>6.0.0</SystemTextEncodingsWebPackageVersion>
     <SystemPrivateUriPackageVersion>4.3.2</SystemPrivateUriPackageVersion>
     <MicrosoftExtensionsNonCapturingTimerSourcesPackageVersion>5.0.0-preview.4.20205.1</MicrosoftExtensionsNonCapturingTimerSourcesPackageVersion>
-    <BenchmarkDotNetPackageVersion>0.12.1.1466</BenchmarkDotNetPackageVersion>
+    <BenchmarkDotNetPackageVersion>0.13.2.2052</BenchmarkDotNetPackageVersion>
     <MicrosoftBuildLocatorPackageVersion>1.2.6</MicrosoftBuildLocatorPackageVersion>
     <MicrosoftBuildPackageVersion>16.8.0</MicrosoftBuildPackageVersion>
     <MicrosoftNETSdkRazorPackageVersion>6.0.0-alpha.1.21072.5</MicrosoftNETSdkRazorPackageVersion>
@@ -111,14 +111,14 @@
     <MicrosoftVisualStudioShell150PackageVersion>$(MicrosoftVisualStudioShellPackagesVersion)</MicrosoftVisualStudioShell150PackageVersion>
     <MicrosoftVisualStudioInteropPackageVersion>$(MicrosoftVisualStudioShellPackagesVersion)</MicrosoftVisualStudioInteropPackageVersion>
     <MicrosoftInternalVisualStudioInteropPackageVersion>$(MicrosoftVisualStudioShellPackagesVersion)</MicrosoftInternalVisualStudioInteropPackageVersion>
-    <MicrosoftVisualStudioRpcContractsPackageVersion>17.4.5-alpha</MicrosoftVisualStudioRpcContractsPackageVersion>
+    <MicrosoftVisualStudioRpcContractsPackageVersion>17.5.14-alpha</MicrosoftVisualStudioRpcContractsPackageVersion>
     <MicrosoftVisualStudioTelemetryVersion>16.5.2</MicrosoftVisualStudioTelemetryVersion>
     <MicrosoftVisualStudioTextDataPackageVersion>$(MicrosoftVisualStudioPackagesVersion)</MicrosoftVisualStudioTextDataPackageVersion>
     <MicrosoftVisualStudioTextImplementationPackageVersion>$(MicrosoftVisualStudioPackagesVersion)</MicrosoftVisualStudioTextImplementationPackageVersion>
     <MicrosoftVisualStudioTextLogicPackageVersion>$(MicrosoftVisualStudioPackagesVersion)</MicrosoftVisualStudioTextLogicPackageVersion>
-    <MicrosoftVisualStudioThreadingPackageVersion>17.4.27</MicrosoftVisualStudioThreadingPackageVersion>
+    <MicrosoftVisualStudioThreadingPackageVersion>17.5.10-alpha</MicrosoftVisualStudioThreadingPackageVersion>
     <MicrosoftVisualStudioWebPackageVersion>16.10.0-preview-1-31008-014</MicrosoftVisualStudioWebPackageVersion>
-    <MicrosoftVisualStudioValidationPackageVersion>17.0.64</MicrosoftVisualStudioValidationPackageVersion>
+    <MicrosoftVisualStudioValidationPackageVersion>17.0.71</MicrosoftVisualStudioValidationPackageVersion>
     <MicrosoftWebToolsLanguagesHtmlPackageVersion>$(Tooling_HtmlEditorPackageVersion)</MicrosoftWebToolsLanguagesHtmlPackageVersion>
     <MicrosoftWebToolsLanguagesLanguageServerServerPackageVersion>$(Tooling_HtmlEditorPackageVersion)</MicrosoftWebToolsLanguagesLanguageServerServerPackageVersion>
     <MicrosoftWebToolsLanguagesSharedPackageVersion>$(Tooling_HtmlEditorPackageVersion)</MicrosoftWebToolsLanguagesSharedPackageVersion>
@@ -128,12 +128,12 @@
     <MonoDevelopSdkPackageVersion>1.0.15</MonoDevelopSdkPackageVersion>
     <MoqPackageVersion>4.16.0</MoqPackageVersion>
     <NewtonsoftJsonPackageVersion>13.0.1</NewtonsoftJsonPackageVersion>
-    <NerdbankStreamsPackageVersion>2.9.87-alpha</NerdbankStreamsPackageVersion>
+    <NerdbankStreamsPackageVersion>2.9.112</NerdbankStreamsPackageVersion>
     <NuGetSolutionRestoreManagerInteropVersion>4.8.0</NuGetSolutionRestoreManagerInteropVersion>
     <OmniSharpExtensionsLanguageServerPackageVersion>0.19.5</OmniSharpExtensionsLanguageServerPackageVersion>
     <OmniSharpExtensionsLanguageProtocolPackageVersion>$(OmniSharpExtensionsLanguageServerPackageVersion)</OmniSharpExtensionsLanguageProtocolPackageVersion>
     <OmniSharpMSBuildPackageVersion>1.39.1</OmniSharpMSBuildPackageVersion>
-    <StreamJsonRpcPackageVersion>2.13.21-alpha</StreamJsonRpcPackageVersion>
+    <StreamJsonRpcPackageVersion>2.14.17-alpha</StreamJsonRpcPackageVersion>
     <SystemRuntimeInteropServicesRuntimePackageVersion>4.3.0</SystemRuntimeInteropServicesRuntimePackageVersion>
     <Tooling_MicrosoftCodeAnalysisAnalyzersPackageVersion>3.3.3</Tooling_MicrosoftCodeAnalysisAnalyzersPackageVersion>
     <Tooling_MicrosoftCodeAnalysisNetAnalyzersPackageVersion>7.0.0-preview1.22116.1</Tooling_MicrosoftCodeAnalysisNetAnalyzersPackageVersion>
@@ -157,9 +157,9 @@
     <XunitExtensibilityExecutionPackageVersion>$(XunitVersion)</XunitExtensibilityExecutionPackageVersion>
     <!-- Temporary hack to workaround package restrictions for dev17 -->
     <MicrosoftInternalVisualStudioShellFrameworkPackageVersion>$(MicrosoftVisualStudioShellPackagesVersion)</MicrosoftInternalVisualStudioShellFrameworkPackageVersion>
-    <MicrosoftIORedistPackageVersion>4.7.1</MicrosoftIORedistPackageVersion>
+    <MicrosoftIORedistPackageVersion>6.0.0</MicrosoftIORedistPackageVersion>
     <!-- Compiler Deps -->
-    <BenchmarkDotNetVersion>0.13.0.1555</BenchmarkDotNetVersion>
+    <BenchmarkDotNetVersion>0.13.2.1938</BenchmarkDotNetVersion>
     <DiffPlexVersion>1.5.0</DiffPlexVersion>
     <FluentAssertionsVersion>6.7.0</FluentAssertionsVersion>
     <MicrosoftBuildLocatorVersion>1.4.1</MicrosoftBuildLocatorVersion>

@@ -1,4 +1,4 @@
-RazorDocument - [0..36)::36 - [<script>foo<bar baz='@boz'></script>]
+﻿RazorDocument - [0..36)::36 - [<script>foo<bar baz='@boz'></script>]
     MarkupBlock - [0..36)::36
         MarkupElement - [0..36)::36
             MarkupStartTag - [0..8)::8 - [<script>] - Gen<Markup> - SpanEditHandler;Accepts:Any

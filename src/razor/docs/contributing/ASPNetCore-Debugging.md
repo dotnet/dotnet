@@ -1,4 +1,4 @@
-# Debugging with experimental ASP.NET Core bits
+﻿# Debugging with experimental ASP.NET Core bits
 
 Sometimes it may be necessary to make changes in [`dotnet/aspnetcore`](https://github.com/dotnet/aspnetcore), and react to the changes in this repo. The following are steps which outline the general process in using ASP.NET Core development `nupkg`s with Razor Tooling.
 

@@ -81,7 +81,7 @@ public class FindReferencesEndpointTest : SingleServerDelegatingEndpointTestBase
             },
             Position = new Position(line, offset)
         };
-        var documentContext = await DocumentContextFactory.TryCreateAsync(request.TextDocument.Uri, DisposalToken);
+        var documentContext = await DocumentContextFactory.TryCreateForOpenDocumentAsync(request.TextDocument.Uri, DisposalToken);
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act

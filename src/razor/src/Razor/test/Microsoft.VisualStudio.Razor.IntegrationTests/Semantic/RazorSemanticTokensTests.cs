@@ -42,6 +42,25 @@ public class RazorSemanticTokensTests : AbstractRazorEditorTest
     }
 
     [IdeFact]
+    public async Task GenericTypeParameters_Work()
+    {
+        // Arrange
+        await TestServices.SolutionExplorer.OpenFileAsync(RazorProjectConstants.BlazorProjectName, RazorProjectConstants.MainLayoutFile, ControlledHangMitigatingCancellationToken);
+        await TestServices.Editor.SetTextAsync($@"@page ""/counter""
+@using Microsoft.AspNetCore.Components.Forms
+
+<ValidationMessage For=""() => input.Hashers"" />
+<h1></h1>", ControlledHangMitigatingCancellationToken);
+
+        // Act
+        await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken, count: 1);
+
+        // Assert
+        var expectedClassifications = await GetExpectedClassificationSpansAsync(nameof(GenericTypeParameters_Work), ControlledHangMitigatingCancellationToken);
+        await TestServices.Editor.VerifyGetClassificationsAsync(expectedClassifications, ControlledHangMitigatingCancellationToken);
+    }
+
+    [IdeFact]
     public async Task Components_AreColored()
     {
         // Arrange

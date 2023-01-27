@@ -1,4 +1,4 @@
-RazorDocument - [0..35)::35 - [<input @bind-foo @bind-foo:param />]
+﻿RazorDocument - [0..35)::35 - [<input @bind-foo @bind-foo:param />]
     MarkupBlock - [0..35)::35
         MarkupTagHelperElement - [0..35)::35 - input[SelfClosing] - Bind
             MarkupTagHelperStartTag - [0..35)::35 - [<input @bind-foo @bind-foo:param />] - Gen<Markup> - SpanEditHandler;Accepts:Any

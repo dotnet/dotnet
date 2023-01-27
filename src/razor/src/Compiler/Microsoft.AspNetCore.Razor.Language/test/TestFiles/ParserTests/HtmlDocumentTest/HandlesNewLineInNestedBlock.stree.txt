@@ -1,4 +1,4 @@
-RazorDocument - [0..29)::29 - [@{LF@if(true){LF} LF}LF<html>]
+﻿RazorDocument - [0..29)::29 - [@{LF@if(true){LF} LF}LF<html>]
     MarkupBlock - [0..29)::29
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

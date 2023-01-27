@@ -1,4 +1,4 @@
-RazorDocument - [0..129)::129 - [@{<input    bound-required-int class='@DateTime.Now + 1'   bound-required-string class='@DateTime.Now + 1'  unbound-required  />}]
+﻿RazorDocument - [0..129)::129 - [@{<input    bound-required-int class='@DateTime.Now + 1'   bound-required-string class='@DateTime.Now + 1'  unbound-required  />}]
     MarkupBlock - [0..129)::129
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

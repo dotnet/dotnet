@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common.Extensions;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Newtonsoft.Json.Linq;
 
@@ -20,10 +21,12 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 internal class CreateComponentCodeActionResolver : RazorCodeActionResolver
 {
     private readonly DocumentContextFactory _documentContextFactory;
+    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
 
-    public CreateComponentCodeActionResolver(DocumentContextFactory documentContextFactory)
+    public CreateComponentCodeActionResolver(DocumentContextFactory documentContextFactory, LanguageServerFeatureOptions languageServerFeatureOptions)
     {
         _documentContextFactory = documentContextFactory ?? throw new ArgumentNullException(nameof(documentContextFactory));
+        _languageServerFeatureOptions = languageServerFeatureOptions ?? throw new ArgumentException(nameof(languageServerFeatureOptions));
     }
 
     public override string Action => LanguageServerConstants.CodeActions.CreateComponentFromTag;
@@ -58,10 +61,14 @@ internal class CreateComponentCodeActionResolver : RazorCodeActionResolver
             return null;
         }
 
+        // VS Code in Windows expects path to start with '/'
+        var updatedPath = _languageServerFeatureOptions.ReturnCodeActionAndRenamePathsWithPrefixedSlash && !actionParams.Path.StartsWith("/")
+			? '/' + actionParams.Path
+			: actionParams.Path;
         var newComponentUri = new UriBuilder()
         {
             Scheme = Uri.UriSchemeFile,
-            Path = actionParams.Path,
+			Path = updatedPath,
             Host = string.Empty,
         }.Uri;
 

@@ -1,4 +1,4 @@
-# Source for this file was taken from https://github.com/microsoft/azure-pipelines-task-lib/blob/11c9439d4af17e6475d9fe058e6b2e03914d17e6/powershell/VstsTaskSdk/LoggingCommandFunctions.ps1 and modified.
+﻿# Source for this file was taken from https://github.com/microsoft/azure-pipelines-task-lib/blob/11c9439d4af17e6475d9fe058e6b2e03914d17e6/powershell/VstsTaskSdk/LoggingCommandFunctions.ps1 and modified.
 
 # NOTE: You should not be calling these method directly as they are likely to change.  Instead you should be calling the Write-Pipeline* functions defined in tools.ps1
 

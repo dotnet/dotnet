@@ -1,4 +1,4 @@
-# Initialize variables if they aren't already defined.
+﻿# Initialize variables if they aren't already defined.
 # These may be defined as parameters of the importing script, or set after importing this script.
 
 # CI mode - set to true on CI server for PR validation build or official build.

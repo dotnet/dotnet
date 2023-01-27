@@ -1,4 +1,4 @@
-RazorDocument - [0..28)::28 - [<p class=@DateTime.Now"></p>]
+﻿RazorDocument - [0..28)::28 - [<p class=@DateTime.Now"></p>]
     MarkupBlock - [0..28)::28
         MarkupTagHelperElement - [0..28)::28 - p[StartTagAndEndTag] - ptaghelper
             MarkupTagHelperStartTag - [0..28)::28 - [<p class=@DateTime.Now"></p>] - Gen<Markup> - SpanEditHandler;Accepts:Any

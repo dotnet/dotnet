@@ -1,4 +1,4 @@
-Source Location: (73:1,7 [61] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (73:1,7 [61] x:\dir\subdir\Test\TestComponent.cshtml)
 |
 	[Parameter]
 	public Action NullableAction { get; set; }

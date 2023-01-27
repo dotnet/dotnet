@@ -1,4 +1,4 @@
-RazorDocument - [0..58)::58 - [LF<div>LF    @resultLF</div>LF<div>LF    @(result)LF</div>]
+﻿RazorDocument - [0..58)::58 - [LF<div>LF    @resultLF</div>LF<div>LF    @(result)LF</div>]
     MarkupBlock - [0..58)::58
         MarkupTextLiteral - [0..2)::2 - [LF] - Gen<Markup> - SpanEditHandler;Accepts:Any
             NewLine;[LF];

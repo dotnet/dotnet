@@ -1,4 +1,4 @@
-steps:
+﻿steps:
   - task: NuGetAuthenticate@0
     inputs:
       nuGetServiceConnections: 'devdiv/dotnet-core-internal-tooling'

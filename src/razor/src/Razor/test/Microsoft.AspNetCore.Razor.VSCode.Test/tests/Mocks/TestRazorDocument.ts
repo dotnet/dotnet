@@ -1,10 +1,10 @@
-/* --------------------------------------------------------------------------------------------
+﻿/* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
-import { IProjectedDocument } from 'microsoft.aspnetcore.razor.vscode/dist/IProjectedDocument';
-import { IRazorDocument } from 'microsoft.aspnetcore.razor.vscode/dist/IRazorDocument';
+import { IRazorDocument } from 'microsoft.aspnetcore.razor.vscode/dist/Document/IRazorDocument';
+import { IProjectedDocument } from 'microsoft.aspnetcore.razor.vscode/dist/Projection/IProjectedDocument';
 import * as vscode from 'microsoft.aspnetcore.razor.vscode/dist/vscodeAdapter';
 import { TestProjectedDocument } from './TestProjectedDocument';
 import { TestUri } from './TestUri';

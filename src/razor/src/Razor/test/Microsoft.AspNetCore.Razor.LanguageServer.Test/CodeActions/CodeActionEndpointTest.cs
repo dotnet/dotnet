@@ -42,7 +42,7 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             MockBehavior.Strict);
 
         _languageServerFeatureOptions = Mock.Of<LanguageServerFeatureOptions>(
-            l => l.SupportsFileManipulation == true,
+            l => l.SupportsFileManipulation == true && l.SupportsDelegatedCodeActions == true,
             MockBehavior.Strict);
 
         _languageServer = Mock.Of<ClientNotifierServiceBase>(MockBehavior.Strict);
@@ -141,7 +141,7 @@ public class CodeActionEndpointTest : LanguageServerTestBase
         var commandOrCodeActionContainer = await codeActionEndpoint.HandleRequestAsync(request, requestContext, default);
 
         // Assert
-        Assert.Null(commandOrCodeActionContainer);
+        Assert.Empty(commandOrCodeActionContainer!);
     }
 
     [Fact]
@@ -372,7 +372,7 @@ public class CodeActionEndpointTest : LanguageServerTestBase
         var commandOrCodeActionContainer = await codeActionEndpoint.HandleRequestAsync(request, requestContext, default);
 
         // Assert
-        Assert.Null(commandOrCodeActionContainer);
+        Assert.Empty(commandOrCodeActionContainer!);
     }
 
     [Fact]

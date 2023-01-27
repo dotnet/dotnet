@@ -1,4 +1,4 @@
-# VSCode TextMate Grammar Tests
+﻿# VSCode TextMate Grammar Tests
 
 [Jest](https://jestjs.io/en) is used for VS Code TextMate Grammar unit tests.
 

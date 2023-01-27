@@ -11,7 +11,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 internal abstract class RazorFormattingService
 {
     public abstract Task<TextEdit[]> FormatAsync(
-        DocumentContext documentContext,
+        VersionedDocumentContext documentContext,
         Range? range,
         FormattingOptions options,
         CancellationToken cancellationToken);

@@ -1,4 +1,4 @@
-RazorDocument - [0..34)::34 - [@{<text><p>Hello World</p></text>}]
+﻿RazorDocument - [0..34)::34 - [@{<text><p>Hello World</p></text>}]
     MarkupBlock - [0..34)::34
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

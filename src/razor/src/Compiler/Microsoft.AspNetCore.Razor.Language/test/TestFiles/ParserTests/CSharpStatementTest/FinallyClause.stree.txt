@@ -1,4 +1,4 @@
-RazorDocument - [0..38)::38 - [@try { foo(); } finally { Dispose(); }]
+﻿RazorDocument - [0..38)::38 - [@try { foo(); } finally { Dispose(); }]
     MarkupBlock - [0..38)::38
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

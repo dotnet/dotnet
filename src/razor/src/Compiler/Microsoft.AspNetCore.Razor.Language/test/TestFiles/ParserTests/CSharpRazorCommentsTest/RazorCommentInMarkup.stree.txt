@@ -1,4 +1,4 @@
-RazorDocument - [0..15)::15 - [<p>LF@**@LF</p>]
+﻿RazorDocument - [0..15)::15 - [<p>LF@**@LF</p>]
     MarkupBlock - [0..15)::15
         MarkupElement - [0..15)::15
             MarkupStartTag - [0..3)::3 - [<p>] - Gen<Markup> - SpanEditHandler;Accepts:Any

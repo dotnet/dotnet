@@ -1,4 +1,4 @@
-RazorDocument - [0..34)::34 - [@Foo[Bar[Baz]LFBizLF<b>LFBozLF</b>]
+﻿RazorDocument - [0..34)::34 - [@Foo[Bar[Baz]LFBizLF<b>LFBozLF</b>]
     MarkupBlock - [0..34)::34
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

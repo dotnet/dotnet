@@ -1,14 +1,14 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
   <PropertyGroup>
     <PublishingVersion>3</PublishingVersion>
     <PublishDependsOnTargets>$(PublishDependsOnTargets);_PublishingBlobItems</PublishDependsOnTargets>
-    <_UploadPathRoot>aspnetcore-tooling</_UploadPathRoot>
+    <_UploadPathRoot>razor</_UploadPathRoot>
   </PropertyGroup>
 
   <ItemGroup>
     <!-- Prepare for _PublishingBlobItems target. -->
-    <_ItemsToPublish Include="$(ArtifactsPackagesDir)**\*.tgz" />
+    <_ItemsToPublish Include="$(ArtifactsPackagesDir)**\*.tgz" Condition="'$(OS)' == 'Windows_NT'" />
     <_ItemsToPublish Include="$(ArtifactsDir)LanguageServer\**\*.zip" />
   </ItemGroup>
 

@@ -85,7 +85,7 @@ public class RenameEndpointDelegationTest: SingleServerDelegatingEndpointTestBas
             Position = new Position(line, offset),
             NewName = newName
         };
-        var documentContext = await DocumentContextFactory.TryCreateAsync(request.TextDocument.Uri, DisposalToken);
+        var documentContext = await DocumentContextFactory.TryCreateForOpenDocumentAsync(request.TextDocument.Uri, DisposalToken);
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act

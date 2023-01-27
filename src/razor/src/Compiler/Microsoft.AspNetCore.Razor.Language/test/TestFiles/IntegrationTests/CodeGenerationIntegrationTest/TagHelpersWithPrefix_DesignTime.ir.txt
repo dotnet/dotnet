@@ -1,4 +1,4 @@
-Document - 
+﻿Document - 
     NamespaceDeclaration -  - Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
         ClassDeclaration -  - public - TestFiles_IntegrationTests_CodeGenerationIntegrationTest_TagHelpersWithPrefix_DesignTime -  - 
             DefaultTagHelperRuntime - 

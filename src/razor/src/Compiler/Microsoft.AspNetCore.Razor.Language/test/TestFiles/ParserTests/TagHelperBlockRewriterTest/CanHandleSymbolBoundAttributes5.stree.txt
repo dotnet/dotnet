@@ -1,4 +1,4 @@
-RazorDocument - [0..46)::46 - [<template bound *something='value'></template>]
+﻿RazorDocument - [0..46)::46 - [<template bound *something='value'></template>]
     MarkupBlock - [0..46)::46
         MarkupTagHelperElement - [0..46)::46 - template[StartTagAndEndTag] - CatchAllTagHelper
             MarkupTagHelperStartTag - [0..35)::35 - [<template bound *something='value'>] - Gen<Markup> - SpanEditHandler;Accepts:Any

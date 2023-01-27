@@ -684,7 +684,7 @@ public class DefaultRazorSemanticTokenInfoServiceTest : SemanticTokenTestBase
     }
 
     private RazorSemanticTokensInfoService GetDefaultRazorSemanticTokenInfoService(
-        Queue<DocumentContext> documentSnapshots,
+        Queue<VersionedDocumentContext> documentSnapshots,
         ProvideSemanticTokensResponse? csharpTokens = null)
     {
         var languageServer = new Mock<ClientNotifierServiceBase>(MockBehavior.Strict);
@@ -744,18 +744,23 @@ public class DefaultRazorSemanticTokenInfoServiceTest : SemanticTokenTestBase
 
     private class TestDocumentContextFactory : DocumentContextFactory
     {
-        private readonly Queue<DocumentContext> _documentContexts;
+        private readonly Queue<VersionedDocumentContext> _documentContexts;
 
-        public TestDocumentContextFactory(Queue<DocumentContext> documentContexts)
+        public TestDocumentContextFactory(Queue<VersionedDocumentContext> documentContexts)
         {
             _documentContexts = documentContexts;
         }
 
-        public override Task<DocumentContext?> TryCreateAsync(Uri documentFilePath, CancellationToken _)
+        public override Task<VersionedDocumentContext?> TryCreateForOpenDocumentAsync(Uri documentFilePath, CancellationToken _)
         {
             var document = _documentContexts.Count == 1 ? _documentContexts.Peek() : _documentContexts.Dequeue();
 
-            return Task.FromResult<DocumentContext?>(document);
+            return Task.FromResult<VersionedDocumentContext?>(document);
+        }
+
+        public override Task<DocumentContext?> TryCreateAsync(Uri documentUri, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
         }
     }
 }

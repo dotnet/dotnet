@@ -1,4 +1,4 @@
-RazorDocument - [0..55)::55 - [<p>Hel<strong>lo</strong></p> <p><span>World</span></p>]
+﻿RazorDocument - [0..55)::55 - [<p>Hel<strong>lo</strong></p> <p><span>World</span></p>]
     MarkupBlock - [0..55)::55
         MarkupTagHelperElement - [0..29)::29 - p[StartTagAndEndTag] - ptaghelper
             MarkupTagHelperStartTag - [0..3)::3 - [<p>] - Gen<Markup> - SpanEditHandler;Accepts:Any

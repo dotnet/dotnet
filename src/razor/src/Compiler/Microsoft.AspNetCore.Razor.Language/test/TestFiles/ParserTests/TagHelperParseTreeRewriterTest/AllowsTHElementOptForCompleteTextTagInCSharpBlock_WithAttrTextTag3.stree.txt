@@ -1,4 +1,4 @@
-RazorDocument - [0..47)::47 - [@{<!text class="btn">words with spaces</!text>}]
+﻿RazorDocument - [0..47)::47 - [@{<!text class="btn">words with spaces</!text>}]
     MarkupBlock - [0..47)::47
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

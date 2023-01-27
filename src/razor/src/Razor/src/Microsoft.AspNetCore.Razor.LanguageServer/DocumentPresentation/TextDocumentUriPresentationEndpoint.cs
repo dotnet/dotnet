@@ -22,7 +22,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentPresentation;
 internal class TextDocumentUriPresentationEndpoint : AbstractTextDocumentPresentationEndpointBase<UriPresentationParams>, ITextDocumentUriPresentationHandler
 {
     private readonly RazorComponentSearchEngine _razorComponentSearchEngine;
-    private readonly DocumentResolver _documentResolver;
+    private readonly DocumentContextFactory _documentContextFactory;
     private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
     private readonly ILogger _logger;
 
@@ -31,7 +31,7 @@ internal class TextDocumentUriPresentationEndpoint : AbstractTextDocumentPresent
         RazorComponentSearchEngine razorComponentSearchEngine,
         ClientNotifierServiceBase languageServer,
         LanguageServerFeatureOptions languageServerFeatureOptions,
-        DocumentResolver documentResolver,
+        DocumentContextFactory documentContextFactory,
         ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
         ILoggerFactory loggerFactory)
         : base(razorDocumentMappingService,
@@ -39,7 +39,7 @@ internal class TextDocumentUriPresentationEndpoint : AbstractTextDocumentPresent
              languageServerFeatureOptions)
     {
         _razorComponentSearchEngine = razorComponentSearchEngine ?? throw new ArgumentNullException(nameof(razorComponentSearchEngine));
-        _documentResolver = documentResolver ?? throw new ArgumentNullException(nameof(documentResolver));
+        _documentContextFactory = documentContextFactory ?? throw new ArgumentNullException(nameof(documentContextFactory));
         _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher ?? throw new ArgumentNullException(nameof(projectSnapshotManagerDispatcher));
 
         _logger = loggerFactory.CreateLogger<TextDocumentUriPresentationEndpoint>();
@@ -131,17 +131,8 @@ internal class TextDocumentUriPresentationEndpoint : AbstractTextDocumentPresent
     {
         _logger.LogInformation("Trying to find document info for dropped uri {uri}.", uri);
 
-        var documentSnapshot = await _projectSnapshotManagerDispatcher.RunOnDispatcherThreadAsync(() =>
-        {
-            if (_documentResolver.TryResolveDocument(uri.GetAbsoluteOrUNCPath(), out var documentSnapshot))
-            {
-                return documentSnapshot;
-            }
-
-            return null;
-        }, cancellationToken).ConfigureAwait(false);
-
-        if (documentSnapshot is null)
+        var documentContext = await _documentContextFactory.TryCreateAsync(uri, cancellationToken).ConfigureAwait(false);
+        if (documentContext is null)
         {
             _logger.LogInformation("Failed to find document for component {uri}.", uri);
             return null;
@@ -149,7 +140,7 @@ internal class TextDocumentUriPresentationEndpoint : AbstractTextDocumentPresent
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        var descriptor = await _razorComponentSearchEngine.TryGetTagHelperDescriptorAsync(documentSnapshot, cancellationToken).ConfigureAwait(false);
+        var descriptor = await _razorComponentSearchEngine.TryGetTagHelperDescriptorAsync(documentContext.Snapshot, cancellationToken).ConfigureAwait(false);
         if (descriptor is null)
         {
             _logger.LogInformation("Failed to find tag helper descriptor.");

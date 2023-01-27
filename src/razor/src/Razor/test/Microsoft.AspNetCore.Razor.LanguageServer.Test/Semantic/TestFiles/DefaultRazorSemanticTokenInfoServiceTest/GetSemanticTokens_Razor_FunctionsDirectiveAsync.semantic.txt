@@ -1,4 +1,4 @@
-//line,characterPos,length,tokenType,modifier
+﻿//line,characterPos,length,tokenType,modifier
 0 0 1 razorTransition 0
 0 1 9 razorDirective 0
 0 10 1 razorTransition 0

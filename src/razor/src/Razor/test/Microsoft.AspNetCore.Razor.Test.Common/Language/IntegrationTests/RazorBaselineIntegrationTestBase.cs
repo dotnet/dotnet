@@ -240,7 +240,7 @@ public abstract class RazorBaselineIntegrationTestBase : RazorIntegrationTestBas
         }
 
         var lastSlash = codeDocument.Source.FilePath.LastIndexOfAny(new []{ '/', '\\' });
-        var fileName = lastSlash == -1 ? null : codeDocument.Source.FilePath.Substring(lastSlash + 1);
+        var fileName = lastSlash == -1 ? null : codeDocument.Source.FilePath[(lastSlash + 1)..];
         if (string.IsNullOrEmpty(fileName))
         {
             var message = "Integration tests require a filename";

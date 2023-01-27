@@ -9,5 +9,5 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 
 internal abstract class RazorSemanticTokensInfoService
 {
-    public abstract Task<SemanticTokens?> GetSemanticTokensAsync(TextDocumentIdentifier textDocumentIdentifier, Range range, DocumentContext documentContext, CancellationToken cancellationToken);
+    public abstract Task<SemanticTokens?> GetSemanticTokensAsync(TextDocumentIdentifier textDocumentIdentifier, Range range, VersionedDocumentContext documentContext, CancellationToken cancellationToken);
 }

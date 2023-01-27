@@ -4,11 +4,9 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
-using Microsoft.Extensions.Logging;
+using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Microsoft.AspNetCore.Razor.Telemetry;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
@@ -23,7 +21,7 @@ internal class RazorRequestContextFactory : IRequestContextFactory<RazorRequestC
 
     public async Task<RazorRequestContext> CreateRequestContextAsync<TRequestParams>(IQueueItem<RazorRequestContext> queueItem, TRequestParams @params, CancellationToken cancellationToken)
     {
-        DocumentContext? documentContext = null;
+        VersionedDocumentContext? documentContext = null;
         var textDocumentHandler = queueItem.MethodHandler as ITextDocumentIdentifierHandler;
 
         Uri? uri = null;
@@ -47,14 +45,13 @@ internal class RazorRequestContextFactory : IRequestContextFactory<RazorRequestC
         if (uri is not null)
         {
             var documentContextFactory = _lspServices.GetRequiredService<DocumentContextFactory>();
-            documentContext = await documentContextFactory.TryCreateAsync(uri, cancellationToken);
+            documentContext = await documentContextFactory.TryCreateForOpenDocumentAsync(uri, cancellationToken);
         }
 
-        var loggerFactory = _lspServices.GetRequiredService<ILoggerFactory>();
-        var logger = loggerFactory.CreateLogger(queueItem.MethodName);
-        var lspLogger = new LoggerAdapter(logger, _lspServices.GetRequiredService<ITelemetryReporter>());
+        var loggerAdapter = _lspServices.GetRequiredService<LoggerAdapter>();
+        loggerAdapter.LogDebug("Entering method {methodName}.", queueItem.MethodName);
 
-        var requestContext = new RazorRequestContext(documentContext, lspLogger, _lspServices);
+        var requestContext = new RazorRequestContext(documentContext, loggerAdapter, _lspServices);
 
         return requestContext;
     }

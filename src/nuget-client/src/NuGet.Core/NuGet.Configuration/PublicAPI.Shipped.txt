@@ -125,15 +125,15 @@ NuGet.Configuration.PackagePatternItem
 ~NuGet.Configuration.PackagePatternItem.PackagePatternItem(string pattern) -> void
 ~NuGet.Configuration.PackagePatternItem.Pattern.get -> string
 NuGet.Configuration.PackageSource
-~NuGet.Configuration.PackageSource.AsSourceItem() -> NuGet.Configuration.SourceItem
-~NuGet.Configuration.PackageSource.ClientCertificates.get -> System.Collections.Generic.IReadOnlyList<System.Security.Cryptography.X509Certificates.X509Certificate>
-~NuGet.Configuration.PackageSource.ClientCertificates.set -> void
-~NuGet.Configuration.PackageSource.Clone() -> NuGet.Configuration.PackageSource
-~NuGet.Configuration.PackageSource.Credentials.get -> NuGet.Configuration.PackageSourceCredential
-~NuGet.Configuration.PackageSource.Credentials.set -> void
-~NuGet.Configuration.PackageSource.Description.get -> string
-~NuGet.Configuration.PackageSource.Description.set -> void
-~NuGet.Configuration.PackageSource.Equals(NuGet.Configuration.PackageSource other) -> bool
+NuGet.Configuration.PackageSource.AsSourceItem() -> NuGet.Configuration.SourceItem!
+NuGet.Configuration.PackageSource.ClientCertificates.get -> System.Collections.Generic.IReadOnlyList<System.Security.Cryptography.X509Certificates.X509Certificate!>?
+NuGet.Configuration.PackageSource.ClientCertificates.set -> void
+NuGet.Configuration.PackageSource.Clone() -> NuGet.Configuration.PackageSource!
+NuGet.Configuration.PackageSource.Credentials.get -> NuGet.Configuration.PackageSourceCredential?
+NuGet.Configuration.PackageSource.Credentials.set -> void
+NuGet.Configuration.PackageSource.Description.get -> string?
+NuGet.Configuration.PackageSource.Description.set -> void
+NuGet.Configuration.PackageSource.Equals(NuGet.Configuration.PackageSource? other) -> bool
 NuGet.Configuration.PackageSource.IsEnabled.get -> bool
 NuGet.Configuration.PackageSource.IsEnabled.set -> void
 NuGet.Configuration.PackageSource.IsHttp.get -> bool
@@ -146,17 +146,17 @@ NuGet.Configuration.PackageSource.IsOfficial.set -> void
 NuGet.Configuration.PackageSource.IsPersistable.get -> bool
 NuGet.Configuration.PackageSource.MaxHttpRequestsPerSource.get -> int
 NuGet.Configuration.PackageSource.MaxHttpRequestsPerSource.set -> void
-~NuGet.Configuration.PackageSource.Name.get -> string
-~NuGet.Configuration.PackageSource.PackageSource(string source) -> void
-~NuGet.Configuration.PackageSource.PackageSource(string source, string name) -> void
-~NuGet.Configuration.PackageSource.PackageSource(string source, string name, bool isEnabled) -> void
-~NuGet.Configuration.PackageSource.PackageSource(string source, string name, bool isEnabled, bool isOfficial, bool isPersistable = true) -> void
+NuGet.Configuration.PackageSource.Name.get -> string!
+NuGet.Configuration.PackageSource.PackageSource(string! source) -> void
+NuGet.Configuration.PackageSource.PackageSource(string! source, string! name) -> void
+NuGet.Configuration.PackageSource.PackageSource(string! source, string! name, bool isEnabled) -> void
+NuGet.Configuration.PackageSource.PackageSource(string! source, string! name, bool isEnabled, bool isOfficial, bool isPersistable = true) -> void
 NuGet.Configuration.PackageSource.ProtocolVersion.get -> int
 NuGet.Configuration.PackageSource.ProtocolVersion.set -> void
-~NuGet.Configuration.PackageSource.Source.get -> string
-~NuGet.Configuration.PackageSource.Source.set -> void
-~NuGet.Configuration.PackageSource.SourceUri.get -> System.Uri
-~NuGet.Configuration.PackageSource.TrySourceAsUri.get -> System.Uri
+NuGet.Configuration.PackageSource.Source.get -> string!
+NuGet.Configuration.PackageSource.Source.set -> void
+NuGet.Configuration.PackageSource.SourceUri.get -> System.Uri!
+NuGet.Configuration.PackageSource.TrySourceAsUri.get -> System.Uri?
 NuGet.Configuration.PackageSourceCredential
 ~NuGet.Configuration.PackageSourceCredential.AsCredentialsItem() -> NuGet.Configuration.CredentialsItem
 ~NuGet.Configuration.PackageSourceCredential.Equals(NuGet.Configuration.PackageSourceCredential other) -> bool
@@ -362,9 +362,9 @@ override NuGet.Configuration.OwnersItem.GetHashCode() -> int
 ~override NuGet.Configuration.PackagePatternItem.ElementName.get -> string
 ~override NuGet.Configuration.PackagePatternItem.Equals(object other) -> bool
 override NuGet.Configuration.PackagePatternItem.GetHashCode() -> int
-~override NuGet.Configuration.PackageSource.Equals(object obj) -> bool
+override NuGet.Configuration.PackageSource.Equals(object? obj) -> bool
 override NuGet.Configuration.PackageSource.GetHashCode() -> int
-~override NuGet.Configuration.PackageSource.ToString() -> string
+override NuGet.Configuration.PackageSource.ToString() -> string!
 ~override NuGet.Configuration.PackageSourceCredential.Equals(object other) -> bool
 override NuGet.Configuration.PackageSourceCredential.GetHashCode() -> int
 override NuGet.Configuration.PackageSourceMappingSourceItem.CanHaveChildren.get -> bool

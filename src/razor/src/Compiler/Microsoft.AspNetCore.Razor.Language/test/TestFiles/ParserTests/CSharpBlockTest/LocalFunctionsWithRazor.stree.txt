@@ -1,4 +1,4 @@
-RazorDocument - [0..119)::119 - [@{LF    void Foo() LF    {LF        var time = DateTime.NowLF        <strong>Hello the time is @time</strong>LF    }LF}]
+﻿RazorDocument - [0..119)::119 - [@{LF    void Foo() LF    {LF        var time = DateTime.NowLF        <strong>Hello the time is @time</strong>LF    }LF}]
     MarkupBlock - [0..119)::119
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

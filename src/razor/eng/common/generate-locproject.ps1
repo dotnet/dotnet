@@ -1,4 +1,4 @@
-Param(
+﻿Param(
     [Parameter(Mandatory=$true)][string] $SourcesDirectory,     # Directory where source files live; if using a Localize directory it should live in here
     [string] $LanguageSet = 'VS_Main_Languages',                # Language set to be used in the LocProject.json
     [switch] $UseCheckedInLocProjectJson,                       # When set, generates a LocProject.json and compares it to one that already exists in the repo; otherwise just generates one

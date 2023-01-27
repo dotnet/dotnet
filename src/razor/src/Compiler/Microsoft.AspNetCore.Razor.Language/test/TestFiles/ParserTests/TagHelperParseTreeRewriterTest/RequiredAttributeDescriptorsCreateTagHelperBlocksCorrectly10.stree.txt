@@ -1,4 +1,4 @@
-RazorDocument - [0..24)::24 - [<strong catchAll="hi" />]
+﻿RazorDocument - [0..24)::24 - [<strong catchAll="hi" />]
     MarkupBlock - [0..24)::24
         MarkupTagHelperElement - [0..24)::24 - strong[SelfClosing] - catchAllTagHelper
             MarkupTagHelperStartTag - [0..24)::24 - [<strong catchAll="hi" />] - Gen<Markup> - SpanEditHandler;Accepts:Any

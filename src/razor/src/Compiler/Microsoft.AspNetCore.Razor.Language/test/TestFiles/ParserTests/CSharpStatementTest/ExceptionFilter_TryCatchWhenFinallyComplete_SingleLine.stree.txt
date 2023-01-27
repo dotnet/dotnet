@@ -1,4 +1,4 @@
-RazorDocument - [0..68)::68 - [@try { A(); } catch(Exception) when (true) { B(); } finally { C(); }]
+﻿RazorDocument - [0..68)::68 - [@try { A(); } catch(Exception) when (true) { B(); } finally { C(); }]
     MarkupBlock - [0..68)::68
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

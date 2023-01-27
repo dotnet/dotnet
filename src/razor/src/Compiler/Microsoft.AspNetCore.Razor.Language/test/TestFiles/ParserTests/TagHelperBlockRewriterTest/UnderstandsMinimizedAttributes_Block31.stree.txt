@@ -1,4 +1,4 @@
-RazorDocument - [0..46)::46 - [@{<p class='@DateTime.Now + 1' bound-int></p>}]
+﻿RazorDocument - [0..46)::46 - [@{<p class='@DateTime.Now + 1' bound-int></p>}]
     MarkupBlock - [0..46)::46
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

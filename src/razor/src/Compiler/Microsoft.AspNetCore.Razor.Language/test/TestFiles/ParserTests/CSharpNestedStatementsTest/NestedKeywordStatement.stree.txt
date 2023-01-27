@@ -1,4 +1,4 @@
-RazorDocument - [0..55)::55 - [@while(true) { for(int i = 0; i < 10; i++) { foo(); } }]
+﻿RazorDocument - [0..55)::55 - [@while(true) { for(int i = 0; i < 10; i++) { foo(); } }]
     MarkupBlock - [0..55)::55
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

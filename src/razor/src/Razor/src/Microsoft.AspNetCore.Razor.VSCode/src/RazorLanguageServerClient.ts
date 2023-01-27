@@ -1,4 +1,4 @@
-/* --------------------------------------------------------------------------------------------
+﻿/* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
@@ -6,14 +6,20 @@
 import { EventEmitter } from 'events';
 import * as vscode from 'vscode';
 import {
-    GenericRequestHandler,
-    LanguageClient,
-    LanguageClientOptions,
     RequestHandler,
     RequestType,
-    ServerOptions,
+} from 'vscode-jsonrpc';
+import {
+    GenericNotificationHandler,
+    InitializeResult,
+    LanguageClientOptions,
     State,
-} from 'vscode-languageclient/lib/main';
+} from 'vscode-languageclient';
+import {
+    LanguageClient,
+    ServerOptions,
+} from 'vscode-languageclient/node';
+import { RazorLanguage } from './RazorLanguage';
 import { RazorLanguageServerOptions } from './RazorLanguageServerOptions';
 import { resolveRazorLanguageServerOptions } from './RazorLanguageServerOptionsResolver';
 import { resolveRazorLanguageServerTrace } from './RazorLanguageServerTraceResolver';
@@ -28,7 +34,6 @@ export class RazorLanguageServerClient implements vscode.Disposable {
     private clientOptions!: LanguageClientOptions;
     private serverOptions!: ServerOptions;
     private client!: LanguageClient;
-    private startDisposable: vscode.Disposable | undefined;
     private onStartListeners: Array<() => Promise<any>> = [];
     private onStartedListeners: Array<() => Promise<any>> = [];
     private eventBus: EventEmitter;
@@ -46,6 +51,10 @@ export class RazorLanguageServerClient implements vscode.Disposable {
         this.setupLanguageServer();
 
         this.eventBus = new EventEmitter();
+    }
+
+    public get initializeResult(): InitializeResult | undefined {
+        return this.client.initializeResult;
     }
 
     public updateTraceLevel() {
@@ -86,10 +95,7 @@ export class RazorLanguageServerClient implements vscode.Disposable {
         // change events to detect when restarts are occuring and then properly reject the Language Server
         // start listeners.
         let restartCount = 0;
-        let currentState = State.Starting;
-        const didChangeStateDisposable = this.client.onDidChangeState((stateChangeEvent) => {
-            currentState = stateChangeEvent.newState;
-
+        const didChangeStateDisposable = this.client.onDidChangeState((stateChangeEvent: { newState: any; oldState: any; }) => {
             if (stateChangeEvent.oldState === State.Starting && stateChangeEvent.newState === State.Stopped) {
                 restartCount++;
 
@@ -105,34 +111,24 @@ export class RazorLanguageServerClient implements vscode.Disposable {
 
         try {
             this.logger.logMessage('Starting Razor Language Server...');
-            const startDisposable = this.client.start();
-            this.startDisposable = vscode.Disposable.from(startDisposable, didChangeStateDisposable);
+            await this.client.start();
             this.logger.logMessage('Server started, waiting for client to be ready...');
-            // tslint:disable-next-line: no-floating-promises
-            this.client.onReady().then(async () => {
-                if (currentState !== State.Running) {
-                    // Unexpected scenario, if we fall into this scenario the above onDidChangeState
-                    // handling will kill the start promise if we reach a certain retry threshold.
-                    return;
-                }
-                this.isStarted = true;
-                this.logger.logMessage('Server starting!');
-                for (const listener of this.onStartListeners) {
-                    await listener();
-                }
+            this.isStarted = true;
+            for (const listener of this.onStartListeners) {
+                await listener();
+            }
 
-                // Succesfully started, notify listeners.
-                resolve();
+            // Succesfully started, notify listeners.
+            resolve();
 
-                this.logger.logMessage('Server ready!');
-                for (const listener of this.onStartedListeners) {
-                    await listener();
-                }
+            this.logger.logMessage('Server ready!');
+            for (const listener of this.onStartedListeners) {
+                await listener();
+            }
 
-                // We don't want to track restart management after the server has been initially started,
-                // the langauge client will handle that.
-                didChangeStateDisposable.dispose();
-            });
+            // We don't want to track restart management after the server has been initially started,
+            // the language client will handle that.
+            didChangeStateDisposable.dispose();
         } catch (error) {
             vscode.window.showErrorMessage(
                 'Razor Language Server failed to start unexpectedly, ' +
@@ -153,7 +149,7 @@ export class RazorLanguageServerClient implements vscode.Disposable {
         return this.client.sendRequest<TResponseType>(method, param);
     }
 
-    public onRequest<TResponse, TError>(method: string, handler: GenericRequestHandler<TResponse, TError>) {
+    public async onRequestWithParams<P, R, E>(method: RequestType<P, R, E>, handler: RequestHandler<P, R, E>) {
         if (!this.isStarted) {
             throw new Error('Tried to bind on request logic while server is not started.');
         }
@@ -161,20 +157,16 @@ export class RazorLanguageServerClient implements vscode.Disposable {
         this.client.onRequest(method, handler);
     }
 
-    public async onRequestWithParams<P, R, E, RO>(method: RequestType<P, R, E, RO>, handler: RequestHandler<P, R, E>) {
+    public onNotification(method: string, handler: GenericNotificationHandler) {
         if (!this.isStarted) {
-            throw new Error('Tried to bind on request logic while server is not started.');
+            throw new Error('Tried to bind on notification logic while server is not started.');
         }
 
-        this.client.onRequest(method, handler);
+        this.client.onNotification(method, handler);
     }
 
     public dispose() {
         this.logger.logMessage('Disposing Razor Language Server.');
-
-        if (this.startDisposable) {
-            this.startDisposable.dispose();
-        }
 
         this.isStarted = false;
         this.startHandle = undefined;
@@ -220,6 +212,7 @@ export class RazorLanguageServerClient implements vscode.Disposable {
 
         this.clientOptions = {
             outputChannel: options.outputChannel,
+            documentSelector: [ { language: RazorLanguage.id, pattern: RazorLanguage.globbingPattern } ],
         };
 
         const args: string[] = [];
@@ -248,11 +241,7 @@ export class RazorLanguageServerClient implements vscode.Disposable {
             args.push('--debug');
         }
 
-        this.serverOptions = {
-            run: { command, args },
-            debug: { command, args },
-        };
-
+        this.serverOptions = { command, args };
         this.client = new LanguageClient('razorLanguageServer', 'Razor Language Server', this.serverOptions, this.clientOptions);
     }
 }

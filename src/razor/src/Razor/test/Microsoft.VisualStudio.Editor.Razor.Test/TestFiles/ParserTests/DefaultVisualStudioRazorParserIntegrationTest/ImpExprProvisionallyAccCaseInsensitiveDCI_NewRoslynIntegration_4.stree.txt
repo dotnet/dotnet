@@ -1,4 +1,4 @@
-RazorDocument - [0..18)::18 - [foo @DateTime. baz]
+﻿RazorDocument - [0..18)::18 - [foo @DateTime. baz]
     MarkupBlock - [0..18)::18
         MarkupTextLiteral - [0..4)::4 - [foo ] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Text;[foo];

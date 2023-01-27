@@ -1,4 +1,4 @@
-RazorDocument - [0..32)::32 - [@{<aLFhref='Foo'LFabcd='Bar' />}]
+﻿RazorDocument - [0..32)::32 - [@{<aLFhref='Foo'LFabcd='Bar' />}]
     MarkupBlock - [0..32)::32
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

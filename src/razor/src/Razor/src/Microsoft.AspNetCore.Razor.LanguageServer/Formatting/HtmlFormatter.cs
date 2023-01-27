@@ -7,12 +7,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
+using Microsoft.AspNetCore.Razor.TextDifferencing;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 
-    internal class HtmlFormatter
+internal class HtmlFormatter
     {
         private readonly DocumentVersionCache _documentVersionCache;
         private readonly ClientNotifierServiceBase _server;
@@ -103,7 +104,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
             var changedText = htmlSourceText.WithChanges(textChanges);
 
             // Now we use our minimal text differ algorithm to get the bare minimum of edits
-            var minimalChanges = SourceTextDiffer.GetMinimalTextChanges(htmlSourceText, changedText, lineDiffOnly: false);
+            var minimalChanges = SourceTextDiffer.GetMinimalTextChanges(htmlSourceText, changedText, DiffKind.Char);
             var minimalEdits = minimalChanges.Select(f => f.AsTextEdit(htmlSourceText)).ToArray();
 
             return minimalEdits;

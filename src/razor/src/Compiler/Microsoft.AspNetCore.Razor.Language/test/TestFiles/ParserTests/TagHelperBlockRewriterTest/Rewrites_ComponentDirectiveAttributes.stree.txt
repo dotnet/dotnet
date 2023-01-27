@@ -1,4 +1,4 @@
-RazorDocument - [0..60)::60 - [<input @bind-value="Message" @bind-value:event="onchange" />]
+﻿RazorDocument - [0..60)::60 - [<input @bind-value="Message" @bind-value:event="onchange" />]
     MarkupBlock - [0..60)::60
         MarkupTagHelperElement - [0..60)::60 - input[SelfClosing] - Bind
             MarkupTagHelperStartTag - [0..60)::60 - [<input @bind-value="Message" @bind-value:event="onchange" />] - Gen<Markup> - SpanEditHandler;Accepts:Any

@@ -1,4 +1,4 @@
-RazorDocument - [0..97)::97 - [<div style="@DateTime.Now" class="@DateTime.Now" catchAll="@DateTime.Now" >words and spaces</div>]
+﻿RazorDocument - [0..97)::97 - [<div style="@DateTime.Now" class="@DateTime.Now" catchAll="@DateTime.Now" >words and spaces</div>]
     MarkupBlock - [0..97)::97
         MarkupTagHelperElement - [0..97)::97 - div[StartTagAndEndTag] - divTagHelper - catchAllTagHelper
             MarkupTagHelperStartTag - [0..75)::75 - [<div style="@DateTime.Now" class="@DateTime.Now" catchAll="@DateTime.Now" >] - Gen<Markup> - SpanEditHandler;Accepts:Any

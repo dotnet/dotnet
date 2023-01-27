@@ -1,4 +1,4 @@
-RazorDocument - [0..30)::30 - [<ul bound [item]='items'></ul>]
+﻿RazorDocument - [0..30)::30 - [<ul bound [item]='items'></ul>]
     MarkupBlock - [0..30)::30
         MarkupTagHelperElement - [0..30)::30 - ul[StartTagAndEndTag] - CatchAllTagHelper
             MarkupTagHelperStartTag - [0..25)::25 - [<ul bound [item]='items'>] - Gen<Markup> - SpanEditHandler;Accepts:Any

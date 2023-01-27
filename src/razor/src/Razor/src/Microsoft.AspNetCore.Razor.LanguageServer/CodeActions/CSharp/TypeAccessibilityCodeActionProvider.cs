@@ -133,7 +133,7 @@ internal class TypeAccessibilityCodeActionProvider : CSharpCodeActionProvider
                     var expectedCodeActionPrefix = $"Fully qualify '{associatedValue}' -> ";
                     if (codeAction.Title.StartsWith(expectedCodeActionPrefix, StringComparison.OrdinalIgnoreCase))
                     {
-                        fqn = codeAction.Title.Substring(expectedCodeActionPrefix.Length);
+                        fqn = codeAction.Title[expectedCodeActionPrefix.Length..];
                     }
                 }
 

@@ -1,4 +1,4 @@
-deb http://ports.ubuntu.com/ubuntu-ports/ jammy main restricted universe
+﻿deb http://ports.ubuntu.com/ubuntu-ports/ jammy main restricted universe
 deb-src http://ports.ubuntu.com/ubuntu-ports/ jammy main restricted universe
 
 deb http://ports.ubuntu.com/ubuntu-ports/ jammy-updates main restricted universe

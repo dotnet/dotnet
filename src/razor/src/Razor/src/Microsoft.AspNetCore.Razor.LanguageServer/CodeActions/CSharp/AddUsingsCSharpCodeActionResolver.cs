@@ -51,7 +51,7 @@ internal class AddUsingsCSharpCodeActionResolver : CSharpCodeActionResolver
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        var documentContext = await _documentContextFactory.TryCreateAsync(csharpParams.RazorFileUri, cancellationToken).ConfigureAwait(false);
+        var documentContext = await _documentContextFactory.TryCreateForOpenDocumentAsync(csharpParams.RazorFileUri, cancellationToken).ConfigureAwait(false);
         if (documentContext is null || cancellationToken.IsCancellationRequested)
         {
             return codeAction;

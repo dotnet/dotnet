@@ -1,4 +1,4 @@
-Source Location: (21:0,21 [3] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (21:0,21 [3] x:\dir\subdir\Test\TestComponent.cshtml)
 |int|
 Generated Location: (916:25,21 [3] )
 |int|

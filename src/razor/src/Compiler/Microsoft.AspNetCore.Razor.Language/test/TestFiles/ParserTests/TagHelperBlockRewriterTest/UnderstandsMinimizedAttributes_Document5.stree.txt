@@ -1,4 +1,4 @@
-RazorDocument - [0..17)::17 - [<p bound-int></p>]
+﻿RazorDocument - [0..17)::17 - [<p bound-int></p>]
     MarkupBlock - [0..17)::17
         MarkupTagHelperElement - [0..17)::17 - p[StartTagAndEndTag] - PTagHelper
             MarkupTagHelperStartTag - [0..13)::13 - [<p bound-int>] - Gen<Markup> - SpanEditHandler;Accepts:Any

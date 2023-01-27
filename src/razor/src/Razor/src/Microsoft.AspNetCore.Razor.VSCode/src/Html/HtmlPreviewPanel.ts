@@ -1,12 +1,12 @@
-/* --------------------------------------------------------------------------------------------
+﻿/* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
 import * as vscode from 'vscode';
-import { IRazorDocumentChangeEvent } from '../IRazorDocumentChangeEvent';
-import { RazorDocumentChangeKind } from '../RazorDocumentChangeKind';
-import { RazorDocumentManager } from '../RazorDocumentManager';
+import { IRazorDocumentChangeEvent } from '../Document/IRazorDocumentChangeEvent';
+import { RazorDocumentChangeKind } from '../Document/RazorDocumentChangeKind';
+import { RazorDocumentManager } from '../Document/RazorDocumentManager';
 import { getUriPath } from '../UriPaths';
 
 export class HtmlPreviewPanel {
@@ -130,8 +130,8 @@ export class HtmlPreviewPanel {
     </script>
 </head>
 <body>
-    <p>Host document file path<strong>${hostDocumentFilePath}</strong></p>
-    <p>Virtual document file path<strong>${virtualDocumentFilePath}</strong></p>
+    <p>Host document file path: <strong>${hostDocumentFilePath}</strong></p>
+    <p>Virtual document file path: <strong>${virtualDocumentFilePath}</strong></p>
     <p><button onclick="copy()">Copy HTML</button></p>
     <hr />
     <pre>${content}</pre>

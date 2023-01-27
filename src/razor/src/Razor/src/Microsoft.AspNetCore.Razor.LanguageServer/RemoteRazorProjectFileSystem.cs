@@ -45,7 +45,7 @@ internal class RemoteRazorProjectFileSystem : RazorProjectFileSystem
         var physicalPath = NormalizeAndEnsureValidPath(path);
         if (FilePathRootedBy(physicalPath, _root))
         {
-            var filePath = physicalPath.Substring(_root.Length);
+            var filePath = physicalPath[_root.Length..];
             return new RemoteProjectItem(filePath, physicalPath, fileKind);
         }
         else
@@ -71,7 +71,7 @@ internal class RemoteRazorProjectFileSystem : RazorProjectFileSystem
 
             if (path[0] == '/' || path[0] == '\\')
             {
-                path = path.Substring(1);
+                path = path[1..];
             }
 
             absolutePath = _root + path;
@@ -104,7 +104,7 @@ internal class RemoteRazorProjectFileSystem : RazorProjectFileSystem
             return false;
         }
 
-        var potentialRoot = path.Substring(0, root.Length);
+        var potentialRoot = path[..root.Length];
         if (FilePathComparer.Instance.Equals(potentialRoot, root))
         {
             return true;

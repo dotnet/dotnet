@@ -1,4 +1,4 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 #nullable disable
@@ -49,7 +49,7 @@ internal class GenericTypeNameRewriter : TypeNameRewriter
                     //
                     // We add our own diagnostics for missing/invalid type parameters anyway.
                     var replacement = binding == null ? typeof(object).FullName : binding;
-                    return identifier.Update(SyntaxFactory.Identifier(replacement));
+                    return identifier.Update(SyntaxFactory.Identifier(replacement).WithTriviaFrom(identifier.Identifier));
                 }
             }
 

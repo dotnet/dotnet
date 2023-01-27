@@ -68,7 +68,7 @@ stages:
         name: ${{ variables.defaultPoolName }}
         demands: ${{ variables.defaultPoolDemands }}
       container: ${{ parameters.centOSStream8Container }}
-      bootstrapPrep: false               # 🚫
+      bootstrapPrep: true                # ✅
       buildFromArchive: false            # 🚫
       enablePoison: false                # 🚫
       excludeOmniSharpTests: true        # ✅
@@ -87,7 +87,7 @@ stages:
           name: ${{ variables.defaultPoolName }}
           demands: ${{ variables.defaultPoolDemands }}
         container: ${{ parameters.centOSStream8Container }}
-        bootstrapPrep: false               # 🚫
+        bootstrapPrep: true                # ✅
         buildFromArchive: true             # ✅
         enablePoison: false                # 🚫
         excludeOmniSharpTests: true        # ✅
@@ -105,7 +105,7 @@ stages:
           name: ${{ variables.defaultPoolName }}
           demands: ${{ variables.defaultPoolDemands }}
         container: ${{ parameters.centOSStream9Container }}
-        bootstrapPrep: false              # 🚫
+        bootstrapPrep: true               # ✅
         buildFromArchive: true            # ✅
         enablePoison: false               # 🚫
         excludeOmniSharpTests: false      # 🚫
@@ -123,7 +123,7 @@ stages:
           name: ${{ variables.defaultPoolName }}
           demands: ${{ variables.defaultPoolDemands }}
         container: ${{ parameters.fedora36Container }}
-        bootstrapPrep: false               # 🚫
+        bootstrapPrep: true                # 🚫
         buildFromArchive: true             # ✅
         enablePoison: true                 # ✅
         excludeOmniSharpTests: false       # 🚫
@@ -141,7 +141,7 @@ stages:
           name: ${{ variables.defaultPoolName }}
           demands: ${{ variables.defaultPoolDemands }}
         container: ${{ parameters.ubuntu2004Container }}
-        bootstrapPrep: false               # 🚫
+        bootstrapPrep: true                # ✅
         buildFromArchive: false            # 🚫
         enablePoison: false                # 🚫
         excludeOmniSharpTests: false       # 🚫
@@ -175,7 +175,7 @@ stages:
           name: ${{ variables.defaultPoolName }}
           demands: ${{ variables.defaultPoolDemands }}
         container: ${{ parameters.fedora36Container }}
-        bootstrapPrep: false               # 🚫
+        bootstrapPrep: true                # 🚫
         buildFromArchive: false            # 🚫
         enablePoison: false                # 🚫
         excludeOmniSharpTests: false       # 🚫

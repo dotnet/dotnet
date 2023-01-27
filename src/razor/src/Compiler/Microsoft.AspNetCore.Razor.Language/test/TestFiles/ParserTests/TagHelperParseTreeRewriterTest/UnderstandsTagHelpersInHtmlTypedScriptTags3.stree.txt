@@ -1,4 +1,4 @@
-RazorDocument - [0..84)::84 - [<script type='text/html'><p><script type='text/html'><input /></script></p></script>]
+﻿RazorDocument - [0..84)::84 - [<script type='text/html'><p><script type='text/html'><input /></script></p></script>]
     MarkupBlock - [0..84)::84
         MarkupElement - [0..84)::84
             MarkupStartTag - [0..25)::25 - [<script type='text/html'>] - Gen<Markup> - SpanEditHandler;Accepts:Any

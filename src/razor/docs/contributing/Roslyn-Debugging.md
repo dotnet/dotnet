@@ -1,4 +1,4 @@
-# Debugging with experimental Roslyn bits
+﻿# Debugging with experimental Roslyn bits
 
 Sometimes it may be necessary to make changes in [`dotnet/roslyn`](https://github.com/dotnet/roslyn), and react to the changes in this repo. The following are steps which outline the general process in using Roslyn development `dll`s with Razor Tooling.
 

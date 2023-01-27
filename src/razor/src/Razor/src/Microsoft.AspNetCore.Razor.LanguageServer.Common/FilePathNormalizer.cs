@@ -39,7 +39,7 @@ public static class FilePathNormalizer
             !normalized.StartsWith("//", StringComparison.OrdinalIgnoreCase))
         {
             // We've been provided a path that probably looks something like /C:/path/to
-            normalized = normalized.Substring(1);
+            normalized = normalized[1..];
         }
         else
         {
@@ -65,7 +65,7 @@ public static class FilePathNormalizer
         var normalizedPath = Normalize(filePath);
         var lastSeparatorIndex = normalizedPath.LastIndexOf('/');
 
-        var directory = normalizedPath.Substring(0, lastSeparatorIndex + 1);
+        var directory = normalizedPath[..(lastSeparatorIndex + 1)];
         return directory;
     }
 

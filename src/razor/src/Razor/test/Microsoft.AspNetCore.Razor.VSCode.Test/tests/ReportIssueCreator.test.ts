@@ -1,4 +1,4 @@
-/* --------------------------------------------------------------------------------------------
+﻿/* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
@@ -6,8 +6,8 @@
 import * as assert from 'assert';
 import { IReportIssueDataCollectionResult } from 'microsoft.aspnetcore.razor.vscode/dist/Diagnostics/IReportIssueDataCollectionResult';
 import { ReportIssueCreator } from 'microsoft.aspnetcore.razor.vscode/dist/Diagnostics/ReportIssueCreator';
-import { IRazorDocument } from 'microsoft.aspnetcore.razor.vscode/dist/IRazorDocument';
-import { IRazorDocumentManager } from 'microsoft.aspnetcore.razor.vscode/dist/IRazorDocumentManager';
+import { IRazorDocument } from 'microsoft.aspnetcore.razor.vscode/dist/Document/IRazorDocument';
+import { IRazorDocumentManager } from 'microsoft.aspnetcore.razor.vscode/dist/Document/IRazorDocumentManager';
 import * as vscode from 'microsoft.aspnetcore.razor.vscode/dist/vscodeAdapter';
 import { TestProjectedDocument } from './Mocks/TestProjectedDocument';
 import { TestRazorDocument } from './Mocks/TestRazorDocument';

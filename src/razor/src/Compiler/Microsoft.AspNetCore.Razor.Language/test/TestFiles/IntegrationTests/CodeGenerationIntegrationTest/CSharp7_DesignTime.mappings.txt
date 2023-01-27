@@ -1,4 +1,4 @@
-Source Location: (14:1,6 [187] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp7.cshtml)
+﻿Source Location: (14:1,6 [187] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp7.cshtml)
 |
         var nameLookup = new Dictionary<string, (string FirstName, string LastName, object Extra)>()
         {

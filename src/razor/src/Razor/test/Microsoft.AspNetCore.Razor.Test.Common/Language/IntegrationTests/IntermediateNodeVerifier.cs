@@ -210,18 +210,18 @@ public static class IntermediateNodeVerifier
                 throw new InvalidOperationException($"Baseline text is not well-formed: '{text}'.");
             }
 
-            return text.Substring(start, delimiter - start);
+            return text[start..delimiter];
         }
 
         private static string GetLocation(string text, int start)
         {
             var delimiter = text.IndexOf(" - ", start, StringComparison.Ordinal);
-            return delimiter == -1 ? text.Substring(start) : text.Substring(start, delimiter - start);
+            return delimiter == -1 ? text[start..] : text[start..delimiter];
         }
 
         private static string GetContent(string text, int start)
         {
-            return start == text.Length ? string.Empty : text.Substring(start);
+            return start == text.Length ? string.Empty : text[start..];
         }
 
         private class IntermediateNodeBaselineException : XunitException

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.DotNet.Helix.Sdk" DefaultTargets="Test">
+﻿<Project Sdk="Microsoft.DotNet.Helix.Sdk" DefaultTargets="Test">
 
   <PropertyGroup>
     <Language>msbuild</Language>

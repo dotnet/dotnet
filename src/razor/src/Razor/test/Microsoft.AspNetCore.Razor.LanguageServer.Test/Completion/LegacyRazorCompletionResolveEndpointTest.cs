@@ -242,7 +242,7 @@ public class LegacyRazorCompletionResolveEndpointTest : LanguageServerTestBase
     private VSInternalCompletionList CreateLSPCompletionList(IReadOnlyList<RazorCompletionItem> razorCompletionItems)
     {
         var completionList = LegacyRazorCompletionEndpoint.CreateLSPCompletionList(razorCompletionItems, _defaultClientCapability);
-        var resultId = _completionListCache.Set(completionList, razorCompletionItems);
+        var resultId = _completionListCache.Add(completionList, razorCompletionItems);
         completionList.SetResultId(resultId, completionSetting: null);
         return completionList;
     }

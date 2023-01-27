@@ -646,7 +646,7 @@ public class DefaultProjectSnapshotManagerTest : ProjectSnapshotManagerDispatche
 
         // Assert
         Assert.Equal(ProjectChangeKind.DocumentAdded, _projectManager.ListenersNotifiedOf);
-        textLoader.Verify(d => d.LoadTextAndVersionAsync(It.IsAny<Workspace>(), It.IsAny<DocumentId>(), It.IsAny<CancellationToken>()), Times.Never());
+        textLoader.Verify(d => d.LoadTextAndVersionAsync(It.IsAny<LoadTextOptions>(), It.IsAny<CancellationToken>()), Times.Never());
     }
 
     private class TestProjectSnapshotManager : DefaultProjectSnapshotManager

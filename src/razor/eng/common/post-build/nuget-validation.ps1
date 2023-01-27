@@ -1,4 +1,4 @@
-# This script validates NuGet package metadata information using this 
+﻿# This script validates NuGet package metadata information using this 
 # tool: https://github.com/NuGet/NuGetGallery/tree/jver-verify/src/VerifyMicrosoftPackage
 
 param(

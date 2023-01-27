@@ -1,4 +1,4 @@
-Source Location: (89:6,9 [8] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml)
+﻿Source Location: (89:6,9 [8] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml)
 |Section2|
 Generated Location: (502:12,22 [8] )
 |Section2|

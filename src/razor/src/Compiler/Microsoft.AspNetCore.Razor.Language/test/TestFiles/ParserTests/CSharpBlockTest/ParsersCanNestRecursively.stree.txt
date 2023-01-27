@@ -1,4 +1,4 @@
-RazorDocument - [0..352)::352 - [@foreach(var c in db.Categories) {LF            <div>LF                <h1>@c.Name</h1>LF                <ul>LF                    @foreach(var p in c.Products) {LF                        <li><a href="@Html.ActionUrl("Products", "Detail", new { id = p.Id })">@p.Name</a></li>LF                    }LF                </ul>LF            </div>LF        }]
+﻿RazorDocument - [0..352)::352 - [@foreach(var c in db.Categories) {LF            <div>LF                <h1>@c.Name</h1>LF                <ul>LF                    @foreach(var p in c.Products) {LF                        <li><a href="@Html.ActionUrl("Products", "Detail", new { id = p.Id })">@p.Name</a></li>LF                    }LF                </ul>LF            </div>LF        }]
     MarkupBlock - [0..352)::352
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

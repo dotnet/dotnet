@@ -10,7 +10,7 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 namespace Microsoft.AspNetCore.Razor.OmniSharpPlugin;
 
-public sealed class OmniSharpProjectSnapshot
+internal sealed class OmniSharpProjectSnapshot
 {
     internal readonly ProjectSnapshot InternalProjectSnapshot;
 

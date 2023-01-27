@@ -1,4 +1,4 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 #nullable disable
@@ -51,7 +51,8 @@ public abstract class RazorEngine
     {
         phases.Add(new DefaultRazorParsingPhase());
         phases.Add(new DefaultRazorSyntaxTreePhase());
-        phases.Add(new DefaultRazorTagHelperBinderPhase());
+        phases.Add(new DefaultRazorTagHelperContextDiscoveryPhase());
+        phases.Add(new DefaultRazorTagHelperRewritePhase());
         phases.Add(new DefaultRazorIntermediateNodeLoweringPhase());
         phases.Add(new DefaultRazorDocumentClassifierPhase());
         phases.Add(new DefaultRazorDirectiveClassifierPhase());

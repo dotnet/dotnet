@@ -53,7 +53,7 @@ internal class DefaultHtmlCodeActionResolver : HtmlCodeActionResolver
             throw new ArgumentNullException(nameof(codeAction));
         }
 
-        var documentContext = await _documentContextFactory.TryCreateAsync(resolveParams.RazorFileUri, cancellationToken).ConfigureAwait(false);
+        var documentContext = await _documentContextFactory.TryCreateForOpenDocumentAsync(resolveParams.RazorFileUri, cancellationToken).ConfigureAwait(false);
         if (documentContext is null)
         {
             return codeAction;

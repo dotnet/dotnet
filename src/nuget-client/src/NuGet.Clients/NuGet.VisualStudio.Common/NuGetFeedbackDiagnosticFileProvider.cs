@@ -7,6 +7,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.Internal.VisualStudio.Shell.Embeddable.Feedback;
@@ -153,6 +154,7 @@ namespace NuGet.VisualStudio.Common
 
                 var context = new DependencyGraphCacheContext(NullLogger.Instance, Settings);
                 DependencyGraphSpec dgspec = await DependencyGraphRestoreUtility.GetSolutionRestoreSpec(SolutionManager, context);
+                HashSourceData(dgspec);
 
                 ZipArchiveEntry file = zip.CreateEntry("dgspec.json");
                 using (Stream fileStream = file.Open())
@@ -187,6 +189,30 @@ namespace NuGet.VisualStudio.Common
             else
             {
                 await TelemetryUtility.PostFaultAsync(exception, nameof(NuGetFeedbackDiagnosticFileProvider), callerMemberName);
+            }
+        }
+
+        private void HashSourceData(DependencyGraphSpec dgspec)
+        {
+            foreach (PackageSpec Project in dgspec.Projects)
+            {
+                if (Project?.RestoreMetadata?.Sources == null)
+                    continue;
+
+                bool anyNonMSFeed = Project.RestoreMetadata.Sources.Any(source => string.IsNullOrWhiteSpace(PackageSourceTelemetry.GetMsFeed(source)));
+
+                if (anyNonMSFeed)
+                {
+                    List<PackageSource> sources = new();
+
+                    foreach (PackageSource source in Project.RestoreMetadata.Sources)
+                    {
+                        sources.Add(string.IsNullOrWhiteSpace(PackageSourceTelemetry.GetMsFeed(source)) ?
+                            new PackageSource(CryptoHashUtility.GenerateUniqueToken(source.Source)) : source);
+                    }
+
+                    Project.RestoreMetadata.Sources = sources;
+                }
             }
         }
     }

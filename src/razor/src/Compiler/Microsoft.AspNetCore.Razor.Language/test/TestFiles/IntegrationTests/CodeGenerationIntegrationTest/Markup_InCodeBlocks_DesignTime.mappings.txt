@@ -1,4 +1,4 @@
-Source Location: (4:1,2 [153] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml)
+﻿Source Location: (4:1,2 [153] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml)
 |
     var people = new Person[]
     {

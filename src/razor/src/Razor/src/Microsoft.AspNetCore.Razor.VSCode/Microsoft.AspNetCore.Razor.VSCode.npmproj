@@ -5,7 +5,7 @@
   <PropertyGroup>
     <PackageId>microsoft.aspnetcore.razor.vscode</PackageId>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <IsPackable>true</IsPackable>
+    <IsPackable Condition="'$(OS)' == 'Windows_NT'">true</IsPackable>
 
     <!-- We technically ship this to a blob feed and then manually integrate with O#. Don't want this package making its way anywhere else. -->
     <IsShippingPackage>false</IsShippingPackage>

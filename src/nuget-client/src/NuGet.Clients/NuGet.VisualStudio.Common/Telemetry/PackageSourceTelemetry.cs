@@ -323,7 +323,7 @@ namespace NuGet.VisualStudio.Telemetry
             return subevent;
         }
 
-        private static string GetMsFeed(PackageSource source)
+        internal static string GetMsFeed(PackageSource source)
         {
             if (source.IsHttp)
             {

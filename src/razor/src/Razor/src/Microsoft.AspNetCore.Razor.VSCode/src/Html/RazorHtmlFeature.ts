@@ -1,11 +1,11 @@
-/* --------------------------------------------------------------------------------------------
+﻿/* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
 import * as vscode from 'vscode';
+import { RazorDocumentManager } from '../Document/RazorDocumentManager';
 import { IEventEmitterFactory } from '../IEventEmitterFactory';
-import { RazorDocumentManager } from '../RazorDocumentManager';
 import { RazorLanguageServiceClient } from '../RazorLanguageServiceClient';
 import { RazorLogger } from '../RazorLogger';
 import { HtmlPreviewPanel } from './HtmlPreviewPanel';

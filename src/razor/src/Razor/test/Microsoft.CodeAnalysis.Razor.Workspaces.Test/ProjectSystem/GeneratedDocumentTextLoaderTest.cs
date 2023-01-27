@@ -37,7 +37,7 @@ public class GeneratedDocumentTextLoaderTest : WorkspaceTestBase
         var loader = new GeneratedDocumentTextLoader(document, "file.cshtml");
 
         // Act
-        var textAndVersion = await loader.LoadTextAndVersionAsync(default, default, default);
+        var textAndVersion = await loader.LoadTextAndVersionAsync(default, default);
 
         // Assert
         Assert.True(textAndVersion.Text.CanBeEmbedded);

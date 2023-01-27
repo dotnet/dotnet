@@ -21,7 +21,7 @@ internal class EmptyTextLoader : TextLoader
         _version = VersionStamp.Create(); // Version will never change so this can be reused.
     }
 
-    public override Task<TextAndVersion> LoadTextAndVersionAsync(Workspace workspace, DocumentId documentId, CancellationToken cancellationToken)
+    public override Task<TextAndVersion> LoadTextAndVersionAsync(LoadTextOptions options, CancellationToken cancellationToken)
     {
         // Providing an encoding here is important for debuggability. Without this edit-and-continue
         // won't work for projects with Razor files.

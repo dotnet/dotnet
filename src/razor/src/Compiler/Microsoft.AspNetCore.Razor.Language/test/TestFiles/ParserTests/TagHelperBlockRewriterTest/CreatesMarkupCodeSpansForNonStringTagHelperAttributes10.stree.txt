@@ -1,4 +1,4 @@
-RazorDocument - [0..73)::73 - [<person age="12" birthday="DateTime.Now" name="@@BoundStringAttribute" />]
+﻿RazorDocument - [0..73)::73 - [<person age="12" birthday="DateTime.Now" name="@@BoundStringAttribute" />]
     MarkupBlock - [0..73)::73
         MarkupTagHelperElement - [0..73)::73 - person[SelfClosing] - PersonTagHelper
             MarkupTagHelperStartTag - [0..73)::73 - [<person age="12" birthday="DateTime.Now" name="@@BoundStringAttribute" />] - Gen<Markup> - SpanEditHandler;Accepts:Any

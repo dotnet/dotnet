@@ -1,4 +1,4 @@
-Markup span at (0:0,0 [0] ) (Accepts:Any) - Parent: Markup block at (0:0,0 [60] )
+﻿Markup span at (0:0,0 [0] ) (Accepts:Any) - Parent: Markup block at (0:0,0 [60] )
 Transition span at (0:0,0 [1] ) (Accepts:None) - Parent: Statement block at (0:0,0 [60] )
 Code span at (1:0,1 [46] ) (Accepts:Any) - Parent: Statement block at (0:0,0 [60] )
 Markup span at (47:0,47 [1] ) (Accepts:Any) - Parent: Markup block at (47:0,47 [12] )

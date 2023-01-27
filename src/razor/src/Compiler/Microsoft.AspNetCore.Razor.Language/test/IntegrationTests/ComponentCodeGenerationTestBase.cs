@@ -1,4 +1,4 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 #nullable disable
@@ -526,6 +526,28 @@ public struct MyStruct
         @context.I1.MyClassId - @context.I2.MyStructId
     </Template>
 </TestComponent>");
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
+    [Fact] // https://github.com/dotnet/razor/issues/7628
+    public void ComponentWithTypeParameterValueTuple_ExplicitGenericArguments()
+    {
+        // Act
+        var generated = CompileToCSharp("""
+            @typeparam TDomain where TDomain : struct
+            @typeparam TValue where TValue : struct
+
+            <TestComponent Data="null" TDomain="decimal" TValue="decimal" />
+
+            @code {
+                [Parameter]
+                public List<(TDomain Domain, TValue Value)> Data { get; set; }
+            }
+            """);
 
         // Assert
         AssertDocumentNodeMatchesBaseline(generated.CodeDocument);

@@ -1,4 +1,4 @@
-Document - 
+﻿Document - 
     NamespaceDeclaration -  - Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
         ClassDeclaration -  - public - TestFiles_IntegrationTests_CodeGenerationIntegrationTest_Inherits_DesignTime - foo.bar<baz<biz>>.boz - 
             DesignTimeDirective - 

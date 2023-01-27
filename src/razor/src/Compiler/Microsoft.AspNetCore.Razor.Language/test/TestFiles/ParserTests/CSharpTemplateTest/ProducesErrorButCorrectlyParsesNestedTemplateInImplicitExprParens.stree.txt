@@ -1,4 +1,4 @@
-RazorDocument - [0..62)::62 - [@Html.Repeat(10, @<p>Foo #@Html.Repeat(10, @<p>@item</p>)</p>)]
+﻿RazorDocument - [0..62)::62 - [@Html.Repeat(10, @<p>Foo #@Html.Repeat(10, @<p>@item</p>)</p>)]
     MarkupBlock - [0..62)::62
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

@@ -1,4 +1,4 @@
-Document - 
+﻿Document - 
     RazorCompiledItemAttribute - 
     NamespaceDeclaration -  - Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
         RazorSourceChecksumAttribute - 

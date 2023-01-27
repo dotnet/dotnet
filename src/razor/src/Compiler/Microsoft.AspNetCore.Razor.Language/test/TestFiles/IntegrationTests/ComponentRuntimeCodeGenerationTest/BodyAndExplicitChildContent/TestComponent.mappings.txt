@@ -1,4 +1,4 @@
-Source Location: (2:0,2 [46] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (2:0,2 [46] x:\dir\subdir\Test\TestComponent.cshtml)
 | RenderFragment<string> header = (context) => |
 Generated Location: (602:17,2 [46] )
 | RenderFragment<string> header = (context) => |

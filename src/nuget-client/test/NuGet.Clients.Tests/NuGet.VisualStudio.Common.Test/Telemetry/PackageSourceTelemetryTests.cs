@@ -378,6 +378,24 @@ namespace NuGet.VisualStudio.Common.Test.Telemetry
             Assert.Equal(expectedDuration, totals.Duration);
         }
 
+        [Theory]
+        [InlineData("https://api.nuget.org/v3/index.json", "nuget.org")]
+        [InlineData("https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json", "Azure DevOps")]
+        [InlineData("https://nuget.pkg.github.com/contoso/index.json", "GitHub")]
+        [InlineData("https://api.contoso.org/v2/index.json", null)]
+        [InlineData(".\\my\\PublicRepository\\", null)]
+        public void GetMSFeed_CorrectlyIdentifies_SourceType(string source, string expectedSourceType)
+        {
+            // Arrange
+            PackageSource packageSource = new(source);
+
+            // Act
+            string actualSourceType = PackageSourceTelemetry.GetMsFeed(packageSource);
+
+            // Assert
+            Assert.Equal(expectedSourceType, actualSourceType);
+        }
+
         private static IReadOnlyDictionary<string, PackageSourceTelemetry.Data> CreateDataDictionary(params string[] sources)
         {
             var data = new Dictionary<string, PackageSourceTelemetry.Data>();

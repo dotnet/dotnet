@@ -1,4 +1,4 @@
-Source Location: (19:0,19 [6] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (19:0,19 [6] x:\dir\subdir\Test\TestComponent.cshtml)
 |string|
 Generated Location: (914:25,19 [6] )
 |string|

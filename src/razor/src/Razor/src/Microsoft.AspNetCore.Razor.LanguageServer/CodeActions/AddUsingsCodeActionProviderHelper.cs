@@ -63,7 +63,7 @@ internal static class AddUsingsCodeActionProviderHelper
             // Select everything after the initial "using " part of the statement. This is slightly lazy, for sure, but has
             // the advantage of us not caring about chagnes to C# syntax, we just grab whatever Roslyn wanted to put in, so
             // we should still work in C# v26
-            .Select(u => u.ToString().Substring("using ".Length));
+            .Select(u => u.ToString()["using ".Length..]);
 
         return usings;
     }

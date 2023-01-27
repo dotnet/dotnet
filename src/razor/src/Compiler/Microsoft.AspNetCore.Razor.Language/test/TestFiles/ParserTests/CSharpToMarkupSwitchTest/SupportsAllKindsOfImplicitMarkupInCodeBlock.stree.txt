@@ -1,4 +1,4 @@
-RazorDocument - [0..207)::207 - [@{LF    if(true) {LF        @:Single Line MarkupLF    }LF    foreach (var p in Enumerable.Range(1, 10)) {LF        <text>The number is @p</text>LF    }LF    if(!false) {LF        <p>A real tag!</p>LF    }LF}]
+﻿RazorDocument - [0..207)::207 - [@{LF    if(true) {LF        @:Single Line MarkupLF    }LF    foreach (var p in Enumerable.Range(1, 10)) {LF        <text>The number is @p</text>LF    }LF    if(!false) {LF        <p>A real tag!</p>LF    }LF}]
     MarkupBlock - [0..207)::207
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

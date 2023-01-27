@@ -99,7 +99,7 @@ internal class DefaultMacRazorProjectHost : MacRazorProjectHostBase
 
               foreach (var document in addedFiles)
               {
-                  var relativeFilePath = document.Substring(projectDirectory.Length + 1);
+                  var relativeFilePath = document[(projectDirectory.Length + 1)..];
                   AddDocument(hostProject, document, relativeFilePath);
               }
           },

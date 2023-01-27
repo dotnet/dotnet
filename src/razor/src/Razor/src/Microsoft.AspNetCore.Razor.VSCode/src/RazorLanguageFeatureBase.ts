@@ -1,12 +1,12 @@
-/* --------------------------------------------------------------------------------------------
+﻿/* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
 import * as vscode from 'vscode';
-import { ProjectionResult } from './ProjectionResult';
-import { RazorDocumentManager } from './RazorDocumentManager';
-import { RazorDocumentSynchronizer } from './RazorDocumentSynchronizer';
+import { RazorDocumentManager } from './Document/RazorDocumentManager';
+import { RazorDocumentSynchronizer } from './Document/RazorDocumentSynchronizer';
+import { ProjectionResult } from './Projection/ProjectionResult';
 import { RazorLanguageServiceClient } from './RazorLanguageServiceClient';
 import { RazorLogger } from './RazorLogger';
 import { LanguageKind } from './RPC/LanguageKind';

@@ -1,4 +1,4 @@
-RazorDocument - [0..65)::65 - [@if(foo) {LF    var foo = "foo bar bazLF    <p>Foo is @foo</p>LF}]
+﻿RazorDocument - [0..65)::65 - [@if(foo) {LF    var foo = "foo bar bazLF    <p>Foo is @foo</p>LF}]
     MarkupBlock - [0..65)::65
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

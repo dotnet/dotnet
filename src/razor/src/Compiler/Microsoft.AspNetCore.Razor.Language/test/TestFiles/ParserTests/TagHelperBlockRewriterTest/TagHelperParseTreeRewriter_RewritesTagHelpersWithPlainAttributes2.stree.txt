@@ -1,4 +1,4 @@
-RazorDocument - [0..49)::49 - [<p class="foo" style="color:red;">Hello World</p>]
+﻿RazorDocument - [0..49)::49 - [<p class="foo" style="color:red;">Hello World</p>]
     MarkupBlock - [0..49)::49
         MarkupTagHelperElement - [0..49)::49 - p[StartTagAndEndTag] - ptaghelper
             MarkupTagHelperStartTag - [0..34)::34 - [<p class="foo" style="color:red;">] - Gen<Markup> - SpanEditHandler;Accepts:Any

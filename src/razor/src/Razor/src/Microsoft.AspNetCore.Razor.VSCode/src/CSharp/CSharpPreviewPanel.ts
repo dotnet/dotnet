@@ -1,12 +1,12 @@
-/* --------------------------------------------------------------------------------------------
+﻿/* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
 import * as vscode from 'vscode';
-import { IRazorDocumentChangeEvent } from '../IRazorDocumentChangeEvent';
-import { RazorDocumentChangeKind } from '../RazorDocumentChangeKind';
-import { RazorDocumentManager } from '../RazorDocumentManager';
+import { IRazorDocumentChangeEvent } from '../Document/IRazorDocumentChangeEvent';
+import { RazorDocumentChangeKind } from '../Document/RazorDocumentChangeKind';
+import { RazorDocumentManager } from '../Document/RazorDocumentManager';
 import { getUriPath } from '../UriPaths';
 
 export class CSharpPreviewPanel {
@@ -89,7 +89,7 @@ export class CSharpPreviewPanel {
             // The document is guaranteed to be a Razor document
             this.csharpContent = document.csharpDocument.getContent();
             hostDocumentFilePath = getUriPath(document.uri);
-            virtualDocumentFilePath = getUriPath(document.htmlDocument.uri);
+            virtualDocumentFilePath = getUriPath(document.csharpDocument.uri);
         } else {
             this.csharpContent = undefined;
         }
@@ -130,8 +130,8 @@ export class CSharpPreviewPanel {
     </script>
 </head>
 <body>
-    <p>Host document file path<strong>${hostDocumentFilePath}</strong></p>
-    <p>Virtual document file path<strong>${virtualDocumentFilePath}</strong></p
+    <p>Host document file path: <strong>${hostDocumentFilePath}</strong></p>
+    <p>Virtual document file path: <strong>${virtualDocumentFilePath}</strong></p
     <p><button onclick="copy()">Copy C#</button></p>
     <hr />
     <pre>${content}</pre>

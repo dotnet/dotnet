@@ -1,4 +1,4 @@
-RazorDocument - [0..122)::122 - [<p class="@DateTime.Now" style='@DateTime.Now'>Hello World <strong class="@DateTime.Now">inside of strong tag</strong></p>]
+﻿RazorDocument - [0..122)::122 - [<p class="@DateTime.Now" style='@DateTime.Now'>Hello World <strong class="@DateTime.Now">inside of strong tag</strong></p>]
     MarkupBlock - [0..122)::122
         MarkupTagHelperElement - [0..122)::122 - p[StartTagAndEndTag] - ptaghelper
             MarkupTagHelperStartTag - [0..47)::47 - [<p class="@DateTime.Now" style='@DateTime.Now'>] - Gen<Markup> - SpanEditHandler;Accepts:Any

@@ -31,7 +31,7 @@ internal class CompletionListProvider
     public async Task<VSInternalCompletionList?> GetCompletionListAsync(
         int absoluteIndex,
         VSInternalCompletionContext completionContext,
-        DocumentContext documentContext,
+        VersionedDocumentContext documentContext,
         VSInternalClientCapabilities clientCapabilities,
         CancellationToken cancellationToken)
     {
@@ -41,7 +41,7 @@ internal class CompletionListProvider
             : null;
 
         // Extract the items we got back from the delegated server, to inform tag helper completion
-        var existingItems = delegatedCompletionList != null
+        var existingItems = delegatedCompletionList?.Items != null
             ? new HashSet<string>(delegatedCompletionList.Items.Select(i => i.Label))
             : null;
 

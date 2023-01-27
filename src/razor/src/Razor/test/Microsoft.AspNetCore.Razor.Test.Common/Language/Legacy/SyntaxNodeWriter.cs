@@ -149,7 +149,7 @@ internal class SyntaxNodeWriter : SyntaxRewriter
             WriteSeparator();
 
             // Get the type name without the namespace.
-            var typeName = descriptor.Name.Substring(descriptor.Name.LastIndexOf('.') + 1);
+            var typeName = descriptor.Name[(descriptor.Name.LastIndexOf('.') + 1)..];
             Write(typeName);
         }
     }

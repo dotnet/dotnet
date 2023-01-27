@@ -14,26 +14,22 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-internal record DocumentContext
+internal class DocumentContext
 {
     private RazorCodeDocument? _codeDocument;
     private SourceText? _sourceText;
 
     public DocumentContext(
         Uri uri,
-        DocumentSnapshot snapshot,
-        int version)
+        DocumentSnapshot snapshot)
     {
         Uri = uri;
         Snapshot = snapshot;
-        Version = version;
     }
 
     public virtual Uri Uri { get; }
 
     public virtual DocumentSnapshot Snapshot { get; }
-
-    public virtual int Version { get; }
 
     public virtual string FilePath => Snapshot.FilePath;
 
@@ -41,10 +37,9 @@ internal record DocumentContext
 
     public virtual ProjectSnapshot Project => Snapshot.Project;
 
-    public virtual VersionedTextDocumentIdentifier Identifier => new VersionedTextDocumentIdentifier()
+    public virtual TextDocumentIdentifier Identifier => new VersionedTextDocumentIdentifier()
     {
-        Uri = Uri,
-        Version = Version,
+        Uri = Uri
     };
 
     public virtual async Task<RazorCodeDocument> GetCodeDocumentAsync(CancellationToken cancellationToken)

@@ -286,7 +286,7 @@ internal class BackgroundDocumentProcessedPublisher : OmniSharpDocumentProcessed
             _document = document;
         }
 
-        public async override Task<TextAndVersion> LoadTextAndVersionAsync(Workspace workspace, DocumentId documentId, CancellationToken cancellationToken)
+        public async override Task<TextAndVersion> LoadTextAndVersionAsync(LoadTextOptions options, CancellationToken cancellationToken)
         {
             var sourceText = await _document.GetTextAsync(cancellationToken);
             var textVersion = await _document.GetTextVersionAsync(cancellationToken);

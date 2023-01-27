@@ -36,7 +36,12 @@ namespace NuGet.Protocol.Core.Types
 
         public UserAgentStringBuilder WithOSDescription(string osInfo)
         {
-            _osInfo = osInfo;
+#if NETCOREAPP2_0_OR_GREATER
+            _osInfo = osInfo.Replace("(", @"\(", StringComparison.Ordinal).Replace(")", @"\)", StringComparison.Ordinal);
+#else
+            _osInfo = osInfo.Replace("(", @"\(").Replace(")", @"\)");
+#endif
+
             return this;
         }
 

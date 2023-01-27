@@ -1,4 +1,4 @@
-# Razor integration test pipeline for validating against branch builds of VS.
+﻿# Razor integration test pipeline for validating against branch builds of VS.
 
 trigger: none # Manual trigger for now
 pr: none

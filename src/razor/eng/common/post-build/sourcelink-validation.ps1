@@ -1,4 +1,4 @@
-param(
+﻿param(
   [Parameter(Mandatory=$true)][string] $InputPath,              # Full path to directory where Symbols.NuGet packages to be checked are stored
   [Parameter(Mandatory=$true)][string] $ExtractPath,            # Full path to directory where the packages will be extracted during validation
   [Parameter(Mandatory=$false)][string] $GHRepoName,            # GitHub name of the repo including the Org. E.g., dotnet/arcade

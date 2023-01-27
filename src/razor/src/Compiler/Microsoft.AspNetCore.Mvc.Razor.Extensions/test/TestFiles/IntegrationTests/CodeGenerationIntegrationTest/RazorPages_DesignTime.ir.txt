@@ -1,4 +1,4 @@
-Document - 
+﻿Document - 
     NamespaceDeclaration -  - AspNetCore
         UsingDirective -  - TModel = global::System.Object
         UsingDirective - (1:0,1 [12] ) - System

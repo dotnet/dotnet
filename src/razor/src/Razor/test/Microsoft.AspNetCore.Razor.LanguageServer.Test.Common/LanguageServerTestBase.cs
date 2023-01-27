@@ -58,7 +58,7 @@ public abstract class LanguageServerTestBase : TestBase
         Serializer.AddVSExtensionConverters();
     }
 
-    internal RazorRequestContext CreateRazorRequestContext(DocumentContext? documentContext, ILspServices? lspServices = null)
+    internal RazorRequestContext CreateRazorRequestContext(VersionedDocumentContext? documentContext, ILspServices? lspServices = null)
     {
         lspServices ??= new Mock<ILspServices>(MockBehavior.Strict).Object;
 
@@ -90,7 +90,7 @@ public abstract class LanguageServerTestBase : TestBase
         return CreateDocumentContextFactory(documentPath, codeDocument);
     }
 
-    internal static DocumentContext CreateDocumentContext(Uri documentPath, RazorCodeDocument codeDocument)
+    internal static VersionedDocumentContext CreateDocumentContext(Uri documentPath, RazorCodeDocument codeDocument)
     {
         return TestDocumentContext.From(documentPath.GetAbsoluteOrUNCPath(), codeDocument, hostDocumentVersion: 1337);
     }
@@ -115,9 +115,9 @@ public abstract class LanguageServerTestBase : TestBase
         return documentContextFactory;
     }
 
-    internal static DocumentContext CreateDocumentContext(Uri uri, DocumentSnapshot snapshot)
+    internal static VersionedDocumentContext CreateDocumentContext(Uri uri, DocumentSnapshot snapshot)
     {
-        return new DocumentContext(uri, snapshot, version: 0);
+        return new VersionedDocumentContext(uri, snapshot, version: 0);
     }
 
     [Obsolete("Use " + nameof(LSPProjectSnapshotManagerDispatcher))]

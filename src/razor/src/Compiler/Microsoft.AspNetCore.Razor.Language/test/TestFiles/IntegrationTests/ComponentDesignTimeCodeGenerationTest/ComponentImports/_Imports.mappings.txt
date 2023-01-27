@@ -1,4 +1,4 @@
-Source Location: (1:0,1 [17] x:\dir\subdir\Test\_Imports.razor)
+﻿Source Location: (1:0,1 [17] x:\dir\subdir\Test\_Imports.razor)
 |using System.Text|
 Generated Location: (314:12,0 [17] )
 |using System.Text|

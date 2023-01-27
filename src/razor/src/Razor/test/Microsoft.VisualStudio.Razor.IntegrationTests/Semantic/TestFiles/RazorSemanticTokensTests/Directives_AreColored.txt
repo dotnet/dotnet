@@ -1,4 +1,4 @@
-0,1,RazorTransition,
+﻿0,1,RazorTransition,
 1,4,RazorDirective,
 6,10,string,
 20,1,HTML Tag Delimiter,

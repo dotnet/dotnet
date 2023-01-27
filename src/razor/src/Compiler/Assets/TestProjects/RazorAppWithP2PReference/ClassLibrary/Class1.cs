@@ -1,4 +1,4 @@
-namespace ClassLibrary
+﻿namespace ClassLibrary
 {
     public class Class1
     {

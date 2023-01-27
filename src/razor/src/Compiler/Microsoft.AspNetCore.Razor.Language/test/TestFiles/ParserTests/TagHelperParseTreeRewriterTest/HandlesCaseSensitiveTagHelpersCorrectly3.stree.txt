@@ -1,4 +1,4 @@
-RazorDocument - [0..28)::28 - [<P class='foo' CATCHAll></P>]
+﻿RazorDocument - [0..28)::28 - [<P class='foo' CATCHAll></P>]
     MarkupBlock - [0..28)::28
         MarkupTagHelperElement - [0..28)::28 - P[StartTagAndEndTag] - catchAllTagHelper
             MarkupTagHelperStartTag - [0..24)::24 - [<P class='foo' CATCHAll>] - Gen<Markup> - SpanEditHandler;Accepts:Any

@@ -1,4 +1,4 @@
-# ASP.NET Core Razor
+﻿# ASP.NET Core Razor
 
 This repository is the open-source implementation for the [Razor](https://docs.microsoft.com/en-us/aspnet/core/razor-pages) experience in ASP.NET Core. It contains the compiler and IDE tools for working on Razor ASP.NET Core apps using [Visual Studio](https://visualstudio.com), [Visual Studio for Mac](https://visualstudio.microsoft.com/vs/mac/), and [Visual Studio Code](https://code.visualstudio.com/).
 

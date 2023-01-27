@@ -593,7 +593,7 @@ public class DefaultVisualStudioRazorParserIntegrationTest : ProjectSnapshotMana
     private async Task RunTypeKeywordTestAsync(string keyword)
     {
         // Arrange
-        var before = "@" + keyword.Substring(0, keyword.Length - 1);
+        var before = "@" + keyword[..^1];
         var after = "@" + keyword;
         var changed = new StringTextSnapshot(after);
         var old = new StringTextSnapshot(before);

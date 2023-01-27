@@ -1,4 +1,4 @@
-Source Location: (1:0,1 [15] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SimpleUnspacedIf.cshtml)
+﻿Source Location: (1:0,1 [15] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SimpleUnspacedIf.cshtml)
 |if (true)
 {
 	|

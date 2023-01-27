@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer;
+using Microsoft.AspNetCore.Razor.LanguageServer.ColorPresentation;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
@@ -80,6 +81,10 @@ internal abstract class RazorLanguageServerCustomMessageTarget
     // Called by the Razor Language Server to provide document colors from the platform.
     [JsonRpcMethod(RazorLanguageServerCustomMessageTargets.RazorProvideHtmlDocumentColorEndpoint, UseSingleObjectParameterDeserialization = true)]
     public abstract Task<IReadOnlyList<ColorInformation>?> ProvideHtmlDocumentColorAsync(DelegatedDocumentColorParams documentColorParams, CancellationToken cancellationToken);
+
+    // Called by the Razor Language Server to provide color presentation from the platform.
+    [JsonRpcMethod(RazorLanguageServerCustomMessageTargets.RazorProvideHtmlColorPresentationEndpoint, UseSingleObjectParameterDeserialization = true)]
+    public abstract Task<IReadOnlyList<ColorPresentation>> ProvideHtmlColorPresentationAsync(DelegatedColorPresentationParams colorPresentationParams, CancellationToken cancellationToken);
 
     [JsonRpcMethod(RazorLanguageServerCustomMessageTargets.RazorFoldingRangeEndpoint, UseSingleObjectParameterDeserialization = true)]
     public abstract Task<RazorFoldingRangeResponse?> ProvideFoldingRangesAsync(RazorFoldingRangeRequestParam foldingRangeParams, CancellationToken cancellationToken);

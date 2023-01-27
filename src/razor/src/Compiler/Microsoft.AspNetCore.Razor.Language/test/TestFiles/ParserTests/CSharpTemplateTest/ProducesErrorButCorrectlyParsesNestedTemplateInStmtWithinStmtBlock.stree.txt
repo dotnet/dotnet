@@ -1,4 +1,4 @@
-RazorDocument - [0..92)::92 - [@{ var foo = bar; Html.ExecuteTemplate(foo, @<p>Foo #@Html.Repeat(10, @<p>@item</p>)</p>); }]
+﻿RazorDocument - [0..92)::92 - [@{ var foo = bar; Html.ExecuteTemplate(foo, @<p>Foo #@Html.Repeat(10, @<p>@item</p>)</p>); }]
     MarkupBlock - [0..92)::92
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

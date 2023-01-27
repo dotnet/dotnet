@@ -66,14 +66,12 @@ public static class BoundAttributeDescriptorExtensions
 
     public static bool IsDirectiveAttribute(this BoundAttributeDescriptor attribute)
     {
-        if (attribute == null)
+        if (attribute is null)
         {
             throw new ArgumentNullException(nameof(attribute));
         }
 
-        return
-            attribute.Metadata.TryGetValue(ComponentMetadata.Common.DirectiveAttribute, out var value) &&
-            string.Equals(bool.TrueString, value);
+        return attribute.IsDirectiveAttribute;
     }
 
     public static bool IsDefaultKind(this BoundAttributeParameterDescriptor parameter)

@@ -1,4 +1,4 @@
-syntax: glob
+﻿syntax: glob
 
 ### VisualStudio ###
 
@@ -155,3 +155,6 @@ yarn-*.log
 
 # Bundled extension assets
 *.vsix
+
+# testapp modifications
+src/Razor/test/testapps/ComponentApp/Components/Pages/Generated.razor

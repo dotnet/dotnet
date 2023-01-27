@@ -1,1 +1,1 @@
-// This is the production service worker
+﻿// This is the production service worker

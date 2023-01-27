@@ -1,4 +1,4 @@
-RazorDocument - [0..18)::18 - [<span foo='@ @' />]
+﻿RazorDocument - [0..18)::18 - [<span foo='@ @' />]
     MarkupBlock - [0..18)::18
         MarkupElement - [0..18)::18
             MarkupStartTag - [0..18)::18 - [<span foo='@ @' />] - Gen<Markup> - SpanEditHandler;Accepts:Any

@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Razor;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -34,7 +35,7 @@ internal class ComponentAccessibilityCodeActionProvider : RazorCodeActionProvide
 
     public override Task<IReadOnlyList<RazorVSInternalCodeAction>?> ProvideAsync(RazorCodeActionContext context, CancellationToken cancellationToken)
     {
-        var codeActions = new List<RazorVSInternalCodeAction>();
+        using var _ = ListPool<RazorVSInternalCodeAction>.GetPooledObject(out var codeActions);
 
         // Locate cursor
         var change = new SourceChange(context.Location.AbsoluteIndex, length: 0, newText: string.Empty);
@@ -44,8 +45,9 @@ internal class ComponentAccessibilityCodeActionProvider : RazorCodeActionProvide
             return s_emptyResult;
         }
 
-        // Find start tag
-        var startTag = node.Ancestors().FirstOrDefault(n => n is MarkupStartTagSyntax) as MarkupStartTagSyntax;
+        // Find start tag. We allow this code action to work from anywhere in the start tag, which includes
+        // embedded C#, so we just have to traverse up the tree to find a start tag if there is one.
+        var startTag = (MarkupStartTagSyntax?)node.Ancestors().FirstOrDefault(n => n is MarkupStartTagSyntax);
         if (startTag is null)
         {
             return s_emptyResult;
@@ -68,7 +70,7 @@ internal class ComponentAccessibilityCodeActionProvider : RazorCodeActionProvide
             AddCreateComponentFromTag(context, startTag, codeActions);
         }
 
-        return Task.FromResult<IReadOnlyList<RazorVSInternalCodeAction>?>(codeActions);
+        return Task.FromResult<IReadOnlyList<RazorVSInternalCodeAction>?>(codeActions.ToArray());
     }
 
     private static bool IsApplicableTag(MarkupStartTagSyntax startTag)
@@ -128,7 +130,7 @@ internal class ComponentAccessibilityCodeActionProvider : RazorCodeActionProvide
         var matching = FindMatchingTagHelpers(context, startTag);
 
         // For all the matches, add options for add @using and fully qualify
-        foreach (var tagHelperPair in matching.Values)
+        foreach (var tagHelperPair in matching)
         {
             if (tagHelperPair._fullyQualified is null)
             {
@@ -151,7 +153,7 @@ internal class ComponentAccessibilityCodeActionProvider : RazorCodeActionProvide
         }
     }
 
-    private Dictionary<string, TagHelperPair> FindMatchingTagHelpers(RazorCodeActionContext context, MarkupStartTagSyntax startTag)
+    private List<TagHelperPair> FindMatchingTagHelpers(RazorCodeActionContext context, MarkupStartTagSyntax startTag)
     {
         // Get all data necessary for matching
         var tagName = startTag.Name.Content;
@@ -165,10 +167,11 @@ internal class ComponentAccessibilityCodeActionProvider : RazorCodeActionProvide
             parentTagName = parentTagHelperElement.StartTag?.Name.Content ?? parentTagHelperElement.EndTag?.Name.Content;
         }
 
-        var attributes = _tagHelperFactsService.StringifyAttributes(startTag.Attributes).ToList();
+        var attributes = _tagHelperFactsService.StringifyAttributes(startTag.Attributes);
 
         // Find all matching tag helpers
-        var matching = new Dictionary<string, TagHelperPair>();
+        using var _ = DictionaryPool<string, TagHelperPair>.GetPooledObject(out var matching);
+
         foreach (var tagHelper in context.DocumentSnapshot.Project.TagHelpers)
         {
             if (tagHelper.TagMatchingRules.All(rule => TagHelperMatchingConventions.SatisfiesRule(tagName, parentTagName, attributes, rule)))
@@ -189,12 +192,12 @@ internal class ComponentAccessibilityCodeActionProvider : RazorCodeActionProvide
             }
         }
 
-        return matching;
+        return new List<TagHelperPair>(matching.Values);
     }
 
     private static WorkspaceEdit CreateRenameTagEdit(RazorCodeActionContext context, MarkupStartTagSyntax startTag, string newTagName)
     {
-        var textEdits = new List<TextEdit>();
+        using var _ = ListPool<TextEdit>.GetPooledObject(out var textEdits);
         var codeDocumentIdentifier = new OptionalVersionedTextDocumentIdentifier() { Uri = context.Request.TextDocument.Uri };
 
         var startTagTextEdit = new TextEdit
@@ -219,14 +222,14 @@ internal class ComponentAccessibilityCodeActionProvider : RazorCodeActionProvide
 
         return new WorkspaceEdit
         {
-            DocumentChanges = new List<TextDocumentEdit>()
+            DocumentChanges = new TextDocumentEdit[]
             {
                     new TextDocumentEdit()
                     {
                         TextDocument = codeDocumentIdentifier,
                         Edits = textEdits.ToArray(),
                     }
-            }.ToArray(),
+            },
         };
     }
 

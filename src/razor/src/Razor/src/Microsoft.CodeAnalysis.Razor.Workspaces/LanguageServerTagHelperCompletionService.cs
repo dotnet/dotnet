@@ -228,7 +228,7 @@ internal class LanguageServerTagHelperCompletionService : TagHelperCompletionSer
                 // If we think this completion should be added based on tag name, thats great, but lets also make sure the attributes are correct
                 if (addRuleCompletions && TagHelperMatchingConventions.SatisfiesAttributes(tagAttributes, rule))
                 {
-                    UpdateCompletions(prefix + rule.TagName, possibleDescriptor);
+                    UpdateCompletions(prefix + rule.TagName, possibleDescriptor, elementCompletions);
                 }
             }
         }
@@ -237,14 +237,17 @@ internal class LanguageServerTagHelperCompletionService : TagHelperCompletionSer
         // This way, any TagHelper added completions will also have catch-alls listed under their entries.
         foreach (var catchAllDescriptor in catchAllDescriptors)
         {
-            foreach (var completionTagName in elementCompletions.Keys)
+            foreach (var kvp in elementCompletions)
             {
-                if (elementCompletions[completionTagName].Count > 0 ||
+                var completionTagName = kvp.Key;
+                var tagHelperDescriptors = kvp.Value;
+
+                if (tagHelperDescriptors.Count > 0 ||
                     (!string.IsNullOrEmpty(prefix) && completionTagName.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)))
                 {
                     // The current completion either has other TagHelper's associated with it or is prefixed with a non-empty
                     // TagHelper prefix.
-                    UpdateCompletions(completionTagName, catchAllDescriptor);
+                    UpdateCompletions(completionTagName, catchAllDescriptor, elementCompletions, tagHelperDescriptors);
                 }
             }
         }
@@ -252,7 +255,7 @@ internal class LanguageServerTagHelperCompletionService : TagHelperCompletionSer
         var result = ElementCompletionResult.Create(elementCompletions);
         return result;
 
-        void UpdateCompletions(string tagName, TagHelperDescriptor possibleDescriptor)
+        static void UpdateCompletions(string tagName, TagHelperDescriptor possibleDescriptor, Dictionary<string, HashSet<TagHelperDescriptor>> elementCompletions, HashSet<TagHelperDescriptor>? tagHelperDescriptors = null)
         {
             if (possibleDescriptor.BoundAttributes.Any(boundAttribute => boundAttribute.IsDirectiveAttribute()))
             {
@@ -262,7 +265,12 @@ internal class LanguageServerTagHelperCompletionService : TagHelperCompletionSer
                 return;
             }
 
-            if (!elementCompletions.TryGetValue(tagName, out var existingRuleDescriptors))
+            HashSet<TagHelperDescriptor>? existingRuleDescriptors;
+            if (tagHelperDescriptors is not null)
+            {
+                existingRuleDescriptors = tagHelperDescriptors;
+            }
+            else if (!elementCompletions.TryGetValue(tagName, out existingRuleDescriptors))
             {
                 existingRuleDescriptors = new HashSet<TagHelperDescriptor>();
                 elementCompletions[tagName] = existingRuleDescriptors;

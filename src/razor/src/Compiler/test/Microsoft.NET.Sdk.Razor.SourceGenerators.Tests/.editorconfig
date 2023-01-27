@@ -1,4 +1,4 @@
-[*.cs]
+﻿[*.cs]
 
 # Removal tracked by https://github.com/dotnet/razor-compiler/issues/246
 

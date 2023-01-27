@@ -1,4 +1,4 @@
-RazorDocument - [0..51)::51 - [<script type='text/html invalid'><input /></script>]
+﻿RazorDocument - [0..51)::51 - [<script type='text/html invalid'><input /></script>]
     MarkupBlock - [0..51)::51
         MarkupElement - [0..51)::51
             MarkupStartTag - [0..33)::33 - [<script type='text/html invalid'>] - Gen<Markup> - SpanEditHandler;Accepts:Any

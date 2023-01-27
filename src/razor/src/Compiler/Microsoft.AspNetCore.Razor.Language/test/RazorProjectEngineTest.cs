@@ -1,4 +1,4 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 #nullable disable
@@ -34,7 +34,8 @@ public class RazorProjectEngineTest
             engine.Phases,
             phase => Assert.IsType<DefaultRazorParsingPhase>(phase),
             phase => Assert.IsType<DefaultRazorSyntaxTreePhase>(phase),
-            phase => Assert.IsType<DefaultRazorTagHelperBinderPhase>(phase),
+            phase => Assert.IsType<DefaultRazorTagHelperContextDiscoveryPhase>(phase),
+            phase => Assert.IsType<DefaultRazorTagHelperRewritePhase>(phase),
             phase => Assert.IsType<DefaultRazorIntermediateNodeLoweringPhase>(phase),
             phase => Assert.IsType<DefaultRazorDocumentClassifierPhase>(phase),
             phase => Assert.IsType<DefaultRazorDirectiveClassifierPhase>(phase),

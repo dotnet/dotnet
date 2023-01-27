@@ -1,4 +1,4 @@
-RazorDocument - [0..69)::69 - [@{try { someMethod(); } catch(Exception) when (true) { handleIO(); }}]
+﻿RazorDocument - [0..69)::69 - [@{try { someMethod(); } catch(Exception) when (true) { handleIO(); }}]
     MarkupBlock - [0..69)::69
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

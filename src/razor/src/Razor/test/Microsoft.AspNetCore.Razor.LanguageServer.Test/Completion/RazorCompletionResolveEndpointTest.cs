@@ -74,7 +74,7 @@ public class RazorCompletionResolveEndpointTest : LanguageServerTestBase
         // Arrange
         var completionItem = new VSInternalCompletionItem() { Label = "Test" };
         var completionList = new VSInternalCompletionList() { Items = new[] { completionItem } };
-        var resultId = _completionListCache.Set(completionList, context: null);
+        var resultId = _completionListCache.Add(completionList, context: null);
         completionList.SetResultId(resultId, completionSetting: null);
         var parameters = ConvertToBridgedItem(completionItem);
         var requestContext = CreateRazorRequestContext(documentContext: null);
@@ -94,7 +94,7 @@ public class RazorCompletionResolveEndpointTest : LanguageServerTestBase
         var completionItem = new VSInternalCompletionItem() { Label = "Test" };
         var completionList = new VSInternalCompletionList() { Items = new[] { completionItem } };
         completionList.SetResultId(/* Invalid */ 1337, completionSetting: null);
-        var resultId = _completionListCache.Set(completionList, context: null);
+        var resultId = _completionListCache.Add(completionList, context: null);
         completionList.SetResultId(resultId, completionSetting: null);
         var parameters = ConvertToBridgedItem(completionItem);
         var requestContext = CreateRazorRequestContext(documentContext: null);
@@ -114,13 +114,13 @@ public class RazorCompletionResolveEndpointTest : LanguageServerTestBase
         var completionSetting = new VSInternalCompletionSetting() { CompletionList = new VSInternalCompletionListSetting() { Data = true } };
         var completionList1 = new VSInternalCompletionList() { Items = Array.Empty<CompletionItem>() };
         var completion1Context = new object();
-        var resultId1 = _completionListCache.Set(completionList1, completion1Context);
+        var resultId1 = _completionListCache.Add(completionList1, completion1Context);
         completionList1.SetResultId(resultId1, completionSetting);
 
         var completionItem = new VSInternalCompletionItem() { Label = "Test" };
         var completionList2 = new VSInternalCompletionList() { Items = new[] { completionItem } };
         var completion2Context = new object();
-        var resultId2 = _completionListCache.Set(completionList2, completion2Context);
+        var resultId2 = _completionListCache.Add(completionList2, completion2Context);
         completionList2.SetResultId(resultId2, completionSetting);
         var mergedCompletionList = CompletionListMerger.Merge(completionList1, completionList2);
         var mergedCompletionItem = mergedCompletionList.Items.Single();

@@ -19,7 +19,7 @@ public abstract class TagHelperFactsService
     public abstract IReadOnlyList<TagHelperDescriptor> GetTagHelpersGivenParent(TagHelperDocumentContext documentContext, string? parentTag);
 
     // Internal for testing
-    internal virtual IEnumerable<KeyValuePair<string, string>> StringifyAttributes(SyntaxList<RazorSyntaxNode> attributes)
+    internal virtual List<KeyValuePair<string, string>> StringifyAttributes(SyntaxList<RazorSyntaxNode> attributes)
     {
         throw new NotImplementedException();
     }

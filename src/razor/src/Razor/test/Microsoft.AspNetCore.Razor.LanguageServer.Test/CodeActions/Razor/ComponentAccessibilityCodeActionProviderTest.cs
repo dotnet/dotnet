@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
+using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -30,14 +31,18 @@ public class ComponentAccessibilityCodeActionProviderTest : LanguageServerTestBa
     {
         // Arrange
         var documentPath = "c:/Test.razor";
-        var contents = "<";
+        var contents = """
+            <$$
+            """;
+        TestFileMarkupParser.GetPosition(contents, out contents, out var cursorPosition);
+
         var request = new CodeActionParams()
         {
             TextDocument = new TextDocumentIdentifier { Uri = new Uri(documentPath) },
             Range = new Range{ Start = new Position(0, 1), End = new Position(0, 1), },
         };
 
-        var location = new SourceLocation(1, -1, -1);
+        var location = new SourceLocation(cursorPosition, -1, -1);
         var context = CreateRazorCodeActionContext(request, location, documentPath, contents, new SourceSpan(0, 1));
 
         var provider = new ComponentAccessibilityCodeActionProvider(new DefaultTagHelperFactsService());
@@ -54,14 +59,18 @@ public class ComponentAccessibilityCodeActionProviderTest : LanguageServerTestBa
     {
         // Arrange
         var documentPath = "c:/Test.razor";
-        var contents = "";
+        var contents = """
+            $$
+            """;
+        TestFileMarkupParser.GetPosition(contents, out contents, out var cursorPosition);
+
         var request = new CodeActionParams()
         {
             TextDocument = new TextDocumentIdentifier { Uri = new Uri(documentPath) },
             Range = new Range(),
         };
 
-        var location = new SourceLocation(0, -1, -1);
+        var location = new SourceLocation(cursorPosition, -1, -1);
         var context = CreateRazorCodeActionContext(request, location, documentPath, contents, new SourceSpan(0, 0));
         context.CodeDocument.SetFileKind(FileKinds.Legacy);
 
@@ -79,14 +88,18 @@ public class ComponentAccessibilityCodeActionProviderTest : LanguageServerTestBa
     {
         // Arrange
         var documentPath = "c:/Test.razor";
-        var contents = " <Component></Component>";
+        var contents = """
+            $$ <Component></Component>
+            """;
+        TestFileMarkupParser.GetPosition(contents, out contents, out var cursorPosition);
+
         var request = new CodeActionParams()
         {
             TextDocument = new TextDocumentIdentifier { Uri = new Uri(documentPath) },
             Range = new Range { Start = new Position(0, 0), End = new Position(0, 0) },
         };
 
-        var location = new SourceLocation(0, -1, -1);
+        var location = new SourceLocation(cursorPosition, -1, -1);
         var context = CreateRazorCodeActionContext(request, location, documentPath, contents, new SourceSpan(contents.IndexOf("Component", StringComparison.Ordinal), 9));
 
         var provider = new ComponentAccessibilityCodeActionProvider(new DefaultTagHelperFactsService());
@@ -103,14 +116,18 @@ public class ComponentAccessibilityCodeActionProviderTest : LanguageServerTestBa
     {
         // Arrange
         var documentPath = "c:/Test.razor";
-        var contents = "<Component></Component>";
+        var contents = """
+            <$$Component></Component>
+            """;
+        TestFileMarkupParser.GetPosition(contents, out contents, out var cursorPosition);
+
         var request = new CodeActionParams()
         {
             TextDocument = new TextDocumentIdentifier { Uri = new Uri(documentPath) },
             Range = new Range { Start = new Position(0, 0), End = new Position(0, 0) },
         };
 
-        var location = new SourceLocation(1, -1, -1);
+        var location = new SourceLocation(cursorPosition, -1, -1);
         var context = CreateRazorCodeActionContext(request, location, documentPath, contents, new SourceSpan(contents.IndexOf("Component", StringComparison.Ordinal), 9), supportsFileCreation: true);
 
         var provider = new ComponentAccessibilityCodeActionProvider(new DefaultTagHelperFactsService());
@@ -147,14 +164,49 @@ public class ComponentAccessibilityCodeActionProviderTest : LanguageServerTestBa
     {
         // Arrange
         var documentPath = "c:/Test.razor";
-        var contents = "<NewComponent></NewComponent>";
+        var contents = """
+            <$$NewComponent></NewComponent>
+            """;
+        TestFileMarkupParser.GetPosition(contents, out contents, out var cursorPosition);
+
         var request = new CodeActionParams()
         {
             TextDocument = new TextDocumentIdentifier { Uri = new Uri(documentPath) },
             Range = new Range { Start = new Position(0, 0), End = new Position(0, 0) },
         };
 
-        var location = new SourceLocation(1, -1, -1);
+        var location = new SourceLocation(cursorPosition, -1, -1);
+        var context = CreateRazorCodeActionContext(request, location, documentPath, contents, new SourceSpan(contents.IndexOf("Component", StringComparison.Ordinal), 9), supportsFileCreation: true);
+
+        var provider = new ComponentAccessibilityCodeActionProvider(new DefaultTagHelperFactsService());
+
+        // Act
+        var commandOrCodeActionContainer = await provider.ProvideAsync(context, default);
+
+        // Assert
+        Assert.NotNull(commandOrCodeActionContainer);
+        var command = Assert.Single(commandOrCodeActionContainer);
+        Assert.Equal(LanguageServerSR.Create_Component_FromTag_Title, command.Title);
+        Assert.NotNull(command.Data);
+    }
+
+    [Fact]
+    public async Task Handle_NewComponent_CaretInAttribute_ReturnsResult()
+    {
+        // Arrange
+        var documentPath = "c:/Test.razor";
+        var contents = """
+            <NewComponent checked $$goo="blah"></NewComponent>
+            """;
+        TestFileMarkupParser.GetPosition(contents, out contents, out var cursorPosition);
+
+        var request = new CodeActionParams()
+        {
+            TextDocument = new TextDocumentIdentifier { Uri = new Uri(documentPath) },
+            Range = new Range { Start = new Position(0, 0), End = new Position(0, 0) },
+        };
+
+        var location = new SourceLocation(cursorPosition, -1, -1);
         var context = CreateRazorCodeActionContext(request, location, documentPath, contents, new SourceSpan(contents.IndexOf("Component", StringComparison.Ordinal), 9), supportsFileCreation: true);
 
         var provider = new ComponentAccessibilityCodeActionProvider(new DefaultTagHelperFactsService());
@@ -174,14 +226,18 @@ public class ComponentAccessibilityCodeActionProviderTest : LanguageServerTestBa
     {
         // Arrange
         var documentPath = "c:/Test.razor";
-        var contents = "<NewComponent></NewComponent>";
+        var contents = """
+            <$$NewComponent></NewComponent>
+            """;
+        TestFileMarkupParser.GetPosition(contents, out contents, out var cursorPosition);
+
         var request = new CodeActionParams()
         {
             TextDocument = new TextDocumentIdentifier { Uri = new Uri(documentPath) },
             Range = new Range { Start = new Position(0, 0), End = new Position(0, 0) },
         };
 
-        var location = new SourceLocation(1, -1, -1);
+        var location = new SourceLocation(cursorPosition, -1, -1);
         var context = CreateRazorCodeActionContext(request, location, documentPath, contents, new SourceSpan(contents.IndexOf("Component", StringComparison.Ordinal), 9), supportsFileCreation: false);
 
         var provider = new ComponentAccessibilityCodeActionProvider(new DefaultTagHelperFactsService());
@@ -199,14 +255,18 @@ public class ComponentAccessibilityCodeActionProviderTest : LanguageServerTestBa
     {
         // Arrange
         var documentPath = "c:/Test.razor";
-        var contents = "<Component></Component>";
+        var contents = """
+            <$$Component></Component>
+            """;
+        TestFileMarkupParser.GetPosition(contents, out contents, out var cursorPosition);
+
         var request = new CodeActionParams()
         {
             TextDocument = new TextDocumentIdentifier { Uri = new Uri(documentPath) },
             Range = new Range { Start = new Position(0, 0), End = new Position(0, 0) },
         };
 
-        var location = new SourceLocation(1, -1, -1);
+        var location = new SourceLocation(cursorPosition, -1, -1);
         var context = CreateRazorCodeActionContext(request, location, documentPath, contents, new SourceSpan(contents.IndexOf("Component", StringComparison.Ordinal), 9), supportsFileCreation: false);
 
         var provider = new ComponentAccessibilityCodeActionProvider(new DefaultTagHelperFactsService());

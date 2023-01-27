@@ -1,4 +1,4 @@
-RazorDocument - [0..126)::126 - [@{ using Some.Disposable.TypeName foo = GetDisposable<Some.Disposable.TypeName>(() => { using var bar = otherDisposable; }); }]
+﻿RazorDocument - [0..126)::126 - [@{ using Some.Disposable.TypeName foo = GetDisposable<Some.Disposable.TypeName>(() => { using var bar = otherDisposable; }); }]
     MarkupBlock - [0..126)::126
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

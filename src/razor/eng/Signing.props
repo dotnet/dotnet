@@ -1,4 +1,4 @@
-<Project>
+﻿<Project>
 
   <!--
     The `Condition` in this Import was added because publishing pipelines rely

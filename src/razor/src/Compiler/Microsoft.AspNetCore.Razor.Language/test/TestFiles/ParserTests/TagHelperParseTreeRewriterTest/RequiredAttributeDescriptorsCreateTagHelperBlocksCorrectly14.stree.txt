@@ -1,4 +1,4 @@
-RazorDocument - [0..19)::19 - [<div class="btn" />]
+﻿RazorDocument - [0..19)::19 - [<div class="btn" />]
     MarkupBlock - [0..19)::19
         MarkupElement - [0..19)::19
             MarkupStartTag - [0..19)::19 - [<div class="btn" />] - Gen<Markup> - SpanEditHandler;Accepts:Any

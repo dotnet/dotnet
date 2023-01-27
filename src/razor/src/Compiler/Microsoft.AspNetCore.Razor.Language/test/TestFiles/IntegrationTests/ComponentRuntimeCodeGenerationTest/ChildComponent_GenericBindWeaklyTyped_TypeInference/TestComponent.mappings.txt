@@ -1,4 +1,4 @@
-Source Location: (52:1,7 [21] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (52:1,7 [21] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     string Value;
 |

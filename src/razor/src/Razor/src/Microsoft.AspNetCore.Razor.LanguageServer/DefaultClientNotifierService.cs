@@ -40,7 +40,7 @@ internal class DefaultClientNotifierService : ClientNotifierServiceBase
     {
         await _initializedCompletionSource.Task;
 
-        await _jsonRpc.NotifyAsync(method, @params);
+        await _jsonRpc.NotifyWithParameterObjectAsync(method, @params);
     }
 
     public override async Task SendNotificationAsync(string method, CancellationToken cancellationToken)

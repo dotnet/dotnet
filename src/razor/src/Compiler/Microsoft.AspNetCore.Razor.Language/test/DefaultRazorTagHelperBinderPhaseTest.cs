@@ -1,4 +1,4 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 #nullable disable
@@ -13,7 +13,7 @@ using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
-public class DefaultRazorTagHelperBinderPhaseTest : RazorProjectEngineTestBase
+public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngineTestBase
 {
     protected override RazorLanguageVersion Version => RazorLanguageVersion.Latest;
 
@@ -27,7 +27,7 @@ public class DefaultRazorTagHelperBinderPhaseTest : RazorProjectEngineTestBase
             builder.AddTagHelpers(new TagHelperDescriptor[0]);
         });
 
-        var phase = new DefaultRazorTagHelperBinderPhase()
+        var phase = new DefaultRazorTagHelperContextDiscoveryPhase()
         {
             Engine = projectEngine.Engine,
         };
@@ -66,7 +66,7 @@ public class DefaultRazorTagHelperBinderPhaseTest : RazorProjectEngineTestBase
             builder.AddTagHelpers(new TagHelperDescriptor[0]);
         });
 
-        var phase = new DefaultRazorTagHelperBinderPhase()
+        var phase = new DefaultRazorTagHelperContextDiscoveryPhase()
         {
             Engine = projectEngine.Engine,
         };
@@ -105,7 +105,7 @@ public class DefaultRazorTagHelperBinderPhaseTest : RazorProjectEngineTestBase
             builder.AddTagHelpers(new TagHelperDescriptor[0]);
         });
 
-        var phase = new DefaultRazorTagHelperBinderPhase()
+        var phase = new DefaultRazorTagHelperContextDiscoveryPhase()
         {
             Engine = projectEngine.Engine,
         };
@@ -154,9 +154,13 @@ public class DefaultRazorTagHelperBinderPhaseTest : RazorProjectEngineTestBase
             });
         });
 
-        var phase = new DefaultRazorTagHelperBinderPhase()
+        var discoveryPhase = new DefaultRazorTagHelperContextDiscoveryPhase()
         {
             Engine = projectEngine.Engine,
+        };
+        var rewritePhase = new DefaultRazorTagHelperRewritePhase()
+        {
+            Engine = projectEngine.Engine
         };
 
         var sourceDocument = CreateTestSourceDocument();
@@ -165,7 +169,8 @@ public class DefaultRazorTagHelperBinderPhaseTest : RazorProjectEngineTestBase
         codeDocument.SetSyntaxTree(originalTree);
 
         // Act
-        phase.Execute(codeDocument);
+        discoveryPhase.Execute(codeDocument);
+        rewritePhase.Execute(codeDocument);
 
         // Assert
         var rewrittenTree = codeDocument.GetSyntaxTree();
@@ -193,9 +198,13 @@ public class DefaultRazorTagHelperBinderPhaseTest : RazorProjectEngineTestBase
                     assemblyName: "TestAssembly"),
             };
 
-        var phase = new DefaultRazorTagHelperBinderPhase()
+        var discoveryPhase = new DefaultRazorTagHelperContextDiscoveryPhase()
         {
             Engine = projectEngine.Engine,
+        };
+        var rewritePhase = new DefaultRazorTagHelperRewritePhase()
+        {
+            Engine = projectEngine.Engine
         };
 
         var sourceDocument = CreateTestSourceDocument();
@@ -205,7 +214,8 @@ public class DefaultRazorTagHelperBinderPhaseTest : RazorProjectEngineTestBase
         codeDocument.SetTagHelpers(tagHelpers);
 
         // Act
-        phase.Execute(codeDocument);
+        discoveryPhase.Execute(codeDocument);
+        rewritePhase.Execute(codeDocument);
 
         // Assert
         var rewrittenTree = codeDocument.GetSyntaxTree();
@@ -233,9 +243,13 @@ public class DefaultRazorTagHelperBinderPhaseTest : RazorProjectEngineTestBase
             };
         var projectEngine = RazorProjectEngine.Create(builder => builder.AddTagHelpers(tagHelpers));
 
-        var phase = new DefaultRazorTagHelperBinderPhase()
+        var discoveryPhase = new DefaultRazorTagHelperContextDiscoveryPhase()
         {
             Engine = projectEngine.Engine,
+        };
+        var rewritePhase = new DefaultRazorTagHelperRewritePhase()
+        {
+            Engine = projectEngine.Engine
         };
 
         var sourceDocument = CreateTestSourceDocument();
@@ -245,7 +259,8 @@ public class DefaultRazorTagHelperBinderPhaseTest : RazorProjectEngineTestBase
         codeDocument.SetTagHelpers(tagHelpers: null);
 
         // Act
-        phase.Execute(codeDocument);
+        discoveryPhase.Execute(codeDocument);
+        rewritePhase.Execute(codeDocument);
 
         // Assert
         var rewrittenTree = codeDocument.GetSyntaxTree();
@@ -273,7 +288,7 @@ public class DefaultRazorTagHelperBinderPhaseTest : RazorProjectEngineTestBase
             };
         var projectEngine = RazorProjectEngine.Create(builder => builder.AddTagHelpers(tagHelpers));
 
-        var phase = new DefaultRazorTagHelperBinderPhase()
+        var phase = new DefaultRazorTagHelperContextDiscoveryPhase()
         {
             Engine = projectEngine.Engine,
         };
@@ -320,9 +335,13 @@ public class DefaultRazorTagHelperBinderPhaseTest : RazorProjectEngineTestBase
             builder.AddTagHelpers(new[] { descriptor });
         });
 
-        var phase = new DefaultRazorTagHelperBinderPhase()
+        var discoveryPhase = new DefaultRazorTagHelperContextDiscoveryPhase()
         {
             Engine = projectEngine.Engine,
+        };
+        var rewritePhase = new DefaultRazorTagHelperRewritePhase()
+        {
+            Engine = projectEngine.Engine
         };
 
         var content = @"
@@ -336,7 +355,8 @@ public class DefaultRazorTagHelperBinderPhaseTest : RazorProjectEngineTestBase
         codeDocument.SetSyntaxTree(originalTree);
 
         // Act
-        phase.Execute(codeDocument);
+        discoveryPhase.Execute(codeDocument);
+        rewritePhase.Execute(codeDocument);
 
         // Assert
         var rewrittenTree = codeDocument.GetSyntaxTree();
@@ -374,9 +394,13 @@ public class DefaultRazorTagHelperBinderPhaseTest : RazorProjectEngineTestBase
             builder.AddTagHelpers(new[] { descriptor });
         });
 
-        var phase = new DefaultRazorTagHelperBinderPhase()
+        var discoveryPhase = new DefaultRazorTagHelperContextDiscoveryPhase()
         {
             Engine = projectEngine.Engine,
+        };
+        var rewritePhase = new DefaultRazorTagHelperRewritePhase()
+        {
+            Engine = projectEngine.Engine
         };
 
         var content = @"
@@ -390,7 +414,8 @@ public class DefaultRazorTagHelperBinderPhaseTest : RazorProjectEngineTestBase
         codeDocument.SetSyntaxTree(originalTree);
 
         // Act
-        phase.Execute(codeDocument);
+        discoveryPhase.Execute(codeDocument);
+        rewritePhase.Execute(codeDocument);
 
         // Assert
         var rewrittenTree = codeDocument.GetSyntaxTree();
@@ -416,9 +441,13 @@ public class DefaultRazorTagHelperBinderPhaseTest : RazorProjectEngineTestBase
             };
         var projectEngine = RazorProjectEngine.Create(builder => builder.AddTagHelpers(featureTagHelpers));
 
-        var phase = new DefaultRazorTagHelperBinderPhase()
+        var discoveryPhase = new DefaultRazorTagHelperContextDiscoveryPhase()
         {
             Engine = projectEngine.Engine,
+        };
+        var rewritePhase = new DefaultRazorTagHelperRewritePhase()
+        {
+            Engine = projectEngine.Engine
         };
 
         var sourceDocument = CreateTestSourceDocument();
@@ -436,7 +465,8 @@ public class DefaultRazorTagHelperBinderPhaseTest : RazorProjectEngineTestBase
         codeDocument.SetTagHelpers(codeDocumentTagHelpers);
 
         // Act
-        phase.Execute(codeDocument);
+        discoveryPhase.Execute(codeDocument);
+        rewritePhase.Execute(codeDocument);
 
         // Assert
         var rewrittenTree = codeDocument.GetSyntaxTree();
@@ -453,7 +483,7 @@ public class DefaultRazorTagHelperBinderPhaseTest : RazorProjectEngineTestBase
     {
         // Arrange
         var projectEngine = CreateProjectEngine();
-        var phase = new DefaultRazorTagHelperBinderPhase()
+        var phase = new DefaultRazorTagHelperContextDiscoveryPhase()
         {
             Engine = projectEngine.Engine,
         };
@@ -480,7 +510,7 @@ public class DefaultRazorTagHelperBinderPhaseTest : RazorProjectEngineTestBase
             builder.Features.Add(new TestTagHelperFeature());
         });
 
-        var phase = new DefaultRazorTagHelperBinderPhase()
+        var phase = new DefaultRazorTagHelperContextDiscoveryPhase()
         {
             Engine = projectEngine.Engine,
         };
@@ -509,7 +539,7 @@ public class DefaultRazorTagHelperBinderPhaseTest : RazorProjectEngineTestBase
             builder.Features.Add(new TestTagHelperFeature());
         });
 
-        var phase = new DefaultRazorTagHelperBinderPhase()
+        var phase = new DefaultRazorTagHelperContextDiscoveryPhase()
         {
             Engine = projectEngine.Engine,
         };
@@ -548,9 +578,13 @@ public class DefaultRazorTagHelperBinderPhaseTest : RazorProjectEngineTestBase
             });
         });
 
-        var phase = new DefaultRazorTagHelperBinderPhase()
+        var discoveryPhase = new DefaultRazorTagHelperContextDiscoveryPhase()
         {
             Engine = projectEngine.Engine,
+        };
+        var rewritePhase = new DefaultRazorTagHelperRewritePhase()
+        {
+            Engine = projectEngine.Engine
         };
 
         var content =
@@ -573,7 +607,8 @@ public class DefaultRazorTagHelperBinderPhaseTest : RazorProjectEngineTestBase
         codeDocument.SetSyntaxTree(erroredOriginalTree);
 
         // Act
-        phase.Execute(codeDocument);
+        discoveryPhase.Execute(codeDocument);
+        rewritePhase.Execute(codeDocument);
 
         // Assert
         var outputTree = codeDocument.GetSyntaxTree();
@@ -688,7 +723,7 @@ public class DefaultRazorTagHelperBinderPhaseTest : RazorProjectEngineTestBase
         var sourceDocument = TestRazorSourceDocument.Create(source, filePath: "TestFile");
         var parser = new RazorParser();
         var syntaxTree = parser.Parse(sourceDocument);
-        var visitor = new DefaultRazorTagHelperBinderPhase.TagHelperDirectiveVisitor(tagHelpers: new List<TagHelperDescriptor>());
+        var visitor = new DefaultRazorTagHelperContextDiscoveryPhase.TagHelperDirectiveVisitor(tagHelpers: new List<TagHelperDescriptor>());
 
         // Act
         visitor.Visit(syntaxTree.Root);
@@ -854,7 +889,7 @@ public class DefaultRazorTagHelperBinderPhaseTest : RazorProjectEngineTestBase
         var sourceDocument = TestRazorSourceDocument.Create(source, filePath: "TestFile");
         var parser = new RazorParser();
         var syntaxTree = parser.Parse(sourceDocument);
-        var visitor = new DefaultRazorTagHelperBinderPhase.TagHelperDirectiveVisitor((TagHelperDescriptor[])tagHelpers);
+        var visitor = new DefaultRazorTagHelperContextDiscoveryPhase.TagHelperDirectiveVisitor((TagHelperDescriptor[])tagHelpers);
 
         // Act
         visitor.Visit(syntaxTree.Root);
@@ -998,7 +1033,7 @@ public class DefaultRazorTagHelperBinderPhaseTest : RazorProjectEngineTestBase
         var sourceDocument = TestRazorSourceDocument.Create(source, filePath: "TestFile");
         var parser = new RazorParser();
         var syntaxTree = parser.Parse(sourceDocument);
-        var visitor = new DefaultRazorTagHelperBinderPhase.TagHelperDirectiveVisitor((TagHelperDescriptor[])tagHelpers);
+        var visitor = new DefaultRazorTagHelperContextDiscoveryPhase.TagHelperDirectiveVisitor((TagHelperDescriptor[])tagHelpers);
 
         // Act
         visitor.Visit(syntaxTree.Root);
@@ -1018,7 +1053,7 @@ public class DefaultRazorTagHelperBinderPhaseTest : RazorProjectEngineTestBase
                 legacyDescriptor,
                 componentDescriptor,
             };
-        var visitor = new DefaultRazorTagHelperBinderPhase.TagHelperDirectiveVisitor(descriptors);
+        var visitor = new DefaultRazorTagHelperContextDiscoveryPhase.TagHelperDirectiveVisitor(descriptors);
         var sourceDocument = CreateTestSourceDocument();
         var tree = RazorSyntaxTree.Parse(sourceDocument);
 
@@ -1085,7 +1120,7 @@ public class DefaultRazorTagHelperBinderPhaseTest : RazorProjectEngineTestBase
             };
         var sourceDocument = CreateComponentTestSourceDocument(@"<Counter />", "C:\\SomeFolder\\SomeProject\\Counter.cshtml");
         var tree = RazorSyntaxTree.Parse(sourceDocument);
-        var visitor = new DefaultRazorTagHelperBinderPhase.ComponentDirectiveVisitor(sourceDocument.FilePath, descriptors, currentNamespace);
+        var visitor = new DefaultRazorTagHelperContextDiscoveryPhase.ComponentDirectiveVisitor(sourceDocument.FilePath, descriptors, currentNamespace);
 
         // Act
         visitor.Visit(tree);
@@ -1116,7 +1151,7 @@ public class DefaultRazorTagHelperBinderPhaseTest : RazorProjectEngineTestBase
 ";
         var sourceDocument = CreateComponentTestSourceDocument(content, filePath);
         var tree = RazorSyntaxTree.Parse(sourceDocument);
-        var visitor = new DefaultRazorTagHelperBinderPhase.ComponentDirectiveVisitor(sourceDocument.FilePath, descriptors, currentNamespace);
+        var visitor = new DefaultRazorTagHelperContextDiscoveryPhase.ComponentDirectiveVisitor(sourceDocument.FilePath, descriptors, currentNamespace);
 
         // Act
         visitor.Visit(tree);
@@ -1149,7 +1184,7 @@ public class DefaultRazorTagHelperBinderPhaseTest : RazorProjectEngineTestBase
 ";
         var sourceDocument = CreateComponentTestSourceDocument(content, filePath);
         var tree = RazorSyntaxTree.Parse(sourceDocument);
-        var visitor = new DefaultRazorTagHelperBinderPhase.ComponentDirectiveVisitor(sourceDocument.FilePath, descriptors, currentNamespace);
+        var visitor = new DefaultRazorTagHelperContextDiscoveryPhase.ComponentDirectiveVisitor(sourceDocument.FilePath, descriptors, currentNamespace);
 
         // Act
         visitor.Visit(tree);
@@ -1185,7 +1220,7 @@ public class DefaultRazorTagHelperBinderPhaseTest : RazorProjectEngineTestBase
 ";
         var sourceDocument = CreateComponentTestSourceDocument(content, filePath);
         var tree = RazorSyntaxTree.Parse(sourceDocument);
-        var visitor = new DefaultRazorTagHelperBinderPhase.ComponentDirectiveVisitor(sourceDocument.FilePath, descriptors, currentNamespace);
+        var visitor = new DefaultRazorTagHelperContextDiscoveryPhase.ComponentDirectiveVisitor(sourceDocument.FilePath, descriptors, currentNamespace);
 
         // Act
         visitor.Visit(tree);
@@ -1218,7 +1253,7 @@ public class DefaultRazorTagHelperBinderPhaseTest : RazorProjectEngineTestBase
 ";
         var sourceDocument = CreateComponentTestSourceDocument(content, filePath);
         var tree = RazorSyntaxTree.Parse(sourceDocument);
-        var visitor = new DefaultRazorTagHelperBinderPhase.ComponentDirectiveVisitor(sourceDocument.FilePath, descriptors, currentNamespace);
+        var visitor = new DefaultRazorTagHelperContextDiscoveryPhase.ComponentDirectiveVisitor(sourceDocument.FilePath, descriptors, currentNamespace);
 
         // Act
         visitor.Visit(tree);
@@ -1252,7 +1287,7 @@ public class DefaultRazorTagHelperBinderPhaseTest : RazorProjectEngineTestBase
 ";
         var sourceDocument = CreateComponentTestSourceDocument(content, filePath);
         var tree = RazorSyntaxTree.Parse(sourceDocument);
-        var visitor = new DefaultRazorTagHelperBinderPhase.ComponentDirectiveVisitor(sourceDocument.FilePath, descriptors, currentNamespace);
+        var visitor = new DefaultRazorTagHelperContextDiscoveryPhase.ComponentDirectiveVisitor(sourceDocument.FilePath, descriptors, currentNamespace);
 
         // Act
         visitor.Visit(tree);
@@ -1286,7 +1321,7 @@ public class DefaultRazorTagHelperBinderPhaseTest : RazorProjectEngineTestBase
 ";
         var sourceDocument = CreateComponentTestSourceDocument(content, filePath);
         var tree = RazorSyntaxTree.Parse(sourceDocument);
-        var visitor = new DefaultRazorTagHelperBinderPhase.ComponentDirectiveVisitor(sourceDocument.FilePath, descriptors, currentNamespace);
+        var visitor = new DefaultRazorTagHelperContextDiscoveryPhase.ComponentDirectiveVisitor(sourceDocument.FilePath, descriptors, currentNamespace);
 
         // Act
         visitor.Visit(tree);
@@ -1308,7 +1343,7 @@ public class DefaultRazorTagHelperBinderPhaseTest : RazorProjectEngineTestBase
     {
         // Arrange & Act
         var descriptor = CreateComponentDescriptor(typeName, typeName, "Test.dll");
-        var result = DefaultRazorTagHelperBinderPhase.ComponentDirectiveVisitor.IsTypeInNamespace(descriptor, @namespace);
+        var result = DefaultRazorTagHelperContextDiscoveryPhase.ComponentDirectiveVisitor.IsTypeInNamespace(descriptor, @namespace);
 
         // Assert
         Assert.Equal(expected, result);
@@ -1326,7 +1361,7 @@ public class DefaultRazorTagHelperBinderPhaseTest : RazorProjectEngineTestBase
     {
         // Arrange & Act
         var descriptor = CreateComponentDescriptor(typeName, typeName, "Test.dll");
-        var result = DefaultRazorTagHelperBinderPhase.ComponentDirectiveVisitor.IsTypeInScope(descriptor, currentNamespace);
+        var result = DefaultRazorTagHelperContextDiscoveryPhase.ComponentDirectiveVisitor.IsTypeInScope(descriptor, currentNamespace);
 
         // Assert
         Assert.Equal(expected, result);
@@ -1344,7 +1379,7 @@ public class DefaultRazorTagHelperBinderPhaseTest : RazorProjectEngineTestBase
             assemblyName: AssemblyA);
 
         // Act
-        var result = DefaultRazorTagHelperBinderPhase.ComponentDirectiveVisitor.IsTagHelperFromMangledClass(descriptor);
+        var result = DefaultRazorTagHelperContextDiscoveryPhase.ComponentDirectiveVisitor.IsTagHelperFromMangledClass(descriptor);
 
         // Assert
         Assert.True(result);

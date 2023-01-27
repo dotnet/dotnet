@@ -1,4 +1,4 @@
-RazorDocument - [0..61)::61 - [@section foo { @section bar { <p>Foo</p> @section baz { } } }]
+﻿RazorDocument - [0..61)::61 - [@section foo { @section bar { <p>Foo</p> @section baz { } } }]
     MarkupBlock - [0..61)::61
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

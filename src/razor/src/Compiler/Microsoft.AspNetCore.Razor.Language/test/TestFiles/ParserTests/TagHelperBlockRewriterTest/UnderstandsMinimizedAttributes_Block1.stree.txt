@@ -1,4 +1,4 @@
-RazorDocument - [0..29)::29 - [@{<input unbound-required />}]
+﻿RazorDocument - [0..29)::29 - [@{<input unbound-required />}]
     MarkupBlock - [0..29)::29
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

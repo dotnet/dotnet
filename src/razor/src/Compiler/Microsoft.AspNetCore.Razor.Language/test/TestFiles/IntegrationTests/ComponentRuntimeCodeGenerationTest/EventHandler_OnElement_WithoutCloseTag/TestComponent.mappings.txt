@@ -1,4 +1,4 @@
-Source Location: (96:4,7 [31] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (96:4,7 [31] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     void OnClick() {
     }

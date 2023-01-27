@@ -1,4 +1,4 @@
-RazorDocument - [0..43)::43 - [@for(int i = 0; i++; i < length) { foo(); }]
+﻿RazorDocument - [0..43)::43 - [@for(int i = 0; i++; i < length) { foo(); }]
     MarkupBlock - [0..43)::43
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

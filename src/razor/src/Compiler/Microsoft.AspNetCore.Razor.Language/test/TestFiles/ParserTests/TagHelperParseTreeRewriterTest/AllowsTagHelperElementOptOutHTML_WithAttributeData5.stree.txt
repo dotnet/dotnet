@@ -1,4 +1,4 @@
-RazorDocument - [0..41)::41 - [<!p class='btn1 @DateTime.Now btn2'></!p>]
+﻿RazorDocument - [0..41)::41 - [<!p class='btn1 @DateTime.Now btn2'></!p>]
     MarkupBlock - [0..41)::41
         MarkupElement - [0..41)::41
             MarkupStartTag - [0..36)::36 - [<!p class='btn1 @DateTime.Now btn2'>] - Gen<Markup> - SpanEditHandler;Accepts:Any

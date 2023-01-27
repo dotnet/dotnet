@@ -32,7 +32,16 @@ internal class TestDocumentContextFactory : DocumentContextFactory
             return Task.FromResult<DocumentContext?>(null);
         }
 
-        var documentContext = _version is null ? TestDocumentContext.From(_filePath, _codeDocument) : TestDocumentContext.From(_filePath, _codeDocument, _version.Value);
-        return Task.FromResult<DocumentContext?>(documentContext);
+        return Task.FromResult<DocumentContext?>(TestDocumentContext.From(_filePath, _codeDocument));
+    }
+
+    public override Task<VersionedDocumentContext?> TryCreateForOpenDocumentAsync(Uri documentUri, CancellationToken cancellationToken)
+    {
+        if (_filePath is null || _codeDocument is null || _version is null)
+        {
+            return Task.FromResult<VersionedDocumentContext?>(null);
+        }
+
+        return Task.FromResult<VersionedDocumentContext?>(TestDocumentContext.From(_filePath, _codeDocument, _version.Value));
     }
 }

@@ -1,4 +1,4 @@
-parameters:
+﻿parameters:
   configuration: 'Debug'
 
   # Optional: condition for the job to run

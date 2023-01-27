@@ -1,4 +1,4 @@
-RazorDocument - [0..27)::27 - [@{<a href LF= 	LF'Foo' />}]
+﻿RazorDocument - [0..27)::27 - [@{<a href LF= 	LF'Foo' />}]
     MarkupBlock - [0..27)::27
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

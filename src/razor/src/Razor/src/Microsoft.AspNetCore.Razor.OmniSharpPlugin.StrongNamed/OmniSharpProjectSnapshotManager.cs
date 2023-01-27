@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace Microsoft.AspNetCore.Razor.OmniSharpPlugin;
 
-public abstract class OmniSharpProjectSnapshotManager
+internal abstract class OmniSharpProjectSnapshotManager
 {
     public abstract event EventHandler<OmniSharpProjectChangeEventArgs> Changed;
 

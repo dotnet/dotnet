@@ -164,7 +164,7 @@ internal class TagHelperCompletionProvider : RazorCompletionItemProvider
             var indexerCompletion = filterText.EndsWith("...", StringComparison.Ordinal);
             if (indexerCompletion)
             {
-                filterText = filterText.Substring(0, filterText.Length - 3);
+                filterText = filterText[..^3];
             }
 
             var attributeContext = ResolveAttributeContext(completion.Value, indexerCompletion, options.SnippetsSupported);

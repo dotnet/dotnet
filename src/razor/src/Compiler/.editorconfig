@@ -1,4 +1,4 @@
-; EditorConfig to support per-solution formatting.
+﻿; EditorConfig to support per-solution formatting.
 ; Use the EditorConfig VS add-in to make this work.
 ; http://editorconfig.org/
 ;
@@ -22,6 +22,7 @@ insert_final_newline = true
 [*.cs]
 indent_size = 4
 dotnet_sort_system_directives_first = true
+dotnet_separate_import_directive_groups = false
 
 # Don't use this. qualifier
 dotnet_style_qualification_for_field = false:suggestion
@@ -51,6 +52,7 @@ csharp_new_line_before_members_in_anonymous_types = true
 
 # Namespace settings
 csharp_style_namespace_declarations = file_scoped
+csharp_using_directive_placement = outside_namespace:suggestion
 
 # Prefer curly braces even for one line of code
 csharp_prefer_braces = true

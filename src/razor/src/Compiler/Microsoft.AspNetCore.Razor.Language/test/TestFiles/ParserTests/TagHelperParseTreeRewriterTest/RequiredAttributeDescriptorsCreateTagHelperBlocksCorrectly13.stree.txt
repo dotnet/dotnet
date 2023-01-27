@@ -1,4 +1,4 @@
-RazorDocument - [0..58)::58 - [<strong catchAll="@DateTime.Now">words and spaces</strong>]
+﻿RazorDocument - [0..58)::58 - [<strong catchAll="@DateTime.Now">words and spaces</strong>]
     MarkupBlock - [0..58)::58
         MarkupTagHelperElement - [0..58)::58 - strong[StartTagAndEndTag] - catchAllTagHelper
             MarkupTagHelperStartTag - [0..33)::33 - [<strong catchAll="@DateTime.Now">] - Gen<Markup> - SpanEditHandler;Accepts:Any

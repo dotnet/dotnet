@@ -1,4 +1,4 @@
-Source Location: (9:0,9 [11] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (9:0,9 [11] x:\dir\subdir\Test\TestComponent.cshtml)
 |TestDynamic|
 Generated Location: (877:24,9 [11] )
 |TestDynamic|

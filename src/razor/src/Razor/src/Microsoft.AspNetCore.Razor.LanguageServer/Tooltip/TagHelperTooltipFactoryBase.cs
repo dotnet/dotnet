@@ -31,7 +31,7 @@ internal abstract class TagHelperTooltipFactoryBase
         }
 
         var type = value[0];
-        value = value.Substring(2);
+        value = value[2..];
 
         switch (type)
         {
@@ -212,7 +212,7 @@ internal abstract class TagHelperTooltipFactoryBase
 
             if (dotsSeen == reduceWhenDotCount)
             {
-                var piece = content.Substring(i + 1);
+                var piece = content[(i + 1)..];
                 return piece;
             }
         }

@@ -1,4 +1,4 @@
-RazorDocument - [0..46)::46 - [@{<p bound-int bound-string bound-string></p>}]
+﻿RazorDocument - [0..46)::46 - [@{<p bound-int bound-string bound-string></p>}]
     MarkupBlock - [0..46)::46
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

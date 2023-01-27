@@ -118,7 +118,7 @@ public class RazorCSharpFormattingBenchmark : RazorLanguageServerBenchmarkBase
             InsertSpaces = true
         };
 
-        var documentContext = new DocumentContext(DocumentUri, DocumentSnapshot, version: 1);
+        var documentContext = new VersionedDocumentContext(DocumentUri, DocumentSnapshot, version: 1);
 
         var edits = await RazorFormattingService.FormatAsync(documentContext, range: null, options, CancellationToken.None);
 

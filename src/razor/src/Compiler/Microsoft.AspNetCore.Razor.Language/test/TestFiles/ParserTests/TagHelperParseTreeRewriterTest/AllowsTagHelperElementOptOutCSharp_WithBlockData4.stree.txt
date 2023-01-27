@@ -1,4 +1,4 @@
-RazorDocument - [0..28)::28 - [@{<!p>words and spaces</!p>}]
+﻿RazorDocument - [0..28)::28 - [@{<!p>words and spaces</!p>}]
     MarkupBlock - [0..28)::28
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

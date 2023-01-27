@@ -26,6 +26,7 @@ internal static class VSInternalCompletionListExtensions
         {
             [ResultIdKey] = resultId,
         };
+
         if (completionSetting?.CompletionList?.Data == true)
         {
             // Can set data at the completion list level

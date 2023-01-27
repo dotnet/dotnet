@@ -1,4 +1,4 @@
-RazorDocument - [0..99)::99 - [<p class="foo" style="color:red;">Hello World <strong class="foo">inside of strong tag</strong></p>]
+﻿RazorDocument - [0..99)::99 - [<p class="foo" style="color:red;">Hello World <strong class="foo">inside of strong tag</strong></p>]
     MarkupBlock - [0..99)::99
         MarkupTagHelperElement - [0..99)::99 - p[StartTagAndEndTag] - ptaghelper
             MarkupTagHelperStartTag - [0..34)::34 - [<p class="foo" style="color:red;">] - Gen<Markup> - SpanEditHandler;Accepts:Any

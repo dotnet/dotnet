@@ -50,7 +50,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
                 }
             }
 
-            return new PackageSource(source, name, isEnabled)
+            return new PackageSource(source!, name!, isEnabled)
             {
                 IsMachineWide = isMachineWide
             };

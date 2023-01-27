@@ -8,7 +8,5 @@ namespace Microsoft.AspNetCore.Razor.OmniSharpPlugin.StrongNamed;
 
 public class OmniSharpLanguageServerFeatureOptions
 {
-    private LanguageServerFeatureOptions _internalLanguageServerFeatureOptions = new DefaultLanguageServerFeatureOptions();
-
-    internal LanguageServerFeatureOptions InternalLanguageServerFeatureOptions => _internalLanguageServerFeatureOptions;
+    internal LanguageServerFeatureOptions InternalLanguageServerFeatureOptions { get; } = new DefaultLanguageServerFeatureOptions();
 }

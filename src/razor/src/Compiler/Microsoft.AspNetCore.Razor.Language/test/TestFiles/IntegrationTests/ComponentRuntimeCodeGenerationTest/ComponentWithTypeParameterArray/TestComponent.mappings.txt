@@ -1,4 +1,4 @@
-Source Location: (111:7,1 [33] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (111:7,1 [33] x:\dir\subdir\Test\TestComponent.cshtml)
 |foreach (var item in Items2)
 {
 |

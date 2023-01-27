@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
+using Microsoft.AspNetCore.Razor.TextDifferencing;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.Extensions.Logging;
@@ -48,7 +49,7 @@ internal class DefaultRazorFormattingService : RazorFormattingService
     }
 
     public override async Task<TextEdit[]> FormatAsync(
-        DocumentContext documentContext,
+        VersionedDocumentContext documentContext,
         Range? range,
         FormattingOptions options,
         CancellationToken cancellationToken)
@@ -116,7 +117,7 @@ internal class DefaultRazorFormattingService : RazorFormattingService
         }
 
         // Only send back the minimum edits
-        var minimalChanges = SourceTextDiffer.GetMinimalTextChanges(originalText, changedText, lineDiffOnly: false);
+        var minimalChanges = SourceTextDiffer.GetMinimalTextChanges(originalText, changedText, DiffKind.Char);
         var finalEdits = minimalChanges.Select(f => f.AsTextEdit(originalText)).ToArray();
 
         return finalEdits;

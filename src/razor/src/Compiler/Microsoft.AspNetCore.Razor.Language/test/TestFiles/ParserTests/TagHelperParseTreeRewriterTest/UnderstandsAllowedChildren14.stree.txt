@@ -1,4 +1,4 @@
-RazorDocument - [0..76)::76 - [<p><custom><br>:<strong><strong>Hello</strong></strong>:<input></custom></p>]
+﻿RazorDocument - [0..76)::76 - [<p><custom><br>:<strong><strong>Hello</strong></strong>:<input></custom></p>]
     MarkupBlock - [0..76)::76
         MarkupTagHelperElement - [0..76)::76 - p[StartTagAndEndTag] - PTagHelper
             MarkupTagHelperStartTag - [0..3)::3 - [<p>] - Gen<Markup> - SpanEditHandler;Accepts:Any

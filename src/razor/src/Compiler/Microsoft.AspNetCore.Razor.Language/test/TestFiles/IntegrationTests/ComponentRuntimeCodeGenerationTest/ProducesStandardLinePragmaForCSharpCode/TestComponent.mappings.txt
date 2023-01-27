@@ -1,4 +1,4 @@
-Source Location: (33:1,1 [33] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (33:1,1 [33] x:\dir\subdir\Test\TestComponent.cshtml)
 |for (var i = 0; i < 10; i++)
 {
 |

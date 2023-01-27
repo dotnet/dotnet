@@ -8,7 +8,7 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 namespace Microsoft.AspNetCore.Razor.OmniSharpPlugin;
 
-public abstract class OmniSharpProjectSnapshotManagerBase : OmniSharpProjectSnapshotManager
+internal abstract class OmniSharpProjectSnapshotManagerBase : OmniSharpProjectSnapshotManager
 {
     internal abstract ProjectSnapshotManagerBase InternalProjectSnapshotManager { get; }
 

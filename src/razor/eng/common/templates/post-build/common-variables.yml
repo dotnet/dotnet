@@ -1,4 +1,4 @@
-variables:
+﻿variables:
   - group: AzureDevOps-Artifact-Feeds-Pats
   - group: DotNet-Blob-Feed
   - group: DotNet-DotNetCli-Storage

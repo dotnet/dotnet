@@ -1,4 +1,4 @@
-RazorDocument - [0..50)::50 - [@{<script>if(foo < bar) { alert("baz");)</script>}]
+﻿RazorDocument - [0..50)::50 - [@{<script>if(foo < bar) { alert("baz");)</script>}]
     MarkupBlock - [0..50)::50
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

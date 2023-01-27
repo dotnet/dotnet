@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -24,17 +23,10 @@ public class RazorLanguageServerBenchmarkBase : ProjectSnapshotManagerBenchmarkB
 {
     public RazorLanguageServerBenchmarkBase()
     {
-        var current = new DirectoryInfo(AppContext.BaseDirectory);
-        while (current != null && !File.Exists(Path.Combine(current.FullName, "Razor.sln")))
-        {
-            current = current.Parent;
-        }
-
-        RepoRoot = current.FullName;
-
         var (_, serverStream) = FullDuplexStream.CreatePair();
-        var logger = new NoopLogger();
-        RazorLanguageServer = RazorLanguageServerWrapper.Create(serverStream, serverStream, logger, configure: (collection) => {
+        Logger = new NoopLogger();
+        RazorLanguageServer = RazorLanguageServerWrapper.Create(serverStream, serverStream, Logger, configure: (collection) =>
+        {
             collection.AddSingleton<ClientNotifierServiceBase, NoopClientNotifierService>();
             Builder(collection);
         });
@@ -44,9 +36,9 @@ public class RazorLanguageServerBenchmarkBase : ProjectSnapshotManagerBenchmarkB
     {
     }
 
-    protected string RepoRoot { get; }
-
     private protected RazorLanguageServerWrapper RazorLanguageServer { get; }
+
+    private protected IRazorLogger Logger { get; }
 
     internal DocumentSnapshot GetDocumentSnapshot(string projectFilePath, string filePath, string targetPath)
     {
@@ -58,6 +50,9 @@ public class RazorLanguageServerBenchmarkBase : ProjectSnapshotManagerBenchmarkB
 
         var projectSnapshotManager = CreateProjectSnapshotManager();
         projectSnapshotManager.ProjectAdded(hostProject);
+        var tagHelpers = GetTagHelperDescriptors();
+        var projectWorkspaceState = new ProjectWorkspaceState(tagHelpers, CodeAnalysis.CSharp.LanguageVersion.CSharp11);
+        projectSnapshotManager.ProjectWorkspaceStateChanged(projectFilePath, projectWorkspaceState);
         projectSnapshotManager.DocumentAdded(hostProject, hostDocument, textLoader);
         var projectSnapshot = projectSnapshotManager.GetOrCreateProject(projectFilePath);
 

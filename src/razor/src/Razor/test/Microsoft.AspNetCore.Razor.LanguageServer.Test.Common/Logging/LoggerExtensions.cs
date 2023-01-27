@@ -35,6 +35,9 @@ internal static class LoggerExtensions
         public void LogWarning(string? message, params object?[] @params)
             => _logger.LogWarning(message, @params);
 
+        public void LogDebug(string message, params object[] @params)
+            => _logger.LogDebug(message, @params);
+
         public void LogStartContext(string message, params object?[] @params)
         {
             lock (_gate)

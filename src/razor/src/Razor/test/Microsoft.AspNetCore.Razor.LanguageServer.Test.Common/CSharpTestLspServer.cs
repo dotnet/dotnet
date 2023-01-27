@@ -79,7 +79,8 @@ public sealed class CSharpTestLspServer : IAsyncDisposable
             registrationService.Register(workspace);
 
             var languageServerFactory = exportProvider.GetExportedValue<IRazorLanguageServerFactoryWrapper>();
-            var languageServer = languageServerFactory.CreateLanguageServer(serverRpc, capabilitiesProvider);
+            var hostServices = workspace.Services.HostServices;
+            var languageServer = languageServerFactory.CreateLanguageServer(serverRpc, capabilitiesProvider, hostServices);
 
             serverRpc.StartListening();
             return languageServer;

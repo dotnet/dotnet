@@ -30,7 +30,7 @@ internal class GeneratedDocumentTextLoader : TextLoader
         _version = VersionStamp.Create();
     }
 
-    public override async Task<TextAndVersion> LoadTextAndVersionAsync(Workspace workspace, DocumentId documentId, CancellationToken cancellationToken)
+    public override async Task<TextAndVersion> LoadTextAndVersionAsync(LoadTextOptions options, CancellationToken cancellationToken)
     {
         var output = await _document.GetGeneratedOutputAsync().ConfigureAwait(false);
 

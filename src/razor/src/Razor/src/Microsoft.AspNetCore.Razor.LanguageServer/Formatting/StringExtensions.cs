@@ -53,7 +53,7 @@ internal static class StringExtensions
         var firstOffset = lineText.GetFirstNonWhitespaceOffset();
 
         return firstOffset.HasValue
-            ? lineText.Substring(0, firstOffset.Value)
+            ? lineText[..firstOffset.Value]
             : lineText;
     }
 
@@ -67,7 +67,7 @@ internal static class StringExtensions
         var lastOffset = lineText.GetLastNonWhitespaceOffset();
 
         return lastOffset.HasValue
-            ? lineText.Substring(lastOffset.Value)
+            ? lineText[lastOffset.Value..]
             : lineText;
     }
 }

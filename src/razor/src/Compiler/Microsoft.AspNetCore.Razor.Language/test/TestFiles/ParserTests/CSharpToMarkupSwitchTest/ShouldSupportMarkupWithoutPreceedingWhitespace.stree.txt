@@ -1,4 +1,4 @@
-RazorDocument - [0..68)::68 - [@foreach(var file in files){LFLFLF@:BazLF<br/>LF<a>Foo</a>LF@:BarLF}]
+﻿RazorDocument - [0..68)::68 - [@foreach(var file in files){LFLFLF@:BazLF<br/>LF<a>Foo</a>LF@:BarLF}]
     MarkupBlock - [0..68)::68
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

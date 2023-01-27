@@ -8,12 +8,12 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 
 internal readonly struct RazorRequestContext
 {
-    public readonly DocumentContext? DocumentContext;
+    public readonly VersionedDocumentContext? DocumentContext;
     public readonly IRazorLogger Logger;
     public readonly ILspServices LspServices;
 
     public RazorRequestContext(
-        DocumentContext? documentContext,
+        VersionedDocumentContext? documentContext,
         IRazorLogger logger,
         ILspServices lspServices)
     {
@@ -22,7 +22,7 @@ internal readonly struct RazorRequestContext
         Logger = logger;
     }
 
-    public DocumentContext GetRequiredDocumentContext()
+    public VersionedDocumentContext GetRequiredDocumentContext()
     {
         if (DocumentContext is null)
         {

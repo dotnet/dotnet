@@ -1,4 +1,4 @@
-is_global = true
+﻿is_global = true
 
 # API-related warnings do not make sense in API shim files
 

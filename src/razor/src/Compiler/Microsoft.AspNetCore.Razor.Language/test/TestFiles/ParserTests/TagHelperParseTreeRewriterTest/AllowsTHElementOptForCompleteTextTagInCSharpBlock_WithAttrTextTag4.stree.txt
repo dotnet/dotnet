@@ -1,4 +1,4 @@
-RazorDocument - [0..47)::47 - [@{<!text class='btn1 btn2' class2=btn></!text>}]
+﻿RazorDocument - [0..47)::47 - [@{<!text class='btn1 btn2' class2=btn></!text>}]
     MarkupBlock - [0..47)::47
         MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Marker;[];

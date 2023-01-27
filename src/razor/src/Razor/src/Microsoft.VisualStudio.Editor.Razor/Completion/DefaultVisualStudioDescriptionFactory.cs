@@ -66,10 +66,10 @@ internal class DefaultVisualStudioDescriptionFactory : VisualStudioDescriptionFa
                 // We're pulling apart the type name so the prefix looks like:
                 //
                 // Microsoft.AspnetCore.Components.
-                tagHelperTypeNamePrefix = tagHelperTypeName.Substring(0, afterLastDot);
+                tagHelperTypeNamePrefix = tagHelperTypeName[..afterLastDot];
 
                 // And the type name looks like BindBinds
-                tagHelperTypeNameProper = tagHelperTypeName.Substring(afterLastDot);
+                tagHelperTypeNameProper = tagHelperTypeName[afterLastDot..];
             }
 
             descriptionElements.Add(

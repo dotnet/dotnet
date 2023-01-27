@@ -1,9 +1,10 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable enable
+
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using NuGet.Common;
@@ -17,20 +18,53 @@ namespace NuGet.Configuration
         /// </summary>
         public const int DefaultProtocolVersion = 2;
 
-        private readonly int _hashCode;
+        private int _hashCode;
+        private string _source;
+        private bool _isHttp;
+        private bool _isHttps;
+        private bool _isLocal;
 
-        private bool? _isHttp;
-        private bool? _isHttps;
-        private bool? _isLocal;
+        public string Name { get; }
 
-        public string Name { get; private set; }
+        public string Source
+        {
+            get => _source;
+            set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException(paramName: nameof(value));
+                }
 
-        public string Source { get; set; }
+                _source = value;
+                _hashCode = Name.ToUpperInvariant().GetHashCode() * 3137 + _source.ToUpperInvariant().GetHashCode();
+
+                if (value.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+                {
+                    _isHttps = true;
+                    _isHttp = true;
+                    _isLocal = false;
+                }
+                else if (value.StartsWith("http://", StringComparison.OrdinalIgnoreCase))
+                {
+                    _isHttps = false;
+                    _isHttp = true;
+                    _isLocal = false;
+                }
+                else
+                {
+                    _isHttps = false;
+                    _isHttp = false;
+                    Uri? uri = TrySourceAsUri;
+                    _isLocal = uri != null ? uri.IsFile : false;
+                }
+            }
+        }
 
         /// <summary>
         /// Returns null if Source is an invalid URI
         /// </summary>
-        public Uri TrySourceAsUri => UriUtility.TryCreateSourceUri(Source, UriKind.Absolute);
+        public Uri? TrySourceAsUri => UriUtility.TryCreateSourceUri(Source, UriKind.Absolute);
 
         /// <summary>
         /// Throws if Source is an invalid URI
@@ -47,15 +81,15 @@ namespace NuGet.Configuration
 
         public bool IsEnabled { get; set; }
 
-        public PackageSourceCredential Credentials { get; set; }
+        public PackageSourceCredential? Credentials { get; set; }
 
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
-        public bool IsPersistable { get; private set; }
+        public bool IsPersistable { get; }
 
         public int MaxHttpRequestsPerSource { get; set; }
 
-        public IReadOnlyList<X509Certificate> ClientCertificates { get; set; }
+        public IReadOnlyList<X509Certificate>? ClientCertificates { get; set; }
 
         /// <summary>
         /// Gets or sets the protocol version of the source. Defaults to 2.
@@ -65,62 +99,17 @@ namespace NuGet.Configuration
         /// <summary>
         /// Whether the source is using the HTTP protocol, including HTTPS.
         /// </summary>
-        public bool IsHttp
-        {
-            get
-            {
-                if (!_isHttp.HasValue)
-                {
-                    _isHttp = IsHttps || Source.StartsWith("http://", StringComparison.OrdinalIgnoreCase);
-                }
-
-                return _isHttp.Value;
-            }
-        }
+        public bool IsHttp => _isHttp;
 
         /// <summary>
         /// Whether the source is using the HTTPS protocol.
         /// </summary>
-        public bool IsHttps
-        {
-            get
-            {
-                if (!_isHttps.HasValue)
-                {
-                    _isHttps = Source.StartsWith("https://", StringComparison.OrdinalIgnoreCase);
-                    if (_isHttps == true)
-                    {
-                        _isHttp = true;
-                    }
-                }
-
-                return _isHttps.Value;
-            }
-        }
+        public bool IsHttps => _isHttps;
 
         /// <summary>
         /// True if the source path is file based. Unc shares are not included.
         /// </summary>
-        public bool IsLocal
-        {
-            get
-            {
-                if (!_isLocal.HasValue)
-                {
-                    var uri = TrySourceAsUri;
-                    if (uri != null)
-                    {
-                        _isLocal = uri.IsFile;
-                    }
-                    else
-                    {
-                        _isLocal = false;
-                    }
-                }
-
-                return _isLocal.Value;
-            }
-        }
+        public bool IsLocal => _isLocal;
 
         public PackageSource(string source)
             : this(source, source, isEnabled: true)
@@ -145,16 +134,15 @@ namespace NuGet.Configuration
             bool isPersistable = true)
         {
             Name = name ?? throw new ArgumentNullException(nameof(name));
-            Source = source ?? throw new ArgumentNullException(nameof(source));
+            Source = _source = source ?? throw new ArgumentNullException(nameof(source));
             IsEnabled = isEnabled;
             IsOfficial = isOfficial;
             IsPersistable = isPersistable;
-            _hashCode = Name.ToUpperInvariant().GetHashCode() * 3137 + Source.ToUpperInvariant().GetHashCode();
         }
 
         public SourceItem AsSourceItem()
         {
-            string protocolVersion = null;
+            string? protocolVersion = null;
             if (ProtocolVersion != DefaultProtocolVersion)
             {
                 protocolVersion = $"{ProtocolVersion}";
@@ -162,7 +150,7 @@ namespace NuGet.Configuration
             return new SourceItem(Name, Source, protocolVersion);
         }
 
-        public bool Equals(PackageSource other)
+        public bool Equals(PackageSource? other)
         {
             if (other == null)
             {
@@ -173,7 +161,7 @@ namespace NuGet.Configuration
                    Source.Equals(other.Source, StringComparison.OrdinalIgnoreCase);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             var source = obj as PackageSource;
             if (source != null)
@@ -183,15 +171,9 @@ namespace NuGet.Configuration
             return base.Equals(obj);
         }
 
-        public override string ToString()
-        {
-            return Name + " [" + Source + "]";
-        }
+        public override string ToString() => Name + " [" + Source + "]";
 
-        public override int GetHashCode()
-        {
-            return _hashCode;
-        }
+        public override int GetHashCode() => _hashCode;
 
         public PackageSource Clone()
         {

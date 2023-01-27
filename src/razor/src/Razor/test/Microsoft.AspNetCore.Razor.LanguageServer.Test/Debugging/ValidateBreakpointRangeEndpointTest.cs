@@ -127,13 +127,13 @@ public class ValidateBreakpointRangeEndpointTest : SingleServerDelegatingEndpoin
             Range = breakpointSpan.AsRange(codeDocument.GetSourceText())
         };
 
-        var documentContext = await DocumentContextFactory.TryCreateAsync(request.TextDocument.Uri, DisposalToken);
+        var documentContext = await DocumentContextFactory.TryCreateForOpenDocumentAsync(request.TextDocument.Uri, DisposalToken);
         var requestContext = CreateValidateBreakpointRangeRequestContext(documentContext);
 
         return await endpoint.HandleRequestAsync(request, requestContext, DisposalToken);
     }
 
-    private RazorRequestContext CreateValidateBreakpointRangeRequestContext(DocumentContext documentContext)
+    private RazorRequestContext CreateValidateBreakpointRangeRequestContext(VersionedDocumentContext documentContext)
     {
         var lspServices = new Mock<ILspServices>(MockBehavior.Strict);
         //lspServices

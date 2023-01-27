@@ -1,4 +1,4 @@
-RazorDocument - [0..31)::31 - [<input bound-required-string />]
+﻿RazorDocument - [0..31)::31 - [<input bound-required-string />]
     MarkupBlock - [0..31)::31
         MarkupTagHelperElement - [0..31)::31 - input[SelfClosing] - InputTagHelper1 - InputTagHelper3
             MarkupTagHelperStartTag - [0..31)::31 - [<input bound-required-string />] - Gen<Markup> - SpanEditHandler;Accepts:Any

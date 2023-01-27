@@ -18,6 +18,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Newtonsoft.Json.Linq;
 using CSharpSyntaxFactory = Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
@@ -28,10 +29,14 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 internal class ExtractToCodeBehindCodeActionResolver : RazorCodeActionResolver
 {
     private readonly DocumentContextFactory _documentContextFactory;
+    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
 
-    public ExtractToCodeBehindCodeActionResolver(DocumentContextFactory documentContextFactory)
+    public ExtractToCodeBehindCodeActionResolver(
+        DocumentContextFactory documentContextFactory,
+        LanguageServerFeatureOptions languageServerFeatureOptions)
     {
         _documentContextFactory = documentContextFactory ?? throw new ArgumentNullException(nameof(documentContextFactory));
+        _languageServerFeatureOptions = languageServerFeatureOptions;
     }
 
     public override string Action => LanguageServerConstants.CodeActions.ExtractToCodeBehindAction;
@@ -69,10 +74,16 @@ internal class ExtractToCodeBehindCodeActionResolver : RazorCodeActionResolver
         }
 
         var codeBehindPath = GenerateCodeBehindPath(path);
+
+        // VS Code in Windows expects path to start with '/'
+        var updatedCodeBehindPath = _languageServerFeatureOptions.ReturnCodeActionAndRenamePathsWithPrefixedSlash && !codeBehindPath.StartsWith("/")
+            ? '/' + codeBehindPath
+            : codeBehindPath;
+
         var codeBehindUri = new UriBuilder
         {
             Scheme = Uri.UriSchemeFile,
-            Path = codeBehindPath,
+            Path = updatedCodeBehindPath,
             Host = string.Empty,
         }.Uri;
 
