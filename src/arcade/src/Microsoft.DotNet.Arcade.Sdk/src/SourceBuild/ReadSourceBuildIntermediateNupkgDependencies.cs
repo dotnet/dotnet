@@ -23,8 +23,6 @@ namespace Microsoft.DotNet.Arcade.Sdk.SourceBuild
 
         /// <summary>
         /// The intermediate nupkg RID to use if any RID-specific intermediate nupkgs are required.
-        /// If this parameter isn't specified, RID-specific intermediate nupkgs can't be used and
-        /// this task fails.
         /// </summary>
         public string SourceBuildIntermediateNupkgRid { get; set; }
 
@@ -100,19 +98,8 @@ namespace Microsoft.DotNet.Arcade.Sdk.SourceBuild
                         sourceBuildElement.Attribute("ManagedOnly")?.Value,
                         out bool managedOnly);
 
-                    // If RID-specific, add the RID to the end of the identity.
                     if (!managedOnly)
                     {
-                        if (string.IsNullOrEmpty(SourceBuildIntermediateNupkgRid))
-                        {
-                            Log.LogError(
-                                $"Parameter {nameof(SourceBuildIntermediateNupkgRid)} was " +
-                                "not specified, indicating this project depends only on managed " +
-                                "inputs. However, source-build element is not ManagedOnly: " +
-                                sourceBuildElement);
-                            return null;
-                        }
-
                         identity += "." + SourceBuildIntermediateNupkgRid;
                     }
 
