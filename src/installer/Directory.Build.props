@@ -25,7 +25,7 @@
     <DebugSymbols>true</DebugSymbols>
 
     <IsShipping>true</IsShipping>
-    <CoreSdkTargetFramework>net7.0</CoreSdkTargetFramework>
+    <CoreSdkTargetFramework>net8.0</CoreSdkTargetFramework>
 
     <!-- MSB3243 and MSB3247 fire when attempting to resolve references to the same assembly from different cultures.
          This is a prevalent problem in building the precomputed assembly reference cache. Limiting the assemblies resolved
