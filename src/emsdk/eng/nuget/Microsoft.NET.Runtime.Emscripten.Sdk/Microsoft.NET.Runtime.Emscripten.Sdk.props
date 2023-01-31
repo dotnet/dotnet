@@ -1,0 +1,11 @@
+<Project>
+  <PropertyGroup>
+    <ArtifactsDirToPackage>$(ArtifactsObjDir)upstream\</ArtifactsDirToPackage>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <File Include="$(ArtifactsDirToPackage)**" TargetPath="tools\%(RecursiveDir)" SkipPackageFileCheck="true" />
+    <File Include="$(RepoRoot)eng\.emscripten" TargetPath="tools\emscripten" SkipPackageFileCheck="true" />
+    <File Include="$(RepoRoot)eng\sdk_files\Emscripten.Sdk.props" TargetPath="Sdk\Sdk.props" SkipPackageFileCheck="true" />
+  </ItemGroup>
+</Project>
