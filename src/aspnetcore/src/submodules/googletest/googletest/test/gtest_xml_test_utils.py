@@ -35,14 +35,13 @@ from googletest.test import gtest_test_utils
 
 GTEST_DEFAULT_OUTPUT_FILE = 'test_detail.xml'
 
-class GTestXMLTestCase(gtest_test_utils.TestCase):
-  """
-  Base class for tests of Google Test's XML output functionality.
-  """
 
+class GTestXMLTestCase(gtest_test_utils.TestCase):
+  """Base class for tests of Google Test's XML output functionality."""
 
   def AssertEquivalentNodes(self, expected_node, actual_node):
-    """
+    """Asserts that actual_node is equivalent to expected_node.
+
     Asserts that actual_node (a DOM node object) is equivalent to
     expected_node (another DOM node object), in that either both of
     them are CDATA nodes and have the same value, or both are DOM
@@ -58,6 +57,10 @@ class GTestXMLTestCase(gtest_test_utils.TestCase):
        CDATA sections) as expected_node.  Note that we ignore the
        order of the children as they are not guaranteed to be in any
        particular order.
+
+    Args:
+      expected_node: expected DOM node object
+      actual_node: actual DOM node object
     """
 
     if expected_node.nodeType == Node.CDATA_SECTION_NODE:
@@ -126,18 +129,24 @@ class GTestXMLTestCase(gtest_test_utils.TestCase):
   }
 
   def _GetChildren(self, element):
-    """
-    Fetches all of the child nodes of element, a DOM Element object.
-    Returns them as the values of a dictionary keyed by the IDs of the
-    children.  For <testsuites>, <testsuite>, <testcase>, and <property>
-    elements, the ID is the value of their "name" attribute; for <failure>
-    elements, it is the value of the "message" attribute; for <properties>
-    elements, it is the value of their parent's "name" attribute plus the
-    literal string "properties"; CDATA sections and non-whitespace
-    text nodes are concatenated into a single CDATA section with ID
-    "detail".  An exception is raised if any element other than the above
-    four is encountered, if two child elements with the same identifying
-    attributes are encountered, or if any other type of node is encountered.
+    """Fetches all of the child nodes of element, a DOM Element object.
+
+    Returns them as the values of a dictionary keyed by the IDs of the children.
+    For <testsuites>, <testsuite>, <testcase>, and <property> elements, the ID
+    is the value of their "name" attribute; for <failure> elements, it is the
+    value of the "message" attribute; for <properties> elements, it is the value
+    of their parent's "name" attribute plus the literal string "properties";
+    CDATA sections and non-whitespace text nodes are concatenated into a single
+    CDATA section with ID "detail".  An exception is raised if any element other
+    than the above four is encountered, if two child elements with the same
+    identifying attributes are encountered, or if any other type of node is
+    encountered.
+
+    Args:
+      element: DOM Element object
+
+    Returns:
+      Dictionary where keys are the IDs of the children.
     """
 
     children = {}
@@ -155,15 +164,19 @@ class GTestXMLTestCase(gtest_test_utils.TestCase):
               'Encountered unknown element <%s>' % child.tagName,
           )
           child_id = child.getAttribute(
-              self.identifying_attribute[child.tagName])
+              self.identifying_attribute[child.tagName]
+          )
         self.assertNotIn(child_id, children)
         children[child_id] = child
       elif child.nodeType in [Node.TEXT_NODE, Node.CDATA_SECTION_NODE]:
         if 'detail' not in children:
-          if (child.nodeType == Node.CDATA_SECTION_NODE or
-              not child.nodeValue.isspace()):
+          if (
+              child.nodeType == Node.CDATA_SECTION_NODE
+              or not child.nodeValue.isspace()
+          ):
             children['detail'] = child.ownerDocument.createCDATASection(
-                child.nodeValue)
+                child.nodeValue
+            )
         else:
           children['detail'].nodeValue += child.nodeValue
       else:
@@ -171,7 +184,8 @@ class GTestXMLTestCase(gtest_test_utils.TestCase):
     return children
 
   def NormalizeXml(self, element):
-    """
+    """Normalizes XML that may change from run to run.
+
     Normalizes Google Test's XML output to eliminate references to transient
     information that may change from run to run.
 
@@ -188,6 +202,9 @@ class GTestXMLTestCase(gtest_test_utils.TestCase):
        file's basename and a single asterisk for the line number.
     *  The directory names in file paths are removed.
     *  The stack traces are removed.
+
+    Args:
+      element: DOM element to normalize
     """
 
     if element.tagName == 'testcase':
@@ -196,8 +213,9 @@ class GTestXMLTestCase(gtest_test_utils.TestCase):
         source_file.value = re.sub(r'^.*[/\\](.*)', '\\1', source_file.value)
     if element.tagName in ('testsuites', 'testsuite', 'testcase'):
       timestamp = element.getAttributeNode('timestamp')
-      timestamp.value = re.sub(r'^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.\d\d\d$',
-                               '*', timestamp.value)
+      timestamp.value = re.sub(
+          r'^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.\d\d\d$', '*', timestamp.value
+      )
     if element.tagName in ('testsuites', 'testsuite', 'testcase'):
       time = element.getAttributeNode('time')
       time.value = re.sub(r'^\d+(\.\d+)?$', '*', time.value)
@@ -214,8 +232,9 @@ class GTestXMLTestCase(gtest_test_utils.TestCase):
           # Replaces the source line information with a normalized form.
           cdata = re.sub(source_line_pat, '\\1*\n', child.nodeValue)
           # Removes the actual stack trace.
-          child.nodeValue = re.sub(r'Stack trace:\n(.|\n)*',
-                                   'Stack trace:\n*', cdata)
+          child.nodeValue = re.sub(
+              r'Stack trace:\n(.|\n)*', 'Stack trace:\n*', cdata
+          )
     for child in element.childNodes:
       if child.nodeType == Node.ELEMENT_NODE:
         self.NormalizeXml(child)
