@@ -45,6 +45,9 @@ parameters:
 - name: excludeOmniSharpTests
   type: boolean
 
+- name: bootstrapPrep
+  type: boolean
+
 - name: enablePoison
   type: boolean
 
@@ -151,7 +154,12 @@ jobs:
       set -x
 
       if [[ -z '${{ parameters.reuseBuildArtifactsFrom }}' ]]; then
-        docker run --rm -v "$(sourcesPath):/vmr" -w /vmr ${{ parameters.container }} ./prep.sh
+        customPrepArgs=
+        if [[ '${{ parameters.bootstrapPrep }}' == 'True' ]]; then
+          customPrepArgs='--bootstrap'
+        fi
+
+        docker run --rm -v "$(sourcesPath):/vmr" -w /vmr ${{ parameters.container }} ./prep.sh ${customPrepArgs}
       else
         mkdir $(sourcesPath)/.dotnet
         previousSdkPath="$(sourcesPath)/packages/archive/dotnet-sdk-*.tar.gz"

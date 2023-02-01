@@ -11,7 +11,7 @@
     <VersionFeature>00</VersionFeature>
     <VersionPrefix>$(VersionMajor).$(VersionMinor).$(VersionSDKMinor)$(VersionFeature)</VersionPrefix>
     <PreReleaseVersionLabel>preview</PreReleaseVersionLabel>
-    <PreReleaseVersionIteration>2</PreReleaseVersionIteration>
+    <PreReleaseVersionIteration>1</PreReleaseVersionIteration>
     <MajorMinorVersion>$(VersionMajor).$(VersionMinor)</MajorMinorVersion>
     <CliProductBandVersion>$(MajorMinorVersion).$(VersionSDKMinor)</CliProductBandVersion>
     <!-- Enable to remove prerelease label. -->
@@ -58,22 +58,22 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/aspnet/AspNetCore -->
-    <MicrosoftAspNetCoreAppRuntimewinx64PackageVersion>8.0.0-alpha.1.23079.1</MicrosoftAspNetCoreAppRuntimewinx64PackageVersion>
-    <MicrosoftAspNetCoreAppRefPackageVersion>8.0.0-alpha.1.23079.1</MicrosoftAspNetCoreAppRefPackageVersion>
-    <MicrosoftAspNetCoreAppRefInternalPackageVersion>8.0.0-alpha.1.23079.1</MicrosoftAspNetCoreAppRefInternalPackageVersion>
-    <VSRedistCommonAspNetCoreSharedFrameworkx6480PackageVersion>8.0.0-alpha.1.23079.1</VSRedistCommonAspNetCoreSharedFrameworkx6480PackageVersion>
-    <dotnetdevcertsPackageVersion>8.0.0-alpha.1.23079.1</dotnetdevcertsPackageVersion>
-    <dotnetuserjwtsPackageVersion>8.0.0-alpha.1.23079.1</dotnetuserjwtsPackageVersion>
-    <dotnetusersecretsPackageVersion>8.0.0-alpha.1.23079.1</dotnetusersecretsPackageVersion>
+    <MicrosoftAspNetCoreAppRuntimewinx64PackageVersion>8.0.0-preview.1.23080.16</MicrosoftAspNetCoreAppRuntimewinx64PackageVersion>
+    <MicrosoftAspNetCoreAppRefPackageVersion>8.0.0-preview.1.23080.16</MicrosoftAspNetCoreAppRefPackageVersion>
+    <MicrosoftAspNetCoreAppRefInternalPackageVersion>8.0.0-preview.1.23080.16</MicrosoftAspNetCoreAppRefInternalPackageVersion>
+    <VSRedistCommonAspNetCoreSharedFrameworkx6480PackageVersion>8.0.0-preview.1.23080.16</VSRedistCommonAspNetCoreSharedFrameworkx6480PackageVersion>
+    <dotnetdevcertsPackageVersion>8.0.0-preview.1.23080.16</dotnetdevcertsPackageVersion>
+    <dotnetuserjwtsPackageVersion>8.0.0-preview.1.23080.16</dotnetuserjwtsPackageVersion>
+    <dotnetusersecretsPackageVersion>8.0.0-preview.1.23080.16</dotnetusersecretsPackageVersion>
   </PropertyGroup>
   <PropertyGroup>
     <MicroBuildCorePackageVersion>0.2.0</MicroBuildCorePackageVersion>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/sdk -->
-    <MicrosoftDotNetCommonItemTemplatesPackageVersion>8.0.100-alpha.1.23080.9</MicrosoftDotNetCommonItemTemplatesPackageVersion>
-    <MicrosoftNETSdkPackageVersion>8.0.100-alpha.1.23080.9</MicrosoftNETSdkPackageVersion>
-    <MicrosoftDotNetMSBuildSdkResolverPackageVersion>8.0.100-alpha.1.23080.9</MicrosoftDotNetMSBuildSdkResolverPackageVersion>
+    <MicrosoftDotNetCommonItemTemplatesPackageVersion>8.0.100-preview.1.23081.1</MicrosoftDotNetCommonItemTemplatesPackageVersion>
+    <MicrosoftNETSdkPackageVersion>8.0.100-preview.1.23081.1</MicrosoftNETSdkPackageVersion>
+    <MicrosoftDotNetMSBuildSdkResolverPackageVersion>8.0.100-preview.1.23081.1</MicrosoftDotNetMSBuildSdkResolverPackageVersion>
     <MicrosoftNETBuildExtensionsPackageVersion>$(MicrosoftNETSdkPackageVersion)</MicrosoftNETBuildExtensionsPackageVersion>
     <MicrosoftDotnetToolsetInternalPackageVersion>$(MicrosoftNETSdkPackageVersion)</MicrosoftDotnetToolsetInternalPackageVersion>
     <MicrosoftDotnetTemplateLocatorPackageVersion>$(MicrosoftNETSdkPackageVersion)</MicrosoftDotnetTemplateLocatorPackageVersion>
@@ -200,13 +200,18 @@
     <XamarinMacOSWorkloadManifestVersion>12.3.2372</XamarinMacOSWorkloadManifestVersion>
     <XamarinTvOSWorkloadManifestVersion>16.0.1478</XamarinTvOSWorkloadManifestVersion>
     <!-- Workloads from dotnet/emsdk -->
-    <MicrosoftNETWorkloadEmscriptenCurrentManifest80100preview2PackageVersion>8.0.0-preview.2.23081.3</MicrosoftNETWorkloadEmscriptenCurrentManifest80100preview2PackageVersion>
-    <MicrosoftNETWorkloadEmscriptennet7Manifest80100preview2PackageVersion>8.0.0-preview.2.23081.3</MicrosoftNETWorkloadEmscriptennet7Manifest80100preview2PackageVersion>
-    <MicrosoftNETWorkloadEmscriptennet6Manifest80100preview2PackageVersion>8.0.0-preview.2.23081.3</MicrosoftNETWorkloadEmscriptennet6Manifest80100preview2PackageVersion>
-    <EmscriptenWorkloadManifestVersion>$(MicrosoftNETWorkloadEmscriptenCurrentManifest80100preview2PackageVersion)</EmscriptenWorkloadManifestVersion>
+    <MicrosoftNETWorkloadEmscriptenCurrentManifest80100preview1PackageVersion>8.0.0-preview.1.23081.2</MicrosoftNETWorkloadEmscriptenCurrentManifest80100preview1PackageVersion>
+    <MicrosoftNETWorkloadEmscriptennet7Manifest80100preview1PackageVersion>8.0.0-preview.1.23081.2</MicrosoftNETWorkloadEmscriptennet7Manifest80100preview1PackageVersion>
+    <MicrosoftNETWorkloadEmscriptennet6Manifest80100preview1PackageVersion>8.0.0-preview.1.23081.2</MicrosoftNETWorkloadEmscriptennet6Manifest80100preview1PackageVersion>
+    <EmscriptenWorkloadManifestVersion>$(MicrosoftNETWorkloadEmscriptenCurrentManifest80100preview1PackageVersion)</EmscriptenWorkloadManifestVersion>
     <!-- emsdk workload prerelease version band must match the emsdk feature band -->
     <EmscriptenWorkloadFeatureBand>8.0.100$([System.Text.RegularExpressions.Regex]::Match($(EmscriptenWorkloadManifestVersion), `-[A-z]*[\.]*\d*`))</EmscriptenWorkloadFeatureBand>
     <!-- Workloads from dotnet/runtime use MicrosoftNETCoreAppRefPackageVersion because it has a stable name that does not include the full feature band -->
+    <!--
+    <MicrosoftNETWorkloadMonoToolchainCurrentManifest80100preview1PackageVersion>8.0.0-alpha.1.23078.5</MicrosoftNETWorkloadMonoToolchainCurrentManifest80100preview1PackageVersion>
+    <MicrosoftNETWorkloadMonoToolchainnet7Manifest80100preview1PackageVersion>8.0.0-alpha.1.23078.5</MicrosoftNETWorkloadMonoToolchainnet7Manifest80100preview1PackageVersion>
+    <MicrosoftNETWorkloadMonoToolchainnet6Manifest80100preview1PackageVersion>8.0.0-alpha.1.23078.5</MicrosoftNETWorkloadMonoToolchainnet6Manifest80100preview1PackageVersion>
+    -->
     <MonoWorkloadManifestVersion>$(MicrosoftNETCoreAppRefPackageVersion)</MonoWorkloadManifestVersion>
     <!-- mono workload prerelease version band must match the runtime feature band -->
     <MonoWorkloadFeatureBand>8.0.100$([System.Text.RegularExpressions.Regex]::Match($(MonoWorkloadManifestVersion), `-[A-z]*[\.]*\d*`))</MonoWorkloadFeatureBand>
