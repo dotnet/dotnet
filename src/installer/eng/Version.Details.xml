@@ -167,29 +167,17 @@
       <Uri>https://github.com/Microsoft/ApplicationInsights-dotnet</Uri>
       <Sha>53b80940842204f78708a538628288ff5d741a1d</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Workload.Emscripten.Current.Manifest-8.0.100-alpha.1" Version="8.0.0-alpha.1.23077.4">
+    <Dependency Name="Microsoft.NET.Workload.Emscripten.Current.Manifest-8.0.100-preview.2" Version="8.0.0-preview.2.23081.3">
       <Uri>https://github.com/dotnet/emsdk</Uri>
-      <Sha>0fe864fc71191ff4ee18e59ef0af2929ca367a11</Sha>
+      <Sha>1d9df3320ccdb0bbc40a31314641e1100369745b</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Workload.Emscripten.net7.Manifest-8.0.100-alpha.1" Version="8.0.0-alpha.1.23077.4">
+    <Dependency Name="Microsoft.NET.Workload.Emscripten.net7.Manifest-8.0.100-preview.2" Version="8.0.0-preview.2.23081.3">
       <Uri>https://github.com/dotnet/emsdk</Uri>
-      <Sha>0fe864fc71191ff4ee18e59ef0af2929ca367a11</Sha>
+      <Sha>1d9df3320ccdb0bbc40a31314641e1100369745b</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Workload.Emscripten.net6.Manifest-8.0.100-alpha.1" Version="8.0.0-alpha.1.23077.4">
+    <Dependency Name="Microsoft.NET.Workload.Emscripten.net6.Manifest-8.0.100-preview.2" Version="8.0.0-preview.2.23081.3">
       <Uri>https://github.com/dotnet/emsdk</Uri>
-      <Sha>0fe864fc71191ff4ee18e59ef0af2929ca367a11</Sha>
-    </Dependency>
-    <Dependency Name="Microsoft.NET.Workload.Mono.Toolchain.Current.Manifest-8.0.100-alpha.1" Version="8.0.0-alpha.1.23078.5" CoherentParentDependency="Microsoft.NET.Sdk">
-      <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>dfe1076090adad6990747e6abed8bf6699371877</Sha>
-    </Dependency>
-    <Dependency Name="Microsoft.NET.Workload.Mono.Toolchain.net7.Manifest-8.0.100-alpha.1" Version="8.0.0-alpha.1.23078.5" CoherentParentDependency="Microsoft.NET.Sdk">
-      <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>dfe1076090adad6990747e6abed8bf6699371877</Sha>
-    </Dependency>
-    <Dependency Name="Microsoft.NET.Workload.Mono.Toolchain.net6.Manifest-8.0.100-alpha.1" Version="8.0.0-alpha.1.23078.5" CoherentParentDependency="Microsoft.NET.Sdk">
-      <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>dfe1076090adad6990747e6abed8bf6699371877</Sha>
+      <Sha>1d9df3320ccdb0bbc40a31314641e1100369745b</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Deployment.DotNet.Releases" Version="1.0.0-preview5.1.22263.1">
       <Uri>https://github.com/dotnet/deployment-tools</Uri>

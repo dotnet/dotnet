@@ -10,7 +10,7 @@ parameters:
 - name: vmrBranch
   displayName: dotnet/dotnet branch to use
   type: string
-  default: $(Build.SourceBranchName)
+  default: $(Build.SourceBranch)
 
 - name: noPush
   displayName: Don't push changes to dotnet/dotnet

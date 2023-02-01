@@ -6,7 +6,7 @@ parameters:
   condition: always()
 
   # Branch of the VMR to use (to push to for internal builds)
-  vmrBranch: $(Build.SourceBranchName)
+  vmrBranch: $(Build.SourceBranch)
 
   # True when build is running from dotnet/dotnet directly
   isBuiltFromVmr:
@@ -57,12 +57,19 @@ stages:
       - name: defaultPoolDemands
         value: ${{ parameters.poolInternalAmd64.demands }}
 
+  - ${{ if ne(parameters.vmrBranch, '') }}:
+    - name: VmrBranch
+      value: ${{ parameters.vmrBranch }}
+  - ${{ else }}:
+    - name: VmrBranch
+      value: ${{ replace(replace(variables['Build.SourceBranch'], 'refs/heads/', ''), 'refs/pull/', '') }}
+
   jobs:
   - template: ../jobs/vmr-build.yml
     parameters:
       buildName: CentOSStream8_Online
       isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-      vmrBranch: ${{ parameters.vmrBranch }}
+      vmrBranch: ${{ variables.VmrBranch }}
       architecture: x64
       pool:
         name: ${{ variables.defaultPoolName }}
@@ -81,7 +88,7 @@ stages:
       parameters:
         buildName: CentOSStream8_Offline
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-        vmrBranch: ${{ parameters.vmrBranch }}
+        vmrBranch: ${{ variables.VmrBranch }}
         architecture: x64
         pool:
           name: ${{ variables.defaultPoolName }}
@@ -99,7 +106,7 @@ stages:
       parameters:
         buildName: CentOSStream9_Offline
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-        vmrBranch: ${{ parameters.vmrBranch }}
+        vmrBranch: ${{ variables.VmrBranch }}
         architecture: x64
         pool:
           name: ${{ variables.defaultPoolName }}
@@ -117,7 +124,7 @@ stages:
       parameters:
         buildName: Fedora36_Offline
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-        vmrBranch: ${{ parameters.vmrBranch }}
+        vmrBranch: ${{ variables.VmrBranch }}
         architecture: x64
         pool:
           name: ${{ variables.defaultPoolName }}
@@ -135,7 +142,7 @@ stages:
       parameters:
         buildName: Ubuntu2004_Offline
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-        vmrBranch: ${{ parameters.vmrBranch }}
+        vmrBranch: ${{ variables.VmrBranch }}
         architecture: x64
         pool:
           name: ${{ variables.defaultPoolName }}
@@ -153,7 +160,7 @@ stages:
       parameters:
         buildName: Debian11_Offline
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-        vmrBranch: ${{ parameters.vmrBranch }}
+        vmrBranch: ${{ variables.VmrBranch }}
         architecture: arm64
         pool: ${{ parameters.poolInternalArm64 }}
         container: ${{ parameters.debian11Arm64Container }}
@@ -169,7 +176,7 @@ stages:
       parameters:
         buildName: Fedora36_Offline_Using_Previous
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-        vmrBranch: ${{ parameters.vmrBranch }}
+        vmrBranch: ${{ variables.VmrBranch }}
         architecture: x64
         pool:
           name: ${{ variables.defaultPoolName }}

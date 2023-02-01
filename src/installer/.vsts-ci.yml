@@ -21,7 +21,7 @@ parameters:
 - name: vmrBranch
   displayName: dotnet/dotnet branch to push to
   type: string
-  default: $(Build.SourceBranchName)
+  default: ''
 
 - name: disableVmrBuild
   displayName: Skip source-building the VMR
@@ -47,6 +47,13 @@ variables:
 
 - name: _InternalRuntimeDownloadArgs
   value: ''
+
+- ${{ if ne(parameters.vmrBranch, '') }}:
+  - name: VmrBranch
+    value: ${{ parameters.vmrBranch }}
+- ${{ else }}:
+  - name: VmrBranch
+    value: ${{ replace(replace(variables['Build.SourceBranch'], 'refs/heads/', ''), 'refs/pull/', '') }}
 
 - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
   - group: DotNetBuilds storage account read tokens
@@ -369,7 +376,7 @@ stages:
 - ${{ if and(eq(variables['Build.Reason'], 'PullRequest'), not(parameters.disableVmrBuild)) }}:
   - template: eng/pipelines/templates/stages/vmr-build.yml
     parameters:
-      vmrBranch: ${{ parameters.vmrBranch }}
+      vmrBranch: ${{ variables.VmrBranch }}
       isBuiltFromVmr: false
 
 # In case the VMR Build stage is temporarily disabled, the VMR synchronization step is run to validate
@@ -381,7 +388,7 @@ stages:
     jobs:
     - template: eng/pipelines/templates/jobs/vmr-synchronization.yml
       parameters:
-        vmrBranch: ${{ parameters.vmrBranch }}
+        vmrBranch: ${{ variables.VmrBranch }}
 
 - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
   - stage: Publish
