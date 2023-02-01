@@ -5,10 +5,14 @@ IFS=$'\n\t'
 SCRIPT_ROOT="$(cd -P "$( dirname "$0" )" && pwd)"
 
 usage() {
-    echo "usage: $0"
+    echo "usage: $0 [options]"
     echo ""
     echo "  Prepares the environment to be built by downloading Private.SourceBuilt.Artifacts.*.tar.gz and"
     echo "  installing the version of dotnet referenced in global.json"
+    echo "options:"
+    echo "  --bootstrap    Build a bootstrap version of previously source-built packages archive."
+    echo "                 This modifies the downloaded version, replacing portable packages"
+    echo "                 with official ms-built packages restored from package feeds."
     echo ""
 }
 
@@ -23,6 +27,9 @@ while :; do
         "-?"|-h|--help)
             usage
             exit 0
+            ;;
+        --bootstrap)
+            buildBootstrap=true
             ;;
         *)
             positional_args+=("$1")
@@ -88,7 +95,23 @@ function DownloadArchive {
     fi
 }
 
-function BootstrapArtifacts {
+# Read the eng/Versions.props to get the archives to download and download them
+if [ "$downloadArtifacts" == "true" ]; then
+    DownloadArchive "Artifacts" $artifactsBaseFileName "true"
+fi
+
+if [ "$downloadPrebuilts" == "true" ]; then
+    DownloadArchive "Prebuilts" $prebuiltsBaseFileName "false"
+fi
+
+# Check for the version of dotnet to install
+if [ "$installDotnet" == "true" ]; then
+    echo "  Installing dotnet..."
+    (source ./eng/common/tools.sh && InitializeDotNetCli true)
+fi
+
+# Build bootstrap, if specified
+if [ "$buildBootstrap" == "true" ]; then
     DOTNET_SDK_PATH="$SCRIPT_ROOT/.dotnet"
 
     # Create working directory for running bootstrap project
@@ -113,20 +136,4 @@ function BootstrapArtifacts {
 
     # Remove working directory
     rm -rf $workingDir
-}
-
-# Check for the version of dotnet to install
-if [ "$installDotnet" == "true" ]; then
-    echo "  Installing dotnet..."
-    (source ./eng/common/tools.sh && InitializeDotNetCli true)
-fi
-
-# Read the eng/Versions.props to get the archives to download and download them
-if [ "$downloadArtifacts" == "true" ]; then
-    DownloadArchive "Artifacts" $artifactsBaseFileName "true"
-    BootstrapArtifacts
-fi
-
-if [ "$downloadPrebuilts" == "true" ]; then
-    DownloadArchive "Prebuilts" $prebuiltsBaseFileName "false"
 fi

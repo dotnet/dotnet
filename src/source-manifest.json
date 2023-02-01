@@ -7,10 +7,10 @@
       "commitSha": "691fd54681d10eef3c2681fceb8b09b9f9ba9bb0"
     },
     {
-      "packageVersion": "8.0.0-alpha.1.23079.1",
+      "packageVersion": "8.0.0-preview.1.23080.16",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "65493f5ed529a47937066a84d43f913796bbcf30"
+      "commitSha": "6a9cef3fa2f5c7c2695a2141a8aa098294736d4e"
     },
     {
       "packageVersion": "0.1.356401",
@@ -52,7 +52,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "31a14bea384a14c9d4f1278d7df6de81406801b9"
+      "commitSha": "df5ac735d27b3e8d1cf537be1ec38ee4e4ccca05"
     },
     {
       "packageVersion": "8.0.100-1.23067.1",
@@ -79,10 +79,10 @@
       "commitSha": "8b605a43b9faef4e77c350d510a53dfba5712a9f"
     },
     {
-      "packageVersion": "4.5.0-6.23078.4",
+      "packageVersion": "4.5.0-6.23080.17",
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "d436fefc287a8ea2291945fa89630caaf430847b"
+      "commitSha": "1daa862268882f13e8396e0dfc87d43e3417a5a1"
     },
     {
       "packageVersion": "3.3.5-beta1.23080.2",
@@ -97,10 +97,10 @@
       "commitSha": "9529803ae29c2804880c6bd8ca710b8c037cb498"
     },
     {
-      "packageVersion": "8.0.100-alpha.1.23080.9",
+      "packageVersion": "8.0.100-preview.1.23081.1",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "35c898e0bdeed18c4aecfd7d47fdb9c82997ba7d"
+      "commitSha": "b129cdd9c4ab6fd7d99fc502f73f3a14f9baaa5d"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23076.1",
@@ -161,7 +161,7 @@
     {
       "path": "aspnetcore/src/submodules/googletest",
       "remoteUri": "https://github.com/google/googletest",
-      "commitSha": "ec25eea8f8237cf86c30703f59747e42f34b6f75"
+      "commitSha": "b72202078d0a7a2f2509eb5237685bcf1baea3b4"
     },
     {
       "path": "aspnetcore/src/submodules/MessagePack-CSharp",
@@ -171,7 +171,7 @@
     {
       "path": "aspnetcore/src/submodules/spa-templates",
       "remoteUri": "https://github.com/dotnet/spa-templates.git",
-      "commitSha": "83c2bdca0adfd3a3d0fc82a5520f0e05c507160b"
+      "commitSha": "69dd8ae1b5c19bd17e1ecf74c9d3864f64746d92"
     },
     {
       "path": "linker/external/cecil",

@@ -17,7 +17,7 @@
   "symbols/NoHttps/description": "Se o HTTPS deve ser desativado. Essa opção se aplica somente se Individual, IndividualB2C, SingleOrg ou MultiOrg não forem usados para --auth.",
   "symbols/UseLocalDB/description": "Se deve usar LocalDB em vez de SQLite. Esta opção só se aplica se --auth Individual ou --auth IndividualB2C for especificado.",
   "symbols/Framework/description": "A estrutura de destino do projeto.",
-  "symbols/Framework/choices/net7.0/description": "Alvo .NET7.0",
+  "symbols/Framework/choices/net8.0/description": "net8.0 de destino",
   "symbols/UseProgramMain/displayName": "Não usar instruções de nível superior",
   "symbols/UseProgramMain/description": "Se deve gerar uma classe de Programa explícita e um método principal em vez de instruções de nível superior.",
   "postActions/restore/description": "Restaure os pacotes NuGet exigidos por este projeto.",
