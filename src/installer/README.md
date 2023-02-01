@@ -93,8 +93,6 @@ Further instructions on how to build inside of the Codespace will be available u
     cd /path/to/complete/dotnet/sources
     ./prep.sh
     ```
-    
-    On arm64, please use `./prep.sh --bootstrap` instead.
 
 3. Build the .NET SDK
 
