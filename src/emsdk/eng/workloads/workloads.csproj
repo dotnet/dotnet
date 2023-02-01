@@ -62,11 +62,19 @@
                           Version="$(AssemblyVersion)"
                           Title=".NET WebAssembly Build Tools (Emscripten)"
                           Description="Build tools for WebAssembly ahead-of-time (AoT) compilation and native linking."/>
+      <ComponentResources Include="microsoft-net-sdk-emscripten-net7"
+                          Version="$(AssemblyVersion)"
+                          Title=".NET WebAssembly Build Tools for .NET7 (Emscripten)"
+                          Description="Build tools for WebAssembly ahead-of-time (AoT) compilation and native linking on .NET7."/>
+      <ComponentResources Include="microsoft-net-sdk-emscripten-net6"
+                          Version="$(AssemblyVersion)"
+                          Title=".NET WebAssembly Build Tools for .NET6 (Emscripten)"
+                          Description="Build tools for WebAssembly ahead-of-time (AoT) compilation and native linking on .NET6."/>
     </ItemGroup>
 
     <!-- Shorten package names to avoid long path issues in Visual Studio -->
     <ItemGroup>
-      <ShortNames Include="microsoft.net.workload.emscripten.net;Microsoft.NET.Workload.Emscripten.net">
+      <ShortNames Include="microsoft.net.workload.emscripten.net;Microsoft.NET.Workload.Emscripten.net;microsoft.net.workload.emscripten.current">
         <Replacement>Emsdk.</Replacement>
       </ShortNames>
       <ShortNames Include="microsoft.netcore.app.runtime;Microsoft.NETCore.App.Runtime;microsoft.net.runtime;Microsoft.NET.Runtime">
@@ -75,7 +83,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ManifestPackages Include="$(PackageSource)Microsoft.NET.Workload.Emscripten*.Manifest-%(WorkloadSdkBandVersions.Identity).*.nupkg"
+      <ManifestPackages Include="$(PackageSource)Microsoft.NET.Workload.Emscripten*.Manifest-%(WorkloadSdkBandVersions.Identity)*.*.nupkg"
                         Exclude="$(PackageSource)Microsoft.NET.Workload.Emscripten*.Manifest*.msi*.nupkg"
                         MsiVersion="$(MsiVersion)"
                         SupportsMachineArch="%(SupportsMachineArch)" />
