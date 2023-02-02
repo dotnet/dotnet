@@ -15,19 +15,19 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
 internal abstract class RazorDocumentMappingService
 {
-    public abstract TextEdit[] GetProjectedDocumentEdits(RazorCodeDocument codeDocument, TextEdit[] edits);
+    public abstract TextEdit[] GetProjectedDocumentEdits(IRazorGeneratedDocument generatedDocument, TextEdit[] edits);
 
-    public abstract bool TryMapFromProjectedDocumentRange(RazorCodeDocument codeDocument, Range projectedRange, [NotNullWhen(true)] out Range? originalRange);
+    public abstract bool TryMapFromProjectedDocumentRange(IRazorGeneratedDocument generatedDocument, Range projectedRange, [NotNullWhen(true)] out Range? originalRange);
 
-    public abstract bool TryMapFromProjectedDocumentRange(RazorCodeDocument codeDocument, Range projectedRange, MappingBehavior mappingBehavior, [NotNullWhen(true)] out Range? originalRange);
+    public abstract bool TryMapFromProjectedDocumentRange(IRazorGeneratedDocument generatedDocument, Range projectedRange, MappingBehavior mappingBehavior, [NotNullWhen(true)] out Range? originalRange);
 
-    public abstract bool TryMapToProjectedDocumentRange(RazorCodeDocument codeDocument, Range originalRange, [NotNullWhen(true)] out Range? projectedRange);
+    public abstract bool TryMapToProjectedDocumentRange(IRazorGeneratedDocument generatedDocument, Range originalRange, [NotNullWhen(true)] out Range? projectedRange);
 
-    public abstract bool TryMapFromProjectedDocumentPosition(RazorCodeDocument codeDocument, int csharpAbsoluteIndex, [NotNullWhen(true)] out Position? originalPosition, out int originalIndex);
+    public abstract bool TryMapFromProjectedDocumentPosition(IRazorGeneratedDocument generatedDocument, int csharpAbsoluteIndex, [NotNullWhen(true)] out Position? originalPosition, out int originalIndex);
 
-    public abstract bool TryMapToProjectedDocumentPosition(RazorCodeDocument codeDocument, int absoluteIndex, [NotNullWhen(true)] out Position? projectedPosition, out int projectedIndex);
+    public abstract bool TryMapToProjectedDocumentPosition(IRazorGeneratedDocument generatedDocument, int absoluteIndex, [NotNullWhen(true)] out Position? projectedPosition, out int projectedIndex);
 
-    public abstract bool TryMapToProjectedDocumentOrNextCSharpPosition(RazorCodeDocument codeDocument, int absoluteIndex, [NotNullWhen(true)] out Position? projectedPosition, out int projectedIndex);
+    public abstract bool TryMapToProjectedDocumentOrNextCSharpPosition(IRazorGeneratedDocument generatedDocument, int absoluteIndex, [NotNullWhen(true)] out Position? projectedPosition, out int projectedIndex);
 
     public abstract RazorLanguageKind GetLanguageKind(RazorCodeDocument codeDocument, int originalIndex, bool rightAssociative);
 
@@ -49,9 +49,12 @@ internal abstract class RazorDocumentMappingService
         var projectedPosition = new Position(line, character);
 
         var languageKind = GetLanguageKind(codeDocument, absoluteIndex, rightAssociative: false);
-        if (languageKind == RazorLanguageKind.CSharp)
+        if (languageKind is not RazorLanguageKind.Razor)
         {
-            if (TryMapToProjectedDocumentPosition(codeDocument, absoluteIndex, out var mappedPosition, out _))
+            var generatedDocument = languageKind is RazorLanguageKind.CSharp
+                ? (IRazorGeneratedDocument)codeDocument.GetCSharpDocument()
+                : codeDocument.GetHtmlDocument();
+            if (TryMapToProjectedDocumentPosition(generatedDocument, absoluteIndex, out var mappedPosition, out _))
             {
                 // For C# locations, we attempt to return the corresponding position
                 // within the projected document
@@ -59,7 +62,7 @@ internal abstract class RazorDocumentMappingService
             }
             else
             {
-                // It no longer makes sense to think of this location as C#, since it doesn't
+                // It no longer makes sense to think of this location as C# or Html, since it doesn't
                 // correspond to any position in the projected document. This should not happen
                 // since there should be source mappings for all the C# spans.
                 languageKind = RazorLanguageKind.Razor;

@@ -9,7 +9,7 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests;
 
 public static class SourceMappingsSerializer
 {
-    public static string Serialize(RazorCSharpDocument csharpDocument, RazorSourceDocument sourceDocument)
+    internal static string Serialize(IRazorGeneratedDocument csharpDocument, RazorSourceDocument sourceDocument)
     {
         var builder = new StringBuilder();
         var charBuffer = new char[sourceDocument.Length];

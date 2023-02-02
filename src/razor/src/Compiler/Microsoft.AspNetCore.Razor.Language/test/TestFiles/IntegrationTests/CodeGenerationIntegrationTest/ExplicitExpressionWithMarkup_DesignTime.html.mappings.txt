@@ -1,0 +1,10 @@
+Source Location: (0:0,0 [5] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ExplicitExpressionWithMarkup.cshtml)
+|<div>|
+Generated Location: (0:0,0 [5] )
+|<div>|
+
+Source Location: (8:0,8 [6] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ExplicitExpressionWithMarkup.cshtml)
+|</div>|
+Generated Location: (8:0,8 [6] )
+|</div>|
+

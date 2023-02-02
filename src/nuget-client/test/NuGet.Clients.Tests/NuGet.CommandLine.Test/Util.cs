@@ -23,6 +23,8 @@ using Xunit;
 
 namespace NuGet.CommandLine.Test
 {
+    using IPackageFile = NuGet.Packaging.IPackageFile;
+
     public static class Util
     {
         private static readonly string NupkgFileFormat = "{0}.{1}.nupkg";

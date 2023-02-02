@@ -1,0 +1,62 @@
+Source Location: (13:0,13 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DuplicateAttributeTagHelpers.cshtml)
+| |
+Generated Location: (13:0,13 [1] )
+| |
+
+Source Location: (31:0,31 [12] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DuplicateAttributeTagHelpers.cshtml)
+|
+
+<p age="|
+Generated Location: (31:0,31 [12] )
+|
+
+<p age="|
+
+Source Location: (44:2,9 [7] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DuplicateAttributeTagHelpers.cshtml)
+|" AGE="|
+Generated Location: (44:2,9 [7] )
+|" AGE="|
+
+Source Location: (53:2,18 [7] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DuplicateAttributeTagHelpers.cshtml)
+|" Age="|
+Generated Location: (53:2,18 [7] )
+|" Age="|
+
+Source Location: (63:2,28 [83] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DuplicateAttributeTagHelpers.cshtml)
+|">
+    <input type="button" TYPE="checkbox" />
+    <input type="button" checked="|
+Generated Location: (63:2,28 [83] )
+|">
+    <input type="button" TYPE="checkbox" />
+    <input type="button" checked="|
+
+Source Location: (150:4,38 [27] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DuplicateAttributeTagHelpers.cshtml)
+|" type="checkbox" checked="|
+Generated Location: (150:4,38 [27] )
+|" type="checkbox" checked="|
+
+Source Location: (182:4,70 [40] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DuplicateAttributeTagHelpers.cshtml)
+|" />
+    <input type='button' checked="|
+Generated Location: (182:4,70 [40] )
+|" />
+    <input type='button' checked="|
+
+Source Location: (226:5,38 [25] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DuplicateAttributeTagHelpers.cshtml)
+|" type=checkbox checked='|
+Generated Location: (226:5,38 [25] )
+|" type=checkbox checked='|
+
+Source Location: (255:5,67 [26] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DuplicateAttributeTagHelpers.cshtml)
+|' type="checkbox" checked=|
+Generated Location: (255:5,67 [26] )
+|' type="checkbox" checked=|
+
+Source Location: (285:5,97 [9] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DuplicateAttributeTagHelpers.cshtml)
+| />
+</p>|
+Generated Location: (285:5,97 [9] )
+| />
+</p>|
+

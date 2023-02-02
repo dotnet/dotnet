@@ -1,0 +1,51 @@
+Source Location: (13:0,13 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithTemplate.cshtml)
+| |
+Generated Location: (13:0,13 [1] )
+| |
+
+Source Location: (31:0,31 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithTemplate.cshtml)
+|
+
+|
+Generated Location: (31:0,31 [4] )
+|
+
+|
+
+Source Location: (45:2,10 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithTemplate.cshtml)
+| |
+Generated Location: (45:2,10 [1] )
+| |
+
+Source Location: (316:9,1 [15] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithTemplate.cshtml)
+|
+
+<div>
+    |
+Generated Location: (316:9,1 [15] )
+|
+
+<div>
+    |
+
+Source Location: (400:15,13 [26] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithTemplate.cshtml)
+|<div condition="true"><h3>|
+Generated Location: (400:15,13 [26] )
+|<div condition="true"><h3>|
+
+Source Location: (431:15,44 [51] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithTemplate.cshtml)
+|</h3><input type="checkbox" checked="true" /></div>|
+Generated Location: (431:15,44 [51] )
+|</h3><input type="checkbox" checked="true" /></div>|
+
+Source Location: (491:16,5 [12] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithTemplate.cshtml)
+|
+</div>
+
+|
+Generated Location: (491:16,5 [12] )
+|
+</div>
+
+|
+

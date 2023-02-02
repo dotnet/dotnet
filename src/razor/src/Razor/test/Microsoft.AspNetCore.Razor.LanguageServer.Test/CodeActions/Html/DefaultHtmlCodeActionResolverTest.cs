@@ -25,7 +25,7 @@ public class DefaultHtmlCodeActionResolverTest : LanguageServerTestBase
     }
 
     [Fact]
-    public async Task ResoplveAsync_RemapsAndFixesEdits()
+    public async Task ResolveAsync_RemapsAndFixesEdits()
     {
         // Arrange
         var contents = "[|<$$h1>Goo @(DateTime.Now) Bar</h1>|]";

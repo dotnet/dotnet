@@ -16,6 +16,7 @@ resources:
     type: github
     name: dotnet/dotnet
     endpoint: dotnet
+    ref: refs/heads/release/8.0.1xx-preview1
 
 parameters:
 - name: vmrBranch

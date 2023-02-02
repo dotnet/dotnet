@@ -1,0 +1,95 @@
+Source Location: (50:3,4 [16] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes.cshtml)
+|<a href="Foo" />|
+Generated Location: (50:3,4 [16] )
+|<a href="Foo" />|
+
+Source Location: (72:4,4 [10] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes.cshtml)
+|<p class="|
+Generated Location: (72:4,4 [10] )
+|<p class="|
+
+Source Location: (86:4,18 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes.cshtml)
+|" />|
+Generated Location: (86:4,18 [4] )
+|" />|
+
+Source Location: (96:5,4 [14] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes.cshtml)
+|<p class="foo |
+Generated Location: (96:5,4 [14] )
+|<p class="foo |
+
+Source Location: (114:5,22 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes.cshtml)
+|" />|
+Generated Location: (114:5,22 [4] )
+|" />|
+
+Source Location: (124:6,4 [10] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes.cshtml)
+|<p class="|
+Generated Location: (124:6,4 [10] )
+|<p class="|
+
+Source Location: (138:6,18 [8] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes.cshtml)
+| foo" />|
+Generated Location: (138:6,18 [8] )
+| foo" />|
+
+Source Location: (152:7,4 [32] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes.cshtml)
+|<input type="checkbox" checked="|
+Generated Location: (152:7,4 [32] )
+|<input type="checkbox" checked="|
+
+Source Location: (187:7,39 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes.cshtml)
+|" />|
+Generated Location: (187:7,39 [4] )
+|" />|
+
+Source Location: (197:8,4 [36] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes.cshtml)
+|<input type="checkbox" checked="foo |
+Generated Location: (197:8,4 [36] )
+|<input type="checkbox" checked="foo |
+
+Source Location: (236:8,43 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes.cshtml)
+|" />|
+Generated Location: (236:8,43 [4] )
+|" />|
+
+Source Location: (246:9,4 [10] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes.cshtml)
+|<p class="|
+Generated Location: (246:9,4 [10] )
+|<p class="|
+
+Source Location: (281:9,39 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes.cshtml)
+|" />|
+Generated Location: (281:9,39 [4] )
+|" />|
+
+Source Location: (291:10,4 [18] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes.cshtml)
+|<a href="~/Foo" />|
+Generated Location: (291:10,4 [18] )
+|<a href="~/Foo" />|
+
+Source Location: (315:11,4 [13] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes.cshtml)
+|<script src="|
+Generated Location: (315:11,4 [13] )
+|<script src="|
+
+Source Location: (373:11,62 [34] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes.cshtml)
+|" type="text/javascript"></script>|
+Generated Location: (373:11,62 [34] )
+|" type="text/javascript"></script>|
+
+Source Location: (413:12,4 [13] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes.cshtml)
+|<script src="|
+Generated Location: (413:12,4 [13] )
+|<script src="|
+
+Source Location: (487:12,78 [34] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes.cshtml)
+|" type="text/javascript"></script>|
+Generated Location: (487:12,78 [34] )
+|" type="text/javascript"></script>|
+
+Source Location: (527:13,4 [111] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes.cshtml)
+|<script src="http://ajax.aspnetcdn.com/ajax/jquery.ui/1.8.16/jquery-ui.min.js" type="text/javascript"></script>|
+Generated Location: (527:13,4 [111] )
+|<script src="http://ajax.aspnetcdn.com/ajax/jquery.ui/1.8.16/jquery-ui.min.js" type="text/javascript"></script>|
+

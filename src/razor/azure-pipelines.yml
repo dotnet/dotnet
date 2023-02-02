@@ -128,7 +128,8 @@ stages:
             demands: ImageOverride -equals windows.vs2022preview.scout.amd64.open
           ${{ if ne(variables['System.TeamProject'], 'public') }}:
             name: NetCore1ESPool-Internal
-            demands: ImageOverride -equals windows.vs2022preview.amd64
+            #Switch to scout queue to get test pass
+            demands: ImageOverride -equals windows.vs2022preview.scout.amd64
         strategy:
           matrix:
             ${{ if eq(variables['System.TeamProject'], 'public') }}:

@@ -2092,7 +2092,7 @@ namespace NuGet.Packaging.Test
             using (var packageArchiveReader = new PackageArchiveReader(packageStream, environmentVariableReader: environment.Object))
             {
                 // Act
-                bool expectedResult = CanVerifySignedPackages();
+                bool expectedResult = CanVerifySignedPackages(environment.Object);
                 bool actualResult = packageArchiveReader.CanVerifySignedPackages(null);
 
                 // Assert
@@ -2100,14 +2100,26 @@ namespace NuGet.Packaging.Test
             }
         }
 
-        private static bool CanVerifySignedPackages()
+        private static bool CanVerifySignedPackages(IEnvironmentVariableReader environmentVariableReader = null)
         {
-            return RuntimeEnvironmentHelper.IsWindows &&
+            return (RuntimeEnvironmentHelper.IsWindows ||
+                IsVerificationEnabledByEnvironmentVariable(environmentVariableReader)) &&
 #if IS_SIGNING_SUPPORTED
                 true;
 #else
                 false;
 #endif
+        }
+
+        private static bool IsVerificationEnabledByEnvironmentVariable(
+            IEnvironmentVariableReader environmentVariableReader = null)
+        {
+            IEnvironmentVariableReader reader = environmentVariableReader ?? EnvironmentVariableWrapper.Instance;
+
+            string value = reader.GetEnvironmentVariable(
+                EnvironmentVariableConstants.DotNetNuGetSignatureVerification);
+
+            return string.Equals(bool.TrueString, value, StringComparison.OrdinalIgnoreCase);
         }
 
         private static string ExtractFile(string sourcePath, string targetPath, Stream sourceStream)

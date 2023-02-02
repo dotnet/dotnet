@@ -91,7 +91,7 @@ internal class FormattingLanguageServerClient : ClientNotifierServiceBase
     private string GetGeneratedHtml(Uri uri)
     {
         var codeDocument = _documents[uri.GetAbsoluteOrUNCPath()];
-        var generatedHtml = codeDocument.GetHtmlDocument().GeneratedHtml;
+        var generatedHtml = codeDocument.GetHtmlDocument().GeneratedCode;
         return generatedHtml.Replace("\r", "", StringComparison.Ordinal).Replace("\n", "\r\n", StringComparison.Ordinal);
     }
 

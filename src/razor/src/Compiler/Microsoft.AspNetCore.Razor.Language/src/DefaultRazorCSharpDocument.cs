@@ -16,8 +16,10 @@ internal class DefaultRazorCSharpDocument : RazorCSharpDocument
     private readonly SourceMapping[] _sourceMappings;
     private readonly LinePragma[] _linePragmas;
     private readonly RazorCodeGenerationOptions _options;
+    private readonly RazorCodeDocument _codeDocument;
 
     public DefaultRazorCSharpDocument(
+        RazorCodeDocument codeDocument,
         string generatedCode,
         RazorCodeGenerationOptions options,
         RazorDiagnostic[] diagnostics,
@@ -34,6 +36,7 @@ internal class DefaultRazorCSharpDocument : RazorCSharpDocument
             throw new ArgumentNullException(nameof(options));
         }
 
+        _codeDocument = codeDocument;
         _generatedCode = generatedCode;
         _options = options;
 
@@ -51,4 +54,6 @@ internal class DefaultRazorCSharpDocument : RazorCSharpDocument
     internal override IReadOnlyList<LinePragma> LinePragmas => _linePragmas;
 
     public override RazorCodeGenerationOptions Options => _options;
+
+    public override RazorCodeDocument CodeDocument => _codeDocument;
 }

@@ -14,7 +14,6 @@ using Microsoft.VisualStudio.Sdk.TestFramework;
 using Moq;
 using NuGet.PackageManagement.UI.Utility;
 using NuGet.PackageManagement.VisualStudio;
-using NuGet.PackageManagement.VisualStudio.Test;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using NuGet.Test.Utility;
@@ -28,7 +27,7 @@ using Xunit.Abstractions;
 namespace NuGet.PackageManagement.UI.Test
 {
     [Collection(MockedVS.Collection)]
-    public class PackageItemViewModelTests : MockedVSCollectionTests, IClassFixture<LocalPackageSearchMetadataFixture>, IClassFixture<DispatcherThreadFixture>
+    public class PackageItemViewModelTests : IClassFixture<LocalPackageSearchMetadataFixture>, IClassFixture<DispatcherThreadFixture>
     {
         private readonly LocalPackageSearchMetadataFixture _testData;
         private readonly PackageItemViewModel _testInstance;
@@ -42,7 +41,6 @@ namespace NuGet.PackageManagement.UI.Test
             GlobalServiceProvider globalServiceProvider,
             ITestOutputHelper output,
             LocalPackageSearchMetadataFixture testData)
-            : base(globalServiceProvider)
         {
             globalServiceProvider.Reset();
             _serviceBroker.Setup(

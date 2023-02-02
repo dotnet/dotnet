@@ -191,7 +191,7 @@ public class FormattingTestBase : RazorIntegrationTestBase
             throw new NotImplementedException("Code action formatting is not yet supported for HTML in Razor.");
         }
 
-        if (!mappingService.TryMapToProjectedDocumentPosition(codeDocument, positionAfterTrigger, out _, out var _))
+        if (!mappingService.TryMapToProjectedDocumentPosition(codeDocument.GetCSharpDocument(), positionAfterTrigger, out _, out var _))
         {
             throw new InvalidOperationException("Could not map from Razor document to generated document");
         }

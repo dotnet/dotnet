@@ -1,0 +1,126 @@
+Source Location: (35:2,15 [10] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Instrumented.cshtml)
+|<p>Bar</p>|
+Generated Location: (35:2,15 [10] )
+|<p>Bar</p>|
+
+Source Location: (54:3,6 [14] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Instrumented.cshtml)
+|Hello, World
+|
+Generated Location: (54:3,6 [14] )
+|Hello, World
+|
+
+Source Location: (72:4,4 [19] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Instrumented.cshtml)
+|<p>Hello, World</p>|
+Generated Location: (72:4,4 [19] )
+|<p>Hello, World</p>|
+
+Source Location: (94:5,1 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Instrumented.cshtml)
+|
+
+|
+Generated Location: (94:5,1 [4] )
+|
+
+|
+
+Source Location: (121:8,4 [19] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Instrumented.cshtml)
+|<p>Hello from C#, #|
+Generated Location: (121:8,4 [19] )
+|<p>Hello from C#, #|
+
+Source Location: (144:8,27 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Instrumented.cshtml)
+|</p>|
+Generated Location: (144:8,27 [4] )
+|</p>|
+
+Source Location: (164:10,1 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Instrumented.cshtml)
+|
+
+|
+Generated Location: (164:10,1 [4] )
+|
+
+|
+
+Source Location: (188:13,4 [25] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Instrumented.cshtml)
+|<p>We wrote 10 lines!</p>|
+Generated Location: (188:13,4 [25] )
+|<p>We wrote 10 lines!</p>|
+
+Source Location: (216:14,1 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Instrumented.cshtml)
+|
+
+|
+Generated Location: (216:14,1 [4] )
+|
+
+|
+
+Source Location: (256:18,8 [36] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Instrumented.cshtml)
+|<p>No really, we wrote 10 lines!</p>|
+Generated Location: (256:18,8 [36] )
+|<p>No really, we wrote 10 lines!</p>|
+
+Source Location: (332:21,8 [29] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Instrumented.cshtml)
+|<p>Actually, we didn't...</p>|
+Generated Location: (332:21,8 [29] )
+|<p>Actually, we didn't...</p>|
+
+Source Location: (380:23,1 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Instrumented.cshtml)
+|
+
+|
+Generated Location: (380:23,1 [4] )
+|
+
+|
+
+Source Location: (424:26,4 [25] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Instrumented.cshtml)
+|<p>Hello again from C#, #|
+Generated Location: (424:26,4 [25] )
+|<p>Hello again from C#, #|
+
+Source Location: (453:26,33 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Instrumented.cshtml)
+|</p>|
+Generated Location: (453:26,33 [4] )
+|</p>|
+
+Source Location: (460:27,1 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Instrumented.cshtml)
+|
+
+|
+Generated Location: (460:27,1 [4] )
+|
+
+|
+
+Source Location: (476:30,4 [35] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Instrumented.cshtml)
+|<p>That time, we wrote 5 lines!</p>|
+Generated Location: (476:30,4 [35] )
+|<p>That time, we wrote 5 lines!</p>|
+
+Source Location: (542:32,4 [29] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Instrumented.cshtml)
+|<p>Oh no! An error occurred: |
+Generated Location: (542:32,4 [29] )
+|<p>Oh no! An error occurred: |
+
+Source Location: (584:32,46 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Instrumented.cshtml)
+|</p>|
+Generated Location: (584:32,46 [4] )
+|</p>|
+
+Source Location: (591:33,1 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Instrumented.cshtml)
+|
+
+|
+Generated Location: (591:33,1 [4] )
+|
+
+|
+
+Source Location: (622:36,4 [47] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Instrumented.cshtml)
+|<p>This block is locked, for your security!</p>|
+Generated Location: (622:36,4 [47] )
+|<p>This block is locked, for your security!</p>|
+

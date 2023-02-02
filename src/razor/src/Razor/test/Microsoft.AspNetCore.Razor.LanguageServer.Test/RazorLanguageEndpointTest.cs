@@ -367,11 +367,12 @@ public class RazorLanguageEndpointTest : LanguageServerTestBase
     {
         var codeDocument = CreateCodeDocument(razorSource, Array.Empty<TagHelperDescriptor>());
         var csharpDocument = RazorCSharpDocument.Create(
-                projectedCSharpSource,
-                RazorCodeGenerationOptions.CreateDefault(),
-                Enumerable.Empty<RazorDiagnostic>(),
-                sourceMappings,
-                Enumerable.Empty<LinePragma>());
+            codeDocument,
+            projectedCSharpSource,
+            RazorCodeGenerationOptions.CreateDefault(),
+            Enumerable.Empty<RazorDiagnostic>(),
+            sourceMappings,
+            Enumerable.Empty<LinePragma>());
         codeDocument.SetCSharpDocument(csharpDocument);
         return codeDocument;
     }

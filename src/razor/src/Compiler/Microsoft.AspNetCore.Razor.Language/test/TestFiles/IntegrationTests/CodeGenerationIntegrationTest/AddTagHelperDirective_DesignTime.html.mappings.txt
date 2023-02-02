@@ -1,0 +1,12 @@
+Source Location: (13:0,13 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/AddTagHelperDirective.cshtml)
+| |
+Generated Location: (13:0,13 [1] )
+| |
+
+Source Location: (31:0,31 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/AddTagHelperDirective.cshtml)
+|
+|
+Generated Location: (31:0,31 [2] )
+|
+|
+

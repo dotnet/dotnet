@@ -1,0 +1,12 @@
+Source Location: (70:3,8 [89] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SwitchExpression_RecursivePattern.cshtml)
+|<strong>Property expressions are supported by the razor syntax in the year 2022.</strong>|
+Generated Location: (70:3,8 [89] )
+|<strong>Property expressions are supported by the razor syntax in the year 2022.</strong>|
+
+Source Location: (339:11,1 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SwitchExpression_RecursivePattern.cshtml)
+|
+|
+Generated Location: (339:11,1 [2] )
+|
+|
+

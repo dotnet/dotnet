@@ -1,0 +1,7 @@
+Source Location: (0:0,0 [45] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/HtmlCommentWithQuote_Double.cshtml)
+|<!-- " -->
+<img src="~/images/submit.png" />|
+Generated Location: (0:0,0 [45] )
+|<!-- " -->
+<img src="~/images/submit.png" />|
+

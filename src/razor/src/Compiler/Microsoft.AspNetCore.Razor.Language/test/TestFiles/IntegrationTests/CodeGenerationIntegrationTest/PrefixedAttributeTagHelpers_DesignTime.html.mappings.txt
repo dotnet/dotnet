@@ -1,0 +1,94 @@
+Source Location: (13:0,13 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/PrefixedAttributeTagHelpers.cshtml)
+| |
+Generated Location: (13:0,13 [1] )
+| |
+
+Source Location: (31:0,31 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/PrefixedAttributeTagHelpers.cshtml)
+|
+
+|
+Generated Location: (31:0,31 [4] )
+|
+
+|
+
+Source Location: (280:12,1 [90] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/PrefixedAttributeTagHelpers.cshtml)
+|
+
+<div class="randomNonTagHelperAttribute">
+    <input type="checkbox" int-dictionary="|
+Generated Location: (280:12,1 [90] )
+|
+
+<div class="randomNonTagHelperAttribute">
+    <input type="checkbox" int-dictionary="|
+
+Source Location: (383:15,56 [21] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/PrefixedAttributeTagHelpers.cshtml)
+|" string-dictionary="|
+Generated Location: (383:15,56 [21] )
+|" string-dictionary="|
+
+Source Location: (420:15,93 [48] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/PrefixedAttributeTagHelpers.cshtml)
+|"/>
+    <input type="password" int-dictionary="|
+Generated Location: (420:15,93 [48] )
+|"/>
+    <input type="password" int-dictionary="|
+
+Source Location: (481:16,56 [21] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/PrefixedAttributeTagHelpers.cshtml)
+|" int-prefix-garlic="|
+Generated Location: (481:16,56 [21] )
+|" int-prefix-garlic="|
+
+Source Location: (504:16,79 [22] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/PrefixedAttributeTagHelpers.cshtml)
+|" int-prefix-grabber="|
+Generated Location: (504:16,79 [22] )
+|" int-prefix-grabber="|
+
+Source Location: (528:16,103 [62] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/PrefixedAttributeTagHelpers.cshtml)
+|" />
+    <input type="radio"
+           int-prefix-grabber="|
+Generated Location: (528:16,103 [62] )
+|" />
+    <input type="radio"
+           int-prefix-grabber="|
+
+Source Location: (592:18,33 [19] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/PrefixedAttributeTagHelpers.cshtml)
+|" int-prefix-salt="|
+Generated Location: (592:18,33 [19] )
+|" int-prefix-salt="|
+
+Source Location: (613:18,54 [21] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/PrefixedAttributeTagHelpers.cshtml)
+|" int-prefix-pepper="|
+Generated Location: (613:18,54 [21] )
+|" int-prefix-pepper="|
+
+Source Location: (636:18,77 [19] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/PrefixedAttributeTagHelpers.cshtml)
+|" int-prefix-salt="|
+Generated Location: (636:18,77 [19] )
+|" int-prefix-salt="|
+
+Source Location: (656:18,97 [126] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/PrefixedAttributeTagHelpers.cshtml)
+|"
+           string-prefix-grabber="string" string-prefix-paprika="another string"
+           string-prefix-cumin="literate |
+Generated Location: (656:18,97 [126] )
+|"
+           string-prefix-grabber="string" string-prefix-paprika="another string"
+           string-prefix-cumin="literate |
+
+Source Location: (791:20,50 [35] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/PrefixedAttributeTagHelpers.cshtml)
+|?"/>
+    <input int-prefix-value="|
+Generated Location: (791:20,50 [35] )
+|?"/>
+    <input int-prefix-value="|
+
+Source Location: (828:21,31 [41] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/PrefixedAttributeTagHelpers.cshtml)
+|" string-prefix-thyme="string" />
+</div>|
+Generated Location: (828:21,31 [41] )
+|" string-prefix-thyme="string" />
+</div>|
+

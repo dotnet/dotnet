@@ -1,0 +1,53 @@
+Source Location: (13:0,13 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithWeirdlySpacedAttributes.cshtml)
+| |
+Generated Location: (13:0,13 [1] )
+| |
+
+Source Location: (31:0,31 [43] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithWeirdlySpacedAttributes.cshtml)
+|
+
+<p
+class 
+   =
+"Hello World" age   =|
+Generated Location: (31:0,31 [43] )
+|
+
+<p
+class 
+   =
+"Hello World" age   =|
+
+Source Location: (78:5,25 [20] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithWeirdlySpacedAttributes.cshtml)
+|
+   data-content= "|
+Generated Location: (78:5,25 [20] )
+|
+   data-content= "|
+
+Source Location: (103:6,23 [83] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithWeirdlySpacedAttributes.cshtml)
+|">Body of Tag</p>
+
+<input type 	= 'text' data-content=	 "hello" />
+
+<p age=   "|
+Generated Location: (103:6,23 [83] )
+|">Body of Tag</p>
+
+<input type 	= 'text' data-content=	 "hello" />
+
+<p age=   "|
+
+Source Location: (190:10,15 [86] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithWeirdlySpacedAttributes.cshtml)
+|" data-content
+= 'hello2'></p>
+
+<input type 
+       =password data-content =blah/>|
+Generated Location: (190:10,15 [86] )
+|" data-content
+= 'hello2'></p>
+
+<input type 
+       =password data-content =blah/>|
+

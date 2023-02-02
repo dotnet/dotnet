@@ -1,0 +1,19 @@
+Source Location: (13:0,13 [30] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InlineBlocks.cshtml)
+|(string link) {
+    <a href="|
+Generated Location: (13:0,13 [30] )
+|(string link) {
+    <a href="|
+
+Source Location: (78:1,48 [14] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InlineBlocks.cshtml)
+|<text>#</text>|
+Generated Location: (78:1,48 [14] )
+|<text>#</text>|
+
+Source Location: (94:1,64 [7] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InlineBlocks.cshtml)
+|" />
+}|
+Generated Location: (94:1,64 [7] )
+|" />
+}|
+

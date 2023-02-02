@@ -1,0 +1,196 @@
+Source Location: (13:0,13 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ComplexTagHelpers.cshtml)
+| |
+Generated Location: (13:0,13 [1] )
+| |
+
+Source Location: (31:0,31 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ComplexTagHelpers.cshtml)
+|
+
+|
+Generated Location: (31:0,31 [4] )
+|
+
+|
+
+Source Location: (88:6,4 [59] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ComplexTagHelpers.cshtml)
+|<div class="randomNonTagHelperAttribute">
+        <p age="|
+Generated Location: (88:6,4 [59] )
+|<div class="randomNonTagHelperAttribute">
+        <p age="|
+
+Source Location: (155:7,24 [56] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ComplexTagHelpers.cshtml)
+|" class="@@string"></p>
+        <p time="Current Time: |
+Generated Location: (155:7,24 [56] )
+|" class="@@string"></p>
+        <p time="Current Time: |
+
+Source Location: (224:8,44 [48] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ComplexTagHelpers.cshtml)
+|">
+            <h1>Set Time:</h1>
+            |
+Generated Location: (224:8,44 [48] )
+|">
+            <h1>Set Time:</h1>
+            |
+
+Source Location: (316:12,16 [83] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ComplexTagHelpers.cshtml)
+|<p>New Time: <input type="text" value="" placeholder="Enter in a new time..."/></p>|
+Generated Location: (316:12,16 [83] )
+|<p>New Time: <input type="text" value="" placeholder="Enter in a new time..."/></p>|
+
+Source Location: (465:16,16 [29] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ComplexTagHelpers.cshtml)
+|<p>Current Time: <input type=|
+Generated Location: (465:16,16 [29] )
+|<p>Current Time: <input type=|
+
+Source Location: (503:16,54 [9] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ComplexTagHelpers.cshtml)
+| checked=|
+Generated Location: (503:16,54 [9] )
+| checked=|
+
+Source Location: (516:16,67 [7] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ComplexTagHelpers.cshtml)
+| /></p>|
+Generated Location: (516:16,67 [7] )
+| /></p>|
+
+Source Location: (541:17,16 [13] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ComplexTagHelpers.cshtml)
+|<input tYPe='|
+Generated Location: (541:17,16 [13] )
+|<input tYPe='|
+
+Source Location: (587:17,62 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ComplexTagHelpers.cshtml)
+|' />|
+Generated Location: (587:17,62 [4] )
+|' />|
+
+Source Location: (609:18,16 [13] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ComplexTagHelpers.cshtml)
+|<input type='|
+Generated Location: (609:18,16 [13] )
+|<input type='|
+
+Source Location: (634:18,41 [21] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ComplexTagHelpers.cshtml)
+|<text>checkbox</text>|
+Generated Location: (634:18,41 [21] )
+|<text>checkbox</text>|
+
+Source Location: (665:18,72 [21] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ComplexTagHelpers.cshtml)
+|<text>anything</text>|
+Generated Location: (665:18,72 [21] )
+|<text>anything</text>|
+
+Source Location: (688:18,95 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ComplexTagHelpers.cshtml)
+|'>|
+Generated Location: (688:18,95 [2] )
+|'>|
+
+Source Location: (705:19,13 [54] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ComplexTagHelpers.cshtml)
+|
+        </p>
+        <p unbound="first value" age="|
+Generated Location: (705:19,13 [54] )
+|
+        </p>
+        <p unbound="first value" age="|
+
+Source Location: (790:21,69 [40] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ComplexTagHelpers.cshtml)
+|" unbound="second value" >
+            |
+Generated Location: (790:21,69 [40] )
+|" unbound="second value" >
+            |
+
+Source Location: (854:22,36 [30] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ComplexTagHelpers.cshtml)
+|
+            <input ChecKED="|
+Generated Location: (854:22,36 [30] )
+|
+            <input ChecKED="|
+
+Source Location: (894:23,38 [34] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ComplexTagHelpers.cshtml)
+|">
+        </p>
+        <p age="|
+Generated Location: (894:23,38 [34] )
+|">
+        </p>
+        <p age="|
+
+Source Location: (960:25,48 [64] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ComplexTagHelpers.cshtml)
+|">
+            <input unbound="hello" unbound="world" checked="|
+Generated Location: (960:25,48 [64] )
+|">
+            <input unbound="hello" unbound="world" checked="|
+
+Source Location: (1057:26,93 [36] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ComplexTagHelpers.cshtml)
+|" />
+        </p>
+        <p age="|
+Generated Location: (1057:26,93 [36] )
+|" />
+        </p>
+        <p age="|
+
+Source Location: (1123:28,46 [32] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ComplexTagHelpers.cshtml)
+|">
+            <input checked="|
+Generated Location: (1123:28,46 [32] )
+|">
+            <input checked="|
+
+Source Location: (1185:29,58 [34] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ComplexTagHelpers.cshtml)
+|">
+        </p>
+        <p age="|
+Generated Location: (1185:29,58 [34] )
+|">
+        </p>
+        <p age="|
+
+Source Location: (1251:31,48 [32] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ComplexTagHelpers.cshtml)
+|">
+            <input checked="|
+Generated Location: (1251:31,48 [32] )
+|">
+            <input checked="|
+
+Source Location: (1326:32,71 [28] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ComplexTagHelpers.cshtml)
+|" />
+        </p>
+        |
+Generated Location: (1326:32,71 [28] )
+|" />
+        </p>
+        |
+
+Source Location: (1367:34,21 [8] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ComplexTagHelpers.cshtml)
+|<p age="|
+Generated Location: (1367:34,21 [8] )
+|<p age="|
+
+Source Location: (1378:34,32 [31] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ComplexTagHelpers.cshtml)
+|" class="hello"><input checked=|
+Generated Location: (1378:34,32 [31] )
+|" class="hello"><input checked=|
+
+Source Location: (1417:34,71 [7] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ComplexTagHelpers.cshtml)
+| /></p>|
+Generated Location: (1417:34,71 [7] )
+| /></p>|
+
+Source Location: (1425:34,79 [18] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ComplexTagHelpers.cshtml)
+|
+        <p age="|
+Generated Location: (1425:34,79 [18] )
+|
+        <p age="|
+
+Source Location: (1451:35,24 [18] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ComplexTagHelpers.cshtml)
+|"></p>
+    </div>|
+Generated Location: (1451:35,24 [18] )
+|"></p>
+    </div>|
+

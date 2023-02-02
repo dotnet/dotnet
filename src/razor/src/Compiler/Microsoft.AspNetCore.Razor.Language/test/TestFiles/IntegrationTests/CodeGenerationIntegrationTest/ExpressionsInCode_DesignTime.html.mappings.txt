@@ -1,0 +1,32 @@
+Source Location: (54:3,1 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ExpressionsInCode.cshtml)
+|
+
+|
+Generated Location: (54:3,1 [4] )
+|
+
+|
+
+Source Location: (102:8,4 [19] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ExpressionsInCode.cshtml)
+|<p>Foo is Null!</p>|
+Generated Location: (102:8,4 [19] )
+|<p>Foo is Null!</p>|
+
+Source Location: (124:9,1 [9] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ExpressionsInCode.cshtml)
+|
+
+<p>
+|
+Generated Location: (124:9,1 [9] )
+|
+
+<p>
+|
+
+Source Location: (199:14,1 [6] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ExpressionsInCode.cshtml)
+|
+</p>|
+Generated Location: (199:14,1 [6] )
+|
+</p>|
+

@@ -1,0 +1,95 @@
+Source Location: (13:0,13 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocksWithTagHelper.cshtml)
+| |
+Generated Location: (13:0,13 [1] )
+| |
+
+Source Location: (31:0,31 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocksWithTagHelper.cshtml)
+|
+|
+Generated Location: (31:0,31 [2] )
+|
+|
+
+Source Location: (189:9,8 [5] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocksWithTagHelper.cshtml)
+|<div>|
+Generated Location: (189:9,8 [5] )
+|<div>|
+
+Source Location: (206:9,25 [6] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocksWithTagHelper.cshtml)
+|</div>|
+Generated Location: (206:9,25 [6] )
+|</div>|
+
+Source Location: (222:11,1 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocksWithTagHelper.cshtml)
+|
+
+|
+Generated Location: (222:11,1 [4] )
+|
+
+|
+
+Source Location: (252:13,26 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocksWithTagHelper.cshtml)
+|
+|
+Generated Location: (252:13,26 [2] )
+|
+|
+
+Source Location: (293:14,39 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocksWithTagHelper.cshtml)
+|
+
+|
+Generated Location: (293:14,39 [4] )
+|
+
+|
+
+Source Location: (307:16,10 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocksWithTagHelper.cshtml)
+| |
+Generated Location: (307:16,10 [1] )
+| |
+
+Source Location: (415:20,8 [38] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocksWithTagHelper.cshtml)
+|<div>
+            <h3>Happy birthday |
+Generated Location: (415:20,8 [38] )
+|<div>
+            <h3>Happy birthday |
+
+Source Location: (465:21,43 [22] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocksWithTagHelper.cshtml)
+|!</h3>
+        </div>|
+Generated Location: (465:21,43 [22] )
+|!</h3>
+        </div>|
+
+Source Location: (499:24,8 [14] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocksWithTagHelper.cshtml)
+|<ul>
+        |
+Generated Location: (499:24,8 [14] )
+|<ul>
+        |
+
+Source Location: (580:27,12 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocksWithTagHelper.cshtml)
+|<li>|
+Generated Location: (580:27,12 [4] )
+|<li>|
+
+Source Location: (588:27,20 [21] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocksWithTagHelper.cshtml)
+| Happy birthday!</li>|
+Generated Location: (588:27,20 [21] )
+| Happy birthday!</li>|
+
+Source Location: (620:28,9 [15] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocksWithTagHelper.cshtml)
+|
+        </ul>|
+Generated Location: (620:28,9 [15] )
+|
+        </ul>|
+
+Source Location: (741:36,8 [23] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocksWithTagHelper.cshtml)
+|<h4>Secret message</h4>|
+Generated Location: (741:36,8 [23] )
+|<h4>Secret message</h4>|
+

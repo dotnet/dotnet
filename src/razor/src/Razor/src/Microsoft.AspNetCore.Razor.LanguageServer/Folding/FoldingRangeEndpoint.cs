@@ -111,7 +111,7 @@ internal class FoldingRangeEndpoint : IVSFoldingRangeEndpoint
             var range = GetRange(foldingRange);
 
             if (_documentMappingService.TryMapFromProjectedDocumentRange(
-                codeDocument,
+                codeDocument.GetCSharpDocument(),
                 range,
                 out var mappedRange))
             {

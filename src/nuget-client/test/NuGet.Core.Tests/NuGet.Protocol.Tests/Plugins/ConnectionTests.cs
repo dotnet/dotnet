@@ -11,11 +11,12 @@ using System.Threading.Tasks;
 using Moq;
 using NuGet.Common;
 using NuGet.Protocol.Tests;
-using NuGet.Versioning;
 using Xunit;
 
 namespace NuGet.Protocol.Plugins.Tests
 {
+    using SemanticVersion = Versioning.SemanticVersion;
+
     [Collection(nameof(NotThreadSafeResourceCollection))]
     public class ConnectionTests
     {

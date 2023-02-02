@@ -23,6 +23,8 @@ using NuGet.Versioning;
 
 namespace NuGet.Test.Utility
 {
+    using IPackageFile = NuGet.Packaging.IPackageFile;
+
     public static class SimpleTestPackageUtility
     {
         public static async Task CreateFullPackagesAsync(string repositoryDir, IDictionary<string, IEnumerable<string>> packages)

@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
@@ -106,7 +107,7 @@ internal class InlineCompletionEndpoint : IVSInlineCompletionEndpoint
 
         // Map to the location in the C# document.
         if (languageKind != RazorLanguageKind.CSharp ||
-            !_documentMappingService.TryMapToProjectedDocumentPosition(codeDocument, hostDocumentIndex, out var projectedPosition, out _))
+            !_documentMappingService.TryMapToProjectedDocumentPosition(codeDocument.GetCSharpDocument(), hostDocumentIndex, out var projectedPosition, out _))
         {
             requestContext.Logger.LogInformation("Unsupported location for {textDocumentUri}.", request.TextDocument.Uri);
             return null;
@@ -138,7 +139,7 @@ internal class InlineCompletionEndpoint : IVSInlineCompletionEndpoint
             var containsSnippet = item.TextFormat == InsertTextFormat.Snippet;
             var range = item.Range ?? new Range { Start = projectedPosition, End = projectedPosition };
 
-            if (!_documentMappingService.TryMapFromProjectedDocumentRange(codeDocument, range, out var rangeInRazorDoc))
+            if (!_documentMappingService.TryMapFromProjectedDocumentRange(codeDocument.GetCSharpDocument(), range, out var rangeInRazorDoc))
             {
                 requestContext.Logger.LogWarning("Could not remap projected range {range} to razor document", range);
                 continue;

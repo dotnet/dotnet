@@ -444,7 +444,7 @@ internal class RazorTranslateDiagnosticsService
         }
 
         if (!_documentMappingService.TryMapFromProjectedDocumentRange(
-            codeDocument,
+            codeDocument.GetCSharpDocument(),
             diagnostic.Range,
             MappingBehavior.Inferred,
             out originalRange))

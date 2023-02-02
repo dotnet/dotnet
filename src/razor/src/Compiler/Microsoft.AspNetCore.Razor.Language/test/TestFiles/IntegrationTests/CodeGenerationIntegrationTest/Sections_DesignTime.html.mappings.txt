@@ -1,0 +1,93 @@
+Source Location: (47:2,1 [33] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml)
+|
+
+<div>This is in the Body>
+
+|
+Generated Location: (47:2,1 [33] )
+|
+
+<div>This is in the Body>
+
+|
+
+Source Location: (97:6,17 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml)
+| |
+Generated Location: (97:6,17 [1] )
+| |
+
+Source Location: (99:6,19 [23] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml)
+|
+    <div class="some |
+Generated Location: (99:6,19 [23] )
+|
+    <div class="some |
+
+Source Location: (128:7,27 [30] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml)
+|">This is in Section 2</div>
+|
+Generated Location: (128:7,27 [30] )
+|">This is in Section 2</div>
+|
+
+Source Location: (159:8,1 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml)
+|
+
+|
+Generated Location: (159:8,1 [4] )
+|
+
+|
+
+Source Location: (180:10,17 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml)
+| |
+Generated Location: (180:10,17 [1] )
+| |
+
+Source Location: (182:10,19 [39] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml)
+|
+    <div>This is in Section 1</div>
+|
+Generated Location: (182:10,19 [39] )
+|
+    <div>This is in Section 1</div>
+|
+
+Source Location: (222:12,1 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml)
+|
+
+|
+Generated Location: (222:12,1 [4] )
+|
+
+|
+
+Source Location: (250:14,24 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml)
+| |
+Generated Location: (250:14,24 [1] )
+| |
+
+Source Location: (252:14,26 [6] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml)
+|
+    |
+Generated Location: (252:14,26 [6] )
+|
+    |
+
+Source Location: (288:15,34 [6] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml)
+|<span>|
+Generated Location: (288:15,34 [6] )
+|<span>|
+
+Source Location: (299:15,45 [7] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml)
+|</span>|
+Generated Location: (299:15,45 [7] )
+|</span>|
+
+Source Location: (309:15,55 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml)
+|
+|
+Generated Location: (309:15,55 [2] )
+|
+|
+

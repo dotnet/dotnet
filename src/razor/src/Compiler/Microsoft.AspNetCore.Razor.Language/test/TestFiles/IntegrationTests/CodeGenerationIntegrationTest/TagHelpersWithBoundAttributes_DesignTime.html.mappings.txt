@@ -1,0 +1,21 @@
+Source Location: (13:0,13 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithBoundAttributes.cshtml)
+| |
+Generated Location: (13:0,13 [1] )
+| |
+
+Source Location: (29:0,29 [27] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithBoundAttributes.cshtml)
+|
+<form>
+    <input bound=|
+Generated Location: (29:0,29 [27] )
+|
+<form>
+    <input bound=|
+
+Source Location: (62:2,23 [24] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithBoundAttributes.cshtml)
+| type='text' />
+</form>|
+Generated Location: (62:2,23 [24] )
+| type='text' />
+</form>|
+

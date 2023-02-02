@@ -94,16 +94,22 @@ internal partial class EditorInProcess
         var actualClassifications = await GetClassificationsAsync(cancellationToken);
         var actualArray = actualClassifications.ToArray();
         var expectedArray = expectedClassifications.ToArray();
+        var actualOffset = 0;
 
         for (var i = 0; i < actualArray.Length; i++)
         {
-            var actualClassification = actualArray[i];
+            var actualClassification = actualArray[i+actualOffset];
             var expectedClassification = expectedArray[i];
+
+            if (actualClassification.ClassificationType.BaseTypes.Count() == 1 && actualClassification.ClassificationType.BaseTypes.Any(t => t is ILayeredClassificationType layered && layered.Layer == ClassificationLayer.Syntactic))
+            {
+                actualOffset++;
+                actualClassification = actualArray[i+ actualOffset];
+            }
 
             if (actualClassification.ClassificationType.BaseTypes.Count() > 1)
             {
                 Assert.Equal(expectedClassification, actualClassification, ClassificationTypeComparer.Instance);
-
             }
             else if (!expectedClassification.Span.Span.Equals(actualClassification.Span.Span)
                 || !string.Equals(expectedClassification.ClassificationType.Classification, actualClassification.ClassificationType.Classification))
