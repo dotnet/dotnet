@@ -1,0 +1,36 @@
+pr: none
+
+trigger:
+  batch: true
+  branches:
+    include:
+    - main
+    - release/*
+
+resources:
+  repositories:
+  - repository: vmr
+    type: github
+    name: dotnet/dotnet
+    endpoint: dotnet
+
+parameters:
+- name: vmrBranch
+  displayName: dotnet/dotnet branch to push to
+  type: string
+  default: ''
+
+variables: 
+- ${{ if ne(parameters.vmrBranch, '') }}:
+  - name: VmrBranch
+    value: ${{ parameters.vmrBranch }}
+- ${{ else }}:
+  - name: VmrBranch
+    value: ${{ replace(replace(variables['Build.SourceBranch'], 'refs/heads/', ''), 'refs/pull/', '') }}
+    
+jobs:
+  - template: /eng/pipelines/templates/jobs/vmr-synchronization.yml
+    parameters:
+      vmrBranch: ${{ variables.VmrBranch }}
+  
+    
