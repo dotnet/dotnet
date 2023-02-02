@@ -1,0 +1,67 @@
+Source Location: (16:0,16 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings.cshtml)
+|
+|
+Generated Location: (16:0,16 [2] )
+|
+|
+
+Source Location: (51:1,33 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings.cshtml)
+|
+|
+Generated Location: (51:1,33 [2] )
+|
+|
+
+Source Location: (66:2,13 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings.cshtml)
+|
+
+|
+Generated Location: (66:2,13 [4] )
+|
+
+|
+
+Source Location: (90:4,20 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings.cshtml)
+|
+|
+Generated Location: (90:4,20 [2] )
+|
+|
+
+Source Location: (120:5,28 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings.cshtml)
+|
+|
+Generated Location: (120:5,28 [2] )
+|
+|
+
+Source Location: (164:6,42 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings.cshtml)
+|
+
+|
+Generated Location: (164:6,42 [4] )
+|
+
+|
+
+Source Location: (329:11,1 [32] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings.cshtml)
+|
+
+<p>Path's full type name is |
+Generated Location: (329:11,1 [32] )
+|
+
+<p>Path's full type name is |
+
+Source Location: (383:13,50 [40] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings.cshtml)
+|</p>
+<p>Foo's actual full type name is |
+Generated Location: (383:13,50 [40] )
+|</p>
+<p>Foo's actual full type name is |
+
+Source Location: (444:14,55 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings.cshtml)
+|</p>|
+Generated Location: (444:14,55 [4] )
+|</p>|
+

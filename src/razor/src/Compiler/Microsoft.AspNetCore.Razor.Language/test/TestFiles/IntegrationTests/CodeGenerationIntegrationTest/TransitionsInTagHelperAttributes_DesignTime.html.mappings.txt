@@ -1,0 +1,78 @@
+Source Location: (13:0,13 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TransitionsInTagHelperAttributes.cshtml)
+| |
+Generated Location: (13:0,13 [1] )
+| |
+
+Source Location: (31:0,31 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TransitionsInTagHelperAttributes.cshtml)
+|
+|
+Generated Location: (31:0,31 [2] )
+|
+|
+
+Source Location: (95:4,1 [14] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TransitionsInTagHelperAttributes.cshtml)
+|
+
+<p class="|
+Generated Location: (95:4,1 [14] )
+|
+
+<p class="|
+
+Source Location: (115:6,16 [7] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TransitionsInTagHelperAttributes.cshtml)
+|" age="|
+Generated Location: (115:6,16 [7] )
+|" age="|
+
+Source Location: (126:6,27 [29] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TransitionsInTagHelperAttributes.cshtml)
+|">Body of Tag</p>
+<p class="|
+Generated Location: (126:6,27 [29] )
+|">Body of Tag</p>
+<p class="|
+
+Source Location: (164:7,19 [7] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TransitionsInTagHelperAttributes.cshtml)
+|" age="|
+Generated Location: (164:7,19 [7] )
+|" age="|
+
+Source Location: (173:7,28 [29] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TransitionsInTagHelperAttributes.cshtml)
+|"></p>
+<p class="test" age="|
+Generated Location: (173:7,28 [29] )
+|"></p>
+<p class="test" age="|
+
+Source Location: (211:8,30 [29] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TransitionsInTagHelperAttributes.cshtml)
+|"></p>
+<p class="test" age="|
+Generated Location: (211:8,30 [29] )
+|"></p>
+<p class="test" age="|
+
+Source Location: (244:9,25 [29] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TransitionsInTagHelperAttributes.cshtml)
+|"></p>
+<p class="test" age="|
+Generated Location: (244:9,25 [29] )
+|"></p>
+<p class="test" age="|
+
+Source Location: (280:10,28 [25] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TransitionsInTagHelperAttributes.cshtml)
+|"></p>
+<p class="custom-|
+Generated Location: (280:10,28 [25] )
+|"></p>
+<p class="custom-|
+
+Source Location: (314:11,26 [7] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TransitionsInTagHelperAttributes.cshtml)
+|" age="|
+Generated Location: (314:11,26 [7] )
+|" age="|
+
+Source Location: (336:11,48 [8] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TransitionsInTagHelperAttributes.cshtml)
+|"></p>
+|
+Generated Location: (336:11,48 [8] )
+|"></p>
+|
+

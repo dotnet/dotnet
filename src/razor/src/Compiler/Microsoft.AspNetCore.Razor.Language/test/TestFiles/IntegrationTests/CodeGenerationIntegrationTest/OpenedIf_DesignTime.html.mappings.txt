@@ -1,0 +1,19 @@
+Source Location: (0:0,0 [16] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/OpenedIf.cshtml)
+|<html>
+<body>
+|
+Generated Location: (0:0,0 [16] )
+|<html>
+<body>
+|
+
+Source Location: (31:3,0 [7] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/OpenedIf.cshtml)
+|</body>|
+Generated Location: (31:3,0 [7] )
+|</body>|
+
+Source Location: (40:4,0 [7] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/OpenedIf.cshtml)
+|</html>|
+Generated Location: (40:4,0 [7] )
+|</html>|
+

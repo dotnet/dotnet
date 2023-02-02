@@ -57,10 +57,10 @@ internal class DefaultRazorDocumentMappingService : RazorDocumentMappingService
     public DefaultRazorDocumentMappingService() { }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
-    public override TextEdit[] GetProjectedDocumentEdits(RazorCodeDocument codeDocument, TextEdit[] edits)
+    public override TextEdit[] GetProjectedDocumentEdits(IRazorGeneratedDocument generatedDocument, TextEdit[] edits)
     {
         var projectedEdits = new List<TextEdit>();
-        var csharpSourceText = codeDocument.GetCSharpSourceText();
+        var csharpSourceText = GetGeneratedSourceText(generatedDocument);
         var lastNewLineAddedToLine = 0;
 
         foreach (var edit in edits)
@@ -78,8 +78,8 @@ internal class DefaultRazorDocumentMappingService : RazorDocumentMappingService
                 break;
             }
 
-            var mappedStart = this.TryMapFromProjectedDocumentPosition(codeDocument, startIndex, out var hostDocumentStart, out _);
-            var mappedEnd = this.TryMapFromProjectedDocumentPosition(codeDocument, endIndex, out var hostDocumentEnd, out _);
+            var mappedStart = this.TryMapFromProjectedDocumentPosition(generatedDocument, startIndex, out var hostDocumentStart, out _);
+            var mappedEnd = this.TryMapFromProjectedDocumentPosition(generatedDocument, endIndex, out var hostDocumentEnd, out _);
 
             // Ideal case, both start and end can be mapped so just return the edit
             if (mappedStart && mappedEnd)
@@ -133,8 +133,8 @@ internal class DefaultRazorDocumentMappingService : RazorDocumentMappingService
                     break;
                 }
 
-                mappedStart = this.TryMapFromProjectedDocumentPosition(codeDocument, startIndex, out hostDocumentStart, out _);
-                mappedEnd = this.TryMapFromProjectedDocumentPosition(codeDocument, endIndex, out hostDocumentEnd, out _);
+                mappedStart = this.TryMapFromProjectedDocumentPosition(generatedDocument, startIndex, out hostDocumentStart, out _);
+                mappedEnd = this.TryMapFromProjectedDocumentPosition(generatedDocument, endIndex, out hostDocumentEnd, out _);
 
                 if (mappedStart && mappedEnd)
                 {
@@ -188,7 +188,7 @@ internal class DefaultRazorDocumentMappingService : RazorDocumentMappingService
 
                 // Only do anything if the end of the line in question is a valid mapping point (ie, a transition)
                 var endOfLine = line.Span.End;
-                if (this.TryMapFromProjectedDocumentPosition(codeDocument, endOfLine, out var hostDocumentIndex, out _))
+                if (this.TryMapFromProjectedDocumentPosition(generatedDocument, endOfLine, out var hostDocumentIndex, out _))
                 {
                     if (range.Start.Line == lastNewLineAddedToLine)
                     {
@@ -220,14 +220,14 @@ internal class DefaultRazorDocumentMappingService : RazorDocumentMappingService
         return projectedEdits.ToArray();
     }
 
-    public override bool TryMapFromProjectedDocumentRange(RazorCodeDocument codeDocument, Range projectedRange, [NotNullWhen(true)] out Range? originalRange)
-        => TryMapFromProjectedDocumentRange(codeDocument, projectedRange, MappingBehavior.Strict, out originalRange);
+    public override bool TryMapFromProjectedDocumentRange(IRazorGeneratedDocument generatedDocument, Range projectedRange, [NotNullWhen(true)] out Range? originalRange)
+        => TryMapFromProjectedDocumentRange(generatedDocument, projectedRange, MappingBehavior.Strict, out originalRange);
 
-    public override bool TryMapFromProjectedDocumentRange(RazorCodeDocument codeDocument, Range projectedRange, MappingBehavior mappingBehavior, [NotNullWhen(true)] out Range? originalRange)
+    public override bool TryMapFromProjectedDocumentRange(IRazorGeneratedDocument generatedDocument, Range projectedRange, MappingBehavior mappingBehavior, [NotNullWhen(true)] out Range? originalRange)
     {
-        if (codeDocument is null)
+        if (generatedDocument is null)
         {
-            throw new ArgumentNullException(nameof(codeDocument));
+            throw new ArgumentNullException(nameof(generatedDocument));
         }
 
         if (projectedRange is null)
@@ -237,15 +237,15 @@ internal class DefaultRazorDocumentMappingService : RazorDocumentMappingService
 
         if (mappingBehavior == MappingBehavior.Strict)
         {
-            return TryMapFromProjectedDocumentRangeStrict(codeDocument, projectedRange, out originalRange);
+            return TryMapFromProjectedDocumentRangeStrict(generatedDocument, projectedRange, out originalRange);
         }
         else if (mappingBehavior == MappingBehavior.Inclusive)
         {
-            return TryMapFromProjectedDocumentRangeInclusive(codeDocument, projectedRange, out originalRange);
+            return TryMapFromProjectedDocumentRangeInclusive(generatedDocument, projectedRange, out originalRange);
         }
         else if (mappingBehavior == MappingBehavior.Inferred)
         {
-            return TryMapFromProjectedDocumentRangeInferred(codeDocument, projectedRange, out originalRange);
+            return TryMapFromProjectedDocumentRangeInferred(generatedDocument, projectedRange, out originalRange);
         }
         else
         {
@@ -253,16 +253,21 @@ internal class DefaultRazorDocumentMappingService : RazorDocumentMappingService
         }
     }
 
-    public override bool TryMapToProjectedDocumentRange(RazorCodeDocument codeDocument, Range originalRange, [NotNullWhen(true)] out Range? projectedRange)
+    public override bool TryMapToProjectedDocumentRange(IRazorGeneratedDocument generatedDocument, Range originalRange, [NotNullWhen(true)] out Range? projectedRange)
     {
-        if (codeDocument is null)
+        if (generatedDocument is null)
         {
-            throw new ArgumentNullException(nameof(codeDocument));
+            throw new ArgumentNullException(nameof(generatedDocument));
         }
 
         if (originalRange is null)
         {
             throw new ArgumentNullException(nameof(originalRange));
+        }
+
+        if (generatedDocument.CodeDocument is not { } codeDocument)
+        {
+            throw new InvalidOperationException("Cannot use document mapping service on a generated document that has a null CodeDocument.");
         }
 
         projectedRange = default;
@@ -284,13 +289,13 @@ internal class DefaultRazorDocumentMappingService : RazorDocumentMappingService
         }
 
         if (!range.Start.TryGetAbsoluteIndex(sourceText, _logger, out var startIndex) ||
-            !TryMapToProjectedDocumentPosition(codeDocument, startIndex, out var projectedStart, out var _))
+            !TryMapToProjectedDocumentPosition(generatedDocument, startIndex, out var projectedStart, out var _))
         {
             return false;
         }
 
         if (!range.End.TryGetAbsoluteIndex(sourceText, _logger, out var endIndex) ||
-            !TryMapToProjectedDocumentPosition(codeDocument, endIndex, out var projectedEnd, out var _))
+            !TryMapToProjectedDocumentPosition(generatedDocument, endIndex, out var projectedEnd, out var _))
         {
             return false;
         }
@@ -317,15 +322,19 @@ internal class DefaultRazorDocumentMappingService : RazorDocumentMappingService
         return true;
     }
 
-    public override bool TryMapFromProjectedDocumentPosition(RazorCodeDocument codeDocument, int csharpAbsoluteIndex, [NotNullWhen(true)] out Position? originalPosition, out int originalIndex)
+    public override bool TryMapFromProjectedDocumentPosition(IRazorGeneratedDocument generatedDocument, int csharpAbsoluteIndex, [NotNullWhen(true)] out Position? originalPosition, out int originalIndex)
     {
-        if (codeDocument is null)
+        if (generatedDocument is null)
         {
-            throw new ArgumentNullException(nameof(codeDocument));
+            throw new ArgumentNullException(nameof(generatedDocument));
         }
 
-        var csharpDoc = codeDocument.GetCSharpDocument();
-        foreach (var mapping in csharpDoc.SourceMappings)
+        if (generatedDocument.CodeDocument is not { } codeDocument)
+        {
+            throw new InvalidOperationException("Cannot use document mapping service on a generated document that has a null CodeDocument.");
+        }
+
+        foreach (var mapping in generatedDocument.SourceMappings)
         {
             var generatedSpan = mapping.GeneratedSpan;
             var generatedAbsoluteIndex = generatedSpan.AbsoluteIndex;
@@ -351,21 +360,25 @@ internal class DefaultRazorDocumentMappingService : RazorDocumentMappingService
         return false;
     }
 
-    public override bool TryMapToProjectedDocumentOrNextCSharpPosition(RazorCodeDocument codeDocument, int absoluteIndex, [NotNullWhen(true)] out Position? projectedPosition, out int projectedIndex)
-        => TryMapToProjectedDocumentPositionInternal(codeDocument, absoluteIndex, nextCSharpPositionOnFailure: true, out projectedPosition, out projectedIndex);
+    public override bool TryMapToProjectedDocumentOrNextCSharpPosition(IRazorGeneratedDocument generatedDocument, int absoluteIndex, [NotNullWhen(true)] out Position? projectedPosition, out int projectedIndex)
+        => TryMapToProjectedDocumentPositionInternal(generatedDocument, absoluteIndex, nextCSharpPositionOnFailure: true, out projectedPosition, out projectedIndex);
 
-    public override bool TryMapToProjectedDocumentPosition(RazorCodeDocument codeDocument, int absoluteIndex, [NotNullWhen(true)] out Position? projectedPosition, out int projectedIndex)
-        => TryMapToProjectedDocumentPositionInternal(codeDocument, absoluteIndex, nextCSharpPositionOnFailure: false, out projectedPosition, out projectedIndex);
+    public override bool TryMapToProjectedDocumentPosition(IRazorGeneratedDocument generatedDocument, int absoluteIndex, [NotNullWhen(true)] out Position? projectedPosition, out int projectedIndex)
+        => TryMapToProjectedDocumentPositionInternal(generatedDocument, absoluteIndex, nextCSharpPositionOnFailure: false, out projectedPosition, out projectedIndex);
 
-    private static bool TryMapToProjectedDocumentPositionInternal(RazorCodeDocument codeDocument, int absoluteIndex, bool nextCSharpPositionOnFailure, [NotNullWhen(true)] out Position? projectedPosition, out int projectedIndex)
+    private static bool TryMapToProjectedDocumentPositionInternal(IRazorGeneratedDocument generatedDocument, int absoluteIndex, bool nextCSharpPositionOnFailure, [NotNullWhen(true)] out Position? projectedPosition, out int projectedIndex)
     {
-        if (codeDocument is null)
+        if (generatedDocument is null)
         {
-            throw new ArgumentNullException(nameof(codeDocument));
+            throw new ArgumentNullException(nameof(generatedDocument));
         }
 
-        var csharpDoc = codeDocument.GetCSharpDocument();
-        foreach (var mapping in csharpDoc.SourceMappings)
+        if (generatedDocument.CodeDocument is not { } codeDocument)
+        {
+            throw new InvalidOperationException("Cannot use document mapping service on a generated document that has a null CodeDocument.");
+        }
+
+        foreach (var mapping in generatedDocument.SourceMappings)
         {
             var originalSpan = mapping.OriginalSpan;
             var originalAbsoluteIndex = originalSpan.AbsoluteIndex;
@@ -377,7 +390,7 @@ internal class DefaultRazorDocumentMappingService : RazorDocumentMappingService
                 if (distanceIntoOriginalSpan <= originalSpan.Length)
                 {
                     projectedIndex = mapping.GeneratedSpan.AbsoluteIndex + distanceIntoOriginalSpan;
-                    projectedPosition = GetProjectedPosition(codeDocument, projectedIndex);
+                    projectedPosition = GetProjectedPosition(generatedDocument, projectedIndex);
                     return true;
                 }
             }
@@ -390,7 +403,7 @@ internal class DefaultRazorDocumentMappingService : RazorDocumentMappingService
                 if (mapping.OriginalSpan.LineIndex == hostDocumentLine)
                 {
                     projectedIndex = mapping.GeneratedSpan.AbsoluteIndex;
-                    projectedPosition = GetProjectedPosition(codeDocument, projectedIndex);
+                    projectedPosition = GetProjectedPosition(generatedDocument, projectedIndex);
                     return true;
                 }
 
@@ -402,9 +415,9 @@ internal class DefaultRazorDocumentMappingService : RazorDocumentMappingService
         projectedIndex = default;
         return false;
 
-        static Position GetProjectedPosition(RazorCodeDocument codeDocument, int projectedIndex)
+        static Position GetProjectedPosition(IRazorGeneratedDocument generatedDocument, int projectedIndex)
         {
-            var generatedSource = codeDocument.GetCSharpSourceText();
+            var generatedSource = GetGeneratedSourceText(generatedDocument);
             var generatedLinePosition = generatedSource.Lines.GetLinePosition(projectedIndex);
             var projectedPosition = new Position(generatedLinePosition.Line, generatedLinePosition.Character);
             return projectedPosition;
@@ -472,8 +485,12 @@ internal class DefaultRazorDocumentMappingService : RazorDocumentMappingService
         }
 
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
+        var generatedDocument = GetGeneratedDocumentFromVirtualDocumentUri(virtualDocumentUri, codeDocument);
 
-        if (TryMapFromProjectedDocumentRange(codeDocument, projectedRange, out var mappedRange))
+        // We already checked that the uri was for a virtual document, above
+        Assumes.NotNull(generatedDocument);
+
+        if (TryMapFromProjectedDocumentRange(generatedDocument, projectedRange, out var mappedRange))
         {
             return (razorDocumentUri, mappedRange);
         }
@@ -578,11 +595,11 @@ internal class DefaultRazorDocumentMappingService : RazorDocumentMappingService
         }
     }
 
-    private bool TryMapFromProjectedDocumentRangeStrict(RazorCodeDocument codeDocument, Range projectedRange, out Range? originalRange)
+    private bool TryMapFromProjectedDocumentRangeStrict(IRazorGeneratedDocument generatedDocument, Range projectedRange, out Range? originalRange)
     {
         originalRange = default;
 
-        var csharpSourceText = codeDocument.GetCSharpSourceText();
+        var csharpSourceText = GetGeneratedSourceText(generatedDocument);
         var range = projectedRange;
         if (!IsRangeWithinDocument(range, csharpSourceText))
         {
@@ -590,13 +607,13 @@ internal class DefaultRazorDocumentMappingService : RazorDocumentMappingService
         }
 
         if (!range.Start.TryGetAbsoluteIndex(csharpSourceText, _logger, out var startIndex) ||
-            !TryMapFromProjectedDocumentPosition(codeDocument, startIndex, out var hostDocumentStart, out _))
+            !TryMapFromProjectedDocumentPosition(generatedDocument, startIndex, out var hostDocumentStart, out _))
         {
             return false;
         }
 
         if (!range.End.TryGetAbsoluteIndex(csharpSourceText, _logger, out var endIndex) ||
-            !TryMapFromProjectedDocumentPosition(codeDocument, endIndex, out var hostDocumentEnd, out _))
+            !TryMapFromProjectedDocumentPosition(generatedDocument, endIndex, out var hostDocumentEnd, out _))
         {
             return false;
         }
@@ -610,19 +627,23 @@ internal class DefaultRazorDocumentMappingService : RazorDocumentMappingService
         return true;
     }
 
-    private bool TryMapFromProjectedDocumentRangeInclusive(RazorCodeDocument codeDocument, Range projectedRange, [NotNullWhen(returnValue: true)] out Range? originalRange)
+    private bool TryMapFromProjectedDocumentRangeInclusive(IRazorGeneratedDocument generatedDocument, Range projectedRange, [NotNullWhen(returnValue: true)] out Range? originalRange)
     {
+        if (generatedDocument.CodeDocument is not { } codeDocument)
+        {
+            throw new InvalidOperationException("Cannot use document mapping service on a generated document that has a null CodeDocument.");
+        }
+
         originalRange = default;
 
-        var csharpDoc = codeDocument.GetCSharpDocument();
-        var csharpSourceText = codeDocument.GetCSharpSourceText();
+        var csharpSourceText = GetGeneratedSourceText(generatedDocument);
         var projectedRangeAsSpan = projectedRange.AsTextSpan(csharpSourceText);
         var range = projectedRange;
         var startIndex = projectedRangeAsSpan.Start;
-        var startMappedDirectly = TryMapFromProjectedDocumentPosition(codeDocument, startIndex, out var hostDocumentStart, out _);
+        var startMappedDirectly = TryMapFromProjectedDocumentPosition(generatedDocument, startIndex, out var hostDocumentStart, out _);
 
         var endIndex = projectedRangeAsSpan.End;
-        var endMappedDirectly = TryMapFromProjectedDocumentPosition(codeDocument, endIndex, out var hostDocumentEnd, out _);
+        var endMappedDirectly = TryMapFromProjectedDocumentPosition(generatedDocument, endIndex, out var hostDocumentEnd, out _);
 
         if (startMappedDirectly && endMappedDirectly)
         {
@@ -639,17 +660,17 @@ internal class DefaultRazorDocumentMappingService : RazorDocumentMappingService
         if (startMappedDirectly)
         {
             // Start of projected range intersects with a mapping
-            candidateMappings = csharpDoc.SourceMappings.Where(mapping => IntersectsWith(startIndex, mapping.GeneratedSpan)).ToList();
+            candidateMappings = generatedDocument.SourceMappings.Where(mapping => IntersectsWith(startIndex, mapping.GeneratedSpan)).ToList();
         }
         else if (endMappedDirectly)
         {
             // End of projected range intersects with a mapping
-            candidateMappings = csharpDoc.SourceMappings.Where(mapping => IntersectsWith(endIndex, mapping.GeneratedSpan)).ToList();
+            candidateMappings = generatedDocument.SourceMappings.Where(mapping => IntersectsWith(endIndex, mapping.GeneratedSpan)).ToList();
         }
         else
         {
             // Our range does not intersect with any mapping; we should see if it overlaps generated locations
-            candidateMappings = csharpDoc.SourceMappings.Where(mapping => Overlaps(projectedRangeAsSpan, mapping.GeneratedSpan)).ToList();
+            candidateMappings = generatedDocument.SourceMappings.Where(mapping => Overlaps(projectedRangeAsSpan, mapping.GeneratedSpan)).ToList();
         }
 
         if (candidateMappings.Count == 1)
@@ -692,10 +713,15 @@ internal class DefaultRazorDocumentMappingService : RazorDocumentMappingService
         }
     }
 
-    private bool TryMapFromProjectedDocumentRangeInferred(RazorCodeDocument codeDocument, Range projectedRange, [NotNullWhen(returnValue: true)] out Range? originalRange)
+    private bool TryMapFromProjectedDocumentRangeInferred(IRazorGeneratedDocument generatedDocument, Range projectedRange, [NotNullWhen(returnValue: true)] out Range? originalRange)
     {
+        if (generatedDocument.CodeDocument is not { } codeDocument)
+        {
+            throw new InvalidOperationException("Cannot use document mapping service on a generated document that has a null CodeDocument.");
+        }
+
         // Inferred mapping behavior is a superset of inclusive mapping behavior so if the range is "inclusive" lets use that mapping.
-        if (TryMapFromProjectedDocumentRangeInclusive(codeDocument, projectedRange, out originalRange))
+        if (TryMapFromProjectedDocumentRangeInclusive(generatedDocument, projectedRange, out originalRange))
         {
             return true;
         }
@@ -703,25 +729,24 @@ internal class DefaultRazorDocumentMappingService : RazorDocumentMappingService
         // Doesn't map so lets try and infer some mappings
 
         originalRange = default;
-        var csharpDoc = codeDocument.GetCSharpDocument();
-        var csharpSourceText = codeDocument.GetCSharpSourceText();
+        var csharpSourceText = GetGeneratedSourceText(generatedDocument);
         var projectedRangeAsSpan = projectedRange.AsTextSpan(csharpSourceText);
         SourceMapping? mappingBeforeProjectedRange = null;
         SourceMapping? mappingAfterProjectedRange = null;
 
-        for (var i = csharpDoc.SourceMappings.Count - 1; i >= 0; i--)
+        for (var i = generatedDocument.SourceMappings.Count - 1; i >= 0; i--)
         {
-            var sourceMapping = csharpDoc.SourceMappings[i];
+            var sourceMapping = generatedDocument.SourceMappings[i];
             var sourceMappingEnd = sourceMapping.GeneratedSpan.AbsoluteIndex + sourceMapping.GeneratedSpan.Length;
             if (projectedRangeAsSpan.Start >= sourceMappingEnd)
             {
                 // This is the source mapping that's before us!
                 mappingBeforeProjectedRange = sourceMapping;
 
-                if (i + 1 < csharpDoc.SourceMappings.Count)
+                if (i + 1 < generatedDocument.SourceMappings.Count)
                 {
                     // We're not at the end of the document there's another source mapping after us
-                    mappingAfterProjectedRange = csharpDoc.SourceMappings[i + 1];
+                    mappingAfterProjectedRange = generatedDocument.SourceMappings[i + 1];
                 }
 
                 break;
@@ -876,31 +901,58 @@ internal class DefaultRazorDocumentMappingService : RazorDocumentMappingService
 
     private TextEdit[] RemapTextEditsCore(Uri virtualDocumentUri, RazorCodeDocument codeDocument, TextEdit[] edits)
     {
-        if (_languageServerFeatureOptions.IsVirtualCSharpFile(virtualDocumentUri))
+        var generatedDocument = GetGeneratedDocumentFromVirtualDocumentUri(virtualDocumentUri, codeDocument);
+        if (generatedDocument is null)
         {
-            var remappedEdits = new List<TextEdit>();
-            for (var i = 0; i < edits.Length; i++)
-            {
-                var projectedRange = edits[i].Range;
-                if (!TryMapFromProjectedDocumentRange(codeDocument, projectedRange, out var originalRange))
-                {
-                    // Can't map range. Discard this edit.
-                    continue;
-                }
-
-                var edit = new TextEdit()
-                {
-                    Range = originalRange,
-                    NewText = edits[i].NewText
-                };
-
-                remappedEdits.Add(edit);
-            }
-
-            return remappedEdits.ToArray();
+            return edits;
         }
 
-        return edits;
+        var remappedEdits = new List<TextEdit>();
+        for (var i = 0; i < edits.Length; i++)
+        {
+            var projectedRange = edits[i].Range;
+            if (!TryMapFromProjectedDocumentRange(generatedDocument, projectedRange, out var originalRange))
+            {
+                // Can't map range. Discard this edit.
+                continue;
+            }
+
+            var edit = new TextEdit()
+            {
+                Range = originalRange,
+                NewText = edits[i].NewText
+            };
+
+            remappedEdits.Add(edit);
+        }
+
+        return remappedEdits.ToArray();
+    }
+
+    private IRazorGeneratedDocument? GetGeneratedDocumentFromVirtualDocumentUri(Uri virtualDocumentUri, RazorCodeDocument codeDocument)
+    {
+        if (_languageServerFeatureOptions.IsVirtualCSharpFile(virtualDocumentUri))
+        {
+            return codeDocument.GetCSharpDocument();
+        }
+        else if (_languageServerFeatureOptions.IsVirtualHtmlFile(virtualDocumentUri))
+        {
+            return codeDocument.GetHtmlDocument();
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    private static SourceText GetGeneratedSourceText(IRazorGeneratedDocument generatedDocument)
+    {
+        if (generatedDocument.CodeDocument is not { } codeDocument)
+        {
+            throw new InvalidOperationException("Cannot use document mapping service on a generated document that has a null CodeDocument.");
+        }
+
+        return codeDocument.GetGeneratedSourceText(generatedDocument);
     }
 
     private static IReadOnlyList<ClassifiedSpanInternal> GetClassifiedSpans(RazorCodeDocument document)

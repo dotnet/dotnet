@@ -113,7 +113,7 @@ public class RazorCodeDocumentExtensionsTest
         // Arrange
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
 
-        var expected = RazorCSharpDocument.Create("", RazorCodeGenerationOptions.CreateDefault(), Array.Empty<RazorDiagnostic>());
+        var expected = RazorCSharpDocument.Create(codeDocument, "", RazorCodeGenerationOptions.CreateDefault(), Array.Empty<RazorDiagnostic>());
         codeDocument.Items[typeof(RazorCSharpDocument)] = expected;
 
         // Act
@@ -129,7 +129,7 @@ public class RazorCodeDocumentExtensionsTest
         // Arrange
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
 
-        var expected = RazorCSharpDocument.Create("", RazorCodeGenerationOptions.CreateDefault(), Array.Empty<RazorDiagnostic>());
+        var expected = RazorCSharpDocument.Create(codeDocument, "", RazorCodeGenerationOptions.CreateDefault(), Array.Empty<RazorDiagnostic>());
 
         // Act
         codeDocument.SetCSharpDocument(expected);

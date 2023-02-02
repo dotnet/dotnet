@@ -1,0 +1,14 @@
+Source Location: (13:0,13 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteTagHelper.cshtml)
+| |
+Generated Location: (13:0,13 [1] )
+| |
+
+Source Location: (31:0,31 [14] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteTagHelper.cshtml)
+|
+
+<p class="|
+Generated Location: (31:0,31 [14] )
+|
+
+<p class="|
+

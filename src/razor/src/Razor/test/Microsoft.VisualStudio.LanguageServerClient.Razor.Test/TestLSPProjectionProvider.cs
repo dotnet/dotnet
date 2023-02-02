@@ -5,6 +5,7 @@
 
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.AspNetCore.Razor.LanguageServer.Test.Common;
@@ -43,7 +44,7 @@ internal sealed class TestLSPProjectionProvider : LSPProjectionProvider
 
         if (languageKind == RazorLanguageKind.CSharp)
         {
-            if (!_mappingService.TryMapToProjectedDocumentPosition(codeDocument, absoluteIndex, out var projectedPosition, out var projectedIndex))
+            if (!_mappingService.TryMapToProjectedDocumentPosition(codeDocument.GetCSharpDocument(), absoluteIndex, out var projectedPosition, out var projectedIndex))
             {
                 return Task.FromResult<ProjectionResult>(null);
             }

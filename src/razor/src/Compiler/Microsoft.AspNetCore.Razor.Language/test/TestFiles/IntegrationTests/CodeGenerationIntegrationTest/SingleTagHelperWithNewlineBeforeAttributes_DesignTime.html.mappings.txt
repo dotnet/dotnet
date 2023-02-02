@@ -1,0 +1,21 @@
+Source Location: (13:0,13 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleTagHelperWithNewlineBeforeAttributes.cshtml)
+| |
+Generated Location: (13:0,13 [1] )
+| |
+
+Source Location: (31:0,31 [36] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleTagHelperWithNewlineBeforeAttributes.cshtml)
+|
+
+<p
+   class="Hello World" age="|
+Generated Location: (31:0,31 [36] )
+|
+
+<p
+   class="Hello World" age="|
+
+Source Location: (71:3,32 [17] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleTagHelperWithNewlineBeforeAttributes.cshtml)
+|">Body of Tag</p>|
+Generated Location: (71:3,32 [17] )
+|">Body of Tag</p>|
+

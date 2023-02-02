@@ -1,0 +1,17 @@
+Source Location: (48:2,8 [19] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/MarkupInCodeBlock.cshtml)
+|<p>Hello from C#, #|
+Generated Location: (48:2,8 [19] )
+|<p>Hello from C#, #|
+
+Source Location: (82:2,42 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/MarkupInCodeBlock.cshtml)
+|</p>|
+Generated Location: (82:2,42 [4] )
+|</p>|
+
+Source Location: (96:4,1 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/MarkupInCodeBlock.cshtml)
+|
+|
+Generated Location: (96:4,1 [2] )
+|
+|
+

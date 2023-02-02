@@ -40,7 +40,7 @@ public class DefaultRazorDocumentMappingServiceTest : TestBase
 
         // Act
         var result = service.TryMapFromProjectedDocumentRange(
-            codeDoc,
+            codeDoc.GetCSharpDocument(),
             projectedRange,
             MappingBehavior.Strict,
             out var originalRange);
@@ -67,7 +67,7 @@ public class DefaultRazorDocumentMappingServiceTest : TestBase
 
         // Act
         var result = service.TryMapFromProjectedDocumentRange(
-            codeDoc,
+            codeDoc.GetCSharpDocument(),
             projectedRange,
             MappingBehavior.Strict,
             out var originalRange);
@@ -99,7 +99,7 @@ public class DefaultRazorDocumentMappingServiceTest : TestBase
 
         // Act
         var result = service.TryMapFromProjectedDocumentRange(
-            codeDoc,
+            codeDoc.GetCSharpDocument(),
             projectedRange,
             MappingBehavior.Strict,
             out var originalRange);
@@ -131,7 +131,7 @@ public class DefaultRazorDocumentMappingServiceTest : TestBase
 
         // Act
         var result = service.TryMapFromProjectedDocumentRange(
-            codeDoc,
+            codeDoc.GetCSharpDocument(),
             projectedRange,
             MappingBehavior.Inclusive,
             out var originalRange);
@@ -163,7 +163,7 @@ public class DefaultRazorDocumentMappingServiceTest : TestBase
 
         // Act
         var result = service.TryMapFromProjectedDocumentRange(
-            codeDoc,
+            codeDoc.GetCSharpDocument(),
             projectedRange,
             MappingBehavior.Inclusive,
             out var originalRange);
@@ -195,7 +195,7 @@ public class DefaultRazorDocumentMappingServiceTest : TestBase
 
         // Act
         var result = service.TryMapFromProjectedDocumentRange(
-            codeDoc,
+            codeDoc.GetCSharpDocument(),
             projectedRange,
             MappingBehavior.Inclusive,
             out var originalRange);
@@ -226,7 +226,7 @@ public class DefaultRazorDocumentMappingServiceTest : TestBase
 
         // Act
         var result = service.TryMapFromProjectedDocumentRange(
-            codeDoc,
+            codeDoc.GetCSharpDocument(),
             projectedRange,
             MappingBehavior.Inclusive,
             out var originalRange);
@@ -257,7 +257,7 @@ public class DefaultRazorDocumentMappingServiceTest : TestBase
 
         // Act
         var result = service.TryMapFromProjectedDocumentRange(
-            codeDoc,
+            codeDoc.GetCSharpDocument(),
             projectedRange,
             MappingBehavior.Inclusive,
             out var originalRange);
@@ -289,7 +289,7 @@ public class DefaultRazorDocumentMappingServiceTest : TestBase
 
         // Act
         var result = service.TryMapFromProjectedDocumentRange(
-            codeDoc,
+            codeDoc.GetCSharpDocument(),
             projectedRange,
             MappingBehavior.Inclusive,
             out var originalRange);
@@ -320,7 +320,7 @@ public class DefaultRazorDocumentMappingServiceTest : TestBase
 
         // Act
         var result = service.TryMapFromProjectedDocumentRange(
-            codeDoc,
+            codeDoc.GetCSharpDocument(),
             projectedRange,
             MappingBehavior.Inclusive,
             out var originalRange);
@@ -352,7 +352,7 @@ public class DefaultRazorDocumentMappingServiceTest : TestBase
 
         // Act
         var result = service.TryMapFromProjectedDocumentRange(
-            codeDoc,
+            codeDoc.GetCSharpDocument(),
             projectedRange,
             MappingBehavior.Inferred,
             out var originalRange);
@@ -379,7 +379,7 @@ public class DefaultRazorDocumentMappingServiceTest : TestBase
 
         // Act
         var result = service.TryMapFromProjectedDocumentRange(
-            codeDoc,
+            codeDoc.GetCSharpDocument(),
             projectedRange,
             MappingBehavior.Inferred,
             out var originalRange);
@@ -414,7 +414,7 @@ public class DefaultRazorDocumentMappingServiceTest : TestBase
 
         // Act
         var result = service.TryMapFromProjectedDocumentRange(
-            codeDoc,
+            codeDoc.GetCSharpDocument(),
             projectedRange,
             MappingBehavior.Inferred,
             out var originalRange);
@@ -446,7 +446,7 @@ public class DefaultRazorDocumentMappingServiceTest : TestBase
 
         // Act
         var result = service.TryMapFromProjectedDocumentRange(
-            codeDoc,
+            codeDoc.GetCSharpDocument(),
             projectedRange,
             MappingBehavior.Inferred,
             out var originalRange);
@@ -468,7 +468,7 @@ public class DefaultRazorDocumentMappingServiceTest : TestBase
 
         // Act
         var result = service.TryMapToProjectedDocumentPosition(
-            codeDoc,
+            codeDoc.GetCSharpDocument(),
             1,
             out var projectedPosition,
             out var projectedPositionIndex);
@@ -494,7 +494,7 @@ public class DefaultRazorDocumentMappingServiceTest : TestBase
 
         // Act
         if (service.TryMapToProjectedDocumentPosition(
-            codeDoc,
+            codeDoc.GetCSharpDocument(),
             16,
             out var projectedPosition,
             out var projectedPositionIndex))
@@ -513,7 +513,7 @@ public class DefaultRazorDocumentMappingServiceTest : TestBase
     public void TryMapToProjectedDocumentPosition_CSharp_InMiddle()
     {
         // Arrange
-        var service = new DefaultRazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(),LoggerFactory);
+        var service = new DefaultRazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory);
         var codeDoc = CreateCodeDocumentWithCSharpProjection(
             "Line 1\nLine 2 @{ var abc;\nvar def; }",
             "\n// Prefix\n var abc;\nvar def; \n// Suffix",
@@ -524,7 +524,7 @@ public class DefaultRazorDocumentMappingServiceTest : TestBase
 
         // Act & Assert
         if (service.TryMapToProjectedDocumentPosition(
-            codeDoc,
+            codeDoc.GetCSharpDocument(),
             28,
             out var projectedPosition,
             out var projectedPositionIndex))
@@ -543,7 +543,7 @@ public class DefaultRazorDocumentMappingServiceTest : TestBase
     public void TryMapToProjectedDocumentPosition_CSharp_OnTrailingEdge()
     {
         // Arrange
-        var service = new DefaultRazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(),LoggerFactory);
+        var service = new DefaultRazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory);
         var codeDoc = CreateCodeDocumentWithCSharpProjection(
             "Line 1\nLine 2 @{ var abc;\nvar def; }",
             "\n// Prefix\n var abc;\nvar def; \n// Suffix",
@@ -554,7 +554,7 @@ public class DefaultRazorDocumentMappingServiceTest : TestBase
 
         // Act & Assert
         if (service.TryMapToProjectedDocumentPosition(
-            codeDoc,
+            codeDoc.GetCSharpDocument(),
             35,
             out var projectedPosition,
             out var projectedPositionIndex))
@@ -573,7 +573,7 @@ public class DefaultRazorDocumentMappingServiceTest : TestBase
     public void TryMapFromProjectedDocumentPosition_NotMatchingAnyMapping()
     {
         // Arrange
-        var service = new DefaultRazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(),LoggerFactory);
+        var service = new DefaultRazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory);
         var codeDoc = CreateCodeDocumentWithCSharpProjection(
             razorSource: "test razor source",
             projectedCSharpSource: "projectedCSharpSource: test C# source",
@@ -581,7 +581,7 @@ public class DefaultRazorDocumentMappingServiceTest : TestBase
 
         // Act
         var result = service.TryMapFromProjectedDocumentPosition(
-            codeDoc,
+            codeDoc.GetCSharpDocument(),
             1,
             out var hostDocumentPosition,
             out var hostDocumentIndex);
@@ -596,7 +596,7 @@ public class DefaultRazorDocumentMappingServiceTest : TestBase
     public void TryMapFromProjectedDocumentPosition_CSharp_OnLeadingEdge()
     {
         // Arrange
-        var service = new DefaultRazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(),LoggerFactory);
+        var service = new DefaultRazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory);
         var codeDoc = CreateCodeDocumentWithCSharpProjection(
             razorSource: "Line 1\nLine 2 @{ var abc;\nvar def; }",
             projectedCSharpSource: "\n// Prefix\n var abc;\nvar def; \n// Suffix",
@@ -607,7 +607,7 @@ public class DefaultRazorDocumentMappingServiceTest : TestBase
 
         // Act & Assert
         if (service.TryMapFromProjectedDocumentPosition(
-            codeDoc,
+            codeDoc.GetCSharpDocument(),
             11, // @{|
             out var hostDocumentPosition,
             out var hostDocumentIndex))
@@ -626,7 +626,7 @@ public class DefaultRazorDocumentMappingServiceTest : TestBase
     public void TryMapFromProjectedDocumentPosition_CSharp_InMiddle()
     {
         // Arrange
-        var service = new DefaultRazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(),LoggerFactory);
+        var service = new DefaultRazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory);
         var codeDoc = CreateCodeDocumentWithCSharpProjection(
             razorSource: "Line 1\nLine 2 @{ var abc;\nvar def; }",
             projectedCSharpSource: "\n// Prefix\n var abc;\nvar def; \n// Suffix",
@@ -637,7 +637,7 @@ public class DefaultRazorDocumentMappingServiceTest : TestBase
 
         // Act & Assert
         if (service.TryMapFromProjectedDocumentPosition(
-            codeDoc,
+            codeDoc.GetCSharpDocument(),
             21, // |var def
             out var hostDocumentPosition,
             out var hostDocumentIndex))
@@ -656,7 +656,7 @@ public class DefaultRazorDocumentMappingServiceTest : TestBase
     public void TryMapFromProjectedDocumentPosition_CSharp_OnTrailingEdge()
     {
         // Arrange
-        var service = new DefaultRazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(),LoggerFactory);
+        var service = new DefaultRazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory);
         var codeDoc = CreateCodeDocumentWithCSharpProjection(
             razorSource: "Line 1\nLine 2 @{ var abc;\nvar def; }",
             projectedCSharpSource: "\n// Prefix\n var abc;\nvar def; \n// Suffix",
@@ -667,7 +667,7 @@ public class DefaultRazorDocumentMappingServiceTest : TestBase
 
         // Act & Assert
         if (service.TryMapFromProjectedDocumentPosition(
-            codeDoc,
+            codeDoc.GetCSharpDocument(),
             30, // def; |}
             out var hostDocumentPosition,
             out var hostDocumentIndex))
@@ -686,7 +686,7 @@ public class DefaultRazorDocumentMappingServiceTest : TestBase
     public void TryMapToProjectedDocumentRange_CSharp()
     {
         // Arrange
-        var service = new DefaultRazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(),LoggerFactory);
+        var service = new DefaultRazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory);
         var codeDoc = CreateCodeDocumentWithCSharpProjection(
             razorSource: "Line 1\nLine 2 @{ var abc;\nvar def; }",
             projectedCSharpSource: "\n// Prefix\n var abc;\nvar def; \n// Suffix",
@@ -698,7 +698,7 @@ public class DefaultRazorDocumentMappingServiceTest : TestBase
 
         // Act & Assert
         if (service.TryMapToProjectedDocumentRange(
-            codeDoc,
+            codeDoc.GetCSharpDocument(),
             range, // |var| abc
             out var projectedRange))
         {
@@ -717,7 +717,7 @@ public class DefaultRazorDocumentMappingServiceTest : TestBase
     public void TryMapToProjectedDocumentRange_CSharp_MissingSourceMappings()
     {
         // Arrange
-        var service = new DefaultRazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(),LoggerFactory);
+        var service = new DefaultRazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory);
         var codeDoc = CreateCodeDocumentWithCSharpProjection(
             razorSource: "Line 1\nLine 2 @{ var abc;\nvar def; }",
             projectedCSharpSource: "\n// Prefix\n var abc;\nvar def; \n// Suffix",
@@ -728,7 +728,7 @@ public class DefaultRazorDocumentMappingServiceTest : TestBase
 
         // Act
         var result = service.TryMapToProjectedDocumentRange(
-            codeDoc,
+            codeDoc.GetCSharpDocument(),
             range, // |var| abc
             out var projectedRange);
 
@@ -741,7 +741,7 @@ public class DefaultRazorDocumentMappingServiceTest : TestBase
     public void TryMapToProjectedDocumentRange_CSharp_End_LessThan_Start()
     {
         // Arrange
-        var service = new DefaultRazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(),LoggerFactory);
+        var service = new DefaultRazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory);
         var codeDoc = CreateCodeDocumentWithCSharpProjection(
             razorSource: "Line 1\nLine 2 @{ var abc;\nvar def; }",
             projectedCSharpSource: "\n// Prefix\n var abc;\nvar def; \n// Suffix",
@@ -754,7 +754,7 @@ public class DefaultRazorDocumentMappingServiceTest : TestBase
 
         // Act
         var result = service.TryMapToProjectedDocumentRange(
-            codeDoc,
+            codeDoc.GetCSharpDocument(),
             range, // |var| abc
             out var projectedRange);
 
@@ -1089,11 +1089,12 @@ public class DefaultRazorDocumentMappingServiceTest : TestBase
     {
         var codeDocument = CreateCodeDocument(razorSource, Array.Empty<TagHelperDescriptor>());
         var csharpDocument = RazorCSharpDocument.Create(
-                projectedCSharpSource,
-                RazorCodeGenerationOptions.CreateDefault(),
-                Enumerable.Empty<RazorDiagnostic>(),
-                sourceMappings,
-                Enumerable.Empty<LinePragma>());
+            codeDocument,
+            projectedCSharpSource,
+            RazorCodeGenerationOptions.CreateDefault(),
+            Enumerable.Empty<RazorDiagnostic>(),
+            sourceMappings,
+            Enumerable.Empty<LinePragma>());
         codeDocument.SetCSharpDocument(csharpDocument);
         return codeDocument;
     }

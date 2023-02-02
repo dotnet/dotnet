@@ -1,0 +1,28 @@
+Source Location: (10:0,10 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/FunctionsBlock.cshtml)
+| |
+Generated Location: (10:0,10 [1] )
+| |
+
+Source Location: (17:2,1 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/FunctionsBlock.cshtml)
+|
+
+|
+Generated Location: (17:2,1 [4] )
+|
+
+|
+
+Source Location: (31:4,10 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/FunctionsBlock.cshtml)
+| |
+Generated Location: (31:4,10 [1] )
+| |
+
+Source Location: (138:9,1 [28] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/FunctionsBlock.cshtml)
+|
+
+Here's a random number: |
+Generated Location: (138:9,1 [28] )
+|
+
+Here's a random number: |
+

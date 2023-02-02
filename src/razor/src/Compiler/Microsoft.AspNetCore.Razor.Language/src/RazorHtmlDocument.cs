@@ -4,16 +4,21 @@
 #nullable disable
 
 using System;
+using System.Collections.Generic;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
-internal abstract class RazorHtmlDocument
+internal abstract class RazorHtmlDocument : IRazorGeneratedDocument
 {
-    public abstract string GeneratedHtml { get; }
+    public abstract string GeneratedCode { get; }
 
     public abstract RazorCodeGenerationOptions Options { get; }
 
-    public static RazorHtmlDocument Create(string generatedHtml, RazorCodeGenerationOptions options)
+    public abstract IReadOnlyList<SourceMapping> SourceMappings { get; }
+
+    public abstract RazorCodeDocument CodeDocument { get; }
+
+    public static RazorHtmlDocument Create(RazorCodeDocument codeDocument, string generatedHtml, RazorCodeGenerationOptions options, SourceMapping[] sourceMappings)
     {
         if (generatedHtml == null)
         {
@@ -25,6 +30,6 @@ internal abstract class RazorHtmlDocument
             throw new ArgumentNullException(nameof(options));
         }
 
-        return new DefaultRazorHtmlDocument(generatedHtml, options);
+        return new DefaultRazorHtmlDocument(codeDocument, generatedHtml, options, sourceMappings);
     }
 }

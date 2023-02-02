@@ -2,8 +2,9 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
+using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 
 namespace Microsoft.AspNetCore.Razor.Language;
@@ -30,6 +31,8 @@ internal class RazorHtmlWriter : SyntaxWalker
     private readonly Action<UnclassifiedTextLiteralSyntax> _baseVisitUnclassifiedTextLiteral;
 
     private bool _isHtml;
+    private SourceSpan _lastOriginalSourceSpan = SourceSpan.Undefined;
+    private SourceSpan _lastGeneratedSourceSpan = SourceSpan.Undefined;
 
     private RazorHtmlWriter(RazorSourceDocument source)
     {
@@ -39,7 +42,8 @@ internal class RazorHtmlWriter : SyntaxWalker
         }
 
         Source = source;
-        Builder = new StringBuilder(Source.Length);
+        Builder = new CodeWriter();
+        SourceMappings = new List<SourceMapping>();
         _isHtml = true;
 
         _baseVisitRazorCommentBlock = base.VisitRazorCommentBlock;
@@ -60,7 +64,9 @@ internal class RazorHtmlWriter : SyntaxWalker
 
     public RazorSourceDocument Source { get; }
 
-    public StringBuilder Builder { get; }
+    public CodeWriter Builder { get; }
+
+    public List<SourceMapping> SourceMappings { get; }
 
     public static RazorHtmlDocument? GetHtmlDocument(RazorCodeDocument codeDocument)
     {
@@ -74,15 +80,35 @@ internal class RazorHtmlWriter : SyntaxWalker
         var writer = new RazorHtmlWriter(codeDocument.Source);
         var syntaxTree = codeDocument.GetSyntaxTree();
 
-        writer.Visit(syntaxTree.Root);
+        writer.Visit(syntaxTree);
 
-        var generatedHtml = writer.Builder.ToString();
         Debug.Assert(
             writer.Source.Length == writer.Builder.Length,
             $"The backing HTML document should be the same length as the original document. Expected: {writer.Source.Length} Actual: {writer.Builder.Length}");
+        var generatedHtml = writer.Builder.GenerateCode();
 
-        var razorHtmlDocument = new DefaultRazorHtmlDocument(generatedHtml, options);
+        var sourceMappings = writer.SourceMappings.ToArray();
+
+        var razorHtmlDocument = new DefaultRazorHtmlDocument(codeDocument, generatedHtml, options, sourceMappings);
         return razorHtmlDocument;
+    }
+
+    public void Visit(RazorSyntaxTree syntaxTree)
+    {
+        Visit(syntaxTree.Root);
+
+        if (_lastGeneratedSourceSpan != SourceSpan.Undefined)
+        {
+            // If we finished up with a source mapping being tracked, then add it to the list now
+
+            Debug.Assert(_lastOriginalSourceSpan != SourceSpan.Undefined);
+
+            var sourceMapping = new SourceMapping(_lastOriginalSourceSpan, _lastGeneratedSourceSpan);
+            SourceMappings.Add(sourceMapping);
+
+            _lastOriginalSourceSpan = SourceSpan.Undefined;
+            _lastGeneratedSourceSpan = SourceSpan.Undefined;
+        }
     }
 
     public override void VisitRazorCommentBlock(RazorCommentBlockSyntax node)
@@ -166,9 +192,63 @@ internal class RazorHtmlWriter : SyntaxWalker
         var content = token.Content;
         if (_isHtml)
         {
+            var source = token.GetSourceSpan(Source);
+
+            // No point source mapping an empty token
+            if (source.Length > 0)
+            {
+                var generatedLocation = new SourceSpan(Builder.Location, source.Length);
+
+                if (_lastGeneratedSourceSpan == SourceSpan.Undefined)
+                {
+                    // Not tracking any current source mapping, so start tracking one
+
+                    Debug.Assert(_lastOriginalSourceSpan == SourceSpan.Undefined);
+
+                    _lastGeneratedSourceSpan = generatedLocation;
+                    _lastOriginalSourceSpan = source;
+                }
+                else if (generatedLocation.AbsoluteIndex == _lastGeneratedSourceSpan.AbsoluteIndex + _lastGeneratedSourceSpan.Length &&
+                    source.AbsoluteIndex == _lastOriginalSourceSpan.AbsoluteIndex + _lastOriginalSourceSpan.Length &&
+                    generatedLocation.LineCount <= 1 &&
+                    source.LineCount <= 1)
+                {
+                    // We're tracking a span, and it ends at the same spot the current token starts, so lets just extend the existing
+                    // source mapping we're tracking, so we produce a minimal set
+                    // eg, in "<div>" there are three tokens that are written (open angle bracket, tag name, close angle bracket)
+                    //     but having three source mappings in unnecessarily complex
+                    _lastGeneratedSourceSpan = _lastGeneratedSourceSpan.With(length: _lastGeneratedSourceSpan.Length + source.Length, endCharacterIndex: source.EndCharacterIndex);
+                    _lastOriginalSourceSpan = _lastOriginalSourceSpan.With(length: _lastOriginalSourceSpan.Length + source.Length, endCharacterIndex: source.EndCharacterIndex);
+                }
+                else
+                {
+                    // New span is not directly next to the previous one, so add the previous to the list, and start tracking the new one
+                    var sourceMapping = new SourceMapping(_lastOriginalSourceSpan, _lastGeneratedSourceSpan);
+                    SourceMappings.Add(sourceMapping);
+
+                    _lastOriginalSourceSpan = source;
+                    _lastGeneratedSourceSpan = generatedLocation;
+                }
+            }
+
             // If we're in HTML context, append the content directly.
-            Builder.Append(content);
+            Builder.Write(content);
             return;
+        }
+
+        if (_lastGeneratedSourceSpan != SourceSpan.Undefined)
+        {
+            // If we were tracking a source mapping span before now, add it to the list. Importantly there are cases
+            // where there are 0-length C# nodes, so this step is very important if the source mappings are to match
+            // the syntax tree.
+
+            Debug.Assert(_lastOriginalSourceSpan != SourceSpan.Undefined);
+
+            var sourceMapping = new SourceMapping(_lastOriginalSourceSpan, _lastGeneratedSourceSpan);
+            SourceMappings.Add(sourceMapping);
+
+            _lastGeneratedSourceSpan = SourceSpan.Undefined;
+            _lastOriginalSourceSpan = SourceSpan.Undefined;
         }
 
         // We're in non-HTML context. Let's replace all non-whitespace chars with a tilde(~).
@@ -176,11 +256,11 @@ internal class RazorHtmlWriter : SyntaxWalker
         {
             if (char.IsWhiteSpace(c))
             {
-                Builder.Append(c);
+                Builder.Write(c.ToString());
             }
             else
             {
-                Builder.Append('~');
+                Builder.Write("~");
             }
         }
     }

@@ -1,0 +1,90 @@
+Source Location: (0:0,0 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml)
+|
+|
+Generated Location: (0:0,0 [2] )
+|
+|
+
+Source Location: (157:9,8 [5] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml)
+|<div>|
+Generated Location: (157:9,8 [5] )
+|<div>|
+
+Source Location: (174:9,25 [6] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml)
+|</div>|
+Generated Location: (174:9,25 [6] )
+|</div>|
+
+Source Location: (190:11,1 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml)
+|
+
+|
+Generated Location: (190:11,1 [4] )
+|
+
+|
+
+Source Location: (219:13,25 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml)
+|
+|
+Generated Location: (219:13,25 [2] )
+|
+|
+
+Source Location: (254:14,33 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml)
+|
+
+|
+Generated Location: (254:14,33 [4] )
+|
+
+|
+
+Source Location: (268:16,10 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml)
+| |
+Generated Location: (268:16,10 [1] )
+| |
+
+Source Location: (376:20,8 [38] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml)
+|<div>
+            <h3>Happy birthday |
+Generated Location: (376:20,8 [38] )
+|<div>
+            <h3>Happy birthday |
+
+Source Location: (426:21,43 [22] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml)
+|!</h3>
+        </div>|
+Generated Location: (426:21,43 [22] )
+|!</h3>
+        </div>|
+
+Source Location: (460:24,8 [14] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml)
+|<ul>
+        |
+Generated Location: (460:24,8 [14] )
+|<ul>
+        |
+
+Source Location: (541:27,12 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml)
+|<li>|
+Generated Location: (541:27,12 [4] )
+|<li>|
+
+Source Location: (549:27,20 [21] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml)
+| Happy birthday!</li>|
+Generated Location: (549:27,20 [21] )
+| Happy birthday!</li>|
+
+Source Location: (581:28,9 [15] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml)
+|
+        </ul>|
+Generated Location: (581:28,9 [15] )
+|
+        </ul>|
+
+Source Location: (683:36,8 [23] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml)
+|<h4>Secret message</h4>|
+Generated Location: (683:36,8 [23] )
+|<h4>Secret message</h4>|
+

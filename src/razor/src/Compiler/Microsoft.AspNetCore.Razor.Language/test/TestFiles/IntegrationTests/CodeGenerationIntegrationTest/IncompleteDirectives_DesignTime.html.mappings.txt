@@ -1,0 +1,168 @@
+Source Location: (83:0,83 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml)
+|
+
+|
+Generated Location: (83:0,83 [4] )
+|
+
+|
+
+Source Location: (100:2,13 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml)
+|
+|
+Generated Location: (100:2,13 [2] )
+|
+|
+
+Source Location: (115:3,13 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml)
+| |
+Generated Location: (115:3,13 [1] )
+| |
+
+Source Location: (116:3,14 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml)
+|
+|
+Generated Location: (116:3,14 [2] )
+|
+|
+
+Source Location: (131:4,13 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml)
+| |
+Generated Location: (131:4,13 [1] )
+| |
+
+Source Location: (133:4,15 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml)
+|
+
+|
+Generated Location: (133:4,15 [4] )
+|
+
+|
+
+Source Location: (153:6,16 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml)
+|
+|
+Generated Location: (153:6,16 [2] )
+|
+|
+
+Source Location: (171:7,16 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml)
+| |
+Generated Location: (171:7,16 [1] )
+| |
+
+Source Location: (172:7,17 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml)
+|
+|
+Generated Location: (172:7,17 [2] )
+|
+|
+
+Source Location: (190:8,16 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml)
+| |
+Generated Location: (190:8,16 [1] )
+| |
+
+Source Location: (192:8,18 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml)
+|
+
+|
+Generated Location: (192:8,18 [4] )
+|
+
+|
+
+Source Location: (212:10,16 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml)
+|
+|
+Generated Location: (212:10,16 [2] )
+|
+|
+
+Source Location: (230:11,16 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml)
+| |
+Generated Location: (230:11,16 [1] )
+| |
+
+Source Location: (231:11,17 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml)
+|
+|
+Generated Location: (231:11,17 [2] )
+|
+|
+
+Source Location: (249:12,16 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml)
+| |
+Generated Location: (249:12,16 [1] )
+| |
+
+Source Location: (251:12,18 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml)
+|
+
+|
+Generated Location: (251:12,18 [4] )
+|
+
+|
+
+Source Location: (264:14,9 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml)
+|
+|
+Generated Location: (264:14,9 [2] )
+|
+|
+
+Source Location: (276:15,10 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml)
+|
+
+|
+Generated Location: (276:15,10 [4] )
+|
+
+|
+
+Source Location: (290:17,10 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml)
+|
+|
+Generated Location: (290:17,10 [2] )
+|
+|
+
+Source Location: (302:18,10 [5] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml)
+| 
+
+|
+Generated Location: (302:18,10 [5] )
+| 
+
+|
+
+Source Location: (315:20,8 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml)
+|
+|
+Generated Location: (315:20,8 [2] )
+|
+|
+
+Source Location: (326:21,9 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml)
+|
+
+|
+Generated Location: (326:21,9 [4] )
+|
+
+|
+
+Source Location: (339:23,9 [3] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml)
+|{
+|
+Generated Location: (339:23,9 [3] )
+|{
+|
+
+Source Location: (352:24,10 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml)
+| |
+Generated Location: (352:24,10 [1] )
+| |
+

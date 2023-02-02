@@ -1,0 +1,18 @@
+Source Location: (13:0,13 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NestedTagHelpers.cshtml)
+| |
+Generated Location: (13:0,13 [1] )
+| |
+
+Source Location: (29:0,29 [96] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NestedTagHelpers.cshtml)
+|
+<span someattr>Hola</span>
+<div unbound="foo">
+    <input value=Hello type='text' />
+</div>|
+Generated Location: (29:0,29 [96] )
+|
+<span someattr>Hola</span>
+<div unbound="foo">
+    <input value=Hello type='text' />
+</div>|
+

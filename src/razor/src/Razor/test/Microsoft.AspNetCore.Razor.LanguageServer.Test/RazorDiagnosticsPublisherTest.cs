@@ -263,7 +263,7 @@ public class RazorDiagnosticsPublisherTest : LanguageServerTestBase
     private static RazorCodeDocument CreateCodeDocument(params RazorDiagnostic[] diagnostics)
     {
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
-        var razorCSharpDocument = RazorCSharpDocument.Create(string.Empty, RazorCodeGenerationOptions.CreateDefault(), diagnostics);
+        var razorCSharpDocument = RazorCSharpDocument.Create(codeDocument, string.Empty, RazorCodeGenerationOptions.CreateDefault(), diagnostics);
         codeDocument.SetCSharpDocument(razorCSharpDocument);
 
         return codeDocument;

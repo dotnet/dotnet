@@ -611,13 +611,13 @@ public class DefaultRazorHoverInfoServiceTest : TagHelperServiceTestBase
 
         var outRange = new Range();
         documentMappingServiceMock
-            .Setup(c => c.TryMapToProjectedDocumentRange(It.IsAny<RazorCodeDocument>(), It.IsAny<Range>(), out outRange))
+            .Setup(c => c.TryMapToProjectedDocumentRange(It.IsAny<IRazorGeneratedDocument>(), It.IsAny<Range>(), out outRange))
             .Returns(true);
 
         var projectedPosition = new Position(1, 1);
         var projectedIndex = 1;
         documentMappingServiceMock.Setup(
-            c => c.TryMapToProjectedDocumentPosition(It.IsAny<RazorCodeDocument>(), It.IsAny<int>(), out projectedPosition, out projectedIndex))
+            c => c.TryMapToProjectedDocumentPosition(It.IsAny<IRazorGeneratedDocument>(), It.IsAny<int>(), out projectedPosition, out projectedIndex))
             .Returns(true);
 
         var endpoint = CreateEndpoint(languageServerFeatureOptions, documentMappingServiceMock.Object, languageServerMock.Object);

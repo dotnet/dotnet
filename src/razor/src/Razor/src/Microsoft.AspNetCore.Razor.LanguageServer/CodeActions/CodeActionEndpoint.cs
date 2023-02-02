@@ -272,14 +272,14 @@ internal class CodeActionEndpoint : IVSCodeActionEndpoint
         if (languageKind == RazorLanguageKind.CSharp)
         {
             // For C# we have to map the ranges to the generated document
-            if (!_documentMappingService.TryMapToProjectedDocumentRange(context.CodeDocument, context.Request.Range, out var projectedRange))
+            if (!_documentMappingService.TryMapToProjectedDocumentRange(context.CodeDocument.GetCSharpDocument(), context.Request.Range, out var projectedRange))
             {
                 return Array.Empty<RazorVSInternalCodeAction>();
             }
 
             var newContext = context.Request.Context;
             if (context.Request.Context is VSInternalCodeActionContext { SelectionRange: not null } vsContext &&
-                _documentMappingService.TryMapToProjectedDocumentRange(context.CodeDocument, vsContext.SelectionRange, out var selectionRange))
+                _documentMappingService.TryMapToProjectedDocumentRange(context.CodeDocument.GetCSharpDocument(), vsContext.SelectionRange, out var selectionRange))
             {
                 vsContext.SelectionRange = selectionRange;
                 newContext = vsContext;

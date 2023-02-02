@@ -66,12 +66,26 @@ internal static class RazorCodeDocumentExtensions
         if (sourceTextObj is null)
         {
             var htmlDocument = document.GetHtmlDocument();
-            var sourceText = SourceText.From(htmlDocument.GeneratedHtml);
+            var sourceText = SourceText.From(htmlDocument.GeneratedCode);
             document.Items[s_htmlSourceTextKey] = sourceText;
 
             return sourceText;
         }
 
         return (SourceText)sourceTextObj;
+    }
+
+    public static SourceText GetGeneratedSourceText(this RazorCodeDocument document, IRazorGeneratedDocument generatedDocument)
+    {
+        if (generatedDocument is RazorCSharpDocument)
+        {
+            return GetCSharpSourceText(document);
+        }
+        else if (generatedDocument is RazorHtmlDocument)
+        {
+            return GetHtmlSourceText(document);
+        }
+
+        throw new InvalidOperationException("Unknown generated document type");
     }
 }

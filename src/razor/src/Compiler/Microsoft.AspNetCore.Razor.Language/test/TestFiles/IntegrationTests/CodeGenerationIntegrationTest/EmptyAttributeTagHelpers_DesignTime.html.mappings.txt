@@ -1,0 +1,24 @@
+Source Location: (13:0,13 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EmptyAttributeTagHelpers.cshtml)
+| |
+Generated Location: (13:0,13 [1] )
+| |
+
+Source Location: (29:0,29 [127] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EmptyAttributeTagHelpers.cshtml)
+|
+
+<div>
+    <input type= checked=""class="" />
+    <p age=''>
+        <input type=""checked= class="" />
+    </p>
+</div>|
+Generated Location: (29:0,29 [127] )
+|
+
+<div>
+    <input type= checked=""class="" />
+    <p age=''>
+        <input type=""checked= class="" />
+    </p>
+</div>|
+

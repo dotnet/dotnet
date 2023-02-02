@@ -1,0 +1,56 @@
+Source Location: (13:0,13 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NestedScriptTagTagHelpers.cshtml)
+| |
+Generated Location: (13:0,13 [1] )
+| |
+
+Source Location: (31:0,31 [163] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NestedScriptTagTagHelpers.cshtml)
+|
+
+<script type="text/html">
+    <div data-animation="fade" class="randomNonTagHelperAttribute">
+        <p class="Hello World" data-delay="1000">
+            |
+Generated Location: (31:0,31 [163] )
+|
+
+<script type="text/html">
+    <div data-animation="fade" class="randomNonTagHelperAttribute">
+        <p class="Hello World" data-delay="1000">
+            |
+
+Source Location: (241:6,16 [97] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NestedScriptTagTagHelpers.cshtml)
+|<script id="nestedScriptTag" type="text/html">
+                    <input data-interval="2000 + |
+Generated Location: (241:6,16 [97] )
+|<script id="nestedScriptTag" type="text/html">
+                    <input data-interval="2000 + |
+
+Source Location: (362:7,73 [27] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NestedScriptTagTagHelpers.cshtml)
+| + 1" type="text" checked="|
+Generated Location: (362:7,73 [27] )
+| + 1" type="text" checked="|
+
+Source Location: (393:7,104 [29] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NestedScriptTagTagHelpers.cshtml)
+|">
+                </script>|
+Generated Location: (393:7,104 [29] )
+|">
+                </script>|
+
+Source Location: (437:9,13 [158] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NestedScriptTagTagHelpers.cshtml)
+|
+            <script type="text/javascript">
+                var tag = '<input checked="true">';
+            </script>
+        </p>
+    </div>
+</script>|
+Generated Location: (437:9,13 [158] )
+|
+            <script type="text/javascript">
+                var tag = '<input checked="true">';
+            </script>
+        </p>
+    </div>
+</script>|
+

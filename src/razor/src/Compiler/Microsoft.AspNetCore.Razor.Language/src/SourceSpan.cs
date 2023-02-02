@@ -96,6 +96,18 @@ public struct SourceSpan : IEquatable<SourceSpan>
             FilePath);
     }
 
+    internal SourceSpan With(int length, int endCharacterIndex)
+    {
+        return new SourceSpan(
+            FilePath,
+            AbsoluteIndex,
+            LineIndex,
+            CharacterIndex,
+            length,
+            LineCount,
+            endCharacterIndex);
+    }
+
     public static bool operator ==(SourceSpan left, SourceSpan right)
     {
         return left.Equals(right);

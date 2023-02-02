@@ -1,0 +1,27 @@
+Source Location: (8:1,4 [31] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Tags.cshtml)
+|<script type="text/javascript" |
+Generated Location: (8:1,4 [31] )
+|<script type="text/javascript" |
+
+Source Location: (42:1,38 [17] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Tags.cshtml)
+| ></script @foo >|
+Generated Location: (42:1,38 [17] )
+| ></script @foo >|
+
+Source Location: (62:2,1 [94] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Tags.cshtml)
+|
+
+<script type="text/html">
+    <%var x = window == null%>
+</script>
+
+<script></script @|
+Generated Location: (62:2,1 [94] )
+|
+
+<script type="text/html">
+    <%var x = window == null%>
+</script>
+
+<script></script @|
+
