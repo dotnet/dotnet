@@ -3,6 +3,8 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.VisualStudio.Sdk.TestFramework;
 using NuGet.Common;
 using Xunit;
 
@@ -12,11 +14,15 @@ namespace NuGet.VisualStudio.Common.Test
     {
         public class ReportError : LogAndReportErrorTests
         {
+            public ReportError(GlobalServiceProvider sp)
+                : base(sp)
+            { }
+
             [Theory]
             [MemberData(nameof(GetAllMessageVariations))]
-            public void Adds_entry_to_error_list(LogLevel logLevel, int verbosityLevel)
+            public async Task Adds_entry_to_error_list(LogLevel logLevel, int verbosityLevel)
             {
-                VerifyThatEntryToErrorListIsAdded(_outputConsoleLogger.ReportError, logLevel, verbosityLevel);
+                await VerifyThatEntryToErrorListIsAddedAsync(_outputConsoleLogger.ReportError, logLevel, verbosityLevel);
             }
 
             public static IEnumerable<object[]> GetAllMessageVariations()

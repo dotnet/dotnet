@@ -3,6 +3,7 @@
 
 using System;
 using FluentAssertions;
+using Microsoft.VisualStudio.Sdk.TestFramework;
 using Xunit;
 
 namespace NuGet.VisualStudio.Common.Test
@@ -11,6 +12,10 @@ namespace NuGet.VisualStudio.Common.Test
     {
         public class ImportingConstructor : OutputConsoleLoggerTests
         {
+            public ImportingConstructor(GlobalServiceProvider sp)
+                : base(sp)
+            { }
+
             [Fact]
             public void When_null_consoleProvider_is_passed_ArgumentNullException_is_thrown()
             {

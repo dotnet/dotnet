@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using FluentAssertions;
@@ -59,15 +60,72 @@ namespace NuGet.Build.Tasks.Test
             };
 
             using var stream = new MemoryStream();
+            using var streamWriter = new StreamWriter(stream, Encoding.UTF8);
 
-            expected.Write(stream);
+            expected.Write(streamWriter);
 
             stream.Position = 0;
 
-            StaticGraphRestoreArguments actual = StaticGraphRestoreArguments.Read(stream);
+            StaticGraphRestoreArguments actual = StaticGraphRestoreArguments.Read(stream, streamWriter.Encoding);
 
             actual.GlobalProperties.Should().BeEquivalentTo(expected.GlobalProperties);
             actual.Options.Should().BeEquivalentTo(expected.Options);
+        }
+
+        [Theory]
+        [MemberData(nameof(GetEncodingsToTest))]
+        public void Read_WhenStreamContainsByteOrderMark_CanBeRead(Encoding encoding, bool byteOrderMark)
+        {
+            var expected = new StaticGraphRestoreArguments
+            {
+                GlobalProperties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["Property1"] = "Value1",
+                    ["Property2"] = "Value2",
+                },
+                Options = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["Option1"] = bool.TrueString,
+                    ["Option2"] = bool.FalseString,
+                },
+            };
+
+            using var stream = new MemoryStream();
+            using var streamWriter = new StreamWriter(stream, encoding);
+
+            byte[] preamble = encoding.GetPreamble();
+
+            if (byteOrderMark)
+            {
+                if (preamble.Length == 0)
+                {
+                    throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, "The preamble for the encoding {0} is not defined but the test requested a byte order mark be written.", encoding.EncodingName));
+                }
+
+                stream.Write(preamble, 0, preamble.Length);
+            }
+
+            expected.Write(streamWriter);
+
+            stream.Position = 0;
+
+            StaticGraphRestoreArguments actual = StaticGraphRestoreArguments.Read(stream, encoding);
+
+            actual.GlobalProperties.Should().BeEquivalentTo(expected.GlobalProperties);
+            actual.Options.Should().BeEquivalentTo(expected.Options);
+        }
+
+        public static IEnumerable<object[]> GetEncodingsToTest()
+        {
+            foreach (bool byteOrderMark in new bool[] { true, false })
+            {
+                yield return new object[] { new UTF8Encoding( encoderShouldEmitUTF8Identifier: true), byteOrderMark };
+
+                foreach (bool bigEndian in new bool[] { true, false })
+                {
+                    yield return new object[] { new UTF32Encoding(bigEndian, byteOrderMark), byteOrderMark };
+                }
+            }
         }
     }
 }

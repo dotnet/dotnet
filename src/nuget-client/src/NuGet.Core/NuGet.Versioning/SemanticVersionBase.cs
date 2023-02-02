@@ -42,12 +42,10 @@ namespace NuGet.Versioning
         /// </summary>
         public virtual string ToString(string format, IFormatProvider formatProvider)
         {
-            string formattedString = null;
-
             if (formatProvider == null
-                || !TryFormatter(format, formatProvider, out formattedString))
+                || !TryFormatter(format, formatProvider, out string formattedString))
             {
-                formattedString = ToString();
+                return ToString();
             }
 
             return formattedString;

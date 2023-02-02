@@ -4,11 +4,12 @@
 using System;
 using Moq;
 using NuGet.Common;
-using NuGet.Versioning;
 using Xunit;
 
 namespace NuGet.Protocol.Plugins.Tests
 {
+    using SemanticVersion = Versioning.SemanticVersion;
+
     public class ConnectionOptionsTests
     {
         private static readonly TimeSpan _timeout = TimeSpan.FromSeconds(10);

@@ -7,7 +7,7 @@ using System.Windows.Controls;
 
 namespace NuGet.PackageManagement.UI
 {
-    public class ProjectsListView : ListView, ISelectableItemsControl
+    public class ToggleableListView : ListView, ISelectableItemsControl
     {
         public bool IsItemSelectionEnabled
         {
@@ -21,7 +21,7 @@ namespace NuGet.PackageManagement.UI
             var listViewPeer = new ListViewToggleableItemsAutomationPeer(this);
             if (View is GridView gridView)
             {
-                // Hook up an automation peer for the GridView. If the ProjectsListView ever uses a different view,
+                // Hook up an automation peer for the GridView. If this control ever uses a view other than GridView,
                 // this should be updated to create an AutomationPeer appropriate to that view.
                 // Unfortunately, we can't call GetAutomationPeer on the ViewBase due to its restricted access level so we
                 // create an automation peer for the appropriate view ourselves and hook it up.

@@ -9,8 +9,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
-using FluentAssertions.Execution;
-using Lucene.Net.Util;
 using Microsoft.ServiceHub.Framework;
 using Microsoft.VisualStudio.Sdk.TestFramework;
 using Microsoft.VisualStudio.Shell;
@@ -29,7 +27,6 @@ using Task = System.Threading.Tasks.Task;
 
 namespace NuGet.PackageManagement.UI.Test.Models
 {
-    [Collection(MockedVS.Collection)]
     public abstract class V3DetailControlModelTestBase : IClassFixture<V3PackageSearchMetadataFixture>
     {
         protected readonly V3PackageSearchMetadataFixture _testData;
@@ -43,10 +40,6 @@ namespace NuGet.PackageManagement.UI.Test.Models
             // The versions pre-baked into the view model provide data for the first step of metadata extraction
             // which fails (null) in a V3 scenario--they need to be extracted using a metadata provider (below)
             var testVersion = new NuGetVersion(0, 0, 1);
-            var testVersions = new List<VersionInfoContextInfo>() {
-                new VersionInfoContextInfo(new NuGetVersion(0, 0, 1)),
-                new VersionInfoContextInfo(new NuGetVersion(0, 0, 2))
-            };
 
             var searchService = new Mock<IReconnectingNuGetSearchService>();
             _testViewModel = new PackageItemViewModel(searchService.Object)
@@ -81,6 +74,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
         }
     }
 
+    [Collection(MockedVS.Collection)]
     public class V3PackageDetailControlModelTests : V3DetailControlModelTestBase, IAsyncServiceProvider
     {
         private readonly Dictionary<Type, Task<object>> _services = new Dictionary<Type, Task<object>>(TypeEquivalenceComparer.Instance);
@@ -1253,6 +1247,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
         }
     }
 
+    [Collection(MockedVS.Collection)]
     public class V3PackageSolutionDetailControlModelTests : V3DetailControlModelTestBase, IAsyncServiceProvider
     {
         private PackageSolutionDetailControlModel _testInstance;

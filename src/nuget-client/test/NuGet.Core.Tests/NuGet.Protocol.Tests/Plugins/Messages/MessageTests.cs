@@ -4,11 +4,12 @@
 using System;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using NuGet.Versioning;
 using Xunit;
 
 namespace NuGet.Protocol.Plugins.Tests
 {
+    using SemanticVersion = Versioning.SemanticVersion;
+
     public class MessageTests
     {
         [Theory]

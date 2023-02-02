@@ -196,7 +196,7 @@ EndGlobal";
         }
 
 #if IS_SIGNING_SUPPORTED
-        [PlatformFact(Platform.Windows)]
+        [PlatformFact(Platform.Windows, Platform.Linux)]
         public async Task DotnetRestore_WithUnSignedPackageAndSignatureValidationModeAsRequired_FailsAsync()
         {
             using (var pathContext = _msbuildFixture.CreateSimpleTestPathContext())

@@ -24,8 +24,7 @@ using NuGet.ProjectModel;
 using NuGet.Test.Utility;
 using NuGet.Versioning;
 using NuGet.VisualStudio;
-using NuGet.VisualStudio.Common.Test;
-using Test.Utility;
+using Test.Utility.VisualStudio;
 using Xunit;
 using static NuGet.PackageManagement.VisualStudio.Test.ProjectFactories;
 using Task = System.Threading.Tasks.Task;
@@ -46,17 +45,6 @@ namespace NuGet.PackageManagement.VisualStudio.Test
 
             var componentModel = new Mock<IComponentModel>();
             AddService<SComponentModel>(Task.FromResult((object)componentModel.Object));
-
-            // Force Enable Transitive Origin experiment tests
-            ExperimentationConstants constant = ExperimentationConstants.TransitiveDependenciesInPMUI;
-            var flightsEnabled = new Dictionary<string, bool>()
-            {
-                { constant.FlightFlag, true },
-            };
-            var service = new NuGetExperimentationService(new TestEnvironmentVariableReader(new Dictionary<string, string>()), new TestVisualStudioExperimentalService(flightsEnabled), new Lazy<IOutputConsoleProvider>(() => new TestOutputConsoleProvider()));
-
-            service.IsExperimentEnabled(constant).Should().Be(true);
-            componentModel.Setup(x => x.GetService<INuGetExperimentationService>()).Returns(service);
         }
 
         [Fact]
