@@ -17,7 +17,7 @@
     <formatOutputPackageVersion>8.0.405501</formatOutputPackageVersion>
     <fsharpGitCommitHash>b4317096ea3aacdb48505744c9e371d5310464c2</fsharpGitCommitHash>
     <fsharpOutputPackageVersion>7.0.300-beta.23101.1</fsharpOutputPackageVersion>
-    <installerGitCommitHash>0cc5aa00b66c451fad774aafebbbd1801f83b8a9</installerGitCommitHash>
+    <installerGitCommitHash>15858648852962f807df424967152741bbbfcc57</installerGitCommitHash>
     <installerOutputPackageVersion>8.0.100</installerOutputPackageVersion>
     <linkerGitCommitHash>c790896f128957acd2999208f44f09ae1e826c8c</linkerGitCommitHash>
     <linkerOutputPackageVersion>8.0.100-1.23067.1</linkerOutputPackageVersion>
@@ -29,12 +29,12 @@
     <razorOutputPackageVersion>7.0.0-preview.23101.4</razorOutputPackageVersion>
     <roslynanalyzersGitCommitHash>9f9d9fac1b1c81bb56155636c59214aa494ea34e</roslynanalyzersGitCommitHash>
     <roslynanalyzersOutputPackageVersion>3.3.5-beta1.23080.2</roslynanalyzersOutputPackageVersion>
-    <roslynGitCommitHash>bdc33e2f66c5331ecf21d5988875c5bbe05f1f9c</roslynGitCommitHash>
-    <roslynOutputPackageVersion>4.6.0-1.23101.16</roslynOutputPackageVersion>
+    <roslynGitCommitHash>8da03f9cd0471db81cea9a5d7f7f92d3a746c6de</roslynGitCommitHash>
+    <roslynOutputPackageVersion>4.6.0-1.23101.17</roslynOutputPackageVersion>
     <runtimeGitCommitHash>1b2c4a998d0a03fa99b0bf341cb40fc188e0b3f0</runtimeGitCommitHash>
     <runtimeOutputPackageVersion>8.0.0-preview.1.23081.6</runtimeOutputPackageVersion>
-    <sdkGitCommitHash>f147a9de87ea115b2e29f8760c76c9f928687c52</sdkGitCommitHash>
-    <sdkOutputPackageVersion>8.0.100-preview.1.23101.20</sdkOutputPackageVersion>
+    <sdkGitCommitHash>69f62586e0f1740bc35fb25030e7f97a586d4678</sdkGitCommitHash>
+    <sdkOutputPackageVersion>8.0.100-preview.1.23102.1</sdkOutputPackageVersion>
     <sourcebuildexternalsGitCommitHash>adcc7b7599a5f1fa2e5f452ee1bab92e4f4be866</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>8.0.0-alpha.1.23076.1</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>d114eecff6c3149a55cb643fba6c4e7580b9f0b7</sourcebuildreferencepackagesGitCommitHash>
