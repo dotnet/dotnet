@@ -164,12 +164,13 @@ jobs:
       set -x
       df -h
 
-      customRunArgs=
+      # Allows Arcade to have access to the commit for the build
+      customRunArgs="-e BUILD_SOURCEVERSION"
       customBuildArgs=
       if [[ '${{ parameters.runOnline }}' == 'True' ]]; then
         customBuildArgs='--online'
       else
-        customRunArgs='--network none'
+        customRunArgs="$customRunArgs --network none"
       fi
 
       # See https://github.com/dotnet/source-build/issues/3202
@@ -188,7 +189,7 @@ jobs:
       set -x
 
       dockerVolumeArgs="-v $(sourcesPath):/vmr"
-      dockerEnvArgs="-e SMOKE_TESTS_EXCLUDE_OMNISHARP=${{ parameters.excludeOmniSharpTests }} -e SMOKE_TESTS_WARN_SDK_CONTENT_DIFFS=true"
+      dockerEnvArgs="-e SMOKE_TESTS_EXCLUDE_OMNISHARP=${{ parameters.excludeOmniSharpTests }} -e SMOKE_TESTS_WARN_SDK_CONTENT_DIFFS=true -e SMOKE_TESTS_RUNNING_IN_CI=true"
       poisonArg=''
 
       if [[ '${{ parameters.excludeSdkContentTests }}' != 'True' ]]; then
