@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "packageVersion": "8.0.0-beta.23077.1",
+      "packageVersion": "8.0.0-beta.23101.1",
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "691fd54681d10eef3c2681fceb8b09b9f9ba9bb0"
+      "commitSha": "c4d6ac086bdb9764f72c5ede705d3ef12e1b4c74"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23079.1",
@@ -52,7 +52,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "a6f0171cbc28c41eb20e9e95913fe963103e060b"
+      "commitSha": "b332792a615d7a9e26ffecec0ba0952a9af17581"
     },
     {
       "packageVersion": "8.0.100-1.23067.1",
@@ -103,10 +103,10 @@
       "commitSha": "35c898e0bdeed18c4aecfd7d47fdb9c82997ba7d"
     },
     {
-      "packageVersion": "8.0.0-alpha.1.23076.1",
+      "packageVersion": "8.0.0-alpha.1.23101.1",
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "adcc7b7599a5f1fa2e5f452ee1bab92e4f4be866"
+      "commitSha": "992594bac69b9d7e2cd462ef6b79e31d2d56f08d"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23101.3",
@@ -115,10 +115,10 @@
       "commitSha": "23a89685a4bd9184382d5591fb71f3d49c1b89fc"
     },
     {
-      "packageVersion": "1.2.0-beta-23064-02",
+      "packageVersion": "1.2.0-beta-23081-01",
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
-      "commitSha": "de25d2565e5b89ff1d7eee1bce066005b272e365"
+      "commitSha": "4ad5e57a1489a065674bd4da72b788f073dab638"
     },
     {
       "packageVersion": "1.4.0-beta2-21475-02",
@@ -151,10 +151,10 @@
       "commitSha": "9a1c3e1b7f0c8763d4c96e593961a61a72679a7b"
     },
     {
-      "packageVersion": "1.0.0-beta.23073.2",
+      "packageVersion": "1.0.0-beta.23081.1",
       "path": "xliff-tasks",
       "remoteUri": "https://github.com/dotnet/xliff-tasks",
-      "commitSha": "ee48da80a3094f5273480398268095bfa973840b"
+      "commitSha": "ff7db52c8a66e892216be667271e726a02661cad"
     }
   ],
   "submodules": [
