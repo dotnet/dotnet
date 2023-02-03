@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
+using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
@@ -33,11 +34,11 @@ public class TypeAccessibilityCodeActionProviderTest : LanguageServerTestBase
         // Arrange
         var documentPath = "c:/Test.razor";
         var contents = "";
-        var request = new CodeActionParams()
+        var request = new VSCodeActionParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = new Uri(documentPath) },
+            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
             Range = new Range(),
-            Context = new CodeActionContext()
+            Context = new VSInternalCodeActionContext()
             {
                 // Even though the DTO declares this as non-null, we want to make sure we behave
                 Diagnostics = null!
@@ -70,11 +71,11 @@ public class TypeAccessibilityCodeActionProviderTest : LanguageServerTestBase
         // Arrange
         var documentPath = "c:/Test.razor";
         var contents = "";
-        var request = new CodeActionParams()
+        var request = new VSCodeActionParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = new Uri(documentPath) },
+            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
             Range = new Range(),
-            Context = new CodeActionContext()
+            Context = new VSInternalCodeActionContext()
             {
                 Diagnostics = new Diagnostic[] {
                     new Diagnostic()
@@ -126,11 +127,11 @@ public class TypeAccessibilityCodeActionProviderTest : LanguageServerTestBase
         // Arrange
         var documentPath = "c:/Test.razor";
         var contents = "";
-        var request = new CodeActionParams()
+        var request = new VSCodeActionParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = new Uri(documentPath) },
+            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
             Range = new Range(),
-            Context = new CodeActionContext()
+            Context = new VSInternalCodeActionContext()
             {
                 Diagnostics = new Diagnostic[] {
                     new Diagnostic()
@@ -167,11 +168,11 @@ public class TypeAccessibilityCodeActionProviderTest : LanguageServerTestBase
         // Arrange
         var documentPath = "c:/Test.razor";
         var contents = "@code { Path; }";
-        var request = new CodeActionParams()
+        var request = new VSCodeActionParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = new Uri(documentPath) },
+            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
             Range = new Range(),
-            Context = new CodeActionContext()
+            Context = new VSInternalCodeActionContext()
             {
                 Diagnostics = new Diagnostic[] {
                     new Diagnostic()
@@ -246,11 +247,11 @@ public class TypeAccessibilityCodeActionProviderTest : LanguageServerTestBase
         // Arrange
         var documentPath = "c:/Test.razor";
         var contents = "@inject Path";
-        var request = new CodeActionParams()
+        var request = new VSCodeActionParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = new Uri(documentPath) },
+            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
             Range = new Range(),
-            Context = new CodeActionContext()
+            Context = new VSInternalCodeActionContext()
             {
                 Diagnostics = Array.Empty<Diagnostic>()
             }
@@ -298,11 +299,11 @@ public class TypeAccessibilityCodeActionProviderTest : LanguageServerTestBase
         // Arrange
         var documentPath = "c:/Test.razor";
         var contents = "@code { Path; }";
-        var request = new CodeActionParams()
+        var request = new VSCodeActionParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = new Uri(documentPath) },
+            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
             Range = new Range(),
-            Context = new CodeActionContext()
+            Context = new VSInternalCodeActionContext()
             {
                 Diagnostics = Array.Empty<Diagnostic>()
             }
@@ -356,11 +357,11 @@ public class TypeAccessibilityCodeActionProviderTest : LanguageServerTestBase
         // Arrange
         var documentPath = "c:/Test.razor";
         var contents = "@code { Path; }";
-        var request = new CodeActionParams()
+        var request = new VSCodeActionParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = new Uri(documentPath) },
+            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
             Range = new Range(),
-            Context = new CodeActionContext()
+            Context = new VSInternalCodeActionContext()
             {
                 Diagnostics = new Diagnostic[] {
                     new Diagnostic()
@@ -444,7 +445,7 @@ public class TypeAccessibilityCodeActionProviderTest : LanguageServerTestBase
     }
 
     private static RazorCodeActionContext CreateRazorCodeActionContext(
-        CodeActionParams request,
+        VSCodeActionParams request,
         SourceLocation location,
         string filePath,
         string text,
