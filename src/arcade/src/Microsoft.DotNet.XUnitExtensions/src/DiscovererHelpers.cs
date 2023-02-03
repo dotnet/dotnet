@@ -108,6 +108,9 @@ namespace Microsoft.DotNet.XUnitExtensions
             {
                 yield return new KeyValuePair<string, string>(XunitConstants.Category, category);
             }
-        }        
+        }
+
+        internal static string AppendAdditionalMessage(this string message, string additionalMessage)
+            => !string.IsNullOrWhiteSpace(additionalMessage) ? $"{message} {additionalMessage}" : message;
     }
 }

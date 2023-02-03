@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+  <PropertyGroup>
+    <_EnableTargetFrameworkFiltering>false</_EnableTargetFrameworkFiltering>
+    <_EnableTargetFrameworkFiltering Condition="'$(NoTargetFrameworkFiltering)' != 'true' and '$(DotNetTargetFrameworkFilter)' != ''">true</_EnableTargetFrameworkFiltering>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(_EnableTargetFrameworkFiltering)">
+    <_OriginalTargetFrameworks Condition="'$(TargetFrameworks)' != ''">$(TargetFrameworks)</_OriginalTargetFrameworks>
+    <_OriginalTargetFrameworks Condition="'$(TargetFramework)' != ''">$(TargetFramework)</_OriginalTargetFrameworks>
+    <_FilteredTargetFrameworks>$([MSBuild]::Unescape($([MSBuild]::FilterTargetFrameworks('$(_OriginalTargetFrameworks)', '$(DotNetTargetFrameworkFilter)'))))</_FilteredTargetFrameworks>
+    <!-- Maintain usage of the original property -->
+    <TargetFrameworks Condition="'$(TargetFrameworks)' != ''">$(_FilteredTargetFrameworks)</TargetFrameworks>
+    <TargetFramework Condition="'$(TargetFramework)' != ''">$(_FilteredTargetFrameworks)</TargetFramework>
+    <!-- If nothing left to build, exclude it! -->
+    <ExcludeFromBuild Condition="'$(_FilteredTargetFrameworks)' == ''">true</ExcludeFromBuild>
+    <!-- If excluding, then disable a restore warning, which will fire on newer SDKs-->
+    <DisableWarnForInvalidRestoreProjects Condition="'$(_FilteredTargetFrameworks)' == ''">true</DisableWarnForInvalidRestoreProjects>
+  </PropertyGroup>
+
+</Project>

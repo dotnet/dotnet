@@ -8,4 +8,5 @@
   </PropertyGroup>
 
   <Import Project="Version.BeforeCommonTargets.targets"/>
+  <Import Project="TargetFrameworkFilters.BeforeCommonTargets.targets"/>
 </Project>

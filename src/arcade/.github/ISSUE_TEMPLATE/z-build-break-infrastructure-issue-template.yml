@@ -34,7 +34,7 @@ body:
 
         If this is an issue that is causing build breaks across multiple builds and would get benefit from being listed on the [build analysis check](https://github.com/dotnet/arcade/blob/174acbcafeba3ae339c1935ec48812514ee09837/Documentation/Projects/Build%20Analysis/Introduction.md), follow the next steps:
         1. Add the label "Known Build Error"
-        2. Edit this issue and add an error string in the Json below that can help us match this issue with future build breaks. You should use the [known issues documentation](https://github.com/dotnet/arcade/blob/main/Documentation/Projects/Build%20Analysis/KnownIssues.md#how-to-fill-out-a-known-issue-error-message-section)
+        2. Edit this issue and add an error string in the Json below that can help us match this issue with future build breaks. You should use the [known issues documentation](https://github.com/dotnet/arcade/blob/main/Documentation/Projects/Build%20Analysis/KnownIssues.md#how-to-fill-out-a-known-issue-error-section)
 
          ```json
          {
