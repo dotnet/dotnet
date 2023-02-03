@@ -155,7 +155,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 
 <!-- component list beginning -->
 - `src/arcade`  
-*[dotnet/arcade@c4d6ac0](https://github.com/dotnet/arcade/commit/c4d6ac086bdb9764f72c5ede705d3ef12e1b4c74)*
+*[dotnet/arcade@afa0b37](https://github.com/dotnet/arcade/commit/afa0b37a066ac10768e49b29c82e5e039e714655)*
 - `src/aspnetcore`  
 *[dotnet/aspnetcore@65493f5](https://github.com/dotnet/aspnetcore/commit/65493f5ed529a47937066a84d43f913796bbcf30)*
     - `src/aspnetcore/src/submodules/googletest`  
@@ -177,7 +177,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@e391694](https://github.com/dotnet/fsharp/commit/e391694876e891d2cdc4089e62fe7b1138d8294e)*
 - `src/installer`  
-*[dotnet/installer@5c7737d](https://github.com/dotnet/installer/commit/5c7737d740c861fe7cda4822a7137c22368000dc)*
+*[dotnet/installer@afe25ac](https://github.com/dotnet/installer/commit/afe25ac5f343c2e7a3050dffe4808e461c1f80af)*
 - `src/linker`  
 *[dotnet/linker@c790896](https://github.com/dotnet/linker/commit/c790896f128957acd2999208f44f09ae1e826c8c)*
     - `src/linker/external/cecil`  
@@ -199,7 +199,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/sdk`  
 *[dotnet/sdk@35c898e](https://github.com/dotnet/sdk/commit/35c898e0bdeed18c4aecfd7d47fdb9c82997ba7d)*
 - `src/source-build-externals`  
-*[dotnet/source-build-externals@992594b](https://github.com/dotnet/source-build-externals/commit/992594bac69b9d7e2cd462ef6b79e31d2d56f08d)*
+*[dotnet/source-build-externals@9443b3a](https://github.com/dotnet/source-build-externals/commit/9443b3ac42ef15f0a8e33f1b73fcc86d2aec60d1)*
     - `src/source-build-externals/src/application-insights`  
     *[Microsoft/ApplicationInsights-dotnet@51c3ed8](https://github.com/Microsoft/ApplicationInsights-dotnet/commit/51c3ed8aa3f32209edf01168f9136a3ac8486c5d)*
     - `src/source-build-externals/src/azure-activedirectory-identitymodel-extensions-for-dotnet`  

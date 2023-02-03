@@ -61,7 +61,17 @@ There are two ways to report a Known Issue: one is via Build Analysis and the ot
 1. You should set `ExcludeConsoleLog` to `true` if you want to exclude console logs from Known Issues matching
 1. You are done but [what happens after a Known Issue is created?](#what-happens-after-creating-or-updating-a-known-issue)
 
-Note: You need to escape special characters to make your JSON valid. You can use the preview tab to validate your JSON blob, GitHub will highlight invalid characters.
+Note: You need to escape special characters to make your JSON valid, to do it you can use online tools like [freeformatter](https://www.freeformatter.com/json-escape.html).
+
+For example, if your error message is `text "using" quotes`
+
+![Unescaped text example](./Resources/UnescapedText.png?raw=true)
+
+You need to enter `text \"using\" quotes` as the `ErrorMessage` value
+
+![Escaped text example](./Resources/EscapedText.png?raw=true)
+
+You can use the preview tab to validate your JSON blob, GitHub will highlight invalid characters.
 
 ![Invalid JSON blob](./Resources/invalid_json_blob.png?raw=true)
 
@@ -85,11 +95,13 @@ The strategy and limitations differ between both types of errors:
 For the error matching to work, you need to provide an error message or an error pattern.
 
 ```json
-{ 
+{
     "ErrorMessage":"",
     "ErrorPattern": "",
 }
 ```
+
+### String matching
 
 The `ErrorMessage` value needs to be updated with an error message that meets the following requirements:
 
@@ -104,13 +116,15 @@ The `ErrorMessage` value needs to be updated with an error message that meets th
 
     We could choose this part of the message: `(NETCORE_ENGINEERING_TELEMETRY=Restore) Failed to retrieve information`. This is a good option because it targets a particular problem but excludes details of the build, thus making it possible for this same error to match with other builds.
 
-After selecting the message, fill the "ErrorMessage":
+After selecting the message, fill `ErrorMessage` value:
 
 ```json
 { 
     "ErrorMessage":"(NETCORE_ENGINEERING_TELEMETRY=Restore) Failed to retrieve information" 
 }
 ```
+
+### Regex matching
 
 If you need to match an error using a regex, you should use the `ErrorPattern` value.
 
@@ -121,6 +135,12 @@ In the following example, the regular expression `The command .+ failed` would m
     "ErrorPattern": "The command .+ failed",
 }
 ```
+
+We recommend you test your regular expression, to do it you can use [regex101 tester](https://regex101.com/) (choose `.NET (C#)` flavor) with the following regex options:
+
+- Single line
+- Insentitive
+- No backtracking
 
 ## What happens after creating or updating a Known Issue
 

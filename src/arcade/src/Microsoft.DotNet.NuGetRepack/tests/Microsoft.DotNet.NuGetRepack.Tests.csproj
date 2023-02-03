@@ -82,6 +82,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Microsoft.DotNet.XUnitExtensions\src\Microsoft.DotNet.XUnitExtensions.csproj" />
     <ProjectReference Include="..\tasks\Microsoft.DotNet.NuGetRepack.Tasks.csproj" />
   </ItemGroup>
 </Project>
