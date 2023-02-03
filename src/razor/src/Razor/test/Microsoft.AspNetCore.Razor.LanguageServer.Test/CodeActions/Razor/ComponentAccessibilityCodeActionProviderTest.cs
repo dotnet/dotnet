@@ -5,6 +5,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
+using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
@@ -36,10 +37,11 @@ public class ComponentAccessibilityCodeActionProviderTest : LanguageServerTestBa
             """;
         TestFileMarkupParser.GetPosition(contents, out contents, out var cursorPosition);
 
-        var request = new CodeActionParams()
+        var request = new VSCodeActionParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = new Uri(documentPath) },
+            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
             Range = new Range{ Start = new Position(0, 1), End = new Position(0, 1), },
+            Context = new VSInternalCodeActionContext()
         };
 
         var location = new SourceLocation(cursorPosition, -1, -1);
@@ -64,10 +66,11 @@ public class ComponentAccessibilityCodeActionProviderTest : LanguageServerTestBa
             """;
         TestFileMarkupParser.GetPosition(contents, out contents, out var cursorPosition);
 
-        var request = new CodeActionParams()
+        var request = new VSCodeActionParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = new Uri(documentPath) },
+            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
             Range = new Range(),
+            Context = new VSInternalCodeActionContext()
         };
 
         var location = new SourceLocation(cursorPosition, -1, -1);
@@ -93,10 +96,11 @@ public class ComponentAccessibilityCodeActionProviderTest : LanguageServerTestBa
             """;
         TestFileMarkupParser.GetPosition(contents, out contents, out var cursorPosition);
 
-        var request = new CodeActionParams()
+        var request = new VSCodeActionParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = new Uri(documentPath) },
+            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
             Range = new Range { Start = new Position(0, 0), End = new Position(0, 0) },
+            Context = new VSInternalCodeActionContext()
         };
 
         var location = new SourceLocation(cursorPosition, -1, -1);
@@ -121,10 +125,11 @@ public class ComponentAccessibilityCodeActionProviderTest : LanguageServerTestBa
             """;
         TestFileMarkupParser.GetPosition(contents, out contents, out var cursorPosition);
 
-        var request = new CodeActionParams()
+        var request = new VSCodeActionParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = new Uri(documentPath) },
+            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
             Range = new Range { Start = new Position(0, 0), End = new Position(0, 0) },
+            Context = new VSInternalCodeActionContext()
         };
 
         var location = new SourceLocation(cursorPosition, -1, -1);
@@ -169,10 +174,11 @@ public class ComponentAccessibilityCodeActionProviderTest : LanguageServerTestBa
             """;
         TestFileMarkupParser.GetPosition(contents, out contents, out var cursorPosition);
 
-        var request = new CodeActionParams()
+        var request = new VSCodeActionParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = new Uri(documentPath) },
+            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
             Range = new Range { Start = new Position(0, 0), End = new Position(0, 0) },
+            Context = new VSInternalCodeActionContext()
         };
 
         var location = new SourceLocation(cursorPosition, -1, -1);
@@ -200,10 +206,11 @@ public class ComponentAccessibilityCodeActionProviderTest : LanguageServerTestBa
             """;
         TestFileMarkupParser.GetPosition(contents, out contents, out var cursorPosition);
 
-        var request = new CodeActionParams()
+        var request = new VSCodeActionParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = new Uri(documentPath) },
+            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
             Range = new Range { Start = new Position(0, 0), End = new Position(0, 0) },
+            Context = new VSInternalCodeActionContext()
         };
 
         var location = new SourceLocation(cursorPosition, -1, -1);
@@ -231,10 +238,11 @@ public class ComponentAccessibilityCodeActionProviderTest : LanguageServerTestBa
             """;
         TestFileMarkupParser.GetPosition(contents, out contents, out var cursorPosition);
 
-        var request = new CodeActionParams()
+        var request = new VSCodeActionParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = new Uri(documentPath) },
+            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
             Range = new Range { Start = new Position(0, 0), End = new Position(0, 0) },
+            Context = new VSInternalCodeActionContext()
         };
 
         var location = new SourceLocation(cursorPosition, -1, -1);
@@ -260,10 +268,11 @@ public class ComponentAccessibilityCodeActionProviderTest : LanguageServerTestBa
             """;
         TestFileMarkupParser.GetPosition(contents, out contents, out var cursorPosition);
 
-        var request = new CodeActionParams()
+        var request = new VSCodeActionParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = new Uri(documentPath) },
+            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
             Range = new Range { Start = new Position(0, 0), End = new Position(0, 0) },
+            Context = new VSInternalCodeActionContext()
         };
 
         var location = new SourceLocation(cursorPosition, -1, -1);
@@ -292,7 +301,7 @@ public class ComponentAccessibilityCodeActionProviderTest : LanguageServerTestBa
             });
     }
 
-    private static RazorCodeActionContext CreateRazorCodeActionContext(CodeActionParams request, SourceLocation location, string filePath, string text, SourceSpan componentSourceSpan, bool supportsFileCreation = true)
+    private static RazorCodeActionContext CreateRazorCodeActionContext(VSCodeActionParams request, SourceLocation location, string filePath, string text, SourceSpan componentSourceSpan, bool supportsFileCreation = true)
     {
         var shortComponent = TagHelperDescriptorBuilder.Create(ComponentMetadata.Component.TagHelperKind, "Fully.Qualified.Component", "TestAssembly");
         shortComponent.TagMatchingRule(rule => rule.TagName = "Component");

@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
+using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 using Microsoft.AspNetCore.Razor.LanguageServer.Semantic.Models;
@@ -242,12 +243,14 @@ public class DefaultRazorLanguageServerCustomMessageTargetTest : TestBase
         {
             HostDocumentVersion = 1,
             LanguageKind = RazorLanguageKind.CSharp,
-            CodeActionParams = new CodeActionParams()
+            CodeActionParams = new VSCodeActionParams()
             {
-                TextDocument = new TextDocumentIdentifier()
+                TextDocument = new VSTextDocumentIdentifier()
                 {
                     Uri = new Uri("C:/path/to/file.razor")
-                }
+                },
+                Range = new Range(),
+                Context = new VSInternalCodeActionContext()
             }
         };
 
@@ -289,11 +292,11 @@ public class DefaultRazorLanguageServerCustomMessageTargetTest : TestBase
         var expectedResults = GetExpectedResultsAsync();
         var requestInvoker = new Mock<LSPRequestInvoker>(MockBehavior.Strict);
         requestInvoker
-            .Setup(invoker => invoker.ReinvokeRequestOnMultipleServersAsync<CodeActionParams, IReadOnlyList<VSInternalCodeAction>>(
+            .Setup(invoker => invoker.ReinvokeRequestOnMultipleServersAsync<VSCodeActionParams, IReadOnlyList<VSInternalCodeAction>>(
                 _textBuffer,
                 Methods.TextDocumentCodeActionName,
                 It.IsAny<Func<JToken, bool>>(),
-                It.IsAny<CodeActionParams>(),
+                It.IsAny<VSCodeActionParams>(),
                 It.IsAny<CancellationToken>()))
             .Returns(expectedResults);
 
@@ -308,12 +311,14 @@ public class DefaultRazorLanguageServerCustomMessageTargetTest : TestBase
         {
             HostDocumentVersion = 1,
             LanguageKind = RazorLanguageKind.CSharp,
-            CodeActionParams = new CodeActionParams()
+            CodeActionParams = new VSCodeActionParams()
             {
-                TextDocument = new TextDocumentIdentifier()
+                TextDocument = new VSTextDocumentIdentifier()
                 {
                     Uri = testDocUri
-                }
+                },
+                Range = new Range(),
+                Context = new VSInternalCodeActionContext()
             }
         };
 

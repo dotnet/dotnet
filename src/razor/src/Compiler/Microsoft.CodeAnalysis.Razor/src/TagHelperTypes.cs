@@ -11,7 +11,7 @@ internal static class TagHelperTypes
 
     public const string IComponent = "Microsoft.AspNetCore.Components.IComponent";
 
-    public const string IDictionary = "System.Collections.Generic.IDictionary`2";
+    public const string IDictionary = "System.Collections.Generic.IDictionary<TKey, TValue>";
 
     public const string HtmlAttributeNameAttribute = "Microsoft.AspNetCore.Razor.TagHelpers.HtmlAttributeNameAttribute";
 

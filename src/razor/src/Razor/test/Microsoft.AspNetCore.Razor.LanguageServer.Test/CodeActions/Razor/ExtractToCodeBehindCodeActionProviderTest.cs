@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
+using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
@@ -38,10 +39,11 @@ public class ExtractToCodeBehindCodeActionProviderTest : LanguageServerTestBase
             """;
         TestFileMarkupParser.GetPosition(contents, out contents, out var cursorPosition);
 
-        var request = new CodeActionParams()
+        var request = new VSCodeActionParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = new Uri(documentPath) },
+            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
             Range = new Range(),
+            Context = new VSInternalCodeActionContext()
         };
 
         var location = new SourceLocation(cursorPosition, -1, -1);
@@ -68,10 +70,11 @@ public class ExtractToCodeBehindCodeActionProviderTest : LanguageServerTestBase
             """;
         TestFileMarkupParser.GetPosition(contents, out contents, out var cursorPosition);
 
-        var request = new CodeActionParams()
+        var request = new VSCodeActionParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = new Uri(documentPath) },
+            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
             Range = new Range(),
+            Context = new VSInternalCodeActionContext()
         };
 
         var location = new SourceLocation(cursorPosition, -1, -1);
@@ -97,10 +100,11 @@ public class ExtractToCodeBehindCodeActionProviderTest : LanguageServerTestBase
             """;
         TestFileMarkupParser.GetPosition(contents, out contents, out var cursorPosition);
 
-        var request = new CodeActionParams()
+        var request = new VSCodeActionParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = new Uri(documentPath) },
+            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
             Range = new Range(),
+            Context = new VSInternalCodeActionContext()
         };
 
         var location = new SourceLocation(cursorPosition, -1, -1);
@@ -126,10 +130,11 @@ public class ExtractToCodeBehindCodeActionProviderTest : LanguageServerTestBase
             """;
         TestFileMarkupParser.GetPosition(contents, out contents, out var cursorPosition);
 
-        var request = new CodeActionParams()
+        var request = new VSCodeActionParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = new Uri(documentPath) },
+            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
             Range = new Range(),
+            Context = new VSInternalCodeActionContext()
         };
 
         var location = new SourceLocation(cursorPosition, -1, -1);
@@ -160,10 +165,11 @@ public class ExtractToCodeBehindCodeActionProviderTest : LanguageServerTestBase
             """;
         TestFileMarkupParser.GetPosition(contents, out contents, out var cursorPosition);
 
-        var request = new CodeActionParams()
+        var request = new VSCodeActionParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = new Uri(documentPath) },
+            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
             Range = new Range(),
+            Context = new VSInternalCodeActionContext()
         };
 
         var location = new SourceLocation(cursorPosition, -1, -1);
@@ -194,10 +200,11 @@ public class ExtractToCodeBehindCodeActionProviderTest : LanguageServerTestBase
             """;
         TestFileMarkupParser.GetPosition(contents, out contents, out var cursorPosition);
 
-        var request = new CodeActionParams()
+        var request = new VSCodeActionParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = new Uri(documentPath) },
+            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
             Range = new Range(),
+            Context = new VSInternalCodeActionContext()
         };
 
         var location = new SourceLocation(cursorPosition, -1, -1);
@@ -232,10 +239,11 @@ public class ExtractToCodeBehindCodeActionProviderTest : LanguageServerTestBase
             """;
         TestFileMarkupParser.GetPosition(contents, out contents, out var cursorPosition);
 
-        var request = new CodeActionParams()
+        var request = new VSCodeActionParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = new Uri(documentPath) },
+            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
             Range = new Range(),
+            Context = new VSInternalCodeActionContext()
         };
 
         var location = new SourceLocation(cursorPosition, -1, -1);
@@ -270,10 +278,11 @@ public class ExtractToCodeBehindCodeActionProviderTest : LanguageServerTestBase
             """;
         TestFileMarkupParser.GetPosition(contents, out contents, out var cursorPosition);
 
-        var request = new CodeActionParams()
+        var request = new VSCodeActionParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = new Uri(documentPath) },
+            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
             Range = new Range(),
+            Context = new VSInternalCodeActionContext()
         };
 
         var location = new SourceLocation(cursorPosition, -1, -1);
@@ -299,10 +308,11 @@ public class ExtractToCodeBehindCodeActionProviderTest : LanguageServerTestBase
             """;
         TestFileMarkupParser.GetPosition(contents, out contents, out var cursorPosition);
 
-        var request = new CodeActionParams()
+        var request = new VSCodeActionParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = new Uri(documentPath) },
+            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
             Range = new Range(),
+            Context = new VSInternalCodeActionContext()
         };
 
         var location = new SourceLocation(cursorPosition, -1, -1);
@@ -337,10 +347,11 @@ public class ExtractToCodeBehindCodeActionProviderTest : LanguageServerTestBase
             """;
         TestFileMarkupParser.GetPosition(contents, out contents, out var cursorPosition);
 
-        var request = new CodeActionParams()
+        var request = new VSCodeActionParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = new Uri(documentPath) },
+            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
             Range = new Range(),
+            Context = null!
         };
 
         var location = new SourceLocation(cursorPosition, -1, -1);
@@ -355,10 +366,10 @@ public class ExtractToCodeBehindCodeActionProviderTest : LanguageServerTestBase
         Assert.Null(commandOrCodeActionContainer);
     }
 
-    private static RazorCodeActionContext CreateRazorCodeActionContext(CodeActionParams request, SourceLocation location, string filePath, string text, bool supportsFileCreation = true)
+    private static RazorCodeActionContext CreateRazorCodeActionContext(VSCodeActionParams request, SourceLocation location, string filePath, string text, bool supportsFileCreation = true)
         => CreateRazorCodeActionContext(request, location, filePath, text, relativePath: filePath, supportsFileCreation: supportsFileCreation);
 
-    private static RazorCodeActionContext CreateRazorCodeActionContext(CodeActionParams request, SourceLocation location, string filePath, string text, string? relativePath, bool supportsFileCreation = true)
+    private static RazorCodeActionContext CreateRazorCodeActionContext(VSCodeActionParams request, SourceLocation location, string filePath, string text, string? relativePath, bool supportsFileCreation = true)
     {
         var sourceDocument = RazorSourceDocument.Create(text, new RazorSourceDocumentProperties(filePath, relativePath));
         var options = RazorParserOptions.Create(o =>

@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
+using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -34,11 +35,11 @@ public class DefaultHtmlCodeActionProviderTest : LanguageServerTestBase
         TestFileMarkupParser.GetPosition(contents, out contents, out var cursorPosition);
 
         var documentPath = "c:/Test.razor";
-        var request = new CodeActionParams()
+        var request = new VSCodeActionParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = new Uri(documentPath) },
+            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
             Range = new Range(),
-            Context = new CodeActionContext()
+            Context = new VSInternalCodeActionContext()
         };
 
         var location = new SourceLocation(cursorPosition, -1, -1);
@@ -68,11 +69,11 @@ public class DefaultHtmlCodeActionProviderTest : LanguageServerTestBase
         TestFileMarkupParser.GetPositionAndSpan(contents, out contents, out var cursorPosition, out var span);
 
         var documentPath = "c:/Test.razor";
-        var request = new CodeActionParams()
+        var request = new VSCodeActionParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = new Uri(documentPath) },
+            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
             Range = new Range(),
-            Context = new CodeActionContext()
+            Context = new VSInternalCodeActionContext()
         };
 
         var location = new SourceLocation(cursorPosition, -1, -1);
@@ -145,7 +146,7 @@ public class DefaultHtmlCodeActionProviderTest : LanguageServerTestBase
     }
 
     private static RazorCodeActionContext CreateRazorCodeActionContext(
-        CodeActionParams request,
+        VSCodeActionParams request,
         SourceLocation location,
         string filePath,
         string text,

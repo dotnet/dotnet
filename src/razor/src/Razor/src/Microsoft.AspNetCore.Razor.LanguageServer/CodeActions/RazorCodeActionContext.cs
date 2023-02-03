@@ -3,16 +3,16 @@
 
 using System;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
 internal sealed class RazorCodeActionContext
 {
     public RazorCodeActionContext(
-        CodeActionParams request,
+        VSCodeActionParams request,
         DocumentSnapshot documentSnapshot,
         RazorCodeDocument codeDocument,
         SourceLocation location,
@@ -29,7 +29,7 @@ internal sealed class RazorCodeActionContext
         SupportsCodeActionResolve = supportsCodeActionResolve;
     }
 
-    public CodeActionParams Request { get; }
+    public VSCodeActionParams Request { get; }
     public DocumentSnapshot DocumentSnapshot { get; }
     public RazorCodeDocument CodeDocument { get; }
     public SourceLocation Location { get; }
