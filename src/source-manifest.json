@@ -97,10 +97,10 @@
       "commitSha": "6507a44770f6648ca8da6ebbd7fe804ee5f91db4"
     },
     {
-      "packageVersion": "8.0.100-preview.1.23103.14",
+      "packageVersion": "8.0.100-preview.1.23105.1",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "135868c9dc856ef0dc6a64c130b90a83d242d91f"
+      "commitSha": "888cf4b2b5517a442d213b0a7500a709c1c4d033"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23076.1",
