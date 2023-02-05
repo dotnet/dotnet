@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
   <ProductDependencies>
-    <Dependency Name="Microsoft.TemplateEngine.Abstractions" Version="8.0.100-preview.1.23102.1">
+    <Dependency Name="Microsoft.TemplateEngine.Abstractions" Version="8.0.100-preview.1.23103.4">
       <Uri>https://github.com/dotnet/templating</Uri>
-      <Sha>63ba9ca6bcf12d0dbd17987fb5810910d911a6ab</Sha>
+      <Sha>56d6065ff8b01a4fbb88dfef6c47a5ea700cb196</Sha>
       <SourceBuild RepoName="templating" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.NETCore.App.Ref" Version="8.0.0-preview.1.23081.6">
@@ -50,13 +50,13 @@
       <Uri>https://github.com/dotnet/msbuild</Uri>
       <Sha>7cfb36cb90d1c9cc34bc4e0910d0c9ef42ee47b6</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.FSharp.Compiler" Version="12.5.0-beta.23101.1">
+    <Dependency Name="Microsoft.FSharp.Compiler" Version="12.5.0-beta.23103.4">
       <Uri>https://github.com/dotnet/fsharp</Uri>
-      <Sha>b4317096ea3aacdb48505744c9e371d5310464c2</Sha>
+      <Sha>e2af231f075c132622780054de5ce204389683bf</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.fsharp" Version="7.0.300-beta.23101.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.fsharp" Version="7.0.300-beta.23103.4">
       <Uri>https://github.com/dotnet/fsharp</Uri>
-      <Sha>b4317096ea3aacdb48505744c9e371d5310464c2</Sha>
+      <Sha>e2af231f075c132622780054de5ce204389683bf</Sha>
       <SourceBuild RepoName="fsharp" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="dotnet-format" Version="8.0.405501">
@@ -101,9 +101,9 @@
       <Uri>https://github.com/dotnet/aspnetcore</Uri>
       <Sha>6a9cef3fa2f5c7c2695a2141a8aa098294736d4e</Sha>
     </Dependency>
-    <Dependency Name="NuGet.Build.Tasks" Version="6.6.0-preview.1.16">
+    <Dependency Name="NuGet.Build.Tasks" Version="6.6.0-preview.1.17">
       <Uri>https://github.com/nuget/nuget.client</Uri>
-      <Sha>098dab6611b40ae85609209d730a671c470dcbae</Sha>
+      <Sha>419ab86c016778ee3aeab40ea6fee879c09c7365</Sha>
     </Dependency>
     <Dependency Name="Microsoft.NET.Test.Sdk" Version="17.6.0-preview-20230126-02">
       <Uri>https://github.com/microsoft/vstest</Uri>
