@@ -177,13 +177,13 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@e2af231](https://github.com/dotnet/fsharp/commit/e2af231f075c132622780054de5ce204389683bf)*
 - `src/installer`  
-*[dotnet/installer@ba47db7](https://github.com/dotnet/installer/commit/ba47db7f77ae15ccbd237b3c949e2f690a9c5ba0)*
+*[dotnet/installer@0e4c551](https://github.com/dotnet/installer/commit/0e4c551aeb93858c105e03795d1e632cfa99e72a)*
 - `src/linker`  
 *[dotnet/linker@c790896](https://github.com/dotnet/linker/commit/c790896f128957acd2999208f44f09ae1e826c8c)*
     - `src/linker/external/cecil`  
     *[dotnet/cecil@2941911](https://github.com/dotnet/cecil/commit/2941911af1e028ec4b508cbb8c326003089bc610)*
 - `src/msbuild`  
-*[dotnet/msbuild@7cfb36c](https://github.com/dotnet/msbuild/commit/7cfb36cb90d1c9cc34bc4e0910d0c9ef42ee47b6)*
+*[dotnet/msbuild@fc3ab4c](https://github.com/dotnet/msbuild/commit/fc3ab4c5e2a486abb8fc66aede7ec8e3eb91fe08)*
 - `src/nuget-client`  
 *[nuget/nuget.client@419ab86](https://github.com/nuget/nuget.client/commit/419ab86c016778ee3aeab40ea6fee879c09c7365)*
     - `src/nuget-client/submodules/NuGet.Build.Localization`  
@@ -197,7 +197,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/runtime`  
 *[dotnet/runtime@6507a44](https://github.com/dotnet/runtime/commit/6507a44770f6648ca8da6ebbd7fe804ee5f91db4)*
 - `src/sdk`  
-*[dotnet/sdk@10c0cfa](https://github.com/dotnet/sdk/commit/10c0cface32cc1b7b684c38cdcb6746ffb1607fd)*
+*[dotnet/sdk@3b39598](https://github.com/dotnet/sdk/commit/3b39598558cc6c68ca6bf7d274b1dcc65f3aade1)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@adcc7b7](https://github.com/dotnet/source-build-externals/commit/adcc7b7599a5f1fa2e5f452ee1bab92e4f4be866)*
     - `src/source-build-externals/src/application-insights`  
