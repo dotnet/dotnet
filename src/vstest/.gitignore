@@ -144,3 +144,5 @@ logs/
 
 .fake/
 .ionide/
+
+.idea/
