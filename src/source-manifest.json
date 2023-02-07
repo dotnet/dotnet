@@ -13,6 +13,12 @@
       "commitSha": "20c7ae1791f8ee01de42c7ad6568f7c611c6ec43"
     },
     {
+      "packageVersion": "0.11.4-alpha.23080.1",
+      "path": "cecil",
+      "remoteUri": "https://github.com/dotnet/cecil",
+      "commitSha": "8f5aa2558a5a9c6b8c821e10c26e47103a47ae7d"
+    },
+    {
       "packageVersion": "0.1.356401",
       "path": "command-line-api",
       "remoteUri": "https://github.com/dotnet/command-line-api",

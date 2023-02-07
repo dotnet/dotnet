@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <PropertyGroup>
+    <!-- This repo version -->
+    <!-- We need to modify the version here manually everytime the version changes from the upstream branch jbevain/cecil -->
+    <VersionPrefix>0.11.4.0</VersionPrefix>
+    <PreReleaseVersionLabel>alpha</PreReleaseVersionLabel>
+    <!-- Use VSTestRunner instead of allowing Arcade to use xunit, since Cecil tests are nunit based -->
+    <UseVSTestRunner>true</UseVSTestRunner>
+  </PropertyGroup>
+</Project>
