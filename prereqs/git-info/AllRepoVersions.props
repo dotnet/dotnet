@@ -13,13 +13,13 @@
     <deploymenttoolsOutputPackageVersion>1.0.0-preview5.1.22263.1</deploymenttoolsOutputPackageVersion>
     <diagnosticsGitCommitHash>e3e1490a23f27a6e0ed30d323035660c3ffc52cd</diagnosticsGitCommitHash>
     <diagnosticsOutputPackageVersion>6.0.0-preview.22424.1</diagnosticsOutputPackageVersion>
-    <emsdkGitCommitHash>1d9df3320ccdb0bbc40a31314641e1100369745b</emsdkGitCommitHash>
-    <emsdkOutputPackageVersion>8.0.0-preview.2.23081.3</emsdkOutputPackageVersion>
+    <emsdkGitCommitHash>3ae16c4a4f58bdeb6621b9a9eec832fb3b56d470</emsdkGitCommitHash>
+    <emsdkOutputPackageVersion>8.0.0-preview.2.23107.1</emsdkOutputPackageVersion>
     <formatGitCommitHash>2cb3e68c6b9a966114572fd63f2a20d2cb54a288</formatGitCommitHash>
     <formatOutputPackageVersion>8.0.405501</formatOutputPackageVersion>
     <fsharpGitCommitHash>e2af231f075c132622780054de5ce204389683bf</fsharpGitCommitHash>
     <fsharpOutputPackageVersion>7.0.300-beta.23103.4</fsharpOutputPackageVersion>
-    <installerGitCommitHash>b0e14be151f3be2a42c09c09b265bcd10e86c603</installerGitCommitHash>
+    <installerGitCommitHash>1eaae0dc5145c4c6531a31fc4a7b15d1900083e6</installerGitCommitHash>
     <installerOutputPackageVersion>8.0.100</installerOutputPackageVersion>
     <linkerGitCommitHash>c790896f128957acd2999208f44f09ae1e826c8c</linkerGitCommitHash>
     <linkerOutputPackageVersion>8.0.100-1.23067.1</linkerOutputPackageVersion>

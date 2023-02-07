@@ -173,13 +173,13 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/diagnostics`  
 *[dotnet/diagnostics@e3e1490](https://github.com/dotnet/diagnostics/commit/e3e1490a23f27a6e0ed30d323035660c3ffc52cd)*
 - `src/emsdk`  
-*[dotnet/emsdk@1d9df33](https://github.com/dotnet/emsdk/commit/1d9df3320ccdb0bbc40a31314641e1100369745b)*
+*[dotnet/emsdk@3ae16c4](https://github.com/dotnet/emsdk/commit/3ae16c4a4f58bdeb6621b9a9eec832fb3b56d470)*
 - `src/format`  
 *[dotnet/format@2cb3e68](https://github.com/dotnet/format/commit/2cb3e68c6b9a966114572fd63f2a20d2cb54a288)*
 - `src/fsharp`  
 *[dotnet/fsharp@e2af231](https://github.com/dotnet/fsharp/commit/e2af231f075c132622780054de5ce204389683bf)*
 - `src/installer`  
-*[dotnet/installer@b0e14be](https://github.com/dotnet/installer/commit/b0e14be151f3be2a42c09c09b265bcd10e86c603)*
+*[dotnet/installer@1eaae0d](https://github.com/dotnet/installer/commit/1eaae0dc5145c4c6531a31fc4a7b15d1900083e6)*
 - `src/linker`  
 *[dotnet/linker@c790896](https://github.com/dotnet/linker/commit/c790896f128957acd2999208f44f09ae1e826c8c)*
     - `src/linker/external/cecil`  

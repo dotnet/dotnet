@@ -200,9 +200,9 @@
     <XamarinMacOSWorkloadManifestVersion>12.3.2372</XamarinMacOSWorkloadManifestVersion>
     <XamarinTvOSWorkloadManifestVersion>16.0.1478</XamarinTvOSWorkloadManifestVersion>
     <!-- Workloads from dotnet/emsdk -->
-    <MicrosoftNETWorkloadEmscriptenCurrentManifest80100preview2PackageVersion>8.0.0-preview.2.23081.3</MicrosoftNETWorkloadEmscriptenCurrentManifest80100preview2PackageVersion>
-    <MicrosoftNETWorkloadEmscriptennet7Manifest80100preview2PackageVersion>8.0.0-preview.2.23081.3</MicrosoftNETWorkloadEmscriptennet7Manifest80100preview2PackageVersion>
-    <MicrosoftNETWorkloadEmscriptennet6Manifest80100preview2PackageVersion>8.0.0-preview.2.23081.3</MicrosoftNETWorkloadEmscriptennet6Manifest80100preview2PackageVersion>
+    <MicrosoftNETWorkloadEmscriptenCurrentManifest80100preview2PackageVersion>8.0.0-preview.2.23107.1</MicrosoftNETWorkloadEmscriptenCurrentManifest80100preview2PackageVersion>
+    <MicrosoftNETWorkloadEmscriptennet7Manifest80100preview2PackageVersion>8.0.0-preview.2.23107.1</MicrosoftNETWorkloadEmscriptennet7Manifest80100preview2PackageVersion>
+    <MicrosoftNETWorkloadEmscriptennet6Manifest80100preview2PackageVersion>8.0.0-preview.2.23107.1</MicrosoftNETWorkloadEmscriptennet6Manifest80100preview2PackageVersion>
     <EmscriptenWorkloadManifestVersion>$(MicrosoftNETWorkloadEmscriptenCurrentManifest80100preview2PackageVersion)</EmscriptenWorkloadManifestVersion>
     <!-- emsdk workload prerelease version band must match the emsdk feature band -->
     <EmscriptenWorkloadFeatureBand>8.0.100$([System.Text.RegularExpressions.Regex]::Match($(EmscriptenWorkloadManifestVersion), `-[A-z]*[\.]*\d*`))</EmscriptenWorkloadFeatureBand>
