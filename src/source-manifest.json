@@ -7,10 +7,10 @@
       "commitSha": "c453dfef2f41533de5cb03b2115aab9d0dfc74c6"
     },
     {
-      "packageVersion": "8.0.0-alpha.1.23079.1",
+      "packageVersion": "8.0.0-preview.2.23106.9",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "65493f5ed529a47937066a84d43f913796bbcf30"
+      "commitSha": "20c7ae1791f8ee01de42c7ad6568f7c611c6ec43"
     },
     {
       "packageVersion": "0.1.356401",
@@ -161,7 +161,7 @@
     {
       "path": "aspnetcore/src/submodules/googletest",
       "remoteUri": "https://github.com/google/googletest",
-      "commitSha": "ec25eea8f8237cf86c30703f59747e42f34b6f75"
+      "commitSha": "2f2e72bae991138cedd0e3d06a115022736cd568"
     },
     {
       "path": "aspnetcore/src/submodules/MessagePack-CSharp",
@@ -171,7 +171,7 @@
     {
       "path": "aspnetcore/src/submodules/spa-templates",
       "remoteUri": "https://github.com/dotnet/spa-templates.git",
-      "commitSha": "83c2bdca0adfd3a3d0fc82a5520f0e05c507160b"
+      "commitSha": "81de03e125f509b35261c946c95b7cc8cbd6084b"
     },
     {
       "path": "linker/external/cecil",

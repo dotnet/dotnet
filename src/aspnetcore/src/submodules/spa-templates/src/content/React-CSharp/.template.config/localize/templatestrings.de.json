@@ -17,7 +17,7 @@
   "symbols/NoHttps/description": "Ob HTTPS deaktiviert werden soll. Diese Option gilt nur, wenn Individual, IndividualB2C, SingleOrg oder MultiOrg nicht für --auth verwendet werden.",
   "symbols/UseLocalDB/description": "Ob LocalDB anstelle von SQLite verwendet werden soll. Diese Option gilt nur, wenn --auth Individual oder --auth IndividualB2C angegeben ist.",
   "symbols/Framework/description": "Das Zielframework für das Projekt.",
-  "symbols/Framework/choices/net7.0/description": "Ziel net7.0",
+  "symbols/Framework/choices/net8.0/description": "Ziel net8.0",
   "symbols/UseProgramMain/displayName": "Keine Anweisungen der obersten Ebene verwenden",
   "symbols/UseProgramMain/description": "Gibt an, ob anstelle von Anweisungen der obersten Ebene eine explizite Programmklasse und eine Main-Methode generiert werden soll.",
   "postActions/restore/description": "„NuGet-Pakete“ wiederherstellen, die für dieses Projekt erforderlich sind.",

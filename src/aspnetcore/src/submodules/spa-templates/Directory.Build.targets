@@ -29,7 +29,7 @@ To install the templates in this package, run 'dotnet new --install $(PackageId)
       We don't need source link. This is imported for automatic determination of repository information.
     -->
     <PackageReference Include="Microsoft.SourceLink.GitHub"
-        Version="$(MicrosoftSourceLinkVersion)"
+        Version="$(MicrosoftSourceLinkGitHubVersion)"
         PrivateAssets="all"
         IsImplicitlyDefined="true" />
   </ItemGroup>

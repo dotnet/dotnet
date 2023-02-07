@@ -57,10 +57,19 @@ EXPECTED_XML_1 = """<?xml version="1.0" encoding="UTF-8"?>
 EXPECTED_XML_2 = """<?xml version="1.0" encoding="UTF-8"?>
 <testsuites tests="1" failures="0" disabled="0" errors="0" time="*" timestamp="*" name="AllTests">
   <testsuite name="PropertyTwo" tests="1" failures="0" skipped="0" disabled="0" errors="0" time="*" timestamp="*">
-    <testcase name="TestSomeProperties" file="gtest_xml_outfile2_test_.cc" line="41" status="run" result="completed" time="*" timestamp="*" classname="PropertyTwo">
+    <testcase name="TestInt64Properties" file="gtest_xml_outfile2_test_.cc" line="41" status="run" result="completed" time="*" timestamp="*" classname="PropertyTwo">
       <properties>
         <property name="SetUpProp" value="2"/>
-        <property name="TestSomeProperty" value="2"/>
+        <property name="TestFloatProperty" value="3"/>
+        <property name="TestDoubleProperty" value="4"/>
+        <property name="TestSizetProperty" value="5"/>
+        <property name="TestBoolProperty" value="1"/>
+        <property name="TestCharProperty" value="65"/>
+        <property name="TestInt16Property" value="6"/>
+        <property name="TestInt32Property" value="7"/>
+        <property name="TestInt64Property" value="8"/>
+        <property name="TestEnumProperty" value="9"/>
+        <property name="TestAtomicIntProperty" value="10"/>
         <property name="TearDownProp" value="2"/>
       </properties>
     </testcase>
@@ -76,8 +85,9 @@ class GTestXMLOutFilesTest(gtest_xml_test_utils.GTestXMLTestCase):
     # We want the trailing '/' that the last "" provides in os.path.join, for
     # telling Google Test to create an output directory instead of a single file
     # for xml output.
-    self.output_dir_ = os.path.join(gtest_test_utils.GetTempDir(),
-                                    GTEST_OUTPUT_SUBDIR, "")
+    self.output_dir_ = os.path.join(
+        gtest_test_utils.GetTempDir(), GTEST_OUTPUT_SUBDIR, ""
+    )
     self.DeleteFilesAndDir()
 
   def tearDown(self):
@@ -106,14 +116,15 @@ class GTestXMLOutFilesTest(gtest_xml_test_utils.GTestXMLTestCase):
   def _TestOutFile(self, test_name, expected_xml):
     gtest_prog_path = gtest_test_utils.GetTestExecutablePath(test_name)
     command = [gtest_prog_path, "--gtest_output=xml:%s" % self.output_dir_]
-    p = gtest_test_utils.Subprocess(command,
-                                    working_dir=gtest_test_utils.GetTempDir())
+    p = gtest_test_utils.Subprocess(
+        command, working_dir=gtest_test_utils.GetTempDir()
+    )
     self.assertTrue(p.exited)
     self.assertEqual(0, p.exit_code)
 
     output_file_name1 = test_name + ".xml"
     output_file1 = os.path.join(self.output_dir_, output_file_name1)
-    output_file_name2 = 'lt-' + output_file_name1
+    output_file_name2 = "lt-" + output_file_name1
     output_file2 = os.path.join(self.output_dir_, output_file_name2)
     self.assertTrue(
         os.path.isfile(output_file1) or os.path.isfile(output_file2),
@@ -126,8 +137,7 @@ class GTestXMLOutFilesTest(gtest_xml_test_utils.GTestXMLTestCase):
     else:
       actual = minidom.parse(output_file2)
     self.NormalizeXml(actual.documentElement)
-    self.AssertEquivalentNodes(expected.documentElement,
-                               actual.documentElement)
+    self.AssertEquivalentNodes(expected.documentElement, actual.documentElement)
     expected.unlink()
     actual.unlink()
 
