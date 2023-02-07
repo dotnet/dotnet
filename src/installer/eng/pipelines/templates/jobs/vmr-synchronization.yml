@@ -25,12 +25,16 @@ jobs:
   - template: /eng/common/templates/variables/pool-providers.yml
   - name: vmrPath
     value: $(Agent.BuildDirectory)/vmr
-  - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+  - ${{ if and( eq(variables['System.TeamProject'], 'internal'), or(startswith(variables['Build.SourceBranch'], 'refs/heads/release/'), eq(variables['Build.SourceBranch'], 'refs/heads/main'))) }}:
     - group: DotNetBot-GitHub
-  - ${{ else }}:
-    - name: BotAccount-dotnet-bot-repo-PAT
-      value: N/A
-
+    - group: DotNetBot-GitHub-No-Scopes
+    - name: vmrPublicUrl
+      value: https://github.com/dotnet/dotnet
+  - ${{ if and( eq(variables['System.TeamProject'], 'internal'), startswith(variables['Build.SourceBranch'], 'refs/heads/internal/release/')) }}:
+    - group: DotNetBot-AzDO-PAT
+    - name: vmrInternalUrl
+      value: https://dnceng@dev.azure.com/dnceng/internal/_git/dotnet-dotnet
+  
   pool:
     ${{ if eq(variables['System.TeamProject'], 'public') }}:
       name: $(DncEngPublicBuildPool)
@@ -51,17 +55,30 @@ jobs:
       vmrBranch: ${{ parameters.vmrBranch }}
       targetRef: ${{ parameters.targetRef }}
 
-  # For official builds, push the changes to the VMR
-  # Push only main and release branches
+  
   - ${{ if and(not(parameters.noPush), not(in(variables['Build.Reason'], 'PullRequest')), eq(variables['System.TeamProject'], 'internal')) }}:
-    - script: |
-        set -x
-        git config --global user.email 'dotnet-maestro[bot]@users.noreply.github.com' && git config --global user.name 'dotnet-maestro[bot]'
-        git remote add dotnet 'https://$(BotAccount-dotnet-bot-repo-PAT)@github.com/dotnet/dotnet.git'
-        git fetch dotnet
-        git branch ${{ parameters.vmrBranch }}
-        git branch --set-upstream-to=dotnet/${{ parameters.vmrBranch }} ${{ parameters.vmrBranch }} || echo 'Branch ${{ parameters.vmrBranch }} not found in remote'
-        git push dotnet ${{ parameters.vmrBranch }}
-      displayName: Push changes to dotnet/dotnet
-      workingDirectory: $(vmrPath)
-      condition: and(succeeded(), or(eq(variables['vmrBranch'], 'main'), startsWith(variables['vmrBranch'], 'release/')))
+    # Push main and release branches to the public VMR
+    - ${{ if or(eq(parameters.vmrBranch, 'main'), startsWith(parameters.vmrBranch, 'release/')) }}:
+      - script: >
+          ./.dotnet/dotnet darc vmr push
+          --vmr '$(vmrPath)'
+          --commit-verification-pat '$(BotAccount-dotnet-maestro-bot-no-scopes-PAT)'
+          --branch '${{ parameters.vmrBranch }}'
+          --remote-url '$(vmrPublicUrl)'
+          --github-pat '$(BotAccount-dotnet-bot-repo-PAT)'
+          --verbose
+        displayName: Push changes to dotnet/dotnet (public)
+        workingDirectory: $(Agent.BuildDirectory)/installer
+  
+    # Push internal/release branches to the internal VMR
+    - ${{ if startsWith(parameters.vmrBranch, 'internal/release/') }}:
+      - script: >
+          ./.dotnet/dotnet darc vmr push
+          --vmr '$(vmrPath)'
+          --skip-commit-verification
+          --branch '${{ parameters.vmrBranch }}'
+          --remote-url '$(vmrInternalUrl)'
+          --azdev-pat '$(dn-bot-dnceng-build-rw-code-rw)'
+          --verbose
+        displayName: Push changes to dotnet-dotnet (internal)
+        workingDirectory: $(Agent.BuildDirectory)/installer
