@@ -118,7 +118,7 @@ internal abstract partial class TextDiffer
                 // Does this index fall within page? If not, acquire the appropriate page.
                 if (index < page.Start || index >= page.Start + page.Length)
                 {
-                    page = _pages[index % PageSize];
+                    page = _pages[index / PageSize];
                     _page = page;
                 }
 
