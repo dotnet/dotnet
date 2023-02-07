@@ -42,21 +42,21 @@
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>6507a44770f6648ca8da6ebbd7fe804ee5f91db4</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Build" Version="17.6.0-preview-23106-07">
+    <Dependency Name="Microsoft.Build" Version="17.6.0-preview-23107-01">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>fc3ab4c5e2a486abb8fc66aede7ec8e3eb91fe08</Sha>
+      <Sha>76215a05cd2f3853ceb59e7de473fa85c088abe0</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Build.Localization" Version="17.6.0-preview-23106-07">
+    <Dependency Name="Microsoft.Build.Localization" Version="17.6.0-preview-23107-01">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>fc3ab4c5e2a486abb8fc66aede7ec8e3eb91fe08</Sha>
+      <Sha>76215a05cd2f3853ceb59e7de473fa85c088abe0</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.FSharp.Compiler" Version="12.5.0-beta.23103.4">
+    <Dependency Name="Microsoft.FSharp.Compiler" Version="12.5.0-beta.23106.5">
       <Uri>https://github.com/dotnet/fsharp</Uri>
-      <Sha>e2af231f075c132622780054de5ce204389683bf</Sha>
+      <Sha>41a0910c12a3b30f34e35e726e32fe8f48bfd3b7</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.fsharp" Version="7.0.300-beta.23103.4">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.fsharp" Version="7.0.300-beta.23106.5">
       <Uri>https://github.com/dotnet/fsharp</Uri>
-      <Sha>e2af231f075c132622780054de5ce204389683bf</Sha>
+      <Sha>41a0910c12a3b30f34e35e726e32fe8f48bfd3b7</Sha>
       <SourceBuild RepoName="fsharp" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="dotnet-format" Version="8.0.405501">
@@ -134,25 +134,25 @@
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>6507a44770f6648ca8da6ebbd7fe804ee5f91db4</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.WindowsDesktop.App.Runtime.win-x64" Version="8.0.0-preview.1.23102.2">
+    <Dependency Name="Microsoft.WindowsDesktop.App.Runtime.win-x64" Version="8.0.0-preview.1.23106.2">
       <Uri>https://github.com/dotnet/windowsdesktop</Uri>
-      <Sha>af98ad85eef1aecf03fd9159ebe42095caeac5ab</Sha>
+      <Sha>0a6acf6a4cfa485bbc2e894220d864e806edc1fa</Sha>
     </Dependency>
-    <Dependency Name="VS.Redist.Common.WindowsDesktop.SharedFramework.x64.8.0" Version="8.0.0-preview.1.23102.2">
+    <Dependency Name="VS.Redist.Common.WindowsDesktop.SharedFramework.x64.8.0" Version="8.0.0-preview.1.23106.2">
       <Uri>https://github.com/dotnet/windowsdesktop</Uri>
-      <Sha>af98ad85eef1aecf03fd9159ebe42095caeac5ab</Sha>
+      <Sha>0a6acf6a4cfa485bbc2e894220d864e806edc1fa</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.WindowsDesktop.App.Ref" Version="8.0.0-preview.1.23102.2">
+    <Dependency Name="Microsoft.WindowsDesktop.App.Ref" Version="8.0.0-preview.1.23106.2">
       <Uri>https://github.com/dotnet/windowsdesktop</Uri>
-      <Sha>af98ad85eef1aecf03fd9159ebe42095caeac5ab</Sha>
+      <Sha>0a6acf6a4cfa485bbc2e894220d864e806edc1fa</Sha>
     </Dependency>
-    <Dependency Name="VS.Redist.Common.WindowsDesktop.TargetingPack.x64.8.0" Version="8.0.0-preview.1.23102.2">
+    <Dependency Name="VS.Redist.Common.WindowsDesktop.TargetingPack.x64.8.0" Version="8.0.0-preview.1.23106.2">
       <Uri>https://github.com/dotnet/windowsdesktop</Uri>
-      <Sha>af98ad85eef1aecf03fd9159ebe42095caeac5ab</Sha>
+      <Sha>0a6acf6a4cfa485bbc2e894220d864e806edc1fa</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Sdk.WindowsDesktop" Version="8.0.0-preview.1.23102.2" CoherentParentDependency="Microsoft.WindowsDesktop.App.Ref">
+    <Dependency Name="Microsoft.NET.Sdk.WindowsDesktop" Version="8.0.0-preview.1.23106.1" CoherentParentDependency="Microsoft.WindowsDesktop.App.Ref">
       <Uri>https://github.com/dotnet/wpf</Uri>
-      <Sha>963ba1e971be46011c54c73cd6499f001ffad34b</Sha>
+      <Sha>ccbb370c2fdce3315baad28b2c2aa7ad07f00d22</Sha>
     </Dependency>
     <Dependency Name="Microsoft.AspNetCore.App.Ref" Version="8.0.0-preview.1.23105.1">
       <Uri>https://github.com/dotnet/aspnetcore</Uri>

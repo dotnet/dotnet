@@ -175,15 +175,15 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/format`  
 *[dotnet/format@2cb3e68](https://github.com/dotnet/format/commit/2cb3e68c6b9a966114572fd63f2a20d2cb54a288)*
 - `src/fsharp`  
-*[dotnet/fsharp@e2af231](https://github.com/dotnet/fsharp/commit/e2af231f075c132622780054de5ce204389683bf)*
+*[dotnet/fsharp@41a0910](https://github.com/dotnet/fsharp/commit/41a0910c12a3b30f34e35e726e32fe8f48bfd3b7)*
 - `src/installer`  
-*[dotnet/installer@0e4c551](https://github.com/dotnet/installer/commit/0e4c551aeb93858c105e03795d1e632cfa99e72a)*
+*[dotnet/installer@5a21560](https://github.com/dotnet/installer/commit/5a2156073c60d97b3d36d040dd3596a502850265)*
 - `src/linker`  
 *[dotnet/linker@c790896](https://github.com/dotnet/linker/commit/c790896f128957acd2999208f44f09ae1e826c8c)*
     - `src/linker/external/cecil`  
     *[dotnet/cecil@2941911](https://github.com/dotnet/cecil/commit/2941911af1e028ec4b508cbb8c326003089bc610)*
 - `src/msbuild`  
-*[dotnet/msbuild@fc3ab4c](https://github.com/dotnet/msbuild/commit/fc3ab4c5e2a486abb8fc66aede7ec8e3eb91fe08)*
+*[dotnet/msbuild@76215a0](https://github.com/dotnet/msbuild/commit/76215a05cd2f3853ceb59e7de473fa85c088abe0)*
 - `src/nuget-client`  
 *[nuget/nuget.client@419ab86](https://github.com/nuget/nuget.client/commit/419ab86c016778ee3aeab40ea6fee879c09c7365)*
     - `src/nuget-client/submodules/NuGet.Build.Localization`  
@@ -197,7 +197,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/runtime`  
 *[dotnet/runtime@6507a44](https://github.com/dotnet/runtime/commit/6507a44770f6648ca8da6ebbd7fe804ee5f91db4)*
 - `src/sdk`  
-*[dotnet/sdk@3b39598](https://github.com/dotnet/sdk/commit/3b39598558cc6c68ca6bf7d274b1dcc65f3aade1)*
+*[dotnet/sdk@56a3453](https://github.com/dotnet/sdk/commit/56a345322a4800a2eca82b9e93c275d1784b912d)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@adcc7b7](https://github.com/dotnet/source-build-externals/commit/adcc7b7599a5f1fa2e5f452ee1bab92e4f4be866)*
     - `src/source-build-externals/src/application-insights`  
