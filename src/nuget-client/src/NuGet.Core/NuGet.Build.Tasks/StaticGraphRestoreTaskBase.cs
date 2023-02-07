@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 
 #if !IS_CORECLR
 
@@ -120,7 +119,7 @@ namespace NuGet.Build.Tasks
 
                         process.Start();
 
-                        WriteArguments(process.StandardInput.BaseStream);
+                        WriteArguments(process.StandardInput);
 
                         process.BeginOutputReadLine();
 
@@ -258,7 +257,7 @@ namespace NuGet.Build.Tasks
             };
         }
 
-        internal void WriteArguments(Stream stream)
+        internal void WriteArguments(StreamWriter streamWriter)
         {
             var arguments = new StaticGraphRestoreArguments
             {
@@ -266,7 +265,7 @@ namespace NuGet.Build.Tasks
                 Options = GetOptions(),
             };
 
-            arguments.Write(stream);
+            arguments.Write(streamWriter);
         }
     }
 }

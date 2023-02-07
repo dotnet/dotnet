@@ -14,7 +14,7 @@
 
   <ItemGroup>
     <MergeManifest Include="$(VsixPublishDestination)Microsoft.VisualStudio.NuGet.Core.json"
-      SBOMFileLocation="$(ManifestDirPath)_manifest\spdx_2.2\manifest.spdx.json"
+      SBOMFileLocation="$(ManifestDirPath)\_manifest\spdx_2.2\manifest.spdx.json"
       />
   </ItemGroup>
 

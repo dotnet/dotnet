@@ -160,5 +160,10 @@ namespace NuGet.Options
                 }
             }
         }
+
+        private void AddMappingDialogWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            Keyboard.Focus(_packageID);
+        }
     }
 }

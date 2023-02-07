@@ -527,7 +527,8 @@ namespace NuGet.Packaging
             else if (RuntimeEnvironmentHelper.IsLinux || RuntimeEnvironmentHelper.IsMacOSX)
             {
                 // Please note: Linux/MAC case sensitive for env var name.
-                string signVerifyEnvVariable = _environmentVariableReader.GetEnvironmentVariable("DOTNET_NUGET_SIGNATURE_VERIFICATION");
+                string signVerifyEnvVariable = _environmentVariableReader.GetEnvironmentVariable(
+                    EnvironmentVariableConstants.DotNetNuGetSignatureVerification);
 
                 bool canVerify = false;
 

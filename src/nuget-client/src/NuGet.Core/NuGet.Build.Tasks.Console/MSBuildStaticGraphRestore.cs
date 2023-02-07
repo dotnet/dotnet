@@ -866,51 +866,63 @@ namespace NuGet.Build.Tasks.Console
         /// <returns>An <see cref="ICollection{ProjectWithInnerNodes}" /> object containing projects and their inner nodes if they are targeting multiple frameworks.</returns>
         private ICollection<ProjectWithInnerNodes> LoadProjects(IEnumerable<ProjectGraphEntryPoint> entryProjects)
         {
-            var loggers = new List<Microsoft.Build.Framework.ILogger>
-            {
-                LoggingQueue
-            };
-
-            // Get user specified parameters for a binary logger
-            string binlogParameters = Environment.GetEnvironmentVariable("RESTORE_TASK_BINLOG_PARAMETERS");
-
-            // Attach the binary logger if Debug or binlog parameters were specified
-            bool useBinlog = Debug || !string.IsNullOrWhiteSpace(binlogParameters);
-            if (useBinlog)
-            {
-                loggers.Add(new BinaryLogger
-                {
-                    // Default the binlog parameters if only the debug option was specified
-                    Parameters = binlogParameters ?? "LogFile=nuget.binlog"
-                });
-            }
-
-            var projects = new ConcurrentDictionary<string, ProjectWithInnerNodes>(StringComparer.OrdinalIgnoreCase);
-
-            var projectCollection = new ProjectCollection(
-                globalProperties: null,
-                // Attach a logger for evaluation only if the Debug option is set
-                loggers: loggers,
-                remoteLoggers: null,
-                toolsetDefinitionLocations: ToolsetDefinitionLocations.Default,
-                // Having more than 1 node spins up multiple msbuild.exe instances to run builds in parallel
-                // However, these targets complete so quickly that the added overhead makes it take longer
-                maxNodeCount: 1,
-                onlyLogCriticalEvents: false,
-                // Loading projects as readonly makes parsing a little faster since comments and whitespace can be ignored
-                loadProjectsReadOnly: true);
-
-            var failedBuildSubmissions = new ConcurrentBag<BuildSubmission>();
-
             try
             {
-                var sw = Stopwatch.StartNew();
+                var loggers = new List<Microsoft.Build.Framework.ILogger>
+                {
+                    LoggingQueue
+                };
 
-                var evaluationContext = EvaluationContext.Create(EvaluationContext.SharingPolicy.Shared);
+                // Get user specified parameters for a binary logger
+                string binlogParameters = Environment.GetEnvironmentVariable("RESTORE_TASK_BINLOG_PARAMETERS");
 
-                ProjectGraph projectGraph;
+                // Attach the binary logger if Debug or binlog parameters were specified
+                bool useBinlog = Debug || !string.IsNullOrWhiteSpace(binlogParameters);
+                if (useBinlog)
+                {
+                    loggers.Add(new BinaryLogger
+                    {
+                        // Default the binlog parameters if only the debug option was specified
+                        Parameters = binlogParameters ?? "LogFile=nuget.binlog"
+                    });
+                }
+
+                var projects = new ConcurrentDictionary<string, ProjectWithInnerNodes>(StringComparer.OrdinalIgnoreCase);
+
+                using var projectCollection = new ProjectCollection(
+                    globalProperties: null,
+                    // Attach a logger for evaluation only if the Debug option is set
+                    loggers: loggers,
+                    remoteLoggers: null,
+                    toolsetDefinitionLocations: ToolsetDefinitionLocations.Default,
+                    // Having more than 1 node spins up multiple msbuild.exe instances to run builds in parallel
+                    // However, these targets complete so quickly that the added overhead makes it take longer
+                    maxNodeCount: 1,
+                    onlyLogCriticalEvents: false,
+                    // Loading projects as readonly makes parsing a little faster since comments and whitespace can be ignored
+                    loadProjectsReadOnly: true);
+
+                Stopwatch sw = Stopwatch.StartNew();
+
+                EvaluationContext evaluationContext = EvaluationContext.Create(EvaluationContext.SharingPolicy.Shared);
+
+                // Create a ProjectGraph object and pass a factory method which creates a ProjectInstance
+                ProjectGraph projectGraph = new ProjectGraph(entryProjects, projectCollection, (path, properties, collection) =>
+                {
+                    var projectOptions = new ProjectOptions
+                    {
+                        EvaluationContext = evaluationContext,
+                        GlobalProperties = properties,
+                        // Ignore bad imports to maximize the chances of being able to load the project and restore
+                        LoadSettings = ProjectLoadSettings.IgnoreEmptyImports | ProjectLoadSettings.IgnoreInvalidImports | ProjectLoadSettings.IgnoreMissingImports | ProjectLoadSettings.DoNotEvaluateElementsWithFalseCondition,
+                        ProjectCollection = collection
+                    };
+
+                    return ProjectInstance.FromFile(path, projectOptions);
+                });
 
                 int buildCount = 0;
+                int failedBuildSubmissionCount = 0;
 
                 var buildParameters = new BuildParameters(projectCollection)
                 {
@@ -919,63 +931,48 @@ namespace NuGet.Build.Tasks.Console
                     LogTaskInputs = useBinlog
                 };
 
-                // BeginBuild starts a queue which accepts build requests and applies the build parameters to all of them
-                BuildManager.DefaultBuildManager.BeginBuild(buildParameters);
-
                 try
                 {
-                    // Create a ProjectGraph object and pass a factory method which creates a ProjectInstance
-                    projectGraph = new ProjectGraph(entryProjects, projectCollection, (path, properties, collection) =>
+                    // BeginBuild starts a queue which accepts build requests and applies the build parameters to all of them
+                    BuildManager.DefaultBuildManager.BeginBuild(buildParameters);
+
+                    // Loop through each project and run the targets.  There is no need for this to run in parallel since there is only
+                    // one node in the process to run builds.
+                    foreach (ProjectGraphNode projectGraphItem in projectGraph.ProjectNodes)
                     {
-                        var projectOptions = new ProjectOptions
-                        {
-                            EvaluationContext = evaluationContext,
-                            GlobalProperties = properties,
-                            // Ignore bad imports to maximize the chances of being able to load the project and restore
-                            LoadSettings = ProjectLoadSettings.IgnoreEmptyImports | ProjectLoadSettings.IgnoreInvalidImports | ProjectLoadSettings.IgnoreMissingImports | ProjectLoadSettings.DoNotEvaluateElementsWithFalseCondition,
-                            ProjectCollection = collection
-                        };
+                        ProjectInstance projectInstance = projectGraphItem.ProjectInstance;
 
-                        ProjectInstance projectInstance = ProjectInstance.FromFile(path, projectOptions);
-
-                        if (!projectInstance.Targets.ContainsKey("_IsProjectRestoreSupported") || properties == null || properties.TryGetValue("TargetFramework", out string targetFramework) && string.IsNullOrWhiteSpace(targetFramework))
+                        if (!projectInstance.Targets.ContainsKey("_IsProjectRestoreSupported") || projectInstance.GlobalProperties == null || projectInstance.GlobalProperties.TryGetValue("TargetFramework", out string targetFramework) && string.IsNullOrWhiteSpace(targetFramework))
                         {
                             // In rare cases, users can set an empty TargetFramework value in a project-to-project reference.  Static Graph will respect that
                             // but NuGet does not need to do anything with that instance of the project since the actual project is still loaded correctly
                             // with its actual TargetFramework.
-                            return projectInstance;
+                            continue;
                         }
 
                         // If the project supports restore, queue up a build of the 3 targets needed for restore
-                        BuildManager.DefaultBuildManager
-                            .PendBuildRequest(
-                                new BuildRequestData(
-                                    projectInstance,
-                                    TargetsToBuild,
-                                    hostServices: null,
-                                    // Suppresses an error that a target does not exist because it may or may not contain the targets that we're running
-                                    BuildRequestDataFlags.SkipNonexistentTargets))
-                            .ExecuteAsync(
-                                callback: buildSubmission =>
-                                {
-                                    // If the build failed, add its result to the list to be processed later
-                                    if (buildSubmission.BuildResult.OverallResult == BuildResultCode.Failure)
-                                    {
-                                        failedBuildSubmissions.Add(buildSubmission);
-                                    }
-                                },
-                                context: null);
+                        BuildSubmission buildSubmission = BuildManager.DefaultBuildManager.PendBuildRequest(
+                            new BuildRequestData(
+                                projectInstance,
+                                TargetsToBuild,
+                                hostServices: null,
+                                // Suppresses an error that a target does not exist because it may or may not contain the targets that we're running
+                                BuildRequestDataFlags.SkipNonexistentTargets));
 
-                        Interlocked.Increment(ref buildCount);
+                        BuildResult result = buildSubmission.Execute();
 
-                        // Add the project instance to the list, if its an inner node for a multi-targeting project it will be added to the inner collection
+                        if (result.OverallResult == BuildResultCode.Failure)
+                        {
+                            failedBuildSubmissionCount++;
+                        }
+
+                        buildCount++;
+
                         projects.AddOrUpdate(
-                            path,
+                            projectInstance.FullPath,
                             key => new ProjectWithInnerNodes(targetFramework, new MSBuildProjectInstance(projectInstance)),
                             (_, item) => item.Add(targetFramework, new MSBuildProjectInstance(projectInstance)));
-
-                        return projectInstance;
-                    });
+                    }
                 }
                 finally
                 {
@@ -985,13 +982,16 @@ namespace NuGet.Build.Tasks.Console
 
                 sw.Stop();
 
-                MSBuildLogger.LogInformation(string.Format(CultureInfo.CurrentCulture, Strings.ProjectEvaluationSummary, projectGraph.ProjectNodes.Count, sw.ElapsedMilliseconds, buildCount, failedBuildSubmissions.Count));
+                MSBuildLogger.LogInformation(string.Format(CultureInfo.CurrentCulture, Strings.ProjectEvaluationSummary, projectGraph.ProjectNodes.Count, sw.ElapsedMilliseconds, buildCount, failedBuildSubmissionCount));
 
-                if (failedBuildSubmissions.Any())
+                if (failedBuildSubmissionCount != 0)
                 {
                     // Return null if any builds failed, they will have logged errors
                     return null;
                 }
+
+                // Just return the projects not the whole dictionary as it was just used to group the projects together
+                return projects.Values;
             }
             catch (Exception e)
             {
@@ -999,13 +999,6 @@ namespace NuGet.Build.Tasks.Console
 
                 return null;
             }
-            finally
-            {
-                projectCollection.Dispose();
-            }
-
-            // Just return the projects not the whole dictionary as it was just used to group the projects together
-            return projects.Values;
         }
 
         /// <summary>

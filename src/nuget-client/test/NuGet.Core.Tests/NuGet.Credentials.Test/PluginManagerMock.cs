@@ -13,10 +13,11 @@ using NuGet.Configuration;
 using NuGet.Protocol;
 using NuGet.Protocol.Plugins;
 using NuGet.Test.Utility;
-using NuGet.Versioning;
 
 namespace NuGet.Credentials.Test
 {
+    using SemanticVersion = Versioning.SemanticVersion;
+
     internal sealed class TestExpectation
     {
         internal IEnumerable<OperationClaim> OperationClaims { get; }

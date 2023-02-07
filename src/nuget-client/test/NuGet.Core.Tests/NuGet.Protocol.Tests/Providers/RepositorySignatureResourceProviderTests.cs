@@ -11,12 +11,13 @@ using Newtonsoft.Json.Linq;
 using NuGet.Configuration;
 using NuGet.Protocol.Core.Types;
 using NuGet.Protocol.Tests;
-using NuGet.Versioning;
 using Test.Utility;
 using Xunit;
 
 namespace NuGet.Protocol.Providers.Tests
 {
+    using SemanticVersion = Versioning.SemanticVersion;
+
     [Collection(nameof(NotThreadSafeResourceCollection))]
     public class RepositorySignatureResourceProviderTests
     {

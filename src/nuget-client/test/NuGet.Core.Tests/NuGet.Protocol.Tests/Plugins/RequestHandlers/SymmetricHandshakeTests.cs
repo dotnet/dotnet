@@ -5,11 +5,12 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Moq;
-using NuGet.Versioning;
 using Xunit;
 
 namespace NuGet.Protocol.Plugins.Tests
 {
+    using SemanticVersion = Versioning.SemanticVersion;
+
     public class SymmetricHandshakeTests
     {
         private static readonly SemanticVersion _version1_0_0 = new SemanticVersion(major: 1, minor: 0, patch: 0);

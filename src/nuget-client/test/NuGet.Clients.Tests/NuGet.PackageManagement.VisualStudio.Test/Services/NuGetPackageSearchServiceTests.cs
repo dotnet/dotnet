@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.Caching;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.ServiceHub.Framework;
 using Microsoft.ServiceHub.Framework.Services;
 using Microsoft.VisualStudio.ComponentModelHost;
@@ -27,9 +28,9 @@ using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 using NuGet.Versioning;
 using NuGet.VisualStudio;
-using NuGet.VisualStudio.Common.Test;
 using NuGet.VisualStudio.Internal.Contracts;
 using Test.Utility;
+using Test.Utility.VisualStudio;
 using Xunit;
 using Task = System.Threading.Tasks.Task;
 
@@ -43,6 +44,8 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         private readonly IEnumerable<ITransitivePackageReferenceContextInfo> _transitivePackages;
         private readonly IReadOnlyCollection<IProjectContextInfo> _projects;
         private readonly Mock<IComponentModel> _componentModel;
+        private readonly Mock<IOutputConsoleProvider> _outputConsoleProviderMock;
+        private readonly Lazy<IOutputConsoleProvider> _outputConsoleProvider;
 
         public NuGetPackageSearchServiceTests(GlobalServiceProvider globalServiceProvider)
             : base(globalServiceProvider)
@@ -68,8 +71,13 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 { "https://api.nuget.org/v3/registration3-gz-semver2/microsoft.extensions.logging.abstractions/index.json", ProtocolUtility.GetResource("NuGet.PackageManagement.VisualStudio.Test.compiler.resources.loggingAbstractions.json", GetType()) }
             };
             _componentModel = new Mock<IComponentModel>();
-            var expService = new NuGetExperimentationService(new TestEnvironmentVariableReader(new Dictionary<string, string>()), new TestVisualStudioExperimentalService(_experimentationFlags), new Lazy<IOutputConsoleProvider>(() => new TestOutputConsoleProvider()));
-            _componentModel.Setup(x => x.GetService<INuGetExperimentationService>()).Returns(expService);
+            var mockOutputConsoleUtility = OutputConsoleUtility.GetMock();
+            _outputConsoleProviderMock = mockOutputConsoleUtility.mockIOutputConsoleProvider;
+            _outputConsoleProvider = new Lazy<IOutputConsoleProvider>(() => _outputConsoleProviderMock.Object);
+            var service = new NuGetExperimentationService(Mock.Of<IEnvironmentVariableReader>(), NuGetExperimentationServiceUtility.GetMock(_experimentationFlags), _outputConsoleProvider);
+
+            service.IsExperimentEnabled(ExperimentationConstants.TransitiveDependenciesInPMUI).Should().Be(false);
+            _componentModel.Setup(x => x.GetService<INuGetExperimentationService>()).Returns(service);
 
             globalServiceProvider.AddService(typeof(SComponentModel), _componentModel.Object);
 

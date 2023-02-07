@@ -3,100 +3,126 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Media;
 using FluentAssertions;
 using Microsoft.VisualStudio.Experimentation;
+using Microsoft.VisualStudio.Sdk.TestFramework;
+using Moq;
 using NuGet.Common;
 using Test.Utility;
+using Test.Utility.VisualStudio;
 using Xunit;
 
 namespace NuGet.VisualStudio.Common.Test
 {
-    [Collection(nameof(TestJoinableTaskFactoryCollection))]
+    [Collection(MockedVS.Collection)]
     public class NuGetExperimentationServiceTests
     {
+        private readonly Mock<IOutputConsoleProvider> _outputConsoleProviderMock;
         private readonly Lazy<IOutputConsoleProvider> _outputConsoleProvider;
+        private readonly Mock<IOutputConsole> _outputConsoleMock;
 
-        public NuGetExperimentationServiceTests()
+        public NuGetExperimentationServiceTests(GlobalServiceProvider sp)
         {
-            _outputConsoleProvider = new Lazy<IOutputConsoleProvider>(() => new TestOutputConsoleProvider());
+            sp.Reset();
+
+            var mockOutputConsoleUtility = OutputConsoleUtility.GetMock();
+            _outputConsoleProviderMock = mockOutputConsoleUtility.mockIOutputConsoleProvider;
+            _outputConsoleProvider = new Lazy<IOutputConsoleProvider>(() => _outputConsoleProviderMock.Object);
+            _outputConsoleMock = mockOutputConsoleUtility.mockIOutputConsole;
         }
 
-        private IList<string> OutputMessages => ((TestOutputConsoleProvider)_outputConsoleProvider.Value).TestOutputConsole.Messages;
-
         [Fact]
-        public void Constructor_WithNullWrapper_Throws()
+        public void Constructor_WithNullEnvironmentVariableReader_Throws()
         {
-            Assert.Throws<ArgumentNullException>(() => new NuGetExperimentationService(null, new TestVisualStudioExperimentalService(), _outputConsoleProvider));
+            Assert.Throws<ArgumentNullException>(() => new NuGetExperimentationService(environmentVariableReader: null, Mock.Of<IExperimentationService>(), Mock.Of<Lazy<IOutputConsoleProvider>>()));
         }
 
         [Fact]
         public void Constructor_WithNullExperimentalService_Throws()
         {
-            Assert.Throws<ArgumentNullException>(() => new NuGetExperimentationService(new TestEnvironmentVariableReader(new Dictionary<string, string>()), null, _outputConsoleProvider));
+            Assert.Throws<ArgumentNullException>(() => new NuGetExperimentationService(Mock.Of< IEnvironmentVariableReader>(), experimentationService: null, _outputConsoleProvider));
         }
 
         [Fact]
         public void Constructor_WithNullOutputConsoleProvider_Throws()
         {
-            Assert.Throws<ArgumentNullException>(() => new NuGetExperimentationService(new TestEnvironmentVariableReader(new Dictionary<string, string>()), new TestVisualStudioExperimentalService(), null));
+            Assert.Throws<ArgumentNullException>(() => new NuGetExperimentationService(Mock.Of<IEnvironmentVariableReader>(), Mock.Of<IExperimentationService>(), outputConsoleProvider: null));
         }
 
         [Fact]
         public void IsEnabled_WithoutEnabledFlight_ReturnsFalse()
         {
-            var service = new NuGetExperimentationService(new EnvironmentVariableWrapper(), new TestVisualStudioExperimentalService(), _outputConsoleProvider);
+            // Arrange
+            var service = new NuGetExperimentationService(Mock.Of<IEnvironmentVariableReader>(), NuGetExperimentationServiceUtility.GetMock(), _outputConsoleProvider);
             var constant = ExperimentationConstants.PackageManagerBackgroundColor;
-            service.IsExperimentEnabled(constant).Should().BeFalse();
-            OutputMessages.Should().NotContainMatch($"*{constant.FlightFlag}*{constant.FlightEnvironmentVariable}*");
+
+            // Act
+            bool isExperimentEnabled = service.IsExperimentEnabled(constant);
+
+            // Assert
+            isExperimentEnabled.Should().BeFalse();
+            _outputConsoleProviderMock.Verify(_ => _.CreatePackageManagerConsoleAsync(), Times.Never);
         }
 
         [Fact]
         public void IsEnabled_WithEnabledFlightAndForcedEnabledEnvVar_ReturnsTrue()
         {
+            // Arrange
             var constant = ExperimentationConstants.PackageManagerBackgroundColor;
             var envVars = new Dictionary<string, string>()
             {
                 { constant.FlightEnvironmentVariable, "1" },
             };
             var envVarWrapper = new TestEnvironmentVariableReader(envVars);
-            var service = new NuGetExperimentationService(envVarWrapper, new TestVisualStudioExperimentalService(), _outputConsoleProvider);
+            var service = new NuGetExperimentationService(envVarWrapper, NuGetExperimentationServiceUtility.GetMock(), _outputConsoleProvider);
 
-            service.IsExperimentEnabled(ExperimentationConstants.PackageManagerBackgroundColor).Should().BeTrue();
-            OutputMessages.Should().ContainMatch($"*{constant.FlightFlag}*{constant.FlightEnvironmentVariable}*1*");
+            // Act
+            bool isExperimentEnabled = service.IsExperimentEnabled(ExperimentationConstants.PackageManagerBackgroundColor);
+
+            // Assert
+            isExperimentEnabled.Should().BeTrue();
+            _outputConsoleMock.Verify(_ => _.WriteLineAsync(It.IsRegex(constant.FlightFlag + "(.*)" + constant.FlightEnvironmentVariable + "(.*)1")));
         }
 
         [Theory]
         [InlineData("2")]
         [InlineData("randomValue")]
-        public void IsEnabled_WithEnvVarWithIncorrectValue_WithEnvironmentVariable__ReturnsFalse(string value)
+        public void IsEnabled_WithEnvVarWithIncorrectValue_WithEnvironmentVariable_ReturnsFalse(string value)
         {
+            // Arrange
             var constant = ExperimentationConstants.PackageManagerBackgroundColor;
             var envVars = new Dictionary<string, string>()
             {
                 { constant.FlightEnvironmentVariable, value },
             };
             var envVarWrapper = new TestEnvironmentVariableReader(envVars);
-            var service = new NuGetExperimentationService(envVarWrapper, new TestVisualStudioExperimentalService(), _outputConsoleProvider);
+            var service = new NuGetExperimentationService(envVarWrapper, NuGetExperimentationServiceUtility.GetMock(), _outputConsoleProvider);
 
-            service.IsExperimentEnabled(ExperimentationConstants.PackageManagerBackgroundColor).Should().BeFalse();
-            OutputMessages.Should().NotContainMatch($"*{constant.FlightFlag}*{constant.FlightEnvironmentVariable}*");
+            // Act
+            bool isExperimentEnabled = service.IsExperimentEnabled(ExperimentationConstants.PackageManagerBackgroundColor);
+
+            // Assert
+            isExperimentEnabled.Should().BeFalse();
+            _outputConsoleProviderMock.Verify(_ => _.CreatePackageManagerConsoleAsync(), Times.Never);
         }
 
         [Fact]
         public void IsEnabled_WithEnabledFlight_WithExperimentalService_ReturnsTrue()
         {
+            // Arrange
             var constant = ExperimentationConstants.PackageManagerBackgroundColor;
             var flightsEnabled = new Dictionary<string, bool>()
             {
                 { constant.FlightFlag, true },
             };
-            var service = new NuGetExperimentationService(new TestEnvironmentVariableReader(new Dictionary<string, string>()), new TestVisualStudioExperimentalService(flightsEnabled), _outputConsoleProvider);
+            var service = new NuGetExperimentationService(Mock.Of<IEnvironmentVariableReader>(), NuGetExperimentationServiceUtility.GetMock(flightsEnabled), _outputConsoleProvider);
 
-            service.IsExperimentEnabled(ExperimentationConstants.PackageManagerBackgroundColor).Should().BeTrue();
-            OutputMessages.Should().NotContainMatch($"*{constant.FlightFlag}*{constant.FlightEnvironmentVariable}*");
+            // Act
+            bool isExperimentEnabled = service.IsExperimentEnabled(ExperimentationConstants.PackageManagerBackgroundColor);
+
+            // Assert
+            isExperimentEnabled.Should().BeTrue();
+            _outputConsoleProviderMock.Verify(_ => _.CreatePackageManagerConsoleAsync(), Times.Never);
         }
 
         [Theory]
@@ -104,20 +130,26 @@ namespace NuGet.VisualStudio.Common.Test
         [InlineData(false, false)]
         public void IsEnabled_WithEnvVarNotSetAndExperimentalService_ReturnsExpectedResult(bool isFlightEnabled, bool expectedResult)
         {
+            // Arrange
             var constant = ExperimentationConstants.PackageManagerBackgroundColor;
             var flightsEnabled = new Dictionary<string, bool>()
             {
                 { constant.FlightFlag, isFlightEnabled },
             };
-            var service = new NuGetExperimentationService(new TestEnvironmentVariableReader(new Dictionary<string, string>()), new TestVisualStudioExperimentalService(flightsEnabled), _outputConsoleProvider);
+            var service = new NuGetExperimentationService(Mock.Of<IEnvironmentVariableReader>(), NuGetExperimentationServiceUtility.GetMock(flightsEnabled), _outputConsoleProvider);
 
-            service.IsExperimentEnabled(ExperimentationConstants.PackageManagerBackgroundColor).Should().Be(expectedResult);
-            OutputMessages.Should().NotContainMatch($"*{constant.FlightFlag}*{constant.FlightEnvironmentVariable}*");
+            // Act
+            bool isExperimentEnabled = service.IsExperimentEnabled(ExperimentationConstants.PackageManagerBackgroundColor);
+
+            // Assert
+            isExperimentEnabled.Should().Be(expectedResult);
+            _outputConsoleProviderMock.Verify(_ => _.CreatePackageManagerConsoleAsync(), Times.Never);
         }
 
         [Fact]
         public void IsEnabled_WithEnvVarEnabled_WithExperimentalServiceDisabled_ReturnsTrue()
         {
+            // Arrange
             var constant = ExperimentationConstants.PackageManagerBackgroundColor;
             var flightsEnabled = new Dictionary<string, bool>()
             {
@@ -130,15 +162,20 @@ namespace NuGet.VisualStudio.Common.Test
             };
             var envVarWrapper = new TestEnvironmentVariableReader(envVars);
 
-            var service = new NuGetExperimentationService(envVarWrapper, new TestVisualStudioExperimentalService(flightsEnabled), _outputConsoleProvider);
+            var service = new NuGetExperimentationService(envVarWrapper, NuGetExperimentationServiceUtility.GetMock(flightsEnabled), _outputConsoleProvider);
 
-            service.IsExperimentEnabled(ExperimentationConstants.PackageManagerBackgroundColor).Should().BeTrue();
-            OutputMessages.Should().ContainMatch($"*{constant.FlightFlag}*{constant.FlightEnvironmentVariable}*1*");
+            // Act
+            bool isExperimentEnabled = service.IsExperimentEnabled(ExperimentationConstants.PackageManagerBackgroundColor);
+
+            // Assert
+            isExperimentEnabled.Should().BeTrue();
+            _outputConsoleMock.Verify(_ => _.WriteLineAsync(It.IsRegex(constant.FlightFlag + "(.*)" + constant.FlightEnvironmentVariable + "(.*)1")));
         }
 
         [Fact]
         public void IsEnabled_WithEnvVarDisabled_WithExperimentalServiceEnabled_ReturnsFalse()
         {
+            // Arrange
             var constant = ExperimentationConstants.PackageManagerBackgroundColor;
             var flightsEnabled = new Dictionary<string, bool>()
             {
@@ -151,24 +188,35 @@ namespace NuGet.VisualStudio.Common.Test
             };
             var envVarWrapper = new TestEnvironmentVariableReader(envVars);
 
-            var service = new NuGetExperimentationService(envVarWrapper, new TestVisualStudioExperimentalService(flightsEnabled), _outputConsoleProvider);
+            var service = new NuGetExperimentationService(envVarWrapper, NuGetExperimentationServiceUtility.GetMock(flightsEnabled), _outputConsoleProvider);
 
-            service.IsExperimentEnabled(ExperimentationConstants.PackageManagerBackgroundColor).Should().BeFalse();
-            OutputMessages.Should().ContainMatch($"*{constant.FlightFlag}*{constant.FlightEnvironmentVariable}*0*");
+            // Act
+            bool isExperimentEnabled = service.IsExperimentEnabled(ExperimentationConstants.PackageManagerBackgroundColor);
+
+            // Assert
+            isExperimentEnabled.Should().BeFalse();
+            _outputConsoleMock.Verify(_ => _.WriteLineAsync(It.IsRegex(constant.FlightFlag + "(.*)" + constant.FlightEnvironmentVariable + "(.*)0")));
         }
 
         [Fact]
         public void IsEnabled_WithNullEnvironmentVariableForConstant_HandlesGracefully()
         {
-            var service = new NuGetExperimentationService(new EnvironmentVariableWrapper(), new TestVisualStudioExperimentalService(), _outputConsoleProvider);
+            // Arrange
+            var service = new NuGetExperimentationService(Mock.Of<IEnvironmentVariableReader>(), NuGetExperimentationServiceUtility.GetMock(), _outputConsoleProvider);
             var constant = new ExperimentationConstants("flag", null);
-            service.IsExperimentEnabled(constant).Should().BeFalse();
-            OutputMessages.Should().NotContainMatch($"*{constant.FlightFlag}*{constant.FlightEnvironmentVariable}*");
+
+            // Act
+            bool isExperimentEnabled = service.IsExperimentEnabled(constant);
+
+            // Assert
+            isExperimentEnabled.Should().BeFalse();
+            _outputConsoleProviderMock.Verify(_ => _.CreatePackageManagerConsoleAsync(), Times.Never);
         }
 
         [Fact]
         public void IsEnabled_MultipleExperimentsOverriddenWithDifferentEnvVars_DoNotConflict()
         {
+            // Arrange
             var forcedOffExperiment = new ExperimentationConstants("TestExp1", "TEST_EXP_1");
             var forcedOnExperiment = new ExperimentationConstants("TestExp2", "TEST_EXP_2");
             var noOverrideExperiment = new ExperimentationConstants("TestExp3", "TEST_EXP_3");
@@ -184,118 +232,21 @@ namespace NuGet.VisualStudio.Common.Test
                 { forcedOffExperiment.FlightEnvironmentVariable, "0" },
             };
             var envVarWrapper = new TestEnvironmentVariableReader(envVars);
-            var service = new NuGetExperimentationService(envVarWrapper, new TestVisualStudioExperimentalService(flightsEnabled), _outputConsoleProvider);
+            var service = new NuGetExperimentationService(envVarWrapper, NuGetExperimentationServiceUtility.GetMock(flightsEnabled), _outputConsoleProvider);
 
-            service.IsExperimentEnabled(forcedOffExperiment).Should().BeFalse();
-            service.IsExperimentEnabled(forcedOnExperiment).Should().BeTrue();
-            service.IsExperimentEnabled(noOverrideExperiment).Should().BeTrue();
-            OutputMessages.Should().ContainMatch($"*{forcedOffExperiment.FlightFlag}*{forcedOffExperiment.FlightEnvironmentVariable}*0*");
-            OutputMessages.Should().ContainMatch($"*{forcedOnExperiment.FlightFlag}*{forcedOnExperiment.FlightEnvironmentVariable}*1*");
-            OutputMessages.Should().NotContainMatch($"*{noOverrideExperiment.FlightFlag}*{noOverrideExperiment.FlightEnvironmentVariable}*");
-        }
-    }
+            // Act
+            bool isForcedOffExperimentEnabled = service.IsExperimentEnabled(forcedOffExperiment);
+            bool isForcedOnExperimentEnabled = service.IsExperimentEnabled(forcedOnExperiment);
+            bool isNoOverrideExperimentEnabled = service.IsExperimentEnabled(noOverrideExperiment);
 
-    public class TestVisualStudioExperimentalService : IExperimentationService
-    {
-        private readonly Dictionary<string, bool> _flights;
+            // Assert
+            isForcedOffExperimentEnabled.Should().BeFalse();
+            isForcedOnExperimentEnabled.Should().BeTrue();
+            isNoOverrideExperimentEnabled.Should().BeTrue();
 
-        public TestVisualStudioExperimentalService()
-            : this(new Dictionary<string, bool>())
-        {
-        }
-
-        public TestVisualStudioExperimentalService(Dictionary<string, bool> flights)
-        {
-            _flights = flights ?? throw new ArgumentNullException(nameof(flights));
-        }
-
-        public void Dispose()
-        {
-            // do nothing
-        }
-
-        public bool IsCachedFlightEnabled(string flight)
-        {
-            _flights.TryGetValue(flight, out bool result);
-            return result;
-        }
-
-        public Task<bool> IsFlightEnabledAsync(string flight, CancellationToken token)
-        {
-            return Task.FromResult(IsCachedFlightEnabled(flight));
-        }
-
-        public void Start()
-        {
-            // do nothing.
-        }
-    }
-
-    public class TestOutputConsoleProvider : IOutputConsoleProvider
-    {
-        public TestOutputConsole TestOutputConsole { get; } = new TestOutputConsole();
-
-        public Task<IOutputConsole> CreateBuildOutputConsoleAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IOutputConsole> CreatePackageManagerConsoleAsync()
-        {
-            return Task.FromResult((IOutputConsole)TestOutputConsole);
-        }
-
-        public Task<IConsole> CreatePowerShellConsoleAsync()
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class TestOutputConsole : IOutputConsole
-    {
-        public IList<string> Messages { get; } = new List<string>();
-
-        public int ConsoleWidth => throw new NotImplementedException();
-
-        public Task ActivateAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task ClearAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task WriteAsync(string text)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task WriteAsync(string text, Color? foreground, Color? background)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task WriteBackspaceAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task WriteLineAsync(string text)
-        {
-            Messages.Add(text);
-            return Task.CompletedTask;
-        }
-
-        public Task WriteLineAsync(string format, params object[] args)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task WriteProgressAsync(string currentOperation, int percentComplete)
-        {
-            throw new NotImplementedException();
+            _outputConsoleMock.Verify(_ => _.WriteLineAsync(It.IsRegex(forcedOffExperiment.FlightFlag + "(.*)" + forcedOffExperiment.FlightEnvironmentVariable + "(.*)0")));
+            _outputConsoleMock.Verify(_ => _.WriteLineAsync(It.IsRegex(forcedOnExperiment.FlightFlag + "(.*)" + forcedOnExperiment.FlightEnvironmentVariable + "(.*)1")));
+            _outputConsoleMock.VerifyNoOtherCalls();
         }
     }
 }

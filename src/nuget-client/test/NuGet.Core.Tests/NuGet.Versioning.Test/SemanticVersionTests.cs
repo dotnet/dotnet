@@ -97,5 +97,23 @@ namespace NuGet.Versioning.Test
             Assert.False(result);
             Assert.Null(semanticVersion);
         }
+
+        [Fact]
+        public void ToString_ClassExtendingSemanticVersion_ReturnsDefaultFormat()
+        {
+            ExtendedSemanticVersion target = new(1, 2, 3);
+
+            string result = target.ToString();
+
+            Assert.Equal("1.2.3", result);
+        }
+
+        private class ExtendedSemanticVersion : SemanticVersion
+        {
+            public ExtendedSemanticVersion(int major, int minor, int patch)
+                : base(major, minor, patch)
+            {
+            }
+        }
     }
 }

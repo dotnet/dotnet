@@ -3,26 +3,31 @@
 
 using System;
 using System.Threading.Tasks;
+using Microsoft.VisualStudio.Sdk.TestFramework;
 using Moq;
+using Test.Utility.VisualStudio;
 using Xunit;
 
 namespace NuGet.VisualStudio.Common.Test
 {
-    [Collection(nameof(TestJoinableTaskFactoryCollection))]
-    public abstract partial class OutputConsoleLoggerTests : IDisposable
+    [Collection(MockedVS.Collection)]
+    public abstract partial class OutputConsoleLoggerTests : IDisposable, IAsyncLifetime
     {
         private protected Action _onBuildBegin;
         private protected Action _afterClosing;
         private protected object _msBuildOutputVerbosity;
 
         private protected readonly Mock<IVisualStudioShell> _visualStudioShell = new Mock<IVisualStudioShell>();
-        private protected readonly Mock<IOutputConsoleProvider> _outputConsoleProvider = new Mock<IOutputConsoleProvider>();
-        private protected readonly Mock<IOutputConsole> _outputConsole = new Mock<IOutputConsole>();
         private protected readonly Mock<INuGetErrorList> _errorList = new Mock<INuGetErrorList>();
         private protected readonly OutputConsoleLogger _outputConsoleLogger;
 
-        protected OutputConsoleLoggerTests()
+        private protected readonly Mock<IOutputConsoleProvider> _outputConsoleProvider;
+        private protected readonly Mock<IOutputConsole> _outputConsole;
+
+        protected OutputConsoleLoggerTests(GlobalServiceProvider sp)
         {
+            sp.Reset();
+
             _visualStudioShell.Setup(vss => vss.SubscribeToBuildBeginAsync(It.IsAny<Action>()))
                               .Returns(Task.CompletedTask)
                               .Callback((Action action) => { _onBuildBegin = action; });
@@ -34,10 +39,23 @@ namespace NuGet.VisualStudio.Common.Test
             _visualStudioShell.Setup(vss => vss.GetPropertyValueAsync("Environment", "ProjectsAndSolution", "MSBuildOutputVerbosity"))
                               .Returns(GetMSBuildOutputVerbosityAsync);
 
-            _outputConsoleProvider.Setup(ocp => ocp.CreatePackageManagerConsoleAsync())
-                                  .Returns(Task.FromResult(_outputConsole.Object));
+            var mockOutputConsoleUtility = OutputConsoleUtility.GetMock();
+            _outputConsole = mockOutputConsoleUtility.mockIOutputConsole;
+            _outputConsoleProvider = mockOutputConsoleUtility.mockIOutputConsoleProvider;
 
             _outputConsoleLogger = new OutputConsoleLogger(_visualStudioShell.Object, _outputConsoleProvider.Object, new Lazy<INuGetErrorList>(() => _errorList.Object));
+        }
+
+        /// <summary>
+        /// Waits until the <see cref="OutputConsoleLogger._semaphore" /> has reset.
+        /// </summary>
+        private async Task WaitForInitializationAsync()
+        {
+            await NuGetUIThreadHelper.JoinableTaskFactory.RunAsync(async () =>
+            {
+                // Wait on a task that does nothing so we know when the semaphore's enqueued real work is complete.
+                await _outputConsoleLogger._semaphore.ExecuteAsync(() => { return Task.CompletedTask; });
+            });
         }
 
         private Task<object> GetMSBuildOutputVerbosityAsync()
@@ -48,6 +66,13 @@ namespace NuGet.VisualStudio.Common.Test
         void IDisposable.Dispose()
         {
             _outputConsoleLogger.Dispose();
+        }
+
+        public Task DisposeAsync() => Task.CompletedTask;
+
+        public async Task InitializeAsync()
+        {
+            await WaitForInitializationAsync();
         }
     }
 }
