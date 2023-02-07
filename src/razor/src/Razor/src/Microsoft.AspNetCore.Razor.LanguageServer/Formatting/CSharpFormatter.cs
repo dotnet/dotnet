@@ -61,7 +61,7 @@ internal class CSharpFormatter
             throw new ArgumentNullException(nameof(rangeToFormat));
         }
 
-        if (!_documentMappingService.TryMapToProjectedDocumentRange(context.CodeDocument, rangeToFormat, out var projectedRange))
+        if (!_documentMappingService.TryMapToProjectedDocumentRange(context.CodeDocument.GetCSharpDocument(), rangeToFormat, out var projectedRange))
         {
             return Array.Empty<TextEdit>();
         }
@@ -98,7 +98,7 @@ internal class CSharpFormatter
 
     private TextEdit[] MapEditsToHostDocument(RazorCodeDocument codeDocument, TextEdit[] csharpEdits)
     {
-        var actualEdits = _documentMappingService.GetProjectedDocumentEdits(codeDocument, csharpEdits);
+        var actualEdits = _documentMappingService.GetProjectedDocumentEdits(codeDocument.GetCSharpDocument(), csharpEdits);
 
         return actualEdits;
     }

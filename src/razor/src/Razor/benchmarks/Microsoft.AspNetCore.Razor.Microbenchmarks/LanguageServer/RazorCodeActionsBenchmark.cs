@@ -141,11 +141,11 @@ public class RazorCodeActionsBenchmark : RazorLanguageServerBenchmarkBase
     [Benchmark(Description = "Lightbulbs")]
     public async Task RazorLightbulbAsync()
     {
-        var request = new CodeActionParams
+        var request = new VSCodeActionParams
         {
             Range = RazorCodeActionRange!,
             Context = new VSInternalCodeActionContext(),
-            TextDocument = new TextDocumentIdentifier
+            TextDocument = new VSTextDocumentIdentifier
             {
                 Uri = DocumentUri!
             },

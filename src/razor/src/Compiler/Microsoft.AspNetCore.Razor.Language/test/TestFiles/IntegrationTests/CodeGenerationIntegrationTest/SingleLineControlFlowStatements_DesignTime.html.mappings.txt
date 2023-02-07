@@ -1,0 +1,114 @@
+Source Location: (0:0,0 [22] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml)
+|<p>Before Text</p>
+
+|
+Generated Location: (0:0,0 [22] )
+|<p>Before Text</p>
+
+|
+
+Source Location: (830:34,1 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml)
+|
+
+|
+Generated Location: (830:34,1 [4] )
+|
+
+|
+
+Source Location: (844:36,10 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml)
+| |
+Generated Location: (844:36,10 [1] )
+| |
+
+Source Location: (1669:74,1 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml)
+|
+
+|
+Generated Location: (1669:74,1 [4] )
+|
+
+|
+
+Source Location: (1710:77,6 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml)
+|
+
+|
+Generated Location: (1710:77,6 [4] )
+|
+
+|
+
+Source Location: (1763:80,9 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml)
+|
+
+|
+Generated Location: (1763:80,9 [4] )
+|
+
+|
+
+Source Location: (1819:84,28 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml)
+|
+
+|
+Generated Location: (1819:84,28 [4] )
+|
+
+|
+
+Source Location: (1873:87,19 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml)
+|
+
+|
+Generated Location: (1873:87,19 [4] )
+|
+
+|
+
+Source Location: (1996:91,23 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml)
+|
+
+|
+Generated Location: (1996:91,23 [4] )
+|
+
+|
+
+Source Location: (2033:94,19 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml)
+|
+
+|
+Generated Location: (2033:94,19 [4] )
+|
+
+|
+
+Source Location: (2065:96,28 [17] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml)
+|<p>Hello!</p>
+
+|
+Generated Location: (2065:96,28 [17] )
+|<p>Hello!</p>
+
+|
+
+Source Location: (2101:99,6 [16] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml)
+| <p>The time is |
+Generated Location: (2101:99,6 [16] )
+| <p>The time is |
+
+Source Location: (2130:99,35 [6] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml)
+|</p>
+|
+Generated Location: (2130:99,35 [6] )
+|</p>
+|
+
+Source Location: (2136:100,0 [19] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml)
+|
+<p>After Text</p>|
+Generated Location: (2136:100,0 [19] )
+|
+<p>After Text</p>|
+

@@ -69,7 +69,7 @@ internal class TestLSPDocumentMappingProvider : LSPDocumentMappingProvider
         {
             var projectedRange = projectedRanges[i];
             if (result.codeDocument.IsUnsupported() ||
-                !_documentMappingService.TryMapFromProjectedDocumentRange(result.codeDocument, projectedRange, mappedMappingBehavior, out var originalRange))
+                !_documentMappingService.TryMapFromProjectedDocumentRange(result.codeDocument.GetCSharpDocument(), projectedRange, mappedMappingBehavior, out var originalRange))
             {
                 ranges[i] = RangeExtensions.UndefinedRange;
                 continue;

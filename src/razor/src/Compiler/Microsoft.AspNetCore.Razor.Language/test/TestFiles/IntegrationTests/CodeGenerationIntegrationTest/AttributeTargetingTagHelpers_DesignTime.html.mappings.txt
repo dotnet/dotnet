@@ -1,0 +1,34 @@
+Source Location: (13:0,13 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/AttributeTargetingTagHelpers.cshtml)
+| |
+Generated Location: (13:0,13 [1] )
+| |
+
+Source Location: (29:0,29 [158] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/AttributeTargetingTagHelpers.cshtml)
+|
+
+<p class="btn">
+    <p><strong catchAll="hi">Hello</strong><strong>World</strong></p>
+    <input checked="true" />
+    <input type="checkbox" checked="|
+Generated Location: (29:0,29 [158] )
+|
+
+<p class="btn">
+    <p><strong catchAll="hi">Hello</strong><strong>World</strong></p>
+    <input checked="true" />
+    <input type="checkbox" checked="|
+
+Source Location: (191:5,40 [42] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/AttributeTargetingTagHelpers.cshtml)
+|" />
+    <input type="checkbox" checked="|
+Generated Location: (191:5,40 [42] )
+|" />
+    <input type="checkbox" checked="|
+
+Source Location: (237:6,40 [24] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/AttributeTargetingTagHelpers.cshtml)
+|" catchAll="hi" />
+</p>|
+Generated Location: (237:6,40 [24] )
+|" catchAll="hi" />
+</p>|
+

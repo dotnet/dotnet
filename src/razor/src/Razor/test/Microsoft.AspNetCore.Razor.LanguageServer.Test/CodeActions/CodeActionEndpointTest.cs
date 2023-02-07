@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common.Extensions;
+using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.AspNetCore.Razor.Test.Common;
@@ -33,7 +34,7 @@ public class CodeActionEndpointTest : LanguageServerTestBase
     {
         _documentMappingService = Mock.Of<RazorDocumentMappingService>(
             s => s.TryMapToProjectedDocumentRange(
-                It.IsAny<RazorCodeDocument>(),
+                It.IsAny<IRazorGeneratedDocument>(),
                 It.IsAny<Range>(),
                 out It.Ref<Range?>.IsAny) == false &&
 
@@ -63,11 +64,11 @@ public class CodeActionEndpointTest : LanguageServerTestBase
         {
             _supportsCodeActionResolve = false
         };
-        var request = new CodeActionParams()
+        var request = new VSCodeActionParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = documentPath },
+            TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
             Range = new Range { Start = new Position(0, 1), End = new Position(0, 1) },
-            Context = new CodeActionContext()
+            Context = new VSInternalCodeActionContext()
         };
 
         var requestContext = CreateRazorRequestContext(documentContext: null);
@@ -97,9 +98,9 @@ public class CodeActionEndpointTest : LanguageServerTestBase
         {
             _supportsCodeActionResolve = false
         };
-        var request = new CodeActionParams()
+        var request = new VSCodeActionParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = documentPath },
+            TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
             Range = new Range { Start = new Position(0, 1), End = new Position(0, 1) },
             Context = new VSInternalCodeActionContext()
         };
@@ -129,9 +130,9 @@ public class CodeActionEndpointTest : LanguageServerTestBase
         {
             _supportsCodeActionResolve = false
         };
-        var request = new CodeActionParams()
+        var request = new VSCodeActionParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = documentPath },
+            TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
             Range = new Range { Start = new Position(0, 1), End = new Position(0, 1) },
             Context = new VSInternalCodeActionContext()
         };
@@ -164,9 +165,9 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             _supportsCodeActionResolve = false
         };
 
-        var request = new CodeActionParams()
+        var request = new VSCodeActionParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = documentPath },
+            TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
             Range = new Range { Start = new Position(0, 1), End = new Position(0, 1) },
             Context = new VSInternalCodeActionContext()
         };
@@ -202,9 +203,9 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             _supportsCodeActionResolve = false
         };
 
-        var request = new CodeActionParams()
+        var request = new VSCodeActionParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = documentPath },
+            TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
             Range = new Range { Start = new Position(0, 1), End = new Position(0, 1) },
             Context = new VSInternalCodeActionContext()
         };
@@ -238,9 +239,9 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             _supportsCodeActionResolve = false
         };
 
-        var request = new CodeActionParams()
+        var request = new VSCodeActionParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = documentPath },
+            TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
             Range = new Range { Start = new Position(0, 1), End = new Position(0, 1) },
             Context = new VSInternalCodeActionContext()
         };
@@ -281,9 +282,9 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             _supportsCodeActionResolve = false
         };
 
-        var request = new CodeActionParams()
+        var request = new VSCodeActionParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = documentPath },
+            TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
             Range = new Range { Start = new Position(0, 1), End = new Position(0, 1) },
             Context = new VSInternalCodeActionContext()
         };
@@ -324,9 +325,9 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             _supportsCodeActionResolve = false
         };
 
-        var request = new CodeActionParams()
+        var request = new VSCodeActionParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = documentPath },
+            TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
             Range = new Range { Start = new Position(0, 1), End = new Position(0, 1) },
             Context = new VSInternalCodeActionContext()
         };
@@ -360,9 +361,9 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             _supportsCodeActionResolve = false
         };
 
-        var request = new CodeActionParams()
+        var request = new VSCodeActionParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = documentPath },
+            TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
             Range = new Range { Start = new Position(0, 1), End = new Position(0, 1) },
             Context = new VSInternalCodeActionContext()
         };
@@ -403,9 +404,9 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             _supportsCodeActionResolve = false
         };
 
-        var request = new CodeActionParams()
+        var request = new VSCodeActionParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = documentPath },
+            TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
             Range = new Range { Start = new Position(0, 1), End = new Position(0, 1) },
             Context = new VSInternalCodeActionContext()
         };
@@ -441,9 +442,9 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             _supportsCodeActionResolve = true
         };
 
-        var request = new CodeActionParams()
+        var request = new VSCodeActionParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = documentPath },
+            TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
             Range = new Range { Start = new Position(0, 1), End = new Position(0, 1) },
             Context = new VSInternalCodeActionContext()
         };
@@ -489,9 +490,9 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             _supportsCodeActionResolve = false
         };
 
-        var request = new CodeActionParams()
+        var request = new VSCodeActionParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = documentPath },
+            TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
             Range = new Range { Start = new Position(0, 1), End = new Position(0, 1) },
             Context = new VSInternalCodeActionContext()
         };
@@ -537,9 +538,9 @@ public class CodeActionEndpointTest : LanguageServerTestBase
 
         var initialRange = new Range { Start = new Position(0, 1), End = new Position(0, 1) };
         var selectionRange = new Range { Start = new Position(0, 5), End = new Position(0, 5) };
-        var request = new CodeActionParams()
+        var request = new VSCodeActionParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = documentPath },
+            TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
             Range = initialRange,
             Context = new VSInternalCodeActionContext()
             {
@@ -576,9 +577,9 @@ public class CodeActionEndpointTest : LanguageServerTestBase
         };
 
         var initialRange = new Range { Start = new Position(0, 1), End = new Position(0, 1) };
-        var request = new CodeActionParams()
+        var request = new VSCodeActionParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = documentPath },
+            TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
             Range = initialRange,
             Context = new VSInternalCodeActionContext()
             {
@@ -603,7 +604,7 @@ public class CodeActionEndpointTest : LanguageServerTestBase
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
         Range? projectedRange = null;
         var documentMappingService = Mock.Of<DefaultRazorDocumentMappingService>(
-            d => d.TryMapToProjectedDocumentRange(It.IsAny<RazorCodeDocument>(), It.IsAny<Range>(), out projectedRange) == false
+            d => d.TryMapToProjectedDocumentRange(It.IsAny<IRazorGeneratedDocument>(), It.IsAny<Range>(), out projectedRange) == false
         , MockBehavior.Strict);
         var codeActionEndpoint = new CodeActionEndpoint(
             documentMappingService,
@@ -619,9 +620,9 @@ public class CodeActionEndpointTest : LanguageServerTestBase
         };
 
         var initialRange = new Range { Start = new Position(0, 1), End = new Position(0, 1) };
-        var request = new CodeActionParams()
+        var request = new VSCodeActionParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = documentPath },
+            TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
             Range = initialRange,
             Context = new VSInternalCodeActionContext()
         };
@@ -661,9 +662,9 @@ public class CodeActionEndpointTest : LanguageServerTestBase
         };
 
         var initialRange = new Range { Start = new Position(0, 1), End = new Position(0, 1) };
-        var request = new CodeActionParams()
+        var request = new VSCodeActionParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = documentPath },
+            TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
             Range = initialRange,
             Context = new VSInternalCodeActionContext()
             {
@@ -696,7 +697,7 @@ public class CodeActionEndpointTest : LanguageServerTestBase
     {
         projectedRange ??= new Range { Start = new Position(5, 2), End = new Position(5, 2) };
         var documentMappingService = Mock.Of<DefaultRazorDocumentMappingService>(
-            d => d.TryMapToProjectedDocumentRange(It.IsAny<RazorCodeDocument>(), It.IsAny<Range>(), out projectedRange) == true &&
+            d => d.TryMapToProjectedDocumentRange(It.IsAny<IRazorGeneratedDocument>(), It.IsAny<Range>(), out projectedRange) == true &&
                  d.GetLanguageKind(It.IsAny<RazorCodeDocument>(), It.IsAny<int>(), It.IsAny<bool>()) == RazorLanguageKind.CSharp
         , MockBehavior.Strict);
         return documentMappingService;
@@ -801,7 +802,7 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             }
 
             if (@params is not DelegatedCodeActionParams delegatedCodeActionParams ||
-                delegatedCodeActionParams.CodeActionParams is not CodeActionParams codeActionParams ||
+                delegatedCodeActionParams.CodeActionParams is not VSCodeActionParams codeActionParams ||
                 codeActionParams.Context is not VSInternalCodeActionContext codeActionContext)
             {
                 throw new InvalidOperationException(@params!.GetType().FullName);

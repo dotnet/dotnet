@@ -441,7 +441,7 @@ public class RenameEndpointTest : LanguageServerTestBase
 
         var projectedPosition = new Position(1, 1);
         var projectedIndex = 1;
-        documentMappingServiceMock.Setup(c => c.TryMapToProjectedDocumentPosition(It.IsAny<RazorCodeDocument>(), It.IsAny<int>(), out projectedPosition, out projectedIndex)).Returns(true);
+        documentMappingServiceMock.Setup(c => c.TryMapToProjectedDocumentPosition(It.IsAny<IRazorGeneratedDocument>(), It.IsAny<int>(), out projectedPosition, out projectedIndex)).Returns(true);
 
         var endpoint = CreateEndpoint(languageServerFeatureOptions, documentMappingServiceMock.Object, languageServerMock.Object);
 
@@ -649,6 +649,11 @@ public class RenameEndpointTest : LanguageServerTestBase
         documentMappingServiceMock
             .Setup(c => c.GetLanguageKind(It.IsAny<RazorCodeDocument>(), It.IsAny<int>(), It.IsAny<bool>()))
             .Returns(Protocol.RazorLanguageKind.Html);
+        var projectedPosition = new Position(1, 1);
+        var projectedIndex = 1;
+        documentMappingServiceMock
+            .Setup(c => c.TryMapToProjectedDocumentPosition(It.IsAny<IRazorGeneratedDocument>(), It.IsAny<int>(), out projectedPosition, out projectedIndex))
+            .Returns(true);
         documentMappingService ??= documentMappingServiceMock.Object;
 
         languageServer ??= Mock.Of<ClientNotifierServiceBase>(MockBehavior.Strict);

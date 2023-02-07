@@ -4,6 +4,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
@@ -55,7 +56,8 @@ internal class ValidateBreakpointRangeEndpoint : AbstractRazorDelegatingEndpoint
         var documentContext = requestContext.GetRequiredDocumentContext();
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
 
-        if (!_documentMappingService.TryMapToProjectedDocumentRange(codeDocument, request.Range, out var projectedRange))
+        // We've already mapped the position, but sadly we need a range for breakpoints, so we have to do it again
+        if (!_documentMappingService.TryMapToProjectedDocumentRange(codeDocument.GetCSharpDocument(), request.Range, out var projectedRange))
         {
             return null;
         }
@@ -76,7 +78,7 @@ internal class ValidateBreakpointRangeEndpoint : AbstractRazorDelegatingEndpoint
         var documentContext = requestContext.GetRequiredDocumentContext();
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
 
-        if (_documentMappingService.TryMapFromProjectedDocumentRange(codeDocument, delegatedResponse, out var projectedRange))
+        if (_documentMappingService.TryMapFromProjectedDocumentRange(codeDocument.GetCSharpDocument(), delegatedResponse, out var projectedRange))
         {
             return projectedRange;
         }

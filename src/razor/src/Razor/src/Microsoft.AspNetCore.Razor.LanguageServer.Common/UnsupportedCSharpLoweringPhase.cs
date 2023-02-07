@@ -17,6 +17,7 @@ internal class UnsupportedCSharpLoweringPhase : RazorEnginePhaseBase, IRazorCSha
         ThrowForMissingDocumentDependency(documentNode);
 
         var cSharpDocument = RazorCSharpDocument.Create(
+            codeDocument,
             UnsupportedDisclaimer,
             documentNode.Options,
             Enumerable.Empty<RazorDiagnostic>());

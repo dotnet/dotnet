@@ -70,7 +70,7 @@ internal class RazorHoverEndpoint : AbstractRazorDelegatingEndpoint<TextDocument
 
         // Sometimes what looks like a html attribute can actually map to C#, in which case its better to let Roslyn try to handle this.
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-        if (_documentMappingService.TryMapToProjectedDocumentPosition(codeDocument, projection.AbsoluteIndex, out _, out _))
+        if (_documentMappingService.TryMapToProjectedDocumentPosition(codeDocument.GetCSharpDocument(), projection.AbsoluteIndex, out _, out _))
         {
             return null;
         }
@@ -89,7 +89,7 @@ internal class RazorHoverEndpoint : AbstractRazorDelegatingEndpoint<TextDocument
         var documentContext = requestContext.GetRequiredDocumentContext();
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
 
-        if (_documentMappingService.TryMapFromProjectedDocumentRange(codeDocument, response.Range, out var projectedRange))
+        if (_documentMappingService.TryMapFromProjectedDocumentRange(codeDocument.GetCSharpDocument(), response.Range, out var projectedRange))
         {
             response.Range = projectedRange;
         }

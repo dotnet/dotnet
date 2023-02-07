@@ -1182,11 +1182,12 @@ public class RazorTranslateDiagnosticsEndpointTest : LanguageServerTestBase
     {
         var codeDocument = CreateCodeDocument(razorSource, tagHelpers);
         var csharpDocument = RazorCSharpDocument.Create(
-                projectedCSharpSource,
-                RazorCodeGenerationOptions.CreateDefault(),
-                Enumerable.Empty<RazorDiagnostic>(),
-                sourceMappings,
-                Enumerable.Empty<LinePragma>());
+            codeDocument,
+            projectedCSharpSource,
+            RazorCodeGenerationOptions.CreateDefault(),
+            Enumerable.Empty<RazorDiagnostic>(),
+            sourceMappings,
+            Enumerable.Empty<LinePragma>());
         codeDocument.SetCSharpDocument(csharpDocument);
         return codeDocument;
     }

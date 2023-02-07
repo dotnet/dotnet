@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
-public abstract class RazorCSharpDocument
+public abstract class RazorCSharpDocument : IRazorGeneratedDocument
 {
     public abstract string GeneratedCode { get; }
 
@@ -20,9 +20,19 @@ public abstract class RazorCSharpDocument
 
     public abstract RazorCodeGenerationOptions Options { get; }
 
+    public abstract RazorCodeDocument CodeDocument { get; }
+
     internal virtual IReadOnlyList<LinePragma> LinePragmas { get; }
 
+    [Obsolete("For backwards compatibility only. Use the overload that takes a RazorCodeDocument")]
     public static RazorCSharpDocument Create(string generatedCode, RazorCodeGenerationOptions options, IEnumerable<RazorDiagnostic> diagnostics)
+        => Create(codeDocument: null, generatedCode, options, diagnostics);
+
+    [Obsolete("For backwards compatibility only. Use the overload that takes a RazorCodeDocument")]
+    public static RazorCSharpDocument Create(string generatedCode, RazorCodeGenerationOptions options, IEnumerable<RazorDiagnostic> diagnostics, IEnumerable<SourceMapping> sourceMappings, IEnumerable<LinePragma> linePragmas)
+        => Create(codeDocument: null, generatedCode, options, diagnostics, sourceMappings, linePragmas);
+
+    public static RazorCSharpDocument Create(RazorCodeDocument codeDocument, string generatedCode, RazorCodeGenerationOptions options, IEnumerable<RazorDiagnostic> diagnostics)
     {
         if (generatedCode == null)
         {
@@ -39,10 +49,11 @@ public abstract class RazorCSharpDocument
             throw new ArgumentNullException(nameof(diagnostics));
         }
 
-        return new DefaultRazorCSharpDocument(generatedCode, options, diagnostics.ToArray(), sourceMappings: null, linePragmas: null);
+        return new DefaultRazorCSharpDocument(codeDocument, generatedCode, options, diagnostics.ToArray(), sourceMappings: null, linePragmas: null);
     }
 
     public static RazorCSharpDocument Create(
+        RazorCodeDocument codeDocument,
         string generatedCode,
         RazorCodeGenerationOptions options,
         IEnumerable<RazorDiagnostic> diagnostics,
@@ -69,6 +80,6 @@ public abstract class RazorCSharpDocument
             throw new ArgumentNullException(nameof(sourceMappings));
         }
 
-        return new DefaultRazorCSharpDocument(generatedCode, options, diagnostics.ToArray(), sourceMappings.ToArray(), linePragmas.ToArray());
+        return new DefaultRazorCSharpDocument(codeDocument, generatedCode, options, diagnostics.ToArray(), sourceMappings.ToArray(), linePragmas.ToArray());
     }
 }

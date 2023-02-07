@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Razor;
+using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Sdk;
 
@@ -313,8 +314,8 @@ public abstract class IntegrationTestBase
 
             configure?.Invoke(b);
 
-                // Allow the test to do custom things with tag helpers, but do the default thing most of the time.
-                if (!b.Features.OfType<ITagHelperFeature>().Any())
+            // Allow the test to do custom things with tag helpers, but do the default thing most of the time.
+            if (!b.Features.OfType<ITagHelperFeature>().Any())
             {
                 b.Features.Add(new CompilationTagHelperFeature());
                 b.Features.Add(new DefaultMetadataReferenceFeature()
@@ -326,8 +327,8 @@ public abstract class IntegrationTestBase
             b.Features.Add(new DefaultTypeNameFeature());
             b.SetCSharpLanguageVersion(CSharpParseOptions.LanguageVersion);
 
-                // Decorate each import feature so we can normalize line endings.
-                foreach (var feature in b.Features.OfType<IImportProjectFeature>().ToArray())
+            // Decorate each import feature so we can normalize line endings.
+            foreach (var feature in b.Features.OfType<IImportProjectFeature>().ToArray())
             {
                 b.Features.Remove(feature);
                 b.Features.Add(new NormalizedDefaultImportFeature(feature, LineEnding));
@@ -375,7 +376,7 @@ public abstract class IntegrationTestBase
         if (GenerateBaselines)
         {
             var baselineFullPath = Path.Combine(TestProjectRoot, baselineFileName);
-            File.WriteAllText(baselineFullPath, htmlDocument.GeneratedHtml);
+            File.WriteAllText(baselineFullPath, htmlDocument.GeneratedCode);
             return;
         }
 
@@ -388,7 +389,7 @@ public abstract class IntegrationTestBase
         var baseline = htmlFile.ReadAllText();
 
         // Normalize newlines to match those in the baseline.
-        var actual = htmlDocument.GeneratedHtml.Replace("\r", "").Replace("\n", "\r\n");
+        var actual = htmlDocument.GeneratedCode.Replace("\r", "").Replace("\n", "\r\n");
         Assert.Equal(baseline, actual);
     }
 
@@ -541,6 +542,61 @@ public abstract class IntegrationTestBase
                     $"Could not find the span {sourceSpan} - containing '{EscapeWhitespace(expectedSpan)}' " +
                     $"in the output.");
             }
+        }
+    }
+
+    protected void AssertHtmlSourceMappingsMatchBaseline(RazorCodeDocument codeDocument)
+    {
+        if (FileName == null)
+        {
+            var message = $"{nameof(AssertHtmlSourceMappingsMatchBaseline)} should only be called from an integration test ({nameof(FileName)} is null).";
+            throw new InvalidOperationException(message);
+        }
+
+        var htmlDocument = codeDocument.GetHtmlDocument();
+        Assert.NotNull(htmlDocument);
+
+        var baselineFileName = Path.ChangeExtension(FileName, ".html.mappings.txt");
+        var serializedMappings = SourceMappingsSerializer.Serialize(htmlDocument, codeDocument.Source);
+
+        if (GenerateBaselines)
+        {
+            var baselineFullPath = Path.Combine(TestProjectRoot, baselineFileName);
+            File.WriteAllText(baselineFullPath, serializedMappings);
+            return;
+        }
+
+        var testFile = TestFile.Create(baselineFileName, GetType().GetTypeInfo().Assembly);
+        if (!testFile.Exists())
+        {
+            throw new XunitException($"The resource {baselineFileName} was not found.");
+        }
+
+        var baseline = testFile.ReadAllText();
+
+        AssertEx.AssertEqualToleratingWhitespaceDifferences(baseline, serializedMappings);
+
+        var charBuffer = new char[codeDocument.Source.Length];
+        codeDocument.Source.CopyTo(0, charBuffer, 0, codeDocument.Source.Length);
+        var sourceContent = new string(charBuffer);
+
+        var problems = new List<string>();
+        foreach (var mapping in htmlDocument.SourceMappings)
+        {
+            var actualSpan = htmlDocument.GeneratedCode.Substring(mapping.GeneratedSpan.AbsoluteIndex, mapping.GeneratedSpan.Length);
+            var expectedSpan = sourceContent.Substring(mapping.OriginalSpan.AbsoluteIndex, mapping.OriginalSpan.Length);
+
+            if (expectedSpan != actualSpan)
+            {
+                problems.Add(
+                    $"Found the span {mapping.OriginalSpan} in the output mappings but it contains " +
+                    $"'{EscapeWhitespace(actualSpan)}' instead of '{EscapeWhitespace(expectedSpan)}'.");
+            }
+        }
+
+        if (problems.Count > 0)
+        {
+            throw new XunitException(string.Join(Environment.NewLine, problems));
         }
     }
 

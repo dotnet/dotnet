@@ -1,0 +1,195 @@
+Source Location: (10:0,10 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml)
+| |
+Generated Location: (10:0,10 [1] )
+| |
+
+Source Location: (278:8,1 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml)
+|
+
+|
+Generated Location: (278:8,1 [4] )
+|
+
+|
+
+Source Location: (319:11,33 [17] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml)
+|<text>This works |
+Generated Location: (319:11,33 [17] )
+|<text>This works |
+
+Source Location: (341:11,55 [8] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml)
+|!</text>|
+Generated Location: (341:11,55 [8] )
+|!</text>|
+
+Source Location: (367:13,1 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml)
+|
+
+|
+Generated Location: (367:13,1 [4] )
+|
+
+|
+
+Source Location: (409:16,33 [10] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml)
+|<p class="|
+Generated Location: (409:16,33 [10] )
+|<p class="|
+
+Source Location: (424:16,48 [11] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml)
+|">Hello</p>|
+Generated Location: (424:16,48 [11] )
+|">Hello</p>|
+
+Source Location: (460:18,1 [10] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml)
+|
+
+<ul>
+|
+Generated Location: (460:18,1 [10] )
+|
+
+<ul>
+|
+
+Source Location: (484:21,14 [10] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml)
+|<li>Item #|
+Generated Location: (484:21,14 [10] )
+|<li>Item #|
+
+Source Location: (499:21,29 [5] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml)
+|</li>|
+Generated Location: (499:21,29 [5] )
+|</li>|
+
+Source Location: (506:21,36 [16] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml)
+|
+</ul>
+
+<p>
+|
+Generated Location: (506:21,36 [16] )
+|
+</ul>
+
+<p>
+|
+
+Source Location: (541:26,6 [14] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml)
+| This is line#|
+Generated Location: (541:26,6 [14] )
+| This is line#|
+
+Source Location: (560:26,25 [17] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml)
+| of markup<br/>
+|
+Generated Location: (560:26,25 [17] )
+| of markup<br/>
+|
+
+Source Location: (578:27,1 [15] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml)
+|
+</p>
+
+<p>
+|
+Generated Location: (578:27,1 [15] )
+|
+</p>
+
+<p>
+|
+
+Source Location: (612:32,6 [15] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml)
+|: This is line#|
+Generated Location: (612:32,6 [15] )
+|: This is line#|
+
+Source Location: (632:32,26 [18] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml)
+| of markup<br />
+|
+Generated Location: (632:32,26 [18] )
+| of markup<br />
+|
+
+Source Location: (651:33,1 [15] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml)
+|
+</p>
+
+<p>
+|
+Generated Location: (651:33,1 [15] )
+|
+</p>
+
+<p>
+|
+
+Source Location: (685:38,6 [16] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml)
+|:: This is line#|
+Generated Location: (685:38,6 [16] )
+|:: This is line#|
+
+Source Location: (706:38,27 [18] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml)
+| of markup<br />
+|
+Generated Location: (706:38,27 [18] )
+| of markup<br />
+|
+
+Source Location: (725:39,1 [22] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml)
+|
+</p>
+
+
+<ul>
+    |
+Generated Location: (725:39,1 [22] )
+|
+</p>
+
+
+<ul>
+    |
+
+Source Location: (760:44,17 [20] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml)
+|<li>
+        Item #|
+Generated Location: (760:44,17 [20] )
+|<li>
+        Item #|
+
+Source Location: (785:45,19 [10] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml)
+|
+        |
+Generated Location: (785:45,19 [10] )
+|
+        |
+
+Source Location: (816:46,29 [67] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml)
+|
+        <ul>
+            <li>Child Items... ?</li>
+            |
+Generated Location: (816:46,29 [67] )
+|
+        <ul>
+            <li>Child Items... ?</li>
+            |
+
+Source Location: (930:49,59 [26] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml)
+|
+        </ul>
+    </li>|
+Generated Location: (930:49,59 [26] )
+|
+        </ul>
+    </li>|
+
+Source Location: (957:51,10 [8] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml)
+|
+</ul> |
+Generated Location: (957:51,10 [8] )
+|
+</ul> |
+

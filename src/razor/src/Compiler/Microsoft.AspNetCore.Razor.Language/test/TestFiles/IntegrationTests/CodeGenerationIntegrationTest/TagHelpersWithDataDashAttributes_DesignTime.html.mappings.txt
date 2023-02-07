@@ -1,0 +1,35 @@
+Source Location: (13:0,13 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithDataDashAttributes.cshtml)
+| |
+Generated Location: (13:0,13 [1] )
+| |
+
+Source Location: (29:0,29 [81] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithDataDashAttributes.cshtml)
+|
+
+<input bound="hello" data-one="1" data-two=2 data-three="" />
+<div data-one=|
+Generated Location: (29:0,29 [81] )
+|
+
+<input bound="hello" data-one="1" data-two=2 data-three="" />
+<div data-one=|
+
+Source Location: (114:3,18 [11] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithDataDashAttributes.cshtml)
+| data-two="|
+Generated Location: (114:3,18 [11] )
+| data-two="|
+
+Source Location: (129:3,33 [95] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithDataDashAttributes.cshtml)
+|" data-three= data-four=""></div>
+<p attr="" data-one="" data-two= data-three=hello data-four=|
+Generated Location: (129:3,33 [95] )
+|" data-three= data-four=""></div>
+<p attr="" data-one="" data-two= data-three=hello data-four=|
+
+Source Location: (228:4,64 [3] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithDataDashAttributes.cshtml)
+|>
+|
+Generated Location: (228:4,64 [3] )
+|>
+|
+

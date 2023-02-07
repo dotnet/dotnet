@@ -1,0 +1,59 @@
+Source Location: (36:0,36 [17] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorComments.cshtml)
+|
+<p>This should |
+Generated Location: (36:0,36 [17] )
+|
+<p>This should |
+
+Source Location: (62:1,24 [17] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorComments.cshtml)
+| be shown</p>
+
+|
+Generated Location: (62:1,24 [17] )
+| be shown</p>
+
+|
+
+Source Location: (232:9,1 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorComments.cshtml)
+|
+
+|
+Generated Location: (232:9,1 [4] )
+|
+
+|
+
+Source Location: (263:11,27 [46] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorComments.cshtml)
+|
+<p>But this should show the comment syntax: |
+Generated Location: (263:11,27 [46] )
+|
+<p>But this should show the comment syntax: |
+
+Source Location: (313:12,48 [8] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorComments.cshtml)
+|</p>
+
+|
+Generated Location: (313:12,48 [8] )
+|</p>
+
+|
+
+Source Location: (330:14,9 [85] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorComments.cshtml)
+|
+
+<input value="@*this razor comment is the actual value*@" type="text" />
+<input |
+Generated Location: (330:14,9 [85] )
+|
+
+<input value="@*this razor comment is the actual value*@" type="text" />
+<input |
+
+Source Location: (458:17,50 [17] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorComments.cshtml)
+| type="text" />
+|
+Generated Location: (458:17,50 [17] )
+| type="text" />
+|
+

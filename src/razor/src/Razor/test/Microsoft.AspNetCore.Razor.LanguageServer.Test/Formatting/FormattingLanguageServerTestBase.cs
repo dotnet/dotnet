@@ -37,7 +37,7 @@ public abstract class FormattingLanguageServerTestBase : LanguageServerTestBase
         var codeDocument = RazorCodeDocument.Create(sourceDocument);
         var syntaxTree = RazorSyntaxTree.Parse(sourceDocument, RazorParserOptions.CreateDefault());
         var razorCSharpDocument = RazorCSharpDocument.Create(
-            content, RazorCodeGenerationOptions.CreateDefault(), Array.Empty<RazorDiagnostic>(), sourceMappings, Array.Empty<LinePragma>());
+            codeDocument, content, RazorCodeGenerationOptions.CreateDefault(), Array.Empty<RazorDiagnostic>(), sourceMappings, Array.Empty<LinePragma>());
         codeDocument.SetSyntaxTree(syntaxTree);
         codeDocument.SetCSharpDocument(razorCSharpDocument);
 

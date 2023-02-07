@@ -73,12 +73,13 @@ public class TextDocumentTextPresentationEndpointTests : LanguageServerTestBase
     {
         // Arrange
         var codeDocument = TestRazorCodeDocument.Create("@counter");
+        var csharpDocument = codeDocument.GetCSharpDocument();
         var uri = new Uri("file://path/test.razor");
         var documentContext = CreateDocumentContext(uri, codeDocument);
         var projectedRange = It.IsAny<Range>();
         var documentMappingService = Mock.Of<RazorDocumentMappingService>(
             s => s.GetLanguageKind(codeDocument, It.IsAny<int>(), It.IsAny<bool>()) == RazorLanguageKind.CSharp &&
-            s.TryMapToProjectedDocumentRange(codeDocument, It.IsAny<Range>(), out projectedRange) == true, MockBehavior.Strict);
+            s.TryMapToProjectedDocumentRange(csharpDocument, It.IsAny<Range>(), out projectedRange) == true, MockBehavior.Strict);
 
         var response = (WorkspaceEdit?)null;
 
