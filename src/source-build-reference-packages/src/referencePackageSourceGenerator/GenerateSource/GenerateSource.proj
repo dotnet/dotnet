@@ -14,6 +14,18 @@
     <GenAPIExcludeAttributesList Include="$(_GenAPIExcludeAttributesList)" />
   </ItemGroup>
 
+  <Target Name="RemoveIconFromNuspec" BeforeTargets="CopyNuspecFiles">
+    <PropertyGroup>
+      <!-- Regex for '<icon>{icon_file_name}</icon>' + line spacing before the attribute (\s) -->
+      <IconRegex>\s+&lt;icon&gt;.+&lt;\/icon&gt;</IconRegex>
+    </PropertyGroup>
+
+    <WriteLinesToFile 
+      File="%(NuspecFiles.FullPath)"
+      Lines="$([System.Text.RegularExpressions.Regex]::Replace($([System.IO.File]::ReadAllText('%(NuspecFiles.FullPath)')), '$(IconRegex)', ''))"
+      Overwrite="true" />
+  </Target>
+
   <Target Name="CopyNuspecFiles" BeforeTargets="CoreCompile">
     <Message Importance="High" Text="==> Copying all target package nuspec files to generated source" />
     <Copy SourceFiles="@(NuspecFiles)" DestinationFiles="@(NuspecFiles->'$(GeneratedSourcePath)%(RecursiveDir)%(Filename)%(Extension)')" />
