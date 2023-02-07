@@ -10,24 +10,6 @@ trigger:
     - internal/release/6.*
     - internal/release/7.*
 
-resources:
-  repositories:
-  - repository: vmr
-    type: github
-    name: dotnet/dotnet
-    endpoint: dotnet
-
-parameters:
-- name: vmrBranch
-  displayName: dotnet/dotnet branch to push to
-  type: string
-  default: ''
-
-- name: disableVmrBuild
-  displayName: Skip source-building the VMR
-  type: boolean
-  default: false
-
 variables:
 - name: _PublishUsingPipelines
   value: false
@@ -47,13 +29,6 @@ variables:
 
 - name: _InternalRuntimeDownloadArgs
   value: ''
-
-- ${{ if ne(parameters.vmrBranch, '') }}:
-  - name: VmrBranch
-    value: ${{ parameters.vmrBranch }}
-- ${{ else }}:
-  - name: VmrBranch
-    value: ${{ replace(replace(variables['Build.SourceBranch'], 'refs/heads/', ''), 'refs/pull/', '') }}
 
 - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
   - group: DotNetBuilds storage account read tokens
@@ -371,26 +346,6 @@ stages:
         runTests: false
 
   - template: /eng/common/templates/jobs/source-build.yml
-
-- ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
-
-  # You can temporarily disable the VMR Build stage by setting the disableVmrBuild variable on the installer pipeline
-  - ${{ if not(parameters.disableVmrBuild) }}:
-    - template: eng/pipelines/templates/stages/vmr-build.yml
-      parameters:
-        vmrBranch: ${{ variables.VmrBranch }}
-        isBuiltFromVmr: false
-  
-  # In case the VMR Build stage is temporarily disabled, the VMR synchronization step is run to validate
-  # that the PR can be merged and later synchronized into the VMR without problems.
-  - ${{ else }}:
-    - stage: Synchronize_VMR
-      displayName: Synchronize VMR
-      dependsOn: []
-      jobs:
-      - template: eng/pipelines/templates/jobs/vmr-synchronization.yml
-        parameters:
-          vmrBranch: ${{ variables.VmrBranch }}
 
 - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
   - stage: Publish
