@@ -1,0 +1,86 @@
+Source Location: (13:0,13 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SymbolBoundAttributes.cshtml)
+| |
+Generated Location: (13:0,13 [1] )
+| |
+
+Source Location: (29:0,29 [273] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SymbolBoundAttributes.cshtml)
+|
+
+<ul [item]="items"></ul>
+<ul [(item)]="items"></ul>
+<button (click)="doSomething()">Click Me</button>
+<button (^click)="doSomething()">Click Me</button>
+<template *something="value">
+</template>
+<div #local></div>
+<div #local="value"></div>
+
+<ul bound [item]="|
+Generated Location: (29:0,29 [273] )
+|
+
+<ul [item]="items"></ul>
+<ul [(item)]="items"></ul>
+<button (click)="doSomething()">Click Me</button>
+<button (^click)="doSomething()">Click Me</button>
+<template *something="value">
+</template>
+<div #local></div>
+<div #local="value"></div>
+
+<ul bound [item]="|
+
+Source Location: (307:11,23 [10] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SymbolBoundAttributes.cshtml)
+|" [item]="|
+Generated Location: (307:11,23 [10] )
+|" [item]="|
+
+Source Location: (322:11,38 [29] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SymbolBoundAttributes.cshtml)
+|"></ul>
+<ul bound [(item)]="|
+Generated Location: (322:11,38 [29] )
+|"></ul>
+<ul bound [(item)]="|
+
+Source Location: (356:12,25 [12] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SymbolBoundAttributes.cshtml)
+|" [(item)]="|
+Generated Location: (356:12,25 [12] )
+|" [(item)]="|
+
+Source Location: (373:12,42 [32] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SymbolBoundAttributes.cshtml)
+|"></ul>
+<button bound (click)="|
+Generated Location: (373:12,42 [32] )
+|"></ul>
+<button bound (click)="|
+
+Source Location: (418:13,36 [11] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SymbolBoundAttributes.cshtml)
+|" (click)="|
+Generated Location: (418:13,36 [11] )
+|" (click)="|
+
+Source Location: (442:13,60 [45] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SymbolBoundAttributes.cshtml)
+|">Click Me</button>
+<button bound (^click)="|
+Generated Location: (442:13,60 [45] )
+|">Click Me</button>
+<button bound (^click)="|
+
+Source Location: (500:14,37 [12] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SymbolBoundAttributes.cshtml)
+|" (^click)="|
+Generated Location: (500:14,37 [12] )
+|" (^click)="|
+
+Source Location: (525:14,62 [172] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SymbolBoundAttributes.cshtml)
+|">Click Me</button>
+<template bound *something="value" *something="value">
+</template>
+<div bound #localminimized></div>
+<div bound #local="value" #local="value"></div>|
+Generated Location: (525:14,62 [172] )
+|">Click Me</button>
+<template bound *something="value" *something="value">
+</template>
+<div bound #localminimized></div>
+<div bound #local="value" #local="value"></div>|
+

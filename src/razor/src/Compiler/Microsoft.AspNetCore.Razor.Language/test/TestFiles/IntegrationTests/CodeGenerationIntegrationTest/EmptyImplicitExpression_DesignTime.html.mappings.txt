@@ -1,0 +1,14 @@
+Source Location: (0:0,0 [18] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EmptyImplicitExpression.cshtml)
+|This is markup
+
+|
+Generated Location: (0:0,0 [18] )
+|This is markup
+
+|
+
+Source Location: (19:2,1 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EmptyImplicitExpression.cshtml)
+|!|
+Generated Location: (19:2,1 [1] )
+|!|
+

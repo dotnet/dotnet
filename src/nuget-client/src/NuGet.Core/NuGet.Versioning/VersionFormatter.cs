@@ -54,7 +54,7 @@ namespace NuGet.Versioning
         {
             if (formatType == typeof(ICustomFormatter)
                 || formatType == typeof(NuGetVersion)
-                || formatType == typeof(SemanticVersion))
+                || typeof(SemanticVersion).IsAssignableFrom(formatType))
             {
                 return this;
             }

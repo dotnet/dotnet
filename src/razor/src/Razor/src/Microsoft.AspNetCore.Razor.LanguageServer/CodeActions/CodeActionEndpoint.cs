@@ -58,7 +58,7 @@ internal class CodeActionEndpoint : IVSCodeActionEndpoint
         _allAvailableCodeActionNames = GetAllAvailableCodeActionNames();
     }
 
-    public async Task<SumType<Command, CodeAction>[]?> HandleRequestAsync(CodeActionParams request, RazorRequestContext requestContext, CancellationToken cancellationToken)
+    public async Task<SumType<Command, CodeAction>[]?> HandleRequestAsync(VSCodeActionParams request, RazorRequestContext requestContext, CancellationToken cancellationToken)
     {
         if (request is null)
         {
@@ -140,7 +140,7 @@ internal class CodeActionEndpoint : IVSCodeActionEndpoint
     }
 
     // internal for testing
-    internal async Task<RazorCodeActionContext?> GenerateRazorCodeActionContextAsync(CodeActionParams request, DocumentSnapshot documentSnapshot)
+    internal async Task<RazorCodeActionContext?> GenerateRazorCodeActionContextAsync(VSCodeActionParams request, DocumentSnapshot documentSnapshot)
     {
         var codeDocument = await documentSnapshot.GetGeneratedOutputAsync().ConfigureAwait(false);
         if (codeDocument.IsUnsupported())
@@ -272,14 +272,14 @@ internal class CodeActionEndpoint : IVSCodeActionEndpoint
         if (languageKind == RazorLanguageKind.CSharp)
         {
             // For C# we have to map the ranges to the generated document
-            if (!_documentMappingService.TryMapToProjectedDocumentRange(context.CodeDocument, context.Request.Range, out var projectedRange))
+            if (!_documentMappingService.TryMapToProjectedDocumentRange(context.CodeDocument.GetCSharpDocument(), context.Request.Range, out var projectedRange))
             {
                 return Array.Empty<RazorVSInternalCodeAction>();
             }
 
             var newContext = context.Request.Context;
             if (context.Request.Context is VSInternalCodeActionContext { SelectionRange: not null } vsContext &&
-                _documentMappingService.TryMapToProjectedDocumentRange(context.CodeDocument, vsContext.SelectionRange, out var selectionRange))
+                _documentMappingService.TryMapToProjectedDocumentRange(context.CodeDocument.GetCSharpDocument(), vsContext.SelectionRange, out var selectionRange))
             {
                 vsContext.SelectionRange = selectionRange;
                 newContext = vsContext;
@@ -358,7 +358,7 @@ internal class CodeActionEndpoint : IVSCodeActionEndpoint
         return availableCodeActionNames.ToImmutableHashSet();
     }
 
-    public TextDocumentIdentifier GetTextDocumentIdentifier(CodeActionParams request)
+    public TextDocumentIdentifier GetTextDocumentIdentifier(VSCodeActionParams request)
     {
         return request.TextDocument;
     }

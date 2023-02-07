@@ -1,0 +1,89 @@
+Source Location: (13:0,13 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersInSection.cshtml)
+| |
+Generated Location: (13:0,13 [1] )
+| |
+
+Source Location: (31:0,31 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersInSection.cshtml)
+|
+
+|
+Generated Location: (31:0,31 [4] )
+|
+
+|
+
+Source Location: (69:4,1 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersInSection.cshtml)
+|
+
+|
+Generated Location: (69:4,1 [4] )
+|
+
+|
+
+Source Location: (91:6,18 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersInSection.cshtml)
+| |
+Generated Location: (91:6,18 [1] )
+| |
+
+Source Location: (93:6,20 [63] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersInSection.cshtml)
+|
+    <div>
+        <mytaghelper boundproperty="Current Time: |
+Generated Location: (93:6,20 [63] )
+|
+    <div>
+        <mytaghelper boundproperty="Current Time: |
+
+Source Location: (169:8,63 [33] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersInSection.cshtml)
+|" unboundproperty="Current Time: |
+Generated Location: (169:8,63 [33] )
+|" unboundproperty="Current Time: |
+
+Source Location: (215:8,109 [97] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersInSection.cshtml)
+|">
+            In None ContentBehavior.
+            <nestedtaghelper>Some buffered values with |
+Generated Location: (215:8,109 [97] )
+|">
+            In None ContentBehavior.
+            <nestedtaghelper>Some buffered values with |
+
+Source Location: (317:10,60 [62] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersInSection.cshtml)
+|</nestedtaghelper>
+        </mytaghelper>
+    </div>
+
+    |
+Generated Location: (317:10,60 [62] )
+|</nestedtaghelper>
+        </mytaghelper>
+    </div>
+
+    |
+
+Source Location: (401:14,26 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersInSection.cshtml)
+|  |
+Generated Location: (401:14,26 [2] )
+|  |
+
+Source Location: (404:14,29 [86] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersInSection.cshtml)
+|
+        <div>
+            <nestedtaghelper></nestedtaghelper>
+        </div>
+    |
+Generated Location: (404:14,29 [86] )
+|
+        <div>
+            <nestedtaghelper></nestedtaghelper>
+        </div>
+    |
+
+Source Location: (491:18,5 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersInSection.cshtml)
+|
+|
+Generated Location: (491:18,5 [2] )
+|
+|
+

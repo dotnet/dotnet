@@ -7,6 +7,6 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 namespace Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 
 [LanguageServerEndpoint(Methods.TextDocumentCodeActionName)]
-internal interface IVSCodeActionEndpoint : IRazorRequestHandler<CodeActionParams, SumType<Command, CodeAction>[]?>, IRegistrationExtension
+internal interface IVSCodeActionEndpoint : IRazorRequestHandler<VSCodeActionParams, SumType<Command, CodeAction>[]?>, IRegistrationExtension
 {
 }

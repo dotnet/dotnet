@@ -30,7 +30,7 @@ namespace NuGet.PackageManagement.VisualStudio
         , IProjectSystemReferencesReader
         , IProjectSystemReferencesService
     {
-        private static readonly Array ReferenceMetadata;
+        private static readonly string[] ReferenceMetadata;
 
         private readonly IVsProjectAdapter _vsProjectAdapter;
         private readonly IVsProjectThreadingService _threadingService;
@@ -58,14 +58,17 @@ namespace NuGet.PackageManagement.VisualStudio
 
         static VsManagedLanguagesProjectSystemServices()
         {
-            ReferenceMetadata = Array.CreateInstance(typeof(string), 7);
-            ReferenceMetadata.SetValue(ProjectItemProperties.IncludeAssets, 0);
-            ReferenceMetadata.SetValue(ProjectItemProperties.ExcludeAssets, 1);
-            ReferenceMetadata.SetValue(ProjectItemProperties.PrivateAssets, 2);
-            ReferenceMetadata.SetValue(ProjectItemProperties.NoWarn, 3);
-            ReferenceMetadata.SetValue(ProjectItemProperties.GeneratePathProperty, 4);
-            ReferenceMetadata.SetValue(ProjectItemProperties.Aliases, 5);
-            ReferenceMetadata.SetValue(ProjectItemProperties.VersionOverride, 6);
+            ReferenceMetadata = new string[]
+            {
+                ProjectItemProperties.IncludeAssets,
+                ProjectItemProperties.ExcludeAssets,
+                ProjectItemProperties.PrivateAssets,
+                ProjectItemProperties.NoWarn,
+                ProjectItemProperties.GeneratePathProperty,
+                ProjectItemProperties.Aliases,
+                ProjectItemProperties.VersionOverride,
+                ProjectItemProperties.IsImplicitlyDefined,
+            };
         }
 
         public VsManagedLanguagesProjectSystemServices(

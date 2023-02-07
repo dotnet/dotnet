@@ -1,0 +1,5 @@
+Source Location: (16:2,1 [11] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SimpleUnspacedIf.cshtml)
+|<div></div>|
+Generated Location: (16:2,1 [11] )
+|<div></div>|
+

@@ -1,0 +1,30 @@
+Source Location: (67:0,67 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/AttributeDirective.cshtml)
+|
+|
+Generated Location: (67:0,67 [2] )
+|
+|
+
+Source Location: (131:1,62 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/AttributeDirective.cshtml)
+|
+|
+Generated Location: (131:1,62 [2] )
+|
+|
+
+Source Location: (210:2,77 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/AttributeDirective.cshtml)
+|
+|
+Generated Location: (210:2,77 [2] )
+|
+|
+
+Source Location: (267:3,55 [15] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/AttributeDirective.cshtml)
+|
+
+Hello World|
+Generated Location: (267:3,55 [15] )
+|
+
+Hello World|
+

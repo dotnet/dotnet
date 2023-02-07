@@ -3,6 +3,8 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.VisualStudio.Sdk.TestFramework;
 using Moq;
 using NuGet.Common;
 using Xunit;
@@ -13,10 +15,15 @@ namespace NuGet.VisualStudio.Common.Test
     {
         public class Log : LogAndReportErrorTests
         {
+            public Log(GlobalServiceProvider sp)
+                : base(sp)
+            { }
+
             [Fact]
-            public void Gets_MSBuild_verbosity_from_shell()
+            public async Task Gets_MSBuild_verbosity_from_shell()
             {
                 _outputConsoleLogger.Log(new LogMessage(LogLevel.Debug, "message"));
+                await WaitForInitializationAsync();
                 _visualStudioShell.Verify(vss => vss.GetPropertyValueAsync("Environment", "ProjectsAndSolution", "MSBuildOutputVerbosity"));
             }
 
@@ -33,13 +40,13 @@ namespace NuGet.VisualStudio.Common.Test
 
             [Theory]
             [MemberData(nameof(GetMessageVariationsWhichAreLogged))]
-            public void Writes_line_to_output_console(LogLevel logLevel, int verbosityLevel)
+            public async Task Writes_line_to_output_console(LogLevel logLevel, int verbosityLevel)
             {
                 _outputConsole.Reset();
                 _msBuildOutputVerbosity = verbosityLevel;
 
                 _outputConsoleLogger.Log(new LogMessage(logLevel, "message"));
-
+                await WaitForInitializationAsync();
                 _outputConsole.Verify(oc => oc.WriteLineAsync("message"));
             }
 
@@ -71,9 +78,9 @@ namespace NuGet.VisualStudio.Common.Test
 
             [Theory]
             [MemberData(nameof(GetMessageVariationsWhichAreReported))]
-            public void Adds_entry_to_error_list(LogLevel logLevel, int verbosityLevel)
+            public async Task Adds_entry_to_error_list(LogLevel logLevel, int verbosityLevel)
             {
-                VerifyThatEntryToErrorListIsAdded(_outputConsoleLogger.Log, logLevel, verbosityLevel);
+                await VerifyThatEntryToErrorListIsAddedAsync(_outputConsoleLogger.Log, logLevel, verbosityLevel);
             }
 
             [Theory]

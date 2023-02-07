@@ -1,0 +1,9 @@
+Source Location: (0:0,0 [18] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ExplicitExpressionAtEOF.cshtml)
+|This is markup
+
+|
+Generated Location: (0:0,0 [18] )
+|This is markup
+
+|
+

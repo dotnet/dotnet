@@ -1,0 +1,14 @@
+Source Location: (23:0,23 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Implements.cshtml)
+|
+
+|
+Generated Location: (23:0,23 [4] )
+|
+
+|
+
+Source Location: (37:2,10 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Implements.cshtml)
+| |
+Generated Location: (37:2,10 [1] )
+| |
+

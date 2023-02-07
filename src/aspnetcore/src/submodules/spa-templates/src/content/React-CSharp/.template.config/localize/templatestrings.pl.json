@@ -17,7 +17,7 @@
   "symbols/NoHttps/description": "Określa, czy wyłączyć protokół HTTPS. Ta opcja ma zastosowanie tylko wtedy, gdy dla uwierzytelniania --auth nie są używane elementy Individual, IndividualB2C, SingleOrg lub MultiOrg.",
   "symbols/UseLocalDB/description": "Określa, czy używać bazy danych LocalDB zamiast oprogramowania SQLite. Ta opcja ma zastosowanie tylko wtedy, gdy określono uwierzytelnianie --auth Individual lub --auth IndividualB2C.",
   "symbols/Framework/description": "Platforma docelowa dla tego projektu.",
-  "symbols/Framework/choices/net7.0/description": "Docelowe środowisko net7.0",
+  "symbols/Framework/choices/net8.0/description": "Docelowa platforma net8.0",
   "symbols/UseProgramMain/displayName": "Nie używaj instrukcji najwyższego poziomu",
   "symbols/UseProgramMain/description": "Określa, czy wygenerować jawną klasę Program i metodę Main zamiast instrukcji najwyższego poziomu.",
   "postActions/restore/description": "Przywróć pakiety NuGet wymagane przez ten projekt.",

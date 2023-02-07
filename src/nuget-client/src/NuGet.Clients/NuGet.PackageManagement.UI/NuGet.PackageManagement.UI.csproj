@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -184,7 +184,7 @@
     <Compile Include="Xamls\PRMigratorBar.xaml.cs">
       <DependentUpon>PRMigratorBar.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Xamls\ProjectsListView.cs" />
+    <Compile Include="Xamls\ToggleableListView.cs" />
     <Compile Include="Xamls\RestartRequestBar.xaml.cs">
       <DependentUpon>RestartRequestBar.xaml</DependentUpon>
     </Compile>

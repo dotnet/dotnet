@@ -1,0 +1,33 @@
+Source Location: (13:0,13 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithPrefix.cshtml)
+| |
+Generated Location: (13:0,13 [1] )
+| |
+
+Source Location: (29:0,29 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithPrefix.cshtml)
+|
+|
+Generated Location: (29:0,29 [2] )
+|
+|
+
+Source Location: (47:1,16 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithPrefix.cshtml)
+| |
+Generated Location: (47:1,16 [1] )
+| |
+
+Source Location: (53:1,22 [32] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithPrefix.cshtml)
+|
+<form>
+    <cool:input bound=|
+Generated Location: (53:1,22 [32] )
+|
+<form>
+    <cool:input bound=|
+
+Source Location: (91:3,28 [24] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithPrefix.cshtml)
+| type='text' />
+</form>|
+Generated Location: (91:3,28 [24] )
+| type='text' />
+</form>|
+

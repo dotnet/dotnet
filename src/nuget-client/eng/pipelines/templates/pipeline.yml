@@ -146,6 +146,7 @@ stages:
       FullVstsBuildNumber: $[stageDependencies.Initialize.Initialize_Build.outputs['updatebuildnumber.FullVstsBuildNumber']]
       SDKVersionForBuild: $[stageDependencies.Initialize.Initialize_Build.outputs['getSDKVersionForBuild.SDKVersionForBuild']]
       BuildRTM: "false"
+      DOTNET_NUGET_SIGNATURE_VERIFICATION: true
     pool:
       vmImage: ubuntu-latest
     steps:
@@ -182,6 +183,7 @@ stages:
       MSBUILDDISABLENODEREUSE: 1
       # Set MSBuildEnableWorkloadResolver to work around https://github.com/dotnet/sdk/issues/17461
       MSBuildEnableWorkloadResolver: false
+      DOTNET_NUGET_SIGNATURE_VERIFICATION: true
     condition: "and(succeeded(), eq(variables['RunTestsOnLinux'], 'true'))"
     pool:
       vmImage: ubuntu-latest

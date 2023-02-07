@@ -95,7 +95,7 @@ internal abstract class CSharpFormattingPassBase : FormattingPassBase
                 continue;
             }
 
-            if (DocumentMappingService.TryMapToProjectedDocumentPosition(context.CodeDocument, lineStart, out _, out var projectedLineStart))
+            if (DocumentMappingService.TryMapToProjectedDocumentPosition(context.CodeDocument.GetCSharpDocument(), lineStart, out _, out var projectedLineStart))
             {
                 lineStartMap[lineStart] = projectedLineStart;
                 significantLocations.Add(projectedLineStart);

@@ -31,17 +31,14 @@
 //
 // This file tests some commonly used argument matchers.
 
-// Silence warning C4244: 'initializing': conversion from 'int' to 'short',
-// possible loss of data and C4100, unreferenced local parameter
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4244)
-#pragma warning(disable : 4100)
-#endif
-
 #include <vector>
 
 #include "test/gmock-matchers_test.h"
+
+// Silence warning C4244: 'initializing': conversion from 'int' to 'short',
+// possible loss of data and C4100, unreferenced local parameter
+GTEST_DISABLE_MSC_WARNINGS_PUSH_(4244 4100)
+
 
 namespace testing {
 namespace gmock_matchers_test {
@@ -864,7 +861,7 @@ struct Type {
 };
 
 TEST(TypedEqTest, HasSpecifiedType) {
-  // Verfies that the type of TypedEq<T>(v) is Matcher<T>.
+  // Verifies that the type of TypedEq<T>(v) is Matcher<T>.
   Type<Matcher<int>>::IsTypeOf(TypedEq<int>(5));
   Type<Matcher<double>>::IsTypeOf(TypedEq<double>(5));
 }
@@ -1530,7 +1527,7 @@ TEST(PairTest, MatchesCorrectly) {
   EXPECT_THAT(p, Pair(25, "foo"));
   EXPECT_THAT(p, Pair(Ge(20), HasSubstr("o")));
 
-  // 'first' doesnt' match, but 'second' matches.
+  // 'first' doesn't match, but 'second' matches.
   EXPECT_THAT(p, Not(Pair(42, "foo")));
   EXPECT_THAT(p, Not(Pair(Lt(25), "foo")));
 
@@ -2354,6 +2351,4 @@ TEST(PolymorphicMatcherTest, CanAccessImpl) {
 }  // namespace gmock_matchers_test
 }  // namespace testing
 
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
+GTEST_DISABLE_MSC_WARNINGS_POP_()  // 4244 4100

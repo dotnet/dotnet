@@ -1,0 +1,80 @@
+Source Location: (33:0,33 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml)
+|
+
+|
+Generated Location: (33:0,33 [4] )
+|
+
+|
+
+Source Location: (436:22,1 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml)
+|
+
+|
+Generated Location: (436:22,1 [4] )
+|
+
+|
+
+Source Location: (452:24,12 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml)
+|
+|
+Generated Location: (452:24,12 [2] )
+|
+|
+
+Source Location: (470:25,16 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml)
+|
+
+|
+Generated Location: (470:25,16 [4] )
+|
+
+|
+
+Source Location: (598:32,2 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml)
+|
+
+|
+Generated Location: (598:32,2 [4] )
+|
+
+|
+
+Source Location: (666:37,1 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml)
+|
+
+|
+Generated Location: (666:37,1 [4] )
+|
+
+|
+
+Source Location: (683:39,13 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml)
+|
+|
+Generated Location: (683:39,13 [2] )
+|
+|
+
+Source Location: (706:40,21 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml)
+|
+|
+Generated Location: (706:40,21 [2] )
+|
+|
+
+Source Location: (730:41,22 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml)
+|
+
+|
+Generated Location: (730:41,22 [4] )
+|
+
+|
+
+Source Location: (744:43,10 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml)
+| |
+Generated Location: (744:43,10 [1] )
+| |
+

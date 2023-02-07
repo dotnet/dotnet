@@ -1,0 +1,39 @@
+Source Location: (13:0,13 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EscapedTagHelpers.cshtml)
+| |
+Generated Location: (13:0,13 [1] )
+| |
+
+Source Location: (29:0,29 [76] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EscapedTagHelpers.cshtml)
+|
+
+<!div class="randomNonTagHelperAttribute">
+    <!p class="Hello World" |
+Generated Location: (29:0,29 [76] )
+|
+
+<!div class="randomNonTagHelperAttribute">
+    <!p class="Hello World" |
+
+Source Location: (118:3,41 [85] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EscapedTagHelpers.cshtml)
+|>
+        <!input type="text" />
+        <!em>Not a TagHelper: </!em> <input type="|
+Generated Location: (118:3,41 [85] )
+|>
+        <!input type="text" />
+        <!em>Not a TagHelper: </!em> <input type="|
+
+Source Location: (216:5,63 [11] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EscapedTagHelpers.cshtml)
+|" checked="|
+Generated Location: (216:5,63 [11] )
+|" checked="|
+
+Source Location: (231:5,78 [24] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EscapedTagHelpers.cshtml)
+|" />
+    </!p>
+</!div>|
+Generated Location: (231:5,78 [24] )
+|" />
+    </!p>
+</!div>|
+

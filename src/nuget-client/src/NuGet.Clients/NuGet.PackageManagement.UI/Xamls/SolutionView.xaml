@@ -183,7 +183,7 @@
       Grid.Row="0"
       Text="{Binding InstalledVersionsCount, Converter={StaticResource InstalledVersionsCountConverter}}" />
 
-    <local:ProjectsListView
+    <local:ToggleableListView
       Grid.Row="1"
       x:Name="_projectList"
       Margin="0,8,0,0"
@@ -324,7 +324,7 @@
           </GridViewColumn>
         </GridView>
       </ListView.View>
-    </local:ProjectsListView>
+    </local:ToggleableListView>
 
     <Grid
       Grid.Row="2"

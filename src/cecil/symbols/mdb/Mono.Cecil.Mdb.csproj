@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>$(ToolsFramework)</TargetFramework>
+    <DefineConstants>$(DefineConstants);CECIL</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Mono.Cecil.csproj">
+      <Name>Mono.Cecil</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\ProjectInfo.cs" />
+    <Compile Include="Mono.Cecil.Mdb\*.cs" />
+    <Compile Include="Mono.CompilerServices.SymbolWriter\*.cs" />
+  </ItemGroup>
+</Project>

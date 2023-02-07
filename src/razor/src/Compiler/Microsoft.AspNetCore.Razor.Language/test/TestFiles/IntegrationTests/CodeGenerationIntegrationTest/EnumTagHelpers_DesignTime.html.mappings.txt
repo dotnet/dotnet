@@ -1,0 +1,68 @@
+Source Location: (13:0,13 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EnumTagHelpers.cshtml)
+| |
+Generated Location: (13:0,13 [1] )
+| |
+
+Source Location: (31:0,31 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EnumTagHelpers.cshtml)
+|
+
+|
+Generated Location: (31:0,31 [4] )
+|
+
+|
+
+Source Location: (77:4,1 [18] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EnumTagHelpers.cshtml)
+|
+
+<input value="|
+Generated Location: (77:4,1 [18] )
+|
+
+<input value="|
+
+Source Location: (110:6,29 [20] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EnumTagHelpers.cshtml)
+|" />
+<input class="|
+Generated Location: (110:6,29 [20] )
+|" />
+<input class="|
+
+Source Location: (151:7,35 [20] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EnumTagHelpers.cshtml)
+|" />
+<input value="|
+Generated Location: (151:7,35 [20] )
+|" />
+<input value="|
+
+Source Location: (178:8,21 [20] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EnumTagHelpers.cshtml)
+|" />
+<input value="|
+Generated Location: (178:8,21 [20] )
+|" />
+<input value="|
+
+Source Location: (211:9,27 [13] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EnumTagHelpers.cshtml)
+|" catch-all="|
+Generated Location: (211:9,27 [13] )
+|" catch-all="|
+
+Source Location: (231:9,47 [19] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EnumTagHelpers.cshtml)
+|"/>
+<input value="|
+Generated Location: (231:9,47 [19] )
+|"/>
+<input value="|
+
+Source Location: (260:10,24 [13] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EnumTagHelpers.cshtml)
+|" catch-all="|
+Generated Location: (260:10,24 [13] )
+|" catch-all="|
+
+Source Location: (283:10,47 [6] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EnumTagHelpers.cshtml)
+|" />
+|
+Generated Location: (283:10,47 [6] )
+|" />
+|
+

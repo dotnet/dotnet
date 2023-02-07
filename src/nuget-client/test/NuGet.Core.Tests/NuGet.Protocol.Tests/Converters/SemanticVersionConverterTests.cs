@@ -5,11 +5,12 @@ using System;
 using System.IO;
 using Newtonsoft.Json;
 using NuGet.Protocol.Plugins;
-using NuGet.Versioning;
 using Xunit;
 
 namespace NuGet.Protocol.Tests
 {
+    using SemanticVersion = Versioning.SemanticVersion;
+
     public class SemanticVersionConverterTests
     {
         private static readonly SemanticVersionConverter _converter = new SemanticVersionConverter();

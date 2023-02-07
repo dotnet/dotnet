@@ -92,7 +92,12 @@ let ActivePatternElemsOfValRef g (vref: ValRef) =
                 false
             else
                 let _, apReturnTy = stripFunTy g vref.TauType
-                isStructTy g apReturnTy
+                let hasStructAttribute() = 
+                    vref.Attribs
+                    |> List.exists (function 
+                        | Attrib(targetsOpt = Some(System.AttributeTargets.ReturnValue)) as a -> IsMatchingFSharpAttribute g g.attrib_StructAttribute a  
+                        | _ -> false)
+                isStructTy g apReturnTy || hasStructAttribute()
         apinfo.ActiveTags |> List.mapi (fun i _ -> APElemRef(apinfo, vref, i, isStructRetTy))
     | None -> []
 
@@ -3868,7 +3873,8 @@ let ResolveExprDotLongIdentAndComputeRange (sink: TcResultsSink) (ncenv: NameRes
                 match findFlag, item with
                 | FindMemberFlag.PreferOverrides, _
                 | _, NonOverridable() -> item, itemRange, false
-                | FindMemberFlag.IgnoreOverrides, _ ->
+                | FindMemberFlag.IgnoreOverrides, _
+                | FindMemberFlag.DiscardOnFirstNonOverride, _ ->
                     let _, item, _, itemRange = resolveExpr FindMemberFlag.PreferOverrides
                     item, itemRange, true
 
@@ -3916,7 +3922,6 @@ let FakeInstantiationGenerator (_m: range) gps = List.map mkTyparTy gps
 
 // note: using local refs is ok since it is only used by VS
 let ItemForModuleOrNamespaceRef v = Item.ModuleOrNamespaces [v]
-let ItemForPropInfo (pinfo: PropInfo) = Item.Property (pinfo.PropertyName, [pinfo])
 
 let IsTyconUnseenObsoleteSpec ad g amap m (x: TyconRef) allowObsolete =
     not (IsEntityAccessible amap m ad x) ||

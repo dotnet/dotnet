@@ -62,6 +62,7 @@ internal static class ComponentsApi
         public const string Namespace = "Microsoft.AspNetCore.Components";
         public const string FullTypeName = Namespace + ".RenderFragment<>";
         public const string MetadataName = Namespace + ".RenderFragment`1";
+        public const string DisplayName = Namespace + ".RenderFragment<TValue>";
     }
 
     public static class RenderTreeBuilder
@@ -149,6 +150,7 @@ internal static class ComponentsApi
     public static class EventCallbackOfT
     {
         public const string MetadataName = "Microsoft.AspNetCore.Components.EventCallback`1";
+        public const string DisplayName = "Microsoft.AspNetCore.Components.EventCallback<TValue>";
     }
 
     public static class EventCallbackFactory

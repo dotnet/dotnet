@@ -1,0 +1,61 @@
+Source Location: (0:0,0 [12] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp7.cshtml)
+|<body>
+    |
+Generated Location: (0:0,0 [12] )
+|<body>
+    |
+
+Source Location: (500:13,5 [8] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp7.cshtml)
+|
+
+    |
+Generated Location: (500:13,5 [8] )
+|
+
+    |
+
+Source Location: (668:21,5 [48] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp7.cshtml)
+|
+    <p>
+        Here's a very unique number: |
+Generated Location: (668:21,5 [48] )
+|
+    <p>
+        Here's a very unique number: |
+
+Source Location: (781:23,102 [33] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp7.cshtml)
+|
+    </p>
+
+    <div>
+        |
+Generated Location: (781:23,102 [33] )
+|
+    </p>
+
+    <div>
+        |
+
+Source Location: (851:27,45 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp7.cshtml)
+| |
+Generated Location: (851:27,45 [1] )
+| |
+
+Source Location: (870:27,64 [20] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp7.cshtml)
+|
+    </div>
+
+    |
+Generated Location: (870:27,64 [20] )
+|
+    </div>
+
+    |
+
+Source Location: (1182:41,5 [9] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp7.cshtml)
+|
+</body>|
+Generated Location: (1182:41,5 [9] )
+|
+</body>|
+

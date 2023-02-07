@@ -1779,16 +1779,11 @@ TEST(DeletingMockEarlyTest, Success2) {
 
 // Suppresses warning on unreferenced formal parameter in MSVC with
 // -W4.
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4100)
-#endif
+GTEST_DISABLE_MSC_WARNINGS_PUSH_(4100)
 
 ACTION_P(Delete, ptr) { delete ptr; }
 
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
+GTEST_DISABLE_MSC_WARNINGS_POP_()  // 4100
 
 TEST(DeletingMockEarlyTest, CanDeleteSelfInActionReturningVoid) {
   MockA* const a = new MockA;
@@ -2602,14 +2597,7 @@ TEST(ParameterlessExpectationsTest,
 }  // namespace
 }  // namespace testing
 
-// Allows the user to define their own main and then invoke gmock_main
-// from it. This might be necessary on some platforms which require
-// specific setup and teardown.
-#if GMOCK_RENAME_MAIN
-int gmock_main(int argc, char** argv) {
-#else
 int main(int argc, char** argv) {
-#endif  // GMOCK_RENAME_MAIN
   testing::InitGoogleMock(&argc, argv);
   // Ensures that the tests pass no matter what value of
   // --gmock_catch_leaked_mocks and --gmock_verbose the user specifies.

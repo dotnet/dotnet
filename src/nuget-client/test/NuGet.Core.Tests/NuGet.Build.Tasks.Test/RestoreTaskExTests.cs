@@ -58,9 +58,10 @@ namespace NuGet.Build.Tasks.Test
                     MSBuildStartupDirectory = testDirectory,
                 })
                 {
-                    using MemoryStream stream = new MemoryStream();
+                    using var stream = new MemoryStream();
+                    using var streamWriter = new StreamWriter(stream, Encoding.UTF8);
 
-                    task.WriteArguments(stream);
+                    task.WriteArguments(streamWriter);
 
                     string actualArguments = task.GetCommandLineArguments(msbuildBinPath);
 
@@ -79,7 +80,7 @@ namespace NuGet.Build.Tasks.Test
 
                     stream.Position = 0;
 
-                    StaticGraphRestoreArguments arguments = StaticGraphRestoreArguments.Read(stream);
+                    StaticGraphRestoreArguments arguments = StaticGraphRestoreArguments.Read(stream, streamWriter.Encoding);
 
                     arguments.Options.Should().BeEquivalentTo(new Dictionary<string, string>()
                     {

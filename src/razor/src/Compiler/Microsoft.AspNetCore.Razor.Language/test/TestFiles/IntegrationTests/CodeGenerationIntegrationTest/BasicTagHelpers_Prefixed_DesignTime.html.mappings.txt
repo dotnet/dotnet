@@ -1,0 +1,43 @@
+Source Location: (16:0,16 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/BasicTagHelpers_Prefixed.cshtml)
+| |
+Generated Location: (16:0,16 [1] )
+| |
+
+Source Location: (22:0,22 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/BasicTagHelpers_Prefixed.cshtml)
+|
+|
+Generated Location: (22:0,22 [2] )
+|
+|
+
+Source Location: (37:1,13 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/BasicTagHelpers_Prefixed.cshtml)
+| |
+Generated Location: (37:1,13 [1] )
+| |
+
+Source Location: (55:1,31 [171] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/BasicTagHelpers_Prefixed.cshtml)
+|
+
+<THSdiv class="randomNonTagHelperAttribute">
+    <THSp class="Hello World">
+        <p></p>
+        <input type="text">
+        <THSinput type="checkbox" checked="|
+Generated Location: (55:1,31 [171] )
+|
+
+<THSdiv class="randomNonTagHelperAttribute">
+    <THSp class="Hello World">
+        <p></p>
+        <input type="text">
+        <THSinput type="checkbox" checked="|
+
+Source Location: (230:7,47 [26] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/BasicTagHelpers_Prefixed.cshtml)
+|">
+    </THSp>
+</THSdiv>|
+Generated Location: (230:7,47 [26] )
+|">
+    </THSp>
+</THSdiv>|
+

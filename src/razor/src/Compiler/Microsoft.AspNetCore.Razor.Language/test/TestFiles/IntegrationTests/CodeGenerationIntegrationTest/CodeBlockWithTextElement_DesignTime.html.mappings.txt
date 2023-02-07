@@ -1,0 +1,22 @@
+Source Location: (19:1,15 [16] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CodeBlockWithTextElement.cshtml)
+|<text>foo</text>|
+Generated Location: (19:1,15 [16] )
+|<text>foo</text>|
+
+Source Location: (57:2,17 [10] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CodeBlockWithTextElement.cshtml)
+|<text>bar |
+Generated Location: (57:2,17 [10] )
+|<text>bar |
+
+Source Location: (73:2,33 [7] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CodeBlockWithTextElement.cshtml)
+|</text>|
+Generated Location: (73:2,33 [7] )
+|</text>|
+
+Source Location: (83:3,1 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CodeBlockWithTextElement.cshtml)
+|
+|
+Generated Location: (83:3,1 [2] )
+|
+|
+

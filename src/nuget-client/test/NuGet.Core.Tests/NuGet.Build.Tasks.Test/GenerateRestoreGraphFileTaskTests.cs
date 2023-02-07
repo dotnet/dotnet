@@ -52,7 +52,9 @@ namespace NuGet.Build.Tasks.Test
                 {
                     using var stream = new MemoryStream();
 
-                    task.WriteArguments(stream);
+                    using var streamWriter = new StreamWriter(stream, Encoding.UTF8);
+
+                    task.WriteArguments(streamWriter);
 
                     string actualArguments = task.GetCommandLineArguments(msbuildBinPath);
 
@@ -71,7 +73,7 @@ namespace NuGet.Build.Tasks.Test
 
                     stream.Position = 0;
 
-                    var arguments = StaticGraphRestoreArguments.Read(stream);
+                    var arguments = StaticGraphRestoreArguments.Read(stream, streamWriter.Encoding);
 
                     arguments.Options.Should().BeEquivalentTo(new Dictionary<string, string>()
                     {

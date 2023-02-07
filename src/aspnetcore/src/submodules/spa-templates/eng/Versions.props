@@ -23,7 +23,7 @@
     <!-- Packages from dotnet/runtime -->
     <MicrosoftExtensionsHostingVersion>6.0.0</MicrosoftExtensionsHostingVersion>
     <!-- Packages from dotnet/sourcelink -->
-    <MicrosoftSourceLinkVersion>1.1.0-beta-20206-02</MicrosoftSourceLinkVersion>
+    <MicrosoftSourceLinkGitHubVersion>1.1.0-beta-20206-02</MicrosoftSourceLinkGitHubVersion>
     <!--
       Packages from dotnet/templating. https://github.com/dotnet/templating/blob/main/docs/Localization.md
       recommends updating the version when preview or stable versions are released to NuGet.org.

@@ -46,6 +46,7 @@
 
   <ItemGroup Condition=" '$(TargetFramework)' == '$(NETFXTargetFramework)' ">
     <ProjectReference Include="..\..\..\src\NuGet.Clients\NuGet.CommandLine\NuGet.CommandLine.csproj" />
+    <ProjectReference Include="..\..\..\src\NuGet.Clients\NuGet.VisualStudio.Common\NuGet.VisualStudio.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -67,13 +68,14 @@
     <None Remove="compiler\resources\TestPackage.AuthorSigned.1.0.0.nupkg" />
   </ItemGroup>
 
-  <ItemGroup>
+ <ItemGroup>
     <ProjectReference Include="..\..\..\src\NuGet.Core\NuGet.Commands\NuGet.Commands.csproj" />
     <ProjectReference Include="..\..\..\src\NuGet.Core\NuGet.Resolver\NuGet.Resolver.csproj" />
     <ProjectReference Include="..\..\..\src\NuGet.Core\NuGet.PackageManagement\NuGet.PackageManagement.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Moq" />
     <PackageReference Include="Portable.BouncyCastle" />
     <PackageReference Include="xunit" />
   </ItemGroup>
@@ -103,5 +105,6 @@
   <ItemGroup Condition=" '$(IsCore)' == 'true' ">
     <Compile Remove="ProjectManagement\TestProjectKProject.cs" />
     <Compile Remove="Threading\*.cs" />
+    <Compile Remove="VisualStudio\*.cs" />
   </ItemGroup>
 </Project>
