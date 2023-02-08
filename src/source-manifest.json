@@ -52,7 +52,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "7dd47f6d5a20fe30b965c502306a0f24b4586e56"
+      "commitSha": "2028c18d561a49155c49c09ea14c50c7e0214888"
     },
     {
       "packageVersion": "8.0.100-1.23067.1",
