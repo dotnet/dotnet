@@ -22,7 +22,7 @@ parameters:
 variables: 
 - ${{ if ne(parameters.vmrBranch, ' ') }}:
   - name: VmrBranch
-    value: ${{ parameters.vmrBranch }}
+    value: ${{ replace(parameters.vmrBranch, ' ', '') }}
 - ${{ else }}:
   - name: VmrBranch
     value: ${{ replace(replace(variables['Build.SourceBranch'], 'refs/heads/', ''), 'refs/pull/', '') }}

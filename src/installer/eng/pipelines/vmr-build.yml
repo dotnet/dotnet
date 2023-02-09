@@ -9,7 +9,7 @@ parameters:
 - name: vmrBranch
   displayName: dotnet/dotnet branch to push to
   type: string
-  default: ''
+  default: ' '
 
 - name: disableVmrBuild
   displayName: Skip source-building the VMR
@@ -17,9 +17,9 @@ parameters:
   default: false
 
 variables:
-- ${{ if ne(parameters.vmrBranch, '') }}:
+- ${{ if ne(parameters.vmrBranch, ' ') }}:
   - name: VmrBranch
-    value: ${{ parameters.vmrBranch }}
+    value: ${{ replace(parameters.vmrBranch, ' ', '') }}
 - ${{ else }}:
   - name: VmrBranch
     value: ${{ replace(replace(variables['System.PullRequest.TargetBranch'], 'refs/heads/', ''), 'refs/pull/', '') }}

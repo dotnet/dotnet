@@ -52,6 +52,12 @@
 ###       Defaults to the revision of the parent installer repo
 ###   --debug
 ###       Optional. Turns on the most verbose logging for the VMR tooling
+###   --readme-template
+###       Optional. Template for VMRs README.md used for regenerating the file to list the newest versions of components. 
+###       Defaults to src/VirtualMonoRepo/README.template.md
+###   --tpn-template
+###       Optional. Template for the header of VMRs THIRD-PARTY-NOTICES file.
+###       Defaults to src/VirtualMonoRepo/THIRD-PARTY-NOTICES.template.txt
 
 source="${BASH_SOURCE[0]}"
 
@@ -89,6 +95,8 @@ vmr_dir=''
 vmr_branch='main'
 target_ref=''
 verbosity=verbose
+tpn_template=''
+readme_template=''
 
 while [[ $# -gt 0 ]]; do
   opt="$(echo "$1" | tr "[:upper:]" "[:lower:]")"
@@ -112,6 +120,14 @@ while [[ $# -gt 0 ]]; do
       target_ref=$2
       shift
       ;;
+    --readme-template)
+      readme_template=$2
+      shift
+      ;;
+    --tpn-template)
+      tpn_template=$2
+      shift
+      ;;
     -h|--help)
       print_help
       exit 0
@@ -131,8 +147,26 @@ if [[ ! -d "$installer_dir" ]]; then
   exit 1
 fi
 
+if [[ -z "$readme_template" ]]; then
+  readme_template="$installer_dir/src/VirtualMonoRepo/README.template.md"
+fi
+
+if [[ -z "$tpn_template" ]]; then
+  tpn_template="$installer_dir/src/VirtualMonoRepo/THIRD-PARTY-NOTICES.template.txt"
+fi
+
 if [[ -z "$tmp_dir" ]]; then
   fail "Missing --tmp-dir argument. Please specify the path to the temporary folder where the repositories will be cloned"
+  exit 1
+fi
+
+if [[ ! -f "$readme_template" ]]; then
+  fail "File '$readme_template' does not exist. Please specify a valid path to the README template"
+  exit 1
+fi
+
+if [[ ! -f "$tpn_template" ]]; then
+  fail "File '$tpn_template' does not exist. Please specify a valid path to the THIRD-PARTY-NOTICES template"
   exit 1
 fi
 
@@ -180,7 +214,7 @@ fi
 highlight "Starting the synchronization to '$target_ref'.."
 set +e
 
-if "$dotnet" darc vmr update --vmr "$vmr_dir" --tmp "$tmp_dir" --$verbosity --recursive --additional-remotes "installer:$installer_dir" "installer:$target_ref"; then
+if "$dotnet" darc vmr update --vmr "$vmr_dir" --tmp "$tmp_dir" --$verbosity --recursive --readme-template "$readme_template" --tpn-template "$tpn_template" --additional-remotes "installer:$installer_dir" "installer:$target_ref"; then
   highlight "Synchronization succeeded"
 else
   fail "Synchronization of dotnet/dotnet to '$target_ref' failed!"
