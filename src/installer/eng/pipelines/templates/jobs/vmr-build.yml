@@ -148,7 +148,7 @@ jobs:
       inputs:
         SourceFolder: $(Pipeline.Workspace)/${{ parameters.reuseBuildArtifactsFrom }}_${{ parameters.architecture }}_Artifacts
         Contents: '*.tar.gz'
-        TargetFolder: ${{ variables.sourcesPath }}/packages/archive/
+        TargetFolder: ${{ variables.sourcesPath }}/prereqs/packages/archive/
 
   - script: |
       set -x
@@ -162,7 +162,7 @@ jobs:
         docker run --rm -v "$(sourcesPath):/vmr" -w /vmr ${{ parameters.container }} ./prep.sh ${customPrepArgs}
       else
         mkdir $(sourcesPath)/.dotnet
-        previousSdkPath="$(sourcesPath)/packages/archive/dotnet-sdk-*.tar.gz"
+        previousSdkPath="$(sourcesPath)/prereqs/packages/archive/dotnet-sdk-*.tar.gz"
         eval tar -ozxf "$previousSdkPath" -C "$(sourcesPath)/.dotnet"
         eval rm -f "$previousSdkPath"
       fi
