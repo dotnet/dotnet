@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.IO;
 using System.Management.Automation;
 using System.Reflection;
 using LocalResources = NuGet.PackageManagement.PowerShellCmdlets.Resources;
@@ -43,8 +44,14 @@ namespace NuGetConsole.Host.PowerShell.Implementation
         {
             get
             {
-                return _addWrapperMembersScript ??
-                       (_addWrapperMembersScript = ScriptBlock.Create(LocalResources.Add_WrapperMembers));
+                if (_addWrapperMembersScript == null)
+                {
+                    string extensionRoot = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                    string scriptPath = Path.Combine(extensionRoot, "Modules", "NuGet", "Add-WrapperMembers.ps1");
+                    string scriptContents = File.ReadAllText(scriptPath);
+                    _addWrapperMembersScript = ScriptBlock.Create(scriptContents);
+                }
+                return _addWrapperMembersScript;
             }
         }
 
