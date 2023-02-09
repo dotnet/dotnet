@@ -192,13 +192,13 @@
   </PropertyGroup>
   <!-- Workload manifest package versions -->
   <PropertyGroup>
-    <MauiFeatureBand>7.0.100</MauiFeatureBand>
-    <MauiWorkloadManifestVersion>7.0.49</MauiWorkloadManifestVersion>
-    <XamarinAndroidWorkloadManifestVersion>33.0.4</XamarinAndroidWorkloadManifestVersion>
-    <XamarinIOSWorkloadManifestVersion>16.0.1478</XamarinIOSWorkloadManifestVersion>
-    <XamarinMacCatalystWorkloadManifestVersion>15.4.2372</XamarinMacCatalystWorkloadManifestVersion>
-    <XamarinMacOSWorkloadManifestVersion>12.3.2372</XamarinMacOSWorkloadManifestVersion>
-    <XamarinTvOSWorkloadManifestVersion>16.0.1478</XamarinTvOSWorkloadManifestVersion>
+    <MauiFeatureBand>8.0.100-preview.1</MauiFeatureBand>
+    <MauiWorkloadManifestVersion>8.0.0-preview.1.7626</MauiWorkloadManifestVersion>
+    <XamarinAndroidWorkloadManifestVersion>34.0.0-preview.1.148</XamarinAndroidWorkloadManifestVersion>
+    <XamarinIOSWorkloadManifestVersion>16.2.227-net8-p1</XamarinIOSWorkloadManifestVersion>
+    <XamarinMacCatalystWorkloadManifestVersion>16.2.227-net8-p1</XamarinMacCatalystWorkloadManifestVersion>
+    <XamarinMacOSWorkloadManifestVersion>13.1.227-net8-p1</XamarinMacOSWorkloadManifestVersion>
+    <XamarinTvOSWorkloadManifestVersion>16.1.1015-net8-p1</XamarinTvOSWorkloadManifestVersion>
     <!-- Workloads from dotnet/emsdk -->
     <MicrosoftNETWorkloadEmscriptenCurrentManifest80100preview1PackageVersion>8.0.0-preview.1.23101.1</MicrosoftNETWorkloadEmscriptenCurrentManifest80100preview1PackageVersion>
     <MicrosoftNETWorkloadEmscriptennet7Manifest80100preview1PackageVersion>8.0.0-preview.1.23101.1</MicrosoftNETWorkloadEmscriptennet7Manifest80100preview1PackageVersion>
