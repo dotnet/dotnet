@@ -36,5 +36,6 @@ steps:
     --target-ref ${{ parameters.targetRef }}
     --readme-template $(Agent.BuildDirectory)/installer/src/VirtualMonoRepo/README.template.md
     --tpn-template $(Agent.BuildDirectory)/installer/src/VirtualMonoRepo/THIRD-PARTY-NOTICES.template.txt
+    --debug
   displayName: Synchronize dotnet/dotnet
   workingDirectory: $(Agent.BuildDirectory)/installer
