@@ -61,12 +61,6 @@
       "commitSha": "c84d89ca68e3c038defd371c092818446507b785"
     },
     {
-      "packageVersion": "8.0.100-1.23067.1",
-      "path": "linker",
-      "remoteUri": "https://github.com/dotnet/linker",
-      "commitSha": "c790896f128957acd2999208f44f09ae1e826c8c"
-    },
-    {
       "packageVersion": "17.6.0-preview-23106-07",
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
@@ -178,11 +172,6 @@
       "path": "aspnetcore/src/submodules/spa-templates",
       "remoteUri": "https://github.com/dotnet/spa-templates.git",
       "commitSha": "81de03e125f509b35261c946c95b7cc8cbd6084b"
-    },
-    {
-      "path": "linker/external/cecil",
-      "remoteUri": "https://github.com/dotnet/cecil.git",
-      "commitSha": "2941911af1e028ec4b508cbb8c326003089bc610"
     },
     {
       "path": "nuget-client/submodules/NuGet.Build.Localization",
