@@ -7,10 +7,10 @@
       "commitSha": "691fd54681d10eef3c2681fceb8b09b9f9ba9bb0"
     },
     {
-      "packageVersion": "8.0.0-preview.1.23111.4",
+      "packageVersion": "8.0.0-preview.1.23112.2",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "814114eaec63dd6f5c7b24a44bd65bf966aed54d"
+      "commitSha": "63d1187a01b82719c2891cecc74ee3d51ce892a8"
     },
     {
       "packageVersion": "0.1.356401",
@@ -43,16 +43,16 @@
       "commitSha": "2cb3e68c6b9a966114572fd63f2a20d2cb54a288"
     },
     {
-      "packageVersion": "7.0.300-beta.23110.2",
+      "packageVersion": "7.0.300-beta.23111.4",
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "3dd78b8325ffae266e5f19b37a6c4d863f9b8f30"
+      "commitSha": "bff3d620f8cd205c6475701e06f6abe549da7540"
     },
     {
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "0ee05ef0c51197e87d9e617a1cd6a5165864f740"
+      "commitSha": "4b571e3eef0179ac13f4113a60b9441d23df683a"
     },
     {
       "packageVersion": "8.0.100-1.23067.1",
@@ -97,10 +97,10 @@
       "commitSha": "7deac7d6da3ce4e96d51d5f61a27ee85b7c42f60"
     },
     {
-      "packageVersion": "8.0.100-preview.1.23111.11",
+      "packageVersion": "8.0.100-preview.1.23112.6",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "aafb3b9793b0ad4e6d3632b4f0cc8689fa444dbe"
+      "commitSha": "2b1ef92dbec1f7ece98038118f4ce856b9377d59"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23076.1",
