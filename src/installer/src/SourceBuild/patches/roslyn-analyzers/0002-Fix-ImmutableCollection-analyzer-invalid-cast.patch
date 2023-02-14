@@ -1,0 +1,26 @@
+From 6f4d85b6ffd64190045ab29ba2903628788b8dc5 Mon Sep 17 00:00:00 2001
+From: Matt Thalman <mthalman@microsoft.com>
+Date: Tue, 14 Feb 2023 10:59:29 -0600
+Subject: [PATCH] Fix ImmutableCollection analyzer invalid cast
+
+Backport: https://github.com/dotnet/roslyn-analyzers/pull/6476
+---
+ ...tCallToImmutableCollectionOnAnImmutableCollectionValue.cs | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/src/NetAnalyzers/Core/Microsoft.NetCore.Analyzers/ImmutableCollections/DoNotCallToImmutableCollectionOnAnImmutableCollectionValue.cs b/src/NetAnalyzers/Core/Microsoft.NetCore.Analyzers/ImmutableCollections/DoNotCallToImmutableCollectionOnAnImmutableCollectionValue.cs
+index 9e6cc03404..ee1151a1fa 100644
+--- a/src/NetAnalyzers/Core/Microsoft.NetCore.Analyzers/ImmutableCollections/DoNotCallToImmutableCollectionOnAnImmutableCollectionValue.cs
++++ b/src/NetAnalyzers/Core/Microsoft.NetCore.Analyzers/ImmutableCollections/DoNotCallToImmutableCollectionOnAnImmutableCollectionValue.cs
+@@ -91,9 +91,8 @@ public override void Initialize(AnalysisContext context)
+                         return;
+                     }
+ 
+-                    var receiverType = (INamedTypeSymbol?)invocation.GetReceiverType(operationContext.Compilation, beforeConversion: true, cancellationToken: operationContext.CancellationToken);
+-                    if (receiverType != null &&
+-                        receiverType.DerivesFromOrImplementsAnyConstructionOf(immutableCollectionType))
++                    if (invocation.GetReceiverType(operationContext.Compilation, beforeConversion: true, cancellationToken: operationContext.CancellationToken) is INamedTypeSymbol receiverType
++                        && receiverType.DerivesFromOrImplementsAnyConstructionOf(immutableCollectionType))
+                     {
+                         operationContext.ReportDiagnostic(
+                             invocation.CreateDiagnostic(
