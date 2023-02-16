@@ -165,7 +165,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
     - `src/aspnetcore/src/submodules/spa-templates`  
     *[dotnet/spa-templates@376a7f3](https://github.com/dotnet/spa-templates/commit/376a7f396d50d12f1d82818c8f03de1cb51198d5)*
 - `src/cecil`  
-*[dotnet/cecil@8f5aa25](https://github.com/dotnet/cecil/commit/8f5aa2558a5a9c6b8c821e10c26e47103a47ae7d)*
+*[dotnet/cecil@68e0c35](https://github.com/dotnet/cecil/commit/68e0c35d0b4b6651b9a062a52e7dd694d7a43927)*
 - `src/command-line-api`  
 *[dotnet/command-line-api@8374d5f](https://github.com/dotnet/command-line-api/commit/8374d5fca634a93458c84414b1604c12f765d1ab)*
 - `src/deployment-tools`  

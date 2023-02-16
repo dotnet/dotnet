@@ -1,5 +1,11 @@
 <Project>
   <ItemGroup>
+    <ItemsToSign Include="$(ArtifactsBinDir)\Mono.Cecil\$(Configuration)\netstandard2.0\Mono.Cecil.dll" />
+    <ItemsToSign Include="$(ArtifactsBinDir)\Mono.Cecil.Rocks\$(Configuration)\netstandard2.0\Mono.Cecil.Rocks.dll" />
+    <ItemsToSign Include="$(ArtifactsBinDir)\Mono.Cecil.Mdb\$(Configuration)\netstandard2.0\Mono.Cecil.Mdb.dll" />
+    <ItemsToSign Include="$(ArtifactsBinDir)\Mono.Cecil.Pdb\$(Configuration)\netstandard2.0\Mono.Cecil.Pdb.dll" />
+  </ItemGroup>
+  <ItemGroup>
     <!-- These libraries are 3rd-party based on the copyright info. -->
     <FileSignInfo Include="Mono.Cecil.dll" CertificateName="3PartySHA2" />
     <FileSignInfo Include="Mono.Cecil.Rocks.dll" CertificateName="3PartySHA2" />
