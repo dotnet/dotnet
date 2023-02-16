@@ -61,39 +61,6 @@ namespace NuGet.PackageManagement.PowerShellCmdlets {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to #
-        ///# This private script adds $InterfaceType members to $psObject which invokes on $wrappedObject
-        ///#
-        ///Param(
-        ///    $psObject,
-        ///    $wrappedObject,
-        ///    [Type]$InterfaceType
-        ///)
-        ///
-        ///function GetInvoker
-        ///{
-        ///    Param(
-        ///        $Target,
-        ///        $Method
-        ///    )
-        ///
-        ///    if ($Method.IsGenericMethodDefinition) {
-        ///        return {
-        ///            $t = $Target
-        ///            $m = $Method.MakeGenericMethod($args)
-        ///            
-        ///            if (!$m.GetParameters()) {
-        ///                return $m.Invoke($t, @())
-        ///            }
-        ///  [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string Add_WrapperMembers {
-            get {
-                return ResourceManager.GetString("Add_WrapperMembers", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to All.
         /// </summary>
         internal static string AggregateSourceName {

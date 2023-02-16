@@ -54,6 +54,9 @@ function Verify-Assemblies
                 if ($signature.SignerCertificate.Subject -eq "CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US") {
                     Write-Debug "Valid ($($signature.SignerCertificate.Thumbprint)): $Path"
                 }
+                elseif ($signature.SignerCertificate.Subject -eq "CN=.NET, O=Microsoft Corporation, L=Redmond, S=Washington, C=US") {
+                    Write-Debug "Valid ($($signature.SignerCertificate.Thumbprint)): $Path"
+                }
                 elseif ($signature.SignerCertificate.Subject -eq "CN=Microsoft 3rd Party Application Component, O=Microsoft Corporation, L=Redmond, S=Washington, C=US") {
                     Write-Debug "Valid ($($signature.SignerCertificate.Thumbprint)): $Path [3rd Party]"
                 }

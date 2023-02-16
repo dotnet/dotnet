@@ -254,6 +254,11 @@
     <file src="Microsoft.CodeCoverage\Mono.Cecil.Rocks.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Mono.Cecil.Rocks.dll" />
     <file src="Microsoft.CodeCoverage\Microsoft.CodeCoverage.Core.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Microsoft.CodeCoverage.Core.dll" />
     <file src="Microsoft.CodeCoverage\Microsoft.CodeCoverage.Telemetry.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Microsoft.CodeCoverage.Telemetry.dll" />
+    <file src="Microsoft.CodeCoverage\Microsoft.DiaSymReader.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Microsoft.DiaSymReader.dll" />
+    <file src="Microsoft.CodeCoverage\Microsoft.DiaSymReader.Native.x86.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Microsoft.DiaSymReader.Native.x86.dll" />
+    <file src="Microsoft.CodeCoverage\Microsoft.DiaSymReader.Native.amd64.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Microsoft.DiaSymReader.Native.amd64.dll" />
+    <file src="Microsoft.CodeCoverage\Microsoft.DiaSymReader.Native.arm64.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Microsoft.DiaSymReader.Native.arm64.dll" />
+    <file src="Microsoft.CodeCoverage\Microsoft.DiaSymReader.Native.arm.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Microsoft.DiaSymReader.Native.arm.dll" />
 
     <file src="net462\$Runtime$\Microsoft.CodeCoverage.IO.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.CodeCoverage.IO.dll" />
     <file src="net462\$Runtime$\cs\Microsoft.CodeCoverage.IO.resources.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\cs\Microsoft.CodeCoverage.IO.dll" />

@@ -226,6 +226,7 @@ internal class ArgumentProcessorFactory
         new ListSettingsProvidersArgumentProcessor(),
         new ListFullyQualifiedTestsArgumentProcessor(),
         new ListTestsTargetPathArgumentProcessor(),
+        new ShowDeprecateDotnetVStestMessageArgumentProcessor(),
         new EnvironmentArgumentProcessor()
     };
 

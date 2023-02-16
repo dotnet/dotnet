@@ -859,7 +859,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CommandLine.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The directory specified for the procdump executable is not valid and the tool was not found inside environment variables(PROCDUMP_PATH, PATH).
+        ///   Looks up a localized string similar to The directory specified for the procdump executable is not valid and the tool was not found inside environment variables (PROCDUMP_PATH, PATH).
         /// </summary>
         internal static string InvalidProcDumpToolDirectoryPath {
             get {
@@ -1895,6 +1895,15 @@ namespace Microsoft.VisualStudio.TestPlatform.CommandLine.Resources {
         internal static string UseVsixExtensionsValueRequired {
             get {
                 return ResourceManager.GetString("UseVsixExtensionsValueRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The dotnet vstest command is superseded by dotnet test, which can now be used to run assemblies. See https://aka.ms/dotnet-test..
+        /// </summary>
+        internal static string VSTestDeprecationMessage {
+            get {
+                return ResourceManager.GetString("VSTestDeprecationMessage", resourceCulture);
             }
         }
         

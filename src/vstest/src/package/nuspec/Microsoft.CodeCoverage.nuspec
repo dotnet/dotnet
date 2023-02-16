@@ -37,6 +37,7 @@
     <file src="Microsoft.CodeCoverage\Mono.Cecil.dll" target="build\netstandard2.0\" />
     <file src="Microsoft.CodeCoverage\Mono.Cecil.Pdb.dll" target="build\netstandard2.0\" />
     <file src="Microsoft.CodeCoverage\Mono.Cecil.Rocks.dll" target="build\netstandard2.0\" />
+    <file src="Microsoft.CodeCoverage\Microsoft.DiaSymReader.dll" target="build\netstandard2.0\" />
 
     <file src="Microsoft.CodeCoverage\CodeCoverage\CodeCoverage.config" target="build\netstandard2.0\CodeCoverage\" />
     <file src="Microsoft.CodeCoverage\CodeCoverage\CodeCoverage.exe" target="build\netstandard2.0\CodeCoverage\" />

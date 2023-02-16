@@ -1,20 +1,25 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System.Globalization;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Loader;
 using System.Text;
+using System.Text.Json;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Http.Json;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Testing;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyModel;
 using Microsoft.Extensions.DependencyModel.Resolution;
+using Microsoft.Extensions.Options;
 
 namespace Microsoft.AspNetCore.Http.Generators.Tests;
 
@@ -50,21 +55,27 @@ public class RequestDelegateGeneratorTestBase : LoggedTest
         return (Assert.Single(runResult.Results), updatedCompilation);
     }
 
-    internal static StaticRouteHandlerModel.Endpoint GetStaticEndpoint(GeneratorRunResult result, string stepName)
+    internal static StaticRouteHandlerModel.Endpoint GetStaticEndpoint(GeneratorRunResult result, string stepName) =>
+        Assert.Single(GetStaticEndpoints(result, stepName));
+
+    internal static StaticRouteHandlerModel.Endpoint[] GetStaticEndpoints(GeneratorRunResult result, string stepName)
     {
         // We only invoke the generator once in our test scenarios
         if (result.TrackedSteps.TryGetValue(stepName, out var staticEndpointSteps))
         {
-            var staticEndpointStep = staticEndpointSteps.Single();
-            var staticEndpointOutput = staticEndpointStep.Outputs.Single();
-            var (staticEndpoint, _) = staticEndpointOutput;
-            var endpoint = Assert.IsType<StaticRouteHandlerModel.Endpoint>(staticEndpoint);
-            return endpoint;
+            return staticEndpointSteps
+                .SelectMany(step => step.Outputs)
+                .Select(output => Assert.IsType<StaticRouteHandlerModel.Endpoint>(output.Value))
+                .ToArray();
         }
-        return null;
+
+        return Array.Empty<StaticRouteHandlerModel.Endpoint>();
     }
 
-    internal static Endpoint GetEndpointFromCompilation(Compilation compilation, bool checkSourceKey = true)
+    internal static Endpoint GetEndpointFromCompilation(Compilation compilation, bool expectSourceKey = true) =>
+        Assert.Single(GetEndpointsFromCompilation(compilation, expectSourceKey));
+
+    internal static Endpoint[] GetEndpointsFromCompilation(Compilation compilation, bool expectSourceKey = true)
     {
         var assemblyName = compilation.AssemblyName!;
         var symbolsName = Path.ChangeExtension(assemblyName, "pdb");
@@ -106,6 +117,7 @@ public class RequestDelegateGeneratorTestBase : LoggedTest
         var handler = assembly.GetType("TestMapActions")
             ?.GetMethod("MapTestEndpoints", BindingFlags.Public | BindingFlags.Static)
             ?.CreateDelegate<Func<IEndpointRouteBuilder, IEndpointRouteBuilder>>();
+        var sourceKeyType = assembly.GetType("Microsoft.AspNetCore.Builder.SourceKey");
 
         Assert.NotNull(handler);
 
@@ -113,17 +125,25 @@ public class RequestDelegateGeneratorTestBase : LoggedTest
         _ = handler(builder);
 
         var dataSource = Assert.Single(builder.DataSources);
-        // Trigger Endpoint build by calling getter.
-        var endpoint = Assert.Single(dataSource.Endpoints);
 
-        if (checkSourceKey)
+        // Trigger Endpoint build by calling getter.
+        var endpoints = dataSource.Endpoints.ToArray();
+
+        foreach (var endpoint in endpoints)
         {
-            var sourceKeyType = assembly.GetType("Microsoft.AspNetCore.Builder.SourceKey");
-            var sourceKeyMetadata = endpoint.Metadata.Single(metadata => metadata.GetType() == sourceKeyType);
-            Assert.NotNull(sourceKeyMetadata);
+            var sourceKeyMetadata = endpoint.Metadata.FirstOrDefault(metadata => metadata.GetType() == sourceKeyType);
+
+            if (expectSourceKey)
+            {
+                Assert.NotNull(sourceKeyMetadata);
+            }
+            else
+            {
+                Assert.Null(sourceKeyMetadata);
+            }
         }
 
-        return endpoint;
+        return endpoints;
     }
 
     internal HttpContext CreateHttpContext()
@@ -132,12 +152,37 @@ public class RequestDelegateGeneratorTestBase : LoggedTest
 
         var serviceCollection = new ServiceCollection();
         serviceCollection.AddSingleton(LoggerFactory);
+        var jsonOptions = new JsonOptions();
+        serviceCollection.AddSingleton(Options.Create(jsonOptions));
         httpContext.RequestServices = serviceCollection.BuildServiceProvider();
 
         var outStream = new MemoryStream();
         httpContext.Response.Body = outStream;
 
         return httpContext;
+    }
+
+    internal HttpContext CreateHttpContextWithBody(Todo requestData)
+    {
+        var httpContext = CreateHttpContext();
+        httpContext.Features.Set<IHttpRequestBodyDetectionFeature>(new RequestBodyDetectionFeature(true));
+        httpContext.Request.Headers["Content-Type"] = "application/json";
+
+        var requestBodyBytes = JsonSerializer.SerializeToUtf8Bytes(requestData);
+        var stream = new MemoryStream(requestBodyBytes);
+        httpContext.Request.Body = stream;
+        httpContext.Request.Headers["Content-Length"] = stream.Length.ToString(CultureInfo.InvariantCulture);
+        return httpContext;
+    }
+
+    internal static async Task VerifyResponseBodyAsync(HttpContext httpContext, string expectedBody, int expectedStatusCode = 200)
+    {
+        var httpResponse = httpContext.Response;
+        httpResponse.Body.Seek(0, SeekOrigin.Begin);
+        var streamReader = new StreamReader(httpResponse.Body);
+        var body = await streamReader.ReadToEndAsync();
+        Assert.Equal(expectedStatusCode, httpContext.Response.StatusCode);
+        Assert.Equal(expectedBody, body);
     }
 
     private static string GetMapActionString(string sources) => $$"""
@@ -148,6 +193,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Metadata;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 
@@ -171,6 +217,11 @@ public static class TestMapActions
         public int Id { get; set; }
         public string? Name { get; set; } = "Todo";
         public bool IsComplete { get; set; }
+    }
+
+    public class FromBodyAttribute : Attribute, IFromBodyMetadata
+    {
+        public bool AllowEmpty { get; set; }
     }
 }
 """;
@@ -212,14 +263,15 @@ public static class TestMapActions
     internal async Task VerifyAgainstBaselineUsingFile(Compilation compilation, [CallerMemberName] string callerName = "")
     {
         var baselineFilePath = Path.Combine("RequestDelegateGenerator", "Baselines", $"{callerName}.generated.txt");
-        var generatedCode = compilation.SyntaxTrees.Last();
+        var generatedSyntaxTree = compilation.SyntaxTrees.Last();
+        var generatedCode = await generatedSyntaxTree.GetTextAsync();
         var baseline = await File.ReadAllTextAsync(baselineFilePath);
         var expectedLines = baseline
             .TrimEnd() // Trim newlines added by autoformat
             .Replace("%GENERATEDCODEATTRIBUTE%", RequestDelegateGeneratorSources.GeneratedCodeAttribute)
             .Split(Environment.NewLine);
 
-        Assert.True(CompareLines(expectedLines, generatedCode.GetText(), out var errorMessage), errorMessage);
+        Assert.True(CompareLines(expectedLines, generatedCode, out var errorMessage), errorMessage);
     }
 
     private bool CompareLines(string[] expectedLines, SourceText sourceText, out string message)
@@ -278,7 +330,7 @@ Actual Line:
         }
     }
 
-    private class EmptyServiceProvider : IServiceScope, IServiceProvider, IServiceScopeFactory
+    private class EmptyServiceProvider : IServiceScope, IServiceProvider, IServiceScopeFactory, IServiceProviderIsService
     {
         public IServiceProvider ServiceProvider => this;
 
@@ -291,8 +343,18 @@ Actual Line:
 
         public object GetService(Type serviceType)
         {
+            if (IsService(serviceType))
+            {
+                return this;
+            }
+
             return null;
         }
+
+        public bool IsService(Type serviceType) =>
+            serviceType == typeof(IServiceProvider) ||
+            serviceType == typeof(IServiceScopeFactory) ||
+            serviceType == typeof(IServiceProviderIsService);
     }
 
     private class DefaultEndpointRouteBuilder : IEndpointRouteBuilder
@@ -310,5 +372,22 @@ Actual Line:
         public ICollection<EndpointDataSource> DataSources { get; }
 
         public IServiceProvider ServiceProvider => ApplicationBuilder.ApplicationServices;
+    }
+
+    public class Todo
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = "Todo";
+        public bool IsComplete { get; set; }
+    }
+
+    internal sealed class RequestBodyDetectionFeature : IHttpRequestBodyDetectionFeature
+    {
+        public RequestBodyDetectionFeature(bool canHaveBody)
+        {
+            CanHaveBody = canHaveBody;
+        }
+
+        public bool CanHaveBody { get; }
     }
 }

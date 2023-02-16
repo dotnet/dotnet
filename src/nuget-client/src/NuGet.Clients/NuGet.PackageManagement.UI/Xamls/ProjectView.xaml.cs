@@ -276,7 +276,7 @@ namespace NuGet.PackageManagement.UI
 
         private void Versions_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            PackageDetailControlModel.PreviousSelectedVersion = e.AddedItems.Count > 0 && !e.AddedItems[0].Equals(null) ? e.AddedItems[0].ToString() : string.Empty;
+            PackageDetailControlModel.PreviousSelectedVersion = e.AddedItems.Count > 0 && e.AddedItems[0] != null ? e.AddedItems[0].ToString() : string.Empty;
 
             return;
         }
