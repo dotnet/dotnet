@@ -1234,6 +1234,11 @@ Altere o prefixo de nível de diagnóstico do agente de console, como mostrado a
         <target state="translated">O argumento do AeDebugger '{0}' não é válido.</target>
         <note></note>
       </trans-unit>
+      <trans-unit id="VSTestDeprecationMessage">
+        <source>The dotnet vstest command is superseded by dotnet test, which can now be used to run assemblies. See https://aka.ms/dotnet-test.</source>
+        <target state="new">The dotnet vstest command is superseded by dotnet test, which can now be used to run assemblies. See https://aka.ms/dotnet-test.</target>
+        <note></note>
+      </trans-unit>
     </body>
   </file>
 </xliff>

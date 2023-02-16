@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Text;
 
 using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Extensions;
@@ -14,6 +15,8 @@ namespace Microsoft.TestPlatform.TestHostProvider.Hosting;
 
 internal class TestHostManagerCallbacks
 {
+    private const int E_HANDLE = unchecked((int)0x80070006);
+
     public static void ErrorReceivedCallback(StringBuilder testHostProcessStdError, string? data)
     {
         // Log all standard error message because on too much data we ignore starting part.
@@ -32,7 +35,16 @@ internal class TestHostManagerCallbacks
         EqtTrace.Verbose("TestHostProvider.ExitCallBack: Host exited starting callback.");
         var testHostProcessStdErrorStr = testHostProcessStdError.ToString();
 
-        processHelper.TryGetExitCode(process, out int exitCode);
+        int exitCode;
+        try
+        {
+            processHelper.TryGetExitCode(process, out exitCode);
+        }
+        catch (COMException ex) when (ex.HResult == E_HANDLE)
+        {
+            exitCode = -1;
+            EqtTrace.Error("TestHostProvider.ExitCallBack: Invalid process handle we cannot get the error code, error {0}.", ex);
+        }
 
         int procId = -1;
         try

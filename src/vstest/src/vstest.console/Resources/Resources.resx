@@ -843,4 +843,7 @@
   <data name="ErrorHostingCommunicationChannel" xml:space="preserve">
     <value>Error hosting communication channel.</value>
   </data>
+  <data name="VSTestDeprecationMessage" xml:space="preserve">
+    <value>The dotnet vstest command is superseded by dotnet test, which can now be used to run assemblies. See https://aka.ms/dotnet-test.</value>
+  </data>
 </root>

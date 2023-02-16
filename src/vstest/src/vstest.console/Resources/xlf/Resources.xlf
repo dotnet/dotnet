@@ -1028,6 +1028,11 @@ Format : TestRunParameters.Parameter(name="&lt;name&gt;", value="&lt;value&gt;")
         <target state="new">Blame argument '{0}' is not valid.</target>
         <note></note>
       </trans-unit>
+      <trans-unit id="VSTestDeprecationMessage">
+        <source>The dotnet vstest command is superseded by dotnet test, which can now be used to run assemblies. See https://aka.ms/dotnet-test.</source>
+        <target state="new">The dotnet vstest command is superseded by dotnet test, which can now be used to run assemblies. See https://aka.ms/dotnet-test.</target>
+        <note></note>
+      </trans-unit>
     </body>
   </file>
 </xliff>
