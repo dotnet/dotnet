@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project DefaultTargets="Build">
+  <!--
+    Import this file to suppress all _IsProjectRestoreSupported when the BeforeCommonTargets hook isn't in 
+    use while allowing the project to participate in the build.
+    Workaround for https://github.com/dotnet/sdk/issues/2071.
+    
+    The targets defined here are not sufficient for the project to be open in Visual Studio without issues though.    
+  -->
+
+  <Target Name="_IsProjectRestoreSupported"/>
+
+</Project>

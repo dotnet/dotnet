@@ -13,7 +13,10 @@
     <ImportNuGetBuildTasksPackTargetsFromSdk>false</ImportNuGetBuildTasksPackTargetsFromSdk>
   </PropertyGroup>
 
-  <Target Name="_IsProjectRestoreSupported"/>
+  <!-- We don't want to create this target if the before common targets hook is in use.
+       If we are using the hook, then we avoid creation of the target altogether, which is more
+       compatible with static graph restores -->
+  <Import Project="..\tools\EmptyIsProjectRestoreSupportedTarget.targets" Condition="!$(_BeforeCommonTargetsHookUsed)"/>
   <Target Name="Restore"/>
   <Target Name="Build"/>
   <Target Name="Test"/>

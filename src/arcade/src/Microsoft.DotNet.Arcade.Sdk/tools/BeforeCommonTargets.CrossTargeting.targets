@@ -3,6 +3,15 @@
 <Project>
   <Import Project="$(_ArcadeOverriddenCustomBeforeMicrosoftCommonCrossTargetingTargets)" Condition="Exists('$(_ArcadeOverriddenCustomBeforeMicrosoftCommonCrossTargetingTargets)')"/>
 
+  <PropertyGroup>
+    <_ArcadeBeforeCommonTargetsImported>true</_ArcadeBeforeCommonTargetsImported>
+  </PropertyGroup>
+
   <Import Project="Version.BeforeCommonTargets.targets"/>
   <Import Project="TargetFrameworkFilters.BeforeCommonTargets.targets"/>
+
+  <!-- Import the logic to determine whether a project should not build.
+       This is done at this point because we need to exclude the import of some standard Microsoft restore targets (NuGet)
+       that are loaded before the import of Arcade's Sdk.targets. See info in ExcludeFromBuild -->
+  <Import Project="ExcludeFromBuild.BeforeCommonTargets.targets"/>
 </Project>
