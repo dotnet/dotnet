@@ -251,6 +251,103 @@ namespace NuGet.Tests.Apex
             }
         }
 
+        [NuGetWpfTheory]
+        [MemberData(nameof(GetNetCoreTemplates))]
+        public async Task InstallPackageToNetCoreProjectFromUI(ProjectTemplate projectTemplate)
+        {
+            EnsureVisualStudioHost();
+
+            using (var simpleTestPathContext = new SimpleTestPathContext())
+            {
+                // Arrange
+                var packageName = "NetCoreInstallTestPackage";
+                var packageVersion = "1.0.0";
+                await CommonUtility.CreatePackageInSourceAsync(simpleTestPathContext.PackageSource, packageName, packageVersion);
+
+                using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, XunitLogger, addNetStandardFeeds: true, simpleTestPathContext: simpleTestPathContext))
+                {
+                    VisualStudio.AssertNoErrors();
+
+                    // Act
+                    CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
+                    var nugetTestService = GetNuGetTestService();
+                    var uiwindow = nugetTestService.GetUIWindowfromProject(testContext.Project);
+                    uiwindow.InstallPackageFromUI(packageName, packageVersion);
+
+                    // Assert
+                    VisualStudio.AssertNuGetOutputDoesNotHaveErrors();
+                    CommonUtility.AssertPackageReferenceExists(VisualStudio, testContext.Project, packageName, packageVersion, XunitLogger);
+                }
+            }
+        }
+
+        [NuGetWpfTheory]
+        [MemberData(nameof(GetNetCoreTemplates))]
+        public async Task UpdatePackageToNetCoreProjectFromUI(ProjectTemplate projectTemplate)
+        {
+            EnsureVisualStudioHost();
+
+            using (var simpleTestPathContext = new SimpleTestPathContext())
+            {
+                // Arrange
+                var packageName = "NetCoreUpdateTestPackage";
+                var packageVersion1 = "1.0.0";
+                var packageVersion2 = "2.0.0";
+
+                await CommonUtility.CreatePackageInSourceAsync(simpleTestPathContext.PackageSource, packageName, packageVersion1);
+                await CommonUtility.CreatePackageInSourceAsync(simpleTestPathContext.PackageSource, packageName, packageVersion2);
+
+                using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, XunitLogger, addNetStandardFeeds: true, simpleTestPathContext: simpleTestPathContext))
+                {
+                    VisualStudio.AssertNoErrors();
+
+                    // Act
+                    CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
+                    var nugetTestService = GetNuGetTestService();
+                    var uiwindow = nugetTestService.GetUIWindowfromProject(testContext.Project);
+                    uiwindow.InstallPackageFromUI(packageName, packageVersion1);
+                    uiwindow.SwitchTabToUpdate();
+                    uiwindow.UpdatePackageFromUI(packageName, packageVersion2);
+
+                    // Assert
+                    VisualStudio.AssertNuGetOutputDoesNotHaveErrors();
+                    CommonUtility.AssertPackageReferenceExists(VisualStudio, testContext.Project, packageName, packageVersion2, XunitLogger);
+                }
+            }
+        }
+
+        [NuGetWpfTheory]
+        [MemberData(nameof(GetNetCoreTemplates))]
+        public async Task UninstallPackageFromNetCoreProjectFromUI(ProjectTemplate projectTemplate)
+        {
+            EnsureVisualStudioHost();
+
+            using (var simpleTestPathContext = new SimpleTestPathContext())
+            {
+                // Arrange
+                var packageName = "NetCoreUninstallTestPackage";
+                var packageVersion = "1.0.0";
+
+                await CommonUtility.CreatePackageInSourceAsync(simpleTestPathContext.PackageSource, packageName, packageVersion);
+
+                using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, XunitLogger, addNetStandardFeeds: true, simpleTestPathContext: simpleTestPathContext))
+                {
+                    VisualStudio.AssertNoErrors();
+
+                    // Act
+                    CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
+                    var nugetTestService = GetNuGetTestService();
+                    var uiwindow = nugetTestService.GetUIWindowfromProject(testContext.Project);
+                    uiwindow.InstallPackageFromUI(packageName, packageVersion);
+                    uiwindow.SwitchTabToInstalled();
+                    uiwindow.UninstallPackageFromUI(packageName);
+
+                    // Assert
+                    VisualStudio.AssertNuGetOutputDoesNotHaveErrors();
+                    CommonUtility.AssertPackageReferenceDoesNotExist(VisualStudio, testContext.Project, packageName, XunitLogger);
+                }
+            }
+        }
         // There  is a bug with VS or Apex where NetCoreConsoleApp and NetCoreClassLib create netcore 2.1 projects that are not supported by the sdk
         // Commenting out any NetCoreConsoleApp or NetCoreClassLib template and swapping it for NetStandardClassLib as both are package ref.
 
