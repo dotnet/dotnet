@@ -15,8 +15,6 @@
     <TargetFramework Condition="'$(TargetFramework)' != ''">$(_FilteredTargetFrameworks)</TargetFramework>
     <!-- If nothing left to build, exclude it! -->
     <ExcludeFromBuild Condition="'$(_FilteredTargetFrameworks)' == ''">true</ExcludeFromBuild>
-    <!-- If excluding, then disable a restore warning, which will fire on newer SDKs-->
-    <DisableWarnForInvalidRestoreProjects Condition="'$(_FilteredTargetFrameworks)' == ''">true</DisableWarnForInvalidRestoreProjects>
   </PropertyGroup>
 
 </Project>

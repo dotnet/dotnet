@@ -2,18 +2,16 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project>
   <!--
-    If a project specifies ExcludeFromSourceBuild=true during a source build suppress all targets and emulate a no-op
-    (empty common targets like Restore, Build, Pack, etc.).
-    
-    It's also possible to set ExcludeFromBuild prior to importing the Sdk.targets
-    to skip building as desired in non-source build scenarios. This might be done to
-    avoid building tests in certain product build scenarios.
+    Some projects do not import Common targets, so BeforeCommonTargets.targets doesn't get imported. 
+    (https://github.com/dotnet/arcade/issues/2676).
   -->
   <PropertyGroup>
-    <_SuppressAllTargets>false</_SuppressAllTargets>
-    <_SuppressAllTargets Condition="'$(DotNetBuildFromSource)' == 'true' and '$(ExcludeFromSourceBuild)' == 'true'">true</_SuppressAllTargets>
-    <_SuppressAllTargets Condition="'$(ExcludeFromBuild)' == 'true'">true</_SuppressAllTargets>
+    <_BeforeCommonTargetsHookUsed>true</_BeforeCommonTargetsHookUsed>
+    <_BeforeCommonTargetsHookUsed Condition="'$(_ArcadeBeforeCommonTargetsImported)' != 'true'">false</_BeforeCommonTargetsHookUsed>
   </PropertyGroup>
+
+  <Import Project="..\tools\BeforeCommonTargets.targets" Condition="!$(_SuppressSdkImports) and '$(_ArcadeBeforeCommonTargetsImported)' != 'true' and '$(IsCrossTargetingBuild)' != 'true'"/>
+  <Import Project="..\tools\BeforeCommonTargets.CrossTargeting.targets" Condition="!$(_SuppressSdkImports) and '$(_ArcadeBeforeCommonTargetsImported)' != 'true' and '$(IsCrossTargetingBuild)' == 'true'"/>
 
   <!-- 
     Output the location of the Build.proj so that the build driver can find where it was restored.

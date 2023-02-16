@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+
+  <!--  This file sets properties that enable skipping of a project build if desired.
+        Cases where we might skip include:
+        - Source-build mode and "ExcludeFromSourceBuild" is set.
+        - Non source-build mode and "ExcludeFromBuild" is set
+        - Target filtering is used and the target filters set "ExcludeFromBuild".
+
+        To exclude a project from building, Arcade must do two things:
+        - Create/override the standard targets (Build, Restore, Sign, etc.) with empty ones.
+        - Keep the .NET SDK from importing the standard NuGet restore targets - NuGet uses the
+          '_IsProjectRestoreSupported target' to determine whether a project can be restored. If the project shouldn't be built,
+          it shouldn't be restored either. This could be done two ways:
+            - Override the _IsProjectRestoreSupported target to an empty target, or one that returns false.
+            - Avoid import of the _IsProjectRestoreSupported target altogether.
+          The first approach is more consistent with the rest of Arcade's approach to skipping a build.
+          However is does **not** work with msbuild static graph. Static graph uses the *existence* of the
+          target to determine whether a project should be restored, so overriding with an empty target will
+          only avoid building a project, but it will still get restored. This could cause issues with target
+          framework filtering, or introduce unexpected prebuilts.
+
+          So to achieve the desired affect, Arcade must reset NuGetRestoreTargets to an empty file. Because
+          this import is done early, the BeforeCommonTargets hook must be used. There is a case
+          where the BeforeCommonTargets hook is not used (see https://github.com/dotnet/arcade/issues/2676).
+          In that case, Sdk.targets imports it explicitly. -->
+
+  <!--
+    If a project specifies ExcludeFromSourceBuild=true during a source build suppress all targets and emulate a no-op
+    (empty common targets like Restore, Build, Pack, etc.).
+
+    It's also possible to set ExcludeFromBuild prior to importing the Sdk.targets
+    to skip building as desired in non-source build scenarios. This might be done to
+    avoid building tests in certain product build scenarios.
+  -->
+  <PropertyGroup>
+    <_SuppressAllTargets>false</_SuppressAllTargets>
+    <_SuppressAllTargets Condition="'$(DotNetBuildFromSource)' == 'true' and '$(ExcludeFromSourceBuild)' == 'true'">true</_SuppressAllTargets>
+    <_SuppressAllTargets Condition="'$(ExcludeFromBuild)' == 'true'">true</_SuppressAllTargets>
+
+    <!-- If excluding, then disable a restore warning, which will fire on newer SDKs, as well as set the NuGetRestoreTargets property to empty,
+         which will avoid importing the restore targets inside the .NET SDK. If the restore targets exist, then static graph restore will attempt tpo
+         execute. -->
+    <DisableWarnForInvalidRestoreProjects Condition="'$(_SuppressAllTargets)' == 'true'">true</DisableWarnForInvalidRestoreProjects>
+    <NuGetRestoreTargets Condition="'$(_SuppressAllTargets)' == 'true'">$(MSBuildThisFileDirectory)NoRestore.targets</NuGetRestoreTargets>
+  </PropertyGroup>
+</Project>
