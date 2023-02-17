@@ -1,63 +1,58 @@
 #!/bin/bash
 
-### This script is used for synchronizing the dotnet/dotnet repository locally
-### It is used during CI to ingest new code based on dotnet/installer
-### I can also help for reproducing potential failures during installer's PRs,
-### namely during errors during the 'Synchronize dotnet/dotnet' build step from
-### the 'VMR Source-Build'.
-### The following scenario is assumed:
-### - There is a PR in dotnet/installer
-### - The PR is failing on the 'VMR Source-Build' job in the 'Synchronize dotnet/dotnet' step
+### This script is used for synchronizing the dotnet/dotnet VMR locally. This means pulling new
+### code from various repositories into the 'dotnet/dotnet' repository.
 ###
-### There are a few possible reasons but usually this happens because there is a mismatch between
-### source patches that are applied on top of the files that are being synchronized from repositories
-### into the 'dotnet/dotnet' repo and new changes in the repositories.
-### This manifests as the following error:
-###     fail: Failed to synchronize repo installer
-###           Failed to apply the patch for src/aspnetcore
-###           Exit code: 1
-###           Std err:
-###           error: patch failed: src/aspnetcore/eng/SourceBuild.props:55
-###           error: src/aspnetcore/eng/SourceBuild.props: patch does not apply
+### The script is used during CI to ingest new code based on dotnet/installer but it can also help
+### for reproducing potential failures during installer's PRs, namely to fix the Source-Build.
+### Another usecase is to try manually synchronizing a given commit of some repo into the VMR and
+### trying to Source-Build the VMR. This can help when fixing the Source-Build but using a commit
+### from a not-yet merged branch (or fork) to test the fix will help.
 ###
-### where 'src/aspnetcore/eng/SourceBuild.props' would be the file that is being patched and new
-### changes to it are conflicting with the patch that is being applied.
-###
-### The whole process can be reproduced locally easily by running this script.
-### The patches are located in a folder in the 'dotnet/installer' repository.
-### At the moment of writing, the location is 'src/SourceBuild/patches' but to get
-### the up-to-date location, please see the 'patchesPath' property in
-### https://github.com/dotnet/dotnet/blob/main/src/source-mappings.json
-###
-### You will need to compare what is in the patch and what is in the file and fix the patch.
-###
-### The tooling that synchronizes the VMR will need to clone the various repositories.
-### It clones them into a temporary folder and re-uses them on future runs so it is advised
-### you dedicate a folder to this to speed up your re-runs.
-###
-### This script will synchronize the 'dotnet/dotnet' repo locally and let you inspect the changes.
+### The tooling that synchronizes the VMR will need to clone the various repositories into a temporary
+### folder. These clones can be re-used in future synchronizations so it is advised you dedicate a
+### folder to this to speed up your re-runs.
 ###
 ### USAGE:
+###   Synchronize the VMR to the commit of dotnet/installer that is currently being built:
 ###     ./vmr-sync.sh --tmp-dir "$HOME/repos/tmp"
+###
+###   Synchronize the VMR to a specific commit of dotnet/runtime using custom fork:
+###     ./vmr-sync.sh \
+###        --repository runtime:e7e71da303af8dc97df99b098f21f526398c3943 \
+###        --remote runtime:https://github.com/yourfork/runtime \
+###        --tmp-dir "$HOME/repos/tmp"\
+###
 ### Options:
 ###   -t, --tmp, --tmp-dir PATH
 ###       Required. Path to the temporary folder where repositories will be cloned
+###   --repository name:GIT_REF
+###       Optional. Repository + git ref separated by colon to synchronize to.
+###       This can be a specific commit, branch, tag..
+###       When omitted, the script will synchronize the installer commit based on the version of the parent
+###       where this script is stored.
 ###   -v, --vmr, --vmr-dir PATH
 ###       Optional. Path to the dotnet/dotnet repository. When null, gets cloned to the temporary folder
 ###   -b, --branch, --vmr-branch BRANCH_NAME
 ###       Optional. Branch of the 'dotnet/dotnet' repo to synchronize to
-###       This should match the target branch of the PR, defaults to 'main'
-###   --target-ref GIT_REF
-###       Optional. Git ref to synchronize to. This can be a specific commit, branch, tag..
-###       Defaults to the revision of the parent installer repo
-###   --debug
-###       Optional. Turns on the most verbose logging for the VMR tooling
+###       This should match the target branch of the PR; defaults to 'main'
+###   --remote name:URI
+###       Optional. Additional remote to use during the synchronization
+###       This can be used to synchronize to a commit from a fork of the repository
+###       Example: 'runtime:https://github.com/yourfork/runtime'
+###   --recursive
+###       Optional. Recursively synchronize all the source build dependencies (declared in Version.Details.xml)
+###       This is used when performing the full synchronization during installer's CI and the final VMR sync.
+###       Defaults to false unless no repository is supplied in which case a recursive sync of installer is performed.
 ###   --readme-template
-###       Optional. Template for VMRs README.md used for regenerating the file to list the newest versions of components. 
+###       Optional. Template for VMRs README.md used for regenerating the file to list the newest versions of
+###       components.
 ###       Defaults to src/VirtualMonoRepo/README.template.md
 ###   --tpn-template
 ###       Optional. Template for the header of VMRs THIRD-PARTY-NOTICES file.
 ###       Defaults to src/VirtualMonoRepo/THIRD-PARTY-NOTICES.template.txt
+###   --debug
+###       Optional. Turns on the most verbose logging for the VMR tooling
 
 source="${BASH_SOURCE[0]}"
 
@@ -93,10 +88,12 @@ installer_dir=$(realpath "$scriptroot/../")
 tmp_dir=''
 vmr_dir=''
 vmr_branch='main'
-target_ref=''
+repository=''
+recursive=false
 verbosity=verbose
-tpn_template=''
-readme_template=''
+additional_remotes="installer:$installer_dir"
+readme_template="$installer_dir/src/VirtualMonoRepo/README.template.md"
+tpn_template="$installer_dir/src/VirtualMonoRepo/THIRD-PARTY-NOTICES.template.txt"
 
 while [[ $# -gt 0 ]]; do
   opt="$(echo "$1" | tr "[:upper:]" "[:lower:]")"
@@ -113,11 +110,15 @@ while [[ $# -gt 0 ]]; do
       vmr_branch=$2
       shift
       ;;
-    -d|--debug)
-      verbosity=debug
+    --repository)
+      repository=$2
+      shift
       ;;
-    --target-ref)
-      target_ref=$2
+    --recursive)
+      recursive=true
+      ;;
+    --remote)
+      additional_remotes="$additional_remotes,$2"
       shift
       ;;
     --readme-template)
@@ -127,6 +128,9 @@ while [[ $# -gt 0 ]]; do
     --tpn-template)
       tpn_template=$2
       shift
+      ;;
+    -d|--debug)
+      verbosity=debug
       ;;
     -h|--help)
       print_help
@@ -142,17 +146,11 @@ while [[ $# -gt 0 ]]; do
   shift
 done
 
+# Validation
+
 if [[ ! -d "$installer_dir" ]]; then
   fail "Directory '$installer_dir' does not exist. Please specify the path to the dotnet/installer repo"
   exit 1
-fi
-
-if [[ -z "$readme_template" ]]; then
-  readme_template="$installer_dir/src/VirtualMonoRepo/README.template.md"
-fi
-
-if [[ -z "$tpn_template" ]]; then
-  tpn_template="$installer_dir/src/VirtualMonoRepo/THIRD-PARTY-NOTICES.template.txt"
 fi
 
 if [[ -z "$tmp_dir" ]]; then
@@ -170,6 +168,15 @@ if [[ ! -f "$tpn_template" ]]; then
   exit 1
 fi
 
+# Sanitize the input
+
+if [[ -z "$repository" ]]; then
+  current_sha=$(git -C "$installer_dir" rev-parse HEAD)
+  echo "No repository specified, will synchronize installer:$current_sha"
+  repository="installer:$current_sha"
+  recursive=true
+fi
+
 if [[ -z "$vmr_dir" ]]; then
   vmr_dir="$tmp_dir/dotnet"
 fi
@@ -181,6 +188,8 @@ fi
 if [[ "$verbosity" == "debug" ]]; then
   set -x
 fi
+
+# Prepare the VMR
 
 if [[ ! -d "$vmr_dir" ]]; then
   highlight "Cloning 'dotnet/dotnet' into $vmr_dir.."
@@ -200,24 +209,37 @@ fi
 set -e
 
 # Prepare darc
+
 highlight 'Installing .NET, preparing the tooling..'
 source "$scriptroot/common/tools.sh"
 InitializeDotNetCli true
 dotnet="$scriptroot/../.dotnet/dotnet"
 "$dotnet" tool restore
 
-# Run the sync
-if [[ -z "$target_ref" ]]; then
-  target_ref=$(git -C "$installer_dir" rev-parse HEAD)
-fi
-
-highlight "Starting the synchronization to '$target_ref'.."
+highlight "Starting the synchronization to '$repository'.."
 set +e
 
-if "$dotnet" darc vmr update --vmr "$vmr_dir" --tmp "$tmp_dir" --$verbosity --recursive --readme-template "$readme_template" --tpn-template "$tpn_template" --additional-remotes "installer:$installer_dir" "installer:$target_ref"; then
+recursive_arg=''
+if [[ "$recursive" == "true" ]]; then
+  recursive_arg="--recursive"
+fi
+
+# Synchronize the VMR
+
+"$dotnet" darc vmr update                    \
+  --vmr "$vmr_dir"                           \
+  --tmp "$tmp_dir"                           \
+  --$verbosity                               \
+  $recursive_arg                             \
+  --readme-template "$readme_template"       \
+  --tpn-template "$tpn_template"             \
+  --additional-remotes "$additional_remotes" \
+  "$repository"
+
+if [[ $? == 0 ]]; then
   highlight "Synchronization succeeded"
 else
-  fail "Synchronization of dotnet/dotnet to '$target_ref' failed!"
+  fail "Synchronization of dotnet/dotnet to '$repository' failed!"
   fail "'$vmr_dir' is left in its last state (re-run of this script will reset it)."
   fail "Please inspect the logs which contain path to the failing patch file (use --debug to get all the details)."
   fail "Once you make changes to the conflicting VMR patch, commit it locally and re-run this script."
