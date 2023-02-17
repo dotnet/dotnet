@@ -46,7 +46,7 @@
 #endif
 
 using System.Collections.Generic;
-#if NET5_0
+#if NET6_0_OR_GREATER
 using System.Text;
 #endif
 
@@ -62,7 +62,7 @@ namespace Wcwidth
 #endif
     static class UnicodeCalculator
     {
-        private const Unicode Latest = Unicode.Version_13_0_0;
+        private const Unicode Latest = Unicode.Version_15_0_0;
 
         // NOTE: created by hand, there isn't anything identifiable other than
         // general Cf category code to identify these, and some characters in Cf
@@ -126,7 +126,7 @@ namespace Wcwidth
             return wideTable.Exist((uint)value) ? 2 : 1;
         }
 
-#if NET5_0
+#if NET6_0_OR_GREATER
         /// <summary>
         /// Gets the width of a Unicode scalar.
         /// </summary>
