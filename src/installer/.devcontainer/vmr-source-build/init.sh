@@ -17,7 +17,11 @@ git -C "$installer_dir" fetch --all --unshallow
 
 # We will try to figure out, which branch is the current (PR) branch based off of
 # We need this to figure out, which VMR branch to use
-vmr_branch=$(git log --pretty=format:'%D' HEAD^ | grep 'origin/' | head -n1 | sed 's@origin/@@' | sed 's@,.*@@')
+vmr_branch=$(git -C "$installer_dir" log --pretty=format:'%D' HEAD^ \
+  | grep 'origin/' \
+  | head -n1 \
+  | sed 's@origin/@@' \
+  | sed 's@,.*@@')
 
 pushd "$installer_dir"
   "./eng/vmr-sync.sh"      \
