@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>##Tfm##</TargetFramework>
+    <##TfmPropertyName##>##Tfm##</##TfmPropertyName##>
     <RestorePackagesPath>$(TargetPackagesPath)</RestorePackagesPath>
   </PropertyGroup>
 

@@ -27,10 +27,10 @@ usage() {
     echo "  Either --pkg or --pkgCsv must be specified"
     echo ""
     echo "options:"
-    echo "  --pkg <packageName,version[,tfm]>  A package and version, no spaces, separated by comma.  If the optional"
-    echo "                                       tfm is specified, it will be used in the project that restores the"
-    echo "                                       package."
-    echo "                                       Example: System.Text.Json,4.7.0"
+    echo "  --pkg <packageName,version[,tfms]>  A package and version, no spaces, separated by comma.  If optional semicolon-separated"
+    echo "                                       TFMs are specified, they will be used in the project that restores the package."
+    echo "                                       Examples: System.Collections,4.3.0"
+    echo "                                                 System.Text.Json,4.7.0,nestandard2.0;net461"
     echo "  --pkgCsv <pathToCSV>               A path to a csv file of packages to generate. Format is the same as the --pkg"
     echo "                                       option above, one per line.  If specified, the --pkg option is ignored."
     echo "  --dest <pathToDestRepo>            A path to the root of the repo to copy source into."
@@ -140,6 +140,8 @@ INPUT="$pathToCSV"
 OLDIFS=$IFS
 IFS=,
 
+TfmPropertyName="TargetFramework"
+
 restoreProjectsDir="$scriptroot/artifacts/targetRestoreProjects"
 targetPackageTemplate="$scriptroot/src/referencePackageSourceGenerator/GenerateSource/targetPackage.csproj.template"
 if [ -d "$restoreProjectsDir" ]; then
@@ -151,11 +153,18 @@ while read -r pkgName pkgVersion tfm
 do
     sed "s/##PackageName##/${pkgName}/g" "$targetPackageTemplate" > "$restoreProjectsDir/$pkgName.$pkgVersion.csproj"
     sed -i "s/##PackageVersion##/${pkgVersion}/g" "$restoreProjectsDir/$pkgName.$pkgVersion.csproj"
+    
     if [ "$tfm" != "" ]; then
+        if [[ "$tfm" == *";"* ]]; then
+            TfmPropertyName="TargetFrameworks"
+        fi
+
         sed -i "s/##Tfm##/${tfm}/g" "$restoreProjectsDir/$pkgName.$pkgVersion.csproj"
     else
         sed -i "s/##Tfm##/${DEFAULT_TFM}/g" "$restoreProjectsDir/$pkgName.$pkgVersion.csproj"
     fi
+
+    sed -i "s/##TfmPropertyName##/${TfmPropertyName}/g" "$restoreProjectsDir/$pkgName.$pkgVersion.csproj"
 done < "$INPUT"
 IFS=$OLDIFS
 

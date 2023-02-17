@@ -39,7 +39,7 @@
     <Message Importance="High" Text="Copy DummyFiles Complete."/>
   </Target>
 
-  <Target Name="SetupReferencePath" BeforeTargets="GenerateReferenceAssemblySource;GenAPIGenerateReferenceAssemblySource" DependsOnTargets="GetGenApiDlls">
+  <Target Name="SetupReferencePath" BeforeTargets="FindReferenceAssembliesForReferences;GenerateReferenceAssemblySource;GenAPIGenerateReferenceAssemblySource" DependsOnTargets="GetGenApiDlls">
     <!-- ReferencePath is used by the GenerateReferenceAsemblySource target to locate references -->
     <ItemGroup>
         <ReferencePath Include="@(GenApiDlls)" />
