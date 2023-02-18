@@ -527,7 +527,7 @@ namespace System.Text
         /// </summary>
         public struct ChunkEnumerator
         {
-            private readonly StringBuilder _firstChunk; // The first Stringbuilder chunk (which is the end of the logical string)
+            private readonly StringBuilder _firstChunk; // The first StringBuilder chunk (which is the end of the logical string)
             private StringBuilder? _currentChunk;        // The chunk that this enumerator is currently returning (Current).
             private readonly ManyChunkInfo? _manyChunks; // Only used for long string builders with many chunks (see constructor)
 
@@ -587,7 +587,7 @@ namespace System.Text
                 _currentChunk = null;   // MoveNext will find the last chunk if we do this.
                 _manyChunks = null;
 
-                // There is a performance-vs-allocation tradeoff.   Because the chunks
+                // There is a performance-vs-allocation trade off.   Because the chunks
                 // are a linked list with each chunk pointing to its PREDECESSOR, walking
                 // the list FORWARD is not efficient.   If there are few chunks (< 8) we
                 // simply scan from the start each time, and tolerate the N*N behavior.
@@ -659,7 +659,7 @@ namespace System.Text
                 return this;
             }
 
-            // this is where we can check if the repeatCount will put us over m_MaxCapacity
+            // This is where we can check if the repeatCount will put us over m_MaxCapacity.
             // We are doing the check here to prevent the corruption of the StringBuilder.
             int newLength = Length + repeatCount;
             if (newLength > m_MaxCapacity || newLength < repeatCount)
@@ -2148,7 +2148,7 @@ namespace System.Text
                 throw new ArgumentOutOfRangeException(nameof(valueCount), SR.ArgumentOutOfRange_LengthGreaterThanCapacity);
             }
 
-            // Copy the first chunk
+            // Copy the first chunk.
             int firstLength = m_ChunkChars.Length - m_ChunkLength;
             if (firstLength > 0)
             {
@@ -2161,7 +2161,7 @@ namespace System.Text
             ExpandByABlock(restLength);
             Debug.Assert(m_ChunkLength == 0, "A new block was not created.");
 
-            // Copy the second chunk
+            // Copy the second chunk.
             new ReadOnlySpan<char>(ref Unsafe.Add(ref value, firstLength), restLength).CopyTo(m_ChunkChars);
             m_ChunkLength = restLength;
 
@@ -2199,7 +2199,7 @@ namespace System.Text
         {
             Debug.Assert(!replacements.IsEmpty);
 
-            // calculate the total amount of extra space or space needed for all the replacements.
+            // Calculate the total amount of extra space or space needed for all the replacements.
             long longDelta = (value.Length - removeCount) * (long)replacements.Length;
             int delta = (int)longDelta;
             if (delta != longDelta)
@@ -2207,7 +2207,7 @@ namespace System.Text
                 throw new OutOfMemoryException();
             }
 
-            StringBuilder targetChunk = sourceChunk;        // the target as we copy chars down
+            StringBuilder targetChunk = sourceChunk;      // The target as we copy chars down.
             int targetIndexInChunk = replacements[0];
 
             // Make the room needed for all the new characters if needed.
@@ -2233,9 +2233,9 @@ namespace System.Text
                 Debug.Assert(gapStart < sourceChunk.m_ChunkChars.Length, "gap starts at end of buffer.  Should not happen");
                 Debug.Assert(gapStart <= gapEnd, "negative gap size");
                 Debug.Assert(gapEnd <= sourceChunk.m_ChunkLength, "gap too big");
-                if (delta != 0)     // can skip the sliding of gaps if source an target string are the same size.
+                if (delta != 0)     // Can skip the sliding of gaps if source an target string are the same size.
                 {
-                    // Copy the gap data between the current replacement and the next replacement
+                    // Copy the gap data between the current replacement and the next replacement.
                     ReplaceInPlaceAtChunk(ref targetChunk!, ref targetIndexInChunk, ref sourceChunk.m_ChunkChars[gapStart], gapEnd - gapStart);
                 }
                 else
@@ -2630,7 +2630,7 @@ namespace System.Text
             // also ensure that `copyTargetIndexInChunk + copyCount` is within the chunk.
 
             // Remove any characters in the end chunk, by sliding the characters down.
-            if (copyTargetIndexInChunk != endIndexInChunk) // Sometimes no move is necessary
+            if (copyTargetIndexInChunk != endIndexInChunk) // Sometimes no move is necessary.
             {
                 new ReadOnlySpan<char>(endChunk.m_ChunkChars, endIndexInChunk, copyCount).CopyTo(endChunk.m_ChunkChars.AsSpan(copyTargetIndexInChunk));
             }
@@ -2735,7 +2735,7 @@ namespace System.Text
                     else if (value is ISpanFormattable)
                     {
                         Span<char> destination = _stringBuilder.RemainingCurrentChunk;
-                        if (((ISpanFormattable)value).TryFormat(destination, out int charsWritten, default, _provider)) // constrained call avoiding boxing for value types
+                        if (((ISpanFormattable)value).TryFormat(destination, out int charsWritten, default, _provider)) // Constrained call avoiding boxing for value types.
                         {
                             if ((uint)charsWritten > (uint)destination.Length)
                             {
@@ -2755,7 +2755,7 @@ namespace System.Text
                     }
                     else
                     {
-                        _stringBuilder.Append(((IFormattable)value).ToString(format: null, _provider)); // constrained call avoiding boxing for value types
+                        _stringBuilder.Append(((IFormattable)value).ToString(format: null, _provider)); // Constrained call avoiding boxing for value types.
                     }
                 }
                 else if (value is not null)
@@ -2799,7 +2799,7 @@ namespace System.Text
                     else if (value is ISpanFormattable)
                     {
                         Span<char> destination = _stringBuilder.RemainingCurrentChunk;
-                        if (((ISpanFormattable)value).TryFormat(destination, out int charsWritten, format, _provider)) // constrained call avoiding boxing for value types
+                        if (((ISpanFormattable)value).TryFormat(destination, out int charsWritten, format, _provider)) // Constrained call avoiding boxing for value types.
                         {
                             if ((uint)charsWritten > (uint)destination.Length)
                             {
@@ -2819,7 +2819,7 @@ namespace System.Text
                     }
                     else
                     {
-                        _stringBuilder.Append(((IFormattable)value).ToString(format, _provider)); // constrained call avoiding boxing for value types
+                        _stringBuilder.Append(((IFormattable)value).ToString(format, _provider)); // Constrained call avoiding boxing for value types.
                     }
                 }
                 else if (value is not null)
