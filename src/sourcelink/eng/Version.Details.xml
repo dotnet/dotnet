@@ -1,15 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
   <ProductDependencies>
+    <Dependency Name="System.CommandLine" Version="2.0.0-beta4.22272.1">
+      <Uri>https://github.com/dotnet/command-line-api</Uri>
+      <Sha>209b724a3c843253d3071e8348c353b297b0b8b5</Sha>
+    </Dependency>
+    <Dependency Name="System.CommandLine.NamingConventionBinder" Version="2.0.0-beta4.22272.1">
+      <Uri>https://github.com/dotnet/command-line-api</Uri>
+      <Sha>209b724a3c843253d3071e8348c353b297b0b8b5</Sha>
+    </Dependency>
+    <Dependency Name="System.CommandLine.Rendering" Version="0.4.0-alpha.22272.1">
+      <Uri>https://github.com/dotnet/command-line-api</Uri>
+      <Sha>209b724a3c843253d3071e8348c353b297b0b8b5</Sha>
+    </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
     <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.22630.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
       <Sha>e82404fca08383513e0b0b3c5308d4a9b18b7c7a</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.23103.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.23116.3">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>87936395e1226e09f3fd4fb9589f3f9b7831601a</Sha>
+      <Sha>7c3a0d077698a87ffc9b92e8e75ebc190015100f</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
   </ToolsetDependencies>
