@@ -387,7 +387,39 @@ The three "rules" entries are lists of rules that will be used to match test to 
 - if the default behavior is "fail" and a "rerun" rule matches, the test is rerun
 - default behavior is used
 
-A "rule" consists of a property, and then a rule object
+A "rule" consists on at least one condition. A condition should have a [property](#properties) and a [rule object](#rule-object), but it could have more than one condition.
+
+#### Rule with one condition
+In this case any test with a testName of "Pizza" is going to be retried
+
+```json
+{
+ "retryOnRules":[{"testName": "Pizza"}]
+}
+```
+
+#### Rule with multiple conditions
+In this case the  `testName` needs to be "Pizza" and the `failureMessage` needs to be "Message" in order to meet the rule to be retried.
+
+```json
+{
+  "retryOnRules": [{"testName":"Pizza",   "failureMessage":"Message"}]
+}
+```
+
+#### Multiple rules
+In this example we see two rules on `retryOnRules` section, only one rule needs to be met to retry the build. 
+
+In this case if a test fails and its `testName` is "Pizza" or its `testName` is "Taco", the test is going to be retried.
+
+```json
+{
+  "retryOnRules": [
+    {"testName":"Pizza"},
+    {"testName":"Taco"}
+  ]
+}
+```
 
 ### Properties
 <dl>

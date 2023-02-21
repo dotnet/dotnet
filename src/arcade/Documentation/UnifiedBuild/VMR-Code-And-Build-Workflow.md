@@ -208,57 +208,65 @@ Following section describes how code flows into the (internal) release branches 
 
 ```mermaid
 flowchart TD
+
     subgraph GitHub / public
         PublicRepos[(Public repos)]
         PublicInstaller[(github.com\ndotnet/installer)]
-        PublicVMR[(Public VMR\ngithub.com/dotnet/dotnet)]
+        PublicVMR[(Public VMR\ngithub.com\ndotnet/dotnet)]
         PublicRepos-- Maestro flow\nmain, release/* -->PublicInstaller
     end
 
-    PublicInstaller-.triggers build.->CodeMirror
-    PublicVMR-.triggers build.->CodeMirror2
+    subgraph Legend
+        LegendRepo[(Repository)]
+        LegendPipeline[AzDO pipeline]
+    end
+
+    PublicInstaller-.triggers.->CodeMirror
+    PublicVMR-.triggers.->CodeMirror2
 
     subgraph AzDO / internal
         InternalRepos[(Internal repos)]
-        InternalInstaller[(dev.azure.com\ndotnet/installer)]
-        InternalVMR[(Internal VMR\ndev.azure.com/dotnet-dotnet)]
+        InternalInstaller[(dev.azure.com\ndotnet-installer)]
+        InternalVMR[(Internal VMR\ndev.azure.com\ndotnet-dotnet)]
         CodeMirror[code-mirror]
         CodeMirror2[code-mirror]
-        InstallerBuild[dotnet-installer-official-ci]
+        VmrSync[dotnet-dotnet-synchronization]
+        VmrSyncInternal[dotnet-dotnet-synchronization-internal]
         Releases[Partner releases]
 
-        CodeMirror-- code-mirror\nmain, release/* -->InternalInstaller
+        CodeMirror-- mirrors\nmain, release/* -->InternalInstaller
         InternalRepos-- Maestro flow\ninternal/release/* -->InternalInstaller
-        InternalInstaller-.triggers build.->InstallerBuild
-        InstallerBuild-- VMR synchronization\ninternal/release/* -->InternalVMR
-        InstallerBuild-- VMR synchronization\nmain, release/*\nPotential leak -->PublicVMR
-        CodeMirror2-.triggers build.->InternalVMR
-        InternalVMR-->Releases
+        InternalInstaller-.triggers for\nmain, release/*.->VmrSync
+        InternalInstaller-.triggers for\ninternal/release/*.->VmrSyncInternal
+        VmrSyncInternal-- VMR synchronization\ninternal/release/* -->InternalVMR
+        VmrSync-- VMR synchronization\nmain, release/*\nSecurity verification, see below -->PublicVMR
+        CodeMirror2-- mirrors\nmain, release/* -->InternalVMR
+        InternalVMR-.->Releases
     end
 
-    class CodeMirror,CodeMirror2,InstallerBuild Build;
+    class CodeMirror,CodeMirror2,VmrSync,VmrSyncInternal,LegendPipeline Build;
     class PublicVMR PublicVMR_;
     class InternalVMR InternalVMR_;
+    class Legend LegendStyle;
 
     classDef Build fill:#2487DF,stroke:#2487DF,stroke-width:4px,color:#fff;
     classDef PublicVMR_ fill:#B5E61D,stroke:#000,color:#000;
     classDef InternalVMR_ fill:#E6631C,stroke:#fff,color:#fff;
-    linkStyle 7 stroke-width:2px,fill:none,stroke:red,color:red;
+    classDef LegendStyle fill:#fff,stroke:#ccc,color:#aaa;
+    linkStyle 8 stroke-width:2px,fill:none,stroke:blue,color:blue;
 ```
 
 On the diagram, you can see two main code flows. The first one for `main` and `release/*` branches (public flow):
 1. Changes are made to product repos as usual (e.g. `dotnet/runtime`).
 2. Runtime flows into `dotnet/installer` as part of the regular Maestro package flow.
 3. `dotnet/installer` is mirrored internally.
-4. The official build of `dotnet/installer` is triggered and performs the synchronization of VMR sources.
-5. Changes are pushed to the public VMR.
-6. The public VMR is mirrored internally.
+4. The VMR synchronization build is triggered and newly ingested sources are pushed to the public VMR.
+5. The public VMR is then mirrored internally.
 
 The second flow is for internal changes:
-1. Changes are made to an internal release branch of an internal mirror of some product repo.
-2. These changes are flown to an internal release branch of the internal mirror of `dotnet/installer`.
-3. The official build of `dotnet/installer` is triggered and performs the synchronization of VMR sources.
-4. Changes are pushed to the internal VMR.
+1. Changes are made to an `internal/release/X` branch of an internal mirror of some product repo.
+2. These changes are flown to an `internal/release/X` branch of the internal mirror of `dotnet/installer`.
+3. The *internal* VMR synchronization build triggered and changes are pushed to the internal VMR.
 
 ### Security considerations
 

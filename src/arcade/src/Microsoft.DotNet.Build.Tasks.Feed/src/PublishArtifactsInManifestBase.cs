@@ -211,7 +211,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
         protected PublishArtifactsInManifestBase(AssetPublisherFactory assetPublisherFactory = null)
         {
-            AssetPublisherFactory = assetPublisherFactory ?? new AssetPublisherFactory(new MsBuildUtils.TaskLoggingHelper(this));
+            AssetPublisherFactory = assetPublisherFactory ?? new AssetPublisherFactory(Log);
         }
 
         public override bool Execute()

@@ -10,9 +10,9 @@ It is important to note that this document takes on the problem from the point o
 
 Currently, the individual product repositories contain several dozen external dependencies which are ingested in different ways: 
 
-- **Git submodule (also just “submodule”)** – Git native process where we reference a specific commit of a remote repository and checkout it out as if it had been a full git repository. 
+- **Git submodule (also just “submodule”)** – Git native process where we reference a specific commit of a remote repository and checkout it out as if it had been a full git repository. The host repository builds the submodule as if it was part of its own infrastructure. Submodules may be a part of individual product repositories or in the source-build-externals repo, which gathers together a number of common dependencies and builds them using arcade's infrastructure.
   
-  Example: https://github.com/dotnet/aspnetcore/blob/main/.gitmodules  
+  Examples: https://github.com/dotnet/aspnetcore/blob/main/.gitmodules and https://github.com/dotnet/source-build-externals/tree/main/repos
 - **Custom fork** – we maintain our own fork which is then included the same way as if it was an individual product repository. 
   
   Example: https://github.com/dotnet/llvm-project 
@@ -91,7 +91,11 @@ To police external dependencies, we will utilize infrastructure that is already 
 
 #### Policy for external submodules
 
-For submodules referencing external repositories, we can leverage the source-build-externals repository and mandate a registration there. We can run appropriate automation as part of this repository’s CI. Further, it should be trivial to add a check to the VMR ingestion process and verify that each resolved external submodule has its counterpart in source-build-externals and police the requirement this way. 
+For submodules referencing external repositories, we can leverage the source-build-externals repository and mandate a registration there. We can run appropriate automation as part of this repository’s CI. Further, it should be trivial to add a check to the VMR ingestion process and verify that each resolved external submodule has its counterpart in source-build-externals and police the requirement this way.
+
+#### Policy for non-forked/non-vendored external dependencies
+
+External dependencies that are required for source-build but are not forked or submodules of a product repository should continue to be included as submodules in the source-build-externals repository. This ensures that these dependencies remain source-buildable using arcade's infrastructure and new versions of source-build intermediate packages can flow out to product repos for any required updates.
 
 #### Policy for submodules of forks 
 
