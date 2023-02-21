@@ -16,7 +16,12 @@
     <TestRunnerName Condition="'$(TestRunnerName)' == ''">XUnit</TestRunnerName>
     <TestRunnerName Condition="'$(UsingToolXUnit)' == 'false'"></TestRunnerName>
 
-    <TestRunnerTargets>$(MSBuildThisFileDirectory)$(TestRunnerName)\$(TestRunnerName).targets</TestRunnerTargets>
+    <!--
+      Look for the specified test runner in the building repository first.
+      If we can't find it see if the requested test runner provided by the Arcade SDK.
+    -->
+    <TestRunnerTargets>$(RepositoryEngineeringDir)$(TestRunnerName)\$(TestRunnerName).targets</TestRunnerTargets>
+    <TestRunnerTargets Condition="!Exists($(TestRunnerTargets))">$(MSBuildThisFileDirectory)$(TestRunnerName)\$(TestRunnerName).targets</TestRunnerTargets>
   </PropertyGroup>
 
   <Target Name="ErrorForMissingTestRunner"
@@ -80,7 +85,7 @@
   </Target>
 
   <!-- Import specialized targets files of supported test runners -->
-  <Import Project="$(MSBuildThisFileDirectory)$(TestRunnerName)\$(TestRunnerName).targets" Condition="'$(IsTestProject)' == 'true' and '$(TestRunnerName)' != '' and Exists('$(MSBuildThisFileDirectory)$(TestRunnerName)\$(TestRunnerName).targets')"/>
+  <Import Project="$(TestRunnerTargets)" Condition="'$(IsTestProject)' == 'true' and '$(TestRunnerName)' != '' and Exists('$(TestRunnerTargets)')"/>
   
   <!-- Allow for repo specific Test targets such as rerunning tests -->
   <Import Project="$(RepositoryEngineeringDir)Tests.targets" Condition="Exists('$(RepositoryEngineeringDir)Tests.targets')" />

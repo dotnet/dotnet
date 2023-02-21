@@ -30,9 +30,9 @@ To validate against the Arcade Validation for Promotion pipeline (that includes 
 5. Push your branch up to Azure DevOps Arcade Validation repository and run a build of your branch on the [dotnet-arcade-validation-for-promotion](https://dev.azure.com/dnceng/internal/_build?definitionId=838&_a=summary) to verify your changes. 
 6. It's not necessary to merge your Arcade Validation branch into the repo's main branch, so feel free to delete it when you're done validating your changes.
 
-### '.NET Tools - Validation' channel
+### '.NET Eng - Validation' channel
 
-Arcade's official builds go to the ".NET Tools - Validation" channel.
+Arcade's official builds go to the ".NET Eng - Validation" channel.
 
 ### [Arcade-Validation Repository](https://github.com/dotnet/arcade-validation)
 
