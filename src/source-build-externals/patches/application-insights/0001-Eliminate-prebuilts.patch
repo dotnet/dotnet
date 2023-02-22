@@ -23,7 +23,7 @@ index da6f6ec3..cec2ee58 100644
 -
 -  <ItemGroup>
 -    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
-+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="$(MicrosoftSourceLinkVersion)" PrivateAssets="All" />
++    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="$(MicrosoftSourceLinkGitHubVersion)" PrivateAssets="All" />
    </ItemGroup>
    
    <PropertyGroup>
