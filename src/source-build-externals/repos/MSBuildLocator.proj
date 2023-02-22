@@ -15,7 +15,7 @@
       <BuildCommandArgs>$(BuildCommandArgs) /p:Configuration=$(Configuration)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /v:$(LogVerbosity)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) $(RedirectRepoOutputToLog)</BuildCommandArgs>
-      <BuildCommandArgs>$(BuildCommandArgs) /p:MicrosoftSourceLinkVersion=$(MicrosoftSourceLinkVersion)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:MicrosoftSourceLinkGitHubVersion=$(MicrosoftSourceLinkGitHubVersion)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /p:Version=1.5.5</BuildCommandArgs>
     </PropertyGroup>
 
