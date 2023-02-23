@@ -17,6 +17,15 @@ public interface IProxyDiscoveryManager
     void Initialize(bool skipDefaultAdapters);
 
     /// <summary>
+    /// Initializes test discovery. Create the test host, setup channel and initialize extensions.
+    /// </summary>
+    /// 
+    /// <param name="discoveryCriteria">Settings, parameters for the discovery request</param>
+    /// <param name="eventHandler">EventHandler for handling discovery events from Engine</param>
+    /// <param name="skipDefaultAdapters">Skip default adapters flag</param>
+    void InitializeDiscovery(DiscoveryCriteria discoveryCriteria, ITestDiscoveryEventsHandler2 eventHandler, bool skipDefaultAdapters);
+
+    /// <summary>
     /// Discovers tests
     /// </summary>
     /// <param name="discoveryCriteria">Settings, parameters for the discovery request</param>

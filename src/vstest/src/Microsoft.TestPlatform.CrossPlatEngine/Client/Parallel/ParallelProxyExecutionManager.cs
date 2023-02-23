@@ -115,7 +115,7 @@ internal sealed class ParallelProxyExecutionManager : IParallelProxyExecutionMan
             // _currentRunDataAggregator.MarkAsAborted();
         }
 
-        _parallelOperationManager.StartWork(runnableWorkloads, eventHandler, GetParallelEventHandler, StartTestRunOnConcurrentManager);
+        _parallelOperationManager.StartWork(workloads, eventHandler, GetParallelEventHandler, PrepareTestRunOnConcurrentManager, StartTestRunOnConcurrentManager);
 
         // Why 1? Because this is supposed to be a processId, and that is just the default that was chosen by someone before me,
         // and maybe is checked somewhere, but I don't see it checked in our codebase.
@@ -388,24 +388,58 @@ internal sealed class ParallelProxyExecutionManager : IParallelProxyExecutionMan
             _currentRunDataAggregator);
     }
 
-    /// <summary>
-    /// Triggers the execution for the next data object on the concurrent executor
-    /// Each concurrent executor calls this method, once its completed working on previous data
-    /// </summary>
-    /// <param name="proxyExecutionManager">Proxy execution manager instance.</param>
-    /// <returns>True, if execution triggered</returns>
-    private void StartTestRunOnConcurrentManager(IProxyExecutionManager proxyExecutionManager, IInternalTestRunEventsHandler eventHandler, TestRunCriteria testRunCriteria)
+    private Task PrepareTestRunOnConcurrentManager(IProxyExecutionManager proxyExecutionManager, IInternalTestRunEventsHandler eventHandler, TestRunCriteria testRunCriteria)
     {
-        if (testRunCriteria != null)
+        return Task.Run(() =>
         {
             if (!proxyExecutionManager.IsInitialized)
             {
                 proxyExecutionManager.Initialize(_skipDefaultAdapters);
             }
 
+            // NOTE: No need to increment the number of started clients on initialization since the
+            // client doesn't really count as started unless some work is done on it. Incrementing
+            // the number of clients will result in failing acceptance tests because they expect all
+            // clients to be done running their workloads when aborting/cancelling and that doesn't
+            // happen with an initialized workload that is never run.
+            //
+            // Interlocked.Increment(ref _runStartedClients);
+            proxyExecutionManager.InitializeTestRun(testRunCriteria, eventHandler);
+        });
+    }
+
+    /// <summary>
+    /// Triggers the execution for the next data object on the concurrent executor
+    /// Each concurrent executor calls this method, once its completed working on previous data
+    /// </summary>
+    /// <param name="proxyExecutionManager">Proxy execution manager instance.</param>
+    /// <returns>True, if execution triggered</returns>
+    private void StartTestRunOnConcurrentManager(
+        IProxyExecutionManager proxyExecutionManager,
+        IInternalTestRunEventsHandler eventHandler,
+        TestRunCriteria testRunCriteria,
+        bool initialized,
+        Task? initTask)
+    {
+        if (testRunCriteria != null)
+        {
             Task.Run(() =>
                 {
-                    Interlocked.Increment(ref _runStartedClients);
+                    if (!initialized)
+                    {
+                        if (!proxyExecutionManager.IsInitialized)
+                        {
+                            proxyExecutionManager.Initialize(_skipDefaultAdapters);
+                        }
+
+                        Interlocked.Increment(ref _runStartedClients);
+                        proxyExecutionManager.InitializeTestRun(testRunCriteria, eventHandler);
+                    }
+                    else
+                    {
+                        initTask!.Wait();
+                    }
+
                     EqtTrace.Verbose("ParallelProxyExecutionManager: Execution started. Started clients: " + _runStartedClients);
 
                     proxyExecutionManager.StartTestRun(testRunCriteria, eventHandler);
@@ -435,6 +469,13 @@ internal sealed class ParallelProxyExecutionManager : IParallelProxyExecutionMan
         }
 
         EqtTrace.Verbose("ProxyParallelExecutionManager: No sources available for execution.");
+    }
+
+    public void InitializeTestRun(TestRunCriteria testRunCriteria, IInternalTestRunEventsHandler eventHandler)
+    {
+        // Leaving this empty as it is not really relevant to the parallel proxy managers.
+        // The idea of pre-initializing the test run makes sense only for single proxies like
+        // ProxyExecutionManager or ProxyDiscoveryManager.
     }
 
     public void Dispose()
