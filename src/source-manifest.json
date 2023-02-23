@@ -85,10 +85,10 @@
       "commitSha": "7347efa598bc5e34086f6c1078f1c0e864400d29"
     },
     {
-      "packageVersion": "3.3.5-beta1.23116.1",
+      "packageVersion": "3.3.5-beta1.23121.1",
       "path": "roslyn-analyzers",
       "remoteUri": "https://github.com/dotnet/roslyn-analyzers",
-      "commitSha": "15abfb9a6ea6e28ec3ef7110e6efffa95bbf2cad"
+      "commitSha": "50f62a926806bc75f294b5f738bc6694e0941361"
     },
     {
       "packageVersion": "8.0.0-preview.2.23123.1",
