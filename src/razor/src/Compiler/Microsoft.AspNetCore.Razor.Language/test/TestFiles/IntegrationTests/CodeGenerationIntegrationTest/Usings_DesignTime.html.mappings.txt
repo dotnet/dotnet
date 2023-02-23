@@ -1,4 +1,4 @@
-Source Location: (16:0,16 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings.cshtml)
+﻿Source Location: (16:0,16 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings.cshtml)
 |
 |
 Generated Location: (16:0,16 [2] )

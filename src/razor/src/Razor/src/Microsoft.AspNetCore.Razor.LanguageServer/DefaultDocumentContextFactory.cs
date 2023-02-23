@@ -95,5 +95,5 @@ internal class DefaultDocumentContextFactory : DocumentContextFactory
         return new DocumentContext(documentUri, documentSnapshot);
     }
 
-    private record DocumentSnapshotAndVersion(DocumentSnapshot Snapshot, int? Version);
+    private record DocumentSnapshotAndVersion(IDocumentSnapshot Snapshot, int? Version);
 }

@@ -232,6 +232,7 @@
     <file src="net462\$Runtime$\Extensions\Microsoft.VisualStudio.TestTools.DataCollection.MediaRecorder.Model.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Microsoft.VisualStudio.TestTools.DataCollection.MediaRecorder.Model.dll" />
     <file src="net462\$Runtime$\Extensions\Microsoft.VisualStudio.TestTools.DataCollection.VideoRecorderCollector.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Microsoft.VisualStudio.TestTools.DataCollection.VideoRecorderCollector.dll" />
 
+    <file src="Microsoft.CodeCoverage.Extensions\Microsoft.CodeCoverage.Interprocess.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Microsoft.CodeCoverage.Interprocess.dll" />
     <file src="Microsoft.CodeCoverage.Extensions\Microsoft.VisualStudio.TraceDataCollector.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Microsoft.VisualStudio.TraceDataCollector.dll" />
     <file src="Microsoft.CodeCoverage.Extensions\cs\Microsoft.VisualStudio.TraceDataCollector.resources.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\cs\Microsoft.VisualStudio.TraceDataCollector.dll" />
     <file src="Microsoft.CodeCoverage.Extensions\de\Microsoft.VisualStudio.TraceDataCollector.resources.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\de\Microsoft.VisualStudio.TraceDataCollector.dll" />
@@ -247,7 +248,6 @@
     <file src="Microsoft.CodeCoverage.Extensions\zh-Hans\Microsoft.VisualStudio.TraceDataCollector.resources.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\zh-Hans\Microsoft.VisualStudio.TraceDataCollector.dll" />
     <file src="Microsoft.CodeCoverage.Extensions\zh-Hant\Microsoft.VisualStudio.TraceDataCollector.resources.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\zh-Hant\Microsoft.VisualStudio.TraceDataCollector.dll" />
 
-    <file src="Microsoft.CodeCoverage\Microsoft.CodeCoverage.Interprocess.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Microsoft.CodeCoverage.Interprocess.dll" />
     <file src="Microsoft.CodeCoverage\Microsoft.CodeCoverage.Instrumentation.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Microsoft.CodeCoverage.Instrumentation.dll" />
     <file src="Microsoft.CodeCoverage\Mono.Cecil.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Mono.Cecil.dll" />
     <file src="Microsoft.CodeCoverage\Mono.Cecil.Pdb.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Mono.Cecil.Pdb.dll" />

@@ -18,7 +18,7 @@ public abstract class VisualStudioDocumentTracker
 
     public abstract RazorConfiguration? Configuration { get; }
 
-    public abstract EditorSettings EditorSettings { get; }
+    public abstract ClientSpaceSettings EditorSettings { get; }
 
     public abstract IReadOnlyList<TagHelperDescriptor>? TagHelpers { get; }
 
@@ -28,7 +28,7 @@ public abstract class VisualStudioDocumentTracker
 
     public abstract string ProjectPath { get; }
 
-    internal abstract ProjectSnapshot? ProjectSnapshot { get; }
+    internal abstract IProjectSnapshot? ProjectSnapshot { get; }
 
     public abstract Workspace Workspace { get; }
 

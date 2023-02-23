@@ -11,3 +11,8 @@ $vsRegEdit = Join-Path (Join-Path (Join-Path $vsDir 'Common7') 'IDE') 'VSRegEdit
 
 $hive = "RoslynDev"
 &$vsRegEdit set "$vsDir" $hive HKCU "Roslyn\Internal\OnOff\Features" OOP64Bit dword 0
+
+Write-Host "-- VS Info --"
+$isolationIni = Join-Path (Join-Path (Join-Path $vsDir 'Common7') 'IDE') 'devenv.isolation.ini'
+Get-Content $isolationIni | Write-Host
+Write-Host "-- /VS Info --"

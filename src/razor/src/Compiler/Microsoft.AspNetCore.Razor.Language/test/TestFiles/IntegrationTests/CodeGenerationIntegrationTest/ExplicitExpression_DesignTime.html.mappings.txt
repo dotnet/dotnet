@@ -1,4 +1,4 @@
-Source Location: (0:0,0 [8] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ExplicitExpression.cshtml)
+﻿Source Location: (0:0,0 [8] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ExplicitExpression.cshtml)
 |1 + 1 = |
 Generated Location: (0:0,0 [8] )
 |1 + 1 = |

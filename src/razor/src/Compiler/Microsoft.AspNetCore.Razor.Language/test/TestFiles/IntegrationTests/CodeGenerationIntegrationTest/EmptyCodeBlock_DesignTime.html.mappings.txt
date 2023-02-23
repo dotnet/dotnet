@@ -1,4 +1,4 @@
-Source Location: (0:0,0 [18] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EmptyCodeBlock.cshtml)
+﻿Source Location: (0:0,0 [18] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EmptyCodeBlock.cshtml)
 |This is markup
 
 |

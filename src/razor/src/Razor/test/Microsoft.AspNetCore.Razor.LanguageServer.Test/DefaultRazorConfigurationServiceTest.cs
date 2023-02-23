@@ -26,27 +26,40 @@ public class DefaultRazorConfigurationServiceTest : LanguageServerTestBase
     {
         // Arrange
         var expectedOptions = new RazorLSPOptions(
-            Trace.Messages, enableFormatting: false, autoClosingTags: false, insertSpaces: true, tabSize: 8);
-        var razorJsonString = @"
-{
-  ""trace"": ""Messages"",
-  ""format"": {
-    ""enable"": ""false""
-  }
-}
-".Trim();
-        var htmlJsonString = @"
-{
-  ""format"": ""true"",
-  ""autoClosingTags"": ""false""
-}
-".Trim();
-        var vsEditorJsonString = @"
-{
-  ""IndentSize"": 8,
-  ""IndentWithTabs"": ""false""
-}
-".Trim();
+            Trace.Messages, EnableFormatting: false, AutoClosingTags: false, InsertSpaces: true, TabSize: 8, FormatOnType: false);
+        var razorJsonString =
+            """
+
+            {
+              "trace": "Messages",
+              "format": {
+                "enable": "false"
+              }
+            }
+
+            """;
+
+        var htmlJsonString = """
+
+            {
+              "format": "true",
+              "autoClosingTags": "false"
+            }
+
+            """;
+
+        var vsEditorJsonString = """
+            {
+                "ClientSpaceSettings": {
+                    "IndentSize": 8,
+                    "IndentWithTabs": "false"
+                },
+                "AdvancedSettings": {
+                    "FormatOnType": "false"
+                }
+            }
+
+            """;
 
         var result = new JObject[] { JObject.Parse(razorJsonString), JObject.Parse(htmlJsonString), JObject.Parse(vsEditorJsonString) };
         var languageServer = GetLanguageServer(result);
@@ -92,27 +105,34 @@ public class DefaultRazorConfigurationServiceTest : LanguageServerTestBase
     {
         // Arrange - purposely choosing options opposite of default
         var expectedOptions = new RazorLSPOptions(
-            Trace.Verbose, enableFormatting: false, autoClosingTags: false, insertSpaces: false, tabSize: 8);
-        var razorJsonString = @"
-{
-  ""trace"": ""Verbose"",
-  ""format"": {
-    ""enable"": ""false""
-  }
-}
-".Trim();
-        var htmlJsonString = @"
-{
-  ""format"": ""true"",
-  ""autoClosingTags"": ""false""
-}
-".Trim();
-        var vsEditorJsonString = @"
-{
-  ""IndentSize"": 8,
-  ""IndentWithTabs"": ""true""
-}
-".Trim();
+            Trace.Verbose, EnableFormatting: false, AutoClosingTags: false, InsertSpaces: false, TabSize: 8, FormatOnType: false);
+        var razorJsonString = """
+            {
+              "trace": "Verbose",
+              "format": {
+                "enable": "false"
+              }
+            }
+
+            """;
+        var htmlJsonString = """
+            {
+              "format": "true",
+              "autoClosingTags": "false"
+            }
+
+            """;
+        var vsEditorJsonString = """
+            {
+                "ClientSpaceSettings": {
+                    "IndentSize": 8,
+                    "IndentWithTabs": "true"
+                },
+                "AdvancedSettings": {
+                    "FormatOnType": "false"
+                }
+            }
+            """;
 
         // Act
         var result = new JObject[] { JObject.Parse(razorJsonString), JObject.Parse(htmlJsonString), JObject.Parse(vsEditorJsonString) };
@@ -131,9 +151,7 @@ public class DefaultRazorConfigurationServiceTest : LanguageServerTestBase
 
         // Arrange
         var defaultOptions = RazorLSPOptions.Default;
-        var expectedOptions = new RazorLSPOptions(
-            defaultOptions.Trace, defaultOptions.EnableFormatting, defaultOptions.AutoClosingTags,
-            insertSpaces: false, defaultOptions.TabSize);
+        var expectedOptions = defaultOptions;
         var razorJsonString = @"
 {
   ""trace"": 0,
@@ -149,8 +167,10 @@ public class DefaultRazorConfigurationServiceTest : LanguageServerTestBase
 ".Trim();
         var vsEditorJsonString = @"
 {
-  ""IndentSize"": ""supposedToBeAnInt"",
-  ""IndentWithTabs"": 4
+    ""ClientSpaceSettings"": {
+          ""IndentSize"": ""supposedToBeAnInt"",
+          ""IndentWithTabs"": 4
+    }
 }
 ".Trim();
 

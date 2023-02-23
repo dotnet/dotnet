@@ -17,46 +17,33 @@ internal class DefaultDocumentVersionCache : DocumentVersionCache
 
     // Internal for testing
     internal readonly Dictionary<string, List<DocumentEntry>> DocumentLookup;
-    private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
+    private readonly ProjectSnapshotManagerDispatcher _dispatcher;
     private ProjectSnapshotManagerBase? _projectSnapshotManager;
 
     private ProjectSnapshotManagerBase ProjectSnapshotManager
+        => _projectSnapshotManager ?? throw new InvalidOperationException("ProjectSnapshotManager accessed before Initialized was called.");
+
+    public DefaultDocumentVersionCache(ProjectSnapshotManagerDispatcher dispatcher)
     {
-        get
-        {
-            if (_projectSnapshotManager is null)
-            {
-                throw new InvalidOperationException("ProjectSnapshotManager accessed before Initialized was called.");
-            }
-
-            return _projectSnapshotManager;
-        }
-    }
-
-    public DefaultDocumentVersionCache(ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher)
-    {
-        if (projectSnapshotManagerDispatcher is null)
-        {
-            throw new ArgumentNullException(nameof(projectSnapshotManagerDispatcher));
-        }
-
+        _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
         DocumentLookup = new Dictionary<string, List<DocumentEntry>>(FilePathComparer.Instance);
-        _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher;
     }
 
-    public override void TrackDocumentVersion(DocumentSnapshot documentSnapshot, int version)
+    public override void TrackDocumentVersion(IDocumentSnapshot documentSnapshot, int version)
     {
         if (documentSnapshot is null)
         {
             throw new ArgumentNullException(nameof(documentSnapshot));
         }
 
-        _projectSnapshotManagerDispatcher.AssertDispatcherThread();
+        _dispatcher.AssertDispatcherThread();
 
-        if (!DocumentLookup.TryGetValue(documentSnapshot.FilePath, out var documentEntries))
+        var filePath = documentSnapshot.FilePath.AssumeNotNull();
+
+        if (!DocumentLookup.TryGetValue(filePath, out var documentEntries))
         {
             documentEntries = new List<DocumentEntry>();
-            DocumentLookup[documentSnapshot.FilePath] = documentEntries;
+            DocumentLookup[filePath] = documentEntries;
         }
 
         if (documentEntries.Count == MaxDocumentTrackingCount)
@@ -72,16 +59,18 @@ internal class DefaultDocumentVersionCache : DocumentVersionCache
         documentEntries.Add(entry);
     }
 
-    public override bool TryGetDocumentVersion(DocumentSnapshot documentSnapshot, [NotNullWhen(true)] out int? version)
+    public override bool TryGetDocumentVersion(IDocumentSnapshot documentSnapshot, [NotNullWhen(true)] out int? version)
     {
         if (documentSnapshot is null)
         {
             throw new ArgumentNullException(nameof(documentSnapshot));
         }
 
-        _projectSnapshotManagerDispatcher.AssertDispatcherThread();
+        _dispatcher.AssertDispatcherThread();
 
-        if (!DocumentLookup.TryGetValue(documentSnapshot.FilePath, out var documentEntries))
+        var filePath = documentSnapshot.FilePath.AssumeNotNull();
+
+        if (!DocumentLookup.TryGetValue(filePath, out var documentEntries))
         {
             version = null;
             return false;
@@ -109,20 +98,20 @@ internal class DefaultDocumentVersionCache : DocumentVersionCache
         return true;
     }
 
-    public override async Task<int?> TryGetDocumentVersionAsync(DocumentSnapshot documentSnapshot, CancellationToken cancellationToken)
+    public override Task<int?> TryGetDocumentVersionAsync(IDocumentSnapshot documentSnapshot, CancellationToken cancellationToken)
     {
         if (documentSnapshot is null)
         {
             throw new ArgumentNullException(nameof(documentSnapshot));
         }
 
-        var resolvedVersion = await _projectSnapshotManagerDispatcher.RunOnDispatcherThreadAsync(() =>
-        {
-            TryGetDocumentVersion(documentSnapshot, out var version);
-            return version;
-        }, cancellationToken).ConfigureAwait(false);
-
-        return resolvedVersion;
+        return _dispatcher.RunOnDispatcherThreadAsync(
+            () =>
+            {
+                TryGetDocumentVersion(documentSnapshot, out var version);
+                return version;
+            },
+            cancellationToken);
     }
 
     public override void Initialize(ProjectSnapshotManagerBase projectManager)
@@ -144,7 +133,7 @@ internal class DefaultDocumentVersionCache : DocumentVersionCache
             return;
         }
 
-        _projectSnapshotManagerDispatcher.AssertDispatcherThread();
+        _dispatcher.AssertDispatcherThread();
 
         switch (args.Kind)
         {
@@ -178,9 +167,11 @@ internal class DefaultDocumentVersionCache : DocumentVersionCache
     }
 
     // Internal for testing
-    internal void MarkAsLatestVersion(DocumentSnapshot document)
+    internal void MarkAsLatestVersion(IDocumentSnapshot document)
     {
-        if (!TryGetLatestVersionFromPath(document.FilePath, out var latestVersion))
+        var filePath = document.FilePath.AssumeNotNull();
+
+        if (!TryGetLatestVersionFromPath(filePath, out var latestVersion))
         {
             return;
         }
@@ -198,19 +189,19 @@ internal class DefaultDocumentVersionCache : DocumentVersionCache
             return false;
         }
 
-        var latestEntry = documentEntries[documentEntries.Count - 1];
+        var latestEntry = documentEntries[^1];
 
         version = latestEntry.Version;
         return true;
     }
 
-    private void CaptureProjectDocumentsAsLatest(ProjectSnapshot projectSnapshot)
+    private void CaptureProjectDocumentsAsLatest(IProjectSnapshot projectSnapshot)
     {
         foreach (var documentPath in projectSnapshot.DocumentFilePaths)
         {
-            if (DocumentLookup.ContainsKey(documentPath))
+            if (DocumentLookup.ContainsKey(documentPath) &&
+                projectSnapshot.GetDocument(documentPath) is { } document)
             {
-                var document = projectSnapshot.GetDocument(documentPath);
                 MarkAsLatestVersion(document);
             }
         }
@@ -218,13 +209,13 @@ internal class DefaultDocumentVersionCache : DocumentVersionCache
 
     internal class DocumentEntry
     {
-        public DocumentEntry(DocumentSnapshot document, int version)
+        public DocumentEntry(IDocumentSnapshot document, int version)
         {
-            Document = new WeakReference<DocumentSnapshot>(document);
+            Document = new WeakReference<IDocumentSnapshot>(document);
             Version = version;
         }
 
-        public WeakReference<DocumentSnapshot> Document { get; }
+        public WeakReference<IDocumentSnapshot> Document { get; }
 
         public int Version { get; }
     }

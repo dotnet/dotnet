@@ -13,11 +13,15 @@ namespace Microsoft.CodeAnalysis.Razor.Serialization;
 
 internal class TagHelperDescriptorJsonConverter : JsonConverter
 {
-    public static readonly TagHelperDescriptorJsonConverter Instance = new TagHelperDescriptorJsonConverter();
+    public static readonly TagHelperDescriptorJsonConverter Instance = new();
 
     private static readonly StringCache s_stringCache = new StringCache();
 
     public static bool DisableCachingForTesting { private get; set; } = false;
+
+    private TagHelperDescriptorJsonConverter()
+    {
+    }
 
     public override bool CanConvert(Type objectType)
     {

@@ -75,10 +75,10 @@
     <Tooling_HtmlEditorPackageVersion>17.5.101-preview-0002</Tooling_HtmlEditorPackageVersion>
     <!-- Several packages share the MS.CA.Testing version -->
     <Tooling_MicrosoftCodeAnalysisTestingVersion>1.1.2-beta1.22512.1</Tooling_MicrosoftCodeAnalysisTestingVersion>
-    <MicrosoftVisualStudioShellPackagesVersion>17.5.0-preview-2-33111-355</MicrosoftVisualStudioShellPackagesVersion>
-    <MicrosoftVisualStudioPackagesVersion>17.5.143-preview</MicrosoftVisualStudioPackagesVersion>
-    <RoslynPackageVersion>4.5.0-2.22580.13</RoslynPackageVersion>
-    <VisualStudioLanguageServerProtocolVersion>17.5.20-preview</VisualStudioLanguageServerProtocolVersion>
+    <MicrosoftVisualStudioShellPackagesVersion>17.5.0-preview-2-33117-317</MicrosoftVisualStudioShellPackagesVersion>
+    <MicrosoftVisualStudioPackagesVersion>17.5.274-preview</MicrosoftVisualStudioPackagesVersion>
+    <RoslynPackageVersion>4.6.0-2.23113.15</RoslynPackageVersion>
+    <VisualStudioLanguageServerProtocolVersion>17.6.4-preview</VisualStudioLanguageServerProtocolVersion>
     <MicrosoftNetCompilersToolsetVersion>4.4.0</MicrosoftNetCompilersToolsetVersion>
     <MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion>$(RoslynPackageVersion)</MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion>
     <!-- dotnet/runtime packages -->
@@ -111,7 +111,7 @@
     <MicrosoftVisualStudioShell150PackageVersion>$(MicrosoftVisualStudioShellPackagesVersion)</MicrosoftVisualStudioShell150PackageVersion>
     <MicrosoftVisualStudioInteropPackageVersion>$(MicrosoftVisualStudioShellPackagesVersion)</MicrosoftVisualStudioInteropPackageVersion>
     <MicrosoftInternalVisualStudioInteropPackageVersion>$(MicrosoftVisualStudioShellPackagesVersion)</MicrosoftInternalVisualStudioInteropPackageVersion>
-    <MicrosoftVisualStudioRpcContractsPackageVersion>17.5.14-alpha</MicrosoftVisualStudioRpcContractsPackageVersion>
+    <MicrosoftVisualStudioRpcContractsPackageVersion>17.5.17-alpha</MicrosoftVisualStudioRpcContractsPackageVersion>
     <MicrosoftVisualStudioTelemetryVersion>16.5.2</MicrosoftVisualStudioTelemetryVersion>
     <MicrosoftVisualStudioTextDataPackageVersion>$(MicrosoftVisualStudioPackagesVersion)</MicrosoftVisualStudioTextDataPackageVersion>
     <MicrosoftVisualStudioTextImplementationPackageVersion>$(MicrosoftVisualStudioPackagesVersion)</MicrosoftVisualStudioTextImplementationPackageVersion>
@@ -133,21 +133,24 @@
     <OmniSharpExtensionsLanguageServerPackageVersion>0.19.5</OmniSharpExtensionsLanguageServerPackageVersion>
     <OmniSharpExtensionsLanguageProtocolPackageVersion>$(OmniSharpExtensionsLanguageServerPackageVersion)</OmniSharpExtensionsLanguageProtocolPackageVersion>
     <OmniSharpMSBuildPackageVersion>1.39.1</OmniSharpMSBuildPackageVersion>
-    <StreamJsonRpcPackageVersion>2.14.17-alpha</StreamJsonRpcPackageVersion>
+    <StreamJsonRpcPackageVersion>2.14.20</StreamJsonRpcPackageVersion>
     <SystemRuntimeInteropServicesRuntimePackageVersion>4.3.0</SystemRuntimeInteropServicesRuntimePackageVersion>
-    <Tooling_MicrosoftCodeAnalysisAnalyzersPackageVersion>3.3.3</Tooling_MicrosoftCodeAnalysisAnalyzersPackageVersion>
+    <Tooling_MicrosoftCodeAnalysisAnalyzersPackageVersion>3.3.4</Tooling_MicrosoftCodeAnalysisAnalyzersPackageVersion>
     <Tooling_MicrosoftCodeAnalysisNetAnalyzersPackageVersion>7.0.0-preview1.22116.1</Tooling_MicrosoftCodeAnalysisNetAnalyzersPackageVersion>
-    <Tooling_MicrosoftCodeAnalysisExternalAccessRazorPackageVersion>$(RoslynPackageVersion)</Tooling_MicrosoftCodeAnalysisExternalAccessRazorPackageVersion>
-    <Tooling_MicrosoftCodeAnalysisExternalAccessOmniSharpCSharpPackageVersion>$(RoslynPackageVersion)</Tooling_MicrosoftCodeAnalysisExternalAccessOmniSharpCSharpPackageVersion>
-    <Tooling_MicrosoftCodeAnalysisCSharpEditorFeaturesPackageVersion>$(RoslynPackageVersion)</Tooling_MicrosoftCodeAnalysisCSharpEditorFeaturesPackageVersion>
-    <Tooling_MicrosoftCodeAnalysisCSharpFeaturesPackageVersion>$(RoslynPackageVersion)</Tooling_MicrosoftCodeAnalysisCSharpFeaturesPackageVersion>
-    <Tooling_MicrosoftCodeAnalysisCSharpPackageVersion>$(RoslynPackageVersion)</Tooling_MicrosoftCodeAnalysisCSharpPackageVersion>
-    <Tooling_MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>$(RoslynPackageVersion)</Tooling_MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>
-    <Tooling_MicrosoftCodeAnalysisEditorFeaturesCommonPackageVersion>$(RoslynPackageVersion)</Tooling_MicrosoftCodeAnalysisEditorFeaturesCommonPackageVersion>
-    <Tooling_MicrosoftCodeAnalysisEditorFeaturesTextPackageVersion>$(RoslynPackageVersion)</Tooling_MicrosoftCodeAnalysisEditorFeaturesTextPackageVersion>
-    <Tooling_MicrosoftCodeAnalysisRemoteServiceHubPackageVersion>$(RoslynPackageVersion)</Tooling_MicrosoftCodeAnalysisRemoteServiceHubPackageVersion>
-    <Tooling_MicrosoftCodeAnalysisVisualBasicWorkspacesPackageVersion>$(RoslynPackageVersion)</Tooling_MicrosoftCodeAnalysisVisualBasicWorkspacesPackageVersion>
-    <Tooling_MicrosoftCodeAnalysisWorkspacesCommonPackageVersion>$(RoslynPackageVersion)</Tooling_MicrosoftCodeAnalysisWorkspacesCommonPackageVersion>
+    <MicrosoftCodeAnalysisExternalAccessRazorPackageVersion>$(RoslynPackageVersion)</MicrosoftCodeAnalysisExternalAccessRazorPackageVersion>
+    <MicrosoftCodeAnalysisExternalAccessOmniSharpCSharpPackageVersion>$(RoslynPackageVersion)</MicrosoftCodeAnalysisExternalAccessOmniSharpCSharpPackageVersion>
+    <MicrosoftCodeAnalysisCommonPackageVersion>$(RoslynPackageVersion)</MicrosoftCodeAnalysisCommonPackageVersion>
+    <MicrosoftCodeAnalysisCSharpPackageVersion>$(RoslynPackageVersion)</MicrosoftCodeAnalysisCSharpPackageVersion>
+    <MicrosoftCodeAnalysisCSharpEditorFeaturesPackageVersion>$(RoslynPackageVersion)</MicrosoftCodeAnalysisCSharpEditorFeaturesPackageVersion>
+    <MicrosoftCodeAnalysisCSharpFeaturesPackageVersion>$(RoslynPackageVersion)</MicrosoftCodeAnalysisCSharpFeaturesPackageVersion>
+    <MicrosoftCodeAnalysisCSharpPackageVersion>$(RoslynPackageVersion)</MicrosoftCodeAnalysisCSharpPackageVersion>
+    <MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>$(RoslynPackageVersion)</MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>
+    <MicrosoftCodeAnalysisEditorFeaturesCommonPackageVersion>$(RoslynPackageVersion)</MicrosoftCodeAnalysisEditorFeaturesCommonPackageVersion>
+    <MicrosoftCodeAnalysisEditorFeaturesTextPackageVersion>$(RoslynPackageVersion)</MicrosoftCodeAnalysisEditorFeaturesTextPackageVersion>
+    <MicrosoftCodeAnalysisRemoteServiceHubPackageVersion>$(RoslynPackageVersion)</MicrosoftCodeAnalysisRemoteServiceHubPackageVersion>
+    <MicrosoftCodeAnalysisVisualBasicWorkspacesPackageVersion>$(RoslynPackageVersion)</MicrosoftCodeAnalysisVisualBasicWorkspacesPackageVersion>
+    <MicrosoftCodeAnalysisWorkspacesCommonPackageVersion>$(RoslynPackageVersion)</MicrosoftCodeAnalysisWorkspacesCommonPackageVersion>
+    <MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>$(RoslynPackageVersion)</MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>
     <Tooling_MicrosoftCodeAnalysisBannedApiAnalyzersPackageVersion>$(Tooling_MicrosoftCodeAnalysisAnalyzersPackageVersion)</Tooling_MicrosoftCodeAnalysisBannedApiAnalyzersPackageVersion>
     <Tooling_RoslynDiagnosticsAnalyzersPackageVersion>$(Tooling_MicrosoftCodeAnalysisAnalyzersPackageVersion)</Tooling_RoslynDiagnosticsAnalyzersPackageVersion>
     <Tooling_MicrosoftVisualStudioLanguageServicesPackageVersion>$(RoslynPackageVersion)</Tooling_MicrosoftVisualStudioLanguageServicesPackageVersion>
@@ -166,10 +169,6 @@
     <MicrosoftBuildVersion>17.3.0-preview-22364-05</MicrosoftBuildVersion>
     <MicrosoftBuildFrameworkVersion>$(MicrosoftBuildVersion)</MicrosoftBuildFrameworkVersion>
     <MicrosoftBuildUtilitiesCoreVersion>$(MicrosoftBuildVersion)</MicrosoftBuildUtilitiesCoreVersion>
-    <MicrosoftCodeAnalysisCommonVersion>4.0.0-4.final</MicrosoftCodeAnalysisCommonVersion>
-    <MicrosoftCodeAnalysisCSharpVersion>4.0.0-4.final</MicrosoftCodeAnalysisCSharpVersion>
-    <MicrosoftCodeAnalysisCSharpWorkspacesVersion>4.3.0-2.final</MicrosoftCodeAnalysisCSharpWorkspacesVersion>
-    <MicrosoftCodeAnalysisWorkspacesMSBuildVersion>4.3.0-2.final</MicrosoftCodeAnalysisWorkspacesMSBuildVersion>
     <MicrosoftCSharpVersion>4.7.0</MicrosoftCSharpVersion>
     <MicrosoftCssParserVersion>1.0.0-20200708.1</MicrosoftCssParserVersion>
     <MicrosoftExtensionsDependencyModelVersion>6.0.0</MicrosoftExtensionsDependencyModelVersion>

@@ -9,6 +9,14 @@ namespace Microsoft.VisualStudio.Editor.Razor;
 
 public sealed class ElementCompletionContext
 {
+    public TagHelperDocumentContext DocumentContext { get; }
+    public IEnumerable<string> ExistingCompletions { get; }
+    public string? ContainingTagName { get; }
+    public IEnumerable<KeyValuePair<string, string>> Attributes { get; }
+    public string? ContainingParentTagName { get; }
+    public bool ContainingParentIsTagHelper { get; }
+    public Func<string, bool> InHTMLSchema { get; }
+
     public ElementCompletionContext(
         TagHelperDocumentContext documentContext,
         IEnumerable<string>? existingCompletions,
@@ -18,36 +26,12 @@ public sealed class ElementCompletionContext
         bool containingParentIsTagHelper,
         Func<string, bool> inHTMLSchema)
     {
-        if (documentContext is null)
-        {
-            throw new ArgumentNullException(nameof(documentContext));
-        }
-
-        if (inHTMLSchema is null)
-        {
-            throw new ArgumentNullException(nameof(inHTMLSchema));
-        }
-
-        DocumentContext = documentContext;
+        DocumentContext = documentContext ?? throw new ArgumentNullException(nameof(documentContext));
         ExistingCompletions = existingCompletions ?? Array.Empty<string>();
         ContainingTagName = containingTagName;
         Attributes = attributes;
         ContainingParentTagName = containingParentTagName;
         ContainingParentIsTagHelper = containingParentIsTagHelper;
-        InHTMLSchema = inHTMLSchema;
+        InHTMLSchema = inHTMLSchema ?? throw new ArgumentNullException(nameof(inHTMLSchema));
     }
-
-    public TagHelperDocumentContext DocumentContext { get; }
-
-    public IEnumerable<string> ExistingCompletions { get; }
-
-    public string? ContainingTagName { get; }
-
-    public IEnumerable<KeyValuePair<string, string>> Attributes { get; }
-
-    public string? ContainingParentTagName { get; }
-
-    public bool ContainingParentIsTagHelper { get; }
-
-    public Func<string, bool> InHTMLSchema { get; }
 }

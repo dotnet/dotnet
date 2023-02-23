@@ -330,7 +330,11 @@
 
       <dict>
         <key>scope</key>
-        <string>source.js storage.type, source.js keyword.operator.new</string>
+        <string>
+          source.js storage.type,
+          source.js keyword.operator.new,
+          source.js constant.language
+        </string>
         <key>settings</key>
         <dict>
           <key>vsclassificationtype</key>
@@ -345,6 +349,16 @@
         <dict>
           <key>vsclassificationtype</key>
           <string>string</string>
+        </dict>
+      </dict>
+
+      <dict>
+        <key>scope</key>
+        <string>source.js keyword.control</string>
+        <key>settings</key>
+        <dict>
+          <key>vsclassificationtype</key>
+          <string>keyword - control</string>
         </dict>
       </dict>
 

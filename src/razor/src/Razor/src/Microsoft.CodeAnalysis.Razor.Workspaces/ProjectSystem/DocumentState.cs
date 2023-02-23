@@ -3,11 +3,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.CodeAnalysis.Text;
@@ -87,12 +89,12 @@ internal class DocumentState
         }
     }
 
-    public Task<(RazorCodeDocument output, VersionStamp inputVersion)> GetGeneratedOutputAndVersionAsync(DefaultProjectSnapshot project, DefaultDocumentSnapshot document)
+    public Task<(RazorCodeDocument output, VersionStamp inputVersion)> GetGeneratedOutputAndVersionAsync(ProjectSnapshot project, DocumentSnapshot document)
     {
         return ComputedState.GetGeneratedOutputAndVersionAsync(project, document);
     }
 
-    public IReadOnlyList<DocumentSnapshot> GetImports(DefaultProjectSnapshot project)
+    public ImmutableArray<IDocumentSnapshot> GetImports(ProjectSnapshot project)
     {
         return GetImportsCore(project);
     }
@@ -129,16 +131,16 @@ internal class DocumentState
 
     public bool TryGetText([NotNullWhen(true)] out SourceText? result)
     {
-        if (_sourceText != null)
+        if (_sourceText is { } sourceText)
         {
-            result = _sourceText;
+            result = sourceText;
             return true;
         }
 
-        if (_loaderTask != null && _loaderTask.IsCompleted)
+        if (_loaderTask is { } loaderTask && loaderTask.IsCompleted)
         {
 #pragma warning disable VSTHRD002 // Avoid problematic synchronous waits
-            result = _loaderTask.Result.Text;
+            result = loaderTask.Result.Text;
 #pragma warning restore VSTHRD002 // Avoid problematic synchronous waits
             return true;
         }
@@ -149,16 +151,16 @@ internal class DocumentState
 
     public bool TryGetTextVersion(out VersionStamp result)
     {
-        if (_version != null)
+        if (_version is { } version)
         {
-            result = _version.Value;
+            result = version;
             return true;
         }
 
-        if (_loaderTask != null && _loaderTask.IsCompleted)
+        if (_loaderTask is { } loaderTask && loaderTask.IsCompleted)
         {
 #pragma warning disable VSTHRD002 // Avoid problematic synchronous waits
-            result = _loaderTask.Result.Version;
+            result = loaderTask.Result.Version;
 #pragma warning restore VSTHRD002 // Avoid problematic synchronous waits
             return true;
         }
@@ -192,7 +194,7 @@ internal class DocumentState
             _loaderTask = _loaderTask
         };
 
-        // Optimisically cache the computed state
+        // Optimistically cache the computed state
         state._computedState = new ComputedStateTracker(state, _computedState);
 
         return state;
@@ -208,7 +210,7 @@ internal class DocumentState
             _loaderTask = _loaderTask
         };
 
-        // Optimisically cache the computed state
+        // Optimistically cache the computed state
         state._computedState = new ComputedStateTracker(state, _computedState);
 
         return state;
@@ -238,40 +240,43 @@ internal class DocumentState
         return new DocumentState(Services, HostDocument, null, null, loader);
     }
 
-    private IReadOnlyList<DocumentSnapshot> GetImportsCore(DefaultProjectSnapshot project)
+    private ImmutableArray<IDocumentSnapshot> GetImportsCore(ProjectSnapshot project)
     {
         var projectEngine = project.GetProjectEngine();
-        var importFeatures = projectEngine.ProjectFeatures.OfType<IImportProjectFeature>();
         var projectItem = projectEngine.FileSystem.GetItem(HostDocument.FilePath, HostDocument.FileKind);
-        var importItems = importFeatures.SelectMany(f => f.GetImports(projectItem));
-        if (importItems is null)
+
+        using var _1 = ListPool<RazorProjectItem>.GetPooledObject(out var importItems);
+
+        foreach (var feature in projectEngine.ProjectFeatures.OfType<IImportProjectFeature>())
         {
-            return Array.Empty<DocumentSnapshot>();
+            if (feature.GetImports(projectItem) is { } featureImports)
+            {
+                importItems.AddRange(featureImports);
+            }
         }
 
-        var imports = new List<DocumentSnapshot>();
+        if (importItems.Count == 0)
+        {
+            return ImmutableArray<IDocumentSnapshot>.Empty;
+        }
+
+        using var _2 = ArrayBuilderPool<IDocumentSnapshot>.GetPooledObject(out var imports);
+
         foreach (var item in importItems)
         {
             if (item.PhysicalPath is null)
             {
                 // This is a default import.
-                var defaultImport = new DefaultImportDocumentSnapshot(project, item);
+                var defaultImport = new ImportDocumentSnapshot(project, item);
                 imports.Add(defaultImport);
             }
-            else
+            else if (project.GetDocument(item.PhysicalPath) is { } import)
             {
-                var import = project.GetDocument(item.PhysicalPath);
-                if (import is null)
-                {
-                    // We are not tracking this document in this project. So do nothing.
-                    continue;
-                }
-
                 imports.Add(import);
             }
         }
 
-        return imports;
+        return imports.ToImmutable();
     }
 
     // See design notes on ProjectState.ComputedStateTracker.
@@ -316,7 +321,7 @@ internal class DocumentState
             }
         }
 
-        public async Task<(RazorCodeDocument, VersionStamp)> GetGeneratedOutputAndVersionAsync(DefaultProjectSnapshot project, DocumentSnapshot document)
+        public async Task<(RazorCodeDocument, VersionStamp)> GetGeneratedOutputAndVersionAsync(ProjectSnapshot project, IDocumentSnapshot document)
         {
             if (_computedOutput?.TryGetCachedOutput(out var cachedCodeDocument, out var cachedInputVersion) == true)
             {
@@ -329,7 +334,7 @@ internal class DocumentState
             return (codeDocument, inputVersion);
         }
 
-        private Task<(RazorCodeDocument, VersionStamp)> GetMemoizedGeneratedOutputAndVersionAsync(DefaultProjectSnapshot project, DocumentSnapshot document)
+        private Task<(RazorCodeDocument, VersionStamp)> GetMemoizedGeneratedOutputAndVersionAsync(ProjectSnapshot project, IDocumentSnapshot document)
         {
             if (project is null)
             {
@@ -391,19 +396,19 @@ internal class DocumentState
                         CancellationToken.None,
                         TaskContinuationOptions.ExecuteSynchronously,
                         TaskScheduler.Default);
+                }
             }
-        }
 
-        return taskUnsafe;
+            return taskUnsafe;
 
-        static void PropagateToTaskCompletionSource(
-            Task<(RazorCodeDocument, VersionStamp)> targetTask,
-            TaskCompletionSource<(RazorCodeDocument, VersionStamp)> tcs)
-        {
-            if (targetTask.Status == TaskStatus.RanToCompletion)
+            static void PropagateToTaskCompletionSource(
+                Task<(RazorCodeDocument, VersionStamp)> targetTask,
+                TaskCompletionSource<(RazorCodeDocument, VersionStamp)> tcs)
             {
+                if (targetTask.Status == TaskStatus.RanToCompletion)
+                {
 #pragma warning disable VSTHRD103 // Call async methods when in an async method
-                tcs.SetResult(targetTask.Result);
+                    tcs.SetResult(targetTask.Result);
 #pragma warning restore VSTHRD103 // Call async methods when in an async method
                 }
                 else if (targetTask.Status == TaskStatus.Canceled)
@@ -420,7 +425,7 @@ internal class DocumentState
             }
         }
 
-        private async Task<(RazorCodeDocument, VersionStamp)> ComputeGeneratedOutputAndVersionAsync(DefaultProjectSnapshot project, DocumentSnapshot document)
+        private async Task<(RazorCodeDocument, VersionStamp)> ComputeGeneratedOutputAndVersionAsync(ProjectSnapshot project, IDocumentSnapshot document)
         {
             // We only need to produce the generated code if any of our inputs is newer than the
             // previously cached output.
@@ -497,13 +502,13 @@ internal class DocumentState
             return (codeDocument, inputVersion);
         }
 
-        private static async Task<RazorSourceDocument> GetRazorSourceDocumentAsync(DocumentSnapshot document, RazorProjectItem? projectItem)
+        private static async Task<RazorSourceDocument> GetRazorSourceDocumentAsync(IDocumentSnapshot document, RazorProjectItem? projectItem)
         {
             var sourceText = await document.GetTextAsync();
             return sourceText.GetRazorSourceDocument(document.FilePath, projectItem?.RelativePhysicalPath);
         }
 
-        private static async Task<IReadOnlyList<ImportItem>> GetImportsAsync(DocumentSnapshot document)
+        private static async Task<IReadOnlyList<ImportItem>> GetImportsAsync(IDocumentSnapshot document)
         {
             var imports = new List<ImportItem>();
             foreach (var snapshot in document.GetImports())
@@ -517,20 +522,18 @@ internal class DocumentState
 
         private readonly struct ImportItem
         {
-            public ImportItem(string filePath, VersionStamp version, DocumentSnapshot document)
+            public string? FilePath { get; }
+            public VersionStamp Version { get; }
+            public IDocumentSnapshot Document { get; }
+
+            public string? FileKind => Document.FileKind;
+
+            public ImportItem(string? filePath, VersionStamp version, IDocumentSnapshot document)
             {
                 FilePath = filePath;
                 Version = version;
                 Document = document;
             }
-
-            public string FilePath { get; }
-
-            public string FileKind => Document.FileKind;
-
-            public VersionStamp Version { get; }
-
-            public DocumentSnapshot Document { get; }
         }
 
         private class ComputedOutput

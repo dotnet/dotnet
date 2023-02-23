@@ -15,7 +15,7 @@ internal class VisualStudioFileChangeTracker : FileChangeTracker, IVsFreeThreade
 {
     private const _VSFILECHANGEFLAGS FileChangeFlags = _VSFILECHANGEFLAGS.VSFILECHG_Time | _VSFILECHANGEFLAGS.VSFILECHG_Size | _VSFILECHANGEFLAGS.VSFILECHG_Del | _VSFILECHANGEFLAGS.VSFILECHG_Add;
 
-    private readonly ErrorReporter _errorReporter;
+    private readonly IErrorReporter _errorReporter;
     private readonly IVsAsyncFileChangeEx _fileChangeService;
     private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
     private readonly JoinableTaskContext _joinableTaskContext;
@@ -29,7 +29,7 @@ internal class VisualStudioFileChangeTracker : FileChangeTracker, IVsFreeThreade
 
     public VisualStudioFileChangeTracker(
         string filePath,
-        ErrorReporter errorReporter,
+        IErrorReporter errorReporter,
         IVsAsyncFileChangeEx fileChangeService,
         ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
         JoinableTaskContext joinableTaskContext)

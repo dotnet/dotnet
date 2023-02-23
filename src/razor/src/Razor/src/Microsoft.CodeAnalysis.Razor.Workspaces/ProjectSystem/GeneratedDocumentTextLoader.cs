@@ -14,11 +14,11 @@ namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 internal class GeneratedDocumentTextLoader : TextLoader
 {
-    private readonly DocumentSnapshot _document;
+    private readonly IDocumentSnapshot _document;
     private readonly string _filePath;
     private readonly VersionStamp _version;
 
-    public GeneratedDocumentTextLoader(DocumentSnapshot document, string filePath)
+    public GeneratedDocumentTextLoader(IDocumentSnapshot document, string filePath)
     {
         if (document is null)
         {

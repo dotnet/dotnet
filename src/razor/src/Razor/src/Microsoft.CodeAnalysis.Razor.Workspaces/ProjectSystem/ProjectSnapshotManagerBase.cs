@@ -11,39 +11,39 @@ namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 internal abstract class ProjectSnapshotManagerBase : ProjectSnapshotManager
 {
-    public abstract Workspace Workspace { get; }
+    internal abstract Workspace Workspace { get; }
 
-    public abstract ErrorReporter ErrorReporter { get; }
+    internal abstract IErrorReporter ErrorReporter { get; }
 
-    public abstract IReadOnlyCollection<string> OpenDocuments { get; }
+    internal abstract IReadOnlyCollection<string> OpenDocuments { get; }
 
-    public abstract void DocumentAdded(HostProject hostProject, HostDocument hostDocument, TextLoader textLoader);
+    internal abstract void DocumentAdded(HostProject hostProject, HostDocument hostDocument, TextLoader textLoader);
 
-    public abstract void DocumentOpened(string projectFilePath, string documentFilePath, SourceText sourceText);
+    internal abstract void DocumentOpened(string projectFilePath, string documentFilePath, SourceText sourceText);
 
-    public abstract void DocumentClosed(string projectFilePath, string documentFilePath, TextLoader textLoader);
+    internal abstract void DocumentClosed(string projectFilePath, string documentFilePath, TextLoader textLoader);
 
-    public abstract void DocumentChanged(string projectFilePath, string documentFilePath, TextLoader textLoader);
+    internal abstract void DocumentChanged(string projectFilePath, string documentFilePath, TextLoader textLoader);
 
-    public abstract void DocumentChanged(string projectFilePath, string documentFilePath, SourceText sourceText);
+    internal abstract void DocumentChanged(string projectFilePath, string documentFilePath, SourceText sourceText);
 
-    public abstract void DocumentRemoved(HostProject hostProject, HostDocument hostDocument);
+    internal abstract void DocumentRemoved(HostProject hostProject, HostDocument hostDocument);
 
-    public abstract void ProjectAdded(HostProject hostProject);
+    internal abstract void ProjectAdded(HostProject hostProject);
 
-    public abstract void ProjectConfigurationChanged(HostProject hostProject);
+    internal abstract void ProjectConfigurationChanged(HostProject hostProject);
 
-    public abstract void ProjectWorkspaceStateChanged(string projectFilePath, ProjectWorkspaceState projectWorkspaceState);
+    internal abstract void ProjectWorkspaceStateChanged(string projectFilePath, ProjectWorkspaceState projectWorkspaceState);
 
-    public abstract void ProjectRemoved(HostProject hostProject);
+    internal abstract void ProjectRemoved(HostProject hostProject);
 
-    public abstract void ReportError(Exception exception);
+    internal abstract void ReportError(Exception exception);
 
-    public abstract void ReportError(Exception exception, ProjectSnapshot project);
+    internal abstract void ReportError(Exception exception, IProjectSnapshot project);
 
-    public abstract void ReportError(Exception exception, HostProject hostProject);
+    internal abstract void ReportError(Exception exception, HostProject hostProject);
 
-    public abstract void SolutionOpened();
+    internal abstract void SolutionOpened();
 
-    public abstract void SolutionClosed();
+    internal abstract void SolutionClosed();
 }

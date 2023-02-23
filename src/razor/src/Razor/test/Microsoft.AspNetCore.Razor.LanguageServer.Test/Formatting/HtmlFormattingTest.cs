@@ -106,6 +106,35 @@ public class HtmlFormattingTest : FormattingTestBase
     }
 
     [Fact]
+    public async Task FormatsSimpleHtmlTag_OnTypeDisabled()
+    {
+        await RunOnTypeFormattingTestAsync(
+            input: """
+                    <html>
+                    <head>
+                        <title>Hello</title>
+                            <script>
+                                var x = 2;$$
+                            </script>
+                    </head>
+                    </html>
+                    """,
+            expected: """
+                    <html>
+                    <head>
+                        <title>Hello</title>
+                            <script>
+                                var x = 2;
+                            </script>
+                    </head>
+                    </html>
+                    """,
+            triggerCharacter: ';',
+            fileKind: FileKinds.Legacy,
+            razorLSPOptions: RazorLSPOptions.Default with { FormatOnType = false });
+    }
+
+    [Fact]
     public async Task FormatsRazorHtmlBlock()
     {
         await RunFormattingTestAsync(
@@ -716,6 +745,120 @@ public class HtmlFormattingTest : FormattingTestBase
                             </GridRow>
                         </ChildContent>
                     </GridTable>
+                    """,
+            tagHelpers: GetComponents());
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/8227")]
+    public async Task FormatNestedComponents3()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    @if (true)
+                    {
+                        <Component1 Id="comp1"
+                                Caption="Title" />
+                    <Component1 Id="comp2"
+                                Caption="Title">
+                                <Frag>
+                    <Component1 Id="comp3"
+                                Caption="Title" />
+                                </Frag>
+                                </Component1>
+                    }
+
+                    @if (true)
+                    {
+                        <a_really_long_tag_name Id="comp1"
+                                Caption="Title" />
+                    <a_really_long_tag_name Id="comp2"
+                                Caption="Title">
+                                <a_really_long_tag_name>
+                    <a_really_long_tag_name Id="comp3"
+                                Caption="Title" />
+                                </a_really_long_tag_name>
+                                </a_really_long_tag_name>
+                    }
+                    """,
+            expected: """
+                    @if (true)
+                    {
+                        <Component1 Id="comp1"
+                                    Caption="Title" />
+                        <Component1 Id="comp2"
+                                    Caption="Title">
+                            <Frag>
+                                <Component1 Id="comp3"
+                                            Caption="Title" />
+                            </Frag>
+                        </Component1>
+                    }
+
+                    @if (true)
+                    {
+                        <a_really_long_tag_name Id="comp1"
+                                                Caption="Title" />
+                        <a_really_long_tag_name Id="comp2"
+                                                Caption="Title">
+                            <a_really_long_tag_name>
+                                <a_really_long_tag_name Id="comp3"
+                                                        Caption="Title" />
+                            </a_really_long_tag_name>
+                        </a_really_long_tag_name>
+                    }
+                    """,
+            tagHelpers: GetComponents());
+    }
+
+    [Fact(Skip = "Requires fix")]
+    [WorkItem("https://github.com/dotnet/razor/issues/8228")]
+    public async Task FormatNestedComponents4()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    @{
+                        RenderFragment fragment =
+                          @<Component1 Id="Comp1"
+                                     Caption="Title">
+                        </Component1>;
+                    }
+                    """,
+            expected: """
+                    @{
+                        RenderFragment fragment =
+                        @<Component1 Id="Comp1"
+                                     Caption="Title">
+                        </Component1>;
+                    }
+                    """,
+            tagHelpers: GetComponents());
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/8229")]
+    public async Task FormatNestedComponents5()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    <Component1>
+                        @{
+                            RenderFragment fragment =
+                            @<Component1 Id="Comp1"
+                                     Caption="Title">
+                            </Component1>;
+                        }
+                    </Component1>
+                    """,
+            expected: """
+                    <Component1>
+                        @{
+                            RenderFragment fragment =
+                            @<Component1 Id="Comp1"
+                                         Caption="Title">
+                            </Component1>;
+                        }
+                    </Component1>
                     """,
             tagHelpers: GetComponents());
     }
@@ -1798,6 +1941,18 @@ public class HtmlFormattingTest : FormattingTestBase
                     {
                         [Parameter]
                         public RenderFragment ChildContent { get; set; }
+                    }
+
+                    public class Component1 : ComponentBase
+                    {
+                        [Parameter]
+                        public string Id { get; set; }
+
+                        [Parameter]
+                        public string Caption { get; set; }
+
+                        [Parameter]
+                        public RenderFragment Frag {get;set;}
                     }
                 }
                 """));

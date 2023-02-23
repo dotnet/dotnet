@@ -142,7 +142,7 @@ public class DefaultRazorComponentSearchEngineTest : LanguageServerTestBase
         return builder1.Build();
     }
 
-    internal static DocumentSnapshot CreateRazorDocumentSnapshot(string text, string filePath, string rootNamespaceName)
+    internal static IDocumentSnapshot CreateRazorDocumentSnapshot(string text, string filePath, string rootNamespaceName)
     {
         var sourceDocument = TestRazorSourceDocument.Create(text, filePath: filePath, relativePath: filePath);
         var projectEngine = RazorProjectEngine.Create(RazorConfiguration.Default, TestRazorProjectFileSystem.Empty, builder => builder.AddDirective(NamespaceDirective.Directive));
@@ -154,7 +154,7 @@ public class DefaultRazorComponentSearchEngineTest : LanguageServerTestBase
             .FirstOrDefault(n => n is NamespaceDeclarationIntermediateNode);
         namespaceNode.Content = rootNamespaceName;
 
-        var documentSnapshot = Mock.Of<DocumentSnapshot>(d =>
+        var documentSnapshot = Mock.Of<IDocumentSnapshot>(d =>
             d.GetGeneratedOutputAsync() == Task.FromResult(codeDocument) &&
             d.FilePath == filePath &&
             d.FileKind == FileKinds.Component, MockBehavior.Strict);
@@ -163,13 +163,13 @@ public class DefaultRazorComponentSearchEngineTest : LanguageServerTestBase
 
     internal static ProjectSnapshotManagerAccessor CreateProjectSnapshotManagerAccessor()
     {
-        var firstProject = Mock.Of<ProjectSnapshot>(p =>
+        var firstProject = Mock.Of<IProjectSnapshot>(p =>
             p.FilePath == "c:/First/First.csproj" &&
             p.DocumentFilePaths == new[] { "c:/First/Component1.razor", "c:/First/Component2.razor" } &&
             p.GetDocument("c:/First/Component1.razor") == CreateRazorDocumentSnapshot("", "c:/First/Component1.razor", "First.Components") &&
             p.GetDocument("c:/First/Component2.razor") == CreateRazorDocumentSnapshot("@namespace Test", "c:/First/Component2.razor", "Test"), MockBehavior.Strict);
 
-        var secondProject = Mock.Of<ProjectSnapshot>(p =>
+        var secondProject = Mock.Of<IProjectSnapshot>(p =>
             p.FilePath == "c:/Second/Second.csproj" &&
             p.DocumentFilePaths == new[] { "c:/Second/Component3.razor" } &&
             p.GetDocument("c:/Second/Component3.razor") == CreateRazorDocumentSnapshot("", "c:/Second/Component3.razor", "Second.Components"), MockBehavior.Strict);

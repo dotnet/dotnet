@@ -1,4 +1,4 @@
-Source Location: (35:2,15 [10] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Instrumented.cshtml)
+﻿Source Location: (35:2,15 [10] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Instrumented.cshtml)
 |<p>Bar</p>|
 Generated Location: (35:2,15 [10] )
 |<p>Bar</p>|

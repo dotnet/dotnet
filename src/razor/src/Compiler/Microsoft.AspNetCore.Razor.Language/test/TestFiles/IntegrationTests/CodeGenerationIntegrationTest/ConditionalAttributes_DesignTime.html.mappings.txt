@@ -1,4 +1,4 @@
-Source Location: (50:3,4 [16] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes.cshtml)
+﻿Source Location: (50:3,4 [16] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes.cshtml)
 |<a href="Foo" />|
 Generated Location: (50:3,4 [16] )
 |<a href="Foo" />|

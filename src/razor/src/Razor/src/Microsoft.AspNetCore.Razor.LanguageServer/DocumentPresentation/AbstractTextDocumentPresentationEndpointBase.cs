@@ -273,5 +273,5 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams> : 
         return workspaceEdit;
     }
 
-    protected record DocumentSnapshotAndVersion(DocumentSnapshot Snapshot, int Version);
+    protected record DocumentSnapshotAndVersion(IDocumentSnapshot Snapshot, int Version);
 }

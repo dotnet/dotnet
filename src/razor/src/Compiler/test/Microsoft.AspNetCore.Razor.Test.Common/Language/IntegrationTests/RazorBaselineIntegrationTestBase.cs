@@ -6,6 +6,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Xunit;
@@ -17,6 +18,9 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests;
 public abstract class RazorBaselineIntegrationTestBase : RazorIntegrationTestBase
 {
     private static readonly AsyncLocal<string> _directoryPath = new AsyncLocal<string>();
+
+    // UTF-8 with BOM
+    private static readonly Encoding _baselineEncoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: true);
 
     protected RazorBaselineIntegrationTestBase(bool? generateBaselines = null)
     {
@@ -36,7 +40,7 @@ public abstract class RazorBaselineIntegrationTestBase : RazorIntegrationTestBas
     }
 
 #if GENERATE_BASELINES
-        protected bool GenerateBaselines { get; } = true;
+    protected bool GenerateBaselines { get; } = true;
 #else
     protected bool GenerateBaselines { get; } = false;
 #endif
@@ -250,12 +254,12 @@ public abstract class RazorBaselineIntegrationTestBase : RazorIntegrationTestBas
     private static void WriteBaseline(string text, string filePath)
     {
         var lines = text.Replace("\r", "").Replace("\n", "\r\n");
-        File.WriteAllText(filePath, text);
+        File.WriteAllText(filePath, text, _baselineEncoding);
     }
 
     private static void WriteBaseline(string[] lines, string filePath)
     {
-        using (var writer = new StreamWriter(File.Open(filePath, FileMode.Create)))
+        using (var writer = new StreamWriter(File.Open(filePath, FileMode.Create), _baselineEncoding))
         {
             // Force windows-style line endings so that we're consistent. This isn't
             // required for correctness, but will prevent churn when developing on OSX.

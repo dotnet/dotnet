@@ -4,6 +4,7 @@
 #nullable disable
 
 using System.Composition;
+using Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project;
 using OmniSharp.MSBuild.Notification;
 
 namespace Microsoft.AspNetCore.Razor.OmniSharpPlugin;
@@ -13,7 +14,7 @@ namespace Microsoft.AspNetCore.Razor.OmniSharpPlugin;
 internal class ProjectSnapshotManagerInstantiator : IMSBuildEventSink
 {
     // The entire purpose of this class is to ensure the project manager is instantiated.
-    // Without this class all exporters of IOmniSharpProjectSnapshotManagerChangeTrigger
+    // Without this class all exporters of AbstractOmniSharpProjectSnapshotManagerChangeTrigger
     // would never be called (the class wouldn't have been created). So instead we rely
     // on OmniSharp to instantiate the snapshot manager and therefore configure the
     // dependent change triggers.

@@ -53,7 +53,7 @@ internal class VisualStudioFileChangeTrackerFactoryFactory : IWorkspaceServiceFa
             throw new ArgumentNullException(nameof(workspaceServices));
         }
 
-        var errorReporter = workspaceServices.GetRequiredService<ErrorReporter>();
+        var errorReporter = workspaceServices.GetRequiredService<IErrorReporter>();
         return new VisualStudioFileChangeTrackerFactory(errorReporter, _fileChangeService!, _projectSnapshotManagerDispatcher, _joinableTaskContext);
     }
 }

@@ -9,7 +9,7 @@ using Microsoft.CodeAnalysis.Razor;
 namespace Microsoft.VisualStudio.Mac.LanguageServices.Razor;
 
 [Shared]
-[ExportWorkspaceServiceFactory(typeof(ErrorReporter), ServiceLayer.Host)]
+[ExportWorkspaceServiceFactory(typeof(IErrorReporter), ServiceLayer.Host)]
 internal class VisualStudioErrorReporterFactory : IWorkspaceServiceFactory
 {
     public IWorkspaceService CreateService(HostWorkspaceServices workspaceServices)

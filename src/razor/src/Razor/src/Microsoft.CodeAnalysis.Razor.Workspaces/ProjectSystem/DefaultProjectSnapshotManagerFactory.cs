@@ -44,7 +44,7 @@ internal class DefaultProjectSnapshotManagerFactory : ILanguageServiceFactory
 
         return new DefaultProjectSnapshotManager(
             _projectSnapshotManagerDispatcher,
-            languageServices.WorkspaceServices.GetRequiredService<ErrorReporter>(),
+            languageServices.WorkspaceServices.GetRequiredService<IErrorReporter>(),
             _triggers,
             languageServices.WorkspaceServices.Workspace);
     }

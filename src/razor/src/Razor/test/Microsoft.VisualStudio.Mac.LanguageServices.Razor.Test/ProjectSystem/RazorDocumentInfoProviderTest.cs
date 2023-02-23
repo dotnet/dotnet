@@ -20,8 +20,8 @@ public class RazorDocumentInfoProviderTest : WorkspaceTestBase
     private readonly VisualStudioMacDocumentInfoFactory _factory;
     private readonly DefaultRazorDynamicFileInfoProvider _innerDynamicDocumentInfoProvider;
     private readonly TestProjectSnapshotManager _projectSnapshotManager;
-    private readonly ProjectSnapshot _projectSnapshot;
-    private readonly DocumentSnapshot _documentSnapshot;
+    private readonly IProjectSnapshot _projectSnapshot;
+    private readonly IDocumentSnapshot _documentSnapshot;
 
     public RazorDocumentInfoProviderTest(ITestOutputHelper testOutput)
         : base(testOutput)

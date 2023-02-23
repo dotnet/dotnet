@@ -7,6 +7,8 @@ using System;
 using System.IO;
 using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
+using Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp;
+using Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Document;
 
 namespace Microsoft.AspNetCore.Razor.OmniSharpPlugin;
 

@@ -47,8 +47,8 @@ public class TagHelperResolutionResultSerializationTest : TestBase
         var tagHelperFilePath = Path.Combine(current.FullName, testFileName);
         var buffer = File.ReadAllBytes(tagHelperFilePath);
         var serializer = new JsonSerializer();
-        serializer.Converters.Add(new TagHelperDescriptorJsonConverter());
-        serializer.Converters.Add(new TagHelperResolutionResultJsonConverter());
+        serializer.Converters.Add(TagHelperDescriptorJsonConverter.Instance);
+        serializer.Converters.Add(TagHelperResolutionResultJsonConverter.Instance);
 
         IReadOnlyList<TagHelperDescriptor> deserializedTagHelpers;
         using (var stream = new MemoryStream(buffer))

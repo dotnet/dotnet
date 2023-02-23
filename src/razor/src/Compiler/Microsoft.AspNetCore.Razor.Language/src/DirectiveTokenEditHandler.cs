@@ -12,8 +12,14 @@ namespace Microsoft.AspNetCore.Razor.Language;
 
 internal class DirectiveTokenEditHandler : SpanEditHandler
 {
-    public DirectiveTokenEditHandler(Func<string, IEnumerable<Syntax.InternalSyntax.SyntaxToken>> tokenizer) : base(tokenizer)
+    public static void SetupBuilder(SpanEditHandlerBuilder builder, AcceptedCharactersInternal acceptedCharacters, Func<string, IEnumerable<Syntax.InternalSyntax.SyntaxToken>> tokenizer)
     {
+        builder.AcceptedCharacters = acceptedCharacters;
+        builder.Factory = static (acceptedCharacters, tokenizer) => new DirectiveTokenEditHandler
+        {
+            AcceptedCharacters = acceptedCharacters,
+            Tokenizer = tokenizer,
+        };
     }
 
     protected override PartialParseResultInternal CanAcceptChange(SyntaxNode target, SourceChange change)

@@ -25,7 +25,7 @@ public class CodeDocumentReferenceHolderTest : LanguageServerTestBase
     public CodeDocumentReferenceHolderTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _projectManager = TestProjectSnapshotManager.Create(Dispatcher);
+        _projectManager = TestProjectSnapshotManager.Create(Dispatcher, ErrorReporter);
         _projectManager.AllowNotifyListeners = true;
         _referenceHolder = new CodeDocumentReferenceHolder();
         _referenceHolder.Initialize(_projectManager);
@@ -62,6 +62,8 @@ public class CodeDocumentReferenceHolderTest : LanguageServerTestBase
             var document = project.GetDocument(unrelatedHostDocument.FilePath);
             return document;
         }, DisposalToken);
+
+        Assert.NotNull(unrelatedDocumentSnapshot);
 
         var mainCodeDocumentReference = await ProcessDocumentAndRetrieveOutputAsync(documentSnapshot, DisposalToken);
         var unrelatedCodeDocumentReference = await ProcessDocumentAndRetrieveOutputAsync(unrelatedDocumentSnapshot, DisposalToken);
@@ -155,7 +157,7 @@ public class CodeDocumentReferenceHolderTest : LanguageServerTestBase
         Assert.False(codeDocumentReference.TryGetTarget(out _));
     }
 
-    private Task<DocumentSnapshot> CreateDocumentSnapshotAsync(CancellationToken cancellationToken)
+    private Task<IDocumentSnapshot> CreateDocumentSnapshotAsync(CancellationToken cancellationToken)
     {
         return Dispatcher.RunOnDispatcherThreadAsync(() =>
         {
@@ -163,13 +165,12 @@ public class CodeDocumentReferenceHolderTest : LanguageServerTestBase
             var textLoader = new SourceTextLoader("<p>Hello World</p>", _hostDocument.FilePath);
             _projectManager.DocumentAdded(_hostProject, _hostDocument, textLoader);
             var project = _projectManager.GetLoadedProject(_hostProject.FilePath);
-            var document = project.GetDocument(_hostDocument.FilePath);
-            return document;
+            return project.GetDocument(_hostDocument.FilePath).AssumeNotNull();
         }, cancellationToken);
     }
 
     [MethodImpl(MethodImplOptions.NoInlining)]
-    private async Task<WeakReference<RazorCodeDocument>> ProcessDocumentAndRetrieveOutputAsync(DocumentSnapshot documentSnapshot, CancellationToken cancellationToken)
+    private async Task<WeakReference<RazorCodeDocument>> ProcessDocumentAndRetrieveOutputAsync(IDocumentSnapshot documentSnapshot, CancellationToken cancellationToken)
     {
         var codeDocument = await documentSnapshot.GetGeneratedOutputAsync();
         await Dispatcher.RunOnDispatcherThreadAsync(() =>

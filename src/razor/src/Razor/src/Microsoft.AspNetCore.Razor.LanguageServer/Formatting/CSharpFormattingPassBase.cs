@@ -167,7 +167,7 @@ internal abstract class CSharpFormattingPassBase : FormattingPassBase
             var line = context.SourceText.Lines[i];
             var lineStart = line.GetFirstNonWhitespacePosition() ?? line.Start;
             var lineStartSpan = new TextSpan(lineStart, 0);
-            if (!ShouldFormat(context, lineStartSpan, allowImplicitStatements: true))
+            if (!ShouldFormatLine(context, lineStartSpan, allowImplicitStatements: true))
             {
                 // We don't care about this line as it lies in an area we don't want to format.
                 continue;
@@ -280,6 +280,16 @@ internal abstract class CSharpFormattingPassBase : FormattingPassBase
 
     protected static bool ShouldFormat(FormattingContext context, TextSpan mappingSpan, bool allowImplicitStatements, out SyntaxNode? foundOwner)
     {
+        return ShouldFormatCore(context, mappingSpan, allowImplicitStatements, isLineRequest: false, out foundOwner);
+    }
+
+    private static bool ShouldFormatLine(FormattingContext context, TextSpan mappingSpan, bool allowImplicitStatements)
+    {
+        return ShouldFormatCore(context, mappingSpan, allowImplicitStatements, isLineRequest: true, out _);
+    }
+
+    private static bool ShouldFormatCore(FormattingContext context, TextSpan mappingSpan, bool allowImplicitStatements, bool isLineRequest, out SyntaxNode? foundOwner)
+    {
         // We should be called with the range of various C# SourceMappings.
 
         if (mappingSpan.Start == 0)
@@ -323,7 +333,7 @@ internal abstract class CSharpFormattingPassBase : FormattingPassBase
         }
 
         if (IsRazorComment() ||
-            IsInHtmlAttributeName() ||
+            IsInBoundComponentAttributeName() ||
             IsInHtmlAttributeValue() ||
             IsInDirectiveWithNoKind() ||
             IsInSingleLineDirective() ||
@@ -367,18 +377,31 @@ internal abstract class CSharpFormattingPassBase : FormattingPassBase
             return false;
         }
 
-        bool IsInHtmlAttributeName()
+        bool IsInBoundComponentAttributeName()
         {
             // E.g, (| is position)
             //
             // `<p |csharpattr="Variable">` - true
             //
             // Because we map attributes, so rename and FAR works, there could be C# mapping for them,
-            // but only if they're actually bound attributes
+            // but only if they're actually bound attributes. We don't want the mapping to throw make the
+            // formatting engine think it needs to apply C# indentation rules.
+            //
+            // The exception here is if we're being asked whether to format the line of code at all,
+            // then we want to pretend it's not a component attribute, because we do still want the line
+            // formatted. ie, given this:
+            //
+            // `<p
+            //     |csharpattr="Variable">`
+            //
+            // We want to return false when being asked to format the line, so the line gets indented, but
+            // return true if we're just being asked "should we format this according to C# rules".
 
-            return owner.AncestorsAndSelf().Any(
-                n => n is MarkupTagHelperAttributeSyntax { TagHelperAttributeInfo: { Bound: true } } or
-                          MarkupTagHelperDirectiveAttributeSyntax { TagHelperAttributeInfo: { Bound: true } });
+            return owner is MarkupTextLiteralSyntax
+            {
+                Parent: MarkupTagHelperAttributeSyntax { TagHelperAttributeInfo: { Bound: true } } or
+                        MarkupTagHelperDirectiveAttributeSyntax { TagHelperAttributeInfo: { Bound: true } }
+            } && !isLineRequest;
         }
 
         bool IsInHtmlAttributeValue()

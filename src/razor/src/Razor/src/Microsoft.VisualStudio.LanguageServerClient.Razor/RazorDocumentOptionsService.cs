@@ -18,10 +18,10 @@ namespace Microsoft.VisualStudio.LanguageServerClient.Razor;
 [Export(typeof(IRazorDocumentOptionsService))]
 internal sealed class RazorDocumentOptionsService : IRazorDocumentOptionsService
 {
-    private readonly EditorSettingsManager _editorSettingsManager;
+    private readonly IClientSettingsManager _editorSettingsManager;
 
     [ImportingConstructor]
-    public RazorDocumentOptionsService(EditorSettingsManager editorSettingsManager)
+    public RazorDocumentOptionsService(IClientSettingsManager editorSettingsManager)
     {
         if (editorSettingsManager is null)
         {
@@ -39,18 +39,18 @@ internal sealed class RazorDocumentOptionsService : IRazorDocumentOptionsService
         }
 
         // TO-DO: We should switch to a per-document implementation once Razor starts supporting .editorconfig.
-        var editorSettings = _editorSettingsManager.Current;
+        var editorSettings = _editorSettingsManager.GetClientSettings().ClientSpaceSettings;
         return Task.FromResult<IRazorDocumentOptions>(new RazorDocumentOptions(document, editorSettings));
     }
 
     private sealed class RazorDocumentOptions : IRazorDocumentOptions
     {
-        private readonly EditorSettings _editorSettings;
+        private readonly ClientSpaceSettings _editorSettings;
         private readonly OptionKey _useTabsOptionKey;
         private readonly OptionKey _tabSizeOptionKey;
         private readonly OptionKey _indentationSizeOptionKey;
 
-        public RazorDocumentOptions(Document document, EditorSettings editorSettings)
+        public RazorDocumentOptions(Document document, ClientSpaceSettings editorSettings)
         {
             _editorSettings = editorSettings;
 

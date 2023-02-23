@@ -19,8 +19,8 @@ namespace Microsoft.VisualStudio.LiveShare.Razor.Host;
 public class DefaultProjectSnapshotManagerProxyTest : ProjectSnapshotManagerDispatcherTestBase
 {
     private readonly Workspace _workspace;
-    private readonly ProjectSnapshot _projectSnapshot1;
-    private readonly ProjectSnapshot _projectSnapshot2;
+    private readonly IProjectSnapshot _projectSnapshot1;
+    private readonly IProjectSnapshot _projectSnapshot2;
 
     public DefaultProjectSnapshotManagerProxyTest(ITestOutputHelper testOutput)
         : base(testOutput)
@@ -33,7 +33,7 @@ public class DefaultProjectSnapshotManagerProxyTest : ProjectSnapshotManagerDisp
             TagHelperDescriptorBuilder.Create("test1", "TestAssembly1").Build(),
         },
         default);
-        _projectSnapshot1 = new DefaultProjectSnapshot(
+        _projectSnapshot1 = new ProjectSnapshot(
             ProjectState.Create(
                 _workspace.Services,
                 new HostProject("/host/path/to/project1.csproj", RazorConfiguration.Default, "project1"),
@@ -43,7 +43,7 @@ public class DefaultProjectSnapshotManagerProxyTest : ProjectSnapshotManagerDisp
             TagHelperDescriptorBuilder.Create("test2", "TestAssembly2").Build(),
         },
         default);
-        _projectSnapshot2 = new DefaultProjectSnapshot(
+        _projectSnapshot2 = new ProjectSnapshot(
             ProjectState.Create(
                 _workspace.Services,
                 new HostProject("/host/path/to/project2.csproj", RazorConfiguration.Default, "project2"),
@@ -197,12 +197,12 @@ public class DefaultProjectSnapshotManagerProxyTest : ProjectSnapshotManagerDisp
 
     private class TestProjectSnapshotManager : ProjectSnapshotManager
     {
-        public TestProjectSnapshotManager(params ProjectSnapshot[] projects)
+        public TestProjectSnapshotManager(params IProjectSnapshot[] projects)
         {
             Projects = projects;
         }
 
-        public override IReadOnlyList<ProjectSnapshot> Projects { get; }
+        public override IReadOnlyList<IProjectSnapshot> Projects { get; }
 
         public override event EventHandler<ProjectChangeEventArgs> Changed;
 
@@ -211,12 +211,12 @@ public class DefaultProjectSnapshotManagerProxyTest : ProjectSnapshotManagerDisp
             Changed?.Invoke(this, args);
         }
 
-        public override ProjectSnapshot GetLoadedProject(string filePath)
+        public override IProjectSnapshot GetLoadedProject(string filePath)
         {
             throw new NotImplementedException();
         }
 
-        public override ProjectSnapshot GetOrCreateProject(string filePath)
+        public override IProjectSnapshot GetOrCreateProject(string filePath)
         {
             throw new NotImplementedException();
         }

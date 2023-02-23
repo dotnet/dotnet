@@ -9,7 +9,7 @@
     <IsShipping>false</IsShipping>
     <!-- setting IsShippingAssembly because we want symbols stored for this DLL, since it ships in the VSIX -->
     <IsShippingAssembly>true</IsShippingAssembly>
-    <NoWarn>$(NoWarn);RS2008</NoWarn>
+    <NoWarn>$(NoWarn);RS2008;RS1036</NoWarn>
     <Nullable>enable</Nullable>
     <ExcludeFromSourceBuild>false</ExcludeFromSourceBuild>
   </PropertyGroup>

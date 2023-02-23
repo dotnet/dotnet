@@ -255,16 +255,6 @@ stages:
           continueOnError: true
           condition: always()
 
-        - powershell: |
-            $version = $(node -p "require('./package.json').version" | Out-String).Trim()
-            yarn install
-            md $(Build.SourcesDirectory)/artifacts/packages/VSCode/$(_BuildConfig)/ -ea 0
-            npx vsce@1.103.1 package -o $(Build.SourcesDirectory)/artifacts/packages/VSCode/$(_BuildConfig)/blazorwasm-companion-$version.vsix
-          displayName: Produce Blazor WASM Debugging Extension VSIX
-          workingDirectory: $(Build.SourcesDirectory)/src/Razor/src/Microsoft.AspNetCore.Razor.VSCode.BlazorWasmDebuggingExtension
-          failOnStderr: true
-          condition: and(succeeded(), eq(variables['_BuildConfig'], 'Release'))
-
         - task: PublishBuildArtifacts@1
           displayName: Upload Test Results
           condition: always()
@@ -306,14 +296,6 @@ stages:
           inputs:
             PathtoPublish: 'artifacts\packages\$(_BuildConfig)'
             ArtifactName: Packages_$(Agent.Os)_$(_BuildConfig)
-          continueOnError: true
-          condition: and(succeeded(), eq(variables['system.pullrequest.isfork'], false), eq(variables['_BuildConfig'], 'Release'))
-
-        - task: PublishBuildArtifacts@1
-          displayName: Publish VS Code extension artifacts
-          inputs:
-            PathtoPublish: 'artifacts\packages\VSCode\$(_BuildConfig)'
-            ArtifactName: BlazorWasmDebuggingExtension
           continueOnError: true
           condition: and(succeeded(), eq(variables['system.pullrequest.isfork'], false), eq(variables['_BuildConfig'], 'Release'))
 

@@ -13,16 +13,16 @@ namespace Microsoft.CodeAnalysis.Razor;
 
 internal abstract class ProjectSnapshotProjectEngineFactory : IWorkspaceService
 {
-    public abstract IProjectEngineFactory FindFactory(ProjectSnapshot project);
+    public abstract IProjectEngineFactory FindFactory(IProjectSnapshot project);
 
-    public abstract IProjectEngineFactory FindSerializableFactory(ProjectSnapshot project);
+    public abstract IProjectEngineFactory FindSerializableFactory(IProjectSnapshot project);
 
-    public RazorProjectEngine Create(ProjectSnapshot project)
+    public RazorProjectEngine Create(IProjectSnapshot project)
     {
         return Create(project, RazorProjectFileSystem.Create(Path.GetDirectoryName(project.FilePath)), null);
     }
 
-    public RazorProjectEngine Create(ProjectSnapshot project, RazorProjectFileSystem fileSystem)
+    public RazorProjectEngine Create(IProjectSnapshot project, RazorProjectFileSystem fileSystem)
     {
         if (project is null)
         {
@@ -37,7 +37,7 @@ internal abstract class ProjectSnapshotProjectEngineFactory : IWorkspaceService
         return Create(project, fileSystem, null);
     }
 
-    public RazorProjectEngine Create(ProjectSnapshot project, Action<RazorProjectEngineBuilder> configure)
+    public RazorProjectEngine Create(IProjectSnapshot project, Action<RazorProjectEngineBuilder> configure)
     {
         if (project is null)
         {
@@ -47,7 +47,7 @@ internal abstract class ProjectSnapshotProjectEngineFactory : IWorkspaceService
         return Create(project, RazorProjectFileSystem.Create(Path.GetDirectoryName(project.FilePath)), configure);
     }
 
-    public RazorProjectEngine Create(ProjectSnapshot project, RazorProjectFileSystem fileSystem, Action<RazorProjectEngineBuilder> configure)
+    public RazorProjectEngine Create(IProjectSnapshot project, RazorProjectFileSystem fileSystem, Action<RazorProjectEngineBuilder> configure)
     {
         if (project is null)
         {

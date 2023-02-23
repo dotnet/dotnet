@@ -38,7 +38,7 @@ internal class RazorLSPTextViewConnectionListener : ITextViewConnectionListener
     private readonly IVsEditorAdaptersFactoryService _editorAdaptersFactory;
     private readonly LSPEditorFeatureDetector _editorFeatureDetector;
     private readonly IEditorOptionsFactoryService _editorOptionsFactory;
-    private readonly EditorSettingsManager _editorSettingsManager;
+    private readonly IClientSettingsManager _editorSettingsManager;
     private readonly IVsTextManager4 _textManager;
 
     /// <summary>
@@ -58,7 +58,7 @@ internal class RazorLSPTextViewConnectionListener : ITextViewConnectionListener
         IVsEditorAdaptersFactoryService editorAdaptersFactory,
         LSPEditorFeatureDetector editorFeatureDetector,
         IEditorOptionsFactoryService editorOptionsFactory,
-        EditorSettingsManager editorSettingsManager,
+        IClientSettingsManager editorSettingsManager,
         SVsServiceProvider serviceProvider)
     {
         if (editorAdaptersFactory is null)
@@ -265,7 +265,7 @@ internal class RazorLSPTextViewConnectionListener : ITextViewConnectionListener
         optionsTracker.ViewOptions.SetOptionValue(DefaultTextViewHostOptions.PreviewSizeOptionName, (int)langPrefs3[0].uOverviewWidth);
     }
 
-    private static EditorSettings UpdateRazorEditorOptions(IVsTextManager4 textManager, RazorEditorOptionsTracker optionsTracker)
+    private static ClientSpaceSettings UpdateRazorEditorOptions(IVsTextManager4 textManager, RazorEditorOptionsTracker optionsTracker)
     {
         var insertSpaces = true;
         var tabSize = 4;
@@ -273,7 +273,7 @@ internal class RazorLSPTextViewConnectionListener : ITextViewConnectionListener
         var langPrefs3 = new LANGPREFERENCES3[] { new LANGPREFERENCES3() { guidLang = RazorVisualStudioWindowsConstants.RazorLanguageServiceGuid } };
         if (VSConstants.S_OK != textManager.GetUserPreferences4(null, langPrefs3, null))
         {
-            return new EditorSettings(indentWithTabs: !insertSpaces, tabSize);
+            return new ClientSpaceSettings(IndentWithTabs: !insertSpaces, tabSize);
         }
 
         // Tabs options
@@ -289,7 +289,7 @@ internal class RazorLSPTextViewConnectionListener : ITextViewConnectionListener
         optionsTracker.BufferOptions.SetOptionValue(DefaultOptions.ConvertTabsToSpacesOptionId, insertSpaces);
         optionsTracker.BufferOptions.SetOptionValue(DefaultOptions.TabSizeOptionId, tabSize);
 
-        return new EditorSettings(indentWithTabs: !insertSpaces, tabSize);
+        return new ClientSpaceSettings(IndentWithTabs: !insertSpaces, tabSize);
     }
 
     private class RazorLSPTextViewFilter : IOleCommandTarget, IVsTextViewFilter

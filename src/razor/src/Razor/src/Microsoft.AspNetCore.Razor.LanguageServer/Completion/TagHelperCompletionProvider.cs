@@ -141,7 +141,7 @@ internal class TagHelperCompletionProvider : RazorCompletionItemProvider
         var (ancestorTagName, ancestorIsTagHelper) = _tagHelperFactsService.GetNearestAncestorTagInfo(ancestors);
         var attributeCompletionContext = new AttributeCompletionContext(
             filteredContext,
-            existingCompletions: Enumerable.Empty<string>(),
+            existingCompletions: Array.Empty<string>(),
             containingTagName,
             selectedAttributeName,
             attributes,

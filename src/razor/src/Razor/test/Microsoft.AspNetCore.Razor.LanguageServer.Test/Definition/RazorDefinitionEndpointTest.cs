@@ -216,12 +216,12 @@ public class RazorDefinitionEndpointTest : TagHelperServiceTestBase
         }
     }
 
-    private void SetupDocument(out RazorCodeDocument codeDocument, out DocumentSnapshot documentSnapshot, string content, bool isRazorFile = true)
+    private void SetupDocument(out RazorCodeDocument codeDocument, out IDocumentSnapshot documentSnapshot, string content, bool isRazorFile = true)
     {
         var sourceText = SourceText.From(content);
         codeDocument = CreateCodeDocument(content, isRazorFile, DefaultTagHelpers);
         var outDoc = codeDocument;
-        documentSnapshot = Mock.Of<DocumentSnapshot>(
+        documentSnapshot = Mock.Of<IDocumentSnapshot>(
             d => d.GetTextAsync() == Task.FromResult(sourceText),
             MockBehavior.Strict);
         Mock.Get(documentSnapshot)

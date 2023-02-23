@@ -1,4 +1,4 @@
-Source Location: (13:0,13 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EmptyAttributeTagHelpers.cshtml)
+﻿Source Location: (13:0,13 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EmptyAttributeTagHelpers.cshtml)
 | |
 Generated Location: (13:0,13 [1] )
 | |

@@ -20,6 +20,7 @@ using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using SyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
 using TextSpan = Microsoft.CodeAnalysis.Text.TextSpan;
@@ -29,10 +30,12 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 internal class CSharpOnTypeFormattingPass : CSharpFormattingPassBase
 {
     private readonly ILogger _logger;
+    private readonly IOptionsMonitor<RazorLSPOptions> _optionsMonitor;
 
     public CSharpOnTypeFormattingPass(
         RazorDocumentMappingService documentMappingService,
         ClientNotifierServiceBase server,
+        IOptionsMonitor<RazorLSPOptions> optionsMonitor,
         ILoggerFactory loggerFactory)
         : base(documentMappingService, server)
     {
@@ -42,11 +45,12 @@ internal class CSharpOnTypeFormattingPass : CSharpFormattingPassBase
         }
 
         _logger = loggerFactory.CreateLogger<CSharpOnTypeFormattingPass>();
+        _optionsMonitor = optionsMonitor;
     }
 
     public async override Task<FormattingResult> ExecuteAsync(FormattingContext context, FormattingResult result, CancellationToken cancellationToken)
     {
-        if (!context.IsFormatOnType || result.Kind != RazorLanguageKind.CSharp)
+        if (!context.IsFormatOnType || result.Kind != RazorLanguageKind.CSharp || !_optionsMonitor.CurrentValue.FormatOnType)
         {
             // We don't want to handle regular formatting or non-C# on type formatting here.
             return result;

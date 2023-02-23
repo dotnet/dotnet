@@ -1,8 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -14,23 +12,25 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.AspNetCore.Razor.Test.Common;
 
-internal class TestProjectSnapshot : DefaultProjectSnapshot
+internal class TestProjectSnapshot : ProjectSnapshot
 {
-    public static TestProjectSnapshot Create(string filePath, ProjectWorkspaceState projectWorkspaceState = null) => Create(filePath, Array.Empty<string>(), projectWorkspaceState);
+    public static TestProjectSnapshot Create(string filePath, ProjectWorkspaceState? projectWorkspaceState = null)
+        => Create(filePath, Array.Empty<string>(), projectWorkspaceState);
 
-    public static TestProjectSnapshot Create(string filePath, string[] documentFilePaths, ProjectWorkspaceState projectWorkspaceState = null) =>
-        Create(filePath, documentFilePaths, RazorConfiguration.Default, projectWorkspaceState);
+    public static TestProjectSnapshot Create(string filePath, string[] documentFilePaths, ProjectWorkspaceState? projectWorkspaceState = null)
+        => Create(filePath, documentFilePaths, RazorConfiguration.Default, projectWorkspaceState);
 
     public static TestProjectSnapshot Create(
         string filePath,
         string[] documentFilePaths,
         RazorConfiguration configuration,
-        ProjectWorkspaceState projectWorkspaceState)
+        ProjectWorkspaceState? projectWorkspaceState)
     {
         var workspaceServices = new List<IWorkspaceService>()
         {
             new TestProjectSnapshotProjectEngineFactory(),
         };
+
         var languageServices = new List<ILanguageService>();
 
         var hostServices = TestServices.Create(workspaceServices, languageServices);
@@ -43,7 +43,7 @@ internal class TestProjectSnapshot : DefaultProjectSnapshot
             state = state.WithAddedHostDocument(hostDocument, () => Task.FromResult(TextAndVersion.Create(SourceText.From(string.Empty), VersionStamp.Default)));
         }
 
-        if (projectWorkspaceState != null)
+        if (projectWorkspaceState is not null)
         {
             state = state.WithProjectWorkspaceState(projectWorkspaceState);
         }
@@ -53,27 +53,16 @@ internal class TestProjectSnapshot : DefaultProjectSnapshot
         return testProject;
     }
 
-    private TestProjectSnapshot(ProjectState projectState)
-        : base(projectState)
+    private TestProjectSnapshot(ProjectState state)
+        : base(state)
     {
-        if (projectState is null)
-        {
-            throw new ArgumentNullException(nameof(projectState));
-        }
     }
 
     public override VersionStamp Version => throw new NotImplementedException();
 
-    public override DocumentSnapshot GetDocument(string filePath)
+    public override IDocumentSnapshot? GetDocument(string filePath)
     {
-        var document = base.GetDocument(filePath);
-
-        if (document is null)
-        {
-            throw new InvalidOperationException("Test was not setup correctly. Could not locate document '" + filePath + "'.");
-        }
-
-        return document;
+        return base.GetDocument(filePath) ?? throw new InvalidOperationException($"Test was not setup correctly. Could not locate document '{filePath}'.");
     }
 
     public override RazorProjectEngine GetProjectEngine()

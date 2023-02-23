@@ -1,8 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,31 +15,28 @@ namespace Microsoft.AspNetCore.Razor.Microbenchmarks.Serialization;
 
 public class TagHelperResolutionResultSerializationBenchmark
 {
-    public TagHelperResolutionResultSerializationBenchmark()
-    {
-        var current = new DirectoryInfo(AppContext.BaseDirectory);
-        while (current != null && !File.Exists(Path.Combine(current.FullName, "taghelpers.json")))
-        {
-            current = current.Parent;
-        }
+    private JsonSerializer? _serializer;
+    private TagHelperResolutionResult? _tagHelperResolutionResult;
 
-        var tagHelperFilePath = Path.Combine(current.FullName, "taghelpers.json");
-        var tagHelperBuffer = File.ReadAllBytes(tagHelperFilePath);
+    private JsonSerializer Serializer => _serializer.AssumeNotNull();
+    private TagHelperResolutionResult TagHelperResolutionResult => _tagHelperResolutionResult.AssumeNotNull();
+
+    [GlobalSetup]
+    public void Setup()
+    {
+        var tagHelperBuffer = Resources.GetResourceBytes("taghelpers.json");
 
         // Deserialize from json file.
-        Serializer = new JsonSerializer();
-        Serializer.Converters.Add(new TagHelperDescriptorJsonConverter());
-        Serializer.Converters.Add(new TagHelperResolutionResultJsonConverter());
-        using (var stream = new MemoryStream(tagHelperBuffer))
-        using (var reader = new JsonTextReader(new StreamReader(stream)))
-        {
-            var tagHelpers = Serializer.Deserialize<IReadOnlyList<TagHelperDescriptor>>(reader);
-            TagHelperResolutionResult = new TagHelperResolutionResult(tagHelpers, Array.Empty<RazorDiagnostic>());
-        }
-    }
+        _serializer = new JsonSerializer();
+        _serializer.Converters.Add(TagHelperDescriptorJsonConverter.Instance);
+        _serializer.Converters.Add(TagHelperResolutionResultJsonConverter.Instance);
 
-    public JsonSerializer Serializer { get; set; }
-    private TagHelperResolutionResult TagHelperResolutionResult { get; }
+        using var stream = new MemoryStream(tagHelperBuffer);
+        using var reader = new JsonTextReader(new StreamReader(stream));
+
+        var tagHelpers = Serializer.Deserialize<IReadOnlyList<TagHelperDescriptor>>(reader);
+        _tagHelperResolutionResult = new TagHelperResolutionResult(tagHelpers, Array.Empty<RazorDiagnostic>());
+    }
 
     [Benchmark(Description = "Razor TagHelperResolutionResult Roundtrip JsonConverter Serialization")]
     public void TagHelper_JsonConvert_Serialization_RoundTrip()
@@ -58,7 +53,7 @@ public class TagHelperResolutionResultSerializationBenchmark
         using (stream)
         using (var reader = new JsonTextReader(new StreamReader(stream)))
         {
-            deserializedResult = Serializer.Deserialize<TagHelperResolutionResult>(reader);
+            deserializedResult = Serializer.Deserialize<TagHelperResolutionResult>(reader).AssumeNotNull();
         }
     }
 }

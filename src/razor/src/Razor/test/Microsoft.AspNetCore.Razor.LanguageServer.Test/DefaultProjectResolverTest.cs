@@ -28,7 +28,7 @@ public class DocumentProjectResolverTest : LanguageServerTestBase
     {
         // Arrange
         var documentFilePath = "C:/path/to/document.cshtml";
-        var projectResolver = CreateProjectResolver(() => Array.Empty<ProjectSnapshot>());
+        var projectResolver = CreateProjectResolver(() => Array.Empty<IProjectSnapshot>());
 
         // Act
         var result = projectResolver.TryResolveProject(documentFilePath, out var project);
@@ -44,11 +44,11 @@ public class DocumentProjectResolverTest : LanguageServerTestBase
         // Arrange
         var documentFilePath = "C:/path/to/document.cshtml";
         DefaultProjectResolver projectResolver = null;
-        var miscProject = new Mock<ProjectSnapshot>(MockBehavior.Strict);
+        var miscProject = new Mock<IProjectSnapshot>(MockBehavior.Strict);
         miscProject.Setup(p => p.FilePath)
             .Returns(() => projectResolver.MiscellaneousHostProject.FilePath);
         miscProject.Setup(p => p.GetDocument(documentFilePath))
-            .Returns((DocumentSnapshot)null);
+            .Returns((IDocumentSnapshot)null);
         projectResolver = CreateProjectResolver(() => new[] { miscProject.Object });
 
         // Act
@@ -65,10 +65,10 @@ public class DocumentProjectResolverTest : LanguageServerTestBase
         // Arrange
         var documentFilePath = "C:/path/to/document.cshtml";
         DefaultProjectResolver projectResolver = null;
-        var miscProject = new Mock<ProjectSnapshot>(MockBehavior.Strict);
+        var miscProject = new Mock<IProjectSnapshot>(MockBehavior.Strict);
         miscProject.Setup(p => p.FilePath)
             .Returns(() => projectResolver.MiscellaneousHostProject.FilePath);
-        miscProject.Setup(p => p.GetDocument(documentFilePath)).Returns(Mock.Of<DocumentSnapshot>(MockBehavior.Strict));
+        miscProject.Setup(p => p.GetDocument(documentFilePath)).Returns(Mock.Of<IDocumentSnapshot>(MockBehavior.Strict));
         projectResolver = CreateProjectResolver(() => new[] { miscProject.Object });
 
         // Act
@@ -84,7 +84,7 @@ public class DocumentProjectResolverTest : LanguageServerTestBase
     {
         // Arrange
         var documentFilePath = "C:/path/to/document.cshtml";
-        var unrelatedProject = Mock.Of<ProjectSnapshot>(p => p.FilePath == "C:/other/path/to/project.csproj", MockBehavior.Strict);
+        var unrelatedProject = Mock.Of<IProjectSnapshot>(p => p.FilePath == "C:/other/path/to/project.csproj", MockBehavior.Strict);
         var projectResolver = CreateProjectResolver(() => new[] { unrelatedProject });
 
         // Act
@@ -100,10 +100,10 @@ public class DocumentProjectResolverTest : LanguageServerTestBase
     {
         // Arrange
         var documentFilePath = "C:/path/to/document.cshtml";
-        var unrelatedProject = Mock.Of<ProjectSnapshot>(p => p.FilePath == "C:/other/path/to/project.csproj", MockBehavior.Strict);
-        var ownerProject = Mock.Of<ProjectSnapshot>(
+        var unrelatedProject = Mock.Of<IProjectSnapshot>(p => p.FilePath == "C:/other/path/to/project.csproj", MockBehavior.Strict);
+        var ownerProject = Mock.Of<IProjectSnapshot>(
             p => p.FilePath == "C:/path/to/project.csproj" &&
-            p.GetDocument(documentFilePath) == Mock.Of<DocumentSnapshot>(MockBehavior.Strict), MockBehavior.Strict);
+            p.GetDocument(documentFilePath) == Mock.Of<IDocumentSnapshot>(MockBehavior.Strict), MockBehavior.Strict);
 
         var projectResolver = CreateProjectResolver(() => new[] { unrelatedProject, ownerProject });
 
@@ -121,11 +121,11 @@ public class DocumentProjectResolverTest : LanguageServerTestBase
         // Arrange
         var documentFilePath = "C:/path/to/document.cshtml";
         DefaultProjectResolver projectResolver = null;
-        var miscProject = new Mock<ProjectSnapshot>(MockBehavior.Strict);
+        var miscProject = new Mock<IProjectSnapshot>(MockBehavior.Strict);
         miscProject.Setup(p => p.FilePath)
             .Returns(() => projectResolver.MiscellaneousHostProject.FilePath);
-        miscProject.Setup(p => p.GetDocument(documentFilePath)).Returns(Mock.Of<DocumentSnapshot>(MockBehavior.Strict));
-        var ownerProject = Mock.Of<ProjectSnapshot>(
+        miscProject.Setup(p => p.GetDocument(documentFilePath)).Returns(Mock.Of<IDocumentSnapshot>(MockBehavior.Strict));
+        var ownerProject = Mock.Of<IProjectSnapshot>(
             p => p.FilePath == "C:/path/to/project.csproj" &&
             p.GetDocument(documentFilePath) == null, MockBehavior.Strict);
 
@@ -145,11 +145,11 @@ public class DocumentProjectResolverTest : LanguageServerTestBase
         // Arrange
         var documentFilePath = "C:/path/to/document.cshtml";
         DefaultProjectResolver projectResolver = null;
-        var miscProject = new Mock<ProjectSnapshot>(MockBehavior.Strict);
+        var miscProject = new Mock<IProjectSnapshot>(MockBehavior.Strict);
         miscProject.Setup(p => p.FilePath)
             .Returns(() => projectResolver.MiscellaneousHostProject.FilePath);
-        miscProject.Setup(p => p.GetDocument(documentFilePath)).Returns(Mock.Of<DocumentSnapshot>(MockBehavior.Strict));
-        var ownerProject = Mock.Of<ProjectSnapshot>(
+        miscProject.Setup(p => p.GetDocument(documentFilePath)).Returns(Mock.Of<IDocumentSnapshot>(MockBehavior.Strict));
+        var ownerProject = Mock.Of<IProjectSnapshot>(
             p => p.FilePath == "C:/path/to/project.csproj" &&
             p.GetDocument(documentFilePath) == null, MockBehavior.Strict);
 
@@ -168,9 +168,9 @@ public class DocumentProjectResolverTest : LanguageServerTestBase
     {
         // Arrange
         var documentFilePath = "c:/path/to/document.cshtml";
-        var ownerProject = Mock.Of<ProjectSnapshot>(
+        var ownerProject = Mock.Of<IProjectSnapshot>(
             p => p.FilePath == "C:/Path/To/project.csproj" &&
-            p.GetDocument(documentFilePath) == Mock.Of<DocumentSnapshot>(MockBehavior.Strict), MockBehavior.Strict);
+            p.GetDocument(documentFilePath) == Mock.Of<IDocumentSnapshot>(MockBehavior.Strict), MockBehavior.Strict);
         var projectResolver = CreateProjectResolver(() => new[] { ownerProject });
 
         // Act
@@ -186,7 +186,7 @@ public class DocumentProjectResolverTest : LanguageServerTestBase
     {
         // Arrange
         DefaultProjectResolver projectResolver = null;
-        var miscProject = new Mock<ProjectSnapshot>(MockBehavior.Strict);
+        var miscProject = new Mock<IProjectSnapshot>(MockBehavior.Strict);
         miscProject.Setup(p => p.FilePath)
             .Returns(() => projectResolver.MiscellaneousHostProject.FilePath);
         var expectedProject = miscProject.Object;
@@ -204,14 +204,14 @@ public class DocumentProjectResolverTest : LanguageServerTestBase
     {
         // Arrange
         DefaultProjectResolver projectResolver = null;
-        var projects = new List<ProjectSnapshot>();
+        var projects = new List<IProjectSnapshot>();
         var snapshotManager = new Mock<ProjectSnapshotManagerBase>(MockBehavior.Strict);
         snapshotManager.Setup(manager => manager.Projects)
             .Returns(() => projects);
         snapshotManager.Setup(manager => manager.GetLoadedProject(It.IsAny<string>()))
             .Returns<string>(filePath => projects.FirstOrDefault(p => p.FilePath == filePath));
         snapshotManager.Setup(manager => manager.ProjectAdded(It.IsAny<HostProject>()))
-            .Callback<HostProject>(hostProject => projects.Add(Mock.Of<ProjectSnapshot>(p => p.FilePath == hostProject.FilePath, MockBehavior.Strict)));
+            .Callback<HostProject>(hostProject => projects.Add(Mock.Of<IProjectSnapshot>(p => p.FilePath == hostProject.FilePath, MockBehavior.Strict)));
         var snapshotManagerAccessor = Mock.Of<ProjectSnapshotManagerAccessor>(accessor => accessor.Instance == snapshotManager.Object, MockBehavior.Strict);
         projectResolver = new DefaultProjectResolver(LegacyDispatcher, snapshotManagerAccessor);
 
@@ -223,7 +223,7 @@ public class DocumentProjectResolverTest : LanguageServerTestBase
         Assert.Equal(projectResolver.MiscellaneousHostProject.FilePath, project.FilePath);
     }
 
-    private DefaultProjectResolver CreateProjectResolver(Func<ProjectSnapshot[]> projectFactory)
+    private DefaultProjectResolver CreateProjectResolver(Func<IProjectSnapshot[]> projectFactory)
     {
         var snapshotManager = new Mock<ProjectSnapshotManagerBase>(MockBehavior.Strict);
         snapshotManager.Setup(manager => manager.Projects)

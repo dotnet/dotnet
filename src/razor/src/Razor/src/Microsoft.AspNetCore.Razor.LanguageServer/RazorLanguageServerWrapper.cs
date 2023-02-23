@@ -38,7 +38,8 @@ internal sealed class RazorLanguageServerWrapper : IDisposable
         IRazorLogger razorLogger,
         ProjectSnapshotManagerDispatcher? projectSnapshotManagerDispatcher = null,
         Action<IServiceCollection>? configure = null,
-        LanguageServerFeatureOptions? featureOptions = null)
+        LanguageServerFeatureOptions? featureOptions = null,
+        RazorLSPOptions? razorLSPOptions = null)
     {
         var jsonRpc = CreateJsonRpc(input, output);
 
@@ -47,7 +48,8 @@ internal sealed class RazorLanguageServerWrapper : IDisposable
             razorLogger,
             projectSnapshotManagerDispatcher,
             featureOptions,
-            configure);
+            configure,
+            razorLSPOptions);
 
         var razorLanguageServer = new RazorLanguageServerWrapper(server);
         jsonRpc.StartListening();

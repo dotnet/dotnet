@@ -85,10 +85,10 @@ In most cases, this is because the option _Use previews of the .NET Core SDK_ in
 Note, the [Visual Studio Code C# Extension](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp) is required.
 
 1. Run `Restore.cmd` on the command line.
-1. Launch the `razor-tooling` repo in VS Code.
+1. Launch the `razor` repo in VS Code.
 2. Open VS Code settings (`CTRL+,`) and navigate to the `Razor > Plugin: Path` setting:
 ![image](https://user-images.githubusercontent.com/16968319/192892840-ae2b102c-a282-472f-b1f1-ef3dad671874.png)
-3. Set path to `C:\path_to_razor_repo\razor-tooling\artifacts\bin\Microsoft.AspNetCore.Razor.OmniSharpPlugin\Debug\net472\Microsoft.AspNetCore.Razor.OmniSharpPlugin.dll`.
+3. Set path to `C:\path_to_razor_repo\artifacts\bin\Microsoft.AspNetCore.Razor.OmniSharpPlugin\Debug\net472\Microsoft.AspNetCore.Razor.OmniSharpPlugin.dll`.
 4. Launch extension via `Run and Debug -> Run Extension`.
 5. Install missing assets if prompted.
 

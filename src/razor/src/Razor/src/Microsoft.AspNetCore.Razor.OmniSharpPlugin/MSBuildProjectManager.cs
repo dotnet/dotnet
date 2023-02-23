@@ -9,6 +9,8 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Document;
+using Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.OmniSharpPlugin;
 using Microsoft.Build.Execution;
@@ -21,7 +23,7 @@ namespace Microsoft.AspNetCore.Razor.OmnisharpPlugin;
 [Export(typeof(IMSBuildEventSink))]
 [Export(typeof(IRazorDocumentChangeListener))]
 [Export(typeof(IOmniSharpProjectSnapshotManagerChangeTrigger))]
-internal class MSBuildProjectManager : IMSBuildEventSink, IOmniSharpProjectSnapshotManagerChangeTrigger, IRazorDocumentChangeListener
+internal class MSBuildProjectManager : IOmniSharpProjectSnapshotManagerChangeTrigger, IMSBuildEventSink, IRazorDocumentChangeListener
 {
     // Internal for testing
     internal const string IntermediateOutputPathPropertyName = "IntermediateOutputPath";
@@ -35,7 +37,7 @@ internal class MSBuildProjectManager : IMSBuildEventSink, IOmniSharpProjectSnaps
     private readonly ProjectInstanceEvaluator _projectInstanceEvaluator;
     private readonly ProjectChangePublisher _projectConfigurationPublisher;
     private readonly OmniSharpProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
-    private OmniSharpProjectSnapshotManagerBase? _projectManager;
+    private OmniSharpProjectSnapshotManager? _projectManager;
 
     [ImportingConstructor]
     public MSBuildProjectManager(
@@ -77,9 +79,9 @@ internal class MSBuildProjectManager : IMSBuildEventSink, IOmniSharpProjectSnaps
         _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher;
     }
 
-    public OmniSharpProjectSnapshotManagerBase ProjectManager => _projectManager ?? throw new InvalidOperationException($"{nameof(ProjectManager)} was unexpectedly 'null'. Has {nameof(Initialize)} been called?");
+    public OmniSharpProjectSnapshotManager ProjectManager => _projectManager ?? throw new InvalidOperationException($"{nameof(ProjectManager)} was unexpectedly 'null'. Has {nameof(Initialize)} been called?");
 
-    public void Initialize(OmniSharpProjectSnapshotManagerBase projectManager)
+    public void Initialize(OmniSharpProjectSnapshotManager projectManager)
     {
         if (projectManager is null)
         {
@@ -193,7 +195,15 @@ internal class MSBuildProjectManager : IMSBuildEventSink, IOmniSharpProjectSnaps
         foreach (var documentFilePath in projectSnapshot.DocumentFilePaths)
         {
             OmniSharpHostDocument? associatedHostDocument = null;
-            var currentHostDocument = projectSnapshot.GetDocument(documentFilePath).HostDocument;
+
+            var documentSnapshot = projectSnapshot.GetDocument(documentFilePath);
+            if (documentSnapshot is null)
+            {
+                _logger.LogWarning("Missing DocumentSnapshot for {documentFilePath}.", documentFilePath);
+                continue;
+            }
+
+            var currentHostDocument = documentSnapshot.HostDocument;
 
             for (var i = 0; i < configuredHostDocuments.Count; i++)
             {
@@ -295,7 +305,7 @@ internal class MSBuildProjectManager : IMSBuildEventSink, IOmniSharpProjectSnaps
             var projectDirectory = projectInstance.GetPropertyValue(MSBuildProjectDirectoryPropertyName);
             if (string.IsNullOrEmpty(projectDirectory))
             {
-                // This should never be true but we're beign extra careful.
+                // This should never be true but we're being extra careful.
                 path = null;
                 return false;
             }

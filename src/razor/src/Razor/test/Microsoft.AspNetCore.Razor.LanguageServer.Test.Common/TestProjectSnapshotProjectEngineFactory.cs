@@ -21,12 +21,12 @@ internal class TestProjectSnapshotProjectEngineFactory : ProjectSnapshotProjectE
         return Engine ?? RazorProjectEngine.Create(configuration, fileSystem, configure ?? Configure);
     }
 
-    public override IProjectEngineFactory FindFactory(ProjectSnapshot project)
+    public override IProjectEngineFactory FindFactory(IProjectSnapshot project)
     {
         throw new NotImplementedException();
     }
 
-    public override IProjectEngineFactory FindSerializableFactory(ProjectSnapshot project)
+    public override IProjectEngineFactory FindSerializableFactory(IProjectSnapshot project)
     {
         throw new NotImplementedException();
     }

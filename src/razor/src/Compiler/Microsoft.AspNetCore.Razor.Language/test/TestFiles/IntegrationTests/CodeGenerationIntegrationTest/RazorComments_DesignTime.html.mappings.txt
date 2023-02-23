@@ -1,4 +1,4 @@
-Source Location: (36:0,36 [17] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorComments.cshtml)
+﻿Source Location: (36:0,36 [17] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorComments.cshtml)
 |
 <p>This should |
 Generated Location: (36:0,36 [17] )

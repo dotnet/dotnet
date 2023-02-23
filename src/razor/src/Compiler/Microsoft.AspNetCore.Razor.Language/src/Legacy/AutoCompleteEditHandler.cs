@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.Extensions.Internal;
 
@@ -12,27 +13,30 @@ namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
 internal class AutoCompleteEditHandler : SpanEditHandler
 {
+    public static void SetupBuilder(SpanEditHandlerBuilder builder, Func<string, IEnumerable<Syntax.InternalSyntax.SyntaxToken>> tokenizer, bool autoCompleteAtEndOfSpan, out AutoCompleteStringAccessor autoCompleteStringAccessor)
+    {
+        var accessor = new AutoCompleteStringAccessor();
+        autoCompleteStringAccessor = accessor;
+        builder.Factory = (acceptedCharacters, tokenizer) => new AutoCompleteEditHandler(accessor)
+        {
+            AcceptedCharacters = acceptedCharacters,
+            Tokenizer = tokenizer,
+            AutoCompleteAtEndOfSpan = autoCompleteAtEndOfSpan,
+        };
+    }
+
     private static readonly int TypeHashCode = typeof(AutoCompleteEditHandler).GetHashCode();
 
-    public AutoCompleteEditHandler(Func<string, IEnumerable<Syntax.InternalSyntax.SyntaxToken>> tokenizer)
-        : base(tokenizer)
+    private readonly AutoCompleteStringAccessor _autoCompleteStringAccessor;
+
+    private AutoCompleteEditHandler(AutoCompleteStringAccessor autoCompleteStringAccessor)
     {
+        _autoCompleteStringAccessor = autoCompleteStringAccessor;
     }
 
-    public AutoCompleteEditHandler(Func<string, IEnumerable<Syntax.InternalSyntax.SyntaxToken>> tokenizer, bool autoCompleteAtEndOfSpan)
-        : this(tokenizer)
-    {
-        AutoCompleteAtEndOfSpan = autoCompleteAtEndOfSpan;
-    }
+    public required bool AutoCompleteAtEndOfSpan { get; init; }
 
-    public AutoCompleteEditHandler(Func<string, IEnumerable<Syntax.InternalSyntax.SyntaxToken>> tokenizer, AcceptedCharactersInternal accepted)
-        : base(tokenizer, accepted)
-    {
-    }
-
-    public bool AutoCompleteAtEndOfSpan { get; }
-
-    public string AutoCompleteString { get; set; }
+    public string AutoCompleteString => _autoCompleteStringAccessor.CanAcceptCloseBrace ? "}" : null;
 
     protected override PartialParseResultInternal CanAcceptChange(SyntaxNode target, SourceChange change)
     {
@@ -67,5 +71,25 @@ internal class AutoCompleteEditHandler : SpanEditHandler
         hashCodeCombiner.Add(AutoCompleteAtEndOfSpan);
 
         return hashCodeCombiner.CombinedHash;
+    }
+
+    internal class AutoCompleteStringAccessor
+    {
+        private bool? canCompleteBrace;
+
+        public bool CanAcceptCloseBrace
+        {
+            get
+            {
+                // Throw if the value is not set.
+                Debug.Assert(canCompleteBrace is not null);
+                return canCompleteBrace.Value;
+            }
+            set
+            {
+                Debug.Assert(canCompleteBrace is null);
+                canCompleteBrace = value;
+            }
+        }
     }
 }

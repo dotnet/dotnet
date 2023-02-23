@@ -11,10 +11,10 @@ using MonoDevelop.Core;
 
 namespace Microsoft.VisualStudio.Mac.LanguageServices.Razor;
 
-[Export(typeof(ErrorReporter))]
-internal class VisualStudioErrorReporter : ErrorReporter
+[Export(typeof(IErrorReporter))]
+internal class VisualStudioErrorReporter : IErrorReporter
 {
-    public override void ReportError(Exception exception)
+    public void ReportError(Exception exception)
     {
         if (exception is null)
         {
@@ -27,7 +27,7 @@ internal class VisualStudioErrorReporter : ErrorReporter
             exception);
     }
 
-    public override void ReportError(Exception exception, Project project)
+    public void ReportError(Exception exception, Project project)
     {
         if (exception is null)
         {
@@ -40,7 +40,7 @@ internal class VisualStudioErrorReporter : ErrorReporter
             exception);
     }
 
-    public override void ReportError(Exception exception, ProjectSnapshot? project)
+    public void ReportError(Exception exception, IProjectSnapshot? project)
     {
         if (exception is null)
         {

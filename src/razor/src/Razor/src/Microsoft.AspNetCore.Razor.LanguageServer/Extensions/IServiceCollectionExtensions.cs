@@ -164,11 +164,18 @@ internal static class IServiceCollectionExtensions
         services.AddHandler<RazorLanguageQueryEndpoint>();
     }
 
-    public static void AddOptionsServices(this IServiceCollection services)
+    public static void AddOptionsServices(this IServiceCollection services, RazorLSPOptions currentOptions)
     {
-        services.AddSingleton<RazorConfigurationService, DefaultRazorConfigurationService>();
-        services.AddSingleton<RazorLSPOptionsMonitor>();
-        services.AddSingleton<IOptionsMonitor<RazorLSPOptions>, RazorLSPOptionsMonitor>();
+        services.AddSingleton<IConfigurationSyncService, DefaultRazorConfigurationService>();
+        services.AddSingleton(s =>
+        {
+            return new RazorLSPOptionsMonitor(
+                s.GetRequiredService<IConfigurationSyncService>(),
+                s.GetRequiredService<IOptionsMonitorCache<RazorLSPOptions>>(),
+                currentOptions);
+        });
+
+        services.AddSingleton<IOptionsMonitor<RazorLSPOptions>, RazorLSPOptionsMonitor>(s => s.GetRequiredService<RazorLSPOptionsMonitor>());
     }
 
     public static void AddDocumentManagmentServices(this IServiceCollection services)

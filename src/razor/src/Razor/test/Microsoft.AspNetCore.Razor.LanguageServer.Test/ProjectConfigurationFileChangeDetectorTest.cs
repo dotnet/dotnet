@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -40,7 +41,8 @@ public class ProjectConfigurationFileChangeDetectorTest : LanguageServerTestBase
             cts,
             Dispatcher,
             new[] { listener1.Object, listener2.Object },
-            existingConfigurationFiles);
+            existingConfigurationFiles,
+            LoggerFactory);
 
         // Act
         await detector.StartAsync("/some/workspace+directory", cts.Token);
@@ -77,10 +79,11 @@ public class ProjectConfigurationFileChangeDetectorTest : LanguageServerTestBase
 
         public TestProjectConfigurationFileChangeDetector(
             CancellationTokenSource cancellationTokenSource,
-            ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
+            ProjectSnapshotManagerDispatcher dispatcher,
             IEnumerable<IProjectConfigurationFileChangeListener> listeners,
-            IReadOnlyList<string> existingConfigurationFiles)
-            : base(projectSnapshotManagerDispatcher, listeners, TestLanguageServerFeatureOptions.Instance)
+            IReadOnlyList<string> existingConfigurationFiles,
+            ILoggerFactory loggerFactory)
+            : base(dispatcher, listeners, TestLanguageServerFeatureOptions.Instance, loggerFactory)
         {
             _cancellationTokenSource = cancellationTokenSource;
             _existingConfigurationFiles = existingConfigurationFiles;

@@ -1,4 +1,4 @@
-Source Location: (37:1,4 [17] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ImplicitExpression.cshtml)
+﻿Source Location: (37:1,4 [17] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ImplicitExpression.cshtml)
 |<p>This is item #|
 Generated Location: (37:1,4 [17] )
 |<p>This is item #|

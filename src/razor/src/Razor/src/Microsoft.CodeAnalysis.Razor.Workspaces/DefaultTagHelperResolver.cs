@@ -18,7 +18,7 @@ internal class DefaultTagHelperResolver : TagHelperResolver
     {
     }
 
-    public override Task<TagHelperResolutionResult> GetTagHelpersAsync(Project workspaceProject, ProjectSnapshot projectSnapshot, CancellationToken cancellationToken = default)
+    public override Task<TagHelperResolutionResult> GetTagHelpersAsync(Project workspaceProject, IProjectSnapshot projectSnapshot, CancellationToken cancellationToken = default)
     {
         if (workspaceProject is null)
         {

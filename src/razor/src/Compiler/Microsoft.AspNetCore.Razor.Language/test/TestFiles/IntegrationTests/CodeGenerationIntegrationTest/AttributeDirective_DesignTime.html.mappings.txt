@@ -1,4 +1,4 @@
-Source Location: (67:0,67 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/AttributeDirective.cshtml)
+﻿Source Location: (67:0,67 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/AttributeDirective.cshtml)
 |
 |
 Generated Location: (67:0,67 [2] )

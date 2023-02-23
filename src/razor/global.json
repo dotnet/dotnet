@@ -17,7 +17,7 @@
   },
   "sdk": {
     "version": "7.0.101",
-    "allowPrerelease": true,
+    "allowPrerelease": false,
     "rollForward": "latestPatch"
   },
   "msbuild-sdks": {

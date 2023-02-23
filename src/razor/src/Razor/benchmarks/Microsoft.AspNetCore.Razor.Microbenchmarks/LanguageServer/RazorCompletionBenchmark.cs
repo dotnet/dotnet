@@ -24,7 +24,7 @@ public class RazorCompletionBenchmark : RazorLanguageServerBenchmarkBase
     private string? _filePath;
     private Uri? DocumentUri { get; set; }
     private RazorCompletionEndpoint? CompletionEndpoint { get; set; }
-    private DocumentSnapshot? DocumentSnapshot { get; set; }
+    private IDocumentSnapshot? DocumentSnapshot { get; set; }
     private SourceText? DocumentText { get; set; }
     private Position? RazorPosition { get; set; }
     private RazorRequestContext RazorRequestContext { get; set; }

@@ -1,4 +1,4 @@
-Source Location: (47:2,1 [33] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml)
+﻿Source Location: (47:2,1 [33] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml)
 |
 
 <div>This is in the Body>

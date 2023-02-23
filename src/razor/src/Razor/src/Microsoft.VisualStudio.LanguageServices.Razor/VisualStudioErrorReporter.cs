@@ -11,8 +11,8 @@ using Microsoft.VisualStudio.Shell.Interop;
 
 namespace Microsoft.VisualStudio.LanguageServices.Razor;
 
-[Export(typeof(ErrorReporter))]
-internal class VisualStudioErrorReporter : ErrorReporter
+[Export(typeof(IErrorReporter))]
+internal class VisualStudioErrorReporter : IErrorReporter
 {
     private readonly SVsServiceProvider _services;
 
@@ -27,7 +27,7 @@ internal class VisualStudioErrorReporter : ErrorReporter
         _services = services;
     }
 
-    public override void ReportError(Exception exception)
+    public void ReportError(Exception exception)
     {
         if (exception is null)
         {
@@ -45,7 +45,7 @@ internal class VisualStudioErrorReporter : ErrorReporter
         }
     }
 
-    public override void ReportError(Exception exception, ProjectSnapshot? project)
+    public void ReportError(Exception exception, IProjectSnapshot? project)
     {
         var activityLog = GetActivityLog();
         if (activityLog is not null)
@@ -58,7 +58,7 @@ internal class VisualStudioErrorReporter : ErrorReporter
         }
     }
 
-    public override void ReportError(Exception exception, Project workspaceProject)
+    public void ReportError(Exception exception, Project workspaceProject)
     {
         var activityLog = GetActivityLog();
         if (activityLog is not null)

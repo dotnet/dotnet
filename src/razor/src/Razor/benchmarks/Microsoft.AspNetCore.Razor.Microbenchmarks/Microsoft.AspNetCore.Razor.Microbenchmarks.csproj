@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <Compile Remove="Resources\**\*.*" />
+    <None Remove="Resources\**\*.*" />
   </ItemGroup>
 
   <ItemGroup>
@@ -45,8 +46,6 @@
     <Compile Include="..\..\test\Microsoft.AspNetCore.Razor.Test.Common\NoOpTelemetryReporter.cs">
       <Link>TestServices\%(FileName)%(Extension)</Link>
     </Compile>
-    <None Include="taghelpers.json" CopyToOutputDirectory="PreserveNewest" />
-    <None Include="ProjectSystem\project.razor.json" CopyToOutputDirectory="PreserveNewest" />
     
     <None Remove=".gitignore" />
     <None Remove="BenchmarkDotNet.Artifacts\**" />

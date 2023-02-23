@@ -1,4 +1,4 @@
-Source Location: (10:0,10 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml)
+﻿Source Location: (10:0,10 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Templates.cshtml)
 | |
 Generated Location: (10:0,10 [1] )
 | |

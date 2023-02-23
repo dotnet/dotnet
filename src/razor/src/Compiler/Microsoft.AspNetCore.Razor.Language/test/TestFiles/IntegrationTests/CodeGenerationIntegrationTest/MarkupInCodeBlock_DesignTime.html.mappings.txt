@@ -1,4 +1,4 @@
-Source Location: (48:2,8 [19] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/MarkupInCodeBlock.cshtml)
+﻿Source Location: (48:2,8 [19] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/MarkupInCodeBlock.cshtml)
 |<p>Hello from C#, #|
 Generated Location: (48:2,8 [19] )
 |<p>Hello from C#, #|

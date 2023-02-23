@@ -5,6 +5,7 @@
 
 using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.Extensions.Logging;
 using Xunit;
@@ -21,12 +22,14 @@ public class DefaultProjectChangePublisherTest : OmniSharpTestBase
     }
 
     [Theory]
-    [InlineData(OmniSharpProjectChangeKind.DocumentAdded)]
-    [InlineData(OmniSharpProjectChangeKind.DocumentRemoved)]
-    [InlineData(OmniSharpProjectChangeKind.ProjectChanged)]
-    public async Task ProjectManager_Changed_EnqueuesPublish(OmniSharpProjectChangeKind changeKind)
+    [InlineData(nameof(OmniSharpProjectChangeKind.DocumentAdded))]
+    [InlineData(nameof(OmniSharpProjectChangeKind.DocumentRemoved))]
+    [InlineData(nameof(OmniSharpProjectChangeKind.ProjectChanged))]
+    public async Task ProjectManager_Changed_EnqueuesPublish(string changeKindStr)
     {
         // Arrange
+        var changeKind = (OmniSharpProjectChangeKind)Enum.Parse(typeof(OmniSharpProjectChangeKind), changeKindStr);
+
         var serializationSuccessful = false;
         var projectSnapshot = CreateProjectSnapshot("/path/to/project.csproj");
         var expectedPublishFilePath = "/path/to/obj/bin/Debug/project.razor.json";
@@ -42,7 +45,7 @@ public class DefaultProjectChangePublisherTest : OmniSharpTestBase
             EnqueueDelay = 10
         };
         publisher.SetPublishFilePath(projectSnapshot.FilePath, expectedPublishFilePath);
-        var args = OmniSharpProjectChangeEventArgs.CreateTestInstance(projectSnapshot, projectSnapshot, documentFilePath: null, changeKind);
+        var args = new OmniSharpProjectChangeEventArgs(projectSnapshot, projectSnapshot, documentFilePath: null, changeKind);
 
         // Act
         publisher.ProjectManager_Changed(null, args);
@@ -68,7 +71,7 @@ public class DefaultProjectChangePublisherTest : OmniSharpTestBase
         };
         publisher.SetPublishFilePath(projectSnapshot.FilePath, expectedPublishFilePath);
         publisher.EnqueuePublish(projectSnapshot);
-        var args = OmniSharpProjectChangeEventArgs.CreateTestInstance(projectSnapshot, newer: null, documentFilePath: null, OmniSharpProjectChangeKind.ProjectRemoved);
+        var args = new OmniSharpProjectChangeEventArgs(projectSnapshot, newer: null, documentFilePath: null, OmniSharpProjectChangeKind.ProjectRemoved);
 
         // Act
         publisher.ProjectManager_Changed(null, args);
@@ -143,20 +146,6 @@ public class DefaultProjectChangePublisherTest : OmniSharpTestBase
 
         // Assert
         Assert.True(serializationSuccessful);
-    }
-
-    [Fact]
-    public async Task ProjectRemoved_UnSetPublishFilePath_Noops()
-    {
-        // Arrange
-        var snapshotManager = CreateProjectSnapshotManager(allowNotifyListeners: true);
-        var publisher = new TestProjectChangePublisher(LoggerFactory);
-        publisher.Initialize(snapshotManager);
-        var hostProject = new OmniSharpHostProject("/path/to/project.csproj", RazorConfiguration.Default, "TestRootNamespace");
-        await RunOnDispatcherThreadAsync(() => snapshotManager.ProjectAdded(hostProject));
-
-        // Act & Assert
-        await RunOnDispatcherThreadAsync(() => snapshotManager.ProjectRemoved(hostProject));
     }
 
     private class TestProjectChangePublisher : DefaultProjectChangePublisher

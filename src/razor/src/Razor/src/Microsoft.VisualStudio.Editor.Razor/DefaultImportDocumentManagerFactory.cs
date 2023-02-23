@@ -34,7 +34,7 @@ internal class DefaultImportDocumentManagerFactory : ILanguageServiceFactory
             throw new ArgumentNullException(nameof(languageServices));
         }
 
-        var errorReporter = languageServices.WorkspaceServices.GetRequiredService<ErrorReporter>();
+        var errorReporter = languageServices.WorkspaceServices.GetRequiredService<IErrorReporter>();
         var fileChangeTrackerFactory = languageServices.WorkspaceServices.GetRequiredService<FileChangeTrackerFactory>();
 
         return new DefaultImportDocumentManager(_projectSnapshotManagerDispatcher, errorReporter, fileChangeTrackerFactory);

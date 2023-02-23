@@ -113,18 +113,18 @@ public class DefaultDocumentContextFactoryTest : LanguageServerTestBase
 
     private class TestDocumentResolver : DocumentResolver
     {
-        private readonly DocumentSnapshot _documentSnapshot;
+        private readonly IDocumentSnapshot _documentSnapshot;
 
         public TestDocumentResolver()
         {
         }
 
-        public TestDocumentResolver(DocumentSnapshot documentSnapshot)
+        public TestDocumentResolver(IDocumentSnapshot documentSnapshot)
         {
             _documentSnapshot = documentSnapshot;
         }
 
-        public override bool TryResolveDocument(string documentFilePath, out DocumentSnapshot document)
+        public override bool TryResolveDocument(string documentFilePath, out IDocumentSnapshot document)
         {
             if (documentFilePath == _documentSnapshot?.FilePath)
             {

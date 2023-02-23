@@ -26,8 +26,8 @@ public class DocumentDocumentResolverTest : LanguageServerTestBase
         // Arrange
         var documentFilePath = @"C:\path\to\document.cshtml";
         var normalizedFilePath = "C:/path/to/document.cshtml";
-        var expectedDocument = Mock.Of<DocumentSnapshot>(MockBehavior.Strict);
-        var project = Mock.Of<ProjectSnapshot>(shim => shim.GetDocument(normalizedFilePath) == expectedDocument, MockBehavior.Strict);
+        var expectedDocument = Mock.Of<IDocumentSnapshot>(MockBehavior.Strict);
+        var project = Mock.Of<IProjectSnapshot>(shim => shim.GetDocument(normalizedFilePath) == expectedDocument, MockBehavior.Strict);
         var projectResolver = Mock.Of<ProjectResolver>(resolver => resolver.TryResolveProject(normalizedFilePath, out project, true) == true, MockBehavior.Strict);
         var documentResolver = new DefaultDocumentResolver(LegacyDispatcher, projectResolver);
 
@@ -45,8 +45,8 @@ public class DocumentDocumentResolverTest : LanguageServerTestBase
         // Arrange
         var documentFilePath = @"C:\path\to\document.cshtml";
         var normalizedFilePath = "C:/path/to/document.cshtml";
-        var expectedDocument = Mock.Of<DocumentSnapshot>(MockBehavior.Strict);
-        var project = Mock.Of<ProjectSnapshot>(shim => shim.GetDocument(normalizedFilePath) == expectedDocument, MockBehavior.Strict);
+        var expectedDocument = Mock.Of<IDocumentSnapshot>(MockBehavior.Strict);
+        var project = Mock.Of<IProjectSnapshot>(shim => shim.GetDocument(normalizedFilePath) == expectedDocument, MockBehavior.Strict);
         var projectResolver = Mock.Of<ProjectResolver>(resolver => resolver.TryResolveProject(normalizedFilePath, out project, true) == true, MockBehavior.Strict);
         var documentResolver = new DefaultDocumentResolver(LegacyDispatcher, projectResolver);
 
@@ -64,9 +64,9 @@ public class DocumentDocumentResolverTest : LanguageServerTestBase
         // Arrange
         var documentFilePath = @"C:\path\to\document.cshtml";
         var normalizedFilePath = "C:/path/to/document.cshtml";
-        var project = Mock.Of<ProjectSnapshot>(shim => shim.DocumentFilePaths == Array.Empty<string>(), MockBehavior.Strict);
-        var miscProject = Mock.Of<ProjectSnapshot>(shim => shim.DocumentFilePaths == Array.Empty<string>(), MockBehavior.Strict);
-        ProjectSnapshot noProject = null;
+        var project = Mock.Of<IProjectSnapshot>(shim => shim.DocumentFilePaths == Array.Empty<string>(), MockBehavior.Strict);
+        var miscProject = Mock.Of<IProjectSnapshot>(shim => shim.DocumentFilePaths == Array.Empty<string>(), MockBehavior.Strict);
+        IProjectSnapshot noProject = null;
         var projectResolver = Mock.Of<ProjectResolver>(resolver =>
             resolver.TryResolveProject(normalizedFilePath, out noProject, true) == false, MockBehavior.Strict);
         var documentResolver = new DefaultDocumentResolver(LegacyDispatcher, projectResolver);
@@ -85,9 +85,9 @@ public class DocumentDocumentResolverTest : LanguageServerTestBase
         // Arrange
         var documentFilePath = @"C:\path\to\document.cshtml";
         var normalizedFilePath = "C:/path/to/document.cshtml";
-        var expectedDocument = Mock.Of<DocumentSnapshot>(MockBehavior.Strict);
-        var project = Mock.Of<ProjectSnapshot>(shim => shim.DocumentFilePaths == Array.Empty<string>(), MockBehavior.Strict);
-        var miscProject = Mock.Of<ProjectSnapshot>(shim => shim.GetDocument(normalizedFilePath) == expectedDocument, MockBehavior.Strict);
+        var expectedDocument = Mock.Of<IDocumentSnapshot>(MockBehavior.Strict);
+        var project = Mock.Of<IProjectSnapshot>(shim => shim.DocumentFilePaths == Array.Empty<string>(), MockBehavior.Strict);
+        var miscProject = Mock.Of<IProjectSnapshot>(shim => shim.GetDocument(normalizedFilePath) == expectedDocument, MockBehavior.Strict);
         var projectResolver = Mock.Of<ProjectResolver>(resolver =>
             resolver.TryResolveProject(normalizedFilePath, out miscProject, true) == true, MockBehavior.Strict);
         var documentResolver = new DefaultDocumentResolver(LegacyDispatcher, projectResolver);

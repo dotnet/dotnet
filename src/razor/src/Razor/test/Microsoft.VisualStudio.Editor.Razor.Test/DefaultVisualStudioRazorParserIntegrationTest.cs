@@ -28,7 +28,7 @@ public class DefaultVisualStudioRazorParserIntegrationTest : ProjectSnapshotMana
     private const string TestLinePragmaFileName = @"C:\This\Path\Is\Just\For\Line\Pragmas.cshtml";
     private const string TestProjectPath = @"C:\This\Path\Is\Just\For\Project.csproj";
 
-    private readonly ProjectSnapshot _projectSnapshot;
+    private readonly IProjectSnapshot _projectSnapshot;
     private readonly CodeAnalysis.Workspace _workspace;
 
     public DefaultVisualStudioRazorParserIntegrationTest(ITestOutputHelper testOutput)
@@ -547,7 +547,7 @@ public class DefaultVisualStudioRazorParserIntegrationTest : ProjectSnapshotMana
             JoinableTaskFactory.Context,
             documentTracker,
             templateEngineFactory,
-            new DefaultErrorReporter(),
+            ErrorReporter,
             new TestCompletionBroker())
         {
             // We block idle work with the below reset events. Therefore, make tests fast and have the idle timer fire as soon as possible.

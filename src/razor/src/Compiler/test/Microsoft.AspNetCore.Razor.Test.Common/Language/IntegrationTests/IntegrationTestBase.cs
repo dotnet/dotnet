@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
@@ -25,6 +26,9 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests;
 public abstract class IntegrationTestBase
 {
     private static readonly AsyncLocal<string> _fileName = new AsyncLocal<string>();
+
+    // UTF-8 with BOM
+    private static readonly Encoding _baselineEncoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: true);
 
     private static readonly CSharpCompilation DefaultBaseCompilation;
 
@@ -98,7 +102,7 @@ public abstract class IntegrationTestBase
     protected virtual string LineEnding { get; } = "\r\n";
 
 #if GENERATE_BASELINES
-        protected bool GenerateBaselines { get; } = true;
+    protected bool GenerateBaselines { get; } = true;
 #else
     protected bool GenerateBaselines { get; } = false;
 #endif
@@ -349,7 +353,7 @@ public abstract class IntegrationTestBase
         if (GenerateBaselines)
         {
             var baselineFullPath = Path.Combine(TestProjectRoot, baselineFileName);
-            File.WriteAllText(baselineFullPath, IntermediateNodeSerializer.Serialize(document));
+            File.WriteAllText(baselineFullPath, IntermediateNodeSerializer.Serialize(document), _baselineEncoding);
             return;
         }
 
@@ -376,7 +380,7 @@ public abstract class IntegrationTestBase
         if (GenerateBaselines)
         {
             var baselineFullPath = Path.Combine(TestProjectRoot, baselineFileName);
-            File.WriteAllText(baselineFullPath, htmlDocument.GeneratedCode);
+            File.WriteAllText(baselineFullPath, htmlDocument.GeneratedCode, _baselineEncoding);
             return;
         }
 
@@ -407,7 +411,7 @@ public abstract class IntegrationTestBase
         if (GenerateBaselines)
         {
             var baselineFullPath = Path.Combine(TestProjectRoot, baselineFileName);
-            File.WriteAllText(baselineFullPath, cSharpDocument.GeneratedCode);
+            File.WriteAllText(baselineFullPath, cSharpDocument.GeneratedCode, _baselineEncoding);
 
             var baselineDiagnosticsFullPath = Path.Combine(TestProjectRoot, baselineDiagnosticsFileName);
             var lines = cSharpDocument.Diagnostics.Select(RazorDiagnosticSerializer.Serialize).ToArray();
@@ -463,7 +467,7 @@ public abstract class IntegrationTestBase
         if (GenerateBaselines)
         {
             var baselineFullPath = Path.Combine(TestProjectRoot, baselineFileName);
-            File.WriteAllText(baselineFullPath, serializedMappings);
+            File.WriteAllText(baselineFullPath, serializedMappings, _baselineEncoding);
             return;
         }
 
@@ -562,7 +566,7 @@ public abstract class IntegrationTestBase
         if (GenerateBaselines)
         {
             var baselineFullPath = Path.Combine(TestProjectRoot, baselineFileName);
-            File.WriteAllText(baselineFullPath, serializedMappings);
+            File.WriteAllText(baselineFullPath, serializedMappings, _baselineEncoding);
             return;
         }
 

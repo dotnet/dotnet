@@ -124,7 +124,8 @@ internal class RenameEndpoint : AbstractRazorDelegatingEndpoint<RenameParamsBrid
             return null;
         }
 
-        var newPath = MakeNewPath(originComponentDocumentSnapshot.FilePath, request.NewName);
+        var originComponentDocumentFilePath = originComponentDocumentSnapshot.FilePath.AssumeNotNull();
+        var newPath = MakeNewPath(originComponentDocumentFilePath, request.NewName);
         if (File.Exists(newPath))
         {
             return null;
@@ -147,9 +148,9 @@ internal class RenameEndpoint : AbstractRazorDelegatingEndpoint<RenameParamsBrid
         };
     }
 
-    private async Task<List<DocumentSnapshot?>> GetAllDocumentSnapshotsAsync(DocumentContext skipDocumentContext, CancellationToken cancellationToken)
+    private async Task<List<IDocumentSnapshot?>> GetAllDocumentSnapshotsAsync(DocumentContext skipDocumentContext, CancellationToken cancellationToken)
     {
-        var documentSnapshots = new List<DocumentSnapshot?>();
+        var documentSnapshots = new List<IDocumentSnapshot?>();
         var documentPaths = new HashSet<string>();
 
         await _projectSnapshotManagerDispatcher.RunOnDispatcherThreadAsync(GetAllDocumentSnapshotsInternalAsync, cancellationToken).ConfigureAwait(false);
@@ -188,12 +189,13 @@ internal class RenameEndpoint : AbstractRazorDelegatingEndpoint<RenameParamsBrid
         }
     }
 
-    public void AddFileRenameForComponent(List<SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>> documentChanges, DocumentSnapshot documentSnapshot, string newPath)
+    public void AddFileRenameForComponent(List<SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>> documentChanges, IDocumentSnapshot documentSnapshot, string newPath)
     {
         // VS Code in Windows expects path to start with '/'
-        var updatedOldPath = _languageServerFeatureOptions.ReturnCodeActionAndRenamePathsWithPrefixedSlash && !documentSnapshot.FilePath.StartsWith("/")
-            ? '/' + documentSnapshot.FilePath
-            : documentSnapshot.FilePath;
+        var filePath = documentSnapshot.FilePath.AssumeNotNull();
+        var updatedOldPath = _languageServerFeatureOptions.ReturnCodeActionAndRenamePathsWithPrefixedSlash && !filePath.StartsWith("/")
+            ? '/' + filePath
+            : filePath;
         var oldUri = new UriBuilder
         {
             Path = updatedOldPath,
@@ -233,7 +235,7 @@ internal class RenameEndpoint : AbstractRazorDelegatingEndpoint<RenameParamsBrid
         List<SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>> documentChanges,
         IReadOnlyList<TagHelperDescriptor> originTagHelpers,
         string newName,
-        DocumentSnapshot? documentSnapshot)
+        IDocumentSnapshot? documentSnapshot)
     {
         if (documentSnapshot is null)
         {
@@ -252,9 +254,10 @@ internal class RenameEndpoint : AbstractRazorDelegatingEndpoint<RenameParamsBrid
         }
 
         // VS Code in Windows expects path to start with '/'
-        var updatedPath = _languageServerFeatureOptions.ReturnCodeActionAndRenamePathsWithPrefixedSlash && !documentSnapshot.FilePath.StartsWith("/")
-            ? "/" + documentSnapshot.FilePath
-            : documentSnapshot.FilePath;
+        var filePath = documentSnapshot.FilePath.AssumeNotNull();
+        var updatedPath = _languageServerFeatureOptions.ReturnCodeActionAndRenamePathsWithPrefixedSlash && !filePath.StartsWith("/")
+            ? "/" + filePath
+            : filePath;
         var uri = new UriBuilder
         {
             Path = updatedPath,

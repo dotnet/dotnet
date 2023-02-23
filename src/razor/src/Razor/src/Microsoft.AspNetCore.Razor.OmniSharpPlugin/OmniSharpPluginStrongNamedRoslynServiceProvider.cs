@@ -11,7 +11,7 @@ using OmniSharp.Services;
 namespace Microsoft.AspNetCore.Razor.OmniSharpPlugin;
 
 // This service provider is here to enable the OmniSharp process to indirectly utilize internal types that are exposed via the strong named
-// Razor assemblies by re-exporting them via the Microsoft.AspNetCore.Razor.OmniSharpPlugin.StrongNamed assembly. For example, we re-export the
+// Razor assemblies by re-exporting them via the Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp assembly. For example, we re-export the
 // DefaultTagHelperResolver's factory in the strong named assembly because it's internal to Razor and can only be accessed in a strong named
 // assembly.
 //
@@ -25,7 +25,7 @@ public class OmniSharpPluginStrongNamedRoslynServiceProvider : IHostServicesProv
 {
     public OmniSharpPluginStrongNamedRoslynServiceProvider()
     {
-        var strongNamedAssembly = Assembly.Load("Microsoft.AspNetCore.Razor.OmniSharpPlugin.StrongNamed");
+        var strongNamedAssembly = Assembly.Load("Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp");
         Assemblies = ImmutableArray.Create(strongNamedAssembly);
     }
 

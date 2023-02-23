@@ -446,9 +446,9 @@ internal class TestProjectSystemServices : IUnconfiguredProjectCommonServices
 
         public TestProjectValueDataSource<IProjectSubscriptionUpdate> JointRuleSource { get; }
 
-        IReceivableSourceBlock<IProjectVersionedValue<IProjectSnapshot>> IProjectSubscriptionService.ProjectBlock => throw new NotImplementedException();
+        IReceivableSourceBlock<IProjectVersionedValue<VisualStudio.ProjectSystem.IProjectSnapshot>> IProjectSubscriptionService.ProjectBlock => throw new NotImplementedException();
 
-        IProjectValueDataSource<IProjectSnapshot> IProjectSubscriptionService.ProjectSource => throw new NotImplementedException();
+        IProjectValueDataSource<VisualStudio.ProjectSystem.IProjectSnapshot> IProjectSubscriptionService.ProjectSource => throw new NotImplementedException();
 
         IProjectValueDataSource<IProjectImportTreeSnapshot> IProjectSubscriptionService.ImportTreeSource => throw new NotImplementedException();
 

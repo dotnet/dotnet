@@ -42,6 +42,107 @@ public class TagHelperBinderTest
         Assert.Equal(divTagHelper.TagMatchingRules, bindingResult.Mappings[divTagHelper], TagMatchingRuleDescriptorComparer.Default);
     }
 
+    [Fact]
+    public void GetBinding_With_Multiple_TagNameRules_SingleHelper()
+    {
+        // Arrange
+        var multiTagHelper = TagHelperDescriptorBuilder.Create("MultiTagHelper", "SomeAssembly")
+            .TagMatchingRuleDescriptor(rule => rule.RequireTagName("div"))
+            .TagMatchingRuleDescriptor(rule => rule.RequireTagName("a"))
+            .TagMatchingRuleDescriptor(rule => rule.RequireTagName("img"))
+            .Build();
+        var expectedDescriptors = new[] { multiTagHelper };
+        var tagHelperBinder = new TagHelperBinder("", expectedDescriptors);
+
+        TestTagName("div", multiTagHelper.TagMatchingRules[0]);
+        TestTagName("a", multiTagHelper.TagMatchingRules[1]);
+        TestTagName("img", multiTagHelper.TagMatchingRules[2]);
+        TestTagName("p", null);
+        TestTagName("*", null);
+        void TestTagName(string tagName, TagMatchingRuleDescriptor expectedBindingResult)
+        {
+            // Act
+            var bindingResult = tagHelperBinder.GetBinding(
+
+                tagName: tagName,
+                attributes: Array.Empty<KeyValuePair<string, string>>(),
+                parentTagName: "body",
+                parentIsTagHelper: false);
+
+            // Assert
+            if (expectedBindingResult == null)
+            {
+                Assert.Null(bindingResult);
+                return;
+            }
+            else
+            {
+                Assert.NotNull(bindingResult);
+                Assert.Equal(expectedDescriptors, bindingResult.Descriptors, TagHelperDescriptorComparer.Default);
+
+                Assert.Equal(tagName, bindingResult.TagName);
+                var mapping = Assert.Single(bindingResult.Mappings[multiTagHelper]);
+                Assert.Equal(expectedBindingResult, mapping, TagMatchingRuleDescriptorComparer.Default);
+            }
+        }
+    }
+
+    [Fact]
+    public void GetBinding_With_Multiple_TagNameRules_MultipleHelpers()
+    {
+        // Arrange
+        var multiTagHelper1 = TagHelperDescriptorBuilder.Create("MultiTagHelper1", "SomeAssembly")
+            .TagMatchingRuleDescriptor(rule => rule.RequireTagName("div"))
+            .TagMatchingRuleDescriptor(rule => rule.RequireTagName("a"))
+            .TagMatchingRuleDescriptor(rule => rule.RequireTagName("img"))
+            .Build();
+
+        var multiTagHelper2 = TagHelperDescriptorBuilder.Create("MultiTagHelper2", "SomeAssembly")
+            .TagMatchingRuleDescriptor(rule => rule.RequireTagName("div"))
+            .TagMatchingRuleDescriptor(rule => rule.RequireTagName("p"))
+            .TagMatchingRuleDescriptor(rule => rule.RequireTagName("table"))
+            .Build();
+
+        var tagHelperBinder = new TagHelperBinder("", new[] { multiTagHelper1, multiTagHelper2 });
+
+        TestTagName("div",   new[] { multiTagHelper1, multiTagHelper2 }, new[] { multiTagHelper1.TagMatchingRules[0], multiTagHelper2.TagMatchingRules[0] });
+        TestTagName("a",     new[] { multiTagHelper1 },                  new[] { multiTagHelper1.TagMatchingRules[1] });
+        TestTagName("img",   new[] { multiTagHelper1 },                  new[] { multiTagHelper1.TagMatchingRules[2] });
+        TestTagName("p",     new[] { multiTagHelper2 },                  new[] { multiTagHelper2.TagMatchingRules[1] });
+        TestTagName("table", new[] { multiTagHelper2 },                  new[] { multiTagHelper2.TagMatchingRules[2] });
+        TestTagName("*",     null,                                       null);
+
+
+        void TestTagName(string tagName, TagHelperDescriptor[] expectedDescriptors, TagMatchingRuleDescriptor[] expectedBindingResults)
+        {
+            // Act
+            var bindingResult = tagHelperBinder.GetBinding(
+                tagName: tagName,
+                attributes: Array.Empty<KeyValuePair<string, string>>(),
+                parentTagName: "body",
+                parentIsTagHelper: false);
+
+            // Assert
+            if (expectedDescriptors is null)
+            {
+                Assert.Null(bindingResult);
+            }
+            else
+            {
+                Assert.NotNull(bindingResult);
+                Assert.Equal(expectedDescriptors, bindingResult.Descriptors, TagHelperDescriptorComparer.Default);
+
+                Assert.Equal(tagName, bindingResult.TagName);
+
+                for(int i = 0; i < expectedDescriptors.Length; i++)
+                {
+                    var mapping = Assert.Single(bindingResult.Mappings[expectedDescriptors[i]]);
+                    Assert.Equal(expectedBindingResults[i], mapping, TagMatchingRuleDescriptorComparer.Default);
+                }
+            }
+        }
+    }
+
     public static TheoryData RequiredParentData
     {
         get

@@ -297,18 +297,18 @@ internal class BraceSmartIndenter : IDisposable
     }
 
     // Internal for testing
-    internal static bool IsUnlinkedSpan(SyntaxNode owner)
+    internal static bool IsUnlinkedSpan([NotNullWhen(false)] SyntaxNode? owner)
     {
         return owner is null ||
-            owner.NextSpan() is null ||
-            owner.PreviousSpan() is null;
+               owner.NextSpan() is null ||
+               owner.PreviousSpan() is null;
     }
 
     // Internal for testing
     internal static bool SurroundedByInvalidContent(SyntaxNode owner)
     {
-        return !owner.NextSpan().IsMetaCodeSpanKind() ||
-            !owner.PreviousSpan().IsMetaCodeSpanKind();
+        return !(owner.NextSpan()?.IsMetaCodeSpanKind() ?? false) ||
+               !(owner.PreviousSpan()?.IsMetaCodeSpanKind() ?? false);
     }
 
     internal static bool BeforeClosingBrace(int linePosition, ITextSnapshotLine lineSnapshot)

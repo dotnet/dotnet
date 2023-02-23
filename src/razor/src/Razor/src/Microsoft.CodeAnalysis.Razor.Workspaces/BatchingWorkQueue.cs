@@ -22,7 +22,7 @@ internal sealed class BatchingWorkQueue : IDisposable
     // efficient pace.
     private readonly Dictionary<string, BatchableWorkItem> _work;
     private readonly TimeSpan _batchingTimeSpan;
-    private readonly ErrorReporter _errorReporter;
+    private readonly IErrorReporter _errorReporter;
     private readonly CancellationTokenSource _disposalCts;
     private Timer? _timer;
     private bool _disposed;
@@ -30,7 +30,7 @@ internal sealed class BatchingWorkQueue : IDisposable
     public BatchingWorkQueue(
         TimeSpan batchingTimeSpan,
         StringComparer keyComparer,
-        ErrorReporter errorReporter)
+        IErrorReporter errorReporter)
     {
         if (keyComparer is null)
         {

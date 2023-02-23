@@ -40,7 +40,7 @@ public class RazorSpanMappingServiceTest : WorkspaceTestBase
 @SomeProperty
 ");
 
-        var project = new DefaultProjectSnapshot(
+        var project = new ProjectSnapshot(
             ProjectState.Create(Workspace.Services, _hostProject)
             .WithAddedHostDocument(_hostDocument, () => Task.FromResult(TextAndVersion.Create(sourceText, VersionStamp.Create()))));
 
@@ -72,7 +72,7 @@ public class RazorSpanMappingServiceTest : WorkspaceTestBase
 @SomeProperty
 ");
 
-        var project = new DefaultProjectSnapshot(
+        var project = new ProjectSnapshot(
             ProjectState.Create(Workspace.Services, _hostProject)
             .WithAddedHostDocument(_hostDocument, () => Task.FromResult(TextAndVersion.Create(sourceText, VersionStamp.Create()))));
 
@@ -105,7 +105,7 @@ public class RazorSpanMappingServiceTest : WorkspaceTestBase
 }
 ");
 
-        var project = new DefaultProjectSnapshot(
+        var project = new ProjectSnapshot(
             ProjectState.Create(Workspace.Services, _hostProject)
             .WithAddedHostDocument(_hostDocument, () => Task.FromResult(TextAndVersion.Create(sourceText, VersionStamp.Create()))));
 
@@ -137,7 +137,7 @@ public class RazorSpanMappingServiceTest : WorkspaceTestBase
 }
 ");
 
-        var project = new DefaultProjectSnapshot(
+        var project = new ProjectSnapshot(
             ProjectState.Create(Workspace.Services, _hostProject)
             .WithAddedHostDocument(_hostDocument, () => Task.FromResult(TextAndVersion.Create(sourceText, VersionStamp.Create()))));
 

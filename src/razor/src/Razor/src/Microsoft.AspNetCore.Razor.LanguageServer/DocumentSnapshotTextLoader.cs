@@ -11,9 +11,9 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
 internal class DocumentSnapshotTextLoader : TextLoader
 {
-    private readonly DocumentSnapshot _documentSnapshot;
+    private readonly IDocumentSnapshot _documentSnapshot;
 
-    public DocumentSnapshotTextLoader(DocumentSnapshot documentSnapshot)
+    public DocumentSnapshotTextLoader(IDocumentSnapshot documentSnapshot)
     {
         if (documentSnapshot is null)
         {

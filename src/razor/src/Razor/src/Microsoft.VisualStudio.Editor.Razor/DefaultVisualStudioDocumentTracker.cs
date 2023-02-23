@@ -30,7 +30,7 @@ internal class DefaultVisualStudioDocumentTracker : VisualStudioDocumentTracker
     private readonly List<ITextView> _textViews;
     private readonly Workspace _workspace;
     private bool _isSupportedProject;
-    private ProjectSnapshot? _projectSnapshot;
+    private IProjectSnapshot? _projectSnapshot;
     private int _subscribeCount;
 
     public override event EventHandler<ContextChangeEventArgs>? ContextChanged;
@@ -106,13 +106,13 @@ internal class DefaultVisualStudioDocumentTracker : VisualStudioDocumentTracker
 
     public override RazorConfiguration? Configuration => _projectSnapshot?.Configuration;
 
-    public override EditorSettings EditorSettings => _workspaceEditorSettings.Current;
+    public override ClientSpaceSettings EditorSettings => _workspaceEditorSettings.Current.ClientSpaceSettings;
 
     public override IReadOnlyList<TagHelperDescriptor>? TagHelpers => ProjectSnapshot?.TagHelpers;
 
     public override bool IsSupportedProject => _isSupportedProject;
 
-    internal override ProjectSnapshot? ProjectSnapshot => _projectSnapshot;
+    internal override IProjectSnapshot? ProjectSnapshot => _projectSnapshot;
 
     public override ITextBuffer TextBuffer => _textBuffer;
 
@@ -272,7 +272,7 @@ internal class DefaultVisualStudioDocumentTracker : VisualStudioDocumentTracker
     }
 
     // Internal for testing
-    internal void EditorSettingsManager_Changed(object sender, EditorSettingsChangedEventArgs args)
+    internal void EditorSettingsManager_Changed(object sender, ClientSettingsChangedEventArgs args)
         => _ = OnContextChangedAsync(ContextChangeKind.EditorSettingsChanged);
 
     // Internal for testing

@@ -1,4 +1,4 @@
-Source Location: (0:0,0 [16] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/OpenedIf.cshtml)
+﻿Source Location: (0:0,0 [16] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/OpenedIf.cshtml)
 |<html>
 <body>
 |

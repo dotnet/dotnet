@@ -183,7 +183,7 @@ internal class AutoClosingTagOnAutoInsertProvider : RazorOnAutoInsertProvider
         return false;
     }
 
-    private static bool TryEnsureOwner_WorkaroundCompilerQuirks(int afterCloseAngleIndex, RazorSyntaxTree syntaxTree, SyntaxNode currentOwner, [NotNullWhen(true)] out SyntaxNode? newOwner)
+    private static bool TryEnsureOwner_WorkaroundCompilerQuirks(int afterCloseAngleIndex, RazorSyntaxTree syntaxTree, SyntaxNode? currentOwner, [NotNullWhen(true)] out SyntaxNode? newOwner)
     {
         // All of these owner modifications are to account for https://github.com/dotnet/aspnetcore/issues/33919
 

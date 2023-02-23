@@ -1,4 +1,4 @@
-Source Location: (0:0,0 [45] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/HtmlCommentWithQuote_Single.cshtml)
+﻿Source Location: (0:0,0 [45] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/HtmlCommentWithQuote_Single.cshtml)
 |<!-- ' -->
 <img src="~/images/submit.png" />|
 Generated Location: (0:0,0 [45] )

@@ -1,4 +1,4 @@
-Source Location: (0:0,0 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml)
+﻿Source Location: (0:0,0 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml)
 |
 |
 Generated Location: (0:0,0 [2] )

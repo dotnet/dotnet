@@ -16,7 +16,7 @@ public class GeneratedDocumentSynchronizerTest : LanguageServerTestBase
     private readonly DefaultDocumentVersionCache _cache;
     private readonly GeneratedDocumentSynchronizer _synchronizer;
     private readonly TestGeneratedDocumentPublisher _publisher;
-    private readonly DocumentSnapshot _document;
+    private readonly IDocumentSnapshot _document;
     private readonly RazorCodeDocument _codeDocument;
 
     public GeneratedDocumentSynchronizerTest(ITestOutputHelper testOutput)

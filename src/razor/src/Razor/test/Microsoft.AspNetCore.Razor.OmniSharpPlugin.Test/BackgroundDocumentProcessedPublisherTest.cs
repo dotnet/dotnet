@@ -5,6 +5,8 @@
 
 using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Document;
+using Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis;
 using Xunit;

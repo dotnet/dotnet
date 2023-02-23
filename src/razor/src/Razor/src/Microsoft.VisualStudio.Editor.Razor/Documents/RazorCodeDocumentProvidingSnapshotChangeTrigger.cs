@@ -85,6 +85,11 @@ internal class RazorCodeDocumentProvidingSnapshotChangeTrigger : ProjectSnapshot
         }
 
         var document = project.GetDocument(filePath);
+        if (document is null)
+        {
+            return null;
+        }
+
         var razorDocument = await document.GetGeneratedOutputAsync().ConfigureAwait(false);
 
         return razorDocument;

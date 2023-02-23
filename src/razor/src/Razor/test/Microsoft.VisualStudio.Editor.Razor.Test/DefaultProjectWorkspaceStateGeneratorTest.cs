@@ -21,7 +21,7 @@ public class DefaultProjectWorkspaceStateGeneratorTest : ProjectSnapshotManagerD
     private readonly IReadOnlyList<TagHelperDescriptor> _resolvableTagHelpers;
     private readonly Workspace _workspace;
     private readonly Project _workspaceProject;
-    private readonly DefaultProjectSnapshot _projectSnapshot;
+    private readonly ProjectSnapshot _projectSnapshot;
     private readonly ProjectWorkspaceState _projectWorkspaceStateWithTagHelpers;
 
     public DefaultProjectWorkspaceStateGeneratorTest(ITestOutputHelper testOutput)
@@ -43,7 +43,7 @@ public class DefaultProjectWorkspaceStateGeneratorTest : ProjectSnapshotManagerD
             LanguageNames.CSharp,
             TestProjectData.SomeProject.FilePath));
         _workspaceProject = solution.GetProject(projectId);
-        _projectSnapshot = new DefaultProjectSnapshot(ProjectState.Create(_workspace.Services, TestProjectData.SomeProject));
+        _projectSnapshot = new ProjectSnapshot(ProjectState.Create(_workspace.Services, TestProjectData.SomeProject));
         _projectWorkspaceStateWithTagHelpers = new ProjectWorkspaceState(new[]
         {
             TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly").Build(),

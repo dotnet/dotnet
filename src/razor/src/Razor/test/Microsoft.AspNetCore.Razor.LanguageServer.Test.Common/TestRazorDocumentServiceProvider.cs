@@ -19,7 +19,7 @@ internal class TestRazorDocumentServiceProvider : IRazorDocumentServiceProvider
 
     public bool CanApplyChange => throw new NotImplementedException();
 
-    public bool SupportDiagnostics => throw new NotImplementedException();
+    public bool SupportDiagnostics => true;
 
     TService IRazorDocumentServiceProvider.GetService<TService>()
     {

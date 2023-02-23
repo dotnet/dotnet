@@ -39,7 +39,7 @@ internal class DefaultProjectResolver : ProjectResolver
         MiscellaneousHostProject = new HostProject(miscellaneousProjectPath, RazorDefaults.Configuration, RazorDefaults.RootNamespace);
     }
 
-    public override bool TryResolveProject(string documentFilePath, [NotNullWhen(true)] out ProjectSnapshot? projectSnapshot, bool enforceDocumentInProject = true)
+    public override bool TryResolveProject(string documentFilePath, [NotNullWhen(true)] out IProjectSnapshot? projectSnapshot, bool enforceDocumentInProject = true)
     {
         if (documentFilePath is null)
         {
@@ -76,13 +76,13 @@ internal class DefaultProjectResolver : ProjectResolver
         projectSnapshot = null;
         return false;
 
-        static bool IsDocumentInProject(ProjectSnapshot projectSnapshot, string documentFilePath)
+        static bool IsDocumentInProject(IProjectSnapshot projectSnapshot, string documentFilePath)
         {
             return projectSnapshot.GetDocument(documentFilePath) != null;
         }
     }
 
-    public override ProjectSnapshot GetMiscellaneousProject()
+    public override IProjectSnapshot GetMiscellaneousProject()
     {
         _projectSnapshotManagerDispatcher.AssertDispatcherThread();
 

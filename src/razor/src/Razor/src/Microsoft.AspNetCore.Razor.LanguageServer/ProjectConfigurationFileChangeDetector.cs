@@ -15,10 +15,10 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
 internal class ProjectConfigurationFileChangeDetector : IFileChangeDetector
 {
-    private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
+    private readonly ProjectSnapshotManagerDispatcher _dispatcher;
     private readonly IEnumerable<IProjectConfigurationFileChangeListener> _listeners;
-    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
-    private readonly ILogger? _logger;
+    private readonly LanguageServerFeatureOptions _options;
+    private readonly ILogger _logger;
     private FileSystemWatcher? _watcher;
 
     private static readonly IReadOnlyCollection<string> s_ignoredDirectories = new string[]
@@ -29,30 +29,20 @@ internal class ProjectConfigurationFileChangeDetector : IFileChangeDetector
     };
 
     public ProjectConfigurationFileChangeDetector(
-        ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
+        ProjectSnapshotManagerDispatcher dispatcher,
         IEnumerable<IProjectConfigurationFileChangeListener> listeners,
-        LanguageServerFeatureOptions languageServerFeatureOptions,
-        ILoggerFactory? loggerFactory = null)
+        LanguageServerFeatureOptions options,
+        ILoggerFactory loggerFactory)
     {
-        if (projectSnapshotManagerDispatcher is null)
+        if (loggerFactory is null)
         {
-            throw new ArgumentNullException(nameof(projectSnapshotManagerDispatcher));
+            throw new ArgumentNullException(nameof(loggerFactory));
         }
 
-        if (listeners is null)
-        {
-            throw new ArgumentNullException(nameof(listeners));
-        }
-
-        if (languageServerFeatureOptions is null)
-        {
-            throw new ArgumentNullException(nameof(languageServerFeatureOptions));
-        }
-
-        _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher;
-        _listeners = listeners;
-        _languageServerFeatureOptions = languageServerFeatureOptions;
-        _logger = loggerFactory?.CreateLogger<ProjectConfigurationFileChangeDetector>();
+        _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
+        _listeners = listeners ?? throw new ArgumentNullException(nameof(listeners));
+        _options = options ?? throw new ArgumentNullException(nameof(options));
+        _logger = loggerFactory.CreateLogger<ProjectConfigurationFileChangeDetector>();
     }
 
     public async Task StartAsync(string workspaceDirectory, CancellationToken cancellationToken)
@@ -67,7 +57,7 @@ internal class ProjectConfigurationFileChangeDetector : IFileChangeDetector
         workspaceDirectory = FilePathNormalizer.Normalize(workspaceDirectory);
         var existingConfigurationFiles = GetExistingConfigurationFiles(workspaceDirectory);
 
-        await _projectSnapshotManagerDispatcher.RunOnDispatcherThreadAsync(() =>
+        await _dispatcher.RunOnDispatcherThreadAsync(() =>
         {
             foreach (var configurationFilePath in existingConfigurationFiles)
             {
@@ -84,7 +74,7 @@ internal class ProjectConfigurationFileChangeDetector : IFileChangeDetector
             return;
         }
 
-        _watcher = new RazorFileSystemWatcher(workspaceDirectory, _languageServerFeatureOptions.ProjectConfigurationFileName)
+        _watcher = new RazorFileSystemWatcher(workspaceDirectory, _options.ProjectConfigurationFileName)
         {
             NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite | NotifyFilters.CreationTime,
             IncludeSubdirectories = true,
@@ -97,12 +87,12 @@ internal class ProjectConfigurationFileChangeDetector : IFileChangeDetector
         {
             // Translate file renames into remove / add
 
-            if (args.OldFullPath.EndsWith(_languageServerFeatureOptions.ProjectConfigurationFileName, FilePathComparison.Instance))
+            if (args.OldFullPath.EndsWith(_options.ProjectConfigurationFileName, FilePathComparison.Instance))
             {
                 // Renaming from project configuration file to something else. Just remove the configuration file.
                 FileSystemWatcher_ProjectConfigurationFileEvent_Background(args.OldFullPath, RazorFileChangeKind.Removed);
             }
-            else if (args.FullPath.EndsWith(_languageServerFeatureOptions.ProjectConfigurationFileName, FilePathComparison.Instance))
+            else if (args.FullPath.EndsWith(_options.ProjectConfigurationFileName, FilePathComparison.Instance))
             {
                 // Renaming from a non-project configuration file file to a real one. Just add the configuration file.
                 FileSystemWatcher_ProjectConfigurationFileEvent_Background(args.FullPath, RazorFileChangeKind.Added);
@@ -128,14 +118,18 @@ internal class ProjectConfigurationFileChangeDetector : IFileChangeDetector
     // Protected virtual for testing
     protected virtual IEnumerable<string> GetExistingConfigurationFiles(string workspaceDirectory)
     {
-        var files = DirectoryHelper.GetFilteredFiles(workspaceDirectory, _languageServerFeatureOptions.ProjectConfigurationFileName, s_ignoredDirectories, logger: _logger);
+        using var _ = _logger.BeginScope("Searching for existing project configuration files");
 
-        return files;
+        return DirectoryHelper.GetFilteredFiles(
+            workspaceDirectory,
+            _options.ProjectConfigurationFileName,
+            s_ignoredDirectories,
+            logger: _logger);
     }
 
     private void FileSystemWatcher_ProjectConfigurationFileEvent_Background(string physicalFilePath, RazorFileChangeKind kind)
     {
-        _ = _projectSnapshotManagerDispatcher.RunOnDispatcherThreadAsync(
+        _ = _dispatcher.RunOnDispatcherThreadAsync(
             () => FileSystemWatcher_ProjectConfigurationFileEvent(physicalFilePath, kind),
             CancellationToken.None);
     }

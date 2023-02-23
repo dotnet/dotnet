@@ -341,7 +341,14 @@ internal class FormattingVisitor : SyntaxWalker
 
     public override void VisitMarkupTagHelperAttribute(MarkupTagHelperAttributeSyntax node)
     {
-        Visit(node.Value);
+        WriteBlock(node, FormattingBlockKind.Tag, n =>
+        {
+            var equalsSyntax = SyntaxFactory.MarkupTextLiteral(new SyntaxList<SyntaxToken>(node.EqualsToken));
+            var mergedAttributePrefix = SyntaxUtilities.MergeTextLiterals(node.NamePrefix, node.Name, node.NameSuffix, equalsSyntax, node.ValuePrefix);
+            Visit(mergedAttributePrefix);
+            Visit(node.Value);
+            Visit(node.ValueSuffix);
+        });
     }
 
     public override void VisitMarkupTagHelperDirectiveAttribute(MarkupTagHelperDirectiveAttributeSyntax node)

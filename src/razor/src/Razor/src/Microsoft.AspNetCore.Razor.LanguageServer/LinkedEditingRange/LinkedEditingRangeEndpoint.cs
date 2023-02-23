@@ -117,7 +117,7 @@ internal class LinkedEditingRangeEndpoint : ILinkedEditingRangeEndpoint
         {
             var change = new SourceChange(location.AbsoluteIndex, length: 0, newText: "");
             var owner = syntaxTree.Root.LocateOwner(change);
-            var element = owner.FirstAncestorOrSelf<MarkupSyntaxNode>(
+            var element = owner?.FirstAncestorOrSelf<MarkupSyntaxNode>(
                 a => a.Kind is SyntaxKind.MarkupTagHelperElement || a.Kind is SyntaxKind.MarkupElement);
 
             if (element is null)

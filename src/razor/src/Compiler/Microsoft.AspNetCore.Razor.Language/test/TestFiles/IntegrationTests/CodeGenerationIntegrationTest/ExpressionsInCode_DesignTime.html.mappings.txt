@@ -1,4 +1,4 @@
-Source Location: (54:3,1 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ExpressionsInCode.cshtml)
+﻿Source Location: (54:3,1 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ExpressionsInCode.cshtml)
 |
 
 |

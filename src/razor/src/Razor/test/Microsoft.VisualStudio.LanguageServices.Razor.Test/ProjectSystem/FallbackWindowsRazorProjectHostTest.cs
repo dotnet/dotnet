@@ -656,7 +656,7 @@ public class FallbackWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatc
     private class TestProjectSnapshotManager : DefaultProjectSnapshotManager
     {
         public TestProjectSnapshotManager(ProjectSnapshotManagerDispatcher dispatcher, Workspace workspace)
-            : base(dispatcher, Mock.Of<ErrorReporter>(MockBehavior.Strict), Array.Empty<ProjectSnapshotChangeTrigger>(), workspace)
+            : base(dispatcher, Mock.Of<IErrorReporter>(MockBehavior.Strict), Array.Empty<ProjectSnapshotChangeTrigger>(), workspace)
         {
         }
     }

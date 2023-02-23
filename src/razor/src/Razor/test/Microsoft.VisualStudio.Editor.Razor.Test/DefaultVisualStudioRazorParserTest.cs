@@ -20,7 +20,7 @@ namespace Microsoft.VisualStudio.Editor.Razor;
 
 public class DefaultVisualStudioRazorParserTest : ProjectSnapshotManagerDispatcherTestBase
 {
-    private readonly ProjectSnapshot _projectSnapshot;
+    private readonly IProjectSnapshot _projectSnapshot;
     private readonly ProjectSnapshotProjectEngineFactory _projectEngineFactory;
     private readonly Workspace _workspace;
 
@@ -61,7 +61,7 @@ public class DefaultVisualStudioRazorParserTest : ProjectSnapshotManagerDispatch
             JoinableTaskContext,
             documentTracker,
             _projectEngineFactory,
-            new DefaultErrorReporter(),
+            ErrorReporter,
             Mock.Of<VisualStudioCompletionBroker>(MockBehavior.Strict)))
         {
             var latestChange = new SourceChange(0, 0, string.Empty);
@@ -103,7 +103,7 @@ public class DefaultVisualStudioRazorParserTest : ProjectSnapshotManagerDispatch
             JoinableTaskContext,
             documentTracker,
             _projectEngineFactory,
-            new DefaultErrorReporter(),
+            ErrorReporter,
             Mock.Of<VisualStudioCompletionBroker>(MockBehavior.Strict)))
         {
             var latestChange = new SourceChange(0, 0, string.Empty);
@@ -142,7 +142,7 @@ public class DefaultVisualStudioRazorParserTest : ProjectSnapshotManagerDispatch
             JoinableTaskContext,
             documentTracker,
             _projectEngineFactory,
-            new DefaultErrorReporter(),
+            ErrorReporter,
             Mock.Of<VisualStudioCompletionBroker>(MockBehavior.Strict)))
         {
             var latestChange = new SourceChange(0, 0, string.Empty);
@@ -168,7 +168,7 @@ public class DefaultVisualStudioRazorParserTest : ProjectSnapshotManagerDispatch
             JoinableTaskContext,
             documentTracker,
             _projectEngineFactory,
-            new DefaultErrorReporter(),
+            ErrorReporter,
             Mock.Of<VisualStudioCompletionBroker>(MockBehavior.Strict)))
         {
             var latestChange = new SourceChange(0, 0, string.Empty);
@@ -196,7 +196,7 @@ public class DefaultVisualStudioRazorParserTest : ProjectSnapshotManagerDispatch
             JoinableTaskContext,
             documentTracker,
             _projectEngineFactory,
-            new DefaultErrorReporter(),
+            ErrorReporter,
             Mock.Of<VisualStudioCompletionBroker>(MockBehavior.Strict)))
         {
             var latestChange = new SourceChange(0, 0, string.Empty);
@@ -239,7 +239,7 @@ public class DefaultVisualStudioRazorParserTest : ProjectSnapshotManagerDispatch
             JoinableTaskContext,
             documentTracker,
             _projectEngineFactory,
-            new DefaultErrorReporter(),
+            ErrorReporter,
             Mock.Of<VisualStudioCompletionBroker>(MockBehavior.Strict)))
         {
             var latestChange = new SourceChange(0, 0, string.Empty);
@@ -381,7 +381,7 @@ public class DefaultVisualStudioRazorParserTest : ProjectSnapshotManagerDispatch
             JoinableTaskContext,
             CreateDocumentTracker(),
             _projectEngineFactory,
-            new DefaultErrorReporter(),
+            ErrorReporter,
             Mock.Of<VisualStudioCompletionBroker>(MockBehavior.Strict));
         parser.Dispose();
 
@@ -397,7 +397,7 @@ public class DefaultVisualStudioRazorParserTest : ProjectSnapshotManagerDispatch
             JoinableTaskContext,
             CreateDocumentTracker(),
             _projectEngineFactory,
-            new DefaultErrorReporter(),
+            ErrorReporter,
             Mock.Of<VisualStudioCompletionBroker>(MockBehavior.Strict));
         parser.Dispose();
 
@@ -413,7 +413,7 @@ public class DefaultVisualStudioRazorParserTest : ProjectSnapshotManagerDispatch
             JoinableTaskContext,
             CreateDocumentTracker(),
             _projectEngineFactory,
-            new DefaultErrorReporter(),
+            ErrorReporter,
             Mock.Of<VisualStudioCompletionBroker>(MockBehavior.Strict));
         parser.Dispose();
 
@@ -429,7 +429,7 @@ public class DefaultVisualStudioRazorParserTest : ProjectSnapshotManagerDispatch
             JoinableTaskContext,
             CreateDocumentTracker(),
             _projectEngineFactory,
-            new DefaultErrorReporter(),
+            ErrorReporter,
             Mock.Of<VisualStudioCompletionBroker>(MockBehavior.Strict)))
         {
             var called = false;
@@ -456,7 +456,7 @@ public class DefaultVisualStudioRazorParserTest : ProjectSnapshotManagerDispatch
             JoinableTaskContext,
             documentTracker,
             _projectEngineFactory,
-            new DefaultErrorReporter(),
+            ErrorReporter,
             Mock.Of<VisualStudioCompletionBroker>(MockBehavior.Strict)))
         {
             var called = false;
@@ -487,7 +487,7 @@ public class DefaultVisualStudioRazorParserTest : ProjectSnapshotManagerDispatch
             JoinableTaskContext,
             documentTracker,
             _projectEngineFactory,
-            new DefaultErrorReporter(),
+            ErrorReporter,
             Mock.Of<VisualStudioCompletionBroker>(MockBehavior.Strict)))
         {
             var called = false;
@@ -526,7 +526,7 @@ public class DefaultVisualStudioRazorParserTest : ProjectSnapshotManagerDispatch
             JoinableTaskContext,
             CreateDocumentTracker(),
             _projectEngineFactory,
-            new DefaultErrorReporter(),
+            ErrorReporter,
             Mock.Of<VisualStudioCompletionBroker>(MockBehavior.Strict))
         {
             BlockBackgroundIdleWork = new ManualResetEventSlim(),
@@ -556,7 +556,7 @@ public class DefaultVisualStudioRazorParserTest : ProjectSnapshotManagerDispatch
             JoinableTaskContext,
             CreateDocumentTracker(),
             _projectEngineFactory,
-            new DefaultErrorReporter(),
+            ErrorReporter,
             Mock.Of<VisualStudioCompletionBroker>(MockBehavior.Strict))
         {
             BlockBackgroundIdleWork = new ManualResetEventSlim(),
@@ -585,7 +585,7 @@ public class DefaultVisualStudioRazorParserTest : ProjectSnapshotManagerDispatch
             JoinableTaskContext,
             CreateDocumentTracker(),
             _projectEngineFactory,
-            new DefaultErrorReporter(),
+            ErrorReporter,
             Mock.Of<VisualStudioCompletionBroker>(MockBehavior.Strict)))
         {
             parser.StartParser();
@@ -609,7 +609,7 @@ public class DefaultVisualStudioRazorParserTest : ProjectSnapshotManagerDispatch
             JoinableTaskContext,
             documentTracker,
             _projectEngineFactory,
-            new DefaultErrorReporter(),
+            ErrorReporter,
             Mock.Of<VisualStudioCompletionBroker>(MockBehavior.Strict)))
         {
             // Act
@@ -629,7 +629,7 @@ public class DefaultVisualStudioRazorParserTest : ProjectSnapshotManagerDispatch
             JoinableTaskContext,
             CreateDocumentTracker(isSupportedProject: true),
             _projectEngineFactory,
-            new DefaultErrorReporter(),
+            ErrorReporter,
             Mock.Of<VisualStudioCompletionBroker>(MockBehavior.Strict)))
         {
             // Act
@@ -648,7 +648,7 @@ public class DefaultVisualStudioRazorParserTest : ProjectSnapshotManagerDispatch
             JoinableTaskContext,
             CreateDocumentTracker(isSupportedProject: false),
             _projectEngineFactory,
-            new DefaultErrorReporter(),
+            ErrorReporter,
             Mock.Of<VisualStudioCompletionBroker>(MockBehavior.Strict)))
         {
             // Act

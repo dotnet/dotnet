@@ -58,12 +58,14 @@
 
   <!-- Reference the Roslyn dependencies so that Preview builds work -->
   <ItemGroup Condition="'$(IncludeRoslynDeps)' == 'true'">
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Version="$(Tooling_MicrosoftCodeAnalysisCSharpFeaturesPackageVersion)" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Version="$(MicrosoftCodeAnalysisCSharpFeaturesPackageVersion)" />
     <PackageReference Include="Microsoft.CodeAnalysis.EditorFeatures" Version="$(RoslynPackageVersion)" />
     <PackageReference Include="Microsoft.CodeAnalysis.EditorFeatures.Wpf" Version="$(RoslynPackageVersion)" />
-    <PackageReference Include="Microsoft.CodeAnalysis.ExternalAccess.Razor" Version="$(Tooling_MicrosoftCodeAnalysisExternalAccessRazorPackageVersion)" />
-    <PackageReference Include="Microsoft.CodeAnalysis.ExternalAccess.FSharp" Version="$(Tooling_MicrosoftCodeAnalysisExternalAccessRazorPackageVersion)" />
+    <PackageReference Include="Microsoft.CodeAnalysis.ExternalAccess.Razor" Version="$(MicrosoftCodeAnalysisExternalAccessRazorPackageVersion)" />
+    <PackageReference Include="Microsoft.CodeAnalysis.ExternalAccess.FSharp" Version="$(MicrosoftCodeAnalysisExternalAccessRazorPackageVersion)" />
     <PackageReference Include="Microsoft.VisualStudio.LanguageServices" Version="$(Tooling_MicrosoftVisualStudioLanguageServicesPackageVersion)" />
+    <PackageReference Include="Microsoft.VisualStudio.LanguageServices.CSharp.Symbols" Version="$(Tooling_MicrosoftVisualStudioLanguageServicesPackageVersion)" />
+    <PackageReference Include="Microsoft.VisualStudio.LanguageServices.Implementation.Symbols" Version="$(Tooling_MicrosoftVisualStudioLanguageServicesPackageVersion)" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(IncludeRoslynDeps)' == 'true'">
@@ -81,5 +83,7 @@
     <VSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.Remote.Workspaces.dll" />
     <VSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.Workspaces.dll" />
     <VSIXSourceItem Include="$(OutputPath)Microsoft.VisualStudio.LanguageServices.dll" />
+    <VSIXSourceItem Include="$(OutputPath)Microsoft.VisualStudio.LanguageServices.CSharp.dll" />
+    <VSIXSourceItem Include="$(OutputPath)Microsoft.VisualStudio.LanguageServices.Implementation.dll" />
   </ItemGroup>
 </Project>

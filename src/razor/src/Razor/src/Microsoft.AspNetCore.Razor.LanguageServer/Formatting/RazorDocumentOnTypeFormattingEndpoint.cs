@@ -82,6 +82,12 @@ internal class RazorDocumentOnTypeFormattingEndpoint : IVSDocumentOnTypeFormatti
             return null;
         }
 
+        if (!_optionsMonitor.CurrentValue.FormatOnType)
+        {
+            requestContext.Logger.LogInformation("Formatting on type disabled.");
+            return null;
+        }
+
         if (!s_allTriggerCharacters.Contains(request.Character, StringComparer.Ordinal))
         {
             requestContext.Logger.LogWarning("Unexpected trigger character '{requestCharacter}'.", request.Character);

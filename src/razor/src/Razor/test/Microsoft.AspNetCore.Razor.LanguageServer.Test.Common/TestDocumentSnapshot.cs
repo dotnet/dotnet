@@ -2,7 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis;
@@ -11,15 +11,18 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.AspNetCore.Razor.Test.Common;
 
-internal class TestDocumentSnapshot : DefaultDocumentSnapshot
+internal class TestDocumentSnapshot : DocumentSnapshot
 {
     private RazorCodeDocument? _codeDocument;
 
-    public static TestDocumentSnapshot Create(string filePath) => Create(filePath, string.Empty);
+    public static TestDocumentSnapshot Create(string filePath)
+        => Create(filePath, string.Empty);
 
-    public static TestDocumentSnapshot Create(string filePath, VersionStamp version) => Create(filePath, string.Empty, version);
+    public static TestDocumentSnapshot Create(string filePath, VersionStamp version)
+        => Create(filePath, string.Empty, version);
 
-    public static TestDocumentSnapshot Create(string filePath, string text) => Create(filePath, text, VersionStamp.Default);
+    public static TestDocumentSnapshot Create(string filePath, string text)
+        => Create(filePath, text, VersionStamp.Default);
 
     public static TestDocumentSnapshot Create(string filePath, string text, VersionStamp version)
     {
@@ -38,7 +41,7 @@ internal class TestDocumentSnapshot : DefaultDocumentSnapshot
         return testDocument;
     }
 
-    private TestDocumentSnapshot(DefaultProjectSnapshot projectSnapshot, DocumentState documentState)
+    private TestDocumentSnapshot(ProjectSnapshot projectSnapshot, DocumentState documentState)
         : base(projectSnapshot, documentState)
     {
     }
@@ -53,16 +56,16 @@ internal class TestDocumentSnapshot : DefaultDocumentSnapshot
         return Task.FromResult(_codeDocument);
     }
 
-    public override IReadOnlyList<DocumentSnapshot> GetImports()
+    public override ImmutableArray<IDocumentSnapshot> GetImports()
     {
-        return Array.Empty<DocumentSnapshot>();
+        return ImmutableArray<IDocumentSnapshot>.Empty;
     }
 
     public override bool TryGetGeneratedOutput(out RazorCodeDocument result)
     {
         if (_codeDocument is null)
         {
-            throw new InvalidOperationException("You must call " + nameof(With) + " to set the code document for this document snapshot.");
+            throw new InvalidOperationException($"You must call {nameof(With)} to set the code document for this document snapshot.");
         }
 
         result = _codeDocument;

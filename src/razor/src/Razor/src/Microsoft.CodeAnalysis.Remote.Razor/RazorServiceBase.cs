@@ -3,10 +3,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Telemetry;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.ServiceHub.Framework;
@@ -33,7 +35,7 @@ internal abstract class RazorServiceBase : IDisposable
         ServiceBrokerClient.Dispose();
     }
 
-    protected virtual Task<ProjectSnapshot> GetProjectSnapshotAsync(ProjectSnapshotHandle projectHandle, CancellationToken cancellationToken)
+    protected virtual Task<IProjectSnapshot> GetProjectSnapshotAsync(ProjectSnapshotHandle projectHandle, CancellationToken cancellationToken)
     {
         if (projectHandle is null)
         {
@@ -41,10 +43,10 @@ internal abstract class RazorServiceBase : IDisposable
         }
 
         var snapshot = new SerializedProjectSnapshot(projectHandle.FilePath, projectHandle.Configuration, projectHandle.RootNamespace);
-        return Task.FromResult<ProjectSnapshot>(snapshot);
+        return Task.FromResult<IProjectSnapshot>(snapshot);
     }
 
-    private class SerializedProjectSnapshot : ProjectSnapshot
+    private class SerializedProjectSnapshot : IProjectSnapshot
     {
         public SerializedProjectSnapshot(string filePath, RazorConfiguration? configuration, string? rootNamespace)
         {
@@ -55,17 +57,23 @@ internal abstract class RazorServiceBase : IDisposable
             Version = VersionStamp.Default;
         }
 
-        public override RazorConfiguration? Configuration { get; }
+        public RazorConfiguration? Configuration { get; }
 
-        public override IEnumerable<string> DocumentFilePaths => Array.Empty<string>();
+        public IEnumerable<string> DocumentFilePaths => Array.Empty<string>();
 
-        public override string FilePath { get; }
+        public string FilePath { get; }
 
-        public override string? RootNamespace { get; }
+        public string? RootNamespace { get; }
 
-        public override VersionStamp Version { get; }
+        public VersionStamp Version { get; }
 
-        public override DocumentSnapshot? GetDocument(string filePath)
+        public LanguageVersion CSharpLanguageVersion => LanguageVersion.Default;
+
+        public IReadOnlyList<TagHelperDescriptor> TagHelpers => Array.Empty<TagHelperDescriptor>();
+
+        public ProjectWorkspaceState? ProjectWorkspaceState => null;
+
+        public IDocumentSnapshot? GetDocument(string filePath)
         {
             if (filePath is null)
             {
@@ -75,10 +83,12 @@ internal abstract class RazorServiceBase : IDisposable
             return null;
         }
 
-        public override bool IsImportDocument(DocumentSnapshot document) => throw new NotImplementedException();
+        public bool IsImportDocument(IDocumentSnapshot document) => throw new NotImplementedException();
 
-        public override IEnumerable<DocumentSnapshot> GetRelatedDocuments(DocumentSnapshot document) => throw new NotImplementedException();
+        public ImmutableArray<IDocumentSnapshot> GetRelatedDocuments(IDocumentSnapshot document)
+            => throw new NotImplementedException();
 
-        public override RazorProjectEngine GetProjectEngine() => throw new NotImplementedException();
+        public RazorProjectEngine GetProjectEngine()
+            => throw new NotImplementedException();
     }
 }

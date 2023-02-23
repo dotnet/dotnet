@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Composition;
 using System.IO;
 using System.Linq;
+using Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Document;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.Build.Execution;
 

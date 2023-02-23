@@ -1,4 +1,4 @@
-Source Location: (0:0,0 [12] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp7.cshtml)
+﻿Source Location: (0:0,0 [12] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp7.cshtml)
 |<body>
     |
 Generated Location: (0:0,0 [12] )

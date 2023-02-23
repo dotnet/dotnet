@@ -1,5 +1,38 @@
 # Release Notes
 
+## 17.5.0
+
+### Issues Fixed
+
+* Fix SDK issue [#4278](https://github.com/microsoft/vstest/pull/4278)
+* Add test run serialization feature [#4126](https://github.com/microsoft/vstest/pull/4126)
+* Ensure that the OnAbort message is sent if the testhost aborts early [#3993](https://github.com/microsoft/vstest/pull/3993)
+* Add custom satellite assemblies resolution [#4133](https://github.com/microsoft/vstest/pull/4133)
+* Fixed muxer resolution strategy enum [#4134](https://github.com/microsoft/vstest/pull/4134)
+* Fixed dotnet resolution for in-process vstest.console scenarios [#4122](https://github.com/microsoft/vstest/pull/4122)
+* Ensure to not produce and ship exe for netcore [#4124](https://github.com/microsoft/vstest/pull/4124)
+* Fixed testhost crash for net7 [#4112](https://github.com/microsoft/vstest/pull/4112)
+* Revert "Run tests with Server GC enabled & concurrent GC disabled. (#3661)" [#4108](https://github.com/microsoft/vstest/pull/4108)
+* Revert making Microsoft.NET.Test.Sdk package transitive [#4104](https://github.com/microsoft/vstest/pull/4104)
+* Fix recursive resource lookup [#4095](https://github.com/microsoft/vstest/pull/4095)
+* Fixed CC for in-process console scenarios [#4084](https://github.com/microsoft/vstest/pull/4084)
+* Fixed test session issues [#4075](https://github.com/microsoft/vstest/pull/4075)
+* Fix Invalid target architecture 'S390x' error [#4066](https://github.com/microsoft/vstest/pull/4066)
+* Add Mono.Cecil.Rocks [#4071](https://github.com/microsoft/vstest/pull/4071)
+* Revert "Revert "Re-enable arm64 ngen (#3931)" (#3948)" [#3951](https://github.com/microsoft/vstest/pull/3951)
+* Update docker to the latest tagging schema [#4041](https://github.com/microsoft/vstest/pull/4041)
+* Update resources [#4063](https://github.com/microsoft/vstest/pull/4063)
+* Use environment variables for AeDebugger mode [#4049](https://github.com/microsoft/vstest/pull/4049)
+* Add postmortem blame mode [#4032](https://github.com/microsoft/vstest/pull/4032)
+* Add VSTEST_DISABLE_THREADPOOL_SIZE_INCREASE feature flag [#4046](https://github.com/microsoft/vstest/pull/4046)
+
+See full log [here](https://github.com/microsoft/vstest/compare/v17.4.1...v17.5.0)
+
+### Artifacts
+
+* TestPlatform vsix: [17.5.0](https://vsdrop.corp.microsoft.com/file/v1/Products/DevDiv/microsoft/vstest/17.5/20230221-01;/TestPlatform.vsix)
+* Microsoft.TestPlatform.ObjectModel: [17.5.0](https://www.nuget.org/packages/Microsoft.TestPlatform.ObjectModel/17.5.0)
+
 ## 17.5.0-preview-20221221-03
 
 ### Issues Fixed

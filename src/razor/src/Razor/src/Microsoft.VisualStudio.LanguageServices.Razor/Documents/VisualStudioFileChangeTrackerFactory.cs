@@ -10,13 +10,13 @@ namespace Microsoft.VisualStudio.Editor.Razor.Documents;
 
 internal class VisualStudioFileChangeTrackerFactory : FileChangeTrackerFactory
 {
-    private readonly ErrorReporter _errorReporter;
+    private readonly IErrorReporter _errorReporter;
     private readonly IVsAsyncFileChangeEx _fileChangeService;
     private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
     private readonly JoinableTaskContext _joinableTaskContext;
 
     public VisualStudioFileChangeTrackerFactory(
-        ErrorReporter errorReporter,
+        IErrorReporter errorReporter,
         IVsAsyncFileChangeEx fileChangeService,
         ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
         JoinableTaskContext joinableTaskContext)

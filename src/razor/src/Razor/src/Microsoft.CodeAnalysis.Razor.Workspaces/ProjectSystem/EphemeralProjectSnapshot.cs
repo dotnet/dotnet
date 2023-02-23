@@ -1,16 +1,16 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Host;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
-internal class EphemeralProjectSnapshot : ProjectSnapshot
+internal class EphemeralProjectSnapshot : IProjectSnapshot
 {
     private readonly HostWorkspaceServices _services;
     private readonly Lazy<RazorProjectEngine> _projectEngine;
@@ -33,19 +33,23 @@ internal class EphemeralProjectSnapshot : ProjectSnapshot
         _projectEngine = new Lazy<RazorProjectEngine>(CreateProjectEngine);
     }
 
-    public override RazorConfiguration Configuration => FallbackRazorConfiguration.Latest;
+    public RazorConfiguration? Configuration => FallbackRazorConfiguration.Latest;
 
-    public override IEnumerable<string> DocumentFilePaths => Array.Empty<string>();
+    public IEnumerable<string> DocumentFilePaths => Array.Empty<string>();
 
-    public override string FilePath { get; }
+    public string FilePath { get; }
 
-    public override string RootNamespace { get; }
+    public string? RootNamespace { get; }
 
-    public override VersionStamp Version { get; } = VersionStamp.Default;
+    public VersionStamp Version => VersionStamp.Default;
 
-    public override IReadOnlyList<TagHelperDescriptor> TagHelpers { get; } = Array.Empty<TagHelperDescriptor>();
+    public LanguageVersion CSharpLanguageVersion => LanguageVersion.Default;
 
-    public override DocumentSnapshot GetDocument(string filePath)
+    public IReadOnlyList<TagHelperDescriptor> TagHelpers => Array.Empty<TagHelperDescriptor>();
+
+    public ProjectWorkspaceState? ProjectWorkspaceState => null;
+
+    public IDocumentSnapshot? GetDocument(string filePath)
     {
         if (filePath is null)
         {
@@ -55,7 +59,7 @@ internal class EphemeralProjectSnapshot : ProjectSnapshot
         return null;
     }
 
-    public override bool IsImportDocument(DocumentSnapshot document)
+    public bool IsImportDocument(IDocumentSnapshot document)
     {
         if (document is null)
         {
@@ -65,17 +69,17 @@ internal class EphemeralProjectSnapshot : ProjectSnapshot
         return false;
     }
 
-    public override IEnumerable<DocumentSnapshot> GetRelatedDocuments(DocumentSnapshot document)
+    public ImmutableArray<IDocumentSnapshot> GetRelatedDocuments(IDocumentSnapshot document)
     {
         if (document is null)
         {
             throw new ArgumentNullException(nameof(document));
         }
 
-        return Array.Empty<DocumentSnapshot>();
+        return ImmutableArray<IDocumentSnapshot>.Empty;
     }
 
-    public override RazorProjectEngine GetProjectEngine()
+    public RazorProjectEngine GetProjectEngine()
     {
         return _projectEngine.Value;
     }

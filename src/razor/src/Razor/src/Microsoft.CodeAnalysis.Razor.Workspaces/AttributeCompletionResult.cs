@@ -3,18 +3,18 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
 
-public abstract class AttributeCompletionResult
+public sealed class AttributeCompletionResult
 {
-    private AttributeCompletionResult()
-    {
-    }
+    public IReadOnlyDictionary<string, IEnumerable<BoundAttributeDescriptor>> Completions { get; }
 
-    public abstract IReadOnlyDictionary<string, IEnumerable<BoundAttributeDescriptor>> Completions { get; }
+    private AttributeCompletionResult(IReadOnlyDictionary<string, IEnumerable<BoundAttributeDescriptor>> completions)
+    {
+        Completions = completions;
+    }
 
     internal static AttributeCompletionResult Create(Dictionary<string, HashSet<BoundAttributeDescriptor>> completions)
     {
@@ -23,24 +23,15 @@ public abstract class AttributeCompletionResult
             throw new ArgumentNullException(nameof(completions));
         }
 
-        var readonlyCompletions = completions.ToDictionary(
-            key => key.Key,
-            value => (IEnumerable<BoundAttributeDescriptor>)value.Value,
-            completions.Comparer);
-        var result = new DefaultAttributeCompletionResult(readonlyCompletions);
+        var readonlyCompletions = new Dictionary<string, IEnumerable<BoundAttributeDescriptor>>(
+            capacity: completions.Count,
+            comparer: completions.Comparer);
 
-        return result;
-    }
-
-    private class DefaultAttributeCompletionResult : AttributeCompletionResult
-    {
-        private readonly IReadOnlyDictionary<string, IEnumerable<BoundAttributeDescriptor>> _completions;
-
-        public DefaultAttributeCompletionResult(IReadOnlyDictionary<string, IEnumerable<BoundAttributeDescriptor>> completions)
+        foreach (var (key, value) in completions)
         {
-            _completions = completions;
+            readonlyCompletions.Add(key, value);
         }
 
-        public override IReadOnlyDictionary<string, IEnumerable<BoundAttributeDescriptor>> Completions => _completions;
+        return new AttributeCompletionResult(readonlyCompletions);
     }
 }

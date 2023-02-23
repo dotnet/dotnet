@@ -22,7 +22,7 @@ public class DefaultGeneratedDocumentPublisherTest : LanguageServerTestBase
         : base(testOutput)
     {
         _serverClient = new TestClient();
-        _projectManager = TestProjectSnapshotManager.Create(LegacyDispatcher);
+        _projectManager = TestProjectSnapshotManager.Create(LegacyDispatcher, ErrorReporter);
         _projectManager.AllowNotifyListeners = true;
         _hostProject = new HostProject("/path/to/project.csproj", RazorConfiguration.Default, "TestRootNamespace");
         _projectManager.ProjectAdded(_hostProject);

@@ -8,7 +8,7 @@ namespace Microsoft.CodeAnalysis.Razor.Editor;
 
 internal abstract class WorkspaceEditorSettings : ILanguageService
 {
-    public abstract event EventHandler<EditorSettingsChangedEventArgs> Changed;
+    public abstract event EventHandler<ClientSettingsChangedEventArgs> Changed;
 
-    public abstract EditorSettings Current { get; }
+    public abstract ClientSettings Current { get; }
 }

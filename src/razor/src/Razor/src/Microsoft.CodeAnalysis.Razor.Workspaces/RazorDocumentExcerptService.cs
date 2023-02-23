@@ -19,10 +19,10 @@ namespace Microsoft.CodeAnalysis.Razor;
 
 internal class RazorDocumentExcerptService : DocumentExcerptServiceBase
 {
-    private readonly DocumentSnapshot _document;
+    private readonly IDocumentSnapshot _document;
     private readonly IRazorSpanMappingService _mappingService;
 
-    public RazorDocumentExcerptService(DocumentSnapshot document, IRazorSpanMappingService mappingService)
+    public RazorDocumentExcerptService(IDocumentSnapshot document, IRazorSpanMappingService mappingService)
     {
         if (document is null)
         {

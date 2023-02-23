@@ -11,7 +11,7 @@ internal class VersionedDocumentContext : DocumentContext
 {
     public virtual int Version { get; }
 
-    public VersionedDocumentContext(Uri uri, DocumentSnapshot snapshot, int version)
+    public VersionedDocumentContext(Uri uri, IDocumentSnapshot snapshot, int version)
         : base(uri, snapshot)
     {
         Version = version;

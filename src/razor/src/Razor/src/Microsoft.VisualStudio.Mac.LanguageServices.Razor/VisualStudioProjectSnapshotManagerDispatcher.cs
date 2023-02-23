@@ -12,10 +12,10 @@ namespace Microsoft.VisualStudio.Mac.LanguageServices.Razor;
 internal class VisualStudioProjectSnapshotManagerDispatcher : ProjectSnapshotManagerDispatcherBase
 {
     private const string ThreadName = "Razor." + nameof(VisualStudioProjectSnapshotManagerDispatcher);
-    private readonly ErrorReporter _errorReporter;
+    private readonly IErrorReporter _errorReporter;
 
     [ImportingConstructor]
-    public VisualStudioProjectSnapshotManagerDispatcher(ErrorReporter errorReporter) : base(ThreadName)
+    public VisualStudioProjectSnapshotManagerDispatcher(IErrorReporter errorReporter) : base(ThreadName)
     {
         _errorReporter = errorReporter;
     }

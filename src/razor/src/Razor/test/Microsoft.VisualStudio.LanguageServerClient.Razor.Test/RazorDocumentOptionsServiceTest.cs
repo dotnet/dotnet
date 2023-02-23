@@ -34,10 +34,10 @@ public class RazorDocumentOptionsServiceTest : WorkspaceTestBase
     public async Task RazorDocumentOptionsService_ReturnsCorrectOptions_UseTabs()
     {
         // Arrange
-        var editorSettings = new EditorSettings(indentWithTabs: true, indentSize: 4);
-        var editorSettingsManager = new DefaultEditorSettingsManager(Array.Empty<EditorSettingsChangedTrigger>());
-        editorSettingsManager.Update(editorSettings);
-        var optionsService = new RazorDocumentOptionsService(editorSettingsManager);
+        var editorSettings = new ClientSpaceSettings(IndentWithTabs: true, IndentSize: 4);
+        var clientSettingsManager = new ClientSettingsManager(Array.Empty<ClientSettingsChangedTrigger>());
+        clientSettingsManager.Update(editorSettings);
+        var optionsService = new RazorDocumentOptionsService(clientSettingsManager);
 
         var document = InitializeDocument(SourceText.From("text"));
 
@@ -61,10 +61,10 @@ public class RazorDocumentOptionsServiceTest : WorkspaceTestBase
     public async Task RazorDocumentOptionsService_ReturnsCorrectOptions_UseSpaces()
     {
         // Arrange
-        var editorSettings = new EditorSettings(indentWithTabs: false, indentSize: 2);
-        var editorSettingsManager = new DefaultEditorSettingsManager(Array.Empty<EditorSettingsChangedTrigger>());
-        editorSettingsManager.Update(editorSettings);
-        var optionsService = new RazorDocumentOptionsService(editorSettingsManager);
+        var spaceSettings = new ClientSpaceSettings(IndentWithTabs: false, IndentSize: 2);
+        var clientSettingsManager = new ClientSettingsManager(Array.Empty<ClientSettingsChangedTrigger>());
+        clientSettingsManager.Update(spaceSettings);
+        var optionsService = new RazorDocumentOptionsService(clientSettingsManager);
 
         var document = InitializeDocument(SourceText.From("text"));
 
@@ -103,7 +103,7 @@ public class RazorDocumentOptionsServiceTest : WorkspaceTestBase
         var hostDocument = new HostDocument(
             Path.Combine(baseDirectory, "SomeProject", "File1.cshtml"), "File1.cshtml", FileKinds.Legacy);
 
-        var project = new DefaultProjectSnapshot(
+        var project = new ProjectSnapshot(
             ProjectState.Create(Workspace.Services, hostProject)
             .WithAddedHostDocument(hostDocument, () => Task.FromResult(TextAndVersion.Create(sourceText, VersionStamp.Create()))));
 

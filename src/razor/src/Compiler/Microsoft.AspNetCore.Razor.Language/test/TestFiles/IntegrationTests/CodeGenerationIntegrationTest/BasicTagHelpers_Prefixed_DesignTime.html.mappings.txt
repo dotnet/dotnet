@@ -1,4 +1,4 @@
-Source Location: (16:0,16 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/BasicTagHelpers_Prefixed.cshtml)
+﻿Source Location: (16:0,16 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/BasicTagHelpers_Prefixed.cshtml)
 | |
 Generated Location: (16:0,16 [1] )
 | |

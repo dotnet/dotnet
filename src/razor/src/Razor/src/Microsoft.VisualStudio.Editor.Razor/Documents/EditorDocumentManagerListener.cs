@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.Threading;
@@ -14,7 +15,7 @@ using Microsoft.VisualStudio.Threading;
 namespace Microsoft.VisualStudio.Editor.Razor.Documents;
 
 // Hooks up the document manager to project snapshot events. The project snapshot manager
-// tracks the existance of projects/files and the the document manager watches for changes.
+// tracks the existence of projects/files and the the document manager watches for changes.
 //
 // This class forwards notifications in both directions.
 [Export(typeof(ProjectSnapshotChangeTrigger))]
@@ -22,10 +23,10 @@ internal class EditorDocumentManagerListener : ProjectSnapshotChangeTrigger
 {
     private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
     private readonly JoinableTaskContext _joinableTaskContext;
-    private readonly EventHandler _onChangedOnDisk;
-    private readonly EventHandler _onChangedInEditor;
+    private readonly EventHandler? _onChangedOnDisk;
+    private readonly EventHandler? _onChangedInEditor;
     private readonly EventHandler _onOpened;
-    private readonly EventHandler _onClosed;
+    private readonly EventHandler? _onClosed;
 
     private EditorDocumentManager? _documentManager;
     private ProjectSnapshotManagerBase? _projectManager;
@@ -59,10 +60,10 @@ internal class EditorDocumentManagerListener : ProjectSnapshotChangeTrigger
         ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
         JoinableTaskContext joinableTaskContext,
         EditorDocumentManager documentManager,
-        EventHandler onChangedOnDisk,
-        EventHandler onChangedInEditor,
+        EventHandler? onChangedOnDisk,
+        EventHandler? onChangedInEditor,
         EventHandler onOpened,
-        EventHandler onClosed)
+        EventHandler? onClosed)
     {
         _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher;
         _joinableTaskContext = joinableTaskContext;
@@ -93,9 +94,9 @@ internal class EditorDocumentManagerListener : ProjectSnapshotChangeTrigger
     }
 
     // Internal for testing.
-    internal void ProjectManager_Changed(object sender, ProjectChangeEventArgs e)
+    internal void ProjectManager_Changed(object? sender, ProjectChangeEventArgs e)
     {
-        _ = ProjectManager_ChangedAsync(e, CancellationToken.None);
+        ProjectManager_ChangedAsync(e, CancellationToken.None).Forget();
     }
 
     private async Task ProjectManager_ChangedAsync(ProjectChangeEventArgs e, CancellationToken cancellationToken)
@@ -112,7 +113,7 @@ internal class EditorDocumentManagerListener : ProjectSnapshotChangeTrigger
                         return;
                     }
 
-                    var key = new DocumentKey(e.ProjectFilePath, e.DocumentFilePath);
+                    var key = new DocumentKey(e.ProjectFilePath.AssumeNotNull(), e.DocumentFilePath.AssumeNotNull());
 
                     // GetOrCreateDocument needs to be run on the UI thread
                     await _joinableTaskContext.Factory.SwitchToMainThreadAsync(cancellationToken);
@@ -135,7 +136,7 @@ internal class EditorDocumentManagerListener : ProjectSnapshotChangeTrigger
                     await _joinableTaskContext.Factory.SwitchToMainThreadAsync(cancellationToken);
 
                     if (DocumentManager.TryGetDocument(
-                        new DocumentKey(e.ProjectFilePath, e.DocumentFilePath), out var document))
+                        new DocumentKey(e.ProjectFilePath.AssumeNotNull(), e.DocumentFilePath.AssumeNotNull()), out var document))
                     {
                         // This class 'owns' the document entry so it's safe for us to dispose it.
                         document.Dispose();
@@ -154,7 +155,7 @@ internal class EditorDocumentManagerListener : ProjectSnapshotChangeTrigger
 
     private void Document_ChangedOnDisk(object sender, EventArgs e)
     {
-        _ = Document_ChangedOnDiskAsync((EditorDocument)sender, CancellationToken.None);
+        Document_ChangedOnDiskAsync((EditorDocument)sender, CancellationToken.None).Forget();
     }
 
     private async Task Document_ChangedOnDiskAsync(EditorDocument document, CancellationToken cancellationToken)

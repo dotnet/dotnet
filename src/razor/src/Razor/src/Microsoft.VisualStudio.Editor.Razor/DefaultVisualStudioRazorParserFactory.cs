@@ -13,11 +13,11 @@ internal class DefaultVisualStudioRazorParserFactory : VisualStudioRazorParserFa
     private readonly JoinableTaskContext _joinableTaskContext;
     private readonly ProjectSnapshotProjectEngineFactory _projectEngineFactory;
     private readonly VisualStudioCompletionBroker _completionBroker;
-    private readonly ErrorReporter _errorReporter;
+    private readonly IErrorReporter _errorReporter;
 
     public DefaultVisualStudioRazorParserFactory(
         JoinableTaskContext joinableTaskContext,
-        ErrorReporter errorReporter,
+        IErrorReporter errorReporter,
         VisualStudioCompletionBroker completionBroker,
         ProjectSnapshotProjectEngineFactory projectEngineFactory)
     {

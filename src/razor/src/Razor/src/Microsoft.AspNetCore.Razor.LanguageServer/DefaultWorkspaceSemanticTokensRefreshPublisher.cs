@@ -19,7 +19,7 @@ internal class DefaultWorkspaceSemanticTokensRefreshPublisher : WorkspaceSemanti
     private readonly BatchingWorkQueue _workQueue;
     private static readonly TimeSpan s_debounceTimeSpan = TimeSpan.FromMilliseconds(250);
 
-    public DefaultWorkspaceSemanticTokensRefreshPublisher(IInitializeManager<InitializeParams, InitializeResult> settingsManager, ClientNotifierServiceBase clientNotifier, ErrorReporter errorReporter)
+    public DefaultWorkspaceSemanticTokensRefreshPublisher(IInitializeManager<InitializeParams, InitializeResult> settingsManager, ClientNotifierServiceBase clientNotifier, IErrorReporter errorReporter)
     {
         if (settingsManager is null)
         {
