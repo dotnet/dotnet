@@ -29,12 +29,12 @@ public class DefaultProjectSnapshotProjectEngineFactoryTest : TestBase
     private readonly HostProject _hostProject_For_2_1;
     private readonly HostProject _hostProject_For_3_0;
     private readonly HostProject _hostProject_For_UnknownConfiguration;
-    private readonly ProjectSnapshot _snapshot_For_1_0;
-    private readonly ProjectSnapshot _snapshot_For_1_1;
-    private readonly ProjectSnapshot _snapshot_For_2_0;
-    private readonly ProjectSnapshot _snapshot_For_2_1;
-    private readonly ProjectSnapshot _snapshot_For_3_0;
-    private readonly ProjectSnapshot _snapshot_For_UnknownConfiguration;
+    private readonly IProjectSnapshot _snapshot_For_1_0;
+    private readonly IProjectSnapshot _snapshot_For_1_1;
+    private readonly IProjectSnapshot _snapshot_For_2_0;
+    private readonly IProjectSnapshot _snapshot_For_2_1;
+    private readonly IProjectSnapshot _snapshot_For_3_0;
+    private readonly IProjectSnapshot _snapshot_For_UnknownConfiguration;
     private readonly ProjectWorkspaceState _projectWorkspaceState;
     private readonly Workspace _workspace;
 
@@ -62,12 +62,12 @@ public class DefaultProjectSnapshotProjectEngineFactoryTest : TestBase
             "/TestPath/SomePath/Test.csproj",
             new ProjectSystemRazorConfiguration(RazorLanguageVersion.Version_2_1, "Random-0.1", Array.Empty<RazorExtension>()), rootNamespace: null);
 
-        _snapshot_For_1_0 = new DefaultProjectSnapshot(ProjectState.Create(_workspace.Services, _hostProject_For_1_0, _projectWorkspaceState));
-        _snapshot_For_1_1 = new DefaultProjectSnapshot(ProjectState.Create(_workspace.Services, _hostProject_For_1_1, _projectWorkspaceState));
-        _snapshot_For_2_0 = new DefaultProjectSnapshot(ProjectState.Create(_workspace.Services, _hostProject_For_2_0, _projectWorkspaceState));
-        _snapshot_For_2_1 = new DefaultProjectSnapshot(ProjectState.Create(_workspace.Services, _hostProject_For_2_1, _projectWorkspaceState));
-        _snapshot_For_3_0 = new DefaultProjectSnapshot(ProjectState.Create(_workspace.Services, _hostProject_For_3_0, _projectWorkspaceState));
-        _snapshot_For_UnknownConfiguration = new DefaultProjectSnapshot(ProjectState.Create(_workspace.Services, _hostProject_For_UnknownConfiguration, _projectWorkspaceState));
+        _snapshot_For_1_0 = new ProjectSnapshot(ProjectState.Create(_workspace.Services, _hostProject_For_1_0, _projectWorkspaceState));
+        _snapshot_For_1_1 = new ProjectSnapshot(ProjectState.Create(_workspace.Services, _hostProject_For_1_1, _projectWorkspaceState));
+        _snapshot_For_2_0 = new ProjectSnapshot(ProjectState.Create(_workspace.Services, _hostProject_For_2_0, _projectWorkspaceState));
+        _snapshot_For_2_1 = new ProjectSnapshot(ProjectState.Create(_workspace.Services, _hostProject_For_2_1, _projectWorkspaceState));
+        _snapshot_For_3_0 = new ProjectSnapshot(ProjectState.Create(_workspace.Services, _hostProject_For_3_0, _projectWorkspaceState));
+        _snapshot_For_UnknownConfiguration = new ProjectSnapshot(ProjectState.Create(_workspace.Services, _hostProject_For_UnknownConfiguration, _projectWorkspaceState));
 
         _customFactories = new Lazy<IProjectEngineFactory, ICustomProjectEngineFactoryMetadata>[]
         {

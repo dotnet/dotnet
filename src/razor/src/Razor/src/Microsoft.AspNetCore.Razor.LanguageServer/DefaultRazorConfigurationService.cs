@@ -7,11 +7,12 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor.Editor;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-internal class DefaultRazorConfigurationService : RazorConfigurationService
+internal class DefaultRazorConfigurationService : IConfigurationSyncService
 {
     private readonly ClientNotifierServiceBase _server;
     private readonly ILogger _logger;
@@ -32,7 +33,7 @@ internal class DefaultRazorConfigurationService : RazorConfigurationService
         _logger = loggerFactory.CreateLogger<DefaultRazorConfigurationService>();
     }
 
-    public async override Task<RazorLSPOptions?> GetLatestOptionsAsync(CancellationToken cancellationToken)
+    public async Task<RazorLSPOptions?> GetLatestOptionsAsync(CancellationToken cancellationToken)
     {
         try
         {
@@ -76,7 +77,7 @@ internal class DefaultRazorConfigurationService : RazorConfigurationService
                 new ConfigurationItem()
                 {
                     Section = "vs.editor.razor"
-                },
+                }
             }
         };
     }
@@ -85,9 +86,9 @@ internal class DefaultRazorConfigurationService : RazorConfigurationService
     internal RazorLSPOptions BuildOptions(JObject[] result)
     {
         ExtractVSCodeOptions(result, out var trace, out var enableFormatting, out var autoClosingTags);
-        ExtractVSOptions(result, out var insertSpaces, out var tabSize);
+        var settings = ExtractVSOptions(result) ?? ClientSettings.Default;
 
-        return new RazorLSPOptions(trace, enableFormatting, autoClosingTags, insertSpaces, tabSize);
+        return new RazorLSPOptions(trace, enableFormatting, autoClosingTags, settings);
     }
 
     private void ExtractVSCodeOptions(
@@ -129,29 +130,32 @@ internal class DefaultRazorConfigurationService : RazorConfigurationService
         }
     }
 
-    private void ExtractVSOptions(
-        JObject[] result,
-        out bool insertSpaces,
-        out int tabSize)
+    private ClientSettings ExtractVSOptions(JObject[] result)
     {
-        var vsEditor = result[2];
-
-        insertSpaces = RazorLSPOptions.Default.InsertSpaces;
-        tabSize = RazorLSPOptions.Default.TabSize;
-
-        if (vsEditor is null)
+        try
         {
-            return;
+            var settings = result[2]?.ToObject<ClientSettings>();
+            if (settings is null)
+            {
+                return ClientSettings.Default;
+            }
+
+            // Deserializing can result in null properties. Fill with default as needed
+            if (settings.ClientSpaceSettings is null)
+            {
+                settings = settings with { ClientSpaceSettings = ClientSpaceSettings.Default };
+            }
+
+            if (settings.AdvancedSettings is null)
+            {
+                settings = settings with { AdvancedSettings = ClientAdvancedSettings.Default };
+            }
+
+            return settings;
         }
-
-        if (vsEditor.TryGetValue(nameof(EditorSettings.IndentWithTabs), out var parsedInsertTabs))
+        catch (JsonReaderException)
         {
-            insertSpaces = !GetObjectOrDefault(parsedInsertTabs, insertSpaces);
-        }
-
-        if (vsEditor.TryGetValue(nameof(EditorSettings.IndentSize), out var parsedTabSize))
-        {
-            tabSize = GetObjectOrDefault(parsedTabSize, tabSize);
+            return ClientSettings.Default;
         }
     }
 

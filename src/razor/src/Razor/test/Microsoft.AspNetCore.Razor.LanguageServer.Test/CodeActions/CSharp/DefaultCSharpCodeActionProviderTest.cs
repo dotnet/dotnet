@@ -299,7 +299,7 @@ $$Path;
         var cSharpDocumentWithDiagnostic = RazorCSharpDocument.Create(codeDocument, cSharpDocument.GeneratedCode, cSharpDocument.Options, new[] { diagnostic });
         codeDocument.SetCSharpDocument(cSharpDocumentWithDiagnostic);
 
-        var documentSnapshot = Mock.Of<DocumentSnapshot>(document =>
+        var documentSnapshot = Mock.Of<IDocumentSnapshot>(document =>
             document.GetGeneratedOutputAsync() == Task.FromResult(codeDocument) &&
             document.GetTextAsync() == Task.FromResult(codeDocument.GetSourceText()) &&
             document.Project.TagHelpers == tagHelpers, MockBehavior.Strict);

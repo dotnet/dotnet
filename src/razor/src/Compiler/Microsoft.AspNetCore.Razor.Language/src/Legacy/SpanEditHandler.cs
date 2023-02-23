@@ -15,29 +15,21 @@ internal class SpanEditHandler
 {
     private static readonly int TypeHashCode = typeof(SpanEditHandler).GetHashCode();
 
-    public SpanEditHandler(Func<string, IEnumerable<Syntax.InternalSyntax.SyntaxToken>> tokenizer)
-        : this(tokenizer, AcceptedCharactersInternal.Any)
+    public required AcceptedCharactersInternal AcceptedCharacters { get; init; }
+    public required Func<string, IEnumerable<Syntax.InternalSyntax.SyntaxToken>> Tokenizer { get; init; }
+
+    public static SpanEditHandler CreateDefault(AcceptedCharactersInternal acceptedCharacters)
     {
+        return CreateDefault(static c => Enumerable.Empty<Syntax.InternalSyntax.SyntaxToken>(), acceptedCharacters);
     }
 
-    public SpanEditHandler(Func<string, IEnumerable<Syntax.InternalSyntax.SyntaxToken>> tokenizer, AcceptedCharactersInternal accepted)
+    public static SpanEditHandler CreateDefault(Func<string, IEnumerable<Syntax.InternalSyntax.SyntaxToken>> tokenizer, AcceptedCharactersInternal acceptedCharacters)
     {
-        AcceptedCharacters = accepted;
-        Tokenizer = tokenizer;
-    }
-
-    public AcceptedCharactersInternal AcceptedCharacters { get; set; }
-
-    public Func<string, IEnumerable<Syntax.InternalSyntax.SyntaxToken>> Tokenizer { get; set; }
-
-    public static SpanEditHandler CreateDefault()
-    {
-        return CreateDefault(c => Enumerable.Empty<Syntax.InternalSyntax.SyntaxToken>());
-    }
-
-    public static SpanEditHandler CreateDefault(Func<string, IEnumerable<Syntax.InternalSyntax.SyntaxToken>> tokenizer)
-    {
-        return new SpanEditHandler(tokenizer);
+        return new SpanEditHandler
+        {
+            AcceptedCharacters = acceptedCharacters,
+            Tokenizer = tokenizer
+        };
     }
 
     public virtual EditResult ApplyChange(SyntaxNode target, SourceChange change)

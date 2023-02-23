@@ -5,8 +5,10 @@
 
 using System.Collections.Generic;
 using System.Composition;
+using Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Document;
+using Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
-using Microsoft.AspNetCore.Razor.OmniSharpPlugin.StrongNamed;
+using Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp;
 using OmniSharp;
 
 namespace Microsoft.AspNetCore.Razor.OmniSharpPlugin;
@@ -18,7 +20,7 @@ namespace Microsoft.AspNetCore.Razor.OmniSharpPlugin;
 
 [Shared]
 [Export(typeof(OmniSharpProjectSnapshotManagerDispatcher))]
-internal class ExportOmniSharpProjectSnapshotManagerDispatcher : DefaultOmniSharpProjectSnapshotManagerDispatcher
+internal class ExportOmniSharpProjectSnapshotManagerDispatcher : OmniSharpProjectSnapshotManagerDispatcher
 {
 }
 
@@ -30,7 +32,7 @@ internal class ExportRemoteTextLoaderFactory : DefaultRemoteTextLoaderFactory
 
 [Shared]
 [Export(typeof(OmniSharpProjectSnapshotManagerAccessor))]
-internal class ExportDefaultOmniSharpProjectSnapshotManagerAccessor : DefaultOmniSharpProjectSnapshotManagerAccessor
+internal class ExportDefaultOmniSharpProjectSnapshotManagerAccessor : OmniSharpProjectSnapshotManagerAccessor
 {
     [ImportingConstructor]
     public ExportDefaultOmniSharpProjectSnapshotManagerAccessor(

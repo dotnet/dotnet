@@ -5,13 +5,14 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Document;
 using Microsoft.AspNetCore.Razor.Language;
 
 namespace Microsoft.AspNetCore.Razor.OmniSharpPlugin;
 
 public sealed class ProjectConfiguration
 {
-    public ProjectConfiguration(RazorConfiguration configuration, IReadOnlyList<OmniSharpHostDocument> documents, string rootNamespace)
+    internal ProjectConfiguration(RazorConfiguration configuration, IReadOnlyList<OmniSharpHostDocument> documents, string rootNamespace)
     {
         if (configuration is null)
         {
@@ -30,7 +31,7 @@ public sealed class ProjectConfiguration
 
     public RazorConfiguration Configuration { get; }
 
-    public IReadOnlyList<OmniSharpHostDocument> Documents { get; }
+    internal IReadOnlyList<OmniSharpHostDocument> Documents { get; }
 
     public string RootNamespace { get; }
 }

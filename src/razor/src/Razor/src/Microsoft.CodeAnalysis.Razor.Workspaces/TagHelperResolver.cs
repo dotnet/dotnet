@@ -24,7 +24,7 @@ internal abstract class TagHelperResolver : IWorkspaceService
         _telemetryReporter = telemetryReporter;
     }
 
-    public abstract Task<TagHelperResolutionResult> GetTagHelpersAsync(Project workspaceProject, ProjectSnapshot projectSnapshot, CancellationToken cancellationToken = default);
+    public abstract Task<TagHelperResolutionResult> GetTagHelpersAsync(Project workspaceProject, IProjectSnapshot projectSnapshot, CancellationToken cancellationToken = default);
 
     protected async Task<TagHelperResolutionResult> GetTagHelpersAsync(Project workspaceProject, RazorProjectEngine engine, CancellationToken cancellationToken)
     {

@@ -7,14 +7,17 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
+using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
+using Microsoft.AspNetCore.Razor.LanguageServer.Diagnostics;
+using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.AspNetCore.Razor.LanguageServer.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Mef;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
-using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Xunit;
@@ -65,6 +68,7 @@ public abstract class SingleServerDelegatingEndpointTestBase : LanguageServerTes
         DocumentContextFactory = new TestDocumentContextFactory(razorFilePath, codeDocument, version: 1337);
         LanguageServerFeatureOptions = Mock.Of<LanguageServerFeatureOptions>(options =>
             options.SupportsFileManipulation == true &&
+            options.SupportsDelegatedCodeActions == true &&
             options.SingleServerSupport == true &&
             options.CSharpVirtualDocumentSuffix == realLanguageServerFeatureOptions.CSharpVirtualDocumentSuffix &&
             options.HtmlVirtualDocumentSuffix == realLanguageServerFeatureOptions.HtmlVirtualDocumentSuffix,
@@ -108,10 +112,62 @@ public abstract class SingleServerDelegatingEndpointTestBase : LanguageServerTes
                 RazorLanguageServerCustomMessageTargets.RazorOnAutoInsertEndpointName => await HandleOnAutoInsertAsync(@params),
                 RazorLanguageServerCustomMessageTargets.RazorValidateBreakpointRangeName => await HandleValidateBreakpointRangeAsync(@params),
                 RazorLanguageServerCustomMessageTargets.RazorReferencesEndpointName => await HandleReferencesAsync(@params),
+                RazorLanguageServerCustomMessageTargets.RazorProvideCodeActionsEndpoint => await HandleProvideCodeActionsAsync(@params),
+                RazorLanguageServerCustomMessageTargets.RazorResolveCodeActionsEndpoint => await HandleResolveCodeActionsAsync(@params),
+                RazorLanguageServerCustomMessageTargets.RazorPullDiagnosticEndpointName => await HandlePullDiagnosticsAsync(@params),
                 _ => throw new NotImplementedException($"I don't know how to handle the '{method}' method.")
             };
 
             return (TResponse)result;
+        }
+
+        private async Task<RazorPullDiagnosticResponse> HandlePullDiagnosticsAsync<TParams>(TParams @params)
+        {
+            Assert.IsType<DelegatedDiagnosticParams>(@params);
+
+            var delegatedRequest = new VSInternalDocumentDiagnosticsParams
+            {
+                TextDocument = new TextDocumentIdentifier
+                {
+                    Uri = _csharpDocumentUri,
+                },
+            };
+
+            var result = await _csharpServer.ExecuteRequestAsync<VSInternalDocumentDiagnosticsParams, VSInternalDiagnosticReport[]>(
+                VSInternalMethods.DocumentPullDiagnosticName,
+                delegatedRequest,
+                _cancellationToken);
+
+            return new RazorPullDiagnosticResponse(result, Array.Empty<VSInternalDiagnosticReport>());
+        }
+
+        private async Task<VSInternalCodeAction> HandleResolveCodeActionsAsync<TParams>(TParams @params)
+        {
+            var delegatedParams = Assert.IsType<RazorResolveCodeActionParams>(@params);
+
+            var delegatedRequest = delegatedParams.CodeAction;
+
+            var result = await _csharpServer.ExecuteRequestAsync<CodeAction, VSInternalCodeAction>(
+                Methods.CodeActionResolveName,
+                delegatedRequest,
+                _cancellationToken);
+
+            return result;
+        }
+
+        private async Task<RazorVSInternalCodeAction[]> HandleProvideCodeActionsAsync<TParams>(TParams @params)
+        {
+            var delegatedParams = Assert.IsType<DelegatedCodeActionParams>(@params);
+
+            var delegatedRequest = delegatedParams.CodeActionParams;
+            delegatedRequest.TextDocument.Uri = _csharpDocumentUri;
+
+            var result = await _csharpServer.ExecuteRequestAsync<VSCodeActionParams, RazorVSInternalCodeAction[]>(
+                Methods.TextDocumentCodeActionName,
+                delegatedRequest,
+                _cancellationToken);
+
+            return result;
         }
 
         private async Task<VSInternalReferenceItem[]> HandleReferencesAsync<TParams>(TParams @params)

@@ -1,4 +1,4 @@
-Source Location: (0:0,0 [22] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml)
+﻿Source Location: (0:0,0 [22] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleLineControlFlowStatements.cshtml)
 |<p>Before Text</p>
 
 |

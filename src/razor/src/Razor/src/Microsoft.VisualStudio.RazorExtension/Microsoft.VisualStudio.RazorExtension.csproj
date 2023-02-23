@@ -190,7 +190,7 @@
 
   <ItemGroup>
     <!-- Don't trim this list. It is used to feed into the binding redirects -->
-    <ProjectReference Include="$(SharedSourceRoot)\Microsoft.AspNetCore.Razor.LanguageSupport\Microsoft.AspNetCore.Razor.LanguageSupport.csproj">
+    <ProjectReference Include="$(SharedSourceRoot)\Microsoft.AspNetCore.Razor.Utilities.Shared\Microsoft.AspNetCore.Razor.Utilities.Shared.csproj">
       <AdditionalProperties>TargetFramework=$(DefaultNetFxTargetFramework)</AdditionalProperties>
     </ProjectReference>
 

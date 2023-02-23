@@ -115,7 +115,7 @@ public abstract class LanguageServerTestBase : TestBase
         return documentContextFactory;
     }
 
-    internal static VersionedDocumentContext CreateDocumentContext(Uri uri, DocumentSnapshot snapshot)
+    internal static VersionedDocumentContext CreateDocumentContext(Uri uri, IDocumentSnapshot snapshot)
     {
         return new VersionedDocumentContext(uri, snapshot, version: 0);
     }

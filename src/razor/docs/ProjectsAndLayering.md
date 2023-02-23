@@ -8,7 +8,7 @@ This project is shared between all layers (both compiler and tooling) to provide
 
 - Target Framework: `net7.0;netstandard2.0;net472`
 - Projects:
-  - Microsoft.AspNetCore.Razor.LanguageSupport
+  - Microsoft.AspNetCore.Razor.Utilities.Shared
 
 ### Compiler
 
@@ -76,7 +76,7 @@ target the broadest set of frameworks.
 - Target Framework: `net472`
 - Projects:
   - Microsoft.AspNetCore.Razor.OmniSharpPlugin
-  - Microsoft.AspNetCore.Razor.OmniSHarpPlugin.StrongNamed
+  - Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp
 
 ## Testing Layers
 

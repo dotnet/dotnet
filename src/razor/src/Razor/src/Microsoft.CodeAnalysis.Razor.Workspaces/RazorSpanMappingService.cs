@@ -15,9 +15,9 @@ namespace Microsoft.CodeAnalysis.Razor;
 
 internal class RazorSpanMappingService : IRazorSpanMappingService
 {
-    private readonly DocumentSnapshot _document;
+    private readonly IDocumentSnapshot _document;
 
-    public RazorSpanMappingService(DocumentSnapshot document)
+    public RazorSpanMappingService(IDocumentSnapshot document)
     {
         if (document is null)
         {

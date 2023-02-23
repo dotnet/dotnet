@@ -225,12 +225,12 @@ public abstract class TagHelperServiceTestBase : LanguageServerTestBase
         {
             var document = CreateCodeDocument(text.Content, isRazorFile, tagHelpers);
 
-            var projectSnapshot = new Mock<ProjectSnapshot>(MockBehavior.Strict);
+            var projectSnapshot = new Mock<IProjectSnapshot>(MockBehavior.Strict);
             projectSnapshot
                 .Setup(p => p.Version)
                 .Returns(projectVersion);
 
-            var documentSnapshot = Mock.Of<DocumentSnapshot>(MockBehavior.Strict);
+            var documentSnapshot = Mock.Of<IDocumentSnapshot>(MockBehavior.Strict);
             var documentContext = new Mock<VersionedDocumentContext>(MockBehavior.Strict, new Uri("c:/path/to/file.razor"), documentSnapshot, 0);
             documentContext.Setup(d => d.GetCodeDocumentAsync(It.IsAny<CancellationToken>()))
                 .ReturnsAsync(document);

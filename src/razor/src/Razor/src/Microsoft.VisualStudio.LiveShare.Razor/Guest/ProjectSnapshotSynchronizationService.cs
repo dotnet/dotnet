@@ -73,7 +73,7 @@ internal class ProjectSnapshotSynchronizationService : ICollaborationService, IA
         {
             try
             {
-                _projectSnapshotManager.ProjectRemoved(((DefaultProjectSnapshot)project).HostProject);
+                _projectSnapshotManager.ProjectRemoved(((ProjectSnapshot)project).HostProject);
             }
             catch (Exception ex)
             {

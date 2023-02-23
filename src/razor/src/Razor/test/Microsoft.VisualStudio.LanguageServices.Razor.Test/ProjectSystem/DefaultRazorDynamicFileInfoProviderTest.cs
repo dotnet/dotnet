@@ -25,9 +25,9 @@ public class DefaultRazorDynamicFileInfoProviderTest : WorkspaceTestBase
     private readonly RazorDocumentServiceProviderFactory _documentServiceFactory;
     private readonly LSPEditorFeatureDetector _editorFeatureDetector;
     private readonly TestProjectSnapshotManager _projectSnapshotManager;
-    private readonly DefaultProjectSnapshot _project;
-    private readonly DefaultDocumentSnapshot _document1;
-    private readonly DefaultDocumentSnapshot _document2;
+    private readonly ProjectSnapshot _project;
+    private readonly DocumentSnapshot _document1;
+    private readonly DocumentSnapshot _document2;
     private readonly DynamicDocumentContainer _lspDocumentContainer;
 
     public DefaultRazorDynamicFileInfoProviderTest(ITestOutputHelper testOutput)
@@ -46,8 +46,8 @@ public class DefaultRazorDynamicFileInfoProviderTest : WorkspaceTestBase
         var hostDocument2 = new HostDocument("C:\\document2.razor", "document2.razor", FileKinds.Component);
         _projectSnapshotManager.DocumentAdded(hostProject, hostDocument2, new EmptyTextLoader(hostDocument2.FilePath));
         _project = _projectSnapshotManager.GetSnapshot(hostProject);
-        _document1 = (DefaultDocumentSnapshot)_project.GetDocument(hostDocument1.FilePath);
-        _document2 = (DefaultDocumentSnapshot)_project.GetDocument(hostDocument2.FilePath);
+        _document1 = (DocumentSnapshot)_project.GetDocument(hostDocument1.FilePath);
+        _document2 = (DocumentSnapshot)_project.GetDocument(hostDocument2.FilePath);
 
         _provider = new DefaultRazorDynamicFileInfoProvider(_documentServiceFactory, _editorFeatureDetector, TestLanguageServerFeatureOptions.Instance);
         _testAccessor = _provider.GetTestAccessor();

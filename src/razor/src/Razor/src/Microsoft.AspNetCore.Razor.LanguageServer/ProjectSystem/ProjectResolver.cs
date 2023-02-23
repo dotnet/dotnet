@@ -8,7 +8,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 
 internal abstract class ProjectResolver
 {
-    public abstract bool TryResolveProject(string documentFilePath, [NotNullWhen(true)] out ProjectSnapshot? projectSnapshot, bool enforceDocumentInProject = true);
+    public abstract bool TryResolveProject(string documentFilePath, [NotNullWhen(true)] out IProjectSnapshot? projectSnapshot, bool enforceDocumentInProject = true);
 
-    public abstract ProjectSnapshot GetMiscellaneousProject();
+    public abstract IProjectSnapshot GetMiscellaneousProject();
 }

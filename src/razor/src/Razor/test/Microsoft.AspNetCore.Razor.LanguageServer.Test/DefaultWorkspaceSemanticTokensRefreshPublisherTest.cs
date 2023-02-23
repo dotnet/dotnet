@@ -109,21 +109,10 @@ public class DefaultWorkspaceSemanticTokensRefreshPublisherTest : LanguageServer
         };
     }
 
-    private class TestErrorReporter : ErrorReporter
+    private class TestErrorReporter : IErrorReporter
     {
-        public override void ReportError(Exception exception)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void ReportError(Exception exception, ProjectSnapshot? project)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void ReportError(Exception exception, Project workspaceProject)
-        {
-            throw new NotImplementedException();
-        }
+        public void ReportError(Exception exception) => throw new NotImplementedException();
+        public void ReportError(Exception exception, IProjectSnapshot? project) => throw new NotImplementedException();
+        public void ReportError(Exception exception, Project workspaceProject) => throw new NotImplementedException();
     }
 }

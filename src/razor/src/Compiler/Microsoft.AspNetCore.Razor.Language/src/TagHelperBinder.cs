@@ -132,8 +132,6 @@ internal sealed class TagHelperBinder
 
     private void Register(TagHelperDescriptor descriptor)
     {
-        bool descriptorAdded = false;
-
         var count = descriptor.TagMatchingRules.Count;
         for (var i = 0; i < count; i++)
         {
@@ -150,12 +148,7 @@ internal sealed class TagHelperBinder
                 _registrations[registrationKey] = descriptorSet;
             }
 
-            // We don't need to keep trying to add the same Descriptor to the HashSet for each matching rule.
-            if (!descriptorAdded)
-            {
-                _ = descriptorSet.Add(descriptor);
-                descriptorAdded = true;
-            }
+            _ = descriptorSet.Add(descriptor);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.Build.NoTargets/2.0.1">
+<Project Sdk="Microsoft.Build.NoTargets/2.0.1">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -7,7 +7,9 @@
     <SuppressDependenciesWhenPacking>false</SuppressDependenciesWhenPacking>
     <NoPackageAnalysis>true</NoPackageAnalysis>
     <GenerateDependencyFile>false</GenerateDependencyFile>
-    <IsPackable>true</IsPackable>
+    <IsPackable Condition="'$(OS)' == 'Windows_NT'">true</IsPackable>
+    <!-- Need to build this project in source build -->
+    <ExcludeFromSourceBuild>false</ExcludeFromSourceBuild>
   </PropertyGroup>
 
   <ItemGroup>

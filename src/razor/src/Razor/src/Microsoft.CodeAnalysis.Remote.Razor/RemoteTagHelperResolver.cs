@@ -27,7 +27,7 @@ internal class RemoteTagHelperResolver : TagHelperResolver
         _fallbackFactory = fallbackFactory;
     }
 
-    public override Task<TagHelperResolutionResult> GetTagHelpersAsync(Project project, ProjectSnapshot projectSnapshot, CancellationToken cancellationToken = default)
+    public override Task<TagHelperResolutionResult> GetTagHelpersAsync(Project project, IProjectSnapshot projectSnapshot, CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }

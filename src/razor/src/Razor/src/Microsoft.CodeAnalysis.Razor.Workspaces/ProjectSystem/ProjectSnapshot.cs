@@ -1,44 +1,107 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
+using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.CSharp;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
-internal abstract class ProjectSnapshot
+internal class ProjectSnapshot : IProjectSnapshot
 {
-    public abstract RazorConfiguration Configuration { get; }
+    private readonly object _lock;
 
-    public abstract IEnumerable<string> DocumentFilePaths { get; }
+    private readonly Dictionary<string, DocumentSnapshot> _documents;
 
-    public abstract string FilePath { get; }
+    public ProjectSnapshot(ProjectState state)
+    {
+        State = state ?? throw new ArgumentNullException(nameof(state));
 
-    public virtual string RootNamespace { get; }
+        _lock = new object();
+        _documents = new Dictionary<string, DocumentSnapshot>(FilePathComparer.Instance);
+    }
 
-    public abstract VersionStamp Version { get; }
+    public ProjectState State { get; }
 
-    public virtual LanguageVersion CSharpLanguageVersion { get; }
+    public RazorConfiguration? Configuration => HostProject.Configuration;
 
-    public virtual IReadOnlyList<TagHelperDescriptor> TagHelpers { get; }
+    public IEnumerable<string> DocumentFilePaths => State.Documents.Keys;
 
-    public virtual ProjectWorkspaceState ProjectWorkspaceState { get; }
+    public string FilePath => State.HostProject.FilePath;
 
-    public abstract RazorProjectEngine GetProjectEngine();
+    public string? RootNamespace => State.HostProject.RootNamespace;
 
-    public abstract DocumentSnapshot GetDocument(string filePath);
+    public LanguageVersion CSharpLanguageVersion => State.CSharpLanguageVersion;
 
-    public abstract bool IsImportDocument(DocumentSnapshot document);
+    public HostProject HostProject => State.HostProject;
 
-    /// <summary>
-    /// If the provided document is an import document, gets the other documents in the project
-    /// that include directives specified by the provided document. Otherwise returns an empty
-    /// list.
-    /// </summary>
-    /// <param name="document">The document.</param>
-    /// <returns>A list of related documents.</returns>
-    public abstract IEnumerable<DocumentSnapshot> GetRelatedDocuments(DocumentSnapshot document);
+    public virtual VersionStamp Version => State.Version;
+
+    public IReadOnlyList<TagHelperDescriptor> TagHelpers => State.TagHelpers;
+
+    public ProjectWorkspaceState? ProjectWorkspaceState => State.ProjectWorkspaceState;
+
+    public virtual IDocumentSnapshot? GetDocument(string filePath)
+    {
+        lock (_lock)
+        {
+            if (!_documents.TryGetValue(filePath, out var result) &&
+                State.Documents.TryGetValue(filePath, out var state))
+            {
+                result = new DocumentSnapshot(this, state);
+                _documents.Add(filePath, result);
+            }
+
+            return result;
+        }
+    }
+
+    public bool IsImportDocument(IDocumentSnapshot document)
+    {
+        if (document is null)
+        {
+            throw new ArgumentNullException(nameof(document));
+        }
+
+        return State.ImportsToRelatedDocuments.ContainsKey(document.TargetPath);
+    }
+
+    public ImmutableArray<IDocumentSnapshot> GetRelatedDocuments(IDocumentSnapshot document)
+    {
+        if (document is null)
+        {
+            throw new ArgumentNullException(nameof(document));
+        }
+
+        var targetPath = document.TargetPath.AssumeNotNull();
+
+        if (!State.ImportsToRelatedDocuments.TryGetValue(targetPath, out var relatedDocuments))
+        {
+            return ImmutableArray<IDocumentSnapshot>.Empty;
+        }
+
+        lock (_lock)
+        {
+            using var _ = ArrayBuilderPool<IDocumentSnapshot>.GetPooledObject(out var builder);
+
+            foreach (var relatedDocumentFilePath in relatedDocuments)
+            {
+                if (GetDocument(relatedDocumentFilePath) is { } relatedDocument)
+                {
+                    builder.Add(relatedDocument);
+                }
+            }
+
+            return builder.ToImmutableArray();
+        }
+    }
+
+    public virtual RazorProjectEngine GetProjectEngine()
+    {
+        return State.ProjectEngine;
+    }
 }

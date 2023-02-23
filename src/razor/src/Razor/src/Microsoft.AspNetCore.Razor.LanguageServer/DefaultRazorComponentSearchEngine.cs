@@ -35,7 +35,7 @@ internal class DefaultRazorComponentSearchEngine : RazorComponentSearchEngine
         _logger = loggerFactory.CreateLogger<DefaultRazorComponentSearchEngine>();
     }
 
-    public async override Task<TagHelperDescriptor?> TryGetTagHelperDescriptorAsync(DocumentSnapshot documentSnapshot, CancellationToken cancellationToken)
+    public async override Task<TagHelperDescriptor?> TryGetTagHelperDescriptorAsync(IDocumentSnapshot documentSnapshot, CancellationToken cancellationToken)
     {
         // No point doing anything if its not a component
         if (documentSnapshot.FileKind != FileKinds.Component)
@@ -93,7 +93,7 @@ internal class DefaultRazorComponentSearchEngine : RazorComponentSearchEngine
     /// <param name="tagHelper">A TagHelperDescriptor to find the corresponding Razor component for.</param>
     /// <returns>The corresponding DocumentSnapshot if found, null otherwise.</returns>
     /// <exception cref="ArgumentNullException">Thrown if <paramref name="tagHelper"/> is null.</exception>
-    public override async Task<DocumentSnapshot?> TryLocateComponentAsync(TagHelperDescriptor tagHelper)
+    public override async Task<IDocumentSnapshot?> TryLocateComponentAsync(TagHelperDescriptor tagHelper)
     {
         if (tagHelper is null)
         {
@@ -119,7 +119,10 @@ internal class DefaultRazorComponentSearchEngine : RazorComponentSearchEngine
             foreach (var path in project.DocumentFilePaths)
             {
                 // Get document and code document
-                var documentSnapshot = project.GetDocument(path);
+                if (project.GetDocument(path) is not { } documentSnapshot)
+                {
+                    continue;
+                }
 
                 // Rule out if not Razor component with correct name
                 if (!IsPathCandidateForComponent(documentSnapshot, lookupSymbolName))
@@ -146,19 +149,19 @@ internal class DefaultRazorComponentSearchEngine : RazorComponentSearchEngine
         return null;
     }
 
-    private StringSegment RemoveGenericContent(StringSegment typeName)
+    private static StringSegment RemoveGenericContent(StringSegment typeName)
     {
         var genericSeparatorStart = typeName.IndexOf('<');
         if (genericSeparatorStart > 0)
         {
-            var ungenericTypeName = typeName.Subsegment(0, genericSeparatorStart);
-            return ungenericTypeName;
+            var nonGenericTypeName = typeName.Subsegment(0, genericSeparatorStart);
+            return nonGenericTypeName;
         }
 
         return typeName;
     }
 
-    private static bool IsPathCandidateForComponent(DocumentSnapshot documentSnapshot, StringSegment path)
+    private static bool IsPathCandidateForComponent(IDocumentSnapshot documentSnapshot, StringSegment path)
     {
         if (documentSnapshot.FileKind != FileKinds.Component)
         {

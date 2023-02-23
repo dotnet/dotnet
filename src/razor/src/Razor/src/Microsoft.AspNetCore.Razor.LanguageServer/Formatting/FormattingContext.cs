@@ -28,7 +28,7 @@ internal class FormattingContext : IDisposable
     private RazorProjectEngine? _engine;
     private IReadOnlyList<RazorSourceDocument>? _importSources;
 
-    private FormattingContext(AdhocWorkspaceFactory workspaceFactory, Uri uri, DocumentSnapshot originalSnapshot, RazorCodeDocument codeDocument, FormattingOptions options,
+    private FormattingContext(AdhocWorkspaceFactory workspaceFactory, Uri uri, IDocumentSnapshot originalSnapshot, RazorCodeDocument codeDocument, FormattingOptions options,
         bool isFormatOnType, bool automaticallyAddUsings, int hostDocumentIndex, char triggerCharacter)
     {
         _workspaceFactory = workspaceFactory;
@@ -42,7 +42,7 @@ internal class FormattingContext : IDisposable
         TriggerCharacter = triggerCharacter;
     }
 
-    private FormattingContext(RazorProjectEngine engine, IReadOnlyList<RazorSourceDocument> importSources, AdhocWorkspaceFactory workspaceFactory, Uri uri, DocumentSnapshot originalSnapshot, RazorCodeDocument codeDocument, FormattingOptions options,
+    private FormattingContext(RazorProjectEngine engine, IReadOnlyList<RazorSourceDocument> importSources, AdhocWorkspaceFactory workspaceFactory, Uri uri, IDocumentSnapshot originalSnapshot, RazorCodeDocument codeDocument, FormattingOptions options,
         bool isFormatOnType, bool automaticallyAddUsings, int hostDocumentIndex, char triggerCharacter)
         : this(workspaceFactory, uri, originalSnapshot, codeDocument, options, isFormatOnType, automaticallyAddUsings, hostDocumentIndex, triggerCharacter)
     {
@@ -53,7 +53,7 @@ internal class FormattingContext : IDisposable
     public static bool SkipValidateComponents { get; set; }
 
     public Uri Uri { get; }
-    public DocumentSnapshot OriginalSnapshot { get; }
+    public IDocumentSnapshot OriginalSnapshot { get; }
     public RazorCodeDocument CodeDocument { get; }
     public FormattingOptions Options { get; }
     public bool IsFormatOnType { get; }
@@ -367,7 +367,7 @@ internal class FormattingContext : IDisposable
 
     public static FormattingContext CreateForOnTypeFormatting(
         Uri uri,
-        DocumentSnapshot originalSnapshot,
+        IDocumentSnapshot originalSnapshot,
         RazorCodeDocument codeDocument,
         FormattingOptions options,
         AdhocWorkspaceFactory workspaceFactory,
@@ -380,7 +380,7 @@ internal class FormattingContext : IDisposable
 
     public static FormattingContext Create(
         Uri uri,
-        DocumentSnapshot originalSnapshot,
+        IDocumentSnapshot originalSnapshot,
         RazorCodeDocument codeDocument,
         FormattingOptions options,
         AdhocWorkspaceFactory workspaceFactory)
@@ -390,7 +390,7 @@ internal class FormattingContext : IDisposable
 
     private static FormattingContext CreateCore(
         Uri uri,
-        DocumentSnapshot originalSnapshot,
+        IDocumentSnapshot originalSnapshot,
         RazorCodeDocument codeDocument,
         FormattingOptions options,
         AdhocWorkspaceFactory workspaceFactory,

@@ -10,12 +10,12 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
 internal class RazorLSPOptionsMonitor : IOptionsMonitor<RazorLSPOptions>
 {
-    private readonly RazorConfigurationService _configurationService;
+    private readonly IConfigurationSyncService _configurationService;
     private readonly IOptionsMonitorCache<RazorLSPOptions> _cache;
     private event Action<RazorLSPOptions, string>? OnChangeEvent;
     private RazorLSPOptions _currentValue;
 
-    public RazorLSPOptionsMonitor(RazorConfigurationService configurationService, IOptionsMonitorCache<RazorLSPOptions> cache)
+    public RazorLSPOptionsMonitor(IConfigurationSyncService configurationService, IOptionsMonitorCache<RazorLSPOptions> cache, RazorLSPOptions currentOptions)
     {
         if (configurationService is null)
         {
@@ -29,7 +29,7 @@ internal class RazorLSPOptionsMonitor : IOptionsMonitor<RazorLSPOptions>
 
         _configurationService = configurationService;
         _cache = cache;
-        _currentValue = RazorLSPOptions.Default;
+        _currentValue = currentOptions;
     }
 
     public RazorLSPOptions CurrentValue => Get(Options.DefaultName);

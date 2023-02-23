@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.AspNetCore.Razor.Test.Common.Logging;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.Threading;
 using Xunit;
@@ -34,12 +37,13 @@ namespace Microsoft.AspNetCore.Razor.Test.Common;
 ///   to provide custom initialization and disposal for tests.</item>
 ///  </list>
 /// </summary>
-public abstract class TestBase : IAsyncLifetime
+public abstract partial class TestBase : IAsyncLifetime
 {
     private readonly JoinableTaskCollection _joinableTaskCollection;
     private readonly CancellationTokenSource _disposalTokenSource;
     private List<IDisposable>? _disposables;
     private List<IAsyncDisposable>? _asyncDisposables;
+    private IErrorReporter? _errorReporter;
 
     /// <summary>
     ///  A common context within which joinable tasks may be created and interact to avoid
@@ -71,6 +75,8 @@ public abstract class TestBase : IAsyncLifetime
     ///  An <see cref="IRazorLogger"/> for the currently running test.
     /// </summary>
     protected IRazorLogger Logger => _logger ??= new LoggerAdapter(new[] { LoggerFactory.CreateLogger(GetType()) }, new TelemetryReporter(LoggerFactory));
+
+    private protected IErrorReporter ErrorReporter => _errorReporter ??= new TestErrorReporter(Logger);
 
     protected TestBase(ITestOutputHelper testOutput)
     {

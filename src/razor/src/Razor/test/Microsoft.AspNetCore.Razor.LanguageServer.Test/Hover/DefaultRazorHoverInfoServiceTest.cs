@@ -734,7 +734,7 @@ public class DefaultRazorHoverInfoServiceTest : TagHelperServiceTestBase
             , MockBehavior.Strict);
         var languageServer = new HoverLanguageServer(csharpServer, csharpDocumentUri, DisposalToken);
         var documentMappingService = new DefaultRazorDocumentMappingService(languageServerFeatureOptions, documentContextFactory, LoggerFactory);
-        var projectSnapshotManager = Mock.Of<ProjectSnapshotManagerBase>(p => p.Projects == new[] { Mock.Of<ProjectSnapshot>(MockBehavior.Strict) }, MockBehavior.Strict);
+        var projectSnapshotManager = Mock.Of<ProjectSnapshotManagerBase>(p => p.Projects == new[] { Mock.Of<IProjectSnapshot>(MockBehavior.Strict) }, MockBehavior.Strict);
         var hoverInfoService = GetDefaultRazorHoverInfoService();
 
         var endpoint = new RazorHoverEndpoint(
@@ -781,7 +781,7 @@ public class DefaultRazorHoverInfoServiceTest : TagHelperServiceTestBase
         var projectSnapshot = TestProjectSnapshot.Create("C:/project.csproj", projectWorkspaceState);
         var sourceText = SourceText.From(txt);
 
-        var snapshot = Mock.Of<DocumentSnapshot>(d =>
+        var snapshot = Mock.Of<IDocumentSnapshot>(d =>
             d.GetGeneratedOutputAsync() == Task.FromResult(codeDocument) &&
             d.FilePath == path &&
             d.FileKind == FileKinds.Component &&

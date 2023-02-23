@@ -11,7 +11,7 @@ using Microsoft.VisualStudio.Shell;
 namespace Microsoft.VisualStudio.LanguageServices.Razor;
 
 [Shared]
-[ExportWorkspaceServiceFactory(typeof(ErrorReporter), ServiceLayer.Host)]
+[ExportWorkspaceServiceFactory(typeof(IErrorReporter), ServiceLayer.Host)]
 internal class VisualStudioErrorReporterFactory : IWorkspaceServiceFactory
 {
     private readonly SVsServiceProvider _serviceProvider;

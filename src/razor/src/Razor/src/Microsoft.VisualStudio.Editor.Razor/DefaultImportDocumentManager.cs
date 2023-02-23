@@ -15,14 +15,14 @@ internal class DefaultImportDocumentManager : ImportDocumentManager
 {
     private readonly FileChangeTrackerFactory _fileChangeTrackerFactory;
     private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
-    private readonly ErrorReporter _errorReporter;
+    private readonly IErrorReporter _errorReporter;
     private readonly Dictionary<string, ImportTracker> _importTrackerCache;
 
     public override event EventHandler<ImportChangedEventArgs>? Changed;
 
     public DefaultImportDocumentManager(
         ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
-        ErrorReporter errorReporter,
+        IErrorReporter errorReporter,
         FileChangeTrackerFactory fileChangeTrackerFactory)
     {
         if (projectSnapshotManagerDispatcher is null)

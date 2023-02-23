@@ -16,8 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.EditorFeatures" Version="$(Tooling_MicrosoftCodeAnalysisCSharpEditorFeaturesPackageVersion)" />
-    <PackageReference Include="Microsoft.CodeAnalysis.EditorFeatures.Common" Version="$(Tooling_MicrosoftCodeAnalysisEditorFeaturesCommonPackageVersion)" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.EditorFeatures" Version="$(MicrosoftCodeAnalysisCSharpEditorFeaturesPackageVersion)" />
+    <PackageReference Include="Microsoft.CodeAnalysis.EditorFeatures.Common" Version="$(MicrosoftCodeAnalysisEditorFeaturesCommonPackageVersion)" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="$(MicrosoftExtensionsPackageVersion)" />
     <PackageReference Include="Moq" Version="$(MoqPackageVersion)" />
   </ItemGroup>

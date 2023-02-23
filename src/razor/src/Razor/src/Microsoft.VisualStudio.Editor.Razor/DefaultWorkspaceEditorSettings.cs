@@ -8,23 +8,23 @@ namespace Microsoft.VisualStudio.Editor.Razor;
 
 internal class DefaultWorkspaceEditorSettings : WorkspaceEditorSettings
 {
-    private readonly EditorSettingsManager _editorSettingsManager;
-    private readonly EventHandler<EditorSettingsChangedEventArgs> _onChanged;
-    private EventHandler<EditorSettingsChangedEventArgs>? _changed;
+    private readonly IClientSettingsManager _clientSettingsManager;
+    private readonly EventHandler<ClientSettingsChangedEventArgs> _onChanged;
+    private EventHandler<ClientSettingsChangedEventArgs>? _changed;
     private int _listenerCount = 0;
 
-    public DefaultWorkspaceEditorSettings(EditorSettingsManager editorSettingsManager)
+    public DefaultWorkspaceEditorSettings(IClientSettingsManager clientSettingsManager)
     {
-        if (editorSettingsManager is null)
+        if (clientSettingsManager is null)
         {
-            throw new ArgumentNullException(nameof(editorSettingsManager));
+            throw new ArgumentNullException(nameof(clientSettingsManager));
         }
 
-        _editorSettingsManager = editorSettingsManager;
+        _clientSettingsManager = clientSettingsManager;
         _onChanged = OnChanged;
     }
 
-    public override event EventHandler<EditorSettingsChangedEventArgs> Changed
+    public override event EventHandler<ClientSettingsChangedEventArgs> Changed
     {
         add
         {
@@ -56,23 +56,23 @@ internal class DefaultWorkspaceEditorSettings : WorkspaceEditorSettings
     // Internal for testing
     internal virtual void AttachToEditorSettingsManager()
     {
-        _editorSettingsManager.Changed += _onChanged;
+        _clientSettingsManager.ClientSettingsChanged += _onChanged;
     }
 
     // Internal for testing
     internal virtual void DetachFromEditorSettingsManager()
     {
-        _editorSettingsManager.Changed -= _onChanged;
+        _clientSettingsManager.ClientSettingsChanged -= _onChanged;
     }
 
-    public override EditorSettings Current => _editorSettingsManager.Current;
+    public override ClientSettings Current => _clientSettingsManager.GetClientSettings();
 
     // Internal for testing
-    internal void OnChanged(object sender, EditorSettingsChangedEventArgs e)
+    internal void OnChanged(object sender, ClientSettingsChangedEventArgs e)
     {
         Assumes.True(_changed is not null, nameof(OnChanged) + " should not be invoked when there are no listeners.");
 
-        var args = new EditorSettingsChangedEventArgs(Current);
+        var args = new ClientSettingsChangedEventArgs(Current);
         _changed.Invoke(this, args);
     }
 }

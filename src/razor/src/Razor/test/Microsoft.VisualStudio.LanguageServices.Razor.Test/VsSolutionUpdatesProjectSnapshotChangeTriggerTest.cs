@@ -186,7 +186,7 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : TestBase
 
         var services = new Mock<IServiceProvider>(MockBehavior.Strict);
         services.Setup(s => s.GetService(It.Is<Type>(f => f == typeof(SVsSolutionBuildManager)))).Returns(buildManager.Object);
-        var projectSnapshot = new DefaultProjectSnapshot(
+        var projectSnapshot = new ProjectSnapshot(
             ProjectState.Create(
                 _workspace.Services,
                 new HostProject("/Some/Unknown/Path.csproj", RazorConfiguration.Default, "Path")));
@@ -234,7 +234,7 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : TestBase
         projectManager.SetupGet(p => p.Workspace).Returns(_workspace);
         projectManager
             .Setup(p => p.GetLoadedProject(expectedProjectPath))
-            .Returns((ProjectSnapshot)null);
+            .Returns((IProjectSnapshot)null);
         var workspaceStateGenerator = new TestProjectWorkspaceStateGenerator();
 
         var trigger = new VsSolutionUpdatesProjectSnapshotChangeTrigger(services.Object, projectService.Object, workspaceStateGenerator, s_dispatcher, JoinableTaskFactory.Context);

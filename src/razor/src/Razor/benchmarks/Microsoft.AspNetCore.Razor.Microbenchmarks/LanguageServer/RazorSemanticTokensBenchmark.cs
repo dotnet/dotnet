@@ -28,7 +28,7 @@ public class RazorSemanticTokensBenchmark : RazorLanguageServerBenchmarkBase
 
     private Uri DocumentUri => DocumentContext.Uri;
 
-    private DocumentSnapshot DocumentSnapshot => DocumentContext.Snapshot;
+    private IDocumentSnapshot DocumentSnapshot => DocumentContext.Snapshot;
 
     private VersionedDocumentContext DocumentContext { get; set; }
 
@@ -94,7 +94,7 @@ public class RazorSemanticTokensBenchmark : RazorLanguageServerBenchmarkBase
         throw new NotImplementedException();
     }
 
-    private async Task UpdateDocumentAsync(int newVersion, DocumentSnapshot documentSnapshot, CancellationToken cancellationToken)
+    private async Task UpdateDocumentAsync(int newVersion, IDocumentSnapshot documentSnapshot, CancellationToken cancellationToken)
     {
         await ProjectSnapshotManagerDispatcher.RunOnDispatcherThreadAsync(
             () => VersionCache.TrackDocumentVersion(documentSnapshot, newVersion), cancellationToken).ConfigureAwait(false);

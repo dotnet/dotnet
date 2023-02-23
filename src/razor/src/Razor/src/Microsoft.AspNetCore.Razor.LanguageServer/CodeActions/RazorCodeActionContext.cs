@@ -13,7 +13,7 @@ internal sealed class RazorCodeActionContext
 {
     public RazorCodeActionContext(
         VSCodeActionParams request,
-        DocumentSnapshot documentSnapshot,
+        IDocumentSnapshot documentSnapshot,
         RazorCodeDocument codeDocument,
         SourceLocation location,
         SourceText sourceText,
@@ -30,7 +30,7 @@ internal sealed class RazorCodeActionContext
     }
 
     public VSCodeActionParams Request { get; }
-    public DocumentSnapshot DocumentSnapshot { get; }
+    public IDocumentSnapshot DocumentSnapshot { get; }
     public RazorCodeDocument CodeDocument { get; }
     public SourceLocation Location { get; }
     public SourceText SourceText { get; }

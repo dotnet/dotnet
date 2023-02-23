@@ -37,7 +37,7 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
     public void UpdateProject_UpdatesProjectWorkspaceState()
     {
         // Arrange
-        var projectManager = TestProjectSnapshotManager.Create(LegacyDispatcher);
+        var projectManager = TestProjectSnapshotManager.Create(LegacyDispatcher, ErrorReporter);
         var hostProject = new HostProject("C:/path/to/project.csproj", RazorConfiguration.Default, "TestRootNamespace");
         projectManager.ProjectAdded(hostProject);
         var projectService = CreateProjectService(new TestProjectResolver(), projectManager);
@@ -55,7 +55,7 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
     public void UpdateProject_UpdatingDocument_MapsRelativeFilePathToActualDocument()
     {
         // Arrange
-        var projectManager = TestProjectSnapshotManager.Create(LegacyDispatcher);
+        var projectManager = TestProjectSnapshotManager.Create(LegacyDispatcher, ErrorReporter);
         var hostProject = new HostProject("C:/path/to/project.csproj", RazorConfiguration.Default, "TestRootNamespace");
         projectManager.ProjectAdded(hostProject);
         var hostDocument = new HostDocument("C:/path/to/file.cshtml", "file.cshtml", FileKinds.Legacy);
@@ -77,7 +77,7 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
     public void UpdateProject_AddsNewDocuments()
     {
         // Arrange
-        var projectManager = TestProjectSnapshotManager.Create(LegacyDispatcher);
+        var projectManager = TestProjectSnapshotManager.Create(LegacyDispatcher, ErrorReporter);
         var hostProject = new HostProject("C:/path/to/project.csproj", RazorConfiguration.Default, "TestRootNamespace");
         projectManager.ProjectAdded(hostProject);
         var hostDocument = new HostDocument("C:/path/to/file.cshtml", "file.cshtml", FileKinds.Legacy);
@@ -99,7 +99,7 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
     public void UpdateProject_MovesDocumentsFromMisc()
     {
         // Arrange
-        var projectManager = TestProjectSnapshotManager.Create(LegacyDispatcher);
+        var projectManager = TestProjectSnapshotManager.Create(LegacyDispatcher, ErrorReporter);
         var hostDocument = new HostDocument("C:/path/to/file.cshtml", "file.cshtml", FileKinds.Legacy);
         var miscProject = TestProjectSnapshot.Create("C:/__MISC_PROJECT__");
         projectManager.ProjectAdded(miscProject.HostProject);
@@ -109,7 +109,7 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
         var project = projectManager.GetLoadedProject(hostProject.FilePath);
         var miscProjectSnapshot = projectManager.GetLoadedProject(miscProject.FilePath);
         var projectResolver = new TestProjectResolver(
-            new Dictionary<string, ProjectSnapshot>
+            new Dictionary<string, IProjectSnapshot>
             {
                 [hostDocument.FilePath] = project
             },
@@ -132,8 +132,8 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
     public void UpdateProject_MovesExistingDocumentToMisc()
     {
         // Arrange
-        var projectManager = TestProjectSnapshotManager.Create(LegacyDispatcher);
-        ProjectSnapshot miscProject = TestProjectSnapshot.Create("C:/__MISC_PROJECT__");
+        var projectManager = TestProjectSnapshotManager.Create(LegacyDispatcher, ErrorReporter);
+        IProjectSnapshot miscProject = TestProjectSnapshot.Create("C:/__MISC_PROJECT__");
         var miscHostProject = new HostProject(miscProject.FilePath, RazorConfiguration.Default, "TestRootNamespace");
         projectManager.ProjectAdded(miscHostProject);
         var hostProject = new HostProject("C:/path/to/project.csproj", RazorConfiguration.Default, "TestRootNamespace");
@@ -142,7 +142,7 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
         var hostDocument = new HostDocument("C:/path/to/file.cshtml", "file.cshtml", FileKinds.Legacy);
         projectManager.DocumentAdded(hostProject, hostDocument, Mock.Of<TextLoader>(MockBehavior.Strict));
         var projectResolver = new TestProjectResolver(
-            new Dictionary<string, ProjectSnapshot>
+            new Dictionary<string, IProjectSnapshot>
             {
                 [hostDocument.FilePath] = project
             },
@@ -165,7 +165,7 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
     public void UpdateProject_KnownDocuments()
     {
         // Arrange
-        var projectManager = TestProjectSnapshotManager.Create(LegacyDispatcher);
+        var projectManager = TestProjectSnapshotManager.Create(LegacyDispatcher, ErrorReporter);
         var hostProject = new HostProject("/path/to/project.csproj", RazorConfiguration.Default, "TestRootNamespace");
         projectManager.ProjectAdded(hostProject);
         var document = new HostDocument("/path/to/file.cshtml", "file.cshtml", FileKinds.Legacy);
@@ -191,7 +191,7 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
     public void UpdateProject_UpdatesLegacyDocumentsAsComponents()
     {
         // Arrange
-        var projectManager = TestProjectSnapshotManager.Create(LegacyDispatcher);
+        var projectManager = TestProjectSnapshotManager.Create(LegacyDispatcher, ErrorReporter);
         var hostProject = new HostProject("C:/path/to/project.csproj", RazorConfiguration.Default, "TestRootNamespace");
         projectManager.ProjectAdded(hostProject);
         var legacyDocument = new HostDocument("C:/path/to/file.cshtml", "file.cshtml", FileKinds.Legacy);
@@ -306,7 +306,7 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
         var projectFilePath = "C:/path/to/project.csproj";
         var projectSnapshotManager = new Mock<ProjectSnapshotManagerBase>(MockBehavior.Strict);
         projectSnapshotManager.Setup(manager => manager.GetLoadedProject(projectFilePath))
-            .Returns<ProjectSnapshot>(null);
+            .Returns<IProjectSnapshot>(null);
         projectSnapshotManager.Setup(manager => manager.ProjectConfigurationChanged(It.IsAny<HostProject>()))
             .Throws(new XunitException("Should not have been called."));
         var projectService = CreateProjectService(new TestProjectResolver(), projectSnapshotManager.Object);
@@ -322,7 +322,7 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
         var expectedDocumentFilePath = "C:/path/to/document.cshtml";
         var ownerProject = TestProjectSnapshot.Create("C:/path/to/project.csproj");
         var projectResolver = new TestProjectResolver(
-            new Dictionary<string, ProjectSnapshot>
+            new Dictionary<string, IProjectSnapshot>
             {
                 [expectedDocumentFilePath] = ownerProject
             },
@@ -351,7 +351,7 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
         var expectedDocumentFilePath = "C:/path/to/document.cshtml";
         var miscellaneousProject = TestProjectSnapshot.Create("C:/__MISC_PROJECT__");
         var projectResolver = new TestProjectResolver(
-            new Dictionary<string, ProjectSnapshot>(),
+            new Dictionary<string, IProjectSnapshot>(),
             miscellaneousProject);
         var projectSnapshotManager = new Mock<ProjectSnapshotManagerBase>(MockBehavior.Strict);
         projectSnapshotManager.Setup(manager => manager.DocumentClosed(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TextLoader>()))
@@ -377,7 +377,7 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
         var expectedDocumentFilePath = "C:/path/to/document.cshtml";
         var ownerProject = TestProjectSnapshot.Create("C:/path/to/project.csproj");
         var projectResolver = new TestProjectResolver(
-            new Dictionary<string, ProjectSnapshot>
+            new Dictionary<string, IProjectSnapshot>
             {
                 [expectedDocumentFilePath] = ownerProject
             },
@@ -392,7 +392,7 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
                 Assert.Equal(expectedDocumentFilePath, documentFilePath);
                 Assert.NotNull(text);
             });
-        var documentSnapshot = Mock.Of<DocumentSnapshot>(s => s.GetGeneratedOutputAsync() == Task.FromResult<RazorCodeDocument>(null), MockBehavior.Strict);
+        var documentSnapshot = Mock.Of<IDocumentSnapshot>(s => s.GetGeneratedOutputAsync() == Task.FromResult<RazorCodeDocument>(null), MockBehavior.Strict);
         var documentResolver = Mock.Of<DocumentResolver>(resolver => resolver.TryResolveDocument(It.IsAny<string>(), out documentSnapshot) == true, MockBehavior.Strict);
         var projectService = CreateProjectService(projectResolver, projectSnapshotManager.Object, documentResolver);
         var sourceText = SourceText.From("Hello World");
@@ -411,7 +411,7 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
         var expectedDocumentFilePath = "C:/path/to/document.cshtml";
         var miscellaneousProject = TestProjectSnapshot.Create("C:/__MISC_PROJECT__");
         var projectResolver = new TestProjectResolver(
-            new Dictionary<string, ProjectSnapshot>(),
+            new Dictionary<string, IProjectSnapshot>(),
             miscellaneousProject);
         var projectSnapshotManager = new Mock<ProjectSnapshotManagerBase>(MockBehavior.Strict);
         projectSnapshotManager.Setup(manager => manager.DocumentAdded(It.IsAny<HostProject>(), It.IsAny<HostDocument>(), It.IsAny<TextLoader>()))
@@ -423,7 +423,7 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
                 Assert.Equal(expectedDocumentFilePath, documentFilePath);
                 Assert.NotNull(text);
             });
-        var documentSnapshot = new Mock<DocumentSnapshot>(MockBehavior.Strict).Object;
+        var documentSnapshot = new Mock<IDocumentSnapshot>(MockBehavior.Strict).Object;
         Mock.Get(documentSnapshot)
             .Setup(s => s.GetGeneratedOutputAsync())
             .ReturnsAsync(value: null);
@@ -445,7 +445,7 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
         var expectedDocumentFilePath = "C:/path/to/document.cshtml";
         var ownerProject = TestProjectSnapshot.Create("C:/path/to/project.csproj");
         var projectResolver = new TestProjectResolver(
-            new Dictionary<string, ProjectSnapshot>
+            new Dictionary<string, IProjectSnapshot>
             {
                 [expectedDocumentFilePath] = ownerProject
             },
@@ -480,11 +480,11 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
     {
         // Arrange
         var documentFilePath = "C:/path/to/document.cshtml";
-        var project = Mock.Of<ProjectSnapshot>(MockBehavior.Strict);
+        var project = Mock.Of<IProjectSnapshot>(MockBehavior.Strict);
         var projectResolver = new Mock<ProjectResolver>(MockBehavior.Strict);
         projectResolver.Setup(resolver => resolver.TryResolveProject(It.IsAny<string>(), out project, It.IsAny<bool>()))
             .Throws(new InvalidOperationException("This shouldn't have been called."));
-        var alreadyOpenDoc = Mock.Of<DocumentSnapshot>(MockBehavior.Strict);
+        var alreadyOpenDoc = Mock.Of<IDocumentSnapshot>(MockBehavior.Strict);
         var documentResolver = Mock.Of<DocumentResolver>(resolver => resolver.TryResolveDocument(It.IsAny<string>(), out alreadyOpenDoc), MockBehavior.Strict);
         var projectSnapshotManager = new Mock<ProjectSnapshotManagerBase>(MockBehavior.Strict);
         projectSnapshotManager.Setup(manager => manager.DocumentAdded(It.IsAny<HostProject>(), It.IsAny<HostDocument>(), It.IsAny<TextLoader>()))
@@ -502,7 +502,7 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
         var documentFilePath = "C:/path/to/document.cshtml";
         var ownerProject = TestProjectSnapshot.Create("C:/path/to/project.csproj");
         var projectResolver = new TestProjectResolver(
-            new Dictionary<string, ProjectSnapshot>
+            new Dictionary<string, IProjectSnapshot>
             {
                 [documentFilePath] = ownerProject
             },
@@ -530,7 +530,7 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
         // Arrange
         var documentFilePath = "C:/path/to/document.cshtml";
         var miscellaneousProject = TestProjectSnapshot.Create("C:/__MISC_PROJECT__");
-        var projectResolver = new TestProjectResolver(new Dictionary<string, ProjectSnapshot>(), miscellaneousProject);
+        var projectResolver = new TestProjectResolver(new Dictionary<string, IProjectSnapshot>(), miscellaneousProject);
         var projectSnapshotManager = new Mock<ProjectSnapshotManagerBase>(MockBehavior.Strict);
         projectSnapshotManager.Setup(manager => manager.DocumentAdded(It.IsAny<HostProject>(), It.IsAny<HostDocument>(), It.IsAny<TextLoader>()))
             .Callback<HostProject, HostDocument, TextLoader>((hostProject, hostDocument, loader) =>
@@ -555,7 +555,7 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
         var documentFilePath = "C:/path/to/document.cshtml";
         var ownerProject = TestProjectSnapshot.Create("C:/path/to/project.csproj", new[] { documentFilePath });
         var projectResolver = new TestProjectResolver(
-            new Dictionary<string, ProjectSnapshot>
+            new Dictionary<string, IProjectSnapshot>
             {
                 [documentFilePath] = ownerProject
             },
@@ -583,7 +583,7 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
         var documentFilePath = "C:/path/to/document.cshtml";
         var miscellaneousProject = TestProjectSnapshot.Create("C:/__MISC_PROJECT__", new[] { documentFilePath });
         var projectResolver = new TestProjectResolver(
-            new Dictionary<string, ProjectSnapshot>(),
+            new Dictionary<string, IProjectSnapshot>(),
             miscellaneousProject);
         var projectSnapshotManager = new Mock<ProjectSnapshotManagerBase>(MockBehavior.Strict);
         projectSnapshotManager.Setup(manager => manager.DocumentRemoved(It.IsAny<HostProject>(), It.IsAny<HostDocument>()))
@@ -608,7 +608,7 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
         var documentFilePath = "C:/path/to/document.cshtml";
         var ownerProject = TestProjectSnapshot.Create("C:/path/to/project.csproj", Array.Empty<string>());
         var projectResolver = new TestProjectResolver(
-            new Dictionary<string, ProjectSnapshot>
+            new Dictionary<string, IProjectSnapshot>
             {
                 [documentFilePath] = ownerProject
             },
@@ -629,7 +629,7 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
         var documentFilePath = "C:/path/to/document.cshtml";
         var miscellaneousProject = TestProjectSnapshot.Create("C:/__MISC_PROJECT__", Array.Empty<string>());
         var projectResolver = new TestProjectResolver(
-            new Dictionary<string, ProjectSnapshot>(),
+            new Dictionary<string, IProjectSnapshot>(),
             miscellaneousProject);
         var projectSnapshotManager = new Mock<ProjectSnapshotManagerBase>(MockBehavior.Strict);
         projectSnapshotManager.Setup(manager => manager.DocumentRemoved(It.IsAny<HostProject>(), It.IsAny<HostDocument>()))
@@ -647,7 +647,7 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
         var documentFilePath = "C:/path/to/document.cshtml";
         var ownerProject = TestProjectSnapshot.Create("C:/path/to/project.csproj", new[] { documentFilePath });
         var projectResolver = new TestProjectResolver(
-            new Dictionary<string, ProjectSnapshot>
+            new Dictionary<string, IProjectSnapshot>
             {
                 [documentFilePath] = ownerProject
             },
@@ -677,7 +677,7 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
         var documentFilePath = "C:/path/to/document.cshtml";
         var miscellaneousProject = TestProjectSnapshot.Create("C:/__MISC_PROJECT__", new[] { documentFilePath });
         var projectResolver = new TestProjectResolver(
-            new Dictionary<string, ProjectSnapshot>(),
+            new Dictionary<string, IProjectSnapshot>(),
             TestProjectSnapshot.Create("C:/__MISC_PROJECT__"));
         var newText = SourceText.From("Something New");
         var projectSnapshotManager = new Mock<ProjectSnapshotManagerBase>(MockBehavior.Strict);
@@ -704,16 +704,16 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
         var documentFilePath = "C:/path/to/document.cshtml";
         var ownerProject = TestProjectSnapshot.Create("C:/path/to/project.csproj", new[] { documentFilePath });
         var projectResolver = new TestProjectResolver(
-            new Dictionary<string, ProjectSnapshot>
+            new Dictionary<string, IProjectSnapshot>
             {
                 [documentFilePath] = ownerProject
             },
             TestProjectSnapshot.Create("C:/__MISC_PROJECT__"));
-        DocumentSnapshot documentSnapshot = TestDocumentSnapshot.Create(documentFilePath);
+        IDocumentSnapshot documentSnapshot = TestDocumentSnapshot.Create(documentFilePath);
         var documentResolver = Mock.Of<DocumentResolver>(resolver => resolver.TryResolveDocument(It.IsAny<string>(), out documentSnapshot) == true, MockBehavior.Strict);
         var documentVersionCache = new Mock<DocumentVersionCache>(MockBehavior.Strict);
         documentVersionCache.Setup(cache => cache.TrackDocumentVersion(documentSnapshot, It.IsAny<int>()))
-            .Callback<DocumentSnapshot, int>((snapshot, version) =>
+            .Callback<IDocumentSnapshot, int>((snapshot, version) =>
             {
                 Assert.Same(documentSnapshot, snapshot);
                 Assert.Equal(1337, version);
@@ -741,13 +741,13 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
         var documentFilePath = "C:/path/to/document.cshtml";
         var ownerProject = TestProjectSnapshot.Create("C:/path/to/project.csproj", new[] { documentFilePath });
         var projectResolver = new TestProjectResolver(
-            new Dictionary<string, ProjectSnapshot>
+            new Dictionary<string, IProjectSnapshot>
             {
                 [documentFilePath] = ownerProject
             },
             TestProjectSnapshot.Create("C:/__MISC_PROJECT__"));
         var documentVersionCache = new Mock<DocumentVersionCache>(MockBehavior.Strict);
-        documentVersionCache.Setup(cache => cache.TrackDocumentVersion(It.IsAny<DocumentSnapshot>(), It.IsAny<int>()))
+        documentVersionCache.Setup(cache => cache.TrackDocumentVersion(It.IsAny<IDocumentSnapshot>(), It.IsAny<int>()))
             .Throws<XunitException>();
         var newText = SourceText.From("Something New");
         var projectSnapshotManager = new Mock<ProjectSnapshotManagerBase>(MockBehavior.Strict);
@@ -767,7 +767,7 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
         // Arrange
         var projectFilePath = "C:/path/to/project.csproj";
         var miscellaneousProject = TestProjectSnapshot.Create("/./__MISC_PROJECT__");
-        var projectResolver = new TestProjectResolver(new Dictionary<string, ProjectSnapshot>(), miscellaneousProject);
+        var projectResolver = new TestProjectResolver(new Dictionary<string, IProjectSnapshot>(), miscellaneousProject);
         var projectSnapshotManager = new Mock<ProjectSnapshotManagerBase>(MockBehavior.Strict);
         projectSnapshotManager.Setup(manager => manager.ProjectAdded(It.IsAny<HostProject>()))
             .Callback<HostProject>((hostProject) =>
@@ -775,7 +775,7 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
                 Assert.Equal(projectFilePath, hostProject.FilePath);
                 Assert.Same(RazorDefaults.Configuration, hostProject.Configuration);
             });
-        projectSnapshotManager.Setup(manager => manager.GetLoadedProject(It.IsAny<string>())).Returns<ProjectSnapshot>(null);
+        projectSnapshotManager.Setup(manager => manager.GetLoadedProject(It.IsAny<string>())).Returns<IProjectSnapshot>(null);
         var projectService = CreateProjectService(projectResolver, projectSnapshotManager.Object);
 
         // Act
@@ -791,10 +791,10 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
         // Arrange
         var projectFilePath = "C:/path/to/project.csproj";
         var miscellaneousProject = TestProjectSnapshot.Create("C:/__MISC_PROJECT__");
-        var projectResolver = new TestProjectResolver(new Dictionary<string, ProjectSnapshot>(), miscellaneousProject);
+        var projectResolver = new TestProjectResolver(new Dictionary<string, IProjectSnapshot>(), miscellaneousProject);
         var projectSnapshotManager = new Mock<ProjectSnapshotManagerBase>(MockBehavior.Strict);
         projectSnapshotManager.Setup(manager => manager.GetLoadedProject(projectFilePath))
-            .Returns(Mock.Of<ProjectSnapshot>(MockBehavior.Strict));
+            .Returns(Mock.Of<IProjectSnapshot>(MockBehavior.Strict));
         var projectService = CreateProjectService(projectResolver, projectSnapshotManager.Object);
 
         // Act
@@ -811,7 +811,7 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
         var projectFilePath = "C:/path/to/project.csproj";
         var ownerProject = TestProjectSnapshot.Create(projectFilePath);
         var miscellaneousProject = TestProjectSnapshot.Create("C:/__MISC_PROJECT__");
-        var projectResolver = new TestProjectResolver(new Dictionary<string, ProjectSnapshot>(), miscellaneousProject);
+        var projectResolver = new TestProjectResolver(new Dictionary<string, IProjectSnapshot>(), miscellaneousProject);
         var projectSnapshotManager = new Mock<ProjectSnapshotManagerBase>(MockBehavior.Strict);
         projectSnapshotManager.Setup(manager => manager.GetLoadedProject(projectFilePath))
             .Returns(ownerProject);
@@ -832,12 +832,12 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
         // Arrange
         var projectFilePath = "C:/path/to/project.csproj";
         var miscellaneousProject = TestProjectSnapshot.Create("C:/__MISC_PROJECT__");
-        var projectResolver = new TestProjectResolver(new Dictionary<string, ProjectSnapshot>(), miscellaneousProject);
+        var projectResolver = new TestProjectResolver(new Dictionary<string, IProjectSnapshot>(), miscellaneousProject);
         var projectSnapshotManager = new Mock<ProjectSnapshotManagerBase>(MockBehavior.Strict);
         projectSnapshotManager.Setup(manager => manager.ProjectRemoved(It.IsAny<HostProject>()))
             .Throws(new InvalidOperationException("Should not have been called."));
         projectSnapshotManager.Setup(manager => manager.GetLoadedProject(projectFilePath))
-            .Returns((ProjectSnapshot)null);
+            .Returns((IProjectSnapshot)null);
         var projectService = CreateProjectService(projectResolver, projectSnapshotManager.Object);
 
         // Act & Assert
@@ -854,7 +854,7 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
         var removedProject = TestProjectSnapshot.Create("C:/path/to/some/project.csproj", new[] { documentFilePath1, documentFilePath2 });
         var projectToBeMigratedTo = TestProjectSnapshot.Create("C:/path/to/project.csproj");
         var projectResolver = new TestProjectResolver(
-            new Dictionary<string, ProjectSnapshot>
+            new Dictionary<string, IProjectSnapshot>
             {
                 [documentFilePath1] = projectToBeMigratedTo,
                 [documentFilePath2] = projectToBeMigratedTo,
@@ -889,7 +889,7 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
         var documentFilePath2 = "C:/path/to/some/document2.cshtml";
         var miscellaneousProject = TestProjectSnapshot.Create("C:/__MISC_PROJECT__");
         var removedProject = TestProjectSnapshot.Create("C:/path/to/some/project.csproj", new[] { documentFilePath1, documentFilePath2 });
-        var projectResolver = new TestProjectResolver(new Dictionary<string, ProjectSnapshot>(), miscellaneousProject);
+        var projectResolver = new TestProjectResolver(new Dictionary<string, IProjectSnapshot>(), miscellaneousProject);
         var migratedDocuments = new List<HostDocument>();
         var projectSnapshotManager = new Mock<ProjectSnapshotManagerBase>(MockBehavior.Strict);
         projectSnapshotManager.Setup(manager => manager.DocumentAdded(It.IsAny<HostProject>(), It.IsAny<HostDocument>(), It.IsAny<TextLoader>()))
@@ -918,7 +918,7 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
         var documentFilePath1 = "C:/path/to/document1.cshtml";
         var documentFilePath2 = "C:/path/to/document2.cshtml";
         var miscellaneousProject = TestProjectSnapshot.Create("C:/__MISC_PROJECT__", new[] { documentFilePath1, documentFilePath2 });
-        var projectResolver = new TestProjectResolver(new Dictionary<string, ProjectSnapshot>(), miscellaneousProject);
+        var projectResolver = new TestProjectResolver(new Dictionary<string, IProjectSnapshot>(), miscellaneousProject);
         var projectSnapshotManager = new Mock<ProjectSnapshotManagerBase>(MockBehavior.Strict);
         projectSnapshotManager.Setup(manager => manager.DocumentAdded(It.IsAny<HostProject>(), It.IsAny<HostDocument>(), It.IsAny<TextLoader>()))
             .Throws(new InvalidOperationException("Should not have been called."));
@@ -937,7 +937,7 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
         var miscellaneousProject = TestProjectSnapshot.Create("C:/__MISC_PROJECT__", new[] { documentFilePath1, documentFilePath2 });
         var projectToBeMigratedTo = TestProjectSnapshot.Create("C:/path/to/project.csproj");
         var projectResolver = new TestProjectResolver(
-            new Dictionary<string, ProjectSnapshot>
+            new Dictionary<string, IProjectSnapshot>
             {
                 [documentFilePath1] = projectToBeMigratedTo,
                 [documentFilePath2] = projectToBeMigratedTo,
@@ -980,14 +980,14 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
         if (documentVersionCache is null)
         {
             documentVersionCache = new Mock<DocumentVersionCache>(MockBehavior.Strict).Object;
-            Mock.Get(documentVersionCache).Setup(c => c.TrackDocumentVersion(It.IsAny<DocumentSnapshot>(), It.IsAny<int>())).Verifiable();
+            Mock.Get(documentVersionCache).Setup(c => c.TrackDocumentVersion(It.IsAny<IDocumentSnapshot>(), It.IsAny<int>())).Verifiable();
         }
 
         var accessor = Mock.Of<ProjectSnapshotManagerAccessor>(a => a.Instance == projectSnapshotManager, MockBehavior.Strict);
         if (documentResolver is null)
         {
             documentResolver = new Mock<DocumentResolver>(MockBehavior.Strict).Object;
-            Mock.Get(documentResolver).Setup(r => r.TryResolveDocument(It.IsAny<string>(), out It.Ref<DocumentSnapshot>.IsAny)).Returns(false);
+            Mock.Get(documentResolver).Setup(r => r.TryResolveDocument(It.IsAny<string>(), out It.Ref<IDocumentSnapshot>.IsAny)).Returns(false);
         }
 
         var remoteTextLoaderFactory = Mock.Of<RemoteTextLoaderFactory>(factory => factory.Create(It.IsAny<string>()) == Mock.Of<TextLoader>(MockBehavior.Strict), MockBehavior.Strict);
@@ -1005,24 +1005,24 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
 
     private class TestProjectResolver : ProjectResolver
     {
-        private readonly IReadOnlyDictionary<string, ProjectSnapshot> _projectMappings;
-        private readonly ProjectSnapshot _miscellaneousProject;
+        private readonly IReadOnlyDictionary<string, IProjectSnapshot> _projectMappings;
+        private readonly IProjectSnapshot _miscellaneousProject;
 
         public TestProjectResolver()
         {
-            _projectMappings = new Dictionary<string, ProjectSnapshot>();
+            _projectMappings = new Dictionary<string, IProjectSnapshot>();
             _miscellaneousProject = TestProjectSnapshot.Create("C:/__MISC_PROJECT__");
         }
 
-        public TestProjectResolver(IReadOnlyDictionary<string, ProjectSnapshot> projectMappings, ProjectSnapshot miscellaneousProject)
+        public TestProjectResolver(IReadOnlyDictionary<string, IProjectSnapshot> projectMappings, IProjectSnapshot miscellaneousProject)
         {
             _projectMappings = projectMappings;
             _miscellaneousProject = miscellaneousProject;
         }
 
-        public override ProjectSnapshot GetMiscellaneousProject() => _miscellaneousProject;
+        public override IProjectSnapshot GetMiscellaneousProject() => _miscellaneousProject;
 
-        public override bool TryResolveProject(string documentFilePath, out ProjectSnapshot projectSnapshot, bool enforceDocumentInProject = true)
+        public override bool TryResolveProject(string documentFilePath, out IProjectSnapshot projectSnapshot, bool enforceDocumentInProject = true)
         {
             return _projectMappings.TryGetValue(documentFilePath, out projectSnapshot);
         }

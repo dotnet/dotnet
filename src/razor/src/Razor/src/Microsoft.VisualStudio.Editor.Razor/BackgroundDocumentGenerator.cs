@@ -8,9 +8,11 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.Extensions.Internal;
+using Microsoft.VisualStudio.Threading;
 
 namespace Microsoft.CodeAnalysis.Razor;
 
@@ -19,9 +21,9 @@ namespace Microsoft.CodeAnalysis.Razor;
 internal class BackgroundDocumentGenerator : ProjectSnapshotChangeTrigger
 {
     // Internal for testing
-    internal readonly Dictionary<DocumentKey, (ProjectSnapshot project, DocumentSnapshot document)> Work;
+    internal readonly Dictionary<DocumentKey, (IProjectSnapshot project, IDocumentSnapshot document)> Work;
 
-    private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
+    private readonly ProjectSnapshotManagerDispatcher _dispatcher;
     private readonly RazorDynamicFileInfoProvider _infoProvider;
     private readonly HashSet<string> _suppressedDocuments;
     private ProjectSnapshotManagerBase? _projectManager;
@@ -29,23 +31,13 @@ internal class BackgroundDocumentGenerator : ProjectSnapshotChangeTrigger
     private bool _solutionIsClosing;
 
     [ImportingConstructor]
-    public BackgroundDocumentGenerator(ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher, RazorDynamicFileInfoProvider infoProvider)
+    public BackgroundDocumentGenerator(ProjectSnapshotManagerDispatcher dispatcher, RazorDynamicFileInfoProvider infoProvider)
     {
-        if (projectSnapshotManagerDispatcher is null)
-        {
-            throw new ArgumentNullException(nameof(projectSnapshotManagerDispatcher));
-        }
-
-        if (infoProvider is null)
-        {
-            throw new ArgumentNullException(nameof(infoProvider));
-        }
-
-        _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher;
-        _infoProvider = infoProvider;
+        _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
+        _infoProvider = infoProvider ?? throw new ArgumentNullException(nameof(infoProvider));
         _suppressedDocuments = new HashSet<string>(FilePathComparer.Instance);
 
-        Work = new Dictionary<DocumentKey, (ProjectSnapshot project, DocumentSnapshot document)>();
+        Work = new Dictionary<DocumentKey, (IProjectSnapshot project, IDocumentSnapshot document)>();
     }
 
     public bool HasPendingNotifications
@@ -128,14 +120,14 @@ internal class BackgroundDocumentGenerator : ProjectSnapshotChangeTrigger
         _projectManager.Changed += ProjectManager_Changed;
     }
 
-    protected virtual async Task ProcessDocumentAsync(ProjectSnapshot project, DocumentSnapshot document)
+    protected virtual async Task ProcessDocumentAsync(IProjectSnapshot project, IDocumentSnapshot document)
     {
         await document.GetGeneratedOutputAsync().ConfigureAwait(false);
 
         UpdateFileInfo(project, document);
     }
 
-    public void Enqueue(ProjectSnapshot project, DocumentSnapshot document)
+    public void Enqueue(IProjectSnapshot project, IDocumentSnapshot document)
     {
         if (project is null)
         {
@@ -147,7 +139,7 @@ internal class BackgroundDocumentGenerator : ProjectSnapshotChangeTrigger
             throw new ArgumentNullException(nameof(document));
         }
 
-        _projectSnapshotManagerDispatcher.AssertDispatcherThread();
+        _dispatcher.AssertDispatcherThread();
 
         lock (Work)
         {
@@ -158,7 +150,7 @@ internal class BackgroundDocumentGenerator : ProjectSnapshotChangeTrigger
 
             // We only want to store the last 'seen' version of any given document. That way when we pick one to process
             // it's always the best version to use.
-            Work[new DocumentKey(project.FilePath, document.FilePath)] = (project, document);
+            Work[new DocumentKey(project.FilePath, document.FilePath.AssumeNotNull())] = (project, document);
 
             StartWorker();
         }
@@ -173,7 +165,7 @@ internal class BackgroundDocumentGenerator : ProjectSnapshotChangeTrigger
 
     private void Timer_Tick()
     {
-        _ = TimerTickAsync();
+        TimerTickAsync().Forget();
     }
 
     private async Task TimerTickAsync()
@@ -187,7 +179,7 @@ internal class BackgroundDocumentGenerator : ProjectSnapshotChangeTrigger
 
             OnStartingBackgroundWork();
 
-            KeyValuePair<DocumentKey, (ProjectSnapshot project, DocumentSnapshot document)>[] work;
+            KeyValuePair<DocumentKey, (IProjectSnapshot project, IDocumentSnapshot document)>[] work;
             lock (Work)
             {
                 work = Work.ToArray();
@@ -215,7 +207,7 @@ internal class BackgroundDocumentGenerator : ProjectSnapshotChangeTrigger
                 }
                 catch (IOException)
                 {
-                    // Ignore IOException. These can occur when a file was in the middle of being renamed and it dissapears as we're processing it.
+                    // Ignore IOException. These can occur when a file was in the middle of being renamed and it disappears as we're processing it.
                     // This is a common case and does not warrant an activity log entry.
                 }
                 catch (Exception ex)
@@ -247,46 +239,52 @@ internal class BackgroundDocumentGenerator : ProjectSnapshotChangeTrigger
             Assumes.NotNull(_projectManager);
 
             // This is something totally unexpected, let's just send it over to the workspace.
-            await _projectSnapshotManagerDispatcher.RunOnDispatcherThreadAsync(
-                () => _projectManager.ReportError(ex),
-                CancellationToken.None).ConfigureAwait(false);
+            await _dispatcher
+                .RunOnDispatcherThreadAsync(
+                    () => _projectManager.ReportError(ex),
+                    CancellationToken.None)
+                .ConfigureAwait(false);
         }
     }
 
-    private void ReportError(ProjectSnapshot project, Exception ex)
+    private void ReportError(IProjectSnapshot project, Exception ex)
     {
         OnErrorBeingReported();
 
         Assumes.NotNull(_projectManager);
 
-        _ = _projectSnapshotManagerDispatcher.RunOnDispatcherThreadAsync(
+        _dispatcher.RunOnDispatcherThreadAsync(
             () => _projectManager.ReportError(ex, project),
-            CancellationToken.None);
+            CancellationToken.None).Forget();
     }
 
-    private bool Suppressed(ProjectSnapshot project, DocumentSnapshot document)
+    private bool Suppressed(IProjectSnapshot project, IDocumentSnapshot document)
     {
         Assumes.NotNull(_projectManager);
 
         lock (_suppressedDocuments)
         {
-            if (_projectManager.IsDocumentOpen(document.FilePath))
+            var filePath = document.FilePath.AssumeNotNull();
+
+            if (_projectManager.IsDocumentOpen(filePath))
             {
-                _suppressedDocuments.Add(document.FilePath);
-                _infoProvider.SuppressDocument(project.FilePath, document.FilePath);
+                _suppressedDocuments.Add(filePath);
+                _infoProvider.SuppressDocument(project.FilePath, filePath);
                 return true;
             }
 
-            _suppressedDocuments.Remove(document.FilePath);
+            _suppressedDocuments.Remove(filePath);
             return false;
         }
     }
 
-    private void UpdateFileInfo(ProjectSnapshot project, DocumentSnapshot document)
+    private void UpdateFileInfo(IProjectSnapshot project, IDocumentSnapshot document)
     {
         lock (_suppressedDocuments)
         {
-            if (!_suppressedDocuments.Contains(document.FilePath))
+            var filePath = document.FilePath.AssumeNotNull();
+
+            if (!_suppressedDocuments.Contains(filePath))
             {
                 var container = new DefaultDynamicDocumentContainer(document);
                 _infoProvider.UpdateFileInfo(project.FilePath, container);
@@ -294,10 +292,10 @@ internal class BackgroundDocumentGenerator : ProjectSnapshotChangeTrigger
         }
     }
 
-    private void ProjectManager_Changed(object sender, ProjectChangeEventArgs e)
+    private void ProjectManager_Changed(object sender, ProjectChangeEventArgs args)
     {
         // We don't want to do any work on solution close
-        if (e.SolutionIsClosing)
+        if (args.SolutionIsClosing)
         {
             _solutionIsClosing = true;
             return;
@@ -305,24 +303,32 @@ internal class BackgroundDocumentGenerator : ProjectSnapshotChangeTrigger
 
         _solutionIsClosing = false;
 
-        switch (e.Kind)
+        switch (args.Kind)
         {
             case ProjectChangeKind.ProjectAdded:
                 {
-                    var projectSnapshot = e.Newer!;
-                    foreach (var documentFilePath in projectSnapshot.DocumentFilePaths)
+                    var newProject = args.Newer.AssumeNotNull();
+
+                    foreach (var documentFilePath in newProject.DocumentFilePaths)
                     {
-                        Enqueue(projectSnapshot, projectSnapshot.GetDocument(documentFilePath));
+                        if (newProject.GetDocument(documentFilePath) is { } document)
+                        {
+                            Enqueue(newProject, document);
+                        }
                     }
 
                     break;
                 }
             case ProjectChangeKind.ProjectChanged:
                 {
-                    var projectSnapshot = e.Newer!;
-                    foreach (var documentFilePath in projectSnapshot.DocumentFilePaths)
+                    var newProject = args.Newer.AssumeNotNull();
+
+                    foreach (var documentFilePath in newProject.DocumentFilePaths)
                     {
-                        Enqueue(projectSnapshot, projectSnapshot.GetDocument(documentFilePath));
+                        if (newProject.GetDocument(documentFilePath) is { } document)
+                        {
+                            Enqueue(newProject, document);
+                        }
                     }
 
                     break;
@@ -331,13 +337,17 @@ internal class BackgroundDocumentGenerator : ProjectSnapshotChangeTrigger
             case ProjectChangeKind.DocumentAdded:
             case ProjectChangeKind.DocumentChanged:
                 {
-                    var project = e.Newer!;
-                    var document = project.GetDocument(e.DocumentFilePath);
+                    var newProject = args.Newer.AssumeNotNull();
+                    var documentFilePath = args.DocumentFilePath.AssumeNotNull();
 
-                    Enqueue(project, document);
-                    foreach (var relatedDocument in project.GetRelatedDocuments(document))
+                    if (newProject.GetDocument(documentFilePath) is { } document)
                     {
-                        Enqueue(project, relatedDocument);
+                        Enqueue(newProject, document);
+
+                        foreach (var relatedDocument in newProject.GetRelatedDocuments(document))
+                        {
+                            Enqueue(newProject, relatedDocument);
+                        }
                     }
 
                     break;
@@ -347,11 +357,16 @@ internal class BackgroundDocumentGenerator : ProjectSnapshotChangeTrigger
                 {
                     // For removals use the old snapshot to find the removed document, so we can figure out
                     // what the imports were in the new snapshot.
-                    var document = e.Older!.GetDocument(e.DocumentFilePath);
+                    var newProject = args.Newer.AssumeNotNull();
+                    var oldProject = args.Older.AssumeNotNull();
+                    var documentFilePath = args.DocumentFilePath.AssumeNotNull();
 
-                    foreach (var relatedDocument in e.Newer!.GetRelatedDocuments(document))
+                    if (oldProject.GetDocument(documentFilePath) is { } document)
                     {
-                        Enqueue(e.Newer, relatedDocument);
+                        foreach (var relatedDocument in newProject.GetRelatedDocuments(document))
+                        {
+                            Enqueue(newProject, relatedDocument);
+                        }
                     }
 
                     break;
@@ -364,7 +379,7 @@ internal class BackgroundDocumentGenerator : ProjectSnapshotChangeTrigger
                 }
 
             default:
-                throw new InvalidOperationException($"Unknown ProjectChangeKind {e.Kind}");
+                throw new InvalidOperationException($"Unknown ProjectChangeKind {args.Kind}");
         }
     }
 }

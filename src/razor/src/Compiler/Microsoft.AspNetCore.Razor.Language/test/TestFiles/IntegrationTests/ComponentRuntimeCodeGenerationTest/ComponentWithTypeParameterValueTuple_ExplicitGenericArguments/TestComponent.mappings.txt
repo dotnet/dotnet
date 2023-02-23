@@ -1,4 +1,4 @@
-Source Location: (161:5,7 [87] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (161:5,7 [87] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     [Parameter]
     public List<(TDomain Domain, TValue Value)> Data { get; set; }

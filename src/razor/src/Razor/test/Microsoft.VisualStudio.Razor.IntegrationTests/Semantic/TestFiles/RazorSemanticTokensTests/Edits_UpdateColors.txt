@@ -1,4 +1,4 @@
-﻿0,1,RazorTransition,
+0,1,RazorTransition,
 1,4,RazorDirective,
 6,3,string,
 13,1,HTML Tag Delimiter,
@@ -27,5 +27,6 @@
 141,4,HTML Attribute Value,
 145,5,HTML Attribute Value,
 150,1,HTML Attribute Value,
+151,1,HTML Tag Delimiter,
 152,1,HTML Tag Delimiter,
 153,1,HTML Tag Delimiter,

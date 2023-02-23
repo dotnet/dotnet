@@ -40,7 +40,7 @@ public class BackgroundDocumentGeneratorTest : LanguageServerTestBase
     public async Task Queue_ProcessesNotifications_AndGoesBackToSleep()
     {
         // Arrange
-        var projectManager = TestProjectSnapshotManager.Create(Dispatcher);
+        var projectManager = TestProjectSnapshotManager.Create(Dispatcher, ErrorReporter);
         await Dispatcher.RunOnDispatcherThreadAsync(() =>
         {
             projectManager.ProjectAdded(_hostProject1);
@@ -82,7 +82,7 @@ public class BackgroundDocumentGeneratorTest : LanguageServerTestBase
     public async Task Queue_ProcessesNotifications_AndRestarts()
     {
         // Arrange
-        var projectManager = TestProjectSnapshotManager.Create(Dispatcher);
+        var projectManager = TestProjectSnapshotManager.Create(Dispatcher, ErrorReporter);
         await Dispatcher.RunOnDispatcherThreadAsync(() =>
         {
             projectManager.ProjectAdded(_hostProject1);

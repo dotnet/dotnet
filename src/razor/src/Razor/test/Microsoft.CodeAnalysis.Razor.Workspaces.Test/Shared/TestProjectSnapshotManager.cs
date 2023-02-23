@@ -12,12 +12,12 @@ namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 internal class TestProjectSnapshotManager : DefaultProjectSnapshotManager
 {
     public TestProjectSnapshotManager(Workspace workspace)
-        : base(CreateProjectSnapshotManagerDispatcher(), Mock.Of<ErrorReporter>(MockBehavior.Strict), Enumerable.Empty<ProjectSnapshotChangeTrigger>(), workspace)
+        : base(CreateProjectSnapshotManagerDispatcher(), Mock.Of<IErrorReporter>(MockBehavior.Strict), Enumerable.Empty<ProjectSnapshotChangeTrigger>(), workspace)
     {
     }
 
     public TestProjectSnapshotManager(ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher, Workspace workspace)
-        : base(projectSnapshotManagerDispatcher, Mock.Of<ErrorReporter>(MockBehavior.Strict), Enumerable.Empty<ProjectSnapshotChangeTrigger>(), workspace)
+        : base(projectSnapshotManagerDispatcher, Mock.Of<IErrorReporter>(MockBehavior.Strict), Enumerable.Empty<ProjectSnapshotChangeTrigger>(), workspace)
     {
     }
 
@@ -32,14 +32,14 @@ internal class TestProjectSnapshotManager : DefaultProjectSnapshotManager
         return dispatcher.Object;
     }
 
-    public DefaultProjectSnapshot GetSnapshot(HostProject hostProject)
+    public ProjectSnapshot GetSnapshot(HostProject hostProject)
     {
-        return Projects.Cast<DefaultProjectSnapshot>().FirstOrDefault(s => s.FilePath == hostProject.FilePath);
+        return Projects.Cast<ProjectSnapshot>().FirstOrDefault(s => s.FilePath == hostProject.FilePath);
     }
 
-    public DefaultProjectSnapshot GetSnapshot(Project workspaceProject)
+    public ProjectSnapshot GetSnapshot(Project workspaceProject)
     {
-        return Projects.Cast<DefaultProjectSnapshot>().FirstOrDefault(s => s.FilePath == workspaceProject.FilePath);
+        return Projects.Cast<ProjectSnapshot>().FirstOrDefault(s => s.FilePath == workspaceProject.FilePath);
     }
 
     protected override void NotifyListeners(ProjectChangeEventArgs e)

@@ -241,16 +241,16 @@ public class BatchingWorkQueueTest : TestBase
         }
     }
 
-    private class TestErrorReporter : ErrorReporter
+    private class TestErrorReporter : IErrorReporter
     {
-        private readonly List<Exception> _reportedExceptions = new List<Exception>();
+        private readonly List<Exception> _reportedExceptions = new();
 
         public IReadOnlyList<Exception> ReportedExceptions => _reportedExceptions;
 
-        public override void ReportError(Exception exception) => _reportedExceptions.Add(exception);
+        public void ReportError(Exception exception) => _reportedExceptions.Add(exception);
 
-        public override void ReportError(Exception exception, ProjectSnapshot project) => _reportedExceptions.Add(exception);
+        public void ReportError(Exception exception, IProjectSnapshot project) => _reportedExceptions.Add(exception);
 
-        public override void ReportError(Exception exception, Project workspaceProject) => _reportedExceptions.Add(exception);
+        public void ReportError(Exception exception, Project workspaceProject) => _reportedExceptions.Add(exception);
     }
 }

@@ -280,7 +280,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
                 case ParserState.MarkupComment:
                 case ParserState.CData:
                     ParseMarkupNode(builder, ParseMode.MarkupInCodeBlock);
-                    SpanContext.EditHandler.AcceptedCharacters = AcceptedCharactersInternal.None;
+                    SpanContext.EditHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.None;
                     builder.Add(OutputAsMarkupLiteral());
                     break;
                 default:
@@ -365,7 +365,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
                 if (isOuterTagWellFormed)
                 {
                     // Completed tags have no accepted characters inside blocks.
-                    SpanContext.EditHandler.AcceptedCharacters = AcceptedCharactersInternal.None;
+                    SpanContext.EditHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.None;
                 }
             }
         }
@@ -384,7 +384,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
         Assert(SyntaxKind.Transition);
 
         AcceptAndMoveNext();
-        SpanContext.EditHandler.AcceptedCharacters = AcceptedCharactersInternal.None;
+        SpanContext.EditHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.None;
         SpanContext.ChunkGenerator = SpanChunkGenerator.Null;
         var transition = GetNodeWithSpanContext(SyntaxFactory.MarkupTransition(Output()));
         builder.Add(transition);
@@ -420,7 +420,8 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
         // First, signal to code parser that whitespace is significant to us.
         var old = Context.WhiteSpaceIsSignificantToAncestorBlock;
         Context.WhiteSpaceIsSignificantToAncestorBlock = true;
-        SpanContext.EditHandler = new SpanEditHandler(LanguageTokenizeString);
+        SpanContext.EditHandlerBuilder.Reset();
+        SpanContext.EditHandlerBuilder.Tokenizer = LanguageTokenizeString;
 
         // Now parse until a new line.
         do
@@ -435,7 +436,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
         if (!EndOfFile && CurrentToken.Kind == SyntaxKind.NewLine)
         {
             AcceptAndMoveNext();
-            SpanContext.EditHandler.AcceptedCharacters = AcceptedCharactersInternal.None;
+            SpanContext.EditHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.None;
         }
         PutCurrentBack();
         Context.WhiteSpaceIsSignificantToAncestorBlock = old;
@@ -673,7 +674,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
                 }
 
                 // Completed tags in code blocks have no accepted characters.
-                SpanContext.EditHandler.AcceptedCharacters = AcceptedCharactersInternal.None;
+                SpanContext.EditHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.None;
 
                 if (tagMode != MarkupTagMode.SelfClosing && IsVoidElement(tagName))
                 {
@@ -769,7 +770,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
                 }
 
                 closeAngleToken = EatCurrentToken();
-                SpanContext.EditHandler.AcceptedCharacters = AcceptedCharactersInternal.None;
+                SpanContext.EditHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.None;
             }
             else
             {
@@ -877,7 +878,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
                 if (At(SyntaxKind.CloseAngle))
                 {
                     // Completed tags in code blocks have no accepted characters.
-                    SpanContext.EditHandler.AcceptedCharacters = AcceptedCharactersInternal.None;
+                    SpanContext.EditHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.None;
                 }
             }
 
@@ -923,13 +924,13 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
                     RazorDiagnosticFactory.CreateParsing_TextTagCannotContainAttributes(
                         new SourceSpan(textLocation, contentLength: 4 /* text */)));
 
-                SpanContext.EditHandler.AcceptedCharacters = AcceptedCharactersInternal.Any;
+                SpanContext.EditHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.Any;
                 RecoverTextTag(out var miscContent, out closeAngleToken);
                 miscAttributeBuilder.Add(miscContent);
             }
             else
             {
-                SpanContext.EditHandler.AcceptedCharacters = AcceptedCharactersInternal.None;
+                SpanContext.EditHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.None;
                 closeAngleToken = EatCurrentToken();
             }
 
@@ -1239,12 +1240,12 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
                         new LocationTagged<string>(string.Concat(prefixTokens.Select(s => s.Content)), prefixStart),
                         new LocationTagged<string>(CurrentToken.Content, CurrentStart));
                     AcceptAndMoveNext();
-                    SpanContext.EditHandler.AcceptedCharacters = AcceptedCharactersInternal.None;
+                    SpanContext.EditHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.None;
                     markupBuilder.Add(OutputAsMarkupLiteral());
 
                     SpanContext.ChunkGenerator = SpanChunkGenerator.Null;
                     AcceptAndMoveNext();
-                    SpanContext.EditHandler.AcceptedCharacters = AcceptedCharactersInternal.None;
+                    SpanContext.EditHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.None;
                     markupBuilder.Add(OutputAsMarkupEphemeralLiteral());
 
                     var markupBlock = SyntaxFactory.MarkupBlock(markupBuilder.ToList());
@@ -1399,7 +1400,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
                 }
             }
 
-            SpanContext.EditHandler.AcceptedCharacters = endTagAcceptedCharacters;
+            SpanContext.EditHandlerBuilder.AcceptedCharacters = endTagAcceptedCharacters;
 
             endTag = SyntaxFactory.MarkupEndTag(
                 openAngleToken,
@@ -1513,10 +1514,10 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
             AcceptAndMoveNext();
             AcceptAndMoveNext();
             AcceptAndMoveNext();
-            SpanContext.EditHandler.AcceptedCharacters = AcceptedCharactersInternal.None;
+            SpanContext.EditHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.None;
             htmlCommentBuilder.Add(OutputAsMarkupLiteral());
 
-            SpanContext.EditHandler.AcceptedCharacters = AcceptedCharactersInternal.Whitespace;
+            SpanContext.EditHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.Whitespace;
             while (!EndOfFile)
             {
                 ParseMarkupNodes(htmlCommentBuilder, ParseMode.Text, t => t.Kind == SyntaxKind.DoubleHyphen);
@@ -1525,13 +1526,13 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
                 if (At(SyntaxKind.CloseAngle))
                 {
                     // Output the content in the comment block as a separate markup
-                    SpanContext.EditHandler.AcceptedCharacters = AcceptedCharactersInternal.Whitespace;
+                    SpanContext.EditHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.Whitespace;
                     htmlCommentBuilder.Add(OutputAsMarkupLiteral());
 
                     // This is the end of a comment block
                     Accept(lastDoubleHyphen);
                     AcceptAndMoveNext();
-                    SpanContext.EditHandler.AcceptedCharacters = AcceptedCharactersInternal.None;
+                    SpanContext.EditHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.None;
                     htmlCommentBuilder.Add(OutputAsMarkupLiteral());
                     var commentBlock = SyntaxFactory.MarkupCommentBlock(htmlCommentBuilder.ToList());
                     builder.Add(commentBlock);
@@ -1720,7 +1721,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
             }
         }
         Debug.Assert(EndOfFile);
-        SpanContext.EditHandler.AcceptedCharacters = AcceptedCharactersInternal.Any;
+        SpanContext.EditHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.Any;
         return false;
     }
 
@@ -2157,7 +2158,9 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
     private void DefaultMarkupSpanContext(SpanContextBuilder spanContext)
     {
         spanContext.ChunkGenerator = MarkupChunkGenerator.Instance;
-        spanContext.EditHandler = new SpanEditHandler(LanguageTokenizeString, AcceptedCharactersInternal.Any);
+        spanContext.EditHandlerBuilder.Reset();
+        spanContext.EditHandlerBuilder.Tokenizer = LanguageTokenizeString;
+        spanContext.EditHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.Any;
     }
 
     private Syntax.GreenNode GetLastSpan(RazorSyntaxNode node)

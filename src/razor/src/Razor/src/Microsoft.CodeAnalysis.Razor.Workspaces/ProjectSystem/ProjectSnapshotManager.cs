@@ -13,11 +13,11 @@ internal abstract class ProjectSnapshotManager : ILanguageService
 {
     public abstract event EventHandler<ProjectChangeEventArgs> Changed;
 
-    public abstract IReadOnlyList<ProjectSnapshot> Projects { get; }
+    public abstract IReadOnlyList<IProjectSnapshot> Projects { get; }
 
     public abstract bool IsDocumentOpen(string documentFilePath);
 
-    public abstract ProjectSnapshot GetLoadedProject(string filePath);
+    public abstract IProjectSnapshot GetLoadedProject(string filePath);
 
-    public abstract ProjectSnapshot GetOrCreateProject(string filePath);
+    public abstract IProjectSnapshot GetOrCreateProject(string filePath);
 }

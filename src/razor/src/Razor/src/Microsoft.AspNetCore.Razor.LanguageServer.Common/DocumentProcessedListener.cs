@@ -10,5 +10,5 @@ internal abstract class DocumentProcessedListener
 {
     public abstract void Initialize(ProjectSnapshotManager projectManager);
 
-    public abstract void DocumentProcessed(RazorCodeDocument codeDocument, DocumentSnapshot documentSnapshot);
+    public abstract void DocumentProcessed(RazorCodeDocument codeDocument, IDocumentSnapshot documentSnapshot);
 }

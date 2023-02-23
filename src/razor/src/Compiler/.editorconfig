@@ -21,6 +21,7 @@ insert_final_newline = true
 
 [*.cs]
 indent_size = 4
+charset = utf-8-bom
 dotnet_sort_system_directives_first = true
 dotnet_separate_import_directive_groups = false
 

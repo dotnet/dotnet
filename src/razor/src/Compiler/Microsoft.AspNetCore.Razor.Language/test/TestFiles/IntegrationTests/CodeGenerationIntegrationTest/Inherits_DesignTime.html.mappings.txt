@@ -1,4 +1,4 @@
-Source Location: (31:0,31 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Inherits.cshtml)
+﻿Source Location: (31:0,31 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Inherits.cshtml)
 |
 
 |

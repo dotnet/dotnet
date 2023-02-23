@@ -13,10 +13,10 @@ public abstract partial class ProjectSnapshotManagerBenchmarkBase
 {
     private class StaticProjectSnapshotProjectEngineFactory : ProjectSnapshotProjectEngineFactory
     {
-        public override IProjectEngineFactory FindFactory(ProjectSnapshot project)
+        public override IProjectEngineFactory FindFactory(IProjectSnapshot project)
             => throw new NotImplementedException();
 
-        public override IProjectEngineFactory FindSerializableFactory(ProjectSnapshot project)
+        public override IProjectEngineFactory FindSerializableFactory(IProjectSnapshot project)
             => throw new NotImplementedException();
 
         public override RazorProjectEngine Create(

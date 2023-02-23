@@ -45,11 +45,11 @@ public class DefaultRazorDocumentManagerTest : ProjectSnapshotManagerDispatcherT
             MockBehavior.Strict);
 
         _projectManager = Mock.Of<ProjectSnapshotManager>(
-            p => p.Projects == new List<ProjectSnapshot>() && p.GetOrCreateProject(It.IsAny<string>()) == null,
+            p => p.Projects == new List<IProjectSnapshot>() && p.GetOrCreateProject(It.IsAny<string>()) == null,
             MockBehavior.Strict);
 
         _workspaceEditorSettings = new DefaultWorkspaceEditorSettings(
-            Mock.Of<EditorSettingsManager>(MockBehavior.Strict));
+            Mock.Of<IClientSettingsManager>(MockBehavior.Strict));
 
         var importDocumentManager = new Mock<ImportDocumentManager>(MockBehavior.Strict);
         importDocumentManager.Setup(m => m.OnSubscribed(It.IsAny<VisualStudioDocumentTracker>())).Verifiable();

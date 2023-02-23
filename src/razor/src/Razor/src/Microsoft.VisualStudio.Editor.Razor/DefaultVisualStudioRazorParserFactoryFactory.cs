@@ -34,7 +34,7 @@ internal class DefaultVisualStudioRazorParserFactoryFactory : ILanguageServiceFa
         }
 
         var workspaceServices = languageServices.WorkspaceServices;
-        var errorReporter = workspaceServices.GetRequiredService<ErrorReporter>();
+        var errorReporter = workspaceServices.GetRequiredService<IErrorReporter>();
         var completionBroker = languageServices.GetRequiredService<VisualStudioCompletionBroker>();
         var projectEngineFactory = workspaceServices.GetRequiredService<ProjectSnapshotProjectEngineFactory>();
 

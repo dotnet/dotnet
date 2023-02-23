@@ -220,10 +220,12 @@ public class CSharpCodeParserTest
         var source = TestRazorSourceDocument.Create();
         var options = RazorParserOptions.CreateDefault();
         var context = new ParserContext(source, options);
-        var parser = new CSharpCodeParser(context);
 
         // Act & Assert (Does not throw)
-        parser.MapDirectives((b, t) => { }, "test");
-        parser.MapDirectives((b, t) => { }, "test");
+        var directiveDescriptors = new[] {
+            DirectiveDescriptor.CreateDirective("test", DirectiveKind.SingleLine),
+            DirectiveDescriptor.CreateDirective("test", DirectiveKind.SingleLine),
+        };
+        var parser = new CSharpCodeParser(directiveDescriptors, context);
     }
 }

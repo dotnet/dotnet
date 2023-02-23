@@ -80,11 +80,13 @@ internal class RazorDefinitionEndpoint : AbstractRazorDelegatingEndpoint<TextDoc
             return default;
         }
 
-        requestContext.Logger.LogInformation("Definition found at file path: {filePath}", originComponentDocumentSnapshot.FilePath);
+        var originComponentDocumentFilePath = originComponentDocumentSnapshot.FilePath.AssumeNotNull();
+
+        requestContext.Logger.LogInformation("Definition found at file path: {filePath}", originComponentDocumentFilePath);
 
         var originComponentUri = new UriBuilder
         {
-            Path = originComponentDocumentSnapshot.FilePath,
+            Path = originComponentDocumentFilePath,
             Scheme = Uri.UriSchemeFile,
             Host = string.Empty,
         }.Uri;

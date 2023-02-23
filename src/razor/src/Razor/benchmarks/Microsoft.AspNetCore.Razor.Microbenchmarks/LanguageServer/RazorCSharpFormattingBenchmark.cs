@@ -34,7 +34,7 @@ public class RazorCSharpFormattingBenchmark : RazorLanguageServerBenchmarkBase
 
     private Uri DocumentUri { get; set; }
 
-    private DocumentSnapshot DocumentSnapshot { get; set; }
+    private IDocumentSnapshot DocumentSnapshot { get; set; }
 
     private SourceText DocumentText { get; set; }
 

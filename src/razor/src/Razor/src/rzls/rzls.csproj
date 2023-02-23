@@ -60,8 +60,13 @@
       <ProjectToPublish Include="@(RuntimeIdentifierForPublish->'$(MSBuildProjectFullPath)')">
         <AdditionalProperties>RuntimeIdentifier=%(RuntimeIdentifierForPublish.Identity);PublishDir=$(RidsPublishDir)%(RuntimeIdentifierForPublish.Identity)\</AdditionalProperties>
       </ProjectToPublish>
+
+      <ProjectToPublish_PlatformAgnostic Include="$(MSBuildProjectFullPath)">
+        <AdditionalProperties>PublishDir=$(RidsPublishDir)\PlatformAgnostic\;UseAppHost=false</AdditionalProperties>
+      </ProjectToPublish_PlatformAgnostic>
     </ItemGroup>
 
     <MSBuild Projects="@(ProjectToPublish)" Targets="Publish;_IncludeOmniSharpPlugin" BuildInParallel="false" />
+    <MSBuild Projects="@(ProjectToPublish_PlatformAgnostic)" Targets="Publish;_IncludeOmniSharpPlugin" BuildInParallel="false" Condition="'$(OS)' == 'Windows_NT'" />
   </Target>
 </Project>

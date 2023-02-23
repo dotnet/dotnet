@@ -1,4 +1,4 @@
-﻿0,1,RazorTransition,
+0,1,RazorTransition,
 1,8,RazorDirective,
 10,19,class name,
 33,1,HTML Tag Delimiter,
@@ -26,6 +26,7 @@
 113,1,HTML Tag Delimiter,
 124,1,HTML Tag Delimiter,
 125,7,RazorComponentElement,
+132,1,HTML Tag Delimiter,
 133,1,HTML Tag Delimiter,
 134,1,HTML Tag Delimiter,
 141,1,HTML Tag Delimiter,

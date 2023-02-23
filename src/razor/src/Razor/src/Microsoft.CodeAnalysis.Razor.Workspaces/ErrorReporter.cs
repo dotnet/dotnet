@@ -2,16 +2,45 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 namespace Microsoft.CodeAnalysis.Razor;
 
-internal abstract class ErrorReporter : IWorkspaceService
+internal sealed class ErrorReporter : IErrorReporter
 {
-    public abstract void ReportError(Exception exception);
+    public static readonly ErrorReporter Instance = new();
 
-    public abstract void ReportError(Exception exception, ProjectSnapshot? project);
+    private ErrorReporter()
+    {
+    }
 
-    public abstract void ReportError(Exception exception, Project workspaceProject);
+    public void ReportError(Exception exception)
+    {
+        if (exception is null)
+        {
+            throw new ArgumentNullException(nameof(exception));
+        }
+
+        // Do nothing.
+    }
+
+    public void ReportError(Exception exception, IProjectSnapshot? project)
+    {
+        if (exception is null)
+        {
+            throw new ArgumentNullException(nameof(exception));
+        }
+
+        // Do nothing.
+    }
+
+    public void ReportError(Exception exception, Project workspaceProject)
+    {
+        if (exception is null)
+        {
+            throw new ArgumentNullException(nameof(exception));
+        }
+
+        // Do nothing.
+    }
 }

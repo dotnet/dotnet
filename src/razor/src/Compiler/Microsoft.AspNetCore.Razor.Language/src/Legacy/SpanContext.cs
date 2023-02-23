@@ -1,10 +1,9 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-using System.Linq;
-using Microsoft.AspNetCore.Razor.Language.Syntax.InternalSyntax;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
@@ -23,31 +22,27 @@ internal class SpanContext
 
 internal class SpanContextBuilder
 {
-    public SpanContextBuilder()
+    public SpanContextBuilder(Func<string, IEnumerable<Syntax.InternalSyntax.SyntaxToken>> defaultLanguageTokenizer)
     {
+        EditHandlerBuilder = new(defaultLanguageTokenizer);
         Reset();
-    }
-
-    public SpanContextBuilder(SpanContext context)
-    {
-        EditHandler = context.EditHandler;
-        ChunkGenerator = context.ChunkGenerator;
     }
 
     public ISpanChunkGenerator ChunkGenerator { get; set; }
 
-    public SpanEditHandler EditHandler { get; set; }
+    public SpanEditHandlerBuilder EditHandlerBuilder { get; set; }
 
     public SpanContext Build()
     {
-        var result = new SpanContext(ChunkGenerator, EditHandler);
+        var result = new SpanContext(ChunkGenerator, EditHandlerBuilder.Build());
         Reset();
         return result;
     }
 
+    [MemberNotNull(nameof(ChunkGenerator))]
     public void Reset()
     {
-        EditHandler = SpanEditHandler.CreateDefault((content) => Enumerable.Empty<SyntaxToken>());
+        EditHandlerBuilder.Reset();
         ChunkGenerator = SpanChunkGenerator.Null;
     }
 }

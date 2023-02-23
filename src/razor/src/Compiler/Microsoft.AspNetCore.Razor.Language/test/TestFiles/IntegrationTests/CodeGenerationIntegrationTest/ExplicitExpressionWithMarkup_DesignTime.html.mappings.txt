@@ -1,4 +1,4 @@
-Source Location: (0:0,0 [5] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ExplicitExpressionWithMarkup.cshtml)
+﻿Source Location: (0:0,0 [5] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ExplicitExpressionWithMarkup.cshtml)
 |<div>|
 Generated Location: (0:0,0 [5] )
 |<div>|

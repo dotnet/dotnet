@@ -596,7 +596,7 @@ internal static class TagHelperBlockRewriter
                 // Convert transition.
                 // Change to a MarkupChunkGenerator so that the '@' \ parenthesis is generated as part of the output.
                 var context = node.GetSpanContext();
-                var newContext = new SpanContext(MarkupChunkGenerator.Instance, context?.EditHandler ?? SpanEditHandler.CreateDefault((content) => Enumerable.Empty<Syntax.InternalSyntax.SyntaxToken>()));
+                var newContext = new SpanContext(MarkupChunkGenerator.Instance, context?.EditHandler ?? SpanEditHandler.CreateDefault((content) => Enumerable.Empty<Syntax.InternalSyntax.SyntaxToken>(), AcceptedCharactersInternal.Any));
 
                 var expression = SyntaxFactory.CSharpExpressionLiteral(new SyntaxList<SyntaxToken>(node.Transition.Transition)).WithSpanContext(newContext);
                 expression = (CSharpExpressionLiteralSyntax)VisitCSharpExpressionLiteral(expression);
@@ -624,7 +624,7 @@ internal static class TagHelperBlockRewriter
                 // Convert transition.
                 // Change to a MarkupChunkGenerator so that the '@' \ parenthesis is generated as part of the output.
                 var context = node.GetSpanContext();
-                var newContext = new SpanContext(MarkupChunkGenerator.Instance, context?.EditHandler ?? SpanEditHandler.CreateDefault((content) => Enumerable.Empty<Syntax.InternalSyntax.SyntaxToken>()));
+                var newContext = new SpanContext(MarkupChunkGenerator.Instance, context?.EditHandler ?? SpanEditHandler.CreateDefault((content) => Enumerable.Empty<Syntax.InternalSyntax.SyntaxToken>(), AcceptedCharactersInternal.Any));
 
                 var expression = SyntaxFactory.CSharpExpressionLiteral(new SyntaxList<SyntaxToken>(node.Transition.Transition)).WithSpanContext(newContext);
                 expression = (CSharpExpressionLiteralSyntax)VisitCSharpExpressionLiteral(expression);
@@ -833,13 +833,21 @@ internal static class TagHelperBlockRewriter
         private SyntaxNode ConfigureNonStringAttribute(SyntaxNode node)
         {
             var context = node.GetSpanContext();
-            var builder = context != null ? new SpanContextBuilder(context) : new SpanContextBuilder();
-            builder.EditHandler = new ImplicitExpressionEditHandler(
-                    builder.EditHandler.Tokenizer,
-                    CSharpCodeParser.DefaultKeywords,
-                    acceptTrailingDot: true)
+            var builder = new SpanContextBuilder(defaultLanguageTokenizer: null)
             {
-                AcceptedCharacters = AcceptedCharactersInternal.AnyExceptNewline
+                ChunkGenerator = context?.ChunkGenerator ?? SpanChunkGenerator.Null,
+                EditHandlerBuilder =
+                {
+                    Tokenizer = context?.EditHandler.Tokenizer,
+                    AcceptedCharacters = AcceptedCharactersInternal.AnyExceptNewline,
+                    Factory = (acceptedCharacters, tokenizer) => new ImplicitExpressionEditHandler
+                    {
+                        Tokenizer = tokenizer,
+                        AcceptedCharacters = acceptedCharacters,
+                        AcceptTrailingDot = true,
+                        Keywords = CSharpCodeParser.DefaultKeywords
+                    }
+                }
             };
 
             if (!_tryParseResult.IsDuplicateAttribute && builder.ChunkGenerator != SpanChunkGenerator.Null)

@@ -387,7 +387,7 @@ public class ExtractToCodeBehindCodeActionProviderTest : LanguageServerTestBase
         }));
         codeDocument.SetSyntaxTree(syntaxTree);
 
-        var documentSnapshot = Mock.Of<DocumentSnapshot>(document =>
+        var documentSnapshot = Mock.Of<IDocumentSnapshot>(document =>
             document.GetGeneratedOutputAsync() == Task.FromResult(codeDocument) &&
             document.GetTextAsync() == Task.FromResult(codeDocument.GetSourceText()), MockBehavior.Strict);
 

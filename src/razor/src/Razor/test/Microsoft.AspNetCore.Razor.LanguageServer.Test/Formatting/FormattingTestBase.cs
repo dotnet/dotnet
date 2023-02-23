@@ -59,14 +59,15 @@ public class FormattingTestBase : RazorIntegrationTestBase
         set { s_fileName.Value = value; }
     }
 
-    protected async Task RunFormattingTestAsync(
+    protected internal async Task RunFormattingTestAsync(
         string input,
         string expected,
         int tabSize = 4,
         bool insertSpaces = true,
         string? fileKind = null,
         IReadOnlyList<TagHelperDescriptor>? tagHelpers = null,
-        bool allowDiagnostics = false)
+        bool allowDiagnostics = false,
+        RazorLSPOptions? razorLSPOptions = null)
     {
         // Arrange
         fileKind ??= FileKinds.Component;
@@ -87,7 +88,7 @@ public class FormattingTestBase : RazorIntegrationTestBase
             InsertSpaces = insertSpaces,
         };
 
-        var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(codeDocument, documentSnapshot, LoggerFactory);
+        var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(codeDocument, documentSnapshot, LoggerFactory, razorLSPOptions);
         var documentContext = new VersionedDocumentContext(uri, documentSnapshot, version: 1);
 
         // Act
@@ -112,7 +113,8 @@ public class FormattingTestBase : RazorIntegrationTestBase
         int tabSize = 4,
         bool insertSpaces = true,
         string? fileKind = null,
-        int? expectedChangedLines = null)
+        int? expectedChangedLines = null,
+        RazorLSPOptions? razorLSPOptions = null)
     {
         // Arrange
         fileKind ??= FileKinds.Component;
@@ -128,7 +130,7 @@ public class FormattingTestBase : RazorIntegrationTestBase
             TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory);
         var languageKind = mappingService.GetLanguageKind(codeDocument, positionAfterTrigger, rightAssociative: false);
 
-        var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(codeDocument, documentSnapshot, LoggerFactory);
+        var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(codeDocument, documentSnapshot, LoggerFactory, razorLSPOptions);
         var options = new FormattingOptions()
         {
             TabSize = tabSize,
@@ -215,9 +217,9 @@ public class FormattingTestBase : RazorIntegrationTestBase
     }
 
     protected static TextEdit Edit(int startLine, int startChar, int endLine, int endChar, string newText)
-        => new TextEdit()
+        => new()
         {
-            Range = new VisualStudio.LanguageServer.Protocol.Range
+            Range = new Range
             {
                 Start = new Position(startLine, startChar),
                 End = new Position(endLine, endChar),
@@ -231,7 +233,7 @@ public class FormattingTestBase : RazorIntegrationTestBase
         return source.WithChanges(changes);
     }
 
-    private static (RazorCodeDocument, DocumentSnapshot) CreateCodeDocumentAndSnapshot(SourceText text, string path, IReadOnlyList<TagHelperDescriptor>? tagHelpers = null, string? fileKind = default, bool allowDiagnostics = false)
+    private static (RazorCodeDocument, IDocumentSnapshot) CreateCodeDocumentAndSnapshot(SourceText text, string path, IReadOnlyList<TagHelperDescriptor>? tagHelpers = null, string? fileKind = default, bool allowDiagnostics = false)
     {
         fileKind ??= FileKinds.Component;
         tagHelpers ??= Array.Empty<TagHelperDescriptor>();
@@ -256,7 +258,7 @@ public class FormattingTestBase : RazorIntegrationTestBase
         var importsPath = new Uri("file:///path/to/_Imports.razor").AbsolutePath;
         var importsSourceText = SourceText.From(DefaultImports);
         var importsDocument = importsSourceText.GetRazorSourceDocument(importsPath, importsPath);
-        var importsSnapshot = new Mock<DocumentSnapshot>(MockBehavior.Strict);
+        var importsSnapshot = new Mock<IDocumentSnapshot>(MockBehavior.Strict);
         importsSnapshot
             .Setup(d => d.GetTextAsync())
             .ReturnsAsync(importsSourceText);
@@ -280,13 +282,13 @@ public class FormattingTestBase : RazorIntegrationTestBase
             Assert.False(codeDocument.GetCSharpDocument().Diagnostics.Any(), "Error creating document:" + Environment.NewLine + string.Join(Environment.NewLine, codeDocument.GetCSharpDocument().Diagnostics));
         }
 
-        var documentSnapshot = new Mock<DocumentSnapshot>(MockBehavior.Strict);
+        var documentSnapshot = new Mock<IDocumentSnapshot>(MockBehavior.Strict);
         documentSnapshot
             .Setup(d => d.GetGeneratedOutputAsync())
             .ReturnsAsync(codeDocument);
         documentSnapshot
             .Setup(d => d.GetImports())
-            .Returns(new[] { importsSnapshot.Object });
+            .Returns(ImmutableArray.Create(importsSnapshot.Object));
         documentSnapshot
             .Setup(d => d.Project.GetProjectEngine())
             .Returns(projectEngine);
@@ -308,11 +310,7 @@ public class FormattingTestBase : RazorIntegrationTestBase
 
     private static string GetProjectDirectory()
     {
-        var repoRoot = SearchUp(AppContext.BaseDirectory, "global.json");
-        if (repoRoot is null)
-        {
-            repoRoot = AppContext.BaseDirectory;
-        }
+        var repoRoot = SearchUp(AppContext.BaseDirectory, "global.json") ?? AppContext.BaseDirectory;
 
         var assemblyName = typeof(FormattingTestBase).Assembly.GetName().Name;
         var projectDirectory = Path.Combine(repoRoot, "src", "Razor", "test", assemblyName!);
@@ -350,7 +348,7 @@ public class FormattingTestBase : RazorIntegrationTestBase
         var tagHelperFilePath = Path.Combine(current!.FullName, testFileName);
         var buffer = File.ReadAllBytes(tagHelperFilePath);
         var serializer = new JsonSerializer();
-        serializer.Converters.Add(new TagHelperDescriptorJsonConverter());
+        serializer.Converters.Add(TagHelperDescriptorJsonConverter.Instance);
 
         using var stream = new MemoryStream(buffer);
         using var streamReader = new StreamReader(stream);

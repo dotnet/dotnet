@@ -27,7 +27,7 @@ public abstract partial class ProjectSnapshotManagerBenchmarkBase
 
         public override Task<TagHelperResolutionResult> GetTagHelpersAsync(
             Project project,
-            ProjectSnapshot projectSnapshot,
+            IProjectSnapshot projectSnapshot,
             CancellationToken cancellationToken = default)
             => Task.FromResult(new TagHelperResolutionResult(_tagHelpers, Array.Empty<RazorDiagnostic>()));
     }

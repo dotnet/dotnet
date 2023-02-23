@@ -47,7 +47,7 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase
 
         var languageTokenizer = Language.CreateTokenizer(Context.Source);
         _tokenizer = new TokenizerView<TTokenizer>(languageTokenizer);
-        SpanContext = new SpanContextBuilder();
+        SpanContext = new SpanContextBuilder(LanguageTokenizeString);
     }
 
     protected SyntaxListPool Pool => _pool;
@@ -389,7 +389,8 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase
     private void CommentSpanContextConfig(SpanContextBuilder spanContext)
     {
         spanContext.ChunkGenerator = SpanChunkGenerator.Null;
-        spanContext.EditHandler = SpanEditHandler.CreateDefault(LanguageTokenizeString);
+        spanContext.EditHandlerBuilder.Reset();
+        spanContext.EditHandlerBuilder.Tokenizer = LanguageTokenizeString;
     }
 
     protected SyntaxToken EatCurrentToken()
@@ -606,7 +607,7 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase
 
         var metacode = SyntaxFactory.RazorMetaCode(tokens);
         SpanContext.ChunkGenerator = SpanChunkGenerator.Null;
-        SpanContext.EditHandler.AcceptedCharacters = accepted ?? AcceptedCharactersInternal.None;
+        SpanContext.EditHandlerBuilder.AcceptedCharacters = accepted ?? AcceptedCharactersInternal.None;
 
         return GetNodeWithSpanContext(metacode);
     }

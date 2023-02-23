@@ -21,7 +21,7 @@ internal class DocumentContext
 
     public DocumentContext(
         Uri uri,
-        DocumentSnapshot snapshot)
+        IDocumentSnapshot snapshot)
     {
         Uri = uri;
         Snapshot = snapshot;
@@ -29,13 +29,13 @@ internal class DocumentContext
 
     public virtual Uri Uri { get; }
 
-    public virtual DocumentSnapshot Snapshot { get; }
+    public virtual IDocumentSnapshot Snapshot { get; }
 
-    public virtual string FilePath => Snapshot.FilePath;
+    public virtual string FilePath => Snapshot.FilePath.AssumeNotNull();
 
-    public virtual string FileKind => Snapshot.FileKind;
+    public virtual string FileKind => Snapshot.FileKind.AssumeNotNull();
 
-    public virtual ProjectSnapshot Project => Snapshot.Project;
+    public virtual IProjectSnapshot Project => Snapshot.Project;
 
     public virtual TextDocumentIdentifier Identifier => new VersionedTextDocumentIdentifier()
     {

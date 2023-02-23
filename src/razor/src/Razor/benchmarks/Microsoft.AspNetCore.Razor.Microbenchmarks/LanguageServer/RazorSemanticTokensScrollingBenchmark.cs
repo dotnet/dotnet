@@ -28,7 +28,7 @@ public class RazorSemanticTokensScrollingBenchmark : RazorLanguageServerBenchmar
 
     private Uri DocumentUri => DocumentContext.Uri;
 
-    private DocumentSnapshot DocumentSnapshot => DocumentContext.Snapshot;
+    private IDocumentSnapshot DocumentSnapshot => DocumentContext.Snapshot;
 
     private Range Range { get; set; }
 
@@ -106,7 +106,7 @@ public class RazorSemanticTokensScrollingBenchmark : RazorLanguageServerBenchmar
         }
     }
 
-    private async Task UpdateDocumentAsync(int newVersion, DocumentSnapshot documentSnapshot)
+    private async Task UpdateDocumentAsync(int newVersion, IDocumentSnapshot documentSnapshot)
     {
         await ProjectSnapshotManagerDispatcher!.RunOnDispatcherThreadAsync(
             () => VersionCache!.TrackDocumentVersion(documentSnapshot, newVersion), CancellationToken.None).ConfigureAwait(false);

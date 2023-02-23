@@ -5,6 +5,7 @@
 
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -574,5 +575,67 @@ public class RazorFormattingTest : FormattingTestBase
                     @tagHelperPrefix    th:
                     """,
             fileKind: FileKinds.Legacy);
+    }
+
+    [Fact]
+    public async Task OnTypeFormatting_Disabled()
+    {
+        await RunOnTypeFormattingTestAsync(
+            input: """
+            @functions {
+            	private int currentCount = 0;
+            
+            	private void IncrementCount (){
+            		currentCount++;
+            	}$$
+            }
+            """,
+            expected: """
+            @functions {
+            	private int currentCount = 0;
+            
+            	private void IncrementCount (){
+            		currentCount++;
+            	}
+            }
+            """,
+            triggerCharacter: '}',
+            razorLSPOptions: RazorLSPOptions.Default with { FormatOnType = false });
+    }
+
+    [Fact]
+    public async Task OnTypeFormatting_Enabled()
+    {
+        await RunOnTypeFormattingTestAsync(
+            input: """
+            @functions {
+            	private int currentCount = 0;
+            
+            	private void IncrementCount (){
+            		currentCount++;
+            	}$$
+            }
+            """,
+            expected: """
+            @functions {
+                private int currentCount = 0;
+            
+                private void IncrementCount()
+                {
+                    currentCount++;
+                }
+            }
+            """,
+            triggerCharacter: '}',
+            razorLSPOptions: RazorLSPOptions.Default with { FormatOnType = true });
+    }
+
+    [Fact]
+    public async Task LargeFile()
+    {
+        await RunFormattingTestAsync(
+            input: TestResources.GetResourceText("FormattingTest.razor"),
+            expected: TestResources.GetResourceText("FormattingTest_Expected.razor"),
+            allowDiagnostics: true);
     }
 }

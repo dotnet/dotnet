@@ -33,7 +33,7 @@ internal class ProjectRazorJsonPublisher : ProjectSnapshotChangeTrigger
     private readonly RazorLogger _logger;
     private readonly LSPEditorFeatureDetector _lspEditorFeatureDetector;
     private readonly ProjectConfigurationFilePathStore _projectConfigurationFilePathStore;
-    private readonly Dictionary<string, ProjectSnapshot> _pendingProjectPublishes;
+    private readonly Dictionary<string, IProjectSnapshot> _pendingProjectPublishes;
     private readonly object _pendingProjectPublishesLock;
     private readonly object _publishLock;
 
@@ -75,7 +75,7 @@ internal class ProjectRazorJsonPublisher : ProjectSnapshotChangeTrigger
         }
 
         DeferredPublishTasks = new Dictionary<string, Task>(FilePathComparer.Instance);
-        _pendingProjectPublishes = new Dictionary<string, ProjectSnapshot>(FilePathComparer.Instance);
+        _pendingProjectPublishes = new Dictionary<string, IProjectSnapshot>(FilePathComparer.Instance);
         _pendingProjectPublishesLock = new();
         _publishLock = new object();
 
@@ -99,7 +99,7 @@ internal class ProjectRazorJsonPublisher : ProjectSnapshotChangeTrigger
     }
 
     // Internal for testing
-    internal void EnqueuePublish(ProjectSnapshot projectSnapshot)
+    internal void EnqueuePublish(IProjectSnapshot projectSnapshot)
     {
         lock (_pendingProjectPublishesLock)
         {
@@ -211,7 +211,7 @@ internal class ProjectRazorJsonPublisher : ProjectSnapshotChangeTrigger
     }
 
     // Internal for testing
-    internal void Publish(ProjectSnapshot projectSnapshot)
+    internal void Publish(IProjectSnapshot projectSnapshot)
     {
         if (projectSnapshot is null)
         {
@@ -245,7 +245,7 @@ internal class ProjectRazorJsonPublisher : ProjectSnapshotChangeTrigger
     }
 
     // Internal for testing
-    internal void RemovePublishingData(ProjectSnapshot projectSnapshot)
+    internal void RemovePublishingData(IProjectSnapshot projectSnapshot)
     {
         lock (_publishLock)
         {
@@ -267,7 +267,7 @@ internal class ProjectRazorJsonPublisher : ProjectSnapshotChangeTrigger
         }
     }
 
-    protected virtual void SerializeToFile(ProjectSnapshot projectSnapshot, string publishFilePath)
+    protected virtual void SerializeToFile(IProjectSnapshot projectSnapshot, string publishFilePath)
     {
         // We need to avoid having an incomplete file at any point, but our
         // project configuration file is large enough that it will be written as multiple operations.
@@ -302,7 +302,7 @@ internal class ProjectRazorJsonPublisher : ProjectSnapshotChangeTrigger
         return File.Exists(file);
     }
 
-    protected virtual bool ShouldSerialize(ProjectSnapshot projectSnapshot, string configurationFilePath)
+    protected virtual bool ShouldSerialize(IProjectSnapshot projectSnapshot, string configurationFilePath)
     {
         if (!FileExists(configurationFilePath))
         {
@@ -315,16 +315,15 @@ internal class ProjectRazorJsonPublisher : ProjectSnapshotChangeTrigger
             if (projectSnapshot.DocumentFilePaths.Any(d => AspNetCore.Razor.Language.FileKinds.GetFileKindFromFilePath(d)
                 .Equals(AspNetCore.Razor.Language.FileKinds.Component, StringComparison.OrdinalIgnoreCase)))
             {
-                foreach (var document in projectSnapshot.DocumentFilePaths)
+                foreach (var documentFilePath in projectSnapshot.DocumentFilePaths)
                 {
                     // We want to wait until at least one document has been processed (meaning it became a TagHelper.
                     // Because we don't have a way to tell which TagHelpers were created from the local project just from their descriptors we have to improvise
                     // We assume that a document has been processed if at least one Component matches the name of one of our files.
-                    var fileName = Path.GetFileNameWithoutExtension(document);
+                    var fileName = Path.GetFileNameWithoutExtension(documentFilePath);
 
-                    var documentSnapshot = projectSnapshot.GetDocument(document);
-
-                    if (documentSnapshot.FileKind.Equals(AspNetCore.Razor.Language.FileKinds.Component, StringComparison.OrdinalIgnoreCase) &&
+                    if (projectSnapshot.GetDocument(documentFilePath) is { } documentSnapshot &&
+                        string.Equals(documentSnapshot.FileKind, AspNetCore.Razor.Language.FileKinds.Component, StringComparison.OrdinalIgnoreCase) &&
                         projectSnapshot.TagHelpers.Any(t => t.Name.EndsWith("." + fileName, StringComparison.OrdinalIgnoreCase)))
                     {
                         // Documents have been processed, lets publish
@@ -343,7 +342,7 @@ internal class ProjectRazorJsonPublisher : ProjectSnapshotChangeTrigger
         return _documentsProcessed;
     }
 
-    private void ImmediatePublish(ProjectSnapshot projectSnapshot)
+    private void ImmediatePublish(IProjectSnapshot projectSnapshot)
     {
         lock (_pendingProjectPublishesLock)
         {
@@ -358,7 +357,7 @@ internal class ProjectRazorJsonPublisher : ProjectSnapshotChangeTrigger
     {
         await Task.Delay(EnqueueDelay).ConfigureAwait(false);
 
-        ProjectSnapshot projectSnapshot;
+        IProjectSnapshot projectSnapshot;
         lock (_pendingProjectPublishesLock)
         {
             if (!_pendingProjectPublishes.TryGetValue(projectFilePath, out projectSnapshot))

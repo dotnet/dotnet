@@ -1,4 +1,4 @@
-Source Location: (0:0,0 [19] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DesignTime.cshtml)
+﻿Source Location: (0:0,0 [19] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DesignTime.cshtml)
 |<div>
             |
 Generated Location: (0:0,0 [19] )

@@ -22,7 +22,7 @@ public class DefaultWorkspaceSemanticTokensRefreshTriggerTest : LanguageServerTe
     public DefaultWorkspaceSemanticTokensRefreshTriggerTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _projectManager = TestProjectSnapshotManager.Create(LegacyDispatcher);
+        _projectManager = TestProjectSnapshotManager.Create(LegacyDispatcher, ErrorReporter);
         _projectManager.AllowNotifyListeners = true;
         _hostProject = new HostProject("/path/to/project.csproj", RazorConfiguration.Default, "TestRootNamespace");
         _projectManager.ProjectAdded(_hostProject);
@@ -55,21 +55,10 @@ public class DefaultWorkspaceSemanticTokensRefreshTriggerTest : LanguageServerTe
         }
     }
 
-    private class TestErrorReporter : ErrorReporter
+    private class TestErrorReporter : IErrorReporter
     {
-        public override void ReportError(Exception exception)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void ReportError(Exception exception, ProjectSnapshot? project)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void ReportError(Exception exception, Project workspaceProject)
-        {
-            throw new NotImplementedException();
-        }
+        public void ReportError(Exception exception) => throw new NotImplementedException();
+        public void ReportError(Exception exception, IProjectSnapshot? project) => throw new NotImplementedException();
+        public void ReportError(Exception exception, Project workspaceProject) => throw new NotImplementedException();
     }
 }

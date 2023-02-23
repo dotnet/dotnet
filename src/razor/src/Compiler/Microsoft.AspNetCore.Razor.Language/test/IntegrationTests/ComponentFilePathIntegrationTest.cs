@@ -4,6 +4,7 @@
 #nullable disable
 
 using System.IO;
+using System.Linq;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests;
@@ -24,7 +25,7 @@ public class ComponentFilePathIntegrationTest : RazorIntegrationTestBase
         // Assert
         Assert.Empty(result.Diagnostics);
 
-        var type = Assert.Single(result.Assembly.GetTypes());
+        var type = Assert.Single(result.Assembly.GetTypes().Where(t => t.GetCustomAttributes(inherit: false).All(a => a.GetType().Name != "CompilerGeneratedAttribute")));
         Assert.Equal(DefaultRootNamespace, type.Namespace);
         Assert.Equal("Filename_with_spaces", type.Name);
     }
@@ -44,7 +45,7 @@ public class ComponentFilePathIntegrationTest : RazorIntegrationTestBase
         // Assert
         Assert.Empty(result.Diagnostics);
 
-        var type = Assert.Single(result.Assembly.GetTypes());
+        var type = Assert.Single(result.Assembly.GetTypes().Where(t => t.GetCustomAttributes(inherit: false).All(a => a.GetType().Name != "CompilerGeneratedAttribute")));
         Assert.Equal(expectedNamespace, type.Namespace);
         Assert.Equal(expectedClassName, type.Name);
     }

@@ -22,6 +22,7 @@
 101,1,operator,
 102,7,identifier,
 109,1,HTML Attribute Value,
+110,1,HTML Tag Delimiter,
 111,1,HTML Tag Delimiter,
 112,1,HTML Tag Delimiter,
 115,1,HTML Tag Delimiter,

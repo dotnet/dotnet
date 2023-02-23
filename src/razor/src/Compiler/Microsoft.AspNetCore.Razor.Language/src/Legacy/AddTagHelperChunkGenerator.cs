@@ -29,11 +29,11 @@ internal class AddTagHelperChunkGenerator : SpanChunkGenerator
 
     public string LookupText { get; }
 
-    public string DirectiveText { get; set; }
+    public string DirectiveText { get; }
 
-    public string TypePattern { get; set; }
+    public string TypePattern { get; }
 
-    public string AssemblyName { get; set; }
+    public string AssemblyName { get; }
 
     public List<RazorDiagnostic> Diagnostics { get; }
 

@@ -16,7 +16,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 public class RazorConfigurationEndpointTest : LanguageServerTestBase
 {
     private readonly IOptionsMonitorCache<RazorLSPOptions> _cache;
-    private readonly RazorConfigurationService _configurationService;
+    private readonly IConfigurationSyncService _configurationService;
 
     public RazorConfigurationEndpointTest(ITestOutputHelper testOutput)
         : base(testOutput)
@@ -24,7 +24,12 @@ public class RazorConfigurationEndpointTest : LanguageServerTestBase
         var services = new ServiceCollection().AddOptions();
         _cache = services.BuildServiceProvider().GetRequiredService<IOptionsMonitorCache<RazorLSPOptions>>();
 
-        _configurationService = Mock.Of<RazorConfigurationService>(MockBehavior.Strict);
+        var configServiceMock = new Mock<IConfigurationSyncService>(MockBehavior.Strict);
+        configServiceMock
+            .Setup(c => c.GetLatestOptionsAsync(It.IsAny<CancellationToken>()))
+            .Returns(Task.FromResult<RazorLSPOptions?>(RazorLSPOptions.Default));
+
+        _configurationService = configServiceMock.Object;
     }
 
     [Fact]
@@ -41,23 +46,5 @@ public class RazorConfigurationEndpointTest : LanguageServerTestBase
 
         // Assert
         Assert.True(optionsMonitor.Called, "UpdateAsync was not called.");
-    }
-
-    private class TestRazorLSPOptionsMonitor : RazorLSPOptionsMonitor
-    {
-        public TestRazorLSPOptionsMonitor(
-            RazorConfigurationService configurationService,
-            IOptionsMonitorCache<RazorLSPOptions> cache)
-            : base(configurationService, cache)
-        {
-        }
-
-        public bool Called { get; private set; }
-
-        public override Task UpdateAsync(CancellationToken cancellationToken)
-        {
-            Called = true;
-            return Task.CompletedTask;
-        }
     }
 }

@@ -10,6 +10,7 @@ using Microsoft.VisualStudio.Editor;
 using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.Editor.Razor.Debugging;
 using Microsoft.VisualStudio.LanguageServices.Razor;
+using Microsoft.VisualStudio.RazorExtension.Options;
 using Microsoft.VisualStudio.RazorExtension.SyntaxVisualizer;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
@@ -32,6 +33,7 @@ namespace Microsoft.VisualStudio.RazorExtension;
 [ProvideMenuResource("Menus.ctmenu", 1)]
 [ProvideMenuResource("SyntaxVisualizerMenu.ctmenu", 1)]
 [ProvideToolWindow(typeof(SyntaxVisualizerToolWindow))]
+[ProvideLanguageEditorOptionPage(typeof(AdvancedOptionPage), RazorConstants.RazorLSPContentTypeName, category: null, "Advanced", pageNameResourceId: "#1050", keywordListResourceId: 1060)]
 [Guid(PackageGuidString)]
 public sealed class RazorPackage : AsyncPackage
 {

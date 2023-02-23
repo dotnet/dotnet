@@ -64,7 +64,7 @@ internal class DefaultProjectSnapshotProjectEngineFactory : ProjectSnapshotProje
     }
 #nullable disable
 
-    public override IProjectEngineFactory FindFactory(ProjectSnapshot project)
+    public override IProjectEngineFactory FindFactory(IProjectSnapshot project)
     {
         if (project is null)
         {
@@ -74,7 +74,7 @@ internal class DefaultProjectSnapshotProjectEngineFactory : ProjectSnapshotProje
         return SelectFactory(project.Configuration ?? s_defaultConfiguration, requireSerializable: false);
     }
 
-    public override IProjectEngineFactory FindSerializableFactory(ProjectSnapshot project)
+    public override IProjectEngineFactory FindSerializableFactory(IProjectSnapshot project)
     {
         if (project is null)
         {

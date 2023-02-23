@@ -23,12 +23,12 @@ internal class TestProjectSnapshotProjectEngineFactory : ProjectSnapshotProjectE
         });
     }
 
-    public override IProjectEngineFactory FindFactory(ProjectSnapshot project)
+    public override IProjectEngineFactory FindFactory(IProjectSnapshot project)
     {
         throw new NotImplementedException();
     }
 
-    public override IProjectEngineFactory FindSerializableFactory(ProjectSnapshot project)
+    public override IProjectEngineFactory FindSerializableFactory(IProjectSnapshot project)
     {
         throw new NotImplementedException();
     }

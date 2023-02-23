@@ -26,7 +26,7 @@ public class DocumentSnapshotTextLoaderTest : TestBase
         // Arrange
         var expectedSourceText = SourceText.From("Hello World");
         var result = Task.FromResult(expectedSourceText);
-        var snapshot = Mock.Of<DocumentSnapshot>(doc => doc.GetTextAsync() == result, MockBehavior.Strict);
+        var snapshot = Mock.Of<IDocumentSnapshot>(doc => doc.GetTextAsync() == result, MockBehavior.Strict);
         var textLoader = new DocumentSnapshotTextLoader(snapshot);
 
         // Act

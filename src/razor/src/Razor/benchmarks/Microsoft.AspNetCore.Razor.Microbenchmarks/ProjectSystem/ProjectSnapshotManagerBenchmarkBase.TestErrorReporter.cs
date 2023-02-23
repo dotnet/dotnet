@@ -10,17 +10,17 @@ namespace Microsoft.AspNetCore.Razor.Microbenchmarks;
 
 public abstract partial class ProjectSnapshotManagerBenchmarkBase
 {
-    private class TestErrorReporter : ErrorReporter
+    private class TestErrorReporter : IErrorReporter
     {
-        public override void ReportError(Exception exception)
+        public void ReportError(Exception exception)
         {
         }
 
-        public override void ReportError(Exception exception, ProjectSnapshot? project)
+        public void ReportError(Exception exception, IProjectSnapshot? project)
         {
         }
 
-        public override void ReportError(Exception exception, Project workspaceProject)
+        public void ReportError(Exception exception, Project workspaceProject)
         {
         }
     }

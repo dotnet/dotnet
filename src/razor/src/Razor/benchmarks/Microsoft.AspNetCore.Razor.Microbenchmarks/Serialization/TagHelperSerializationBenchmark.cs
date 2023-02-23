@@ -1,8 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -30,7 +28,7 @@ public class TagHelperSerializationBenchmark : TagHelperBenchmarkBase
         using (stream)
         using (var reader = new JsonTextReader(new StreamReader(stream)))
         {
-            reDeserializedTagHelpers = DefaultSerializer.Deserialize<IReadOnlyList<TagHelperDescriptor>>(reader);
+            reDeserializedTagHelpers = DefaultSerializer.Deserialize<IReadOnlyList<TagHelperDescriptor>>(reader).AssumeNotNull();
         }
     }
 
@@ -49,7 +47,7 @@ public class TagHelperSerializationBenchmark : TagHelperBenchmarkBase
         IReadOnlyList<TagHelperDescriptor> tagHelpers;
         using var stream = new MemoryStream(TagHelperBuffer);
         using var reader = new JsonTextReader(new StreamReader(stream));
-        tagHelpers = DefaultSerializer.Deserialize<IReadOnlyList<TagHelperDescriptor>>(reader);
+        tagHelpers = DefaultSerializer.Deserialize<IReadOnlyList<TagHelperDescriptor>>(reader).AssumeNotNull();
     }
 
     [Benchmark(Description = "TagHelpers GetHashCode")]

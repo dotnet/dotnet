@@ -52,7 +52,7 @@ public class ProjectBuildChangeTriggerTest : ProjectSnapshotManagerDispatcherTes
         var projectService = CreateProjectService(expectedProjectPath);
 
         var args = new BuildEventArgs(monitor: null, success: true);
-        var projectSnapshot = new DefaultProjectSnapshot(ProjectState.Create(_workspace.Services, _someProject));
+        var projectSnapshot = new ProjectSnapshot(ProjectState.Create(_workspace.Services, _someProject));
 
         var projectManager = new Mock<ProjectSnapshotManagerBase>(MockBehavior.Strict);
         projectManager.SetupGet(p => p.Workspace).Returns(_workspace);
@@ -80,7 +80,7 @@ public class ProjectBuildChangeTriggerTest : ProjectSnapshotManagerDispatcherTes
         var projectService = CreateProjectService(expectedPath);
 
         var args = new BuildEventArgs(monitor: null, success: true);
-        var projectSnapshot = new DefaultProjectSnapshot(
+        var projectSnapshot = new ProjectSnapshot(
             ProjectState.Create(
                 _workspace.Services,
                 new HostProject(expectedPath, RazorConfiguration.Default, "Project")));
@@ -112,7 +112,7 @@ public class ProjectBuildChangeTriggerTest : ProjectSnapshotManagerDispatcherTes
         projectManager.SetupGet(p => p.Workspace).Returns(_workspace);
         projectManager
             .Setup(p => p.GetLoadedProject(_someProject.FilePath))
-            .Returns<ProjectSnapshot>(null);
+            .Returns<IProjectSnapshot>(null);
         var workspaceStateGenerator = new TestProjectWorkspaceStateGenerator();
         var trigger = new ProjectBuildChangeTrigger(Dispatcher, projectService, workspaceStateGenerator, projectManager.Object);
 

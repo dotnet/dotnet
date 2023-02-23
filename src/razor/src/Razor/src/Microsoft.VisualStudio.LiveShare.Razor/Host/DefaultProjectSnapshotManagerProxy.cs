@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.Threading;
@@ -89,7 +90,7 @@ internal class DefaultProjectSnapshotManagerProxy : IProjectSnapshotManagerProxy
     }
 
     // Internal for testing
-    internal async Task<IReadOnlyList<ProjectSnapshot>> GetLatestProjectsAsync()
+    internal async Task<IReadOnlyList<IProjectSnapshot>> GetLatestProjectsAsync()
     {
         if (!_joinableTaskFactory.Context.IsOnMainThread)
         {
@@ -100,7 +101,7 @@ internal class DefaultProjectSnapshotManagerProxy : IProjectSnapshotManagerProxy
     }
 
     // Internal for testing
-    internal async Task<ProjectSnapshotManagerProxyState> CalculateUpdatedStateAsync(IReadOnlyList<ProjectSnapshot> projects)
+    internal async Task<ProjectSnapshotManagerProxyState> CalculateUpdatedStateAsync(IReadOnlyList<IProjectSnapshot> projects)
     {
         using (await _latestStateSemaphore.EnterAsync().ConfigureAwait(false))
         {
@@ -117,7 +118,7 @@ internal class DefaultProjectSnapshotManagerProxy : IProjectSnapshotManagerProxy
     }
 
     [return: NotNullIfNotNull(nameof(project))]
-    private ProjectSnapshotHandleProxy? ConvertToProxy(ProjectSnapshot? project)
+    private ProjectSnapshotHandleProxy? ConvertToProxy(IProjectSnapshot? project)
     {
         if (project is null)
         {
@@ -126,7 +127,7 @@ internal class DefaultProjectSnapshotManagerProxy : IProjectSnapshotManagerProxy
 
         var projectWorkspaceState = new ProjectWorkspaceState(project.TagHelpers, project.CSharpLanguageVersion);
         var projectFilePath = _session.ConvertLocalPathToSharedUri(project.FilePath);
-        var projectHandleProxy = new ProjectSnapshotHandleProxy(projectFilePath, project.Configuration, project.RootNamespace, projectWorkspaceState);
+        var projectHandleProxy = new ProjectSnapshotHandleProxy(projectFilePath, project.Configuration.AssumeNotNull(), project.RootNamespace, projectWorkspaceState);
         return projectHandleProxy;
     }
 

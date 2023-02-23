@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-internal class LanguageServerErrorReporter : ErrorReporter
+internal class LanguageServerErrorReporter : IErrorReporter
 {
     private readonly ILogger _logger;
 
@@ -23,18 +23,12 @@ internal class LanguageServerErrorReporter : ErrorReporter
         _logger = loggerFactory.CreateLogger<LanguageServerErrorReporter>();
     }
 
-    public override void ReportError(Exception exception)
-    {
-        _logger.LogError(exception, "Error thrown from LanguageServer");
-    }
+    public void ReportError(Exception exception)
+        => _logger.LogError(exception, "Error thrown from LanguageServer");
 
-    public override void ReportError(Exception exception, ProjectSnapshot? project)
-    {
-        _logger.LogError(exception, "Error thrown from project {projectFilePath}", project?.FilePath);
-    }
+    public void ReportError(Exception exception, IProjectSnapshot? project)
+        => _logger.LogError(exception, "Error thrown from project {projectFilePath}", project?.FilePath);
 
-    public override void ReportError(Exception exception, Project workspaceProject)
-    {
-        _logger.LogError(exception, "Error thrown from project {workspaceProjectFilePath}", workspaceProject.FilePath);
-    }
+    public void ReportError(Exception exception, Project workspaceProject)
+        => _logger.LogError(exception, "Error thrown from project {workspaceProjectFilePath}", workspaceProject.FilePath);
 }

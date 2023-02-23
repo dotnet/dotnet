@@ -12,8 +12,13 @@ namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
 internal class CodeBlockEditHandler : SpanEditHandler
 {
-    public CodeBlockEditHandler(Func<string, IEnumerable<Syntax.InternalSyntax.SyntaxToken>> tokenizer) : base(tokenizer)
+    public static void SetupBuilder(SpanEditHandlerBuilder builder, Func<string, IEnumerable<Syntax.InternalSyntax.SyntaxToken>> tokenizer)
     {
+        builder.Factory = (acceptedCharacters, tokenizer) => new CodeBlockEditHandler
+        {
+            AcceptedCharacters = acceptedCharacters,
+            Tokenizer = tokenizer,
+        };
     }
 
     protected override PartialParseResultInternal CanAcceptChange(SyntaxNode target, SourceChange change)

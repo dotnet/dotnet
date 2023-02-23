@@ -17,10 +17,11 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
 internal class MonitorProjectConfigurationFilePathEndpoint : IMonitorProjectConfigurationFilePathHandler, IDisposable
 {
-    private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
+    private readonly ProjectSnapshotManagerDispatcher _dispatcher;
     private readonly WorkspaceDirectoryPathResolver _workspaceDirectoryPathResolver;
     private readonly IEnumerable<IProjectConfigurationFileChangeListener> _listeners;
-    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
+    private readonly LanguageServerFeatureOptions _options;
+    private readonly ILoggerFactory _loggerFactory;
     private readonly ILogger _logger;
     private readonly ConcurrentDictionary<string, (string ConfigurationDirectory, IFileChangeDetector Detector)> _outputPathMonitors;
     private readonly object _disposeLock;
@@ -29,21 +30,22 @@ internal class MonitorProjectConfigurationFilePathEndpoint : IMonitorProjectConf
     public bool MutatesSolutionState => false;
 
     public MonitorProjectConfigurationFilePathEndpoint(
-        ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
+        ProjectSnapshotManagerDispatcher dispatcher,
         WorkspaceDirectoryPathResolver workspaceDirectoryPathResolver,
         IEnumerable<IProjectConfigurationFileChangeListener> listeners,
-        LanguageServerFeatureOptions languageServerFeatureOptions,
+        LanguageServerFeatureOptions options,
         ILoggerFactory loggerFactory)
     {
-        if (languageServerFeatureOptions is null)
+        if (options is null)
         {
-            throw new ArgumentNullException(nameof(languageServerFeatureOptions));
+            throw new ArgumentNullException(nameof(options));
         }
 
-        _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher;
+        _dispatcher = dispatcher;
         _workspaceDirectoryPathResolver = workspaceDirectoryPathResolver;
         _listeners = listeners;
-        _languageServerFeatureOptions = languageServerFeatureOptions;
+        _options = options;
+        _loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
         _logger = loggerFactory.CreateLogger<MonitorProjectConfigurationFilePathEndpoint>();
         _outputPathMonitors = new ConcurrentDictionary<string, (string, IFileChangeDetector)>(FilePathComparer.Instance);
         _disposeLock = new object();
@@ -72,7 +74,7 @@ internal class MonitorProjectConfigurationFilePathEndpoint : IMonitorProjectConf
             return;
         }
 
-        if (!request.ConfigurationFilePath.EndsWith(_languageServerFeatureOptions.ProjectConfigurationFileName, StringComparison.Ordinal))
+        if (!request.ConfigurationFilePath.EndsWith(_options.ProjectConfigurationFileName, StringComparison.Ordinal))
         {
             _logger.LogError("Invalid configuration file path provided for project '{0}': '{1}'", request.ProjectFilePath, request.ConfigurationFilePath);
             return;
@@ -188,8 +190,10 @@ internal class MonitorProjectConfigurationFilePathEndpoint : IMonitorProjectConf
     }
 
     // Protected virtual for testing
-    protected virtual IFileChangeDetector CreateFileChangeDetector() => new ProjectConfigurationFileChangeDetector(
-        _projectSnapshotManagerDispatcher,
-        _listeners,
-        _languageServerFeatureOptions);
+    protected virtual IFileChangeDetector CreateFileChangeDetector()
+        => new ProjectConfigurationFileChangeDetector(
+            _dispatcher,
+            _listeners,
+            _options,
+            _loggerFactory);
 }

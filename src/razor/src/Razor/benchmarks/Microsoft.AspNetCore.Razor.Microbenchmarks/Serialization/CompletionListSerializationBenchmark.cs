@@ -1,8 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System.IO;
 using System.Text;
 using BenchmarkDotNet.Attributes;
@@ -20,6 +18,9 @@ public class CompletionListSerializationBenchmark : TagHelperBenchmarkBase
 {
     private readonly byte[] _completionListBuffer;
 
+    private readonly JsonSerializer _serializer;
+    private readonly CompletionList _completionList;
+
     public CompletionListSerializationBenchmark()
     {
         var tagHelperFactsService = new DefaultTagHelperFactsService();
@@ -27,17 +28,13 @@ public class CompletionListSerializationBenchmark : TagHelperBenchmarkBase
         var htmlFactsService = new DefaultHtmlFactsService();
         var tagHelperCompletionProvider = new TagHelperCompletionProvider(completionService, htmlFactsService, tagHelperFactsService);
 
-        Serializer = JsonSerializer.Create();
+        _serializer = JsonSerializer.Create();
 
         var documentContent = "<";
         var queryIndex = 1;
-        CompletionList = GenerateCompletionList(documentContent, queryIndex, tagHelperCompletionProvider);
-        _completionListBuffer = GenerateBuffer(CompletionList);
+        _completionList = GenerateCompletionList(documentContent, queryIndex, tagHelperCompletionProvider);
+        _completionListBuffer = GenerateBuffer(_completionList);
     }
-
-    private JsonSerializer Serializer { get; }
-
-    private CompletionList CompletionList { get; }
 
     [Benchmark(Description = "Component Completion List Roundtrip Serialization")]
     public void ComponentElement_CompletionList_Serialization_RoundTrip()
@@ -47,7 +44,7 @@ public class CompletionListSerializationBenchmark : TagHelperBenchmarkBase
         using (originalStream = new MemoryStream())
         using (var writer = new StreamWriter(originalStream, Encoding.UTF8, bufferSize: 4096))
         {
-            Serializer.Serialize(writer, CompletionList);
+            _serializer.Serialize(writer, _completionList);
         }
 
         CompletionList deserializedCompletions;
@@ -55,7 +52,7 @@ public class CompletionListSerializationBenchmark : TagHelperBenchmarkBase
         using (stream)
         using (var reader = new JsonTextReader(new StreamReader(stream)))
         {
-            deserializedCompletions = Serializer.Deserialize<CompletionList>(reader);
+            deserializedCompletions = _serializer.Deserialize<CompletionList>(reader).AssumeNotNull();
         }
     }
 
@@ -64,7 +61,7 @@ public class CompletionListSerializationBenchmark : TagHelperBenchmarkBase
     {
         using var stream = new MemoryStream();
         using var writer = new StreamWriter(stream, Encoding.UTF8, bufferSize: 4096);
-        Serializer.Serialize(writer, CompletionList);
+        _serializer.Serialize(writer, _completionList);
     }
 
     [Benchmark(Description = "Component Completion List Deserialization")]
@@ -74,7 +71,7 @@ public class CompletionListSerializationBenchmark : TagHelperBenchmarkBase
         using var stream = new MemoryStream(_completionListBuffer);
         using var reader = new JsonTextReader(new StreamReader(stream));
         CompletionList deserializedCompletions;
-        deserializedCompletions = Serializer.Deserialize<CompletionList>(reader);
+        deserializedCompletions = _serializer.Deserialize<CompletionList>(reader).AssumeNotNull();
     }
 
     private CompletionList GenerateCompletionList(string documentContent, int queryIndex, TagHelperCompletionProvider componentCompletionProvider)
@@ -115,7 +112,7 @@ public class CompletionListSerializationBenchmark : TagHelperBenchmarkBase
     {
         using var stream = new MemoryStream();
         using var writer = new StreamWriter(stream, Encoding.UTF8, bufferSize: 4096);
-        Serializer.Serialize(writer, completionList);
+        _serializer.Serialize(writer, completionList);
         var buffer = stream.GetBuffer();
 
         return buffer;

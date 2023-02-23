@@ -1,38 +1,64 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
-using System.Collections.Generic;
+using System;
+using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
-internal abstract class DocumentSnapshot
+internal class DocumentSnapshot : IDocumentSnapshot
 {
-    public abstract string FileKind { get; }
+    public string FileKind => State.HostDocument.FileKind;
+    public string FilePath => State.HostDocument.FilePath;
+    public string TargetPath => State.HostDocument.TargetPath;
+    public IProjectSnapshot Project => ProjectInternal;
+    public bool SupportsOutput => true;
 
-    public abstract string FilePath { get; }
+    public ProjectSnapshot ProjectInternal { get; }
+    public DocumentState State { get; }
 
-    public abstract string TargetPath { get; }
+    public DocumentSnapshot(ProjectSnapshot project, DocumentState state)
+    {
+        ProjectInternal = project ?? throw new ArgumentNullException(nameof(project));
+        State = state ?? throw new ArgumentNullException(nameof(state));
+    }
 
-    public abstract ProjectSnapshot Project { get; }
+    public virtual ImmutableArray<IDocumentSnapshot> GetImports()
+        => State.GetImports(ProjectInternal);
 
-    public abstract bool SupportsOutput { get; }
+    public Task<SourceText> GetTextAsync()
+        => State.GetTextAsync();
 
-    public abstract IReadOnlyList<DocumentSnapshot> GetImports();
+    public Task<VersionStamp> GetTextVersionAsync()
+        => State.GetTextVersionAsync();
 
-    public abstract Task<SourceText> GetTextAsync();
+    public virtual async Task<RazorCodeDocument> GetGeneratedOutputAsync()
+    {
+        var (output, _) = await State.GetGeneratedOutputAndVersionAsync(ProjectInternal, this).ConfigureAwait(false);
+        return output;
+    }
 
-    public abstract Task<VersionStamp> GetTextVersionAsync();
+    public bool TryGetText([NotNullWhen(true)] out SourceText? result)
+        => State.TryGetText(out result);
 
-    public abstract Task<RazorCodeDocument> GetGeneratedOutputAsync();
+    public bool TryGetTextVersion(out VersionStamp result)
+        => State.TryGetTextVersion(out result);
 
-    public abstract bool TryGetText(out SourceText result);
+    public virtual bool TryGetGeneratedOutput([NotNullWhen(true)] out RazorCodeDocument? result)
+    {
+        if (State.IsGeneratedOutputResultAvailable)
+        {
+#pragma warning disable VSTHRD002 // Avoid problematic synchronous waits
+            result = State.GetGeneratedOutputAndVersionAsync(ProjectInternal, this).Result.output;
+#pragma warning restore VSTHRD002 // Avoid problematic synchronous waits
+            return true;
+        }
 
-    public abstract bool TryGetTextVersion(out VersionStamp result);
-
-    public abstract bool TryGetGeneratedOutput(out RazorCodeDocument result);
+        result = null;
+        return false;
+    }
 }

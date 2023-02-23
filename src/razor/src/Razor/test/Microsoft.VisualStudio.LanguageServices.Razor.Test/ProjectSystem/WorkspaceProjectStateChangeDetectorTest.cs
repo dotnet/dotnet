@@ -126,7 +126,7 @@ public class WorkspaceProjectStateChangeDetectorTest : WorkspaceTestBase
         _hostProjectTwo = new HostProject("Two.csproj", FallbackRazorConfiguration.MVC_1_1, "Two");
         _hostProjectThree = new HostProject("Three.csproj", FallbackRazorConfiguration.MVC_1_1, "Three");
 
-        _workQueue = new BatchingWorkQueue(TimeSpan.FromMilliseconds(1), StringComparer.Ordinal, new DefaultErrorReporter());
+        _workQueue = new BatchingWorkQueue(TimeSpan.FromMilliseconds(1), StringComparer.Ordinal, ErrorReporter);
         AddDisposable(_workQueue);
 
         _workQueueTestAccessor = _workQueue.GetTestAccessor();
@@ -787,7 +787,7 @@ namespace Microsoft.AspNetCore.Components
             ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
             IEnumerable<ProjectSnapshotChangeTrigger> triggers,
             Workspace workspace)
-            : base(projectSnapshotManagerDispatcher, Mock.Of<ErrorReporter>(MockBehavior.Strict), triggers, workspace)
+            : base(projectSnapshotManagerDispatcher, Mock.Of<IErrorReporter>(MockBehavior.Strict), triggers, workspace)
         {
         }
     }

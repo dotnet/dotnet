@@ -21,11 +21,11 @@ public class DefaultDocumentSnapshotTest : WorkspaceTestBase
     private readonly HostDocument _componentHostDocument;
     private readonly HostDocument _componentCshtmlHostDocument;
     private readonly HostDocument _legacyHostDocument;
-    private readonly DefaultDocumentSnapshot _componentDocument;
-    private readonly DefaultDocumentSnapshot _componentCshtmlDocument;
-    private readonly DefaultDocumentSnapshot _legacyDocument;
+    private readonly DocumentSnapshot _componentDocument;
+    private readonly DocumentSnapshot _componentCshtmlDocument;
+    private readonly DocumentSnapshot _legacyDocument;
     private readonly HostDocument _nestedComponentHostDocument;
-    private readonly DefaultDocumentSnapshot _nestedComponentDocument;
+    private readonly DocumentSnapshot _nestedComponentDocument;
 
     public DefaultDocumentSnapshotTest(ITestOutputHelper testOutput)
         : base(testOutput)
@@ -40,21 +40,21 @@ public class DefaultDocumentSnapshotTest : WorkspaceTestBase
         _nestedComponentHostDocument = new HostDocument(TestProjectData.SomeProjectNestedComponentFile3);
 
         var projectState = ProjectState.Create(Workspace.Services, TestProjectData.SomeProject);
-        var project = new DefaultProjectSnapshot(projectState);
+        var project = new ProjectSnapshot(projectState);
 
         var textAndVersion = TextAndVersion.Create(_sourceText, _version);
 
         var documentState = DocumentState.Create(Workspace.Services, _legacyHostDocument, () => Task.FromResult(textAndVersion));
-        _legacyDocument = new DefaultDocumentSnapshot(project, documentState);
+        _legacyDocument = new DocumentSnapshot(project, documentState);
 
         documentState = DocumentState.Create(Workspace.Services, _componentHostDocument, () => Task.FromResult(textAndVersion));
-        _componentDocument = new DefaultDocumentSnapshot(project, documentState);
+        _componentDocument = new DocumentSnapshot(project, documentState);
 
         documentState = DocumentState.Create(Workspace.Services, _componentCshtmlHostDocument, () => Task.FromResult(textAndVersion));
-        _componentCshtmlDocument = new DefaultDocumentSnapshot(project, documentState);
+        _componentCshtmlDocument = new DocumentSnapshot(project, documentState);
 
         documentState = DocumentState.Create(Workspace.Services, _nestedComponentHostDocument, () => Task.FromResult(textAndVersion));
-        _nestedComponentDocument = new DefaultDocumentSnapshot(project, documentState);
+        _nestedComponentDocument = new DocumentSnapshot(project, documentState);
     }
 
     protected override void ConfigureWorkspaceServices(List<IWorkspaceService> services)

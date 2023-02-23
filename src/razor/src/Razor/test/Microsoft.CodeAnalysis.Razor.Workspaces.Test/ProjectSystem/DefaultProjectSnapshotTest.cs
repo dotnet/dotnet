@@ -59,7 +59,7 @@ public class DefaultProjectSnapshotTest : WorkspaceTestBase
             .WithAddedHostDocument(_documents[0], DocumentState.EmptyLoader)
             .WithAddedHostDocument(_documents[1], DocumentState.EmptyLoader)
             .WithAddedHostDocument(_documents[2], DocumentState.EmptyLoader);
-        var snapshot = new DefaultProjectSnapshot(state);
+        var snapshot = new ProjectSnapshot(state);
 
         // Act
         var documents = snapshot.DocumentFilePaths.ToDictionary(f => f, f => snapshot.GetDocument(f));
@@ -78,7 +78,7 @@ public class DefaultProjectSnapshotTest : WorkspaceTestBase
         // Arrange
         var state = ProjectState.Create(Workspace.Services, _hostProject, _projectWorkspaceState)
             .WithAddedHostDocument(_documents[0], DocumentState.EmptyLoader);
-        var snapshot = new DefaultProjectSnapshot(state);
+        var snapshot = new ProjectSnapshot(state);
 
         var document = snapshot.GetDocument(_documents[0].FilePath);
 
@@ -96,7 +96,7 @@ public class DefaultProjectSnapshotTest : WorkspaceTestBase
         var state = ProjectState.Create(Workspace.Services, _hostProject, _projectWorkspaceState)
             .WithAddedHostDocument(_documents[0], DocumentState.EmptyLoader)
             .WithAddedHostDocument(TestProjectData.SomeProjectImportFile, DocumentState.EmptyLoader);
-        var snapshot = new DefaultProjectSnapshot(state);
+        var snapshot = new ProjectSnapshot(state);
 
         var document = snapshot.GetDocument(TestProjectData.SomeProjectImportFile.FilePath);
 
@@ -113,7 +113,7 @@ public class DefaultProjectSnapshotTest : WorkspaceTestBase
         // Arrange
         var state = ProjectState.Create(Workspace.Services, _hostProject, _projectWorkspaceState)
             .WithAddedHostDocument(_documents[0], DocumentState.EmptyLoader);
-        var snapshot = new DefaultProjectSnapshot(state);
+        var snapshot = new ProjectSnapshot(state);
 
         var document = snapshot.GetDocument(_documents[0].FilePath);
 
@@ -132,7 +132,7 @@ public class DefaultProjectSnapshotTest : WorkspaceTestBase
             .WithAddedHostDocument(_documents[0], DocumentState.EmptyLoader)
             .WithAddedHostDocument(_documents[1], DocumentState.EmptyLoader)
             .WithAddedHostDocument(TestProjectData.SomeProjectImportFile, DocumentState.EmptyLoader);
-        var snapshot = new DefaultProjectSnapshot(state);
+        var snapshot = new ProjectSnapshot(state);
 
         var document = snapshot.GetDocument(TestProjectData.SomeProjectImportFile.FilePath);
 

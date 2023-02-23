@@ -8,5 +8,5 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 
 internal abstract class DocumentResolver
 {
-    public abstract bool TryResolveDocument(string documentFilePath, [NotNullWhen(true)] out DocumentSnapshot? document);
+    public abstract bool TryResolveDocument(string documentFilePath, [NotNullWhen(true)] out IDocumentSnapshot? document);
 }

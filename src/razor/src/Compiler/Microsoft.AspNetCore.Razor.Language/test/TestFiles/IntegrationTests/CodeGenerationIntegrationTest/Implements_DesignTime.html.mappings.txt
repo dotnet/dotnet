@@ -1,4 +1,4 @@
-Source Location: (23:0,23 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Implements.cshtml)
+﻿Source Location: (23:0,23 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Implements.cshtml)
 |
 
 |

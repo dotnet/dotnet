@@ -40,7 +40,7 @@ public class RazorLanguageServerBenchmarkBase : ProjectSnapshotManagerBenchmarkB
 
     private protected IRazorLogger Logger { get; }
 
-    internal DocumentSnapshot GetDocumentSnapshot(string projectFilePath, string filePath, string targetPath)
+    internal IDocumentSnapshot GetDocumentSnapshot(string projectFilePath, string filePath, string targetPath)
     {
         var hostProject = new HostProject(projectFilePath, RazorConfiguration.Default, rootNamespace: null);
         using var fileStream = new FileStream(filePath, FileMode.Open);

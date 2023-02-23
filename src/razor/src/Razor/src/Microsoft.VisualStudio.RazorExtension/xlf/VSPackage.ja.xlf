@@ -2,6 +2,16 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="ja" original="../VSPackage.resx">
     <body>
+      <trans-unit id="1050">
+        <source>Advanced</source>
+        <target state="translated">詳細</target>
+        <note>Advanced Page Group. Name must match the pkgdef definition</note>
+      </trans-unit>
+      <trans-unit id="1060">
+        <source>Formatting; Format On Type;</source>
+        <target state="translated">書式設定; 入力時に書式設定;</target>
+        <note>Delimited list of search terms for the advanced options page</note>
+      </trans-unit>
       <trans-unit id="110">
         <source>Razor (ASP.NET Core)</source>
         <target state="translated">Razor (ASP.NET Core)</target>
@@ -12,9 +22,24 @@
         <target state="translated">ASP.NET Core Razor の言語サービスを提供します。</target>
         <note />
       </trans-unit>
+      <trans-unit id="Formatting">
+        <source>Formatting</source>
+        <target state="translated">書式設定</target>
+        <note />
+      </trans-unit>
       <trans-unit id="RazorSyntaxVisualizer">
         <source>Razor Syntax Visualizer</source>
         <target state="translated">Razor Syntax Visualizer</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_FormattingOnTypeDescription">
+        <source>If true, formatting will be enabled while typing</source>
+        <target state="translated">true の場合、入力中に書式設定が有効になります</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_FormattingOnTypeDisplayName">
+        <source>Format On Type</source>
+        <target state="translated">入力時に書式設定</target>
         <note />
       </trans-unit>
     </body>

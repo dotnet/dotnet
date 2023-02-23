@@ -1,4 +1,4 @@
-Source Location: (13:0,13 [30] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InlineBlocks.cshtml)
+﻿Source Location: (13:0,13 [30] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InlineBlocks.cshtml)
 |(string link) {
     <a href="|
 Generated Location: (13:0,13 [30] )

@@ -158,7 +158,7 @@ public class DefaultHtmlCodeActionProviderTest : LanguageServerTestBase
         var projectEngine = RazorProjectEngine.Create(builder => builder.AddTagHelpers(tagHelpers));
         var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, FileKinds.Component, Array.Empty<RazorSourceDocument>(), tagHelpers);
 
-        var documentSnapshot = Mock.Of<DocumentSnapshot>(document =>
+        var documentSnapshot = Mock.Of<IDocumentSnapshot>(document =>
             document.GetGeneratedOutputAsync() == Task.FromResult(codeDocument) &&
             document.GetTextAsync() == Task.FromResult(codeDocument.GetSourceText()) &&
             document.Project.TagHelpers == tagHelpers, MockBehavior.Strict);

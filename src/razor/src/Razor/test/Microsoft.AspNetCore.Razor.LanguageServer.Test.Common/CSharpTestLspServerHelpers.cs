@@ -6,11 +6,13 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Test.Common.Extensions;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Testing;
@@ -98,6 +100,8 @@ internal class CSharpTestLspServerHelpers
 
         workspace.AddSolution(solutionInfo);
 
+        AddAnalyzersToWorkspace(workspace, exportProvider);
+
         // Add document to workspace. We use an IVT method to create the DocumentInfo variable because there's
         // a special constructor in Roslyn that will help identify the document as belonging to Razor.
         var languageServerFactory = exportProvider.GetExportedValue<IRazorLanguageServerFactoryWrapper>();
@@ -119,6 +123,30 @@ internal class CSharpTestLspServerHelpers
         }
 
         return workspace;
+    }
+
+    private static void AddAnalyzersToWorkspace(Workspace workspace, ExportProvider exportProvider)
+    {
+        var analyzerLoader = RazorTestAnalyzerLoader.CreateAnalyzerAssemblyLoader();
+
+        var analyzerPaths = new DirectoryInfo(AppContext.BaseDirectory).GetFiles("*.dll")
+            .Where(f => f.Name.StartsWith("Microsoft.CodeAnalysis.", StringComparison.Ordinal) && !f.Name.Contains("LanguageServer"))
+            .Select(f => f.FullName)
+            .ToImmutableArray();
+        var references = new List<AnalyzerFileReference>();
+        foreach (var analyzerPath in analyzerPaths)
+        {
+            if (File.Exists(analyzerPath))
+            {
+                references.Add(new AnalyzerFileReference(analyzerPath, analyzerLoader));
+            }
+        }
+
+        workspace.TryApplyChanges(workspace.CurrentSolution.WithAnalyzerReferences(references));
+
+        // Make sure Roslyn is producing diagnostics for our workspace
+        var razorTestAnalyzerLoader = exportProvider.GetExportedValue<RazorTestAnalyzerLoader>();
+        razorTestAnalyzerLoader.InitializeDiagnosticsServices(workspace);
     }
 
     private record CSharpFile(Uri DocumentUri, SourceText CSharpSourceText);

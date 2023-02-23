@@ -33,7 +33,7 @@ internal class OpenDocumentGenerator : ProjectSnapshotChangeTrigger, IDisposable
     public OpenDocumentGenerator(
         IEnumerable<DocumentProcessedListener> documentProcessedListeners,
         ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
-        ErrorReporter errorReporter)
+        IErrorReporter errorReporter)
     {
         if (documentProcessedListeners is null)
         {
@@ -88,11 +88,14 @@ internal class OpenDocumentGenerator : ProjectSnapshotChangeTrigger, IDisposable
         {
             case ProjectChangeKind.ProjectChanged:
                 {
-                    var projectSnapshot = args.Newer!;
-                    foreach (var documentFilePath in projectSnapshot.DocumentFilePaths)
+                    var newProject = args.Newer.AssumeNotNull();
+
+                    foreach (var documentFilePath in newProject.DocumentFilePaths)
                     {
-                        var document = projectSnapshot.GetDocument(documentFilePath);
-                        TryEnqueue(document);
+                        if (newProject.GetDocument(documentFilePath) is { } document)
+                        {
+                            TryEnqueue(document);
+                        }
                     }
 
                     break;
@@ -100,14 +103,17 @@ internal class OpenDocumentGenerator : ProjectSnapshotChangeTrigger, IDisposable
 
             case ProjectChangeKind.DocumentAdded:
                 {
-                    var projectSnapshot = args.Newer!;
-                    var document = projectSnapshot.GetDocument(args.DocumentFilePath);
+                    var newProject = args.Newer.AssumeNotNull();
+                    var documentFilePath = args.DocumentFilePath.AssumeNotNull();
 
-                    // We don't enqueue the current document because added documents are by default closed.
-
-                    foreach (var relatedDocument in projectSnapshot.GetRelatedDocuments(document))
+                    if (newProject.GetDocument(documentFilePath) is { } document)
                     {
-                        TryEnqueue(relatedDocument);
+                        // We don't enqueue the current document because added documents are by default closed.
+
+                        foreach (var relatedDocument in newProject.GetRelatedDocuments(document))
+                        {
+                            TryEnqueue(relatedDocument);
+                        }
                     }
 
                     break;
@@ -115,14 +121,17 @@ internal class OpenDocumentGenerator : ProjectSnapshotChangeTrigger, IDisposable
 
             case ProjectChangeKind.DocumentChanged:
                 {
-                    var projectSnapshot = args.Newer!;
-                    var document = projectSnapshot.GetDocument(args.DocumentFilePath);
+                    var newProject = args.Newer.AssumeNotNull();
+                    var documentFilePath = args.DocumentFilePath.AssumeNotNull();
 
-                    TryEnqueue(document);
-
-                    foreach (var relatedDocument in projectSnapshot.GetRelatedDocuments(document))
+                    if (newProject.GetDocument(documentFilePath) is { } document)
                     {
-                        TryEnqueue(relatedDocument);
+                        TryEnqueue(document);
+
+                        foreach (var relatedDocument in newProject.GetRelatedDocuments(document))
+                        {
+                            TryEnqueue(relatedDocument);
+                        }
                     }
 
                     break;
@@ -130,39 +139,49 @@ internal class OpenDocumentGenerator : ProjectSnapshotChangeTrigger, IDisposable
 
             case ProjectChangeKind.DocumentRemoved:
                 {
-                    var olderProject = args.Older!;
-                    var document = olderProject.GetDocument(args.DocumentFilePath);
+                    var newProject = args.Newer.AssumeNotNull();
+                    var oldProject = args.Older.AssumeNotNull();
+                    var documentFilePath = args.DocumentFilePath.AssumeNotNull();
 
-                    foreach (var relatedDocument in olderProject.GetRelatedDocuments(document))
+                    if (oldProject.GetDocument(documentFilePath) is { } document)
                     {
-                        var newerRelatedDocument = args.Newer!.GetDocument(relatedDocument.FilePath);
-                        TryEnqueue(newerRelatedDocument);
+                        foreach (var relatedDocument in oldProject.GetRelatedDocuments(document))
+                        {
+                            var relatedDocumentFilePath = relatedDocument.FilePath.AssumeNotNull();
+
+                            if (newProject.GetDocument(relatedDocumentFilePath) is { } newRelatedDocument)
+                            {
+                                TryEnqueue(newRelatedDocument);
+                            }
+                        }
                     }
 
                     break;
                 }
 
-                void TryEnqueue(DocumentSnapshot document)
+                void TryEnqueue(IDocumentSnapshot document)
                 {
-                    if (!ProjectManager.IsDocumentOpen(document.FilePath))
+                    var filePath = document.FilePath.AssumeNotNull();
+
+                    if (!ProjectManager.IsDocumentOpen(filePath))
                     {
                         return;
                     }
 
                     var workItem = new ProcessWorkItem(document, _documentProcessedListeners, _projectSnapshotManagerDispatcher);
-                    _workQueue.Enqueue(document.FilePath, workItem);
+                    _workQueue.Enqueue(filePath, workItem);
                 }
         }
     }
 
     private class ProcessWorkItem : BatchableWorkItem
     {
-        private readonly DocumentSnapshot _latestDocument;
+        private readonly IDocumentSnapshot _latestDocument;
         private readonly IEnumerable<DocumentProcessedListener> _documentProcessedListeners;
         private readonly ProjectSnapshotManagerDispatcher _dispatcher;
 
         public ProcessWorkItem(
-            DocumentSnapshot latestDocument,
+            IDocumentSnapshot latestDocument,
             IReadOnlyList<DocumentProcessedListener> documentProcessedListeners,
             ProjectSnapshotManagerDispatcher dispatcher)
         {

@@ -4,6 +4,7 @@
 #nullable disable
 
 using System;
+using Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp;
 using Microsoft.Build.Construction;
 using Microsoft.Build.Execution;
 using Xunit;

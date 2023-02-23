@@ -530,7 +530,7 @@ public class ProjectRazorJsonPublisherTest : LanguageServerTestBase
         Assert.False(serializationSuccessful);
     }
 
-    internal static ProjectSnapshot CreateProjectSnapshot(string projectFilePath, ProjectWorkspaceState projectWorkspaceState = null, string[] documentFilePaths = null)
+    internal static IProjectSnapshot CreateProjectSnapshot(string projectFilePath, ProjectWorkspaceState projectWorkspaceState = null, string[] documentFilePaths = null)
     {
         if (documentFilePaths is null)
         {
@@ -542,7 +542,7 @@ public class ProjectRazorJsonPublisherTest : LanguageServerTestBase
         return testProjectSnapshot;
     }
 
-    internal static ProjectSnapshot CreateProjectSnapshot(string projectFilePath, string[] documentFilePaths)
+    internal static IProjectSnapshot CreateProjectSnapshot(string projectFilePath, string[] documentFilePaths)
     {
         var testProjectSnapshot = TestProjectSnapshot.Create(projectFilePath, documentFilePaths);
 
@@ -551,7 +551,7 @@ public class ProjectRazorJsonPublisherTest : LanguageServerTestBase
 
     internal ProjectSnapshotManagerBase CreateProjectSnapshotManager(bool allowNotifyListeners = false)
     {
-        var snapshotManager = TestProjectSnapshotManager.Create(LegacyDispatcher);
+        var snapshotManager = TestProjectSnapshotManager.Create(LegacyDispatcher, ErrorReporter);
         snapshotManager.AllowNotifyListeners = allowNotifyListeners;
 
         return snapshotManager;
@@ -576,7 +576,7 @@ public class ProjectRazorJsonPublisherTest : LanguageServerTestBase
     {
         private static readonly Mock<LSPEditorFeatureDetector> s_lspEditorFeatureDetector = new(MockBehavior.Strict);
 
-        private readonly Action<ProjectSnapshot, string> _onSerializeToFile;
+        private readonly Action<IProjectSnapshot, string> _onSerializeToFile;
 
         private readonly bool _shouldSerialize;
         private readonly bool _useRealShouldSerialize;
@@ -590,7 +590,7 @@ public class ProjectRazorJsonPublisherTest : LanguageServerTestBase
 
         public TestProjectRazorJsonPublisher(
             ProjectConfigurationFilePathStore projectStatePublishFilePathStore,
-            Action<ProjectSnapshot, string> onSerializeToFile = null,
+            Action<IProjectSnapshot, string> onSerializeToFile = null,
             bool shouldSerialize = true,
             bool useRealShouldSerialize = false)
             : base(s_lspEditorFeatureDetector.Object, projectStatePublishFilePathStore, TestRazorLogger.Instance)
@@ -605,9 +605,9 @@ public class ProjectRazorJsonPublisherTest : LanguageServerTestBase
             return true;
         }
 
-        protected override void SerializeToFile(ProjectSnapshot projectSnapshot, string configurationFilePath) => _onSerializeToFile?.Invoke(projectSnapshot, configurationFilePath);
+        protected override void SerializeToFile(IProjectSnapshot projectSnapshot, string configurationFilePath) => _onSerializeToFile?.Invoke(projectSnapshot, configurationFilePath);
 
-        protected override bool ShouldSerialize(ProjectSnapshot projectSnapshot, string configurationFilePath)
+        protected override bool ShouldSerialize(IProjectSnapshot projectSnapshot, string configurationFilePath)
         {
             if (_useRealShouldSerialize)
             {

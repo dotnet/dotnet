@@ -52,7 +52,7 @@ internal class VisualStudioWindowsLSPEditorFeatureDetector : LSPEditorFeatureDet
                 return true;
             }
 
-            var settingsManager = (ISettingsManager)ServiceProvider.GlobalProvider.GetService(typeof(SVsSettingsPersistenceManager));
+            var settingsManager = (Settings.ISettingsManager)ServiceProvider.GlobalProvider.GetService(typeof(SVsSettingsPersistenceManager));
             Assumes.Present(settingsManager);
 
             var useLegacyEditor = settingsManager.GetValueOrDefault<bool>(UseLegacyASPNETCoreEditorSetting);

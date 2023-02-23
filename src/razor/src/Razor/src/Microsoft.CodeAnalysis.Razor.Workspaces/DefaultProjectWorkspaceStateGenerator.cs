@@ -60,7 +60,7 @@ internal class DefaultProjectWorkspaceStateGenerator : ProjectWorkspaceStateGene
         _tagHelperResolver = _projectManager.Workspace.Services.GetRequiredService<TagHelperResolver>();
     }
 
-    public override void Update(Project workspaceProject, ProjectSnapshot projectSnapshot, CancellationToken cancellationToken)
+    public override void Update(Project workspaceProject, IProjectSnapshot projectSnapshot, CancellationToken cancellationToken)
     {
         if (projectSnapshot is null)
         {
@@ -123,7 +123,7 @@ internal class DefaultProjectWorkspaceStateGenerator : ProjectWorkspaceStateGene
         BlockBackgroundWorkStart?.Set();
     }
 
-    private async Task UpdateWorkspaceStateAsync(Project workspaceProject, ProjectSnapshot projectSnapshot, CancellationToken cancellationToken)
+    private async Task UpdateWorkspaceStateAsync(Project workspaceProject, IProjectSnapshot projectSnapshot, CancellationToken cancellationToken)
     {
         // We fire this up on a background thread so we could have been disposed already, and if so, waiting on our semaphore
         // throws an exception.

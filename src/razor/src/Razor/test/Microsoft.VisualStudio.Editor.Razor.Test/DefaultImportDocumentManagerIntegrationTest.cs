@@ -41,12 +41,12 @@ public class DefaultImportDocumentManagerIntegrationTest : ProjectSnapshotManage
         var tracker = Mock.Of<VisualStudioDocumentTracker>(
             t => t.FilePath == Path.Combine(_directoryPath, "Views", "Home", "_ViewImports.cshtml") &&
             t.ProjectPath == _projectPath &&
-            t.ProjectSnapshot == Mock.Of<ProjectSnapshot>(p => p.GetProjectEngine() == _projectEngine && p.GetDocument(It.IsAny<string>()) == null, MockBehavior.Strict), MockBehavior.Strict);
+            t.ProjectSnapshot == Mock.Of<IProjectSnapshot>(p => p.GetProjectEngine() == _projectEngine && p.GetDocument(It.IsAny<string>()) == null, MockBehavior.Strict), MockBehavior.Strict);
 
         var anotherTracker = Mock.Of<VisualStudioDocumentTracker>(
             t => t.FilePath == Path.Combine(_directoryPath, "anotherFile.cshtml") &&
             t.ProjectPath == _projectPath &&
-            t.ProjectSnapshot == Mock.Of<ProjectSnapshot>(p => p.GetProjectEngine() == _projectEngine && p.GetDocument(It.IsAny<string>()) == null, MockBehavior.Strict), MockBehavior.Strict);
+            t.ProjectSnapshot == Mock.Of<IProjectSnapshot>(p => p.GetProjectEngine() == _projectEngine && p.GetDocument(It.IsAny<string>()) == null, MockBehavior.Strict), MockBehavior.Strict);
 
         var fileChangeTrackerFactory = new Mock<FileChangeTrackerFactory>(MockBehavior.Strict);
         var fileChangeTracker = new Mock<FileChangeTracker>(MockBehavior.Strict);
@@ -68,7 +68,7 @@ public class DefaultImportDocumentManagerIntegrationTest : ProjectSnapshotManage
             .Returns(Mock.Of<FileChangeTracker>(MockBehavior.Strict));
 
         var called = false;
-        var manager = new DefaultImportDocumentManager(Dispatcher, new DefaultErrorReporter(), fileChangeTrackerFactory.Object);
+        var manager = new DefaultImportDocumentManager(Dispatcher, ErrorReporter, fileChangeTrackerFactory.Object);
         manager.OnSubscribed(tracker);
         manager.OnSubscribed(anotherTracker);
         manager.Changed += (sender, args) =>

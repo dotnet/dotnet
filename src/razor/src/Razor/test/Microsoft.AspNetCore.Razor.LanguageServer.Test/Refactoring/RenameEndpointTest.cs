@@ -545,7 +545,7 @@ public class RenameEndpointTest : LanguageServerTestBase
         var sourceText = SourceText.From(new string(item.Content));
         var projectWorkspaceState = new ProjectWorkspaceState(tagHelpers, LanguageVersion.Default);
         var projectSnapshot = TestProjectSnapshot.Create("C:/project.csproj", projectWorkspaceState);
-        var snapshot = Mock.Of<DocumentSnapshot>(d =>
+        var snapshot = Mock.Of<IDocumentSnapshot>(d =>
             d.GetGeneratedOutputAsync() == Task.FromResult(codeDocument) &&
             d.FilePath == item.FilePath &&
             d.FileKind == FileKinds.Component &&
@@ -619,7 +619,7 @@ public class RenameEndpointTest : LanguageServerTestBase
             d.TryCreateForOpenDocumentAsync(new Uri(itemDirectory1.FilePath), It.IsAny<CancellationToken>()) == Task.FromResult(directory1Component) &&
             d.TryCreateForOpenDocumentAsync(new Uri(itemDirectory2.FilePath), It.IsAny<CancellationToken>()) == Task.FromResult(directory2Component), MockBehavior.Strict);
 
-        var firstProject = Mock.Of<ProjectSnapshot>(p =>
+        var firstProject = Mock.Of<IProjectSnapshot>(p =>
             p.FilePath == "c:/First/First.csproj" &&
             p.DocumentFilePaths == new[] { "c:/First/Component1.razor", "c:/First/Component2.razor", itemDirectory1.FilePath, itemDirectory2.FilePath, component1337.FilePath } &&
             p.GetDocument("c:/First/Component1.razor") == component1.Snapshot &&
@@ -628,7 +628,7 @@ public class RenameEndpointTest : LanguageServerTestBase
             p.GetDocument(itemDirectory2.FilePath) == directory2Component.Snapshot &&
             p.GetDocument(component1337.FilePath) == component1337.Snapshot, MockBehavior.Strict);
 
-        var secondProject = Mock.Of<ProjectSnapshot>(p =>
+        var secondProject = Mock.Of<IProjectSnapshot>(p =>
             p.FilePath == "c:/Second/Second.csproj" &&
             p.DocumentFilePaths == new[] { "c:/Second/Component3.razor", "c:/Second/Component4.razor", index.FilePath } &&
             p.GetDocument("c:/Second/Component3.razor") == component3.Snapshot &&

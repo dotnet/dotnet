@@ -255,8 +255,8 @@ public class ProjectStateGeneratedOutputTest : WorkspaceTestBase
     private static Task<(RazorCodeDocument, VersionStamp)> GetOutputAsync(ProjectState project, DocumentState document)
     {
 
-        var projectSnapshot = new DefaultProjectSnapshot(project);
-        var documentSnapshot = new DefaultDocumentSnapshot(projectSnapshot, document);
+        var projectSnapshot = new ProjectSnapshot(project);
+        var documentSnapshot = new DocumentSnapshot(projectSnapshot, document);
         return document.GetGeneratedOutputAndVersionAsync(projectSnapshot, documentSnapshot);
     }
 }

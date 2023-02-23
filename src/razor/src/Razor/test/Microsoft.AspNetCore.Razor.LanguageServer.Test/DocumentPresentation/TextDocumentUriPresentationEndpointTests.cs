@@ -41,12 +41,12 @@ public class TextDocumentUriPresentationEndpointTests : LanguageServerTestBase
 
         var uri = new Uri("file://path/test.razor");
 
-        var documentSnapshot = Mock.Of<DocumentSnapshot>(s => s.GetGeneratedOutputAsync() == Task.FromResult(componentCodeDocument), MockBehavior.Strict);
+        var documentSnapshot = Mock.Of<IDocumentSnapshot>(s => s.GetGeneratedOutputAsync() == Task.FromResult(componentCodeDocument), MockBehavior.Strict);
         var documentContextFactory = CreateDocumentContextFactory(uri, codeDocument);
 
         var documentContext = CreateDocumentContext(uri, codeDocument);
         var searchEngine = Mock.Of<RazorComponentSearchEngine>(
-            s => s.TryGetTagHelperDescriptorAsync(It.IsAny<DocumentSnapshot>(), It.IsAny<CancellationToken>()) == Task.FromResult(tagHelperDescriptor),
+            s => s.TryGetTagHelperDescriptorAsync(It.IsAny<IDocumentSnapshot>(), It.IsAny<CancellationToken>()) == Task.FromResult(tagHelperDescriptor),
             MockBehavior.Strict);
 
         var languageServer = new Mock<ClientNotifierServiceBase>(MockBehavior.Strict);
@@ -100,13 +100,13 @@ public class TextDocumentUriPresentationEndpointTests : LanguageServerTestBase
         builder.SetTypeNameIdentifier("MyTagHelper");
         var tagHelperDescriptor = builder.Build();
 
-        var documentSnapshot = Mock.Of<DocumentSnapshot>(s => s.GetGeneratedOutputAsync() == Task.FromResult(componentCodeDocument), MockBehavior.Strict);
+        var documentSnapshot = Mock.Of<IDocumentSnapshot>(s => s.GetGeneratedOutputAsync() == Task.FromResult(componentCodeDocument), MockBehavior.Strict);
 
         var uri = new Uri("file://path/test.razor");
         var documentContextFactory = CreateDocumentContextFactory(uri, codeDocument);
         var documentContext = CreateDocumentContext(uri, codeDocument);
         var searchEngine = Mock.Of<RazorComponentSearchEngine>(
-            s => s.TryGetTagHelperDescriptorAsync(It.IsAny<DocumentSnapshot>(), It.IsAny<CancellationToken>()) == Task.FromResult(tagHelperDescriptor),
+            s => s.TryGetTagHelperDescriptorAsync(It.IsAny<IDocumentSnapshot>(), It.IsAny<CancellationToken>()) == Task.FromResult(tagHelperDescriptor),
             MockBehavior.Strict);
 
         var languageServer = new Mock<ClientNotifierServiceBase>(MockBehavior.Strict);
@@ -168,13 +168,13 @@ public class TextDocumentUriPresentationEndpointTests : LanguageServerTestBase
         builder.BindAttribute(b => b.Name = "MyNonRequiredAttribute");
         var tagHelperDescriptor = builder.Build();
 
-        var documentSnapshot = Mock.Of<DocumentSnapshot>(s => s.GetGeneratedOutputAsync() == Task.FromResult(componentCodeDocument), MockBehavior.Strict);
+        var documentSnapshot = Mock.Of<IDocumentSnapshot>(s => s.GetGeneratedOutputAsync() == Task.FromResult(componentCodeDocument), MockBehavior.Strict);
 
         var uri = new Uri("file://path/test.razor");
         var documentContextFactory = CreateDocumentContextFactory(uri, codeDocument);
         var documentContext = CreateDocumentContext(uri, codeDocument);
         var searchEngine = Mock.Of<RazorComponentSearchEngine>(
-            s => s.TryGetTagHelperDescriptorAsync(It.IsAny<DocumentSnapshot>(), It.IsAny<CancellationToken>()) == Task.FromResult(tagHelperDescriptor),
+            s => s.TryGetTagHelperDescriptorAsync(It.IsAny<IDocumentSnapshot>(), It.IsAny<CancellationToken>()) == Task.FromResult(tagHelperDescriptor),
             MockBehavior.Strict);
 
         var languageServer = new Mock<ClientNotifierServiceBase>(MockBehavior.Strict);
@@ -227,13 +227,13 @@ public class TextDocumentUriPresentationEndpointTests : LanguageServerTestBase
         var builder = TagHelperDescriptorBuilder.Create("MyTagHelper", "MyAssembly");
         var tagHelperDescriptor = builder.Build();
 
-        var documentSnapshot = Mock.Of<DocumentSnapshot>(s => s.GetGeneratedOutputAsync() == Task.FromResult(componentCodeDocument), MockBehavior.Strict);
+        var documentSnapshot = Mock.Of<IDocumentSnapshot>(s => s.GetGeneratedOutputAsync() == Task.FromResult(componentCodeDocument), MockBehavior.Strict);
 
         var uri = new Uri("file://path/test.razor");
         var documentContextFactory = CreateDocumentContextFactory(uri, codeDocument);
         var documentContext = CreateDocumentContext(uri, codeDocument);
         var searchEngine = Mock.Of<RazorComponentSearchEngine>(
-            s => s.TryGetTagHelperDescriptorAsync(It.IsAny<DocumentSnapshot>(), It.IsAny<CancellationToken>()) == Task.FromResult(tagHelperDescriptor),
+            s => s.TryGetTagHelperDescriptorAsync(It.IsAny<IDocumentSnapshot>(), It.IsAny<CancellationToken>()) == Task.FromResult(tagHelperDescriptor),
             MockBehavior.Strict);
 
         var response = (WorkspaceEdit?)null;
@@ -285,7 +285,7 @@ public class TextDocumentUriPresentationEndpointTests : LanguageServerTestBase
         var documentMappingService = Mock.Of<RazorDocumentMappingService>(
             s => s.GetLanguageKind(codeDocument, It.IsAny<int>(), It.IsAny<bool>()) == RazorLanguageKind.Html, MockBehavior.Strict);
 
-        var documentSnapshot = Mock.Of<DocumentSnapshot>(s => s.GetGeneratedOutputAsync() == Task.FromResult(codeDocument), MockBehavior.Strict);
+        var documentSnapshot = Mock.Of<IDocumentSnapshot>(s => s.GetGeneratedOutputAsync() == Task.FromResult(codeDocument), MockBehavior.Strict);
 
         var uri = new Uri("file://path/test.razor");
         var documentContextFactory = CreateDocumentContextFactory(uri, codeDocument);
@@ -343,7 +343,7 @@ public class TextDocumentUriPresentationEndpointTests : LanguageServerTestBase
         var documentMappingService = Mock.Of<RazorDocumentMappingService>(
             s => s.GetLanguageKind(codeDocument, It.IsAny<int>(), It.IsAny<bool>()) == RazorLanguageKind.Html, MockBehavior.Strict);
 
-        var documentSnapshot = Mock.Of<DocumentSnapshot>(s => s.GetGeneratedOutputAsync() == Task.FromResult(codeDocument), MockBehavior.Strict);
+        var documentSnapshot = Mock.Of<IDocumentSnapshot>(s => s.GetGeneratedOutputAsync() == Task.FromResult(codeDocument), MockBehavior.Strict);
 
         var droppedUri = new Uri("file:///c:/path/MyTagHelper.cshtml");
         var uri = new Uri("file://path/test.razor");
@@ -406,7 +406,7 @@ public class TextDocumentUriPresentationEndpointTests : LanguageServerTestBase
             s.TryMapToProjectedDocumentRange(csharpDocument, It.IsAny<Range>(), out projectedRange) == true, MockBehavior.Strict);
         var searchEngine = Mock.Of<RazorComponentSearchEngine>(MockBehavior.Strict);
 
-        var documentSnapshot = Mock.Of<DocumentSnapshot>(s => s.GetGeneratedOutputAsync() == Task.FromResult(codeDocument), MockBehavior.Strict);
+        var documentSnapshot = Mock.Of<IDocumentSnapshot>(s => s.GetGeneratedOutputAsync() == Task.FromResult(codeDocument), MockBehavior.Strict);
         var documentContextFactory = CreateDocumentContextFactory(uri, codeDocument);
 
         var response = (WorkspaceEdit?)null;
@@ -457,7 +457,7 @@ public class TextDocumentUriPresentationEndpointTests : LanguageServerTestBase
             s => s.GetLanguageKind(codeDocument, It.IsAny<int>(), It.IsAny<bool>()) == RazorLanguageKind.Html, MockBehavior.Strict);
         var searchEngine = Mock.Of<RazorComponentSearchEngine>(MockBehavior.Strict);
 
-        var documentSnapshot = Mock.Of<DocumentSnapshot>(s => s.GetGeneratedOutputAsync() == Task.FromResult(codeDocument), MockBehavior.Strict);
+        var documentSnapshot = Mock.Of<IDocumentSnapshot>(s => s.GetGeneratedOutputAsync() == Task.FromResult(codeDocument), MockBehavior.Strict);
         var documentContextFactory = CreateDocumentContextFactory(uri, codeDocument);
 
         var response = (WorkspaceEdit?)null;
@@ -509,7 +509,7 @@ public class TextDocumentUriPresentationEndpointTests : LanguageServerTestBase
             s => s.GetLanguageKind(codeDocument, It.IsAny<int>(), It.IsAny<bool>()) == RazorLanguageKind.Html, MockBehavior.Strict);
         var searchEngine = Mock.Of<RazorComponentSearchEngine>(MockBehavior.Strict);
 
-        var documentSnapshot = Mock.Of<DocumentSnapshot>(s => s.GetGeneratedOutputAsync() == Task.FromResult(codeDocument), MockBehavior.Strict);
+        var documentSnapshot = Mock.Of<IDocumentSnapshot>(s => s.GetGeneratedOutputAsync() == Task.FromResult(codeDocument), MockBehavior.Strict);
         var documentContextFactory = CreateDocumentContextFactory(uri, codeDocument);
 
         var response = new WorkspaceEdit();
@@ -560,7 +560,7 @@ public class TextDocumentUriPresentationEndpointTests : LanguageServerTestBase
             s => s.GetLanguageKind(codeDocument, It.IsAny<int>(), It.IsAny<bool>()) == RazorLanguageKind.Html, MockBehavior.Strict);
         var searchEngine = Mock.Of<RazorComponentSearchEngine>(MockBehavior.Strict);
 
-        var documentSnapshot = Mock.Of<DocumentSnapshot>(s => s.GetGeneratedOutputAsync() == Task.FromResult(codeDocument), MockBehavior.Strict);
+        var documentSnapshot = Mock.Of<IDocumentSnapshot>(s => s.GetGeneratedOutputAsync() == Task.FromResult(codeDocument), MockBehavior.Strict);
         var documentContextFactory = CreateDocumentContextFactory(uri, codeDocument);
 
         var response = (WorkspaceEdit?)null;

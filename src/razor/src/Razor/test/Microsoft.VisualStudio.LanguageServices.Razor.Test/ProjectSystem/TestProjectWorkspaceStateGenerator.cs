@@ -26,7 +26,7 @@ internal class TestProjectWorkspaceStateGenerator : ProjectWorkspaceStateGenerat
     {
     }
 
-    public override void Update(Project workspaceProject, ProjectSnapshot projectSnapshot, CancellationToken cancellationToken)
+    public override void Update(Project workspaceProject, IProjectSnapshot projectSnapshot, CancellationToken cancellationToken)
     {
         var update = new TestUpdate(workspaceProject, projectSnapshot, cancellationToken);
         _updates.Add(update);
@@ -37,5 +37,5 @@ internal class TestProjectWorkspaceStateGenerator : ProjectWorkspaceStateGenerat
         _updates.Clear();
     }
 
-    public record TestUpdate(Project WorkspaceProject, ProjectSnapshot ProjectSnapshot, CancellationToken CancellationToken);
+    public record TestUpdate(Project WorkspaceProject, IProjectSnapshot ProjectSnapshot, CancellationToken CancellationToken);
 }

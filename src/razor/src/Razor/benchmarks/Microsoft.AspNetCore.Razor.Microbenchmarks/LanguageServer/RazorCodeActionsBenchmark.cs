@@ -25,7 +25,7 @@ public class RazorCodeActionsBenchmark : RazorLanguageServerBenchmarkBase
     private string? _filePath;
     private Uri? DocumentUri { get; set; }
     private CodeActionEndpoint? CodeActionEndpoint { get; set; }
-    private DocumentSnapshot? DocumentSnapshot { get; set; }
+    private IDocumentSnapshot? DocumentSnapshot { get; set; }
     private SourceText? DocumentText { get; set; }
     private Range? RazorCodeActionRange { get; set; }
     private Range? CSharpCodeActionRange { get; set; }

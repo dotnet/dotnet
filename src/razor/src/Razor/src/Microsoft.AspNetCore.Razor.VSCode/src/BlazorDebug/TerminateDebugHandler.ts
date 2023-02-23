@@ -12,7 +12,9 @@ export const isValidEvent = (name: string) => {
 
   // The name can be of the form: `Debug Blazor Web Assembly in Browser: https://localhost:7291`
   // hence we have to examine what the name **startsWith**
-  return name.startsWith(JS_DEBUG_NAME) || name === SERVER_APP_NAME;
+  // we cannot use startsWith otherwise when we close a login window we will receive a name like this
+  // `Debug Blazor Web Assembly in Browser: https://localhost:5001/authentication/login-callback#state=eyJpZCI6ImEwYjQ5MDMzL` and will kill the app
+  return name === JS_DEBUG_NAME || name === SERVER_APP_NAME;
 };
 
 const killProcess = (targetPid: number | undefined, logger: RazorLogger) => {

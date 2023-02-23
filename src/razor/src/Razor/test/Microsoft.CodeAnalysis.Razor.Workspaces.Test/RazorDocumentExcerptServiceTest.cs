@@ -471,7 +471,7 @@ public class RazorDocumentExcerptServiceTest : DocumentExcerptServiceTestBase
             });
     }
 
-    private RazorDocumentExcerptService CreateExcerptService(DocumentSnapshot document)
+    private RazorDocumentExcerptService CreateExcerptService(IDocumentSnapshot document)
     {
         return new RazorDocumentExcerptService(document, new RazorSpanMappingService(document));
     }

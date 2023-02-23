@@ -63,7 +63,7 @@ internal class DefaultProjectSnapshotManagerAccessor : ProjectSnapshotManagerAcc
                     });
                 _instance = new DefaultProjectSnapshotManager(
                     _projectSnapshotManagerDispatcher,
-                    new DefaultErrorReporter(),
+                    ErrorReporter.Instance,
                     _changeTriggers,
                     workspace);
             }

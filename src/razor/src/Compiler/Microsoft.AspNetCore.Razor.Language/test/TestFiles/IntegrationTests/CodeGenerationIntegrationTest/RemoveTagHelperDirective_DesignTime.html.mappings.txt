@@ -1,4 +1,4 @@
-Source Location: (16:0,16 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RemoveTagHelperDirective.cshtml)
+﻿Source Location: (16:0,16 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RemoveTagHelperDirective.cshtml)
 | |
 Generated Location: (16:0,16 [1] )
 | |

@@ -9,8 +9,8 @@ using System.Composition;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.OmniSharpPlugin.StrongNamed;
 using Microsoft.CodeAnalysis;
 using OmniSharp;
 using OmniSharp.MSBuild.Notification;
@@ -22,7 +22,7 @@ namespace Microsoft.AspNetCore.Razor.OmniSharpPlugin;
 [Export(typeof(IRazorDocumentChangeListener))]
 [Export(typeof(IRazorDocumentOutputChangeListener))]
 [Export(typeof(IOmniSharpProjectSnapshotManagerChangeTrigger))]
-internal class TagHelperRefreshTrigger : IMSBuildEventSink, IRazorDocumentOutputChangeListener, IOmniSharpProjectSnapshotManagerChangeTrigger, IRazorDocumentChangeListener
+internal class TagHelperRefreshTrigger : IOmniSharpProjectSnapshotManagerChangeTrigger, IMSBuildEventSink, IRazorDocumentOutputChangeListener, IRazorDocumentChangeListener
 {
     private readonly OmniSharpProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
     private readonly Workspace _omniSharpWorkspace;
@@ -68,7 +68,7 @@ internal class TagHelperRefreshTrigger : IMSBuildEventSink, IRazorDocumentOutput
 
     public int EnqueueDelay { get; set; } = 3 * 1000;
 
-    public void Initialize(OmniSharpProjectSnapshotManagerBase projectManager)
+    public void Initialize(OmniSharpProjectSnapshotManager projectManager)
     {
         if (projectManager is null)
         {

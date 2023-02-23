@@ -64,6 +64,11 @@ internal static class DirectoryHelper
             // This can also happen if the directory is too long for windows.
             files = Array.Empty<string>();
         }
+        catch (UnauthorizedAccessException ex)
+        {
+            logger?.LogWarning("UnauthorizedAccess: {exception}", ex.Message);
+            yield break;
+        }
         catch (PathTooLongException ex)
         {
             logger?.LogWarning("PathTooLong: {exception}", ex.Message);
@@ -90,6 +95,11 @@ internal static class DirectoryHelper
             // The filesystem may have deleted the directory between us finding it and searching for directories in it.
             // This can also happen if the directory is too long for windows.
             directories = Array.Empty<string>();
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            logger?.LogWarning("UnauthorizedAccess: {exception}", ex.Message);
+            yield break;
         }
         catch (PathTooLongException ex)
         {

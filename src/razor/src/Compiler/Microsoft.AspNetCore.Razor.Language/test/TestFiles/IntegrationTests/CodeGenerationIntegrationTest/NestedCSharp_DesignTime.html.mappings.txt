@@ -1,4 +1,4 @@
-Source Location: (62:3,8 [19] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NestedCSharp.cshtml)
+﻿Source Location: (62:3,8 [19] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NestedCSharp.cshtml)
 |<div>
             |
 Generated Location: (62:3,8 [19] )

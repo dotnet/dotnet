@@ -13,20 +13,20 @@ namespace Microsoft.VisualStudio.Editor.Razor.Test;
 
 internal class TestProjectWorkspaceStateGenerator : ProjectWorkspaceStateGenerator
 {
-    private readonly List<(Project workspaceProject, ProjectSnapshot projectSnapshot)> _updates;
+    private readonly List<(Project workspaceProject, IProjectSnapshot projectSnapshot)> _updates;
 
     public TestProjectWorkspaceStateGenerator()
     {
-        _updates = new List<(Project workspaceProject, ProjectSnapshot projectSnapshot)>();
+        _updates = new List<(Project workspaceProject, IProjectSnapshot projectSnapshot)>();
     }
 
-    public IReadOnlyList<(Project workspaceProject, ProjectSnapshot projectSnapshot)> UpdateQueue => _updates;
+    public IReadOnlyList<(Project workspaceProject, IProjectSnapshot projectSnapshot)> UpdateQueue => _updates;
 
     public override void Initialize(ProjectSnapshotManagerBase projectManager)
     {
     }
 
-    public override void Update(Project workspaceProject, ProjectSnapshot projectSnapshot, CancellationToken cancellationToken)
+    public override void Update(Project workspaceProject, IProjectSnapshot projectSnapshot, CancellationToken cancellationToken)
     {
         var update = (workspaceProject, projectSnapshot);
         _updates.Add(update);
