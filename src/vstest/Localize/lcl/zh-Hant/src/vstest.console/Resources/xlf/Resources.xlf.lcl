@@ -1771,6 +1771,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";VSTestDeprecationMessage" ItemType="0" PsrId="308" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The dotnet vstest command is superseded by dotnet test, which can now be used to run assemblies. See https://aka.ms/dotnet-test.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[dotnet vstest 命令已由 dotnet 測試取代，該測試現在可用於執行組件。請參閱 https://aka.ms/dotnet-test。]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";VstestDiagLogOutputPath" ItemType="0" PsrId="308" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Logging Vstest Diagnostics in file: {0}]]></Val>

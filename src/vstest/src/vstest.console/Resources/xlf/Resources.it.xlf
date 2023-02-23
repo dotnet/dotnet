@@ -1236,7 +1236,7 @@
       </trans-unit>
       <trans-unit id="VSTestDeprecationMessage">
         <source>The dotnet vstest command is superseded by dotnet test, which can now be used to run assemblies. See https://aka.ms/dotnet-test.</source>
-        <target state="new">The dotnet vstest command is superseded by dotnet test, which can now be used to run assemblies. See https://aka.ms/dotnet-test.</target>
+        <target state="translated">Il comando dotnet vstest è sostituito da un test dotnet, che può ora essere usato per eseguire gli assembly. Vedi https://aka.ms/dotnet-test.</target>
         <note></note>
       </trans-unit>
     </body>

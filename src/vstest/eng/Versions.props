@@ -62,8 +62,8 @@
     <XUnitVersion>2.4.1</XUnitVersion>
     <XUnitAbstractionsVersion>2.0.3</XUnitAbstractionsVersion>
     <XUnitVSRunnerVersion>2.4.1</XUnitVSRunnerVersion>
-    <MicrosoftDotNetBuildTasksFeedVersion>8.0.0-beta.23110.3</MicrosoftDotNetBuildTasksFeedVersion>
-    <MicrosoftDotNetSignToolVersion>8.0.0-beta.23110.3</MicrosoftDotNetSignToolVersion>
+    <MicrosoftDotNetBuildTasksFeedVersion>8.0.0-beta.23118.1</MicrosoftDotNetBuildTasksFeedVersion>
+    <MicrosoftDotNetSignToolVersion>8.0.0-beta.23118.1</MicrosoftDotNetSignToolVersion>
     <MicrosoftAzureDocumentDBVersion>1.22.0</MicrosoftAzureDocumentDBVersion>
     <MicrosoftAzureCosmosDBTableVersion>1.1.2</MicrosoftAzureCosmosDBTableVersion>
     <MicrosoftAspNetCoreAllVersion>2.0.0</MicrosoftAspNetCoreAllVersion>
@@ -75,14 +75,14 @@
     <MicrosoftDiaSymReaderNativeVersion>1.7.0</MicrosoftDiaSymReaderNativeVersion>
     <MicrosoftDotNetMaestroClientVersion>1.1.0-beta.20074.1</MicrosoftDotNetMaestroClientVersion>
     <MicrosoftSourceLinkVersion>1.0.0-beta2-19554-01</MicrosoftSourceLinkVersion>
-    <MicrosoftDotNetSwaggerGeneratorMSBuildVersion>8.0.0-beta.23110.3</MicrosoftDotNetSwaggerGeneratorMSBuildVersion>
+    <MicrosoftDotNetSwaggerGeneratorMSBuildVersion>8.0.0-beta.23118.1</MicrosoftDotNetSwaggerGeneratorMSBuildVersion>
     <XliffTasksVersion>1.0.0-beta.21272.1</XliffTasksVersion>
     <!-- Roslyn -->
     <!-- WARNING: Depending on Roslyn in code that also supports unmanaged scenarios (e.g. C++,
          JS etc.) is risky. This can break setup authoring and cause runtime failures in workloads
          where Rolsyn is not installed. -->
     <MicrosoftCodeAnalysisVersion>3.8.0-3.20427.2</MicrosoftCodeAnalysisVersion>
-    <MicrosoftInternalCodeCoverageVersion>17.6.5-beta.23114.3</MicrosoftInternalCodeCoverageVersion>
+    <MicrosoftInternalCodeCoverageVersion>17.6.6-beta.23120.3</MicrosoftInternalCodeCoverageVersion>
     <MicrosoftDiagnosticsNETCoreClientVersion>0.2.0-preview.22424.1</MicrosoftDiagnosticsNETCoreClientVersion>
     <MicrosoftSourceBuildIntermediatediagnosticsVersion>6.0.0-preview.22424.1</MicrosoftSourceBuildIntermediatediagnosticsVersion>
     <MicrosoftVisualStudioTelemetryVersion>16.6.11</MicrosoftVisualStudioTelemetryVersion>
