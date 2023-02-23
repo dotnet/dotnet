@@ -155,8 +155,7 @@ internal class ProxyExecutionManager : IProxyExecutionManager, IBaseProxy, IInte
         IsInitialized = true;
     }
 
-    /// <inheritdoc/>
-    public virtual int StartTestRun(TestRunCriteria testRunCriteria, IInternalTestRunEventsHandler eventHandler)
+    public virtual void InitializeTestRun(TestRunCriteria testRunCriteria, IInternalTestRunEventsHandler eventHandler)
     {
         if (_proxyOperationManager == null)
         {
@@ -195,6 +194,53 @@ internal class ProxyExecutionManager : IProxyExecutionManager, IBaseProxy, IInte
                 _proxyOperationManager.CancellationTokenSource.Token.ThrowTestPlatformExceptionIfCancellationRequested();
 
                 InitializeExtensions(_testSources);
+            }
+        }
+        catch (Exception ex)
+        {
+            HandleError(ex);
+        }
+    }
+    /// <inheritdoc/>
+    public virtual int StartTestRun(TestRunCriteria testRunCriteria, IInternalTestRunEventsHandler eventHandler)
+    {
+        try
+        {
+            if (!_isCommunicationEstablished)
+            {
+                InitializeTestRun(testRunCriteria, eventHandler);
+            }
+
+            // In certain scenarios (like the one for non-parallel dotnet runs) we may end up
+            // using the incorrect events handler which can have nasty side effects, like failing to
+            // properly terminate the communication with any data collector. The reason for this is
+            // that the initialization and the actual test run have been decoupled and are now two
+            // separate operations. In the initialization phase we already provide an events handler
+            // to be invoked when data flows back from the testhost, but the "correct" handler is
+            // only provided in the run phase which may occur later on. This was not a problem when
+            // initialization was part of the normal test run workflow. However, now that the two
+            // operations are separate and because initialization could've already taken place, the
+            // communication channel could be properly set up, which means that we don't get to
+            // overwrite the old events handler anymore.
+            // The solution to this is to make sure that we always use the most "up-to-date"
+            // handler, and that would be the handler we got as an argument when this method was
+            // called. When initialization and test run are part of the same operation the behavior
+            // is still correct, since the two events handler will be equal and there'll be no need
+            // for an overwrite.
+            if (eventHandler != _baseTestRunEventsHandler)
+            {
+                _baseTestRunEventsHandler = eventHandler;
+            }
+
+            TPDebug.Assert(_proxyOperationManager is not null, "ProxyOperationManager is null.");
+
+            if (_isCommunicationEstablished)
+            {
+                var testSources = new List<string>(
+                    testRunCriteria.HasSpecificSources
+                        ? testRunCriteria.Sources
+                        // If the test execution is with a test filter, group them by sources.
+                        : testRunCriteria.Tests.GroupBy(tc => tc.Source).Select(g => g.Key));
 
                 // This code should be in sync with InProcessProxyExecutionManager.StartTestRun
                 // execution context.
@@ -242,34 +288,39 @@ internal class ProxyExecutionManager : IProxyExecutionManager, IBaseProxy, IInte
         }
         catch (Exception exception)
         {
-            EqtTrace.Error("ProxyExecutionManager.StartTestRun: Failed to start test run: {0}", exception);
-
-            // Log error message to design mode and CLI.
-            // TestPlatformException is expected exception, log only the message.
-            // For other exceptions, log the stacktrace as well.
-            var errorMessage = exception is TestPlatformException ? exception.Message : exception.ToString();
-            var testMessagePayload = new TestMessagePayload()
-            {
-                MessageLevel = TestMessageLevel.Error,
-                Message = errorMessage
-            };
-            HandleRawMessage(_dataSerializer.SerializePayload(MessageType.TestMessage, testMessagePayload));
-            LogMessage(TestMessageLevel.Error, errorMessage);
-
-            // Send a run complete to caller. Similar logic is also used in
-            // ParallelProxyExecutionManager.StartTestRunOnConcurrentManager.
-            //
-            // Aborted is `true`: in case of parallel run (or non shared host), an aborted
-            // message ensures another execution manager created to replace the current one.
-            // This will help if the current execution manager is aborted due to irreparable
-            // error and the test host is lost as well.
-            var completeArgs = new TestRunCompleteEventArgs(null, false, true, null, new Collection<AttachmentSet>(), new Collection<InvokedDataCollector>(), TimeSpan.Zero);
-            var testRunCompletePayload = new TestRunCompletePayload { TestRunCompleteArgs = completeArgs };
-            HandleRawMessage(_dataSerializer.SerializePayload(MessageType.ExecutionComplete, testRunCompletePayload));
-            HandleTestRunComplete(completeArgs, null, null, null);
+            HandleError(exception);
         }
 
         return 0;
+    }
+
+    private void HandleError(Exception exception)
+    {
+        EqtTrace.Error("ProxyExecutionManager.StartTestRun: Failed to start test run: {0}", exception);
+
+        // Log error message to design mode and CLI.
+        // TestPlatformException is expected exception, log only the message.
+        // For other exceptions, log the stacktrace as well.
+        var errorMessage = exception is TestPlatformException ? exception.Message : exception.ToString();
+        var testMessagePayload = new TestMessagePayload
+        {
+            MessageLevel = TestMessageLevel.Error,
+            Message = errorMessage
+        };
+        HandleRawMessage(_dataSerializer.SerializePayload(MessageType.TestMessage, testMessagePayload));
+        LogMessage(TestMessageLevel.Error, errorMessage);
+
+        // Send a run complete to caller. Similar logic is also used in
+        // ParallelProxyExecutionManager.StartTestRunOnConcurrentManager.
+        //
+        // Aborted is `true`: in case of parallel run (or non shared host), an aborted
+        // message ensures another execution manager created to replace the current one.
+        // This will help if the current execution manager is aborted due to irreparable
+        // error and the test host is lost as well.
+        var completeArgs = new TestRunCompleteEventArgs(null, false, true, null, new Collection<AttachmentSet>(), new Collection<InvokedDataCollector>(), TimeSpan.Zero);
+        var testRunCompletePayload = new TestRunCompletePayload { TestRunCompleteArgs = completeArgs };
+        HandleRawMessage(_dataSerializer.SerializePayload(MessageType.ExecutionComplete, testRunCompletePayload));
+        HandleTestRunComplete(completeArgs, null, null, null);
     }
 
     /// <inheritdoc/>

@@ -133,7 +133,6 @@ internal class InProcessProxyExecutionManager : IProxyExecutionManager
     {
     }
 
-
     private void InitializeExtensions(IEnumerable<string> sources)
     {
         var extensionsFromSource = _testHostManager.GetTestPlatformExtensions(sources, Enumerable.Empty<string>());
@@ -145,5 +144,13 @@ internal class InProcessProxyExecutionManager : IProxyExecutionManager
         // We don't need to pass list of extension as we are running inside vstest.console and
         // it will use TestPluginCache of vstest.console
         _executionManager.Initialize(Enumerable.Empty<string>(), null);
+    }
+
+    public void InitializeTestRun(TestRunCriteria testRunCriteria, IInternalTestRunEventsHandler eventHandler)
+    {
+        // Leaving this empty as it is not really relevant to the in-process proxy managers since
+        // there's no external testhost to be started. The idea of pre-initializing the test run
+        // makes sense only for out-of-process proxies like ProxyExecutionManager or
+        // ProxyDiscoveryManager.
     }
 }

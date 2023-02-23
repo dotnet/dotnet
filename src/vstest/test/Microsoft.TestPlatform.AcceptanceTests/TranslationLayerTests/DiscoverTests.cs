@@ -164,7 +164,7 @@ public class DiscoverTests : AcceptanceTestBase
     [TestMethod]
     [NetCoreTargetFrameworkDataSource]
     [NetFullTargetFrameworkDataSource]
-    public void DisoverTestUsingEventHandler2ShouldContainAllSourcesAsFullyDiscovered(RunnerInfo runnerInfo)
+    public void DiscoverTestUsingEventHandler2ShouldContainAllSourcesAsFullyDiscovered(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
         Setup();
