@@ -923,7 +923,7 @@ class GTEST_API_ RE {
   ~RE();
 
   // Returns the string representation of the regex.
-  const char* pattern() const { return pattern_; }
+  const char* pattern() const { return pattern_.c_str(); }
 
   // FullMatch(str, re) returns true if and only if regular expression re
   // matches the entire str.
@@ -941,7 +941,7 @@ class GTEST_API_ RE {
 
  private:
   void Init(const char* regex);
-  const char* pattern_;
+  std::string pattern_;
   bool is_valid_;
 
 #if GTEST_USES_POSIX_RE
@@ -951,7 +951,7 @@ class GTEST_API_ RE {
 
 #else  // GTEST_USES_SIMPLE_RE
 
-  const char* full_pattern_;  // For FullMatch();
+  std::string full_pattern_;  // For FullMatch();
 
 #endif
 };
@@ -2032,7 +2032,6 @@ inline int DoIsATTY(int fd) { return isatty(fd); }
 inline int StrCaseCmp(const char* s1, const char* s2) {
   return stricmp(s1, s2);
 }
-inline char* StrDup(const char* src) { return strdup(src); }
 #else  // !__BORLANDC__
 #if GTEST_OS_WINDOWS_MOBILE || GTEST_OS_ZOS || GTEST_OS_IOS || \
     GTEST_OS_WINDOWS_PHONE || GTEST_OS_WINDOWS_RT || defined(ESP_PLATFORM)
@@ -2043,16 +2042,7 @@ inline int DoIsATTY(int fd) { return _isatty(fd); }
 inline int StrCaseCmp(const char* s1, const char* s2) {
   return _stricmp(s1, s2);
 }
-inline char* StrDup(const char* src) { return _strdup(src); }
 #endif  // __BORLANDC__
-
-#elif GTEST_OS_ESP8266
-
-inline int DoIsATTY(int fd) { return isatty(fd); }
-inline int StrCaseCmp(const char* s1, const char* s2) {
-  return strcasecmp(s1, s2);
-}
-inline char* StrDup(const char* src) { return strdup(src); }
 
 #else
 
@@ -2060,7 +2050,6 @@ inline int DoIsATTY(int fd) { return isatty(fd); }
 inline int StrCaseCmp(const char* s1, const char* s2) {
   return strcasecmp(s1, s2);
 }
-inline char* StrDup(const char* src) { return strdup(src); }
 
 #endif  // GTEST_OS_WINDOWS
 
@@ -2352,7 +2341,8 @@ using Any = ::absl::any;
 }  // namespace testing
 #else
 #ifdef __has_include
-#if __has_include(<any>) && __cplusplus >= 201703L
+#if __has_include(<any>) && __cplusplus >= 201703L && \
+    (!defined(_MSC_VER) || GTEST_HAS_RTTI)
 // Otherwise for C++17 and higher use std::any for UniversalPrinter<>
 // specializations.
 #define GTEST_INTERNAL_HAS_ANY 1
