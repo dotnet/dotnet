@@ -209,7 +209,7 @@ internal class DefaultRazorProjectService : RazorProjectService
         TrackDocumentVersion(textDocumentPath, version);
     }
 
-    public override void AddProject(string filePath)
+    public override void AddProject(string filePath, string? rootNamespace)
     {
         _projectSnapshotManagerDispatcher.AssertDispatcherThread();
 
@@ -223,7 +223,7 @@ internal class DefaultRazorProjectService : RazorProjectService
             return;
         }
 
-        var hostProject = new HostProject(normalizedPath, RazorDefaults.Configuration, RazorDefaults.RootNamespace);
+        var hostProject = new HostProject(normalizedPath, RazorDefaults.Configuration, rootNamespace ?? RazorDefaults.RootNamespace);
         _projectSnapshotManagerAccessor.Instance.ProjectAdded(hostProject);
         _logger.LogInformation("Added project '{filePath}' to project system.", filePath);
 
