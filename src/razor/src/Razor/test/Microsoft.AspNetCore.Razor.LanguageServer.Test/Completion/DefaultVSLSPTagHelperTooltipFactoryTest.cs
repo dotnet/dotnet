@@ -490,7 +490,7 @@ End summary description.";
         //     [Class Glyph] Microsoft.AspNetCore.OtherTagHelper
         //     Also uses List<string>s
         Assert.Equal(ContainerElementStyle.Stacked, container.Style);
-        Assert.Equal(4, containerElements.Count);
+        Assert.Equal(5, containerElements.Count);
 
         // [Class Glyph] Microsoft.AspNetCore.SomeTagHelper
         var innerContainer = ((ContainerElement)containerElements[0]).Elements.ToList();
@@ -516,8 +516,14 @@ End summary description.";
             run => AssertExpectedClassification(run, ">", VSPredefinedClassificationTypeNames.Punctuation),
             run => AssertExpectedClassification(run, "s", VSPredefinedClassificationTypeNames.Text));
 
-        // [Class Glyph] Microsoft.AspNetCore.OtherTagHelper
+        // new line
         innerContainer = ((ContainerElement)containerElements[2]).Elements.ToList();
+        classifiedTextElement = (ClassifiedTextElement)innerContainer[0];
+        Assert.Single(innerContainer);
+        Assert.Empty(classifiedTextElement.Runs);
+
+        // [Class Glyph] Microsoft.AspNetCore.OtherTagHelper
+        innerContainer = ((ContainerElement)containerElements[3]).Elements.ToList();
         classifiedTextElement = (ClassifiedTextElement)innerContainer[1];
         Assert.Equal(2, innerContainer.Count);
         Assert.Equal(ClassGlyph, innerContainer[0]);
@@ -529,7 +535,7 @@ End summary description.";
             run => AssertExpectedClassification(run, "OtherTagHelper", VSPredefinedClassificationTypeNames.Type));
 
         // Also uses List<string>s
-        innerContainer = ((ContainerElement)containerElements[3]).Elements.ToList();
+        innerContainer = ((ContainerElement)containerElements[4]).Elements.ToList();
         classifiedTextElement = (ClassifiedTextElement)innerContainer[0];
         Assert.Single(innerContainer);
         Assert.Collection(classifiedTextElement.Runs,
@@ -590,7 +596,7 @@ End summary description.";
         //     [Property Glyph] bool? Microsoft.AspNetCore.SomeTagHelpers.AnotherTypeName.AnotherProperty
         //     Uses List<string>s
         Assert.Equal(ContainerElementStyle.Stacked, container.Style);
-        Assert.Equal(4, containerElements.Count);
+        Assert.Equal(5, containerElements.Count);
 
         // [TagHelper Glyph] string Microsoft.AspNetCore.SomeTagHelpers.SomeTypeName.SomeProperty
         var innerContainer = ((ContainerElement)containerElements[0]).Elements.ToList();
@@ -622,8 +628,14 @@ End summary description.";
             run => AssertExpectedClassification(run, ">", VSPredefinedClassificationTypeNames.Punctuation),
             run => AssertExpectedClassification(run, "s", VSPredefinedClassificationTypeNames.Text));
 
-        // [TagHelper Glyph] bool? Microsoft.AspNetCore.SomeTagHelpers.AnotherTypeName.AnotherProperty
+        // new line
         innerContainer = ((ContainerElement)containerElements[2]).Elements.ToList();
+        classifiedTextElement = (ClassifiedTextElement)innerContainer[0];
+        Assert.Single(innerContainer);
+        Assert.Empty(classifiedTextElement.Runs);
+
+        // [TagHelper Glyph] bool? Microsoft.AspNetCore.SomeTagHelpers.AnotherTypeName.AnotherProperty
+        innerContainer = ((ContainerElement)containerElements[3]).Elements.ToList();
         classifiedTextElement = (ClassifiedTextElement)innerContainer[1];
         Assert.Equal(2, innerContainer.Count);
         Assert.Equal(PropertyGlyph, innerContainer[0]);
@@ -642,7 +654,7 @@ End summary description.";
             run => AssertExpectedClassification(run, "AnotherProperty", VSPredefinedClassificationTypeNames.Identifier));
 
         // Uses List<string>s
-        innerContainer = ((ContainerElement)containerElements[3]).Elements.ToList();
+        innerContainer = ((ContainerElement)containerElements[4]).Elements.ToList();
         classifiedTextElement = (ClassifiedTextElement)innerContainer[0];
         Assert.Single(innerContainer);
         Assert.Collection(classifiedTextElement.Runs,

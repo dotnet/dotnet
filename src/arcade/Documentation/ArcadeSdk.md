@@ -963,6 +963,10 @@ If not specified by the project defaults to the value of `PlatformTarget` proper
 
 For example, a project that targets `AnyCPU` can opt-into running tests using both 32-bit and 64-bit test runners on .NET Framework by setting `TestArchitectures` to `x64;x86`.
 
+### `TestResultsLogDir` (string)
+
+An alternative path where to save test standard output logs (e.g., `MyProject.Tests_tfm_arch.log`). If not specified, these logs will be saved under the path specified in `$(ArtifactsLogDir)` variable.
+
 ### `TestTargetFrameworks` (list of strings)
 
 By default, the test runner will run tests for all frameworks a test project targets. Use `TestTargetFrameworks` to reduce the set of frameworks to run against.
@@ -1006,7 +1010,7 @@ Timeout to apply to an individual invocation of the test runner (e.g. `xunit.con
 
 ### `GenerateResxSource` (bool)
 
-When set to true, Arcade will generate a class source for all embedded .resx files.
+When set to `true`, Arcade will generate a class source for all embedded .resx files.
 
 If source should only be generated for some .resx files, this can be turned on for individual files like this:
 
@@ -1032,10 +1036,10 @@ class Resources
 ```
 
 #### `GenerateResxSourceIncludeDefaultValues` (bool)
-If set to true calls to GetResourceString receive a default resource string value.
+If set to `true` calls to GetResourceString receive a default resource string value.
 
 #### `GenerateResxSourceOmitGetResourceString` (bool)
-If set to true the GetResourceString method is not included in the generated class and must be specified in a separate source file.
+If set to `true` the GetResourceString method is not included in the generated class and must be specified in a separate source file.
 
 
 <!-- Begin Generated Content: Doc Feedback -->
