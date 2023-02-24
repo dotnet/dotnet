@@ -193,7 +193,7 @@ namespace Dotnet.Integration.Test
         }
 
         [PlatformFact(Platform.Windows)]
-        public void PackCommand_NewSolution_ContinuousOutputInBothDefaultAndCustomPaths()
+        public void PackCommand_NewSolution_ContinuousOutputInDefaultPaths()
         {
             // Arrange
             using (var testDirectory = TestDirectory.Create())
@@ -249,19 +249,6 @@ namespace Dotnet.Integration.Test
                 // Assert
                 Assert.True(File.Exists(nupkgPath), "The output .nupkg is not in the default place");
                 Assert.True(File.Exists(nuspecPath), "The intermediate nuspec file is not in the default place");
-
-                // With common publish path within solution folder
-
-                // Arrange
-                var publishDir = Path.Combine(testDirectory.Path, "publish");
-                nupkgPath = Path.Combine(publishDir, $"{projectName}.1.0.0.nupkg");
-                nuspecPath = Path.Combine(publishDir, $"{projectName}.1.0.0.nuspec");
-
-                msbuildFixture.PackSolution(testDirectory, solutionName, $"--no-build -o {publishDir}", publishDir);
-
-                // Assert
-                Assert.True(File.Exists(nupkgPath), "The output .nupkg is not in the expected place");
-                Assert.True(File.Exists(nuspecPath), "The intermediate nuspec file is not in the expected place");
             }
         }
 
@@ -3331,12 +3318,11 @@ namespace ClassLibrary
                     ProjectFileUtils.WriteXmlToFile(xml, stream);
                 }
 
-                msbuildFixture.RestoreSolution(testDirectory, solutionName, string.Empty);
-
+                msbuildFixture.RestoreSolution(testDirectory, solutionName, args: string.Empty);
                 // Act
-                msbuildFixture.PackSolution(testDirectory, solutionName, $"-o {testDirectory}");
+                msbuildFixture.PackSolution(testDirectory, solutionName, args: string.Empty);
 
-                var nupkgPath = Path.Combine(testDirectory, $"{projectName}.1.0.0.nupkg");
+                var nupkgPath = Path.Combine(projectFolder, "bin", "Debug", $"{projectName}.1.0.0.nupkg");
                 var nuspecPath = Path.Combine(projectFolder, "obj", $"{projectName}.1.0.0.nuspec");
                 Assert.True(File.Exists(nupkgPath), "The output .nupkg is not in the expected place");
                 Assert.True(File.Exists(nuspecPath), "The intermediate nuspec file is not in the expected place");
