@@ -13,6 +13,76 @@ namespace NuGet.Build.Tasks.Console.Test
     public class BuildTasksUtilityTests
     {
         [Fact]
+        public void GetPackagesConfigFilePath_WithNonExistentPackagesConfig_ReturnsNull()
+        {
+            using (var testDirectory = TestDirectory.Create())
+            {
+                BuildTasksUtility.GetPackagesConfigFilePath(testDirectory, "Test")
+                    .Should().BeNull();
+            }
+        }
+
+        [Fact]
+        public void GetPackagesConfigFilePath_WithNullProjectDirectory_ThrowsArgumentException()
+        {
+            Action action = () => { BuildTasksUtility.GetPackagesConfigFilePath(projectDirectory: null, projectName: "ProjectA"); };
+
+            action.Should().Throw<ArgumentException>();
+        }
+
+        [Fact]
+        public void GetPackagesConfigFilePath_WithNullProjectFullPath_ThrowsArgumentException()
+        {
+            Action action = () => { BuildTasksUtility.GetPackagesConfigFilePath(projectFullPath: null); };
+
+            action.Should().Throw<ArgumentException>();
+        }
+
+        [Fact]
+        public void GetPackagesConfigFilePath_WithNullProjectName_ThrowsArgumentException()
+        {
+            Action action = () => { BuildTasksUtility.GetPackagesConfigFilePath(projectDirectory: "SomePath", projectName: null); };
+
+            action.Should().Throw<ArgumentException>();
+        }
+
+        [Theory]
+        [InlineData("packages.config")]
+        [InlineData("packages.Test.config")]
+        public void GetPackagesConfigFilePath_WithProjectDirectoryAndProjectName_ReturnsPackagesConfig(string packagesConfigFilename)
+        {
+            using (var testDirectory = TestDirectory.Create())
+            {
+                string projectFullPath = Path.Combine(testDirectory, "Test.csproj");
+
+                string packagesConfigFilePath = Path.Combine(testDirectory, packagesConfigFilename);
+
+                File.WriteAllText(packagesConfigFilePath, string.Empty);
+
+                BuildTasksUtility.GetPackagesConfigFilePath(testDirectory, "Test")
+                    .Should().Be(packagesConfigFilePath);
+            }
+        }
+
+        [Theory]
+        [InlineData("packages.config")]
+        [InlineData("packages.Test.config")]
+        public void GetPackagesConfigFilePath_WithProjectFullPath_ReturnsPackagesConfig(string packagesConfigFilename)
+        {
+            using (var testDirectory = TestDirectory.Create())
+            {
+                string projectFullPath = Path.Combine(testDirectory, "Test.csproj");
+
+                string packagesConfigFilePath = Path.Combine(testDirectory, packagesConfigFilename);
+
+                File.WriteAllText(packagesConfigFilePath, string.Empty);
+
+                BuildTasksUtility.GetPackagesConfigFilePath(projectFullPath)
+                    .Should().Be(packagesConfigFilePath);
+            }
+        }
+
+        [Fact]
         public void GetSources_WithRestoreSourcesProperty_ResolvesAgainstProjectDirectory()
         {
             using (var testDir = TestDirectory.CreateInTemp())

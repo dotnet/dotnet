@@ -27,5 +27,10 @@ namespace NuGet.Build.Tasks
         /// The message is a message.
         /// </summary>
         Message,
+
+        /// <summary>
+        /// The message is a full path to a file to embed in the MSBuild binary log.
+        /// </summary>
+        EmbedInBinlog
     }
 }

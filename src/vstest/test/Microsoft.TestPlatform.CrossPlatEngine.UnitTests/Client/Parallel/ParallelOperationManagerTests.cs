@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Client;
@@ -32,7 +33,7 @@ public class ParallelOperationManagerTests
         List<int> workerCounts = new();
 
         Func<SampleHandler, SampleManager, SampleHandler> getEventHandler = (handler, _) => handler;
-        Action<SampleManager, SampleHandler, SampleWorkload> runWorkload = (manager, _, _) =>
+        Action<SampleManager, SampleHandler, SampleWorkload, bool, Task?> runWorkload = (manager, _, _, _, _) =>
         {
             // Every time we run a workload check how many slots are occupied,
             // we should see 3 slots at max, because that is our max parallel level, we should NOT see 4 or more:
@@ -57,9 +58,11 @@ public class ParallelOperationManagerTests
             // and pass on the current manager that is done.
             parallelOperationManager.RunNextWork(manager);
         };
+        Func<SampleManager, SampleHandler, SampleWorkload, Task> initializeWorkload = (_, _, _) =>
+            Task.Run(() => System.Threading.Thread.Sleep(100));
 
         // Act
-        parallelOperationManager.StartWork(workloads, eventHandler, getEventHandler, runWorkload);
+        parallelOperationManager.StartWork(workloads, eventHandler, getEventHandler, initializeWorkload, runWorkload);
 
         // Assert
         workerCounts.Should().BeEquivalentTo(new[] { 3, 3, 3, 2, 1 });
@@ -82,7 +85,7 @@ public class ParallelOperationManagerTests
         List<int> workerCounts = new();
 
         Func<SampleHandler, SampleManager, SampleHandler> getEventHandler = (handler, _) => handler;
-        Action<SampleManager, SampleHandler, SampleWorkload> runWorkload = (manager, _, _) =>
+        Action<SampleManager, SampleHandler, SampleWorkload, bool, Task?> runWorkload = (manager, _, _, _, _) =>
         {
             // See comments in test above for explanation.
             workerCounts.Add(parallelOperationManager.OccupiedSlotCount);
@@ -90,9 +93,11 @@ public class ParallelOperationManagerTests
 
             parallelOperationManager.RunNextWork(manager);
         };
+        Func<SampleManager, SampleHandler, SampleWorkload, Task> initializeWorkload = (_, _, _) =>
+            Task.Run(() => System.Threading.Thread.Sleep(100));
 
         // Act
-        parallelOperationManager.StartWork(workloads, eventHandler, getEventHandler, runWorkload);
+        parallelOperationManager.StartWork(workloads, eventHandler, getEventHandler, initializeWorkload, runWorkload);
 
         // Assert
         workerCounts.Should().BeEquivalentTo(new[] { 2, 1 });
@@ -117,7 +122,7 @@ public class ParallelOperationManagerTests
         List<int> availableWorkerCounts = new();
 
         Func<SampleHandler, SampleManager, SampleHandler> getEventHandler = (handler, _) => handler;
-        Action<SampleManager, SampleHandler, SampleWorkload> runWorkload = (manager, _, _) =>
+        Action<SampleManager, SampleHandler, SampleWorkload, bool, Task?> runWorkload = (manager, _, _, _, _) =>
         {
             // See comments in test above for explanation.
             workerCounts.Add(parallelOperationManager.OccupiedSlotCount);
@@ -126,9 +131,11 @@ public class ParallelOperationManagerTests
 
             parallelOperationManager.RunNextWork(manager);
         };
+        Func<SampleManager, SampleHandler, SampleWorkload, Task> initializeWorkload = (_, _, _) =>
+            Task.Run(() => System.Threading.Thread.Sleep(100));
 
         // Act
-        parallelOperationManager.StartWork(workloads, eventHandler, getEventHandler, runWorkload);
+        parallelOperationManager.StartWork(workloads, eventHandler, getEventHandler, initializeWorkload, runWorkload);
 
         // Assert
         workerCounts.Should().BeEquivalentTo(new[] { 2, 1 });
@@ -155,7 +162,7 @@ public class ParallelOperationManagerTests
         List<int> workloadsProcessed = new();
 
         Func<SampleHandler, SampleManager, SampleHandler> getEventHandler = (handler, _) => handler;
-        Action<SampleManager, SampleHandler, SampleWorkload> runWorkload = (manager, _, workload) =>
+        Action<SampleManager, SampleHandler, SampleWorkload, bool, Task?> runWorkload = (manager, _, workload, _, _) =>
         {
             // See comments in test above for explanation.
             System.Threading.Thread.Sleep(100);
@@ -167,9 +174,11 @@ public class ParallelOperationManagerTests
                 parallelOperationManager.RunNextWork(manager);
             }
         };
+        Func<SampleManager, SampleHandler, SampleWorkload, Task> initializeWorkload = (_, _, _) =>
+            Task.Run(() => System.Threading.Thread.Sleep(100));
 
         // Act
-        parallelOperationManager.StartWork(workloads, eventHandler, getEventHandler, runWorkload);
+        parallelOperationManager.StartWork(workloads, eventHandler, getEventHandler, initializeWorkload, runWorkload);
 
         // Assert
         // We start by scheduling 2 workloads (1 and 2) becuase that is the max parallel level.
@@ -204,7 +213,7 @@ public class ParallelOperationManagerTests
         var eventHandler = new SampleHandler();
 
         Func<SampleHandler, SampleManager, SampleHandler> getEventHandler = (handler, _) => handler;
-        Action<SampleManager, SampleHandler, SampleWorkload> runWorkload = (manager, _, workload) =>
+        Action<SampleManager, SampleHandler, SampleWorkload, bool, Task?> runWorkload = (manager, _, workload, _, _) =>
         {
             // See comments in test above for explanation.
 
@@ -220,9 +229,11 @@ public class ParallelOperationManagerTests
                 parallelOperationManager.RunNextWork(manager);
             }
         };
+        Func<SampleManager, SampleHandler, SampleWorkload, Task> initializeWorkload = (_, _, _) =>
+            Task.Run(() => System.Threading.Thread.Sleep(100));
 
         // Start the work, so we process workload 1 and then move to 2.
-        parallelOperationManager.StartWork(workloads, eventHandler, getEventHandler, runWorkload);
+        parallelOperationManager.StartWork(workloads, eventHandler, getEventHandler, initializeWorkload, runWorkload);
 
         // Act
         parallelOperationManager.DoActionOnAllManagers(manager => manager.Abort(), doActionsInParallel: true);
