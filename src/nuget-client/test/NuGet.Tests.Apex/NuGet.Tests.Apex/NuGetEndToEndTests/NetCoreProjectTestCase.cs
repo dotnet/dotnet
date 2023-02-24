@@ -281,7 +281,7 @@ namespace NuGet.Tests.Apex
             }
         }
 
-        [NuGetWpfTheory]
+        [NuGetWpfTheory(Skip = "https://github.com/NuGet/Home/issues/12441")]
         [MemberData(nameof(GetNetCoreTemplates))]
         public async Task UpdatePackageToNetCoreProjectFromUI(ProjectTemplate projectTemplate)
         {
@@ -316,7 +316,7 @@ namespace NuGet.Tests.Apex
             }
         }
 
-        [NuGetWpfTheory]
+        [NuGetWpfTheory(Skip = "https://github.com/NuGet/Home/issues/12441")]
         [MemberData(nameof(GetNetCoreTemplates))]
         public async Task UninstallPackageFromNetCoreProjectFromUI(ProjectTemplate projectTemplate)
         {

@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
@@ -210,7 +211,28 @@ SDKs found: {string.Join(", ", Directory.EnumerateDirectories(SdkDirSource).Sele
                 {
                     foreach (FileInfo file in frameworkArtifactsFolder.EnumerateFiles($"*{fileExtension}"))
                     {
-                        file.CopyTo(Path.Combine(pathToSdkInCli, file.Name), overwrite: true);
+                        var dependencyTargetPath = Path.Combine(pathToSdkInCli, file.Name);
+
+                        if (file.Name.Contains("NuGet"))
+                        {
+                            file.CopyTo(dependencyTargetPath, overwrite: true);
+                        }
+                        else
+                        {
+                            if (File.Exists(dependencyTargetPath)) // If a dependency exists in the SDK, only copy it if our version is higher than the SDK version.
+                            {
+                                var targetFileVersion = new Version(FileVersionInfo.GetVersionInfo(dependencyTargetPath).FileVersion);
+                                var fileToPatchVersion = new Version(FileVersionInfo.GetVersionInfo(file.FullName).FileVersion);
+                                if (fileToPatchVersion > targetFileVersion)
+                                {
+                                    file.CopyTo(dependencyTargetPath, overwrite: true);
+                                }
+                            }
+                            else // If a dependency does not exist in the SDK, copy it, as we'll need it.
+                            {
+                                file.CopyTo(dependencyTargetPath, overwrite: true);
+                            }
+                        }
                     }
                 }
 
