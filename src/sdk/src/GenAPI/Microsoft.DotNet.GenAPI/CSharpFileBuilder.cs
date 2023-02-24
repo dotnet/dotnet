@@ -137,6 +137,8 @@ namespace Microsoft.DotNet.GenAPI
                 namedTypeNode = _syntaxGenerator.AddMembers(namedTypeNode, namedType.SynthesizeDummyFields(_symbolFilter));
             }
 
+            namedTypeNode = _syntaxGenerator.AddMembers(namedTypeNode, namedType.TryGetInternalDefaultConstructor(_symbolFilter));
+
             foreach (ISymbol member in members.Order())
             {
                 // If the method is ExplicitInterfaceImplementation and is derived from an interface that was filtered out, we must filter out it either.
@@ -161,7 +163,16 @@ namespace Microsoft.DotNet.GenAPI
                     memberDeclaration = Visit(memberDeclaration, nestedTypeSymbol);
                 }
 
-                namedTypeNode = _syntaxGenerator.AddMembers(namedTypeNode, memberDeclaration);
+                try
+                {
+                    namedTypeNode = _syntaxGenerator.AddMembers(namedTypeNode, memberDeclaration);
+                }
+                catch (InvalidOperationException e)
+                {
+                    // re-throw the InvalidOperationException with the symbol that caused it.
+                    throw new InvalidOperationException($"Adding member {member.ToDisplayString()} to the " +
+                        $"named type {namedTypeNode.ToString()} failed with an exception {e.Message}");
+                }
             }
 
             return namedTypeNode;
