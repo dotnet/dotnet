@@ -92,6 +92,25 @@ Copyright (c) .NET Foundation. All rights reserved.
     </_GenerateRestoreGraphProjectEntryInputProperties>
   </PropertyGroup>
 
+  <ItemGroup Condition="'$(ManagePackageVersionsCentrally)' == 'true' And '$(RestoreEnableGlobalPackageReference)' != 'false'">
+    <!--
+        Add GlobalPackageReference items to the PackageReference item group with no version.  The PackageVersion items are added
+        in the CollectCentralPackageVersions target.
+
+        Global package references only include the same assets as a development dependency (runtime; build; native; contentfiles; analyzers)
+        because those kind of packages are the best candidate for a global package reference.  They are generally packages that
+        extend the build.
+
+        Global package references have all assets private because central package references are generally packages that provide
+        versioning, signing, etc and should not flow to downstream dependencies.  Also, central package references are already
+        referenced by every project in the tree so they don't need to be transitive.
+      -->
+    <PackageReference Include="@(GlobalPackageReference)"
+                      Version=""
+                      IncludeAssets="Runtime;Build;Native;contentFiles;Analyzers"
+                      PrivateAssets="All" />
+  </ItemGroup>
+
   <!-- Tasks -->
   <UsingTask TaskName="NuGet.Build.Tasks.RestoreTask" AssemblyFile="$(RestoreTaskAssemblyFile)" />
   <UsingTask TaskName="NuGet.Build.Tasks.WriteRestoreGraphTask" AssemblyFile="$(RestoreTaskAssemblyFile)" />
@@ -139,7 +158,9 @@ Copyright (c) .NET Foundation. All rights reserved.
       HideWarningsAndErrors="$(HideWarningsAndErrors)"
       Interactive="$(NuGetInteractive)"
       RestoreForceEvaluate="$(RestoreForceEvaluate)"
-      RestorePackagesConfig="$(RestorePackagesConfig)"/>
+      RestorePackagesConfig="$(RestorePackagesConfig)">
+      <Output TaskParameter="EmbedInBinlog" ItemName="EmbedInBinlog" />
+    </RestoreTask>
   </Target>
 
   <!--
@@ -181,25 +202,6 @@ Copyright (c) .NET Foundation. All rights reserved.
       <CollectPackageReferencesContinueOnError>$(ContinueOnError)</CollectPackageReferencesContinueOnError>
       <CollectPackageReferencesContinueOnError Condition="'$(ContinueOnError)' == '' ">false</CollectPackageReferencesContinueOnError>
     </PropertyGroup>
-
-    <ItemGroup Condition="'$(ManagePackageVersionsCentrally)' == 'true' And '$(RestoreEnableGlobalPackageReference)' != 'false'">
-      <!--
-        Add GlobalPackageReference items to the PackageReference item group with no version.  The PackageVersion items are added
-        in the CollectCentralPackageVersions target.
-
-        Global package references only include the same assets as a development dependency (runtime; build; native; contentfiles; analyzers)
-        because those kind of packages are the best candidate for a global package reference.  They are generally packages that
-        extend the build.
-
-        Global package references have all assets private because central package references are generally packages that provide
-        versioning, signing, etc and should not flow to downstream dependencies.  Also, central package references are already
-        referenced by every project in the tree so they don't need to be transitive.
-      -->
-      <PackageReference Include="@(GlobalPackageReference)"
-                        Version=""
-                        IncludeAssets="Runtime;Build;Native;contentFiles;Analyzers"
-                        PrivateAssets="All" />
-    </ItemGroup>
 
     <CheckForDuplicateNuGetItemsTask
       Condition="'$(DisableCheckingDuplicateNuGetItems)' != 'true' "
