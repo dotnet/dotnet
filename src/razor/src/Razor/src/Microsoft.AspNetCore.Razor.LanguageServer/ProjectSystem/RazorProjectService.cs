@@ -21,7 +21,7 @@ internal abstract class RazorProjectService
 
     public abstract void UpdateDocument(string filePath, SourceText sourceText, int version);
 
-    public abstract void AddProject(string filePath);
+    public abstract void AddProject(string filePath, string? rootNamespace);
 
     public abstract void RemoveProject(string filePath);
 

@@ -87,8 +87,9 @@ internal class ProjectConfigurationStateSynchronizer : IProjectConfigurationFile
                     }
 
                     var projectFilePath = FilePathNormalizer.Normalize(projectRazorJson.FilePath);
+                    var rootNamespace = projectRazorJson.RootNamespace;
                     _configurationToProjectMap[configurationFilePath] = projectFilePath;
-                    _projectService.AddProject(projectFilePath);
+                    _projectService.AddProject(projectFilePath, rootNamespace);
 
                     _logger.LogInformation("Project configuration file added for project '{0}': '{1}'", projectFilePath, configurationFilePath);
                     EnqueueUpdateProject(projectFilePath, projectRazorJson);

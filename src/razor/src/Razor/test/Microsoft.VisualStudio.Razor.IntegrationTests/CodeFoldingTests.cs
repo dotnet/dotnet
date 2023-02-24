@@ -122,7 +122,7 @@ public class CodeFoldingTests : AbstractRazorEditorTest
         }
     }
 
-    [IdeFact(Skip = "https://github.com/dotnet/razor/issues/7942")]
+    [IdeFact]
     public async Task CodeFolding_CodeBlock()
     {
         await TestServices.SolutionExplorer.AddFileAsync(

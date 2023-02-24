@@ -56,7 +56,7 @@ public class ProjectConfigurationStateSynchronizerTest : LanguageServerTestBase
             new ProjectWorkspaceState(Array.Empty<TagHelperDescriptor>(), LanguageVersion.CSharp5),
             Array.Empty<DocumentSnapshotHandle>());
         var projectService = new Mock<RazorProjectService>(MockBehavior.Strict);
-        projectService.Setup(service => service.AddProject(projectRazorJson.FilePath)).Verifiable();
+        projectService.Setup(service => service.AddProject(projectRazorJson.FilePath, projectRazorJson.RootNamespace)).Verifiable();
         projectService.Setup(service => service.UpdateProject(
             projectRazorJson.FilePath,
             projectRazorJson.Configuration,
@@ -122,7 +122,7 @@ public class ProjectConfigurationStateSynchronizerTest : LanguageServerTestBase
             new ProjectWorkspaceState(Array.Empty<TagHelperDescriptor>(), LanguageVersion.CSharp5),
             Array.Empty<DocumentSnapshotHandle>());
         var projectService = new Mock<RazorProjectService>(MockBehavior.Strict);
-        projectService.Setup(service => service.AddProject(projectRazorJson.FilePath)).Verifiable();
+        projectService.Setup(service => service.AddProject(projectRazorJson.FilePath, projectRazorJson.RootNamespace)).Verifiable();
         projectService.Setup(service => service.UpdateProject(
             projectRazorJson.FilePath,
             projectRazorJson.Configuration,
@@ -157,7 +157,7 @@ public class ProjectConfigurationStateSynchronizerTest : LanguageServerTestBase
             new ProjectWorkspaceState(Array.Empty<TagHelperDescriptor>(), LanguageVersion.CSharp5),
             Array.Empty<DocumentSnapshotHandle>());
         var projectService = new Mock<RazorProjectService>(MockBehavior.Strict);
-        projectService.Setup(service => service.AddProject(projectRazorJson.FilePath)).Verifiable();
+        projectService.Setup(service => service.AddProject(projectRazorJson.FilePath, projectRazorJson.RootNamespace)).Verifiable();
         projectService.Setup(service => service.UpdateProject(
             projectRazorJson.FilePath,
             projectRazorJson.Configuration,
@@ -206,7 +206,7 @@ public class ProjectConfigurationStateSynchronizerTest : LanguageServerTestBase
             new ProjectWorkspaceState(Array.Empty<TagHelperDescriptor>(), LanguageVersion.CSharp5),
             Array.Empty<DocumentSnapshotHandle>());
         var projectService = new Mock<RazorProjectService>(MockBehavior.Strict);
-        projectService.Setup(service => service.AddProject(initialProjectRazorJson.FilePath)).Verifiable();
+        projectService.Setup(service => service.AddProject(initialProjectRazorJson.FilePath, initialProjectRazorJson.RootNamespace)).Verifiable();
         projectService.Setup(service => service.UpdateProject(
             initialProjectRazorJson.FilePath,
             initialProjectRazorJson.Configuration,
@@ -267,7 +267,7 @@ public class ProjectConfigurationStateSynchronizerTest : LanguageServerTestBase
             new ProjectWorkspaceState(Array.Empty<TagHelperDescriptor>(), LanguageVersion.CSharp5),
             Array.Empty<DocumentSnapshotHandle>());
         var projectService = new Mock<RazorProjectService>(MockBehavior.Strict);
-        projectService.Setup(service => service.AddProject(initialProjectRazorJson.FilePath)).Verifiable();
+        projectService.Setup(service => service.AddProject(initialProjectRazorJson.FilePath, initialProjectRazorJson.RootNamespace)).Verifiable();
         projectService.Setup(service => service.UpdateProject(
             initialProjectRazorJson.FilePath,
             initialProjectRazorJson.Configuration,
@@ -352,7 +352,7 @@ public class ProjectConfigurationStateSynchronizerTest : LanguageServerTestBase
 
         var filePath = "path/to/project.csproj";
         var projectService = new Mock<RazorProjectService>(MockBehavior.Strict);
-        projectService.Setup(service => service.AddProject(projectRazorJson.FilePath)).Verifiable();
+        projectService.Setup(service => service.AddProject(projectRazorJson.FilePath, projectRazorJson.RootNamespace)).Verifiable();
         projectService.Setup(p => p.UpdateProject(
             filePath,
             It.IsAny<RazorConfiguration>(),

@@ -25,7 +25,7 @@ public class ProjectFileSynchronizerTest : LanguageServerTestBase
         // Arrange
         var projectPath = "/path/to/project.csproj";
         var projectService = new Mock<RazorProjectService>(MockBehavior.Strict);
-        projectService.Setup(service => service.AddProject(projectPath)).Verifiable();
+        projectService.Setup(service => service.AddProject(projectPath, null)).Verifiable();
         var synchronizer = new ProjectFileSynchronizer(LegacyDispatcher, projectService.Object);
 
         // Act

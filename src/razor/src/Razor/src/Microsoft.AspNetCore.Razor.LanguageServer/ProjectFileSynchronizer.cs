@@ -43,7 +43,7 @@ internal class ProjectFileSynchronizer : IProjectFileChangeListener
         switch (kind)
         {
             case RazorFileChangeKind.Added:
-                _projectService.AddProject(filePath);
+                _projectService.AddProject(filePath, rootNamespace: null);
                 break;
             case RazorFileChangeKind.Removed:
                 _projectService.RemoveProject(filePath);

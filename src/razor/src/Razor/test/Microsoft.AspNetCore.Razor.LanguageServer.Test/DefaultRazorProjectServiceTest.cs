@@ -779,7 +779,7 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
         var projectService = CreateProjectService(projectResolver, projectSnapshotManager.Object);
 
         // Act
-        projectService.AddProject(projectFilePath);
+        projectService.AddProject(projectFilePath, rootNamespace: null);
 
         // Assert
         projectSnapshotManager.VerifyAll();
@@ -798,7 +798,7 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
         var projectService = CreateProjectService(projectResolver, projectSnapshotManager.Object);
 
         // Act
-        projectService.AddProject(projectFilePath);
+        projectService.AddProject(projectFilePath, rootNamespace: null);
 
         // Assert
         projectSnapshotManager.VerifyAll();
