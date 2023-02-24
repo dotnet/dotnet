@@ -8,8 +8,4 @@
     <PreReleaseVersionLabel>alpha</PreReleaseVersionLabel>
     <PreReleaseVersionIteration>1</PreReleaseVersionIteration>
   </PropertyGroup>
-  <!-- Humanizer expects us to tell the version it's building -->
-  <PropertyGroup>
-    <HumanizerCorePackageVersion>2.2.0</HumanizerCorePackageVersion>
-  </PropertyGroup>
 </Project>

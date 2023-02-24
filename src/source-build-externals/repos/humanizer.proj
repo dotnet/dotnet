@@ -6,6 +6,7 @@
     <RepoApiImplemented>false</RepoApiImplemented>
     <DeterministicBuildOptOut>true</DeterministicBuildOptOut>
     <NuGetConfigFile>$(ProjectDirectory)/src/NuGet.config</NuGetConfigFile>
+    <HumanizerCorePackageVersion>2.14.1</HumanizerCorePackageVersion>
   </PropertyGroup>
 
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
