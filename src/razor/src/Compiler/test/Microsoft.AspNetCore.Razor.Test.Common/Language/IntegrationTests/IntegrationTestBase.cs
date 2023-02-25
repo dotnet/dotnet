@@ -417,7 +417,7 @@ public abstract class IntegrationTestBase
             var lines = cSharpDocument.Diagnostics.Select(RazorDiagnosticSerializer.Serialize).ToArray();
             if (lines.Any())
             {
-                File.WriteAllLines(baselineDiagnosticsFullPath, lines);
+                File.WriteAllLines(baselineDiagnosticsFullPath, lines, _baselineEncoding);
             }
             else if (File.Exists(baselineDiagnosticsFullPath))
             {

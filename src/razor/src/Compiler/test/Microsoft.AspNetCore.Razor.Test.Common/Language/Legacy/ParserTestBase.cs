@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Roslyn.Test.Utilities;
@@ -22,6 +23,9 @@ public abstract class ParserTestBase
     private static readonly AsyncLocal<string> _fileName = new AsyncLocal<string>();
     private static readonly AsyncLocal<bool> _isTheory = new AsyncLocal<bool>();
 
+    // UTF-8 with BOM
+    private static readonly Encoding _baselineEncoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: true);
+
     internal ParserTestBase()
     {
         TestProjectRoot = TestProject.GetProjectDirectory(GetType());
@@ -34,7 +38,7 @@ public abstract class ParserTestBase
     protected bool FixupSpans { get; set; }
 
 #if GENERATE_BASELINES
-        protected bool GenerateBaselines { get; set; } = true;
+    protected bool GenerateBaselines { get; set; } = true;
 #else
     protected bool GenerateBaselines { get; set; } = false;
 #endif
@@ -84,14 +88,14 @@ public abstract class ParserTestBase
         {
             // Write syntax tree baseline
             var baselineFullPath = Path.Combine(TestProjectRoot, baselineFileName);
-            File.WriteAllText(baselineFullPath, SyntaxNodeSerializer.Serialize(root));
+            File.WriteAllText(baselineFullPath, SyntaxNodeSerializer.Serialize(root), _baselineEncoding);
 
             // Write diagnostics baseline
             var baselineDiagnosticsFullPath = Path.Combine(TestProjectRoot, baselineDiagnosticsFileName);
             var lines = diagnostics.Select(SerializeDiagnostic).ToArray();
             if (lines.Any())
             {
-                File.WriteAllLines(baselineDiagnosticsFullPath, lines);
+                File.WriteAllLines(baselineDiagnosticsFullPath, lines, _baselineEncoding);
             }
             else if (File.Exists(baselineDiagnosticsFullPath))
             {
@@ -100,14 +104,14 @@ public abstract class ParserTestBase
 
             // Write classified spans baseline
             var classifiedSpansBaselineFullPath = Path.Combine(TestProjectRoot, baselineClassifiedSpansFileName);
-            File.WriteAllText(classifiedSpansBaselineFullPath, ClassifiedSpanSerializer.Serialize(syntaxTree));
+            File.WriteAllText(classifiedSpansBaselineFullPath, ClassifiedSpanSerializer.Serialize(syntaxTree), _baselineEncoding);
 
             // Write tag helper spans baseline
             var tagHelperSpansBaselineFullPath = Path.Combine(TestProjectRoot, baselineTagHelperSpansFileName);
             var serializedTagHelperSpans = TagHelperSpanSerializer.Serialize(syntaxTree);
             if (!string.IsNullOrEmpty(serializedTagHelperSpans))
             {
-                File.WriteAllText(tagHelperSpansBaselineFullPath, serializedTagHelperSpans);
+                File.WriteAllText(tagHelperSpansBaselineFullPath, serializedTagHelperSpans, _baselineEncoding);
             }
             else if (File.Exists(tagHelperSpansBaselineFullPath))
             {
