@@ -4,10 +4,11 @@ pr:
     include:
     - main
     - release/*
+    - internal/release/*
 
 parameters:
 - name: vmrBranch
-  displayName: dotnet/dotnet branch to push to
+  displayName: dotnet/dotnet branch to use
   type: string
   default: ' '
 
@@ -27,13 +28,12 @@ variables:
 resources:
   repositories:
   - repository: vmr
-    type: github
-    name: dotnet/dotnet
-    endpoint: dotnet
-    ref: ${{ variables.VmrBranch }}
+    type: git
+    name: dotnet-dotnet
+    ref: $(VmrBranch)
 
 stages:
-# You can temporarily disable the VMR Build stage by setting the disableVmrBuild variable
+# You can temporarily disable the VMR Build stage by changing the default of disableVmrBuild
 - ${{ if not(parameters.disableVmrBuild) }}:
   - template: templates/stages/vmr-build.yml
     parameters:

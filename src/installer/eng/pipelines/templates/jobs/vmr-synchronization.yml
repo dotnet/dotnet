@@ -25,15 +25,16 @@ jobs:
   - template: /eng/common/templates/variables/pool-providers.yml
   - name: vmrPath
     value: $(Agent.BuildDirectory)/vmr
-  - ${{ if and( eq(variables['System.TeamProject'], 'internal'), or(startswith(variables['Build.SourceBranch'], 'refs/heads/release/'), eq(variables['Build.SourceBranch'], 'refs/heads/main'))) }}:
-    - group: DotNetBot-GitHub
-    - group: DotNetBot-GitHub-No-Scopes
-    - name: vmrPublicUrl
-      value: https://github.com/dotnet/dotnet
-  - ${{ if and( eq(variables['System.TeamProject'], 'internal'), startswith(variables['Build.SourceBranch'], 'refs/heads/internal/release/')) }}:
-    - group: DotNetBot-AzDO-PAT
-    - name: vmrInternalUrl
-      value: https://dnceng@dev.azure.com/dnceng/internal/_git/dotnet-dotnet
+  - ${{ if not(parameters.noPush) }}:
+    - ${{ if and( eq(variables['System.TeamProject'], 'internal'), or(startswith(variables['Build.SourceBranch'], 'refs/heads/release/'), eq(variables['Build.SourceBranch'], 'refs/heads/main'))) }}:
+      - group: DotNetBot-GitHub
+      - group: DotNetBot-GitHub-No-Scopes
+      - name: vmrPublicUrl
+        value: https://github.com/dotnet/dotnet
+    - ${{ if and( eq(variables['System.TeamProject'], 'internal'), startswith(variables['Build.SourceBranch'], 'refs/heads/internal/release/')) }}:
+      - group: DotNetBot-AzDO-PAT
+      - name: vmrInternalUrl
+        value: https://dnceng@dev.azure.com/dnceng/internal/_git/dotnet-dotnet
   
   pool:
     ${{ if eq(variables['System.TeamProject'], 'public') }}:
