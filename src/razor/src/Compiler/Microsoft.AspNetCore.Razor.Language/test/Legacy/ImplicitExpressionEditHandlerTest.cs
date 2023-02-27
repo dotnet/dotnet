@@ -451,7 +451,7 @@ public class ImplicitExpressionEditHandlerTest
         {
             builder.Add(token);
         }
-        var node = SyntaxFactory.MarkupTextLiteral(builder.ToList()).CreateRed(parent: null, position: start.AbsoluteIndex);
+        var node = SyntaxFactory.MarkupTextLiteral(builder.ToList(), SpanChunkGenerator.Null).CreateRed(parent: null, position: start.AbsoluteIndex);
 
         return (Syntax.MarkupTextLiteralSyntax)node;
     }

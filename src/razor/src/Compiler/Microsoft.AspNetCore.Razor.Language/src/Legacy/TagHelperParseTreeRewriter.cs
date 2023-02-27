@@ -370,7 +370,7 @@ internal static class TagHelperParseTreeRewriter
             }
 
             rewritten = SyntaxFactory.MarkupTagHelperEndTag(
-                endTag.OpenAngle, endTag.ForwardSlash, endTag.Bang, endTag.Name, endTag.MiscAttributeContent, endTag.CloseAngle);
+                endTag.OpenAngle, endTag.ForwardSlash, endTag.Bang, endTag.Name, endTag.MiscAttributeContent, endTag.CloseAngle, chunkGenerator: null);
 
             return true;
         }

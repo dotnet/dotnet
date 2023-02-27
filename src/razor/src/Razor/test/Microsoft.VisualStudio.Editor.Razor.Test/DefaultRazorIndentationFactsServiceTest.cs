@@ -45,7 +45,7 @@ public class DefaultRazorIndentationFactsServiceTest : TestBase
         // Arrange
         var builder = SyntaxListBuilder<SyntaxToken>.Create();
         builder.Add(SyntaxFactory.Token(SyntaxKind.LeftBrace, "{"));
-        var child = SyntaxFactory.RazorMetaCode(builder.ToList());
+        var child = SyntaxFactory.RazorMetaCode(builder.ToList(), chunkGenerator: null);
 
         // Act
         var result = DefaultRazorIndentationFactsService.IsCSharpOpenCurlyBrace(child);
@@ -65,7 +65,7 @@ public class DefaultRazorIndentationFactsServiceTest : TestBase
         var symbolType = (SyntaxKind)symbolTypeObject;
         var builder = SyntaxListBuilder<SyntaxToken>.Create();
         builder.Add(SyntaxFactory.Token(symbolType, content));
-        var child = SyntaxFactory.MarkupTextLiteral(builder.ToList());
+        var child = SyntaxFactory.MarkupTextLiteral(builder.ToList(), chunkGenerator: null);
 
         // Act
         var result = DefaultRazorIndentationFactsService.IsCSharpOpenCurlyBrace(child);
@@ -81,7 +81,7 @@ public class DefaultRazorIndentationFactsServiceTest : TestBase
         var builder = SyntaxListBuilder<SyntaxToken>.Create();
         builder.Add(SyntaxFactory.Token(SyntaxKind.Identifier, "hello"));
         builder.Add(SyntaxFactory.Token(SyntaxKind.Comma, ","));
-        var child = SyntaxFactory.MarkupTextLiteral(builder.ToList());
+        var child = SyntaxFactory.MarkupTextLiteral(builder.ToList(), chunkGenerator: null);
 
         // Act
         var result = DefaultRazorIndentationFactsService.IsCSharpOpenCurlyBrace(child);
@@ -96,7 +96,7 @@ public class DefaultRazorIndentationFactsServiceTest : TestBase
         // Arrange
         var builder = SyntaxListBuilder<SyntaxToken>.Create();
         builder.Add(SyntaxFactory.Token(SyntaxKind.Text, "hello"));
-        var child = SyntaxFactory.MarkupTextLiteral(builder.ToList());
+        var child = SyntaxFactory.MarkupTextLiteral(builder.ToList(), chunkGenerator: null);
 
         // Act
         var result = DefaultRazorIndentationFactsService.IsCSharpOpenCurlyBrace(child);

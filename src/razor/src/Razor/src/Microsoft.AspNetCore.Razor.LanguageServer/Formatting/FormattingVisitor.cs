@@ -331,7 +331,7 @@ internal class FormattingVisitor : SyntaxWalker
     {
         WriteBlock(node, FormattingBlockKind.Markup, n =>
         {
-            var equalsSyntax = SyntaxFactory.MarkupTextLiteral(new SyntaxList<SyntaxToken>(node.EqualsToken));
+            var equalsSyntax = SyntaxFactory.MarkupTextLiteral(new SyntaxList<SyntaxToken>(node.EqualsToken), chunkGenerator: null);
             var mergedAttributePrefix = SyntaxUtilities.MergeTextLiterals(node.NamePrefix, node.Name, node.NameSuffix, equalsSyntax, node.ValuePrefix);
             Visit(mergedAttributePrefix);
             Visit(node.Value);
@@ -343,7 +343,7 @@ internal class FormattingVisitor : SyntaxWalker
     {
         WriteBlock(node, FormattingBlockKind.Tag, n =>
         {
-            var equalsSyntax = SyntaxFactory.MarkupTextLiteral(new SyntaxList<SyntaxToken>(node.EqualsToken));
+            var equalsSyntax = SyntaxFactory.MarkupTextLiteral(new SyntaxList<SyntaxToken>(node.EqualsToken), chunkGenerator: null);
             var mergedAttributePrefix = SyntaxUtilities.MergeTextLiterals(node.NamePrefix, node.Name, node.NameSuffix, equalsSyntax, node.ValuePrefix);
             Visit(mergedAttributePrefix);
             Visit(node.Value);
@@ -501,11 +501,11 @@ internal class FormattingVisitor : SyntaxWalker
             var tokens = node.DescendantNodes().Where(n => n is SyntaxToken token && !token.IsMissing).Cast<SyntaxToken>().ToArray();
             var tokenBuilder = SyntaxListBuilder<SyntaxToken>.Create();
             tokenBuilder.AddRange(tokens, 0, tokens.Length);
-            var markupTransition = SyntaxFactory.MarkupTransition(tokenBuilder.ToList()).Green.CreateRed(node, node.Position);
-            var spanContext = node.GetSpanContext();
-            if (spanContext != null)
+            var markupTransition = SyntaxFactory.MarkupTransition(tokenBuilder.ToList(), node.ChunkGenerator).Green.CreateRed(node, node.Position);
+            var editHandler = node.GetEditHandler();
+            if (editHandler != null)
             {
-                markupTransition = markupTransition.WithSpanContext(spanContext);
+                markupTransition = markupTransition.WithEditHandler(editHandler);
             }
 
             var builder = new SyntaxListBuilder(1);
@@ -513,7 +513,7 @@ internal class FormattingVisitor : SyntaxWalker
             return new SyntaxList<RazorSyntaxNode>(builder.ToListNode().CreateRed(node, node.Position));
         }
 
-        SpanContext? latestSpanContext = null;
+        SpanEditHandler? latestSpanEditHandler = null;
         var children = node.Children;
         var newChildren = new SyntaxListBuilder(children.Count);
         var literals = new List<MarkupTextLiteralSyntax>();
@@ -522,7 +522,7 @@ internal class FormattingVisitor : SyntaxWalker
             if (child is MarkupTextLiteralSyntax literal)
             {
                 literals.Add(literal);
-                latestSpanContext = literal.GetSpanContext() ?? latestSpanContext;
+                latestSpanEditHandler = literal.GetEditHandler() ?? latestSpanEditHandler;
             }
             else if (child is MarkupMiscAttributeContentSyntax miscContent)
             {
@@ -531,7 +531,7 @@ internal class FormattingVisitor : SyntaxWalker
                     if (contentChild is MarkupTextLiteralSyntax contentLiteral)
                     {
                         literals.Add(contentLiteral);
-                        latestSpanContext = contentLiteral.GetSpanContext() ?? latestSpanContext;
+                        latestSpanEditHandler = contentLiteral.GetEditHandler() ?? latestSpanEditHandler;
                     }
                     else
                     {
@@ -557,9 +557,9 @@ internal class FormattingVisitor : SyntaxWalker
             if (literals.Count > 0)
             {
                 var mergedLiteral = SyntaxUtilities.MergeTextLiterals(literals.ToArray());
-                mergedLiteral = mergedLiteral.WithSpanContext(latestSpanContext);
+                mergedLiteral = mergedLiteral.WithEditHandler(latestSpanEditHandler);
                 literals.Clear();
-                latestSpanContext = null;
+                latestSpanEditHandler = null;
                 newChildren.Add(mergedLiteral);
             }
         }
@@ -573,11 +573,11 @@ internal class FormattingVisitor : SyntaxWalker
             var tokens = node.DescendantNodes().Where(n => n is SyntaxToken token && !token.IsMissing).Cast<SyntaxToken>().ToArray();
             var tokenBuilder = SyntaxListBuilder<SyntaxToken>.Create();
             tokenBuilder.AddRange(tokens, 0, tokens.Length);
-            var markupTransition = SyntaxFactory.MarkupTransition(tokenBuilder.ToList()).Green.CreateRed(node, node.Position);
-            var spanContext = node.GetSpanContext();
-            if (spanContext != null)
+            var markupTransition = SyntaxFactory.MarkupTransition(tokenBuilder.ToList(), node.ChunkGenerator).Green.CreateRed(node, node.Position);
+            var editHandler = node.GetEditHandler();
+            if (editHandler != null)
             {
-                markupTransition = markupTransition.WithSpanContext(spanContext);
+                markupTransition = markupTransition.WithEditHandler(editHandler);
             }
 
             var builder = new SyntaxListBuilder(1);

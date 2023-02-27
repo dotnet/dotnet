@@ -296,140 +296,141 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 
         public override void VisitCSharpStatementLiteral(CSharpStatementLiteralSyntax node)
         {
-            var context = node.GetSpanContext();
-            if (context == null)
+            switch (node.ChunkGenerator)
             {
-                base.VisitCSharpStatementLiteral(node);
-                return;
-            }
-            else if (context.ChunkGenerator is DirectiveTokenChunkGenerator tokenChunkGenerator)
-            {
-                _builder.Add(new DirectiveTokenIntermediateNode()
-                {
-                    Content = node.GetContent(),
-                    DirectiveToken = tokenChunkGenerator.Descriptor,
-                    Source = BuildSourceSpanFromNode(node),
-                });
-            }
-            else if (context.ChunkGenerator is AddImportChunkGenerator importChunkGenerator)
-            {
-                var namespaceImport = importChunkGenerator.Namespace.Trim();
-                var namespaceSpan = BuildSourceSpanFromNode(node);
-                _usings.Add(new UsingReference(namespaceImport, namespaceSpan));
-            }
-            else if (context.ChunkGenerator is AddTagHelperChunkGenerator addTagHelperChunkGenerator)
-            {
-                IntermediateNode directiveNode;
-                if (IsMalformed(addTagHelperChunkGenerator.Diagnostics))
-                {
-                    directiveNode = new MalformedDirectiveIntermediateNode()
+                case null:
+                    base.VisitCSharpStatementLiteral(node);
+                    return;
+                case DirectiveTokenChunkGenerator tokenChunkGenerator:
+                    _builder.Add(new DirectiveTokenIntermediateNode()
                     {
-                        DirectiveName = CSharpCodeParser.AddTagHelperDirectiveDescriptor.Directive,
-                        Directive = CSharpCodeParser.AddTagHelperDirectiveDescriptor,
+                        Content = node.GetContent(),
+                        DirectiveToken = tokenChunkGenerator.Descriptor,
                         Source = BuildSourceSpanFromNode(node),
-                    };
-                }
-                else
-                {
-                    directiveNode = new DirectiveIntermediateNode()
+                    });
+                    break;
+                case AddImportChunkGenerator importChunkGenerator:
+                    var namespaceImport = importChunkGenerator.Namespace.Trim();
+                    var namespaceSpan = BuildSourceSpanFromNode(node);
+                    _usings.Add(new UsingReference(namespaceImport, namespaceSpan));
+                    break;
+                case AddTagHelperChunkGenerator addTagHelperChunkGenerator:
                     {
-                        DirectiveName = CSharpCodeParser.AddTagHelperDirectiveDescriptor.Directive,
-                        Directive = CSharpCodeParser.AddTagHelperDirectiveDescriptor,
-                        Source = BuildSourceSpanFromNode(node),
-                    };
-                }
+                        IntermediateNode directiveNode;
+                        if (IsMalformed(addTagHelperChunkGenerator.Diagnostics))
+                        {
+                            directiveNode = new MalformedDirectiveIntermediateNode()
+                            {
+                                DirectiveName = CSharpCodeParser.AddTagHelperDirectiveDescriptor.Directive,
+                                Directive = CSharpCodeParser.AddTagHelperDirectiveDescriptor,
+                                Source = BuildSourceSpanFromNode(node),
+                            };
+                        }
+                        else
+                        {
+                            directiveNode = new DirectiveIntermediateNode()
+                            {
+                                DirectiveName = CSharpCodeParser.AddTagHelperDirectiveDescriptor.Directive,
+                                Directive = CSharpCodeParser.AddTagHelperDirectiveDescriptor,
+                                Source = BuildSourceSpanFromNode(node),
+                            };
+                        }
 
-                for (var i = 0; i < addTagHelperChunkGenerator.Diagnostics.Count; i++)
-                {
-                    directiveNode.Diagnostics.Add(addTagHelperChunkGenerator.Diagnostics[i]);
-                }
+                        for (var i = 0; i < addTagHelperChunkGenerator.Diagnostics.Count; i++)
+                        {
+                            directiveNode.Diagnostics.Add(addTagHelperChunkGenerator.Diagnostics[i]);
+                        }
 
-                _builder.Push(directiveNode);
+                        _builder.Push(directiveNode);
 
-                _builder.Add(new DirectiveTokenIntermediateNode()
-                {
-                    Content = addTagHelperChunkGenerator.LookupText,
-                    DirectiveToken = CSharpCodeParser.AddTagHelperDirectiveDescriptor.Tokens[0],
-                    Source = BuildSourceSpanFromNode(node),
-                });
+                        _builder.Add(new DirectiveTokenIntermediateNode()
+                        {
+                            Content = addTagHelperChunkGenerator.LookupText,
+                            DirectiveToken = CSharpCodeParser.AddTagHelperDirectiveDescriptor.Tokens[0],
+                            Source = BuildSourceSpanFromNode(node),
+                        });
 
-                _builder.Pop();
-            }
-            else if (context.ChunkGenerator is RemoveTagHelperChunkGenerator removeTagHelperChunkGenerator)
-            {
-                IntermediateNode directiveNode;
-                if (IsMalformed(removeTagHelperChunkGenerator.Diagnostics))
-                {
-                    directiveNode = new MalformedDirectiveIntermediateNode()
+                        _builder.Pop();
+                        break;
+                    }
+                case RemoveTagHelperChunkGenerator removeTagHelperChunkGenerator:
                     {
-                        DirectiveName = CSharpCodeParser.RemoveTagHelperDirectiveDescriptor.Directive,
-                        Directive = CSharpCodeParser.RemoveTagHelperDirectiveDescriptor,
-                        Source = BuildSourceSpanFromNode(node),
-                    };
-                }
-                else
-                {
-                    directiveNode = new DirectiveIntermediateNode()
+                        IntermediateNode directiveNode;
+                        if (IsMalformed(removeTagHelperChunkGenerator.Diagnostics))
+                        {
+                            directiveNode = new MalformedDirectiveIntermediateNode()
+                            {
+                                DirectiveName = CSharpCodeParser.RemoveTagHelperDirectiveDescriptor.Directive,
+                                Directive = CSharpCodeParser.RemoveTagHelperDirectiveDescriptor,
+                                Source = BuildSourceSpanFromNode(node),
+                            };
+                        }
+                        else
+                        {
+                            directiveNode = new DirectiveIntermediateNode()
+                            {
+                                DirectiveName = CSharpCodeParser.RemoveTagHelperDirectiveDescriptor.Directive,
+                                Directive = CSharpCodeParser.RemoveTagHelperDirectiveDescriptor,
+                                Source = BuildSourceSpanFromNode(node),
+                            };
+                        }
+
+                        for (var i = 0; i < removeTagHelperChunkGenerator.Diagnostics.Count; i++)
+                        {
+                            directiveNode.Diagnostics.Add(removeTagHelperChunkGenerator.Diagnostics[i]);
+                        }
+
+                        _builder.Push(directiveNode);
+
+                        _builder.Add(new DirectiveTokenIntermediateNode()
+                        {
+                            Content = removeTagHelperChunkGenerator.LookupText,
+                            DirectiveToken = CSharpCodeParser.RemoveTagHelperDirectiveDescriptor.Tokens[0],
+                            Source = BuildSourceSpanFromNode(node),
+                        });
+
+                        _builder.Pop();
+                        break;
+                    }
+                case TagHelperPrefixDirectiveChunkGenerator tagHelperPrefixChunkGenerator:
                     {
-                        DirectiveName = CSharpCodeParser.RemoveTagHelperDirectiveDescriptor.Directive,
-                        Directive = CSharpCodeParser.RemoveTagHelperDirectiveDescriptor,
-                        Source = BuildSourceSpanFromNode(node),
-                    };
-                }
+                        IntermediateNode directiveNode;
+                        if (IsMalformed(tagHelperPrefixChunkGenerator.Diagnostics))
+                        {
+                            directiveNode = new MalformedDirectiveIntermediateNode()
+                            {
+                                DirectiveName = CSharpCodeParser.TagHelperPrefixDirectiveDescriptor.Directive,
+                                Directive = CSharpCodeParser.TagHelperPrefixDirectiveDescriptor,
+                                Source = BuildSourceSpanFromNode(node),
+                            };
+                        }
+                        else
+                        {
+                            directiveNode = new DirectiveIntermediateNode()
+                            {
+                                DirectiveName = CSharpCodeParser.TagHelperPrefixDirectiveDescriptor.Directive,
+                                Directive = CSharpCodeParser.TagHelperPrefixDirectiveDescriptor,
+                                Source = BuildSourceSpanFromNode(node),
+                            };
+                        }
 
-                for (var i = 0; i < removeTagHelperChunkGenerator.Diagnostics.Count; i++)
-                {
-                    directiveNode.Diagnostics.Add(removeTagHelperChunkGenerator.Diagnostics[i]);
-                }
+                        for (var i = 0; i < tagHelperPrefixChunkGenerator.Diagnostics.Count; i++)
+                        {
+                            directiveNode.Diagnostics.Add(tagHelperPrefixChunkGenerator.Diagnostics[i]);
+                        }
 
-                _builder.Push(directiveNode);
+                        _builder.Push(directiveNode);
 
-                _builder.Add(new DirectiveTokenIntermediateNode()
-                {
-                    Content = removeTagHelperChunkGenerator.LookupText,
-                    DirectiveToken = CSharpCodeParser.RemoveTagHelperDirectiveDescriptor.Tokens[0],
-                    Source = BuildSourceSpanFromNode(node),
-                });
+                        _builder.Add(new DirectiveTokenIntermediateNode()
+                        {
+                            Content = tagHelperPrefixChunkGenerator.Prefix,
+                            DirectiveToken = CSharpCodeParser.TagHelperPrefixDirectiveDescriptor.Tokens[0],
+                            Source = BuildSourceSpanFromNode(node),
+                        });
 
-                _builder.Pop();
-            }
-            else if (context.ChunkGenerator is TagHelperPrefixDirectiveChunkGenerator tagHelperPrefixChunkGenerator)
-            {
-                IntermediateNode directiveNode;
-                if (IsMalformed(tagHelperPrefixChunkGenerator.Diagnostics))
-                {
-                    directiveNode = new MalformedDirectiveIntermediateNode()
-                    {
-                        DirectiveName = CSharpCodeParser.TagHelperPrefixDirectiveDescriptor.Directive,
-                        Directive = CSharpCodeParser.TagHelperPrefixDirectiveDescriptor,
-                        Source = BuildSourceSpanFromNode(node),
-                    };
-                }
-                else
-                {
-                    directiveNode = new DirectiveIntermediateNode()
-                    {
-                        DirectiveName = CSharpCodeParser.TagHelperPrefixDirectiveDescriptor.Directive,
-                        Directive = CSharpCodeParser.TagHelperPrefixDirectiveDescriptor,
-                        Source = BuildSourceSpanFromNode(node),
-                    };
-                }
-
-                for (var i = 0; i < tagHelperPrefixChunkGenerator.Diagnostics.Count; i++)
-                {
-                    directiveNode.Diagnostics.Add(tagHelperPrefixChunkGenerator.Diagnostics[i]);
-                }
-
-                _builder.Push(directiveNode);
-
-                _builder.Add(new DirectiveTokenIntermediateNode()
-                {
-                    Content = tagHelperPrefixChunkGenerator.Prefix,
-                    DirectiveToken = CSharpCodeParser.TagHelperPrefixDirectiveDescriptor.Tokens[0],
-                    Source = BuildSourceSpanFromNode(node),
-                });
-
-                _builder.Pop();
+                        _builder.Pop();
+                        break;
+                    }
             }
 
             base.VisitCSharpStatementLiteral(node);
@@ -471,7 +472,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 node.NameSuffix?.LiteralTokens,
                 node.EqualsToken == null ? new SyntaxList<SyntaxToken>() : new SyntaxList<SyntaxToken>(node.EqualsToken),
                 node.ValuePrefix?.LiteralTokens);
-            var prefix = (MarkupTextLiteralSyntax)SyntaxFactory.MarkupTextLiteral(prefixTokens).Green.CreateRed(node, node.NamePrefix?.Position ?? node.Name.Position);
+            var prefix = (MarkupTextLiteralSyntax)SyntaxFactory.MarkupTextLiteral(prefixTokens, chunkGenerator: null).Green.CreateRed(node, node.NamePrefix?.Position ?? node.Name.Position);
 
             var name = node.Name.GetContent();
             if (name.StartsWith("data-", StringComparison.OrdinalIgnoreCase) &&
@@ -493,10 +494,10 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                         var mergedValue = MergeAttributeValue(literalAttributeValueNodes[i]);
                         valueTokens.AddRange(mergedValue.LiteralTokens);
                     }
-                    var rewritten = SyntaxFactory.MarkupTextLiteral(valueTokens.ToList());
+                    var rewritten = SyntaxFactory.MarkupTextLiteral(valueTokens.ToList(), chunkGenerator: null);
 
                     var mergedLiterals = MergeLiterals(prefix?.LiteralTokens, rewritten.LiteralTokens, node.ValueSuffix?.LiteralTokens);
-                    var mergedAttribute = SyntaxFactory.MarkupTextLiteral(mergedLiterals).Green.CreateRed(node.Parent, node.Position);
+                    var mergedAttribute = SyntaxFactory.MarkupTextLiteral(mergedLiterals, chunkGenerator: null).Green.CreateRed(node.Parent, node.Position);
                     Visit(mergedAttribute);
                 }
                 else
@@ -530,7 +531,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             var literals = MergeLiterals(
                 node.NamePrefix?.LiteralTokens,
                 node.Name?.LiteralTokens);
-            var literal = SyntaxFactory.MarkupTextLiteral(literals).Green.CreateRed(node.Parent, node.Position);
+            var literal = SyntaxFactory.MarkupTextLiteral(literals, chunkGenerator: null).Green.CreateRed(node.Parent, node.Position);
 
             Visit(literal);
         }
@@ -544,8 +545,8 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             var containsExpression = false;
             var descendantNodes = node.DescendantNodes(n =>
             {
-                    // Don't go into sub block. They may contain expressions but we only care about the top level.
-                    return !(n.Parent is CSharpCodeBlockSyntax);
+                // Don't go into sub block. They may contain expressions but we only care about the top level.
+                return !(n.Parent is CSharpCodeBlockSyntax);
             });
             foreach (var child in descendantNodes)
             {
@@ -719,7 +720,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 // If we are top level in a tag helper HTML attribute, we want to be rendered as markup.
                 // This case happens for duplicate non-string bound attributes. They would be initially be categorized as
                 // CSharp but since they are duplicate, they should just be markup.
-                var markupLiteral = SyntaxFactory.MarkupTextLiteral(node.LiteralTokens).Green.CreateRed(node.Parent, node.Position);
+                var markupLiteral = SyntaxFactory.MarkupTextLiteral(node.LiteralTokens, chunkGenerator: null).Green.CreateRed(node.Parent, node.Position);
                 Visit(markupLiteral);
                 return;
             }
@@ -737,8 +738,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 
         public override void VisitCSharpStatementLiteral(CSharpStatementLiteralSyntax node)
         {
-            var context = node.GetSpanContext();
-            if (context == null || context.ChunkGenerator is StatementChunkGenerator)
+            if (node.ChunkGenerator is null or StatementChunkGenerator)
             {
                 var isAttributeValue = _builder.Current is CSharpCodeAttributeValueIntermediateNode;
 
@@ -770,8 +770,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 
         public override void VisitMarkupTextLiteral(MarkupTextLiteralSyntax node)
         {
-            var context = node.GetSpanContext();
-            if (context != null && context.ChunkGenerator == SpanChunkGenerator.Null)
+            if (node.ChunkGenerator == SpanChunkGenerator.Null)
             {
                 return;
             }
@@ -1053,7 +1052,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                     var mergedValue = MergeAttributeValue(literalAttributeValueNodes[i]);
                     valueTokens.AddRange(mergedValue.LiteralTokens);
                 }
-                var rewritten = SyntaxFactory.MarkupTextLiteral(valueTokens.ToList()).Green.CreateRed(node.Parent, position);
+                var rewritten = SyntaxFactory.MarkupTextLiteral(valueTokens.ToList(), chunkGenerator: null).Green.CreateRed(node.Parent, position);
                 Visit(rewritten);
             }
             else if (children.All(c => c is MarkupTextLiteralSyntax))
@@ -1064,21 +1063,23 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 {
                     builder.AddRange(literal.LiteralTokens);
                 }
-                var rewritten = SyntaxFactory.MarkupTextLiteral(builder.ToList()).Green.CreateRed(node.Parent, position);
+                var rewritten = SyntaxFactory.MarkupTextLiteral(builder.ToList(), chunkGenerator: null).Green.CreateRed(node.Parent, position);
                 Visit(rewritten);
             }
             else if (children.All(c => c is CSharpExpressionLiteralSyntax))
             {
                 var builder = SyntaxListBuilder<SyntaxToken>.Create();
                 var expressionLiteralArray = children.Cast<CSharpExpressionLiteralSyntax>();
-                SpanContext context = null;
+                SpanEditHandler editHandler = null;
+                ISpanChunkGenerator generator = null;
                 foreach (var literal in expressionLiteralArray)
                 {
-                    context = literal.GetSpanContext();
+                    generator = literal.ChunkGenerator;
+                    editHandler = literal.GetEditHandler();
                     builder.AddRange(literal.LiteralTokens);
                 }
-                var rewritten = SyntaxFactory.CSharpExpressionLiteral(builder.ToList()).Green.CreateRed(node.Parent, position);
-                rewritten = context != null ? rewritten.WithSpanContext(context) : rewritten;
+                var rewritten = SyntaxFactory.CSharpExpressionLiteral(builder.ToList(), generator).Green.CreateRed(node.Parent, position);
+                rewritten = editHandler != null ? rewritten.WithEditHandler(editHandler) : rewritten;
                 Visit(rewritten);
             }
             else
@@ -1090,12 +1091,12 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
         private MarkupTextLiteralSyntax MergeAttributeValue(MarkupLiteralAttributeValueSyntax node)
         {
             var valueTokens = MergeLiterals(node.Prefix?.LiteralTokens, node.Value?.LiteralTokens);
-            var rewritten = node.Prefix?.Update(valueTokens) ?? node.Value?.Update(valueTokens);
+            var rewritten = node.Prefix?.Update(valueTokens, node.Prefix.ChunkGenerator) ?? node.Value?.Update(valueTokens, node.Value.ChunkGenerator);
             rewritten = (MarkupTextLiteralSyntax)rewritten?.Green.CreateRed(node, node.Position);
-            var originalContext = rewritten.GetSpanContext();
-            if (originalContext != null)
+            var originalEditHandler = rewritten.GetEditHandler();
+            if (originalEditHandler != null)
             {
-                rewritten = rewritten.WithSpanContext(new SpanContext(MarkupChunkGenerator.Instance, originalContext.EditHandler));
+                rewritten = rewritten.Update(rewritten.LiteralTokens, MarkupChunkGenerator.Instance).WithEditHandler(originalEditHandler);
             }
 
             return rewritten;
@@ -1278,7 +1279,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 node.NameSuffix?.LiteralTokens,
                 node.EqualsToken == null ? new SyntaxList<SyntaxToken>() : new SyntaxList<SyntaxToken>(node.EqualsToken),
                 node.ValuePrefix?.LiteralTokens);
-            var prefix = (MarkupTextLiteralSyntax)SyntaxFactory.MarkupTextLiteral(prefixTokens).Green.CreateRed(node, node.NamePrefix?.Position ?? node.Name.Position);
+            var prefix = (MarkupTextLiteralSyntax)SyntaxFactory.MarkupTextLiteral(prefixTokens, chunkGenerator: null).Green.CreateRed(node, node.NamePrefix?.Position ?? node.Name.Position);
 
             var name = node.Name.GetContent();
             _builder.Push(new HtmlAttributeIntermediateNode()
@@ -1297,7 +1298,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
         public override void VisitMarkupMinimizedAttributeBlock(MarkupMinimizedAttributeBlockSyntax node)
         {
             var prefixTokens = MergeLiterals(node.NamePrefix?.LiteralTokens, node.Name.LiteralTokens);
-            var prefix = (MarkupTextLiteralSyntax)SyntaxFactory.MarkupTextLiteral(prefixTokens).Green.CreateRed(node, node.NamePrefix?.Position ?? node.Name.Position);
+            var prefix = (MarkupTextLiteralSyntax)SyntaxFactory.MarkupTextLiteral(prefixTokens, chunkGenerator: null).Green.CreateRed(node, node.NamePrefix?.Position ?? node.Name.Position);
 
             var name = node.Name.GetContent();
             _builder.Add(new HtmlAttributeIntermediateNode()
@@ -1318,8 +1319,8 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             var containsExpression = false;
             var descendantNodes = node.DescendantNodes(n =>
             {
-                    // Don't go into sub block. They may contain expressions but we only care about the top level.
-                    return !(n.Parent is CSharpCodeBlockSyntax);
+                // Don't go into sub block. They may contain expressions but we only care about the top level.
+                return !(n.Parent is CSharpCodeBlockSyntax);
             });
             foreach (var child in descendantNodes)
             {
@@ -1394,8 +1395,8 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 return;
             }
 
-            var context = node.GetSpanContext();
-            if (context != null && context.ChunkGenerator == SpanChunkGenerator.Null)
+            var context = node.GetEditHandler();
+            if (node.ChunkGenerator == SpanChunkGenerator.Null)
             {
                 return;
             }
@@ -1610,7 +1611,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 // If we are top level in a tag helper HTML attribute, we want to be rendered as markup.
                 // This case happens for duplicate non-string bound attributes. They would be initially be categorized as
                 // CSharp but since they are duplicate, they should just be markup.
-                var markupLiteral = SyntaxFactory.MarkupTextLiteral(node.LiteralTokens).Green.CreateRed(node.Parent, node.Position);
+                var markupLiteral = SyntaxFactory.MarkupTextLiteral(node.LiteralTokens, chunkGenerator: null).Green.CreateRed(node.Parent, node.Position);
                 Visit(markupLiteral);
                 return;
             }
@@ -1628,8 +1629,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 
         public override void VisitCSharpStatementLiteral(CSharpStatementLiteralSyntax node)
         {
-            var context = node.GetSpanContext();
-            if (context == null || context.ChunkGenerator is StatementChunkGenerator)
+            if (node.ChunkGenerator is null or StatementChunkGenerator)
             {
                 var isAttributeValue = _builder.Current is CSharpCodeAttributeValueIntermediateNode;
 
@@ -2041,7 +2041,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                     var mergedValue = MergeAttributeValue(literalAttributeValueNodes[i]);
                     valueTokens.AddRange(mergedValue.LiteralTokens);
                 }
-                var rewritten = SyntaxFactory.MarkupTextLiteral(valueTokens.ToList()).Green.CreateRed(node.Parent, position);
+                var rewritten = SyntaxFactory.MarkupTextLiteral(valueTokens.ToList(), chunkGenerator: null).Green.CreateRed(node.Parent, position);
                 Visit(rewritten);
             }
             else if (children.All(c => c is MarkupTextLiteralSyntax))
@@ -2052,21 +2052,23 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 {
                     builder.AddRange(literal.LiteralTokens);
                 }
-                var rewritten = SyntaxFactory.MarkupTextLiteral(builder.ToList()).Green.CreateRed(node.Parent, position);
+                var rewritten = SyntaxFactory.MarkupTextLiteral(builder.ToList(), chunkGenerator: null).Green.CreateRed(node.Parent, position);
                 Visit(rewritten);
             }
             else if (children.All(c => c is CSharpExpressionLiteralSyntax))
             {
                 var builder = SyntaxListBuilder<SyntaxToken>.Create();
                 var expressionLiteralArray = children.Cast<CSharpExpressionLiteralSyntax>();
-                SpanContext context = null;
+                ISpanChunkGenerator generator = null;
+                SpanEditHandler editHandler = null;
                 foreach (var literal in expressionLiteralArray)
                 {
-                    context = literal.GetSpanContext();
+                    generator = literal.ChunkGenerator;
+                    editHandler = literal.GetEditHandler();
                     builder.AddRange(literal.LiteralTokens);
                 }
-                var rewritten = SyntaxFactory.CSharpExpressionLiteral(builder.ToList()).Green.CreateRed(node.Parent, position);
-                rewritten = context != null ? rewritten.WithSpanContext(context) : rewritten;
+                var rewritten = SyntaxFactory.CSharpExpressionLiteral(builder.ToList(), generator).Green.CreateRed(node.Parent, position);
+                rewritten = editHandler != null ? rewritten.WithEditHandler(editHandler) : rewritten;
                 Visit(rewritten);
             }
             else
@@ -2078,12 +2080,12 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
         private MarkupTextLiteralSyntax MergeAttributeValue(MarkupLiteralAttributeValueSyntax node)
         {
             var valueTokens = MergeLiterals(node.Prefix?.LiteralTokens, node.Value?.LiteralTokens);
-            var rewritten = node.Prefix?.Update(valueTokens) ?? node.Value?.Update(valueTokens);
+            var rewritten = node.Prefix?.Update(valueTokens, node.Prefix.ChunkGenerator) ?? node.Value?.Update(valueTokens, node.Value.ChunkGenerator);
             rewritten = (MarkupTextLiteralSyntax)rewritten?.Green.CreateRed(node, node.Position);
-            var originalContext = rewritten.GetSpanContext();
-            if (originalContext != null)
+            var originalEditHandler = rewritten.GetEditHandler();
+            if (originalEditHandler != null)
             {
-                rewritten = rewritten.WithSpanContext(new SpanContext(MarkupChunkGenerator.Instance, originalContext.EditHandler));
+                rewritten = rewritten.Update(rewritten.LiteralTokens, MarkupChunkGenerator.Instance).WithEditHandler(originalEditHandler);
             }
 
             return rewritten;

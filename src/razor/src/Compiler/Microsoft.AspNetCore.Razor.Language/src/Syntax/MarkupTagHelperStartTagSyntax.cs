@@ -28,11 +28,11 @@ internal partial class MarkupTagHelperStartTagSyntax
         // This is needed to generate the same classified spans as the legacy syntax tree.
         var builder = new SyntaxListBuilder(5);
         var tokens = SyntaxListBuilder<SyntaxToken>.Create();
-        var context = this.GetSpanContext();
+        var editHandler = this.GetEditHandler();
 
         // We want to know if this tag contains non-whitespace attribute content to set the appropriate AcceptedCharacters.
         // The prefix of a start tag(E.g '|<foo| attr>') will have 'Any' accepted characters if non-whitespace attribute content exists.
-        var acceptsAnyContext = new SpanContext(context.ChunkGenerator, SpanEditHandler.CreateDefault(AcceptedCharactersInternal.Any));
+        var acceptsAnyHandler = SpanEditHandler.CreateDefault(AcceptedCharactersInternal.Any);
         var containsAttributesContent = false;
         foreach (var attribute in Attributes)
         {
@@ -50,11 +50,11 @@ internal partial class MarkupTagHelperStartTagSyntax
 
         if (Bang != null)
         {
-            builder.Add(SyntaxFactory.MarkupTextLiteral(tokens.Consume()).WithSpanContext(acceptsAnyContext));
+            builder.Add(SyntaxFactory.MarkupTextLiteral(tokens.Consume(), ChunkGenerator).WithEditHandler(acceptsAnyHandler));
 
             tokens.Add(Bang);
-            var acceptsNoneContext = new SpanContext(context.ChunkGenerator, SpanEditHandler.CreateDefault(AcceptedCharactersInternal.None));
-            builder.Add(SyntaxFactory.RazorMetaCode(tokens.Consume()).WithSpanContext(acceptsNoneContext));
+            var acceptsNoneHandler = SpanEditHandler.CreateDefault(AcceptedCharactersInternal.None);
+            builder.Add(SyntaxFactory.RazorMetaCode(tokens.Consume(), ChunkGenerator).WithEditHandler(acceptsNoneHandler));
         }
 
         if (!Name.IsMissing)
@@ -62,7 +62,7 @@ internal partial class MarkupTagHelperStartTagSyntax
             tokens.Add(Name);
         }
 
-        builder.Add(SyntaxFactory.MarkupTextLiteral(tokens.Consume()).WithSpanContext(containsAttributesContent ? acceptsAnyContext : context));
+        builder.Add(SyntaxFactory.MarkupTextLiteral(tokens.Consume(), ChunkGenerator).WithEditHandler(containsAttributesContent ? acceptsAnyHandler : editHandler));
 
         builder.AddRange(Attributes);
 
@@ -78,7 +78,7 @@ internal partial class MarkupTagHelperStartTagSyntax
 
         if (tokens.Count > 0)
         {
-            builder.Add(SyntaxFactory.MarkupTextLiteral(tokens.Consume()).WithSpanContext(context));
+            builder.Add(SyntaxFactory.MarkupTextLiteral(tokens.Consume(), ChunkGenerator).WithEditHandler(editHandler));
         }
 
         return builder.ToListNode().CreateRed(this, Position);
