@@ -31,8 +31,9 @@ Copyright (c) .NET Foundation. All rights reserved.
         RestorePackagesConfig="$(RestorePackagesConfig)"
         SolutionPath="$(SolutionPath)"
         ProcessFileName="$(NuGetConsoleProcessFileName)"
-        MSBuildStartupDirectory="$(MSBuildStartupDirectory)"
-        />
+        MSBuildStartupDirectory="$(MSBuildStartupDirectory)">
+      <Output TaskParameter="EmbedInBinlog" ItemName="EmbedInBinlog" />
+    </RestoreTaskEx>
   </Target>
 
  <!--

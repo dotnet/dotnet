@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 
 #if !IS_CORECLR
 
@@ -14,6 +15,7 @@ using System.Reflection;
 
 using System.Threading;
 using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 using NuGet.Common;
 
 namespace NuGet.Build.Tasks
@@ -61,6 +63,9 @@ namespace NuGet.Build.Tasks
         /// Get or sets a value indicating whether or not the restore should restore all projects or just the entry project.
         /// </summary>
         public bool Recursive { get; set; }
+
+        [Output]
+        public ITaskItem[] EmbedInBinlog { get; set; }
 
         /// <summary>
         /// Gets or sets the full path to the solution file (if any) that is being built.
@@ -136,6 +141,8 @@ namespace NuGet.Build.Tasks
                                 // The process may have exited, in this case ignore the exception
                             }
                         }
+
+                        EmbedInBinlog = loggingQueue.FilesToEmbedInBinlog.Select(i => new TaskItem(i)).ToArray();
                     }
                     catch (Exception e) when (
                         e is OperationCanceledException

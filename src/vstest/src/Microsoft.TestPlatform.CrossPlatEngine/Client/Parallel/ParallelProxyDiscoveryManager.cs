@@ -99,17 +99,7 @@ internal sealed class ParallelProxyDiscoveryManager : IParallelProxyDiscoveryMan
         // marked as NotDiscovered.
         _dataAggregator.MarkSourcesWithStatus(discoveryCriteria.Sources, DiscoveryStatus.NotDiscovered);
 
-        if (nonRunnableWorkloads.Count > 0)
-        {
-            // We found some sources that don't associate to any runtime provider and so they cannot run.
-            // Mark the sources as skipped.
-
-            _dataAggregator.MarkSourcesWithStatus(nonRunnableWorkloads.SelectMany(w => w.Work.Sources), DiscoveryStatus.SkippedDiscovery);
-            // TODO: in strict mode keep them as non-discovered, and mark the run as aborted.
-            // _dataAggregator.MarkAsAborted();
-        }
-
-        _parallelOperationManager.StartWork(runnableWorkloads, eventHandler, GetParallelEventHandler, DiscoverTestsOnConcurrentManager);
+        _parallelOperationManager.StartWork(workloads, eventHandler, GetParallelEventHandler, InitializeDiscoverTestsOnConcurrentManager, DiscoverTestsOnConcurrentManager);
     }
 
     private ITestDiscoveryEventsHandler2 GetParallelEventHandler(ITestDiscoveryEventsHandler2 eventHandler, IProxyDiscoveryManager concurrentManager)
@@ -261,41 +251,82 @@ internal sealed class ParallelProxyDiscoveryManager : IParallelProxyDiscoveryMan
     /// Each concurrent discoverer calls this method, once its completed working on previous data
     /// </summary>
     /// <param name="ProxyDiscoveryManager">Proxy discovery manager instance.</param>
-    private void DiscoverTestsOnConcurrentManager(IProxyDiscoveryManager proxyDiscoveryManager, ITestDiscoveryEventsHandler2 eventHandler, DiscoveryCriteria discoveryCriteria)
+    private Task InitializeDiscoverTestsOnConcurrentManager(IProxyDiscoveryManager proxyDiscoveryManager, ITestDiscoveryEventsHandler2 eventHandler, DiscoveryCriteria discoveryCriteria)
+    {
+        // Kick off another discovery task for the next source
+        return Task.Run(() =>
+        {
+            EqtTrace.Verbose("ProxyParallelDiscoveryManager.InitializeDiscoverTestsOnConcurrentManager: Discovery preparation started.");
+
+            proxyDiscoveryManager.Initialize(_skipDefaultAdapters);
+            proxyDiscoveryManager.InitializeDiscovery(discoveryCriteria, eventHandler, _skipDefaultAdapters);
+
+            EqtTrace.Verbose($"ProxyParallelDiscoveryManager.InitializeDiscoverTestsOnConcurrentManager: Init only: {string.Join(", ", discoveryCriteria.Sources)}");
+        });
+    }
+
+    /// <summary>
+    /// Triggers the discovery for the next data object on the concurrent discoverer
+    /// Each concurrent discoverer calls this method, once its completed working on previous data
+    /// </summary>
+    /// <param name="ProxyDiscoveryManager">Proxy discovery manager instance.</param>
+    private void DiscoverTestsOnConcurrentManager(
+        IProxyDiscoveryManager proxyDiscoveryManager,
+        ITestDiscoveryEventsHandler2 eventHandler,
+        DiscoveryCriteria discoveryCriteria,
+        bool initialized,
+        Task? task)
     {
         // Kick off another discovery task for the next source
         Task.Run(() =>
             {
                 EqtTrace.Verbose("ParallelProxyDiscoveryManager: Discovery started.");
-
-                proxyDiscoveryManager.Initialize(_skipDefaultAdapters);
-                proxyDiscoveryManager.DiscoverTests(discoveryCriteria, eventHandler);
-            })
-            .ContinueWith(t =>
+                if (!initialized)
                 {
-                    // Just in case, the actual discovery couldn't start for an instance. Ensure that
-                    // we call discovery complete since we have already fetched a source. Otherwise
-                    // discovery will not terminate
-                    EqtTrace.Error("ParallelProxyDiscoveryManager: Failed to trigger discovery. Exception: " + t.Exception);
+                    EqtTrace.Verbose($"ProxyParallelDiscoveryManager.DiscoverTestsOnConcurrentManager: Initialize right before run: {string.Join(", ", discoveryCriteria.Sources)}");
+                    proxyDiscoveryManager.Initialize(_skipDefaultAdapters);
+                    proxyDiscoveryManager.InitializeDiscovery(discoveryCriteria, eventHandler, _skipDefaultAdapters);
+                }
+                else
+                {
+                    task?.Wait();
+                }
 
-                    var handler = eventHandler;
-                    var exceptionToString = t.Exception?.ToString();
-                    var testMessagePayload = new TestMessagePayload { MessageLevel = TestMessageLevel.Error, Message = exceptionToString };
-                    handler.HandleRawMessage(_dataSerializer.SerializePayload(MessageType.TestMessage, testMessagePayload));
-                    handler.HandleLogMessage(TestMessageLevel.Error, exceptionToString);
-
-                    // Send discovery complete. Similar logic is also used in ProxyDiscoveryManager.DiscoverTests.
-                    // Differences:
-                    // Total tests must be zero here since parallel discovery events handler adds the count
-                    // Keep `lastChunk` as null since we don't want a message back to the IDE (discovery didn't even begin)
-                    // Set `isAborted` as true since we want this instance of discovery manager to be replaced
-                    // TODO: the comment above mentions 0 tests but sends -1. Make sense of this.
-                    var discoveryCompleteEventsArgs = new DiscoveryCompleteEventArgs(-1, true);
-                    handler.HandleDiscoveryComplete(discoveryCompleteEventsArgs, null);
-                },
-                TaskContinuationOptions.OnlyOnFaulted);
+                EqtTrace.Verbose($"ProxyParallelDiscoveryManager.DiscoverTestsOnConcurrentManager: Run: {string.Join(", ", discoveryCriteria.Sources)}");
+                proxyDiscoveryManager.DiscoverTests(discoveryCriteria, eventHandler);
+            }).ContinueWith(t => HandleError(eventHandler, t), TaskContinuationOptions.OnlyOnFaulted);
 
         EqtTrace.Verbose("ProxyParallelDiscoveryManager.DiscoverTestsOnConcurrentManager: No sources available for discovery.");
+    }
+
+    private void HandleError(ITestDiscoveryEventsHandler2 eventHandler, Task t)
+    {
+        // Just in case, the actual discovery couldn't start for an instance. Ensure that
+        // we call discovery complete since we have already fetched a source. Otherwise
+        // discovery will not terminate
+        EqtTrace.Error("ParallelProxyDiscoveryManager: Failed to trigger discovery. Exception: " + t.Exception);
+
+        var handler = eventHandler;
+        var exceptionString = t.Exception?.ToString();
+        var testMessagePayload = new TestMessagePayload { MessageLevel = TestMessageLevel.Error, Message = exceptionString };
+        handler.HandleRawMessage(_dataSerializer.SerializePayload(MessageType.TestMessage, testMessagePayload));
+        handler.HandleLogMessage(TestMessageLevel.Error, exceptionString);
+
+        // Send discovery complete. Similar logic is also used in ProxyDiscoveryManager.DiscoverTests.
+        // Differences:
+        // Total tests must be zero here since parallel discovery events handler adds the count
+        // Keep `lastChunk` as null since we don't want a message back to the IDE (discovery didn't even begin)
+        // Set `isAborted` as true since we want this instance of discovery manager to be replaced
+        // TODO: the comment above mentions 0 tests but sends -1. Make sense of this.
+        var discoveryCompleteEventsArgs = new DiscoveryCompleteEventArgs(-1, true);
+        handler.HandleDiscoveryComplete(discoveryCompleteEventsArgs, null);
+    }
+
+    public void InitializeDiscovery(DiscoveryCriteria discoveryCriteria, ITestDiscoveryEventsHandler2 eventHandler, bool skipDefaultAdapters)
+    {
+        // Leaving this empty as it is not really relevant to the parallel proxy managers.
+        // The idea of pre-initializing the test run makes sense only for single proxies like
+        // ProxyExecutionManager or ProxyDiscoveryManager.
     }
 
     public void Dispose()

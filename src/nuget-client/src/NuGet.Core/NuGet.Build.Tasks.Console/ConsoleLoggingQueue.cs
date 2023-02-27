@@ -23,7 +23,7 @@ namespace NuGet.Build.Tasks.Console
     /// This class implements <see cref="IBuildEngine" /> so that an instance of TaskLoggingHelper can be created.
     ///
     /// This class implements <see cref="ILogger" /> so that it can be passed to MSBuild APIs that require an ILogger to log messages.</remarks>
-    internal class ConsoleLoggingQueue : LoggingQueue<ConsoleOutLogMessage>, IBuildEngine, ILogger
+    internal class ConsoleLoggingQueue : LoggingQueue<ConsoleOutLogItem>, IBuildEngine, ILogger
     {
         private readonly Lazy<TaskLoggingHelper> _taskLoggingHelperLazy;
 
@@ -144,7 +144,7 @@ namespace NuGet.Build.Tasks.Console
         /// Processes a logging message by serializing it as JSON and writing it to <see cref="System.Console.Out" />.
         /// </summary>
         /// <param name="message">The <see cref="ConsoleOutLogMessage" /> to log.</param>
-        protected override void Process(ConsoleOutLogMessage message)
+        protected override void Process(ConsoleOutLogItem message)
         {
             System.Console.Out.WriteLine(message.ToJson());
         }

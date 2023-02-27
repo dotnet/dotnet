@@ -2,13 +2,18 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 using NuGet.Commands;
 using NuGet.Common;
+using NuGet.Configuration;
+using NuGet.ProjectModel;
 
 namespace NuGet.Build.Tasks
 {
@@ -73,6 +78,12 @@ namespace NuGet.Build.Tasks
         /// <returns></returns>
         public bool RestorePackagesConfig { get; set; }
 
+        /// <summary>
+        /// Gets or sets the paths for files to embed in the binary log.
+        /// </summary>
+        [Output]
+        public ITaskItem[] EmbedInBinlog { get; set; }
+
         public override bool Execute()
         {
 #if DEBUG
@@ -127,6 +138,8 @@ namespace NuGet.Build.Tasks
 
             var dgFile = MSBuildRestoreUtility.GetDependencySpec(wrappedItems);
 
+            EmbedInBinlog = GetFilesToEmbedInBinlog(dgFile);
+
             return await BuildTasksUtility.RestoreAsync(
                 dependencyGraphSpec: dgFile,
                 interactive: Interactive,
@@ -166,6 +179,45 @@ namespace NuGet.Build.Tasks
             }
 
             _disposed = true;
+        }
+
+        /// <summary>
+        /// Gets the list of files to embed in the MSBuild binary log.
+        /// </summary>
+        /// <param name="dependencyGraphSpec"></param>
+        /// <returns>If the MSBuildBinaryLoggerEnabled environment variable is set, returns the paths to NuGet files to embed in the binlog, otherwise returns <see cref="Array.Empty{T}" />.</returns>
+        private ITaskItem[] GetFilesToEmbedInBinlog(DependencyGraphSpec dependencyGraphSpec)
+        {
+            if (!string.Equals(Environment.GetEnvironmentVariable("MSBUILDBINARYLOGGERENABLED"), bool.TrueString, StringComparison.OrdinalIgnoreCase))
+            {
+                return Array.Empty<ITaskItem>();
+            }
+
+            IReadOnlyList<PackageSpec> projects = dependencyGraphSpec.Projects;
+
+            List<ITaskItem> restoredProjectOutputPaths = new List<ITaskItem>(projects.Count);
+
+            foreach (PackageSpec project in projects)
+            {
+                if (project.RestoreMetadata.ProjectStyle == ProjectStyle.PackageReference)
+                {
+                    restoredProjectOutputPaths.Add(new TaskItem(Path.Combine(project.RestoreMetadata.OutputPath, LockFileFormat.AssetsFileName)));
+                    restoredProjectOutputPaths.Add(new TaskItem(Path.Combine(project.RestoreMetadata.OutputPath, DependencyGraphSpec.GetDGSpecFileName(Path.GetFileName(project.RestoreMetadata.ProjectPath)))));
+                    restoredProjectOutputPaths.Add(new TaskItem(BuildAssetsUtils.GetMSBuildFilePathForPackageReferenceStyleProject(project, BuildAssetsUtils.PropsExtension)));
+                    restoredProjectOutputPaths.Add(new TaskItem(BuildAssetsUtils.GetMSBuildFilePathForPackageReferenceStyleProject(project, BuildAssetsUtils.TargetsExtension)));
+                }
+                else if (project.RestoreMetadata.ProjectStyle == ProjectStyle.PackagesConfig)
+                {
+                    string packagesConfigPath = BuildTasksUtility.GetPackagesConfigFilePath(project.RestoreMetadata.ProjectPath);
+
+                    if (packagesConfigPath != null)
+                    {
+                        restoredProjectOutputPaths.Add(new TaskItem(packagesConfigPath));
+                    }
+                }
+            }
+
+            return restoredProjectOutputPaths.ToArray();
         }
     }
 }
