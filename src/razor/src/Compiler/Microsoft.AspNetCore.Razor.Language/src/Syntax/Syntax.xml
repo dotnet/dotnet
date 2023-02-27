@@ -3,7 +3,7 @@
 <Tree Root="SyntaxNode">
   <PredefinedNode Name="RazorSyntaxNode" Base="SyntaxNode" />
   <PredefinedNode Name="SyntaxToken" Base="RazorSyntaxNode" />
-  
+
   <!-- Common -->
   <AbstractNode Name="RazorBlockSyntax" Base="RazorSyntaxNode">
     <Field Name="Children" Type="SyntaxList&lt;RazorSyntaxNode&gt;" />
@@ -33,6 +33,7 @@
   <Node Name="RazorMetaCodeSyntax" Base="RazorSyntaxNode">
     <Kind Name="RazorMetaCode" />
     <Field Name="MetaCode" Type="SyntaxList&lt;SyntaxToken&gt;" />
+    <Field Name="ChunkGenerator" Type="ISpanChunkGenerator" IsOptional="true" />
   </Node>
   <Node Name="GenericBlockSyntax" Base="RazorBlockSyntax">
     <Kind Name="GenericBlock" />
@@ -41,6 +42,7 @@
   <Node Name="UnclassifiedTextLiteralSyntax" Base="RazorSyntaxNode">
     <Kind Name="UnclassifiedTextLiteral" />
     <Field Name="LiteralTokens" Type="SyntaxList&lt;SyntaxToken&gt;" />
+    <Field Name="ChunkGenerator" Type="ISpanChunkGenerator" IsOptional="true" />
   </Node>
 
   <!-- Markup -->
@@ -52,14 +54,17 @@
   <Node Name="MarkupTransitionSyntax" Base="MarkupSyntaxNode">
     <Kind Name="MarkupTransition" />
     <Field Name="TransitionTokens" Type="SyntaxList&lt;SyntaxToken&gt;" />
+    <Field Name="ChunkGenerator" Type="ISpanChunkGenerator" Optional="true" />
   </Node>
   <Node Name="MarkupTextLiteralSyntax" Base="MarkupSyntaxNode">
     <Kind Name="MarkupTextLiteral" />
     <Field Name="LiteralTokens" Type="SyntaxList&lt;SyntaxToken&gt;" />
+    <Field Name="ChunkGenerator" Type="ISpanChunkGenerator" Optional="true" />
   </Node>
   <Node Name="MarkupEphemeralTextLiteralSyntax" Base="MarkupSyntaxNode">
     <Kind Name="MarkupEphemeralTextLiteral" />
     <Field Name="LiteralTokens" Type="SyntaxList&lt;SyntaxToken&gt;" />
+    <Field Name="ChunkGenerator" Type="ISpanChunkGenerator" Optional="true" />
   </Node>
   <Node Name="MarkupCommentBlockSyntax" Base="RazorBlockSyntax">
     <Kind Name="MarkupCommentBlock" />
@@ -120,6 +125,7 @@
     <Field Name="CloseAngle" Type="SyntaxToken">
       <Kind Name="CloseAngle" />
     </Field>
+    <Field Name="ChunkGenerator" Type="ISpanChunkGenerator" Optional="true" />
   </Node>
   <Node Name="MarkupEndTagSyntax" Base="MarkupSyntaxNode">
     <Kind Name="MarkupEndTag" />
@@ -139,6 +145,7 @@
     <Field Name="CloseAngle" Type="SyntaxToken">
       <Kind Name="CloseAngle" />
     </Field>
+    <Field Name="ChunkGenerator" Type="ISpanChunkGenerator" Optional="true" />
   </Node>
   <Node Name="MarkupTagHelperElementSyntax" Base="MarkupSyntaxNode">
     <Kind Name="MarkupTagHelperElement" />
@@ -164,6 +171,7 @@
     <Field Name="CloseAngle" Type="SyntaxToken">
       <Kind Name="CloseAngle" />
     </Field>
+    <Field Name="ChunkGenerator" Type="ISpanChunkGenerator" Optional="true" />
   </Node>
   <Node Name="MarkupTagHelperEndTagSyntax" Base="MarkupSyntaxNode">
     <Kind Name="MarkupTagHelperEndTag" />
@@ -183,6 +191,7 @@
     <Field Name="CloseAngle" Type="SyntaxToken">
       <Kind Name="CloseAngle" />
     </Field>
+    <Field Name="ChunkGenerator" Type="ISpanChunkGenerator" Optional="true" />
   </Node>
   <Node Name="MarkupTagHelperAttributeSyntax" Base="MarkupSyntaxNode">
     <Kind Name="MarkupTagHelperAttribute" />
@@ -228,7 +237,7 @@
     <Field Name="Colon" Type="RazorMetaCodeSyntax" Optional="true" />
     <Field Name="ParameterName" Type="MarkupTextLiteralSyntax" Optional="true" />
   </Node>
-  
+
   <!-- CSharp -->
   <AbstractNode Name="CSharpSyntaxNode" Base="RazorSyntaxNode" />
   <Node Name="CSharpCodeBlockSyntax" Base="RazorBlockSyntax">
@@ -240,18 +249,22 @@
     <Field Name="Transition" Type="SyntaxToken">
       <Kind Name="Transition" />
     </Field>
+    <Field Name="ChunkGenerator" Type="ISpanChunkGenerator" Optional="true" />
   </Node>
   <Node Name="CSharpStatementLiteralSyntax" Base="CSharpSyntaxNode">
     <Kind Name="CSharpStatementLiteral" />
     <Field Name="LiteralTokens" Type="SyntaxList&lt;SyntaxToken&gt;" />
+    <Field Name="ChunkGenerator" Type="ISpanChunkGenerator" Optional="true" />
   </Node>
   <Node Name="CSharpExpressionLiteralSyntax" Base="CSharpSyntaxNode">
     <Kind Name="CSharpExpressionLiteral" />
     <Field Name="LiteralTokens" Type="SyntaxList&lt;SyntaxToken&gt;" />
+    <Field Name="ChunkGenerator" Type="ISpanChunkGenerator" Optional="true" />
   </Node>
   <Node Name="CSharpEphemeralTextLiteralSyntax" Base="CSharpSyntaxNode">
     <Kind Name="CSharpEphemeralTextLiteral" />
     <Field Name="LiteralTokens" Type="SyntaxList&lt;SyntaxToken&gt;" />
+    <Field Name="ChunkGenerator" Type="ISpanChunkGenerator" Optional="true" />
   </Node>
   <Node Name="CSharpTemplateBlockSyntax" Base="RazorBlockSyntax">
     <Kind Name="CSharpTemplateBlock" />

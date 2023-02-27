@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
@@ -674,8 +674,7 @@ public abstract class IntegrationTestBase
 
         public override Syntax.SyntaxNode VisitCSharpStatementLiteral(CSharpStatementLiteralSyntax node)
         {
-            var context = node.GetSpanContext();
-            if (context != null && context.ChunkGenerator != SpanChunkGenerator.Null)
+            if (node.ChunkGenerator != null && node.ChunkGenerator != SpanChunkGenerator.Null)
             {
                 CodeSpans.Add(node);
             }
@@ -684,8 +683,7 @@ public abstract class IntegrationTestBase
 
         public override Syntax.SyntaxNode VisitCSharpExpressionLiteral(CSharpExpressionLiteralSyntax node)
         {
-            var context = node.GetSpanContext();
-            if (context != null && context.ChunkGenerator != SpanChunkGenerator.Null)
+            if (node.ChunkGenerator != null && node.ChunkGenerator != SpanChunkGenerator.Null)
             {
                 CodeSpans.Add(node);
             }

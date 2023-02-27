@@ -6,8 +6,8 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Text;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language.Syntax;
 
@@ -92,10 +92,12 @@ internal class SyntaxNodeWriter : SyntaxRewriter
             Write($"[{node.GetContent()}]");
         }
 
-        var annotation = node.GetAnnotations().FirstOrDefault(a => a.Kind == SyntaxConstants.SpanContextKind);
-        if (annotation != null && annotation.Data is SpanContext context)
+        WriteChunkGenerator(node);
+
+        var annotation = node.GetAnnotations().FirstOrDefault(a => a.Kind == SyntaxConstants.EditHandlerKind);
+        if (annotation != null && annotation.Data is SpanEditHandler handler)
         {
-            WriteSpanContext(context);
+            WriteEditHandler(handler);
         }
 
         if (!_visitedRoot)
@@ -108,28 +110,26 @@ internal class SyntaxNodeWriter : SyntaxRewriter
 
     private void WriteRazorDirective(RazorDirectiveSyntax node)
     {
-        if (node.DirectiveDescriptor == null)
+        if (node.DirectiveDescriptor is null)
         {
             return;
         }
-
-        var builder = new StringBuilder("Directive:{");
+        using var _ = StringBuilderPool.GetPooledObject(out var builder);
+        builder.Append("Directive:{");
         builder.Append(node.DirectiveDescriptor.Directive);
-        builder.Append(";");
+        builder.Append(';');
         builder.Append(node.DirectiveDescriptor.Kind);
-        builder.Append(";");
+        builder.Append(';');
         builder.Append(node.DirectiveDescriptor.Usage);
-        builder.Append("}");
-
+        builder.Append('}');
         var diagnostics = node.GetDiagnostics();
         if (diagnostics.Length > 0)
         {
             builder.Append(" [");
             var ids = string.Join(", ", diagnostics.Select(diagnostic => $"{diagnostic.Id}{diagnostic.Span}"));
             builder.Append(ids);
-            builder.Append("]");
+            builder.Append(']');
         }
-
         WriteSeparator();
         Write(builder.ToString());
     }
@@ -146,7 +146,7 @@ internal class SyntaxNodeWriter : SyntaxRewriter
             WriteSeparator();
 
             // Get the type name without the namespace.
-            var typeName = descriptor.Name.Substring(descriptor.Name.LastIndexOf('.') + 1);
+            var typeName = descriptor.Name[(descriptor.Name.LastIndexOf('.') + 1)..];
             Write(typeName);
         }
     }
@@ -176,12 +176,20 @@ internal class SyntaxNodeWriter : SyntaxRewriter
         throw new NotImplementedException();
     }
 
-    private void WriteSpanContext(SpanContext context)
+    private void WriteChunkGenerator(SyntaxNode node)
+    {
+        var generator = node.GetChunkGenerator();
+        if (generator != null)
+        {
+            WriteSeparator();
+            Write($"Gen<{generator}>");
+        }
+    }
+
+    private void WriteEditHandler(SpanEditHandler handler)
     {
         WriteSeparator();
-        Write($"Gen<{context.ChunkGenerator}>");
-        WriteSeparator();
-        Write(context.EditHandler);
+        Write(handler);
     }
 
     protected void WriteIndent()

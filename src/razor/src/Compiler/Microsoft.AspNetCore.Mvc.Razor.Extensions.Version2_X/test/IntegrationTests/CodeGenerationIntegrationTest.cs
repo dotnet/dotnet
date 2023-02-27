@@ -185,7 +185,7 @@ public class MyModel
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
     }
 
-    [Fact(Skip = "Reenable after CS1701 errors are resolved")]
+    [Fact]
     public void Sections_Runtime()
     {
         // Arrange
@@ -319,7 +319,7 @@ public class MyService<TModel>
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
     }
 
-    [Fact(Skip = "Reenable after CS1701 errors are resolved")]
+    [Fact]
     public void ModelExpressionTagHelper_Runtime()
     {
         // Arrange
@@ -342,7 +342,7 @@ public class InputTestTagHelper : {typeof(TagHelper).FullName}
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
     }
 
-    [Fact(Skip = "Reenable after CS1701 errors are resolved")]
+    [Fact]
     public void RazorPages_Runtime()
     {
         // Arrange
@@ -377,7 +377,7 @@ public class DivTagHelper : {typeof(TagHelper).FullName}
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
     }
 
-    [Fact(Skip = "Reenable after CS1701 errors are resolved")]
+    [Fact]
     public void RazorPagesWithoutModel_Runtime()
     {
         // Arrange
@@ -426,7 +426,7 @@ public class DivTagHelper : {typeof(TagHelper).FullName}
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
     }
 
-    [Fact(Skip = "Reenable after CS1701 errors are resolved")]
+    [Fact]
     public void ViewComponentTagHelper_Runtime()
     {
         // Arrange

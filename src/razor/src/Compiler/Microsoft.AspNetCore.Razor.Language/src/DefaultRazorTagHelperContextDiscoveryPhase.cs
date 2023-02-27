@@ -135,71 +135,67 @@ internal sealed class DefaultRazorTagHelperContextDiscoveryPhase : RazorEnginePh
             var descendantLiterals = node.DescendantNodes();
             foreach (var child in descendantLiterals)
             {
-                if (!(child is CSharpStatementLiteralSyntax literal))
+                if (child is not CSharpStatementLiteralSyntax literal)
                 {
                     continue;
                 }
 
-                var context = literal.GetSpanContext();
-                if (context == null)
+                switch (literal.ChunkGenerator)
                 {
-                    // We can't find a chunk generator.
-                    continue;
-                }
-                else if (context.ChunkGenerator is AddTagHelperChunkGenerator addTagHelper)
-                {
-                    if (addTagHelper.AssemblyName == null)
-                    {
-                        // Skip this one, it's an error
+                    case null:
                         continue;
-                    }
-
-                    if (!AssemblyContainsTagHelpers(addTagHelper.AssemblyName, _tagHelpers))
-                    {
-                        // No tag helpers in the assembly.
-                        continue;
-                    }
-
-                    for (var i = 0; i < _tagHelpers.Count; i++)
-                    {
-                        var tagHelper = _tagHelpers[i];
-                        if (MatchesDirective(tagHelper, addTagHelper.TypePattern, addTagHelper.AssemblyName))
+                    case AddTagHelperChunkGenerator addTagHelper:
+                        if (addTagHelper.AssemblyName == null)
                         {
-                            Matches.Add(tagHelper);
+                            // Skip this one, it's an error
+                            continue;
                         }
-                    }
-                }
-                else if (context.ChunkGenerator is RemoveTagHelperChunkGenerator removeTagHelper)
-                {
-                    if (removeTagHelper.AssemblyName == null)
-                    {
-                        // Skip this one, it's an error
-                        continue;
-                    }
 
-
-                    if (!AssemblyContainsTagHelpers(removeTagHelper.AssemblyName, _tagHelpers))
-                    {
-                        // No tag helpers in the assembly.
-                        continue;
-                    }
-
-                    for (var i = 0; i < _tagHelpers.Count; i++)
-                    {
-                        var tagHelper = _tagHelpers[i];
-                        if (MatchesDirective(tagHelper, removeTagHelper.TypePattern, removeTagHelper.AssemblyName))
+                        if (!AssemblyContainsTagHelpers(addTagHelper.AssemblyName, _tagHelpers))
                         {
-                            Matches.Remove(tagHelper);
+                            // No tag helpers in the assembly.
+                            continue;
                         }
-                    }
-                }
-                else if (context.ChunkGenerator is TagHelperPrefixDirectiveChunkGenerator tagHelperPrefix)
-                {
-                    if (!string.IsNullOrEmpty(tagHelperPrefix.DirectiveText))
-                    {
-                        // We only expect to see a single one of these per file, but that's enforced at another level.
-                        _tagHelperPrefix = tagHelperPrefix.DirectiveText;
-                    }
+
+                        for (var i = 0; i < _tagHelpers.Count; i++)
+                        {
+                            var tagHelper = _tagHelpers[i];
+                            if (MatchesDirective(tagHelper, addTagHelper.TypePattern, addTagHelper.AssemblyName))
+                            {
+                                Matches.Add(tagHelper);
+                            }
+                        }
+                        break;
+                    case RemoveTagHelperChunkGenerator removeTagHelper:
+                        if (removeTagHelper.AssemblyName == null)
+                        {
+                            // Skip this one, it's an error
+                            continue;
+                        }
+
+
+                        if (!AssemblyContainsTagHelpers(removeTagHelper.AssemblyName, _tagHelpers))
+                        {
+                            // No tag helpers in the assembly.
+                            continue;
+                        }
+
+                        for (var i = 0; i < _tagHelpers.Count; i++)
+                        {
+                            var tagHelper = _tagHelpers[i];
+                            if (MatchesDirective(tagHelper, removeTagHelper.TypePattern, removeTagHelper.AssemblyName))
+                            {
+                                Matches.Remove(tagHelper);
+                            }
+                        }
+                        break;
+                    case TagHelperPrefixDirectiveChunkGenerator tagHelperPrefix:
+                        if (!string.IsNullOrEmpty(tagHelperPrefix.DirectiveText))
+                        {
+                            // We only expect to see a single one of these per file, but that's enforced at another level.
+                            _tagHelperPrefix = tagHelperPrefix.DirectiveText;
+                        }
+                        break;
                 }
             }
         }
@@ -290,69 +286,65 @@ internal sealed class DefaultRazorTagHelperContextDiscoveryPhase : RazorEnginePh
                     continue;
                 }
 
-                var context = literal.GetSpanContext();
-                if (context == null)
+                switch (literal.ChunkGenerator)
                 {
-                    // We can't find a chunk generator.
-                    continue;
-                }
-                else if (context.ChunkGenerator is AddTagHelperChunkGenerator addTagHelper)
-                {
-                    // Make sure this node exists in the file we're parsing and not in its imports.
-                    if (_filePath.Equals(_source.FilePath, StringComparison.Ordinal))
-                    {
-                        addTagHelper.Diagnostics.Add(
-                            ComponentDiagnosticFactory.Create_UnsupportedTagHelperDirective(node.GetSourceSpan(_source)));
-                    }
-                }
-                else if (context.ChunkGenerator is RemoveTagHelperChunkGenerator removeTagHelper)
-                {
-                    // Make sure this node exists in the file we're parsing and not in its imports.
-                    if (_filePath.Equals(_source.FilePath, StringComparison.Ordinal))
-                    {
-                        removeTagHelper.Diagnostics.Add(
-                            ComponentDiagnosticFactory.Create_UnsupportedTagHelperDirective(node.GetSourceSpan(_source)));
-                    }
-                }
-                else if (context.ChunkGenerator is TagHelperPrefixDirectiveChunkGenerator tagHelperPrefix)
-                {
-                    // Make sure this node exists in the file we're parsing and not in its imports.
-                    if (_filePath.Equals(_source.FilePath, StringComparison.Ordinal))
-                    {
-                        tagHelperPrefix.Diagnostics.Add(
-                            ComponentDiagnosticFactory.Create_UnsupportedTagHelperDirective(node.GetSourceSpan(_source)));
-                    }
-                }
-                else if (context.ChunkGenerator is AddImportChunkGenerator usingStatement && !usingStatement.IsStatic)
-                {
-                    // Get the namespace from the using statement.
-                    var @namespace = usingStatement.ParsedNamespace;
-                    if (@namespace.IndexOf('=') != -1)
-                    {
-                        // We don't support usings with alias.
+                    case null:
+                        // We can't find a chunk generator.
                         continue;
-                    }
-
-                    for (var i = 0; _notFullyQualifiedComponents is not null && i < _notFullyQualifiedComponents.Count; i++)
-                    {
-                        var tagHelper = _notFullyQualifiedComponents[i];
-                        Debug.Assert(!tagHelper.IsComponentFullyQualifiedNameMatch(), "We've already processed these.");
-
-                        if (tagHelper.IsChildContentTagHelper())
+                    case AddTagHelperChunkGenerator addTagHelper:
+                        // Make sure this node exists in the file we're parsing and not in its imports.
+                        if (_filePath.Equals(_source.FilePath, StringComparison.Ordinal))
                         {
-                            // If this is a child content tag helper, we want to add it if it's original type is in scope of the given namespace.
-                            // E.g, if the type name is `Test.MyComponent.ChildContent`, we want to add it if `Test.MyComponent` is in this namespace.
-                            if (IsTypeInNamespace(tagHelper, @namespace))
+                            addTagHelper.Diagnostics.Add(
+                                ComponentDiagnosticFactory.Create_UnsupportedTagHelperDirective(node.GetSourceSpan(_source)));
+                        }
+                        break;
+                    case RemoveTagHelperChunkGenerator removeTagHelper:
+                        // Make sure this node exists in the file we're parsing and not in its imports.
+                        if (_filePath.Equals(_source.FilePath, StringComparison.Ordinal))
+                        {
+                            removeTagHelper.Diagnostics.Add(
+                                ComponentDiagnosticFactory.Create_UnsupportedTagHelperDirective(node.GetSourceSpan(_source)));
+                        }
+                        break;
+                    case TagHelperPrefixDirectiveChunkGenerator tagHelperPrefix:
+                        // Make sure this node exists in the file we're parsing and not in its imports.
+                        if (_filePath.Equals(_source.FilePath, StringComparison.Ordinal))
+                        {
+                            tagHelperPrefix.Diagnostics.Add(
+                                ComponentDiagnosticFactory.Create_UnsupportedTagHelperDirective(node.GetSourceSpan(_source)));
+                        }
+                        break;
+                    case AddImportChunkGenerator { IsStatic: false } usingStatement:
+                        // Get the namespace from the using statement.
+                        var @namespace = usingStatement.ParsedNamespace;
+                        if (@namespace.IndexOf('=') != -1)
+                        {
+                            // We don't support usings with alias.
+                            continue;
+                        }
+
+                        for (var i = 0; _notFullyQualifiedComponents is not null && i < _notFullyQualifiedComponents.Count; i++)
+                        {
+                            var tagHelper = _notFullyQualifiedComponents[i];
+                            Debug.Assert(!tagHelper.IsComponentFullyQualifiedNameMatch(), "We've already processed these.");
+
+                            if (tagHelper.IsChildContentTagHelper())
                             {
+                                // If this is a child content tag helper, we want to add it if it's original type is in scope of the given namespace.
+                                // E.g, if the type name is `Test.MyComponent.ChildContent`, we want to add it if `Test.MyComponent` is in this namespace.
+                                if (IsTypeInNamespace(tagHelper, @namespace))
+                                {
+                                    Matches.Add(tagHelper);
+                                }
+                            }
+                            else if (IsTypeInNamespace(tagHelper, @namespace))
+                            {
+                                // If the type is at the top-level or if the type's namespace matches the using's namespace, add it.
                                 Matches.Add(tagHelper);
                             }
                         }
-                        else if (IsTypeInNamespace(tagHelper, @namespace))
-                        {
-                            // If the type is at the top-level or if the type's namespace matches the using's namespace, add it.
-                            Matches.Add(tagHelper);
-                        }
-                    }
+                        break;
                 }
             }
         }

@@ -34,6 +34,7 @@ internal class SourceWriter : AbstractFileWriter
         WriteLine("using System.Collections.Generic;");
         WriteLine("using System.Linq;");
         WriteLine("using System.Threading;");
+        WriteLine("using Microsoft.AspNetCore.Razor.Language.Legacy;");
         WriteLine();
     }
 
@@ -944,7 +945,7 @@ internal class SourceWriter : AbstractFileWriter
         {
             var field = valueFields[i];
             Write(", ");
-            Write(UnderscoreCamelCase(field.Name));
+            Write(CamelCase(field.Name));
         }
         if (withSyntaxFactoryContext)
         {
@@ -1378,7 +1379,7 @@ internal class SourceWriter : AbstractFileWriter
         for (int f = 0; f < node.Fields.Count; f++)
         {
             var field = node.Fields[f];
-            if (IsDerivedOrListOfDerived("SyntaxNode", field.Type) || IsDerivedOrListOfDerived("SyntaxToken", field.Type) || field.Type == "SyntaxNodeOrTokenList")
+            if (IsDerivedOrListOfDerived("SyntaxNode", field.Type) || IsDerivedOrListOfDerived("SyntaxToken", field.Type) || field.Type is "SyntaxNodeOrTokenList" or "ISpanChunkGenerator")
             {
                 if (nCompared > 0)
                 {

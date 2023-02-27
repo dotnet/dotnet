@@ -628,8 +628,8 @@ public abstract class IntegrationTestBase
 
         public override Syntax.SyntaxNode VisitCSharpStatementLiteral(CSharpStatementLiteralSyntax node)
         {
-            var context = node.GetSpanContext();
-            if (context != null && context.ChunkGenerator != SpanChunkGenerator.Null)
+            var chunkGenerator = node.GetChunkGenerator();
+            if (chunkGenerator != null && chunkGenerator != SpanChunkGenerator.Null)
             {
                 CodeSpans.Add(node);
             }
@@ -639,8 +639,8 @@ public abstract class IntegrationTestBase
 
         public override Syntax.SyntaxNode VisitCSharpExpressionLiteral(CSharpExpressionLiteralSyntax node)
         {
-            var context = node.GetSpanContext();
-            if (context != null && context.ChunkGenerator != SpanChunkGenerator.Null)
+            var chunkGenerator = node.GetChunkGenerator();
+            if (chunkGenerator != null && chunkGenerator != SpanChunkGenerator.Null)
             {
                 CodeSpans.Add(node);
             }

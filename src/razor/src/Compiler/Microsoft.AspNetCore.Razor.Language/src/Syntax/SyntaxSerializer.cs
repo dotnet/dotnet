@@ -176,10 +176,12 @@ internal class SyntaxSerializer
                 Write($"[{node.GetContent()}]");
             }
 
-            var annotation = node.GetAnnotations().FirstOrDefault(a => a.Kind == SyntaxConstants.SpanContextKind);
-            if (annotation != null && annotation.Data is SpanContext context)
+            WriteChunkGenerator(node);
+
+            var annotation = node.GetAnnotations().FirstOrDefault(a => a.Kind == SyntaxConstants.EditHandlerKind);
+            if (annotation != null && annotation.Data is SpanEditHandler handler)
             {
-                WriteSpanContext(context);
+                WriteEditHandler(handler);
             }
 
             if (!_visitedRoot)
@@ -260,12 +262,20 @@ internal class SyntaxSerializer
             throw new NotImplementedException();
         }
 
-        private void WriteSpanContext(SpanContext context)
+        private void WriteChunkGenerator(SyntaxNode node)
+        {
+            var generator = node.GetChunkGenerator();
+            if (generator != null)
+            {
+                WriteSeparator();
+                Write($"Gen<{generator}>");
+            }
+        }
+
+        private void WriteEditHandler(SpanEditHandler handler)
         {
             WriteSeparator();
-            Write($"Gen<{context.ChunkGenerator}>");
-            WriteSeparator();
-            Write(context.EditHandler);
+            Write(handler);
         }
 
         protected void WriteIndent()
