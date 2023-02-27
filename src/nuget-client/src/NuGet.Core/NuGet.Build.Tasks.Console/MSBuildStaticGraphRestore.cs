@@ -20,6 +20,7 @@ using Microsoft.Build.Execution;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Graph;
 using Microsoft.Build.Logging;
+using Microsoft.Build.Utilities;
 using NuGet.Commands;
 using NuGet.Common;
 using NuGet.Configuration;
@@ -114,7 +115,7 @@ namespace NuGet.Build.Tasks.Console
 
             try
             {
-                return await BuildTasksUtility.RestoreAsync(
+                bool result = await BuildTasksUtility.RestoreAsync(
                     dependencyGraphSpec: dependencyGraphSpec,
                     interactive: IsOptionTrue(nameof(RestoreTaskEx.Interactive), options),
                     recursive: IsOptionTrue(nameof(RestoreTaskEx.Recursive), options),
@@ -127,7 +128,11 @@ namespace NuGet.Build.Tasks.Console
                     restorePC: IsOptionTrue(nameof(RestoreTaskEx.RestorePackagesConfig), options),
                     cleanupAssetsForUnsupportedProjects: IsOptionTrue(nameof(RestoreTaskEx.CleanupAssetsForUnsupportedProjects), options),
                     log: MSBuildLogger,
-                    cancellationToken: CancellationToken.None);
+                cancellationToken: CancellationToken.None);
+
+                LogFilesToEmbedInBinlog(dependencyGraphSpec);
+
+                return result;
             }
             catch (Exception e)
             {
@@ -1063,6 +1068,41 @@ namespace NuGet.Build.Tasks.Console
                         exception,
                         showStackTrace: true);
                     break;
+            }
+        }
+
+        /// <summary>
+        /// Logs the list of files to embed in the MSBuild binary log.
+        /// </summary>
+        /// <param name="dependencyGraphSpec"></param>
+        private void LogFilesToEmbedInBinlog(DependencyGraphSpec dependencyGraphSpec)
+        {
+            // If the MSBuildBinaryLoggerEnabled environment variable is not set, don't log the paths to the files.
+            if (!string.Equals(Environment.GetEnvironmentVariable("MSBUILDBINARYLOGGERENABLED"), bool.TrueString, StringComparison.OrdinalIgnoreCase))
+            {
+                return;
+            }
+
+            IReadOnlyList<PackageSpec> projects = dependencyGraphSpec.Projects;
+
+            foreach (PackageSpec project in projects)
+            {
+                if (project.RestoreMetadata.ProjectStyle == ProjectStyle.PackageReference)
+                {
+                    LoggingQueue.Enqueue(new ConsoleOutLogEmbedInBinlog(Path.Combine(project.RestoreMetadata.OutputPath, LockFileFormat.AssetsFileName)));
+                    LoggingQueue.Enqueue(new ConsoleOutLogEmbedInBinlog(Path.Combine(project.RestoreMetadata.OutputPath, DependencyGraphSpec.GetDGSpecFileName(Path.GetFileName(project.RestoreMetadata.ProjectPath)))));
+                    LoggingQueue.Enqueue(new ConsoleOutLogEmbedInBinlog(BuildAssetsUtils.GetMSBuildFilePathForPackageReferenceStyleProject(project, BuildAssetsUtils.PropsExtension)));
+                    LoggingQueue.Enqueue(new ConsoleOutLogEmbedInBinlog(BuildAssetsUtils.GetMSBuildFilePathForPackageReferenceStyleProject(project, BuildAssetsUtils.TargetsExtension)));
+                }
+                else if (project.RestoreMetadata.ProjectStyle == ProjectStyle.PackagesConfig)
+                {
+                    string packagesConfigPath = BuildTasksUtility.GetPackagesConfigFilePath(project.RestoreMetadata.ProjectPath);
+
+                    if (packagesConfigPath != null)
+                    {
+                        LoggingQueue.Enqueue(new ConsoleOutLogEmbedInBinlog(packagesConfigPath));
+                    }
+                }
             }
         }
     }

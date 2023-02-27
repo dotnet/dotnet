@@ -208,7 +208,7 @@ namespace NuGet.Build.Tasks
                         var message = string.Format(
                             CultureInfo.CurrentCulture,
                             Strings.InstallCommandNothingToInstall,
-                            "packages.config"
+                            NuGetConstants.PackageReferenceFile
                         );
 
                         log.LogMinimal(message);
@@ -425,23 +425,9 @@ namespace NuGet.Build.Tasks
                 throw new ArgumentException(Strings.Argument_Cannot_Be_Null_Or_Empty, nameof(projectName));
             }
 
-            packagesConfigPath = Path.Combine(projectDirectory, NuGetConstants.PackageReferenceFile);
+            packagesConfigPath = GetPackagesConfigFilePath(projectDirectory, projectName);
 
-            if (File.Exists(packagesConfigPath))
-            {
-                return true;
-            }
-
-            packagesConfigPath = Path.Combine(projectDirectory, $"packages.{projectName}.config");
-
-            if (File.Exists(packagesConfigPath))
-            {
-                return true;
-            }
-
-            packagesConfigPath = null;
-
-            return false;
+            return packagesConfigPath != null;
         }
 
 #if IS_DESKTOP
@@ -478,7 +464,7 @@ namespace NuGet.Build.Tasks
 
                 settings = settings ?? Settings.LoadSettingsGivenConfigPaths(pcRestoreMetadata.ConfigFilePaths);
 
-                var packagesConfigPath = Path.Combine(Path.GetDirectoryName(pcRestoreMetadata.ProjectPath), NuGetConstants.PackageReferenceFile);
+                string packagesConfigPath = GetPackagesConfigFilePath(pcRestoreMetadata.ProjectPath);
 
                 firstPackagesConfigPath = firstPackagesConfigPath ?? packagesConfigPath;
 
@@ -733,6 +719,58 @@ namespace NuGet.Build.Tasks
             var additionalAbsolute = additional.Select(e => UriUtility.GetAbsolutePath(projectDirectory, e));
 
             return current.Concat(additionalAbsolute).ToArray();
+        }
+
+        /// <summary>
+        /// Gets the path to a packages.config for the specified project if one exists.
+        /// </summary>
+        /// <param name="projectFullPath">The full path to the project.</param>
+        /// <returns>The path to the packages.config file if one exists, otherwise <c>null</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="projectFullPath" /> is <c>null</c>.</exception>
+        public static string GetPackagesConfigFilePath(string projectFullPath)
+        {
+            if (string.IsNullOrWhiteSpace(projectFullPath))
+            {
+                throw new ArgumentException(Strings.Argument_Cannot_Be_Null_Or_Empty, nameof(projectFullPath));
+            }
+
+            return GetPackagesConfigFilePath(Path.GetDirectoryName(projectFullPath), Path.GetFileNameWithoutExtension(projectFullPath));
+        }
+
+        /// <summary>
+        /// Gets the path to a packages.config for the specified project if one exists.
+        /// </summary>
+        /// <param name="projectFullPath">The full path to the project directory.</param>
+        /// <param name="projectName">The name of the project file.</param>
+        /// <returns>The path to the packages.config file if one exists, otherwise <c>null</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="projectDirectory" /> -or- <paramref name="projectName" /> is <c>null</c>.</exception>
+        public static string GetPackagesConfigFilePath(string projectDirectory, string projectName)
+        {
+            if (string.IsNullOrWhiteSpace(projectDirectory))
+            {
+                throw new ArgumentException(Strings.Argument_Cannot_Be_Null_Or_Empty, nameof(projectDirectory));
+            }
+
+            if (string.IsNullOrWhiteSpace(projectName))
+            {
+                throw new ArgumentException(Strings.Argument_Cannot_Be_Null_Or_Empty, nameof(projectName));
+            }
+
+            string packagesConfigPath = Path.Combine(projectDirectory, NuGetConstants.PackageReferenceFile);
+
+            if (File.Exists(packagesConfigPath))
+            {
+                return packagesConfigPath;
+            }
+
+            packagesConfigPath = Path.Combine(projectDirectory, "packages." + projectName + ".config");
+
+            if (File.Exists(packagesConfigPath))
+            {
+                return packagesConfigPath;
+            }
+
+            return null;
         }
     }
 }

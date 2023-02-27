@@ -69,6 +69,22 @@ namespace NuGet.Build.Tasks.Test
         }
 
         [Fact]
+        public void TaskLoggingQueue_Process_LogsFilesToEmbedInBinlog()
+        {
+            var message = new ConsoleOutLogEmbedInBinlog(@"/path/to/file");
+
+            var buildEngine = new TestBuildEngine();
+
+            var loggingQueue = new TaskLoggingQueue(new TaskLoggingHelper(buildEngine, nameof(TaskLoggingQueueTests)));
+
+            loggingQueue.Enqueue(message.ToJson());
+
+            loggingQueue.Dispose();
+
+            loggingQueue.FilesToEmbedInBinlog.Should().BeEquivalentTo(new string[] { "/path/to/file" });
+        }
+
+        [Fact]
         public void TaskLoggingQueue_Process_ThrowsIfInvalidMessageType()
         {
             const string badMessage = "{ 'MessageType': 200 }";
