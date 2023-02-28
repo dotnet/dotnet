@@ -1105,6 +1105,36 @@ namespace Microsoft.DotNet.GenAPI.Tests
         }
 
         [Fact]
+        void TestSynthesizePrivateFieldsForInaccessibleNestedGenericTypes()
+        {
+            RunTest(original: """
+                namespace A
+                {
+                    internal class Bar<T> {}
+
+                    public struct Foo<T>
+                    {
+                        #pragma warning disable 0169
+                        // as the includeInternalSymbols field is set to false and the Bar<> class is internal -
+                        //   we must skip generation of the `_field` private field.
+                        private Bar<T> _field;
+                    }
+                }
+                """,
+            expected: """
+                namespace A
+                {
+                    public partial struct Foo<T>
+                    {
+                        private object _dummy;
+                        private int _dummyPrimitive;
+                    }
+                }
+                """,
+                includeInternalSymbols: false);
+        }
+
+        [Fact]
         public void TestBaseTypeWithoutExplicitDefaultConstructor()
         {
             RunTest(original: """
@@ -1685,8 +1715,53 @@ namespace Microsoft.DotNet.GenAPI.Tests
                         {
                             public Bar() { }
                         }
-                    
+
                         public partial class Foo : Bar
+                        {
+                        }
+                    }
+                    """,
+                includeInternalSymbols: false);
+        }
+
+        [Fact]
+        public void TestGenericBaseInterfaceWithInaccessibleTypeArguments()
+        {
+            RunTest(original: """
+                    namespace A
+                    {
+                        internal class IOption2
+                        {
+                        }
+
+                        public interface IOption
+                        {
+                        }
+
+                        public interface AreEqual<T>
+                        {
+                            bool Compare(T other);
+                        }
+
+                        public class PerLanguageOption : AreEqual<IOption2>, IOption
+                        {
+                            bool AreEqual<IOption2>.Compare(IOption2 other) => false;
+                        }
+                    }
+                    """,
+                expected: """
+                    namespace A
+                    {
+                        public partial interface AreEqual<T>
+                        {
+                            bool Compare(T other);
+                        }
+
+                        public partial interface IOption
+                        {
+                        }
+                    
+                        public partial class PerLanguageOption : IOption
                         {
                         }
                     }
@@ -1695,3 +1770,4 @@ namespace Microsoft.DotNet.GenAPI.Tests
         }
     }
 }
+
