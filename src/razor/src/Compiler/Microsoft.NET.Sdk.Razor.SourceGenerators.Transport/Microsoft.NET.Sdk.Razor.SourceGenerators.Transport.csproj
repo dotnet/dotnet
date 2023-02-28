@@ -7,7 +7,7 @@
     <SuppressDependenciesWhenPacking>false</SuppressDependenciesWhenPacking>
     <NoPackageAnalysis>true</NoPackageAnalysis>
     <GenerateDependencyFile>false</GenerateDependencyFile>
-    <IsPackable Condition="'$(OS)' == 'Windows_NT'">true</IsPackable>
+    <IsPackable>true</IsPackable>
     <!-- Need to build this project in source build -->
     <ExcludeFromSourceBuild>false</ExcludeFromSourceBuild>
   </PropertyGroup>
