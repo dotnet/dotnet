@@ -4,6 +4,7 @@ The Build Analysis offers a set of features to make build and pull request resul
 
 Explore all the features offered by build analysis:
 
+- [Build Analysis Website](https://helix.dot.net/BuildAnalysis): Find the builds that are impacted by an error, that occurs either in tests or in timelines, across the dotnet organization, in the same way as Runfo does. You can also obtain the latest report for any known issue and a list of all open issues and their impact.
 - [Build Analysis GitHub Check](https://github.com/dotnet/arcade/blob/main/Documentation/Projects/Build%20Analysis/Introduction.md): Makes GitHub pull request results more actionable by highlighting build and test information most helpful to .NET developers.
 - [Known Issues](https://github.com/dotnet/arcade/blob/main/Documentation/Projects/Build%20Analysis/KnownIssues.md): Report known issues so these can be automatically identified and reported on failed builds.
 - [Automatic Test Retries](https://github.com/dotnet/arcade/blob/main/Documentation/Projects/Build%20Analysis/Test%20Retry%20Documentation.md): Configure tests in your repo's pull requests to automatically retry when they encounter specific errors.
