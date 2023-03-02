@@ -16,5 +16,5 @@
                             IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, 
                             IntermediateToken -  - CSharp - UpdateValue
                             IntermediateToken -  - CSharp - , ParentValue)
-            CSharpCode - (84:1,7 [109] x:\dir\subdir\Test\TestComponent.cshtml)
-                LazyIntermediateToken - (84:1,7 [109] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - \n    public int ParentValue { get; set; } = 42;\n\n    public EventCallback<int> UpdateValue { get; set; }\n
+            CSharpCode - (84:1,7 [107] x:\dir\subdir\Test\TestComponent.cshtml)
+                LazyIntermediateToken - (84:1,7 [107] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - \n    public int ParentValue { get; set; } = 42;\n    public EventCallback<int> UpdateValue { get; set; }\n

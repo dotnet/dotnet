@@ -10,7 +10,7 @@
             CSharpCode - 
                 IntermediateToken -  - CSharp - #pragma warning disable 0414
             CSharpCode - 
-                IntermediateToken -  - CSharp - private static System.Object __o = null;
+                IntermediateToken -  - CSharp - private static object __o = null;
             CSharpCode - 
                 IntermediateToken -  - CSharp - #pragma warning restore 0414
             MethodDeclaration -  - protected override - void - BuildRenderTree
@@ -25,7 +25,7 @@
                     HtmlAttribute - (24:0,24 [12] x:\dir\subdir\Test\TestComponent.cshtml) - myevent=" - "
                         CSharpExpressionAttributeValue -  - 
                             IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.EventCallback.Factory.CreateBinder(this, 
-                            IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, callback: ValueChanged, value: ParentValue)
+                            IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredBindSetter(callback: ValueChanged, value: ParentValue)
                             IntermediateToken -  - CSharp - , 
                             IntermediateToken -  - CSharp - ParentValue
                             IntermediateToken -  - CSharp - )

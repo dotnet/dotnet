@@ -10,7 +10,7 @@ Generated Location: (1837:38,37 [12] )
 
 Source Location: (566:24,47 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorPagesWithoutModel.cshtml)
 |Name|
-Generated Location: (2545:57,47 [4] )
+Generated Location: (2538:57,47 [4] )
 |Name|
 
 Source Location: (95:5,12 [283] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorPagesWithoutModel.cshtml)
@@ -28,7 +28,7 @@ Source Location: (95:5,12 [283] TestFiles/IntegrationTests/CodeGenerationIntegra
         public string Name { get; set; }
     }
 |
-Generated Location: (3368:74,12 [283] )
+Generated Location: (3361:74,12 [283] )
 |
     public IActionResult OnPost(Customer customer)
     {

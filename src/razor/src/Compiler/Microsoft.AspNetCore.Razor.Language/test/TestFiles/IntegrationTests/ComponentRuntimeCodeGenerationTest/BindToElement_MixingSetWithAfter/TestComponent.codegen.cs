@@ -23,7 +23,7 @@ namespace Test
 #line hidden
 #nullable disable
             ));
-            __builder.AddAttribute(2, "myevent", global::Microsoft.AspNetCore.Components.EventCallback.Factory.CreateBinder(this, global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, callback: async __value => { await global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, callback: UpdateValue, value: ParentValue).InvokeAsync(); await global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create(this, callback: AfterUpdate).InvokeAsync(); }, value: ParentValue), ParentValue));
+            __builder.AddAttribute(2, "myevent", global::Microsoft.AspNetCore.Components.EventCallback.Factory.CreateBinder(this, global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, callback: async __value => { await global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredBindSetter(callback: UpdateValue, value: ParentValue)(); await global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.InvokeAsynchronousDelegate(callback: AfterUpdate); }, value: ParentValue), ParentValue));
             __builder.SetUpdatesAttributeName("myvalue");
             __builder.CloseElement();
         }

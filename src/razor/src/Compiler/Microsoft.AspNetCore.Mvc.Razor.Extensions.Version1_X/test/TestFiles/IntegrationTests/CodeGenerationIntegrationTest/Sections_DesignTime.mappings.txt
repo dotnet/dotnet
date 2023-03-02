@@ -17,13 +17,13 @@ Source Location: (68:4,2 [46] TestFiles/IntegrationTests/CodeGenerationIntegrati
 | 
     Layout = "_SectionTestLayout.cshtml";
 |
-Generated Location: (2169:56,2 [46] )
+Generated Location: (2162:56,2 [46] )
 | 
     Layout = "_SectionTestLayout.cshtml";
 |
 
 Source Location: (222:12,21 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml)
 |Date|
-Generated Location: (2594:64,102 [4] )
+Generated Location: (2587:64,102 [4] )
 |Date|
 

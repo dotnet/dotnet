@@ -855,21 +855,21 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
         else if (setter == null && after != null)
         {
             // bind:after only
-            var afterToEventCallback = $"global::{ComponentsApi.EventCallback.FactoryAccessor}.{ComponentsApi.EventCallbackFactory.CreateMethod}(this, callback: {after.Content})";
+            var afterContentInvocation = $"{ComponentsApi.RuntimeHelpers.InvokeAsynchronousDelegate}(callback: {after.Content})";
             changeExpressionTokens.Add(new IntermediateToken()
             {
-                Content = $"{ComponentsApi.RuntimeHelpers.CreateInferredEventCallback}(this, callback: __value => {{ {original.Content} = __value; return {afterToEventCallback}.InvokeAsync(); }}, value: {original.Content})",
+                Content = $"{ComponentsApi.RuntimeHelpers.CreateInferredBindSetter}(callback: __value => {{ {original.Content} = __value; return {afterContentInvocation}; }}, value: {original.Content})",
                 Kind = TokenKind.CSharp
             });
         }
         else
         {
             // bind:set and bind:after create the code even though we disallow this combination through a diagnostic
-            var setToEventCallback = $"{ComponentsApi.RuntimeHelpers.CreateInferredEventCallback}(this, callback: {setter.Content}, value: {original.Content})";
-            var afterToEventCallback = $"global::{ComponentsApi.EventCallback.FactoryAccessor}.{ComponentsApi.EventCallbackFactory.CreateMethod}(this, callback: {after.Content})";
+            var setToEventCallback = $"{ComponentsApi.RuntimeHelpers.CreateInferredBindSetter}(callback: {setter.Content}, value: {original.Content})";
+            var afterContentInvocation = $"{ComponentsApi.RuntimeHelpers.InvokeAsynchronousDelegate}(callback: {after.Content})";
             changeExpressionTokens.Add(new IntermediateToken()
             {
-                Content = $"{ComponentsApi.RuntimeHelpers.CreateInferredEventCallback}(this, callback: async __value => {{ await {setToEventCallback}.InvokeAsync(); await {afterToEventCallback}.InvokeAsync(); }}, value: {original.Content})",
+                Content = $"{ComponentsApi.RuntimeHelpers.CreateInferredEventCallback}(this, callback: async __value => {{ await {setToEventCallback}; await {afterContentInvocation}; }}, value: {original.Content})",
                 Kind = TokenKind.CSharp
             });
         }
@@ -966,28 +966,28 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
             // bind:set only
             changeExpressionTokens.Add(new IntermediateToken()
             {
-                Content = $"{ComponentsApi.RuntimeHelpers.CreateInferredEventCallback}(this, callback: {setter.Content}, value: {original.Content})",
+                Content = $"{ComponentsApi.RuntimeHelpers.CreateInferredBindSetter}(callback: {setter.Content}, value: {original.Content})",
                 Kind = TokenKind.CSharp
             });
         }
         else if (setter == null && after != null)
         {
             // bind:after only
-            var afterToEventCallback = $"global::{ComponentsApi.EventCallback.FactoryAccessor}.{ComponentsApi.EventCallbackFactory.CreateMethod}(this, callback: {after.Content})";
+            var afterContentInvocation = $"{ComponentsApi.RuntimeHelpers.InvokeAsynchronousDelegate}(callback: {after.Content})";
             changeExpressionTokens.Add(new IntermediateToken()
             {
-                Content = $"{ComponentsApi.RuntimeHelpers.CreateInferredEventCallback}(this, callback: __value => {{ {original.Content} = __value; return {afterToEventCallback}.InvokeAsync(); }}, value: {original.Content})",
+                Content = $"{ComponentsApi.RuntimeHelpers.CreateInferredBindSetter}(callback: __value => {{ {original.Content} = __value; return {afterContentInvocation}; }}, value: {original.Content})",
                 Kind = TokenKind.CSharp
             });
         }
         else
         {
             // bind:set and bind:after create the code even though we disallow this combination through a diagnostic
-            var setToEventCallback = $"{ComponentsApi.RuntimeHelpers.CreateInferredEventCallback}(this, callback: {setter.Content}, value: {original.Content})";
-            var afterToEventCallback = $"global::{ComponentsApi.EventCallback.FactoryAccessor}.{ComponentsApi.EventCallbackFactory.CreateMethod}(this, callback: {after.Content})";
+            var setterContentInvocation = $"{ComponentsApi.RuntimeHelpers.CreateInferredBindSetter}(callback: {setter.Content}, value: {original.Content})";
+            var afterContentInvocation = $"{ComponentsApi.RuntimeHelpers.InvokeAsynchronousDelegate}(callback: {after.Content})";
             changeExpressionTokens.Add(new IntermediateToken()
             {
-                Content = $"{ComponentsApi.RuntimeHelpers.CreateInferredEventCallback}(this, callback: async __value => {{ await {setToEventCallback}.InvokeAsync(); await {afterToEventCallback}.InvokeAsync(); }}, value: {original.Content})",
+                Content = $"{ComponentsApi.RuntimeHelpers.CreateInferredEventCallback}(this, callback: async __value => {{ await {setterContentInvocation}(); await {afterContentInvocation}; }}, value: {original.Content})",
                 Kind = TokenKind.CSharp
             });
         }

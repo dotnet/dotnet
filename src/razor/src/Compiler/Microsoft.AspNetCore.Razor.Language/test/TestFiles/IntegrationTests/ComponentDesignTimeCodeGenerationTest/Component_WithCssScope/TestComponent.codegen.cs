@@ -29,7 +29,7 @@ using Microsoft.AspNetCore.Components.Rendering;
         }
         #pragma warning restore 219
         #pragma warning disable 0414
-        private static System.Object __o = null;
+        private static object __o = null;
         #pragma warning restore 0414
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
@@ -48,7 +48,7 @@ using Microsoft.AspNetCore.Components.Rendering;
             ));
 #nullable restore
 #line 7 "x:\dir\subdir\Test\TestComponent.cshtml"
-                              myComponentReference = default(global::Test.TemplatedComponent);
+                              myComponentReference = default(global::Test.TemplatedComponent)!;
 
 #line default
 #line hidden
@@ -71,7 +71,7 @@ __o = typeof(global::Test.TemplatedComponent);
 #nullable disable
 #nullable restore
 #line 13 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                      myElementReference = default(Microsoft.AspNetCore.Components.ElementReference);
+                                      myElementReference = default(Microsoft.AspNetCore.Components.ElementReference)!;
 
 #line default
 #line hidden

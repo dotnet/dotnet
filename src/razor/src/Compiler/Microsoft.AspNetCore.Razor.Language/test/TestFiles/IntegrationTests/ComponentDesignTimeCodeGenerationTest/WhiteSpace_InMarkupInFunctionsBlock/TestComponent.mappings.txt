@@ -8,7 +8,7 @@ Source Location: (57:1,7 [65] x:\dir\subdir\Test\TestComponent.cshtml)
     void MyMethod(RenderTreeBuilder __builder)
     {
         |
-Generated Location: (1094:33,7 [65] )
+Generated Location: (1087:33,7 [65] )
 |
     void MyMethod(RenderTreeBuilder __builder)
     {
@@ -18,20 +18,20 @@ Source Location: (141:5,13 [62] x:\dir\subdir\Test\TestComponent.cshtml)
 |for (var i = 0; i < 100; i++)
             {
                 |
-Generated Location: (1294:43,13 [62] )
+Generated Location: (1287:43,13 [62] )
 |for (var i = 0; i < 100; i++)
             {
                 |
 
 Source Location: (230:8,21 [1] x:\dir\subdir\Test\TestComponent.cshtml)
 |i|
-Generated Location: (1499:52,21 [1] )
+Generated Location: (1492:52,21 [1] )
 |i|
 
 Source Location: (254:9,21 [15] x:\dir\subdir\Test\TestComponent.cshtml)
 |
             }|
-Generated Location: (1645:59,21 [15] )
+Generated Location: (1638:59,21 [15] )
 |
             }|
 
@@ -39,7 +39,7 @@ Source Location: (284:11,13 [9] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     }
 |
-Generated Location: (1796:67,13 [9] )
+Generated Location: (1789:67,13 [9] )
 |
     }
 |

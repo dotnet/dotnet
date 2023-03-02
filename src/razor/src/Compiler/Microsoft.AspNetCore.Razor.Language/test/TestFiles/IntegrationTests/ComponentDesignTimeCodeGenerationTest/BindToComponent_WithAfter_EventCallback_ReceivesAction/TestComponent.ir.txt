@@ -10,7 +10,7 @@
             CSharpCode - 
                 IntermediateToken -  - CSharp - #pragma warning disable 0414
             CSharpCode - 
-                IntermediateToken -  - CSharp - private static System.Object __o = null;
+                IntermediateToken -  - CSharp - private static object __o = null;
             CSharpCode - 
                 IntermediateToken -  - CSharp - #pragma warning restore 0414
             MethodDeclaration -  - protected override - void - BuildRenderTree
@@ -21,7 +21,7 @@
                     ComponentAttribute - (30:0,30 [11] x:\dir\subdir\Test\TestComponent.cshtml) - ValueChanged - ValueChanged - AttributeStructure.DoubleQuotes
                         CSharpExpression - 
                             IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, 
-                            IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, callback: __value => { ParentValue = __value; return global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create(this, callback: () => { }).InvokeAsync(); }, value: ParentValue)
+                            IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredBindSetter(callback: __value => { ParentValue = __value; return global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.InvokeAsynchronousDelegate(callback: () => { }); }, value: ParentValue)
                             IntermediateToken -  - CSharp - , ParentValue)
                 HtmlContent - (75:0,75 [2] x:\dir\subdir\Test\TestComponent.cshtml)
                     LazyIntermediateToken - (75:0,75 [2] x:\dir\subdir\Test\TestComponent.cshtml) - Html - \n

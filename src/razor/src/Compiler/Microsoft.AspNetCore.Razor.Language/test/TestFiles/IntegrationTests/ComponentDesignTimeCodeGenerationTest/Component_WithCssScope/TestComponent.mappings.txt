@@ -10,44 +10,44 @@ Generated Location: (484:19,0 [47] )
 
 Source Location: (192:3,61 [3] x:\dir\subdir\Test\TestComponent.cshtml)
 |123|
-Generated Location: (1283:39,61 [3] )
+Generated Location: (1276:39,61 [3] )
 |123|
 
 Source Location: (318:6,30 [20] x:\dir\subdir\Test\TestComponent.cshtml)
 |myComponentReference|
-Generated Location: (1616:50,30 [20] )
+Generated Location: (1609:50,30 [20] )
 |myComponentReference|
 
 Source Location: (439:10,1 [38] x:\dir\subdir\Test\TestComponent.cshtml)
 |if (DateTime.Now.Year > 1950)
 {
     |
-Generated Location: (1972:64,1 [38] )
+Generated Location: (1966:64,1 [38] )
 |if (DateTime.Now.Year > 1950)
 {
     |
 
 Source Location: (511:12,38 [18] x:\dir\subdir\Test\TestComponent.cshtml)
 |myElementReference|
-Generated Location: (2171:73,38 [18] )
+Generated Location: (2165:73,38 [18] )
 |myElementReference|
 
 Source Location: (557:12,84 [6] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     |
-Generated Location: (2386:78,84 [6] )
+Generated Location: (2381:78,84 [6] )
 |
     |
 
 Source Location: (589:13,30 [10] x:\dir\subdir\Test\TestComponent.cshtml)
 |myVariable|
-Generated Location: (2581:83,30 [10] )
+Generated Location: (2576:83,30 [10] )
 |myVariable|
 
 Source Location: (637:13,78 [3] x:\dir\subdir\Test\TestComponent.cshtml)
 |
 }|
-Generated Location: (2954:92,78 [3] )
+Generated Location: (2949:92,78 [3] )
 |
 }|
 
@@ -62,7 +62,7 @@ Source Location: (651:16,7 [245] x:\dir\subdir\Test\TestComponent.cshtml)
         for (var i = 0; i < 10; i++)
         {
             |
-Generated Location: (3136:102,7 [245] )
+Generated Location: (3131:102,7 [245] )
 |
     ElementReference myElementReference;
     TemplatedComponent myComponentReference;
@@ -76,12 +76,12 @@ Generated Location: (3136:102,7 [245] )
 
 Source Location: (912:25,28 [1] x:\dir\subdir\Test\TestComponent.cshtml)
 |i|
-Generated Location: (3548:119,28 [1] )
+Generated Location: (3543:119,28 [1] )
 |i|
 
 Source Location: (925:25,41 [1] x:\dir\subdir\Test\TestComponent.cshtml)
 |i|
-Generated Location: (3724:127,41 [1] )
+Generated Location: (3719:127,41 [1] )
 |i|
 
 Source Location: (931:25,47 [166] x:\dir\subdir\Test\TestComponent.cshtml)
@@ -93,7 +93,7 @@ Source Location: (931:25,47 [166] x:\dir\subdir\Test\TestComponent.cshtml)
         System.GC.KeepAlive(myVariable);
     }
 |
-Generated Location: (3896:134,47 [166] )
+Generated Location: (3891:134,47 [166] )
 |
         }
 

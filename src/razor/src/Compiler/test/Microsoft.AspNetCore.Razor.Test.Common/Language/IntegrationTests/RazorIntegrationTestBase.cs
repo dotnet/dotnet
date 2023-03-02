@@ -176,12 +176,30 @@ public class RazorIntegrationTestBase
         };
     }
 
-    protected CompileToCSharpResult CompileToCSharp(string cshtmlContent, bool throwOnFailure = true, string cssScope = null, bool supportLocalizedComponentNames = false)
+    protected CompileToCSharpResult CompileToCSharp(
+        string cshtmlContent,
+        bool throwOnFailure = true,
+        string cssScope = null,
+        bool supportLocalizedComponentNames = false,
+        bool nullableEnable = false)
     {
-        return CompileToCSharp(DefaultFileName, cshtmlContent, throwOnFailure, cssScope: cssScope, supportLocalizedComponentNames: supportLocalizedComponentNames);
+        return CompileToCSharp(
+            DefaultFileName,
+            cshtmlContent,
+            throwOnFailure,
+            cssScope: cssScope,
+            supportLocalizedComponentNames: supportLocalizedComponentNames,
+            nullableEnable: nullableEnable);
     }
 
-    protected CompileToCSharpResult CompileToCSharp(string cshtmlRelativePath, string cshtmlContent, bool throwOnFailure = true, string fileKind = null, string cssScope = null, bool supportLocalizedComponentNames = false)
+    protected CompileToCSharpResult CompileToCSharp(
+        string cshtmlRelativePath,
+        string cshtmlContent,
+        bool throwOnFailure = true,
+        string fileKind = null,
+        string cssScope = null,
+        bool supportLocalizedComponentNames = false,
+        bool nullableEnable = false)
     {
         if (DeclarationOnly && DesignTime)
         {
@@ -191,6 +209,13 @@ public class RazorIntegrationTestBase
         if (DeclarationOnly && UseTwoPhaseCompilation)
         {
             throw new InvalidOperationException($"{nameof(DeclarationOnly)} cannot be used with {nameof(UseTwoPhaseCompilation)}.");
+        }
+
+        var baseCompilation = BaseCompilation;
+
+        if (nullableEnable)
+        {
+            baseCompilation = baseCompilation.WithOptions(baseCompilation.Options.WithNullableContextOptions(NullableContextOptions.Enable));
         }
 
         if (UseTwoPhaseCompilation)
@@ -215,7 +240,7 @@ public class RazorIntegrationTestBase
             codeDocument = projectEngine.ProcessDeclarationOnly(projectItem);
             var declaration = new CompileToCSharpResult
             {
-                BaseCompilation = BaseCompilation.AddSyntaxTrees(AdditionalSyntaxTrees),
+                BaseCompilation = baseCompilation.AddSyntaxTrees(AdditionalSyntaxTrees),
                 CodeDocument = codeDocument,
                 Code = codeDocument.GetCSharpDocument().GeneratedCode,
                 Diagnostics = codeDocument.GetCSharpDocument().Diagnostics,
@@ -225,7 +250,7 @@ public class RazorIntegrationTestBase
             var tempAssembly = CompileToAssembly(declaration, throwOnFailure);
 
             // Add the 'temp' compilation as a metadata reference
-            var references = BaseCompilation.References.Concat(new[] { tempAssembly.Compilation.ToMetadataReference() }).ToArray();
+            var references = baseCompilation.References.Concat(new[] { tempAssembly.Compilation.ToMetadataReference() }).ToArray();
             projectEngine = CreateProjectEngine(Configuration, references, supportLocalizedComponentNames);
 
             // Now update the any additional files
@@ -245,7 +270,7 @@ public class RazorIntegrationTestBase
             codeDocument = DesignTime ? projectEngine.ProcessDesignTime(projectItem) : projectEngine.Process(projectItem);
             return new CompileToCSharpResult
             {
-                BaseCompilation = BaseCompilation.AddSyntaxTrees(AdditionalSyntaxTrees),
+                BaseCompilation = baseCompilation.AddSyntaxTrees(AdditionalSyntaxTrees),
                 CodeDocument = codeDocument,
                 Code = codeDocument.GetCSharpDocument().GeneratedCode,
                 Diagnostics = codeDocument.GetCSharpDocument().Diagnostics,
@@ -255,7 +280,7 @@ public class RazorIntegrationTestBase
         {
             // For single phase compilation tests just use the base compilation's references.
             // This will include the built-in components.
-            var projectEngine = CreateProjectEngine(Configuration, BaseCompilation.References.ToArray(), supportLocalizedComponentNames);
+            var projectEngine = CreateProjectEngine(Configuration, baseCompilation.References.ToArray(), supportLocalizedComponentNames);
 
             var projectItem = CreateProjectItem(cshtmlRelativePath, cshtmlContent, fileKind, cssScope);
 
@@ -275,7 +300,7 @@ public class RazorIntegrationTestBase
 
             return new CompileToCSharpResult
             {
-                BaseCompilation = BaseCompilation.AddSyntaxTrees(AdditionalSyntaxTrees),
+                BaseCompilation = baseCompilation.AddSyntaxTrees(AdditionalSyntaxTrees),
                 CodeDocument = codeDocument,
                 Code = codeDocument.GetCSharpDocument().GeneratedCode,
                 Diagnostics = codeDocument.GetCSharpDocument().Diagnostics,

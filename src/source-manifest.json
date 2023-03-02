@@ -49,16 +49,16 @@
       "commitSha": "2cb3e68c6b9a966114572fd63f2a20d2cb54a288"
     },
     {
-      "packageVersion": "7.0.300-beta.23126.1",
+      "packageVersion": "7.0.300-beta.23127.2",
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "4de2393866be1be6fa35af544c6f25a10af5ab3d"
+      "commitSha": "2f802c77efc09c63d3e36f50ca4380cbe5b4a5ce"
     },
     {
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "a5fc6f048f0a203e06af80f4ecbe501a1e8a29a6"
+      "commitSha": "16dd2b87e98c10eef8f5d782cc7bb517a0e25d25"
     },
     {
       "packageVersion": "17.6.0-preview-23151-03",
@@ -73,10 +73,10 @@
       "commitSha": "4d5af8a3492c8d9d0c99c3cdf3cce12129c8e743"
     },
     {
-      "packageVersion": "7.0.0-preview.23125.1",
+      "packageVersion": "7.0.0-preview.23151.4",
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "d7ad748d4f436f89ecc1298f64a876047524ac45"
+      "commitSha": "0591c7026e0972ff2f2da0be7caf26f1590e73f6"
     },
     {
       "packageVersion": "4.6.0-2.23127.9",
@@ -97,10 +97,10 @@
       "commitSha": "2bdc3cb8dd3500aa2b3a51b558782560b26b5973"
     },
     {
-      "packageVersion": "8.0.100-preview.3.23151.3",
+      "packageVersion": "8.0.100-preview.3.23151.7",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "f2f528b164d9ed8d1e517c6383f725c608f8237c"
+      "commitSha": "89fecaf394a0ee7a5faeaae4245c7c59c39732d8"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23123.2",
