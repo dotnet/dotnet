@@ -26,7 +26,7 @@ internal class ClientSettingsManager : EditorSettingsManager, IClientSettingsMan
     [ImportingConstructor]
     public ClientSettingsManager(
         [ImportMany] IEnumerable<ClientSettingsChangedTrigger> editorSettingsChangeTriggers,
-        IAdvancedSettingsStorage? advancedSettingsStorage = null,
+        [Import(AllowDefault = true)] IAdvancedSettingsStorage? advancedSettingsStorage = null,
         RazorGlobalOptions? globalOptions = null)
     {
         _settings = ClientSettings.Default;

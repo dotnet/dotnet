@@ -17,23 +17,23 @@ Source Location: (37:2,2 [31] TestFiles/IntegrationTests/CodeGenerationIntegrati
 |
     var code = "some code";
 |
-Generated Location: (2152:56,2 [31] )
+Generated Location: (2145:56,2 [31] )
 |
     var code = "some code";
 |
 
 Source Location: (313:10,56 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersInSection.cshtml)
 |code|
-Generated Location: (2479:65,56 [4] )
+Generated Location: (2472:65,56 [4] )
 |code|
 
 Source Location: (157:8,51 [12] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersInSection.cshtml)
 |DateTime.Now|
-Generated Location: (2991:75,51 [12] )
+Generated Location: (2984:75,51 [12] )
 |DateTime.Now|
 
 Source Location: (203:8,97 [12] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersInSection.cshtml)
 |DateTime.Now|
-Generated Location: (3342:83,97 [12] )
+Generated Location: (3335:83,97 [12] )
 |DateTime.Now|
 

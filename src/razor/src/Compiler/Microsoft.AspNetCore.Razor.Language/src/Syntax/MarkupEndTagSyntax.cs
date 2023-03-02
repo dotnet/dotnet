@@ -1,4 +1,4 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 #nullable disable
@@ -35,7 +35,7 @@ internal partial class MarkupEndTagSyntax
         // This is needed to generate the same classified spans as the legacy syntax tree.
         var builder = new SyntaxListBuilder(3);
         var tokens = SyntaxListBuilder<SyntaxToken>.Create();
-        var context = this.GetSpanContext();
+        var editHandler = this.GetEditHandler();
 
         if (!OpenAngle.IsMissing)
         {
@@ -50,12 +50,12 @@ internal partial class MarkupEndTagSyntax
         if (Bang != null)
         {
             // The prefix of an end tag(E.g '|</|!foo>') will have 'Any' accepted characters if a bang exists.
-            var acceptsAnyContext = new SpanContext(context.ChunkGenerator, SpanEditHandler.CreateDefault(AcceptedCharactersInternal.Any));
-            builder.Add(SyntaxFactory.MarkupTextLiteral(tokens.Consume()).WithSpanContext(acceptsAnyContext));
+            var acceptsAnyHandler = SpanEditHandler.CreateDefault(AcceptedCharactersInternal.Any);
+            builder.Add(SyntaxFactory.MarkupTextLiteral(tokens.Consume(), ChunkGenerator).WithEditHandler(acceptsAnyHandler));
 
             tokens.Add(Bang);
-            var acceptsNoneContext = new SpanContext(context.ChunkGenerator, SpanEditHandler.CreateDefault(AcceptedCharactersInternal.None));
-            builder.Add(SyntaxFactory.RazorMetaCode(tokens.Consume()).WithSpanContext(acceptsNoneContext));
+            var acceptsNoneHandler = SpanEditHandler.CreateDefault(AcceptedCharactersInternal.None);
+            builder.Add(SyntaxFactory.RazorMetaCode(tokens.Consume(), ChunkGenerator).WithEditHandler(acceptsNoneHandler));
         }
 
         if (!Name.IsMissing)
@@ -76,7 +76,7 @@ internal partial class MarkupEndTagSyntax
             tokens.Add(CloseAngle);
         }
 
-        builder.Add(SyntaxFactory.MarkupTextLiteral(tokens.Consume()).WithSpanContext(context));
+        builder.Add(SyntaxFactory.MarkupTextLiteral(tokens.Consume(), ChunkGenerator).WithEditHandler(editHandler));
 
         return builder.ToListNode().CreateRed(this, Position);
     }

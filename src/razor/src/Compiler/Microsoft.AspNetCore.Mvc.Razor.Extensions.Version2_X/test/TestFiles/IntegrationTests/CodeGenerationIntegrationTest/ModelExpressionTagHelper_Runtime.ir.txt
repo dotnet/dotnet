@@ -18,13 +18,13 @@
                 CSharpCode - 
                     IntermediateToken -  - CSharp - BeginContext(17, 2, true);
                 HtmlContent - (17:1,0 [2] ModelExpressionTagHelper.cshtml)
-                    IntermediateToken - (17:1,0 [2] ModelExpressionTagHelper.cshtml) - Html - \n
+                    LazyIntermediateToken - (17:1,0 [2] ModelExpressionTagHelper.cshtml) - Html - \n
                 CSharpCode - 
                     IntermediateToken -  - CSharp - EndContext();
                 CSharpCode - 
                     IntermediateToken -  - CSharp - BeginContext(64, 2, true);
                 HtmlContent - (64:3,0 [2] ModelExpressionTagHelper.cshtml)
-                    IntermediateToken - (64:3,0 [2] ModelExpressionTagHelper.cshtml) - Html - \n
+                    LazyIntermediateToken - (64:3,0 [2] ModelExpressionTagHelper.cshtml) - Html - \n
                 CSharpCode - 
                     IntermediateToken -  - CSharp - EndContext();
                 CSharpCode - 
@@ -36,7 +36,7 @@
                         CSharpExpression - 
                             IntermediateToken -  - CSharp - ModelExpressionProvider.CreateModelExpression(ViewData, __model => 
                             IntermediateToken -  - CSharp - __model.
-                            IntermediateToken - (83:4,17 [4] ModelExpressionTagHelper.cshtml) - CSharp - Date
+                            LazyIntermediateToken - (83:4,17 [4] ModelExpressionTagHelper.cshtml) - CSharp - Date
                             IntermediateToken -  - CSharp - )
                     DefaultTagHelperExecute - 
                 CSharpCode - 
@@ -44,7 +44,7 @@
                 CSharpCode - 
                     IntermediateToken -  - CSharp - BeginContext(91, 2, true);
                 HtmlContent - (91:4,25 [2] ModelExpressionTagHelper.cshtml)
-                    IntermediateToken - (91:4,25 [2] ModelExpressionTagHelper.cshtml) - Html - \n
+                    LazyIntermediateToken - (91:4,25 [2] ModelExpressionTagHelper.cshtml) - Html - \n
                 CSharpCode - 
                     IntermediateToken -  - CSharp - EndContext();
                 CSharpCode - 
@@ -55,7 +55,7 @@
                     DefaultTagHelperProperty - (110:5,17 [6] ModelExpressionTagHelper.cshtml) - for - Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExpression InputTestTagHelper.For - HtmlAttributeValueStyle.DoubleQuotes
                         CSharpExpression - 
                             IntermediateToken -  - CSharp - ModelExpressionProvider.CreateModelExpression(ViewData, __model => 
-                            IntermediateToken - (111:5,18 [5] ModelExpressionTagHelper.cshtml) - CSharp - Model
+                            LazyIntermediateToken - (111:5,18 [5] ModelExpressionTagHelper.cshtml) - CSharp - Model
                             IntermediateToken -  - CSharp - )
                     DefaultTagHelperExecute - 
                 CSharpCode - 
@@ -63,7 +63,7 @@
                 CSharpCode - 
                     IntermediateToken -  - CSharp - BeginContext(120, 2, true);
                 HtmlContent - (120:5,27 [2] ModelExpressionTagHelper.cshtml)
-                    IntermediateToken - (120:5,27 [2] ModelExpressionTagHelper.cshtml) - Html - \n
+                    LazyIntermediateToken - (120:5,27 [2] ModelExpressionTagHelper.cshtml) - Html - \n
                 CSharpCode - 
                     IntermediateToken -  - CSharp - EndContext();
             Inject - 

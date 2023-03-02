@@ -214,8 +214,8 @@ internal class AddUsingsCodeActionResolver : RazorCodeActionResolver
             {
                 foreach (var child in directiveNode.DescendantNodes())
                 {
-                    var context = child.GetSpanContext();
-                    if (context != null && context.ChunkGenerator is AddImportChunkGenerator usingStatement && !usingStatement.IsStatic)
+                    var context = child.GetEditHandler();
+                    if (child.GetChunkGenerator() is AddImportChunkGenerator { IsStatic: false } usingStatement)
                     {
                         directives.Add(new RazorUsingDirective(directiveNode, usingStatement));
                     }

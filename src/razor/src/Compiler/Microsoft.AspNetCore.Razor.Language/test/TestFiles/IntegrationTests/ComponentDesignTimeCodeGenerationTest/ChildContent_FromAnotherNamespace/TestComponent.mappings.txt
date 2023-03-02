@@ -5,11 +5,11 @@ Generated Location: (320:12,0 [17] )
 
 Source Location: (119:6,13 [7] x:\dir\subdir\Test\TestComponent.cshtml)
 |context|
-Generated Location: (1498:42,13 [7] )
+Generated Location: (1491:42,13 [7] )
 |context|
 
 Source Location: (276:12,13 [7] x:\dir\subdir\Test\TestComponent.cshtml)
 |context|
-Generated Location: (2323:69,13 [7] )
+Generated Location: (2316:69,13 [7] )
 |context|
 

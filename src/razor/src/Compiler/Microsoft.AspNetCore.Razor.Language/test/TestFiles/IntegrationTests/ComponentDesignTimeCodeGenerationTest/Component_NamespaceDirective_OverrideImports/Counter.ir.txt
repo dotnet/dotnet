@@ -13,7 +13,7 @@
             CSharpCode - 
                 IntermediateToken -  - CSharp - #pragma warning disable 0414
             CSharpCode - 
-                IntermediateToken -  - CSharp - private static System.Object __o = null;
+                IntermediateToken -  - CSharp - private static object __o = null;
             CSharpCode - 
                 IntermediateToken -  - CSharp - #pragma warning restore 0414
             MethodDeclaration -  - protected override - void - BuildRenderTree

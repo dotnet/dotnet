@@ -1,10 +1,10 @@
 ﻿Source Location: (15:0,15 [29] x:\dir\subdir\Test\TestComponent.cshtml)
 |new Dictionary<int, string>()|
-Generated Location: (997:26,15 [29] )
+Generated Location: (990:26,15 [29] )
 |new Dictionary<int, string>()|
 
 Source Location: (6:0,6 [5] x:\dir\subdir\Test\TestComponent.cshtml)
 |Items|
-Generated Location: (1786:46,6 [5] )
+Generated Location: (1779:46,6 [5] )
 |Items|
 

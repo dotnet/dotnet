@@ -11,7 +11,7 @@
             CSharpCode - 
                 IntermediateToken -  - CSharp - #pragma warning disable 0414
             CSharpCode - 
-                IntermediateToken -  - CSharp - private static System.Object __o = null;
+                IntermediateToken -  - CSharp - private static object __o = null;
             CSharpCode - 
                 IntermediateToken -  - CSharp - #pragma warning restore 0414
             MethodDeclaration -  - protected override - void - BuildRenderTree
@@ -26,8 +26,8 @@
                             IntermediateToken -  - CSharp - , ParentValue)
                 HtmlContent - (94:1,75 [2] x:\dir\subdir\Test\TestComponent.cshtml)
                     LazyIntermediateToken - (94:1,75 [2] x:\dir\subdir\Test\TestComponent.cshtml) - Html - \n
-            CSharpCode - (103:2,7 [120] x:\dir\subdir\Test\TestComponent.cshtml)
-                LazyIntermediateToken - (103:2,7 [120] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - \n    public TParam ParentValue { get; set; } = default;\n\n    public EventCallback<TParam> UpdateValue { get; set; }\n
+            CSharpCode - (103:2,7 [118] x:\dir\subdir\Test\TestComponent.cshtml)
+                LazyIntermediateToken - (103:2,7 [118] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - \n    public TParam ParentValue { get; set; } = default;\n    public EventCallback<TParam> UpdateValue { get; set; }\n
     NamespaceDeclaration -  - __Blazor.Test.TestComponent
         ClassDeclaration -  - internal static - TypeInference -  - 
             ComponentTypeInferenceMethod -  - __Blazor.Test.TestComponent.TypeInference - CreateMyComponent_0

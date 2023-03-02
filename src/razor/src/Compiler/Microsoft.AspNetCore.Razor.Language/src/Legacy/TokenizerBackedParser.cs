@@ -14,9 +14,15 @@ namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase
     where TTokenizer : Tokenizer
 {
+    protected delegate void SpanContextConfigAction(SpanEditHandlerBuilder editHandlerBuilder, ref ISpanChunkGenerator chunkGenerator);
+    protected delegate void SpanContextConfigActionWithPreviousConfig(SpanEditHandlerBuilder editHandlerBuilder, ref ISpanChunkGenerator chunkGenerator, SpanContextConfigAction previousConfig);
+
     private readonly SyntaxListPool _pool = new SyntaxListPool();
     private readonly TokenizerView<TTokenizer> _tokenizer;
     private SyntaxListBuilder<SyntaxToken>? _tokenBuilder;
+
+    protected SpanEditHandlerBuilder editHandlerBuilder;
+    protected ISpanChunkGenerator chunkGenerator;
 
     // Following four high traffic methods cached as using method groups would cause allocation on every invocation.
     protected static readonly Func<SyntaxToken, bool> IsSpacingToken = (token) =>
@@ -47,7 +53,7 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase
 
         var languageTokenizer = Language.CreateTokenizer(Context.Source);
         _tokenizer = new TokenizerView<TTokenizer>(languageTokenizer);
-        SpanContext = new SpanContextBuilder(LanguageTokenizeString);
+        editHandlerBuilder = new SpanEditHandlerBuilder(LanguageTokenizeString);
     }
 
     protected SyntaxListPool Pool => _pool;
@@ -66,9 +72,7 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase
         }
     }
 
-    protected SpanContextBuilder SpanContext { get; private set; }
-
-    protected Action<SpanContextBuilder> SpanContextConfig { get; set; }
+    protected SpanContextConfigAction SpanContextConfig { get; set; }
 
     protected SyntaxToken CurrentToken
     {
@@ -381,16 +385,16 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase
             }
         }
 
-        InitializeContext(SpanContext);
+        InitializeContext();
 
         return commentBlock;
     }
 
-    private void CommentSpanContextConfig(SpanContextBuilder spanContext)
+    private void CommentSpanContextConfig(SpanEditHandlerBuilder editHandler, ref ISpanChunkGenerator generator)
     {
-        spanContext.ChunkGenerator = SpanChunkGenerator.Null;
-        spanContext.EditHandlerBuilder.Reset();
-        spanContext.EditHandlerBuilder.Tokenizer = LanguageTokenizeString;
+        generator = SpanChunkGenerator.Null;
+        editHandlerBuilder.Reset();
+        editHandlerBuilder.Tokenizer = LanguageTokenizeString;
     }
 
     protected SyntaxToken EatCurrentToken()
@@ -584,7 +588,7 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase
             return null;
         }
 
-        return GetNodeWithSpanContext(SyntaxFactory.MarkupTextLiteral(tokens));
+        return GetNodeWithEditHandler(SyntaxFactory.MarkupTextLiteral(tokens, chunkGenerator));
     }
 
     protected MarkupEphemeralTextLiteralSyntax OutputAsMarkupEphemeralLiteral()
@@ -595,7 +599,7 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase
             return null;
         }
 
-        return GetNodeWithSpanContext(SyntaxFactory.MarkupEphemeralTextLiteral(tokens));
+        return GetNodeWithEditHandler(SyntaxFactory.MarkupEphemeralTextLiteral(tokens, chunkGenerator));
     }
 
     protected RazorMetaCodeSyntax OutputAsMetaCode(SyntaxList<SyntaxToken> tokens, AcceptedCharactersInternal? accepted = null)
@@ -605,47 +609,47 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase
             return null;
         }
 
-        var metacode = SyntaxFactory.RazorMetaCode(tokens);
-        SpanContext.ChunkGenerator = SpanChunkGenerator.Null;
-        SpanContext.EditHandlerBuilder.AcceptedCharacters = accepted ?? AcceptedCharactersInternal.None;
+        var metacode = SyntaxFactory.RazorMetaCode(tokens, SpanChunkGenerator.Null);
+        chunkGenerator = SpanChunkGenerator.Null;
+        editHandlerBuilder.AcceptedCharacters = accepted ?? AcceptedCharactersInternal.None;
 
-        return GetNodeWithSpanContext(metacode);
+        return GetNodeWithEditHandler(metacode);
     }
 
-    protected TNode GetNodeWithSpanContext<TNode>(TNode node) where TNode : Syntax.GreenNode
+    protected TNode GetNodeWithEditHandler<TNode>(TNode node) where TNode : Syntax.GreenNode
     {
-        var spanContext = SpanContext.Build();
-        Context.LastAcceptedCharacters = spanContext.EditHandler.AcceptedCharacters;
-        InitializeContext(SpanContext);
-        var annotation = new Syntax.SyntaxAnnotation(SyntaxConstants.SpanContextKind, spanContext);
+        var editHandlerBuilder = this.editHandlerBuilder.Build();
+        Context.LastAcceptedCharacters = editHandlerBuilder.AcceptedCharacters;
+        InitializeContext();
+        var annotation = new Syntax.SyntaxAnnotation(SyntaxConstants.EditHandlerKind, editHandlerBuilder);
 
         return (TNode)node.SetAnnotations(new[] { annotation });
     }
 
     protected IDisposable PushSpanContextConfig()
     {
-        return PushSpanContextConfig(newConfig: (Action<SpanContextBuilder, Action<SpanContextBuilder>>)null);
+        return PushSpanContextConfig(newConfig: (SpanContextConfigActionWithPreviousConfig)null);
     }
 
-    protected IDisposable PushSpanContextConfig(Action<SpanContextBuilder> newConfig)
+    protected IDisposable PushSpanContextConfig(SpanContextConfigAction newConfig)
     {
-        return PushSpanContextConfig(newConfig == null ? (Action<SpanContextBuilder, Action<SpanContextBuilder>>)null : (span, _) => newConfig(span));
+        return PushSpanContextConfig(newConfig == null ? null : (SpanEditHandlerBuilder span, ref ISpanChunkGenerator chunkGenerator, SpanContextConfigAction _) => newConfig(span, ref chunkGenerator));
     }
 
-    protected IDisposable PushSpanContextConfig(Action<SpanContextBuilder, Action<SpanContextBuilder>> newConfig)
+    protected IDisposable PushSpanContextConfig(SpanContextConfigActionWithPreviousConfig  newConfig)
     {
         var old = SpanContextConfig;
         ConfigureSpanContext(newConfig);
         return new DisposableAction(() => SpanContextConfig = old);
     }
 
-    protected void ConfigureSpanContext(Action<SpanContextBuilder> config)
+    protected void ConfigureSpanContext(SpanContextConfigAction config)
     {
         SpanContextConfig = config;
-        InitializeContext(SpanContext);
+        InitializeContext();
     }
 
-    protected void ConfigureSpanContext(Action<SpanContextBuilder, Action<SpanContextBuilder>> config)
+    protected void ConfigureSpanContext(SpanContextConfigActionWithPreviousConfig config)
     {
         var prev = SpanContextConfig;
         if (config == null)
@@ -654,13 +658,13 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase
         }
         else
         {
-            SpanContextConfig = span => config(span, prev);
+            SpanContextConfig = (SpanEditHandlerBuilder span, ref ISpanChunkGenerator chunkGenerator) => config(span, ref chunkGenerator, prev);
         }
-        InitializeContext(SpanContext);
+        InitializeContext();
     }
 
-    protected void InitializeContext(SpanContextBuilder spanContext)
+    protected void InitializeContext()
     {
-        SpanContextConfig?.Invoke(spanContext);
+        SpanContextConfig?.Invoke(editHandlerBuilder, ref chunkGenerator);
     }
 }

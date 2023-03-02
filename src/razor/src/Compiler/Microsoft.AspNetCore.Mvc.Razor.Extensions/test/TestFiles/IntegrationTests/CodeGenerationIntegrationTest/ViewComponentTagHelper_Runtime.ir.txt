@@ -9,6 +9,8 @@
         UsingDirective - (135:5,1 [42] ) - Microsoft.AspNetCore.Mvc.Rendering
         UsingDirective - (178:6,1 [45] ) - Microsoft.AspNetCore.Mvc.ViewFeatures
         RazorSourceChecksumAttribute - 
+        RazorCompiledItemMetadataAttribute - 
+        CreateNewOnMetadataUpdateAttribute - 
         ClassDeclaration -  - public - TestFiles_IntegrationTests_CodeGenerationIntegrationTest_ViewComponentTagHelper - global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<dynamic> - 
             FieldDeclaration -  - private - global::AspNetCore.TestFiles_IntegrationTests_CodeGenerationIntegrationTest_ViewComponentTagHelper.__Generated__TestViewComponentTagHelper - __TestViewComponentTagHelper
             PreallocatedTagHelperPropertyValue -  - __tagHelperAttribute_0 - bar -  World - HtmlAttributeValueStyle.DoubleQuotes
@@ -16,16 +18,16 @@
             FieldDeclaration -  - private - global::AllTagHelper - __AllTagHelper
             MethodDeclaration -  - public async override - global::System.Threading.Tasks.Task - ExecuteAsync
                 CSharpCode - (30:1,2 [26] ViewComponentTagHelper.cshtml)
-                    IntermediateToken - (30:1,2 [26] ViewComponentTagHelper.cshtml) - CSharp - \n    var foo = "Hello";\n
+                    LazyIntermediateToken - (30:1,2 [26] ViewComponentTagHelper.cshtml) - CSharp - \n    var foo = "Hello";\n
                 HtmlContent - (59:4,0 [2] ViewComponentTagHelper.cshtml)
-                    IntermediateToken - (59:4,0 [2] ViewComponentTagHelper.cshtml) - Html - \n
+                    LazyIntermediateToken - (59:4,0 [2] ViewComponentTagHelper.cshtml) - Html - \n
                 TagHelper - (61:5,0 [50] ViewComponentTagHelper.cshtml) - vc:test - TagMode.StartTagAndEndTag
                     DefaultTagHelperBody - 
                     DefaultTagHelperCreate -  - AllTagHelper
                     DefaultTagHelperCreate -  - AspNetCore.TestFiles_IntegrationTests_CodeGenerationIntegrationTest_ViewComponentTagHelper.__Generated__TestViewComponentTagHelper
                     DefaultTagHelperProperty - (82:5,21 [4] ViewComponentTagHelper.cshtml) - first-name - string TestViewComponentTagHelper.firstName - HtmlAttributeValueStyle.DoubleQuotes
                         CSharpExpression - (83:5,22 [3] ViewComponentTagHelper.cshtml)
-                            IntermediateToken - (83:5,22 [3] ViewComponentTagHelper.cshtml) - CSharp - foo
+                            LazyIntermediateToken - (83:5,22 [3] ViewComponentTagHelper.cshtml) - CSharp - foo
                     PreallocatedTagHelperProperty - (93:5,32 [6] ViewComponentTagHelper.cshtml) - __tagHelperAttribute_0 - bar - Bar
                     DefaultTagHelperExecute - 
             Inject - 

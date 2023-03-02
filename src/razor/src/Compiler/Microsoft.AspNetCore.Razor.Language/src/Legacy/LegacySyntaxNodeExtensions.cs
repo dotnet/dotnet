@@ -65,21 +65,58 @@ internal static partial class LegacySyntaxNodeExtensions
         return set.ToImmutable();
     }
 
-    public static SpanContext? GetSpanContext(this SyntaxNode node)
-        => node.GetAnnotationValue(SyntaxConstants.SpanContextKind) as SpanContext;
+    internal static ISpanChunkGenerator? GetChunkGenerator(this SyntaxNode node)
+     => node switch
+        {
+            MarkupStartTagSyntax start => start.ChunkGenerator,
+            MarkupEndTagSyntax end => end.ChunkGenerator,
+            MarkupEphemeralTextLiteralSyntax ephemeral => ephemeral.ChunkGenerator,
+            MarkupTagHelperStartTagSyntax start => start.ChunkGenerator,
+            MarkupTagHelperEndTagSyntax end => end.ChunkGenerator,
+            MarkupTextLiteralSyntax text => text.ChunkGenerator,
+            MarkupTransitionSyntax transition => transition.ChunkGenerator,
+            CSharpStatementLiteralSyntax csharp => csharp.ChunkGenerator,
+            CSharpExpressionLiteralSyntax csharp => csharp.ChunkGenerator,
+            CSharpEphemeralTextLiteralSyntax csharp => csharp.ChunkGenerator,
+            CSharpTransitionSyntax transition => transition.ChunkGenerator,
+            RazorMetaCodeSyntax meta => meta.ChunkGenerator,
+            UnclassifiedTextLiteralSyntax unclassified => unclassified.ChunkGenerator,
+            _ => null,
+        };
 
-    public static TNode WithSpanContext<TNode>(this TNode node, SpanContext? spanContext)
-        where TNode : SyntaxNode
+    public static SpanEditHandler? GetEditHandler(this SyntaxNode node) => node.GetAnnotationValue(SyntaxConstants.EditHandlerKind) as SpanEditHandler;
+
+    public static TNode WithEditHandler<TNode>(this TNode node, SpanEditHandler? editHandler) where TNode : SyntaxNode
     {
         if (node is null)
         {
             throw new ArgumentNullException(nameof(node));
         }
 
-        var newAnnotation = new SyntaxAnnotation(SyntaxConstants.SpanContextKind, spanContext);
+        if (editHandler is null)
+        {
+            if (node.ContainsAnnotations)
+            {
+                List<SyntaxAnnotation>? filteredAnnotations = null;
+                foreach (var annotation in node.GetAnnotations())
+                {
+                    if (annotation.Kind != SyntaxConstants.EditHandlerKind)
+                    {
+                        (filteredAnnotations ??= new List<SyntaxAnnotation>()).Add(annotation);
+                    }
+                }
+
+                return node.WithAnnotations(filteredAnnotations?.ToArray() ?? Array.Empty<SyntaxAnnotation>());
+            }
+            else
+            {
+                return node;
+            }
+        }
+
+        var newAnnotation = new SyntaxAnnotation(SyntaxConstants.EditHandlerKind, editHandler);
 
         List<SyntaxAnnotation>? newAnnotations = null;
-
         if (node.ContainsAnnotations)
         {
             foreach (var annotation in node.GetAnnotations())
@@ -126,7 +163,7 @@ internal static partial class LegacySyntaxNodeExtensions
 
         if (node.IsSpanKind())
         {
-            var editHandler = node.GetSpanContext()?.EditHandler ?? SpanEditHandler.CreateDefault(AcceptedCharactersInternal.Any);
+            var editHandler = node.GetEditHandler() ?? SpanEditHandler.CreateDefault(AcceptedCharactersInternal.Any);
             return editHandler.OwnsChange(node, change) ? node : null;
         }
 

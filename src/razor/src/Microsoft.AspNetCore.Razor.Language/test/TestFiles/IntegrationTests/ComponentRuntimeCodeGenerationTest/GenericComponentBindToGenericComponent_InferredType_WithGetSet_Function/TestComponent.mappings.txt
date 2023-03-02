@@ -1,0 +1,13 @@
+Source Location: (103:2,7 [155] x:\dir\subdir\Test\TestComponent.cshtml)
+|
+    public TParam ParentValue { get; set; } = default;
+
+    public Task UpdateValue(TParam value) { ParentValue = value; return Task.CompletedTask; }
+|
+Generated Location: (1156:28,7 [155] )
+|
+    public TParam ParentValue { get; set; } = default;
+
+    public Task UpdateValue(TParam value) { ParentValue = value; return Task.CompletedTask; }
+|
+

@@ -60,7 +60,7 @@ internal class WhitespaceRewriter : SyntaxRewriter
             if (!containsNonWhitespace)
             {
                 // Literal node is all whitespace. Can rewrite.
-                whitespaceLiteral = SyntaxFactory.MarkupTextLiteral(literal.LiteralTokens);
+                whitespaceLiteral = SyntaxFactory.MarkupTextLiteral(literal.LiteralTokens, chunkGenerator: null);
                 rewritten = codeBlock.ReplaceNode(literal, newNode: null);
                 return true;
             }
