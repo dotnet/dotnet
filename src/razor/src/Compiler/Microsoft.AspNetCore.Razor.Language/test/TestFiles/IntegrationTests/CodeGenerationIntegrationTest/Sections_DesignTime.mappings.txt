@@ -17,28 +17,28 @@ Source Location: (2:0,2 [44] TestFiles/IntegrationTests/CodeGenerationIntegratio
 |
     Layout = "_SectionTestLayout.cshtml"
 |
-Generated Location: (1507:49,2 [44] )
+Generated Location: (1500:49,2 [44] )
 |
     Layout = "_SectionTestLayout.cshtml"
 |
 
 Source Location: (123:7,22 [5] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml)
 |thing|
-Generated Location: (1800:58,22 [5] )
+Generated Location: (1793:58,22 [5] )
 |thing|
 
 Source Location: (260:15,6 [27] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml)
 | Func<dynamic, object> f = |
-Generated Location: (2185:71,6 [27] )
+Generated Location: (2178:71,6 [27] )
 | Func<dynamic, object> f = |
 
 Source Location: (295:15,41 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml)
 |item|
-Generated Location: (2483:79,41 [4] )
+Generated Location: (2476:79,41 [4] )
 |item|
 
 Source Location: (306:15,52 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml)
 |; |
-Generated Location: (2734:88,52 [2] )
+Generated Location: (2727:88,52 [2] )
 |; |
 

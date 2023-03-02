@@ -16,7 +16,7 @@
                     HtmlAttribute - (16:0,16 [12] x:\dir\subdir\Test\TestComponent.cshtml) - myevent=" - "
                         CSharpExpressionAttributeValue -  - 
                             IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.EventCallback.Factory.CreateBinder(this, 
-                            IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, callback: async __value => { await global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, callback: UpdateValue, value: ParentValue).InvokeAsync(); await global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create(this, callback: AfterUpdate).InvokeAsync(); }, value: ParentValue)
+                            IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, callback: async __value => { await global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredBindSetter(callback: UpdateValue, value: ParentValue)(); await global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.InvokeAsynchronousDelegate(callback: AfterUpdate); }, value: ParentValue)
                             IntermediateToken -  - CSharp - , 
                             IntermediateToken -  - CSharp - ParentValue
                             IntermediateToken -  - CSharp - )

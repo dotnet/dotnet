@@ -31,7 +31,6 @@ namespace Test
 #line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
        
     public int ParentValue { get; set; } = 42;
-
     public EventCallback<int> UpdateValue { get; set; }
 
 #line default

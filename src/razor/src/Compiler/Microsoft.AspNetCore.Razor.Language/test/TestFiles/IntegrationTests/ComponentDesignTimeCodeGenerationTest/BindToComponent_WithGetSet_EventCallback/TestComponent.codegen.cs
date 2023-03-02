@@ -15,7 +15,7 @@ namespace Test
         }
         #pragma warning restore 219
         #pragma warning disable 0414
-        private static System.Object __o = null;
+        private static object __o = null;
         #pragma warning restore 0414
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
@@ -47,7 +47,6 @@ __o = typeof(global::Test.MyComponent);
 #line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
        
     public int ParentValue { get; set; } = 42;
-
     public EventCallback<int> UpdateValue { get; set; }
 
 #line default

@@ -72,7 +72,7 @@ public sealed class ViewComponentTagHelperDescriptorProvider : RazorEngineFeatur
         }
     }
 
-    private bool IsTagHelperAssembly(IAssemblySymbol assembly)
+    internal static bool IsTagHelperAssembly(IAssemblySymbol assembly)
     {
         return assembly.Name != null && !assembly.Name.StartsWith("System.", StringComparison.Ordinal);
     }

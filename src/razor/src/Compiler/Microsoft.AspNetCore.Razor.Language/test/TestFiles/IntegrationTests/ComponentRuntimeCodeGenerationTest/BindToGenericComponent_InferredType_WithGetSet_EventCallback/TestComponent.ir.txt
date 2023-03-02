@@ -16,8 +16,8 @@
                             IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, 
                             IntermediateToken -  - CSharp - UpdateValue
                             IntermediateToken -  - CSharp - , ParentValue)
-            CSharpCode - (84:1,7 [140] x:\dir\subdir\Test\TestComponent.cshtml)
-                LazyIntermediateToken - (84:1,7 [140] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - \n    public CustomValue ParentValue { get; set; } = new CustomValue();\n\n    public EventCallback<CustomValue> UpdateValue { get; set; }\n
+            CSharpCode - (84:1,7 [138] x:\dir\subdir\Test\TestComponent.cshtml)
+                LazyIntermediateToken - (84:1,7 [138] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - \n    public CustomValue ParentValue { get; set; } = new CustomValue();\n    public EventCallback<CustomValue> UpdateValue { get; set; }\n
     NamespaceDeclaration -  - __Blazor.Test.TestComponent
         ClassDeclaration -  - internal static - TypeInference -  - 
             ComponentTypeInferenceMethod -  - __Blazor.Test.TestComponent.TypeInference - CreateMyComponent_0

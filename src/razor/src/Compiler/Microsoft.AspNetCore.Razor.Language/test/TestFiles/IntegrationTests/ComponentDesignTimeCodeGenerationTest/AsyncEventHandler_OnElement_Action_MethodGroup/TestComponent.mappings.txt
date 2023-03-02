@@ -10,7 +10,7 @@ Generated Location: (436:18,0 [41] )
 
 Source Location: (92:2,17 [7] x:\dir\subdir\Test\TestComponent.cshtml)
 |OnClick|
-Generated Location: (1320:38,17 [7] )
+Generated Location: (1313:38,17 [7] )
 |OnClick|
 
 Source Location: (112:3,7 [72] x:\dir\subdir\Test\TestComponent.cshtml)
@@ -20,7 +20,7 @@ Source Location: (112:3,7 [72] x:\dir\subdir\Test\TestComponent.cshtml)
         return Task.CompletedTask;
     }
 |
-Generated Location: (1521:48,7 [72] )
+Generated Location: (1514:48,7 [72] )
 |
     Task OnClick()
     {

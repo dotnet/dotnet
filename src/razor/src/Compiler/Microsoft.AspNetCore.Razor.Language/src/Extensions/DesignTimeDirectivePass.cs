@@ -52,7 +52,7 @@ internal class DesignTimeDirectivePass : IntermediateNodePassBase, IRazorDirecti
                         new IntermediateToken()
                         {
                             Kind = TokenKind.CSharp,
-                            Content = $"private static {typeof(object).FullName} {DesignTimeVariable} = null;",
+                            Content = $"private static object {DesignTimeVariable} = null;",
                         }
                     }
             });

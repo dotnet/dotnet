@@ -5,6 +5,6 @@ Generated Location: (1017:18,37 [17] )
 
 Source Location: (63:2,28 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SingleTagHelper.cshtml)
 |1337|
-Generated Location: (1639:36,33 [4] )
+Generated Location: (1632:36,33 [4] )
 |1337|
 

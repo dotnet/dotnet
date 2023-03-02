@@ -28,7 +28,6 @@ namespace Test
 #line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
        
     public TParam ParentValue { get; set; } = default;
-
     public EventCallback<TParam> UpdateValue { get; set; }
 
 #line default
