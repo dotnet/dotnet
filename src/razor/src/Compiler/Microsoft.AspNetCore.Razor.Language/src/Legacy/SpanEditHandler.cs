@@ -76,41 +76,41 @@ internal class SpanEditHandler
         }
 
         SyntaxNode newTarget = null;
-        if (target is RazorMetaCodeSyntax)
+        if (target is RazorMetaCodeSyntax metaCode)
         {
-            newTarget = Syntax.InternalSyntax.SyntaxFactory.RazorMetaCode(builder.ToList()).CreateRed(target.Parent, target.Position);
+            newTarget = Syntax.InternalSyntax.SyntaxFactory.RazorMetaCode(builder.ToList(), metaCode.ChunkGenerator).CreateRed(target.Parent, target.Position);
         }
-        else if (target is MarkupTextLiteralSyntax)
+        else if (target is MarkupTextLiteralSyntax markupLiteral)
         {
-            newTarget = Syntax.InternalSyntax.SyntaxFactory.MarkupTextLiteral(builder.ToList()).CreateRed(target.Parent, target.Position);
+            newTarget = Syntax.InternalSyntax.SyntaxFactory.MarkupTextLiteral(builder.ToList(), markupLiteral.ChunkGenerator).CreateRed(target.Parent, target.Position);
         }
-        else if (target is MarkupEphemeralTextLiteralSyntax)
+        else if (target is MarkupEphemeralTextLiteralSyntax ephemeral)
         {
-            newTarget = Syntax.InternalSyntax.SyntaxFactory.MarkupEphemeralTextLiteral(builder.ToList()).CreateRed(target.Parent, target.Position);
+            newTarget = Syntax.InternalSyntax.SyntaxFactory.MarkupEphemeralTextLiteral(builder.ToList(), ephemeral.ChunkGenerator).CreateRed(target.Parent, target.Position);
         }
-        else if (target is CSharpStatementLiteralSyntax)
+        else if (target is CSharpStatementLiteralSyntax statement)
         {
-            newTarget = Syntax.InternalSyntax.SyntaxFactory.CSharpStatementLiteral(builder.ToList()).CreateRed(target.Parent, target.Position);
+            newTarget = Syntax.InternalSyntax.SyntaxFactory.CSharpStatementLiteral(builder.ToList(), statement.ChunkGenerator).CreateRed(target.Parent, target.Position);
         }
-        else if (target is CSharpExpressionLiteralSyntax)
+        else if (target is CSharpExpressionLiteralSyntax expression)
         {
-            newTarget = Syntax.InternalSyntax.SyntaxFactory.CSharpExpressionLiteral(builder.ToList()).CreateRed(target.Parent, target.Position);
+            newTarget = Syntax.InternalSyntax.SyntaxFactory.CSharpExpressionLiteral(builder.ToList(), expression.ChunkGenerator).CreateRed(target.Parent, target.Position);
         }
-        else if (target is CSharpEphemeralTextLiteralSyntax)
+        else if (target is CSharpEphemeralTextLiteralSyntax cSharpEphemeral)
         {
-            newTarget = Syntax.InternalSyntax.SyntaxFactory.CSharpEphemeralTextLiteral(builder.ToList()).CreateRed(target.Parent, target.Position);
+            newTarget = Syntax.InternalSyntax.SyntaxFactory.CSharpEphemeralTextLiteral(builder.ToList(), cSharpEphemeral.ChunkGenerator).CreateRed(target.Parent, target.Position);
         }
-        else if (target is UnclassifiedTextLiteralSyntax)
+        else if (target is UnclassifiedTextLiteralSyntax unclassified)
         {
-            newTarget = Syntax.InternalSyntax.SyntaxFactory.UnclassifiedTextLiteral(builder.ToList()).CreateRed(target.Parent, target.Position);
+            newTarget = Syntax.InternalSyntax.SyntaxFactory.UnclassifiedTextLiteral(builder.ToList(), unclassified.ChunkGenerator).CreateRed(target.Parent, target.Position);
         }
         else
         {
             Debug.Fail($"The type {target?.GetType().Name} is not a supported span node.");
         }
 
-        var context = target.GetSpanContext();
-        newTarget = context != null ? newTarget?.WithSpanContext(context) : newTarget;
+        var editHandler = target.GetEditHandler();
+        newTarget = editHandler != null ? newTarget?.WithEditHandler(editHandler) : newTarget;
 
         return newTarget;
     }

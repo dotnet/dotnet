@@ -1,15 +1,15 @@
 ﻿Source Location: (13:0,13 [15] x:\dir\subdir\Test\TestComponent.cshtml)
 |WeatherForecast|
-Generated Location: (908:25,13 [15] )
+Generated Location: (901:25,13 [15] )
 |WeatherForecast|
 
 Source Location: (39:0,39 [30] x:\dir\subdir\Test\TestComponent.cshtml)
 |Array.Empty<WeatherForecast>()|
-Generated Location: (1120:34,39 [30] )
+Generated Location: (1113:34,39 [30] )
 |Array.Empty<WeatherForecast>()|
 
 Source Location: (126:2,29 [9] x:\dir\subdir\Test\TestComponent.cshtml)
 |FieldName|
-Generated Location: (1699:45,29 [9] )
+Generated Location: (1692:45,29 [9] )
 |FieldName|
 

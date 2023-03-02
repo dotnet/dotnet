@@ -26,6 +26,14 @@ internal class ViewComponentTypeVisitor : SymbolVisitor
         _results = results;
     }
 
+    public override void VisitAssembly(IAssemblySymbol symbol)
+    {
+        if (ViewComponentTagHelperDescriptorProvider.IsTagHelperAssembly(symbol))
+        {
+            Visit(symbol.GlobalNamespace);
+        }
+    }
+
     public override void VisitNamedType(INamedTypeSymbol symbol)
     {
         if (IsViewComponent(symbol))

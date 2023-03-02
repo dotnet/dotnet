@@ -31,7 +31,6 @@ namespace Test
 #line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
        
     public CustomValue ParentValue { get; set; } = new CustomValue();
-
     public EventCallback<CustomValue> UpdateValue { get; set; }
 
 #line default
