@@ -44,5 +44,8 @@
          execute. -->
     <DisableWarnForInvalidRestoreProjects Condition="'$(_SuppressAllTargets)' == 'true'">true</DisableWarnForInvalidRestoreProjects>
     <NuGetRestoreTargets Condition="'$(_SuppressAllTargets)' == 'true'">$(MSBuildThisFileDirectory)NoRestore.targets</NuGetRestoreTargets>
+    <!-- When a project is using the .NET SDK, but with the "UseWpf" property, there will be an attempt to import the windows desktop SDK targets.
+         These are not available in certain circumstances, like linux source build. -->
+    <ImportWindowsDesktopTargets Condition="'$(_SuppressAllTargets)' == 'true'">false</ImportWindowsDesktopTargets>
   </PropertyGroup>
 </Project>
