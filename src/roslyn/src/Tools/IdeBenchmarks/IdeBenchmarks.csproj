@@ -7,7 +7,7 @@
     <TargetFramework>net472</TargetFramework>
     <IsShipping>false</IsShipping>
     <NoWarn>$(NoWarn),CA2007</NoWarn>
-    <UseWpf Condition="'$(DotNetBuildFromSource)' != 'true'">true</UseWpf>
+    <UseWpf>true</UseWpf>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="$(BenchmarkDotNetVersion)" />
