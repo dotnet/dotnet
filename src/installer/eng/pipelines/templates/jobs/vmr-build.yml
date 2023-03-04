@@ -58,6 +58,10 @@ parameters:
   type: boolean
   default: false
 
+- name: withPreviousSDK
+  type: boolean
+  default: false
+
 jobs:
 - job: ${{ parameters.buildName }}_${{ parameters.architecture }}
   timeoutInMinutes: 150
@@ -76,12 +80,8 @@ jobs:
   - ${{ else }}:
     - name: BotAccount-dotnet-bot-repo-PAT
       value: N/A
-  - ${{ if eq(parameters.reuseBuildArtifactsFrom, '') }}:
-    - name: additionalBuildArgs
-      value: ''
-  - ${{ else }}:
-    - name: additionalBuildArgs
-      value: ' --with-sdk /vmr/.dotnet'
+  - name: additionalBuildArgs
+    value: ''
 
   # Location of the VMR sources
   # We either build the repo directly, or we extract them outside (which is what partners do)
@@ -147,16 +147,45 @@ jobs:
         Contents: '*.tar.gz'
         TargetFolder: ${{ variables.sourcesPath }}/prereqs/packages/archive/
 
+  - ${{ if eq(parameters.withPreviousSDK, 'true') }}:
+    - script: |
+        set -euo pipefail
+
+        packageVersionsPath="${{ variables.sourcesPath }}/eng/Versions.props"
+        notFoundMessage="No source-built SDK found to download..."
+
+        echo "Looking for source-built SDK to download..."
+        archiveUrlLine=`grep -m 1 "<PrivateSourceBuiltSdkUrl_CentOS8Stream>" "$packageVersionsPath" || :`
+        urlPattern="<PrivateSourceBuiltSdkUrl_CentOS8Stream>(.*)</PrivateSourceBuiltSdkUrl_CentOS8Stream>"
+
+        if [[ $archiveUrlLine =~ $urlPattern ]]; then
+          archiveUrl="${BASH_REMATCH[1]}"
+          downloadDir="$(sourcesPath)/prereqs/packages/archive/"
+          (cd $downloadDir && curl --retry 5 -O $archiveUrl)
+        else
+          echo "$notFoundMessage"
+          exit 1
+        fi
+      displayName: Setup Previously Source-Built SDK
+
   - script: |
       set -x
 
-      if [[ -z '${{ parameters.reuseBuildArtifactsFrom }}' ]]; then
+      if [[ -z '${{ parameters.reuseBuildArtifactsFrom }}' && '${{ parameters.withPreviousSDK }}' != 'True' ]]; then
         docker run --rm -v "$(sourcesPath):/vmr" -w /vmr ${{ parameters.container }} ./prep.sh
       else
         mkdir $(sourcesPath)/.dotnet
         previousSdkPath="$(sourcesPath)/prereqs/packages/archive/dotnet-sdk-*.tar.gz"
         eval tar -ozxf "$previousSdkPath" -C "$(sourcesPath)/.dotnet"
         eval rm -f "$previousSdkPath"
+
+        if [[ '${{ parameters.withPreviousSDK }}' == 'True' ]]; then
+          # Source-built artifacts are from CentOS 8 Stream. We want to download them without
+          # downloading portable versions from the internet.
+          docker run --rm -v "$(sourcesPath):/vmr" -w /vmr ${{ parameters.container }} ./prep.sh --no-bootstrap
+        fi
+
+        echo "##vso[task.setvariable variable=additionalBuildArgs]--with-sdk /vmr/.dotnet"
       fi
     displayName: Prep the Build
 
