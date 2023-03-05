@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/01/nuspec.xsd">
+  <metadata minClientVersion="2.12">
+    <id>Humanizer.Core</id>
+    <version>2.2.0</version>
+    <title>Humanizer Locale (en)</title>
+    <authors>Mehdi Khalili, Oren Novotny</authors>
+    <owners>Mehdi Khalili, onovotny</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <licenseUrl>https://raw.githubusercontent.com/Humanizr/Humanizer/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/Humanizr/Humanizer</projectUrl>
+    <iconUrl>https://raw.github.com/Humanizr/Humanizer/master/logo.png</iconUrl>
+    <description>Humanizer core package that contains the library and the neutral language (English) resources</description>
+    <copyright>Copyright 2012-2016</copyright>
+    <language>en</language>
+    <dependencies>
+      <group targetFramework=".NETPortable0.0-Profile259" />
+      <group targetFramework=".NETStandard1.0">
+        <dependency id="NETStandard.Library" version="1.6.1" />
+      </group>
+    </dependencies>
+  </metadata>
+</package>
