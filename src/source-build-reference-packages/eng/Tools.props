@@ -1,27 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- All Rights Reserved. Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. See the LICENSE file in the project root for more information. -->
 <Project>
 
-  <PropertyGroup Condition=" '$(GeneratePackageSource)' == 'true' ">
-    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
-  </PropertyGroup>
-
-  <ItemGroup Condition=" '$(GeneratePackageSource)' == 'true' AND '$(GenAPIBackend)' == 'roslyn' ">
-    <PackageReference Include="Microsoft.DotNet.GenAPI.Task" Version="$(MicrosoftDotNetGenAPITaskPackageVersion)" />
-    <PackageReference Include="Microsoft.DotNet.Build.Tasks.Packaging" Version="$(MicrosoftDotNetBuildTasksPackagingPackageVersion)" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(GeneratePackageSource)' == 'true' AND '$(GenAPIBackend)' == 'cci' ">
-    <PackageReference Include="Microsoft.DotNet.GenAPI" Version="$(MicrosoftDotNetGenApiPackageVersion)" />
-    <PackageReference Include="Microsoft.DotNet.Build.Tasks.Packaging" Version="$(MicrosoftDotNetBuildTasksPackagingPackageVersion)" />
-  </ItemGroup>
-
-  <PropertyGroup Condition=" '$(GeneratePackageSource)' == 'true' ">
-    <!--When we are doing SDK validation we place the locally built packages in a custom path. This has to be propagated so the next
-        build can restore the local packages.-->
+  <PropertyGroup Condition="'$(GeneratePackageSource)' == 'true'">
     <RestoreSources Condition="'$(AdditionalRestoreSources)' != ''">
-        $(RestoreSources);
-        $(AdditionalRestoreSources)
+      $(RestoreSources);
+      $(AdditionalRestoreSources)
     </RestoreSources>
   </PropertyGroup>
+
 </Project>

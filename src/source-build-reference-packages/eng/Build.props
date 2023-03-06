@@ -1,12 +1,13 @@
 <Project>
 
-  <ItemGroup Condition=" '$(GeneratePackageSource)' == 'true' ">
-    <ProjectToBuild Include="$(RepoRoot)src/referencePackageSourceGenerator/Tasks/GenerateProjectsTask.csproj" />
-    <ProjectToBuild Include="$(RepoRoot)src/referencePackageSourceGenerator/GenerateSource/GenerateSource.proj" />
-    <ProjectToBuild Include="$(Reporoot)src/referencePackageSourceGenerator/GenerateProjects/GenerateProjects.proj" />
+  <ItemGroup Condition="'$(GeneratePackageSource)' == 'true'">
+    <ProjectToBuild Include="$(RepoRoot)src\referencePackageSourceGenerator\ReferencePackageSourceGenerator.proj"
+                    Condition="'$(PackageType)' == '' or '$(PackageType)' != 'text'" />
+    <ProjectToBuild Include="$(RepoRoot)src\textOnlyPackageGenerator\PackageGenerator.proj"
+                    Condition="'$(PackageType)' == 'text'" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(GeneratePackageSource)' != 'true' ">
+  <ItemGroup Condition="'$(GeneratePackageSource)' != 'true'">
     <!--
       The following DependencyPackageProjects are ones on which other packages depend on that do
       not exist in the source-build package cache.  Adding them to this ItemGroup will ensure that
@@ -22,7 +23,7 @@
     <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Humanizer.Core.2.2.0.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(BuildDependencyPackageProjects)' == 'true' ">
+  <ItemGroup Condition="'$(BuildDependencyPackageProjects)' == 'true'">
     <!-- Building an empty project triggers building the Arcade Tools.proj which is needed before BuildDependencyPackageProjects -->
     <ProjectToBuild Include="$(RepoRoot)\eng\NoOp.csproj" />
   </ItemGroup>
@@ -40,7 +41,7 @@
           DestinationFolder="$(LocalNuGetPackageCacheDirectory)" />
   </Target>
 
-  <ItemGroup Condition=" '$(GeneratePackageSource)' != 'true' and '$(BuildDependencyPackageProjects)' != 'true'">
+  <ItemGroup Condition="'$(GeneratePackageSource)' != 'true' and '$(BuildDependencyPackageProjects)' != 'true'">
     <TargetingPackageProject Include="$(RepoRoot)src\targetPacks\ILsrc\**\*.csproj" />
     <ProjectToBuild Include="@(TargetingPackageProject)" />
 

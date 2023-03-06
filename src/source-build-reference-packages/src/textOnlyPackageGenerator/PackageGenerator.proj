@@ -1,50 +1,38 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
     <TargetFramework>$(NetCurrent)</TargetFramework>
-    <TargetPackagesPath>$(ArtifactsDir)textOnlyPackages/</TargetPackagesPath>
-    <CsProjTemplatePath>./textOnlyPackage.csproj.template</CsProjTemplatePath>
+    <TextOnlyPackageGeneratorProjectTemplate>textOnlyPackage.csproj.template</TextOnlyPackageGeneratorProjectTemplate>
+    <!-- The reference packages output directory. -->
+    <PackagesTargetDirectory>$(RepoRoot)src\textOnlyPackages\src\</PackagesTargetDirectory>
   </PropertyGroup>
 
-  <Import Project="../common/RestoreProjects.proj" />
+  <Import Project="..\common\RestoreCsvContent.props" />
 
-  <Target Name="GetPackageInfo" AfterTargets="Restore">
-    <Error Text="'PathToCsv' property was not set!" Condition="$(PathToCsv) == ''" />
-
-    <ReadLinesFromFile File="$(PathToCsv)">
-      <Output TaskParameter="Lines" ItemName="CsvLines" />
-    </ReadLinesFromFile>
-
-    <ItemGroup>
-      <PackageInfo Include="@(CsvLines)" Exclude="">
-        <PackageName>$([System.String]::Copy('%(CsvLines.Identity)').Split(',')[0])</PackageName>
-        <PackageVersion>$([System.String]::Copy('%(CsvLines.Identity)').Split(',')[1])</PackageVersion>
-      </PackageInfo>
-    </ItemGroup>
-  </Target>
-
-  <!-- see ./generate.sh for 'AfterTargets' justification -->
-  <Target Name="CopyTextOnlyPackages" AfterTargets="Restore">
-    <MSBuild Projects="$(MSBuildProjectFile)" Targets="CopyTextOnlyPackage" Properties="PackageName=%(PackageInfo.PackageName);PackageVersion=%(PackageInfo.PackageVersion)" />
-  </Target>
-
-  <Target Name="CopyTextOnlyPackage">
+  <Target Name="GenerateTextOnlyPackage"
+          AfterTargets="Build"
+          Inputs="%(PackageInfo.PackageName);%(PackageInfo.PackageVersion);%(PackageInfo.PackageTargetFrameworks)"
+          Outputs="unused">
     <PropertyGroup>
-      <RestoredPackagePath>$(TargetPackagesPath)$(PackageName.ToLower())</RestoredPackagePath>
-      <TextOnlyPackageDirectory>$(PackageName.ToLower())</TextOnlyPackageDirectory>
-      <CsProjFileName>$(PackageName.ToLower()).$(PackageVersion).csproj</CsProjFileName>
+      <PackageName>%(PackageInfo.PackageName)</PackageName>
+      <PackageVersion>%(PackageInfo.PackageVersion)</PackageVersion>
+      <PackageTargetFrameworks>%(PackageInfo.PackageTargetFrameworks)</PackageTargetFrameworks>
+
+      <InvariantPackageName>$(PackageName.ToLowerInvariant())</InvariantPackageName>
+      <RestoredPackagePath>$(NuGetPackageRoot)$(InvariantPackageName)\$(PackageVersion)\</RestoredPackagePath>
+      <CsProjFileName>$(InvariantPackageName).$(PackageVersion).csproj</CsProjFileName>
     </PropertyGroup>
 
     <ItemGroup>
-      <TextOnlyPackageContent Include="$(RestoredPackagePath)/**/*" Exclude="
-          $(RestoredPackagePath)/**/.nupkg.metadata;
-          $(RestoredPackagePath)/**/.signature.p7s;
-          $(RestoredPackagePath)/**/*.nupkg;
-          $(RestoredPackagePath)/**/*.nupkg.sha512;" />
+      <TextOnlyPackageContent Include="$(RestoredPackagePath)**/*"
+                              Exclude="$(RestoredPackagePath)**/.nupkg.metadata;
+                                       $(RestoredPackagePath)**/.signature.p7s;
+                                       $(RestoredPackagePath)**/*.nupkg;
+                                       $(RestoredPackagePath)**/*.nupkg.sha512" />
     </ItemGroup>
 
-    <Error Text="Package $(PackageName) was not restored!" Condition=" '@(TextOnlyPackageContent)' == '' " />
+    <Error Text="Package %(PackageInfo.PackageName) was not restored!"
+           Condition="'@(TextOnlyPackageContent)' == ''" />
 
     <!-- Verify that invalid assets were not copied into text-only packs -->
     <ItemGroup>
@@ -98,16 +86,20 @@
         browserslistrc;
         LICENSE;" />
       <UnsupportedTextOnlyPackageContent Include="@(TextOnlyPackageContent)" />
-      <UnsupportedTextOnlyPackageContent Remove="$(RestoredPackagePath)/**/*$([System.String]::Copy('%(AllowedTextOnlyExtensions.Identity)').ToLowerInvariant())" />
-      <UnsupportedTextOnlyPackageContent Remove="$(RestoredPackagePath)/**/*$([System.String]::Copy('%(AllowedTextOnlyExtensions.Identity)').ToUpperInvariant())" />
+      <UnsupportedTextOnlyPackageContent Remove="$(RestoredPackagePath)**\*$([System.String]::Copy('%(AllowedTextOnlyExtensions.Identity)').ToLowerInvariant())" />
+      <UnsupportedTextOnlyPackageContent Remove="$(RestoredPackagePath)**\*$([System.String]::Copy('%(AllowedTextOnlyExtensions.Identity)').ToUpperInvariant())" />
     </ItemGroup>
 
-    <Error Text="Unsupported content found in text-only packages: @(UnsupportedTextOnlyPackageContent)" Condition=" '@(UnsupportedTextOnlyPackageContent)' != '' " />
-    <Error Text="'TextOnlyPackageDestination' property was not set!" Condition="$(TextOnlyPackageDestination) == ''" />
+    <Error Text="Unsupported content found in text-only packages: @(UnsupportedTextOnlyPackageContent)"
+           Condition="'@(UnsupportedTextOnlyPackageContent)' != ''" />
 
-    <Copy SourceFiles="@(TextOnlyPackageContent)" DestinationFiles="@(TextOnlyPackageContent->'$(TextOnlyPackageDestination)/$(TextOnlyPackageDirectory)/%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(TextOnlyPackageContent)"
+          DestinationFiles="@(TextOnlyPackageContent->'$(PackagesTargetDirectory)\$(InvariantPackageName)\$(PackageVersion)\%(RecursiveDir)%(Filename)%(Extension)')"
+          SkipUnchangedFiles="true" />
 
-    <Copy SourceFiles="$(CsProjTemplatePath)" DestinationFiles="$(TextOnlyPackageDestination)/$(TextOnlyPackageDirectory)/$(PackageVersion)/$(CsProjFileName)" />
-
+    <Copy SourceFiles="$(TextOnlyPackageGeneratorProjectTemplate)"
+          DestinationFiles="$(PackagesTargetDirectory)\$(InvariantPackageName)\$(PackageVersion)\$(CsProjFileName)"
+          SkipUnchangedFiles="true" />
   </Target>
+
 </Project>
