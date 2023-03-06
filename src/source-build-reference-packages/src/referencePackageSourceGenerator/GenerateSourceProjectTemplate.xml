@@ -1,0 +1,95 @@
+<!-- Wrapper project to restore the SBRP target package, including its dependencies and
+     invoke GenAPI to generate reference source files for the desired tfms.
+     
+     The following tokens need to be replaced with their corresponding values:
+     - BaseOutputPath
+     - BaseIntermediateOutputPath
+     - ReferencePackageSourceGeneratorDirectory: The directory in which the reference package source generator's
+                                                 infrastructure and configuration resides.
+     - TargetFrameworks: The target frameworks for which GenAPI should generate reference source files.
+     - ReferenceSourceBaseTargetPath: The target path that GenAPI should write to. This should be the base path
+                                      in which the nuspec and csproj files reside.
+     - PackageName: The package id from which GenAPI generates the reference source files.
+     - PackageVersion: The package version from which GenAPI generates the reference source files.
+-->
+
+<Project>
+
+  <!-- Make the generated projects use the reference package source generator msbuild infrastructure. -->
+  <PropertyGroup>
+    <ReferencePackageSourceGeneratorDirectory>$$ReferencePackageSourceGeneratorDirectory$$</ReferencePackageSourceGeneratorDirectory>
+    <DirectoryBuildPropsPath>$(ReferencePackageSourceGeneratorDirectory)Directory.Build.props</DirectoryBuildPropsPath>
+    <DirectoryBuildTargetsPath>$(ReferencePackageSourceGeneratorDirectory)Directory.Build.targets</DirectoryBuildTargetsPath>
+  </PropertyGroup>
+
+  <!-- Make the generated projects use custom output and intermediate paths. -->
+  <PropertyGroup>
+    <BaseOutputPath>$$BaseOutputPath$$</BaseOutputPath>
+    <BaseIntermediateOutputPath>$$BaseIntermediateOutputPath$$</BaseIntermediateOutputPath>
+  </PropertyGroup>
+
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+
+  <PropertyGroup>
+    <TargetFrameworks>$$TargetFrameworks$$</TargetFrameworks>
+    <PackageName>$$PackageName$$</PackageName>
+    <PackageVersion>$$PackageVersion$$</PackageVersion>
+    <!-- Microsoft.NET.Sdk settings -->
+    <SkipCopyBuildProduct>true</SkipCopyBuildProduct>
+    <GenerateDependencyFile>false</GenerateDependencyFile>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <!-- Turn off end of life target framework checks as we intentionally build older TFMs. -->
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
+    <!-- GenAPI settings -->
+    <GenAPIGenerateReferenceAssemblySource>true</GenAPIGenerateReferenceAssemblySource>
+    <GenAPIHeaderFile>$(ReferencePackageSourceGeneratorDirectory)LicenseHeader.txt</GenAPIHeaderFile>
+    <GenAPIIncludeAssemblyAttributes>true</GenAPIIncludeAssemblyAttributes>
+    <GenAPIVerbosity>high</GenAPIVerbosity>
+    <!-- Detected package downgrades are intentional when generating a lower bound version of a package that exists in the dependency graph. -->
+    <NoWarn>$(NoWarn);NU1605</NoWarn>
+  </PropertyGroup>
+
+  <!-- GenAPI settings -->
+  <ItemGroup>
+    <GenAPIExcludeAttributesList Include="$(ReferencePackageSourceGeneratorDirectory)DefaultGenApiDocIds.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="$(PackageName)" Version="$(PackageVersion)" />
+    <PackageReference Include="Microsoft.DotNet.GenAPI.Task" Version="$(MicrosoftDotNetGenAPITaskPackageVersion)" PrivateAssets="all" />
+  </ItemGroup>
+
+  <Target Name="SetGenAPIInputAndOutputPaths"
+          DependsOnTargets="ResolvePackageAssets"
+          BeforeTargets="GenAPIGenerateReferenceAssemblySource">
+    <ItemGroup>
+      <GenAPIInputAssembly Include="@(ResolvedCompileFileDefinitions->WithMetadataValue('NuGetPackageId', '$(PackageName)'))" />
+    </ItemGroup>
+
+    <Error Text="Couldn't find an assembly for package '$(PackageName)' (v$(PackageVersion)) for target framework '$(TargetFramework)'"
+           Condition="'@(GenAPIInputAssembly)' == ''" />
+
+    <PropertyGroup>
+      <PackageTargetDirectory>$$PackageTargetDirectory$$</PackageTargetDirectory>
+      <InputAssemblyRelativePath>$([System.IO.Path]::GetDirectoryName('%(GenAPIInputAssembly.PathInPackage)'))</InputAssemblyRelativePath>
+      <GenAPITargetPath>$([System.IO.Path]::Combine('$(PackageTargetDirectory)', '$(InputAssemblyRelativePath)'))</GenAPITargetPath>
+    </PropertyGroup>
+
+    <!-- Create the directory beforehand as otherwise GenAPI assumes that the passed in path is a file. -->
+    <MakeDir Directories="$(GenAPITargetPath)" />
+  </Target>
+
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+
+  <!-- Override stock CoreCompile target to do nothing but keep extensibility points -->
+  <Target Name="CoreCompile"
+          DependsOnTargets="$(CoreCompileDependsOn)">
+    <CallTarget Targets="$(TargetsTriggeredByCompilation)" Condition="'$(TargetsTriggeredByCompilation)' != ''" />
+  </Target>
+  <Target Name="_GenerateCompileInputs" />
+  <Target Name="_GenerateCompileDependencyCache" />
+  <Target Name="_CopyFilesMarkedCopyLocal" />
+  <Target Name="PrepareForBuild" DependsOnTargets="$(PrepareForBuildDependsOn)" />
+
+</Project>

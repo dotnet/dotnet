@@ -1,48 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
 <Project>
-  <PropertyGroup>
-    <ImportNetSdkFromRepoToolset>false</ImportNetSdkFromRepoToolset>
-  </PropertyGroup>
 
-  <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
-
-  <PropertyGroup>
-    <TargetPackagesPath>$(ArtifactsDir)targetPackages/</TargetPackagesPath>
-    <GeneratedSourcePath>$(ArtifactsDir)generatedSrc/</GeneratedSourcePath>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <GenApiLibDlls Include="$(TargetPackagesPath)*/*/lib/netstandard*/*.dll" />
-    <GenApiRefDlls Include="$(TargetPackagesPath)*/*/ref/netstandard*/*.dll" />
-    <GenApiLibDlls Include="$(TargetPackagesPath)*/*/lib/netcoreapp*/*.dll" />
-    <GenApiRefDlls Include="$(TargetPackagesPath)*/*/ref/netcoreapp*/*.dll" />
-    <GenApiLibDlls Include="$(TargetPackagesPath)*/*/lib/net4*/*.dll" />
-    <GenApiRefDlls Include="$(TargetPackagesPath)*/*/ref/net4*/*.dll" />
-
-    <!--
-        Remove nuget.frameworks 5.1.0 net40 tfm - this isn't needed
-    -->
-    <GenApiLibDlls Remove="$(TargetPackagesPath)nuget.frameworks/5.1.0/lib/net40/*.dll" />
-
-    <!--
-        Remove newtonsoft.json from dlls to be considered.  This is built by source-build
-    -->
-    <GenApiLibDlls Remove="$(TargetPackagesPath)newtonsoft.json/**/*.dll" />
-    
-    <!--
-        Remove netstandard.library and microsoft.netcore.app from dlls to be considered.  
-        These are targeting packs
-    -->
-    <GenApiRefDlls Remove="$(TargetPackagesPath)netstandard.library/**/*.dll" />
-    <GenApiRefDlls Remove="$(TargetPackagesPath)microsoft.netcore.app/**/*.dll" />
-    <GenApiRefDlls Remove="$(TargetPackagesPath)microsoft.netcore.app.ref/**/*.dll" />
-    <GenApiRefDlls Remove="$(TargetPackagesPath)microsoft.aspnetcore.app.ref/**/*.dll" />
-
-    <DummyFiles Include="$(TargetPackagesPath)*/*/ref/netstandard*/_._" />
-    <DummyFiles Include="$(TargetPackagesPath)*/*/ref/netcoreapp*/_._" />
-    <DummyFiles Include="$(TargetPackagesPath)*/*/ref/net4*/_._" />
-
-    <NuspecFiles Include="$(TargetPackagesPath)**/*.nuspec" />
-  </ItemGroup>
+  <Import Project="..\..\Directory.Build.props" />
 
 </Project>

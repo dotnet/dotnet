@@ -1,0 +1,267 @@
+<Project Sdk="Microsoft.Build.NoTargets">
+
+  <PropertyGroup>
+    <TargetFramework>$(NetCurrent)</TargetFramework>
+    <ReferencePackageSourceTaskAssembly>$(ArtifactsBinDir)ReferencePackageSourceTask\$(Configuration)\$(NetCurrent)\ReferencePackageSourceTask.dll</ReferencePackageSourceTaskAssembly>
+    <!-- The reference packages output directory. -->
+    <PackagesTargetDirectory>$(RepoRoot)src\referencePackages\src\</PackagesTargetDirectory>
+    <!-- The following target frameworks aren't buildable with the current SDK and as they don't contribute to the set of
+         source build target verticals, can be safely excluded. -->
+    <ExcludeTargetFrameworks>netcore50;net463;portable-*;xamarin*;MonoTouch</ExcludeTargetFrameworks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(PackageName)' != '' and '$(PackageVersion)' != ''">
+    <!-- Restored package directory -->
+    <PackageSourceDirectory>$([MSBuild]::NormalizeDirectory('$(NuGetPackageRoot)', '$(PackageName.ToLowerInvariant())', '$(PackageVersion)'))</PackageSourceDirectory>
+    <!-- The reference package output directory without the package version. -->
+    <BasePackageTargetDirectory>$([MSBuild]::NormalizeDirectory('$(PackagesTargetDirectory)', '$(PackageName.ToLowerInvariant())'))</BasePackageTargetDirectory>
+    <!-- The reference package output directory including the package version. -->
+    <PackageTargetDirectory>$([MSBuild]::NormalizeDirectory('$(BasePackageTargetDirectory)', '$(PackageVersion)'))</PackageTargetDirectory>
+  </PropertyGroup>
+
+  <Import Project="..\common\RestoreCsvContent.props" />
+
+  <ItemGroup>
+    <ProjectReference Include="ReferencePackageSourceTask\ReferencePackageSourceTask.csproj"
+                      ReferenceOutputAssembly="false"
+                      UndefineProperties="PackageCSV;PackageName;PackageVersion;PackageTargetFrameworks" />
+  </ItemGroup>
+
+  <!-- The entry point target that runs when a CSV file is provided which invokes the
+       'GeneratePackageSource' target for each package. -->
+  <Target Name="GeneratePackagesSource"
+          AfterTargets="Build"
+          Condition="'@(PackageInfo)' != ''">
+    <MSBuild Projects="$(MSBuildProjectFile)"
+             Properties="PackageName=%(PackageInfo.PackageName);
+                         PackageVersion=%(PackageInfo.PackageVersion);
+                         PackageTargetFrameworks=%(PackageInfo.PackageTargetFrameworks)"
+             RemoveProperties="PackageCSV"
+             BuildInParallel="false" />
+  </Target>
+
+  <!-- The entry point target that runs per package. -->
+  <Target Name="GeneratePackageSource"
+          AfterTargets="Build"
+          Condition="'$(PackageName)' != '' and '$(PackageVersion)' != ''"
+          DependsOnTargets="BeginGeneratePackageSource;
+                            GetPackageItems;
+                            GenerateReferencePackageSource;
+                            EndGeneratePackageSource;
+                            InvokePackageDependencies" />
+
+  <!-- Emit a log message that indicates the start of the package source generation. -->
+  <Target Name="BeginGeneratePackageSource">
+    <PropertyGroup>
+      <PackageTargetFrameworksMessage Condition="'$(PackageType)' != 'text' and '$(PackageTargetFrameworks)' != ''">, Filtered TFMs: $(PackageTargetFrameworks)</PackageTargetFrameworksMessage>
+    </PropertyGroup>
+
+    <Message Text="%0D%0A$(MSBuildProjectName) -> Generating package source for $(PackageName) (v$(PackageVersion)$(PackageTargetFrameworksMessage))..."
+             Importance="high" />
+  </Target>
+
+  <!-- Retrieve compile items, placeholder files, package dependencies and framework references with their target framework. -->
+  <UsingTask TaskName="GetPackageItems" AssemblyFile="$(ReferencePackageSourceTaskAssembly)" />
+  <Target Name="GetPackageItems">
+    <PropertyGroup>
+      <PackageNupkgPath>$(PackageSourceDirectory)$(PackageName.ToLowerInvariant()).$(PackageVersion).nupkg</PackageNupkgPath>
+    </PropertyGroup>
+
+    <GetPackageItems PackagePath="$(PackageNupkgPath)"
+                     IncludeTargetFrameworks="$(PackageTargetFrameworks)"
+                     ExcludeTargetFrameworks="$(ExcludeTargetFrameworks)">
+      <Output TaskParameter="CompileItems" ItemName="PackageCompileItem" />
+      <Output TaskParameter="PlaceholderFiles" ItemName="PackagePlaceholderFile" />
+      <Output TaskParameter="PackageDependencies" ItemName="PackageDependency" />
+      <Output TaskParameter="FrameworkReferences" ItemName="PackageFrameworkReference" />
+      <Output TaskParameter="PackageId" PropertyName="RealPackageId" />
+    </GetPackageItems>
+
+    <ItemGroup>
+      <PackageCompileItemsTargetFramework Include="@(PackageCompileItem->Metadata('TargetFramework')->Distinct())" />
+    </ItemGroup>
+  </Target>
+
+  <!-- The entry point for generating reference package source. -->
+  <Target Name="GenerateReferencePackageSource"
+          Condition="'@(PackageCompileItem)' != ''"
+          DependsOnTargets="GenerateAndInvokeGenerateSourceProject;
+                            GenerateReferencePackageProject;
+                            CopyPlaceholderFiles;
+                            CopyNuspec;
+                            CreateDirectoryBuildPropsFile" />
+
+  <!-- Generate an intermediate multi-targeting wrapper project that retrieves the reference assemblies and invokes GenAPI. -->
+  <Target Name="GenerateAndInvokeGenerateSourceProject"
+          DependsOnTargets="GetPackageItems">
+    <PropertyGroup>
+      <ReferencePackageSourceGeneratorDirectory>$(MSBuildThisFileDirectory)</ReferencePackageSourceGeneratorDirectory>
+      <PackageCompileItemsTargetFrameworks>@(PackageCompileItemsTargetFramework, ';')</PackageCompileItemsTargetFrameworks>
+
+      <GenerateSourceProjectTemplate>GenerateSourceProjectTemplate.xml</GenerateSourceProjectTemplate>
+      <GenerateSourceProjectBaseOutputPath>$([MSBuild]::NormalizeDirectory('$(BaseOutputPath)', '$(PackageName.ToLowerInvariant())', '$(PackageVersion)'))</GenerateSourceProjectBaseOutputPath>
+      <GenerateSourceProjectBaseIntermediateOutputPath>$([MSBuild]::NormalizeDirectory('$(BaseIntermediateOutputPath)', '$(PackageName.ToLowerInvariant())', '$(PackageVersion)'))</GenerateSourceProjectBaseIntermediateOutputPath>
+      <GenerateSourceProjectTargetPath>$(GenerateSourceProjectBaseOutputPath)$(PackageName.ToLowerInvariant()).$(PackageVersion).csproj</GenerateSourceProjectTargetPath>
+    </PropertyGroup>
+
+    <!-- Generate wrapper project that restores the dependent package and all its dependencies in order for
+         GenAPI to run successfully. -->
+    <WriteLinesToFile File="$(GenerateSourceProjectTargetPath)"
+                      Lines="$([System.IO.File]::ReadAllText('$(GenerateSourceProjectTemplate)')
+                               .Replace('$$BaseOutputPath$$', '$(GenerateSourceProjectBaseOutputPath)')
+                               .Replace('$$BaseIntermediateOutputPath$$', '$(GenerateSourceProjectBaseIntermediateOutputPath)')
+                               .Replace('$$ReferencePackageSourceGeneratorDirectory$$', '$(ReferencePackageSourceGeneratorDirectory)')
+                               .Replace('$$TargetFrameworks$$', '$(PackageCompileItemsTargetFrameworks)')
+                               .Replace('$$PackageTargetDirectory$$', '$(PackageTargetDirectory)')
+                               .Replace('$$PackageName$$', '$(RealPackageId)')
+                               .Replace('$$PackageVersion$$', '$(PackageVersion)'))"
+                      Overwrite="true"
+                      Condition="'$(PackageCompileItemsTargetFrameworks)' != ''" />
+
+    <Message Text="$(MSBuildProjectName) -> $(GenerateSourceProjectTargetPath)"
+             Importance="low"
+             Condition="'$(PackageCompileItemsTargetFrameworks)' != ''" />
+
+    <!-- Restore the generated wrapper project. -->
+    <MSBuild Projects="$(GenerateSourceProjectTargetPath)"
+             Properties="MSBuildRestoreSessionId=$([System.Guid]::NewGuid())"
+             Targets="Restore"
+             RemoveProperties="PackageCSV;PackageName;PackageVersion;PackageCompileItemsTargetFrameworks"
+             Condition="'$(PackageCompileItemsTargetFrameworks)' != ''" />
+
+    <!-- Build the generated wrapper project. -->
+    <MSBuild Projects="$(GenerateSourceProjectTargetPath)"
+             Targets="Build"
+             RemoveProperties="PackageCSV;PackageName;PackageVersion;PackageCompileItemsTargetFrameworks"
+             Condition="'$(PackageCompileItemsTargetFrameworks)' != ''" />
+  </Target>
+
+  <!-- Generate the final reference package project and write it to the package target directory. -->
+  <UsingTask TaskName="GenerateProject" AssemblyFile="$(ReferencePackageSourceTaskAssembly)" />
+  <Target Name="GenerateReferencePackageProject"
+          DependsOnTargets="GetPackageItems">
+    <PropertyGroup>
+      <ReferencePackageProjectTemplate>ReferencePackageProjectTemplate.xml</ReferencePackageProjectTemplate>
+      <ReferencePackageProjectTargetPath>$(PackageTargetDirectory)$(RealPackageId).$(PackageVersion).csproj</ReferencePackageProjectTargetPath>
+    </PropertyGroup>
+
+    <GenerateProject PackageId="$(RealPackageId)"
+                     TargetFrameworks="@(PackageCompileItemsTargetFramework)"
+                     CompileItems="@(PackageCompileItem)"
+                     PackageDependencies="@(PackageDependency)"
+                     FrameworkReferences="@(PackageFrameworkReference)"
+                     BaseTargetPath="$(PackagesTargetDirectory)"
+                     TargetPath="$(ReferencePackageProjectTargetPath)"
+                     ProjectTemplate="$(ReferencePackageProjectTemplate)" />
+
+    <Message Text="$(MSBuildProjectName) -> $(ReferencePackageProjectTargetPath)"
+             Importance="high" />
+  </Target>
+
+  <!-- Copy placeholder files (_._) -->
+  <Target Name="CopyPlaceholderFiles"
+          DependsOnTargets="GetPackageItems">
+    <Copy SourceFiles="@(PackagePlaceholderFile->'$(PackageSourceDirectory)%(Identity)')"
+          DestinationFiles="@(PackagePlaceholderFile->'$(PackageTargetDirectory)%(Identity)')"
+          SkipUnchangedFiles="true" />
+
+    <Message Text="$(MSBuildProjectName) -> $([MSBuild]::NormalizePath('$(PackageTargetDirectory)', '%(PackagePlaceholderFile.Identity)'))"
+             Importance="high"
+             Condition="'@(PackagePlaceholderFile)' != ''" />
+  </Target>
+
+  <!-- Copy nuspec to target directory and remove icon element from it. -->
+  <Target Name="CopyNuspec">
+    <PropertyGroup>
+      <!-- Regex for '<icon>{icon_file_name}</icon>' + line spacing before the attribute (\s) -->
+      <IconRegex>\s+&lt;icon&gt;.+&lt;\/icon&gt;</IconRegex>
+
+      <NuspecPath>$(PackageSourceDirectory)$(PackageName.ToLowerInvariant()).nuspec</NuspecPath>
+      <NuspecTargetPath>$(PackageTargetDirectory)$([System.IO.Path]::GetFileName('$(NuspecPath)'))</NuspecTargetPath>
+    </PropertyGroup>
+
+    <Copy SourceFiles="$(NuspecPath)"
+          DestinationFiles="$(NuspecTargetPath)"
+          SkipUnchangedFiles="true" />
+
+    <PropertyGroup>
+      <NuspecContent>$([System.IO.File]::ReadAllText('$(NuspecTargetPath)'))</NuspecContent>
+    </PropertyGroup>
+
+    <WriteLinesToFile File="$(NuspecTargetPath)"
+                      Lines="$([System.Text.RegularExpressions.Regex]::Replace('$(NuspecContent)', '$(IconRegex)', ''))"
+                      Overwrite="true" />
+
+    <Message Text="$(MSBuildProjectName) -> $(NuspecTargetPath)"
+             Importance="high" />
+  </Target>
+
+  <!-- Generate Directory.Build.props supplemental build file. -->
+  <Target Name="CreateDirectoryBuildPropsFile"
+          DependsOnTargets="GetPackageItems">
+    <PropertyGroup>
+      <DirectoryBuildPropsTemplate>DirectoryBuildPropsTemplate.xml</DirectoryBuildPropsTemplate>
+      <DirectoryBuildPropsTargetPath>$(BasePackageTargetDirectory)Directory.Build.props</DirectoryBuildPropsTargetPath>
+    </PropertyGroup>
+
+    <!-- Calculate the assembly name from the compile items assembly name metadata. If more than one
+         distinct name is found (i.e. multi assembly package), use the PackageId instead. -->
+    <ItemGroup>
+      <PackageAssemblyName Include="@(PackageCompileItem->Metadata('AssemblyName')->Distinct())" />
+    </ItemGroup>
+
+    <PropertyGroup>
+      <PackageAssemblyName Condition="@(PackageAssemblyName->Count()) > 1">$(RealPackageId)</PackageAssemblyName>
+      <PackageAssemblyName Condition="'$(PackageAssemblyName)' == ''">%(PackageAssemblyName.Identity)</PackageAssemblyName>
+    </PropertyGroup>
+
+    <WriteLinesToFile File="$(DirectoryBuildPropsTargetPath)"
+                      Lines="$([System.IO.File]::ReadAllText('$(DirectoryBuildPropsTemplate)')
+                               .Replace('$$AssemblyName$$', '$(PackageAssemblyName)'))"
+                      Overwrite="true" />
+
+    <Message Text="$(MSBuildProjectName) -> $(DirectoryBuildPropsTargetPath)"
+             Importance="high" />
+  </Target>
+
+  <!-- Emit a log message that indicates the end of the reference package source generation. -->
+  <Target Name="EndGeneratePackageSource"
+          DependsOnTargets="BeginGeneratePackageSource">
+    <PropertyGroup>
+      <EndGeneratePackageSourceMessage Condition="'@(PackageCompileItem)' != '' or '$(PackageType)' == 'text'">Package source successfully generated for $(PackageName) (v$(PackageVersion)$(PackageTargetFrameworksMessage)).</EndGeneratePackageSourceMessage>
+      <EndGeneratePackageSourceMessage Condition="'$(EndGeneratePackageSourceMessage)' == ''">Package source generation skipped for $(PackageName) (v$(PackageVersion)$(PackageTargetFrameworksMessage)) as it doesn't contain any compile items.</EndGeneratePackageSourceMessage>
+    </PropertyGroup>
+
+    <Message Text="$(MSBuildProjectName) -> $(EndGeneratePackageSourceMessage)"
+             Importance="high" />
+  </Target>
+
+  <!-- Invoke this project for every package dependency which results in recursively walking the dependency tree. -->
+  <Target Name="InvokePackageDependencies"
+          DependsOnTargets="GetPackageItems"
+          Condition="'$(ExcludePackageDependencies)' != 'true'">
+    <!-- Targeting packages aren't visited to minimize the dependency graph. -->
+    <ItemGroup>
+      <TargetingPackage Include="NETStandard.Library" />
+      <TargetingPackage Include="NETStandard.Library.Ref" />
+      <TargetingPackage Include="Microsoft.NETCore.App" />
+      <TargetingPackage Include="Microsoft.NETCore.App.Ref" />
+      <TargetingPackage Include="Microsoft.AspNetCore.App" />
+      <TargetingPackage Include="Microsoft.AspNetCore.App.Ref" />
+      <TargetingPackage Include="Microsoft.WindowsDesktop.App.Ref" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <FilteredPackageDependency Include="@(PackageDependency)"
+                                 Exclude="@(TargetingPackage)" />
+    </ItemGroup>
+
+    <MSBuild Projects="$(MSBuildThisFileFullPath)"
+             Targets="BeginGeneratePackageSource;Restore;Build"
+             Properties="PackageName=%(FilteredPackageDependency.Identity);PackageVersion=%(FilteredPackageDependency.Version)"
+             RemoveProperties="PackageCSV;PackageTargetFrameworks"
+             BuildInParallel="false"
+             Condition="'@(FilteredPackageDependency)' != ''" />
+  </Target>
+
+</Project>

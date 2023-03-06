@@ -1,5 +1,14 @@
 <Project>
 
+  <Import Project="..\Directory.Build.targets" />
+
+  <!--
+    Disable Arcade util that populates PackTask properties. For these projects, the nuspec already
+    contains everything. It's generated when the package is initially deconstructed and tends to be
+    unique per package, so there's no benefit to this Arcade util.
+  -->
+  <Target Name="InitializeStandardNuspecProperties" />
+
   <Target Name="GetProjectSrc">
     <ItemGroup>
       <!--
@@ -67,7 +76,7 @@
   </Target>
 
   <Target Name="CopyBuildOutputToTempOutput"
-          Condition="'$(TargetFramework)' != ''"
+          Condition="'$(TargetFramework)' != '' and '$(UsingMicrosoftNoTargetsSdk)' != 'true'"
           AfterTargets="CopyFilesToOutputDirectory">
     <Error
       Condition="@(Compile->Count()) != 1"
@@ -116,15 +125,5 @@
       <NuspecFile>$(TFMPackTempOutputDir)@(NuspecFile)</NuspecFile>
     </PropertyGroup>
   </Target>
-
-  <!-- Import SDK and Arcade SDK. Overrides below. -->
-  <Import Project="$([MSBuild]::GetPathOfFileAbove(Directory.Build.targets, $(MSBuildThisFileDirectory)..))" />
-
-  <!--
-    Disable Arcade util that populates PackTask properties. For these projects, the nuspec already
-    contains everything. It's generated when the package is initially deconstructed and tends to be
-    unique per package, so there's no benefit to this Arcade util.
-  -->
-  <Target Name="InitializeStandardNuspecProperties" />
 
 </Project>

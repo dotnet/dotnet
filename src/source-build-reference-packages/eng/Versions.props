@@ -11,11 +11,15 @@
   <PropertyGroup>
     <!-- Arcade dependencies -->
     <MicrosoftDotNetBuildTasksPackagingPackageVersion>1.0.0-beta.20113.5</MicrosoftDotNetBuildTasksPackagingPackageVersion>
-    <MicrosoftDotNetGenAPIPackageVersion>8.0.0-beta.23152.1</MicrosoftDotNetGenAPIPackageVersion>
+    <!-- MSBuild dependencies -->
+    <MicrosoftBuildVersion>15.6.82</MicrosoftBuildVersion>
+    <MicrosoftBuildUtilitiesCoreVersion>$(MicrosoftBuildVersion)</MicrosoftBuildUtilitiesCoreVersion>
+    <!-- NuGet dependencies -->
+    <NuGetPackagingVersion>6.4.0</NuGetPackagingVersion>
     <!-- Runtime dependencies -->
     <MicrosoftNETCoreILAsmVersion>6.0.0-preview.6.21352.12</MicrosoftNETCoreILAsmVersion>
     <MicrosoftNETCoreILDAsmVersion>6.0.0-preview.6.21352.12</MicrosoftNETCoreILDAsmVersion>
     <!-- SDK dependencies -->
-    <MicrosoftDotNetGenAPITaskPackageVersion>8.0.100-preview.3.23152.9</MicrosoftDotNetGenAPITaskPackageVersion>
+    <MicrosoftDotNetGenAPITaskPackageVersion>8.0.100-preview.3.23156.5</MicrosoftDotNetGenAPITaskPackageVersion>
   </PropertyGroup>
 </Project>
