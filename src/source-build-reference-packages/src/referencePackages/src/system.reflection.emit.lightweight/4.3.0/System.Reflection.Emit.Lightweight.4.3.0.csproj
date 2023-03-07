@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), dir.props))/dir.props" />
   <PropertyGroup>
     <TargetFrameworks>netstandard1.0;netstandard1.3</TargetFrameworks>
     <NuspecFile>$(ArtifactsBinDir)system.reflection.emit.lightweight/4.3.0/system.reflection.emit.lightweight.nuspec</NuspecFile>

@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), dir.props))/dir.props" />
   <PropertyGroup>
     <TargetFrameworks>netstandard1.1;netstandard1.2;netstandard1.3;netstandard1.5;net462</TargetFrameworks>
     <NuspecFile>$(ArtifactsBinDir)system.runtime.interopservices/4.1.0/system.runtime.interopservices.nuspec</NuspecFile>

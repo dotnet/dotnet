@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), dir.props))/dir.props" />
   <PropertyGroup>
     <TargetFrameworks>netstandard1.1;netstandard1.3;net46</TargetFrameworks>
     <NuspecFile>$(ArtifactsBinDir)system.net.http/4.3.4/system.net.http.nuspec</NuspecFile>

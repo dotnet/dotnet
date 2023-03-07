@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), dir.props))/dir.props" />
   <PropertyGroup>
     <TargetFrameworks>netstandard1.3;net46</TargetFrameworks>
     <NuspecFile>$(ArtifactsBinDir)system.text.encoding.codepages/4.0.1/system.text.encoding.codepages.nuspec</NuspecFile>

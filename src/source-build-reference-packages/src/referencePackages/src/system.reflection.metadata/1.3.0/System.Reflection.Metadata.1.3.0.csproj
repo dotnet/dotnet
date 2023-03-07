@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), dir.props))/dir.props" />
   <PropertyGroup>
     <TargetFrameworks>netstandard1.1</TargetFrameworks>
     <NuspecFile>$(ArtifactsBinDir)system.reflection.metadata/1.3.0/system.reflection.metadata.nuspec</NuspecFile>
