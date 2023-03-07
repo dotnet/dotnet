@@ -1,5 +1,0 @@
-<!--
-  This file exists for historical reasons: every csproj in this dir imports it. It can be removed if
-  every reference is removed from each csproj. Directory.Build.props has made this file obsolete.
--->
-<Project />

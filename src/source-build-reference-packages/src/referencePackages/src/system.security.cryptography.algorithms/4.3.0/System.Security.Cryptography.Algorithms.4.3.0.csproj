@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), dir.props))/dir.props" />
   <PropertyGroup>
     <TargetFrameworks>netstandard1.3;netstandard1.4;netstandard1.6;net46;net461;net462</TargetFrameworks>
     <NuspecFile>$(ArtifactsBinDir)system.security.cryptography.algorithms/4.3.0/system.security.cryptography.algorithms.nuspec</NuspecFile>
