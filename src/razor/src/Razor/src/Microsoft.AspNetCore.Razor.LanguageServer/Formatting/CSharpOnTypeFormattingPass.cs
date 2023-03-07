@@ -50,7 +50,7 @@ internal class CSharpOnTypeFormattingPass : CSharpFormattingPassBase
 
     public async override Task<FormattingResult> ExecuteAsync(FormattingContext context, FormattingResult result, CancellationToken cancellationToken)
     {
-        if (!context.IsFormatOnType || result.Kind != RazorLanguageKind.CSharp || !_optionsMonitor.CurrentValue.FormatOnType)
+        if (!context.IsFormatOnType || result.Kind != RazorLanguageKind.CSharp)
         {
             // We don't want to handle regular formatting or non-C# on type formatting here.
             return result;

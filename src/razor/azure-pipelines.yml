@@ -230,14 +230,17 @@ stages:
         - powershell: eng\SetupVSHive.ps1
           displayName: Setup VS Hive
 
+          # https://github.com/dotnet/razor/issues/8378
+          # Restore the following flag to the below script to re-enable integration tests.
+          # -integrationTest
         - script: eng\CIBuild.cmd
             -configuration $(_BuildConfig)
             -prepareMachine
             -test
-            -integrationTest
             /p:BuildProjectReferences=false
           name: Run_Tests
-          displayName: Run Unit and Integration tests
+          # displayName: Run Unit and Integration tests
+          displayName: Run Unit tests
           condition: succeeded()
 
         - task: PublishBuildArtifacts@1

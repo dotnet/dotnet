@@ -28,7 +28,7 @@ public abstract class RazorOnAutoInsertProviderTestBase : LanguageServerTestBase
     {
     }
 
-    internal abstract RazorOnAutoInsertProvider CreateProvider();
+    internal abstract IOnAutoInsertProvider CreateProvider();
 
     protected void RunAutoInsertTest(string input, string expected, int tabSize = 4, bool insertSpaces = true, string fileKind = default, IReadOnlyList<TagHelperDescriptor> tagHelpers = default)
     {

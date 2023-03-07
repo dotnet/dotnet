@@ -578,32 +578,6 @@ public class RazorFormattingTest : FormattingTestBase
     }
 
     [Fact]
-    public async Task OnTypeFormatting_Disabled()
-    {
-        await RunOnTypeFormattingTestAsync(
-            input: """
-            @functions {
-            	private int currentCount = 0;
-            
-            	private void IncrementCount (){
-            		currentCount++;
-            	}$$
-            }
-            """,
-            expected: """
-            @functions {
-            	private int currentCount = 0;
-            
-            	private void IncrementCount (){
-            		currentCount++;
-            	}
-            }
-            """,
-            triggerCharacter: '}',
-            razorLSPOptions: RazorLSPOptions.Default with { FormatOnType = false });
-    }
-
-    [Fact]
     public async Task OnTypeFormatting_Enabled()
     {
         await RunOnTypeFormattingTestAsync(

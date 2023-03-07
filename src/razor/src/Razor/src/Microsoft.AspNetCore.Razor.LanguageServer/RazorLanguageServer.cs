@@ -133,8 +133,8 @@ internal class RazorLanguageServer : AbstractLanguageServer<RazorRequestContext>
         services.AddTextDocumentServices();
 
         // Auto insert
-        services.AddSingleton<RazorOnAutoInsertProvider, CloseTextTagOnAutoInsertProvider>();
-        services.AddSingleton<RazorOnAutoInsertProvider, AutoClosingTagOnAutoInsertProvider>();
+        services.AddSingleton<IOnAutoInsertProvider, CloseTextTagOnAutoInsertProvider>();
+        services.AddSingleton<IOnAutoInsertProvider, AutoClosingTagOnAutoInsertProvider>();
 
         // Folding Range Providers
         services.AddSingleton<RazorFoldingRangeProvider, RazorCodeBlockFoldingProvider>();

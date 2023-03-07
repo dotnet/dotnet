@@ -1,1 +1,1 @@
-﻿//line,characterPos,length,tokenType,modifier
+//line,characterPos,length,tokenType,modifier

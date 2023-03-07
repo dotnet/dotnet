@@ -1,4 +1,4 @@
-﻿//line,characterPos,length,tokenType,modifier
+//line,characterPos,length,tokenType,modifier
 0 0 1 razorCommentTransition 0
 0 1 1 razorCommentStar 0
 0 1 5 razorComment 0

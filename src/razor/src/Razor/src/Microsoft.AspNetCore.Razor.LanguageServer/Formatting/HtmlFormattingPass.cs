@@ -56,7 +56,7 @@ internal class HtmlFormattingPass : FormattingPassBase
 
         TextEdit[] htmlEdits;
 
-        if (context.IsFormatOnType && result.Kind == RazorLanguageKind.Html && _optionsMonitor.CurrentValue.FormatOnType)
+        if (context.IsFormatOnType && result.Kind == RazorLanguageKind.Html)
         {
             htmlEdits = await HtmlFormatter.FormatOnTypeAsync(context, cancellationToken).ConfigureAwait(false);
         }
