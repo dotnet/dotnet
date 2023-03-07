@@ -57,6 +57,15 @@ The tooling has evolved over time and therefore when generating new packages, yo
 This is because the new package has a dependency on an existing package, it was regenerated and changes were detected from
 when it was originally generated.
 
+#### Workflow
+
+* Generate reference package and its depencencies running the `./generate.sh --pkg <package>,<version>` script.
+* Revert changes for packages that were already existed in the repository.
+* Run build with the `./build.sh -sb` command.
+* If the compilation produces numerous compilation issue - run the `./build.sh --projects <path to .csproj file>` command for each generated reference package separately.
+
+You can search for known issues in the `docs/known_generator_issues.md`.
+
 ### Targeting
 
 Generating new targeting packages is not supported. No new targeting packs should be needed/added. If you feel a new
