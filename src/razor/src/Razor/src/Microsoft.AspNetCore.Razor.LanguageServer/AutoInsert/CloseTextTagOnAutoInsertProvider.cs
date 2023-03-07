@@ -15,37 +15,31 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.AutoInsert;
 
-internal class CloseTextTagOnAutoInsertProvider : RazorOnAutoInsertProvider
+internal sealed class CloseTextTagOnAutoInsertProvider : IOnAutoInsertProvider
 {
     private readonly IOptionsMonitor<RazorLSPOptions> _optionsMonitor;
+    private readonly ILogger<IOnAutoInsertProvider> _logger;
 
-    public CloseTextTagOnAutoInsertProvider(
-        IOptionsMonitor<RazorLSPOptions> optionsMonitor,
-        ILoggerFactory loggerFactory)
-        : base(loggerFactory)
+    public CloseTextTagOnAutoInsertProvider(IOptionsMonitor<RazorLSPOptions> optionsMonitor, ILoggerFactory loggerFactory)
     {
         if (optionsMonitor is null)
         {
             throw new ArgumentNullException(nameof(optionsMonitor));
         }
 
+        if (loggerFactory is null)
+        {
+            throw new ArgumentNullException(nameof(loggerFactory));
+        }
+
         _optionsMonitor = optionsMonitor;
+        _logger = loggerFactory.CreateLogger<IOnAutoInsertProvider>();
     }
 
-    public override string TriggerCharacter => ">";
+    public string TriggerCharacter => ">";
 
-    public override bool TryResolveInsertion(Position position, FormattingContext context, [NotNullWhen(true)] out TextEdit? edit, out InsertTextFormat format)
+    public bool TryResolveInsertion(Position position, FormattingContext context, [NotNullWhen(true)] out TextEdit? edit, out InsertTextFormat format)
     {
-        if (position is null)
-        {
-            throw new ArgumentNullException(nameof(position));
-        }
-
-        if (context is null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
-
         if (!_optionsMonitor.CurrentValue.AutoClosingTags)
         {
             // We currently only support auto-closing tags our onType formatter.
@@ -54,7 +48,7 @@ internal class CloseTextTagOnAutoInsertProvider : RazorOnAutoInsertProvider
             return false;
         }
 
-        if (!IsAtTextTag(context, position, Logger))
+        if (!IsAtTextTag(context, position, _logger))
         {
             format = default;
             edit = default;
@@ -81,14 +75,14 @@ internal class CloseTextTagOnAutoInsertProvider : RazorOnAutoInsertProvider
             return false;
         }
 
-        absoluteIndex -= 1;
-        var change = new SourceChange(absoluteIndex, 0, string.Empty);
+        var change = new SourceChange(absoluteIndex - 1, 0, string.Empty);
         var owner = syntaxTree.Root.LocateOwner(change);
-        if (owner?.Parent != null &&
-            owner.Parent is MarkupStartTagSyntax startTag &&
-            startTag.IsMarkupTransition &&
-            startTag.Parent is MarkupElementSyntax element &&
-            element.EndTag is null) // Make sure the end </text> tag doesn't already exist
+        // Make sure the end </text> tag doesn't already exist
+        if (owner?.Parent is MarkupStartTagSyntax
+            {
+                IsMarkupTransition: true,
+                Parent: MarkupElementSyntax { EndTag: null }
+            } startTag)
         {
             Debug.Assert(string.Equals(startTag.Name.Content, SyntaxConstants.TextTagName, StringComparison.Ordinal), "MarkupTransition that is not a <text> tag.");
 

@@ -106,35 +106,6 @@ public class HtmlFormattingTest : FormattingTestBase
     }
 
     [Fact]
-    public async Task FormatsSimpleHtmlTag_OnTypeDisabled()
-    {
-        await RunOnTypeFormattingTestAsync(
-            input: """
-                    <html>
-                    <head>
-                        <title>Hello</title>
-                            <script>
-                                var x = 2;$$
-                            </script>
-                    </head>
-                    </html>
-                    """,
-            expected: """
-                    <html>
-                    <head>
-                        <title>Hello</title>
-                            <script>
-                                var x = 2;
-                            </script>
-                    </head>
-                    </html>
-                    """,
-            triggerCharacter: ';',
-            fileKind: FileKinds.Legacy,
-            razorLSPOptions: RazorLSPOptions.Default with { FormatOnType = false });
-    }
-
-    [Fact]
     public async Task FormatsRazorHtmlBlock()
     {
         await RunFormattingTestAsync(

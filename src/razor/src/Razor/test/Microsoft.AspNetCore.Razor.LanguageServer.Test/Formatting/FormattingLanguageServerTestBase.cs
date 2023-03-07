@@ -44,13 +44,6 @@ public abstract class FormattingLanguageServerTestBase : LanguageServerTestBase
         return codeDocument;
     }
 
-    internal static IOptionsMonitor<RazorLSPOptions> GetOptionsMonitor(bool enableFormatting)
-    {
-        var monitor = new Mock<IOptionsMonitor<RazorLSPOptions>>(MockBehavior.Strict);
-        monitor.SetupGet(m => m.CurrentValue).Returns(new RazorLSPOptions(default, enableFormatting, true, InsertSpaces: true, TabSize: 4, FormatOnType: true));
-        return monitor.Object;
-    }
-
     internal class DummyRazorFormattingService : RazorFormattingService
     {
         public bool Called { get; private set; }
