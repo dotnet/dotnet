@@ -20,7 +20,6 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
     public partial class GetPackageItems : Task
     {
         private const string PlaceholderFile = "_._";
-        private const char TargetFrameworkDelimiter = ';';
         private static readonly Dictionary<string, (string, string)> s_strongNameKeyToNameMap = new()
         {
             { "b03f5f7f11d50a3a", ("Microsoft", "MSFT") },
@@ -78,54 +77,27 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
 
         public override bool Execute()
         {
-            Regex[] includeTargetFrameworks = TransformPatternsToRegexList(IncludeTargetFrameworks).ToArray();
-            Regex[] excludeTargetFrameworks = TransformPatternsToRegexList(ExcludeTargetFrameworks).ToArray();
-            HashSet<string> excludedTargetFrameworkLogBag = new();
-
             using PackageArchiveReader packageArchiveReader = new(PackagePath);
-            bool isTargetFrameworkIncluded(string targetFramework)
-            {
-                // Skip empty target frameworks.
-                if (string.IsNullOrWhiteSpace(targetFramework))
-                    return false;
+            TargetFrameworkRegexFilter targetFrameworkRegexFilter = new(IncludeTargetFrameworks,
+                ExcludeTargetFrameworks);
 
-                // Skip "services" target framework added by NuGet.
-                if (targetFramework == "services")
-                    return false;
-
-                // Skip target frameworks that aren't included in the IncludeTargetFrameworks filter.
-                if (includeTargetFrameworks.Length > 0 && includeTargetFrameworks.All(r => !r.IsMatch(targetFramework)))
-                    return false;
-
-                // Skip target frameworks that are excluded.
-                if (excludeTargetFrameworks.Length > 0 && excludeTargetFrameworks.Any(r => r.IsMatch(targetFramework)))
-                {
-                    // Make sure that a warning is only logged once per target framework.
-                    if (!excludedTargetFrameworkLogBag.Contains(targetFramework))
-                    {
-                        Log.LogMessage(MessageImportance.High,
-                            "Encountered package '{0}' with excluded target framework '{1}'.",
-                            Path.GetFileNameWithoutExtension(PackagePath),
-                            targetFramework);
-                        excludedTargetFrameworkLogBag.Add(targetFramework);
-                    }
-
-                    return false;
-                }
-
-                return true;
-            }
-
-            SetCompileItems(packageArchiveReader, isTargetFrameworkIncluded);
-            SetPackageDependencies(packageArchiveReader, isTargetFrameworkIncluded);
-            SetFrameworkReferences(packageArchiveReader, isTargetFrameworkIncluded);
+            SetCompileItems(packageArchiveReader, targetFrameworkRegexFilter);
+            SetPackageDependencies(packageArchiveReader, targetFrameworkRegexFilter);
+            SetFrameworkReferences(packageArchiveReader, targetFrameworkRegexFilter);
             PackageId = packageArchiveReader.GetIdentity().Id;
+
+            if (targetFrameworkRegexFilter.FoundExcludedTargetFrameworks.Count > 0)
+            {
+                Log.LogMessage(MessageImportance.High,
+                    "Excluding target frameworks: {0}.",
+                    string.Join(", ", targetFrameworkRegexFilter.FoundExcludedTargetFrameworks));
+            }
 
             return true;
         }
 
         private void SetCompileItems(PackageArchiveReader packageArchiveReader,
-            Func<string, bool> isTargetFrameworkIncluded)
+            TargetFrameworkRegexFilter targetFrameworkRegexFilter)
         {
             IEnumerable<string> packageAssets = packageArchiveReader.GetFiles();
             ContentItemCollection contentItemCollection = new();
@@ -138,7 +110,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
                 .Concat(contentItemCollection.FindItems(managedCodeConventions.Patterns.CompileLibAssemblies))
                 .Where(t => t.Properties.ContainsKey("tfm"))
                 .Select(t => (NuGetFramework)t.Properties["tfm"])
-                .Where(nugetFramework => isTargetFrameworkIncluded(nugetFramework.GetShortFolderName()))
+                .Where(nugetFramework => targetFrameworkRegexFilter.IsIncludedAndNotExcluded(nugetFramework.GetShortFolderName()))
                 .Distinct()
                 .ToArray();
 
@@ -190,7 +162,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
         }
 
         private void SetPackageDependencies(PackageArchiveReader packageArchiveReader,
-            Func<string, bool> isTargetFrameworkIncluded)
+            TargetFrameworkRegexFilter targetFrameworkRegexFilter)
         {
             IEnumerable<PackageDependencyGroup> packageDependencyGroups = packageArchiveReader.GetPackageDependencies();
             List<ITaskItem> packageDependencyTaskItems = new();
@@ -198,7 +170,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
             foreach (PackageDependencyGroup packageDependencyGroup in packageDependencyGroups)
             {
                 string targetFramework = packageDependencyGroup.TargetFramework.GetShortFolderName();
-                if (!isTargetFrameworkIncluded(targetFramework))
+                if (!targetFrameworkRegexFilter.IsIncludedAndNotExcluded(targetFramework))
                     continue;
 
                 foreach (PackageDependency packageDependency in packageDependencyGroup.Packages)
@@ -219,7 +191,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
         }
 
         private void SetFrameworkReferences(PackageArchiveReader packageArchiveReader,
-            Func<string, bool> isTargetFrameworkIncluded)
+            TargetFrameworkRegexFilter targetFrameworkRegexFilter)
         {
             IEnumerable<FrameworkSpecificGroup> frameworkSpecificGroups = packageArchiveReader.GetFrameworkItems();
             List<ITaskItem> frameworkReferenceTaskItems = new();
@@ -227,7 +199,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
             foreach (FrameworkSpecificGroup frameworkSpecificGroup in frameworkSpecificGroups)
             {
                 string targetFramework = frameworkSpecificGroup.TargetFramework.GetShortFolderName();
-                if (!isTargetFrameworkIncluded(targetFramework))
+                if (!targetFrameworkRegexFilter.IsIncludedAndNotExcluded(targetFramework))
                     continue;
 
                 foreach (string frameworkReference in frameworkSpecificGroup.Items)
@@ -241,23 +213,12 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
             FrameworkReferences = frameworkReferenceTaskItems.ToArray();
         }
 
-        private static IEnumerable<Regex> TransformPatternsToRegexList(string patterns)
-        {
-            if (string.IsNullOrWhiteSpace(patterns))
-                yield break;
-
-            string[] patternsSplit = patterns.Split(TargetFrameworkDelimiter, StringSplitOptions.RemoveEmptyEntries);
-
-            foreach (string pattern in patternsSplit)
-                yield return new Regex(pattern, RegexOptions.NonBacktracking | RegexOptions.Compiled);
-        }
-
         [GeneratedRegex(@"PublicKeyToken=([\w]*)")]
-        private static partial Regex StrongNameKeyRegex();
+        private static partial Regex GetStrongNameKeyRegex();
 
         private static bool TryGetStrongNameData(AssemblyName assemblyName, out StrongNameData strongNameData)
         {
-            Match match = StrongNameKeyRegex().Match(assemblyName.FullName);
+            Match match = GetStrongNameKeyRegex().Match(assemblyName.FullName);
             if (!match.Success)
             {
                 strongNameData = default;

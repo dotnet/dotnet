@@ -7,7 +7,7 @@
     <PackagesTargetDirectory>$(RepoRoot)src\referencePackages\src\</PackagesTargetDirectory>
     <!-- The following target frameworks aren't buildable with the current SDK and as they don't contribute to the set of
          source build target verticals, can be safely excluded. -->
-    <ExcludeTargetFrameworks>netcore50;net463;portable-*;xamarin*;MonoTouch</ExcludeTargetFrameworks>
+    <ExcludeTargetFrameworks>netcore50;net463;portable-*;xamarin*;monotouch*;monoandroid*;win8;wp8;wpa81</ExcludeTargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(PackageName)' != '' and '$(PackageVersion)' != ''">
@@ -53,7 +53,7 @@
   <!-- Emit a log message that indicates the start of the package source generation. -->
   <Target Name="BeginGeneratePackageSource">
     <PropertyGroup>
-      <PackageTargetFrameworksMessage Condition="'$(PackageType)' != 'text' and '$(PackageTargetFrameworks)' != ''">, Filtered TFMs: $(PackageTargetFrameworks)</PackageTargetFrameworksMessage>
+      <PackageTargetFrameworksMessage Condition="'$(PackageType)' != 'text' and '$(PackageTargetFrameworks)' != ''">, TFMs: $(PackageTargetFrameworks)</PackageTargetFrameworksMessage>
     </PropertyGroup>
 
     <Message Text="%0D%0A$(MSBuildProjectName) -> Generating package source for $(PackageName) (v$(PackageVersion)$(PackageTargetFrameworksMessage))..."
@@ -88,7 +88,7 @@
           DependsOnTargets="GenerateAndInvokeGenerateSourceProject;
                             GenerateReferencePackageProject;
                             CopyPlaceholderFiles;
-                            CopyNuspec;
+                            RewriteNuspec;
                             CreateDirectoryBuildPropsFile" />
 
   <!-- Generate an intermediate multi-targeting wrapper project that retrieves the reference assemblies and invokes GenAPI. -->
@@ -170,27 +170,20 @@
              Condition="'@(PackagePlaceholderFile)' != ''" />
   </Target>
 
-  <!-- Copy nuspec to target directory and remove icon element from it. -->
-  <Target Name="CopyNuspec">
+  <!-- Rewrite nuspec and copy to target directory. -->
+  <UsingTask TaskName="RewriteNuspec" AssemblyFile="$(ReferencePackageSourceTaskAssembly)" />
+  <Target Name="RewriteNuspec">
     <PropertyGroup>
-      <!-- Regex for '<icon>{icon_file_name}</icon>' + line spacing before the attribute (\s) -->
-      <IconRegex>\s+&lt;icon&gt;.+&lt;\/icon&gt;</IconRegex>
-
       <NuspecPath>$(PackageSourceDirectory)$(PackageName.ToLowerInvariant()).nuspec</NuspecPath>
       <NuspecTargetPath>$(PackageTargetDirectory)$([System.IO.Path]::GetFileName('$(NuspecPath)'))</NuspecTargetPath>
     </PropertyGroup>
 
-    <Copy SourceFiles="$(NuspecPath)"
-          DestinationFiles="$(NuspecTargetPath)"
-          SkipUnchangedFiles="true" />
-
-    <PropertyGroup>
-      <NuspecContent>$([System.IO.File]::ReadAllText('$(NuspecTargetPath)'))</NuspecContent>
-    </PropertyGroup>
-
-    <WriteLinesToFile File="$(NuspecTargetPath)"
-                      Lines="$([System.Text.RegularExpressions.Regex]::Replace('$(NuspecContent)', '$(IconRegex)', ''))"
-                      Overwrite="true" />
+    <RewriteNuspec NuspecPath="$(NuspecPath)"
+                   TargetPath="$(NuspecTargetPath)"
+                   IncludeTargetFrameworks="$(PackageTargetFrameworks)"
+                   ExcludeTargetFrameworks="$(ExcludeTargetFrameworks)"
+                   RemoveIcon="true"
+                   RemoveRuntimeSpecificDependencies="true" />
 
     <Message Text="$(MSBuildProjectName) -> $(NuspecTargetPath)"
              Importance="high" />
