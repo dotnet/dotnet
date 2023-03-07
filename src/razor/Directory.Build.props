@@ -26,7 +26,7 @@
     <GenerateResxSourceEmitFormatMethods>true</GenerateResxSourceEmitFormatMethods>
     <ExcludeFromSourceBuild Condition="'$(IsUnitTestProject)' == 'true'">true</ExcludeFromSourceBuild>
     <RepositoryRoot>$(MSBuildThisFileDirectory)</RepositoryRoot>
-    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <EnableWindowsTargeting Condition="'$(DotNetBuildFromSource)' != 'true'">true</EnableWindowsTargeting>
 
     <SharedSourceRoot>$(MSBuildThisFileDirectory)src\Shared\</SharedSourceRoot>
 
