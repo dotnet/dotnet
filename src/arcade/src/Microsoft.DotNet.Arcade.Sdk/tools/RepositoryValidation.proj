@@ -2,6 +2,11 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project DefaultTargets="Validate">
 
+  <PropertyGroup>
+    <!-- Disable target framework filtering for top level projects -->
+    <NoTargetFrameworkFiltering>true</NoTargetFrameworkFiltering>
+  </PropertyGroup>
+  
   <Import Project="BuildTasks.props" />
 
   <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.ValidateLicense" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" />

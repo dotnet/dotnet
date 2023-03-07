@@ -34,6 +34,8 @@
 
   <PropertyGroup>
     <_OriginalProjectsValue>$(Projects)</_OriginalProjectsValue>
+    <!-- Disable target framework filtering for top level projects -->
+    <NoTargetFrameworkFiltering>true</NoTargetFrameworkFiltering>
   </PropertyGroup>
 
   <ItemDefinitionGroup>
