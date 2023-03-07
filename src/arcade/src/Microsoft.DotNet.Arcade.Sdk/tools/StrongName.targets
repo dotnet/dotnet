@@ -5,6 +5,12 @@
   <!--
     Reads variables:
       SignAssembly    "true" to sign the output assembly of the current project
+      FullAssemblySigningSupported    "false" to use public signing even when full signing is possible. This is useful
+                                      in environments where full signing is non-functional or not desired. For example,
+                                      in some Linux distributions RSA+SHA1 (required for full signing) is not
+                                      functional/available, and trying to use full signing results in the runtime
+                                      throwing an exception. For more details and an example, see
+                                      https://github.com/dotnet/runtime/issues/65874.
       StrongNameKeyId The id of the key used for strong name generation
 
     Writes variables:
@@ -42,7 +48,7 @@
         <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)snk/AspNetCore.snk</AssemblyOriginatorKeyFile>
         <PublicKey>$(MicrosoftAspNetCorePublicKey)</PublicKey>
         <PublicKeyToken>adb9793829ddae60</PublicKeyToken>
-        <PublicSign>false</PublicSign> <!-- The MicrosoftAspNetCore strong name key is a full key -->
+        <PublicSign Condition="'$(FullAssemblySigningSupported)' != 'false'">false</PublicSign> <!-- The MicrosoftAspNetCore strong name key is a full key -->
       </PropertyGroup>
     </When>
     <When Condition="'$(StrongNameKeyId)' == 'ECMA'">
@@ -63,7 +69,7 @@
         <PublicKey>$(OpenPublicKey)</PublicKey>
         <PublicKeyToken>cc7b13ffcd2ddd51</PublicKeyToken>
         <DelaySign>false</DelaySign>
-        <PublicSign>false</PublicSign> <!-- The Open strong name key is a full key -->
+        <PublicSign Condition="'$(FullAssemblySigningSupported)' != 'false'">false</PublicSign> <!-- The Open strong name key is a full key -->
       </PropertyGroup>
     </When>
     <When Condition="'$(StrongNameKeyId)' == 'SilverlightPlatform'">

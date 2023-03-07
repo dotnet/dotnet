@@ -11,9 +11,9 @@
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-symuploader</Uri>
       <Sha>62ceb439e80bf0814d0ffa17f022d4624ea4aa6c</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.TemplateEngine.Authoring.Tasks" Version="8.0.100-preview.3.23127.2">
+    <Dependency Name="Microsoft.TemplateEngine.Authoring.Tasks" Version="8.0.100-preview.3.23156.6">
       <Uri>https://github.com/dotnet/templating</Uri>
-      <Sha>7d0d699d78ff44494425a9b2c106d871a75cf440</Sha>
+      <Sha>dd26905a70c8519254688ff30a1724f5dc2074aa</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.23151.4">
       <Uri>https://github.com/dotnet/arcade</Uri>
@@ -47,9 +47,9 @@
       <Uri>https://github.com/dotnet/xharness</Uri>
       <Sha>0c619f8eb8879a7f46d0a167d8849dd4f94de3d0</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Net.Compilers.Toolset" Version="4.5.0-6.23123.11">
+    <Dependency Name="Microsoft.Net.Compilers.Toolset" Version="4.5.2-3.23152.4">
       <Uri>https://github.com/dotnet/roslyn</Uri>
-      <Sha>271ccd71554f7d28d2f90551aafd0bdeb5d327aa</Sha>
+      <Sha>019bee653d1f2c0d7500be262536e505f67117cf</Sha>
     </Dependency>
     <Dependency Name="Microsoft.NET.ILLink.Tasks" Version="6.0.100-1.22103.2">
       <Uri>https://github.com/dotnet/linker</Uri>
