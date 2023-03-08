@@ -81,6 +81,8 @@ stages:
       excludeSdkContentTests: true       # ✅
       overrideDistroDisablingSha1: false # 🚫
       runOnline: true                    # ✅
+      prepNoArtifacts: false             # 🚫
+      prepNoSdk: false                   # 🚫
 
   - ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
     - template: ../jobs/vmr-build.yml
@@ -99,6 +101,8 @@ stages:
         excludeSdkContentTests: false      # 🚫
         overrideDistroDisablingSha1: false # 🚫
         runOnline: false                   # 🚫
+        prepNoArtifacts: false             # 🚫
+        prepNoSdk: false                   # 🚫
 
     - template: ../jobs/vmr-build.yml
       parameters:
@@ -116,6 +120,8 @@ stages:
         excludeSdkContentTests: false     # 🚫
         overrideDistroDisablingSha1: true # ✅
         runOnline: false                  # 🚫
+        prepNoArtifacts: false            # 🚫
+        prepNoSdk: false                  # 🚫
 
     - template: ../jobs/vmr-build.yml
       parameters:
@@ -133,6 +139,8 @@ stages:
         excludeSdkContentTests: false      # 🚫
         overrideDistroDisablingSha1: false # 🚫
         runOnline: false                   # 🚫
+        prepNoArtifacts: false             # 🚫
+        prepNoSdk: false                   # 🚫
 
     - template: ../jobs/vmr-build.yml
       parameters:
@@ -150,6 +158,8 @@ stages:
         excludeSdkContentTests: false      # 🚫
         overrideDistroDisablingSha1: false # 🚫
         runOnline: false                   # 🚫
+        prepNoArtifacts: false             # 🚫
+        prepNoSdk: false                   # 🚫
 
     - template: ../jobs/vmr-build.yml
       parameters:
@@ -165,6 +175,8 @@ stages:
         excludeSdkContentTests: false      # 🚫
         overrideDistroDisablingSha1: false # 🚫
         runOnline: false                   # 🚫
+        prepNoArtifacts: false             # 🚫
+        prepNoSdk: false                   # 🚫
 
     - template: ../jobs/vmr-build.yml
       parameters:
@@ -182,4 +194,6 @@ stages:
         excludeSdkContentTests: true       # ✅
         overrideDistroDisablingSha1: false # 🚫
         runOnline: false                   # 🚫
+        prepNoArtifacts: true              # ✅
+        prepNoSdk: true                    # ✅
         reuseBuildArtifactsFrom: Fedora36_Offline

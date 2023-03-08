@@ -58,6 +58,14 @@ parameters:
   type: boolean
   default: false
 
+- name: prepNoArtifacts
+  type: boolean
+  default: false
+
+- name: prepNoSdk
+  type: boolean
+  default: false
+
 jobs:
 - job: ${{ parameters.buildName }}_${{ parameters.architecture }}
   timeoutInMinutes: 150
@@ -150,9 +158,15 @@ jobs:
   - script: |
       set -x
 
-      if [[ -z '${{ parameters.reuseBuildArtifactsFrom }}' ]]; then
-        docker run --rm -v "$(sourcesPath):/vmr" -w /vmr ${{ parameters.container }} ./prep.sh
-      else
+      customPrepArgs=""
+      if [[ '${{ parameters.prepNoArtifacts }}' == 'True' ]]; then
+        customPrepArgs="${customPrepArgs} --no-artifacts"
+      fi
+      if [[ '${{ parameters.prepNoSdk }}' == 'True' ]]; then
+        customPrepArgs="${customPrepArgs} --no-sdk"
+      fi
+      docker run --rm -v "$(sourcesPath):/vmr" -w /vmr ${{ parameters.container }} ./prep.sh ${customPrepArgs}
+      if [[ '${{ parameters.prepNoSdk }}' == 'True' || -n '${{ parameters.reuseBuildArtifactsFrom }}' ]]; then
         mkdir $(sourcesPath)/.dotnet
         previousSdkPath="$(sourcesPath)/prereqs/packages/archive/dotnet-sdk-*.tar.gz"
         eval tar -ozxf "$previousSdkPath" -C "$(sourcesPath)/.dotnet"
