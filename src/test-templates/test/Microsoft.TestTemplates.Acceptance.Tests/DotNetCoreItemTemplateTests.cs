@@ -17,15 +17,14 @@ namespace Microsoft.TestTemplates.Acceptance.Tests
         /// <summary>
         /// The net core versions for which templates are present
         /// </summary>
-        private static string[] netCoreVersions = {
+        private static string[] netCoreVersions =
+        {
             // refer to https://dotnet.microsoft.com/download/dotnet-core
             // for a list of supported dotnet versions and only include the ones
             // that are not end-of-life
-             "3.1",
-             "5.0",
              "6.0",
              "7.0",
-             // "8.0", TODO: not yet, enable when net8.0 sdk can target net8.0
+             "8.0"
         };
 
         /// <summary>
