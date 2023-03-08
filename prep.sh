@@ -7,12 +7,18 @@ SCRIPT_ROOT="$(cd -P "$( dirname "$0" )" && pwd)"
 usage() {
     echo "usage: $0"
     echo ""
-    echo "  Prepares the environment to be built by downloading Private.SourceBuilt.Artifacts.*.tar.gz and"
-    echo "  installing the version of dotnet referenced in global.json"
-    echo ""
+    echo "  Prepares the environment to be built by downloading the required archive files. This includes"
+    echo "  the previously source-built artifacts archive, prebuilts archive, and .NET SDK."
+    echo "options:"
+    echo "  --no-artifacts    Exclude the download of the previously source-built artifacts archive."
+    echo "  --no-prebuilts    Exclude the download of the prebuilts archive."
+    echo "  --no-sdk          Exclude the download of the .NET SDK."
 }
 
-buildBootstrap=false
+downloadArtifacts=true
+downloadPrebuilts=true
+installDotnet=true
+
 positional_args=()
 while :; do
     if [ $# -le 0 ]; then
@@ -24,6 +30,15 @@ while :; do
             usage
             exit 0
             ;;
+        --no-artifacts)
+            downloadArtifacts=false
+            ;;
+        --no-prebuilts)
+            downloadPrebuilts=false
+            ;;
+        --no-sdk)
+            installDotnet=false
+            ;;
         *)
             positional_args+=("$1")
             ;;
@@ -31,10 +46,6 @@ while :; do
 
     shift
 done
-
-downloadArtifacts=true
-downloadPrebuilts=true
-installDotnet=true
 
 # Check to make sure curl exists to download the archive files
 if ! command -v curl &> /dev/null
@@ -46,20 +57,20 @@ fi
 # Check if Private.SourceBuilt artifacts archive exists
 artifactsBaseFileName="Private.SourceBuilt.Artifacts"
 packagesArchiveDir="$SCRIPT_ROOT/prereqs/packages/archive/"
-if [ -f ${packagesArchiveDir}${artifactsBaseFileName}.*.tar.gz ]; then
+if [[ "$downloadArtifacts" == "true" && -f ${packagesArchiveDir}${artifactsBaseFileName}.*.tar.gz ]]; then
     echo "  Private.SourceBuilt.Artifacts.*.tar.gz exists...it will not be downloaded"
     downloadArtifacts=false
 fi
 
 # Check if Private.SourceBuilt prebuilts archive exists
 prebuiltsBaseFileName="Private.SourceBuilt.Prebuilts"
-if [ -f ${packagesArchiveDir}${prebuiltsBaseFileName}.*.tar.gz ]; then
+if [[ "$downloadPrebuilts" == "true" && -f ${packagesArchiveDir}${prebuiltsBaseFileName}.*.tar.gz ]]; then
     echo "  Private.SourceBuilt.Prebuilts.*.tar.gz exists...it will not be downloaded"
     downloadPrebuilts=false
 fi
 
 # Check if dotnet is installed
-if [ -d $SCRIPT_ROOT/.dotnet ]; then
+if [[ "$installDotnet" == "true" && -d $SCRIPT_ROOT/.dotnet ]]; then
     echo "  ./.dotnet SDK directory exists...it will not be installed"
     installDotnet=false;
 fi
