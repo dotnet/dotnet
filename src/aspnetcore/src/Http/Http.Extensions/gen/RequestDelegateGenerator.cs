@@ -80,7 +80,12 @@ public sealed class RequestDelegateGenerator : IIncrementalGenerator
             codeWriter.WriteLine($"var handler = ({endpoint.EmitHandlerDelegateCast()})del;");
             codeWriter.WriteLine("EndpointFilterDelegate? filteredInvocation = null;");
             endpoint.EmitRouteOrQueryResolver(codeWriter);
+            endpoint.EmitJsonBodyOrServicePreparation(codeWriter);
             endpoint.EmitJsonPreparation(codeWriter);
+            if (endpoint.NeedsParameterArray)
+            {
+                codeWriter.WriteLine("var parameters = del.Method.GetParameters();");
+            }
             codeWriter.WriteLineNoTabs(string.Empty);
             codeWriter.WriteLine("if (options?.EndpointBuilder?.FilterFactories.Count > 0)");
             codeWriter.StartBlock();
