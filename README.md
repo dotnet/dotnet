@@ -157,13 +157,13 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/arcade`  
 *[dotnet/arcade@e4e5e16](https://github.com/dotnet/arcade/commit/e4e5e16cf38c950ed835f8b223ebfdeca3e112aa)*
 - `src/aspnetcore`  
-*[dotnet/aspnetcore@b52555b](https://github.com/dotnet/aspnetcore/commit/b52555b008890d43c388608336fa86e3f2ac6018)*
+*[dotnet/aspnetcore@4f356a2](https://github.com/dotnet/aspnetcore/commit/4f356a28a972abe2b66133128310800e66208bdc)*
     - `src/aspnetcore/src/submodules/googletest`  
     *[google/googletest@cead3d5](https://github.com/google/googletest/commit/cead3d57c93ff8c4e5c1bbae57a5c0b0b0f6e168)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
     *[aspnet/MessagePack-CSharp@fe9fa08](https://github.com/aspnet/MessagePack-CSharp/commit/fe9fa0834d18492eb229ff2923024af2c87553f8)*
     - `src/aspnetcore/src/submodules/spa-templates`  
-    *[dotnet/spa-templates@0b40b4f](https://github.com/dotnet/spa-templates/commit/0b40b4fbdc360add4ffa969e22ba2502b05a2f17)*
+    *[dotnet/spa-templates@c8375a9](https://github.com/dotnet/spa-templates/commit/c8375a991fcb7f5ed047c31801784b7c9c6819b5)*
 - `src/cecil`  
 *[dotnet/cecil@ecc4b20](https://github.com/dotnet/cecil/commit/ecc4b20d2a3e24cf3018ed2464cd6aab8a3efa19)*
 - `src/command-line-api`  
