@@ -85,22 +85,22 @@
       <Uri>https://github.com/dotnet/test-templates</Uri>
       <Sha>0385265f4d0b6413d64aea0223172366a9b9858c</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.5.0" Version="1.1.0-rc.22558.1">
+    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.5.0" Version="1.1.0-rc.23115.1">
       <Uri>https://github.com/dotnet/test-templates</Uri>
-      <Sha>bb3695688177f5f80eeb3c0498168612e31549d5</Sha>
+      <Sha>94c498e399eb1cbb7290ed1e42564589a259312a</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.6.0" Version="1.1.0-rc.22558.1">
+    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.6.0" Version="1.1.0-rc.23115.1">
       <Uri>https://github.com/dotnet/test-templates</Uri>
-      <Sha>bb3695688177f5f80eeb3c0498168612e31549d5</Sha>
+      <Sha>94c498e399eb1cbb7290ed1e42564589a259312a</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.7.0" Version="1.1.0-rc.22558.1">
+    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.7.0" Version="1.1.0-rc.23115.1">
       <Uri>https://github.com/dotnet/test-templates</Uri>
-      <Sha>bb3695688177f5f80eeb3c0498168612e31549d5</Sha>
+      <Sha>94c498e399eb1cbb7290ed1e42564589a259312a</Sha>
       <SourceBuild RepoName="test-templates" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.8.0" Version="1.1.0-rc.22558.1">
+    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.8.0" Version="1.1.0-rc.23115.1">
       <Uri>https://github.com/dotnet/test-templates</Uri>
-      <Sha>bb3695688177f5f80eeb3c0498168612e31549d5</Sha>
+      <Sha>94c498e399eb1cbb7290ed1e42564589a259312a</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.Common.ItemTemplates" Version="8.0.100-preview.3.23156.10">
       <Uri>https://github.com/dotnet/sdk</Uri>
@@ -183,9 +183,9 @@
       <Sha>c3ad00ae84489071080a606f6a8e43c9a91a5cc2</Sha>
       <SourceBuildTarball RepoName="deployment-tools" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="8.0.0-alpha.1.23153.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="8.0.0-alpha.1.23157.2">
       <Uri>https://github.com/dotnet/source-build-externals</Uri>
-      <Sha>487e3990066862c81960a6d053b9d04c67f9d2a8</Sha>
+      <Sha>7bf6cff81d0dd42b12f6d1a9b29f00607bfb47b4</Sha>
       <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.SourceBuild.Intermediate.symreader" Version="1.4.0-beta2-21475-02">

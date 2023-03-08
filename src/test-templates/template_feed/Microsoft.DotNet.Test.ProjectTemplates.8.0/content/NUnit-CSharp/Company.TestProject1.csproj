@@ -9,6 +9,7 @@
 
     <IsPackable Condition="'$(EnablePack)' == 'true'">true</IsPackable>
     <IsPackable Condition="'$(EnablePack)' != 'true'">false</IsPackable>
+    <IsTestProject>true</IsTestProject>
   </PropertyGroup>
 
   <ItemGroup>

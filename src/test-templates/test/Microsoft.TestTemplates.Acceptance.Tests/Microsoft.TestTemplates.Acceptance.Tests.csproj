@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <IsTestProject>true</IsTestProject>
     <IsPackable>false</IsPackable>
     <LangVersion>preview</LangVersion>
     <NoWarn>$(NoWarn);CS0105</NoWarn>
-    
+
     <GenerateProgramFile>false</GenerateProgramFile>
   </PropertyGroup>
 

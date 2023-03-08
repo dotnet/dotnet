@@ -58,7 +58,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "01845ddb59a88eec5927919b7c0901ad8f54eccc"
+      "commitSha": "05c3ef4ac256f3104bf58cbd9f3b38b4e2e5f6c7"
     },
     {
       "packageVersion": "17.6.0-preview-23152-03",
@@ -103,10 +103,10 @@
       "commitSha": "4846f59fe168a343acfb84841f323fd47dd0e72c"
     },
     {
-      "packageVersion": "8.0.0-alpha.1.23153.1",
+      "packageVersion": "8.0.0-alpha.1.23157.2",
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "487e3990066862c81960a6d053b9d04c67f9d2a8"
+      "commitSha": "7bf6cff81d0dd42b12f6d1a9b29f00607bfb47b4"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23157.4",
@@ -133,10 +133,10 @@
       "commitSha": "f6a48b9da4f7a79d800ed7abd712d3f41ccb421a"
     },
     {
-      "packageVersion": "1.1.0-rc.22558.1",
+      "packageVersion": "1.1.0-rc.23115.1",
       "path": "test-templates",
       "remoteUri": "https://github.com/dotnet/test-templates",
-      "commitSha": "bb3695688177f5f80eeb3c0498168612e31549d5"
+      "commitSha": "94c498e399eb1cbb7290ed1e42564589a259312a"
     },
     {
       "packageVersion": "17.6.0-preview-20230223-05",

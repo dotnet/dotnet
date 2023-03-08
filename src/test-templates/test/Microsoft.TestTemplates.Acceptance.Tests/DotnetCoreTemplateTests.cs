@@ -6,6 +6,7 @@ namespace Microsoft.TestTemplates.Acceptance.Tests
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using System.Collections.Generic;
     using System.IO;
+    using System.Text.RegularExpressions;
 
     [TestClass]
     public class DotnetCoreTemplateTests : AcceptanceTestBase
@@ -13,21 +14,21 @@ namespace Microsoft.TestTemplates.Acceptance.Tests
         /// <summary>
         /// The net core versions for which templates are present
         /// </summary>
-        private static string[] netCoreVersions = {
+        private static string[] netCoreVersions =
+        {
             // refer to https://dotnet.microsoft.com/download/dotnet-core
             // for a list of supported dotnet versions and only include the ones
             // that are not end-of-life
-            "3.1",
-            "5.0",
             "6.0",
             "7.0",
-            // "8.0", TODO: not yet, enable when net8.0 sdk can target net8.0
+            "8.0"
         };
 
         /// <summary>
         /// The type of the test template, combination of the test framework and language
         /// </summary>
-        private static string[] templateTypes = {
+        private static string[] templateTypes =
+        {
             "MSTest-CSharp",
             "MSTest-FSharp",
             "MSTest-VisualBasic",
@@ -50,8 +51,23 @@ namespace Microsoft.TestTemplates.Acceptance.Tests
             ValidateSummaryStatus(1, 0, 0);
         }
 
+
+        [DataTestMethod]
+        [DynamicData(nameof(GetTestTemplatesPath), DynamicDataSourceType.Method)]
+        public void TemplateTest_WrongTfmShouldFail(string path)
+        {
+            InvokeDotnet("build " + path);
+            InvokeDotnet("test  --no-build --framework net5.0 " + path, assertExecution: false);
+
+            Assert.IsTrue(Regex.IsMatch(standardTestError, "The test source file.*provided was not found."));
+            Assert.AreNotEqual(0, runnerExitCode);
+
+            // after we want to test the normal path to ensure we're not breaking it.
+            TemplateTest(path);
+        }
+
         /// <summary>
-        /// Dynamic data source for the template test 
+        /// Dynamic data source for the template test
         /// </summary>
         /// <returns>Paths to all possible the template projects</returns>
         private static IEnumerable<object[]> GetTestTemplatesPath()
