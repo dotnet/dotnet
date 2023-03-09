@@ -18,6 +18,8 @@ T:System.Diagnostics.DebuggerStepThroughAttribute
 T:System.Diagnostics.DebuggerTypeProxyAttribute
 T:System.Diagnostics.MonitoringDescriptionAttribute
 T:System.IO.IODescriptionAttribut
+T:System.Reflection.AssemblyDelaySignAttribute
+T:System.Reflection.AssemblyKeyFileAttribute
 T:System.Runtime.CompilerServices.AsyncStateMachineAttribute
 T:System.Runtime.CompilerServices.CompilerGeneratedAttribute
 T:System.Runtime.CompilerServices.IteratorStateMachineAttribute

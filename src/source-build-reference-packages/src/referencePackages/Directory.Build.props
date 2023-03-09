@@ -25,6 +25,7 @@
     <KeyFileDir>$(RepoRoot)src/referencePackages/snk/</KeyFileDir>
     <SignAssembly>true</SignAssembly>
     <PublicSign>true</PublicSign>
+    <FullAssemblySigningSupported Condition="('$(FullAssemblySigningSupported)' == '') and ('$(OS)' != 'Windows_NT')">false</FullAssemblySigningSupported>
 
     <StrongNameKeyId>Microsoft</StrongNameKeyId>
 
