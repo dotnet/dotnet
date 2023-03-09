@@ -78,7 +78,6 @@ stages:
       buildFromArchive: false            # 🚫
       enablePoison: false                # 🚫
       excludeOmniSharpTests: true        # ✅
-      excludeSdkContentTests: true       # ✅
       overrideDistroDisablingSha1: false # 🚫
       runOnline: true                    # ✅
       withPreviousSDK: false             # 🚫
@@ -115,7 +114,6 @@ stages:
         buildFromArchive: true             # ✅
         enablePoison: false                # 🚫
         excludeOmniSharpTests: true        # ✅
-        excludeSdkContentTests: false      # 🚫
         overrideDistroDisablingSha1: false # 🚫
         runOnline: false                   # 🚫
         withPreviousSDK: false             # 🚫
@@ -133,7 +131,6 @@ stages:
         buildFromArchive: true            # ✅
         enablePoison: false               # 🚫
         excludeOmniSharpTests: false      # 🚫
-        excludeSdkContentTests: false     # 🚫
         overrideDistroDisablingSha1: true # ✅
         runOnline: false                  # 🚫
         withPreviousSDK: false            # 🚫
@@ -151,7 +148,6 @@ stages:
         buildFromArchive: true             # ✅
         enablePoison: true                 # ✅
         excludeOmniSharpTests: false       # 🚫
-        excludeSdkContentTests: false      # 🚫
         overrideDistroDisablingSha1: false # 🚫
         runOnline: false                   # 🚫
         withPreviousSDK: false             # 🚫
@@ -169,7 +165,6 @@ stages:
         buildFromArchive: false            # 🚫
         enablePoison: false                # 🚫
         excludeOmniSharpTests: false       # 🚫
-        excludeSdkContentTests: false      # 🚫
         overrideDistroDisablingSha1: false # 🚫
         runOnline: false                   # 🚫
         withPreviousSDK: false             # 🚫
@@ -185,7 +180,6 @@ stages:
         buildFromArchive: false            # 🚫
         enablePoison: false                # 🚫
         excludeOmniSharpTests: false       # 🚫
-        excludeSdkContentTests: false      # 🚫
         overrideDistroDisablingSha1: false # 🚫
         runOnline: false                   # 🚫
         withPreviousSDK: false             # 🚫
@@ -203,7 +197,6 @@ stages:
         buildFromArchive: false            # 🚫
         enablePoison: false                # 🚫
         excludeOmniSharpTests: false       # 🚫
-        excludeSdkContentTests: true       # ✅
         overrideDistroDisablingSha1: false # 🚫
         runOnline: false                   # 🚫
         withPreviousSDK: false             # 🚫

@@ -31,11 +31,6 @@ parameters:
 - name: runOnline
   type: boolean
 
-# Skip running the SDK content smoke-tests
-- name: excludeSdkContentTests
-  type: boolean
-  default: false
-
 # Name of a previous job (from the same template as this) whose output will be used to build this job
 # The SDK from its artifacts is copied to vmr/.dotnet
 - name: reuseBuildArtifactsFrom
@@ -128,12 +123,6 @@ jobs:
       env:
         Token: $(dn-bot-dnceng-artifact-feeds-rw)
 
-  - ${{ if ne(parameters.excludeSdkContentTests, 'true') }}:
-    - download: current
-      artifact: BlobArtifacts
-      patterns: '**/dotnet-sdk-+([0-9]).+([0-9]).+([0-9])?(-@(alpha|preview|rc|rtm)*)-linux-${{ parameters.architecture }}.tar.gz'
-      displayName: Download MSFT SDK
-
   - ${{ if ne(parameters.reuseBuildArtifactsFrom, '') }}:
     - download: current
       artifact: ${{ parameters.reuseBuildArtifactsFrom }}_${{ parameters.architecture }}_Artifacts
@@ -220,12 +209,6 @@ jobs:
       dockerVolumeArgs="-v $(sourcesPath):/vmr"
       dockerEnvArgs="-e SMOKE_TESTS_EXCLUDE_OMNISHARP=${{ parameters.excludeOmniSharpTests }} -e SMOKE_TESTS_WARN_SDK_CONTENT_DIFFS=true -e SMOKE_TESTS_RUNNING_IN_CI=true"
       poisonArg=''
-
-      if [[ '${{ parameters.excludeSdkContentTests }}' != 'True' ]]; then
-        dockerVolumeArgs+=" -v $(Pipeline.Workspace)/BlobArtifacts/:/BlobArtifacts"
-        msftSdkTarballName=$(find "$(Pipeline.Workspace)/BlobArtifacts/" -name "dotnet-sdk-*-linux-${{ parameters.architecture }}.tar.gz" -exec basename {} \;)
-        dockerEnvArgs+=" -e SMOKE_TESTS_MSFT_SDK_TARBALL_PATH=/BlobArtifacts/$msftSdkTarballName"
-      fi
 
       if [[ '${{ parameters.enablePoison }}' == 'True' ]]; then
         poisonArg='--poison'
