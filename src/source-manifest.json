@@ -58,13 +58,13 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "ba1a3f9f81992c855cf5d1765b3275ce60d07e71"
+      "commitSha": "e53bf9d628e51c9c34b43836b25e8990a719b198"
     },
     {
-      "packageVersion": "17.6.0-preview-23157-03",
+      "packageVersion": "17.6.0-preview-23159-01",
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "1a6d753a7648baf0cc991af0c0d254a41d36eba6"
+      "commitSha": "0fb1955ea9708d3b8f817dfa193af0edf5dd3991"
     },
     {
       "packageVersion": "6.6.0-preview.3.42",
@@ -85,22 +85,22 @@
       "commitSha": "1314d090671dc1a1500c5303c4b5ae9150f40d98"
     },
     {
-      "packageVersion": "3.3.5-beta1.23124.1",
+      "packageVersion": "3.3.5-beta1.23158.3",
       "path": "roslyn-analyzers",
       "remoteUri": "https://github.com/dotnet/roslyn-analyzers",
-      "commitSha": "c6352bf2e1bd214fce090829de1042000d021497"
+      "commitSha": "b994850c7f12f93df46646790e6a87dd0d4f05b6"
     },
     {
-      "packageVersion": "8.0.0-preview.3.23158.17",
+      "packageVersion": "8.0.0-preview.3.23158.25",
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "1b2eb12a711410a358bdfa93af017a34a929d4cf"
+      "commitSha": "97de75b51230212b04883cddb3f261587684ca78"
     },
     {
-      "packageVersion": "8.0.100-preview.3.23158.53",
+      "packageVersion": "8.0.100-preview.3.23159.9",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "e5531d2e8d182f11bcc50f7b086124f8a6210612"
+      "commitSha": "7ef62da023bceb530e409b0492ead4fd52a78969"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23157.2",
