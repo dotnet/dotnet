@@ -7,10 +7,10 @@
       "commitSha": "e4e5e16cf38c950ed835f8b223ebfdeca3e112aa"
     },
     {
-      "packageVersion": "8.0.0-preview.3.23158.5",
+      "packageVersion": "8.0.0-preview.3.23158.16",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "bb4153237f491dc39fe36482bb09b378bb863125"
+      "commitSha": "34a16dcf5043b4f02756e9d0727943c385cd2810"
     },
     {
       "packageVersion": "0.11.4-alpha.23156.1",
@@ -58,7 +58,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "79b01b79d126d7c4f408cbf4cb69c1bca075cf95"
+      "commitSha": "ba1a3f9f81992c855cf5d1765b3275ce60d07e71"
     },
     {
       "packageVersion": "17.6.0-preview-23157-03",
@@ -91,16 +91,16 @@
       "commitSha": "c6352bf2e1bd214fce090829de1042000d021497"
     },
     {
-      "packageVersion": "8.0.0-preview.3.23158.15",
+      "packageVersion": "8.0.0-preview.3.23158.17",
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "633dcab4b1d665dc355d0acd5ca6c6ba8a4ae059"
+      "commitSha": "1b2eb12a711410a358bdfa93af017a34a929d4cf"
     },
     {
-      "packageVersion": "8.0.100-preview.3.23158.40",
+      "packageVersion": "8.0.100-preview.3.23158.53",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "725b93c957aa29079203f506a44625c1332f3a5e"
+      "commitSha": "e5531d2e8d182f11bcc50f7b086124f8a6210612"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23157.2",
@@ -127,10 +127,10 @@
       "commitSha": "7b9791daa3a3477eb22ec805946c9fff8b42d8ca"
     },
     {
-      "packageVersion": "8.0.100-preview.3.23157.2",
+      "packageVersion": "8.0.100-preview.3.23158.15",
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "429ea226440e535e8c371af98e8e08381377be61"
+      "commitSha": "8c02d28ba4de9af9ef00be4a1b14dcaa149a23c1"
     },
     {
       "packageVersion": "1.1.0-rc.23115.1",
