@@ -339,6 +339,14 @@ namespace NuGet.PackageManagement.UI
             }
         }
 
+        public bool IsFloatingVersionSupported
+        {
+            get
+            {
+                return IsProjectPackageReference && !IsCentralPackageManagementEnabled;
+            }
+        }
+
         public bool IsInstalledVersionTopLevel => InstalledVersion != null && PackageLevel == PackageLevel.TopLevel;
 
         public override IEnumerable<IProjectContextInfo> GetSelectedProjects(UserAction action)

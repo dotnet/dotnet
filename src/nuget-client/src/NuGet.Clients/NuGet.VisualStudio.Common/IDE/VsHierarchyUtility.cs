@@ -24,9 +24,22 @@ namespace NuGet.VisualStudio
 
         public static string GetProjectPath(IVsHierarchy project)
         {
+            Assumes.Present(project);
             ThreadHelper.ThrowIfNotOnUIThread();
             var format = (IPersistFileFormat)project;
             format.GetCurFile(out string projectPath, out uint _);
+            return projectPath;
+        }
+
+        /// <summary>
+        /// Handles the project path retrieval for website from both when the project is loaded from disk or from IIS,
+        /// <see cref="GetProjectPath(IVsHierarchy)"/> can only handle the project loaded from disk scenario correctly.
+        /// </summary>
+        public static string GetProjectPathForWebsiteProject(IVsHierarchy project)
+        {
+            Assumes.Present(project);
+            ThreadHelper.ThrowIfNotOnUIThread();
+            project.GetCanonicalName((uint)VSConstants.VSITEMID.Root, out string projectPath);
             return projectPath;
         }
 

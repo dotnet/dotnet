@@ -3,6 +3,7 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft;
@@ -118,7 +119,10 @@ namespace NuGet.PackageManagement.VisualStudio
             var vsBuildProperties = new VsProjectBuildProperties(
                 new Lazy<EnvDTE.Project>(() => loadDteProject(hierarchy)), buildStorageProperty, _threadingService, _buildPropertiesTelemetry, projectTypeGuids);
 
-            var fullProjectPath = VsHierarchyUtility.GetProjectPath(hierarchy);
+            var fullProjectPath = projectTypeGuids.Contains(VsProjectTypes.WebSiteProjectTypeGuid) ?
+                VsHierarchyUtility.GetProjectPathForWebsiteProject(hierarchy)
+                : VsHierarchyUtility.GetProjectPath(hierarchy);
+
             var projectNames = await ProjectNames.FromIVsSolution2(fullProjectPath, (IVsSolution2)vsSolution, hierarchy, CancellationToken.None);
 
             return new VsProjectAdapter(

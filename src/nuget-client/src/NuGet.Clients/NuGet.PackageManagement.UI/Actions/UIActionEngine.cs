@@ -18,6 +18,7 @@ using NuGet.PackageManagement.VisualStudio;
 using NuGet.Packaging.Core;
 using NuGet.ProjectManagement;
 using NuGet.Protocol.Core.Types;
+using NuGet.Versioning;
 using NuGet.VisualStudio;
 using NuGet.VisualStudio.Internal.Contracts;
 using Task = System.Threading.Tasks.Task;
@@ -281,10 +282,10 @@ namespace NuGet.PackageManagement.UI
             }
         }
 
-        private static Tuple<string, string> CreatePackageTuple(IPackageReferenceContextInfo pkg)
+        private static Tuple<string, string, string> CreatePackageTuple(IPackageReferenceContextInfo pkg)
         {
             PackageIdentity package = pkg.Identity;
-            return Tuple.Create(package.Id, package.Version == null ? string.Empty : package.Version.ToNormalizedString());
+            return Tuple.Create(package.Id, package.Version == null ? string.Empty : package.Version.ToNormalizedString(), pkg?.AllowedVersions?.OriginalString ?? null);
         }
 
         private async Task PerformActionImplAsync(
@@ -304,7 +305,7 @@ namespace NuGet.PackageManagement.UI
             var acceptedLicense = true;
 
             List<string> removedPackages = null;
-            var existingPackages = new HashSet<Tuple<string, string>>();
+            var existingPackages = new HashSet<Tuple<string, string, string>>();
             List<Tuple<string, string>> addedPackages = null;
             List<Tuple<string, string>> updatedPackagesOld = null;
             List<Tuple<string, string>> updatedPackagesNew = null;
@@ -562,6 +563,26 @@ namespace NuGet.PackageManagement.UI
             }, cancellationToken);
         }
 
+        internal static TelemetryEvent ToTelemetryPackage(string packageId, string packageVersion, string packageVersionRange)
+        {
+            var subEvent = new TelemetryEvent(eventName: null);
+            subEvent.AddPiiData("id", VSTelemetryServiceUtility.NormalizePackageId(packageId));
+            subEvent["version"] = packageVersion;
+            if (packageVersionRange != null)
+            {
+                subEvent["versionRange"] = packageVersionRange;
+            }
+
+            return subEvent;
+        }
+
+        internal static List<TelemetryEvent> ToTelemetryPackageList(List<Tuple<string, string>> packages)
+        {
+            var list = new List<TelemetryEvent>(packages.Count);
+            list.AddRange(packages.Select(p => ToTelemetryPackage(p.Item1, p.Item2, null)));
+            return list;
+        }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1308:Normalize strings to uppercase", Justification = "We require lowercase package names in telemetry so that the hashes are consistent")]
         internal static void AddUiActionEngineTelemetryProperties(
             VSActionsTelemetryEvent actionTelemetryEvent,
@@ -574,28 +595,13 @@ namespace NuGet.PackageManagement.UI
             (string modelVersion, string vsixVersion)? recommenderVersion,
             int topLevelVulnerablePackagesCount,
             List<int> topLevelVulnerablePackagesMaxSeverities,
-            HashSet<Tuple<string, string>> existingPackages,
+            HashSet<Tuple<string, string, string>> existingPackages,
             List<Tuple<string, string>> addedPackages,
             List<string> removedPackages,
             List<Tuple<string, string>> updatedPackagesOld,
             List<Tuple<string, string>> updatedPackagesNew,
             IReadOnlyCollection<string> targetFrameworks)
         {
-            static TelemetryEvent ToTelemetryPackage(Tuple<string, string> package)
-            {
-                var subEvent = new TelemetryEvent(eventName: null);
-                subEvent.AddPiiData("id", VSTelemetryServiceUtility.NormalizePackageId(package.Item1));
-                subEvent["version"] = package.Item2;
-                return subEvent;
-            }
-
-            static List<TelemetryEvent> ToTelemetryPackageList(List<Tuple<string, string>> packages)
-            {
-                var list = new List<TelemetryEvent>(packages.Count);
-                list.AddRange(packages.Select(ToTelemetryPackage));
-                return list;
-            }
-
             // log possible cancel reasons
             if (!continueAfterPreview)
             {
@@ -611,7 +617,7 @@ namespace NuGet.PackageManagement.UI
             if (userAction != null)
             {
                 // userAction.Version can be null for deleted packages.
-                actionTelemetryEvent.ComplexData["SelectedPackage"] = ToTelemetryPackage(new Tuple<string, string>(userAction.PackageId, userAction.Version?.ToNormalizedString() ?? string.Empty));
+                actionTelemetryEvent.ComplexData["SelectedPackage"] = ToTelemetryPackage(userAction.PackageId, userAction.Version?.ToNormalizedString() ?? string.Empty, userAction.VersionRange?.OriginalString);
                 actionTelemetryEvent["SelectedIndex"] = selectedIndex;
                 actionTelemetryEvent["RecommendedCount"] = recommendedCount;
                 actionTelemetryEvent["RecommendPackages"] = recommendPackages;
@@ -631,7 +637,7 @@ namespace NuGet.PackageManagement.UI
 
                 foreach (var package in existingPackages)
                 {
-                    packages.Add(ToTelemetryPackage(package));
+                    packages.Add(ToTelemetryPackage(package.Item1, package.Item2, package.Item3));
                 }
 
                 actionTelemetryEvent.ComplexData["ExistingPackages"] = packages;
@@ -644,7 +650,15 @@ namespace NuGet.PackageManagement.UI
 
                 foreach (var package in addedPackages)
                 {
-                    packages.Add(ToTelemetryPackage(package));
+                    // Update package VersionRange if it is the selected one
+                    if (package.Item1.Equals(userAction.PackageId, StringComparison.OrdinalIgnoreCase))
+                    {
+                        packages.Add(ToTelemetryPackage(package.Item1, package.Item2, userAction.VersionRange?.OriginalString));
+                    }
+                    else
+                    {
+                        packages.Add(ToTelemetryPackage(package.Item1, package.Item2, null));
+                    }
                 }
 
                 actionTelemetryEvent.ComplexData["AddedPackages"] = packages;
@@ -665,7 +679,21 @@ namespace NuGet.PackageManagement.UI
             // two collections for updated packages: pre and post upgrade
             if (updatedPackagesNew?.Count > 0)
             {
-                actionTelemetryEvent.ComplexData["UpdatedPackagesNew"] = ToTelemetryPackageList(updatedPackagesNew);
+                var packages = new List<TelemetryEvent>();
+
+                foreach (var package in updatedPackagesNew)
+                {
+                    if (package.Item1.Equals(userAction.PackageId, StringComparison.OrdinalIgnoreCase))
+                    {
+                        packages.Add(ToTelemetryPackage(package.Item1, package.Item2, userAction.VersionRange?.OriginalString));
+                    }
+                    else
+                    {
+                        packages.Add(ToTelemetryPackage(package.Item1, package.Item2, null));
+                    }
+                }
+
+                actionTelemetryEvent.ComplexData["UpdatedPackagesNew"] = packages;
             }
 
             if (updatedPackagesOld?.Count > 0)

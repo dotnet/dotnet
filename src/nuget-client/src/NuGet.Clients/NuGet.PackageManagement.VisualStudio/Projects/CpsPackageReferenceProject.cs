@@ -294,6 +294,12 @@ namespace NuGet.PackageManagement.VisualStudio
                         TargetFrameworkCondition,
                         originalFramework);
 
+                    // This is the update operation
+                    if (!reference.IsAdded)
+                    {
+                        await reference.Metadata.SetPropertyValueAsync("Version", formattedRange);
+                    }
+
                     // SuppressParent could be set to All if developmentDependency flag is true in package nuspec file.
                     if (installationContext.SuppressParent != LibraryIncludeFlagUtils.DefaultSuppressParent &&
                         installationContext.IncludeType != LibraryIncludeFlags.All)

@@ -101,10 +101,8 @@
   <!-- Allow WPF projects to run under NETCore SDK -->
   <!-- Errors occur if the output path is not set correctly -->
   <PropertyGroup Condition=" '$(NETCoreWPFProject)' == 'true' ">
-    <TargetFrameworkVersion>$(NETFXTargetFrameworkVersion)</TargetFrameworkVersion>
     <BaseOutputPath>bin\</BaseOutputPath>
     <OutputPath>bin\$(Configuration)</OutputPath>
-    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>

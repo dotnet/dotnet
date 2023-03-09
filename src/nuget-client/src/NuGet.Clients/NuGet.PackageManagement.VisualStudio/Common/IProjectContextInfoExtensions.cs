@@ -12,6 +12,8 @@ using Microsoft.ServiceHub.Framework;
 using NuGet.Frameworks;
 using NuGet.Packaging.Core;
 using NuGet.VisualStudio.Internal.Contracts;
+using NuGet.ProjectManagement.Projects;
+using System.Linq;
 
 namespace NuGet.PackageManagement.VisualStudio
 {
@@ -120,6 +122,21 @@ namespace NuGet.PackageManagement.VisualStudio
             using (INuGetProjectManagerService projectManager = await GetProjectManagerAsync(serviceBroker, cancellationToken))
             {
                 return await projectManager.GetTargetFrameworksAsync(new string[] { projectContextInfo.ProjectId }, cancellationToken);
+            }
+        }
+
+        public static async ValueTask<bool> IsCentralPackageManagementEnabledAsync(this IProjectContextInfo projectContextInfo,
+            IServiceBroker serviceBroker,
+            CancellationToken cancellationToken)
+        {
+            Assumes.NotNull(projectContextInfo);
+            Assumes.NotNull(serviceBroker);
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            using (INuGetProjectManagerService projectManager = await GetProjectManagerAsync(serviceBroker, cancellationToken))
+            {
+                return await projectManager.IsCentralPackageManagementEnabledAsync(projectContextInfo.ProjectId, cancellationToken);
             }
         }
 

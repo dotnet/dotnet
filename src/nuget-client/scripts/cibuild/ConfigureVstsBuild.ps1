@@ -171,10 +171,10 @@ else
 {
     Write-Host "##vso[task.setvariable variable=VsixPublishDir;]VS15"
     $newBuildCounter = $BuildNumber
-    $VsTargetBranch = & dotnet msbuild $RepositoryPath\build\config.props /restore:false "/ConsoleLoggerParameters:Verbosity=Minimal;NoSummary;ForceNoAlign" /nologo /target:GetVsTargetBranch
-    $NuGetSdkVsVersion = & dotnet msbuild $RepositoryPath\build\config.props /restore:false "/ConsoleLoggerParameters:Verbosity=Minimal;NoSummary;ForceNoAlign" /nologo /target:GetNuGetSdkVsSemanticVersion
-    $VsTargetChannel = & dotnet msbuild $RepositoryPath\build\config.props /restore:false "/ConsoleLoggerParameters:Verbosity=Minimal;NoSummary;ForceNoAlign" /nologo /target:GetVsTargetChannel
-    $VsTargetMajorVersion = & dotnet msbuild $RepositoryPath\build\config.props /restore:false "/ConsoleLoggerParameters:Verbosity=Minimal;NoSummary;ForceNoAlign" /nologo /target:GetVsTargetMajorVersion
+    $VsTargetBranch = ((& dotnet msbuild $RepositoryPath\build\config.props /restore:false "/ConsoleLoggerParameters:Verbosity=Minimal;NoSummary;ForceNoAlign" /nologo /target:GetVsTargetBranch) | Out-String).Trim()
+    $NuGetSdkVsVersion = ((& dotnet msbuild $RepositoryPath\build\config.props /restore:false "/ConsoleLoggerParameters:Verbosity=Minimal;NoSummary;ForceNoAlign" /nologo /target:GetNuGetSdkVsSemanticVersion) | Out-String).Trim()
+    $VsTargetChannel = ((& dotnet msbuild $RepositoryPath\build\config.props /restore:false "/ConsoleLoggerParameters:Verbosity=Minimal;NoSummary;ForceNoAlign" /nologo /target:GetVsTargetChannel) | Out-String).Trim()
+    $VsTargetMajorVersion = ((& dotnet msbuild $RepositoryPath\build\config.props /restore:false "/ConsoleLoggerParameters:Verbosity=Minimal;NoSummary;ForceNoAlign" /nologo /target:GetVsTargetMajorVersion) | Out-String).Trim()
     Write-Host "VS target branch: $VsTargetBranch"
     $jsonRepresentation = @{
         BuildNumber = $newBuildCounter
@@ -182,10 +182,10 @@ else
         BuildBranch = $BranchName
         LocalizationRepositoryBranch = $NuGetLocalizationRepoBranch
         LocalizationRepositoryCommitHash = $LocalizationRepoCommitHash
-        VsTargetBranch = $VsTargetBranch.Trim()
-        VsTargetChannel = $VstargetChannel.Trim()
-        VsTargetMajorVersion = $VsTargetMajorVersion.Trim()
-        NuGetSdkVsVersion = $NuGetSdkVsVersion.Trim()
+        VsTargetBranch = $VsTargetBranch
+        VsTargetChannel = $VstargetChannel
+        VsTargetMajorVersion = $VsTargetMajorVersion
+        NuGetSdkVsVersion = $NuGetSdkVsVersion
     }
 
     # First create the file locally so that we can laster publish it as a build artifact from a local source file instead of a remote source file.

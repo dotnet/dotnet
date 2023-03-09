@@ -818,6 +818,8 @@ namespace NuGet.PackageManagement.UI
 
         public string PackagePath => _searchResultPackage?.PackagePath;
 
+        public bool IsCentralPackageManagementEnabled { get; set; }
+
         protected void AddBlockedVersions(List<NuGetVersion> blockedVersions)
         {
             // add a separator

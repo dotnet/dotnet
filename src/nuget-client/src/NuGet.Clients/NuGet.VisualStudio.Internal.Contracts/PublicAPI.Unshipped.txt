@@ -1,1 +1,2 @@
 #nullable enable
+NuGet.VisualStudio.Internal.Contracts.INuGetProjectManagerService.IsCentralPackageManagementEnabledAsync(string! projectId, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask<bool>

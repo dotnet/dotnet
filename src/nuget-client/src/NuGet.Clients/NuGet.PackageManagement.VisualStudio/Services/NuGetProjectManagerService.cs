@@ -274,6 +274,30 @@ namespace NuGet.PackageManagement.VisualStudio
             return targetFrameworks;
         }
 
+        public async ValueTask<bool> IsCentralPackageManagementEnabledAsync(string projectId, CancellationToken cancellationToken)
+        {
+            Assumes.NotNullOrEmpty(projectId);
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            NuGetProject? project = await SolutionUtility.GetNuGetProjectAsync(
+                _sharedState.SolutionManager,
+                projectId,
+                cancellationToken);
+
+            Assumes.NotNull(project);
+
+            if (project is BuildIntegratedNuGetProject buildIntegratedProject)
+            {
+                var dgcContext = new DependencyGraphCacheContext();
+                IReadOnlyList<ProjectModel.PackageSpec>? packageSpecs = await buildIntegratedProject.GetPackageSpecsAsync(dgcContext);
+
+                return packageSpecs.Any(spec => spec.RestoreMetadata.CentralPackageVersionsEnabled);
+            }
+
+            return false;
+        }
+
         public async ValueTask<IProjectMetadataContextInfo> GetMetadataAsync(string projectId, CancellationToken cancellationToken)
         {
             Assumes.NotNullOrEmpty(projectId);

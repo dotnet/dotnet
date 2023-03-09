@@ -153,7 +153,7 @@ namespace NuGet.VisualStudio.Implementation.Test.Extensibility
                 throw new NotImplementedException();
             }
 
-            public override Task<ProjectPackages> GetInstalledAndTransitivePackagesAsync(CancellationToken token)
+            public override Task<ProjectPackages> GetInstalledAndTransitivePackagesAsync(bool includeTransitiveOrigins, CancellationToken token)
             {
                 var transitivePackages = TransitivePackages.Select(p => new TransitivePackageReference(p));
 

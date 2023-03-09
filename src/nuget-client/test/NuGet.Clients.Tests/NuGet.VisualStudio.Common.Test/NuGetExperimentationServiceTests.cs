@@ -40,7 +40,7 @@ namespace NuGet.VisualStudio.Common.Test
         [Fact]
         public void Constructor_WithNullExperimentalService_Throws()
         {
-            Assert.Throws<ArgumentNullException>(() => new NuGetExperimentationService(Mock.Of< IEnvironmentVariableReader>(), experimentationService: null, _outputConsoleProvider));
+            Assert.Throws<ArgumentNullException>(() => new NuGetExperimentationService(Mock.Of<IEnvironmentVariableReader>(), experimentationService: null, _outputConsoleProvider));
         }
 
         [Fact]

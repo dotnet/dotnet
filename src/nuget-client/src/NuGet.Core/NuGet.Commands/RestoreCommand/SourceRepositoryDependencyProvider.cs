@@ -42,15 +42,32 @@ namespace NuGet.Commands
         private readonly ConcurrentDictionary<LibraryRange, AsyncLazy<LibraryIdentity>> _libraryMatchCache
             = new ConcurrentDictionary<LibraryRange, AsyncLazy<LibraryIdentity>>();
 
-        // Limiting concurrent requests to limit the amount of files open at a time on Mac OSX
-        // the default is 256 which is easy to hit if we don't limit concurrency
-        private readonly static SemaphoreSlim _throttle =
-            RuntimeEnvironmentHelper.IsMacOSX
-                ? new SemaphoreSlim(ConcurrencyLimit, ConcurrencyLimit)
+        // Limiting concurrent requests to limit the amount of files open at a time.
+        private readonly static SemaphoreSlim _throttle = GetThrottleSemaphoreSlim(EnvironmentVariableWrapper.Instance);
+        internal static SemaphoreSlim GetThrottleSemaphoreSlim(IEnvironmentVariableReader env)
+        {
+            // Determine default concurrency limit based on operating system constraints.
+            int concurrencyLimit = 0;
+            if (RuntimeEnvironmentHelper.IsMacOSX)
+            {
+                // Limit concurrent requests on Mac OSX to limit the amount of files
+                // open at a time, since the default limit is 256.
+                concurrencyLimit = 16;
+            }
+            // Allow user to override concurrency limit via environment variable.
+            var variableValue = env.GetEnvironmentVariable("NUGET_CONCURRENCY_LIMIT");
+            if (!string.IsNullOrEmpty(variableValue))
+            {
+                if (int.TryParse(variableValue, out int parsedValue))
+                {
+                    concurrencyLimit = parsedValue;
+                }
+            }
+            // Construct throttle semaphore if requested.
+            return concurrencyLimit > 0
+                ? new SemaphoreSlim(concurrencyLimit, concurrencyLimit)
                 : null;
-
-        // In order to avoid too many open files error, set concurrent requests number to 16 on Mac
-        private const int ConcurrencyLimit = 16;
+        }
 
         /// <summary>
         /// Initializes a new <see cref="SourceRepositoryDependencyProvider" /> class.
@@ -232,8 +249,27 @@ namespace NuGet.Commands
             if (libraryRange.VersionRange?.MinVersion != null && libraryRange.VersionRange.IsMinInclusive && !libraryRange.VersionRange.IsFloating)
             {
                 // first check if the exact min version exist then simply return that
-                if (await _findPackagesByIdResource.DoesPackageExistAsync(
-                    libraryRange.Name, libraryRange.VersionRange.MinVersion, cacheContext, logger, cancellationToken))
+                bool versionExists = false;
+                try
+                {
+                    if (_throttle != null)
+                    {
+                        await _throttle.WaitAsync(cancellationToken);
+                    }
+
+                    versionExists = await _findPackagesByIdResource.DoesPackageExistAsync(
+                        libraryRange.Name,
+                        libraryRange.VersionRange.MinVersion,
+                        cacheContext,
+                        logger,
+                        cancellationToken);
+                }
+                finally
+                {
+                    _throttle?.Release();
+                }
+
+                if (versionExists)
                 {
                     return new LibraryIdentity
                     {

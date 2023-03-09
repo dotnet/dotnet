@@ -24,46 +24,6 @@
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Actions\AccessiblePackageIdentityTests.cs" />
-    <Compile Include="Actions\UIActionEngineTests.cs" />
-    <Compile Include="Actions\UpdatePreviewResultTests.cs" />
-    <Compile Include="Converters\DateTimeConverterTests.cs" />
-    <Compile Include="Converters\DownloadCountToVisibilityConverterTests.cs" />
-    <Compile Include="Converters\FormattedStringPartConverterTests.cs" />
-    <Compile Include="Converters\DeprecationToDeprecationLabelStateConverterTests.cs" />
-    <Compile Include="Converters\PackageLevelToGroupNameConverterTests.cs" />
-    <Compile Include="Converters\ParametersToHyperlinkTupleConverterTests.cs" />
-    <Compile Include="Converters\VersionToStringConverterTests.cs" />
-    <Compile Include="ConverterTests.cs" />
-    <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="Models\PackageDependencySetMetadataTests.cs" />
-    <Compile Include="Models\DetailControlModelTests.cs" />
-    <Compile Include="Models\TestDetailControlModel.cs" />
-    <Compile Include="Models\V3DetailControlModelTests.cs" />
-    <Compile Include="Models\LocalDetailControlModelTests.cs" />
-    <Compile Include="Models\PackageItemViewModelTests.cs" />
-    <Compile Include="Models\PreviewWindowModelTests.cs" />
-    <Compile Include="Models\DetailedPackageMetadataTests.cs" />
-    <Compile Include="NuGetSettingsSerializerTests.cs" />
-    <Compile Include="NuGetSolutionManagerServiceWrapperTests.cs" />
-    <Compile Include="NuGetSourcesServiceWrapperTests.cs" />
-    <Compile Include="PackageItemLoaderTests.cs" />
-    <Compile Include="PackageLicenseUtilitiesTests.cs" />
-    <Compile Include="PackageManagerListItemsTest.cs" />
-    <Compile Include="TestNuGetUILogger.cs" />
-    <Compile Include="TestPackageSearchMetadata.cs" />
-    <Compile Include="UserInterfaceService\NuGetUIContextTests.cs" />
-    <Compile Include="UserInterfaceService\NuGetUITests.cs" />
-    <Compile Include="Utility\NuGetSearchServiceReconnectorTests.cs" />
-    <Compile Include="Utility\ProjectUtilityTests.cs" />
-    <Compile Include="WpfFactAttribute.cs" />
-    <Compile Include="WpfFactDiscoverer.cs" />
-    <Compile Include="WpfTestCase.cs" />
-    <Compile Include="WpfTheoryAttribute.cs" />
-    <Compile Include="WpfTheoryDiscoverer.cs" />
-    <Compile Include="Xamls\InfiniteScrollListTests.cs" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\NuGet.Clients\NuGet.VisualStudio\NuGet.VisualStudio.csproj" />

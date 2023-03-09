@@ -27,17 +27,14 @@ steps:
         if ([System.String]::IsNullOrEmpty($env:VsTargetChannelOverride) -eq $false) {
           $targetChannel = $env:VsTargetChannelOverride
         } else {
-          $targetChannel = & dotnet msbuild $env:BUILD_REPOSITORY_LOCALPATH\build\config.props /restore:false "/ConsoleLoggerParameters:Verbosity=Minimal;NoSummary;ForceNoAlign" /nologo /target:GetVsTargetChannel
-          $targetChannel = $targetChannel.Trim()
+          $targetChannel = ((& dotnet msbuild $env:BUILD_REPOSITORY_LOCALPATH\build\config.props /restore:false "/ConsoleLoggerParameters:Verbosity=Minimal;NoSummary;ForceNoAlign" /nologo /target:GetVsTargetChannel) | Out-String).Trim()
         }
         if ([System.String]::IsNullOrEmpty($env:VsTargetChannelOverrideForTests) -eq $false) {
           $targetChannelForTests = $env:VsTargetChannelOverrideForTests
         } else {
-          $targetChannelForTests = & dotnet msbuild $env:BUILD_REPOSITORY_LOCALPATH\build\config.props /restore:false "/ConsoleLoggerParameters:Verbosity=Minimal;NoSummary;ForceNoAlign" /nologo /target:GetVsTargetChannelForTests
-          $targetChannelForTests = $targetChannelForTests.Trim()
+          $targetChannelForTests = ((& dotnet msbuild $env:BUILD_REPOSITORY_LOCALPATH\build\config.props /restore:false "/ConsoleLoggerParameters:Verbosity=Minimal;NoSummary;ForceNoAlign" /nologo /target:GetVsTargetChannelForTests) | Out-String).Trim()
         }
-        $targetMajorVersion = & dotnet msbuild $env:BUILD_REPOSITORY_LOCALPATH\build\config.props /restore:false "/ConsoleLoggerParameters:Verbosity=Minimal;NoSummary;ForceNoAlign" /nologo /target:GetVsTargetMajorVersion
-        $targetMajorVersion = $targetMajorVersion.Trim()
+        $targetMajorVersion = ((& dotnet msbuild $env:BUILD_REPOSITORY_LOCALPATH\build\config.props /restore:false "/ConsoleLoggerParameters:Verbosity=Minimal;NoSummary;ForceNoAlign" /nologo /target:GetVsTargetMajorVersion) | Out-String).Trim()
         Write-Host "##vso[task.setvariable variable=VsTargetChannel;isOutput=true]$targetChannel"
         Write-Host "##vso[task.setvariable variable=VsTargetChannelForTests;isOutput=true]$targetChannelForTests"
         Write-Host "##vso[task.setvariable variable=VsTargetMajorVersion;isOutput=true]$targetMajorVersion"

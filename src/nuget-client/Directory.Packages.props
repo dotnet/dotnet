@@ -6,7 +6,7 @@
     <MicrosoftCodeAnalysisPublicApiAnalyzersVersion Condition="'$(MicrosoftCodeAnalysisPublicApiAnalyzersVersion)' == ''">3.0.0</MicrosoftCodeAnalysisPublicApiAnalyzersVersion>
     <NewtonsoftJsonPackageVersion Condition="'$(NewtonsoftJsonPackageVersion)' == ''">13.0.1</NewtonsoftJsonPackageVersion>
     <SystemPackagesVersion Condition="'$(SystemPackagesVersion)' == ''">4.3.0</SystemPackagesVersion>
-    <VSFrameworkVersion Condition="'$(VSFrameworkVersion)' == ''">17.2.0-preview-2-32304-091</VSFrameworkVersion>
+    <VSFrameworkVersion Condition="'$(VSFrameworkVersion)' == ''">17.4.33103.184</VSFrameworkVersion>
     <VSServicesVersion Condition="'$(VSServicesVersion)' == ''">16.153.0</VSServicesVersion>
     <!-- Default MSBuild version -->
     <MicrosoftBuildVersion Condition="'$(MicrosoftBuildVersion)' == ''">17.3.1</MicrosoftBuildVersion>
@@ -94,7 +94,6 @@
       To resolve runtime assembly binding failures, we'll downgrade the package from 4.11.1 to 4.9.0.
     -->
     <PackageVersion Include="System.Threading.Tasks.Dataflow" Version="4.9.0" />
-    <PackageVersion Include="VSSDK.TemplateWizardInterface" Version="12.0.4" />
     <PackageVersion Include="VsWebSite.Interop" Version="$(VSFrameworkVersion)" />
     <PackageVersion Include="xunit" Version="2.4.1" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.4.5" />
@@ -113,8 +112,8 @@
               '$(MSBuildProjectFile)' == 'NuGet.VisualStudio.Contracts.csproj' OR
               '$(MSBuildProjectFile)' == 'NuGet.VisualStudio.Interop.csproj' OR
               '$(MSBuildProjectFile)' == 'NuGet.SolutionRestoreManager.Interop.csproj'">
-    <PackageVersion Include="Microsoft.ServiceHub.Framework" Version="2.7.327-preview" />
-    <PackageVersion Include="Microsoft.VisualStudio.ComponentModelHost" Version="17.0.67-g9e37b637e6" />
+    <PackageVersion Include="Microsoft.ServiceHub.Framework" Version="4.1.112" />
+    <PackageVersion Include="Microsoft.VisualStudio.ComponentModelHost" Version="17.4.255" />
     <PackageVersion Update="Microsoft.VisualStudio.SDK" Version="" />
     <PackageVersion Include="Microsoft.VisualStudio.Shell.15.0" Version="$(VSFrameworkVersion)" />
   </ItemGroup>

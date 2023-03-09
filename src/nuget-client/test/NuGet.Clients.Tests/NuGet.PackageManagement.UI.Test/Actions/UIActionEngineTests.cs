@@ -13,6 +13,7 @@ using Moq;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Frameworks;
+using NuGet.PackageManagement.Telemetry;
 using NuGet.PackageManagement.VisualStudio;
 using NuGet.Packaging.Core;
 using NuGet.ProjectManagement;
@@ -196,6 +197,41 @@ namespace NuGet.PackageManagement.UI.Test
                 item => Assert.Equal(3, item));
             Assert.Equal(3, pkgSeverities.Count());
         }
+
+        [Theory]
+        [InlineData("packageA", "2.0.0", "*")]
+        [InlineData("packageA", "2.0.0", "(1.0.0, )")]
+        [InlineData("packageA", "2.0.0", null)]
+        public void ToTelemetryPackage_Succeeds(string packageId, string packageVersion, string packageVersionRange)
+        {
+            TelemetryEvent telemetryEvent = UIActionEngine.ToTelemetryPackage(packageId, packageVersion, packageVersionRange);
+
+            Assert.Equal(telemetryEvent.GetPiiData().First().Value.ToString(), VSTelemetryServiceUtility.NormalizePackageId(packageId));
+            Assert.Equal(telemetryEvent["version"], packageVersion);
+            Assert.Equal(telemetryEvent["versionRange"], packageVersionRange);
+        }
+
+        public static IEnumerable<object[]> GetTelemetryListTestData()
+        {
+            yield return new object[] { new List<Tuple<string, string>> { new Tuple<string, string>("packageA", "2.0.0") } };
+            yield return new object[] { new List<Tuple<string, string>> { new Tuple<string, string>("packageB", "1.0.0") } };
+        }
+
+        [Theory]
+        [MemberData(nameof(GetTelemetryListTestData))]
+        public void ToTelemetryPackageList_Succeeds(List<Tuple<string, string>> packages)
+        {
+            List<TelemetryEvent> telemetryEvents = UIActionEngine.ToTelemetryPackageList(packages);
+
+            Assert.Equal(packages.Count(), telemetryEvents.Count());
+
+            for (int index = 0; index < telemetryEvents.Count(); index++)
+            {
+                Assert.Equal(telemetryEvents[index].GetPiiData().First().Value.ToString(), VSTelemetryServiceUtility.NormalizePackageId(packages[index].Item1));
+                Assert.Equal(telemetryEvents[index]["version"], packages[index].Item2);
+            }
+        }
+
 
         public static IEnumerable<object[]> GetInstallActionTestData()
         {
