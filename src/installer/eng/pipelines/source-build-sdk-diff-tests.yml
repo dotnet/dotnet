@@ -1,0 +1,56 @@
+schedules:
+- cron: "0 7 * * 1-5"
+  displayName: Run on weekdays at 7am UTC
+  branches:
+    include:
+    - main
+    - release/*
+
+pr: none
+trigger: none
+
+pool:
+  name: NetCore1ESPool-Svc-Internal
+  demands: ImageOverride -equals 1es-ubuntu-2004
+
+parameters:
+- name: dotnetDotnetRunId
+  displayName: 'Specific dotnet-dotnet run ID number (e.g `2108850`)'
+  type: string
+  default: ' '
+
+jobs:
+- template: templates/jobs/sdk-diff-tests.yml
+  parameters:
+    buildName: CentOSStream8_Offline_MsftSdk
+    targetRid: centos.8-x64
+    architecture: x64
+    dotnetDotnetRunId: ${{ parameters.dotnetDotnetRunId }}
+
+- template: templates/jobs/sdk-diff-tests.yml
+  parameters:
+    buildName: CentOSStream9_Offline_MsftSdk
+    targetRid: centos.9-x64
+    architecture: x64
+    dotnetDotnetRunId: ${{ parameters.dotnetDotnetRunId }}
+
+- template: templates/jobs/sdk-diff-tests.yml
+  parameters:
+    buildName: Fedora36_Offline_MsftSdk
+    targetRid: fedora.36-x64
+    architecture: x64
+    dotnetDotnetRunId: ${{ parameters.dotnetDotnetRunId }}
+
+- template: templates/jobs/sdk-diff-tests.yml
+  parameters:
+    buildName: Ubuntu2004_Offline_MsftSdk
+    targetRid: ubuntu.2004-x64
+    architecture: x64
+    dotnetDotnetRunId: ${{ parameters.dotnetDotnetRunId }}
+
+- template: templates/jobs/sdk-diff-tests.yml
+  parameters:
+    buildName: Debian11_Offline_MsftSdk
+    targetRid: debian.11-arm64
+    architecture: arm64
+    dotnetDotnetRunId: ${{ parameters.dotnetDotnetRunId }}
