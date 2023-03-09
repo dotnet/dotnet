@@ -160,7 +160,7 @@ namespace NuGet.VisualStudio.Implementation.Extensibility
 
             if (project is IPackageReferenceProject packageReferenceProject)
             {
-                var installed = await packageReferenceProject.GetInstalledAndTransitivePackagesAsync(cancellationToken);
+                var installed = await packageReferenceProject.GetInstalledAndTransitivePackagesAsync(includeTransitiveOrigins: false, cancellationToken);
                 directPackages = installed.InstalledPackages;
                 transitivePackages = installed.TransitivePackages;
             }

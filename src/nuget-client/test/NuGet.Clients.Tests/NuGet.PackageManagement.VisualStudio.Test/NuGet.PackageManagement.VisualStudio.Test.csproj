@@ -19,57 +19,7 @@
     <Reference Include="WindowsBase" />
     <Reference Include="System.IO.Compression" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Common\IProjectContextInfoExtensionsTests.cs" />
-    <Compile Include="Common\PackageCollectionExtensionsTests.cs" />
-    <Compile Include="Feeds\ConsolidatePackageFeedTests.cs" />
-    <Compile Include="Feeds\FeedTestUtils.cs" />
-    <Compile Include="Feeds\InstalledAndTransitivePackageFeedTests.cs" />
-    <Compile Include="Feeds\SourceRepositoryCreator.cs" />
-    <Compile Include="Feeds\SourceRepositoryExtensionsTests.cs" />
-    <Compile Include="CpsPackageReferenceProjectTests.cs" />
-    <Compile Include="PackageFeeds\PackageSourceMonikerTests.cs" />
-    <Compile Include="Projects\FrameworkInstalledPackagesTests.cs" />
-    <Compile Include="ProjectFactories.cs" />
-    <Compile Include="ProjectSystems\LegacyPackageReferenceProjectTests.cs" />
-    <Compile Include="Feeds\MultiSourcePackageMetadataProviderTests.cs" />
-    <Compile Include="Feeds\UpdatePackageFeedTests.cs" />
-    <Compile Include="Feeds\InstalledPackageFeedTests.cs" />
-    <Compile Include="FrameworkAssemblyResolverTests.cs" />
-    <Compile Include="ProjectSystems\LegacyPackageReferenceRestoreUtilityTests.cs" />
-    <Compile Include="ProjectSystems\ProjectSystemCacheTests.cs" />
-    <Compile Include="ProjectSystems\TestVSProjectAdapter.cs" />
-    <Compile Include="Projects\CpsPackageReferenceProjectProviderTests.cs" />
-    <Compile Include="Projects\PackageReferenceProjectTests.cs" />
-    <Compile Include="Services\MockedVSCollectionTests.cs" />
-    <Compile Include="Services\NuGetLockServiceTests.cs" />
-    <Compile Include="Services\NuGetProjectManagerServiceTests.cs" />
-    <Compile Include="Services\NuGetPackageFileServiceTests.cs" />
-    <Compile Include="Services\NuGetSourcesServiceTests.cs" />
-    <Compile Include="Services\SharedServiceStateTests.cs" />
-    <Compile Include="Services\TestSharedServiceState.cs" />
-    <Compile Include="Services\NuGetPackageSearchServiceTests.cs" />
-    <Compile Include="Telemetry\ActionsTelemetryServiceTests.cs" />
-    <Compile Include="Telemetry\PackageManagerUIRefreshTelemetryTests.cs" />
-    <Compile Include="Telemetry\TelemetryOnceEmitterTests.cs" />
-    <Compile Include="Telemetry\HyperlinkClickedTelemetryEventTests.cs" />
-    <Compile Include="Telemetry\IntervalTrackerTests.cs" />
-    <Compile Include="Telemetry\NuGetTelemetryServiceTests.cs" />
-    <Compile Include="Telemetry\RestoreTelemetryServiceTests.cs" />
-    <Compile Include="Telemetry\SearchSelectionTelemetryEventTests.cs" />
-    <Compile Include="Telemetry\TestTelemetryUtility.cs" />
-    <Compile Include="Utility\FileWatchers\FileWatcherFactoryTests.cs" />
-    <Compile Include="Utility\FileWatchers\SolutionConfigFileWatcherTests.cs" />
-    <Compile Include="Utility\FileWatchers\UserConfigFileWatcherTests.cs" />
-    <Compile Include="Utility\GetPackageReferenceUtilityTests.cs" />
-    <Compile Include="VisualStudioCredentialProviderTests.cs" />
-    <Compile Include="VsCredentialProviderAdapterTests.cs" />
-    <Compile Include="VsCredentialProviderImporterTests.cs" />
-    <Compile Include="VsProjectBuildPropertiesTelemetryTests.cs" />
-    <Compile Include="VSRestoreSettingsUtilityTests.cs" />
-    <Compile Include="Telemetry\VsTelemetrySessionTest.cs" />
-    <Compile Include="VSSettingsTests.cs" />
-  </ItemGroup>
+
   <ItemGroup>
     <EmbeddedResource Include="compiler\resources\EntityFrameworkSearch.json" />
     <EmbeddedResource Include="compiler\resources\loggingAbstractions.json" />

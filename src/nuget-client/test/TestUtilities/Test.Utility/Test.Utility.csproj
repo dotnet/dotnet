@@ -46,6 +46,7 @@
 
   <ItemGroup Condition=" '$(TargetFramework)' == '$(NETFXTargetFramework)' ">
     <ProjectReference Include="..\..\..\src\NuGet.Clients\NuGet.CommandLine\NuGet.CommandLine.csproj" />
+    <ProjectReference Include="..\..\..\src\NuGet.Clients\NuGet.PackageManagement.VisualStudio\NuGet.PackageManagement.VisualStudio.csproj" />
     <ProjectReference Include="..\..\..\src\NuGet.Clients\NuGet.VisualStudio.Common\NuGet.VisualStudio.Common.csproj" />
   </ItemGroup>
 
@@ -81,6 +82,7 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == '$(NETFXTargetFramework)' ">
+    <PackageReference Include="FluentAssertions" />
     <PackageReference Include="Microsoft.Build" ExcludeAssets="runtime" />
     <PackageReference Include="Microsoft.Build.Tasks.Core" ExcludeAssets="runtime" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" ExcludeAssets="runtime" />
@@ -103,7 +105,11 @@
 
   <!-- Remove files that do not support netcore -->
   <ItemGroup Condition=" '$(IsCore)' == 'true' ">
+    <Compile Remove="ProjectManagement\TestCpsPackageReferenceProject.cs" />
+    <Compile Remove="ProjectManagement\TestExternalProjectReference.cs" />
     <Compile Remove="ProjectManagement\TestProjectKProject.cs" />
+    <Compile Remove="ProjectManagement\TestProjectSystemServices.cs" />
+    <Compile Remove="ProjectManagement\TestProjectThreadingService.cs" />
     <Compile Remove="Threading\*.cs" />
     <Compile Remove="VisualStudio\*.cs" />
   </ItemGroup>

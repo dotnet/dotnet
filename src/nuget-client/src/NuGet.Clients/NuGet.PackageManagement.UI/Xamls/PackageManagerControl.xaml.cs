@@ -140,6 +140,8 @@ namespace NuGet.PackageManagement.UI
             ApplySettings(settings, Settings);
             _initialized = true;
 
+            await IsCentralPackageManagementEnabledAsync(CancellationToken.None);
+
             NuGetExperimentationService = await ServiceLocator.GetComponentModelServiceAsync<INuGetExperimentationService>();
             _isTransitiveDependenciesExperimentEnabled = NuGetExperimentationService.IsExperimentEnabled(ExperimentationConstants.TransitiveDependenciesInPMUI);
 
@@ -564,6 +566,19 @@ namespace NuGet.PackageManagement.UI
             finally
             {
                 _dontStartNewSearch = false;
+            }
+        }
+
+        private async Task IsCentralPackageManagementEnabledAsync(CancellationToken cancellationToken)
+        {
+            if (!Model.IsSolution)
+            {
+                await NuGetUIThreadHelper.JoinableTaskFactory.RunAsync(async delegate
+                {
+                    // Go off the UI thread to perform non-UI operations
+                    await TaskScheduler.Default;
+                    _detailModel.IsCentralPackageManagementEnabled = await Model.Context.Projects.First().IsCentralPackageManagementEnabledAsync(Model.Context.ServiceBroker, cancellationToken);
+                });
             }
         }
 

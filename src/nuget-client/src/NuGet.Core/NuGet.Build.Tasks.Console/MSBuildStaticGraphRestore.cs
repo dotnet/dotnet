@@ -706,6 +706,9 @@ namespace NuGet.Build.Tasks.Console
                 // Fix project reference casings to match the original project on case insensitive file systems.
                 MSBuildRestoreUtility.NormalizePathCasings(projectPathLookup, dependencyGraphSpec);
 
+                // Remove references to projects that could not be read by restore.
+                MSBuildRestoreUtility.RemoveMissingProjects(dependencyGraphSpec);
+
                 // Add all entry projects if they support restore.  In most cases this is just a single project but if the entry
                 // project is a solution, then all projects in the solution are added (if they support restore)
                 foreach (var entryPoint in entryProjects)

@@ -23,40 +23,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Apex\ApexBaseTestClass.cs" />
-    <Compile Include="Apex\ApexTestContext.cs" />
-    <Compile Include="Apex\NuGetConsoleTestExtension.cs" />
-    <Compile Include="Apex\NuGetTestOperationConfiguration.cs" />
-    <Compile Include="Apex\SharedVisualStudioHostTestClass.cs" />
-    <Compile Include="Apex\NuGetApexTestService.cs" />
-    <Compile Include="Apex\NuGetApexVerifier.cs" />
-    <Compile Include="Fixtures\ApexTestRequirementsFixture.cs" />
-    <Compile Include="Fixtures\IVisualStudioHostFixtureFactory.cs" />
-    <Compile Include="Fixtures\SignedPackagesTestsApexFixture.cs" />
-    <Compile Include="Fixtures\VisualStudioHostFixture.cs" />
-    <Compile Include="Fixtures\VisualStudioHostFixtureFactory.cs" />
-    <Compile Include="Fixtures\VisualStudioOperationsFixture.cs" />
-    <Compile Include="NuGetEndToEndTests\IVsServicesTestCase.cs" />
-    <Compile Include="NuGetPackageSigningTests\AuthorSignedPackageTestCase.cs" />
-    <Compile Include="NuGetEndToEndTests\NuGetConsoleTestCase.cs" />
-    <Compile Include="NuGetEndToEndTests\NetCoreProjectTestCase.cs" />
-    <Compile Include="NuGetEndToEndTests\NuGetUITestCase.cs" />
-    <Compile Include="NuGetPackageSigningTests\RepositoryCountersignedPackageTestCase.cs" />
-    <Compile Include="Utility\CommonUtility.cs" />
-    <Compile Include="Apex\NuGetTypeConstraint.cs" />
-    <Compile Include="Apex\NuGetUIProjectTestExtensionVerifier.cs" />
-    <Compile Include="Apex\NuGetUIProjectTestExtension.cs" />
-    <Compile Include="Apex\NuGetBaseTestExtension.cs" />
-    <Compile Include="Utility\SigningUtility.cs" />
-    <Compile Include="VisualStudioHostExtension.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Apex\NuGetConsoleTestExtensionVerifier.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="NuGetPackageSigningTests\RepositorySignedPackageTestCase.cs" />
-  </ItemGroup>
+ 
   <ItemGroup>
     <PackageReference Include="Microsoft.Test.Apex.VisualStudio" ExcludeAssets="Compile" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.VisualStudio.Sdk" />

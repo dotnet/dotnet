@@ -810,6 +810,53 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
         [PlatformTheory(Platform.Windows)]
         [InlineData(true)]
         [InlineData(false)]
+        public async Task MsbuildRestore_WithMissingProjectReferences_HandlesProjectReferencesToUnsupportedProjects(bool restoreUseStaticGraphEvaluation)
+        {
+            // Arrange
+            using (var pathContext = new SimpleTestPathContext())
+            {
+                // Set up solution, project, and packages
+                var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+
+                var net461 = NuGetFramework.Parse("net472");
+
+                var projectA = new SimpleTestProjectContext("a", ProjectStyle.PackageReference, pathContext.SolutionRoot);
+
+                var projectB = new SimpleTestProjectContext("b", ProjectStyle.PackageReference, pathContext.SolutionRoot);
+
+                var projectAFrameworkContext = new SimpleTestProjectFrameworkContext(net461);
+
+                projectAFrameworkContext.ProjectReferences.Add(projectB);
+
+                var packageX = new SimpleTestPackageContext()
+                {
+                    Id = "x",
+                    Version = "1.0.0"
+                };
+
+                projectA.Frameworks.Add(projectAFrameworkContext);
+
+                projectA.AddPackageToAllFrameworks(packageX);
+
+                solution.Projects.Add(projectA);
+                solution.Create(pathContext.SolutionRoot);
+
+                File.WriteAllText(
+                   projectB.ProjectPath,
+                   @"<Project />");
+
+                await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, packageX);
+
+                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore /p:RestoreUseStaticGraphEvaluation={restoreUseStaticGraphEvaluation} {projectA.ProjectPath}", ignoreExitCode: true);
+
+                // Assert
+                result.ExitCode.Should().Be(0, result.AllOutput);
+            }
+        }
+
+        [PlatformTheory(Platform.Windows)]
+        [InlineData(true)]
+        [InlineData(false)]
         public async Task MsbuildRestore_WithCPPCliVcxproj_RestoresSuccessfullyWithPackageReference(bool isStaticGraphRestore)
         {
             // Arrange

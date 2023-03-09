@@ -21,6 +21,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
         ValueTask<IInstalledAndTransitivePackages> GetInstalledAndTransitivePackagesAsync(
             IReadOnlyCollection<string> projectIds,
             CancellationToken cancellationToken);
+
         /// <summary>
         /// Obtains the installed and transitive packages from all given projects, optionally including transitive origins for transitive packages.
         /// </summary>
@@ -39,6 +40,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
             string projectId,
             bool includeUnresolved,
             CancellationToken cancellationToken);
+        ValueTask<bool> IsCentralPackageManagementEnabledAsync(string projectId, CancellationToken cancellationToken);
         ValueTask<IProjectMetadataContextInfo> GetMetadataAsync(string projectId, CancellationToken cancellationToken);
         ValueTask<IProjectContextInfo> GetProjectAsync(string projectId, CancellationToken cancellationToken);
         ValueTask<IReadOnlyCollection<IProjectContextInfo>> GetProjectsAsync(CancellationToken cancellationToken);

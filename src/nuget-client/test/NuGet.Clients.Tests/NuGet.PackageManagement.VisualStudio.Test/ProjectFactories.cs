@@ -17,6 +17,7 @@ using NuGet.Protocol.Core.Types;
 using NuGet.Test.Utility;
 using NuGet.Versioning;
 using NuGet.VisualStudio;
+using Test.Utility;
 using Xunit;
 using Xunit.Abstractions;
 

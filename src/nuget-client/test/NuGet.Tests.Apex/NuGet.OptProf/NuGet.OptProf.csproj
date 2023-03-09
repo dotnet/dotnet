@@ -8,11 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="TestIVsPackageSourceProvider.cs" />
-    <Compile Include="Tests.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="Assets\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
