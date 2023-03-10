@@ -13,13 +13,13 @@
     <deploymenttoolsOutputPackageVersion>1.0.0-preview5.1.22263.1</deploymenttoolsOutputPackageVersion>
     <diagnosticsGitCommitHash>e3e1490a23f27a6e0ed30d323035660c3ffc52cd</diagnosticsGitCommitHash>
     <diagnosticsOutputPackageVersion>6.0.0-preview.22424.1</diagnosticsOutputPackageVersion>
-    <emsdkGitCommitHash>4c1f185a78249c6974c1f6c248dad189fe70497b</emsdkGitCommitHash>
-    <emsdkOutputPackageVersion>8.0.0-preview.3.23156.1</emsdkOutputPackageVersion>
+    <emsdkGitCommitHash>b211c38c398416b516ffab1806b8ba47d49c42da</emsdkGitCommitHash>
+    <emsdkOutputPackageVersion>8.0.0-preview.3.23159.3</emsdkOutputPackageVersion>
     <formatGitCommitHash>2cb3e68c6b9a966114572fd63f2a20d2cb54a288</formatGitCommitHash>
     <formatOutputPackageVersion>8.0.405501</formatOutputPackageVersion>
     <fsharpGitCommitHash>225eaa6ddb994e7c74c7eac1e301f688366f1b78</fsharpGitCommitHash>
     <fsharpOutputPackageVersion>7.0.300-beta.23158.5</fsharpOutputPackageVersion>
-    <installerGitCommitHash>1885389cd7fa25a04037e45d2760573d995f6293</installerGitCommitHash>
+    <installerGitCommitHash>359d6cd0db0753b791f4d213a458160ca0c75c24</installerGitCommitHash>
     <installerOutputPackageVersion>8.0.100</installerOutputPackageVersion>
     <msbuildGitCommitHash>a0c282787d59ca9a449ded85175f39030e5077b8</msbuildGitCommitHash>
     <msbuildOutputPackageVersion>17.6.0-preview-23159-04</msbuildOutputPackageVersion>

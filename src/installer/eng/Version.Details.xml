@@ -165,18 +165,10 @@
       <Uri>https://github.com/Microsoft/ApplicationInsights-dotnet</Uri>
       <Sha>53b80940842204f78708a538628288ff5d741a1d</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Workload.Emscripten.Current.Manifest-8.0.100-preview.3" Version="8.0.0-preview.3.23156.1" CoherentParentDependency="Microsoft.NETCore.App.Runtime.win-x64">
+    <Dependency Name="Microsoft.NET.Workload.Emscripten.Current.Manifest-8.0.100.Transport" Version="8.0.0-preview.3.23159.3" CoherentParentDependency="Microsoft.NETCore.App.Runtime.win-x64">
       <Uri>https://github.com/dotnet/emsdk</Uri>
-      <Sha>4c1f185a78249c6974c1f6c248dad189fe70497b</Sha>
+      <Sha>b211c38c398416b516ffab1806b8ba47d49c42da</Sha>
       <SourceBuild RepoName="emsdk" ManagedOnly="true" />
-    </Dependency>
-    <Dependency Name="Microsoft.NET.Workload.Emscripten.net7.Manifest-8.0.100-preview.3" Version="8.0.0-preview.3.23156.1" CoherentParentDependency="Microsoft.NETCore.App.Runtime.win-x64">
-      <Uri>https://github.com/dotnet/emsdk</Uri>
-      <Sha>4c1f185a78249c6974c1f6c248dad189fe70497b</Sha>
-    </Dependency>
-    <Dependency Name="Microsoft.NET.Workload.Emscripten.net6.Manifest-8.0.100-preview.3" Version="8.0.0-preview.3.23156.1" CoherentParentDependency="Microsoft.NETCore.App.Runtime.win-x64">
-      <Uri>https://github.com/dotnet/emsdk</Uri>
-      <Sha>4c1f185a78249c6974c1f6c248dad189fe70497b</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Deployment.DotNet.Releases" Version="1.0.0-preview5.1.22263.1">
       <Uri>https://github.com/dotnet/deployment-tools</Uri>

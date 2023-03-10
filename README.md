@@ -173,13 +173,13 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/diagnostics`  
 *[dotnet/diagnostics@e3e1490](https://github.com/dotnet/diagnostics/commit/e3e1490a23f27a6e0ed30d323035660c3ffc52cd)*
 - `src/emsdk`  
-*[dotnet/emsdk@4c1f185](https://github.com/dotnet/emsdk/commit/4c1f185a78249c6974c1f6c248dad189fe70497b)*
+*[dotnet/emsdk@b211c38](https://github.com/dotnet/emsdk/commit/b211c38c398416b516ffab1806b8ba47d49c42da)*
 - `src/format`  
 *[dotnet/format@2cb3e68](https://github.com/dotnet/format/commit/2cb3e68c6b9a966114572fd63f2a20d2cb54a288)*
 - `src/fsharp`  
 *[dotnet/fsharp@225eaa6](https://github.com/dotnet/fsharp/commit/225eaa6ddb994e7c74c7eac1e301f688366f1b78)*
 - `src/installer`  
-*[dotnet/installer@1885389](https://github.com/dotnet/installer/commit/1885389cd7fa25a04037e45d2760573d995f6293)*
+*[dotnet/installer@359d6cd](https://github.com/dotnet/installer/commit/359d6cd0db0753b791f4d213a458160ca0c75c24)*
 - `src/msbuild`  
 *[dotnet/msbuild@a0c2827](https://github.com/dotnet/msbuild/commit/a0c282787d59ca9a449ded85175f39030e5077b8)*
 - `src/nuget-client`  
