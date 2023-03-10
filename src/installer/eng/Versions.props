@@ -200,10 +200,8 @@
     <XamarinMacOSWorkloadManifestVersion>13.1.227-net8-p1</XamarinMacOSWorkloadManifestVersion>
     <XamarinTvOSWorkloadManifestVersion>16.1.1015-net8-p1</XamarinTvOSWorkloadManifestVersion>
     <!-- Workloads from dotnet/emsdk -->
-    <MicrosoftNETWorkloadEmscriptenCurrentManifest80100preview3PackageVersion>8.0.0-preview.3.23156.1</MicrosoftNETWorkloadEmscriptenCurrentManifest80100preview3PackageVersion>
-    <MicrosoftNETWorkloadEmscriptennet7Manifest80100preview3PackageVersion>8.0.0-preview.3.23156.1</MicrosoftNETWorkloadEmscriptennet7Manifest80100preview3PackageVersion>
-    <MicrosoftNETWorkloadEmscriptennet6Manifest80100preview3PackageVersion>8.0.0-preview.3.23156.1</MicrosoftNETWorkloadEmscriptennet6Manifest80100preview3PackageVersion>
-    <EmscriptenWorkloadManifestVersion>$(MicrosoftNETWorkloadEmscriptenCurrentManifest80100preview3PackageVersion)</EmscriptenWorkloadManifestVersion>
+    <MicrosoftNETWorkloadEmscriptenCurrentManifest80100TransportPackageVersion>8.0.0-preview.3.23159.3</MicrosoftNETWorkloadEmscriptenCurrentManifest80100TransportPackageVersion>
+    <EmscriptenWorkloadManifestVersion>$(MicrosoftNETWorkloadEmscriptenCurrentManifest80100TransportPackageVersion)</EmscriptenWorkloadManifestVersion>
     <!-- emsdk workload prerelease version band must match the emsdk feature band -->
     <EmscriptenWorkloadFeatureBand>8.0.100$([System.Text.RegularExpressions.Regex]::Match($(EmscriptenWorkloadManifestVersion), `-[A-z]*[\.]*\d*`))</EmscriptenWorkloadFeatureBand>
     <!-- Workloads from dotnet/runtime use MicrosoftNETCoreAppRefPackageVersion because it has a stable name that does not include the full feature band -->
