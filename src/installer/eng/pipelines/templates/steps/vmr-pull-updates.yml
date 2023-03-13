@@ -35,6 +35,7 @@ steps:
     --branch ${{ parameters.vmrBranch }}
     --repository "installer:${{ parameters.targetRef }}"
     --recursive
+    --remote "installer:$(pwd)"
     --readme-template $(Agent.BuildDirectory)/installer/src/VirtualMonoRepo/README.template.md
     --tpn-template $(Agent.BuildDirectory)/installer/src/VirtualMonoRepo/THIRD-PARTY-NOTICES.template.txt
     --debug
