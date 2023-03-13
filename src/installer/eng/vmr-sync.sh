@@ -14,45 +14,47 @@
 ### folder to this to speed up your re-runs.
 ###
 ### USAGE:
-###   Synchronize the VMR to the commit of dotnet/installer that is currently being built:
-###     ./vmr-sync.sh --tmp-dir "$HOME/repos/tmp"
-###
 ###   Synchronize the VMR to a specific commit of dotnet/runtime using custom fork:
 ###     ./vmr-sync.sh \
 ###        --repository runtime:e7e71da303af8dc97df99b098f21f526398c3943 \
-###        --remote runtime:https://github.com/yourfork/runtime \
-###        --tmp-dir "$HOME/repos/tmp"\
+###        --remote runtime:https://github.com/yourfork/runtime          \
+###        --tmp-dir "$HOME/repos/tmp"
 ###
 ### Options:
+###   -r, --repository name:GIT_REF
+###       Required. Repository + git ref separated by colon to synchronize to.
+###       This can be a specific commit, branch, tag..
+###
 ###   -t, --tmp, --tmp-dir PATH
 ###       Required. Path to the temporary folder where repositories will be cloned
-###   --repository name:GIT_REF
-###       Optional. Repository + git ref separated by colon to synchronize to.
-###       This can be a specific commit, branch, tag..
-###       When omitted, the script will synchronize the installer commit based on the version of the parent
-###       where this script is stored.
-###   -v, --vmr, --vmr-dir PATH
-###       Optional. Path to the dotnet/dotnet repository. When null, gets cloned to the temporary folder
+###
 ###   -b, --branch, --vmr-branch BRANCH_NAME
-###       Optional. Branch of the 'dotnet/dotnet' repo to synchronize to
-###       This should match the target branch of the PR; defaults to 'main'
-###   --remote name:URI
-###       Optional. Additional remote to use during the synchronization
-###       This can be used to synchronize to a commit from a fork of the repository
-###       Example: 'runtime:https://github.com/yourfork/runtime'
-###   --recursive
-###       Optional. Recursively synchronize all the source build dependencies (declared in Version.Details.xml)
-###       This is used when performing the full synchronization during installer's CI and the final VMR sync.
-###       Defaults to false unless no repository is supplied in which case a recursive sync of installer is performed.
+###       Optional. Branch of the 'dotnet/dotnet' repo to synchronize. The VMR will be checked out to this branch
+###
+###   --debug
+###       Optional. Turns on the most verbose logging for the VMR tooling
+###
 ###   --readme-template
 ###       Optional. Template for VMRs README.md used for regenerating the file to list the newest versions of
 ###       components.
 ###       Defaults to src/VirtualMonoRepo/README.template.md
+###
+###   --recursive
+###       Optional. Recursively synchronize all the source build dependencies (declared in Version.Details.xml)
+###       This is used when performing the full synchronization during installer's CI and the final VMR sync.
+###       Defaults to false unless no repository is supplied in which case a recursive sync of installer is performed.
+###
+###   --remote name:URI
+###       Optional. Additional remote to use during the synchronization
+###       This can be used to synchronize to a commit from a fork of the repository
+###       Example: 'runtime:https://github.com/yourfork/runtime'
+###
 ###   --tpn-template
 ###       Optional. Template for the header of VMRs THIRD-PARTY-NOTICES file.
 ###       Defaults to src/VirtualMonoRepo/THIRD-PARTY-NOTICES.template.txt
-###   --debug
-###       Optional. Turns on the most verbose logging for the VMR tooling
+###
+###   -v, --vmr, --vmr-dir PATH
+###       Optional. Path to the dotnet/dotnet repository. When null, gets cloned to the temporary folder
 
 source="${BASH_SOURCE[0]}"
 
@@ -85,15 +87,21 @@ function highlight () {
 }
 
 installer_dir=$(realpath "$scriptroot/../")
+
 tmp_dir=''
 vmr_dir=''
-vmr_branch='main'
+vmr_branch=''
 repository=''
+additional_remotes=''
 recursive=false
 verbosity=verbose
-additional_remotes="installer:$installer_dir"
 readme_template="$installer_dir/src/VirtualMonoRepo/README.template.md"
 tpn_template="$installer_dir/src/VirtualMonoRepo/THIRD-PARTY-NOTICES.template.txt"
+
+# If installer is a repo, we're in an installer and not in the dotnet/dotnet repo
+if [[ -d "$installer_dir/.git" ]]; then
+  additional_remotes="installer:$installer_dir"
+fi
 
 while [[ $# -gt 0 ]]; do
   opt="$(echo "$1" | tr "[:upper:]" "[:lower:]")"
@@ -110,7 +118,7 @@ while [[ $# -gt 0 ]]; do
       vmr_branch=$2
       shift
       ;;
-    --repository)
+    -r|--repository)
       repository=$2
       shift
       ;;
@@ -138,7 +146,7 @@ while [[ $# -gt 0 ]]; do
       ;;
     *)
       fail "Invalid argument: $1"
-      usage
+      print_help
       exit 1
       ;;
   esac
@@ -171,10 +179,8 @@ fi
 # Sanitize the input
 
 if [[ -z "$repository" ]]; then
-  current_sha=$(git -C "$installer_dir" rev-parse HEAD)
-  echo "No repository specified, will synchronize installer:$current_sha"
-  repository="installer:$current_sha"
-  recursive=true
+  fail "No repository to synchronize specified"
+  exit 1
 fi
 
 if [[ -z "$vmr_dir" ]]; then
@@ -194,16 +200,21 @@ fi
 if [[ ! -d "$vmr_dir" ]]; then
   highlight "Cloning 'dotnet/dotnet' into $vmr_dir.."
   git clone https://github.com/dotnet/dotnet "$vmr_dir"
-  git switch -c "$vmr_branch"
+
+  if [[ -n "$vmr_branch" ]]; then
+    git -C "$vmr_dir" switch -c "$vmr_branch"
+  fi
 else
   if ! git -C "$vmr_dir" diff --quiet; then
     fail "There are changes in the working tree of $vmr_dir. Please commit or stash your changes"
     exit 1
   fi
 
-  highlight "Preparing $vmr_dir"
-  git -C "$vmr_dir" checkout "$vmr_branch"
-  git -C "$vmr_dir" pull
+  if [[ -n "$vmr_branch" ]]; then
+    highlight "Preparing $vmr_dir"
+    git -C "$vmr_dir" checkout "$vmr_branch"
+    git -C "$vmr_dir" pull
+  fi
 fi
 
 set -e
@@ -213,15 +224,19 @@ set -e
 highlight 'Installing .NET, preparing the tooling..'
 source "$scriptroot/common/tools.sh"
 InitializeDotNetCli true
-dotnet="$scriptroot/../.dotnet/dotnet"
+dotnet=$(realpath "$scriptroot/../.dotnet/dotnet")
 "$dotnet" tool restore
 
-highlight "Starting the synchronization to '$repository'.."
+highlight "Starting the synchronization of '$repository'.."
 set +e
 
 recursive_arg=''
 if [[ "$recursive" == "true" ]]; then
   recursive_arg="--recursive"
+fi
+
+if [[ -n "$additional_remotes" ]]; then
+  additional_remotes="--additional-remotes $additional_remotes"
 fi
 
 # Synchronize the VMR
@@ -233,7 +248,7 @@ fi
   $recursive_arg                             \
   --readme-template "$readme_template"       \
   --tpn-template "$tpn_template"             \
-  --additional-remotes "$additional_remotes" \
+  $additional_remotes                        \
   "$repository"
 
 if [[ $? == 0 ]]; then

@@ -2,32 +2,17 @@
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
 
   <PropertyGroup>
-    <PackagesOutput>$(ProjectDirectory)/bin/$(Configuration)</PackagesOutput>
-    <RepoApiImplemented>false</RepoApiImplemented>
-    <DeterministicBuildOptOut>true</DeterministicBuildOptOut>
+    <PackagesOutput>$(ProjectDirectory)/src/Microsoft.Css.Parser/bin/$(Configuration)/</PackagesOutput>
   </PropertyGroup>
-
-  <ItemGroup>
-    <NuGetConfigFiles Include="$(ProjectDirectory)/NuGet.config" />
-    <NuGetConfigFiles Include="$(ProjectDirectory)/BASE/NuGet.config" />
-  </ItemGroup>
 
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 
   <Target Name="RepoBuild">
     <PropertyGroup>
-      <BuildCommandArgs>$(ProjectDirectory)/BASE/src/Microsoft.ApplicationInsights/Microsoft.ApplicationInsights.csproj</BuildCommandArgs>
+      <BuildCommandArgs>$(ProjectDirectory)/src/Microsoft.Css.Parser/Microsoft.Css.Parser.csproj</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /p:Configuration=$(Configuration)</BuildCommandArgs>
-      <BuildCommandArgs>$(BuildCommandArgs) /p:MicrosoftSourceLinkGitHubVersion=$(MicrosoftSourceLinkGitHubVersion)</BuildCommandArgs>
-      <BuildCommandArgs>$(BuildCommandArgs) /p:StableRelease=True</BuildCommandArgs>
-      <BuildCommandArgs>$(BuildCommandArgs) /p:RelativeOutputPathBase=</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /v:$(LogVerbosity)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) $(RedirectRepoOutputToLog)</BuildCommandArgs>
-
-      <!-- Re-assign path properties so output directories end up under src/application-insights -->
-      <BuildCommandArgs>$(BuildCommandArgs) /p:BinRoot=$(ProjectDirectory)/bin</BuildCommandArgs>
-      <BuildCommandArgs>$(BuildCommandArgs) /p:ObjRoot=$(ProjectDirectory)/obj</BuildCommandArgs>
-      <BuildCommandArgs>$(BuildCommandArgs) /p:PackageOutputDir=$(ProjectDirectory)/bin/$(Configuration)</BuildCommandArgs>
     </PropertyGroup>
 
     <Exec Command="$(DotnetToolCommand) restore /bl:restore.binlog $(BuildCommandArgs)  "

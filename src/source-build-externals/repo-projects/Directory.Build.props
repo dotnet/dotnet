@@ -1,7 +1,7 @@
 <Project>
 
   <PropertyGroup>
-    <RepositoryName Condition="'$(RepositoryName)' == ''">$(MSBuildProjectName)</RepositoryName>
+    <RepositoryName>$(MSBuildProjectName)</RepositoryName>
   </PropertyGroup>
 
   <Import Project="$([MSBuild]::GetPathOfFileAbove(Directory.Build.props, $(MSBuildThisFileDirectory)..))" />
@@ -78,9 +78,7 @@
     <EnvironmentVariables Include="GIT_COMMIT=$(GitCommitHash)" Condition="'$(GitCommitHash)' != ''" />
     <EnvironmentVariables Include="RepositoryType=Git" />
 
-    <EnvironmentVariables Include="DeterministicSourcePaths=true" Condition="'$(DeterministicBuildOptOut)' != 'true'" />
-    <EnvironmentVariables Include="DeterministicSourcePaths=false" Condition="'$(DeterministicBuildOptOut)' == 'true'" />
-
+    <EnvironmentVariables Include="DeterministicSourcePaths=false" />
     <EnvironmentVariables Include="SourceRoot=$(ProjectDirectory)" />
   </ItemGroup>
 

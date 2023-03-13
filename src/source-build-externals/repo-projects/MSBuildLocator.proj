@@ -2,22 +2,22 @@
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
 
   <PropertyGroup>
-    <PackagesOutput>$(ProjectDirectory)/src/Microsoft.Css.Parser/bin/$(Configuration)/</PackagesOutput>
-    <RepoApiImplemented>false</RepoApiImplemented>
-    <DeterministicBuildOptOut>true</DeterministicBuildOptOut>
+    <PackagesOutput>$(ProjectDirectory)/src/MSBuildLocator/bin/$(Configuration)/</PackagesOutput>
   </PropertyGroup>
 
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 
   <Target Name="RepoBuild">
     <PropertyGroup>
-      <BuildCommandArgs>$(ProjectDirectory)/src/Microsoft.Css.Parser/Microsoft.Css.Parser.csproj</BuildCommandArgs>
+      <BuildCommandArgs>$(ProjectDirectory)/src/MSBuildLocator/Microsoft.Build.Locator.csproj</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /p:Configuration=$(Configuration)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /v:$(LogVerbosity)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) $(RedirectRepoOutputToLog)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:MicrosoftSourceLinkGitHubVersion=$(MicrosoftSourceLinkGitHubVersion)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:Version=1.5.5</BuildCommandArgs>
     </PropertyGroup>
 
-    <Exec Command="$(DotnetToolCommand) restore /bl:restore.binlog $(BuildCommandArgs)  "
+    <Exec Command="$(DotnetToolCommand) restore /bl:restore.binlog $(BuildCommandArgs)"
           EnvironmentVariables="@(EnvironmentVariables)"
           WorkingDirectory="$(ProjectDirectory)"
           IgnoreStandardErrorWarningFormat="true" />

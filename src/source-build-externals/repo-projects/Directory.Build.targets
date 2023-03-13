@@ -92,7 +92,7 @@
           Outputs="$(RepoCompletedSemaphorePath)Build.complete">
     <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Building $(ProjectBuildReason)" />
     <Message Importance="High" Text="Running command:" />
-    <Message Importance="High" Text="  $(BuildCommand) $(RepoApiArgs)" Condition="'$(BuildCommand)' != ''" />
+    <Message Importance="High" Text="  $(BuildCommand)" Condition="'$(BuildCommand)' != ''" />
     <Message Importance="High" Text="  Using custom build target" Condition="'$(BuildCommand)' == ''" />
     <Message Importance="High" Text="  Log: $(RepoConsoleLogFile)" />
     <Message Importance="High" Text="  With Environment Variables:" />
@@ -109,8 +109,8 @@
       <EnvironmentVariables Condition="'$(NUGET_PACKAGES)'!=''" Include="NUGET_PACKAGES=$(NUGET_PACKAGES)" />
     </ItemGroup>
     <PropertyGroup>
-      <FullCommand Condition="'$(LogVerbosityOptOut)' != 'true'">$(BuildCommand) /v:$(LogVerbosity) $(RepoApiArgs) $(RedirectRepoOutputToLog)</FullCommand>
-      <FullCommand Condition="'$(LogVerbosityOptOut)' == 'true'">$(BuildCommand) $(RepoApiArgs) $(RedirectRepoOutputToLog)</FullCommand>
+      <FullCommand Condition="'$(LogVerbosityOptOut)' != 'true'">$(BuildCommand) /v:$(LogVerbosity) $(RedirectRepoOutputToLog)</FullCommand>
+      <FullCommand Condition="'$(LogVerbosityOptOut)' == 'true'">$(BuildCommand) $(RedirectRepoOutputToLog)</FullCommand>
     </PropertyGroup>
     <Exec Command="$(FullCommand)"
           WorkingDirectory="$(ProjectDirectory)"
@@ -154,7 +154,7 @@
 
   <Target Name="CopyPackage"
           AfterTargets="Package"
-          Condition="'$(OutputPlacementRepoApiImplemented)' != 'true' AND ('$(PackagesOutput)' != '' OR '@(PackagesOutputList)' != '')"
+          Condition="'$(PackagesOutput)' != '' OR '@(PackagesOutputList)' != ''"
           DependsOnTargets="GatherBuiltPackages"
           Inputs="$(MSBuildProjectFullPath)"
           Outputs="$(RepoCompletedSemaphorePath)CopyPackage.complete">

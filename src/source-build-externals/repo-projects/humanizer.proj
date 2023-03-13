@@ -3,8 +3,6 @@
 
   <PropertyGroup>
     <PackagesOutput>$(ProjectDirectory)/src/Humanizer/bin/Release</PackagesOutput>
-    <RepoApiImplemented>false</RepoApiImplemented>
-    <DeterministicBuildOptOut>true</DeterministicBuildOptOut>
     <NuGetConfigFile>$(ProjectDirectory)/src/NuGet.config</NuGetConfigFile>
     <HumanizerCorePackageVersion>2.14.1</HumanizerCorePackageVersion>
   </PropertyGroup>

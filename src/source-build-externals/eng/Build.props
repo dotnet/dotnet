@@ -1,7 +1,7 @@
 <Project>
 
   <ItemGroup>
-    <ProjectToBuild Include="$(RepoRoot)repos\*.proj" />
+    <ProjectToBuild Include="$(RepoRoot)repo-projects\*.proj" />
   </ItemGroup>
 
 </Project>
