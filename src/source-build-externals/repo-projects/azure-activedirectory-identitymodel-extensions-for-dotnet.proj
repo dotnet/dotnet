@@ -3,8 +3,6 @@
 
   <PropertyGroup>
     <PackagesOutput>$(ProjectDirectory)/pack</PackagesOutput>
-    <RepoApiImplemented>false</RepoApiImplemented>
-    <DeterministicBuildOptOut>true</DeterministicBuildOptOut>
   </PropertyGroup>
 
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
