@@ -1,4 +1,8 @@
-# Microsoft.DotNet.ApiCompat
+# Not maintained anymore
+
+:warning: Microsoft.DotNet.ApiCompat which is CCI based isn't maintained anymore and was never intended to be publicly used. Please switch to the Roslyn based ApiCompat & PackageValidation functionality that is part of the .NET SDK: https://learn.microsoft.com/en-us/dotnet/fundamentals/package-validation/overview. This code base will be deleted in the future.
+
+## Microsoft.DotNet.ApiCompat
 
 APICompat is a tool which may be used to test API compatibility between a two .NET assemblies.
 
@@ -8,7 +12,7 @@ The *contract* represents the API that's expected : for example a reference asse
 
 The *implementation* represents the API that's provided : for example the current version of an assembly.
 
-## Usage
+### Usage
 
 API Compat can be used by referencing this Microsoft.DotNet.ApiCompat package from the *implementation* project, and providing the path to the *contract* via a single `@(ResolvedMatchingContract)` item.  Dependencies of `@(ResolvedMatchingContract)` must be specified in either `DependencyPaths` metadata on the items themselves or via the `$(ContractDependencyPaths)` property.
 

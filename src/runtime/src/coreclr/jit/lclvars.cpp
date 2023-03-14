@@ -52,9 +52,8 @@ void Compiler::lvaInit()
     lvaInlinedPInvokeFrameVar = BAD_VAR_NUM;
     lvaReversePInvokeFrameVar = BAD_VAR_NUM;
 #if FEATURE_FIXED_OUT_ARGS
-    lvaPInvokeFrameRegSaveVar = BAD_VAR_NUM;
-    lvaOutgoingArgSpaceVar    = BAD_VAR_NUM;
-    lvaOutgoingArgSpaceSize   = PhasedVar<unsigned>();
+    lvaOutgoingArgSpaceVar  = BAD_VAR_NUM;
+    lvaOutgoingArgSpaceSize = PhasedVar<unsigned>();
 #endif // FEATURE_FIXED_OUT_ARGS
 #ifdef JIT32_GCENCODER
     lvaLocAllocSPvar = BAD_VAR_NUM;
@@ -856,12 +855,12 @@ void Compiler::lvaInitUserArgs(InitVarDscInfo* varDscInfo, unsigned skipArgs, un
             if ((floatFlags & STRUCT_FLOAT_FIELD_ONLY_ONE) != 0)
             {
                 assert(argSize <= 8);
-                assert(varDsc->lvExactSize <= argSize);
+                assert(varDsc->lvExactSize() <= argSize);
 
                 floatNum              = 1;
                 canPassArgInRegisters = varDscInfo->canEnreg(TYP_DOUBLE, 1);
 
-                argRegTypeInStruct1 = (varDsc->lvExactSize == 8) ? TYP_DOUBLE : TYP_FLOAT;
+                argRegTypeInStruct1 = (varDsc->lvExactSize() == 8) ? TYP_DOUBLE : TYP_FLOAT;
             }
             else if ((floatFlags & STRUCT_FLOAT_FIELD_ONLY_TWO) != 0)
             {

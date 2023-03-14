@@ -155,7 +155,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 
 <!-- component list beginning -->
 - `src/arcade`  
-*[dotnet/arcade@e4e5e16](https://github.com/dotnet/arcade/commit/e4e5e16cf38c950ed835f8b223ebfdeca3e112aa)*
+*[dotnet/arcade@a0a9c59](https://github.com/dotnet/arcade/commit/a0a9c59876ae267d27d64c9b157337681208c1bc)*
 - `src/aspnetcore`  
 *[dotnet/aspnetcore@09e9ed7](https://github.com/dotnet/aspnetcore/commit/09e9ed7edbbaf6f43cb083d633908b4459a90d8c)*
     - `src/aspnetcore/src/submodules/googletest`  
@@ -179,7 +179,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@50ede73](https://github.com/dotnet/fsharp/commit/50ede7324c833488ee6769b18662d0e7be31c862)*
 - `src/installer`  
-*[dotnet/installer@d625015](https://github.com/dotnet/installer/commit/d625015437c1e2809a02504164b870d063cca663)*
+*[dotnet/installer@488ee6e](https://github.com/dotnet/installer/commit/488ee6e38300882014bcbd0c36d075abed0c0b15)*
 - `src/msbuild`  
 *[dotnet/msbuild@f776814](https://github.com/dotnet/msbuild/commit/f776814442dc189b442ba87e3bdf1656c45dce81)*
 - `src/nuget-client`  
@@ -193,9 +193,9 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/roslyn-analyzers`  
 *[dotnet/roslyn-analyzers@5212c6e](https://github.com/dotnet/roslyn-analyzers/commit/5212c6e9fc8737ca8cd675e7b69970f93d758b56)*
 - `src/runtime`  
-*[dotnet/runtime@648d477](https://github.com/dotnet/runtime/commit/648d477858b5723059085de84966a2247cfdc0e7)*
+*[dotnet/runtime@d9f4539](https://github.com/dotnet/runtime/commit/d9f453924f7c3cca9f02d920a57e1477293f216e)*
 - `src/sdk`  
-*[dotnet/sdk@6692fa1](https://github.com/dotnet/sdk/commit/6692fa1c9b067ce600df9ad504a0a10d56975339)*
+*[dotnet/sdk@212be2c](https://github.com/dotnet/sdk/commit/212be2cdff0ed0fcbbf05995743d0273dbc72968)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@57af468](https://github.com/dotnet/source-build-externals/commit/57af468ca0fed21a073bd42d46fa6a2181fc7f18)*
     - `src/source-build-externals/src/application-insights`  
