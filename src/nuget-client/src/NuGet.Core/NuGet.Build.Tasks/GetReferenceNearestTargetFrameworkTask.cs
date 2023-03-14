@@ -248,19 +248,19 @@ namespace NuGet.Build.Tasks
                     string.Empty :
                     targetFrameworkInformation._targetPlatformMoniker);
         }
+    }
 
-        internal class TargetFrameworkInformation
+    internal class TargetFrameworkInformation
+    {
+        internal readonly string _targetFrameworkAlias;
+        internal readonly string _targetFrameworkMoniker;
+        internal readonly string _targetPlatformMoniker;
+
+        public TargetFrameworkInformation(string targetFrameworkAlias, string targetFrameworkMoniker, string targetPlatformMoniker)
         {
-            internal readonly string _targetFrameworkAlias;
-            internal readonly string _targetFrameworkMoniker;
-            internal readonly string _targetPlatformMoniker;
-
-            public TargetFrameworkInformation(string targetFrameworkAlias, string targetFrameworkMoniker, string targetPlatformMoniker)
-            {
-                _targetFrameworkAlias = targetFrameworkAlias;
-                _targetFrameworkMoniker = targetFrameworkMoniker;
-                _targetPlatformMoniker = targetPlatformMoniker;
-            }
+            _targetFrameworkAlias = targetFrameworkAlias;
+            _targetFrameworkMoniker = targetFrameworkMoniker;
+            _targetPlatformMoniker = targetPlatformMoniker;
         }
     }
 }

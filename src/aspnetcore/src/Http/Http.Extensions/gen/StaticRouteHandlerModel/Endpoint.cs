@@ -3,8 +3,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Analyzers.Infrastructure;
 using Microsoft.AspNetCore.App.Analyzers.Infrastructure;
+using Microsoft.AspNetCore.Http.Generators.StaticRouteHandlerModel.Emitters;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Operations;
@@ -18,10 +20,11 @@ internal class Endpoint
         Operation = operation;
         Location = GetLocation(operation);
         HttpMethod = GetHttpMethod(operation);
+        EmitterContext = new EmitterContext();
 
         if (!operation.TryGetRouteHandlerPattern(out var routeToken))
         {
-            Diagnostics.Add(DiagnosticDescriptors.UnableToResolveRoutePattern);
+            Diagnostics.Add(Diagnostic.Create(DiagnosticDescriptors.UnableToResolveRoutePattern, Operation.Syntax.GetLocation()));
             return;
         }
 
@@ -29,11 +32,12 @@ internal class Endpoint
 
         if (!operation.TryGetRouteHandlerMethod(out var method))
         {
-            Diagnostics.Add(DiagnosticDescriptors.UnableToResolveMethod);
+            Diagnostics.Add(Diagnostic.Create(DiagnosticDescriptors.UnableToResolveMethod, Operation.Syntax.GetLocation()));
             return;
         }
 
         Response = new EndpointResponse(method, wellKnownTypes);
+        EmitterContext.HasJsonResponse = !(Response.ResponseType.IsSealed || Response.ResponseType.IsValueType);
         IsAwaitable = Response.IsAwaitable;
 
         if (method.Parameters.Length == 0)
@@ -64,7 +68,10 @@ internal class Endpoint
                     IsAwaitable = true;
                     break;
                 case EndpointParameterSource.Unknown:
-                    Diagnostics.Add(DiagnosticDescriptors.GetUnableToResolveParameterDescriptor(parameter.Name));
+                    Diagnostics.Add(Diagnostic.Create(
+                        DiagnosticDescriptors.UnableToResolveParameterDescriptor,
+                        Operation.Syntax.GetLocation(),
+                        parameter.Name));
                     break;
             }
 
@@ -72,15 +79,22 @@ internal class Endpoint
         }
 
         Parameters = parameters;
+
+        EmitterContext.HasJsonBodyOrService = Parameters.Any(parameter => parameter.Source == EndpointParameterSource.JsonBodyOrService);
+        EmitterContext.HasJsonBody = Parameters.Any(parameter => parameter.Source == EndpointParameterSource.JsonBody);
+        EmitterContext.HasRouteOrQuery = Parameters.Any(parameter => parameter.Source == EndpointParameterSource.RouteOrQuery);
+        EmitterContext.HasBindAsync = Parameters.Any(parameter => parameter.Source == EndpointParameterSource.BindAsync);
+        EmitterContext.HasParsable = Parameters.Any(parameter => parameter.IsParsable);
     }
 
     public string HttpMethod { get; }
     public bool IsAwaitable { get; }
     public bool NeedsParameterArray { get; }
     public string? RoutePattern { get; }
+    public EmitterContext EmitterContext { get;  }
     public EndpointResponse? Response { get; }
     public EndpointParameter[] Parameters { get; } = Array.Empty<EndpointParameter>();
-    public List<DiagnosticDescriptor> Diagnostics { get; } = new List<DiagnosticDescriptor>();
+    public List<Diagnostic> Diagnostics { get; } = new List<Diagnostic>();
 
     public (string File, int LineNumber) Location { get; }
     public IInvocationOperation Operation { get; }

@@ -2,6 +2,6 @@
 # See https://help.github.com/articles/about-code-owners/
 
 *                                                                                 @dotnet/aspnet-blazor-eng
-/.github/                                                                         @dotnet/aspnet-build @dougbu @wtgodbe
-/eng/                                                                             @dotnet/aspnet-build @dougbu @wtgodbe
-/eng/Versions.props                                                               @dotnet/aspnet-build @dougbu @wtgodbe
+/.github/                                                                         @dotnet/aspnet-build @wtgodbe
+/eng/                                                                             @dotnet/aspnet-build @wtgodbe
+/eng/Versions.props                                                               @dotnet/aspnet-build @wtgodbe

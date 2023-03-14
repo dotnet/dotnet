@@ -159,7 +159,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuGet.SolutionRestoreManage
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuGet.Tools", "src\NuGet.Clients\NuGet.Tools\NuGet.Tools.csproj", "{D0F9864B-D782-4471-81A2-29555E5DC0D7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuGet.PackageManagement.VisualStudio", "src\NuGet.Clients\NuGet.PackageManagement.VisualStudio\NuGet.PackageManagement.VisualStudio.csproj", "{306CDDFA-FF0B-4299-930C-9EC6C9308160}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NuGet.PackageManagement.VisualStudio", "src\NuGet.Clients\NuGet.PackageManagement.VisualStudio\NuGet.PackageManagement.VisualStudio.csproj", "{306CDDFA-FF0B-4299-930C-9EC6C9308160}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleCommandLineExtensions", "test\TestExtensions\SampleCommandLineExtensions\SampleCommandLineExtensions.csproj", "{F2F53B1A-B973-4932-80CB-5EDA38F9D74C}"
 EndProject
@@ -321,6 +321,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenerateLicenseList", "test\TestExtensions\GenerateLicenseList\GenerateLicenseList.csproj", "{D792897C-D5D7-40A6-9565-8FA4ACE0EBFA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenerateTestPackages", "test\TestExtensions\GenerateTestPackages\GenerateTestPackages.csproj", "{1BCC177E-D529-4015-93E2-4C254FA015AA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ensure-nupkg-dependencies-on-source", "tools-local\ensure-nupkg-dependencies-on-source\ensure-nupkg-dependencies-on-source.csproj", "{719AC60C-59EF-4A63-AC9E-7841DF14179D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -696,6 +698,10 @@ Global
 		{1BCC177E-D529-4015-93E2-4C254FA015AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1BCC177E-D529-4015-93E2-4C254FA015AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1BCC177E-D529-4015-93E2-4C254FA015AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{719AC60C-59EF-4A63-AC9E-7841DF14179D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{719AC60C-59EF-4A63-AC9E-7841DF14179D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{719AC60C-59EF-4A63-AC9E-7841DF14179D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{719AC60C-59EF-4A63-AC9E-7841DF14179D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -812,6 +818,7 @@ Global
 		{DB4FB5FB-6E00-4648-8DCB-40BFF972D3AD} = {01BC4531-1E25-48D7-A8FD-A47D6FEC47FB}
 		{D792897C-D5D7-40A6-9565-8FA4ACE0EBFA} = {23CEFC88-9365-4464-A517-700224ECA033}
 		{1BCC177E-D529-4015-93E2-4C254FA015AA} = {23CEFC88-9365-4464-A517-700224ECA033}
+		{719AC60C-59EF-4A63-AC9E-7841DF14179D} = {CE4C7E1B-6883-49C3-A407-F807094777CC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3747A66A-00D1-41B8-A9C5-ED0D7BEA9D25}

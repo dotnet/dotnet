@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net7.0</TargetFramework>
+    <RootNamespace>ensure_nupkg_dependencies_on_source</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Description>Checks that the dependencies of one or more nupkgs are available on specified NuGet source(s)</Description>
+    <SkipShared>true</SkipShared>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/NuGet.Core/NuGet.Protocol/NuGet.Protocol.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="System.CommandLine" />
+  </ItemGroup>
+
+</Project>

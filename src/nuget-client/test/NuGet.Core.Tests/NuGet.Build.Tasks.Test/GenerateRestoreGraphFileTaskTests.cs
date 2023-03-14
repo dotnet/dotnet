@@ -4,7 +4,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using FluentAssertions;
 using NuGet.Test.Utility;
 using Xunit;
@@ -50,39 +49,19 @@ namespace NuGet.Build.Tasks.Test
                     RestoreGraphOutputPath = restoreGraphOutputPath,
                 })
                 {
-                    using var stream = new MemoryStream();
-
-                    using var streamWriter = new StreamWriter(stream, Encoding.UTF8);
-
-                    task.WriteArguments(streamWriter);
-
-                    string actualArguments = task.GetCommandLineArguments(msbuildBinPath);
-
-                    string[] expectedArguments = new[]
-                    {
+                    var arguments = task.GetCommandLineArguments().ToList();
+                    arguments.Should().BeEquivalentTo(
 #if IS_CORECLR
-                        Path.ChangeExtension(typeof(RestoreTaskEx).Assembly.Location, ".Console.dll"),
-                        Path.Combine(msbuildBinPath, "MSBuild.dll"),
-#else
-                        Path.Combine(msbuildBinPath, "MSBuild.exe"),
+                    Path.ChangeExtension(typeof(RestoreTaskEx).Assembly.Location, ".Console.dll"),
 #endif
-                        projectPath
-                    };
-
-                    actualArguments.Should().Be($"\"{string.Join("\" \"", expectedArguments)}\"");
-
-                    stream.Position = 0;
-
-                    var arguments = StaticGraphRestoreArguments.Read(stream, streamWriter.Encoding);
-
-                    arguments.Options.Should().BeEquivalentTo(new Dictionary<string, string>()
-                    {
-                        [nameof(RestoreTaskEx.Recursive)] = task.Recursive.ToString(),
-                        [nameof(GenerateRestoreGraphFileTask.RestoreGraphOutputPath)] = task.RestoreGraphOutputPath.ToString(),
-                        ["GenerateRestoreGraphFile"] = bool.TrueString
-                    });
-
-                    arguments.GlobalProperties.Should().Contain(globalProperties);
+                    $"GenerateRestoreGraphFile=True;Recursive=True;RestoreGraphOutputPath={restoreGraphOutputPath}",
+#if IS_CORECLR
+                    Path.Combine(msbuildBinPath, "MSBuild.dll"),
+#else
+                    Path.Combine(msbuildBinPath, "MSBuild.exe"),
+#endif
+                    projectPath,
+                        $"Property1=Value1;Property2=  Value2  ;ExcludeRestorePackageImports=true;OriginalMSBuildStartupDirectory={testDirectory}");
                 }
             }
         }
