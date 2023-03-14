@@ -58,7 +58,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "9ac394730a6e62b93e313f8bc00c17d31f015cdc"
+      "commitSha": "f6b2e98361cc35295d0b347b594fbe0afd40d764"
     },
     {
       "packageVersion": "17.6.0-preview-23163-03",
@@ -91,16 +91,16 @@
       "commitSha": "5212c6e9fc8737ca8cd675e7b69970f93d758b56"
     },
     {
-      "packageVersion": "8.0.0-preview.3.23163.5",
+      "packageVersion": "8.0.0-preview.3.23163.12",
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "e247ef3c03f5dae7ed634d83ec53e1386e5fe57d"
+      "commitSha": "648d477858b5723059085de84966a2247cfdc0e7"
     },
     {
-      "packageVersion": "8.0.100-preview.3.23163.10",
+      "packageVersion": "8.0.100-preview.3.23164.3",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "3f4fd12815b4e6c4a1ec1a9a79fa3da525533fe9"
+      "commitSha": "6692fa1c9b067ce600df9ad504a0a10d56975339"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23160.1",
@@ -127,10 +127,10 @@
       "commitSha": "7b9791daa3a3477eb22ec805946c9fff8b42d8ca"
     },
     {
-      "packageVersion": "8.0.100-preview.3.23160.4",
+      "packageVersion": "8.0.100-preview.3.23163.5",
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "729640b4592d9bb922143cc978bfc8e54309b198"
+      "commitSha": "ca0f4f9859c01a5621a5196551009e676102daeb"
     },
     {
       "packageVersion": "1.1.0-rc.23115.1",

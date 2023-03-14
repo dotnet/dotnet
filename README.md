@@ -179,7 +179,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@50ede73](https://github.com/dotnet/fsharp/commit/50ede7324c833488ee6769b18662d0e7be31c862)*
 - `src/installer`  
-*[dotnet/installer@9ac3947](https://github.com/dotnet/installer/commit/9ac394730a6e62b93e313f8bc00c17d31f015cdc)*
+*[dotnet/installer@f6b2e98](https://github.com/dotnet/installer/commit/f6b2e98361cc35295d0b347b594fbe0afd40d764)*
 - `src/msbuild`  
 *[dotnet/msbuild@f776814](https://github.com/dotnet/msbuild/commit/f776814442dc189b442ba87e3bdf1656c45dce81)*
 - `src/nuget-client`  
@@ -193,9 +193,9 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/roslyn-analyzers`  
 *[dotnet/roslyn-analyzers@5212c6e](https://github.com/dotnet/roslyn-analyzers/commit/5212c6e9fc8737ca8cd675e7b69970f93d758b56)*
 - `src/runtime`  
-*[dotnet/runtime@e247ef3](https://github.com/dotnet/runtime/commit/e247ef3c03f5dae7ed634d83ec53e1386e5fe57d)*
+*[dotnet/runtime@648d477](https://github.com/dotnet/runtime/commit/648d477858b5723059085de84966a2247cfdc0e7)*
 - `src/sdk`  
-*[dotnet/sdk@3f4fd12](https://github.com/dotnet/sdk/commit/3f4fd12815b4e6c4a1ec1a9a79fa3da525533fe9)*
+*[dotnet/sdk@6692fa1](https://github.com/dotnet/sdk/commit/6692fa1c9b067ce600df9ad504a0a10d56975339)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@57af468](https://github.com/dotnet/source-build-externals/commit/57af468ca0fed21a073bd42d46fa6a2181fc7f18)*
     - `src/source-build-externals/src/application-insights`  
@@ -217,7 +217,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/symreader`  
 *[dotnet/symreader@7b9791d](https://github.com/dotnet/symreader/commit/7b9791daa3a3477eb22ec805946c9fff8b42d8ca)*
 - `src/templating`  
-*[dotnet/templating@729640b](https://github.com/dotnet/templating/commit/729640b4592d9bb922143cc978bfc8e54309b198)*
+*[dotnet/templating@ca0f4f9](https://github.com/dotnet/templating/commit/ca0f4f9859c01a5621a5196551009e676102daeb)*
 - `src/test-templates`  
 *[dotnet/test-templates@94c498e](https://github.com/dotnet/test-templates/commit/94c498e399eb1cbb7290ed1e42564589a259312a)*
 - `src/vstest`  
