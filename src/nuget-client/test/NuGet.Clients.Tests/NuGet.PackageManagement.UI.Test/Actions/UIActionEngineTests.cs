@@ -308,8 +308,8 @@ namespace NuGet.PackageManagement.UI.Test
 
             // Assert
             Assert.NotNull(lastTelemetryEvent);
-            // expect failed action because we mocked just enough objects to emit telemetry
-            Assert.Equal(NuGetOperationStatus.Failed, lastTelemetryEvent[nameof(ActionEventBase.Status)]);
+            // expect cancelled action because we mocked just enough objects to emit telemetry
+            Assert.Equal(NuGetOperationStatus.Cancelled, lastTelemetryEvent[nameof(ActionEventBase.Status)]);
             Assert.Equal(NuGetOperationType.Install, lastTelemetryEvent[nameof(ActionsTelemetryEvent.OperationType)]);
             Assert.Equal(isSolutionLevel, lastTelemetryEvent[nameof(VSActionsTelemetryEvent.IsSolutionLevel)]);
             Assert.Equal(activeTab, lastTelemetryEvent[nameof(VSActionsTelemetryEvent.Tab)]);

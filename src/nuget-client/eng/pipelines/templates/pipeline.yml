@@ -133,6 +133,17 @@ stages:
       parameters:
         BuildRTM: true
         NuGetLocalizationType: Full
+  - job: Validate_Publishing_Artifacts
+    displayName: 'Validate Publishing build artifacts'
+    dependsOn: Build_and_UnitTest_RTM
+    timeoutInMinutes: 15
+    pool:
+      vmImage: windows-latest
+    steps:
+    - template: Validate_Build_Output.yml
+      parameters:
+        isOfficialBuild: ${{ parameters.isOfficialBuild }}
+
 
 - stage: Source_Build
   dependsOn: Initialize

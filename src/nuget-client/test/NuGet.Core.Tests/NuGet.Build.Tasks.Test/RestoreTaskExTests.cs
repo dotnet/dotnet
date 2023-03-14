@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using FluentAssertions;
 using NuGet.Test.Utility;
 using Xunit;
@@ -58,45 +57,19 @@ namespace NuGet.Build.Tasks.Test
                     MSBuildStartupDirectory = testDirectory,
                 })
                 {
-                    using var stream = new MemoryStream();
-                    using var streamWriter = new StreamWriter(stream, Encoding.UTF8);
-
-                    task.WriteArguments(streamWriter);
-
-                    string actualArguments = task.GetCommandLineArguments(msbuildBinPath);
-
-                    string[] expectedArguments = new[]
-                    {
+                    var arguments = task.GetCommandLineArguments().ToList();
+                    arguments.Should().BeEquivalentTo(
 #if IS_CORECLR
-                        Path.ChangeExtension(typeof(RestoreTaskEx).Assembly.Location, ".Console.dll"),
-                        Path.Combine(msbuildBinPath, "MSBuild.dll"),
-#else
-                        Path.Combine(msbuildBinPath, "MSBuild.exe"),
+                    Path.ChangeExtension(typeof(RestoreTaskEx).Assembly.Location, ".Console.dll"),
 #endif
-                        projectPath
-                    };
-
-                    actualArguments.Should().Be($"\"{string.Join("\" \"", expectedArguments)}\"");
-
-                    stream.Position = 0;
-
-                    StaticGraphRestoreArguments arguments = StaticGraphRestoreArguments.Read(stream, streamWriter.Encoding);
-
-                    arguments.Options.Should().BeEquivalentTo(new Dictionary<string, string>()
-                    {
-                        [nameof(RestoreTaskEx.CleanupAssetsForUnsupportedProjects)] = task.CleanupAssetsForUnsupportedProjects.ToString(),
-                        [nameof(RestoreTaskEx.DisableParallel)] = task.DisableParallel.ToString(),
-                        [nameof(RestoreTaskEx.Force)] = task.Force.ToString(),
-                        [nameof(RestoreTaskEx.ForceEvaluate)] = task.ForceEvaluate.ToString(),
-                        [nameof(RestoreTaskEx.HideWarningsAndErrors)] = task.HideWarningsAndErrors.ToString(),
-                        [nameof(RestoreTaskEx.IgnoreFailedSources)] = task.IgnoreFailedSources.ToString(),
-                        [nameof(RestoreTaskEx.Interactive)] = task.Interactive.ToString(),
-                        [nameof(RestoreTaskEx.NoCache)] = task.NoCache.ToString(),
-                        [nameof(RestoreTaskEx.Recursive)] = task.Recursive.ToString(),
-                        [nameof(RestoreTaskEx.RestorePackagesConfig)] = task.RestorePackagesConfig.ToString(),
-                    });
-
-                    arguments.GlobalProperties.Should().Contain(globalProperties);
+                    "CleanupAssetsForUnsupportedProjects=True;DisableParallel=True;Force=True;ForceEvaluate=True;HideWarningsAndErrors=True;IgnoreFailedSources=True;Interactive=True;NoCache=True;Recursive=True;RestorePackagesConfig=True",
+#if IS_CORECLR
+                    Path.Combine(msbuildBinPath, "MSBuild.dll"),
+#else
+                    Path.Combine(msbuildBinPath, "MSBuild.exe"),
+#endif
+                    projectPath,
+                        $"Property1=Value1;Property2=  Value2  ;ExcludeRestorePackageImports=True;OriginalMSBuildStartupDirectory={testDirectory}");
                 }
             }
         }

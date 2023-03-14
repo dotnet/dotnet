@@ -67,10 +67,10 @@
       "commitSha": "f776814442dc189b442ba87e3bdf1656c45dce81"
     },
     {
-      "packageVersion": "6.6.0-preview.3.43",
+      "packageVersion": "6.6.0-preview.3.45",
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "f49ca00e27297fe7b4b82a2557d5b0caad907a06"
+      "commitSha": "fdc39cc7f7541056c638ea982dc179f554849b7d"
     },
     {
       "packageVersion": "7.0.0-preview.23157.2",
