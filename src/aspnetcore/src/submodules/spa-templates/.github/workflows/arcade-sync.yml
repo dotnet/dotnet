@@ -82,6 +82,6 @@ jobs:
         path: .\${{ env.TargetRepoName }}
         # May have problems here with a team name. team-reviewers property doesn't work due to
         # https://github.com/peter-evans/create-pull-request/issues/155 Avoiding that for now.
-        reviewers: dougbu, wtgodbe
+        reviewers: wtgodbe
         title: 'Sync shared code from ${{ env.SourceRepoName }}'
         token: ${{ secrets.GITHUB_TOKEN }}
