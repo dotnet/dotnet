@@ -53,6 +53,7 @@ parameters:
   type: boolean
   default: false
 
+# Use the previous version's SDK to build the current one
 - name: withPreviousSDK
   type: boolean
   default: false
@@ -160,22 +161,28 @@ jobs:
   - script: |
       set -x
 
-      if [[ -z '${{ parameters.reuseBuildArtifactsFrom }}' && '${{ parameters.withPreviousSDK }}' != 'True' ]]; then
-        docker run --rm -v "$(sourcesPath):/vmr" -w /vmr ${{ parameters.container }} ./prep.sh
-      else
+      customPrepArgs=""
+      prepSdk=true
+      if [[ '${{ parameters.withPreviousSDK }}' == 'True' ]]; then
+        # Source-built artifacts are from CentOS 8 Stream. We want to download them without
+        # downloading portable versions from the internet.
+        customPrepArgs="${customPrepArgs} --no-sdk --no-bootstrap"
+        prepSdk=false
+      elif [[ -n '${{ parameters.reuseBuildArtifactsFrom }}' ]]; then
+        customPrepArgs="${customPrepArgs} --no-sdk --no-artifacts"
+        prepSdk=false
+      fi
+      
+      if [[ "$prepSdk" == "false" ]]; then
         mkdir $(sourcesPath)/.dotnet
         previousSdkPath="$(sourcesPath)/prereqs/packages/archive/dotnet-sdk-*.tar.gz"
         eval tar -ozxf "$previousSdkPath" -C "$(sourcesPath)/.dotnet"
         eval rm -f "$previousSdkPath"
 
-        if [[ '${{ parameters.withPreviousSDK }}' == 'True' ]]; then
-          # Source-built artifacts are from CentOS 8 Stream. We want to download them without
-          # downloading portable versions from the internet.
-          docker run --rm -v "$(sourcesPath):/vmr" -w /vmr ${{ parameters.container }} ./prep.sh --no-bootstrap
-        fi
-
         echo "##vso[task.setvariable variable=additionalBuildArgs]--with-sdk /vmr/.dotnet"
       fi
+
+      docker run --rm -v "$(sourcesPath):/vmr" -w /vmr ${{ parameters.container }} ./prep.sh ${customPrepArgs}
     displayName: Prep the Build
 
   - script: |
