@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
   <ProductDependencies>
-    <Dependency Name="Microsoft.WindowsDesktop.App.Ref" Version="8.0.0-preview.3.23160.3" CoherentParentDependency="Microsoft.NET.Sdk">
+    <Dependency Name="Microsoft.WindowsDesktop.App.Ref" Version="8.0.0-preview.3.23164.1" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://github.com/dotnet/windowsdesktop</Uri>
-      <Sha>551dd11c3af07b8fcb0e465277179893cdf5bea1</Sha>
+      <Sha>437601213fdd61c3c90ace55e81ebc99dea96e3b</Sha>
     </Dependency>
-    <Dependency Name="VS.Redist.Common.WindowsDesktop.SharedFramework.x64.8.0" Version="8.0.0-preview.3.23160.3" CoherentParentDependency="Microsoft.NET.Sdk">
+    <Dependency Name="VS.Redist.Common.WindowsDesktop.SharedFramework.x64.8.0" Version="8.0.0-preview.3.23164.1" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://github.com/dotnet/windowsdesktop</Uri>
-      <Sha>551dd11c3af07b8fcb0e465277179893cdf5bea1</Sha>
+      <Sha>437601213fdd61c3c90ace55e81ebc99dea96e3b</Sha>
     </Dependency>
-    <Dependency Name="VS.Redist.Common.WindowsDesktop.TargetingPack.x64.8.0" Version="8.0.0-preview.3.23160.3" CoherentParentDependency="Microsoft.NET.Sdk">
+    <Dependency Name="VS.Redist.Common.WindowsDesktop.TargetingPack.x64.8.0" Version="8.0.0-preview.3.23164.1" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://github.com/dotnet/windowsdesktop</Uri>
-      <Sha>551dd11c3af07b8fcb0e465277179893cdf5bea1</Sha>
+      <Sha>437601213fdd61c3c90ace55e81ebc99dea96e3b</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.WindowsDesktop.App.Runtime.win-x64" Version="8.0.0-preview.3.23160.3" CoherentParentDependency="Microsoft.NET.Sdk">
+    <Dependency Name="Microsoft.WindowsDesktop.App.Runtime.win-x64" Version="8.0.0-preview.3.23164.1" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://github.com/dotnet/windowsdesktop</Uri>
-      <Sha>551dd11c3af07b8fcb0e465277179893cdf5bea1</Sha>
+      <Sha>437601213fdd61c3c90ace55e81ebc99dea96e3b</Sha>
     </Dependency>
     <Dependency Name="VS.Redist.Common.NetCore.SharedFramework.x64.8.0" Version="8.0.0-preview.3.23164.4" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://github.com/dotnet/runtime</Uri>
@@ -102,22 +102,22 @@
       <Uri>https://github.com/dotnet/test-templates</Uri>
       <Sha>94c498e399eb1cbb7290ed1e42564589a259312a</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Common.ItemTemplates" Version="8.0.100-preview.3.23164.38">
+    <Dependency Name="Microsoft.DotNet.Common.ItemTemplates" Version="8.0.100-preview.3.23165.10">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>83971ae73e9a40583d4648ab746e0c44bd03572d</Sha>
+      <Sha>4b46f8bd2b1c49b81d7b49649837a4b9b0093abb</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.TemplateEngine.Cli" Version="8.0.100-preview.3.23164.38">
+    <Dependency Name="Microsoft.TemplateEngine.Cli" Version="8.0.100-preview.3.23165.10">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>83971ae73e9a40583d4648ab746e0c44bd03572d</Sha>
+      <Sha>4b46f8bd2b1c49b81d7b49649837a4b9b0093abb</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Sdk" Version="8.0.100-preview.3.23164.38">
+    <Dependency Name="Microsoft.NET.Sdk" Version="8.0.100-preview.3.23165.10">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>83971ae73e9a40583d4648ab746e0c44bd03572d</Sha>
+      <Sha>4b46f8bd2b1c49b81d7b49649837a4b9b0093abb</Sha>
       <SourceBuild RepoName="sdk" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.MSBuildSdkResolver" Version="8.0.100-preview.3.23164.38">
+    <Dependency Name="Microsoft.DotNet.MSBuildSdkResolver" Version="8.0.100-preview.3.23165.10">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>83971ae73e9a40583d4648ab746e0c44bd03572d</Sha>
+      <Sha>4b46f8bd2b1c49b81d7b49649837a4b9b0093abb</Sha>
     </Dependency>
     <!-- For coherency purposes, these versions should be gated by the versions of winforms and wpf routed via windowsdesktop -->
     <Dependency Name="Microsoft.Dotnet.WinForms.ProjectTemplates" Version="8.0.0-preview.3.23159.2" CoherentParentDependency="Microsoft.WindowsDesktop.App.Runtime.win-x64">
@@ -187,18 +187,18 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.23163.1">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.23164.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>a0a9c59876ae267d27d64c9b157337681208c1bc</Sha>
+      <Sha>0edf826d30ecfec312a2f36c3a688ef2449fa6b0</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.CMake.Sdk" Version="8.0.0-beta.23163.1">
+    <Dependency Name="Microsoft.DotNet.CMake.Sdk" Version="8.0.0-beta.23164.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>a0a9c59876ae267d27d64c9b157337681208c1bc</Sha>
+      <Sha>0edf826d30ecfec312a2f36c3a688ef2449fa6b0</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Tasks.Installers" Version="8.0.0-beta.23163.1">
+    <Dependency Name="Microsoft.DotNet.Build.Tasks.Installers" Version="8.0.0-beta.23164.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>a0a9c59876ae267d27d64c9b157337681208c1bc</Sha>
+      <Sha>0edf826d30ecfec312a2f36c3a688ef2449fa6b0</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.Darc" Version="1.1.0-beta.23128.1">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
@@ -217,14 +217,14 @@
       <Sha>a848f811a52d75494029e663cd0a799be11744fe</Sha>
       <SourceBuildTarball RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.GitHub" Version="1.2.0-beta-23151-02" CoherentParentDependency="Microsoft.DotNet.Arcade.Sdk">
+    <Dependency Name="Microsoft.SourceLink.GitHub" Version="1.2.0-beta-23163-01" CoherentParentDependency="Microsoft.DotNet.Arcade.Sdk">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>5585cd4cd5779bc7efdf3e2f19ed0bef50b15f7b</Sha>
+      <Sha>084aa5d8e6d73d66f8e8b2adaddafae755852f26</Sha>
       <SourceBuild RepoName="sourcelink" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="1.0.0-beta.23151.1" CoherentParentDependency="Microsoft.DotNet.Arcade.Sdk">
+    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="1.0.0-beta.23160.1" CoherentParentDependency="Microsoft.DotNet.Arcade.Sdk">
       <Uri>https://github.com/dotnet/xliff-tasks</Uri>
-      <Sha>95794aa6747aa08b79869e7dac06a9ac5d922ab2</Sha>
+      <Sha>0437e392b8b20068b8b2e1c6c9c34c011927bbb9</Sha>
       <SourceBuild RepoName="xliff-tasks" ManagedOnly="true" />
     </Dependency>
   </ToolsetDependencies>
