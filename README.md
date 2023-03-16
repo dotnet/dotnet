@@ -181,7 +181,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/installer`  
 *[dotnet/installer@91a6543](https://github.com/dotnet/installer/commit/91a65438c082a529f351dca6bb34f8c6229aa554)*
 - `src/msbuild`  
-*[dotnet/msbuild@18fe510](https://github.com/dotnet/msbuild/commit/18fe510422c6cf65533add0c82b9d4d190e5df28)*
+*[dotnet/msbuild@60ea2f7](https://github.com/dotnet/msbuild/commit/60ea2f733cfcc78da965ab43cf040fe5c58800fb)*
 - `src/nuget-client`  
 *[nuget/nuget.client@fdc39cc](https://github.com/nuget/nuget.client/commit/fdc39cc7f7541056c638ea982dc179f554849b7d)*
     - `src/nuget-client/submodules/NuGet.Build.Localization`  
