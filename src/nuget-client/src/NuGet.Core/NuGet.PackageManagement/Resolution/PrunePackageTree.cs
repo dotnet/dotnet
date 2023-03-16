@@ -168,7 +168,7 @@ namespace NuGet.PackageManagement
         }
 
         /// <summary>
-        /// This is used in update scenarios ro remove packages that are of the same Id but different version than the primartTargets 
+        /// This is used in update scenarios to remove packages that are of the same Id but different version than the primartTargets 
         /// </summary>
         public static IEnumerable<SourcePackageDependencyInfo> PruneByPrimaryTargets(IEnumerable<SourcePackageDependencyInfo> packages, IEnumerable<PackageIdentity> primaryTargets)
         {

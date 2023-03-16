@@ -2,7 +2,6 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using Microsoft.Build.Framework;
 using Newtonsoft.Json;
 
 namespace NuGet.Build.Tasks
@@ -49,5 +48,15 @@ namespace NuGet.Build.Tasks
         public string Subcategory { get; set; }
 
         public override string ToJson() => JsonConvert.SerializeObject(this, SerializerSettings);
+
+        /// <summary>
+        /// Represents the message importance.  This is a copy of <see cref="MessageImportance" /> because in some code paths we need to log a message before MSBuild assemblies have been loaded.
+        /// </summary>
+        public enum MessageImportance
+        {
+            High,
+            Normal,
+            Low
+        }
     }
 }

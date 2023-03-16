@@ -3,7 +3,7 @@
   <PropertyGroup>
     <GitHubRepositoryName>nuget-client</GitHubRepositoryName>
     <SourceBuildManagedOnly>true</SourceBuildManagedOnly>
-
+    <SourceBuildTrimNetFrameworkTargets>true</SourceBuildTrimNetFrameworkTargets>
     <VersionPrefix>1.0.0</VersionPrefix>
   </PropertyGroup>
 

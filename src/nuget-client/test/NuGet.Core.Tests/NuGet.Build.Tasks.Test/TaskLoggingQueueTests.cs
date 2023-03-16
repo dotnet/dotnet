@@ -52,7 +52,7 @@ namespace NuGet.Build.Tasks.Test
 
             if (messageImportance.HasValue)
             {
-                expected.Importance = messageImportance.Value;
+                expected.Importance = (ConsoleOutLogMessage.MessageImportance)messageImportance.Value;
             }
 
             var buildEngine = new TestBuildEngine();

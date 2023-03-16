@@ -186,4 +186,18 @@
   <data name="Error_DuplicateItems" xml:space="preserve">
     <value>Duplicate '{0}' items found. Remove the duplicate items or use the Update functionality to ensure a consistent restore behavior. The duplicate '{0}' items are: {1}.</value>
   </data>
+  <data name="Error_StaticGraphNonZeroExitCode" xml:space="preserve">
+    <value>Static graph-based restore failed with exit code '{0}' but did not log an error. Please file an issue at https://github.com/NuGet/Home.</value>
+    <comment>0 - the exit code of the process</comment>
+  </data>
+  <data name="Error_StaticGraphUnhandledException" xml:space="preserve">
+    <value>Static graph-based restore encountered an unhandled exception. Please file an issue at https://github.com/NuGet/Home.  The exception was:
+{0}</value>
+    <comment>0 - The exception as a string.</comment>
+  </data>
+  <data name="Log_RunningStaticGraphRestoreCommand" xml:space="preserve">
+    <value>Running command: '{0}' {1}</value>
+    <comment>0 - the path to the EXE being launched
+1 - The command-line arguments</comment>
+  </data>
 </root>

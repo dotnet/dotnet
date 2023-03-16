@@ -133,6 +133,25 @@ namespace NuGet.Build.Tasks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Static graph-based restore failed with exit code &apos;{0}&apos; but did not log an error. Please file an issue at https://github.com/NuGet/Home..
+        /// </summary>
+        public static string Error_StaticGraphNonZeroExitCode {
+            get {
+                return ResourceManager.GetString("Error_StaticGraphNonZeroExitCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Static graph-based restore encountered an unhandled exception. Please file an issue at https://github.com/NuGet/Home.  The exception was:
+        ///{0}.
+        /// </summary>
+        public static string Error_StaticGraphUnhandledException {
+            get {
+                return ResourceManager.GetString("Error_StaticGraphUnhandledException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ProjectReference &apos;{0}&apos; was resolved using &apos;{1}&apos; instead of the project target framework &apos;{2}&apos;. This project may not be fully compatible with your project..
         /// </summary>
         public static string ImportsFallbackWarning {
@@ -165,6 +184,15 @@ namespace NuGet.Build.Tasks {
         public static string Log_ProjectsInSolutionNotKnowntoMSBuild {
             get {
                 return ResourceManager.GetString("Log_ProjectsInSolutionNotKnowntoMSBuild", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Running command: &apos;{0}&apos; {1}.
+        /// </summary>
+        public static string Log_RunningStaticGraphRestoreCommand {
+            get {
+                return ResourceManager.GetString("Log_RunningStaticGraphRestoreCommand", resourceCulture);
             }
         }
         

@@ -116,7 +116,7 @@ namespace NuGet.Build.Tasks
                             return;
 
                         case ConsoleOutLogMessageType.Message:
-                            _log.LogMessageFromText(consoleOutLogMessage.Message, consoleOutLogMessage.Importance);
+                            _log.LogMessageFromText(consoleOutLogMessage.Message, (MessageImportance)consoleOutLogMessage.Importance);
                             return;
                     }
                 }

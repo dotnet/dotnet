@@ -41,7 +41,7 @@ namespace NuGet.Build.Tasks
         {
             return new ConsoleOutLogMessage
             {
-                Importance = buildMessageEventArgs.Importance,
+                Importance = (ConsoleOutLogMessage.MessageImportance)buildMessageEventArgs.Importance,
                 Message = buildMessageEventArgs.Message,
                 MessageType = ConsoleOutLogMessageType.Message,
             };
