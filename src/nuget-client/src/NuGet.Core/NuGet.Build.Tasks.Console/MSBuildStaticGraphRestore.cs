@@ -651,10 +651,10 @@ namespace NuGet.Build.Tasks.Console
                 // Load the projects via MSBuild and create an array of them since Parallel.ForEach is optimized for arrays
                 var projects = LoadProjects(entryProjects)?.ToArray();
 
-                // If no projects were loaded, return null indicating that the projects could not be loaded.
+                // If no projects were loaded, return an empty DependencyGraphSpec
                 if (projects == null || projects.Length == 0)
                 {
-                    return null;
+                    return new DependencyGraphSpec();
                 }
 
                 var sw = Stopwatch.StartNew();

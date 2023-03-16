@@ -54,14 +54,14 @@ namespace NuGet.Build.Tasks.Test
 #if IS_CORECLR
                     Path.ChangeExtension(typeof(RestoreTaskEx).Assembly.Location, ".Console.dll"),
 #endif
-                    $"GenerateRestoreGraphFile=True;Recursive=True;RestoreGraphOutputPath={restoreGraphOutputPath}",
+                    $"Recursive=True;GenerateRestoreGraphFile=True;RestoreGraphOutputPath={restoreGraphOutputPath}",
 #if IS_CORECLR
                     Path.Combine(msbuildBinPath, "MSBuild.dll"),
 #else
                     Path.Combine(msbuildBinPath, "MSBuild.exe"),
 #endif
                     projectPath,
-                        $"Property1=Value1;Property2=  Value2  ;ExcludeRestorePackageImports=true;OriginalMSBuildStartupDirectory={testDirectory}");
+                        $"Property1=Value1;Property2=  Value2  ;ExcludeRestorePackageImports=True;OriginalMSBuildStartupDirectory={testDirectory}");
                 }
             }
         }

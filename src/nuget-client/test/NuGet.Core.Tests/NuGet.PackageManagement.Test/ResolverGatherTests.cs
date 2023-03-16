@@ -1422,7 +1422,7 @@ namespace NuGet.Test
         }
 
         /// <summary>
-        /// Test package pacckage patterns filters are respected and succeeds.
+        /// Test package patterns filters are respected and succeeds.
         /// </summary>
         [Theory]
         [InlineData("public,Nuget", "Nuget")]
