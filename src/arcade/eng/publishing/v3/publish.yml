@@ -17,8 +17,6 @@ stages:
         - group: DotNet-Symbol-Server-Pats
         - group: DotNetBuilds storage account tokens
         - group: AzureDevOps-Artifact-Feeds-Pats
-        - group: DotNet-Blob-Feed
-        - group: DotNet-DotNetCli-Storage
         - group: DotNet-MSRC-Storage
         - group: Publish-Build-Assets
           
@@ -173,12 +171,7 @@ stages:
               /p:BlobBasePath='$(Build.ArtifactStagingDirectory)/BlobArtifacts/'
               /p:PackageBasePath='$(Build.ArtifactStagingDirectory)/PackageArtifacts/'
               /p:PublishInstallersAndChecksums=true
-              /p:InstallersAzureAccountKey=$(dotnetcli-storage-key)
-              /p:InternalInstallersAzureAccountKey=$(dotnetclimsrc-access-key)
-              /p:ChecksumsAzureAccountKey=$(dotnetclichecksums-storage-key)
-              /p:InternalChecksumsAzureAccountKey=$(dotnetclichecksumsmsrc-storage-key)
               /p:AzureDevOpsFeedsKey='$(dn-bot-all-orgs-artifact-feeds-rw)'
-              /p:AzureStorageTargetFeedPAT='$(dotnetfeed-storage-access-key-1)'
               /p:AkaMSClientId=$(akams-client-id)
               /p:AkaMSClientSecret=$(akams-client-secret)
               ${{ parameters.artifactsPublishingAdditionalParameters }}
@@ -200,6 +193,8 @@ stages:
               /p:DotNetBuildsPublicChecksumsUriBase64='$(dotnetbuilds-public-container-checksum-uri-base64)'
               /p:DotNetBuildsInternalUriBase64='$(dotnetbuilds-internal-container-uri-base64)'
               /p:DotNetBuildsInternalChecksumsUriBase64='$(dotnetbuilds-internal-container-checksum-uri-base64)'
+              /p:DotNetCliMsrcDotNetUriBase64='$(dotnetclimsrc-dotnet-container-uri-base64)'
+              /p:DotNetCliChecksumsMsrcDotNetUriBase64='$(dotnetclichecksumsmsrc-dotnet-container-uri-base64)'
         - template: /eng/common/templates/steps/publish-logs.yml
           parameters:
             StageLabel: '${{ parameters.stageName }}'

@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard1.1;netstandard1.3;net46</TargetFrameworks>
     <NuspecFile>$(ArtifactsBinDir)system.io.compression/4.3.0/system.io.compression.nuspec</NuspecFile>
-    <AssemblyOriginatorKeyFile>$(KeyFileDir)ECMA.snk</AssemblyOriginatorKeyFile>
+    <StrongNameKeyId>ECMA</StrongNameKeyId>
    </PropertyGroup>
 
   <PropertyGroup>

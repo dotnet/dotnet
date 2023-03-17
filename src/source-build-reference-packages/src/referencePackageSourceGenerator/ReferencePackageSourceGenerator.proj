@@ -7,7 +7,10 @@
     <PackagesTargetDirectory>$(RepoRoot)src\referencePackages\src\</PackagesTargetDirectory>
     <!-- The following target frameworks aren't buildable with the current SDK and as they don't contribute to the set of
          source build target verticals, can be safely excluded. -->
-    <ExcludeTargetFrameworks>netcore50;net463;portable-*;xamarin*;monotouch*;monoandroid*;win8;wp8;wpa81</ExcludeTargetFrameworks>
+    <ExcludeTargetFrameworks>monoandroid*;monotouch*;net463;netcore50;portable*;uap*;win8;wp8;wpa81;xamarin*</ExcludeTargetFrameworks>
+    <!-- The following target frameworks should be excluded even though they are supported by the current SDK because there is no need to have them.
+         Only exclude them when target frameworks to include aren't provided. -->
+    <ExcludeTargetFrameworks Condition="'$(IncludeTargetFrameworks)' == ''">$(ExcludeTargetFrameworks);netcoreapp3.1</ExcludeTargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(PackageName)' != '' and '$(PackageVersion)' != ''">
@@ -88,8 +91,7 @@
           DependsOnTargets="GenerateAndInvokeGenerateSourceProject;
                             GenerateReferencePackageProject;
                             CopyPlaceholderFiles;
-                            RewriteNuspec;
-                            CreateDirectoryBuildPropsFile" />
+                            RewriteNuspec" />
 
   <!-- Generate an intermediate multi-targeting wrapper project that retrieves the reference assemblies and invokes GenAPI. -->
   <Target Name="GenerateAndInvokeGenerateSourceProject"
@@ -150,7 +152,6 @@
                      CompileItems="@(PackageCompileItem)"
                      PackageDependencies="@(PackageDependency)"
                      FrameworkReferences="@(PackageFrameworkReference)"
-                     BaseTargetPath="$(PackagesTargetDirectory)"
                      TargetPath="$(ReferencePackageProjectTargetPath)"
                      ProjectTemplate="$(ReferencePackageProjectTemplate)" />
 
@@ -186,34 +187,6 @@
                    RemoveRuntimeSpecificDependencies="true" />
 
     <Message Text="$(MSBuildProjectName) -> $(NuspecTargetPath)"
-             Importance="high" />
-  </Target>
-
-  <!-- Generate Directory.Build.props supplemental build file. -->
-  <Target Name="CreateDirectoryBuildPropsFile"
-          DependsOnTargets="GetPackageItems">
-    <PropertyGroup>
-      <DirectoryBuildPropsTemplate>DirectoryBuildPropsTemplate.xml</DirectoryBuildPropsTemplate>
-      <DirectoryBuildPropsTargetPath>$(BasePackageTargetDirectory)Directory.Build.props</DirectoryBuildPropsTargetPath>
-    </PropertyGroup>
-
-    <!-- Calculate the assembly name from the compile items assembly name metadata. If more than one
-         distinct name is found (i.e. multi assembly package), use the PackageId instead. -->
-    <ItemGroup>
-      <PackageAssemblyName Include="@(PackageCompileItem->Metadata('AssemblyName')->Distinct())" />
-    </ItemGroup>
-
-    <PropertyGroup>
-      <PackageAssemblyName Condition="@(PackageAssemblyName->Count()) > 1">$(RealPackageId)</PackageAssemblyName>
-      <PackageAssemblyName Condition="'$(PackageAssemblyName)' == ''">%(PackageAssemblyName.Identity)</PackageAssemblyName>
-    </PropertyGroup>
-
-    <WriteLinesToFile File="$(DirectoryBuildPropsTargetPath)"
-                      Lines="$([System.IO.File]::ReadAllText('$(DirectoryBuildPropsTemplate)')
-                               .Replace('$$AssemblyName$$', '$(PackageAssemblyName)'))"
-                      Overwrite="true" />
-
-    <Message Text="$(MSBuildProjectName) -> $(DirectoryBuildPropsTargetPath)"
              Importance="high" />
   </Target>
 

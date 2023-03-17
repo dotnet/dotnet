@@ -24,7 +24,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 case FeedType.AzDoNugetFeed:
                     return new AzureDevOpsNugetFeedAssetPublisher(_log, feedConfig.TargetURL, feedConfig.Token, task);
                 case FeedType.AzureStorageContainer:
-                    return new AzureStorageContainerAssetPublisher(new Uri(feedConfig.TargetURL), _log);
+                    return new AzureStorageContainerAssetPublisher(new Uri(feedConfig.TargetURL), new Uri(feedConfig.Token), _log);
                 default:
                     throw new NotImplementedException();
             }
