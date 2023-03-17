@@ -76,8 +76,6 @@ namespace NuGet.CommandLine.Test
             var dgPath = Path.Combine(pathContext.WorkingDirectory, "out.dg");
             var envVars = new Dictionary<string, string>()
                 {
-                    { "NUGET_PERSIST_DG", "true" },
-                    { "NUGET_PERSIST_DG_PATH", dgPath },
                     { "NUGET_HTTP_CACHE_PATH", pathContext.HttpCacheFolder }
                 };
 
