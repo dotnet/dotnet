@@ -50,7 +50,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             ImmutableList<string> filesToExclude = null,
             bool flatten = true,
             TaskLoggingHelper log = null) 
-            : base(isInternalBuild, isStableBuild, repositoryName, commitSha, null, publishInstallersAndChecksums, null, null, null, null, null, null, null, latestLinkShortUrlPrefixes, null)
+            : base(isInternalBuild, isStableBuild, repositoryName, commitSha, publishInstallersAndChecksums, null, null, null, null, null, null, null, latestLinkShortUrlPrefixes, null)
         {
             _targetChannelConfig = targetChannelConfig;
             BuildEngine = buildEngine;
@@ -158,18 +158,19 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                     }
                     var key = GetFeedKey(feed);
                     var sasUri = GetFeedSasUri(feed);
-                    if (feed != oldFeed && string.IsNullOrEmpty(key) && string.IsNullOrEmpty(sasUri))
+                    if (string.IsNullOrEmpty(key) && string.IsNullOrEmpty(sasUri))
                     {
-                        Log?.LogWarning($"No keys found for {feed}, unable to publish to it.");
+                        Log?.LogError($"No keys found for {feed}, unable to publish to it.");
                         continue;
                     }
+
                     var feedType = feed.StartsWith("https://pkgs.dev.azure.com")
                         ? FeedType.AzDoNugetFeed : FeedType.AzureStorageContainer;
                     yield return new TargetFeedConfig(
                         type,
-                        sasUri ?? feed,
+                        feed,
                         feedType,
-                        sasUri == null ? key : null,
+                        sasUri ?? key,
                         LatestLinkShortUrlPrefixes,
                         spec.Assets,
                         false,

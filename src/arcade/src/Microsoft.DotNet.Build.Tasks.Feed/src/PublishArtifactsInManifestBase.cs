@@ -590,7 +590,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                             treatPdbConversionIssuesAsInfo: false,
                             dryRun: false,
                             timer: false,
-                            verboseLogging: true);
+                            verboseLogging: false);
                     }
                     catch (Exception ex)
                     {
@@ -719,7 +719,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                             treatPdbConversionIssuesAsInfo: false,
                             dryRun: false,
                             timer: false,
-                            verboseLogging: true);
+                            verboseLogging: false);
                     }
                     catch (Exception ex)
                     {

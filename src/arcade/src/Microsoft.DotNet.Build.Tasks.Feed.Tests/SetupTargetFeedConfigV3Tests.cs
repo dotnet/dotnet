@@ -17,7 +17,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
 {
     public class SetupTargetFeedConfigV3Tests
     {
-        private const string AzureStorageTargetFeedPAT = "AzureStorageTargetFeedPAT";
         private const string LatestLinkShortUrlPrefix = "LatestLinkShortUrlPrefix";
         private const string BuildQuality = "quality";
         private const string AzureDevOpsFeedsKey = "AzureDevOpsFeedsKey";

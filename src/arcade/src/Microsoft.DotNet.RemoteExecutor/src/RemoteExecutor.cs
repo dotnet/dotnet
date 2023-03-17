@@ -109,8 +109,6 @@ namespace Microsoft.DotNet.RemoteExecutor
             !RuntimeInformation.IsOSPlatform(OSPlatform.Create("WATCHOS")) &&
             !RuntimeInformation.IsOSPlatform(OSPlatform.Create("BROWSER")) &&
             !RuntimeInformation.IsOSPlatform(OSPlatform.Create("WASI")) &&
-            // The current RemoteExecutor design is not compatible with single file
-            !string.IsNullOrEmpty(typeof(RemoteExecutor).Assembly.Location) &&
             Environment.GetEnvironmentVariable("DOTNET_REMOTEEXECUTOR_SUPPORTED") != "0";
 
         /// <summary>Invokes the method from this assembly in another process using the specified arguments.</summary>

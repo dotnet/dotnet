@@ -53,7 +53,6 @@
       - AzureStorageAccountKey
       - AzureDevOpsFeedsBaseUrl
       - ArtifactsCategory
-      - AzureStorageTargetFeedPAT               : PAT for accessing dotnetfeed Azure Storage
 
     Optional parameters for SetupTargetFeeds.proj
       - PublishInstallersAndChecksums   : This control whether installers & checksums should be published to public feeds on public builds
@@ -99,10 +98,6 @@
       <AkaMSGroupOwner Condition="'$(AkaMSGroupOwner)' == ''">ddfwlink</AkaMSGroupOwner>
       <PublishSpecialClrFiles Condition="'$(PublishSpecialClrFiles)' == ''">false</PublishSpecialClrFiles>
       <BuildQuality Condition="'$(BuildQuality)' == ''">daily</BuildQuality>
-      <InstallersFeedKey>$(InstallersAzureAccountKey)</InstallersFeedKey>
-      <InternalInstallersFeedKey>$(InternalInstallersAzureAccountKey)</InternalInstallersFeedKey>
-      <ChecksumsFeedKey>$(ChecksumsAzureAccountKey)</ChecksumsFeedKey>
-      <InternalChecksumsFeedKey>$(InternalChecksumsAzureAccountKey)</InternalChecksumsFeedKey>
       <AllowFeedOverrides Condition="'$(AllowFeedOverrides)' == ''">false</AllowFeedOverrides>
       <UseStreamingPublishing Condition="'$(UseStreamingPublishing)' == ''">false</UseStreamingPublishing>
       <ArtifactsBasePath Condition="'$(ArtifactsBasePath)' == ''">$(BlobBasePath)</ArtifactsBasePath>
@@ -111,13 +106,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <FeedKey Include="https://dotnetclichecksums.blob.core.windows.net/dotnet/index.json" Key="$(ChecksumsFeedKey)"/>
-      <FeedKey Include="https://dotnetcli.blob.core.windows.net/dotnet/index.json" Key="$(InstallersFeedKey)"/>
-      <FeedKey Include="https://dotnetclichecksumsmsrc.blob.core.windows.net/dotnet/index.json" Key="$(InternalChecksumsFeedKey)"/>
-      <FeedKey Include="https://dotnetclimsrc.blob.core.windows.net/dotnet/index.json" Key="$(InternalInstallersFeedKey)"/>
+      <!-- These stay for .NET 5 for now -->
       <FeedKey Include="https://pkgs.dev.azure.com/dnceng" Key="$(AzureDevOpsFeedsKey)"/>
-      <FeedKey Include="$(ChecksumsFeedOverride)" Key="$(ChecksumsFeedKey)" Condition="'$(ChecksumsFeedOverride)' != ''"/>
-      <FeedKey Include="$(InstallersFeedOverride)" Key="$(InstallersFeedKey)" Condition="'$(InstallersFeedOverride)' != ''"/>
+      <FeedSasUri Include="$(ChecksumsFeedOverride)" Base64Uri="$(ChecksumsFeedBase64SasUri)" Condition="'$(ChecksumsFeedOverride)' != ''"/>
+      <FeedSasUri Include="$(InstallersFeedOverride)" Base64Uri="$(InstallersFeedBase64SasUri)" Condition="'$(InstallersFeedOverride)' != ''"/>
+      <FeedSasUri Include="https://dotnetclimsrc.blob.core.windows.net/dotnet" Key="$(DotNetCliMsrcDotNetUriBase64)"/>
+      <FeedSasUri Include="https://dotnetclichecksumsmsrc.blob.core.windows.net/dotnet" Key="$(DotNetCliChecksumsMsrcDotNetUriBase64)"/>
       <FeedSasUri Include="https://dotnetbuilds.blob.core.windows.net/public" Base64Uri="$(DotNetBuildsPublicUriBase64)"/>
       <FeedSasUri Include="https://dotnetbuilds.blob.core.windows.net/public-checksums" Base64Uri="$(DotNetBuildsPublicChecksumsUriBase64)"/>
       <FeedSasUri Include="https://dotnetbuilds.blob.core.windows.net/internal" Base64Uri="$(DotNetBuildsInternalUriBase64)"/>
