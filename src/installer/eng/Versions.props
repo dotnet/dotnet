@@ -86,6 +86,10 @@
     <MicrosoftDotnetTemplateLocatorPackageVersion>$(MicrosoftNETSdkPackageVersion)</MicrosoftDotnetTemplateLocatorPackageVersion>
   </PropertyGroup>
   <PropertyGroup>
+    <!-- Dependencies from https://github.com/dotnet/roslyn -->
+    <MicrosoftNetCompilersToolsetPackageVersion>4.6.0-2.23166.9</MicrosoftNetCompilersToolsetPackageVersion>
+  </PropertyGroup>
+  <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/corefx -->
     <MicrosoftNETCorePlatformsPackageVersion>8.0.0-preview.3.23166.7</MicrosoftNETCorePlatformsPackageVersion>
   </PropertyGroup>
