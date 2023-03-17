@@ -14,6 +14,8 @@
       <BuildCommandArgs>$(ProjectDirectory)src/Humanizer/Humanizer.csproj</BuildCommandArgs>
       <!-- Always build release mode: nuspecs in repo are hard-coded to Release config outputs. -->
       <BuildCommandArgs>$(BuildCommandArgs) /p:Configuration=Release</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:DelaySign=$(DelaySign)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:PublicSign=$(PublicSign)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /v:$(LogVerbosity)</BuildCommandArgs>
 
       <PackCommandArgs>$(BuildCommandArgs)</PackCommandArgs>

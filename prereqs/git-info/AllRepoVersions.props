@@ -19,7 +19,7 @@
     <formatOutputPackageVersion>8.0.416301</formatOutputPackageVersion>
     <fsharpGitCommitHash>2a827fdff7e07ec013c299ac6c9e7dabea87d554</fsharpGitCommitHash>
     <fsharpOutputPackageVersion>7.0.300-beta.23165.8</fsharpOutputPackageVersion>
-    <installerGitCommitHash>956fbfc3d528bcc34dade6f0066e6e72649ef981</installerGitCommitHash>
+    <installerGitCommitHash>abf98a19aa12b607455557f2aad60752b11c2786</installerGitCommitHash>
     <installerOutputPackageVersion>8.0.100</installerOutputPackageVersion>
     <msbuildGitCommitHash>60ea2f733cfcc78da965ab43cf040fe5c58800fb</msbuildGitCommitHash>
     <msbuildOutputPackageVersion>17.6.0-preview-23165-02</msbuildOutputPackageVersion>
@@ -31,12 +31,12 @@
     <roslynanalyzersOutputPackageVersion>3.3.5-beta1.23165.1</roslynanalyzersOutputPackageVersion>
     <roslynGitCommitHash>48b13597fee9df5ecfbd0b8c0758b3f46bc1d440</roslynGitCommitHash>
     <roslynOutputPackageVersion>4.6.0-2.23164.1</roslynOutputPackageVersion>
-    <runtimeGitCommitHash>56223423e5f81264371b76ab9476229716df8d91</runtimeGitCommitHash>
-    <runtimeOutputPackageVersion>8.0.0-preview.3.23166.7</runtimeOutputPackageVersion>
-    <sdkGitCommitHash>3abfbcf34ae753601d701b0e4ce56eb0b2597eec</sdkGitCommitHash>
-    <sdkOutputPackageVersion>8.0.100-preview.3.23166.24</sdkOutputPackageVersion>
-    <sourcebuildexternalsGitCommitHash>c440136d26fcd3bda4289755023ee91dff20c4f7</sourcebuildexternalsGitCommitHash>
-    <sourcebuildexternalsOutputPackageVersion>8.0.0-alpha.1.23165.1</sourcebuildexternalsOutputPackageVersion>
+    <runtimeGitCommitHash>27fe4461113c4c0be354ce188d27cf9797d7d632</runtimeGitCommitHash>
+    <runtimeOutputPackageVersion>8.0.0-preview.3.23167.2</runtimeOutputPackageVersion>
+    <sdkGitCommitHash>23bbdf8e62544b04afd333920b109877f427b637</sdkGitCommitHash>
+    <sdkOutputPackageVersion>8.0.100-preview.3.23167.5</sdkOutputPackageVersion>
+    <sourcebuildexternalsGitCommitHash>9338b8c86e9a170c9b0c1b35ab1210d2c74829d6</sourcebuildexternalsGitCommitHash>
+    <sourcebuildexternalsOutputPackageVersion>8.0.0-alpha.1.23166.4</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>fdbe4632b67ee16bd1856417cda93fdbf84139ec</sourcebuildreferencepackagesGitCommitHash>
     <sourcebuildreferencepackagesOutputPackageVersion>8.0.0-alpha.1.23167.2</sourcebuildreferencepackagesOutputPackageVersion>
     <sourcelinkGitCommitHash>3f43bf1b2dead2cb51f20dc47f6dfd7981248820</sourcelinkGitCommitHash>

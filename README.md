@@ -179,7 +179,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@2a827fd](https://github.com/dotnet/fsharp/commit/2a827fdff7e07ec013c299ac6c9e7dabea87d554)*
 - `src/installer`  
-*[dotnet/installer@956fbfc](https://github.com/dotnet/installer/commit/956fbfc3d528bcc34dade6f0066e6e72649ef981)*
+*[dotnet/installer@abf98a1](https://github.com/dotnet/installer/commit/abf98a19aa12b607455557f2aad60752b11c2786)*
 - `src/msbuild`  
 *[dotnet/msbuild@60ea2f7](https://github.com/dotnet/msbuild/commit/60ea2f733cfcc78da965ab43cf040fe5c58800fb)*
 - `src/nuget-client`  
@@ -193,17 +193,19 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/roslyn-analyzers`  
 *[dotnet/roslyn-analyzers@89c1a9d](https://github.com/dotnet/roslyn-analyzers/commit/89c1a9dd4775efb2c55af106c23d5415d8177d5e)*
 - `src/runtime`  
-*[dotnet/runtime@5622342](https://github.com/dotnet/runtime/commit/56223423e5f81264371b76ab9476229716df8d91)*
+*[dotnet/runtime@27fe446](https://github.com/dotnet/runtime/commit/27fe4461113c4c0be354ce188d27cf9797d7d632)*
 - `src/sdk`  
-*[dotnet/sdk@3abfbcf](https://github.com/dotnet/sdk/commit/3abfbcf34ae753601d701b0e4ce56eb0b2597eec)*
+*[dotnet/sdk@23bbdf8](https://github.com/dotnet/sdk/commit/23bbdf8e62544b04afd333920b109877f427b637)*
 - `src/source-build-externals`  
-*[dotnet/source-build-externals@c440136](https://github.com/dotnet/source-build-externals/commit/c440136d26fcd3bda4289755023ee91dff20c4f7)*
+*[dotnet/source-build-externals@9338b8c](https://github.com/dotnet/source-build-externals/commit/9338b8c86e9a170c9b0c1b35ab1210d2c74829d6)*
     - `src/source-build-externals/src/application-insights`  
     *[Microsoft/ApplicationInsights-dotnet@51c3ed8](https://github.com/Microsoft/ApplicationInsights-dotnet/commit/51c3ed8aa3f32209edf01168f9136a3ac8486c5d)*
     - `src/source-build-externals/src/azure-activedirectory-identitymodel-extensions-for-dotnet`  
     *[AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet@a9de8ff](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/commit/a9de8ff14648770a3caa33a68d8061d0fa84d105)*
     - `src/source-build-externals/src/cssparser`  
     *[dotnet/cssparser@d6d86bc](https://github.com/dotnet/cssparser/commit/d6d86bcd8c162b1ae22ef00955ff748d028dd0ee)*
+    - `src/source-build-externals/src/docker-creds-provider`  
+    *[mthalman/docker-creds-provider@e92e354](https://github.com/mthalman/docker-creds-provider/commit/e92e354c78d6d5c60e9d0f679712c871bef97ebe)*
     - `src/source-build-externals/src/humanizer`  
     *[Humanizr/Humanizer@3ebc38d](https://github.com/Humanizr/Humanizer/commit/3ebc38de585fc641a04b0e78ed69468453b0f8a1)*
     - `src/source-build-externals/src/MSBuildLocator`  
