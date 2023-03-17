@@ -19,7 +19,7 @@ namespace NuGet.Packaging.Rules {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class AnalysisResources {
@@ -309,6 +309,15 @@ namespace NuGet.Packaging.Rules {
         public static string MisplacedTransformFileWarning {
             get {
                 return ResourceManager.GetString("MisplacedTransformFileWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The package {0} is missing a readme. Go to https://aka.ms/nuget/authoring-best-practices/readme to learn why package readmes are important..
+        /// </summary>
+        public static string MissingReadmeInformation {
+            get {
+                return ResourceManager.GetString("MissingReadmeInformation", resourceCulture);
             }
         }
         

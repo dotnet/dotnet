@@ -1031,27 +1031,27 @@ namespace NuGet.Commands
         internal void AnalyzePackage(PackageArchiveReader package)
         {
             IEnumerable<IPackageRule> packageRules = Rules;
-            IList<PackagingLogMessage> issues = new List<PackagingLogMessage>();
+            IList<PackagingLogMessage> logMessages = new List<PackagingLogMessage>();
 
             foreach (IPackageRule rule in packageRules)
             {
-                issues.AddRange(rule.Validate(package).OrderBy(p => p.Code.ToString(), StringComparer.CurrentCulture));
+                logMessages.AddRange(rule.Validate(package).OrderBy(p => p.Code.ToString(), StringComparer.CurrentCulture));
             }
 
-            if (issues.Count > 0)
+            if (logMessages.Count > 0)
             {
-                foreach (PackagingLogMessage issue in issues)
+                foreach (PackagingLogMessage logMessage in logMessages)
                 {
-                    PrintPackageIssue(issue);
+                    PrintPackageLogMessage(logMessage);
                 }
             }
         }
 
-        private void PrintPackageIssue(PackagingLogMessage issue)
+        private void PrintPackageLogMessage(PackagingLogMessage message)
         {
-            if (!string.IsNullOrEmpty(issue.Message))
+            if (!string.IsNullOrEmpty(message.Message))
             {
-                _packArgs.Logger.Log(issue);
+                _packArgs.Logger.Log(message);
             }
         }
 

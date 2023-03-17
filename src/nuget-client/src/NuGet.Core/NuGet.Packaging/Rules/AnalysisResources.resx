@@ -213,6 +213,10 @@
   <data name="MisplacedTransformFileWarning" xml:space="preserve">
     <value>The transform file '{0}' is outside the 'content' folder and hence will not be transformed during installation of this package. Move it into the 'content' folder.</value>
   </data>
+  <data name="MissingReadmeInformation" xml:space="preserve">
+    <value>The package {0} is missing a readme. Go to https://aka.ms/nuget/authoring-best-practices/readme to learn why package readmes are important.</value>
+    <comment>0 - package identity</comment>
+  </data>
   <data name="NoRefOrLibFolderInPackage" xml:space="preserve">
     <value>This package does not contain a lib/ or ref/ folder, and will therefore be treated as compatible for all frameworks. Since framework specific files were found under the build/ directory for {0}, consider creating the following empty files to correctly narrow the compatibility of the package:
 {1}</value>
