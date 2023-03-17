@@ -1,20 +1,6 @@
 <Project>
 
-  <!--
-    The project name uses {AssemblyName}.{Version}.csproj format to be unqiue, because we build
-    multiple versions of the same package IDs. This means the AssemblyName will include the version
-    in the name, unlike the real packages. To fix this, use the parent parent dir name as the
-    assembly name, as it has the correct versionless name and capitalization.
-
-    If this doesn't work in a specific case, manually define AssemblyName in the project, or in a
-    Directory.Build.props for that whole package ID.
-  -->
-  <PropertyGroup>
-    <ProjectParentDir>$([System.IO.Directory]::GetParent('$(MSBuildProjectDirectory)'))</ProjectParentDir>
-    <AssemblyName Condition="'$(AssemblyName)' == ''">$([MSBuild]::MakeRelative('$(MSBuildThisFileDirectory)src', '$(ProjectParentDir)'))</AssemblyName>
-  </PropertyGroup>
-
-  <Import Project="$([MSBuild]::GetPathOfFileAbove(Directory.Build.props, $(MSBuildThisFileDirectory)..))" />
+  <Import Project="..\Directory.Build.props" />
 
   <PropertyGroup>
     <!-- Common properties for all Reference Packages -->
@@ -22,7 +8,6 @@
     <DebugSymbols>false</DebugSymbols>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
-    <KeyFileDir>$(RepoRoot)src/referencePackages/snk/</KeyFileDir>
     <SignAssembly>true</SignAssembly>
     <PublicSign>true</PublicSign>
     <FullAssemblySigningSupported Condition="('$(FullAssemblySigningSupported)' == '') and ('$(OS)' != 'Windows_NT')">false</FullAssemblySigningSupported>
