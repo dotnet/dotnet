@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+defaults:
+  run:
+    working-directory: src
+
+jobs:
+  build:
+    name: "Build and test on ${{ matrix.os }}"
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v1.7.2
+        with:
+          dotnet-version: "6.0.x"
+        env:
+          NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+      - name: Install dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build -c Release --no-restore
+
+      - name: Test
+        run: dotnet test --no-restore -v normal -c Release -r test-results -l trx
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v2.1.4
+        if: always()
+        with:
+          name: test-results
+          path: src/test-results/*

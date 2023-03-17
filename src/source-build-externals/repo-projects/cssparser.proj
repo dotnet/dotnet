@@ -11,6 +11,8 @@
     <PropertyGroup>
       <BuildCommandArgs>$(ProjectDirectory)/src/Microsoft.Css.Parser/Microsoft.Css.Parser.csproj</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /p:Configuration=$(Configuration)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:DelaySign=$(DelaySign)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:PublicSign=$(PublicSign)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /v:$(LogVerbosity)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) $(RedirectRepoOutputToLog)</BuildCommandArgs>
     </PropertyGroup>

@@ -2,21 +2,20 @@
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
 
   <PropertyGroup>
-    <PackagesOutput>$(ProjectDirectory)/src/MSBuildLocator/bin/$(Configuration)/</PackagesOutput>
+    <PackagesOutput>$(ProjectDirectory)/src/Valleysoft.DockerCredsProvider/bin/$(Configuration)/</PackagesOutput>
+    <DockerCredsProviderPackageVersion>2.1.0</DockerCredsProviderPackageVersion>
   </PropertyGroup>
 
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 
   <Target Name="RepoBuild">
     <PropertyGroup>
-      <BuildCommandArgs>$(ProjectDirectory)/src/MSBuildLocator/Microsoft.Build.Locator.csproj</BuildCommandArgs>
+      <BuildCommandArgs>$(ProjectDirectory)/src/Valleysoft.DockerCredsProvider/Valleysoft.DockerCredsProvider.csproj</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /p:Configuration=$(Configuration)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /v:$(LogVerbosity)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) $(RedirectRepoOutputToLog)</BuildCommandArgs>
-      <BuildCommandArgs>$(BuildCommandArgs) /p:MicrosoftSourceLinkGitHubVersion=$(MicrosoftSourceLinkGitHubVersion)</BuildCommandArgs>
-      <BuildCommandArgs>$(BuildCommandArgs) /p:DelaySign=$(DelaySign)</BuildCommandArgs>
-      <BuildCommandArgs>$(BuildCommandArgs) /p:PublicSign=$(PublicSign)</BuildCommandArgs>
-      <BuildCommandArgs>$(BuildCommandArgs) /p:Version=1.5.5</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:Version=$(DockerCredsProviderPackageVersion)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:TargetFrameworks=$(NetCurrent)</BuildCommandArgs>
     </PropertyGroup>
 
     <Exec Command="$(DotnetToolCommand) restore /bl:restore.binlog $(BuildCommandArgs)"
