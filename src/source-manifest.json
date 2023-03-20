@@ -1,16 +1,16 @@
 {
   "repositories": [
     {
-      "packageVersion": "8.0.0-beta.23166.5",
+      "packageVersion": "8.0.0-beta.23168.1",
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "a1359bf50fe84f9b1cd01d611c9186820126df9b"
+      "commitSha": "b12f035e893c34ec2c965d75f6e21b7a2667e98d"
     },
     {
-      "packageVersion": "8.0.0-preview.3.23166.9",
+      "packageVersion": "8.0.0-preview.3.23167.7",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "2a7dc900bc0a2c87340595d943c25260fe3a3b94"
+      "commitSha": "c52fd930f70e102d5e5c84e85180e451861eaf7e"
     },
     {
       "packageVersion": "0.11.4-alpha.23156.1",
@@ -49,16 +49,16 @@
       "commitSha": "0b968051beac5d7c1a62a52aee7fbbbb47dc1f47"
     },
     {
-      "packageVersion": "7.0.300-beta.23165.8",
+      "packageVersion": "7.0.300-beta.23166.3",
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "2a827fdff7e07ec013c299ac6c9e7dabea87d554"
+      "commitSha": "bf1480450655ba8da5a3721c9aa783488f519a8d"
     },
     {
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "3ca0db8956623a55772c644e0a0628c8bcfc4a5b"
+      "commitSha": "e5bc8806c92135eecb3ca5ce9065e83c4dd47f97"
     },
     {
       "packageVersion": "17.6.0-preview-23165-02",
@@ -91,22 +91,22 @@
       "commitSha": "89c1a9dd4775efb2c55af106c23d5415d8177d5e"
     },
     {
-      "packageVersion": "8.0.0-preview.3.23167.2",
+      "packageVersion": "8.0.0-preview.3.23167.3",
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "27fe4461113c4c0be354ce188d27cf9797d7d632"
+      "commitSha": "3c381894b737bb1a56a21f16d0710a0c61908a1a"
     },
     {
-      "packageVersion": "8.0.100-preview.3.23167.5",
+      "packageVersion": "8.0.100-preview.3.23167.17",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "23bbdf8e62544b04afd333920b109877f427b637"
+      "commitSha": "4b8de6857076720f7c9fded5f20a5d6f4c3acb65"
     },
     {
-      "packageVersion": "8.0.0-alpha.1.23166.4",
+      "packageVersion": "8.0.0-alpha.1.23167.1",
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "9338b8c86e9a170c9b0c1b35ab1210d2c74829d6"
+      "commitSha": "dcd0eca339b5c64b5816c111f583c82062ce4c74"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23167.2",
@@ -127,10 +127,10 @@
       "commitSha": "7b9791daa3a3477eb22ec805946c9fff8b42d8ca"
     },
     {
-      "packageVersion": "8.0.100-preview.3.23166.2",
+      "packageVersion": "8.0.100-preview.3.23167.3",
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "131200a33917e752b660d20b49e18f426887452d"
+      "commitSha": "63a6c32277d9e9e12f3a06ea6c16b37e98744356"
     },
     {
       "packageVersion": "1.1.0-rc.23166.1",
@@ -161,7 +161,7 @@
     {
       "path": "aspnetcore/src/submodules/googletest",
       "remoteUri": "https://github.com/google/googletest",
-      "commitSha": "50e07d1c92875e66138d5d5ee3bb46ef237115bb"
+      "commitSha": "e49c6b946a44f9a58586bfc76f75687d8f77e725"
     },
     {
       "path": "aspnetcore/src/submodules/MessagePack-CSharp",

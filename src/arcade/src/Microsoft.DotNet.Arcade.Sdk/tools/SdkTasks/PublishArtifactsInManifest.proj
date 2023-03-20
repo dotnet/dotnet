@@ -116,10 +116,10 @@
       <FeedSasUri Include="https://dotnetbuilds.blob.core.windows.net/public-checksums" Base64Uri="$(DotNetBuildsPublicChecksumsUriBase64)"/>
       <FeedSasUri Include="https://dotnetbuilds.blob.core.windows.net/internal" Base64Uri="$(DotNetBuildsInternalUriBase64)"/>
       <FeedSasUri Include="https://dotnetbuilds.blob.core.windows.net/internal-checksums" Base64Uri="$(DotNetBuildsInternalChecksumsUriBase64)"/>
-      <FeedOverride Include="https://dotnetclichecksums.blob.core.windows.net/dotnet/index.json" Replacement="$(ChecksumsFeedOverride)" Condition="'$(ChecksumsFeedOverride)' != ''"/>
-      <FeedOverride Include="https://dotnetcli.blob.core.windows.net/dotnet/index.json" Replacement="$(InstallersFeedOverride)" Condition="'$(InstallersFeedOverride)' != ''"/>
-      <FeedOverride Include="https://dotnetclichecksumsmsrc.blob.core.windows.net/dotnet/index.json" Replacement="$(ChecksumsFeedOverride)" Condition="'$(ChecksumsFeedOverride)' != ''"/>
-      <FeedOverride Include="https://dotnetclimsrc.blob.core.windows.net/dotnet/index.json" Replacement="$(InstallersFeedOverride)" Condition="'$(InstallersFeedOverride)' != ''"/>
+      <FeedOverride Include="https://dotnetclichecksums.blob.core.windows.net/dotnet" Replacement="$(ChecksumsFeedOverride)" Condition="'$(ChecksumsFeedOverride)' != ''"/>
+      <FeedOverride Include="https://dotnetcli.blob.core.windows.net/dotnet" Replacement="$(InstallersFeedOverride)" Condition="'$(InstallersFeedOverride)' != ''"/>
+      <FeedOverride Include="https://dotnetclichecksumsmsrc.blob.core.windows.net/dotnet" Replacement="$(ChecksumsFeedOverride)" Condition="'$(ChecksumsFeedOverride)' != ''"/>
+      <FeedOverride Include="https://dotnetclimsrc.blob.core.windows.net/dotnet" Replacement="$(InstallersFeedOverride)" Condition="'$(InstallersFeedOverride)' != ''"/>
       <FeedOverride Include="https://dotnetbuilds.blob.core.windows.net/public-checksums" Replacement="$(ChecksumsFeedOverride)" Condition="'$(ChecksumsFeedOverride)' != ''"/>
       <FeedOverride Include="https://dotnetbuilds.blob.core.windows.net/public" Replacement="$(InstallersFeedOverride)" Condition="'$(InstallersFeedOverride)' != ''"/>
       <FeedOverride Include="https://dotnetbuilds.blob.core.windows.net/internal-checksums" Replacement="$(ChecksumsFeedOverride)" Condition="'$(ChecksumsFeedOverride)' != ''"/>

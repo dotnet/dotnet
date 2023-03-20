@@ -79,7 +79,7 @@ namespace Microsoft.TemplateEngine.Orchestrator.RunnableProjects {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Choice parameter {0} is invalid. It allows multiple values (&apos;AllowMultipleValues=true&apos;), while some of the configured choices contain separator characters ({1}). Invalid choices: {2}.
+        ///   Looks up a localized string similar to Choice parameter &apos;{0}&apos; is invalid. It allows multiple values (&apos;AllowMultipleValues=true&apos;), while some of the configured choices contain separator characters ({1}). Invalid choices: {2}.
         /// </summary>
         internal static string Authoring_InvalidMultichoiceSymbol {
             get {
@@ -305,11 +305,20 @@ namespace Microsoft.TemplateEngine.Orchestrator.RunnableProjects {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to read parse localization file {0}, it will be skipped from further processing..
+        ///   Looks up a localized string similar to Failed to read or parse localization file {0}, it will be skipped from further processing..
         /// </summary>
         internal static string LocalizationModelDeserializer_Error_FailedToParse {
             get {
                 return ResourceManager.GetString("LocalizationModelDeserializer_Error_FailedToParse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Locale &apos;{0}&apos; does not match any known cultures..
+        /// </summary>
+        internal static string LocalizationModelDeserializer_Error_UnknownLocale {
+            get {
+                return ResourceManager.GetString("LocalizationModelDeserializer_Error_UnknownLocale", resourceCulture);
             }
         }
         
