@@ -5,7 +5,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <IsShipping>false</IsShipping>
     <IncludeBuildOutput>false</IncludeBuildOutput>
-    <IsPackable Condition="'$(OS)' == 'Windows_NT'">true</IsPackable>
+    <IsPackable>true</IsPackable>
     <ExcludeFromSourceBuild>false</ExcludeFromSourceBuild>
   </PropertyGroup>
 
