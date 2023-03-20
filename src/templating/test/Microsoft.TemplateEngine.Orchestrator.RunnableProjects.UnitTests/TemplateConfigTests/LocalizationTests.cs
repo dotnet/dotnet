@@ -1,17 +1,16 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Microsoft.TemplateEngine.Abstractions;
 using Microsoft.TemplateEngine.Abstractions.Mount;
 using Microsoft.TemplateEngine.Orchestrator.RunnableProjects.ConfigModel;
 using Microsoft.TemplateEngine.Orchestrator.RunnableProjects.Localization;
+using Microsoft.TemplateEngine.Orchestrator.RunnableProjects.UnitTests.Serialization;
+using Microsoft.TemplateEngine.Orchestrator.RunnableProjects.Validation;
 using Microsoft.TemplateEngine.TestHelper;
+using Microsoft.TemplateEngine.Utils;
 using Xunit;
 
 namespace Microsoft.TemplateEngine.Orchestrator.RunnableProjects.UnitTests.TemplateConfigTests
@@ -19,7 +18,6 @@ namespace Microsoft.TemplateEngine.Orchestrator.RunnableProjects.UnitTests.Templ
     public class LocalizationTests : IClassFixture<EnvironmentSettingsHelper>
     {
         private readonly EnvironmentSettingsHelper _environmentSettingsHelper;
-        public static readonly string DefaultConfigRelativePath = ".template.config/template.json";
         public static readonly string DefaultLocalizeConfigRelativePath = ".template.config/localize/templatestrings.{0}.json";
 
         public LocalizationTests(EnvironmentSettingsHelper environmentSettingsHelper)
@@ -36,7 +34,7 @@ namespace Microsoft.TemplateEngine.Orchestrator.RunnableProjects.UnitTests.Templ
         public void CanReadLocalizationFile(string fileContent, bool errorExpected)
         {
             IEngineEnvironmentSettings environmentSettings = _environmentSettingsHelper.CreateEnvironment(virtualize: true);
-            string tempFolder = _environmentSettingsHelper.CreateTemporaryFolder();
+            string tempFolder = environmentSettings.GetTempVirtualizedPath();
             string localizationFile = string.Format(DefaultLocalizeConfigRelativePath, "de-DE");
             environmentSettings.WriteFile(Path.Combine(tempFolder, localizationFile), fileContent);
 
@@ -59,14 +57,14 @@ namespace Microsoft.TemplateEngine.Orchestrator.RunnableProjects.UnitTests.Templ
         public void CanReadName(string fileContent, bool errorExpected, string? expectedName)
         {
             IEngineEnvironmentSettings environmentSettings = _environmentSettingsHelper.CreateEnvironment(virtualize: true);
-            string tempFolder = _environmentSettingsHelper.CreateTemporaryFolder();
+            string tempFolder = environmentSettings.GetTempVirtualizedPath();
             string localizationFile = string.Format(DefaultLocalizeConfigRelativePath, "de-DE");
             environmentSettings.WriteFile(Path.Combine(tempFolder, localizationFile), fileContent);
 
             using IMountPoint mountPoint = environmentSettings.MountPath(tempFolder);
             if (!errorExpected)
             {
-                var localizationModel = LocalizationModelDeserializer.Deserialize(mountPoint.FileInfo(localizationFile)!);
+                LocalizationModel localizationModel = LocalizationModelDeserializer.Deserialize(mountPoint.FileInfo(localizationFile)!);
                 Assert.NotNull(localizationModel);
                 Assert.Equal(expectedName, localizationModel.Name);
             }
@@ -83,14 +81,13 @@ namespace Microsoft.TemplateEngine.Orchestrator.RunnableProjects.UnitTests.Templ
         public void CanReadDescription(string fileContent, bool errorExpected, string? expectedDescription)
         {
             IEngineEnvironmentSettings environmentSettings = _environmentSettingsHelper.CreateEnvironment(virtualize: true);
-            string tempFolder = _environmentSettingsHelper.CreateTemporaryFolder();
+            string tempFolder = environmentSettings.GetTempVirtualizedPath();
             string localizationFile = string.Format(DefaultLocalizeConfigRelativePath, "de-DE");
             environmentSettings.WriteFile(Path.Combine(tempFolder, localizationFile), fileContent);
-
             using IMountPoint mountPoint = environmentSettings.MountPath(tempFolder);
             if (!errorExpected)
             {
-                var localizationModel = LocalizationModelDeserializer.Deserialize(mountPoint.FileInfo(localizationFile)!);
+                LocalizationModel localizationModel = LocalizationModelDeserializer.Deserialize(mountPoint.FileInfo(localizationFile)!);
                 Assert.NotNull(localizationModel);
                 Assert.Equal(expectedDescription, localizationModel.Description);
             }
@@ -123,14 +120,14 @@ namespace Microsoft.TemplateEngine.Orchestrator.RunnableProjects.UnitTests.Templ
             string expectedDescriptionsStr)
         {
             IEngineEnvironmentSettings environmentSettings = _environmentSettingsHelper.CreateEnvironment(virtualize: true);
-            string tempFolder = _environmentSettingsHelper.CreateTemporaryFolder();
+            string tempFolder = environmentSettings.GetTempVirtualizedPath();
             string localizationFile = string.Format(DefaultLocalizeConfigRelativePath, "de-DE");
             environmentSettings.WriteFile(Path.Combine(tempFolder, localizationFile), fileContent);
 
             using IMountPoint mountPoint = environmentSettings.MountPath(tempFolder);
             if (!errorExpected)
             {
-                var localizationModel = LocalizationModelDeserializer.Deserialize(mountPoint.FileInfo(localizationFile)!);
+                LocalizationModel localizationModel = LocalizationModelDeserializer.Deserialize(mountPoint.FileInfo(localizationFile)!);
                 Assert.NotNull(localizationModel);
 
                 if (string.IsNullOrEmpty(expectedSymbolNamesStr))
@@ -138,9 +135,9 @@ namespace Microsoft.TemplateEngine.Orchestrator.RunnableProjects.UnitTests.Templ
                     Assert.Empty(localizationModel.ParameterSymbols);
                     return;
                 }
-                var expectedSymbolNames = expectedSymbolNamesStr.Split('|');
-                var expectedDisplayNames = expectedSymbolDisplayNamesStr.Split('|');
-                var expectedDescriptions = expectedDescriptionsStr.Split('|');
+                string[] expectedSymbolNames = expectedSymbolNamesStr.Split('|');
+                string[] expectedDisplayNames = expectedSymbolDisplayNamesStr.Split('|');
+                string[] expectedDescriptions = expectedDescriptionsStr.Split('|');
 
                 for (int i = 0; i < expectedSymbolNames.Length; i++)
                 {
@@ -185,7 +182,7 @@ namespace Microsoft.TemplateEngine.Orchestrator.RunnableProjects.UnitTests.Templ
             string expectedChoicesStr)
         {
             IEngineEnvironmentSettings environmentSettings = _environmentSettingsHelper.CreateEnvironment(virtualize: true);
-            string tempFolder = _environmentSettingsHelper.CreateTemporaryFolder();
+            string tempFolder = environmentSettings.GetTempVirtualizedPath();
             string localizationFile = string.Format(DefaultLocalizeConfigRelativePath, "de-DE");
             environmentSettings.WriteFile(Path.Combine(tempFolder, localizationFile), fileContent);
 
@@ -258,7 +255,7 @@ false,
     string expectedManualInstructionsStr)
         {
             IEngineEnvironmentSettings environmentSettings = _environmentSettingsHelper.CreateEnvironment(virtualize: true);
-            string tempFolder = _environmentSettingsHelper.CreateTemporaryFolder();
+            string tempFolder = environmentSettings.GetTempVirtualizedPath();
             string localizationFile = string.Format(DefaultLocalizeConfigRelativePath, "de-DE");
             environmentSettings.WriteFile(Path.Combine(tempFolder, localizationFile), fileContent);
 
@@ -308,10 +305,11 @@ false,
         #region Validation Tests
 
         [Fact]
-        public void CanValidatePostActionWithoutLocalization()
+        public async Task CanValidatePostActionWithoutLocalization()
         {
             IEngineEnvironmentSettings environmentSettings = _environmentSettingsHelper.CreateEnvironment(virtualize: true);
-            string tempFolder = _environmentSettingsHelper.CreateTemporaryFolder();
+            string tempFolder = environmentSettings.GetTempVirtualizedPath();
+
             string localizationFile = string.Format(DefaultLocalizeConfigRelativePath, "de-DE");
 
             environmentSettings.WriteFile(Path.Combine(tempFolder, localizationFile), /*lang=json,strict*/ """{ "postActions/pa0/description": "localizedDescription" }""");
@@ -320,6 +318,8 @@ false,
 
             TemplateConfigModel baseConfig = new TemplateConfigModel("Test")
             {
+                Name = "Test",
+                ShortNameList = new[] { "Test" },
                 PostActionModels = new List<PostActionModel>
                 {
                     new PostActionModel()
@@ -337,20 +337,37 @@ false,
                 }
             };
 
-            var runnableProjectConfig = new RunnableProjectConfig(environmentSettings, A.Fake<IGenerator>(), baseConfig, A.Fake<IDirectory>());
-            var localizationModel = LocalizationModelDeserializer.Deserialize(mountPoint.FileInfo(localizationFile)!);
-            Assert.True(runnableProjectConfig.VerifyLocalizationModel(localizationModel));
+            IDictionary<string, string?> templateSourceFiles = new Dictionary<string, string?>
+            {
+                // template.json
+                { TestFileSystemUtils.DefaultConfigRelativePath, baseConfig.ToJsonString() },
+            };
+            environmentSettings.WriteTemplateSource(tempFolder, templateSourceFiles);
+            RunnableProjectGenerator generator = new();
 
-            runnableProjectConfig.ConfigurationModel.Localize(localizationModel);
+            IFile? templateConfigFile = mountPoint.FileInfo(TestFileSystemUtils.DefaultConfigRelativePath);
+            Assert.NotNull(templateConfigFile);
+            IFile? locFile = mountPoint.FileInfo(localizationFile);
+            Assert.NotNull(locFile);
+
+            using var runnableProjectConfig = new RunnableProjectConfig(environmentSettings, generator, templateConfigFile, localeConfigFile: locFile);
+            await runnableProjectConfig.ValidateAsync(ValidationScope.Instantiation, default).ConfigureAwait(false);
+
+            Assert.NotNull(runnableProjectConfig.Localization);
+            Assert.True(runnableProjectConfig.Localization.IsValid);
+
+            runnableProjectConfig.Localize();
             runnableProjectConfig.ConfigurationModel.PostActionModels.Single(model => model.Id == "pa0" && model.Description == "localizedDescription");
             runnableProjectConfig.ConfigurationModel.PostActionModels.Single(model => model.Id != "pa0" && model.Description == "text");
         }
 
         [Fact]
-        public void CanValidatePostActionWithDefaultInstructionLocalization()
+        public async Task CanValidatePostActionWithDefaultInstructionLocalization()
         {
             TemplateConfigModel baseConfig = new TemplateConfigModel("Test")
             {
+                Name = "Test",
+                ShortNameList = new[] { "Test" },
                 PostActionModels = new List<PostActionModel>
                 {
                     new PostActionModel()
@@ -366,26 +383,45 @@ false,
                 }
             };
             IEngineEnvironmentSettings environmentSettings = _environmentSettingsHelper.CreateEnvironment(virtualize: true);
-            string tempFolder = _environmentSettingsHelper.CreateTemporaryFolder();
+            string tempFolder = environmentSettings.GetTempVirtualizedPath();
             string localizationFile = string.Format(DefaultLocalizeConfigRelativePath, "de-DE");
 
             environmentSettings.WriteFile(Path.Combine(tempFolder, localizationFile), /*lang=json,strict*/ """{ "postActions/pa0/manualInstructions/default/text": "localized" }""");
 
             using IMountPoint mountPoint = environmentSettings.MountPath(tempFolder);
 
-            var runnableProjectConfig = new RunnableProjectConfig(environmentSettings, A.Fake<IGenerator>(), baseConfig, A.Fake<IDirectory>());
-            var localizationModel = LocalizationModelDeserializer.Deserialize(mountPoint.FileInfo(localizationFile)!);
-            Assert.True(runnableProjectConfig.VerifyLocalizationModel(localizationModel));
+            string sourceBasePath = environmentSettings.GetTempVirtualizedPath();
+            IDictionary<string, string?> templateSourceFiles = new Dictionary<string, string?>
+            {
+                // template.json
+                { TestFileSystemUtils.DefaultConfigRelativePath, baseConfig.ToJsonString() }
+            };
+            environmentSettings.WriteTemplateSource(tempFolder, templateSourceFiles);
 
-            runnableProjectConfig.ConfigurationModel.Localize(localizationModel);
+            RunnableProjectGenerator generator = new();
+
+            IFile? templateConfigFile = mountPoint.FileInfo(TestFileSystemUtils.DefaultConfigRelativePath);
+            Assert.NotNull(templateConfigFile);
+            IFile? locFile = mountPoint.FileInfo(localizationFile);
+            Assert.NotNull(locFile);
+
+            using var runnableProjectConfig = new RunnableProjectConfig(environmentSettings, generator, templateConfigFile, localeConfigFile: locFile);
+            await runnableProjectConfig.ValidateAsync(ValidationScope.Instantiation, default).ConfigureAwait(false);
+
+            Assert.NotNull(runnableProjectConfig.Localization);
+            Assert.True(runnableProjectConfig.Localization.IsValid);
+
+            runnableProjectConfig.Localize();
             runnableProjectConfig.ConfigurationModel.PostActionModels.Single(model => model.Id == "pa0" && model.ManualInstructionInfo[0].Text == "localized");
         }
 
         [Fact]
-        public void CannotValidatePostActionWithExtraInstructionLocalization()
+        public async Task CannotValidatePostActionWithExtraInstructionLocalization()
         {
             TemplateConfigModel baseConfig = new TemplateConfigModel("Test")
             {
+                Name = "Test",
+                ShortNameList = new[] { "Test" },
                 PostActionModels = new List<PostActionModel>
                 {
                     new PostActionModel()
@@ -405,7 +441,7 @@ false,
             List<(LogLevel, string)> loggedMessages = new List<(LogLevel, string)>();
             InMemoryLoggerProvider loggerProvider = new InMemoryLoggerProvider(loggedMessages);
             IEngineEnvironmentSettings environmentSettings = _environmentSettingsHelper.CreateEnvironment(virtualize: true, addLoggerProviders: new[] { loggerProvider });
-            string tempFolder = _environmentSettingsHelper.CreateTemporaryFolder();
+            string tempFolder = environmentSettings.GetTempVirtualizedPath();
             string localizationFilename = string.Format(DefaultLocalizeConfigRelativePath, "de-DE");
 
             const string locContent = /*lang=json,strict*/
@@ -421,24 +457,43 @@ false,
 
             using IMountPoint mountPoint = environmentSettings.MountPath(tempFolder);
 
-            var templateConfig = new RunnableProjectConfig(environmentSettings, A.Fake<IGenerator>(), baseConfig, A.Fake<IDirectory>());
-            var localizationFile = mountPoint.FileInfo(localizationFilename);
-            var localizationModel = LocalizationModelDeserializer.Deserialize(localizationFile!);
-            Assert.False(templateConfig.VerifyLocalizationModel(localizationModel, localizationFile));
+            IDictionary<string, string?> templateSourceFiles = new Dictionary<string, string?>
+            {
+                // template.json
+                { TestFileSystemUtils.DefaultConfigRelativePath, baseConfig.ToJsonString() }
+            };
+            environmentSettings.WriteTemplateSource(tempFolder, templateSourceFiles);
 
-            var warningMessages = loggedMessages.Where(log => log.Item1 == LogLevel.Warning);
-            Assert.Single(warningMessages);
-            Assert.Contains(
+            RunnableProjectGenerator generator = new();
+
+            IFile? templateConfigFile = mountPoint.FileInfo(TestFileSystemUtils.DefaultConfigRelativePath);
+            Assert.NotNull(templateConfigFile);
+            IFile? locFile = mountPoint.FileInfo(localizationFilename);
+            Assert.NotNull(locFile);
+
+            using var runnableProjectConfig = new RunnableProjectConfig(environmentSettings, generator, templateConfigFile, localeConfigFile: locFile);
+            await runnableProjectConfig.ValidateAsync(ValidationScope.Instantiation, default).ConfigureAwait(false);
+
+            Assert.NotNull(runnableProjectConfig.Localization);
+            Assert.False(runnableProjectConfig.Localization.IsValid);
+
+            IValidationEntry validationError = Assert.Single(runnableProjectConfig.Localization.ValidationErrors);
+
+            Assert.Equal(IValidationEntry.SeverityLevel.Error, validationError.Severity);
+            Assert.Equal("LOC001", validationError.Code);
+            Assert.Equal(
                 string.Format(LocalizableStrings.Authoring_InvalidManualInstructionLocalizationIndex, "extra", "pa0"),
-                warningMessages.Single().Item2);
-            Assert.Contains(localizationFilename, warningMessages.Single().Item2);
+                validationError.ErrorMessage);
+            Assert.Equal("/" + localizationFilename, runnableProjectConfig.Localization.File.FullPath);
         }
 
         [Fact]
-        public void CannotValidateExtraPostActionLocalization()
+        public async Task CannotValidateExtraPostActionLocalization()
         {
             TemplateConfigModel baseConfig = new TemplateConfigModel("Test")
             {
+                Name = "Test",
+                ShortNameList = new[] { "Test" },
                 PostActionModels = new List<PostActionModel>
                 {
                     new PostActionModel()
@@ -457,7 +512,7 @@ false,
             List<(LogLevel, string)> loggedMessages = new List<(LogLevel, string)>();
             InMemoryLoggerProvider loggerProvider = new InMemoryLoggerProvider(loggedMessages);
             IEngineEnvironmentSettings environmentSettings = _environmentSettingsHelper.CreateEnvironment(virtualize: true, addLoggerProviders: new[] { loggerProvider });
-            string tempFolder = _environmentSettingsHelper.CreateTemporaryFolder();
+            string tempFolder = environmentSettings.GetTempVirtualizedPath();
             string localizationFile = string.Format(DefaultLocalizeConfigRelativePath, "de-DE");
 
             const string locContent = /*lang=json,strict*/
@@ -474,29 +529,48 @@ false,
 
             using IMountPoint mountPoint = environmentSettings.MountPath(tempFolder);
 
-            var templateConfig = new RunnableProjectConfig(environmentSettings, A.Fake<IGenerator>(), baseConfig, A.Fake<IDirectory>());
-            var localizationModel = LocalizationModelDeserializer.Deserialize(mountPoint.FileInfo(localizationFile)!);
-            Assert.False(templateConfig.VerifyLocalizationModel(localizationModel));
+            IDictionary<string, string?> templateSourceFiles = new Dictionary<string, string?>
+            {
+                // template.json
+                { TestFileSystemUtils.DefaultConfigRelativePath, baseConfig.ToJsonString() }
+            };
+            environmentSettings.WriteTemplateSource(tempFolder, templateSourceFiles);
 
-            var warningMessages = loggedMessages.Where(log => log.Item1 == LogLevel.Warning);
-            Assert.Single(warningMessages);
+            RunnableProjectGenerator generator = new();
 
-            Assert.Contains(
+            IFile? templateConfigFile = mountPoint.FileInfo(TestFileSystemUtils.DefaultConfigRelativePath);
+            Assert.NotNull(templateConfigFile);
+            IFile? locFile = mountPoint.FileInfo(localizationFile);
+            Assert.NotNull(locFile);
+
+            using var runnableProjectConfig = new RunnableProjectConfig(environmentSettings, generator, templateConfigFile, localeConfigFile: locFile);
+            await runnableProjectConfig.ValidateAsync(ValidationScope.Instantiation, default).ConfigureAwait(false);
+
+            Assert.NotNull(runnableProjectConfig.Localization);
+            Assert.False(runnableProjectConfig.Localization.IsValid);
+
+            IValidationEntry validationError = Assert.Single(runnableProjectConfig.Localization.ValidationErrors);
+
+            Assert.Equal(IValidationEntry.SeverityLevel.Error, validationError.Severity);
+            Assert.Equal("LOC002", validationError.Code);
+            Assert.Equal(
                string.Format(LocalizableStrings.Authoring_InvalidPostActionLocalizationIndex, "pa1"),
-               warningMessages.Single().Item2);
+               validationError.ErrorMessage);
         }
-
         #endregion
 
         [Fact]
-        public void CanLocalizeParameters()
+        public async Task CanLocalizeParameters()
         {
             TemplateConfigModel baseConfig = new TemplateConfigModel("Test")
             {
+                Name = "Test",
+                ShortNameList = new[] { "Test" },
                 Symbols = new[]
                 {
                     new ParameterSymbol("test")
                     {
+                        DataType = "choice",
                         Description = "not localized",
                         DisplayName = "not localized",
                         Choices = new Dictionary<string, ParameterChoice>
@@ -518,6 +592,7 @@ false,
             """;
 
             IEngineEnvironmentSettings environmentSettings = _environmentSettingsHelper.CreateEnvironment(virtualize: true);
+            RunnableProjectGenerator generator = new();
             string tempFolder = _environmentSettingsHelper.CreateTemporaryFolder();
             string localizationFile = string.Format(DefaultLocalizeConfigRelativePath, "de-DE");
 
@@ -525,11 +600,25 @@ false,
 
             using IMountPoint mountPoint = environmentSettings.MountPath(tempFolder);
 
-            var runnableProjectConfig = new RunnableProjectConfig(environmentSettings, A.Fake<IGenerator>(), baseConfig, A.Fake<IDirectory>());
-            LocalizationModel localizationModel = LocalizationModelDeserializer.Deserialize(mountPoint.FileInfo(localizationFile)!);
-            Assert.True(runnableProjectConfig.VerifyLocalizationModel(localizationModel));
+            IDictionary<string, string?> templateSourceFiles = new Dictionary<string, string?>
+            {
+                // template.json
+                { TestFileSystemUtils.DefaultConfigRelativePath, baseConfig.ToJsonString() }
+            };
+            environmentSettings.WriteTemplateSource(tempFolder, templateSourceFiles);
 
-            runnableProjectConfig.ConfigurationModel.Localize(localizationModel);
+            IFile? templateConfigFile = mountPoint.FileInfo(TestFileSystemUtils.DefaultConfigRelativePath);
+            Assert.NotNull(templateConfigFile);
+            IFile? locFile = mountPoint.FileInfo(localizationFile);
+            Assert.NotNull(locFile);
+
+            using var runnableProjectConfig = new RunnableProjectConfig(environmentSettings, generator, templateConfigFile, localeConfigFile: locFile);
+            await runnableProjectConfig.ValidateAsync(ValidationScope.Instantiation, default).ConfigureAwait(false);
+
+            Assert.NotNull(runnableProjectConfig.Localization);
+            Assert.True(runnableProjectConfig.Localization.IsValid);
+
+            runnableProjectConfig.Localize();
             ParameterSymbol actualSymbol = runnableProjectConfig.ConfigurationModel.Symbols.OfType<ParameterSymbol>().Single(s => s.Name == "test");
 
             Assert.Equal("localized displayName", actualSymbol.DisplayName);

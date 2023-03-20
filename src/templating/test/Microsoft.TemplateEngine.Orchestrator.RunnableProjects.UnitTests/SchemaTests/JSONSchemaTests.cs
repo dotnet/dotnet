@@ -1,10 +1,6 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using Microsoft.TemplateEngine.Tests;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -48,8 +44,12 @@ namespace Microsoft.TemplateEngine.Orchestrator.RunnableProjects.UnitTests.Schem
 
         public static IEnumerable<object?[]> GetAllTemplates()
         {
+            //those templates are intentionally wrong
+            string[] exceptions = new[] { "MissingIdentity", "MissingMandatoryConfig" };
+
             return Directory.EnumerateFiles(TestTemplatesLocation, "template.json", SearchOption.AllDirectories)
                 .Where(s => s.Contains(".template.config"))
+                .Where(s => !exceptions.Any(e => s.Contains(e)))
                 .Select(s => s.Remove(s.Length - JsonLocation.Length).Remove(0, TestTemplatesLocation.Length).Trim(Path.DirectorySeparatorChar))
                 .Select(s => new object?[] { s });
         }

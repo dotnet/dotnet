@@ -6,6 +6,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 #if !NETFULL
 using System.Runtime.Loader;
 #endif
@@ -39,6 +42,7 @@ namespace Microsoft.TemplateEngine.Edge.Settings
         /// <remarks>
         /// The mount point will not be disposed by the <see cref="Scanner"/>. Use <see cref="ScanResult.Dispose"/> to dispose mount point.
         /// </remarks>
+        [Obsolete("Use ScanAsync instead.")]
         public ScanResult Scan(string mountPointUri)
         {
             return Scan(mountPointUri, scanForComponents: true);
@@ -50,6 +54,8 @@ namespace Microsoft.TemplateEngine.Edge.Settings
         /// <remarks>
         /// The mount point will not be disposed by the <see cref="Scanner"/>. Use <see cref="ScanResult.Dispose"/> to dispose mount point.
         /// </remarks>
+        ///
+        [Obsolete("Use ScanAsync instead.")]
         public ScanResult Scan(string mountPointUri, bool scanForComponents)
         {
             if (string.IsNullOrWhiteSpace(mountPointUri))
@@ -62,7 +68,45 @@ namespace Microsoft.TemplateEngine.Edge.Settings
             {
                 ScanForComponents(source);
             }
-            return ScanMountPointForTemplatesAndLangpacks(source);
+            return Task.Run(async () => await ScanMountPointForTemplatesAsync(source, default).ConfigureAwait(false)).GetAwaiter().GetResult();
+        }
+
+        /// <summary>
+        /// Scans mount point for templates.
+        /// </summary>
+        /// <remarks>
+        /// The mount point will not be disposed by the <see cref="Scanner"/>. Use <see cref="ScanResult.Dispose"/> to dispose mount point.
+        /// </remarks>
+        public Task<ScanResult> ScanAsync(string mountPointUri, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(mountPointUri))
+            {
+                throw new ArgumentException($"{nameof(mountPointUri)} should not be null or empty");
+            }
+            MountPointScanSource source = GetOrCreateMountPointScanInfoForInstallSource(mountPointUri);
+            cancellationToken.ThrowIfCancellationRequested();
+            return ScanMountPointForTemplatesAsync(source, cancellationToken: cancellationToken);
+        }
+
+        /// <summary>
+        /// Scans mount point for templates.
+        /// </summary>
+        /// <remarks>
+        /// The mount point will not be disposed by the <see cref="Scanner"/>. Use <see cref="ScanResult.Dispose"/> to dispose mount point.
+        /// </remarks>
+        public Task<ScanResult> ScanAsync(
+            string mountPointUri,
+            bool logValidationResults = true,
+            bool returnInvalidTemplates = false,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrWhiteSpace(mountPointUri))
+            {
+                throw new ArgumentException($"{nameof(mountPointUri)} should not be null or empty");
+            }
+            MountPointScanSource source = GetOrCreateMountPointScanInfoForInstallSource(mountPointUri);
+            cancellationToken.ThrowIfCancellationRequested();
+            return ScanMountPointForTemplatesAsync(source, logValidationResults, returnInvalidTemplates, cancellationToken);
         }
 
         private MountPointScanSource GetOrCreateMountPointScanInfoForInstallSource(string sourceLocation)
@@ -184,31 +228,31 @@ namespace Microsoft.TemplateEngine.Edge.Settings
             return true;
         }
 
-        private ScanResult ScanMountPointForTemplatesAndLangpacks(MountPointScanSource source)
+        private async Task<ScanResult> ScanMountPointForTemplatesAsync(
+            MountPointScanSource source,
+            bool logValidationResults = true,
+            bool returnInvalidTemplates = false,
+            CancellationToken cancellationToken = default)
         {
             _ = source ?? throw new ArgumentNullException(nameof(source));
-            // look for things to install
 
-            var templates = new List<ITemplate>();
-            var localizationLocators = new List<ILocalizationLocator>();
-
+            var templates = new List<IScanTemplateInfo>();
             foreach (IGenerator generator in _environmentSettings.Components.OfType<IGenerator>())
             {
-                IList<ITemplate> templateList = generator.GetTemplatesAndLangpacksFromDir(source.MountPoint, out IList<ILocalizationLocator> localizationInfo);
+                IReadOnlyList<IScanTemplateInfo> templateList = await generator.GetTemplatesFromMountPointAsync(source.MountPoint, cancellationToken).ConfigureAwait(false);
 
-                foreach (ILocalizationLocator locator in localizationInfo)
+                if (logValidationResults)
                 {
-                    localizationLocators.Add(locator);
+                    LogScanningResults(source, templateList, generator);
                 }
 
-                foreach (ITemplate template in templateList)
-                {
-                    templates.Add(template);
-                }
-
-                source.FoundTemplates |= templateList.Count > 0 || localizationInfo.Count > 0;
+                IEnumerable<IScanTemplateInfo> validTemplates = templateList.Where(t => t.IsValid || returnInvalidTemplates);
+                templates.AddRange(validTemplates);
+                source.FoundTemplates |= validTemplates.Any();
             }
 
+            //backward compatibility
+            var localizationLocators = templates.SelectMany(t => t.Localizations.Values.Where(li => li.IsValid || returnInvalidTemplates)).ToList();
             return new ScanResult(source.MountPoint, templates, localizationLocators, Array.Empty<(string, Type, IIdentifiedComponent)>());
         }
 
@@ -264,6 +308,95 @@ namespace Microsoft.TemplateEngine.Edge.Settings
 
             loadFailures = failures;
             return loaded;
+        }
+
+        private void LogScanningResults(MountPointScanSource source, IReadOnlyList<IScanTemplateInfo> foundTemplates, IGenerator generator)
+        {
+            _logger.LogDebug("Scanning mount point '{0}' by generator '{1}': found {2} templates", source.MountPoint.MountPointUri, generator.Id, foundTemplates.Count);
+            foreach (IScanTemplateInfo template in foundTemplates)
+            {
+                string templateDisplayName = GetTemplateDisplayName(template);
+                _logger.LogDebug("Found template {0}", templateDisplayName);
+
+                LogValidationEntries(
+                    _logger,
+                    string.Format(LocalizableStrings.Scanner_Validation_Error_Header, templateDisplayName),
+                    template.ValidationErrors,
+                    IValidationEntry.SeverityLevel.Error);
+                LogValidationEntries(
+                    _logger,
+                    string.Format(LocalizableStrings.Scanner_Validation_Warning_Header, templateDisplayName),
+                    template.ValidationErrors,
+                    IValidationEntry.SeverityLevel.Warning);
+                LogValidationEntries(
+                    _logger,
+                    string.Format(LocalizableStrings.Scanner_Validation_Info_Header, templateDisplayName),
+                    template.ValidationErrors,
+                    IValidationEntry.SeverityLevel.Info);
+
+                foreach (KeyValuePair<string, ILocalizationLocator> locator in template.Localizations)
+                {
+                    ILocalizationLocator localizationInfo = locator.Value;
+
+                    LogValidationEntries(
+                        _logger,
+                        string.Format(LocalizableStrings.Scanner_Validation_LocError_Header, templateDisplayName, localizationInfo.Locale),
+                        localizationInfo.ValidationErrors,
+                        IValidationEntry.SeverityLevel.Error);
+                    LogValidationEntries(
+                        _logger,
+                        string.Format(LocalizableStrings.Scanner_Validation_LocWarning_Header, templateDisplayName, localizationInfo.Locale),
+                        localizationInfo.ValidationErrors,
+                        IValidationEntry.SeverityLevel.Warning);
+                    LogValidationEntries(
+                        _logger,
+                        string.Format(LocalizableStrings.Scanner_Validation_LocInfo_Header, templateDisplayName, localizationInfo.Locale),
+                        localizationInfo.ValidationErrors,
+                        IValidationEntry.SeverityLevel.Info);
+                }
+
+                if (!template.IsValid)
+                {
+                    _logger.LogError(LocalizableStrings.Scanner_Validation_InvalidTemplate, templateDisplayName);
+                }
+                foreach (ILocalizationLocator invalidLoc in template.Localizations.Values.Where(li => !li.IsValid))
+                {
+                    _logger.LogWarning(LocalizableStrings.Scanner_Validation_InvalidTemplateLoc, invalidLoc.Locale, templateDisplayName);
+                }
+            }
+
+            static string GetTemplateDisplayName(IScanTemplateInfo template)
+            {
+                string templateName = string.IsNullOrEmpty(template.Name) ? "<no name>" : template.Name;
+                return $"'{templateName}' ({template.Identity})";
+            }
+
+            static string PrintError(IValidationEntry error) => $"   [{error.Severity}][{error.Code}] {error.ErrorMessage}";
+
+            static void LogValidationEntries(ILogger logger, string header, IReadOnlyList<IValidationEntry> errors, IValidationEntry.SeverityLevel severity)
+            {
+                Action<string> log = severity switch
+                {
+                    IValidationEntry.SeverityLevel.None => (string s) => throw new NotSupportedException($"{IValidationEntry.SeverityLevel.None} severity is not supported."),
+                    IValidationEntry.SeverityLevel.Info => (string s) => logger.LogDebug(s),
+                    IValidationEntry.SeverityLevel.Warning => (string s) => logger.LogWarning(s),
+                    IValidationEntry.SeverityLevel.Error => (string s) => logger.LogError(s),
+                    _ => throw new InvalidOperationException($"{severity} is not expected value for {nameof(IValidationEntry.SeverityLevel)}."),
+                };
+
+                if (!errors.Any(e => e.Severity == severity))
+                {
+                    return;
+                }
+
+                StringBuilder sb = new();
+                sb.AppendLine(header);
+                foreach (IValidationEntry error in errors.Where(e => e.Severity == severity))
+                {
+                    sb.AppendLine(PrintError(error));
+                }
+                log(sb.ToString());
+            }
         }
 
         private class MountPointScanSource
