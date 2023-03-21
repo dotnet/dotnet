@@ -218,8 +218,6 @@ namespace Microsoft.TemplateEngine.Edge.UnitTests
 
                 public IReadOnlyDictionary<string, string> HostConfigFiles { get; } = new Dictionary<string, string>();
 
-                public ILocalizationLocator? Localization => null;
-
                 public void Dispose()
                 {
                     _mountPoint.Dispose();
