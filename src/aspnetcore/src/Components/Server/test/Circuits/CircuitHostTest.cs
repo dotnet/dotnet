@@ -157,8 +157,6 @@ public class CircuitHostTest
         var handler2 = new Mock<CircuitHandler>(MockBehavior.Strict);
         var sequence = new MockSequence();
 
-        SetupMockInboundActivityHandlers(sequence, handler1, handler2);
-
         handler1
             .InSequence(sequence)
             .Setup(h => h.OnCircuitOpenedAsync(It.IsAny<Circuit>(), cancellationToken))
@@ -244,8 +242,6 @@ public class CircuitHostTest
         var tcs = new TaskCompletionSource();
         var reportedErrors = new List<UnhandledExceptionEventArgs>();
 
-        SetupMockInboundActivityHandler(handler);
-
         handler
             .Setup(h => h.OnCircuitOpenedAsync(It.IsAny<Circuit>(), It.IsAny<CancellationToken>()))
             .Returns(tcs.Task)
@@ -287,8 +283,6 @@ public class CircuitHostTest
         var handler1 = new Mock<CircuitHandler>(MockBehavior.Strict);
         var handler2 = new Mock<CircuitHandler>(MockBehavior.Strict);
         var sequence = new MockSequence();
-
-        SetupMockInboundActivityHandlers(sequence, handler1, handler2);
 
         handler1
             .InSequence(sequence)
@@ -333,31 +327,29 @@ public class CircuitHostTest
         var handler3 = new Mock<CircuitHandler>(MockBehavior.Strict);
         var sequence = new MockSequence();
 
+        // We deliberately avoid making handler2 an inbound activity handler
+        var activityHandler1 = handler1.As<IHandleCircuitActivity>();
+        var activityHandler3 = handler3.As<IHandleCircuitActivity>();
+
         var asyncLocal1 = new AsyncLocal<bool>();
         var asyncLocal3 = new AsyncLocal<bool>();
 
-        handler3
+        activityHandler1
             .InSequence(sequence)
-            .Setup(h => h.CreateInboundActivityHandler(It.IsAny<Func<CircuitInboundActivityContext, Task>>()))
-            .Returns((Func<CircuitInboundActivityContext, Task> next) => async (CircuitInboundActivityContext context) =>
+            .Setup(h => h.HandleInboundActivityAsync(It.IsAny<CircuitInboundActivityContext>(), It.IsAny<Func<CircuitInboundActivityContext, Task>>()))
+            .Returns(async (CircuitInboundActivityContext context, Func<CircuitInboundActivityContext, Task> next) =>
             {
-                asyncLocal3.Value = true;
+                asyncLocal1.Value = true;
                 await next(context);
             })
             .Verifiable();
 
-        handler2
+        activityHandler3
             .InSequence(sequence)
-            .Setup(h => h.CreateInboundActivityHandler(It.IsAny<Func<CircuitInboundActivityContext, Task>>()))
-            .Returns((Func<CircuitInboundActivityContext, Task> next) => next)
-            .Verifiable();
-
-        handler1
-            .InSequence(sequence)
-            .Setup(h => h.CreateInboundActivityHandler(It.IsAny<Func<CircuitInboundActivityContext, Task>>()))
-            .Returns((Func<CircuitInboundActivityContext, Task> next) => async (CircuitInboundActivityContext context) =>
+            .Setup(h => h.HandleInboundActivityAsync(It.IsAny<CircuitInboundActivityContext>(), It.IsAny<Func<CircuitInboundActivityContext, Task>>()))
+            .Returns(async (CircuitInboundActivityContext context, Func<CircuitInboundActivityContext, Task> next) =>
             {
-                asyncLocal1.Value = true;
+                asyncLocal3.Value = true;
                 await next(context);
             })
             .Verifiable();
@@ -375,9 +367,8 @@ public class CircuitHostTest
         });
 
         // Assert
-        handler1.VerifyAll();
-        handler2.VerifyAll();
-        handler3.VerifyAll();
+        activityHandler1.VerifyAll();
+        activityHandler3.VerifyAll();
 
         Assert.False(asyncLocal1.Value);
         Assert.False(asyncLocal3.Value);
@@ -411,26 +402,6 @@ public class CircuitHostTest
         return new TestRemoteRenderer(
             serviceCollection.BuildServiceProvider(),
             Mock.Of<IClientProxy>());
-    }
-
-    private static void SetupMockInboundActivityHandlers(MockSequence sequence, params Mock<CircuitHandler>[] circuitHandlers)
-    {
-        for (var i = circuitHandlers.Length - 1; i >= 0; i--)
-        {
-            circuitHandlers[i]
-                .InSequence(sequence)
-                .Setup(h => h.CreateInboundActivityHandler(It.IsAny<Func<CircuitInboundActivityContext, Task>>()))
-                .Returns((Func<CircuitInboundActivityContext, Task> next) => next)
-                .Verifiable();
-        }
-    }
-
-    private static void SetupMockInboundActivityHandler(Mock<CircuitHandler> circuitHandler)
-    {
-        circuitHandler
-            .Setup(h => h.CreateInboundActivityHandler(It.IsAny<Func<CircuitInboundActivityContext, Task>>()))
-            .Returns((Func<CircuitInboundActivityContext, Task> next) => next)
-            .Verifiable();
     }
 
     private class TestRemoteRenderer : RemoteRenderer

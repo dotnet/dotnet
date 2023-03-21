@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Analyzers.Infrastructure;
 using Microsoft.AspNetCore.Analyzers.RouteEmbeddedLanguage.Infrastructure;
 using Microsoft.CodeAnalysis;
 
-namespace Microsoft.AspNetCore.Http.RequestDelegateGenerator.StaticRouteHandlerModel.Emitters;
+namespace Microsoft.AspNetCore.Http.Generators.StaticRouteHandlerModel.Emitters;
 
 internal static class EndpointParameterEmitter
 {

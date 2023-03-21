@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Connections;
 using Microsoft.AspNetCore.Http.Connections.Internal.Transports;
 using Microsoft.AspNetCore.Http.Features;
-using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.AspNetCore.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -214,7 +213,6 @@ internal sealed partial class HttpConnectionDispatcher
                 return;
             }
 
-            context.Features.Get<IHttpRequestTimeoutFeature>()?.DisableTimeout();
             var resultTask = await Task.WhenAny(connection.ApplicationTask!, connection.TransportTask!);
 
             try
@@ -276,7 +274,6 @@ internal sealed partial class HttpConnectionDispatcher
     {
         if (connection.TryActivatePersistentConnection(connectionDelegate, transport, context, _logger))
         {
-            context.Features.Get<IHttpRequestTimeoutFeature>()?.DisableTimeout();
             // Wait for any of them to end
             await Task.WhenAny(connection.ApplicationTask!, connection.TransportTask!);
 
@@ -442,7 +439,7 @@ internal sealed partial class HttpConnectionDispatcher
                 }
                 catch (OperationCanceledException)
                 {
-                    // CancelPendingFlush has canceled pending writes caused by backpressure
+                    // CancelPendingFlush has canceled pending writes caused by backpresure
                     Log.ConnectionDisposed(_logger, connection.ConnectionId);
 
                     context.Response.StatusCode = StatusCodes.Status404NotFound;
