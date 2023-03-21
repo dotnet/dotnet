@@ -78,9 +78,9 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/sdk -->
-    <MicrosoftDotNetCommonItemTemplatesPackageVersion>8.0.100-preview.4.23171.18</MicrosoftDotNetCommonItemTemplatesPackageVersion>
-    <MicrosoftNETSdkPackageVersion>8.0.100-preview.4.23171.18</MicrosoftNETSdkPackageVersion>
-    <MicrosoftDotNetMSBuildSdkResolverPackageVersion>8.0.100-preview.4.23171.18</MicrosoftDotNetMSBuildSdkResolverPackageVersion>
+    <MicrosoftDotNetCommonItemTemplatesPackageVersion>8.0.100-preview.4.23171.22</MicrosoftDotNetCommonItemTemplatesPackageVersion>
+    <MicrosoftNETSdkPackageVersion>8.0.100-preview.4.23171.22</MicrosoftNETSdkPackageVersion>
+    <MicrosoftDotNetMSBuildSdkResolverPackageVersion>8.0.100-preview.4.23171.22</MicrosoftDotNetMSBuildSdkResolverPackageVersion>
     <MicrosoftNETBuildExtensionsPackageVersion>$(MicrosoftNETSdkPackageVersion)</MicrosoftNETBuildExtensionsPackageVersion>
     <MicrosoftDotnetToolsetInternalPackageVersion>$(MicrosoftNETSdkPackageVersion)</MicrosoftDotnetToolsetInternalPackageVersion>
     <MicrosoftDotnetTemplateLocatorPackageVersion>$(MicrosoftNETSdkPackageVersion)</MicrosoftDotnetTemplateLocatorPackageVersion>
@@ -91,16 +91,16 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/corefx -->
-    <MicrosoftNETCorePlatformsPackageVersion>8.0.0-preview.3.23170.14</MicrosoftNETCorePlatformsPackageVersion>
+    <MicrosoftNETCorePlatformsPackageVersion>8.0.0-preview.3.23171.3</MicrosoftNETCorePlatformsPackageVersion>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/core-setup -->
-    <VSRedistCommonNetCoreSharedFrameworkx6480PackageVersion>8.0.0-preview.3.23170.14</VSRedistCommonNetCoreSharedFrameworkx6480PackageVersion>
-    <VSRedistCommonNetCoreTargetingPackx6480PackageVersion>8.0.0-preview.3.23170.14</VSRedistCommonNetCoreTargetingPackx6480PackageVersion>
-    <MicrosoftNETCoreAppRuntimewinx64PackageVersion>8.0.0-preview.3.23170.14</MicrosoftNETCoreAppRuntimewinx64PackageVersion>
-    <MicrosoftNETCoreAppHostwinx64PackageVersion>8.0.0-preview.3.23170.14</MicrosoftNETCoreAppHostwinx64PackageVersion>
-    <MicrosoftNETCoreAppRefPackageVersion>8.0.0-preview.3.23170.14</MicrosoftNETCoreAppRefPackageVersion>
-    <MicrosoftNETCoreDotNetHostResolverPackageVersion>8.0.0-preview.3.23170.14</MicrosoftNETCoreDotNetHostResolverPackageVersion>
+    <VSRedistCommonNetCoreSharedFrameworkx6480PackageVersion>8.0.0-preview.3.23171.3</VSRedistCommonNetCoreSharedFrameworkx6480PackageVersion>
+    <VSRedistCommonNetCoreTargetingPackx6480PackageVersion>8.0.0-preview.3.23171.3</VSRedistCommonNetCoreTargetingPackx6480PackageVersion>
+    <MicrosoftNETCoreAppRuntimewinx64PackageVersion>8.0.0-preview.3.23171.3</MicrosoftNETCoreAppRuntimewinx64PackageVersion>
+    <MicrosoftNETCoreAppHostwinx64PackageVersion>8.0.0-preview.3.23171.3</MicrosoftNETCoreAppHostwinx64PackageVersion>
+    <MicrosoftNETCoreAppRefPackageVersion>8.0.0-preview.3.23171.3</MicrosoftNETCoreAppRefPackageVersion>
+    <MicrosoftNETCoreDotNetHostResolverPackageVersion>8.0.0-preview.3.23171.3</MicrosoftNETCoreDotNetHostResolverPackageVersion>
     <NETStandardLibraryRefPackageVersion>2.1.0</NETStandardLibraryRefPackageVersion>
   </PropertyGroup>
   <PropertyGroup>
