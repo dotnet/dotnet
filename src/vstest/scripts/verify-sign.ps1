@@ -60,6 +60,10 @@ function Verify-Assemblies
                 elseif ($signature.SignerCertificate.Subject -eq "CN=Microsoft 3rd Party Application Component, O=Microsoft Corporation, L=Redmond, S=Washington, C=US") {
                     Write-Debug "Valid ($($signature.SignerCertificate.Thumbprint)): $Path [3rd Party]"
                 }
+                elseif ($signature.SignerCertificate.Subject -eq "CN=Microsoft Windows, O=Microsoft Corporation, L=Redmond, S=Washington, C=US") {
+                    # We see this on server only, review what is the actual signature on the dlls we ship.
+                    Write-Debug "Valid ($($signature.SignerCertificate.Thumbprint)): $Path [???]"
+                }
                 else {
                     # For legacy components, sign certificate is always "prod" signature. Skip such binaries.
                     if ($signature.SignerCertificate.Thumbprint -eq "98ED99A67886D020C564923B7DF25E9AC019DF26") {

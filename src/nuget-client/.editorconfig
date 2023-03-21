@@ -139,3 +139,7 @@ dotnet_naming_symbols.private_field_symbols.applicable_accessibilities = private
 dotnet_naming_rule.private_field_rule.severity = warning
 dotnet_naming_rule.private_field_rule.symbols  = private_field_symbols
 dotnet_naming_rule.private_field_rule.style = private_member_style
+
+; Diagnostics rule: Don't leave unnecessary suppressions
+dotnet_diagnostic.IDE0076.severity = warning
+dotnet_diagnostic.IDE0005.severity = warning

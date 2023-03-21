@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>$(TargetFrameworksLibraryForSigning)</TargetFrameworks>
+    <TargetFrameworks>$(MinimalTargetFrameworksExeSigning)</TargetFrameworks>
     <TargetFramework />
     <Shipping>true</Shipping>
     <IncludeInVSIX>true</IncludeInVSIX>

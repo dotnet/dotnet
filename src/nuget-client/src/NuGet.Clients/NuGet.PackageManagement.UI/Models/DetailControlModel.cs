@@ -522,7 +522,7 @@ namespace NuGet.PackageManagement.UI
             }
         }
 
-        private string GetPackageDeprecationAlternatePackageText(AlternatePackageMetadataContextInfo alternatePackageMetadata)
+        private static string GetPackageDeprecationAlternatePackageText(AlternatePackageMetadataContextInfo alternatePackageMetadata)
         {
             if (alternatePackageMetadata == null)
             {

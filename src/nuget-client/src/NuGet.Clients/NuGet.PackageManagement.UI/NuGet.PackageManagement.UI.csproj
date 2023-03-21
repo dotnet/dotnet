@@ -121,7 +121,6 @@
     <Compile Include="Options\GeneralOptionPage.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Options\GlobalSuppressions.cs" />
     <Compile Include="Options\OptionsPageBase.cs">
       <SubType>Component</SubType>
     </Compile>
