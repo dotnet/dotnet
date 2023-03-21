@@ -637,7 +637,7 @@ To prevent NuGet from downloading packages during build, open the Visual Studio 
     <value>Using Msbuild from '{0}'.</value>
   </data>
   <data name="MsbuildPathNotExist" xml:space="preserve">
-    <value>MSBuildPath : {0}  doesn't not exist.</value>
+    <value>MSBuildPath : {0} does not exist.</value>
   </data>
   <data name="PackageRestoreConsentCheckBoxText" xml:space="preserve">
     <value>&amp;Allow NuGet to download missing packages</value>

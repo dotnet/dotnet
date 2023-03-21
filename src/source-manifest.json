@@ -7,10 +7,10 @@
       "commitSha": "b12f035e893c34ec2c965d75f6e21b7a2667e98d"
     },
     {
-      "packageVersion": "8.0.0-preview.3.23169.3",
+      "packageVersion": "8.0.0-preview.3.23170.11",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "d482bf3f8eea8071fb89fe481a956c9b56ff1c74"
+      "commitSha": "7a4829de7a0995b1ccffabc8c8567a0193ebc669"
     },
     {
       "packageVersion": "0.11.4-alpha.23163.1",
@@ -58,7 +58,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "472784382ad71618f4696afda27bcb137d1ed189"
+      "commitSha": "9ed6f19af4d445ec13985a6c2aaf4449652b656b"
     },
     {
       "packageVersion": "17.6.0-preview-23165-02",
@@ -67,10 +67,10 @@
       "commitSha": "60ea2f733cfcc78da965ab43cf040fe5c58800fb"
     },
     {
-      "packageVersion": "6.6.0-preview.3.50",
+      "packageVersion": "6.6.0-preview.3.54",
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "b9b418e95ed428961af59f3ee5883f37cf4b0004"
+      "commitSha": "c835f7f2050bc8d7166ca5b2a6e750d434ba002a"
     },
     {
       "packageVersion": "7.0.0-preview.23167.3",
@@ -97,10 +97,10 @@
       "commitSha": "61ce09105fe08a6b02783970d85712e859479f44"
     },
     {
-      "packageVersion": "8.0.100-preview.3.23170.5",
+      "packageVersion": "8.0.100-preview.3.23170.15",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "1c1c32b62172bbf8cf666783ac575a8ad4f34418"
+      "commitSha": "5e91237ed540678f43ec105586beb0bc1af5e3f6"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23167.1",
@@ -127,10 +127,10 @@
       "commitSha": "7b9791daa3a3477eb22ec805946c9fff8b42d8ca"
     },
     {
-      "packageVersion": "8.0.100-preview.3.23167.3",
+      "packageVersion": "8.0.100-preview.4.23170.9",
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "63a6c32277d9e9e12f3a06ea6c16b37e98744356"
+      "commitSha": "d837657a4c6de844f30acdf782f900333b23e6de"
     },
     {
       "packageVersion": "1.1.0-rc.23166.1",

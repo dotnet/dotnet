@@ -594,7 +594,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 
                 // Assert
                 Assert.True(_failureCode == r.ExitCode, r.Output + " " + r.Errors);
-                Assert.True(r.Errors.Contains($"MSBuildPath : {msbuildPath}  doesn't not exist."));
+                Assert.True(r.Errors.Contains($"MSBuildPath : {msbuildPath} does not exist."));
             }
         }
 
