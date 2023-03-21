@@ -5222,7 +5222,6 @@ void Compiler::compCompile(void** methodCodePtr, uint32_t* methodCodeSize, JitFl
 //
 PhaseStatus Compiler::placeLoopAlignInstructions()
 {
-    // Add align only if there were any loops that needed alignment
     if (loopAlignCandidates == 0)
     {
         return PhaseStatus::MODIFIED_NOTHING;
@@ -5230,6 +5229,7 @@ PhaseStatus Compiler::placeLoopAlignInstructions()
 
     JITDUMP("Inside placeLoopAlignInstructions for %d loops.\n", loopAlignCandidates);
 
+    // Add align only if there were any loops that needed alignment
     bool                   madeChanges           = false;
     weight_t               minBlockSoFar         = BB_MAX_WEIGHT;
     BasicBlock*            bbHavingAlign         = nullptr;

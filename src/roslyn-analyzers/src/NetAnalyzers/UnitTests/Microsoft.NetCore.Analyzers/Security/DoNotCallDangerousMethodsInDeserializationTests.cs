@@ -45,7 +45,8 @@ public class TestClass
                 19,
                 "TestClass",
                 "OnDeserializingMethod",
-                "void File.WriteAllBytes(string path, byte[] bytes)"));
+                "WriteAllBytes",
+                "void TestClass.OnDeserializingMethod(StreamingContext context) -> void File.WriteAllBytes(string path, byte[] bytes)"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -69,7 +70,8 @@ End Namespace",
                 13,
                 "TestClass",
                 "OnDeserializingMethod",
-                "Sub File.WriteAllBytes(path As String, bytes As Byte())"));
+                "WriteAllBytes",
+                "Sub TestClass.OnDeserializingMethod(context As StreamingContext) -> Sub File.WriteAllBytes(path As String, bytes As Byte())"));
         }
 
         [Fact]
@@ -97,7 +99,8 @@ public class TestClass
                 19,
                 "TestClass",
                 "OnDeserializedMethod",
-                "void File.WriteAllBytes(string path, byte[] bytes)"));
+                "WriteAllBytes",
+                "void TestClass.OnDeserializedMethod(StreamingContext context) -> void File.WriteAllBytes(string path, byte[] bytes)"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -121,7 +124,8 @@ End Namespace",
                 13,
                 "TestClass",
                 "OnDeserializedMethod",
-                "Sub File.WriteAllBytes(path As String, bytes As Byte())"));
+                "WriteAllBytes",
+                "Sub TestClass.OnDeserializedMethod(context As StreamingContext) -> Sub File.WriteAllBytes(path As String, bytes As Byte())"));
         }
 
         [Fact]
@@ -150,7 +154,8 @@ public class TestClass
                 19,
                 "TestClass",
                 "OnDeserializedMethod",
-                "void File.WriteAllBytes(string path, byte[] bytes)"));
+                "WriteAllBytes",
+                "void TestClass.OnDeserializedMethod(StreamingContext context) -> void File.WriteAllBytes(string path, byte[] bytes)"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -175,7 +180,8 @@ End Namespace",
                 13,
                 "TestClass",
                 "OnDeserializedMethod",
-                "Sub File.WriteAllBytes(path As String, bytes As Byte())"));
+                "WriteAllBytes",
+                "Sub TestClass.OnDeserializedMethod(context As StreamingContext) -> Sub File.WriteAllBytes(path As String, bytes As Byte())"));
         }
 
         [Fact]
@@ -211,7 +217,15 @@ public class TestClass
                 19,
                 "TestClass",
                 "OnDeserializedMethod",
-                "void File.WriteAllBytes(string path, byte[] bytes)"));
+                "WriteAllBytes",
+                "void TestClass.OnDeserializedMethod(StreamingContext context) -> void File.WriteAllBytes(string path, byte[] bytes)"),
+            GetCSharpResultAt(
+                12,
+                19,
+                "TestClass",
+                "OnDeserializedMethod",
+                "WriteAllBytes",
+                "void TestClass.OnDeserializedMethod(StreamingContext context) -> void TestClass.TestMethod() -> void File.WriteAllBytes(string path, byte[] bytes)"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -242,7 +256,15 @@ End Namespace",
                 13,
                 "TestClass",
                 "OnDeserializedMethod",
-                "Sub File.WriteAllBytes(path As String, bytes As Byte())"));
+                "WriteAllBytes",
+                 "Sub TestClass.OnDeserializedMethod(context As StreamingContext) -> Sub File.WriteAllBytes(path As String, bytes As Byte())"),
+            GetBasicResultAt(
+                12,
+                13,
+                "TestClass",
+                "OnDeserializedMethod",
+                "WriteAllBytes",
+                 "Sub TestClass.OnDeserializedMethod(context As StreamingContext) -> Sub TestClass.TestMethod() -> Sub File.WriteAllBytes(path As String, bytes As Byte())"));
         }
 
         [Fact]
@@ -283,7 +305,8 @@ public class TestClass
                 19,
                 "TestClass",
                 "OnDeserializedMethod",
-                "void File.WriteAllBytes(string path, byte[] bytes)"));
+                "WriteAllBytes",
+                "void TestClass.OnDeserializedMethod(StreamingContext context) -> void TestClass.TestMethod(int count) -> void File.WriteAllBytes(string path, byte[] bytes)"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -318,7 +341,8 @@ End Namespace",
                 13,
                 "TestClass",
                 "OnDeserializedMethod",
-                "Sub File.WriteAllBytes(path As String, bytes As Byte())"));
+                "WriteAllBytes",
+                "Sub TestClass.OnDeserializedMethod(context As StreamingContext) -> Sub TestClass.TestMethod(count As Integer) -> Sub File.WriteAllBytes(path As String, bytes As Byte())"));
         }
 
         [Fact]
@@ -348,7 +372,8 @@ public class TestClass : IDeserializationCallback
                 17,
                 "TestClass",
                 "OnDeserialization",
-                "void File.WriteAllBytes(string path, byte[] bytes)"));
+                "WriteAllBytes",
+                "void TestClass.OnDeserialization(object sender) -> void File.WriteAllBytes(string path, byte[] bytes)"));
         }
 
         [Fact]
@@ -378,7 +403,8 @@ public class TestClass : IDeserializationCallback
                 35,
                 "TestClass",
                 "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization",
-                "void File.WriteAllBytes(string path, byte[] bytes)"));
+                "WriteAllBytes",
+                "void TestClass.OnDeserialization(object sender) -> void File.WriteAllBytes(string path, byte[] bytes)"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -402,7 +428,8 @@ End Namespace",
                 20,
                 "TestClass",
                 "OnDeserializationExplictlyImplemented",
-                "Sub File.WriteAllBytes(path As String, bytes As Byte())"));
+                "WriteAllBytes",
+                "Sub TestClass.OnDeserializationExplictlyImplemented(sender As Object) -> Sub File.WriteAllBytes(path As String, bytes As Byte())"));
         }
 
         [Fact]
@@ -432,7 +459,8 @@ public class TestClass : IDeserializationCallback
                 35,
                 "TestClass",
                 "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization",
-                "void File.WriteAllLines(string path, string[] contents, Encoding encoding)"));
+                "WriteAllLines",
+                "void TestClass.OnDeserialization(object sender) -> void File.WriteAllLines(string path, string[] contents, Encoding encoding)"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -459,7 +487,8 @@ End Namespace",
                 20,
                 "TestClass",
                 "OnDeserialization",
-                "Sub File.WriteAllLines(path As String, contents As String(), encoding As Encoding)"));
+                "WriteAllLines",
+                "Sub TestClass.OnDeserialization(sender As Object) -> Sub File.WriteAllLines(path As String, contents As String(), encoding As Encoding)"));
         }
 
         [Fact]
@@ -489,7 +518,8 @@ public class TestClass : IDeserializationCallback
                 35,
                 "TestClass",
                 "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization",
-                "void File.WriteAllText(string path, string contents)"));
+                "WriteAllText",
+                "void TestClass.OnDeserialization(object sender) -> void File.WriteAllText(string path, string contents)"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -516,7 +546,8 @@ End Namespace",
                 20,
                 "TestClass",
                 "OnDeserialization",
-                "Sub File.WriteAllText(path As String, contents As String)"));
+                "WriteAllText",
+                "Sub TestClass.OnDeserialization(sender As Object) -> Sub File.WriteAllText(path As String, contents As String)"));
         }
 
         [Fact]
@@ -546,7 +577,8 @@ public class TestClass : IDeserializationCallback
                 35,
                 "TestClass",
                 "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization",
-                "void File.Copy(string sourceFileName, string destFileName)"));
+                "Copy",
+                "void TestClass.OnDeserialization(object sender) -> void File.Copy(string sourceFileName, string destFileName)"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -573,7 +605,8 @@ End Namespace",
                 20,
                 "TestClass",
                 "OnDeserialization",
-                "Sub File.Copy(sourceFileName As String, destFileName As String)"));
+                "Copy",
+                "Sub TestClass.OnDeserialization(sender As Object) -> Sub File.Copy(sourceFileName As String, destFileName As String)"));
         }
 
         [Fact]
@@ -603,7 +636,8 @@ public class TestClass : IDeserializationCallback
                 35,
                 "TestClass",
                 "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization",
-                "void File.Move(string sourceFileName, string destFileName)"));
+                "Move",
+                "void TestClass.OnDeserialization(object sender) -> void File.Move(string sourceFileName, string destFileName)"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -631,7 +665,8 @@ End Namespace",
                 20,
                 "TestClass",
                 "OnDeserialization",
-                "Sub File.Move(sourceFileName As String, destFileName As String)"));
+                "Move",
+                "Sub TestClass.OnDeserialization(sender As Object) -> Sub File.Move(sourceFileName As String, destFileName As String)"));
         }
 
         [Fact]
@@ -661,7 +696,8 @@ public class TestClass : IDeserializationCallback
                 35,
                 "TestClass",
                 "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization",
-                "void File.AppendAllLines(string path, IEnumerable<string> contents)"));
+                "AppendAllLines",
+                "void TestClass.OnDeserialization(object sender) -> void File.AppendAllLines(string path, IEnumerable<string> contents)"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -687,7 +723,8 @@ End Namespace",
                 20,
                 "TestClass",
                 "OnDeserialization",
-                "Sub File.AppendAllLines(path As String, contents As IEnumerable(Of String))"));
+                "AppendAllLines",
+                "Sub TestClass.OnDeserialization(sender As Object) -> Sub File.AppendAllLines(path As String, contents As IEnumerable(Of String))"));
         }
 
         [Fact]
@@ -717,7 +754,8 @@ public class TestClass : IDeserializationCallback
                 35,
                 "TestClass",
                 "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization",
-                "void File.AppendAllText(string path, string contents)"));
+                "AppendAllText",
+                "void TestClass.OnDeserialization(object sender) -> void File.AppendAllText(string path, string contents)"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -743,7 +781,8 @@ End Namespace",
                 20,
                 "TestClass",
                 "OnDeserialization",
-                "Sub File.AppendAllText(path As String, contents As String)"));
+                "AppendAllText",
+                "Sub TestClass.OnDeserialization(sender As Object) -> Sub File.AppendAllText(path As String, contents As String)"));
         }
 
         [Fact]
@@ -772,7 +811,8 @@ public class TestClass : IDeserializationCallback
                 35,
                 "TestClass",
                 "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization",
-                "StreamWriter File.AppendText(string path)"));
+                "AppendText",
+                "void TestClass.OnDeserialization(object sender) -> StreamWriter File.AppendText(string path)"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -797,7 +837,8 @@ End Namespace",
                 20,
                 "TestClass",
                 "OnDeserialization",
-                "Function File.AppendText(path As String) As StreamWriter"));
+                "AppendText",
+                "Sub TestClass.OnDeserialization(sender As Object) -> Function File.AppendText(path As String) As StreamWriter"));
         }
 
         [Fact]
@@ -826,7 +867,8 @@ public class TestClass : IDeserializationCallback
                 35,
                 "TestClass",
                 "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization",
-                "void File.Delete(string path)"));
+                "Delete",
+                "void TestClass.OnDeserialization(object sender) -> void File.Delete(string path)"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -851,7 +893,8 @@ End Namespace",
                 20,
                 "TestClass",
                 "OnDeserialization",
-                "Sub File.Delete(path As String)"));
+                "Delete",
+                "Sub TestClass.OnDeserialization(sender As Object) -> Sub File.Delete(path As String)"));
         }
 
         [Fact]
@@ -880,7 +923,8 @@ public class TestClass : IDeserializationCallback
                 35,
                 "TestClass",
                 "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization",
-                "void Directory.Delete(string path)"));
+                "Delete",
+                "void TestClass.OnDeserialization(object sender) -> void Directory.Delete(string path)"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -905,7 +949,8 @@ End Namespace",
                 20,
                 "TestClass",
                 "OnDeserialization",
-                "Sub Directory.Delete(path As String)"));
+                "Delete",
+                "Sub TestClass.OnDeserialization(sender As Object) -> Sub Directory.Delete(path As String)"));
         }
 
         [Fact]
@@ -933,7 +978,8 @@ public class TestClass : IDeserializationCallback
                 35,
                 "TestClass",
                 "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization",
-                "void FileInfo.Delete()"));
+                "Delete",
+                "void TestClass.OnDeserialization(object sender) -> void FileInfo.Delete()"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -957,7 +1003,8 @@ End Namespace",
                 20,
                 "TestClass",
                 "OnDeserialization",
-                "Sub FileInfo.Delete()"));
+                "Delete",
+                "Sub TestClass.OnDeserialization(sender As Object) -> Sub FileInfo.Delete()"));
         }
 
         [Fact]
@@ -985,7 +1032,8 @@ public class TestClass : IDeserializationCallback
                 35,
                 "TestClass",
                 "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization",
-                "void DirectoryInfo.Delete()"));
+                "Delete",
+                "void TestClass.OnDeserialization(object sender) -> void DirectoryInfo.Delete()"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -1009,7 +1057,8 @@ End Namespace",
                 20,
                 "TestClass",
                 "OnDeserialization",
-                "Sub DirectoryInfo.Delete()"));
+                "Delete",
+                "Sub TestClass.OnDeserialization(sender As Object) -> Sub DirectoryInfo.Delete()"));
         }
 
         [Fact]
@@ -1053,7 +1102,8 @@ public class TestClass : IDeserializationCallback
                 35,
                 "TestClass",
                 "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization",
-                "void LogStore.Delete(string path)"));
+                "Delete",
+                "void TestClass.OnDeserialization(object sender) -> void LogStore.Delete(string path)"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -1090,7 +1140,8 @@ End Namespace",
                 20,
                 "TestClass",
                 "OnDeserialization",
-                "Sub LogStore.Delete(path As String)"));
+                "Delete",
+                "Sub TestClass.OnDeserialization(sender As Object) -> Sub LogStore.Delete(path As String)"));
         }
 
         [Fact]
@@ -1119,7 +1170,8 @@ public class TestClass : IDeserializationCallback
                 35,
                 "TestClass",
                 "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization",
-                "Module[] Assembly.GetLoadedModules()"));
+                "GetLoadedModules",
+                "void TestClass.OnDeserialization(object sender) -> Module[] Assembly.GetLoadedModules()"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -1144,7 +1196,8 @@ End Namespace",
                 20,
                 "TestClass",
                 "OnDeserialization",
-                "Function Assembly.GetLoadedModules() As [Module]()"));
+                "GetLoadedModules",
+                "Sub TestClass.OnDeserialization(sender As Object) -> Function Assembly.GetLoadedModules() As [Module]()"));
         }
 
         [Fact]
@@ -1175,7 +1228,8 @@ public class TestClass : IDeserializationCallback
                 35,
                 "TestClass",
                 "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization",
-                "Assembly Assembly.Load(AssemblyName assemblyRef)"));
+                "Load",
+                "void TestClass.OnDeserialization(object sender) -> Assembly Assembly.Load(AssemblyName assemblyRef)"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -1203,7 +1257,8 @@ End Namespace",
                 20,
                 "TestClass",
                 "OnDeserialization",
-                "Function Assembly.Load(assemblyRef As AssemblyName) As Assembly"));
+                "Load",
+                "Sub TestClass.OnDeserialization(sender As Object) -> Function Assembly.Load(assemblyRef As AssemblyName) As Assembly"));
         }
 
         [Fact]
@@ -1232,7 +1287,8 @@ public class TestClass : IDeserializationCallback
                 35,
                 "TestClass",
                 "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization",
-                "Assembly Assembly.LoadFile(string path)"));
+                "LoadFile",
+                "void TestClass.OnDeserialization(object sender) -> Assembly Assembly.LoadFile(string path)"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -1258,7 +1314,8 @@ End Namespace",
                 20,
                 "TestClass",
                 "OnDeserialization",
-                "Function Assembly.LoadFile(path As String) As Assembly"));
+                "LoadFile",
+                "Sub TestClass.OnDeserialization(sender As Object) -> Function Assembly.LoadFile(path As String) As Assembly"));
         }
 
         [Fact]
@@ -1287,7 +1344,8 @@ public class TestClass : IDeserializationCallback
                 35,
                 "TestClass",
                 "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization",
-                "Assembly Assembly.LoadFrom(string assemblyFile)"));
+                "LoadFrom",
+                "void TestClass.OnDeserialization(object sender) -> Assembly Assembly.LoadFrom(string assemblyFile)"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -1313,7 +1371,8 @@ End Namespace",
                 20,
                 "TestClass",
                 "OnDeserialization",
-                "Function Assembly.LoadFrom(assemblyFile As String) As Assembly"));
+                "LoadFrom",
+                "Sub TestClass.OnDeserialization(sender As Object) -> Function Assembly.LoadFrom(assemblyFile As String) As Assembly"));
         }
 
         [Fact]
@@ -1344,7 +1403,8 @@ public class TestClass : IDeserializationCallback
                 35,
                 "TestClass",
                 "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization",
-                $"Module Assembly.LoadModule(string moduleName, byte[]{NullableSuffixOnNetCoreApp} rawModule)"));
+                "LoadModule",
+                $"void TestClass.OnDeserialization(object sender) -> Module Assembly.LoadModule(string moduleName, byte[]{NullableSuffixOnNetCoreApp} rawModule)"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -1372,7 +1432,8 @@ End Namespace",
                 20,
                 "TestClass",
                 "OnDeserialization",
-                "Function Assembly.LoadModule(moduleName As String, rawModule As Byte()) As [Module]"));
+                "LoadModule",
+                "Sub TestClass.OnDeserialization(sender As Object) -> Function Assembly.LoadModule(moduleName As String, rawModule As Byte()) As [Module]"));
         }
 
         [Fact]
@@ -1400,7 +1461,8 @@ public class TestClass : IDeserializationCallback
                 13,
                 35,
                 "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization",
-                $"Assembly{NullableSuffixOnNetCoreApp} Assembly.LoadWithPartialName(string partialName)"));
+                "LoadWithPartialName",
+                $"void TestClass.OnDeserialization(object sender) -> Assembly{NullableSuffixOnNetCoreApp} Assembly.LoadWithPartialName(string partialName)"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -1426,7 +1488,8 @@ End Namespace",
                 20,
                 "TestClass",
                 "OnDeserialization",
-                "Function Assembly.LoadWithPartialName(partialName As String) As Assembly"));
+                "LoadWithPartialName",
+                "Sub TestClass.OnDeserialization(sender As Object) -> Function Assembly.LoadWithPartialName(partialName As String) As Assembly"));
         }
 
         [Fact]
@@ -1455,7 +1518,8 @@ public class TestClass : IDeserializationCallback
                 35,
                 "TestClass",
                 "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization",
-                "Assembly Assembly.ReflectionOnlyLoad(byte[] rawAssembly)"));
+                "ReflectionOnlyLoad",
+                "void TestClass.OnDeserialization(object sender) -> Assembly Assembly.ReflectionOnlyLoad(byte[] rawAssembly)"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -1480,7 +1544,8 @@ End Namespace",
                 20,
                 "TestClass",
                 "OnDeserialization",
-                "Function Assembly.ReflectionOnlyLoad(rawAssembly As Byte()) As Assembly"));
+                "ReflectionOnlyLoad",
+                "Sub TestClass.OnDeserialization(sender As Object) -> Function Assembly.ReflectionOnlyLoad(rawAssembly As Byte()) As Assembly"));
         }
 
         [Fact]
@@ -1509,7 +1574,8 @@ public class TestClass : IDeserializationCallback
                 35,
                 "TestClass",
                 "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization",
-                "Assembly Assembly.ReflectionOnlyLoadFrom(string assemblyFile)"));
+                "ReflectionOnlyLoadFrom",
+                "void TestClass.OnDeserialization(object sender) -> Assembly Assembly.ReflectionOnlyLoadFrom(string assemblyFile)"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -1535,7 +1601,8 @@ End Namespace",
                 20,
                 "TestClass",
                 "OnDeserialization",
-                "Function Assembly.ReflectionOnlyLoadFrom(assemblyFile As String) As Assembly"));
+                "ReflectionOnlyLoadFrom",
+                "Sub TestClass.OnDeserialization(sender As Object) -> Function Assembly.ReflectionOnlyLoadFrom(assemblyFile As String) As Assembly"));
         }
 
         [Fact]
@@ -1564,7 +1631,8 @@ public class TestClass : IDeserializationCallback
                 35,
                 "TestClass",
                 "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization",
-                "Assembly Assembly.UnsafeLoadFrom(string assemblyFile)"));
+                "UnsafeLoadFrom",
+                "void TestClass.OnDeserialization(object sender) -> Assembly Assembly.UnsafeLoadFrom(string assemblyFile)"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -1590,7 +1658,8 @@ End Namespace",
                 20,
                 "TestClass",
                 "OnDeserialization",
-                "Function Assembly.UnsafeLoadFrom(assemblyFile As String) As Assembly"));
+                "UnsafeLoadFrom",
+                "Sub TestClass.OnDeserialization(sender As Object) -> Function Assembly.UnsafeLoadFrom(assemblyFile As String) As Assembly"));
         }
 
         [Fact]
@@ -1631,7 +1700,8 @@ public class TestClass : IDeserializationCallback
                 35,
                 "TestClass",
                 "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization",
-                "void File.WriteAllBytes(string path, byte[] bytes)"));
+                "WriteAllBytes",
+                "void TestClass.OnDeserialization(object sender) -> void TestGenericClass<T>.TestGenericMethod() -> void File.WriteAllBytes(string path, byte[] bytes)"));
         }
 
         [Fact]
@@ -1675,7 +1745,8 @@ public class TestClass : IDeserializationCallback
                 35,
                 "TestClass",
                 "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization",
-                "void File.WriteAllBytes(string path, byte[] bytes)"));
+                "WriteAllBytes",
+                "void TestClass.OnDeserialization(object sender) -> void TestInterfaceImplement.TestInterfaceMethod() -> void File.WriteAllBytes(string path, byte[] bytes)"));
         }
 
         [Fact]
@@ -1714,7 +1785,8 @@ public class TestClass : IDeserializationCallback
                 35,
                 "TestClass",
                 "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization",
-                "void File.WriteAllBytes(string path, byte[] bytes)"));
+                "WriteAllBytes",
+                "void TestClass.OnDeserialization(object sender) -> TestDelegate TestAnotherClass.staticDelegateField -> void File.WriteAllBytes(string path, byte[] bytes)"));
         }
 
         [Fact]
@@ -1755,7 +1827,8 @@ public class TestClass : IDeserializationCallback
                 35,
                 "TestClass",
                 "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization",
-                "void File.WriteAllBytes(string path, byte[] bytes)"));
+                "WriteAllBytes",
+                "void TestClass.OnDeserialization(object sender) -> void File.WriteAllBytes(string path, byte[] bytes)"));
         }
 
         [Fact]
@@ -1799,7 +1872,8 @@ public class TestClass : IDeserializationCallback
                 35,
                 "TestClass",
                 "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization",
-                "void File.WriteAllBytes(string path, byte[] bytes)"));
+                "WriteAllBytes",
+                "void TestClass.OnDeserialization(object sender) -> void TestDerivedClass.TestAbstractMethod() -> void File.WriteAllBytes(string path, byte[] bytes)"));
         }
 
         [Fact]
@@ -1826,7 +1900,8 @@ public class TestClass
                 6,
                 "TestClass",
                 "Finalize",
-                "void File.WriteAllBytes(string path, byte[] bytes)"));
+                "WriteAllBytes",
+                "TestClass.~TestClass() -> void File.WriteAllBytes(string path, byte[] bytes)"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -1849,7 +1924,8 @@ End Namespace",
                 33,
                 "TestClass",
                 "Finalize",
-                "Sub File.WriteAllBytes(path As String, bytes As Byte())"));
+                "WriteAllBytes",
+                "Sub TestClass.Finalize() -> Sub File.WriteAllBytes(path As String, bytes As Byte())"));
         }
 
         [Fact]
@@ -1899,13 +1975,15 @@ public class TestClass : IDisposable
                 17,
                 "TestClass",
                 "Dispose",
-                "void File.WriteAllBytes(string path, byte[] bytes)"),
+                "WriteAllBytes",
+                "void TestClass.Dispose() -> void TestClass.Dispose(bool disposing) -> void File.WriteAllBytes(string path, byte[] bytes)"),
             GetCSharpResultAt(
                 35,
                 6,
                 "TestClass",
                 "Finalize",
-                "void File.WriteAllBytes(string path, byte[] bytes)"));
+                "WriteAllBytes",
+                "TestClass.~TestClass() -> void TestClass.Dispose(bool disposing) -> void File.WriteAllBytes(string path, byte[] bytes)"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -1944,12 +2022,14 @@ End Namespace",
                 20,
                 "TestClass",
                 "Dispose",
-                "Sub File.WriteAllBytes(path As String, bytes As Byte())"),
+                "WriteAllBytes",
+                "Sub TestClass.Dispose() -> Sub TestClass.Dispose(disposing As Boolean) -> Sub File.WriteAllBytes(path As String, bytes As Byte())"),
             GetBasicResultAt(28,
                 33,
                 "TestClass",
                 "Finalize",
-                "Sub File.WriteAllBytes(path As String, bytes As Byte())"));
+                "WriteAllBytes",
+                    "Sub TestClass.Finalize() -> Sub TestClass.Dispose(disposing As Boolean) -> Sub File.WriteAllBytes(path As String, bytes As Byte())"));
         }
 
         [Fact]
@@ -1986,7 +2066,8 @@ public class SubTestClass : TestClass
                 6,
                 "SubTestClass",
                 "Finalize",
-                "void File.WriteAllBytes(string path, byte[] bytes)"));
+                "WriteAllBytes",
+                "SubTestClass.~SubTestClass() -> void File.WriteAllBytes(string path, byte[] bytes)"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -2018,7 +2099,8 @@ End Namespace",
                 33,
                 "SubTestClass",
                 "Finalize",
-                "Sub File.WriteAllBytes(path As String, bytes As Byte())"));
+                "WriteAllBytes",
+                "Sub SubTestClass.Finalize() -> Sub File.WriteAllBytes(path As String, bytes As Byte())"));
         }
 
         [Fact]
@@ -2874,7 +2956,8 @@ public class TestClass
                 19,
                 "TestClass",
                 "OnDeserializingMethod",
-                "void File.WriteAllBytes(string path, byte[] bytes)"));
+                "WriteAllBytes",
+                "void TestClass.OnDeserializingMethod(StreamingContext context) -> void File.WriteAllBytes(string path, byte[] bytes)"));
         }
 
         [Fact]

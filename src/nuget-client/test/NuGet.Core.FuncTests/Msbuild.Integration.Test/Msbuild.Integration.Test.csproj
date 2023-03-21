@@ -22,10 +22,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\..\..\src\NuGet.Core\NuGet.Build.Tasks\NuGet.props"
-          CopyToOutputDirectory="Always" />
-    <None Include="..\..\..\src\NuGet.Core\NuGet.Build.Tasks\NuGet.targets"
-          CopyToOutputDirectory="Always" />
+    <None Include="..\..\..\src\NuGet.Core\NuGet.Build.Tasks\NuGet.targets">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>

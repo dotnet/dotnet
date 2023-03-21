@@ -49,7 +49,7 @@ namespace Microsoft.TemplateSearch.Common
         public IReadOnlyList<string> ShortNameList => TemplateInfo.ShortNameList;
 
         /// <inheritdoc/>
-        bool ITemplateMetadata.PreferDefaultName => TemplateInfo.PreferDefaultName;
+        bool ITemplateInfo.PreferDefaultName => TemplateInfo.PreferDefaultName;
 
         /// <inheritdoc/>
         public string? Author => TemplateInfo.Author;
@@ -77,9 +77,9 @@ namespace Microsoft.TemplateSearch.Common
         public string? ThirdPartyNotices => TemplateInfo.ThirdPartyNotices;
 
         #region implicit ITemplateInfo implementation
-        string? ITemplateMetadata.DefaultName => TemplateInfo.DefaultName;
+        string? ITemplateInfo.DefaultName => TemplateInfo.DefaultName;
 
-        Guid ITemplateLocator.GeneratorId => TemplateInfo.GeneratorId;
+        Guid ITemplateInfo.GeneratorId => TemplateInfo.GeneratorId;
 
         [Obsolete]
         string ITemplateInfo.ShortName => TemplateInfo.ShortName;
@@ -90,22 +90,22 @@ namespace Microsoft.TemplateSearch.Common
         [Obsolete]
         IReadOnlyDictionary<string, ICacheParameter> ITemplateInfo.CacheParameters => TemplateInfo.CacheParameters;
 
-        string ITemplateLocator.MountPointUri => TemplateInfo.MountPointUri;
+        string ITemplateInfo.MountPointUri => TemplateInfo.MountPointUri;
 
-        string ITemplateLocator.ConfigPlace => TemplateInfo.ConfigPlace;
+        string ITemplateInfo.ConfigPlace => TemplateInfo.ConfigPlace;
 
-        string? IExtendedTemplateLocator.LocaleConfigPlace => TemplateInfo.LocaleConfigPlace;
+        string? ITemplateInfo.LocaleConfigPlace => TemplateInfo.LocaleConfigPlace;
 
-        string? IExtendedTemplateLocator.HostConfigPlace => TemplateInfo.HostConfigPlace;
+        string? ITemplateInfo.HostConfigPlace => TemplateInfo.HostConfigPlace;
 
-        IReadOnlyDictionary<string, IBaselineInfo> ITemplateMetadata.BaselineInfo => TemplateInfo.BaselineInfo;
+        IReadOnlyDictionary<string, IBaselineInfo> ITemplateInfo.BaselineInfo => TemplateInfo.BaselineInfo;
 
         [Obsolete]
         bool ITemplateInfo.HasScriptRunningPostActions { get => TemplateInfo.HasScriptRunningPostActions; set => throw new NotImplementedException(); }
 
-        IReadOnlyList<Guid> ITemplateMetadata.PostActions => TemplateInfo.PostActions;
+        IReadOnlyList<Guid> ITemplateInfo.PostActions => TemplateInfo.PostActions;
 
-        IReadOnlyList<TemplateConstraintInfo> ITemplateMetadata.Constraints => TemplateInfo.Constraints;
+        IReadOnlyList<TemplateConstraintInfo> ITemplateInfo.Constraints => TemplateInfo.Constraints;
         #endregion
 
         private ITemplateInfo TemplateInfo { get; }

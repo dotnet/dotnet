@@ -12,22 +12,6 @@ namespace Microsoft.AspNetCore.Builder;
 public static class CorsEndpointConventionBuilderExtensions
 {
     /// <summary>
-    /// Adds a CORS policy with the default policy name to the endpoint(s).
-    /// </summary>
-    /// <param name="builder">The endpoint convention builder.</param>
-    /// <returns>The original convention builder parameter.</returns>
-    public static TBuilder RequireCors<TBuilder>(this TBuilder builder) where TBuilder : IEndpointConventionBuilder
-    {
-        ArgumentNullException.ThrowIfNull(builder);
-
-        builder.Add(endpointBuilder =>
-        {
-            endpointBuilder.Metadata.Add(new EnableCorsAttribute());
-        });
-        return builder;
-    }
-
-    /// <summary>
     /// Adds a CORS policy with the specified name to the endpoint(s).
     /// </summary>
     /// <param name="builder">The endpoint convention builder.</param>
@@ -35,7 +19,10 @@ public static class CorsEndpointConventionBuilderExtensions
     /// <returns>The original convention builder parameter.</returns>
     public static TBuilder RequireCors<TBuilder>(this TBuilder builder, string policyName) where TBuilder : IEndpointConventionBuilder
     {
-        ArgumentNullException.ThrowIfNull(builder);
+        if (builder == null)
+        {
+            throw new ArgumentNullException(nameof(builder));
+        }
 
         builder.Add(endpointBuilder =>
         {
@@ -52,7 +39,11 @@ public static class CorsEndpointConventionBuilderExtensions
     /// <returns>The original convention builder parameter.</returns>
     public static TBuilder RequireCors<TBuilder>(this TBuilder builder, Action<CorsPolicyBuilder> configurePolicy) where TBuilder : IEndpointConventionBuilder
     {
-        ArgumentNullException.ThrowIfNull(builder);
+        if (builder == null)
+        {
+            throw new ArgumentNullException(nameof(builder));
+        }
+
         ArgumentNullException.ThrowIfNull(configurePolicy);
 
         var policyBuilder = new CorsPolicyBuilder();

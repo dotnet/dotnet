@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>$(NetCurrent)</TargetFramework>
-    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <!-- Do not include assemblies that ship inside the SDK. -->

@@ -18,57 +18,55 @@ namespace Microsoft.TemplateEngine.Orchestrator.RunnableProjects
 
         IFileSystemInfo ITemplate.Configuration => ConfigFile ?? throw new InvalidOperationException("Configuration file is not initialized, are you using test constructor?");
 
-        string ITemplateLocator.MountPointUri => ConfigFile?.MountPoint.MountPointUri ?? throw new InvalidOperationException("Configuration file is not initialized, are you using test constructor?");
+        string ITemplateInfo.MountPointUri => ConfigFile?.MountPoint.MountPointUri ?? throw new InvalidOperationException("Configuration file is not initialized, are you using test constructor?");
 
-        string ITemplateLocator.ConfigPlace => ConfigFile?.FullPath ?? throw new InvalidOperationException("Configuration file is not initialized, are you using test constructor?");
+        string ITemplateInfo.ConfigPlace => ConfigFile?.FullPath ?? throw new InvalidOperationException("Configuration file is not initialized, are you using test constructor?");
 
         IFileSystemInfo? ITemplate.LocaleConfiguration => _localizaitonInfo?.File;
 
         IFileSystemInfo? ITemplate.HostSpecificConfiguration => _hostConfigFile;
 
-        string? IExtendedTemplateLocator.LocaleConfigPlace => _localizaitonInfo?.File.FullPath;
+        string? ITemplateInfo.LocaleConfigPlace => _localizaitonInfo?.File.FullPath;
 
-        string? IExtendedTemplateLocator.HostConfigPlace => _hostConfigFile?.FullPath;
+        string? ITemplateInfo.HostConfigPlace => _hostConfigFile?.FullPath;
 
         bool ITemplate.IsNameAgreementWithFolderPreferred => ConfigurationModel.PreferNameDirectory;
 
         IDirectory ITemplate.TemplateSourceRoot => TemplateSourceRoot;
 
-        string? ITemplateMetadata.Author => ConfigurationModel.Author;
+        IReadOnlyList<IValidationEntry> IValidationInfo.ValidationErrors => throw new NotImplementedException();
 
-        string? ITemplateMetadata.Description => ConfigurationModel.Description;
+        string? ITemplateInfo.Author => ConfigurationModel.Author;
 
-        IReadOnlyList<string> ITemplateMetadata.Classifications => ConfigurationModel.Classifications;
+        string? ITemplateInfo.Description => ConfigurationModel.Description;
 
-        string? ITemplateMetadata.DefaultName => ConfigurationModel.DefaultName;
+        IReadOnlyList<string> ITemplateInfo.Classifications => ConfigurationModel.Classifications;
 
-        string ITemplateMetadata.Identity => ConfigurationModel.Identity;
+        string? ITemplateInfo.DefaultName => ConfigurationModel.DefaultName;
 
-        Guid ITemplateLocator.GeneratorId => Generator.Id;
+        string ITemplateInfo.Identity => ConfigurationModel.Identity;
 
-        string? ITemplateMetadata.GroupIdentity => ConfigurationModel.GroupIdentity;
+        Guid ITemplateInfo.GeneratorId => Generator.Id;
 
-        int ITemplateMetadata.Precedence => ConfigurationModel.Precedence;
+        string? ITemplateInfo.GroupIdentity => ConfigurationModel.GroupIdentity;
 
-        string ITemplateMetadata.Name => ConfigurationModel.Name ?? throw new TemplateAuthoringException("Template configuration should have 'name' defined.", "name");
+        int ITemplateInfo.Precedence => ConfigurationModel.Precedence;
 
-        IReadOnlyList<string> ITemplateMetadata.ShortNameList => ConfigurationModel.ShortNameList ?? new List<string>();
+        string ITemplateInfo.Name => ConfigurationModel.Name ?? throw new TemplateAuthoringException("Template configuration should have 'name' defined.", "name");
 
-        IParameterDefinitionSet ITemplateMetadata.ParameterDefinitions => new ParameterDefinitionSet(ConfigurationModel.ExtractParameters());
+        IReadOnlyList<string> ITemplateInfo.ShortNameList => ConfigurationModel.ShortNameList ?? new List<string>();
 
-        string? ITemplateMetadata.ThirdPartyNotices => ConfigurationModel.ThirdPartyNotices;
+        IParameterDefinitionSet ITemplateInfo.ParameterDefinitions => new ParameterDefinitionSet(ConfigurationModel.ExtractParameters());
 
-        IReadOnlyDictionary<string, IBaselineInfo> ITemplateMetadata.BaselineInfo => ConfigurationModel.BaselineInfo;
+        string? ITemplateInfo.ThirdPartyNotices => ConfigurationModel.ThirdPartyNotices;
 
-        IReadOnlyDictionary<string, string> ITemplateMetadata.TagsCollection => ConfigurationModel.Tags;
+        IReadOnlyDictionary<string, IBaselineInfo> ITemplateInfo.BaselineInfo => ConfigurationModel.BaselineInfo;
 
-        IReadOnlyList<Guid> ITemplateMetadata.PostActions => ConfigurationModel.PostActionModels.Select(pam => pam.ActionId).ToArray();
+        IReadOnlyDictionary<string, string> ITemplateInfo.TagsCollection => ConfigurationModel.Tags;
 
-        IReadOnlyList<TemplateConstraintInfo> ITemplateMetadata.Constraints => ConfigurationModel.Constraints;
+        IReadOnlyList<Guid> ITemplateInfo.PostActions => ConfigurationModel.PostActionModels.Select(pam => pam.ActionId).ToArray();
 
-        bool ITemplateMetadata.PreferDefaultName => ConfigurationModel.PreferDefaultName;
-
-        ILocalizationLocator? ITemplate.Localization => Localization;
+        IReadOnlyList<TemplateConstraintInfo> ITemplateInfo.Constraints => ConfigurationModel.Constraints;
 
         #region Obsolete implementation
 
@@ -85,6 +83,8 @@ namespace Microsoft.TemplateEngine.Orchestrator.RunnableProjects
                 return string.Empty;
             }
         }
+
+        bool ITemplateInfo.PreferDefaultName => ConfigurationModel.PreferDefaultName;
 
         [Obsolete]
         IReadOnlyDictionary<string, ICacheTag> ITemplateInfo.Tags

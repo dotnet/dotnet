@@ -3,7 +3,7 @@
 
 using System.Collections.Generic;
 
-namespace Microsoft.AspNetCore.Http.RequestDelegateGenerator.StaticRouteHandlerModel;
+namespace Microsoft.AspNetCore.Http.Generators.StaticRouteHandlerModel;
 
 internal sealed class EndpointDelegateComparer : IEqualityComparer<Endpoint>
 {
