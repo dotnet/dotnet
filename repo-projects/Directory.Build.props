@@ -112,6 +112,9 @@
 
     <EnvironmentVariables Include="SourceRoot=$(ProjectDirectory)" />
 
+    <!-- Disable TFM filtering. -->
+    <EnvironmentVariables Include="NoTargetFrameworkFiltering=true" />
+
     <!-- https://github.com/dotnet/source-build/issues/3081 -->
     <EnvironmentVariables Include="CheckEolTargetFramework=false" />
   </ItemGroup>
