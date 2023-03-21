@@ -3,6 +3,8 @@
 
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.IO;
 using System.Text;
 
 namespace System.Net.Http.Headers
@@ -10,9 +12,9 @@ namespace System.Net.Http.Headers
     public class ContentRangeHeaderValue : ICloneable
     {
         private string _unit = null!;
-        private long _from;
-        private long _to;
-        private long _length;
+        private long? _from;
+        private long? _to;
+        private long? _length;
 
         public string Unit
         {
@@ -24,15 +26,30 @@ namespace System.Net.Http.Headers
             }
         }
 
-        public long? From => HasRange ? _from : null;
+        public long? From
+        {
+            get { return _from; }
+        }
 
-        public long? To => HasRange ? _to : null;
+        public long? To
+        {
+            get { return _to; }
+        }
 
-        public long? Length => HasLength ? _length : null;
+        public long? Length
+        {
+            get { return _length; }
+        }
 
-        public bool HasLength => _length >= 0; // e.g. "Content-Range: bytes 12-34/*"
+        public bool HasLength // e.g. "Content-Range: bytes 12-34/*"
+        {
+            get { return _length != null; }
+        }
 
-        public bool HasRange => _from >= 0; // e.g. "Content-Range: bytes */1234"
+        public bool HasRange // e.g. "Content-Range: bytes */1234"
+        {
+            get { return _from != null; }
+        }
 
         public ContentRangeHeaderValue(long from, long to, long length)
         {
@@ -58,7 +75,6 @@ namespace System.Net.Http.Headers
 
             _length = length;
             _unit = HeaderUtilities.BytesUnit;
-            _from = -1;
         }
 
         public ContentRangeHeaderValue(long from, long to)
@@ -72,13 +88,10 @@ namespace System.Net.Http.Headers
             _from = from;
             _to = to;
             _unit = HeaderUtilities.BytesUnit;
-            _length = -1;
         }
 
         private ContentRangeHeaderValue()
         {
-            _from = -1;
-            _length = -1;
         }
 
         private ContentRangeHeaderValue(ContentRangeHeaderValue source)
@@ -91,19 +104,35 @@ namespace System.Net.Http.Headers
             _unit = source._unit;
         }
 
-        public override bool Equals([NotNullWhen(true)] object? obj) =>
-            obj is ContentRangeHeaderValue other &&
-            _from == other._from &&
-            _to == other._to &&
-            _length == other._length &&
-            string.Equals(_unit, other._unit, StringComparison.OrdinalIgnoreCase);
+        public override bool Equals([NotNullWhen(true)] object? obj)
+        {
+            ContentRangeHeaderValue? other = obj as ContentRangeHeaderValue;
 
-        public override int GetHashCode() =>
-            HashCode.Combine(
-                StringComparer.OrdinalIgnoreCase.GetHashCode(_unit),
-                _from,
-                _to,
-                _length);
+            if (other == null)
+            {
+                return false;
+            }
+
+            return ((_from == other._from) && (_to == other._to) && (_length == other._length) &&
+                string.Equals(_unit, other._unit, StringComparison.OrdinalIgnoreCase));
+        }
+
+        public override int GetHashCode()
+        {
+            int result = StringComparer.OrdinalIgnoreCase.GetHashCode(_unit);
+
+            if (HasRange)
+            {
+                result = result ^ _from.GetHashCode() ^ _to.GetHashCode();
+            }
+
+            if (HasLength)
+            {
+                result ^= _length.GetHashCode();
+            }
+
+            return result;
+        }
 
         public override string ToString()
         {
@@ -113,9 +142,10 @@ namespace System.Net.Http.Headers
 
             if (HasRange)
             {
-                sb.AppendSpanFormattable(_from);
+                sb.AppendSpanFormattable(_from!.Value);
                 sb.Append('-');
-                sb.AppendSpanFormattable(_to);
+                Debug.Assert(_to.HasValue);
+                sb.AppendSpanFormattable(_to.Value);
             }
             else
             {
@@ -125,7 +155,7 @@ namespace System.Net.Http.Headers
             sb.Append('/');
             if (HasLength)
             {
-                sb.AppendSpanFormattable(_length);
+                sb.AppendSpanFormattable(_length!.Value);
             }
             else
             {

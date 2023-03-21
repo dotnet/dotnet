@@ -24,6 +24,7 @@ namespace System
         public static bool IsDebian10 => IsDistroAndVersion("debian", 10);
         public static bool IsRaspbian10 => IsDistroAndVersion("raspbian", 10);
         public static bool IsMariner => IsDistroAndVersion("mariner");
+        public static bool IsMariner1 => IsDistroAndVersion("mariner", 1);
         public static bool IsSLES => IsDistroAndVersion("sles");
         public static bool IsTizen => IsDistroAndVersion("tizen");
         public static bool IsFedora => IsDistroAndVersion("fedora");

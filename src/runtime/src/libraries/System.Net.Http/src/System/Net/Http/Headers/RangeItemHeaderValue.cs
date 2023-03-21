@@ -10,13 +10,18 @@ namespace System.Net.Http.Headers
 {
     public class RangeItemHeaderValue : ICloneable
     {
-        // Set to -1 if not set.
-        private readonly long _from;
-        private readonly long _to;
+        private readonly long? _from;
+        private readonly long? _to;
 
-        public long? From => _from >= 0 ? _from : null;
+        public long? From
+        {
+            get { return _from; }
+        }
 
-        public long? To => _to >= 0 ? _to : null;
+        public long? To
+        {
+            get { return _to; }
+        }
 
         public RangeItemHeaderValue(long? from, long? to)
         {
@@ -37,8 +42,8 @@ namespace System.Net.Http.Headers
                 ArgumentOutOfRangeException.ThrowIfGreaterThan(from.GetValueOrDefault(), to.GetValueOrDefault(), nameof(from));
             }
 
-            _from = from ?? -1;
-            _to = to ?? -1;
+            _from = from;
+            _to = to;
         }
 
         internal RangeItemHeaderValue(RangeItemHeaderValue source)
@@ -53,26 +58,43 @@ namespace System.Net.Http.Headers
         {
             Span<char> stackBuffer = stackalloc char[128];
 
-            if (_from < 0)
+            if (!_from.HasValue)
             {
-                return string.Create(CultureInfo.InvariantCulture, stackBuffer, $"-{_to}");
+                Debug.Assert(_to != null);
+                return string.Create(CultureInfo.InvariantCulture, stackBuffer, $"-{_to.Value}");
             }
 
-            if (_to < 0)
+            if (!_to.HasValue)
             {
-                return string.Create(CultureInfo.InvariantCulture, stackBuffer, $"{_from}-"); ;
+                return string.Create(CultureInfo.InvariantCulture, stackBuffer, $"{_from.Value}-"); ;
             }
 
-            return string.Create(CultureInfo.InvariantCulture, stackBuffer, $"{_from}-{_to}");
+            return string.Create(CultureInfo.InvariantCulture, stackBuffer, $"{_from.Value}-{_to.Value}");
         }
 
-        public override bool Equals([NotNullWhen(true)] object? obj) =>
-            obj is RangeItemHeaderValue other &&
-            _from == other._from &&
-            _to == other._to;
+        public override bool Equals([NotNullWhen(true)] object? obj)
+        {
+            RangeItemHeaderValue? other = obj as RangeItemHeaderValue;
 
-        public override int GetHashCode() =>
-            HashCode.Combine(_from, _to);
+            if (other == null)
+            {
+                return false;
+            }
+            return ((_from == other._from) && (_to == other._to));
+        }
+
+        public override int GetHashCode()
+        {
+            if (!_from.HasValue)
+            {
+                return _to.GetHashCode();
+            }
+            else if (!_to.HasValue)
+            {
+                return _from.GetHashCode();
+            }
+            return _from.GetHashCode() ^ _to.GetHashCode();
+        }
 
         // Returns the length of a range list. E.g. "1-2, 3-4, 5-6" adds 3 ranges to 'rangeCollection'. Note that empty
         // list segments are allowed, e.g. ",1-2, , 3-4,,".
@@ -96,9 +118,10 @@ namespace System.Net.Http.Headers
                 return 0;
             }
 
+            RangeItemHeaderValue? range;
             while (true)
             {
-                int rangeLength = GetRangeItemLength(input, current, out RangeItemHeaderValue? range);
+                int rangeLength = GetRangeItemLength(input, current, out range);
 
                 if (rangeLength == 0)
                 {
@@ -204,7 +227,8 @@ namespace System.Net.Http.Headers
                 return 0;
             }
 
-            parsedValue = new RangeItemHeaderValue((fromLength == 0 ? null : from), (toLength == 0 ? null : to));
+            parsedValue = new RangeItemHeaderValue((fromLength == 0 ? (long?)null : (long?)from),
+                (toLength == 0 ? (long?)null : (long?)to));
             return current - startIndex;
         }
 

@@ -161,7 +161,7 @@ namespace System.Text
         {
             if (MemoryMarshal.AsBytes(source).Overlaps(MemoryMarshal.AsBytes(destination)))
             {
-                ThrowHelper.ThrowInvalidOperationException(ExceptionResource.InvalidOperation_SpanOverlappedOperation);
+                throw new InvalidOperationException(SR.InvalidOperation_SpanOverlappedOperation);
             }
 
             nuint numElementsToConvert;

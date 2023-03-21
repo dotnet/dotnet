@@ -2780,24 +2780,27 @@ namespace System
             return -1;
         }
 
-        public static void Replace<T>(ref T src, ref T dst, T oldValue, T newValue, nuint length) where T : IEquatable<T>?
+        public static void Replace<T>(Span<T> span, T oldValue, T newValue) where T : IEquatable<T>?
         {
             if (default(T) is not null || oldValue is not null)
             {
                 Debug.Assert(oldValue is not null);
 
-                for (nuint idx = 0; idx < length; ++idx)
+                for (int i = 0; i < span.Length; ++i)
                 {
-                    T original = Unsafe.Add(ref src, idx);
-                    Unsafe.Add(ref dst, idx) = oldValue.Equals(original) ? newValue : original;
+                    ref T val = ref span[i];
+                    if (oldValue.Equals(val))
+                    {
+                        val = newValue;
+                    }
                 }
             }
             else
             {
-                for (nuint idx = 0; idx < length; ++idx)
+                for (int i = 0; i < span.Length; ++i)
                 {
-                    T original = Unsafe.Add(ref src, idx);
-                    Unsafe.Add(ref dst, idx) = original is null ? newValue : original;
+                    ref T val = ref span[i];
+                    val ??= newValue;
                 }
             }
         }

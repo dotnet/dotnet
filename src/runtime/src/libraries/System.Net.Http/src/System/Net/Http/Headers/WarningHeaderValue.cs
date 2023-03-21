@@ -4,6 +4,7 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.IO;
 using System.Text;
 
 namespace System.Net.Http.Headers
@@ -13,16 +14,27 @@ namespace System.Net.Http.Headers
         private readonly int _code;
         private readonly string _agent;
         private readonly string _text;
-        private readonly DateTimeOffset _date;
-        private readonly bool _dateHasValue;
+        private readonly DateTimeOffset? _date;
 
-        public int Code => _code;
+        public int Code
+        {
+            get { return _code; }
+        }
 
-        public string Agent => _agent;
+        public string Agent
+        {
+            get { return _agent; }
+        }
 
-        public string Text => _text;
+        public string Text
+        {
+            get { return _text; }
+        }
 
-        public DateTimeOffset? Date => _dateHasValue ? _date : null;
+        public DateTimeOffset? Date
+        {
+            get { return _date; }
+        }
 
         public WarningHeaderValue(int code, string agent, string text)
         {
@@ -45,7 +57,6 @@ namespace System.Net.Http.Headers
             _agent = agent;
             _text = text;
             _date = date;
-            _dateHasValue = true;
         }
 
         private WarningHeaderValue(WarningHeaderValue source)
@@ -56,7 +67,6 @@ namespace System.Net.Http.Headers
             _agent = source._agent;
             _text = source._text;
             _date = source._date;
-            _dateHasValue = source._dateHasValue;
         }
 
         public override string ToString()
@@ -71,33 +81,56 @@ namespace System.Net.Http.Headers
             sb.Append(' ');
             sb.Append(_text);
 
-            if (_dateHasValue)
+            if (_date.HasValue)
             {
                 sb.Append(" \"");
-                sb.AppendSpanFormattable(_date, "r");
+                sb.AppendSpanFormattable(_date.Value, "r");
                 sb.Append('\"');
             }
 
             return sb.ToString();
         }
 
-        public override bool Equals([NotNullWhen(true)] object? obj) =>
-            obj is WarningHeaderValue other &&
-            _code == other._code &&
+        public override bool Equals([NotNullWhen(true)] object? obj)
+        {
+            WarningHeaderValue? other = obj as WarningHeaderValue;
+
+            if (other == null)
+            {
+                return false;
+            }
+
             // 'agent' is a host/token, i.e. use case-insensitive comparison. Use case-sensitive comparison for 'text'
             // since it is a quoted string.
-            string.Equals(_agent, other._agent, StringComparison.OrdinalIgnoreCase) &&
-            string.Equals(_text, other._text, StringComparison.Ordinal) &&
-            _dateHasValue == other._dateHasValue &&
-            _date == other._date;
+            if ((_code != other._code) || (!string.Equals(_agent, other._agent, StringComparison.OrdinalIgnoreCase)) ||
+                (!string.Equals(_text, other._text, StringComparison.Ordinal)))
+            {
+                return false;
+            }
 
-        public override int GetHashCode() =>
-            HashCode.Combine(
-                _code,
-                StringComparer.OrdinalIgnoreCase.GetHashCode(_agent),
-                _text,
-                _dateHasValue,
-                _date);
+            // We have a date set. Verify 'other' has also a date that matches our value.
+            if (_date.HasValue)
+            {
+                return other._date.HasValue && (_date.Value == other._date.Value);
+            }
+
+            // We don't have a date. If 'other' has a date, we're not equal.
+            return !other._date.HasValue;
+        }
+
+        public override int GetHashCode()
+        {
+            int result = _code.GetHashCode() ^
+                StringComparer.OrdinalIgnoreCase.GetHashCode(_agent) ^
+                _text.GetHashCode();
+
+            if (_date.HasValue)
+            {
+                result ^= _date.Value.GetHashCode();
+            }
+
+            return result;
+        }
 
         public static WarningHeaderValue Parse(string input)
         {
@@ -291,7 +324,7 @@ namespace System.Net.Http.Headers
             // is a valid host.
             if (HttpRuleParser.GetHostLength(agent, 0, true) != agent.Length)
             {
-                throw new FormatException(SR.Format(SR.net_http_headers_invalid_value, agent));
+                throw new FormatException(SR.Format(System.Globalization.CultureInfo.InvariantCulture, SR.net_http_headers_invalid_value, agent));
             }
         }
     }

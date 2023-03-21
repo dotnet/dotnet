@@ -472,7 +472,7 @@ namespace System.Globalization
         internal static int ToUpperOrdinal(ReadOnlySpan<char> source, Span<char> destination)
         {
             if (source.Overlaps(destination))
-                ThrowHelper.ThrowInvalidOperationException(ExceptionResource.InvalidOperation_SpanOverlappedOperation);
+                throw new InvalidOperationException(SR.InvalidOperation_SpanOverlappedOperation);
 
             // Assuming that changing case does not affect length
             if (destination.Length < source.Length)

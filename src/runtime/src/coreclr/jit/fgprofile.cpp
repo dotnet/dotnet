@@ -844,10 +844,15 @@ public:
 //
 void Compiler::WalkSpanningTree(SpanningTreeVisitor* visitor)
 {
+    // Inlinee compilers build their blocks in the root compiler's
+    // graph. So for BlockSets and NumSucc, we use the root compiler instance.
+    //
+    Compiler* const comp = impInlineRoot();
+    comp->EnsureBasicBlockEpoch();
+
     // We will track visited or queued nodes with a bit vector.
     //
-    EnsureBasicBlockEpoch();
-    BlockSet marked = BlockSetOps::MakeEmpty(this);
+    BlockSet marked = BlockSetOps::MakeEmpty(comp);
 
     // And nodes to visit with a bit vector and stack.
     //
@@ -859,7 +864,7 @@ void Compiler::WalkSpanningTree(SpanningTreeVisitor* visitor)
     // Bit vector to track progress through those successors.
     //
     ArrayStack<BasicBlock*> scratch(getAllocator(CMK_Pgo));
-    BlockSet                processed = BlockSetOps::MakeEmpty(this);
+    BlockSet                processed = BlockSetOps::MakeEmpty(comp);
 
     // Push the method entry and all EH handler region entries on the stack.
     // (push method entry last so it's visited first).
@@ -877,18 +882,18 @@ void Compiler::WalkSpanningTree(SpanningTreeVisitor* visitor)
         {
             BasicBlock* hndBegBB = HBtab->ebdHndBeg;
             stack.Push(hndBegBB);
-            BlockSetOps::AddElemD(this, marked, hndBegBB->bbNum);
+            BlockSetOps::AddElemD(comp, marked, hndBegBB->bbNum);
             if (HBtab->HasFilter())
             {
                 BasicBlock* filterBB = HBtab->ebdFilter;
                 stack.Push(filterBB);
-                BlockSetOps::AddElemD(this, marked, filterBB->bbNum);
+                BlockSetOps::AddElemD(comp, marked, filterBB->bbNum);
             }
         }
     }
 
     stack.Push(fgFirstBB);
-    BlockSetOps::AddElemD(this, marked, fgFirstBB->bbNum);
+    BlockSetOps::AddElemD(comp, marked, fgFirstBB->bbNum);
 
     unsigned nBlocks = 0;
 
@@ -898,7 +903,7 @@ void Compiler::WalkSpanningTree(SpanningTreeVisitor* visitor)
 
         // Visit the block.
         //
-        assert(BlockSetOps::IsMember(this, marked, block->bbNum));
+        assert(BlockSetOps::IsMember(comp, marked, block->bbNum));
         visitor->VisitBlock(block);
         nBlocks++;
 
@@ -921,10 +926,10 @@ void Compiler::WalkSpanningTree(SpanningTreeVisitor* visitor)
                     // This block should be the only pred of the continuation.
                     //
                     BasicBlock* const target = block->bbNext;
-                    assert(!BlockSetOps::IsMember(this, marked, target->bbNum));
+                    assert(!BlockSetOps::IsMember(comp, marked, target->bbNum));
                     visitor->VisitTreeEdge(block, target);
                     stack.Push(target);
-                    BlockSetOps::AddElemD(this, marked, target->bbNum);
+                    BlockSetOps::AddElemD(comp, marked, target->bbNum);
                 }
             }
             break;
@@ -954,7 +959,7 @@ void Compiler::WalkSpanningTree(SpanningTreeVisitor* visitor)
                 // profiles for methods that throw lots of exceptions.
                 //
                 BasicBlock* const target = fgFirstBB;
-                assert(BlockSetOps::IsMember(this, marked, target->bbNum));
+                assert(BlockSetOps::IsMember(comp, marked, target->bbNum));
                 visitor->VisitNonTreeEdge(block, target, SpanningTreeVisitor::EdgeKind::Pseudo);
             }
             break;
@@ -992,7 +997,7 @@ void Compiler::WalkSpanningTree(SpanningTreeVisitor* visitor)
                     }
                     else
                     {
-                        if (BlockSetOps::IsMember(this, marked, target->bbNum))
+                        if (BlockSetOps::IsMember(comp, marked, target->bbNum))
                         {
                             visitor->VisitNonTreeEdge(block, target,
                                                       SpanningTreeVisitor::EdgeKind::PostdominatesSource);
@@ -1001,7 +1006,7 @@ void Compiler::WalkSpanningTree(SpanningTreeVisitor* visitor)
                         {
                             visitor->VisitTreeEdge(block, target);
                             stack.Push(target);
-                            BlockSetOps::AddElemD(this, marked, target->bbNum);
+                            BlockSetOps::AddElemD(comp, marked, target->bbNum);
                         }
                     }
                 }
@@ -1010,7 +1015,7 @@ void Compiler::WalkSpanningTree(SpanningTreeVisitor* visitor)
                     // Pseudo-edge back to handler entry.
                     //
                     BasicBlock* const target = dsc->ebdHndBeg;
-                    assert(BlockSetOps::IsMember(this, marked, target->bbNum));
+                    assert(BlockSetOps::IsMember(comp, marked, target->bbNum));
                     visitor->VisitNonTreeEdge(block, target, SpanningTreeVisitor::EdgeKind::Pseudo);
                 }
             }
@@ -1034,14 +1039,14 @@ void Compiler::WalkSpanningTree(SpanningTreeVisitor* visitor)
                 // things will just work for switches either way, but it
                 // might work a bit better using the root compiler.
                 //
-                const unsigned numSucc = block->NumSucc(this);
+                const unsigned numSucc = block->NumSucc(comp);
 
                 if (numSucc == 1)
                 {
                     // Not a fork. Just visit the sole successor.
                     //
-                    BasicBlock* const target = block->GetSucc(0, this);
-                    if (BlockSetOps::IsMember(this, marked, target->bbNum))
+                    BasicBlock* const target = block->GetSucc(0, comp);
+                    if (BlockSetOps::IsMember(comp, marked, target->bbNum))
                     {
                         // We can't instrument in the call always pair tail block
                         // so treat this as a critical edge.
@@ -1055,7 +1060,7 @@ void Compiler::WalkSpanningTree(SpanningTreeVisitor* visitor)
                     {
                         visitor->VisitTreeEdge(block, target);
                         stack.Push(target);
-                        BlockSetOps::AddElemD(this, marked, target->bbNum);
+                        BlockSetOps::AddElemD(comp, marked, target->bbNum);
                     }
                 }
                 else
@@ -1071,11 +1076,11 @@ void Compiler::WalkSpanningTree(SpanningTreeVisitor* visitor)
                     // edges from non-rare to rare be non-tree edges.
                     //
                     scratch.Reset();
-                    BlockSetOps::ClearD(this, processed);
+                    BlockSetOps::ClearD(comp, processed);
 
                     for (unsigned i = 0; i < numSucc; i++)
                     {
-                        BasicBlock* const succ = block->GetSucc(i, this);
+                        BasicBlock* const succ = block->GetSucc(i, comp);
                         scratch.Push(succ);
                     }
 
@@ -1085,7 +1090,7 @@ void Compiler::WalkSpanningTree(SpanningTreeVisitor* visitor)
                     {
                         BasicBlock* const target = scratch.Top(i);
 
-                        if (BlockSetOps::IsMember(this, processed, i))
+                        if (BlockSetOps::IsMember(comp, processed, i))
                         {
                             continue;
                         }
@@ -1095,9 +1100,9 @@ void Compiler::WalkSpanningTree(SpanningTreeVisitor* visitor)
                             continue;
                         }
 
-                        BlockSetOps::AddElemD(this, processed, i);
+                        BlockSetOps::AddElemD(comp, processed, i);
 
-                        if (BlockSetOps::IsMember(this, marked, target->bbNum))
+                        if (BlockSetOps::IsMember(comp, marked, target->bbNum))
                         {
                             visitor->VisitNonTreeEdge(block, target,
                                                       target->bbRefs > 1
@@ -1108,7 +1113,7 @@ void Compiler::WalkSpanningTree(SpanningTreeVisitor* visitor)
                         {
                             visitor->VisitTreeEdge(block, target);
                             stack.Push(target);
-                            BlockSetOps::AddElemD(this, marked, target->bbNum);
+                            BlockSetOps::AddElemD(comp, marked, target->bbNum);
                         }
                     }
 
@@ -1118,7 +1123,7 @@ void Compiler::WalkSpanningTree(SpanningTreeVisitor* visitor)
                     {
                         BasicBlock* const target = scratch.Top(i);
 
-                        if (BlockSetOps::IsMember(this, processed, i))
+                        if (BlockSetOps::IsMember(comp, processed, i))
                         {
                             continue;
                         }
@@ -1128,9 +1133,9 @@ void Compiler::WalkSpanningTree(SpanningTreeVisitor* visitor)
                             continue;
                         }
 
-                        BlockSetOps::AddElemD(this, processed, i);
+                        BlockSetOps::AddElemD(comp, processed, i);
 
-                        if (BlockSetOps::IsMember(this, marked, target->bbNum))
+                        if (BlockSetOps::IsMember(comp, marked, target->bbNum))
                         {
                             visitor->VisitNonTreeEdge(block, target, SpanningTreeVisitor::EdgeKind::DominatesTarget);
                         }
@@ -1138,7 +1143,7 @@ void Compiler::WalkSpanningTree(SpanningTreeVisitor* visitor)
                         {
                             visitor->VisitTreeEdge(block, target);
                             stack.Push(target);
-                            BlockSetOps::AddElemD(this, marked, target->bbNum);
+                            BlockSetOps::AddElemD(comp, marked, target->bbNum);
                         }
                     }
 
@@ -1148,14 +1153,14 @@ void Compiler::WalkSpanningTree(SpanningTreeVisitor* visitor)
                     {
                         BasicBlock* const target = scratch.Top(i);
 
-                        if (BlockSetOps::IsMember(this, processed, i))
+                        if (BlockSetOps::IsMember(comp, processed, i))
                         {
                             continue;
                         }
 
-                        BlockSetOps::AddElemD(this, processed, i);
+                        BlockSetOps::AddElemD(comp, processed, i);
 
-                        if (BlockSetOps::IsMember(this, marked, target->bbNum))
+                        if (BlockSetOps::IsMember(comp, marked, target->bbNum))
                         {
                             visitor->VisitNonTreeEdge(block, target, SpanningTreeVisitor::EdgeKind::CriticalEdge);
                         }
@@ -1163,13 +1168,13 @@ void Compiler::WalkSpanningTree(SpanningTreeVisitor* visitor)
                         {
                             visitor->VisitTreeEdge(block, target);
                             stack.Push(target);
-                            BlockSetOps::AddElemD(this, marked, target->bbNum);
+                            BlockSetOps::AddElemD(comp, marked, target->bbNum);
                         }
                     }
 
                     // Verify we processed each successor.
                     //
-                    assert(numSucc == BlockSetOps::Count(this, processed));
+                    assert(numSucc == BlockSetOps::Count(comp, processed));
                 }
             }
             break;
@@ -1485,7 +1490,7 @@ void EfficientEdgeCountInstrumentor::SplitCriticalEdges()
                     // See if the edge still exists.
                     //
                     bool found = false;
-                    for (BasicBlock* const succ : block->Succs(m_comp))
+                    for (BasicBlock* const succ : block->Succs(m_comp->impInlineRoot()))
                     {
                         if (target == succ)
                         {
@@ -2484,7 +2489,7 @@ PhaseStatus Compiler::fgIncorporateProfileData()
 #ifdef DEBUG
     // Optionally run synthesis
     //
-    if (JitConfig.JitSynthesizeCounts() > 0)
+    if ((JitConfig.JitSynthesizeCounts() > 0) && !compIsForInlining())
     {
         if ((JitConfig.JitSynthesizeCounts() == 1) || ((JitConfig.JitSynthesizeCounts() == 2) && !fgHaveProfileData()))
         {
@@ -2497,7 +2502,7 @@ PhaseStatus Compiler::fgIncorporateProfileData()
     // Or run synthesis and save the data out as the actual profile data
     //
     if (opts.jitFlags->IsSet(JitFlags::JIT_FLAG_BBINSTR) &&
-        (JitConfig.JitPropagateSynthesizedCountsToProfileData() > 0))
+        (JitConfig.JitPropagateSynthesizedCountsToProfileData() > 0) && !compIsForInlining())
     {
         JITDUMP("Synthesizing profile data and writing it out as the actual profile data\n");
         ProfileSynthesis::Run(this, ProfileSynthesisOption::AssignLikelihoods);
@@ -2623,7 +2628,7 @@ PhaseStatus Compiler::fgIncorporateProfileData()
 #ifdef DEBUG
     // Optionally synthesize & blend
     //
-    if (JitConfig.JitSynthesizeCounts() == 3)
+    if ((JitConfig.JitSynthesizeCounts() == 3) && !compIsForInlining())
     {
         JITDUMP("Synthesizing profile data and blending it with the actual profile data\n");
         ProfileSynthesis::Run(this, ProfileSynthesisOption::BlendLikelihoods);
