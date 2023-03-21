@@ -1,0 +1,27 @@
+<Project InitialTargets="ValidateRestoreCsvContentProperties">
+
+  <ItemGroup Condition="'$(PackageCSV)' != ''">
+    <CsvContentLine Include="$([System.Text.RegularExpressions.Regex]::Split('$([System.IO.File]::ReadAllText('$(PackageCSV)'))', '\r\n|\n'))" />
+    <PackageInfo Include="@(CsvContentLine)"
+                 PackageName="$([System.String]::Copy('%(Identity)').Split(',')[0])"
+                 PackageVersion="$([System.String]::Copy('%(Identity)').Split(',')[1])">
+      <PackageTargetFrameworks Condition="$([System.String]::Copy('%(Identity)').Split(',').Length) == '3'">$([System.String]::Copy('%(Identity)').Split(',')[2])</PackageTargetFrameworks>
+    </PackageInfo>
+  </ItemGroup>
+
+  <!-- Download the specified packages. -->
+  <ItemGroup>
+    <PackageDownload Include="@(PackageInfo->Metadata('PackageName'))"
+                     Version="[%(PackageVersion)]"
+                     Condition="'@(PackageInfo)' != ''" />
+    <PackageDownload Include="$(PackageName)"
+                     Version="[$(PackageVersion)]"
+                     Condition="'$(PackageName)' != '' and '$(PackageVersion)' != ''" />
+  </ItemGroup>
+
+  <Target Name="ValidateRestoreCsvContentProperties">
+    <Error Text="The 'PackageName' and 'PackageVersion' or 'PackageCSV' properties must be set!"
+           Condition="('$(PackageName)' == '' or '$(PackageVersion)' == '') and '$(PackageCSV)' == ''" />
+  </Target>
+
+</Project>
