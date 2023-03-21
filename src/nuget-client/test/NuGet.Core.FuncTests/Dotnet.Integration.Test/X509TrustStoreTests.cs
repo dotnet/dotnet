@@ -60,17 +60,7 @@ namespace Dotnet.Integration.Test
             Assert.Equal(5, _logger.Messages.Count);
             Assert.Equal(1, _logger.InformationMessages.Count);
             Assert.True(_logger.InformationMessages.TryPeek(out string actualMessage));
-
-            switch (storePurpose)
-            {
-                case X509StorePurpose.CodeSigning:
-                    Assert.Equal(Strings.ChainBuilding_UsingDefaultTrustStoreForCodeSigning, actualMessage);
-                    break;
-
-                case X509StorePurpose.Timestamping:
-                    Assert.Equal(Strings.ChainBuilding_UsingDefaultTrustStoreForTimestamping, actualMessage);
-                    break;
-            }
+            Assert.Equal(Strings.ChainBuilding_UsingDefaultTrustStore, actualMessage);
         }
 
         [PlatformTheory(Platform.Linux)]
