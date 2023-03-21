@@ -9,4 +9,3 @@
 using System.Diagnostics.CodeAnalysis;
 
 [assembly: SuppressMessage("Build", "CA1031:Modify 'RunSolutionRestoreAsync' to catch a more specific allowed exception type, or rethrow the exception.", Justification = "<Pending>", Scope = "member", Target = "~M:NuGet.VisualStudio.OnlineEnvironment.Client.RestoreCommandHandler.RunSolutionRestoreAsync~System.Threading.Tasks.Task")]
-[assembly: SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "ToolWindow can't be disposed while the window is active. Dispose is handled in OnClose.", Scope = "member", Target = "~M:NuGet.VisualStudio.OnlineEnvironment.Client.PackageManagerUICommandHandler.CreateToolWindowAsync(System.String,Microsoft.VisualStudio.Shell.Interop.IVsHierarchy,System.UInt32)~System.Threading.Tasks.Task{Microsoft.VisualStudio.Shell.Interop.IVsWindowFrame}")]

@@ -1008,7 +1008,7 @@ namespace NuGet.Packaging
             return entry;
         }
 
-        private ZipArchiveEntry CreatePackageFileEntry(ZipArchive package, string entryName, DateTimeOffset timeOffset, CompressionLevel compressionLevel, StringBuilder warningMessage)
+        private static ZipArchiveEntry CreatePackageFileEntry(ZipArchive package, string entryName, DateTimeOffset timeOffset, CompressionLevel compressionLevel, StringBuilder warningMessage)
         {
             var entry = package.CreateEntry(entryName, compressionLevel);
 

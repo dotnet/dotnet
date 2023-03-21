@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -421,7 +420,7 @@ namespace NuGet.VisualStudio
             }
         }
 
-        private void CopyNativeBinaries(VsMSBuildProjectSystem projectSystem, string packagePath)
+        private static void CopyNativeBinaries(VsMSBuildProjectSystem projectSystem, string packagePath)
         {
             const string nativeBinariesFolder = "NativeBinaries";
             const string binFolder = "bin";
