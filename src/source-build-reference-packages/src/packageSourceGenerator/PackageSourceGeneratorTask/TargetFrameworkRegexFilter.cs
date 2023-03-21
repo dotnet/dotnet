@@ -13,8 +13,8 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
     internal class TargetFrameworkRegexFilter
     {
         private const char TargetFrameworkDelimiter = ';';
-        private readonly Regex _includeTargetFrameworks;
-        private readonly Regex _excludeTargetFrameworks;
+        private readonly Regex? _includeTargetFrameworks;
+        private readonly Regex? _excludeTargetFrameworks;
         private readonly HashSet<string> _foundExcludedTargetFrameworks = new();
 
         /// <summary>
@@ -22,8 +22,8 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
         /// </summary>
         public IReadOnlySet<string> FoundExcludedTargetFrameworks => _foundExcludedTargetFrameworks;
 
-        public TargetFrameworkRegexFilter(string includeTargetFrameworks,
-            string excludeTargetFrameworks)
+        public TargetFrameworkRegexFilter(string? includeTargetFrameworks,
+            string? excludeTargetFrameworks)
         {
             _includeTargetFrameworks = TransformPatternsToRegexList(includeTargetFrameworks);
             _excludeTargetFrameworks = TransformPatternsToRegexList(excludeTargetFrameworks);
@@ -33,18 +33,18 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
         /// Skip target frameworks that aren't included in the IncludeTargetFrameworks filter and that
         /// are excluded in the ExcludeTargetFrameworks filter.
         /// </summary>
-        public bool IsIncludedAndNotExcluded(string targetFramework)
+        public bool IsIncludedAndNotExcluded(string? targetFramework)
         {
             // Skip empty target frameworks.
             if (string.IsNullOrWhiteSpace(targetFramework))
                 return false;
 
             // Skip target frameworks that aren't included in the IncludeTargetFrameworks filter.
-            if (_includeTargetFrameworks != null && !_includeTargetFrameworks.IsMatch(targetFramework))
+            if (_includeTargetFrameworks is not null && !_includeTargetFrameworks.IsMatch(targetFramework))
                 return false;
 
             // Skip target frameworks that are excluded.
-            if (_excludeTargetFrameworks != null && _excludeTargetFrameworks.IsMatch(targetFramework))
+            if (_excludeTargetFrameworks is not null && _excludeTargetFrameworks.IsMatch(targetFramework))
             {
                 _foundExcludedTargetFrameworks.Add(targetFramework);
                 return false;
@@ -53,7 +53,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
             return true;
         }
 
-        private static Regex TransformPatternsToRegexList(string patterns)
+        private static Regex? TransformPatternsToRegexList(string? patterns)
         {
             if (string.IsNullOrWhiteSpace(patterns))
                 return null;

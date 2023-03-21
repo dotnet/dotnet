@@ -1,10 +1,7 @@
 <Project>
 
   <ItemGroup Condition="'$(GeneratePackageSource)' == 'true'">
-    <ProjectToBuild Include="$(RepoRoot)src\referencePackageSourceGenerator\ReferencePackageSourceGenerator.proj"
-                    Condition="'$(PackageType)' == '' or '$(PackageType)' != 'text'" />
-    <ProjectToBuild Include="$(RepoRoot)src\textOnlyPackageGenerator\PackageGenerator.proj"
-                    Condition="'$(PackageType)' == 'text'" />
+    <ProjectToBuild Include="$(RepoRoot)src\packageSourceGenerator\PackageSourceGenerator.proj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(GeneratePackageSource)' != 'true'">

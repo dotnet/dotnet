@@ -1,34 +1,61 @@
-<Project Sdk="Microsoft.Build.NoTargets">
+<Project Sdk="Microsoft.Build.NoTargets" InitialTargets="ValidateRestoreCsvContentProperties">
 
   <PropertyGroup>
     <TargetFramework>$(NetCurrent)</TargetFramework>
-    <ReferencePackageSourceTaskAssembly>$(ArtifactsBinDir)ReferencePackageSourceTask\$(Configuration)\$(NetCurrent)\ReferencePackageSourceTask.dll</ReferencePackageSourceTaskAssembly>
-    <!-- The reference packages output directory. -->
-    <PackagesTargetDirectory>$(RepoRoot)src\referencePackages\src\</PackagesTargetDirectory>
+    <PackageSourceGeneratorTaskAssembly>$(ArtifactsBinDir)PackageSourceGeneratorTask\$(Configuration)\$(NetCurrent)\PackageSourceGeneratorTask.dll</PackageSourceGeneratorTaskAssembly>
+    <!-- The packages output directory. -->
+    <PackagesTargetDirectory Condition="'$(PackageType)' != 'text'">$(RepoRoot)src\referencePackages\src\</PackagesTargetDirectory>
+    <PackagesTargetDirectory Condition="'$(PackageType)' == 'text'">$(RepoRoot)src\textOnlyPackages\src\</PackagesTargetDirectory>
     <!-- The following target frameworks aren't buildable with the current SDK and as they don't contribute to the set of
          source build target verticals, can be safely excluded. -->
-    <ExcludeTargetFrameworks>monoandroid*;monotouch*;net463;netcore50;portable*;uap*;win8;wp8;wpa81;xamarin*</ExcludeTargetFrameworks>
+    <ExcludeTargetFrameworks>monoandroid*;monotouch*;net40;net463;netcore50;portable*;uap*;win8;wp8;wpa81;xamarin*</ExcludeTargetFrameworks>
     <!-- The following target frameworks should be excluded even though they are supported by the current SDK because there is no need to have them.
          Only exclude them when target frameworks to include aren't provided. -->
     <ExcludeTargetFrameworks Condition="'$(IncludeTargetFrameworks)' == ''">$(ExcludeTargetFrameworks);netcoreapp3.1</ExcludeTargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(PackageName)' != '' and '$(PackageVersion)' != ''">
-    <!-- Restored package directory -->
-    <PackageSourceDirectory>$([MSBuild]::NormalizeDirectory('$(NuGetPackageRoot)', '$(PackageName.ToLowerInvariant())', '$(PackageVersion)'))</PackageSourceDirectory>
+    <!-- Restored package directory. -->
+    <RestoredPackageDirectory>$([MSBuild]::NormalizeDirectory('$(NuGetPackageRoot)', '$(PackageName.ToLowerInvariant())', '$(PackageVersion)'))</RestoredPackageDirectory>
+    <!-- Restored package nuspec file path. -->
+    <RestoredPackageNuspec>$(RestoredPackageDirectory)$(PackageName.ToLowerInvariant()).nuspec</RestoredPackageNuspec>
     <!-- The reference package output directory without the package version. -->
     <BasePackageTargetDirectory>$([MSBuild]::NormalizeDirectory('$(PackagesTargetDirectory)', '$(PackageName.ToLowerInvariant())'))</BasePackageTargetDirectory>
     <!-- The reference package output directory including the package version. -->
     <PackageTargetDirectory>$([MSBuild]::NormalizeDirectory('$(BasePackageTargetDirectory)', '$(PackageVersion)'))</PackageTargetDirectory>
   </PropertyGroup>
 
-  <Import Project="..\common\RestoreCsvContent.props" />
-
   <ItemGroup>
-    <ProjectReference Include="ReferencePackageSourceTask\ReferencePackageSourceTask.csproj"
+    <ProjectReference Include="PackageSourceGeneratorTask\PackageSourceGeneratorTask.csproj"
                       ReferenceOutputAssembly="false"
-                      UndefineProperties="PackageCSV;PackageName;PackageVersion;PackageTargetFrameworks" />
+                      UndefineProperties="PackageType;PackageCSV;PackageName;PackageVersion;PackageTargetFrameworks" />
   </ItemGroup>
+
+  <!-- Parse the passed in CSV file into PackageInfo items with metadata. -->
+  <ItemGroup Condition="'$(PackageCSV)' != ''">
+    <CsvContentLine Include="$([System.Text.RegularExpressions.Regex]::Split('$([System.IO.File]::ReadAllText('$(PackageCSV)'))', '\r\n|\n'))" />
+    <PackageInfo Include="@(CsvContentLine)"
+                 PackageName="$([System.String]::Copy('%(Identity)').Split(',')[0])"
+                 PackageVersion="$([System.String]::Copy('%(Identity)').Split(',')[1])">
+      <PackageTargetFrameworks Condition="$([System.String]::Copy('%(Identity)').Split(',').Length) == '3'">$([System.String]::Copy('%(Identity)').Split(',')[2])</PackageTargetFrameworks>
+    </PackageInfo>
+  </ItemGroup>
+
+  <!-- Download the specified packages as part of the project's restore. -->
+  <ItemGroup>
+    <PackageDownload Include="@(PackageInfo->Metadata('PackageName'))"
+                     Version="[%(PackageVersion)]"
+                     Condition="'@(PackageInfo)' != ''" />
+    <PackageDownload Include="$(PackageName)"
+                     Version="[$(PackageVersion)]"
+                     Condition="'$(PackageName)' != '' and '$(PackageVersion)' != ''" />
+  </ItemGroup>
+
+  <!-- Validate that the required properties are passed in. -->
+  <Target Name="ValidateRestoreCsvContentProperties">
+    <Error Text="The 'PackageName' and 'PackageVersion' or 'PackageCSV' properties must be set!"
+           Condition="('$(PackageName)' == '' or '$(PackageVersion)' == '') and '$(PackageCSV)' == ''" />
+  </Target>
 
   <!-- The entry point target that runs when a CSV file is provided which invokes the
        'GeneratePackageSource' target for each package. -->
@@ -50,13 +77,16 @@
           DependsOnTargets="BeginGeneratePackageSource;
                             GetPackageItems;
                             GenerateReferencePackageSource;
+                            GenerateTextOnlyPackageSource;
+                            GeneratePackageProject;
+                            RewriteNuspec;
                             EndGeneratePackageSource;
                             InvokePackageDependencies" />
 
   <!-- Emit a log message that indicates the start of the package source generation. -->
   <Target Name="BeginGeneratePackageSource">
     <PropertyGroup>
-      <PackageTargetFrameworksMessage Condition="'$(PackageType)' != 'text' and '$(PackageTargetFrameworks)' != ''">, TFMs: $(PackageTargetFrameworks)</PackageTargetFrameworksMessage>
+      <PackageTargetFrameworksMessage Condition="'$(PackageTargetFrameworks)' != ''">, TFMs: $(PackageTargetFrameworks)</PackageTargetFrameworksMessage>
     </PropertyGroup>
 
     <Message Text="%0D%0A$(MSBuildProjectName) -> Generating package source for $(PackageName) (v$(PackageVersion)$(PackageTargetFrameworksMessage))..."
@@ -64,10 +94,10 @@
   </Target>
 
   <!-- Retrieve compile items, placeholder files, package dependencies and framework references with their target framework. -->
-  <UsingTask TaskName="GetPackageItems" AssemblyFile="$(ReferencePackageSourceTaskAssembly)" />
+  <UsingTask TaskName="GetPackageItems" AssemblyFile="$(PackageSourceGeneratorTaskAssembly)" />
   <Target Name="GetPackageItems">
     <PropertyGroup>
-      <PackageNupkgPath>$(PackageSourceDirectory)$(PackageName.ToLowerInvariant()).$(PackageVersion).nupkg</PackageNupkgPath>
+      <PackageNupkgPath>$(RestoredPackageDirectory)$(PackageName.ToLowerInvariant()).$(PackageVersion).nupkg</PackageNupkgPath>
     </PropertyGroup>
 
     <GetPackageItems PackagePath="$(PackageNupkgPath)"
@@ -79,23 +109,21 @@
       <Output TaskParameter="FrameworkReferences" ItemName="PackageFrameworkReference" />
       <Output TaskParameter="PackageId" PropertyName="RealPackageId" />
     </GetPackageItems>
-
-    <ItemGroup>
-      <PackageCompileItemsTargetFramework Include="@(PackageCompileItem->Metadata('TargetFramework')->Distinct())" />
-    </ItemGroup>
   </Target>
 
   <!-- The entry point for generating reference package source. -->
   <Target Name="GenerateReferencePackageSource"
-          Condition="'@(PackageCompileItem)' != ''"
+          Condition="'@(PackageCompileItem)' != '' and '$(PackageType)' != 'text'"
           DependsOnTargets="GenerateAndInvokeGenerateSourceProject;
-                            GenerateReferencePackageProject;
-                            CopyPlaceholderFiles;
-                            RewriteNuspec" />
+                            CopyPlaceholderFiles" />
 
   <!-- Generate an intermediate multi-targeting wrapper project that retrieves the reference assemblies and invokes GenAPI. -->
   <Target Name="GenerateAndInvokeGenerateSourceProject"
           DependsOnTargets="GetPackageItems">
+    <ItemGroup>
+      <PackageCompileItemsTargetFramework Include="@(PackageCompileItem->Metadata('TargetFramework')->Distinct())" />
+    </ItemGroup>
+
     <PropertyGroup>
       <ReferencePackageSourceGeneratorDirectory>$(MSBuildThisFileDirectory)</ReferencePackageSourceGeneratorDirectory>
       <PackageCompileItemsTargetFrameworks>@(PackageCompileItemsTargetFramework, ';')</PackageCompileItemsTargetFrameworks>
@@ -138,31 +166,10 @@
              Condition="'$(PackageCompileItemsTargetFrameworks)' != ''" />
   </Target>
 
-  <!-- Generate the final reference package project and write it to the package target directory. -->
-  <UsingTask TaskName="GenerateProject" AssemblyFile="$(ReferencePackageSourceTaskAssembly)" />
-  <Target Name="GenerateReferencePackageProject"
-          DependsOnTargets="GetPackageItems">
-    <PropertyGroup>
-      <ReferencePackageProjectTemplate>ReferencePackageProjectTemplate.xml</ReferencePackageProjectTemplate>
-      <ReferencePackageProjectTargetPath>$(PackageTargetDirectory)$(RealPackageId).$(PackageVersion).csproj</ReferencePackageProjectTargetPath>
-    </PropertyGroup>
-
-    <GenerateProject PackageId="$(RealPackageId)"
-                     TargetFrameworks="@(PackageCompileItemsTargetFramework)"
-                     CompileItems="@(PackageCompileItem)"
-                     PackageDependencies="@(PackageDependency)"
-                     FrameworkReferences="@(PackageFrameworkReference)"
-                     TargetPath="$(ReferencePackageProjectTargetPath)"
-                     ProjectTemplate="$(ReferencePackageProjectTemplate)" />
-
-    <Message Text="$(MSBuildProjectName) -> $(ReferencePackageProjectTargetPath)"
-             Importance="high" />
-  </Target>
-
   <!-- Copy placeholder files (_._) -->
   <Target Name="CopyPlaceholderFiles"
           DependsOnTargets="GetPackageItems">
-    <Copy SourceFiles="@(PackagePlaceholderFile->'$(PackageSourceDirectory)%(Identity)')"
+    <Copy SourceFiles="@(PackagePlaceholderFile->'$(RestoredPackageDirectory)%(Identity)')"
           DestinationFiles="@(PackagePlaceholderFile->'$(PackageTargetDirectory)%(Identity)')"
           SkipUnchangedFiles="true" />
 
@@ -171,15 +178,119 @@
              Condition="'@(PackagePlaceholderFile)' != ''" />
   </Target>
 
-  <!-- Rewrite nuspec and copy to target directory. -->
-  <UsingTask TaskName="RewriteNuspec" AssemblyFile="$(ReferencePackageSourceTaskAssembly)" />
-  <Target Name="RewriteNuspec">
+  <Target Name="GenerateTextOnlyPackageSource"
+          DependsOnTargets="GetPackageItems"
+          Condition="'$(PackageType)' == 'text'">
+    <ItemGroup>
+      <TextOnlyPackageContent Include="$(RestoredPackageDirectory)**/*"
+                              Exclude="$(RestoredPackageDirectory)**/.nupkg.metadata;
+                                       $(RestoredPackageDirectory)**/.signature.p7s;
+                                       $(RestoredPackageDirectory)**/*.nupkg;
+                                       $(RestoredPackageDirectory)**/*.nupkg.sha512;
+                                       $(RestoredPackageNuspec)" />
+    </ItemGroup>
+
+    <Error Text="Package $(PackageName) was not restored!"
+           Condition="'@(TextOnlyPackageContent)' == ''" />
+
+    <!-- Verify that invalid assets are not considered as text-only package sources. -->
+    <ItemGroup>
+      <!-- ttf, woff, woff2, eot are permissible font-related content -->
+      <AllowedTextOnlyExtensions Include="
+        .-;
+        ._;
+        .bowerrc;
+        .config;
+        .cs;
+        .cshtml;
+        .csproj;
+        .css;
+        .db;
+        .editorconfig;
+        .env;
+        .env.development;
+        .eot;
+        .fs;
+        .fsproj;
+        .gitignore;
+        .gitkeep;
+        .html;
+        .ico;
+        .js;
+        .json;
+        .map;
+        .md;
+        .nuspec;
+        .otf;
+        .png;
+        .props;
+        .proto;
+        .razor;
+        .resx;
+        .rtf;
+        .sln;
+        .svg;
+        .targets;
+        .ts;
+        .ttf;
+        .tsx;
+        .txt;
+        .vb;
+        .vbproj;
+        .woff;
+        .woff2;
+        .xlf;
+        .xml;
+        browserslist;
+        browserslistrc;
+        LICENSE;" />
+      <UnsupportedTextOnlyPackageContent Include="@(TextOnlyPackageContent)" />
+      <UnsupportedTextOnlyPackageContent Remove="$(RestoredPackageDirectory)**\*$([System.String]::Copy('%(AllowedTextOnlyExtensions.Identity)').ToLowerInvariant())" />
+      <UnsupportedTextOnlyPackageContent Remove="$(RestoredPackageDirectory)**\*$([System.String]::Copy('%(AllowedTextOnlyExtensions.Identity)').ToUpperInvariant())" />
+    </ItemGroup>
+
+    <Error Text="Unsupported content found in text-only packages: @(UnsupportedTextOnlyPackageContent)"
+           Condition="'@(UnsupportedTextOnlyPackageContent)' != ''" />
+
+    <Copy SourceFiles="@(TextOnlyPackageContent)"
+          DestinationFiles="@(TextOnlyPackageContent->'$(PackageTargetDirectory)%(RecursiveDir)%(Filename)%(Extension)')"
+          SkipUnchangedFiles="true" />
+
+    <Message Text="$(MSBuildProjectName) -> $([MSBuild]::NormalizePath('$(PackageTargetDirectory)', '%(TextOnlyPackageContent.RecursiveDir)%(TextOnlyPackageContent.Filename)%(TextOnlyPackageContent.Extension)'))"
+             Importance="high"
+             Condition="'@(TextOnlyPackageContent)' != ''" />
+  </Target>
+
+  <!-- Generate the final reference package project and write it to the package target directory. -->
+  <UsingTask TaskName="GenerateProject" AssemblyFile="$(PackageSourceGeneratorTaskAssembly)" />
+  <Target Name="GeneratePackageProject"
+          DependsOnTargets="GetPackageItems"
+          Condition="'@(PackageCompileItem)' != '' or '$(PackageType)' == 'text'">
     <PropertyGroup>
-      <NuspecPath>$(PackageSourceDirectory)$(PackageName.ToLowerInvariant()).nuspec</NuspecPath>
-      <NuspecTargetPath>$(PackageTargetDirectory)$([System.IO.Path]::GetFileName('$(NuspecPath)'))</NuspecTargetPath>
+      <PackageProjectTemplate>PackageProjectTemplate.xml</PackageProjectTemplate>
+      <PackageProjectTargetPath>$(PackageTargetDirectory)$(RealPackageId).$(PackageVersion).csproj</PackageProjectTargetPath>
     </PropertyGroup>
 
-    <RewriteNuspec NuspecPath="$(NuspecPath)"
+    <GenerateProject PackageId="$(RealPackageId)"
+                     ProjectTemplate="$(PackageProjectTemplate)"
+                     TargetPath="$(PackageProjectTargetPath)"
+                     CompileItems="@(PackageCompileItem)"
+                     PackageDependencies="@(PackageDependency)"
+                     FrameworkReferences="@(PackageFrameworkReference)" />
+
+    <Message Text="$(MSBuildProjectName) -> $(PackageProjectTargetPath)"
+             Importance="high" />
+  </Target>
+
+  <!-- Rewrite nuspec and copy to target directory. -->
+  <UsingTask TaskName="RewriteNuspec" AssemblyFile="$(PackageSourceGeneratorTaskAssembly)" />
+  <Target Name="RewriteNuspec"
+          Condition="'@(PackageCompileItem)' != '' or '$(PackageType)' == 'text'">
+    <PropertyGroup>
+      <NuspecTargetPath>$(PackageTargetDirectory)$([System.IO.Path]::GetFileName('$(RestoredPackageNuspec)'))</NuspecTargetPath>
+    </PropertyGroup>
+
+    <RewriteNuspec NuspecPath="$(RestoredPackageNuspec)"
                    TargetPath="$(NuspecTargetPath)"
                    IncludeTargetFrameworks="$(PackageTargetFrameworks)"
                    ExcludeTargetFrameworks="$(ExcludeTargetFrameworks)"
@@ -225,7 +336,7 @@
     <MSBuild Projects="$(MSBuildThisFileFullPath)"
              Targets="BeginGeneratePackageSource;Restore;Build"
              Properties="PackageName=%(FilteredPackageDependency.Identity);PackageVersion=%(FilteredPackageDependency.Version)"
-             RemoveProperties="PackageCSV;PackageTargetFrameworks"
+             RemoveProperties="PackageType;PackageCSV;PackageTargetFrameworks"
              BuildInParallel="false"
              Condition="'@(FilteredPackageDependency)' != ''" />
   </Target>
