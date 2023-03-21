@@ -21,38 +21,34 @@ usage() {
     echo "  Text-only package generation will restore the specified package and copy the source-build-usable content"
     echo "  into the provided directory ('./src/textOnlyPackages/' by default)."
     echo ""
-    echo "  Either --pkg or --pkgcsv must be specified"
+    echo "  Either --package or --csv must be specified"
     echo ""
     echo "options:"
-    echo "  --pkg|--package <packageName,version[,tfms]>      A package and version, no spaces, separated by comma.  If optional semicolon-separated"
-    echo "                                                    TFMs are specified, they will be used in the project that restores the package."
-    echo "                                                    Examples: System.Collections,4.3.0"
-    echo "                                                              System.Text.Json,4.7.0,nestandard2.0;net461"
-    echo "  --pkgcsv|--package-csv                            A path to a csv file of packages to generate. Format is the same as the --pkg"
-    echo "                                                    option above, one per line.  If specified, the --pkg option is ignored."
-    echo "  --dest|--destination                              A path to the root of the repo to copy source into."
-    echo "  --type|--package-type                             Type of the package to generate. Accepted values: ref (default) | text."
-    echo "  --exclude-deps|--exclude-package-dependencies     Determines if package dependencies should be excluded. Default is false."
-    echo "  --feeds                                           A semicolon-separated list of additional NuGet feeds to use during restore."
-    echo ""
+    echo "  -p|--package <name,version[,tfms]>            A package and version, no spaces, separated by comma. If optional semicolon-separated"
+    echo "                                                TFMs are specified, they will be used to filter the project's target frameworks."
+    echo "                                                Examples: System.Collections,4.3.0"
+    echo "                                                          System.Text.Json,4.7.0,netstandard2.0;net461"
+    echo "  --csv                                         A path to a csv file of packages to generate. Format is the same as the --package"
+    echo "                                                option above, one per line.  If specified, the --package option is ignored."
+    echo "  -d|--destination                              A path to the root of the repo to copy source into."
+    echo "  -t|--type                                     Type of the package to generate. Accepted values: ref (default) | text."
+    echo "  -e|--excludeDependencies                      Determines if package dependencies should be excluded. Default is false."
+    echo "  -f|--feeds                                    A semicolon-separated list of additional NuGet feeds to use during restore."
+    echo "  -h|--help                                     Print help and exit."
 }
-
-arguments=''
-extraArgs=''
 
 if [[ $# -le 0 ]]; then
 	usage
 	exit 0
 fi
 
+arguments=''
+extraArgs=''
+
 while [[ $# > 0 ]]; do
     opt="$(echo "${1/#--/-}" | tr "[:upper:]" "[:lower:]")"
     case "$opt" in
-        "-?"|-h|-help)
-            usage
-            exit 0
-            ;;
-        -pkg|-package)
+        -p|-package)
             IFS=, read -r packageName packageVersion packageTargetFrameworks <<< $2
             arguments="$arguments /p:PackageName=$packageName /p:PackageVersion=$packageVersion"
             if [ -n "$packageTargetFrameworks" ]; then
@@ -60,7 +56,7 @@ while [[ $# > 0 ]]; do
             fi
             shift 2
             ;;
-        -pkgcsv|-package-csv)
+        -c|-csv)
             if [ ! -f "$2" ]; then
                 echo -e "${RED}ERROR: CSV file not found - $2${NC}"
                 exit 1
@@ -69,7 +65,7 @@ while [[ $# > 0 ]]; do
             arguments="$arguments /p:PackageCSV=\"$packageCSV\""
             shift 2
             ;;
-        -dest|-destination)
+        -d|-destination)
             if [ ! -d "$2" ]; then
                 echo -e "${RED}ERROR: dest not found - $2${NC}"
                 exit 1
@@ -78,25 +74,29 @@ while [[ $# > 0 ]]; do
             arguments="$arguments /p:PackagesTargetDirectory=\"$packagesTargetDirectory\""
             shift 2
             ;;
-        -type|-package-type)
-            packageType="$2"
-            if [[ ! "$packageType" =~ ^(text|ref)$ ]]; then
+        -t|-type)
+            type="$2"
+            if [[ ! "$type" =~ ^(text|ref)$ ]]; then
                 echo -e "${RED}ERROR: unknown package type - $2${NC}"
                 usage
                 exit 1
             fi
-            arguments="$arguments /p:PackageType=$packageType"
+            arguments="$arguments /p:PackageType=$type"
             shift 2
             ;;
-        -exclude-deps|-exclude-package-dependencies)
+        -e|-excludedependencies)
             arguments="$arguments /p:ExcludePackageDependencies=true"
             shift 1
             ;;
-        -feeds)
+        -f|-feeds)
             # -p:RestoreAdditionalProjectSources -> specifies additional Nuget package sources, including feeds: https://docs.microsoft.com/en-us/nuget/reference/msbuild-targets#restore-properties
             feeds="$2"
             arguments="$arguments /p:RestoreAdditionalProjectSources=\"$feeds\""
             shift 2
+            ;;
+        "-?"|-h|-help)
+            usage
+            exit 0
             ;;
         *)
             extraArgs="$extraArgs $1"

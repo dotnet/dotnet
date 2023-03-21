@@ -129,10 +129,12 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
 
             // Calculate the assembly name from the compile items assembly name metadata. If more than one
             // distinct name is found (i.e. multi assembly package), use the PackageId instead.
+            ITaskItem[] assemblyNames = CompileItems
+                .Select(compileItem => compileItem.GetMetadata(SharedMetadata.AssemblyNameMetadataName))
+                .Distinct()
+                .ToArray();
             projectContent = projectContent.Replace("$$AssemblyName$$",
-                CompileItems.Select(compileItem => compileItem.GetMetadata(SharedMetadata.AssemblyNameMetadataName))
-                    .Distinct()
-                    .SingleOrDefault() ?? PackageId!);
+                 assemblyNames.Length == 1 ? assemblyNames[0] : PackageId!);
 
             // Generate the project file
             Directory.CreateDirectory(Path.GetDirectoryName(TargetPath!)!);

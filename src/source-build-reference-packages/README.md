@@ -17,7 +17,7 @@ to time in issues and some documentation.
 
 ## Supported Platforms
 
-.NET source build currently only supports Linux.
+.NET source build currently only supports Linux but generating a source-build reference or text-only package is supported on both Windows and Unix based operating systems.
 
 ## Building
 
@@ -31,14 +31,14 @@ New packages are needed from time to time as
 [existing dependency versions are upgraded](https://github.com/dotnet/source-build/blob/main/Documentation/sourcebuild-in-repos/update-dependencies.md)
 and [new dependencies are added](https://github.com/dotnet/source-build/blob/main/Documentation/sourcebuild-in-repos/new-dependencies.md)
 to .NET. The [generate script](https://github.com/dotnet/source-build-reference-packages/blob/main/generate.sh) supports
-generating new packages. Run `generate.sh -h` for usage details.
+generating new packages. Run `generate.sh --help` for usage details.
 
 When generating a package(s), the tooling will detect and generate all dependent packages.
 
 ### Reference
 
 ``` bash
-./generate.sh --pkg system.buffers,4.5.1
+./generate.sh --package system.buffers,4.5.1
 ```
 
 After generating new reference packages, all new projects must be referenced as a
@@ -56,7 +56,7 @@ when it was originally generated.
 
 #### Workflow
 
-* Generate reference package and its depencencies running the `./generate.sh --pkg <package>,<version>` script.
+* Generate reference package and its depencencies running the `./generate.sh --package <package>,<version>` script.
 * Revert changes for packages that were already existed in the repository.
 * Run build with the `./build.sh -sb` command.
 * If the compilation produces numerous compilation issue - run the `./build.sh --projects <path to .csproj file>` command for each generated reference package separately.
@@ -71,7 +71,7 @@ targeting pack is needed, please [open a new issue](#filing-issues) to discuss.
 ### Text Only
 
 ``` bash
-./generate.sh --type text --pkg microsoft.build.traversal,3.1.6
+./generate.sh --type text --package microsoft.build.traversal,3.1.6
 ```
 
 ## Filing Issues
