@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
+using Analyzer.Utilities.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
@@ -36,7 +37,7 @@ namespace Microsoft.NetCore.Analyzers.Security
 
         internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
             DiagnosticId,
-            CreateLocalizableResourceString(nameof(DoNotCallDangerousMethodsInDeserializationTitle)),
+            CreateLocalizableResourceString(nameof(DoNotCallDangerousMethodsInDeserialization)),
             CreateLocalizableResourceString(nameof(DoNotCallDangerousMethodsInDeserializationMessage)),
             DiagnosticCategory.Security,
             RuleLevel.IdeHidden_BulkConfigurable,
@@ -192,43 +193,67 @@ namespace Microsoft.NetCore.Analyzers.Security
                         (CompilationAnalysisContext compilationAnalysisContext) =>
                         {
                             var visited = new HashSet<ISymbol>();
-                            var results = new Dictionary<ISymbol, HashSet<ISymbol>>();
+                            var results = new Dictionary<ISymbol, HashSet<(ISymbol DangerousMethod, ArrayBuilder<ISymbol> IntermediateMethods)>>();
                             var symbolDisplayStringCache = SymbolDisplayStringCache.GetOrCreate(
                                 compilation,
                                 SymbolDisplayFormat.MinimallyQualifiedFormat);
+                            var methodSymbolArray = new ISymbol[1];    // So we can call .Concat() without allocating new arrays.
 
-                            foreach (var methodSymbol in callGraph.Keys.OfType<IMethodSymbol>())
+                            try
                             {
-                                // Determine if the method is called automatically when an object is deserialized.
-                                // This includes methods with OnDeserializing attribute, method with OnDeserialized attribute, deserialization callbacks as well as cleanup/dispose calls.
-                                var flagSerializable = methodSymbol.ContainingType.HasAttribute(serializableAttributeTypeSymbol);
-                                var parameters = methodSymbol.GetParameters();
-                                var flagHasDeserializeAttributes = !attributeTypeSymbols.IsEmpty
-                                    && attributeTypeSymbols.Any(s => methodSymbol.HasAttribute(s))
-                                    && parameters.Length == 1
-                                    && parameters[0].Type.Equals(streamingContextTypeSymbol);
-                                var flagImplementOnDeserializationMethod = methodSymbol.IsOnDeserializationImplementation(IDeserializationCallbackTypeSymbol);
-                                var flagImplementDisposeMethod = methodSymbol.IsDisposeImplementation(compilation);
-                                var flagIsFinalizer = methodSymbol.IsFinalizer();
-
-                                if (!flagSerializable || !flagHasDeserializeAttributes && !flagImplementOnDeserializationMethod && !flagImplementDisposeMethod && !flagIsFinalizer)
+                                foreach (var methodSymbol in callGraph.Keys.OfType<IMethodSymbol>())
                                 {
-                                    continue;
+                                    // Determine if the method is called automatically when an object is deserialized.
+                                    // This includes methods with OnDeserializing attribute, method with OnDeserialized attribute, deserialization callbacks as well as cleanup/dispose calls.
+                                    var flagSerializable = methodSymbol.ContainingType.HasAttribute(serializableAttributeTypeSymbol);
+                                    var parameters = methodSymbol.GetParameters();
+                                    var flagHasDeserializeAttributes = !attributeTypeSymbols.IsEmpty
+                                        && attributeTypeSymbols.Any(s => methodSymbol.HasAttribute(s))
+                                        && parameters.Length == 1
+                                        && parameters[0].Type.Equals(streamingContextTypeSymbol);
+                                    var flagImplementOnDeserializationMethod = methodSymbol.IsOnDeserializationImplementation(IDeserializationCallbackTypeSymbol);
+                                    var flagImplementDisposeMethod = methodSymbol.IsDisposeImplementation(compilation);
+                                    var flagIsFinalizer = methodSymbol.IsFinalizer();
+
+                                    if (!flagSerializable || !flagHasDeserializeAttributes && !flagImplementOnDeserializationMethod && !flagImplementDisposeMethod && !flagIsFinalizer)
+                                    {
+                                        continue;
+                                    }
+
+                                    FindCalledDangerousMethod(methodSymbol, visited, results);
+
+                                    foreach (var (DangerousMethod, IntermediateMethods) in results[methodSymbol])
+                                    {
+                                        methodSymbolArray[0] = methodSymbol;
+                                        compilationAnalysisContext.ReportDiagnostic(
+                                            methodSymbol.CreateDiagnostic(
+                                                Rule,
+                                                methodSymbol.ContainingType.Name,
+                                                methodSymbol.MetadataName,
+                                                DangerousMethod.MetadataName,
+                                                string.Join(
+                                                    " -> ",
+                                                    methodSymbolArray
+                                                        .Concat(IntermediateMethods)
+                                                        .Concat(DangerousMethod)
+                                                        .Select(
+                                                            s => symbolDisplayStringCache.GetDisplayString(s)))));
+                                    }
                                 }
-
-                                FindCalledDangerousMethod(methodSymbol, visited, results);
-
-                                if (!results.TryGetValue(methodSymbol, out var dangerousMethods))
-                                    continue;
-
-                                foreach (var dangerousMethod in dangerousMethods)
+                            }
+                            finally
+                            {
+                                foreach (var entry in results)
                                 {
-                                    compilationAnalysisContext.ReportDiagnostic(
-                                        methodSymbol.CreateDiagnostic(
-                                            Rule,
-                                            methodSymbol.ContainingType.Name,
-                                            methodSymbol.MetadataName,
-                                            symbolDisplayStringCache.GetDisplayString(dangerousMethod)));
+                                    if (entry.Value == null)
+                                    {
+                                        continue;
+                                    }
+
+                                    foreach (var (DangerousMethod, IntermediateMethods) in entry.Value)
+                                    {
+                                        IntermediateMethods?.Dispose();
+                                    }
                                 }
                             }
                         });
@@ -243,10 +268,12 @@ namespace Microsoft.NetCore.Analyzers.Security
                     void FindCalledDangerousMethod(
                         ISymbol methodSymbol,
                         HashSet<ISymbol> visited,
-                        Dictionary<ISymbol, HashSet<ISymbol>> results)
+                        Dictionary<ISymbol, HashSet<(ISymbol, ArrayBuilder<ISymbol>)>> results)
                     {
                         if (visited.Add(methodSymbol))
                         {
+                            results.Add(methodSymbol, new HashSet<(ISymbol, ArrayBuilder<ISymbol>)>());
+
                             if (!callGraph.TryGetValue(methodSymbol, out var calledMethods))
                             {
                                 Debug.Fail(methodSymbol.Name + " was not found in callGraph");
@@ -254,18 +281,11 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 return;
                             }
 
-                            HashSet<ISymbol>? methodSymbolSet = null;
                             foreach (var child in calledMethods.Keys)
                             {
                                 if (dangerousMethodSymbols.Contains(child))
                                 {
-                                    if (methodSymbolSet == null)
-                                    {
-                                        methodSymbolSet = new();
-                                        results[methodSymbol] = methodSymbolSet;
-                                    }
-
-                                    methodSymbolSet.Add(child);
+                                    results[methodSymbol].Add((child, ArrayBuilder<ISymbol>.GetInstance()));
                                 }
 
                                 if (Equals(child, methodSymbol))
@@ -275,17 +295,20 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                                 FindCalledDangerousMethod(child, visited, results);
 
-                                if (results.TryGetValue(child, out var dangerousMethods))
+                                if (results.TryGetValue(child, out var result))
                                 {
-                                    Debug.Assert(dangerousMethods.Count > 0);
-
-                                    if (methodSymbolSet == null)
+                                    // If we find results in the calling method
+                                    foreach ((ISymbol dangerousMethod, ArrayBuilder<ISymbol> intermediateCalls) in result)
                                     {
-                                        methodSymbolSet = new();
-                                        results[methodSymbol] = methodSymbolSet;
+                                        var newIntermediateCalls = ArrayBuilder<ISymbol>.GetInstance();
+                                        newIntermediateCalls.Add(child);
+                                        newIntermediateCalls.AddRange(intermediateCalls);
+                                        results[methodSymbol].Add((dangerousMethod, newIntermediateCalls));
                                     }
-
-                                    methodSymbolSet.AddRange(dangerousMethods);
+                                }
+                                else
+                                {
+                                    Debug.Fail(child.Name + " was not found in results");
                                 }
                             }
                         }
