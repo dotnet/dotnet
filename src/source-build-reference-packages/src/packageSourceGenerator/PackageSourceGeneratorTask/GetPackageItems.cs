@@ -33,51 +33,51 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
         /// The path to the .nupkg package file.
         /// </summary>
         [Required]
-        public string PackagePath { get; set; }
+        public string? PackagePath { get; set; }
 
         /// <summary>
         /// Include only the package compile items and dependencies with a matching target framework.
         /// </summary>
-        public string IncludeTargetFrameworks { get; set; }
+        public string? IncludeTargetFrameworks { get; set; }
 
         /// <summary>
         /// Exclude package compile items and dependencies with a matching target framework.
         /// </summary>
-        public string ExcludeTargetFrameworks { get; set; }
+        public string? ExcludeTargetFrameworks { get; set; }
 
         /// <summary>
         /// The package's compile items, including target framework metadata.
         /// </summary>
         [Output]
-        public ITaskItem[] CompileItems { get; set; }
+        public ITaskItem[]? CompileItems { get; set; }
 
         /// <summary>
         /// Placeholder files from compile target framework groups.
         /// </summary>
         [Output]
-        public ITaskItem[] PlaceholderFiles { get; set; }
+        public ITaskItem[]? PlaceholderFiles { get; set; }
 
         /// <summary>
         /// The package's dependencies with the PackageId as the identity and the version and target framework as metadata.
         /// </summary>
         [Output]
-        public ITaskItem[] PackageDependencies { get; set; }
+        public ITaskItem[]? PackageDependencies { get; set; }
 
         /// <summary>
         /// The package's framework references with the framework reference assembly as the identity and the target framework as metadata.
         /// </summary>
         [Output]
-        public ITaskItem[] FrameworkReferences { get; set; }
+        public ITaskItem[]? FrameworkReferences { get; set; }
 
         /// <summary>
         /// The package id.
         /// </summary>
         [Output]
-        public string PackageId { get; set; }
+        public string? PackageId { get; set; }
 
         public override bool Execute()
         {
-            using PackageArchiveReader packageArchiveReader = new(PackagePath);
+            using PackageArchiveReader packageArchiveReader = new(PackagePath!);
             TargetFrameworkRegexFilter targetFrameworkRegexFilter = new(IncludeTargetFrameworks,
                 ExcludeTargetFrameworks);
 
@@ -142,7 +142,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
                     else
                     {
                         // Retrieve the strong name key information and add it to the compile item as metadata.
-                        string assemblyPath = Path.Combine(Path.GetDirectoryName(PackagePath), compileItem.Path);
+                        string assemblyPath = Path.Combine(Path.GetDirectoryName(PackagePath!)!, compileItem.Path);
                         AssemblyName assemblyName = AssemblyName.GetAssemblyName(assemblyPath);
                         if (TryGetStrongNameData(assemblyName, out StrongNameData strongNameData))
                         {

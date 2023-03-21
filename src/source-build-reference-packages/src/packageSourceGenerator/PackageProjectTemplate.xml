@@ -6,4 +6,4 @@
     <ProjectTemplateVersion>2</ProjectTemplateVersion>$$KeyFileTag$$
   </PropertyGroup>
 
-$$PackageReferences$$</Project>
+$$References$$</Project>

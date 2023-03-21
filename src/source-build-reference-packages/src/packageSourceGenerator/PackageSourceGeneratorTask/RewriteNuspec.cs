@@ -13,14 +13,14 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
     public partial class RewriteNuspec : Task
     {
         [Required]
-        public string NuspecPath { get; set; }
+        public string? NuspecPath { get; set; }
 
         [Required]
-        public string TargetPath { get; set; }
+        public string? TargetPath { get; set; }
 
-        public string IncludeTargetFrameworks { get; set; }
+        public string? IncludeTargetFrameworks { get; set; }
 
-        public string ExcludeTargetFrameworks { get; set; }
+        public string? ExcludeTargetFrameworks { get; set; }
 
         public bool RemoveIcon { get; set; }
 
@@ -28,8 +28,8 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
 
         public override bool Execute()
         {
-            string nuspecContent = File.ReadAllText(NuspecPath);
-            NuspecReader nuspecReader = new(NuspecPath);
+            string nuspecContent = File.ReadAllText(NuspecPath!);
+            NuspecReader nuspecReader = new(NuspecPath!);
             TargetFrameworkRegexFilter targetFrameworkRegexFilter = new(IncludeTargetFrameworks,
                 ExcludeTargetFrameworks);
 
@@ -67,7 +67,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
                 nuspecContent = GetRuntimeSpecificDependenciesRegex().Replace(nuspecContent, string.Empty);
             }
 
-            File.WriteAllText(TargetPath, nuspecContent);
+            File.WriteAllText(TargetPath!, nuspecContent);
             return true;
         }
 
