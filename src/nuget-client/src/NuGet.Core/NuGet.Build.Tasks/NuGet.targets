@@ -94,8 +94,7 @@ Copyright (c) .NET Foundation. All rights reserved.
 
   <ItemGroup Condition="'$(ManagePackageVersionsCentrally)' == 'true' And '$(RestoreEnableGlobalPackageReference)' != 'false'">
     <!--
-        Add GlobalPackageReference items to the PackageReference item group with no version.  The PackageVersion items are added
-        in the CollectCentralPackageVersions target.
+        Add GlobalPackageReference items to the PackageReference item group with no version.
 
         Global package references only include the same assets as a development dependency (runtime; build; native; contentfiles; analyzers)
         because those kind of packages are the best candidate for a global package reference.  They are generally packages that
@@ -109,6 +108,12 @@ Copyright (c) .NET Foundation. All rights reserved.
                       Version=""
                       IncludeAssets="Runtime;Build;Native;contentFiles;Analyzers"
                       PrivateAssets="All" />
+
+      <!--
+        Add GlobalPackageReference items to the PackageVersion item group with the version.
+      -->
+    <PackageVersion Include="@(GlobalPackageReference)"
+                    Version="%(Version)" />
   </ItemGroup>
 
   <!-- Tasks -->
@@ -238,14 +243,6 @@ Copyright (c) .NET Foundation. All rights reserved.
       <CollectCentralPackageVersionsContinueOnError>$(ContinueOnError)</CollectCentralPackageVersionsContinueOnError>
       <CollectCentralPackageVersionsContinueOnError Condition="'$(ContinueOnError)' == '' ">false</CollectCentralPackageVersionsContinueOnError>
     </PropertyGroup>
-
-    <ItemGroup Condition="'$(ManagePackageVersionsCentrally)' == 'true' And '$(RestoreEnableGlobalPackageReference)' != 'false'">
-      <!--
-        Add GlobalPackageReference items to the PackageVersion item group with the version.  The PackageReference items are added
-        in the CollectPackageReferences target.
-      -->
-      <PackageVersion Include="@(GlobalPackageReference)" Version="%(Version)" />
-    </ItemGroup>
 
     <CheckForDuplicateNuGetItemsTask
       Condition="'$(DisableCheckingDuplicateNuGetItems)' != 'true' "

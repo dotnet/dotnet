@@ -649,7 +649,12 @@ namespace Dotnet.Integration.Test
                 {
                     result.AllOutput.Should()
                         .Contain(
-                            Strings.ChainBuilding_UsingDefaultTrustStore,
+                            Strings.ChainBuilding_UsingDefaultTrustStoreForCodeSigning,
+                            because: result.AllOutput);
+
+                    result.AllOutput.Should()
+                        .Contain(
+                            Strings.ChainBuilding_UsingDefaultTrustStoreForTimestamping,
                             because: result.AllOutput);
                 }
                 else

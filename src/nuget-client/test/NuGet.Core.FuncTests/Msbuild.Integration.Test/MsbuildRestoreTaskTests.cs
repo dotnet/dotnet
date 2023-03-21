@@ -1142,5 +1142,46 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
             result.Output.Should().Contain("warning NU1603");
 
         }
+
+        [Fact]
+        public void MsbuildRestore_WithLegacyCsproj_GlobalPackageReferencesAreProcessed()
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+
+            string projectPath = Path.Combine(pathContext.SolutionRoot, "ProjectA.proj");
+
+            File.WriteAllText(
+                Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props"),
+                @$"<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <GlobalPackageReference Include=""PackageA"" Version=""1.2.3"" />
+    <GlobalPackageReference Include=""PackageB"" Version=""4.5.6"" />
+  </ItemGroup>
+</Project>");
+
+            // Writes out a project that simply prints out the <PackageReference /> and <PackageVersion /> items after the <GlobalPackageReference /> items have been processed by NuGet.targets
+            File.WriteAllText(
+                projectPath,
+                @$"<Project>
+  <Import Project=""$([System.IO.Path]::ChangeExtension('$(NuGetRestoreTargets)', '.props'))"" />
+  <Target Name=""PrintPackageReferences"">
+    <Message Text=""PackageReferences = @(PackageReference->'`%(Identity)` / `%(Version)`', ', ')"" Importance=""High"" />
+    <Message Text=""PackageVersions = @(PackageVersion->'`%(Identity)` / `%(Version)`', ', ')"" Importance=""High"" />
+  </Target>
+  <Import Project=""$(NuGetRestoreTargets)"" />
+</Project>");
+            
+
+            CommandRunnerResult result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/NoAutoResponse /NoLogo /ConsoleLoggerParameters:Verbosity=Minimal;NoSummary;ForceNoAlign /Target:PrintPackageReferences {projectPath}", ignoreExitCode: false);
+
+            // Assert
+            result.Success.Should().BeTrue(because: result.AllOutput);
+            result.Output.Should().Contain("PackageReferences = `PackageA` / ``, `PackageB` / ``");
+            result.Output.Should().Contain("PackageVersions = `PackageA` / `1.2.3`, `PackageB` / `4.5.6`");
+        }
     }
 }

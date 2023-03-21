@@ -19,9 +19,6 @@ namespace NuGet.Tests.Apex
         private const string PrimarySourceName = "source";
         private const string SecondarySourceName = "SecondarySource";
 
-        private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(10);
-        private static readonly TimeSpan Interval = TimeSpan.FromSeconds(2);
-
         private readonly SimpleTestPathContext _pathContext = new SimpleTestPathContext();
 
         public NuGetUITestCase(VisualStudioHostFixtureFactory visualStudioHostFixtureFactory, ITestOutputHelper output)
@@ -129,14 +126,14 @@ namespace NuGet.Tests.Apex
             NuGetUIProjectTestExtension uiwindow = nugetTestService.GetUIWindowfromProject(project);
             uiwindow.InstallPackageFromUI(TestPackageName, TestPackageVersionV1);
 
-            WaitForFileExists(packagesConfigFile);
+            CommonUtility.WaitForFileExists(packagesConfigFile);
 
             VisualStudio.ClearWindows();
 
             // Act
             uiwindow.UninstallPackageFromUI(TestPackageName);
 
-            WaitForFileNotExists(packagesConfigFile);
+            CommonUtility.WaitForFileNotExists(packagesConfigFile);
 
             // Assert
             CommonUtility.AssertPackageNotInPackagesConfig(VisualStudio, project, TestPackageName, XunitLogger);
@@ -382,23 +379,6 @@ namespace NuGet.Tests.Apex
             return new FileInfo(Path.Combine(projectFile.DirectoryName, "packages.config"));
         }
 
-        private static void WaitForFileExists(FileInfo file)
-        {
-            Omni.Common.WaitFor.IsTrue(
-                () => File.Exists(file.FullName),
-                Timeout,
-                Interval,
-                $"{file.FullName} did not exist within {Timeout}.");
-        }
-
-        private static void WaitForFileNotExists(FileInfo file)
-        {
-            Omni.Common.WaitFor.IsTrue(
-                () => !File.Exists(file.FullName),
-                Timeout,
-                Interval,
-                $"{file.FullName} still existed after {Timeout}.");
-        }
 
         [StaFact]
         public void InstallPackageToWebSiteProjectFromUI()
