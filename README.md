@@ -157,7 +157,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/arcade`  
 *[dotnet/arcade@b12f035](https://github.com/dotnet/arcade/commit/b12f035e893c34ec2c965d75f6e21b7a2667e98d)*
 - `src/aspnetcore`  
-*[dotnet/aspnetcore@f136052](https://github.com/dotnet/aspnetcore/commit/f136052490cdf7f06dedc6868a246d27f6e43856)*
+*[dotnet/aspnetcore@5eac493](https://github.com/dotnet/aspnetcore/commit/5eac493dc97d1df6591b8dab3647f36a8d7d2f9a)*
     - `src/aspnetcore/src/submodules/googletest`  
     *[google/googletest@e49c6b9](https://github.com/google/googletest/commit/e49c6b946a44f9a58586bfc76f75687d8f77e725)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
@@ -179,7 +179,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@29cdad3](https://github.com/dotnet/fsharp/commit/29cdad34b502e2720399765b63700954cc8a70cc)*
 - `src/installer`  
-*[dotnet/installer@c1c4b1e](https://github.com/dotnet/installer/commit/c1c4b1ebfa260a492829b27e94a7ad70515afb73)*
+*[dotnet/installer@e0109ac](https://github.com/dotnet/installer/commit/e0109ac477975eca43c2dffdf3f5e6caffae2438)*
 - `src/msbuild`  
 *[dotnet/msbuild@b84faa7](https://github.com/dotnet/msbuild/commit/b84faa7d0dfb42daedca5c244f73f0b07e1135d7)*
 - `src/nuget-client`  
@@ -193,9 +193,9 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/roslyn-analyzers`  
 *[dotnet/roslyn-analyzers@3bc7d28](https://github.com/dotnet/roslyn-analyzers/commit/3bc7d2884964b9ae202d389a43a3889d89dd70e8)*
 - `src/runtime`  
-*[dotnet/runtime@c1acb35](https://github.com/dotnet/runtime/commit/c1acb35ce2b90f241ccdf3ead79544516c673e5f)*
+*[dotnet/runtime@edb161a](https://github.com/dotnet/runtime/commit/edb161ab06ddc69d27aee2c0e990a60221ebbe92)*
 - `src/sdk`  
-*[dotnet/sdk@09d8fec](https://github.com/dotnet/sdk/commit/09d8fec0cd3cfd622fa8e53dba5509d6decd2deb)*
+*[dotnet/sdk@e3b39b8](https://github.com/dotnet/sdk/commit/e3b39b8db045f14193a29726cb193cea8913e0dc)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@5b908e0](https://github.com/dotnet/source-build-externals/commit/5b908e01f04e383883a6f69a03ebfb2b93b1c6a2)*
     - `src/source-build-externals/src/application-insights`  
