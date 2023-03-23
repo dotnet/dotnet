@@ -7,10 +7,10 @@
       "commitSha": "b17c4b8af95a9652c3501df2702913ca94adb139"
     },
     {
-      "packageVersion": "8.0.0-preview.4.23171.7",
+      "packageVersion": "8.0.0-preview.4.23172.5",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "16907a1efa1b53ea0c91984f90d8cef314fb4420"
+      "commitSha": "1972d2772f36a1cfbe5d36fd7167ecf7e4e03e59"
     },
     {
       "packageVersion": "0.11.4-alpha.23163.1",
@@ -58,7 +58,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "f8b833f01f2e63c89567802a53e684fac3ef8e5a"
+      "commitSha": "e82781d4bab779cbe72d1fe4f3a7868b670fd1f1"
     },
     {
       "packageVersion": "17.6.0-preview-23171-02",
@@ -67,10 +67,10 @@
       "commitSha": "b84faa7d0dfb42daedca5c244f73f0b07e1135d7"
     },
     {
-      "packageVersion": "6.6.0-preview.3.55",
+      "packageVersion": "6.6.0-preview.3.56",
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "fc41cff354547a3c7f84d88d10d4e0bdf79d9c4b"
+      "commitSha": "f99e9b890eb66a8b4876aa6f93852717683e1fe4"
     },
     {
       "packageVersion": "7.0.0-preview.23167.3",
@@ -91,16 +91,16 @@
       "commitSha": "3bc7d2884964b9ae202d389a43a3889d89dd70e8"
     },
     {
-      "packageVersion": "8.0.0-preview.4.23172.1",
+      "packageVersion": "8.0.0-preview.4.23172.9",
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "7500625bd9303a48d0500b6123cec604e49039ae"
+      "commitSha": "6bcd4aa9cf626d6ee490a7bd35908cefd1603103"
     },
     {
-      "packageVersion": "8.0.100-preview.4.23172.20",
+      "packageVersion": "8.0.100-preview.4.23172.33",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "6f9dc3a890cf308dbb7f16a061dce8b66987b11a"
+      "commitSha": "d8b549b85299046654ba8e9bd0caff0eed507ae6"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23171.1",
