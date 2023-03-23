@@ -82,8 +82,6 @@ $productVersions += $queries | ForEach-Object -Parallel {
     $quality = $_.quality
     $component = $_.component
 
-    Write-Verbose "Querying $channel $quality $component" -Verbose:$using:PSBoundParameters.Verbose
-
     @{channel = $channel; quality = $quality; component = $component; version = $(DoLookup $channel $quality $component) }
 }
 
