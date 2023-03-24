@@ -91,7 +91,7 @@ namespace NuGet.Tests.Apex
             }
         }
 
-        [CIOnlyNuGetWpfTheory]
+        [CIOnlyNuGetWpfTheory(Skip = "https://github.com/NuGet/Home/issues/11308")]
         [MemberData(nameof(GetPackagesConfigTemplates))]
         public async Task DowngradeSignedToUnsignedVersionFromPMCForPC_SucceedAsync(ProjectTemplate projectTemplate)
         {
