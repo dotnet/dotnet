@@ -179,11 +179,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@5477380](https://github.com/dotnet/fsharp/commit/54773808aed924ea6ba071b1a0dd1db8da3007cc)*
 - `src/installer`  
-*[dotnet/installer@8e65be0](https://github.com/dotnet/installer/commit/8e65be07550ff10e0cf7eb0bb2e7b16977694777)*
+*[dotnet/installer@ea32c3d](https://github.com/dotnet/installer/commit/ea32c3d85561c576174f27e1217718b000bc8280)*
 - `src/msbuild`  
 *[dotnet/msbuild@b84faa7](https://github.com/dotnet/msbuild/commit/b84faa7d0dfb42daedca5c244f73f0b07e1135d7)*
 - `src/nuget-client`  
-*[nuget/nuget.client@f99e9b8](https://github.com/nuget/nuget.client/commit/f99e9b890eb66a8b4876aa6f93852717683e1fe4)*
+*[nuget/nuget.client@80c3c74](https://github.com/nuget/nuget.client/commit/80c3c74ca5c6d67912a19833e8cc2b10f875dc95)*
     - `src/nuget-client/submodules/NuGet.Build.Localization`  
     *[NuGet/NuGet.Build.Localization@f15db7b](https://github.com/NuGet/NuGet.Build.Localization/commit/f15db7b7c6f5affbea268632ef8333d2687c8031)*
 - `src/razor`  
@@ -193,9 +193,9 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/roslyn-analyzers`  
 *[dotnet/roslyn-analyzers@3bc7d28](https://github.com/dotnet/roslyn-analyzers/commit/3bc7d2884964b9ae202d389a43a3889d89dd70e8)*
 - `src/runtime`  
-*[dotnet/runtime@f52d11c](https://github.com/dotnet/runtime/commit/f52d11c9f6cbc6300301b9f07fe8e108b2a77bd4)*
+*[dotnet/runtime@0cf4023](https://github.com/dotnet/runtime/commit/0cf4023a475974052c2046e110199ad8fa55a884)*
 - `src/sdk`  
-*[dotnet/sdk@055201f](https://github.com/dotnet/sdk/commit/055201f65a7ac425d688eefc9f05251ac1e19528)*
+*[dotnet/sdk@e040698](https://github.com/dotnet/sdk/commit/e0406984f70b53f6afa5eb0c56c00e2d4c63ea5b)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@4b8fe3f](https://github.com/dotnet/source-build-externals/commit/4b8fe3ff0cfb2b38901803c798c647ca8123c222)*
     - `src/source-build-externals/src/application-insights`  
