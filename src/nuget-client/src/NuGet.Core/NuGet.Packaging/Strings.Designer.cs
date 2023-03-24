@@ -169,11 +169,20 @@ namespace NuGet.Packaging {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to X.509 certificate chain validation will use the default trust store selected by .NET..
+        ///   Looks up a localized string similar to X.509 certificate chain validation will use the default trust store selected by .NET for code signing..
         /// </summary>
-        internal static string ChainBuilding_UsingDefaultTrustStore {
+        internal static string ChainBuilding_UsingDefaultTrustStoreForCodeSigning {
             get {
-                return ResourceManager.GetString("ChainBuilding_UsingDefaultTrustStore", resourceCulture);
+                return ResourceManager.GetString("ChainBuilding_UsingDefaultTrustStoreForCodeSigning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to X.509 certificate chain validation will use the default trust store selected by .NET for timestamping..
+        /// </summary>
+        internal static string ChainBuilding_UsingDefaultTrustStoreForTimestamping {
+            get {
+                return ResourceManager.GetString("ChainBuilding_UsingDefaultTrustStoreForTimestamping", resourceCulture);
             }
         }
         

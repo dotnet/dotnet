@@ -162,7 +162,16 @@ namespace NuGet.Packaging.Signing
         // Non-private for testing purposes only
         internal static IX509ChainFactory CreateX509ChainFactory(X509StorePurpose storePurpose, ILogger logger)
         {
-            logger.LogInformation(Strings.ChainBuilding_UsingDefaultTrustStore);
+            switch (storePurpose)
+            {
+                case X509StorePurpose.CodeSigning:
+                    logger.LogInformation(Strings.ChainBuilding_UsingDefaultTrustStoreForCodeSigning);
+                    break;
+
+                case X509StorePurpose.Timestamping:
+                    logger.LogInformation(Strings.ChainBuilding_UsingDefaultTrustStoreForTimestamping);
+                    break;
+            }
 
             return new DotNetDefaultTrustStoreX509ChainFactory();
         }

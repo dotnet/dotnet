@@ -49,7 +49,7 @@ namespace NuGet.Packaging.FuncTest
             Assert.Equal(1, _logger.Messages.Count);
             Assert.Equal(1, _logger.InformationMessages.Count);
             Assert.True(_logger.InformationMessages.TryDequeue(out string actualMessage));
-            Assert.Equal(Strings.ChainBuilding_UsingDefaultTrustStore, actualMessage);
+            Assert.Equal(Strings.ChainBuilding_UsingDefaultTrustStoreForCodeSigning, actualMessage);
         }
     }
 }
