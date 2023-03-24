@@ -682,6 +682,37 @@ namespace NuGet.Tests.Apex
             solutionService.Save();
         }
 
+        [NuGetWpfTheory]
+        [MemberData(nameof(GetNetCoreTemplates))]
+        public async Task VerifyCacheFileInsideObjFolder(ProjectTemplate projectTemplate)
+        {
+            // Arrange
+            EnsureVisualStudioHost();
+
+            using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, XunitLogger))
+            {                
+                var packageName = "VerifyCacheFilePackage";
+                var packageVersion = "1.0.0";
+                await CommonUtility.CreatePackageInSourceAsync(testContext.PackageSource, packageName, packageVersion);                
+                var nugetConsole = GetConsole(testContext.Project);
+
+                //Act
+                nugetConsole.InstallPackageFromPMC(packageName, packageVersion);
+                FileInfo CacheFilePath = CommonUtility.GetCacheFilePath(testContext.Project.FullPath);
+
+                // Assert
+                testContext.SolutionService.Build();
+                testContext.NuGetApexTestService.WaitForAutoRestore();
+                CommonUtility.WaitForFileExists(CacheFilePath);
+
+                testContext.Project.Rebuild();
+                CommonUtility.WaitForFileExists(CacheFilePath);
+
+                testContext.Project.Clean();
+                CommonUtility.WaitForFileNotExists(CacheFilePath);
+            }
+        }
+
         // There  is a bug with VS or Apex where NetCoreConsoleApp creates a netcore 2.1 project that is not supported by the sdk
         // Commenting out any NetCoreConsoleApp template and swapping it for NetStandardClassLib as both are package ref.
         public static IEnumerable<object[]> GetNetCoreTemplates()

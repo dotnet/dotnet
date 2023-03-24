@@ -27,6 +27,9 @@ namespace NuGet.Tests.Apex
 {
     public class CommonUtility
     {
+        private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(10);
+        private static readonly TimeSpan Interval = TimeSpan.FromSeconds(2);
+
         public static async Task CreatePackageInSourceAsync(string packageSource, string packageName, string packageVersion)
         {
             var package = CreatePackage(packageName, packageVersion);
@@ -230,7 +233,7 @@ namespace NuGet.Tests.Apex
             testService.WaitForAutoRestore();
 
             var assetsFilePath = GetAssetsFilePath(project.FullPath);
-            
+
             // Project has an assets file, let's look there to assert
             var inAssetsFile = IsPackageInstalledInAssetsFile(assetsFilePath, packageName, packageVersion, true);
 
@@ -271,7 +274,7 @@ namespace NuGet.Tests.Apex
             testService.WaitForAutoRestore();
 
             var assetsFilePath = GetAssetsFilePath(project.FullPath);
-            
+
             // Project has an assets file, let's look there to assert
             var inAssetsFile = IsPackageInstalledInAssetsFile(assetsFilePath, packageName, packageVersion, false);
             logger.LogInformation($"Exists: {inAssetsFile}");
@@ -412,6 +415,30 @@ namespace NuGet.Tests.Apex
         {
             var projectDirectory = Path.GetDirectoryName(projectPath);
             return Path.Combine(projectDirectory, "obj", "project.assets.json");
+        }
+
+        public static FileInfo GetCacheFilePath(string projectPath)
+        {
+            var projectDirectory = Path.GetDirectoryName(projectPath);
+            return new FileInfo(Path.Combine(projectDirectory, "obj", "project.nuget.cache"));
+        }
+
+        public static void WaitForFileExists(FileInfo file)
+        {
+            Omni.Common.WaitFor.IsTrue(
+                () => File.Exists(file.FullName),
+                Timeout,
+                Interval,
+                $"{file.FullName} did not exist within {Timeout}.");
+        }
+
+        public static void WaitForFileNotExists(FileInfo file)
+        {
+            Omni.Common.WaitFor.IsTrue(
+                () => !File.Exists(file.FullName),
+                Timeout,
+                Interval,
+                $"{file.FullName} still existed after {Timeout}.");
         }
 
         public static void UIInvoke(Action action)
