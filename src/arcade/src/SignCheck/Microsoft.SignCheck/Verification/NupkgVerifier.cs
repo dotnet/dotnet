@@ -33,18 +33,19 @@ namespace Microsoft.SignCheck.Verification
 
         private bool IsSigned(string path)
         {
-            IEnumerable<ISignatureVerificationProvider> providers = SignatureVerificationProviderFactory.GetSignatureVerificationProviders();
-            var packageSignatureVerifier = new PackageSignatureVerifier(providers);
-
+            List<ISignatureVerificationProvider> providers = new()
+            {
+                new IntegrityVerificationProvider(),
+                new SignatureTrustAndValidityVerificationProvider(),
+            };
             var verifierSettings = SignedPackageVerifierSettings.GetVerifyCommandDefaultPolicy();
-            IEnumerable<ISignatureVerificationProvider> verificationProviders = SignatureVerificationProviderFactory.GetSignatureVerificationProviders();
-            var verifier = new PackageSignatureVerifier(verificationProviders);
+            var packageSignatureVerifier = new PackageSignatureVerifier(providers);
 
             using (var pr = new PackageArchiveReader(path))
             {
                 Task<VerifySignaturesResult> verifySignatureResult = packageSignatureVerifier.VerifySignaturesAsync(pr, verifierSettings, CancellationToken.None);
 
-                return verifySignatureResult.Result.Valid;
+                return verifySignatureResult.Result.IsValid;
             }
         }
     }
