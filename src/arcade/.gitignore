@@ -20,7 +20,7 @@ artifacts/
 artifacts_stage_1/
 [Dd]ebug/
 [Rr]elease/
-x64/
+x64/ !eng/common/cross/x64/
 x86/ !eng/common/cross/x86/
 [Bb]in/
 [Oo]bj/
