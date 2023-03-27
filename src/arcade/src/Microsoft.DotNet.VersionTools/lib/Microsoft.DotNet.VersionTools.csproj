@@ -16,7 +16,6 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
     <PackageReference Include="NuGet.Packaging" Version="$(NuGetPackagingVersion)" />
-    <PackageReference Include="NuGet.Packaging.Core" Version="$(NuGetPackagingVersion)" />
     <PackageReference Include="NuGet.Versioning" Version="$(NuGetPackagingVersion)" />
     <PackageReference Include="System.Diagnostics.TraceSource" Version="$(SystemDiagnosticsTraceSourceVersion)" />
   </ItemGroup>
