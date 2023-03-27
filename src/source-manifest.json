@@ -7,10 +7,10 @@
       "commitSha": "1177b37e60c7271ab461098aefbdd03edc15b90d"
     },
     {
-      "packageVersion": "8.0.0-preview.4.23174.2",
+      "packageVersion": "8.0.0-preview.4.23176.6",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "520c18777aa51e4a56ca30554daf58ae492a03bf"
+      "commitSha": "c2350729d09a0db90cc6f5b1f11517f509e5db70"
     },
     {
       "packageVersion": "0.11.4-alpha.23163.1",
@@ -49,22 +49,22 @@
       "commitSha": "0b968051beac5d7c1a62a52aee7fbbbb47dc1f47"
     },
     {
-      "packageVersion": "7.0.300-beta.23172.6",
+      "packageVersion": "7.0.300-beta.23174.5",
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "54773808aed924ea6ba071b1a0dd1db8da3007cc"
+      "commitSha": "0207bea1afae48d9351ac26fb51afc8260de0a97"
     },
     {
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "03d61319b0cd02b430936e6dc4b2054bd5773087"
+      "commitSha": "73299513f8bd091da4d9395c99fdd3ffa68c5876"
     },
     {
-      "packageVersion": "17.6.0-preview-23171-02",
+      "packageVersion": "17.6.0-preview-23174-01",
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "b84faa7d0dfb42daedca5c244f73f0b07e1135d7"
+      "commitSha": "e7de1330724224a542668e1ef82c997613c7080c"
     },
     {
       "packageVersion": "6.6.0-preview.3.57",
@@ -91,16 +91,16 @@
       "commitSha": "3bc7d2884964b9ae202d389a43a3889d89dd70e8"
     },
     {
-      "packageVersion": "8.0.0-preview.4.23174.4",
+      "packageVersion": "8.0.0-preview.4.23176.4",
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "96a003edd9e25a7b4b693b6a7717ad4d46937a8b"
+      "commitSha": "8d5f520838bbe2fe0ad02df53c85809fbbb1fcbb"
     },
     {
-      "packageVersion": "8.0.100-preview.4.23174.20",
+      "packageVersion": "8.0.100-preview.4.23177.4",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "5dcdf394dc01c681079fb777ae984f9149b056ef"
+      "commitSha": "c20074dc5212d7bf37bba4040e001ea64c5b3263"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23171.1",
