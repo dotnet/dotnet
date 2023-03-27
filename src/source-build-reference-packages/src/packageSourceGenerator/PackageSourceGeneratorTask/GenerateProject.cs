@@ -129,7 +129,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
 
             // Calculate the assembly name from the compile items assembly name metadata. If more than one
             // distinct name is found (i.e. multi assembly package), use the PackageId instead.
-            ITaskItem[] assemblyNames = CompileItems
+            string[] assemblyNames = CompileItems
                 .Select(compileItem => compileItem.GetMetadata(SharedMetadata.AssemblyNameMetadataName))
                 .Distinct()
                 .ToArray();
