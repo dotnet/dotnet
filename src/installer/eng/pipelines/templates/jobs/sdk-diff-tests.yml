@@ -85,14 +85,14 @@ jobs:
       msft_sdk_tarball_name=$(find "$(Pipeline.Workspace)/Artifacts" -name "dotnet-sdk-*-linux-${{ parameters.architecture }}.tar.gz" -exec basename {} \;)
 
       if [[ -z "$msft_sdk_tarball_name" ]]; then
-        echo "Microsoft SDK tarball does not exist in '$(Pipeline.Workspace)/Artifacts'. The associated build 'https://dev.azure.com/dnceng/internal/_build/results?buildId=$(InstallerBuildId)&view=results' might have failed."
+        echo "Microsoft SDK tarball does not exist in '$(Pipeline.Workspace)/Artifacts'. The associated build https://dev.azure.com/dnceng/internal/_build/results?buildId=$(InstallerBuildId) might have failed."
         exit 1
       fi
 
       sdk_tarball_name=$(find "$(Pipeline.Workspace)/Artifacts" -name "dotnet-sdk-*-${{ parameters.targetRid }}.tar.gz" -exec basename {} \;)
 
       if [[ -z "$sdk_tarball_name" ]]; then
-        echo "Source-build SDK tarball does not exist in '$(Pipeline.Workspace)/Artifacts'. The associated build 'https://dev.azure.com/dnceng/internal/_build/results?buildId=$(DotnetDotnetBuildId)&view=results' might have failed"
+        echo "Source-build SDK tarball does not exist in '$(Pipeline.Workspace)/Artifacts'. The associated build https://dev.azure.com/dnceng/internal/_build/results?buildId=$(DotnetDotnetBuildId) might have failed"
         exit 1
       fi
 
