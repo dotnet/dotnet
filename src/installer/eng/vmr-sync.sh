@@ -14,17 +14,16 @@
 ### folder to this to speed up your re-runs.
 ###
 ### USAGE:
+###   Synchronize current installer and all dependencies into a local VMR:
+###     ./vmr-sync.sh --vmr "$HOME/repos/dotnet" --tmp "$HOME/repos/tmp"
+###
 ###   Synchronize the VMR to a specific commit of dotnet/runtime using custom fork:
 ###     ./vmr-sync.sh \
 ###        --repository runtime:e7e71da303af8dc97df99b098f21f526398c3943 \
 ###        --remote runtime:https://github.com/yourfork/runtime          \
-###        --tmp-dir "$HOME/repos/tmp"
+###        --tmp "$HOME/repos/tmp"
 ###
 ### Options:
-###   -r, --repository name:GIT_REF
-###       Required. Repository + git ref separated by colon to synchronize to.
-###       This can be a specific commit, branch, tag..
-###
 ###   -t, --tmp, --tmp-dir PATH
 ###       Required. Path to the temporary folder where repositories will be cloned
 ###
@@ -48,6 +47,12 @@
 ###       Optional. Additional remote to use during the synchronization
 ###       This can be used to synchronize to a commit from a fork of the repository
 ###       Example: 'runtime:https://github.com/yourfork/runtime'
+###
+###   -r, --repository name:GIT_REF
+###       Optional. Repository + git ref separated by colon to synchronize to.
+###       This can be a specific commit, branch, tag.
+###       If not supplied, the revision of the parent installer repository of this script will be used (recursively).
+###       Example: 'runtime:my-branch-name'
 ###
 ###   --tpn-template
 ###       Optional. Template for the header of VMRs THIRD-PARTY-NOTICES file.
@@ -178,9 +183,10 @@ fi
 
 # Sanitize the input
 
+# Default when no repository is provided
 if [[ -z "$repository" ]]; then
-  fail "No repository to synchronize specified"
-  exit 1
+  repository="installer:$(git -C "$installer_dir" rev-parse HEAD)"
+  recursive=true
 fi
 
 if [[ -z "$vmr_dir" ]]; then
