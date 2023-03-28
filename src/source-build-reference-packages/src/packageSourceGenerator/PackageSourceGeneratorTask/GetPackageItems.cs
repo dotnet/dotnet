@@ -131,6 +131,12 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
 
                 foreach (ContentItem compileItem in compileItems.Items)
                 {
+                    // Skip duplicate compile items. That can happen when different target frameworks choose
+                    // the same asset as best compatible. E.g. System.Runtime.CompilerServices.Unsafe/4.7.0
+                    // netcoreapp2.0 and netstandard2.0 TFMs both choose the netstandard2.0 compile asset.
+                    if (compileTaskItems.Any(compileTaskItem => compileTaskItem.ItemSpec == compileItem.Path))
+                        continue;
+
                     TaskItem compileTaskItem = new(compileItem.Path);
                     compileTaskItem.SetMetadata(SharedMetadata.TargetFrameworkMetadataName, targetFramework);
 
