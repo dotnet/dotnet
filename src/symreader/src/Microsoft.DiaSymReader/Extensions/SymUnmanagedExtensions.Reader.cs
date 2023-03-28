@@ -4,6 +4,7 @@
 
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace Microsoft.DiaSymReader
 {
@@ -86,7 +87,7 @@ namespace Microsoft.DiaSymReader
             }
 
             ISymUnmanagedDocument document;
-            ThrowExceptionForHR(reader.GetDocument(name, default(Guid), default(Guid), default(Guid), out document));
+            ThrowExceptionForHR(reader.GetDocument(name, language: default, languageVendor: default, documentType: default, out document));
             return document;
         }
 
@@ -119,8 +120,7 @@ namespace Microsoft.DiaSymReader
                 throw new ArgumentNullException(nameof(reader));
             }
 
-            ISymUnmanagedMethod method;
-            int hr = reader.GetMethod(methodToken, out method);
+            int hr = reader.GetMethod(methodToken, out var method);
             ThrowExceptionForHR(hr);
 
             if (hr < 0)
@@ -169,9 +169,35 @@ namespace Microsoft.DiaSymReader
                 throw new ArgumentNullException(nameof(reader));
             }
 
-            int version;
-            ThrowExceptionForHR(reader.GetMethodVersion(method, out version));
+            ThrowExceptionForHR(reader.GetMethodVersion(method, out var version));
             return version;
+        }
+
+        /// <summary>
+        /// Returns compiler version number and name.
+        /// </summary>
+        public static bool TryGetCompilerInfo(this ISymUnmanagedCompilerInfoReader reader, out Version version, out string name)
+        {
+            if (reader == null)
+            {
+                throw new ArgumentNullException(nameof(reader));
+            }
+
+            ThrowExceptionForHR(reader.GetCompilerInfo(out var _, out var _, out var _, out var _, bufferLength: 0, out var bufferLength, name: null));
+            if (bufferLength == 0)
+            {
+                version = null;
+                name = null;
+                return false;
+            }
+
+            var nameBuffer = new char[bufferLength];
+            ThrowExceptionForHR(reader.GetCompilerInfo(out var major, out var minor, out var build, out var revision, bufferLength, out var actualLength, nameBuffer));
+            ValidateItems(actualLength, nameBuffer.Length);
+
+            name = BufferToString(nameBuffer);
+            version = new Version(major, minor, build, revision);
+            return true;
         }
     }
 }

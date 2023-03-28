@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -42,6 +43,8 @@ namespace Microsoft.DiaSymReader.UnitTests
                 metadataProvider, 
                 SymUnmanagedWriterCreationOptions.Deterministic | SymUnmanagedWriterCreationOptions.UseAlternativeLoadPath))
             {
+                writer.AddCompilerInfo(1, 2, 3, 4, "Compiler");
+
                 var docIndex = writer.DefineDocument("doc", lang, vendor, type, algorithmId: default, checksum: null, source: null); 
 
                 writer.OpenMethod(0x06000001);
@@ -66,6 +69,12 @@ namespace Microsoft.DiaSymReader.UnitTests
             Assert.Equal(1, pdbAge);
 
             var symReader = SymUnmanagedReaderFactory.CreateReader<ISymUnmanagedReader5>(pdbStream, metadataProvider, SymUnmanagedReaderCreationOptions.UseAlternativeLoadPath);
+
+            var infoReader = (ISymUnmanagedCompilerInfoReader)symReader;
+            Assert.True(infoReader.TryGetCompilerInfo(out var version, out var name));
+            Assert.Equal(new Version(1, 2, 3, 4), version);
+            Assert.Equal("Compiler", name);
+
             var docs = symReader.GetDocuments();
             AssertEx.Equal(new[] { "doc 00000000-0000-0000-0000-000000000001" }, docs.Select(d => $"{d.GetName()} {d.GetLanguage()}"));
 

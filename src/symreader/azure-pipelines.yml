@@ -36,18 +36,17 @@ stages:
       enablePublishTestResults: true
       enablePublishBuildAssets: true
       enablePublishUsingPipelines: $(_PublishUsingPipelines)
-      enableSourceBuild: true
       enableTelemetry: true
+      enableSourceBuild: true
       helixRepo: dotnet/symreader
       jobs:
       - job: Windows
         pool:
           ${{ if or(eq(variables['System.TeamProject'], 'public'), in(variables['Build.Reason'], 'PullRequest')) }}:
-            name: NetCorePublic-Pool
-            queue: BuildPool.Windows.10.Amd64.VS2017.Open
+            vmImage: 'windows-latest'
           ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
-            name: NetCoreInternal-Pool
-            queue: BuildPool.Windows.10.Amd64.VS2017
+            name: NetCore1ESPool-Internal
+            demands: ImageOverride -equals Build.Windows.10.Amd64.VS2019
         variables:
         # Only enable publishing in official builds
         - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
@@ -56,7 +55,7 @@ stages:
           - group: DotNet-Blob-Feed
           - group: Publish-Build-Assets
           - name: _OfficialBuildArgs
-            value: /p:DotNetSignType=$(_SignType) 
+            value: /p:DotNetSignType=$(_SignType)
                   /p:TeamName=$(_TeamName)
                   /p:DotNetPublishBlobFeedKey=$(dotnetfeed-storage-access-key-1)
                   /p:DotNetPublishBlobFeedUrl=https://dotnetfeed.blob.core.windows.net/dotnet-core/index.json
@@ -70,11 +69,12 @@ stages:
             value: ''
         strategy:
           matrix:
-            Debug:
-              _BuildConfig: Debug
-              _SignType: test
-              _DotNetPublishToBlobFeed: false
-              _BuildArgs: ''
+            ${{ if or(eq(variables['System.TeamProject'], 'public'), in(variables['Build.Reason'], 'PullRequest')) }}:
+              Debug:
+                _BuildConfig: Debug
+                _SignType: test
+                _DotNetPublishToBlobFeed: false
+                _BuildArgs: ''
             Release:
               _BuildConfig: Release
               # PRs or external builds are not signed.
@@ -92,54 +92,51 @@ stages:
         - script: eng\common\cibuild.cmd -configuration $(_BuildConfig) -prepareMachine $(_BuildArgs)
           displayName: Build and Test
 
-      - job: MacOS
-        displayName: 'MacOS'
-        pool: Hosted macOS
-        strategy:
-          matrix:
-            Debug:
-              _BuildConfig: Debug
-              _SignType: none
-              _DotNetPublishToBlobFeed : false
-            Release:
-              _BuildConfig: Release
-              _SignType: none
-              _DotNetPublishToBlobFeed : false
-        steps:
-        - checkout: self
-          clean: true
-        - script: eng/common/cibuild.sh --configuration $(_BuildConfig) --prepareMachine
-          displayName: Build and Test
+      - ${{ if or(eq(variables['System.TeamProject'], 'public'), in(variables['Build.Reason'], 'PullRequest')) }}:
+        - job: MacOS
+          displayName: 'MacOS'
+          pool:
+            vmImage: 'macOS-latest'
+          strategy:
+            matrix:
+              Debug:
+                _BuildConfig: Debug
+                _SignType: none
+                _DotNetPublishToBlobFeed : false
+              Release:
+                _BuildConfig: Release
+                _SignType: none
+                _DotNetPublishToBlobFeed : false
+          steps:
+          - checkout: self
+            clean: true
+          - script: eng/common/cibuild.sh --configuration $(_BuildConfig) --prepareMachine
+            displayName: Build and Test
 
-      - job: Linux
-        displayName: 'Linux'
-        pool:
-          ${{ if or(eq(variables['System.TeamProject'], 'public'), in(variables['Build.Reason'], 'PullRequest')) }}:
-            name: NetCorePublic-Pool
-            queue: BuildPool.Ubuntu.1604.Amd64.Open
-          ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
-            name: NetCoreInternal-Pool
-            queue: BuildPool.Ubuntu.1604.Amd64
-        strategy:
-          matrix:
-            Debug:
-              _BuildConfig: Debug
-              _SignType: none
-              _DotNetPublishToBlobFeed : false
-            Release:
-              _BuildConfig: Release
-              _SignType: none
-              _DotNetPublishToBlobFeed : false
-        steps:
-        - checkout: self
-          clean: true
-        - script: eng/common/cibuild.sh --configuration $(_BuildConfig) --prepareMachine
-          displayName: Build and Test
+        - job: Linux
+          displayName: 'Linux'
+          pool:
+            vmImage: 'ubuntu-latest'
+          strategy:
+            matrix:
+              Debug:
+                _BuildConfig: Debug
+                _SignType: none
+                _DotNetPublishToBlobFeed : false
+              Release:
+                _BuildConfig: Release
+                _SignType: none
+                _DotNetPublishToBlobFeed : false
+          steps:
+          - checkout: self
+            clean: true
+          - script: eng/common/cibuild.sh --configuration $(_BuildConfig) --prepareMachine
+            displayName: Build and Test
 
 - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
   - template: eng\common\templates\post-build\post-build.yml
     parameters:
+      publishingInfraVersion: 3
       # Symbol validation isn't being very reliable lately. This should be enabled back
       # once this issue is resolved: https://github.com/dotnet/arcade/issues/2871
-      publishingInfraVersion: 3
       enableSymbolValidation: false

@@ -186,9 +186,9 @@
       <Sha>4b8fe3ff0cfb2b38901803c798c647ca8123c222</Sha>
       <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.symreader" Version="1.4.0-beta2-21475-02">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.symreader" Version="2.0.0-beta-22503-02">
       <Uri>https://github.com/dotnet/symreader</Uri>
-      <Sha>7b9791daa3a3477eb22ec805946c9fff8b42d8ca</Sha>
+      <Sha>0c29b7109c054bdc578e917515ae7e8635b9cb9d</Sha>
       <SourceBuild RepoName="symreader" ManagedOnly="true" />
     </Dependency>
   </ProductDependencies>
