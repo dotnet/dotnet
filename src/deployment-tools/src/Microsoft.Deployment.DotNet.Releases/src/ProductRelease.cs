@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Microsoft.Deployment.DotNet.Releases
 {
@@ -17,16 +17,8 @@ namespace Microsoft.Deployment.DotNet.Releases
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
     public class ProductRelease
     {
-        private string DebuggerDisplay => $"Release {Version} (SDKs: {Sdks.Count}, Runtimes: {AllRuntimes.Count})";
+        private string DebuggerDisplay => $"Release {Version} (SDKs: {Sdks.Count}, Runtimes: {Runtimes.Count})";
 
-        /// <summary>
-        /// A collection of all the runtime components (.NET Core, ASP.NET Core, Windows Desktop, etc.) included in this <see cref="ProductRelease"/>.
-        /// </summary>
-        [JsonIgnore]
-        public ReadOnlyCollection<ReleaseComponent> AllRuntimes
-        {
-            get;
-        }
 
         /// <summary>
         /// The ASP.NET Core runtime included in this release, or <see langword="null"/> if the component is absent."/>
@@ -45,8 +37,8 @@ namespace Microsoft.Deployment.DotNet.Releases
         }
 
         /// <summary>
-        /// The collection CVEs addressed by this release. The collection may be empty if no CVEs are associated with
-        /// the release.
+        /// The collection of CVEs addressed by this release. The collection may be empty if no CVEs are associated with
+        /// it, typically when the release does not contain any security fixes.
         /// </summary>
         public ReadOnlyCollection<Cve> Cves
         {
@@ -64,7 +56,6 @@ namespace Microsoft.Deployment.DotNet.Releases
         /// <summary>
         /// <see langword="true"/> if the release version describes a prerelease; <see langword="false"/> otherwise.
         /// </summary>
-        [JsonIgnore]
         public bool IsPreview => !string.IsNullOrWhiteSpace(Version.Prerelease);
 
         /// <summary>
@@ -78,7 +69,6 @@ namespace Microsoft.Deployment.DotNet.Releases
         /// <summary>
         /// The <see cref="Product"/> to which this <see cref="ProductRelease"/> belongs.
         /// </summary>
-
         public Product Product
         {
             get;
@@ -101,9 +91,17 @@ namespace Microsoft.Deployment.DotNet.Releases
         }
 
         /// <summary>
-        /// The .NET Core Runtime included with this <see cref="ProductRelease"/>.
+        /// The .NET runtime included with this <see cref="ProductRelease"/>.
         /// </summary>
         public RuntimeReleaseComponent Runtime
+        {
+            get;
+        }
+
+        /// <summary>
+        /// A collection of all the runtime components (.NET, ASP.NET Core, Windows Desktop, etc.) included in this <see cref="ProductRelease"/>.
+        /// </summary>
+        public ReadOnlyCollection<ReleaseComponent> Runtimes
         {
             get;
         }
@@ -125,80 +123,88 @@ namespace Microsoft.Deployment.DotNet.Releases
         }
 
         /// <summary>
-        /// The Windows Desktop runtime associated with this release or <see langword="null"/> if the component is absent.
+        /// The Windows desktop runtime associated with this release or <see langword="null"/> if the component is absent.
         /// </summary>
         public WindowsDesktopReleaseComponent WindowsDesktopRuntime
         {
             get;
         }
 
-        internal ProductRelease(JToken jtoken, Product product)
+        /// <summary>
+        /// Creates a new <see cref="ProductRelease"/> instance.
+        /// </summary>
+        /// <param name="element">The JSON element of the release.</param>
+        /// <param name="product">The product to which the release belongs.</param>
+        internal ProductRelease(JsonElement element, Product product)
         {
-            var js = JsonSerializer.CreateDefault(Utils.DefaultSerializerSettings);
+            ReleaseDate = element.GetProperty("release-date").GetDateTime();
+            Version = element.GetReleaseVersionOrDefault("release-version");
+            IsSecurityUpdate = element.GetProperty("security").GetBoolean();
+            ReleaseNotes = element.GetUriOrDefault("release-notes");
+            Product = product;
 
-            List<SdkReleaseComponent> sdkList = new List<SdkReleaseComponent>();
-            var componentList = new List<ReleaseComponent>();
-            var runtimeList = new List<ReleaseComponent>();
+            var cves = new List<Cve>();
 
-            ReleaseDate = jtoken["release-date"].ToObject<DateTime>(js);
-            Version = jtoken["release-version"].ToObject<ReleaseVersion>(js);
-
-            var cveListToken = jtoken["cve-list"];
-            var cveList = cveListToken.IsNullOrEmpty()
-                ? new List<Cve>()
-                : JsonConvert.DeserializeObject<List<Cve>>(cveListToken.ToString(), Utils.DefaultSerializerSettings);
-            Cves = new ReadOnlyCollection<Cve>(cveList);
-            IsSecurityUpdate = jtoken["security"].ToObject<bool>(js);
-            ReleaseNotes = jtoken["release-notes"]?.ToObject<Uri>(js);
-
-            var aspNetCoreRuntimeToken = jtoken["aspnetcore-runtime"];
-            var runtimeToken = jtoken["runtime"];
-            var winDesktopToken = jtoken["windowsdesktop"];
-
-            if (!aspNetCoreRuntimeToken.IsNullOrEmpty())
+            if (element.TryGetProperty("cve-list", out JsonElement cveListElement) && cveListElement.ValueKind == JsonValueKind.Array)
             {
-                AspNetCoreRuntime = new AspNetCoreReleaseComponent(aspNetCoreRuntimeToken, this);
-                runtimeList.Add(AspNetCoreRuntime);
-            }
+                var enumerator = cveListElement.EnumerateArray();
 
-            if (!runtimeToken.IsNullOrEmpty())
-            {
-                Runtime = new RuntimeReleaseComponent(runtimeToken, this);
-                runtimeList.Add(Runtime);
-            }
-
-            if (!winDesktopToken.IsNullOrEmpty())
-            {
-                WindowsDesktopRuntime = new WindowsDesktopReleaseComponent(winDesktopToken, this);
-                runtimeList.Add(WindowsDesktopRuntime);
-            }
-
-            var sdkToken = jtoken["sdk"];
-            var sdksToken = jtoken["sdks"];
-
-            if (!sdksToken.IsNullOrEmpty())
-            {
-                foreach (var token in sdksToken)
+                while (enumerator.MoveNext())
                 {
-                    sdkList.Add(new SdkReleaseComponent(token, this));
+                    cves.Add(JsonSerializer.Deserialize<Cve>(enumerator.Current));
                 }
             }
-            else if (!sdkToken.IsNullOrEmpty())
+
+            Cves = new ReadOnlyCollection<Cve>(cves);
+
+            var runtimes = new List<ReleaseComponent>();
+
+            if (element.TryGetProperty("aspnetcore-runtime", out JsonElement aspNetCoreValue) && aspNetCoreValue.ValueKind != JsonValueKind.Null)
             {
-                sdkList.Add(new SdkReleaseComponent(sdkToken, this));
+                AspNetCoreRuntime = new AspNetCoreReleaseComponent(aspNetCoreValue, this);
+                runtimes.Add(AspNetCoreRuntime);
             }
 
-            componentList.AddRange(runtimeList);
-            componentList.AddRange(sdkList);
+            if (element.TryGetProperty("runtime", out JsonElement runtimeValue) && runtimeValue.ValueKind != JsonValueKind.Null)
+            {
+                Runtime = new RuntimeReleaseComponent(runtimeValue, this);
+                runtimes.Add(Runtime);
+            }
 
-            Sdks = new ReadOnlyCollection<SdkReleaseComponent>(sdkList);
-            Components = new ReadOnlyCollection<ReleaseComponent>(componentList);
-            AllRuntimes = new ReadOnlyCollection<ReleaseComponent>(runtimeList);
+            if (element.TryGetProperty("windowsdesktop", out JsonElement desktopValue) && desktopValue.ValueKind != JsonValueKind.Null)
+            {
+                WindowsDesktopRuntime = new WindowsDesktopReleaseComponent(desktopValue, this);
+                runtimes.Add(WindowsDesktopRuntime);
+            }
 
+            Runtimes = new ReadOnlyCollection<ReleaseComponent>(runtimes);
+
+            var sdks = new List<SdkReleaseComponent>();
+
+            if (element.TryGetProperty("sdks", out JsonElement sdksValue) && sdksValue.ValueKind == JsonValueKind.Array)
+            {
+                var enumerator = sdksValue.EnumerateArray();
+
+                while (enumerator.MoveNext())
+                {
+                    sdks.Add(new SdkReleaseComponent(enumerator.Current, this));
+                }
+            }
+            else if (element.TryGetProperty("sdk", out JsonElement sdkValue) && sdkValue.ValueKind != JsonValueKind.Null)
+            {
+                sdks.Add(new SdkReleaseComponent(sdkValue, this));
+            }
+
+            Sdks = new ReadOnlyCollection<SdkReleaseComponent>(sdks);
+
+            var components = new List<ReleaseComponent>();
+            components.AddRange(runtimes);
+            components.AddRange(sdks);
+            Components = new ReadOnlyCollection<ReleaseComponent>(components);
+
+            // Distinct is necessary because some releases have overlapping files.
             Files = new ReadOnlyCollection<ReleaseFile>(
                 Components.SelectMany(c => c.Files).Distinct().ToList());
-
-            Product = product;
         }
     }
 }

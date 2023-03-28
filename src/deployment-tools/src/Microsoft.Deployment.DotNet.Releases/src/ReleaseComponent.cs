@@ -1,12 +1,9 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Text.Json;
 
 namespace Microsoft.Deployment.DotNet.Releases
 {
@@ -55,25 +52,36 @@ namespace Microsoft.Deployment.DotNet.Releases
             get;
         }
 
-        internal ReleaseComponent(JToken token, ProductRelease release)
+        /// <summary>
+        /// Creates a new <see cref="ReleaseComponent"/> instance.
+        /// </summary>
+        /// <param name="element">The JSON element of the component.</param>
+        /// <param name="release">The release to which the component belongs.</param>
+        internal ReleaseComponent(JsonElement element, ProductRelease release)
         {
-            if (token == null)
+            Release = release;
+            Version = element.GetReleaseVersionOrDefault("version");
+            DisplayVersion = element.GetStringOrDefault("version-display");
+
+            List<ReleaseFile> files = new List<ReleaseFile>();
+
+            if (element.TryGetProperty("files", out JsonElement P) && P.ValueKind == JsonValueKind.Array)
             {
-                throw new ArgumentNullException(nameof(token));
+                var enumerator = P.EnumerateArray();
+
+                while (enumerator.MoveNext())
+                {
+                    ReleaseFile file = JsonSerializer.Deserialize<ReleaseFile>(enumerator.Current);
+
+                    // Trim out marketing files.
+                    if (!string.IsNullOrEmpty(file.Name) && !file.Name.Contains("-gs") && !file.Name.Contains("-nj"))
+                    {
+                        files.Add(file);
+                    }
+                }
             }
 
-            Version = token["version"]?.ToObject<ReleaseVersion>(Utils.DefaultSerializer);
-            DisplayVersion = token["version-display"]?.ToString();
-            JToken filesToken = token["files"];
-            List<ReleaseFile> fileList = filesToken.IsNullOrEmpty()
-                ? new List<ReleaseFile>()
-                : JsonConvert.DeserializeObject<List<ReleaseFile>>(
-                    filesToken.ToString(), Utils.DefaultSerializerSettings);
-            Release = release;
-
-            // Trim out marketing files. Users should never interact with these
-            Files = new ReadOnlyCollection<ReleaseFile>(
-                fileList.Where(f => !(f.Name.Contains("-gs") || f.Name.Contains("-nj"))).ToList());
+            Files = new ReadOnlyCollection<ReleaseFile>(files);
         }
     }
 }

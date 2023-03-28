@@ -57,17 +57,27 @@ set VSCMD_START_DIR="%~dp0"
 call "%_VSCOMNTOOLS%\VsDevCmd.bat"
 
 :RunVCVars
-if "%VisualStudioVersion%"=="16.0" (
+if "%VisualStudioVersion%"=="17.0" (
+    goto :VS2022
+) else if "%VisualStudioVersion%"=="16.0" (
     goto :VS2019
 ) else if "%VisualStudioVersion%"=="15.0" (
     goto :VS2017
 )
 
 :MissingVersion
-:: Can't find VS 2017, 2019
-echo Error: Visual Studio 2017 or 2019 required
+:: Can't find VS 2017, 2019, 2022
+echo Error: Visual Studio 2017, 2019 or 2022 required
 echo        Please see https://github.com/dotnet/runtime/tree/main/docs/installer/building/windows-instructions.md for build instructions.
 exit /b 1
+
+:VS2022
+:: Setup vars for VS2022
+set __PlatformToolset=v142
+set __VSVersion=16 2019
+:: Set the environment for the native build
+call "%VS170COMNTOOLS%..\..\VC\Auxiliary\Build\vcvarsall.bat" %__VCBuildArch%
+goto :SetupDirs
 
 :VS2019
 :: Setup vars for VS2019

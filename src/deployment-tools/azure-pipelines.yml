@@ -20,17 +20,10 @@ variables:
   # Skip Running CI tests
   - name: SkipTests
     value: false
-  # Set Official Build Id
-  - name: OfficialBuildId
-    value: $(Build.BuildNumber)
-  - name: PostBuildSign
-    value: false
-
-  # Set the target blob feed for package publish during official and validation builds.
-  - name: _DotNetArtifactsCategory
-    value: .NETCore
-  - name: _DotNetValidationArtifactsCategory
-    value: .NETCoreValidation
+  - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+    # Set Official Build Id
+    - name: OfficialBuildId
+      value: $(Build.BuildNumber)
 
   # Produce test-signed build for PR and Public builds
   - ${{ if or(eq(variables['System.TeamProject'], 'public'), in(variables['Build.Reason'], 'PullRequest')) }}:
@@ -60,6 +53,7 @@ stages:
       name: Windows_x64
       publishRidAgnosticPackages: true
       targetArchitecture: x64
+      codeql: true
 
   # Windows x86
   - template: /eng/jobs/windows-build.yml
@@ -74,12 +68,7 @@ stages:
       targetArchitecture: arm64
   
   # Source-build
-  - template: /eng/common/templates/job/source-build.yml
-    parameters:
-      platform:
-        name: 'Managed'
-        container: 'mcr.microsoft.com/dotnet-buildtools/prereqs:centos-7-3e800f1-20190501005343'
-        skipPublishValidation: true
+  - template: /eng/common/templates/jobs/source-build.yml
 
 - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
   - stage: PrepareForPublish
@@ -97,7 +86,7 @@ stages:
         dependsOn: PrepareSignedArtifacts
         pool:
           name: NetCore1ESPool-Internal
-          demands: ImageOverride -equals Build.Server.Amd64.VS2019
+          demands: ImageOverride -equals windows.vs2019.amd64
 
 # Stages-based publishing entry point
 - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:

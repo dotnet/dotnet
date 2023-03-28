@@ -6,10 +6,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Microsoft.Deployment.DotNet.Releases
 {
@@ -21,10 +19,7 @@ namespace Microsoft.Deployment.DotNet.Releases
         /// <summary>
         /// The default URL of the releases index file.
         /// </summary>
-        public static Uri ReleasesIndexDefaultUrl
-        {
-            get;
-        } = new Uri("https://dotnetcli.azureedge.net/dotnet/release-metadata/releases-index.json");
+        public static readonly Uri ReleasesIndexDefaultUrl = new Uri("https://dotnetcli.azureedge.net/dotnet/release-metadata/releases-index.json");
 
         /// <summary>
         /// Creates a new <see cref="ProductCollection"/> instance.
@@ -48,7 +43,7 @@ namespace Microsoft.Deployment.DotNet.Releases
         /// <returns>A collection of products described in the releases index file.</returns>
         public static async Task<ProductCollection> GetAsync()
         {
-            return await GetAsync(ReleasesIndexDefaultUrl);
+            return await GetAsync(ReleasesIndexDefaultUrl).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -68,7 +63,7 @@ namespace Microsoft.Deployment.DotNet.Releases
                 throw new ArgumentException(ReleasesResources.ValueCannotBeEmpty, nameof(releasesIndexUri));
             }
 
-            return await GetAsync(new Uri(releasesIndexUri));
+            return await GetAsync(new Uri(releasesIndexUri)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -83,11 +78,10 @@ namespace Microsoft.Deployment.DotNet.Releases
                 throw new ArgumentNullException(nameof(releasesIndexUrl));
             }
 
-            using var client = new HttpClient();
-            using var stream = new MemoryStream(await client.GetByteArrayAsync(releasesIndexUrl));
+            using var stream = new MemoryStream(await Utils.s_httpClient.GetByteArrayAsync(releasesIndexUrl).ConfigureAwait(false));
             using var reader = new StreamReader(stream);
 
-            return await GetAsync(reader);
+            return await GetAsync(reader).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -105,11 +99,11 @@ namespace Microsoft.Deployment.DotNet.Releases
         /// </exception>
         public static async Task<ProductCollection> GetFromFileAsync(string path, bool downloadLatest)
         {
-            await Utils.GetLatestFileAsync(path, downloadLatest, ReleasesIndexDefaultUrl);
+            await Utils.GetLatestFileAsync(path, downloadLatest, ReleasesIndexDefaultUrl).ConfigureAwait(false);
 
             using TextReader reader = File.OpenText(path);
-            
-            return await GetAsync(reader);
+
+            return await GetAsync(reader).ConfigureAwait(false);
         }
 
         private static async Task<ProductCollection> GetAsync(TextReader reader)
@@ -119,12 +113,9 @@ namespace Microsoft.Deployment.DotNet.Releases
                 throw new ArgumentNullException(nameof(reader));
             }
 
-            var json = JObject.Parse(await reader.ReadToEndAsync());
-            JToken releasesIndex = json["releases-index"];
-
-            return new ProductCollection(
-                JsonConvert.DeserializeObject<List<Product>>(releasesIndex.ToString(),
-                    Utils.DefaultSerializerSettings));
+            using var releasesIndexDocument = JsonDocument.Parse(await reader.ReadToEndAsync().ConfigureAwait(false));
+            var root = releasesIndexDocument.RootElement.GetProperty("releases-index");
+            return new ProductCollection(root.Deserialize<List<Product>>(SerializerOptions.Default));
         }
     }
 }

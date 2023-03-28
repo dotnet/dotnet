@@ -15,39 +15,39 @@ namespace Microsoft.Deployment.DotNet.Releases.Tests
         [Fact]
         public async Task ItReturnsAllSupportPhases()
         {
-            ProductCollection products = await ProductCollection.GetFromFileAsync(@"data\\releases-index.json", false);
+            ProductCollection products = await ProductCollection.GetFromFileAsync(@"data\\releases-index.json", false).ConfigureAwait(false);
             IEnumerable<SupportPhase> supportPhases = products.GetSupportPhases();
 
             Assert.Equal(4, supportPhases.Count());
-            Assert.Contains(SupportPhase.Current, supportPhases);
+            Assert.Contains(SupportPhase.Active, supportPhases);
             Assert.Contains(SupportPhase.EOL, supportPhases);
-            Assert.Contains(SupportPhase.LTS, supportPhases);
-            Assert.Contains(SupportPhase.Preview, supportPhases);
+            Assert.Contains(SupportPhase.Maintenance, supportPhases);
+            Assert.Contains(SupportPhase.GoLive, supportPhases);
         }
 
         [Fact]
         public async Task ItThrowsIfPathIsNull()
         {
-            Func<Task> f = async () => await ProductCollection.GetFromFileAsync((string)null, false);
+            Func<Task> f = async () => await ProductCollection.GetFromFileAsync((string)null, false).ConfigureAwait(false); ;
 
-            _ = await Assert.ThrowsAsync<ArgumentNullException>(f);
+            _ = await Assert.ThrowsAsync<ArgumentNullException>(f).ConfigureAwait(false); 
         }
 
         [Fact]
         public async Task ItThrowsIfPathIsEmpty()
         {
-            Func<Task> f = async () => await ProductCollection.GetFromFileAsync("", false);
+            Func<Task> f = async () => await ProductCollection.GetFromFileAsync("", false).ConfigureAwait(false); 
 
-            ArgumentException exception = await Assert.ThrowsAsync<ArgumentException>(f);
-            Assert.Equal($"Value cannot be empty.{Environment.NewLine}Parameter name: path", exception.Message);
+            ArgumentException exception = await Assert.ThrowsAsync<ArgumentException>(f).ConfigureAwait(false);
+            Assert.Equal($"Value cannot be empty. (Parameter 'path')", exception.Message);
         }
 
         [Fact]
         public async Task ItThrowsIfFileDoesNotExitAndCannotBeDownloaded()
         {
-            Func<Task> f = async () => await ProductCollection.GetFromFileAsync("data.json", false);
+            Func<Task> f = async () => await ProductCollection.GetFromFileAsync("data.json", false).ConfigureAwait(false);
 
-            FileNotFoundException exception = await Assert.ThrowsAsync<FileNotFoundException>(f);
+            FileNotFoundException exception = await Assert.ThrowsAsync<FileNotFoundException>(f).ConfigureAwait(false);
 
             Assert.Equal("Could not find the specified file: data.json", exception.Message);
         }
@@ -55,18 +55,18 @@ namespace Microsoft.Deployment.DotNet.Releases.Tests
         [Fact]
         public async Task ItThrowsIfReleasesUriIsNull()
         {
-            Func<Task> f = async () => await ProductCollection.GetAsync((string)null);
+            Func<Task> f = async () => await ProductCollection.GetAsync((string)null).ConfigureAwait(false);
 
-            ArgumentNullException exception = await Assert.ThrowsAsync<ArgumentNullException>(f);
+            ArgumentNullException exception = await Assert.ThrowsAsync<ArgumentNullException>(f).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task ItThrowsIfReleasesUriIsEmpty()
         {
-            Func<Task> f = async () => await ProductCollection.GetAsync("");
+            Func<Task> f = async () => await ProductCollection.GetAsync("").ConfigureAwait(false);
 
-            ArgumentException exception = await Assert.ThrowsAsync<ArgumentException>(f);
-            Assert.Equal($"Value cannot be empty.{Environment.NewLine}Parameter name: releasesIndexUri", exception.Message);
+            ArgumentException exception = await Assert.ThrowsAsync<ArgumentException>(f).ConfigureAwait(false);
+            Assert.Equal($"Value cannot be empty. (Parameter 'releasesIndexUri')", exception.Message);
         }
     }
 }

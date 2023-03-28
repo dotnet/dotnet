@@ -4,9 +4,10 @@
   "latest-release-date": "2019-05-14",
   "latest-runtime": "1.1.13",
   "latest-sdk": "1.1.14",
+  "release-type" : "lts",
   "support-phase": "eol",
   "eol-date": "2019-06-27",
-  "lifecycle-policy": "https://www.microsoft.com/net/support/policy",
+  "lifecycle-policy": "https://dotnet.microsoft.com/platform/support/policy/",
   "releases": [
     {
       "release-date": "2019-05-14",
@@ -26,7 +27,7 @@
           "cve-url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-0981"
         }
       ],
-      "release-notes": "https://github.com/dotnet/core/blob/master/release-notes/1.1/1.1.13/1.1.13.md",
+      "release-notes": "https://github.com/dotnet/core/blob/main/release-notes/1.1/1.1.13/1.1.13.md",
       "runtime": {
         "version": "1.1.13",
         "version-display": "1.1.13",
@@ -274,7 +275,7 @@
           "cve-url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-0757"
         }
       ],
-      "release-notes": "https://github.com/dotnet/core/blob/master/release-notes/1.1/1.1.12/1.1.12.md",
+      "release-notes": "https://github.com/dotnet/core/blob/main/release-notes/1.1/1.1.12/1.1.12.md",
       "runtime": {
         "version": "1.1.12",
         "version-display": "1.1.12",
@@ -515,7 +516,7 @@
           "cve-url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-0657"
         }
       ],
-      "release-notes": "https://github.com/dotnet/core/blob/master/release-notes/1.1/1.1.11/1.1.11.md",
+      "release-notes": "https://github.com/dotnet/core/blob/main/release-notes/1.1/1.1.11/1.1.11.md",
       "runtime": {
         "version": "1.1.11",
         "version-display": "1.1.11",
@@ -756,7 +757,7 @@
           "cve-url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-8292"
         }
       ],
-      "release-notes": "https://github.com/dotnet/core/blob/master/release-notes/1.1/1.1.10.md",
+      "release-notes": "https://github.com/dotnet/core/blob/main/release-notes/1.1/1.1.10.md",
       "runtime": {
         "version": "1.1.10",
         "version-display": "1.1.10",
@@ -1015,7 +1016,7 @@
           "cve-url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-8356"
         }
       ],
-      "release-notes": "https://github.com/dotnet/core/blob/master/release-notes/1.1/1.1.9.md",
+      "release-notes": "https://github.com/dotnet/core/blob/main/release-notes/1.1/1.1.9.md",
       "runtime": {
         "version": "1.1.9",
         "version-display": "1.1.9",
@@ -1235,7 +1236,7 @@
       "release-version": "1.1.8",
       "security": false,
       "cve-list": null,
-      "release-notes": "https://github.com/dotnet/core/blob/master/release-notes/1.1/1.1.8.md",
+      "release-notes": "https://github.com/dotnet/core/blob/main/release-notes/1.1/1.1.8.md",
       "runtime": {
         "version": "1.1.8",
         "version-display": "1.1.8",
@@ -1410,7 +1411,7 @@
           "cve-url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-0808"
         }
       ],
-      "release-notes": "https://github.com/dotnet/core/blob/master/release-notes/1.1/1.1.7.md",
+      "release-notes": "https://github.com/dotnet/core/blob/main/release-notes/1.1/1.1.7.md",
       "runtime": {
         "version": "1.1.7",
         "version-display": "1.1.7",
@@ -1583,7 +1584,7 @@
           "cve-url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-0784"
         }
       ],
-      "release-notes": "https://github.com/dotnet/core/blob/master/release-notes/1.1/1.1.6.md",
+      "release-notes": "https://github.com/dotnet/core/blob/main/release-notes/1.1/1.1.6.md",
       "runtime": {
         "version": "1.1.6",
         "version-display": "1.1.6",
@@ -1890,7 +1891,7 @@
           "cve-url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-8585"
         }
       ],
-      "release-notes": "https://github.com/dotnet/core/blob/master/release-notes/1.1/1.1.4.md",
+      "release-notes": "https://github.com/dotnet/core/blob/main/release-notes/1.1/1.1.4.md",
       "runtime": {
         "version": "1.1.4",
         "version-display": "1.1.4",
@@ -2031,7 +2032,7 @@
           "cve-url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-0247"
         }
       ],
-      "release-notes": "https://github.com/dotnet/core/blob/master/release-notes/1.1/1.1.2.md",
+      "release-notes": "https://github.com/dotnet/core/blob/main/release-notes/1.1/1.1.2.md",
       "runtime": {
         "version": "1.1.2",
         "version-display": "1.1.2",
@@ -2202,7 +2203,7 @@
       "release-version": "1.1.1",
       "security": false,
       "cve-list": null,
-      "release-notes": "https://github.com/dotnet/core/blob/master/release-notes/1.1/1.1.1.md",
+      "release-notes": "https://github.com/dotnet/core/blob/main/release-notes/1.1/1.1.1.md",
       "runtime": {
         "version": "1.1.1",
         "version-display": "1.1.1",
@@ -2373,7 +2374,7 @@
       "release-version": "1.1.0",
       "security": false,
       "cve-list": null,
-      "release-notes": "https://github.com/dotnet/core/blob/master/release-notes/1.1/1.1.md",
+      "release-notes": "https://github.com/dotnet/core/blob/main/release-notes/1.1/1.1.md",
       "runtime": {
         "version": "1.1.0",
         "version-display": "1.1.0",

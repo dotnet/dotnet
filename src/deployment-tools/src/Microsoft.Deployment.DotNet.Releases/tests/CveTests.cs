@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using Xunit;
 
 namespace Microsoft.Deployment.DotNet.Releases.Tests
@@ -13,10 +14,10 @@ namespace Microsoft.Deployment.DotNet.Releases.Tests
         public void ItImplementsIEquatable()
         {
             List<Cve> cves = new List<Cve>();
-            var cve1 = new Cve("cve-1", "https://cve.com");
-            var cve2 = new Cve("cve-1", "https://cve.com");
+            var cve1 = Cve.Create("cve-1", "https://cve.com");
+            var cve2 = Cve.Create("cve-1", "https://cve.com");
 
-            cves.Add(new Cve("cve-2", "https://cve.com"));
+            cves.Add(Cve.Create("cve-2", "https://cve.com"));
             cves.Add(cve1);
             cves.Add(cve2);
 
@@ -27,10 +28,19 @@ namespace Microsoft.Deployment.DotNet.Releases.Tests
         [Fact]
         public void GetHashCodeReturnsTheSameValueIfObjectsAreEqual()
         {
-            var a = new Cve("cve-1", "https://cve.com");
-            var b = new Cve("cve-1", "https://cve.com");
+            var a = Cve.Create("cve-1", "https://cve.com");
+            var b = Cve.Create("cve-1", "https://cve.com");
 
             Assert.Equal(a.GetHashCode(), b.GetHashCode());
+        }
+
+        [Fact]
+        public void ItCanDeserializeACveEntry()
+        {
+            Cve cve = JsonSerializer.Deserialize<Cve>(@"{""cve-id"": ""CVE-2020-1147"", ""cve-url"": ""https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-1147""}");
+
+            Assert.Equal("CVE-2020-1147", cve.Id);
+            Assert.Equal("https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-1147", cve.DescriptionLink.ToString());
         }
     }
 }

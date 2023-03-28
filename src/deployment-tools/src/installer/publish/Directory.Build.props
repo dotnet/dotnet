@@ -13,20 +13,12 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <BaseUrl Condition="'$(BaseUrl)' == ''">https://dotnetcli.blob.core.windows.net/</BaseUrl>
-    <ProductBlobStorageName>Deployment-Tools</ProductBlobStorageName>
-
     <ChecksumExtension>.sha512</ChecksumExtension>
     <DownloadDirectory>$(ArtifactsDir)PackageDownload/</DownloadDirectory>
-
-    <!-- Allow dev builds to set a custom blob feed, or default to dotnet-core. -->
-    <PackagesUrl Condition="'$(PackagesUrl)' == ''">$(PublishBlobFeedUrl)</PackagesUrl>
-    <PackagesUrl Condition="'$(PackagesUrl)' == ''">https://dotnetfeed.blob.core.windows.net/dotnet-core/index.json</PackagesUrl>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="$(MicrosoftDotNetBuildTasksFeedPackage)" Version="$(MicrosoftDotNetBuildTasksFeedVersion)" />
-    <PackageReference Include="Microsoft.DotNet.VersionTools.Tasks" Version="$(MicrosoftDotNetVersionToolsTasksVersion)" />
   </ItemGroup>
 
 </Project>

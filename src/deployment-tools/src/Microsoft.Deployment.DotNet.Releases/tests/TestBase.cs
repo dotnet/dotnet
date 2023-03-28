@@ -7,7 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
+using System.Text.Json;
 using Xunit;
 
 namespace Microsoft.Deployment.DotNet.Releases.Tests
@@ -50,14 +50,14 @@ namespace Microsoft.Deployment.DotNet.Releases.Tests
 
         public async Task InitializeAsync()
         {
-            Products = await ProductCollection.GetFromFileAsync(@"data\\releases-index.json", false);
+            Products = await ProductCollection.GetFromFileAsync(@"data\\releases-index.json", false).ConfigureAwait(false);
             ProductReleases = new Dictionary<string, ReadOnlyCollection<ProductRelease>>();
 
-            foreach (var product in Products)
+            foreach (Product product in Products)
             {
-                var releasesJsonPath = Path.Combine("data", product.ProductVersion, "releases.json");
+                string releasesJsonPath = Path.Combine("data", product.ProductVersion, "releases.json");
 
-                ProductReleases[product.ProductVersion] = await product.GetReleasesAsync(releasesJsonPath, downloadLatest: false);
+                ProductReleases[product.ProductVersion] = await product.GetReleasesAsync(releasesJsonPath, downloadLatest: false).ConfigureAwait(false);
             }
         }
 
@@ -68,7 +68,7 @@ namespace Microsoft.Deployment.DotNet.Releases.Tests
         /// <returns></returns>
         protected Product CreateProduct(string json)
         {
-            return JsonConvert.DeserializeObject<Product>(json, Utils.DefaultSerializerSettings);
+            return JsonSerializer.Deserialize<Product>(json, SerializerOptions.Default);
         }
 
         /// <summary>

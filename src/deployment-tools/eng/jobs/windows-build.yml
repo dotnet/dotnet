@@ -5,6 +5,7 @@ parameters:
   skipTests: $(SkipTests)
   targetArchitecture: null
   timeoutInMinutes: 120
+  codeql: false
 
 jobs:
   - job: ${{ parameters.name }}
@@ -13,11 +14,11 @@ jobs:
     pool:
       # Use a hosted pool when possible.
       ${{ if eq(variables['System.TeamProject'], 'public') }}:
-        name: NetCore1ESPool-Public
-        demands: ImageOverride -equals build.windows.10.amd64.vs2019.open
+        name: NetCore-Public
+        demands: ImageOverride -equals windows.vs2019.amd64.open
       ${{ if ne(variables['System.TeamProject'], 'public') }}:
         name: NetCore1ESPool-Internal
-        demands: ImageOverride -equals build.windows.10.amd64.vs2019
+        demands: ImageOverride -equals windows.vs2019.amd64
     strategy:
       matrix: 
         debug:
@@ -38,6 +39,7 @@ jobs:
         /p:CertificateId=400
         /p:DotNetSignType=$(SignType)
       TargetArchitecture: ${{ parameters.targetArchitecture }}
+      Codeql.Enabled: ${{ parameters.codeql }}
 
     steps:
 

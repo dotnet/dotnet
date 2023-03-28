@@ -117,11 +117,12 @@ Options
   -TimeStampUri &lt;uri&gt;               -ti
   -ToFile	&lt;file_name&gt;	    -t
   -TrustLevel &lt;level&gt;	            -tr
+  -TrustURLParameters &lt;true|false&gt;  -tu
   -UseManifestForTrust &lt;true|false&gt; -um
   -Version &lt;version&gt;	            -v
 
 Use "mage -help verbose" for more detailed help</source>
-        <target state="translated">Comandi
+        <target state="needs-review-translation">Comandi
   -New &lt;tipo_file&gt;	          -n
   -Update &lt;nome_file&gt;	          -u
   -Sign &lt;nome_file&gt;	          -s
@@ -333,6 +334,9 @@ Options:
       Example:
         -TrustLevel FullTrust
 
+  -TrustURLParameters &lt;true|false&gt;  -tu
+      Specifies if URL parameters will be trusted and passed to the application.
+            
   -UseManifestForTrust &lt;true|false&gt; -um
       Specifies if the application manifest will be used for certification and
       branding information.
@@ -342,7 +346,7 @@ Options:
       generated or updated.  Must be of the form "0.0.0.0".
       Example:
         -Version 1.2.3.2112</source>
-        <target state="translated">Comandi:
+        <target state="needs-review-translation">Comandi:
 
   -New &lt;tipo_file&gt;        -n
       Genera un nuovo manifesto dell'applicazione, manifesto di distribuzione o licenza di
@@ -652,6 +656,11 @@ Opzioni:
       <trans-unit id="InvalidTrustLevel">
         <source>Invalid trust level, must be either "LocalIntranet", "Internet", or "FullTrust" - "{0}"</source>
         <target state="translated">Livello di attendibilità non valido. Deve essere "LocalIntranet", "Internet" o "FullTrust" - "{0}"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidTrustURLParameters">
+        <source>The -TrustURLParameters option must be "true", "false", "t", or "f" - "{0}"</source>
+        <target state="new">The -TrustURLParameters option must be "true", "false", "t", or "f" - "{0}"</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidUrl">

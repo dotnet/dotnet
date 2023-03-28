@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="$(MicrosoftExtensionsDependencyModelVersion)" />
+    <PackageReference Include="NuGet.Protocol" Version="$(RefOnlyNugetProtocolVersion)" />
     <PackageReference Include="NuGet.ProjectModel" Version="$(RefOnlyNugetProjectModelVersion)" />
     <PackageReference Include="NuGet.Packaging" Version="$(RefOnlyNugetPackagingVersion)" />
     <PackageReference Include="System.Reflection.Metadata" Version="1.7.0" />
@@ -20,9 +21,6 @@
 
   <Choose>
     <When Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
-      <ItemGroup>
-        <Compile Include="net46/ProcessSharedFrameworkDeps.net46.cs" />
-      </ItemGroup>
       <ItemGroup>
         <Reference Include="Microsoft.Build.Framework" />
         <Reference Include="Microsoft.Build.Tasks.v4.0" />
