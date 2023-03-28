@@ -3,6 +3,7 @@
 // See the License.txt file in the project root for more information.
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace Microsoft.DiaSymReader
 {
@@ -18,8 +19,12 @@ namespace Microsoft.DiaSymReader
         Default = 0,
 
         /// <summary>
-        /// Use environment variable MICROSOFT_DIASYMREADER_NATIVE_ALT_LOAD_PATH to locate Microsoft.DiaSymReader.Native.{platform}.dll.
+        /// Use environment variable MICROSOFT_DIASYMREADER_NATIVE_ALT_LOAD_PATH, which specifies a load directory to locate Microsoft.DiaSymReader.Native.{platform}.dll
+        /// if it fails to load from <see cref="DllImportSearchPath.AssemblyDirectory"/> or <see cref="DllImportSearchPath.SafeDirectories"/>.
         /// </summary>
+        /// <remarks>
+        /// Loads the native library only from the alternative load directory if environment variable MICROSOFT_DIASYMREADER_NATIVE_USE_ALT_LOAD_PATH_ONLY is also set to 1.
+        /// </remarks>
         UseAlternativeLoadPath = 1 << 1,
 
         /// <summary>
