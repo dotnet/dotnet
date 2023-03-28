@@ -687,7 +687,7 @@ namespace Dotnet.Integration.Test
             }
         }
 
-        [PlatformFact(Platform.Windows)]
+        [PlatformFact(Platform.Windows, Skip = "https://github.com/NuGet/Home/issues/12503")]
         public void List_Sources_LocalizatedPackagesourceKeys_ConsideredDiffererent()
         {
             using (var pathContext = new SimpleTestPathContext())
