@@ -470,12 +470,17 @@ namespace NuGet.Commands
             if (restoreRequest.Project.RestoreMetadata.CentralPackageVersionOverrideDisabled)
             {
                 // Emit a error if VersionOverride was specified for a package reference but that functionality is disabled
+                bool hasVersionOverrides = false;
                 foreach (var item in dependenciesWithVersionOverride)
                 {
                     await _logger.LogAsync(RestoreLogMessage.CreateError(NuGetLogCode.NU1013, string.Format(CultureInfo.CurrentCulture, Strings.Error_CentralPackageVersions_VersionOverrideDisabled, item.Name)));
+                    hasVersionOverrides = true;
                 }
 
-                return false;
+                if (hasVersionOverrides)
+                {
+                    return false;
+                }
             }
 
             if (!restoreRequest.PackageSourceMapping.IsEnabled && httpSourcesCount > 1)

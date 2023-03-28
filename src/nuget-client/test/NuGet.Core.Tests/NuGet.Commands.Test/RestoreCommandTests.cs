@@ -2696,9 +2696,11 @@ namespace NuGet.Commands.Test
         /// </summary>
         /// <returns></returns>
         [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public async Task RestoreCommand_CentralVersion_ErrorWhenVersionOverrideUsedButIsDisabled(bool isCentralPackageVersionOverrideDisabled)
+        [InlineData(true, true)]
+        [InlineData(true, false)]
+        [InlineData(false, true)]
+        [InlineData(false, false)]
+        public async Task RestoreCommand_CentralVersion_ErrorWhenVersionOverrideUsedButIsDisabled(bool isCentralPackageVersionOverrideDisabled, bool isVersionOverrideUsed)
         {
             const string projectName = "TestProject";
 
@@ -2712,18 +2714,21 @@ namespace NuGet.Commands.Test
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, PackageSaveMode.Defaultv3, new SimpleTestPackageContext(packageName, "1.0.0"), new SimpleTestPackageContext(packageName, "2.0.0"));
 
-                var packageRefDependecyFoo = new LibraryDependency()
+                var packageRefDependencyFoo = new LibraryDependency()
                 {
                     LibraryRange = new LibraryRange(packageName, versionRange: null, typeConstraint: LibraryDependencyTarget.Package),
-                    VersionOverride = new VersionRange(NuGetVersion.Parse("2.0.0"))
                 };
+                if (isVersionOverrideUsed)
+                {
+                    packageRefDependencyFoo.VersionOverride = new VersionRange(NuGetVersion.Parse("2.0.0"));
+                }
 
                 var packageVersion = new CentralPackageVersion(packageName, VersionRange.Parse("1.0.0"));
 
                 TargetFrameworkInformation targetFrameworkInformation = CreateTargetFrameworkInformation(
                     new List<LibraryDependency>
                     {
-                        packageRefDependecyFoo
+                        packageRefDependencyFoo
                     },
                     new List<CentralPackageVersion>
                     {
@@ -2753,7 +2758,7 @@ namespace NuGet.Commands.Test
 
                 // Assert
 
-                if (isCentralPackageVersionOverrideDisabled)
+                if (isCentralPackageVersionOverrideDisabled && isVersionOverrideUsed)
                 {
                     Assert.False(result.Success);
 

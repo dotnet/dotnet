@@ -21,7 +21,7 @@ namespace NuGet.Tests.Apex
         {
         }
 
-        [NuGetWpfTheory]
+        [NuGetWpfTheory(Skip = "https://github.com/NuGet/Home/issues/11308")]
         [MemberData(nameof(GetPackageReferenceTemplates))]
         public async Task InstallPackageFromPMCWithNoAutoRestoreVerifyAssetsFileAsync(ProjectTemplate projectTemplate)
         {
