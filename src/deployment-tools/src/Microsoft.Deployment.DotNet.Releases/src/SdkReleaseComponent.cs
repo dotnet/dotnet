@@ -1,9 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Serialization;
+using System.Text.Json;
 
 namespace Microsoft.Deployment.DotNet.Releases
 {
@@ -13,7 +11,7 @@ namespace Microsoft.Deployment.DotNet.Releases
     public class SdkReleaseComponent : ReleaseComponent
     {
         /// <summary>
-        /// The version of C# supported by this SDK or <see langword="null"/>.
+        /// The C# language version supported by this SDK.
         /// </summary>
         public string CSharpVersion
         {
@@ -21,7 +19,7 @@ namespace Microsoft.Deployment.DotNet.Releases
         }
 
         /// <summary>
-        /// The F# version supported by this SDK or <see langword="null"/>.
+        /// The F# language version supported by this SDK.
         /// </summary>
         public string FSharpVersion
         {
@@ -75,23 +73,28 @@ namespace Microsoft.Deployment.DotNet.Releases
         }
 
         /// <summary>
-        /// The Visual Basic version supported by this SDK or <see langword="null"/>.
+        /// The Visual Basic language version supported by this SDK.
         /// </summary>
         public string VisualBasicVersion
         {
             get;
         }
 
-        internal SdkReleaseComponent(JToken token, ProductRelease release) : base(token, release)
+        /// <summary>
+        /// Creates a new <see cref="SdkReleaseComponent"/> instance.
+        /// </summary>
+        /// <param name="element">The JSON element of the component.</param>
+        /// <param name="release">The release to which the component belongs.</param>
+        internal SdkReleaseComponent(JsonElement element, ProductRelease release) : base(element, release)
         {
-            CSharpVersion = (string)token["csharp-version"];
-            FSharpVersion = (string)token["fsharp-version"]; 
-            VisualBasicVersion = (string)token["vb-version"];
-            RuntimeVersion = token["runtime-version"]?.ToObject<ReleaseVersion>(Utils.DefaultSerializer);
-            VisualStudioMacSupport = (string)token["vs-mac-support"];
-            VisualStudioMacVersion = (string)token["vs-mac-version"];
-            VisualStudioSupport = (string)token["vs-support"];
-            VisualStudioVersion = (string)token["vs-version"];
+            CSharpVersion = element.GetStringOrDefault("csharp-version");
+            FSharpVersion = element.GetStringOrDefault("fsharp-version");
+            VisualBasicVersion = element.GetStringOrDefault("vb-version");
+            RuntimeVersion = element.GetReleaseVersionOrDefault("runtime-version");
+            VisualStudioMacSupport = element.GetStringOrDefault("vs-mac-support");
+            VisualStudioMacVersion = element.GetStringOrDefault("vs-mac-version");
+            VisualStudioSupport = element.GetStringOrDefault("vs-support");
+            VisualStudioVersion = element.GetStringOrDefault("vs-version");
         }
     }
 }

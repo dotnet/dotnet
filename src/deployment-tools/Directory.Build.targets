@@ -11,12 +11,4 @@
   <Import Project="$(RepositoryEngineeringDir)python.targets" />
   <Import Project="Sdk.targets" Sdk="Microsoft.DotNet.Arcade.Sdk" Condition="'$(SkipImportArcadeSdkFromRoot)' != 'true'" />
 
-  <PropertyGroup>
-    <!--
-      Define this here (not just in Versions.props) because the SDK resets it
-      unconditionally in Microsoft.NETCoreSdk.BundledVersions.props.
-    -->
-    <NETCoreAppMaximumVersion>$(MajorVersion).$(MinorVersion)</NETCoreAppMaximumVersion>
-  </PropertyGroup>
-
 </Project>

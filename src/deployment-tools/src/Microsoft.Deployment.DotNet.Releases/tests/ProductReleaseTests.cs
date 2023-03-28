@@ -1,6 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.IO;
 using System.Linq;
 using Xunit;
 using System.Threading.Tasks;
@@ -47,10 +48,27 @@ namespace Microsoft.Deployment.DotNet.Releases.Tests
         [Fact]
         public async Task ItCanCreateASingleRelease()
         {
-            var releases = await Product.GetReleasesAsync(@"data\5.0\releases.json");
+            var releases = await Product.GetReleasesAsync(@"data\5.0\releases.json").ConfigureAwait(false);
 
-            Assert.Equal(new ReleaseVersion("5.0.0-preview.7"), releases[0].Version);
+            Assert.Equal(new ReleaseVersion("5.0.17"), releases[0].Version);
             Assert.Null(releases[0].Product);
+        }
+
+        [Fact]
+        public async Task ItCanParseTheLatestPublishedJson()
+        {
+            string tempPath = Path.GetRandomFileName();
+            var products = await ProductCollection.GetFromFileAsync(
+                Path.Combine(tempPath, "releases-index.json"), downloadLatest: true).ConfigureAwait(false);
+
+            foreach (var product in products)
+            {
+                await product.GetReleasesAsync(Path.Combine(tempPath, product.ProductVersion, "releases.json"), downloadLatest: true).ConfigureAwait(false);
+            }
+
+            // Nothing to assert, but we want to ensure there are no exceptions parsing all the latest data from the CDN
+
+            Directory.Delete(tempPath, recursive: true);
         }
     }
 }

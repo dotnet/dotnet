@@ -451,6 +451,11 @@ namespace Microsoft.Deployment.MageCLI
         InvalidUseManifestForTrust,
 
         /// <summary>
+        /// The -TrustURLParameters option must be "true", "false", "t", or "f" - "{0}"
+        /// </summary>
+        InvalidTrustURLParameters,
+
+        /// <summary>
         /// The IncludeProviderURL option is set to true, but no deployment provider Url is provided.
         /// </summary>
         MissingDeploymentProviderUrl,

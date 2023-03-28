@@ -67,4 +67,6 @@
   </Target>
 
   <Import Project="..\Directory.Build.targets" />
+  <Import Project="$(NuGetPackageRoot)microsoft.dotnet.build.tasks.feed\$(MicrosoftDotNetBuildTasksFeedVersion)\build\Microsoft.DotNet.Build.Tasks.Feed.targets"/>
+  
 </Project>

@@ -16,6 +16,11 @@ namespace Microsoft.Deployment.Utilities
         {
             public const UInt32 LOAD_LIBRARY_AS_DATAFILE = 0x00000002;
             public const int ERROR_SHARING_VIOLATION = -2147024864;
+            public const ushort IMAGE_FILE_MACHINE_ARM64 = 0xAA64;
+
+            [DllImport(nameof(Kernel32), SetLastError = true, CallingConvention = CallingConvention.Winapi)]
+            [return: MarshalAs(UnmanagedType.Bool)]
+            public static extern bool IsWow64Process2([In] IntPtr process, [Out] out ushort processMachine, [Out] out ushort nativeMachine);
 
             [DllImport(nameof(Kernel32), CharSet = CharSet.Unicode, SetLastError = true)]
             public static extern IntPtr BeginUpdateResourceW(String fileName, bool deleteExistingResource);

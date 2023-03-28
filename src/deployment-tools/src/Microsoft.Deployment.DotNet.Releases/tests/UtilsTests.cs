@@ -16,7 +16,7 @@ namespace Microsoft.Deployment.DotNet.Releases.Tests
         {
             ArgumentNullException e = Assert.Throws<ArgumentNullException>(() =>
             {
-                Utils.GetFileHash(null, SHA512Managed.Create());
+                Utils.GetFileHash(null, SHA512.Create());
             });
         }
 
@@ -25,10 +25,10 @@ namespace Microsoft.Deployment.DotNet.Releases.Tests
         {
             ArgumentException e = Assert.Throws<ArgumentException>(() =>
             {
-                Utils.GetFileHash("", SHA512Managed.Create());
+                Utils.GetFileHash("", SHA512.Create());
             });
 
-            Assert.Equal($"Value cannot be empty.{Environment.NewLine}Parameter name: fileName", e.Message);
+            Assert.Equal($"Value cannot be empty. (Parameter 'fileName')", e.Message);
         }
 
         [Fact]
@@ -39,7 +39,7 @@ namespace Microsoft.Deployment.DotNet.Releases.Tests
                 Utils.GetFileHash("File.txt", null);
             });
 
-            Assert.Equal($"Value cannot be null.{Environment.NewLine}Parameter name: hashAlgorithm", e.Message);
+            Assert.Equal($"Value cannot be null. (Parameter 'hashAlgorithm')", e.Message);
         }
 
         [Fact]
@@ -54,7 +54,7 @@ namespace Microsoft.Deployment.DotNet.Releases.Tests
 
             Uri sourceAddress = new Uri(Path.GetFullPath(sourceFile));
             string destinationFile = Path.GetFullPath(Path.GetTempFileName());
-            await Utils.DownloadFileAsync(sourceAddress, destinationFile);
+            await Utils.DownloadFileAsync(sourceAddress, destinationFile).ConfigureAwait(false);
 
             HashAlgorithm sha256 = SHA256.Create();
             string sourceHash = Utils.GetFileHash(sourceFile, sha256);

@@ -2,9 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
-using System.Collections.Generic;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+using System.Text.Json.Serialization;
 
 namespace Microsoft.Deployment.DotNet.Releases
 {
@@ -16,6 +14,8 @@ namespace Microsoft.Deployment.DotNet.Releases
         /// <summary>
         /// The identifier of the CVE.
         /// </summary>
+        [JsonPropertyName("cve-id")]
+        [JsonInclude]
         public string Id
         {
             get;
@@ -25,17 +25,12 @@ namespace Microsoft.Deployment.DotNet.Releases
         /// <summary>
         /// The URI pointing to a description of the vulnerability.
         /// </summary>
+        [JsonPropertyName("cve-url")]
+        [JsonInclude]
         public Uri DescriptionLink
         {
             get;
             private set;
-        }
-
-        [JsonConstructor]
-        internal Cve([JsonProperty(PropertyName = "cve-id")] string id, [JsonProperty(PropertyName = "cve-url")] string address)
-        {
-            Id = id;
-            DescriptionLink = new Uri(address);
         }
 
         /// <summary>
@@ -60,15 +55,12 @@ namespace Microsoft.Deployment.DotNet.Releases
         }
 
         /// <summary>
-        /// The default hash function.
+        /// Returns the hash code for this CVE.
         /// </summary>
         /// <returns>A hash code for the current object.</returns>
-        public override int GetHashCode()
-        {
-            int hashCode = 315393214;
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Id);
-            hashCode = hashCode * -1521134295 + EqualityComparer<Uri>.Default.GetHashCode(DescriptionLink);
-            return hashCode;
-        }
+        public override int GetHashCode() => Id.GetHashCode() ^ DescriptionLink.GetHashCode();
+
+        internal static Cve Create(string id, string address) =>
+            new Cve { Id = id, DescriptionLink = new Uri(address) };
     }
 }

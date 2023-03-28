@@ -2,8 +2,9 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Newtonsoft.Json.Linq;
+using System.Text.Json;
 
 namespace Microsoft.Deployment.DotNet.Releases
 {
@@ -34,10 +35,16 @@ namespace Microsoft.Deployment.DotNet.Releases
             get;
         }
 
-        internal AspNetCoreReleaseComponent(JToken token, ProductRelease release) : base(token, release)
+        /// <summary>
+        /// Creates a new <see cref="AspNetCoreReleaseComponent"/> instance.
+        /// </summary>
+        /// <param name="element">The JSON element of the component.</param>
+        /// <param name="release">The release to which the component belongs.</param>
+        internal AspNetCoreReleaseComponent(JsonElement element, ProductRelease release) : base(element, release)
         {
-            AspNetCoreModuleVersions = new ReadOnlyCollection<Version>(token["version-aspnetcoremodule"]?.ToObject<Version[]>(Utils.DefaultSerializer) ?? new Version[] { });
-            VisualStudioVersion = (string)token["vs-version"];
+            AspNetCoreModuleVersions = element.TryGetProperty("version-aspnetcoremodule", out JsonElement ancmVersionValue) && ancmVersionValue.ValueKind != JsonValueKind.Null ?
+                new ReadOnlyCollection<Version>(JsonSerializer.Deserialize<Version[]>(ancmVersionValue, SerializerOptions.Default)) : new ReadOnlyCollection<Version>(new List<Version>());
+            VisualStudioVersion = element.GetStringOrDefault("vs-version");
         }
     }
 }

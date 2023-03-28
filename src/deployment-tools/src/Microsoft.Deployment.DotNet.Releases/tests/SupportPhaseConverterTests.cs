@@ -1,7 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Newtonsoft.Json;
+using System.Text.Json;
 using Xunit;
 
 namespace Microsoft.Deployment.DotNet.Releases.Tests
@@ -19,13 +19,13 @@ namespace Microsoft.Deployment.DotNet.Releases.Tests
 
         [Theory]
         [InlineData("eoL", SupportPhase.EOL)]
-        [InlineData("LTS", SupportPhase.LTS)]
-        [InlineData("current", SupportPhase.Current)]
-        [InlineData("rC", SupportPhase.RC)]
+        [InlineData("Active", SupportPhase.Active)]
+        [InlineData("MAINTENANCE", SupportPhase.Maintenance)]
+        [InlineData("go-livE", SupportPhase.GoLive)]
         public void ItIsCaseInsenitive(string supportPhaseValue, SupportPhase expectedSupportPhase)
         {
             var json = $@"{{""SupportPhase"":""{supportPhaseValue}""}}";
-            var testObject = JsonConvert.DeserializeObject<TestObject>(json, new SupportPhaseConverter());
+            var testObject = JsonSerializer.Deserialize<TestObject>(json, SerializerOptions.Default);
 
             Assert.Equal(expectedSupportPhase, testObject.SupportPhase);
         }
@@ -33,10 +33,12 @@ namespace Microsoft.Deployment.DotNet.Releases.Tests
         [Theory]
         [InlineData("X63")]
         [InlineData("")]
+        [InlineData(null)]
+        [InlineData("current")]
         public void ItReturnsUnknownIfParsingFails(string supportPhaseValue)
         {
             var json = $@"{{""SupportPhase"":""{supportPhaseValue}""}}";
-            var testObject = JsonConvert.DeserializeObject<TestObject>(json, new SupportPhaseConverter());
+            var testObject = JsonSerializer.Deserialize<TestObject>(json, SerializerOptions.Default);
 
             Assert.Equal(SupportPhase.Unknown, testObject.SupportPhase);
         }

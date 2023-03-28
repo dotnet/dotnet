@@ -167,6 +167,7 @@ Options
   -TimeStampUri &lt;uri&gt;               -ti
   -ToFile	&lt;file_name&gt;	    -t
   -TrustLevel &lt;level&gt;	            -tr
+  -TrustURLParameters &lt;true|false&gt;  -tu
   -UseManifestForTrust &lt;true|false&gt; -um
   -Version &lt;version&gt;	            -v
 
@@ -344,6 +345,9 @@ Options:
       Example:
         -TrustLevel FullTrust
 
+  -TrustURLParameters &lt;true|false&gt;  -tu
+      Specifies if URL parameters will be trusted and passed to the application.
+            
   -UseManifestForTrust &lt;true|false&gt; -um
       Specifies if the application manifest will be used for certification and
       branding information.
@@ -436,6 +440,9 @@ Options:
   </data>
   <data name="InvalidUrl" xml:space="preserve">
     <value>The URL is not of the proper format - "{0}"</value>
+  </data>
+  <data name="InvalidTrustURLParameters" xml:space="preserve">
+    <value>The -TrustURLParameters option must be "true", "false", "t", or "f" - "{0}"</value>
   </data>
   <data name="InvalidUseManifestForTrust" xml:space="preserve">
     <value>The -UseManifestForTrust option must be "true", "false", "t", or "f" - "{0}"</value>

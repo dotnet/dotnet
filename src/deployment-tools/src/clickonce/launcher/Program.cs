@@ -65,6 +65,10 @@ namespace Microsoft.Deployment.Launcher
                 throw new LauncherException(Constants.ErrorUnsupportedExtension, appToLaunchFullPath);
             }
 
+            // Add ClickOnce properties from ApplicationDeployment object
+            // as environment variables, to be passed to child process.
+            AddClickOnceEnvironmentVariables();
+
             ProcessHelper ph = new ProcessHelper(exe, args);
             ph.StartProcessWithRetries();
         }
@@ -124,6 +128,43 @@ namespace Microsoft.Deployment.Launcher
             {
                 Logger.StartLogging(path);
             }
+        }
+
+        /// <summary>
+        /// Add ClickOnce properties from ApplicationDeployment object
+        /// as environment variables, to be passed to child process.
+        /// 
+        /// Add some extra variables, like Launcher version.
+        /// </summary>
+        private static void AddClickOnceEnvironmentVariables()
+        {
+            if (ApplicationDeployment.IsNetworkDeployed)
+            {
+                // ApplicationDeployment properties
+                ApplicationDeployment ad = ApplicationDeployment.CurrentDeployment;
+                Environment.SetEnvironmentVariable("ClickOnce_ActivationUri", ad.ActivationUri?.ToString());
+                Environment.SetEnvironmentVariable("ClickOnce_CurrentVersion", ad.CurrentVersion?.ToString());
+                Environment.SetEnvironmentVariable("ClickOnce_DataDirectory", ad.DataDirectory?.ToString());
+                Environment.SetEnvironmentVariable("ClickOnce_IsFirstRun", ad.IsFirstRun.ToString());
+                Environment.SetEnvironmentVariable("ClickOnce_TimeOfLastUpdateCheck", ad.TimeOfLastUpdateCheck.ToString());
+                Environment.SetEnvironmentVariable("ClickOnce_UpdatedApplicationFullName", ad.UpdatedApplicationFullName?.ToString());
+                Environment.SetEnvironmentVariable("ClickOnce_UpdatedVersion", ad.UpdatedVersion?.ToString());
+                Environment.SetEnvironmentVariable("ClickOnce_UpdateLocation", ad.UpdateLocation?.ToString());
+
+                // ClickOnce ActivationData
+                string[] activationData = AppDomain.CurrentDomain?.SetupInformation?.ActivationArguments?.ActivationData;
+                if (activationData != null && activationData.Length > 0)
+                {
+                    Environment.SetEnvironmentVariable("ClickOnce_ActivationData_Count", activationData.Length.ToString());
+                    for (int i = 0; i < activationData.Length; i++)
+                    {
+                        Environment.SetEnvironmentVariable($"ClickOnce_ActivationData_{i}", activationData[i]);
+                    }
+                }
+            }
+
+            Environment.SetEnvironmentVariable("ClickOnce_IsNetworkDeployed", ApplicationDeployment.IsNetworkDeployed.ToString());
+            Environment.SetEnvironmentVariable("ClickOnce_LauncherVersion", System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString());
         }
 
         /// <summary>

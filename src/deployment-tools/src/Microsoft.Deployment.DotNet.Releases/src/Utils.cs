@@ -4,32 +4,20 @@
 using System;
 using System.IO;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
+
+#pragma warning disable CA1810
 
 namespace Microsoft.Deployment.DotNet.Releases
 {
     /// <summary>
-    /// Utitlity and help methods.
+    /// Utility and helper methods.
     /// </summary>
     internal class Utils
     {
-        /// <summary>
-        /// Gets the default <see cref="JsonSerializerSettings"/> to use.
-        /// </summary>
-        internal static JsonSerializerSettings DefaultSerializerSettings
-        {
-            get;
-        }
-
-        /// <summary>
-        /// Gets the default <see cref="JsonSerializer"/> to use.
-        /// </summary>
-        internal static JsonSerializer DefaultSerializer
-        {
-            get;
-        }
+        internal static readonly HttpClient s_httpClient;
 
         /// <summary>
         /// Determines if a local file is the latest version compared to an online copy.
@@ -39,10 +27,8 @@ namespace Microsoft.Deployment.DotNet.Releases
         /// <returns><see langword="true"/> if the local file is the latest; <see langword="false"/> otherwise.</returns>
         internal static async Task<bool> IsLatestFileAsync(string fileName, Uri address)
         {
-            using var httpClient = new HttpClient();
-
             var httpRequest = new HttpRequestMessage(HttpMethod.Head, address);
-            HttpResponseMessage httpResponse = await httpClient.SendAsync(httpRequest);
+            HttpResponseMessage httpResponse = await s_httpClient.SendAsync(httpRequest).ConfigureAwait(false);
 
             httpResponse.EnsureSuccessStatusCode();
 
@@ -71,16 +57,15 @@ namespace Microsoft.Deployment.DotNet.Releases
             {
                 using Stream source = File.Open(address.LocalPath, FileMode.Open, FileAccess.Read, FileShare.Read);
                 using Stream destination = File.Create(fileName);
-                await source.CopyToAsync(destination);
+                await source.CopyToAsync(destination).ConfigureAwait(false);
             }
             else
             {
-                using var httpClient = new HttpClient();
-                HttpResponseMessage httpResponse = await httpClient.GetAsync(address);
+                HttpResponseMessage httpResponse = await s_httpClient.GetAsync(address).ConfigureAwait(false);
                 httpResponse.EnsureSuccessStatusCode();
 
-                using var fileStream = File.Create(fileName);
-                await httpResponse.Content.CopyToAsync(fileStream);
+                using FileStream stream = File.Create(fileName);
+                await httpResponse.Content.CopyToAsync(stream).ConfigureAwait(false);
             }
         }
 
@@ -115,7 +100,7 @@ namespace Microsoft.Deployment.DotNet.Releases
                 throw new FileNotFoundException(string.Format(ReleasesResources.FileNotFound, fileName));
             }
 
-            using var stream = File.OpenRead(fileName);
+            using FileStream stream = File.OpenRead(fileName);
             byte[] checksum = hashAlgorithm.ComputeHash(stream);
 
             return BitConverter.ToString(checksum).Replace("-", "").ToLowerInvariant();
@@ -154,27 +139,21 @@ namespace Microsoft.Deployment.DotNet.Releases
                     throw new FileNotFoundException(string.Format(ReleasesResources.FileNotFound, path));
                 }
 
-                await DownloadFileAsync(address, path);
+                await DownloadFileAsync(address, path).ConfigureAwait(false);
             }
-            else if (downloadLatest && !await IsLatestFileAsync(path, address))
+            else if (downloadLatest && !await IsLatestFileAsync(path, address).ConfigureAwait(false))
             {
-                await DownloadFileAsync(address, path);
+                await DownloadFileAsync(address, path).ConfigureAwait(false);
             }
         }
 
         static Utils()
         {
-            DefaultSerializerSettings = new JsonSerializerSettings
+            s_httpClient = new HttpClient();
+            s_httpClient.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue
             {
-                DateFormatHandling = DateFormatHandling.MicrosoftDateFormat,
-                NullValueHandling = NullValueHandling.Ignore,
-                Converters =
-                {
-                    new ReleaseVersionConverter()
-                }
+                NoCache = true
             };
-
-            DefaultSerializer = JsonSerializer.CreateDefault(DefaultSerializerSettings);
         }
     }
 }

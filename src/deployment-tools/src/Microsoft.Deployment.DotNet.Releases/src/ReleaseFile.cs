@@ -2,11 +2,10 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 namespace Microsoft.Deployment.DotNet.Releases
 {
@@ -15,11 +14,13 @@ namespace Microsoft.Deployment.DotNet.Releases
     /// </summary>
     public class ReleaseFile : IEquatable<ReleaseFile>
     {
-        private static readonly SHA512 s_defaultHashAlgorithm = SHA512Managed.Create();
+        private static readonly SHA512 s_defaultHashAlgorithm = SHA512.Create();
 
         /// <summary>
         /// The URL from where to download the file.
         /// </summary>
+        [JsonPropertyName("url")]
+        [JsonInclude]
         public Uri Address
         {
             get;
@@ -29,12 +30,13 @@ namespace Microsoft.Deployment.DotNet.Releases
         /// <summary>
         /// The filename and extension of this <see cref="ReleaseFile"/>.
         /// </summary>
-        [JsonIgnore]
         public string FileName => Path.GetFileName(Address.LocalPath);
 
         /// <summary>
         /// The <see cref="SHA512"/> hash of the file.
         /// </summary>
+        [JsonPropertyName("hash")]
+        [JsonInclude]
         public string Hash
         {
             get;
@@ -44,6 +46,8 @@ namespace Microsoft.Deployment.DotNet.Releases
         /// <summary>
         /// The version agnostic name and extension of the file.
         /// </summary>
+        [JsonPropertyName("name")]
+        [JsonInclude]
         public string Name
         {
             get;
@@ -53,23 +57,12 @@ namespace Microsoft.Deployment.DotNet.Releases
         /// <summary>
         /// The runtime identifier associated with the file.
         /// </summary>
+        [JsonPropertyName("rid")]
+        [JsonInclude]
         public string Rid
         {
             get;
             private set;
-        }
-
-        [JsonConstructor]
-        internal ReleaseFile(
-            [JsonProperty(PropertyName = "hash")] string hash,
-            [JsonProperty(PropertyName = "name")] string name,
-            [JsonProperty(PropertyName = "rid")] string rid,
-            [JsonProperty(PropertyName = "url")] string address)
-        {
-            Hash = hash;
-            Name = name;
-            Rid = rid;
-            Address = new Uri(address);
         }
 
         /// <summary>
@@ -96,7 +89,7 @@ namespace Microsoft.Deployment.DotNet.Releases
 
             // If the destination file doesn't exist we can skip using an actual temporary file.
             string tempPath = !File.Exists(destinationPath) ? destinationPath : Path.GetTempFileName();
-            await Utils.DownloadFileAsync(Address, tempPath);
+            await Utils.DownloadFileAsync(Address, tempPath).ConfigureAwait(false);
 
             // Most of the files are large since they represent full installations of .NET/.NET Core. They can
             // easily be 100MB+ so we won't verify the hash in memory.
@@ -141,17 +134,13 @@ namespace Microsoft.Deployment.DotNet.Releases
         }
 
         /// <summary>
-        /// The default hash function.
+        /// Returns the hash code for this release file.
         /// </summary>
         /// <returns>A hash code for the current object.</returns>
-        public override int GetHashCode()
-        {
-            int hashCode = -28983843;
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Hash);
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Name);
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Rid);
-            hashCode = hashCode * -1521134295 + EqualityComparer<Uri>.Default.GetHashCode(Address);
-            return hashCode;
-        }
+        public override int GetHashCode() =>
+            Hash.GetHashCode() ^ Name.GetHashCode() ^ Rid.GetHashCode() ^ Address.GetHashCode();
+
+        internal static ReleaseFile Create(string hash, string name, string rid, string address) =>
+            new ReleaseFile { Hash = hash, Name = name, Rid = rid, Address = new Uri(address) };
     }
 }
