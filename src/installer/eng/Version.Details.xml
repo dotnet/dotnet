@@ -63,7 +63,7 @@
     <Dependency Name="Microsoft.AspNetCore.App.Runtime.win-x64" Version="8.0.0-preview.4.23177.14" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://github.com/dotnet/aspnetcore</Uri>
       <Sha>d4be4957c24c7c8b745ade4cbaf290ad9cad1ad2</Sha>
-      <SourceBuildTarball RepoName="aspnetcore" ManagedOnly="true" />
+      <SourceBuild RepoName="aspnetcore" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="VS.Redist.Common.AspNetCore.SharedFramework.x64.8.0" Version="8.0.0-preview.4.23177.14" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://github.com/dotnet/aspnetcore</Uri>
@@ -154,7 +154,7 @@
     <Dependency Name="Microsoft.Build" Version="17.6.0-preview-23174-01" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://github.com/dotnet/msbuild</Uri>
       <Sha>e7de1330724224a542668e1ef82c997613c7080c</Sha>
-      <SourceBuildTarball RepoName="msbuild" ManagedOnly="true" />
+      <SourceBuild RepoName="msbuild" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="NuGet.Build.Tasks" Version="6.6.0-preview.3.57" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://github.com/nuget/nuget.client</Uri>
@@ -221,7 +221,7 @@
     <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.23179.1">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
       <Sha>bc5210a7b68c43bcf9d9687b9268a4665126c583</Sha>
-      <SourceBuildTarball RepoName="source-build-reference-packages" ManagedOnly="true" />
+      <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.SourceLink.GitHub" Version="1.2.0-beta-23172-02" CoherentParentDependency="Microsoft.DotNet.Arcade.Sdk">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
