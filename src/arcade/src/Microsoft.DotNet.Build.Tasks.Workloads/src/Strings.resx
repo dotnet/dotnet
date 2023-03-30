@@ -171,6 +171,9 @@
   <data name="UnknownWorkloadKind" xml:space="preserve">
     <value>Unknown workload kind: {0}.</value>
   </data>
+  <data name="WorkloadComponentExists" xml:space="preserve">
+    <value>Duplicate workload ID: {0}. A SWIX component, {1}, with the same workload ID already exists.</value>
+  </data>
   <data name="WorkloadDefinitionDoesNotSupportWindows" xml:space="preserve">
     <value>{0} does not support any Windows platforms and will be skipped. Supported platforms: {1}.</value>
   </data>

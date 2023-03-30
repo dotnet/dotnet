@@ -14,6 +14,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
         public static readonly string Description = nameof(Description);
         public static readonly string Filename = nameof(Filename);
         public static readonly string FullPath = nameof(FullPath);
+        public static readonly string IsPreview = nameof(IsPreview);
         public static readonly string JsonProperties = nameof(JsonProperties);
 
         /// <summary>

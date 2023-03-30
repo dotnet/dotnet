@@ -50,8 +50,9 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
         /// </summary>
         /// <param name="id">The identifier to convert to a safe identifier</param>
         /// <returns>The safe identifier.</returns>
-        internal static string ToSafeId(string id) =>
-            id.Replace("-", ".").Replace(" ", ".").Replace("_", ".");
+        internal static string ToSafeId(string id, string suffix = null) =>
+            id.Replace("-", ".").Replace(" ", ".").Replace("_", ".")+
+            (string.IsNullOrWhiteSpace(suffix) ? null : $".{suffix}");
 
         /// <summary>
         /// Replaces all the tokens in a file using the provided dictionary. The dictionary keys define the tokens and

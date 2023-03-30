@@ -358,15 +358,21 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
                             // Finally, add a component for the workload in Visual Studio.
                             SwixComponent component = SwixComponent.Create(manifestPackage.SdkFeatureBand, workload, manifest, packGroupId,
                                 ComponentResources, ShortNames);
+                            // Create an additional component for shipping previews
+                            SwixComponent previewComponent = SwixComponent.Create(manifestPackage.SdkFeatureBand, workload, manifest, packGroupId,
+                                ComponentResources, ShortNames, "pre");
 
                             // Check for duplicates, e.g. manifests that were copied without changing workload definition IDs and
                             // provide a more usable error message so users can track down the duplication.
-                            if (swixComponents.Contains(component))
+                            if (!swixComponents.Add(component))
                             {
-                                Log.LogError($"Duplicate workload ID: {workload.Id}. A SWIX component with the same workload ID already exists.");
+                                Log.LogError(Strings.WorkloadComponentExists, workload.Id, component.Name);
                             }
 
-                            swixComponents.Add(component);
+                            if (!swixComponents.Add(previewComponent))
+                            {
+                                Log.LogError(Strings.WorkloadComponentExists, workload.Id, previewComponent.Name);
+                            }
                         }
                     }
                 }
@@ -408,6 +414,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
                                 ITaskItem swixProjectItem = new TaskItem(swixProj);
                                 swixProjectItem.SetMetadata(Metadata.SdkFeatureBand, $"{sdkFeatureBand}");
                                 swixProjectItem.SetMetadata(Metadata.PackageType, DefaultValues.PackageTypeMsiPack);
+                                swixProjectItem.SetMetadata(Metadata.IsPreview, "false");
 
                                 lock (swixProjectItems)
                                 {
@@ -456,6 +463,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
                                     ITaskItem swixProjectItem = new TaskItem(swixProj);
                                     swixProjectItem.SetMetadata(Metadata.SdkFeatureBand, $"{manifestPackage.SdkFeatureBand}");
                                     swixProjectItem.SetMetadata(Metadata.PackageType, DefaultValues.PackageTypeMsiPack);
+                                    swixProjectItem.SetMetadata(Metadata.IsPreview, "false");
 
                                     lock (swixProjectItems)
                                     {
@@ -483,6 +491,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
                         ITaskItem swixProjectItem = new TaskItem(swixProject.Create());
                         swixProjectItem.SetMetadata(Metadata.SdkFeatureBand, $"{((WorkloadManifestPackage)msi.Package).SdkFeatureBand}");
                         swixProjectItem.SetMetadata(Metadata.PackageType, DefaultValues.PackageTypeMsiManifest);
+                        swixProjectItem.SetMetadata(Metadata.IsPreview, "false");
 
                         lock (swixProjectItems)
                         {
@@ -509,6 +518,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
                     ITaskItem swixProjectItem = new TaskItem(swixComponentProject.Create());
                     swixProjectItem.SetMetadata(Metadata.SdkFeatureBand, $"{swixComponent.SdkFeatureBand}");
                     swixProjectItem.SetMetadata(Metadata.PackageType, DefaultValues.PackageTypeComponent);
+                    swixProjectItem.SetMetadata(Metadata.IsPreview, swixComponent.Name.EndsWith(".pre").ToString().ToLowerInvariant());
 
                     lock (swixProjectItems)
                     {

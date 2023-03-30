@@ -148,7 +148,7 @@ secrets:
           name: dn-bot-account-redmond
       name: microsoft-symbol-server-pat
       organizations: microsoftpublicsymbols
-      scopes: packaging_write  
+      scopes: symbols_write  
 
   symweb-symbol-server-pat:
     type: azure-devops-access-token
@@ -159,7 +159,7 @@ secrets:
           name: dn-bot-account-redmond
       name: dn-symweb-symbol-server-pat
       organizations: microsoft
-      scopes: packaging_write 
+      scopes: symbols_write 
 
   dotnetfeedmsrc-storage-access-key-1:
     type: text
