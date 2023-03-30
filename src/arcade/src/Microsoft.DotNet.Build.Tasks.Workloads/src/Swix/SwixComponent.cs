@@ -176,7 +176,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Swix
         /// <returns>A SWIX component.</returns>
         public static SwixComponent Create(ReleaseVersion sdkFeatureBand, WorkloadDefinition workload, WorkloadManifest manifest,
             string? packGroupId,
-            ITaskItem[]? componentResources = null, ITaskItem[]? shortNames = null)
+            ITaskItem[]? componentResources = null, ITaskItem[]? shortNames = null, string? componentSuffix = null)
         {
             ITaskItem? resourceItem = componentResources?.Where(r => string.Equals(r.ItemSpec, workload.Id)).FirstOrDefault();
 
@@ -188,7 +188,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Swix
 
             // Since workloads only define a description, if no custom resources were provided, both the title and description of
             // the SWIX component will default to the workload description. 
-            SwixComponent component = new(sdkFeatureBand, Utils.ToSafeId(workload.Id),
+            SwixComponent component = new(sdkFeatureBand, Utils.ToSafeId(workload.Id, componentSuffix),
                 resourceItem != null && !string.IsNullOrEmpty(resourceItem.GetMetadata(Metadata.Title)) ? resourceItem.GetMetadata(Metadata.Title) : workload.Description ?? throw new Exception(Strings.ComponentTitleCannotBeNull),
                 resourceItem != null && !string.IsNullOrEmpty(resourceItem.GetMetadata(Metadata.Description)) ? resourceItem.GetMetadata(Metadata.Description) : workload.Description ?? throw new Exception(Strings.ComponentDescriptionCannotBeNull),
                 componentVersion, workload.IsAbstract,
@@ -199,7 +199,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Swix
             // processing direct pack dependencies.
             foreach (WorkloadId dependency in workload.Extends ?? Enumerable.Empty<WorkloadId>())
             {
-                component.AddDependency(Utils.ToSafeId(dependency), s_v1);
+                component.AddDependency(Utils.ToSafeId(dependency, componentSuffix), s_v1);
             }
 
             // TODO: Check for missing packs

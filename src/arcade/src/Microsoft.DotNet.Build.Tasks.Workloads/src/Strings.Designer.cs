@@ -97,7 +97,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Components must have define at lease on category..
+        ///   Looks up a localized string similar to Components must define at least one category..
         /// </summary>
         internal static string ComponentCategoryCannotBeNull {
             get {
@@ -219,6 +219,15 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads {
         internal static string UnknownWorkloadKind {
             get {
                 return ResourceManager.GetString("UnknownWorkloadKind", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Duplicate workload ID: {0}. A SWIX component, {1}, with the same workload ID already exists..
+        /// </summary>
+        internal static string WorkloadComponentExists {
+            get {
+                return ResourceManager.GetString("WorkloadComponentExists", resourceCulture);
             }
         }
         
