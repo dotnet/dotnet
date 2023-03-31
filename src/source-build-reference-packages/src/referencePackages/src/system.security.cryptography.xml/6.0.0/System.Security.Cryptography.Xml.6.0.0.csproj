@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net461;net6.0;netstandard2.0</TargetFrameworks>
+    <AssemblyName>System.Security.Cryptography.Xml</AssemblyName>
+    <ProjectTemplateVersion>2</ProjectTemplateVersion>
+    <StrongNameKeyId>Open</StrongNameKeyId>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net461'">
+    <PackageReference Include="System.Security.AccessControl" Version="6.0.0" />
+    <Reference Include="System.Security" />
+  </ItemGroup>
+
+  <!-- Other ref packs / repo's that depend on *.Cryptography.Pkcs utilize 6.0.1 (security patch of 6.0.0) -->
+  <!-- This is the only place to use 6.0.0, so we manually bump it to 6.0.1 here and in the *.nuspec-->
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+    <PackageReference Include="System.Security.AccessControl" Version="6.0.0" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="6.0.1" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="System.Security.AccessControl" Version="6.0.0" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="6.0.1" />
+    <PackageReference Include="System.Memory" Version="4.5.4" />
+  </ItemGroup>
+
+</Project>

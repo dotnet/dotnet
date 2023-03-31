@@ -295,6 +295,7 @@
                    IncludeTargetFrameworks="$(PackageTargetFrameworks)"
                    ExcludeTargetFrameworks="$(ExcludeTargetFrameworks)"
                    RemoveIcon="true"
+                   RemoveReadMe="true"
                    RemoveRuntimeSpecificDependencies="true" />
 
     <Message Text="$(MSBuildProjectName) -> $(NuspecTargetPath)"
