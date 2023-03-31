@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
   <metadata minClientVersion="2.12">
     <id>System.Security.AccessControl</id>
@@ -44,7 +44,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
       <group targetFramework=".NETStandard2.0">
         <dependency id="System.Security.Principal.Windows" version="5.0.0" />
       </group>
-      <group targetFramework="UAP10.0.16299" />
     </dependencies>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.6.1" />

@@ -24,6 +24,8 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
 
         public bool RemoveIcon { get; set; }
 
+        public bool RemoveReadMe { get; set; }
+
         public bool RemoveRuntimeSpecificDependencies { get; set; }
 
         public override bool Execute()
@@ -62,6 +64,11 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
                 nuspecContent = GetIconRegex().Replace(nuspecContent, string.Empty);
             }
 
+            if (RemoveReadMe)
+            {
+                nuspecContent = GetReadMeRegex().Replace(nuspecContent, string.Empty);
+            }
+
             if (RemoveRuntimeSpecificDependencies)
             {
                 nuspecContent = GetRuntimeSpecificDependenciesRegex().Replace(nuspecContent, string.Empty);
@@ -73,6 +80,9 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
 
         [GeneratedRegex(" *<icon>.+</icon>\r?\n")]
         private static partial Regex GetIconRegex();
+
+        [GeneratedRegex(" *<readme>.+</readme>\r?\n")]
+        private static partial Regex GetReadMeRegex();
 
         [GeneratedRegex(@" *<dependency id=""runtime.native.+?"".+? />\r?\n")]
         private static partial Regex GetRuntimeSpecificDependenciesRegex();

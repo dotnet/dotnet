@@ -7,10 +7,15 @@
   <ItemGroup Condition="'$(GeneratePackageSource)' != 'true'">
     <!--
       The following DependencyPackageProjects are ones on which other packages depend on that do
-      not exist in the source-build package cache.  Adding them to this ItemGroup will ensure that
-      they get built first and in order of inclusion.  Also, packages included here will be added
+      not exist in the source-build package cache. Adding them to this ItemGroup will ensure that
+      they get built first and in order of inclusion. Also, packages included here will be added
       to the source-build package cache when building with source-build to allow them to be
       considered in prebuilt reporting.
+
+      All newly added packages should be grouped together at the end of the list. The reason this is 
+      important is that when previous source-built artifacts are updated, the entries for the new projects 
+      it includes can be removed. New PRs may miss that cut and if they are not grouped at the bottom,
+      this management becomes more difficult.
 
       Format:
       <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Extensions.Options.5.0.0.csproj" />
@@ -25,6 +30,24 @@
     <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Text.Json.6.0.0.csproj" />
 
     <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Text.Encoding.CodePages.6.0.0.csproj" />
+    
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Win32.SystemEvents.6.0.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Drawing.Common.6.0.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Windows.Extensions.6.0.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Formats.Asn1.6.0.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Security.Cryptography.Pkcs.6.0.1.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Security.Cryptography.Xml.6.0.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Security.Permissions.6.0.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Security.Cryptography.ProtectedData.6.0.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Configuration.ConfigurationManager.6.0.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Threading.Tasks.Dataflow.6.0.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Reflection.MetadataLoadContext.6.0.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Resources.Extensions.6.0.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.CodeDom.6.0.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.IO.Redist.6.0.0.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.NET.StringTools.17.3.2.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Build.Framework.17.3.2.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Build.Utilities.Core.17.3.2.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(BuildDependencyPackageProjects)' == 'true'">
