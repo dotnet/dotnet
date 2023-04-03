@@ -106,9 +106,8 @@ jobs:
   - ${{ if parameters.buildFromArchive }}:
     - script: |
         set -ex
-        "${{ parameters.vmrPath }}/eng/pack-sources.sh" -o "$(Build.StagingDirectory)/dotnet-sources.tar.gz"
-        tar -xf dotnet-sources.tar.gz
-        mv "dotnet-$(Build.SourceVersion)" "$(sourcesPath)"
+        cp -r "${{ parameters.vmrPath }}" "$(sourcesPath)"
+        rm -rf "$(sourcesPath)/.git"
       displayName: Export VMR sources
       workingDirectory: $(Build.StagingDirectory)
 
@@ -182,7 +181,12 @@ jobs:
         echo "##vso[task.setvariable variable=additionalBuildArgs]--with-sdk /vmr/.dotnet"
       fi
 
-      docker run --rm -v "$(sourcesPath):/vmr" -w /vmr ${{ parameters.container }} ./prep.sh ${customPrepArgs}
+      if [[ '${{ parameters.buildFromArchive }}' == 'True' ]]; then
+        customPrepArgs="$customPrepArgs --source-repository https://github.com/dotnet/dotnet"
+        customPrepArgs="$customPrepArgs --source-version $(git -C "${{ parameters.vmrPath }}" rev-parse HEAD)"
+      fi
+
+      docker run --rm -v "$(sourcesPath):/vmr" -w /vmr ${{ parameters.container }} ./prep.sh $customPrepArgs
     displayName: Prep the Build
 
   - script: |
@@ -207,7 +211,7 @@ jobs:
         customBuildArgs="$customBuildArgs --poison"
       fi
 
-      docker run --rm -v "$(sourcesPath):/vmr" -w /vmr ${customRunArgs} ${{ parameters.container }} ./build.sh --clean-while-building $(additionalBuildArgs) ${customBuildArgs}
+      docker run --rm -v "$(sourcesPath):/vmr" -w /vmr $customRunArgs ${{ parameters.container }} ./build.sh --clean-while-building $(additionalBuildArgs) $customBuildArgs
     displayName: Build
 
   - script: |
