@@ -1,5 +1,5 @@
 ////#if (IndividualLocalAuth)
-import ApiAuthorzationRoutes from './components/api-authorization/ApiAuthorizationRoutes';
+import ApiAuthorizationRoutes from './components/api-authorization/ApiAuthorizationRoutes';
 ////#endif
 import { Counter } from "./components/Counter";
 import { FetchData } from "./components/FetchData";
@@ -25,7 +25,7 @@ const AppRoutes = [
     requireAuth: true,
     element: <FetchData />
   },
-  ...ApiAuthorzationRoutes
+  ...ApiAuthorizationRoutes
 ////#endif
 ];
 
