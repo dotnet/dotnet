@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard1.3</TargetFrameworks>
+    <AssemblyName>Microsoft.CodeAnalysis.CSharp</AssemblyName>
+    <ProjectTemplateVersion>2</ProjectTemplateVersion>
+    <StrongNameKeyId>MicrosoftShared</StrongNameKeyId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\microsoft.codeanalysis.common\2.9.0\Microsoft.CodeAnalysis.Common.2.9.0.csproj" />
+  </ItemGroup>
+
+</Project>
