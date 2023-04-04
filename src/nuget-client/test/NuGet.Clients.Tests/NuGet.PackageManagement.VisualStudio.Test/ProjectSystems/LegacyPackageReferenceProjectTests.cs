@@ -1430,7 +1430,6 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 Assert.True(result.Success);
                 ProjectPackages packages = await testProject.GetInstalledAndTransitivePackagesAsync(includeTransitiveOrigins: false, CancellationToken.None);
                 DateTime lastWriteTime = File.GetLastWriteTimeUtc(lockFilePath);
-                File.WriteAllText(lockFilePath, "** replaced file content to test cache **");
                 File.SetLastWriteTimeUtc(lockFilePath, lastWriteTime);
                 ProjectPackages cache_packages = await testProject.GetInstalledAndTransitivePackagesAsync(includeTransitiveOrigins: false, CancellationToken.None);
 

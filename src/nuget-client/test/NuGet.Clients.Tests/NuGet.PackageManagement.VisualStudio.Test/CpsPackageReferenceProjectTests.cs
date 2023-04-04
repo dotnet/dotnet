@@ -3900,7 +3900,6 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 await result.CommitAsync(logger, CancellationToken.None);
                 ProjectPackages packages = await project.GetInstalledAndTransitivePackagesAsync(includeTransitiveOrigins: false, CancellationToken.None);
                 DateTime lastWriteTime = File.GetLastWriteTimeUtc(lockFilePath);
-                File.WriteAllText(lockFilePath, "** replaced file content to test cache **");
                 File.SetLastWriteTimeUtc(lockFilePath, lastWriteTime);
                 ProjectPackages cache_packages = await project.GetInstalledAndTransitivePackagesAsync(includeTransitiveOrigins: false, CancellationToken.None);
 
@@ -4125,6 +4124,93 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             Assert.NotEmpty(packages.InstalledPackages);
             Assert.NotEmpty(packages.TransitivePackages);
             Assert.All(packages.TransitivePackages, pkg => Assert.NotEmpty(pkg.TransitiveOrigins));
+        }
+
+        [Theory]
+        [InlineData(false, false, 0, 0)]
+        [InlineData(false, true, 0, 0)]
+        [InlineData(true, false, 1, 0)]
+        [InlineData(true, true, 1, 1)]
+        public async Task GetInstalledAndTransitivePackagesAsync_InstalledAndTransitiveComputationNotNeeded_ReturnsExpectedTransitiveData(bool includeTransitivePackages, bool includeTransitiveOrigins, int transitivePackagesCount, int transitiveOriginsCount)
+        {
+            using var rootDir = new SimpleTestPathContext();
+            await CreatePackagesAsync(rootDir, packageAVersion: "1.0.0");
+            IProjectSystemCache cache = new ProjectSystemCache();
+
+            // Arrange
+            PackageSpec initialProjectSpec = ProjectTestHelpers.GetPackageSpec("MyProject", rootDir.SolutionRoot, framework: "net472", dependencyName: "PackageA");
+            await RestorePackageSpecsAsync(rootDir, output: null, initialProjectSpec);
+
+            CpsPackageReferenceProject project = PrepareCpsRestoredProject(initialProjectSpec, cache);
+            var installedPackagesBefore = await project.GetInstalledPackagesAsync(CancellationToken.None); // This will change IsInstalledAndTransitiveComputationNeeded to false
+
+            // Act
+            ProjectPackages installedAndTransitivePackagesAfter = await project.GetInstalledAndTransitivePackagesAsync(includeTransitivePackages, includeTransitiveOrigins, CancellationToken.None);
+
+            // Assert
+            Assert.Equal(installedAndTransitivePackagesAfter.InstalledPackages.Count, installedPackagesBefore.Count());
+            Assert.Equal(1, installedAndTransitivePackagesAfter.InstalledPackages.Count);
+            Assert.Equal(transitivePackagesCount, installedAndTransitivePackagesAfter.TransitivePackages.Count);
+            Assert.All(installedAndTransitivePackagesAfter.TransitivePackages, pkg => Assert.Equal(transitiveOriginsCount, pkg.TransitiveOrigins.Count()));
+        }
+
+        [Theory]
+        [InlineData(false, false, 0, 0)]
+        [InlineData(false, true, 0, 0)]
+        [InlineData(true, false, 1, 0)]
+        [InlineData(true, true, 1, 1)]
+        public async Task GetInstalledAndTransitivePackagesAsync_IsInstalledAndTransitiveComputationNeeded_ReturnsExpectedTransitiveData(bool includeTransitivePackages, bool includeTransitiveOrigins, int transitivePackagesCount, int transitiveOriginsCount)
+        {
+            using var rootDir = new SimpleTestPathContext();
+            await CreatePackagesAsync(rootDir, packageAVersion: "1.0.0");
+            IProjectSystemCache cache = new ProjectSystemCache();
+
+            // Arrange
+            PackageSpec initialProjectSpec = ProjectTestHelpers.GetPackageSpec("MyProject", rootDir.SolutionRoot, framework: "net472", dependencyName: "PackageA");
+            await RestorePackageSpecsAsync(rootDir, output: null, initialProjectSpec);
+
+            CpsPackageReferenceProject project = PrepareCpsRestoredProject(initialProjectSpec, cache);
+
+            // Act
+            ProjectPackages installedAndTransitivePackages = await project.GetInstalledAndTransitivePackagesAsync(includeTransitivePackages, includeTransitiveOrigins, CancellationToken.None);
+
+            // Assert
+            Assert.Equal(1, installedAndTransitivePackages.InstalledPackages.Count);
+            Assert.Equal(transitivePackagesCount, installedAndTransitivePackages.TransitivePackages.Count);
+            Assert.All(installedAndTransitivePackages.TransitivePackages, pkg => Assert.Equal(transitiveOriginsCount, pkg.TransitiveOrigins.Count()));
+        }
+
+        [Fact]
+        public async Task GetInstalledAndTransitivePackagesAsync_IncludeTransitiveSetToTrue_WhenCacheWasCleared_ReturnsExpectedTransitiveData()
+        {
+            using var rootDir = new SimpleTestPathContext();
+            await CreatePackagesAsync(rootDir, packageAVersion: "1.0.0");
+            IProjectSystemCache cache = new ProjectSystemCache();
+
+            // Arrange
+            PackageSpec initialProjectSpec = ProjectTestHelpers.GetPackageSpec("MyProject", rootDir.SolutionRoot, framework: "net472", dependencyName: "PackageA");
+            await RestorePackageSpecsAsync(rootDir, output: null, initialProjectSpec);
+
+            CpsPackageReferenceProject project = PrepareCpsRestoredProject(initialProjectSpec, cache);
+
+            // Act
+            ProjectPackages result = await project.GetInstalledAndTransitivePackagesAsync(true, true, CancellationToken.None);
+
+            // do a restore
+            project = PrepareCpsRestoredProject(initialProjectSpec, cache);
+            result = await project.GetInstalledAndTransitivePackagesAsync(false, false, CancellationToken.None);
+
+            // Assert I: Cache for transitive was cleared
+            Assert.Equal(1, result.InstalledPackages.Count);
+            Assert.Equal(0, result.TransitivePackages.Count);
+            Assert.All(result.TransitivePackages, pkg => Assert.Equal(0, pkg.TransitiveOrigins.Count()));
+
+            result = await project.GetInstalledAndTransitivePackagesAsync(true, true, CancellationToken.None);
+
+            // Assert II: Transitive packages calculated correctly
+            Assert.Equal(1, result.InstalledPackages.Count);
+            Assert.Equal(1, result.TransitivePackages.Count);
+            Assert.All(result.TransitivePackages, pkg => Assert.Equal(1, pkg.TransitiveOrigins.Count()));
         }
 
         [Fact]

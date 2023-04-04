@@ -134,14 +134,13 @@ namespace NuGet.PackageManagement.VisualStudio
             IList<LockFileTarget> targetsList = null;
             T installedPackages;
             T transitivePackages = default;
+            Dictionary<string, TransitiveEntry> transitiveOrigins = default;
             if (IsInstalledAndTransitiveComputationNeeded)
             {
                 // clear the transitive packages cache, since we don't know when a dependency has been removed
                 installedPackages = new T();
-                if (includeTransitivePackages)
-                {
-                    transitivePackages = new T();
-                }
+                transitivePackages = new T();
+                transitiveOrigins = new Dictionary<string, TransitiveEntry>();
                 targetsList = await GetTargetsListAsync(assetsFilePath, token);
             }
             else
@@ -164,6 +163,7 @@ namespace NuGet.PackageManagement.VisualStudio
                     if (TransitivePackages == null)
                     {
                         transitivePackages = new T();
+                        transitiveOrigins = new Dictionary<string, TransitiveEntry>();
                     }
                     else
                     {
@@ -188,6 +188,11 @@ namespace NuGet.PackageManagement.VisualStudio
             IEnumerable<PackageReference> calculatedTransitivePackages = Enumerable.Empty<PackageReference>();
             if (includeTransitivePackages)
             {
+                if (targetsList == null)
+                {
+                    targetsList = await GetTargetsListAsync(assetsFilePath, token);
+                }
+
                 calculatedTransitivePackages = packageSpec
                     .TargetFrameworks
                     .SelectMany(f => ResolvedTransitivePackagesList(f.FrameworkName, targetsList, installedPackages, transitivePackages))
@@ -202,7 +207,6 @@ namespace NuGet.PackageManagement.VisualStudio
                 if (includeTransitiveOrigins && await ExperimentUtility.IsTransitiveOriginExpEnabled.GetValueAsync(token))
                 {
                     // Compute Transitive Origins
-                    Dictionary<string, TransitiveEntry> transitiveOrigins;
                     if (IsInstalledAndTransitiveComputationNeeded // Cache invalidation
                         || TransitiveOriginsCache == null // If any data race left the cache as null
                         || (!TransitiveOriginsCache.Any() && calculatedTransitivePackages.Any())) // We have transitive packages, but no transitive origins and the call is requesting transitive origins
@@ -254,8 +258,14 @@ namespace NuGet.PackageManagement.VisualStudio
             {
                 InstalledPackages = installedPackages;
             }
-            if (includeTransitivePackages)
+            // if includeTransitivePackages, update the cache with the new transitive packages information
+            // or if IsInstalledAndTransitiveComputationNeeded, clear the transitive packages cache, since we don't know when a dependency has been removed
+            if (includeTransitivePackages || IsInstalledAndTransitiveComputationNeeded)
             {
+                lock (_transitiveOriginsLock)
+                {
+                    TransitiveOriginsCache = transitiveOrigins;
+                }
                 lock (_installedAndTransitivePackagesLock)
                 {
                     TransitivePackages = transitivePackages;
