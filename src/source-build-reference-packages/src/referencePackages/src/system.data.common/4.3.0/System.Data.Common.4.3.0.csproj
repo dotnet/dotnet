@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.2;net451</TargetFrameworks>
+    <TargetFrameworks>netstandard1.2</TargetFrameworks>
     <NuspecFile>$(ArtifactsBinDir)system.data.common/4.3.0/system.data.common.nuspec</NuspecFile>
   </PropertyGroup>
 
@@ -24,11 +24,6 @@
     <PackageReference Include="System.Runtime.Extensions" Version="4.3.0" />
     <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
     <PackageReference Include="System.Threading.Tasks" Version="4.3.0" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net451' ">
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net451" Version="1.0.2" />
-    <Reference Include="System.Data" />
   </ItemGroup>
 
 </Project>
