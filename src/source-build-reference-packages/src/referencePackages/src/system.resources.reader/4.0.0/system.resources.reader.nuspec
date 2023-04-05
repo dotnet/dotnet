@@ -22,7 +22,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     <dependencies>
       <group targetFramework="MonoAndroid1.0" />
       <group targetFramework="MonoTouch1.0" />
-      <group targetFramework=".NETFramework4.5" />
       <group targetFramework=".NETStandard1.0">
         <dependency id="System.IO" version="4.1.0" />
         <dependency id="System.Resources.ResourceManager" version="4.0.1" />

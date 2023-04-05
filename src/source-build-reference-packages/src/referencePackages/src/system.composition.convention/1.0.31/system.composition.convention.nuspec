@@ -30,9 +30,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
       <group targetFramework="MonoTouch1.0">
         <dependency id="System.Composition.AttributedModel" version="1.0.31" />
       </group>
-      <group targetFramework=".NETFramework4.5">
-        <dependency id="System.Composition.AttributedModel" version="1.0.31" />
-      </group>
       <group targetFramework=".NETStandard1.0">
         <dependency id="System.Collections" version="4.3.0" />
         <dependency id="System.Composition.AttributedModel" version="1.0.31" />

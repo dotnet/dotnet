@@ -27,7 +27,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     <dependencies>
       <group targetFramework="MonoAndroid1.0" />
       <group targetFramework="MonoTouch1.0" />
-      <group targetFramework=".NETFramework4.5" />
       <group targetFramework=".NETCore5.0">
         <dependency id="NETStandard.Library" version="1.6.1" />
         <dependency id="System.Dynamic.Runtime" version="4.3.0" />
@@ -57,7 +56,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="Microsoft.CSharp" targetFramework="MonoAndroid1.0" />
       <frameworkAssembly assemblyName="Microsoft.CSharp" targetFramework="MonoTouch1.0" />
-      <frameworkAssembly assemblyName="Microsoft.CSharp" targetFramework=".NETFramework4.5" />
       <frameworkAssembly assemblyName="Microsoft.CSharp" targetFramework="Xamarin.iOS1.0" />
       <frameworkAssembly assemblyName="Microsoft.CSharp" targetFramework="Xamarin.Mac2.0" />
       <frameworkAssembly assemblyName="Microsoft.CSharp" targetFramework="Xamarin.TVOS1.0" />

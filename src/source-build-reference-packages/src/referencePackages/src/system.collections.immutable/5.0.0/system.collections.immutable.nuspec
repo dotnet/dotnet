@@ -37,7 +37,6 @@ System.Collections.Immutable.ImmutableStack&lt;T&gt;</description>
     <dependencies>
       <group targetFramework="MonoAndroid1.0" />
       <group targetFramework="MonoTouch1.0" />
-      <group targetFramework=".NETFramework4.5" />
       <group targetFramework=".NETFramework4.6">
         <dependency id="NETStandard.Library" version="1.6.1" />
         <dependency id="System.Memory" version="4.5.4" />

@@ -30,9 +30,5 @@
         <dependency id="System.Linq" version="4.1.0" exclude="Build,Analyzers" />
       </group>
     </dependencies>
-    <frameworkAssemblies>
-      <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.5.1" />
-      <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.5.1" />
-    </frameworkAssemblies>
   </metadata>
 </package>

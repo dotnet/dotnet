@@ -22,9 +22,6 @@ System.Threading.Tasks.ValueTask&lt;TResult&gt;
     <dependencies>
       <group targetFramework="MonoAndroid1.0" />
       <group targetFramework="MonoTouch1.0" />
-      <group targetFramework=".NETFramework4.5">
-        <dependency id="System.Runtime.CompilerServices.Unsafe" version="4.5.3" />
-      </group>
       <group targetFramework=".NETFramework4.6.1">
         <dependency id="System.Runtime.CompilerServices.Unsafe" version="4.5.3" />
       </group>

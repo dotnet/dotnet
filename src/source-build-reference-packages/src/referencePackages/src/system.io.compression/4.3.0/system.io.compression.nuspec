@@ -28,7 +28,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     <dependencies>
       <group targetFramework="MonoAndroid1.0" />
       <group targetFramework="MonoTouch1.0" />
-      <group targetFramework=".NETFramework4.5" />
       <group targetFramework=".NETFramework4.6" />
       <group targetFramework=".NETCore5.0">
         <dependency id="System.Buffers" version="4.3.0" exclude="Compile" />
@@ -75,7 +74,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.6" />
       <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.6" />
-      <frameworkAssembly assemblyName="System.IO.Compression" targetFramework=".NETFramework4.5" />
       <frameworkAssembly assemblyName="System.IO.Compression" targetFramework="MonoAndroid1.0" />
       <frameworkAssembly assemblyName="System.IO.Compression" targetFramework="MonoTouch1.0" />
       <frameworkAssembly assemblyName="System.IO.Compression" targetFramework="Xamarin.iOS1.0" />

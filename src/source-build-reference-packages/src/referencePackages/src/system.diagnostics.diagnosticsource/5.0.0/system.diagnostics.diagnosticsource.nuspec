@@ -29,10 +29,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
       <group targetFramework="MonoTouch1.0">
         <dependency id="System.Runtime.CompilerServices.Unsafe" version="5.0.0" />
       </group>
-      <group targetFramework=".NETFramework4.5">
-        <dependency id="System.Memory" version="4.5.4" />
-        <dependency id="System.Runtime.CompilerServices.Unsafe" version="5.0.0" />
-      </group>
       <group targetFramework=".NETFramework4.6">
         <dependency id="System.Memory" version="4.5.4" />
         <dependency id="System.Runtime.CompilerServices.Unsafe" version="5.0.0" />
@@ -91,9 +87,7 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
       </group>
     </dependencies>
     <frameworkAssemblies>
-      <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.5" />
       <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.6" />
-      <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.5" />
       <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.6" />
     </frameworkAssemblies>
   </metadata>

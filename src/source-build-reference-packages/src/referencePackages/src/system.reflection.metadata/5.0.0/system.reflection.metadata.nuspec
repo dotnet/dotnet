@@ -26,9 +26,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     <serviceable>true</serviceable>
     <repository type="git" url="git://github.com/dotnet/runtime" commit="cf258a14b70ad9069470a108f13765e0e5988f51" />
     <dependencies>
-      <group targetFramework=".NETFramework4.5">
-        <dependency id="System.Collections.Immutable" version="5.0.0" />
-      </group>
       <group targetFramework=".NETFramework4.6.1">
         <dependency id="System.Collections.Immutable" version="5.0.0" />
       </group>
