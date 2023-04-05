@@ -126,7 +126,9 @@ jobs:
   - ${{ if ne(parameters.reuseBuildArtifactsFrom, '') }}:
     - download: current
       artifact: ${{ parameters.reuseBuildArtifactsFrom }}_${{ parameters.architecture }}_Artifacts
-      patterns: '*.tar.gz'
+      patterns: |
+        **/Private.SourceBuilt.Artifacts.*.tar.gz
+        **/dotnet-sdk-*.tar.gz
       displayName: Download Previous Build
 
     - task: CopyFiles@2
