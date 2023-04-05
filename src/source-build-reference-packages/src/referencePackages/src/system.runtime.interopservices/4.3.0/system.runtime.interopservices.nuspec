@@ -26,7 +26,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     <dependencies>
       <group targetFramework="MonoAndroid1.0" />
       <group targetFramework="MonoTouch1.0" />
-      <group targetFramework=".NETFramework4.5" />
       <group targetFramework=".NETFramework4.6.2">
         <dependency id="System.Runtime" version="4.3.0" />
       </group>
@@ -90,10 +89,8 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.6.3" />
       <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.6.2" />
-      <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.5" />
       <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.6.3" />
       <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.6.2" />
-      <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.5" />
       <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.6.3" />
       <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.6.2" />
     </frameworkAssemblies>

@@ -35,7 +35,6 @@ System.Threading.Tasks.Dataflow.WriteOnceBlock&lt;T&gt;</description>
     <dependencies>
       <group targetFramework="MonoAndroid1.0" />
       <group targetFramework="MonoTouch1.0" />
-      <group targetFramework=".NETFramework4.5" />
       <group targetFramework=".NETStandard1.0">
         <dependency id="System.Collections" version="4.0.11" />
         <dependency id="System.Diagnostics.Debug" version="4.0.11" />

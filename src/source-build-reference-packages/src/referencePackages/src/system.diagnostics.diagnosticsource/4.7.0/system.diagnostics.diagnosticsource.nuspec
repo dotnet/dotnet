@@ -24,9 +24,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     <dependencies>
       <group targetFramework="MonoAndroid1.0" />
       <group targetFramework="MonoTouch1.0" />
-      <group targetFramework=".NETFramework4.5">
-        <dependency id="System.Memory" version="4.5.3" />
-      </group>
       <group targetFramework=".NETFramework4.6">
         <dependency id="System.Memory" version="4.5.3" />
       </group>
@@ -69,9 +66,7 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
       <group targetFramework="Xamarin.WatchOS1.0" />
     </dependencies>
     <frameworkAssemblies>
-      <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.5" />
       <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.6" />
-      <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.5" />
       <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.6" />
     </frameworkAssemblies>
   </metadata>

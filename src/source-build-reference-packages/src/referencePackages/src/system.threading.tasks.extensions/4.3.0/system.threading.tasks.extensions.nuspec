@@ -20,7 +20,6 @@ System.Threading.Tasks.ValueTask&lt;TResult&gt;</description>
     <dependencies>
       <group targetFramework="MonoAndroid1.0" />
       <group targetFramework="MonoTouch1.0" />
-      <group targetFramework=".NETFramework4.5" />
       <group targetFramework=".NETStandard1.0">
         <dependency id="System.Collections" version="4.3.0" />
         <dependency id="System.Runtime" version="4.3.0" />

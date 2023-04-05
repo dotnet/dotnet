@@ -23,7 +23,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     <copyright>© Microsoft Corporation.  All rights reserved.</copyright>
     <serviceable>true</serviceable>
     <dependencies>
-      <group targetFramework=".NETFramework4.5" />
       <group targetFramework=".NETStandard1.1">
         <dependency id="System.Collections.Concurrent" version="4.3.0" />
         <dependency id="System.Runtime" version="4.3.0" />

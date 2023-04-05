@@ -33,7 +33,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     <dependencies>
       <group targetFramework="MonoAndroid1.0" />
       <group targetFramework="MonoTouch1.0" />
-      <group targetFramework=".NETFramework4.5" />
       <group targetFramework=".NETFramework4.6.1" />
       <group targetFramework=".NETCore5.0">
         <dependency id="NETStandard.Library" version="1.6.1" />
@@ -62,7 +61,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     </dependencies>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.6.1" />
-      <frameworkAssembly assemblyName="System.ComponentModel.DataAnnotations" targetFramework=".NETFramework4.5" />
       <frameworkAssembly assemblyName="System.ComponentModel.DataAnnotations" targetFramework=".NETFramework4.6.1" />
     </frameworkAssemblies>
   </metadata>

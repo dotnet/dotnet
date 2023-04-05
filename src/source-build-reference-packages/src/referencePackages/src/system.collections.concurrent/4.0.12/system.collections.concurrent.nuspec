@@ -26,7 +26,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     <dependencies>
       <group targetFramework="MonoAndroid1.0" />
       <group targetFramework="MonoTouch1.0" />
-      <group targetFramework=".NETFramework4.5" />
       <group targetFramework=".NETCore5.0">
         <dependency id="System.Collections" version="4.0.11" exclude="Compile" />
         <dependency id="System.Diagnostics.Debug" version="4.0.11" exclude="Compile" />
@@ -62,8 +61,5 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
       <group targetFramework="Xamarin.TVOS1.0" />
       <group targetFramework="Xamarin.WatchOS1.0" />
     </dependencies>
-    <frameworkAssemblies>
-      <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.5" />
-    </frameworkAssemblies>
   </metadata>
 </package>

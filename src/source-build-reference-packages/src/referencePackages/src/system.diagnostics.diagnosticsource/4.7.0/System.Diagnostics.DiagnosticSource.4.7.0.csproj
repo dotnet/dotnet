@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.1;netstandard1.3;net45;net46</TargetFrameworks>
+    <TargetFrameworks>netstandard1.1;netstandard1.3;net46</TargetFrameworks>
     <NuspecFile>$(ArtifactsBinDir)system.diagnostics.diagnosticsource/4.7.0/system.diagnostics.diagnosticsource.nuspec</NuspecFile>
     <StrongNameKeyId>Open</StrongNameKeyId>
   </PropertyGroup>
@@ -16,10 +16,6 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
-    <OutputPath>$(ArtifactsBinDir)system.diagnostics.diagnosticsource/4.7.0/lib/</OutputPath>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
     <OutputPath>$(ArtifactsBinDir)system.diagnostics.diagnosticsource/4.7.0/lib/</OutputPath>
   </PropertyGroup>
 
@@ -55,12 +51,6 @@
     <PackageReference Include="System.Runtime.Extensions" Version="4.3.0" />
     <PackageReference Include="System.Runtime.InteropServices" Version="4.3.0" />
     <PackageReference Include="System.Threading" Version="4.3.0" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
-    <PackageReference Include="System.Memory" Version="4.5.3" />
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net45" Version="1.0.2" />
-    <Reference Include="System" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net46' ">

@@ -30,7 +30,6 @@ System.Numerics.Vector&lt;T&gt;
     <dependencies>
       <group targetFramework="MonoAndroid1.0" />
       <group targetFramework="MonoTouch1.0" />
-      <group targetFramework=".NETFramework4.5" />
       <group targetFramework=".NETFramework4.6" />
       <group targetFramework=".NETCoreApp2.0" />
       <group targetFramework=".NETStandard1.0">
@@ -49,7 +48,6 @@ System.Numerics.Vector&lt;T&gt;
     </dependencies>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.6" />
-      <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.5" />
       <frameworkAssembly assemblyName="System.Numerics" targetFramework=".NETFramework4.6" />
     </frameworkAssemblies>
   </metadata>

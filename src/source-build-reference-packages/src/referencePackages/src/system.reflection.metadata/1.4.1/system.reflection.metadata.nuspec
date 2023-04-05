@@ -25,9 +25,6 @@ System.Reflection.PortableExecutable.PEReader</description>
       <group targetFramework="MonoTouch1.0">
         <dependency id="System.Collections.Immutable" version="1.3.0" />
       </group>
-      <group targetFramework=".NETFramework4.5">
-        <dependency id="System.Collections.Immutable" version="1.3.0" />
-      </group>
       <group targetFramework=".NETStandard1.1">
         <dependency id="System.Collections" version="4.3.0" />
         <dependency id="System.Collections.Immutable" version="1.3.0" />

@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.1;net45</TargetFrameworks>
+    <TargetFrameworks>netstandard1.1</TargetFrameworks>
     <NuspecFile>$(ArtifactsBinDir)system.runtime.interopservices.runtimeinformation/4.3.0/system.runtime.interopservices.runtimeinformation.nuspec</NuspecFile>
    </PropertyGroup>
 
@@ -8,26 +8,19 @@
     <OutputPath>$(ArtifactsBinDir)system.runtime.interopservices.runtimeinformation/4.3.0/ref/</OutputPath>
     <IntermediateOutputPath>$(ArtifactsObjDir)system.runtime.interopservices.runtimeinformation/4.3.0</IntermediateOutputPath>
   </PropertyGroup>
-    <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
-        <OutputPath>$(ArtifactsBinDir)system.runtime.interopservices.runtimeinformation/4.3.0/lib/</OutputPath>
-    </PropertyGroup>
 
   <ItemGroup>
     <Compile Include="**/ref/$(TargetFramework)/*.cs" />
     <Compile Include="**/lib/$(TargetFramework)/*.cs" />
   </ItemGroup>
 
-    <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.1' ">
-        <PackageReference Include="System.Reflection" Version="4.3.0" />
-        <PackageReference Include="System.Reflection.Extensions" Version="4.3.0" />
-        <PackageReference Include="System.Resources.ResourceManager" Version="4.3.0" />
-        <PackageReference Include="System.Runtime" Version="4.3.0" />
-        <PackageReference Include="System.Runtime.InteropServices" Version="4.3.0" />
-        <PackageReference Include="System.Threading" Version="4.3.0" />
-    </ItemGroup>
-    <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
-        <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net45" Version="1.0.2" />
-    </ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.1' ">
+      <PackageReference Include="System.Reflection" Version="4.3.0" />
+      <PackageReference Include="System.Reflection.Extensions" Version="4.3.0" />
+      <PackageReference Include="System.Resources.ResourceManager" Version="4.3.0" />
+      <PackageReference Include="System.Runtime" Version="4.3.0" />
+      <PackageReference Include="System.Runtime.InteropServices" Version="4.3.0" />
+      <PackageReference Include="System.Threading" Version="4.3.0" />
+  </ItemGroup>
 
-  
 </Project>
