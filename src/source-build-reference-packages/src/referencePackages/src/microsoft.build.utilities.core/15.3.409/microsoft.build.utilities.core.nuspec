@@ -52,10 +52,6 @@
         <dependency id="System.Xml.ReaderWriter" version="4.0.11" />
         <dependency id="System.Xml.XmlDocument" version="4.0.1" />
       </group>
-      <group targetFramework=".NETFramework4.6">
-        <dependency id="Microsoft.Build.Framework" version="[15.3.409]" />
-        <dependency id="System.Runtime.InteropServices.RuntimeInformation" version="4.3.0" />
-      </group>
     </dependencies>
   </metadata>
 </package>

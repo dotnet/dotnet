@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.3;net46</TargetFrameworks>
+    <TargetFrameworks>netstandard1.3</TargetFrameworks>
     <NuspecFile>$(ArtifactsBinDir)microsoft.build.framework/15.3.409/microsoft.build.framework.nuspec</NuspecFile>
   </PropertyGroup>
 
@@ -11,10 +11,6 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
-    <OutputPath>$(ArtifactsBinDir)microsoft.build.framework/15.3.409/lib/</OutputPath>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net46' ">
     <OutputPath>$(ArtifactsBinDir)microsoft.build.framework/15.3.409/lib/</OutputPath>
   </PropertyGroup>
 
@@ -33,11 +29,6 @@
     <PackageReference Include="System.Runtime.InteropServices" Version="4.1.0" />
     <PackageReference Include="System.Threading" Version="4.0.11" />
     <PackageReference Include="System.Threading.Thread" Version="4.0.0" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net46' ">
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net46" Version="1.0.2" />
-    <PackageReference Include="System.Runtime" Version="4.1.0" />
   </ItemGroup>
 
 </Project>

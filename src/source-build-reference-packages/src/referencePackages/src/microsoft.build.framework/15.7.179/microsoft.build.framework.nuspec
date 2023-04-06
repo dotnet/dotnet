@@ -15,14 +15,10 @@
     <serviceable>true</serviceable>
     <repository url="https://github.com/microsoft/msbuild" />
     <dependencies>
-      <group targetFramework=".NETFramework4.6" />
       <group targetFramework=".NETStandard2.0">
         <dependency id="System.Runtime.Serialization.Primitives" version="4.1.1" exclude="Build,Analyzers" />
         <dependency id="System.Threading.Thread" version="4.0.0" exclude="Build,Analyzers" />
       </group>
     </dependencies>
-    <frameworkAssemblies>
-      <frameworkAssembly assemblyName="System.Xaml" targetFramework=".NETFramework4.6" />
-    </frameworkAssemblies>
   </metadata>
 </package>

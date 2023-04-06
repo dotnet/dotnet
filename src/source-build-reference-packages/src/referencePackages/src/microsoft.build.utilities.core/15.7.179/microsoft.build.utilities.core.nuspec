@@ -15,11 +15,6 @@
     <serviceable>true</serviceable>
     <repository url="https://github.com/microsoft/msbuild" />
     <dependencies>
-      <group targetFramework=".NETFramework4.6">
-        <dependency id="Microsoft.Build.Framework" version="15.7.179" exclude="Build,Analyzers" />
-        <dependency id="System.Collections.Immutable" version="1.3.1" exclude="Build,Analyzers" />
-        <dependency id="System.Runtime.InteropServices.RuntimeInformation" version="4.3.0" exclude="Build,Analyzers" />
-      </group>
       <group targetFramework=".NETStandard2.0">
         <dependency id="Microsoft.Build.Framework" version="15.7.179" exclude="Build,Analyzers" />
         <dependency id="System.Collections.Immutable" version="1.3.1" exclude="Build,Analyzers" />
@@ -27,8 +22,5 @@
         <dependency id="System.Text.Encoding.CodePages" version="4.4.0" exclude="Build,Analyzers" />
       </group>
     </dependencies>
-    <frameworkAssemblies>
-      <frameworkAssembly assemblyName="System.Configuration" targetFramework=".NETFramework4.6" />
-    </frameworkAssemblies>
   </metadata>
 </package>
