@@ -22,7 +22,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     <serviceable>true</serviceable>
     <dependencies>
       <group targetFramework=".NETFramework4.6.1" />
-      <group targetFramework=".NETFramework4.7.2" />
       <group targetFramework=".NETCoreApp2.0">
         <dependency id="Microsoft.NETCore.Platforms" version="3.1.0" />
       </group>
@@ -33,9 +32,7 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     </dependencies>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.6.1" />
-      <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.7.2" />
       <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.6.1" />
-      <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.7.2" />
     </frameworkAssemblies>
   </metadata>
 </package>

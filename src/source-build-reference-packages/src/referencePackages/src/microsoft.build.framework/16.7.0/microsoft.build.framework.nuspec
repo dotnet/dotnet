@@ -16,13 +16,9 @@
     <serviceable>true</serviceable>
     <repository type="git" url="https://github.com/microsoft/msbuild" commit="7fb82e5b2e5f7f8b932f3dcb6ca37db116be30ad" />
     <dependencies>
-      <group targetFramework=".NETFramework4.7.2" />
       <group targetFramework=".NETStandard2.0">
         <dependency id="System.Security.Permissions" version="4.7.0" exclude="Build,Analyzers" />
       </group>
     </dependencies>
-    <frameworkAssemblies>
-      <frameworkAssembly assemblyName="System.Xaml" targetFramework=".NETFramework4.7.2" />
-    </frameworkAssemblies>
   </metadata>
 </package>

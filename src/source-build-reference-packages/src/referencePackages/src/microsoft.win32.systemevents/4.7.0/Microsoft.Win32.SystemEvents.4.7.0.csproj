@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net461;net472</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
     <NuspecFile>$(ArtifactsBinDir)microsoft.win32.systemevents/4.7.0/microsoft.win32.systemevents.nuspec</NuspecFile>
     <StrongNameKeyId>Open</StrongNameKeyId>
   </PropertyGroup>
@@ -22,11 +22,6 @@
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net461" Version="1.0.2" />
-    <Reference Include="System" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net472" Version="1.0.2" />
     <Reference Include="System" />
   </ItemGroup>
 
