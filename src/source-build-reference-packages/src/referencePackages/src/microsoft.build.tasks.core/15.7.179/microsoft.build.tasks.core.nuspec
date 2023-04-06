@@ -15,11 +15,6 @@
     <serviceable>true</serviceable>
     <repository url="https://github.com/microsoft/msbuild" />
     <dependencies>
-      <group targetFramework=".NETFramework4.6">
-        <dependency id="Microsoft.Build.Framework" version="15.7.179" exclude="Build,Analyzers" />
-        <dependency id="Microsoft.Build.Utilities.Core" version="15.7.179" exclude="Build,Analyzers" />
-        <dependency id="System.Collections.Immutable" version="1.3.1" exclude="Build,Analyzers" />
-      </group>
       <group targetFramework=".NETStandard2.0">
         <dependency id="Microsoft.Build.Framework" version="15.7.179" exclude="Build,Analyzers" />
         <dependency id="Microsoft.Build.Utilities.Core" version="15.7.179" exclude="Build,Analyzers" />
@@ -30,16 +25,5 @@
         <dependency id="System.Resources.Writer" version="4.0.0" exclude="Build,Analyzers" />
       </group>
     </dependencies>
-    <frameworkAssemblies>
-      <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.6" />
-      <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.6" />
-      <frameworkAssembly assemblyName="System.Reflection" targetFramework=".NETFramework4.6" />
-      <frameworkAssembly assemblyName="System.Runtime.Serialization" targetFramework=".NETFramework4.6" />
-      <frameworkAssembly assemblyName="System.Security" targetFramework=".NETFramework4.6" />
-      <frameworkAssembly assemblyName="System.Windows.Forms" targetFramework=".NETFramework4.6" />
-      <frameworkAssembly assemblyName="System.Xaml" targetFramework=".NETFramework4.6" />
-      <frameworkAssembly assemblyName="System.Xml" targetFramework=".NETFramework4.6" />
-      <frameworkAssembly assemblyName="System.Xml.Linq" targetFramework=".NETFramework4.6" />
-    </frameworkAssemblies>
   </metadata>
 </package>

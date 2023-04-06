@@ -11,6 +11,9 @@
 
     <UsagePattern IdentityGlob="Microsoft.SourceBuild.Intermediate.*/*" />
 
+    <!-- Until repos move off of 7.0 targeting, we need to exclude the 7.0 targeting pack -->
+    <UsagePattern IdentityGlob="Microsoft.NETCore.App.Ref/7.0*" />
+
   </IgnorePatterns>
   <Usages/>
 </UsageData>

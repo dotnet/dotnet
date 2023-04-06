@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net46</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <NuspecFile>$(ArtifactsBinDir)microsoft.build.framework/15.7.179/microsoft.build.framework.nuspec</NuspecFile>
    </PropertyGroup>
 
@@ -11,25 +11,16 @@
     <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
         <OutputPath>$(ArtifactsBinDir)microsoft.build.framework/15.7.179/lib/</OutputPath>
     </PropertyGroup>
-    <PropertyGroup Condition=" '$(TargetFramework)' == 'net46' ">
-        <OutputPath>$(ArtifactsBinDir)microsoft.build.framework/15.7.179/lib/</OutputPath>
-    </PropertyGroup>
 
   <ItemGroup>
     <Compile Include="**/ref/$(TargetFramework)/*.cs" />
     <Compile Include="**/lib/$(TargetFramework)/*.cs" />
   </ItemGroup>
 
-    <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-        <PackageReference Include="NETStandard.Library" Version="$(NETStandardImplicitPackageVersion)" />
-        <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.1.1" />
-        <PackageReference Include="System.Threading.Thread" Version="4.0.0" />
-    </ItemGroup>
-    <ItemGroup Condition=" '$(TargetFramework)' == 'net46' ">
-        <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net46" Version="1.0.2" />
-        <PackageReference Include="System.Runtime" Version="4.3.0" />
-        <Reference Include="System.Xaml" />
-    </ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+      <PackageReference Include="NETStandard.Library" Version="$(NETStandardImplicitPackageVersion)" />
+      <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.1.1" />
+      <PackageReference Include="System.Threading.Thread" Version="4.0.0" />
+  </ItemGroup>
 
-  
 </Project>
