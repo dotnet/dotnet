@@ -156,7 +156,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/arcade`  
 *[dotnet/arcade@747f53d](https://github.com/dotnet/arcade/commit/747f53d751983dd062f39f4654bff074536e0012)*
 - `src/aspnetcore`  
-*[dotnet/aspnetcore@acdfabb](https://github.com/dotnet/aspnetcore/commit/acdfabbc111dee9ad3e5dbbea9e3c026c3b562b1)*
+*[dotnet/aspnetcore@dce793f](https://github.com/dotnet/aspnetcore/commit/dce793fda55ebc9b32eb69ff01023a618ed06942)*
     - `src/aspnetcore/src/submodules/googletest`  
     *[google/googletest@b5fd99b](https://github.com/google/googletest/commit/b5fd99bbd55ebe1a3488b8ea3717fba089293457)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
@@ -178,7 +178,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@15e94b3](https://github.com/dotnet/fsharp/commit/15e94b3cb730ed90d454141e0d4c10a28d9efe1d)*
 - `src/installer`  
-*[dotnet/installer@5b4b054](https://github.com/dotnet/installer/commit/5b4b0548f0d7992900ba4d0b225e2368c172fc9c)*
+*[dotnet/installer@3fe5487](https://github.com/dotnet/installer/commit/3fe54874e8cc5e383c7b33e25002761d5104c1d2)*
 - `src/msbuild`  
 *[dotnet/msbuild@413571d](https://github.com/dotnet/msbuild/commit/413571dea9ebb0023f26e5c0f5cd514d30b61465)*
 - `src/nuget-client`  
@@ -194,7 +194,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/runtime`  
 *[dotnet/runtime@958b1e0](https://github.com/dotnet/runtime/commit/958b1e046cbfff5c0bc647f531b4fcf9eb197a6c)*
 - `src/sdk`  
-*[dotnet/sdk@96f4e06](https://github.com/dotnet/sdk/commit/96f4e06b4d579146332607aa2fe83113e24efaa4)*
+*[dotnet/sdk@14ef05c](https://github.com/dotnet/sdk/commit/14ef05cb4b32d24cb062017f9ac1ebf6110257e6)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@cbd9d61](https://github.com/dotnet/source-build-externals/commit/cbd9d61c5a92d7e4a0548a2c8ff4d1a28aaf6379)*
     - `src/source-build-externals/src/application-insights`  
