@@ -31,7 +31,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
       </group>
       <group targetFramework=".NETFramework4.6.1" />
       <group targetFramework=".NETFramework4.6.2" />
-      <group targetFramework=".NETFramework4.7" />
       <group targetFramework=".NETCoreApp2.0">
         <dependency id="Microsoft.NETCore.Platforms" version="3.1.0" />
       </group>
@@ -81,11 +80,9 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.6.1" />
       <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.6.2" />
-      <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.7" />
       <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.6" />
       <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.6.1" />
       <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.6.2" />
-      <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.7" />
       <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.6" />
     </frameworkAssemblies>
   </metadata>

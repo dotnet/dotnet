@@ -36,7 +36,8 @@
     <PackageReference Include="System.Reflection.Metadata" Version="6.0.0" />
     <PackageReference Include="System.Resources.Extensions" Version="6.0.0" />
     <PackageReference Include="System.Security.Cryptography.Pkcs" Version="6.0.1" />
-    <PackageReference Include="System.Security.Cryptography.Xml" Version="6.0.0" />
+    <!-- Manually updated version from 6.0.0 to address CVE-2021-43877 -->
+    <PackageReference Include="System.Security.Cryptography.Xml" Version="6.0.1" />
     <PackageReference Include="System.Security.Permissions" Version="6.0.0" />
     <PackageReference Include="System.Threading.Tasks.Dataflow" Version="6.0.0" />
   </ItemGroup>
@@ -51,7 +52,8 @@
     <PackageReference Include="System.Reflection.Metadata" Version="6.0.0" />
     <PackageReference Include="System.Resources.Extensions" Version="6.0.0" />
     <PackageReference Include="System.Security.Cryptography.Pkcs" Version="6.0.1" />
-    <PackageReference Include="System.Security.Cryptography.Xml" Version="6.0.0" />
+    <!-- Manually updated version from 6.0.0 to address CVE-2021-43877 -->
+    <PackageReference Include="System.Security.Cryptography.Xml" Version="6.0.1" />
     <PackageReference Include="System.Security.Permissions" Version="6.0.0" />
     <PackageReference Include="System.Threading.Tasks.Dataflow" Version="6.0.0" />
   </ItemGroup>

@@ -1,33 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFrameworks>net461;net47;netstandard1.0</TargetFrameworks>
-    <NuspecFile>$(ArtifactsBinDir)system.valuetuple/4.5.0/system.valuetuple.nuspec</NuspecFile>
+    <AssemblyName>System.ValueTuple</AssemblyName>
+    <ProjectTemplateVersion>2</ProjectTemplateVersion>
     <StrongNameKeyId>Open</StrongNameKeyId>
-   </PropertyGroup>
-
-  <PropertyGroup>
-    <OutputPath>$(ArtifactsBinDir)system.valuetuple/4.5.0/ref/</OutputPath>
-    <IntermediateOutputPath>$(ArtifactsObjDir)system.valuetuple/4.5.0</IntermediateOutputPath>
   </PropertyGroup>
-    <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.0' ">
-        <OutputPath>$(ArtifactsBinDir)system.valuetuple/4.5.0/lib/</OutputPath>
-    </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="**/ref/$(TargetFramework)/*.cs" />
-    <Compile Include="**/lib/$(TargetFramework)/*.cs" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'net461'">
+    <Reference Include="System" />
   </ItemGroup>
 
-    <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
-        <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net461" Version="1.0.2" />
-        <Reference Include="System" />
-    </ItemGroup>
-    <ItemGroup Condition=" '$(TargetFramework)' == 'net47' ">
-        <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net47" Version="1.0.2" />
-    </ItemGroup>
-    <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.0' ">
-        <PackageReference Include="NETStandard.Library" Version="$(NETStandardImplicitPackageVersion)" />
-    </ItemGroup>
+  <!-- Manual changes:                                                      -->
+  <!--   - Reverted T* type forwards in `ref/net47` to System.ValueTuple<*> -->
 
-  
 </Project>
