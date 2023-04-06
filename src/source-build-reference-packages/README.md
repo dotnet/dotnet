@@ -59,7 +59,8 @@ when it was originally generated.
 * Generate reference package and its depencencies running the `./generate.sh --package <package>,<version>` script.
 * Revert changes for packages that were already existed in the repository.
 * Run build with the `./build.sh -sb` command.
-* If the compilation produces numerous compilation issue - run the `./build.sh --projects <path to .csproj file>` command for each generated reference package separately.
+* If the compilation produces numerous compilation issue - run the `./build.sh --projects <path to .csproj file>` command for each
+generated reference package separately. It may be necessary to manually tweak the code to address compilation issues. When this occurs, please ensure there is an [tracking issue](#filing-issues) to address the underlying problem with the generator.
 
 You can search for known issues in the [Known Generator Issues Markdown file](docs/known_generator_issues.md).
 
@@ -72,6 +73,16 @@ targeting pack is needed, please [open a new issue](#filing-issues) to discuss.
 
 ``` bash
 ./generate.sh --type text --package microsoft.build.traversal,3.1.6
+```
+
+## Vulnerable Packages
+
+CVEs may exist for reference packages included in this repo. If they are mitigated by a newer version, the newer version should be added, the vulnerable version should be removed, and references to the vulnerable package within other reference
+packages should be upgraded. A comment should be added to indicate when packages were manually upgraded.
+
+``` xml
+    <!-- Manually updated version from 4.3.0 to address CVE-2017-0247 -->
+    <PackageReference Include="System.Net.Security" Version="4.3.1" />
 ```
 
 ## Filing Issues
