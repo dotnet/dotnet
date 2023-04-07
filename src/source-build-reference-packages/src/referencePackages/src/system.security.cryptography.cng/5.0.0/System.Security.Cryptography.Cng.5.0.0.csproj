@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.3;netstandard1.4;netstandard1.6;netstandard2.0;netstandard2.1;netcoreapp2.0;netcoreapp2.1;netcoreapp3.0;net46;net461;net462</TargetFrameworks>
+    <TargetFrameworks>netstandard1.3;netstandard1.4;netstandard1.6;netstandard2.0;netstandard2.1;netcoreapp2.0;netcoreapp2.1;netcoreapp3.0;net46;net461</TargetFrameworks>
     <NuspecFile>$(ArtifactsBinDir)system.security.cryptography.cng/5.0.0/system.security.cryptography.cng.nuspec</NuspecFile>
     <DisableImplicitFrameworkReferences>false</DisableImplicitFrameworkReferences>
   </PropertyGroup>
@@ -79,12 +79,6 @@
   <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
     <PackageReference Include="System.Security.Cryptography.Algorithms" Version="4.3.1" />
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net461" Version="1.0.2" />
-    <Reference Include="System.Core" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
-    <PackageReference Include="System.Security.Cryptography.Algorithms" Version="4.3.1" />
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net462" Version="1.0.2" />
     <Reference Include="System.Core" />
   </ItemGroup>
 

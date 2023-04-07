@@ -30,7 +30,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     <dependencies>
       <group targetFramework="MonoAndroid1.0" />
       <group targetFramework="MonoTouch1.0" />
-      <group targetFramework=".NETFramework4.6.2" />
       <group targetFramework=".NETCore5.0">
         <dependency id="Microsoft.NETCore.Platforms" version="1.0.1" />
         <dependency id="Microsoft.NETCore.Targets" version="1.0.1" />
@@ -60,9 +59,5 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
       <group targetFramework="Xamarin.TVOS1.0" />
       <group targetFramework="Xamarin.WatchOS1.0" />
     </dependencies>
-    <frameworkAssemblies>
-      <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.6.2" />
-      <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.6.2" />
-    </frameworkAssemblies>
   </metadata>
 </package>
