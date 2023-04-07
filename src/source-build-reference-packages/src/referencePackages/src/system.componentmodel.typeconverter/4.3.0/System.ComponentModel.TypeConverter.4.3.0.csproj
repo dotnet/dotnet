@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.0;netstandard1.5;net462</TargetFrameworks>
+    <TargetFrameworks>netstandard1.0;netstandard1.5</TargetFrameworks>
     <NuspecFile>$(ArtifactsBinDir)system.componentmodel.typeconverter/4.3.0/system.componentmodel.typeconverter.nuspec</NuspecFile>
    </PropertyGroup>
 
@@ -43,12 +43,6 @@
       <PackageReference Include="System.Runtime" Version="4.3.0" />
       <PackageReference Include="System.Runtime.Extensions" Version="4.3.0" />
       <PackageReference Include="System.Threading" Version="4.3.0" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
-      <PackageReference Include="System.Collections.NonGeneric" Version="4.3.0" />
-      <PackageReference Include="System.ComponentModel.Primitives" Version="4.3.0" />
-      <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net462" Version="1.0.2" />
-      <Reference Include="System" />
   </ItemGroup>
 
 </Project>
