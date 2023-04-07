@@ -16,13 +16,6 @@
     <serviceable>true</serviceable>
     <repository type="git" url="https://github.com/microsoft/msbuild" commit="7fb82e5b2e5f7f8b932f3dcb6ca37db116be30ad" />
     <dependencies>
-      <group targetFramework=".NETFramework4.7.2">
-        <dependency id="Microsoft.Build.Framework" version="16.7.0" exclude="Build,Analyzers" />
-        <dependency id="Microsoft.Build.Utilities.Core" version="16.7.0" exclude="Build,Analyzers" />
-        <dependency id="System.Collections.Immutable" version="1.5.0" exclude="Build,Analyzers" />
-        <dependency id="System.Resources.Extensions" version="4.6.0" exclude="Build,Analyzers" />
-        <dependency id="System.Threading.Tasks.Dataflow" version="4.9.0" exclude="Build,Analyzers" />
-      </group>
       <group targetFramework=".NETStandard2.0">
         <dependency id="Microsoft.Build.Framework" version="16.7.0" exclude="Build,Analyzers" />
         <dependency id="Microsoft.Build.Utilities.Core" version="16.7.0" exclude="Build,Analyzers" />
@@ -36,18 +29,5 @@
         <dependency id="System.Threading.Tasks.Dataflow" version="4.9.0" exclude="Build,Analyzers" />
       </group>
     </dependencies>
-    <frameworkAssemblies>
-      <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.7.2" />
-      <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.7.2" />
-      <frameworkAssembly assemblyName="System.IO.Compression" targetFramework=".NETFramework4.7.2" />
-      <frameworkAssembly assemblyName="System.Net.Http" targetFramework=".NETFramework4.7.2" />
-      <frameworkAssembly assemblyName="System.Reflection" targetFramework=".NETFramework4.7.2" />
-      <frameworkAssembly assemblyName="System.Runtime.Serialization" targetFramework=".NETFramework4.7.2" />
-      <frameworkAssembly assemblyName="System.Security" targetFramework=".NETFramework4.7.2" />
-      <frameworkAssembly assemblyName="System.Windows.Forms" targetFramework=".NETFramework4.7.2" />
-      <frameworkAssembly assemblyName="System.Xaml" targetFramework=".NETFramework4.7.2" />
-      <frameworkAssembly assemblyName="System.Xml" targetFramework=".NETFramework4.7.2" />
-      <frameworkAssembly assemblyName="System.Xml.Linq" targetFramework=".NETFramework4.7.2" />
-    </frameworkAssemblies>
   </metadata>
 </package>

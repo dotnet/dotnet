@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.3;netstandard2.0;net46;net461;net472</TargetFrameworks>
+    <TargetFrameworks>netstandard1.3;netstandard2.0;net46;net461</TargetFrameworks>
     <NuspecFile>$(ArtifactsBinDir)microsoft.win32.registry/4.7.0/microsoft.win32.registry.nuspec</NuspecFile>
   </PropertyGroup>
 
@@ -35,12 +35,6 @@
     <PackageReference Include="System.Security.AccessControl" Version="4.7.0" />
     <PackageReference Include="System.Security.Principal.Windows" Version="4.7.0" />
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net461" Version="1.0.2" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
-    <PackageReference Include="System.Security.AccessControl" Version="4.7.0" />
-    <PackageReference Include="System.Security.Principal.Windows" Version="4.7.0" />
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net472" Version="1.0.2" />
   </ItemGroup>
 
 </Project>

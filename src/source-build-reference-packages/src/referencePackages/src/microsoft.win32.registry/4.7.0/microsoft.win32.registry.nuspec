@@ -40,10 +40,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
         <dependency id="System.Security.AccessControl" version="4.7.0" />
         <dependency id="System.Security.Principal.Windows" version="4.7.0" />
       </group>
-      <group targetFramework=".NETFramework4.7.2">
-        <dependency id="System.Security.AccessControl" version="4.7.0" />
-        <dependency id="System.Security.Principal.Windows" version="4.7.0" />
-      </group>
       <group targetFramework=".NETCoreApp2.0">
         <dependency id="System.Memory" version="4.5.3" exclude="Compile" />
         <dependency id="System.Security.AccessControl" version="4.7.0" />
@@ -88,7 +84,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     </dependencies>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.6.1" />
-      <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.7.2" />
       <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.6" />
     </frameworkAssemblies>
   </metadata>

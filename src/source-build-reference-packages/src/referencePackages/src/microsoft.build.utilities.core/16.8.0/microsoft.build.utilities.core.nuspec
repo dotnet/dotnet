@@ -16,10 +16,6 @@
     <serviceable>true</serviceable>
     <repository type="git" url="https://github.com/microsoft/msbuild" commit="126527ff107ae93fed10af675506c56d046aa5a3" />
     <dependencies>
-      <group targetFramework=".NETFramework4.7.2">
-        <dependency id="Microsoft.Build.Framework" version="16.8.0" exclude="Build,Analyzers" />
-        <dependency id="System.Collections.Immutable" version="1.5.0" exclude="Build,Analyzers" />
-      </group>
       <group targetFramework=".NETStandard2.0">
         <dependency id="Microsoft.Build.Framework" version="16.8.0" exclude="Build,Analyzers" />
         <dependency id="Microsoft.Win32.Registry" version="4.3.0" exclude="Build,Analyzers" />
@@ -28,8 +24,5 @@
         <dependency id="System.Text.Encoding.CodePages" version="4.0.1" exclude="Build,Analyzers" />
       </group>
     </dependencies>
-    <frameworkAssemblies>
-      <frameworkAssembly assemblyName="System.Configuration" targetFramework=".NETFramework4.7.2" />
-    </frameworkAssemblies>
   </metadata>
 </package>

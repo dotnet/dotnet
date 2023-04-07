@@ -8,7 +8,7 @@
     <PackagesTargetDirectory Condition="'$(PackageType)' == 'text'">$(RepoRoot)src\textOnlyPackages\src\</PackagesTargetDirectory>
     <!-- The following target frameworks aren't buildable with the current SDK and as they don't contribute to the set of
          source build target verticals, can be safely excluded. -->
-    <ExcludeTargetFrameworks>monoandroid*;monotouch*;net35;net40;net45*;net463;netcore50;portable*;uap*;win8;wp8;wpa81;xamarin*</ExcludeTargetFrameworks>
+    <ExcludeTargetFrameworks>monoandroid*;monotouch*;net35;net40;net45*;net463;net472;netcore50;portable*;uap*;win8;wp8;wpa81;xamarin*</ExcludeTargetFrameworks>
     <!-- The following target frameworks should be excluded even though they are supported by the current SDK because there is no need to have them.
          Only exclude them when target frameworks to include aren't provided. -->
     <ExcludeTargetFrameworks Condition="'$(IncludeTargetFrameworks)' == ''">$(ExcludeTargetFrameworks);net4*;netcoreapp3.1</ExcludeTargetFrameworks>

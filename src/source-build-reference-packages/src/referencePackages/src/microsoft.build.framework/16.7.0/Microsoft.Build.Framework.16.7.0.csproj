@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <NuspecFile>$(ArtifactsBinDir)microsoft.build.framework/16.7.0/microsoft.build.framework.nuspec</NuspecFile>
   </PropertyGroup>
 
@@ -11,10 +11,6 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <OutputPath>$(ArtifactsBinDir)microsoft.build.framework/16.7.0/lib/</OutputPath>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net472' ">
     <OutputPath>$(ArtifactsBinDir)microsoft.build.framework/16.7.0/lib/</OutputPath>
   </PropertyGroup>
 
@@ -28,10 +24,5 @@
     <PackageReference Include="System.Security.Permissions" Version="4.7.0" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net472" Version="1.0.2" />
-    <PackageReference Include="System.Runtime" Version="4.3.0" />
-    <Reference Include="System.Xaml" />
-  </ItemGroup>
 
 </Project>

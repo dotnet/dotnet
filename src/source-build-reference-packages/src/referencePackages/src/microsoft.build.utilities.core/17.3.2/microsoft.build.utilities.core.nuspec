@@ -15,13 +15,6 @@
     <serviceable>true</serviceable>
     <repository type="git" url="https://github.com/dotnet/msbuild" commit="561848881bab01749e6d8b03be2869a18ca944f7" />
     <dependencies>
-      <group targetFramework=".NETFramework4.7.2">
-        <dependency id="Microsoft.Build.Framework" version="17.3.2" exclude="Build,Analyzers" />
-        <dependency id="Microsoft.NET.StringTools" version="17.3.2" exclude="Build,Analyzers" />
-        <dependency id="Microsoft.IO.Redist" version="6.0.0" exclude="Build,Analyzers" />
-        <dependency id="System.Collections.Immutable" version="6.0.0" exclude="Build,Analyzers" />
-        <dependency id="System.Configuration.ConfigurationManager" version="6.0.0" exclude="Build,Analyzers" />
-      </group>
       <group targetFramework="net6.0">
         <dependency id="Microsoft.Build.Framework" version="17.3.2" exclude="Build,Analyzers" />
         <dependency id="Microsoft.NET.StringTools" version="17.3.2" exclude="Build,Analyzers" />
