@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net46;netstandard1.3</TargetFrameworks>
+    <TargetFrameworks>netstandard1.3</TargetFrameworks>
     <AssemblyName>System.Diagnostics.StackTrace</AssemblyName>
     <ProjectTemplateVersion>2</ProjectTemplateVersion>
   </PropertyGroup>

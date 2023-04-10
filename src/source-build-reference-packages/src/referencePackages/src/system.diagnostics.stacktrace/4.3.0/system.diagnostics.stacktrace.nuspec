@@ -21,7 +21,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     <copyright>© Microsoft Corporation.  All rights reserved.</copyright>
     <serviceable>true</serviceable>
     <dependencies>
-      <group targetFramework=".NETFramework4.6" />
       <group targetFramework=".NETStandard1.3">
         <dependency id="System.IO.FileSystem" version="4.3.0" exclude="Compile" />
         <dependency id="System.Reflection" version="4.3.0" />
@@ -29,8 +28,5 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
         <dependency id="System.Runtime" version="4.3.0" />
       </group>
     </dependencies>
-    <frameworkAssemblies>
-      <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.6" />
-    </frameworkAssemblies>
   </metadata>
 </package>

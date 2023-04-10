@@ -22,10 +22,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     <copyright>© Microsoft Corporation.  All rights reserved.</copyright>
     <serviceable>true</serviceable>
     <dependencies>
-      <group targetFramework=".NETFramework4.6">
-        <dependency id="System.Security.Cryptography.Algorithms" version="4.3.0" />
-        <dependency id="System.Security.Cryptography.Primitives" version="4.3.0" />
-      </group>
       <group targetFramework=".NETFramework4.6.3">
         <dependency id="System.Security.Cryptography.Algorithms" version="4.3.0" />
         <dependency id="System.Security.Cryptography.Primitives" version="4.3.0" />
@@ -65,9 +61,7 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
       </group>
     </dependencies>
     <frameworkAssemblies>
-      <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.6" />
       <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.6.3" />
-      <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.6" />
       <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.6.3" />
     </frameworkAssemblies>
   </metadata>
