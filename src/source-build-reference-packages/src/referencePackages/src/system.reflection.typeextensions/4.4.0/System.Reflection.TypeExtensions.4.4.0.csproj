@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.3;netstandard1.5;netstandard2.0;net46</TargetFrameworks>
+    <TargetFrameworks>netstandard1.3;netstandard1.5;netstandard2.0</TargetFrameworks>
     <NuspecFile>$(ArtifactsBinDir)system.reflection.typeextensions/4.4.0/system.reflection.typeextensions.nuspec</NuspecFile>
   </PropertyGroup>
 
@@ -29,10 +29,6 @@
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
     <PackageReference Include="NETStandard.Library" Version="$(NETStandardImplicitPackageVersion)" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net46' ">
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net46" Version="1.0.2" />
   </ItemGroup>
 
 </Project>

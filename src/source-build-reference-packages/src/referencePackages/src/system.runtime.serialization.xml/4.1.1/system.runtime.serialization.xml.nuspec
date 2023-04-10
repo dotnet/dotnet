@@ -31,9 +31,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     <dependencies>
       <group targetFramework="MonoAndroid1.0" />
       <group targetFramework="MonoTouch1.0" />
-      <group targetFramework=".NETFramework4.6">
-        <dependency id="System.Runtime.Serialization.Primitives" version="4.1.1" />
-      </group>
       <group targetFramework=".NETCore5.0">
         <dependency id="System.IO" version="4.1.0" />
         <dependency id="System.Private.DataContractSerialization" version="4.1.1" exclude="Compile" />
@@ -65,10 +62,5 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
       <group targetFramework="Xamarin.TVOS1.0" />
       <group targetFramework="Xamarin.WatchOS1.0" />
     </dependencies>
-    <frameworkAssemblies>
-      <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.6" />
-      <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.6" />
-      <frameworkAssembly assemblyName="System.Runtime.Serialization" targetFramework=".NETFramework4.6" />
-    </frameworkAssemblies>
   </metadata>
 </package>

@@ -26,10 +26,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     <dependencies>
       <group targetFramework="MonoAndroid1.0" />
       <group targetFramework="MonoTouch1.0" />
-      <group targetFramework=".NETFramework4.6">
-        <dependency id="System.Security.Cryptography.Algorithms" version="4.3.1" />
-        <dependency id="System.Security.Cryptography.Primitives" version="4.3.0" />
-      </group>
       <group targetFramework=".NETCoreApp2.1" />
       <group targetFramework=".NETCoreApp3.0">
         <dependency id="System.Formats.Asn1" version="5.0.0" exclude="Compile" />
@@ -75,9 +71,5 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
       <group targetFramework="Xamarin.TVOS1.0" />
       <group targetFramework="Xamarin.WatchOS1.0" />
     </dependencies>
-    <frameworkAssemblies>
-      <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.6" />
-      <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.6" />
-    </frameworkAssemblies>
   </metadata>
 </package>

@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.3;net46;netstandard1.4</TargetFrameworks>
+    <TargetFrameworks>netstandard1.3;netstandard1.4</TargetFrameworks>
     <NuspecFile>$(ArtifactsBinDir)system.runtime.serialization.formatters/4.3.0/system.runtime.serialization.formatters.nuspec</NuspecFile>
    </PropertyGroup>
 
@@ -17,21 +17,16 @@
     <Compile Include="**/lib/$(TargetFramework)/*.cs" />
   </ItemGroup>
 
-    <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
-        <PackageReference Include="System.Runtime" Version="4.3.0" />
-        <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
-    </ItemGroup>
-    <ItemGroup Condition=" '$(TargetFramework)' == 'net46' ">
-        <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
-        <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net46" Version="1.0.2" />
-    </ItemGroup>
-    <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.4' ">
-        <PackageReference Include="System.Collections" Version="4.3.0" />
-        <PackageReference Include="System.Reflection" Version="4.3.0" />
-        <PackageReference Include="System.Resources.ResourceManager" Version="4.3.0" />
-        <PackageReference Include="System.Runtime" Version="4.3.0" />
-        <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
-    </ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
+      <PackageReference Include="System.Runtime" Version="4.3.0" />
+      <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.4' ">
+      <PackageReference Include="System.Collections" Version="4.3.0" />
+      <PackageReference Include="System.Reflection" Version="4.3.0" />
+      <PackageReference Include="System.Resources.ResourceManager" Version="4.3.0" />
+      <PackageReference Include="System.Runtime" Version="4.3.0" />
+      <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
+  </ItemGroup>
 
-  
 </Project>

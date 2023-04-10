@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.3;netstandard1.4;net46</TargetFrameworks>
+    <TargetFrameworks>netstandard1.3;netstandard1.4</TargetFrameworks>
     <NuspecFile>$(ArtifactsBinDir)system.diagnostics.process/4.1.0/system.diagnostics.process.nuspec</NuspecFile>
    </PropertyGroup>
 
@@ -41,10 +41,6 @@
       <PackageReference Include="System.Threading.Tasks" Version="4.0.11" />
       <PackageReference Include="System.Threading.Thread" Version="4.0.0" />
       <PackageReference Include="System.Threading.ThreadPool" Version="4.0.10" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net46' ">
-      <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net46" Version="1.0.2" />
-      <Reference Include="System" />
   </ItemGroup>
 
 </Project>

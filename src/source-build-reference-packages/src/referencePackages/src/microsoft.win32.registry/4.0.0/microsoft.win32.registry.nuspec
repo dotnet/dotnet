@@ -24,7 +24,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     <copyright>© Microsoft Corporation.  All rights reserved.</copyright>
     <serviceable>true</serviceable>
     <dependencies>
-      <group targetFramework=".NETFramework4.6" />
       <group targetFramework=".NETCore5.0" />
       <group targetFramework=".NETStandard1.3">
         <dependency id="Microsoft.NETCore.Platforms" version="1.0.1" />
@@ -37,8 +36,5 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
         <dependency id="System.Runtime.InteropServices" version="4.1.0" exclude="Compile" />
       </group>
     </dependencies>
-    <frameworkAssemblies>
-      <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.6" />
-    </frameworkAssemblies>
   </metadata>
 </package>
