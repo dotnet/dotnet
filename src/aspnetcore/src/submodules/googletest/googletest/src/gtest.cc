@@ -2994,7 +2994,7 @@ void TestSuite::Run() {
   // translation units.
   std::stable_sort(test_info_list_.begin(), test_info_list_.end(),
                    [](const TestInfo* const a, const TestInfo* const b) {
-                     if (const int result = std::strcmp(a->file(), a->file())) {
+                     if (const int result = std::strcmp(a->file(), b->file())) {
                        return result < 0;
                      }
 
