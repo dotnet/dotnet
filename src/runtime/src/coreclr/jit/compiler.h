@@ -549,6 +549,12 @@ public:
     unsigned char lvIsSplit : 1;   // Set if the argument is splited.
 #endif                             // defined(TARGET_LOONGARCH64)
 
+#if defined(TARGET_RISCV64)
+    unsigned char lvIs4Field1 : 1; // Set if the 1st field is int or float within struct for RISCV64.
+    unsigned char lvIs4Field2 : 1; // Set if the 2nd field is int or float within struct for RISCV64.
+    unsigned char lvIsSplit : 1;   // Set if the argument is splited.
+#endif                             // defined(TARGET_RISCV64)
+
     unsigned char lvIsBoolean : 1; // set if variable is boolean
     unsigned char lvSingleDef : 1; // variable has a single def. Used to identify ref type locals that can get type
                                    // updates
@@ -1816,7 +1822,7 @@ struct FuncInfoDsc
     emitLocation* coldStartLoc; // locations for the cold section, if there is one.
     emitLocation* coldEndLoc;
 
-#elif defined(TARGET_ARMARCH) || defined(TARGET_LOONGARCH64)
+#elif defined(TARGET_ARMARCH) || defined(TARGET_LOONGARCH64) || defined(TARGET_RISCV64)
 
     UnwindInfo  uwi;     // Unwind information for this function/funclet's hot  section
     UnwindInfo* uwiCold; // Unwind information for this function/funclet's cold section
@@ -1831,7 +1837,7 @@ struct FuncInfoDsc
     emitLocation* coldStartLoc; // locations for the cold section, if there is one.
     emitLocation* coldEndLoc;
 
-#endif // TARGET_ARMARCH || TARGET_LOONGARCH64
+#endif // TARGET_ARMARCH || TARGET_LOONGARCH64 || TARGET_RISCV64
 
 #if defined(FEATURE_CFI_SUPPORT)
     jitstd::vector<CFI_CODE>* cfiCodes;
@@ -4541,6 +4547,8 @@ public:
 
     BasicBlock* fgNewBBafter(BBjumpKinds jumpKind, BasicBlock* block, bool extendRegion);
 
+    BasicBlock* fgNewBBFromTreeAfter(BBjumpKinds jumpKind, BasicBlock* block, GenTree* tree, DebugInfo& debugInfo, bool updateSideEffects = false);
+
     BasicBlock* fgNewBBinRegion(BBjumpKinds jumpKind,
                                 unsigned    tryIndex,
                                 unsigned    hndIndex,
@@ -5304,6 +5312,11 @@ public:
     void SplitTreesRandomly();
     void SplitTreesRemoveCommas();
     PhaseStatus fgExpandRuntimeLookups();
+
+    bool fgExpandStaticInitForBlock(BasicBlock* block);
+    bool fgExpandStaticInitForCall(BasicBlock* block, Statement* stmt, GenTreeCall* call);
+    PhaseStatus fgExpandStaticInit();
+
     PhaseStatus fgInsertGCPolls();
     BasicBlock* fgCreateGCPoll(GCPollType pollType, BasicBlock* block);
 
@@ -7025,6 +7038,7 @@ public:
 #define OMF_HAS_TAILCALL_SUCCESSOR             0x00001000 // Method has potential tail call in a non BBJ_RETURN block
 #define OMF_HAS_MDNEWARRAY                     0x00002000 // Method contains 'new' of an MD array
 #define OMF_HAS_MDARRAYREF                     0x00004000 // Method contains multi-dimensional intrinsic array element loads or stores.
+#define OMF_HAS_STATIC_INIT                    0x00008000 // Method has static initializations we might want to partially inline
 
     // clang-format on
 
@@ -7053,6 +7067,16 @@ public:
     void setMethodHasFrozenObjects()
     {
         optMethodFlags |= OMF_HAS_FROZEN_OBJECTS;
+    }
+
+    bool doesMethodHaveStaticInit()
+    {
+        return (optMethodFlags & OMF_HAS_STATIC_INIT) != 0;
+    }
+
+    void setMethodHasStaticInit()
+    {
+        optMethodFlags |= OMF_HAS_STATIC_INIT;
     }
 
     bool doesMethodHaveGuardedDevirtualization() const
@@ -7907,6 +7931,9 @@ public:
 #elif defined(TARGET_LOONGARCH64)
             reg     = REG_T8;
             regMask = RBM_T8;
+#elif defined(TARGET_RISCV64)
+            reg     = REG_T5;
+            regMask = RBM_T5;
 #else
 #error Unsupported or unset target architecture
 #endif
@@ -8048,6 +8075,14 @@ public:
     static CORINFO_METHOD_HANDLE eeFindHelper(unsigned helper);
     static CorInfoHelpFunc eeGetHelperNum(CORINFO_METHOD_HANDLE method);
 
+    enum StaticHelperReturnValue
+    {
+        SHRV_STATIC_BASE_PTR,
+        SHRV_VOID,
+    };
+    static bool IsStaticHelperEligibleForExpansion(GenTree*                 tree,
+                                                   bool*                    isGc       = nullptr,
+                                                   StaticHelperReturnValue* retValKind = nullptr);
     static bool IsSharedStaticHelper(GenTree* tree);
     static bool IsGcSafePoint(GenTreeCall* call);
 
@@ -8263,6 +8298,15 @@ public:
     void unwindSaveRegPair(regNumber reg1, regNumber reg2, int offset);
     void unwindReturn(regNumber reg);
 #endif // defined(TARGET_LOONGARCH64)
+
+#if defined(TARGET_RISCV64)
+    void unwindNop();
+    void unwindPadding(); // Generate a sequence of unwind NOP codes representing instructions between the last
+                          // instruction and the current location.
+    void unwindSaveReg(regNumber reg, int offset);
+    void unwindSaveRegPair(regNumber reg1, regNumber reg2, int offset);
+    void unwindReturn(regNumber reg);
+#endif // defined(TARGET_RISCV64)
 
     //
     // Private "helper" functions for the unwind implementation.
@@ -8906,6 +8950,82 @@ private:
 #endif
     }
 
+    //------------------------------------------------------------------------
+    // roundUpSIMDSize: rounds the given size up to the nearest SIMD size
+    //                  available on the target. Examples on XARCH:
+    //
+    //    size: 7 -> XMM
+    //    size: 30 -> YMM (or XMM if target doesn't support AVX)
+    //    size: 70 -> ZMM (or YMM or XMM depending on target)
+    //
+    // Arguments:
+    //    size   - size of the data to process with SIMD
+    //
+    // Notes:
+    //    It's only supposed to be used for scenarios where we can
+    //    perform an overlapped load/store.
+    //
+    unsigned int roundUpSIMDSize(unsigned size)
+    {
+#if defined(FEATURE_HW_INTRINSICS) && defined(TARGET_XARCH)
+        unsigned maxSimdSize = maxSIMDStructBytes();
+        assert(maxSimdSize <= ZMM_REGSIZE_BYTES);
+        if (size <= XMM_REGSIZE_BYTES && maxSimdSize > XMM_REGSIZE_BYTES)
+        {
+            return XMM_REGSIZE_BYTES;
+        }
+        if (size <= YMM_REGSIZE_BYTES && maxSimdSize > YMM_REGSIZE_BYTES)
+        {
+            return YMM_REGSIZE_BYTES;
+        }
+        return maxSimdSize;
+#elif defined(TARGET_ARM64)
+        assert(maxSIMDStructBytes() == FP_REGSIZE_BYTES);
+        return FP_REGSIZE_BYTES;
+#else
+        assert(!"roundUpSIMDSize() unimplemented on target arch");
+        unreached();
+#endif
+    }
+
+    //------------------------------------------------------------------------
+    // roundDownSIMDSize: rounds the given size down to the nearest SIMD size
+    //                    available on the target. Examples on XARCH:
+    //
+    //    size: 7 -> 0
+    //    size: 30 -> XMM (not enough for AVX)
+    //    size: 60 -> YMM (or XMM if target doesn't support AVX)
+    //    size: 70 -> ZMM/YMM/XMM whatever the current system can offer
+    //
+    // Arguments:
+    //    size   - size of the data to process with SIMD
+    //
+    unsigned int roundDownSIMDSize(unsigned size)
+    {
+#if defined(FEATURE_HW_INTRINSICS) && defined(TARGET_XARCH)
+        unsigned maxSimdSize = maxSIMDStructBytes();
+        assert(maxSimdSize <= ZMM_REGSIZE_BYTES);
+        if (size >= maxSimdSize)
+        {
+            // Size is bigger than max SIMD size the current target supports
+            return maxSimdSize;
+        }
+        if (size >= YMM_REGSIZE_BYTES && maxSimdSize >= YMM_REGSIZE_BYTES)
+        {
+            // Size is >= YMM but not enough for ZMM -> YMM
+            return YMM_REGSIZE_BYTES;
+        }
+        // Return 0 if size is even less than XMM, otherwise - XMM
+        return size >= XMM_REGSIZE_BYTES ? XMM_REGSIZE_BYTES : 0;
+#elif defined(TARGET_ARM64)
+        assert(maxSIMDStructBytes() == FP_REGSIZE_BYTES);
+        return size >= FP_REGSIZE_BYTES ? FP_REGSIZE_BYTES : 0;
+#else
+        assert(!"roundDownSIMDSize() unimplemented on target arch");
+        unreached();
+#endif
+    }
+
     unsigned int minSIMDStructBytes()
     {
         return emitTypeSize(TYP_SIMD8);
@@ -8953,6 +9073,14 @@ private:
     {
         return false;
     }
+    unsigned int roundUpSIMDSize(unsigned size)
+    {
+        return 0;
+    }
+    unsigned int roundDownSIMDSize(unsigned size)
+    {
+        return 0;
+    }
 #endif // FEATURE_SIMD
 
 public:
@@ -8983,9 +9111,13 @@ public:
         {
             maxRegSize = maxSIMDStructBytes();
 #if defined(TARGET_XARCH)
-            // TODO-XARCH-AVX512: Consider enabling this for AVX512 where it's beneficial
-            maxRegSize = min(maxRegSize, YMM_REGSIZE_BYTES);
-            threshold  = maxRegSize;
+            if (type != UnrollKind::Memmove)
+            {
+                // TODO-XARCH-AVX512: Consider enabling this for AVX512 where it's beneficial.
+                // Enabled for Memmove only for now.
+                maxRegSize = min(maxRegSize, YMM_REGSIZE_BYTES);
+            }
+            threshold = maxRegSize;
 #elif defined(TARGET_ARM64)
             // ldp/stp instructions can load/store two 16-byte vectors at once, e.g.:
             //
@@ -10058,6 +10190,8 @@ public:
 
 #define CPU_LOONGARCH64 0x0800 // The generic LOONGARCH64 CPU
 
+#define CPU_RISCV64 0x1000 // The generic RISCV64 CPU
+
         unsigned genCPU; // What CPU are we running on
 
         // Number of class profile probes in this method
@@ -10540,7 +10674,7 @@ protected:
     void compSetProcessor();
     void compInitDebuggingInfo();
     void compSetOptimizationLevel();
-#if defined(TARGET_ARMARCH) || defined(TARGET_LOONGARCH64)
+#if defined(TARGET_ARMARCH) || defined(TARGET_LOONGARCH64) || defined(TARGET_RISCV64)
     bool compRsvdRegCheck(FrameLayoutState curState);
 #endif
     void compCompile(void** methodCodePtr, uint32_t* methodCodeSize, JitFlags* compileFlags);
@@ -11848,6 +11982,10 @@ const instruction INS_MULADD     = INS_fmadd_d; // NOTE: default is double.
 const instruction INS_ABS        = INS_fabs_d;  // NOTE: default is double.
 const instruction INS_SQRT       = INS_fsqrt_d; // NOTE: default is double.
 #endif                                          // TARGET_LOONGARCH64
+
+#ifdef TARGET_RISCV64
+const instruction INS_BREAKPOINT = INS_ebreak;
+#endif // TARGET_RISCV64
 
 /*****************************************************************************/
 
