@@ -33,8 +33,8 @@
     <roslynOutputPackageVersion>4.6.0-2.23177.13</roslynOutputPackageVersion>
     <runtimeGitCommitHash>053e17a0daf4be907db34d64fc51bc133c284fae</runtimeGitCommitHash>
     <runtimeOutputPackageVersion>8.0.0-preview.4.23210.1</runtimeOutputPackageVersion>
-    <sdkGitCommitHash>15dd3db4531d5180fda8a864f3087791cb240ede</sdkGitCommitHash>
-    <sdkOutputPackageVersion>8.0.100-preview.4.23207.19</sdkOutputPackageVersion>
+    <sdkGitCommitHash>f6119d17d5f76f6efbe6e0e074205e0d0fa0d59d</sdkGitCommitHash>
+    <sdkOutputPackageVersion>8.0.100-preview.4.23210.3</sdkOutputPackageVersion>
     <sourcebuildexternalsGitCommitHash>33edde07d61cf7606d76ada765335fb81f1cbb71</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>8.0.0-alpha.1.23203.1</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>51836c280a920fb25e286c81ad395a934f5bcbc0</sourcebuildreferencepackagesGitCommitHash>
