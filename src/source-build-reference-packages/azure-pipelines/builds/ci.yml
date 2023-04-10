@@ -24,6 +24,7 @@ stages:
       enablePublishUsingPipelines: true
       enablePublishBuildArtifacts: true
       enablePublishBuildAssets: true
+      publishAssetsImmediately: true
       artifacts:
         publish:
           artifacts: true
@@ -35,7 +36,8 @@ stages:
   - template: /eng/common/templates/post-build/post-build.yml
     parameters:
       publishingInfraVersion: 3
-      enableSourceLinkValidation: true
+      publishAssetsImmediately: true
+      enableSourceLinkValidation: false
       #Nuget and Signing Validation are not needed as we only produce a transport package.
       enableSigningValidation: false
       enableNugetValidation: false
