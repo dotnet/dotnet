@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.1;netstandard2.0;net461</TargetFrameworks>
+    <TargetFrameworks>netstandard1.1;netstandard2.0</TargetFrameworks>
     <NuspecFile>$(ArtifactsBinDir)system.reflection.metadata/5.0.0/system.reflection.metadata.nuspec</NuspecFile>
   </PropertyGroup>
 
@@ -18,10 +18,6 @@
     <OutputPath>$(ArtifactsBinDir)system.reflection.metadata/5.0.0/lib/</OutputPath>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net461' ">
-    <OutputPath>$(ArtifactsBinDir)system.reflection.metadata/5.0.0/lib/</OutputPath>
-  </PropertyGroup>
-
   <ItemGroup>
     <Compile Include="**/ref/$(TargetFramework)/*.cs" />
     <Compile Include="**/lib/$(TargetFramework)/*.cs" />
@@ -35,13 +31,6 @@
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
     <PackageReference Include="NETStandard.Library" Version="$(NETStandardImplicitPackageVersion)" />
     <PackageReference Include="System.Collections.Immutable" Version="5.0.0" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
-    <PackageReference Include="System.Collections.Immutable" Version="5.0.0" />
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net461" Version="1.0.2" />
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
   </ItemGroup>
 
 </Project>

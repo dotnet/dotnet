@@ -54,9 +54,6 @@ System.Security.Cryptography.Xml.XmlLicenseTransform</description>
     <serviceable>true</serviceable>
     <repository type="git" url="https://github.com/dotnet/runtime" commit="55fb7ef977e7d120dc12f0960edcff0739d7ee0e" />
     <dependencies>
-      <group targetFramework=".NETFramework4.6.1">
-        <dependency id="System.Security.AccessControl" version="6.0.0" exclude="Build,Analyzers" />
-      </group>
       <group targetFramework="net6.0">
         <dependency id="System.Security.AccessControl" version="6.0.0" exclude="Build,Analyzers" />
         <dependency id="System.Security.Cryptography.Pkcs" version="6.0.1" exclude="Build,Analyzers" />
@@ -67,8 +64,5 @@ System.Security.Cryptography.Xml.XmlLicenseTransform</description>
         <dependency id="System.Memory" version="4.5.4" exclude="Build,Analyzers" />
       </group>
     </dependencies>
-    <frameworkAssemblies>
-      <frameworkAssembly assemblyName="System.Security" targetFramework=".NETFramework4.6.1" />
-    </frameworkAssemblies>
   </metadata>
 </package>

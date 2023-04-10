@@ -59,19 +59,10 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     <copyright>© Microsoft Corporation. All rights reserved.</copyright>
     <serviceable>true</serviceable>
     <dependencies>
-      <group targetFramework=".NETFramework4.6.1">
-        <dependency id="System.Security.Permissions" version="4.7.0" />
-      </group>
       <group targetFramework=".NETStandard2.0">
         <dependency id="System.Security.Cryptography.Pkcs" version="4.7.0" exclude="Compile" />
         <dependency id="System.Security.Permissions" version="4.7.0" />
       </group>
     </dependencies>
-    <frameworkAssemblies>
-      <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.6.1" />
-      <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.6.1" />
-      <frameworkAssembly assemblyName="System.Security" targetFramework=".NETFramework4.6.1" />
-      <frameworkAssembly assemblyName="System.Xml" targetFramework=".NETFramework4.6.1" />
-    </frameworkAssemblies>
   </metadata>
 </package>

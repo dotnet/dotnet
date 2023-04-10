@@ -16,7 +16,6 @@ System.Security.Cryptography.Pkcs.EnvelopedCms</description>
     <serviceable>true</serviceable>
     <repository type="git" url="https://github.com/dotnet/runtime" commit="70ae3df4a6f3c92fb6b315afc405edd10ff38579" />
     <dependencies>
-      <group targetFramework=".NETFramework4.6.1" />
       <group targetFramework="net6.0">
         <dependency id="System.Formats.Asn1" version="6.0.0" exclude="Build,Analyzers" />
       </group>
@@ -31,8 +30,5 @@ System.Security.Cryptography.Pkcs.EnvelopedCms</description>
         <dependency id="System.Security.Cryptography.Cng" version="5.0.0" exclude="Build,Analyzers" />
       </group>
     </dependencies>
-    <frameworkAssemblies>
-      <frameworkAssembly assemblyName="System.Security" targetFramework=".NETFramework4.6.1" />
-    </frameworkAssemblies>
   </metadata>
 </package>

@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.3;netstandard1.4;net46;net461</TargetFrameworks>
+    <TargetFrameworks>netstandard1.3;netstandard1.4;net46</TargetFrameworks>
     <NuspecFile>$(ArtifactsBinDir)system.diagnostics.process/4.1.0/system.diagnostics.process.nuspec</NuspecFile>
    </PropertyGroup>
 
@@ -14,42 +14,37 @@
     <Compile Include="**/lib/$(TargetFramework)/*.cs" />
   </ItemGroup>
 
-    <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
-        <PackageReference Include="System.IO" Version="4.1.0" />
-        <PackageReference Include="System.Runtime" Version="4.1.0" />
-        <PackageReference Include="System.Runtime.Handles" Version="4.0.1" />
-        <PackageReference Include="System.Text.Encoding" Version="4.0.11" />
-    </ItemGroup>
-    <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.4' ">
-        <PackageReference Include="Microsoft.NETCore.Platforms" Version="1.0.1" />
-        <PackageReference Include="Microsoft.Win32.Primitives" Version="4.0.1" />
-        <PackageReference Include="Microsoft.Win32.Registry" Version="4.0.0" />
-        <PackageReference Include="System.Collections" Version="4.0.11" />
-        <PackageReference Include="System.Diagnostics.Debug" Version="4.0.11" />
-        <PackageReference Include="System.Globalization" Version="4.0.11" />
-        <PackageReference Include="System.IO" Version="4.1.0" />
-        <PackageReference Include="System.IO.FileSystem" Version="4.0.1" />
-        <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.0.1" />
-        <PackageReference Include="System.Resources.ResourceManager" Version="4.0.1" />
-        <PackageReference Include="System.Runtime" Version="4.1.0" />
-        <PackageReference Include="System.Runtime.Extensions" Version="4.1.0" />
-        <PackageReference Include="System.Runtime.Handles" Version="4.0.1" />
-        <PackageReference Include="System.Runtime.InteropServices" Version="4.1.0" />
-        <PackageReference Include="System.Text.Encoding" Version="4.0.11" />
-        <PackageReference Include="System.Text.Encoding.Extensions" Version="4.0.11" />
-        <PackageReference Include="System.Threading" Version="4.0.11" />
-        <PackageReference Include="System.Threading.Tasks" Version="4.0.11" />
-        <PackageReference Include="System.Threading.Thread" Version="4.0.0" />
-        <PackageReference Include="System.Threading.ThreadPool" Version="4.0.10" />
-    </ItemGroup>
-    <ItemGroup Condition=" '$(TargetFramework)' == 'net46' ">
-        <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net46" Version="1.0.2" />
-        <Reference Include="System" />
-    </ItemGroup>
-    <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
-        <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net461" Version="1.0.2" />
-        <Reference Include="System" />
-    </ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
+      <PackageReference Include="System.IO" Version="4.1.0" />
+      <PackageReference Include="System.Runtime" Version="4.1.0" />
+      <PackageReference Include="System.Runtime.Handles" Version="4.0.1" />
+      <PackageReference Include="System.Text.Encoding" Version="4.0.11" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.4' ">
+      <PackageReference Include="Microsoft.NETCore.Platforms" Version="1.0.1" />
+      <PackageReference Include="Microsoft.Win32.Primitives" Version="4.0.1" />
+      <PackageReference Include="Microsoft.Win32.Registry" Version="4.0.0" />
+      <PackageReference Include="System.Collections" Version="4.0.11" />
+      <PackageReference Include="System.Diagnostics.Debug" Version="4.0.11" />
+      <PackageReference Include="System.Globalization" Version="4.0.11" />
+      <PackageReference Include="System.IO" Version="4.1.0" />
+      <PackageReference Include="System.IO.FileSystem" Version="4.0.1" />
+      <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.0.1" />
+      <PackageReference Include="System.Resources.ResourceManager" Version="4.0.1" />
+      <PackageReference Include="System.Runtime" Version="4.1.0" />
+      <PackageReference Include="System.Runtime.Extensions" Version="4.1.0" />
+      <PackageReference Include="System.Runtime.Handles" Version="4.0.1" />
+      <PackageReference Include="System.Runtime.InteropServices" Version="4.1.0" />
+      <PackageReference Include="System.Text.Encoding" Version="4.0.11" />
+      <PackageReference Include="System.Text.Encoding.Extensions" Version="4.0.11" />
+      <PackageReference Include="System.Threading" Version="4.0.11" />
+      <PackageReference Include="System.Threading.Tasks" Version="4.0.11" />
+      <PackageReference Include="System.Threading.Thread" Version="4.0.0" />
+      <PackageReference Include="System.Threading.ThreadPool" Version="4.0.10" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net46' ">
+      <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net46" Version="1.0.2" />
+      <Reference Include="System" />
+  </ItemGroup>
 
-  
 </Project>

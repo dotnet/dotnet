@@ -32,7 +32,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
         <dependency id="System.Security.Cryptography.Encoding" version="4.3.0" />
         <dependency id="System.Security.Cryptography.X509Certificates" version="4.3.0" />
       </group>
-      <group targetFramework=".NETFramework4.6.1" />
       <group targetFramework=".NETCoreApp2.1">
         <dependency id="System.Security.Cryptography.Cng" version="5.0.0" exclude="Compile" />
       </group>
@@ -80,10 +79,7 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
       </group>
     </dependencies>
     <frameworkAssemblies>
-      <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.6.1" />
       <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.6" />
-      <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.6.1" />
-      <frameworkAssembly assemblyName="System.Security" targetFramework=".NETFramework4.6.1" />
       <frameworkAssembly assemblyName="System.Security" targetFramework=".NETFramework4.6" />
     </frameworkAssemblies>
   </metadata>

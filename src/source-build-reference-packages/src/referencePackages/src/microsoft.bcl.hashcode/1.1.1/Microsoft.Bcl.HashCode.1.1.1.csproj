@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard2.1;netcoreapp2.1;net461</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;netcoreapp2.1</TargetFrameworks>
     <NuspecFile>$(ArtifactsBinDir)microsoft.bcl.hashcode/1.1.1/microsoft.bcl.hashcode.nuspec</NuspecFile>
     <StrongNameKeyId>Open</StrongNameKeyId>
     <DisableImplicitFrameworkReferences>false</DisableImplicitFrameworkReferences>
@@ -15,11 +15,6 @@
   <ItemGroup>
     <Compile Include="**/ref/$(TargetFramework)/*.cs" />
     <Compile Include="**/lib/$(TargetFramework)/*.cs" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net461" Version="1.0.2" />
-    <Reference Include="System" />
   </ItemGroup>
 
 </Project>

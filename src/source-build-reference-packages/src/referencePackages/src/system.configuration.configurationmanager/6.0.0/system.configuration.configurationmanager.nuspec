@@ -17,9 +17,6 @@ System.Configuration.ConfigurationManager</description>
     <serviceable>true</serviceable>
     <repository type="git" url="https://github.com/dotnet/runtime" commit="4822e3c3aa77eb82b2fb33c9321f923cf11ddde6" />
     <dependencies>
-      <group targetFramework=".NETFramework4.6.1">
-        <dependency id="System.Security.Permissions" version="6.0.0" exclude="Build,Analyzers" />
-      </group>
       <group targetFramework="net6.0">
         <dependency id="System.Security.Cryptography.ProtectedData" version="6.0.0" exclude="Build,Analyzers" />
         <dependency id="System.Security.Permissions" version="6.0.0" exclude="Build,Analyzers" />
@@ -29,8 +26,5 @@ System.Configuration.ConfigurationManager</description>
         <dependency id="System.Security.Permissions" version="6.0.0" exclude="Build,Analyzers" />
       </group>
     </dependencies>
-    <frameworkAssemblies>
-      <frameworkAssembly assemblyName="System.Configuration" targetFramework=".NETFramework4.6.1" />
-    </frameworkAssemblies>
   </metadata>
 </package>
