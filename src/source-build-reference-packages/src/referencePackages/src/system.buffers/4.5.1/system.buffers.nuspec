@@ -21,7 +21,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     <copyright>© Microsoft Corporation. All rights reserved.</copyright>
     <serviceable>true</serviceable>
     <dependencies>
-      <group targetFramework=".NETFramework4.6.1" />
       <group targetFramework=".NETStandard1.1">
         <dependency id="System.Diagnostics.Debug" version="4.3.0" exclude="Compile" />
         <dependency id="System.Diagnostics.Tracing" version="4.3.0" exclude="Compile" />
@@ -35,8 +34,5 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
       <group targetFramework="Windows8.0" />
       <group targetFramework="WindowsPhoneApp8.1" />
     </dependencies>
-    <frameworkAssemblies>
-      <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.6.1" />
-    </frameworkAssemblies>
   </metadata>
 </package>

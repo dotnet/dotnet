@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.1;netstandard2.0;net461</TargetFrameworks>
+    <TargetFrameworks>netstandard1.1;netstandard2.0</TargetFrameworks>
     <NuspecFile>$(ArtifactsBinDir)system.buffers/4.5.1/system.buffers.nuspec</NuspecFile>
     <StrongNameKeyId>Open</StrongNameKeyId>
    </PropertyGroup>
@@ -9,9 +9,6 @@
     <OutputPath>$(ArtifactsBinDir)system.buffers/4.5.1/ref/</OutputPath>
     <IntermediateOutputPath>$(ArtifactsObjDir)system.buffers/4.5.1</IntermediateOutputPath>
   </PropertyGroup>
-    <PropertyGroup Condition=" '$(TargetFramework)' == 'net461' ">
-        <OutputPath>$(ArtifactsBinDir)system.buffers/4.5.1/lib/</OutputPath>
-    </PropertyGroup>
 
   <ItemGroup>
     <Compile Include="**/ref/$(TargetFramework)/*.cs" />
@@ -27,9 +24,6 @@
   </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
       <PackageReference Include="NETStandard.Library" Version="$(NETStandardImplicitPackageVersion)" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
-      <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net461" Version="1.0.2" />
   </ItemGroup>
 
 </Project>

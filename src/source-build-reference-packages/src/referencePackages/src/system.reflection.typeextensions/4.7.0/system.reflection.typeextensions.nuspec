@@ -25,7 +25,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
       <group targetFramework="MonoAndroid1.0" />
       <group targetFramework="MonoTouch1.0" />
       <group targetFramework=".NETFramework4.6" />
-      <group targetFramework=".NETFramework4.6.1" />
       <group targetFramework=".NETCore5.0">
         <dependency id="System.Diagnostics.Contracts" version="4.3.0" exclude="Compile" />
         <dependency id="System.Diagnostics.Debug" version="4.3.0" exclude="Compile" />
@@ -54,7 +53,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
       <group targetFramework="Xamarin.WatchOS1.0" />
     </dependencies>
     <frameworkAssemblies>
-      <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.6.1" />
       <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.6" />
     </frameworkAssemblies>
   </metadata>

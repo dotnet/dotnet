@@ -35,11 +35,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
         <dependency id="System.Memory" version="4.5.4" />
         <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
       </group>
-      <group targetFramework=".NETFramework4.6.1">
-        <dependency id="System.Buffers" version="4.5.1" />
-        <dependency id="System.Memory" version="4.5.4" />
-        <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
-      </group>
       <group targetFramework=".NETCoreApp2.1" />
       <group targetFramework=".NETCoreApp3.0" />
       <group targetFramework=".NETStandard1.3">
@@ -70,8 +65,5 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
         <dependency id="System.Buffers" version="4.5.1" />
       </group>
     </dependencies>
-    <frameworkAssemblies>
-      <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.6.1" />
-    </frameworkAssemblies>
   </metadata>
 </package>

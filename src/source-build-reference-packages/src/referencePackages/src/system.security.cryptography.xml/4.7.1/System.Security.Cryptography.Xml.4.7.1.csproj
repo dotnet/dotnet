@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <NuspecFile>$(ArtifactsBinDir)system.security.cryptography.xml/4.7.1/system.security.cryptography.xml.nuspec</NuspecFile>
     <StrongNameKeyId>Open</StrongNameKeyId>
   </PropertyGroup>
@@ -20,14 +20,6 @@
     <PackageReference Include="NETStandard.Library" Version="$(NETStandardImplicitPackageVersion)" />
     <PackageReference Include="System.Security.Cryptography.Pkcs" Version="4.7.0" />
     <PackageReference Include="System.Security.Permissions" Version="4.7.0" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
-    <PackageReference Include="System.Security.Permissions" Version="4.7.0" />
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net461" Version="1.0.2" />
-    <Reference Include="System" />
-    <Reference Include="System.Security" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
 
 </Project>
