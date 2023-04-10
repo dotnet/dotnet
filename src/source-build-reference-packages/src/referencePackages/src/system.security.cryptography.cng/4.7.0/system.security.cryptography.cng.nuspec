@@ -30,9 +30,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
         <dependency id="System.Security.Cryptography.Primitives" version="4.3.0" />
       </group>
       <group targetFramework=".NETFramework4.6.1" />
-      <group targetFramework=".NETCoreApp2.0">
-        <dependency id="Microsoft.NETCore.Platforms" version="3.1.0" />
-      </group>
       <group targetFramework=".NETCoreApp2.1" />
       <group targetFramework=".NETCoreApp3.0" />
       <group targetFramework=".NETStandard1.3">

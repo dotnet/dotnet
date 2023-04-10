@@ -1,18 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.0;netstandard2.0;netcoreapp2.0</TargetFrameworks>
+    <TargetFrameworks>netstandard1.0;netstandard2.0</TargetFrameworks>
     <NuspecFile>$(ArtifactsBinDir)system.runtime.compilerservices.unsafe/4.7.0/system.runtime.compilerservices.unsafe.nuspec</NuspecFile>
   </PropertyGroup>
 
   <PropertyGroup>
     <OutputPath>$(ArtifactsBinDir)system.runtime.compilerservices.unsafe/4.7.0/ref/</OutputPath>
     <IntermediateOutputPath>$(ArtifactsObjDir)system.runtime.compilerservices.unsafe/4.7.0</IntermediateOutputPath>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
-    <OutputPath>$(ArtifactsBinDir)system.runtime.compilerservices.unsafe/4.7.0/lib/</OutputPath>
-    <DisableImplicitFrameworkReferences>false</DisableImplicitFrameworkReferences>
   </PropertyGroup>
 
   <ItemGroup>

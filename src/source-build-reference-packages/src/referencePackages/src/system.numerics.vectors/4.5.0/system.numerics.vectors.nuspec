@@ -31,7 +31,6 @@ System.Numerics.Vector&lt;T&gt;
       <group targetFramework="MonoAndroid1.0" />
       <group targetFramework="MonoTouch1.0" />
       <group targetFramework=".NETFramework4.6" />
-      <group targetFramework=".NETCoreApp2.0" />
       <group targetFramework=".NETStandard1.0">
         <dependency id="NETStandard.Library" version="1.6.1" />
       </group>
