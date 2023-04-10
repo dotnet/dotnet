@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp2.0;netstandard1.3;netstandard2.0;netcoreapp3.0;net461</TargetFrameworks>
+    <TargetFrameworks>netstandard1.3;netstandard2.0;netcoreapp3.0;net461</TargetFrameworks>
     <NuspecFile>$(ArtifactsBinDir)system.io.pipelines/5.0.1/system.io.pipelines.nuspec</NuspecFile>
     <StrongNameKeyId>Open</StrongNameKeyId>
     <DisableImplicitFrameworkReferences>false</DisableImplicitFrameworkReferences>
@@ -31,11 +31,6 @@
   <ItemGroup>
     <Compile Include="**/ref/$(TargetFramework)/*.cs" />
     <Compile Include="**/lib/$(TargetFramework)/*.cs" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
-    <PackageReference Include="System.Memory" Version="4.5.4" />
-    <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">

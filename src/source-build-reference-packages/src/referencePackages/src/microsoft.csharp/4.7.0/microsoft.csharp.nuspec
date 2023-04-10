@@ -32,7 +32,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
         <dependency id="System.Dynamic.Runtime" version="4.3.0" />
         <dependency id="System.Reflection.TypeExtensions" version="4.7.0" exclude="Compile" />
       </group>
-      <group targetFramework=".NETCoreApp2.0" />
       <group targetFramework=".NETStandard1.0">
         <dependency id="NETStandard.Library" version="1.6.1" />
         <dependency id="System.Dynamic.Runtime" version="4.3.0" />

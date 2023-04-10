@@ -41,9 +41,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
         <dependency id="System.Numerics.Vectors" version="4.4.0" />
         <dependency id="System.Runtime.CompilerServices.Unsafe" version="4.5.2" />
       </group>
-      <group targetFramework=".NETCoreApp2.0">
-        <dependency id="System.Runtime.CompilerServices.Unsafe" version="4.5.2" />
-      </group>
       <group targetFramework=".NETCoreApp2.1" />
       <group targetFramework=".NETStandard1.1">
         <dependency id="System.Buffers" version="4.4.0" />

@@ -27,10 +27,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
       <group targetFramework=".NETFramework4.6.1">
         <dependency id="System.Runtime.CompilerServices.Unsafe" version="4.5.2" />
       </group>
-      <group targetFramework=".NETCoreApp2.0">
-        <dependency id="Microsoft.NETCore.Platforms" version="2.1.2" />
-        <dependency id="System.Runtime.CompilerServices.Unsafe" version="4.5.2" />
-      </group>
       <group targetFramework=".NETStandard1.3">
         <dependency id="NETStandard.Library" version="1.6.1" />
       </group>

@@ -36,7 +36,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
         <dependency id="System.Runtime" version="4.3.0" />
         <dependency id="System.Runtime.Extensions" version="4.3.0" exclude="Compile" />
       </group>
-      <group targetFramework=".NETCoreApp2.0" />
       <group targetFramework=".NETStandard1.3">
         <dependency id="System.Reflection" version="4.3.0" />
         <dependency id="System.Resources.ResourceManager" version="4.3.0" exclude="Compile" />
