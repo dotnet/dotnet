@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net461;net47;netstandard1.0</TargetFrameworks>
+    <TargetFrameworks>net461;netstandard1.0</TargetFrameworks>
     <AssemblyName>System.ValueTuple</AssemblyName>
     <ProjectTemplateVersion>2</ProjectTemplateVersion>
     <StrongNameKeyId>Open</StrongNameKeyId>
@@ -10,8 +10,5 @@
   <ItemGroup Condition="'$(TargetFramework)' == 'net461'">
     <Reference Include="System" />
   </ItemGroup>
-
-  <!-- Manual changes:                                                      -->
-  <!--   - Reverted T* type forwards in `ref/net47` to System.ValueTuple<*> -->
 
 </Project>
