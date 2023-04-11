@@ -226,7 +226,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/xdt`  
 *[dotnet/xdt@9a1c3e1](https://github.com/dotnet/xdt/commit/9a1c3e1b7f0c8763d4c96e593961a61a72679a7b)*
 - `src/xliff-tasks`  
-*[dotnet/xliff-tasks@519d565](https://github.com/dotnet/xliff-tasks/commit/519d565b45c46ac452fe5a77ab63295138992e07)*
+*[dotnet/xliff-tasks@ce5066c](https://github.com/dotnet/xliff-tasks/commit/ce5066cd85c138c257a981f9c95257e9c577a5ee)*
 <!-- component list end -->
 
 The repository also contains a [JSON manifest](https://github.com/dotnet/dotnet/blob/main/src/source-manifest.json) listing all components in a machine-readable format.
