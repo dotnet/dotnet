@@ -41,9 +41,6 @@ System.Collections.Immutable.ImmutableStack&lt;T&gt;</description>
         <dependency id="NETStandard.Library" version="1.6.1" />
         <dependency id="System.Memory" version="4.5.4" />
       </group>
-      <group targetFramework=".NETFramework4.6.1">
-        <dependency id="System.Memory" version="4.5.4" />
-      </group>
       <group targetFramework=".NETCoreApp2.1" />
       <group targetFramework=".NETStandard1.0">
         <dependency id="NETStandard.Library" version="1.6.1" />
@@ -67,10 +64,5 @@ System.Collections.Immutable.ImmutableStack&lt;T&gt;</description>
       <group targetFramework="Xamarin.TVOS1.0" />
       <group targetFramework="Xamarin.WatchOS1.0" />
     </dependencies>
-    <frameworkAssemblies>
-      <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.6.1" />
-      <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.6.1" />
-      <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.6.1" />
-    </frameworkAssemblies>
   </metadata>
 </package>

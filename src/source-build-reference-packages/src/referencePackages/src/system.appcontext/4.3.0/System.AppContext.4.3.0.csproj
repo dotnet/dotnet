@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.3;netstandard1.6;net462</TargetFrameworks>
+    <TargetFrameworks>netstandard1.3;netstandard1.6</TargetFrameworks>
     <NuspecFile>$(ArtifactsBinDir)system.appcontext/4.3.0/system.appcontext.nuspec</NuspecFile>
    </PropertyGroup>
 
@@ -19,9 +19,6 @@
   </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
       <PackageReference Include="System.Runtime" Version="4.3.0" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
-      <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net462" Version="1.0.2" />
   </ItemGroup>
 
 </Project>

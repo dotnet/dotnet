@@ -39,12 +39,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
       <group targetFramework=".NETFramework4.6.1">
         <dependency id="System.Security.Cryptography.Primitives" version="4.3.0" />
       </group>
-      <group targetFramework=".NETFramework4.6.3">
-        <dependency id="System.IO" version="4.3.0" />
-        <dependency id="System.Runtime" version="4.3.0" />
-        <dependency id="System.Security.Cryptography.Encoding" version="4.3.0" />
-        <dependency id="System.Security.Cryptography.Primitives" version="4.3.0" />
-      </group>
       <group targetFramework=".NETCore5.0">
         <dependency id="Microsoft.NETCore.Platforms" version="1.1.0" />
         <dependency id="System.IO" version="4.3.0" exclude="Compile" />
@@ -89,10 +83,8 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.6" />
       <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.6.1" />
-      <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.6.3" />
       <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.6" />
       <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.6.1" />
-      <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.6.3" />
     </frameworkAssemblies>
   </metadata>
 </package>

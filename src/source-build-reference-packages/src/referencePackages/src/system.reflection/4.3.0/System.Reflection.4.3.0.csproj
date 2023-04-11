@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.0;netstandard1.3;netstandard1.5;net462</TargetFrameworks>
+    <TargetFrameworks>netstandard1.0;netstandard1.3;netstandard1.5</TargetFrameworks>
     <NuspecFile>$(ArtifactsBinDir)system.reflection/4.3.0/system.reflection.nuspec</NuspecFile>
   </PropertyGroup>
 
@@ -37,10 +37,6 @@
     <PackageReference Include="System.IO" Version="4.3.0" />
     <PackageReference Include="System.Reflection.Primitives" Version="4.3.0" />
     <PackageReference Include="System.Runtime" Version="4.3.0" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net462" Version="1.0.2" />
   </ItemGroup>
 
 </Project>
