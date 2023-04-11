@@ -22,7 +22,7 @@
     <PackageReference Include="NuGet.Frameworks" Version="5.0.2" />
     <PackageReference Include="NuGet.Packaging" Version="5.0.2" />
     <PackageReference Include="NuGet.Versioning" Version="5.0.2" />
-    <PackageReference Include="System.IO.Packaging" Version="4.5.0" />
+    <PackageReference Include="System.IO.Packaging" Version="$(SystemIOPackagingVersion)" />
     <PackageReference Include="Microsoft.Signed.Wix" Version="$(MicrosoftSignedWixVersion)" />
   </ItemGroup>
   <ItemGroup>

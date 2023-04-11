@@ -3,9 +3,8 @@
 <Project>
   <PropertyGroup>
     <!-- This repo version -->
-    <VersionPrefix>1.2.0</VersionPrefix>
+    <VersionPrefix>8.0.0</VersionPrefix>
     <PreReleaseVersionLabel>beta</PreReleaseVersionLabel>
-    <SemanticVersioningV1>true</SemanticVersioningV1>
     <!-- Opt-in repo features -->
     <UsingToolNetFrameworkReferenceAssemblies>true</UsingToolNetFrameworkReferenceAssemblies>
     <UsingToolSymbolUploader>true</UsingToolSymbolUploader>
@@ -21,6 +20,7 @@
     <SystemReflectionMetadataVersion>1.8.1</SystemReflectionMetadataVersion>
     <SystemValueTupleVersion>4.5.0</SystemValueTupleVersion>
     <SystemTextJsonVersion>4.7.2</SystemTextJsonVersion>
+    <XunitCombinatorialVersion>1.5.25</XunitCombinatorialVersion>
     <!-- libgit2 used for integration tests -->
     <LibGit2SharpVersion>0.27.0-preview-0119</LibGit2SharpVersion>
   </PropertyGroup>

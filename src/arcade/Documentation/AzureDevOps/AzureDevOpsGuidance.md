@@ -10,7 +10,7 @@ There are two projects for use.  They are:
   - Pipelines are allowed to pull source directly from GitHub
 - internal  (https://dev.azure.com/dnceng/internal)
   - Pipelines are only allowed to pull source from internal repos
-  - Public GitHub repos should be mirror here for official msft builds
+  - Public GitHub repos should be mirrored here for official Microsoft builds
 
 We will have multiple Pipelines, effectively a mirrored set in the public and internal. We will have one set of YAML which applies to both. This will allow for CI (PR testing) in both internal and OSS venues, and well as official build production on the internal side.
 
@@ -36,7 +36,7 @@ To keep things as simple (manageable) as possible, we're going to manage permiss
   - public (project name)
   - internal (project name)
   - Microsoft (folder name matching GitHub org name)
-  - dotnet-corefx (Azure DevOps repo name on internal project)
+  - dotnet-runtime (Azure DevOps repo name on internal project)
 
 ## Pipelines
 
@@ -59,7 +59,7 @@ For repos in Azure DevOps, the build pipelines should live:
 ### Pipeline file name convention
 
 - lower-case, No spaces, use dashes
-- Pattern: $scenario
+- Pattern: `<repo-scenario>`
   - Scenario:
     - code-coverage
     - slow-tests
@@ -72,24 +72,12 @@ For repos in Azure DevOps, the build pipelines should live:
 
 ```TEXT
 public project:
-  dotnet/arcade/ci
-  dotnet/coreclr/jit-stress
+  dotnet/arcade/arcade-ci
+  dotnet/coreclr/coreclr-jit-stress
 internal project:
-  dotnet/arcade/official
-  dotnet/coreclr/ci
-  dotnet/coreclr/jit-stress
-```
-
-### YML folders
-
-(Still in discussion - not yet implemented - [GitHub PR](https://github.com/Microsoft/Azure DevOps-agent/pull/1430/files#diff-0e4df20b2155d804a6518e8089072a96R29))
-
-```TEXT
-.Azure DevOps-pipelines
-  builds/
-    $(GitHubOrg)/
-      $(GitHubRepoName)/
-        scenario.yml
+  dotnet/arcade/arcade-official
+  dotnet/coreclr/coreclr-ci
+  dotnet/coreclr/coreclr-jit-stress
 ```
 
 ## Source Code

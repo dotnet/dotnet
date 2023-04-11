@@ -29,6 +29,11 @@ namespace Microsoft.Build.Tasks.Git
         static RepositoryTask() => AssemblyResolver.Initialize();
 #endif
 
+        /// <summary>
+        /// True to report a warning when the repository can't be located, it's missing remote or a commit.
+        /// </summary>
+        public bool NoWarnOnMissingInfo { get; set; }
+
         public sealed override bool Execute()
         {
 #if NET461
@@ -53,6 +58,14 @@ namespace Microsoft.Build.Tasks.Git
 #endif
 
             return !Log.HasLoggedErrors;
+        }
+
+        private void ReportMissingRepositoryWarning(string initialPath)
+        {
+            if (!NoWarnOnMissingInfo)
+            {
+                Log.LogWarning(Resources.UnableToLocateRepository, initialPath);
+            }
         }
 
         private protected abstract void Execute(GitRepository repository);
@@ -98,7 +111,7 @@ namespace Microsoft.Build.Tasks.Git
 
             if (!GitRepository.TryFindRepository(initialPath, out var location))
             {
-                Log.LogWarning(Resources.UnableToLocateRepository, initialPath);
+                ReportMissingRepositoryWarning(initialPath);
                 return null;
             }
 
@@ -120,7 +133,7 @@ namespace Microsoft.Build.Tasks.Git
 
             if (repository?.WorkingDirectory == null)
             {
-                Log.LogWarning(Resources.UnableToLocateRepository, initialPath);
+                ReportMissingRepositoryWarning(initialPath);
                 repository = null;
             }
 

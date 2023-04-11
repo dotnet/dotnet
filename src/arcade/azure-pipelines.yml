@@ -191,36 +191,6 @@ stages:
         workspace:
           clean: all
         jobs:
-        - job: Apple_Simulators
-          timeoutInMinutes: 90
-          container: LinuxContainer
-          pool:
-            vmimage: ubuntu-latest
-          strategy:
-            matrix:
-              Build_Debug:
-                _BuildConfig: Debug
-          variables:
-          - _Testing: XHarness_Apple_Simulator_Tests
-          preSteps:
-          - checkout: self
-            clean: true
-          steps:
-          - script: eng/common/build.sh
-              -configuration $(_BuildConfig)
-              -prepareMachine
-              -ci
-              -restore
-              -test
-              -warnAsError false
-              -projects $(Build.SourcesDirectory)/tests/XHarness.Apple.SimulatorTests.proj
-              /bl:$(Build.SourcesDirectory)/artifacts/log/$(_BuildConfig)/XHarness.Apple.Simulator.Tests.binlog
-              /p:RestoreUsingNuGetTargets=false
-            displayName: XHarness Apple Simulator Helix Testing
-            env:
-              SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-              HelixAccessToken: ''
-
         - job: Apple_Devices
           timeoutInMinutes: 90
           container: LinuxContainer
