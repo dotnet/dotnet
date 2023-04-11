@@ -91,7 +91,7 @@ Further instructions on how to build inside of the Codespace will be available u
 
     ```bash
     cd /path/to/complete/dotnet/sources
-    ./prep.sh
+    ./prep.sh --bootstrap
     ```
 
 3. Build the .NET SDK
