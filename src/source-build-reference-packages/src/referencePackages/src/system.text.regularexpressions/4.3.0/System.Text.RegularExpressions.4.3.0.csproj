@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.0;netstandard1.3;netstandard1.6;netcoreapp1.1;net462</TargetFrameworks>
+    <TargetFrameworks>netstandard1.0;netstandard1.3;netstandard1.6;netcoreapp1.1</TargetFrameworks>
     <NuspecFile>$(ArtifactsBinDir)system.text.regularexpressions/4.3.0/system.text.regularexpressions.nuspec</NuspecFile>
   </PropertyGroup>
 
@@ -34,11 +34,6 @@
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.1' ">
     <PackageReference Include="System.Runtime" Version="4.3.0" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net462" Version="1.0.2" />
-    <Reference Include="System" />
   </ItemGroup>
 
 </Project>

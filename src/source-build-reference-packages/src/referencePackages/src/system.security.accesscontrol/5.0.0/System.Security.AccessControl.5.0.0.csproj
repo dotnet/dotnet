@@ -1,14 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net46;net461;netstandard1.3;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net461;netstandard1.3;netstandard2.0</TargetFrameworks>
     <AssemblyName>System.Security.AccessControl</AssemblyName>
     <ProjectTemplateVersion>2</ProjectTemplateVersion>
   </PropertyGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net46'">
-    <PackageReference Include="System.Security.Principal.Windows" Version="5.0.0" />
-  </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net461'">
     <PackageReference Include="System.Security.Principal.Windows" Version="5.0.0" />

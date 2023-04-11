@@ -13,9 +13,6 @@
     <serviceable>true</serviceable>
     <repository type="git" url="https://github.com/dotnet/runtime" commit="4822e3c3aa77eb82b2fb33c9321f923cf11ddde6" />
     <dependencies>
-      <group targetFramework=".NETFramework4.6.1">
-        <dependency id="System.Security.AccessControl" version="6.0.0" exclude="Build,Analyzers" />
-      </group>
       <group targetFramework="net5.0">
         <dependency id="System.Security.AccessControl" version="6.0.0" exclude="Build,Analyzers" />
         <dependency id="System.Windows.Extensions" version="6.0.0" exclude="Build,Analyzers" />
@@ -28,14 +25,5 @@
         <dependency id="System.Security.AccessControl" version="6.0.0" exclude="Build,Analyzers" />
       </group>
     </dependencies>
-    <frameworkAssemblies>
-      <frameworkAssembly assemblyName="System.Configuration" targetFramework=".NETFramework4.6.1" />
-      <frameworkAssembly assemblyName="System.Data.OracleClient" targetFramework=".NETFramework4.6.1" />
-      <frameworkAssembly assemblyName="System.Net" targetFramework=".NETFramework4.6.1" />
-      <frameworkAssembly assemblyName="System.Security" targetFramework=".NETFramework4.6.1" />
-      <frameworkAssembly assemblyName="System.ServiceProcess" targetFramework=".NETFramework4.6.1" />
-      <frameworkAssembly assemblyName="System.Transactions" targetFramework=".NETFramework4.6.1" />
-      <frameworkAssembly assemblyName="WindowsBase" targetFramework=".NETFramework4.6.1" />
-    </frameworkAssemblies>
   </metadata>
 </package>

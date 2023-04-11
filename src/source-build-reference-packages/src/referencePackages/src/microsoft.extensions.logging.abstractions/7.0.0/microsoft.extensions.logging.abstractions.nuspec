@@ -22,10 +22,6 @@ Microsoft.Extensions.Logging.Abstractions.NullLogger</description>
     <serviceable>true</serviceable>
     <repository type="git" url="https://github.com/dotnet/runtime" commit="d099f075e45d2aa6007a22b71b45a08758559f80" />
     <dependencies>
-      <group targetFramework=".NETFramework4.6.2">
-        <dependency id="System.Buffers" version="4.5.1" exclude="Build,Analyzers" />
-        <dependency id="System.Memory" version="4.5.5" exclude="Build,Analyzers" />
-      </group>
       <group targetFramework="net6.0" />
       <group targetFramework="net7.0" />
       <group targetFramework=".NETStandard2.0">
