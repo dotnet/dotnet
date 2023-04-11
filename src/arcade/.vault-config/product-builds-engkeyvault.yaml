@@ -89,7 +89,7 @@ secrets:
           location: helixkv
           name: dn-bot-account-redmond
       name: dn-bot-all-orgs-build
-      organizations: dnceng devdiv microsoft
+      organizations: dnceng devdiv microsoft dotnet-security-partners
       scopes: build_execute code_write
 
   #DotNet-AllOrgs-Darc-Pats

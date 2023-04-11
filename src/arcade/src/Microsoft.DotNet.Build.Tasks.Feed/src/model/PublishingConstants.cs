@@ -580,6 +580,26 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 symbolTargetType: InternalSymbolTargets,
                 filenamesToExclude: FilenamesToExclude),
 
+            // .NET 7.0.4xx SDK,
+            new TargetChannelConfig(
+                id: 3600,
+                isInternal: false,
+                publishingInfraVersion: PublishingInfraVersion.All,
+                akaMSChannelNames: new List<string>() { "7.0.4xx" },
+                targetFeeds: DotNet7Feeds,
+                symbolTargetType: PublicAndInternalSymbolTargets,
+                filenamesToExclude: FilenamesToExclude),
+
+            // .NET 7.0.4xx SDK Internal,
+            new TargetChannelConfig(
+                id: 3601,
+                isInternal: true,
+                publishingInfraVersion: PublishingInfraVersion.All,
+                akaMSChannelNames: new List<string>() { "internal/7.0.4xx" },
+                targetFeeds: DotNet7InternalFeeds,
+                symbolTargetType: InternalSymbolTargets,
+                filenamesToExclude: FilenamesToExclude),
+
             // .NET 8,
             new TargetChannelConfig(
                 id: 3073,
@@ -936,6 +956,26 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
             // VS 17.6,
             new TargetChannelConfig(
                 id: 3434,
+                isInternal: false,
+                publishingInfraVersion: PublishingInfraVersion.All,
+                akaMSChannelNames: new List<string>(),
+                targetFeeds: DotNetToolsFeeds,
+                symbolTargetType: PublicAndInternalSymbolTargets,
+                filenamesToExclude: FilenamesToExclude,
+                flatten: false),
+            // VS 17.7,
+            new TargetChannelConfig(
+                id: 3581,
+                isInternal: false,
+                publishingInfraVersion: PublishingInfraVersion.All,
+                akaMSChannelNames: new List<string>(),
+                targetFeeds: DotNetToolsFeeds,
+                symbolTargetType: PublicAndInternalSymbolTargets,
+                filenamesToExclude: FilenamesToExclude,
+                flatten: false),
+            // VS 17.8,
+            new TargetChannelConfig(
+                id: 3582,
                 isInternal: false,
                 publishingInfraVersion: PublishingInfraVersion.All,
                 akaMSChannelNames: new List<string>(),

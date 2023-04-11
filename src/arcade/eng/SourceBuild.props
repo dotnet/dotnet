@@ -3,6 +3,7 @@
   <PropertyGroup>
     <GitHubRepositoryName>arcade</GitHubRepositoryName>
     <SourceBuildManagedOnly>true</SourceBuildManagedOnly>
+    <SourceBuildTrimNetFrameworkTargets>true</SourceBuildTrimNetFrameworkTargets>
   </PropertyGroup>
 
 </Project>
