@@ -21,13 +21,17 @@ namespace Microsoft.SourceLink.Common
         [Required, NotNull]
         public string? OutputFile { get; set; }
 
+        /// <summary>
+        /// Set to <see cref="OutputFile"/> if the output Source Link file should be passed to the compiler.
+        /// </summary>
+        [Output]
+        public string? SourceLink { get; set; }
+
+        public bool NoWarnOnMissingSourceControlInformation { get; set; }
+
         public override bool Execute()
         {
-            var content = GenerateSourceLinkContent();
-            if (content != null)
-            {
-                WriteSourceLinkFile(content);
-            }
+            WriteSourceLinkFile(GenerateSourceLinkContent());
 
             return !Log.HasLoggedErrors;
         }
@@ -41,7 +45,7 @@ namespace Microsoft.SourceLink.Common
             result.Append("{\"documents\":{");
 
             bool success = true;
-            bool first = true;
+            bool isEmpty = true;
             foreach (var root in SourceRoots)
             {
                 string mappedPath = root.GetMetadata(Names.SourceRoot.MappedPath);
@@ -50,14 +54,14 @@ namespace Microsoft.SourceLink.Common
 
                 if (!localPath.EndsWithSeparator())
                 {
-                    Log.LogError(Resources.MustEndWithDirectorySeparator, (isMapped ? Names.SourceRoot.MappedPathFullName : Names.SourceRoot.Name), localPath);
+                    Log.LogError(Resources.MustEndWithDirectorySeparator, isMapped ? Names.SourceRoot.MappedPathFullName : Names.SourceRoot.Name, localPath);
                     success = false;
                     continue;
                 }
 
                 if (localPath.Contains('*'))
                 {
-                    Log.LogError(Resources.MustNotContainWildcard, (isMapped ? Names.SourceRoot.MappedPathFullName : Names.SourceRoot.Name), localPath);
+                    Log.LogError(Resources.MustNotContainWildcard, isMapped ? Names.SourceRoot.MappedPathFullName : Names.SourceRoot.Name, localPath);
                     success = false;
                     continue;
                 }
@@ -77,9 +81,9 @@ namespace Microsoft.SourceLink.Common
                     continue;
                 }
 
-                if (first)
+                if (isEmpty)
                 {
-                    first = false;
+                    isEmpty = false;
                 }
                 else
                 {
@@ -98,34 +102,49 @@ namespace Microsoft.SourceLink.Common
 
             result.Append("}}");
 
-            if (!success)
-            {
-                return null;
-            }
+            return success && !isEmpty ? result.ToString() : null;
+        }
 
-            if (first)
+        private void WriteSourceLinkFile(string? content)
+        {
+            if (content == null && !NoWarnOnMissingSourceControlInformation)
             {
                 Log.LogWarning(Resources.SourceControlInformationIsNotAvailableGeneratedSourceLinkEmpty);
             }
 
-            return result.ToString();
-        }
-
-        private void WriteSourceLinkFile(string content)
-        {
             try
             {
                 if (File.Exists(OutputFile))
                 {
+                    if (content == null)
+                    {
+                        Log.LogMessage(Resources.SourceLinkEmptyDeletingExistingFile, OutputFile);
+
+                        File.Delete(OutputFile);
+                        return;
+                    }
+
                     var originalContent = File.ReadAllText(OutputFile);
                     if (originalContent == content)
                     {
-                        // Don't rewrite the file if the contents are the same
+                        // Don't rewrite the file if the contents is the same, just pass it to the compiler.
+                        Log.LogMessage(Resources.SourceLinkFileUpToDate, OutputFile);
+
+                        SourceLink = OutputFile;
                         return;
                     }
                 }
+                else if (content == null)
+                {
+                    // File doesn't exist and the output is empty:
+                    // Do not write the file and don't pass it to the compiler.
+                    Log.LogMessage(Resources.SourceLinkEmptyNoExistingFile, OutputFile);
+                    return;
+                }
 
+                Log.LogMessage(Resources.SourceLinkFileUpdated, OutputFile);
                 File.WriteAllText(OutputFile, content);
+                SourceLink = OutputFile;
             }
             catch (Exception e)
             {

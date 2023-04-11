@@ -7,7 +7,7 @@
 
   <Target Name="_SetSourceLinkFilePath">
     <PropertyGroup>
-      <SourceLink>$(IntermediateOutputPath)$(MSBuildProjectName).sourcelink.json</SourceLink>
+      <_SourceLinkFilePath>$(IntermediateOutputPath)$(MSBuildProjectName).sourcelink.json</_SourceLinkFilePath>
     </PropertyGroup>
   </Target>
 
@@ -48,16 +48,28 @@
   <Target Name="_GenerateSourceLinkFile"
           DependsOnTargets="_SetSourceLinkFilePath;$(_GenerateSourceLinkFileDependsOnTargets);_InitializeSourceRootMappedPathsOpt;$(SourceLinkUrlInitializerTargets)"
           Condition="'$(EnableSourceLink)' == 'true' and '$(DebugType)' != 'none'"
-          Outputs="$(SourceLink)">
-  
-    <Microsoft.SourceLink.Common.GenerateSourceLinkFile SourceRoots="@(SourceRoot)" OutputFile="$(SourceLink)" />
+          Outputs="$(_SourceLinkFilePath)">
 
-    <ItemGroup>
+    <!--- Suppress warning if targets are imported from an SDK without a package reference. -->
+    <Microsoft.SourceLink.Common.GenerateSourceLinkFile
+      SourceRoots="@(SourceRoot)"
+      NoWarnOnMissingSourceControlInformation="$(PkgMicrosoft_SourceLink_Common.Equals(''))"
+      OutputFile="$(_SourceLinkFilePath)">
+
+      <!-- Set SourceLink property passed to compilers -->
+      <Output TaskParameter="SourceLink" PropertyName="SourceLink" />
+    </Microsoft.SourceLink.Common.GenerateSourceLinkFile>
+
+    <!--
+      Include the output file whenever it exists, even if it hasn't been written to (it was up-to-date).
+      This is needed so that incremental clean doesn't delete the file.
+    -->
+    <ItemGroup Condition="'$(SourceLink)' != ''">
       <FileWrites Include="$(SourceLink)" />
     </ItemGroup>
 
     <!-- C++ Link task currently doesn't recognize SourceLink property -->
-    <ItemGroup Condition="'$(Language)' == 'C++'">
+    <ItemGroup Condition="'$(Language)' == 'C++' and '$(SourceLink)' != ''">
       <Link Update="@(Link)">
         <AdditionalOptions>%(Link.AdditionalOptions) /sourcelink:"$(SourceLink)"</AdditionalOptions>
       </Link>

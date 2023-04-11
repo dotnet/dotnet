@@ -22,7 +22,7 @@ namespace Microsoft.SourceLink.IntegrationTests
             var repoUrl = "https://噸.com/test-org/test-%72epo\u1234%24%2572%2F";
             var repoName = "test-repo\u1234%24%2572%2F";
 
-            var repo = GitUtilities.CreateGitRepositoryWithSingleCommit(ProjectDir.Path, new[] { ProjectFileName }, repoUrl);
+            var repo = GitUtilities.CreateGitRepository(ProjectDir.Path, new[] { ProjectFileName }, repoUrl);
             var commitSha = repo.Head.Tip.Sha;
 
             VerifyValues(
@@ -51,14 +51,14 @@ namespace Microsoft.SourceLink.IntegrationTests
                 {
                     NuGetPackageFolders,
                     ProjectSourceRoot,
-                    $"https://噸.com/test-org/{repoName}/raw/{commitSha}/*",
+                    $"https://噸.com/test-org/{repoName}/-/raw/{commitSha}/*",
                     s_relativeSourceLinkJsonPath,
                     $"https://噸.com/test-org/{repoName}",
                     $"https://噸.com/test-org/{repoName}"
                 });
 
             AssertEx.AreEqual(
-                $@"{{""documents"":{{""{ProjectSourceRoot.Replace(@"\", @"\\")}*"":""https://噸.com/test-org/{repoName}/raw/{commitSha}/*""}}}}",
+                $@"{{""documents"":{{""{ProjectSourceRoot.Replace(@"\", @"\\")}*"":""https://噸.com/test-org/{repoName}/-/raw/{commitSha}/*""}}}}",
                 File.ReadAllText(Path.Combine(ProjectDir.Path, s_relativeSourceLinkJsonPath)));
 
             TestUtilities.ValidateAssemblyInformationalVersion(
@@ -80,7 +80,7 @@ namespace Microsoft.SourceLink.IntegrationTests
             var repoUrl = "test-user@噸.com:test-org/test-%72epo\u1234%24%2572%2F";
             var repoName = "test-repo\u1234%24%2572%2F";
 
-            var repo = GitUtilities.CreateGitRepositoryWithSingleCommit(ProjectDir.Path, new[] { ProjectFileName }, repoUrl);
+            var repo = GitUtilities.CreateGitRepository(ProjectDir.Path, new[] { ProjectFileName }, repoUrl);
             var commitSha = repo.Head.Tip.Sha;
 
             VerifyValues(
@@ -109,14 +109,14 @@ namespace Microsoft.SourceLink.IntegrationTests
                 {
                     NuGetPackageFolders,
                     ProjectSourceRoot,
-                    $"https://噸.com/test-org/{repoName}/raw/{commitSha}/*",
+                    $"https://噸.com/test-org/{repoName}/-/raw/{commitSha}/*",
                     s_relativeSourceLinkJsonPath,
                     $"https://噸.com/test-org/{repoName}",
                     $"https://噸.com/test-org/{repoName}"
                 });
 
             AssertEx.AreEqual(
-                $@"{{""documents"":{{""{ProjectSourceRoot.Replace(@"\", @"\\")}*"":""https://噸.com/test-org/{repoName}/raw/{commitSha}/*""}}}}",
+                $@"{{""documents"":{{""{ProjectSourceRoot.Replace(@"\", @"\\")}*"":""https://噸.com/test-org/{repoName}/-/raw/{commitSha}/*""}}}}",
                 File.ReadAllText(Path.Combine(ProjectDir.Path, s_relativeSourceLinkJsonPath)));
 
             TestUtilities.ValidateAssemblyInformationalVersion(
@@ -139,7 +139,7 @@ namespace Microsoft.SourceLink.IntegrationTests
             var repoUrl = "http://噸.com/test-org/test-%72epo\u1234%24%2572%2F";
             var repoName = "test-repo\u1234%24%2572%2F";
 
-            var repo = GitUtilities.CreateGitRepositoryWithSingleCommit(ProjectDir.Path, new[] { ProjectFileName }, repoUrl);
+            var repo = GitUtilities.CreateGitRepository(ProjectDir.Path, new[] { ProjectFileName }, repoUrl);
             var commitSha = repo.Head.Tip.Sha;
 
             VerifyValues(
@@ -161,7 +161,7 @@ namespace Microsoft.SourceLink.IntegrationTests
                 },
                 expectedResults: new[]
                 {
-                    $"http://噸.com/test-org/{repoName}/raw/{commitSha}/*",
+                    $"http://噸.com/test-org/{repoName}/-/raw/{commitSha}/*",
                     $"http://噸.com/test-org/{repoName}",
                     $"http://噸.com/test-org/{repoName}"
                 });
