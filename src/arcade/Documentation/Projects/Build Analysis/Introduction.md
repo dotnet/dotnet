@@ -16,7 +16,7 @@ For more details, see the [specifics](Specifics.md) document.
 
 Build Analysis is enabled on a per-repository basis. Contact the [.NET Engineering Services Team](https://github.com/dotnet/arcade/wiki/How-to-get-a-hold-of-.NET-Engineering-Services) to request it be enabled in your repository.
 
-**Note**: This feature requires your repository's pull request builds to occur in the `dnceng/public` Azure DevOps organization/project. Unfortunately, we cannot accommodate builds that occur in other Azure DevOps organizations (such as DevDiv). 
+**Note**: This feature requires your repository's pull request builds to occur in the `dnceng-public/public` Azure DevOps organization/project. Unfortunately, we cannot accommodate builds that occur in other Azure DevOps organizations (such as DevDiv). 
 
 ### How do I know if it's enabled in my repository? 
 
