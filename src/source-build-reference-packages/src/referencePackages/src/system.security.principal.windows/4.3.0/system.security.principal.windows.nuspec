@@ -27,9 +27,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     <copyright>© Microsoft Corporation.  All rights reserved.</copyright>
     <serviceable>true</serviceable>
     <dependencies>
-      <group targetFramework=".NETFramework4.6">
-        <dependency id="System.Security.Claims" version="4.3.0" />
-      </group>
       <group targetFramework=".NETStandard1.3">
         <dependency id="Microsoft.NETCore.Platforms" version="1.1.0" />
         <dependency id="Microsoft.Win32.Primitives" version="4.3.0" exclude="Compile" />
@@ -47,8 +44,5 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
         <dependency id="System.Threading" version="4.3.0" exclude="Compile" />
       </group>
     </dependencies>
-    <frameworkAssemblies>
-      <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.6" />
-    </frameworkAssemblies>
   </metadata>
 </package>

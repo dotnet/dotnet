@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.3;net46</TargetFrameworks>
+    <TargetFrameworks>netstandard1.3</TargetFrameworks>
     <NuspecFile>$(ArtifactsBinDir)system.io.filesystem.primitives/4.3.0/system.io.filesystem.primitives.nuspec</NuspecFile>
   </PropertyGroup>
 
@@ -17,10 +17,6 @@
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
     <PackageReference Include="System.Runtime" Version="4.3.0" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net46' ">
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net46" Version="1.0.2" />
   </ItemGroup>
 
 </Project>

@@ -13,18 +13,6 @@
     <serviceable>true</serviceable>
     <repository type="git" url="https://github.com/dotnet/runtime" commit="4822e3c3aa77eb82b2fb33c9321f923cf11ddde6" />
     <dependencies>
-      <group targetFramework=".NETFramework4.6.1">
-        <dependency id="Microsoft.Bcl.AsyncInterfaces" version="6.0.0" exclude="Build,Analyzers" />
-        <dependency id="Microsoft.Extensions.DependencyInjection.Abstractions" version="6.0.0" exclude="Build,Analyzers" />
-        <dependency id="Microsoft.Extensions.Logging.Abstractions" version="6.0.0" exclude="Build,Analyzers" />
-        <dependency id="Microsoft.Extensions.Logging.Configuration" version="6.0.0" exclude="Build,Analyzers" />
-        <dependency id="Microsoft.Extensions.Logging" version="6.0.0" exclude="Build,Analyzers" />
-        <dependency id="Microsoft.Extensions.Options" version="6.0.0" exclude="Build,Analyzers" />
-        <dependency id="System.Text.Json" version="6.0.0" exclude="Build,Analyzers" />
-        <dependency id="System.Buffers" version="4.5.1" exclude="Build,Analyzers" />
-        <dependency id="System.Runtime.InteropServices.RuntimeInformation" version="4.3.0" exclude="Build,Analyzers" />
-        <dependency id="System.ValueTuple" version="4.5.0" exclude="Build,Analyzers" />
-      </group>
       <group targetFramework="net6.0">
         <dependency id="Microsoft.Extensions.DependencyInjection.Abstractions" version="6.0.0" exclude="Build,Analyzers" />
         <dependency id="Microsoft.Extensions.Logging.Abstractions" version="6.0.0" exclude="Build,Analyzers" />

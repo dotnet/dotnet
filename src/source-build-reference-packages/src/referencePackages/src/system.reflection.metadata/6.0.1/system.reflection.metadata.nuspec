@@ -20,9 +20,6 @@ System.Reflection.PortableExecutable.ManagedPEBuilder</description>
     <serviceable>true</serviceable>
     <repository type="git" url="https://github.com/dotnet/runtime" commit="c24d9a9c91c5d04b7b4de71f1a9f33ac35e09663" />
     <dependencies>
-      <group targetFramework=".NETFramework4.6.1">
-        <dependency id="System.Collections.Immutable" version="6.0.0" exclude="Build,Analyzers" />
-      </group>
       <group targetFramework="net6.0">
         <dependency id="System.Collections.Immutable" version="6.0.0" exclude="Build,Analyzers" />
       </group>
