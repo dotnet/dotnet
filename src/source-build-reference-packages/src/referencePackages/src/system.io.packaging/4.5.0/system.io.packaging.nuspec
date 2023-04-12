@@ -17,9 +17,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     <copyright>© Microsoft Corporation.  All rights reserved.</copyright>
     <serviceable>true</serviceable>
     <dependencies>
-      <group targetFramework=".NETFramework4.6">
-        <dependency id="System.IO.FileSystem.Primitives" version="4.3.0" />
-      </group>
       <group targetFramework=".NETStandard1.3">
         <dependency id="System.Collections" version="4.3.0" />
         <dependency id="System.Diagnostics.Debug" version="4.3.0" exclude="Compile" />
@@ -36,10 +33,5 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
       </group>
       <group targetFramework=".NETStandard2.0" />
     </dependencies>
-    <frameworkAssemblies>
-      <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.6" />
-      <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.6" />
-      <frameworkAssembly assemblyName="WindowsBase" targetFramework=".NETFramework4.6" />
-    </frameworkAssemblies>
   </metadata>
 </package>

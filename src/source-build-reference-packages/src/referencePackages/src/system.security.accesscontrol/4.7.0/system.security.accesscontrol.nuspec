@@ -25,9 +25,6 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
     <copyright>© Microsoft Corporation. All rights reserved.</copyright>
     <serviceable>true</serviceable>
     <dependencies>
-      <group targetFramework=".NETFramework4.6.1">
-        <dependency id="System.Security.Principal.Windows" version="4.7.0" />
-      </group>
       <group targetFramework=".NETStandard1.3">
         <dependency id="NETStandard.Library" version="1.6.1" />
         <dependency id="System.Security.Principal.Windows" version="4.7.0" />
@@ -38,8 +35,5 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
       </group>
       <group targetFramework="UAP10.0.16299" />
     </dependencies>
-    <frameworkAssemblies>
-      <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.6.1" />
-    </frameworkAssemblies>
   </metadata>
 </package>
