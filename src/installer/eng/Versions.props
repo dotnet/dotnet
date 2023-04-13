@@ -22,8 +22,8 @@
     <VersionFeature21>30</VersionFeature21>
     <VersionFeature31>32</VersionFeature31>
     <VersionFeature50>17</VersionFeature50>
-    <VersionFeature60>15</VersionFeature60>
-    <VersionFeature70>2</VersionFeature70>
+    <VersionFeature60>16</VersionFeature60>
+    <VersionFeature70>5</VersionFeature70>
   </PropertyGroup>
   <!-- Restore feeds -->
   <PropertyGroup Label="Restore feeds">
@@ -223,13 +223,13 @@
   </PropertyGroup>
   <!-- Workload manifest package versions -->
   <PropertyGroup>
-    <MauiFeatureBand>8.0.100-preview.2</MauiFeatureBand>
-    <MauiWorkloadManifestVersion>8.0.0-preview.2.7871</MauiWorkloadManifestVersion>
-    <XamarinAndroidWorkloadManifestVersion>34.0.0-preview.2.187</XamarinAndroidWorkloadManifestVersion>
-    <XamarinIOSWorkloadManifestVersion>16.2.374-net8-p2</XamarinIOSWorkloadManifestVersion>
-    <XamarinMacCatalystWorkloadManifestVersion>16.2.374-net8-p2</XamarinMacCatalystWorkloadManifestVersion>
-    <XamarinMacOSWorkloadManifestVersion>13.1.374-net8-p2</XamarinMacOSWorkloadManifestVersion>
-    <XamarinTvOSWorkloadManifestVersion>16.1.1162-net8-p2</XamarinTvOSWorkloadManifestVersion>
+    <MauiFeatureBand>8.0.100-preview.3</MauiFeatureBand>
+    <MauiWorkloadManifestVersion>8.0.0-preview.3.8149</MauiWorkloadManifestVersion>
+    <XamarinAndroidWorkloadManifestVersion>34.0.0-preview.3.224</XamarinAndroidWorkloadManifestVersion>
+    <XamarinIOSWorkloadManifestVersion>16.2.462-net8-p3</XamarinIOSWorkloadManifestVersion>
+    <XamarinMacCatalystWorkloadManifestVersion>16.2.462-net8-p3</XamarinMacCatalystWorkloadManifestVersion>
+    <XamarinMacOSWorkloadManifestVersion>13.1.462-net8-p3</XamarinMacOSWorkloadManifestVersion>
+    <XamarinTvOSWorkloadManifestVersion>16.1.1250-net8-p3</XamarinTvOSWorkloadManifestVersion>
     <!-- Workloads from dotnet/emsdk -->
     <MicrosoftNETWorkloadEmscriptenCurrentManifest80100TransportPackageVersion>8.0.0-preview.4.23170.1</MicrosoftNETWorkloadEmscriptenCurrentManifest80100TransportPackageVersion>
     <EmscriptenWorkloadManifestVersion>$(MicrosoftNETWorkloadEmscriptenCurrentManifest80100TransportPackageVersion)</EmscriptenWorkloadManifestVersion>
