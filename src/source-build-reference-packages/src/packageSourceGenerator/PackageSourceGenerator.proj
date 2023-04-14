@@ -328,10 +328,16 @@
       <TargetingPackage Include="Microsoft.AspNetCore.App.Ref" />
       <TargetingPackage Include="Microsoft.WindowsDesktop.App.Ref" />
     </ItemGroup>
+    
+    <!-- External packages aren't visited as they shouldn't be added to SBRP. --> 
+    <ItemGroup>
+      <ExternalPackage Include="Newtonsoft.Json" />
+    </ItemGroup>
 
     <ItemGroup>
       <FilteredPackageDependency Include="@(PackageDependency)"
-                                 Exclude="@(TargetingPackage)" />
+                                 Exclude="@(TargetingPackage);
+                                          @(ExternalPackage)" />
     </ItemGroup>
 
     <MSBuild Projects="$(MSBuildThisFileFullPath)"
