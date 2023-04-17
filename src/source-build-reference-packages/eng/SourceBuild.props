@@ -16,7 +16,7 @@
              Directories="$(LocalNuGetPackageCacheDirectory)" />
 
     <Exec
-      Command="./build.sh --configuration $(Configuration) /bl:$(ArtifactsDir)sourcebuild-dependency-projects.binlog /p:LocalNuGetPackageCacheDirectory=$(LocalNuGetPackageCacheDirectory) /p:BuildDependencyPackageProjects=true /p:SetUpSourceBuildIntermediateNupkgCache=true /p:DotNetBuildFromSource=true /p:ArcadeInnerBuildFromSource=true"
+      Command="./build.sh --configuration $(Configuration) /bl:$(ArtifactsDir)sourcebuild-dependency-projects.binlog /p:LocalNuGetPackageCacheDirectory=$(LocalNuGetPackageCacheDirectory) /p:BuildDependencyPackageProjects=true /p:SetUpSourceBuildIntermediateNupkgCache=true /p:DotNetBuildFromSource=true /p:ArcadeInnerBuildFromSource=true /p:MicrosoftNetCoreIlasmPackageRuntimeId=$(MicrosoftNetCoreIlasmPackageRuntimeId)"
       WorkingDirectory="$(InnerSourceBuildRepoRoot)"
       EnvironmentVariables="@(InnerBuildEnv)" />
   </Target>
