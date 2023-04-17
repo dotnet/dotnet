@@ -43,7 +43,7 @@
     <MicrosoftExtensionsLoggingConsoleVersion>6.0.0</MicrosoftExtensionsLoggingConsoleVersion>
     <MicrosoftNETCorePlatformsVersion>2.1.0</MicrosoftNETCorePlatformsVersion>
     <MicrosoftNetCompilersToolsetVersion>4.5.2-3.23152.4</MicrosoftNetCompilersToolsetVersion>
-    <MicrosoftNetTestSdkVersion>17.4.0-preview-20220707-01</MicrosoftNetTestSdkVersion>
+    <MicrosoftNetTestSdkVersion>17.5.0</MicrosoftNetTestSdkVersion>
     <MicrosoftNETILLinkTasksVersion>6.0.100-1.22103.2</MicrosoftNETILLinkTasksVersion>
     <MicrosoftSignedWixVersion>1.0.0-v3.14.0.5722</MicrosoftSignedWixVersion>
     <MoqVersion>4.8.3</MoqVersion>
