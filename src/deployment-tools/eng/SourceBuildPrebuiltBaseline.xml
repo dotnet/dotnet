@@ -1,5 +1,12 @@
 <UsageData>
   <IgnorePatterns>
-    <UsagePattern IdentityGlob="*/*" />
+    <UsagePattern IdentityGlob="Microsoft.SourceBuild.Intermediate.*/*" />
+
+    <!-- Ignore System.Text.JSon 7.0.1 and dependencies until we can add
+         7.0 targeting pack and these packages to SBRP.
+         https://github.com/dotnet/source-build/issues/3330 -->
+    <UsagePattern IdentityGlob="System.Text.Json/7.0.1" />
+    <UsagePattern IdentityGlob="Microsoft.Bcl.AsyncInterfaces/7.0.0" />
+    <UsagePattern IdentityGlob="System.Text.Encodings.Web/7.0.0" />
   </IgnorePatterns>
 </UsageData>

@@ -3,6 +3,7 @@
   <PropertyGroup>
     <GitHubRepositoryName>deployment-tools</GitHubRepositoryName>
     <SourceBuildManagedOnly>true</SourceBuildManagedOnly>
+    <SourceBuildTrimNetFrameworkTargets>true</SourceBuildTrimNetFrameworkTargets>
   </PropertyGroup>
 
 </Project>
