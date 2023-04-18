@@ -13,7 +13,7 @@ namespace NuGet.Versioning.Test
         {
             var range = VersionRange.Parse("1.0.0-*");
 
-            Assert.True(range.MinVersion.IsPrerelease);
+            Assert.True(range.MinVersion?.IsPrerelease);
         }
 
         [Theory]
@@ -31,7 +31,7 @@ namespace NuGet.Versioning.Test
         {
             var range = VersionRange.Parse(rangeString);
 
-            Assert.Equal(expected, range.MinVersion.ToNormalizedString());
+            Assert.Equal(expected, range.MinVersion?.ToNormalizedString());
         }
 
         [Theory]
@@ -85,8 +85,8 @@ namespace NuGet.Versioning.Test
         {
             var range = VersionRange.Parse(rangeString);
 
-            Assert.Equal(versionLabel, range.Float.MinVersion.Release);
-            Assert.Equal(originalLabel, range.Float.OriginalReleasePrefix);
+            Assert.Equal(versionLabel, range.Float?.MinVersion.Release);
+            Assert.Equal(originalLabel, range.Float?.OriginalReleasePrefix);
         }
 
         [Theory]
@@ -105,7 +105,7 @@ namespace NuGet.Versioning.Test
                     NuGetVersion.Parse("1.1.0")
                 };
 
-            Assert.Equal("1.0.0", range.FindBestMatch(versions).ToNormalizedString());
+            Assert.Equal("1.0.0", range.FindBestMatch(versions)?.ToNormalizedString());
         }
 
         [Fact]
@@ -119,7 +119,7 @@ namespace NuGet.Versioning.Test
                     NuGetVersion.Parse("1.0.0-beta")
                 };
 
-            Assert.Equal("1.0.0-beta", range.FindBestMatch(versions).ToNormalizedString());
+            Assert.Equal("1.0.0-beta", range.FindBestMatch(versions)?.ToNormalizedString());
         }
 
         [Fact]
@@ -133,7 +133,7 @@ namespace NuGet.Versioning.Test
                     NuGetVersion.Parse("1.0.1-omega"),
                 };
 
-            Assert.Equal("1.0.0-beta", range.FindBestMatch(versions).ToNormalizedString());
+            Assert.Equal("1.0.0-beta", range.FindBestMatch(versions)?.ToNormalizedString());
         }
 
         [Fact]
@@ -148,7 +148,7 @@ namespace NuGet.Versioning.Test
                     NuGetVersion.Parse("1.0.0-omega.3"),
                 };
 
-            Assert.Equal("1.0.0-beta.2", range.FindBestMatch(versions).ToNormalizedString());
+            Assert.Equal("1.0.0-beta.2", range.FindBestMatch(versions)?.ToNormalizedString());
         }
 
         [Fact]
@@ -163,7 +163,7 @@ namespace NuGet.Versioning.Test
                     NuGetVersion.Parse("1.0.0-beta.a"),
                 };
 
-            Assert.Equal("1.0.0-beta.a", range.FindBestMatch(versions).ToNormalizedString());
+            Assert.Equal("1.0.0-beta.a", range.FindBestMatch(versions)?.ToNormalizedString());
         }
 
         [Theory]
@@ -198,7 +198,7 @@ namespace NuGet.Versioning.Test
         [InlineData("1.0.*-")]
         public void VersionRangeFloatParsing_Invalid(string rangeString)
         {
-            VersionRange range = null;
+            VersionRange? range = null;
             Assert.False(VersionRange.TryParse(rangeString, out range));
         }
 
@@ -225,7 +225,7 @@ namespace NuGet.Versioning.Test
         [InlineData("1.0.0--*")]
         public void VersionRangeFloatParsing_Valid(string rangeString)
         {
-            VersionRange range = null;
+            VersionRange? range = null;
             Assert.True(VersionRange.TryParse(rangeString, out range));
         }
 
@@ -238,10 +238,10 @@ namespace NuGet.Versioning.Test
         [InlineData("*", "[0.0.0, )")]
         public void VersionRangeFloatParsing_LegacyEquivalent(string rangeString, string legacyString)
         {
-            VersionRange range = null;
+            VersionRange? range = null;
             Assert.True(VersionRange.TryParse(rangeString, out range));
 
-            Assert.Equal(legacyString, range.ToLegacyString());
+            Assert.Equal(legacyString, range!.ToLegacyString());
         }
 
         [Theory]
@@ -250,10 +250,10 @@ namespace NuGet.Versioning.Test
         [InlineData("1.0.0-beta-*")]
         public void VersionRangeFloatParsing_CorrectFloatRange(string rangeString)
         {
-            VersionRange range = null;
+            VersionRange? range = null;
             Assert.True(VersionRange.TryParse(rangeString, out range));
 
-            Assert.Equal(rangeString, range.Float.ToString());
+            Assert.Equal(rangeString, range!.Float?.ToString());
         }
 
         [Theory]

@@ -2,7 +2,6 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Globalization;
 using System.Text;
 
 namespace NuGet.Versioning
@@ -20,21 +19,31 @@ namespace NuGet.Versioning
         /// <summary>
         /// Format a version string.
         /// </summary>
-        public string Format(string format, object arg, IFormatProvider formatProvider)
+        public string Format(string? format, object? arg, IFormatProvider? formatProvider)
         {
             if (arg == null)
             {
                 throw new ArgumentNullException(nameof(arg));
             }
 
-            if (string.IsNullOrEmpty(format) || arg is not SemanticVersion version)
+            if (arg is string stringValue)
             {
-                return null;
+                return stringValue;
+            }
+
+            if (arg is not SemanticVersion version)
+            {
+                throw ResourcesFormatter.TypeNotSupported(arg.GetType(), nameof(arg));
+            }
+
+            if (string.IsNullOrEmpty(format))
+            {
+                format = "N";
             }
 
             StringBuilder builder = StringBuilderPool.Shared.Rent(256);
 
-            foreach (char c in format)
+            foreach (char c in format!)
             {
                 Format(builder, c, version);
             }
@@ -50,7 +59,7 @@ namespace NuGet.Versioning
         /// <summary>
         /// Get version format type.
         /// </summary>
-        public object GetFormat(Type formatType)
+        public object? GetFormat(Type? formatType)
         {
             if (formatType == typeof(ICustomFormatter)
                 || formatType == typeof(NuGetVersion)

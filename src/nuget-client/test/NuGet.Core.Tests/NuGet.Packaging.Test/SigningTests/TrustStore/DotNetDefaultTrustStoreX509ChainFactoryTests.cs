@@ -16,7 +16,7 @@ namespace NuGet.Packaging.Test
         {
             DotNetDefaultTrustStoreX509ChainFactory factory = new();
 
-            using (X509Chain chain = factory.Create())
+            using (IX509Chain chain = factory.Create())
             {
                 Assert.Equal(X509ChainTrustMode.System, chain.ChainPolicy.TrustMode);
             }

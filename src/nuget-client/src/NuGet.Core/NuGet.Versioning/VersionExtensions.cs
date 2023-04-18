@@ -15,8 +15,8 @@ namespace NuGet.Versioning
         /// <summary>
         /// Find the version that best matches the VersionRange and the floating behavior.
         /// </summary>
-        public static T FindBestMatch<T>(this IEnumerable<T> items,
-            VersionRange ideal,
+        public static T? FindBestMatch<T>(this IEnumerable<T> items,
+            VersionRange? ideal,
             Func<T, NuGetVersion> selector) where T : class
         {
             if (ideal == null)
@@ -24,21 +24,32 @@ namespace NuGet.Versioning
                 return items.FirstOrDefault();
             }
 
-            T bestMatch = null;
+            using IEnumerator<T> enumerator = items.GetEnumerator();
+            T? bestMatch = null;
 
-            foreach (var item in items)
+            while (bestMatch == null && enumerator.MoveNext())
             {
+                T current = enumerator.Current;
                 if (ideal.IsBetter(
-                    current: selector(bestMatch),
-                    considering: selector(item)))
+                    current: null,
+                    considering: selector(current)))
                 {
-                    bestMatch = item;
+                    bestMatch = current;
                 }
             }
 
-            if (bestMatch == null)
+            if (bestMatch != null)
             {
-                return null;
+                while (enumerator.MoveNext())
+                {
+                    T current = enumerator.Current;
+                    if (ideal.IsBetter(
+                        current: selector(bestMatch),
+                        considering: selector(current)))
+                    {
+                        bestMatch = current;
+                    }
+                }
             }
 
             return bestMatch;
@@ -47,7 +58,7 @@ namespace NuGet.Versioning
         /// <summary>
         /// Find the version that best matches the VersionRange and the floating behavior.
         /// </summary>
-        public static INuGetVersionable FindBestMatch(this IEnumerable<INuGetVersionable> items, VersionRange ideal)
+        public static INuGetVersionable? FindBestMatch(this IEnumerable<INuGetVersionable> items, VersionRange ideal)
         {
             return FindBestMatch<INuGetVersionable>(items, ideal, (e => e.Version));
         }

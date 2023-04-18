@@ -9,6 +9,7 @@
     <IncludeInVSIX>true</IncludeInVSIX>
     <XPLATProject>true</XPLATProject>
     <NoWarn>$(NoWarn);RS0041</NoWarn>
+    <nullable>enable</nullable>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(IsVsixBuild)' == 'true' ">

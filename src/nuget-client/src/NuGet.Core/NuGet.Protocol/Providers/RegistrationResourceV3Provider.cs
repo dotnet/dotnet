@@ -25,12 +25,16 @@ namespace NuGet.Protocol
 
             if (serviceIndex != null)
             {
+                //This will come back as null if there are no matching RegistrationsBaseUrl types
                 var baseUrl = serviceIndex.GetServiceEntryUri(ServiceTypes.RegistrationsBaseUrl);
 
-                var httpSourceResource = await source.GetResourceAsync<HttpSourceResource>(token);
+                if (baseUrl != null)
+                {
+                    var httpSourceResource = await source.GetResourceAsync<HttpSourceResource>(token);
 
-                // construct a new resource
-                regResource = new RegistrationResourceV3(httpSourceResource.HttpSource, baseUrl);
+                    // construct a new resource
+                    regResource = new RegistrationResourceV3(httpSourceResource.HttpSource, baseUrl);
+                }
             }
 
             return new Tuple<bool, INuGetResource>(regResource != null, regResource);

@@ -95,15 +95,12 @@ namespace NuGet.Packaging.Test
             var innerPolicy = new Mock<IX509ChainBuildPolicy>(MockBehavior.Strict);
             var policy = new RetriableX509ChainBuildPolicy(innerPolicy.Object, retryCount: 1, TimeSpan.Zero);
 
-            using (var chain = new X509Chain())
-            {
-                ArgumentNullException exception = Assert.Throws<ArgumentNullException>(
-                    () => policy.Build(chain, certificate: null));
+            ArgumentNullException exception = Assert.Throws<ArgumentNullException>(
+                () => policy.Build(Mock.Of<IX509Chain>(), certificate: null));
 
-                Assert.Equal("certificate", exception.ParamName);
+            Assert.Equal("certificate", exception.ParamName);
 
-                innerPolicy.VerifyAll();
-            }
+            innerPolicy.VerifyAll();
         }
 
         [PlatformFact(Platform.Windows)]
@@ -111,19 +108,20 @@ namespace NuGet.Packaging.Test
         {
             var innerPolicy = new Mock<IX509ChainBuildPolicy>(MockBehavior.Strict);
             var policy = new RetriableX509ChainBuildPolicy(innerPolicy.Object, retryCount: 3, TimeSpan.FromSeconds(10));
+            Mock<IX509Chain> chain = new(MockBehavior.Strict);
 
-            using (var chain = new X509Chain())
             using (X509Certificate2 certificate = _fixture.GetDefaultCertificate())
             {
                 innerPolicy.Setup(
                     x => x.Build(
-                        It.Is<X509Chain>(chainArg => ReferenceEquals(chainArg, chain)),
+                        It.Is<IX509Chain>(chainArg => ReferenceEquals(chainArg, chain.Object)),
                         It.Is<X509Certificate2>(certArg => ReferenceEquals(certArg, certificate))))
                     .Returns(true);
-                bool actualResult = policy.Build(chain, certificate);
+                bool actualResult = policy.Build(chain.Object, certificate);
 
                 Assert.True(actualResult);
 
+                chain.VerifyAll();
                 innerPolicy.VerifyAll();
             }
         }
@@ -133,30 +131,31 @@ namespace NuGet.Packaging.Test
         {
             var innerPolicy = new Mock<IX509ChainBuildPolicy>(MockBehavior.Strict);
             var policy = new RetriableX509ChainBuildPolicy(innerPolicy.Object, retryCount: 3, TimeSpan.FromMilliseconds(50));
+            Mock<IX509Chain> chain = new(MockBehavior.Strict);
 
-            using (var chain = new X509Chain())
             using (X509Certificate2 certificate = _fixture.GetDefaultCertificate())
             {
                 innerPolicy.Setup(
                    x => x.Build(
-                       It.Is<X509Chain>(chainArg => ReferenceEquals(chainArg, chain)),
+                       It.Is<IX509Chain>(chainArg => ReferenceEquals(chainArg, chain.Object)),
                        It.Is<X509Certificate2>(certArg => ReferenceEquals(certArg, certificate))))
                    .Returns(false);
                 innerPolicy.Setup(
                    x => x.Build(
-                       It.Is<X509Chain>(chainArg => ReferenceEquals(chainArg, chain)),
+                       It.Is<IX509Chain>(chainArg => ReferenceEquals(chainArg, chain.Object)),
                        It.Is<X509Certificate2>(certArg => ReferenceEquals(certArg, certificate))))
                    .Returns(false);
                 innerPolicy.Setup(
                     x => x.Build(
-                        It.Is<X509Chain>(chainArg => ReferenceEquals(chainArg, chain)),
+                        It.Is<IX509Chain>(chainArg => ReferenceEquals(chainArg, chain.Object)),
                         It.Is<X509Certificate2>(certArg => ReferenceEquals(certArg, certificate))))
                     .Returns(true);
 
-                bool actualResult = policy.Build(chain, certificate);
+                bool actualResult = policy.Build(chain.Object, certificate);
 
                 Assert.True(actualResult);
 
+                chain.VerifyAll();
                 innerPolicy.VerifyAll();
             }
         }

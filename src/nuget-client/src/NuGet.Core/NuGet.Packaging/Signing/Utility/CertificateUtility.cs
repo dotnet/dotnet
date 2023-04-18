@@ -313,7 +313,7 @@ namespace NuGet.Packaging.Signing
 
             using (X509ChainHolder chainHolder = X509ChainHolder.CreateForCodeSigning())
             {
-                X509Chain chain = chainHolder.Chain;
+                IX509Chain chain = chainHolder.Chain2;
 
                 chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
                 chain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority |

@@ -6,7 +6,7 @@
     <PackProject>true</PackProject>
     <SkipShared>true</SkipShared>
     <Description>NuGet Build tasks for MSBuild and dotnet restore. Contains restore logic using the MSBuild static graph functionality.</Description>
-    <NoWarn>$(NoWarn);CS1591;NU5100;NU5128;NU1505</NoWarn> <!-- Remove NU1505 NoWarn when https://github.com/dotnet/sdk/issues/24747 is fixed -->
+    <NoWarn>$(NoWarn);CS1591;NU5100;NU5128</NoWarn>
     <XPLATProject>true</XPLATProject>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);PackBuildOutputs</TargetsForTfmSpecificContentInPackage>
@@ -15,6 +15,7 @@
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <UsePublicApiAnalyzer>false</UsePublicApiAnalyzer>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <RollForward>LatestMajor</RollForward>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(IsVsixBuild)' == 'true' ">

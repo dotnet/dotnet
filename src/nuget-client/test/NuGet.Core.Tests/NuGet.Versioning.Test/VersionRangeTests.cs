@@ -195,9 +195,9 @@ namespace NuGet.Versioning.Test
             // Act & Assert
             Assert.Equal("(, )", VersionRange.All.ToNormalizedString());
 #pragma warning disable CS0618 // Type or member is obsolete
-            Assert.Equal("(, )", VersionRange.AllFloating.ToNormalizedString());
+            Assert.Equal("[*-*, )", VersionRange.AllFloating.ToNormalizedString());
             Assert.Equal("(, )", VersionRange.AllStable.ToNormalizedString());
-            Assert.Equal("(, )", VersionRange.AllStableFloating.ToNormalizedString());
+            Assert.Equal("[*, )", VersionRange.AllStableFloating.ToNormalizedString());
 #pragma warning restore CS0618 // Type or member is obsolete
 
         }
@@ -271,9 +271,9 @@ namespace NuGet.Versioning.Test
         {
             // Act
             var versionInfo = VersionRange.Parse("[1,3)");
-            Assert.Equal("1.0.0", versionInfo.MinVersion.ToNormalizedString());
+            Assert.Equal("1.0.0", versionInfo.MinVersion?.ToNormalizedString());
             Assert.True(versionInfo.IsMinInclusive);
-            Assert.Equal("3.0.0", versionInfo.MaxVersion.ToNormalizedString());
+            Assert.Equal("3.0.0", versionInfo.MaxVersion?.ToNormalizedString());
             Assert.False(versionInfo.IsMaxInclusive);
         }
 
@@ -380,8 +380,8 @@ namespace NuGet.Versioning.Test
             var versionInfo = new VersionRange(min, minInc, max, maxInc);
 
             // Assert
-            Assert.Equal(min, versionInfo.MinVersion, VersionComparer.Default);
-            Assert.Equal(max, versionInfo.MaxVersion, VersionComparer.Default);
+            Assert.Equal(min, versionInfo.MinVersion!, VersionComparer.Default);
+            Assert.Equal(max, versionInfo.MaxVersion!, VersionComparer.Default);
             Assert.Equal(minInc, versionInfo.IsMinInclusive);
             Assert.Equal(maxInc, versionInfo.IsMaxInclusive);
         }
@@ -404,8 +404,8 @@ namespace NuGet.Versioning.Test
             var versionInfo = VersionRange.Parse(original.ToString());
 
             // Assert
-            Assert.Equal(min, versionInfo.MinVersion, VersionComparer.Default);
-            Assert.Equal(max, versionInfo.MaxVersion, VersionComparer.Default);
+            Assert.Equal(min, versionInfo.MinVersion!, VersionComparer.Default);
+            Assert.Equal(max, versionInfo.MaxVersion!, VersionComparer.Default);
             Assert.Equal(minInc, versionInfo.IsMinInclusive);
             Assert.Equal(maxInc, versionInfo.IsMaxInclusive);
         }
@@ -454,7 +454,7 @@ namespace NuGet.Versioning.Test
         public void ParseVersionRangeWithNullThrows()
         {
             // Act & Assert
-            ExceptionAssert.ThrowsArgNull(() => VersionRange.Parse(null), "value");
+            ExceptionAssert.ThrowsArgNull(() => VersionRange.Parse(null!), "value");
         }
 
         [Theory]
@@ -484,7 +484,7 @@ namespace NuGet.Versioning.Test
             var versionInfo = VersionRange.Parse("1.2");
 
             // Assert
-            Assert.Equal("1.2", versionInfo.MinVersion.ToString());
+            Assert.Equal("1.2", versionInfo.MinVersion?.ToString());
             Assert.True(versionInfo.IsMinInclusive);
             Assert.Equal(null, versionInfo.MaxVersion);
             Assert.False(versionInfo.IsMaxInclusive);
@@ -497,7 +497,7 @@ namespace NuGet.Versioning.Test
             var versionInfo = VersionRange.Parse("  1  .   2  ");
 
             // Assert
-            Assert.Equal("1.2", versionInfo.MinVersion.ToString());
+            Assert.Equal("1.2", versionInfo.MinVersion?.ToString());
             Assert.True(versionInfo.IsMinInclusive);
             Assert.Equal(null, versionInfo.MaxVersion);
             Assert.False(versionInfo.IsMaxInclusive);
@@ -512,7 +512,7 @@ namespace NuGet.Versioning.Test
             // Assert
             Assert.Equal(null, versionInfo.MinVersion);
             Assert.False(versionInfo.IsMinInclusive);
-            Assert.Equal("1.2", versionInfo.MaxVersion.ToString());
+            Assert.Equal("1.2", versionInfo.MaxVersion?.ToString());
             Assert.True(versionInfo.IsMaxInclusive);
         }
 
@@ -522,7 +522,7 @@ namespace NuGet.Versioning.Test
             var versionInfo = VersionRange.Parse("(,1.2)");
             Assert.Equal(null, versionInfo.MinVersion);
             Assert.False(versionInfo.IsMinInclusive);
-            Assert.Equal("1.2", versionInfo.MaxVersion.ToString());
+            Assert.Equal("1.2", versionInfo.MaxVersion?.ToString());
             Assert.False(versionInfo.IsMaxInclusive);
         }
 
@@ -533,9 +533,9 @@ namespace NuGet.Versioning.Test
             var versionInfo = VersionRange.Parse("[1.2]");
 
             // Assert
-            Assert.Equal("1.2", versionInfo.MinVersion.ToString());
+            Assert.Equal("1.2", versionInfo.MinVersion?.ToString());
             Assert.True(versionInfo.IsMinInclusive);
-            Assert.Equal("1.2", versionInfo.MaxVersion.ToString());
+            Assert.Equal("1.2", versionInfo.MaxVersion?.ToString());
             Assert.True(versionInfo.IsMaxInclusive);
         }
 
@@ -546,7 +546,7 @@ namespace NuGet.Versioning.Test
             var versionInfo = VersionRange.Parse("(1.2,)");
 
             // Assert
-            Assert.Equal("1.2", versionInfo.MinVersion.ToString());
+            Assert.Equal("1.2", versionInfo.MinVersion?.ToString());
             Assert.False(versionInfo.IsMinInclusive);
             Assert.Equal(null, versionInfo.MaxVersion);
             Assert.False(versionInfo.IsMaxInclusive);
@@ -559,9 +559,9 @@ namespace NuGet.Versioning.Test
             var versionInfo = VersionRange.Parse("(1.2,2.3)");
 
             // Assert
-            Assert.Equal("1.2", versionInfo.MinVersion.ToString());
+            Assert.Equal("1.2", versionInfo.MinVersion?.ToString());
             Assert.False(versionInfo.IsMinInclusive);
-            Assert.Equal("2.3", versionInfo.MaxVersion.ToString());
+            Assert.Equal("2.3", versionInfo.MaxVersion?.ToString());
             Assert.False(versionInfo.IsMaxInclusive);
         }
 
@@ -572,9 +572,9 @@ namespace NuGet.Versioning.Test
             var versionInfo = VersionRange.Parse("(1.2,2.3]");
 
             // Assert
-            Assert.Equal("1.2", versionInfo.MinVersion.ToString());
+            Assert.Equal("1.2", versionInfo.MinVersion?.ToString());
             Assert.False(versionInfo.IsMinInclusive);
-            Assert.Equal("2.3", versionInfo.MaxVersion.ToString());
+            Assert.Equal("2.3", versionInfo.MaxVersion?.ToString());
             Assert.True(versionInfo.IsMaxInclusive);
         }
 
@@ -583,9 +583,9 @@ namespace NuGet.Versioning.Test
         {
             // Act
             var versionInfo = VersionRange.Parse("[1.2,2.3)");
-            Assert.Equal("1.2", versionInfo.MinVersion.ToString());
+            Assert.Equal("1.2", versionInfo.MinVersion?.ToString());
             Assert.True(versionInfo.IsMinInclusive);
-            Assert.Equal("2.3", versionInfo.MaxVersion.ToString());
+            Assert.Equal("2.3", versionInfo.MaxVersion?.ToString());
             Assert.False(versionInfo.IsMaxInclusive);
         }
 
@@ -596,9 +596,9 @@ namespace NuGet.Versioning.Test
             var versionInfo = VersionRange.Parse("[1.2,2.3]");
 
             // Assert
-            Assert.Equal("1.2", versionInfo.MinVersion.ToString());
+            Assert.Equal("1.2", versionInfo.MinVersion?.ToString());
             Assert.True(versionInfo.IsMinInclusive);
-            Assert.Equal("2.3", versionInfo.MaxVersion.ToString());
+            Assert.Equal("2.3", versionInfo.MaxVersion?.ToString());
             Assert.True(versionInfo.IsMaxInclusive);
         }
 
@@ -609,9 +609,9 @@ namespace NuGet.Versioning.Test
             var versionInfo = VersionRange.Parse("   [  1 .2   , 2  .3   ]  ");
 
             // Assert
-            Assert.Equal("1.2", versionInfo.MinVersion.ToString());
+            Assert.Equal("1.2", versionInfo.MinVersion?.ToString());
             Assert.True(versionInfo.IsMinInclusive);
-            Assert.Equal("2.3", versionInfo.MaxVersion.ToString());
+            Assert.Equal("2.3", versionInfo.MaxVersion?.ToString());
             Assert.True(versionInfo.IsMaxInclusive);
         }
 
@@ -644,7 +644,7 @@ namespace NuGet.Versioning.Test
         public void ParseVersionRangeNegativeIntegerRanges()
         {
             // Act
-            VersionRange versionInfo;
+            VersionRange? versionInfo;
             var parsed = VersionRange.TryParse("   [-1, 2]  ", out versionInfo);
 
             Assert.False(parsed);
@@ -655,10 +655,10 @@ namespace NuGet.Versioning.Test
         public void TryParseNullVersionRange()
         {
             // Arrange
-            VersionRange output;
+            VersionRange? output;
 
             // Act
-            var parsed = VersionRange.TryParse(null, out output);
+            var parsed = VersionRange.TryParse(null!, out output);
 
             // Assert
             Assert.False(parsed);
@@ -867,9 +867,9 @@ namespace NuGet.Versioning.Test
             var range = VersionRange.Parse("*-*");
 
             Assert.Equal("[*-*, )", range.ToNormalizedString());
-            Assert.Equal("0.0.0-0", range.MinVersion.ToNormalizedString());
-            Assert.Equal("0.0.0-0", range.Float.MinVersion.ToNormalizedString());
-            Assert.Equal(NuGetVersionFloatBehavior.AbsoluteLatest, range.Float.FloatBehavior);
+            Assert.Equal("0.0.0-0", range.MinVersion?.ToNormalizedString());
+            Assert.Equal("0.0.0-0", range.Float?.MinVersion.ToNormalizedString());
+            Assert.Equal(NuGetVersionFloatBehavior.AbsoluteLatest, range.Float?.FloatBehavior);
         }
 
         [Fact]
@@ -878,9 +878,9 @@ namespace NuGet.Versioning.Test
             var range = VersionRange.Parse("*-rc.*");
 
             Assert.Equal("[*-rc.*, )", range.ToNormalizedString());
-            Assert.Equal("0.0.0-rc.0", range.MinVersion.ToNormalizedString());
-            Assert.Equal("0.0.0-rc.0", range.Float.MinVersion.ToNormalizedString());
-            Assert.Equal(NuGetVersionFloatBehavior.PrereleaseMajor, range.Float.FloatBehavior);
+            Assert.Equal("0.0.0-rc.0", range.MinVersion?.ToNormalizedString());
+            Assert.Equal("0.0.0-rc.0", range.Float?.MinVersion.ToNormalizedString());
+            Assert.Equal(NuGetVersionFloatBehavior.PrereleaseMajor, range.Float?.FloatBehavior);
         }
 
         [Fact]
@@ -960,7 +960,7 @@ namespace NuGet.Versioning.Test
                     NuGetVersion.Parse("3.0.0"),
                 };
 
-            Assert.Equal("1.0.1-alpha.2", range.FindBestMatch(versions).ToNormalizedString());
+            Assert.Equal("1.0.1-alpha.2", range.FindBestMatch(versions)?.ToNormalizedString());
         }
 
         [Fact]
@@ -979,7 +979,7 @@ namespace NuGet.Versioning.Test
                     NuGetVersion.Parse("3.0.0"),
                 };
 
-            Assert.Equal("1.0.1.9-alpha.1", range.FindBestMatch(versions).ToNormalizedString());
+            Assert.Equal("1.0.1.9-alpha.1", range.FindBestMatch(versions)?.ToNormalizedString());
         }
 
         [Fact]
@@ -999,7 +999,7 @@ namespace NuGet.Versioning.Test
                     NuGetVersion.Parse("3.0.0"),
                 };
 
-            Assert.Equal("1.0.1.9", range.FindBestMatch(versions).ToNormalizedString());
+            Assert.Equal("1.0.1.9", range.FindBestMatch(versions)?.ToNormalizedString());
         }
 
         [Fact]
@@ -1019,7 +1019,7 @@ namespace NuGet.Versioning.Test
                     NuGetVersion.Parse("3.0.0"),
                 };
 
-            Assert.Equal("1.0.1.9-alpha.1", range.FindBestMatch(versions).ToNormalizedString());
+            Assert.Equal("1.0.1.9-alpha.1", range.FindBestMatch(versions)?.ToNormalizedString());
         }
 
         [Fact]
@@ -1099,7 +1099,7 @@ namespace NuGet.Versioning.Test
                     NuGetVersion.Parse("3.0.0"),
                 };
 
-            Assert.Equal("1.0.0-alpha.2", range.FindBestMatch(versions).ToNormalizedString());
+            Assert.Equal("1.0.0-alpha.2", range.FindBestMatch(versions)?.ToNormalizedString());
         }
 
         [Fact]
@@ -1118,7 +1118,7 @@ namespace NuGet.Versioning.Test
                     NuGetVersion.Parse("3.0.0"),
                 };
 
-            Assert.Equal("1.0.9-alpha.1", range.FindBestMatch(versions).ToNormalizedString());
+            Assert.Equal("1.0.9-alpha.1", range.FindBestMatch(versions)?.ToNormalizedString());
         }
 
         [Fact]
@@ -1138,7 +1138,7 @@ namespace NuGet.Versioning.Test
                     NuGetVersion.Parse("3.0.0"),
                 };
 
-            Assert.Equal("1.0.9", range.FindBestMatch(versions).ToNormalizedString());
+            Assert.Equal("1.0.9", range.FindBestMatch(versions)?.ToNormalizedString());
         }
 
         [Fact]
@@ -1158,7 +1158,7 @@ namespace NuGet.Versioning.Test
                     NuGetVersion.Parse("3.0.0"),
                 };
 
-            Assert.Equal("1.0.9-alpha.1", range.FindBestMatch(versions).ToNormalizedString());
+            Assert.Equal("1.0.9-alpha.1", range.FindBestMatch(versions)?.ToNormalizedString());
         }
 
         [Fact]
@@ -1221,7 +1221,7 @@ namespace NuGet.Versioning.Test
                     NuGetVersion.Parse("3.0.0"),
                 };
 
-            Assert.Equal("1.0.0-alpha.2", range.FindBestMatch(versions).ToNormalizedString());
+            Assert.Equal("1.0.0-alpha.2", range.FindBestMatch(versions)?.ToNormalizedString());
         }
 
         [Fact]
@@ -1240,7 +1240,7 @@ namespace NuGet.Versioning.Test
                     NuGetVersion.Parse("3.0.0"),
                 };
 
-            Assert.Equal("1.1.0-alpha.1", range.FindBestMatch(versions).ToNormalizedString());
+            Assert.Equal("1.1.0-alpha.1", range.FindBestMatch(versions)?.ToNormalizedString());
         }
 
         [Fact]
@@ -1260,7 +1260,7 @@ namespace NuGet.Versioning.Test
                     NuGetVersion.Parse("3.0.0"),
                 };
 
-            Assert.Equal("1.10.1", range.FindBestMatch(versions).ToNormalizedString());
+            Assert.Equal("1.10.1", range.FindBestMatch(versions)?.ToNormalizedString());
         }
 
         [Fact]
@@ -1281,7 +1281,7 @@ namespace NuGet.Versioning.Test
                     NuGetVersion.Parse("3.0.0"),
                 };
 
-            Assert.Equal("1.99.1-alpha1", range.FindBestMatch(versions).ToNormalizedString());
+            Assert.Equal("1.99.1-alpha1", range.FindBestMatch(versions)?.ToNormalizedString());
         }
 
         [Fact]
@@ -1299,7 +1299,7 @@ namespace NuGet.Versioning.Test
                     NuGetVersion.Parse("101.0.0")
                 };
 
-            Assert.Equal("1.0.0.1-alpha.1", range.FindBestMatch(versions).ToNormalizedString());
+            Assert.Equal("1.0.0.1-alpha.1", range.FindBestMatch(versions)?.ToNormalizedString());
         }
 
         [Fact]
@@ -1315,7 +1315,7 @@ namespace NuGet.Versioning.Test
                     NuGetVersion.Parse("1.0.1-beta.2")
                 };
 
-            Assert.Equal("1.0.1-beta.2", range.FindBestMatch(versions).ToNormalizedString());
+            Assert.Equal("1.0.1-beta.2", range.FindBestMatch(versions)?.ToNormalizedString());
         }
 
         [Fact]
@@ -1333,7 +1333,7 @@ namespace NuGet.Versioning.Test
                     NuGetVersion.Parse("101.0.0")
                 };
 
-            Assert.Equal("1.9.0-alpha.2", range.FindBestMatch(versions).ToNormalizedString());
+            Assert.Equal("1.9.0-alpha.2", range.FindBestMatch(versions)?.ToNormalizedString());
         }
 
         [Fact]
@@ -1351,7 +1351,7 @@ namespace NuGet.Versioning.Test
                     NuGetVersion.Parse("101.0.0")
                 };
 
-            Assert.Equal("1.9.0", range.FindBestMatch(versions).ToNormalizedString());
+            Assert.Equal("1.9.0", range.FindBestMatch(versions)?.ToNormalizedString());
         }
 
         [Fact]
@@ -1368,7 +1368,7 @@ namespace NuGet.Versioning.Test
                     NuGetVersion.Parse("101.0.0")
                 };
 
-            Assert.Equal("1.20.0-alph.3", range.FindBestMatch(versions).ToNormalizedString());
+            Assert.Equal("1.20.0-alph.3", range.FindBestMatch(versions)?.ToNormalizedString());
         }
 
         [Fact]
@@ -1385,7 +1385,7 @@ namespace NuGet.Versioning.Test
                     NuGetVersion.Parse("1.20.0-alph.3"),
                 };
 
-            Assert.Equal("1.9.0", range.FindBestMatch(versions).ToNormalizedString());
+            Assert.Equal("1.9.0", range.FindBestMatch(versions)?.ToNormalizedString());
         }
 
         [Fact]
@@ -1401,7 +1401,7 @@ namespace NuGet.Versioning.Test
                     NuGetVersion.Parse("2.0.0-alpha.2"),
                 };
 
-            Assert.Equal("0.1.0-beta", range.FindBestMatch(versions).ToNormalizedString());
+            Assert.Equal("0.1.0-beta", range.FindBestMatch(versions)?.ToNormalizedString());
         }
 
         [Fact]
@@ -1419,7 +1419,7 @@ namespace NuGet.Versioning.Test
                     NuGetVersion.Parse("3.0.0-beta.1")
                 };
 
-            Assert.Equal("2.0.0", range.FindBestMatch(versions).ToNormalizedString());
+            Assert.Equal("2.0.0", range.FindBestMatch(versions)?.ToNormalizedString());
         }
 
         [Fact]
@@ -1433,7 +1433,7 @@ namespace NuGet.Versioning.Test
                     NuGetVersion.Parse("3.1.0"),
                 };
 
-            Assert.Equal("1.1.1.10", range.FindBestMatch(versions).ToNormalizedString());
+            Assert.Equal("1.1.1.10", range.FindBestMatch(versions)?.ToNormalizedString());
         }
 
         [Fact]
@@ -1447,7 +1447,7 @@ namespace NuGet.Versioning.Test
                     NuGetVersion.Parse("3.1.0"),
                 };
 
-            Assert.Equal("1.1.1.10", range.FindBestMatch(versions).ToNormalizedString());
+            Assert.Equal("1.1.1.10", range.FindBestMatch(versions)?.ToNormalizedString());
         }
 
         [Fact]
@@ -1461,7 +1461,7 @@ namespace NuGet.Versioning.Test
                     NuGetVersion.Parse("3.1.0"),
                 };
 
-            Assert.Equal("1.1.10", range.FindBestMatch(versions).ToNormalizedString());
+            Assert.Equal("1.1.10", range.FindBestMatch(versions)?.ToNormalizedString());
         }
 
         [Fact]
@@ -1475,7 +1475,7 @@ namespace NuGet.Versioning.Test
                     NuGetVersion.Parse("3.1.0"),
                 };
 
-            Assert.Equal("1.1.10", range.FindBestMatch(versions).ToNormalizedString());
+            Assert.Equal("1.1.10", range.FindBestMatch(versions)?.ToNormalizedString());
         }
 
         [Fact]
@@ -1489,7 +1489,7 @@ namespace NuGet.Versioning.Test
                     NuGetVersion.Parse("3.1.0"),
                 };
 
-            Assert.Equal("1.10.1", range.FindBestMatch(versions).ToNormalizedString());
+            Assert.Equal("1.10.1", range.FindBestMatch(versions)?.ToNormalizedString());
         }
 
         [Fact]
@@ -1503,7 +1503,7 @@ namespace NuGet.Versioning.Test
                     NuGetVersion.Parse("3.1.0"),
                 };
 
-            Assert.Equal("1.10.1", range.FindBestMatch(versions).ToNormalizedString());
+            Assert.Equal("1.10.1", range.FindBestMatch(versions)?.ToNormalizedString());
         }
 
         [Fact]
@@ -1518,7 +1518,7 @@ namespace NuGet.Versioning.Test
                     NuGetVersion.Parse("3.1.0"),
                 };
 
-            Assert.Equal("1.0.0--beta", range.FindBestMatch(versions).ToNormalizedString());
+            Assert.Equal("1.0.0--beta", range.FindBestMatch(versions)?.ToNormalizedString());
         }
 
         [Fact]
@@ -1534,7 +1534,7 @@ namespace NuGet.Versioning.Test
                     NuGetVersion.Parse("3.1.0"),
                 };
 
-            Assert.Equal("1.9.0--beta", range.FindBestMatch(versions).ToNormalizedString());
+            Assert.Equal("1.9.0--beta", range.FindBestMatch(versions)?.ToNormalizedString());
         }
 
         [Theory]

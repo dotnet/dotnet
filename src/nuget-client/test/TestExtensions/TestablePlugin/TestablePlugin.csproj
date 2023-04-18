@@ -4,7 +4,7 @@
     <TargetLatestRuntimePatch>false</TargetLatestRuntimePatch>
     <OutputType>Exe</OutputType>
     <AssemblyName>Plugin.Testable</AssemblyName>
-    <NoWarn>$(NoWarn);CS1701;NU1505</NoWarn> <!-- Remove NU1505 NoWarn when https://github.com/dotnet/sdk/issues/24747 is fixed -->
+    <NoWarn>$(NoWarn);CS1701</NoWarn>
     <Description>A sample cross platform plugin used for end-to-end tests.</Description>
   </PropertyGroup>
 

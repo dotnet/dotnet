@@ -870,4 +870,20 @@ Valid from:</comment>
   <data name="ChainBuilding_UsingDefaultTrustStoreForTimestamping" xml:space="preserve">
     <value>X.509 certificate chain validation will use the default trust store selected by .NET for timestamping.</value>
   </data>
+  <data name="UntrustedRoot_WithCertificateBundle" xml:space="preserve">
+    <value>The following X.509 root certificate is untrusted because it is not present in the certificate bundle at {0}.  For more information, see documentation for NU3042.
+    Subject:  {1}
+    Fingerprint (SHA-256):  {2}
+    Certificate (PEM):
+{3}</value>
+    <comment>0 is a file path, 1 is a certificate subject, 2 is a certificate fingerprint, and 3 is a PEM-encoded certificate.</comment>
+  </data>
+  <data name="UntrustedRoot_WithoutCertificateBundle" xml:space="preserve">
+    <value>The following X.509 root certificate is untrusted because no certificate bundle was found.  For more information, see documentation for NU3042.
+    Subject:  {0}
+    Fingerprint (SHA-256):  {1}
+    Certificate (PEM):
+{2}</value>
+    <comment>0 is a certificate subject, 1 is a certificate fingerprint, and 2 is a PEM-encoded certificate.</comment>
+  </data>
 </root>

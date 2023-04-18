@@ -24,9 +24,9 @@ namespace NuGet.VisualStudio.Internal.Contracts.Test
 
         public static TheoryData FloatRanges => new TheoryData<FloatRange>
             {
-                { new FloatRange(NuGetVersionFloatBehavior.AbsoluteLatest) },
-                { new FloatRange(NuGetVersionFloatBehavior.PrereleaseMajor, MinVersion) },
+                { new FloatRange(NuGetVersionFloatBehavior.AbsoluteLatest, NuGetVersion.Parse("0.0.0"), "*") },
+                { new FloatRange(NuGetVersionFloatBehavior.PrereleaseMajor, MinVersion, "*") },
                 { new FloatRange(NuGetVersionFloatBehavior.PrereleasePatch, MinVersion, ReleaseVersion) }
-            };
+        };
     }
 }

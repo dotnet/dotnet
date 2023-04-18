@@ -36,7 +36,7 @@ namespace NuGet.Packaging.Signing
             SleepInterval = sleepInterval;
         }
 
-        public bool Build(X509Chain chain, X509Certificate2 certificate)
+        public bool Build(IX509Chain chain, X509Certificate2 certificate)
         {
             if (chain is null)
             {

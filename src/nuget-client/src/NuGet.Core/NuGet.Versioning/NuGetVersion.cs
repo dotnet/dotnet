@@ -13,7 +13,7 @@ namespace NuGet.Versioning
     /// </summary>
     public partial class NuGetVersion : SemanticVersion
     {
-        private readonly string _originalString;
+        private readonly string? _originalString;
 
         /// <summary>
         /// Creates a NuGetVersion using NuGetVersion.Parse(string)
@@ -38,7 +38,7 @@ namespace NuGet.Versioning
         /// <param name="version">Version numbers</param>
         /// <param name="releaseLabel">Prerelease label</param>
         /// <param name="metadata">Build metadata</param>
-        public NuGetVersion(Version version, string releaseLabel = null, string metadata = null)
+        public NuGetVersion(Version version, string? releaseLabel = null, string? metadata = null)
             : this(version, ParseReleaseLabels(releaseLabel), metadata, GetLegacyString(version, ParseReleaseLabels(releaseLabel), metadata))
         {
         }
@@ -61,7 +61,7 @@ namespace NuGet.Versioning
         /// <param name="minor">x.Y.z</param>
         /// <param name="patch">x.y.Z</param>
         /// <param name="releaseLabel">Prerelease label</param>
-        public NuGetVersion(int major, int minor, int patch, string releaseLabel)
+        public NuGetVersion(int major, int minor, int patch, string? releaseLabel)
             : this(major, minor, patch, ParseReleaseLabels(releaseLabel), null)
         {
         }
@@ -74,7 +74,7 @@ namespace NuGet.Versioning
         /// <param name="patch">x.y.Z</param>
         /// <param name="releaseLabel">Prerelease label</param>
         /// <param name="metadata">Build metadata</param>
-        public NuGetVersion(int major, int minor, int patch, string releaseLabel, string metadata)
+        public NuGetVersion(int major, int minor, int patch, string? releaseLabel, string? metadata)
             : this(major, minor, patch, ParseReleaseLabels(releaseLabel), metadata)
         {
         }
@@ -87,7 +87,7 @@ namespace NuGet.Versioning
         /// <param name="patch">x.y.Z</param>
         /// <param name="releaseLabels">Prerelease labels</param>
         /// <param name="metadata">Build metadata</param>
-        public NuGetVersion(int major, int minor, int patch, IEnumerable<string> releaseLabels, string metadata)
+        public NuGetVersion(int major, int minor, int patch, IEnumerable<string>? releaseLabels, string? metadata)
             : this(new Version(major, minor, patch, 0), releaseLabels, metadata, null)
         {
         }
@@ -127,7 +127,7 @@ namespace NuGet.Versioning
         /// <param name="revision">w.x.y.Z</param>
         /// <param name="releaseLabels">Prerelease labels</param>
         /// <param name="metadata">Build metadata</param>
-        public NuGetVersion(int major, int minor, int patch, int revision, IEnumerable<string> releaseLabels, string metadata)
+        public NuGetVersion(int major, int minor, int patch, int revision, IEnumerable<string>? releaseLabels, string? metadata)
             : this(new Version(major, minor, patch, revision), releaseLabels, metadata, null)
         {
         }
@@ -140,7 +140,7 @@ namespace NuGet.Versioning
         /// <param name="releaseLabels">prerelease labels</param>
         /// <param name="metadata">Build metadata</param>
         /// <param name="originalVersion">Non-normalized original version string</param>
-        public NuGetVersion(Version version, IEnumerable<string> releaseLabels, string metadata, string originalVersion)
+        public NuGetVersion(Version version, IEnumerable<string>? releaseLabels, string? metadata, string? originalVersion)
             : base(version, releaseLabels, metadata)
         {
             _originalString = originalVersion;
@@ -164,7 +164,7 @@ namespace NuGet.Versioning
                 return ToNormalizedString();
             }
 
-            return _originalString;
+            return _originalString!;
         }
 
         /// <summary>
@@ -196,6 +196,6 @@ namespace NuGet.Versioning
         /// <summary>
         /// Returns the original, non-normalized version string.
         /// </summary>
-        public string OriginalVersion => _originalString;
+        public string? OriginalVersion => _originalString;
     }
 }

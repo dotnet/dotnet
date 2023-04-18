@@ -17,7 +17,7 @@ namespace NuGet.Versioning.Test
         public void Constructor_WhenVersionComparerIsNull_Throws()
         {
             ArgumentNullException exception = Assert.Throws<ArgumentNullException>(
-                () => new VersionRangeComparer(versionComparer: null));
+                () => new VersionRangeComparer(versionComparer: null!));
 
             Assert.Equal("versionComparer", exception.ParamName);
         }
@@ -49,19 +49,19 @@ namespace NuGet.Versioning.Test
         [Fact]
         public void Equals_WhenXArgumentIsNull_ReturnsFalse()
         {
-            Assert.False(VersionRangeComparer.Default.Equals(x: null, y: VersionRange));
+            Assert.False(VersionRangeComparer.Default.Equals(x: null!, y: VersionRange));
         }
 
         [Fact]
         public void Equals_WhenYArgumentIsNull_ReturnsFalse()
         {
-            Assert.False(VersionRangeComparer.Default.Equals(x: VersionRange, y: null));
+            Assert.False(VersionRangeComparer.Default.Equals(x: VersionRange, y: null!));
         }
 
         [Fact]
         public void Equals_WhenBothArgumentsAreNull_ReturnsTrue()
         {
-            Assert.True(VersionRangeComparer.Default.Equals(x: null, y: null));
+            Assert.True(VersionRangeComparer.Default.Equals(x: null!, y: null!));
         }
 
         [Fact]
@@ -109,7 +109,7 @@ namespace NuGet.Versioning.Test
         [Fact]
         public void GetHashCode_WhenArgumentIsNull_ReturnsZero()
         {
-            int hashCode = VersionRangeComparer.Default.GetHashCode(obj: null);
+            int hashCode = VersionRangeComparer.Default.GetHashCode(obj: null!);
 
             Assert.Equal(0, hashCode);
         }
@@ -123,8 +123,8 @@ namespace NuGet.Versioning.Test
 
             combiner.AddObject(range.IsMinInclusive);
             combiner.AddObject(range.IsMaxInclusive);
-            combiner.AddObject(comparer.GetHashCode(range.MinVersion));
-            combiner.AddObject(comparer.GetHashCode(range.MaxVersion));
+            combiner.AddObject(comparer.GetHashCode(range.MinVersion!));
+            combiner.AddObject(comparer.GetHashCode(range.MaxVersion!));
 
             int expectedResult = combiner.CombinedHash;
             int actualResult = VersionRangeComparer.Default.GetHashCode(range);

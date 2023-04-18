@@ -5,6 +5,9 @@ namespace NuGet.VisualStudio.Internal.Contracts
 {
     public enum ItemFilter
     {
+        /// <summary>
+        /// The value All represents the Browse tab in PM UI
+        /// </summary>
         All,
         Installed,
         UpdatesAvailable,

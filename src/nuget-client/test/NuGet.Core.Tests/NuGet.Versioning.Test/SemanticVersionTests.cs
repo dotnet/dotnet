@@ -21,11 +21,12 @@ namespace NuGet.Versioning.Test
         public void ParseSemanticVersionStrict(string versionString)
         {
             // Act
-            SemanticVersion semVer = null;
-            SemanticVersion.TryParse(versionString, out semVer);
+            SemanticVersion? semVer;
+            var successful = SemanticVersion.TryParse(versionString, out semVer);
 
             // Assert
-            Assert.Equal<string>(versionString, semVer.ToFullString());
+            Assert.True(successful);
+            Assert.Equal<string>(versionString, semVer!.ToFullString());
             Assert.Equal<string>(semVer.ToNormalizedString(), semVer.ToString());
         }
 
@@ -37,15 +38,15 @@ namespace NuGet.Versioning.Test
         public void SemanticVersionStrictEquality(string versionString)
         {
             // Act
-            SemanticVersion main = null;
+            SemanticVersion? main;
             SemanticVersion.TryParse("1.2.3", out main);
 
-            SemanticVersion semVer = null;
+            SemanticVersion? semVer;
             SemanticVersion.TryParse(versionString, out semVer);
 
             // Assert
-            Assert.True(main.Equals(semVer));
-            Assert.True(semVer.Equals(main));
+            Assert.True(main!.Equals(semVer));
+            Assert.True(semVer!.Equals(main));
 
             Assert.True(main.GetHashCode() == semVer.GetHashCode());
         }
@@ -58,15 +59,15 @@ namespace NuGet.Versioning.Test
         public void SemanticVersionStrictEqualityPreRelease(string versionString)
         {
             // Act
-            SemanticVersion main = null;
+            SemanticVersion? main;
             SemanticVersion.TryParse("1.2.3-alpha", out main);
 
-            SemanticVersion semVer = null;
+            SemanticVersion? semVer;
             SemanticVersion.TryParse(versionString, out semVer);
 
             // Assert
-            Assert.True(main.Equals(semVer));
-            Assert.True(semVer.Equals(main));
+            Assert.True(main!.Equals(semVer));
+            Assert.True(semVer!.Equals(main));
 
             Assert.True(main.GetHashCode() == semVer.GetHashCode());
         }
@@ -90,7 +91,7 @@ namespace NuGet.Versioning.Test
         public void TryParseStrictReturnsFalseIfVersionIsNotStrictSemVer(string version)
         {
             // Act 
-            SemanticVersion semanticVersion;
+            SemanticVersion? semanticVersion;
             var result = SemanticVersion.TryParse(version, out semanticVersion);
 
             // Assert

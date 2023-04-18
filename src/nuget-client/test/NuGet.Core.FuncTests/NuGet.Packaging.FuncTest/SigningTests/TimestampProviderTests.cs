@@ -89,7 +89,7 @@ namespace NuGet.Packaging.FuncTest
                 // rebuild the chain to get the list of certificates
                 using (X509ChainHolder chainHolder = X509ChainHolder.CreateForTimestamping())
                 {
-                    var chain = chainHolder.Chain;
+                    IX509Chain chain = chainHolder.Chain2;
                     var policy = chain.ChainPolicy;
 
                     policy.ApplicationPolicy.Add(new Oid(Oids.TimeStampingEku));
@@ -99,7 +99,7 @@ namespace NuGet.Packaging.FuncTest
 
                     var timestampSignerCertificate = timestampCms.SignerInfos[0].Certificate;
                     chainBuildSuccess = chain.Build(timestampSignerCertificate);
-                    certificateChain = CertificateChainUtility.GetCertificateChain(chain);
+                    certificateChain = CertificateChainUtility.GetCertificateChain(chain.PrivateReference);
                 }
 
                 using (certificateChain)

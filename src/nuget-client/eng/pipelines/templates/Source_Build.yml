@@ -9,7 +9,7 @@ steps:
 
 - task: PublishBuildArtifacts@1
   displayName: Upload source-build log
-  condition: "always()"
+  condition: "or(failed(), eq(variables['System.debug'], 'true'))"
   continueOnError: true
   inputs:
     PathToPublish: "artifacts/source-build/self/log/source-build.binlog"

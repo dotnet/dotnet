@@ -84,7 +84,7 @@ namespace NuGet.Packaging.FuncTest
 
                 Assert.Equal(SignatureVerificationStatus.Valid, result.Status);
                 Assert.Equal(0, result.Issues.Count(issue => issue.Level == LogLevel.Error));
-                Assert.Equal(1, result.Issues.Count(issue => issue.Level == LogLevel.Warning));
+                Assert.NotEqual(0, result.Issues.Count(issue => issue.Level == LogLevel.Warning));
             }
         }
 

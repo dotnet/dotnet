@@ -72,7 +72,7 @@ namespace NuGet.Versioning.Test
             var converter = new SemanticVersionConverter();
             var result = converter.ConvertFrom(input);
             Assert.IsType(typeof(SemanticVersion), result);
-            Assert.Equal(input, ((SemanticVersion)result).ToFullString());
+            Assert.Equal(input, ((SemanticVersion)result!).ToFullString());
         }
 
         [Theory]

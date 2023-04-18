@@ -8,7 +8,7 @@ namespace NuGet.Versioning.Test
 {
     public class GitMetadataComparer : IVersionComparer
     {
-        public bool Equals(SemanticVersion x, SemanticVersion y)
+        public bool Equals(SemanticVersion? x, SemanticVersion? y)
         {
             return Compare(x, y) == 0;
         }
@@ -17,17 +17,20 @@ namespace NuGet.Versioning.Test
         {
             var version = obj as NuGetVersion;
 
-            return String.Format(CultureInfo.InvariantCulture, "{0}.{1}.{2}-{3}GIT{4}",
-                version.Major, version.Minor, version.Patch, version.Release, GetCommitFromMetadata(version.Metadata)).GetHashCode();
+            return string.Format(CultureInfo.InvariantCulture, "{0}.{1}.{2}-{3}GIT{4}",
+                version!.Major, version.Minor, version.Patch, version.Release, GetCommitFromMetadata(version.Metadata!)).GetHashCode();
         }
 
-        public int Compare(SemanticVersion x, SemanticVersion y)
+        public int Compare(SemanticVersion? x, SemanticVersion? y)
         {
             var versionX = x as NuGetVersion;
             var versionY = y as NuGetVersion;
 
             // compare without metadata
+#pragma warning disable CS8604 // Possible null reference argument.
+            // BCL doesn't have nullable annotations for IComparer<T> before net5.0
             var result = VersionComparer.VersionRelease.Compare(x, y);
+#pragma warning restore CS8604 // Possible null reference argument.
 
             if (result != 0)
             {
@@ -35,7 +38,7 @@ namespace NuGet.Versioning.Test
             }
 
             // compare git commits, form: buildmachine-gitcommit
-            return GitCommitOrder(GetCommitFromMetadata(versionX.Metadata)).CompareTo(GitCommitOrder(GetCommitFromMetadata(versionY.Metadata)));
+            return GitCommitOrder(GetCommitFromMetadata(versionX!.Metadata!)).CompareTo(GitCommitOrder(GetCommitFromMetadata(versionY!.Metadata!)));
         }
 
         /// <summary>

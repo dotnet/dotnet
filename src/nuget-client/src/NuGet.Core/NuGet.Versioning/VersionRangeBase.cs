@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace NuGet.Versioning
 {
@@ -12,8 +13,8 @@ namespace NuGet.Versioning
     {
         private readonly bool _includeMinVersion;
         private readonly bool _includeMaxVersion;
-        private readonly NuGetVersion _minVersion;
-        private readonly NuGetVersion _maxVersion;
+        private readonly NuGetVersion? _minVersion;
+        private readonly NuGetVersion? _maxVersion;
 
         /// <summary>
         /// Creates a VersionRange with the given min and max.
@@ -23,9 +24,9 @@ namespace NuGet.Versioning
         /// <param name="maxVersion">Upper bound of the version range.</param>
         /// <param name="includeMaxVersion">True if maxVersion satisfies the condition.</param>
         public VersionRangeBase(
-            NuGetVersion minVersion = null,
+            NuGetVersion? minVersion = null,
             bool includeMinVersion = true,
-            NuGetVersion maxVersion = null,
+            NuGetVersion? maxVersion = null,
             bool includeMaxVersion = false)
         {
             _minVersion = minVersion;
@@ -37,6 +38,7 @@ namespace NuGet.Versioning
         /// <summary>
         /// True if MinVersion exists;
         /// </summary>
+        [MemberNotNullWhen(true, nameof(MinVersion))]
         public bool HasLowerBound
         {
             get { return _minVersion != null; }
@@ -45,6 +47,7 @@ namespace NuGet.Versioning
         /// <summary>
         /// True if MaxVersion exists.
         /// </summary>
+        [MemberNotNullWhen(true, nameof(MaxVersion))]
         public bool HasUpperBound
         {
             get { return _maxVersion != null; }
@@ -53,6 +56,8 @@ namespace NuGet.Versioning
         /// <summary>
         /// True if both MinVersion and MaxVersion exist.
         /// </summary>
+        [MemberNotNullWhen(true, nameof(MinVersion))]
+        [MemberNotNullWhen(true, nameof(MaxVersion))]
         public bool HasLowerAndUpperBounds
         {
             get { return HasLowerBound && HasUpperBound; }
@@ -61,6 +66,7 @@ namespace NuGet.Versioning
         /// <summary>
         /// True if MinVersion exists and is included in the range.
         /// </summary>
+        [MemberNotNullWhen(true, nameof(MaxVersion))]
         public bool IsMinInclusive
         {
             get { return HasLowerBound && _includeMinVersion; }
@@ -69,6 +75,7 @@ namespace NuGet.Versioning
         /// <summary>
         /// True if MaxVersion exists and is included in the range.
         /// </summary>
+        [MemberNotNullWhen(true, nameof(MaxVersion))]
         public bool IsMaxInclusive
         {
             get { return HasUpperBound && _includeMaxVersion; }
@@ -77,7 +84,7 @@ namespace NuGet.Versioning
         /// <summary>
         /// Maximum version allowed by this range.
         /// </summary>
-        public NuGetVersion MaxVersion
+        public NuGetVersion? MaxVersion
         {
             get { return _maxVersion; }
         }
@@ -85,7 +92,7 @@ namespace NuGet.Versioning
         /// <summary>
         /// Minimum version allowed by this range.
         /// </summary>
-        public NuGetVersion MinVersion
+        public NuGetVersion? MinVersion
         {
             get { return _minVersion; }
         }
@@ -131,6 +138,8 @@ namespace NuGet.Versioning
             {
                 if (IsMinInclusive)
                 {
+#pragma warning disable CS8604 // Possible null reference argument.
+                    // BCL is missing nullable annotations before net5.0
                     condition &= comparer.Compare(MinVersion, version) <= 0;
                 }
                 else
@@ -148,6 +157,7 @@ namespace NuGet.Versioning
                 else
                 {
                     condition &= comparer.Compare(MaxVersion, version) > 0;
+#pragma warning restore CS8604 // Possible null reference argument.
                 }
             }
 
@@ -157,7 +167,7 @@ namespace NuGet.Versioning
         /// <summary>
         /// Compares the object as a VersionRange with the default comparer
         /// </summary>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             var range = obj as VersionRangeBase;
 
@@ -180,7 +190,7 @@ namespace NuGet.Versioning
         /// <summary>
         /// Default compare
         /// </summary>
-        public bool Equals(VersionRangeBase other)
+        public bool Equals(VersionRangeBase? other)
         {
             return Equals(other, VersionRangeComparer.Default);
         }
@@ -188,20 +198,23 @@ namespace NuGet.Versioning
         /// <summary>
         /// Use the VersionRangeComparer for equality checks
         /// </summary>
-        public bool Equals(VersionRangeBase other, IVersionRangeComparer comparer)
+        public bool Equals(VersionRangeBase? other, IVersionRangeComparer comparer)
         {
             if (comparer == null)
             {
                 throw new ArgumentNullException(nameof(comparer));
             }
 
+#pragma warning disable CS8604 // Possible null reference argument.
+            // IEqualtyComparer<T>.Equals doesn't have nullable annotations before .NET 5.0
             return comparer.Equals(this, other);
+#pragma warning restore CS8604 // Possible null reference argument.
         }
 
         /// <summary>
         /// Use a specific VersionComparison for comparison
         /// </summary>
-        public bool Equals(VersionRangeBase other, VersionComparison versionComparison)
+        public bool Equals(VersionRangeBase? other, VersionComparison versionComparison)
         {
             IVersionRangeComparer comparer = new VersionRangeComparer(versionComparison);
             return Equals(other, comparer);
@@ -210,7 +223,7 @@ namespace NuGet.Versioning
         /// <summary>
         /// Use a specific IVersionComparer for comparison
         /// </summary>
-        public bool Equals(VersionRangeBase other, IVersionComparer versionComparer)
+        public bool Equals(VersionRangeBase? other, IVersionComparer versionComparer)
         {
             IVersionRangeComparer comparer = new VersionRangeComparer(versionComparer);
             return Equals(other, comparer);
@@ -219,7 +232,7 @@ namespace NuGet.Versioning
         /// <summary>
         /// SubSet check
         /// </summary>
-        public bool IsSubSetOrEqualTo(VersionRangeBase possibleSuperSet)
+        public bool IsSubSetOrEqualTo(VersionRangeBase? possibleSuperSet)
         {
             return IsSubSetOrEqualTo(possibleSuperSet, VersionComparer.Default);
         }
@@ -227,7 +240,7 @@ namespace NuGet.Versioning
         /// <summary>
         /// SubSet check
         /// </summary>
-        public bool IsSubSetOrEqualTo(VersionRangeBase possibleSuperSet, IVersionComparer comparer)
+        public bool IsSubSetOrEqualTo(VersionRangeBase? possibleSuperSet, IVersionComparer comparer)
         {
             var rangeComparer = new VersionRangeComparer(comparer);
 
@@ -239,10 +252,13 @@ namespace NuGet.Versioning
                 return true;
             }
 
+#pragma warning disable CS8604 // Possible null reference argument.
+            // BCL doesn't have nullable annotations for IEqualityComparer<T> before net5.0
             if (rangeComparer.Equals(target, VersionRange.None))
             {
                 return false;
             }
+#pragma warning restore CS8604 // Possible null reference argument.
 
             if (target == null)
             {
@@ -265,7 +281,10 @@ namespace NuGet.Versioning
                     if (!possibleSubSet.IsMinInclusive
                         && !target.IsMinInclusive)
                     {
+#pragma warning disable CS8604 // Possible null reference argument.
+                        // BCL missing annotations on IEqualityComparer<T> before .NET 5
                         result &= comparer.Equals(target.MinVersion, possibleSubSet.MinVersion);
+#pragma warning restore CS8604 // Possible null reference argument.
                     }
                     else
                     {
@@ -287,7 +306,10 @@ namespace NuGet.Versioning
                     if (!possibleSubSet.IsMaxInclusive
                         && !target.IsMaxInclusive)
                     {
+#pragma warning disable CS8604 // Possible null reference argument.
+                        // BCL is missing nullable annotations for IEqualityComparer<T> before net5.0
                         result &= comparer.Equals(target.MaxVersion, possibleSubSet.MaxVersion);
+#pragma warning restore CS8604 // Possible null reference argument.
                     }
                     else
                     {
@@ -316,7 +338,7 @@ namespace NuGet.Versioning
             }
         }
 
-        private static bool? IsPrerelease(SemanticVersion version)
+        private static bool? IsPrerelease(SemanticVersion? version)
         {
             bool? b = null;
 
