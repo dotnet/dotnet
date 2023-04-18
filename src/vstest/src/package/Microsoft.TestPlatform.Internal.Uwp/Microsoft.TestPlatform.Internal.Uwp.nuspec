@@ -1,0 +1,50 @@
+﻿<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    $CommonMetadataElements$
+
+    <dependencies>
+      <group targetFramework="netstandard2.0"></group>
+    </dependencies>
+  </metadata>
+  <files>
+    $CommonFileElements$
+
+    <file src="netstandard2.0\Microsoft.VisualStudio.TestPlatform.ObjectModel.dll" target="lib\netstandard2.0\" />
+    <file src="netstandard2.0\cs\Microsoft.VisualStudio.TestPlatform.ObjectModel.*resources.dll" target="lib\netstandard2.0\cs" />
+    <file src="netstandard2.0\de\Microsoft.VisualStudio.TestPlatform.ObjectModel.*resources.dll" target="lib\netstandard2.0\de" />
+    <file src="netstandard2.0\es\Microsoft.VisualStudio.TestPlatform.ObjectModel.*resources.dll" target="lib\netstandard2.0\es" />
+    <file src="netstandard2.0\fr\Microsoft.VisualStudio.TestPlatform.ObjectModel.*resources.dll" target="lib\netstandard2.0\fr" />
+    <file src="netstandard2.0\it\Microsoft.VisualStudio.TestPlatform.ObjectModel.*resources.dll" target="lib\netstandard2.0\it" />
+    <file src="netstandard2.0\ja\Microsoft.VisualStudio.TestPlatform.ObjectModel.*resources.dll" target="lib\netstandard2.0\ja" />
+    <file src="netstandard2.0\ko\Microsoft.VisualStudio.TestPlatform.ObjectModel.*resources.dll" target="lib\netstandard2.0\ko" />
+    <file src="netstandard2.0\pl\Microsoft.VisualStudio.TestPlatform.ObjectModel.*resources.dll" target="lib\netstandard2.0\pl" />
+    <file src="netstandard2.0\pt-BR\Microsoft.VisualStudio.TestPlatform.ObjectModel.*resources.dll" target="lib\netstandard2.0\pt-BR" />
+    <file src="netstandard2.0\ru\Microsoft.VisualStudio.TestPlatform.ObjectModel.*resources.dll" target="lib\netstandard2.0\ru" />
+    <file src="netstandard2.0\tr\Microsoft.VisualStudio.TestPlatform.ObjectModel.*resources.dll" target="lib\netstandard2.0\tr" />
+    <file src="netstandard2.0\zh-Hans\Microsoft.VisualStudio.TestPlatform.ObjectModel.*resources.dll" target="lib\netstandard2.0\zh-Hans" />
+    <file src="netstandard2.0\zh-Hant\Microsoft.VisualStudio.TestPlatform.ObjectModel.*resources.dll" target="lib\netstandard2.0\zh-Hant" />
+
+    <file src="netstandard2.0\Microsoft.TestPlatform.CoreUtilities.dll" target="lib\netstandard2.0\" />
+    <file src="netstandard2.0\cs\Microsoft.TestPlatform.CoreUtilities.resources.dll" target="lib\netstandard2.0\cs" />
+    <file src="netstandard2.0\de\Microsoft.TestPlatform.CoreUtilities.resources.dll" target="lib\netstandard2.0\de" />
+    <file src="netstandard2.0\es\Microsoft.TestPlatform.CoreUtilities.resources.dll" target="lib\netstandard2.0\es" />
+    <file src="netstandard2.0\fr\Microsoft.TestPlatform.CoreUtilities.resources.dll" target="lib\netstandard2.0\fr" />
+    <file src="netstandard2.0\it\Microsoft.TestPlatform.CoreUtilities.resources.dll" target="lib\netstandard2.0\it" />
+    <file src="netstandard2.0\ja\Microsoft.TestPlatform.CoreUtilities.resources.dll" target="lib\netstandard2.0\ja" />
+    <file src="netstandard2.0\ko\Microsoft.TestPlatform.CoreUtilities.resources.dll" target="lib\netstandard2.0\ko" />
+    <file src="netstandard2.0\pl\Microsoft.TestPlatform.CoreUtilities.resources.dll" target="lib\netstandard2.0\pl" />
+    <file src="netstandard2.0\pt-BR\Microsoft.TestPlatform.CoreUtilities.resources.dll" target="lib\netstandard2.0\pt-BR" />
+    <file src="netstandard2.0\ru\Microsoft.TestPlatform.CoreUtilities.resources.dll" target="lib\netstandard2.0\ru" />
+    <file src="netstandard2.0\tr\Microsoft.TestPlatform.CoreUtilities.resources.dll" target="lib\netstandard2.0\tr" />
+    <file src="netstandard2.0\zh-Hans\Microsoft.TestPlatform.CoreUtilities.resources.dll" target="lib\netstandard2.0\zh-Hans" />
+    <file src="netstandard2.0\zh-Hant\Microsoft.TestPlatform.CoreUtilities.resources.dll" target="lib\netstandard2.0\zh-Hant" />
+
+    <file src="netstandard2.0\Microsoft.TestPlatform.CrossPlatEngine.dll" target="lib\netstandard2.0\" />
+    <file src="netstandard2.0\Microsoft.TestPlatform.CommunicationUtilities.dll" target="lib\netstandard2.0\" />
+    <file src="netstandard2.0\Microsoft.TestPlatform.Utilities.dll" target="lib\netstandard2.0\" />
+    <file src="netstandard2.0\Microsoft.VisualStudio.TestPlatform.Common.dll" target="lib\netstandard2.0\" />
+    <file src="netstandard2.0\Microsoft.TestPlatform.PlatformAbstractions.dll" target="lib\netstandard2.0\" />
+
+  </files>
+</package>

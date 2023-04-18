@@ -222,7 +222,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/test-templates`  
 *[dotnet/test-templates@45a41b3](https://github.com/dotnet/test-templates/commit/45a41b353d078e4d1e5918246fddbacb452eb210)*
 - `src/vstest`  
-*[microsoft/vstest@2d656fe](https://github.com/microsoft/vstest/commit/2d656fe2133f89248825419fb8ffac5505486906)*
+*[microsoft/vstest@1541fc3](https://github.com/microsoft/vstest/commit/1541fc31ead99a358c649e7e9fa203e0dd4d20a5)*
 - `src/xdt`  
 *[dotnet/xdt@9a1c3e1](https://github.com/dotnet/xdt/commit/9a1c3e1b7f0c8763d4c96e593961a61a72679a7b)*
 - `src/xliff-tasks`  

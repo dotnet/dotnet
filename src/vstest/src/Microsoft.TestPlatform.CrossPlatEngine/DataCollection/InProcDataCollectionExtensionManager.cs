@@ -205,7 +205,7 @@ internal class InProcDataCollectionExtensionManager
 
             // Verify if it has any valid in-proc datacollectors or just a dummy element
             inProcDataCollectionSettingsPresentInRunSettings = inProcDataCollectionSettingsPresentInRunSettings &&
-                                                               inProcDataCollectionRunSettings!.DataCollectorSettingsList.Any();
+                                                               inProcDataCollectionRunSettings!.DataCollectorSettingsList.Count != 0;
 
             // Initialize if we have at least one
             if (!inProcDataCollectionSettingsPresentInRunSettings)

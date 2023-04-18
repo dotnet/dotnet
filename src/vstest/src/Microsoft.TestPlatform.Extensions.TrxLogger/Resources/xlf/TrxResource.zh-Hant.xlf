@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
-  <file datatype="xml" source-language="en" target-language="zh-HANT" original="../TrxResource.resx" build-num="247625400">
+  <file datatype="xml" source-language="en" target-language="zh-Hant" original="../TrxResource.resx" build-num="247625400">
     <header>
       <count-group name="BlackBox wordcount">
         <count count-type="x-wordCount">134</count>
@@ -301,12 +301,12 @@ Fehlerdetails: {1}: {2}</target>
       <trans-unit id="PrefixAndNameProvidedError">
         <source>The parameters LogFileName and LogFilePrefix cannot be used together. </source>
         <target state="translated">不能同時使用參數 LogFileName 和 LogFilePrefix。</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="Common_CannotGetNextTimestampFileName">
         <source>Cannot get find an available filename for {0} using timestamp format '{2}' at {1}.</source>
         <target state="translated">無法在 {1} 中使用時間戳記格式 '{2}' 找到 {0} 的可用檔案名。</target>
-        <note></note>
+        <note />
       </trans-unit>
     </body>
   </file>

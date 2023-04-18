@@ -33,8 +33,8 @@ internal class Program
         // sub-processes. It won't stop at entry-point automatically, don't forget to set your breakpoints, or remove VSTEST_DEBUG_NOBP
         // from the environment variables of this project.
 
-        var thisAssemblyPath = Assembly.GetEntryAssembly().Location;
-        var here = Path.GetDirectoryName(thisAssemblyPath);
+        var thisAssemblyPath = Assembly.GetEntryAssembly()!.Location;
+        var here = Path.GetDirectoryName(thisAssemblyPath)!;
         var playground = Path.GetFullPath(Path.Combine(here, "..", "..", "..", ".."));
 
         var console = Path.Combine(here, "vstest.console", "vstest.console.exe");
@@ -176,7 +176,7 @@ internal class Program
                 Console.WriteLine($"[DISCOVERY.PROGRESS]");
                 Console.WriteLine(WriteTests(discoveredTestCases));
             }
-            _testCasesCount += discoveredTestCases.Count();
+            _testCasesCount += discoveredTestCases!.Count();
             if (discoveredTestCases != null) { TestCases.AddRange(discoveredTestCases); }
         }
 
@@ -222,7 +222,7 @@ internal class Program
 
         private static string WriteTests(IEnumerable<TestCase>? testCases)
             => testCases?.Any() == true
-                ? "\t" + string.Join("\n\t", testCases?.Select(r => r.Source + " " + r.DisplayName))
+                ? "\t" + string.Join("\n\t", testCases!.Select(r => r.Source + " " + r.DisplayName))
                 : "\t<empty>";
 
         private static string WriteSources(IEnumerable<string>? sources)

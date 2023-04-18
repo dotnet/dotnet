@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    $CommonMetadataElements$
+
+    <dependencies>
+      <group targetFramework="netcoreapp3.1">
+        <dependency id="Microsoft.TestPlatform.TestHost" version="$Version$" />
+        <dependency id="Microsoft.CodeCoverage" version="$Version$" />
+      </group>
+      <group targetFramework="net462">
+        <!-- TestHost gets shipped with vstest.console -->
+        <dependency id="Microsoft.CodeCoverage" version="$Version$" />
+      </group>
+    </dependencies>
+  </metadata>
+
+  <files>
+    $CommonFileElements$
+
+    <file src="netstandard2.0\netcoreapp\*" target="build\netcoreapp3.1\" />
+    <file src="netstandard2.0\netfx\*" target="build\net462\" />
+
+    <file src="netstandard2.0\Microsoft.NET.Test.Sdk.props" target="buildMultiTargeting\" />
+    <file src="netstandard2.0\Microsoft.NET.Test.Sdk.props" target="build\netcoreapp3.1\" />
+    <file src="netstandard2.0\Microsoft.NET.Test.Sdk.props" target="build\net462\" />
+
+    <file src="netstandard2.0\_._" target="lib/netcoreapp3.1" />
+    <file src="netstandard2.0\_._" target="lib/net462" />
+  </files>
+</package>

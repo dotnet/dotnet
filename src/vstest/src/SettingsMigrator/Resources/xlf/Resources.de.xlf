@@ -5,22 +5,22 @@
       <trans-unit id="IgnoringLegacySettings">
         <source>Any LegacySettings node already present in the runsettings will be removed.</source>
         <target state="translated">Bereits in RunSettings vorhandene LegacySettings-Knoten werden entfernt.</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="NoEmbeddedSettings">
         <source>RunSettings does not contain an embedded testSettings, not migrating.</source>
         <target state="translated">RunSettings enthält keine eingebetteten testSettings. Die Migration wird nicht durchgeführt.</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="RunSettingsCreated">
         <source>The migrated RunSettings file has been created at: {0}</source>
         <target state="translated">Die migrierte RunSettings-Datei wurde in folgendem Verzeichnis erstellt: {0}</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="UnsupportedAttributes">
         <source>The attributes agentNotRespondingTimeout, deploymentTimeout, scriptTimeout of Timeouts node are not supported, so these will not be migrated.</source>
         <target state="translated">Die Attribute "agentNotRespondingTimeout", "deploymentTimeout" und "scriptTimeout" des Knotens "Timeouts" werden nicht unterstützt und daher nicht migriert.</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="ValidUsage">
         <source>Valid usage:
@@ -39,7 +39,7 @@ SettingsMigrator.exe  E:\MyTest\MyTestSettings.testsettings
 SettingsMigrator.exe  E:\MyTest\MyOldRunSettings.runsettings
 SettingsMigrator.exe  E:\MyTest\MyTestSettings.testsettings E:\MyTest\MyNewRunSettings.runsettings
 SettingsMigrator.exe  E:\MyTest\MyOldRunSettings.runsettings E:\MyTest\MyNewRunSettings.runsettings</target>
-        <note></note>
+        <note />
       </trans-unit>
     </body>
   </file>

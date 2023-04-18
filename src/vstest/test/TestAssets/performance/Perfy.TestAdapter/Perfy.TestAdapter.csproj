@@ -1,22 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <!-- Package dependency versions -->
-  <Import Project="..\..\..\..\scripts\build\TestAssets.props" />
+
   <PropertyGroup>
     <TargetFrameworks>net7.0;net6.0;net48;net472;net471;net5.0</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(DotNetBuildFromSource)' == 'true' ">netcoreapp3.1</TargetFrameworks>
-    <CheckEolTargetFramework>false</CheckEolTargetFramework>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(NETTestSdkVersion)" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(PackageVersion)" />
     <!-- Don't output any of this into the output folder,
     it would clash with Test.Sdk, MSTest also does not ship ObjectModel that it builds against. -->
-    <PackageReference Include="Microsoft.TestPlatform.ObjectModel" Version="$(NETTestSdkVersion)" PrivateAssets="All" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+    <PackageReference Include="Microsoft.TestPlatform.ObjectModel" Version="$(PackageVersion)" PrivateAssets="All" />
   </ItemGroup>
 
 </Project>

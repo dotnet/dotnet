@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TestPlatformRoot Condition="$(TestPlatformRoot) == ''">..\..\</TestPlatformRoot>
-  </PropertyGroup>
-  <Import Project="$(TestPlatformRoot)scripts/build/TestPlatform.Settings.targets" />
 
   <PropertyGroup>
     <AssemblyName>Microsoft.VisualStudio.TestPlatform.ObjectModel</AssemblyName>
     <TargetFrameworks>net7.0;$(NetFrameworkMinimum);$(NetCoreAppMinimum);netstandard2.0;</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(DotNetBuildFromSource)' == 'true' ">net7.0;</TargetFrameworks>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IsPackable Condition=" '$(DotNetBuildFromSource)' != 'true' ">true</IsPackable>
+    <NuspecFile>Microsoft.TestPlatform.ObjectModel.nuspec</NuspecFile>
+    <NuspecBasePath>$(OutputPath)</NuspecBasePath>
     <PackageId>Microsoft.TestPlatform.ObjectModel</PackageId>
+    <PackageTags>vstest visual-studio unittest testplatform mstest microsoft test testing</PackageTags>
+    <PackageDescription>
+      The Microsoft Test Platform Object Model.
+    </PackageDescription>
   </PropertyGroup>
 
   <ItemGroup>
@@ -31,9 +36,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Resources.resx" />
-    <EmbeddedResource Include="Resources\CommonResources.resx" />
-
     <None Include="Resources\CommonResources.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Resources\CommonResources.resx</LastGenOutput>
@@ -77,5 +79,4 @@
     <AdditionalFiles Include="PublicAPI/$(TargetFramework)/PublicAPI.Unshipped.txt" />
   </ItemGroup>
 
-  <Import Project="$(TestPlatformRoot)scripts\build\TestPlatform.targets" />
 </Project>

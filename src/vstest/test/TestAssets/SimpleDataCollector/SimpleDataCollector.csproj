@@ -1,38 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <!-- Package dependency versions -->
-  <Import Project="..\..\..\scripts\build\TestPlatform.Dependencies.props" />
-  <PropertyGroup>
-    <TestPlatformRoot Condition="$(TestPlatformRoot) == ''">..\..\..\</TestPlatformRoot>
-  </PropertyGroup>
-
   <PropertyGroup>
     <Version>15.0.0.0</Version>
     <FileVersion>15.0.0.0</FileVersion>
     <ProductVersion>15.0.0.0</ProductVersion>
     <TargetFrameworks>$(NetFrameworkMinimum);$(NetCoreAppMinimum)</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(DotNetBuildFromSource)' == 'true' ">netcoreapp3.1</TargetFrameworks>
-    <CheckEolTargetFramework>false</CheckEolTargetFramework>
     <WarningsAsErrors>true</WarningsAsErrors>
     <AssemblyName>SimpleDataCollector</AssemblyName>
     <AssemblyOriginatorKeyFile>TITestDllKey.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
     <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
+    <IsPackable>false</IsPackable>
+    <IsSourcePackage>false</IsSourcePackage>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="$(TestPlatformRoot)src/testhost/testhost.csproj">
+    <ProjectReference Include="$(RepoRoot)src/testhost/testhost.csproj">
       <FromP2P>true</FromP2P>
     </ProjectReference>
-    <ProjectReference Include="$(TestPlatformRoot)src/Microsoft.TestPlatform.CommunicationUtilities/Microsoft.TestPlatform.CommunicationUtilities.csproj">
+    <ProjectReference Include="$(RepoRoot)src/Microsoft.TestPlatform.CommunicationUtilities/Microsoft.TestPlatform.CommunicationUtilities.csproj">
       <FromP2P>true</FromP2P>
     </ProjectReference>
-    <ProjectReference Include="$(TestPlatformRoot)src/Microsoft.TestPlatform.CrossPlatEngine/Microsoft.TestPlatform.CrossPlatEngine.csproj">
+    <ProjectReference Include="$(RepoRoot)src/Microsoft.TestPlatform.CrossPlatEngine/Microsoft.TestPlatform.CrossPlatEngine.csproj">
       <FromP2P>true</FromP2P>
     </ProjectReference>
-    <ProjectReference Include="$(TestPlatformRoot)src/Microsoft.TestPlatform.Common/Microsoft.TestPlatform.Common.csproj">
+    <ProjectReference Include="$(RepoRoot)src/Microsoft.TestPlatform.Common/Microsoft.TestPlatform.Common.csproj">
       <FromP2P>true</FromP2P>
     </ProjectReference>
-    <ProjectReference Include="$(TestPlatformRoot)src/Microsoft.TestPlatform.ObjectModel/Microsoft.TestPlatform.ObjectModel.csproj">
+    <ProjectReference Include="$(RepoRoot)src/Microsoft.TestPlatform.ObjectModel/Microsoft.TestPlatform.ObjectModel.csproj">
       <FromP2P>true</FromP2P>
     </ProjectReference>
   </ItemGroup>

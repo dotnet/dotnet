@@ -67,7 +67,7 @@ public class PathResolverTests
         var newFilePath = _pathResolver.GetTargetPath(new string[] { "C:\\asd.testsettings" });
         Assert.IsNotNull(newFilePath, "File path should not be null.");
         Assert.IsTrue(string.Equals(Path.GetExtension(newFilePath), ".runsettings"), "File path should be .runsettings");
-        Assert.IsTrue(newFilePath.Contains("C:\\asd_"), "File should be of same name as testsettings");
+        Assert.IsTrue(newFilePath!.Contains("C:\\asd_"), "File should be of same name as testsettings");
         var time = newFilePath.Substring(7, 19);
         Assert.IsTrue(DateTime.TryParseExact(time, "MM-dd-yyyy_hh-mm-ss", CultureInfo.CurrentCulture, DateTimeStyles.None, out _), "File name should have datetime");
     }

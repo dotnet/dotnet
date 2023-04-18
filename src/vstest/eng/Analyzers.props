@@ -1,0 +1,20 @@
+<Project>
+  <!--
+    Include PublicApi analyzers into all projects that are in our src directory.
+    Use relative path between the project and the root to avoid including the analyzer if the path above the root contains 'src' (e.g. C:\src\vstest).
+  -->
+  <ItemGroup Condition=" '$(IsSourceFile)' == 'true' and '$(DotNetBuildFromSource)' != 'true' ">
+    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="$(RoslynPublicApiAnalyzersVersion)">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <!-- Add BannedApiAnalyzer if opt-in -->
+  <ItemGroup Condition=" '$(UseBannedApiAnalyzers)' == 'true' and '$(DotNetBuildFromSource)' != 'true' ">
+    <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="$(RoslynBannedApiAnalyzersVersion)">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+</Project>

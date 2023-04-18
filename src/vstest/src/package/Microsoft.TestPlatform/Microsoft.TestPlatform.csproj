@@ -1,0 +1,135 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>$(NetCoreAppMinimum);$(NetFrameworkMinimum);net47;net471;net472;net48</TargetFrameworks>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- MSB3270 Suppress warnings about platform specific projects imported in AnyCPU (MSIL) projects. -->
+    <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
+    <!--
+      Sometimes NU1702 is not suppressed correctly, so force reducing severity of the warning.
+      See https://github.com/NuGet/Home/issues/9147
+    -->
+    <MSBuildWarningsAsMessages>NU1702;NETSDK1023</MSBuildWarningsAsMessages>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IsPackable Condition=" '$(DotNetBuildFromSource)' != 'true' ">true</IsPackable>
+    <NuspecFile>Microsoft.TestPlatform.nuspec</NuspecFile>
+    <NuspecBasePath>$(OutputPath)</NuspecBasePath>
+    <PackageId>Microsoft.TestPlatform</PackageId>
+    <PackageTags>vstest visual-studio unittest testplatform mstest microsoft test testing</PackageTags>
+    <PackageDescription>
+      This package contains the full set of binaries for the Visual Studio Test Platform (vstest).
+      It provides a modern, cross platform testing engine that powers the testing on .NET Core as well.
+      It integrates with popular test frameworks like MSTest(v1 and v2), xUnit and Nunit with support for extensibility.
+
+      The package supports running Coded UI tests.
+      While running Coded UI tests, you must ensure that the package version matches the major version of Visual Studio used to build the test binaries.
+      For example, if your Coded UI test project was built using Visual Studio 2019 (version 16.x), you must use test platform version 16.x.
+      Coded UI test is deprecated (https://docs.microsoft.com/en-us/visualstudio/releases/2019/release-notes-preview#test-tools) and
+      Visual Studio 2019 (Test Platform version 16.x) will be the last version with Coded UI test functionality.
+    </PackageDescription>
+    <!-- Override default license -->
+    <PackageLicenseFile>LICENSE_VS.txt</PackageLicenseFile>
+    <PackageLicenseFullPath>$(SrcPackageFolder)licenses/LICENSE_VS.txt</PackageLicenseFullPath>
+  </PropertyGroup>
+
+  <ItemGroup Label="NuGet">
+    <NuspecProperty Include="SrcPackageFolder=$(SrcPackageFolder)" />
+    <NuspecProperty Include="TesthostRuntimeconfig=$(RepoRoot)temp\testhost" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\vstest.console\vstest.console.csproj" />
+    <ProjectReference Include="..\..\vstest.console.arm64\vstest.console.arm64.csproj" />
+    <ProjectReference Include="..\..\testhost\testhost.csproj" />
+    <ProjectReference Include="..\..\testhost.x86\testhost.x86.csproj" />
+    <ProjectReference Include="..\..\testhost.arm64\testhost.arm64.csproj" />
+    <ProjectReference Include="..\..\datacollector\datacollector.csproj" />
+    <ProjectReference Include="..\..\datacollector.arm64\datacollector.arm64.csproj" />
+    <ProjectReference Include="..\..\DataCollectors\DumpMinitool\DumpMinitool.csproj" />
+    <ProjectReference Include="..\..\DataCollectors\DumpMinitool.arm64\DumpMinitool.arm64.csproj" />
+    <ProjectReference Include="..\..\DataCollectors\DumpMinitool.x86\DumpMinitool.x86.csproj" />
+    <ProjectReference Include="..\..\DataCollectors\Microsoft.TestPlatform.Extensions.EventLogCollector\Microsoft.TestPlatform.Extensions.EventLogCollector.csproj" />
+    <ProjectReference Include="..\..\Microsoft.TestPlatform.Extensions.BlameDataCollector\Microsoft.TestPlatform.Extensions.BlameDataCollector.csproj" />
+    <ProjectReference Include="..\..\Microsoft.TestPlatform.Extensions.TrxLogger\Microsoft.TestPlatform.Extensions.TrxLogger.csproj" />
+    <ProjectReference Include="..\..\Microsoft.TestPlatform.Extensions.HtmlLogger\Microsoft.TestPlatform.Extensions.HtmlLogger.csproj" />
+    <ProjectReference Include="..\..\Microsoft.TestPlatform.TestHostProvider\Microsoft.TestPlatform.TestHostProvider.csproj" />
+    <ProjectReference Include="..\..\Microsoft.TestPlatform.PlatformAbstractions\Microsoft.TestPlatform.PlatformAbstractions.csproj" />
+    <ProjectReference Include="..\..\SettingsMigrator\SettingsMigrator.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
+    <PackageReference Include="System.Memory" Version="$(SystemMemoryVersion)" />
+    <PackageReference Include="Microsoft.CodeCoverage.Instrumentation" Version="$(MicrosoftInternalCodeCoverageVersion)" PrivateAssets="All" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.CodeCoverage.IO" Version="$(MicrosoftInternalCodeCoverageVersion)" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="$(MicrosoftExtensionsDependencyModelPackageVersion)" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" Version="$(MicrosoftExtensionsFileSystemGlobbingVersion)" GeneratePathProperty="true" />
+    <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" GeneratePathProperty="true" />
+    <PackageReference Include="NuGet.Frameworks" Version="$(NuGetFrameworksVersion)" GeneratePathProperty="true" />
+    <PackageReference Include="System.Collections.Immutable" Version="$(SystemCollectionsImmutableVersion)" GeneratePathProperty="true" />
+    <PackageReference Include="System.Reflection.Metadata" Version="$(SystemReflectionMetadataVersion)" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.Internal.Dia" Version="$(TestPlatformMSDiaVersion)" PrivateAssets="All" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.Internal.Intellitrace" Version="$(TestPlatformExternalsVersion)" PrivateAssets="All" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.Internal.Intellitrace.Extensions" Version="$(TestPlatformExternalsVersion)" PrivateAssets="All" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.VisualStudio.Diagnostics.Utilities" Version="$(MicrosoftVisualStudioDiagnosticsUtilitiesVersion)" PrivateAssets="All" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.VisualStudio.Enterprise.AspNetHelper" Version="$(MicrosoftVisualStudioEnterpriseAspNetHelper)" PrivateAssets="All" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.VisualStudio.QualityTools" Version="$(TestPlatformExternalsVersion)" PrivateAssets="All" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.VisualStudio.QualityTools.DataCollectors" Version="$(TestPlatformExternalsVersion)" PrivateAssets="All" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.Internal.TestPlatform.Extensions" Version="$(TestPlatformExternalsVersion)" PrivateAssets="All" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.VisualStudio.TraceDataCollector" Version="$(MicrosoftInternalCodeCoverageVersion)" PrivateAssets="All" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.Internal.CodeCoverage" Version="$(MicrosoftInternalCodeCoverageVersion)" PrivateAssets="All" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.VisualStudio.CUIT" Version="$(TestPlatformExternalsVersion)" PrivateAssets="All" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="$(VSSdkBuildToolsVersion)" PrivateAssets="All" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.QualityTools.Testing.Fakes.TestRunnerHarness" Version="$(MicrosoftFakesVersion)" PrivateAssets="All" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.Internal.TestPlatform.Remote" Version="$(TestPlatformRemoteExternalsVersion)" PrivateAssets="All" GeneratePathProperty="true" />
+  </ItemGroup>
+
+  <Target Name="CopyFiles" AfterTargets="Build" Condition=" '$(TargetFramework)' == 'net472' ">
+    <ItemGroup>
+      <MicrosoftCodeCoverageInstrumentationFiles Include="$(PkgMicrosoft_CodeCoverage_Instrumentation)\runtimes\win\native\*"></MicrosoftCodeCoverageInstrumentationFiles>
+      <MicrosoftCodeCoverageIOFiles Include="$(PkgMicrosoft_CodeCoverage_IO)\lib\netstandard2.0\**\*"></MicrosoftCodeCoverageIOFiles>
+      <MicrosoftExtensionsDependencyModelFiles Include="$(PkgMicrosoft_Extensions_DependencyModel)\lib\netstandard2.0\*"></MicrosoftExtensionsDependencyModelFiles>
+      <MicrosoftExtensionsFileSystemGlobbingFiles Include="$(PkgMicrosoft_Extensions_FileSystemGlobbing)\lib\netstandard2.0\*"></MicrosoftExtensionsFileSystemGlobbingFiles>
+      <PlatformAbstractionsDepsJsonFiles Include="..\..\Microsoft.TestPlatform.PlatformAbstractions\bin\$(Configuration)\$(TargetFramework)\*.deps.json"></PlatformAbstractionsDepsJsonFiles>
+      <PackageDepsJsonFiles Include="..\..\Microsoft.TestPlatform.PlatformAbstractions\bin\$(Configuration)\$(TargetFramework)\*.deps.json"></PackageDepsJsonFiles>
+      <NewtonsoftJsonFiles Include="$(PkgNewtonsoft_Json)\lib\netstandard2.0\*"></NewtonsoftJsonFiles>
+      <NuGetFrameworksFiles Include="$(PkgNuGet_Frameworks)\lib\netstandard2.0\*"></NuGetFrameworksFiles>
+      <SystemCollectionsImmutableFiles Include="$(PkgSystem_Collections_Immutable)\lib\netstandard2.0\*"></SystemCollectionsImmutableFiles>
+      <SystemReflectionMetadataFiles Include="$(PkgSystem_Reflection_Metadata)\lib\netstandard2.0\*"></SystemReflectionMetadataFiles>
+      <MicrosoftInternalDiaFiles Include="$(PkgMicrosoft_Internal_Dia)\tools\net451\**\*"></MicrosoftInternalDiaFiles>
+      <MicrosoftInternalIntellitraceFiles Include="$(PkgMicrosoft_Internal_Intellitrace)\tools\net451\**\*"></MicrosoftInternalIntellitraceFiles>
+      <MicrosoftInternalIntellitraceExtensionsFiles Include="$(PkgMicrosoft_Internal_Intellitrace_Extensions)\tools\net451\**\*"></MicrosoftInternalIntellitraceExtensionsFiles>
+      <MicrosoftVisualStudioQualityToolsFiles Include="$(PkgMicrosoft_VisualStudio_QualityTools)\tools\net451\**\*"></MicrosoftVisualStudioQualityToolsFiles>
+      <MicrosoftVisualStudioQualityToolsDataCollectorsFiles Include="$(PkgMicrosoft_VisualStudio_QualityTools_DataCollectors)\tools\net451\**\*"></MicrosoftVisualStudioQualityToolsDataCollectorsFiles>
+      <MicrosoftInternalTestPlatformExtensionsFiles Include="$(PkgMicrosoft_Internal_TestPlatform_Extensions)\tools\net451\**\*"></MicrosoftInternalTestPlatformExtensionsFiles>
+      <MicrosoftInternalCodeCoverageFiles Include="$(PkgMicrosoft_Internal_CodeCoverage)\contentFiles\any\any\**\*"></MicrosoftInternalCodeCoverageFiles>
+      <MicrosoftVisualStudioCUITFiles Include="$(PkgMicrosoft_VisualStudio_CUIT)\tools\net451\**\*"></MicrosoftVisualStudioCUITFiles>
+      <MicrosoftVSSDKBuildToolsFiles Include="$(PkgMicrosoft_VSSDK_BuildTools)\tools\vssdk\**\*"></MicrosoftVSSDKBuildToolsFiles>
+      <MicrosoftQualityToolsTestingFakesTestRunnerHarnessFiles Include="$(PkgMicrosoft_QualityTools_Testing_Fakes_TestRunnerHarness)\contentFiles\**\*"></MicrosoftQualityToolsTestingFakesTestRunnerHarnessFiles>
+      <MicrosoftInternalTestPlatformRemoteFiles Include="$(PkgMicrosoft_Internal_TestPlatform_Remote)\tools\netstandard\**\*"></MicrosoftInternalTestPlatformRemoteFiles>
+    </ItemGroup>
+
+    <Copy SourceFiles="@(MicrosoftCodeCoverageInstrumentationFiles)" DestinationFiles="$(OutDir)\Microsoft.CodeCoverage.Instrumentation\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Copy SourceFiles="@(MicrosoftCodeCoverageIOFiles)" DestinationFiles="$(OutDir)\Microsoft.CodeCoverage.IO\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Copy SourceFiles="@(MicrosoftExtensionsDependencyModelFiles)" DestinationFiles="$(OutDir)\Microsoft.Extensions.DependencyModel\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Copy SourceFiles="@(MicrosoftExtensionsFileSystemGlobbingFiles)" DestinationFiles="$(OutDir)\Microsoft.Extensions.FileSystemGlobbing\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Copy SourceFiles="@(PlatformAbstractionsDepsJsonFiles)" DestinationFiles="$(OutDir)\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Copy SourceFiles="@(NewtonsoftJsonFiles)" DestinationFiles="$(OutDir)\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Copy SourceFiles="@(NuGetFrameworksFiles)" DestinationFiles="$(OutDir)\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Copy SourceFiles="@(SystemCollectionsImmutableFiles)" DestinationFiles="$(OutDir)\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Copy SourceFiles="@(SystemReflectionMetadataFiles)" DestinationFiles="$(OutDir)\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Copy SourceFiles="@(MicrosoftInternalDiaFiles)" DestinationFiles="$(OutDir)\Microsoft.Internal.Dia\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Copy SourceFiles="@(MicrosoftInternalIntellitraceFiles)" DestinationFiles="$(OutDir)\Microsoft.Internal.Intellitrace\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Copy SourceFiles="@(MicrosoftInternalIntellitraceExtensionsFiles)" DestinationFiles="$(OutDir)\Microsoft.Internal.Intellitrace.Extensions\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Copy SourceFiles="@(MicrosoftVisualStudioQualityToolsFiles)" DestinationFiles="$(OutDir)\Microsoft.VisualStudio.QualityTools\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Copy SourceFiles="@(MicrosoftVisualStudioQualityToolsDataCollectorsFiles)" DestinationFiles="$(OutDir)\Microsoft.VisualStudio.QualityTools.DataCollectors\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Copy SourceFiles="@(MicrosoftInternalTestPlatformExtensionsFiles)" DestinationFiles="$(OutDir)\Microsoft.Internal.TestPlatform.Extensions\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Copy SourceFiles="@(MicrosoftInternalCodeCoverageFiles)" DestinationFiles="$(OutDir)\Microsoft.Internal.CodeCoverage\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Copy SourceFiles="@(MicrosoftVisualStudioCUITFiles)" DestinationFolder="$(OutDir)\Microsoft.VisualStudio.CUIT" />
+    <Copy SourceFiles="@(MicrosoftVSSDKBuildToolsFiles)" DestinationFolder="$(OutDir)\Microsoft.VSSDK.BuildTools" />
+    <Copy SourceFiles="@(MicrosoftQualityToolsTestingFakesTestRunnerHarnessFiles)" DestinationFiles="$(OutDir)\Microsoft.QualityTools.Testing.Fakes.TestRunnerHarness\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Copy SourceFiles="@(MicrosoftInternalTestPlatformRemoteFiles)" DestinationFiles="$(OutDir)\Microsoft.Internal.TestPlatform.Remote\%(RecursiveDir)%(Filename)%(Extension)" />
+  </Target>
+</Project>

@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TestPlatformRoot Condition="$(TestPlatformRoot) == ''">..\..\</TestPlatformRoot>
     <TestProject>true</TestProject>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
-  <Import Project="$(TestPlatformRoot)scripts/build/TestPlatform.Settings.targets" />
+
   <PropertyGroup>
     <TargetFrameworks>net6.0;net48</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(DotNetBuildFromSource)' == 'true' ">netcoreapp3.1</TargetFrameworks>
     <OutputType Condition=" '$(TargetFramework)' != 'net48' ">Exe</OutputType>
     <AssemblyName>TranslationLayer.UnitTests</AssemblyName>
   </PropertyGroup>
@@ -21,7 +19,7 @@
     <Reference Include="System.Threading.Tasks" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
-  <Import Project="$(TestPlatformRoot)scripts\build\TestPlatform.targets" />
+
   <Target Name="WorkAroundToSkipPreprocessingBinaries" BeforeTargets="RunProduceContentAssets">
     <ItemGroup>
       <FileDependencies>

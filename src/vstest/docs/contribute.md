@@ -56,7 +56,7 @@ To build the repository, run the following command:
 This command will fetch the latest `dotnet-cli` into `/src/vstest/tools/dotnet`
 directory. It will use the `dotnet` executable present there to build the source
 code. All the nuget required for build will be downloaded to
-`/src/vstest/packages` directory.
+`/src/vstest/.packages` directory.
 
 Build will produce following assets:
 

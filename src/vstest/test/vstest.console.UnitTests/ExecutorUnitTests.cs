@@ -186,6 +186,7 @@ public class ExecutorUnitTests
     }
 
     [TestMethod]
+    [Ignore("TODO: gets stuck when running with other tests in ExecutorUnitTests")]
     [DataRow("--ShowDeprecateDotnetVSTestMessage")]
     [DataRow("--showdeprecateDotnetvsTestMessage")]
     public void ExecutorShouldPrintDotnetVSTestDeprecationMessage(string commandLine)

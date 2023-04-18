@@ -1,10 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TestPlatformRoot Condition="$(TestPlatformRoot) == ''">..\..\..\</TestPlatformRoot>
         <PackagesPath Condition="'$(TP_PACKAGES_DIR)' != ''">$(TP_PACKAGES_DIR)\</PackagesPath>
-        <PackagesPath Condition="'$(PackagesPath)' == ''">$(TestPlatformRoot)\packages\</PackagesPath>
+        <PackagesPath Condition="'$(PackagesPath)' == ''">$(RepoRoot).packages\</PackagesPath>
     </PropertyGroup>
-    <Import Project="$(TestPlatformRoot)scripts/build/TestPlatform.Dependencies.props" />
 
     <!-- Required by Microsoft.Common.targets -->
     <Target Name="CreateManifestResourceNames" Condition="'@(EmbeddedResource)' != ''" />
@@ -37,6 +35,10 @@
 
     <ItemGroup>
         <Compile Include="OrphanMethod.il" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.NETCore.ILAsm" Version="$(ILAsmPackageVersion)" />
     </ItemGroup>
 
     <Target Name="CoreCompile" Inputs="$(MSBuildAllProjects);@(Compile)" Outputs="@(IntermediateAssembly);" Returns="" DependsOnTargets="GetIlasmPath;$(CoreCompileDependsOn)">

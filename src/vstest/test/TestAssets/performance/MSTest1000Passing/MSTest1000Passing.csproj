@@ -1,17 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <!-- Package dependency versions -->
-  <Import Project="..\..\..\..\scripts\build\TestAssets.props" />
+
   <PropertyGroup>
     <TargetFrameworks>net6.0;net48</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(DotNetBuildFromSource)' == 'true' ">netcoreapp3.1</TargetFrameworks>
-    <CheckEolTargetFramework>false</CheckEolTargetFramework>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(NETTestSdkVersion)" />
-    <PackageReference Include="MSTest.TestAdapter" Version="$(MSTestFrameworkVersion)" />
-    <PackageReference Include="MSTest.TestFramework" Version="$(MSTestAdapterVersion)" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(PackageVersion)" />
+    <PackageReference Include="MSTest.TestAdapter" Version="$(MSTestTestFrameworkVersion)" />
+    <PackageReference Include="MSTest.TestFramework" Version="$(MSTestTestAdapterVersion)" />
   </ItemGroup>
 
   <ItemGroup>

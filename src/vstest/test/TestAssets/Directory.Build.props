@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <!-- Including just a small subset of what Arcade would do, and not including Directory build props here
+  to avoid "polluting" our testing test projects with Arcade details. We don't want those details there because these
+  projects should be real-life, and most people don't use Arcade. -->
+  <PropertyGroup>
+    <RepoRoot>$(MSBuildThisFileDirectory)../../</RepoRoot>
+    <BaseOutputPath>$(RepoRoot)artifacts/bin/TestAssets/$(MSBuildProjectName)/</BaseOutputPath>
+    <BaseIntermediateOutputPath>$(RepoRoot)artifacts/obj/TestAssets/$(MSBuildProjectName)/</BaseIntermediateOutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+
+    <NoWarn>$(NoWarn);
+    <!-- Suppress warnings about testhost being x64 (AMD64)/x86 when imported into AnyCPU (MSIL) test projects. -->
+    MSB3270;
+    <!-- Suppress warnings about netcoreapp3.1 being used, and being out of support. -->
+    NETSDK1138;
+    <!-- Suppress warning about nugets that we produce not being available when we did not build at least once -->
+    NU1603</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- The TFMs to build and test against. -->
+    <!-- Naming is based on dotnet/runtime one -->
+    <NetFrameworkMinimum>net462</NetFrameworkMinimum>
+    <NetCoreAppMinimum>netcoreapp3.1</NetCoreAppMinimum>
+    <LangVersion>Latest</LangVersion>
+  </PropertyGroup>
+
+  <Import Project="$(RepoRoot)eng/Versions.props" />
+</Project>

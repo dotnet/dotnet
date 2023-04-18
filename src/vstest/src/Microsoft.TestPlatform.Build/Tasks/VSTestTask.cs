@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading;
 
 using Microsoft.Build.Framework;
@@ -19,8 +18,7 @@ public class VSTestTask : Task, ICancelableTask
     // The process which is invoking vstest.console
     private VSTestForwardingApp? _vsTestForwardingApp;
 
-    private const string VsTestAppName = "vstest.console.dll";
-    private const string CodeCovergaeString = "Code Coverage";
+    private const string CodeCoverageString = "Code Coverage";
 
     public string? TestFileFullPath { get; set; }
 
@@ -272,7 +270,7 @@ public class VSTestTask : Task, ICancelableTask
                     }
                 }
 
-                if (dumpArgs.Any())
+                if (dumpArgs.Count != 0)
                 {
                     blameArgs += $":\"{string.Join(";", dumpArgs)}\"";
                 }
@@ -289,8 +287,8 @@ public class VSTestTask : Task, ICancelableTask
                 // Split the argument with ';' and compare first token value.
                 var tokens = arg.Split(';');
 
-                if (arg.Equals(CodeCovergaeString, StringComparison.OrdinalIgnoreCase) ||
-                    tokens[0].Equals(CodeCovergaeString, StringComparison.OrdinalIgnoreCase))
+                if (arg.Equals(CodeCoverageString, StringComparison.OrdinalIgnoreCase) ||
+                    tokens[0].Equals(CodeCoverageString, StringComparison.OrdinalIgnoreCase))
                 {
                     isCollectCodeCoverageEnabled = true;
                 }

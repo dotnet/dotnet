@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TestPlatformRoot Condition="$(TestPlatformRoot) == ''">..\..\</TestPlatformRoot>
     <TestProject>false</TestProject>
     <IsTestProject>false</IsTestProject>
   </PropertyGroup>
-  <Import Project="$(TestPlatformRoot)scripts/build/TestPlatform.Settings.targets" />
+
   <PropertyGroup>
     <Nullable>enable</Nullable>
     <ImplicitUsings>true</ImplicitUsings>
-    <LangVersion>preview</LangVersion>
     <TargetFrameworks>net6.0</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(DotNetBuildFromSource)' == 'true' ">netcoreapp3.1</TargetFrameworks>
     <OutputType Condition=" $(TargetFramework.StartsWith('net6')) ">Exe</OutputType>
     <OutputType>Exe</OutputType>
   </PropertyGroup>
@@ -36,5 +33,4 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
-  <Import Project="$(TestPlatformRoot)scripts\build\TestPlatform.targets" />
 </Project>

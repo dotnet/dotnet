@@ -1,13 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TestPlatformRoot>$(MSBuildThisFileDirectory)..\..\</TestPlatformRoot>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <SignAssembly>True</SignAssembly>
-    <AssemblyOriginatorKeyFile>$(TestPlatformRoot)\scripts\key.snk</AssemblyOriginatorKeyFile>
-    <DelaySign>True</DelaySign>
   </PropertyGroup>
 
 </Project>

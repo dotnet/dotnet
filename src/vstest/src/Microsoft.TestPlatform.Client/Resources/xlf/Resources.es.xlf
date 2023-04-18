@@ -4,23 +4,23 @@
     <body>
       <trans-unit id="InvalidStateForExecution">
         <source>The test run could not be executed because the initial state was invalid.</source>
-        <note></note>
         <target state="translated">No se pudo ejecutar la serie de pruebas porque el estado inicial no era válido.</target>
+        <note />
       </trans-unit>
       <trans-unit id="WaitForCompletionOperationIsNotAllowedWhenNoTestRunIsActive">
         <source>Wait for completion operation is not allowed when there is no active test run. </source>
-        <note></note>
         <target state="translated">La operación “Esperar que termine” no se permite cuando no hay ninguna serie de pruebas activa. </target>
+        <note />
       </trans-unit>
       <trans-unit id="TestSessionTimeoutMessage">
         <source>Aborting test run: test run timeout of {0} milliseconds exceeded.</source>
         <target state="translated">Anulando la serie de pruebas: se superó el tiempo de espera de {0} milisegundos para la serie de pruebas.</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="NoTestHostProviderFound">
         <source>No suitable test runtime provider found for this run.</source>
         <target state="translated">No se encontró un proveedor de tiempo de ejecución de prueba adecuado para esta ejecución.</target>
-        <note></note>
+        <note />
       </trans-unit>
     </body>
   </file>

@@ -154,7 +154,7 @@ internal static class TestPluginDiscoverer
                 types.AddRange(typesToLoad);
             }
 
-            if (!types.Any())
+            if (types.Count == 0)
             {
                 types.AddRange(assembly.GetTypes().Where(type => type.GetTypeInfo() is { } typeInfo && typeInfo.IsClass && !typeInfo.IsAbstract));
             }
@@ -178,7 +178,7 @@ internal static class TestPluginDiscoverer
             }
         }
 
-        if (types != null && types.Any())
+        if (types != null && types.Count != 0)
         {
             foreach (var type in types)
             {

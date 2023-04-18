@@ -5,22 +5,22 @@
       <trans-unit id="IgnoringLegacySettings">
         <source>Any LegacySettings node already present in the runsettings will be removed.</source>
         <target state="translated">runsettings에 이미 존재하는 LegacySettings 노드가 제거됩니다.</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="NoEmbeddedSettings">
         <source>RunSettings does not contain an embedded testSettings, not migrating.</source>
         <target state="translated">RunSettings에 포함된 testSettings이 없으며 마이그레이션되지 않습니다.</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="RunSettingsCreated">
         <source>The migrated RunSettings file has been created at: {0}</source>
         <target state="translated">마이그레이션된 RunSettings 파일은 {0}에 생성되었습니다.</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="UnsupportedAttributes">
         <source>The attributes agentNotRespondingTimeout, deploymentTimeout, scriptTimeout of Timeouts node are not supported, so these will not be migrated.</source>
         <target state="translated">시간 제한 노드의 agentNotRespondingTimeout, deploymentTimeout, scriptTimeout 특성은 지원되지 않으므로 마이그레이션되지 않습니다.</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="ValidUsage">
         <source>Valid usage:
@@ -39,7 +39,7 @@ SettingsMigrator.exe  E:\MyTest\MyTestSettings.testsettings
 SettingsMigrator.exe  E:\MyTest\MyOldRunSettings.runsettings
 SettingsMigrator.exe  E:\MyTest\MyTestSettings.testsettings E:\MyTest\MyNewRunSettings.runsettings
 SettingsMigrator.exe  E:\MyTest\MyOldRunSettings.runsettings E:\MyTest\MyNewRunSettings.runsettings</target>
-        <note></note>
+        <note />
       </trans-unit>
     </body>
   </file>

@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -17,12 +18,12 @@ namespace problematic_child
         {
             if (args.Length > 0)
             {
-                var val = int.Parse(args[0]);
+                var val = int.Parse(args[0], CultureInfo.InvariantCulture);
                 if (val > 0)
                 {
                     if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     {
-                        Process.Start(Process.GetCurrentProcess().MainModule.FileName, (val - 1).ToString());
+                        Process.Start(Process.GetCurrentProcess().MainModule.FileName, (val - 1).ToString(CultureInfo.InvariantCulture));
                     }
                     else
                     {

@@ -1,23 +1,21 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TestPlatformRoot Condition="$(TestPlatformRoot) == ''">..\..\</TestPlatformRoot>
     <TestProject>true</TestProject>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
-  <Import Project="$(TestPlatformRoot)scripts/build/TestPlatform.Settings.targets" />
+
   <PropertyGroup Label="Configuration">
     <RootNamespace>Microsoft.VisualStudio.TestPlatform.DataCollector.PlatformTests</RootNamespace>
   </PropertyGroup>
   <PropertyGroup>
     <TargetFrameworks>net6.0;net48</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(DotNetBuildFromSource)' == 'true' ">netcoreapp3.1</TargetFrameworks>
     <OutputType Condition=" $(TargetFramework.StartsWith('net6')) ">Exe</OutputType>
     <AssemblyName>datacollector.PlatformTests</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\datacollector\datacollector.csproj" />
 
-    <Content Include="$(TestPlatformRoot)src\datacollector\bin\$(Configuration)\$(TargetFramework)\datacollector*.json">
+    <Content Include="$(RepoRoot)src\datacollector\bin\$(Configuration)\$(TargetFramework)\datacollector*.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -27,5 +25,5 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Xml" />
   </ItemGroup>
-  <Import Project="$(TestPlatformRoot)scripts\build\TestPlatform.targets" />
+
 </Project>

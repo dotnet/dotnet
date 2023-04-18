@@ -1,24 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TestPlatformRoot Condition="$(TestPlatformRoot) == ''">..\..\</TestPlatformRoot>
-  </PropertyGroup>
-  <Import Project="$(TestPlatformRoot)scripts/build/TestPlatform.Settings.targets" />
+
   <PropertyGroup>
     <AssemblyName>SettingsMigrator</AssemblyName>
     <TargetFrameworks>net7.0;$(NetFrameworkMinimum)</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(DotNetBuildFromSource)' == 'true' ">net7.0;</TargetFrameworks>
     <OutputType>Exe</OutputType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <IsTestProject>false</IsTestProject>
-    <Prefer32Bit>true</Prefer32Bit>
+    <Prefer32Bit Condition="$(TargetFramework.StartsWith('net4'))">true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)' == '$(NetFrameworkMinimum)'">
     <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
   </PropertyGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\Resources.resx" />
-  </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == '$(NetFrameworkMinimum)' ">
     <Reference Include="System" />
     <Reference Include="System.IO" />
@@ -61,5 +54,5 @@
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
-  <Import Project="$(TestPlatformRoot)scripts\build\TestPlatform.targets" />
+
 </Project>

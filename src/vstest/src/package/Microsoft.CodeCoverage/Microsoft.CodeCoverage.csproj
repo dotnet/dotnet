@@ -1,0 +1,56 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>$(NetFrameworkMinimum)</TargetFrameworks>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IsPackable Condition=" '$(DotNetBuildFromSource)' != 'true' ">true</IsPackable>
+    <NuspecFile>Microsoft.CodeCoverage.nuspec</NuspecFile>
+    <NuspecBasePath>$(OutputPath)</NuspecBasePath>
+    <PackageId>Microsoft.CodeCoverage</PackageId>
+    <PackageTags>vstest visual-studio unittest testplatform mstest microsoft test testing codecoverage code-coverage</PackageTags>
+    <PackageDescription>
+      Microsoft.CodeCoverage package brings infra for collecting code coverage from vstest.console.exe and "dotnet test".
+    </PackageDescription>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);NU1702</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeCoverage.Core" Version="$(MicrosoftInternalCodeCoverageVersion)" PrivateAssets="All" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.CodeCoverage.Interprocess" Version="$(MicrosoftInternalCodeCoverageVersion)" PrivateAssets="All" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.CodeCoverage.Instrumentation" Version="$(MicrosoftInternalCodeCoverageVersion)" PrivateAssets="All" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.Internal.CodeCoverage" Version="$(MicrosoftInternalCodeCoverageVersion)" PrivateAssets="All" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.VisualStudio.TraceDataCollector" Version="$(MicrosoftInternalCodeCoverageVersion)" PrivateAssets="All" GeneratePathProperty="true" />
+  </ItemGroup>
+
+  <Target Name="CopyFiles" AfterTargets="Build">
+    <ItemGroup>
+      <MicrosoftCodeCoverageCore Include="$(PkgMicrosoft_CodeCoverage_Core)\lib\netstandard2.0\**\*"></MicrosoftCodeCoverageCore>
+      <MicrosoftCodeCoverageInterprocess Include="$(PkgMicrosoft_CodeCoverage_Interprocess)\lib\netstandard2.0\**\*"></MicrosoftCodeCoverageInterprocess>
+      <MicrosoftCodeCoverageInstrumentation Include="$(PkgMicrosoft_CodeCoverage_Instrumentation)\lib\netstandard2.0\**\*"></MicrosoftCodeCoverageInstrumentation>
+      <MicrosoftInternalCodeCoverage Include="$(PkgMicrosoft_Internal_CodeCoverage)\contentFiles\any\any\**\*"></MicrosoftInternalCodeCoverage>
+      <MicrosoftVisualStudioTraceDataCollector Include="$(PkgMicrosoft_VisualStudio_TraceDataCollector)\lib\netstandard2.0\**\*"></MicrosoftVisualStudioTraceDataCollector>
+    </ItemGroup>
+
+    <Copy SourceFiles="@(MicrosoftCodeCoverageCore)" DestinationFiles="$(OutDir)\Microsoft.CodeCoverage.Core\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Copy SourceFiles="@(MicrosoftCodeCoverageInterprocess)" DestinationFiles="$(OutDir)\Microsoft.CodeCoverage.Interprocess\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Copy SourceFiles="@(MicrosoftCodeCoverageInstrumentation)" DestinationFiles="$(OutDir)\Microsoft.CodeCoverage.Instrumentation\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Copy SourceFiles="@(MicrosoftInternalCodeCoverage)" DestinationFiles="$(OutDir)\Microsoft.Internal.CodeCoverage\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Copy SourceFiles="@(MicrosoftVisualStudioTraceDataCollector)" DestinationFiles="$(OutDir)\Microsoft.VisualStudio.TraceDataCollector\%(RecursiveDir)%(Filename)%(Extension)" />
+  </Target>
+
+  <ItemGroup>
+    <None Update="ThirdPartyNoticesCodeCoverage.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Microsoft.CodeCoverage.props">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Microsoft.CodeCoverage.targets">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>

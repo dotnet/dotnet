@@ -727,7 +727,7 @@ internal class DataCollectionManager : IDataCollectionManager
     /// </param>
     private void RemoveDataCollectors(IReadOnlyCollection<DataCollectorInformation> dataCollectorsToRemove)
     {
-        if (dataCollectorsToRemove == null || !dataCollectorsToRemove.Any())
+        if (dataCollectorsToRemove == null || dataCollectorsToRemove.Count == 0)
         {
             return;
         }

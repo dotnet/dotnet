@@ -44,30 +44,17 @@ public class TempDirectory : IDisposable
 
     public DirectoryInfo CreateDirectory(string dir)
         => Directory.CreateDirectory(IO.Path.Combine(Path, dir));
-
     public void CopyDirectory(string sourceDirectory, string targetDirectory)
     {
         CopyDirectory(new DirectoryInfo(sourceDirectory), new DirectoryInfo(targetDirectory));
     }
 
+#pragma warning disable CA1822 // Mark members as static
     public void CopyDirectory(DirectoryInfo source, DirectoryInfo target)
+#pragma warning restore CA1822 // Mark members as static
     {
-        Directory.CreateDirectory(target.FullName);
-
-        // Copy each file into the new directory.
-        foreach (FileInfo fi in source.GetFiles())
-        {
-            fi.CopyTo(IO.Path.Combine(target.FullName, fi.Name), true);
-        }
-
-        // Copy each subdirectory using recursion.
-        foreach (DirectoryInfo diSourceSubDir in source.GetDirectories())
-        {
-            DirectoryInfo nextTargetSubDir = target.CreateSubdirectory(diSourceSubDir.Name);
-            CopyDirectory(diSourceSubDir, nextTargetSubDir);
-        }
+        DirectoryUtils.CopyDirectory(source, target);
     }
-
     /// <summary>
     /// Copy given files into the TempDirectory and return the updated paths that are pointing to TempDirectory.
     /// </summary>

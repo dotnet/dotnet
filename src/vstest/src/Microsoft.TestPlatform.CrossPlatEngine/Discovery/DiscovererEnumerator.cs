@@ -133,7 +133,7 @@ internal class DiscovererEnumerator
         _requestData.MetricsCollection.Add(TelemetryDataConstants.TimeTakenToLoadAdaptersInSec, totalAdapterLoadTIme.TotalSeconds);
 
         // Warning is logged for in the inner function
-        if (discovererToSourcesMap == null || !discovererToSourcesMap.Any())
+        if (discovererToSourcesMap == null || discovererToSourcesMap.Count == 0)
         {
             return;
         }

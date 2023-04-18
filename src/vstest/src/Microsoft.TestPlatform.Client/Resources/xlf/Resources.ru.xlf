@@ -4,23 +4,23 @@
     <body>
       <trans-unit id="InvalidStateForExecution">
         <source>The test run could not be executed because the initial state was invalid.</source>
-        <note></note>
         <target state="translated">Не удалось выполнить тестовый запуск из-за недопустимого начального состояния.</target>
+        <note />
       </trans-unit>
       <trans-unit id="WaitForCompletionOperationIsNotAllowedWhenNoTestRunIsActive">
         <source>Wait for completion operation is not allowed when there is no active test run. </source>
-        <note></note>
         <target state="translated">Операция "Ожидать завершения" запрещена, если нет активного тестового запуска.</target>
+        <note />
       </trans-unit>
       <trans-unit id="TestSessionTimeoutMessage">
         <source>Aborting test run: test run timeout of {0} milliseconds exceeded.</source>
         <target state="translated">Тестовый запуск отменяется: превышено допустимое время ожидания в {0} мс.</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="NoTestHostProviderFound">
         <source>No suitable test runtime provider found for this run.</source>
         <target state="translated">Не найден подходящий поставщик среды выполнения теста для этого запуска.</target>
-        <note></note>
+        <note />
       </trans-unit>
     </body>
   </file>

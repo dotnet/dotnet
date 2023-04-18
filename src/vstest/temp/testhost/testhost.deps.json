@@ -15,7 +15,7 @@
           "Microsoft.TestPlatform.Utilities": "15.0.0.0",
           "Microsoft.VisualStudio.TestPlatform.Common": "15.0.0.0",
           "Microsoft.VisualStudio.TestPlatform.ObjectModel": "15.0.0.0",
-          "Newtonsoft.Json": "9.0.0.0",
+          "Newtonsoft.Json": "13.0.0.0",
           "NuGet.Frameworks": "5.0.0.6"
         },
         "runtime": {
@@ -78,11 +78,11 @@
           }
         }
       },
-      "Newtonsoft.Json/9.0.0.0": {
+      "Newtonsoft.Json/13.0.0.0": {
         "runtime": {
           "Newtonsoft.Json.dll": {
-            "assemblyVersion": "9.0.0.0",
-            "fileVersion": "9.0.1.19813"
+            "assemblyVersion": "13.0.0.0",
+            "fileVersion": "13.0.1.25517"
           }
         }
       },
@@ -145,7 +145,7 @@
       "sha512": "",
       "path": "/"
     },
-    "Newtonsoft.Json/9.0.0.0": {
+    "Newtonsoft.Json/13.0.0.0": {
       "type": "reference",
       "serviceable": false,
       "sha512": "",

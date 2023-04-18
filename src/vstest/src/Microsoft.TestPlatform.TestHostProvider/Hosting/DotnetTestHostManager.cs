@@ -169,7 +169,7 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
     private Action<object?, string?> ErrorReceivedCallback => (process, data) =>
     {
         TPDebug.Assert(_testHostProcessStdError is not null, "_testHostProcessStdError is null");
-        TestHostManagerCallbacks.ErrorReceivedCallback(_testHostProcessStdError, data);
+        new TestHostManagerCallbacks(false, null).ErrorReceivedCallback(_testHostProcessStdError, data);
     };
 
     /// <inheritdoc/>
@@ -777,7 +777,10 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
                             }
                         }
 
-                        testHostPath = Path.Combine(testhostPackage.Path, testHostPath);
+                        if (testhostPackage.Path is not null)
+                        {
+                            testHostPath = Path.Combine(testhostPackage.Path, testHostPath);
+                        }
                         _hostPackageVersion = testhostPackage.Version;
                         IsVersionCheckRequired = !_hostPackageVersion.StartsWith("15.0.0");
                         EqtTrace.Verbose("DotnetTestHostmanager: Relative path of testhost.dll with respect to package folder is {0}", testHostPath);

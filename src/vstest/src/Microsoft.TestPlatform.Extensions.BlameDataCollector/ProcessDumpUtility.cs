@@ -78,7 +78,7 @@ internal class ProcessDumpUtility : IProcessDumpUtility
             }
         }
 
-        if (warnOnNoDumpFiles && !foundDumps.Any())
+        if (warnOnNoDumpFiles && foundDumps.Count == 0)
         {
             EqtTrace.Error($"ProcessDumpUtility.GetDumpFile: Could not find any dump file in {_hangDumpDirectory}.");
             throw new FileNotFoundException(Resources.Resources.DumpFileNotGeneratedErrorMessage);

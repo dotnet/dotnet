@@ -340,7 +340,7 @@ internal class TestRequestManager : ITestRequestManager
         // OR we already did discovery and have a list of TestCases that have concrete test method information
         // and so we only pass those. TestCase also has the test container path (usually a DLL).
         TPDebug.Assert(testRunRequestPayload.Sources != null || testRunRequestPayload.TestCases != null, "testRunRequestPayload.Sources or testRunRequestPayload.TestCases is null");
-        TestRunCriteria runCriteria = testRunRequestPayload.Sources != null && testRunRequestPayload.Sources.Any()
+        TestRunCriteria runCriteria = testRunRequestPayload.Sources != null && testRunRequestPayload.Sources.Count != 0
             ? new TestRunCriteria(
                 testRunRequestPayload.Sources,
                 batchSize,

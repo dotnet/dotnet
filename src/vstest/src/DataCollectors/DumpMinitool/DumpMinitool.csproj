@@ -1,18 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TestPlatformRoot Condition="$(TestPlatformRoot) == ''">..\..\..\</TestPlatformRoot>
-  </PropertyGroup>
-  <Import Project="$(TestPlatformRoot)scripts/build/TestPlatform.Settings.targets" />
+
   <PropertyGroup>
     <TargetFrameworks>net7.0;net6.0;$(NetFrameworkMinimum)</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(DotNetBuildFromSource)' == 'true' ">net7.0</TargetFrameworks>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <Prefer32Bit>false</Prefer32Bit>
+    <Prefer32Bit Condition="'$(TargetFramework)' == '$(NetFrameworkMinimum)'">false</Prefer32Bit>
     <OutputType>Exe</OutputType>
     <IsTestProject>false</IsTestProject>
     <RuntimeIdentifier Condition=" '$(DotNetBuildFromSource)' != 'true' ">win7-x64</RuntimeIdentifier>
     <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
+    <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
   </PropertyGroup>
 
   <ItemGroup>
@@ -26,5 +23,4 @@
     <AdditionalFiles Include="..\DumpMinitool.x86\PublicAPI\PublicAPI.Unshipped.txt" Link="PublicAPI\PublicAPI.Unshipped.txt" />
   </ItemGroup>
 
-  <Import Project="$(TestPlatformRoot)scripts\build\TestPlatform.targets" />
 </Project>

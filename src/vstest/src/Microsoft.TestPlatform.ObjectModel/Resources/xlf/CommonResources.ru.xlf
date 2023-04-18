@@ -4,28 +4,28 @@
     <body>
       <trans-unit id="CannotBeNullOrEmpty">
         <source>The parameter cannot be null or empty.</source>
-        <note></note>
         <target state="translated">Параметр не может быть пустым или иметь значение null.</target>
+        <note />
       </trans-unit>
       <trans-unit id="DisplayChosenSettings">
         <source>Test run detected DLL(s) which would use different framework and platform versions. Following DLL(s) do not match current settings, which are {0} framework and {1} platform.{2}Go to {3} for more details on managing these settings.</source>
-        <note></note>
         <target state="translated">Тестовый запуск обнаружил библиотеки DLL, предназначенные для других версий инфраструктуры и платформы. Следующие DLL не соответствуют текущим параметрам (инфраструктура {0} и платформа {1}).{2}Дополнительные сведения об управлении этими параметрами: {3}.</target>
+        <note />
       </trans-unit>
       <trans-unit id="NoMatchingSourcesFound">
         <source>None of the provided test containers match the Platform Architecture and .Net Framework settings for the test run. Platform: {0}  .Net Framework: {1}. Go to http://go.microsoft.com/fwlink/?LinkID=330428 for more details on managing these settings.</source>
-        <note></note>
         <target state="translated">Ни один из предоставленных контейнеров тестов не соответствует архитектуре платформы и параметрам .NET Framework для тестового запуска. Платформа: {0} .NET Framework: {1}. Дополнительные сведения об управлении этими параметрами см. по адресу http://go.microsoft.com/fwlink/?LinkID=330428.</target>
+        <note />
       </trans-unit>
       <trans-unit id="MalformedRunSettingsFile">
         <source>Settings file provided does not conform to required format.</source>
         <target state="translated">Указанный файл параметров не соответствует требуемому формату.</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="SourceIncompatible">
         <source>{0} would use Framework {1} and Platform {2}.</source>
         <target state="translated">{0} предполагает использование инфраструктуры {1} и платформы {2}.</target>
-        <note></note>
+        <note />
       </trans-unit>
     </body>
   </file>

@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <!-- Package dependency versions -->
+
   <PropertyGroup>
-    <TestPlatformRoot Condition="$(TestPlatformRoot) == ''">..\..\..\</TestPlatformRoot>
     <TestProject>true</TestProject>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
-  <!-- Imports Common TestAssets props. -->
-  <Import Project="..\..\..\scripts\build\TestAssets.props" />
 
   <PropertyGroup>
     <AssemblyName>NewtonSoftDependency</AssemblyName>
@@ -24,8 +21,8 @@
 
 
   <ItemGroup>
-    <PackageReference Include="MSTest.TestAdapter" Version="$(MSTestAdapterVersion)" />
-    <PackageReference Include="MSTest.TestFramework" Version="$(MSTestAdapterVersion)" />
+    <PackageReference Include="MSTest.TestAdapter" Version="$(MSTestTestAdapterVersion)" />
+    <PackageReference Include="MSTest.TestFramework" Version="$(MSTestTestAdapterVersion)" />
     <!-- TODO: This version would ideally be higher than the newtonsoft version we use in TP to show that the higher version is used.
     Currently there is no higher stable version. -->
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />

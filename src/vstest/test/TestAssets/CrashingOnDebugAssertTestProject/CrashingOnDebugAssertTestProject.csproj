@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <!-- Imports Common TestAssets props. -->
-  <Import Project="..\..\..\scripts\build\TestAssets.props" />
 
   <PropertyGroup>
     <TargetFrameworks>$(NetCoreAppMinimum)</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(DotNetBuildFromSource)' == 'true' ">netcoreapp3.1</TargetFrameworks>
-    <CheckEolTargetFramework>false</CheckEolTargetFramework>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|$(NetCoreAppMinimum)|AnyCPU'">
@@ -20,13 +16,13 @@
 
   <ItemGroup>
     <PackageReference Include="MSTest.TestFramework">
-      <Version>$(MSTestFrameworkVersion)</Version>
+      <Version>$(MSTestTestFrameworkVersion)</Version>
     </PackageReference>
     <PackageReference Include="MSTest.TestAdapter">
-      <Version>$(MSTestAdapterVersion)</Version>
+      <Version>$(MSTestTestAdapterVersion)</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NET.Test.Sdk">
-      <Version>$(NETTestSdkVersion)</Version>
+      <Version>$(PackageVersion)</Version>
     </PackageReference>
   </ItemGroup>
 

@@ -16,17 +16,17 @@ This test may, or may not be the source of the crash.</source>
       <trans-unit id="ProcDumpEnvVarEmpty">
         <source>Required environment variable PROCDUMP_PATH was null or empty. Set PROCDUMP_PATH to path of folder containing appropriate procdump executable.</source>
         <target state="translated">必須の環境変数 PROCDUMP_PATH は Null または空でした。PROCDUMP_PATH を、適切な procdump 実行可能ファイルを含むフォルダーのパスに設定してください。</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="DumpFileNotGeneratedErrorMessage">
         <source>Collect dump was enabled but no dump file was generated.</source>
         <target state="translated">ダンプの収集は有効化されましたが、ダンプ ファイルは生成されませんでした。</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="BlameParameterKeyIncorrect">
         <source>The blame parameter key specified {0} is not valid. Ignoring this key.</source>
         <target state="translated">指定された blame パラメーター キー {0} は無効です。このキーは無視されます。</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="BlameParameterValueIncorrect">
         <source>The blame parameter key {0}, has incorrect value: {1}. Supported values are: {2}</source>
@@ -36,12 +36,12 @@ This test may, or may not be the source of the crash.</source>
       <trans-unit id="ProcDumpCouldNotStart">
         <source>Could not start process dump: {0}</source>
         <target state="translated">プロセス ダンプを開始できませんでした: {0}</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="ProcDumpNotGenerated">
         <source>CollectDump was enabled but dump file was not generated.</source>
         <target state="translated">CollectDump は有効になりましたが、ダンプ ファイルは生成されませんでした。</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="InactivityTimeout">
         <source>The specified inactivity time of {0} {1} has elapsed. Collecting hang dumps from testhost and its child processes</source>
@@ -51,12 +51,12 @@ This test may, or may not be the source of the crash.</source>
       <trans-unit id="UnexpectedValueForInactivityTimespanValue">
         <source>Unexpected value '{0}' provided as timeout. Please provide a value in this format: 1.5h / 90m / 5400s / 5400000ms / 5400000</source>
         <target state="translated">予期しない値 '{0}' がタイムアウトとして指定されました。次の形式で値を指定してください: 1.5h、90m、5400s、5400000ms、5400000</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="NotGeneratingSequenceFile">
         <source>All tests finished running, Sequence file will not be generated</source>
         <target state="translated">すべてのテストの実行が完了しました。Sequence ファイルは生成されません</target>
-        <note>"Sequence" is the name of the file.</note>
+        <note>"Sequence" is the name of the file. No . at the end, because this is a blame message and the . will be added automatically.</note>
       </trans-unit>
       <trans-unit id="Dumping">
         <source>Dumping {0} - {1}</source>
@@ -66,17 +66,17 @@ This test may, or may not be the source of the crash.</source>
       <trans-unit id="DumpingTree">
         <source>Dumping this process tree (from bottom)</source>
         <target state="translated">このプロセス ツリーをダンプしています (下から)</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="Minutes">
         <source>minutes</source>
         <target state="translated">分</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="Seconds">
         <source>seconds</source>
         <target state="translated">秒</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="ProcDumpNotFound">
         <source>{0} could not be found, please make sure that the executable is available on PATH. Alternatively set PROCDUMP_PATH environment variable to a directory that contains {0} executable</source>
@@ -86,7 +86,7 @@ This test may, or may not be the source of the crash.</source>
       <trans-unit id="MonitorPostmortemDebuggerInvalidDumpDirectoryPathParameter">
         <source>Invalid 'DumpDirectoryPath' for postmortem debugger monitor</source>
         <target state="translated">事後デバッガー モニターの 'DumpDirectoryPath' が無効です</target>
-        <note></note>
+        <note />
       </trans-unit>
     </body>
   </file>

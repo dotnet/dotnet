@@ -1,12 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TestPlatformRoot Condition="$(TestPlatformRoot) == ''">..\..\</TestPlatformRoot>
     <!-- MSB3270 Suppress warnings about testhost being x64 (AMD64)/x86 when imported into AnyCPU (MSIL) projects. -->
+    <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
     <!-- MSB3276 Suppress warnings about conflicts between different versions of the same dependent assembly -->
-    <MSBuildWarningsAsMessages>$(MSBuildWarningsAsMessages);MSB3270;MSB3276</MSBuildWarningsAsMessages>
+    <MSBuildWarningsAsMessages>$(MSBuildWarningsAsMessages);MSB3276</MSBuildWarningsAsMessages>
   </PropertyGroup>
 
-  <Import Project="$(TestPlatformRoot)scripts/build/TestPlatform.Settings.targets" />
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFrameworks>$(TargetFrameworks);net472</TargetFrameworks>
@@ -18,18 +17,18 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="$(TestPlatformRoot)src\DataCollectors\DumpMinitool.arm64\DumpMinitool.arm64.csproj" />
-    <ProjectReference Include="$(TestPlatformRoot)src\DataCollectors\DumpMinitool.x86\DumpMinitool.x86.csproj" />
-    <ProjectReference Include="$(TestPlatformRoot)src\DataCollectors\DumpMinitool\DumpMinitool.csproj" />
-    <ProjectReference Include="$(TestPlatformRoot)src\DataCollectors\Microsoft.TestPlatform.Extensions.EventLogCollector\Microsoft.TestPlatform.Extensions.EventLogCollector.csproj" />
-    <ProjectReference Include="$(TestPlatformRoot)src\datacollector\datacollector.csproj" />
-    <ProjectReference Include="$(TestPlatformRoot)src\Microsoft.TestPlatform.Extensions.BlameDataCollector\Microsoft.TestPlatform.Extensions.BlameDataCollector.csproj" />
-    <ProjectReference Include="$(TestPlatformRoot)src\Microsoft.TestPlatform.TestHostProvider\Microsoft.TestPlatform.TestHostProvider.csproj" />
-    <ProjectReference Include="$(TestPlatformRoot)src\Microsoft.TestPlatform.VsTestConsole.TranslationLayer\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.csproj" />
-    <ProjectReference Include="$(TestPlatformRoot)src\testhost.x86\testhost.x86.csproj" />
-    <ProjectReference Include="$(TestPlatformRoot)src\testhost\testhost.csproj" />
-    <ProjectReference Include="$(TestPlatformRoot)src\vstest.console\vstest.console.csproj" />
-    <ProjectReference Include="$(TestPlatformRoot)playground\MSTest1\MSTest1.csproj" />
+    <ProjectReference Include="$(RepoRoot)src\DataCollectors\DumpMinitool.arm64\DumpMinitool.arm64.csproj" />
+    <ProjectReference Include="$(RepoRoot)src\DataCollectors\DumpMinitool.x86\DumpMinitool.x86.csproj" />
+    <ProjectReference Include="$(RepoRoot)src\DataCollectors\DumpMinitool\DumpMinitool.csproj" />
+    <ProjectReference Include="$(RepoRoot)src\DataCollectors\Microsoft.TestPlatform.Extensions.EventLogCollector\Microsoft.TestPlatform.Extensions.EventLogCollector.csproj" />
+    <ProjectReference Include="$(RepoRoot)src\datacollector\datacollector.csproj" />
+    <ProjectReference Include="$(RepoRoot)src\Microsoft.TestPlatform.Extensions.BlameDataCollector\Microsoft.TestPlatform.Extensions.BlameDataCollector.csproj" />
+    <ProjectReference Include="$(RepoRoot)src\Microsoft.TestPlatform.TestHostProvider\Microsoft.TestPlatform.TestHostProvider.csproj" />
+    <ProjectReference Include="$(RepoRoot)src\Microsoft.TestPlatform.VsTestConsole.TranslationLayer\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.csproj" />
+    <ProjectReference Include="$(RepoRoot)src\testhost.x86\testhost.x86.csproj" />
+    <ProjectReference Include="$(RepoRoot)src\testhost\testhost.csproj" />
+    <ProjectReference Include="$(RepoRoot)src\vstest.console\vstest.console.csproj" />
+    <ProjectReference Include="$(RepoRoot)playground\MSTest1\MSTest1.csproj" />
   </ItemGroup>
   <ItemGroup Condition=" $(TargetFramework.StartsWith('net4')) AND '$(OS)' != 'Windows_NT' ">
     <Reference Include="System" />
@@ -41,7 +40,7 @@
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition=" '$(OS)' == 'WINDOWS_NT' ">
     <PropertyGroup>
-      <SourcePath>$(TestPlatformRoot)src\</SourcePath>
+      <SourcePath>$(RepoRoot)src\</SourcePath>
       <DestinationPath>$(TargetDir)vstest.console\</DestinationPath>
     </PropertyGroup>
 
@@ -79,5 +78,4 @@
       <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
     </Copy>
   </Target>
-  <Import Project="$(TestPlatformRoot)scripts\build\TestPlatform.targets" />
 </Project>

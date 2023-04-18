@@ -1,92 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
-  <PropertyGroup>
+  <PropertyGroup Label="Version settings">
     <!-- This repo version -->
-    <VersionPrefix>17.6.0</VersionPrefix>
+    <VersionPrefix>17.7.0</VersionPrefix>
     <PreReleaseVersionLabel>preview</PreReleaseVersionLabel>
-    <!-- Opt-out repo features -->
-    <UsingToolXliff>false</UsingToolXliff>
-    <UsingToolNetFrameworkReferenceAssemblies Condition="'$(DotNetBuildFromSource)' != 'true'">true</UsingToolNetFrameworkReferenceAssemblies>
-    <!-- Libs -->
-    <CommandLineParserVersion>2.2.1</CommandLineParserVersion>
-    <CredentialManagementVersion>1.0.2</CredentialManagementVersion>
-    <MicrosoftCciVersion>4.0.0-rc3-24214-00</MicrosoftCciVersion>
-    <HandlebarsNetVersion>1.9.5</HandlebarsNetVersion>
-    <LibGit2SharpVersion>0.25.2</LibGit2SharpVersion>
-    <log4netVersion>2.0.8</log4netVersion>
-    <SystemNetHttpVersion>4.3.4</SystemNetHttpVersion>
-    <SystemServiceModelVersion>4.3.3</SystemServiceModelVersion>
-    <SystemUriVersion>4.3.2</SystemUriVersion>
-    <MicrosoftAzureStorageBlobVersion>10.0.2</MicrosoftAzureStorageBlobVersion>
-    <MicrosoftAzureKeyVaultVersion>3.0.0</MicrosoftAzureKeyVaultVersion>
-    <MicrosoftAzureServicesAppAuthenticationVersion>1.3.1</MicrosoftAzureServicesAppAuthenticationVersion>
-    <MicrosoftBuildVersion>15.7.179</MicrosoftBuildVersion>
-    <MicrosoftBuildFrameworkVersion>15.7.179</MicrosoftBuildFrameworkVersion>
-    <MicrosoftBuildTasksCoreVersion>15.7.179</MicrosoftBuildTasksCoreVersion>
-    <MicrosoftBuildUtilitiesCoreVersion>15.7.179</MicrosoftBuildUtilitiesCoreVersion>
-    <MicrosoftCodeAnalysisAnalyzersVersion>2.6.3</MicrosoftCodeAnalysisAnalyzersVersion>
-    <MicrosoftCodeAnalysisCSharpVersion>2.9.0</MicrosoftCodeAnalysisCSharpVersion>
-    <MsbuildTaskMicrosoftCodeAnalysisCSharpVersion>2.1.0</MsbuildTaskMicrosoftCodeAnalysisCSharpVersion>
-    <MicrosoftDotNetPlatformAbstractionsVersion>2.1.0</MicrosoftDotNetPlatformAbstractionsVersion>
-    <MicrosoftIdentityModelClientsActiveDirectoryVersion>3.19.8</MicrosoftIdentityModelClientsActiveDirectoryVersion>
-    <MicrosoftRestClientRuntimeVersion>2.3.13</MicrosoftRestClientRuntimeVersion>
-    <MicrosoftExtensionsDependencyModelVersion>2.1.0</MicrosoftExtensionsDependencyModelVersion>
-    <MicrosoftExtensionsFileSystemGlobbingVersion>2.0.0</MicrosoftExtensionsFileSystemGlobbingVersion>
-    <MicrosoftNETCorePlatformsVersion>2.1.0</MicrosoftNETCorePlatformsVersion>
-    <MicrosoftNetCompilersToolsetVersion>4.1.0-1.21507.14</MicrosoftNetCompilersToolsetVersion>
-    <MicrosoftNetTestSdkVersion>15.7.2</MicrosoftNetTestSdkVersion>
-    <MoqVersion>4.16.1</MoqVersion>
-    <MonoOptionsVersion>5.3.0.1</MonoOptionsVersion>
-    <McMasterExtensionsCommandLineUtils>2.3.0</McMasterExtensionsCommandLineUtils>
-    <NewtonsoftJsonVersion>13.0.1</NewtonsoftJsonVersion>
-    <MicrosoftBclJsonSourcesVersion>4.6.0-preview4.19202.2</MicrosoftBclJsonSourcesVersion>
-    <NuGetVersioningVersion>4.4.0</NuGetVersioningVersion>
-    <NuGetVersion>5.3.0</NuGetVersion>
-    <OctokitVersion>0.32.0</OctokitVersion>
-    <DotNetSleetLibVersion>2.2.143</DotNetSleetLibVersion>
-    <SwashbuckleAspNetCoreSwaggerVersion>3.0.0</SwashbuckleAspNetCoreSwaggerVersion>
-    <SystemBuffersVersion>4.5.0</SystemBuffersVersion>
-    <SystemCollectionsImmutableVersion>1.3.1</SystemCollectionsImmutableVersion>
-    <SystemDiagnosticsTraceSourceVersion>4.0.0</SystemDiagnosticsTraceSourceVersion>
-    <SystemIOCompressionVersion>4.3.0</SystemIOCompressionVersion>
-    <SystemIOPackagingVersion>4.5.0</SystemIOPackagingVersion>
-    <SystemIOFileSystemPrimitivesVersion>4.3.0</SystemIOFileSystemPrimitivesVersion>
-    <SystemMemoryVersion>4.5.1</SystemMemoryVersion>
-    <SystemNumericsVectorsVersion>4.4.0</SystemNumericsVectorsVersion>
-    <SystemReflectionMetadataVersion>1.4.2</SystemReflectionMetadataVersion>
-    <SystemRuntimeCompilerServicesUnsafeVersion>5.0.0</SystemRuntimeCompilerServicesUnsafeVersion>
-    <SystemTextEncodingsWebVersion>4.5.1</SystemTextEncodingsWebVersion>
-    <SystemThreadingTasksExtensionVersion>4.5.1</SystemThreadingTasksExtensionVersion>
-    <SystemValueTupleVersion>4.4.0</SystemValueTupleVersion>
-    <WindowsAzureStorageVersion>8.5.0</WindowsAzureStorageVersion>
-    <XUnitVersion>2.4.1</XUnitVersion>
-    <XUnitAbstractionsVersion>2.0.3</XUnitAbstractionsVersion>
-    <XUnitVSRunnerVersion>2.4.1</XUnitVSRunnerVersion>
-    <MicrosoftDotNetBuildTasksFeedVersion>8.0.0-beta.23118.1</MicrosoftDotNetBuildTasksFeedVersion>
-    <MicrosoftDotNetSignToolVersion>8.0.0-beta.23118.1</MicrosoftDotNetSignToolVersion>
-    <MicrosoftAzureDocumentDBVersion>1.22.0</MicrosoftAzureDocumentDBVersion>
-    <MicrosoftAzureCosmosDBTableVersion>1.1.2</MicrosoftAzureCosmosDBTableVersion>
-    <MicrosoftAspNetCoreAllVersion>2.0.0</MicrosoftAspNetCoreAllVersion>
-    <MicrosoftDotNetGitHubIssueLabelerAssetsVersion>1.5.0</MicrosoftDotNetGitHubIssueLabelerAssetsVersion>
-    <MicrosoftMLVersion>1.0.0</MicrosoftMLVersion>
-    <MicrosoftVisualStudioWebCodeGenerationDesignVersion>2.0.4</MicrosoftVisualStudioWebCodeGenerationDesignVersion>
-    <MicrosoftDiaSymReaderConverterVersion>1.1.0-beta2-19575-01</MicrosoftDiaSymReaderConverterVersion>
-    <MicrosoftDiaSymReaderPdb2PdbVersion>1.1.0-beta2-19575-01</MicrosoftDiaSymReaderPdb2PdbVersion>
-    <MicrosoftDiaSymReaderNativeVersion>1.7.0</MicrosoftDiaSymReaderNativeVersion>
-    <MicrosoftDotNetMaestroClientVersion>1.1.0-beta.20074.1</MicrosoftDotNetMaestroClientVersion>
-    <MicrosoftSourceLinkVersion>1.0.0-beta2-19554-01</MicrosoftSourceLinkVersion>
-    <MicrosoftDotNetSwaggerGeneratorMSBuildVersion>8.0.0-beta.23118.1</MicrosoftDotNetSwaggerGeneratorMSBuildVersion>
-    <XliffTasksVersion>1.0.0-beta.21272.1</XliffTasksVersion>
-    <!-- Roslyn -->
-    <!-- WARNING: Depending on Roslyn in code that also supports unmanaged scenarios (e.g. C++,
-         JS etc.) is risky. This can break setup authoring and cause runtime failures in workloads
-         where Rolsyn is not installed. -->
+  </PropertyGroup>
+  <PropertyGroup Label="Arcade settings">
+    <!-- Ensure we use xliff task tool - true is the default but we make it explicit here -->
+    <UsingToolXliff>true</UsingToolXliff>
+    <!-- Opt-in to Arcade tools for building VSIX projects. -->
+    <UsingToolVSSDK>true</UsingToolVSSDK>
+    <!-- Use the correct compiler version -->
+    <UsingToolMicrosoftNetCompilers>true</UsingToolMicrosoftNetCompilers>
+  </PropertyGroup>
+  <PropertyGroup Label="VSTest dependencies">
+    <CoverletCoverageVersion>1.2.0</CoverletCoverageVersion>
+    <InteropExternalsVersion>17.3.32622.426</InteropExternalsVersion>
+    <MicrosoftBuildFrameworkPackageVersion>16.0.461</MicrosoftBuildFrameworkPackageVersion>
+    <MicrosoftBuildPackageVersion>$(MicrosoftBuildFrameworkPackageVersion)</MicrosoftBuildPackageVersion>
+    <MicrosoftBuildUtilitiesCorePackageVersion>$(MicrosoftBuildPackageVersion)</MicrosoftBuildUtilitiesCorePackageVersion>
     <MicrosoftCodeAnalysisVersion>3.8.0-3.20427.2</MicrosoftCodeAnalysisVersion>
-    <MicrosoftInternalCodeCoverageVersion>17.6.7-beta.23124.1</MicrosoftInternalCodeCoverageVersion>
-    <MicrosoftDiagnosticsNETCoreClientVersion>0.2.0-preview.22424.1</MicrosoftDiagnosticsNETCoreClientVersion>
-    <MicrosoftSourceBuildIntermediatediagnosticsVersion>6.0.0-preview.22424.1</MicrosoftSourceBuildIntermediatediagnosticsVersion>
-    <MicrosoftVisualStudioTelemetryVersion>16.6.11</MicrosoftVisualStudioTelemetryVersion>
-    <MicrosoftVisualStudioRemoteControlVersion>16.3.44</MicrosoftVisualStudioRemoteControlVersion>
-    <MicrosoftVisualStudioUtilitiesInternalVersion>16.3.38</MicrosoftVisualStudioUtilitiesInternalVersion>
+    <MicrosoftDiagnosticsNETCoreClientVersion>0.2.0-preview.23211.1</MicrosoftDiagnosticsNETCoreClientVersion>
+    <MicrosoftExtensionsDependencyModelPackageVersion>3.0.0-preview4-27615-11</MicrosoftExtensionsDependencyModelPackageVersion>
+    <MicrosoftExtensionsFileSystemGlobbingVersion>2.0.0</MicrosoftExtensionsFileSystemGlobbingVersion>
+    <MicrosoftFakesVersion>17.4.0-beta.22478.3</MicrosoftFakesVersion>
+    <MicrosoftInternalCodeCoverageVersion>17.7.1-beta.23213.1</MicrosoftInternalCodeCoverageVersion>
+    <MicrosoftVisualStudioDiagnosticsUtilitiesVersion>17.5.0-preview-3-33219-258</MicrosoftVisualStudioDiagnosticsUtilitiesVersion>
+    <MicrosoftVisualStudioEnterpriseAspNetHelper>$(MicrosoftVisualStudioDiagnosticsUtilitiesVersion)</MicrosoftVisualStudioEnterpriseAspNetHelper>
+    <NETStandardLibraryVersion>2.0.3</NETStandardLibraryVersion>
+    <NewtonsoftJsonVersion>13.0.1</NewtonsoftJsonVersion>
+    <RoslynBannedApiAnalyzersVersion>3.3.3</RoslynBannedApiAnalyzersVersion>
+    <RoslynPublicApiAnalyzersVersion>3.3.4-beta1.21554.2</RoslynPublicApiAnalyzersVersion>
+    <SystemCollectionsImmutableVersion>1.5.0</SystemCollectionsImmutableVersion>
+    <SystemMemoryVersion>4.5.5</SystemMemoryVersion>
+    <SystemNetHttpVersion>4.3.4</SystemNetHttpVersion>
+    <SystemReflectionMetadataVersion>1.6.0</SystemReflectionMetadataVersion>
+    <SystemUriVersion>4.3.2</SystemUriVersion>
+    <TestPlatformMSDiaVersion>17.3.32621.448</TestPlatformMSDiaVersion>
+    <TestPlatformRemoteExternalsVersion>17.3.32621.448</TestPlatformRemoteExternalsVersion>
+    <VSSdkBuildToolsVersion>17.4.2116</VSSdkBuildToolsVersion>
+    <MicrosoftNetCompilersToolsetVersion>4.6.0-1.final</MicrosoftNetCompilersToolsetVersion>
+  </PropertyGroup>
+  <PropertyGroup Label="VSTest test settings">
+    <!-- Name of the elements must be in sync with test\Microsoft.TestPlatform.TestUtilities\IntegrationTestBase.cs -->
+    <FluentAssertionsVersion>6.7.0</FluentAssertionsVersion>
+    <MoqVersion>4.16.1</MoqVersion>
+    <!-- For coverage use our own package on latest stable -->
+    <MicrosoftCodeCoverageVersion>17.4.1</MicrosoftCodeCoverageVersion>
+    <!-- These versions are used for running unit tests, and running acceptance tests. They are also used as the default version for projects
+    in TestAssets.sln to allow running and debugging tests in that solution directly in VS without having to run them via AcceptanceTests. -->
+    <MSTestTestFrameworkVersion>2.3.0-preview-20220711-02</MSTestTestFrameworkVersion>
+    <MSTestTestAdapterVersion>2.3.0-preview-20220711-02</MSTestTestAdapterVersion>
+    <MSTestAssertExtensionVersion>1.0.3-preview</MSTestAssertExtensionVersion>
+    <XUnitFrameworkVersion>2.3.1</XUnitFrameworkVersion>
+    <XUnitAdapterVersion>2.3.1</XUnitAdapterVersion>
+    <XUnitConsoleRunnerVersion>2.3.1</XUnitConsoleRunnerVersion>
+    <NUnit3FrameworkVersion>3.10.1</NUnit3FrameworkVersion>
+    <NUnit3AdapterVersion>3.11.0</NUnit3AdapterVersion>
+    <NUnitConsoleRunnerVersion>3.8.0</NUnitConsoleRunnerVersion>
+    <!-- Versions that are used when building projects from TestAssets.sln for compatibility tests. See Invoke-TestAssetsBuild in scripts/build.ps1.
+    Exact versions are used to avoid Nuget substituting them by closest match, if we make a typo.
+    These versions need to be "statically" readable because we read this file as xml in our build and tests. -->
+    <!-- <MSTestFrameworkLatestVersion></MSTestFrameworkLatestVersion> is not here, because we don't build MSTest locally, so we don't have access to the latest version. -->
+    <MSTestFrameworkLatestPreviewVersion>[2.3.0-preview-20220613-02]</MSTestFrameworkLatestPreviewVersion>
+    <MSTestFrameworkLatestStableVersion>[2.2.10]</MSTestFrameworkLatestStableVersion>
+    <MSTestFrameworkRecentStableVersion>[2.2.9]</MSTestFrameworkRecentStableVersion>
+    <MSTestFrameworkMostDownloadedVersion>[2.1.0]</MSTestFrameworkMostDownloadedVersion>
+    <MSTestFrameworkPreviousStableVersion>[2.1.0]</MSTestFrameworkPreviousStableVersion>
+    <MSTestFrameworkLegacyStableVersion>[1.4.0]</MSTestFrameworkLegacyStableVersion>
+    <!-- Versions that are used to restore previous versions of console, translation layer, and test.sdk for compatibility tests.
+    See Invoke-TestAssetsBuild in scripts/build.ps1. Exact versions are used to avoid Nuget substituting them by closest match, if we make a typo.
+    These versions need to be "statically" readable because we read this file as xml in our build and tests. -->
+    <!-- <VSTestConsoleLatestVersion></VSTestConsoleLatestVersion> is not here, NETTestSdkVersion is used instead, because that is the version of the locally built latest package.  -->
+    <VSTestConsoleLatestPreviewVersion>[17.2.0-preview-20220401-08]</VSTestConsoleLatestPreviewVersion>
+    <VSTestConsoleLatestStableVersion>[17.2.0]</VSTestConsoleLatestStableVersion>
+    <VSTestConsoleRecentStableVersion>[17.1.0]</VSTestConsoleRecentStableVersion>
+    <VSTestConsoleMostDownloadedVersion>[16.6.1]</VSTestConsoleMostDownloadedVersion>
+    <VSTestConsolePreviousStableVersion>[16.11.0]</VSTestConsolePreviousStableVersion>
+    <VSTestConsoleLegacyStableVersion>[15.9.2]</VSTestConsoleLegacyStableVersion>
+    <!-- This version also needs to be updated in src\package\nuspec\TestPlatform.ObjectModel.nuspec -->
+    <NuGetFrameworksVersion>5.11.0</NuGetFrameworksVersion>
+    <ILAsmPackageVersion>5.0.0</ILAsmPackageVersion>
+    <JsonNetVersion>13.0.1</JsonNetVersion>
+    <!-- We cannot reuse $(msbuildvar) because we need the text value inside build.ps1 -->
+    <TestPlatformExternalsVersion>17.3.32621.448</TestPlatformExternalsVersion>
   </PropertyGroup>
 </Project>

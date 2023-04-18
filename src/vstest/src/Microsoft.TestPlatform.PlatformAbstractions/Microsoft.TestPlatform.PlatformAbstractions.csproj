@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup>
-    <TestPlatformRoot Condition="$(TestPlatformRoot) == ''">..\..\</TestPlatformRoot>
-  </PropertyGroup>
-  <Import Project="$(TestPlatformRoot)scripts/build/TestPlatform.Settings.targets" />
+
   <PropertyGroup>
     <AssemblyName>Microsoft.TestPlatform.PlatformAbstractions</AssemblyName>
     <RootNamespace>Microsoft.TestPlatform.PlatformAbstractions</RootNamespace>
     <TargetFrameworks>net7.0;$(NetFrameworkMinimum);$(NetCoreAppMinimum);netstandard2.0;net6.0</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(DotNetBuildFromSource)' == 'true' ">net7.0;</TargetFrameworks>
     <IsTestProject>false</IsTestProject>
     <NoWarn>$(NoWarn);NU1605</NoWarn>
   </PropertyGroup>
@@ -65,5 +61,4 @@
       <DependentUpon>NullableHelpers.tt</DependentUpon>
     </Compile>
   </ItemGroup>
-  <Import Project="$(TestPlatformRoot)scripts\build\TestPlatform.targets" />
 </Project>

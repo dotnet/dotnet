@@ -1,8 +1,97 @@
-<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information. -->
+<?xml version="1.0" encoding="utf-8"?>
 <Project>
+
+  <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
+  <Import Project="$(RepositoryEngineeringDir)Analyzers.props" />
+
+  <PropertyGroup>
+    <RepoRoot Condition=" '$(RepoRoot)' == '' ">$([MSBuild]::NormalizeDirectory('$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildProjectDirectory), 'LICENSE'))'))</RepoRoot>
+    <IsSourceFile>false</IsSourceFile>
+    <IsSourceFile Condition="$([MSBuild]::MakeRelative($(RepoRoot), $(MSBuildProjectFullPath)).StartsWith('src/')) OR $([MSBuild]::MakeRelative($(RepoRoot), $(MSBuildProjectFullPath)).StartsWith('src\'))">true</IsSourceFile>
+    <SrcPackageFolder>$(RepoRoot)src\package\</SrcPackageFolder>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!--
+      This version is read by vsts-prebuild.ps1 and is a base for the current version, this should be updated at the start of
+      new iteration to the goal number. This is also used to version the local packages. This version needs to be statically
+      readable when we read the file as xml, don't move it to a .props file, unless you change the build server process
+    -->
+    <TPVersionPrefix>17.7.0</TPVersionPrefix>
+    <!--
+        Versioning is defined from the build script. Use a default dev build if it's not defined.
+        Sets the AssemblyVersion, AssemblyFileVersion and AssemblyInformationalVersion
+      -->
+    <Version Condition="'$(Version)' == ''">$(TPVersionPrefix)-dev</Version>
+    <!-- Override the AssemblyVersion as 15.0.0 since protocol depends on this version for serialization. This is also defined in build script. -->
+    <AssemblyVersion Condition="'$(AssemblyVersion)' == ''">15.0.0</AssemblyVersion>
+    <!-- Auto generating binding redirects breaks testhost when running under netcoreapp3.1 vstest.console as .NET Framework net462.  -->
+    <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
+    <!-- But not autogenerating binding redirects also breaks build occasionally, so we tell MSBuild to unify assembly versions,
+    without outputting binding redirectes. -->
+    <AutoUnifyAssemblyReferences>true</AutoUnifyAssemblyReferences>
+  </PropertyGroup>
+
+  <!-- Language configuration -->
+  <PropertyGroup>
+    <!-- default to allowing all language features -->
+    <LangVersion>preview</LangVersion>
+    <!-- enable strict mode for Roslyn compiler -->
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <!-- default to max warnlevel -->
+    <AnalysisLevel>preview</AnalysisLevel>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <!--
+      Make sure any documentation comments which are included in code get checked for syntax during the build, but do
+      not report warnings for missing comments.
+
+      Cleanup issue: https://github.com/microsoft/vstest/issues/4236
+      CS1570: XML comment on '<construct>' has badly formed XML
+      CS1572: XML comment on 'construct' has a param tag for 'parameter', but there is no parameter by that name
+      CS1573: Parameter 'parameter' has no matching param tag in the XML comment for 'parameter' (but other parameters do)
+      CS1574: XML comment on 'construct' has syntactically incorrect cref attribute 'name'
+      CS1591: Missing XML comment for publicly visible type or member 'Type_or_Member'
+    -->
+    <NoWarn>$(NoWarn);CA1416;RS0037;CS1570;CS1572;CS1573;CS1574;CS1591</NoWarn>
+  </PropertyGroup>
+
+  <!-- The TFMs to build and test against. -->
   <PropertyGroup>
     <!-- Naming is based on dotnet/runtime one -->
     <NetFrameworkMinimum>net462</NetFrameworkMinimum>
     <NetCoreAppMinimum>netcoreapp3.1</NetCoreAppMinimum>
   </PropertyGroup>
+
+  <!-- Build & pack config -->
+  <PropertyGroup>
+    <Copyright>$(CopyrightMicrosoft)</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageLicenseFile>LICENSE_NET.txt</PackageLicenseFile>
+    <PackageLicenseFullPath>$(SrcPackageFolder)licenses/LICENSE_NET.txt</PackageLicenseFullPath>
+    <!-- Prevent warning about deprecated target frameworks -->
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
+    <DefineConstants Condition=" '$(DotNetBuildFromSource)' == 'true' ">$(DefineConstants);DOTNET_BUILD_FROM_SOURCE</DefineConstants>
+    <!-- PDB -->
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>embedded</DebugType>
+    <!-- Default to all packages generating a corresponding symbol package -->
+    <IncludeSymbols>true</IncludeSymbols>
+  </PropertyGroup>
+
+  <!-- Sign config -->
+  <PropertyGroup>
+    <StrongNameKeyId>Microsoft</StrongNameKeyId>
+  </PropertyGroup>
+
+  <!-- Test config -->
+  <PropertyGroup>
+    <TestRunnerName>MSTest</TestRunnerName>
+    <!-- Skip windows only tests on non-windows systems. -->
+    <TestRunnerAdditionalArguments Condition=" '$(OS)' != 'Windows_NT' ">$(TestRunnerAdditionalArguments) --filter "TestCategory!=Windows&amp;TestCategory!=Windows-Review"</TestRunnerAdditionalArguments>
+  </PropertyGroup>
+
 </Project>
