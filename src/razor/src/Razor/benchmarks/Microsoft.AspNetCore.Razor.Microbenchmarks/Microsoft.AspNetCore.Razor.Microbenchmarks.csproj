@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(DefaultNetCoreTargetFramework);$(DefaultNetFxTargetFramework)</TargetFrameworks>
+    <TargetFrameworks>$(DefaultNetCoreTargetFrameworks);$(DefaultNetFxTargetFramework)</TargetFrameworks>
     <OutputType>Exe</OutputType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ServerGarbageCollection>true</ServerGarbageCollection>
@@ -46,7 +46,7 @@
     <Compile Include="..\..\test\Microsoft.AspNetCore.Razor.Test.Common\NoOpTelemetryReporter.cs">
       <Link>TestServices\%(FileName)%(Extension)</Link>
     </Compile>
-    
+
     <None Remove=".gitignore" />
     <None Remove="BenchmarkDotNet.Artifacts\**" />
   </ItemGroup>

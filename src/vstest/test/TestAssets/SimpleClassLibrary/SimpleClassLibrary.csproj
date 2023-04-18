@@ -1,11 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <!-- Imports Common TestAssets props. -->
-  <Import Project="..\..\..\scripts\build\TestAssets.props" />
-
   <PropertyGroup>
     <TargetFrameworks>$(NetFrameworkMinimum);$(NetCoreAppMinimum)</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(DotNetBuildFromSource)' == 'true' ">$(NetCoreAppMinimum)</TargetFrameworks>
-    <CheckEolTargetFramework>false</CheckEolTargetFramework>
   </PropertyGroup>
 
   <ItemGroup>

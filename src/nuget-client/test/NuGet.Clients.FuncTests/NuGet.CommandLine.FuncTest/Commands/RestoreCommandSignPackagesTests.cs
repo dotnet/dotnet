@@ -382,7 +382,6 @@ namespace NuGet.CommandLine.FuncTest.Commands
             using (var intermediateCertificate = SigningTestUtility.GetCertificate("intermediate.crt"))
             using (var leafCertificate = SigningTestUtility.GetCertificate("leaf.crt"))
             {
-                var chain = chainHolder.Chain;
                 var extraStore = new X509Certificate2Collection() { rootCertificate, intermediateCertificate };
                 var logger = new TestLogger();
 
@@ -395,9 +394,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
 
                 Assert.Equal(NuGetLogCode.NU3018, exception.Code);
                 Assert.Equal("Certificate chain validation failed.", exception.Message);
-
                 Assert.Equal(1, logger.Errors);
-                Assert.Equal(RuntimeEnvironmentHelper.IsWindows ? 2 : 1, logger.Warnings);
 
                 SigningTestUtility.AssertUntrustedRoot(logger.LogMessages, LogLevel.Error);
                 SigningTestUtility.AssertOfflineRevocation(logger.LogMessages, LogLevel.Warning);

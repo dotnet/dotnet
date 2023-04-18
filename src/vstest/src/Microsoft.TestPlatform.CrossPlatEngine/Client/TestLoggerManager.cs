@@ -111,7 +111,7 @@ internal class TestLoggerManager : ITestLoggerManager
     /// <summary>
     /// Loggers initialized flag.
     /// </summary>
-    public bool LoggersInitialized => _initializedLoggers.Any();
+    public bool LoggersInitialized => _initializedLoggers.Count != 0;
 
     private TestLoggerExtensionManager TestLoggerExtensionManager
     {

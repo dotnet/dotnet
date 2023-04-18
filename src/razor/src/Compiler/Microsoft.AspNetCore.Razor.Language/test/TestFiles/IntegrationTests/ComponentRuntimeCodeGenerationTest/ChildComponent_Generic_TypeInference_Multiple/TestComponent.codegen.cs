@@ -54,19 +54,19 @@ namespace __Blazor.Test.TestComponent
         public static void CreateMyComponent_0<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, TItem __arg0)
         {
         __builder.OpenComponent<global::Test.MyComponent<TItem>>(seq);
-        __builder.AddAttribute(__seq0, "Item", __arg0);
+        __builder.AddComponentParameter(__seq0, "Item", __arg0);
         __builder.CloseComponent();
         }
         public static void CreateMyComponent_1<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, TItem __arg0)
         {
         __builder.OpenComponent<global::Test.MyComponent<TItem>>(seq);
-        __builder.AddAttribute(__seq0, "Item", __arg0);
+        __builder.AddComponentParameter(__seq0, "Item", __arg0);
         __builder.CloseComponent();
         }
         public static void CreateMyComponent_2<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, TItem __arg0)
         {
         __builder.OpenComponent<global::Test.MyComponent<TItem>>(seq);
-        __builder.AddAttribute(__seq0, "Item", __arg0);
+        __builder.AddComponentParameter(__seq0, "Item", __arg0);
         __builder.CloseComponent();
         }
     }

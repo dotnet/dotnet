@@ -3,7 +3,6 @@
   <Import Project="..\..\scripts\build\TestPlatform.Dependencies.props" />
   <PropertyGroup>
     <TargetFrameworks>$(NetFrameworkMinimum);$(NetCoreAppMinimum);net7.0;net6.0;</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(DotNetBuildFromSource)' == 'true' ">$(NetCoreAppMinimum)</TargetFrameworks>
     <OutputType Condition=" '$(TargetFramework)' != '$(NetFrameworkMinimum)' ">Exe</OutputType>
     <AssemblyName>UnitTestProject</AssemblyName>
     <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
@@ -16,9 +15,9 @@
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="MSTest.TestFramework" Version="$(MSTestFrameworkVersion)" />
-    <PackageReference Include="MSTest.TestAdapter" Version="$(MSTestAdapterVersion)" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(NETTestSdkVersion)" />
+    <PackageReference Include="MSTest.TestFramework" Version="$(MSTestTestFrameworkVersion)" />
+    <PackageReference Include="MSTest.TestAdapter" Version="$(MSTestTestAdapterVersion)" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(PackageVersion)" />
   </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == '$(NetFrameworkMinimum)' ">
     <Reference Include="System.Runtime" />

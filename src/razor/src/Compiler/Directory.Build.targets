@@ -7,7 +7,7 @@
     <GenerateResxSource Condition="$(GenerateResxSource) == ''">true</GenerateResxSource>
     <GenerateResxSourceEmitFormatMethods Condition="$(GenerateResxSourceEmitFormatMethods) == ''">true</GenerateResxSourceEmitFormatMethods>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <!-- Remove unneeded reference to AspNetCore.App -->
     <KnownFrameworkReference Remove="Microsoft.AspNetCore.App" />

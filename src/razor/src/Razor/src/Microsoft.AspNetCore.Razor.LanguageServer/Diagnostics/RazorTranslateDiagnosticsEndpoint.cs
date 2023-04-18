@@ -5,14 +5,16 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
+using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Diagnostics;
 
-internal class RazorTranslateDiagnosticsEndpoint :
-    IRazorTranslateDiagnosticsEndpoint
+[LanguageServerEndpoint(LanguageServerConstants.RazorTranslateDiagnosticsEndpoint)]
+internal class RazorTranslateDiagnosticsEndpoint : IRazorRequestHandler<RazorDiagnosticsParams, RazorDiagnosticsResponse>
 {
     private readonly ILogger _logger;
     private readonly RazorTranslateDiagnosticsService _translateDiagnosticsService;
@@ -23,17 +25,12 @@ internal class RazorTranslateDiagnosticsEndpoint :
         RazorTranslateDiagnosticsService translateDiagnosticsService,
         ILoggerFactory loggerFactory)
     {
-        if (translateDiagnosticsService is null)
-        {
-            throw new ArgumentNullException(nameof(translateDiagnosticsService));
-        }
-
         if (loggerFactory is null)
         {
             throw new ArgumentNullException(nameof(loggerFactory));
         }
 
-        _translateDiagnosticsService = translateDiagnosticsService;
+        _translateDiagnosticsService = translateDiagnosticsService ?? throw new ArgumentNullException(nameof(translateDiagnosticsService));
         _logger = loggerFactory.CreateLogger<RazorTranslateDiagnosticsEndpoint>();
     }
 

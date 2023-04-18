@@ -32,6 +32,13 @@ public record RazorLSPOptions(
             _ => LogLevel.None,
         };
 
-    internal RazorLSPOptions With(ClientSettings clientSettings)
-        => new(Trace, EnableFormatting, AutoClosingTags, clientSettings);
+    /// <summary>
+    /// Initializes the LSP options with the settings from the passed in client settings, and default values for anything
+    /// not defined in client settings.
+    /// </summary>
+    internal static RazorLSPOptions From(ClientSettings clientSettings)
+        => new(Default.Trace,
+            Default.EnableFormatting,
+            clientSettings.AdvancedSettings.AutoClosingTags,
+            clientSettings);
 }

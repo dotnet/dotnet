@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="$(RepoRoot)src\Microsoft.TestPlatform.Execution.Shared\Microsoft.TestPlatform.Execution.Shared.projitems" Label="Shared" />
+  <PropertyGroup>
+    <AssemblyName>vstest.console.arm64</AssemblyName>
+    <TargetFrameworks>net7.0;$(NetFrameworkMinimum);$(NetCoreAppMinimum)</TargetFrameworks>
+    <OutputType>Exe</OutputType>
+    <!-- Prevent the creation of the ".exe" for .NET Core. This was the default on .NET Core 2.1, behavior changed for .NET Core 3.1 -->
+    <UseAppHost>false</UseAppHost>
+    <RollForward>Major</RollForward>
+    <IsTestProject>false</IsTestProject>
+    <PlatformTarget Condition="'$(TargetFramework)' == '$(NetFrameworkMinimum)' AND '$(RuntimeIdentifier)' == '' ">AnyCPU</PlatformTarget>
+    <ApplicationManifest>..\vstest.console\app.manifest</ApplicationManifest>
+    <RootNamespace>Microsoft.VisualStudio.TestPlatform.CommandLine</RootNamespace>
+    <UseBannedApiAnalyzers>true</UseBannedApiAnalyzers>
+    <!--
+      Prevents adding a bunch of binding redirects causing exception
+      (e.g. System.Runtime 4.1.2 instead of 4.0.0)
+    -->
+    <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
+    <DefineConstants>$(DefineConstants);USE_EXTERN_ALIAS</DefineConstants>
+
+    <SkipLocalization>true</SkipLocalization>
+
+    <MSBuildWarningsAsMessages>
+      $(MSBuildWarningsAsMessages);MSB3276;
+    </MSBuildWarningsAsMessages>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework)' == '$(NetFrameworkMinimum)'">
+    <RuntimeIdentifier>win10-arm64</RuntimeIdentifier>
+  </PropertyGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == '$(NetFrameworkMinimum)' ">
+    <Reference Include="System" />
+    <Reference Include="System.IO" />
+    <Reference Include="System.Runtime" />
+    <Reference Include="System.Collections" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" Version="$(MicrosoftExtensionsFileSystemGlobbingVersion)" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.TestPlatform.CoreUtilities\Microsoft.TestPlatform.CoreUtilities.csproj" />
+    <ProjectReference Include="..\Microsoft.TestPlatform.ObjectModel\Microsoft.TestPlatform.ObjectModel.csproj" />
+    <ProjectReference Include="..\Microsoft.TestPlatform.Client\Microsoft.TestPlatform.Client.csproj" />
+    <ProjectReference Include="..\Microsoft.TestPlatform.CommunicationUtilities\Microsoft.TestPlatform.CommunicationUtilities.csproj" />
+    <ProjectReference Include="..\Microsoft.TestPlatform.PlatformAbstractions\Microsoft.TestPlatform.PlatformAbstractions.csproj" Aliases="Abstraction" />
+    <ProjectReference Include="..\Microsoft.TestPlatform.Utilities\Microsoft.TestPlatform.Utilities.csproj" />
+    <ProjectReference Include="..\Microsoft.TestPlatform.CrossPlatEngine\Microsoft.TestPlatform.CrossPlatEngine.csproj">
+      <FromP2P>true</FromP2P>
+    </ProjectReference>
+    <ProjectReference Include="..\Microsoft.TestPlatform.Common\Microsoft.TestPlatform.Common.csproj">
+      <FromP2P>true</FromP2P>
+    </ProjectReference>
+    <ProjectReference Include="..\Microsoft.TestPlatform.VsTestConsole.TranslationLayer\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\vstest.console\**\*.cs" Exclude="..\vstest.console\NullableHelpers.cs;..\vstest.console\bin\**\*;..\vstest.console\obj\**\*" />
+    <None Include="..\vstest.console\app.config" />
+    <None Include="$(RepoRoot)src\vstest.console\**\*.xlf" Exclude="..\vstest.console\bin\**\*;..\vstest.console\obj\**\*" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\vstest.console\NullableHelpers.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>NullableHelpers.tt</DependentUpon>
+    </Compile>
+    <Compile Update="$(RepoRoot)src\vstest.console\Resources\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <Link>Resources\Resources.Designer.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(RepoRoot)src\vstest.console\Resources\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <Link>Resources\Resources.resx</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\vstest.console\NullableHelpers.tt">
+      <LastGenOutput>NullableHelpers.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <AdditionalFiles Include="..\vstest.console\BannedSymbols.txt" />
+    <!-- API that is common to all frameworks that we build for. -->
+    <AdditionalFiles Include="..\vstest.console\PublicAPI/PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="..\vstest.console\PublicAPI/PublicAPI.Unshipped.txt" />
+    <!-- Framework specific API -->
+    <AdditionalFiles Include="..\vstest.console\PublicAPI/$(TargetFramework)/PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="..\vstest.console\PublicAPI/$(TargetFramework)/PublicAPI.Unshipped.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+</Project>

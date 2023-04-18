@@ -5,27 +5,27 @@
       <trans-unit id="BuildCompleted">
         <source>Build completed.</source>
         <target state="translated">建置完成。</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="BuildStarted">
         <source>Build started, please wait...</source>
         <target state="translated">已開始建置，請稍候...</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="TestRunningSummary">
         <source>Test run for {0} ({1})</source>
         <target state="translated">{0} 的測試回合 ({1})</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="UpdateTestSdkForCollectingCodeCoverage">
         <source>Warning: Update the Microsoft.NET.Test.Sdk package reference to version 15.8.0 or later to collect code coverage.</source>
         <target state="translated">警告: 將 Microsoft.NET.Test.Sdk 套件參考更新至版本 15.8.0 或更新版本，才可收集程式碼涵蓋範圍。</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="NoIsTestProjectProperty">
         <source>Skipping running test for project {0}. To run tests with dotnet test add "&lt;IsTestProject&gt;true&lt;/IsTestProject&gt;" property to project file.</source>
         <target state="translated">跳過專案 {0} 目前正在執行中的測試。若要執行有 dotnet 測試的測試項目，請對專案檔新增 "&lt;IsTestProject&gt;true&lt;/IsTestProject&gt;" 屬性。</target>
-        <note></note>
+        <note />
       </trans-unit>
     </body>
   </file>

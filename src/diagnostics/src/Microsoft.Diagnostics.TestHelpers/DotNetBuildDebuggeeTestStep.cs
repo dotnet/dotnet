@@ -1,12 +1,9 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -72,6 +69,7 @@ namespace Microsoft.Diagnostics.TestHelpers
         /// </param>
         public DotNetBuildDebuggeeTestStep(string dotnetToolPath,
                                        string templateSolutionDirPath,
+                                       string debuggeeMsbuildAuxRoot,
                                        string debuggeeNativeLibDirPath,
                                        string debuggeeSolutionDirPath,
                                        string debuggeeProjectDirPath,
@@ -79,12 +77,13 @@ namespace Microsoft.Diagnostics.TestHelpers
                                        string debuggeeBinaryDllPath,
                                        string debuggeeBinaryExePath,
                                        string nugetPackageCacheDirPath,
-                                       Dictionary<string,string> nugetFeeds,
+                                       Dictionary<string, string> nugetFeeds,
                                        string logPath) :
-            base(logPath, "Build Debuggee") 
+            base(logPath, "Build Debuggee")
         {
             DotNetToolPath = dotnetToolPath;
             DebuggeeTemplateSolutionDirPath = templateSolutionDirPath;
+            DebuggeeMsbuildAuxRoot = debuggeeMsbuildAuxRoot;
             DebuggeeNativeLibDirPath = debuggeeNativeLibDirPath;
             DebuggeeSolutionDirPath = debuggeeSolutionDirPath;
             DebuggeeProjectDirPath = debuggeeProjectDirPath;
@@ -93,7 +92,7 @@ namespace Microsoft.Diagnostics.TestHelpers
             DebuggeeBinaryExePath = debuggeeBinaryExePath;
             NuGetPackageCacheDirPath = nugetPackageCacheDirPath;
             NugetFeeds = nugetFeeds;
-            if(NugetFeeds != null && NugetFeeds.Count > 0)
+            if (NugetFeeds != null && NugetFeeds.Count > 0)
             {
                 NuGetConfigPath = Path.Combine(DebuggeeSolutionDirPath, "NuGet.config");
             }
@@ -109,6 +108,10 @@ namespace Microsoft.Diagnostics.TestHelpers
         /// </summary>
         public string DebuggeeTemplateSolutionDirPath { get; private set; }
         /// <summary>
+        /// The path containing supporting msbuild files for the build
+        /// </summary>
+        public string DebuggeeMsbuildAuxRoot { get; }
+        /// <summary>
         /// The path where the debuggee's native binary dependencies will be copied from.
         /// </summary>
         public string DebuggeeNativeLibDirPath { get; private set; }
@@ -117,6 +120,7 @@ namespace Microsoft.Diagnostics.TestHelpers
         /// the debuggee project directory.
         /// </summary>
         public string DebuggeeSolutionDirPath { get; private set; }
+
         /// <summary>
         /// The path where the primary debuggee executable project directory will be created. For single project solutions this
         /// will be identical to the debuggee solution directory.
@@ -139,25 +143,26 @@ namespace Microsoft.Diagnostics.TestHelpers
         /// a default cache.
         public string NuGetPackageCacheDirPath { get; private set; }
         public string NuGetConfigPath { get; private set; }
-        public IDictionary<string,string> NugetFeeds { get; private set; }
+        public IDictionary<string, string> NugetFeeds { get; private set; }
         public abstract string ProjectTemplateFileName { get; }
 
-        async protected override Task DoWork(ITestOutputHelper output)
+        protected override async Task DoWork(ITestOutputHelper output)
         {
             PrepareProjectSolution(output);
-            await Restore(output);
-            await Build(output);
+            await Restore(output).ConfigureAwait(false);
+            await Build(output).ConfigureAwait(false);
             CopyNativeDependencies(output);
         }
 
-        void PrepareProjectSolution(ITestOutputHelper output)
+        private void PrepareProjectSolution(ITestOutputHelper output)
         {
             AssertDebuggeeSolutionTemplateDirExists(output);
 
             output.WriteLine("Creating Solution Source Directory");
             output.WriteLine("{");
-            IndentedTestOutputHelper indentedOutput = new IndentedTestOutputHelper(output);
+            IndentedTestOutputHelper indentedOutput = new(output);
             CopySourceDirectory(DebuggeeTemplateSolutionDirPath, DebuggeeSolutionDirPath, indentedOutput);
+            CopySourceDirectory(DebuggeeMsbuildAuxRoot, DebuggeeSolutionDirPath, indentedOutput);
             CreateNuGetConfig(indentedOutput);
             output.WriteLine("}");
             output.WriteLine("");
@@ -167,7 +172,7 @@ namespace Microsoft.Diagnostics.TestHelpers
             AssertDebuggeeProjectFileExists(output);
         }
 
-        SemaphoreSlim _dotnetRestoreLock = new SemaphoreSlim(1);
+        private SemaphoreSlim _dotnetRestoreLock = new(1);
 
         protected async Task Restore(string extraArgs, ITestOutputHelper output)
         {
@@ -189,16 +194,17 @@ namespace Microsoft.Diagnostics.TestHelpers
                 args += extraArgs;
             }
             output.WriteLine("Launching {0} {1}", DotNetToolPath, args);
-            ProcessRunner runner = new ProcessRunner(DotNetToolPath, args).
-                WithEnvironmentVariable("DOTNET_MULTILEVEL_LOOKUP", "0").
-                WithEnvironmentVariable("DOTNET_ROOT", Path.GetDirectoryName(DotNetToolPath)).
-                WithEnvironmentVariable("DOTNET_MSBUILD_SDK_RESOLVER_CLI_DIR", Path.GetDirectoryName(DotNetToolPath)).
-                WithEnvironmentVariable("DOTNET_INSTALL_DIR", Path.GetDirectoryName(DotNetToolPath)).
-                RemoveEnvironmentVariable("MSBuildSDKsPath").
-                WithWorkingDirectory(DebuggeeSolutionDirPath).
-                WithLog(output).
-                WithTimeout(TimeSpan.FromMinutes(10)).                    // restore can be painfully slow
-                WithExpectedExitCode(0);
+            ProcessRunner runner = new ProcessRunner(DotNetToolPath, args)
+                .WithEnvironmentVariable("DOTNET_MULTILEVEL_LOOKUP", "0")
+                .WithEnvironmentVariable("DOTNET_ROOT", Path.GetDirectoryName(DotNetToolPath))
+                .WithEnvironmentVariable("DOTNET_CLI_DO_NOT_USE_MSBUILD_SERVER", "true")
+                .WithEnvironmentVariable("DOTNET_MSBUILD_SDK_RESOLVER_CLI_DIR", Path.GetDirectoryName(DotNetToolPath))
+                .WithEnvironmentVariable("DOTNET_INSTALL_DIR", Path.GetDirectoryName(DotNetToolPath))
+                .RemoveEnvironmentVariable("MSBuildSDKsPath")
+                .WithWorkingDirectory(DebuggeeSolutionDirPath)
+                .WithLog(output)
+                .WithTimeout(TimeSpan.FromMinutes(10))                    // restore can be painfully slow
+                .WithExpectedExitCode(0);
 
             if (OS.Kind != OSKind.Windows && Environment.GetEnvironmentVariable("HOME") == null)
             {
@@ -210,10 +216,10 @@ namespace Microsoft.Diagnostics.TestHelpers
             }
 
             //workaround for https://github.com/dotnet/cli/issues/3868
-            await _dotnetRestoreLock.WaitAsync();
+            await _dotnetRestoreLock.WaitAsync().ConfigureAwait(false);
             try
             {
-                await runner.Run();
+                await runner.Run().ConfigureAwait(false);
             }
             finally
             {
@@ -225,7 +231,7 @@ namespace Microsoft.Diagnostics.TestHelpers
 
         protected virtual async Task Restore(ITestOutputHelper output)
         {
-            await Restore(null, output);
+            await Restore(null, output).ConfigureAwait(false);
         }
 
         protected async Task Build(string dotnetArgs, ITestOutputHelper output)
@@ -235,16 +241,17 @@ namespace Microsoft.Diagnostics.TestHelpers
             AssertDebuggeeAssetsFileExists(output);
 
             output.WriteLine("Launching {0} {1}", DotNetToolPath, dotnetArgs);
-            ProcessRunner runner = new ProcessRunner(DotNetToolPath, dotnetArgs).
-                WithEnvironmentVariable("DOTNET_MULTILEVEL_LOOKUP", "0").
-                WithEnvironmentVariable("DOTNET_ROOT", Path.GetDirectoryName(DotNetToolPath)).
-                WithEnvironmentVariable("DOTNET_MSBUILD_SDK_RESOLVER_CLI_DIR", Path.GetDirectoryName(DotNetToolPath)).
-                WithEnvironmentVariable("DOTNET_INSTALL_DIR", Path.GetDirectoryName(DotNetToolPath)).
-                RemoveEnvironmentVariable("MSBuildSDKsPath").
-                WithWorkingDirectory(DebuggeeProjectDirPath).
-                WithLog(output).
-                WithTimeout(TimeSpan.FromMinutes(10)). // a mac CI build of the modules debuggee is painfully slow :(
-                WithExpectedExitCode(0);
+            ProcessRunner runner = new ProcessRunner(DotNetToolPath, dotnetArgs)
+                .WithEnvironmentVariable("DOTNET_MULTILEVEL_LOOKUP", "0")
+                .WithEnvironmentVariable("DOTNET_ROOT", Path.GetDirectoryName(DotNetToolPath))
+                .WithEnvironmentVariable("DOTNET_CLI_DO_NOT_USE_MSBUILD_SERVER", "true")
+                .WithEnvironmentVariable("DOTNET_MSBUILD_SDK_RESOLVER_CLI_DIR", Path.GetDirectoryName(DotNetToolPath))
+                .WithEnvironmentVariable("DOTNET_INSTALL_DIR", Path.GetDirectoryName(DotNetToolPath))
+                .RemoveEnvironmentVariable("MSBuildSDKsPath")
+                .WithWorkingDirectory(DebuggeeProjectDirPath)
+                .WithLog(output)
+                .WithTimeout(TimeSpan.FromMinutes(10)) // a mac CI build of the modules debuggee is painfully slow :(
+                .WithExpectedExitCode(0);
 
             if (OS.Kind != OSKind.Windows && Environment.GetEnvironmentVariable("HOME") == null)
             {
@@ -262,7 +269,7 @@ namespace Microsoft.Diagnostics.TestHelpers
                 runner = runner.WithEnvironmentVariable("NUGET_PACKAGES", NuGetPackageCacheDirPath);
             }
 
-            await runner.Run();
+            await runner.Run().ConfigureAwait(false);
 
             if (DebuggeeBinaryExePath != null)
             {
@@ -276,10 +283,10 @@ namespace Microsoft.Diagnostics.TestHelpers
 
         protected virtual async Task Build(ITestOutputHelper output)
         {
-            await Build("build", output);
+            await Build("build", output).ConfigureAwait(false);
         }
 
-        void CopyNativeDependencies(ITestOutputHelper output)
+        private void CopyNativeDependencies(ITestOutputHelper output)
         {
             if (Directory.Exists(DebuggeeNativeLibDirPath))
             {
@@ -296,7 +303,7 @@ namespace Microsoft.Diagnostics.TestHelpers
         {
             output.WriteLine("Copying: " + sourceDirPath + " -> " + destDirPath);
             Directory.CreateDirectory(destDirPath);
-            foreach(string dirPath in Directory.EnumerateDirectories(sourceDirPath))
+            foreach (string dirPath in Directory.EnumerateDirectories(sourceDirPath))
             {
                 CopySourceDirectory(dirPath, Path.Combine(destDirPath, Path.GetFileName(dirPath)), output);
             }
@@ -322,15 +329,14 @@ namespace Microsoft.Diagnostics.TestHelpers
             {
                 return;
             }
-            string nugetConfigPath = Path.Combine(DebuggeeSolutionDirPath, "NuGet.config");
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             sb.AppendLine("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
             sb.AppendLine("<configuration>");
-            if(NugetFeeds != null && NugetFeeds.Count > 0)
+            if (NugetFeeds != null && NugetFeeds.Count > 0)
             {
                 sb.AppendLine("  <packageSources>");
                 sb.AppendLine("    <clear />");
-                foreach(KeyValuePair<string, string> kv in NugetFeeds)
+                foreach (KeyValuePair<string, string> kv in NugetFeeds)
                 {
                     sb.AppendLine("    <add key=\"" + kv.Key + "\" value=\"" + kv.Value + "\" />");
                 }

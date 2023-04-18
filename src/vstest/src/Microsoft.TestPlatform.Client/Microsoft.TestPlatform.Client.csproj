@@ -1,18 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TestPlatformRoot Condition="$(TestPlatformRoot) == ''">..\..\</TestPlatformRoot>
-  </PropertyGroup>
-  <Import Project="$(TestPlatformRoot)scripts/build/TestPlatform.Settings.targets" />
+
   <PropertyGroup>
     <AssemblyName>Microsoft.VisualStudio.TestPlatform.Client</AssemblyName>
     <TargetFrameworks>net7.0;netstandard2.0;$(NetFrameworkMinimum)</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(DotNetBuildFromSource)' == 'true' ">net7.0</TargetFrameworks>
     <IsTestProject>false</IsTestProject>
   </PropertyGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\Resources.resx" />
-  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.TestPlatform.ObjectModel\Microsoft.TestPlatform.ObjectModel.csproj" />
     <ProjectReference Include="..\Microsoft.TestPlatform.CoreUtilities\Microsoft.TestPlatform.CoreUtilities.csproj" />
@@ -54,5 +47,4 @@
     <AdditionalFiles Include="PublicAPI/$(TargetFramework)/PublicAPI.Shipped.txt" />
     <AdditionalFiles Include="PublicAPI/$(TargetFramework)/PublicAPI.Unshipped.txt" />
   </ItemGroup>
-  <Import Project="$(TestPlatformRoot)scripts\build\TestPlatform.targets" />
 </Project>

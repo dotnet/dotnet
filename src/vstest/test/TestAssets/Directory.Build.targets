@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <!-- We don't want these projects to be Arcade projects, because they are
+  test projects for testing, and most people don't use Arcade, so we don't want the details of
+  arcade to go into them. -->
+</Project>

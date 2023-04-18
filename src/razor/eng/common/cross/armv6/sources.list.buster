@@ -1,2 +1,2 @@
-﻿deb http://raspbian.raspberrypi.org/raspbian/ buster main contrib non-free rpi
+deb http://raspbian.raspberrypi.org/raspbian/ buster main contrib non-free rpi
 deb-src http://raspbian.raspberrypi.org/raspbian/ buster main contrib non-free rpi

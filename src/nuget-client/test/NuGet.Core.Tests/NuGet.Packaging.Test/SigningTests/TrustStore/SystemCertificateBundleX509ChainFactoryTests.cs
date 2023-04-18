@@ -84,7 +84,7 @@ namespace NuGet.Packaging.Test
 
                 Assert.True(wasCreated);
 
-                using (X509Chain chain = factory.Create())
+                using (IX509Chain chain = factory.Create())
                 {
                     Assert.Equal(X509ChainTrustMode.CustomRootTrust, chain.ChainPolicy.TrustMode);
                     Assert.Equal(1, chain.ChainPolicy.CustomTrustStore.Count);

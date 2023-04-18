@@ -118,7 +118,7 @@ public class ValidateBreakpointRangeEndpointTest : SingleServerDelegatingEndpoin
 
         var endpoint = new ValidateBreakpointRangeEndpoint(DocumentMappingService, LanguageServerFeatureOptions, LanguageServer, LoggerFactory);
 
-        var request = new ValidateBreakpointRangeParamsBridge
+        var request = new ValidateBreakpointRangeParams
         {
             TextDocument = new TextDocumentIdentifier
             {
@@ -136,10 +136,6 @@ public class ValidateBreakpointRangeEndpointTest : SingleServerDelegatingEndpoin
     private RazorRequestContext CreateValidateBreakpointRangeRequestContext(VersionedDocumentContext documentContext)
     {
         var lspServices = new Mock<ILspServices>(MockBehavior.Strict);
-        //lspServices
-        //    .Setup(l => l.GetRequiredService<AdhocWorkspaceFactory>()).Returns(TestAdhocWorkspaceFactory.Instance);
-        //lspServices
-        //    .Setup(l => l.GetRequiredService<RazorFormattingService>()).Returns(TestRazorFormattingService.Instance);
 
         var requestContext = CreateRazorRequestContext(documentContext, lspServices: lspServices.Object);
 

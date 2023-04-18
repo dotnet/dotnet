@@ -1,8 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TestPlatformRoot Condition="$(TestPlatformRoot) == ''">..\..\</TestPlatformRoot>
-  </PropertyGroup>
-  <Import Project="$(TestPlatformRoot)scripts/build/TestPlatform.Settings.targets" />
 
   <PropertyGroup>
     <TargetFrameworks>$(TargetFrameworks);net472;net5.0;net6.0;net7.0</TargetFrameworks>
@@ -11,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="2.1.0" />
     <PackageReference Include="MSTest.TestFramework" Version="2.1.0" />
     <PackageReference Include="coverlet.collector" Version="1.2.0" />
@@ -23,5 +18,4 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
-  <Import Project="$(TestPlatformRoot)scripts\build\TestPlatform.targets" />
 </Project>

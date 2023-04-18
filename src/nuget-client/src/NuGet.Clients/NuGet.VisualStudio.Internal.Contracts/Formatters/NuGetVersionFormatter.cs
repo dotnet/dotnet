@@ -36,7 +36,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
                 }
             }
 
-            return NuGetVersion.Parse(version);
+            return NuGetVersion.Parse(version!);
         }
 
         protected override void SerializeCore(ref MessagePackWriter writer, NuGetVersion value, MessagePackSerializerOptions options)

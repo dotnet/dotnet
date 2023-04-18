@@ -1,4 +1,4 @@
-﻿[CmdletBinding(PositionalBinding=$false)]
+[CmdletBinding(PositionalBinding=$false)]
 Param(
   [string] $verbosity = 'minimal',
   [bool] $warnAsError = $true,

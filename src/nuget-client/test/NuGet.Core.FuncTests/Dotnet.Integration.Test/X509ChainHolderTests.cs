@@ -20,7 +20,7 @@ namespace Dotnet.Integration.Test
         {
             using (X509ChainHolder chainHolder = X509ChainHolder.CreateForCodeSigning())
             {
-                X509ChainPolicy policy = chainHolder.Chain.ChainPolicy;
+                X509ChainPolicy policy = chainHolder.Chain2.ChainPolicy;
 
                 // Code signing certificates that chain to this root certificate are widely used on nuget.org.
                 // CN=DigiCert Assured ID Root CA, OU=www.digicert.com, O=DigiCert Inc, C=US
@@ -33,7 +33,7 @@ namespace Dotnet.Integration.Test
         {
             using (X509ChainHolder chainHolder = X509ChainHolder.CreateForTimestamping())
             {
-                X509ChainPolicy policy = chainHolder.Chain.ChainPolicy;
+                X509ChainPolicy policy = chainHolder.Chain2.ChainPolicy;
 
                 // Timestamping certificates that chain to this root certificate are widely used on nuget.org.
                 // CN=VeriSign Universal Root Certification Authority, OU="(c) 2008 VeriSign, Inc. - For authorized use only", OU=VeriSign Trust Network, O="VeriSign, Inc.", C=US

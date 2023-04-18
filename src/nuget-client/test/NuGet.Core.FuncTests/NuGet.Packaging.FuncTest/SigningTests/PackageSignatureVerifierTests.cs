@@ -762,13 +762,14 @@ namespace NuGet.Packaging.FuncTest
                         _verifyCommandSettings,
                         CancellationToken.None);
                     IEnumerable<PackageVerificationResult> resultsWithErrors = result.Results.Where(r => r.GetErrorIssues().Any());
+                    IEnumerable<ILogMessage> allIssues = result.Results.SelectMany(r => r.Issues);
                     IEnumerable<ILogMessage> totalErrorIssues = resultsWithErrors.SelectMany(r => r.GetErrorIssues());
 
                     // Assert
                     result.IsValid.Should().BeFalse();
                     resultsWithErrors.Count().Should().Be(1);
                     totalErrorIssues.Count().Should().Be(3);
-                    SigningTestUtility.AssertUntrustedRoot(totalErrorIssues, NuGetLogCode.NU3028, LogLevel.Error);
+                    SigningTestUtility.AssertUntrustedRoot(allIssues, NuGetLogCode.NU3028, LogLevel.Error);
                 }
             }
         }

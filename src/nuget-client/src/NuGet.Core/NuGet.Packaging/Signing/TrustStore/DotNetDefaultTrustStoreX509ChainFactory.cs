@@ -7,9 +7,9 @@ namespace NuGet.Packaging.Signing
 {
     internal sealed class DotNetDefaultTrustStoreX509ChainFactory : IX509ChainFactory
     {
-        public X509Chain Create()
+        public IX509Chain Create()
         {
-            return new X509Chain();
+            return new X509ChainWrapper(new X509Chain());
         }
     }
 }

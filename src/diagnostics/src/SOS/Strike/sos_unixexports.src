@@ -30,7 +30,7 @@ EEHeap
 EEVersion
 EEStack
 EHInfo
-enummemory
+enummem
 FinalizeQueue
 FindAppDomain
 FindRoots
@@ -55,8 +55,8 @@ PathTo
 runtimes
 StopOnCatch
 SetClrPath
-SOSFlush
 SOSStatus
+SOSFlush
 runtimes
 SuppressJitOptimization
 SyncBlk
@@ -64,6 +64,7 @@ Threads
 ThreadPool
 ThreadState
 Token2EE
+TraverseHeap
 u
 VerifyHeap
 VerifyObj

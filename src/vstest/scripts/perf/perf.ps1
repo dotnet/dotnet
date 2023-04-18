@@ -55,7 +55,7 @@ $Script:TPT_ErrorMsgColor = "Red"
 $Script:TPT_PayLoads=New-Object System.Collections.ArrayList
 $Script:TPT_PerfIterations = 10
 $Script:TPT_Results = New-Object System.Collections.ArrayList
-$Script:TPT_DependencyProps = [xml] (Get-Content $env:TP_ROOT_DIR\scripts\build\TestPlatform.Dependencies.props)
+$Script:TPT_DependencyProps = [xml] (Get-Content $env:TP_ROOT_DIR\eng\Versions.props)
 
 $ResultObject = New-Object PSObject
 Add-Member -InputObject $ResultObject -MemberType NoteProperty -Name Runner -Value ""
@@ -119,7 +119,7 @@ function Get-TestAdapterPath($testadapter)
 {
     if($testadapter -eq "MsTest")
     {
-        return "$env:TP_PACKAGES_DIR\mstest.testadapter\$($Script:TPT_DependencyProps.Project.PropertyGroup.MSTestAdapterVersion)\build\_common"
+        return "$env:TP_PACKAGES_DIR\mstest.testadapter\$($Script:TPT_DependencyProps.Project.PropertyGroup.MSTestTestAdapterVersion)\build\_common"
     }
     if($testadapter -eq "xUnit")
     {
@@ -135,7 +135,7 @@ function Get-AdapterVersion($testadapter)
 {
     if($testadapter -eq "MsTest")
     {
-        return "$($Script:TPT_DependencyProps.Project.PropertyGroup.MSTestAdapterVersion)"
+        return "$($Script:TPT_DependencyProps.Project.PropertyGroup.MSTestTestAdapterVersion)"
     }
     if($testadapter -eq "xUnit")
     {

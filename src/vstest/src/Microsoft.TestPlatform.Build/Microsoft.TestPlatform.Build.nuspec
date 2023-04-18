@@ -1,0 +1,32 @@
+﻿<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    $CommonMetadataElements$
+
+    <dependencies>
+      <group targetFramework="$tfm$" />
+    </dependencies>
+  </metadata>
+
+  <files>
+    $CommonFileElements$
+
+    <file src="$tfm$/Microsoft.TestPlatform.targets" target="runtimes/any/native" />
+    <file src="$tfm$/Microsoft.TestPlatform.Build.dll" target="lib/$tfm$" />
+
+    <!-- Add localized resources -->
+    <file src="$tfm$/cs/Microsoft.TestPlatform.Build.resources.dll" target="lib/$tfm$/cs" />
+    <file src="$tfm$/de/Microsoft.TestPlatform.Build.resources.dll" target="lib/$tfm$/de" />
+    <file src="$tfm$/es/Microsoft.TestPlatform.Build.resources.dll" target="lib/$tfm$/es" />
+    <file src="$tfm$/fr/Microsoft.TestPlatform.Build.resources.dll" target="lib/$tfm$/fr" />
+    <file src="$tfm$/it/Microsoft.TestPlatform.Build.resources.dll" target="lib/$tfm$/it" />
+    <file src="$tfm$/ja/Microsoft.TestPlatform.Build.resources.dll" target="lib/$tfm$/ja" />
+    <file src="$tfm$/ko/Microsoft.TestPlatform.Build.resources.dll" target="lib/$tfm$/ko" />
+    <file src="$tfm$/pl/Microsoft.TestPlatform.Build.resources.dll" target="lib/$tfm$/pl" />
+    <file src="$tfm$/pt-BR/Microsoft.TestPlatform.Build.resources.dll" target="lib/$tfm$/pt-BR" />
+    <file src="$tfm$/ru/Microsoft.TestPlatform.Build.resources.dll" target="lib/$tfm$/ru" />
+    <file src="$tfm$/tr/Microsoft.TestPlatform.Build.resources.dll" target="lib/$tfm$/tr" />
+    <file src="$tfm$/zh-Hans/Microsoft.TestPlatform.Build.resources.dll" target="lib/$tfm$/zh-Hans" />
+    <file src="$tfm$/zh-Hant/Microsoft.TestPlatform.Build.resources.dll" target="lib/$tfm$/zh-Hant" />
+  </files>
+</package>

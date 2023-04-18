@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TestPlatformRoot Condition="$(TestPlatformRoot) == ''">..\..\..\</TestPlatformRoot>
     <TestProject>true</TestProject>
     <IsTestProject>true</IsTestProject>
+    <!-- We build this only for net48, and it fails to skip this on Linux in Aracade otherwise. -->
+    <IsTestProject Condition=" '$(OS)' != 'Windows_NT' ">false</IsTestProject>
   </PropertyGroup>
-  <Import Project="$(TestPlatformRoot)scripts/build/TestPlatform.Settings.targets" />
+
   <PropertyGroup Label="Configuration">
     <RootNamespace>Microsoft.TestPlatform.Extensions.EventLogCollector.UnitTests</RootNamespace>
   </PropertyGroup>
@@ -20,7 +21,9 @@
   <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
     <Reference Include="System" />
     <Reference Include="System.Runtime" />
-    <Reference Include="Microsoft.CSharp" />    
+    <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
-  <Import Project="$(TestPlatformRoot)scripts\build\TestPlatform.targets" />
+
+  <!-- We build this only for net48, and it fails to skip this on Linux in Aracade otherwise. -->
+  <Target Name="RunTests" Condition=" '$(OS)' != 'Windows_NT' " />
 </Project>

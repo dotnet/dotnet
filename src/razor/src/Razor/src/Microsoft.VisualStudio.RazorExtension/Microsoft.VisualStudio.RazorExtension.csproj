@@ -194,10 +194,6 @@
       <AdditionalProperties>TargetFramework=$(DefaultNetFxTargetFramework)</AdditionalProperties>
     </ProjectReference>
 
-    <ProjectReference Include="..\Microsoft.AspNetCore.Razor.Common\Microsoft.AspNetCore.Razor.Common.csproj">
-      <AdditionalProperties>TargetFramework=$(DefaultNetFxTargetFramework)</AdditionalProperties>
-    </ProjectReference>
-
     <ProjectReference Include="..\Microsoft.AspNetCore.Razor.LanguageServer\Microsoft.AspNetCore.Razor.LanguageServer.csproj">
       <AdditionalProperties>TargetFramework=$(DefaultNetFxTargetFramework)</AdditionalProperties>
     </ProjectReference>

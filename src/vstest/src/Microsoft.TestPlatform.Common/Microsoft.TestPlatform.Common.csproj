@@ -1,22 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TestPlatformRoot Condition="$(TestPlatformRoot) == ''">..\..\</TestPlatformRoot>
-  </PropertyGroup>
-  <Import Project="$(TestPlatformRoot)scripts/build/TestPlatform.Settings.targets" />
+
   <PropertyGroup>
     <AssemblyName>Microsoft.VisualStudio.TestPlatform.Common</AssemblyName>
     <TargetFrameworks>net7.0;net6.0;netstandard2.0;$(NetFrameworkMinimum)</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(DotNetBuildFromSource)' == 'true' ">net7.0</TargetFrameworks>
     <IsTestProject>false</IsTestProject>
     <UseBannedApiAnalyzers>true</UseBannedApiAnalyzers>
   </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="..\..\scripts\build\ExternalAssemblyVersions.cs" Link="ExternalAssemblyVersions.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\Resources.resx" />
-  </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == '$(NetFrameworkMinimum)' ">
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -73,5 +63,5 @@
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
-  <Import Project="$(TestPlatformRoot)scripts\build\TestPlatform.targets" />
+
 </Project>

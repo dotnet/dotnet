@@ -3,7 +3,6 @@
   <Runtime>
     <Import assembly="Microsoft.VisualStudio.Editor.Razor.dll" />
     <Import assembly="Microsoft.CodeAnalysis.Razor.Workspaces.dll" />
-    <Import assembly="Microsoft.AspNetCore.Razor.Common.dll" />
     <Import assembly="Microsoft.AspNetCore.Razor.Language.dll" />
     <Import assembly="Microsoft.AspNetCore.Razor.Utilities.Shared.dll" />
     <Import assembly="Microsoft.AspNetCore.Mvc.Razor.Extensions.Version1_X.dll" />
@@ -42,7 +41,6 @@
 
   <!-- MEF catalog -->
   <Extension path="/MonoDevelop/Ide/Composition">
-    <Assembly file="Microsoft.AspNetCore.Razor.Common.dll" />
     <Assembly file="Microsoft.VisualStudio.Editor.Razor.dll" />
     <Assembly file="Microsoft.CodeAnalysis.Razor.Workspaces.dll" />
     <Assembly file="Microsoft.VisualStudio.LanguageServerClient.Razor.dll" />

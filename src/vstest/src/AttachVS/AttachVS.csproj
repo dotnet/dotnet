@@ -1,13 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TestPlatformRoot Condition="$(TestPlatformRoot) == ''">..\..\</TestPlatformRoot>
-  </PropertyGroup>
-  <Import Project="$(TestPlatformRoot)scripts/build/TestPlatform.Settings.targets" />
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFrameworks>net7;net472</TargetFrameworks>
     <AssemblyName>AttachVS</AssemblyName>
+    <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
   </PropertyGroup>
   <ItemGroup>
     <!-- API that is common to all frameworks that we build for. -->
@@ -17,5 +14,4 @@
   <ItemGroup>
     <Compile Include="..\..\shared\NullableAttributes.cs" Link="NullableAttributes.cs" />
   </ItemGroup>
-  <Import Project="$(TestPlatformRoot)scripts\build\TestPlatform.targets" />
 </Project>

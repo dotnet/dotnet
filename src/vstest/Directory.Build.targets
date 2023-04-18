@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+
+  <Import Project="Sdk.targets" Sdk="Microsoft.DotNet.Arcade.Sdk" />
+
+  <!-- Source build properties -->
+  <PropertyGroup Condition=" '$(DotNetBuildFromSource)' == 'true' ">
+    <!-- Force setting TargetFrameworks to net7.0 only if it was set -->
+    <TargetFrameworks Condition=" '$(TargetFrameworks)' != '' ">$(NetCurrent)</TargetFrameworks>
+    <!-- Force setting TargetFramework to net7.0 only if it was set -->
+    <TargetFramework Condition=" '$(TargetFramework)' != '' ">$(NetCurrent)</TargetFramework>
+  </PropertyGroup>
+
+  <!-- Allows build of .NET Framework assemblies on MacOS and Linux https://github.com/dotnet/designs/pull/33#issuecomment-489264196 -->
+  <ItemGroup>
+    <PackageReference Condition=" '$(OS)' != 'Windows_NT' " Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="All" />
+  </ItemGroup>
+
+  <!-- Test project settings -->
+  <Choose>
+    <When Condition="$(TestProject) == 'true'">
+      <PropertyGroup>
+        <!-- Suppress warnings about testhost being x64 (AMD64)/x86 when imported into AnyCPU (MSIL) test projects. -->
+        <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
+      </PropertyGroup>
+
+      <!-- Test projects are not discovered in test window without test container capability -->
+      <ItemGroup>
+        <ProjectCapability Include="TestContainer" />
+      </ItemGroup>
+
+      <!-- Test project references -->
+      <ItemGroup>
+        <!--
+          Test projects take a direct dependency on TestHost. Indirect dependencies must be included.
+          This is required to enable selfhost the latest testhost bits.
+
+          We don't want these references to be passed onto compiler. They are just required at runtime.
+          Mark them as content and copy to output directory.
+        -->
+        <ProjectReference Include="$(RepoRoot)src/testhost/testhost.csproj">
+          <FromP2P>true</FromP2P>
+        </ProjectReference>
+        <ProjectReference Include="$(RepoRoot)src/Microsoft.TestPlatform.CommunicationUtilities/Microsoft.TestPlatform.CommunicationUtilities.csproj">
+          <FromP2P>true</FromP2P>
+        </ProjectReference>
+        <ProjectReference Include="$(RepoRoot)src/Microsoft.TestPlatform.CrossPlatEngine/Microsoft.TestPlatform.CrossPlatEngine.csproj">
+          <FromP2P>true</FromP2P>
+        </ProjectReference>
+        <ProjectReference Include="$(RepoRoot)src/Microsoft.TestPlatform.Common/Microsoft.TestPlatform.Common.csproj">
+          <FromP2P>true</FromP2P>
+        </ProjectReference>
+        <ProjectReference Include="$(RepoRoot)src/Microsoft.TestPlatform.ObjectModel/Microsoft.TestPlatform.ObjectModel.csproj">
+          <FromP2P>true</FromP2P>
+        </ProjectReference>
+
+        <PackageReference Include="MSTest.Assert.Extensions" Version="$(MSTestAssertExtensionVersion)" />
+        <PackageReference Include="Moq" Version="$(MoqVersion)" />
+        <PackageReference Include="Microsoft.CodeCoverage" Version="$(MicrosoftCodeCoverageVersion)" />
+        <!--
+          The following packages are brought by arcade but we don't want to use them as we are testing TP with
+          currently built version of TP.
+        -->
+        <PackageReference Remove="Microsoft.NET.Test.Sdk" />
+        <PackageReference Remove="Microsoft.TestPlatform" />
+      </ItemGroup>
+    </When>
+  </Choose>
+
+</Project>

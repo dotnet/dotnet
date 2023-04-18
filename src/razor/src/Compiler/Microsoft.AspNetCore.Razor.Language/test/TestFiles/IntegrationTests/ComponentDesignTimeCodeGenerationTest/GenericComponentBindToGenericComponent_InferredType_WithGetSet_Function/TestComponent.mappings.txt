@@ -1,11 +1,11 @@
 ﻿Source Location: (11:0,11 [6] x:\dir\subdir\Test\TestComponent.cshtml)
 |TParam|
-Generated Location: (581:17,22 [6] )
+Generated Location: (589:17,22 [6] )
 |TParam|
 
 Source Location: (49:1,30 [11] x:\dir\subdir\Test\TestComponent.cshtml)
 |ParentValue|
-Generated Location: (1263:35,30 [11] )
+Generated Location: (1271:35,30 [11] )
 |ParentValue|
 
 Source Location: (103:2,7 [155] x:\dir\subdir\Test\TestComponent.cshtml)
@@ -14,7 +14,7 @@ Source Location: (103:2,7 [155] x:\dir\subdir\Test\TestComponent.cshtml)
 
     public Task UpdateValue(TParam value) { ParentValue = value; return Task.CompletedTask; }
 |
-Generated Location: (1858:53,7 [155] )
+Generated Location: (1866:53,7 [155] )
 |
     public TParam ParentValue { get; set; } = default;
 

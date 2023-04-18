@@ -241,7 +241,7 @@ internal class RazorTranslateDiagnosticsService
             var element = owner.FirstAncestorOrSelf<MarkupElementSyntax>(n => n.StartTag?.Name.Content == "style");
             var csharp = owner.FirstAncestorOrSelf<CSharpCodeBlockSyntax>();
 
-            return element.Body.Any(c => c is CSharpCodeBlockSyntax) || csharp is not null;
+            return element?.Body.Any(c => c is CSharpCodeBlockSyntax) ?? false || csharp is not null;
         }
 
         // Ideally this would be solved instead by not emitting the "!" at the HTML backing file,
@@ -255,6 +255,10 @@ internal class RazorTranslateDiagnosticsService
             }
 
             var element = owner.FirstAncestorOrSelf<MarkupElementSyntax>();
+            if (element is null)
+            {
+                return false;
+            }
 
             if (element.StartTag?.Name.Content != "html")
             {
@@ -280,8 +284,8 @@ internal class RazorTranslateDiagnosticsService
             }
 
             var element = owner.FirstAncestorOrSelf<MarkupElementSyntax>();
-            var startNode = element.StartTag;
-            var endNode = element.EndTag;
+            var startNode = element?.StartTag;
+            var endNode = element?.EndTag;
 
             if (startNode is null || endNode is null)
             {
@@ -290,9 +294,9 @@ internal class RazorTranslateDiagnosticsService
             }
 
             var haveBang = startNode.Bang is not null && endNode.Bang is not null;
-            var namesEquivilant = startNode.Name.Content == endNode.Name.Content;
+            var namesEquivalent = startNode.Name.Content == endNode.Name.Content;
 
-            return haveBang && namesEquivilant;
+            return haveBang && namesEquivalent;
         }
 
         static bool IsAnyFilteredInvalidNestingError(Diagnostic diagnostic, SourceText sourceText, RazorSyntaxTree syntaxTree, ILogger logger)
@@ -334,7 +338,7 @@ internal class RazorTranslateDiagnosticsService
                 return false;
             }
 
-            return diagnostic.Message.EndsWith("cannot be nested inside element 'html'.") && body.StartTag?.Bang is not null;
+            return diagnostic.Message.EndsWith("cannot be nested inside element 'html'.") && body?.StartTag?.Bang is not null;
         }
     }
 

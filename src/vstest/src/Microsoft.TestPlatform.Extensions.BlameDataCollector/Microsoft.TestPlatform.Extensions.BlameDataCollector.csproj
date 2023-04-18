@@ -8,36 +8,34 @@
     -->
     <MSBuildWarningsAsMessages>$(MSBuildWarningsAsMessages);NU1702</MSBuildWarningsAsMessages>
     <!-- MSB3270 Suppress warnings about testhost being x64 (AMD64)/x86 when imported into AnyCPU (MSIL) projects. -->
+    <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
     <!-- MSB3276 Suppress warnings about conflicts between different versions of the same dependent assembly -->
-    <MSBuildWarningsAsMessages>$(MSBuildWarningsAsMessages);MSB3270;MSB3276</MSBuildWarningsAsMessages>
-    <TestPlatformRoot Condition="$(TestPlatformRoot) == ''">..\..\</TestPlatformRoot>
+    <MSBuildWarningsAsMessages>$(MSBuildWarningsAsMessages);MSB3276</MSBuildWarningsAsMessages>
   </PropertyGroup>
-  <Import Project="$(TestPlatformRoot)src\Microsoft.TestPlatform.Execution.Shared\Microsoft.TestPlatform.Execution.Shared.projitems" Label="Shared" />
-  <Import Project="$(TestPlatformRoot)scripts/build/TestPlatform.Settings.targets" />
+  <Import Project="$(RepoRoot)src\Microsoft.TestPlatform.Execution.Shared\Microsoft.TestPlatform.Execution.Shared.projitems" Label="Shared" />
+
   <PropertyGroup Label="Configuration">
     <RootNamespace>Microsoft.TestPlatform.Extensions.BlameDataCollector</RootNamespace>
   </PropertyGroup>
   <PropertyGroup>
     <AssemblyName>Microsoft.TestPlatform.Extensions.BlameDataCollector</AssemblyName>
     <TargetFrameworks>net7.0;netstandard2.0;net472</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(DotNetBuildFromSource)' == 'true' ">net7.0;</TargetFrameworks>
     <IsTestProject>false</IsTestProject>
     <!-- to copy the netcore.client dependency to bin folder on build -->
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <UseBannedApiAnalyzers>true</UseBannedApiAnalyzers>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(TestPlatformRoot)src\Microsoft.TestPlatform.TestHostProvider\Properties\TestExtensionTypesAttribute.cs" Link="Properties\TestExtensionTypesAttribute.cs" />
+    <Compile Include="$(RepoRoot)src\Microsoft.TestPlatform.TestHostProvider\Properties\TestExtensionTypesAttribute.cs" Link="Properties\TestExtensionTypesAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Resources.resx" />
+    <ProjectReference Include="$(RepoRoot)src\Microsoft.TestPlatform.ObjectModel\Microsoft.TestPlatform.ObjectModel.csproj" />
+    <ProjectReference Include="$(RepoRoot)src\Microsoft.TestPlatform.CoreUtilities\Microsoft.TestPlatform.CoreUtilities.csproj" />    
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="$(TestPlatformRoot)src\Microsoft.TestPlatform.ObjectModel\Microsoft.TestPlatform.ObjectModel.csproj" />
-    <ProjectReference Include="$(TestPlatformRoot)src\Microsoft.TestPlatform.CoreUtilities\Microsoft.TestPlatform.CoreUtilities.csproj" />
-    <ProjectReference Include="$(TestPlatformRoot)src\DataCollectors\DumpMinitool\DumpMinitool.csproj" />
-    <ProjectReference Include="$(TestPlatformRoot)src\DataCollectors\DumpMinitool.x86\DumpMinitool.x86.csproj" />
-    <ProjectReference Include="$(TestPlatformRoot)src\DataCollectors\DumpMinitool.arm64\DumpMinitool.arm64.csproj" />
+  <ItemGroup Condition=" '$(DotNetBuildFromSource)' != 'true' ">
+    <ProjectReference Include="$(RepoRoot)src\DataCollectors\DumpMinitool\DumpMinitool.csproj" />
+    <ProjectReference Include="$(RepoRoot)src\DataCollectors\DumpMinitool.x86\DumpMinitool.x86.csproj" />
+    <ProjectReference Include="$(RepoRoot)src\DataCollectors\DumpMinitool.arm64\DumpMinitool.arm64.csproj" />
   </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'net472' AND '$(OS)' != 'Windows_NT' ">
     <Reference Include="System" />
@@ -84,5 +82,5 @@
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
-  <Import Project="$(TestPlatformRoot)scripts\build\TestPlatform.targets" />
+
 </Project>

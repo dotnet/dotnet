@@ -20,6 +20,7 @@ public class RazorCompletionResolveEndpointTest : LanguageServerTestBase
 {
     private readonly RazorCompletionResolveEndpoint _endpoint;
     private readonly CompletionListCache _completionListCache;
+    private readonly VSInternalClientCapabilities _clientCapabilities;
 
     public RazorCompletionResolveEndpointTest(ITestOutputHelper testOutput)
         : base(testOutput)
@@ -29,11 +30,20 @@ public class RazorCompletionResolveEndpointTest : LanguageServerTestBase
             new AggregateCompletionItemResolver(
                 new[] { new TestCompletionItemResolver() }, LoggerFactory),
             _completionListCache);
-    }
-
-    protected override Task InitializeAsync()
-    {
-        return _endpoint.OnInitializedAsync(new VSInternalClientCapabilities(), DisposalToken);
+        _clientCapabilities = new VSInternalClientCapabilities()
+        {
+            TextDocument = new TextDocumentClientCapabilities()
+            {
+                Completion = new VSInternalCompletionSetting()
+                {
+                    CompletionItem = new CompletionItemSetting()
+                    {
+                        DocumentationFormat = new[] { MarkupKind.Markdown },
+                    }
+                }
+            }
+        };
+        _endpoint.GetRegistration(_clientCapabilities);
     }
 
     [Fact]
@@ -83,7 +93,7 @@ public class RazorCompletionResolveEndpointTest : LanguageServerTestBase
         var resolvedItem = await _endpoint.HandleRequestAsync(parameters, requestContext, DisposalToken);
 
         // Assert
-        Assert.NotNull(resolvedItem.Documentation);
+        Assert.Equal("I was resolved using markdown", resolvedItem.Documentation.Value.First);
     }
 
     [Fact]
@@ -103,7 +113,7 @@ public class RazorCompletionResolveEndpointTest : LanguageServerTestBase
         var resolvedItem = await _endpoint.HandleRequestAsync(parameters, requestContext, DisposalToken);
 
         // Assert
-        Assert.NotNull(resolvedItem.Documentation);
+        Assert.Equal("I was resolved using markdown", resolvedItem.Documentation.Value.First);
     }
 
     [Fact]
@@ -132,7 +142,7 @@ public class RazorCompletionResolveEndpointTest : LanguageServerTestBase
         var resolvedItem = await _endpoint.HandleRequestAsync(parameters, requestContext, DisposalToken);
 
         // Assert
-        Assert.NotNull(resolvedItem.Documentation);
+        Assert.Equal("I was resolved using markdown", resolvedItem.Documentation.Value.First);
         Assert.Same(completion2Context, resolvedItem.Data);
     }
 
@@ -155,7 +165,9 @@ public class RazorCompletionResolveEndpointTest : LanguageServerTestBase
             VSInternalClientCapabilities clientCapabilities,
             CancellationToken cancellationToken)
         {
-            item.Documentation = "I was resolved";
+            var completionSupportedKinds = clientCapabilities?.TextDocument?.Completion?.CompletionItem?.DocumentationFormat;
+            var documentationKind = completionSupportedKinds?.Contains(MarkupKind.Markdown) == true ? MarkupKind.Markdown : MarkupKind.PlainText;
+            item.Documentation = "I was resolved using " + documentationKind.Value;
             item.Data = originalRequestContext;
             return Task.FromResult(item);
         }

@@ -1,6 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <!-- Imports Common TestAssets props. -->
-  <Import Project="..\..\..\scripts\build\TestAssets.props" />
 
   <PropertyGroup>
     <TargetFrameworks>$(NetCoreAppMinimum)</TargetFrameworks>
@@ -10,8 +8,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0-preview-20161024-02" />
-    <PackageReference Include="MSTest.TestFramework" Version="$(MSTestFrameworkVersion)" />
-    <PackageReference Include="MSTest.TestAdapter" Version="$(MSTestAdapterVersion)" />
+    <PackageReference Include="MSTest.TestFramework" Version="$(MSTestTestFrameworkVersion)" />
+    <PackageReference Include="MSTest.TestAdapter" Version="$(MSTestTestAdapterVersion)" />
     <PackageReference Include="System.Net.Http" Version="$(SystemNetHttpVersion)" />
   </ItemGroup>
 

@@ -16,7 +16,7 @@ namespace Test
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
             __builder.OpenComponent<global::Test.TestComponent<decimal, decimal>>(0);
-            __builder.AddAttribute(1, "Data", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Collections.Generic.List<(decimal Domain, decimal Value)>>(
+            __builder.AddComponentParameter(1, "Data", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Collections.Generic.List<(decimal Domain, decimal Value)>>(
 #nullable restore
 #line 4 "x:\dir\subdir\Test\TestComponent.cshtml"
                      null

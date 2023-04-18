@@ -11,6 +11,7 @@ using FluentAssertions;
 using NuGet.Common;
 using NuGet.Frameworks;
 using NuGet.Packaging;
+using NuGet.Packaging.Signing;
 using NuGet.ProjectModel;
 using NuGet.Test.Utility;
 using Test.Utility.Signing;
@@ -25,11 +26,13 @@ namespace Dotnet.Integration.Test
         private const string SignatureVerificationEnvironmentVariable = "DOTNET_NUGET_SIGNATURE_VERIFICATION";
         private const string SignatureVerificationEnvironmentVariableTypo = "DOTNET_NUGET_SIGNATURE_VERIFICATIOn";
 
-        private MsbuildIntegrationTestFixture _msbuildFixture;
+        private readonly MsbuildIntegrationTestFixture _msbuildFixture;
+        private readonly SignCommandTestFixture _signFixture;
 
-        public DotnetRestoreTests(MsbuildIntegrationTestFixture fixture)
+        public DotnetRestoreTests(MsbuildIntegrationTestFixture msbuildFixture, SignCommandTestFixture signFixture)
         {
-            _msbuildFixture = fixture;
+            _msbuildFixture = msbuildFixture;
+            _signFixture = signFixture;
         }
 
         [PlatformFact(Platform.Windows)]
@@ -120,6 +123,65 @@ EndGlobal";
                 }
 
                 _msbuildFixture.RestoreProject(workingDirectory, projectName, args: string.Empty);
+            }
+        }
+
+        [Fact]
+        public async Task DotnetRestore_WithUntrustedSignedPackage_LogsNU3042BasedOnOperatingSystem()
+        {
+            using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
+            {
+                IX509StoreCertificate storeCertificate = _signFixture.UntrustedSelfIssuedCertificateInCertificateStore;
+                SimpleTestPackageContext packageContext = new("A", "1.0.0");
+                string signedPackagePath = await SignedArchiveTestUtility.AuthorSignPackageAsync(
+                    storeCertificate.Certificate,
+                    packageContext,
+                    pathContext.PackageSource);
+
+                var projectName = "ClassLibrary1";
+                string workingDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
+                string projectFile = Path.Combine(workingDirectory, $"{projectName}.csproj");
+
+                _msbuildFixture.CreateDotnetNewProject(pathContext.SolutionRoot, projectName, "classlib -f netstandard2.0");
+
+                using (FileStream stream = File.Open(projectFile, FileMode.Open, FileAccess.ReadWrite))
+                {
+                    XDocument xml = XDocument.Load(stream);
+
+                    Dictionary<string, string> attributes = new() { { "Version", packageContext.Version } };
+
+                    ProjectFileUtils.AddItem(
+                        xml,
+                        "PackageReference",
+                        packageContext.Id,
+                        string.Empty,
+                        new Dictionary<string, string>(),
+                        attributes);
+
+                    ProjectFileUtils.WriteXmlToFile(xml, stream);
+                }
+
+                CommandRunnerResult result = _msbuildFixture.RunDotnet(
+                    workingDirectory,
+                    $"restore {projectName}.csproj",
+                    additionalEnvVars: new Dictionary<string, string>()
+                        {
+                            { EnvironmentVariableConstants.DotNetNuGetSignatureVerification, "true" }
+                        }
+                    );
+
+                Assert.True(result.Success);
+
+                string expectedText = "warning NU3042:";
+
+                if (RuntimeEnvironmentHelper.IsWindows)
+                {
+                    Assert.DoesNotContain(expectedText, result.AllOutput);
+                }
+                else
+                {
+                    Assert.Contains(expectedText, result.AllOutput);
+                }
             }
         }
 

@@ -4,6 +4,7 @@
     <PackageVersion Include="BenchmarkDotNet.Diagnostics.Windows" Version="$(BenchmarkDotNetVersion)" />
     <PackageVersion Include="DiffPlex" Version="$(DiffPlexVersion)" />
     <PackageVersion Include="FluentAssertions" Version="$(FluentAssertionsVersion)" />
+    <PackageVersion Include="Microsoft.AspNetCore.App.Runtime.win-x64" Version="$(MicrosoftAspNetCoreAppVersion)" />
     <PackageVersion Include="Microsoft.Build.Framework" Version="$(MicrosoftBuildFrameworkVersion)" />
     <PackageVersion Include="Microsoft.Build.Locator" Version="$(MicrosoftBuildLocatorVersion)" />
     <PackageVersion Include="Microsoft.Build.Utilities.Core" Version="$(MicrosoftBuildUtilitiesCoreVersion)" />
@@ -26,7 +27,6 @@
     <PackageVersion Include="xunit.extensibility.execution" Version="$(XunitExtensibilityExecutionVersion)" />
     <!-- Temporarily force analyzers to match compiler version https://github.com/dotnet/razor-tooling/issues/6758 -->
     <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="$(Tooling_MicrosoftCodeAnalysisAnalyzersPackageVersion)" NoWarn="NU1608" />
-    <PackageVersion Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="$(Tooling_MicrosoftCodeAnalysisNetAnalyzersPackageVersion)" NoWarn="NU1608" />
     <PackageVersion Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="$(Tooling_MicrosoftCodeAnalysisBannedApiAnalyzersPackageVersion)" />
     <PackageVersion Include="Roslyn.Diagnostics.Analyzers" Version="$(Tooling_RoslynDiagnosticsAnalyzersPackageVersion)" />
     <PackageVersion Include="System.Collections.Immutable" Version="$(SystemCollectionsImmutablePackageVersion)" />

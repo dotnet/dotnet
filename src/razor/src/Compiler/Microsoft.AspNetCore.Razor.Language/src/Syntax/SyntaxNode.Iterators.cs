@@ -5,6 +5,8 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.Extensions.ObjectPool;
 
 namespace Microsoft.AspNetCore.Razor.Language.Syntax;
 
@@ -44,7 +46,30 @@ internal abstract partial class SyntaxNode
 
     private struct ChildSyntaxListEnumeratorStack : IDisposable
     {
-        private static readonly ObjectPool<ChildSyntaxList.Enumerator[]> StackPool = new ObjectPool<ChildSyntaxList.Enumerator[]>(() => new ChildSyntaxList.Enumerator[16]);
+        private sealed class Policy : IPooledObjectPolicy<ChildSyntaxList.Enumerator[]>
+        {
+            public static readonly Policy Instance = new();
+
+            private Policy()
+            {
+            }
+
+            public ChildSyntaxList.Enumerator[] Create() => new ChildSyntaxList.Enumerator[16];
+
+            public bool Return(ChildSyntaxList.Enumerator[] stack)
+            {
+                // Return only reasonably-sized stacks to the pool.
+                if (stack.Length < 256)
+                {
+                    Array.Clear(stack, 0, stack.Length);
+                    return true;
+                }
+
+                return false;
+            }
+        }
+
+        private static readonly ObjectPool<ChildSyntaxList.Enumerator[]> StackPool = DefaultPool.Create(Policy.Instance);
 
         private ChildSyntaxList.Enumerator[] _stack;
         private int _stackPtr;
@@ -53,7 +78,7 @@ internal abstract partial class SyntaxNode
         {
             if (descendIntoChildren == null || descendIntoChildren(startingNode))
             {
-                _stack = StackPool.Allocate();
+                _stack = StackPool.Get();
                 _stackPtr = 0;
                 _stack[0].InitializeFrom(startingNode);
             }
@@ -116,11 +141,9 @@ internal abstract partial class SyntaxNode
 
         public void Dispose()
         {
-            // Return only reasonably-sized stacks to the pool.
-            if (_stack?.Length < 256)
+            if (_stack is { } stack)
             {
-                Array.Clear(_stack, 0, _stack.Length);
-                StackPool.Free(_stack);
+                StackPool.Return(stack);
             }
         }
     }

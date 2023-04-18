@@ -50,11 +50,12 @@ namespace NuGet.Versioning.Test
         public void NuGetVersionParseStrict(string versionString)
         {
             // Arrange
-            NuGetVersion semVer = null;
-            NuGetVersion.TryParseStrict(versionString, out semVer);
+            NuGetVersion? semVer;
+            bool successful = NuGetVersion.TryParseStrict(versionString, out semVer);
 
             // Assert
-            Assert.Equal<string>(versionString, semVer.ToFullString());
+            Assert.True(successful);
+            Assert.Equal<string>(versionString, semVer!.ToFullString());
             Assert.Equal<string>(semVer.ToNormalizedString(), semVer.ToString());
         }
 
@@ -81,7 +82,7 @@ namespace NuGet.Versioning.Test
         [Fact]
         public void ParseThrowsIfStringIsNullOrEmpty()
         {
-            ExceptionAssert.ThrowsArgNullOrEmpty(() => NuGetVersion.Parse(null), "value");
+            ExceptionAssert.ThrowsArgNullOrEmpty(() => NuGetVersion.Parse(null!), "value");
             ExceptionAssert.ThrowsArgNullOrEmpty(() => NuGetVersion.Parse(string.Empty), "value");
         }
 
@@ -236,16 +237,16 @@ namespace NuGet.Versioning.Test
         public void SemVerEqualityComparisonsWorkForNullValues()
         {
             // Arrange
-            NuGetVersion itemA = null;
-            NuGetVersion itemB = null;
+            NuGetVersion? itemA = null;
+            NuGetVersion? itemB = null;
 
             // Act and Assert
             Assert.True(itemA == itemB);
             Assert.True(itemB == itemA);
-            Assert.True(itemA <= itemB);
-            Assert.True(itemB <= itemA);
-            Assert.True(itemA >= itemB);
-            Assert.True(itemB >= itemA);
+            Assert.True(itemA! <= itemB!);
+            Assert.True(itemB! <= itemA!);
+            Assert.True(itemA! >= itemB!);
+            Assert.True(itemB! >= itemA!);
         }
 
         [Theory]
@@ -336,12 +337,12 @@ namespace NuGet.Versioning.Test
             var versionString = "1.3.2-CTP-2-Refresh-Alpha";
 
             // Act
-            NuGetVersion version;
+            NuGetVersion? version;
             var result = NuGetVersion.TryParseStrict(versionString, out version);
 
             // Assert
             Assert.True(result);
-            Assert.Equal(new Version("1.3.2.0"), version.Version);
+            Assert.Equal(new Version("1.3.2.0"), version!.Version);
             Assert.Equal("CTP-2-Refresh-Alpha", version.Release);
         }
 
@@ -355,7 +356,7 @@ namespace NuGet.Versioning.Test
         public void TryParseReturnsFalseWhenUnableToParseString(string versionString)
         {
             // Act
-            NuGetVersion version;
+            NuGetVersion? version;
             var result = NuGetVersion.TryParseStrict(versionString, out version);
 
             // Assert

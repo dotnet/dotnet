@@ -65,8 +65,10 @@ public class DefaultTestHostManager : ITestRuntimeProvider2
     private ITestHostLauncher? _customTestHostLauncher;
     private Process? _testHostProcess;
     private StringBuilder? _testHostProcessStdError;
+    private StringBuilder? _testHostProcessStdOut;
     private IMessageLogger? _messageLogger;
     private bool _hostExitedEventRaised;
+    private TestHostManagerCallbacks? _testhostManagerCallbacks;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DefaultTestHostManager"/> class.
@@ -123,6 +125,7 @@ public class DefaultTestHostManager : ITestRuntimeProvider2
     private Action<object?> ExitCallBack => process =>
     {
         TPDebug.Assert(_testHostProcessStdError is not null, "LaunchTestHostAsync must have been called before ExitCallBack");
+        TPDebug.Assert(_testhostManagerCallbacks is not null, "Initialize must have been called before ExitCallBack");
         TestHostManagerCallbacks.ExitCallBack(_processHelper, process, _testHostProcessStdError, OnHostExited);
     };
 
@@ -132,7 +135,18 @@ public class DefaultTestHostManager : ITestRuntimeProvider2
     private Action<object?, string?> ErrorReceivedCallback => (process, data) =>
     {
         TPDebug.Assert(_testHostProcessStdError is not null, "LaunchTestHostAsync must have been called before ErrorReceivedCallback");
-        TestHostManagerCallbacks.ErrorReceivedCallback(_testHostProcessStdError, data);
+        TPDebug.Assert(_testhostManagerCallbacks is not null, "Initialize must have been called before ErrorReceivedCallback");
+        _testhostManagerCallbacks.ErrorReceivedCallback(_testHostProcessStdError, data);
+    };
+
+    /// <summary>
+    /// Gets callback to read from process error stream
+    /// </summary>
+    private Action<object?, string?> OutputReceivedCallback => (process, data) =>
+    {
+        TPDebug.Assert(_testHostProcessStdOut is not null, "LaunchTestHostAsync must have been called before OutputReceivedCallback");
+        TPDebug.Assert(_testhostManagerCallbacks is not null, "Initialize must have been called before OutputReceivedCallback");
+        _testhostManagerCallbacks.StandardOutputReceivedCallback(_testHostProcessStdOut, data);
     };
 
     /// <inheritdoc/>
@@ -357,6 +371,7 @@ public class DefaultTestHostManager : ITestRuntimeProvider2
         var runConfiguration = XmlRunSettingsUtilities.GetRunConfigurationNode(runsettingsXml);
 
         _messageLogger = logger;
+        _testhostManagerCallbacks = new TestHostManagerCallbacks(_environmentVariableHelper.GetEnvironmentVariable("VSTEST_EXPERIMENTAL_FORWARD_OUTPUT_FEATURE") == "1", logger);
         _architecture = runConfiguration.TargetPlatform;
         _targetFramework = runConfiguration.TargetFramework;
         _testHostProcess = null;
@@ -454,7 +469,7 @@ public class DefaultTestHostManager : ITestRuntimeProvider2
         }
 
         // Log warning if conflicting version extensions are found
-        if (conflictingExtensions.Any())
+        if (conflictingExtensions.Count != 0)
         {
             var extensionsString = string.Join("\n", conflictingExtensions.Select(kv => $"  {kv.Key} : {kv.Value}"));
             string message = string.Format(CultureInfo.CurrentCulture, Resources.MultipleFileVersions, extensionsString);
@@ -498,6 +513,7 @@ public class DefaultTestHostManager : ITestRuntimeProvider2
     private bool LaunchHost(TestProcessStartInfo testHostStartInfo, CancellationToken cancellationToken)
     {
         _testHostProcessStdError = new StringBuilder(0, CoreUtilities.Constants.StandardErrorMaxLength);
+        _testHostProcessStdOut = new StringBuilder(0, CoreUtilities.Constants.StandardErrorMaxLength);
         EqtTrace.Verbose("Launching default test Host Process {0} with arguments {1}", testHostStartInfo.FileName, testHostStartInfo.Arguments);
 
         // We launch the test host process here if we're on the normal test running workflow.
@@ -519,7 +535,7 @@ public class DefaultTestHostManager : ITestRuntimeProvider2
                 testHostStartInfo.EnvironmentVariables,
                 ErrorReceivedCallback,
                 ExitCallBack,
-                null) as Process;
+                OutputReceivedCallback) as Process;
         }
         else
         {

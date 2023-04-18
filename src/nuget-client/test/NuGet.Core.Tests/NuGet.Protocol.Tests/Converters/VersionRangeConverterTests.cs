@@ -75,7 +75,7 @@ namespace NuGet.Protocol.Tests
         [Fact]
         public void WriteJson_WritesWildCardVersionRangeToString()
         {
-            var versionRange = new VersionRange(null, true, null, true, new FloatRange(NuGetVersionFloatBehavior.Major), originalString: "*");
+            var versionRange = VersionRange.Parse("*");
 
             using (var stringWriter = new StringWriter())
             using (var jsonWriter = new JsonTextWriter(stringWriter))

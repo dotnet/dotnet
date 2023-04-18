@@ -6,22 +6,19 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
+using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentColor;
 
-internal class DocumentColorEndpoint : IDocumentColorEndpoint
+[LanguageServerEndpoint(Methods.TextDocumentDocumentColorName)]
+internal sealed class DocumentColorEndpoint : IRazorRequestHandler<DocumentColorParams, ColorInformation[]>, IRegistrationExtension
 {
     private readonly ClientNotifierServiceBase _languageServer;
 
     public DocumentColorEndpoint(ClientNotifierServiceBase languageServer)
     {
-        if (languageServer is null)
-        {
-            throw new ArgumentNullException(nameof(languageServer));
-        }
-
-        _languageServer = languageServer;
+        _languageServer = languageServer ?? throw new ArgumentNullException(nameof(languageServer));
     }
 
     public bool MutatesSolutionState => false;
@@ -35,12 +32,18 @@ internal class DocumentColorEndpoint : IDocumentColorEndpoint
     }
 
     public TextDocumentIdentifier GetTextDocumentIdentifier(DocumentColorParams request)
-    {
-        return request.TextDocument;
-    }
+        => request.TextDocument;
 
     public async Task<ColorInformation[]> HandleRequestAsync(DocumentColorParams request, RazorRequestContext requestContext, CancellationToken cancellationToken)
     {
+        // Workaround for Web Tools bug https://devdiv.visualstudio.com/DevDiv/_workitems/edit/1743689 where they sometimes
+        // send requests for filenames that are stale, possibly due to adornment taggers being cached incorrectly (or caching
+        // filenames incorrectly)
+        if (requestContext.DocumentContext is null)
+        {
+            return Array.Empty<ColorInformation>();
+        }
+
         var delegatedRequest = new DelegatedDocumentColorParams()
         {
             HostDocumentVersion = requestContext.GetRequiredDocumentContext().Version,

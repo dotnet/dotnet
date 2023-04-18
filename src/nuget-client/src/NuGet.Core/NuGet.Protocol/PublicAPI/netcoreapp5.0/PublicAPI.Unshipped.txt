@@ -1,1 +1,30 @@
 #nullable enable
+NuGet.Protocol.Model.GetVulnerabilityInfoResult.GetVulnerabilityInfoResult(System.Collections.Generic.IReadOnlyList<System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Model.PackageVulnerabilityInfo!>!>!>? knownVulnerabilities, System.AggregateException? exceptions) -> void
+NuGet.Protocol.Model.GetVulnerabilityInfoResult.KnownVulnerabilities.get -> System.Collections.Generic.IReadOnlyList<System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Model.PackageVulnerabilityInfo!>!>!>?
+NuGet.Protocol.Model.PackageVulnerabilityInfo
+NuGet.Protocol.Model.PackageVulnerabilityInfo.Equals(NuGet.Protocol.Model.PackageVulnerabilityInfo? other) -> bool
+NuGet.Protocol.Model.PackageVulnerabilityInfo.PackageVulnerabilityInfo(System.Uri! url, int severity, NuGet.Versioning.VersionRange! versions) -> void
+NuGet.Protocol.Model.PackageVulnerabilityInfo.Severity.get -> int
+NuGet.Protocol.Model.PackageVulnerabilityInfo.Url.get -> System.Uri!
+NuGet.Protocol.Model.PackageVulnerabilityInfo.Versions.get -> NuGet.Versioning.VersionRange!
+NuGet.Protocol.Model.V3VulnerabilityIndexEntry.Updated.get -> string!
+NuGet.Protocol.Model.V3VulnerabilityIndexEntry.V3VulnerabilityIndexEntry(string! name, System.Uri! url, string! updated, string? comment) -> void
+NuGet.Protocol.Resources.VulnerabilityInfoResourceV3.GetVulnerabilityDataAsync(NuGet.Protocol.Model.V3VulnerabilityIndexEntry! vulnerabilityPage, NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Model.PackageVulnerabilityInfo!>!>!>!
+override NuGet.Protocol.Model.PackageVulnerabilityInfo.Equals(object? obj) -> bool
+override NuGet.Protocol.Model.PackageVulnerabilityInfo.GetHashCode() -> int
+~static readonly NuGet.Protocol.ServiceTypes.Version300rc -> string
+~static readonly NuGet.Protocol.ServiceTypes.Version360 -> string
+NuGet.Protocol.IVulnerabilityInfoResource
+NuGet.Protocol.IVulnerabilityInfoResource.GetVulnerabilityInfoAsync(NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.Protocol.Model.GetVulnerabilityInfoResult!>!
+NuGet.Protocol.Model.GetVulnerabilityInfoResult
+NuGet.Protocol.Model.GetVulnerabilityInfoResult.Exceptions.get -> System.AggregateException?
+NuGet.Protocol.Model.V3VulnerabilityIndexEntry
+NuGet.Protocol.Model.V3VulnerabilityIndexEntry.Comment.get -> string?
+NuGet.Protocol.Model.V3VulnerabilityIndexEntry.Name.get -> string!
+NuGet.Protocol.Model.V3VulnerabilityIndexEntry.Url.get -> System.Uri!
+NuGet.Protocol.Providers.VulnerabilityInfoResourceV3Provider
+NuGet.Protocol.Providers.VulnerabilityInfoResourceV3Provider.VulnerabilityInfoResourceV3Provider() -> void
+NuGet.Protocol.Resources.VulnerabilityInfoResourceV3
+NuGet.Protocol.Resources.VulnerabilityInfoResourceV3.GetVulnerabilityFilesAsync(NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! log, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Model.V3VulnerabilityIndexEntry!>!>!
+NuGet.Protocol.Resources.VulnerabilityInfoResourceV3.GetVulnerabilityInfoAsync(NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.Protocol.Model.GetVulnerabilityInfoResult!>!
+override NuGet.Protocol.Providers.VulnerabilityInfoResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!

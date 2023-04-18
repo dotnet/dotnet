@@ -12,10 +12,12 @@ namespace Microsoft.AspNetCore.Razor.Language.Components;
 internal class ComponentCodeTarget : CodeTarget
 {
     private readonly RazorCodeGenerationOptions _options;
+    private readonly RazorLanguageVersion _version;
 
-    public ComponentCodeTarget(RazorCodeGenerationOptions options, IEnumerable<ICodeTargetExtension> extensions)
+    public ComponentCodeTarget(RazorCodeGenerationOptions options, RazorLanguageVersion version, IEnumerable<ICodeTargetExtension> extensions)
     {
         _options = options;
+        _version = version;
 
         // Components provide some built-in target extensions that don't apply to
         // legacy documents.
@@ -26,7 +28,9 @@ internal class ComponentCodeTarget : CodeTarget
 
     public override IntermediateNodeWriter CreateNodeWriter()
     {
-        return _options.DesignTime ? (IntermediateNodeWriter)new ComponentDesignTimeNodeWriter() : new ComponentRuntimeNodeWriter();
+        return _options.DesignTime
+            ? new ComponentDesignTimeNodeWriter(_version)
+            : new ComponentRuntimeNodeWriter(_version);
     }
 
     public override TExtension GetExtension<TExtension>()

@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IsPackable Condition=" '$(DotNetBuildFromSource)' != 'true' ">true</IsPackable>
+    <!-- This is an internal package not meant to be published outside -->
+    <IsShippingPackage>false</IsShippingPackage>
+    <NuspecFile>Microsoft.TestPlatform.Internal.Uwp.nuspec</NuspecFile>
+    <NuspecBasePath>$(OutputPath)</NuspecBasePath>
+    <PackageId>Microsoft.TestPlatform.Internal.Uwp</PackageId>
+    <PackageTags>vstest visual-studio unittest testplatform mstest microsoft test testing</PackageTags>
+    <PackageDescription>
+      Internal Microsoft Test Platform libraries for UWP runner.
+    </PackageDescription>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Microsoft.TestPlatform.ObjectModel\Microsoft.TestPlatform.ObjectModel.csproj" />
+    <ProjectReference Include="..\..\Microsoft.TestPlatform.CrossPlatEngine\Microsoft.TestPlatform.CrossPlatEngine.csproj" />
+  </ItemGroup>
+</Project>

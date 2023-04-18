@@ -56,7 +56,7 @@ namespace NuGet.Packaging.Signing
             using (X509ChainHolder chainHolder = certificateType == CertificateType.Signature
                 ? X509ChainHolder.CreateForCodeSigning() : X509ChainHolder.CreateForTimestamping())
             {
-                var chain = chainHolder.Chain;
+                IX509Chain chain = chainHolder.Chain2;
 
                 SetCertBuildChainPolicy(
                     chain.ChainPolicy,
@@ -68,7 +68,7 @@ namespace NuGet.Packaging.Signing
 
                 if (BuildWithPolicy(chain, certificate))
                 {
-                    return GetCertificateChain(chain);
+                    return GetCertificateChain(chain.PrivateReference);
                 }
 
                 X509ChainStatusFlags errorStatusFlags;
@@ -78,6 +78,8 @@ namespace NuGet.Packaging.Signing
 
                 var fatalStatuses = new List<X509ChainStatus>();
                 var logCode = certificateType == CertificateType.Timestamp ? NuGetLogCode.NU3028 : NuGetLogCode.NU3018;
+
+                LogAdditionalContext(chain, logger);
 
                 foreach (var chainStatus in chain.ChainStatus)
                 {
@@ -102,7 +104,7 @@ namespace NuGet.Packaging.Signing
                     throw new SignatureException(logCode, Strings.CertificateChainValidationFailed);
                 }
 
-                return GetCertificateChain(chain);
+                return GetCertificateChain(chain.PrivateReference);
             }
         }
 
@@ -178,7 +180,7 @@ namespace NuGet.Packaging.Signing
             }
         }
 
-        internal static bool BuildCertificateChain(X509Chain chain, X509Certificate2 certificate, out X509ChainStatus[] status)
+        internal static bool BuildCertificateChain(IX509Chain chain, X509Certificate2 certificate, out X509ChainStatus[] status)
         {
             if (certificate == null)
             {
@@ -193,7 +195,7 @@ namespace NuGet.Packaging.Signing
             return buildSuccess && !CertificateUtility.IsCertificateValidityPeriodInTheFuture(certificate);
         }
 
-        internal static bool BuildWithPolicy(X509Chain chain, X509Certificate2 certificate)
+        internal static bool BuildWithPolicy(IX509Chain chain, X509Certificate2 certificate)
         {
             if (chain is null)
             {
@@ -251,6 +253,16 @@ namespace NuGet.Packaging.Signing
                 .Select(x => $"{x.Status}: {x.StatusInformation?.Trim()}")
                 .Distinct(StringComparer.Ordinal)
                 .OrderBy(x => x, StringComparer.Ordinal);
+        }
+
+        private static void LogAdditionalContext(IX509Chain chain, ILogger logger)
+        {
+            ILogMessage additionalContext = chain.AdditionalContext;
+
+            if (additionalContext is not null)
+            {
+                logger.Log(additionalContext);
+            }
         }
     }
 }

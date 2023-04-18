@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TestPlatformRoot Condition="$(TestPlatformRoot) == ''">..\..\</TestPlatformRoot>
     <TestProject>true</TestProject>
     <IsTestProject>true</IsTestProject>
     <!-- NU1702 suppresses warning about testhost being .NET Framework reference imported to a .NET project.
@@ -11,16 +10,16 @@
     -->
     <MSBuildWarningsAsMessages>$(MSBuildWarningsAsMessages);NU1702</MSBuildWarningsAsMessages>
     <!-- MSB3270 Suppress warnings about testhost being x64 (AMD64)/x86 when imported into AnyCPU (MSIL) projects. -->
+    <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
     <!-- MSB3276 Suppress warnings about conflicts between different versions of the same dependent assembly -->
-    <MSBuildWarningsAsMessages>$(MSBuildWarningsAsMessages);MSB3270;MSB3276</MSBuildWarningsAsMessages>
+    <MSBuildWarningsAsMessages>$(MSBuildWarningsAsMessages);MSB3276</MSBuildWarningsAsMessages>
   </PropertyGroup>
-  <Import Project="$(TestPlatformRoot)scripts/build/TestPlatform.Settings.targets" />
+
   <PropertyGroup Label="Configuration">
     <RootNamespace>Microsoft.TestPlatform.Extensions.BlameDataCollector.UnitTests</RootNamespace>
   </PropertyGroup>
   <PropertyGroup>
     <TargetFrameworks>net6.0;net48</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(DotNetBuildFromSource)' == 'true' ">netcoreapp3.1</TargetFrameworks>
     <OutputType Condition=" $(TargetFramework.StartsWith('net6')) ">Exe</OutputType>
     <AssemblyName>Microsoft.TestPlatform.Extensions.BlameDataCollector.UnitTests</AssemblyName>
   </PropertyGroup>
@@ -38,5 +37,5 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Xml" />
   </ItemGroup>
-  <Import Project="$(TestPlatformRoot)scripts\build\TestPlatform.targets" />
+
 </Project>

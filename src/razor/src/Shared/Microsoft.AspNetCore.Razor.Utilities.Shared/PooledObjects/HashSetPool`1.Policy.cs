@@ -12,11 +12,14 @@ internal static partial class HashSetPool<T>
     {
         public static readonly Policy Instance = new();
 
-        private Policy()
+        private readonly IEqualityComparer<T>? _comparer;
+
+        public Policy(IEqualityComparer<T>? comparer = null)
         {
+            _comparer = comparer;
         }
 
-        public HashSet<T> Create() => new();
+        public HashSet<T> Create() => new(_comparer);
 
         public bool Return(HashSet<T> set)
         {

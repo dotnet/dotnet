@@ -1,5 +1,10 @@
 <Project Sdk="Microsoft.Build.Traversal">
 
+  <PropertyGroup>
+    <!-- Disable target framework filtering for top level projects -->
+    <NoTargetFrameworkFiltering>true</NoTargetFrameworkFiltering>
+  </PropertyGroup>
+
   <!--
     Subsets are already imported by Directory.Build.props.
     Reference the projects for traversal build. Ordering matters here.

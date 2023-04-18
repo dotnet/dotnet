@@ -26,7 +26,7 @@ namespace NuGet.Versioning.Test
         public void SemVerVersionMustBe3Parts(string version, bool expected)
         {
             // Arrange & act
-            SemanticVersion semVer = null;
+            SemanticVersion? semVer = null;
             var valid = SemanticVersion.TryParse(version, out semVer);
 
             // Assert
@@ -41,7 +41,7 @@ namespace NuGet.Versioning.Test
         public void SemVerVersionNegativeNumbers(string versionString)
         {
             // Arrange & act
-            SemanticVersion semVer = null;
+            SemanticVersion? semVer = null;
             var valid = SemanticVersion.TryParse(versionString, out semVer);
 
             // Assert
@@ -58,7 +58,7 @@ namespace NuGet.Versioning.Test
         public void SemVerVersionLeadingZeros(string versionString)
         {
             // Arrange & act
-            SemanticVersion semVer = null;
+            SemanticVersion? semVer = null;
             var valid = SemanticVersion.TryParse(versionString, out semVer);
 
             // Assert
@@ -73,7 +73,7 @@ namespace NuGet.Versioning.Test
         public void SemVerVersionValidZeros(string versionString)
         {
             // Arrange & act
-            SemanticVersion semVer = null;
+            SemanticVersion? semVer = null;
             var valid = SemanticVersion.TryParse(versionString, out semVer);
 
             // Assert
@@ -92,7 +92,7 @@ namespace NuGet.Versioning.Test
         public void SemVerVersionValidReleaseLabels(string versionString)
         {
             // Arrange & act
-            SemanticVersion semVer = null;
+            SemanticVersion? semVer = null;
             var valid = SemanticVersion.TryParse(versionString, out semVer);
 
             // Assert
@@ -108,7 +108,7 @@ namespace NuGet.Versioning.Test
         public void SemVerVersionInvalidReleaseId(string versionString)
         {
             // Arrange & act
-            SemanticVersion semVer = null;
+            SemanticVersion? semVer = null;
             var valid = SemanticVersion.TryParse(versionString, out semVer);
 
             // Assert
@@ -124,7 +124,7 @@ namespace NuGet.Versioning.Test
         public void SemVerVersionInvalidReleaseLabelChars(string versionString)
         {
             // Arrange & act
-            SemanticVersion semVer = null;
+            SemanticVersion? semVer = null;
             var valid = SemanticVersion.TryParse(versionString, out semVer);
 
             // Assert
@@ -140,7 +140,7 @@ namespace NuGet.Versioning.Test
         public void SemVerVersionReleaseLabelZeros(string versionString)
         {
             // Arrange & act
-            SemanticVersion semVer = null;
+            SemanticVersion? semVer = null;
             var valid = SemanticVersion.TryParse(versionString, out semVer);
 
             // Assert
@@ -156,7 +156,7 @@ namespace NuGet.Versioning.Test
         public void SemVerVersionReleaseLabelValidZeros(string versionString)
         {
             // Arrange & act
-            SemanticVersion semVer = null;
+            SemanticVersion? semVer = null;
             var valid = SemanticVersion.TryParse(versionString, out semVer);
 
             // Assert
@@ -176,7 +176,7 @@ namespace NuGet.Versioning.Test
         public void SemVerVersionMetadataValidChars(string versionString)
         {
             // Arrange & act
-            SemanticVersion semVer = null;
+            SemanticVersion? semVer = null;
             var valid = SemanticVersion.TryParse(versionString, out semVer);
 
             // Assert
@@ -191,7 +191,7 @@ namespace NuGet.Versioning.Test
         public void SemVerVersionMetadataInvalidChars(string versionString)
         {
             // Arrange & act
-            SemanticVersion semVer = null;
+            SemanticVersion? semVer = null;
             var valid = SemanticVersion.TryParse(versionString, out semVer);
 
             // Assert
@@ -206,7 +206,7 @@ namespace NuGet.Versioning.Test
         public void SemVerVersionMetadataNonEmptyParts(string versionString)
         {
             // Arrange & act
-            SemanticVersion semVer = null;
+            SemanticVersion? semVer = null;
             var valid = SemanticVersion.TryParse(versionString, out semVer);
 
             // Assert
@@ -222,7 +222,7 @@ namespace NuGet.Versioning.Test
         public void SemVerVersionMetadataLeadingZeros(string versionString)
         {
             // Arrange & act
-            SemanticVersion semVer = null;
+            SemanticVersion? semVer = null;
             var valid = SemanticVersion.TryParse(versionString, out semVer);
 
             // Assert
@@ -235,12 +235,12 @@ namespace NuGet.Versioning.Test
         public void SemVerVersionMetadataOrder(string versionString)
         {
             // Arrange & act
-            SemanticVersion semVer = null;
+            SemanticVersion? semVer = null;
             var valid = SemanticVersion.TryParse(versionString, out semVer);
 
             // Assert
             Assert.True(valid);
-            Assert.False(semVer.IsPrerelease);
+            Assert.False(semVer!.IsPrerelease);
         }
 
         // Precedence is determined by the first difference when comparing each of these identifiers from left to right as follows: Major, minor, and patch versions are always compared numerically
@@ -251,12 +251,12 @@ namespace NuGet.Versioning.Test
         public void SemVerSortVersion(string lower, string higher)
         {
             // Arrange & act
-            SemanticVersion lowerSemVer = null, higherSemVer = null;
+            SemanticVersion? lowerSemVer = null, higherSemVer = null;
             SemanticVersion.TryParse(lower, out lowerSemVer);
             SemanticVersion.TryParse(higher, out higherSemVer);
 
             // Assert
-            Assert.True(VersionComparer.Default.Compare(lowerSemVer, higherSemVer) < 0);
+            Assert.True(VersionComparer.Default.Compare(lowerSemVer!, higherSemVer!) < 0);
         }
 
         // a pre-release version has lower precedence than a normal version
@@ -265,12 +265,12 @@ namespace NuGet.Versioning.Test
         public void SemVerSortRelease(string lower, string higher)
         {
             // Arrange & act
-            SemanticVersion lowerSemVer = null, higherSemVer = null;
+            SemanticVersion? lowerSemVer = null, higherSemVer = null;
             SemanticVersion.TryParse(lower, out lowerSemVer);
             SemanticVersion.TryParse(higher, out higherSemVer);
 
             // Assert
-            Assert.True(VersionComparer.Default.Compare(lowerSemVer, higherSemVer) < 0);
+            Assert.True(VersionComparer.Default.Compare(lowerSemVer!, higherSemVer!) < 0);
         }
 
         // identifiers consisting of only digits are compared numerically
@@ -280,12 +280,12 @@ namespace NuGet.Versioning.Test
         public void SemVerSortReleaseNumeric(string lower, string higher)
         {
             // Arrange & act
-            SemanticVersion lowerSemVer = null, higherSemVer = null;
+            SemanticVersion? lowerSemVer = null, higherSemVer = null;
             SemanticVersion.TryParse(lower, out lowerSemVer);
             SemanticVersion.TryParse(higher, out higherSemVer);
 
             // Assert
-            Assert.True(VersionComparer.Default.Compare(lowerSemVer, higherSemVer) < 0);
+            Assert.True(VersionComparer.Default.Compare(lowerSemVer!, higherSemVer!) < 0);
         }
 
         // identifiers with letters or hyphens are compared lexically in ASCII sort order
@@ -295,12 +295,12 @@ namespace NuGet.Versioning.Test
         public void SemVerSortReleaseAlpha(string lower, string higher)
         {
             // Arrange & act
-            SemanticVersion lowerSemVer = null, higherSemVer = null;
+            SemanticVersion? lowerSemVer = null, higherSemVer = null;
             SemanticVersion.TryParse(lower, out lowerSemVer);
             SemanticVersion.TryParse(higher, out higherSemVer);
 
             // Assert
-            Assert.True(VersionComparer.Default.Compare(lowerSemVer, higherSemVer) < 0);
+            Assert.True(VersionComparer.Default.Compare(lowerSemVer!, higherSemVer!) < 0);
         }
 
         // Numeric identifiers always have lower precedence than non-numeric identifiers
@@ -310,12 +310,12 @@ namespace NuGet.Versioning.Test
         public void SemVerSortNumericAlpha(string lower, string higher)
         {
             // Arrange & act
-            SemanticVersion lowerSemVer = null, higherSemVer = null;
+            SemanticVersion? lowerSemVer = null, higherSemVer = null;
             SemanticVersion.TryParse(lower, out lowerSemVer);
             SemanticVersion.TryParse(higher, out higherSemVer);
 
             // Assert
-            Assert.True(VersionComparer.Default.Compare(lowerSemVer, higherSemVer) < 0);
+            Assert.True(VersionComparer.Default.Compare(lowerSemVer!, higherSemVer!) < 0);
         }
 
         // A larger set of pre-release fields has a higher precedence than a smaller set
@@ -325,12 +325,12 @@ namespace NuGet.Versioning.Test
         public void SemVerSortReleaseLabelCount(string lower, string higher)
         {
             // Arrange & act
-            SemanticVersion lowerSemVer = null, higherSemVer = null;
+            SemanticVersion? lowerSemVer = null, higherSemVer = null;
             SemanticVersion.TryParse(lower, out lowerSemVer);
             SemanticVersion.TryParse(higher, out higherSemVer);
 
             // Assert
-            Assert.True(VersionComparer.Default.Compare(lowerSemVer, higherSemVer) < 0);
+            Assert.True(VersionComparer.Default.Compare(lowerSemVer!, higherSemVer!) < 0);
         }
 
         // ignore release label casing
@@ -340,12 +340,12 @@ namespace NuGet.Versioning.Test
         public void SemVerSortIgnoreReleaseCasing(string a, string b)
         {
             // Arrange & act
-            SemanticVersion semVerA = null, semVerB = null;
+            SemanticVersion? semVerA = null, semVerB = null;
             SemanticVersion.TryParse(a, out semVerA);
             SemanticVersion.TryParse(b, out semVerB);
 
             // Assert
-            Assert.True(VersionComparer.Default.Equals(semVerA, semVerB));
+            Assert.True(VersionComparer.Default.Equals(semVerA!, semVerB!));
         }
     }
 }

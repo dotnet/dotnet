@@ -1,12 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <!-- Package dependency versions -->
   <PropertyGroup>
-    <TestPlatformRoot Condition="$(TestPlatformRoot) == ''">..\..\..\</TestPlatformRoot>
     <TestProject>true</TestProject>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
-  <!-- Imports Common TestAssets props. -->
-  <Import Project="..\..\..\scripts\build\TestAssets.props" />
 
   <PropertyGroup>
     <TargetFrameworks>net7.0;net6.0;net5.0</TargetFrameworks>
@@ -15,12 +12,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(NETTestSdkVersion)" />
-    <PackageReference Include="MSTest.TestAdapter" Version="$(MSTestAdapterVersion)" />
-    <PackageReference Include="MSTest.TestFramework" Version="$(MSTestFrameworkVersion)" />
-    <PackageReference Include="Microsoft.CodeCoverage" Version="$(NETTestSdkVersion)" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(PackageVersion)" />
+    <PackageReference Include="MSTest.TestAdapter" Version="$(MSTestTestAdapterVersion)" />
+    <PackageReference Include="MSTest.TestFramework" Version="$(MSTestTestFrameworkVersion)" />
+    <PackageReference Include="Microsoft.CodeCoverage" Version="$(PackageVersion)" />
     <PackageReference Include="System.Memory" Version="4.5.4" />
     <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="4.3.0" />
   </ItemGroup>
-  <Import Project="$(TestPlatformRoot)scripts\build\TestPlatform.targets" />
+
 </Project>

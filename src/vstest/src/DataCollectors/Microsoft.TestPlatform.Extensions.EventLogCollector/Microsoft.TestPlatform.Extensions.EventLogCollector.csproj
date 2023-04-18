@@ -1,29 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TestPlatformRoot Condition="$(TestPlatformRoot) == ''">..\..\..\</TestPlatformRoot>
-  </PropertyGroup>
-  <Import Project="$(TestPlatformRoot)scripts/build/TestPlatform.Settings.targets" />
+
   <PropertyGroup>
     <AssemblyName>Microsoft.TestPlatform.Extensions.EventLogCollector</AssemblyName>
     <TargetFrameworks>net7.0;$(NetFrameworkMinimum)</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(DotNetBuildFromSource)' == 'true' ">net7.0</TargetFrameworks>
     <IsTestProject>false</IsTestProject>
     <UseBannedApiAnalyzers>true</UseBannedApiAnalyzers>
   </PropertyGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
+  <ItemGroup Condition=" '$(TargetFramework)' != '$(NetFrameworkMinimum)' ">
     <PackageReference Include="System.Diagnostics.EventLog" Version="5.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="$(TestPlatformRoot)src\Microsoft.TestPlatform.ObjectModel\Microsoft.TestPlatform.ObjectModel.csproj" />
-    <ProjectReference Include="$(TestPlatformRoot)src\Microsoft.TestPlatform.CoreUtilities\Microsoft.TestPlatform.CoreUtilities.csproj" />
+    <ProjectReference Include="$(RepoRoot)src\Microsoft.TestPlatform.ObjectModel\Microsoft.TestPlatform.ObjectModel.csproj" />
+    <ProjectReference Include="$(RepoRoot)src\Microsoft.TestPlatform.CoreUtilities\Microsoft.TestPlatform.CoreUtilities.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="$(TestPlatformRoot)src\Microsoft.TestPlatform.TestHostProvider\Properties\TestExtensionTypesAttribute.cs" Link="Properties\TestExtensionTypesAttribute.cs" />
-    <Compile Include="..\..\..\shared\NullableAttributes.cs" Link="NullableAttributes.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\Resources.resx" />
+    <Compile Include="$(RepoRoot)src\Microsoft.TestPlatform.TestHostProvider\Properties\TestExtensionTypesAttribute.cs" Link="Properties\TestExtensionTypesAttribute.cs" />
+    <Compile Include="$(RepoRoot)shared\NullableAttributes.cs" Link="NullableAttributes.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="Resources\Resources.resx">
@@ -65,5 +58,4 @@
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
-  <Import Project="$(TestPlatformRoot)scripts\build\TestPlatform.targets" />
 </Project>

@@ -10,7 +10,6 @@
 
 namespace NuGet.Versioning {
     using System;
-    using System.Reflection;
     
     
     /// <summary>
@@ -20,7 +19,7 @@ namespace NuGet.Versioning {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -40,7 +39,7 @@ namespace NuGet.Versioning {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("NuGet.Versioning.Resources", typeof(Resources).GetTypeInfo().Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("NuGet.Versioning.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -71,11 +70,38 @@ namespace NuGet.Versioning {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Parameter &apos;{0}&apos; cannot be null when parameter &apos;{1}&apos; is not null..
+        /// </summary>
+        internal static string CannotBeNullWhenParameterIsNotNull {
+            get {
+                return ResourceManager.GetString("CannotBeNullWhenParameterIsNotNull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; is not a valid float range string..
+        /// </summary>
+        internal static string InvalidFloatRangeValue {
+            get {
+                return ResourceManager.GetString("InvalidFloatRangeValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &apos;{0}&apos; is not a valid version string..
         /// </summary>
         internal static string Invalidvalue {
             get {
                 return ResourceManager.GetString("Invalidvalue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Type &apos;{0}&apos; is not supported..
+        /// </summary>
+        internal static string TypeNotSupported {
+            get {
+                return ResourceManager.GetString("TypeNotSupported", resourceCulture);
             }
         }
     }

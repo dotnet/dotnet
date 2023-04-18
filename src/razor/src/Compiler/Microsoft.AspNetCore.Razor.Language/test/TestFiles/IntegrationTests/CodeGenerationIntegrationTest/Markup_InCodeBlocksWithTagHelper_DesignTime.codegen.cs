@@ -13,7 +13,7 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
         private global::DivTagHelper __DivTagHelper;
         #pragma warning disable 219
         private void __RazorDirectiveTokenHelpers__() {
-        ((System.Action)(() => {
+        ((global::System.Action)(() => {
 #nullable restore
 #line 1 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocksWithTagHelper.cshtml"
 global::System.Object __typeHelper = "*, TestAssembly";

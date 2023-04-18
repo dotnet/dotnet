@@ -3,6 +3,7 @@
 #
 
 variables:
+- template: /eng/common/templates/variables/pool-providers.yml
 - name: Build.Repository.Clean
   value: true
 
@@ -31,7 +32,7 @@ stages:
       jobs:
       - job: Windows
         pool:
-          name: NetCore-Public
+          name: $(DncEngPublicBuildPool)
           demands: ImageOverride -equals windows.vs2019.amd64.open
 
         steps:

@@ -7,11 +7,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.DocumentColor;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
+using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.ColorPresentation;
 
-internal class ColorPresentationEndpoint : IColorPresentationEndpoint
+[LanguageServerEndpoint(ColorPresentationMethodName)]
+internal sealed class ColorPresentationEndpoint : IRazorRequestHandler<ColorPresentationParams, ColorPresentation[]>
 {
     public const string ColorPresentationMethodName = "textDocument/colorPresentation";
 
@@ -29,7 +31,8 @@ internal class ColorPresentationEndpoint : IColorPresentationEndpoint
 
     public bool MutatesSolutionState => false;
 
-    public TextDocumentIdentifier GetTextDocumentIdentifier(ColorPresentationParams request) => request.TextDocument;
+    public TextDocumentIdentifier GetTextDocumentIdentifier(ColorPresentationParams request)
+        => request.TextDocument;
 
     public async Task<ColorPresentation[]> HandleRequestAsync(ColorPresentationParams request, RazorRequestContext context, CancellationToken cancellationToken)
     {
@@ -42,7 +45,8 @@ internal class ColorPresentationEndpoint : IColorPresentationEndpoint
         var delegatedRequest = new DelegatedColorPresentationParams
         {
             RequiredHostDocumentVersion = documentContext.Version,
-            Color = request.Color, Range = request.Range,
+            Color = request.Color,
+            Range = request.Range,
             TextDocument = request.TextDocument
         };
 

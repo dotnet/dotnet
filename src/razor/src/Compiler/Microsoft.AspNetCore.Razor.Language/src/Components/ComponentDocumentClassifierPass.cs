@@ -14,6 +14,13 @@ namespace Microsoft.AspNetCore.Razor.Language.Components;
 
 internal class ComponentDocumentClassifierPass : DocumentClassifierPassBase
 {
+    private readonly RazorLanguageVersion _version;
+
+    public ComponentDocumentClassifierPass(RazorLanguageVersion version)
+    {
+        _version = version;
+    }
+
     public const string ComponentDocumentKind = "component.1.0";
 
     /// <summary>
@@ -46,7 +53,7 @@ internal class ComponentDocumentClassifierPass : DocumentClassifierPassBase
 
     protected override CodeTarget CreateTarget(RazorCodeDocument codeDocument, RazorCodeGenerationOptions options)
     {
-        return new ComponentCodeTarget(options, TargetExtensions);
+        return new ComponentCodeTarget(options, _version, TargetExtensions);
     }
 
     /// <inheritdoc />

@@ -7,17 +7,17 @@
 {0}</source>
         <target state="translated">Обнаружено несколько версий одного расширения. Выбрана самая поздняя версия.
 {0}</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="UnableToFindDepsFile">
         <source>Unable to find {0}. Make sure test project has a nuget reference of package "Microsoft.NET.Test.Sdk".</source>
         <target state="translated">Не удается найти {0}. Убедитесь, что в тестовом проекте есть ссылка NuGet на пакет "Microsoft.NET.Test.Sdk".</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="SuggestPublishTestProject">
         <source>Unable to find {0}. Please publish your test project and retry.</source>
         <target state="translated">Не удалось найти {0}. Опубликуйте тестовый проект и повторите попытку.</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="NoDotnetMuxerFoundForArchitecture">
         <source>Could not find '{0}' host for the '{1}' architecture.

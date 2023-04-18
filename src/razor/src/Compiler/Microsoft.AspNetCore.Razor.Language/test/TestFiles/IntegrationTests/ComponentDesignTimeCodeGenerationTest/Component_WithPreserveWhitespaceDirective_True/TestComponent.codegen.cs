@@ -12,7 +12,7 @@ namespace Test
     {
         #pragma warning disable 219
         private void __RazorDirectiveTokenHelpers__() {
-        ((System.Action)(() => {
+        ((global::System.Action)(() => {
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
 global::System.Boolean __typeHelper = true;

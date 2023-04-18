@@ -13,18 +13,18 @@ namespace OutOfProcDataCollector
     [DataCollectorTypeUri("my://sample/datacollector")]
     public class SampleDataCollector : DataCollector, ITestExecutionEnvironmentSpecifier
     {
-        int _i = 0;
-        private DataCollectionSink _dataCollectionSink;
-        private DataCollectionEnvironmentContext _context;
-        private DataCollectionLogger _logger;
+        int _i;
+        private DataCollectionSink? _dataCollectionSink;
+        private DataCollectionEnvironmentContext? _context;
+        private DataCollectionLogger? _logger;
         private readonly string _tempDirectoryPath = Environment.GetEnvironmentVariable("TEST_ASSET_SAMPLE_COLLECTOR_PATH") ?? Path.GetTempPath();
 
         public override void Initialize(
-            System.Xml.XmlElement configurationElement,
+            System.Xml.XmlElement? configurationElement,
             DataCollectionEvents events,
             DataCollectionSink dataSink,
             DataCollectionLogger logger,
-            DataCollectionEnvironmentContext environmentContext)
+            DataCollectionEnvironmentContext? environmentContext)
         {
 
             events.TestHostLaunched += TestHostLaunched_Handler;
@@ -37,40 +37,40 @@ namespace OutOfProcDataCollector
             _logger = logger;
         }
 
-        private void Events_TestCaseEnd(object sender, TestCaseEndEventArgs e)
+        private void Events_TestCaseEnd(object? sender, TestCaseEndEventArgs e)
         {
-            _logger.LogWarning(_context.SessionDataCollectionContext, "TestCaseEnded " + e.TestCaseName);
+            _logger!.LogWarning(_context!.SessionDataCollectionContext, "TestCaseEnded " + e.TestCaseName);
         }
 
-        private void Events_TestCaseStart(object sender, TestCaseStartEventArgs e)
+        private void Events_TestCaseStart(object? sender, TestCaseStartEventArgs e)
         {
-            _logger.LogWarning(_context.SessionDataCollectionContext, "TestCaseStarted " + e.TestCaseName);
-            _logger.LogWarning(_context.SessionDataCollectionContext, "TestCaseStarted " + e.TestElement.FullyQualifiedName);
+            _logger!.LogWarning(_context!.SessionDataCollectionContext, "TestCaseStarted " + e.TestCaseName);
+            _logger.LogWarning(_context.SessionDataCollectionContext, "TestCaseStarted " + e.TestElement!.FullyQualifiedName);
             var filename = Path.Combine(_tempDirectoryPath, "testcasefilename" + _i++ + ".txt");
             File.WriteAllText(filename, string.Empty);
-            _dataCollectionSink.SendFileAsync(e.Context, filename, true);
+            _dataCollectionSink!.SendFileAsync(e.Context, filename, true);
         }
 
-        private void SessionStarted_Handler(object sender, SessionStartEventArgs args)
+        private void SessionStarted_Handler(object? sender, SessionStartEventArgs args)
         {
             var filename = Path.Combine(_tempDirectoryPath, "filename.txt");
             File.WriteAllText(filename, string.Empty);
-            _dataCollectionSink.SendFileAsync(_context.SessionDataCollectionContext, filename, true);
-            _logger.LogWarning(_context.SessionDataCollectionContext, "SessionStarted");
+            _dataCollectionSink!.SendFileAsync(_context!.SessionDataCollectionContext, filename, true);
+            _logger!.LogWarning(_context.SessionDataCollectionContext, "SessionStarted");
         }
 
-        private void SessionEnded_Handler(object sender, SessionEndEventArgs args)
+        private void SessionEnded_Handler(object? sender, SessionEndEventArgs args)
         {
-            _logger.LogError(_context.SessionDataCollectionContext, new Exception("my exception"));
+            _logger!.LogError(_context!.SessionDataCollectionContext, new Exception("my exception"));
             _logger.LogWarning(_context.SessionDataCollectionContext, "my warning");
             _logger.LogException(_context.SessionDataCollectionContext, new Exception("abc"), DataCollectorMessageLevel.Error);
 
             _logger.LogWarning(_context.SessionDataCollectionContext, "SessionEnded");
         }
 
-        private void TestHostLaunched_Handler(object sender, TestHostLaunchedEventArgs e)
+        private void TestHostLaunched_Handler(object? sender, TestHostLaunchedEventArgs e)
         {
-            _logger.LogWarning(_context.SessionDataCollectionContext, "TestHostLaunched " + e.TestHostProcessId);
+            _logger!.LogWarning(_context!.SessionDataCollectionContext, "TestHostLaunched " + e.TestHostProcessId);
         }
 
         public IEnumerable<KeyValuePair<string, string>> GetTestExecutionEnvironmentVariables()
@@ -80,7 +80,8 @@ namespace OutOfProcDataCollector
 
         protected override void Dispose(bool disposing)
         {
-            _logger.LogWarning(_context.SessionDataCollectionContext, "Dispose called.");
+            _logger!.LogWarning(_context!.SessionDataCollectionContext, "Dispose called.");
+            base.Dispose(disposing);
         }
     }
 }

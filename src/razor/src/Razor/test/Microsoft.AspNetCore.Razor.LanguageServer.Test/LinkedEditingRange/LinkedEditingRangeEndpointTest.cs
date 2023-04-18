@@ -7,12 +7,11 @@ using System;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Completion;
-using Microsoft.AspNetCore.Razor.LanguageServer.LinkedEditingRange;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Microsoft.AspNetCore.Razor.LanguageServer.Test.LinkedEditingRange;
+namespace Microsoft.AspNetCore.Razor.LanguageServer.LinkedEditingRange;
 
 public class LinkedEditingRangeEndpointTest : TagHelperServiceTestBase
 {

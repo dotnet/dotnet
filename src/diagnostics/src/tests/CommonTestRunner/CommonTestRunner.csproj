@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <CommonTestRunnerConfigFileName>$(OutputPath)$(TargetFramework)\Debugger.Tests.Common.txt</CommonTestRunnerConfigFileName>
   </PropertyGroup>
 
@@ -37,7 +37,7 @@
     </ConfigFileEntries>
   </ItemGroup>
 
-  <Target Name="CommonTestRunnerWriteTestConfigFile" Outputs="$(CommonTestRunnerConfigFileName)" AfterTargets="Build">
+  <Target Name="CommonTestRunnerWriteTestConfigFile" Outputs="$(CommonTestRunnerConfigFileName)" BeforeTargets="BeforeBuild;Publish">
      <PropertyGroup>
        <TestConfigFileLines>@(ConfigFileEntries-&gt;Metadata("ConfigFileEntry"))</TestConfigFileLines>
      </PropertyGroup>

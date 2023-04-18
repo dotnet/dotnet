@@ -4,6 +4,7 @@
 using System;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
+using Moq;
 using NuGet.Common;
 using NuGet.Packaging.Signing;
 using NuGet.Test.Utility;
@@ -82,7 +83,7 @@ namespace NuGet.Packaging.Test
             using (var intermediateCertificate = SigningTestUtility.GetCertificate("intermediate.crt"))
             using (var leafCertificate = SigningTestUtility.GetCertificate("leaf.crt"))
             {
-                var chain = chainHolder.Chain;
+                var chain = chainHolder.Chain2;
                 var extraStore = new X509Certificate2Collection() { rootCertificate, intermediateCertificate };
                 var logger = new TestLogger();
 
@@ -102,22 +103,14 @@ namespace NuGet.Packaging.Test
                 SigningTestUtility.AssertRevocationStatusUnknown(logger.LogMessages, LogLevel.Warning);
                 if (RuntimeEnvironmentHelper.IsWindows)
                 {
-                    Assert.Equal(2, logger.Warnings);
                     SigningTestUtility.AssertOfflineRevocation(logger.LogMessages, LogLevel.Warning);
                 }
+#if NETCORE5_0
                 else if (RuntimeEnvironmentHelper.IsLinux)
                 {
-#if NETCORE5_0
-                    Assert.Equal(2, logger.Warnings);
                     SigningTestUtility.AssertOfflineRevocation(logger.LogMessages, LogLevel.Warning);
-#else
-                    Assert.Equal(1, logger.Warnings);
+                }
 #endif
-                }
-                else
-                {
-                    Assert.Equal(1, logger.Warnings);
-                }
             }
         }
 
@@ -140,11 +133,6 @@ namespace NuGet.Packaging.Test
                 }
 
                 Assert.Equal(0, logger.Errors);
-#if (IS_DESKTOP || NETCORE5_0)
-                Assert.Equal(1, logger.Warnings);
-#else
-                Assert.Equal(RuntimeEnvironmentHelper.IsLinux ? 2 : 1, logger.Warnings);
-#endif
                 SigningTestUtility.AssertUntrustedRoot(logger.LogMessages, LogLevel.Warning);
 
 #if !NETCORE5_0
@@ -173,14 +161,14 @@ namespace NuGet.Packaging.Test
             using (var intermediateCertificate = SigningTestUtility.GetCertificate("intermediate.crt"))
             using (var leafCertificate = SigningTestUtility.GetCertificate("leaf.crt"))
             {
-                var chain = chainHolder.Chain;
+                IX509Chain chain = chainHolder.Chain2;
 
                 chain.ChainPolicy.ExtraStore.Add(rootCertificate);
                 chain.ChainPolicy.ExtraStore.Add(intermediateCertificate);
 
                 chain.Build(leafCertificate);
 
-                using (var certificateChain = CertificateChainUtility.GetCertificateChain(chain))
+                using (IX509CertificateChain certificateChain = CertificateChainUtility.GetCertificateChain(chain.PrivateReference))
                 {
                     Assert.Equal(3, certificateChain.Count);
                     Assert.Equal(leafCertificate.Thumbprint, certificateChain[0].Thumbprint);
@@ -205,13 +193,10 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void BuildWithPolicy_WhenCertificateIsNull_Throws()
         {
-            using (var chain = new X509Chain())
-            {
-                ArgumentNullException exception = Assert.Throws<ArgumentNullException>(
-                    () => CertificateChainUtility.BuildWithPolicy(chain, certificate: null));
+            ArgumentNullException exception = Assert.Throws<ArgumentNullException>(
+                () => CertificateChainUtility.BuildWithPolicy(Mock.Of<IX509Chain>(), certificate: null));
 
-                Assert.Equal("certificate", exception.ParamName);
-            }
+            Assert.Equal("certificate", exception.ParamName);
         }
     }
 }

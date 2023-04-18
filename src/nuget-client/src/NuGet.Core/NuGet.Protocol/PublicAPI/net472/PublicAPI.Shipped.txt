@@ -72,11 +72,11 @@ NuGet.Protocol.Core.Types.ILegacyFeedCapabilityResource
 ~NuGet.Protocol.Core.Types.ILegacyFeedCapabilityResource.SupportsSearchAsync(NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
 NuGet.Protocol.Core.Types.INuGetResource
 NuGet.Protocol.Core.Types.INuGetResourceProvider
-~NuGet.Protocol.Core.Types.INuGetResourceProvider.After.get -> System.Collections.Generic.IEnumerable<string>
-~NuGet.Protocol.Core.Types.INuGetResourceProvider.Before.get -> System.Collections.Generic.IEnumerable<string>
-~NuGet.Protocol.Core.Types.INuGetResourceProvider.Name.get -> string
-~NuGet.Protocol.Core.Types.INuGetResourceProvider.ResourceType.get -> System.Type
-~NuGet.Protocol.Core.Types.INuGetResourceProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
+NuGet.Protocol.Core.Types.INuGetResourceProvider.After.get -> System.Collections.Generic.IEnumerable<string!>!
+NuGet.Protocol.Core.Types.INuGetResourceProvider.Before.get -> System.Collections.Generic.IEnumerable<string!>!
+NuGet.Protocol.Core.Types.INuGetResourceProvider.Name.get -> string!
+NuGet.Protocol.Core.Types.INuGetResourceProvider.ResourceType.get -> System.Type!
+NuGet.Protocol.Core.Types.INuGetResourceProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
 NuGet.Protocol.Core.Types.IPackageSearchMetadata
 ~NuGet.Protocol.Core.Types.IPackageSearchMetadata.Authors.get -> string
 ~NuGet.Protocol.Core.Types.IPackageSearchMetadata.DependencySets.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageDependencyGroup>
@@ -247,10 +247,10 @@ NuGet.Protocol.Core.Types.Repository.ProviderFactory.ProviderFactory() -> void
 NuGet.Protocol.Core.Types.Repository.RepositoryFactory
 NuGet.Protocol.Core.Types.Repository.RepositoryFactory.RepositoryFactory() -> void
 NuGet.Protocol.Core.Types.ResourceProvider
-~NuGet.Protocol.Core.Types.ResourceProvider.ResourceProvider(System.Type resourceType) -> void
-~NuGet.Protocol.Core.Types.ResourceProvider.ResourceProvider(System.Type resourceType, string name) -> void
-~NuGet.Protocol.Core.Types.ResourceProvider.ResourceProvider(System.Type resourceType, string name, System.Collections.Generic.IEnumerable<string> before, System.Collections.Generic.IEnumerable<string> after) -> void
-~NuGet.Protocol.Core.Types.ResourceProvider.ResourceProvider(System.Type resourceType, string name, string before) -> void
+NuGet.Protocol.Core.Types.ResourceProvider.ResourceProvider(System.Type! resourceType) -> void
+NuGet.Protocol.Core.Types.ResourceProvider.ResourceProvider(System.Type! resourceType, string! name) -> void
+NuGet.Protocol.Core.Types.ResourceProvider.ResourceProvider(System.Type! resourceType, string! name, System.Collections.Generic.IEnumerable<string!>! before, System.Collections.Generic.IEnumerable<string!>! after) -> void
+NuGet.Protocol.Core.Types.ResourceProvider.ResourceProvider(System.Type! resourceType, string! name, string? before) -> void
 NuGet.Protocol.Core.Types.RetriableProtocolException
 ~NuGet.Protocol.Core.Types.RetriableProtocolException.RetriableProtocolException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) -> void
 ~NuGet.Protocol.Core.Types.RetriableProtocolException.RetriableProtocolException(string message) -> void
@@ -1523,7 +1523,7 @@ NuGet.Repositories.NuGetv3LocalRepositoryUtility
 ~abstract NuGet.Protocol.Core.Types.PackageMetadataResource.GetMetadataAsync(NuGet.Packaging.Core.PackageIdentity package, NuGet.Protocol.Core.Types.SourceCacheContext sourceCacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata>
 ~abstract NuGet.Protocol.Core.Types.PackageMetadataResource.GetMetadataAsync(string packageId, bool includePrerelease, bool includeUnlisted, NuGet.Protocol.Core.Types.SourceCacheContext sourceCacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata>>
 ~abstract NuGet.Protocol.Core.Types.PackageSearchResource.SearchAsync(string searchTerm, NuGet.Protocol.Core.Types.SearchFilter filters, int skip, int take, NuGet.Common.ILogger log, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata>>
-~abstract NuGet.Protocol.Core.Types.ResourceProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
+abstract NuGet.Protocol.Core.Types.ResourceProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
 ~abstract NuGet.Protocol.FindLocalPackagesResource.FindPackagesById(string id, NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> System.Collections.Generic.IEnumerable<NuGet.Protocol.LocalPackageInfo>
 ~abstract NuGet.Protocol.FindLocalPackagesResource.GetPackage(NuGet.Packaging.Core.PackageIdentity identity, NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> NuGet.Protocol.LocalPackageInfo
 ~abstract NuGet.Protocol.FindLocalPackagesResource.GetPackage(System.Uri path, NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> NuGet.Protocol.LocalPackageInfo
@@ -2045,10 +2045,10 @@ static readonly NuGet.Protocol.ProxyAuthenticationHandler.MaxAuthRetries -> int
 static readonly NuGet.Protocol.StreamExtensions.BufferSize -> int
 ~virtual NuGet.Protocol.Core.Types.DependencyInfoResource.ResolvePackages(string packageId, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.RemoteSourceDependencyInfo>>
 ~virtual NuGet.Protocol.Core.Types.Repository.ProviderFactory.GetCoreV3() -> System.Collections.Generic.IEnumerable<System.Lazy<NuGet.Protocol.Core.Types.INuGetResourceProvider>>
-~virtual NuGet.Protocol.Core.Types.ResourceProvider.After.get -> System.Collections.Generic.IEnumerable<string>
-~virtual NuGet.Protocol.Core.Types.ResourceProvider.Before.get -> System.Collections.Generic.IEnumerable<string>
-~virtual NuGet.Protocol.Core.Types.ResourceProvider.Name.get -> string
-~virtual NuGet.Protocol.Core.Types.ResourceProvider.ResourceType.get -> System.Type
+virtual NuGet.Protocol.Core.Types.ResourceProvider.After.get -> System.Collections.Generic.IEnumerable<string!>!
+virtual NuGet.Protocol.Core.Types.ResourceProvider.Before.get -> System.Collections.Generic.IEnumerable<string!>!
+virtual NuGet.Protocol.Core.Types.ResourceProvider.Name.get -> string!
+virtual NuGet.Protocol.Core.Types.ResourceProvider.ResourceType.get -> System.Type!
 ~virtual NuGet.Protocol.Core.Types.SourceCacheContext.Clone() -> NuGet.Protocol.Core.Types.SourceCacheContext
 virtual NuGet.Protocol.Core.Types.SourceCacheContext.Dispose(bool disposing) -> void
 ~virtual NuGet.Protocol.Core.Types.SourceCacheContext.GeneratedTempFolder.get -> string

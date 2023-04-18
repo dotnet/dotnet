@@ -1,4 +1,4 @@
-﻿<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <!-- Opt-in arcade features -->
   <PropertyGroup>
     <UsingToolVSSDK>true</UsingToolVSSDK>
@@ -25,8 +25,9 @@
     <StabilizePackageVersion Condition="'$(StabilizePackageVersion)' == ''">false</StabilizePackageVersion>
     <DotNetFinalVersionKind Condition="'$(StabilizePackageVersion)' == 'true'">release</DotNetFinalVersionKind>
     <DefaultNetFxTargetFramework>net472</DefaultNetFxTargetFramework>
-    <DefaultNetCoreTargetFramework>net7.0</DefaultNetCoreTargetFramework>
-    <DefaultNetCoreWindowsTargetFramework>net7.0-windows</DefaultNetCoreWindowsTargetFramework>
+    <DefaultNetCoreTargetFramework>net8.0</DefaultNetCoreTargetFramework>
+    <DefaultNetCoreTargetFrameworks>$(DefaultNetCoreTargetFramework);net7.0</DefaultNetCoreTargetFrameworks>
+    <DefaultNetCoreWindowsTargetFrameworks>net8.0-windows;net7.0-windows</DefaultNetCoreWindowsTargetFrameworks>
   </PropertyGroup>
   <!--
     Versioning for tooling releases.
@@ -35,8 +36,8 @@
     imported. This OK because we want to just have an obvious salt for a local build.
   -->
   <PropertyGroup>
-    <VsixVersionPrefix>17.5.2</VsixVersionPrefix>
-    <AddinMajorVersion>17.5</AddinMajorVersion>
+    <VsixVersionPrefix>17.6.0</VsixVersionPrefix>
+    <AddinMajorVersion>17.6</AddinMajorVersion>
     <AddinVersion>$(AddinMajorVersion)</AddinVersion>
     <AddinVersion Condition="'$(OfficialBuildId)' != ''">$(AddinVersion).$(OfficialBuildId)</AddinVersion>
     <AddinVersion Condition="'$(OfficialBuildId)' == ''">$(AddinVersion).42424242.42</AddinVersion>
@@ -51,13 +52,7 @@
     See https://github.com/dotnet/arcade/blob/main/Documentation/Darc.md for instructions on using darc.
 
   -->
-  <!-- TODO: https://github.com/dotnet/razor-tooling/issues/6760 -->
   <PropertyGroup Label="Automated">
-    <MicrosoftCodeAnalysisRazorToolingInternalPackageVersion>7.0.0-preview.5.22528.1</MicrosoftCodeAnalysisRazorToolingInternalPackageVersion>
-    <MicrosoftAspNetCoreRazorSymbolsTransportPackageVersion>7.0.0-preview.5.22528.1</MicrosoftAspNetCoreRazorSymbolsTransportPackageVersion>
-    <MicrosoftAspNetCoreMvcRazorExtensionsToolingInternalPackageVersion>7.0.0-preview.5.22528.1</MicrosoftAspNetCoreMvcRazorExtensionsToolingInternalPackageVersion>
-    <MicrosoftAspNetCoreMvcRazorExtensionsVersion1_XInternalTransportPackageVersion>7.0.0-preview.5.22528.1</MicrosoftAspNetCoreMvcRazorExtensionsVersion1_XInternalTransportPackageVersion>
-    <MicrosoftAspNetCoreMvcRazorExtensionsVersion2_XInternalTransportPackageVersion>7.0.0-preview.5.22528.1</MicrosoftAspNetCoreMvcRazorExtensionsVersion2_XInternalTransportPackageVersion>
     <MicrosoftNETCoreBrowserDebugHostTransportPackageVersion>6.0.2-servicing.22064.6</MicrosoftNETCoreBrowserDebugHostTransportPackageVersion>
     <MicrosoftNETCorePlatformsPackageVersion>6.0.1</MicrosoftNETCorePlatformsPackageVersion>
   </PropertyGroup>
@@ -77,9 +72,9 @@
     <Tooling_MicrosoftCodeAnalysisTestingVersion>1.1.2-beta1.22512.1</Tooling_MicrosoftCodeAnalysisTestingVersion>
     <MicrosoftVisualStudioShellPackagesVersion>17.5.0-preview-2-33117-317</MicrosoftVisualStudioShellPackagesVersion>
     <MicrosoftVisualStudioPackagesVersion>17.5.274-preview</MicrosoftVisualStudioPackagesVersion>
-    <RoslynPackageVersion>4.6.0-2.23113.15</RoslynPackageVersion>
+    <RoslynPackageVersion>4.6.0-3.23164.6</RoslynPackageVersion>
     <VisualStudioLanguageServerProtocolVersion>17.6.4-preview</VisualStudioLanguageServerProtocolVersion>
-    <MicrosoftNetCompilersToolsetVersion>4.4.0</MicrosoftNetCompilersToolsetVersion>
+    <MicrosoftNetCompilersToolsetVersion>4.6.0-2.23128.3</MicrosoftNetCompilersToolsetVersion>
     <MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion>$(RoslynPackageVersion)</MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion>
     <!-- dotnet/runtime packages -->
     <MicrosoftExtensionsPackageVersion>6.0.0</MicrosoftExtensionsPackageVersion>
@@ -112,12 +107,16 @@
     <MicrosoftVisualStudioInteropPackageVersion>$(MicrosoftVisualStudioShellPackagesVersion)</MicrosoftVisualStudioInteropPackageVersion>
     <MicrosoftInternalVisualStudioInteropPackageVersion>$(MicrosoftVisualStudioShellPackagesVersion)</MicrosoftInternalVisualStudioInteropPackageVersion>
     <MicrosoftVisualStudioRpcContractsPackageVersion>17.5.17-alpha</MicrosoftVisualStudioRpcContractsPackageVersion>
-    <MicrosoftVisualStudioTelemetryVersion>16.5.2</MicrosoftVisualStudioTelemetryVersion>
+    <MicrosoftVisualStudioTelemetryVersion>16.6.15</MicrosoftVisualStudioTelemetryVersion>
     <MicrosoftVisualStudioTextDataPackageVersion>$(MicrosoftVisualStudioPackagesVersion)</MicrosoftVisualStudioTextDataPackageVersion>
     <MicrosoftVisualStudioTextImplementationPackageVersion>$(MicrosoftVisualStudioPackagesVersion)</MicrosoftVisualStudioTextImplementationPackageVersion>
     <MicrosoftVisualStudioTextLogicPackageVersion>$(MicrosoftVisualStudioPackagesVersion)</MicrosoftVisualStudioTextLogicPackageVersion>
+    <!-- NOTE: Keep O#-Roslyn's Microsoft.VisualStudio.Threading version in sync with the version below:
+    https://github.com/OmniSharp/omnisharp-roslyn/blob/d7555ebfb6c4d7c6811c58370322d3b092c0abf6/build/Packages.props#L65 -->
     <MicrosoftVisualStudioThreadingPackageVersion>17.5.10-alpha</MicrosoftVisualStudioThreadingPackageVersion>
     <MicrosoftVisualStudioWebPackageVersion>16.10.0-preview-1-31008-014</MicrosoftVisualStudioWebPackageVersion>
+    <!-- NOTE: Keep O#-Roslyn's Microsoft.VisualStudio.Validation version in sync with the version below:
+    https://github.com/OmniSharp/omnisharp-roslyn/blob/d7555ebfb6c4d7c6811c58370322d3b092c0abf6/build/Packages.props#L66 -->
     <MicrosoftVisualStudioValidationPackageVersion>17.0.71</MicrosoftVisualStudioValidationPackageVersion>
     <MicrosoftWebToolsLanguagesHtmlPackageVersion>$(Tooling_HtmlEditorPackageVersion)</MicrosoftWebToolsLanguagesHtmlPackageVersion>
     <MicrosoftWebToolsLanguagesLanguageServerServerPackageVersion>$(Tooling_HtmlEditorPackageVersion)</MicrosoftWebToolsLanguagesLanguageServerServerPackageVersion>
@@ -136,7 +135,6 @@
     <StreamJsonRpcPackageVersion>2.14.20</StreamJsonRpcPackageVersion>
     <SystemRuntimeInteropServicesRuntimePackageVersion>4.3.0</SystemRuntimeInteropServicesRuntimePackageVersion>
     <Tooling_MicrosoftCodeAnalysisAnalyzersPackageVersion>3.3.4</Tooling_MicrosoftCodeAnalysisAnalyzersPackageVersion>
-    <Tooling_MicrosoftCodeAnalysisNetAnalyzersPackageVersion>7.0.0-preview1.22116.1</Tooling_MicrosoftCodeAnalysisNetAnalyzersPackageVersion>
     <MicrosoftCodeAnalysisExternalAccessRazorPackageVersion>$(RoslynPackageVersion)</MicrosoftCodeAnalysisExternalAccessRazorPackageVersion>
     <MicrosoftCodeAnalysisExternalAccessOmniSharpCSharpPackageVersion>$(RoslynPackageVersion)</MicrosoftCodeAnalysisExternalAccessOmniSharpCSharpPackageVersion>
     <MicrosoftCodeAnalysisCommonPackageVersion>$(RoslynPackageVersion)</MicrosoftCodeAnalysisCommonPackageVersion>
@@ -165,6 +163,7 @@
     <BenchmarkDotNetVersion>0.13.2.1938</BenchmarkDotNetVersion>
     <DiffPlexVersion>1.5.0</DiffPlexVersion>
     <FluentAssertionsVersion>6.7.0</FluentAssertionsVersion>
+    <MicrosoftAspNetCoreAppVersion>7.0.4</MicrosoftAspNetCoreAppVersion>
     <MicrosoftBuildLocatorVersion>1.4.1</MicrosoftBuildLocatorVersion>
     <MicrosoftBuildVersion>17.3.0-preview-22364-05</MicrosoftBuildVersion>
     <MicrosoftBuildFrameworkVersion>$(MicrosoftBuildVersion)</MicrosoftBuildFrameworkVersion>

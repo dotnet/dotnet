@@ -91,4 +91,4 @@ steps:
   inputs:
     artifactName: binlog - $(System.JobDisplayName) - Attempt $(System.JobAttempt)
     targetPath: $(Build.StagingDirectory)\binlog
-  condition: " failed() "
+  condition: " or(failed(), eq(variables['System.debug'], 'true')) "

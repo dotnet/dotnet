@@ -8,11 +8,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\..\..\Razor\test\Microsoft.AspNetCore.Razor.Test.Common\WorkItemAttribute.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Microsoft.AspNetCore.Razor.Test.ComponentShim\Microsoft.AspNetCore.Razor.Test.ComponentShim.Compiler.csproj" />
 
     <ProjectReference Include="..\..\Microsoft.AspNetCore.Razor.Language\src\Microsoft.AspNetCore.Razor.Language.csproj" />
     <ProjectReference Include="..\..\Microsoft.CodeAnalysis.Razor\src\Microsoft.CodeAnalysis.Razor.csproj" />
-    <ProjectReference Include="..\..\..\Razor\src\Microsoft.AspNetCore.Razor.Common\Microsoft.AspNetCore.Razor.Common.csproj" />
     <PackageReference Include="Microsoft.CSharp" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" />

@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Xunit;
@@ -96,7 +97,7 @@ public class ComponentDeclarationRazorIntegrationTest : RazorIntegrationTestBase
         Assert.Contains(typeof(IDoCoolThings), component.GetType().GetInterfaces());
     }
 
-    [Fact] // Regression test for https://github.com/dotnet/blazor/issues/453
+    [Fact, WorkItem("https://github.com/dotnet/blazor/issues/453")]
     public void DeclarationConfiguration_FunctionsBlockHasLineMappings_MappingsApplyToError()
     {
         // Arrange & Act 1

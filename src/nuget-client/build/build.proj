@@ -294,27 +294,6 @@
 
   <!--
     ============================================================
-    Restore Apex
-    ============================================================
-  -->
-  <Target Name="RestoreApex">
-    <Message Text="Restoring Apex projects" Importance="high" />
-
-    <PropertyGroup>
-      <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
-      <ProjectListValue>@(ApexProjects)</ProjectListValue>
-    </PropertyGroup>
-
-    <MSBuild
-      Projects="restorehelper.targets"
-      Targets="Restore"
-      Properties="RestoreGraphProjectInput=$(ProjectListValue);
-                  $(CommonMSBuildProperties)">
-    </MSBuild>
-  </Target>
-
-  <!--
-    ============================================================
     Get projects need to be packed
     ============================================================
   -->

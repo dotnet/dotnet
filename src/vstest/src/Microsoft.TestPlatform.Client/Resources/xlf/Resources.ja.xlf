@@ -4,23 +4,23 @@
     <body>
       <trans-unit id="InvalidStateForExecution">
         <source>The test run could not be executed because the initial state was invalid.</source>
-        <note></note>
         <target state="translated">初期状態が無効なため、テストの実行を実行できませんでした。</target>
+        <note />
       </trans-unit>
       <trans-unit id="WaitForCompletionOperationIsNotAllowedWhenNoTestRunIsActive">
         <source>Wait for completion operation is not allowed when there is no active test run. </source>
-        <note></note>
         <target state="translated">アクティブなテストの実行がない場合、完了の待機操作は許可されません。</target>
+        <note />
       </trans-unit>
       <trans-unit id="TestSessionTimeoutMessage">
         <source>Aborting test run: test run timeout of {0} milliseconds exceeded.</source>
         <target state="translated">テストの実行を中止しています: テスト実行のタイムアウト {0} ミリ秒を超過しました。</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="NoTestHostProviderFound">
         <source>No suitable test runtime provider found for this run.</source>
         <target state="translated">この実行に対して適切なテスト ランタイム プロバイダーが見つかりませんでした。</target>
-        <note></note>
+        <note />
       </trans-unit>
     </body>
   </file>

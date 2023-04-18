@@ -66,9 +66,9 @@ namespace __Blazor.Test.TestComponent
         public static global::Test.MyComponent<T> CreateMyComponent_0<T>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, global::System.Collections.Generic.IEnumerable<T> __arg0, int __seq1, global::Microsoft.AspNetCore.Components.EventCallback<global::System.Collections.Generic.IEnumerable<T>> __arg1, int __seq2, global::System.Linq.Expressions.Expression<global::System.Func<global::System.Collections.Generic.IEnumerable<T>>> __arg2)
         {
         __builder.OpenComponent<global::Test.MyComponent<T>>(seq);
-        __builder.AddAttribute(__seq0, "SomeParam", __arg0);
-        __builder.AddAttribute(__seq1, "SomeParamChanged", __arg1);
-        __builder.AddAttribute(__seq2, "SomeParamExpression", __arg2);
+        __builder.AddComponentParameter(__seq0, "SomeParam", __arg0);
+        __builder.AddComponentParameter(__seq1, "SomeParamChanged", __arg1);
+        __builder.AddComponentParameter(__seq2, "SomeParamExpression", __arg2);
         __builder.CloseComponent();
         return default;
         }

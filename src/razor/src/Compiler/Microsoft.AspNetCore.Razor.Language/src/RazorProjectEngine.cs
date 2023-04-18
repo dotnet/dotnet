@@ -242,7 +242,7 @@ public abstract class RazorProjectEngine
         }
 
         // Document Classifier
-        builder.Features.Add(new ComponentDocumentClassifierPass());
+        builder.Features.Add(new ComponentDocumentClassifierPass(razorLanguageVersion));
 
         // Directive Classifier
         builder.Features.Add(new ComponentWhitespacePass());

@@ -27,7 +27,7 @@ public class TestHostManagerCallbacksTests
     public void ErrorReceivedCallbackShouldAppendNoDataOnNullDataReceived()
     {
         _testHostProcessStdError.Append("NoDataShouldAppend");
-        TestHostManagerCallbacks.ErrorReceivedCallback(_testHostProcessStdError, null);
+        new TestHostManagerCallbacks(false, null).ErrorReceivedCallback(_testHostProcessStdError, null);
 
         Assert.AreEqual("NoDataShouldAppend", _testHostProcessStdError.ToString());
     }
@@ -36,7 +36,7 @@ public class TestHostManagerCallbacksTests
     public void ErrorReceivedCallbackShouldAppendNoDataOnEmptyDataReceived()
     {
         _testHostProcessStdError.Append("NoDataShouldAppend");
-        TestHostManagerCallbacks.ErrorReceivedCallback(_testHostProcessStdError, string.Empty);
+        new TestHostManagerCallbacks(false, null).ErrorReceivedCallback(_testHostProcessStdError, string.Empty);
 
         Assert.AreEqual("NoDataShouldAppend", _testHostProcessStdError.ToString());
     }
@@ -45,7 +45,7 @@ public class TestHostManagerCallbacksTests
     public void ErrorReceivedCallbackShouldAppendWhiteSpaceString()
     {
         _testHostProcessStdError.Append("OldData");
-        TestHostManagerCallbacks.ErrorReceivedCallback(_testHostProcessStdError, " ");
+        new TestHostManagerCallbacks(false, null).ErrorReceivedCallback(_testHostProcessStdError, " ");
 
         Assert.AreEqual("OldData " + Environment.NewLine, _testHostProcessStdError.ToString());
     }
@@ -54,7 +54,7 @@ public class TestHostManagerCallbacksTests
     public void ErrorReceivedCallbackShouldAppendGivenData()
     {
         _testHostProcessStdError.Append("NoDataShouldAppend");
-        TestHostManagerCallbacks.ErrorReceivedCallback(_testHostProcessStdError, "new data");
+        new TestHostManagerCallbacks(false, null).ErrorReceivedCallback(_testHostProcessStdError, "new data");
 
         Assert.AreEqual("NoDataShouldAppendnew data" + Environment.NewLine, _testHostProcessStdError.ToString());
     }
@@ -64,7 +64,7 @@ public class TestHostManagerCallbacksTests
     {
         _testHostProcessStdError = new StringBuilder(0, 5);
         _testHostProcessStdError.Append("12345");
-        TestHostManagerCallbacks.ErrorReceivedCallback(_testHostProcessStdError, "678");
+        new TestHostManagerCallbacks(false, null).ErrorReceivedCallback(_testHostProcessStdError, "678");
 
         Assert.AreEqual("12345", _testHostProcessStdError.ToString());
     }
@@ -74,7 +74,7 @@ public class TestHostManagerCallbacksTests
     {
         _testHostProcessStdError = new StringBuilder(0, 5);
         _testHostProcessStdError.Append("1234");
-        TestHostManagerCallbacks.ErrorReceivedCallback(_testHostProcessStdError, "5678");
+        new TestHostManagerCallbacks(false, null).ErrorReceivedCallback(_testHostProcessStdError, "5678");
 
         Assert.AreEqual("12345", _testHostProcessStdError.ToString());
     }
@@ -84,7 +84,7 @@ public class TestHostManagerCallbacksTests
     {
         _testHostProcessStdError = new StringBuilder(0, 5);
         _testHostProcessStdError.Append("12");
-        TestHostManagerCallbacks.ErrorReceivedCallback(_testHostProcessStdError, "3");
+        new TestHostManagerCallbacks(false, null).ErrorReceivedCallback(_testHostProcessStdError, "3");
 
         Assert.AreEqual("123" + Environment.NewLine, _testHostProcessStdError.ToString());
     }
@@ -94,7 +94,7 @@ public class TestHostManagerCallbacksTests
     {
         _testHostProcessStdError = new StringBuilder(0, 5);
         _testHostProcessStdError.Append("123");
-        TestHostManagerCallbacks.ErrorReceivedCallback(_testHostProcessStdError, "4");
+        new TestHostManagerCallbacks(false, null).ErrorReceivedCallback(_testHostProcessStdError, "4");
 
         Assert.AreEqual("1234" + Environment.NewLine.Substring(0, 1), _testHostProcessStdError.ToString());
     }

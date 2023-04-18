@@ -22,8 +22,7 @@ export class FoldingRangeHandler {
         private readonly logger: RazorLogger) { }
 
     public register() {
-        // tslint:disable-next-line: no-floating-promises
-        this.serverClient.onRequestWithParams<SerializableFoldingRangeParams, SerializableFoldingRangeResponse, any>(
+        return this.serverClient.onRequestWithParams<SerializableFoldingRangeParams, SerializableFoldingRangeResponse, any>(
             this.foldingRangeRequestType,
             async (request, token) => this.provideFoldingRanges(request, token));
     }

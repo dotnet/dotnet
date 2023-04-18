@@ -111,19 +111,12 @@ namespace NuGet.Packaging.Test
 
                 Assert.Equal(1, logger.Errors);
 
+#if !NETCORE5_0
                 if (RuntimeEnvironmentHelper.IsLinux)
                 {
-#if NETCORE5_0
-                    Assert.Equal(1, logger.Warnings);
-#else
-                    Assert.Equal(2, logger.Warnings);
                     SigningTestUtility.AssertRevocationStatusUnknown(logger.LogMessages, LogLevel.Warning);
+                }
 #endif
-                }
-                else
-                {
-                    Assert.Equal(1, logger.Warnings);
-                }
 
                 SigningTestUtility.AssertNotTimeValid(logger.LogMessages, LogLevel.Error);
                 SigningTestUtility.AssertUntrustedRoot(logger.LogMessages, LogLevel.Warning);
@@ -141,12 +134,6 @@ namespace NuGet.Packaging.Test
                 SigningUtility.Verify(request, logger);
 
                 Assert.Equal(0, logger.Errors);
-#if (IS_DESKTOP || NETCORE5_0)
-                Assert.Equal(1, logger.Warnings);
-#else
-                Assert.Equal(RuntimeEnvironmentHelper.IsLinux ? 2 : 1, logger.Warnings);
-#endif
-
                 SigningTestUtility.AssertUntrustedRoot(logger.LogMessages, LogLevel.Warning);
 
 
@@ -539,7 +526,6 @@ namespace NuGet.Packaging.Test
                 Assert.Equal("Certificate chain validation failed.", exception.Message);
 
                 Assert.Equal(1, test.Logger.Errors);
-                Assert.Equal(1, test.Logger.Warnings);
                 SigningTestUtility.AssertNotTimeValid(test.Logger.LogMessages, LogLevel.Error);
                 SigningTestUtility.AssertUntrustedRoot(test.Logger.LogMessages, LogLevel.Warning);
             }
@@ -562,8 +548,6 @@ namespace NuGet.Packaging.Test
                 Assert.True(await SignedArchiveTestUtility.IsSignedAsync(test.Options.OutputPackageStream));
 
                 Assert.Equal(0, test.Logger.Errors);
-                Assert.Equal(1, test.Logger.Warnings);
-                Assert.Equal(1, test.Logger.Messages.Count());
                 SigningTestUtility.AssertUntrustedRoot(test.Logger.LogMessages, LogLevel.Warning);
             }
         }
@@ -606,8 +590,6 @@ namespace NuGet.Packaging.Test
 
                     Assert.Equal(0, test.Options.OutputPackageStream.Length);
                     Assert.Equal(0, test.Logger.Errors);
-                    Assert.Equal(1, test.Logger.Warnings);
-                    Assert.Equal(1, test.Logger.Messages.Count());
                     SigningTestUtility.AssertUntrustedRoot(test.Logger.LogMessages, LogLevel.Warning);
                 }
             }

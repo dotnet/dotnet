@@ -21,7 +21,7 @@ using Models;
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
             __builder.OpenComponent<global::Test.Grid<WeatherForecast>>(0);
-            __builder.AddAttribute(1, "Items", 
+            __builder.AddComponentParameter(1, "Items", 
 #nullable restore
 #line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
                                        Array.Empty<WeatherForecast>()
@@ -48,10 +48,10 @@ namespace __Blazor.Test.TestComponent
             where TItem : global::System.Collections.Generic.IEnumerable<TItem>
         {
         __builder.OpenComponent<global::Test.Column<TItem>>(seq);
-        __builder.AddAttribute(__seq0, "Title", __arg0);
-        __builder.AddAttribute(__seq1, "FieldName", __arg1);
-        __builder.AddAttribute(__seq2, "Format", __arg2);
-        __builder.AddAttribute(__seq3, "Width", __arg3);
+        __builder.AddComponentParameter(__seq0, "Title", __arg0);
+        __builder.AddComponentParameter(__seq1, "FieldName", __arg1);
+        __builder.AddComponentParameter(__seq2, "Format", __arg2);
+        __builder.AddComponentParameter(__seq3, "Width", __arg3);
         __builder.CloseComponent();
         }
     }

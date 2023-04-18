@@ -5,11 +5,11 @@ Generated Location: (320:12,0 [11] )
 
 Source Location: (6:0,6 [9] x:\dir\subdir\Test\TestComponent.cshtml)
 |"/MyPage"|
-Generated Location: (908:27,37 [9] )
+Generated Location: (916:27,37 [9] )
 |"/MyPage"|
 
 Source Location: (23:1,6 [20] x:\dir\subdir\Test\TestComponent.cshtml)
 |"/AnotherRoute/{id}"|
-Generated Location: (1166:38,37 [20] )
+Generated Location: (1182:38,37 [20] )
 |"/AnotherRoute/{id}"|
 

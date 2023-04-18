@@ -19,7 +19,7 @@ using N;
     {
         #pragma warning disable 219
         private void __RazorDirectiveTokenHelpers__() {
-        ((System.Action)(() => {
+        ((global::System.Action)(() => {
 #nullable restore
 #line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
 global::System.Object TParam = null!;
@@ -102,8 +102,8 @@ namespace __Blazor.Test.TestComponent
         public static global::Test.TestComponent<TParam> CreateTestComponent_0<TParam>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, TParam __arg0, int __seq1, global::Microsoft.AspNetCore.Components.RenderFragment<(global::N.MyClass I1, global::N.MyStruct I2, TParam P)> __arg1)
         {
         __builder.OpenComponent<global::Test.TestComponent<TParam>>(seq);
-        __builder.AddAttribute(__seq0, "InferParam", __arg0);
-        __builder.AddAttribute(__seq1, "Template", __arg1);
+        __builder.AddComponentParameter(__seq0, "InferParam", __arg0);
+        __builder.AddComponentParameter(__seq1, "Template", __arg1);
         __builder.CloseComponent();
         return default;
         }

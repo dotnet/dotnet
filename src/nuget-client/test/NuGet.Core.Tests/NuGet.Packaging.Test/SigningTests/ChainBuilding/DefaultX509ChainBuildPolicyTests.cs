@@ -3,6 +3,7 @@
 
 using System;
 using System.Security.Cryptography.X509Certificates;
+using Moq;
 using NuGet.Packaging.Signing;
 using Xunit;
 
@@ -42,20 +43,17 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void Build_WhenCertificateIsNull_Throws()
         {
-            using (var chain = new X509Chain())
-            {
-                ArgumentNullException exception = Assert.Throws<ArgumentNullException>(
-                    () => DefaultX509ChainBuildPolicy.Instance.Build(chain, certificate: null));
+            ArgumentNullException exception = Assert.Throws<ArgumentNullException>(
+                () => DefaultX509ChainBuildPolicy.Instance.Build(Mock.Of<IX509Chain>(), certificate: null));
 
-                Assert.Equal("certificate", exception.ParamName);
-            }
+            Assert.Equal("certificate", exception.ParamName);
         }
 
 #if NET5_0_OR_GREATER || IS_DESKTOP
         [Fact]
         public void Build_WhenArgumentsAreValid_ReturnsExpectedResult()
         {
-            using (var chain = new X509Chain())
+            using (X509ChainWrapper chain = new(new X509Chain()))
             using (X509Certificate2 expectedCertificate = _fixture.GetDefaultCertificate())
             {
                 bool actualResult = DefaultX509ChainBuildPolicy.Instance.Build(chain, expectedCertificate);

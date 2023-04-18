@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TestPlatformRoot Condition="$(TestPlatformRoot) == ''">..\..\</TestPlatformRoot>
-  </PropertyGroup>
-  <Import Project="$(TestPlatformRoot)scripts/build/TestPlatform.Settings.targets" />
+
   <PropertyGroup>
     <AssemblyName>Microsoft.TestPlatform.CrossPlatEngine</AssemblyName>
     <TargetFrameworks>net7.0;net6.0;netstandard2.0;$(NetFrameworkMinimum)</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(DotNetBuildFromSource)' == 'true' ">net7.0;</TargetFrameworks>
     <IsTestProject>false</IsTestProject>
   </PropertyGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Resources.resx">
+    <EmbeddedResource Update="Resources\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
@@ -48,10 +44,6 @@
       <LastGenOutput>NullableHelpers.cs</LastGenOutput>
       <Generator>TextTemplatingFileGenerator</Generator>
     </None>
-    <None Update="Resources\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </None>
   </ItemGroup>
   <PropertyGroup Label="Configuration">
     <RootNamespace>Microsoft.VisualStudio.TestPlatform.CrossPlatEngine</RootNamespace>
@@ -67,5 +59,5 @@
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
-  <Import Project="$(TestPlatformRoot)scripts\build\TestPlatform.targets" />
+
 </Project>

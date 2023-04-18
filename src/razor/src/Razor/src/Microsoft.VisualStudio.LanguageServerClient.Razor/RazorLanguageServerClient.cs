@@ -102,11 +102,6 @@ internal class RazorLanguageServerClient : ILanguageClient, ILanguageClientCusto
             throw new ArgumentNullException(nameof(logHubLoggerProviderFactory));
         }
 
-        if (outputWindowLogger is null)
-        {
-            throw new ArgumentNullException(nameof(outputWindowLogger));
-        }
-
         if (projectSnapshotManagerDispatcher is null)
         {
             throw new ArgumentNullException(nameof(projectSnapshotManagerDispatcher));
@@ -188,7 +183,7 @@ internal class RazorLanguageServerClient : ILanguageClient, ILanguageClientCusto
         var logHubLogger = _loggerProvider.CreateLogger("Razor");
         var loggers = _outputWindowLogger == null ? new ILogger[] { logHubLogger } : new ILogger[] { logHubLogger, _outputWindowLogger };
         var razorLogger = new LoggerAdapter(loggers, _telemetryReporter);
-        var lspOptions = RazorLSPOptions.Default.With(_clientSettingsManager.GetClientSettings());
+        var lspOptions = RazorLSPOptions.From(_clientSettingsManager.GetClientSettings());
         _server = RazorLanguageServerWrapper.Create(
             serverStream,
             serverStream,

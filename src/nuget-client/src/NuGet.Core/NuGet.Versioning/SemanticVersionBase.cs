@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace NuGet.Versioning
 {
@@ -40,10 +41,10 @@ namespace NuGet.Versioning
         /// <summary>
         /// Custom string format.
         /// </summary>
-        public virtual string ToString(string format, IFormatProvider formatProvider)
+        public virtual string ToString(string? format, IFormatProvider? formatProvider)
         {
             if (formatProvider == null
-                || !TryFormatter(format, formatProvider, out string formattedString))
+                || !TryFormatter(format, formatProvider, out string? formattedString))
             {
                 return ToString();
             }
@@ -54,14 +55,14 @@ namespace NuGet.Versioning
         /// <summary>
         /// Internal string formatter.
         /// </summary>
-        protected bool TryFormatter(string format, IFormatProvider formatProvider, out string formattedString)
+        protected bool TryFormatter(string? format, IFormatProvider formatProvider, [NotNullWhen(true)] out string? formattedString)
         {
             var formatted = false;
             formattedString = null;
 
             if (formatProvider != null)
             {
-                var formatter = formatProvider.GetFormat(this.GetType()) as ICustomFormatter;
+                var formatter = formatProvider.GetFormat(GetType()) as ICustomFormatter;
                 if (formatter != null)
                 {
                     formatted = true;
@@ -83,7 +84,7 @@ namespace NuGet.Versioning
         /// <summary>
         /// Object compare.
         /// </summary>
-        public virtual int CompareTo(object obj)
+        public virtual int CompareTo(object? obj)
         {
             return CompareTo(obj as SemanticVersion);
         }
@@ -91,7 +92,7 @@ namespace NuGet.Versioning
         /// <summary>
         /// Compare to another SemanticVersion.
         /// </summary>
-        public virtual int CompareTo(SemanticVersion other)
+        public virtual int CompareTo(SemanticVersion? other)
         {
             return CompareTo(other, VersionComparison.Default);
         }
@@ -99,7 +100,7 @@ namespace NuGet.Versioning
         /// <summary>
         /// Equals
         /// </summary>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return Equals(obj as SemanticVersion);
         }
@@ -107,15 +108,18 @@ namespace NuGet.Versioning
         /// <summary>
         /// Equals
         /// </summary>
-        public virtual bool Equals(SemanticVersion other)
+        public virtual bool Equals(SemanticVersion? other)
         {
+#pragma warning disable CS8604 // Possible null reference argument.
+            // The BCL is missing nullable annotations on IComparer<T> before net5.0
             return VersionComparer.Default.Equals(this, other);
+#pragma warning restore CS8604 // Possible null reference argument.
         }
 
         /// <summary>
         /// True if the VersionBase objects are equal based on the given comparison mode.
         /// </summary>
-        public virtual bool Equals(SemanticVersion other, VersionComparison versionComparison)
+        public virtual bool Equals(SemanticVersion? other, VersionComparison versionComparison)
         {
             var comparer = new VersionComparer(versionComparison);
             return comparer.Equals(this, other);
@@ -124,7 +128,7 @@ namespace NuGet.Versioning
         /// <summary>
         /// Compares NuGetVersion objects using the given comparison mode.
         /// </summary>
-        public virtual int CompareTo(SemanticVersion other, VersionComparison versionComparison)
+        public virtual int CompareTo(SemanticVersion? other, VersionComparison versionComparison)
         {
             var comparer = new VersionComparer(versionComparison);
             return comparer.Compare(this, other);
@@ -133,7 +137,7 @@ namespace NuGet.Versioning
         /// <summary>
         /// Equals
         /// </summary>
-        public static bool operator ==(SemanticVersion version1, SemanticVersion version2)
+        public static bool operator ==(SemanticVersion? version1, SemanticVersion? version2)
         {
             return Equals(version1, version2);
         }
@@ -141,7 +145,7 @@ namespace NuGet.Versioning
         /// <summary>
         /// Not equal
         /// </summary>
-        public static bool operator !=(SemanticVersion version1, SemanticVersion version2)
+        public static bool operator !=(SemanticVersion? version1, SemanticVersion? version2)
         {
             return !Equals(version1, version2);
         }
@@ -178,9 +182,12 @@ namespace NuGet.Versioning
             return Compare(version1, version2) >= 0;
         }
 
-        private static int Compare(SemanticVersion version1, SemanticVersion version2)
+        private static int Compare(SemanticVersion? version1, SemanticVersion? version2)
         {
+#pragma warning disable CS8604 // Possible null reference argument.
+            // The BCL is missing nullable annotations in IComparer<T> before net5.0
             return VersionComparer.Default.Compare(version1, version2);
+#pragma warning restore CS8604 // Possible null reference argument.
         }
     }
 }

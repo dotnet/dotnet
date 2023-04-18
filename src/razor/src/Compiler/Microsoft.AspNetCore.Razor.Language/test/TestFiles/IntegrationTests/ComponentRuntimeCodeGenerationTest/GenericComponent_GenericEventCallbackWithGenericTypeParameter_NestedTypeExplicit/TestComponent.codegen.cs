@@ -21,7 +21,7 @@ using Test;
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
             __builder.OpenComponent<global::Test.MyComponent<TChild>>(0);
-            __builder.AddAttribute(1, "MyEvent", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::Microsoft.AspNetCore.Components.EventCallback<TChild>>(global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<TChild>(this, 
+            __builder.AddComponentParameter(1, "MyEvent", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::Microsoft.AspNetCore.Components.EventCallback<TChild>>(global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<TChild>(this, 
 #nullable restore
 #line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
                                      (TChild x) => {}

@@ -1,31 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TestPlatformRoot Condition="$(TestPlatformRoot) == ''">..\..\</TestPlatformRoot>
-  </PropertyGroup>
-  <Import Project="$(TestPlatformRoot)src\Microsoft.TestPlatform.Execution.Shared\Microsoft.TestPlatform.Execution.Shared.projitems" Label="Shared" />
-  <Import Project="$(TestPlatformRoot)scripts/build/TestPlatform.Settings.targets" />
+
+  <Import Project="$(RepoRoot)src\Microsoft.TestPlatform.Execution.Shared\Microsoft.TestPlatform.Execution.Shared.projitems" Label="Shared" />
+
   <PropertyGroup Label="Configuration">
     <RootNamespace>Microsoft.VisualStudio.TestPlatform.DataCollector</RootNamespace>
   </PropertyGroup>
+
   <PropertyGroup>
     <AssemblyName>datacollector</AssemblyName>
-    <AssemblyName Condition=" '$(RuntimeIdentifier)' == 'win10-arm64' ">datacollector.arm64</AssemblyName>
     <TargetFrameworks>$(NetCoreAppMinimum)</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(OS)' == 'WINDOWS_NT' ">$(TargetFrameworks);net472</TargetFrameworks>
+    <TargetFrameworks Condition=" '$(OS)' == 'WINDOWS_NT' ">$(TargetFrameworks);net472;$(NetFrameworkMinimum)</TargetFrameworks>
     <TargetFrameworks Condition=" '$(OS)' != 'WINDOWS_NT' ">$(TargetFrameworks);$(NetFrameworkMinimum)</TargetFrameworks>
-    <TargetFrameworks>$(TargetFrameworks);net7.0;net6.0;</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(DotNetBuildFromSource)' == 'true' ">net7.0</TargetFrameworks>
+    <TargetFrameworks>$(TargetFrameworks);net7.0;net6.0</TargetFrameworks>
     <PlatformTarget Condition=" $(TargetFramework.StartsWith('net4')) AND '$(RuntimeIdentifier)' == '' ">AnyCPU</PlatformTarget>
     <OutputType>Exe</OutputType>
     <!-- Prevent the creation of the ".exe" for .NET Core. This was the default on .NET Core 2.1, behavior changed for .NET Core 3.1 -->
     <UseAppHost>false</UseAppHost>
     <RollForward>Major</RollForward>
     <IsTestProject>false</IsTestProject>
+    <!-- MSB3276 Suppress warnings about conflicts between different versions of the same dependent assembly -->
+    <MSBuildWarningsAsMessages>$(MSBuildWarningsAsMessages);MSB3276</MSBuildWarningsAsMessages>
   </PropertyGroup>
+
   <PropertyGroup Condition="$(TargetFramework.StartsWith('net4'))">
-    <RuntimeIdentifiers>win7-x64;win10-arm64</RuntimeIdentifiers>
+    <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
   </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.TestPlatform.CommunicationUtilities\Microsoft.TestPlatform.CommunicationUtilities.csproj" />
     <ProjectReference Include="..\Microsoft.TestPlatform.ObjectModel\Microsoft.TestPlatform.ObjectModel.csproj" />
@@ -37,11 +38,13 @@
       <FromP2P>true</FromP2P>
     </ProjectReference>
   </ItemGroup>
+
   <ItemGroup Condition="$(TargetFramework.StartsWith('net4'))">
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Xml" />
   </ItemGroup>
+
   <ItemGroup>
     <!-- API that is common to all frameworks that we build for. -->
     <AdditionalFiles Include="PublicAPI/PublicAPI.Shipped.txt" />
@@ -50,5 +53,4 @@
     <AdditionalFiles Include="PublicAPI/$(TargetFramework)/PublicAPI.Shipped.txt" />
     <AdditionalFiles Include="PublicAPI/$(TargetFramework)/PublicAPI.Unshipped.txt" />
   </ItemGroup>
-  <Import Project="$(TestPlatformRoot)scripts\build\TestPlatform.targets" />
 </Project>

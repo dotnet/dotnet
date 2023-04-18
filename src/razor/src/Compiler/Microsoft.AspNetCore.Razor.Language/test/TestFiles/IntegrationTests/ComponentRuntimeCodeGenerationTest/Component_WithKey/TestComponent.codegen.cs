@@ -14,8 +14,8 @@ namespace Test
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
             __builder.OpenComponent<global::Test.MyComponent>(0);
-            __builder.AddAttribute(1, "ParamBefore", "before");
-            __builder.AddAttribute(2, "ParamAfter", "after");
+            __builder.AddComponentParameter(1, "ParamBefore", "before");
+            __builder.AddComponentParameter(2, "ParamAfter", "after");
             __builder.SetKey(
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"

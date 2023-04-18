@@ -1,18 +1,23 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TestPlatformRoot Condition="$(TestPlatformRoot) == ''">..\..\</TestPlatformRoot>
-  </PropertyGroup>
-  <Import Project="$(TestPlatformRoot)scripts/build/TestPlatform.Settings.targets" />
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net7.0;netstandard2.0;$(NetFrameworkMinimum)</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(DotNetBuildFromSource)' == 'true' ">net7.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;$(NetFrameworkMinimum)</TargetFrameworks>
     <AssemblyName>Microsoft.TestPlatform.AdapterUtilities</AssemblyName>
     <RootNamespace>Microsoft.TestPlatform.AdapterUtilities</RootNamespace>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <IsPackable Condition=" '$(DotNetBuildFromSource)' != 'true' ">true</IsPackable>
+    <NuspecFile>Microsoft.TestPlatform.AdapterUtilities.nuspec</NuspecFile>
+    <NuspecBasePath>$(OutputPath)</NuspecBasePath>
+    <PackageId>Microsoft.TestPlatform.AdapterUtilities</PackageId>
+    <PackageTags>vstest visual-studio unittest testplatform mstest microsoft test testing</PackageTags>
+    <PackageDescription>
+      Includes helpers for the Test Platform's modern functionality such as standardized fully qualified names and hierarchical test case names.
+    </PackageDescription>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(TargetFramework)' == '$(NetFrameworkMinimum)'">
-    <RuntimeIdentifier>any</RuntimeIdentifier>
     <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
   </PropertyGroup>
 
@@ -23,8 +28,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Resources.resx" />
-
     <Compile Update="Resources\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -65,5 +68,4 @@
     </Compile>
   </ItemGroup>
 
-  <Import Project="$(TestPlatformRoot)scripts\build\TestPlatform.targets" />
 </Project>

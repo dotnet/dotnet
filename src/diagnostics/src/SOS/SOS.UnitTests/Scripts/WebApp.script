@@ -1,8 +1,6 @@
 #
 # Tests the various SOS stack and other commands against a webapp 3.x app
 #
-# Commands Verified: ClrStack, DumpStackObjects, DumpStack, EEStack, IP2MD, u, Name2EE, Threads (clrthreads)
-#
 
 CONTINUE
 
@@ -122,7 +120,7 @@ SOSCOMMAND:DumpHeap -stat
 VERIFY:\s*Statistics:\s+
 VERIFY:\s+MT\s+Count\s+TotalSize\s+Class Name\s+
 VERIFY:\s*<HEXVAL>\s+<DECVAL>\s+<DECVAL>\s+.*
-VERIFY:\s*Total\s+<DECVAL>\s+objects\s+
+VERIFY:\s*Total\s+<DECVAL>\s+objects.*<DECVAL>\s+bytes\s*
 !VERIFY:.*UNKNOWN.*
 
 SOSCOMMAND:DumpAsync --completed

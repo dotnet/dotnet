@@ -99,7 +99,7 @@ internal class DataCollectionTestRunEventsHandler : IInternalTestRunEventsHandle
             var testRunCompletePayload =
                 _dataSerializer.DeserializePayload<TestRunCompletePayload>(message);
 
-            if (_dataCollectionAttachmentSets != null && _dataCollectionAttachmentSets.Any())
+            if (_dataCollectionAttachmentSets != null && _dataCollectionAttachmentSets.Count != 0)
             {
                 GetCombinedAttachmentSets(
                     testRunCompletePayload?.TestRunCompleteArgs?.AttachmentSets,
@@ -140,14 +140,14 @@ internal class DataCollectionTestRunEventsHandler : IInternalTestRunEventsHandle
     /// </param>
     public void HandleTestRunComplete(TestRunCompleteEventArgs testRunCompleteArgs, TestRunChangedEventArgs? lastChunkArgs, ICollection<AttachmentSet>? runContextAttachments, ICollection<string>? executorUris)
     {
-        if (_dataCollectionAttachmentSets != null && _dataCollectionAttachmentSets.Any())
+        if (_dataCollectionAttachmentSets != null && _dataCollectionAttachmentSets.Count != 0)
         {
             runContextAttachments = GetCombinedAttachmentSets(_dataCollectionAttachmentSets, runContextAttachments);
         }
 
         // At the moment, we don't support running data collectors inside testhost process, so it will always be empty inside "TestRunCompleteEventArgs testRunCompleteArgs".
         // We load invoked data collectors from data collector process inside "DataCollectionTestRunEventsHandler.HandleRawMessage" method.
-        if (_invokedDataCollectors != null && _invokedDataCollectors.Any())
+        if (_invokedDataCollectors != null && _invokedDataCollectors.Count != 0)
         {
             foreach (var dataCollector in _invokedDataCollectors)
             {

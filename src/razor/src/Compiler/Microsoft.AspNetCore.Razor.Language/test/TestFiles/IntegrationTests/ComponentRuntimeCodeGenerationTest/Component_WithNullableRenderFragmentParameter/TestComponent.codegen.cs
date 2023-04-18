@@ -14,7 +14,7 @@ namespace Test
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
             __builder.OpenComponent<global::Test.ComponentWithNullableRenderFragment>(0);
-            __builder.AddAttribute(1, "Header", (global::Microsoft.AspNetCore.Components.RenderFragment)(
+            __builder.AddComponentParameter(1, "Header", (global::Microsoft.AspNetCore.Components.RenderFragment)(
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
                                               Header

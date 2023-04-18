@@ -20,9 +20,30 @@ namespace Microsoft.TestPlatform.TestUtilities;
 /// </summary>
 public class IntegrationTestEnvironment
 {
-    public static string TestPlatformRootDirectory { get; private set; } =
+    public static string RepoRootDirectory { get; } =
         Environment.GetEnvironmentVariable("TP_ROOT_DIR")
+        // Running in VS/IDE. Use artifacts directory as root.
+        // Get root directory from test assembly output directory
         ?? Path.GetFullPath(@"..\..\..\..\..".Replace('\\', Path.DirectorySeparatorChar));
+
+    public static string ArtifactsTempDirectory { get; } = Path.Combine(RepoRootDirectory, "artifacts", "tmp", BuildConfiguration);
+
+    public static string LocalPackageSource { get; } = Path.Combine(RepoRootDirectory, "artifacts", "packages", BuildConfiguration, "Shipping").TrimEnd(Path.DirectorySeparatorChar);
+    public static string LatestLocallyBuiltNugetVersion { get; } = GetLatestLocallyBuiltPackageVersion();
+
+    /// <summary>
+    /// Gets the publish directory for <c>vstest.console</c> package.
+    /// </summary>
+    public static string PublishDirectory { get; } =
+        // this used to switch to src\package\package\bin\based on whether
+        // this is running in cli, but that's a bad idea, the console there does not have
+        // a runtime config and will fail to start with error testhostpolicy.dll not found
+        Path.Combine(ArtifactsTempDirectory, "extractedPackages");
+
+    /// <summary>
+    /// Gets the extensions directory for <c>vstest.console</c> package.
+    /// </summary>
+    public static string ExtensionsDirectory { get; } = Path.Combine(PublishDirectory, $"Microsoft.TestPlatform.{IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion}.nupkg", "tools", "net462", "Common7", "IDE", "Extensions", "TestPlatform", "Extensions");
 
     private static Dictionary<string, string>? s_dependencyVersions;
 
@@ -37,20 +58,12 @@ public class IntegrationTestEnvironment
             TargetFramework = "net462";
         }
 
-        if (TestPlatformRootDirectory.IsNullOrEmpty())
-        {
-            // Running in VS/IDE. Use artifacts directory as root.
-            // Get root directory from test assembly output directory
-            TestPlatformRootDirectory = Path.GetFullPath(@"..\..\..\..\..".Replace('\\', Path.DirectorySeparatorChar));
-        }
-
-        TestAssetsPath = Path.Combine(TestPlatformRootDirectory, $@"test{Path.DirectorySeparatorChar}TestAssets");
+        TestAssetsPath = Path.Combine(RepoRootDirectory, "test", "TestAssets");
 
         // There is an assumption that integration tests will always run from a source enlistment.
         // Need to remove this assumption when we move to a CDP.
-        PackageDirectory = Path.Combine(TestPlatformRootDirectory, @"packages");
-        ToolsDirectory = Path.Combine(TestPlatformRootDirectory, @"tools");
-        TestArtifactsDirectory = Path.Combine(TestPlatformRootDirectory, "artifacts", "testArtifacts");
+        PackageDirectory = Path.Combine(RepoRootDirectory, @".packages");
+        TestArtifactsDirectory = Path.Combine(RepoRootDirectory, "artifacts", "testArtifacts");
         RunnerFramework = "net462";
     }
 
@@ -70,40 +83,12 @@ public class IntegrationTestEnvironment
     }
 
     public static Dictionary<string, string> DependencyVersions
-        => s_dependencyVersions ??= GetDependencies(TestPlatformRootDirectory);
+        => s_dependencyVersions ??= GetDependencies(RepoRootDirectory);
 
     /// <summary>
     /// Gets the nuget packages directory for enlistment.
     /// </summary>
-    public string PackageDirectory { get; private set; }
-
-    /// <summary>
-    /// Gets the publish directory for <c>vstest.console</c> package.
-    /// </summary>
-    public string PublishDirectory
-    {
-        get
-        {
-            // this used to switch to src\package\package\bin\based on whether
-            // this is running in cli, but that's a bad idea, the console there does not have
-            // a runtime config and will fail to start with error testhostpolicy.dll not found
-            var publishDirectory = Path.Combine(
-                TestPlatformRootDirectory,
-                "artifacts",
-                BuildConfiguration,
-                RunnerFramework,
-                TargetRuntime!);
-
-            return !Directory.Exists(publishDirectory)
-                ? throw new InvalidOperationException($"Path '{publishDirectory}' does not exist, did you build the solution via build.cmd?")
-                : publishDirectory;
-        }
-    }
-
-    /// <summary>
-    /// Gets the extensions directory for <c>vstest.console</c> package.
-    /// </summary>
-    public string ExtensionsDirectory => Path.Combine(PublishDirectory, "Extensions");
+    public string PackageDirectory { get; }
 
     /// <summary>
     /// Gets the target framework.
@@ -150,11 +135,6 @@ public class IntegrationTestEnvironment
     /// Gets the root directory for test assets.
     /// </summary>
     public string TestAssetsPath { get; }
-
-    /// <summary>
-    /// Gets the tools directory for dependent tools
-    /// </summary>
-    public string ToolsDirectory { get; private set; }
 
     /// <summary>
     /// Gets the test artifacts directory.
@@ -207,9 +187,11 @@ public class IntegrationTestEnvironment
     {
         var simpleAssetName = Path.GetFileNameWithoutExtension(assetName);
         var assetPath = Path.Combine(
-            TestAssetsPath,
-            simpleAssetName,
+            RepoRootDirectory,
+            "artifacts",
             "bin",
+            "TestAssets",
+            simpleAssetName,
             BuildConfiguration,
             targetFramework,
             assetName);
@@ -220,8 +202,8 @@ public class IntegrationTestEnvironment
             // The path is really ugly: S:\p\vstest3\test\GeneratedTestAssets\NETTestSdkLegacyStable-15.9.2--MSTestMostDownloaded-2.1.0--MSTestProject2\bin\Debug\net462\MSTestProject2-NETTestSdkLegacyStable-15.9.2--MSTestMostDownloaded-2.1.0.dll
             // And we need to hash the versions in it to get shorter path as well.
             var versions = string.Join("--", DllInfos.Select(d => d.Path));
-            var versionsHash = Hash(versions);
-            assetPath = Path.Combine(TestAssetsPath, "..", "GeneratedTestAssets", $"{simpleAssetName}--{versionsHash}", "bin", BuildConfiguration, targetFramework, $"{simpleAssetName}--{versionsHash}.dll");
+            var versionsHash = GetPathHash(versions);
+            assetPath = Path.Combine(RepoRootDirectory, "artifacts", "bin", "TestAssets", $"{simpleAssetName}--{versionsHash}", BuildConfiguration, targetFramework, $"{simpleAssetName}--{versionsHash}.dll");
         }
 
         Assert.IsTrue(File.Exists(assetPath), "GetTestAsset: Path not found: \"{0}\". Most likely you need to build using build.cmd -s PrepareAcceptanceTests.", assetPath);
@@ -229,19 +211,19 @@ public class IntegrationTestEnvironment
         // If you are thinking about wrapping the path in double quotes here,
         // then don't. File.Exist cannot handle quoted paths, and we use it in a lot of places.
         return assetPath;
+    }
 
-        static string Hash(string value)
+    public static string GetPathHash(string value)
+    {
+        unchecked
         {
-            unchecked
+            long hash = 23;
+            foreach (char ch in value)
             {
-                long hash = 23;
-                foreach (char ch in value)
-                {
-                    hash = hash * 31 + ch;
-                }
-
-                return $"{hash:X}";
+                hash = hash * 31 + ch;
             }
+
+            return $"{hash:X}";
         }
     }
 
@@ -260,9 +242,9 @@ public class IntegrationTestEnvironment
         return packagePath;
     }
 
-    private static Dictionary<string, string> GetDependencies(string testPlatformRoot)
+    private static Dictionary<string, string> GetDependencies(string repoRoot)
     {
-        var dependencyPropsFile = Path.Combine(testPlatformRoot, @"scripts\build\TestPlatform.Dependencies.props".Replace('\\', Path.DirectorySeparatorChar));
+        var dependencyPropsFile = Path.GetFullPath(Path.Combine(repoRoot, @"eng", "Versions.props"));
         var dependencyProps = new Dictionary<string, string>();
         if (!File.Exists(dependencyPropsFile))
         {
@@ -271,6 +253,14 @@ public class IntegrationTestEnvironment
 
         using (var reader = XmlReader.Create(dependencyPropsFile))
         {
+            while (reader.Read())
+            {
+                if (reader.NodeType == XmlNodeType.Element && reader.Name == "PropertyGroup" && reader.GetAttribute("Label") == "VSTest dependencies")
+                {
+                    break;
+                }
+            }
+
             reader.ReadToFollowing("PropertyGroup");
             using var props = reader.ReadSubtree();
             props.MoveToContent();
@@ -318,5 +308,31 @@ public class IntegrationTestEnvironment
         Assert.IsTrue(File.Exists(assetPath), "GetTestAsset: Path not found: \"{0}\".", assetPath);
 
         return assetPath;
+    }
+
+    private static string GetLatestLocallyBuiltPackageVersion()
+    {
+        // Latest version is determined by inspecting the locally built packages in artifacts/packages. The package name changes during build,
+        // e.g. -dev locally, but -ci on CI server, etc., and we cannot always guarantee that we will have the build properties available (e.g.
+        // when building under VS).
+
+        if (!Directory.Exists(LocalPackageSource))
+        {
+            throw new InvalidOperationException($"Directory {LocalPackageSource}' does not exist, did you run build.cmd -pack?");
+        }
+
+        var nugets = Directory.GetFiles(LocalPackageSource, "Microsoft.TestPlatform.ObjectModel.*.nupkg")
+            .Where(f => !f.Contains(".symbols."))
+            .Select(f => new FileInfo(f))
+            .ToList();
+
+        if (nugets.Count == 0)
+        {
+            throw new InvalidOperationException($"No Microsoft.TestPlatform.ObjectModel nugets were found in '{LocalPackageSource}', did you run build.cmd -pack?");
+        }
+
+        var nuget = nugets.OrderByDescending(n => n.LastWriteTime).First().Name!;
+        var version = nuget.Replace("Microsoft.TestPlatform.ObjectModel.", "").Replace(".nupkg", "");
+        return version;
     }
 }

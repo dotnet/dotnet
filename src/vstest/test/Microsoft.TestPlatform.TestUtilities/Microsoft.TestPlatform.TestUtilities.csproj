@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TestPlatformRoot Condition="$(TestPlatformRoot) == ''">..\..\</TestPlatformRoot>
-  </PropertyGroup>
-  <Import Project="$(TestPlatformRoot)scripts\build\TestPlatform.Settings.targets" />
+
   <PropertyGroup>
     <AssemblyName>Microsoft.TestPlatform.TestUtilities</AssemblyName>
     <TargetFrameworks>net6.0;net48</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(DotNetBuildFromSource)' == 'true' ">netcoreapp3.1</TargetFrameworks>
     <IsTestProject>false</IsTestProject>
     <UseBannedApiAnalyzers>true</UseBannedApiAnalyzers>
   </PropertyGroup>
@@ -31,7 +27,7 @@
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="$(FluentAssertionsVersion)" />
     <PackageReference Include="Moq" Version="$(MoqVersion)" />
-    <PackageReference Include="MSTest.TestFramework" Version="$(MSTestFrameworkVersion)" />
+    <PackageReference Include="MSTest.TestFramework" Version="$(MSTestTestFrameworkVersion)" />
   </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
     <PackageReference Include="Microsoft.Diagnostics.Tracing.TraceEvent" Version="1.0.41" />
@@ -46,5 +42,5 @@
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
-  <Import Project="$(TestPlatformRoot)scripts\build\TestPlatform.targets" />
+
 </Project>

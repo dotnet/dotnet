@@ -21,7 +21,7 @@ namespace AspNetCore
         private global::InputTestTagHelper __InputTestTagHelper;
         #pragma warning disable 219
         private void __RazorDirectiveTokenHelpers__() {
-        ((System.Action)(() => {
+        ((global::System.Action)(() => {
 #line 1 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml"
 DateTime __typeHelper = default;
 
@@ -29,7 +29,7 @@ DateTime __typeHelper = default;
 #line hidden
         }
         ))();
-        ((System.Action)(() => {
+        ((global::System.Action)(() => {
 #line 3 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml"
 global::System.Object __typeHelper = "InputTestTagHelper, AppCode";
 
@@ -37,7 +37,7 @@ global::System.Object __typeHelper = "InputTestTagHelper, AppCode";
 #line hidden
         }
         ))();
-        ((System.Action)(() => {
+        ((global::System.Action)(() => {
 #line 11 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml"
 global::System.Object Section1 = null;
 

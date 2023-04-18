@@ -615,7 +615,7 @@ internal abstract class BaseRunTests
             // Collecting Number of Adapters Used to run tests.
             _requestData.MetricsCollection.Add(TelemetryDataConstants.NumberOfAdapterUsedToRunTests, ExecutorUrisThatRanTests.Count);
 
-            if (lastChunkTestResults.Any() && IsTestSourceIsPackage())
+            if (lastChunkTestResults.Count != 0 && IsTestSourceIsPackage())
             {
                 UpdateTestCaseSourceToPackage(lastChunkTestResults, null, out lastChunkTestResults, out _);
             }

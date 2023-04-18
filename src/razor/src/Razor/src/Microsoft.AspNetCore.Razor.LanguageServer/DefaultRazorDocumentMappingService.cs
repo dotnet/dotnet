@@ -637,6 +637,12 @@ internal class DefaultRazorDocumentMappingService : RazorDocumentMappingService
         originalRange = default;
 
         var csharpSourceText = GetGeneratedSourceText(generatedDocument);
+
+        if (!IsRangeWithinDocument(projectedRange, csharpSourceText))
+        {
+            return false;
+        }
+
         var projectedRangeAsSpan = projectedRange.AsTextSpan(csharpSourceText);
         var range = projectedRange;
         var startIndex = projectedRangeAsSpan.Start;

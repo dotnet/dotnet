@@ -7,7 +7,7 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
     {
         #pragma warning disable 219
         private void __RazorDirectiveTokenHelpers__() {
-        ((System.Action)(() => {
+        ((global::System.Action)(() => {
 #nullable restore
 #line 86 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/StringLiterals.cshtml"
 global::System.Object WriteLiteralsToInHere = null!;
@@ -17,7 +17,7 @@ global::System.Object WriteLiteralsToInHere = null!;
 #nullable disable
         }
         ))();
-        ((System.Action)(() => {
+        ((global::System.Action)(() => {
 #nullable restore
 #line 206 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/StringLiterals.cshtml"
 global::System.Object WriteLiteralsToInHereAlso = null!;

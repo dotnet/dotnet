@@ -7,7 +7,7 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
     {
         #pragma warning disable 219
         private void __RazorDirectiveTokenHelpers__() {
-        ((System.Action)(() => {
+        ((global::System.Action)(() => {
 #nullable restore
 #line 12 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DesignTime.cshtml"
 global::System.Object Footer = null!;

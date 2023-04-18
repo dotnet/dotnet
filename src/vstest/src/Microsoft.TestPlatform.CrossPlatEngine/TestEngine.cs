@@ -659,7 +659,7 @@ public class TestEngine : ITestEngine
 
     private static void WarnAboutNotFoundRuntimeProvidersOrThrowWhenNoneAreFound(List<TestRuntimeProviderInfo> testRuntimeProviders, IWarningLogger warningLogger)
     {
-        if (!testRuntimeProviders.Any())
+        if (testRuntimeProviders.Count == 0)
             throw new ArgumentException(null, nameof(testRuntimeProviders));
 
         // Throw when we did not find any runtime provider for any of the provided sources.

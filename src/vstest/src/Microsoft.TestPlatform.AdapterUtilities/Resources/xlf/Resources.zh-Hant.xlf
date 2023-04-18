@@ -4,33 +4,33 @@
     <body>
       <trans-unit id="ErrorIncompleteManagedName">
         <source>ManagedName is incomplete</source>
-        <note />
         <target state="translated">ManagedName 不完整</target>
+        <note />
       </trans-unit>
       <trans-unit id="ErrorMethodArityMustBeNumeric">
         <source>Method arity must be numeric.</source>
-        <note></note>
         <target state="translated">方法 arity 必須為數值。</target>
+        <note />
       </trans-unit>
       <trans-unit id="ErrorMethodNotFound">
         <source>Method '{0}' not found on type '{1}'</source>
-        <note>{0} is the method name, {1} is the full type name.</note>
         <target state="translated">在類型 '{1}' 上找不到方法 '{0}'</target>
+        <note>{0} is the method name, {1} is the full type name.</note>
       </trans-unit>
       <trans-unit id="ErrorTypeNotFound">
         <source>Type '{0}' not found</source>
-        <note>{0} is the full type name.</note>
         <target state="translated">找不到類型 '{0}'</target>
+        <note>{0} is the full type name.</note>
       </trans-unit>
       <trans-unit id="ErrorUnexpectedCharactersAtEnd">
         <source>Unexpected characters after the end of the ManagedName (pos: {0})</source>
-        <note>{0} is the position of unexpected characters</note>
         <target state="translated">ManagedName 的結尾後出現非預期的字元 (位置: {0})</target>
+        <note>{0} is the position of unexpected characters</note>
       </trans-unit>
       <trans-unit id="ErrorWhitespaceNotValid">
         <source>Whitespace is not valid in a ManagedName (pos: {0})</source>
-        <note>{0} is the position of invalid whitespace</note>
         <target state="translated">空白字元在 ManagedName 中無效 (位置: {0})</target>
+        <note>{0} is the position of invalid whitespace</note>
       </trans-unit>
       <trans-unit id="MethodNotImplementedOnPlatform">
         <source>'{0}.{1}' is not implemented on this platform!</source>
@@ -52,12 +52,12 @@ Example: 'System.Reflection.MethodBase' is not implemented on this platform!</no
       <trans-unit id="ErrorMethodExpectedAsAnArgument">
         <source>Argument must be a method. (Argument name: {0})</source>
         <target state="translated">引數必須是方法。(引數名稱: {0})</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="ErrorCannotAppendAfterHashCalculation">
         <source>Cannot append to a TestIdProvider, after GetId or GetHash method is called.</source>
         <target state="translated">在呼叫 GetId 或 GetHash 方法之，無法附加到 TestIdProvider。</target>
-        <note></note>
+        <note />
       </trans-unit>
     </body>
   </file>

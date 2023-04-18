@@ -25,6 +25,7 @@ using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
 using Microsoft.VisualStudio.TestPlatform.PlatformAbstractions;
 using Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces;
+using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces;
 
 using CommunicationUtilitiesResources = Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources;
 
@@ -55,7 +56,7 @@ public class DesignModeClient : IDesignModeClient
     /// Initializes a new instance of the <see cref="DesignModeClient"/> class.
     /// </summary>
     public DesignModeClient()
-        : this(new SocketCommunicationManager(), JsonDataSerializer.Instance, new PlatformEnvironment())
+        : this(new SocketCommunicationManager(), JsonDataSerializer.Instance, new PlatformEnvironment(), new EnvironmentVariableHelper())
     {
     }
 
@@ -71,13 +72,14 @@ public class DesignModeClient : IDesignModeClient
     /// <param name="platformEnvironment">
     /// The platform Environment
     /// </param>
-    internal DesignModeClient(ICommunicationManager communicationManager, IDataSerializer dataSerializer, IEnvironment platformEnvironment)
+    internal DesignModeClient(ICommunicationManager communicationManager, IDataSerializer dataSerializer, IEnvironment platformEnvironment, IEnvironmentVariableHelper environmentVariableHelper)
     {
         _communicationManager = communicationManager;
         _dataSerializer = dataSerializer;
         _platformEnvironment = platformEnvironment;
         _testSessionMessageLogger = TestSessionMessageLogger.Instance;
         _testSessionMessageLogger.TestRunMessage += TestRunMessageHandler;
+        _isForwardingOutput = environmentVariableHelper.GetEnvironmentVariable("VSTEST_EXPERIMENTAL_FORWARD_OUTPUT_FEATURE") == "1";
     }
 
     /// <summary>
@@ -446,7 +448,7 @@ public class DesignModeClient : IDesignModeClient
             case TestMessageLevel.Informational:
                 EqtTrace.Info(e.Message);
 
-                if (EqtTrace.IsInfoEnabled)
+                if (_isForwardingOutput || EqtTrace.IsInfoEnabled)
                     SendTestMessage(e.Level, e.Message);
                 break;
 
@@ -653,6 +655,7 @@ public class DesignModeClient : IDesignModeClient
     #region IDisposable Support
 
     private bool _isDisposed; // To detect redundant calls
+    private bool _isForwardingOutput;
 
     protected virtual void Dispose(bool disposing)
     {

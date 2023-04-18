@@ -10,6 +10,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
+using Microsoft.AspNetCore.Razor.Language.Legacy;
 
 namespace Microsoft.AspNetCore.Razor.Language.Components;
 
@@ -19,6 +20,10 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
     private readonly ScopeStack _scopeStack = new ScopeStack();
 
     private const string DesignTimeVariable = "__o";
+
+    public ComponentDesignTimeNodeWriter(RazorLanguageVersion version) : base(version)
+    {
+    }
 
     public override void WriteMarkupBlock(CodeRenderingContext context, MarkupBlockIntermediateNode node)
     {
@@ -366,8 +371,8 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
             // Writes something like:
             //
             // __builder.OpenComponent<MyComponent>(0);
-            // __builder.AddAttribute(1, "Foo", ...);
-            // __builder.AddAttribute(2, "ChildContent", ...);
+            // __builder.AddComponentParameter(1, "Foo", ...);
+            // __builder.AddComponentParameter(2, "ChildContent", ...);
             // __builder.SetKey(someValue);
             // __builder.AddElementCapture(3, (__value) => _field = __value);
             // __builder.CloseComponent();
@@ -709,6 +714,13 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
         using (context.CodeWriter.BuildLinePragma(attributeSourceSpan, context))
         {
             context.CodeWriter.WritePadding(0, attributeSourceSpan, context);
+            // Escape the property name in case it's a C# keyword
+            // When https://github.com/dotnet/razor/issues/8445 is implemented,
+            // replace with a check against SyntaxFacts.IsKeywordKind || SyntaxFacts.IsConditionalKeywordKind
+            if (CSharpLanguageCharacteristics.GetKeywordKind(node.PropertyName) != null)
+            {
+                context.CodeWriter.Write("@");
+            }
             context.AddSourceMappingFor(attributeSourceSpan);
             context.CodeWriter.WriteLine(node.PropertyName);
         }
@@ -917,9 +929,9 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
 
         // Writes something like:
         //
-        // __builder.AddAttribute(1, "ChildContent", (RenderFragment)((__builder73) => { ... }));
+        // __builder.AddComponentParameter(1, "ChildContent", (RenderFragment)((__builder73) => { ... }));
         // OR
-        // __builder.AddAttribute(1, "ChildContent", (RenderFragment<Person>)((person) => (__builder73) => { ... }));
+        // __builder.AddComponentParameter(1, "ChildContent", (RenderFragment<Person>)((person) => (__builder73) => { ... }));
         BeginWriteAttribute(context, node.AttributeName);
         context.CodeWriter.WriteParameterSeparator();
         context.CodeWriter.Write("(");

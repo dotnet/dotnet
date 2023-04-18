@@ -2,14 +2,10 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
-using System.Reflection;
 
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollector.InProcDataCollector;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.InProcDataCollector;
-
-[assembly: AssemblyKeyFile("key.snk")]
-[assembly: AssemblyVersion("9.9.9.9")]
 
 namespace Coverlet.Collector.DataCollection;
 

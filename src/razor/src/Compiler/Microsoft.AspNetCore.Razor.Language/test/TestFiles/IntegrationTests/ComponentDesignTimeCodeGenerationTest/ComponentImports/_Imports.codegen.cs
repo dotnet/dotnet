@@ -27,7 +27,7 @@ using System.Reflection;
     {
         #pragma warning disable 219
         private void __RazorDirectiveTokenHelpers__() {
-        ((System.Action)(() => {
+        ((global::System.Action)(() => {
 #nullable restore
 #line 4 "x:\dir\subdir\Test\_Imports.razor"
 MainLayout __typeHelper = default!;

@@ -10,16 +10,16 @@ using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
-using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts.LinkedEditingRange;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.LinkedEditingRange;
 
-internal class LinkedEditingRangeEndpoint : ILinkedEditingRangeEndpoint
+[LanguageServerEndpoint(Methods.TextDocumentLinkedEditingRangeName)]
+internal class LinkedEditingRangeEndpoint : IRazorRequestHandler<LinkedEditingRangeParams, LinkedEditingRanges?>, IRegistrationExtension
 {
     // The regex below excludes characters that can never be valid in a TagHelper name.
     // This is loosely based off logic from the Razor compiler:

@@ -124,7 +124,7 @@ internal class RazorLanguageServer : AbstractLanguageServer<RazorRequestContext>
 
         services.AddDiagnosticServices();
         services.AddSemanticTokensServices();
-        services.AddDocumentManagmentServices();
+        services.AddDocumentManagementServices(featureOptions);
         services.AddCompletionServices(featureOptions);
         services.AddFormattingServices();
         services.AddCodeActionsServices();
@@ -176,7 +176,7 @@ internal class RazorLanguageServer : AbstractLanguageServer<RazorRequestContext>
             services.AddRegisteringHandler<OnAutoInsertEndpoint>();
             services.AddHandler<MonitorProjectConfigurationFilePathEndpoint>();
             services.AddRegisteringHandler<RenameEndpoint>();
-            services.AddRegisteringHandler<RazorDefinitionEndpoint>();
+            services.AddRegisteringHandler<DefinitionEndpoint>();
             services.AddRegisteringHandler<LinkedEditingRangeEndpoint>();
             services.AddHandler<WrapWithTagEndpoint>();
             services.AddHandler<RazorBreakpointSpanEndpoint>();

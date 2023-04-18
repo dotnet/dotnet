@@ -17,7 +17,7 @@ internal sealed class DefaultRazorTagHelperContextDiscoveryPhase : RazorEnginePh
 {
     protected override void ExecuteCore(RazorCodeDocument codeDocument)
     {
-        var syntaxTree = codeDocument.GetSyntaxTree();
+        var syntaxTree = codeDocument.GetPreTagHelperSyntaxTree() ?? codeDocument.GetSyntaxTree();
         ThrowForMissingDocumentDependency(syntaxTree);
 
         var descriptors = codeDocument.GetTagHelpers();
@@ -69,7 +69,6 @@ internal sealed class DefaultRazorTagHelperContextDiscoveryPhase : RazorEnginePh
 
         var context = TagHelperDocumentContext.Create(tagHelperPrefix, descriptors);
         codeDocument.SetTagHelperContext(context);
-        codeDocument.SetPreTagHelperSyntaxTree(syntaxTree);
     }
 
     private static bool MatchesDirective(TagHelperDescriptor descriptor, string typePattern, string assemblyName)

@@ -368,7 +368,7 @@ public class TestPluginCache
 
         // Add the extension directories for assembly resolution
         var extensionDirectories = GetExtensionPaths(string.Empty).Select(e => Path.GetDirectoryName(Path.GetFullPath(e))!).Distinct().ToList();
-        if (extensionDirectories.Any())
+        if (extensionDirectories.Count != 0)
         {
             resolutionPaths.AddRange(extensionDirectories);
         }

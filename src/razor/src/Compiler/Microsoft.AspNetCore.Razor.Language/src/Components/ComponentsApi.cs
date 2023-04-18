@@ -86,6 +86,7 @@ internal static class ComponentsApi
         public const string AddAttribute = nameof(AddAttribute);
 
         public const string AddMultipleAttributes = nameof(AddMultipleAttributes);
+        public const string AddComponentParameter = nameof(AddComponentParameter);
 
         public const string AddElementReferenceCapture = nameof(AddElementReferenceCapture);
 

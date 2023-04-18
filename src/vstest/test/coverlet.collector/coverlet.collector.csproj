@@ -1,11 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net6.0;net48</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(DotNetBuildFromSource)' == 'true' ">netcoreapp3.1</TargetFrameworks>
-    <CheckEolTargetFramework>false</CheckEolTargetFramework>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <IsTestProject>false</IsTestProject>
-    <LangVersion>preview</LangVersion>
+    <!-- Don't change the version from 9.9.9.9 it is used in tests to recognize this "mock" library. -->
+    <AssemblyVersion>9.9.9.9</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>

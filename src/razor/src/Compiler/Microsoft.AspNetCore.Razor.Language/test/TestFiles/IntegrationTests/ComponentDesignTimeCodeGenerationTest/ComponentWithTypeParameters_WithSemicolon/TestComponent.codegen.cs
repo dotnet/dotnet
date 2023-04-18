@@ -18,7 +18,7 @@ using Microsoft.AspNetCore.Components;
     {
         #pragma warning disable 219
         private void __RazorDirectiveTokenHelpers__() {
-        ((System.Action)(() => {
+        ((global::System.Action)(() => {
 #nullable restore
 #line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
 global::System.Object TItem1 = null!;
@@ -28,7 +28,7 @@ global::System.Object TItem1 = null!;
 #nullable disable
         }
         ))();
-        ((System.Action)(() => {
+        ((global::System.Action)(() => {
 #nullable restore
 #line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
 global::System.Object TItem2 = null!;

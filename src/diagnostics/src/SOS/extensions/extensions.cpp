@@ -1,6 +1,5 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 #include <windows.h>
 #include <psapi.h>
@@ -133,7 +132,7 @@ ISymbolService* Extensions::GetSymbolService()
 {
     if (m_pSymbolService == nullptr)
     {
-	    ITarget* target = GetTarget();
+        ITarget* target = GetTarget();
         if (target != nullptr)
         {
             target->GetService(__uuidof(ISymbolService), (void**)&m_pSymbolService);
@@ -213,21 +212,6 @@ void Extensions::ReleaseTarget()
         m_pTarget->Release();
         m_pTarget = nullptr;
     }
-}
-
-/// <summary>
-/// Returns the runtime or fails if no target or current runtime
-/// </summary>
-/// <param name="ppRuntime">runtime instance</param>
-/// <returns>error code</returns>
-HRESULT GetRuntime(IRuntime** ppRuntime)
-{
-    ITarget* target = GetTarget();
-    if (target == nullptr)
-    {
-        return E_FAIL;
-    }
-    return target->GetRuntime(ppRuntime);
 }
 
 /// <summary>

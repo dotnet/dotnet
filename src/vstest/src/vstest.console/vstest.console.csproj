@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TestPlatformRoot Condition="$(TestPlatformRoot) == ''">..\..\</TestPlatformRoot>
-  </PropertyGroup>
-  <Import Project="$(TestPlatformRoot)src\Microsoft.TestPlatform.Execution.Shared\Microsoft.TestPlatform.Execution.Shared.projitems" Label="Shared" />
-  <Import Project="$(TestPlatformRoot)scripts/build/TestPlatform.Settings.targets" />
+
+  <Import Project="$(RepoRoot)src\Microsoft.TestPlatform.Execution.Shared\Microsoft.TestPlatform.Execution.Shared.projitems" Label="Shared" />
+
   <PropertyGroup>
     <AssemblyName>vstest.console</AssemblyName>
-    <AssemblyName Condition=" '$(RuntimeIdentifier)' == 'win10-arm64' ">vstest.console.arm64</AssemblyName>
     <TargetFrameworks>net7.0;$(NetFrameworkMinimum);$(NetCoreAppMinimum)</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(DotNetBuildFromSource)' == 'true' ">net7.0;</TargetFrameworks>
     <OutputType>Exe</OutputType>
     <!-- Prevent the creation of the ".exe" for .NET Core. This was the default on .NET Core 2.1, behavior changed for .NET Core 3.1 -->
     <UseAppHost>false</UseAppHost>
@@ -26,16 +22,11 @@
     <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
     <DefineConstants>$(DefineConstants);USE_EXTERN_ALIAS</DefineConstants>
 
-    <MSBuildWarningsAsMessages>
-      $(MSBuildWarningsAsMessages);MSB3276;
-    </MSBuildWarningsAsMessages>
+    <MSBuildWarningsAsMessages>$(MSBuildWarningsAsMessages);MSB3276</MSBuildWarningsAsMessages>
   </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)' == '$(NetFrameworkMinimum)'">
-    <RuntimeIdentifiers>win7-x64;win10-arm64</RuntimeIdentifiers>
+    <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
   </PropertyGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\Resources.resx" />
-  </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == '$(NetFrameworkMinimum)' ">
     <Reference Include="System" />
     <Reference Include="System.IO" />
@@ -45,7 +36,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" Version="$(MicrosoftExtensionsFileSystemGlobbingPackageVersion)" />
+    <PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" Version="$(MicrosoftExtensionsFileSystemGlobbingVersion)" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.TestPlatform.CoreUtilities\Microsoft.TestPlatform.CoreUtilities.csproj" />
@@ -98,5 +89,5 @@
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
-  <Import Project="$(TestPlatformRoot)scripts\build\TestPlatform.targets" />
+
 </Project>

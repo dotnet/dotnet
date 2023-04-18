@@ -3,6 +3,7 @@
 #
 
 variables:
+- template: /eng/common/templates/variables/pool-providers.yml
 - name: Build.Repository.Clean
   value: true
 - name: _TeamName
@@ -76,11 +77,11 @@ stages:
           displayName: Code check
           pool:
             ${{ if eq(variables['System.TeamProject'], 'public') }}:
-              name: NetCore-Public
-              demands: ImageOverride -equals windows.vs2022preview.scout.amd64.open
+              name: $(DncEngPublicBuildPool)
+              demands: ImageOverride -equals windows.vs2022preview.amd64.open
             ${{ if ne(variables['System.TeamProject'], 'public') }}:
-              name: NetCore1ESPool-Internal
-              demands: ImageOverride -equals windows.vs2022preview.scout.amd64
+              name: $(DncEngInternalBuildPool)
+              demands: ImageOverride -equals windows.vs2022preview.amd64
           steps:
           - task: NodeTool@0
             displayName: Install Node 10.x
@@ -124,12 +125,11 @@ stages:
         timeoutInMinutes: 120
         pool:
           ${{ if eq(variables['System.TeamProject'], 'public') }}:
-            name: NetCore-Public
-            demands: ImageOverride -equals windows.vs2022preview.scout.amd64.open
+            name: $(DncEngPublicBuildPool)
+            demands: ImageOverride -equals windows.vs2022preview.amd64.open
           ${{ if ne(variables['System.TeamProject'], 'public') }}:
-            name: NetCore1ESPool-Internal
-            #Switch to scout queue to get test pass
-            demands: ImageOverride -equals windows.vs2022preview.scout.amd64
+            name: $(DncEngInternalBuildPool)
+            demands: ImageOverride -equals windows.vs2022preview.amd64
         strategy:
           matrix:
             ${{ if eq(variables['System.TeamProject'], 'public') }}:
@@ -212,7 +212,6 @@ stages:
             $(_BuildArgs)
             $(_PublishArgs)
             $(_InternalRuntimeDownloadArgs)
-            /p:IncludeRoslynDeps=true
           name: Build
           displayName: Build and Deploy
           condition: succeeded()
@@ -230,17 +229,13 @@ stages:
         - powershell: eng\SetupVSHive.ps1
           displayName: Setup VS Hive
 
-          # https://github.com/dotnet/razor/issues/8378
-          # Restore the following flag to the below script to re-enable integration tests.
-          # -integrationTest
         - script: eng\CIBuild.cmd
             -configuration $(_BuildConfig)
             -prepareMachine
             -test
-            /p:BuildProjectReferences=false
+            -integrationTest
           name: Run_Tests
-          # displayName: Run Unit and Integration tests
-          displayName: Run Unit tests
+          displayName: Run Unit and Integration tests
           condition: succeeded()
 
         - task: PublishBuildArtifacts@1
@@ -384,7 +379,7 @@ stages:
           ${{ if eq(variables['System.TeamProject'], 'public') }}:
             vmImage: ubuntu-latest
           ${{ if eq(variables['System.TeamProject'], 'internal') }}:
-            name: NetCore1ESPool-Internal
+            name: $(DncEngInternalBuildPool)
             demands: ImageOverride -equals Build.Ubuntu.1804.Amd64
 
         variables:

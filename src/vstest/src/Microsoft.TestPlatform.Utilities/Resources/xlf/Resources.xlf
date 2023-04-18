@@ -4,27 +4,27 @@
     <body>
       <trans-unit id="InvalidRunSettingsXml">
         <source>Run settings XML does not contain "RunSettings" node.</source>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="InvalidSettingsIncorrectValue">
         <source>Invalid setting '{0}'. Invalid value '{1}' specified for '{2}'.</source>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="MissingRunSettingsNode">
         <source>Could not find 'RunSettings' node.</source>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="NoRunSettingsNodeFound">
         <source>Could not find 'RunSettings' node.</source>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="RunSettingsParseError">
         <source>An error occurred while loading the settings.  Error: {0}.</source>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="UnExpectedSettingsFile">
         <source>Unexpected settings file specified.</source>
-        <note></note>
+        <note />
       </trans-unit>
     </body>
   </file>

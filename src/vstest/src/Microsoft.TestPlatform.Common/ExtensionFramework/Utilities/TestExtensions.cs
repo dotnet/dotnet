@@ -235,13 +235,13 @@ public class TestExtensions
         testExtensions.DataCollectors =
             GetExtensionsDiscoveredFromAssembly(DataCollectors, extensionAssembly);
 
-        if (testExtensions.TestDiscoverers.Any()
-            || testExtensions.TestExecutors.Any()
-            || testExtensions.TestExecutors2.Any()
-            || testExtensions.TestSettingsProviders.Any()
-            || testExtensions.TestLoggers.Any()
-            || testExtensions.TestHosts.Any()
-            || testExtensions.DataCollectors.Any())
+        if (testExtensions.TestDiscoverers.Count != 0
+            || testExtensions.TestExecutors.Count != 0
+            || testExtensions.TestExecutors2.Count != 0
+            || testExtensions.TestSettingsProviders.Count != 0
+            || testExtensions.TestLoggers.Count != 0
+            || testExtensions.TestHosts.Count != 0
+            || testExtensions.DataCollectors.Count != 0)
         {
             // This extension has already been discovered.
             return testExtensions;

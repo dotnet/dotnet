@@ -6,11 +6,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Moq;
 using Newtonsoft.Json.Linq;
 using NuGet.Configuration;
 using NuGet.Protocol.Core.Types;
 using NuGet.Protocol.Tests;
+using NuGet.Protocol.Tests.Providers;
 using Test.Utility;
 using Xunit;
 
@@ -44,7 +44,7 @@ namespace NuGet.Protocol.Providers.Tests
         {
             var resourceProviders = new ResourceProvider[]
             {
-                CreateServiceIndexResourceV3Provider(),
+                MockServiceIndexResourceV3Provider.Create(),
                 _repositorySignatureResourceProvider
             };
             var sourceRepository = new SourceRepository(_packageSource, resourceProviders);
@@ -63,7 +63,7 @@ namespace NuGet.Protocol.Providers.Tests
             var serviceEntry = new ServiceIndexEntry(new Uri(resourceUrl), resourceType, DefaultVersion);
             var resourceProviders = new ResourceProvider[]
             {
-                CreateServiceIndexResourceV3Provider(serviceEntry),
+                MockServiceIndexResourceV3Provider.Create(serviceEntry),
                 StaticHttpSource.CreateHttpSource(
                     new Dictionary<string, string>()
                     {
@@ -88,7 +88,7 @@ namespace NuGet.Protocol.Providers.Tests
             var serviceEntry = new ServiceIndexEntry(new Uri(resourceUrl), resourceType, DefaultVersion);
             var resourceProviders = new ResourceProvider[]
             {
-                CreateServiceIndexResourceV3Provider(serviceEntry),
+                MockServiceIndexResourceV3Provider.Create(serviceEntry),
                 StaticHttpSource.CreateHttpSource(
                     new Dictionary<string, string>()
                     {
@@ -117,7 +117,7 @@ namespace NuGet.Protocol.Providers.Tests
             var serviceEntry500 = new ServiceIndexEntry(new Uri(ResourceUri500), ResourceType500, DefaultVersion);
             var resourceProviders = new ResourceProvider[]
             {
-                CreateServiceIndexResourceV3Provider(serviceEntry470, serviceEntry490, serviceEntry500),
+                MockServiceIndexResourceV3Provider.Create(serviceEntry470, serviceEntry490, serviceEntry500),
                 StaticHttpSource.CreateHttpSource(
                     new Dictionary<string, string>()
                     {
@@ -156,7 +156,7 @@ namespace NuGet.Protocol.Providers.Tests
             var httpSource = new TestHttpSource(_packageSource, responses);
             var resourceProviders = new ResourceProvider[]
             {
-                CreateServiceIndexResourceV3Provider(serviceEntry),
+                MockServiceIndexResourceV3Provider.Create(serviceEntry),
                 StaticHttpSource.CreateHttpSource(responses, httpSource: httpSource),
                 _repositorySignatureResourceProvider
             };
@@ -172,43 +172,6 @@ namespace NuGet.Protocol.Providers.Tests
 
             Assert.True(result.Item1);
             Assert.Equal(expectedCacheKey, actualCacheKey);
-        }
-
-        private static ServiceIndexResourceV3Provider CreateServiceIndexResourceV3Provider(params ServiceIndexEntry[] entries)
-        {
-            var provider = new Mock<ServiceIndexResourceV3Provider>();
-
-            provider.Setup(x => x.Name)
-                .Returns(nameof(ServiceIndexResourceV3Provider));
-            provider.Setup(x => x.ResourceType)
-                .Returns(typeof(ServiceIndexResourceV3));
-
-            var resources = new JArray();
-
-            foreach (var entry in entries)
-            {
-                resources.Add(
-                    new JObject(
-                        new JProperty("@id", entry.Uri.AbsoluteUri),
-                        new JProperty("@type", entry.Type)));
-            }
-
-            var index = new JObject();
-
-            index.Add("version", "3.0.0");
-            index.Add("resources", resources);
-            index.Add("@context",
-                new JObject(
-                    new JProperty("@vocab", "http://schema.nuget.org/schema#"),
-                    new JProperty("comment", "http://www.w3.org/2000/01/rdf-schema#comment")));
-
-            var serviceIndexResource = new ServiceIndexResourceV3(index, DateTime.UtcNow);
-            var tryCreateResult = new Tuple<bool, INuGetResource>(true, serviceIndexResource);
-
-            provider.Setup(x => x.TryCreate(It.IsAny<SourceRepository>(), It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(tryCreateResult));
-
-            return provider.Object;
         }
 
         private static string GetRepositorySignaturesResourceJson(string resourceBaseUri)

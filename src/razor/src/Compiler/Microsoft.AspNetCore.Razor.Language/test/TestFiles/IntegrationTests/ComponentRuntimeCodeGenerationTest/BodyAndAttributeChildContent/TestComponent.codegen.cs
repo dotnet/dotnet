@@ -39,7 +39,7 @@ __builder2.AddContent(1, context.ToLowerInvariant());
 #line hidden
 #nullable disable
             __builder.OpenComponent<global::Test.MyComponent>(2);
-            __builder.AddAttribute(3, "Header", (global::Microsoft.AspNetCore.Components.RenderFragment<System.String>)(
+            __builder.AddComponentParameter(3, "Header", (global::Microsoft.AspNetCore.Components.RenderFragment<System.String>)(
 #nullable restore
 #line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
                      header

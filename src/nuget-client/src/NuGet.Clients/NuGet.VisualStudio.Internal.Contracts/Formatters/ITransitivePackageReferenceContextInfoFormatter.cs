@@ -90,7 +90,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
                 IsDevelopmentDependency = isDevelopmentDependency
             };
 
-            if (!string.IsNullOrWhiteSpace(allowedVersions) && VersionRange.TryParse(allowedVersions, out VersionRange versionRange))
+            if (!string.IsNullOrWhiteSpace(allowedVersions) && VersionRange.TryParse(allowedVersions!, out VersionRange? versionRange))
             {
                 packageReferenceContextInfo.AllowedVersions = versionRange;
             }

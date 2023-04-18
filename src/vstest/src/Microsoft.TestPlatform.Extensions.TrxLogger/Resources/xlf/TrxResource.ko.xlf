@@ -301,12 +301,12 @@ Fehlerdetails: {1}: {2}</target>
       <trans-unit id="PrefixAndNameProvidedError">
         <source>The parameters LogFileName and LogFilePrefix cannot be used together. </source>
         <target state="translated">LogFileName 및 LogFilePrefix 매개 변수는 함께 사용할 수 없습니다. </target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="Common_CannotGetNextTimestampFileName">
         <source>Cannot get find an available filename for {0} using timestamp format '{2}' at {1}.</source>
         <target state="translated">{1}에서 타임스탬프 형식 '{2}'을(를) 사용하는 {0}의 사용 가능한 파일 이름을 찾을 수 없습니다.</target>
-        <note></note>
+        <note />
       </trans-unit>
     </body>
   </file>

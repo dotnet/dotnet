@@ -149,7 +149,7 @@ internal class DefaultRazorComponentSearchEngine : RazorComponentSearchEngine
         return null;
     }
 
-    private static StringSegment RemoveGenericContent(StringSegment typeName)
+    internal static StringSegment RemoveGenericContent(StringSegment typeName)
     {
         var genericSeparatorStart = typeName.IndexOf('<');
         if (genericSeparatorStart > 0)

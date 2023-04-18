@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <TargetFramework>$(DefaultNetCoreTargetFramework)</TargetFramework>
+    <TargetFrameworks>$(DefaultNetCoreTargetFrameworks)</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(RunningAsTest)' == ''">

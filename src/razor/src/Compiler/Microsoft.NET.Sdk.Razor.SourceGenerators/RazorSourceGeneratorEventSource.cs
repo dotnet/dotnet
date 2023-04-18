@@ -59,5 +59,37 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
         private const int GenerateDeclarationSyntaxTreeStopId = 14;
         [Event(GenerateDeclarationSyntaxTreeStopId, Level = EventLevel.Informational)]
         public void GenerateDeclarationSyntaxTreeStop() => WriteEvent(GenerateDeclarationSyntaxTreeStopId);
+
+        private const int DiscoverTagHelpersFromComponentStartId = 15;
+        [Event(DiscoverTagHelpersFromComponentStartId, Level = EventLevel.Informational)]
+        public void DiscoverTagHelpersFromComponentStart(string filePath) => WriteEvent(DiscoverTagHelpersFromComponentStartId, filePath);
+
+        private const int DiscoverTagHelpersFromComponentStopId = 16;
+        [Event(DiscoverTagHelpersFromComponentStopId, Level = EventLevel.Informational)]
+        public void DiscoverTagHelpersFromComponentStop(string filePath) => WriteEvent(DiscoverTagHelpersFromComponentStopId, filePath);
+
+        private const int ParseRazorDocumentStartId = 17;
+        [Event(ParseRazorDocumentStartId, Level = EventLevel.Informational)]
+        public void ParseRazorDocumentStart(string file) => WriteEvent(ParseRazorDocumentStartId, file);
+
+        private const int ParseRazorDocumentStopId = 18;
+        [Event(ParseRazorDocumentStopId, Level = EventLevel.Informational)]
+        public void ParseRazorDocumentStop(string file) => WriteEvent(ParseRazorDocumentStopId, file);
+
+        private const int RewriteTagHelpersStartId = 19;
+        [Event(RewriteTagHelpersStartId, Level = EventLevel.Informational)]
+        public void RewriteTagHelpersStart(string file) => WriteEvent(RewriteTagHelpersStartId, file);
+
+        private const int RewriteTagHelpersStopId = 20;
+        [Event(RewriteTagHelpersStopId, Level = EventLevel.Informational)]
+        public void RewriteTagHelpersStop(string file) => WriteEvent(RewriteTagHelpersStopId, file);
+
+        private const int CheckAndRewriteTagHelpersStartId = 21;
+        [Event(CheckAndRewriteTagHelpersStartId, Level = EventLevel.Informational)]
+        public void CheckAndRewriteTagHelpersStart(string file) => WriteEvent(CheckAndRewriteTagHelpersStartId, file);
+
+        private const int CheckAndRewriteTagHelpersStopId = 22;
+        [Event(CheckAndRewriteTagHelpersStopId, Level = EventLevel.Informational)]
+        public void CheckAndRewriteTagHelpersStop(string file) => WriteEvent(CheckAndRewriteTagHelpersStopId, file);
     }
 }

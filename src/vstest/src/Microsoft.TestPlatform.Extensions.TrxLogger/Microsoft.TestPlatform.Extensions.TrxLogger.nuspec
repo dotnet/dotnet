@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    $CommonMetadataElements$
+
+    <dependencies>
+      <group targetFramework="net462">
+        <dependency id="Newtonsoft.Json" version="$JsonNetVersion$"/>
+        <dependency id="Microsoft.TestPlatform.ObjectModel" version="$Version$"/>
+      </group>
+      <group targetFramework="netstandard2.0">
+        <dependency id="Newtonsoft.Json" version="$JsonNetVersion$"/>
+        <dependency id="Microsoft.TestPlatform.ObjectModel" version="$Version$"/>
+      </group>
+    </dependencies>
+
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="System.Xml" targetFramework=".NETFramework4.6" />
+      <frameworkAssembly assemblyName="System.Runtime.Serialization" targetFramework=".NETFramework4.6" />
+      <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.6" />
+      <frameworkAssembly assemblyName="Microsoft.CSharp" targetFramework=".NETFramework4.6" />
+    </frameworkAssemblies>
+  </metadata>
+
+  <files>
+    $CommonFileElements$
+
+    <!-- Add a third party notice file -->
+    <file src="$SrcPackageFolder$ThirdPartyNotices.txt" target="" />
+
+    <file src="net462\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.dll" target="lib\net462\" />
+    <file src="netstandard2.0\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.dll" target="lib\netstandard2.0\" />
+
+    <!-- Add localized resources -->
+    <file src="net462\cs\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" target="lib\net462\cs" />
+    <file src="net462\de\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" target="lib\net462\de" />
+    <file src="net462\es\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" target="lib\net462\es" />
+    <file src="net462\fr\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" target="lib\net462\fr" />
+    <file src="net462\it\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" target="lib\net462\it" />
+    <file src="net462\ja\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" target="lib\net462\ja" />
+    <file src="net462\ko\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" target="lib\net462\ko" />
+    <file src="net462\pl\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" target="lib\net462\pl" />
+    <file src="net462\pt-BR\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" target="lib\net462\pt-BR" />
+    <file src="net462\ru\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" target="lib\net462\ru" />
+    <file src="net462\tr\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" target="lib\net462\tr" />
+    <file src="net462\zh-Hans\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" target="lib\net462\zh-Hans" />
+    <file src="net462\zh-Hant\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" target="lib\net462\zh-Hant" />
+
+    <file src="netstandard2.0\cs\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" target="lib\netstandard2.0\cs" />
+    <file src="netstandard2.0\de\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" target="lib\netstandard2.0\de" />
+    <file src="netstandard2.0\es\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" target="lib\netstandard2.0\es" />
+    <file src="netstandard2.0\fr\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" target="lib\netstandard2.0\fr" />
+    <file src="netstandard2.0\it\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" target="lib\netstandard2.0\it" />
+    <file src="netstandard2.0\ja\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" target="lib\netstandard2.0\ja" />
+    <file src="netstandard2.0\ko\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" target="lib\netstandard2.0\ko" />
+    <file src="netstandard2.0\pl\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" target="lib\netstandard2.0\pl" />
+    <file src="netstandard2.0\pt-BR\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" target="lib\netstandard2.0\pt-BR" />
+    <file src="netstandard2.0\ru\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" target="lib\netstandard2.0\ru" />
+    <file src="netstandard2.0\tr\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" target="lib\netstandard2.0\tr" />
+    <file src="netstandard2.0\zh-Hans\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" target="lib\netstandard2.0\zh-Hans" />
+    <file src="netstandard2.0\zh-Hant\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" target="lib\netstandard2.0\zh-Hant" />
+  </files>
+</package>

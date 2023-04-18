@@ -5,6 +5,7 @@
 
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Text;
 using Xunit;
 using Xunit.Abstractions;
@@ -23,8 +24,7 @@ public class GeneratedDocumentTextLoaderTest : WorkspaceTestBase
         _hostDocument = TestProjectData.SomeProjectFile1;
     }
 
-    // See https://github.com/dotnet/aspnetcore/issues/7997
-    [Fact]
+    [Fact, WorkItem("https://github.com/dotnet/aspnetcore/issues/7997")]
     public async Task LoadAsync_SpecifiesEncoding()
     {
         // Arrange

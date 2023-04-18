@@ -5,27 +5,27 @@
       <trans-unit id="BuildCompleted">
         <source>Build completed.</source>
         <target state="translated">Derleme tamamlandı.</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="BuildStarted">
         <source>Build started, please wait...</source>
         <target state="translated">Derleme başlatıldı. Lütfen bekleyin...</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="TestRunningSummary">
         <source>Test run for {0} ({1})</source>
         <target state="translated">{0} ({1}) için test çalıştırması</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="UpdateTestSdkForCollectingCodeCoverage">
         <source>Warning: Update the Microsoft.NET.Test.Sdk package reference to version 15.8.0 or later to collect code coverage.</source>
         <target state="translated">Uyarı: Kod kapsamını toplamak için Microsoft.NET.Test.Sdk paketinin başvurusunu 15.8.0 veya üzeri bir sürüme güncelleştirin.</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="NoIsTestProjectProperty">
         <source>Skipping running test for project {0}. To run tests with dotnet test add "&lt;IsTestProject&gt;true&lt;/IsTestProject&gt;" property to project file.</source>
         <target state="translated">{0} projesi için test çalıştırma atlanıyor. Testleri dotnet test ile çalıştırmak için proje dosyasına "&lt;IsTestProject&gt;true&lt;/IsTestProject&gt;" özelliğini ekleyin.</target>
-        <note></note>
+        <note />
       </trans-unit>
     </body>
   </file>

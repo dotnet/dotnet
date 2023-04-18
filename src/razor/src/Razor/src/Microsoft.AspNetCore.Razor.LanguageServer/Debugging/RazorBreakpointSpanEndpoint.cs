@@ -5,6 +5,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
@@ -13,12 +14,14 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Debugging;
 
-internal class RazorBreakpointSpanEndpoint : IRazorBreakpointSpanEndpoint
+[LanguageServerEndpoint(LanguageServerConstants.RazorBreakpointSpanEndpoint)]
+internal class RazorBreakpointSpanEndpoint : IRazorDocumentlessRequestHandler<RazorBreakpointSpanParams, RazorBreakpointSpanResponse?>, ITextDocumentIdentifierHandler<RazorBreakpointSpanParams, Uri>
 {
     private readonly RazorDocumentMappingService _documentMappingService;
     private readonly ILogger _logger;
@@ -29,18 +32,12 @@ internal class RazorBreakpointSpanEndpoint : IRazorBreakpointSpanEndpoint
         RazorDocumentMappingService documentMappingService,
         ILoggerFactory loggerFactory)
     {
-
-        if (documentMappingService is null)
-        {
-            throw new ArgumentNullException(nameof(documentMappingService));
-        }
-
         if (loggerFactory is null)
         {
             throw new ArgumentNullException(nameof(loggerFactory));
         }
 
-        _documentMappingService = documentMappingService;
+        _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
         _logger = loggerFactory.CreateLogger<RazorBreakpointSpanEndpoint>();
     }
 

@@ -47,6 +47,7 @@ namespace MessagePack
         /// </summary>
         /// <param name="info">Serialization info.</param>
         /// <param name="context">Serialization context.</param>
+        [Obsolete("This API supports obsolete formatter-based serialization. It should not be called or extended by application code.")]
         protected MessagePackSerializationException(
           System.Runtime.Serialization.SerializationInfo info,
           System.Runtime.Serialization.StreamingContext context)

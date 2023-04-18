@@ -22,64 +22,59 @@ namespace NuGet.Versioning
         /// <summary>
         /// Format a version range string.
         /// </summary>
-        public string Format(string format, object arg, IFormatProvider formatProvider)
+        public string Format(string? format, object? arg, IFormatProvider? formatProvider)
         {
             if (arg == null)
             {
                 throw new ArgumentNullException(nameof(arg));
             }
 
-            string formatted = null;
-            var argType = arg.GetType();
-
-            if (argType == typeof(IFormattable))
+            var range = arg as VersionRange;
+            if (range == null)
             {
-                formatted = ((IFormattable)arg).ToString(format, formatProvider);
+                throw ResourcesFormatter.TypeNotSupported(arg.GetType(), nameof(arg));
             }
-            else if (!string.IsNullOrEmpty(format))
-            {
-                var range = arg as VersionRange;
 
-                if (range != null)
+            if (string.IsNullOrEmpty(format))
+            {
+                format = "N";
+            }
+
+            // single char identifiers
+            if (format!.Length == 1)
+            {
+                string formatted = Format(format[0], range);
+                return formatted;
+            }
+            else
+            {
+                var sb = new StringBuilder(format.Length);
+
+                for (var i = 0; i < format.Length; i++)
                 {
-                    // single char identifiers
-                    if (format.Length == 1)
+                    var s = Format(format[i], range);
+
+                    if (s == null)
                     {
-                        formatted = Format(format[0], range);
+                        sb.Append(format[i]);
                     }
                     else
                     {
-                        var sb = new StringBuilder(format.Length);
-
-                        for (var i = 0; i < format.Length; i++)
-                        {
-                            var s = Format(format[i], range);
-
-                            if (s == null)
-                            {
-                                sb.Append(format[i]);
-                            }
-                            else
-                            {
-                                sb.Append(s);
-                            }
-                        }
-
-                        formatted = sb.ToString();
+                        sb.Append(s);
                     }
                 }
-            }
 
-            return formatted;
+                string formatted = sb.ToString();
+                return formatted;
+            }
         }
 
         /// <summary>
         /// Format type.
         /// </summary>
-        public object GetFormat(Type formatType)
+        public object? GetFormat(Type? formatType)
         {
-            if (formatType == typeof(ICustomFormatter)
-                || formatType == typeof(VersionRange))
+            if (typeof(VersionRange).IsAssignableFrom(formatType))
             {
                 return this;
             }
@@ -89,7 +84,7 @@ namespace NuGet.Versioning
 
         private string Format(char c, VersionRange range)
         {
-            string s = null;
+            string s = string.Empty;
 
             switch (c)
             {
@@ -127,7 +122,7 @@ namespace NuGet.Versioning
 
         private string GetShortString(VersionRange range)
         {
-            string s = null;
+            string s;
 
             if (range.HasLowerBound
                 && range.IsMinInclusive
@@ -192,7 +187,7 @@ namespace NuGet.Versioning
         /// </summary>
         private string GetToString(VersionRange range)
         {
-            string s = null;
+            string s;
 
             if (range.HasLowerBound
                 && range.IsMinInclusive
@@ -223,7 +218,7 @@ namespace NuGet.Versioning
         /// </summary>
         private string GetLegacyShortString(VersionRangeBase range)
         {
-            string s = null;
+            string s;
 
             if (range.HasLowerBound
                 && range.IsMinInclusive

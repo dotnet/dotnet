@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
+using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Razor;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -68,7 +69,7 @@ internal static class AddUsingsCodeActionProviderHelper
         return usings;
     }
 
-    internal static readonly Regex AddUsingVSCodeAction = new Regex("^@?using ([^;]+);?$", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
+    internal static readonly Regex AddUsingVSCodeAction = new Regex("@?using ([^;]+);?$", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
     // Internal for testing
     internal static string GetNamespaceFromFQN(string fullyQualifiedName)
@@ -112,8 +113,9 @@ internal static class AddUsingsCodeActionProviderHelper
     /// </summary>
     /// <param name="csharpAddUsing">Add using statement of the form `using System.X;`</param>
     /// <param name="namespace">Extract namespace `System.X`</param>
+    /// <param name="prefix">The prefix to show, before the namespace, if any</param>
     /// <returns></returns>
-    internal static bool TryExtractNamespace(string csharpAddUsing, out string @namespace)
+    internal static bool TryExtractNamespace(string csharpAddUsing, out string @namespace, out string prefix)
     {
         // We must remove any leading/trailing new lines from the add using edit
         csharpAddUsing = csharpAddUsing.Trim();
@@ -127,10 +129,12 @@ internal static class AddUsingsCodeActionProviderHelper
         {
             // Text edit in an unexpected format
             @namespace = string.Empty;
+            prefix = string.Empty;
             return false;
         }
 
         @namespace = regexMatchedTextEdit.Groups[1].Value;
+        prefix = csharpAddUsing.Substring(0, regexMatchedTextEdit.Index);
         return true;
     }
 

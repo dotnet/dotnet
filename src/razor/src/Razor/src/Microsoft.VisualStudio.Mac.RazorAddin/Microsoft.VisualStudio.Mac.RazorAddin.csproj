@@ -75,7 +75,6 @@
     <MPackFile Include="$(ArtifactsBinDir)Microsoft.VisualStudio.Mac.LanguageServices.Razor\$(Configuration)\net472\Microsoft.VisualStudio.Mac.LanguageServices.Razor.dll" />
 
     <!-- Language Server Dependencies -->
-    <MPackFile Include="$(ArtifactsBinDir)Microsoft.AspNetCore.Razor.Common\$(Configuration)\netstandard2.0\Microsoft.AspNetCore.Razor.Common.dll" />
     <MPackFile Include="$(ArtifactsBinDir)Microsoft.VisualStudio.LanguageServerClient.Razor\$(Configuration)\net472\Microsoft.VisualStudio.LanguageServerClient.Razor.dll" />
     <MPackFile Include="$(ArtifactsBinDir)Microsoft.VisualStudio.LanguageServer.ContainedLanguage\$(Configuration)\net472\Microsoft.VisualStudio.LanguageServer.ContainedLanguage.dll" />
     <MPackFile Include="$(ArtifactsBinDir)Microsoft.AspNetCore.Razor.LanguageServer.Common\$(Configuration)\net472\Microsoft.AspNetCore.Razor.LanguageServer.Common.dll" />

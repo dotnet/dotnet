@@ -27,7 +27,6 @@
 
   <ItemGroup>
     <PackageReference Include="NewtonSoft.Json" Version="$(NewtonSoftJsonVersion)" />
-    <PackageReference Include="Microsoft.Win32.Primitives" Version="$(MicrosoftWin32PrimitivesVersion)" />
   </ItemGroup>
 
   <ItemGroup>
@@ -38,7 +37,7 @@
     <PackageDownload Include="cdb-sos" Version="[$(cdbsosversion)]" />
   </ItemGroup>
 
-  <Target Name="SOSWriteTestConfigFile" Outputs="$(SOSConfigFileName)" AfterTargets="Build">
+  <Target Name="SOSWriteTestConfigFile" Outputs="$(SOSConfigFileName)" BeforeTargets="BeforeBuild;Publish">
     <PropertyGroup>
       <TestConfigFileLines>
 <![CDATA[

@@ -4,33 +4,33 @@
     <body>
       <trans-unit id="ErrorIncompleteManagedName">
         <source>ManagedName is incomplete</source>
-        <note />
         <target state="translated">Název ManagedName není úplný.</target>
+        <note />
       </trans-unit>
       <trans-unit id="ErrorMethodArityMustBeNumeric">
         <source>Method arity must be numeric.</source>
-        <note></note>
         <target state="translated">Arita metody musí být číselná.</target>
+        <note />
       </trans-unit>
       <trans-unit id="ErrorMethodNotFound">
         <source>Method '{0}' not found on type '{1}'</source>
-        <note>{0} is the method name, {1} is the full type name.</note>
         <target state="translated">Metoda {0} nebyla nalezena u typu {1}.</target>
+        <note>{0} is the method name, {1} is the full type name.</note>
       </trans-unit>
       <trans-unit id="ErrorTypeNotFound">
         <source>Type '{0}' not found</source>
-        <note>{0} is the full type name.</note>
         <target state="translated">Typ {0} nebyl nalezen.</target>
+        <note>{0} is the full type name.</note>
       </trans-unit>
       <trans-unit id="ErrorUnexpectedCharactersAtEnd">
         <source>Unexpected characters after the end of the ManagedName (pos: {0})</source>
-        <note>{0} is the position of unexpected characters</note>
         <target state="translated">Neočekávané znaky na konci položky ManagedName (pozice: {0})</target>
+        <note>{0} is the position of unexpected characters</note>
       </trans-unit>
       <trans-unit id="ErrorWhitespaceNotValid">
         <source>Whitespace is not valid in a ManagedName (pos: {0})</source>
-        <note>{0} is the position of invalid whitespace</note>
         <target state="translated">V ManagedName se nepovoluje mezera (pozice: {0}).</target>
+        <note>{0} is the position of invalid whitespace</note>
       </trans-unit>
       <trans-unit id="MethodNotImplementedOnPlatform">
         <source>'{0}.{1}' is not implemented on this platform!</source>
@@ -52,12 +52,12 @@ Example: 'System.Reflection.MethodBase' is not implemented on this platform!</no
       <trans-unit id="ErrorMethodExpectedAsAnArgument">
         <source>Argument must be a method. (Argument name: {0})</source>
         <target state="translated">Argument musí být metoda. (Název argumentu: {0})</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="ErrorCannotAppendAfterHashCalculation">
         <source>Cannot append to a TestIdProvider, after GetId or GetHash method is called.</source>
         <target state="translated">Po volání metody GetId nebo GetHash není možné připojit k zprostředkovateli TestIdProvider.</target>
-        <note></note>
+        <note />
       </trans-unit>
     </body>
   </file>

@@ -2,14 +2,15 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Diagnostics.Eventing.Reader;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common.Extensions;
-using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
@@ -390,6 +391,72 @@ public class TextDocumentUriPresentationEndpointTests : LanguageServerTestBase
 
         // Assert
         Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task Handle_ComponentWithNestedFiles_ReturnsResult()
+    {
+        // Arrange
+        var codeDocument = TestRazorCodeDocument.Create(@"<FetchData\>");
+        var documentMappingService = Mock.Of<RazorDocumentMappingService>(
+            s => s.GetLanguageKind(codeDocument, It.IsAny<int>(), It.IsAny<bool>()) == RazorLanguageKind.Html, MockBehavior.Strict);
+
+        var documentSnapshot = Mock.Of<IDocumentSnapshot>(s => s.GetGeneratedOutputAsync() == Task.FromResult(codeDocument), MockBehavior.Strict);
+
+        var droppedUri1 = new Uri("file:///c:/path/fetchdata.razor.cs");
+        var droppedUri2 = new Uri("file:///c:/path/fetchdata.razor");
+        var builder = TagHelperDescriptorBuilder.Create("FetchData", "MyAssembly");
+        builder.Metadata.Add("Common.TypeNameIdentifier", "FetchData");
+        var tagHelperDescriptor = builder.Build();
+
+        var uri = new Uri("file://path/index.razor");
+        var documentContextFactory = CreateDocumentContextFactory(uri, codeDocument);
+        var documentContext = CreateDocumentContext(uri, codeDocument);
+        var searchEngine = Mock.Of<RazorComponentSearchEngine>(
+            s => s.TryGetTagHelperDescriptorAsync(It.IsAny<IDocumentSnapshot>(), It.IsAny<CancellationToken>()) == Task.FromResult(tagHelperDescriptor),
+            MockBehavior.Strict);
+
+        var response = (WorkspaceEdit?)null;
+
+        var languageServer = new Mock<ClientNotifierServiceBase>(MockBehavior.Strict);
+        languageServer
+            .Setup(l => l.SendRequestAsync<IRazorPresentationParams, WorkspaceEdit?>(RazorLanguageServerCustomMessageTargets.RazorUriPresentationEndpoint, It.IsAny<IRazorPresentationParams>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(response);
+
+        var endpoint = new TextDocumentUriPresentationEndpoint(
+            documentMappingService,
+            searchEngine,
+            languageServer.Object,
+            TestLanguageServerFeatureOptions.Instance,
+            documentContextFactory,
+            Dispatcher,
+            LoggerFactory);
+
+        var parameters = new UriPresentationParams()
+        {
+            TextDocument = new TextDocumentIdentifier
+            {
+                Uri = uri
+            },
+            Range = new Range
+            {
+                Start = new Position(0, 1),
+                End = new Position(0, 2)
+            },
+            Uris = new[]
+            {
+                droppedUri1,
+                droppedUri2,
+            }
+        };
+        var requestContext = CreateRazorRequestContext(documentContext);
+
+        // Act
+        var result = await endpoint.HandleRequestAsync(parameters, requestContext, DisposalToken);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal("<FetchData />", result!.DocumentChanges!.Value.First[0].Edits[0].NewText);
     }
 
     [Fact]

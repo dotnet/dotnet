@@ -340,10 +340,11 @@ internal abstract partial class SyntaxNode
         }
     }
 
+#nullable enable
     /// <summary>
     /// Gets the first node of type TNode that matches the predicate.
     /// </summary>
-    public TNode FirstAncestorOrSelf<TNode>(Func<TNode, bool> predicate = null)
+    public TNode? FirstAncestorOrSelf<TNode>(Func<TNode, bool>? predicate = null)
         where TNode : SyntaxNode
     {
         for (var node = this; node != null; node = node.Parent)
@@ -356,6 +357,7 @@ internal abstract partial class SyntaxNode
 
         return default;
     }
+#nullable disable
 
     /// <summary>
     /// Gets a list of descendant nodes in prefix document order.

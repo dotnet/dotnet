@@ -403,7 +403,7 @@ internal class DataCollectionRequestHandler : IDataCollectionRequestHandler, IDi
         var attachmentsets = _dataCollectionManager.SessionEnded(isCancelled);
         var invokedDataCollectors = _dataCollectionManager.GetInvokedDataCollectors();
 
-        if (invokedDataCollectors != null && invokedDataCollectors.Any())
+        if (invokedDataCollectors != null && invokedDataCollectors.Count != 0)
         {
             // For the invoked collectors we report the same information as ProxyDataCollectionManager.cs line ~416
             var invokedDataCollectorsForMetrics = invokedDataCollectors.Select(x => new { x.Uri, x.FriendlyName, x.HasAttachmentProcessor }.ToString());

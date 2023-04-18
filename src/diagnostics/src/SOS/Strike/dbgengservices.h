@@ -1,6 +1,5 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 #pragma once
 
@@ -30,6 +29,7 @@ private:
     PDEBUG_SYSTEM_OBJECTS m_system;
     PDEBUG_ADVANCED       m_advanced;
     IMachine*             m_targetMachine;
+    bool                  m_flushNeeded;
 
 public:
     DbgEngServices(IDebugClient* client);
@@ -40,6 +40,8 @@ public:
     //----------------------------------------------------------------------------
     // Helper functions
     //----------------------------------------------------------------------------
+
+    void FlushCheck(Extensions* extensions);
 
     IMachine* GetMachine();
 
@@ -179,6 +181,18 @@ public:
         ULONG moduleIndex,
         PCSTR name,
         PULONG64 offset);
+        
+    HRESULT STDMETHODCALLTYPE GetTypeId(
+        ULONG moduleIndex,
+        PCSTR typeName,
+        PULONG64 typeId); 
+
+    HRESULT STDMETHODCALLTYPE GetFieldOffset(
+        ULONG moduleIndex,
+        PCSTR typeName,
+        ULONG64 typeId,
+        PCSTR fieldName,
+        PULONG offset);
 
     ULONG STDMETHODCALLTYPE GetOutputWidth();
 

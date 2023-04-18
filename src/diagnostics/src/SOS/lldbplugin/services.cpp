@@ -1,6 +1,5 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 #include <cstdarg>
 #include <cstdlib>
@@ -18,6 +17,13 @@
 // Return what dbgeng returns for Linux modules that don't have a timestamp/checksum
 #define InvalidTimeStamp    0xFFFFFFFE;
 #define InvalidChecksum     0xFFFFFFFF;
+
+#ifndef PAGE_SIZE 
+#define PAGE_SIZE 0x1000
+#endif
+
+#undef PAGE_MASK 
+#define PAGE_MASK (~(PAGE_SIZE-1))
 
 char *g_coreclrDirectory = nullptr;
 char *g_pluginModuleDirectory = nullptr;
@@ -432,7 +438,7 @@ HRESULT
 LLDBServices::GetPageSize(
     PULONG size)
 {
-    *size = 4096;
+    *size = PAGE_SIZE;
     return S_OK;
 }
 
@@ -762,10 +768,21 @@ LLDBServices::ReadVirtual(
     ULONG64 offset,
     PVOID buffer,
     ULONG bufferSize,
-    PULONG bytesRead)
+    PULONG pbytesRead)
 {
     lldb::SBError error;
-    size_t read = 0;
+    size_t bytesRead = 0;
+    ULONG64 nextPageStart;
+
+    // Reading 0 bytes must succeed
+    if (bufferSize == 0)
+    {
+        if (pbytesRead)
+        {
+            *pbytesRead = 0;
+        }
+        return S_OK;
+    }
 
     // lldb doesn't expect sign-extended address
     offset = CONVERT_FROM_SIGN_EXTENDED(offset);
@@ -776,9 +793,42 @@ LLDBServices::ReadVirtual(
         goto exit;
     }
 
-    read = process.ReadMemory(offset, buffer, bufferSize, error);
+    // Try the full read and return if successful
+    bytesRead = process.ReadMemory(offset, buffer, bufferSize, error);
+    if (error.Success())
+    {
+        goto exit;
+    }
 
-    if (!error.Success())
+    // As it turns out the lldb ReadMemory API doesn't do partial reads and the SOS
+    // caching depends on that behavior. Round up to the next page boundary and attempt
+    // to read up to the page boundaries.
+    nextPageStart = (offset + PAGE_SIZE) & PAGE_MASK;
+    bytesRead = 0;
+
+    while (bufferSize > 0)
+    {
+        size_t size = nextPageStart - offset;
+        if (size > bufferSize)
+        {
+            size = bufferSize;
+        }
+        size_t read = process.ReadMemory(offset, buffer, size, error);
+
+        bytesRead += read;
+        offset += read;
+        buffer = (BYTE*)buffer + read;
+        bufferSize -= read;
+        nextPageStart += PAGE_SIZE;
+
+        if (!error.Success())
+        {
+            break;
+        }
+    }
+
+    // If the read isn't complete, try reading directly from native modules in the address range.
+    if (bufferSize > 0)
     {
         lldb::SBTarget target = process.GetTarget();
         if (!target.IsValid())
@@ -787,8 +837,7 @@ LLDBServices::ReadVirtual(
         }
 
         int numModules = target.GetNumModules();
-        bool found = false;
-        for (int i = 0; !found && i < numModules; i++)
+        for (int i = 0; i < numModules; i++)
         {
             lldb::SBModule module = target.GetModuleAtIndex(i);
             int numSections = module.GetNumSections();
@@ -803,9 +852,8 @@ LLDBServices::ReadVirtual(
                     lldb::SBData sectionData = section.GetSectionData(offset - loadAddr, bufferSize);
                     if (sectionData.IsValid())
                     {
-                        read = sectionData.ReadRawData(error, 0, buffer, bufferSize);
-                        found = true;
-                        break;
+                        bytesRead += sectionData.ReadRawData(error, 0, buffer, bufferSize);
+                        goto exit;
                     }
                 }
             }
@@ -813,11 +861,11 @@ LLDBServices::ReadVirtual(
     }
 
 exit:
-    if (bytesRead)
+    if (pbytesRead)
     {
-        *bytesRead = read;
+        *pbytesRead = bytesRead;
     }
-    return error.Success() || (read != 0) ? S_OK : E_FAIL;
+    return bytesRead > 0 ? S_OK : E_FAIL;
 }
 
 HRESULT 
@@ -901,16 +949,16 @@ LLDBServices::GetNameByOffset(
         goto exit;
     }
 
-    address = target.ResolveLoadAddress(offset);
-    if (!address.IsValid())
-    {
-        hr = E_INVALIDARG;
-        goto exit;
-    }
-
     // If module index is invalid, add module name to symbol
     if (moduleIndex == DEBUG_ANY_ID)
     {
+        address = target.ResolveLoadAddress(offset);
+        if (!address.IsValid())
+        {
+            hr = E_INVALIDARG;
+            goto exit;
+        }
+
         module = address.GetModule();
         if (!module.IsValid())
         {
@@ -928,6 +976,13 @@ LLDBServices::GetNameByOffset(
     {
         module = target.GetModuleAtIndex(moduleIndex);
         if (!module.IsValid())
+        {
+            hr = E_INVALIDARG;
+            goto exit;
+        }
+
+        address = module.ResolveFileAddress(offset);
+        if (!address.IsValid())
         {
             hr = E_INVALIDARG;
             goto exit;
@@ -2193,6 +2248,7 @@ LLDBServices::OutputString(
         file = m_debugger.GetOutputFileHandle();
     }
     fputs(str, file);
+    fflush(file);
 }
 
 HRESULT 
@@ -2337,6 +2393,131 @@ LLDBServices::GetOffsetBySymbol(
         goto exit;
     }
     *offset = startAddress.GetLoadAddress(target);
+exit:
+    return hr;
+}
+
+HRESULT
+LLDBServices::GetTypeId(
+    ULONG moduleIndex,
+    PCSTR typeName,
+    PULONG64 typeId)
+{
+    HRESULT hr = S_OK;
+
+    lldb::SBTarget target;
+    lldb::SBModule module;
+    lldb::SBTypeList typeList;
+    lldb::SBType type;
+
+    if (typeId == nullptr)
+    {
+        hr = E_INVALIDARG;
+        goto exit;
+    }
+
+    *typeId = -1;
+
+    target = m_debugger.GetSelectedTarget();
+    if (!target.IsValid())
+    {
+        hr = E_FAIL;
+        goto exit;
+    }
+
+    module = target.GetModuleAtIndex(moduleIndex);
+    if (!module.IsValid())
+    {
+        hr = E_INVALIDARG;
+        goto exit;
+    }
+
+    type = module.FindFirstType(typeName);
+    if (!type.IsValid())
+    {
+        hr = E_INVALIDARG;
+        goto exit;
+    }
+
+exit:
+    return hr;
+}
+
+HRESULT
+LLDBServices::GetFieldOffset(
+    ULONG moduleIndex,
+    PCSTR typeName,
+    ULONG64 typeId,     // unused on lldb
+    PCSTR fieldName,
+    PULONG offset)
+{
+    HRESULT hr = S_OK;
+
+    lldb::SBTarget target;
+    lldb::SBModule module;
+    lldb::SBTypeList typeList;
+    lldb::SBType type;
+    lldb::SBTypeMember field;
+    lldb::SBTypeMember baseClassTypeMember;
+    lldb::SBType baseClass;
+    std::vector<lldb::SBType> baseClassTypes;
+
+    if (offset == nullptr)
+    {
+        hr = E_INVALIDARG;
+        goto exit;
+    }
+
+    *offset = -1;
+
+    target = m_debugger.GetSelectedTarget();
+    if (!target.IsValid())
+    {
+        hr = E_FAIL;
+        goto exit;
+    }
+
+    module = target.GetModuleAtIndex(moduleIndex);
+    if (!module.IsValid())
+    {
+        hr = E_INVALIDARG;
+        goto exit;
+    }
+
+    type = module.FindFirstType(typeName);
+    if (!type.IsValid())
+    {
+        hr = E_INVALIDARG;
+        goto exit;
+    }
+
+    // lldb only returns the information about the specific class you requested, not any base
+    // classes. So we have to do a DFS to find the field we care about.
+    baseClassTypes.push_back(type);
+    while (baseClassTypes.size() > 0)
+    {
+        type = baseClassTypes.back();
+        baseClassTypes.pop_back();
+
+        for (int fieldIndex = 0; fieldIndex < type.GetNumberOfFields(); ++fieldIndex)
+        {
+            field = type.GetFieldAtIndex(fieldIndex);
+            if (strcmp(fieldName, field.GetName()) == 0)
+            {
+                *offset = field.GetOffsetInBytes();
+                goto exit;
+            }
+        }
+
+        for (int baseClassIndex = 0; baseClassIndex < type.GetNumberOfDirectBaseClasses(); ++baseClassIndex)
+        {
+            baseClass = type.GetDirectBaseClassAtIndex(baseClassIndex).GetType();
+            baseClassTypes.push_back(baseClass);
+        }
+    }
+
+    hr = E_INVALIDARG;
+
 exit:
     return hr;
 }

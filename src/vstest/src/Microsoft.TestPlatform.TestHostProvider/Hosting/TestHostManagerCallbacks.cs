@@ -9,6 +9,7 @@ using System.Text;
 using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Extensions;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Host;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
 using Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces;
 
 namespace Microsoft.TestPlatform.TestHostProvider.Hosting;
@@ -16,14 +17,49 @@ namespace Microsoft.TestPlatform.TestHostProvider.Hosting;
 internal class TestHostManagerCallbacks
 {
     private const int E_HANDLE = unchecked((int)0x80070006);
+    private readonly bool _forwardOutput;
+    private readonly IMessageLogger? _messageLogger;
 
-    public static void ErrorReceivedCallback(StringBuilder testHostProcessStdError, string? data)
+    public TestHostManagerCallbacks(bool forwardOutput, IMessageLogger? logger)
+    {
+        if (forwardOutput)
+        {
+            string? but = null;
+            if (logger == null)
+            {
+                but = " But logger is null, so it won't forward any output.";
+            }
+            EqtTrace.Verbose($"TestHostManagerCallbacks.ctor: Experimental forwarding output is enabled.{but}");
+        }
+        else
+        {
+            EqtTrace.Verbose($"TestHostManagerCallbacks.ctor: Experimental forwarding output is disabled.");
+        }
+        _forwardOutput = forwardOutput;
+        _messageLogger = logger;
+    }
+
+    public void StandardOutputReceivedCallback(StringBuilder testHostProcessStdOut, string? data)
+    {
+        EqtTrace.Verbose("TestHostManagerCallbacks.StandardOutputReceivedCallback Test host standard output line: {0}", data);
+        testHostProcessStdOut.AppendSafeWithNewLine(data);
+        if (_forwardOutput && _messageLogger != null && !StringUtils.IsNullOrWhiteSpace(data))
+        {
+            _messageLogger.SendMessage(TestMessageLevel.Informational, data);
+        }
+    }
+
+    public void ErrorReceivedCallback(StringBuilder testHostProcessStdError, string? data)
     {
         // Log all standard error message because on too much data we ignore starting part.
         // This is helpful in abnormal failure of testhost.
         EqtTrace.Warning("TestHostManagerCallbacks.ErrorReceivedCallback Test host standard error line: {0}", data);
 
         testHostProcessStdError.AppendSafeWithNewLine(data);
+        if (_forwardOutput && _messageLogger != null && !StringUtils.IsNullOrWhiteSpace(data))
+        {
+            _messageLogger.SendMessage(TestMessageLevel.Error, data);
+        }
     }
 
     public static void ExitCallBack(

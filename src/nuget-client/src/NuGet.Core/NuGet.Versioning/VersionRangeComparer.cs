@@ -56,7 +56,7 @@ namespace NuGet.Versioning
         /// Checks if two version ranges are equivalent. This follows the rules of the version comparer
         /// when checking the bounds.
         /// </summary>
-        public bool Equals(VersionRangeBase x, VersionRangeBase y)
+        public bool Equals(VersionRangeBase? x, VersionRangeBase? y)
         {
             if (ReferenceEquals(x, y))
             {
@@ -71,8 +71,11 @@ namespace NuGet.Versioning
 
             return x.IsMinInclusive == y.IsMinInclusive
                 && y.IsMaxInclusive == x.IsMaxInclusive
+#pragma warning disable CS8604 // Possible null reference argument.
+                // BCL missing nullable annotations on IEqualityComparer<T> before .NET 5
                 && _versionComparer.Equals(y.MinVersion, x.MinVersion)
                 && _versionComparer.Equals(y.MaxVersion, x.MaxVersion);
+#pragma warning restore CS8604 // Possible null reference argument.
         }
 
         /// <summary>
@@ -90,8 +93,14 @@ namespace NuGet.Versioning
 
             combiner.AddObject(obj.IsMinInclusive);
             combiner.AddObject(obj.IsMaxInclusive);
-            combiner.AddObject(_versionComparer.GetHashCode(obj.MinVersion));
-            combiner.AddObject(_versionComparer.GetHashCode(obj.MaxVersion));
+            if (obj.HasLowerBound)
+            {
+                combiner.AddObject(_versionComparer.GetHashCode(obj.MinVersion));
+            }
+            if (obj.HasUpperBound)
+            {
+                combiner.AddObject(_versionComparer.GetHashCode(obj.MaxVersion));
+            }
 
             return combiner.CombinedHash;
         }

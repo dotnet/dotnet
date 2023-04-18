@@ -33,7 +33,7 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void Create_Always_ReturnsInstance()
         {
-            using (X509Chain chain = _factory.Create())
+            using (IX509Chain chain = _factory.Create())
             {
                 Assert.Equal(X509ChainTrustMode.CustomRootTrust, chain.ChainPolicy.TrustMode);
                 Assert.Empty(chain.ChainPolicy.CustomTrustStore);

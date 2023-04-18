@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-      <TestPlatformRoot Condition="$(TestPlatformRoot) == ''">../../</TestPlatformRoot>
-  </PropertyGroup>
-  <Import Project="$(TestPlatformRoot)scripts/build/TestPlatform.Dependencies.props" />
+
+  <Import Project="$(RepoRoot)scripts/build/TestPlatform.Dependencies.props" />
   <PropertyGroup>
     <VersionPrefix>15.0.0</VersionPrefix>
     <TargetFramework>$(NetFrameworkMinimum)</TargetFramework>

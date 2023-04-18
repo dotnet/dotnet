@@ -553,6 +553,11 @@ namespace NuGet.Common
         NU3041 = 3041,
 
         /// <summary>
+        /// An X.509 trust store does not contain a root certificate observed in a package signature.
+        /// </summary>
+        NU3042 = 3042,
+
+        /// <summary>
         /// Undefined Package Error.
         /// </summary>
         NU5000 = 5000,

@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project InitialTargets="CopyFiles" Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TestPlatformRoot Condition="$(TestPlatformRoot) == ''">..\..\..\</TestPlatformRoot>
     <TestProject>true</TestProject>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
-  <Import Project="..\..\..\scripts\build\TestAssets.props" />
   <PropertyGroup>
     <OutputType>library</OutputType>
     <TargetFramework>$(NetFrameworkMinimum)</TargetFramework>
@@ -20,7 +18,7 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework">
-      <HintPath>..\..\..\packages\microsoft.visualstudio.qualitytools\$(TestPlatformExternalsVersion)\tools\net451\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll</HintPath>
+      <HintPath>..\..\..\.packages\microsoft.visualstudio.qualitytools\$(TestPlatformExternalsVersion)\tools\net451\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -32,5 +30,5 @@
   <Target Name="CopyFiles">
     <Copy SourceFiles="DeploymentFile.xml" DestinationFolder="$(OutputPath)\Deployment" ContinueOnError="false" />
   </Target>
-  <Import Project="$(TestPlatformRoot)scripts\build\TestPlatform.targets" />
+
 </Project>

@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IsPackable Condition=" '$(DotNetBuildFromSource)' != 'true' ">true</IsPackable>
+    <NuspecFile>Microsoft.NET.Test.Sdk.nuspec</NuspecFile>
+    <NuspecBasePath>$(OutputPath)</NuspecBasePath>
+    <PackageId>Microsoft.NET.Test.Sdk</PackageId>
+    <PackageTags>vstest visual-studio unittest testplatform mstest microsoft test testing</PackageTags>
+    <PackageDescription>
+      The MSbuild targets and properties for building .NET test projects.
+    </PackageDescription>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="netcoreapp\Microsoft.NET.Test.Sdk.Program.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="netcoreapp\Microsoft.NET.Test.Sdk.Program.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="_._">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Microsoft.NET.Test.Sdk.props">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="netcoreapp\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="netfx\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>

@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DbgShimConfigFileName>$(OutputPath)$(TargetFramework)\Debugger.Tests.Common.txt</DbgShimConfigFileName>
-    <TestAssetsVersion>1.0.257801</TestAssetsVersion>
+    <TestAssetsVersion>1.0.351101</TestAssetsVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -78,7 +78,7 @@
     <None Include="Debuggees\SimpleDebuggee\SimpleDebuggee.cs" />
   </ItemGroup>
 
-  <Target Name="DbgShimWriteTestConfigFile" Outputs="$(DbgShimConfigFileName)" AfterTargets="Build">
+  <Target Name="DbgShimWriteTestConfigFile" Outputs="$(DbgShimConfigFileName)" BeforeTargets="BeforeBuild;Publish">
      <PropertyGroup>
        <TestConfigFileLines>@(ConfigFileEntries-&gt;Metadata("ConfigFileEntry"))</TestConfigFileLines>
      </PropertyGroup>

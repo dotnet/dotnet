@@ -9,7 +9,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
-using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.AspNetCore.Razor.LanguageServer.Test.Common;
@@ -24,7 +23,7 @@ using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentHighlighting.Test;
+namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentHighlighting;
 
 [UseExportProvider]
 public class DocumentHighlightEndpointTest : LanguageServerTestBase
@@ -135,7 +134,7 @@ public class DocumentHighlightEndpointTest : LanguageServerTestBase
             languageServerFeatureOptions, documentMappingService, languageServer, LoggerFactory);
 
         codeDocument.GetSourceText().GetLineAndOffset(cursorPosition, out var line, out var offset);
-        var request = new DocumentHighlightParamsBridge
+        var request = new DocumentHighlightParams
         {
             TextDocument = new TextDocumentIdentifier
             {

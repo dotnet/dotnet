@@ -1,4 +1,10 @@
 <Project Sdk="Microsoft.Build.Traversal">
+
+  <PropertyGroup>
+    <!-- Disable target framework filtering for top level projects -->
+    <NoTargetFrameworkFiltering>true</NoTargetFrameworkFiltering>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="$(MSBuildThisFileDirectory)**\*.csproj" Exclude="$(MSBuildProjectFullPath)" Condition="'$(DotNetBuildFromSource)' != 'true'" />
   </ItemGroup>

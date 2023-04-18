@@ -22,6 +22,7 @@ using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
 using Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces;
 
 using Moq;
 
@@ -40,14 +41,16 @@ public class DesignModeClientTests
     private readonly DesignModeClient _designModeClient;
     private readonly int _protocolVersion = 7;
     private readonly AutoResetEvent _completeEvent;
-    private readonly Mock<IEnvironment> _mockPlatformEnvrironment;
+    private readonly Mock<IEnvironment> _mockPlatformEnvironment;
+    private readonly Mock<IEnvironmentVariableHelper> _mockEnvironmentVariableHelper;
 
     public DesignModeClientTests()
     {
         _mockTestRequestManager = new Mock<ITestRequestManager>();
         _mockCommunicationManager = new Mock<ICommunicationManager>();
-        _mockPlatformEnvrironment = new Mock<IEnvironment>();
-        _designModeClient = new DesignModeClient(_mockCommunicationManager.Object, JsonDataSerializer.Instance, _mockPlatformEnvrironment.Object);
+        _mockPlatformEnvironment = new Mock<IEnvironment>();
+        _mockEnvironmentVariableHelper = new Mock<IEnvironmentVariableHelper>();
+        _designModeClient = new DesignModeClient(_mockCommunicationManager.Object, JsonDataSerializer.Instance, _mockPlatformEnvironment.Object, _mockEnvironmentVariableHelper.Object);
         _completeEvent = new AutoResetEvent(false);
     }
 
@@ -283,7 +286,7 @@ public class DesignModeClientTests
     [TestMethod]
     public void DesignModeClientShouldStopCommunicationOnParentProcessExit()
     {
-        _mockPlatformEnvrironment.Setup(pe => pe.Exit(It.IsAny<int>()));
+        _mockPlatformEnvironment.Setup(pe => pe.Exit(It.IsAny<int>()));
         _designModeClient.HandleParentProcessExit();
 
         _mockCommunicationManager.Verify(cm => cm.StopClient(), Times.Once);
@@ -292,7 +295,7 @@ public class DesignModeClientTests
     [TestMethod]
     public void DesignModeClientLaunchCustomHostMustReturnIfAckComes()
     {
-        var testableDesignModeClient = new TestableDesignModeClient(_mockCommunicationManager.Object, JsonDataSerializer.Instance, _mockPlatformEnvrironment.Object);
+        var testableDesignModeClient = new TestableDesignModeClient(_mockCommunicationManager.Object, JsonDataSerializer.Instance, _mockPlatformEnvironment.Object, _mockEnvironmentVariableHelper.Object);
 
         _mockCommunicationManager.Setup(cm => cm.WaitForServerConnection(It.IsAny<int>())).Returns(true);
 
@@ -312,7 +315,7 @@ public class DesignModeClientTests
     [ExpectedException(typeof(TestPlatformException))]
     public void DesignModeClientLaunchCustomHostMustThrowIfInvalidAckComes()
     {
-        var testableDesignModeClient = new TestableDesignModeClient(_mockCommunicationManager.Object, JsonDataSerializer.Instance, _mockPlatformEnvrironment.Object);
+        var testableDesignModeClient = new TestableDesignModeClient(_mockCommunicationManager.Object, JsonDataSerializer.Instance, _mockPlatformEnvironment.Object, _mockEnvironmentVariableHelper.Object);
 
         _mockCommunicationManager.Setup(cm => cm.WaitForServerConnection(It.IsAny<int>())).Returns(true);
 
@@ -331,7 +334,7 @@ public class DesignModeClientTests
     [ExpectedException(typeof(TestPlatformException))]
     public void DesignModeClientLaunchCustomHostMustThrowIfCancellationOccursBeforeHostLaunch()
     {
-        var testableDesignModeClient = new TestableDesignModeClient(_mockCommunicationManager.Object, JsonDataSerializer.Instance, _mockPlatformEnvrironment.Object);
+        var testableDesignModeClient = new TestableDesignModeClient(_mockCommunicationManager.Object, JsonDataSerializer.Instance, _mockPlatformEnvironment.Object, _mockEnvironmentVariableHelper.Object);
 
         var info = new TestProcessStartInfo();
         var cancellationTokenSource = new CancellationTokenSource();
@@ -632,8 +635,9 @@ public class DesignModeClientTests
         internal TestableDesignModeClient(
             ICommunicationManager communicationManager,
             IDataSerializer dataSerializer,
-            IEnvironment platformEnvironment)
-            : base(communicationManager, dataSerializer, platformEnvironment)
+            IEnvironment platformEnvironment,
+            IEnvironmentVariableHelper environmentVariableHelper)
+            : base(communicationManager, dataSerializer, platformEnvironment, environmentVariableHelper)
         {
         }
 

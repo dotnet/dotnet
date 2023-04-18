@@ -406,7 +406,7 @@ internal class ProxyExecutionManager : IProxyExecutionManager, IBaseProxy, IInte
         // of this capability.
         attachDebuggerInfo.TargetFramework ??= _proxyOperationManager?.TestHostManagerFramework?.ToString();
 
-        if (attachDebuggerInfo.Sources is null || !attachDebuggerInfo.Sources.Any())
+        if (attachDebuggerInfo.Sources is null || attachDebuggerInfo.Sources.Count == 0)
         {
             attachDebuggerInfo.Sources = _testSources;
         }

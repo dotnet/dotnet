@@ -4,33 +4,33 @@
     <body>
       <trans-unit id="ErrorIncompleteManagedName">
         <source>ManagedName is incomplete</source>
-        <note />
         <target state="translated">ManagedName が不完全です</target>
+        <note />
       </trans-unit>
       <trans-unit id="ErrorMethodArityMustBeNumeric">
         <source>Method arity must be numeric.</source>
-        <note></note>
         <target state="translated">メソッドのアリティは数値である必要があります。</target>
+        <note />
       </trans-unit>
       <trans-unit id="ErrorMethodNotFound">
         <source>Method '{0}' not found on type '{1}'</source>
-        <note>{0} is the method name, {1} is the full type name.</note>
         <target state="translated">メソッド '{0}' が型 '{1}' に見つかりませんでした。</target>
+        <note>{0} is the method name, {1} is the full type name.</note>
       </trans-unit>
       <trans-unit id="ErrorTypeNotFound">
         <source>Type '{0}' not found</source>
-        <note>{0} is the full type name.</note>
         <target state="translated">型 '{0}' が見つかりません。</target>
+        <note>{0} is the full type name.</note>
       </trans-unit>
       <trans-unit id="ErrorUnexpectedCharactersAtEnd">
         <source>Unexpected characters after the end of the ManagedName (pos: {0})</source>
-        <note>{0} is the position of unexpected characters</note>
         <target state="translated">ManagedName の末尾の後ろに予期しない文字があります (位置: {0})</target>
+        <note>{0} is the position of unexpected characters</note>
       </trans-unit>
       <trans-unit id="ErrorWhitespaceNotValid">
         <source>Whitespace is not valid in a ManagedName (pos: {0})</source>
-        <note>{0} is the position of invalid whitespace</note>
         <target state="translated">ManagedName では空白は無効です (位置: {0})</target>
+        <note>{0} is the position of invalid whitespace</note>
       </trans-unit>
       <trans-unit id="MethodNotImplementedOnPlatform">
         <source>'{0}.{1}' is not implemented on this platform!</source>
@@ -52,12 +52,12 @@ Example: 'System.Reflection.MethodBase' is not implemented on this platform!</no
       <trans-unit id="ErrorMethodExpectedAsAnArgument">
         <source>Argument must be a method. (Argument name: {0})</source>
         <target state="translated">引数はメソッドである必要があります。(引数名: {0})</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="ErrorCannotAppendAfterHashCalculation">
         <source>Cannot append to a TestIdProvider, after GetId or GetHash method is called.</source>
         <target state="translated">GetId メソッドまたは GetHash メソッドが呼び出された後は、TestIdProvider に追加できません。</target>
-        <note></note>
+        <note />
       </trans-unit>
     </body>
   </file>

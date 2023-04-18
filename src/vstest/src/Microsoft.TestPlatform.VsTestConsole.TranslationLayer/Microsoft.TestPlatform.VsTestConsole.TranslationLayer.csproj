@@ -1,30 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TestPlatformRoot Condition="$(TestPlatformRoot) == ''">..\..\</TestPlatformRoot>
-  </PropertyGroup>
-  <Import Project="$(TestPlatformRoot)scripts/build/TestPlatform.Settings.targets" />
+
   <PropertyGroup>
     <AssemblyName>Microsoft.TestPlatform.VsTestConsole.TranslationLayer</AssemblyName>
     <TargetFrameworks>net7.0;net6.0;netstandard2.0;$(NetFrameworkMinimum)</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(DotNetBuildFromSource)' == 'true' ">net7.0;</TargetFrameworks>
     <IsTestProject>false</IsTestProject>
   </PropertyGroup>
+
   <PropertyGroup>
     <DocumentationFile>$(BaseIntermediateOutputPath)\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.XML</DocumentationFile>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <IsPackable Condition=" '$(DotNetBuildFromSource)' != 'true' ">true</IsPackable>
+    <NuspecFile>Microsoft.TestPlatform.VsTestConsole.TranslationLayer.nuspec</NuspecFile>
+    <NuspecBasePath>$(OutputPath)</NuspecBasePath>
+    <PackageId>Microsoft.TestPlatform.TranslationLayer</PackageId>
+    <PackageTags>vstest visual-studio unittest testplatform mstest microsoft test testing</PackageTags>
+    <PackageDescription>
+      C# SDK for the test platform protocol. This SDK can be used in IDE or Editors to use test platform for discovery and execution of tests.
+    </PackageDescription>
+  </PropertyGroup>
+
+  <ItemGroup Label="NuGet">
+    <NuspecProperty Include="JsonNetVersion=$(JsonNetVersion)" />
+    <NuspecProperty Include="SrcPackageFolder=$(SrcPackageFolder)" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.TestPlatform.Common\Microsoft.TestPlatform.Common.csproj" />
     <ProjectReference Include="..\Microsoft.TestPlatform.CoreUtilities\Microsoft.TestPlatform.CoreUtilities.csproj" />
     <ProjectReference Include="..\Microsoft.TestPlatform.ObjectModel\Microsoft.TestPlatform.ObjectModel.csproj" />
     <ProjectReference Include="..\Microsoft.TestPlatform.CommunicationUtilities\Microsoft.TestPlatform.CommunicationUtilities.csproj" />
   </ItemGroup>
+
   <ItemGroup Condition=" '$(TargetFramework)' == '$(NetFrameworkMinimum)' ">
     <Reference Include="System.Xml" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
+
   <ItemGroup>
     <Compile Update="Resources\InternalResources.Designer.cs">
       <DependentUpon>InternalResources.resx</DependentUpon>
@@ -37,19 +53,22 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
   </ItemGroup>
+
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Resources.resx">
+    <EmbeddedResource Update="Resources\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\InternalResources.resx">
+    <EmbeddedResource Update="Resources\InternalResources.resx">
       <LastGenOutput>InternalResources.Designer.cs</LastGenOutput>
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
   </ItemGroup>
+
   <PropertyGroup Label="Configuration">
     <RootNamespace>Microsoft.VisualStudio.TestPlatform.VsTestConsole.TranslationLayer</RootNamespace>
   </PropertyGroup>
+
   <ItemGroup>
     <!-- API that is common to all frameworks that we build for. -->
     <AdditionalFiles Include="PublicAPI/PublicAPI.Shipped.txt" />
@@ -58,10 +77,11 @@
     <AdditionalFiles Include="PublicAPI/$(TargetFramework)/PublicAPI.Shipped.txt" />
     <AdditionalFiles Include="PublicAPI/$(TargetFramework)/PublicAPI.Unshipped.txt" />
   </ItemGroup>
-  <Import Project="$(TestPlatformRoot)scripts\build\TestPlatform.targets" />
+
   <Target Name="WorkAroundPackageAndProjectReferenceConflict" BeforeTargets="ResolveLockFileReferences">
     <ItemGroup>
       <ResolvedCompileFileDefinitions Remove="@(ResolvedCompileFileDefinitions)" Condition="'%(ResolvedCompileFileDefinitions.Filename)' == 'Microsoft.TestPlatform.Common'" />
     </ItemGroup>
   </Target>
+
 </Project>

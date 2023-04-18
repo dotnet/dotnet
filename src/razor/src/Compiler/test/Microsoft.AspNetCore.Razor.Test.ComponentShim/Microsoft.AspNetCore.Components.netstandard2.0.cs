@@ -436,6 +436,7 @@ namespace Microsoft.AspNetCore.Components.Rendering
         public void AddAttribute(int sequence, string name, object value) { }
         public void AddAttribute(int sequence, string name, string value) { }
         public void AddAttribute<TArgument>(int sequence, string name, Microsoft.AspNetCore.Components.EventCallback<TArgument> value) { }
+        public void AddComponentParameter(int sequence, string name, object value) { }
         public void AddComponentReferenceCapture(int sequence, System.Action<object> componentReferenceCaptureAction) { }
         public void AddContent(int sequence, Microsoft.AspNetCore.Components.MarkupString markupContent) { }
         public void AddContent(int sequence, Microsoft.AspNetCore.Components.RenderFragment fragment) { }

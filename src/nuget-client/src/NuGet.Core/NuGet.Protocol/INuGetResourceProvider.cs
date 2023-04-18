@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -30,7 +32,7 @@ namespace NuGet.Protocol.Core.Types
         /// </remarks>
         /// <param name="source">Source repository</param>
         /// <returns>True if this provider handles the input source.</returns>
-        Task<Tuple<bool, INuGetResource>> TryCreate(SourceRepository source, CancellationToken token);
+        Task<Tuple<bool, INuGetResource?>> TryCreate(SourceRepository source, CancellationToken token);
 
         /// <summary>
         /// Resource type provided

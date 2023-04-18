@@ -163,18 +163,18 @@ namespace NuGet.Versioning.Test
             versions.Add(NuGetVersion.Parse(version));
 
             // TryParse
-            NuGetVersion semVer = null;
+            NuGetVersion? semVer = null;
             NuGetVersion.TryParse(version, out semVer);
-            versions.Add(semVer);
+            versions.Add(semVer!);
 
-            NuGetVersion nuVer = null;
+            NuGetVersion? nuVer = null;
             NuGetVersion.TryParse(version, out nuVer);
-            versions.Add(nuVer);
+            versions.Add(nuVer!);
 
             // TryParseStrict
             nuVer = null;
             NuGetVersion.TryParseStrict(version, out nuVer);
-            versions.Add(nuVer);
+            versions.Add(nuVer!);
 
             // Constructors
             var normal = NuGetVersion.Parse(version);

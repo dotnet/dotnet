@@ -18,6 +18,9 @@ internal static partial class HashSetPool<T>
 {
     public static readonly ObjectPool<HashSet<T>> Default = DefaultPool.Create(Policy.Instance);
 
+    public static ObjectPool<HashSet<T>> Create(IEqualityComparer<T> comparer)
+        => DefaultPool.Create(new Policy(comparer));
+
     public static PooledObject<HashSet<T>> GetPooledObject()
         => Default.GetPooledObject();
 

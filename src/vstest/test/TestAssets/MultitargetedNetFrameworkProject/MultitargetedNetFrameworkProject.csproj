@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <!-- Imports Common TestAssets props. -->
-  <Import Project="..\..\..\scripts\build\TestAssets.props" />
 
   <PropertyGroup>
     <TargetFrameworks>$(NetFrameworkMinimum);net47;net471;net472;net48</TargetFrameworks>

@@ -6,7 +6,6 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.ExternalAccess.OmniSharp.Project;
-using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.Extensions.Logging;
 using Xunit;
 using Xunit.Abstractions;

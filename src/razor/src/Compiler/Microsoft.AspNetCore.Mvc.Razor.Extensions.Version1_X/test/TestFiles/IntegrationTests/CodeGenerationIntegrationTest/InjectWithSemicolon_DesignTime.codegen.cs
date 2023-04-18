@@ -15,7 +15,7 @@ namespace AspNetCore
     {
         #pragma warning disable 219
         private void __RazorDirectiveTokenHelpers__() {
-        ((System.Action)(() => {
+        ((global::System.Action)(() => {
 #line 1 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InjectWithSemicolon.cshtml"
 MyModel __typeHelper = default;
 
@@ -23,7 +23,7 @@ MyModel __typeHelper = default;
 #line hidden
         }
         ))();
-        ((System.Action)(() => {
+        ((global::System.Action)(() => {
 #line 2 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InjectWithSemicolon.cshtml"
 MyApp __typeHelper = default;
 
@@ -31,7 +31,7 @@ MyApp __typeHelper = default;
 #line hidden
         }
         ))();
-        ((System.Action)(() => {
+        ((global::System.Action)(() => {
 #line 2 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InjectWithSemicolon.cshtml"
 global::System.Object MyPropertyName = null;
 
@@ -39,7 +39,7 @@ global::System.Object MyPropertyName = null;
 #line hidden
         }
         ))();
-        ((System.Action)(() => {
+        ((global::System.Action)(() => {
 #line 3 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InjectWithSemicolon.cshtml"
 MyService<TModel> __typeHelper = default;
 
@@ -47,7 +47,7 @@ MyService<TModel> __typeHelper = default;
 #line hidden
         }
         ))();
-        ((System.Action)(() => {
+        ((global::System.Action)(() => {
 #line 3 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InjectWithSemicolon.cshtml"
 global::System.Object Html = null;
 
@@ -55,7 +55,7 @@ global::System.Object Html = null;
 #line hidden
         }
         ))();
-        ((System.Action)(() => {
+        ((global::System.Action)(() => {
 #line 4 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InjectWithSemicolon.cshtml"
 MyApp __typeHelper = default;
 
@@ -63,7 +63,7 @@ MyApp __typeHelper = default;
 #line hidden
         }
         ))();
-        ((System.Action)(() => {
+        ((global::System.Action)(() => {
 #line 4 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InjectWithSemicolon.cshtml"
 global::System.Object MyPropertyName2 = null;
 
@@ -71,7 +71,7 @@ global::System.Object MyPropertyName2 = null;
 #line hidden
         }
         ))();
-        ((System.Action)(() => {
+        ((global::System.Action)(() => {
 #line 5 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InjectWithSemicolon.cshtml"
 MyService<TModel> __typeHelper = default;
 
@@ -79,7 +79,7 @@ MyService<TModel> __typeHelper = default;
 #line hidden
         }
         ))();
-        ((System.Action)(() => {
+        ((global::System.Action)(() => {
 #line 5 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InjectWithSemicolon.cshtml"
 global::System.Object Html2 = null;
 

@@ -41,7 +41,7 @@ internal sealed class BoundAttributeParameterDescriptorComparer : IEqualityCompa
             string.Equals(descriptorX.TypeName, descriptorY.TypeName, StringComparison.Ordinal) &&
             string.Equals(descriptorX.Documentation, descriptorY.Documentation, StringComparison.Ordinal) &&
             string.Equals(descriptorX.DisplayName, descriptorY.DisplayName, StringComparison.Ordinal) &&
-            ComparerUtilities.Equals(descriptorX.Metadata, descriptorY.Metadata, StringComparer.Ordinal, StringComparer.Ordinal);
+            ComparerUtilities.Equals(descriptorX.Metadata, descriptorY.Metadata, StringComparer.Ordinal);
     }
 
     public int GetHashCode(BoundAttributeParameterDescriptor? descriptor)

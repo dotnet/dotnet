@@ -1,4 +1,4 @@
-﻿param(
+param(
   [Parameter(Mandatory=$true)][string] $Operation,
   [string] $AuthToken,
   [string] $CommitSha,

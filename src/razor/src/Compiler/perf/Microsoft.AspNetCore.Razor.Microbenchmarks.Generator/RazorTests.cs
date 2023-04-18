@@ -11,10 +11,9 @@ public class RazorTests
     public void Project_Load_Cold()
     {
         // arrange
-        var razorBenchmarks = new RazorBenchmarks();
+        var razorBenchmarks = new ColdBenchmarks();
 
         // act
-        razorBenchmarks.Startup = AbstractBenchmark.StartupKind.Cold;
         razorBenchmarks.Setup();
 
         // assert
@@ -39,7 +38,6 @@ public class RazorTests
         var razorBenchmarks = new RazorBenchmarks();
 
         // act
-        razorBenchmarks.Startup = AbstractBenchmark.StartupKind.Warm;
         razorBenchmarks.Setup();
 
         // assert
@@ -56,7 +54,6 @@ public class RazorTests
     {
         // arrange
         var razorBenchmarks = new RazorBenchmarks();
-        razorBenchmarks.Startup = AbstractBenchmark.StartupKind.Warm;
         razorBenchmarks.Setup();
 
         // act
@@ -74,7 +71,6 @@ public class RazorTests
     {
         // arrange
         var razorBenchmarks = new RazorBenchmarks();
-        razorBenchmarks.Startup = AbstractBenchmark.StartupKind.Warm;
         razorBenchmarks.Setup();
 
         // check the contents of the generated 0 page
@@ -95,7 +91,6 @@ public class RazorTests
     {
         // arrange
         var razorBenchmarks = new RazorBenchmarks();
-        razorBenchmarks.Startup = AbstractBenchmark.StartupKind.Warm;
         razorBenchmarks.Setup();
 
         // act
@@ -112,7 +107,6 @@ public class RazorTests
     {
         // arrange
         var razorBenchmarks = new RazorBenchmarks();
-        razorBenchmarks.Startup = AbstractBenchmark.StartupKind.Warm;
         razorBenchmarks.Setup();
 
         // check the contents of the counter page
@@ -133,7 +127,6 @@ public class RazorTests
     {
         // arrange
         var razorBenchmarks = new RazorBenchmarks();
-        razorBenchmarks.Startup = AbstractBenchmark.StartupKind.Warm;
         razorBenchmarks.Setup();
 
         // check the contents of the counter and index page
@@ -156,7 +149,6 @@ public class RazorTests
     {
         // arrange
         var razorBenchmarks = new RazorBenchmarks();
-        razorBenchmarks.Startup = AbstractBenchmark.StartupKind.Warm;
         razorBenchmarks.Setup();
 
         // check the contents of the index page

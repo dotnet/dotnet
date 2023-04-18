@@ -175,7 +175,7 @@ public class GoToDefinitionTests : AbstractRazorEditorTest
         await TestServices.Editor.WaitForCurrentLineTextAsync("[Parameter] public string? MyProperty { get; set; }", ControlledHangMitigatingCancellationToken);
     }
 
-    [IdeFact]
+    [IdeFact(Skip = "https://github.com/dotnet/razor/issues/8408")]
     public async Task GoToDefinition_ComponentAttribute_InReferencedAssembly()
     {
         // Open the file

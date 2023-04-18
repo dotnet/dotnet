@@ -1,225 +1,309 @@
+# Branches that trigger a build on commit
 trigger:
-- main
-- rel/*
+  branches:
+    include:
+    - main
+    - rel/*
+    exclude:
+    - rel/15.*
+    - rel/16.*
+    - rel/17.0
+    - rel/17.1
+    - rel/17.2
+    - rel/17.3
+    - rel/17.4
+    - rel/17.5
+    - rel/17.6
 
+# Branch(es) that trigger(s) build(s) on PR
 pr:
-- main
-- rel/*
+  branches:
+    include:
+    - main
+    - rel/*
+  paths:
+    exclude:
+      - .github/*
+      - .devcontainer/*
+      - docs/*
+      - .markdownlint.json
+      - .markdownlintignore
+      - CODE_OF_CONDUCT.md
+      - CONTRIBUTING.md
+      - README.md
+      - SECURITY.md
 
-jobs:
-- job: Windows
-  timeoutInMinutes: 120
-  pool:
-    vmImage: 'windows-latest'
-  variables:
-    buildConfiguration: 'Release'
-  steps:
-  - checkout: self
-    fetchDepth: 1
-    clean: true
-  - task: BatchScript@1
-    displayName: 'Run script build.cmd'
-    inputs:
-      filename: build.cmd
-      arguments: '-verbose -configuration $(buildConfiguration) -ci -steps "InstallDotnet, Restore, UpdateLocalization, Build, Publish, Pack, Manifest"'
-      modifyEnvironment: false
-      failOnStandardError: true
+parameters:
+- name: isRTM
+  displayName: "Release a RTM version?"
+  type: boolean
+  default: False
 
-  - task: PowerShell@2
-    displayName: 'Disable Strong Name Validation'
-    inputs:
-      targetType: 'inline'
-      script: |
-        Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\.NETFramework" -Name "AllowStrongNameBypass" -Value 1 -Force
-        Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\.NETFramework" -Name "AllowStrongNameBypass" -Value 1 -Force
-        reg DELETE "HKLM\Software\Microsoft\StrongName\Verification" /f
-        reg DELETE "HKLM\Software\Wow6432Node\Microsoft\StrongName\Verification" /f
-        reg ADD "HKLM\Software\Microsoft\StrongName\Verification\*,*" /f
-        reg ADD "HKLM\Software\Wow6432Node\Microsoft\StrongName\Verification\*,*" /f
+variables:
+  # Cannot use key:value syntax in root defined variables
+  - name: _TeamName
+    value: TestPlatformTeam
+  - name: Codeql.Enabled
+    value: true
+  - name: _RunAsInternal
+    value: ${{ and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}
+  - name: _RunAsPublic
+    value: ${{ eq(variables._RunAsInternal, False) }}
+  # Set default value for variables of PR and Public builds
+  - name: _SignType
+    value: test
+  - name: _SignArgs
+    value: ''
+  - name: _Sign
+    value: False
+  - name: _InternalBuildArgs
+    value: ' '
+  # Arcade is using global cache of nugets in non-windows build
+  # under some circumstances, but we don't respect that in our code and try to find them
+  # in .packages. Force the location of packages to that folder.
+  - name: NUGET_PACKAGES
+    value: '$(Build.SourcesDirectory)/.packages'
 
-  - task: BatchScript@1
-    displayName: 'Run Unit Tests'
-    inputs:
-      filename: test.cmd
-      arguments: '-verbose -configuration $(buildConfiguration)'
-      modifyEnvironment: false
-      failOnStandardError: true
+  # Produce real signed binaries for Internal builds
+  - ${{ if eq(variables._RunAsInternal, True) }}:
+    # Group gives access to $microsoft-symbol-server-pat and $symweb-symbol-server-pat
+    - group: DotNet-Symbol-Server-Pats
+    # Group gives access to $dn-bot-devdiv-drop-rw-code-rw and dn-bot-dnceng-build-rw-code-rw
+    - group: DotNet-VSTS-Infra-Access
+    - name: _DevDivDropAccessToken
+      value: $(dn-bot-devdiv-drop-rw-code-rw)
+    - name: _SignType
+      value: real
+    - name: _SignArgs
+      value: /p:DotNetSignType=$(_SignType) /p:TeamName=$(_TeamName) /p:Sign=$(_Sign)
+    - name: _Sign
+      value: True
+    - name: VisualStudioDropName
+      value: Products/$(System.TeamProject)/$(Build.DefinitionName)/$(Build.SourceBranchName)/$(Build.BuildNumber)
+    - name: _InternalBuildArgs
+      value: /p:DotNetSignType=$(_SignType)
+        /p:TeamName=$(_TeamName)
+        /p:DotNetPublishUsingPipelines=true
+        /p:DotNetSymbolServerTokenMsdl=$(microsoft-symbol-server-pat)
+        /p:DotNetSymbolServerTokenSymWeb=$(symweb-symbol-server-pat)
+        /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
+        /p:VisualStudioDropName=$(VisualStudioDropName)
 
-  - task: PublishTestResults@2
-    displayName: 'Publish Test Results **\*.trx'
-    inputs:
-      testResultsFormat: VSTest
-      testResultsFiles: '**\*.trx'
-    condition: succeededOrFailed()
+stages:
 
-  - task: PublishPipelineArtifact@1
-    inputs:
-      targetPath: '$(Build.SourcesDirectory)\artifacts'
-      artifact: 'testArtifacts'
-      publishLocation: 'pipeline'
+- stage: build
+  displayName: Build
+  jobs:
 
-- job: WindowsAcceptance
-  dependsOn: Windows
-  timeoutInMinutes: 120
-  pool:
-    vmImage: 'windows-latest'
-  variables:
-    buildConfiguration: 'Release'
-  steps:
-  - checkout: self
-    fetchDepth: 1
-    clean: true
-  - task: PowerShell@2
-    displayName: 'Free space'
-    inputs:
-      targetType: 'inline'
-      script: 'Get-PSDrive -PSProvider FileSystem | Out-String'
+  - template: /eng/common/templates/jobs/jobs.yml
+    parameters:
+      enableMicrobuild: true
+      enablePublishBuildArtifacts: true
+      enablePublishBuildAssets: true
+      enablePublishUsingPipelines: true
+      enablePublishTestResults: true
+      testResultsFormat: 'vstest'
+      enableTelemetry: true
+      enableSourceBuild: true
+      jobs:
+      - job: Windows
+        timeoutInMinutes: 120
+        pool:
+          ${{ if eq(variables._RunAsPublic, True) }}:
+            name: NetCore-Public
+            demands: ImageOverride -equals windows.vs2022.amd64.open
+          ${{ if eq(variables._RunAsInternal, True) }}:
+            name: NetCore1ESPool-Internal
+            demands: ImageOverride -equals 1es-windows-2022
+        strategy:
+          matrix:
+            Release:
+              _BuildConfig: Release
+            # ${{ if eq(variables._RunAsPublic, True) }}:
+            #   Debug:
+            #     _BuildConfig: Debug
+        steps:
+        # This steps help to understand versions of .NET runtime installed on the machine,
+        # which is useful to diagnose some governance issues.
+        - task: DotNetCoreCLI@2
+          displayName: 'dotnet --info'
+          inputs:
+            command: custom
+            custom: '--info'
 
-  - task: DownloadPipelineArtifact@2
-    inputs:
-      buildType: 'current'
-      artifactName: 'testArtifacts'
-      targetPath: '$(Build.SourcesDirectory)\artifacts'
+        - powershell: eng\common\CIBuild.cmd
+            -configuration $(_BuildConfig)
+            -prepareMachine
+            $(_InternalBuildArgs)
+            /p:Test=false
+          name: Build
+          displayName: Build
 
-  - task: PowerShell@2
-    displayName: 'Free space'
-    inputs:
-      targetType: 'inline'
-      script: 'Get-PSDrive -PSProvider FileSystem | Out-String' 
+        # -ci is allowing to import some environment variables and some required configurations
+        - script: Test.cmd
+            -configuration $(_BuildConfig)
+            -ci
+            -integrationTest
+            -performanceTest
+          name: Test
+          displayName: Test
 
-  - task: PowerShell@2
-    inputs:
-      targetType: 'inline'
-      script: 'ls "$(Build.SourcesDirectory)\artifacts\" -Recurse -Dir'
+        # This step is only helpful for diagnosing some issues with vstest/test host that would not appear
+        # through the console or trx
+        - task: PublishBuildArtifacts@1
+          displayName: 'Publish Test Results folders'
+          inputs:
+            PathtoPublish: '$(Build.SourcesDirectory)/artifacts/TestResults/$(_BuildConfig)'
+            ArtifactName: TestResults
+          condition: failed()
+        
+        # Public pipeline does not upload packages into artifacts, but we need them for tests on Linux and MacOS.
+        - ${{ if eq(variables._RunAsPublic, True) }}:
+          - task: PublishBuildArtifacts@1
+            displayName: 'Publish Shipping Packages'
+            inputs:
+              PathtoPublish: '$(Build.SourcesDirectory)/artifacts/packages/$(_BuildConfig)/Shipping'
+              ArtifactName: PackageArtifacts
 
-  - task: BatchScript@1
-    displayName: 'Run script build.cmd'
-    inputs:
-      filename: build.cmd
-      # build should not be needed in the end, we are copying the build task from the build folder, but we should get
-      # it either from artifacts, if present, or from extracted package file
-      # Adding it at the moment to avoid this error: #[error]Copy-Item : Cannot find path 'D:\a\1\s\src\Microsoft.TestPlatform.Build\bin\Release\netstandard2.0' because it does  not exist.
-      arguments: '-verbose -configuration $(buildConfiguration) -ci -steps "InstallDotnet, Restore, Build, PrepareAcceptanceTests"'
-      modifyEnvironment: false
-      failOnStandardError: true
+          - task: PublishBuildArtifacts@1
+            displayName: 'Publish NonShippping Packages'
+            inputs:
+              PathtoPublish: '$(Build.SourcesDirectory)/artifacts/packages/$(_BuildConfig)/NonShipping'
+              ArtifactName: PackageArtifacts
 
-  - task: PowerShell@2
-    inputs:
-      targetType: 'inline'
-      script: 'ls "$(Build.SourcesDirectory)\artifacts\Release\packages"'
+        - task: PublishBuildArtifacts@1
+          displayName: 'Publish VSSetup'
+          inputs:
+            PathtoPublish: '$(Build.SourcesDirectory)/artifacts/VSSetup/$(_BuildConfig)'
+            ArtifactName: VSSetupArtifacts
+      
+      - job: OtherOSes
+        dependsOn: Windows
+        workspace:
+          clean: all
+        variables:
+          # Publish Logs seems to depend on this name of variable, so we define it
+          # even when we don't use matrix.
+          - name: _BuildConfig
+            value: Release
+        strategy:
+          matrix:
+            Ubuntu_22_04:
+              vmImage: ubuntu-22.04
+              pwsh: true
+            macOS_11:
+              vmImage: macOS-11
+              pwsh: true
+        pool:
+          vmImage: $[ variables['vmImage'] ]
+        steps:
+        - checkout: self
+          fetchDepth: 1
+          clean: true
+        
+        # Build but don't pack, packing does not work on non-windows and we want to test what we built on Windows
+        # anyway. Because that is what we will publish.
+        - script: ./build.sh
+            --configuration $(_BuildConfig)
+            --ci
+          name: Build
+          displayName: Build
+        
+        # Download the built packages into local package source, as if we built them on this machine.
+        - task: DownloadPipelineArtifact@2
+          displayName: Download Package Artifacts
+          inputs:
+            artifactName: PackageArtifacts
+            targetPath: '$(Build.SourcesDirectory)/artifacts/packages/$(_BuildConfig)/Shipping'
+        
+        - script: ./test.sh
+            --configuration $(_BuildConfig)
+            --ci
+            --integrationTest
+            --performanceTest
+          name: Test
+          displayName: Test
+        
+        # This step is only helpful for diagnosing some issues with vstest/test host that would not appear
+        # through the console or trx
+        - task: PublishBuildArtifacts@1
+          displayName: 'Publish Test Results folders'
+          inputs:
+            PathtoPublish: '$(Build.SourcesDirectory)/artifacts/TestResults/$(_BuildConfig)'
+            ArtifactName: TestResults
+          condition: failed()
 
-  - task: PowerShell@2
-    displayName: 'Free space'
-    inputs:
-      targetType: 'inline'
-      script: 'Get-PSDrive -PSProvider FileSystem | Out-String'
+      - ${{ if eq(variables._RunAsInternal, True) }}:
+        - job: Publish
+          dependsOn: OtherOSes
+          pool:
+              name: NetCore1ESPool-Internal
+              demands: ImageOverride -equals 1es-windows-2022
+          strategy:
+            matrix:
+              Release:
+                _BuildConfig: Release
+          steps:
+            # The template job needs a log, otherwise it writes a warning. We can disable log uploading only for
+            # the whole stage, which is not what we want to do. So we write an empty file instead.
+            - pwsh: 'New-Item -Type file -Force "$(Build.SourcesDirectory)/artifacts/log/$(_BuildConfig)/empty.log"'
+              name: 'Add_empty_logfile'
+            # Download the built packages into local package source, as if we built them on this machine.
+            - task: DownloadPipelineArtifact@2
+              displayName: Download Package Artifacts
+              inputs:
+                artifactName: PackageArtifacts
+                targetPath: '$(Build.SourcesDirectory)/artifacts/packages/$(_BuildConfig)/Shipping'
+            
+            - task: DownloadPipelineArtifact@2
+              displayName: Download VSSetup Artifacts
+              inputs:
+                artifactName: VSSetupArtifacts
+                targetPath: '$(Build.SourcesDirectory)/artifacts/VSSetup/$(_BuildConfig)'
 
-  - task: PowerShell@2
-    displayName: 'Disable Strong Name Validation'
-    inputs:
-      targetType: 'inline'
-      script: |
-        Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\.NETFramework" -Name "AllowStrongNameBypass" -Value 1 -Force
-        Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\.NETFramework" -Name "AllowStrongNameBypass" -Value 1 -Force
-        reg DELETE "HKLM\Software\Microsoft\StrongName\Verification" /f
-        reg DELETE "HKLM\Software\Wow6432Node\Microsoft\StrongName\Verification" /f
-        reg ADD "HKLM\Software\Microsoft\StrongName\Verification\*,*" /f
-        reg ADD "HKLM\Software\Wow6432Node\Microsoft\StrongName\Verification\*,*" /f
+            - task: NuGetAuthenticate@0
+              displayName: 'NuGet Authenticate to dotnet-tools and test-tools feeds'
 
-  - task: BatchScript@1
-    displayName: 'Run Acceptance Tests'
-    inputs:
-      filename: test.cmd
-      arguments: '-verbose -configuration $(buildConfiguration) -p AcceptanceTests -f net48'
-      modifyEnvironment: false
-      failOnStandardError: true
+            - task: NuGetCommand@2
+              displayName: 'Publish NuGet packages to dotnet-tools feed'
+              inputs:
+                command: push
+                packagesToPush: 'artifacts/packages/$(_BuildConfig)/**/*.nupkg;!artifacts/packages/$(_BuildConfig)/**/*.symbols.nupkg'
+                publishVstsFeed: 'public/dotnet-tools'
 
-  - task: BatchScript@1
-    displayName: 'Run Platform Tests'
-    inputs:
-      filename: test.cmd
-      arguments: '-verbose -configuration $(buildConfiguration) -p platformtests'
-      modifyEnvironment: false
-      failOnStandardError: true
+            - task: NuGetCommand@2
+              displayName: 'Publish NuGet packages to test-tools feed'
+              inputs:
+                command: push
+                packagesToPush: 'artifacts/packages/$(_BuildConfig)/**/*.nupkg;!artifacts/packages/$(_BuildConfig)/**/*.symbols.nupkg'
+                publishVstsFeed: 'public/test-tools'
 
-  - task: BatchScript@1
-    displayName: 'Run Smoke Tests'
-    inputs:
-      filename: test.cmd
-      arguments: '-verbose -configuration $(buildConfiguration) -p smoke'
-      modifyEnvironment: false
-      failOnStandardError: true
+            # Publishes setup VSIXes to a drop.
+            # Note: The insertion tool looks for the display name of this task in the logs.
+            - task: ms-vseng.MicroBuildTasks.4305a8de-ba66-4d8b-b2d1-0dc4ecbbf5e8.MicroBuildUploadVstsDropFolder@1
+              displayName: Upload VSTS Drop
+              inputs:
+                DropName: $(VisualStudioDropName)
+                DropFolder: 'artifacts\VSSetup\$(_BuildConfig)\Insertion'
+                AccessToken: $(_DevDivDropAccessToken)
+              condition: succeeded()
 
-  - task: BatchScript@1
-    displayName: 'Run Performance Tests'
-    inputs:
-      filename: test.cmd
-      arguments: '-verbose -configuration $(buildConfiguration) -p Performance -f net48'
-      modifyEnvironment: false
-      failOnStandardError: true
+            - task: PublishBuildArtifacts@1
+              displayName: Publish Artifact VSSetup
+              inputs:
+                PathtoPublish: 'artifacts\VSSetup\$(_BuildConfig)'
+                ArtifactName: 'VSSetup'
+              condition: succeeded()
 
-  - task: PublishTestResults@2
-    displayName: 'Publish Test Results **\*.trx'
-    inputs:
-      testResultsFormat: VSTest
-      testResultsFiles: '**\*.trx'
-    condition: succeededOrFailed()
+  - ${{ if eq(variables._RunAsInternal, True) }}:
+    - template: /eng/common/templates/job/onelocbuild.yml
+      parameters:
+        GitHubOrg: microsoft
+        MirrorRepo: vstest
+        LclSource: lclFilesfromPackage
+        LclPackageId: 'LCL-JUNO-PROD-VSTEST'
 
-- job: OtherOSes
-  dependsOn: Windows
-  workspace:
-    clean: all
-  strategy:
-    matrix:
-      Ubuntu_22_04:
-        vmImage: ubuntu-22.04
-        pwsh: true
-      macOS_11:
-        vmImage: macOS-11
-        pwsh: true
-  pool:
-    vmImage: $[ variables['vmImage'] ]
-  variables:
-      buildConfiguration: 'Release'
-      VSTestRTMBuild: 'false'
-  steps:
-  - checkout: self
-    fetchDepth: 1
-    clean: true
-  - script: chmod +x ./scripts/vsts-prebuild.sh
-    displayName: 'Preparing for set version'
-
-  - script: ./scripts/vsts-prebuild.sh -build "preview-$(Build.BuildNumber)" -rtm "$(VSTestRTMBuild)" -branch "$(Build.SourceBranch)"
-    displayName: 'Set Version'
-
-  - script: ./build.sh -c $(buildConfiguration) -v "$(BuildVersionPrefix)" -vs "$(BuildVersionSuffix)" -ci true -verbose
-    displayName: 'Build'
-
-  - script: ./test.sh -c $(buildConfiguration) -p Unit
-    displayName: 'Unit tests'
-
-  - task: DownloadPipelineArtifact@2
-    inputs:
-      buildType: 'current'
-      artifactName: 'testArtifacts'
-      targetPath: '$(Build.SourcesDirectory)/artifacts'
-
-  - script: ./tools/dotnet-linux/dotnet build -c $(buildConfiguration) ./test/TestAssets/TestAssets.sln
-    displayName: 'Build test assets'
-
-  - script: ./test.sh -c $(buildConfiguration) -p Acceptance
-    displayName: 'Acceptance tests'
-
-  - task: PublishTestResults@2
-    displayName: 'Publish Test Results **/*.trx'
-    inputs:
-      testResultsFormat: VSTest
-      testResultsFiles: '**/*.trx'
-    condition: succeededOrFailed()
-
-- template: /eng/common/templates/job/source-build.yml
-  parameters:
-    platform:
-      name: Managed
-      container: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-7
-      buildScript: eng/common/build.sh
+- ${{ if eq(variables._RunAsInternal, True) }}:
+  - template: eng\common\templates\post-build\post-build.yml
+    parameters:
+      publishingInfraVersion: 3

@@ -1,1 +1,9 @@
 #nullable enable
+NuGet.Versioning.FloatRange.IncludePrerelease.get -> bool
+NuGet.Versioning.VersionRange.HasLowerAndUpperBounds.get -> bool
+NuGet.Versioning.VersionRange.HasLowerBound.get -> bool
+NuGet.Versioning.VersionRange.HasUpperBound.get -> bool
+NuGet.Versioning.VersionRange.IsMaxInclusive.get -> bool
+NuGet.Versioning.VersionRange.IsMinInclusive.get -> bool
+NuGet.Versioning.VersionRange.MaxVersion.get -> NuGet.Versioning.NuGetVersion?
+NuGet.Versioning.VersionRange.MinVersion.get -> NuGet.Versioning.NuGetVersion?

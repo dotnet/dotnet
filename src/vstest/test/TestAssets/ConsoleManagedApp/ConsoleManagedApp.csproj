@@ -1,13 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <!-- Imports Common TestAssets props. -->
-  <Import Project="..\..\..\scripts\build\TestAssets.props" />
 
   <PropertyGroup>
     <AssemblyName>ConsoleManagedApp</AssemblyName>
     <TargetFrameworks>$(NetFrameworkMinimum);$(NetCoreAppMinimum)</TargetFrameworks>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks Condition=" '$(DotNetBuildFromSource)' == 'true' ">netcoreapp3.1</TargetFrameworks>
-    <CheckEolTargetFramework>false</CheckEolTargetFramework>
   </PropertyGroup>
 
 </Project>

@@ -104,9 +104,9 @@ namespace __Blazor.Test.TestComponent
         public static global::Test.Parent<TKey, TValue, TOther> CreateParent_0<TKey, TValue, TOther>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, global::System.Collections.Generic.Dictionary<TKey, TValue> __arg0, int __seq1, TOther __arg1, int __seq2, global::Microsoft.AspNetCore.Components.RenderFragment __arg2)
         {
         __builder.OpenComponent<global::Test.Parent<TKey, TValue, TOther>>(seq);
-        __builder.AddAttribute(__seq0, "Data", __arg0);
-        __builder.AddAttribute(__seq1, "Other", __arg1);
-        __builder.AddAttribute(__seq2, "ChildContent", __arg2);
+        __builder.AddComponentParameter(__seq0, "Data", __arg0);
+        __builder.AddComponentParameter(__seq1, "Other", __arg1);
+        __builder.AddComponentParameter(__seq2, "ChildContent", __arg2);
         __builder.CloseComponent();
         return default;
         }
@@ -119,7 +119,7 @@ namespace __Blazor.Test.TestComponent
         public static global::Test.Child<TOther, TValue, TKey, TChildOnly> CreateChild_1<TOther, TValue, TKey, TChildOnly>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, TOther __syntheticArg0, System.Collections.Generic.Dictionary<TKey, TValue> __syntheticArg1, System.Collections.Generic.Dictionary<TKey, TValue> __syntheticArg2, int __seq0, global::System.Collections.Generic.ICollection<TChildOnly> __arg0)
         {
         __builder.OpenComponent<global::Test.Child<TOther, TValue, TKey, TChildOnly>>(seq);
-        __builder.AddAttribute(__seq0, "ChildOnlyItems", __arg0);
+        __builder.AddComponentParameter(__seq0, "ChildOnlyItems", __arg0);
         __builder.CloseComponent();
         return default;
         }

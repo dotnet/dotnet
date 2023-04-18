@@ -8,7 +8,7 @@
       </trans-unit>
       <trans-unit id="ErrorMethodArityMustBeNumeric">
         <source>Method arity must be numeric.</source>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="ErrorMethodNotFound">
         <source>Method '{0}' not found on type '{1}'</source>
@@ -46,12 +46,12 @@ Example: 'System.Reflection.MethodBase' is not implemented on this platform!</no
       <trans-unit id="ErrorMethodExpectedAsAnArgument">
         <source>Argument must be a method. (Argument name: {0})</source>
         <target state="new">Argument must be a method.</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="ErrorCannotAppendAfterHashCalculation">
         <source>Cannot append to a TestIdProvider, after GetId or GetHash method is called.</source>
         <target state="new">Cannot append to a TestIdProvider, after GetId or GetHash method is called.</target>
-        <note></note>
+        <note />
       </trans-unit>
     </body>
   </file>

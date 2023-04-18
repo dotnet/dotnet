@@ -23,8 +23,7 @@ export class CodeActionsHandler {
         private readonly logger: RazorLogger) { }
 
     public register() {
-        // tslint:disable-next-line: no-floating-promises
-        this.serverClient.onRequestWithParams<SerializableDelegatedCodeActionParams, RazorCodeAction[], any>(
+        return this.serverClient.onRequestWithParams<SerializableDelegatedCodeActionParams, RazorCodeAction[], any>(
             this.codeActionRequestType,
             async (request, token) => this.provideCodeActions(request, token));
     }
@@ -62,6 +61,6 @@ export class CodeActionsHandler {
     }
 
     private commandAsCodeAction(command: vscode.Command): RazorCodeAction {
-        return { title: command.title, data: { CustomTags: [ 'CodeActionFromVSCode' ] } } as RazorCodeAction;
+        return { title: command.title, data: { CustomTags: ['CodeActionFromVSCode'] } } as RazorCodeAction;
     }
 }

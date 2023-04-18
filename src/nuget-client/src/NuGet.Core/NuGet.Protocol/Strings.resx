@@ -488,4 +488,46 @@ The "ms" should be localized to the abbreviation for milliseconds.</comment>
 The "ms" should be localized to the abbreviation for milliseconds.
 The "s" should be localized to the abbreviation for seconds.</comment>
   </data>
+  <data name="VulnerabilityPage_CouldNotLoad" xml:space="preserve">
+    <value>Package source '{0}' vulnerability data index '{1}' could not be loaded. This indicates a problem with the JSON file contents returned from the server.</value>
+    <comment>{0} - package source name (for example "nuget.org")
+{1} - URL where no data was loaded from</comment>
+  </data>
+  <data name="VulnerabilityPage_HasNoName" xml:space="preserve">
+    <value>Vulnerability page index {0} does not contain a name (Source: '{1}')</value>
+    <comment>{0} - an index number
+{1} - the package source name</comment>
+  </data>
+  <data name="VulnerabilityPage_NameHasInvalidCharacters" xml:space="preserve">
+    <value>Vulnerability page index {0} contains invalid characters (Source: '{1}')</value>
+    <comment>{0} - an index number
+{1} - package source name</comment>
+  </data>
+  <data name="VulnerabilityPage_NameNotUnique" xml:space="preserve">
+    <value>Vulnerability page name '{0}' is not unique. Only using the first (Source: '{1}')</value>
+    <comment>{0} - file name
+{1} - package source name</comment>
+  </data>
+  <data name="VulnerabilityPage_NameTooLong" xml:space="preserve">
+    <value>Vulnerability page index {0} name is longer than {1} characters (Source: '{2}')</value>
+    <comment>{0} - an index number
+{1} - number representing the max length allowed
+{2} - the package source name</comment>
+  </data>
+  <data name="VulnerabilityPage_NoUrl" xml:space="preserve">
+    <value>Vulnerability page '{0}' does not contain a URL (Source: '{1}')</value>
+    <comment>{0} - name of file
+{1} - package source name</comment>
+  </data>
+  <data name="VulnerabilityPage_UrlNotHttp" xml:space="preserve">
+    <value>Vulnerability page '{0}' contains URL that is not http(s) (Source: '{1}')</value>
+    <comment>{0} - name of file
+{1} - package source name</comment>
+  </data>
+  <data name="Vulnerability_TooManyPages" xml:space="preserve">
+    <value>Package source '{0}' has {1} vulnerability data pages. Using the first {2}.</value>
+    <comment>{0} - package source name
+{1} - number of vulerabilitiy files reported
+{2} - max count allowed</comment>
+  </data>
 </root>

@@ -857,6 +857,15 @@ namespace Test.Utility.Signing
                  issue.Message.Split(new[] { ' ', ':' }).Any(WORDEXTFLAGS => WORDEXTFLAGS == untrustedRoot)));
 
             Assert.True(isUntrustedRoot);
+
+#if NET5_0_OR_GREATER
+            if (!RuntimeEnvironmentHelper.IsWindows)
+            {
+                bool hasNU3042 = issues.Any(issue => issue.Code == NuGetLogCode.NU3042);
+
+                Assert.True(hasNU3042);
+            }
+#endif
         }
 
         public static void AssertUntrustedRoot(IEnumerable<ILogMessage> issues, LogLevel logLevel)

@@ -45,7 +45,7 @@ internal class RazorMapToDocumentEditsEndpoint : IRazorMapToDocumentEditsHandler
             };
         }
 
-        var razorFormattingService = requestContext.GetRequiredService<RazorFormattingService>();
+        var razorFormattingService = requestContext.GetRequiredService<IRazorFormattingService>();
         if (request.TextEditKind == TextEditKind.FormatOnType)
         {
             var mappedEdits = await razorFormattingService.FormatOnTypeAsync(documentContext, request.Kind, request.ProjectedTextEdits, request.FormattingOptions, hostDocumentIndex: 0, triggerCharacter: '\0', cancellationToken);

@@ -5,27 +5,27 @@
       <trans-unit id="BuildCompleted">
         <source>Build completed.</source>
         <target state="translated">Build concluído.</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="BuildStarted">
         <source>Build started, please wait...</source>
         <target state="translated">Build iniciada, aguarde...</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="TestRunningSummary">
         <source>Test run for {0} ({1})</source>
         <target state="translated">Execução de teste para {0} ({1})</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="UpdateTestSdkForCollectingCodeCoverage">
         <source>Warning: Update the Microsoft.NET.Test.Sdk package reference to version 15.8.0 or later to collect code coverage.</source>
         <target state="translated">Aviso: Atualize a referência do pacote Microsoft.NET.Test.Sdk para a versão 15.8.0 ou posterior para coletar a cobertura do código.</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="NoIsTestProjectProperty">
         <source>Skipping running test for project {0}. To run tests with dotnet test add "&lt;IsTestProject&gt;true&lt;/IsTestProject&gt;" property to project file.</source>
         <target state="translated">Ignorando a execução de teste do projeto {0}. Para executar testes com dotnet test, adicione a propriedade "&lt;IsTestProject&gt;true&lt;/IsTestProject&gt;" ao arquivo de projeto.</target>
-        <note></note>
+        <note />
       </trans-unit>
     </body>
   </file>

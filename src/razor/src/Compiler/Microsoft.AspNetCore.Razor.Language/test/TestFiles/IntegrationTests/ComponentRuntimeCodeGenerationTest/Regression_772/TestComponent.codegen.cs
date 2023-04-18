@@ -16,7 +16,7 @@ namespace Test
         {
             __builder.AddMarkupContent(0, "<h1>Hello, world!</h1>\r\n\r\nWelcome to your new app.\r\n\r\n");
             __builder.OpenComponent<global::Test.SurveyPrompt>(1);
-            __builder.AddAttribute(2, "Title", "\r\n");
+            __builder.AddComponentParameter(2, "Title", "\r\n");
             __builder.CloseComponent();
         }
         #pragma warning restore 1998

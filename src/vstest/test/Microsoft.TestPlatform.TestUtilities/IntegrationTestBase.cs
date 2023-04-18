@@ -206,7 +206,7 @@ public class IntegrationTestBase
         // https://github.com/dotnet/sdk/blob/main/src/Cli/dotnet/commands/dotnet-test/VSTestForwardingApp.cs#L30-L39
         debugEnvironmentVariables["VSTEST_CONSOLE_PATH"] = vstestConsolePath;
 
-        ExecutePatchedDotnet("test", arguments, out _standardTestOutput, out _standardTestError, out _runnerExitCode, debugEnvironmentVariables);
+        IntegrationTestBase.ExecutePatchedDotnet("test", arguments, out _standardTestOutput, out _standardTestError, out _runnerExitCode, debugEnvironmentVariables);
         FormatStandardOutCome();
     }
 
@@ -583,7 +583,7 @@ public class IntegrationTestBase
 
         if (testFramework == UnitTestFramework.MSTest)
         {
-            adapterRelativePath = string.Format(CultureInfo.InvariantCulture, _testAdapterRelativePath, IntegrationTestEnvironment.DependencyVersions["MSTestAdapterVersion"]);
+            adapterRelativePath = string.Format(CultureInfo.InvariantCulture, _testAdapterRelativePath, IntegrationTestEnvironment.DependencyVersions["MSTestTestAdapterVersion"]);
         }
         else if (testFramework == UnitTestFramework.NUnit)
         {
@@ -620,13 +620,13 @@ public class IntegrationTestBase
         if (IsDesktopRunner())
         {
             consoleRunnerPath = StringUtils.IsNullOrWhiteSpace(_testEnvironment.VSTestConsoleInfo?.Path)
-                ? Path.Combine(_testEnvironment.PublishDirectory, "vstest.console.exe")
+                ? Path.Combine(IntegrationTestEnvironment.PublishDirectory, $"Microsoft.TestPlatform.{IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion}.nupkg", "tools", "net462", "Common7", "IDE", "Extensions", "TestPlatform", "vstest.console.exe")
                 : _testEnvironment.VSTestConsoleInfo.Path;
         }
         else if (IsNetCoreRunner())
         {
-            var executablePath = OSUtils.IsWindows ? @"dotnet\dotnet.exe" : @"dotnet-linux/dotnet";
-            consoleRunnerPath = Path.Combine(_testEnvironment.ToolsDirectory, executablePath);
+            var executablePath = OSUtils.IsWindows ? @".dotnet\dotnet.exe" : @".dotnet/dotnet";
+            consoleRunnerPath = Path.Combine(IntegrationTestEnvironment.RepoRootDirectory, executablePath);
         }
         else
         {
@@ -677,8 +677,8 @@ public class IntegrationTestBase
         var consoleRunnerPath = IsNetCoreRunner()
                 ? GetDotnetRunnerPath()
                 : GetConsoleRunnerPath();
-        var executablePath = OSUtils.IsWindows ? @"dotnet\dotnet.exe" : @"dotnet-linux/dotnet";
-        var dotnetPath = Path.Combine(_testEnvironment.ToolsDirectory, executablePath);
+        var executablePath = OSUtils.IsWindows ? @".dotnet\dotnet.exe" : @".dotnet/dotnet";
+        var dotnetPath = Path.Combine(IntegrationTestEnvironment.RepoRootDirectory, executablePath);
 
         if (!File.Exists(dotnetPath))
         {
@@ -762,15 +762,15 @@ public class IntegrationTestBase
     /// <param name="stdOut"></param>
     /// <param name="stdError"></param>
     /// <param name="exitCode"></param>
-    private void ExecutePatchedDotnet(string command, string args, out string stdOut, out string stdError, out int exitCode,
+    private static void ExecutePatchedDotnet(string command, string args, out string stdOut, out string stdError, out int exitCode,
         Dictionary<string, string?>? environmentVariables = null)
     {
         environmentVariables ??= new();
 
         environmentVariables["DOTNET_MULTILEVEL_LOOKUP"] = "0";
 
-        var executablePath = OSUtils.IsWindows ? @"dotnet\dotnet.exe" : @"dotnet-linux/dotnet";
-        var patchedDotnetPath = Path.Combine(_testEnvironment.TestArtifactsDirectory, executablePath);
+        var executablePath = OSUtils.IsWindows ? @"dotnet.exe" : @"dotnet";
+        var patchedDotnetPath = Path.GetFullPath(Path.Combine(IntegrationTestEnvironment.RepoRootDirectory, "artifacts", "tmp", ".dotnet", executablePath));
         ExecuteApplication(patchedDotnetPath, string.Join(" ", command, args), out stdOut, out stdError, out exitCode, environmentVariables);
     }
 
@@ -949,18 +949,19 @@ public class IntegrationTestBase
             throw new NotSupportedException(nameof(architecture));
         }
 
-        string path = Path.Combine(IntegrationTestEnvironment.TestPlatformRootDirectory, "tools",
+        string path = Path.Combine(IntegrationTestEnvironment.RepoRootDirectory, ".dotnet",
             architecture == "X86" ?
-            "dotnet_x86" :
-            $"dotnet",
+            "dotnet-sdk-x86" :
+            "", // x64 is directly in .dotnet folder
             $"dotnet{(OSUtils.IsWindows ? ".exe" : "")}");
 
-        Assert.IsTrue(File.Exists(path));
+        Assert.IsTrue(File.Exists(path), $"Path '{path}' should exist.");
 
         return path;
     }
 
-    protected string GetDotnetRunnerPath() => _testEnvironment.VSTestConsoleInfo?.Path ?? Path.Combine(_testEnvironment.PublishDirectory, "vstest.console.dll");
+    protected string GetDotnetRunnerPath() =>
+        _testEnvironment.VSTestConsoleInfo?.Path ?? Path.Combine(IntegrationTestEnvironment.PublishDirectory, $"Microsoft.TestPlatform.CLI.{IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion}.nupkg", "contentFiles", "any", "netcoreapp3.1", "vstest.console.dll");
 
     protected void StdOutHasNoWarnings()
     {

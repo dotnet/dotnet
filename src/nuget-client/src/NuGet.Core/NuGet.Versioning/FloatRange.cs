@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using NuGet.Shared;
 
@@ -14,14 +15,14 @@ namespace NuGet.Versioning
     {
         private readonly NuGetVersion _minVersion;
         private readonly NuGetVersionFloatBehavior _floatBehavior;
-        private readonly string _releasePrefix;
+        private readonly string? _releasePrefix;
 
         /// <summary>
         /// Create a floating range.
         /// </summary>
         /// <param name="floatBehavior">Section to float.</param>
         public FloatRange(NuGetVersionFloatBehavior floatBehavior)
-            : this(floatBehavior, null, null)
+            : this(floatBehavior, new NuGetVersion(0, 0, 0), null)
         {
         }
 
@@ -41,10 +42,10 @@ namespace NuGet.Versioning
         /// <param name="floatBehavior">Section to float.</param>
         /// <param name="minVersion">Min version of the range.</param>
         /// <param name="releasePrefix">The original release label. Invalid labels are allowed here.</param>
-        public FloatRange(NuGetVersionFloatBehavior floatBehavior, NuGetVersion minVersion, string releasePrefix)
+        public FloatRange(NuGetVersionFloatBehavior floatBehavior, NuGetVersion minVersion, string? releasePrefix)
         {
             _floatBehavior = floatBehavior;
-            _minVersion = minVersion;
+            _minVersion = minVersion ?? throw new ArgumentNullException(nameof(minVersion));
             _releasePrefix = releasePrefix;
 
             if (_releasePrefix == null
@@ -53,6 +54,11 @@ namespace NuGet.Versioning
             {
                 // use the actual label if one was not given
                 _releasePrefix = minVersion.Release;
+            }
+
+            if (IncludePrerelease && _releasePrefix == null)
+            {
+                throw new ArgumentNullException(nameof(releasePrefix));
             }
         }
 
@@ -73,7 +79,24 @@ namespace NuGet.Versioning
         /// <summary>
         /// The original release label. Invalid labels are allowed here.
         /// </summary>
-        public string OriginalReleasePrefix => _releasePrefix;
+        public string? OriginalReleasePrefix => _releasePrefix;
+
+        /// <summary>
+        /// Indicates if the <see cref=" FloatBehavior"/> includes prerelease versions.
+        /// </summary>
+        [MemberNotNullWhen(true, nameof(OriginalReleasePrefix))]
+        [MemberNotNullWhen(true, nameof(_releasePrefix))]
+        public bool IncludePrerelease
+            => _floatBehavior switch
+            {
+                NuGetVersionFloatBehavior.AbsoluteLatest => true,
+                NuGetVersionFloatBehavior.Prerelease => true,
+                NuGetVersionFloatBehavior.PrereleaseMajor => true,
+                NuGetVersionFloatBehavior.PrereleaseMinor => true,
+                NuGetVersionFloatBehavior.PrereleasePatch => true,
+                NuGetVersionFloatBehavior.PrereleaseRevision => true,
+                _ => false
+            };
 
         /// <summary>
         /// True if the given version falls into the floating range.
@@ -96,64 +119,64 @@ namespace NuGet.Versioning
                 return true;
             }
 
-            if (_minVersion != null)
+            if (IncludePrerelease)
             {
                 // everything beyond this point requires a version
                 if (_floatBehavior == NuGetVersionFloatBehavior.PrereleaseRevision)
                 {
                     // allow the stable version to match
                     return _minVersion.Major == version.Major
-                       && _minVersion.Minor == version.Minor
-                       && _minVersion.Patch == version.Patch
-                       && ((version.IsPrerelease && version.Release.StartsWith(_releasePrefix, StringComparison.OrdinalIgnoreCase))
-                           || !version.IsPrerelease);
+                        && _minVersion.Minor == version.Minor
+                        && _minVersion.Patch == version.Patch
+                        && ((version.IsPrerelease && version.Release.StartsWith(_releasePrefix, StringComparison.OrdinalIgnoreCase))
+                            || !version.IsPrerelease);
                 }
                 else if (_floatBehavior == NuGetVersionFloatBehavior.PrereleasePatch)
                 {
                     // allow the stable version to match
                     return _minVersion.Major == version.Major
-                       && _minVersion.Minor == version.Minor
-                       && ((version.IsPrerelease && version.Release.StartsWith(_releasePrefix, StringComparison.OrdinalIgnoreCase))
-                           || !version.IsPrerelease);
+                        && _minVersion.Minor == version.Minor
+                        && ((version.IsPrerelease && version.Release.StartsWith(_releasePrefix, StringComparison.OrdinalIgnoreCase))
+                            || !version.IsPrerelease);
                 }
                 else if (FloatBehavior == NuGetVersionFloatBehavior.PrereleaseMinor)
                 {
                     // allow the stable version to match
                     return _minVersion.Major == version.Major
-                       && ((version.IsPrerelease && version.Release.StartsWith(_releasePrefix, StringComparison.OrdinalIgnoreCase))
-                           || !version.IsPrerelease);
+                        && ((version.IsPrerelease && version.Release.StartsWith(_releasePrefix, StringComparison.OrdinalIgnoreCase))
+                            || !version.IsPrerelease);
                 }
                 else if (FloatBehavior == NuGetVersionFloatBehavior.PrereleaseMajor)
                 {
                     // allow the stable version to match
                     return (version.IsPrerelease && version.Release.StartsWith(_releasePrefix, StringComparison.OrdinalIgnoreCase))
-                           || !version.IsPrerelease;
+                            || !version.IsPrerelease;
                 }
                 else if (_floatBehavior == NuGetVersionFloatBehavior.Prerelease)
                 {
                     // allow the stable version to match
                     return VersionComparer.Version.Equals(_minVersion, version)
-                           && ((version.IsPrerelease && version.Release.StartsWith(_releasePrefix, StringComparison.OrdinalIgnoreCase))
-                               || !version.IsPrerelease);
+                            && ((version.IsPrerelease && version.Release.StartsWith(_releasePrefix, StringComparison.OrdinalIgnoreCase))
+                                || !version.IsPrerelease);
                 }
-                else if (_floatBehavior == NuGetVersionFloatBehavior.Revision)
-                {
-                    return _minVersion.Major == version.Major
-                           && _minVersion.Minor == version.Minor
-                           && _minVersion.Patch == version.Patch
-                           && !version.IsPrerelease;
-                }
-                else if (_floatBehavior == NuGetVersionFloatBehavior.Patch)
-                {
-                    return _minVersion.Major == version.Major
-                           && _minVersion.Minor == version.Minor
-                           && !version.IsPrerelease;
-                }
-                else if (_floatBehavior == NuGetVersionFloatBehavior.Minor)
-                {
-                    return _minVersion.Major == version.Major
-                           && !version.IsPrerelease;
-                }
+            }
+            else if (_floatBehavior == NuGetVersionFloatBehavior.Revision)
+            {
+                return _minVersion.Major == version.Major
+                        && _minVersion.Minor == version.Minor
+                        && _minVersion.Patch == version.Patch
+                        && !version.IsPrerelease;
+            }
+            else if (_floatBehavior == NuGetVersionFloatBehavior.Patch)
+            {
+                return _minVersion.Major == version.Major
+                        && _minVersion.Minor == version.Minor
+                        && !version.IsPrerelease;
+            }
+            else if (_floatBehavior == NuGetVersionFloatBehavior.Minor)
+            {
+                return _minVersion.Major == version.Major
+                        && !version.IsPrerelease;
             }
 
             return false;
@@ -164,7 +187,15 @@ namespace NuGet.Versioning
         /// </summary>
         public static FloatRange Parse(string versionString)
         {
-            _ = TryParse(versionString, out FloatRange range);
+            if (versionString == null)
+            {
+                throw new ArgumentNullException(nameof(versionString));
+            }
+
+            if (!TryParse(versionString, out FloatRange? range))
+            {
+                throw new FormatException(string.Format(Resources.InvalidFloatRangeValue, versionString));
+            }
 
             return range;
         }
@@ -172,15 +203,15 @@ namespace NuGet.Versioning
         /// <summary>
         /// Parse a floating version into a FloatRange
         /// </summary>
-        public static bool TryParse(string versionString, out FloatRange range)
+        public static bool TryParse(string versionString, [NotNullWhen(true)] out FloatRange? range)
         {
             range = null;
 
             if (versionString != null && !string.IsNullOrWhiteSpace(versionString))
             {
-                var firstStarPosition = versionString.IndexOf('*');
+                var firstStarPosition = IndexOf(versionString, '*');
                 var lastStarPosition = versionString.LastIndexOf('*');
-                string releasePrefix = null;
+                string? releasePrefix = null;
 
                 if (versionString.Length == 1
                     && firstStarPosition == 0)
@@ -191,12 +222,12 @@ namespace NuGet.Versioning
                 {
                     range = new FloatRange(NuGetVersionFloatBehavior.AbsoluteLatest, new NuGetVersion("0.0.0-0"), releasePrefix: string.Empty);
                 }
-                else if (firstStarPosition != lastStarPosition && lastStarPosition != -1 && versionString.IndexOf('+') == -1)
+                else if (firstStarPosition != lastStarPosition && lastStarPosition != -1 && IndexOf(versionString, '+') == -1)
                 {
                     var behavior = NuGetVersionFloatBehavior.None;
                     // 2 *s are only allowed in prerelease versions.
-                    var dashPosition = versionString.IndexOf('-');
-                    string actualVersion = null;
+                    var dashPosition = IndexOf(versionString, '-');
+                    string? actualVersion = null;
 
                     if (dashPosition != -1 &&
                         lastStarPosition == versionString.Length - 1 && // Last star is at the end of the full string
@@ -237,20 +268,20 @@ namespace NuGet.Versioning
                         actualVersion = stablePart + "-" + releasePart;
                     }
 
-                    if (NuGetVersion.TryParse(actualVersion, out NuGetVersion version))
+                    if (NuGetVersion.TryParse(actualVersion, out NuGetVersion? version))
                     {
                         range = new FloatRange(behavior, version, releasePrefix);
                     }
                 }
                 // A single * can only appear as the last char in the string. 
                 // * cannot appear in the metadata section after the +
-                else if (lastStarPosition == versionString.Length - 1 && versionString.IndexOf('+') == -1)
+                else if (lastStarPosition == versionString.Length - 1 && IndexOf(versionString, '+') == -1)
                 {
                     var behavior = NuGetVersionFloatBehavior.None;
 
                     var actualVersion = versionString.Substring(0, versionString.Length - 1);
 
-                    if (versionString.IndexOf('-') == -1)
+                    if (IndexOf(versionString, '-') == -1)
                     {
                         // replace the * with a 0
                         actualVersion += "0";
@@ -275,7 +306,7 @@ namespace NuGet.Versioning
                         behavior = NuGetVersionFloatBehavior.Prerelease;
 
                         // check for a prefix
-                        if (versionString.IndexOf('-') == versionString.LastIndexOf('-'))
+                        if (IndexOf(versionString, '-') == versionString.LastIndexOf('-'))
                         {
                             releasePrefix = actualVersion.Substring(versionString.LastIndexOf('-') + 1);
 
@@ -293,8 +324,7 @@ namespace NuGet.Versioning
                         }
                     }
 
-                    NuGetVersion version = null;
-                    if (NuGetVersion.TryParse(actualVersion, out version))
+                    if (NuGetVersion.TryParse(actualVersion, out NuGetVersion? version))
                     {
                         range = new FloatRange(behavior, version, releasePrefix);
                     }
@@ -302,8 +332,7 @@ namespace NuGet.Versioning
                 else
                 {
                     // normal version parse
-                    NuGetVersion version = null;
-                    if (NuGetVersion.TryParse(versionString, out version))
+                    if (NuGetVersion.TryParse(versionString, out NuGetVersion? version))
                     {
                         // there is no float range for this version
                         range = new FloatRange(NuGetVersionFloatBehavior.None, version);
@@ -312,6 +341,15 @@ namespace NuGet.Versioning
             }
 
             return range != null;
+
+            int IndexOf(string str, char c)
+            {
+#if NETCOREAPP2_0_OR_GREATER
+                return str.IndexOf(c, StringComparison.Ordinal);
+#else
+                return str.IndexOf(c);
+#endif
+            }
         }
 
         private static int CalculateVersionParts(string line)
@@ -381,10 +419,13 @@ namespace NuGet.Versioning
         /// <summary>
         /// Equals
         /// </summary>
-        public bool Equals(FloatRange other)
+        public bool Equals(FloatRange? other)
         {
-            return FloatBehavior == other.FloatBehavior
-                   && VersionComparer.Default.Equals(MinVersion, other.MinVersion);
+            return FloatBehavior == other?.FloatBehavior
+#pragma warning disable CS8604 // Possible null reference argument.
+                   // BCL is missing nullable annotations on IComparer<T> before net5.0
+                   && VersionComparer.Default.Equals(MinVersion, other?.MinVersion);
+#pragma warning restore CS8604 // Possible null reference argument.
         }
 
         /// <summary>
@@ -392,7 +433,7 @@ namespace NuGet.Versioning
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return Equals(obj as FloatRange);
         }

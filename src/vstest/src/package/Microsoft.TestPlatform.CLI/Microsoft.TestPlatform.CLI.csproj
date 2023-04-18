@@ -1,0 +1,106 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>$(NetCoreAppMinimum);$(NetFrameworkMinimum);net47;net471;net472;net48</TargetFrameworks>
+  </PropertyGroup>
+
+  <Choose>
+    <When Condition=" '$(DotNetBuildFromSource)' == 'true' ">
+      <PropertyGroup>
+        <NuspecFile>Microsoft.TestPlatform.CLI.sourcebuild.nuspec</NuspecFile>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <NuspecFile>Microsoft.TestPlatform.CLI.nuspec</NuspecFile>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+
+  <PropertyGroup>
+    <!-- This package is included even in source build -->
+    <IsPackable>true</IsPackable>
+    <ExcludeFromSourceBuild>false</ExcludeFromSourceBuild>
+    <NuspecBasePath>$(OutputPath)</NuspecBasePath>
+    <PackageId>Microsoft.TestPlatform.CLI</PackageId>
+    <PackageTags>vstest visual-studio unittest testplatform mstest microsoft test testing</PackageTags>
+    <PackageDescription>
+      The cross platform Microsoft Test Platform.
+    </PackageDescription>
+  </PropertyGroup>
+
+  <ItemGroup Label="NuGet">
+    <NuspecProperty Include="SrcPackageFolder=$(SrcPackageFolder)" />
+    <NuspecProperty Include="TesthostRuntimeconfig=$(RepoRoot)temp\testhost" />
+    <NuspecProperty Include="SourceBuildTfm=$(NetCurrent)" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <!-- MSB3270 Suppress warnings about platform specific projects imported in AnyCPU (MSIL) projects. -->
+    <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
+    <!-- NU5100: No dlls in lib folder -->
+    <NoWarn>$(NoWarn);NU5100</NoWarn>
+    <!--
+      Sometimes NU1702 is not suppressed correctly, so force reducing severity of the warning.
+      See https://github.com/NuGet/Home/issues/9147
+    -->
+    <MSBuildWarningsAsMessages>NU1702</MSBuildWarningsAsMessages>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\datacollector\datacollector.csproj" />
+    <ProjectReference Include="..\..\datacollector.arm64\datacollector.arm64.csproj" />
+    <ProjectReference Include="..\..\testhost\testhost.csproj" />
+    <ProjectReference Include="..\..\testhost.x86\testhost.x86.csproj" />
+    <ProjectReference Include="..\..\testhost.arm64\testhost.arm64.csproj" />
+    <ProjectReference Include="..\..\vstest.console\vstest.console.csproj" />
+    <ProjectReference Include="..\..\DataCollectors\Microsoft.TestPlatform.Extensions.EventLogCollector\Microsoft.TestPlatform.Extensions.EventLogCollector.csproj" />
+    <ProjectReference Include="..\..\Microsoft.TestPlatform.Extensions.BlameDataCollector\Microsoft.TestPlatform.Extensions.BlameDataCollector.csproj" />
+    <ProjectReference Include="..\..\Microsoft.TestPlatform.Extensions.TrxLogger\Microsoft.TestPlatform.Extensions.TrxLogger.csproj" />
+    <ProjectReference Include="..\..\Microsoft.TestPlatform.Extensions.HtmlLogger\Microsoft.TestPlatform.Extensions.HtmlLogger.csproj" />
+    <ProjectReference Include="..\..\Microsoft.TestPlatform.TestHostProvider\Microsoft.TestPlatform.TestHostProvider.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(DotNetBuildFromSource)' != 'true' ">
+    <ProjectReference Include="..\..\DataCollectors\DumpMinitool\DumpMinitool.csproj" />
+    <ProjectReference Include="..\..\DataCollectors\DumpMinitool.arm64\DumpMinitool.arm64.csproj" />
+    <ProjectReference Include="..\..\DataCollectors\DumpMinitool.x86\DumpMinitool.x86.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeCoverage.IO" Version="$(MicrosoftInternalCodeCoverageVersion)" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="$(MicrosoftExtensionsDependencyModelPackageVersion)" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" Version="$(MicrosoftExtensionsFileSystemGlobbingVersion)" GeneratePathProperty="true" />
+    <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" GeneratePathProperty="true" />
+    <PackageReference Include="NuGet.Frameworks" Version="$(NuGetFrameworksVersion)" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.Internal.TestPlatform.Remote" Version="$(TestPlatformRemoteExternalsVersion)" PrivateAssets="All" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.Diagnostics.NETCore.Client" Version="$(MicrosoftDiagnosticsNETCoreClientVersion)" PrivateAssets="All" GeneratePathProperty="true" />
+    <PackageReference Include="NETStandard.Library" Version="$(NETStandardLibraryVersion)" PrivateAssets="All" GeneratePathProperty="true" Condition="'$(TargetFramework)'=='net472'" />
+    <PackageReference Include="Microsoft.Internal.Dia" Version="$(TestPlatformMSDiaVersion)" PrivateAssets="All" GeneratePathProperty="true" Condition="'$(TargetFramework)'=='net472'" />
+  </ItemGroup>
+
+  <Target Name="CopyFiles" AfterTargets="Build">
+    <ItemGroup>
+      <MicrosoftCodeCoverageIO Include="$(PkgMicrosoft_CodeCoverage_IO)\lib\netstandard2.0\**\*"></MicrosoftCodeCoverageIO>
+      <MicrosoftExtensionsDependencyModel Include="$(PkgMicrosoft_Extensions_DependencyModel)\lib\netstandard2.0\*"></MicrosoftExtensionsDependencyModel>
+      <MicrosoftExtensionsFileSystemGlobbing Include="$(PkgMicrosoft_Extensions_FileSystemGlobbing)\lib\netstandard2.0\*"></MicrosoftExtensionsFileSystemGlobbing>
+      <NewtonsoftJson Include="$(PkgNewtonsoft_Json)\lib\netstandard2.0\*"></NewtonsoftJson>
+      <NuGetFrameworks Include="$(PkgNuGet_Frameworks)\lib\netstandard2.0\*"></NuGetFrameworks>
+      <MicrosoftInternalDia Include="$(PkgMicrosoft_Internal_Dia)\tools\netstandard\**\*"></MicrosoftInternalDia>
+      <MicrosoftInternalTestPlatformRemote Include="$(PkgMicrosoft_Internal_TestPlatform_Remote)\tools\netstandard\**\*"></MicrosoftInternalTestPlatformRemote>
+      <MicrosoftDiagnosticsNETCoreClient Include="$(PkgMicrosoft_Diagnostics_NETCore_Client)\lib\netstandard2.0\**\*"></MicrosoftDiagnosticsNETCoreClient>
+      <NETStandardLibrary Include="$(PkgNETStandard_Library)\build\netstandard2.0\ref\**\*"></NETStandardLibrary>
+      <MicrosoftInternalDia Include="$(PkgMicrosoft_Internal_Dia)\tools\net451\**\*"></MicrosoftInternalDia>
+    </ItemGroup>
+
+    <Copy SourceFiles="@(MicrosoftCodeCoverageIO)" DestinationFiles="$(OutDir)\Microsoft.CodeCoverage.IO\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Copy SourceFiles="@(MicrosoftExtensionsDependencyModel)" DestinationFiles="$(OutDir)\Microsoft.Extensions.DependencyModel\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Copy SourceFiles="@(MicrosoftExtensionsFileSystemGlobbing)" DestinationFiles="$(OutDir)\Microsoft.Extensions.FileSystemGlobbing\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Copy SourceFiles="@(NewtonsoftJson)" DestinationFiles="$(OutDir)\Newtonsoft.Json\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Copy SourceFiles="@(NuGetFrameworks)" DestinationFiles="$(OutDir)\NuGet.Frameworks\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Copy SourceFiles="@(MicrosoftInternalTestPlatformRemote)" DestinationFiles="$(OutDir)\Microsoft.Internal.TestPlatform.Remote\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Copy SourceFiles="@(MicrosoftDiagnosticsNETCoreClient)" DestinationFiles="$(OutDir)\Microsoft.Diagnostics.NETCore.Client\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Copy SourceFiles="@(NETStandardLibrary)" DestinationFiles="$(OutDir)\NETStandard.Library\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Copy SourceFiles="@(MicrosoftInternalDia)" DestinationFiles="$(OutDir)\Microsoft.Internal.Dia\%(RecursiveDir)%(Filename)%(Extension)" />
+  </Target>
+
+</Project>

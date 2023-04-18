@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="AbortedTestRun">
         <source>The active Test Run was aborted because the host process exited unexpectedly. Please inspect the call stack above, if available, to get more information about where the exception originated from.
-The test running when the crash occurred: 
+The test running when the crash occurred:
 {0}
 This test may, or may not be the source of the crash.</source>
         <target state="new">The active Test Run was aborted because the host process exited unexpectedly while executing test </target>
@@ -13,17 +13,17 @@ This test may, or may not be the source of the crash.</source>
       <trans-unit id="ProcDumpEnvVarEmpty">
         <source>Required environment variable PROCDUMP_PATH was null or empty. Set PROCDUMP_PATH to path of folder containing appropriate procdump executable.</source>
         <target state="new">Required environment variable PROCDUMP_PATH was null or empty.</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="DumpFileNotGeneratedErrorMessage">
         <source>Collect dump was enabled but no dump file was generated.</source>
         <target state="new">Collect dump was enabled but no dump file was generated.</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="BlameParameterKeyIncorrect">
         <source>The blame parameter key specified {0} is not valid. Ignoring this key.</source>
         <target state="new">The blame parameter key {0} is not valid. Ignoring this parameter.</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="BlameParameterValueIncorrect">
         <source>The blame parameter key {0}, has incorrect value: {1}. Supported values are: {2}</source>
@@ -33,12 +33,12 @@ This test may, or may not be the source of the crash.</source>
       <trans-unit id="ProcDumpCouldNotStart">
         <source>Could not start process dump: {0}</source>
         <target state="new">Could not start process dump: {0}</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="ProcDumpNotGenerated">
         <source>CollectDump was enabled but dump file was not generated.</source>
         <target state="new">CollectDump was enabled but dump file was not generated.</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="InactivityTimeout">
         <source>The specified inactivity time of {0} {1} has elapsed. Collecting hang dumps from testhost and its child processes</source>
@@ -48,7 +48,7 @@ This test may, or may not be the source of the crash.</source>
       <trans-unit id="UnexpectedValueForInactivityTimespanValue">
         <source>Unexpected value '{0}' provided as timeout. Please provide a value in this format: 1.5h / 90m / 5400s / 5400000ms / 5400000</source>
         <target state="new">Unexpected value {0} provided for ExpectedExecutionTimeOfLongestRunningTestInMinutes. Please provide a positive integer as input.</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="NotGeneratingSequenceFile">
         <source>All tests finished running, Sequence file will not be generated</source>
@@ -63,17 +63,17 @@ This test may, or may not be the source of the crash.</source>
       <trans-unit id="DumpingTree">
         <source>Dumping this process tree (from bottom)</source>
         <target state="new">Dumping this process tree (from bottom)</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="Minutes">
         <source>minutes</source>
         <target state="new">minutes</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="Seconds">
         <source>seconds</source>
         <target state="new">seconds</target>
-        <note></note>
+        <note />
       </trans-unit>
       <trans-unit id="ProcDumpNotFound">
         <source>{0} could not be found, please make sure that the executable is available on PATH. Alternatively set PROCDUMP_PATH environment variable to a directory that contains {0} executable</source>
@@ -83,7 +83,7 @@ This test may, or may not be the source of the crash.</source>
       <trans-unit id="MonitorPostmortemDebuggerInvalidDumpDirectoryPathParameter">
         <source>Invalid 'DumpDirectoryPath' for postmortem debugger monitor</source>
         <target state="new">Invalid 'DumpDirectoryPath' for postmortem debugger monitor</target>
-        <note></note>
+        <note />
       </trans-unit>
     </body>
   </file>

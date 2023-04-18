@@ -499,7 +499,7 @@ public class BlameCollector : DataCollector, ITestExecutionEnvironmentSpecifier
     /// <param name="args">SessionEndEventArgs</param>
     private void SessionEndedHandler(object? sender, SessionEndEventArgs args)
     {
-        TPDebug.Assert(_testHostProcessName != null && _testSequence != null && _testObjectDictionary != null && _context != null && _dataCollectionSink != null && _logger != null, "Initialize must be called before calling this method");
+        TPDebug.Assert(_testSequence != null && _testObjectDictionary != null && _context != null && _dataCollectionSink != null && _logger != null, "Initialize must be called before calling this method");
         ResetInactivityTimer();
 
         EqtTrace.Info("Blame Collector: Session End");
@@ -585,7 +585,7 @@ public class BlameCollector : DataCollector, ITestExecutionEnvironmentSpecifier
                         if (createdNew)
                         {
                             string dumpFileName = Path.GetFileNameWithoutExtension(dumpFileNameFullPath);
-
+                            TPDebug.Assert(_testHostProcessName != null, $"TestHostLaunchedHandler must run before this method and set the _testHostProcessName");
                             // Expected format testhost.exe_221004_123127.dmp processName.exe_yyMMdd_HHmmss.dmp
                             if (dumpFileName.StartsWith(_testHostProcessName, StringComparison.OrdinalIgnoreCase))
                             {

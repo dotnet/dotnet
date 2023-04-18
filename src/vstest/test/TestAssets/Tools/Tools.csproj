@@ -1,12 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <!-- Package dependency versions -->
   <PropertyGroup>
-    <TestPlatformRoot Condition="$(TestPlatformRoot) == ''">..\..\..\</TestPlatformRoot>
     <TestProject>true</TestProject>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
-  <!-- Imports Common TestAssets props. -->
-  <Import Project="..\..\..\scripts\build\TestAssets.props" />
 
   <PropertyGroup>
     <TargetFrameworks>net7.0;net6.0;net5.0</TargetFrameworks>
@@ -14,10 +11,10 @@
     <RootNamespace>hanging_child</RootNamespace>
   </PropertyGroup>
 
-  <Import Project="$(TestPlatformRoot)scripts\build\TestPlatform.targets" />
+
   <ItemGroup>
-    <PackageReference Include="Microsoft.TestPlatform" Version="$(NETTestSdkVersion)" />
-    <PackageReference Include="Microsoft.TestPlatform.CLI" Version="$(NETTestSdkVersion)" />
+    <PackageReference Include="Microsoft.TestPlatform" Version="$(PackageVersion)" />
+    <PackageReference Include="Microsoft.TestPlatform.CLI" Version="$(PackageVersion)" />
   </ItemGroup>
 
 </Project>

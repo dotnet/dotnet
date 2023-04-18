@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using NuGet.Shared;
 
@@ -13,8 +14,8 @@ namespace NuGet.Versioning
     /// </summary>
     public partial class VersionRange : VersionRangeBase, IFormattable
     {
-        private readonly FloatRange _floatRange;
-        private readonly string _originalString;
+        private readonly FloatRange? _floatRange;
+        private readonly string? _originalString;
 
         /// <summary>
         /// Creates a range that is greater than or equal to the minVersion.
@@ -30,7 +31,7 @@ namespace NuGet.Versioning
         /// </summary>
         /// <param name="minVersion">Lower bound of the version range.</param>
         /// <param name="floatRange">Floating behavior.</param>
-        public VersionRange(NuGetVersion minVersion, FloatRange floatRange)
+        public VersionRange(NuGetVersion minVersion, FloatRange? floatRange)
             : this(
                   minVersion: minVersion,
                   includeMinVersion: true,
@@ -58,10 +59,15 @@ namespace NuGet.Versioning
         /// <param name="includeMaxVersion">True if maxVersion satisfies the condition.</param>
         /// <param name="floatRange">The floating range subset used to find the best version match.</param>
         /// <param name="originalString">The original string being parsed to this object.</param>
-        public VersionRange(NuGetVersion minVersion = null, bool includeMinVersion = true, NuGetVersion maxVersion = null,
-            bool includeMaxVersion = false, FloatRange floatRange = null, string originalString = null)
+        public VersionRange(NuGetVersion? minVersion = null, bool includeMinVersion = true, NuGetVersion? maxVersion = null,
+            bool includeMaxVersion = false, FloatRange? floatRange = null, string? originalString = null)
             : base(minVersion, includeMinVersion, maxVersion, includeMaxVersion)
         {
+            if (floatRange != null && minVersion == null)
+            {
+                throw ResourcesFormatter.CannotBeNullWhenParameterIsNull(nameof(minVersion), nameof(floatRange));
+            }
+
             _floatRange = floatRange;
             _originalString = originalString;
         }
@@ -69,15 +75,45 @@ namespace NuGet.Versioning
         /// <summary>
         /// True if the range has a floating version above the min version.
         /// </summary>
+        [MemberNotNullWhen(true, nameof(MinVersion))]
+        [MemberNotNullWhen(true, nameof(Float))]
+        [MemberNotNullWhen(true, nameof(_floatRange))]
         public bool IsFloating
         {
             get { return Float != null && Float.FloatBehavior != NuGetVersionFloatBehavior.None; }
         }
 
+        /// <inheritdoc cref="VersionRangeBase.MinVersion"/>
+        public new NuGetVersion? MinVersion => base.MinVersion;
+
+        /// <inheritdoc cref="VersionRangeBase.MaxVersion"/>
+        public new NuGetVersion? MaxVersion => base.MaxVersion;
+
+        /// <inheritdoc cref="VersionRangeBase.HasLowerBound"/>
+        [MemberNotNullWhen(true, nameof(MinVersion))]
+        public new bool HasLowerBound => base.HasLowerBound;
+
+        /// <inheritdoc cref="VersionRangeBase.IsMinInclusive"/>
+        [MemberNotNullWhen(true, nameof(MinVersion))]
+        public new bool IsMinInclusive => base.IsMinInclusive;
+
+        /// <inheritdoc cref="VersionRangeBase.HasUpperBound"/>
+        [MemberNotNullWhen(true, nameof(MaxVersion))]
+        public new bool HasUpperBound => base.HasUpperBound;
+
+        /// <inheritdoc cref="VersionRangeBase.IsMaxInclusive"/>
+        [MemberNotNullWhen(true, nameof(MaxVersion))]
+        public new bool IsMaxInclusive => base.IsMaxInclusive;
+
+        /// <inheritdoc cref="VersionRangeBase.HasLowerAndUpperBounds"/>
+        [MemberNotNullWhen(true, nameof(MinVersion))]
+        [MemberNotNullWhen(true, nameof(MaxVersion))]
+        public new bool HasLowerAndUpperBounds => base.HasLowerAndUpperBounds;
+
         /// <summary>
         /// Optional floating range used to determine the best version match.
         /// </summary>
-        public FloatRange Float
+        public FloatRange? Float
         {
             get { return _floatRange; }
         }
@@ -85,7 +121,7 @@ namespace NuGet.Versioning
         /// <summary>
         /// Original string being parsed to this object.
         /// </summary>
-        public string OriginalString
+        public string? OriginalString
         {
             get { return _originalString; }
         }
@@ -126,9 +162,9 @@ namespace NuGet.Versioning
         /// <summary>
         /// Format the version range with an IFormatProvider
         /// </summary>
-        public string ToString(string format, IFormatProvider formatProvider)
+        public string ToString(string? format, IFormatProvider? formatProvider)
         {
-            string formattedString = null;
+            string? formattedString = null;
 
             if (formatProvider == null
                 || !TryFormatter(format, formatProvider, out formattedString))
@@ -142,14 +178,14 @@ namespace NuGet.Versioning
         /// <summary>
         /// Format the range
         /// </summary>
-        protected bool TryFormatter(string format, IFormatProvider formatProvider, out string formattedString)
+        protected bool TryFormatter(string? format, IFormatProvider formatProvider, [NotNullWhen(true)] out string? formattedString)
         {
             var formatted = false;
             formattedString = null;
 
             if (formatProvider != null)
             {
-                var formatter = formatProvider.GetFormat(this.GetType()) as ICustomFormatter;
+                var formatter = formatProvider.GetFormat(GetType()) as ICustomFormatter;
                 if (formatter != null)
                 {
                     formatted = true;
@@ -171,9 +207,9 @@ namespace NuGet.Versioning
         /// <summary>
         /// Return the version that best matches the range.
         /// </summary>
-        public NuGetVersion FindBestMatch(IEnumerable<NuGetVersion> versions)
+        public NuGetVersion? FindBestMatch(IEnumerable<NuGetVersion>? versions)
         {
-            NuGetVersion bestMatch = null;
+            NuGetVersion? bestMatch = null;
 
             if (versions != null)
             {
@@ -192,7 +228,7 @@ namespace NuGet.Versioning
         /// <summary>
         /// Determines if a given version is better suited to the range than a current version.
         /// </summary>
-        public bool IsBetter(NuGetVersion current, NuGetVersion considering)
+        public bool IsBetter(NuGetVersion? current, NuGetVersion considering)
         {
             if (ReferenceEquals(current, considering))
             {
@@ -374,7 +410,7 @@ namespace NuGet.Versioning
         /// <summary>
         /// Equals implementation for VersionRange.
         /// </summary>
-        public bool Equals(VersionRange other)
+        public bool Equals(VersionRange? other)
         {
             if (other == null)
             {
@@ -394,7 +430,7 @@ namespace NuGet.Versioning
         /// <summary>
         /// Compare the obj as VersionRange.
         /// </summary>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return Equals(obj as VersionRange);
         }

@@ -1,22 +1,24 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
-using Microsoft.Diagnostics.Monitoring.EventPipe.Triggers.EventCounter;
-using Microsoft.Diagnostics.Monitoring.EventPipe.Triggers.Pipelines;
-using Microsoft.Diagnostics.NETCore.Client;
-using Microsoft.Diagnostics.TestHelpers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Diagnostics.Monitoring.EventPipe.Triggers.EventCounter;
+using Microsoft.Diagnostics.Monitoring.EventPipe.Triggers.Pipelines;
+using Microsoft.Diagnostics.NETCore.Client;
+using Microsoft.Diagnostics.TestHelpers;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Extensions;
 using TestRunner = Microsoft.Diagnostics.CommonTestRunner.TestRunner;
+
+// Newer SDKs flag MemberData(nameof(Configurations)) with this error
+// Avoid unnecessary zero-length array allocations.  Use Array.Empty<object>() instead.
+#pragma warning disable CA1825
 
 namespace Microsoft.Diagnostics.Monitoring.EventPipe.UnitTests
 {
@@ -72,7 +74,7 @@ namespace Microsoft.Diagnostics.Monitoring.EventPipe.UnitTests
             settings.CounterIntervalSeconds = 2;
 
             // Either GreaterThan or LessThan must be specified
-            ValidateFieldValidation(
+            EventCounterTriggerTests.ValidateFieldValidation(
                 settings,
                 EventCounterTriggerSettings.EitherGreaterThanLessThanMessage,
                 new[] { nameof(EventCounterTriggerSettings.GreaterThan), nameof(EventCounterTriggerSettings.LessThan) });
@@ -84,7 +86,7 @@ namespace Microsoft.Diagnostics.Monitoring.EventPipe.UnitTests
 
             // GreaterThan must be less than LessThan
             settings.LessThan = 5;
-            ValidateFieldValidation(
+            EventCounterTriggerTests.ValidateFieldValidation(
                 settings,
                 EventCounterTriggerSettings.GreaterThanMustBeLessThanLessThanMessage,
                 new[] { nameof(EventCounterTriggerSettings.GreaterThan), nameof(EventCounterTriggerSettings.LessThan) });
@@ -94,9 +96,9 @@ namespace Microsoft.Diagnostics.Monitoring.EventPipe.UnitTests
         /// Validates that the usage of the settings will result in a ValidationException thrown
         /// with the expected error message and member names.
         /// </summary>
-        private void ValidateFieldValidation(EventCounterTriggerSettings settings, string expectedMessage, string[] expectedMemberNames)
+        private static void ValidateFieldValidation(EventCounterTriggerSettings settings, string expectedMessage, string[] expectedMemberNames)
         {
-            var exception = Assert.Throws<ValidationException>(() => new EventCounterTrigger(settings));
+            ValidationException exception = Assert.Throws<ValidationException>(() => new EventCounterTrigger(settings));
 
             Assert.NotNull(exception.ValidationResult);
 
@@ -111,7 +113,7 @@ namespace Microsoft.Diagnostics.Monitoring.EventPipe.UnitTests
         private void ValidateRequiredFieldValidation(EventCounterTriggerSettings settings, string memberName)
         {
             RequiredAttribute requiredAttribute = new();
-            ValidateFieldValidation(settings, requiredAttribute.FormatErrorMessage(memberName), new[] { memberName });
+            EventCounterTriggerTests.ValidateFieldValidation(settings, requiredAttribute.FormatErrorMessage(memberName), new[] { memberName });
         }
 
         /// <summary>
@@ -120,7 +122,7 @@ namespace Microsoft.Diagnostics.Monitoring.EventPipe.UnitTests
         private void ValidateRangeFieldValidation<T>(EventCounterTriggerSettings settings, string memberName, string min, string max)
         {
             RangeAttribute rangeAttribute = new(typeof(T), min, max);
-            ValidateFieldValidation(settings, rangeAttribute.FormatErrorMessage(memberName), new[] { memberName });
+            EventCounterTriggerTests.ValidateFieldValidation(settings, rangeAttribute.FormatErrorMessage(memberName), new[] { memberName });
         }
 
         /// <summary>
@@ -335,7 +337,7 @@ namespace Microsoft.Diagnostics.Monitoring.EventPipe.UnitTests
                 CounterIntervalSeconds = 1
             };
 
-            await using (var testRunner = await PipelineTestUtilities.StartProcess(config, "TriggerRemoteTest SpinWait10", _output, testProcessTimeout: 2 * 60 * 1000))
+            await using (TestRunner testRunner = await PipelineTestUtilities.StartProcess(config, "TriggerRemoteTest SpinWait10", _output, testProcessTimeout: 2 * 60 * 1000))
             {
                 DiagnosticsClient client = new(testRunner.Pid);
 
@@ -350,8 +352,7 @@ namespace Microsoft.Diagnostics.Monitoring.EventPipe.UnitTests
                         TriggerSettings = settings,
                         Duration = Timeout.InfiniteTimeSpan
                     },
-                    traceEvent =>
-                    {
+                    traceEvent => {
                         waitSource.TrySetResult(null);
                     });
 
@@ -371,7 +372,7 @@ namespace Microsoft.Diagnostics.Monitoring.EventPipe.UnitTests
         /// </summary>
         private void SimulateDataVerifyTrigger(EventCounterTriggerSettings settings, CpuData[] cpuData)
         {
-            Random random = new Random();
+            Random random = new();
             int seed = random.Next();
             _output.WriteLine("Simulation seed: {0}", seed);
             SimulateDataVerifyTrigger(settings, cpuData, seed);
@@ -422,7 +423,7 @@ namespace Microsoft.Diagnostics.Monitoring.EventPipe.UnitTests
             /// <summary>
             /// The expected result of evaluating the trigger on this data.
             /// </summary>
-            public bool? Result { get;}
+            public bool? Result { get; }
 
             /// <summary>
             /// The sample CPU value to be given to the trigger for evaluation.
@@ -484,8 +485,40 @@ namespace Microsoft.Diagnostics.Monitoring.EventPipe.UnitTests
                     EventCounterConstants.CpuUsageUnits,
                     value,
                     CounterType.Metric,
-                    actualInterval);
+                    actualInterval,
+                    null);
             }
+        }
+
+        /// <summary>
+        /// Validates that metadata from TraceEvent payloads is parsed correctly.
+        /// </summary>
+        [Fact]
+        public void ValidateMetadataParsing_Success()
+        {
+            const string key1 = "K1";
+            const string value1 = "V1";
+            const string key2 = "K2";
+            const string value2 = "V:2";
+            IDictionary<string, string> metadataDict = CounterUtilities.GetMetadata($"{key1}:{value1},{key2}:{value2}");
+
+            Assert.Equal(2, metadataDict.Count);
+            Assert.Equal(value1, metadataDict[key1]);
+            Assert.Equal(value2, metadataDict[key2]);
+        }
+
+        /// <summary>
+        /// Validates that metadata with an invalid format from TraceEvent payloads is handled correctly.
+        /// </summary>
+        [Theory]
+        [InlineData("K1:V,1")]
+        [InlineData("K,1:V")]
+        [InlineData("K1")]
+        public void ValidateMetadataParsing_Failure(string invalidMetadata)
+        {
+            IDictionary<string, string> metadataDict = CounterUtilities.GetMetadata(invalidMetadata);
+
+            Assert.Empty(metadataDict);
         }
     }
 }

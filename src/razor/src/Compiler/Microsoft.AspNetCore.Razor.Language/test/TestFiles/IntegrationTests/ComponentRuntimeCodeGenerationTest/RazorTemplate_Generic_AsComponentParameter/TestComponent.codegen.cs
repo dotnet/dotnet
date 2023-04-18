@@ -39,7 +39,7 @@ __builder2.AddContent(1, person.Name);
 #line hidden
 #nullable disable
             __builder.OpenComponent<global::Test.MyComponent>(2);
-            __builder.AddAttribute(3, "PersonTemplate", (global::Microsoft.AspNetCore.Components.RenderFragment<Test.Person>)(
+            __builder.AddComponentParameter(3, "PersonTemplate", (global::Microsoft.AspNetCore.Components.RenderFragment<Test.Person>)(
 #nullable restore
 #line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
                               template
