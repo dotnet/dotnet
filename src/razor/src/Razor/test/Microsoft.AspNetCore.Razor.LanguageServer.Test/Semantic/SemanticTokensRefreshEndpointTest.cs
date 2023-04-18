@@ -3,7 +3,6 @@
 
 using System;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;

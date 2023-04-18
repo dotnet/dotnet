@@ -14,7 +14,7 @@ namespace Test
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
             __builder.OpenComponent<global::Test.MyComponent<TParam>>(0);
-            __builder.AddAttribute(1, "Value", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<TParam>(
+            __builder.AddComponentParameter(1, "Value", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<TParam>(
 #nullable restore
 #line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
                                               ParentValue
@@ -23,7 +23,7 @@ namespace Test
 #line hidden
 #nullable disable
             ));
-            __builder.AddAttribute(2, "ValueChanged", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::Microsoft.AspNetCore.Components.EventCallback<TParam>>(global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<TParam>(this, global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, UpdateValue, ParentValue))));
+            __builder.AddComponentParameter(2, "ValueChanged", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::Microsoft.AspNetCore.Components.EventCallback<TParam>>(global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<TParam>(this, global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, UpdateValue, ParentValue))));
             __builder.CloseComponent();
         }
         #pragma warning restore 1998

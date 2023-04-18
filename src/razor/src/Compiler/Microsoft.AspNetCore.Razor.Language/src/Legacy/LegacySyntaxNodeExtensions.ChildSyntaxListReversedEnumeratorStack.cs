@@ -1,9 +1,11 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
+using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.Extensions.ObjectPool;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
@@ -14,18 +16,18 @@ internal static partial class LegacySyntaxNodeExtensions
     ///  However, instead of enumerating descendant nodes in a top-down, left-to-right
     ///  fashion, the process is reversed; it operates right-to-left and bottom-up.
     /// </summary>
-    private struct ChildSyntaxListReversedEnumeratorStack : IDisposable
+    private partial struct ChildSyntaxListReversedEnumeratorStack : IDisposable
     {
         private const int MaxArraySize = 256;
 
-        private static readonly ObjectPool<ChildSyntaxList.Reversed.Enumerator[]> s_stackPool = new(() => new ChildSyntaxList.Reversed.Enumerator[16]);
+        private static readonly ObjectPool<ChildSyntaxList.Reversed.Enumerator[]> s_stackPool = DefaultPool.Create(Policy.Instance);
 
         private ChildSyntaxList.Reversed.Enumerator[] _stack;
         private int _stackPtr;
 
         public ChildSyntaxListReversedEnumeratorStack(SyntaxNode node)
         {
-            _stack = s_stackPool.Allocate();
+            _stack = s_stackPool.Get();
             _stackPtr = -1;
 
             PushRightmostChildren(node);
@@ -96,12 +98,7 @@ internal static partial class LegacySyntaxNodeExtensions
 
         public void Dispose()
         {
-            // Return only reasonably-sized stacks to the pool.
-            if (_stack.Length < MaxArraySize)
-            {
-                Array.Clear(_stack, 0, _stack.Length);
-                s_stackPool.Free(_stack);
-            }
+            s_stackPool.Return(_stack);
         }
     }
 }

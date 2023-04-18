@@ -14,7 +14,7 @@ namespace Test
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
             __builder.OpenComponent<global::Test.MyComponent<string>>(0);
-            __builder.AddAttribute(1, "Item", 
+            __builder.AddComponentParameter(1, "Item", 
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
                                      Value
@@ -23,7 +23,7 @@ namespace Test
 #line hidden
 #nullable disable
             );
-            __builder.AddAttribute(2, "ItemChanged", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, __value => Value = __value, Value));
+            __builder.AddComponentParameter(2, "ItemChanged", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, __value => Value = __value, Value));
             __builder.CloseComponent();
         }
         #pragma warning restore 1998

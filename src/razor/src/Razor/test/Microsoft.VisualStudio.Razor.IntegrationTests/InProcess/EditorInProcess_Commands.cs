@@ -62,8 +62,7 @@ internal partial class EditorInProcess
         await CloseFileAsync(projectName, relativeFilePath, VSConstants.LOGVIEWID.Code_guid, saveFile, cancellationToken);
     }
 
-    [Obsolete($"This method will close ANY window currently in focus, including things like 'Output'. You probably want {nameof(CloseCodeFileAsync)}.")]
-    public async Task CloseDocumentWindowAsync(CancellationToken cancellationToken)
+    public async Task CloseCurrentlyFocusedWindowAsync(CancellationToken cancellationToken)
     {
         await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
 

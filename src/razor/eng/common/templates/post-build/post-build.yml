@@ -1,4 +1,4 @@
-﻿parameters:
+parameters:
   # Which publishing infra should be used. THIS SHOULD MATCH THE VERSION ON THE BUILD MANIFEST.
   # Publishing V1 is no longer supported
   # Publishing V2 is no longer supported
@@ -171,12 +171,6 @@ stages:
         # otherwise it'll complain about accessing a private feed.
         - task: NuGetAuthenticate@0
           displayName: 'Authenticate to AzDO Feeds'
-
-        - task: PowerShell@2
-          displayName: Enable cross-org publishing
-          inputs:
-            filePath: eng\common\enable-cross-org-publishing.ps1
-            arguments: -token $(dn-bot-dnceng-artifact-feeds-rw)
 
         # Signing validation will optionally work with the buildmanifest file which is downloaded from
         # Azure DevOps above.

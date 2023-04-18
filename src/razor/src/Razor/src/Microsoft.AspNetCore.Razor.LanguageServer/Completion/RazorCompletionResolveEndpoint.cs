@@ -11,7 +11,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 
-internal class RazorCompletionResolveEndpoint : IVSCompletionResolveEndpoint, IOnInitialized
+internal class RazorCompletionResolveEndpoint : IVSCompletionResolveEndpoint, IRegistrationExtension
 {
     private readonly AggregateCompletionItemResolver _completionItemResolver;
     private readonly CompletionListCache _completionListCache;
@@ -27,11 +27,11 @@ internal class RazorCompletionResolveEndpoint : IVSCompletionResolveEndpoint, IO
 
     public bool MutatesSolutionState => false;
 
-    public Task OnInitializedAsync(VSInternalClientCapabilities clientCapabilities, CancellationToken cancellationToken)
+    public RegistrationExtensionResult? GetRegistration(VSInternalClientCapabilities clientCapabilities)
     {
         _clientCapabilities = clientCapabilities.ToVSInternalClientCapabilities();
 
-        return Task.CompletedTask;
+        return null;
     }
 
     public async Task<VSInternalCompletionItem> HandleRequestAsync(VSInternalCompletionItem completionItem, RazorRequestContext requestContext, CancellationToken cancellationToken)

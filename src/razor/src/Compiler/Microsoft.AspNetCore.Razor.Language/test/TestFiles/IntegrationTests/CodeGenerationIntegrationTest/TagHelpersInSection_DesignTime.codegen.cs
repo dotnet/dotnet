@@ -14,7 +14,7 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
         private global::TestNamespace.NestedTagHelper __TestNamespace_NestedTagHelper;
         #pragma warning disable 219
         private void __RazorDirectiveTokenHelpers__() {
-        ((System.Action)(() => {
+        ((global::System.Action)(() => {
 #nullable restore
 #line 1 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersInSection.cshtml"
 global::System.Object __typeHelper = "*, TestAssembly";
@@ -24,7 +24,7 @@ global::System.Object __typeHelper = "*, TestAssembly";
 #nullable disable
         }
         ))();
-        ((System.Action)(() => {
+        ((global::System.Action)(() => {
 #nullable restore
 #line 7 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersInSection.cshtml"
 global::System.Object MySection = null!;
@@ -34,7 +34,7 @@ global::System.Object MySection = null!;
 #nullable disable
         }
         ))();
-        ((System.Action)(() => {
+        ((global::System.Action)(() => {
 #nullable restore
 #line 15 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersInSection.cshtml"
 global::System.Object nestedsection = null!;

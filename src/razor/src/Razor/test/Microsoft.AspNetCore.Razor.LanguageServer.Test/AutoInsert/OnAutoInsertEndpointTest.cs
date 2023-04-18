@@ -465,7 +465,7 @@ public class OnAutoInsertEndpointTest : SingleServerDelegatingEndpointTestBase
             .Setup(l => l.GetRequiredService<AdhocWorkspaceFactory>()).Returns(TestAdhocWorkspaceFactory.Instance);
         var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync();
         lspServices
-            .Setup(l => l.GetRequiredService<RazorFormattingService>())
+            .Setup(l => l.GetRequiredService<IRazorFormattingService>())
             .Returns(formattingService);
 
         var requestContext = CreateRazorRequestContext(documentContext, lspServices: lspServices.Object);

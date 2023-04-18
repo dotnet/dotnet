@@ -21,7 +21,7 @@ using Test2;
     {
         #pragma warning disable 219
         private void __RazorDirectiveTokenHelpers__() {
-        ((System.Action)(() => {
+        ((global::System.Action)(() => {
 // language=Route,Component
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
@@ -32,7 +32,7 @@ global::System.Object __typeHelper = "/MyPage";
 #nullable disable
         }
         ))();
-        ((System.Action)(() => {
+        ((global::System.Action)(() => {
 // language=Route,Component
 #nullable restore
 #line 2 "x:\dir\subdir\Test\TestComponent.cshtml"

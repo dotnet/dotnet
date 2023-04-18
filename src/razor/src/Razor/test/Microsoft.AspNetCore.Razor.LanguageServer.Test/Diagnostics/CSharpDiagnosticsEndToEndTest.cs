@@ -56,7 +56,7 @@ public class CSharpDiagnosticsEndToEndTest : SingleServerDelegatingEndpointTestB
         var requestContext = new RazorRequestContext(documentContext, Logger, null!);
 
         var translateDiagnosticsService = new RazorTranslateDiagnosticsService(DocumentMappingService, LoggerFactory);
-        var diagnosticsEndPoint = new RazorPullDiagnosticsEndpoint(LanguageServerFeatureOptions, translateDiagnosticsService, DocumentMappingService, LanguageServer);
+        var diagnosticsEndPoint = new DocumentPullDiagnosticsEndpoint(LanguageServerFeatureOptions, translateDiagnosticsService, LanguageServer);
 
         var diagnosticsRequest = new VSInternalDocumentDiagnosticsParams
         {
@@ -64,8 +64,7 @@ public class CSharpDiagnosticsEndToEndTest : SingleServerDelegatingEndpointTestB
         };
         var diagnostics = await diagnosticsEndPoint.HandleRequestAsync(diagnosticsRequest, requestContext, DisposalToken);
 
-        var actual = diagnostics!.First().Diagnostics!;
-        Assert.NotEmpty(actual);
+        var actual = diagnostics!.SelectMany(d => d.Diagnostics!);
 
         // Because the test razor project isn't set up properly, we get some extra diagnostics that we don't care about
         // so lets just validate that we get the ones we expect. We're testing the communication and translation between

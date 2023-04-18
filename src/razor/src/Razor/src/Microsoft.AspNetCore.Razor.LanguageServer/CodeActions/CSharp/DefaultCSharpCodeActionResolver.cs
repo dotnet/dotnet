@@ -33,12 +33,12 @@ internal class DefaultCSharpCodeActionResolver : CSharpCodeActionResolver
     };
 
     private readonly DocumentContextFactory _documentContextFactory;
-    private readonly RazorFormattingService _razorFormattingService;
+    private readonly IRazorFormattingService _razorFormattingService;
 
     public DefaultCSharpCodeActionResolver(
         DocumentContextFactory documentContextFactory,
         ClientNotifierServiceBase languageServer,
-        RazorFormattingService razorFormattingService)
+        IRazorFormattingService razorFormattingService)
         : base(languageServer)
     {
         if (documentContextFactory is null)

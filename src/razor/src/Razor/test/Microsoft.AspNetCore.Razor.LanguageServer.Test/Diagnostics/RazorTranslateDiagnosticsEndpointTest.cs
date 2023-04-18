@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common.Extensions;
-using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.AspNetCore.Razor.LanguageServer.Test.Common;
@@ -345,6 +344,45 @@ public class RazorTranslateDiagnosticsEndpointTest : LanguageServerTestBase
         // Assert
         Assert.NotNull(response.Diagnostics);
         Assert.Empty(response.Diagnostics);
+    }
+
+    [Fact]
+    public async Task Handle_FilterDiagnostics_CSharpInsideStyleBlockSpace_NotStyleTag()
+    {
+        // Arrange
+        var documentPath = new Uri("C:/path/to/document.cshtml");
+        var codeDocument = CreateCodeDocumentWithCSharpProjection(
+            "<stile> @DateTime.Now </stile>",
+            "var __o = DateTime.Now",
+            new[] {
+                new SourceMapping(
+                    new SourceSpan(4, 12),
+                    new SourceSpan(10, 12))
+            });
+        var documentContext = CreateDocumentContext(documentPath, codeDocument);
+        var diagnosticsService = new RazorTranslateDiagnosticsService(_mappingService, LoggerFactory);
+        var diagnosticsEndpoint = new RazorTranslateDiagnosticsEndpoint(diagnosticsService, LoggerFactory);
+        var request = new RazorDiagnosticsParams()
+        {
+            Kind = RazorLanguageKind.Html,
+            Diagnostics = new[] {
+                new VSDiagnostic() {
+                    Range = new Range { Start = new Position(0, 7),End =  new Position(0, 7) },
+                    Code = CSSErrorCodes.MissingSelectorBeforeCombinatorCode,
+                    Severity = DiagnosticSeverity.Warning
+                }
+            },
+            RazorDocumentUri = documentPath,
+        };
+        var expectedRange = new Range { Start = new Position(0, 8), End = new Position(0, 15) };
+        var requestContext = CreateRazorRequestContext(documentContext);
+
+        // Act
+        var response = await Task.Run(() => diagnosticsEndpoint.HandleRequestAsync(request, requestContext, default));
+
+        // Assert
+        Assert.NotNull(response.Diagnostics);
+        Assert.Equal(CSSErrorCodes.MissingSelectorBeforeCombinatorCode, response.Diagnostics![0].Code);
     }
 
     [Fact]

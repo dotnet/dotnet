@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Microsoft.AspNetCore.Razor.Common\Microsoft.AspNetCore.Razor.Common.csproj" />
+    <ProjectReference Include="$(SharedSourceRoot)\Microsoft.AspNetCore.Razor.Utilities.Shared\Microsoft.AspNetCore.Razor.Utilities.Shared.csproj" />
   </ItemGroup>
 
 </Project>

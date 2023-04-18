@@ -18,8 +18,7 @@ public class EmptyTextLoaderTest : TestBase
     {
     }
 
-    // See https://github.com/dotnet/aspnetcore/issues/7997
-    [Fact]
+    [Fact, WorkItem("https://github.com/dotnet/aspnetcore/issues/7997")]
     public async Task LoadAsync_SpecifiesEncoding()
     {
         // Arrange

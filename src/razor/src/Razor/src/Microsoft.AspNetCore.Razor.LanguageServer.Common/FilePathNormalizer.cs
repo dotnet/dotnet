@@ -49,12 +49,6 @@ public static class FilePathNormalizer
         return normalized;
     }
 
-    public static Uri Normalize(Uri uri)
-    {
-        var normalized = Normalize(uri.OriginalString);
-        return new Uri(normalized);
-    }
-
     public static string GetDirectory(string filePath)
     {
         if (string.IsNullOrEmpty(filePath))

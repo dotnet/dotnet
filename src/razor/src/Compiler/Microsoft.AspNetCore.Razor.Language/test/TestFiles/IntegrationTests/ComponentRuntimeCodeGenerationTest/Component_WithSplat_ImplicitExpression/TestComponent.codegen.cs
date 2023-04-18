@@ -14,7 +14,7 @@ namespace Test
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
             __builder.OpenComponent<global::Test.MyComponent>(0);
-            __builder.AddAttribute(1, "AttributeBefore", "before");
+            __builder.AddComponentParameter(1, "AttributeBefore", "before");
             __builder.AddMultipleAttributes(2, global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Collections.Generic.IEnumerable<global::System.Collections.Generic.KeyValuePair<string, object>>>(
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
@@ -24,7 +24,7 @@ namespace Test
 #line hidden
 #nullable disable
             ));
-            __builder.AddAttribute(3, "AttributeAfter", "after");
+            __builder.AddComponentParameter(3, "AttributeAfter", "after");
             __builder.CloseComponent();
         }
         #pragma warning restore 1998

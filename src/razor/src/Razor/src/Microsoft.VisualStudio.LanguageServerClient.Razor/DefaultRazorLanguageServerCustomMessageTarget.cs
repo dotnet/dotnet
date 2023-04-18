@@ -28,7 +28,6 @@ using Microsoft.VisualStudio.Editor.Razor.Logging;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.LanguageServerClient.Razor.Extensions;
-using Microsoft.VisualStudio.LanguageServerClient.Razor.Logging;
 using Microsoft.VisualStudio.LanguageServerClient.Razor.WrapWithTag;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Threading;

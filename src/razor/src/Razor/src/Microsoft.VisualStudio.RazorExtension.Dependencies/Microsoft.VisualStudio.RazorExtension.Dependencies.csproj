@@ -85,5 +85,8 @@
     <VSIXSourceItem Include="$(OutputPath)Microsoft.VisualStudio.LanguageServices.dll" />
     <VSIXSourceItem Include="$(OutputPath)Microsoft.VisualStudio.LanguageServices.CSharp.dll" />
     <VSIXSourceItem Include="$(OutputPath)Microsoft.VisualStudio.LanguageServices.Implementation.dll" />
+    <VSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.VisualBasic.dll" />
+    <VSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.VisualBasic.Features.dll" />
+    <VSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.VisualBasic.Workspaces.dll" />
   </ItemGroup>
 </Project>

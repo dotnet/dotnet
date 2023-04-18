@@ -14,7 +14,7 @@ namespace Test
     {
         #pragma warning disable 219
         private void __RazorDirectiveTokenHelpers__() {
-        ((System.Action)(() => {
+        ((global::System.Action)(() => {
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
 global::System.Object TDomain = null!;
@@ -24,7 +24,7 @@ global::System.Object TDomain = null!;
 #nullable disable
         }
         ))();
-        ((System.Action)(() => {
+        ((global::System.Action)(() => {
 #pragma warning disable CS0693
 #pragma warning disable CS8321
 #nullable restore
@@ -40,7 +40,7 @@ void __TypeConstraints_TDomain<TDomain>() where TDomain : struct
 #nullable disable
         }
         ))();
-        ((System.Action)(() => {
+        ((global::System.Action)(() => {
 #nullable restore
 #line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
 global::System.Object TValue = null!;
@@ -50,7 +50,7 @@ global::System.Object TValue = null!;
 #nullable disable
         }
         ))();
-        ((System.Action)(() => {
+        ((global::System.Action)(() => {
 #pragma warning disable CS0693
 #pragma warning disable CS8321
 #nullable restore

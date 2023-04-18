@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using Microsoft.CodeAnalysis.Razor.Editor;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
+
 namespace Microsoft.VisualStudio.Editor.Razor;
 
 [System.Composition.Shared]

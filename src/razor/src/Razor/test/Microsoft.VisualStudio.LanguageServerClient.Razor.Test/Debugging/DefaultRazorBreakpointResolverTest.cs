@@ -5,7 +5,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.VisualStudio.Editor.Razor.Debugging;

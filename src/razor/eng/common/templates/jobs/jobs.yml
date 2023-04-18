@@ -1,4 +1,4 @@
-﻿parameters:
+parameters:
   # See schema documentation in /Documentation/AzureDevOps/TemplateSchema.md
   continueOnError: false
 

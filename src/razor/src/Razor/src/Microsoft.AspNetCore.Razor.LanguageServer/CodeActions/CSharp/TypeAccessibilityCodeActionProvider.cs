@@ -198,10 +198,10 @@ internal class TypeAccessibilityCodeActionProvider : CSharpCodeActionProvider
             // For add using suggestions, the code action title is of the form:
             // `using System.Net;`
             else if (codeAction.Name is not null && codeAction.Name.Equals(RazorPredefinedCodeFixProviderNames.AddImport, StringComparison.Ordinal) &&
-                AddUsingsCodeActionProviderHelper.TryExtractNamespace(codeAction.Title, out var @namespace))
+                AddUsingsCodeActionProviderHelper.TryExtractNamespace(codeAction.Title, out var @namespace, out var prefix))
             {
-                codeAction.Title = $"@using {@namespace}";
-                typeAccessibilityCodeActions.Add(codeAction.WrapResolvableCodeAction(context, LanguageServerConstants.CodeActions.AddUsing));
+                codeAction.Title = $"{prefix}@using {@namespace}";
+                typeAccessibilityCodeActions.Add(codeAction.WrapResolvableCodeAction(context, LanguageServerConstants.CodeActions.Default));
             }
             // Not a type accessibility code action
             else

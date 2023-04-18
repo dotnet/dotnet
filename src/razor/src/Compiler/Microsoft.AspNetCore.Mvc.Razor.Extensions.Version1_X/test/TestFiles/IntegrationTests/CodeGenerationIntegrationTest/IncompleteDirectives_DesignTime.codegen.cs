@@ -15,7 +15,7 @@ namespace AspNetCore
     {
         #pragma warning disable 219
         private void __RazorDirectiveTokenHelpers__() {
-        ((System.Action)(() => {
+        ((global::System.Action)(() => {
 #line 4 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml"
  
 
@@ -23,7 +23,7 @@ namespace AspNetCore
 #line hidden
         }
         ))();
-        ((System.Action)(() => {
+        ((global::System.Action)(() => {
 #line 7 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml"
  
 
@@ -31,7 +31,7 @@ namespace AspNetCore
 #line hidden
         }
         ))();
-        ((System.Action)(() => {
+        ((global::System.Action)(() => {
 #line 8 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/IncompleteDirectives.cshtml"
 MyService<TModel> __typeHelper = default;
 

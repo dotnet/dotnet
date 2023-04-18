@@ -8,7 +8,7 @@
       "vsBranch": "main",
       "vsMajorVersion": 17,
       "insertionCreateDraftPR": true,
-      "insertionTitlePrefix": "[17.6P2]"
+      "insertionTitlePrefix": "[Validation]"
     },
     "release/dev17.5": {
       "nugetKind": [
@@ -24,9 +24,10 @@
         "Shipping",
         "NonShipping"
       ],
-      "vsBranch": "rel/d17.6",
+      "vsBranch": "main",
       "vsMajorVersion": 17,
-      "insertionTitlePrefix": "[17.6P1]"
+      "insertionCreateDraftPR": false,
+      "insertionTitlePrefix": "[17.6P3]"
     }
   }
 }

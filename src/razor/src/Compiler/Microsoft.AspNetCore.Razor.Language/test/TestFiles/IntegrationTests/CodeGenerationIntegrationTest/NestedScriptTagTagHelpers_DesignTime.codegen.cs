@@ -15,7 +15,7 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
         private global::TestNamespace.InputTagHelper2 __TestNamespace_InputTagHelper2;
         #pragma warning disable 219
         private void __RazorDirectiveTokenHelpers__() {
-        ((System.Action)(() => {
+        ((global::System.Action)(() => {
 #nullable restore
 #line 1 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NestedScriptTagTagHelpers.cshtml"
 global::System.Object __typeHelper = "*, TestAssembly";

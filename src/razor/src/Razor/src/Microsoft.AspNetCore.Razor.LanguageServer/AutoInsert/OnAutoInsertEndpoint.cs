@@ -184,7 +184,7 @@ internal class OnAutoInsertEndpoint : AbstractRazorDelegatingEndpoint<VSInternal
         // For C# we run the edit through our formatting engine
         var edits = new[] { delegatedResponse.TextEdit };
 
-        var razorFormattingService = requestContext.GetRequiredService<RazorFormattingService>();
+        var razorFormattingService = requestContext.GetRequiredService<IRazorFormattingService>();
         TextEdit[] mappedEdits;
         if (delegatedResponse.TextEditFormat == InsertTextFormat.Snippet)
         {

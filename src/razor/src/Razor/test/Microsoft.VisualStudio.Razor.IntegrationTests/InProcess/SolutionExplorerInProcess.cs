@@ -8,7 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using Microsoft.VisualStudio.Razor.IntegrationTests;
 using Microsoft.VisualStudio.Razor.IntegrationTests.InProcess;
 using Microsoft.VisualStudio.Shell;

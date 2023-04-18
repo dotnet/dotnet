@@ -9,7 +9,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.Extensions.Internal;
+using Microsoft.Extensions.ObjectPool;
 
 namespace Microsoft.AspNetCore.Razor.Language.Syntax;
 
@@ -260,25 +262,35 @@ internal readonly struct SyntaxTriviaList : IEquatable<SyntaxTriviaList>, IReadO
         return InsertRange(index, new[] { trivia });
     }
 
-    private static readonly ObjectPool<SyntaxTriviaListBuilder> s_builderPool =
-        new ObjectPool<SyntaxTriviaListBuilder>(() => SyntaxTriviaListBuilder.Create());
-
-    private static SyntaxTriviaListBuilder GetBuilder()
-        => s_builderPool.Allocate();
-
-    private static void ClearAndFreeBuilder(SyntaxTriviaListBuilder builder)
+    private sealed class Policy : IPooledObjectPolicy<SyntaxTriviaListBuilder>
     {
-        // It's possible someone might create a list with a huge amount of trivia
-        // in it.  We don't want to hold onto such items forever.  So only cache
-        // reasonably sized lists.  In IDE testing, around 99% of all trivia lists
-        // were 16 or less elements.
-        const int MaxBuilderCount = 16;
-        if (builder.Count <= MaxBuilderCount)
+        public static readonly Policy Instance = new();
+
+        private Policy()
         {
-            builder.Clear();
-            s_builderPool.Free(builder);
+        }
+
+        public SyntaxTriviaListBuilder Create() => SyntaxTriviaListBuilder.Create();
+
+        public bool Return(SyntaxTriviaListBuilder builder)
+        {
+            // It's possible someone might create a list with a huge amount of trivia
+            // in it.  We don't want to hold onto such items forever.  So only cache
+            // reasonably sized lists.  In IDE testing, around 99% of all trivia lists
+            // were 16 or less elements.
+            const int MaxBuilderCount = 16;
+
+            if (builder.Count <= MaxBuilderCount)
+            {
+                builder.Clear();
+                return true;
+            }
+
+            return false;
         }
     }
+
+    private static readonly ObjectPool<SyntaxTriviaListBuilder> s_builderPool = DefaultPool.Create(Policy.Instance);
 
     /// <summary>
     /// Creates a new <see cref="SyntaxTriviaList"/> with the specified trivia inserted at the index.
@@ -304,7 +316,7 @@ internal readonly struct SyntaxTriviaList : IEquatable<SyntaxTriviaList>, IReadO
             return this;
         }
 
-        var builder = GetBuilder();
+        var builder = s_builderPool.Get();
         try
         {
             for (var i = 0; i < index; i++)
@@ -323,7 +335,7 @@ internal readonly struct SyntaxTriviaList : IEquatable<SyntaxTriviaList>, IReadO
         }
         finally
         {
-            ClearAndFreeBuilder(builder);
+            s_builderPool.Return(builder);
         }
     }
 

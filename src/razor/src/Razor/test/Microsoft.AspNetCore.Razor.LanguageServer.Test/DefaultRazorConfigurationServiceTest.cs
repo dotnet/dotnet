@@ -26,7 +26,7 @@ public class DefaultRazorConfigurationServiceTest : LanguageServerTestBase
     {
         // Arrange
         var expectedOptions = new RazorLSPOptions(
-            Trace.Messages, EnableFormatting: false, AutoClosingTags: false, InsertSpaces: true, TabSize: 8, FormatOnType: false);
+            Trace.Messages, EnableFormatting: false, AutoClosingTags: false, InsertSpaces: true, TabSize: 4, FormatOnType: true);
         var razorJsonString =
             """
 
@@ -50,13 +50,6 @@ public class DefaultRazorConfigurationServiceTest : LanguageServerTestBase
 
         var vsEditorJsonString = """
             {
-                "ClientSpaceSettings": {
-                    "IndentSize": 8,
-                    "IndentWithTabs": "false"
-                },
-                "AdvancedSettings": {
-                    "FormatOnType": "false"
-                }
             }
 
             """;
@@ -101,11 +94,11 @@ public class DefaultRazorConfigurationServiceTest : LanguageServerTestBase
     }
 
     [Fact]
-    public void BuildOptions_ReturnsExpectedOptions()
+    public void BuildOptions_VSCodeOptionsOnly_ReturnsExpected()
     {
         // Arrange - purposely choosing options opposite of default
         var expectedOptions = new RazorLSPOptions(
-            Trace.Verbose, EnableFormatting: false, AutoClosingTags: false, InsertSpaces: false, TabSize: 8, FormatOnType: false);
+            Trace.Verbose, EnableFormatting: false, AutoClosingTags: false, InsertSpaces: true, TabSize: 4, FormatOnType: true);
         var razorJsonString = """
             {
               "trace": "Verbose",
@@ -124,12 +117,44 @@ public class DefaultRazorConfigurationServiceTest : LanguageServerTestBase
             """;
         var vsEditorJsonString = """
             {
+            }
+            """;
+
+        // Act
+        var result = new JObject[] { JObject.Parse(razorJsonString), JObject.Parse(htmlJsonString), JObject.Parse(vsEditorJsonString) };
+        var languageServer = GetLanguageServer(result);
+        var configurationService = new DefaultRazorConfigurationService(languageServer, LoggerFactory);
+        var options = configurationService.BuildOptions(result);
+
+        // Assert
+        Assert.Equal(expectedOptions, options);
+    }
+
+    [Fact]
+    public void BuildOptions_VSOptionsOnly_ReturnsExpected()
+    {
+        // Arrange - purposely choosing options opposite of default
+        var expectedOptions = new RazorLSPOptions(
+            Trace.Off, EnableFormatting: true, AutoClosingTags: false, InsertSpaces: false, TabSize: 8, FormatOnType: false);
+        var razorJsonString = """
+            {
+            }
+
+            """;
+        var htmlJsonString = """
+            {
+            }
+
+            """;
+        var vsEditorJsonString = """
+            {
                 "ClientSpaceSettings": {
                     "IndentSize": 8,
                     "IndentWithTabs": "true"
                 },
                 "AdvancedSettings": {
-                    "FormatOnType": "false"
+                    "FormatOnType": "false",
+                    "AutoClosingTags": "false"
                 }
             }
             """;

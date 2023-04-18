@@ -4,7 +4,6 @@
 using System;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CommonLanguageServerProtocol.Framework;
 using Nerdbank.Streams;

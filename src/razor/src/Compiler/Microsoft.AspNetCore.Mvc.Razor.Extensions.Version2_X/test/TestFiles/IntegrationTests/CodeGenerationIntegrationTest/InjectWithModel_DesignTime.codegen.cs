@@ -15,7 +15,7 @@ namespace AspNetCore
     {
         #pragma warning disable 219
         private void __RazorDirectiveTokenHelpers__() {
-        ((System.Action)(() => {
+        ((global::System.Action)(() => {
 #line 1 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InjectWithModel.cshtml"
 MyModel __typeHelper = default;
 
@@ -23,7 +23,7 @@ MyModel __typeHelper = default;
 #line hidden
         }
         ))();
-        ((System.Action)(() => {
+        ((global::System.Action)(() => {
 #line 2 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InjectWithModel.cshtml"
 MyApp __typeHelper = default;
 
@@ -31,7 +31,7 @@ MyApp __typeHelper = default;
 #line hidden
         }
         ))();
-        ((System.Action)(() => {
+        ((global::System.Action)(() => {
 #line 2 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InjectWithModel.cshtml"
 global::System.Object MyPropertyName = null;
 
@@ -39,7 +39,7 @@ global::System.Object MyPropertyName = null;
 #line hidden
         }
         ))();
-        ((System.Action)(() => {
+        ((global::System.Action)(() => {
 #line 3 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InjectWithModel.cshtml"
 MyService<TModel> __typeHelper = default;
 
@@ -47,7 +47,7 @@ MyService<TModel> __typeHelper = default;
 #line hidden
         }
         ))();
-        ((System.Action)(() => {
+        ((global::System.Action)(() => {
 #line 3 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InjectWithModel.cshtml"
 global::System.Object Html = null;
 

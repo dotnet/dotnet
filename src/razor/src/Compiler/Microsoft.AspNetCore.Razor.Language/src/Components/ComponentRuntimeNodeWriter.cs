@@ -24,6 +24,10 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
     private readonly ScopeStack _scopeStack = new ScopeStack();
     private int _sourceSequence;
 
+    public ComponentRuntimeNodeWriter(RazorLanguageVersion version) : base(version)
+    {
+    }
+
     public override void WriteCSharpCode(CodeRenderingContext context, CSharpCodeIntermediateNode node)
     {
         if (context == null)
@@ -355,8 +359,8 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
             // Writes something like:
             //
             // _builder.OpenComponent<MyComponent>(0);
-            // _builder.AddAttribute(1, "Foo", ...);
-            // _builder.AddAttribute(2, "ChildContent", ...);
+            // _builder.AddComponentParameter(1, "Foo", ...);
+            // _builder.AddComponentParameter(2, "ChildContent", ...);
             // _builder.SetKey(someValue);
             // _builder.AddElementCapture(3, (__value) => _field = __value);
             // _builder.CloseComponent();
@@ -501,7 +505,7 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
         {
             case ComponentAttributeIntermediateNode attribute:
                 // Don't type check generics, since we can't actually write the type name.
-                // The type checking with happen anyway since we defined a method and we're generating
+                // The type checking will happen anyway since we defined a method and we're generating
                 // a call to it.
                 WriteComponentAttributeInnards(context, attribute, canTypeCheck: false);
                 break;
@@ -543,9 +547,9 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
             throw new ArgumentNullException(nameof(node));
         }
 
-        var addAttributeMethod = node.Annotations[ComponentMetadata.Common.AddAttributeMethodName] as string ?? ComponentsApi.RenderTreeBuilder.AddAttribute;
+        var addAttributeMethod = node.Annotations[ComponentMetadata.Common.AddAttributeMethodName] as string ?? AddComponentParameterMethodName;
 
-        // _builder.AddAttribute(1, "Foo", 42);
+        // _builder.AddComponentParameter(1, "Foo", 42);
         context.CodeWriter.Write(_scopeStack.BuilderVarName);
         context.CodeWriter.Write(".");
         context.CodeWriter.Write(addAttributeMethod);
@@ -555,7 +559,17 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
         context.CodeWriter.WriteStringLiteral(node.AttributeName);
         context.CodeWriter.Write(", ");
 
+        if (addAttributeMethod == ComponentsApi.RenderTreeBuilder.AddAttribute)
+        {
+            context.CodeWriter.Write("(object)(");
+        }
+
         WriteComponentAttributeInnards(context, node, canTypeCheck: true);
+
+        if (addAttributeMethod == ComponentsApi.RenderTreeBuilder.AddAttribute)
+        {
+            context.CodeWriter.Write(")");
+        }
 
         context.CodeWriter.Write(");");
         context.CodeWriter.WriteLine();
@@ -716,9 +730,9 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
             return html.FindDescendantNodes<IntermediateToken>().Where(t => t.IsHtml).ToArray();
         }
 
-        bool NeedsTypeCheck(ComponentAttributeIntermediateNode n)
+        static bool NeedsTypeCheck(ComponentAttributeIntermediateNode n)
         {
-            return node.BoundAttribute != null && !node.BoundAttribute.IsWeaklyTyped();
+            return n.BoundAttribute != null && !n.BoundAttribute.IsWeaklyTyped();
         }
     }
 
@@ -742,9 +756,9 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
 
         // Writes something like:
         //
-        // _builder.AddAttribute(1, "ChildContent", (RenderFragment)((__builder73) => { ... }));
+        // _builder.AddComponentParameter(1, "ChildContent", (RenderFragment)((__builder73) => { ... }));
         // OR
-        // _builder.AddAttribute(1, "ChildContent", (RenderFragment<Person>)((person) => (__builder73) => { ... }));
+        // _builder.AddComponentParameter(1, "ChildContent", (RenderFragment<Person>)((person) => (__builder73) => { ... }));
         BeginWriteAttribute(context, node.AttributeName);
         context.CodeWriter.WriteParameterSeparator();
         context.CodeWriter.Write("(");

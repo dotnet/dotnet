@@ -3,7 +3,6 @@
 
 #nullable disable
 
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.Extensions.DependencyInjection;

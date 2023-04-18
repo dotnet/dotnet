@@ -21,7 +21,7 @@ public class ComponentDocumentClassifierPassTest : RazorProjectEngineTestBase
 
         var projectEngine = CreateProjectEngine();
         var irDocument = CreateIRDocument(projectEngine, codeDocument);
-        var pass = new ComponentDocumentClassifierPass
+        var pass = new ComponentDocumentClassifierPass(Version)
         {
             Engine = projectEngine.Engine
         };
@@ -47,7 +47,7 @@ public class ComponentDocumentClassifierPassTest : RazorProjectEngineTestBase
         });
 
         var irDocument = CreateIRDocument(projectEngine, codeDocument);
-        var pass = new ComponentDocumentClassifierPass
+        var pass = new ComponentDocumentClassifierPass(Version)
         {
             Engine = projectEngine.Engine
         };
@@ -75,7 +75,7 @@ public class ComponentDocumentClassifierPassTest : RazorProjectEngineTestBase
         });
 
         var irDocument = CreateIRDocument(projectEngine, codeDocument);
-        var pass = new ComponentDocumentClassifierPass
+        var pass = new ComponentDocumentClassifierPass(Version)
         {
             Engine = projectEngine.Engine
         };
@@ -106,7 +106,7 @@ public class ComponentDocumentClassifierPassTest : RazorProjectEngineTestBase
         });
 
         var irDocument = CreateIRDocument(projectEngine, codeDocument);
-        var pass = new ComponentDocumentClassifierPass
+        var pass = new ComponentDocumentClassifierPass(Version)
         {
             Engine = projectEngine.Engine
         };
@@ -135,7 +135,7 @@ public class ComponentDocumentClassifierPassTest : RazorProjectEngineTestBase
         });
 
         var irDocument = CreateIRDocument(projectEngine, codeDocument);
-        var pass = new ComponentDocumentClassifierPass
+        var pass = new ComponentDocumentClassifierPass(Version)
         {
             Engine = projectEngine.Engine
         };
@@ -159,7 +159,7 @@ public class ComponentDocumentClassifierPassTest : RazorProjectEngineTestBase
 
         var projectEngine = CreateProjectEngine();
         var irDocument = CreateIRDocument(projectEngine, codeDocument);
-        var pass = new ComponentDocumentClassifierPass
+        var pass = new ComponentDocumentClassifierPass(Version)
         {
             Engine = projectEngine.Engine
         };
@@ -215,11 +215,5 @@ public class ComponentDocumentClassifierPassTest : RazorProjectEngineTestBase
             Class = node;
             base.VisitClassDeclaration(node);
         }
-    }
-
-    private class TestComponentDocumentClassifierPass : ComponentDocumentClassifierPass
-    {
-        public new bool IsMatch(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
-            => base.IsMatch(codeDocument, documentNode);
     }
 }

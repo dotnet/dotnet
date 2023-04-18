@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Razor.Language.Syntax.InternalSyntax;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
+// Removal of this type is tracked by https://github.com/dotnet/razor/issues/8445
 internal class CSharpLanguageCharacteristics : LanguageCharacteristics<CSharpTokenizer>
 {
     private static readonly Dictionary<SyntaxKind, string> _tokenSamples = new Dictionary<SyntaxKind, string>()
@@ -268,6 +269,19 @@ internal class CSharpLanguageCharacteristics : LanguageCharacteristics<CSharpTok
                 Debug.Fail("FlipBracket must be called with a bracket character");
                 return SyntaxKind.Marker;
         }
+    }
+
+    public static CSharpKeyword? GetKeywordKind(string keyword)
+    {
+        foreach (var kvp in _keywordNames)
+        {
+            if (string.Equals(kvp.Value, keyword, StringComparison.Ordinal))
+            {
+                return kvp.Key;
+            }
+        }
+
+        return null;
     }
 
     public static string GetKeyword(CSharpKeyword keyword)

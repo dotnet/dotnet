@@ -12,7 +12,7 @@ namespace __GeneratedComponent
     {
         #pragma warning disable 219
         private void __RazorDirectiveTokenHelpers__() {
-        ((System.Action)(() => {
+        ((global::System.Action)(() => {
 #nullable restore
 #line 1 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/BasicComponent.cshtml"
 IDisposable __typeHelper = default!;

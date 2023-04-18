@@ -1,45 +1,34 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Collections.Immutable;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
-internal class DefaultRequiredAttributeDescriptorBuilder : RequiredAttributeDescriptorBuilder
+internal class DefaultRequiredAttributeDescriptorBuilder : RequiredAttributeDescriptorBuilder, IBuilder<RequiredAttributeDescriptor>
 {
     private readonly DefaultTagMatchingRuleDescriptorBuilder _parent;
-    private RazorDiagnosticCollection _diagnostics;
-    private readonly Dictionary<string, string> _metadata = new Dictionary<string, string>();
+    private RazorDiagnosticCollection? _diagnostics;
+    private readonly ImmutableDictionary<string, string>.Builder _metadata;
 
     public DefaultRequiredAttributeDescriptorBuilder(DefaultTagMatchingRuleDescriptorBuilder parent)
     {
         _parent = parent;
+        _metadata = ImmutableDictionary.CreateBuilder<string, string>();
     }
 
-    public override string Name { get; set; }
+    public override string? Name { get; set; }
 
     public override RequiredAttributeDescriptor.NameComparisonMode NameComparisonMode { get; set; }
 
-    public override string Value { get; set; }
+    public override string? Value { get; set; }
 
     public override RequiredAttributeDescriptor.ValueComparisonMode ValueComparisonMode { get; set; }
 
-    public override RazorDiagnosticCollection Diagnostics
-    {
-        get
-        {
-            if (_diagnostics == null)
-            {
-                _diagnostics = new RazorDiagnosticCollection();
-            }
-
-            return _diagnostics;
-        }
-    }
+    public override RazorDiagnosticCollection Diagnostics => _diagnostics ??= new RazorDiagnosticCollection();
 
     public override IDictionary<string, string> Metadata => _metadata;
 
@@ -47,41 +36,44 @@ internal class DefaultRequiredAttributeDescriptorBuilder : RequiredAttributeDesc
 
     public RequiredAttributeDescriptor Build()
     {
-        var diagnostics = Validate();
-        if (_diagnostics != null)
+        var diagnostics = new PooledHashSet<RazorDiagnostic>();
+        try
         {
-            diagnostics ??= new();
+            Validate(ref diagnostics);
+
             diagnostics.UnionWith(_diagnostics);
+
+            var displayName = GetDisplayName();
+
+            var descriptor = new DefaultRequiredAttributeDescriptor(
+                Name,
+                NameComparisonMode,
+                CaseSensitive,
+                Value,
+                ValueComparisonMode,
+                displayName,
+                diagnostics.ToArray(),
+                _metadata.ToImmutable());
+
+            return descriptor;
         }
-
-        var displayName = GetDisplayName();
-        var rule = new DefaultRequiredAttributeDescriptor(
-            Name,
-            NameComparisonMode,
-            CaseSensitive,
-            Value,
-            ValueComparisonMode,
-            displayName,
-            diagnostics?.ToArray() ?? Array.Empty<RazorDiagnostic>(),
-            new Dictionary<string, string>(Metadata));
-
-        return rule;
+        finally
+        {
+            diagnostics.ClearAndFree();
+        }
     }
 
     private string GetDisplayName()
     {
-        return NameComparisonMode == RequiredAttributeDescriptor.NameComparisonMode.PrefixMatch ? string.Concat(Name, "...") : Name;
+        return (NameComparisonMode == RequiredAttributeDescriptor.NameComparisonMode.PrefixMatch ? string.Concat(Name, "...") : Name) ?? string.Empty;
     }
 
-    private HashSet<RazorDiagnostic> Validate()
+    private void Validate(ref PooledHashSet<RazorDiagnostic> diagnostics)
     {
-        HashSet<RazorDiagnostic> diagnostics = null;
-
-        if (string.IsNullOrWhiteSpace(Name))
+        if (Name.IsNullOrWhiteSpace())
         {
             var diagnostic = RazorDiagnosticFactory.CreateTagHelper_InvalidTargetedAttributeNameNullOrWhitespace();
 
-            diagnostics ??= new();
             diagnostics.Add(diagnostic);
         }
         else
@@ -96,7 +88,6 @@ internal class DefaultRequiredAttributeDescriptorBuilder : RequiredAttributeDesc
             {
                 var diagnostic = RazorDiagnosticFactory.CreateTagHelper_InvalidRequiredDirectiveAttributeName(GetDisplayName(), Name);
 
-                diagnostics ??= new();
                 diagnostics.Add(diagnostic);
             }
 
@@ -107,12 +98,9 @@ internal class DefaultRequiredAttributeDescriptorBuilder : RequiredAttributeDesc
                 {
                     var diagnostic = RazorDiagnosticFactory.CreateTagHelper_InvalidTargetedAttributeName(Name, character);
 
-                    diagnostics ??= new();
                     diagnostics.Add(diagnostic);
                 }
             }
         }
-
-        return diagnostics;
     }
 }

@@ -21,7 +21,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 // The intention of this class is to temporarily exist as a snapshot in time for our pre-existing completion experience.
 // It will eventually be removed in favor of the non-Legacy variant at which point we'll also remove the feature flag
 // for this legacy version.
-internal class LegacyRazorCompletionResolveEndpoint : IVSCompletionResolveEndpoint, IOnInitialized
+internal class LegacyRazorCompletionResolveEndpoint : IVSCompletionResolveEndpoint, IRegistrationExtension
 {
     private readonly ILogger _logger;
     private readonly LSPTagHelperTooltipFactory _lspTagHelperTooltipFactory;
@@ -68,7 +68,7 @@ internal class LegacyRazorCompletionResolveEndpoint : IVSCompletionResolveEndpoi
         _completionListCache = completionListCache;
     }
 
-    public Task OnInitializedAsync(VSInternalClientCapabilities clientCapabilities, CancellationToken cancellationToken)
+    public RegistrationExtensionResult? GetRegistration(VSInternalClientCapabilities clientCapabilities)
     {
         _completionCapability = clientCapabilities.TextDocument?.Completion as VSInternalCompletionSetting;
         _clientCapabilities = clientCapabilities;
@@ -76,7 +76,7 @@ internal class LegacyRazorCompletionResolveEndpoint : IVSCompletionResolveEndpoi
         var completionSupportedKinds = clientCapabilities.TextDocument?.Completion?.CompletionItem?.DocumentationFormat;
         _documentationKind = completionSupportedKinds?.Contains(MarkupKind.Markdown) == true ? MarkupKind.Markdown : MarkupKind.PlainText;
 
-        return Task.CompletedTask;
+        return null;
     }
 
     public Task<VSInternalCompletionItem> HandleRequestAsync(VSInternalCompletionItem completionItem, RazorRequestContext requestContext, CancellationToken cancellationToken)

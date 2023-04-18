@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
-using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor;
@@ -81,17 +80,19 @@ internal class TextDocumentUriPresentationEndpoint : AbstractTextDocumentPresent
             return null;
         }
 
+        var razorFileUri = request.Uris.Where(
+            x => Path.GetFileName(x.GetAbsoluteOrUNCPath()).EndsWith(".razor", FilePathComparison.Instance)).FirstOrDefault();
+
         // We only want to handle requests for a single .razor file, but when there are files nested under a .razor
         // file (for example, Goo.razor.css, Goo.razor.cs etc.) then we'll get all of those files as well, when the user
         // thinks they're just dragging the parent one, so we have to be a little bit clever with the filter here
-        var razorFileUri = request.Uris.Last();
-        var fileName = Path.GetFileName(razorFileUri.GetAbsoluteOrUNCPath());
-        if (!fileName.EndsWith(".razor", FilePathComparison.Instance))
+        if (razorFileUri == null)
         {
-            _logger.LogInformation("Last file in the drop was not a single razor file URI.");
+            _logger.LogInformation("No file in the drop was a razor file URI.");
             return null;
         }
 
+        var fileName = Path.GetFileName(razorFileUri.GetAbsoluteOrUNCPath());
         if (request.Uris.Any(uri => !Path.GetFileName(uri.GetAbsoluteOrUNCPath()).StartsWith(fileName, FilePathComparison.Instance)))
         {
             _logger.LogInformation("One or more URIs were not a child file of the main .razor file.");

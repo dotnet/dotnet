@@ -35,7 +35,7 @@ public class DelegatedCompletionItemResolverTest : LanguageServerTestBase
     private readonly DelegatedCompletionParams _csharpCompletionParams;
     private readonly DelegatedCompletionParams _htmlCompletionParams;
     private readonly DocumentContextFactory _documentContextFactory;
-    private readonly AsyncLazy<RazorFormattingService> _formattingService;
+    private readonly AsyncLazy<IRazorFormattingService> _formattingService;
     private readonly RazorDocumentMappingService _mappingService;
 
     public DelegatedCompletionItemResolverTest(ITestOutputHelper testOutput)
@@ -59,7 +59,7 @@ public class DelegatedCompletionItemResolverTest : LanguageServerTestBase
         _csharpCompletionParams = new DelegatedCompletionParams(documentContext.Identifier, new Position(10, 6), RazorLanguageKind.CSharp, new VSInternalCompletionContext(), ProvisionalTextEdit: null);
         _htmlCompletionParams = new DelegatedCompletionParams(documentContext.Identifier, new Position(0, 0), RazorLanguageKind.Html, new VSInternalCompletionContext(), ProvisionalTextEdit: null);
         _documentContextFactory = new TestDocumentContextFactory();
-        _formattingService = new AsyncLazy<RazorFormattingService>(() => TestRazorFormattingService.CreateWithFullSupportAsync());
+        _formattingService = new AsyncLazy<IRazorFormattingService>(() => TestRazorFormattingService.CreateWithFullSupportAsync());
         _mappingService = new DefaultRazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory);
     }
 

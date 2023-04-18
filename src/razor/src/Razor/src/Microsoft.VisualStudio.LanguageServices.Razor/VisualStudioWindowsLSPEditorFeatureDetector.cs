@@ -7,7 +7,6 @@ using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.Internal.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Editor.Razor;
-using Microsoft.VisualStudio.Settings;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 

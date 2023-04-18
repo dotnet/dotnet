@@ -15,7 +15,7 @@ namespace AspNetCore
     {
         #pragma warning disable 219
         private void __RazorDirectiveTokenHelpers__() {
-        ((System.Action)(() => {
+        ((global::System.Action)(() => {
 #line 2 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InheritsWithViewImports.cshtml"
 MyModel __typeHelper = default;
 

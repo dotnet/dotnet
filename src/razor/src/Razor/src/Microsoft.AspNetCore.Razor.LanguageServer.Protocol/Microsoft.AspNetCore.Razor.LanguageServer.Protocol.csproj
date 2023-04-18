@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(DefaultNetCoreTargetFramework);$(DefaultNetFxTargetFramework)</TargetFrameworks>
+    <TargetFrameworks>$(DefaultNetCoreTargetFrameworks);$(DefaultNetFxTargetFramework)</TargetFrameworks>
     <Description>Razor is a markup syntax for adding server-side logic to web pages. This package contains the language server protocol library assets for communicating server -&gt; client</Description>
     <EnableApiCheck>false</EnableApiCheck>
     <IsShippingPackage>false</IsShippingPackage>
@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Microsoft.AspNetCore.Razor.Common\Microsoft.AspNetCore.Razor.Common.csproj" />
+    <ProjectReference Include="$(SharedSourceRoot)\Microsoft.AspNetCore.Razor.Utilities.Shared\Microsoft.AspNetCore.Razor.Utilities.Shared.csproj" />
   </ItemGroup>
 
 </Project>

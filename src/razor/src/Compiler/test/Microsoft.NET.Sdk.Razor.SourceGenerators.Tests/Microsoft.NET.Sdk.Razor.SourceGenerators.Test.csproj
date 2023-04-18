@@ -5,16 +5,19 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFramework>$(DefaultNetCoreTargetFramework)</TargetFramework>
+    <TargetFrameworks>$(DefaultNetCoreTargetFrameworks)</TargetFrameworks>
     <PackageId>testSdkRSG</PackageId>
     <PreserveCompilationContext>true</PreserveCompilationContext>
+    <DefineConstants Condition="'$(GenerateBaselines)'=='true'">$(DefineConstants);GENERATE_BASELINES</DefineConstants>
 
     <!-- Not yet annotated -->
     <Nullable>disable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="**\*.cs" Exclude="$(GlobalExclude)" />
+    <Compile Include="**\*.cs" Exclude="$(GlobalExclude);TestFiles\**\*" />
+    <!-- Show test files in solution explorer -->
+    <None Include="TestFiles\**\*" />
   </ItemGroup>
 
   <ItemGroup>
@@ -25,13 +28,26 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" />
     <PackageReference Include="xunit.assert" />
     <PackageReference Include="xunit.extensibility.execution" />
-    <PackageReference Include="Microsoft.Extensions.DependencyModel" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Microsoft.NET.Sdk.Razor.SourceGenerators\Microsoft.NET.Sdk.Razor.SourceGenerators.csproj" />
     <ProjectReference Include="..\Microsoft.AspNetCore.Razor.Test.Common\Microsoft.AspNetCore.Razor.Test.Common.Compiler.csproj" />
-    <ProjectReference Include="..\Microsoft.AspNetCore.Razor.Test.MvcShim\Microsoft.AspNetCore.Razor.Test.MvcShim.Compiler.csproj" />
+  </ItemGroup>
+  
+  <!--
+    Include ASP.NET Core DLLs.
+
+    Even though we reference `win-x64` package, it doesn't matter, we don't use any native DLLs.
+    It's just to work around the fact that ASP.NET Core DLLs are not normally published to NuGet.
+    And we don't want to reference ASP.NET Core SDK as that would be tied to our target SDK version.
+  -->
+  <PropertyGroup>
+    <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.App.Runtime.win-x64" ExcludeAssets="all" GeneratePathProperty="true" />
+    <Reference Include="$(PkgMicrosoft_AspNetCore_App_Runtime_win-x64)\runtimes\win-x64\lib\net7.0\*.dll" />
   </ItemGroup>
 
 </Project>

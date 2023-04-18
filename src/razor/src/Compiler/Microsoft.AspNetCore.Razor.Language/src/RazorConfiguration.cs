@@ -51,6 +51,11 @@ public abstract class RazorConfiguration : IEquatable<RazorConfiguration>
 
     public abstract bool UseConsolidatedMvcViews { get; }
 
+    internal RazorConfiguration WithVersion(RazorLanguageVersion version)
+    {
+        return Create(version, ConfigurationName, Extensions, useConsolidatedMvcViews: UseConsolidatedMvcViews);
+    }
+
     public override bool Equals(object obj)
     {
         return base.Equals(obj as RazorConfiguration);

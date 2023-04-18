@@ -14,8 +14,8 @@ namespace Test
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
             __builder.OpenComponent<global::Test.MyComponent>(0);
-            __builder.AddAttribute(1, "some-attribute", "foo");
-            __builder.AddAttribute(2, "another-attribute", 
+            __builder.AddComponentParameter(1, "some-attribute", "foo");
+            __builder.AddComponentParameter(2, "another-attribute", 
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
                                                        43.ToString()

@@ -4,13 +4,14 @@
 #nullable disable
 
 using System;
+using System.Diagnostics;
 using System.IO;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
 public static class TestProject
 {
-    public static string GetProjectDirectory(string directoryHint)
+    public static string GetProjectDirectory(string directoryHint, bool testDirectoryFirst = false)
     {
         var repoRoot = SearchUp(AppContext.BaseDirectory, "global.json");
         if (repoRoot == null)
@@ -18,10 +19,13 @@ public static class TestProject
             repoRoot = AppContext.BaseDirectory;
         }
 
-        var projectDirectory = Path.Combine(repoRoot, "src", "Compiler", directoryHint, "test");
+        var projectDirectory = testDirectoryFirst
+            ? Path.Combine(repoRoot, "src", "Compiler", "test", directoryHint)
+            : Path.Combine(repoRoot, "src", "Compiler", directoryHint, "test");
 
         if (string.Equals(directoryHint, "Microsoft.AspNetCore.Razor.Language.Test", StringComparison.Ordinal))
         {
+            Debug.Assert(!testDirectoryFirst);
             projectDirectory = Path.Combine(repoRoot, "src", "Compiler", "Microsoft.AspNetCore.Razor.Language", "test");
         }
 

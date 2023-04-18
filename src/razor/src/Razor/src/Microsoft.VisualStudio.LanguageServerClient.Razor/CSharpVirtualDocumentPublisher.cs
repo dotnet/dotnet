@@ -14,7 +14,6 @@ using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServerClient.Razor.HtmlCSharp;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Utilities;
-using CodeAnalysisWorkspace = Microsoft.CodeAnalysis.Workspace;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor;
 

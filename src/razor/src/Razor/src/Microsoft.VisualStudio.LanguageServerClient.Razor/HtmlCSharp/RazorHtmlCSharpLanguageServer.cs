@@ -8,7 +8,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
-using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts.WrapWithTag;
+using Microsoft.AspNetCore.Razor.LanguageServer.WrapWithTag;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.LanguageServerClient.Razor.Logging;
 using Newtonsoft.Json.Linq;

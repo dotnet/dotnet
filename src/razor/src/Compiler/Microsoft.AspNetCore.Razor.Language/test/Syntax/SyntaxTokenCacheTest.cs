@@ -3,14 +3,14 @@
 
 #nullable disable
 
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language.Syntax.InternalSyntax;
 
 public class SyntaxTokenCacheTest
 {
-    // Regression test for https://github.com/dotnet/aspnetcore/issues/27154
-    [Fact]
+    [Fact, WorkItem("https://github.com/dotnet/aspnetcore/issues/27154")]
     public void GetCachedToken_ReturnsNewEntry()
     {
         // Arrange

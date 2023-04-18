@@ -117,7 +117,13 @@ internal class CSharpOnTypeFormattingPass : CSharpFormattingPassBase
         var filteredEdits = FilterCSharpTextEdits(context, mappedEdits);
         if (filteredEdits.Length == 0)
         {
-            // There are no CSharp edits for us to apply. No op.
+            // There are no C# edits for us to apply that could be mapped, but we might still need to check for using statements
+            // because they are non mappable, but might be the only thing changed (eg from the Add Using code action)
+            //
+            // If there aren't any edits that are likely to contain using statement changes, this call will no-op.
+
+            filteredEdits = await AddUsingStatementEditsIfNecessaryAsync(context, codeDocument, csharpText, textEdits, originalTextWithChanges, filteredEdits, cancellationToken);
+
             return new FormattingResult(filteredEdits);
         }
 
@@ -208,6 +214,13 @@ internal class CSharpOnTypeFormattingPass : CSharpFormattingPassBase
         var finalChanges = cleanedText.GetTextChanges(originalText);
         var finalEdits = finalChanges.Select(f => f.AsTextEdit(originalText)).ToArray();
 
+        finalEdits = await AddUsingStatementEditsIfNecessaryAsync(context, codeDocument, csharpText, textEdits, originalTextWithChanges, finalEdits, cancellationToken);
+
+        return new FormattingResult(finalEdits);
+    }
+
+    private static async Task<TextEdit[]> AddUsingStatementEditsIfNecessaryAsync(FormattingContext context, RazorCodeDocument codeDocument, SourceText csharpText, TextEdit[] textEdits, SourceText originalTextWithChanges, TextEdit[] finalEdits, CancellationToken cancellationToken)
+    {
         if (context.AutomaticallyAddUsings)
         {
             // Because we need to parse the C# code twice for this operation, lets do a quick check to see if its even necessary
@@ -218,7 +231,7 @@ internal class CSharpOnTypeFormattingPass : CSharpFormattingPassBase
             }
         }
 
-        return new FormattingResult(finalEdits);
+        return finalEdits;
     }
 
     // Returns the minimal TextSpan that encompasses all the differences between the old and the new text.

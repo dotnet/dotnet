@@ -14,7 +14,7 @@ namespace Test
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
             __builder.OpenComponent<global::Test.MyComponent<MyType>>(0);
-            __builder.AddAttribute(1, "OnClick", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::Microsoft.AspNetCore.Components.EventCallback<MyType>>(global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<MyType>(this, 
+            __builder.AddComponentParameter(1, "OnClick", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::Microsoft.AspNetCore.Components.EventCallback<MyType>>(global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<MyType>(this, 
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
                                    (MyType arg) => counter++

@@ -73,8 +73,8 @@ namespace __Blazor.Test.TestComponent
         public static void CreateTreeNode_0<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, TItem __arg0, int __seq1, global::Microsoft.AspNetCore.Components.RenderFragment __arg1)
         {
         __builder.OpenComponent<global::Test.TreeNode<TItem>>(seq);
-        __builder.AddAttribute(__seq0, "Item", __arg0);
-        __builder.AddAttribute(__seq1, "ChildContent", __arg1);
+        __builder.AddComponentParameter(__seq0, "Item", __arg0);
+        __builder.AddComponentParameter(__seq1, "ChildContent", __arg1);
         __builder.CloseComponent();
         }
 
@@ -85,8 +85,8 @@ namespace __Blazor.Test.TestComponent
         public static void CreateTreeNode_1<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, TItem __arg0, int __seq1, global::Microsoft.AspNetCore.Components.RenderFragment __arg1)
         {
         __builder.OpenComponent<global::Test.TreeNode<TItem>>(seq);
-        __builder.AddAttribute(__seq0, "Item", __arg0);
-        __builder.AddAttribute(__seq1, "ChildContent", __arg1);
+        __builder.AddComponentParameter(__seq0, "Item", __arg0);
+        __builder.AddComponentParameter(__seq1, "ChildContent", __arg1);
         __builder.CloseComponent();
         }
 
@@ -97,7 +97,7 @@ namespace __Blazor.Test.TestComponent
         public static void CreateTreeNode_2<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, TItem __syntheticArg0, int __seq0, global::Microsoft.AspNetCore.Components.RenderFragment __arg0)
         {
         __builder.OpenComponent<global::Test.TreeNode<TItem>>(seq);
-        __builder.AddAttribute(__seq0, "ChildContent", __arg0);
+        __builder.AddComponentParameter(__seq0, "ChildContent", __arg0);
         __builder.CloseComponent();
         }
 

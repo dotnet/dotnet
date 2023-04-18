@@ -13,7 +13,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Microsoft.AspNetCore.Razor.LanguageServer.Test.Debugging;
+namespace Microsoft.AspNetCore.Razor.LanguageServer.Debugging;
 
 public class RazorBreakpointSpanEndpointTest : LanguageServerTestBase
 {

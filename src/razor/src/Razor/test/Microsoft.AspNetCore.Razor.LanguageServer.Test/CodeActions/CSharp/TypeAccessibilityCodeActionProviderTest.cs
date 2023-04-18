@@ -288,7 +288,7 @@ public class TypeAccessibilityCodeActionProviderTest : LanguageServerTestBase
                 Assert.NotNull(r.Data);
                 var resolutionParams = ((JObject)r.Data).ToObject<RazorCodeActionResolutionParams>();
                 Assert.NotNull(resolutionParams);
-                Assert.Equal(LanguageServerConstants.CodeActions.AddUsing, resolutionParams.Action);
+                Assert.Equal(LanguageServerConstants.CodeActions.Default, resolutionParams.Action);
             }
         );
     }
@@ -340,7 +340,7 @@ public class TypeAccessibilityCodeActionProviderTest : LanguageServerTestBase
                 Assert.NotNull(r.Data);
                 var resolutionParams = ((JObject)r.Data).ToObject<RazorCodeActionResolutionParams>();
                 Assert.NotNull(resolutionParams);
-                Assert.Equal(LanguageServerConstants.CodeActions.AddUsing, resolutionParams.Action);
+                Assert.Equal(LanguageServerConstants.CodeActions.Default, resolutionParams.Action);
             },
             r =>
             {

@@ -94,7 +94,7 @@ internal sealed class TagHelperDescriptorComparer : IEqualityComparer<TagHelperD
             return false;
         }
 
-        if (!ComparerUtilities.Equals(descriptorX.Metadata, descriptorY.Metadata, StringComparer.Ordinal, StringComparer.Ordinal))
+        if (!ComparerUtilities.Equals(descriptorX.Metadata, descriptorY.Metadata, StringComparer.Ordinal))
         {
             return false;
         }

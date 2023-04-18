@@ -14,7 +14,7 @@ namespace Test
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
             __builder.OpenComponent<global::Test.MyComponent>(0);
-            __builder.AddAttribute(1, "IntProperty", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Int32>(
+            __builder.AddComponentParameter(1, "IntProperty", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Int32>(
 #nullable restore
 #line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
                  123
@@ -23,7 +23,7 @@ namespace Test
 #line hidden
 #nullable disable
             ));
-            __builder.AddAttribute(2, "BoolProperty", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Boolean>(
+            __builder.AddComponentParameter(2, "BoolProperty", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Boolean>(
 #nullable restore
 #line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
                   true
@@ -32,8 +32,8 @@ namespace Test
 #line hidden
 #nullable disable
             ));
-            __builder.AddAttribute(3, "StringProperty", "My string");
-            __builder.AddAttribute(4, "ObjectProperty", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::Test.SomeType>(
+            __builder.AddComponentParameter(3, "StringProperty", "My string");
+            __builder.AddComponentParameter(4, "ObjectProperty", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::Test.SomeType>(
 #nullable restore
 #line 5 "x:\dir\subdir\Test\TestComponent.cshtml"
                     new SomeType()

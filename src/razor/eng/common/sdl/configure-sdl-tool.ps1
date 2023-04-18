@@ -1,4 +1,4 @@
-﻿Param(
+Param(
   [string] $GuardianCliLocation,
   [string] $WorkingDirectory,
   [string] $TargetDirectory,

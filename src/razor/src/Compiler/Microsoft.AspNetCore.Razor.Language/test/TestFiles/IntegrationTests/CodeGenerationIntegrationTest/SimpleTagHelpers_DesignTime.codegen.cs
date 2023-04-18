@@ -13,7 +13,7 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
         private global::InputTagHelper __InputTagHelper;
         #pragma warning disable 219
         private void __RazorDirectiveTokenHelpers__() {
-        ((System.Action)(() => {
+        ((global::System.Action)(() => {
 #nullable restore
 #line 1 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SimpleTagHelpers.cshtml"
 global::System.Object __typeHelper = "*, TestAssembly";

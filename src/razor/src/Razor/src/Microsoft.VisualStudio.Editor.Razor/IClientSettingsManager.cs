@@ -12,6 +12,8 @@ public interface IClientSettingsManager
 
     void Update(ClientSpaceSettings updateSettings);
 
+    void Update(ClientAdvancedSettings updateSettings);
+
     ClientSettings GetClientSettings();
 }
 

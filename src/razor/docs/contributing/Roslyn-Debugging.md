@@ -32,13 +32,13 @@ Use the steps below to do a clean build if the dlls/binaries need to get cleaned
 > TASKKILL /IM dotnet.exe /F
 > TASKKILL /IM MSBuild.exe /F
 ```
-- Delete your hives completely
-- Delete your artifacts folder
+- Delete the hive folder by navigating to `%LocalAppData%\Microsoft\VisualStudio` and deleting the 17.0_xxxxxxxxRoslynDev folder
+- Delete the artifacts folder under the root folder of razor repository
 - Launch VS with the Razor solution
 - Make sure `Microsoft.VisualStudio.RazorExtension` is set as the start up project.
-- Build and Rebuild Solution from the menu.
-- Check to make sure the hive is there
-- F5 the razor solution.
+- Build and Rebuild Solution from the menu or run script `.\build.cmd -deploy`
+- Check to make sure the hive folder is there
+- F5 (or CTRL+F5) the razor solution.
 
 ## Notes
 

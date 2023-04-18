@@ -16,7 +16,6 @@ using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Razor;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Elfie.Diagnostics;
 using Microsoft.Extensions.Logging;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;

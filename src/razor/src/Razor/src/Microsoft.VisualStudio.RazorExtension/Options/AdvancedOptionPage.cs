@@ -2,12 +2,9 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.VisualStudio.ComponentModelHost;
+using Microsoft.VisualStudio.LanguageServerClient.Razor.Options;
 using Microsoft.VisualStudio.Shell;
 
 namespace Microsoft.VisualStudio.RazorExtension.Options;
@@ -16,7 +13,10 @@ namespace Microsoft.VisualStudio.RazorExtension.Options;
 [ComVisible(true)]
 internal class AdvancedOptionPage : DialogPage
 {
-    private Lazy<OptionsStorage> _optionsStorage;
+    private readonly Lazy<OptionsStorage> _optionsStorage;
+
+    private bool? _formatOnType;
+    private bool? _autoClosingTags;
 
     public AdvancedOptionPage()
     {
@@ -34,7 +34,35 @@ internal class AdvancedOptionPage : DialogPage
     [LocDisplayName(nameof(VSPackage.Setting_FormattingOnTypeDisplayName))]
     public bool FormatOnType
     {
-        get => _optionsStorage.Value.FormatOnType;
-        set => _optionsStorage.Value.FormatOnType = value;
+        get => _formatOnType ?? _optionsStorage.Value.FormatOnType;
+        set => _formatOnType = value;
+    }
+
+    [LocCategory(nameof(VSPackage.Typing))]
+    [LocDescription(nameof(VSPackage.Setting_AutoClosingTagsDescription))]
+    [LocDisplayName(nameof(VSPackage.Setting_AutoClosingTagsDisplayName))]
+    public bool AutoClosingTags
+    {
+        get => _autoClosingTags ?? _optionsStorage.Value.AutoClosingTags;
+        set => _autoClosingTags = value;
+    }
+
+    protected override void OnApply(PageApplyEventArgs e)
+    {
+        if (_formatOnType is not null)
+        {
+            _optionsStorage.Value.FormatOnType = _formatOnType.Value;
+        }
+
+        if (_autoClosingTags is not null)
+        {
+            _optionsStorage.Value.AutoClosingTags = _autoClosingTags.Value;
+        }
+    }
+
+    protected override void OnClosed(EventArgs e)
+    {
+        _formatOnType = null;
+        _autoClosingTags = null;
     }
 }

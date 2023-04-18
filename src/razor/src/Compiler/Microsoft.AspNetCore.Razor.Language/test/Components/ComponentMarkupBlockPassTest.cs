@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language.Components;
@@ -81,8 +82,7 @@ public class ComponentMarkupBlockPassTest
         Assert.Equal(expected, block.Content, ignoreLineEndingDifferences: true);
     }
 
-    // See: https://github.com/dotnet/aspnetcore/issues/6480
-    [Fact]
+    [Fact, WorkItem("https://github.com/dotnet/aspnetcore/issues/6480")]
     public void Execute_RewritesHtml_HtmlAttributePrefix()
     {
         // Arrange

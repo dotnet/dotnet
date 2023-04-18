@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using ImplementationResult = Microsoft.VisualStudio.LanguageServer.Protocol.SumType<
@@ -16,7 +17,8 @@ using ImplementationResult = Microsoft.VisualStudio.LanguageServer.Protocol.SumT
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Implementation;
 
-internal class ImplementationEndpoint : AbstractRazorDelegatingEndpoint<TextDocumentPositionParamsBridge, ImplementationResult>, IImplementationEndpoint
+[LanguageServerEndpoint(Methods.TextDocumentImplementationName)]
+internal sealed class ImplementationEndpoint : AbstractRazorDelegatingEndpoint<TextDocumentPositionParams, ImplementationResult>, IRegistrationExtension
 {
     private readonly RazorDocumentMappingService _documentMappingService;
 
@@ -40,7 +42,7 @@ internal class ImplementationEndpoint : AbstractRazorDelegatingEndpoint<TextDocu
         return new RegistrationExtensionResult(ServerCapability, option);
     }
 
-    protected override Task<IDelegatedParams?> CreateDelegatedParamsAsync(TextDocumentPositionParamsBridge request, RazorRequestContext requestContext, Projection projection, CancellationToken cancellationToken)
+    protected override Task<IDelegatedParams?> CreateDelegatedParamsAsync(TextDocumentPositionParams request, RazorRequestContext requestContext, Projection projection, CancellationToken cancellationToken)
     {
         var documentContext = requestContext.GetRequiredDocumentContext();
         return Task.FromResult<IDelegatedParams?>(new DelegatedPositionParams(
@@ -49,7 +51,7 @@ internal class ImplementationEndpoint : AbstractRazorDelegatingEndpoint<TextDocu
                 projection.LanguageKind));
     }
 
-    protected async override Task<ImplementationResult> HandleDelegatedResponseAsync(ImplementationResult delegatedResponse, TextDocumentPositionParamsBridge request, RazorRequestContext requestContext, Projection projection, CancellationToken cancellationToken)
+    protected async override Task<ImplementationResult> HandleDelegatedResponseAsync(ImplementationResult delegatedResponse, TextDocumentPositionParams request, RazorRequestContext requestContext, Projection projection, CancellationToken cancellationToken)
     {
         // Not using .TryGetXXX because this does the null check for us too
         if (delegatedResponse.Value is Location[] locations)

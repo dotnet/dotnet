@@ -5,6 +5,7 @@
 
 using System;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
@@ -35,10 +36,10 @@ public class HtmlToCodeSwitchTest : ParserTestBase
         ParseDocumentTest("@{<foo>@bar<baz>@boz</baz></foo>}");
     }
 
-    [Fact]
+    [Fact, WorkItem("https://github.com/aspnet/Razor/issues/101")]
     public void ParsesCodeWithinSingleLineMarkup()
     {
-        // TODO: Fix at a later date, HTML should be a tag block: https://github.com/aspnet/Razor/issues/101
+        // TODO: Fix at a later date, HTML should be a tag block.
         ParseDocumentTest("@{@:<li>Foo @Bar Baz" + Environment.NewLine
                      + "bork}");
     }

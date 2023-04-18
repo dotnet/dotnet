@@ -3,6 +3,7 @@
 
 using System;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
+using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Razor;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 using Microsoft.AspNetCore.Razor.LanguageServer.Completion.Delegation;
@@ -48,7 +49,7 @@ internal static class IServiceCollectionExtensions
     public static void AddFormattingServices(this IServiceCollection services)
     {
         // Formatting
-        services.AddSingleton<RazorFormattingService, DefaultRazorFormattingService>();
+        services.AddSingleton<IRazorFormattingService, RazorFormattingService>();
 
         // Formatting Passes
         services.AddSingleton<IFormattingPass, HtmlFormattingPass>();
@@ -58,9 +59,9 @@ internal static class IServiceCollectionExtensions
         services.AddSingleton<IFormattingPass, FormattingContentValidationPass>();
         services.AddSingleton<IFormattingPass, RazorFormattingPass>();
 
-        services.AddRegisteringHandler<RazorDocumentFormattingEndpoint>();
-        services.AddRegisteringHandler<RazorDocumentOnTypeFormattingEndpoint>();
-        services.AddRegisteringHandler<RazorDocumentRangeFormattingEndpoint>();
+        services.AddRegisteringHandler<DocumentFormattingEndpoint>();
+        services.AddRegisteringHandler<DocumentOnTypeFormattingEndpoint>();
+        services.AddRegisteringHandler<DocumentRangeFormattingEndpoint>();
     }
 
     public static void AddCompletionServices(this IServiceCollection services, LanguageServerFeatureOptions featureOptions)
@@ -70,12 +71,12 @@ internal static class IServiceCollectionExtensions
         if (featureOptions.SingleServerCompletionSupport)
         {
             services.AddRegisteringHandler<RazorCompletionEndpoint>();
-            services.AddHandler<RazorCompletionResolveEndpoint>();
+            services.AddRegisteringHandler<RazorCompletionResolveEndpoint>();
         }
         else
         {
             services.AddRegisteringHandler<LegacyRazorCompletionEndpoint>();
-            services.AddHandler<LegacyRazorCompletionResolveEndpoint>();
+            services.AddRegisteringHandler<LegacyRazorCompletionResolveEndpoint>();
         }
 
         services.AddSingleton<CompletionListCache>();
@@ -101,16 +102,16 @@ internal static class IServiceCollectionExtensions
     public static void AddDiagnosticServices(this IServiceCollection services)
     {
         services.AddHandler<RazorTranslateDiagnosticsEndpoint>();
-        services.AddRegisteringHandler<RazorPullDiagnosticsEndpoint>();
+        services.AddRegisteringHandler<DocumentPullDiagnosticsEndpoint>();
         services.AddHandler<WorkspacePullDiagnosticsEndpoint>();
         services.AddSingleton<RazorTranslateDiagnosticsService>();
     }
 
     public static void AddHoverServices(this IServiceCollection services)
     {
-        services.AddRegisteringHandler<RazorHoverEndpoint>();
+        services.AddRegisteringHandler<HoverEndpoint>();
 
-        services.AddSingleton<RazorHoverInfoService, DefaultRazorHoverInfoService>();
+        services.AddSingleton<IHoverInfoService, HoverInfoService>();
     }
 
     public static void AddSemanticTokensServices(this IServiceCollection services)
@@ -134,7 +135,6 @@ internal static class IServiceCollectionExtensions
         services.AddSingleton<CSharpCodeActionProvider, TypeAccessibilityCodeActionProvider>();
         services.AddSingleton<CSharpCodeActionProvider, DefaultCSharpCodeActionProvider>();
         services.AddSingleton<CSharpCodeActionResolver, DefaultCSharpCodeActionResolver>();
-        services.AddSingleton<CSharpCodeActionResolver, AddUsingsCSharpCodeActionResolver>();
         services.AddSingleton<CSharpCodeActionResolver, UnformattedRemappingCSharpCodeActionResolver>();
 
         // Razor Code actions
@@ -154,10 +154,10 @@ internal static class IServiceCollectionExtensions
         services.AddRegisteringHandler<TextDocumentTextPresentationEndpoint>();
         services.AddRegisteringHandler<TextDocumentUriPresentationEndpoint>();
 
-        services.AddRegisteringHandler<RazorDidChangeTextDocumentEndpoint>();
-        services.AddHandler<RazorDidCloseTextDocumentEndpoint>();
-        services.AddHandler<RazorDidOpenTextDocumentEndpoint>();
-        services.AddHandler<RazorDidSaveTextDocumentEndpoint>();
+        services.AddRegisteringHandler<DocumentDidChangeEndpoint>();
+        services.AddHandler<DocumentDidCloseEndpoint>();
+        services.AddHandler<DocumentDidOpenEndpoint>();
+        services.AddHandler<DocumentDidSaveEndpoint>();
 
         services.AddHandler<RazorMapToDocumentEditsEndpoint>();
         services.AddHandler<RazorMapToDocumentRangesEndpoint>();
@@ -178,7 +178,7 @@ internal static class IServiceCollectionExtensions
         services.AddSingleton<IOptionsMonitor<RazorLSPOptions>, RazorLSPOptionsMonitor>(s => s.GetRequiredService<RazorLSPOptionsMonitor>());
     }
 
-    public static void AddDocumentManagmentServices(this IServiceCollection services)
+    public static void AddDocumentManagementServices(this IServiceCollection services, LanguageServerFeatureOptions featureOptions)
     {
         services.AddSingleton<GeneratedDocumentPublisher, DefaultGeneratedDocumentPublisher>();
         services.AddSingleton<ProjectSnapshotChangeTrigger>((services) => services.GetRequiredService<GeneratedDocumentPublisher>());
@@ -206,7 +206,12 @@ internal static class IServiceCollectionExtensions
         services.AddSingleton<IFileChangeDetector, RazorFileChangeDetector>();
 
         // Document processed listeners
-        services.AddSingleton<DocumentProcessedListener, RazorDiagnosticsPublisher>();
+        if (!featureOptions.SingleServerSupport)
+        {
+            // If single server is on, then we don't want to publish diagnostics, so best to just not hook up to any
+            // events etc.
+            services.AddSingleton<DocumentProcessedListener, RazorDiagnosticsPublisher>();
+        }
         services.AddSingleton<DocumentProcessedListener, GeneratedDocumentSynchronizer>();
         services.AddSingleton<DocumentProcessedListener, CodeDocumentReferenceHolder>();
 

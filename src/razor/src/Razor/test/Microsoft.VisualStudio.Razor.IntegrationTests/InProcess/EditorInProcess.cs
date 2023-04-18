@@ -4,12 +4,14 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Razor.Editor;
+using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.Language.Intellisense.AsyncCompletion;
 using Microsoft.VisualStudio.OLE.Interop;
+using Microsoft.VisualStudio.Razor.IntegrationTests.Extensions;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Razor.IntegrationTests.Extensions;
 
 namespace Microsoft.VisualStudio.Extensibility.Testing;
 
@@ -88,5 +90,12 @@ internal partial class EditorInProcess
             var latencyGuardOptionKey = new EditorOptionKey<bool>("EnableTypingLatencyGuard");
             options.SetOptionValue(latencyGuardOptionKey, false);
         }
+    }
+
+    public async Task SetAdvancedSettingsAsync(ClientAdvancedSettings clientAdvancedSettings, CancellationToken cancellationToken)
+    {
+        var clientSettingsManager = await GetComponentModelServiceAsync<IClientSettingsManager>(cancellationToken);
+
+        clientSettingsManager.Update(clientAdvancedSettings);
     }
 }

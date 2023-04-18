@@ -9,12 +9,14 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Debugging;
 
-internal class ValidateBreakpointRangeEndpoint : AbstractRazorDelegatingEndpoint<ValidateBreakpointRangeParamsBridge, Range?>, IValidateBreakpointRangeEndpoint
+[LanguageServerEndpoint(VSInternalMethods.TextDocumentValidateBreakableRangeName)]
+internal class ValidateBreakpointRangeEndpoint : AbstractRazorDelegatingEndpoint<ValidateBreakpointRangeParams, Range?>, IRegistrationExtension
 {
     private readonly RazorDocumentMappingService _documentMappingService;
 
@@ -39,13 +41,13 @@ internal class ValidateBreakpointRangeEndpoint : AbstractRazorDelegatingEndpoint
         return new RegistrationExtensionResult(ServerCapability, true);
     }
 
-    protected override Task<Range?> TryHandleAsync(ValidateBreakpointRangeParamsBridge request, RazorRequestContext requestContext, Projection projection, CancellationToken cancellationToken)
+    protected override Task<Range?> TryHandleAsync(ValidateBreakpointRangeParams request, RazorRequestContext requestContext, Projection projection, CancellationToken cancellationToken)
     {
         // no such thing as Razor breakpoints (yet?!)
         return Task.FromResult<Range?>(null);
     }
 
-    protected async override Task<IDelegatedParams?> CreateDelegatedParamsAsync(ValidateBreakpointRangeParamsBridge request, RazorRequestContext requestContext, Projection projection, CancellationToken cancellationToken)
+    protected async override Task<IDelegatedParams?> CreateDelegatedParamsAsync(ValidateBreakpointRangeParams request, RazorRequestContext requestContext, Projection projection, CancellationToken cancellationToken)
     {
         // only C# supports breakpoints
         if (projection.LanguageKind != RazorLanguageKind.CSharp)
@@ -68,7 +70,7 @@ internal class ValidateBreakpointRangeEndpoint : AbstractRazorDelegatingEndpoint
             projection.LanguageKind);
     }
 
-    protected async override Task<Range?> HandleDelegatedResponseAsync(Range? delegatedResponse, ValidateBreakpointRangeParamsBridge originalRequest, RazorRequestContext requestContext, Projection projection, CancellationToken cancellationToken)
+    protected async override Task<Range?> HandleDelegatedResponseAsync(Range? delegatedResponse, ValidateBreakpointRangeParams originalRequest, RazorRequestContext requestContext, Projection projection, CancellationToken cancellationToken)
     {
         if (delegatedResponse is null)
         {

@@ -200,7 +200,8 @@ internal class ExtractToCodeBehindCodeActionResolver : RazorCodeActionResolver
         var @class = CSharpSyntaxFactory
             .ClassDeclaration(className)
             .AddModifiers(CSharpSyntaxFactory.Token(CSharpSyntaxKind.PublicKeyword), CSharpSyntaxFactory.Token(CSharpSyntaxKind.PartialKeyword))
-            .AddMembers(mock.Members.ToArray());
+            .AddMembers(mock.Members.ToArray())
+            .WithCloseBraceToken(mock.CloseBraceToken);
 
         var @namespace = CSharpSyntaxFactory
             .NamespaceDeclaration(CSharpSyntaxFactory.ParseName(namespaceName))
