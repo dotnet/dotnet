@@ -23,15 +23,22 @@ namespace Microsoft.Diagnostics.NETCore.Client
         // remain responsive in case the advertise data is incomplete and the stream is not closed.
         private static readonly TimeSpan ParseAdvertiseTimeout = TimeSpan.FromMilliseconds(250);
 
-        private readonly CancellationTokenSource _disposalSource = new CancellationTokenSource();
-        private readonly HandleableCollection<IpcEndpointInfo> _endpointInfos = new HandleableCollection<IpcEndpointInfo>();
-        private readonly ConcurrentDictionary<Guid, HandleableCollection<Stream>> _streamCollections = new ConcurrentDictionary<Guid, HandleableCollection<Stream>>();
+        private readonly CancellationTokenSource _disposalSource = new();
+        private readonly HandleableCollection<IpcEndpointInfo> _endpointInfos = new();
+        private readonly ConcurrentDictionary<Guid, HandleableCollection<Stream>> _streamCollections = new();
         private readonly string _address;
 
-        private bool _disposed = false;
+        private bool _disposed;
         private Task _acceptTransportTask;
-        private bool _enableTcpIpProtocol = false;
         private IpcServerTransport _transport;
+        private Kind _kind = Kind.Ipc;
+
+        public enum Kind
+        {
+            Tcp,
+            Ipc,
+            WebSocket,
+        }
 
         /// <summary>
         /// Constructs the <see cref="ReversedDiagnosticsServer"/> instance with an endpoint bound
@@ -57,16 +64,17 @@ namespace Microsoft.Diagnostics.NETCore.Client
         /// On all other systems, this must be the full file path of the socket.
         /// When TcpIp is enabled, this can also be host:port of the listening socket.
         /// </param>
-        /// <param name="enableTcpIpProtocol">
-        /// Add TcpIp as a supported protocol for ReversedDiagnosticServer. When enabled, address will
+        /// <param name="kind">
+        /// If kind is WebSocket, start a Kestrel web server.
+        /// Otherwise if kind is TcpIp as a supported protocol for ReversedDiagnosticServer. When Kind is Tcp, address will
         /// be analyzed and if on format host:port, ReversedDiagnosticServer will try to bind
-        /// a TcpIp listener to host and port.
+        /// a TcpIp listener to host and port, otherwise it will use a Unix domain socket or a Windows named pipe.
         ///
         /// </param>
-        public ReversedDiagnosticsServer(string address, bool enableTcpIpProtocol)
+        public ReversedDiagnosticsServer(string address, Kind kind)
         {
             _address = address;
-            _enableTcpIpProtocol = enableTcpIpProtocol;
+            _kind = kind;
         }
 
         public async ValueTask DisposeAsync()
@@ -134,12 +142,14 @@ namespace Microsoft.Diagnostics.NETCore.Client
                 throw new InvalidOperationException(nameof(ReversedDiagnosticsServer.Start) + " method can only be called once.");
             }
 
-            _transport = IpcServerTransport.Create(_address, maxConnections, _enableTcpIpProtocol, TransportCallback);
+            _transport = IpcServerTransport.Create(_address, maxConnections, _kind, TransportCallback);
 
             _acceptTransportTask = AcceptTransportAsync(_transport, _disposalSource.Token);
 
             if (_acceptTransportTask.IsFaulted)
+            {
                 _acceptTransportTask.Wait(); // Rethrow aggregated exception.
+            }
         }
 
         /// <summary>
@@ -231,8 +241,8 @@ namespace Microsoft.Diagnostics.NETCore.Client
                 {
                     // Cancel parsing of advertise data after timeout period to
                     // mitigate runtimes that write partial data and do not close the stream (avoid waiting forever).
-                    using var parseCancellationSource = new CancellationTokenSource();
-                    using var linkedSource = CancellationTokenSource.CreateLinkedTokenSource(token, parseCancellationSource.Token);
+                    using CancellationTokenSource parseCancellationSource = new();
+                    using CancellationTokenSource linkedSource = CancellationTokenSource.CreateLinkedTokenSource(token, parseCancellationSource.Token);
                     try
                     {
                         parseCancellationSource.CancelAfter(ParseAdvertiseTimeout);
@@ -254,8 +264,8 @@ namespace Microsoft.Diagnostics.NETCore.Client
                     // does not execute the factory under a lock thus it is not thread-safe. Create the collection and
                     // use a thread-safe version of GetOrAdd; use equality comparison on the result to determine if
                     // the new collection was added to the dictionary or if an existing one was returned.
-                    var newStreamCollection = new HandleableCollection<Stream>();
-                    var streamCollection = _streamCollections.GetOrAdd(runtimeCookie, newStreamCollection);
+                    HandleableCollection<Stream> newStreamCollection = new();
+                    HandleableCollection<Stream> streamCollection = _streamCollections.GetOrAdd(runtimeCookie, newStreamCollection);
 
                     try
                     {
@@ -264,7 +274,7 @@ namespace Microsoft.Diagnostics.NETCore.Client
 
                         if (newStreamCollection == streamCollection)
                         {
-                            ServerIpcEndpoint endpoint = new ServerIpcEndpoint(this, runtimeCookie);
+                            ServerIpcEndpoint endpoint = new(this, runtimeCookie);
                             _endpointInfos.Add(new IpcEndpointInfo(endpoint, pid, runtimeCookie));
                         }
                         else
@@ -334,10 +344,10 @@ namespace Microsoft.Diagnostics.NETCore.Client
 
         private static bool TestStream(Stream stream)
         {
-            if (null == stream)
+            if (stream is null)
             {
                 throw new ArgumentNullException(nameof(stream));
-            }
+            };
 
             if (stream is ExposedSocketNetworkStream networkStream)
             {
@@ -370,6 +380,10 @@ namespace Microsoft.Diagnostics.NETCore.Client
                     IntPtr.Zero,
                     IntPtr.Zero,
                     IntPtr.Zero);
+            }
+            else if (stream is WebSocketServer.IWebSocketStreamAdapter adapter)
+            {
+                return adapter.IsConnected;
             }
 
             return false;

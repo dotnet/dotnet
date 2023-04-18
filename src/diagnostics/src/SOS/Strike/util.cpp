@@ -1,6 +1,5 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 // ==++==
 //
@@ -3488,7 +3487,7 @@ size_t FunctionType (size_t EIP)
 
 //
 // Return true if major runtime version (logical product version like 2.1,
-// 3.0 or 5.x). Currently only major versions of 3 or 5 are supported.
+// 3.0 or 5.x).
 //
 bool IsRuntimeVersion(DWORD major)
 {
@@ -3504,13 +3503,10 @@ bool IsRuntimeVersion(VS_FIXEDFILEINFO& fileInfo, DWORD major)
 {
     switch (major)
     {
-        case 5:
-            return HIWORD(fileInfo.dwFileVersionMS) == 5;
         case 3:
             return HIWORD(fileInfo.dwFileVersionMS) == 4 && LOWORD(fileInfo.dwFileVersionMS) == 700;
         default:
-            _ASSERTE(FALSE);
-            break;
+            return HIWORD(fileInfo.dwFileVersionMS) == major;
     }
     return false;
 }
@@ -3536,17 +3532,13 @@ bool IsRuntimeVersionAtLeast(VS_FIXEDFILEINFO& fileInfo, DWORD major)
             }
             // fall through
 
-        case 5:
-            if (HIWORD(fileInfo.dwFileVersionMS) >= 5)
+        default:
+            if (HIWORD(fileInfo.dwFileVersionMS) >= major)
             {
                 return true;
             }
             // fall through
 
-            break;
-
-        default:
-            _ASSERTE(FALSE);
             break;
     }
     return false;
@@ -4406,7 +4398,7 @@ HRESULT GetMTOfObject(TADDR obj, TADDR *mt)
     // Read the MethodTable and if we succeed, get rid of the mark bits.
     HRESULT hr = rvCache->Read(obj, mt, sizeof(TADDR), NULL);
     if (SUCCEEDED(hr))
-        *mt &= ~3;
+        *mt &= ~sos::Object::METHODTABLE_PTR_LOW_BITMASK;
 
     return hr;
 }

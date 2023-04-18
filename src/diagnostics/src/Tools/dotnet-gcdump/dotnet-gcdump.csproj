@@ -1,10 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <RootNamespace>Microsoft.Diagnostics.Tools.GCDump</RootNamespace>
     <ToolCommandName>dotnet-gcdump</ToolCommandName>
     <Description>.NET Managed Heap Dump and Analysis Tool</Description>
     <PackageTags>Diagnostic</PackageTags>
+    <NoWarn>$(NoWarn);CA1050</NoWarn>
     <PackageReleaseNotes>$(Description)</PackageReleaseNotes>
     <PackagedShimOutputRootDirectory>$(OutputPath)</PackagedShimOutputRootDirectory>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>

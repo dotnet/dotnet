@@ -17,9 +17,13 @@ namespace Microsoft.Diagnostics.NETCore.Client
         private IIpcServerTransportCallbackInternal _callback;
         private bool _disposed;
 
-        public static IpcServerTransport Create(string address, int maxConnections, bool enableTcpIpProtocol, IIpcServerTransportCallbackInternal transportCallback = null)
+        public static IpcServerTransport Create(string address, int maxConnections, ReversedDiagnosticsServer.Kind kind, IIpcServerTransportCallbackInternal transportCallback = null)
         {
-            if (!enableTcpIpProtocol || !IpcTcpSocketEndPoint.IsTcpIpEndPoint(address))
+            if (kind == ReversedDiagnosticsServer.Kind.WebSocket)
+            {
+                return new IpcWebSocketServerTransport(transportCallback);
+            }
+            else if (kind == ReversedDiagnosticsServer.Kind.Ipc || !IpcTcpSocketEndPoint.IsTcpIpEndPoint(address))
             {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
@@ -57,7 +61,8 @@ namespace Microsoft.Diagnostics.NETCore.Client
 
         public abstract Task<Stream> AcceptAsync(CancellationToken token);
 
-        public static int MaxAllowedConnections {
+        public static int MaxAllowedConnections
+        {
             get
             {
                 return -1;
@@ -68,7 +73,7 @@ namespace Microsoft.Diagnostics.NETCore.Client
         {
             if (_disposed)
             {
-                throw new ObjectDisposedException(this.GetType().Name);
+                throw new ObjectDisposedException(GetType().Name);
             }
         }
 
@@ -89,7 +94,7 @@ namespace Microsoft.Diagnostics.NETCore.Client
 
         private NamedPipeServerStream _stream;
 
-        private readonly CancellationTokenSource _cancellation = new CancellationTokenSource();
+        private readonly CancellationTokenSource _cancellation = new();
         private readonly string _pipeName;
         private readonly int _maxInstances;
 
@@ -117,14 +122,14 @@ namespace Microsoft.Diagnostics.NETCore.Client
         {
             VerifyNotDisposed();
 
-            using var linkedSource = CancellationTokenSource.CreateLinkedTokenSource(token, _cancellation.Token);
+            using CancellationTokenSource linkedSource = CancellationTokenSource.CreateLinkedTokenSource(token, _cancellation.Token);
             try
             {
                 // Connect client to named pipe server stream.
                 await _stream.WaitForConnectionAsync(linkedSource.Token).ConfigureAwait(false);
 
                 // Transfer ownership of connected named pipe.
-                var connectedStream = _stream;
+                NamedPipeServerStream connectedStream = _stream;
 
                 // Setup new named pipe server stream used in upcomming accept calls.
                 _stream = CreateNewNamedPipeServer(_pipeName, _maxInstances);
@@ -148,7 +153,7 @@ namespace Microsoft.Diagnostics.NETCore.Client
 
         private NamedPipeServerStream CreateNewNamedPipeServer(string pipeName, int maxInstances)
         {
-            var stream = new NamedPipeServerStream(pipeName, PipeDirection.InOut, maxInstances, PipeTransmissionMode.Byte, PipeOptions.Asynchronous, 16 * 1024, 16 * 1024);
+            NamedPipeServerStream stream = new(pipeName, PipeDirection.InOut, maxInstances, PipeTransmissionMode.Byte, PipeOptions.Asynchronous, 16 * 1024, 16 * 1024);
             OnCreateNewServer(null);
             return stream;
         }
@@ -156,7 +161,7 @@ namespace Microsoft.Diagnostics.NETCore.Client
 
     internal abstract class IpcSocketServerTransport : IpcServerTransport
     {
-        private readonly CancellationTokenSource _cancellation = new CancellationTokenSource();
+        private readonly CancellationTokenSource _cancellation = new();
         protected IpcSocket _socket;
 
         protected IpcSocketServerTransport(IIpcServerTransportCallbackInternal transportCallback = null)
@@ -189,11 +194,11 @@ namespace Microsoft.Diagnostics.NETCore.Client
         {
             VerifyNotDisposed();
 
-            using var linkedSource = CancellationTokenSource.CreateLinkedTokenSource(token, _cancellation.Token);
+            using CancellationTokenSource linkedSource = CancellationTokenSource.CreateLinkedTokenSource(token, _cancellation.Token);
             try
             {
                 // Accept next client socket.
-                var socket = await _socket.AcceptAsync(linkedSource.Token).ConfigureAwait(false);
+                Socket socket = await _socket.AcceptAsync(linkedSource.Token).ConfigureAwait(false);
 
                 // Configure client socket based on transport type.
                 OnAccept(socket);
@@ -240,9 +245,12 @@ namespace Microsoft.Diagnostics.NETCore.Client
 
         internal override IpcSocket CreateNewSocketServer()
         {
-            var socket = new IpcSocket(SocketType.Stream, ProtocolType.Tcp);
+            IpcSocket socket = new(SocketType.Stream, ProtocolType.Tcp);
             if (_endPoint.DualMode)
+            {
                 socket.DualMode = _endPoint.DualMode;
+            }
+
             socket.Bind(_endPoint);
             socket.Listen(_backlog);
             socket.LingerState.Enabled = false;
@@ -271,7 +279,7 @@ namespace Microsoft.Diagnostics.NETCore.Client
 
         internal override IpcSocket CreateNewSocketServer()
         {
-            var socket = new IpcUnixDomainSocket();
+            IpcUnixDomainSocket socket = new();
             socket.Bind(_endPoint);
             socket.Listen(_backlog);
             socket.LingerState.Enabled = false;

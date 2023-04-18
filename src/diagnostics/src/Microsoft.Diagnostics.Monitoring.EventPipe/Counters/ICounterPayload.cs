@@ -1,10 +1,7 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Microsoft.Diagnostics.Monitoring.EventPipe
 {
@@ -33,6 +30,17 @@ namespace Microsoft.Diagnostics.Monitoring.EventPipe
 
         DateTime Timestamp { get; }
 
+        /// <summary>
+        /// The interval between counters. Note this is the actual measure of time elapsed, not the requested interval.
+        /// </summary>
         float Interval { get; }
+
+        /// <summary>
+        /// Optional metadata for counters. Note that normal counters use ':' as a separator character, while System.Diagnostics.Metrics use ';'.
+        /// We do not immediately convert string to Dictionary, since dotnet-counters does not need this conversion.
+        /// </summary>
+        string Metadata { get; }
+
+        EventType EventType { get; set; }
     }
 }

@@ -1,6 +1,5 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 // ==++==
 // 
@@ -179,8 +178,20 @@ public:
         }
     }
 
+#ifndef FEATURE_PAL
+    void FlushCheck()
+    {
+        if (m_pDebuggerServices != nullptr)
+        {
+            ((DbgEngServices*)m_pDebuggerServices)->FlushCheck(this);
+        }
+    }
+#endif
+
     IHost* GetHost();
 };
+
+extern HRESULT GetRuntime(IRuntime** ppRuntime);
 
 #ifndef MINIDUMP
  
@@ -581,4 +592,3 @@ extern ReadVirtualCache *rvCache;
 #endif
 
 #endif // __exts_h__
-

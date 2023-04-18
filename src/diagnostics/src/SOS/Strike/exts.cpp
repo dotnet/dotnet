@@ -1,6 +1,5 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 // ==++==
 // 
@@ -217,6 +216,7 @@ void __cdecl _SOS_invalid_parameter(
 }
 
 bool g_Initialized = false;
+const char* g_sosPrefix = "";
 
 bool IsInitializedByDbgEng()
 {
@@ -238,6 +238,7 @@ DebugExtensionInitialize(PULONG Version, PULONG Flags)
         return S_OK;
     }
     g_Initialized = true;
+    g_sosPrefix = "!";
 
     ReleaseHolder<IDebugClient> debugClient;
     if ((hr = DebugCreate(__uuidof(IDebugClient), (void **)&debugClient)) != S_OK)
@@ -388,4 +389,23 @@ IHost* SOSExtensions::GetHost()
         }
     }
     return m_pHost;
+}
+
+/// <summary>
+/// Returns the runtime or fails if no target or current runtime
+/// </summary>
+/// <param name="ppRuntime">runtime instance</param>
+/// <returns>error code</returns>
+HRESULT GetRuntime(IRuntime** ppRuntime)
+{
+    SOSExtensions* extensions = (SOSExtensions*)Extensions::GetInstance();
+    ITarget* target = extensions->GetTarget();
+    if (target == nullptr)
+    {
+        return E_FAIL;
+    }
+#ifndef FEATURE_PAL
+    extensions->FlushCheck();
+#endif
+    return target->GetRuntime(ppRuntime);
 }

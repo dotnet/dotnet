@@ -1,6 +1,5 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
@@ -16,7 +15,10 @@ namespace Microsoft.Diagnostics.Monitoring.EventPipe
             RequestRundown = true;
         }
 
-        private const string DiagnosticFilterString =
+        // This string is shared between HttpRequestSourceConfiguration and AspNetTriggerSourceConfiguration
+        // due to an issue that causes the FilterAndPayloadSpecs to be overwritten but never reverted.
+        // This caused http traces to interfere with AspNet* triggers due to having different arguments.
+        internal const string DiagnosticFilterString =
                 "Microsoft.AspNetCore/Microsoft.AspNetCore.Hosting.HttpRequestIn.Start@Activity1Start:-" +
                     "Request.Scheme" +
                     ";Request.Host" +
@@ -33,9 +35,10 @@ namespace Microsoft.Diagnostics.Monitoring.EventPipe
                     ";ActivityIdFormat=*Activity.IdFormat" +
                 "\r\n" +
                 "Microsoft.AspNetCore/Microsoft.AspNetCore.Hosting.HttpRequestIn.Stop@Activity1Stop:-" +
-                    "Response.StatusCode" +
+                    "ActivityId=*Activity.Id" +
+                    ";Request.Path" +
+                    ";Response.StatusCode" +
                     ";ActivityDuration=*Activity.Duration.Ticks" +
-                    ";ActivityId=*Activity.Id" +
                 "\r\n" +
                 "HttpHandlerDiagnosticListener/System.Net.Http.HttpRequestOut@Event:-" +
                 "\r\n" +
@@ -59,13 +62,13 @@ namespace Microsoft.Diagnostics.Monitoring.EventPipe
 
         public override IList<EventPipeProvider> GetProviders()
         {
-            var providers = new List<EventPipeProvider>()
+            List<EventPipeProvider> providers = new()
             {
                 // Diagnostic source events
                 new EventPipeProvider(DiagnosticSourceEventSource,
                         keywords: DiagnosticSourceEventSourceEvents | DiagnosticSourceEventSourceMessages,
                         eventLevel: EventLevel.Verbose,
-                        arguments: new Dictionary<string,string>
+                        arguments: new Dictionary<string, string>
                         {
                             { "FilterAndPayloadSpecs", DiagnosticFilterString }
                         })

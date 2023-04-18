@@ -1,13 +1,12 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 
-using Microsoft.Diagnostics.DebugServices;
 using System;
+using Microsoft.Diagnostics.DebugServices;
 
 namespace Microsoft.Diagnostics.ExtensionCommands
 {
-    [Command(Name = "taskstate", Aliases = new string[] { "tks" }, Help = "Display a Task state in a human readable format.")]
+    [Command(Name = "taskstate", Aliases = new string[] { "tks" }, Help = "Displays a Task state in a human readable format.")]
     public class TaskStateCommand : ExtensionCommandBase
     {
         [Argument(Help = "The Task instance address.")]
@@ -29,7 +28,7 @@ namespace Microsoft.Diagnostics.ExtensionCommands
             // access the Task state field if the flag is not given as a parameter
             if (!Value.HasValue)
             {
-                if (!TryParseAddress(Address, out var address))
+                if (!TryParseAddress(Address, out ulong address))
                 {
                     WriteLine("Numeric value expected: either a task address or -v <state value>..." + Environment.NewLine);
                     return;
@@ -63,7 +62,7 @@ namespace Microsoft.Diagnostics.ExtensionCommands
             return DetailedHelpText;
         }
 
-        readonly string DetailedHelpText =
+        private readonly string DetailedHelpText =
             "-------------------------------------------------------------------------------" + Environment.NewLine +
             "TaskState [hexa address] [-v <decimal state value>]" + Environment.NewLine +
             Environment.NewLine +
