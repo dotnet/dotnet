@@ -64,7 +64,7 @@ namespace Microsoft.SourceLink.Tools
 
         private static RootCommand GetRootCommand()
         {
-            var authArg = new Option<string>(new[] { "--auth", "-a" }, "Authentication method").AcceptOnlyFromAmong(AuthenticationMethod.Basic);
+            var authArg = new Option<string>(new[] { "--auth", "-a" }, "Authentication method").FromAmong(AuthenticationMethod.Basic);
             var userArg = new Option<string>(new[] { "--user", "-u" }, "Username to use to authenticate") { Arity = ArgumentArity.ExactlyOne };
             var passwordArg = new Option<string>(new[] { "--password", "-p" }, "Password to use to authenticate") { Arity = ArgumentArity.ExactlyOne };
 
