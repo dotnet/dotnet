@@ -181,9 +181,9 @@
       <Sha>9e870996b8bf0b91a791edd1039bfd23bdd01af8</Sha>
       <SourceBuild RepoName="deployment-tools" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="8.0.0-alpha.1.23213.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="8.0.0-alpha.1.23214.1">
       <Uri>https://github.com/dotnet/source-build-externals</Uri>
-      <Sha>73657e276cf80bd35c75af318721da3ea477f402</Sha>
+      <Sha>de4dda48d0cf31e13182bc24107b2246c61ed483</Sha>
       <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.SourceBuild.Intermediate.symreader" Version="2.0.0-beta-22503-02">
@@ -193,18 +193,18 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.23213.1">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.23217.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>fb14cae30eacbe844468ac297b3d4c61e0bb9dc0</Sha>
+      <Sha>cb54ca21431ee8d96f91abfbc42237bcb001f9d1</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.CMake.Sdk" Version="8.0.0-beta.23213.1">
+    <Dependency Name="Microsoft.DotNet.CMake.Sdk" Version="8.0.0-beta.23217.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>fb14cae30eacbe844468ac297b3d4c61e0bb9dc0</Sha>
+      <Sha>cb54ca21431ee8d96f91abfbc42237bcb001f9d1</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Tasks.Installers" Version="8.0.0-beta.23213.1">
+    <Dependency Name="Microsoft.DotNet.Build.Tasks.Installers" Version="8.0.0-beta.23217.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>fb14cae30eacbe844468ac297b3d4c61e0bb9dc0</Sha>
+      <Sha>cb54ca21431ee8d96f91abfbc42237bcb001f9d1</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.Darc" Version="1.1.0-beta.23212.1">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
