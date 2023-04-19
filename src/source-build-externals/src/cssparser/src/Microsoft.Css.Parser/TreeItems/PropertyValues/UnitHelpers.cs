@@ -107,7 +107,7 @@ namespace Microsoft.Css.Parser.TreeItems.PropertyValues
 
         private static bool IsDpi(char[] ch, int count)
         {
-            return count == 3 && (ch[0] == 'd' || ch[0] == 'D') && (ch[1] == 'p' || ch[1] == 'p') && (ch[2] == 'i' || ch[2] == 'I');
+            return count == 3 && (ch[0] == 'd' || ch[0] == 'D') && (ch[1] == 'p' || ch[1] == 'P') && (ch[2] == 'i' || ch[2] == 'I');
         }
 
         private static bool IsDpcm(char[] ch, int count)
