@@ -5,7 +5,6 @@
     <UsingToolXliff>false</UsingToolXliff>
     <!-- MSBuild
          Only update when there's a source-build package available. -->
-    <MicrosoftBuildPackageVersion>15.1.1012</MicrosoftBuildPackageVersion>
-    <MicrosoftBuildUtilitiesCoreVersion>15.1.1012</MicrosoftBuildUtilitiesCoreVersion>
+    <MicrosoftBuildUtilitiesCoreVersion>17.3.2</MicrosoftBuildUtilitiesCoreVersion>
   </PropertyGroup>
 </Project>

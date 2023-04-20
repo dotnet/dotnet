@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "packageVersion": "8.0.0-beta.23217.1",
+      "packageVersion": "8.0.0-beta.23219.2",
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "cb54ca21431ee8d96f91abfbc42237bcb001f9d1"
+      "commitSha": "dca04a5ec44fe1e75535f51a4e0b9a7aa2318de7"
     },
     {
       "packageVersion": "8.0.0-preview.4.23219.8",
@@ -58,7 +58,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "28b0d23f12f5dfef0db1dd2acf3f2b9b530af71b"
+      "commitSha": "2fdfcbe35acee06a9d93a882233600a5045d2d4d"
     },
     {
       "packageVersion": "17.7.0-preview-23217-02",
@@ -115,10 +115,10 @@
       "commitSha": "252170d24e1c667b627b0d1328a5cdbc8e038fa2"
     },
     {
-      "packageVersion": "8.0.0-beta.23211.2",
+      "packageVersion": "8.0.0-beta.23218.1",
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
-      "commitSha": "4cf2eb17c295905edeca76a9afe6dda42988359e"
+      "commitSha": "d4e7ffb47785c4ff21fcffa0a29aa20fec3a5980"
     },
     {
       "packageVersion": "2.0.0-beta-22503-02",
@@ -151,10 +151,10 @@
       "commitSha": "9a1c3e1b7f0c8763d4c96e593961a61a72679a7b"
     },
     {
-      "packageVersion": "1.0.0-beta.23211.1",
+      "packageVersion": "1.0.0-beta.23217.1",
       "path": "xliff-tasks",
       "remoteUri": "https://github.com/dotnet/xliff-tasks",
-      "commitSha": "ce5066cd85c138c257a981f9c95257e9c577a5ee"
+      "commitSha": "2d18d93582529a08ec2ff6da2d2f5c8e9a6b5e26"
     }
   ],
   "submodules": [
