@@ -126,14 +126,14 @@ public class RazorWorkspaceListenerTest
 
         public Dictionary<ProjectId, int> SerializeCalls => _serializeCalls;
 
-        protected override Task SerializeProjectAsync(Project project, CancellationToken ct)
+        protected override Task SerializeProjectAsync(ProjectId projectId, CancellationToken ct)
         {
-            if (!_serializeCalls.ContainsKey(project.Id))
+            if (!_serializeCalls.ContainsKey(projectId))
             {
-                _serializeCalls.Add(project.Id, 0);
+                _serializeCalls.Add(projectId, 0);
             }
 
-            _serializeCalls[project.Id]++;
+            _serializeCalls[projectId]++;
 
             return Task.CompletedTask;
         }
