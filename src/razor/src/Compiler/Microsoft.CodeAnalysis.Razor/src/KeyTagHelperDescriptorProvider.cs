@@ -11,6 +11,8 @@ namespace Microsoft.CodeAnalysis.Razor;
 
 internal class KeyTagHelperDescriptorProvider : ITagHelperDescriptorProvider
 {
+    private static TagHelperDescriptor s_keyTagHelper;
+
     // Run after the component tag helper provider
     public int Order { get; set; } = 1000;
 
@@ -43,48 +45,53 @@ internal class KeyTagHelperDescriptorProvider : ITagHelperDescriptorProvider
             return;
         }
 
-        context.Results.Add(CreateKeyTagHelper());
+        context.Results.Add(GetOrCreateKeyTagHelper());
     }
 
-    private static TagHelperDescriptor CreateKeyTagHelper()
+    private static TagHelperDescriptor GetOrCreateKeyTagHelper()
     {
-        using var _ = TagHelperDescriptorBuilder.GetPooledInstance(
-            ComponentMetadata.Key.TagHelperKind, "Key", ComponentsApi.AssemblyName,
-            out var builder);
+        return s_keyTagHelper ??= CreateKeyTagHelper();
 
-        builder.CaseSensitive = true;
-        builder.Documentation = ComponentResources.KeyTagHelper_Documentation;
-
-        builder.Metadata.Add(ComponentMetadata.SpecialKindKey, ComponentMetadata.Key.TagHelperKind);
-        builder.Metadata.Add(TagHelperMetadata.Common.ClassifyAttributesOnly, bool.TrueString);
-        builder.Metadata[TagHelperMetadata.Runtime.Name] = ComponentMetadata.Key.RuntimeName;
-
-        // WTE has a bug in 15.7p1 where a Tag Helper without a display-name that looks like
-        // a C# property will crash trying to create the tooltips.
-        builder.SetTypeName("Microsoft.AspNetCore.Components.Key");
-
-        builder.TagMatchingRule(rule =>
+        static TagHelperDescriptor CreateKeyTagHelper()
         {
-            rule.TagName = "*";
-            rule.Attribute(attribute =>
+            using var _ = TagHelperDescriptorBuilder.GetPooledInstance(
+                ComponentMetadata.Key.TagHelperKind, "Key", ComponentsApi.AssemblyName,
+                out var builder);
+
+            builder.CaseSensitive = true;
+            builder.Documentation = ComponentResources.KeyTagHelper_Documentation;
+
+            builder.Metadata.Add(ComponentMetadata.SpecialKindKey, ComponentMetadata.Key.TagHelperKind);
+            builder.Metadata.Add(TagHelperMetadata.Common.ClassifyAttributesOnly, bool.TrueString);
+            builder.Metadata[TagHelperMetadata.Runtime.Name] = ComponentMetadata.Key.RuntimeName;
+
+            // WTE has a bug in 15.7p1 where a Tag Helper without a display-name that looks like
+            // a C# property will crash trying to create the tooltips.
+            builder.SetTypeName("Microsoft.AspNetCore.Components.Key");
+
+            builder.TagMatchingRule(rule =>
             {
+                rule.TagName = "*";
+                rule.Attribute(attribute =>
+                {
+                    attribute.Name = "@key";
+                    attribute.Metadata[ComponentMetadata.Common.DirectiveAttribute] = bool.TrueString;
+                });
+            });
+
+            builder.BindAttribute(attribute =>
+            {
+                attribute.Documentation = ComponentResources.KeyTagHelper_Documentation;
                 attribute.Name = "@key";
+
+                // WTE has a bug 15.7p1 where a Tag Helper without a display-name that looks like
+                // a C# property will crash trying to create the tooltips.
+                attribute.SetPropertyName("Key");
+                attribute.TypeName = typeof(object).FullName;
                 attribute.Metadata[ComponentMetadata.Common.DirectiveAttribute] = bool.TrueString;
             });
-        });
 
-        builder.BindAttribute(attribute =>
-        {
-            attribute.Documentation = ComponentResources.KeyTagHelper_Documentation;
-            attribute.Name = "@key";
-
-            // WTE has a bug 15.7p1 where a Tag Helper without a display-name that looks like
-            // a C# property will crash trying to create the tooltips.
-            attribute.SetPropertyName("Key");
-            attribute.TypeName = typeof(object).FullName;
-            attribute.Metadata[ComponentMetadata.Common.DirectiveAttribute] = bool.TrueString;
-        });
-
-        return builder.Build();
+            return builder.Build();
+        }
     }
 }

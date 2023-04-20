@@ -13,11 +13,14 @@ internal static partial class DictionaryPool<TKey, TValue>
     {
         public static readonly Policy Instance = new();
 
-        private Policy()
+        private readonly IEqualityComparer<TKey>? _comparer;
+
+        public Policy(IEqualityComparer<TKey>? comparer = null)
         {
+            _comparer = comparer;
         }
 
-        public Dictionary<TKey, TValue> Create() => new();
+        public Dictionary<TKey, TValue> Create() => new(_comparer);
 
         public bool Return(Dictionary<TKey, TValue> map)
         {
@@ -25,6 +28,7 @@ internal static partial class DictionaryPool<TKey, TValue>
 
             map.Clear();
 
+            // If the map grew too large, don't return it to the pool.
             return count <= DefaultPool.MaximumObjectSize;
         }
     }

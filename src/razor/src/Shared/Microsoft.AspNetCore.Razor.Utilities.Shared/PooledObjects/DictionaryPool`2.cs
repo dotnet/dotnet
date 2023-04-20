@@ -19,6 +19,9 @@ internal static partial class DictionaryPool<TKey, TValue>
 {
     public static readonly ObjectPool<Dictionary<TKey, TValue>> Default = DefaultPool.Create(Policy.Instance);
 
+    public static ObjectPool<Dictionary<TKey, TValue>> Create(IEqualityComparer<TKey> comparer)
+        => DefaultPool.Create(new Policy(comparer));
+
     public static PooledObject<Dictionary<TKey, TValue>> GetPooledObject()
         => Default.GetPooledObject();
 

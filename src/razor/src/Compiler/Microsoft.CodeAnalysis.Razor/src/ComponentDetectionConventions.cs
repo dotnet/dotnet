@@ -1,10 +1,7 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable enable
-
 using System;
-using System.Linq;
 
 namespace Microsoft.CodeAnalysis.Razor;
 
@@ -28,21 +25,22 @@ internal static class ComponentDetectionConventions
             symbol.AllInterfaces.Contains(icomponentSymbol);
     }
 
-    public static bool IsComponent(INamedTypeSymbol symbol, string icomponentSymbolName)
+    public static bool IsComponent(INamedTypeSymbol typeSymbol, string icomponentSymbolName)
     {
-        if (symbol is null)
+        if (typeSymbol.DeclaredAccessibility != Accessibility.Public ||
+            typeSymbol.IsAbstract)
         {
-            throw new ArgumentNullException(nameof(symbol));
+            return false;
         }
 
-        if (icomponentSymbolName is null)
+        foreach (var interfaceSymbol in typeSymbol.AllInterfaces)
         {
-            throw new ArgumentNullException(nameof(icomponentSymbolName));
+            if (interfaceSymbol.HasFullName(icomponentSymbolName))
+            {
+                return true;
+            }
         }
 
-        return
-            symbol.DeclaredAccessibility == Accessibility.Public &&
-            !symbol.IsAbstract &&
-            symbol.AllInterfaces.Any(s => s.HasFullName(icomponentSymbolName));
+        return false;
     }
 }

@@ -1,7 +1,9 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.ObjectPool;
 
 namespace Microsoft.AspNetCore.Razor.PooledObjects;
@@ -11,7 +13,7 @@ namespace Microsoft.AspNetCore.Razor.PooledObjects;
 ///  it's needed. Note: Dispose this to ensure that the pooled list is returned
 ///  to the pool.
 /// </summary>
-internal ref struct PooledList<T>
+internal ref partial struct PooledList<T>
 {
     private readonly ObjectPool<List<T>> _pool;
     private List<T>? _list;
@@ -34,28 +36,59 @@ internal ref struct PooledList<T>
     public int Count
         => _list?.Count ?? 0;
 
+    public T this[int index]
+    {
+        readonly get
+        {
+            if (_list is { } list)
+            {
+                return list[index];
+            }
+
+            // Throw moved to separate method to encourage better JIT inlining.
+            return ThrowIndexOutOfRangeException();
+
+            [DoesNotReturn]
+            static T ThrowIndexOutOfRangeException()
+            {
+                throw new IndexOutOfRangeException();
+            }
+        }
+
+        set
+        {
+            _list ??= _pool.Get();
+            _list[index] = value;
+        }
+    }
+
     public void Add(T item)
     {
         _list ??= _pool.Get();
         _list.Add(item);
     }
 
-    public void AddRange(IReadOnlyList<T> list)
+    public void AddRange(IReadOnlyList<T> items)
     {
-        if (list.Count == 0)
+        if (items.Count == 0)
         {
             return;
         }
 
         _list ??= _pool.Get();
-        _list.AddRange(list);
+        _list.AddRange(items);
     }
 
-    public void AddRange(IEnumerable<T> list)
+    public void AddRange(IEnumerable<T> items)
     {
         _list ??= _pool.Get();
-        _list.AddRange(list);
+        _list.AddRange(items);
     }
+
+    public readonly Enumerator GetEnumerator()
+        => _list is { } list
+            ? new Enumerator(list)
+            : default;
 
     public void ClearAndFree()
     {
